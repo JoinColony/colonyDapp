@@ -11,7 +11,8 @@
     "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
     "eslint": "eslint src",
     "flow": "flow src",
-    "test": "yarn run eslint && yarn run flow"
+    "test": "yarn run eslint && yarn run flow",
+    "dev": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
