@@ -3,10 +3,14 @@
     "parser": "babel-eslint",
     "env":{
         "es6": true,
-        "commonjs": true
+        "commonjs": true,
+        "browser": true
     },
     "parserOptions": {
         "ecmaVersion": 6,
         "sourceType": "module"
+    },
+    "rules": {
+        "import/extensions": [2, { "js": "never", "jsx": "always" }]
     }
 }

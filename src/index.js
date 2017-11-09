@@ -1,3 +1,12 @@
 /* @flow */
 
-console.log('Hello world');
+import { createElement } from 'react';
+import { render } from 'react-dom';
+
+import App from './App.jsx';
+
+const rootNode = document.getElementById('root');
+
+if (rootNode) {
+  render(createElement(App), rootNode);
+}
