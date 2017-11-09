@@ -1,0 +1,36 @@
+{
+  "name": "real-dapp",
+  "engines": {
+    "node": "9.1.0",
+    "yarn": "1.3.2"
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoinColony/realDApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoinColony/realDApp/issues"
+  },
+  "homepage": "https://github.com/JoinColony/realDApp#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "flow-bin": "^0.59.0",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.4"
+  }
+}
