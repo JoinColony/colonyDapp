@@ -9,7 +9,9 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "eslint": "eslint src",
+    "flow": "flow src",
+    "test": "yarn run eslint && yarn run flow"
   },
   "repository": {
     "type": "git",
@@ -23,12 +25,18 @@
   "homepage": "https://github.com/JoinColony/realDApp#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
     "flow-bin": "^0.59.0",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
