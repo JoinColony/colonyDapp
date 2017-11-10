@@ -12,7 +12,8 @@
     "eslint": "eslint src",
     "flow": "flow src",
     "test": "yarn run eslint && yarn run flow",
-    "dev": "webpack-dev-server"
+    "dev": "yarn run contracts:deploy & webpack-dev-server",
+    "contracts:deploy": "(cd colonyNetwork; node_modules/.bin/gulp deploy:contracts --keepRunning)"
   },
   "repository": {
     "type": "git",

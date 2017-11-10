@@ -1,3 +1,4 @@
 [submodule "colonyNetwork"]
 	path = colonyNetwork
 	url = git@github.com:JoinColony/colonyNetwork.git
+	branch = develop
