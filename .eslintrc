@@ -12,9 +12,9 @@
     },
     "plugins": ["flowtype"],
     "rules": {
-        "import/extensions": [2, { "js": "never", "jsx": "always" }],
-        "max-len": [2, 150],
         "eqeqeq": [2, "smart"],
+        "max-len": [2, 150],
+        "import/extensions": [2, { "js": "never", "jsx": "always" }],
         "import/no-extraneous-dependencies": [
             2,
             { "devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js", "./*.js"] }
