@@ -10,6 +10,7 @@
         "ecmaVersion": 6,
         "sourceType": "module"
     },
+    "plugins": ["flowtype"],
     "rules": {
         "import/extensions": [2, { "js": "never", "jsx": "always" }],
         "max-len": [2, 150],
