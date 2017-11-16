@@ -10,11 +10,10 @@ import {
   Link,
 } from 'react-router-dom';
 
-// Simple example reducer
-const reducer = (state = {}) => state;
+import rootReducer from './reducer';
 
 const store = createStore(
-  reducer,
+  rootReducer,
   // eslint-disable-next-line no-underscore-dangle
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
