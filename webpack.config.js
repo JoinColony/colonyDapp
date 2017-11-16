@@ -23,6 +23,9 @@ const shared = {
       template: 'templates/index.html',
     }),
   ],
+  devServer: {
+    historyApiFallback: true,
+  },
 };
 
 // TODO: Plugins for production
