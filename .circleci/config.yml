@@ -2,27 +2,26 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:9.1.0
-
-    working_directory: ~/repo
 
     steps:
       - checkout
 
-      # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "yarn.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
 
-      - run: yarn install
+      - run: |
+          yarn global add greenkeeper-lockfile@1
+          yarn install
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
 
-      # run tests!
-      - run: yarn test
+      - run: |
+          $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-update
+          yarn test
+          $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
