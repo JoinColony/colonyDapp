@@ -15,7 +15,10 @@
         "import/extensions": [2, { "js": "never", "jsx": "always" }],
         "max-len": [2, 150],
         "eqeqeq": [2, "smart"],
-        "import/no-extraneous-dependencies": [2, {"devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js"]}],
+        "import/no-extraneous-dependencies": [
+            2,
+            { "devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js", "./*.js"] }
+        ],
         "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }]
     },
     "settings": {

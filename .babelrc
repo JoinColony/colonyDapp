@@ -1,3 +1,9 @@
 {
-    "presets": ["env", "stage-2", "react", "flow"]
+    "presets": ["env", "stage-2", "react", "flow"],
+    "plugins": [
+        ["react-intl", {
+            "messagesDir": "./dist/i18n",
+            "enforceDescriptions": false
+        }]
+    ]
 }
