@@ -14,6 +14,8 @@ import {
 
 import messages from './i18n/en.json';
 import rootReducer from './reducer';
+// TODO: Just an example, change later
+import styles from './modules/core/components/Fields/Input.css';
 
 addLocaleData(en);
 
@@ -23,7 +25,8 @@ const store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 
-const Home = () => <div>Hello World</div>;
+
+const Home = () => <div className={styles.main}>Hello World</div>;
 const Other = () => <div>Other route</div>;
 
 export default () => (

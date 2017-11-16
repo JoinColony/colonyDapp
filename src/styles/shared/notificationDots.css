@@ -1,0 +1,64 @@
+@import 'variables.css';
+
+.primaryNotification {
+  &::before {
+    position: absolute;
+    z-index: 1;
+    font-size: var(--size-small);
+    font-weight: var(--weight-semi);
+    font-style: normal;
+    color: white;
+    transition: opacity 100ms ease-in;
+    content: attr(data-notification-count);
+  }
+
+  &::after {
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    background-color: var(--danger);
+    transition: opacity 100ms ease-in;
+    content: '';
+  }
+}
+
+.primaryTopRight {
+  &::before {
+    /* This padding is to align the number in the vertical center. I did not find a better solution */
+    padding-top: 2px;
+    height: 20px;
+    width: 20px;
+    top: -10px;
+    right: -10px;
+    text-align: center;
+  }
+
+  &::after {
+    top: -10px;
+    right: -10px;
+  }
+}
+
+.primaryCenter {
+  &::before, &::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.secondaryNotification {
+  &::after {
+    height: 8px;
+    width: 8px;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    border-radius: 50%;
+    background-color: var(--danger);
+    content: '';
+  }
+}

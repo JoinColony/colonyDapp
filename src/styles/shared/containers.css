@@ -1,0 +1,34 @@
+@import "variables.css";
+
+.isBright {
+  background-color: white;
+}
+
+.section + .section {
+  border: none;
+}
+
+.box {
+  display: block;
+  padding: 20px;
+  border-radius: var(--radius-tiny);
+  background-color: var(--colony-white);
+}
+
+.sectionSmall {
+  composes: section;
+  padding: 15px 0;
+}
+
+.sectionLight {
+  composes: section;
+  background-color: white;
+}
+
+.sectionBordered:not(:first-child) {
+  border-top: 1px solid var(--grey-4);
+}
+
+.sectionBorderedLight:not(:first-child) {
+  border-top: 1px solid var(--grey-blue-1);
+}

@@ -1,0 +1,153 @@
+.flexContainerRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.flexContainerColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexJustifyCenter {
+  justify-content: center;
+}
+
+.flexJustifyBetween {
+  justify-content: space-between;
+}
+
+.flexJustifyEnd {
+  justify-content: flex-end;
+}
+
+.flexInlineChild {
+  display: inline-block;
+  line-height: 1;
+}
+
+.flexAlignStart {
+  align-items: flex-start;
+}
+
+.flexAlignCenter {
+  align-items: center;
+}
+
+.flexContent {
+  flex: 1 1 0;
+}
+
+.flexContent3_4 {
+  composes: flexContent;
+  flex: 0 0 75%;
+  width: 75%;
+}
+
+.flexContent1_12 {
+  composes: flexContent;
+  flex-basis: 8.33333333%;
+}
+
+.flexContent1_6 {
+  composes: flexContent;
+  flex: 0 0 16.66666665%;
+  width: 16.66666665%;
+}
+
+.flexContent1_4 {
+  composes: flexContent;
+  flex: 0 0 25%;
+  width: 25%;
+}
+
+.flexContent1_3 {
+  composes: flexContent;
+  flex: 0 0 33.3333333%;
+  width: 33.3333333%;
+}
+
+.flexContent1_2 {
+  composes: flexContent;
+  flex: 0 0 50%;
+  width: 50%;
+}
+
+.flexContent2_3 {
+  composes: flexContent;
+  flex: 0 0 66.6666666%;
+  width: 66.6666666%;
+}
+
+.flexContent1_1 {
+  composes: flexContent;
+  flex: 0 0 100%;
+  width: 100%;
+}
+
+.flexPullRight {
+  margin-left: auto !important;
+}
+
+.pullRight {
+  float: right !important;
+}
+
+.stretch {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.stretch:global(.section) {
+  padding: 0;
+}
+
+.stretchVertical {
+  height: 100%;
+}
+
+.stretchVertical:global(.columns) {
+  margin: 0;
+}
+
+.stretchHorizontal {
+  width: 100%;
+}
+
+.isRelative {
+  position: relative;
+}
+
+.mainPadded {
+  padding: 120px 10%;
+  height: 100%;
+  width: 100%;
+}
+
+.mainPaddedNoBottom {
+  composes: mainPadded;
+  padding-bottom: 0;
+}
+
+.mainPaddedFullscreen {
+  composes: mainPadded;
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.mainPaddedFullscreenNoBottom {
+  composes: mainPaddedFullscreen;
+  padding-bottom: 0;
+}
+
+.sectionPaddedVertical {
+  padding: 15px 0;
+}
+
+.marginBottomMedium {
+  margin-bottom: 20px;
+}
+
+.marginBottomLarge {
+  margin-bottom: 45px;
+}

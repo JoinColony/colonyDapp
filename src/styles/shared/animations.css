@@ -1,0 +1,18 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.spin {
+  animation: spin 500ms infinite linear;
+}
+
+.busySpin[aria-busy="true"]::after {
+  /* This is a poor mans approach to mixins */
+  animation: spin 500ms infinite linear;
+}
