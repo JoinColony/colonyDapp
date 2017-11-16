@@ -1,0 +1,21 @@
+{
+    "testRegex": "/__tests__/.*\\.jsx?$",
+    "rootDir": "src",
+    "moduleNameMapper": {
+        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+        "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+        "^testutils$": "<rootDir>/utils/test"
+    },
+    "setupFiles": [
+        "<rootDir>/utils/test/shims.js",
+        "<rootDir>/utils/test/setup.js"
+    ],
+    "setupTestFrameworkScriptFile": "jest-enzyme",
+    "collectCoverageFrom" : ["*.{js,jsx}"],
+    "coverageDirectory": "./coverage",
+    "coverageThreshold": {
+        "global": {
+            "branches": 50
+        }
+    }
+  }
