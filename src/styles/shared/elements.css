@@ -1,0 +1,14 @@
+@import 'variables.css';
+
+.loading {
+  composes: spin from './animations.css';
+  display: block;
+  height: 16px;
+  width: 16px;
+  position: relative;
+  border: 2px solid var(--grey-5);
+  border-radius: 50%;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: '';
+}

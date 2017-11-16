@@ -1,0 +1,135 @@
+@import 'variables.css';
+
+.table {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.table th {
+  text-align: left;
+}
+
+.tableHead th {
+  padding-left: 20px;
+  height: 46px;
+  font-weight: var(--weight-semi);
+  text-align: left;
+}
+
+.tableBody td {
+  padding: 20px;
+
+  &:not(:last-child) {
+    padding-right: 0;
+  }
+}
+
+.tableBright {
+  composes: table;
+}
+
+.tableBright .tableHead {
+  border: 1px solid var(--grey-blue-1);
+  background-color: white;
+}
+
+.tableBright .tableHead th {
+  color: var(--temp-grey-4);
+}
+
+.tableBright .tableBody {
+  box-shadow: 0 2px 0 0 var(--temp-grey-blue-4);
+}
+
+.tableBright .tableHead + .tableBody tr {
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.tableBright .tableBody tr {
+  border: 1px solid var(--grey-blue-1);
+  border-bottom: none;
+  background-color: white;
+
+  &:hover {
+    background: var(--temp-grey-blue-3);
+  }
+}
+
+.tableBrightAlt {
+  composes: tableBright;
+}
+
+.tableBrightAlt .tableHead {
+  border: none;
+  background-color: transparent;
+}
+
+.tableBrightAlt .tableHead th {
+  padding-left: 20px;
+  color: var(--grey-4);
+
+  &:only-child {
+    padding-left: 10px;
+  }
+}
+
+.tableBrightAlt .tableHead + .tableBody tr {
+  &:first-child {
+    border-top: 1px solid var(--grey-blue-1);
+  }
+}
+
+.tableDark {
+  composes: table;
+  color: rgba(var(--colony-white), 0.3);
+}
+
+.tableDark .tableHead {
+  color: var(--colony-white);
+}
+
+.tableDark .tableHead th {
+  color: inherit;
+}
+
+.tableDark .tableBody tr {
+  border: none;
+  border-bottom: 1px solid var(--grey-1);
+}
+
+.tableScrollable {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.tableScrollable tr {
+  display: flex;
+}
+
+.tableScrollable th, .tableScrollable td {
+  display: flex;
+  align-items: center;
+}
+
+.tableScrollable .tableBody {
+  display: block;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.tableScrollable .emptyRow td {
+  flex-basis: 100%;
+  justify-content: center;
+}
+
+.emptyRow td {
+  padding: 20px;
+  text-align: center;
+}
