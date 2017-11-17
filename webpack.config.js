@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const shared = {
@@ -36,6 +37,9 @@ const shared = {
     ],
   },
   plugins: [
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development',
+    }),
     new HtmlWebpackPlugin({
       template: 'templates/index.html',
     }),

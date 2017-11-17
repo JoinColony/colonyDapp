@@ -17,6 +17,8 @@ import rootReducer from './reducer';
 // TODO: Just an example, change later
 import styles from './modules/core/components/Fields/Input.css';
 
+import ColonyCreationTest from './ColonyCreationTest.jsx';
+
 addLocaleData(en);
 
 const store = createStore(
@@ -25,9 +27,7 @@ const store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 
-
 const Home = () => <div className={styles.main}>Hello World</div>;
-const Other = () => <div>Other route</div>;
 
 export default () => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
@@ -35,11 +35,12 @@ export default () => (
       <Router>
         <div>
           <Link to="/" href="/">
-            <FormattedMessage id="button.ok" />
+            <FormattedMessage id="home" />
           </Link>
-          <Link to="/other" href="/other">Other</Link>
+          <span>--</span>
+          <Link to="/createcolony" href="/createcolony">Create a colony</Link>
           <Route exact path="/" component={Home} />
-          <Route path="/other" component={Other} />
+          <Route path="/createcolony" component={ColonyCreationTest} />
         </div>
       </Router>
     </Provider>
