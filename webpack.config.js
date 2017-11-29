@@ -1,4 +1,5 @@
 const path = require('path');
+const express = require('express');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -46,6 +47,12 @@ const shared = {
   ],
   devServer: {
     historyApiFallback: true,
+    before(app) {
+      app.use(
+        '/contracts/',
+        express.static(path.join(__dirname, 'colonyNetwork', 'build', 'contracts')),
+      );
+    },
   },
 };
 
