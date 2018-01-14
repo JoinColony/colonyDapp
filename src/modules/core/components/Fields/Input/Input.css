@@ -1,0 +1,136 @@
+@import 'variables.css';
+
+.main {
+  composes: main from '../Field/Field.css';
+}
+
+.stateActive {
+  composes: stateActive from '../Field/Field.css';
+}
+
+.input {
+  composes: input from '../Field/Field.css';
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  height: 32px;
+  width: 100%;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: 2px;
+  background-color: var(--colony-white);
+  font-size: var(--size-normal);
+  line-height: 32px;
+  color: var(--text);
+  letter-spacing: 0.25px;
+  transition: border-color 0.1s ease-in;
+}
+
+.delegate {
+  flex: 1 1 0;
+  height: 100%;
+  width: 100%;
+  vertical-align: baseline;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-normal);
+  color: inherit;
+  outline: none;
+
+  &::placeholder {
+    font-size: var(--size-normal);
+    font-style: italic;
+    letter-spacing: var(--spacing-normal);
+  }
+}
+
+.themeFat {
+  composes: main;
+}
+
+.themeFat .input {
+  height: 45px;
+  font-size: var(--size-medium);
+  line-height: 45px;
+
+  &::placeholder {
+    font-weight: var(--weight-semi);
+  }
+}
+
+.themeFat .delegate {
+  font-size: var(--size-medium);
+
+  &::placeholder {
+    font-weight: var(--weight-semi);
+  }
+}
+
+.themeUnderlined .input {
+  display: inline-block;
+  height: 45px;
+  border: 0;
+  border-bottom: 1px solid var(--colony-black);
+  border-radius: 0;
+  background-color: transparent;
+  font-size: var(--size-large);
+  text-align: right;
+  line-height: 45px;
+  color: var(--colony-black);
+}
+
+.themeUnderlined .input:focus {
+  border-color: var(--primary);
+}
+
+.themeUnderlined[aria-invalid="true"] .input {
+  /* danger is more important than primary */
+  border-color: var(--danger) !important;
+}
+
+.directionHorizontal {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.alignRight .input {
+  text-align: right;
+}
+
+.colorSchemaDark .input {
+  border: 1px solid var(--grey-4);
+  background-color: var(--temp-grey-2);
+  color: var(--temp-grey-0);
+  box-shadow: inset 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+
+  &::placeholder {
+    color: var(--grey-4);
+  }
+
+  & svg {
+    fill: var(--grey-4);
+    stroke: var(--grey-4);
+  }
+}
+
+.colorSchemaTransparent .input {
+  border: 1px solid var(--grey-5);
+  background-color: transparent;
+  color: inherit;
+  box-shadow: none;
+}
+
+.error {
+  composes: errorHorizontal from '../Field/Field.css';
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  color: inherit;
+}
+
+.controls svg {
+  fill: var(--grey-5);
+  stroke: var(--grey-5);
+}

@@ -1,3 +1,6 @@
+/* eslint-disable flowtype/require-valid-file-annotation */
+/* This is an experiment, so no flow types for now */
+
 import { providers, utils } from 'ethers';
 import promisify from 'es6-promisify';
 

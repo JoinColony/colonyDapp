@@ -1,29 +1,22 @@
+/* @flow */
+
 /* eslint-env jest */
 
-// import React from 'react';
-// import { mount, shallow } from 'enzyme';
+import React from 'react';
+import { mount, shallow } from 'enzyme';
+import { IntlProvider, intlShape } from 'react-intl';
 
-// import { IntlProvider, intlShape } from 'react-intl';
-
-// import messages from './i18n/en.json';
+import messages from '../../i18n/en.json';
 // import { NOTIFICATIONS_ADD } from './modules/core/components/Notifications/notificationsActionTypes';
 
 // Create the IntlProvider to retrieve context for wrapping around.
-// const intlProvider = new IntlProvider({ locale: 'en', messages }, {});
-// const { intl } = intlProvider.getChildContext();
-
-export const expectRejectedPromise = promise => new Promise((resolve, reject) => {
-  promise.then(() => reject(new Error('Expected promise to be rejected!')), resolve);
-});
-
-export const expectResolvedPromise = promise => new Promise((resolve, reject) => {
-  promise.then(() => resolve('Expected promise to be resolve!'), reject);
-});
+const intlProvider = new IntlProvider({ locale: 'en', messages, children: [] }, {});
+const { intl } = intlProvider.getChildContext();
 
 export const formProps = {
-  handleSubmit(fn) {
+  handleSubmit(fn: (SyntheticEvent<*>) => void) {
     if (typeof fn == 'function') {
-      return function onSubmit(evt) {
+      return function onSubmit(evt: SyntheticEvent<*>) {
         fn.call(null, evt);
       };
     }
@@ -38,7 +31,7 @@ export const formProps = {
   invalid: false,
 };
 
-export const fieldPropsFactory = (defaultInputProps, defaultProps) => {
+export const fieldPropsFactory = (defaultInputProps: Object, defaultProps: Object) => {
   const fieldPropsTemplate = {
     meta: {},
     submitting: false,
@@ -48,7 +41,7 @@ export const fieldPropsFactory = (defaultInputProps, defaultProps) => {
     value: '',
   };
 
-  return (inputProps, props) => ({
+  return (inputProps: Object, props: Object) => ({
     ...fieldPropsTemplate,
     ...defaultProps,
     ...props,
@@ -63,43 +56,43 @@ export const fieldPropsFactory = (defaultInputProps, defaultProps) => {
 /**
  * When using React-Intl `injectIntl` on components, props.intl is required.
  */
-// function nodeWithIntlProp(node) {
-//   return React.cloneElement(node, { intl });
-// }
+function nodeWithIntlProp(node: any) {
+  return React.cloneElement(node, { intl });
+}
 
-// export function shallowWithIntl(node, { context } = {}) {
-//   return shallow(
-//     nodeWithIntlProp(node),
-//     {
-//       context: Object.assign({}, context, { intl }),
-//     },
-//   );
-// }
+export function shallowWithIntl(node: any, { context }: Object = {}) {
+  return shallow(
+    nodeWithIntlProp(node),
+    {
+      context: Object.assign({}, context, { intl }),
+    },
+  );
+}
 
-// export function mountWithIntlContext(node, { context, childContextTypes } = {}) {
-//   return mount(
-//     node,
-//     {
-//       context: Object.assign({}, context, { intl }),
-//       childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
-//     },
-//   );
-// }
+export function mountWithIntlContext(node: any, { context, childContextTypes }: Object = {}) {
+  return mount(
+    node,
+    {
+      context: Object.assign({}, context, { intl }),
+      childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
+    },
+  );
+}
 
-// export function mountWithIntl(node, { context, childContextTypes } = {}) {
-//   return mount(
-//     nodeWithIntlProp(node),
-//     {
-//       context: Object.assign({}, context, { intl }),
-//       childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
-//     },
-//   );
-// }
+export function mountWithIntl(node: any, { context, childContextTypes }: Object = {}) {
+  return mount(
+    nodeWithIntlProp(node),
+    {
+      context: Object.assign({}, context, { intl }),
+      childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
+    },
+  );
+}
 
 /*
   For snapshot testing we need a consistent timestamp
 */
-export const getUTCDate = (...args) => new Date(Date.UTC(...args));
+export const getUTCDate = (...args: Array<any>) => new Date(Date.UTC(...args));
 
 // export const calledWithErrorNotification = dispatchSpy =>
 //   dispatchSpy.mock.calls[0][0].type === NOTIFICATIONS_ADD && dispatchSpy.mock.calls[0][0].payload.type === 'error';

@@ -14,8 +14,6 @@ import {
 
 import messages from './i18n/en.json';
 import rootReducer from './reducer';
-// TODO: Just an example, change later
-import styles from './modules/core/components/Fields/Input.css';
 
 import ColonyCreationTest from './ColonyCreationTest.jsx';
 
@@ -27,22 +25,24 @@ const store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 
-const Home = () => <div className={styles.main}>Hello World</div>;
+const Home = () => <div>Hello World</div>;
 
-export default () => (
-  <IntlProvider locale="en" defaultLocale="en" messages={messages}>
-    <Provider store={store}>
-      <Router>
-        <div>
-          <Link to="/" href="/">
-            <FormattedMessage id="home" />
-          </Link>
-          <span>--</span>
-          <Link to="/createcolony" href="/createcolony">Create a colony</Link>
-          <Route exact path="/" component={Home} />
-          <Route path="/createcolony" component={ColonyCreationTest} />
-        </div>
-      </Router>
-    </Provider>
-  </IntlProvider>
-);
+export default function App() {
+  return (
+    <IntlProvider locale="en" defaultLocale="en" messages={messages}>
+      <Provider store={store}>
+        <Router>
+          <div>
+            <Link to="/" href="/">
+              <FormattedMessage id="home" />
+            </Link>
+            <span>--</span>
+            <Link to="/createcolony" href="/createcolony">Create a colony</Link>
+            <Route exact path="/" component={Home} />
+            <Route path="/createcolony" component={ColonyCreationTest} />
+          </div>
+        </Router>
+      </Provider>
+    </IntlProvider>
+  );
+}

@@ -1,0 +1,40 @@
+@import 'variables.css';
+
+.main {
+  display: block;
+  margin-bottom: 6px;
+  width: 100%;
+  font-size: var(--size-small);
+  font-weight: 600;
+  text-align: left;
+  line-height: calc(var(--size-small) + 2px);
+
+  i {
+    margin-left: 5px;
+  }
+}
+
+.themeUnderlined {
+  composes: main;
+  font-size: var(--size-medium);
+}
+
+.directionHorizontal {
+  display: inline-block;
+  margin-bottom: 0;
+  margin-right: 6px;
+  width: auto;
+  vertical-align: super;
+}
+
+.colorSchemaDark .labelText {
+  color: var(--grey-5);
+}
+
+.error {
+  composes: error from '../Field/Field.css';
+}
+
+.help {
+  composes: help from '../Field/Field.css';
+}
