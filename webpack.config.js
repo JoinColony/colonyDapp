@@ -8,6 +8,12 @@ const shared = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  resolve: {
+    alias: {
+      $utils: path.resolve(__dirname, 'src/utils/'),
+      $types: path.resolve(__dirname, 'src/types/'),
+    },
+  },
   module: {
     rules: [
       {

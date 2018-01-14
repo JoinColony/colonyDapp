@@ -1,1 +1,5 @@
-export default 'test-file-stub';
+/* @flow */
+
+const fileMock = 'test-file-stub';
+
+export default fileMock;
