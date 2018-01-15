@@ -12,12 +12,12 @@ type WizardState = {
 
 type StepType = {
   Step: ComponentType<*>,
-  validate?: Object,
+  validate?: () => Object,
 };
 
 type WizardArgs = {
   form: string,
-  steps: [StepType],
+  steps: Array<StepType>,
   reduxFormOpts?: Object,
 };
 

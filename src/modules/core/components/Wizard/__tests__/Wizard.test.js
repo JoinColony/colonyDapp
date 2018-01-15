@@ -1,6 +1,8 @@
+/* @flow */
 /* eslint-env jest */
 
 import React from 'react';
+import type { Node } from 'react';
 import { mount } from 'enzyme';
 import { createMockStore } from 'redux-test-utils';
 import { object } from 'prop-types';
@@ -22,7 +24,7 @@ describe('Wizard enhancer', () => {
     { Step: () => <div>Second page</div>, validate: () => ({ foo: 'bar' }) },
   ];
 
-  const OuterComponent = ({ children }: { children: React.Node }) => <div>{ children }</div>;
+  const OuterComponent = ({ children }: { children: Node }) => <div>{ children }</div>;
   const Wizard = withWizard({ form: 'test_wizard', steps })(OuterComponent);
 
   test('Renders first page inside container component per default', () => {
