@@ -8,6 +8,8 @@ import type { FieldComponentProps } from '../flowTypes';
 
 import InputLabel from '../InputLabel';
 
+const displayName = 'Fields.Textarea';
+
 type CustomProps = {
   disabled?: boolean,
 };
@@ -41,5 +43,7 @@ const Textarea = ({ elementOnly,
     />
   </div>
 );
+
+Textarea.displayName = displayName;
 
 export default Textarea;

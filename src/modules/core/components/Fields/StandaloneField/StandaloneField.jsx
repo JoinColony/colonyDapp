@@ -14,6 +14,7 @@ type State = {
 class StandaloneField extends Component<Props, State> {
   setActive: () => void;
   setInactive: () => void;
+  static displayName = 'Fields.StandaloneField';
   constructor(props: Props) {
     super(props);
     this.state = {

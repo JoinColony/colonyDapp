@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Field component standalone Renders initial component 1`] = `
-<StandaloneField
+<Fields.StandaloneField
   component={[Function]}
   fieldComponent={[Function]}
   help=""

@@ -5,7 +5,7 @@ exports[`Input Renders initial component 1`] = `
   aria-invalid={false}
   className=""
 >
-  <InjectIntl(core.InputLabel)
+  <InjectIntl(Fields.InputLabel)
     appearance={Object {}}
     error={false}
     id="blah"

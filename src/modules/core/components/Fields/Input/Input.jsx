@@ -36,7 +36,7 @@ class Input extends Component<Props> {
   handleFocus: Function;
   handleRef: Function;
   inputElm: HTMLInputElement;
-  static displayName = 'core.Fields.Input';
+  static displayName = 'Fields.Input';
   static defaultProps = {
     appearance: {},
   };

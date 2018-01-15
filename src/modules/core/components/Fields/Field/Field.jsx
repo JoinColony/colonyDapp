@@ -58,6 +58,7 @@ class Field extends Component<Props> {
   getTitle: () => string;
   getConnectorComponent: () => ComponentType<*>;
   id: string;
+  static displayName = 'Fields.Field';
   static contextTypes = {
     _reduxForm: PropTypes.object,
   };

@@ -24,7 +24,7 @@ type Props = FieldProps & {
 
 class FieldRow extends Component<Props> {
   reset: () => void;
-  static displayName = 'core.Field.FieldRow';
+  static displayName = 'Fields.FieldRow';
   constructor(props: Props) {
     super(props);
     this.reset = this.reset.bind(this);
