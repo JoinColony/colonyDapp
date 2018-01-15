@@ -12,8 +12,8 @@
         "<rootDir>/utils/test/setup.js"
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
-    "collectCoverageFrom" : ["*.{js,jsx}"],
-    "coverageDirectory": "./coverage",
+    "collectCoverageFrom" : ["**/*.{js,jsx}"],
+    "coverageDirectory": "../coverage",
     "coverageThreshold": {
         "global": {
             "branches": 50
