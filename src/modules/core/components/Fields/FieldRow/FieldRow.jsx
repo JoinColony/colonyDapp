@@ -23,13 +23,8 @@ type Props = FieldProps & {
 };
 
 class FieldRow extends Component<Props> {
-  reset: () => void;
   static displayName = 'Fields.FieldRow';
-  constructor(props: Props) {
-    super(props);
-    this.reset = this.reset.bind(this);
-  }
-  reset() {
+  reset = (): void => {
     const { input: { onChange } } = this.props;
     onChange('');
   }

@@ -12,23 +12,19 @@ type State = {
 };
 
 class StandaloneField extends Component<Props, State> {
-  setActive: () => void;
-  setInactive: () => void;
   static displayName = 'Fields.StandaloneField';
   constructor(props: Props) {
     super(props);
     this.state = {
       active: false,
     };
-    this.setActive = this.setActive.bind(this);
-    this.setInactive = this.setInactive.bind(this);
   }
-  setActive() {
+  setActive = (): void => {
     this.setState({
       active: true,
     });
   }
-  setInactive() {
+  setInactive = (): void => {
     this.setState({
       active: false,
     });

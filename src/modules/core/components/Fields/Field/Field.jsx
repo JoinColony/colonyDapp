@@ -9,7 +9,7 @@ import shortid from 'shortid';
 
 import type { Appearance } from '$types/css';
 
-import type { FieldComponentProps, IntlFormatter, Option } from '../flowTypes';
+import type { FieldComponentProps, Option } from '../flowTypes';
 
 import FieldRow from '../FieldRow';
 import StandaloneField from '../StandaloneField';
@@ -48,27 +48,12 @@ type Props = {
   reset?: () => void,
 };
 
-type Context = {
-  _reduxForm: Object,
-};
-
 class Field extends Component<Props> {
-  getLabel: () => string;
-  getIntlFormatted: IntlFormatter;
-  getTitle: () => string;
-  getConnectorComponent: () => ComponentType<*>;
   id: string;
   static displayName = 'Fields.Field';
   static contextTypes = {
     _reduxForm: PropTypes.object,
   };
-  constructor(props: Props, context: Context) {
-    super(props, context);
-    this.getLabel = this.getLabel.bind(this);
-    this.getIntlFormatted = this.getIntlFormatted.bind(this);
-    this.getTitle = this.getTitle.bind(this);
-    this.getConnectorComponent = this.getConnectorComponent.bind(this);
-  }
   componentWillMount() {
     const { _reduxForm } = this.context;
     const { elementOnly, id, label, name } = this.props;
@@ -81,10 +66,8 @@ class Field extends Component<Props> {
       console.error('WARNING: You have to specify an id when using an external label');
     }
   }
-  getId() {
-    return this.props.id || this.id;
-  }
-  getIntlFormatted(prop?: MessageDescriptor | string, values?: { [string]: string }): string {
+  getId = (): string => this.props.id || this.id;
+  getIntlFormatted = (prop?: MessageDescriptor | string, values?: { [string]: string }): string => {
     const { intl: { formatMessage } } = this.props;
     if (!prop) {
       return '';
@@ -94,15 +77,15 @@ class Field extends Component<Props> {
     }
     return formatMessage(prop, values);
   }
-  getLabel(): string {
+  getLabel = (): string => {
     const { label } = this.props;
     return this.getIntlFormatted(label);
   }
-  getTitle() {
+  getTitle = (): string => {
     const { label, placeholder, title } = this.props;
     return this.getIntlFormatted(title) || this.getIntlFormatted(label) || this.getIntlFormatted(placeholder);
   }
-  getConnectorComponent(): (ComponentType<*> | Function | string) {
+  getConnectorComponent = (): (ComponentType<*> | Function | string) => {
     const { standalone } = this.props;
     return standalone ? StandaloneField : ReduxFormField;
   }

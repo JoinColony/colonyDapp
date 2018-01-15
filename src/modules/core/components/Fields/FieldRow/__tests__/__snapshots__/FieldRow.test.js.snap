@@ -8,7 +8,7 @@ exports[`FieldRow component Renders initial component 1`] = `
     Object {
       "checked": false,
       "disabled": false,
-      "onChange": [Function],
+      "onChange": [MockFunction],
     }
   }
   inputProps={

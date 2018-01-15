@@ -30,31 +30,16 @@ type CustomProps = {
 type Props = FieldComponentProps<CustomProps>;
 
 class Input extends Component<Props> {
-  handleBlur: (evt: SyntheticEvent<CleaveHTMLInputElement>) => void;
-  handleChange: (evt: SyntheticEvent<CleaveHTMLInputElement>) => void;
-  handleFocus: (evt: Object) => void;
-  handleRef: (elm: HTMLInputElement) => void;
   inputElm: HTMLInputElement;
   static displayName = 'Fields.Input';
   static defaultProps = {
     appearance: {},
   };
-  constructor(props: Props) {
-    super(props);
-    this.handleBlur = this.handleBlur.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleFocus = this.handleFocus.bind(this);
-    this.handleRef = this.handleRef.bind(this);
-  }
-  handleBlur(evt: SyntheticEvent<CleaveHTMLInputElement>) {
-    return this.props.input.onBlur(evt.currentTarget.rawValue);
-  }
-  handleChange(evt: SyntheticEvent<CleaveHTMLInputElement>) {
-    return this.props.input.onChange(evt.currentTarget.rawValue);
-  }
+  handleBlur = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => this.props.input.onBlur(evt.currentTarget.rawValue);
+  handleChange = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => this.props.input.onChange(evt.currentTarget.rawValue);
   // We're using a simple object here because redux-form is using its
   // own event definition which doesn't make any sense
-  handleFocus(evt: Object) {
+  handleFocus = (evt: Object): void => {
     const { onFocus } = this.props.input;
     const { length } = evt.currentTarget.value;
     setTimeout(() => {
@@ -64,7 +49,7 @@ class Input extends Component<Props> {
     });
     return onFocus(evt);
   }
-  handleRef(elm: HTMLInputElement) {
+  handleRef = (elm: HTMLInputElement): void => {
     this.inputElm = elm;
   }
   render() {

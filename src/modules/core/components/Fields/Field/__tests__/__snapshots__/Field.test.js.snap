@@ -2,7 +2,7 @@
 
 exports[`Field component standalone Renders initial component 1`] = `
 <Fields.StandaloneField
-  component={[Function]}
+  component={[MockFunction]}
   fieldComponent={[Function]}
   help=""
   id="test_foo"
