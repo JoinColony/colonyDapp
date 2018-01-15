@@ -1,5 +1,5 @@
 {
-    "extends": ["airbnb"],
+    "extends": ["airbnb", "plugin:flowtype/recommended"],
     "parser": "babel-eslint",
     "env":{
         "es6": true,
@@ -14,18 +14,32 @@
     "rules": {
         "eqeqeq": [2, "smart"],
         "max-len": [2, 150],
+        "object-curly-newline": ["error", { "consistent": true }],
+        "flowtype/require-valid-file-annotation": [1, "always"],
         "import/extensions": [2, { "js": "never", "jsx": "always" }],
+        "import/no-anonymous-default-export": 2,
         "import/no-extraneous-dependencies": [
             2,
             { "devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js", "./*.js"] }
         ],
-        "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }]
+        "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
+        "react/require-default-props": 0,
+        "react/sort-comp": [2, {
+            "order": [
+              "type-annotations",
+              "static-methods",
+              "lifecycle",
+              "everything-else",
+              "render"
+            ]
+        }]
     },
     "settings": {
         "import/resolver": {
             "jest": {
               "jestConfigFile": "./jest.conf.json"
-            }
+            },
+            "webpack": {}
         }
     }
 }

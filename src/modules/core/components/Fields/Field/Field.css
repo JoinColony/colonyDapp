@@ -1,0 +1,76 @@
+@import 'variables.css';
+
+.main {
+  line-height: 1;
+}
+
+.main + .main {
+  margin-top: 20px;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: var(--radius-tiny);
+  font-size: var(--size-normal);
+  color: var(--text);
+  letter-spacing: var(--spacing-normal);
+  transition: border-color 0.1s ease-in;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+
+  &::placeholder {
+    font-size: var(--size-normal);
+    font-style: italic;
+    letter-spacing: var(--spacing-normal);
+  }
+}
+
+.main[aria-invalid="true"] .input {
+  border-color: var(--danger);
+}
+
+/* States override all existing styles */
+.stateActive .input {
+  border-color: var(--primary) !important;
+}
+
+.displayInline {
+  display: inline-block;
+}
+
+.checkDelegate {
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  visibility: hidden;
+}
+
+.error, .help {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: var(--size-tiny);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.help {
+  color: var(--text);
+}
+
+.errorHorizontal {
+  composes: error;
+  display: block;
+  margin-top: 5px;
+  height: 1.2em;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  text-align: right;
+}

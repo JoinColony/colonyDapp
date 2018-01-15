@@ -1,3 +1,6 @@
+/* eslint-disable flowtype/require-valid-file-annotation */
+/* This is an experiment, so no flow types for now */
+
 import Web3Provider from './Web3Provider';
 
 class Web3Signer {

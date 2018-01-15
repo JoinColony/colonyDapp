@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field component standalone Renders initial component 1`] = `
+<Fields.StandaloneField
+  component={[MockFunction]}
+  fieldComponent={[Function]}
+  help=""
+  id="test_foo"
+  label=""
+  name="test"
+  placeholder=""
+  title=""
+  utils={
+    Object {
+      "getIntlFormatted": [Function],
+      "reset": undefined,
+    }
+  }
+/>
+`;

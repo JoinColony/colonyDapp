@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputLabel intl={intl} component Renders initial component 1`] = `
+<label
+  className=""
+  htmlFor="foo"
+  id="foo_label"
+>
+  <span>
+    awesome
+  </span>
+  <span>
+    red
+  </span>
+</label>
+`;

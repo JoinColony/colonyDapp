@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Textarea component Renders initial component 1`] = `
+<div
+  aria-invalid={false}
+>
+  <InjectIntl(Fields.InputLabel)
+    error={false}
+    help="halp"
+    label="foo"
+  />
+  <textarea
+    id="foo"
+  />
+</div>
+`;

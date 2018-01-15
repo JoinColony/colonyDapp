@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input Renders initial component 1`] = `
+<div
+  aria-invalid={false}
+  className=""
+>
+  <InjectIntl(Fields.InputLabel)
+    appearance={Object {}}
+    error={false}
+    id="blah"
+    label="Invitee's name"
+  />
+  <Component
+    htmlRef={[Function]}
+    id="blah"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    options={
+      Object {
+        "initValue": "none",
+      }
+    }
+  />
+</div>
+`;
