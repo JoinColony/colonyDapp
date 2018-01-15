@@ -30,11 +30,10 @@ type CustomProps = {
 type Props = FieldComponentProps<CustomProps>;
 
 class Input extends Component<Props> {
-  // TODO: exact
-  handleBlur: Function;
-  handleChange: Function;
-  handleFocus: Function;
-  handleRef: Function;
+  handleBlur: (evt: SyntheticEvent<CleaveHTMLInputElement>) => void;
+  handleChange: (evt: SyntheticEvent<CleaveHTMLInputElement>) => void;
+  handleFocus: (evt: Object) => void;
+  handleRef: (elm: HTMLInputElement) => void;
   inputElm: HTMLInputElement;
   static displayName = 'Fields.Input';
   static defaultProps = {
