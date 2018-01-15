@@ -61,15 +61,7 @@ export const styleSelector = (styleObject: StyleObject, ...restStyleProps: Array
 export const getMainClasses = (appearance: Appearance = {}, styleObject: StyleObject = {}, state: { [string]: boolean } = {}) => {
   const { theme, ...modifiers } = appearance;
   const themeClass = `theme${capitalize(theme)}`;
-  const modifierClasses = Object.keys(modifiers).map((key) => {
-    const value = capitalize(modifiers[key]);
-    return styleObject[`${key}${value}`];
-  }).filter(i => !!i);
-  const stateClasses = Object.keys(state).map((key) => {
-    if (state[key]) {
-      return styleObject[`state${capitalize(key)}`];
-    }
-    return '';
-  }).filter(i => !!i);
-  return ([styleObject[themeClass] || styleObject.main].concat(modifierClasses).concat(stateClasses)).join(' ');
+  const modifierClasses = Object.keys(modifiers).map(key => styleObject[`${key}${capitalize(modifiers[key])}`]).filter(i => !!i);
+  const stateClasses = Object.keys(state).map(key => (state[key] ? styleObject[`state${capitalize(key)}`] : '')).filter(i => !!i);
+  return [(styleObject[themeClass] || styleObject.main), ...modifierClasses, ...stateClasses].join(' ');
 };
