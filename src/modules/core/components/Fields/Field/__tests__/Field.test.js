@@ -66,12 +66,12 @@ describe('Field component standalone', () => {
     expect(wrapper).toHaveProp('data-foo', 'bar');
   });
 
-  test('Warns when using it without a rendered label and without an id', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    shallowWithIntl((
-      <Field name="test" standalone component={TestFieldComponent} elementOnly />
-    ));
-    expect(consoleSpy).toHaveBeenCalled();
+  test('Throws when using it without a rendered label and without an id', () => {
+    expect(() => {
+      shallowWithIntl((
+        <Field name="test" standalone component={TestFieldComponent} elementOnly />
+      ));
+    }).toThrow();
   });
 
   test('Assembles labels properly', () => {

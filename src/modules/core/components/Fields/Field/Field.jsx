@@ -57,13 +57,9 @@ class Field extends Component<Props> {
   componentWillMount() {
     const { _reduxForm } = this.context;
     const { elementOnly, id, label, name } = this.props;
-    if (!_reduxForm) {
-      this.id = `${name}_${shortid.generate()}`;
-    } else {
-      this.id = `${_reduxForm.form}_${name}_${shortid.generate()}`;
-    }
+    this.id = _reduxForm ? `${_reduxForm.form}_${name}_${shortid.generate()}` : `${name}_${shortid.generate()}`;
     if (elementOnly && !label && !id) {
-      console.error('WARNING: You have to specify an id when using an external label');
+      throw new Error('You have to specify an id when using an external label');
     }
   }
   getId = (): string => this.props.id || this.id;
