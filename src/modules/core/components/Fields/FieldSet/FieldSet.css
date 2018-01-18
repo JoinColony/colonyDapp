@@ -1,0 +1,11 @@
+.main {
+  border: none;
+}
+
+.main + .main {
+  margin-top: 20px;
+}
+
+.alignRight {
+  text-align: right;
+}
