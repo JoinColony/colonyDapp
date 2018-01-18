@@ -5,7 +5,6 @@ const postCSSNext = require('postcss-cssnext');
 // Aliases for CSS @import rules (relative to this file)
 const aliases = {
   'variables.css': './src/styles/variables.css',
-  'elements.css': './src/styles/elements.css',
 };
 
 module.exports = {
