@@ -23,7 +23,7 @@ type Props = FieldProps & {
 };
 
 class FieldRow extends Component<Props> {
-  static displayName = 'Fields.FieldRow';
+  static displayName = 'core.Fields.FieldRow';
   reset = (): void => {
     const { input: { onChange } } = this.props;
     onChange('');

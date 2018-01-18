@@ -50,7 +50,7 @@ type Props = {
 
 class Field extends Component<Props> {
   id: string;
-  static displayName = 'Fields.Field';
+  static displayName = 'core.Fields.Field';
   static contextTypes = {
     _reduxForm: PropTypes.object,
   };

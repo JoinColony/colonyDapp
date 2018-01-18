@@ -31,7 +31,7 @@ type Props = FieldComponentProps<CustomProps>;
 
 class Input extends Component<Props> {
   inputElm: HTMLInputElement;
-  static displayName = 'Fields.Input';
+  static displayName = 'core.Fields.Input';
   static defaultProps = {
     appearance: {},
   };

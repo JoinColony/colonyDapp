@@ -4,7 +4,7 @@ exports[`Textarea component Renders initial component 1`] = `
 <div
   aria-invalid={false}
 >
-  <InjectIntl(Fields.InputLabel)
+  <InjectIntl(core.Fields.InputLabel)
     error={false}
     help="halp"
     label="foo"

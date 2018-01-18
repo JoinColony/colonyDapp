@@ -8,7 +8,7 @@ import { getMainClasses } from '$utils/css';
 
 import styles from './InputLabel.css';
 
-const displayName = 'Fields.InputLabel';
+const displayName = 'core.Fields.InputLabel';
 
 type Props = {
   appearance?: Appearance,
