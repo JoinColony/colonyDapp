@@ -12,6 +12,7 @@ const shared = {
     alias: {
       $utils: path.resolve(__dirname, 'src/utils/'),
       $types: path.resolve(__dirname, 'src/types/'),
+      $styles: path.resolve(__dirname, 'src/styles/shared/'),
     },
   },
   module: {
@@ -25,7 +26,10 @@ const shared = {
       },
       {
         test: /\.css$/,
-        include: [path.resolve(__dirname, 'src', 'modules'), path.resolve(__dirname, 'src', 'styles', 'shared')],
+        include: [
+          path.resolve(__dirname, 'src', 'modules'),
+          path.resolve(__dirname, 'src', 'styles', 'shared'),
+        ],
         use: [
           'style-loader',
           {
@@ -38,6 +42,29 @@ const shared = {
             },
           },
           'postcss-loader',
+        ],
+      },
+      {
+        test: /\.svg$/,
+        include: path.resolve(__dirname, 'src', 'img'),
+        exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'images/image.[hash].svg',
+            },
+          },
+          {
+            loader: 'svgo-loader',
+            options: {
+              plugins: [
+                { removeTitle: true },
+                { convertColors: { shorthex: false } },
+                { convertPathData: false },
+              ],
+            },
+          },
         ],
       },
     ],
