@@ -8,13 +8,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
+    "contracts:deploy": "(cd colonyNetwork; node_modules/.bin/gulp deploy:contracts --keepRunning)",
     "eslint": "eslint src",
-    "flow": "flow src",
-    "test:unit": "jest --config=jest.conf.json",
-    "test": "yarn run eslint && yarn run flow && yarn run test:unit",
     "dev": "yarn run contracts:deploy & webpack-dev-server",
-    "contracts:deploy": "(cd colonyNetwork; node_modules/.bin/gulp deploy:contracts --keepRunning)"
+    "flow": "flow src",
+    "scaffold": "plop",
+    "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
+    "test:unit": "jest --config=jest.conf.json",
+    "test": "yarn run eslint && yarn run flow && yarn run test:unit"
   },
   "repository": {
     "type": "git",
@@ -60,6 +61,7 @@
     "jest": "^22.0.0",
     "jest-enzyme": "^4.0.1",
     "jest-sandbox": "^1.1.1",
+    "plop": "^1.9.1",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^11.0.0",
     "postcss-loader": "^2.0.8",

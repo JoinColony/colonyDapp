@@ -74,7 +74,7 @@ const shared = {
       NODE_ENV: 'development',
     }),
     new HtmlWebpackPlugin({
-      template: 'templates/index.html',
+      template: 'src/templates/index.html',
     }),
   ],
   devServer: {
