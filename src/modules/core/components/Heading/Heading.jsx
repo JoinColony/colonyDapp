@@ -14,29 +14,13 @@ const displayName = 'core.Heading';
 
 type Props = {
   appearance?: Appearance,
-  className?: string,
-  intl: IntlShape,
-  tagName?: string,
-  children: Node,
-  text: MessageDescriptor | string,
-  textValues?: { [string]: string },
+  className?: string, // Overwriting class name(s). Setting this will overwrite appearance defaults.
+  intl: IntlShape, // `react-intl` object, so that we have access to the `formatMessage()` method.
+  tagName?: string, // String that will hard set the heading element to render (default: h3)
+  children: Node, // Used to extend the functionality of the component. This will not generate a title attribute on the element.
+  text: MessageDescriptor | string, // A string or a `MessageDescriptor` that make up the headings's text
+  textValues?: { [string]: string }, // Values to interpolate in react-intl
 };
-
-/**
- * Heading Component
- *
- * Setting the `theme` and `size` will determine how the heading looks.
- * They are equivalent to the style names found inside `Heading.css` in the `Themes` and `Sizing` sections.
- *
- * @method Heading
- *
- * @param {string} tagName String that will hard set the heading element to render (default: h3)
- * @param {string} className Overwriting class name(s). Setting this will overwrite appearance defaults.
- * @param {string|MessageDescriptor} text A string or a `MessageDescriptor` that make up the headings's text
- * @param {Object} intl `react-intl` object, so that we have access to the `formatMessage()` method.
- * @param {Node} children Used to extend the functionality of the component. This will not generate a title attribute on the element.
- * @param {Object} props Remaining (custom) props that will be passed down to the `heading` element
- */
 
 // TODO: hoping this style will be fixed by prettier
 const Heading = ({ appearance,
