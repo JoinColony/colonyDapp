@@ -81,7 +81,7 @@ class Field extends Component<Props> {
     const { label, placeholder, title } = this.props;
     return this.getIntlFormatted(title) || this.getIntlFormatted(label) || this.getIntlFormatted(placeholder);
   }
-  getConnectorComponent = (): (ComponentType<*> | Function | string) => {
+  getConnectorComponent = (): (ComponentType<any> | Function | string) => {
     const { standalone } = this.props;
     return standalone ? StandaloneField : ReduxFormField;
   }

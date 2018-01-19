@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import type { ComponentType } from 'react';
 
 type Props = {
-  component: ComponentType<*>,
+  component: ComponentType<any>,
 };
 
 type State = {

@@ -1,7 +1,7 @@
 /* @flow */
 
 import { createElement, Component } from 'react';
-import type { ComponentType, Node } from 'react';
+import type { ComponentType } from 'react';
 import { reduxForm } from 'redux-form';
 
 type WizardProps = {};
@@ -11,7 +11,7 @@ type WizardState = {
 };
 
 type StepType = {
-  Step: ComponentType<*>,
+  Step: ComponentType<any>,
   validate?: () => Object,
 };
 
@@ -21,7 +21,7 @@ type WizardArgs = {
   reduxFormOpts?: Object,
 };
 
-const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (OuterComponent: ComponentType<{ children: Node }>) => {
+const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (OuterComponent: ComponentType<any>) => {
   class Wizard extends Component<WizardProps, WizardState> {
     state = { step: 0 };
     next() {
@@ -44,7 +44,11 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (OuterCompone
         validate,
         destroyOnUnmount: false,
       })(OuterComponent);
-      return createElement(WrappedOuterComponent, null, createElement(Step, { form }));
+      return createElement(
+        WrappedOuterComponent,
+        { nextStep: this.next, previousStep: this.prev },
+        createElement(Step, { form }),
+      );
     }
   }
   return Wizard;
