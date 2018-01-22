@@ -37,17 +37,17 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (OuterCompone
       });
     }
     render() {
-      const { Step, validate } = steps[this.state.step];
-      const WrappedOuterComponent = reduxForm({
+      const { Step, validate, ...extraProps } = steps[this.state.step];
+      const WrappedStep = reduxForm({
         ...reduxFormOpts,
         form,
         validate,
         destroyOnUnmount: false,
-      })(OuterComponent);
+      })(Step);
       return createElement(
-        WrappedOuterComponent,
-        { nextStep: this.next, previousStep: this.prev },
-        createElement(Step, { form }),
+        OuterComponent,
+        { ...extraProps },
+        createElement(WrappedStep, { nextStep: this.next, previousStep: this.prev }),
       );
     }
   }
