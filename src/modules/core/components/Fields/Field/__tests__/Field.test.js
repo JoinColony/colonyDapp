@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Field as ReduxFormField } from 'redux-form';
-import { shallowWithIntl, mountWithIntl } from '$utils/test';
+import { shallowWithIntl, mountWithIntl } from '~utils/test';
 
 import Field from '../Field.jsx';
 import StandaloneField from '../../StandaloneField';

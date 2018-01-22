@@ -3,9 +3,9 @@
 import React from 'react';
 import type { Node } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
-import type { Appearance } from '$types/css';
+import type { Appearance } from '~types/css';
 
-import { getMainClasses } from '$utils/css';
+import { getMainClasses } from '~utils/css';
 
 import styles from './Button.css';
 

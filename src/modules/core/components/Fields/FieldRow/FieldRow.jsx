@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import type { ComponentType } from 'react';
 import type { FieldProps } from 'redux-form';
-import type { Appearance } from '$types/css';
+import type { Appearance } from '~types/css';
 
 import type { FieldComponentProps, Option, Utils } from '../flowTypes';
 

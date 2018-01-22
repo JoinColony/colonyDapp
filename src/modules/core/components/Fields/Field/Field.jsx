@@ -7,7 +7,7 @@ import { Field as ReduxFormField } from 'redux-form';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import shortid from 'shortid';
 
-import type { Appearance } from '$types/css';
+import type { Appearance } from '~types/css';
 
 import type { FieldComponentProps, Option } from '../flowTypes';
 

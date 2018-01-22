@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { mountWithIntl, shallowWithIntl } from '$utils/test';
+import { mountWithIntl, shallowWithIntl } from '~utils/test';
 
 import Button from '../Button.jsx';
 

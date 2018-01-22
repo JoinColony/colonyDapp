@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable import/prefer-default-export */
 
-import type { Appearance, StyleObject } from '$types/css';
+import type { Appearance, StyleObject } from '~types/css';
 
 import { capitalize } from '../strings';
 

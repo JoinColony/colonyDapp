@@ -1,7 +1,7 @@
 @import 'variables.css';
 
 .main {
-  composes: medium from 'shared/titles.css';
+  composes: medium from '~styles/titles.css';
   margin-bottom: 20px;
   white-space: pre-line;
   color: var(--text);
@@ -60,23 +60,23 @@
  */
 
 .sizeHuge {
-  composes: huge from 'shared/titles.css';
+  composes: huge from '~styles/titles.css';
 }
 
 .sizeLarge {
-  composes: title from 'shared/titles.css';
+  composes: title from '~styles/titles.css';
   font-size: var(--size-large);
 }
 
 .sizeThin {
-  composes: thin from 'shared/titles.css';
+  composes: thin from '~styles/titles.css';
 }
 
 .sizeSmall {
-  composes: small from 'shared/titles.css';
+  composes: small from '~styles/titles.css';
 }
 
 .sizeTiny {
-  composes: tiny from 'shared/titles.css';
+  composes: tiny from '~styles/titles.css';
   margin-bottom: 10px;
 }

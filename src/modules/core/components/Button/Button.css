@@ -12,7 +12,7 @@
  */
 
 .main {
-  composes: busySpin from 'shared/animations.css';
+  composes: busySpin from '~styles/animations.css';
   display: inline-block;
   padding: 4px 16px;
   height: 27px;

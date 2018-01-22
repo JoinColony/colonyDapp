@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl, mountWithIntl } from '$utils/test';
+import { shallowWithIntl, mountWithIntl } from '~utils/test';
 
 import Heading from '../Heading.jsx';
 
