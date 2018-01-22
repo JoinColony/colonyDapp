@@ -75,10 +75,13 @@ th {
 
 /* minireset.css end */
 
+html, body, :global(#root) {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
 html {
-  min-width: 300px;
-  overflow-x: hidden;
-  overflow-y: scroll;
   background-color: var(--colony-white);
   font-size: var(--size-normal);
   -moz-osx-font-smoothing: grayscale;
