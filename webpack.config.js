@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const shared = {
   entry: './src/index.js',
@@ -75,6 +76,9 @@ const shared = {
     }),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
+    }),
+    new Dotenv({
+      safe: true,
     }),
   ],
   devServer: {
