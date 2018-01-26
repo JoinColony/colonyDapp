@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl } from '$utils/test';
+import { shallowWithIntl } from '~utils/test';
 
 import Textarea from '../Textarea.jsx';
 import InputLabel from '../../InputLabel';

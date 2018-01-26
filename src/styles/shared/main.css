@@ -49,10 +49,6 @@ textarea {
   margin: 0;
 }
 
-html {
-  box-sizing: border-box;
-}
-
 *, *::before, *::after {
   box-sizing: inherit;
 }
@@ -71,11 +67,6 @@ iframe {
   border: 0;
 }
 
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
 td,
 th {
   padding: 0;
@@ -84,15 +75,19 @@ th {
 
 /* minireset.css end */
 
+html, body, :global(#root) {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
 html {
-  min-width: 300px;
-  overflow-x: hidden;
-  overflow-y: scroll;
   background-color: var(--colony-white);
   font-size: var(--size-normal);
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  box-sizing: border-box;
 }
 
 article,
@@ -194,6 +189,8 @@ pre {
 
 table {
   width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
 
   td,
   th {

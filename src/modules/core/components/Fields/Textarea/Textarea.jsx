@@ -8,7 +8,7 @@ import type { FieldComponentProps } from '../flowTypes';
 
 import InputLabel from '../InputLabel';
 
-const displayName = 'Fields.Textarea';
+const displayName = 'core.Fields.Textarea';
 
 type CustomProps = {
   disabled?: boolean,

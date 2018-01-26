@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import type { ComponentType } from 'react';
 import type { FieldProps } from 'redux-form';
-import type { Appearance } from '$types/css';
+import type { Appearance } from '~types/css';
 
 import type { FieldComponentProps, Option, Utils } from '../flowTypes';
 
@@ -23,7 +23,7 @@ type Props = FieldProps & {
 };
 
 class FieldRow extends Component<Props> {
-  static displayName = 'Fields.FieldRow';
+  static displayName = 'core.Fields.FieldRow';
   reset = (): void => {
     const { input: { onChange } } = this.props;
     onChange('');

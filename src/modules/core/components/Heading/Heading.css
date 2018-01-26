@@ -1,0 +1,82 @@
+@import 'variables.css';
+
+.main {
+  composes: medium from '~styles/titles.css';
+  margin-bottom: 20px;
+  white-space: pre-line;
+  color: var(--text);
+}
+
+/*
+ * Theme-ing
+ *
+ * Next set of classes will define our various heading themes.
+ */
+
+/*
+ * Primary is using the `colony` `green` color, as opposes as a `dark-grey` color for the heading.
+ * This is done for consistency: everywhere we refer to something as `primary` we expect `colony` `green`.
+ */
+.primary {
+  composes: main;
+  color: var(--primary);
+}
+
+.dark {
+  composes: main;
+  color: var(--grey-1);
+}
+
+.invert {
+  composes: main;
+  color: var(--text-invert);
+}
+
+.uppercase {
+  composes: main;
+  text-transform: uppercase;
+  color: var(--temp-grey-11);
+}
+
+/*
+ * Margins
+ *
+ * Next set of classes will define the headings's margins
+ */
+
+.marginDouble {
+  margin-bottom: 40px;
+}
+
+.marginNone {
+  /* Need to overwrite the size class */
+  margin-bottom: 0 !important;
+}
+
+/*
+ * Sizing
+ *
+ * Next set of classes will define the headings's size
+ */
+
+.sizeHuge {
+  composes: huge from '~styles/titles.css';
+}
+
+.sizeLarge {
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-large);
+}
+
+.sizeThin {
+  composes: thin from '~styles/titles.css';
+}
+
+.sizeSmall {
+  composes: small from '~styles/titles.css';
+}
+
+.sizeTiny {
+  composes: tiny from '~styles/titles.css';
+  margin-bottom: 10px;
+}

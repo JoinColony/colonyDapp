@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl } from '$utils/test';
+import { shallowWithIntl } from '~utils/test';
 
 import Cleave from 'cleave.js/react';
 import Input from '../Input.jsx';

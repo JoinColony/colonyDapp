@@ -1,0 +1,281 @@
+@import 'variables.css';
+
+:root {
+  --disabled-background: rgb(194, 204, 204);
+  --disabled-color: rgb(250, 251, 251);
+  --ghost-border: rgb(194, 204, 204);
+}
+
+/*
+ * Base `Button` styles
+ * Everything inherits from this
+ */
+
+.main {
+  composes: busySpin from '~styles/animations.css';
+  display: inline-block;
+  padding: 4px 16px;
+  height: 27px;
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: var(--radius-tiny);
+  background-color: transparent;
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.25px;
+  transition: background-color 50ms ease-in;
+  cursor: pointer;
+}
+
+.main:active {
+  outline: none;
+}
+
+.main:hover {
+  outline: none;
+}
+
+/*
+ * Loading styles via `aria-busy`
+ */
+
+.main[aria-busy="true"] {
+  /* We really want to hide the text on the button for the spinner. Same for icons */
+  color: transparent !important;
+  pointer-events: none;
+
+  svg {
+    stroke: transparent !important;
+    fill: transparent !important;
+  }
+}
+
+.main[aria-busy="true"]::after {
+  display: block;
+  margin: -8px 0 0 -8px;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 2px solid var(--grey-5);
+  border-radius: 50%;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: '';
+}
+
+/*
+ * Disabled styles via `disabled` attribute
+ */
+
+.main[disabled]:not([aria-busy="true"]) {
+  border-color: var(--disabled-background);
+  background-color: var(--disabled-background);
+  color: var(--disabled-color);
+  cursor: default;
+}
+
+/*
+ * Arranging buttons relative to other elements
+ */
+
+.main + .main {
+  margin-left: 10px;
+}
+
+/*
+ * Sizing
+ *
+ * Next set of classes will define the button's size
+ *
+ * Heads's up: don't compose `.main` in the button sizing classes, otherwise you'll end up with `.main` apply-ed two times on the element.
+ */
+
+.sizeLarge {
+  padding: 11px 32px;
+  height: 43px;
+  font-size: var(--size-normal);
+}
+
+/*
+ * Themeing
+ *
+ * Note: For buttons you always have to define a theme!
+ * Next set of classes will define our various button themes. This is a quick outline:
+ * - primary: buttons with primary background color
+ * - secondary: buttons with transparent background and no border
+ * - danger: button with danger colored background
+ * - ghost: buttons with transparent background and border color
+ * - underlined-bold: special button with fat underline
+ * - blue: button with transparent background and border, blue semi bold text
+ *
+ * Some of them will also have an `inverted` version. This is for dark backgrounds.
+ */
+
+/*
+ * Primary
+ * Buttons with primary background color
+ */
+
+.themePrimary {
+  composes: main;
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--colony-white);
+}
+
+.themePrimary:hover {
+  border-color: color(var(--primary) shade(15%));
+  background-color: color(var(--primary) shade(15%));
+  color: var(--colony-white);
+}
+
+.themePrimary[aria-busy="true"]::after {
+  border-color: var(--colony-white);
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+/*
+ * Secondary
+ * Buttons with transparent background and no border
+ */
+
+.themeSecondary {
+  composes: main;
+  font-weight: var(--weight-normal);
+  color: var(--text);
+}
+
+.themeSecondary:hover {
+  color: color(var(--text) shade(30%));
+}
+
+.themeSecondary.colorSchemaInverted {
+  color: var(--colony-white);
+}
+
+.themeSecondary.colorSchemaInverted:hover {
+  color: color(var(--colony-white) shade(30%));
+}
+
+/*
+ * Danger
+ * Button with danger colored background
+ */
+
+.themeDanger {
+  composes: main;
+  border-color: var(--danger);
+  background-color: var(--danger);
+  color: var(--colony-white);
+}
+
+.themeDanger:hover {
+  border-color: var(--danger);
+  background-color: color(var(--danger) shade(15%));
+  color: var(--colony-white);
+}
+
+.themeDanger[aria-busy="true"]::after {
+  border-color: var(--colony-white);
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+/*
+ * Ghost
+ * buttons with transparent background and border color
+ */
+
+.themeGhost {
+  composes: main;
+  border-color: var(--ghost-border);
+  color: var(--colony-black);
+}
+
+.themeGhost:hover {
+  border-color: var(--ghost-border);
+  color: color(var(--colony-black) tint(15%));
+}
+
+.themeGhost.colorSchemaInverted {
+  border-color: var(--colony-white);
+  color: var(--colony-white);
+}
+
+.themeGhost.colorSchemaInverted:hover {
+  border-color: var(--colony-white);
+  color: color(var(--colony-white) shade(30%));
+}
+
+.themeGhost.colorSchemaGrey {
+  padding: 3px 16px;
+  border-color: var(--temp-grey-1);
+  border-width: 2px;
+  color: var(--text);
+}
+
+.themeGhost.colorSchemaGrey:hover {
+  border-color: var(--temp-grey-1);
+  color: color(var(--text) shade(30%));
+}
+
+.themeGhost.colorSchemaGrey.sizeLarge {
+  padding: 10px 32px;
+}
+
+/*
+ * Underlined Bold
+ * Special button with fat underline
+ */
+
+.themeUnderlinedBold {
+  composes: main;
+  padding-left: 0;
+  padding-right: 0;
+  color: var(--colony-black);
+}
+
+.themeUnderlinedBold:hover {
+  color: var(--colony-black);
+}
+
+.themeUnderlinedBold::after {
+  height: 6px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-radius: 6px;
+  background-color: var(--temp-grey-1);
+  content: '';
+}
+
+.themeUnderlinedBold:hover::after {
+  background-color: var(--primary);
+}
+
+.themeBlue {
+  composes: main;
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+}
+
+.themeBlue:hover {
+  text-decoration: underline;
+}
+
+.themeBlue[disabled]:not([aria-busy="true"]) {
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--disabled-background);
+  cursor: default;
+}
+
+.themeBlue[disabled]:not([aria-busy="true"]):hover {
+  text-decoration: none;
+}

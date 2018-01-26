@@ -2,7 +2,7 @@
 
 import type { MessageDescriptor } from 'react-intl';
 import type { FieldProps } from 'redux-form';
-import type { Appearance } from '$types/css';
+import type { Appearance } from '~types/css';
 
 /* Cleave.js options. This is not an extensive list. Just the ones we're using for now */
 /* Full list: https://github.com/nosir/cleave.js/blob/master/doc/options.md */

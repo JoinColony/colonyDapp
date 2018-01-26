@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import type { ComponentType } from 'react';
 
 type Props = {
-  component: ComponentType<*>,
+  component: ComponentType<any>,
 };
 
 type State = {
@@ -12,7 +12,7 @@ type State = {
 };
 
 class StandaloneField extends Component<Props, State> {
-  static displayName = 'Fields.StandaloneField';
+  static displayName = 'core.Fields.StandaloneField';
   constructor(props: Props) {
     super(props);
     this.state = {

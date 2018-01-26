@@ -7,7 +7,7 @@ import { Field as ReduxFormField } from 'redux-form';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import shortid from 'shortid';
 
-import type { Appearance } from '$types/css';
+import type { Appearance } from '~types/css';
 
 import type { FieldComponentProps, Option } from '../flowTypes';
 
@@ -50,7 +50,7 @@ type Props = {
 
 class Field extends Component<Props> {
   id: string;
-  static displayName = 'Fields.Field';
+  static displayName = 'core.Fields.Field';
   static contextTypes = {
     _reduxForm: PropTypes.object,
   };
@@ -81,7 +81,7 @@ class Field extends Component<Props> {
     const { label, placeholder, title } = this.props;
     return this.getIntlFormatted(title) || this.getIntlFormatted(label) || this.getIntlFormatted(placeholder);
   }
-  getConnectorComponent = (): (ComponentType<*> | Function | string) => {
+  getConnectorComponent = (): (ComponentType<any> | Function | string) => {
     const { standalone } = this.props;
     return standalone ? StandaloneField : ReduxFormField;
   }

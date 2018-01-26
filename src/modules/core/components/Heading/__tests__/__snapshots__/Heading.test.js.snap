@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Heading component Renders initial component 1`] = `
+<h3
+  className=""
+  title="Hello Rick"
+>
+  Hello Rick
+</h3>
+`;
+
+exports[`Heading component Works with MessageDescriptors 1`] = `
+<h3
+  className=""
+  title="Hello Rick"
+>
+  Hello Rick
+</h3>
+`;

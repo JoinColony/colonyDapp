@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import Cleave from 'cleave.js/react';
 
-import { getMainClasses } from '$utils/css';
+import { getMainClasses } from '~utils/css';
 
 import styles from './Input.css';
 
@@ -31,7 +31,7 @@ type Props = FieldComponentProps<CustomProps>;
 
 class Input extends Component<Props> {
   inputElm: HTMLInputElement;
-  static displayName = 'Fields.Input';
+  static displayName = 'core.Fields.Input';
   static defaultProps = {
     appearance: {},
   };

@@ -1,0 +1,45 @@
+@import 'variables.css';
+
+.main {
+  background-color: var(--grey-blue-2);
+}
+
+.sidebar {
+  width: 33%;
+  background-color: var(--grey-blue-1);
+}
+
+.sidebarContent {
+  padding: 60px 15%;
+}
+
+.logo {
+  max-width: 160px;
+}
+
+.sidebarChild {
+  margin-top: 90px;
+}
+
+.content {
+  padding: 0 15%;
+}
+
+.content > form {
+  width: 100%;
+}
+
+.section {
+  margin-top: -100px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.controls {
+  margin-top: 60px;
+  text-align: right;
+}
+
+.section .logo-loader svg {
+  max-width: 40%;
+}

@@ -20,7 +20,7 @@ const mountWithStore = node => mount(node, {
 
 describe('Wizard enhancer', () => {
   const steps = [
-    { Step: () => <div>First page</div>, validate: () => ({ bar: 'foo' }) },
+    { Step: () => <div>First page</div>, validate: () => ({ bar: 'foo' }), extraProp: 'baz' },
     { Step: () => <div>Second page</div>, validate: () => ({ foo: 'bar' }) },
   ];
 
@@ -42,10 +42,17 @@ describe('Wizard enhancer', () => {
     expect(wrapper.find(Step)).toBePresent();
   });
 
-  test('Wrapper is a redux-form', () => {
+  test('Step is a redux-form', () => {
     const wrapper = mountWithStore(<Wizard />);
-    const outer = wrapper.find(OuterComponent);
-    expect(outer.prop('form')).toEqual('test_wizard');
+    const step = wrapper.find(steps[0].Step);
+    expect(typeof step.prop('handleSubmit')).toBe('function');
+  });
+
+  test('Step has nextStep and previousStep functions', () => {
+    const wrapper = mountWithStore(<Wizard />);
+    const step = wrapper.find(steps[0].Step);
+    expect(typeof step.prop('nextStep')).toBe('function');
+    expect(typeof step.prop('previousStep')).toBe('function');
   });
 
   test('Can go to the next step', () => {
@@ -74,8 +81,15 @@ describe('Wizard enhancer', () => {
 
   test('Passes down validation', () => {
     const wrapper = mountWithStore(<Wizard />);
+    const { Step, validate } = steps[0];
+    const step = wrapper.find(Step);
+    expect(step.prop('validate')).toEqual(validate);
+  });
+
+  test('Passes extra step props to outer component', () => {
+    const wrapper = mountWithStore(<Wizard />);
+    const { extraProp } = steps[0];
     const outer = wrapper.find(OuterComponent);
-    const { validate } = steps[0];
-    expect(outer.prop('validate')).toEqual(validate);
+    expect(outer.prop('extraProp')).toBe(extraProp);
   });
 });

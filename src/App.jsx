@@ -3,19 +3,20 @@
 import React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { addLocaleData, IntlProvider, FormattedMessage } from 'react-intl';
+import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 
 import {
   BrowserRouter as Router,
   Route,
-  Link,
 } from 'react-router-dom';
+
+import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
 import rootReducer from './reducer';
 
-import ColonyCreationTest from './ColonyCreationTest.jsx';
+import CreateColony from './modules/dashboard/components/CreateColony';
 
 addLocaleData(en);
 
@@ -32,14 +33,9 @@ export default function App() {
     <IntlProvider locale="en" defaultLocale="en" messages={messages}>
       <Provider store={store}>
         <Router>
-          <div>
-            <Link to="/" href="/">
-              <FormattedMessage id="home" />
-            </Link>
-            <span>--</span>
-            <Link to="/createcolony" href="/createcolony">Create a colony</Link>
+          <div className={layout.stretch}>
             <Route exact path="/" component={Home} />
-            <Route path="/createcolony" component={ColonyCreationTest} />
+            <Route path="/createcolony" component={CreateColony} />
           </div>
         </Router>
       </Provider>
