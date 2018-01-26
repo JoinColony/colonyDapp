@@ -9,9 +9,7 @@ import CreateColony from '../CreateColony.jsx';
 
 describe('CreateColony component', () => {
   test('Renders initial component (snapshot)', () => {
-    const wrapper = shallowWithIntl((
-      <CreateColony />
-    ));
+    const wrapper = shallowWithIntl(<CreateColony />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

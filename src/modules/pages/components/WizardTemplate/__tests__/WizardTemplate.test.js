@@ -9,9 +9,7 @@ import WizardTemplate from '../WizardTemplate.jsx';
 
 describe('WizardTemplate component', () => {
   test('Renders initial component', () => {
-    const component = shallowWithIntl((
-      <WizardTemplate />
-    ));
+    const component = shallowWithIntl(<WizardTemplate />);
     expect(toJson(component)).toMatchSnapshot();
   });
 });

@@ -13,7 +13,7 @@ jest.mock('../../InputLabel');
 
 describe('Input', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl((
+    const wrapper = shallowWithIntl(
       <Input
         value=""
         type="text"
@@ -28,12 +28,12 @@ describe('Input', () => {
         hasError={false}
         data-wd-hook="invite-name"
       />
-    ));
+    );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   test('If elementOnly and no formatting options, InputLabel and Cleave are not rendered', () => {
-    const wrapper = shallowWithIntl((
+    const wrapper = shallowWithIntl(
       <Input
         name="name"
         value=""
@@ -47,7 +47,7 @@ describe('Input', () => {
         label="Invitee's name"
         elementOnly
       />
-    ));
+    );
     expect(wrapper.find(Cleave)).not.toBePresent();
     expect(wrapper.find(InputLabel)).not.toBePresent();
   });
