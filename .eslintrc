@@ -1,36 +1,40 @@
 {
-    "extends": ["airbnb", "plugin:flowtype/recommended"],
-    "parser": "babel-eslint",
-    "env":{
-        "es6": true,
+    "env": {
+        "browser": true,
         "commonjs": true,
-        "browser": true
+        "es6": true
     },
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module"
-    },
-    "plugins": ["flowtype"],
+    "extends": [
+        "@colony/eslint-config-colony",
+        "plugin:flowtype/recommended",
+        "eslint-config-airbnb/rules/react"
+    ],
+    "overrides": [
+        {
+            "files": "*.test.js",
+            "rules": {
+                "flowtype/require-valid-file-annotation": "off"
+            }
+        }
+    ],
+    "plugins": ["flowtype", "prettier"],
     "rules": {
-        "eqeqeq": [2, "smart"],
-        "max-len": [2, 150],
-        "object-curly-newline": ["error", { "consistent": true }],
         "flowtype/require-valid-file-annotation": [1, "always"],
         "import/extensions": [2, { "js": "never", "jsx": "always" }],
-        "import/no-anonymous-default-export": 2,
         "import/no-extraneous-dependencies": [
             2,
             { "devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js", "./*.js"] }
         ],
+        "object-curly-newline": ["error", { "consistent": true }],
         "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
         "react/require-default-props": 0,
         "react/sort-comp": [2, {
             "order": [
-              "type-annotations",
-              "static-methods",
-              "lifecycle",
-              "everything-else",
-              "render"
+                "type-annotations",
+                "static-methods",
+                "lifecycle",
+                "everything-else",
+                "render"
             ]
         }]
     },

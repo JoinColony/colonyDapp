@@ -33,7 +33,7 @@ export const multiLineTextEllipsis = (string: string, maxCharLength: number) => 
  */
 export const humanReadableFileSize = (size: number) => {
   const index = Math.floor(Math.log(size) / Math.log(1024));
-  return `${((size / (1024 ** index)).toFixed(2))} ${['B', 'kB', 'MB', 'GB', 'TB'][index]}`;
+  return `${(size / 1024 ** index).toFixed(2)} ${['B', 'kB', 'MB', 'GB', 'TB'][index]}`;
 };
 
 /**

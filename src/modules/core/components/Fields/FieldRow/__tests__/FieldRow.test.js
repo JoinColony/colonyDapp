@@ -11,7 +11,7 @@ const TestFieldComponent = () => <div />;
 
 describe('FieldRow component', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl((
+    const wrapper = shallowWithIntl(
       <FieldRow
         name="test"
         fieldComponent={TestFieldComponent}
@@ -19,12 +19,12 @@ describe('FieldRow component', () => {
         utils={{}}
         input={{ checked: false, disabled: false, onChange: jest.fn() }}
       />
-    ));
+    );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   test('With hasError, error shows instead of title', () => {
-    const wrapper = shallowWithIntl((
+    const wrapper = shallowWithIntl(
       <FieldRow
         title="AwesomeComponent"
         name="test"
@@ -32,7 +32,7 @@ describe('FieldRow component', () => {
         meta={{ touched: true, pristine: false, error: 'You made a booboo', active: false }}
         utils={{}}
       />
-    ));
+    );
     expect(wrapper.prop('inputProps').title).toBe('You made a booboo');
   });
 });

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /*
  * Note:
  * This needs to run in the default node environment without the use of transpiler such as `babel`.

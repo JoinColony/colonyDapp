@@ -61,32 +61,23 @@ function nodeWithIntlProp(node: any) {
 }
 
 export function shallowWithIntl(node: any, { context }: Object = {}) {
-  return shallow(
-    nodeWithIntlProp(node),
-    {
-      context: Object.assign({}, context, { intl }),
-    },
-  );
+  return shallow(nodeWithIntlProp(node), {
+    context: Object.assign({}, context, { intl }),
+  });
 }
 
 export function mountWithIntlContext(node: any, { context, childContextTypes }: Object = {}) {
-  return mount(
-    node,
-    {
-      context: Object.assign({}, context, { intl }),
-      childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
-    },
-  );
+  return mount(node, {
+    context: Object.assign({}, context, { intl }),
+    childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
+  });
 }
 
 export function mountWithIntl(node: any, { context, childContextTypes }: Object = {}) {
-  return mount(
-    nodeWithIntlProp(node),
-    {
-      context: Object.assign({}, context, { intl }),
-      childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
-    },
-  );
+  return mount(nodeWithIntlProp(node), {
+    context: Object.assign({}, context, { intl }),
+    childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
+  });
 }
 
 /*

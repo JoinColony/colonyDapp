@@ -9,14 +9,15 @@ import { object } from 'prop-types';
 
 import withWizard from '../Wizard';
 
-const mountWithStore = node => mount(node, {
-  context: {
-    store: createMockStore('state'),
-  },
-  childContextTypes: {
-    store: object,
-  },
-});
+const mountWithStore = node =>
+  mount(node, {
+    context: {
+      store: createMockStore('state'),
+    },
+    childContextTypes: {
+      store: object,
+    },
+  });
 
 describe('Wizard enhancer', () => {
   const steps = [
@@ -24,7 +25,7 @@ describe('Wizard enhancer', () => {
     { Step: () => <div>Second page</div>, validate: () => ({ foo: 'bar' }) },
   ];
 
-  const OuterComponent = ({ children }: { children: Node }) => <div>{ children }</div>;
+  const OuterComponent = ({ children }: { children: Node }) => <div>{children}</div>;
   const Wizard = withWizard({ form: 'test_wizard', steps })(OuterComponent);
 
   test('Renders first page inside container component per default', () => {
