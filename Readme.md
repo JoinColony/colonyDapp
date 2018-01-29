@@ -13,6 +13,27 @@ git submodule update --init --recursive
 yarn && cd colonyNetwork && yarn
 ```
 
+## Define environment variables
+
+Firstly copy the example env file:
+
+```bash
+cp .env.example .env
+```
+
+Then customise the variables in the .env file to your needs.
+
+When adding a new environment variable, you must add it to both files
+(otherwise, the `dotenv-webpack` plugin will throw an error); this is
+designed to keep the expected environment defined in a simple way.
+
+To use the environment variables in the dApp:
+
+```JavaScript
+const { MY_API_URL } = process.env;
+console.log(MY_API_URL); // https://my-api-url.example.com/api
+```
+
 ## Running dev environment
 
 ```
