@@ -7,7 +7,8 @@
     "extends": [
         "@colony/eslint-config-colony",
         "plugin:flowtype/recommended",
-        "eslint-config-airbnb/rules/react"
+        "eslint-config-airbnb/rules/react",
+        "eslint-config-airbnb/rules/react-a11y"
     ],
     "overrides": [
         {
@@ -17,7 +18,6 @@
             }
         }
     ],
-    "plugins": ["flowtype", "prettier"],
     "rules": {
         "flowtype/require-valid-file-annotation": [1, "always"],
         "import/extensions": [2, { "js": "never", "jsx": "always" }],
@@ -25,7 +25,6 @@
             2,
             { "devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js", "./*.js"] }
         ],
-        "object-curly-newline": ["error", { "consistent": true }],
         "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
         "react/require-default-props": 0,
         "react/sort-comp": [2, {

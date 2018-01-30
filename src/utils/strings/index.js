@@ -15,7 +15,10 @@ export const rmLineBreaks = (str: string) => str.replace(/(\r\n|\n|\r)/gm, ' ');
  *
  * @return {string} based on maxCharLength either the cut down string or the original one
  */
-export const multiLineTextEllipsis = (string: string, maxCharLength: number) => {
+export const multiLineTextEllipsis = (
+  string: string,
+  maxCharLength: number,
+) => {
   if (string.length > maxCharLength) {
     return `${string.substring(0, maxCharLength)}...`;
   }
@@ -33,7 +36,9 @@ export const multiLineTextEllipsis = (string: string, maxCharLength: number) => 
  */
 export const humanReadableFileSize = (size: number) => {
   const index = Math.floor(Math.log(size) / Math.log(1024));
-  return `${(size / 1024 ** index).toFixed(2)} ${['B', 'kB', 'MB', 'GB', 'TB'][index]}`;
+  return `${(size / 1024 ** index).toFixed(2)} ${
+    ['B', 'kB', 'MB', 'GB', 'TB'][index]
+  }`;
 };
 
 /**
@@ -44,4 +49,5 @@ export const humanReadableFileSize = (size: number) => {
  * @param {string} word The word / string to capitalize
  * @return {string} The capitalized string
  */
-export const capitalize = (word: string) => word && word.charAt(0).toUpperCase() + word.slice(1);
+export const capitalize = (word: string) =>
+  word && word.charAt(0).toUpperCase() + word.slice(1);

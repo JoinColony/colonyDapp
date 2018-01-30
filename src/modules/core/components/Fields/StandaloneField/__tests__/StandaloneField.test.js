@@ -11,7 +11,15 @@ const TestFieldComponent = () => <span />;
 
 describe('StandaloneField component', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl(<StandaloneField component={TestFieldComponent} help="halp" error="red" hasError={false} label="awesome" />);
+    const wrapper = shallowWithIntl(
+      <StandaloneField
+        component={TestFieldComponent}
+        help="halp"
+        error="red"
+        hasError={false}
+        label="awesome"
+      />,
+    );
     expect(toJson(wrapper)).toMatchSnapshot();
     // component prop not present, but "intl" and "meta" added
     expect(Object.keys(wrapper.props())).toHaveLength(8);

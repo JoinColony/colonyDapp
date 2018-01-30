@@ -18,7 +18,7 @@ describe('FieldRow component', () => {
         meta={{ touched: false, pristine: false, error: false, active: false }}
         utils={{}}
         input={{ checked: false, disabled: false, onChange: jest.fn() }}
-      />
+      />,
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
@@ -29,9 +29,14 @@ describe('FieldRow component', () => {
         title="AwesomeComponent"
         name="test"
         fieldComponent={TestFieldComponent}
-        meta={{ touched: true, pristine: false, error: 'You made a booboo', active: false }}
+        meta={{
+          touched: true,
+          pristine: false,
+          error: 'You made a booboo',
+          active: false,
+        }}
         utils={{}}
-      />
+      />,
     );
     expect(wrapper.prop('inputProps').title).toBe('You made a booboo');
   });

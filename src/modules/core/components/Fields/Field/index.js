@@ -16,7 +16,7 @@ export const asField = (props?: Object) => (component: ComponentType<Object>) =>
       component,
       ...ownProps,
       ...props,
-    }))
+    })),
   )(FieldComponent);
 
 // exports a field without using redux-form

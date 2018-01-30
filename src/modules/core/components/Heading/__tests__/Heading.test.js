@@ -14,7 +14,9 @@ describe('Heading component', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
   });
   test('Works with MessageDescriptors', () => {
-    const wrapper = shallowWithIntl(<Heading text={{ id: 'rick', defaultMessage: mockTitle }} />);
+    const wrapper = shallowWithIntl(
+      <Heading text={{ id: 'rick', defaultMessage: mockTitle }} />,
+    );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
   test('Shows the title value', () => {
@@ -30,42 +32,58 @@ describe('Heading component', () => {
     /*
      * Huge
      */
-    let wrapper = mountWithIntl(<Heading appearance={{ size: 'huge' }} text={mockTitle} />);
+    let wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'huge' }} text={mockTitle} />,
+    );
     expect(wrapper.find('h1')).toHaveLength(1);
     /*
      * Thin
      */
-    wrapper = mountWithIntl(<Heading appearance={{ size: 'thin' }} text={mockTitle} />);
+    wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'thin' }} text={mockTitle} />,
+    );
     expect(wrapper.find('h1')).toHaveLength(1);
     /*
      * Large
      */
-    wrapper = mountWithIntl(<Heading appearance={{ size: 'large' }} text={mockTitle} />);
+    wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'large' }} text={mockTitle} />,
+    );
     expect(wrapper.find('h2')).toHaveLength(1);
     /*
      * Medium
      */
-    wrapper = mountWithIntl(<Heading appearance={{ size: 'medium' }} text={mockTitle} />);
+    wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'medium' }} text={mockTitle} />,
+    );
     expect(wrapper.find('h3')).toHaveLength(1);
     /*
      * Small
      */
-    wrapper = mountWithIntl(<Heading appearance={{ size: 'small' }} text={mockTitle} />);
+    wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'small' }} text={mockTitle} />,
+    );
     expect(wrapper.find('h4')).toHaveLength(1);
     /*
      * Tiny
      */
-    wrapper = mountWithIntl(<Heading appearance={{ size: 'tiny' }} text={mockTitle} />);
+    wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'tiny' }} text={mockTitle} />,
+    );
     expect(wrapper.find('h5')).toHaveLength(1);
   });
   test('Can overwrite the heading element', () => {
     const eliteElement = 'h1337';
-    const wrapper = shallowWithIntl(<Heading tagName={eliteElement} text={mockTitle} />);
+    const wrapper = shallowWithIntl(
+      <Heading tagName={eliteElement} text={mockTitle} />,
+    );
     expect(wrapper.find(eliteElement)).toHaveLength(1);
   });
   test('Can overwrite the className', () => {
     const className = 'hardCodedStyles';
-    const wrapper = shallowWithIntl(<Heading className={className} text={mockTitle} />);
+    const wrapper = shallowWithIntl(
+      <Heading className={className} text={mockTitle} />,
+    );
     expect(wrapper.props().className).toEqual(className);
   });
 });

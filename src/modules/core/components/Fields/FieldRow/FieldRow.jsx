@@ -27,7 +27,7 @@ class FieldRow extends Component<Props> {
   reset = (): void => {
     const { input: { onChange } } = this.props;
     onChange('');
-  }
+  };
   render() {
     const {
       appearance,
@@ -48,12 +48,15 @@ class FieldRow extends Component<Props> {
     } = this.props;
 
     const { touched, pristine, error } = meta;
-    const hasError = !!(error && (touched || (immediateValidation && !pristine)));
+    const hasError = !!(
+      error &&
+      (touched || (immediateValidation && !pristine))
+    );
 
     const inputProps = {
       id,
       placeholder,
-      title: hasError ? (error || title) : title,
+      title: hasError ? error || title : title,
     };
 
     return (

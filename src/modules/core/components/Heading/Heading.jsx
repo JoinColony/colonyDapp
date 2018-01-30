@@ -23,7 +23,8 @@ type Props = {
 };
 
 // TODO: hoping this style will be fixed by prettier
-const Heading = ({ appearance,
+const Heading = ({
+  appearance,
   children,
   className,
   intl,
@@ -33,15 +34,19 @@ const Heading = ({ appearance,
   ...props
 }: Props) => {
   const size = (appearance && appearance.size) || 'medium';
-  const HeadingElement = tagName || {
-    huge: 'h1',
-    thin: 'h1',
-    large: 'h2',
-    medium: 'h3',
-    small: 'h4',
-    tiny: 'h5',
-  }[size] || 'h3';
-  const value = typeof text == 'string' ? text : intl.formatMessage(text, textValues);
+  const HeadingElement =
+    tagName ||
+    {
+      huge: 'h1',
+      thin: 'h1',
+      large: 'h2',
+      medium: 'h3',
+      small: 'h4',
+      tiny: 'h5',
+    }[size] ||
+    'h3';
+  const value =
+    typeof text == 'string' ? text : intl.formatMessage(text, textValues);
 
   return (
     <HeadingElement

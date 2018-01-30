@@ -31,14 +31,14 @@ describe('Button component', () => {
     const wrapper = mountWithIntl(
       <Button>
         <p>Child test</p>
-      </Button>
+      </Button>,
     );
     // https://github.com/airbnb/enzyme/blob/master/docs/guides/migration-from-2-to-3.md#children-now-has-slightly-different-meaning
     expect(
       wrapper
         .children()
         .children()
-        .html()
+        .html(),
     ).toBe('<p>Child test</p>');
   });
 
@@ -53,7 +53,9 @@ describe('Button component', () => {
   });
 
   test('button has custom props', () => {
-    const wrapper = shallowWithIntl(<Button value="Some Text" data-test="test additional props" />);
+    const wrapper = shallowWithIntl(
+      <Button value="Some Text" data-test="test additional props" />,
+    );
     expect(wrapper.prop('data-test')).toBe('test additional props');
   });
 });

@@ -16,9 +16,7 @@ type Props = {
 };
 
 const FieldSet = ({ appearance, children }: Props) => (
-  <fieldset className={getMainClasses(appearance, styles)}>
-    {children}
-  </fieldset>
+  <fieldset className={getMainClasses(appearance, styles)}>{children}</fieldset>
 );
 
 FieldSet.displayName = displayName;

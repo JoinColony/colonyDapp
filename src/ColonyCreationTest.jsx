@@ -29,15 +29,17 @@ const getSigner = async () => {
   return signer;
 };
 
-const createColony = async (name) => {
+const createColony = async name => {
   const signer = await getSigner();
   const colonyNetwork = new Contract(etherRouterAddress, abi, signer);
-  await colonyNetwork.createColony(utils.toUtf8Bytes(name), { gasLimit: 4300000 });
+  await colonyNetwork.createColony(utils.toUtf8Bytes(name), {
+    gasLimit: 4300000,
+  });
   const address = await colonyNetwork.getColony(utils.toUtf8Bytes(name));
   return new Contract(address[0], colonyAbi, signer);
 };
 
-const recoverColony = async (name) => {
+const recoverColony = async name => {
   const signer = await getSigner();
   const colonyNetwork = new Contract(etherRouterAddress, abi, signer);
   const address = await colonyNetwork.getColony(utils.toUtf8Bytes(name));
@@ -96,30 +98,39 @@ class ColonyCreationTest extends Component {
     return (
       <div>
         <h1>Create a Colony here</h1>
-        <label htmlFor="colonyName">Enter colonyName here
-          <input id="colonyName" type="text" ref={(colonyName) => { this.colonyName = colonyName; }} />
+        <label htmlFor="colonyName">
+          Enter colonyName here
+          <input
+            id="colonyName"
+            type="text"
+            ref={colonyName => {
+              this.colonyName = colonyName;
+            }}
+          />
         </label>
         <button onClick={this.createColony}>Create colony!</button>
         <button onClick={this.recoverColony}>Recover colony</button>
-        {this.state.colony ?
+        {this.state.colony ? (
           <div>
             <strong>YOUR COLONY:</strong>
             <ul>
               <li>Adress: {this.state.colony.address}</li>
             </ul>
             <strong>TASKS:</strong>
-            <ul>
-              {this.state.tasks.map(task => (
-                <li key={task}>{task}</li>
-              ))}
-            </ul>
-            <label htmlFor="taskName">Task name
-              <input id="taskName" type="text" ref={(taskName) => { this.taskName = taskName; }} />
+            <ul>{this.state.tasks.map(task => <li key={task}>{task}</li>)}</ul>
+            <label htmlFor="taskName">
+              Task name
+              <input
+                id="taskName"
+                type="text"
+                ref={taskName => {
+                  this.taskName = taskName;
+                }}
+              />
             </label>
             <button onClick={this.createTask}>Create task</button>
           </div>
-        : null
-        }
+        ) : null}
       </div>
     );
   }

@@ -27,11 +27,12 @@ describe('Input', () => {
         elementOnly={false}
         hasError={false}
         data-wd-hook="invite-name"
-      />
+      />,
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
+  // eslint-disable-next-line max-len
   test('If elementOnly and no formatting options, InputLabel and Cleave are not rendered', () => {
     const wrapper = shallowWithIntl(
       <Input
@@ -46,7 +47,7 @@ describe('Input', () => {
         title="Invitee's name"
         label="Invitee's name"
         elementOnly
-      />
+      />,
     );
     expect(wrapper.find(Cleave)).not.toBePresent();
     expect(wrapper.find(InputLabel)).not.toBePresent();

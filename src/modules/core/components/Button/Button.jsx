@@ -22,7 +22,8 @@ type Props = {
   value?: MessageDescriptor | string, // A string or a `messageDescriptor` that make up the button's text label
 };
 
-const Button = ({ appearance = { theme: 'primary' },
+const Button = ({
+  appearance = { theme: 'primary' },
   children,
   className,
   disabled = false,
@@ -32,8 +33,10 @@ const Button = ({ appearance = { theme: 'primary' },
   value,
   ...props
 }: Props) => {
-  const titleText = typeof title == 'string' ? title : title && formatMessage(title);
-  const valueText = typeof value == 'string' ? value : value && formatMessage(value);
+  const titleText =
+    typeof title == 'string' ? title : title && formatMessage(title);
+  const valueText =
+    typeof value == 'string' ? value : value && formatMessage(value);
   return (
     <button
       className={className || getMainClasses(appearance, styles)}
