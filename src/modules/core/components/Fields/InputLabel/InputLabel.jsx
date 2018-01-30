@@ -19,11 +19,24 @@ type Props = {
   intl: IntlShape,
   label?: string | MessageDescriptor,
   labelValues?: { [string]: string },
-}
+};
 
-const InputLabel = ({ appearance, error, help, helpValues, id, intl: { formatMessage }, label: inputLabel, labelValues }: Props) => {
-  const helpText = (typeof help == 'object') ? formatMessage(help, helpValues) : help;
-  const labelText = (typeof inputLabel == 'object') ? formatMessage(inputLabel, labelValues) : inputLabel;
+const InputLabel = ({
+  appearance,
+  error,
+  help,
+  helpValues,
+  id,
+  intl: { formatMessage },
+  label: inputLabel,
+  labelValues,
+}: Props) => {
+  const helpText =
+    typeof help == 'object' ? formatMessage(help, helpValues) : help;
+  const labelText =
+    typeof inputLabel == 'object'
+      ? formatMessage(inputLabel, labelValues)
+      : inputLabel;
   return (
     <label
       className={getMainClasses(appearance, styles)}
@@ -31,11 +44,11 @@ const InputLabel = ({ appearance, error, help, helpValues, id, intl: { formatMes
       htmlFor={id}
     >
       <span className={styles.labelText}>{labelText}</span>
-      { error && appearance && appearance.direction !== 'horizontal' ?
+      {error && appearance && appearance.direction !== 'horizontal' ? (
         <span className={styles.error}>{error}</span>
-        :
+      ) : (
         helpText && <span className={styles.help}>({helpText})</span>
-      }
+      )}
     </label>
   );
 };

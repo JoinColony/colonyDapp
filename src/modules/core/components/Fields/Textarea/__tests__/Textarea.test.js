@@ -23,21 +23,34 @@ describe('Textarea component', () => {
         help="halp"
         error="red"
         hasError={false}
-      />
+      />,
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   test('Does not wrap with InputLabel without label prop', () => {
     const wrapper = shallowWithIntl(
-      <Textarea meta={{ active: false }} elementOnly={false} input={{}} inputProps={{ id: 'foo' }} passthroughProps={{}} />
+      <Textarea
+        meta={{ active: false }}
+        elementOnly={false}
+        input={{}}
+        inputProps={{ id: 'foo' }}
+        passthroughProps={{}}
+      />,
     );
     expect(wrapper.find(InputLabel)).not.toBePresent();
   });
 
   test('Does not wrap with InputLabel if elementOnly is true', () => {
     const wrapper = shallowWithIntl(
-      <Textarea meta={{ active: false }} elementOnly label="foo" input={{}} inputProps={{ id: 'foo' }} passthroughProps={{}} />
+      <Textarea
+        meta={{ active: false }}
+        elementOnly
+        label="foo"
+        input={{}}
+        inputProps={{ id: 'foo' }}
+        passthroughProps={{}}
+      />,
     );
     expect(wrapper.find(InputLabel)).not.toBePresent();
   });

@@ -11,7 +11,7 @@
     "contracts:deploy": "(cd colonyNetwork; node_modules/.bin/gulp deploy:contracts --keepRunning)",
     "dev": "yarn run contracts:deploy & webpack-dev-server",
     "flow": "flow check",
-    "lint": "run(){ eslint --ignore-pattern=**/{node_modules,dist,lib}/* --fix ${@:-\"src/{,**/}*.js\"}; }; run",
+    "lint": "run(){ eslint --ignore-pattern=**/{node_modules,dist,lib}/* --fix ${@:-\"src/{,**/}*.{js,jsx}\"}; }; run",
     "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
     "scaffold": "plop",
     "stylelint": "stylelint \"src/**/*.css\"",
@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/JoinColony/colonyDapp#readme",
   "devDependencies": {
-    "@colony/eslint-config-colony": "^2.2.0",
+    "@colony/eslint-config-colony": "^3.0.1",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-jest": "^22.0.0",

@@ -21,7 +21,9 @@ type WizardArgs = {
   reduxFormOpts?: Object,
 };
 
-const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (OuterComponent: ComponentType<any>) => {
+const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
+  OuterComponent: ComponentType<any>,
+) => {
   class Wizard extends Component<WizardProps, WizardState> {
     state = { step: 0 };
     next() {
@@ -44,7 +46,14 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (OuterCompone
         validate,
         destroyOnUnmount: false,
       })(Step);
-      return createElement(OuterComponent, { ...extraProps }, createElement(WrappedStep, { nextStep: this.next, previousStep: this.prev }));
+      return createElement(
+        OuterComponent,
+        { ...extraProps },
+        createElement(WrappedStep, {
+          nextStep: this.next,
+          previousStep: this.prev,
+        }),
+      );
     }
   }
   return Wizard;

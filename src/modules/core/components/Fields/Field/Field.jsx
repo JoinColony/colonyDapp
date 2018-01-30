@@ -57,13 +57,18 @@ class Field extends Component<Props> {
   componentWillMount() {
     const { _reduxForm } = this.context;
     const { elementOnly, id, label, name } = this.props;
-    this.id = _reduxForm ? `${_reduxForm.form}_${name}_${shortid.generate()}` : `${name}_${shortid.generate()}`;
+    this.id = _reduxForm
+      ? `${_reduxForm.form}_${name}_${shortid.generate()}`
+      : `${name}_${shortid.generate()}`;
     if (elementOnly && !label && !id) {
       throw new Error('You have to specify an id when using an external label');
     }
   }
   getId = (): string => this.props.id || this.id;
-  getIntlFormatted = (prop?: MessageDescriptor | string, values?: { [string]: string }): string => {
+  getIntlFormatted = (
+    prop?: MessageDescriptor | string,
+    values?: { [string]: string },
+  ): string => {
     const { intl: { formatMessage } } = this.props;
     if (!prop) {
       return '';
@@ -72,19 +77,23 @@ class Field extends Component<Props> {
       return prop;
     }
     return formatMessage(prop, values);
-  }
+  };
   getLabel = (): string => {
     const { label } = this.props;
     return this.getIntlFormatted(label);
-  }
+  };
   getTitle = (): string => {
     const { label, placeholder, title } = this.props;
-    return this.getIntlFormatted(title) || this.getIntlFormatted(label) || this.getIntlFormatted(placeholder);
-  }
-  getConnectorComponent = (): (ComponentType<any> | Function | string) => {
+    return (
+      this.getIntlFormatted(title) ||
+      this.getIntlFormatted(label) ||
+      this.getIntlFormatted(placeholder)
+    );
+  };
+  getConnectorComponent = (): ComponentType<any> | Function | string => {
     const { standalone } = this.props;
     return standalone ? StandaloneField : ReduxFormField;
-  }
+  };
   render() {
     const {
       component,
@@ -104,7 +113,12 @@ class Field extends Component<Props> {
       help: this.getIntlFormatted(help),
       id: this.getId(),
       label: this.getLabel(),
-      options: options && options.map(option => ({ ...option, label: this.getIntlFormatted(option.label) })),
+      options:
+        options &&
+        options.map(option => ({
+          ...option,
+          label: this.getIntlFormatted(option.label),
+        })),
       placeholder: this.getIntlFormatted(placeholder),
       utils: {
         getIntlFormatted: this.getIntlFormatted,
@@ -113,12 +127,7 @@ class Field extends Component<Props> {
       title: this.getTitle(),
     };
 
-    return (
-      <ConnectorComponent
-        component={FieldRow}
-        {...connectorProps}
-      />
-    );
+    return <ConnectorComponent component={FieldRow} {...connectorProps} />;
   }
 }
 

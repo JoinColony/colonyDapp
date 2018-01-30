@@ -16,7 +16,8 @@ type CustomProps = {
 
 type Props = FieldComponentProps<CustomProps>;
 
-const Textarea = ({ elementOnly,
+const Textarea = ({
+  elementOnly,
   error,
   hasError,
   help,
@@ -25,16 +26,15 @@ const Textarea = ({ elementOnly,
   passthroughProps: { disabled, ...props },
   label,
 }: Props) => (
-  <div
-    className={styles.main}
-    aria-invalid={hasError}
-    aria-disabled={disabled}
-  >
-    {!elementOnly && label ?
-      <InputLabel id={inputProps.id} label={label} error={hasError && error} help={help} />
-      :
-      null
-    }
+  <div className={styles.main} aria-invalid={hasError} aria-disabled={disabled}>
+    {!elementOnly && label ? (
+      <InputLabel
+        id={inputProps.id}
+        label={label}
+        error={hasError && error}
+        help={help}
+      />
+    ) : null}
     <textarea
       {...props}
       {...inputProps}

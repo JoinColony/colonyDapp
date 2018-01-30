@@ -21,11 +21,17 @@ const mountWithStore = node =>
 
 describe('Wizard enhancer', () => {
   const steps = [
-    { Step: () => <div>First page</div>, validate: () => ({ bar: 'foo' }), extraProp: 'baz' },
+    {
+      Step: () => <div>First page</div>,
+      validate: () => ({ bar: 'foo' }),
+      extraProp: 'baz',
+    },
     { Step: () => <div>Second page</div>, validate: () => ({ foo: 'bar' }) },
   ];
 
-  const OuterComponent = ({ children }: { children: Node }) => <div>{children}</div>;
+  const OuterComponent = ({ children }: { children: Node }) => (
+    <div>{children}</div>
+  );
   const Wizard = withWizard({ form: 'test_wizard', steps })(OuterComponent);
 
   test('Renders first page inside container component per default', () => {

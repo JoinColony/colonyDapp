@@ -25,7 +25,11 @@ import { capitalize } from '../strings';
  *
  * @return {string} The composed class names string
  */
-export const getMainClasses = (appearance: Appearance = {}, styleObject: StyleObject = {}, state: { [string]: boolean } = {}) => {
+export const getMainClasses = (
+  appearance: Appearance = {},
+  styleObject: StyleObject = {},
+  state: { [string]: boolean } = {},
+) => {
   const { theme, ...modifiers } = appearance;
   const themeClass = `theme${capitalize(theme)}`;
   const modifierClasses = Object.keys(modifiers)
@@ -34,5 +38,9 @@ export const getMainClasses = (appearance: Appearance = {}, styleObject: StyleOb
   const stateClasses = Object.keys(state)
     .map(key => (state[key] ? styleObject[`state${capitalize(key)}`] : ''))
     .filter(i => !!i);
-  return [styleObject[themeClass] || styleObject.main, ...modifierClasses, ...stateClasses].join(' ');
+  return [
+    styleObject[themeClass] || styleObject.main,
+    ...modifierClasses,
+    ...stateClasses,
+  ].join(' ');
 };

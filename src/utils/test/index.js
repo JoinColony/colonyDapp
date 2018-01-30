@@ -10,7 +10,10 @@ import messages from '../../i18n/en.json';
 // import { NOTIFICATIONS_ADD } from './modules/core/components/Notifications/notificationsActionTypes';
 
 // Create the IntlProvider to retrieve context for wrapping around.
-const intlProvider = new IntlProvider({ locale: 'en', messages, children: [] }, {});
+const intlProvider = new IntlProvider(
+  { locale: 'en', messages, children: [] },
+  {},
+);
 const { intl } = intlProvider.getChildContext();
 
 export const formProps = {
@@ -31,7 +34,10 @@ export const formProps = {
   invalid: false,
 };
 
-export const fieldPropsFactory = (defaultInputProps: Object, defaultProps: Object) => {
+export const fieldPropsFactory = (
+  defaultInputProps: Object,
+  defaultProps: Object,
+) => {
   const fieldPropsTemplate = {
     meta: {},
     submitting: false,
@@ -66,17 +72,31 @@ export function shallowWithIntl(node: any, { context }: Object = {}) {
   });
 }
 
-export function mountWithIntlContext(node: any, { context, childContextTypes }: Object = {}) {
+export function mountWithIntlContext(
+  node: any,
+  { context, childContextTypes }: Object = {},
+) {
   return mount(node, {
     context: Object.assign({}, context, { intl }),
-    childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
+    childContextTypes: Object.assign(
+      {},
+      { intl: intlShape },
+      childContextTypes,
+    ),
   });
 }
 
-export function mountWithIntl(node: any, { context, childContextTypes }: Object = {}) {
+export function mountWithIntl(
+  node: any,
+  { context, childContextTypes }: Object = {},
+) {
   return mount(nodeWithIntlProp(node), {
     context: Object.assign({}, context, { intl }),
-    childContextTypes: Object.assign({}, { intl: intlShape }, childContextTypes),
+    childContextTypes: Object.assign(
+      {},
+      { intl: intlShape },
+      childContextTypes,
+    ),
   });
 }
 

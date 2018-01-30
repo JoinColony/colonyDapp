@@ -26,15 +26,15 @@ const WizardTemplate = ({ children, sidebarChild }: Props) => (
             <image href={IMG_LOGO} x="0" y="0" width="160" height="80" />
           </svg>
         </figure>
-        {sidebarChild &&
-          <div className={styles.sidebarChild}>
-            {sidebarChild}
-          </div>
-        }
+        {sidebarChild && (
+          <div className={styles.sidebarChild}>{sidebarChild}</div>
+        )}
       </section>
     </aside>
     <article
-      className={`${layout.flexContent} ${layout.flexContainerRow} ${layout.flexAlignCenter} ${styles.content}`}
+      className={`${layout.flexContent} ${layout.flexContainerRow} ${
+        layout.flexAlignCenter
+      } ${styles.content}`}
     >
       {children}
     </article>

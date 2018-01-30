@@ -12,7 +12,7 @@ const CreateColonyContainer = compose(
   withWizard({
     steps,
     form: 'create_colony',
-  })
+  }),
 )(CreateColony);
 
 export default CreateColonyContainer;

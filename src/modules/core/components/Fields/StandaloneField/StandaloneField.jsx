@@ -23,17 +23,22 @@ class StandaloneField extends Component<Props, State> {
     this.setState({
       active: true,
     });
-  }
+  };
   setInactive = (): void => {
     this.setState({
       active: false,
     });
-  }
+  };
   render() {
     const { component: RowComponent, ...props } = this.props;
     const { active } = this.state;
     return (
-      <RowComponent {...props} onFocus={this.setActive} onBlur={this.setInactive} meta={{ active }} />
+      <RowComponent
+        {...props}
+        onFocus={this.setActive}
+        onBlur={this.setInactive}
+        meta={{ active }}
+      />
     );
   }
 }

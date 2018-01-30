@@ -18,7 +18,10 @@ export type CleaveOptions = {
 
 export type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
-export type IntlFormatter = (prop?: MessageDescriptor | string, values?: { [string]: string }) => string;
+export type IntlFormatter = (
+  prop?: MessageDescriptor | string,
+  values?: { [string]: string },
+) => string;
 
 export type Utils = {
   getIntlFormatted: IntlFormatter,

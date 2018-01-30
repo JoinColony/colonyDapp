@@ -38,10 +38,7 @@ type Props = FormProps<CustomProps>;
 const ColonyDetails = ({ nextStep, handleSubmit, submitting }: Props) => (
   <section className={`${styles.main} ${layout.flexContent}`}>
     <header className={styles.header}>
-      <Heading
-        appearance={{ size: 'thin' }}
-        text={MSG.heading}
-      />
+      <Heading appearance={{ size: 'thin' }} text={MSG.heading} />
     </header>
     <form
       className="form"
