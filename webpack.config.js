@@ -83,6 +83,7 @@ const shared = {
   ],
   devServer: {
     historyApiFallback: true,
+    contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
   },
 };
 
@@ -101,7 +102,7 @@ const dev = shared;
 const prod = shared;
 
 // TODO: Define own logic on what config to assume for which environment
-module.exports = (env) => {
+module.exports = env => {
   if (env === 'prod') {
     return prod;
   }

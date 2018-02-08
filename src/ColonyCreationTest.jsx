@@ -10,36 +10,54 @@ import { abi as colonyAbi } from '../colonyNetwork/build/contracts/Colony.json';
 import { private_keys as accounts } from '../colonyNetwork/test-accounts.json';
 
 // We're dynamically loading this as this is not always needed
-const loadWeb3Signer = async () => {
-  const Web3SignerModule = await import('./lib/Web3Signer');
-  return Web3SignerModule.default;
-};
+// const loadWeb3Signer = async () => {
+//   const Web3SignerModule = await import('./lib/Web3Signer');
+//   return Web3SignerModule.default;
+// };
 
 // Address is from deployed EtherRouter
 const etherRouterAddress = networks[Object.keys(networks)[0]].address;
 
 const getSigner = async () => {
   let signer;
-  if (window.web3 && window.web3.currentProvider) {
-    const Web3Signer = await loadWeb3Signer();
-    signer = new Web3Signer(window.web3);
-  } else {
-    const privKey = `0x${accounts[Object.keys(accounts)[0]]}`;
-    const provider = new providers.JsonRpcProvider();
-    // This is the wallets private key
-    signer = new Wallet(privKey, provider);
-  }
+  // if (window.web3 && window.web3.currentProvider) {
+  // const provider = new providers.Web3Provider(window.web3.currentProvider);
+  // signer = provider.getSigner();
+  // } else {
+  const privKey = `0x${accounts[Object.keys(accounts)[0]]}`;
+  // console.log(privKey);
+  const provider = new providers.JsonRpcProvider('http://localhost:8546/');
+  // This is the wallets private key
+  signer = new Wallet(privKey, provider);
+  // const bal = await signer.getBalance();
+  // console.log(bal);
+  // }
   return signer;
 };
 
 const createColony = async name => {
   const signer = await getSigner();
   const colonyNetwork = new Contract(etherRouterAddress, abi, signer);
-  await colonyNetwork.createColony(utils.toUtf8Bytes(name), {
+
+  colonyNetwork.oncolonyadded = idx =>
+    console.log(`Colony added: ${idx.toString()}`);
+
+  // let count = await colonyNetwork.getColonyCount();
+  // console.log(count.toString());
+  const tx = await colonyNetwork.createColony(utils.toUtf8Bytes(name), {
     gasLimit: 4300000,
   });
+
+  // console.log(tx);
+  // count = await colonyNetwork.getColonyCount();
+  // console.log(count.toString());
+
   const address = await colonyNetwork.getColony(utils.toUtf8Bytes(name));
-  return new Contract(address[0], colonyAbi, signer);
+  console.log(address);
+
+  const contract = new Contract(address[0], colonyAbi, signer);
+  console.log(contract);
+  return contract;
 };
 
 const recoverColony = async name => {

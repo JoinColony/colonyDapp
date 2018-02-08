@@ -14,6 +14,7 @@ import messages from './i18n/en.json';
 import rootReducer from './reducer';
 
 import CreateColony from './modules/dashboard/components/CreateColony';
+import ColonyCreationTest from './ColonyCreationTest.jsx';
 
 addLocaleData(en);
 
@@ -33,6 +34,7 @@ export default function App() {
           <div className={layout.stretch}>
             <Route exact path="/" component={Home} />
             <Route path="/createcolony" component={CreateColony} />
+            <Route path="/createcolonytest" component={ColonyCreationTest} />
           </div>
         </Router>
       </Provider>
