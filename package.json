@@ -90,7 +90,7 @@
     "svgo": "^1.0.3",
     "svgo-loader": "^2.1.0",
     "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4"
+    "webpack-dev-server": "^3.0.0"
   },
   "dependencies": {
     "cleave.js": "^1.0.9",
