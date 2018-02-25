@@ -90,7 +90,7 @@
     "stylelint-order": "^0.8.1",
     "svgo": "^1.0.3",
     "svgo-loader": "^2.1.0",
-    "webpack": "^3.8.1",
+    "webpack": "^4.0.0",
     "webpack-dev-server": "^2.9.4"
   },
   "dependencies": {
