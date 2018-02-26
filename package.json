@@ -58,7 +58,7 @@
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",
-    "eslint-import-resolver-jest": "^1.1.0",
+    "eslint-import-resolver-jest": "^2.0.1",
     "eslint-import-resolver-webpack": "^0.8.4",
     "eslint-plugin-flowtype": "^2.44.0",
     "eslint-plugin-import": "^2.8.0",
