@@ -1,9 +1,9 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+/* eslint-disable flowtype/require-valid-file-annotation */
 
-const shared = {
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const config = {
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
@@ -71,14 +71,8 @@ const shared = {
     ],
   },
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development',
-    }),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
-    }),
-    new Dotenv({
-      safe: true,
     }),
   ],
   devServer: {
@@ -87,24 +81,4 @@ const shared = {
   },
 };
 
-// TODO: Plugins for production
-// new webpack.DefinePlugin({
-// 'process.env': {
-//   'NODE_ENV': JSON.stringify('production')
-// }
-// }),
-// new webpack.optimize.DedupePlugin(), //dedupe similar code
-// new webpack.optimize.UglifyJsPlugin(), //minify everything
-// new webpack.optimize.AggressiveMergingPlugin()//Merge chunks
-// ],
-
-const dev = shared;
-const prod = shared;
-
-// TODO: Define own logic on what config to assume for which environment
-module.exports = env => {
-  if (env === 'prod') {
-    return prod;
-  }
-  return dev;
-};
+module.exports = () => config;
