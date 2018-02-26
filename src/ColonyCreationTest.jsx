@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved, flowtype/require-valid-file-annotation */
+/* eslint-disable */
 // This is just a PoC, will be removed later.
 
 import React, { Component } from 'react';
