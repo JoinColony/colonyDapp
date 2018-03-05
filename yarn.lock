@@ -3199,6 +3199,7 @@ eth-lib@^0.1.27:
     ws "^3.0.0"
     xhr-request-promise "^0.1.2"
 
+<<<<<<< HEAD
 ethers-contracts@2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ethers-contracts/-/ethers-contracts-2.2.1.tgz#e2bf5dd5e157313ba454b50c646c8472fcd0a8b3"
@@ -3216,22 +3217,22 @@ ethers-providers@2.1.19:
 ethers-utils@2.1.11, ethers-utils@^2.1.0:
   version "2.1.11"
   resolved "https://registry.yarnpkg.com/ethers-utils/-/ethers-utils-2.1.11.tgz#b27535ca3226118be300211c39c896b1e5e21641"
-  dependencies:
-    bn.js "^4.4.0"
-    hash.js "^1.0.0"
-    js-sha3 "0.5.7"
-    xmlhttprequest "1.8.0"
-
-ethers-wallet@2.1.8:
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/ethers-wallet/-/ethers-wallet-2.1.8.tgz#2819a51d439525ddedeec84992b0b83f59da3cef"
+=======
+ethers@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-3.0.0.tgz#159dd96c74beb2cd158303714fbd5cf32e96fdcf"
+>>>>>>> chore(package): update lockfile
   dependencies:
     aes-js "3.0.0"
+    bn.js "^4.4.0"
     elliptic "6.3.3"
-    ethers-utils "^2.1.0"
+    hash.js "^1.0.0"
+    inherits "2.0.1"
+    js-sha3 "0.5.7"
     scrypt-js "2.0.3"
     setimmediate "1.0.4"
     uuid "2.0.1"
+<<<<<<< HEAD
 
 ethers@^2.2.4:
   version "2.2.6"
@@ -3241,6 +3242,9 @@ ethers@^2.2.4:
     ethers-providers "2.1.19"
     ethers-utils "2.1.11"
     ethers-wallet "2.1.8"
+=======
+    xmlhttprequest "1.8.0"
+>>>>>>> chore(package): update lockfile
 
 ethjs-unit@0.1.6:
   version "0.1.6"
