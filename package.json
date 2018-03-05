@@ -74,7 +74,7 @@
     "jest-enzyme": "^6.0.0",
     "jest-sandbox": "^1.1.1",
     "lint-staged": "^7.0.0",
-    "plop": "^1.9.1",
+    "plop": "^2.0.0",
     "postcss": "^6.0.16",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^11.0.0",
