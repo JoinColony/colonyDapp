@@ -71,7 +71,7 @@
     "html-webpack-plugin": "^3.0.0",
     "husky": "^0.14.3",
     "jest": "^22.0.0",
-    "jest-enzyme": "^4.0.1",
+    "jest-enzyme": "^5.0.0",
     "jest-sandbox": "^1.1.1",
     "lint-staged": "^7.0.0",
     "plop": "^1.9.1",
