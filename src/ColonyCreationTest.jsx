@@ -23,10 +23,11 @@ const options = {
 };
 
 const getNetworkClient = async () => {
-  const privateKey =
-    '0355596cdb5e5242ad082c4fe3f8bbe48c9dba843fe1f99dd8272f487e70efae'; // XXX get this from Ganache
+  const accountsResponse = await fetch(`${TRUFFLEPIG_URL}/accounts`);
+  const accounts = await accountsResponse.json();
+  const privateKey = accounts[Object.keys(accounts)[0]];
   const provider = new providers.JsonRpcProvider('http://localhost:8545/'); // XXX default Ganache port
-  const wallet = new Wallet(`0x${privateKey}`, provider);
+  const wallet = new Wallet(privateKey, provider);
   const adapter = new EthersAdapter({
     loader,
     provider,
