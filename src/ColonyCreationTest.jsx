@@ -1,155 +1,248 @@
-/* eslint-disable */
+/* eslint-disable import/no-unresolved, flowtype/require-valid-file-annotation, react/no-array-index-key */
 // This is just a PoC, will be removed later.
 
-import React, { Component } from 'react';
-import { Contract, providers, utils, Wallet } from 'ethers';
+import * as React from 'react';
+import ethers from 'ethers';
 
-import { abi } from '../colonyNetwork/build/contracts/ColonyNetwork.json';
-import { networks } from '../colonyNetwork/build/contracts/EtherRouter.json';
-import { abi as colonyAbi } from '../colonyNetwork/build/contracts/Colony.json';
-import { private_keys as accounts } from '../colonyNetwork/test-accounts.json';
+import ContractHttpLoader from '@colony/colony-js-contract-loader-http';
+import EthersAdapter from '@colony/colony-js-adapter-ethers';
+import ColonyNetworkClient from '@colony/colony-js-client';
 
-// We're dynamically loading this as this is not always needed
-// const loadWeb3Signer = async () => {
-//   const Web3SignerModule = await import('./lib/Web3Signer');
-//   return Web3SignerModule.default;
-// };
+window.ethers = ethers;
+const { providers, Wallet } = ethers;
+const TRUFFLEPIG_URL = 'http://127.0.0.1:3030'; // XXX default pig url
 
-// Address is from deployed EtherRouter
-const etherRouterAddress = networks[Object.keys(networks)[0]].address;
+const loader = new ContractHttpLoader({
+  endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,
+  parser: 'truffle',
+});
 
-const getSigner = async () => {
-  let signer;
-  // if (window.web3 && window.web3.currentProvider) {
-  // const provider = new providers.Web3Provider(window.web3.currentProvider);
-  // signer = provider.getSigner();
-  // } else {
-  const privKey = `0x${accounts[Object.keys(accounts)[0]]}`;
-  // console.log(privKey);
-  const provider = new providers.JsonRpcProvider('http://localhost:8546/');
-  // This is the wallets private key
-  signer = new Wallet(privKey, provider);
-  // const bal = await signer.getBalance();
-  // console.log(bal);
-  // }
-  return signer;
+const options = {
+  gasLimit: ethers.utils.bigNumberify(4300000),
+  waitForMining: true,
 };
 
-const createColony = async name => {
-  const signer = await getSigner();
-  const colonyNetwork = new Contract(etherRouterAddress, abi, signer);
-
-  colonyNetwork.oncolonyadded = idx =>
-    console.log(`Colony added: ${idx.toString()}`);
-
-  // let count = await colonyNetwork.getColonyCount();
-  // console.log(count.toString());
-  const tx = await colonyNetwork.createColony(utils.toUtf8Bytes(name), {
-    gasLimit: 4300000,
+const getNetworkClient = async () => {
+  const privateKey =
+    '0355596cdb5e5242ad082c4fe3f8bbe48c9dba843fe1f99dd8272f487e70efae'; // XXX get this from Ganache
+  const provider = new providers.JsonRpcProvider('http://localhost:8545/'); // XXX default Ganache port
+  const wallet = new Wallet(`0x${privateKey}`, provider);
+  const adapter = new EthersAdapter({
+    loader,
+    provider,
+    wallet,
   });
-
-  // console.log(tx);
-  // count = await colonyNetwork.getColonyCount();
-  // console.log(count.toString());
-
-  const address = await colonyNetwork.getColony(utils.toUtf8Bytes(name));
-  console.log(address);
-
-  const contract = new Contract(address[0], colonyAbi, signer);
-  console.log(contract);
-  return contract;
+  const networkClient = await ColonyNetworkClient.createSelf(adapter);
+  console.log('Network Client:', networkClient);
+  return networkClient;
 };
 
-const recoverColony = async name => {
-  const signer = await getSigner();
-  const colonyNetwork = new Contract(etherRouterAddress, abi, signer);
-  const address = await colonyNetwork.getColony(utils.toUtf8Bytes(name));
-  return new Contract(address[0], colonyAbi, signer);
-};
+class ColonyCreationTest extends React.Component {
+  state = {
+    colonyName: '',
+    colonyAddress: null,
+    tasks: [],
+    tokenAddress: '',
+    skillId: null,
+    parentSkillId: null,
+  };
+  networkClient = null;
+  colonyClient = null;
+  createColony = async () => {
+    if (!this.networkClient) this.networkClient = await getNetworkClient();
 
-const createTask = async (colony, name) => {
-  await colony.makeTask(utils.toUtf8Bytes(name));
-  const result = await colony.taskCount();
-  const taskCount = result[0].toNumber();
-  const task = await colony.getTask(taskCount);
-  return utils.toUtf8String(task[0]);
-};
+    const { value: name } = this.colonyName;
+    const { value: tokenName } = this.tokenName;
+    const { value: tokenSymbol } = this.tokenSymbol;
 
-class ColonyCreationTest extends Component {
-  constructor() {
-    super();
-    this.createColony = this.createColony.bind(this);
-    this.recoverColony = this.recoverColony.bind(this);
-    this.createTask = this.createTask.bind(this);
-  }
-  state = { colony: null, tasks: [] };
-  async createColony() {
-    const { value } = this.colonyName;
-    if (!value) return;
-    const colony = await createColony(value);
-    this.setState({ colony });
-    this.colonyName.value = '';
-  }
-  async recoverColony() {
-    const { value } = this.colonyName;
-    if (!value) return;
-    const colony = await recoverColony(value);
-    this.setState({ colony });
-    this.colonyName.value = '';
-    const result = await colony.taskCount();
-    const taskCount = result[0].toNumber();
-    const tasks = [];
-    for (let i = 1; i <= taskCount; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      const task = await colony.getTask(i);
-      tasks.push(utils.toUtf8String(task[0]));
+    const {
+      eventData: { colonyId: id } = {},
+    } = await this.networkClient.createColony.send(
+      { name, tokenName, tokenSymbol, tokenDecimals: 18 },
+      options,
+    );
+
+    if (id) {
+      this.colonyClient = await this.networkClient.getColonyClient({
+        id,
+      });
+      this.setState({
+        colonyName: name,
+        colonyAddress: this.colonyClient.contract.address,
+        tokenAddress: '',
+      });
+      this.colonyName.value = '';
+      this.tokenName.value = '';
+      this.tokenSymbol.value = '';
     }
-    this.setState({ tasks });
-  }
-  async createTask() {
-    const { value } = this.taskName;
-    if (!value || !this.state.colony) return;
-    const task = await createTask(this.state.colony, value);
+  };
+  recoverColony = async () => {
+    if (!this.networkClient) this.networkClient = await getNetworkClient();
+
+    const { value: key } = this.colonyName;
+    if (!key) return;
+
+    this.colonyClient = await this.networkClient.getColonyClient({ key });
+    console.log('Colony Client:', this.colonyClient);
+
     this.setState({
-      tasks: [...this.state.tasks, task],
+      colonyName: key,
+      colonyAddress: this.colonyClient.contract.address,
     });
+    this.colonyName.value = '';
+
+    const { address: tokenAddress } = await this.colonyClient.getToken.call();
+    this.setState({ tokenAddress });
+
+    const { count: taskCount } = await this.colonyClient.getTaskCount.call();
+    const taskIds = Array(...{ length: taskCount }).map((_, i) => i + 1);
+    const tasks = await Promise.all(
+      taskIds.map(
+        taskId =>
+          new Promise(async (resolve, reject) => {
+            const task = await this.colonyClient.getTask.call({ taskId });
+            if (!task) reject(new Error(`Task with id ${taskId} not found`));
+            resolve({
+              taskId,
+              taskName: ethers.utils.toUtf8String(task.specificationHash),
+            });
+          }),
+      ),
+    );
+    this.setState({ tasks });
+  };
+  createTask = async () => {
+    if (!this.colonyClient) return;
+
+    const { value: taskName } = this.taskName;
+    if (!taskName) return;
+
+    const {
+      eventData: { taskId } = {},
+    } = await this.colonyClient.createTask.send(
+      {
+        specificationHash: taskName,
+        domainId: 1,
+      },
+      options,
+    );
     this.taskName.value = '';
-  }
+    this.setState({ tasks: [...this.state.tasks, { taskId, taskName }] });
+  };
+  addSkill = async () => {
+    if (!this.colonyClient) return;
+
+    const {
+      eventData: { skillId, parentSkillId } = {},
+    } = await this.colonyClient.addGlobalSkill.send(
+      {
+        parentSkillId: 1, // XXX hardcoded, just for testing...
+      },
+      options,
+    );
+    this.setState({ skillId, parentSkillId });
+  };
+  setTaskSkill = async () => {
+    if (!this.colonyClient) return;
+
+    const { skillId } = this.state;
+    const { value: taskId } = this.taskId;
+    if (!(skillId && taskId)) return;
+
+    await this.colonyClient.setTaskSkill.send(
+      {
+        taskId: parseInt(taskId, 10),
+        skillId,
+        role: 0,
+      },
+      options,
+    );
+    this.taskSkillId.value = '';
+  };
   render() {
     return (
       <div>
         <h1>Create a Colony here</h1>
-        <label htmlFor="colonyName">
-          Enter colonyName here
-          <input
-            id="colonyName"
-            type="text"
-            ref={colonyName => {
-              this.colonyName = colonyName;
-            }}
-          />
-        </label>
-        <button onClick={this.createColony}>Create colony!</button>
+        <input
+          id="colonyName"
+          type="text"
+          placeholder="Colony name"
+          ref={colonyName => {
+            this.colonyName = colonyName;
+          }}
+        />
+        <input
+          id="tokenName"
+          type="text"
+          placeholder="Colony token name"
+          ref={tokenName => {
+            this.tokenName = tokenName;
+          }}
+        />
+        <input
+          id="tokenSymbol"
+          type="text"
+          placeholder="Colony token symbol"
+          ref={tokenSymbol => {
+            this.tokenSymbol = tokenSymbol;
+          }}
+        />
+        <button onClick={this.createColony}>Create colony</button>
         <button onClick={this.recoverColony}>Recover colony</button>
-        {this.state.colony ? (
+        {this.state.colonyAddress ? (
           <div>
             <strong>YOUR COLONY:</strong>
             <ul>
-              <li>Adress: {this.state.colony.address}</li>
+              <li>Address: {this.state.colonyAddress}</li>
+              <li>Name: {this.state.colonyName}</li>
+              <li>Token address: {this.state.tokenAddress}</li>
             </ul>
             <strong>TASKS:</strong>
-            <ul>{this.state.tasks.map(task => <li key={task}>{task}</li>)}</ul>
-            <label htmlFor="taskName">
-              Task name
-              <input
-                id="taskName"
-                type="text"
-                ref={taskName => {
-                  this.taskName = taskName;
-                }}
-              />
-            </label>
-            <button onClick={this.createTask}>Create task</button>
+            <ul>
+              {this.state.tasks.map(({ taskId, taskName }, key) => (
+                <li key={key}>
+                  {taskName} (ID: {taskId})
+                </li>
+              ))}
+            </ul>
+            <div>
+              <button id="addSkill" name="addSkill" onClick={this.addSkill}>
+                Add Skill
+              </button>
+            </div>
+            <div>
+              SKILL ID: {this.state.skillId}
+              <br />
+              PARENT SKILL ID: {this.state.parentSkillId}
+            </div>
+            <div>
+              <label htmlFor="taskName">
+                Task name
+                <input
+                  id="taskName"
+                  type="text"
+                  ref={taskName => {
+                    this.taskName = taskName;
+                  }}
+                />
+              </label>
+              <button onClick={this.createTask}>Create task</button>
+            </div>
+            {this.state.tasks.length && (
+              <div>
+                <label htmlFor="taskSkillId">
+                  Task brief
+                  <input
+                    id="taskSkillId"
+                    type="number"
+                    ref={taskSkillId => {
+                      this.taskSkillId = taskSkillId;
+                    }}
+                  />
+                </label>
+                <button onClick={this.setTaskSkill}>Set task brief</button>
+              </div>
+            )}
           </div>
         ) : null}
       </div>

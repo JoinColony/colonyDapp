@@ -100,7 +100,7 @@
     "cleave.js": "^1.0.9",
     "dotenv-webpack": "^1.5.4",
     "es6-promisify": "^6.0.0",
-    "ethers": "^2.2.4",
+    "ethers": "2.2.6",
     "prop-types": "^15.6.0",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
