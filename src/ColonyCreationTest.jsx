@@ -11,6 +11,7 @@ import ColonyNetworkClient from '@colony/colony-js-client';
 window.ethers = ethers;
 const { providers, Wallet } = ethers;
 const TRUFFLEPIG_URL = 'http://127.0.0.1:3030'; // XXX default pig url
+const RPC_URL = 'http://localhost:8545/'; // XXX default Ganache port
 
 const loader = new ContractHttpLoader({
   endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,
@@ -22,18 +23,36 @@ const options = {
   waitForMining: true,
 };
 
+const getNetworkId = async rpcUrl => {
+  const response = await fetch(rpcUrl, {
+    method: 'POST',
+    body: JSON.stringify({
+      method: 'net_version',
+    }),
+  });
+  const netVersion = await response.json();
+  return netVersion.result;
+};
+
+const getPrivateKey = async () => {
+  const response = await fetch(`${TRUFFLEPIG_URL}/accounts`);
+  const accounts = await response.json();
+  return accounts[Object.keys(accounts)[0]];
+};
+
 const getNetworkClient = async () => {
-  const accountsResponse = await fetch(`${TRUFFLEPIG_URL}/accounts`);
-  const accounts = await accountsResponse.json();
-  const privateKey = accounts[Object.keys(accounts)[0]];
-  const provider = new providers.JsonRpcProvider('http://localhost:8545/'); // XXX default Ganache port
+  const provider = new providers.JsonRpcProvider(RPC_URL);
+  const networkId = await getNetworkId(RPC_URL);
+  const privateKey = await getPrivateKey();
   const wallet = new Wallet(privateKey, provider);
   const adapter = new EthersAdapter({
     loader,
     provider,
     wallet,
   });
-  const networkClient = await ColonyNetworkClient.createSelf(adapter);
+  const networkClient = await ColonyNetworkClient.createSelf(adapter, {
+    networkId,
+  });
   console.log('Network Client:', networkClient);
   return networkClient;
 };
