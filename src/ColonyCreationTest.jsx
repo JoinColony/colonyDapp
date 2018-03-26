@@ -13,6 +13,22 @@ const { providers, Wallet } = ethers;
 const TRUFFLEPIG_URL = 'http://127.0.0.1:3030'; // XXX default pig url
 const RPC_URL = 'http://localhost:8545/'; // XXX default Ganache port
 
+// XXX Just so we can test txs that don't get signed
+class TestWallet extends Wallet {
+  async sendTransaction(tx) {
+    const message =
+      typeof tx === 'string'
+        ? tx
+        : `To:         ${tx.to}
+        Data:       ${tx.data}
+        Gas limit:  ${tx.gasLimit && tx.gasLimit.toNumber()}`;
+    if (window.confirm(`Sign transaction: ${message}`)) {
+      return super.sendTransaction(tx);
+    }
+    throw new Error(`Transaction ${tx.hash} was not signed by the user`);
+  }
+}
+
 const loader = new ContractHttpLoader({
   endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,
   parser: 'truffle',
@@ -44,7 +60,7 @@ const getNetworkClient = async () => {
   const provider = new providers.JsonRpcProvider(RPC_URL);
   const networkId = await getNetworkId(RPC_URL);
   const privateKey = await getPrivateKey();
-  const wallet = new Wallet(privateKey, provider);
+  const wallet = new TestWallet(privateKey, provider);
   const adapter = new EthersAdapter({
     loader,
     provider,
@@ -59,26 +75,35 @@ const getNetworkClient = async () => {
 
 class ColonyCreationTest extends React.Component {
   state = {
-    colonyName: '',
     colonyAddress: null,
+    colonyName: '',
+    colonyTokenAddress: '',
+    createdTokenAddress: '',
     tasks: [],
-    tokenAddress: '',
-    skillId: null,
-    parentSkillId: null,
   };
   networkClient = null;
   colonyClient = null;
+  createToken = async () => {
+    if (!this.networkClient) this.networkClient = await getNetworkClient();
+
+    const { value: name } = this.tokenName;
+    const { value: symbol } = this.tokenSymbol;
+    const createdTokenAddress = await this.networkClient.createToken({
+      name,
+      symbol,
+    });
+    this.setState({ createdTokenAddress });
+  };
   createColony = async () => {
     if (!this.networkClient) this.networkClient = await getNetworkClient();
 
     const { value: name } = this.colonyName;
-    const { value: tokenName } = this.tokenName;
-    const { value: tokenSymbol } = this.tokenSymbol;
+    const { value: tokenAddress } = this.tokenAddress;
 
     const {
       eventData: { colonyId: id } = {},
     } = await this.networkClient.createColony.send(
-      { name, tokenName, tokenSymbol, tokenDecimals: 18 },
+      { name, tokenAddress },
       options,
     );
 
@@ -89,11 +114,10 @@ class ColonyCreationTest extends React.Component {
       this.setState({
         colonyName: name,
         colonyAddress: this.colonyClient.contract.address,
-        tokenAddress: '',
+        colonyTokenAddress: '',
       });
       this.colonyName.value = '';
-      this.tokenName.value = '';
-      this.tokenSymbol.value = '';
+      this.tokenAddress.value = '';
     }
   };
   recoverColony = async () => {
@@ -111,8 +135,10 @@ class ColonyCreationTest extends React.Component {
     });
     this.colonyName.value = '';
 
-    const { address: tokenAddress } = await this.colonyClient.getToken.call();
-    this.setState({ tokenAddress });
+    const {
+      address: colonyTokenAddress,
+    } = await this.colonyClient.getToken.call();
+    this.setState({ colonyTokenAddress });
 
     const { count: taskCount } = await this.colonyClient.getTaskCount.call();
     const taskIds = Array(...{ length: taskCount }).map((_, i) => i + 1);
@@ -149,39 +175,30 @@ class ColonyCreationTest extends React.Component {
     this.taskName.value = '';
     this.setState({ tasks: [...this.state.tasks, { taskId, taskName }] });
   };
-  addSkill = async () => {
-    if (!this.colonyClient) return;
-
-    const {
-      eventData: { skillId, parentSkillId } = {},
-    } = await this.colonyClient.addGlobalSkill.send(
-      {
-        parentSkillId: 1, // XXX hardcoded, just for testing...
-      },
-      options,
-    );
-    this.setState({ skillId, parentSkillId });
-  };
-  setTaskSkill = async () => {
-    if (!this.colonyClient) return;
-
-    const { skillId } = this.state;
-    const { value: taskId } = this.taskId;
-    if (!(skillId && taskId)) return;
-
-    await this.colonyClient.setTaskSkill.send(
-      {
-        taskId: parseInt(taskId, 10),
-        skillId,
-        role: 0,
-      },
-      options,
-    );
-    this.taskSkillId.value = '';
-  };
   render() {
     return (
       <div>
+        <div>
+          <h1>Create a token</h1>
+          <input
+            id="tokenName"
+            type="text"
+            placeholder="Token name"
+            ref={tokenName => {
+              this.tokenName = tokenName;
+            }}
+          />
+          <input
+            id="tokenSymbol"
+            type="text"
+            placeholder="Token symbol"
+            ref={tokenSymbol => {
+              this.tokenSymbol = tokenSymbol;
+            }}
+          />
+          <button onClick={this.createToken}>Create token</button>
+          <div>{this.state.createdTokenAddress}</div>
+        </div>
         <h1>Create a Colony here</h1>
         <input
           id="colonyName"
@@ -192,19 +209,11 @@ class ColonyCreationTest extends React.Component {
           }}
         />
         <input
-          id="tokenName"
+          id="tokenAddress"
           type="text"
-          placeholder="Colony token name"
-          ref={tokenName => {
-            this.tokenName = tokenName;
-          }}
-        />
-        <input
-          id="tokenSymbol"
-          type="text"
-          placeholder="Colony token symbol"
-          ref={tokenSymbol => {
-            this.tokenSymbol = tokenSymbol;
+          placeholder="Token address"
+          ref={tokenAddress => {
+            this.tokenAddress = tokenAddress;
           }}
         />
         <button onClick={this.createColony}>Create colony</button>
@@ -215,7 +224,7 @@ class ColonyCreationTest extends React.Component {
             <ul>
               <li>Address: {this.state.colonyAddress}</li>
               <li>Name: {this.state.colonyName}</li>
-              <li>Token address: {this.state.tokenAddress}</li>
+              <li>Token address: {this.state.colonyTokenAddress}</li>
             </ul>
             <strong>TASKS:</strong>
             <ul>
@@ -225,16 +234,6 @@ class ColonyCreationTest extends React.Component {
                 </li>
               ))}
             </ul>
-            <div>
-              <button id="addSkill" name="addSkill" onClick={this.addSkill}>
-                Add Skill
-              </button>
-            </div>
-            <div>
-              SKILL ID: {this.state.skillId}
-              <br />
-              PARENT SKILL ID: {this.state.parentSkillId}
-            </div>
             <div>
               <label htmlFor="taskName">
                 Task name
@@ -248,21 +247,6 @@ class ColonyCreationTest extends React.Component {
               </label>
               <button onClick={this.createTask}>Create task</button>
             </div>
-            {this.state.tasks.length && (
-              <div>
-                <label htmlFor="taskSkillId">
-                  Task brief
-                  <input
-                    id="taskSkillId"
-                    type="number"
-                    ref={taskSkillId => {
-                      this.taskSkillId = taskSkillId;
-                    }}
-                  />
-                </label>
-                <button onClick={this.setTaskSkill}>Set task brief</button>
-              </div>
-            )}
           </div>
         ) : null}
       </div>
