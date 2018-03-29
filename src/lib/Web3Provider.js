@@ -8,8 +8,13 @@ class Web3Provider extends providers.Provider {
   constructor(web3) {
     super();
     // https://github.com/MetaMask/faq/blob/master/detecting_metamask.md#web3-deprecation
-    if (typeof web3 == 'undefined' || typeof web3.currentProvider == 'undefined') {
-      throw new Error('Web3Provider can just be used with a web3 currentProvider injected');
+    if (
+      typeof web3 == 'undefined' ||
+      typeof web3.currentProvider == 'undefined'
+    ) {
+      throw new Error(
+        'Web3Provider can just be used with a web3 currentProvider injected',
+      );
     }
     this.eth = web3.eth;
     this.currentProvider = web3.currentProvider;
@@ -22,12 +27,12 @@ class Web3Provider extends providers.Provider {
     const tx = {
       from: this.address,
     };
-    ['to', 'data'].forEach((key) => {
+    ['to', 'data'].forEach(key => {
       if (txData[key] != null) {
         tx[key] = txData[key];
       }
     });
-    ['gasLimit', 'gasPrice', 'nonce', 'value'].forEach((key) => {
+    ['gasLimit', 'gasPrice', 'nonce', 'value'].forEach(key => {
       if (txData[key] != null) {
         tx[key] = utils.hexlify(txData[key]);
       }
@@ -41,8 +46,9 @@ class Web3Provider extends providers.Provider {
       id: 1,
       params,
     };
-    return promisify(this.currentProvider.sendAsync, this.currentProvider)(payload)
-      .then(response => response.result);
+    return promisify(this.currentProvider.sendAsync, this.currentProvider)(
+      payload,
+    ).then(response => response.result);
   }
   async sendRawTransaction(transaction) {
     const gasPrice = await this.getGasPrice();
@@ -64,7 +70,10 @@ class Web3Provider extends providers.Provider {
         return this.sendRPC('eth_gasPrice');
       }
       case 'getTransactionCount': {
-        return this.sendRPC('eth_getTransactionCount', [utils.hexlify(params.address), params.blockTag]);
+        return this.sendRPC('eth_getTransactionCount', [
+          utils.hexlify(params.address),
+          params.blockTag,
+        ]);
       }
       default:
         return Promise.reject(new Error('Not implemented'));
