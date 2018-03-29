@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved, flowtype/require-valid-file-annotation, react/no-array-index-key */
+/* eslint-disable import/no-unresolved, flowtype/require-valid-file-annotation, react/no-array-index-key, no-alert, no-console */
 // This is just a PoC, will be removed later.
 
 import * as React from 'react';
