@@ -1,5 +1,7 @@
 [ignore]
 .*\.yalc
+.*/__tests__/.*
+.*/utils/test/.*
 
 [include]
 
