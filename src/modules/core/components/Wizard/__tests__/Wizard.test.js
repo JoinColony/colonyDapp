@@ -37,16 +37,16 @@ describe('Wizard enhancer', () => {
   test('Renders first page inside container component per default', () => {
     const wrapper = mountWithStore(<Wizard />);
     const { Step } = steps[0];
-    expect(wrapper.find(OuterComponent)).toBePresent();
-    expect(wrapper.find(Step)).toBePresent();
+    expect(wrapper.find(OuterComponent)).toExist();
+    expect(wrapper.find(Step)).toExist();
   });
 
   test('Renders second page inside container on state change', () => {
     const wrapper = mountWithStore(<Wizard />);
     wrapper.setState({ step: 1 });
     const { Step } = steps[1];
-    expect(wrapper.find(OuterComponent)).toBePresent();
-    expect(wrapper.find(Step)).toBePresent();
+    expect(wrapper.find(OuterComponent)).toExist();
+    expect(wrapper.find(Step)).toExist();
   });
 
   test('Step is a redux-form', () => {

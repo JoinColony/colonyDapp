@@ -49,7 +49,7 @@ describe('Input', () => {
         elementOnly
       />,
     );
-    expect(wrapper.find(Cleave)).not.toBePresent();
-    expect(wrapper.find(InputLabel)).not.toBePresent();
+    expect(wrapper.find(Cleave)).not.toExist();
+    expect(wrapper.find(InputLabel)).not.toExist();
   });
 });

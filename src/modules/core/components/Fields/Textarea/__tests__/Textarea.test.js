@@ -38,7 +38,7 @@ describe('Textarea component', () => {
         passthroughProps={{}}
       />,
     );
-    expect(wrapper.find(InputLabel)).not.toBePresent();
+    expect(wrapper.find(InputLabel)).not.toExist();
   });
 
   test('Does not wrap with InputLabel if elementOnly is true', () => {
@@ -52,6 +52,6 @@ describe('Textarea component', () => {
         passthroughProps={{}}
       />,
     );
-    expect(wrapper.find(InputLabel)).not.toBePresent();
+    expect(wrapper.find(InputLabel)).not.toExist();
   });
 });

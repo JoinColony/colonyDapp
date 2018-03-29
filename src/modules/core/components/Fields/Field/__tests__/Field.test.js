@@ -28,7 +28,7 @@ describe('Field component standalone', () => {
       <Field name="test" standalone component={TestFieldComponent} />,
     );
     expect(toJson(wrapper)).toMatchSnapshot();
-    expect(wrapper.find(StandaloneField)).toBePresent();
+    expect(wrapper.find(StandaloneField)).toExist();
   });
 
   test('Receives actual fieldComponent as prop', () => {
@@ -121,7 +121,7 @@ describe('Field component embedded in redux-form', () => {
       <Field name="test" label="Test" component={TestFieldComponent} />,
       reduxFormContext,
     );
-    expect(wrapper.find(ReduxFormField)).toBePresent();
+    expect(wrapper.find(ReduxFormField)).toExist();
   });
   test('Assembles field id', () => {
     const wrapper = mountWithIntl(
