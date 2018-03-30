@@ -10,12 +10,16 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
+    "provision": "yarn provision:clean_submodule && yarn provision:init_submodule && yarn provision:build_submodule",
     "build": "webpack-cli",
     "flow": "flow check",
     "lint": "eslint --fix src/",
     "scaffold": "plop",
     "stylelint": "stylelint \"src/**/*.css\"",
-    "test:unit": "jest --config=jest.conf.json"
+    "test:unit": "jest --config=jest.conf.json",
+    "provision:clean_submodule": "rm -Rf src/lib/colony-js/",
+    "provision:init_submodule": "git submodule update --init --recursive",
+    "provision:build_submodule": "cd src/lib/colony-js && yarn && lerna run build"
   },
   "lint-staged": {
     "src/{,**/}*.js": [
