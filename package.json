@@ -10,6 +10,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
+    "build": "webpack-cli",
     "flow": "flow check",
     "lint": "eslint --fix src/",
     "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
