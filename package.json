@@ -17,7 +17,7 @@
     "scaffold": "plop",
     "stylelint": "stylelint \"src/**/*.css\"",
     "test": "jest --config=jest.conf.json",
-    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json",
+    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
     "provision:clean_submodule": "rm -Rf src/lib/colony-js/",
     "provision:init_submodule": "git submodule update --init --recursive",
     "provision:build_submodule": "cd src/lib/colony-js && yarn && lerna run build"
