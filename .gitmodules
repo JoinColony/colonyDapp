@@ -1,0 +1,3 @@
+[submodule "src/lib/colony-js"]
+	path = src/lib/colony-js
+	url = git@github.com:JoinColony/colony-js.git
