@@ -18,5 +18,9 @@
         "global": {
             "branches": 50
         }
-    }
+    },
+    "testPathIgnorePatterns": [
+        "node_modules",
+        "src/lib/colony-js"
+    ]
   }
