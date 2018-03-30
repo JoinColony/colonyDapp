@@ -78,5 +78,5 @@ yarn flow
 To run unit tests you have the following npm script:
 
 ```bash
-yarn test:unit
+yarn test
 ```
