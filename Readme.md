@@ -66,6 +66,11 @@ Linting your code via `eslint` can be done as such:
 yarn lint
 ```
 
+To lint the project's style sheets you run:
+```bash
+yarn stylelint
+```
+
 ## Type checking
 
 Type checking using `flow` can be accessed using this npm script:
