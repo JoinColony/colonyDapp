@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "webpack-dev-server",
     "flow": "flow check",
-    "lint": "run(){ eslint --ignore-pattern=**/{node_modules,dist,lib}/* --fix ${@:-\"src/{,**/}*.{js,jsx}\"}; }; run",
+    "lint": "eslint --fix src/",
     "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
     "scaffold": "plop",
     "stylelint": "stylelint \"src/**/*.css\"",
