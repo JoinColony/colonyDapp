@@ -13,10 +13,8 @@
     "build": "webpack-cli",
     "flow": "flow check",
     "lint": "eslint --fix src/",
-    "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
     "scaffold": "plop",
     "stylelint": "stylelint \"src/**/*.css\"",
-    "test": "yarn run lint && yarn run flow && yarn run test:unit",
     "test:unit": "jest --config=jest.conf.json"
   },
   "lint-staged": {
