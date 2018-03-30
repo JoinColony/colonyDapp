@@ -9225,6 +9225,12 @@ stylelint-config-standard@^18.1.0:
   dependencies:
     stylelint-config-recommended "^2.0.0"
 
+stylelint-formatter-relative-junit@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/stylelint-formatter-relative-junit/-/stylelint-formatter-relative-junit-0.0.3.tgz#0fdb90e6f89ca33ca0ab4fc6dc62a826e3173b6a"
+  dependencies:
+    xmlbuilder "^8.2.2"
+
 stylelint-order@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/stylelint-order/-/stylelint-order-0.8.1.tgz#35f71af3a15954154e0e99e5646ba3d6fbe34f8d"
@@ -10315,6 +10321,10 @@ xml-char-classes@^1.0.0:
 xml-name-validator@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-3.0.0.tgz#6ae73e06de4d8c6e47f9fb181f78d648ad457c6a"
+
+xmlbuilder@^8.2.2:
+  version "8.2.2"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-8.2.2.tgz#69248673410b4ba42e1a6136551d2922335aa773"
 
 xmlhttprequest@1.8.0:
   version "1.8.0"

@@ -40,7 +40,9 @@ jobs:
           command: yarn lint:ci
       - run:
           name: "Linting Style sheets"
-          command: yarn stylelint
+          command: |
+            mkdir -p reports/stylelint
+            yarn stylelint:ci
       - run:
           name: "Running unit tests"
           command: yarn test:ci
