@@ -37,7 +37,7 @@ jobs:
             yarn flow
       - run:
           name: "Linting Javascript"
-          command: yarn lint
+          command: yarn lint:ci
       - run:
           name: "Linting Style sheets"
           command: yarn stylelint

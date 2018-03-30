@@ -14,6 +14,7 @@
     "build": "webpack-cli",
     "flow": "flow check",
     "lint": "eslint --fix src/",
+    "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/",
     "scaffold": "plop",
     "stylelint": "stylelint \"src/**/*.css\"",
     "test": "jest --config=jest.conf.json",
