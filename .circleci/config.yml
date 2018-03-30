@@ -1,27 +1,64 @@
-version: 2
+version: 2.0
+
 jobs:
-  build:
+  build-with-lockfile:
     docker:
       - image: circleci/node:9.4.0
-
+    parallelism: 2
+    working_directory: ~/colonyDapp
     steps:
       - checkout
-
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
-            - v1-dependencies-
-
-      - run: |
-          yarn global add greenkeeper-lockfile@1
-          yarn install
-
+          - node-modules-{{ checksum "package.json" }}
+          - node-modules-
+      - run:
+          name: "Set up global packages"
+          command: |
+            yarn global add greenkeeper-lockfile@1
+            yarn global add lerna
+      - run:
+          name: "Provision submodules"
+          command: yarn provision
+      - run:
+          name: "Installing modules"
+          command: yarn install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          key: node-modules-{{ checksum "package.json" }}
+      - run:
+          name: "Updating lockfile"
+          command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-update
+      - run:
+          name: "Checking correct types"
+          command: |
+            mkdir -p reports/flow
+            yarn flow
+      - run:
+          name: "Linting Javascript"
+          command: yarn lint
+      - run:
+          name: "Linting Style sheets"
+          command: yarn stylelint
+      - run:
+          name: "Running unit tests"
+          command: yarn test:ci
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/jest/jest-results.xml"
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports
+      - run:
+          name: "Building library"
+          command: yarn build
+      - run:
+          name: "Uploading updated lockfile"
+          command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
 
-      - run: |
-          $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-update
-          yarn test
-          $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
+workflows:
+  version: 2
+  triggered-by-commit:
+    jobs:
+      - build-with-lockfile
