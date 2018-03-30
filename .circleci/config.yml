@@ -34,7 +34,7 @@ jobs:
           name: "Checking correct types"
           command: |
             mkdir -p reports/flow
-            yarn flow
+            yarn flow:ci
       - run:
           name: "Linting Javascript"
           command: yarn lint:ci

@@ -75,6 +75,10 @@
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@colony/eslint-config-colony/-/eslint-config-colony-4.0.1.tgz#74495655bf461ef196edc262983c471b42cf2d75"
 
+"@kironeducation/flow-junit-transformer@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@kironeducation/flow-junit-transformer/-/flow-junit-transformer-0.3.0.tgz#ea1e57b01d7096012254a3d3dafc8afc7d97b8fe"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"

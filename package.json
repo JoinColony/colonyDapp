@@ -13,6 +13,7 @@
     "provision": "yarn provision:clean_submodule && yarn provision:init_submodule && yarn provision:build_submodule",
     "build": "webpack-cli",
     "flow": "flow check",
+    "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
     "lint": "eslint --fix src/",
     "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/",
     "scaffold": "plop",
@@ -41,6 +42,7 @@
   "homepage": "https://github.com/JoinColony/colonyDapp#readme",
   "devDependencies": {
     "@colony/eslint-config-colony": "^4.0.1",
+    "@kironeducation/flow-junit-transformer": "^0.3.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-jest": "^22.0.0",
