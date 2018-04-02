@@ -11,12 +11,12 @@ Clone this repository :)
 
 ### Provision dependent libraries
 
-This project depends on external libraries so after cloning, they need to be provisioned:
+This project depends on external libraries, so after cloning, they need to be provisioned:
 ```bash
 yarn provision
 ```
 
-Under the hood, this will initialized the `submodule`s install they're packages and build them
+Under the hood, this will initialize the `submodule`s, install they're packages, and build them
 
 ### Install packages
 
