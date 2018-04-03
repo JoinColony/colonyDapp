@@ -1,9 +1,17 @@
-/* eslint-disable import/no-unresolved, flowtype/require-valid-file-annotation, react/no-array-index-key, no-alert, no-console */
+/* eslint-disable import/no-unresolved, flowtype/require-valid-file-annotation, react/no-array-index-key, no-alert */
 // This is just a PoC, will be removed later.
 
 import * as React from 'react';
 import ethers from 'ethers';
 
+/*
+ * Eslint apparently doesn't play well with webpack aliases that contain the `@` sign
+ * Everything else works just fine.
+ *
+ * When ever we whant to get rid of this disable, we can just change it to:
+ * `colony/colony-js-client` or `~colony/colony-js-client`
+ */
+/* eslint-disable import/no-extraneous-dependencies */
 import ContractHttpLoader from '@colony/colony-js-contract-loader-http';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import ColonyNetworkClient from '@colony/colony-js-client';

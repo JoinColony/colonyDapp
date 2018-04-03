@@ -29,6 +29,7 @@
             2,
             { "devDependencies": ["**/*.test.js", "./src/utils/test/*.js", "./src/__mocks__/*.js", "./*.js"] }
         ],
+        "no-console": "warn",
         "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
         "react/require-default-props": 0,
         "react/sort-comp": [2, {
