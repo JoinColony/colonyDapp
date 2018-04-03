@@ -14,8 +14,8 @@
     "build": "webpack-cli",
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
-    "lint": "eslint --fix src/",
-    "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/",
+    "lint": "eslint --fix src/**/*.js src/**/*.jsx",
+    "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/**/*.js src/**/*.jsx",
     "scaffold": "plop",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
@@ -26,7 +26,7 @@
     "provision:build_submodule": "cd src/lib/colony-js && yarn && lerna run build"
   },
   "lint-staged": {
-    "src/{,**/}*.js": [
+    "src/{,**/}*.{js|jsx}": [
       "eslint --fix",
       "git add"
     ]
