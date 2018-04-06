@@ -16,7 +16,15 @@
     "coverageDirectory": "../coverage",
     "coverageThreshold": {
         "global": {
-            "branches": 50
+            "branches": 40
         }
-    }
+    },
+    "testPathIgnorePatterns": [
+        "node_modules",
+        "src/lib/colony-js"
+    ],
+    "coveragePathIgnorePatterns": [
+        "node_modules",
+        "src/lib/colony-js"
+    ]
   }

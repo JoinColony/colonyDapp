@@ -9,6 +9,15 @@
 
 Clone this repository :)
 
+### Provision dependent libraries
+
+This project depends on external libraries, so after cloning, they need to be provisioned:
+```bash
+yarn provision
+```
+
+Under the hood, this will initialize the `submodule`s, install they're packages, and build them
+
 ### Install packages
 
 ```bash
@@ -35,18 +44,44 @@ console.log(MY_API_URL); // https://my-api-url.example.com/api
 
 ## Running dev environment
 
-```
-yarn run dev
+```bash
+yarn dev
 ```
 
 Webpack dev server will be available under http://localhost:8080
 
+## Building the bundle locally
+
+If you want to build the bundle locally for inspection, you can do it via:
+```bash
+yarn build
+````
+
+_Note: It's a strait-up dev build. Just bundled, no code optimizations what so ever._
+
+## Linting
+
+Linting your code via `eslint` can be done as such:
+```bash
+yarn lint
+```
+
+To lint the project's style sheets you run:
+```bash
+yarn stylelint
+```
+
+## Type checking
+
+Type checking using `flow` can be accessed using this npm script:
+```bash
+yarn flow
+```
 
 ## Testing
 
 To run unit tests you have the following npm script:
+
 ```bash
 yarn test
 ```
-
-This will run the linter with the `--fix` enabled, check flow the flow types, and if all is well, it will run the `jest` test runner suite.

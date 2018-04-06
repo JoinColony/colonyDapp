@@ -2,6 +2,7 @@
 .*\.yalc
 .*/__tests__/.*
 .*/utils/test/.*
+.*/src/lib/colony-js/.*
 
 [include]
 

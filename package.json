@@ -10,13 +10,20 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
+    "provision": "yarn provision:clean_submodule && yarn provision:init_submodule && yarn provision:build_submodule",
+    "build": "webpack-cli",
     "flow": "flow check",
-    "lint": "run(){ eslint --ignore-pattern=**/{node_modules,dist,lib}/* --fix ${@:-\"src/{,**/}*.{js,jsx}\"}; }; run",
-    "preinstall": "test -f ./scripts/checkVersions.js; if [ $? -eq 0 ]; then node ./scripts/checkVersions.js; else echo 'Checkversions does not exist; skipping.'; fi",
+    "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
+    "lint": "eslint --fix src/",
+    "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/",
     "scaffold": "plop",
-    "stylelint": "stylelint \"src/**/*.css\"",
-    "test": "yarn run lint && yarn run flow && yarn run test:unit",
-    "test:unit": "jest --config=jest.conf.json"
+    "stylelint": "stylelint --fix \"src/**/*.css\"",
+    "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
+    "test": "jest --config=jest.conf.json",
+    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
+    "provision:clean_submodule": "rm -Rf src/lib/colony-js/",
+    "provision:init_submodule": "git submodule update --init --recursive",
+    "provision:build_submodule": "cd src/lib/colony-js && yarn && lerna run build"
   },
   "lint-staged": {
     "src/{,**/}*.js": [
@@ -36,6 +43,7 @@
   "homepage": "https://github.com/JoinColony/colonyDapp#readme",
   "devDependencies": {
     "@colony/eslint-config-colony": "^4.0.1",
+    "@kironeducation/flow-junit-transformer": "^0.3.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-jest": "^22.0.0",
@@ -72,6 +80,7 @@
     "husky": "^0.14.3",
     "jest": "^22.0.0",
     "jest-enzyme": "^6.0.0",
+    "jest-junit": "^3.6.0",
     "jest-sandbox": "^1.1.1",
     "lint-staged": "^7.0.0",
     "plop": "^2.0.0",
@@ -87,6 +96,7 @@
     "stylelint": "^9.1.1",
     "stylelint-config-css-modules": "^1.2.0",
     "stylelint-config-standard": "^18.1.0",
+    "stylelint-formatter-relative-junit": "^0.0.3",
     "stylelint-order": "^0.8.1",
     "svgo": "^1.0.3",
     "svgo-loader": "^2.1.0",
@@ -95,13 +105,10 @@
     "webpack-dev-server": "^3.0.0"
   },
   "dependencies": {
-    "@colony/colony-js-adapter-ethers": "^1.0.0",
-    "@colony/colony-js-client": "^1.0.0",
-    "@colony/colony-js-contract-loader-http": "^1.0.0",
     "cleave.js": "^1.0.9",
     "dotenv-webpack": "^1.5.4",
     "es6-promisify": "^6.0.0",
-    "ethers": "^3.0.0",
+    "ethers": "^3.0.8",
     "prop-types": "^15.6.0",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
