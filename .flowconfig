@@ -18,5 +18,6 @@ module.name_mapper='^.*\.(svg)$' -> 'empty/string'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~types\/\(.*\)$' -> '<PROJECT_ROOT>/src/types/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
+module.name_mapper='^\@colony\/\(.*\)$' -> '<PROJECT_ROOT>/src/lib/colony-js/packages/\1'
 
 [strict]
