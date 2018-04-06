@@ -8,6 +8,7 @@
 [include]
 
 [libs]
+.*/src/lib/colony-js/flow-typed
 
 [lints]
 
