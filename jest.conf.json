@@ -21,10 +21,12 @@
     },
     "testPathIgnorePatterns": [
         "node_modules",
-        "src/lib/colony-js"
+        "src/lib/colony-js",
+        "src/lib/colony-wallet"
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
-        "src/lib/colony-js"
+        "src/lib/colony-js",
+        "src/lib/colony-wallet"
     ]
   }

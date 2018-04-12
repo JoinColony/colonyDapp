@@ -3,6 +3,7 @@
 .*/__tests__/.*
 .*/utils/test/.*
 .*/src/lib/colony-js/.*
+.*/src/lib/colony-wallet/.*
 
 [include]
 
