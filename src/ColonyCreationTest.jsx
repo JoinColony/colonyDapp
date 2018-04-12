@@ -2,7 +2,7 @@
 // This is just a PoC, will be removed later.
 
 import * as React from 'react';
-import ethers from 'ethers';
+import { bigNumberify, toUtf8String } from 'ethers/utils';
 
 /*
  * Eslint apparently doesn't play well with webpack aliases that contain the `@` sign
@@ -16,26 +16,11 @@ import ContractHttpLoader from '@colony/colony-js-contract-loader-http';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import ColonyNetworkClient from '@colony/colony-js-client';
 
-window.ethers = ethers;
-const { providers, Wallet } = ethers;
+import { software as wallet } from 'colony-wallet/wallets';
+import { localhost } from 'colony-wallet/providers';
+
 const TRUFFLEPIG_URL = 'http://127.0.0.1:3030'; // XXX default pig url
 const RPC_URL = 'http://localhost:8545/'; // XXX default Ganache port
-
-// XXX Just so we can test txs that don't get signed
-class TestWallet extends Wallet {
-  async sendTransaction(tx) {
-    const message =
-      typeof tx === 'string'
-        ? tx
-        : `To:         ${tx.to}
-        Data:       ${tx.data}
-        Gas limit:  ${tx.gasLimit && tx.gasLimit.toNumber()}`;
-    if (window.confirm(`Sign transaction: ${message}`)) {
-      return super.sendTransaction(tx);
-    }
-    throw new Error(`Transaction ${tx.hash} was not signed by the user`);
-  }
-}
 
 const loader = new ContractHttpLoader({
   endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,
@@ -43,7 +28,7 @@ const loader = new ContractHttpLoader({
 });
 
 const options = {
-  gasLimit: ethers.utils.bigNumberify(4300000),
+  gasLimit: bigNumberify(4300000),
   waitForMining: true,
 };
 
@@ -65,14 +50,17 @@ const getPrivateKey = async () => {
 };
 
 const getNetworkClient = async () => {
-  const provider = new providers.JsonRpcProvider(RPC_URL);
+  const provider = localhost(RPC_URL);
   const networkId = await getNetworkId(RPC_URL);
   const privateKey = await getPrivateKey();
-  const wallet = new TestWallet(privateKey, provider);
+  const clientWallet = await wallet.open({
+    privateKey,
+    provider,
+  });
   const adapter = new EthersAdapter({
     loader,
     provider,
-    wallet,
+    wallet: clientWallet,
   });
   const networkClient = await ColonyNetworkClient.createSelf(adapter, {
     networkId,
@@ -158,7 +146,7 @@ class ColonyCreationTest extends React.Component {
             if (!task) reject(new Error(`Task with id ${taskId} not found`));
             resolve({
               taskId,
-              taskName: ethers.utils.toUtf8String(task.specificationHash),
+              taskName: toUtf8String(task.specificationHash),
             });
           }),
       ),
