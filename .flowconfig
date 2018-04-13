@@ -2,13 +2,17 @@
 .*\.yalc
 .*/__tests__/.*
 .*/utils/test/.*
-.*/src/lib/colony-js/.*
-.*/src/lib/colony-wallet/.*
+# From colony-wallet
+.*/src/lib/colony-wallet/__tests__/.*
+.*/src/lib/colony-wallet/__mocks__/.*
+.*/src/lib/colony-wallet/lib/.*
+.*/src/lib/colony-wallet/docs/.*
 
 [include]
 
 [libs]
 .*/src/lib/colony-js/flow-typed
+.*/src/lib/colony-wallet/flow-typed
 
 [lints]
 
