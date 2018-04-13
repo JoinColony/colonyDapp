@@ -22,6 +22,7 @@ const config = {
       '~types': path.resolve(__dirname, 'src/types/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
       '@colony': path.resolve(__dirname, 'src/lib/colony-js/packages'),
+      'colony-wallet': path.resolve(__dirname, 'src/lib/colony-wallet/lib'),
     },
   },
   module: {

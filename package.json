@@ -10,23 +10,24 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "provision": "yarn provision:clean_submodule && yarn provision:init_submodule && yarn provision:build_submodule",
+    "provision": "yarn provision:clean_submodules && yarn provision:init_submodules && yarn provision:build_submodule:colony-js && yarn provision:build_submodule:colony-wallet",
     "build": "webpack-cli",
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
-    "lint": "eslint --fix src/",
-    "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/",
+    "lint": "eslint --fix src/**/*.js src/**/*.jsx",
+    "lint:ci": "eslint --format junit -o reports/eslint/eslint-results.xml src/**/*.js src/**/*.jsx",
     "scaffold": "plop",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
     "test": "jest --config=jest.conf.json",
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
-    "provision:clean_submodule": "rm -Rf src/lib/colony-js/",
-    "provision:init_submodule": "git submodule update --init --recursive",
-    "provision:build_submodule": "cd src/lib/colony-js && yarn && lerna run build"
+    "provision:clean_submodules": "rm -Rf src/lib/colony-js/ src/lib/colony-wallet/",
+    "provision:init_submodules": "git submodule update --init --recursive",
+    "provision:build_submodule:colony-js": "cd src/lib/colony-js && yarn && lerna run build",
+    "provision:build_submodule:colony-wallet": "cd src/lib/colony-wallet && yarn && yarn build:dev"
   },
   "lint-staged": {
-    "src/{,**/}*.js": [
+    "src/{,**/}*.{js|jsx}": [
       "eslint --fix",
       "git add"
     ]
