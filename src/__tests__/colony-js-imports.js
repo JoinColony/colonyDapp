@@ -6,18 +6,24 @@ import ContractHttpLoader from '@colony/colony-js-contract-loader-http';
 
 describe('colony-js imports', () => {
   it('should use the flow typings of `colony-js` packages', () => {
-    // $ExpectError
-    const loaderWithoutEndpoint = new ContractHttpLoader({
-      wrong: 'constructor argument',
-      parser: 'truffle',
-    });
+    let loaderWithoutEndpoint;
+    try {
+      // $ExpectError
+      loaderWithoutEndpoint = new ContractHttpLoader({
+        wrong: 'constructor argument',
+        parser: 'truffle',
+      });
+    } catch (error) {
+      // Ignore the JS error; we're just testing the flow typing for
+      // the constructor here as an example.
+    }
 
     const loaderWithCorrectArgs = new ContractHttpLoader({
       endpoint: 'myEndpoint',
       parser: 'truffle',
     });
 
-    expect(loaderWithoutEndpoint).toBeInstanceOf(ContractHttpLoader);
+    expect(loaderWithoutEndpoint).toBeUndefined();
     expect(loaderWithCorrectArgs).toBeInstanceOf(ContractHttpLoader);
   });
 });
