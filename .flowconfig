@@ -2,12 +2,17 @@
 .*\.yalc
 .*/__tests__/.*
 .*/utils/test/.*
-.*/src/lib/colony-js/.*
-.*/src/lib/colony-wallet/.*
+# From colony-wallet
+.*/src/lib/colony-wallet/__tests__/.*
+.*/src/lib/colony-wallet/__mocks__/.*
+.*/src/lib/colony-wallet/lib/.*
+.*/src/lib/colony-wallet/docs/.*
 
 [include]
 
 [libs]
+.*/src/lib/colony-js/flow-typed
+.*/src/lib/colony-wallet/flow-typed
 
 [lints]
 
@@ -17,5 +22,8 @@ module.name_mapper='^.*\.(svg)$' -> 'empty/string'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~types\/\(.*\)$' -> '<PROJECT_ROOT>/src/types/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
+module.name_mapper='^\@colony\/\(.*\)$' -> '<PROJECT_ROOT>/src/lib/colony-js/packages/\1'
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe
+suppress_comment= \\(.\\|\n\\)*\\$ExpectError
 
 [strict]
