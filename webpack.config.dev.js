@@ -4,27 +4,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
-let mode = 'development';
-
-if (process.env.NODE_ENV === 'production') {
-  mode = 'production';
-}
-
-const plugins = [
-  new HtmlWebpackPlugin({
-    template: 'src/templates/index.html',
-  }),
-];
-
-if (mode === 'development') {
-  plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-  );
-}
-
 const config = {
   entry: './src/index.js',
-  mode,
+  mode: 'development',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -92,7 +74,12 @@ const config = {
       },
     ],
   },
-  plugins,
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/templates/index.html',
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   devServer: {
     historyApiFallback: true,
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
