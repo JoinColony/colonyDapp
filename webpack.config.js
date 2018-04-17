@@ -2,11 +2,24 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 let mode = 'development';
 
 if (process.env.NODE_ENV === 'production') {
   mode = 'production';
+}
+
+const plugins = [
+  new HtmlWebpackPlugin({
+    template: 'src/templates/index.html',
+  }),
+];
+
+if (mode === 'development') {
+  plugins.push(
+    new webpack.HotModuleReplacementPlugin(),
+  );
 }
 
 const config = {
@@ -79,14 +92,11 @@ const config = {
       },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: 'src/templates/index.html',
-    }),
-  ],
+  plugins,
   devServer: {
     historyApiFallback: true,
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
+    hot: true,
   },
 };
 
