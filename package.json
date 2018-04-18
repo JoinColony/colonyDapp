@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.dev.js",
     "provision": "sh scripts/provision_submodules.sh",
-    "build": "webpack-cli",
+    "build": "webpack-cli --config webpack.config.dev.js",
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
     "lint": "eslint --fix src/**/*.js src/**/*.jsx",
