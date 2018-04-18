@@ -5,7 +5,7 @@ import type { ElementType } from 'react';
 
 type Props = {
   loaderFn: () => Promise<Object>,
-  preloader: ElementType,
+  preloader?: Object,
 };
 
 type State = {
@@ -40,8 +40,11 @@ export default class AsyncComponentLoader extends Component<Props, State> {
     if (LoadedComponent) {
       return <LoadedComponent {...restProps} />;
     }
-    if (Preloader) {
+    if (typeof Preloader === 'function') {
       return <Preloader />;
+    }
+    if (typeof Preloader === 'object') {
+      return Preloader;
     }
     return null;
   }
