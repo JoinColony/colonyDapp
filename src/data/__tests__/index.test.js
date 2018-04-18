@@ -8,6 +8,11 @@ describe('Data component', () => {
     const data = Data.fromDefaultConfig();
     expect(data).toBeTruthy();
   });
+
+  test('The Data Object has a list peer method', () => {
+    const data = Data.fromDefaultConfig();
+    expect(data.listPeers()).toBeTruthy();
+  })
 });
 
 describe('Data Profile', () => {
