@@ -50,6 +50,15 @@ yarn dev
 
 Webpack dev server will be available under http://localhost:8080
 
+Then start & setup the blockchain system from the `colonyNetwork` repo:
+
+```bash
+cd colonyNetwork
+yarn start:blockchain:client
+truffle migrate --reset --compile-all
+trufflepig -g test-accounts.json
+```
+
 ## Building the bundle locally
 
 If you want to build the bundle locally for inspection, you can do it via:
