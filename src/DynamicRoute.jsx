@@ -13,7 +13,7 @@ const DynamicImport = () => (
   <div>
     <ul>
       <li>
-        <NavLink exact to="/">
+        <NavLink exact to="/" style={{ color: 'blue' }}>
           Go Back!
         </NavLink>
       </li>

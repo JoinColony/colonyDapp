@@ -31,10 +31,30 @@ const Home = () => (
   <div>
     <ul>
       <li>
-        <NavLink to="/dynamic-import-route">Dynamic Import Route</NavLink>
+        <NavLink style={{ color: 'blue' }} to="/dynamic-import-route">
+          Dynamic Import Route
+        </NavLink>
+      </li>
+      <li>
+        <NavLink style={{ color: 'blue' }} to="/createcolony">
+          Create Colony Wizard
+        </NavLink>
+      </li>
+      <li>
+        <NavLink style={{ color: 'blue' }} to="/createcolonytest">
+          Create Colony Test
+        </NavLink>
       </li>
     </ul>
     <p>Hello World</p>
+    {/*
+     * This component is used only as a test reference please remove when setting
+     * this up properly. Thanks.
+     */}
+    <AsyncComponentLoader
+      loaderFn={() => import('./DynamicComponent.jsx')}
+      preloader={<SpinnerLoader appearance={{ size: 'medium' }} />}
+    />
   </div>
 );
 
@@ -42,9 +62,9 @@ const Home = () => (
  * This component is used only as a test reference please remove when setting
  * this up properly. Thanks.
  */
-const DynamicImport = () => (
+const DynamicRoute = () => (
   <AsyncComponentLoader
-    loaderFn={() => import('./DynamicImport.jsx')}
+    loaderFn={() => import('./DynamicRoute.jsx')}
     preloader={<SpinnerLoader appearance={{ size: 'medium' }} />}
   />
 );
@@ -58,7 +78,7 @@ export default function App() {
             <Route exact path="/" component={Home} />
             <Route path="/createcolony" component={CreateColony} />
             <Route path="/createcolonytest" component={ColonyCreationTest} />
-            <Route path="/dynamic-import-route" component={DynamicImport} />
+            <Route path="/dynamic-import-route" component={DynamicRoute} />
           </div>
         </Router>
       </Provider>
