@@ -22,11 +22,13 @@
     "testPathIgnorePatterns": [
         "node_modules",
         "src/lib/colony-js",
-        "src/lib/colony-wallet"
+        "src/lib/colony-wallet",
+        "src/lib/colonyNetwork"
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
         "src/lib/colony-js",
-        "src/lib/colony-wallet"
+        "src/lib/colony-wallet",
+        "src/lib/colonyNetwork"
     ]
   }

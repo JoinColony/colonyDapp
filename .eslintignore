@@ -7,3 +7,4 @@ postcss.config.js
 webpack.config.js
 src/lib/colony-js
 src/lib/colony-wallet
+src/lib/colonyNetwork
