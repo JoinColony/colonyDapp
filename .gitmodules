@@ -4,3 +4,6 @@
 [submodule "src/lib/colony-wallet"]
 	path = src/lib/colony-wallet
 	url = git@github.com:JoinColony/colony-wallet.git
+[submodule "src/lib/colonyNetwork"]
+	path = src/lib/colonyNetwork
+	url = git@github.com:JoinColony/colonyNetwork.git
