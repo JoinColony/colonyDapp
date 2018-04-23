@@ -8,6 +8,7 @@
         "^\\~types(.*)$": "<rootDir>/types$1"
     },
     "setupFiles": [
+        "<rootDir>/utils/shims.js"
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
     "collectCoverageFrom" : ["**/*.{js,jsx}"],
