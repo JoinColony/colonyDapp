@@ -5,9 +5,14 @@ export { IPFS };
 
 const DEFAULT_IPFS_SWARM = [
   '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
+  '/ip4/127.0.0.1/tcp/4023/ws/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj',
+  'ip4/127.0.0.1/tcp/4022/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj'
 ];
 
-const DEFAULT_BOOTSTRAP = [];
+const DEFAULT_BOOTSTRAP = [
+  '/ip4/127.0.0.1/tcp/4023/ws/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj',
+  'ip4/127.0.0.1/tcp/4022/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj'
+];
 
 const DEFAULT_REPO = 'colonyIpfs';
 

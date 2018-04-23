@@ -1,6 +1,6 @@
 /* @flow */
-import { getIPFS, IPFS, makeOptions } from './ipfs';
-import OrbitDB from 'orbit-db';
+import * as ipfs from './ipfs';
+import * as orbit from './orbit';
 
 type PeerId = string;
 type PublicKey = string;
@@ -25,13 +25,28 @@ class UserProfile {
 }
 
 export default class Data {
-  _ipfsNode: IPFS;
-  _orbitNode: OrbitDB;
+  _ipfsNode: ipfs.IPFS;
+  _orbitNode: orbit.OrbitDB;
   _key: string;
 
-  constructor(ipfsNode) {
+  constructor(ipfsNode, orbitNode) {
     this._ipfsNode = ipfsNode;
+    this._orbitNode = orbitNode;
     this._key = "helloworld";
+  }
+
+  // TODO(laurent): This design is time-dependant and relies
+  // on lots of mutations, refactor to work with a builder
+  // pattern that is immutable.
+  async ready() {
+    await this._ipfsNode.ready();
+    return true;
+  }
+
+  async peerId() {
+    return new Promise((resolve, error) => {
+      this._ipfsNode.id((err, x) => resolve(x.id));
+    })
   }
 
   async close() {
@@ -39,9 +54,12 @@ export default class Data {
   }
 
   static fromDefaultConfig(opts) {
-    const defaultConfig = makeOptions(opts);
-    const ipfsNode = getIPFS(defaultConfig);
-    return new Data(ipfsNode);
+    const ipfsConf = ipfs.makeOptions(opts);
+    const ipfsNode = ipfs.getIPFS(ipfsConf);
+    const orbitConf = orbit.makeOptions();
+    const orbitNode = orbit.getOrbitDB(ipfsNode);
+
+    return new Data(ipfsNode, orbitNode);
   }
 
   async getUserProfile(key: PublicKey): UserProfile {
