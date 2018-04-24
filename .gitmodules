@@ -1,9 +1,12 @@
 [submodule "src/lib/colony-js"]
 	path = src/lib/colony-js
 	url = git@github.com:JoinColony/colony-js.git
+	branch = master
 [submodule "src/lib/colony-wallet"]
 	path = src/lib/colony-wallet
 	url = git@github.com:JoinColony/colony-wallet.git
+	branch = master
 [submodule "src/lib/colonyNetwork"]
 	path = src/lib/colonyNetwork
 	url = git@github.com:JoinColony/colonyNetwork.git
+  branch = develop
