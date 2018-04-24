@@ -10,26 +10,31 @@ const chalk = require('chalk');
  * @method shell
  *
  * @param {string} command Shell command to execute
+ * @param {object} options Optional options to pass down to the `exec()` method
  * @param {function} callback Optional callback fuction to pass the successfull output string to
- * @param {boolean} setColor True by default, used to pass the `--color` argument to the `command`
  */
 const shell = (
   command,
+  options = {},
   callback,
-  setColor = true
-) =>
-exec(`${command}${setColor ? ' --color': ''}`, (error, stdout) => {
-  if (error) {
-    console.log(chalk.red(`There was an error executing: '${command}'`));
-    console.log(error);
-    console.log('Exitting ...');
-    process.exit(1);
-  }
-  if (callback && typeof callback === 'function') {
-    return callback(stdout);
-  }
-  return undefined;
-}).stdout.on('data',output => process.stdout.write(output));
+) => {
+  const runner = exec(command, options, (error, stdout) => {
+    if (error) {
+      console.log(chalk.red(`There was an error executing: '${command}'`));
+      console.log(error);
+      console.log('Exitting ...');
+      process.exit(1);
+    }
+  });
+  runner.stdout.on('data', output => process.stdout.write(output));
+  runner.on('exit', () => {
+    if (callback && typeof callback === 'function') {
+      return callback();
+    }
+    return undefined;
+  });
+  return runner;
+};
 
 module.exports = {
   shell,
