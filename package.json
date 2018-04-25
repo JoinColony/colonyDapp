@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "provision": "node scripts/provision-submodules.js",
+    "provision": "sh scripts/provision_submodules.sh",
     "build": "webpack-cli",
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
