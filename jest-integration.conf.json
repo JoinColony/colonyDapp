@@ -1,0 +1,14 @@
+{
+    "testRegex": "/__tests__/.*\\.js?$",
+    "rootDir": "integration-testing",
+    "setupFiles": [],
+    "setupTestFrameworkScriptFile": "jest-enzyme",
+    "testPathIgnorePatterns": [
+        "node_modules",
+        "src"
+    ],
+    "coveragePathIgnorePatterns": [
+        "node_modules",
+        "src"
+    ]
+  }
