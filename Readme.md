@@ -16,7 +16,7 @@ This project depends on external libraries, so after cloning, they need to be pr
 yarn provision
 ```
 
-Under the hood, this will initialize the `submodule`s, install they're packages, and build them
+Under the hood, this will initialize the `submodule`s, install their packages, and build them.
 
 ### Install packages
 
@@ -57,7 +57,7 @@ If you want to build the bundle locally for inspection, you can do it via:
 yarn build
 ````
 
-_Note: It's a strait-up dev build. Just bundled, no code optimizations what so ever._
+_Note: It's a straight-up dev build. Just bundled, no code optimizations whatsoever._
 
 ## Linting
 
