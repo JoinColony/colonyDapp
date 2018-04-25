@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "provision": "yarn provision:clean_submodules && yarn provision:init_submodules && yarn provision:build_submodule:colony-js && yarn provision:build_submodule:colony-wallet",
+    "provision": "sh scripts/provision_submodules.sh",
     "build": "webpack-cli",
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
@@ -20,11 +20,7 @@
     "stylelint": "stylelint --fix \"src/**/*.css\"",
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
     "test": "jest --config=jest.conf.json",
-    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
-    "provision:clean_submodules": "rm -Rf src/lib/colony-js/ src/lib/colony-wallet/",
-    "provision:init_submodules": "git submodule update --init --recursive",
-    "provision:build_submodule:colony-js": "cd src/lib/colony-js && yarn && lerna run build",
-    "provision:build_submodule:colony-wallet": "cd src/lib/colony-wallet && yarn && yarn build:dev"
+    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'"
   },
   "lint-staged": {
     "src/{,**/}*.{js|jsx}": [
@@ -58,6 +54,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "caniuse-lite": "^1.0.30000764",
+    "chalk": "^2.4.0",
     "css-loader": "^0.28.7",
     "css-module-flow": "^1.0.0",
     "empty": "^0.10.1",

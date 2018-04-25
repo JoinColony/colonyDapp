@@ -4,6 +4,7 @@
 .*/utils/test/.*
 .*/src/lib/colony-js/.*
 .*/src/lib/colony-wallet/.*
+.*/src/lib/colonyNetwork/.*
 
 [include]
 
