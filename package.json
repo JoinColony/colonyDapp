@@ -20,7 +20,7 @@
     "stylelint": "stylelint --fix \"src/**/*.css\"",
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
     "test": "jest --config=jest.conf.json",
-    "test:integration": "jest --config=jest-integration.conf.json",
+    "test:integration": "jest --runInBand --config=jest-integration.conf.json",
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'"
   },
   "lint-staged": {
@@ -75,6 +75,7 @@
     "eslint-plugin-react": "^7.4.0",
     "file-loader": "^1.1.9",
     "flow-bin": "^0.71.0",
+    "ganache-cli": "^6.1.0",
     "html-webpack-plugin": "^3.0.0",
     "husky": "^0.14.3",
     "jest": "^22.0.0",

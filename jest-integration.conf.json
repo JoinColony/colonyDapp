@@ -1,14 +1,6 @@
 {
-    "testRegex": "/__tests__/.*\\.js?$",
+    "testMatch": ["**/?(*.)(spec|test).js?(x)"],
     "rootDir": "integration-testing",
-    "setupFiles": [],
-    "setupTestFrameworkScriptFile": "jest-enzyme",
-    "testPathIgnorePatterns": [
-        "node_modules",
-        "src"
-    ],
-    "coveragePathIgnorePatterns": [
-        "node_modules",
-        "src"
-    ]
+    "globalSetup": "../src/utils/test/integration-testing-setup.js",
+    "globalTeardown": "../src/utils/test/integration-testing-teardown.js"
   }
