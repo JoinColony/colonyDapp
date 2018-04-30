@@ -1,4 +1,5 @@
 import * as ipfs from "../../src/data/ipfs"
+import { getOrbitDB } from "../../src/data/orbit"
 
 /**
  * Pinner object, mimick a pinning service that'll
@@ -35,11 +36,19 @@ export async function Pinner() {
   const tcp = () => `/ip4/127.0.0.1/tcp/5002/ipfs/${nodeID}`;
   const ws = () => `/ip4/127.0.0.1/tcp/5003/ws/ipfs/${nodeID}`;
 
+  const orbit = await getOrbitDB(node, { path: '/tmp/tests/pinnerOrbit' })
+  const dbs = [];
+
   return {
     node,
+    nodeID,
+    orbit,
     tcp, ws,
+    peers: () => node.swarm.peers(),
+    waitForMe: (ipfsNode) => ipfsNode.waitForPeer(nodeID),
     bootstrap: () => [tcp(), ws()],
     pinBlock: (id) => node.block.get(id),
+    pinKVStore: async (addr) => dbs.push(await orbit.keyvalue(addr)),
     stop: async () => console.log("TODO")
   }
 }

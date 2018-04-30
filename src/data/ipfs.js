@@ -3,16 +3,8 @@ import IPFS from 'ipfs';
 
 export { IPFS };
 
-const DEFAULT_IPFS_SWARM = [
-// '/ip4/127.0.0.1/tcp/9090/ws/p2p-webrtc-star/',
-// '/ip6/127.0.0.1/tcp/9090/ws/p2p-webrtc-star',
-//  '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
-//  '/ip4/127.0.0.1/tcp/4023/ws/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj',
-//  'ip4/127.0.0.1/tcp/4022/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj'
-];
-
+const DEFAULT_IPFS_SWARM = [];
 const DEFAULT_BOOTSTRAP = [];
-
 const DEFAULT_REPO = 'colonyIpfs';
 
 export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, bootstrap = DEFAULT_BOOTSTRAP, repo = DEFAULT_REPO } = {}) {
@@ -41,6 +33,13 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * Turn a `swarm.peers()` result item into its B58 representation (Qm....)
+ *
+ * @param peerItem
+ * @returns {string|*}
+ */
+const peerToB58String = peerItem => peerItem.peer.id.toB58String()
 
 /**
  * Get the peers swarm'd by this ipfs node.
@@ -66,7 +65,7 @@ export async function getPeers(ipfs) {
  * @param ipfs
  * @returns {Promise<*>}
  */
-export async function waitForPeers(ipfs) {
+export async function waitForSomePeers(ipfs) {
   let peers = await getPeers(ipfs);
 
   while (peers === undefined) {
@@ -76,6 +75,28 @@ export async function waitForPeers(ipfs) {
 
   return peers;
 }
+
+/**
+ * Wait until the peer identified by peerID (B58 string representation)
+ * shows up.
+ *
+ * @param ipfs
+ * @param peerID
+ * @returns {Promise<boolean>}
+ */
+export const waitForPeer = async (ipfs, peerID) => {
+  let peers = await waitForSomePeers(ipfs);
+  let peersB58 = peers.map(peerToB58String);
+
+  while (peersB58.indexOf(peerID) < 0) {
+    await sleep(500);
+    peers = await waitForSomePeers(ipfs);
+    peersB58 = peers.map(peerToB58String);
+  }
+
+  return true;
+}
+
 
 /**
  * Node management: Each node has its own repo and
@@ -109,7 +130,7 @@ export function clearNodes() {
  *
  * The object has 2 more method:
  * - `isReady`
- * - `waitForPeers`
+ * - `waitForSomePeers`
  *
  * @param options
  * @returns {getIPFS|IPFS}
@@ -153,6 +174,8 @@ export function getIPFS(options) {
   });
 
   ipfs.ready = () => isReady;
-  ipfs.waitForPeers = () => waitForPeers(ipfs);
+  ipfs.waitForSomePeers = () => waitForSomePeers(ipfs);
+  ipfs.waitForPeer = peerID => waitForPeer(ipfs, peerID);
+
   return ipfs;
 }

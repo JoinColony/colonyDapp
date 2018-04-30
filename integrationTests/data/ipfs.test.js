@@ -41,7 +41,7 @@ describe('IPFS configuration', () => {
 describe('IPFS peers management', () => {
 
   test('wait for peers exists and will return something after a while', async () => {
-    const peers = await ipfs.waitForPeers(node);
+    const peers = await ipfs.waitForSomePeers(node);
 
     expect(peers).toBeTruthy();
     expect(peers.length).toBeGreaterThan(0);
@@ -61,6 +61,7 @@ describe('IPFS peers management', () => {
     }));
 
     await Promise.all([node1.ready(), node2.ready()]);
+    await Promise.all([pinner.waitForMe(node1), pinner.waitForMe(node2)]);
 
     const block = Buffer.from('helloworld, I am a node from ipfs.test');
 
@@ -72,5 +73,5 @@ describe('IPFS peers management', () => {
     const retrieved = await node2.block.get(blockID);
 
     expect(retrieved).toBeTruthy();
-  }, 25000);
+  }, 120000);
 })
