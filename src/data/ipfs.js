@@ -1,5 +1,6 @@
 /* @flow */
 import IPFS from 'ipfs';
+import { sleep } from '../utils/time';
 
 export { IPFS };
 
@@ -28,10 +29,6 @@ export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, bootstrap = DEFAULT_BO
   };
 }
 
-// https://stackoverflow.com/a/39914235
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 /**
  * Turn a `swarm.peers()` result item into its B58 representation (Qm....)
@@ -39,7 +36,9 @@ function sleep(ms) {
  * @param peerItem
  * @returns {string|*}
  */
-const peerToB58String = peerItem => peerItem.peer.id.toB58String()
+function peerToB58String(peerItem) {
+  return peerItem.peer.id.toB58String();
+}
 
 /**
  * Get the peers swarm'd by this ipfs node.
@@ -84,7 +83,7 @@ export async function waitForSomePeers(ipfs) {
  * @param peerID
  * @returns {Promise<boolean>}
  */
-export const waitForPeer = async (ipfs, peerID) => {
+export async function waitForPeer(ipfs, peerID) {
   let peers = await waitForSomePeers(ipfs);
   let peersB58 = peers.map(peerToB58String);
 
@@ -97,40 +96,33 @@ export const waitForPeer = async (ipfs, peerID) => {
   return true;
 }
 
-
 /**
- * Node management: Each node has its own repo and
- * there can't be two nodes with the same repo.
+ * Promise that returns the given node ID
  *
- * This objects lets us manage multiple nodes when testing.
- * Use `clearNodes` when you need to empty this map.
- *
- * @type {Map<any, any>}
+ * @param ipfsNode
+ * @returns {Promise<any>} the node's B58 string id.
  */
-const NODES = new Map();
-
-/**
- * Clear all the nodes previously instantiated by `getIPFS`.
- *
- * @returns {PromiseConstructor.all}
- */
-export function clearNodes() {
-  const deleteOps = NODES.forEach(async (value, key, map) => {
-    await value.stop();
-    map.delete(key);
+export function getNodeID(ipfsNode) {
+  return new Promise((resolve, reject) => {
+    ipfsNode.id((err, n) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      else {
+        resolve(n.id);
+      }
+    })
   })
-
-  return new Promise.all(deleteOps);
 }
 
 /**
  * Return a new IPFS object ready for use.
- * Go through `NODES` management to let you clean
- * up after tests.
  *
- * The object has 2 more method:
- * - `isReady`
+ * The object has 3 more method:
+ * - `ready`
  * - `waitForSomePeers`
+ * - `waitForPeer`
  *
  * @param options
  * @returns {getIPFS|IPFS}
@@ -140,28 +132,12 @@ export function getIPFS(options) {
 
   const ipfs = new IPFS(options);
 
-  if (NODES.has(options.repo)) {
-    throw new Exception('IPFS repo duplicate, clear first!');
-  }
-  NODES.set(options.repo, ipfs);
-
   let readyResolve = null;
   let readyReject = null;
   const isReady = new Promise((resolve, reject) => {
     readyResolve = resolve;
     readyReject = reject;
   });
-
-  const oldStop = ipfs.stop;
-
-  // TODO: make the management less fragile.
-  // This will break if you start the instance again.
-  // The point is to let us stop and start instances during
-  // testing and avoid collision with repo names.
-  ipfs.stop = async () => {
-    await oldStop();
-    NODES.delete(options.repo);
-  }
 
   ipfs.on('ready', () => {
     console.log('IPFS is ready...');

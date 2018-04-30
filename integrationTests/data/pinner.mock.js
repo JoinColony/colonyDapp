@@ -1,16 +1,22 @@
-import * as ipfs from "../../src/data/ipfs"
-import { getOrbitDB } from "../../src/data/orbit"
+import rimraf from 'rimraf';
+import * as ipfs from '../../src/data/ipfs';
+import { getNodeID } from '../../src/data/ipfs';
+import * as orbitdb from '../../src/data/orbit';
+
+const MOCK_PINNERS_ROOT = '/tmp/tests/pinners/';
 
 /**
- * Pinner object, mimick a pinning service that'll
- * be used to store content & sync nodes.
+ * Pinner object,
+ * mimick a pinning service that stores content & sync nodes.
  *
  * @returns {Promise<{node: (getIPFS|IPFS), tcp: (function(): string), ws: (function(): string), pinBlock: (function(*=): *), peers: *}>}
  * @constructor
  */
-export async function Pinner() {
+export async function makePinner(pinnerName) {
+  const pinnerRoot = `${MOCK_PINNERS_ROOT}/${pinnerName}`
+
   const node = ipfs.getIPFS(ipfs.makeOptions({
-    repo: '/tmp/tests/pinner',
+    repo: `${pinnerRoot}/ipfsRepo`,
     bootstrap: [],
     swarm: [
       "/ip4/0.0.0.0/tcp/5002",
@@ -20,35 +26,36 @@ export async function Pinner() {
 
   await node.ready();
 
-  const p = new Promise((resolve, reject) => {
-    node.id((err, n) => {
-      if (err) {
-        console.error(err);
-        reject(err);
-      }
-      else {
-        resolve(n.id);
-      }
-    })
-  })
+  // Get Node ID
+  const nodeID = await getNodeID(node);
 
-  const nodeID = await p;
-  const tcp = () => `/ip4/127.0.0.1/tcp/5002/ipfs/${nodeID}`;
-  const ws = () => `/ip4/127.0.0.1/tcp/5003/ws/ipfs/${nodeID}`;
+  const bootstrap = [
+    `/ip4/127.0.0.1/tcp/5002/ipfs/${nodeID}`,
+    `/ip4/127.0.0.1/tcp/5003/ws/ipfs/${nodeID}`
+  ]
 
-  const orbit = await getOrbitDB(node, { path: '/tmp/tests/pinnerOrbit' })
-  const dbs = [];
+  const orbit = await orbitdb.getOrbitDB(node, orbitdb.makeOptions({
+    repo: `${pinnerRoot}/orbitRepo`
+  }));
+
+  const stop = async () => {
+    await orbit.stop();
+    await node.stop();
+    await new Promise((resolve, reject) => {
+      rimraf(pinnerRoot, {}, (err) => err ? reject(err) : resolve());
+    });
+  }
+
+  const pinnedStores = [];
 
   return {
+    stop,
     node,
-    nodeID,
     orbit,
-    tcp, ws,
-    peers: () => node.swarm.peers(),
+    nodeID,
+    bootstrap,
     waitForMe: (ipfsNode) => ipfsNode.waitForPeer(nodeID),
-    bootstrap: () => [tcp(), ws()],
     pinBlock: (id) => node.block.get(id),
-    pinKVStore: async (addr) => dbs.push(await orbit.keyvalue(addr)),
-    stop: async () => console.log("TODO")
+    pinKVStore: async (addr) => pinnedStores.push(await orbit.keyvalue(addr)),
   }
 }

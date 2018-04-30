@@ -3,8 +3,8 @@ import OrbitDB from 'orbit-db';
 
 const DEFAULT_DB_PATH = 'colonyOrbitdb';
 
-export function makeOptions({ orbitRepo = undefined } = {}) {
-  const dbPath = orbitRepo === undefined ? DEFAULT_DB_PATH : orbitRepo;
+export function makeOptions({ repo = undefined } = {}) {
+  const dbPath = repo === undefined ? DEFAULT_DB_PATH : repo;
   return { path: dbPath, options: {} };
 }
 
