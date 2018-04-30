@@ -6,13 +6,19 @@ let factory = null;
 let pinner = null;
 let data1 = null;
 let data2 = null;
+let data3 = null;
+let data4 = null;
 
 beforeAll(async () => {
   factory = new Factory('UserProfile.test');
   pinner = await factory.pinner();
   data1 = await factory.Data('data1');
-  await sleep(600); // prevent nodes with same keys
+  await sleep(400); // prevent nodes with same keys
   data2 = await factory.Data('data2');
+  await sleep(400); // prevent nodes with same keys
+  data3 = await factory.Data('data3');
+  await sleep(400); // prevent nodes with same keys
+  data4 = await factory.Data('data4');
 
   await factory.ready();
 }, Factory.TIMEOUT);
@@ -30,7 +36,7 @@ describe('User Profile', () => {
   });
 
   test('Create my user profile and set its name', async () => {
-    const p1 = await data1.getMyUserProfile();
+    const p1 = await data2.getMyUserProfile();
 
     await p1.setName('JohnDoe');
 
@@ -39,8 +45,8 @@ describe('User Profile', () => {
   })
 
   test('Create my user profile and set its name sync with another', async () => {
-    const p1 = await data1.getMyUserProfile();
-    const p2 = await data2.getUserProfile(p1.publicKey());
+    const p1 = await data3.getMyUserProfile();
+    const p2 = await data4.getUserProfile(p1.publicKey());
 
     await p1.setName('JohnDoe2');
 
