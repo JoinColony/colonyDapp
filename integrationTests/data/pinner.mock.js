@@ -56,6 +56,12 @@ export async function makePinner(pinnerName) {
     bootstrap,
     waitForMe: (ipfsNode) => ipfsNode.waitForPeer(nodeID),
     pinBlock: (id) => node.block.get(id),
-    pinKVStore: async (addr) => pinnedStores.push(await orbit.keyvalue(addr)),
+    pinKVStore: async (addr) => {
+      const store = await orbit.keyvalue(addr)
+      store.events.on('replicated', addr => {
+        console.log('Pinner Replicated addr=', addr);
+      });
+      pinnedStores.push(store);
+    }
   }
 }

@@ -3,25 +3,12 @@ import { sleep } from '../../src/utils/time';
 import * as orbit from '../../src/data/orbit';
 import { Pinner } from './pinner.mock';
 import Factory from './factory';
+import { retryUntilValue } from '../utils';
 
 let factory = null;
 let pinner = null
 let orbit1 = null;
 let orbit2 = null;
-
-async function retry(f, attempts) {
-  let r = f()
-  console.log('GOT=', r);
-
-  while (!r && attempts > 0) {
-    await sleep(500);
-    r = f();
-    attempts--;
-    console.log('Retried, GOT=', r);
-  }
-
-  return r
-}
 
 beforeAll(async () => {
   factory = new Factory('orbitdb.test');
@@ -51,7 +38,6 @@ describe('OrbitDB store management', () => {
   })
 })
 
-
 describe('OrtbiDB peers management', () => {
   test('an orbitdb store will be seen by the other node', async () => {
     const db = await orbit1.keyvalue(factory.name('share-store-test'));
@@ -60,6 +46,6 @@ describe('OrtbiDB peers management', () => {
 
     await db.put('hello', 'world');
 
-    expect(await retry(() => db2.get('hello'), 10)).toBe('world');
+    expect(await retryUntilValue(() => db2.get('hello'))).toBe('world');
   }, 120000);
 })
