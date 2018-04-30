@@ -1,36 +1,53 @@
 /* eslint-env jest */
-import Data from '../../src/data'
+import Factory from './factory';
+import { sleep } from '../../src/utils/time';
 
-let data = null;
+let factory = null;
+let pinner = null;
+let data1 = null;
 let data2 = null;
 
+beforeAll(async () => {
+  factory = new Factory('UserProfile.test');
+  pinner = await factory.pinner();
+  data1 = await factory.Data('data1');
+  await sleep(600); // prevent nodes with same keys
+  data2 = await factory.Data('data2');
+
+  await factory.ready();
+}, Factory.TIMEOUT);
+
+afterAll(async () => {
+  await factory.clear();
+}, Factory.TIMEOUT);
+
+
 describe('User Profile', () => {
-  beforeAll(async () => {
-    data = await Data.fromDefaultConfig();
-    data2 = await Data.fromDefaultConfig({ repo: 'anotherRepo' });
-  })
-
-  afterAll(async () => {
-    await data.close();
-    await data2.close();
-  })
-
   test('Create my user profile component', async () => {
-    const p1 = await data.getMyUserProfile();
+    const p1 = await data1.getMyUserProfile();
     expect(p1).toBeTruthy();
+    expect(p1.isEmpty()).toBeTruthy();
   });
 
   test('Create my user profile and set its name', async () => {
-    const p1 = await data.getMyUserProfile();
+    const p1 = await data1.getMyUserProfile();
+
     await p1.setName('JohnDoe');
-    expect(p1.name).toBe('JohnDoe');
+
+    expect(p1.isEmpty()).toBeFalsy();
+    expect(p1.getName()).toBe('JohnDoe');
   })
 
   test('Create my user profile and set its name sync with another', async () => {
-    const p1 = await data.getMyUserProfile();
+    const p1 = await data1.getMyUserProfile();
+    const p2 = await data2.getUserProfile(p1.publicKey());
+
     await p1.setName('JohnDoe2');
 
-    const p2 = await data2.getUserProfile(p1.publicKey);
-    expect(p2.name).toBe('JohnDoe2');
-  })
+    await sleep(1000);
+
+    expect(p1.isEmpty()).toBeFalsy();
+    expect(p2.isEmpty()).toBeFalsy();
+    expect(p2.getName()).toBe('JohnDoe2');
+  }, 55000)
 });

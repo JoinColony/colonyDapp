@@ -51,7 +51,6 @@ describe('OrbitDB store management', () => {
   })
 })
 
-
 describe('OrtbiDB peers management', () => {
   test('an orbitdb store will be seen by the other node', async () => {
     const db = await orbit1.keyvalue(factory.name('share-store-test'));

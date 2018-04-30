@@ -1,5 +1,6 @@
 /* @flow */
 import * as ipfs from './ipfs';
+import { getNodeID } from './ipfs';
 import * as orbit from './orbit';
 
 type PeerId = string;
@@ -7,20 +8,32 @@ type PublicKey = string;
 
 class UserProfile {
   name: string;
-  is_empty: boolean;
 
-  constructor() {
-    this.name = undefined;
-    this.is_empty = true;
+  constructor(store) {
+    this._store = store;
+    this._store.events.on('replicated', addr => {
+      console.log('Store replicated addr=', addr);
+    })
   }
 
   isEmpty(): boolean {
-    return this.is_empty;
+    console.log("GET CREATED", this._store.get('created'));
+    return !this._store.get('created');
   }
 
-  setName(name: string) {
-    this.name = name;
-    this.is_empty = false;
+  async setName(name: string) {
+    if (this.isEmpty()) {
+      await this._store.put('created', new Date().toUTCString());
+    }
+    await this._store.put('name', name);
+  }
+
+  getName() {
+    return this._store.get('name');
+  }
+
+  publicKey() {
+    return this._store.address;
   }
 }
 
@@ -29,7 +42,8 @@ export default class Data {
   _orbitNode: orbit.OrbitDB;
   _key: string;
 
-  constructor(ipfsNode, orbitNode) {
+  constructor(pinner, ipfsNode, orbitNode) {
+    this._pinner = pinner;
     this._ipfsNode = ipfsNode;
     this._orbitNode = orbitNode;
     this._key = "helloworld";
@@ -43,33 +57,40 @@ export default class Data {
     return true;
   }
 
-  async peerId() {
-    return new Promise((resolve, error) => {
-      this._ipfsNode.id((err, x) => resolve(x.id));
-    })
+  async waitForPeer(peerID) {
+    return await this._ipfsNode.waitForPeer(peerID);
   }
 
-  async close() {
+  async peerID() {
+    return await getNodeID(this._ipfsNode);
+  }
+
+  async stop() {
+    await this._orbitNode.stop();
     await this._ipfsNode.stop();
   }
 
-  static fromDefaultConfig(opts) {
-    const ipfsConf = ipfs.makeOptions(opts);
+  static async fromDefaultConfig(pinner, opts) {
+    const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
-    const orbitConf = orbit.makeOptions(opts);
-    const orbitNode = orbit.getOrbitDB(ipfsNode, orbitConf);
 
-    return new Data(ipfsNode, orbitNode);
+    const orbitConf = orbit.makeOptions(opts.orbit);
+    const orbitNode = await orbit.getOrbitDB(ipfsNode, orbitConf);
+
+    return new Data(pinner, ipfsNode, orbitNode);
   }
 
   async getUserProfile(key: PublicKey): UserProfile {
-    return new Promise((r) => {
-      r(new UserProfile())
-    });
+    console.log('Build User Profile Store with key=', key);
+    const store = await this._orbitNode.kvstore(key);
+    console.log('Pin User Profile Store with address=', store.address);
+    await this._pinner.pinKVStore(store.address);
+    console.log('Complete User Profile Store creations');
+    return new UserProfile(store);
   }
 
   async getMyUserProfile(): UserProfile {
-    return this.getUserProfile(this._key);
+    return this.getUserProfile('user-profile');
   }
 
   async listPeers(): Array<PeerId> {
