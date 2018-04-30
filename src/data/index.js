@@ -56,8 +56,8 @@ export default class Data {
   static fromDefaultConfig(opts) {
     const ipfsConf = ipfs.makeOptions(opts);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
-    const orbitConf = orbit.makeOptions();
-    const orbitNode = orbit.getOrbitDB(ipfsNode);
+    const orbitConf = orbit.makeOptions(opts);
+    const orbitNode = orbit.getOrbitDB(ipfsNode, orbitConf);
 
     return new Data(ipfsNode, orbitNode);
   }

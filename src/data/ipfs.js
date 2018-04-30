@@ -4,30 +4,35 @@ import IPFS from 'ipfs';
 export { IPFS };
 
 const DEFAULT_IPFS_SWARM = [
-  '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
-  '/ip4/127.0.0.1/tcp/4023/ws/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj',
-  'ip4/127.0.0.1/tcp/4022/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj'
+// '/ip4/127.0.0.1/tcp/9090/ws/p2p-webrtc-star/',
+// '/ip6/127.0.0.1/tcp/9090/ws/p2p-webrtc-star',
+//  '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
+//  '/ip4/127.0.0.1/tcp/4023/ws/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj',
+//  'ip4/127.0.0.1/tcp/4022/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj'
 ];
 
-const DEFAULT_BOOTSTRAP = [
-  '/ip4/127.0.0.1/tcp/4023/ws/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj',
-  'ip4/127.0.0.1/tcp/4022/ipfs/QmaTQTXPakm7ARjs1zeqsum6MEkVAeHJSoSMW642fgG8mj'
-];
+const DEFAULT_BOOTSTRAP = [];
 
 const DEFAULT_REPO = 'colonyIpfs';
 
-export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, repo = DEFAULT_REPO } = {}) {
+export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, bootstrap = DEFAULT_BOOTSTRAP, repo = DEFAULT_REPO } = {}) {
   return {
     repo: repo,
     config: {
-      Bootstrap: DEFAULT_BOOTSTRAP,
+      Bootstrap: bootstrap,
       Addresses: {
+        Gateway: "",
         Swarm: swarm,
       },
     },
     EXPERIMENTAL: {
       pubsub: true,
     },
+    Discovery: {
+      webRTCStar: {
+        enabled: true
+      }
+    }
   };
 }
 
@@ -55,7 +60,7 @@ export async function getPeers(ipfs) {
 
 /**
  * Wait until some peers have been detected.
- * Returns a promise that'll resolve to the list
+ * Returns a promise that'll resolve into the list
  * of current peers.
  *
  * @param ipfs
@@ -84,7 +89,7 @@ export async function waitForPeers(ipfs) {
 const NODES = new Map();
 
 /**
- * Clear all the nodes previously instanciated by `getIPFS`.
+ * Clear all the nodes previously instantiated by `getIPFS`.
  *
  * @returns {PromiseConstructor.all}
  */

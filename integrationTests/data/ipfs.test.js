@@ -1,5 +1,31 @@
 /* eslint-env jest */
 import * as ipfs from '../../src/data/ipfs'
+import { Pinner } from './pinner.mock'
+
+// https://stackoverflow.com/a/39914235
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+let pinner = null;
+let node = null;
+
+beforeAll(async () => {
+  pinner = await Pinner();
+
+  node = ipfs.getIPFS(ipfs.makeOptions({
+    repo: '/tmp/tests/node1',
+    bootstrap: [
+      ...pinner.bootstrap()
+    ]
+  }));
+  await node.ready();
+})
+
+afterAll(async () => {
+  await pinner.stop();
+  await ipfs.clearNodes();
+});
 
 describe('IPFS configuration', () => {
   test('Get default config', () => {
@@ -13,25 +39,38 @@ describe('IPFS configuration', () => {
 });
 
 describe('IPFS peers management', () => {
-  afterAll(async () => {
-    await ipfs.clearNodes();
-  });
-
-  test('get peers exists and may return undefined', async () => {
-    const node = ipfs.getIPFS(ipfs.makeOptions({ repo: 'test1' }));
-    await node.ready();
-
-    const peers = await ipfs.getPeers(node);
-    expect(peers).toBeUndefined();
-  })
 
   test('wait for peers exists and will return something after a while', async () => {
-    const node = ipfs.getIPFS(ipfs.makeOptions({ repo: 'test2' }));
-    await node.ready();
-
     const peers = await ipfs.waitForPeers(node);
 
     expect(peers).toBeTruthy();
     expect(peers.length).toBeGreaterThan(0);
-  })
+  }, 25000);
+
+  test('two nodes will see each other data', async () => {
+    const node1 = ipfs.getIPFS(ipfs.makeOptions({
+      repo: '/tmp/tests/node2',
+      bootstrap: [...pinner.bootstrap()]
+    }));
+
+    await sleep(600); // prevent nodes with same keys
+
+    const node2 = ipfs.getIPFS(ipfs.makeOptions({
+      repo: '/tmp/tests/node3',
+      bootstrap: [...pinner.bootstrap()]
+    }));
+
+    await Promise.all([node1.ready(), node2.ready()]);
+
+    const block = Buffer.from('helloworld, I am a node from ipfs.test');
+
+    const putResult = await node1.block.put(block)
+    const blockID = putResult.cid.toBaseEncodedString();
+
+    await pinner.pinBlock(blockID)
+
+    const retrieved = await node2.block.get(blockID);
+
+    expect(retrieved).toBeTruthy();
+  }, 25000);
 })
