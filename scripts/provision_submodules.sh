@@ -8,12 +8,6 @@ NETWORK_PATH="${LIB_PATH}/colonyNetwork"
 
 ROOT_PATH=$(pwd)
 
-# Helper functions
-clean() {
-  rm -Rf "$1"
-  echo "removed $1"
-}
-
 log() {
   # Colors
   GREEN='\033[0;32m'
@@ -22,12 +16,6 @@ log() {
   BOLD='\033[1m'
   echo "${GREEN}${BOLD}$1${NC}"
 }
-
-# Cleanup
-log "Cleaning up submodule folders"
-clean ${CLIENT_PATH}
-clean ${WALLET_PATH}
-clean ${NETWORK_PATH}
 
 # Update / re-pull submodules
 log "Initialize submodule libs"
