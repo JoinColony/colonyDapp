@@ -3498,12 +3498,6 @@ external-editor@^2.0.4, external-editor@^2.1.0:
     iconv-lite "^0.4.17"
     tmp "^0.0.33"
 
-extfs@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/extfs/-/extfs-0.0.7.tgz#a30810e474590a0dbcd0d2f457adc89009c5c0ab"
-  dependencies:
-    underscore ">= 1.4 < 2"
-
 extglob@^0.3.1:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/extglob/-/extglob-0.3.2.tgz#2e18ff3d2f49ab2765cec9023f011daa8d8349a1"
@@ -9764,10 +9758,6 @@ unc-path-regex@^0.1.0, unc-path-regex@^0.1.2:
 underscore@1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
-
-"underscore@>= 1.4 < 2":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.0.tgz#31dbb314cfcc88f169cd3692d9149d81a00a73e4"
 
 underscore@~1.4.4:
   version "1.4.4"
