@@ -21,7 +21,8 @@
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
     "test": "jest --config=jest.conf.json",
     "test:integration": "jest --runInBand --config=jest-integration.conf.json",
-    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'"
+    "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
+    "postinstall": "yarn provision"
   },
   "lint-staged": {
     "src/{,**/}*.{js|jsx}": [
