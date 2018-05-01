@@ -12,7 +12,13 @@ const { bufferToHex, privateToAddress } = ethereumJsUtil;
 const { execSync } = childProcess;
 const { isEmptySync } = fs;
 
+/*
+ * Paths
+ */
 const libPath = path.resolve('src', 'lib');
+const clientPath = path.resolve(libPath, 'colony-js');
+const walletPath = path.resolve(libPath, 'colony-wallet');
+const networkPath = path.resolve(libPath, 'colonyNetwork');
 
 /*
  * These were nicked for `colonyNetworks`s test accounts
@@ -71,15 +77,23 @@ module.exports = async () => {
    * Checking if submodules are provisioned. If they're not, just re-provision
    */
   if (
-    isEmptySync(path.resolve(libPath, 'colony-js')) ||
-    isEmptySync(path.resolve(libPath, 'colony-wallet')) ||
-    isEmptySync(path.resolve(libPath, 'colonyNetwork'))
+    isEmptySync(clientPath) ||
+    isEmptySync(walletPath) ||
+    isEmptySync(networkPath)
   ) {
-    console.log(
-      chalk.yellow('Submodules are NOT provisioned, re-provisioning...'),
-    );
+    console.log(chalk.yellow.bold('Provisioning submodules'));
     execSync('yarn provision');
   }
+
+  /*
+   * Add submodules info in the global object so they're available inside tests
+   */
+  /* eslint-disable global-require, import/no-dynamic-require */
+  global.submodules = {
+    client: require(path.resolve(clientPath, 'package.json')),
+    wallet: require(path.resolve(walletPath, 'package.json')),
+    network: require(path.resolve(networkPath, 'package.json')),
+  };
 
   /*
    * Start the ganache server
