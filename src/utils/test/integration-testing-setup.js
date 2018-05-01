@@ -3,9 +3,16 @@
 const util = require('util');
 const ganache = require('ganache-cli');
 const chalk = require('chalk');
-const utils = require('ethereumjs-util');
+const ethereumJsUtil = require('ethereumjs-util');
+const childProcess = require('child_process');
+const path = require('path');
+const fs = require('fs');
 
-const { bufferToHex, privateToAddress } = utils;
+const { bufferToHex, privateToAddress } = ethereumJsUtil;
+const { execSync } = childProcess;
+const { existsSync } = fs;
+
+const libPath = path.resolve('src', 'lib');
 
 /*
  * These were nicked for `colonyNetworks`s test accounts
@@ -36,6 +43,12 @@ const accounts = accountsPrivateKeys.map(privateKey => ({
 }));
 
 module.exports = async () => {
+  /*
+   * Leave an empty line.
+   * Since first line of `jest`s output doesn't end with a new line
+   */
+  console.log();
+
   const server = ganache.server({
     debug: true,
     logger: console,
@@ -54,6 +67,28 @@ module.exports = async () => {
    */
   global.integrationTestionAccounts = accounts;
 
+  /*
+   * Checking if submodules are provisioned. If they're not, just re-provision
+   *
+   * Please note: this is not full-proof since we only check for existence of
+   * folders and not actual contents.
+   */
+  if (
+    !(
+      existsSync(path.resolve(libPath, 'colony-js')) &&
+      existsSync(path.resolve(libPath, 'colony-wallet')) &&
+      existsSync(path.resolve(libPath, 'colonyNetwork'))
+    )
+  ) {
+    console.log(
+      chalk.yellow('Submodules are NOT provisioned, re-provisioning...'),
+    );
+    execSync('yarn provision');
+  }
+
+  /*
+   * Start the ganache server
+   */
   await global.ganacheServer.listen('8545');
-  console.log(chalk.green.bold('\nGanache Server Started'));
+  console.log(chalk.green.bold('Ganache Server Started'));
 };
