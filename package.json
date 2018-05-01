@@ -75,6 +75,7 @@
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.4.0",
     "ethereumjs-util": "^5.1.5",
+    "extfs": "^0.0.7",
     "file-loader": "^1.1.9",
     "flow-bin": "^0.71.0",
     "ganache-cli": "^6.1.0",

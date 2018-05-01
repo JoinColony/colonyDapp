@@ -6,11 +6,11 @@ const chalk = require('chalk');
 const ethereumJsUtil = require('ethereumjs-util');
 const childProcess = require('child_process');
 const path = require('path');
-const fs = require('fs');
+const fs = require('extfs');
 
 const { bufferToHex, privateToAddress } = ethereumJsUtil;
 const { execSync } = childProcess;
-const { existsSync } = fs;
+const { isEmptySync } = fs;
 
 const libPath = path.resolve('src', 'lib');
 
@@ -69,16 +69,11 @@ module.exports = async () => {
 
   /*
    * Checking if submodules are provisioned. If they're not, just re-provision
-   *
-   * Please note: this is not full-proof since we only check for existence of
-   * folders and not actual contents.
    */
   if (
-    !(
-      existsSync(path.resolve(libPath, 'colony-js')) &&
-      existsSync(path.resolve(libPath, 'colony-wallet')) &&
-      existsSync(path.resolve(libPath, 'colonyNetwork'))
-    )
+    isEmptySync(path.resolve(libPath, 'colony-js')) ||
+    isEmptySync(path.resolve(libPath, 'colony-wallet')) ||
+    isEmptySync(path.resolve(libPath, 'colonyNetwork'))
   ) {
     console.log(
       chalk.yellow('Submodules are NOT provisioned, re-provisioning...'),
