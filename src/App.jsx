@@ -6,15 +6,16 @@ import { Provider } from 'react-redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 
-import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, NavLink, Route, Switch } from 'react-router-dom';
 
 import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
 import rootReducer from './reducer';
-
 /* eslint-disable-next-line max-len */
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
+
+import * as profiles from './modules/pages/Profiles.jsx';
 import CreateColony from './modules/dashboard/components/CreateColony';
 import ColonyCreationTest from './ColonyCreationTest.jsx';
 import SpinnerLoader from './modules/core/components/Preloaders/SpinnerLoader';
@@ -75,10 +76,14 @@ export default function App() {
       <Provider store={store}>
         <Router>
           <div className={layout.stretch}>
-            <Route exact path="/" component={Home} />
-            <Route path="/createcolony" component={CreateColony} />
-            <Route path="/createcolonytest" component={ColonyCreationTest} />
-            <Route path="/dynamic-import-route" component={DynamicRoute} />
+            <Switch>
+              <Route exact path="/" component={Home}/>
+              <Route path="/createcolony" component={CreateColony}/>
+              <Route path="/createcolonytest" component={ColonyCreationTest}/>
+              <Route path="/dynamic-import-route" component={DynamicRoute}/>
+              <Route exact path="/profile" component={profiles.MyProfile}/>
+              <Route path="/:address" component={profiles.UserProfile}/>
+            </Switch>
           </div>
         </Router>
       </Provider>
