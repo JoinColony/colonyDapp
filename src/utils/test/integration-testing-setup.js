@@ -90,9 +90,18 @@ module.exports = async () => {
    */
   /* eslint-disable global-require, import/no-dynamic-require */
   global.submodules = {
-    client: require(path.resolve(clientPath, 'package.json')),
-    wallet: require(path.resolve(walletPath, 'package.json')),
-    network: require(path.resolve(networkPath, 'package.json')),
+    client: {
+      package: require(path.resolve(clientPath, 'package.json')),
+      path: clientPath,
+    },
+    wallet: {
+      package: require(path.resolve(walletPath, 'package.json')),
+      path: walletPath,
+    },
+    network: {
+      package: require(path.resolve(networkPath, 'package.json')),
+      path: networkPath,
+    },
   };
 
   /*
@@ -113,7 +122,7 @@ module.exports = async () => {
     chalk.green.bold('Compiling Contracts using'),
     chalk.bold(
       `truffle${chalk.gray('@')}${
-        global.submodules.network.devDependencies.truffle
+        global.submodules.network.package.devDependencies.truffle
       }`,
     ),
     chalk.green.bold('from'),
