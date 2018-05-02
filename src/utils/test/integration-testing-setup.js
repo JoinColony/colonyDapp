@@ -12,7 +12,17 @@ const git = require('simple-git/promise');
 const { bufferToHex, privateToAddress } = ethereumJsUtil;
 const { isEmptySync } = fs;
 
-const exec = util.promisify(childProcess.exec);
+let exec = util.promisify(childProcess.exec);
+
+global.DEBUG = process.env.DEBUG || false;
+
+if (global.DEBUG) {
+  exec = util.promisify((...args) => {
+    const runner = childProcess.exec(...args);
+    runner.stdout.on('data', output => process.stdout.write(output));
+    return runner;
+  });
+}
 
 /*
  * Paths
@@ -57,11 +67,26 @@ module.exports = async () => {
    */
   console.log();
 
-  const server = ganache.server({
+  if (global.DEBUG) {
+    console.log(chalk.bgYellowBright.black.bold('  DEBUG MODE  \n'));
+  }
+
+  const ganacheServerOptions = {
     default_balance_ether: 100,
     total_accounts: 10,
     accounts,
-  });
+  };
+  const ganacheServerDebugOptions = {
+    debug: true,
+    logger: console,
+  };
+  const server = ganache.server(
+    Object.assign(
+      {},
+      ganacheServerOptions,
+      global.DEBUG ? ganacheServerDebugOptions : {},
+    ),
+  );
 
   global.ganacheServer = {
     listen: util.promisify(server.listen),

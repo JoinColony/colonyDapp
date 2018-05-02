@@ -22,6 +22,20 @@ module.exports = async () => {
     `${global.submodules.network.path}/build/contracts`,
   ];
   cleanupPaths.map(async path => {
+    if (global.DEBUG) {
+      console.log(`Removing: ${path}`);
+    }
     await remove(path, { disableGlob: true });
   });
+
+  /*
+   * Debug log file
+   */
+  if (global.DEBUG) {
+    console.log(
+      chalk.yellow.bold('Saved'),
+      chalk.bold('integration-testing-output.log'),
+      chalk.yellow.bold('log file'),
+    );
+  }
 };
