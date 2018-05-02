@@ -22,7 +22,6 @@
     "test": "jest --config=jest.conf.json",
     "test:integration": "jest --runInBand --config=jest-integration.conf.json",
     "test:integration:debug": "DEBUG=true yarn test:integration --color | tee integration-testing-output.log",
-    "test:integration:backup": "sh scripts/integration_testing.sh",
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
     "postinstall": "yarn provision"
   },
