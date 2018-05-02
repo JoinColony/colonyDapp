@@ -7,10 +7,13 @@ const ethereumJsUtil = require('ethereumjs-util');
 const childProcess = require('child_process');
 const path = require('path');
 const fs = require('extfs');
+const git = require('simple-git/promise');
 
 const { bufferToHex, privateToAddress } = ethereumJsUtil;
-const { execSync } = childProcess;
+const { execSync, exec } = childProcess;
 const { isEmptySync } = fs;
+
+const execAsync = util.promisify(exec);
 
 /*
  * Paths
@@ -56,8 +59,6 @@ module.exports = async () => {
   console.log();
 
   const server = ganache.server({
-    debug: true,
-    logger: console,
     default_balance_ether: 100,
     total_accounts: 10,
     accounts,
@@ -98,6 +99,30 @@ module.exports = async () => {
   /*
    * Start the ganache server
    */
-  await global.ganacheServer.listen('8545');
-  console.log(chalk.green.bold('Ganache Server Started'));
+  const ganacheServerPort = '8545';
+  await global.ganacheServer.listen(ganacheServerPort);
+  console.log(
+    chalk.green.bold('Ganache Server started on'),
+    `http://localhost:${ganacheServerPort}`,
+  );
+
+  /*
+   * Compile the `colonyNetwork` contracts
+   */
+  const colonyNetworkSubmoduleHead = await git(networkPath).branchLocal();
+  console.log(
+    chalk.green.bold('Compiling Contracts using'),
+    `truffle@${global.submodules.network.devDependencies.truffle}`,
+    chalk.green.bold('from'),
+    `colonyNetwork#${colonyNetworkSubmoduleHead.current}`,
+  );
+  await execAsync(
+    `${networkPath}/node_modules/.bin/truffle migrate --reset --compile-all`,
+    { cwd: networkPath },
+  );
+
+  /*
+   * Start running Jest unit tests
+   */
+  console.log(chalk.green.bold('Starting integration test suites'));
 };
