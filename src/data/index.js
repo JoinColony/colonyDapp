@@ -14,9 +14,13 @@ class UserProfile {
     })
   }
 
+  getCreated() {
+    return this._store.get('created');
+  }
+
   isEmpty(): boolean {
     console.log("GET CREATED", this._store.get('created'));
-    return !this._store.get('created');
+    return !this.getCreated()
   }
 
   async setName(name: string) {
@@ -35,12 +39,14 @@ class UserProfile {
   }
 
   subscribe(f) {
+    f({ name: this.getName(), isEmpty: this.isEmpty(), created: this.getCreated() });
+
     this._store.events.on('replicated', (addr) => {
       console.log(
         'UserProfile at address=', this.address(),
         'replicated with address=', addr
       );
-      f({ name: this.getName() });
+      f({ name: this.getName(), isEmpty: this.isEmpty(), created: this.getCreated() });
     })
   }
 }
@@ -81,6 +87,7 @@ export default class Data {
   static async fromDefaultConfig(pinner, opts) {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
+    await ipfsNode.ready();
 
     const orbitConf = orbit.makeOptions(opts.orbit);
     const orbitNode = await orbit.getOrbitDB(ipfsNode, orbitConf);
@@ -88,6 +95,8 @@ export default class Data {
     return new Data(pinner, ipfsNode, orbitNode);
   }
 
+  // TODO(laurent): abstract away orbitdb.
+  // right now this takes an orbitdb address (either name, or full address)
   async getUserProfile(key: PublicKey): UserProfile {
     console.log('Build User Profile Store with key=', key);
     const store = await this._orbitNode.kvstore(key);
