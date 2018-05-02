@@ -1,6 +1,9 @@
 {
     "testMatch": ["**/?(*.)(spec|test).js?(x)"],
     "rootDir": "integration-testing",
-    "globalSetup": "../src/utils/test/integration-testing-setup.js",
-    "globalTeardown": "../src/utils/test/integration-testing-teardown.js"
+    "globalSetup": "./utils/integration-testing-setup.js",
+    "globalTeardown": "./utils/integration-testing-teardown.js",
+    "testPathIgnorePatterns": [
+        "utils"
+    ]
 }
