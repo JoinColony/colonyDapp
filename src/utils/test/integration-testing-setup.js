@@ -10,10 +10,9 @@ const fs = require('extfs');
 const git = require('simple-git/promise');
 
 const { bufferToHex, privateToAddress } = ethereumJsUtil;
-const { execSync, exec } = childProcess;
 const { isEmptySync } = fs;
 
-const execAsync = util.promisify(exec);
+const exec = util.promisify(childProcess.exec);
 
 /*
  * Paths
@@ -83,7 +82,7 @@ module.exports = async () => {
     isEmptySync(networkPath)
   ) {
     console.log(chalk.yellow.bold('Provisioning submodules'));
-    execSync('yarn provision');
+    await exec('yarn provision');
   }
 
   /*
@@ -103,7 +102,7 @@ module.exports = async () => {
   await global.ganacheServer.listen(ganacheServerPort);
   console.log(
     chalk.green.bold('Ganache Server started on'),
-    `http://localhost:${ganacheServerPort}`,
+    chalk.bold(`${chalk.gray('http://')}localhost:${ganacheServerPort}`),
   );
 
   /*
@@ -112,11 +111,17 @@ module.exports = async () => {
   const colonyNetworkSubmoduleHead = await git(networkPath).branchLocal();
   console.log(
     chalk.green.bold('Compiling Contracts using'),
-    `truffle@${global.submodules.network.devDependencies.truffle}`,
+    chalk.bold(
+      `truffle${chalk.gray('@')}${
+        global.submodules.network.devDependencies.truffle
+      }`,
+    ),
     chalk.green.bold('from'),
-    `colonyNetwork#${colonyNetworkSubmoduleHead.current}`,
+    chalk.bold(
+      `colonyNetwork${chalk.gray('#')}${colonyNetworkSubmoduleHead.current}`,
+    ),
   );
-  await execAsync(
+  await exec(
     `${networkPath}/node_modules/.bin/truffle migrate --reset --compile-all`,
     { cwd: networkPath },
   );
