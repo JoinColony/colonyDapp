@@ -107,7 +107,7 @@ jobs:
       - run:
           name: "Building library"
           command: yarn build
-  integration-testing-nightly-build:
+  integration-testing-build:
     docker:
       - image: circleci/node:9.4.0
     parallelism: 2
@@ -155,4 +155,11 @@ workflows:
               only: master
     jobs:
       - nightly-build
-      - integration-testing-nightly-build
+      - integration-testing-build
+  manual:
+    jobs:
+      - request-testing:
+          type: approval
+      - integration-testing-build:
+          requires:
+            - request-testing
