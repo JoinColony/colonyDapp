@@ -107,6 +107,39 @@ jobs:
       - run:
           name: "Building library"
           command: yarn build
+  integration-testing-nightly-build:
+    docker:
+      - image: circleci/node:9.4.0
+    parallelism: 2
+    working_directory: ~/colonyDapp
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - node-modules-{{ checksum "package.json" }}
+          - node-modules-
+      - run:
+          name: "Set up global packages"
+          command: yarn global add lerna
+      - run:
+          name: "Provision submodules"
+          command: yarn provision
+      - run:
+          name: "Installing modules"
+          command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: node-modules-{{ checksum "package.json" }}
+      - run:
+          name: "Running integration tests tests"
+          command: yarn test:integration:ci
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/jest/jest-integration-tests-results.xml"
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports
 
 workflows:
   version: 2
@@ -122,3 +155,4 @@ workflows:
               only: master
     jobs:
       - nightly-build
+      - integration-testing-nightly-build
