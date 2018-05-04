@@ -4,3 +4,4 @@ node_modules
 .env
 *.log
 reports
+ganache-accounts.json
