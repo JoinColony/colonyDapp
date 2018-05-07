@@ -47,7 +47,9 @@
             "jest": {
               "jestConfigFile": "./jest.conf.json"
             },
-            "webpack": {}
+            "webpack": {
+              config: "./webpack.config.dev.js"
+            }
         }
     }
 }

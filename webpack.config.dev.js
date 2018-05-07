@@ -2,16 +2,11 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-let mode = 'development';
-
-if (process.env.NODE_ENV === 'production') {
-  mode = 'production';
-}
+const webpack = require('webpack');
 
 const config = {
   entry: './src/index.js',
-  mode,
+  mode: 'development',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -83,10 +78,12 @@ const config = {
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
     }),
+    new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     historyApiFallback: true,
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
+    hot: true,
   },
 };
 
