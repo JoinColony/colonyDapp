@@ -1,0 +1,31 @@
+{
+    "testRegex": ".*\\.test\\.jsx?$",
+    "rootDir": "integrationTests",
+    "moduleNameMapper": {
+        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+        "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+        "^\\~utils(.*)$": "<rootDir>/utils$1",
+        "^\\~types(.*)$": "<rootDir>/types$1"
+    },
+    "setupFiles": [
+        "<rootDir>/utils/shims.js"
+    ],
+    "setupTestFrameworkScriptFile": "jest-enzyme",
+    "collectCoverageFrom" : ["**/*.{js,jsx}"],
+    "coverageDirectory": "../coverage",
+    "coverageThreshold": {
+        "global": {
+            "branches": 40
+        }
+    },
+    "testPathIgnorePatterns": [
+        "node_modules",
+        "src/lib/colony-js",
+        "src/lib/colony-wallet"
+    ],
+    "coveragePathIgnorePatterns": [
+        "node_modules",
+        "src/lib/colony-js",
+        "src/lib/colony-wallet"
+    ]
+  }

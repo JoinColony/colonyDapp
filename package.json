@@ -23,6 +23,7 @@
     "test:integration": "jest --runInBand --config=jest-integration.conf.json",
     "test:integration:debug": "DEBUG=true yarn test:integration --color | tee integration-testing-output.log",
     "test:integration:ci": "jest --clearCache && NODE_ENV=test jest --verbose --runInBand --config=jest-integration.conf.json --testResultsProcessor='jest-junit'",
+    "test:integration:ddb": "jest --config=jest-integration-ddb.conf.json",
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
     "postinstall": "yarn provision"
   },
@@ -116,6 +117,8 @@
     "dotenv-webpack": "^1.5.4",
     "es6-promisify": "^6.0.0",
     "ethers": "^3.0.8",
+    "ipfs": "~0.28.2",
+    "orbit-db": "0.19.7",
     "prop-types": "^15.6.0",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
