@@ -8,11 +8,13 @@ const childProcess = require('child_process');
 const path = require('path');
 const fs = require('extfs');
 const git = require('simple-git/promise');
+const rimraf = require('rimraf');
 
 const { bufferToHex, privateToAddress } = ethereumJsUtil;
 const { isEmptySync } = fs;
 
 let exec = util.promisify(childProcess.exec);
+const remove = util.promisify(rimraf);
 
 global.DEBUG = process.env.DEBUG || false;
 /*
@@ -69,6 +71,20 @@ const accounts = accountsPrivateKeys.map(privateKey => ({
   balance: '0x100000000000000000',
   secretKey: `0x${privateKey}`,
 }));
+
+const cleanupArtifacts = message => {
+  console.log(chalk.green.bold(message));
+  const cleanupPaths = [
+    'ganache-accounts.json',
+    `${networkPath}/build/contracts`,
+  ];
+  cleanupPaths.map(async artifactPath => {
+    if (global.DEBUG) {
+      console.log(`Removing: ${artifactPath}`);
+    }
+    await remove(artifactPath, { disableGlob: true });
+  });
+};
 
 module.exports = async () => {
   /*
@@ -127,52 +143,45 @@ module.exports = async () => {
   }
 
   /*
-   * Add submodules info in the global object so they're available inside tests
+   * After we provision the modules, grab the `colonyNetwork` package json
+   * so we can read values from it.
+   *
+   * Before this step, it may not be available
    */
   /* eslint-disable global-require, import/no-dynamic-require */
-  global.submodules = {
-    client: {
-      package: require(path.resolve(clientPath, 'package.json')),
-      path: clientPath,
-    },
-    wallet: {
-      package: require(path.resolve(walletPath, 'package.json')),
-      path: walletPath,
-    },
-    network: {
-      package: require(path.resolve(networkPath, 'package.json')),
-      path: networkPath,
-    },
-  };
+  const networkPackage = require(path.resolve(networkPath, 'package.json'));
 
   /*
    * Start the ganache server
    */
   const ganacheServerPort = '8545';
-  /*
-   * In WATCH mode, only start the server if this is the first run
-   */
-  if (global.WATCH && global.WATCH_FIRST_RUN) {
+  if (!global.WATCH || (global.WATCH && global.WATCH_FIRST_RUN)) {
+    /*
+     * Perform initial cleanup, since there's a good chance there are leftover
+     * artifacts (build folders)
+     */
+    global.cleanupArtifacts = cleanupArtifacts;
+    cleanupArtifacts('Removing leftover artifacts');
+
+    /*
+     * In WATCH mode, only start the server if this is the first run
+     */
     await global.ganacheServer.listen(ganacheServerPort);
     console.log(
       chalk.green.bold('Ganache Server started on'),
       chalk.bold(`${chalk.gray('http://')}localhost:${ganacheServerPort}`),
     );
-  }
 
-  /*
-   * Compile the `colonyNetwork` contracts
-   *
-   * In WATCH mode, only compile contracts if this is the first run
-   */
-  if (global.WATCH && global.WATCH_FIRST_RUN) {
+    /*
+     * Compile the `colonyNetwork` contracts
+     *
+     * In WATCH mode, only compile contracts if this is the first run
+     */
     const colonyNetworkSubmoduleHead = await git(networkPath).branchLocal();
     console.log(
       chalk.green.bold('Compiling Contracts using'),
       chalk.bold(
-        `truffle${chalk.gray('@')}${
-          global.submodules.network.package.devDependencies.truffle
-        }`,
+        `truffle${chalk.gray('@')}${networkPackage.devDependencies.truffle}`,
       ),
       chalk.green.bold('from'),
       chalk.bold(
