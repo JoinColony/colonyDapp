@@ -15,6 +15,16 @@ const { isEmptySync } = fs;
 let exec = util.promisify(childProcess.exec);
 
 global.DEBUG = process.env.DEBUG || false;
+/*
+ * If we're in watch mode, so we need to check if this is the first run or not.
+ *
+ * On the first run, we'll set up ganache and compile contracts, but if we're on
+ * a subsequent run, we leave them just as they are.
+ * Also, if this is NOT a first run, we're not killing the ganache server in the
+ * teardown step.
+ */
+global.WATCH = process.env.WATCH || false;
+global.WATCH_FIRST_RUN = true;
 
 if (global.DEBUG) {
   exec = util.promisify((...args) => {
@@ -67,6 +77,9 @@ module.exports = async () => {
    */
   console.log();
 
+  /*
+   * Tell the user we're in DEBUG mode
+   */
   if (global.DEBUG) {
     console.log(chalk.bgYellowBright.black.bold('  DEBUG MODE  \n'));
   }
@@ -100,6 +113,9 @@ module.exports = async () => {
 
   /*
    * Checking if submodules are provisioned. If they're not, just re-provision
+   *
+   * Maybe we also need to check here if we're in watch mode. Although it's very
+   * unlikely that submodules are going to change during running of the tests.
    */
   if (
     isEmptySync(clientPath) ||
@@ -133,35 +149,65 @@ module.exports = async () => {
    * Start the ganache server
    */
   const ganacheServerPort = '8545';
-  await global.ganacheServer.listen(ganacheServerPort);
-  console.log(
-    chalk.green.bold('Ganache Server started on'),
-    chalk.bold(`${chalk.gray('http://')}localhost:${ganacheServerPort}`),
-  );
+  /*
+   * In WATCH mode, only start the server if this is the first run
+   */
+  if (global.WATCH && global.WATCH_FIRST_RUN) {
+    await global.ganacheServer.listen(ganacheServerPort);
+    console.log(
+      chalk.green.bold('Ganache Server started on'),
+      chalk.bold(`${chalk.gray('http://')}localhost:${ganacheServerPort}`),
+    );
+  }
 
   /*
    * Compile the `colonyNetwork` contracts
+   *
+   * In WATCH mode, only compile contracts if this is the first run
    */
-  const colonyNetworkSubmoduleHead = await git(networkPath).branchLocal();
-  console.log(
-    chalk.green.bold('Compiling Contracts using'),
-    chalk.bold(
-      `truffle${chalk.gray('@')}${
-        global.submodules.network.package.devDependencies.truffle
-      }`,
-    ),
-    chalk.green.bold('from'),
-    chalk.bold(
-      `colonyNetwork${chalk.gray('#')}${colonyNetworkSubmoduleHead.current}`,
-    ),
-  );
-  await exec(
-    `${networkPath}/node_modules/.bin/truffle migrate --reset --compile-all`,
-    { cwd: networkPath },
-  );
+  if (global.WATCH && global.WATCH_FIRST_RUN) {
+    const colonyNetworkSubmoduleHead = await git(networkPath).branchLocal();
+    console.log(
+      chalk.green.bold('Compiling Contracts using'),
+      chalk.bold(
+        `truffle${chalk.gray('@')}${
+          global.submodules.network.package.devDependencies.truffle
+        }`,
+      ),
+      chalk.green.bold('from'),
+      chalk.bold(
+        `colonyNetwork${chalk.gray('#')}${colonyNetworkSubmoduleHead.current}`,
+      ),
+    );
+    await exec(
+      `${networkPath}/node_modules/.bin/truffle migrate --reset --compile-all`,
+      { cwd: networkPath },
+    );
+  }
 
   /*
    * Start running Jest unit tests
    */
   console.log(chalk.green.bold('Starting integration test suites'));
+
+  /*
+   * If WATCH mode, and if this is the first run, at this stage we ran it's course.
+   * So it's no longer a first run.
+   */
+  if (global.WATCH && global.WATCH_FIRST_RUN) {
+    global.WATCH_FIRST_RUN = false;
+  }
+
+  /*
+   * @TODO In WATCH mode run teardown
+   *
+   * Currently we don't run the teardown step in WATCH mode. This is because we
+   * can't run it with the current config options `jest` provides us.
+   *
+   * If they will ever implement a `globalCleanup` config option, then we could
+   * do teardown there.
+   *
+   * This just affects WATCH mode, in a normal run, cleanup/teardown
+   * is performed as expected.
+   */
 };
