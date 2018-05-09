@@ -1,14 +1,16 @@
 /* @flow */
 import IPFS from 'ipfs';
 import { sleep } from '../utils/time';
+import type { B58String, ColonyIPFSNode, ColonyIPFSOptions, IPFSNode, IPFSOptions, IPFSPeer, } from './types';
 
 export { IPFS };
+
 
 const DEFAULT_IPFS_SWARM = [];
 const DEFAULT_BOOTSTRAP = [];
 const DEFAULT_REPO = 'colonyIpfs';
 
-export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, bootstrap = DEFAULT_BOOTSTRAP, repo = DEFAULT_REPO } = {}) {
+export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, bootstrap = DEFAULT_BOOTSTRAP, repo = DEFAULT_REPO }: ColonyIPFSOptions = {}): IPFSOptions {
   return {
     repo: repo,
     config: {
@@ -36,7 +38,7 @@ export function makeOptions({ swarm = DEFAULT_IPFS_SWARM, bootstrap = DEFAULT_BO
  * @param peerItem
  * @returns {string|*}
  */
-function peerToB58String(peerItem) {
+function peerToB58String(peerItem: IPFSPeer): B58String {
   return peerItem.peer.id.toB58String();
 }
 
@@ -48,11 +50,13 @@ function peerToB58String(peerItem) {
  * @param ipfs
  * @returns {Promise<*>}
  */
-export async function getPeers(ipfs) {
-  const peers = await ipfs.swarm.peers();
-  if (peers.length && peers.length > 0) {
+export async function getPeers(ipfs: IPFSNode): Promise<?IPFSPeer[]> {
+  const peers: ?IPFSPeer[] = await ipfs.swarm.peers();
+
+  if (peers && peers.length && peers.length > 0) {
     return peers;
   }
+
   return undefined;
 }
 
@@ -64,10 +68,11 @@ export async function getPeers(ipfs) {
  * @param ipfs
  * @returns {Promise<*>}
  */
-export async function waitForSomePeers(ipfs) {
-  let peers = await getPeers(ipfs);
+export async function waitForSomePeers(ipfs: IPFSNode): Promise<IPFSPeer[]> {
+  let peers: ?IPFSPeer[] = await getPeers(ipfs);
 
-  while (peers === undefined) {
+  // TODO(laurent): in offline mode this would go into an infinite loop.
+  while (!peers) {
     await sleep(500);
     peers = await getPeers(ipfs);
   }
@@ -83,7 +88,7 @@ export async function waitForSomePeers(ipfs) {
  * @param peerID
  * @returns {Promise<boolean>}
  */
-export async function waitForPeer(ipfs, peerID) {
+export async function waitForPeer(ipfs: IPFSNode, peerID: B58String): Promise<boolean> {
   let peers = await waitForSomePeers(ipfs);
   let peersB58 = peers.map(peerToB58String);
 
@@ -99,12 +104,14 @@ export async function waitForPeer(ipfs, peerID) {
 /**
  * Promise that returns the given node ID
  *
- * @param ipfsNode
+ * @param ipfs
  * @returns {Promise<any>} the node's B58 string id.
  */
-export function getNodeID(ipfsNode) {
+export function getNodeID(ipfs: IPFSNode): Promise<B58String> {
+  // TODO(laurent): type with error.
+
   return new Promise((resolve, reject) => {
-    ipfsNode.id((err, n) => {
+    ipfs.id((err, n) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -115,6 +122,8 @@ export function getNodeID(ipfsNode) {
     })
   })
 }
+
+type PromiseResolve<T> = (T) => void;
 
 /**
  * Return a new IPFS object ready for use.
@@ -127,13 +136,14 @@ export function getNodeID(ipfsNode) {
  * @param options
  * @returns {getIPFS|IPFS}
  */
-export function getIPFS(options) {
+export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   console.log('Get IPFS instance with:', options);
 
   const ipfs = new IPFS(options);
 
-  let readyResolve = null;
-  let readyReject = null;
+  let readyResolve: ?PromiseResolve<boolean> = null;
+  let readyReject: ?PromiseResolve<Error> = null;
+
   const isReady = new Promise((resolve, reject) => {
     readyResolve = resolve;
     readyReject = reject;
@@ -141,11 +151,22 @@ export function getIPFS(options) {
 
   ipfs.on('ready', () => {
     console.log('IPFS is ready...');
+
+    // Reassure flow type
+    if (!readyResolve) {
+      throw new Error("Colony's IPFS is not ready");
+    }
+
     readyResolve(true);
   });
 
   ipfs.on('error', e => {
     console.error('IPFS failed to start: ', e);
+
+    // Reassure flow type
+    if (!readyReject) {
+      throw new Error("Colony's IPFS is not ready");
+    }
     readyReject(e);
   });
 

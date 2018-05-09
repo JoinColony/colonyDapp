@@ -2,11 +2,14 @@
 import * as ipfs from './ipfs';
 import { getNodeID } from './ipfs';
 import * as orbit from './orbit';
+import type { B58String, ColonyIPFSNode, DataOptions, OrbitKVStore, OrbitNode, Pinner } from './types';
 
 type PeerId = string;
 type PublicKey = string;
 
 class UserProfile {
+  _store: OrbitKVStore;
+
   constructor(store) {
     this._store = store;
   }
@@ -43,11 +46,12 @@ class UserProfile {
 }
 
 export default class Data {
-  _ipfsNode: ipfs.IPFS;
-  _orbitNode: orbit.OrbitDB;
+  _pinner: Pinner;
+  _ipfsNode: ColonyIPFSNode;
+  _orbitNode: OrbitNode;
   _key: string;
 
-  constructor(pinner, ipfsNode, orbitNode) {
+  constructor(pinner: Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
     this._pinner = pinner;
     this._ipfsNode = ipfsNode;
     this._orbitNode = orbitNode;
@@ -57,25 +61,25 @@ export default class Data {
   // TODO(laurent): This design is time-dependant and relies
   // on lots of mutations, refactor to work with a builder
   // pattern that is immutable.
-  async ready() {
+  async ready(): Promise<boolean> {
     await this._ipfsNode.ready();
     return true;
   }
 
-  async waitForPeer(peerID) {
+  async waitForPeer(peerID: B58String): Promise<boolean> {
     return await this._ipfsNode.waitForPeer(peerID);
   }
 
-  async peerID() {
+  async peerID(): Promise<B58String> {
     return await getNodeID(this._ipfsNode);
   }
 
-  async stop() {
+  async stop(): Promise<void> {
     await this._orbitNode.stop();
     await this._ipfsNode.stop();
   }
 
-  static async fromDefaultConfig(pinner, opts) {
+  static async fromDefaultConfig(pinner: Pinner, opts: DataOptions): Promise<Data> {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
 
@@ -85,7 +89,7 @@ export default class Data {
     return new Data(pinner, ipfsNode, orbitNode);
   }
 
-  async getUserProfile(key: PublicKey): UserProfile {
+  async getUserProfile(key: PublicKey): Promise<UserProfile> {
     console.log('Build User Profile Store with key=', key);
     const store = await this._orbitNode.kvstore(key);
     console.log('Pin User Profile Store with address=', store.address);
@@ -95,11 +99,11 @@ export default class Data {
     return new UserProfile(store);
   }
 
-  async getMyUserProfile(): UserProfile {
+  async getMyUserProfile(): Promise<UserProfile> {
     return this.getUserProfile('user-profile');
   }
 
-  async listPeers(): Array<PeerId> {
+  async listPeers(): Promise<PeerId[]> {
     const peers = await this._ipfsNode.swarm.peers();
     return peers.map(x => x.peer.id.toB58String());
   }
