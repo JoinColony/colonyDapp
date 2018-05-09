@@ -9,6 +9,7 @@ const extfs = require('extfs');
 const git = require('simple-git/promise');
 const rimraf = require('rimraf');
 const fs = require('fs');
+const TrufflePig = require('trufflepig');
 
 const { isEmptySync } = extfs;
 const { writeFile } = fs;
@@ -45,10 +46,11 @@ const clientPath = path.resolve(libPath, 'colony-js');
 const walletPath = path.resolve(libPath, 'colony-wallet');
 const networkPath = path.resolve(libPath, 'colonyNetwork');
 const ganacheAccountsFile = path.resolve('.', 'ganache-accounts.json');
+const contractsFolder = path.resolve(networkPath, 'build', 'contracts');
 
 const cleanupArtifacts = message => {
   console.log(chalk.green.bold(message));
-  const cleanupPaths = [ganacheAccountsFile, `${networkPath}/build/contracts`];
+  const cleanupPaths = [ganacheAccountsFile, contractsFolder];
   cleanupPaths.map(async artifactPath => {
     if (global.DEBUG) {
       console.log(`Removing: ${artifactPath}`);
@@ -71,6 +73,10 @@ module.exports = async () => {
     console.log(chalk.bgYellowBright.black.bold('  DEBUG MODE  \n'));
   }
 
+  /*
+   * Setup & configure ganache
+   */
+  const ganacheServerPort = '8545';
   const ganacheServerOptions = {
     default_balance_ether: 100,
     total_accounts: 10,
@@ -112,6 +118,20 @@ module.exports = async () => {
   };
 
   /*
+   * Setup & configure TrufflePig
+   */
+  const trufflePigOptionsServerPort = '3030';
+  const trufflePigOptions = {
+    contractDir: contractsFolder,
+    port: trufflePigOptionsServerPort,
+    verbose: global.DEBUG && true,
+    ganacheKeyFile: ganacheAccountsFile,
+  };
+  // const trufflePigInstance = new TrufflePig(trufflePigOptions);
+
+  global.trufflePigServer = new TrufflePig(trufflePigOptions);
+
+  /*
    * Checking if submodules are provisioned. If they're not, just re-provision
    *
    * Maybe we also need to check here if we're in watch mode. Although it's very
@@ -135,10 +155,6 @@ module.exports = async () => {
   /* eslint-disable global-require, import/no-dynamic-require */
   const networkPackage = require(path.resolve(networkPath, 'package.json'));
 
-  /*
-   * Start the ganache server
-   */
-  const ganacheServerPort = '8545';
   if (!global.WATCH || (global.WATCH && global.WATCH_FIRST_RUN)) {
     /*
      * Perform initial cleanup, since there's a good chance there are leftover
@@ -148,6 +164,8 @@ module.exports = async () => {
     cleanupArtifacts('Removing leftover artifacts');
 
     /*
+     * Start the ganache server
+     *
      * In WATCH mode, only start the server if this is the first run
      */
     await global.ganacheServer.listen(ganacheServerPort);
@@ -195,6 +213,14 @@ module.exports = async () => {
     await exec(
       `${networkPath}/node_modules/.bin/truffle migrate --reset --compile-all`,
       { cwd: networkPath },
+    );
+
+    await global.trufflePigServer.start();
+    console.log(
+      chalk.green.bold('TrufflePig Server started on'),
+      chalk.bold(
+        `${chalk.gray('http://')}localhost:${trufflePigOptionsServerPort}`,
+      ),
     );
   }
 

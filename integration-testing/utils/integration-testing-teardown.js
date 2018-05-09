@@ -12,6 +12,9 @@ module.exports = async () => {
     await global.ganacheServer.stop();
     console.log(chalk.green.bold('Ganache Server Stopped'));
 
+    global.trufflePigServer.close();
+    console.log(chalk.green.bold('TrufflePig Server Stopped'));
+
     /*
      * Cleanup
      *
