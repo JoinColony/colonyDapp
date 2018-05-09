@@ -33,4 +33,21 @@ module.exports = async () => {
       chalk.yellow.bold('log file'),
     );
   }
+
+  /*
+   * If we're NOT in WATCH mode, manually kill the process
+   *
+   * This is because one of the servers hang and doesn't allow the test runner
+   * to shut down gracefully.
+   *
+   * I suspect this is comming from TrufflePig, but it will require further
+   * investigation to be sure.
+   *
+   * @TODO Cleaner test runner shutdown
+   *
+   * Find a way to close the process and not rely on `process.exit()`
+   */
+  if (!global.WATCH || (global.WATCH && global.WATCH_FIRST_RUN)) {
+    process.exit();
+  }
 };
