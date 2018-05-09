@@ -1,13 +1,11 @@
 /* @flow */
-const EventEmitter = require('events').EventEmitter;
-
-export type { Store as OrbitStore } from 'orbit-db-store';
-export type { KeyValueStore as OrbitKVStore } from 'orbit-db-kvstore';
 import type { IPFS } from 'ipfs';
 import type PeerInfo from 'peer-info';
 import type MultiAddr from 'multiaddr';
-
 import OrbitDB from 'orbit-db';
+
+export type { Store as OrbitStore } from 'orbit-db-store';
+export type { KeyValueStore as OrbitKVStore } from 'orbit-db-kvstore';
 
 export type B58String = string;
 
@@ -20,19 +18,19 @@ type path = string;
 export type ColonyIPFSOptions = {
   swarm: IPFSSwarmAddress[],
   bootstrap: IPFSBootstrapAddress[],
-  repo: path
+  repo: path,
 };
 
 export type IPFSNode = IPFS;
 
 export type ColonyIPFSNode = IPFSNode & {
-  ready: () => Promise<boolean>
+  ready: () => Promise<boolean>,
 };
 
 export type IPFSPeer = {
   addr: MultiAddr,
-  peer: PeerInfo
-}
+  peer: PeerInfo,
+};
 
 export type ColonyOrbitOptions = { repo: ?string };
 
@@ -40,12 +38,10 @@ export type OrbitOptions = {};
 
 export type DataOptions = {
   ipfs: ColonyIPFSOptions,
-  orbit: ColonyOrbitOptions
+  orbit: ColonyOrbitOptions,
 };
 
 export type OrbitNode = OrbitDB;
-//export type OrbitKVStore = Store;
-//{ events: EventEmitter };
 
 export type StoreAddress = string;
-export type Pinner = { pinKVStore: (StoreAddress) => void };
+export type Pinner = { pinKVStore: StoreAddress => void };

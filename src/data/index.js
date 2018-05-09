@@ -1,10 +1,15 @@
 /* @flow */
 import * as ipfs from './ipfs';
-import { getNodeID } from './ipfs';
 import * as orbit from './orbit';
-import type { B58String, ColonyIPFSNode, DataOptions, OrbitKVStore, OrbitNode, Pinner } from './types';
+import type {
+  B58String,
+  ColonyIPFSNode,
+  DataOptions,
+  OrbitKVStore,
+  OrbitNode,
+  Pinner,
+} from './types';
 
-type PeerId = string;
 type PublicKey = string;
 
 class UserProfile {
@@ -15,7 +20,7 @@ class UserProfile {
   }
 
   isEmpty(): boolean {
-    console.log("GET CREATED", this._store.get('created'));
+    // console.log('GET CREATED', this._store.get('created'));
     return !this._store.get('created');
   }
 
@@ -35,13 +40,15 @@ class UserProfile {
   }
 
   subscribe(f) {
-    this._store.events.on('replicated', (addr) => {
-      console.log(
-        'UserProfile at address=', this.address(),
-        'replicated with address=', addr
-      );
+    this._store.events.on('replicated', () => {
+      // console.log(
+      //   'UserProfile at address=',
+      //   this.address(),
+      //   'replicated with address=',
+      //   addr,
+      // );
       f({ name: this.getName() });
-    })
+    });
   }
 }
 
@@ -55,7 +62,7 @@ export default class Data {
     this._pinner = pinner;
     this._ipfsNode = ipfsNode;
     this._orbitNode = orbitNode;
-    this._key = "helloworld";
+    this._key = 'helloworld';
   }
 
   // TODO(laurent): This design is time-dependant and relies
@@ -67,19 +74,22 @@ export default class Data {
   }
 
   async waitForPeer(peerID: B58String): Promise<boolean> {
-    return await this._ipfsNode.waitForPeer(peerID);
+    return this._ipfsNode.waitForPeer(peerID);
   }
 
   async peerID(): Promise<B58String> {
-    return await getNodeID(this._ipfsNode);
+    return ipfs.getNodeID(this._ipfsNode);
   }
 
   async stop(): Promise<void> {
     await this._orbitNode.stop();
-    await this._ipfsNode.stop();
+    return this._ipfsNode.stop();
   }
 
-  static async fromDefaultConfig(pinner: Pinner, opts: DataOptions): Promise<Data> {
+  static async fromDefaultConfig(
+    pinner: Pinner,
+    opts: DataOptions,
+  ): Promise<Data> {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
 
@@ -90,12 +100,12 @@ export default class Data {
   }
 
   async getUserProfile(key: PublicKey): Promise<UserProfile> {
-    console.log('Build User Profile Store with key=', key);
+    // console.log('Build User Profile Store with key=', key);
     const store = await this._orbitNode.kvstore(key);
-    console.log('Pin User Profile Store with address=', store.address);
+    // console.log('Pin User Profile Store with address=', store.address);
     await store.load();
     await this._pinner.pinKVStore(store.address);
-    console.log('Complete User Profile Store creations');
+    // console.log('Complete User Profile Store creations');
     return new UserProfile(store);
   }
 
@@ -103,7 +113,7 @@ export default class Data {
     return this.getUserProfile('user-profile');
   }
 
-  async listPeers(): Promise<PeerId[]> {
+  async listPeers(): Promise<B58String[]> {
     const peers = await this._ipfsNode.swarm.peers();
     return peers.map(x => x.peer.id.toB58String());
   }

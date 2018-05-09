@@ -27,7 +27,7 @@ export async function retryUntilValue(f, { attempts, value } = { attempts: 20, v
   attempts = attempts || 20;
 
   let r = f()
-  console.log('GOT=', r);
+  // console.log('GOT=', r);
 
   const shouldContinue = () => {
     if (value === undefined) {
@@ -42,7 +42,7 @@ export async function retryUntilValue(f, { attempts, value } = { attempts: 20, v
     await sleep(500);
     r = f();
     attempts--;
-    console.log('Retried, GOT=', r);
+    // console.log('Retried, GOT=', r);
   }
 
   return r
