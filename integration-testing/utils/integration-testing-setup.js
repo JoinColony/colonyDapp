@@ -5,14 +5,17 @@ const ganache = require('ganache-cli');
 const chalk = require('chalk');
 const childProcess = require('child_process');
 const path = require('path');
-const fs = require('extfs');
+const extfs = require('extfs');
 const git = require('simple-git/promise');
 const rimraf = require('rimraf');
+const fs = require('fs');
 
-const { isEmptySync } = fs;
+const { isEmptySync } = extfs;
+const { writeFile } = fs;
 
 let exec = util.promisify(childProcess.exec);
 const remove = util.promisify(rimraf);
+const write = util.promisify(writeFile);
 
 global.DEBUG = process.env.DEBUG || false;
 /*
@@ -41,13 +44,11 @@ const libPath = path.resolve('src', 'lib');
 const clientPath = path.resolve(libPath, 'colony-js');
 const walletPath = path.resolve(libPath, 'colony-wallet');
 const networkPath = path.resolve(libPath, 'colonyNetwork');
+const ganacheAccountsFile = path.resolve('.', 'ganache-accounts.json');
 
 const cleanupArtifacts = message => {
   console.log(chalk.green.bold(message));
-  const cleanupPaths = [
-    'ganache-accounts.json',
-    `${networkPath}/build/contracts`,
-  ];
+  const cleanupPaths = [ganacheAccountsFile, `${networkPath}/build/contracts`];
   cleanupPaths.map(async artifactPath => {
     if (global.DEBUG) {
       console.log(`Removing: ${artifactPath}`);
@@ -89,6 +90,25 @@ module.exports = async () => {
   global.ganacheServer = {
     listen: util.promisify(server.listen),
     stop: util.promisify(server.close),
+  };
+
+  /*
+   * Generate the accounts object. These addresses are generated at startup by ganache.
+   *
+   * They will be written to a file and they are added to the global object, so they're
+   * available during testing.
+   */
+  global.integrationTestionAccounts = {
+    accounts: server.provider.manager.state.accounts,
+    private_keys: Object.keys(server.provider.manager.state.accounts).reduce(
+      (keys, address) =>
+        Object.assign({}, keys, {
+          [address]: server.provider.manager.state.accounts[
+            address
+          ].secretKey.toString('hex'),
+        }),
+      {},
+    ),
   };
 
   /*
@@ -135,6 +155,26 @@ module.exports = async () => {
       chalk.green.bold('Ganache Server started on'),
       chalk.bold(`${chalk.gray('http://')}localhost:${ganacheServerPort}`),
     );
+
+    /*
+     * Write the accounts to a Json file so they're available externally (most likely to trufflepig);
+     *
+     * If we're in WATCH mode, only write the file once.
+     */
+    await write(
+      ganacheAccountsFile,
+      JSON.stringify(global.integrationTestionAccounts),
+    );
+    /*
+     * If we're in DEBUG mode, tell the user we wrote the accounts file
+     */
+    if (global.DEBUG) {
+      console.log(
+        chalk.yellow.bold('Saved accounts to'),
+        chalk.bold(ganacheAccountsFile),
+        chalk.yellow.bold('JSON file'),
+      );
+    }
 
     /*
      * Compile the `colonyNetwork` contracts
