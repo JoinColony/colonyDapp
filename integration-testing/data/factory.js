@@ -1,5 +1,5 @@
 import rimraf from 'rimraf';
-import { timePrefix } from '../../src/utils/time';
+import { timePrefix } from '../utils/tools';
 import * as ipfs from '../../src/data/ipfs'
 import * as orbit from '../../src/data/orbit'
 import { makePinner } from './pinner.mock'

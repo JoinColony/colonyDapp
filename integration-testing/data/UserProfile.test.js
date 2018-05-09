@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import Factory from './factory';
 import { sleep } from '../../src/utils/time';
-import { retryUntilValue } from '../utils';
+import { retryUntilValue } from '../utils/tools';
 
 let factory = null;
 let pinner = null;
@@ -49,21 +49,19 @@ describe('User Profile', () => {
   test('Create my user profile and set its name sync with another', async () => {
     const p1 = await data3.getMyUserProfile();
     const p2 = await data4.getUserProfile(p1.address());
-    let name = factory.name('Franz Kafka');
+    const name = factory.name('Franz Kafka');
 
     await p1.setName(name);
 
-    await sleep(1000);
-
     expect(p1.isEmpty()).toBeFalsy();
-    expect(p2.isEmpty()).toBeFalsy();
-    expect(p2.getName()).toBe(name);
-  }, 55000);
+    expect(await retryUntilValue(() => p2.isEmpty(), { value: false })).toBeFalsy();
+    expect(await retryUntilValue(() => p2.getName(), { value: name })).toBe(name);
+  }, Factory.TIMEOUT);
 
   test('Create a user profile and subscribe to changes', async () => {
     // Arrange
     const p1 = await data2.getMyUserProfile();
-    const p2 = await data3.getMyUserProfile(p1.address());
+    const p2 = await data3.getUserProfile(p1.address());
     let name = factory.name('Albert Camus');
 
     let update = {};
@@ -77,5 +75,5 @@ describe('User Profile', () => {
 
     // Assert
     expect(await retryUntilValue(() => update.name)).toEqual(name);
-  });
+  }, Factory.TIMEOUT);
 });

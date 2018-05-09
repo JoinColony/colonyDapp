@@ -3,7 +3,7 @@ import { sleep } from '../../src/utils/time';
 import * as orbit from '../../src/data/orbit';
 import { Pinner } from './pinner.mock';
 import Factory from './factory';
-import { retryUntilValue } from '../utils';
+import { retryUntilValue } from '../utils/tools';
 
 let factory = null;
 let pinner = null

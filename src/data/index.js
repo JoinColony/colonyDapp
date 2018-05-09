@@ -9,9 +9,6 @@ type PublicKey = string;
 class UserProfile {
   constructor(store) {
     this._store = store;
-    this._store.events.on('replicated', addr => {
-      console.log('Store replicated addr=', addr);
-    })
   }
 
   isEmpty(): boolean {
