@@ -88,7 +88,7 @@ export default class Data {
 
   static async fromDefaultConfig(
     pinner: Pinner,
-    opts: DataOptions,
+    opts: DataOptions = { ipfs: {}, orbit: {} },
   ): Promise<Data> {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);

@@ -9,7 +9,8 @@
     },
     "setupFiles": [
         "<rootDir>/utils/test/shims.js",
-        "<rootDir>/utils/test/setup.js"
+        "<rootDir>/utils/test/setup.js",
+        "<rootDir>/utils/test/patch-node-crypto.js"
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
     "collectCoverageFrom" : ["**/*.{js,jsx}"],
