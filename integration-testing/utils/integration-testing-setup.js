@@ -101,10 +101,9 @@ module.exports = async () => {
   /*
    * Generate the accounts object. These addresses are generated at startup by ganache.
    *
-   * They will be written to a file and they are added to the global object, so they're
-   * available during testing.
+   * They will be written to a file so other services can access them
    */
-  global.integrationTestionAccounts = {
+  const ganacheAccounts = {
     accounts: server.provider.manager.state.accounts,
     private_keys: Object.keys(server.provider.manager.state.accounts).reduce(
       (keys, address) =>
@@ -179,10 +178,7 @@ module.exports = async () => {
      *
      * If we're in WATCH mode, only write the file once.
      */
-    await write(
-      ganacheAccountsFile,
-      JSON.stringify(global.integrationTestionAccounts),
-    );
+    await write(ganacheAccountsFile, JSON.stringify(ganacheAccounts));
     /*
      * If we're in DEBUG mode, tell the user we wrote the accounts file
      */

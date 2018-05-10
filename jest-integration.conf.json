@@ -5,5 +5,8 @@
     "globalTeardown": "./utils/integration-testing-teardown.js",
     "testPathIgnorePatterns": [
         "utils"
+    ],
+    "setupFiles": [
+        "./utils/setup-accounts-global.js"
     ]
 }
