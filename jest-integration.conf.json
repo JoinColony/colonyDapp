@@ -9,5 +9,6 @@
     "setupFiles": [
         "./utils/setup-accounts-global.js",
         "./utils/fetch-polyfill.js"
-    ]
+    ],
+    "testEnvironment": "node"
 }

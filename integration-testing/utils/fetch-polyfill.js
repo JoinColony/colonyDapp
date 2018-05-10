@@ -1,1 +1,1 @@
-require('whatwg-fetch');
+global.fetch = require('node-fetch');
