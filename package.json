@@ -110,7 +110,8 @@
     "trufflepig": "^1.0.2",
     "webpack": "^4.3.0",
     "webpack-cli": "^2.0.13",
-    "webpack-dev-server": "^3.0.0"
+    "webpack-dev-server": "^3.0.0",
+    "whatwg-fetch": "^2.0.4"
   },
   "dependencies": {
     "cleave.js": "^1.0.9",

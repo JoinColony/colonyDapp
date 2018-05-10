@@ -7,6 +7,7 @@
         "utils"
     ],
     "setupFiles": [
-        "./utils/setup-accounts-global.js"
+        "./utils/setup-accounts-global.js",
+        "./utils/fetch-polyfill.js"
     ]
 }
