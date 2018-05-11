@@ -8,7 +8,7 @@ module.exports = async () => {
    *
    * In WATCH mode, only stop the server if this is the first run
    */
-  if (!global.WATCH || (global.WATCH && global.WATCH_FIRST_RUN)) {
+  if (!global.WATCH) {
     await global.ganacheServer.stop();
     console.log(chalk.green.bold('Ganache Server Stopped'));
 
@@ -47,7 +47,7 @@ module.exports = async () => {
    *
    * Find a way to close the process and not rely on `process.exit()`
    */
-  if (!global.WATCH || (global.WATCH && global.WATCH_FIRST_RUN)) {
+  if (!global.WATCH) {
     process.exit();
   }
 };

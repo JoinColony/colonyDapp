@@ -100,6 +100,7 @@
     "redux-test-utils": "^0.2.1",
     "rimraf": "^2.6.2",
     "simple-git": "^1.92.0",
+    "sleep": "^5.1.1",
     "style-loader": "^0.21.0",
     "stylelint": "^9.1.1",
     "stylelint-config-css-modules": "^1.2.0",

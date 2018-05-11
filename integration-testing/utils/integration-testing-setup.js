@@ -246,4 +246,5 @@ module.exports = async () => {
    * This just affects WATCH mode, in a normal run, cleanup/teardown
    * is performed as expected.
    */
+  return false;
 };
