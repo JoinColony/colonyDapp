@@ -127,7 +127,6 @@ module.exports = async () => {
     verbose: global.DEBUG && true,
     ganacheKeyFile: ganacheAccountsFile,
   };
-  // const trufflePigInstance = new TrufflePig(trufflePigOptions);
 
   global.trufflePigServer = new TrufflePig(trufflePigOptions);
 
@@ -246,5 +245,4 @@ module.exports = async () => {
    * This just affects WATCH mode, in a normal run, cleanup/teardown
    * is performed as expected.
    */
-  return false;
 };
