@@ -8,7 +8,7 @@
  *  https://github.com/indutny/brorand/blob/
  *    ddc4f9344287769d7e2c2ea987d26bbeec5456b4/index.js#L30
  *
- * TODO(laurent): Find a more stable solution.
+ * TODO(laurent): Use colony-wallet's polyfill
  */
 function patchNodeCrypto() {
   if (process.env.NODE_ENV === 'test') {
