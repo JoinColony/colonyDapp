@@ -17,6 +17,7 @@ import rootReducer from './reducer';
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 import CreateColony from './modules/dashboard/components/CreateColony';
 import SpinnerLoader from './modules/core/components/Preloaders/SpinnerLoader';
+import Profiles from './modules/pages/components/Profiles';
 
 addLocaleData(en);
 
@@ -42,6 +43,16 @@ const Home = () => (
       <li>
         <NavLink style={{ color: 'blue' }} to="/createcolonytest">
           Create Colony Test
+        </NavLink>
+      </li>
+      <li>
+        <NavLink style={{ color: 'blue' }} to="/profiles/me">
+          My Profile
+        </NavLink>
+      </li>
+      <li>
+        <NavLink style={{ color: 'blue' }} to="/profiles/some-id">
+          Someone's Profile
         </NavLink>
       </li>
     </ul>
@@ -77,6 +88,7 @@ export default function App() {
             <Route exact path="/" component={Home} />
             <Route path="/createcolony" component={CreateColony} />
             <Route path="/dynamic-import-route" component={DynamicRoute} />
+            <Route path="/profiles" component={Profiles} />
           </div>
         </Router>
       </Provider>
