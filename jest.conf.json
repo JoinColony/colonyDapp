@@ -28,6 +28,7 @@
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
+        "src/data",
         "src/lib/colony-js",
         "src/lib/colony-wallet",
         "src/lib/colonyNetwork"
