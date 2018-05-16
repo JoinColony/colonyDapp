@@ -1,8 +1,6 @@
 /* eslint-env jest */
 import Data from '../index'
 
-const RANDOM_KEY = '0x64579b1de5b95ff5da197e8b04d8e03c73572c77';
-
 describe('Data component', () => {
   let data = null;
 
