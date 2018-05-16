@@ -23,10 +23,12 @@ export function timePrefix() {
  * @param value
  * @returns {Promise<*>}
  */
-export async function retryUntilValue(f, { attempts, value } = { attempts: 20, value: undefined }) {
-  attempts = attempts || 20;
-
-  let r = f()
+export async function retryUntilValue(
+  f,
+  { attempts = 20, value } = { attempts: 20, value: undefined },
+) {
+  let attemptsLeft = attempts;
+  let r = f();
 
   const shouldContinue = () => {
     if (value === undefined) {
@@ -34,12 +36,14 @@ export async function retryUntilValue(f, { attempts, value } = { attempts: 20, v
     }
 
     return r !== value;
-  }
+  };
 
-  while (shouldContinue() && attempts > 0) {
+  while (shouldContinue() && attemptsLeft > 0) {
+    // await in loop is required here:
+    // this code HAS to be blocking, there's nothing to parallelize.
     await sleep(500);
     r = f();
-    attempts--;
+    attemptsLeft -= 1;
   }
 
   return r
