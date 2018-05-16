@@ -32,9 +32,8 @@ export async function retryUntilValue(f, { attempts, value } = { attempts: 20, v
     if (value === undefined) {
       return r === undefined;
     }
-    else {
-      return r !== value;
-    }
+
+    return r !== value;
   }
 
   while (shouldContinue() && attempts > 0) {
