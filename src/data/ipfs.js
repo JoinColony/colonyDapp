@@ -81,7 +81,7 @@ export async function getPeers(ipfs: IPFSNode): Promise<?(IPFSPeer[])> {
 export async function waitForSomePeers(ipfs: IPFSNode): Promise<IPFSPeer[]> {
   let peers: ?(IPFSPeer[]) = await getPeers(ipfs);
 
-  // TODO(laurent): in offline mode this would go into an infinite loop.
+  // @TODO in offline mode this would go into an infinite loop.
   while (!peers) {
     await sleep(500);
     peers = await getPeers(ipfs);
@@ -121,7 +121,7 @@ export async function waitForPeer(
  * @returns {Promise<any>} the node's B58 string id.
  */
 export function getNodeID(ipfs: IPFSNode): Promise<B58String> {
-  // TODO(laurent): type with error.
+  // @TODO type with error.
 
   return new Promise((resolve, reject) => {
     ipfs.id((err, n) => {

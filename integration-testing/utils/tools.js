@@ -5,7 +5,7 @@ import { sleep } from '../../src/utils/time';
  * in the form '20180430_200059'
  */
 export function timePrefix() {
-  // TODO(laurent): lpad numbers.
+  // @TODO lpad numbers.
   const d = new Date();
   const a = `${d.getUTCFullYear()}${d.getUTCMonth()}${d.getUTCDay()}`;
   const b = `${d.getUTCHours()}${d.getUTCMinutes()}${d.getUTCSeconds()}`;

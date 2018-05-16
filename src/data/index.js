@@ -58,7 +58,7 @@ export default class Data {
     this._key = 'helloworld';
   }
 
-  // TODO(laurent): This design is time-dependant and relies
+  // @TODO This design is time-dependant and relies
   // on lots of mutations, refactor to work with a builder
   // pattern that is immutable.
   async ready(): Promise<boolean> {
