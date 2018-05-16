@@ -6,7 +6,7 @@ const colonyName = 'Integration Tests Colony';
 let colonyAddress;
 let colonyToken;
 
-describe('`ColonyNetworkClient` is able to', () => {
+describe('`ColonyClient` is able to', () => {
   test('Create a new Colony (instance)', async () => {
     /*
      * Get the network client
