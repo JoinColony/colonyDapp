@@ -20,7 +20,6 @@ class UserProfile {
   }
 
   isEmpty(): boolean {
-    // console.log('GET CREATED', this._store.get('created'));
     return !this._store.get('created');
   }
 
@@ -41,12 +40,6 @@ class UserProfile {
 
   subscribe(f) {
     this._store.events.on('replicated', () => {
-      // console.log(
-      //   'UserProfile at address=',
-      //   this.address(),
-      //   'replicated with address=',
-      //   addr,
-      // );
       f({ name: this.getName() });
     });
   }
@@ -100,12 +93,9 @@ export default class Data {
   }
 
   async getUserProfile(key: PublicKey): Promise<UserProfile> {
-    // console.log('Build User Profile Store with key=', key);
     const store = await this._orbitNode.kvstore(key);
-    // console.log('Pin User Profile Store with address=', store.address);
     await store.load();
     await this._pinner.pinKVStore(store.address);
-    // console.log('Complete User Profile Store creations');
     return new UserProfile(store);
   }
 

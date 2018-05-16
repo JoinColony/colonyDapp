@@ -126,7 +126,6 @@ export function getNodeID(ipfs: IPFSNode): Promise<B58String> {
   return new Promise((resolve, reject) => {
     ipfs.id((err, n) => {
       if (err) {
-        // console.error(err);
         reject(err);
       } else {
         resolve(n.id);
@@ -149,7 +148,6 @@ type PromiseResolve<T> = T => void;
  * @returns {getIPFS|IPFS}
  */
 export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
-  // console.log('Get IPFS instance with:', options);
 
   const ipfs = new IPFS(options);
 
@@ -162,7 +160,6 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   });
 
   ipfs.on('ready', () => {
-    // console.log('IPFS is ready...');
 
     // Reassure flow type
     if (!readyResolve) {
@@ -173,7 +170,7 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   });
 
   ipfs.on('error', e => {
-    // console.error('IPFS failed to start: ', e);
+    console.error('IPFS failed to start: ', e);
 
     // Reassure flow type
     if (!readyReject) {

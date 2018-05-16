@@ -58,9 +58,6 @@ export async function makePinner(pinnerName) {
     pinBlock: (id) => node.block.get(id),
     pinKVStore: async (addr) => {
       const store = await orbit.keyvalue(addr)
-      store.events.on('replicated', addr => {
-        console.log('Pinner Replicated addr=', addr);
-      });
       pinnedStores.push(store);
     }
   }

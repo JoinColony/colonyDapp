@@ -66,7 +66,6 @@ describe('User Profile', () => {
 
     let update = {};
     p2.subscribe(x => {
-      console.log('Subscription triggered with x=', x);
       update = x;
     })
 

@@ -15,6 +15,5 @@ export async function getOrbitDB(
   ipfs: ColonyIPFSNode,
   { path, options }: WrappedOptions = { path: DEFAULT_DB_PATH, options: {} },
 ) {
-  // console.log('Get OrbitDB instance with path:', path);
   return new OrbitDB(ipfs, path, options);
 }

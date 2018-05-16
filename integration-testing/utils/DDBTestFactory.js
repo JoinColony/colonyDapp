@@ -50,7 +50,7 @@ export default class Factory {
       return this._pinner.bootstrap;
     }
     else {
-      console.log('WARNING: no pinner?');
+      console.warn('You probably need a pinner service.');
       return [];
     }
   }
