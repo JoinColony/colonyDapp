@@ -1,9 +1,9 @@
 import rimraf from 'rimraf';
 import { timePrefix } from '../utils/tools';
-import * as ipfs from '../../src/data/ipfs'
-import * as orbit from '../../src/data/orbit'
-import { makePinner } from './pinner.mock'
-import Data from "../../src/data"
+import * as ipfs from '../../src/data/ipfs';
+import * as orbit from '../../src/data/orbit';
+import makePinner from './pinner.mock';
+import Data from '../../src/data';
 
 const ROOT_REPO = '/tmp/tests/';
 
@@ -28,7 +28,7 @@ const ROOT_REPO = '/tmp/tests/';
  * factory will be connected to the others through the
  * `pinner` object.
  */
-export default class Factory {
+export default class DDBTestFactory {
   static TIMEOUT = 60000;
 
   constructor(testPrefix) {
@@ -46,13 +46,12 @@ export default class Factory {
 
 
   _bootstrap() {
-    if (this._pinner) {
-      return this._pinner.bootstrap;
-    }
-    else {
+    if (!this._pinner) {
       console.warn('You probably need a pinner service.');
       return [];
     }
+
+    return this._pinner.bootstrap;
   }
 
   name(suffix) {

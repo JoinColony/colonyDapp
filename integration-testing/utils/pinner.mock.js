@@ -1,6 +1,5 @@
 import rimraf from 'rimraf';
 import * as ipfs from '../../src/data/ipfs';
-import { getNodeID } from '../../src/data/ipfs';
 import * as orbitdb from '../../src/data/orbit';
 
 const MOCK_PINNERS_ROOT = '/tmp/tests/pinners/';
@@ -12,7 +11,7 @@ const MOCK_PINNERS_ROOT = '/tmp/tests/pinners/';
  * @returns {Promise<{node: (getIPFS|IPFS), tcp: (function(): string), ws: (function(): string), pinBlock: (function(*=): *), peers: *}>}
  * @constructor
  */
-export async function makePinner(pinnerName) {
+export default async function makePinner(pinnerName) {
   const pinnerRoot = `${MOCK_PINNERS_ROOT}/${pinnerName}`
 
   const node = ipfs.getIPFS(ipfs.makeOptions({
@@ -27,7 +26,7 @@ export async function makePinner(pinnerName) {
   await node.ready();
 
   // Get Node ID
-  const nodeID = await getNodeID(node);
+  const nodeID = await ipfs.getNodeID(node);
 
   const bootstrap = [
     `/ip4/127.0.0.1/tcp/5002/ipfs/${nodeID}`,

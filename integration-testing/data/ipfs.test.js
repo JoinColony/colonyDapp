@@ -1,13 +1,13 @@
 /* eslint-env jest */
 import * as ipfs from '../../src/data/ipfs';
 import { sleep } from '../../src/utils/time';
-import Factory from './factory';
+import DDBTestFactory from '../utils/DDBTestFactory';
 
 let pinner = null;
 let node1 = null;
 let node2 = null;
 
-let factory = new Factory('ipfs.test');
+let factory = new DDBTestFactory('ipfs.test');
 
 beforeAll(async () => {
   pinner = await factory.pinner();
@@ -15,11 +15,11 @@ beforeAll(async () => {
   await sleep(600); // prevent nodes with same keys
   node2 = await factory.node('node2');
   await factory.ready();
-}, Factory.TIMEOUT);
+}, DDBTestFactory.TIMEOUT);
 
 afterAll(async () => {
   await factory.clear();
-}, Factory.TIMEOUT);
+}, DDBTestFactory.TIMEOUT);
 
 describe('IPFS configuration', () => {
   test('Get default config', () => {

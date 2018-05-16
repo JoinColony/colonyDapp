@@ -1,8 +1,8 @@
 /* eslint-env jest */
 import { sleep } from '../../src/utils/time';
 import * as orbit from '../../src/data/orbit';
-import { Pinner } from './pinner.mock';
-import Factory from './factory';
+import { Pinner } from '../utils/pinner.mock';
+import DDBTestFactory from '../utils/DDBTestFactory';
 import { retryUntilValue } from '../utils/tools';
 
 let factory = null;
@@ -11,17 +11,17 @@ let orbit1 = null;
 let orbit2 = null;
 
 beforeAll(async () => {
-  factory = new Factory('orbitdb.test');
+  factory = new DDBTestFactory('orbitdb.test');
   pinner = await factory.pinner();
   orbit1 = await factory.orbit('orbit1');
   await sleep(600); // prevent nodes with same keys
   orbit2 = await factory.orbit('orbit2');
   await factory.ready();
-}, Factory.TIMEOUT);
+}, DDBTestFactory.TIMEOUT);
 
 afterAll(async () => {
   await factory.clear();
-}, Factory.TIMEOUT);
+}, DDBTestFactory.TIMEOUT);
 
 describe('Orbitdb configuration', () => {
   test('Get default config', () => {

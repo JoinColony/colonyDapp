@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import Factory from './factory';
+import DDBTestFactory from '../utils/DDBTestFactory';
 import { sleep } from '../../src/utils/time';
 import { retryUntilValue } from '../utils/tools';
 
@@ -11,7 +11,7 @@ let data3 = null;
 let data4 = null;
 
 beforeAll(async () => {
-  factory = new Factory('UserProfile.test');
+  factory = new DDBTestFactory('UserProfile.test');
   pinner = await factory.pinner();
   data1 = await factory.Data('data1');
   await sleep(400); // prevent nodes with same keys
@@ -22,11 +22,11 @@ beforeAll(async () => {
   data4 = await factory.Data('data4');
 
   await factory.ready();
-}, Factory.TIMEOUT);
+}, DDBTestFactory.TIMEOUT);
 
 afterAll(async () => {
   await factory.clear();
-}, Factory.TIMEOUT);
+}, DDBTestFactory.TIMEOUT);
 
 
 describe('User Profile', () => {
@@ -56,7 +56,7 @@ describe('User Profile', () => {
     expect(p1.isEmpty()).toBeFalsy();
     expect(await retryUntilValue(() => p2.isEmpty(), { value: false })).toBeFalsy();
     expect(await retryUntilValue(() => p2.getName(), { value: name })).toBe(name);
-  }, Factory.TIMEOUT);
+  }, DDBTestFactory.TIMEOUT);
 
   test('Create a user profile and subscribe to changes', async () => {
     // Arrange
@@ -74,5 +74,5 @@ describe('User Profile', () => {
 
     // Assert
     expect(await retryUntilValue(() => update.name)).toEqual(name);
-  }, Factory.TIMEOUT);
+  }, DDBTestFactory.TIMEOUT);
 });
