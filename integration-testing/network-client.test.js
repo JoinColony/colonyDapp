@@ -26,9 +26,8 @@ describe('`ColonyNetworkClient` is able to', () => {
     const contractLoader = new TrufflepigLoader({
       endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,
     });
-    // console.log(contractLoader);
     expect(contractLoader).toHaveProperty('_endpoint');
-    expect(contractLoader).toHaveProperty('_parse');
+    expect(contractLoader).toHaveProperty('_transform');
     /*
      * Setup the Json RPC provideer
      */
@@ -63,7 +62,8 @@ describe('`ColonyNetworkClient` is able to', () => {
     /*
      * Setup the Network Client Instance
      */
-    const networkClient = await NetworkClient.createSelf(ethersAdapter);
+    const networkClient = new NetworkClient({ adapter: ethersAdapter });
+    await networkClient.init();
     expect(networkClient).toHaveProperty('getColonyById');
     expect(networkClient).toHaveProperty('getColonyByKey');
     expect(networkClient).toHaveProperty('getColonyCount');
