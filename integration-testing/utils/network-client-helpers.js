@@ -41,5 +41,10 @@ export const getEthersAdapter = async () =>
     wallet: await getWallet(),
   });
 
-export const getNetworkClient = async () =>
-  NetworkClient.createSelf(await getEthersAdapter());
+export const getNetworkClient = async () => {
+  const networkClient = new NetworkClient({
+    adapter: await getEthersAdapter(),
+  });
+  await networkClient.init();
+  return networkClient;
+};
