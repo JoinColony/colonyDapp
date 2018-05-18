@@ -27,12 +27,6 @@
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
     "postinstall": "yarn provision"
   },
-  "lint-staged": {
-    "src/{,**/}*.{js|jsx}": [
-      "eslint --fix",
-      "git add"
-    ]
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JoinColony/colonyDapp.git"
