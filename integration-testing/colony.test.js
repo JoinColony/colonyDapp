@@ -53,7 +53,6 @@ describe('`ColonyNetworkClient` is able to', () => {
     expect(colonyClient).toHaveProperty('getTaskWorkRatings');
     expect(colonyClient).toHaveProperty('getTaskWorkRatingSecret');
     expect(colonyClient).toHaveProperty('getToken');
-    expect(colonyClient).toHaveProperty('getTransactionCount');
     expect(colonyClient).toHaveProperty('addDomain');
     expect(colonyClient).toHaveProperty('addGlobalSkill');
     expect(colonyClient).toHaveProperty('assignWorkRating');
