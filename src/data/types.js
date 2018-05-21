@@ -16,9 +16,9 @@ type IPFSBootstrapAddress = string;
 type path = string;
 
 export type ColonyIPFSOptions = {
-  swarm: IPFSSwarmAddress[],
-  bootstrap: IPFSBootstrapAddress[],
-  repo: path,
+  swarm?: IPFSSwarmAddress[],
+  bootstrap?: IPFSBootstrapAddress[],
+  repo?: path,
 };
 
 export type IPFSNode = IPFS;
@@ -32,7 +32,7 @@ export type IPFSPeer = {
   peer: PeerInfo,
 };
 
-export type ColonyOrbitOptions = { repo: ?string };
+export type ColonyOrbitOptions = { repo?: string };
 
 export type OrbitOptions = {};
 

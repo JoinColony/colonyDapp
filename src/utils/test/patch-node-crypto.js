@@ -1,3 +1,5 @@
+/* @flow */
+
 const crypto = require('crypto');
 
 /**
