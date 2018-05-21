@@ -7,7 +7,7 @@ let pinner = null;
 let node1 = null;
 let node2 = null;
 
-let factory = new DDBTestFactory('ipfs.test');
+const factory = new DDBTestFactory('ipfs.test');
 
 beforeAll(async () => {
   pinner = await factory.pinner();
@@ -33,24 +33,31 @@ describe('IPFS configuration', () => {
 });
 
 describe('IPFS peers management', () => {
-  test('wait for peers exists and will return something after a while', async () => {
-    const peers = await ipfs.waitForSomePeers(node1);
+  test(
+    'wait for peers exists and will return something after a while',
+    async () => {
+      const peers = await ipfs.waitForSomePeers(node1);
 
-    expect(peers).toBeTruthy();
-    expect(peers.length).toBeGreaterThan(0);
-  }, 25000);
+      expect(peers).toBeTruthy();
+      expect(peers.length).toBeGreaterThan(0);
+    },
+    25000,
+  );
 
-  test('two nodes will see each other data through the pinner', async () => {
+  test(
+    'two nodes will see each other data through the pinner',
+    async () => {
+      const block = Buffer.from('helloworld, I am a node from ipfs.test');
 
-    const block = Buffer.from('helloworld, I am a node from ipfs.test');
+      const putResult = await node1.block.put(block);
+      const blockID = putResult.cid.toBaseEncodedString();
 
-    const putResult = await node1.block.put(block)
-    const blockID = putResult.cid.toBaseEncodedString();
+      await pinner.pinBlock(blockID);
 
-    await pinner.pinBlock(blockID)
+      const retrieved = await node2.block.get(blockID);
 
-    const retrieved = await node2.block.get(blockID);
-
-    expect(retrieved).toBeTruthy();
-  }, 120000);
-})
+      expect(retrieved).toBeTruthy();
+    },
+    120000,
+  );
+});

@@ -11,17 +11,16 @@ const MOCK_PINNERS_ROOT = '/tmp/tests/pinners/';
  * @returns {Promise<{node: (getIPFS|IPFS), tcp: (function(): string), ws: (function(): string), pinBlock: (function(*=): *), peers: *}>}
  * @constructor
  */
-export default async function makePinner(pinnerName) {
-  const pinnerRoot = `${MOCK_PINNERS_ROOT}/${pinnerName}`
+export default (async function makePinner(pinnerName) {
+  const pinnerRoot = `${MOCK_PINNERS_ROOT}/${pinnerName}`;
 
-  const node = ipfs.getIPFS(ipfs.makeOptions({
-    repo: `${pinnerRoot}/ipfsRepo`,
-    bootstrap: [],
-    swarm: [
-      "/ip4/0.0.0.0/tcp/5002",
-      "/ip4/127.0.0.1/tcp/5003/ws",
-    ]
-  }));
+  const node = ipfs.getIPFS(
+    ipfs.makeOptions({
+      repo: `${pinnerRoot}/ipfsRepo`,
+      bootstrap: [],
+      swarm: ['/ip4/0.0.0.0/tcp/5002', '/ip4/127.0.0.1/tcp/5003/ws'],
+    }),
+  );
 
   await node.ready();
 
@@ -30,20 +29,23 @@ export default async function makePinner(pinnerName) {
 
   const bootstrap = [
     `/ip4/127.0.0.1/tcp/5002/ipfs/${nodeID}`,
-    `/ip4/127.0.0.1/tcp/5003/ws/ipfs/${nodeID}`
-  ]
+    `/ip4/127.0.0.1/tcp/5003/ws/ipfs/${nodeID}`,
+  ];
 
-  const orbit = await orbitdb.getOrbitDB(node, orbitdb.makeOptions({
-    repo: `${pinnerRoot}/orbitRepo`
-  }));
+  const orbit = await orbitdb.getOrbitDB(
+    node,
+    orbitdb.makeOptions({
+      repo: `${pinnerRoot}/orbitRepo`,
+    }),
+  );
 
   const stop = async () => {
     await orbit.stop();
     await node.stop();
     await new Promise((resolve, reject) => {
-      rimraf(pinnerRoot, {}, (err) => err ? reject(err) : resolve());
+      rimraf(pinnerRoot, {}, err => (err ? reject(err) : resolve()));
     });
-  }
+  };
 
   const pinnedStores = [];
 
@@ -53,11 +55,11 @@ export default async function makePinner(pinnerName) {
     orbit,
     nodeID,
     bootstrap,
-    waitForMe: (ipfsNode) => ipfsNode.waitForPeer(nodeID),
-    pinBlock: (id) => node.block.get(id),
-    pinKVStore: async (addr) => {
-      const store = await orbit.keyvalue(addr)
+    waitForMe: ipfsNode => ipfsNode.waitForPeer(nodeID),
+    pinBlock: id => node.block.get(id),
+    pinKVStore: async addr => {
+      const store = await orbit.keyvalue(addr);
       pinnedStores.push(store);
-    }
-  }
-}
+    },
+  };
+});

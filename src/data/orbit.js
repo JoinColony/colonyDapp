@@ -1,6 +1,6 @@
 /* @flow */
 import OrbitDB from 'orbit-db';
-import type { ColonyIPFSNode, OrbitOptions, ColonyOrbitOptions } from './types';
+import type { ColonyIPFSNode, ColonyOrbitOptions, OrbitOptions } from './types';
 
 const DEFAULT_DB_PATH = 'colonyOrbitdb';
 

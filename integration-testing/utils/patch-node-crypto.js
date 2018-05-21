@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 /**
  * In node we need to monkey-patch the global crypto functions,
  *
@@ -12,8 +14,6 @@
  */
 function patchNodeCrypto() {
   if (process.env.NODE_ENV === 'test') {
-    const crypto = require('crypto');
-
     Object.defineProperty(global.self, 'crypto', {
       value: {
         getRandomValues: arr => crypto.randomBytes(arr.length),
@@ -23,4 +23,3 @@ function patchNodeCrypto() {
 }
 
 patchNodeCrypto();
-

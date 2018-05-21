@@ -28,6 +28,7 @@ export async function retryUntilValue(
   { attempts = 20, value } = { attempts: 20, value: undefined },
 ) {
   let attemptsLeft = attempts;
+
   let r = f();
 
   const shouldContinue = () => {
@@ -41,10 +42,11 @@ export async function retryUntilValue(
   while (shouldContinue() && attemptsLeft > 0) {
     // await in loop is required here:
     // this code HAS to be blocking, there's nothing to parallelize.
+    // eslint-disable-next-line no-await-in-loop
     await sleep(500);
     r = f();
     attemptsLeft -= 1;
   }
 
-  return r
+  return r;
 }

@@ -148,7 +148,6 @@ type PromiseResolve<T> = T => void;
  * @returns {getIPFS|IPFS}
  */
 export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
-
   const ipfs = new IPFS(options);
 
   let readyResolve: ?PromiseResolve<boolean> = null;
@@ -160,7 +159,6 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   });
 
   ipfs.on('ready', () => {
-
     // Reassure flow type
     if (!readyResolve) {
       throw new Error("Colony's IPFS is not ready");
@@ -170,6 +168,7 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   });
 
   ipfs.on('error', e => {
+    // eslint-disable-next-line no-console
     console.error('IPFS failed to start: ', e);
 
     // Reassure flow type
