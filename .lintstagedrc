@@ -8,6 +8,10 @@
     "src/**/*.css": [
       "yarn stylelint",
       "git add"
+    ],
+    "src/**/*.js": [
+      "yarn lint:integration",
+      "git add"
     ]
   },
   "ignore": [

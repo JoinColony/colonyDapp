@@ -15,6 +15,7 @@
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
     "lint": "eslint --fix 'src/**/*.{js,jsx}'",
+    "lint:integration": "eslint --fix 'integration-testing/**/*.js'",
     "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}'",
     "scaffold": "plop",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
