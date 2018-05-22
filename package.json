@@ -17,6 +17,7 @@
     "lint": "eslint --fix 'src/**/*.{js,jsx}'",
     "lint:integration": "eslint --fix 'integration-testing/**/*.js'",
     "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}'",
+    "lint:integration:ci": "eslint --format junit -o 'reports/eslint/eslint-integration-tests-results.xml' 'integration-testing/**/*.js'",
     "scaffold": "plop",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
