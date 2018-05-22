@@ -123,13 +123,13 @@ jobs:
             - node_modules
           key: node-modules-{{ checksum "package.json" }}
       - run:
-          name: "Linting Integration Tests Javascript code"
-          command: yarn lint:integration:ci
-      - run:
           name: "Running Integration Tests"
           command: yarn test:integration:ci
           environment:
             JEST_JUNIT_OUTPUT: "reports/jest/jest-integration-tests-results.xml"
+      - run:
+          name: "Linting Integration Tests Javascript code"
+          command: yarn lint:integration:ci
       - store_test_results:
           path: reports
       - store_artifacts:
