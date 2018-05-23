@@ -14,26 +14,32 @@ describe('`ColonyClient` is able to', () => {
     const colonyClient = await networkClient.getColonyClient({
       key: colonyName,
     });
-    const domainCountBefore = await colonyClient.getDomainCount.call();
     /*
+     * Get the current number of domains
+     *
      * We have just the parent local skill that was added by default when the
      * colony was created
      */
-    expect(domainCountBefore).toHaveProperty('count', 1);
+    const {
+      count: domainCountBefore,
+    } = await colonyClient.getDomainCount.call();
     /*
-     * Since this is the first domain, in the first colony, it's Id is `3`
+     * Since this is the first domain, in the first colony, it's Id should be `3`
      *
      * The first two are reserved for the meta colony's skills
      */
+    const {
+      count: colonyParentSkillId,
+    } = await networkClient.getSkillCount.call();
     const newDomainTransaction = await colonyClient.addDomain.send({
-      parentSkillId: 3,
+      parentSkillId: colonyParentSkillId,
     });
     expect(newDomainTransaction).toHaveProperty('successful', true);
     const domainCountAfter = await colonyClient.getDomainCount.call();
     /*
      * If all goes to plan we should have another domain
      */
-    expect(domainCountAfter).toHaveProperty('count', 2);
+    expect(domainCountAfter).toHaveProperty('count', domainCountBefore + 1);
   });
   test("Can't create a new domain under the Meta Colony's parent skill", async () => {
     /*
@@ -46,12 +52,15 @@ describe('`ColonyClient` is able to', () => {
     const colonyClient = await networkClient.getColonyClient({
       key: colonyName,
     });
-    const domainCountBefore = await colonyClient.getDomainCount.call();
     /*
-     * We have just two domains, the original one created with the colony, and the
+     * Get the current number of domains
+     *
+     * We should have just two domains, the original one created with the colony, and the
      * one we just added in the previous test
      */
-    expect(domainCountBefore).toHaveProperty('count', 2);
+    const {
+      count: domainCountBefore,
+    } = await colonyClient.getDomainCount.call();
     try {
       /*
        * We shouln't be able to add a new domain to the meta colony's skill
@@ -65,7 +74,7 @@ describe('`ColonyClient` is able to', () => {
        * Count should still be 2 since we shouldn't have been able to add
        * a new domain
        */
-      expect(domainCountAfter).toHaveProperty('count', 2);
+      expect(domainCountAfter).toHaveProperty('count', domainCountBefore);
     }
   });
 });
