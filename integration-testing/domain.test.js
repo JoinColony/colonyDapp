@@ -34,20 +34,38 @@ describe('`ColonyClient` is able to', () => {
      * If all goes to plan we should have another domain
      */
     expect(domainCountAfter).toHaveProperty('count', 2);
+  });
+  test("Can't create a new domain under the Meta Colony's parent skill", async () => {
     /*
-     * But we shouln't be able to add a new domain to the meta colony's skill
+     * Get the network client
      */
+    const networkClient = await getNetworkClient();
+    /*
+     * Get the existing colony
+     */
+    const colonyClient = await networkClient.getColonyClient({
+      key: colonyName,
+    });
+    const domainCountBefore = await colonyClient.getDomainCount.call();
+    /*
+     * We have just two domains, the original one created with the colony, and the
+     * one we just added in the previous test
+     */
+    expect(domainCountBefore).toHaveProperty('count', 2);
     try {
+      /*
+       * We shouln't be able to add a new domain to the meta colony's skill
+       */
       await colonyClient.addDomain.send({
         parentSkillId: 1,
       });
     } catch (e) {
-      const domainCountAfterCatching = await colonyClient.getDomainCount.call();
+      const domainCountAfter = await colonyClient.getDomainCount.call();
       /*
        * Count should still be 2 since we shouldn't have been able to add
        * a new domain
        */
-      expect(domainCountAfterCatching).toHaveProperty('count', 2);
+      expect(domainCountAfter).toHaveProperty('count', 2);
     }
   });
 });
