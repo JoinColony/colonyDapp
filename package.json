@@ -127,6 +127,7 @@
     "redux-form": "^7.1.2",
     "revalidate": "^1.2.0",
     "shortid": "^2.2.8",
-    "web3-utils": "^1.0.0-beta.27"
+    "web3-utils": "^1.0.0-beta.27",
+    "pinningService": "^1.0.0"
   }
 }
