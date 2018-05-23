@@ -13,6 +13,11 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient();
     /*
+     * There should only be one colony at this point, the meta colony
+     */
+    const coloniesBefore = await networkClient.getColonyCount.call();
+    expect(coloniesBefore).toHaveProperty('count', 1);
+    /*
      * Create a new colony
      */
     const colonyClientInstance = await networkClient.createColony.send(
@@ -71,6 +76,11 @@ describe('`ColonyClient` is able to', () => {
      * Save the tokens address for later (so we can check against)
      */
     colonyToken = await colonyClient.getToken.call().address;
+    /*
+     * There should two colonies now, the meta colony, and the one newly created
+     */
+    const coloniesAfter = await networkClient.getColonyCount.call();
+    expect(coloniesAfter).toHaveProperty('count', 2);
   });
   test('Recover an existing Colony', async () => {
     /*
