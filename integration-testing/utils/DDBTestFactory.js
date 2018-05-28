@@ -27,6 +27,11 @@ const ROOT_REPO = '/tmp/tests/';
  * After `ready()`, any instance produced by this
  * factory will be connected to the others through the
  * `pinner` object.
+ *
+ * @TODO Fix libp2p error logged when tests finish,
+ *   Sometimes, OrbitDB throws: `libp2p node is not started yet`.
+ *   Corresponding issue:
+ *   - https://github.com/ipfs-shipyard/ipfs-pubsub-room/issues/42
  */
 export default class DDBTestFactory {
   static TIMEOUT = 60000;
