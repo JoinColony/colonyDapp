@@ -7,12 +7,9 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient();
     /*
-     * Get the existing colony using the first id available, which coresponds
-     * to the Meta Colony
+     * Get the existing Meta Colony
      */
-    const colonyClient = await networkClient.getColonyClient({
-      id: 1,
-    });
+    const colonyClient = await networkClient.getMetaColonyClient();
     /*
      * Get the initial count of skills. They should be 3: two for the meta colony
      * and two for the Colony that we created.
@@ -50,7 +47,7 @@ describe('`ColonyClient` is able to', () => {
      * Get the skill.
      */
     const getSkillTransaction = await networkClient.getSkill.call({
-      id: lastSkillId,
+      skillId: lastSkillId,
     });
     /*
      * It should have one parent since we just added it as a child to the
