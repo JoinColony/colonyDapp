@@ -65,7 +65,7 @@ const getNetworkClient = async () => {
   const networkClient = await ColonyNetworkClient.createSelf(adapter, {
     networkId,
   });
-  console.log('Network Client:', networkClient);
+  console.log('Network Client:', networkClient); // eslint-disable-line no-console
   return networkClient;
 };
 
@@ -123,7 +123,7 @@ class ColonyCreationTest extends React.Component {
     if (!key) return;
 
     this.colonyClient = await this.networkClient.getColonyClient({ key });
-    console.log('Colony Client:', this.colonyClient);
+    console.log('Colony Client:', this.colonyClient); // eslint-disable-line no-console
 
     this.setState({
       colonyName: key,
