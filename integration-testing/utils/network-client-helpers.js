@@ -19,32 +19,40 @@ import NetworkClient from '../../src/lib/colonyJS/packages/colony-js-client';
 const JSON_RPC = 'http://localhost:8545/';
 const TRUFFLEPIG_URL = 'http://localhost:3030';
 
-const privateKey =
-  global.ganacheAccounts.private_keys[
-    Object.keys(global.ganacheAccounts.private_keys)[0]
-  ];
+// const privateKey = global.ganacheAccounts.private_keys[];
 
 export const getTrufflepigLoader = () =>
   new TrufflepigLoader({
     endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,
   });
 
-export const getWallet = () =>
+/*
+ * Optional address to use when instantiating the wallet.
+ *
+ * The corresponding prive key for this address will be taken from `global.ganacheAccounts`
+ * which in turn comes from the local `ganache-accounts.json` file
+ *
+ * By default the first account will be used for most priviledged executions
+ * (create the meta colony, usually it will be the manager role in tasks, etc)
+ */
+export const getWallet = (
+  address = Object.keys(global.ganacheAccounts.private_keys)[0],
+) =>
   wallet.open({
-    privateKey: `0x${privateKey}`,
+    privateKey: `0x${global.ganacheAccounts.private_keys[address]}`,
     provider: localhost(JSON_RPC),
   });
 
-export const getEthersAdapter = async () =>
+export const getEthersAdapter = async address =>
   new EthersAdapter({
     loader: getTrufflepigLoader(),
     provider: localhost(JSON_RPC),
-    wallet: await getWallet(),
+    wallet: await getWallet(address),
   });
 
-export const getNetworkClient = async () => {
+export const getNetworkClient = async address => {
   const networkClient = new NetworkClient({
-    adapter: await getEthersAdapter(),
+    adapter: await getEthersAdapter(address),
   });
   await networkClient.init();
   return networkClient;
