@@ -19,18 +19,11 @@ const WizardTemplate = ({ children, sidebarChild }: Props) => (
   <main
     className={`${layout.flexContainerRow} ${layout.stretch} ${styles.main}`}
   >
-    <aside className={styles.sidebar}>
-      <section className={styles.sidebarContent}>
-        <figure className={styles.logo} role="presentation">
-          <svg viewBox="0 0 160 80">
-            <image href={IMG_LOGO} x="0" y="0" width="160" height="80" />
-          </svg>
-        </figure>
-        {sidebarChild && (
-          <div className={styles.sidebarChild}>{sidebarChild}</div>
-        )}
-      </section>
-    </aside>
+    <figure className={styles.logo} role="presentation">
+      <svg viewBox="0 0 160 80">
+        <image href={IMG_LOGO} x="0" y="0" width="160" height="80" />
+      </svg>
+    </figure>
     <article
       className={`${layout.flexContent} ${layout.flexContainerRow} ${
         layout.flexAlignCenter
@@ -44,7 +37,3 @@ const WizardTemplate = ({ children, sidebarChild }: Props) => (
 WizardTemplate.displayName = displayName;
 
 export default WizardTemplate;
-
-
-
-

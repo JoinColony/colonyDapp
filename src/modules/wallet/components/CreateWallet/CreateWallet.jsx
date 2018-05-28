@@ -1,5 +1,6 @@
 /* @flow */
 
+<<<<<<< HEAD
 import React from 'react';
 
 import layout from '~styles/layout.css';
@@ -25,3 +26,6 @@ const CreateWallet = () => (
 /* eslint-enable max-len */
 
 export default CreateWallet;
+=======
+export { default } from '../../../pages/components/WizardTemplateCentered';
+>>>>>>> create additional template for centered wizard

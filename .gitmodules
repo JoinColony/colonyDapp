@@ -4,9 +4,9 @@
 	branch = master
 [submodule "src/lib/colony-wallet"]
 	path = src/lib/colony-wallet
-	url = karolinkas@github.com:JoinColony/colony-wallet.git
+	url = git@github.com:JoinColony/colony-wallet.git
 	branch = master
 [submodule "src/lib/colonyNetwork"]
 	path = src/lib/colonyNetwork
-	url = karolinkas@github.com:JoinColony/colonyNetwork.git
+	url = git@github.com:JoinColony/colonyNetwork.git
 	branch = develop
