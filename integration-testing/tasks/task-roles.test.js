@@ -1,7 +1,10 @@
 import { getNetworkClient } from '../utils/network-client-helpers';
+import {
+  WORKER_ROLE,
+  MANAGER_ROLE,
+} from '../../src/lib/colony-js/packages/colony-js-client';
 
-const colonyName = 'Integration Tests Colony';
-const taskName = 'Integration Tests Task';
+const taskDescription = 'Integration Tests Task';
 
 const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
@@ -13,11 +16,14 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient(managerAddress);
     /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient({
-      key: colonyName,
-    });
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
      * This is a little jury-rigged, since later tests might create new colonies,
      * which in turn will make this value to not be reliable.
@@ -31,23 +37,26 @@ describe('`ColonyClient` is able to', () => {
      * (See above about the caveat on this)
      */
     const newTaskTransaction = await colonyClient.createTask.send({
-      specificationHash: taskName,
+      specificationHash: taskDescription,
       domainId: latestDomainId,
     });
     const { eventData: { taskId: newTaskId } } = newTaskTransaction;
     /*
      * Check the task has manager role assigned
      *
-     * Role `0` = manager
-     * Role `1` = evaluator
-     * Role `3` = worker
+     * Roles have now changed, so you have to provide an actual string: (uppercase)
+     * - `MANAGER`
+     * - `EVALUATOR`
+     * - `WORKER`
+     *
+     *  Or you could just import them from the `colony-js-client` package
      *
      * @NOTE Convert addresses to lowercase
      *
      * This will normalize them when checking one against the other
      */
     const { address: managerRoleAddress } = await colonyClient.getTaskRole.call(
-      { taskId: newTaskId, role: 0 },
+      { taskId: newTaskId, role: MANAGER_ROLE },
     );
     expect(managerRoleAddress.toLowerCase()).toEqual(
       managerAddress.toLowerCase(),
@@ -57,7 +66,7 @@ describe('`ColonyClient` is able to', () => {
      */
     const { address: workerRoleNull } = await colonyClient.getTaskRole.call({
       taskId: newTaskId,
-      role: 3,
+      role: WORKER_ROLE,
     });
     expect(workerRoleNull).toBe(null);
     /*
@@ -65,7 +74,7 @@ describe('`ColonyClient` is able to', () => {
      */
     const setTaskRoleTransaction = await colonyClient.setTaskRoleUser.send({
       taskId: newTaskId,
-      role: 3,
+      role: WORKER_ROLE,
       user: workerAddress,
     });
     expect(setTaskRoleTransaction).toHaveProperty('successful', true);
@@ -74,7 +83,7 @@ describe('`ColonyClient` is able to', () => {
      */
     const { address: workerRoleAddress } = await colonyClient.getTaskRole.call({
       taskId: newTaskId,
-      role: 3,
+      role: WORKER_ROLE,
     });
     expect(workerRoleAddress.toLowerCase()).toBe(workerAddress.toLowerCase());
   });

@@ -1,8 +1,5 @@
 import { getNetworkClient } from './utils/network-client-helpers';
 
-// Presuming that this Colony has been created, and that ID 1 is the Meta Colony
-const colonyId = 2;
-
 describe('`ColonyClient` is able to', () => {
   test('Create a new Domain within the Colony', async () => {
     /*
@@ -10,9 +7,14 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient();
     /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient(colonyId);
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
      * Get the current number of domains
      *
@@ -46,9 +48,14 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient();
     /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient(colonyId);
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
      * Get the current number of domains
      *

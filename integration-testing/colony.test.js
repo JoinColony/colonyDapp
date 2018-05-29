@@ -14,8 +14,7 @@ describe('`ColonyClient` is able to', () => {
     /*
      * There should only be one colony at this point, the meta colony
      */
-    const coloniesBefore = await networkClient.getColonyCount.call();
-    expect(coloniesBefore).toHaveProperty('count', 1);
+    const { count: coloniesBefore } = await networkClient.getColonyCount.call();
     /*
      * Create a new colony
      */
@@ -79,7 +78,7 @@ describe('`ColonyClient` is able to', () => {
      * There should two colonies now, the meta colony, and the one newly created
      */
     const coloniesAfter = await networkClient.getColonyCount.call();
-    expect(coloniesAfter).toHaveProperty('count', 2);
+    expect(coloniesAfter).toHaveProperty('count', coloniesBefore + 1);
   });
   test('Recover an existing Colony', async () => {
     /*

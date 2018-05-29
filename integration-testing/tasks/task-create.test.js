@@ -1,7 +1,6 @@
 import { getNetworkClient } from '../utils/network-client-helpers';
 
-const colonyName = 'Integration Tests Colony';
-const taskName = 'Integration Tests Task';
+const taskDescription = 'Integration Tests Task';
 
 describe('`ColonyClient` is able to', () => {
   test('Create a new Task within the Colony', async () => {
@@ -10,11 +9,14 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient();
     /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient({
-      key: colonyName,
-    });
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
      * Get the total number of tasks in this colony (so we can test against)
      */
@@ -32,7 +34,7 @@ describe('`ColonyClient` is able to', () => {
      * (See above about the caveat on this)
      */
     const newTaskTransaction = await colonyClient.createTask.send({
-      specificationHash: taskName,
+      specificationHash: taskDescription,
       domainId: latestDomainId,
     });
     /*

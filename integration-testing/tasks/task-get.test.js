@@ -1,8 +1,7 @@
 import { toUtf8String } from 'ethers/utils';
 import { getNetworkClient } from '../utils/network-client-helpers';
 
-const colonyName = 'Integration Tests Colony';
-const taskName = 'Integration Tests Task';
+const taskDescription = 'Integration Tests Task';
 
 describe('`ColonyClient` is able to', () => {
   test('Get a Task that exists in the Colony', async () => {
@@ -11,11 +10,14 @@ describe('`ColonyClient` is able to', () => {
      */
     const networkClient = await getNetworkClient();
     /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient({
-      key: colonyName,
-    });
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
      * Get the total number of tasks so we can use the last existent task's id
      */
@@ -44,6 +46,8 @@ describe('`ColonyClient` is able to', () => {
      * The task should have the correct speciification hash.
      */
     const { specificationHash: existingTaskSpecificationHash } = existingTask;
-    expect(toUtf8String(existingTaskSpecificationHash)).toMatch(taskName);
+    expect(toUtf8String(existingTaskSpecificationHash)).toMatch(
+      taskDescription,
+    );
   });
 });
