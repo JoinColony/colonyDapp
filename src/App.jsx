@@ -16,7 +16,6 @@ import rootReducer from './reducer';
 /* eslint-disable-next-line max-len */
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 import CreateColony from './modules/dashboard/components/CreateColony';
-import ColonyCreationTest from './ColonyCreationTest.jsx';
 import SpinnerLoader from './modules/core/components/Preloaders/SpinnerLoader';
 
 addLocaleData(en);
@@ -77,7 +76,6 @@ export default function App() {
           <div className={layout.stretch}>
             <Route exact path="/" component={Home} />
             <Route path="/createcolony" component={CreateColony} />
-            <Route path="/createcolonytest" component={ColonyCreationTest} />
             <Route path="/dynamic-import-route" component={DynamicRoute} />
           </div>
         </Router>

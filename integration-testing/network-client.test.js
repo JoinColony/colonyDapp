@@ -1,3 +1,5 @@
+import { isAddress } from 'web3-utils';
+
 import { localhost } from '../src/lib/colony-wallet/lib/es/providers';
 
 import {
@@ -45,8 +47,9 @@ describe('`ColonyNetworkClient` is able to', () => {
      * Setup the Network Client Instance
      */
     const networkClient = await getNetworkClient();
-    expect(networkClient).toHaveProperty('getColonyById');
-    expect(networkClient).toHaveProperty('getColonyByKey');
+    expect(networkClient).toHaveProperty('getColony');
+    expect(networkClient).toHaveProperty('getMetaColonyClient');
+    expect(networkClient).toHaveProperty('getMetaColonyAddress');
     expect(networkClient).toHaveProperty('getColonyCount');
     expect(networkClient).toHaveProperty('getColonyClient');
     expect(networkClient).toHaveProperty('getColonyVersionResolver');
@@ -61,5 +64,10 @@ describe('`ColonyNetworkClient` is able to', () => {
     expect(networkClient).toHaveProperty('deposit');
     expect(networkClient).toHaveProperty('upgradeColony');
     expect(networkClient).toHaveProperty('withdraw');
+    /*
+     * The Meta Colony should be available
+     */
+    const metaColonyClient = await networkClient.getMetaColonyClient();
+    expect(isAddress(metaColonyClient.contract.address)).toBeTruthy();
   });
 });

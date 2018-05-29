@@ -1,6 +1,7 @@
 import { getNetworkClient } from './utils/network-client-helpers';
 
-const colonyName = 'Integration Tests Colony';
+// Presuming that this Colony has been created, and that ID 1 is the Meta Colony
+const colonyId = 2;
 
 describe('`ColonyClient` is able to', () => {
   test('Create a new Domain within the Colony', async () => {
@@ -11,9 +12,7 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient({
-      key: colonyName,
-    });
+    const colonyClient = await networkClient.getColonyClient(colonyId);
     /*
      * Get the current number of domains
      *
@@ -49,9 +48,7 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient({
-      key: colonyName,
-    });
+    const colonyClient = await networkClient.getColonyClient(colonyId);
     /*
      * Get the current number of domains
      *
