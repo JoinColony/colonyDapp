@@ -15,19 +15,19 @@ type Props = {
 
 const displayName = 'pages.WizardTemplate';
 
-const WizardTemplate = ({ children, sidebarChild }: Props) => (
-  <main
-    className={`${layout.flexContainerRow} ${layout.stretch} ${styles.main}`}
-  >
-    <figure className={styles.logo} role="presentation">
-      <svg viewBox="0 0 160 80">
-        <image href={IMG_LOGO} x="0" y="0" width="160" height="80" />
-      </svg>
-    </figure>
+const WizardTemplate = ({ children }: Props) => (
+  <main className={`${layout.stretchHorizontal}`}>
+    <header className={styles.header}>
+      <figure className={styles.logo} role="presentation">
+        <svg viewBox="0 0 160 80">
+          <image href={IMG_LOGO} x="0" y="0" width="160" height="80" />
+        </svg>
+      </figure>
+    </header>
     <article
-      className={`${layout.flexContent} ${layout.flexContainerRow} ${
-        layout.flexAlignCenter
-      } ${styles.content}`}
+      className={`${layout.flexContainerColumn} ${layout.flexAlignCenter} ${
+        styles.content
+      }`}
     >
       {children}
     </article>

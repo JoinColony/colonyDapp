@@ -3,22 +3,16 @@
 .main {
   background-color: var(--grey-blue-2);
 }
-
-.sidebar {
-  width: 33%;
-  background-color: var(--grey-blue-1);
-}
-
-.sidebarContent {
-  padding: 60px 15%;
+.header {
+  height: 60px;
+  background-color: var(--total-white);
+  width: 100%;
 }
 
 .logo {
-  max-width: 160px;
-}
-
-.sidebarChild {
-  margin-top: 90px;
+  max-width: 90px;
+  margin-left: 13px;
+  margin-top: 8px;
 }
 
 .content {
