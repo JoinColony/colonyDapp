@@ -49,7 +49,11 @@ describe('`ColonyClient` is able to', () => {
      * - `EVALUATOR`
      * - `WORKER`
      *
-     *  Or you could just import them from the `colony-js-client` package
+     *  Or you could just import them from the `colony-js-client` package via
+     *  the costants:
+     *  - `MANAGER_ROLE`
+     *  - `EVALUATOR_ROLE`
+     *  - `WORKER_ROLE`
      *
      * @NOTE Convert addresses to lowercase
      *
