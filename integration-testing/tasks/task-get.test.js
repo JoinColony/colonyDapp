@@ -19,14 +19,28 @@ describe('`ColonyClient` is able to', () => {
      */
     const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
-     * Get the total number of tasks so we can use the last existent task's id
+     * This is a little jury-rigged, since later tests might create new colonies,
+     * which in turn will make this value to not be reliable.
+     *
+     * But as it stands, this is the Id of the latest domain we created in this
+     * colony during the `domain` integration tests.
      */
-    const { count: lastTaskId } = await colonyClient.getTaskCount.call();
+    const { count: latestDomainId } = await colonyClient.getDomainCount.call();
+    /*
+     * Create the task under the last domain create in this colony.
+     * (See above about the caveat on this)
+     */
+    const {
+      eventData: { taskId: newTaskId },
+    } = await colonyClient.createTask.send({
+      specificationHash: taskDescription,
+      domainId: latestDomainId,
+    });
     /*
      * Get the task
      */
     const existingTask = await colonyClient.getTask.call({
-      taskId: lastTaskId,
+      taskId: newTaskId,
     });
     expect(existingTask).toBeInstanceOf(Object);
     expect(existingTask).toHaveProperty('id');
