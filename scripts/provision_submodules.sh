@@ -24,7 +24,7 @@ git submodule update --init --recursive
 # Build client
 log "Building 'colonyJS' submodule"
 cd ${CLIENT_PATH}
-yarn
+yarn --ignore-engines
 lerna run build
 cd ${ROOT_PATH}
 
