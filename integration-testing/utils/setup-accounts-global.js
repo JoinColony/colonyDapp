@@ -9,5 +9,5 @@
  * If you're linting the integration tests code (in a vacuum), this will fail
  * as this is temp file only available during the actual tests run
  */
-/* eslint-disable-next-lint import/no-unresolved */
+/* eslint-disable import/no-unresolved */
 global.ganacheAccounts = require('../../ganache-accounts.json');
