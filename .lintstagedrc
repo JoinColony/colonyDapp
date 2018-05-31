@@ -2,7 +2,6 @@
   "linters": {
     "src/**/*.{js,jsx}": [
       "yarn lint",
-      "yarn flow",
       "git add"
     ],
     "src/**/*.css": [

@@ -8,10 +8,8 @@
  * it where to search.
  * I've put if off for now since it involves a bit of a time investment to
  * get it right.
- *
- * eslint-disable  import/no-unresolved
  */
-
+/* eslint-disable import/no-unresolved */
 import { TrufflepigLoader } from '../../src/lib/colony-js/packages/colony-js-contract-loader-http';
 import { localhost } from '../../src/lib/colony-wallet/lib/es/providers';
 import { software as wallet } from '../../src/lib/colony-wallet/lib/es/wallets';
