@@ -69,7 +69,9 @@ class Field extends Component<Props> {
     prop?: MessageDescriptor | string,
     values?: { [string]: string },
   ): string => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     if (!prop) {
       return '';
     }

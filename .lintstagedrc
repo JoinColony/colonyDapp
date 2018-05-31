@@ -1,0 +1,21 @@
+{
+  "linters": {
+    "src/**/*.{js,jsx}": [
+      "yarn lint",
+      "git add"
+    ],
+    "src/**/*.css": [
+      "yarn stylelint",
+      "git add"
+    ],
+    "src/**/*.js": [
+      "yarn lint:integration",
+      "git add"
+    ]
+  },
+  "ignore": [
+    "src/lib/colony-js",
+    "src/lib/colony-wallet",
+    "src/lib/colonyNetwork",
+  ]
+}

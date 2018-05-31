@@ -15,7 +15,9 @@
     "flow": "flow check",
     "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
     "lint": "eslint --fix 'src/**/*.{js,jsx}'",
+    "lint:integration": "eslint --fix 'integration-testing/**/*.js'",
     "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}'",
+    "lint:integration:ci": "eslint --format junit -o 'reports/eslint/eslint-integration-tests-results.xml' 'integration-testing/**/*.js'",
     "scaffold": "plop",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
     "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
@@ -26,12 +28,6 @@
     "test:integration:ci": "jest --clearCache && NODE_ENV=test jest --ci --bail --verbose --runInBand --config=jest-integration.conf.json --testResultsProcessor='jest-junit'",
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --testResultsProcessor='jest-junit'",
     "postinstall": "yarn provision"
-  },
-  "lint-staged": {
-    "src/{,**/}*.{js|jsx}": [
-      "eslint --fix",
-      "git add"
-    ]
   },
   "repository": {
     "type": "git",
@@ -82,12 +78,12 @@
     "flow-bin": "^0.71.0",
     "ganache-cli": "^6.1.0",
     "html-webpack-plugin": "^3.0.0",
-    "husky": "^0.14.3",
+    "husky": "^1.0.0-rc.6",
     "jest": "^22.0.0",
     "jest-enzyme": "^6.0.0",
     "jest-junit": "^4.0.0",
     "jest-sandbox": "^1.1.1",
-    "lint-staged": "^7.0.0",
+    "lint-staged": "^7.1.1",
     "node-fetch": "^2.1.2",
     "plop": "^2.0.0",
     "postcss": "^6.0.16",
@@ -100,7 +96,6 @@
     "redux-test-utils": "^0.2.1",
     "rimraf": "^2.6.2",
     "simple-git": "^1.92.0",
-    "sleep": "^5.1.1",
     "style-loader": "^0.21.0",
     "stylelint": "^9.1.1",
     "stylelint-config-css-modules": "^1.2.0",
