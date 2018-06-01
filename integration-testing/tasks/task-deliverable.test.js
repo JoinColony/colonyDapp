@@ -8,7 +8,7 @@ jest.setTimeout(10000);
 
 const taskDescription = 'Integration Tests Task';
 const taskDeliverable = 'I solemnly swear I am up to no good.';
-const taskDueDate = new Date(2022, 10, 13).getTime() - 1000;
+const taskDueDate = new Date().getTime() + 86400000;
 
 const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
@@ -34,7 +34,6 @@ describe('`ColonyClient` is able to', () => {
      * Get the existing colony, again, for both manager and worker accounts
      */
     const managerColonyClient = await managerNetworkClient.getColonyClient(
-      lastColonyId,
       lastColonyId,
     );
     const workerColonyClient = await workerNetworkClient.getColonyClient(
@@ -81,8 +80,8 @@ describe('`ColonyClient` is able to', () => {
      */
     await multisigSetDueDateManager.sign();
     /*
-     * Check that the multisig operation has the required signees for it to be
-     * approved.
+     * Backup the `setTaskDueDate` operation to JSON and import it in the worker's
+     * client instance (so we can sign it with the worker as well)
      */
     const mutisigJsonBackup = multisigSetDueDateManager.toJSON();
     const multisigSetDueDateWorker = await workerColonyClient.setTaskDueDate.restoreOperation(
@@ -103,7 +102,7 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Submit the task's deliverable
      */
-    const submitTaskTransaction = await await workerColonyClient.submitTaskDeliverable.send(
+    const submitTaskTransaction = await workerColonyClient.submitTaskDeliverable.send(
       {
         taskId: newTaskId,
         deliverableHash: taskDeliverable,
