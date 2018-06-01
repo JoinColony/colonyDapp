@@ -1,9 +1,29 @@
 @import 'variables.css';
 
 .main {
-  margin-top: -100px;
-  width: 100%;
-  max-width: 520px;
+    margin-top: -100px;
+    width: 100%;
+    max-width: 520px;
+  }
+  
+.title {
+    margin-top: 124px;
+    margin-bottom: 45px;
+  }
+
+.subtitle {
+  font-size: 14px;
+  margin-bottom: 47px;
+}
+
+.content {
+  width: 430px;
+}
+
+.row {
+  height: 64px;
+  border-bottom: 1px solid grey; 
+  padding: 16px;
 }
 
 .header {

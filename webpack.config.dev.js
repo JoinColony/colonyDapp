@@ -27,7 +27,7 @@ const config = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: 'babel-loader'
         },
       },
       {
@@ -52,8 +52,6 @@ const config = {
       },
       {
         test: /\.svg$/,
-        include: path.resolve(__dirname, 'src', 'img'),
-        exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
         use: [
           {
             loader: 'file-loader',

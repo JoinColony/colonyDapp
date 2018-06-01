@@ -44,7 +44,3 @@ const WizardTemplate = ({ children, sidebarChild }: Props) => (
 WizardTemplate.displayName = displayName;
 
 export default WizardTemplate;
-
-
-
-

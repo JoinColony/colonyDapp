@@ -40,6 +40,7 @@ const Heading = ({
       huge: 'h1',
       thin: 'h1',
       large: 'h2',
+      mediumL: 'h6',
       medium: 'h3',
       small: 'h4',
       tiny: 'h5',

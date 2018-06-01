@@ -10,7 +10,6 @@ import styles from './WizardTemplate.css';
 
 type Props = {
   children: Node,
-  sidebarChild?: Node,
 };
 
 const displayName = 'pages.WizardTemplate';

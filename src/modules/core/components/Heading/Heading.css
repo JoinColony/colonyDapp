@@ -68,6 +68,11 @@
   font-size: var(--size-large);
 }
 
+.sizeMediumL {
+  composes: medium-l from '~styles/titles.css';
+  font-size: var(--size-medium-l);
+}
+
 .sizeThin {
   composes: thin from '~styles/titles.css';
 }

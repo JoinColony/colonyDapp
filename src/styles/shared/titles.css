@@ -38,6 +38,12 @@
   font-size: var(--size-medium);
 }
 
+.medium-l {
+  composes: title;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-normal);
+}
+
 .huge {
   composes: title;
   font-size: var(--size-huge);

@@ -16,6 +16,11 @@ import rootReducer from './reducer';
 /* eslint-disable-next-line max-len */
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 import CreateColony from './modules/dashboard/components/CreateColony';
+<<<<<<< HEAD
+=======
+import CreateWallet from './modules/wallet/components/CreateWallet';
+// import ColonyCreationTest from './ColonyCreationTest.jsx';
+>>>>>>> use button and icon module
 import SpinnerLoader from './modules/core/components/Preloaders/SpinnerLoader';
 
 addLocaleData(en);
