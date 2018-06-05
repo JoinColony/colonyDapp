@@ -7,9 +7,12 @@ import { WORKER_ROLE } from '../../src/lib/colony-js/packages/colony-js-client';
  */
 jest.setTimeout(10000);
 
+const today = new Date();
+const tommorow = new Date();
+tommorow.setDate(today.getDate() + 1);
+
 const taskDescription = 'Integration Tests Task';
 const taskDeliverable = 'I solemnly swear I am up to no good.';
-const taskDueDate = new Date().getTime() + 86400000;
 
 const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
@@ -75,7 +78,7 @@ describe('`ColonyClient` is able to', () => {
     const multisigSetDueDateManager = await managerColonyClient.setTaskDueDate.startOperation(
       {
         taskId: newTaskId,
-        dueDate: taskDueDate,
+        dueDate: tommorow,
       },
     );
     /*
