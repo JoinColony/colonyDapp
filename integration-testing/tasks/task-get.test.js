@@ -1,4 +1,4 @@
-import { toUtf8String } from 'ethers/utils';
+import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
 
 const taskDescription = 'Integration Tests Task';
@@ -33,7 +33,7 @@ describe('`ColonyClient` is able to', () => {
     const {
       eventData: { taskId: newTaskId },
     } = await colonyClient.createTask.send({
-      specificationHash: taskDescription,
+      specificationHash: multiHash.encode(taskDescription),
       domainId: latestDomainId,
     });
     /*
@@ -60,7 +60,7 @@ describe('`ColonyClient` is able to', () => {
      * The task should have the correct speciification hash.
      */
     const { specificationHash: existingTaskSpecificationHash } = existingTask;
-    expect(toUtf8String(existingTaskSpecificationHash)).toMatch(
+    expect(multiHash.decode(existingTaskSpecificationHash)).toMatch(
       taskDescription,
     );
   });

@@ -33,6 +33,10 @@ const encode = value => {
    */
   hexValue = hexValue.slice(2);
   /*
+   * Ensure a maximum hex lenght of 32 bytes
+   */
+  hexValue = hexValue.slice(0, 64);
+  /*
    * If the leading byte is greater than 60, then it's prefix `01`, all other
    * cases are prefix `02`
    */

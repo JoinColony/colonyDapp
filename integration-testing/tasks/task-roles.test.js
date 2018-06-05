@@ -1,3 +1,4 @@
+import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
 import {
   WORKER_ROLE,
@@ -37,10 +38,12 @@ describe('`ColonyClient` is able to', () => {
      * (See above about the caveat on this)
      */
     const newTaskTransaction = await colonyClient.createTask.send({
-      specificationHash: taskDescription,
+      specificationHash: multiHash.encode(taskDescription),
       domainId: latestDomainId,
     });
-    const { eventData: { taskId: newTaskId } } = newTaskTransaction;
+    const {
+      eventData: { taskId: newTaskId },
+    } = newTaskTransaction;
     /*
      * Check the task has manager role assigned
      *

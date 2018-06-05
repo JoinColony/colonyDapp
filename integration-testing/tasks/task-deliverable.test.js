@@ -1,3 +1,4 @@
+import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
 import { WORKER_ROLE } from '../../src/lib/colony-js/packages/colony-js-client';
 
@@ -54,10 +55,12 @@ describe('`ColonyClient` is able to', () => {
      * (See above about the caveat on this)
      */
     const newTaskTransaction = await managerColonyClient.createTask.send({
-      specificationHash: taskDescription,
+      specificationHash: multiHash.encode(taskDescription),
       domainId: latestDomainId,
     });
-    const { eventData: { taskId: newTaskId } } = newTaskTransaction;
+    const {
+      eventData: { taskId: newTaskId },
+    } = newTaskTransaction;
     /*
      * Set a worker for the task
      */
@@ -105,7 +108,7 @@ describe('`ColonyClient` is able to', () => {
     const submitTaskTransaction = await workerColonyClient.submitTaskDeliverable.send(
       {
         taskId: newTaskId,
-        deliverableHash: taskDeliverable,
+        deliverableHash: multiHash.encode(taskDeliverable),
       },
     );
     /*
