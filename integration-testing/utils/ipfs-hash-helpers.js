@@ -34,6 +34,10 @@ const encode = value => {
   hexValue = hexValue.slice(2);
   /*
    * Ensure a maximum hex lenght of 32 bytes
+   *
+   * This is basically cheating, but it works for the purpouses of the integration tests.
+   * If you ever want to port these to a production environment, make sure you find
+   * a way to compress data, as opposed to just truncating it.
    */
   hexValue = hexValue.slice(0, 64);
   /*
