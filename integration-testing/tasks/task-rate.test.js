@@ -23,6 +23,10 @@ const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const evaluatorAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[2];
 
+const ratingSalt = 'SaltySeaBass';
+const managerRatingValue = 30;
+const workerRatingValue = 40;
+
 describe('`ColonyClient` is able to', () => {
   test('Set a task develiverable', async () => {
     /*
@@ -133,8 +137,8 @@ describe('`ColonyClient` is able to', () => {
     const {
       secret: managerRating,
     } = await workerColonyClient.generateSecret.call({
-      salt: 'Great work!',
-      value: bigNumberify(30),
+      salt: ratingSalt,
+      value: bigNumberify(managerRatingValue),
     });
     /*
      * Generate a rating secret (as the evaluator) to rate the Worker
@@ -142,8 +146,8 @@ describe('`ColonyClient` is able to', () => {
     const {
       secret: workerRating,
     } = await evaluatorColonyClient.generateSecret.call({
-      salt: 'Great work!',
-      value: bigNumberify(40),
+      salt: ratingSalt,
+      value: bigNumberify(workerRatingValue),
     });
     /*
      * Rate the Manager as the Worker
@@ -151,13 +155,60 @@ describe('`ColonyClient` is able to', () => {
     const managerRatingTransaction = await workerColonyClient.submitTaskWorkRating.send(
       { taskId: newTaskId, role: MANAGER_ROLE, ratingSecret: managerRating },
     );
+    expect(managerRatingTransaction).toHaveProperty('successful', true);
     /*
      * Rate the Worker as the Evaluator
      */
-    expect(managerRatingTransaction).toHaveProperty('successful', true);
     const workerRatingTransaction = await evaluatorColonyClient.submitTaskWorkRating.send(
       { taskId: newTaskId, role: WORKER_ROLE, ratingSecret: workerRating },
     );
     expect(workerRatingTransaction).toHaveProperty('successful', true);
+    /*
+     * The task should have two ratings submitted
+     */
+    const {
+      count: taskRatingsCount,
+    } = await managerColonyClient.getTaskWorkRatings.call({
+      taskId: newTaskId,
+    });
+    expect(taskRatingsCount).toEqual(2);
+    /*
+     * The ratings secrets submitted should match the ones generated
+     */
+    const {
+      secret: managerRatingSecret,
+    } = await managerColonyClient.getTaskWorkRatingSecret.call({
+      taskId: newTaskId,
+      role: MANAGER_ROLE,
+    });
+    expect(managerRatingSecret).toEqual(managerRating);
+    const {
+      secret: workerRatingSecret,
+    } = await managerColonyClient.getTaskWorkRatingSecret.call({
+      taskId: newTaskId,
+      role: WORKER_ROLE,
+    });
+    expect(workerRatingSecret).toEqual(workerRating);
+    /*
+     * Worker and Evaluator should be able to reveal they're ratings
+     */
+    const managerRatingRevealTransaction = await workerColonyClient.revealTaskWorkRating.send(
+      {
+        taskId: newTaskId,
+        role: MANAGER_ROLE,
+        rating: managerRatingValue,
+        salt: ratingSalt,
+      },
+    );
+    expect(managerRatingRevealTransaction).toHaveProperty('successful', true);
+    const workerRatingRevealTransaction = await evaluatorColonyClient.revealTaskWorkRating.send(
+      {
+        taskId: newTaskId,
+        role: WORKER_ROLE,
+        rating: workerRatingValue,
+        salt: ratingSalt,
+      },
+    );
+    expect(workerRatingRevealTransaction).toHaveProperty('successful', true);
   });
 });
