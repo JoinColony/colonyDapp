@@ -1,7 +1,7 @@
 @import 'variables.css';
 
 .main {
-  background-color: var(--grey-blue-2);
+  background-color: #F4F6FA;
 }
 .header {
   height: 60px;

@@ -37,11 +37,10 @@ const Heading = ({
   const HeadingElement =
     tagName ||
     {
-      huge: 'h1',
-      thin: 'h1',
-      large: 'h2',
+      large: 'h1',
+      mediumL: 'h2',
       medium: 'h3',
-      mediumL: 'h4',
+      normal: 'h4',
       small: 'h5',
       tiny: 'h6',
     }[size] ||

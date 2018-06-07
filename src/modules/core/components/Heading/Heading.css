@@ -5,6 +5,7 @@
   margin-bottom: 20px;
   white-space: pre-line;
   color: var(--text);
+  font-family: var(--family-primary);
 }
 
 /*
@@ -53,6 +54,10 @@
   margin-bottom: 0 !important;
 }
 
+.marginSmall {
+  margin-bottom: 8px;
+}
+
 /*
  * Sizing
  *
@@ -60,7 +65,8 @@
  */
 
 .sizeHuge {
-  composes: huge from '~styles/titles.css';
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-huge);
 }
 
 .sizeLarge {
@@ -69,19 +75,25 @@
 }
 
 .sizeMediumL {
-  composes: medium-l from '~styles/titles.css';
+  composes: title from '~styles/titles.css';
   font-size: var(--size-medium-l);
+}
+
+.sizeNormal {
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-normal);
+}
+
+.sizeSmall {
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-small);
+}
+
+.sizeTiny {
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-tiny);
 }
 
 .sizeThin {
   composes: thin from '~styles/titles.css';
-}
-
-.sizeSmall {
-  composes: small from '~styles/titles.css';
-}
-
-.sizeTiny {
-  composes: tiny from '~styles/titles.css';
-  margin-bottom: 10px;
 }

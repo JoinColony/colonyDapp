@@ -30,6 +30,7 @@ export const getMainClasses = (
   styleObject: StyleObject = {},
   state: { [string]: boolean } = {},
 ) => {
+  console.log(styleObject);
   const { theme, ...modifiers } = appearance;
   const themeClass = `theme${capitalize(theme)}`;
   const modifierClasses = Object.keys(modifiers)

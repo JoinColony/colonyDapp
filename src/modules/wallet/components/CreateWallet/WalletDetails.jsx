@@ -64,6 +64,11 @@ const DetailRow = ({ text, rowIndex }: Props) => {
       <div className="row-icon">
         <Icon style={svgStyle} />
       </div>
+      <Heading
+        appearance={{ size: 'small' }}
+        className="marginSmall"
+        text={text}
+      />
       <Heading appearance={{ size: 'tiny' }} text={text} />
     </div>
   );
@@ -78,14 +83,19 @@ const allTheRows = Object.keys(rows).map((row, i) => {
 const WalletDetails = () => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
-      <Heading appearance={{ size: 'large' }} text={MSG.heading} />
+      <Heading appearance={{ size: 'mediumL' }} text={MSG.heading} />
     </div>
     <div className={`${styles.subtitle}`}>
-      <Heading appearance={{ size: 'mediumL' }} text={MSG.subtitle} />
+      <Heading appearance={{ size: 'normal' }} text={MSG.subtitle} />
     </div>
     {allTheRows}
     <div className={`${styles.callToAction}`}>
-      <FormattedMessage {...MSG.callToAction} />
+      <Heading
+        appearance={{ size: 'small' }}
+        className="marginSmall"
+        text={MSG.callToAction}
+      />
+      <Heading appearance={{ size: 'tiny' }} text={MSG.callToAction} />
     </div>
   </section>
 );
