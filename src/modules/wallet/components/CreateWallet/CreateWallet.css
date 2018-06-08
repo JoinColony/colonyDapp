@@ -23,7 +23,7 @@
 
 .row {
   height: 64px;
-  border-bottom: 1px solid grey; 
+  border-bottom: 1px solid var(--grey-blue-0); 
   padding: 16px;
 }
 

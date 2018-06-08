@@ -76,6 +76,12 @@
   font-size: var(--size-medium-l);
 }
 
+.thinNormal {
+  composes: title;
+  font-weight: var(--weight-medium);
+  font-size: var(--size-normal);
+}
+
 /*
  * Title colors
  */

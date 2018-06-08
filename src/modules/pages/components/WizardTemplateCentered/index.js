@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './WizardTemplate';
+export { default } from './WizardTemplateCentered';

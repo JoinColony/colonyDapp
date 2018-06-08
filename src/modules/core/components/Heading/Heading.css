@@ -97,8 +97,13 @@
 
 .sizeBoldSmall {
   composes: boldSmall from '~styles/titles.css';
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-size: var(--size-small);
+}
+
+.sizeThinNormal {
+  composes: thinNormal from '~styles/titles.css';
+  font-size: var(--size-normal);
 }
 
 .sizeThinner {

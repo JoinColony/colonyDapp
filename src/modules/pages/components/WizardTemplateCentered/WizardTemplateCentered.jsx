@@ -6,7 +6,7 @@ import type { Node } from 'react';
 import layout from '~styles/layout.css';
 
 import Logo from '../../../../img/logo.svg';
-import styles from './WizardTemplate.css';
+import styles from './WizardTemplateCentered.css';
 
 type Props = {
   children: Node,

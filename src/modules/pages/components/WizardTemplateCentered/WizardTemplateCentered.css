@@ -1,18 +1,18 @@
 @import 'variables.css';
 
 .main {
-  background-color: #F4F6FA;
+  background-color: var(--grey-blue-2);
 }
 .header {
   height: 60px;
   background-color: var(--total-white);
   width: 100%;
+  padding-top: 8px;
 }
 
 .logo {
   max-width: 90px;
   margin-left: 13px;
-  margin-top: 8px;
 }
 
 .content {

@@ -1,8 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
 
 import styles from './CreateWallet.css';
 import Heading from '../../../core/components/Heading';
@@ -18,8 +19,8 @@ const MSG = defineMessages({
     id: 'CreateWallet.WalletDetails.heading',
     defaultMessage: 'How would you like to access Colony?',
   },
-  subtitle: {
-    id: 'CreateWallet.WalletDetails.subtitle',
+  subTitle: {
+    id: 'CreateWallet.WalletDetails.subTitle',
     defaultMessage:
       'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
@@ -27,29 +28,53 @@ const MSG = defineMessages({
     id: 'CreateWallet.WalletDetails.callToAction',
     defaultMessage: 'Need a wallet? Let us help',
   },
+  callToActionSub: {
+    id: 'CreateWallet.WalletDetails.callToActionSub',
+    defaultMessage: 'Create an etherum wallet to join',
+  },
 });
 
-const rows = defineMessages({
-  0: {
-    id: 'CreateWallet.WalletDetails.row1',
+const rowTitles = defineMessages({
+  metaMaskTitle: {
+    id: 'CreateWallet.WalletDetails.title1',
     defaultMessage: 'MetaMask',
   },
-  1: {
-    id: 'CreateWallet.WalletDetails.row2',
+  hardwareTitle: {
+    id: 'CreateWallet.WalletDetails.title2',
     defaultMessage: 'Hardware Wallet',
   },
-  2: {
-    id: 'CreateWallet.WalletDetails.row3',
+  phraseTitle: {
+    id: 'CreateWallet.WalletDetails.title3',
     defaultMessage: 'Mnemonic Phrase',
   },
-  3: {
-    id: 'CreateWallet.WalletDetails.row4',
+  JSONTitle: {
+    id: 'CreateWallet.WalletDetails.title4',
     defaultMessage: 'JSON File',
   },
 });
 
+const rowSubTitles = defineMessages({
+  metaMaskSubtTitle: {
+    id: 'CreateWallet.WalletDetails.subTitle1',
+    defaultMessage: 'Require MetaMask browser extension',
+  },
+  hardwareSubtTitle: {
+    id: 'CreateWallet.WalletDetails.subTitle2',
+    defaultMessage: 'We support Ledger and Trezor',
+  },
+  phraseSubtTitle: {
+    id: 'CreateWallet.WalletDetails.subTitle3',
+    defaultMessage: 'Access with your mnemonic phrase',
+  },
+  JSONSubtTitle: {
+    id: 'CreateWallet.WalletDetails.subTitle4',
+    defaultMessage: 'We do not recommend this method',
+  },
+});
+
 const propTypes = {
-  text: PropTypes.string,
+  title: PropTypes.string,
+  subTitle: PropTypes.string,
   rowIndex: PropTypes.number,
 };
 
@@ -58,22 +83,34 @@ const svgStyle = {
   marginRight: '22px',
 };
 
-const DetailRow = ({ text, rowIndex }: Props) => {
+const DetailRow = ({ title, subTitle, rowIndex }: Props) => {
   const Icon = icons[rowIndex];
   return (
     <div className={`${styles.row}`}>
       <div className="row-icon">
         <Icon style={svgStyle} />
       </div>
-      <Heading appearance={{ size: 'boldSmall' }} text={text} />
-      <Heading appearance={{ size: 'tiny' }} text={text} />
+      <Heading appearance={{ size: 'boldSmall' }} text={title} />
+      <Heading appearance={{ size: 'tiny' }} text={subTitle} />
     </div>
   );
 };
 
-const allTheRows = Object.keys(rows).map((row, i) => {
-  const message = rows[i];
-  return <DetailRow text={message} key={i} rowIndex={i} />;
+const allTheRows = Object.keys(rowTitles).map((key, i) => {
+  const keys = Object.keys(rowSubTitles);
+  const title = rowTitles[key];
+  const subTitle = rowSubTitles[keys[i]];
+
+  return (
+    <NavLink exact to="/">
+      <DetailRow
+        title={title}
+        subTitle={subTitle}
+        key={`row${i.toString()}`}
+        rowIndex={i}
+      />
+    </NavLink>
+  );
 });
 
 const WalletDetails = () => (
@@ -82,12 +119,12 @@ const WalletDetails = () => (
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
     </div>
     <div className={`${styles.subtitle}`}>
-      <Heading appearance={{ size: 'normal' }} text={MSG.subtitle} />
+      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     {allTheRows}
     <div className={`${styles.callToAction}`}>
       <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
-      <Heading appearance={{ size: 'tiny' }} text={MSG.callToAction} />
+      <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
     </div>
   </section>
 );
