@@ -20,7 +20,8 @@ const MSG = defineMessages({
   },
   subtitle: {
     id: 'CreateWallet.WalletDetails.subtitle',
-    defaultMessage: 'Each Colony',
+    defaultMessage:
+      'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
   callToAction: {
     id: 'CreateWallet.WalletDetails.callToAction',
@@ -64,11 +65,7 @@ const DetailRow = ({ text, rowIndex }: Props) => {
       <div className="row-icon">
         <Icon style={svgStyle} />
       </div>
-      <Heading
-        appearance={{ size: 'small' }}
-        className="marginSmall"
-        text={text}
-      />
+      <Heading appearance={{ size: 'boldSmall' }} text={text} />
       <Heading appearance={{ size: 'tiny' }} text={text} />
     </div>
   );
@@ -79,7 +76,6 @@ const allTheRows = Object.keys(rows).map((row, i) => {
   return <DetailRow text={message} key={i} rowIndex={i} />;
 });
 
-// Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.
 const WalletDetails = () => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
@@ -90,11 +86,7 @@ const WalletDetails = () => (
     </div>
     {allTheRows}
     <div className={`${styles.callToAction}`}>
-      <Heading
-        appearance={{ size: 'small' }}
-        className="marginSmall"
-        text={MSG.callToAction}
-      />
+      <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
       <Heading appearance={{ size: 'tiny' }} text={MSG.callToAction} />
     </div>
   </section>

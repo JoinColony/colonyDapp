@@ -33,6 +33,7 @@
   font-size: var(--size-small);
 }
 
+
 .normal {
   composes: title;
   font-size: var(--size-normal);
@@ -55,18 +56,23 @@
 }
 
 /*
- * Title weights
- */
+* Title weights
+*/
 
 .thin {
   composes: title;
   font-weight: var(--weight-normal);
 }
 
+.boldSmall{
+  composes: title;
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+}
+
 .thinner {
   composes: title;
-  color: var(--grey-medium);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   font-size: var(--size-medium-l);
 }
 

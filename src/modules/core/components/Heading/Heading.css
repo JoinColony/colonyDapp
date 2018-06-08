@@ -54,10 +54,6 @@
   margin-bottom: 0 !important;
 }
 
-.marginSmall {
-  margin-bottom: 8px;
-}
-
 /*
  * Sizing
  *
@@ -97,6 +93,12 @@
 
 .sizeThin {
   composes: thin from '~styles/titles.css';
+}
+
+.sizeBoldSmall {
+  composes: boldSmall from '~styles/titles.css';
+  margin-bottom: 8px;
+  font-size: var(--size-small);
 }
 
 .sizeThinner {
