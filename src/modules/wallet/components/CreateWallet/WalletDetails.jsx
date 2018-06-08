@@ -83,7 +83,7 @@ const allTheRows = Object.keys(rows).map((row, i) => {
 const WalletDetails = () => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
-      <Heading appearance={{ size: 'mediumL' }} text={MSG.heading} />
+      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
     </div>
     <div className={`${styles.subtitle}`}>
       <Heading appearance={{ size: 'normal' }} text={MSG.subtitle} />

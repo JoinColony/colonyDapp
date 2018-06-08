@@ -92,8 +92,13 @@
 .sizeTiny {
   composes: title from '~styles/titles.css';
   font-size: var(--size-tiny);
+  font-weight: 300;
 }
 
 .sizeThin {
   composes: thin from '~styles/titles.css';
+}
+
+.sizeThinner {
+  composes: thinner from '~styles/titles.css';
 }

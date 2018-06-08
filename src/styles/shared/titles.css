@@ -63,6 +63,13 @@
   font-weight: var(--weight-normal);
 }
 
+.thinner {
+  composes: title;
+  color: var(--grey-medium);
+  font-weight: 500;
+  font-size: var(--size-medium-l);
+}
+
 /*
  * Title colors
  */
