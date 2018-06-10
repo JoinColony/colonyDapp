@@ -27,6 +27,7 @@ const MSG = defineMessages({
   subTitle: {
     id: 'CreateWallet.WalletDetails.subTitle',
     defaultMessage:
+      /* eslint-disable max-len */
       'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
   callToAction: {
@@ -85,6 +86,8 @@ const propTypes = {
 
 const propTypesDetails = {
   nextStep: PropTypes.func,
+  handleSubmit: PropTypes.func,
+  submitting: PropTypes.bool,
 };
 
 const svgStyle = {
@@ -125,32 +128,30 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   );
 });
 
-const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => {
-  return (
-    <section className={`${styles.content}`}>
-      <div className={`${styles.title}`}>
-        <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => (
+  <section className={`${styles.content}`}>
+    <div className={`${styles.title}`}>
+      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+    </div>
+    <div className={`${styles.subtitle}`}>
+      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+    </div>
+    {allTheRows}
+    <div className={`${styles.callToAction}`}>
+      <div className={`${styles.actionImage}`}>
+        <img src={jazz} alt="" className="emoticon" width="25" height="25" />
       </div>
-      <div className={`${styles.subtitle}`}>
-        <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+      <div className={`${styles.actionText}`}>
+        <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
+        <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
       </div>
-      {allTheRows}
-      <div className={`${styles.callToAction}`}>
-        <div className={`${styles.actionImage}`}>
-          <img src={jazz} alt="" className="emoticon" width="25" height="25" />
-        </div>
-        <div className={`${styles.actionText}`}>
-          <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
-          <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
-        </div>
-        <ArrowRight
-          className={`${styles.rowArrow}`}
-          onClick={handleSubmit(nextStep)}
-        />
-      </div>
-    </section>
-  );
-};
+      <ArrowRight
+        className={`${styles.rowArrow}`}
+        onClick={handleSubmit(nextStep)}
+      />
+    </div>
+  </section>
+);
 
 DetailRow.propTypes = propTypes;
 WalletDetails.propTypes = propTypesDetails;

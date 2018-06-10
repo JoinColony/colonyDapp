@@ -5,7 +5,7 @@ import toJson from 'enzyme-to-json';
 
 import { shallowWithIntl } from '~utils/test';
 
-import WizardTemplate from '../WizardTemplate.jsx';
+import WizardTemplate from '../WizardTemplateCentered.jsx';
 
 describe('WizardTemplate component', () => {
   test('Renders initial component', () => {
