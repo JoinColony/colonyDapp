@@ -2,8 +2,16 @@
 /* eslint-disable import/prefer-default-export */
 
 import type { Appearance, StyleObject } from '~types/css';
+import PropTypes from 'prop-types';
 
 import { capitalize } from '../strings';
+
+const propTypes = {
+  styleProp: PropTypes.string,
+  defaultProp: PropTypes.string,
+  styleObject: PropTypes.object,
+  restStyleProps: PropTypes.array,
+};
 
 /**
  * This function maps an appearance object onto CSS modules classes
@@ -83,3 +91,6 @@ export const styleSelector = (styleObject, ...restStyleProps) =>
       '',
     )
     .trim();
+
+styleSelector.propTypes = propTypes;
+styleWithDefaults.propTypes = propTypes;

@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import withWizard from '../../../core/components/Wizard';
 import CreateWallet from './CreateWallet.jsx';
 import WalletDetails from './WalletDetails.jsx';
-import CreatePhrase from './CreatePhrase.jsx';
+import CreatePhrase from './../CreatePhrase/CreatePhrase.jsx';
 
 const steps = [{ Step: WalletDetails }, { Step: CreatePhrase }];
 

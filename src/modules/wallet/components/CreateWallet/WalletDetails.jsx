@@ -82,12 +82,12 @@ const propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   rowIndex: PropTypes.number,
+  nextStep: PropTypes.func,
 };
 
-const propTypesDetails = {
+const propTypesWallet = {
   nextStep: PropTypes.func,
   handleSubmit: PropTypes.func,
-  submitting: PropTypes.bool,
 };
 
 const svgStyle = {
@@ -128,7 +128,7 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   );
 });
 
-const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => (
+const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
@@ -154,6 +154,7 @@ const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => (
 );
 
 DetailRow.propTypes = propTypes;
-WalletDetails.propTypes = propTypesDetails;
+
+WalletDetails.propTypes = propTypesWallet;
 
 export default WalletDetails;
