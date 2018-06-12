@@ -18,21 +18,39 @@
 }
 
 .content {
-  width: 430px;
+  width: 340px;
 }
 
 .row {
   height: 64px;
   border-bottom: 1px solid var(--grey-blue-0); 
   padding: 16px;
+  display: flex;
 }
 
-.row-icon{
-  float: left;
-  margin-right: 22px;
+.rowContent {
+  flex: 6;
 }
+
+.rowIcon{
+  flex: 1;
+}
+
+.rowArrow{
+  flex: 1;
+}
+
 .callToAction{
   margin-top: 64px;
   background-color: var(--total-white);
-  padding: 18px;
+  padding: 16px;
+  display: flex;
+  max-height: 60px;
+}
+
+.actionImage{
+  flex: 1;
+}
+.actionText {
+  flex: 6;
 }

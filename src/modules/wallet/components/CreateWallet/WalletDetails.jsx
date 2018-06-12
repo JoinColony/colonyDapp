@@ -6,11 +6,16 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
 import styles from './CreateWallet.css';
+
 import Heading from '../../../core/components/Heading';
+
 import MetaMask from '../../../../img/icons/metamask.svg';
 import Wallet from '../../../../img/icons/wallet.svg';
 import Phrase from '../../../../img/icons/phrase.svg';
 import File from '../../../../img/icons/file.svg';
+import ArrowRight from '../../../../img/icons/arrow.svg';
+
+import jazz from '../../../../img/jazz.png';
 
 const icons = [MetaMask, Wallet, Phrase, File];
 
@@ -78,20 +83,27 @@ const propTypes = {
   rowIndex: PropTypes.number,
 };
 
+const propTypesDetails = {
+  nextStep: PropTypes.func,
+};
+
 const svgStyle = {
-  float: 'left',
-  marginRight: '22px',
+  width: '22px',
+  height: '22px',
 };
 
 const DetailRow = ({ title, subTitle, rowIndex }: Props) => {
   const Icon = icons[rowIndex];
   return (
     <div className={`${styles.row}`}>
-      <div className="row-icon">
+      <div className={`${styles.rowIcon}`}>
         <Icon style={svgStyle} />
       </div>
-      <Heading appearance={{ size: 'boldSmall' }} text={title} />
-      <Heading appearance={{ size: 'tiny' }} text={subTitle} />
+      <div className={`${styles.rowContent}`}>
+        <Heading appearance={{ size: 'boldSmall' }} text={title} />
+        <Heading appearance={{ size: 'tiny' }} text={subTitle} />
+      </div>
+      <ArrowRight className={`${styles.rowArrow}`} />
     </div>
   );
 };
@@ -102,7 +114,7 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   const subTitle = rowSubTitles[keys[i]];
 
   return (
-    <NavLink exact to="/">
+    <NavLink key={`Link${i.toString()}`} exact to="/">
       <DetailRow
         title={title}
         subTitle={subTitle}
@@ -113,22 +125,34 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   );
 });
 
-const WalletDetails = () => (
-  <section className={`${styles.content}`}>
-    <div className={`${styles.title}`}>
-      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
-    </div>
-    <div className={`${styles.subtitle}`}>
-      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
-    </div>
-    {allTheRows}
-    <div className={`${styles.callToAction}`}>
-      <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
-      <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
-    </div>
-  </section>
-);
+const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => {
+  return (
+    <section className={`${styles.content}`}>
+      <div className={`${styles.title}`}>
+        <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+      </div>
+      <div className={`${styles.subtitle}`}>
+        <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+      </div>
+      {allTheRows}
+      <div className={`${styles.callToAction}`}>
+        <div className={`${styles.actionImage}`}>
+          <img src={jazz} alt="" className="emoticon" width="25" height="25" />
+        </div>
+        <div className={`${styles.actionText}`}>
+          <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
+          <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
+        </div>
+        <ArrowRight
+          className={`${styles.rowArrow}`}
+          onClick={handleSubmit(nextStep)}
+        />
+      </div>
+    </section>
+  );
+};
 
 DetailRow.propTypes = propTypes;
+WalletDetails.propTypes = propTypesDetails;
 
 export default WalletDetails;

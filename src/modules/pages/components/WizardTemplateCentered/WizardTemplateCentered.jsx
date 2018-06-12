@@ -5,7 +5,7 @@ import type { Node } from 'react';
 
 import layout from '~styles/layout.css';
 
-import Logo from '../../../../img/logo.svg';
+import Logo from '../../../../img/icons/logo.svg';
 import styles from './WizardTemplateCentered.css';
 
 type Props = {

@@ -129,6 +129,7 @@
     "revalidate": "^1.2.0",
     "shortid": "^2.2.8",
     "svgr": "^1.10.0",
+    "url-loader": "^1.0.1",
     "web3-utils": "^1.0.0-beta.27"
   }
 }
