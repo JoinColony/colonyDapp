@@ -26,6 +26,12 @@
   padding: 16px;
 }
 
-.header {
-  margin-bottom: 40px;
+.row-icon{
+  float: left;
+  margin-right: 22px;
+}
+.callToAction{
+  margin-top: 64px;
+  background-color: var(--total-white);
+  padding: 18px;
 }

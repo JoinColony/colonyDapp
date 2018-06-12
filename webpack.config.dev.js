@@ -52,25 +52,8 @@ const config = {
       },
       {
         test: /\.svg$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'images/image.[hash].svg',
-            },
-          },
-          {
-            loader: 'svgo-loader',
-            options: {
-              plugins: [
-                { removeTitle: true },
-                { convertColors: { shorthex: false } },
-                { convertPathData: false },
-              ],
-            },
-          },
-        ],
-      },
+        use: ['svgr/webpack'],
+      }
     ],
   },
   plugins: [

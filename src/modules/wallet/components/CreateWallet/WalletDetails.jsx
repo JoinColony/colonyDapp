@@ -5,9 +5,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
 import styles from './CreateWallet.css';
-// import Button from '../../../core/components/Button';
 import Heading from '../../../core/components/Heading';
-import Icon from '../../../core/components/Icon';
+import MetaMask from '../../../../img/icons/metamask.svg';
+import Wallet from '../../../../img/icons/wallet.svg';
+import Phrase from '../../../../img/icons/phrase.svg';
+import File from '../../../../img/icons/file.svg';
+
+const icons = [MetaMask, Wallet, Phrase, File];
 
 const MSG = defineMessages({
   heading: {
@@ -45,18 +49,29 @@ const rows = defineMessages({
 
 const propTypes = {
   text: PropTypes.string,
+  rowIndex: PropTypes.number,
 };
 
-const DetailRow = ({ text }: Props) => (
-  <div className={`${styles.row}`}>
-    <Icon name="metamask" size="medium" />
-    <Heading appearance={{ size: 'tiny' }} text={text} />
-  </div>
-);
+const svgStyle = {
+  float: 'left',
+  marginRight: '22px',
+};
+
+const DetailRow = ({ text, rowIndex }: Props) => {
+  const Icon = icons[rowIndex];
+  return (
+    <div className={`${styles.row}`}>
+      <div className="row-icon">
+        <Icon style={svgStyle} />
+      </div>
+      <Heading appearance={{ size: 'tiny' }} text={text} />
+    </div>
+  );
+};
 
 const allTheRows = Object.keys(rows).map((row, i) => {
   const message = rows[i];
-  return <DetailRow text={message} key="i" />;
+  return <DetailRow text={message} key={i} rowIndex={i} />;
 });
 
 // Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.
