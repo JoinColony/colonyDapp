@@ -26,9 +26,7 @@ class FieldRow extends Component<Props> {
   static displayName = 'core.Fields.FieldRow';
 
   reset = (): void => {
-    const {
-      input: { onChange },
-    } = this.props;
+    const { input: { onChange } } = this.props;
     onChange('');
   };
 
