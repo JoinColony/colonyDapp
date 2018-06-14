@@ -185,7 +185,6 @@
   border-right-color: transparent;
   border-top-color: transparent;
 }
-
 /*
  * Ghost
  * buttons with transparent background and border color
@@ -216,7 +215,7 @@
   padding: 3px 16px;
   border-color: var(--temp-grey-1);
   border-width: 2px;
-  color: var(--text);
+  color: var(--grey-4);
 }
 
 .themeGhost.colorSchemaGrey:hover {
@@ -227,6 +226,30 @@
 .themeGhost.colorSchemaGrey.sizeLarge {
   padding: 10px 32px;
 }
+
+.themeGhost.colorSchemaNoBorder {
+  padding: 3px 16px;
+  border: none;
+  color: var(--grey-4);
+}
+
+.themeGhost.colorSchemaNoBorder:hover {
+  color: color(var(--text) shade(30%));
+  border: none;
+}
+
+
+.themeGhost.colorSchemaNoBorderBlue {
+  padding: 3px 16px;
+  border: none;
+  color: var(--sky-blue);
+}
+
+.themeGhost.colorSchemaNoBorderBlue:hover {
+  color: color(var(--sky-blue) shade(30%));
+  border: none;
+}
+
 
 /*
  * Underlined Bold

@@ -1,0 +1,26 @@
+@import 'variables.css';
+
+.content{
+
+    width: 460px;
+}
+
+.title{
+    margin-top: 180px;
+}
+
+.greyBox{
+    background-color: var(--grey-blue-1);
+    min-height: 86px;
+}
+
+.buttonsForBox{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+.rowOutlier{
+    flex: 1;
+}
