@@ -125,6 +125,7 @@
     "copy-to-clipboard": "^3.0.8",
     "dotenv-webpack": "^1.5.4",
     "es6-promisify": "^6.0.0",
+    "eth-lightwallet": "^3.0.1",
     "ethers": "^3.0.8",
     "formik": "^1.0.2",
     "ipfs": "~0.29.3",
