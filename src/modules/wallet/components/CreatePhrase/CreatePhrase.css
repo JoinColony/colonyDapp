@@ -1,16 +1,17 @@
 @import 'variables.css';
 
 .content{
-
     width: 460px;
 }
 
 .title{
     margin-top: 180px;
 }
+.subtitle {
+    margin-bottom: 65px;
+}
 
 .greyBox{
-    background-color: var(--grey-blue-1);
     min-height: 86px;
 }
 

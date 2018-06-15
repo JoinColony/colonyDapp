@@ -3,12 +3,12 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
 
 import styles from './CreatePhrase.css';
 
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
+import PassphraseGenerator from '../../../core/components/PassphraseGenerator';
 
 const MSG = defineMessages({
   heading: {
@@ -19,11 +19,7 @@ const MSG = defineMessages({
     id: 'CreateWallet.CreatePhrase.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
-      'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
-  },
-  titleBox: {
-    id: 'CreateWallet.CreatePhrase.titleBox',
-    defaultMessage: 'Your Mnemonic Phrase',
+      'The key to your wallet is your mnemonic phrase. Write it down and put it in a safe place; you’ll use it to access Colony. Once you’ve safely stored your mnemonic, we’ll go to the next step.',
   },
   confirmButton: {
     id: 'CreateWallet.CreatePhrase.confirmButton',
@@ -51,23 +47,9 @@ const CreatePhrase = () => (
     <div className={`${styles.subtitle}`}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
-    {/* Heading above grey box */}
-    <div className={`${styles.buttonsForBox}`}>
-      <Heading
-        appearance={{ size: 'boldSmall' }}
-        text={MSG.titleBox}
-        className={`${styles.rowOutlier}`}
-      />
-      <Button
-        appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
-        value={MSG.copyButton}
-      />
-      <Button
-        appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
-        value={MSG.refreshButton}
-      />
+    <div className={`${styles.greyBox}`}>
+      <PassphraseGenerator />
     </div>
-    <div className={`${styles.greyBox}`} />
     <div className={`${styles.buttonsForBox}`}>
       <Button
         appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}

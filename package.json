@@ -112,8 +112,10 @@
   },
   "dependencies": {
     "cleave.js": "^1.0.9",
+    "copy-to-clipboard": "^3.0.8",
     "dotenv-webpack": "^1.5.4",
     "es6-promisify": "^6.0.0",
+    "eth-lightwallet": "^3.0.1",
     "ethers": "^3.0.8",
     "ipfs": "~0.28.2",
     "orbit-db": "0.19.8",
