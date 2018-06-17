@@ -1,0 +1,38 @@
+@import 'variables.css';
+
+.content{
+    width: 460px;
+}
+
+.title{
+    margin-top: 180px;
+}
+.subtitle {
+    margin-bottom: 65px;
+}
+
+.greyBox{
+    min-height: 86px;
+    padding: 60px;
+    position: relative;
+    border: 1px solid rgb(213, 213, 213);
+    border-radius: 3px;
+    background-color: rgb(232, 236, 245);
+    text-align: center;
+}
+
+.buttonsForBox{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+.rowOutlier{
+    flex: 1;
+}
+
+.wordContainer {
+    padding: 20px 0px;
+    border-bottom: 1px solid var(--grey-blue-0); 
+}
