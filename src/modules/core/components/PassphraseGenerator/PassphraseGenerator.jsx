@@ -77,19 +77,23 @@ class PassphraseGenerator extends Component {
             text={MSG.titleBox}
             className={`${styles.heading}`}
           />
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
-            type="button"
-            onClick={this.generatePassphrase}
-            value={MSG.buttonRefresh}
-          />
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
-            type="button"
-            disabled={copied}
-            onClick={this.copyToClipboard}
-            value={{ ...MSG.buttonCopy, values: { copied } }}
-          />
+          {this.state.copied ? (
+            <div className="buttonContainer">
+              <Button
+                appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
+                type="button"
+                onClick={this.generatePassphrase}
+                value={MSG.buttonRefresh}
+              />
+              <Button
+                appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
+                type="button"
+                disabled={copied}
+                onClick={this.copyToClipboard}
+                value={{ ...MSG.buttonCopy, values: { copied } }}
+              />
+            </div>
+          ) : null}
         </div>
         <div
           className={styles.main}

@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl';
 import PropTypes from 'prop-types';
 import type { FormProps } from '~types/forms';
 
-import styles from './CreatePhrase.css';
+import styles from './BackupPhrase.css';
 
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
@@ -14,28 +14,32 @@ import PassphraseGenerator from '../../../core/components/PassphraseGenerator';
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateWallet.CreatePhrase.heading',
-    defaultMessage: 'Great, let’s get started by creating your new wallet!',
+    id: 'CreateWallet.BackupPhrase.heading',
+    defaultMessage: 'Lets make an alternative Backup',
   },
   subTitle: {
-    id: 'CreateWallet.CreatePhrase.subTitle',
+    id: 'CreateWallet.BackupPhrase.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
-      'The key to your wallet is your mnemonic phrase. Write it down and put it in a safe place; you’ll use it to access Colony. Once you’ve safely stored your mnemonic, we’ll go to the next step.',
+      'We do not store your mnemonic phrase anywhere which means we cannot recover it for any reason. Make an alternative backup to keep it extra safe.',
   },
   confirmButton: {
-    id: 'CreateWallet.CreatePhrase.confirmButton',
+    id: 'CreateWallet.BackupPhrase.confirmButton',
     defaultMessage: 'Ive safely stored it',
   },
   backButton: {
-    id: 'CreateWallet.CreatePhrase.backButton',
+    id: 'CreateWallet.BackupPhrase.backButton',
     defaultMessage: 'Back',
+  },
+  backupButton: {
+    id: 'CreateWallet.BackupPhrase.backupButton',
+    defaultMessage: 'Backup Mnemonic',
   },
 });
 
 type Props = FormProps<CustomProps>;
 
-const CreatePhrase = ({ nextStep, handleSubmit, submitting }: Props) => {
+const BackupPhrase = ({ nextStep, handleSubmit, submitting }: Props) => {
   return (
     <section className={`${styles.content}`}>
       <div className={`${styles.title}`}>
@@ -46,6 +50,9 @@ const CreatePhrase = ({ nextStep, handleSubmit, submitting }: Props) => {
       </div>
       <div className={`${styles.greyBox}`}>
         <PassphraseGenerator />
+      </div>
+      <div className={`${styles.backupButton}`}>
+        <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />
       </div>
       <div className={`${styles.buttonsForBox}`}>
         <Button
@@ -62,4 +69,4 @@ const CreatePhrase = ({ nextStep, handleSubmit, submitting }: Props) => {
   );
 };
 
-export default CreatePhrase;
+export default BackupPhrase;
