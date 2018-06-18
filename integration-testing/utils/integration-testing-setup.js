@@ -42,7 +42,7 @@ if (global.DEBUG) {
  * Paths
  */
 const libPath = path.resolve('src', 'lib');
-const clientPath = path.resolve(libPath, 'colony-js');
+const clientPath = path.resolve(libPath, 'colonyJS');
 const walletPath = path.resolve(libPath, 'colony-wallet');
 const networkPath = path.resolve(libPath, 'colonyNetwork');
 const ganacheAccountsFile = path.resolve('.', 'ganache-accounts.json');

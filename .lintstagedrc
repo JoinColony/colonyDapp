@@ -14,7 +14,7 @@
     ]
   },
   "ignore": [
-    "src/lib/colony-js",
+    "src/lib/colonyJS",
     "src/lib/colony-wallet",
     "src/lib/colonyNetwork",
   ]

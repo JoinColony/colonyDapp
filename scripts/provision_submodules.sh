@@ -2,7 +2,7 @@
 
 # Paths
 LIB_PATH="src/lib"
-CLIENT_PATH="${LIB_PATH}/colony-js"
+CLIENT_PATH="${LIB_PATH}/colonyJS"
 WALLET_PATH="${LIB_PATH}/colony-wallet"
 NETWORK_PATH="${LIB_PATH}/colonyNetwork"
 
@@ -22,7 +22,7 @@ log "Initialize submodule libs"
 git submodule update --init --recursive
 
 # Build client
-log "Building 'colony-js' submodule"
+log "Building 'colonyJS' submodule"
 cd ${CLIENT_PATH}
 yarn
 lerna run build

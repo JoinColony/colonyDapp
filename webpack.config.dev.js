@@ -16,7 +16,7 @@ const config = {
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~types': path.resolve(__dirname, 'src/types/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
-      '@colony': path.resolve(__dirname, 'src/lib/colony-js/packages'),
+      '@colony': path.resolve(__dirname, 'src/lib/colonyJS/packages'),
       'colony-wallet': path.resolve(__dirname, 'src/lib/colony-wallet/lib'),
     },
   },

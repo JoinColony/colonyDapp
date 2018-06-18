@@ -1,5 +1,5 @@
 /*
- * Importing the `colony-js` packages directly since I couldn't make `jest` play nicely
+ * Importing the `colonyJS` packages directly since I couldn't make `jest` play nicely
  * with importing them from submodules.
  *
  * @TODO Write custom `jest` submodules resolver
@@ -10,11 +10,11 @@
  * get it right.
  */
 /* eslint-disable import/no-unresolved */
-import { TrufflepigLoader } from '../../src/lib/colony-js/packages/colony-js-contract-loader-http';
+import { TrufflepigLoader } from '../../src/lib/colonyJS/packages/colony-js-contract-loader-http';
 import { localhost } from '../../src/lib/colony-wallet/lib/es/providers';
 import { software as wallet } from '../../src/lib/colony-wallet/lib/es/wallets';
-import EthersAdapter from '../../src/lib/colony-js/packages/colony-js-adapter-ethers';
-import NetworkClient from '../../src/lib/colony-js/packages/colony-js-client';
+import EthersAdapter from '../../src/lib/colonyJS/packages/colony-js-adapter-ethers';
+import NetworkClient from '../../src/lib/colonyJS/packages/colony-js-client';
 
 const JSON_RPC = 'http://localhost:8545/';
 const TRUFFLEPIG_URL = 'http://localhost:3030';
