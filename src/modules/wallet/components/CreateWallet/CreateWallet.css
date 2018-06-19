@@ -46,6 +46,7 @@
   padding: 16px;
   display: flex;
   max-height: 60px;
+  cursor: pointer;
 }
 
 .actionImage{

@@ -44,8 +44,8 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the items look a bit nicer
   userSelect: 'none',
   padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-  width: 80,
+  flex: 1,
+  width: 115,
   height: 20,
 
   // add fancy shadow if dragging
@@ -56,16 +56,21 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 });
 
 const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'rgb(66, 129, 255)' : 'lightgrey',
-  padding: grid,
+  background: isDraggingOver ? 'rgb(66, 129, 255)' : 'rgb(232, 236, 245)',
+  display: 'flex',
+  'flex-wrap': 'wrap',
   width: 460,
-  height: 100,
+  height: 86,
+  padding: 60,
+  border: '1px solid rgb(213, 213, 213)',
+  'border-radius': 3,
+  'background-color': 'rgb(232, 236, 245)',
 });
 
 class DragAndDropArea extends Component {
   state = {
-    items: getItems(10),
-    selected: getItems(5, 10),
+    items: getItems(12),
+    selected: getItems(12),
   };
 
   /**
@@ -121,7 +126,7 @@ class DragAndDropArea extends Component {
   // But in this example everything is just done in one place for simplicity
   render() {
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
+      <DragDropContext direction="horizontal" onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable" direction="horizontal">
           {(provided, snapshot) => (
             <div
@@ -156,7 +161,12 @@ class DragAndDropArea extends Component {
               style={getListStyle(snapshot.isDraggingOver)}
             >
               {this.state.selected.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
+                <Draggable
+                  direction="horizontal"
+                  key={item.id}
+                  draggableId={item.id}
+                  index={index}
+                >
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}

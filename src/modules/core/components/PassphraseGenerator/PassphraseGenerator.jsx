@@ -77,7 +77,7 @@ class PassphraseGenerator extends Component {
             text={MSG.titleBox}
             className={`${styles.heading}`}
           />
-          {this.state.copied ? (
+          {!this.state.copied ? (
             <div className="buttonContainer">
               <Button
                 appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}

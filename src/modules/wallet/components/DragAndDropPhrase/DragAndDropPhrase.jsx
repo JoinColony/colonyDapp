@@ -46,9 +46,8 @@ type Props = FormProps<CustomProps>;
 
 const DragAndDropPhrase = ({
   nextStep,
+  previousStep,
   handleSubmit,
-  submitting,
-  onDragEnd,
 }: Props) => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
@@ -67,6 +66,7 @@ const DragAndDropPhrase = ({
       <Button
         appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
         value={MSG.backButton}
+        onClick={handleSubmit(previousStep)}
       />
       <Button onClick={handleSubmit(nextStep)} value={MSG.nextButton} />
     </div>

@@ -25,7 +25,7 @@ const MSG = defineMessages({
   },
   confirmButton: {
     id: 'CreateWallet.BackupPhrase.confirmButton',
-    defaultMessage: 'Ive safely stored it',
+    defaultMessage: 'Ive created a backup',
   },
   backButton: {
     id: 'CreateWallet.BackupPhrase.backButton',
@@ -39,34 +39,33 @@ const MSG = defineMessages({
 
 type Props = FormProps<CustomProps>;
 
-const BackupPhrase = ({ nextStep, handleSubmit, submitting }: Props) => {
-  return (
-    <section className={`${styles.content}`}>
-      <div className={`${styles.title}`}>
-        <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
-      </div>
-      <div className={`${styles.subtitle}`}>
-        <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
-      </div>
-      <div className={`${styles.greyBox}`}>
-        <PassphraseGenerator />
-      </div>
-      <div className={`${styles.backupButton}`}>
-        <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />
-      </div>
-      <div className={`${styles.buttonsForBox}`}>
-        <Button
-          appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-          value={MSG.backButton}
-        />
-        <Button
-          appearance={{ theme: 'danger' }}
-          onClick={handleSubmit(nextStep)}
-          value={MSG.confirmButton}
-        />
-      </div>
-    </section>
-  );
-};
+const BackupPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
+  <section className={`${styles.content}`}>
+    <div className={`${styles.title}`}>
+      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+    </div>
+    <div className={`${styles.subtitle}`}>
+      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+    </div>
+    <div className={`${styles.greyBox}`}>
+      <PassphraseGenerator />
+    </div>
+    <div className={`${styles.backupButton}`}>
+      <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />
+    </div>
+    <div className={`${styles.buttonsForBox}`}>
+      <Button
+        appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+        onClick={handleSubmit(previousStep)}
+        value={MSG.backButton}
+      />
+      <Button
+        appearance={{ theme: 'danger' }}
+        onClick={handleSubmit(nextStep)}
+        value={MSG.confirmButton}
+      />
+    </div>
+  </section>
+);
 
 export default BackupPhrase;

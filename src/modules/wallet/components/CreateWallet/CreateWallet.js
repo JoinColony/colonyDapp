@@ -10,10 +10,10 @@ import BackupPhrase from './../BackupPhrase/BackupPhrase.jsx';
 import DragAndDropPhrase from './../DragAndDropPhrase/DragAndDropPhrase.jsx';
 
 const steps = [
-  { Step: DragAndDropPhrase },
-  { Step: BackupPhrase },
   { Step: WalletDetails },
   { Step: CreatePhrase },
+  { Step: BackupPhrase },
+  { Step: DragAndDropPhrase },
 ];
 
 const CreateWalletContainer = compose(
