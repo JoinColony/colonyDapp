@@ -5,11 +5,13 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // this will be the phrase from the generator that has been randomly
 // reordered and will be passed in to the component as props
+const examplePhrase = ["sock", "eye", "boil", "hard", "tongue", "enhance", "decade", "trap", "foil", "nephew", "hawk", "edit"];
+
 const getItems = (count, offset = 0) =>
   Array.from({ length: count }, (v, k) => k).map(k => ({
     id: `item-${k + offset}`,
     // THIS will contain each word from the pass phrase
-    content: `item ${k + offset}`,
+    content: `${examplePhrase[k]}`,
   }));
 
 // a little function to help us with reordering the result
@@ -38,38 +40,46 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   return result;
 };
 
-const grid = 12;
-
 const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the items look a bit nicer
   userSelect: 'none',
-  padding: grid * 2,
-  flex: 1,
-  width: 115,
+  padding: '0px 5px',
+  margin: 5,
+  textAlign: 'center',
+  width: '14%',
   height: 20,
+  borderRadius: 3,
+  color: 'black',
 
-  // add fancy shadow if dragging
+  // TODO: add fancy shadow if dragging
   background: isDragging ? 'rgb(207, 213, 229)' : 'rgb(207, 213, 229)',
 
   // styles we need to apply on draggables
   ...draggableStyle,
 });
 
-const getListStyle = isDraggingOver => ({
+const getTargetStyle = isDraggingOver => ({
   background: isDraggingOver ? 'rgb(66, 129, 255)' : 'rgb(232, 236, 245)',
   display: 'flex',
-  'flex-wrap': 'wrap',
+  flexWrap: 'wrap',
+  alignContent: 'flex-start',
   width: 460,
   height: 86,
-  padding: 60,
   border: '1px solid rgb(213, 213, 213)',
-  'border-radius': 3,
-  'background-color': 'rgb(232, 236, 245)',
+  borderRadius: 3,
+  backgroundColor: 'rgb(232, 236, 245)',
+});
+
+const getSourceStyle = () => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: 460,
+  height: 86,
 });
 
 class DragAndDropArea extends Component {
   state = {
-    items: getItems(12),
+    items: getItems(0),
     selected: getItems(12),
   };
 
@@ -131,7 +141,7 @@ class DragAndDropArea extends Component {
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
+              style={getTargetStyle(snapshot.isDraggingOver)}
             >
               {this.state.items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -158,7 +168,7 @@ class DragAndDropArea extends Component {
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
+              style={getSourceStyle(snapshot.isDraggingOver)}
             >
               {this.state.selected.map((item, index) => (
                 <Draggable

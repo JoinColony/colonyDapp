@@ -43,12 +43,7 @@ const MSG = defineMessages({
 
 type Props = FormProps<CustomProps>;
 
-
-const DragAndDropPhrase = ({
-  nextStep,
-  previousStep,
-  handleSubmit,
-}: Props) => (
+const DragAndDropPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
@@ -56,11 +51,8 @@ const DragAndDropPhrase = ({
     <div className={`${styles.subtitle}`}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
-    <div className={`${styles.greyBox}`}>
-      {MSG.dragAndDropBox.defaultMessage}
-    </div>
     <div className={`${styles.wordContainer}`}>
-      <DragAndDropArea />
+      <DragAndDropArea text={MSG.dragAndDropBox.defaultMessage} />
     </div>
     <div className={`${styles.buttonsForBox}`}>
       <Button
