@@ -1,5 +1,10 @@
 import { isAddress } from 'web3-utils';
-
+/*
+ * As with the case with the network client helpers import, this can be resolved
+ * using a custom jest submodules resolver, but has been put off for now, due
+ * to the time investment required.
+ */
+/* eslint-disable-next-line import/no-unresolved */
 import { localhost } from '../src/lib/colony-wallet/lib/es/providers';
 
 import {
