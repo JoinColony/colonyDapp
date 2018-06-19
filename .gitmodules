@@ -10,6 +10,3 @@
 	path = src/lib/colonyNetwork
 	url = git@github.com:JoinColony/colonyNetwork.git
 	branch = develop
-[submodule "src/lib/colonyJS"]
-	path = src/lib/colonyJS
-	url = git@github.com:JoinColony/colonyJS.git
