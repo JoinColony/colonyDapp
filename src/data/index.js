@@ -98,7 +98,7 @@ export default class Data {
   async getUserProfile(key: PublicKey): Promise<UserProfile> {
     const store = await this._orbitNode.kvstore(key);
     await store.load();
-    await this._pinner.pinKVStore(store.address);
+    await this._pinner.pin(store);
     return new UserProfile(store);
   }
 

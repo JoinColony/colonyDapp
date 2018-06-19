@@ -28,21 +28,29 @@ afterAll(async () => {
 }, DDBTestFactory.TIMEOUT);
 
 describe('User Profile', () => {
-  test('Create my user profile component', async () => {
-    const p1 = await data1.getMyUserProfile();
-    expect(p1).toBeTruthy();
-    expect(p1.isEmpty()).toBeTruthy();
-  });
+  test(
+    'Create my user profile component',
+    async () => {
+      const p1 = await data1.getMyUserProfile();
+      expect(p1).toBeTruthy();
+      expect(p1.isEmpty()).toBeTruthy();
+    },
+    DDBTestFactory.TIMEOUT,
+  );
 
-  test('Create my user profile and set its name', async () => {
-    const p1 = await data2.getMyUserProfile();
-    const name = factory.name('Kanye West');
+  test(
+    'Create my user profile and set its name',
+    async () => {
+      const p1 = await data2.getMyUserProfile();
+      const name = factory.name('Kanye West');
 
-    await p1.setName(name);
+      await p1.setName(name);
 
-    expect(p1.isEmpty()).toBeFalsy();
-    expect(p1.getName()).toBe(name);
-  });
+      expect(p1.isEmpty()).toBeFalsy();
+      expect(p1.getName()).toBe(name);
+    },
+    DDBTestFactory.TIMEOUT,
+  );
 
   test(
     'Create my user profile and set its name sync with another',

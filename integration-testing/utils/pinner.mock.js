@@ -54,12 +54,12 @@ export default (async function makePinner(pinnerName) {
     node,
     orbit,
     nodeID,
-    bootstrap,
+    bootstrapServers: async () => bootstrap,
     waitForMe: ipfsNode => ipfsNode.waitForPeer(nodeID),
     pinBlock: id => node.block.get(id),
-    pinKVStore: async addr => {
-      const store = await orbit.keyvalue(addr);
-      pinnedStores.push(store);
+    pin: async store => {
+      const localStore = await orbit.keyvalue(store.address);
+      pinnedStores.push(localStore);
     },
   };
 });
