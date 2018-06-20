@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 
 import PropTypes from 'prop-types';
 import type { FormProps } from '~types/forms';
+import { Field as ReduxFormField } from 'redux-form';
 
 import styles from './CreatePhrase.css';
 
@@ -44,7 +45,7 @@ const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     <div className={`${styles.greyBox}`}>
-      <PassphraseGenerator />
+      <ReduxFormField name="passphrase" component={PassphraseGenerator} />
     </div>
     <div className={`${styles.buttonsForBox}`}>
       <Button
@@ -62,3 +63,5 @@ const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
 );
 
 export default CreatePhrase;
+
+export const reduxFormOpts = {};

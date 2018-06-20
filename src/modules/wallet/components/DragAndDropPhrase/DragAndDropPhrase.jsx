@@ -66,3 +66,5 @@ const DragAndDropPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
 );
 
 export default DragAndDropPhrase;
+
+export const reduxFormOpts = {};

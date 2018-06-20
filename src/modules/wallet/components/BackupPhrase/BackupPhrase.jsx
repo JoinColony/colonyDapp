@@ -1,6 +1,13 @@
 /* @flow */
 
 import React from 'react';
+import {
+  Field as ReduxFormField,
+  reduxForm,
+  formValueSelector,
+} from 'redux-form';
+
+import { connect } from 'react-redux';
 import { defineMessages } from 'react-intl';
 
 import PropTypes from 'prop-types';
@@ -48,7 +55,10 @@ const BackupPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     <div className={`${styles.greyBox}`}>
-      <PassphraseGenerator />
+      <ReduxFormField
+        name="passPhraseToStore"
+        component={PassphraseGenerator}
+      />
     </div>
     <div className={`${styles.backupButton}`}>
       <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />
@@ -68,4 +78,15 @@ const BackupPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
   </section>
 );
 
+BackupPhrase = reduxForm({
+  form: 'create_wallet',
+})(BackupPhrase);
+
+const selector = formValueSelector('selectingFormValues'); // <-- same as form name
+BackupPhrase = connect(state => {
+  const hasPassPhrase = selector(state, 'passPhrase');
+})(BackupPhrase);
+
 export default BackupPhrase;
+
+export const reduxFormOpts = {};

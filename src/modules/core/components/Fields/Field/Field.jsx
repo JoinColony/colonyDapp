@@ -149,7 +149,13 @@ class Field extends Component<Props> {
       title: this.getTitle(),
     };
 
-    return <ConnectorComponent component={FieldRow} {...connectorProps} />;
+    return (
+      <ConnectorComponent
+        name="FieldRow"
+        component={FieldRow}
+        {...connectorProps}
+      />
+    );
   }
 }
 
