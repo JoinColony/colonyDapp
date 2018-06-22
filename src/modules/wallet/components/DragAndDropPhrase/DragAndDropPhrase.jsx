@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { formValueSelector } from 'redux-form';
+import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
 import type { FormProps } from '~types/forms';
@@ -43,7 +45,14 @@ const MSG = defineMessages({
 
 type Props = FormProps<CustomProps>;
 
-const DragAndDropPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
+let DragAndDropPhrase;
+
+DragAndDropPhrase = ({
+  nextStep,
+  previousStep,
+  handleSubmit,
+  passphrase,
+}: Props) => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
@@ -52,7 +61,10 @@ const DragAndDropPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     <div className={`${styles.wordContainer}`}>
-      <DragAndDropArea text={MSG.dragAndDropBox.defaultMessage} />
+      <DragAndDropArea
+        phrase={passphrase}
+        text={MSG.dragAndDropBox.defaultMessage}
+      />
     </div>
     <div className={`${styles.buttonsForBox}`}>
       <Button
@@ -64,6 +76,13 @@ const DragAndDropPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
     </div>
   </section>
 );
+
+// get pass phrase from previous step
+// will be passed in as props
+const selector = formValueSelector('create_wallet');
+DragAndDropPhrase = connect(state => ({
+  passphrase: selector(state, 'pass_phrase_outer'),
+}))(DragAndDropPhrase);
 
 export default DragAndDropPhrase;
 

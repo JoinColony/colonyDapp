@@ -155,3 +155,8 @@ DetailRow.propTypes = propTypes;
 WalletDetails.propTypes = propTypesWallet;
 
 export default WalletDetails;
+
+export const reduxFormOpts = {
+  form: 'create_wallet',
+  forceUnregisterOnUnmount: true,
+};

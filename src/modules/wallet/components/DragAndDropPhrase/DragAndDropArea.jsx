@@ -2,17 +2,16 @@
 
 import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import PropTypes from 'prop-types';
 
-// this will be the phrase from the generator that has been randomly
-// reordered and will be passed in to the component as props
-const examplePhrase = ["sock", "eye", "boil", "hard", "tongue", "enhance", "decade", "trap", "foil", "nephew", "hawk", "edit"];
+const getItems = (phrase, count, offset = 0) => {
 
-const getItems = (count, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `item-${k + offset}`,
-    // THIS will contain each word from the pass phrase
-    content: `${examplePhrase[k]}`,
-  }));
+  const phraseArray = phrase.split(" ");
+  return Array.from({ length: count }, (word, index) => index).map(index => ({
+    id: `item-${index + offset}`,
+    content: `${phraseArray[index]}`,
+  }))
+};
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -77,17 +76,18 @@ const getSourceStyle = () => ({
   height: 86,
 });
 
-class DragAndDropArea extends Component {
+type Props = {
+  passphrase: PropTypes.string
+};
+
+class DragAndDropArea extends Component<Props> {
+
   state = {
-    items: getItems(0),
-    selected: getItems(12),
+    passphrase: this.props.phrase,
+    selected: getItems(this.props.phrase, 12),
+    items: [],
   };
 
-  /**
-   * A semi-generic way to handle multiple lists. Matches
-   * the IDs of the droppable container to the names of the
-   * source arrays stored in the state.
-   */
   id2List = {
     droppable: 'items',
     droppable2: 'selected',
@@ -132,8 +132,6 @@ class DragAndDropArea extends Component {
     }
   };
 
-  // Normally you would want to split things out into separate components.
-  // But in this example everything is just done in one place for simplicity
   render() {
     return (
       <DragDropContext direction="horizontal" onDragEnd={this.onDragEnd}>

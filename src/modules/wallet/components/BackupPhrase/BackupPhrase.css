@@ -13,6 +13,14 @@
 
 .greyBox{
     min-height: 86px;
+    font-weight: var(--weight-semi);
+    line-height: 1.5;
+    padding: 60px;
+    position: relative;
+    border: 1px solid var(--temp-grey-5);
+    border-radius: var(--radius-small);
+    background-color: var(--grey-blue-1);
+    text-align: center;
 }
 
 .buttonsForBox{

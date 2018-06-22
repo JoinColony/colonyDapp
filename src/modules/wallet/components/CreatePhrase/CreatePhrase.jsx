@@ -45,7 +45,10 @@ const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     <div className={`${styles.greyBox}`}>
-      <ReduxFormField name="passphrase" component={PassphraseGenerator} />
+      <ReduxFormField
+        name="pass_phrase_outer"
+        component={PassphraseGenerator}
+      />
     </div>
     <div className={`${styles.buttonsForBox}`}>
       <Button
@@ -56,6 +59,7 @@ const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
       <Button
         appearance={{ theme: 'danger' }}
         onClick={handleSubmit(nextStep)}
+        onSubmit={handleSubmit}
         value={MSG.confirmButton}
       />
     </div>
@@ -64,4 +68,7 @@ const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
 
 export default CreatePhrase;
 
-export const reduxFormOpts = {};
+export const reduxFormOpts = {
+  form: 'create_wallet',
+  forceUnregisterOnUnmount: true,
+};

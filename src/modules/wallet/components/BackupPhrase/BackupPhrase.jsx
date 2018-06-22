@@ -1,12 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import {
-  Field as ReduxFormField,
-  reduxForm,
-  formValueSelector,
-} from 'redux-form';
-
+import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import { defineMessages } from 'react-intl';
 
@@ -17,7 +12,6 @@ import styles from './BackupPhrase.css';
 
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
-import PassphraseGenerator from '../../../core/components/PassphraseGenerator';
 
 const MSG = defineMessages({
   heading: {
@@ -46,7 +40,14 @@ const MSG = defineMessages({
 
 type Props = FormProps<CustomProps>;
 
-const BackupPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
+let BackupPhrase;
+
+BackupPhrase = ({
+  nextStep,
+  previousStep,
+  handleSubmit,
+  passphrase,
+}: Props) => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
@@ -54,12 +55,7 @@ const BackupPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
     <div className={`${styles.subtitle}`}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
-    <div className={`${styles.greyBox}`}>
-      <ReduxFormField
-        name="passPhraseToStore"
-        component={PassphraseGenerator}
-      />
-    </div>
+    <div className={`${styles.greyBox}`}>{passphrase}</div>
     <div className={`${styles.backupButton}`}>
       <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />
     </div>
@@ -78,15 +74,16 @@ const BackupPhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
   </section>
 );
 
-BackupPhrase = reduxForm({
-  form: 'create_wallet',
-})(BackupPhrase);
-
-const selector = formValueSelector('selectingFormValues'); // <-- same as form name
-BackupPhrase = connect(state => {
-  const hasPassPhrase = selector(state, 'passPhrase');
-})(BackupPhrase);
+// get pass phrase from previous step
+// will be passed in as props
+const selector = formValueSelector('create_wallet');
+BackupPhrase = connect(state => ({
+  passphrase: selector(state, 'pass_phrase_outer'),
+}))(BackupPhrase);
 
 export default BackupPhrase;
 
-export const reduxFormOpts = {};
+export const reduxFormOpts = {
+  form: 'create_wallet',
+  forceUnregisterOnUnmount: true,
+};
