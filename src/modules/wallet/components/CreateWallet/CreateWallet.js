@@ -3,7 +3,7 @@
 import { compose } from 'recompose';
 
 import withWizard from '../../../core/components/Wizard';
-import CreateWallet from './CreateWallet.jsx';
+import CreateWallet from './CreateWallet.jsx'; // exporting the template that is wrapping the wizard
 import WalletDetails from './WalletDetails.jsx';
 import CreatePhrase, {
   reduxFormOpts as phraseReduxFormOpts,

@@ -4,16 +4,21 @@ import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
 
+/**
+ * Push word in correct position
+ */
 const getItems = (phrase, count, offset = 0) => {
-
-  const phraseArray = phrase.split(" ");
+  const phraseArray = phrase.split(' ');
   return Array.from({ length: count }, (word, index) => index).map(index => ({
     id: `item-${index + offset}`,
+    sortOrder: index,
     content: `${phraseArray[index]}`,
-  }))
+  }));
 };
 
-// a little function to help us with reordering the result
+/**
+ * Push word in correct position
+ */
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -76,12 +81,7 @@ const getSourceStyle = () => ({
   height: 86,
 });
 
-type Props = {
-  passphrase: PropTypes.string
-};
-
-class DragAndDropArea extends Component<Props> {
-
+class DragAndDropArea extends Component {
   state = {
     passphrase: this.props.phrase,
     selected: getItems(this.props.phrase, 12),
@@ -198,5 +198,9 @@ class DragAndDropArea extends Component<Props> {
     );
   }
 }
+
+DragAndDropArea.propTypes = {
+  phrase: PropTypes.string,
+};
 
 export default DragAndDropArea;

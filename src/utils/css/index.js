@@ -9,8 +9,8 @@ import { capitalize } from '../strings';
 const propTypes = {
   styleProp: PropTypes.string,
   defaultProp: PropTypes.string,
-  styleObject: PropTypes.object,
-  restStyleProps: PropTypes.array,
+  styleObject: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  restStyleProps: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 /**

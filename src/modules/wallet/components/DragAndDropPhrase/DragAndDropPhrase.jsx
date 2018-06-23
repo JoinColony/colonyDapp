@@ -4,8 +4,6 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-
-import PropTypes from 'prop-types';
 import type { FormProps } from '~types/forms';
 
 import styles from './DragAndDropPhrase.css';
@@ -45,9 +43,7 @@ const MSG = defineMessages({
 
 type Props = FormProps<CustomProps>;
 
-let DragAndDropPhrase;
-
-DragAndDropPhrase = ({
+const DragAndDropPhrase = ({
   nextStep,
   previousStep,
   handleSubmit,
@@ -80,10 +76,10 @@ DragAndDropPhrase = ({
 // get pass phrase from previous step
 // will be passed in as props
 const selector = formValueSelector('create_wallet');
-DragAndDropPhrase = connect(state => ({
+const ConnectedDragAndDropPhrase = connect(state => ({
   passphrase: selector(state, 'pass_phrase_outer'),
 }))(DragAndDropPhrase);
 
-export default DragAndDropPhrase;
+export default ConnectedDragAndDropPhrase;
 
 export const reduxFormOpts = {};

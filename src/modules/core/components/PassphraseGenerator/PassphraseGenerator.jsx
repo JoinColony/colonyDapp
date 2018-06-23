@@ -1,6 +1,8 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import { create } from 'colony-wallet/software';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
@@ -29,14 +31,7 @@ const MSG = defineMessages({
 
 class PassphraseGenerator extends Component {
   static displayName = 'core.PassphraseGenerator';
-  static propTypes = {
-    /*     elementOnly: PropTypes.bool,
-    label: PropTypes.string,
-    hasError: PropTypes.bool,
-    error: PropTypes.string,
-    help: PropTypes.string,
-    input: PropTypes.object, */
-  };
+
   constructor(props) {
     super(props);
     this.state = { copied: false };
@@ -119,5 +114,14 @@ class PassphraseGenerator extends Component {
     );
   }
 }
+
+PassphraseGenerator.propTypes = {
+  /*   elementOnly: PropTypes.bool,
+  label: PropTypes.string,
+  hasError: PropTypes.bool,
+  error: PropTypes.string,
+  help: PropTypes.string,
+  input: PropTypes.object, // eslint-disable-line react/forbid-prop-types */
+};
 
 export default PassphraseGenerator;

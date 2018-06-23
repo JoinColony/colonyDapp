@@ -40,9 +40,7 @@ const MSG = defineMessages({
 
 type Props = FormProps<CustomProps>;
 
-let BackupPhrase;
-
-BackupPhrase = ({
+const BackupPhrase = ({
   nextStep,
   previousStep,
   handleSubmit,
@@ -77,11 +75,11 @@ BackupPhrase = ({
 // get pass phrase from previous step
 // will be passed in as props
 const selector = formValueSelector('create_wallet');
-BackupPhrase = connect(state => ({
+const ConnectedBackupPhrase = connect(state => ({
   passphrase: selector(state, 'pass_phrase_outer'),
 }))(BackupPhrase);
 
-export default BackupPhrase;
+export default ConnectedBackupPhrase;
 
 export const reduxFormOpts = {
   form: 'create_wallet',

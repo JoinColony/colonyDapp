@@ -50,14 +50,16 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
         validate,
         destroyOnUnmount: false,
       })(Step);
-      return createElement(
+      const WizardStep = createElement(WrappedStep, {
+        nextStep: this.next,
+        previousStep: this.prev,
+      });
+      const template = createElement(
         OuterComponent,
-        { ...extraProps },
-        createElement(WrappedStep, {
-          nextStep: this.next,
-          previousStep: this.prev,
-        }),
+        { step: this.state.step, stepCount: steps.length, ...extraProps },
+        WizardStep,
       );
+      return template;
     }
   }
   return Wizard;

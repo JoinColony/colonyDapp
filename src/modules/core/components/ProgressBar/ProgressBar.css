@@ -1,0 +1,22 @@
+@import 'variables.css';
+
+.progressBarContainer {
+    width: 120px;
+    height: 4px;
+    background-color: var(--temp-grey-5);
+    margin-right: 30px;
+    margin-top: 32px;
+}
+.stepCounter{
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: var(--temp-grey-4);
+    composes: boldSmall from '~styles/titles.css';
+}
+
+.progressBar {
+    background-color: var(--secondary);
+    height: 4px;
+    width: 120px;
+}
