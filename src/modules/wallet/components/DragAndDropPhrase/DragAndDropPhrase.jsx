@@ -1,10 +1,9 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import type { FormProps } from '~types/forms';
 
 import styles from './DragAndDropPhrase.css';
 
@@ -41,37 +40,57 @@ const MSG = defineMessages({
   },
 });
 
-type Props = FormProps<CustomProps>;
+class DragAndDropPhrase extends Component {
+  constructor(props) {
+    super(props);
+    this.child = React.createRef();
+  }
 
-const DragAndDropPhrase = ({
-  nextStep,
-  previousStep,
-  handleSubmit,
-  passphrase,
-}: Props) => (
-  <section className={`${styles.content}`}>
-    <div className={`${styles.title}`}>
-      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
-    </div>
-    <div className={`${styles.subtitle}`}>
-      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
-    </div>
-    <div className={`${styles.wordContainer}`}>
-      <DragAndDropArea
-        phrase={passphrase}
-        text={MSG.dragAndDropBox.defaultMessage}
-      />
-    </div>
-    <div className={`${styles.buttonsForBox}`}>
-      <Button
-        appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-        value={MSG.backButton}
-        onClick={handleSubmit(previousStep)}
-      />
-      <Button onClick={handleSubmit(nextStep)} value={MSG.nextButton} />
-    </div>
-  </section>
-);
+  state = {
+    nextStep: this.props.nextStep,
+    previousStep: this.props.previousStep,
+    handleSubmit: this.props.handleSubmit,
+    passphrase: this.props.passphrase,
+  };
+
+  checkCorrectSorting = () => {
+    this.child.current.checkSorting();
+  };
+
+  render() {
+    return (
+      <section className={`${styles.content}`}>
+        <div className={`${styles.title}`}>
+          <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+        </div>
+        <div className={`${styles.subtitle}`}>
+          <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+        </div>
+        <div className={`${styles.wordContainer}`}>
+          <DragAndDropArea
+            ref={this.child}
+            phrase={this.state.passphrase}
+            text={MSG.dragAndDropBox.defaultMessage}
+          />
+        </div>
+        <div className={`${styles.buttonsForBox}`}>
+          <Button
+            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            value={MSG.backButton}
+            onClick={this.state.handleSubmit(this.state.previousStep)}
+          />
+          <Button
+            onClick={() => {
+              this.state.handleSubmit(this.state.nextStep);
+              this.checkCorrectSorting();
+            }}
+            value={MSG.nextButton}
+          />
+        </div>
+      </section>
+    );
+  }
+}
 
 // get pass phrase from previous step
 // will be passed in as props
