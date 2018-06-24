@@ -9,7 +9,7 @@
 }
 
 .generator {
-  padding: 60px;
+  padding: 22px 60px;
   position: relative;
   border: 1px solid var(--temp-grey-5);
   border-radius: var(--radius-small);

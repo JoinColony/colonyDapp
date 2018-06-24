@@ -36,6 +36,10 @@ const MSG = defineMessages({
     id: 'CreateWallet.BackupPhrase.backupButton',
     defaultMessage: 'Backup Mnemonic',
   },
+  titleBox: {
+    id: 'CreateWallet.BackupPhrase.titleBox',
+    defaultMessage: `Your Mnemonic Phrase`,
+  },
 });
 
 type Props = FormProps<CustomProps>;
@@ -53,6 +57,11 @@ const BackupPhrase = ({
     <div className={`${styles.subtitle}`}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
+    <Heading
+      appearance={{ size: 'boldSmall' }}
+      text={MSG.titleBox}
+      className={`${styles.heading}`}
+    />
     <div className={`${styles.greyBox}`}>{passphrase}</div>
     <div className={`${styles.backupButton}`}>
       <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />

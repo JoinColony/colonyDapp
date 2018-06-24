@@ -3,6 +3,20 @@
 import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
+import { defineMessages, FormattedMessage } from 'react-intl';
+
+import styles from './DragAndDropPhrase.css';
+
+const MSG = defineMessages({
+  placeholder: {
+    id: 'DragAndDropArea.placeholder.title',
+    defaultMessage: 'Drag & Drop',
+  },
+  placeholderSub: {
+    id: 'DragAndDropArea.placeholder.subtitle',
+    defaultMessage: 'Mnemonics here',
+  },
+});
 
 class DragAndDropArea extends Component {
   /**
@@ -109,6 +123,8 @@ class DragAndDropArea extends Component {
     border: '1px solid rgb(213, 213, 213)',
     borderRadius: 3,
     backgroundColor: 'rgb(232, 236, 245)',
+    borderTop: '1px dashed rgb(0, 230, 196)',
+    borderBottom: '1px dashed rgb(0, 230, 196)',
   });
 
   getSourceStyle = () => ({
@@ -116,6 +132,7 @@ class DragAndDropArea extends Component {
     flexWrap: 'wrap',
     width: 460,
     height: 110,
+    padding: '20px 0px',
   });
 
   // Join array of words back into passphrase to compare with the original one
@@ -192,7 +209,13 @@ class DragAndDropArea extends Component {
                   )}
                 </Draggable>
               ))}
-              {provided.placeholder}
+              <span className={`${styles.plus}`}>+</span>
+              <div className={`${styles.placeholderTop}`}>
+                <FormattedMessage {...MSG.placeholder} />
+              </div>
+              <div className={`${styles.placeholder}`}>
+                <FormattedMessage {...MSG.placeholderSub} />
+              </div>
             </div>
           )}
         </Droppable>

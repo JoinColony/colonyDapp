@@ -27,12 +27,47 @@
     margin-top: 40px;
     margin-bottom: 10px;
 }
+.heading {
+    flex: 1;
+    font-weight: 600;
+    margin-bottom: 9px;
+}
+
+.placeholder{
+    width: 100%;
+    text-align: center;
+    color: var(--temp-grey-12);
+    font-weight: 600;
+    font-size: var(--size-normal);
+    position: absolute;
+    top: 500px;
+    left: 0px;
+    overflow: hidden; 
+}
+.placeholderTop{
+    margin-top: 35px;
+    width: 100%;
+    text-align: center;
+    color: var(--temp-grey-12);
+    font-weight: 600;
+    font-size: var(--size-normal);
+    position: absolute;
+    top: 445px;
+    left: 0px;
+    overflow: hidden;  
+}
+.plus{
+    margin-top: -10px;
+    margin-left: -5px;
+    color: var(--secondary);
+}
+
+
 
 .rowOutlier{
     flex: 1;
 }
 
 .wordContainer {
-    padding: 20px 0px;
     border-bottom: 1px solid var(--grey-blue-0); 
 }

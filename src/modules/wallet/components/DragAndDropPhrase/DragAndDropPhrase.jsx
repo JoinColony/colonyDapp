@@ -38,6 +38,10 @@ const MSG = defineMessages({
     id: 'CreateWallet.DragAndDropPhrase.dragAndDropBox',
     defaultMessage: 'Drag & Drop Mnemonics Here',
   },
+  titleBox: {
+    id: 'CreateWallet.DragAndDropPhrase.titleBox',
+    defaultMessage: 'Drag your Mnemonic Phrase in the right order',
+  },
 });
 
 class DragAndDropPhrase extends Component {
@@ -66,6 +70,11 @@ class DragAndDropPhrase extends Component {
         <div className={`${styles.subtitle}`}>
           <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
         </div>
+        <Heading
+          appearance={{ size: 'boldSmall' }}
+          text={MSG.titleBox}
+          className={`${styles.heading}`}
+        />
         <div className={`${styles.wordContainer}`}>
           <DragAndDropArea
             ref={this.child}
