@@ -69,6 +69,10 @@ describe('`ColonyNetworkClient` is able to', () => {
      */
     const colonyClient = await networkClient.getColonyClient(lastColonyId);
     /*
+     * Get the token's contract address
+     */
+    const { address: colonyTokenAddress } = await colonyClient.getToken.call();
+    /*
      * Get the amount of tokens before minting new ones
      */
     const {
@@ -86,6 +90,33 @@ describe('`ColonyNetworkClient` is able to', () => {
         amount: currentTokenAmount,
       } = await colonyClient.token.getTotalSupply.call();
       expect(currentTokenAmount.toNumber()).toEqual(tokensToMint);
+      /*
+       * Get the total number of tokens in the main pot so that we can check againts
+       */
+      const {
+        balance: initialMainPotTokens,
+      } = await colonyClient.getPotBalance.call({
+        potId: 1,
+        token: colonyTokenAddress,
+      });
+      expect(initialMainPotTokens.toNumber()).toEqual(0);
+      /*
+       * Claim the Colony's Funds into the Main pot
+       */
+      const claimFundsTransaction = await colonyClient.claimColonyFunds.send({
+        token: colonyTokenAddress,
+      });
+      expect(claimFundsTransaction).toHaveProperty('successful', true);
+      /*
+       * Check that the number of tokens in the pot equals the tokens with just mintend and claimed
+       */
+      const {
+        balance: currentMainPotTokens,
+      } = await colonyClient.getPotBalance.call({
+        potId: 1,
+        token: colonyTokenAddress,
+      });
+      expect(currentMainPotTokens.toNumber()).toEqual(tokensToMint);
     }
   });
 });
