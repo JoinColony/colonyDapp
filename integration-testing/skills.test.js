@@ -1,5 +1,10 @@
 import { getNetworkClient } from './utils/network-client-helpers';
 
+/*
+ * Increase the async timeout
+ */
+jest.setTimeout(10000);
+
 describe('`ColonyClient` is able to', () => {
   test('Add a global skill (using the Meta Colony)', async () => {
     /*

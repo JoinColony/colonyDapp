@@ -3,6 +3,11 @@ import { getNetworkClient } from '../utils/network-client-helpers';
 
 const taskDescription = 'Integration Tests Task';
 
+/*
+ * Increase the async timeout
+ */
+jest.setTimeout(10000);
+
 describe('`ColonyClient` is able to', () => {
   test('Get a Task that exists in the Colony', async () => {
     /*

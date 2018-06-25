@@ -10,6 +10,11 @@ const taskDescription = 'Integration Tests Task';
 const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
 
+/*
+ * Increase the async timeout
+ */
+jest.setTimeout(10000);
+
 describe('`ColonyClient` is able to', () => {
   test('Set the role for a task', async () => {
     /*
