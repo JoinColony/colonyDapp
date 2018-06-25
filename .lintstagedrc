@@ -8,7 +8,7 @@
       "yarn stylelint",
       "git add"
     ],
-    "src/**/*.js": [
+    "integration-testing/**/*.js": [
       "yarn lint:integration",
       "git add"
     ]
