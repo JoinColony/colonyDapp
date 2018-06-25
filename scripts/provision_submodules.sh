@@ -24,10 +24,7 @@ git submodule update --init --recursive
 log "Building '${CLIENT}' submodule"
 # We need global lerna to build the client's packages, make sure we have installed globally
 #
-# We're using `npm` as opposed to `yarn` here since it has better PATH detection
-# across systems and will place the global package binaries in an accessible place
-# for both macOS / linux (windows too).
-npm i -g lerna
+yarn global add lerna
 cd "${LIB_PATH}/${CLIENT}"
 yarn --ignore-engines
 lerna run build
