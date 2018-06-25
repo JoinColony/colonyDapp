@@ -1,3 +1,4 @@
+import { bigNumberify } from 'ethers/utils';
 import { getNetworkClient } from '../utils/network-client-helpers';
 import multiHash from '../utils/ipfs-hash-helpers';
 import {
@@ -9,7 +10,7 @@ import {
 /*
  * Increase the async timeout
  */
-jest.setTimeout(20000);
+jest.setTimeout(30000);
 
 const today = new Date();
 const tommorow = new Date();
@@ -20,14 +21,17 @@ const taskDeliverable = 'I solemnly swear I am up to no good.';
 
 const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const evaluatorAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
-const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[2];
+const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
+
+const mainColonyPotId = 1;
 
 const ratingSalt = 'SaltySeaBass';
-const managerRatingValue = 1;
-const workerRatingValue = 2;
+const workerRatingValue = 3;
+const managerRatingValue = 2;
+const payoutValue = 10;
 
 describe('`ColonyClient` is able to', () => {
-  test('Rate a task by a worker and an evaluator', async () => {
+  test("Claim a task's payout", async () => {
     /*
      * Get the network client
      *
@@ -87,6 +91,14 @@ describe('`ColonyClient` is able to', () => {
       user: workerAddress,
     });
     /*
+     * Set the evaluator of the task
+     */
+    await managerColonyClient.setTaskRoleUser.send({
+      taskId: newTaskId,
+      role: EVALUATOR_ROLE,
+      user: evaluatorAddress,
+    });
+    /*
      * Begin a multisig operation by setting the new task due date
      */
     const multisigSetDueDateManager = await managerColonyClient.setTaskDueDate.startOperation(
@@ -103,7 +115,7 @@ describe('`ColonyClient` is able to', () => {
      * Backup the `setTaskDueDate` operation to JSON and import it in the worker's
      * client instance (so we can sign it with the worker)
      */
-    const mutisigJsonBackupManager = multisigSetDueDateManager.toJSON();
+    let mutisigJsonBackupManager = multisigSetDueDateManager.toJSON();
     /*
      * Sign the multisig operation as the worker.
      */
@@ -111,18 +123,69 @@ describe('`ColonyClient` is able to', () => {
       mutisigJsonBackupManager,
     );
     await multisigSetDueDateWorker.sign();
-    /*
-     * Send the multisig transaction.
-     */
     await multisigSetDueDateWorker.send();
     /*
-     * Set the evaluator for the task
+     * Get the current Colony's token address
      */
-    await managerColonyClient.setTaskRoleUser.send({
+    const {
+      address: colonyTokenAddress,
+    } = await managerColonyClient.getToken.call();
+    /*
+     * Get the current task's pot id so we can move funds into it
+     */
+    const { potId: currentTaskPotId } = await managerColonyClient.getTask.call({
       taskId: newTaskId,
-      role: EVALUATOR_ROLE,
-      user: evaluatorAddress,
     });
+    /*
+     * Move funds tot the current task's pot
+     */
+    const moveFundsToPotTransaction = await managerColonyClient.moveFundsBetweenPots.send(
+      {
+        fromPot: mainColonyPotId,
+        toPot: currentTaskPotId,
+        amount: bigNumberify(payoutValue + 1),
+        token: colonyTokenAddress,
+      },
+    );
+    expect(moveFundsToPotTransaction).toHaveProperty('successful', true);
+    /*
+     * Set the Task's payout
+     */
+    const multisigSetTaskPayoutManager = await managerColonyClient.setTaskWorkerPayout.startOperation(
+      {
+        taskId: newTaskId,
+        token: colonyTokenAddress,
+        amount: bigNumberify(payoutValue),
+      },
+    );
+    /*
+     * Sign the multisig operation as the manager.
+     */
+    await multisigSetTaskPayoutManager.sign();
+    /*
+     * Backup the `setTaskDueDate` operation to JSON and import it in the worker's
+     * client instance (so we can sign it with the worker)
+     */
+    mutisigJsonBackupManager = multisigSetTaskPayoutManager.toJSON();
+    /*
+     * Sign the multisig operation as the worker.
+     */
+    const multisigSetTaskPayoutWorker = await workerColonyClient.setTaskDueDate.restoreOperation(
+      mutisigJsonBackupManager,
+    );
+    await multisigSetTaskPayoutWorker.sign();
+    await multisigSetTaskPayoutWorker.send();
+    /*
+     * Check if the payout was set on the task
+     */
+    const {
+      amount: workerPayoutValue,
+    } = await workerColonyClient.getTaskPayout.call({
+      taskId: newTaskId,
+      role: WORKER_ROLE,
+      token: colonyTokenAddress,
+    });
+    expect(workerPayoutValue.toNumber()).toEqual(payoutValue);
     /*
      * Submit the task's deliverable
      */
@@ -149,65 +212,68 @@ describe('`ColonyClient` is able to', () => {
       value: workerRatingValue,
     });
     /*
-     * Rate the Manager as the Worker
+     * Submit the rating for the manager
      */
-    const managerRatingTransaction = await workerColonyClient.submitTaskWorkRating.send(
-      { taskId: newTaskId, role: MANAGER_ROLE, secret: managerRating },
-    );
-    expect(managerRatingTransaction).toHaveProperty('successful', true);
-    /*
-     * Rate the Worker as the Evaluator
-     */
-    const workerRatingTransaction = await evaluatorColonyClient.submitTaskWorkRating.send(
-      { taskId: newTaskId, role: WORKER_ROLE, secret: workerRating },
-    );
-    expect(workerRatingTransaction).toHaveProperty('successful', true);
-    /*
-     * The task should have two ratings submitted
-     */
-    const {
-      count: taskRatingsCount,
-    } = await managerColonyClient.getTaskWorkRatings.call({
-      taskId: newTaskId,
-    });
-    expect(taskRatingsCount).toEqual(2);
-    /*
-     * The ratings secrets submitted should match the ones generated
-     */
-    const {
-      secret: managerRatingSecret,
-    } = await managerColonyClient.getTaskWorkRatingSecret.call({
+    await workerColonyClient.submitTaskWorkRating.send({
       taskId: newTaskId,
       role: MANAGER_ROLE,
+      secret: managerRating,
     });
-    expect(managerRatingSecret).toEqual(managerRating);
-    const {
-      secret: workerRatingSecret,
-    } = await managerColonyClient.getTaskWorkRatingSecret.call({
+    /*
+     * Submit the rating for the worker
+     */
+    await evaluatorColonyClient.submitTaskWorkRating.send({
       taskId: newTaskId,
       role: WORKER_ROLE,
+      secret: workerRating,
     });
-    expect(workerRatingSecret).toEqual(workerRating);
     /*
-     * Worker and Evaluator should be able to reveal they're ratings
+     * Reveal the manager's rating
      */
-    const managerRatingRevealTransaction = await workerColonyClient.revealTaskWorkRating.send(
-      {
-        taskId: newTaskId,
-        role: MANAGER_ROLE,
-        rating: managerRatingValue,
-        salt: ratingSalt,
-      },
+    await managerColonyClient.revealTaskWorkRating.send({
+      taskId: newTaskId,
+      role: MANAGER_ROLE,
+      rating: managerRatingValue,
+      salt: ratingSalt,
+    });
+    /*
+     * Reveal the worker's rating
+     */
+    await managerColonyClient.revealTaskWorkRating.send({
+      taskId: newTaskId,
+      role: WORKER_ROLE,
+      rating: workerRatingValue,
+      salt: ratingSalt,
+    });
+    /*
+     * Finalize the task
+     */
+    const finalizeTaskTransaction = await managerColonyClient.finalizeTask.send(
+      { taskId: newTaskId },
     );
-    expect(managerRatingRevealTransaction).toHaveProperty('successful', true);
-    const workerRatingRevealTransaction = await evaluatorColonyClient.revealTaskWorkRating.send(
+    expect(finalizeTaskTransaction).toHaveProperty('successful', true);
+    const {
+      finalized: isTaskFinalized,
+    } = await managerColonyClient.getTask.call({
+      taskId: newTaskId,
+    });
+    expect(isTaskFinalized).toBeTruthy();
+    /*
+     * Claim your payout as the worker
+     *
+     * @TODO add a method to get custom token balances, like `web3`'s balanceOf
+     *
+     * Maybe build this strait into the wallet?
+     *
+     * This way we could check the users's balance before and after the payout
+     */
+    const claimWorkerPayoutTransaction = await workerColonyClient.claimPayout.send(
       {
         taskId: newTaskId,
         role: WORKER_ROLE,
-        rating: workerRatingValue,
-        salt: ratingSalt,
+        token: colonyTokenAddress,
       },
     );
-    expect(workerRatingRevealTransaction).toHaveProperty('successful', true);
+    expect(claimWorkerPayoutTransaction).toHaveProperty('successful', true);
   });
 });
