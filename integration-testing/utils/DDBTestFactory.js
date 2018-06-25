@@ -103,6 +103,7 @@ export default class DDBTestFactory {
   async Data(name) {
     const data = await Data.fromDefaultConfig(this._pinner, {
       ipfs: {
+        swarm: ['/ip4/0.0.0.0/tcp/0'],
         repo: `${this._rootRepo}/ipfs/${name}`,
         bootstrap: await this._bootstrap(),
       },

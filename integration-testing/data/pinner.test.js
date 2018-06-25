@@ -3,13 +3,15 @@ import PinnerClient from '../../src/lib/pinningService/packages/pinning-service-
 import DDBTestFactory from '../utils/DDBTestFactory';
 import { retryUntilValue } from '../utils/tools';
 
+const PINNER_URL = 'http://localhost:9090';
+
 const factory = new DDBTestFactory('pinner.test');
 let pinnerClient = null;
 let data1 = null;
 let data2 = null;
 
 beforeAll(async () => {
-  pinnerClient = PinnerClient.fromConfig({ host: 'http://localhost:9090' });
+  pinnerClient = PinnerClient.fromConfig({ host: PINNER_URL });
   await pinnerClient.ready();
 
   await factory.pinner(pinnerClient);
@@ -29,9 +31,8 @@ describe('Smoke Test', () => {
   });
 });
 
-describe('Data Smoke Test', () => {
-  test(
-    'Data pins and share data with the default pinner',
+describe('Data Test', () => {
+  it('pins and share data via the default pinner',
     async () => {
       const p1 = await data1.getMyUserProfile();
       const p2 = await data2.getUserProfile(p1.address());
@@ -39,10 +40,10 @@ describe('Data Smoke Test', () => {
 
       await p1.setName(name);
 
-      expect(await retryUntilValue(() => p2.isEmpty()), {
+      expect(await retryUntilValue(() => p2.isEmpty(), {
         value: false,
-      }).toBeFalsy();
-      expect(await retryUntilValue(() => p2.getName()), { value: name }).toBe(
+      })).toBeFalsy();
+      expect(await retryUntilValue(() => p2.getName(), { value: name })).toBe(
         name,
       );
     },

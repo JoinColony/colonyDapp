@@ -89,6 +89,8 @@ export default class Data {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
 
+    await ipfsNode.ready();
+    await ipfsNode.waitForSomePeers();
     const orbitConf = orbit.makeOptions(opts.orbit);
     const orbitNode = await orbit.getOrbitDB(ipfsNode, orbitConf);
 
@@ -108,6 +110,6 @@ export default class Data {
 
   async listPeers(): Promise<B58String[]> {
     const peers = await this._ipfsNode.swarm.peers();
-    return peers.map(x => x.peer.id.toB58String());
+    return peers.map(x => x.peer.toB58String());
   }
 }
