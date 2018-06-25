@@ -1,4 +1,3 @@
-import { bigNumberify } from 'ethers/utils';
 import { getNetworkClient } from '../utils/network-client-helpers';
 import multiHash from '../utils/ipfs-hash-helpers';
 import {
@@ -138,7 +137,7 @@ describe('`ColonyClient` is able to', () => {
       secret: managerRating,
     } = await workerColonyClient.generateSecret.call({
       salt: ratingSalt,
-      value: bigNumberify(managerRatingValue),
+      value: managerRatingValue,
     });
     /*
      * Generate a rating secret (as the evaluator) to rate the Worker
@@ -147,20 +146,20 @@ describe('`ColonyClient` is able to', () => {
       secret: workerRating,
     } = await evaluatorColonyClient.generateSecret.call({
       salt: ratingSalt,
-      value: bigNumberify(workerRatingValue),
+      value: workerRatingValue,
     });
     /*
      * Rate the Manager as the Worker
      */
     const managerRatingTransaction = await workerColonyClient.submitTaskWorkRating.send(
-      { taskId: newTaskId, role: MANAGER_ROLE, ratingSecret: managerRating },
+      { taskId: newTaskId, role: MANAGER_ROLE, secret: managerRating },
     );
     expect(managerRatingTransaction).toHaveProperty('successful', true);
     /*
      * Rate the Worker as the Evaluator
      */
     const workerRatingTransaction = await evaluatorColonyClient.submitTaskWorkRating.send(
-      { taskId: newTaskId, role: WORKER_ROLE, ratingSecret: workerRating },
+      { taskId: newTaskId, role: WORKER_ROLE, secret: workerRating },
     );
     expect(workerRatingTransaction).toHaveProperty('successful', true);
     /*
