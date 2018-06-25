@@ -46,16 +46,18 @@ class DragAndDropArea extends Component {
     let temporaryValue;
     let randomIndex;
 
+    const clone = array.slice(0);
+
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
 
       temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
+      clone[currentIndex] = clone[randomIndex];
+      clone[randomIndex] = temporaryValue;
     }
 
-    return array;
+    return clone;
   };
 
   state = {
@@ -112,7 +114,7 @@ class DragAndDropArea extends Component {
     padding: '0px 5px',
     margin: isTarget ? '7px 25px' : '5px 10px',
     textAlign: 'center',
-    width: 'auto',
+    width: 60,
     height: 20,
     borderRadius: 3,
     color: 'black',
@@ -204,6 +206,8 @@ class DragAndDropArea extends Component {
       position: 'absolute',
     };
     const hasError = this.state.checked && !this.state.matchingPhrase;
+
+    const Children = props => props.children;
     return (
       <DragDropContext direction="horizontal" onDragEnd={this.onDragEnd}>
         <Droppable droppableId="target" direction="horizontal">
@@ -214,14 +218,14 @@ class DragAndDropArea extends Component {
             >
               {this.state.items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
+                  {(providedDrag, snapshotDrag) => (
                     <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
+                      ref={providedDrag.innerRef}
+                      {...providedDrag.draggableProps}
+                      {...providedDrag.dragHandleProps}
                       style={this.getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style,
+                        snapshotDrag.isDragging,
+                        providedDrag.draggableProps.style,
                         true,
                       )}
                     >
@@ -230,22 +234,22 @@ class DragAndDropArea extends Component {
                   )}
                 </Draggable>
               ))}
-              {this.state.items.length === 0
-                ? [
+              {this.state.items.length === 0 ? (
+                <Children>
                   <div className={`${styles.placeholderTop}`}>
                     <FormattedMessage {...MSG.placeholder} />
                   </div>,
                   <div className={`${styles.placeholder}`}>
                     <FormattedMessage {...MSG.placeholderSub} />
                   </div>,
-                  ]
-                : null}
-              {hasError
-                ? [
-                  <div className={`${styles.errorOverlay}`} />,
-                  <Grid style={svgStyle} />,
-                  ]
-                : null}
+                </Children>
+              ) : null}
+              {hasError ? (
+                <Children>
+                  <div className={`${styles.errorOverlay}`} />
+                  <Grid style={svgStyle} />
+                </Children>
+              ) : null}
             </div>
           )}
         </Droppable>
@@ -267,14 +271,14 @@ class DragAndDropArea extends Component {
                   draggableId={item.id}
                   index={index}
                 >
-                  {(provided, snapshot) => (
+                  {(providedSource, snapshotSource) => (
                     <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
+                      ref={providedSource.innerRef}
+                      {...providedSource.draggableProps}
+                      {...providedSource.dragHandleProps}
                       style={this.getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style,
+                        snapshotSource.isDragging,
+                        providedSource.draggableProps.style,
                         false,
                       )}
                     >

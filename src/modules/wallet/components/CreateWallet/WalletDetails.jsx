@@ -81,7 +81,7 @@ const rowSubTitles = defineMessages({
 const propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
-  rowIndex: PropTypes.number,
+  rowIndex: PropTypes.number, // eslint-disable-line react/forbid-prop-types
   nextStep: PropTypes.func,
 };
 
@@ -128,7 +128,7 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   );
 });
 
-const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => (
+const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
   <section className={`${styles.content}`}>
     <div className={`${styles.title}`}>
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
@@ -137,7 +137,13 @@ const WalletDetails = ({ nextStep, handleSubmit, submitting }: Props) => (
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     {allTheRows}
-    <div onClick={handleSubmit(nextStep)} className={`${styles.callToAction}`}>
+    <div
+      onClick={handleSubmit(nextStep)}
+      className={`${styles.callToAction}`}
+      onKeyDown={handleSubmit(nextStep)}
+      role="button"
+      tabIndex="0"
+    >
       <div className={`${styles.actionImage}`}>
         <img src={jazz} alt="" className="emoticon" width="25" height="25" />
       </div>

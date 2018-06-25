@@ -24,11 +24,11 @@ const WizardTemplate = ({ children, step, stepCount }: Props) => (
       <figure className={styles.logo} role="presentation">
         <Logo />
       </figure>
-        { step != 0 ? (
-            <ProgressBar step={step} stepCount={stepCount} />
-        ) : (
-          undefined
-        )}
+      {step !== 0 ? (
+        <ProgressBar step={step} stepCount={stepCount} />
+      ) : (
+        undefined
+      )}
     </header>
     <article
       className={`${layout.flexContainerColumn} ${layout.flexAlignCenter} ${

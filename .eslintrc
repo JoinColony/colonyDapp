@@ -3,7 +3,7 @@
         "browser": true,
         "commonjs": true,
         "es6": true
-    },
+    },    
     "extends": [
         "@colony/eslint-config-colony",
         "plugin:flowtype/recommended",
@@ -49,7 +49,7 @@
               "jestConfigFile": "./jest.conf.json"
             },
             "webpack": {
-              config: "./webpack.config.dev.js"
+              "config": "./webpack.config.dev.js"
             }
         }
     }

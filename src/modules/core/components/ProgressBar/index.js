@@ -1,1 +1,3 @@
-export { default } from './ProgressBar.js';
+/* @flow */
+
+export { default } from './ProgressBar.jsx';
