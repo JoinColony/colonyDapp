@@ -24,8 +24,8 @@ const evaluatorAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[2];
 
 const ratingSalt = 'SaltySeaBass';
-const managerRatingValue = 30;
-const workerRatingValue = 40;
+const managerRatingValue = 1;
+const workerRatingValue = 2;
 
 describe('`ColonyClient` is able to', () => {
   test('Set a task develiverable', async () => {
