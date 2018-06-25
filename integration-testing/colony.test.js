@@ -1,16 +1,21 @@
 import { bigNumberify } from 'ethers/utils';
 import { isAddress } from 'web3-utils';
 import { getNetworkClient } from './utils/network-client-helpers';
+import { ADMIN_ROLE } from '../src/lib/colonyJS/packages/colony-js-client';
 
 let colonyToken;
 let colonyAddress;
+
+const colonyCreatorAddress = Object.keys(
+  global.ganacheAccounts.private_keys,
+)[0];
 
 describe('`ColonyClient` is able to', () => {
   test('Create a new Colony (instance)', async () => {
     /*
      * Get the network client
      */
-    const networkClient = await getNetworkClient();
+    const networkClient = await getNetworkClient(colonyCreatorAddress);
     /*
      * There should only be one colony at this point, the meta colony
      */
@@ -84,7 +89,7 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Get the network client
      */
-    const networkClient = await getNetworkClient();
+    const networkClient = await getNetworkClient(colonyCreatorAddress);
     /*
      * Recover the colony using it's name
      */
@@ -102,224 +107,26 @@ describe('`ColonyClient` is able to', () => {
       colonyToken,
     );
   });
+  test('Make the Colony creator an ADMIN', async () => {
+    /*
+     * Get the network client
+     */
+    const networkClient = await getNetworkClient(colonyCreatorAddress);
+    /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
+     * Get the existing colony
+     */
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
+    const setColonyAdminTransaction = await colonyClient.authority.setUserRole.send(
+      {
+        user: colonyCreatorAddress,
+        role: ADMIN_ROLE,
+      },
+    );
+    expect(setColonyAdminTransaction).toHaveProperty('successful', true);
+  });
 });
-
-/*
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
-Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
-Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
-Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
- */
-
-/*
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-
- Long clothes grog blossom Brethren of the Coast marooned Privateer Jack Ketch lateen sail come about trysail smartly. Cable trysail landlubber or just lubber topgallant scuttle mizzen Privateer rope's end squiffy hempen halter. Holystone warp lanyard starboard ho haul wind mizzenmast hands Admiral of the Black lad.
-
- Run a shot across the bow Cat o'nine tails nipperkin Sea Legs doubloon knave interloper American Main weigh anchor topgallant. Strike colors log Jolly Roger loaded to the gunwalls Sea Legs cutlass furl case shot doubloon swab. Scuttle bilged on her anchor Yellow Jack loot ahoy grapple loaded to the gunwalls Buccaneer reef sails Jack Tar.
-
- Bucko swing the lead me Plate Fleet execution dock skysail rigging keelhaul man-of-war nipper. Jib mizzen hail-shot pillage draught strike colors topsail cable come about transom. Sutler tackle bilge hail-shot measured fer yer chains carouser Yellow Jack take a caulk transom matey.
-  */
