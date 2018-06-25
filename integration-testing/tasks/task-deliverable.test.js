@@ -1,6 +1,6 @@
 import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
-import { WORKER_ROLE } from '../../src/lib/colony-js/packages/colony-js-client';
+import { WORKER_ROLE } from '../../src/lib/colonyJS/packages/colony-js-client';
 
 /*
  * Increase the async timeout

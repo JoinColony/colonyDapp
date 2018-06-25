@@ -3,7 +3,7 @@ import { getNetworkClient } from '../utils/network-client-helpers';
 import {
   WORKER_ROLE,
   MANAGER_ROLE,
-} from '../../src/lib/colony-js/packages/colony-js-client';
+} from '../../src/lib/colonyJS/packages/colony-js-client';
 
 const taskDescription = 'Integration Tests Task';
 

@@ -5,7 +5,7 @@ import {
   WORKER_ROLE,
   EVALUATOR_ROLE,
   MANAGER_ROLE,
-} from '../../src/lib/colony-js/packages/colony-js-client';
+} from '../../src/lib/colonyJS/packages/colony-js-client';
 
 /*
  * Increase the async timeout
