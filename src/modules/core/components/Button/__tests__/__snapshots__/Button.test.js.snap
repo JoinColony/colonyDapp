@@ -2,9 +2,8 @@
 
 exports[`Button component Renders initial component 1`] = `
 <button
-  aria-busy={false}
   className=""
-  disabled={false}
+  type="button"
 >
   Some Text
 </button>

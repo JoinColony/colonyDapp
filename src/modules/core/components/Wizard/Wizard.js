@@ -42,7 +42,8 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
     };
 
     render() {
-      const { Step, validate, ...extraProps } = steps[this.state.step];
+      const { step: currentStep } = this.state;
+      const { Step, validate, ...extraProps } = steps[currentStep];
       const WrappedStep = reduxForm({
         ...reduxFormOpts,
         form,
