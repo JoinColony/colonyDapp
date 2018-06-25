@@ -19,8 +19,6 @@ import NetworkClient from '../../src/lib/colonyJS/packages/colony-js-client';
 const JSON_RPC = 'http://localhost:8545/';
 const TRUFFLEPIG_URL = 'http://localhost:3030';
 
-// const privateKey = global.ganacheAccounts.private_keys[];
-
 export const getTrufflepigLoader = () =>
   new TrufflepigLoader({
     endpoint: `${TRUFFLEPIG_URL}/contracts?name=%%NAME%%`,

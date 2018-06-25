@@ -1,5 +1,6 @@
 import { bigNumberify } from 'ethers/utils';
 import { getNetworkClient } from '../utils/network-client-helpers';
+import { generateMoreColonyFunds } from '../utils/colony-client-helpers';
 import multiHash from '../utils/ipfs-hash-helpers';
 import {
   WORKER_ROLE,
@@ -136,6 +137,13 @@ describe('`ColonyClient` is able to', () => {
     const { potId: currentTaskPotId } = await managerColonyClient.getTask.call({
       taskId: newTaskId,
     });
+    /*
+     * Ensure we have enough funds into the main pot, by generating more (and claiming them for the colony)
+     *
+     * This is necessary since Jest might run this test before the tokens one, in which case this won't
+     * have any funds to move around.
+     */
+    await generateMoreColonyFunds(managerColonyClient, 1000);
     /*
      * Move funds tot the current task's pot
      */
