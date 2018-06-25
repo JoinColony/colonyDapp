@@ -5,6 +5,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import Grid from '../../../../img/icons/grid.svg';
+
 import styles from './DragAndDropPhrase.css';
 
 const MSG = defineMessages({
@@ -57,6 +59,7 @@ class DragAndDropArea extends Component {
     selected: DragAndDropArea.getItems(this.props.phrase, 12),
     items: [],
     submitted: this.props.submitted,
+    matchingPhrase: false,
   };
 
   id2List = {
@@ -142,6 +145,9 @@ class DragAndDropArea extends Component {
       .join(' ');
 
     const matches = passPhraseToCheck === this.state.passphrase;
+    if (matches) {
+      this.setState({ matchingPhrase: true });
+    }
     return matches;
   };
 
@@ -185,7 +191,7 @@ class DragAndDropArea extends Component {
   render() {
     return (
       <DragDropContext direction="horizontal" onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="target" direction="horizontal">
+        <Droppable ref="dropTarget" droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
@@ -209,13 +215,15 @@ class DragAndDropArea extends Component {
                   )}
                 </Draggable>
               ))}
-              <span className={`${styles.plus}`}>+</span>
+              <div className={`${styles.backgroundGrid}`} />
               <div className={`${styles.placeholderTop}`}>
                 <FormattedMessage {...MSG.placeholder} />
               </div>
               <div className={`${styles.placeholder}`}>
                 <FormattedMessage {...MSG.placeholderSub} />
               </div>
+              {/* { this.state.matchingPhrase */}
+              <Grid />
             </div>
           )}
         </Droppable>
