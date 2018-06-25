@@ -18,6 +18,10 @@ const MSG = defineMessages({
     id: 'DragAndDropArea.placeholder.subtitle',
     defaultMessage: 'Mnemonics here',
   },
+  errorMessage: {
+    id: 'DragAndDropArea.error.errorMessage',
+    defaultMessage: 'That’s incorrect. Press the Reset button to try again.',
+  },
 });
 
 class DragAndDropArea extends Component {
@@ -58,8 +62,8 @@ class DragAndDropArea extends Component {
     passphrase: this.props.phrase,
     selected: DragAndDropArea.getItems(this.props.phrase, 12),
     items: [],
-    submitted: this.props.submitted,
     matchingPhrase: false,
+    checked: false,
   };
 
   id2List = {
@@ -106,7 +110,7 @@ class DragAndDropArea extends Component {
   getItemStyle = (isDragging, draggableStyle, isTarget) => ({
     userSelect: 'none',
     padding: '0px 5px',
-    margin: isTarget ? '5px 25px' : '5px 10px',
+    margin: isTarget ? '7px 25px' : '5px 10px',
     textAlign: 'center',
     width: 'auto',
     height: 20,
@@ -116,18 +120,24 @@ class DragAndDropArea extends Component {
     ...draggableStyle,
   });
 
-  getTargetStyle = isDraggingOver => ({
+  getTargetStyle = (isDraggingOver, hasError) => ({
     background: isDraggingOver ? 'rgb(66, 129, 255)' : 'rgb(232, 236, 245)',
     display: 'flex',
     flexWrap: 'wrap',
+    justifyContent: 'space-between',
     alignContent: 'flex-start',
     width: 460,
     height: 110,
     border: '1px solid rgb(213, 213, 213)',
-    borderRadius: 3,
     backgroundColor: 'rgb(232, 236, 245)',
-    borderTop: '1px dashed rgb(0, 230, 196)',
-    borderBottom: '1px dashed rgb(0, 230, 196)',
+    borderLeft: hasError ? '1px solid rgb(248, 43, 101)' : undefined,
+    borderRight: hasError ? '1px solid rgb(248, 43, 101)' : undefined,
+    borderTop: hasError
+      ? '1px solid rgb(248, 43, 101)'
+      : '1px dashed rgb(0, 230, 196)',
+    borderBottom: hasError
+      ? '1px solid rgb(248, 43, 101)'
+      : '1px dashed rgb(0, 230, 196)',
   });
 
   getSourceStyle = () => ({
@@ -140,6 +150,7 @@ class DragAndDropArea extends Component {
 
   // Join array of words back into passphrase to compare with the original one
   checkSorting = () => {
+    this.setState({ checked: true });
     const passPhraseToCheck = this.state.items
       .map(element => element.content)
       .join(' ');
@@ -189,13 +200,17 @@ class DragAndDropArea extends Component {
   };
 
   render() {
+    const svgStyle = {
+      position: 'absolute',
+    };
+    const hasError = this.state.checked && !this.state.matchingPhrase;
     return (
       <DragDropContext direction="horizontal" onDragEnd={this.onDragEnd}>
-        <Droppable ref="dropTarget" droppableId="target" direction="horizontal">
+        <Droppable droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={this.getTargetStyle(snapshot.isDraggingOver)}
+              style={this.getTargetStyle(snapshot.isDraggingOver, hasError)}
             >
               {this.state.items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -215,18 +230,30 @@ class DragAndDropArea extends Component {
                   )}
                 </Draggable>
               ))}
-              <div className={`${styles.backgroundGrid}`} />
-              <div className={`${styles.placeholderTop}`}>
-                <FormattedMessage {...MSG.placeholder} />
-              </div>
-              <div className={`${styles.placeholder}`}>
-                <FormattedMessage {...MSG.placeholderSub} />
-              </div>
-              {/* { this.state.matchingPhrase */}
-              <Grid />
+              {this.state.items.length === 0
+                ? [
+                  <div className={`${styles.placeholderTop}`}>
+                    <FormattedMessage {...MSG.placeholder} />
+                  </div>,
+                  <div className={`${styles.placeholder}`}>
+                    <FormattedMessage {...MSG.placeholderSub} />
+                  </div>,
+                  ]
+                : null}
+              {hasError
+                ? [
+                  <div className={`${styles.errorOverlay}`} />,
+                  <Grid style={svgStyle} />,
+                  ]
+                : null}
             </div>
           )}
         </Droppable>
+        {hasError ? (
+          <div className={`${styles.errorMessage}`}>
+            <FormattedMessage {...MSG.errorMessage} />
+          </div>
+        ) : null}
         <Droppable droppableId="source" direction="horizontal">
           {(provided, snapshot) => (
             <div
@@ -242,7 +269,6 @@ class DragAndDropArea extends Component {
                 >
                   {(provided, snapshot) => (
                     <div
-                      className="wordToDrag"
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
@@ -268,7 +294,6 @@ class DragAndDropArea extends Component {
 
 DragAndDropArea.propTypes = {
   phrase: PropTypes.string,
-  submitted: PropTypes.bool,
 };
 
 export default DragAndDropArea;

@@ -16,7 +16,7 @@ import Button from '../../../core/components/Button';
 const MSG = defineMessages({
   heading: {
     id: 'CreateWallet.BackupPhrase.heading',
-    defaultMessage: 'Lets make an alternative Backup',
+    defaultMessage: 'Let’s make an alternative Backup',
   },
   subTitle: {
     id: 'CreateWallet.BackupPhrase.subTitle',
@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   confirmButton: {
     id: 'CreateWallet.BackupPhrase.confirmButton',
-    defaultMessage: 'Ive created a backup',
+    defaultMessage: 'I’ve created a backup',
   },
   backButton: {
     id: 'CreateWallet.BackupPhrase.backButton',

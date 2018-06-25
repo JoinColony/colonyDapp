@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   confirmButton: {
     id: 'CreateWallet.CreatePhrase.confirmButton',
-    defaultMessage: 'Ive safely stored it',
+    defaultMessage: 'I’ve safely stored it',
   },
   backButton: {
     id: 'CreateWallet.CreatePhrase.backButton',

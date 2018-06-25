@@ -20,6 +20,19 @@
     background-color: rgb(232, 236, 245);
     text-align: center;
 }
+.errorOverlay{
+    background-color: var(--pink);
+    opacity: 0.1;
+    width: 460px;
+    height: 110px;
+    position: absolute;
+}
+
+.errorMessage{
+    margin-top: 20px;
+    color: var(--pink);
+    font-weight: var(--weight-medium);
+}
 
 .buttonsForBox{
     display: flex;
@@ -31,22 +44,6 @@
     flex: 1;
     font-weight: 600;
     margin-bottom: 9px;
-}
-.backgroundGrid{
-     display: flex;
-    flex-wrap: wrap;
-    position: absolute;
-    top: 439px;
-    left: 81px;
-    overflow: hidden; 
-    width: 460px;
-    height: 110px;  
-}
-.gridElement{
-    flex: 1 0 25%;
-    border-bottom: 1px dashed var(--pink);
-    border-right: 1px dashed var(--pink);
-    height: 37px;
 }
 
 .placeholder{
@@ -60,6 +57,7 @@
     left: 0px;
     overflow: hidden; 
 }
+
 .placeholderTop{
     margin-top: 35px;
     width: 100%;
@@ -68,17 +66,10 @@
     font-weight: 600;
     font-size: var(--size-normal);
     position: absolute;
-    top: 445px;
+    top: 440px;
     left: 0px;
     overflow: hidden;  
 }
-.plus{
-    margin-top: -10px;
-    margin-left: -5px;
-    color: var(--secondary);
-}
-
-
 
 .rowOutlier{
     flex: 1;
