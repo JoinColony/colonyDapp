@@ -35,14 +35,19 @@ type Props = FieldComponentProps<CustomProps>;
 
 class Input extends Component<Props> {
   inputElm: HTMLInputElement;
+
   static displayName = 'core.Fields.Input';
+
   static defaultProps = {
     appearance: {},
   };
+
   handleBlur = (evt: SyntheticEvent<CleaveHTMLInputElement>): void =>
     this.props.input.onBlur(evt.currentTarget.rawValue);
+
   handleChange = (evt: SyntheticEvent<CleaveHTMLInputElement>): void =>
     this.props.input.onChange(evt.currentTarget.rawValue);
+
   // We're using a simple object here because redux-form is using its
   // own event definition which doesn't make any sense
   handleFocus = (evt: Object): void => {
@@ -55,9 +60,11 @@ class Input extends Component<Props> {
     });
     return onFocus(evt);
   };
+
   handleRef = (elm: HTMLInputElement): void => {
     this.inputElm = elm;
   };
+
   render() {
     const {
       appearance,

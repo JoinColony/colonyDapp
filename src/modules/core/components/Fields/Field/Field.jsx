@@ -50,10 +50,13 @@ type Props = {
 
 class Field extends Component<Props> {
   id: string;
+
   static displayName = 'core.Fields.Field';
+
   static contextTypes = {
     _reduxForm: PropTypes.object,
   };
+
   componentWillMount() {
     const { _reduxForm } = this.context;
     const { elementOnly, id, label, name } = this.props;
@@ -64,7 +67,9 @@ class Field extends Component<Props> {
       throw new Error('You have to specify an id when using an external label');
     }
   }
+
   getId = (): string => this.props.id || this.id;
+
   getIntlFormatted = (
     prop?: MessageDescriptor | string,
     values?: { [string]: string },
@@ -80,10 +85,12 @@ class Field extends Component<Props> {
     }
     return formatMessage(prop, values);
   };
+
   getLabel = (): string => {
     const { label } = this.props;
     return this.getIntlFormatted(label);
   };
+
   getTitle = (): string => {
     const { label, placeholder, title } = this.props;
     return (
@@ -92,10 +99,12 @@ class Field extends Component<Props> {
       this.getIntlFormatted(placeholder)
     );
   };
+
   getConnectorComponent = (): ComponentType<any> | Function | string => {
     const { standalone } = this.props;
     return standalone ? StandaloneField : ReduxFormField;
   };
+
   render() {
     const {
       component,

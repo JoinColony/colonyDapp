@@ -24,12 +24,14 @@ type Props = FieldProps & {
 
 class FieldRow extends Component<Props> {
   static displayName = 'core.Fields.FieldRow';
+
   reset = (): void => {
     const {
       input: { onChange },
     } = this.props;
     onChange('');
   };
+
   render() {
     const {
       appearance,

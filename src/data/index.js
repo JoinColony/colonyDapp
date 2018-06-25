@@ -47,8 +47,11 @@ class UserProfile {
 
 export default class Data {
   _pinner: Pinner;
+
   _ipfsNode: ColonyIPFSNode;
+
   _orbitNode: OrbitNode;
+
   _key: string;
 
   constructor(pinner: Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
