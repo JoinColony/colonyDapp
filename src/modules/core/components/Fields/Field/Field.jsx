@@ -53,9 +53,16 @@ class Field extends Component<Props> {
 
   static displayName = 'core.Fields.Field';
 
+  /*
+   * We still use proptypes here for the context object, so this rule has
+   * to be manually disabled, otherwise it's a pretty good one, since the move
+   * to Flow
+   */
+  /* eslint-disable react/forbid-prop-types */
   static contextTypes = {
     _reduxForm: PropTypes.object,
   };
+  /* eslint-enable react/forbid-prop-types */
 
   componentWillMount() {
     const { _reduxForm } = this.context;
@@ -68,7 +75,13 @@ class Field extends Component<Props> {
     }
   }
 
-  getId = (): string => this.props.id || this.id;
+  getId = (): string => {
+    const {
+      props: { id: propsId },
+      id,
+    } = this;
+    return propsId || id;
+  };
 
   getIntlFormatted = (
     prop?: MessageDescriptor | string,

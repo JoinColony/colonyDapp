@@ -109,6 +109,11 @@ describe('Field component embedded in redux-form', () => {
     register: jest.fn(),
     getFormState: jest.fn(),
   };
+  /*
+   * We still use proptypes here for the context object, so this rule has
+   * to be manually disabled in most Form unit tests
+   */
+  /* eslint-disable react/forbid-prop-types */
   const reduxFormContext = {
     context: { _reduxForm: reduxFormStub, store: mockStore({}) },
     childContextTypes: {
@@ -116,6 +121,7 @@ describe('Field component embedded in redux-form', () => {
       store: PropTypes.object,
     },
   };
+  /* eslint-enable react/forbid-prop-types */
   test('Contains a ReduxFormField', () => {
     const wrapper = mountWithIntl(
       <Field name="test" label="Test" component={TestFieldComponent} />,

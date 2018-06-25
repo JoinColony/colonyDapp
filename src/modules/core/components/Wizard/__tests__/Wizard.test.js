@@ -15,7 +15,13 @@ const mountWithStore = node =>
       store: createMockStore('state'),
     },
     childContextTypes: {
+      /*
+       * We still use proptypes here for the context object, so this rule has
+       * to be manually disabled in most Form unit tests
+       */
+      /* eslint-disable react/forbid-prop-types */
       store: object,
+      /* eslint-enable react/forbid-prop-types */
     },
   });
 
@@ -26,7 +32,10 @@ describe('Wizard enhancer', () => {
       validate: () => ({ bar: 'foo' }),
       extraProp: 'baz',
     },
-    { Step: () => <div>Second page</div>, validate: () => ({ foo: 'bar' }) },
+    {
+      Step: () => <div>Second page</div>,
+      validate: () => ({ foo: 'bar' }),
+    },
   ];
 
   const OuterComponent = ({ children }: { children: Node }) => (

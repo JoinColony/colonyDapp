@@ -20,17 +20,33 @@ type Props = {
   intl: IntlShape, // `react-intl` object, so that we have access to the `formatMessage()` method.
   title?: MessageDescriptor | string, // Standard html title element. Can be a string or a `messageDescriptor`.
   value?: MessageDescriptor | string, // A string or a `messageDescriptor` that make up the button's text label
+  type: string,
 };
 
+/*
+ * The button type rule recently intoduced in the airbnb ruleset has some funky
+ * functionality right now.
+ *
+ * See this for context: https://github.com/yannickcr/eslint-plugin-react/issues/1555
+ *
+ * But in combination with Flow and react-intl you can't get it to actually work
+ * in this component using default props.
+ *
+ * @TODO Enable react/button-has-type rule
+ *
+ * After a non-workaround has been found for this.
+ */
+/* eslint-disable react/button-has-type */
 const Button = ({
-  appearance = { theme: 'primary' },
+  appearance,
   children,
   className,
-  disabled = false,
+  disabled,
   intl: { formatMessage },
-  loading = false,
+  loading,
   title,
   value,
+  type = 'button',
   ...props
 }: Props) => {
   const titleText =
@@ -43,6 +59,7 @@ const Button = ({
       disabled={disabled || loading}
       aria-busy={loading}
       title={titleText}
+      type={type}
       {...props}
     >
       {valueText || children}
