@@ -3,7 +3,7 @@ version: 2.0
 jobs:
   build-with-lockfile:
     docker:
-      - image: circleci/node:9.4.0
+      - image: circleci/node:9.10
     parallelism: 2
     working_directory: ~/colonyDapp
     steps:
@@ -57,7 +57,7 @@ jobs:
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
   nightly-build:
     docker:
-      - image: circleci/node:9.4.0
+      - image: circleci/node:9.10
     parallelism: 2
     working_directory: ~/colonyDapp
     steps:
@@ -103,7 +103,7 @@ jobs:
           command: yarn build
   integration-testing-build:
     docker:
-      - image: circleci/node:9.4.0
+      - image: circleci/node:9.10
     parallelism: 2
     working_directory: ~/colonyDapp
     steps:
