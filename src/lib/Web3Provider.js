@@ -19,10 +19,12 @@ class Web3Provider extends providers.Provider {
     this.eth = web3.eth;
     this.currentProvider = web3.currentProvider;
   }
+
   get address() {
     // https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#raising_hand-account-list-reflects-user-preference
     return this.eth.accounts[0];
   }
+
   prepareTxData(txData) {
     const tx = {
       from: this.address,
@@ -39,6 +41,7 @@ class Web3Provider extends providers.Provider {
     });
     return tx;
   }
+
   sendRPC(method, params = []) {
     const payload = {
       jsonrpc: '2.0',
@@ -50,6 +53,7 @@ class Web3Provider extends providers.Provider {
       payload,
     ).then(response => response.result);
   }
+
   async sendRawTransaction(transaction) {
     const gasPrice = await this.getGasPrice();
     const nonce = await this.getTransactionCount(this.address, 'pending');
@@ -60,6 +64,7 @@ class Web3Provider extends providers.Provider {
     });
     return this.sendRPC('eth_sendTransaction', [tx]);
   }
+
   async perform(method, params) {
     switch (method) {
       case 'call': {

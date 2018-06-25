@@ -13,22 +13,26 @@ type State = {
 
 class StandaloneField extends Component<Props, State> {
   static displayName = 'core.Fields.StandaloneField';
+
   constructor(props: Props) {
     super(props);
     this.state = {
       active: false,
     };
   }
+
   setActive = (): void => {
     this.setState({
       active: true,
     });
   };
+
   setInactive = (): void => {
     this.setState({
       active: false,
     });
   };
+
   render() {
     const { component: RowComponent, ...props } = this.props;
     const { active } = this.state;

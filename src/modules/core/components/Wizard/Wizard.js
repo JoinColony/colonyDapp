@@ -26,18 +26,21 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
 ) => {
   class Wizard extends Component<WizardProps, WizardState> {
     state = { step: 0 };
+
     next = () => {
       const { step } = this.state;
       this.setState({
         step: steps[step + 1] ? step + 1 : step,
       });
     };
+
     prev = () => {
       const { step } = this.state;
       this.setState({
         step: step === 0 ? 0 : step - 1,
       });
     };
+
     render() {
       const { Step, validate, ...extraProps } = steps[this.state.step];
       const WrappedStep = reduxForm({

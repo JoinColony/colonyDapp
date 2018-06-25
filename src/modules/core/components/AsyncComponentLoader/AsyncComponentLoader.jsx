@@ -23,9 +23,11 @@ type State = {
  */
 export default class AsyncComponentLoader extends Component<Props, State> {
   static displayName = 'core.AsyncComponentLoader';
+
   state = {
     loadedComponent: null,
   };
+
   componentDidMount() {
     const { loaderFn } = this.props;
     loaderFn().then(component =>
@@ -34,6 +36,7 @@ export default class AsyncComponentLoader extends Component<Props, State> {
       }),
     );
   }
+
   render() {
     const { loadedComponent: LoadedComponent } = this.state;
     const { loaderFn, preloader: Preloader, ...restProps } = this.props;
