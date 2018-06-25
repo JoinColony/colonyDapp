@@ -3,7 +3,7 @@
         "browser": true,
         "commonjs": true,
         "es6": true
-    },
+    },    
     "extends": [
         "@colony/eslint-config-colony",
         "plugin:flowtype/recommended",
