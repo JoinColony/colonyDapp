@@ -45,6 +45,9 @@
   background-color: white;
   cursor: pointer;
 }
+.callToAction:focus{
+  outline: none;
+}
 
 .callToAction:focus {
   outline: none;
