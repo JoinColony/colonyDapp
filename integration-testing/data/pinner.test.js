@@ -32,7 +32,8 @@ describe('Smoke Test', () => {
 });
 
 describe('Data Test', () => {
-  it('pins and share data via the default pinner',
+  it(
+    'pins and share data via the default pinner',
     async () => {
       const p1 = await data1.getMyUserProfile();
       const p2 = await data2.getUserProfile(p1.address());
@@ -40,9 +41,11 @@ describe('Data Test', () => {
 
       await p1.setName(name);
 
-      expect(await retryUntilValue(() => p2.isEmpty(), {
-        value: false,
-      })).toBeFalsy();
+      expect(
+        await retryUntilValue(() => p2.isEmpty(), {
+          value: false,
+        }),
+      ).toBeFalsy();
       expect(await retryUntilValue(() => p2.getName(), { value: name })).toBe(
         name,
       );
