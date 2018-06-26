@@ -120,14 +120,7 @@ export default class DDBTestFactory {
     // Wait for the ipfs nodes to be up
     await Promise.all(this._ipfsNodes.map(x => x.ready()));
     await Promise.all(this._datas.map(x => x.ready()));
-
-    // Wait for the nodes to be connected to the pinner
-    // if (this._pinner) {
-    //   await Promise.all(this._ipfsNodes.map(x => this._pinner.waitForMe(x)));
-    //   await Promise.all(
-    //     this._datas.map(x => x.waitForPeer(this._pinner.nodeID)),
-    //   );
-    // }
+    // @TODO at this point we may need to wait for the node to be connected to a pinner node
 
     // No need to wait for orbit-db nodes
   }
