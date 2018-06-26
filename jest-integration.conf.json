@@ -3,15 +3,13 @@
     "rootDir": "integration-testing",
     "globalSetup": "./utils/integration-testing-setup.js",
     "globalTeardown": "./utils/integration-testing-teardown.js",
-    "setupFiles": [
-        "<rootDir>/utils/patch-node-crypto.js"
-    ],
     "testPathIgnorePatterns": [
         "utils"
     ],
     "setupFiles": [
-        "./utils/setup-accounts-global.js",
-        "./utils/fetch-polyfill.js"
+        "<rootDir>/utils/patch-node-crypto.js",
+        "<rootDir>/utils/setup-accounts-global.js",
+        "<rootDir>/utils/fetch-polyfill.js"
     ],
     "testEnvironment": "node"
 }

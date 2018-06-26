@@ -25,13 +25,15 @@
         "node_modules",
         "src/lib/colonyJS",
         "src/lib/colony-wallet",
-        "src/lib/colonyNetwork"
+        "src/lib/colonyNetwork",
+        "src/lib/pinningService"
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
         "src/data",
         "src/lib/colonyJS",
         "src/lib/colony-wallet",
-        "src/lib/colonyNetwork"
+        "src/lib/colonyNetwork",
+        "src/lib/pinningService"
     ]
 }
