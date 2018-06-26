@@ -24,7 +24,7 @@
 .row {
   height: 64px;
   border-bottom: 1px solid var(--grey-blue-0); 
-  padding: 16px;
+  padding: 12px 16px;
   display: flex;
 }
 
@@ -47,6 +47,9 @@
   display: flex;
   max-height: 60px;
   cursor: pointer;
+}
+.callToAction:focus{
+  outline: none;
 }
 
 .actionImage{

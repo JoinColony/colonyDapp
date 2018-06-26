@@ -37,16 +37,32 @@ const MSG = defineMessages({
   dragAndDropBox: {
     id: 'CreateWallet.DragAndDropPhrase.dragAndDropBox',
     defaultMessage: 'Drag & Drop Mnemonics Here',
-  },
-  titleBox: {
-    id: 'CreateWallet.DragAndDropPhrase.titleBox',
-    defaultMessage: 'Drag your Mnemonic Phrase in the right order',
-  },
+  }
 });
 
-class DragAndDropPhrase extends Component {
+declare module 'DragDropArea' {
+  declare module.exports: any;
+}
+
+type Function = () => void;
+type DragProps = {
+  nextStep: Function,
+  previousStep: Function,
+  handleSubmit: Function,
+  passphrase: string,
+};
+type DragState = {
+  nextStep: Function,
+  previousStep: Function,
+  handleSubmit: Function,
+  passphrase: string,
+  child?: any,
+};
+
+class DragAndDropPhrase extends Component<DragProps, DragState> {
   constructor(props) {
     super(props);
+    // $FlowFixMe
     this.child = React.createRef();
   }
 
@@ -58,6 +74,7 @@ class DragAndDropPhrase extends Component {
   };
 
   checkCorrectSorting = () => {
+    // $FlowFixMe
     this.child.current.checkSorting();
   };
 
@@ -70,13 +87,9 @@ class DragAndDropPhrase extends Component {
         <div className={`${styles.subtitle}`}>
           <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
         </div>
-        <Heading
-          appearance={{ size: 'boldSmall' }}
-          text={MSG.titleBox}
-          className={`${styles.heading}`}
-        />
         <div className={`${styles.wordContainer}`}>
           <DragAndDropArea
+            // $FlowFixMe
             ref={this.child}
             phrase={this.state.passphrase}
             text={MSG.dragAndDropBox.defaultMessage}
@@ -89,6 +102,7 @@ class DragAndDropPhrase extends Component {
             onClick={this.state.handleSubmit(this.state.previousStep)}
           />
           <Button
+            appearance={{ theme: 'tertiary' }}
             onClick={() => {
               this.state.handleSubmit(this.state.nextStep);
               this.checkCorrectSorting();

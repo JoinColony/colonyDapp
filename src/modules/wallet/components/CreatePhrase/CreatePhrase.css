@@ -15,6 +15,23 @@
     min-height: 86px;
 }
 
+@media only screen and (max-width: 1500px) {
+    .greyBox:hover:before {
+        display: none;
+    }
+}
+.greyBox:hover:before{
+    content: "";
+    background-image: url(../../../../img/arrow-left-side.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 230px;
+    height: 80px; 
+    left: 390px;
+    top: 460px;
+    background-size: 150px;
+    margin: auto;    
+}
 .buttonsForBox{
     display: flex;
     justify-content: flex-end;

@@ -14,15 +14,16 @@
 .main {
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
-  padding: 4px 16px;
-  height: 27px;
+  padding: 0px 50px;
+  height: 44px;
   position: relative;
   border: 1px solid transparent;
   border-radius: var(--radius-tiny);
   background-color: transparent;
-  font-size: var(--size-small);
+  font-size: var(--size-normal);
   font-weight: var(--weight-semi);
   text-align: center;
+  focus: none;
   white-space: nowrap;
   letter-spacing: 0.25px;
   transition: background-color 50ms ease-in;
@@ -122,7 +123,7 @@
 
 .themePrimary {
   composes: main;
-  border-color: var(--primary);
+  border: none;
   background-color: var(--primary);
   color: var(--colony-white);
 }
@@ -161,6 +162,27 @@
 .themeSecondary.colorSchemaInverted:hover {
   color: color(var(--colony-white) shade(30%));
 }
+
+/*
+ * Secondary
+ * Buttons with grey background and no border
+ */
+
+ .themeTertiary {
+  composes: main;
+  font-weight: var(--weight-normal);
+  background-color: var(--temp-grey-5);
+  color: var(--colony-white);
+}
+
+.themeTertiary:hover {
+  background-color: color(var(--temp-grey-5) shade(30%));
+}
+
+.themeTertiary.colorSchemaInverted {
+  color: var(--colony-white);
+}
+
 
 /*
  * Danger
@@ -249,7 +271,6 @@
   color: color(var(--sky-blue) shade(30%));
   border: none;
 }
-
 
 /*
  * Underlined Bold

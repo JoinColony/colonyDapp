@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
+import type { FormProps } from '~types/forms';
 
 import styles from './CreateWallet.css';
 
@@ -14,8 +14,9 @@ import Wallet from '../../../../img/icons/wallet.svg';
 import Phrase from '../../../../img/icons/phrase.svg';
 import File from '../../../../img/icons/file.svg';
 import ArrowRight from '../../../../img/icons/arrow.svg';
-
 import jazz from '../../../../img/jazz.png';
+import ArrowHandLeft from '../../../../img/arrow-left-side.png';
+import ArrowHandRight from '../../../../img/arrow-right-side.png';
 
 const icons = [MetaMask, Wallet, Phrase, File];
 
@@ -73,29 +74,31 @@ const rowSubTitles = defineMessages({
     defaultMessage: 'Access with your mnemonic phrase',
   },
   JSONSubtTitle: {
-    id: 'CreateWallet.WalletDetails.subTitle4',
+    id: 'CreateWformallet.WalletDetails.subTitle4',
     defaultMessage: 'We do not recommend this method',
   },
 });
 
-const propTypes = {
-  title: PropTypes.string,
-  subTitle: PropTypes.string,
-  rowIndex: PropTypes.number, // eslint-disable-line react/forbid-prop-types
-  nextStep: PropTypes.func,
+type RowProps = {
+  title: {
+    id: string,
+    defaultMessage: string,
+  },
+  subTitle: {
+    id: string,
+    defaultMessage: string,
+  },
+  rowIndex: number,
 };
 
-const propTypesWallet = {
-  nextStep: PropTypes.func,
-  handleSubmit: PropTypes.func,
-};
+type Props = FormProps<CustomProps>;
 
 const svgStyle = {
   width: '22px',
   height: '22px',
 };
 
-const DetailRow = ({ title, subTitle, rowIndex }: Props) => {
+const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => {
   const Icon = icons[rowIndex];
   return (
     <div className={`${styles.row}`}>
@@ -155,10 +158,6 @@ const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
     </div>
   </section>
 );
-
-DetailRow.propTypes = propTypes;
-
-WalletDetails.propTypes = propTypesWallet;
 
 export default WalletDetails;
 

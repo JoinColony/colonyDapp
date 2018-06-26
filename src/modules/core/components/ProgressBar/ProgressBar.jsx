@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { defineMessages } from 'react-intl';
 
 import styles from './ProgressBar.css';
@@ -13,7 +12,12 @@ const MSG = defineMessages({
   },
 });
 
-class ProgressBar extends Component {
+type ProgressBarProps = {
+  stepCount: number,
+  step: number,
+};
+
+class ProgressBar extends Component<ProgressBarProps> {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,10 +47,5 @@ class ProgressBar extends Component {
 }
 
 ProgressBar.displayName = 'core.ProgressBar';
-
-ProgressBar.propTypes = {
-  step: PropTypes.number,
-  stepCount: PropTypes.number,
-};
 
 export default ProgressBar;

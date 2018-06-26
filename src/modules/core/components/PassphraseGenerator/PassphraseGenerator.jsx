@@ -2,7 +2,6 @@
 
 import { create } from 'colony-wallet/software';
 import React, { Component } from 'react';
-//import PropTypes from 'prop-types';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
@@ -29,31 +28,40 @@ const MSG = defineMessages({
   },
 });
 
-class PassphraseGenerator extends Component {
+type PassPhraseProps = {
+  elementOnly: boolean,
+  label: string,
+  hasError: boolean,
+  error: string,
+  help: string,
+  input: { value: string },
+};
+type PassPhraseState = {
+  copied: boolean,
+};
+
+class PassphraseGenerator extends Component<PassPhraseProps, PassPhraseState> {
   static displayName = 'core.PassphraseGenerator';
 
-  constructor(props) {
-    super(props);
-    this.state = { copied: false };
-    this.copyToClipboard = this.copyToClipboard.bind(this);
-    this.generatePassphrase = this.generatePassphrase.bind(this);
-  }
+  state = { copied: false };
+
   componentDidMount() {
     if (!this.props.input.value) {
       this.generatePassphrase();
     }
   }
-  copyToClipboard() {
+  copyToClipboard = () => {
     copy(this.props.input.value);
     this.setState({ copied: true });
     setTimeout(() => this.setState({ copied: false }), 4000);
-  }
-  generatePassphrase() {
+  };
+  generatePassphrase = () => {
     const { input: { onChange } } = this.props;
-    lightwallet.then(({ keystore: { generateRandomSeed } }) =>
-      onChange(generateRandomSeed()),
-    );
-  }
+
+    create().then(wallet => {
+      onChange(wallet.mnemonic);
+    });
+  };
   render() {
     const {
       elementOnly,
@@ -112,14 +120,5 @@ class PassphraseGenerator extends Component {
     );
   }
 }
-
-/* PassphraseGenerator.propTypes = {
-  elementOnly: PropTypes.bool,
-  label: PropTypes.string,
-  hasError: PropTypes.bool,
-  error: PropTypes.string,
-  help: PropTypes.string,
-  input: PropTypes.object,
-}; */
 
 export default PassphraseGenerator;

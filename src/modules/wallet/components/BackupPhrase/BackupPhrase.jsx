@@ -5,7 +5,6 @@ import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import { defineMessages } from 'react-intl';
 
-import PropTypes from 'prop-types';
 import type { FormProps } from '~types/forms';
 
 import styles from './BackupPhrase.css';

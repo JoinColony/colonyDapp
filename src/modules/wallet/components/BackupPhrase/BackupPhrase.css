@@ -13,11 +13,11 @@
 .heading {
     flex: 1;
     font-weight: 600;
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 }
 
 .greyBox{
-    min-height: 86px;
+    min-height: 85px;
     font-weight: var(--weight-semi);
     line-height: 1.5;
     padding: 22px 60px;
@@ -26,6 +26,23 @@
     border-radius: var(--radius-small);
     background-color: var(--grey-blue-1);
     text-align: center;
+}
+@media only screen and (max-width: 1500px) {
+    .greyBox:hover:before{
+        display: none;
+    }
+}
+
+.greyBox:hover:before{
+    content: "";
+    background-image: url(../../../../img/arrow-right-side.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 230px;
+    height: 94px;
+    left: 541px;
+    top: -20px; 
+    background-size: 150px;  
 }
 
 .buttonsForBox{

@@ -34,6 +34,10 @@
     font-weight: var(--weight-medium);
 }
 
+.buttonsToMakeYouDrag{
+    display: flex;
+    justify-content: space-between;
+}
 .buttonsForBox{
     display: flex;
     justify-content: flex-end;
@@ -44,6 +48,7 @@
     flex: 1;
     font-weight: 600;
     margin-bottom: 9px;
+    margin-top: 11px;
 }
 
 .placeholder{
@@ -77,4 +82,5 @@
 
 .wordContainer {
     border-bottom: 1px solid var(--grey-blue-0); 
+    overflow: hidden;
 }

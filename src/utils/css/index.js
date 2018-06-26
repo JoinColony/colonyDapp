@@ -2,16 +2,8 @@
 /* eslint-disable import/prefer-default-export */
 
 import type { Appearance, StyleObject } from '~types/css';
-import PropTypes from 'prop-types';
 
 import { capitalize } from '../strings';
-
-const propTypes = {
-  styleProp: PropTypes.string,
-  defaultProp: PropTypes.string,
-  styleObject: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  restStyleProps: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-};
 
 /**
  * This function maps an appearance object onto CSS modules classes
@@ -65,7 +57,7 @@ export const getMainClasses = (
  *
  * @return {string} If existent, the provided style name, or, the default fallback
  */
-export const styleWithDefaults = (styleProp, defaultProp) =>
+export const styleWithDefaults = (styleProp: string, defaultProp: string) =>
   !styleProp || styleProp.trim() === 'default' ? defaultProp : styleProp;
 
 /**
@@ -83,7 +75,10 @@ export const styleWithDefaults = (styleProp, defaultProp) =>
  *
  * @return {string} The composed class names string
  */
-export const styleSelector = (styleObject, ...restStyleProps) =>
+
+type StyleType = { [key: string]: string | number };
+
+export const styleSelector = (styleObject: StyleType, ...restStyleProps: any) =>
   restStyleProps
     .reduce(
       (styleString, currentStyle) =>
@@ -91,6 +86,3 @@ export const styleSelector = (styleObject, ...restStyleProps) =>
       '',
     )
     .trim();
-
-styleSelector.propTypes = propTypes;
-styleWithDefaults.propTypes = propTypes;
