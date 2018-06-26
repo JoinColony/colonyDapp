@@ -2,8 +2,6 @@
 
 import React from 'react';
 import type { Node } from 'react';
-import PropTypes from 'prop-types';
-
 import layout from '~styles/layout.css';
 
 import Logo from '../../../../img/icons/logo.svg';
@@ -12,8 +10,8 @@ import styles from './WizardTemplateCentered.css';
 
 type Props = {
   children: Node,
-  step: PropTypes.number,
-  stepCount: PropTypes.number,
+  step: number,
+  stepCount: number,
 };
 
 const displayName = 'pages.WizardTemplate';

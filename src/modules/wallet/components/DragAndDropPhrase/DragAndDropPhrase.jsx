@@ -37,7 +37,7 @@ const MSG = defineMessages({
   dragAndDropBox: {
     id: 'CreateWallet.DragAndDropPhrase.dragAndDropBox',
     defaultMessage: 'Drag & Drop Mnemonics Here',
-  }
+  },
 });
 
 declare module 'DragDropArea' {

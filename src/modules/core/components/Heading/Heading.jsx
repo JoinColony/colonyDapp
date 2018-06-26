@@ -4,7 +4,6 @@ import React from 'react';
 import type { Node } from 'react';
 
 import { getMainClasses } from '~utils/css';
-
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { Appearance } from '~types/css';
 

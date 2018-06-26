@@ -76,10 +76,7 @@ class Field extends Component<Props> {
   }
 
   getId = (): string => {
-    const {
-      props: { id: propsId },
-      id,
-    } = this;
+    const { props: { id: propsId }, id } = this;
     return propsId || id;
   };
 

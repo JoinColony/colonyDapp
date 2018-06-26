@@ -15,8 +15,6 @@ import Phrase from '../../../../img/icons/phrase.svg';
 import File from '../../../../img/icons/file.svg';
 import ArrowRight from '../../../../img/icons/arrow.svg';
 import jazz from '../../../../img/jazz.png';
-import ArrowHandLeft from '../../../../img/arrow-left-side.png';
-import ArrowHandRight from '../../../../img/arrow-right-side.png';
 
 const icons = [MetaMask, Wallet, Phrase, File];
 
@@ -82,12 +80,18 @@ const rowSubTitles = defineMessages({
 type RowProps = {
   title: {
     id: string,
-    defaultMessage: string,
+    defaultMessage?: string,
   },
   subTitle: {
     id: string,
-    defaultMessage: string,
+    defaultMessage?: string,
   },
+  rowIndex: number,
+};
+
+type CustomProps = {
+  title: { defaultMessage: string },
+  subTitle: string,
   rowIndex: number,
 };
 

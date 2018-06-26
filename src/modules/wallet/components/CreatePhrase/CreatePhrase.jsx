@@ -33,39 +33,43 @@ const MSG = defineMessages({
   },
 });
 
+type CustomProps = {
+  nextStep: () => void,
+  previousStep: () => void,
+  handleSubmit: () => void,
+};
+
 type Props = FormProps<CustomProps>;
 
-const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => {
-  return (
-    <section className={`${styles.content}`}>
-      <div className={`${styles.title}`}>
-        <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
-      </div>
-      <div className={`${styles.subtitle}`}>
-        <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
-      </div>
-      <div className={`${styles.greyBox}`}>
-        <ReduxFormField
-          name="pass_phrase_outer"
-          component={PassphraseGenerator}
-        />
-      </div>
-      <div className={`${styles.buttonsForBox}`}>
-        <Button
-          appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-          value={MSG.backButton}
-          onClick={handleSubmit(previousStep)}
-        />
-        <Button
-          appearance={{ theme: 'danger' }}
-          onClick={handleSubmit(nextStep)}
-          onSubmit={handleSubmit}
-          value={MSG.confirmButton}
-        />
-      </div>
-    </section>
-  );
-};
+const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
+  <section className={`${styles.content}`}>
+    <div className={`${styles.title}`}>
+      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+    </div>
+    <div className={`${styles.subtitle}`}>
+      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+    </div>
+    <div className={`${styles.greyBox}`}>
+      <ReduxFormField
+        name="pass_phrase_outer"
+        component={PassphraseGenerator}
+      />
+    </div>
+    <div className={`${styles.buttonsForBox}`}>
+      <Button
+        appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+        value={MSG.backButton}
+        onClick={handleSubmit(previousStep)}
+      />
+      <Button
+        appearance={{ theme: 'danger' }}
+        onClick={handleSubmit(nextStep)}
+        onSubmit={handleSubmit}
+        value={MSG.confirmButton}
+      />
+    </div>
+  </section>
+);
 
 export default CreatePhrase;
 

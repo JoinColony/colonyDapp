@@ -43,27 +43,19 @@ class Input extends Component<Props> {
   };
 
   handleBlur = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => {
-    const {
-      props: { input },
-    } = this;
+    const { props: { input } } = this;
     input.onBlur(evt.currentTarget.rawValue);
   };
 
   handleChange = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => {
-    const {
-      props: { input },
-    } = this;
+    const { props: { input } } = this;
     input.onChange(evt.currentTarget.rawValue);
   };
 
   // We're using a simple object here because redux-form is using its
   // own event definition which doesn't make any sense
   handleFocus = (evt: Object): void => {
-    const {
-      props: {
-        input: { onFocus },
-      },
-    } = this;
+    const { props: { input: { onFocus } } } = this;
     const { length } = evt.currentTarget.value;
     setTimeout(() => {
       if (!this.inputElm) return;

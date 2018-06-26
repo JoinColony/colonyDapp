@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import PropTypes from 'prop-types';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '../../../core/components/Button';
@@ -67,7 +66,11 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
   /**
    * Get items to sort from
    */
-  static getItems(phrase: string, count: number, offset = 0) {
+  static getItems(
+    phrase: string,
+    count: number,
+    offset: number = 0,
+  ): Array<DragElement> {
     const phraseArray = phrase.split(' ');
     const shuffled = DragAndDropArea.shuffle(phraseArray);
     return Array.from({ length: count }, (word, index) => index).map(index => ({
@@ -85,20 +88,17 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     let temporaryValue;
     let randomIndex;
 
-    const clone = DragAndDropArea.cloneArray(array);
-
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
 
       temporaryValue = array[currentIndex];
-      clone[currentIndex] = clone[randomIndex];
-      clone[randomIndex] = temporaryValue;
+      /* eslint-disable no-param-reassign */
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
     }
-    return clone;
+    return array;
   };
-
-  static cloneArray = (array: Array<string>): Array<string> => array.slice(0);
 
   state = {
     passphrase: this.props.phrase,
@@ -123,7 +123,7 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     list: Array<DragElement>,
     startIndex: number,
     endIndex: number,
-  ) => {
+  ): Array<DragElement> => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -153,7 +153,11 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
   ) => {
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
-    const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+    let removed;
+    if (droppableSource.index != null) {
+      removed = sourceClone.splice(droppableSource.index, 1);
+    }
 
     if (droppableDestination.index != null) {
       destClone.splice(droppableDestination.index, 0, removed);
@@ -356,7 +360,7 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
           </div>
         ) : null}
         <Droppable droppableId="source" direction="horizontal">
-          {(provided, snapshot) => (
+          {provided => (
             <div ref={provided.innerRef} style={this.getSourceStyle()}>
               {this.state.selected.map((item, index) => (
                 <Draggable
@@ -389,9 +393,5 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     );
   }
 }
-
-DragAndDropArea.propTypes = {
-  phrase: PropTypes.string,
-};
 
 export default DragAndDropArea;

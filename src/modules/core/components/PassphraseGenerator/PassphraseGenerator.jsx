@@ -1,5 +1,6 @@
 /* @flow */
 
+// $FlowFixMe
 import { create } from 'colony-wallet/software';
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
@@ -10,8 +11,6 @@ import styles from './PassphraseGenerator.css';
 import { InputLabel } from '../Fields';
 import Button from '../Button';
 import Heading from '../Heading';
-
-const lightwallet = import(/* webpackChunkName: "lib0" */ 'eth-lightwallet');
 
 const MSG = defineMessages({
   buttonRefresh: {
@@ -28,19 +27,24 @@ const MSG = defineMessages({
   },
 });
 
-type PassPhraseProps = {
+type Props = {
   elementOnly: boolean,
   label: string,
   hasError: boolean,
   error: string,
   help: string,
-  input: { value: string },
+  input: {
+    id: any,
+    value: string,
+    onChange: any,
+    disabled: boolean,
+  },
 };
-type PassPhraseState = {
+type State = {
   copied: boolean,
 };
 
-class PassphraseGenerator extends Component<PassPhraseProps, PassPhraseState> {
+class PassphraseGenerator extends Component<Props, State> {
   static displayName = 'core.PassphraseGenerator';
 
   state = { copied: false };
@@ -50,17 +54,22 @@ class PassphraseGenerator extends Component<PassPhraseProps, PassPhraseState> {
       this.generatePassphrase();
     }
   }
-  copyToClipboard = () => {
-    copy(this.props.input.value);
-    this.setState({ copied: true });
-    setTimeout(() => this.setState({ copied: false }), 4000);
-  };
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+  timeout = undefined;
+
   generatePassphrase = () => {
     const { input: { onChange } } = this.props;
 
     create().then(wallet => {
       onChange(wallet.mnemonic);
     });
+  };
+  copyToClipboard = () => {
+    copy(this.props.input.value);
+    this.setState({ copied: true });
+    this.timeout = setTimeout(() => this.setState({ copied: false }), 4000);
   };
   render() {
     const {
@@ -78,9 +87,9 @@ class PassphraseGenerator extends Component<PassPhraseProps, PassPhraseState> {
           <Heading
             appearance={{ size: 'boldSmall' }}
             text={MSG.titleBox}
-            className={`${styles.heading}`}
+            className={styles.heading}
           />
-          <div className="buttonContainer">
+          <div>
             <Button
               appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
               type="button"

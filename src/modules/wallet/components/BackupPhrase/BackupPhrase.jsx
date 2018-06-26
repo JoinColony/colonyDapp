@@ -41,6 +41,13 @@ const MSG = defineMessages({
   },
 });
 
+type CustomProps = {
+  nextStep: () => void,
+  previousStep: () => void,
+  handleSubmit: () => void,
+  passphrase: string,
+};
+
 type Props = FormProps<CustomProps>;
 
 const BackupPhrase = ({
@@ -80,8 +87,10 @@ const BackupPhrase = ({
   </section>
 );
 
-// get pass phrase from previous step
-// will be passed in as props
+/**
+ * get pass phrase from previous step
+ * will be passed in as props
+ */
 const selector = formValueSelector('create_wallet');
 const ConnectedBackupPhrase = connect(state => ({
   passphrase: selector(state, 'pass_phrase_outer'),
