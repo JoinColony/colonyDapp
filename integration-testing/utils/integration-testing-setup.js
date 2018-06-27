@@ -81,6 +81,7 @@ module.exports = async () => {
     default_balance_ether: 100,
     total_accounts: 10,
     gasLimit: 7000000,
+    vmErrorsOnRPCResponse: true,
   };
   const ganacheServerDebugOptions = {
     debug: true,
