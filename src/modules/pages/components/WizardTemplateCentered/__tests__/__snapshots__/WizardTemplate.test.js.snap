@@ -2,29 +2,18 @@
 
 exports[`WizardTemplate component Renders initial component 1`] = `
 <main
-  className="undefined undefined undefined"
+  className="undefined"
 >
-  <aside>
-    <section>
-      <figure
-        role="presentation"
-      >
-        <svg
-          viewBox="0 0 160 80"
-        >
-          <image
-            height="80"
-            href="test-file-stub"
-            width="160"
-            x="0"
-            y="0"
-          />
-        </svg>
-      </figure>
-    </section>
-  </aside>
+  <header>
+    <figure
+      role="presentation"
+    >
+      <test-file-stub />
+    </figure>
+    <core.ProgressBar />
+  </header>
   <article
-    className="undefined undefined undefined undefined"
+    className="undefined undefined undefined"
   />
 </main>
 `;
