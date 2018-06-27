@@ -1,21 +1,25 @@
 import { bigNumberify } from 'ethers/utils';
 import { isAddress } from 'web3-utils';
 import { getNetworkClient } from './utils/network-client-helpers';
+import { ADMIN_ROLE } from '../src/lib/colonyJS/packages/colony-js-client';
 
 let colonyToken;
 let colonyAddress;
+
+const colonyCreatorAddress = Object.keys(
+  global.ganacheAccounts.private_keys,
+)[0];
 
 describe('`ColonyClient` is able to', () => {
   test('Create a new Colony (instance)', async () => {
     /*
      * Get the network client
      */
-    const networkClient = await getNetworkClient();
+    const networkClient = await getNetworkClient(colonyCreatorAddress);
     /*
      * There should only be one colony at this point, the meta colony
      */
-    const coloniesBefore = await networkClient.getColonyCount.call();
-    expect(coloniesBefore).toHaveProperty('count', 1);
+    const { count: coloniesBefore } = await networkClient.getColonyCount.call();
     /*
      * Create a new colony
      */
@@ -79,13 +83,13 @@ describe('`ColonyClient` is able to', () => {
      * There should two colonies now, the meta colony, and the one newly created
      */
     const coloniesAfter = await networkClient.getColonyCount.call();
-    expect(coloniesAfter).toHaveProperty('count', 2);
+    expect(coloniesAfter).toHaveProperty('count', coloniesBefore + 1);
   });
   test('Recover an existing Colony', async () => {
     /*
      * Get the network client
      */
-    const networkClient = await getNetworkClient();
+    const networkClient = await getNetworkClient(colonyCreatorAddress);
     /*
      * Recover the colony using it's name
      */
@@ -102,5 +106,27 @@ describe('`ColonyClient` is able to', () => {
     expect(await recoveredColonyClientInstance.getToken.call().address).toEqual(
       colonyToken,
     );
+  });
+  test('Make the Colony creator an ADMIN', async () => {
+    /*
+     * Get the network client
+     */
+    const networkClient = await getNetworkClient(colonyCreatorAddress);
+    /*
+     * Get the number of colonies. This will also represent the last created
+     * colony's Id which we created in the previous step.
+     */
+    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    /*
+     * Get the existing colony
+     */
+    const colonyClient = await networkClient.getColonyClient(lastColonyId);
+    const setColonyAdminTransaction = await colonyClient.authority.setUserRole.send(
+      {
+        user: colonyCreatorAddress,
+        role: ADMIN_ROLE,
+      },
+    );
+    expect(setColonyAdminTransaction).toHaveProperty('successful', true);
   });
 });
