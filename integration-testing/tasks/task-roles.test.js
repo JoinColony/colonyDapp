@@ -74,7 +74,7 @@ describe('`ColonyClient` is able to', () => {
       managerAddress.toLowerCase(),
     );
     /*
-     * Check tha the task does not have a worker role assigned
+     * Check that the task does not have a worker role assigned
      */
     const { address: workerRoleNull } = await colonyClient.getTaskRole.call({
       taskId: newTaskId,
@@ -91,7 +91,7 @@ describe('`ColonyClient` is able to', () => {
     });
     expect(setTaskRoleTransaction).toHaveProperty('successful', true);
     /*
-     * Check tha the task now has a worker role, and is the correct one
+     * Check that the task now has a worker role, and is the correct one
      */
     const { address: workerRoleAddress } = await colonyClient.getTaskRole.call({
       taskId: newTaskId,

@@ -18,7 +18,7 @@ const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
 
 describe('`ColonyClient` is able to', () => {
-  test('Set a task develiverable', async () => {
+  test('Set a task deliverable', async () => {
     /*
      * Get the network client
      *
