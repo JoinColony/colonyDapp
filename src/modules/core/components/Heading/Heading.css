@@ -3,9 +3,9 @@
 .main {
   composes: medium from '~styles/titles.css';
   margin-bottom: 20px;
+  font-family: var(--family-primary);
   white-space: pre-line;
   color: var(--text);
-  font-family: var(--family-primary);
 }
 
 /*

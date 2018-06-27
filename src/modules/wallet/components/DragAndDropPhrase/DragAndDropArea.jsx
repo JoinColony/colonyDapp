@@ -43,6 +43,7 @@ const MSG = defineMessages({
 type DragAndDropProps = {
   phrase: string,
   direction?: string,
+  onAllDropped: () => void,
 };
 
 type DragElement = {
@@ -93,8 +94,9 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
       currentIndex -= 1;
 
       temporaryValue = array[currentIndex];
-      /* eslint-disable no-param-reassign */
+      // eslint-disable-next-line
       array[currentIndex] = array[randomIndex];
+      // eslint-disable-next-line
       array[randomIndex] = temporaryValue;
     }
     return array;
@@ -112,6 +114,12 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
   id2List = {
     target: 'items',
     source: 'selected',
+  };
+
+  allDropped = (items: Array<DragElement>) => {
+    if (items.length === 12) {
+      this.props.onAllDropped();
+    }
   };
 
   getList = (id: string) => this.state[this.id2List[id]];
@@ -153,10 +161,9 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
   ) => {
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
-
     let removed;
     if (droppableSource.index != null) {
-      removed = sourceClone.splice(droppableSource.index, 1);
+      [removed] = sourceClone.splice(droppableSource.index, 1);
     }
 
     if (droppableDestination.index != null) {
@@ -181,14 +188,10 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
    * When testing this they got partially overwritten.
    * Find a way to add them more elegantly in the next iteration
    */
-  getItemStyle = (
-    isDragging: boolean,
-    draggableStyle: StyleType,
-    isTarget: boolean,
-  ) => ({
+  getItemStyle = (isDragging: boolean, draggableStyle: StyleType) => ({
     userSelect: 'none',
     padding: '0px 5px',
-    margin: isTarget ? '7px 10px' : '5px 5px',
+    margin: '7px 15px',
     textAlign: 'center',
     width: 80,
     height: 20,
@@ -202,8 +205,8 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     background: isDraggingOver ? 'rgb(66, 129, 255)' : 'rgb(232, 236, 245)',
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    alignContent: 'flex-start',
+    // alignContent: 'flex-start',
+    justifyContent: 'center',
     width: 460,
     height: 110,
     border: '1px solid rgb(213, 213, 213)',
@@ -226,7 +229,6 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     flexWrap: 'wrap',
     width: 460,
     height: 110,
-    padding: '20px 0px',
   });
 
   /**
@@ -282,6 +284,8 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
         items: position.target,
         selected: position.source,
       });
+
+      this.allDropped(position.target);
     }
   };
 
@@ -327,7 +331,6 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
                       style={this.getItemStyle(
                         snapshotDrag.isDragging,
                         providedDrag.draggableProps.style,
-                        true,
                       )}
                     >
                       {item.content}
@@ -339,10 +342,10 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
                 <Children>
                   <div className={`${styles.placeholderTop}`}>
                     <FormattedMessage {...MSG.placeholder} />
-                  </div>,
+                  </div>
                   <div className={`${styles.placeholder}`}>
                     <FormattedMessage {...MSG.placeholderSub} />
-                  </div>,
+                  </div>
                 </Children>
               ) : null}
               {this.state.hasError ? (
@@ -377,7 +380,6 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
                       style={this.getItemStyle(
                         snapshotSource.isDragging,
                         providedSource.draggableProps.style,
-                        false,
                       )}
                     >
                       {item.content}

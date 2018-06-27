@@ -1,20 +1,20 @@
 @import 'variables.css';
 
 .main {
-    margin-top: -100px;
-    width: 100%;
-    max-width: 520px;
-  }
+  margin-top: -100px;
+  width: 100%;
+  max-width: 520px;
+}
   
 .title {
-    margin-top: 124px;
-    margin-bottom: 45px;
-    font-weight: 500;
-  }
+  margin-top: 124px;
+  margin-bottom: 45px;
+  font-weight: 500;
+}
 
 .subtitle {
-  font-size: 14px;
   margin-bottom: 47px;
+  font-size: 14px;
 }
 
 .content {
@@ -22,39 +22,41 @@
 }
 
 .row {
-  height: 64px;
-  border-bottom: 1px solid var(--grey-blue-0); 
+  display: flex; 
   padding: 12px 16px;
-  display: flex;
+  height: 64px;
+  border-bottom: 1px solid var(--grey-blue-0);
 }
 
 .rowContent {
   flex: 6;
 }
 
-.rowIcon{
+.rowIcon {
   flex: 1;
 }
 
-.rowArrow{
+.rowArrow {
   flex: 1;
 }
 
-.callToAction{
-  margin-top: 64px;
-  background-color: var(--total-white);
-  padding: 16px;
+.callToAction {
   display: flex;
+  margin-top: 64px;
+  padding: 16px;
   max-height: 60px;
+  background-color: var(--total-white);
   cursor: pointer;
 }
-.callToAction:focus{
+
+.callToAction:focus {
   outline: none;
 }
 
-.actionImage{
+.actionImage {
   flex: 1;
 }
+
 .actionText {
   flex: 6;
 }

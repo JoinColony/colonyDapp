@@ -1,44 +1,47 @@
 @import 'variables.css';
 
-.content{
-    width: 460px;
+.content {
+  width: 460px;
 }
 
-.title{
-    margin-top: 180px;
+.title {
+  margin-top: 180px;
 }
+
 .subtitle {
-    margin-bottom: 65px;
+  margin-bottom: 65px;
 }
 
 .greyBox{
-    min-height: 86px;
+  min-height: 86px;
 }
 
 @media only screen and (max-width: 1500px) {
-    .greyBox:hover:before {
-        display: none;
-    }
-}
-.greyBox:hover:before{
-    content: "";
-    background-image: url(../../../../img/arrow-left-side.png);
-    background-repeat: no-repeat;
-    position: absolute;
-    width: 230px;
-    height: 80px; 
-    left: 390px;
-    top: 460px;
-    background-size: 150px;
-    margin: auto;    
-}
-.buttonsForBox{
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 40px;
-    margin-bottom: 10px;
+  .greyBox:hover:before {
+    display: none;
+  }
 }
 
-.rowOutlier{
-    flex: 1;
+.greyBox:hover:before {
+  margin: auto;
+  height: 55px;
+  width: 211px;
+  position: absolute;
+  top: 460px; 
+  left: 370px;
+  background-size: 200px;
+  background-image: url(../../../../img/arrow-left-side.png);
+  content: "";
+  background-repeat: no-repeat;    
+}
+
+.buttonsForBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.rowOutlier {
+  flex: 1;
 }

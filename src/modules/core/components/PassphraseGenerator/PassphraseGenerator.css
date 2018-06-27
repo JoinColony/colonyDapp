@@ -29,8 +29,8 @@
 
 .heading {
   flex: 1;
+  margin-top: 16px;
   font-weight: 600;
-  margin-top: 13px;
 }
 
 /*

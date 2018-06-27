@@ -57,6 +57,7 @@ type DragState = {
   handleSubmit: Function,
   passphrase: string,
   child?: any,
+  allowSubmit: boolean,
 };
 
 class DragAndDropPhrase extends Component<DragProps, DragState> {
@@ -71,11 +72,16 @@ class DragAndDropPhrase extends Component<DragProps, DragState> {
     previousStep: this.props.previousStep,
     handleSubmit: this.props.handleSubmit,
     passphrase: this.props.passphrase,
+    allowSubmit: false,
   };
 
   checkCorrectSorting = () => {
     // $FlowFixMe
     this.child.current.checkSorting();
+  };
+
+  enableSubmit = () => {
+    this.setState({ allowSubmit: true });
   };
 
   render() {
@@ -91,6 +97,7 @@ class DragAndDropPhrase extends Component<DragProps, DragState> {
           <DragAndDropArea
             // $FlowFixMe
             ref={this.child}
+            onAllDropped={this.enableSubmit}
             phrase={this.state.passphrase}
             text={MSG.dragAndDropBox.defaultMessage}
           />
@@ -101,14 +108,25 @@ class DragAndDropPhrase extends Component<DragProps, DragState> {
             value={MSG.backButton}
             onClick={this.state.handleSubmit(this.state.previousStep)}
           />
-          <Button
-            appearance={{ theme: 'tertiary' }}
-            onClick={() => {
-              this.state.handleSubmit(this.state.nextStep);
-              this.checkCorrectSorting();
-            }}
-            value={MSG.nextButton}
-          />
+          {this.state.allowSubmit ? (
+            <Button
+              appearance={{ theme: 'primary' }}
+              onClick={() => {
+                this.state.handleSubmit(this.state.nextStep);
+                this.checkCorrectSorting();
+              }}
+              value={MSG.nextButton}
+            />
+          ) : (
+            <Button
+              appearance={{ theme: 'tertiary' }}
+              onClick={() => {
+                this.state.handleSubmit(this.state.nextStep);
+                this.checkCorrectSorting();
+              }}
+              value={MSG.nextButton}
+            />
+          )}
         </div>
       </section>
     );

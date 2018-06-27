@@ -3,19 +3,20 @@
 .main {
   background-color: var(--grey-blue-2);
 }
+
 .header {
-  height: 60px;
-  background-color: var(--total-white);
-  width: 100%;
-  padding-top: 8px;
   display: flex;
   justify-content: space-between;
+  padding-top: 8px;
+  height: 60px;
+  width: 100%;
+  background-color: var(--total-white);
 }
 
 .logo {
-  max-width: 90px;
-  margin-left: 13px;
   flex: 1;
+  margin-left: 13px;
+  max-width: 90px;
 }
 
 .content {

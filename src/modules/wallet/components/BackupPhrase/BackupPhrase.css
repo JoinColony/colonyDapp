@@ -1,64 +1,66 @@
 @import 'variables.css';
 
-.content{
-    width: 460px;
+.content {
+  width: 460px;
 }
 
 .title{
-    margin-top: 180px;
-}
-.subtitle {
-    margin-bottom: 65px;
-}
-.heading {
-    flex: 1;
-    font-weight: 600;
-    margin-bottom: 8px;
+  margin-top: 180px;
 }
 
-.greyBox{
-    min-height: 85px;
-    font-weight: var(--weight-semi);
-    line-height: 1.5;
-    padding: 22px 60px;
-    position: relative;
-    border: 1px solid var(--temp-grey-5);
-    border-radius: var(--radius-small);
-    background-color: var(--grey-blue-1);
-    text-align: center;
+.subtitle {
+  margin-bottom: 81px;
+}
+
+.heading {
+  flex: 1;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.greyBox {
+  padding: 22px 60px;
+  min-height: 85px;
+  position: relative;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: var(--radius-small);
+  background-color: var(--grey-blue-1);
+  font-weight: var(--weight-semi);
+  text-align: center;
+  line-height: 1.5;
 }
 @media only screen and (max-width: 1500px) {
-    .greyBox:hover:before{
-        display: none;
-    }
+  .greyBox:hover:before {
+    display: none;
+  }
 }
 
-.greyBox:hover:before{
-    content: "";
-    background-image: url(../../../../img/arrow-right-side.png);
-    background-repeat: no-repeat;
-    position: absolute;
-    width: 230px;
-    height: 94px;
-    left: 541px;
-    top: -20px; 
-    background-size: 150px;  
+.greyBox:hover:before {
+  height: 94px;
+  width: 230px;
+  position: absolute;
+  top: -20px;
+  left: 541px; 
+  background-size: 150px;
+  background-image: url(../../../../img/arrow-right-side.png);
+  content: "";
+  background-repeat: no-repeat;  
 }
 
-.buttonsForBox{
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 40px;
-    margin-bottom: 10px;
+.buttonsForBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
 
-.rowOutlier{
-    flex: 1;
+.rowOutlier {
+  flex: 1;
 }
 
 .backupButton {
-    display: flex;
-    justify-content: flex-end;
-    padding: 40px 0px;
-    border-bottom: 1px solid var(--grey-blue-0); 
+  display: flex;
+  justify-content: flex-end;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--grey-blue-0); 
 }

@@ -1,86 +1,90 @@
 @import 'variables.css';
 
-.content{
-    width: 460px;
+.content {
+  width: 460px;
 }
 
-.title{
-    margin-top: 180px;
+.title {
+  margin-top: 180px;
 }
+
 .subtitle {
-    margin-bottom: 65px;
+  margin-bottom: 65px;
 }
 
-.greyBox{
-    min-height: 86px;
-    padding: 60px;
-    position: relative;
-    border: 1px solid rgb(213, 213, 213);
-    border-radius: 3px;
-    background-color: rgb(232, 236, 245);
-    text-align: center;
-}
-.errorOverlay{
-    background-color: var(--pink);
-    opacity: 0.1;
-    width: 460px;
-    height: 110px;
-    position: absolute;
+.greyBox {
+  padding: 60px;
+  min-height: 86px;
+  position: relative;
+  border: 1px solid rgb(213, 213, 213);
+  border-radius: 3px;
+  background-color: rgb(232, 236, 245);
+  text-align: center;
 }
 
-.errorMessage{
-    margin-top: 20px;
-    color: var(--pink);
-    font-weight: var(--weight-medium);
+.errorOverlay {
+  height: 110px;
+  width: 460px;
+  position: absolute;
+  background-color: var(--pink);
+  opacity: 0.1;
 }
 
-.buttonsToMakeYouDrag{
-    display: flex;
-    justify-content: space-between;
+.errorMessage {
+  margin-top: 20px;
+  font-weight: var(--weight-medium);
+  color: var(--pink);
 }
-.buttonsForBox{
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 40px;
-    margin-bottom: 10px;
+
+.buttonsToMakeYouDrag {
+  display: flex;
+  justify-content: space-between;
 }
+
+.buttonsForBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
 .heading {
-    flex: 1;
-    font-weight: 600;
-    margin-bottom: 9px;
-    margin-top: 11px;
+  flex: 1;
+  margin-top: 11px;
+  margin-bottom: 9px;
+  font-weight: 600;
 }
 
-.placeholder{
-    width: 100%;
-    text-align: center;
-    color: var(--temp-grey-12);
-    font-weight: 600;
-    font-size: var(--size-normal);
-    position: absolute;
-    top: 500px;
-    left: 0px;
-    overflow: hidden; 
+.placeholder {
+  width: 100%;
+  position: absolute;
+  top: 500px;
+  left: 0;
+  overflow: hidden;
+  font-size: var(--size-normal);
+  font-weight: 600;
+  text-align: center;
+  color: var(--temp-grey-12); 
 }
 
-.placeholderTop{
-    margin-top: 35px;
-    width: 100%;
-    text-align: center;
-    color: var(--temp-grey-12);
-    font-weight: 600;
-    font-size: var(--size-normal);
-    position: absolute;
-    top: 440px;
-    left: 0px;
-    overflow: hidden;  
+.placeholderTop {
+  margin-top: 35px;
+  width: 100%;
+  position: absolute;
+  top: 440px;
+  left: 0;
+  overflow: hidden;
+  font-size: var(--size-normal);
+  font-weight: 600;
+  text-align: center;
+  color: var(--temp-grey-12);  
 }
 
-.rowOutlier{
-    flex: 1;
+.rowOutlier {
+  flex: 1;
 }
 
-.wordContainer {
-    border-bottom: 1px solid var(--grey-blue-0); 
-    overflow: hidden;
+.wordContainer { 
+  overflow: hidden;
+  border-bottom: 1px solid var(--grey-blue-0);
 }
