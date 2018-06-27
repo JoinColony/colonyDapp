@@ -35,7 +35,6 @@ describe('`ColonyClient` is able to', () => {
      */
     const managerColonyClient = await managerNetworkClient.getColonyClient(
       lastColonyId,
-      lastColonyId,
     );
     const workerColonyClient = await workerNetworkClient.getColonyClient(
       lastColonyId,
