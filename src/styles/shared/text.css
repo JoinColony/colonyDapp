@@ -1,0 +1,56 @@
+@import 'variables.css';
+
+.main {
+  color: var(--text);
+}
+
+.small {
+  composes: main;
+  font-size: var(--size-small);
+  letter-spacing: 0.25px;
+}
+
+.bold {
+  composes: main;
+  font-weight: var(--weight-semi);
+}
+
+.invert {
+  composes: main;
+  color: var(--text-invert);
+}
+
+.primary {
+  composes: main;
+  color: var(--primary);
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.margin {
+  margin-bottom: 20px;
+}
+
+.marginDouble {
+  margin-bottom: 40px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  text-align: left;
+  line-height: var(--size-small) + 2px;
+}

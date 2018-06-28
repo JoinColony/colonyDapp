@@ -1,0 +1,32 @@
+@import 'variables.css';
+
+.internal {
+  display: inline-block;
+  border-bottom: 1px solid transparent;
+  font-size: inherit;
+  font-weight: var(--weight-semi);
+  letter-spacing: 0.25px;
+}
+
+.internal:hover {
+  border-bottom: 1px solid currentColor;
+}
+
+.internalDisabled {
+  font-weight: var(--weight-semi);
+  opacity: 0.7;
+}
+
+.external {
+  composes: internal;
+  color: var(--sky-blue);
+}
+
+.external:hover {
+  color: var(--sky-blue);
+}
+
+/* We're keeping this one around in case we want to introduce another link style */
+.internalAlt {
+  composes: external;
+}

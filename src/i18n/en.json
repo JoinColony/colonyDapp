@@ -1,0 +1,23 @@
+{
+    "home": "Home",
+    "role.disabled": "Disabled",
+    "role.member": "Member",
+    "role.admin": "Admin",
+    "role.owner": "Owner",
+    "button.cancel": "Cancel",
+    "button.dismiss": "Dismiss",
+    "button.remove": "Remove",
+    "button.ok": "Okay",
+    "button.add": "Add",
+    "button.back": "Back",
+    "button.next": "Next",
+    "button.confirm": "Confirm",
+    "input.resetText": "Cancel",
+    "label.name": "Name",
+    "label.description": "Description",
+    "label.optional": "Optional",
+    "label.email": "Email address",
+    "label.password": "Password",
+    "placeholder.email": "handle@domain.com",
+    "placeholder.password": "Password"
+  }

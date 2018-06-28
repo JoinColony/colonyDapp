@@ -1,0 +1,10 @@
+{
+    "presets": ["env", "stage-2", "react", "flow"],
+    "plugins": [
+        "transform-runtime",
+        ["react-intl", {
+            "messagesDir": "./dist/i18n",
+            "enforceDescriptions": false
+        }]
+    ]
+}
