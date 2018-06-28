@@ -24,7 +24,6 @@
   font-weight: var(--weight-semi);
   text-align: center;
   white-space: nowrap;
-  focus: none;
   letter-spacing: 0.25px;
   transition: background-color 50ms ease-in;
   cursor: pointer;

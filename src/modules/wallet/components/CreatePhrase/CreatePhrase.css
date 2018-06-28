@@ -12,27 +12,27 @@
   margin-bottom: 65px;
 }
 
-.greyBox{
+.greyBox {
   min-height: 86px;
 }
 
 @media only screen and (max-width: 1500px) {
-  .greyBox:hover:before {
+  .greyBox:hover::before {
     display: none;
   }
 }
 
-.greyBox:hover:before {
+.greyBox:hover::before {
   margin: auto;
   height: 55px;
   width: 211px;
   position: absolute;
-  top: 460px; 
+  top: 460px;
   left: 370px;
   background-size: 200px;
   background-image: url(../../../../img/arrow-left-side.png);
   content: "";
-  background-repeat: no-repeat;    
+  background-repeat: no-repeat;
 }
 
 .buttonsForBox {

@@ -5,7 +5,7 @@
   width: 100%;
   max-width: 520px;
 }
-  
+
 .title {
   margin-top: 124px;
   margin-bottom: 45px;
@@ -22,7 +22,7 @@
 }
 
 .row {
-  display: flex; 
+  display: flex;
   padding: 12px 16px;
   height: 64px;
   border-bottom: 1px solid var(--grey-blue-0);

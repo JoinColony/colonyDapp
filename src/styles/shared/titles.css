@@ -33,7 +33,6 @@
   font-size: var(--size-small);
 }
 
-
 .normal {
   composes: title;
   font-size: var(--size-normal);
@@ -64,7 +63,7 @@
   font-weight: var(--weight-normal);
 }
 
-.boldSmall{
+.boldSmall {
   composes: title;
   font-size: var(--size-small);
   font-weight: var(--weight-semi);

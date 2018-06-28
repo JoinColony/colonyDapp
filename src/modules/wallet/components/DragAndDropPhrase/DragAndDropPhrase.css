@@ -64,7 +64,7 @@
   font-size: var(--size-normal);
   font-weight: 600;
   text-align: center;
-  color: var(--temp-grey-12); 
+  color: var(--temp-grey-12);
 }
 
 .placeholderTop {
@@ -77,14 +77,14 @@
   font-size: var(--size-normal);
   font-weight: 600;
   text-align: center;
-  color: var(--temp-grey-12);  
+  color: var(--temp-grey-12);
 }
 
 .rowOutlier {
   flex: 1;
 }
 
-.wordContainer { 
+.wordContainer {
   overflow: hidden;
   border-bottom: 1px solid var(--grey-blue-0);
 }

@@ -4,7 +4,7 @@
   width: 460px;
 }
 
-.title{
+.title {
   margin-top: 180px;
 }
 
@@ -30,21 +30,21 @@
   line-height: 1.5;
 }
 @media only screen and (max-width: 1500px) {
-  .greyBox:hover:before {
+  .greyBox:hover::before {
     display: none;
   }
 }
 
-.greyBox:hover:before {
+.greyBox:hover::before {
   height: 94px;
   width: 230px;
   position: absolute;
   top: -20px;
-  left: 541px; 
+  left: 541px;
   background-size: 150px;
   background-image: url(../../../../img/arrow-right-side.png);
   content: "";
-  background-repeat: no-repeat;  
+  background-repeat: no-repeat;
 }
 
 .buttonsForBox {
@@ -62,5 +62,5 @@
   display: flex;
   justify-content: flex-end;
   padding: 40px 0;
-  border-bottom: 1px solid var(--grey-blue-0); 
+  border-bottom: 1px solid var(--grey-blue-0);
 }
