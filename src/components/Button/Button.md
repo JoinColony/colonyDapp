@@ -45,5 +45,5 @@ You can use it as a normal button using its children for its content. This will 
 Set a custom `title` attribute. This _can_ be a `MessageDescriptor`.
 
 ```js
-<Button appearance={{ theme: 'danger' }} title="Boo!">I have a title</Button>
+<Button appearance={{ theme: 'danger' }} title="Boo!">Hover over me</Button>
 ```

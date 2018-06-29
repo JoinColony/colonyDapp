@@ -4,7 +4,8 @@
   "description": "Colony's UI components",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "styleguidist server"
   },
   "author": "Christian Maniewski <chris@colony.io>",
   "license": "MIT",
@@ -28,6 +29,7 @@
     "webpack": "^4.13.0"
   },
   "dependencies": {
+    "file-loader": "^1.1.11",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

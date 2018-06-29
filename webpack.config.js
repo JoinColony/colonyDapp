@@ -31,7 +31,7 @@ const config = {
         test: /\.css$/,
         include: [
           path.resolve(__dirname, 'src', 'components'),
-          path.resolve(__dirname, 'src', 'styles', 'shared'),
+          path.resolve(__dirname, 'src', 'styles'),
         ],
         use: [
           'style-loader',
@@ -47,6 +47,10 @@ const config = {
           'postcss-loader',
         ],
       },
+      {
+        test: /\.(woff|woff2)$/,
+        use: 'file-loader',
+      }
       // {
       //   test: /\.svg$/,
       //   include: path.resolve(__dirname, 'src', 'img'),
