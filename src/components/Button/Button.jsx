@@ -13,9 +13,16 @@ import styles from './Button.css';
 const displayName = 'core.Button';
 
 type Appearance = {
-  theme?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'underlinedBold' | 'blue',
-  size?: 'large'
-}
+  // eslint-disable-next-line flowtype/space-after-type-colon
+  theme?:
+    | 'primary'
+    | 'secondary'
+    | 'danger'
+    | 'ghost'
+    | 'underlinedBold'
+    | 'blue',
+  size?: 'large',
+};
 
 type Props = {
   /** Appearance object */
@@ -51,7 +58,7 @@ type Props = {
  *
  * After a non-workaround has been found for this.
  */
- /* eslint-disable react/button-has-type */
+/* eslint-disable react/button-has-type */
 const Button = ({
   appearance,
   children,

@@ -1,8 +1,6 @@
 /* @flow */
 /* eslint-disable import/prefer-default-export */
 
-import type { Appearance, StyleObject } from '~types/css';
-
 import { capitalize } from '../strings';
 
 /**
@@ -26,21 +24,23 @@ import { capitalize } from '../strings';
  * @return {string} The composed class names string
  */
 export const getMainClasses = (
-  appearance: Appearance = {},
-  styleObject: StyleObject = {},
+  appearance: Object = {},
+  styleObject: { [string]: string } = {},
   state: { [string]: boolean } = {},
 ) => {
   const { theme, ...modifiers } = appearance;
-  const themeClass = `theme${capitalize(theme)}`;
+  const styleArray = [];
+  if (theme) {
+    const themeClass = `theme${capitalize(theme)}`;
+    styleArray.push(styleObject[themeClass]);
+  } else {
+    styleArray.push(styleObject.main);
+  }
   const modifierClasses = Object.keys(modifiers)
     .map(key => styleObject[`${key}${capitalize(modifiers[key])}`])
     .filter(i => !!i);
   const stateClasses = Object.keys(state)
     .map(key => (state[key] ? styleObject[`state${capitalize(key)}`] : ''))
     .filter(i => !!i);
-  return [
-    styleObject[themeClass] || styleObject.main,
-    ...modifierClasses,
-    ...stateClasses,
-  ].join(' ');
+  return [...styleArray, ...modifierClasses, ...stateClasses].join(' ');
 };
