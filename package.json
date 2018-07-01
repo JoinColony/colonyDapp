@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/JoinColony/colonyDapp#readme",
   "devDependencies": {
-    "@colony/eslint-config-colony": "^4.0.1",
+    "@colony/eslint-config-colony": "^5.0.0",
     "@kironeducation/flow-junit-transformer": "^0.3.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
