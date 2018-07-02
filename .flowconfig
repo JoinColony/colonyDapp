@@ -1,0 +1,19 @@
+[ignore]
+.*/__tests__/.*
+.*/utils/test/.*
+
+[include]
+.*/src/.*
+
+[libs]
+
+[lints]
+
+[options]
+module.name_mapper='^.*\.css$' -> 'css-module-flow'
+module.name_mapper='^.*\.(svg)$' -> 'empty/string'
+module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
+module.name_mapper='^\~types\/\(.*\)$' -> '<PROJECT_ROOT>/src/types/\1'
+module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
+
+[strict]
