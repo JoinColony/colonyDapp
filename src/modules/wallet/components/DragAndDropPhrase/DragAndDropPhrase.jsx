@@ -40,27 +40,22 @@ const MSG = defineMessages({
   },
 });
 
-declare module 'DragDropArea' {
-  declare module.exports: any;
-}
-
-type Function = () => void;
-type DragProps = {
-  nextStep: Function,
-  previousStep: Function,
-  handleSubmit: Function,
+type Props = {
+  nextStep: () => void,
+  previousStep: () => void,
+  handleSubmit: (handler: () => void) => void,
   passphrase: string,
 };
-type DragState = {
-  nextStep: Function,
-  previousStep: Function,
-  handleSubmit: Function,
+type State = {
+  nextStep: () => void,
+  previousStep: () => void,
+  handleSubmit: (handler: () => void) => void,
   passphrase: string,
   child?: any,
   allowSubmit: boolean,
 };
 
-class DragAndDropPhrase extends Component<DragProps, DragState> {
+class DragAndDropPhrase extends Component<Props, State> {
   constructor(props) {
     super(props);
     // $FlowFixMe
@@ -86,23 +81,23 @@ class DragAndDropPhrase extends Component<DragProps, DragState> {
 
   render() {
     return (
-      <section className={`${styles.content}`}>
-        <div className={`${styles.title}`}>
+      <section className={styles.content}>
+        <div className={styles.title}>
           <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
         </div>
-        <div className={`${styles.subtitle}`}>
+        <div className={styles.subtitle}>
           <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
         </div>
-        <div className={`${styles.wordContainer}`}>
+        <div className={styles.wordContainer}>
           <DragAndDropArea
             // $FlowFixMe
             ref={this.child}
             onAllDropped={this.enableSubmit}
-            phrase={this.state.passphrase}
+            passphrase={this.state.passphrase}
             text={MSG.dragAndDropBox.defaultMessage}
           />
         </div>
-        <div className={`${styles.buttonsForBox}`}>
+        <div className={styles.buttonsForBox}>
           <Button
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
             value={MSG.backButton}

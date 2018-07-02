@@ -4,9 +4,9 @@ import { createElement, Component } from 'react';
 import type { ComponentType } from 'react';
 import { reduxForm } from 'redux-form';
 
-type WizardProps = {};
+type Props = {};
 
-type WizardState = {
+type State = {
   step: number,
 };
 
@@ -24,7 +24,7 @@ type WizardArgs = {
 const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
   OuterComponent: ComponentType<any>,
 ) => {
-  class Wizard extends Component<WizardProps, WizardState> {
+  class Wizard extends Component<Props, State> {
     state = { step: 0 };
 
     next = () => {
@@ -54,12 +54,11 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
         nextStep: this.next,
         previousStep: this.prev,
       });
-      const template = createElement(
+      return createElement(
         OuterComponent,
         { step: this.state.step, stepCount: steps.length, ...extraProps },
         WizardStep,
       );
-      return template;
     }
   }
   return Wizard;

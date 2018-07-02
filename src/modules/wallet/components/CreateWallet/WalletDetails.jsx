@@ -8,6 +8,7 @@ import type { FormProps } from '~types/forms';
 import styles from './CreateWallet.css';
 
 import Heading from '../../../core/components/Heading';
+import Button from '../../../core/components/Button';
 
 import MetaMask from '../../../../img/icons/metamask.svg';
 import Wallet from '../../../../img/icons/wallet.svg';
@@ -41,19 +42,19 @@ const MSG = defineMessages({
 
 const rowTitles = defineMessages({
   metaMaskTitle: {
-    id: 'CreateWallet.WalletDetails.title1',
+    id: 'CreateWallet.WalletDetails.metaMaskTitle',
     defaultMessage: 'MetaMask',
   },
   hardwareTitle: {
-    id: 'CreateWallet.WalletDetails.title2',
+    id: 'CreateWallet.WalletDetails.hardwareTitle',
     defaultMessage: 'Hardware Wallet',
   },
   phraseTitle: {
-    id: 'CreateWallet.WalletDetails.title3',
+    id: 'CreateWallet.WalletDetails.phraseTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
   JSONTitle: {
-    id: 'CreateWallet.WalletDetails.title4',
+    id: 'CreateWallet.WalletDetails.JSONTitle',
     defaultMessage: 'JSON File',
   },
 });
@@ -105,15 +106,15 @@ const svgStyle = {
 const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => {
   const Icon = icons[rowIndex];
   return (
-    <div className={`${styles.row}`}>
-      <div className={`${styles.rowIcon}`}>
+    <div className={styles.row}>
+      <div className={styles.rowIcon}>
         <Icon style={svgStyle} />
       </div>
-      <div className={`${styles.rowContent}`}>
+      <div className={styles.rowContent}>
         <Heading appearance={{ size: 'boldSmall' }} text={title} />
         <Heading appearance={{ size: 'tiny' }} text={subTitle} />
       </div>
-      <ArrowRight className={`${styles.rowArrow}`} />
+      <ArrowRight className={styles.rowArrow} />
     </div>
   );
 };
@@ -124,11 +125,11 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   const subTitle = rowSubTitles[keys[i]];
 
   return (
-    <NavLink key={`Link${i.toString()}`} exact to="/">
+    <NavLink key={`Link${title.id}`} exact to="/">
       <DetailRow
         title={title}
         subTitle={subTitle}
-        key={`row${i.toString()}`}
+        key={`row${title.id}`}
         rowIndex={i}
       />
     </NavLink>
@@ -136,30 +137,24 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
 });
 
 const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
-  <section className={`${styles.content}`}>
-    <div className={`${styles.title}`}>
-      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+  <section className={styles.content}>
+    <div className={styles.title}>
+      <Heading appearance={{ size: 'mediumL' }} text={MSG.heading} />
     </div>
-    <div className={`${styles.subtitle}`}>
+    <div className={styles.subtitle}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     {allTheRows}
-    <div
-      onClick={handleSubmit(nextStep)}
-      className={`${styles.callToAction}`}
-      onKeyDown={handleSubmit(nextStep)}
-      role="button"
-      tabIndex="0"
-    >
-      <div className={`${styles.actionImage}`}>
-        <img src={jazz} alt="" className="emoticon" width="25" height="25" />
+    <Button onClick={handleSubmit(nextStep)} className={styles.callToAction}>
+      <div className={styles.actionImage}>
+        <img src={jazz} alt="" width="22" height="22" />
       </div>
-      <div className={`${styles.actionText}`}>
+      <div className={styles.actionText}>
         <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
         <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
       </div>
-      <ArrowRight className={`${styles.rowArrow}`} />
-    </div>
+      <ArrowRight className={styles.rowArrow} />
+    </Button>
   </section>
 );
 

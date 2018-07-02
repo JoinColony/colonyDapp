@@ -9,7 +9,7 @@
 .title {
   margin-top: 124px;
   margin-bottom: 45px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 .subtitle {
@@ -42,9 +42,12 @@
 
 .callToAction {
   display: flex;
+  justify-content: flex-start;
   margin-top: 64px;
-  padding: 16px;
+  padding: 10px 16px;
   max-height: 60px;
+  width: 100%;
+  border: none;
   background-color: var(--total-white);
   cursor: pointer;
 }
@@ -55,8 +58,10 @@
 
 .actionImage {
   flex: 1;
+  margin-top: 7px;
 }
 
 .actionText {
   flex: 6;
+  text-align: left;
 }

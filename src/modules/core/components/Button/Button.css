@@ -236,7 +236,7 @@
   padding: 3px 16px;
   border-color: var(--temp-grey-1);
   border-width: 2px;
-  color: var(--grey-4);
+  color: var(--text);
 }
 
 .themeGhost.colorSchemaGrey:hover {

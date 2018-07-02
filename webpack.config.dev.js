@@ -27,7 +27,7 @@ const config = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
         },
       },
       {
@@ -56,7 +56,7 @@ const config = {
       },
       {
         test: /\.(png|jpg|gif)$/,
-        use: 'file-loader'
+        use: 'file-loader',
       }
     ],
   },

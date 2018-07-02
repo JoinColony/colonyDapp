@@ -44,7 +44,7 @@ const MSG = defineMessages({
 type CustomProps = {
   nextStep: () => void,
   previousStep: () => void,
-  handleSubmit: () => void,
+  handleSubmit: (handler: () => void) => void,
   passphrase: string,
 };
 
@@ -56,23 +56,23 @@ const BackupPhrase = ({
   handleSubmit,
   passphrase,
 }: Props) => (
-  <section className={`${styles.content}`}>
-    <div className={`${styles.title}`}>
+  <section className={styles.content}>
+    <div className={styles.title}>
       <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
     </div>
-    <div className={`${styles.subtitle}`}>
+    <div className={styles.subtitle}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
     </div>
     <Heading
       appearance={{ size: 'boldSmall' }}
       text={MSG.titleBox}
-      className={`${styles.heading}`}
+      className={styles.heading}
     />
-    <div className={`${styles.greyBox}`}>{passphrase}</div>
-    <div className={`${styles.backupButton}`}>
+    <div className={styles.greyBox}>{passphrase}</div>
+    <div className={styles.backupButton}>
       <Button appearance={{ theme: 'primary' }} value={MSG.backupButton} />
     </div>
-    <div className={`${styles.buttonsForBox}`}>
+    <div className={styles.buttonsForBox}>
       <Button
         appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
         onClick={handleSubmit(previousStep)}

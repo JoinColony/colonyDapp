@@ -6,14 +6,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '../../../core/components/Button';
 import Heading from '../../../core/components/Heading';
+import { shuffle } from '../../../../utils/arrays';
 
 import Grid from '../../../../img/icons/grid.svg';
 
 import styles from './DragAndDropPhrase.css';
-
-declare module 'DragDropContext' {
-  declare module.exports: any;
-}
 
 type StyleType = { [key: string]: string | number };
 
@@ -40,30 +37,21 @@ const MSG = defineMessages({
   },
 });
 
-type DragAndDropProps = {
-  phrase: string,
+type Props = {
+  passphrase: string,
   direction?: string,
   onAllDropped: () => void,
 };
 
-type DragElement = {
-  id?: string,
-  index?: number,
-  sortOrder?: number,
-  content?: string,
-  droppableId?: string,
-};
-
-type DragAndDropState = {
-  passphrase: string,
-  selected: Array<DragElement>,
-  items: Array<DragElement>,
+type State = {
+  selected: Array<Droppable>,
+  items: Array<Droppable>,
   matchingPhrase: boolean,
   checked: boolean,
   hasError: boolean,
 };
 
-class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
+class DragAndDropArea extends Component<Props, State> {
   /**
    * Get items to sort from
    */
@@ -71,9 +59,9 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     phrase: string,
     count: number,
     offset: number = 0,
-  ): Array<DragElement> {
+  ): Array<Droppable> {
     const phraseArray = phrase.split(' ');
-    const shuffled = DragAndDropArea.shuffle(phraseArray);
+    const shuffled = shuffle(phraseArray);
     return Array.from({ length: count }, (word, index) => index).map(index => ({
       id: `item-${index + offset}`,
       sortOrder: index,
@@ -81,30 +69,8 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     }));
   }
 
-  /**
-   * shuffle before offering drap and drop options
-   */
-  static shuffle = (array: Array<string>) => {
-    let currentIndex = array.length;
-    let temporaryValue;
-    let randomIndex;
-
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-
-      temporaryValue = array[currentIndex];
-      // eslint-disable-next-line
-      array[currentIndex] = array[randomIndex];
-      // eslint-disable-next-line
-      array[randomIndex] = temporaryValue;
-    }
-    return array;
-  };
-
   state = {
-    passphrase: this.props.phrase,
-    selected: DragAndDropArea.getItems(this.props.phrase, 12),
+    selected: DragAndDropArea.getItems(this.props.passphrase, 12),
     items: [],
     matchingPhrase: false,
     checked: false,
@@ -116,7 +82,7 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     source: 'selected',
   };
 
-  allDropped = (items: Array<DragElement>) => {
+  allDropped = (items: Array<Droppable>) => {
     if (items.length === 12) {
       this.props.onAllDropped();
     }
@@ -128,10 +94,10 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
    * Push word in correct position
    */
   reorder = (
-    list: Array<DragElement>,
+    list: Array<Droppable>,
     startIndex: number,
     endIndex: number,
-  ): Array<DragElement> => {
+  ): Array<Droppable> => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -144,7 +110,7 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
    */
   reset = () => {
     this.setState({
-      selected: DragAndDropArea.getItems(this.props.phrase, 12),
+      selected: DragAndDropArea.getItems(this.props.passphrase, 12),
       items: [],
       hasError: false,
     });
@@ -154,10 +120,10 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
    * Moves phrase from one list to another list.
    */
   move = (
-    source: Array<DragElement>,
+    source: Array<Droppable>,
     destination: Array<any>,
-    droppableSource: DragElement,
-    droppableDestination: DragElement,
+    droppableSource: Droppable,
+    droppableDestination: Droppable,
   ) => {
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
@@ -240,7 +206,7 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
       .map(element => element.content)
       .join(' ');
 
-    const matches = passPhraseToCheck === this.state.passphrase;
+    const matches = passPhraseToCheck === this.props.passphrase;
     if (matches) {
       this.setState({ matchingPhrase: true, hasError: false });
     } else {
@@ -297,18 +263,16 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
     const Children = props => props.children;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className={`${styles.buttonsToMakeYouDrag}`}>
+        <div className={styles.buttonsToMakeYouDrag}>
           <Heading
             appearance={{ size: 'boldSmall' }}
             text={MSG.titleBox}
-            className={`${styles.heading}`}
+            className={styles.heading}
           />
           <Button
             appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
             type="button"
-            onClick={() => {
-              this.reset();
-            }}
+            onClick={this.reset}
             value={MSG.buttonRefresh}
           />
         </div>
@@ -338,30 +302,30 @@ class DragAndDropArea extends Component<DragAndDropProps, DragAndDropState> {
                   )}
                 </Draggable>
               ))}
-              {this.state.items.length === 0 ? (
+              {!!this.state.items.length && (
                 <Children>
-                  <div className={`${styles.placeholderTop}`}>
+                  <div className={styles.placeholderTop}>
                     <FormattedMessage {...MSG.placeholder} />
                   </div>
-                  <div className={`${styles.placeholder}`}>
+                  <div className={styles.placeholder}>
                     <FormattedMessage {...MSG.placeholderSub} />
                   </div>
                 </Children>
-              ) : null}
-              {this.state.hasError ? (
+              )}
+              {!!this.state.hasError && (
                 <Children>
-                  <div className={`${styles.errorOverlay}`} />
+                  <div className={styles.errorOverlay} />
                   <Grid style={svgStyle} />
                 </Children>
-              ) : null}
+              )}
             </div>
           )}
         </Droppable>
-        {this.state.hasError ? (
-          <div className={`${styles.errorMessage}`}>
+        {!!this.state.hasError && (
+          <div className={styles.errorMessage}>
             <FormattedMessage {...MSG.errorMessage} />
           </div>
-        ) : null}
+        )}
         <Droppable droppableId="source" direction="horizontal">
           {provided => (
             <div ref={provided.innerRef} style={this.getSourceStyle()}>

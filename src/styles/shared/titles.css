@@ -55,8 +55,8 @@
 }
 
 /*
-* Title weights
-*/
+ * Title weights
+ */
 
 .thin {
   composes: title;
