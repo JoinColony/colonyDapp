@@ -1,4 +1,4 @@
 coverage
-dist
+styleguide
 node_modules
 *.log
