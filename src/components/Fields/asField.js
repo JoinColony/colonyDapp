@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { HOC } from 'recompose';
-import type { MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor } from 'react-intl';
 
 import { injectIntl } from 'react-intl';
 import compose from 'recompose/compose';
@@ -17,7 +17,7 @@ type CommonProps = {
 };
 
 type InProps = CommonProps & {
-  formatMessage: FormatMessage,
+  intl: IntlShape,
   touched?: Object,
   values?: Object,
   errors?: Object,
@@ -26,7 +26,7 @@ type InProps = CommonProps & {
 type OutProps = CommonProps & {
   $error: string,
   $value: string,
-  $isTouched: boolean,
+  $touched: boolean,
 };
 
 const formatIntl = (
@@ -50,14 +50,16 @@ const enhance: HOC<*, OutProps> = compose(
       name,
       placeholder,
       title,
-      formatMessage,
+      intl: { formatMessage },
       touched = {},
       values = {},
       errors = {},
       ...props
     }: InProps) => ({
+      id: name,
       label:
         formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
+      name,
       placeholder: formatIntl(placeholder, formatMessage),
       title:
         formatIntl(title, formatMessage) ||
@@ -65,7 +67,7 @@ const enhance: HOC<*, OutProps> = compose(
         formatIntl(placeholder, formatMessage),
       $error: errors[name],
       $value: values[name],
-      $isTouched: touched[name],
+      $touched: touched[name],
       ...props,
     }),
   ),

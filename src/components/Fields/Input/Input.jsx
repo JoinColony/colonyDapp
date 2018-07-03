@@ -9,12 +9,15 @@ import { getMainClasses } from '~utils/css';
 import styles from './Input.css';
 
 import asField from '../asField';
+import InputLabel from '../InputLabel';
 
 type Props = {
   /** Just render the `<input>` element without label */
   elementOnly?: boolean,
   /** Input field name (form variable) */
   name: string,
+  /** Label text */
+  label?: string,
   /** `errors` object (formik) */
   errors?: Object,
   /** `touched` object (formik) */
@@ -26,33 +29,44 @@ type Props = {
   /** `handleBlur` function (formik) */
   handleBlur?: Function,
   /** @ignore Will be injected by `asField` */
+  id: string,
+  /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
   $value?: string,
   /** @ignore Will be injected by `asField` */
-  $isTouched?: boolean,
+  $touched?: boolean,
 };
+
+const displayName = 'Fields.Input';
 
 const Input = ({
   elementOnly,
   name,
+  id,
+  label,
   $value,
   $error,
-  $isTouched,
+  $touched,
   handleChange,
   handleBlur,
   ...props
 }: Props) => (
-  <input
-    name={name}
-    aria-invalid={$isTouched && !!$error}
-    className={styles.main}
-    id={name}
-    value={$value}
-    onChange={handleChange}
-    onBlur={handleBlur}
-    {...props}
-  />
+  <div className={styles.container}>
+    <InputLabel inputId={id} label={label} />
+    <input
+      id={id}
+      name={name}
+      aria-invalid={$touched && !!$error}
+      className={styles.main}
+      value={$value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      {...props}
+    />
+  </div>
 );
+
+Input.displayName = displayName;
 
 export default asField(Input);
