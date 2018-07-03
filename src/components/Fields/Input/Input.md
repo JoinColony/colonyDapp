@@ -54,6 +54,37 @@
 
 ### Fat input field
 
+```js
+<Input
+  appearance={{ theme: 'fat' }}
+  name="inputfat"
+  placeholder="I'm fat"
+  label="Fat label"
+/>
+```
+
 ### Underlined theme
+
+```js
+<Input
+  appearance={{ theme: 'underlined', direction: 'horizontal' }}
+  name="inputunderlined"
+  placeholder="I'm underlined"
+  label="A label"
+/>
+```
+
+### Underlined theme error
+
+```js
+<Input
+  appearance={{ theme: 'underlined', direction: 'horizontal' }}
+  name="inputunderlinederror"
+  placeholder="I'm underlined"
+  label="A label"
+  errors={{ inputunderlinederror: 'A meaningful error message' }}
+  touched={{ inputunderlinederror: true }}
+/>
+```
 
 ### A form

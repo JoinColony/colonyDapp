@@ -81,7 +81,7 @@ const Input = ({
     ...props,
   };
   if (elementOnly) {
-    return <input {...inputProps} aria-label={label} />;
+    return <input {...inputProps} />;
   }
   const containerClasses = cx(styles.container, {
     [styles.containerHorizontal]: appearance.direction === 'horizontal',

@@ -56,6 +56,7 @@ const enhance: HOC<*, OutProps> = compose(
       errors = {},
       ...props
     }: InProps) => ({
+      'aria-label': label,
       id: name,
       label:
         formatIntl(label, formatMessage) || formatIntl(title, formatMessage),

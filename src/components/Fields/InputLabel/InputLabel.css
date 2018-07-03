@@ -14,6 +14,10 @@
   }
 }
 
+.themeFat {
+  composes: main;
+}
+
 .themeUnderlined {
   composes: main;
   font-size: var(--size-medium);
