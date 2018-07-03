@@ -13,5 +13,5 @@
 ### Input label with error
 
 ```js
-<InputLabel label="Label text" $error="This is an error" />
+<InputLabel label="Label text" error="This is an error" />
 ```

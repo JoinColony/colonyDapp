@@ -92,7 +92,7 @@ const Input = ({
         appearance={appearance}
         inputId={id}
         label={label}
-        $error={$error}
+        error={$error}
         help={help}
       />
       <input {...inputProps} />
