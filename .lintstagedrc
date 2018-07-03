@@ -1,0 +1,12 @@
+{
+  "linters": {
+    "src/**/*.{js,jsx}": [
+      "yarn lint",
+      "git add"
+    ],
+    "src/**/*.css": [
+      "yarn stylelint",
+      "git add"
+    ],
+  }
+}
