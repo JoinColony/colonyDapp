@@ -8,6 +8,14 @@
   composes: stateActive from '../Field/Field.css';
 } */
 
+.container {}
+
+.containerHorizontal {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .main {
   padding: 0 8px;
   height: 32px;
@@ -40,6 +48,12 @@
 
 .main[aria-invalid="true"] {
   border-color: var(--danger);
+}
+
+.error {
+  color: var(--danger);
+  margin-left: 5px;
+  font-size: var(--size-tiny);
 }
 
 /* .delegate {
@@ -103,12 +117,6 @@
   border-color: var(--danger) !important;
 }
 
-.directionHorizontal {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
 .alignRight .input {
   text-align: right;
 }
@@ -134,10 +142,6 @@
   background-color: transparent;
   color: inherit;
   box-shadow: none;
-}
-
-.error {
-  composes: errorHorizontal from '../Field/Field.css';
 }
 
 .controls {

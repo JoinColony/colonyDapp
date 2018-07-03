@@ -62,6 +62,7 @@ const enhance: HOC<*, OutProps> = compose(
       name,
       placeholder: formatIntl(placeholder, formatMessage),
       title:
+        formatIntl(errors[name], formatMessage) ||
         formatIntl(title, formatMessage) ||
         formatIntl(label, formatMessage) ||
         formatIntl(placeholder, formatMessage),

@@ -12,7 +12,6 @@ import styles from './InputLabel.css';
 const displayName = 'core.Fields.InputLabel';
 
 type Appearance = {
-  // eslint-disable-next-line flowtype/space-after-type-colon
   theme?: 'underlined',
   direction?: 'horizontal',
   colorSchema?: 'dark',
@@ -22,7 +21,7 @@ type Props = {
   /** Appearance object */
   appearance?: Appearance,
   /** Error text (if applicable) */
-  error?: string,
+  $error?: string,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
@@ -38,8 +37,8 @@ type Props = {
 };
 
 const InputLabel = ({
-  appearance,
-  error,
+  appearance = {},
+  $error,
   help,
   helpValues,
   inputId = '',
@@ -60,8 +59,8 @@ const InputLabel = ({
       htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
-      {error && appearance && appearance.direction !== 'horizontal' ? (
-        <span className={styles.error}>{error}</span>
+      {$error && appearance.direction !== 'horizontal' ? (
+        <span className={styles.error}>{$error}</span>
       ) : (
         helpText && <span className={styles.help}>({helpText})</span>
       )}
