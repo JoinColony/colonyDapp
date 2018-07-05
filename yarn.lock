@@ -5478,14 +5478,6 @@ husky@^1.0.0-rc.6:
     run-node "^1.0.0"
     slash "^2.0.0"
 
-hyperdiff@^2.0.3:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/hyperdiff/-/hyperdiff-2.0.4.tgz#0f03b10f75bf74d0d5aadf99dbc33aebf743492b"
-  dependencies:
-    debug "~3.1.0"
-    lodash.clonedeep "~4.5.0"
-    lodash.pullat "~4.6.0"
-
 iconv-lite@0.4.19:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
@@ -5799,9 +5791,9 @@ ipfs-block@~0.6.1:
   dependencies:
     cids "^0.5.2"
 
-ipfs-log@~4.0.6:
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/ipfs-log/-/ipfs-log-4.0.6.tgz#e54093ea2b721492e59d9c534dab915c322be8ed"
+ipfs-log@~4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/ipfs-log/-/ipfs-log-4.1.0.tgz#8327115c8a5bdf9ee298aa7e9d62046c804d5be4"
   dependencies:
     p-map "^1.1.1"
     p-whilst "^1.0.0"
@@ -5813,15 +5805,17 @@ ipfs-multipart@~0.1.0:
     content "^3.0.0"
     dicer "^0.2.5"
 
-ipfs-pubsub-room@~1.2.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/ipfs-pubsub-room/-/ipfs-pubsub-room-1.2.1.tgz#bf5cbe95c6f36fd81810aec36f43825feb8f4ff3"
+ipfs-pubsub-1on1@~0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/ipfs-pubsub-1on1/-/ipfs-pubsub-1on1-0.0.4.tgz#aee0052f6b85e2d953a8137497471437c6e6dab6"
   dependencies:
-    hyperdiff "^2.0.3"
-    lodash.clonedeep "^4.5.0"
-    pull-pushable "^2.1.1"
-    pull-stream "^3.6.1"
-    safe-buffer "^5.1.1"
+    safe-buffer "~5.1.1"
+
+ipfs-pubsub-peer-monitor@~0.0.5:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/ipfs-pubsub-peer-monitor/-/ipfs-pubsub-peer-monitor-0.0.8.tgz#8972676247e6a7d1901e27dcfe11cbd0aecaa1c6"
+  dependencies:
+    p-forever "^1.0.1"
 
 ipfs-repo@~0.18.5, ipfs-repo@~0.18.7:
   version "0.18.7"
@@ -7836,10 +7830,6 @@ lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
 
-lodash.clonedeep@^4.5.0, lodash.clonedeep@~4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
-
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -7946,10 +7936,6 @@ lodash.padstart@^4.6.1:
 lodash.pullallwith@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/lodash.pullallwith/-/lodash.pullallwith-4.7.0.tgz#657e4200710d8b59d694ee5213662ae0511d1170"
-
-lodash.pullat@~4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.pullat/-/lodash.pullat-4.6.0.tgz#bdfacf0e209fd27f965e711fa65a774a84d30261"
 
 lodash.range@^3.2.0:
   version "3.2.0"
@@ -9204,31 +9190,31 @@ orbit-db-cache@~0.2.2:
     logplease "^1.2.14"
     mkdirp "^0.5.1"
 
-orbit-db-counterstore@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-counterstore/-/orbit-db-counterstore-1.2.0.tgz#665e1fe1d109bc9f93b70249dd65aeb3b7b0be89"
+orbit-db-counterstore@~1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-counterstore/-/orbit-db-counterstore-1.4.0.tgz#3f900b26341df62431ef66aceaef5ae58b0aadad"
   dependencies:
     crdts "~0.1.2"
-    orbit-db-store "~2.2.0"
+    orbit-db-store "~2.5.0"
 
-orbit-db-docstore@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-docstore/-/orbit-db-docstore-1.2.0.tgz#c5d7fe291de148db4e1adebdf3bad12422dc44c6"
+orbit-db-docstore@~1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-docstore/-/orbit-db-docstore-1.4.1.tgz#ef175dd3179b57951ef9f06513a8ec9027531184"
   dependencies:
-    orbit-db-store "~2.2.0"
+    orbit-db-store "~2.5.0"
     p-map "~1.1.1"
 
-orbit-db-eventstore@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-eventstore/-/orbit-db-eventstore-1.2.0.tgz#45f3ced401c7b6929b7f44284bfd627bb7bd088a"
+orbit-db-eventstore@~1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-eventstore/-/orbit-db-eventstore-1.4.0.tgz#b4e4cca623d8652117ec361b9f7193f9c419eb7d"
   dependencies:
-    orbit-db-store "~2.2.0"
+    orbit-db-store "~2.5.0"
 
-orbit-db-feedstore@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-feedstore/-/orbit-db-feedstore-1.2.0.tgz#65d60d65ee447da63e485ac1b6bbe7038b329679"
+orbit-db-feedstore@~1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-feedstore/-/orbit-db-feedstore-1.4.0.tgz#877351bf7e36939862a0111955c68cec80df5525"
   dependencies:
-    orbit-db-eventstore "~1.2.0"
+    orbit-db-eventstore "~1.4.0"
 
 orbit-db-keystore@~0.1.0:
   version "0.1.0"
@@ -9238,42 +9224,44 @@ orbit-db-keystore@~0.1.0:
     mkdirp "^0.5.1"
     node-localstorage "^1.3.0"
 
-orbit-db-kvstore@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-kvstore/-/orbit-db-kvstore-1.2.0.tgz#406ac214678af7422dbfd619412a21f4320cdf2e"
+orbit-db-kvstore@~1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-kvstore/-/orbit-db-kvstore-1.4.0.tgz#d0287e3b1fc8465b295659cbd91942eb2e890d25"
   dependencies:
-    orbit-db-store "~2.2.0"
+    orbit-db-store "~2.5.0"
 
-orbit-db-pubsub@~0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-pubsub/-/orbit-db-pubsub-0.4.0.tgz#32dd4e865b7bbd0349d202c05c3292c7dee8fc12"
+orbit-db-pubsub@~0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/orbit-db-pubsub/-/orbit-db-pubsub-0.5.3.tgz#65eb16dab4d2d190d63a03834689fabd87eeaaa9"
   dependencies:
-    ipfs-pubsub-room "~1.2.0"
+    ipfs-pubsub-peer-monitor "~0.0.5"
     logplease "~1.2.14"
 
-orbit-db-store@~2.2.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/orbit-db-store/-/orbit-db-store-2.2.1.tgz#49ac9c054ae157e3a0052a9a178a73e2e8b7f914"
+orbit-db-store@~2.5.0:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-store/-/orbit-db-store-2.5.1.tgz#c0b6b9a9b10a16c07826ef5a91eca9f31ef5ca2e"
   dependencies:
-    ipfs-log "~4.0.6"
+    ipfs-log "~4.1.0"
     logplease "^1.2.14"
     p-each-series "^1.0.0"
-    readable-stream "~2.3.3"
+    readable-stream "~2.3.5"
 
-orbit-db@0.19.7:
-  version "0.19.7"
-  resolved "https://registry.yarnpkg.com/orbit-db/-/orbit-db-0.19.7.tgz#ff2bfe4bcf74e6bc0fdbcb1c91aa451d90e58dcf"
+orbit-db@0.19.8:
+  version "0.19.8"
+  resolved "https://registry.yarnpkg.com/orbit-db/-/orbit-db-0.19.8.tgz#5d07c96c579d85ca96bacd7f3fdd02a576e0e8cc"
   dependencies:
+    ipfs-pubsub-1on1 "~0.0.4"
     logplease "^1.2.14"
     multihashes "^0.4.12"
     orbit-db-cache "~0.2.2"
-    orbit-db-counterstore "~1.2.0"
-    orbit-db-docstore "~1.2.0"
-    orbit-db-eventstore "~1.2.0"
-    orbit-db-feedstore "~1.2.0"
+    orbit-db-counterstore "~1.4.0"
+    orbit-db-docstore "~1.4.1"
+    orbit-db-eventstore "~1.4.0"
+    orbit-db-feedstore "~1.4.0"
     orbit-db-keystore "~0.1.0"
-    orbit-db-kvstore "~1.2.0"
-    orbit-db-pubsub "~0.4.0"
+    orbit-db-kvstore "~1.4.0"
+    orbit-db-pubsub "~0.5.3"
+    orbit-db-store "~2.5.0"
 
 original@>=0.0.5:
   version "1.0.1"
@@ -9325,6 +9313,10 @@ p-each-series@^1.0.0:
 p-finally@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-finally/-/p-finally-1.0.0.tgz#3fbcfb15b899a44123b34b6dcc18b724336a2cae"
+
+p-forever@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/p-forever/-/p-forever-1.0.1.tgz#d8da0e9f88b3929e51596c2f8aa50cf2f1ad06ab"
 
 p-is-promise@^1.1.0:
   version "1.1.0"
@@ -10609,7 +10601,7 @@ pull-pause@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/pull-pause/-/pull-pause-0.0.2.tgz#19d45be8faa615fa556f14a96fd733462c37fba3"
 
-pull-pushable@^2.0.0, pull-pushable@^2.0.1, pull-pushable@^2.1.1, pull-pushable@^2.1.2, pull-pushable@^2.2.0:
+pull-pushable@^2.0.0, pull-pushable@^2.0.1, pull-pushable@^2.1.2, pull-pushable@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/pull-pushable/-/pull-pushable-2.2.0.tgz#5f2f3aed47ad86919f01b12a2e99d6f1bd776581"
 
@@ -10988,7 +10980,7 @@ read-pkg@^3.0.0:
     normalize-package-data "^2.3.2"
     path-type "^3.0.0"
 
-"readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.4, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.2.9, readable-stream@^2.3.0, readable-stream@^2.3.3, readable-stream@^2.3.4, readable-stream@^2.3.5, readable-stream@^2.3.6, readable-stream@~2.3.3:
+"readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.4, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.2.9, readable-stream@^2.3.0, readable-stream@^2.3.3, readable-stream@^2.3.4, readable-stream@^2.3.5, readable-stream@^2.3.6, readable-stream@~2.3.5:
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.6.tgz#b11c27d88b8ff1fbe070643cf94b0c79ae1b0aaf"
   dependencies:

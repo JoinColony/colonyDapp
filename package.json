@@ -115,7 +115,7 @@
     "es6-promisify": "^6.0.0",
     "ethers": "^3.0.8",
     "ipfs": "~0.28.2",
-    "orbit-db": "0.19.7",
+    "orbit-db": "0.19.8",
     "prop-types": "^15.6.0",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
