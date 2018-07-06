@@ -56,7 +56,7 @@
     "bs58": "^4.0.1",
     "caniuse-lite": "^1.0.30000764",
     "chalk": "^2.4.0",
-    "css-loader": "^0.28.7",
+    "css-loader": "^1.0.0",
     "css-module-flow": "^1.0.0",
     "empty": "^0.10.1",
     "enzyme": "^3.3.0",
