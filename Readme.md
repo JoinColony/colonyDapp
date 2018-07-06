@@ -4,9 +4,6 @@ This is an experiment to extract the major core components out of the colonyDapp
 
 There are a few things missing still:
 
-- Linting
-- A proper jest test setup
-- Add some main styles (including our font)
 - Some tweaks around component loading (what about containers?)
 
 We are using `react-styleguidist` to create the styleguide. This can be set up like this:
@@ -17,14 +14,14 @@ We are using `react-styleguidist` to create the styleguide. This can be set up l
   yarn install
   ```
 
-2. Install npx globally, if you don't have yet (yes, it's super useful)
+2. Start the styleguide server locally
 
   ```
-  yarn global install npx
+  yarn develop
   ```
 
-3. Start the styleguide server
+3. Or build it
 
   ```
-  npx styleguidist server
+  yarn build
   ```
