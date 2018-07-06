@@ -12,9 +12,9 @@ import styles from './InputLabel.css';
 const displayName = 'core.Fields.InputLabel';
 
 type Appearance = {
-  theme?: 'underlined',
+  theme?: 'fat' | 'underlined',
   direction?: 'horizontal',
-  colorSchema?: 'dark',
+  colorSchema?: 'dark' | 'transparent',
 };
 
 type Props = {

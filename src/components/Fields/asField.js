@@ -7,7 +7,10 @@ import { injectIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import mapProps from 'recompose/mapProps';
 
-type FormatMessage = (MessageDescriptor, ?Object) => string;
+type FormatMessage = (
+  messageDescriptor: MessageDescriptor,
+  values?: Object,
+) => string;
 
 type CommonProps = {
   label?: MessageDescriptor | string,

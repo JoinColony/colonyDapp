@@ -2,7 +2,7 @@
 
 import type { MessageDescriptor } from 'react-intl';
 import React from 'react';
-import Cleave from 'cleave.js/react';
+// import Cleave from 'cleave.js/react';
 import cx from 'classnames';
 
 import { getMainClasses } from '~utils/css';

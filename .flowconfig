@@ -1,6 +1,7 @@
 [ignore]
 .*/__tests__/.*
 .*/utils/test/.*
+.*/node_modules/findup/.*
 
 [include]
 .*/src/.*
