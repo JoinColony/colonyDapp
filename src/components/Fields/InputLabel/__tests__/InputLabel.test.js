@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl } from '~utils/test';
+import { shallowWithIntl } from 'testutils';
 
 import InputLabel from '../InputLabel.jsx';
 
@@ -25,11 +25,6 @@ describe('InputLabel intl={intl} component', () => {
     const wrapper = shallowWithIntl(
       <InputLabel id="foo" help="halp" label="awesome" />,
     );
-    expect(
-      wrapper
-        .find('span')
-        .last()
-        .text(),
-    ).toEqual('(halp)');
+    expect(wrapper.html()).toContain('(halp)');
   });
 });

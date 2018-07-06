@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { mountWithIntl, shallowWithIntl } from '~utils/test';
+import { mountWithIntl, shallowWithIntl } from 'testutils';
 
 import Button from '../Button.jsx';
 
@@ -38,13 +38,14 @@ describe('Button component', () => {
       wrapper
         .children()
         .children()
+        .children()
         .html(),
     ).toBe('<p>Child test</p>');
   });
 
   test('button is busy when loading', () => {
     const wrapper = shallowWithIntl(<Button value="Some Text" loading />);
-    expect(wrapper.prop('aria-busy')).toBe(true);
+    expect(wrapper.html()).toContain('aria-busy="true"');
   });
 
   test('button is disabled', () => {

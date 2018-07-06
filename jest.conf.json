@@ -1,13 +1,14 @@
 {
-    "testRegex": "/__tests__/.*\\.jsx?$",
+    "testRegex": "/__tests__/.*\\.test\\.jsx?$",
     "rootDir": "src",
     "moduleNameMapper": {
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
         "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
-        "^\\~utils(.*)$": "<rootDir>/utils$1"
+        "^\\~utils(.*)$": "<rootDir>/utils$1",
+        "^testutils$": "<rootDir>/__tests__/utils.js"
     },
     "setupFiles": [
-        "<rootDir>/utils/test/setup.js"
+        "<rootDir>/__tests__/setup.js"
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
     "collectCoverageFrom" : ["**/*.{js,jsx}"],

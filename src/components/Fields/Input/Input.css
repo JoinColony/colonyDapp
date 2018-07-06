@@ -8,8 +8,6 @@
   composes: stateActive from '../Field/Field.css';
 } */
 
-.container {}
-
 .containerHorizontal {
   display: flex;
   align-items: center;
@@ -78,9 +76,9 @@
 }
 
 .error {
-  color: var(--danger);
   margin-left: 5px;
   font-size: var(--size-tiny);
+  color: var(--danger);
 }
 
 /* .delegate {
