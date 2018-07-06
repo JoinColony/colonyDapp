@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/node:10.1
     working_directory: ~/repo
@@ -14,6 +14,22 @@ jobs:
             - v1-dependencies-
       - run: yarn install
       - run: yarn test
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+  build:
+    docker:
+      - image: circleci/node:10.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: yarn install
       - run: yarn build
       - persist_to_workspace:
           root: .
@@ -50,9 +66,15 @@ jobs:
 
 workflows:
   version: 2
-  build-and-deploy:
+  test-build-and-deploy:
     jobs:
-      - build
+      - test
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
       - deploy:
           requires:
             - build
