@@ -1,6 +1,14 @@
 /* @flow */
 import OrbitDB from 'orbit-db';
-import type { ColonyIPFSNode, ColonyOrbitOptions, OrbitOptions } from './types';
+import type {
+  ColonyIPFSNode,
+  ColonyOrbitOptions,
+  OrbitOptions,
+} from '../types';
+
+import UserProfile from './UserProfile';
+
+export { UserProfile };
 
 const DEFAULT_DB_PATH = 'colonyOrbitdb';
 
@@ -17,3 +25,5 @@ export async function getOrbitDB(
 ) {
   return new OrbitDB(ipfs, path, options);
 }
+
+export const orbitSetup = { getOrbitDB, makeOptions };

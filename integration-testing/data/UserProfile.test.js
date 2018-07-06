@@ -28,15 +28,11 @@ afterAll(async () => {
 }, DDBTestFactory.TIMEOUT);
 
 describe('User Profile', () => {
-  test(
-    'Create my user profile component',
-    async () => {
-      const profile = await data1.getMyUserProfile();
-      expect(profile).toBeTruthy();
-      expect(profile.isEmpty()).toBeTruthy();
-    },
-    DDBTestFactory.TIMEOUT,
-  );
+  test('Create my user profile component', async () => {
+    const p1 = await data1.getMyUserProfile();
+    expect(p1).toBeTruthy();
+    expect(p1.isEmpty()).toBeTruthy();
+  });
 
   test(
     'Create my user profile and set its name',

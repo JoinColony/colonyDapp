@@ -44,4 +44,43 @@ export type DataOptions = {
 export type OrbitNode = OrbitDB;
 
 export type StoreAddress = string;
+
 export type Pinner = { pin: StoreAddress => Promise<void> };
+
+export type Domain = {
+  name: string,
+  color: string,
+};
+
+export type Domains = Array<Domain>;
+
+export type Task = {
+  spec: ipfsHash,
+  dueDate: date,
+  title: string,
+  comments: IPFShash[],
+  taskLabels: taskLabels[],
+  taskDomains: taskDomain[],
+  taskSkills: taskSkill[],
+};
+
+export type Tasks = Array<Task>;
+
+export type Colony = {
+  Domains: Domain[],
+  tasks: Task[],
+  Members: User[],
+  Funds: Token[],
+};
+
+export type User = {
+  name: string,
+  colonies: ColonyAddress[],
+  reputation: rep[],
+};
+
+export type Token = {
+  name: string,
+  symbol: string,
+  decimals: string,
+};

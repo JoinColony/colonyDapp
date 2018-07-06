@@ -1,49 +1,19 @@
 /* @flow */
 import * as ipfs from './ipfs';
-import * as orbit from './orbit';
+import { UserProfile, orbitSetup } from './orbit';
 import type {
   B58String,
+  Colony,
   ColonyIPFSNode,
   DataOptions,
+  Domains,
   OrbitKVStore,
   OrbitNode,
   Pinner,
+  Tasks,
 } from './types';
 
 type PublicKey = string;
-
-class UserProfile {
-  _store: OrbitKVStore;
-
-  constructor(store) {
-    this._store = store;
-  }
-
-  isEmpty(): boolean {
-    return !this._store.get('created');
-  }
-
-  async setName(name: string) {
-    if (this.isEmpty()) {
-      await this._store.put('created', new Date().toUTCString());
-    }
-    await this._store.put('name', name);
-  }
-
-  getName() {
-    return this._store.get('name');
-  }
-
-  address() {
-    return this._store.address;
-  }
-
-  subscribe(f) {
-    this._store.events.on('replicated', () => {
-      f({ name: this.getName() });
-    });
-  }
-}
 
 export default class Data {
   _pinner: ?Pinner;
@@ -61,20 +31,12 @@ export default class Data {
     this._key = 'helloworld';
   }
 
-  // @TODO This design is time-dependant and relies
+  // @TODO This design is time-dependent and relies
   // on lots of mutations, refactor to work with a builder
   // pattern that is immutable.
   async ready(): Promise<boolean> {
     await this._ipfsNode.ready();
     return true;
-  }
-
-  async waitForPeer(peerID: B58String): Promise<boolean> {
-    return this._ipfsNode.waitForPeer(peerID);
-  }
-
-  async peerID(): Promise<B58String> {
-    return ipfs.getNodeID(this._ipfsNode);
   }
 
   async stop(): Promise<void> {
@@ -89,16 +51,8 @@ export default class Data {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
 
-    await ipfsNode.ready();
-
-    // If we passed some bootstrap nodes,
-    // wait for some of them to be available.
-    if (opts.ipfs.bootstrap) {
-      await ipfsNode.waitForSomePeers();
-    }
-
-    const orbitConf = orbit.makeOptions(opts.orbit);
-    const orbitNode = await orbit.getOrbitDB(ipfsNode, orbitConf);
+    const orbitConf = orbitSetup.makeOptions(opts.orbit);
+    const orbitNode = await orbitSetup.getOrbitDB(ipfsNode, orbitConf);
 
     return new Data(pinner, ipfsNode, orbitNode);
   }
@@ -117,8 +71,40 @@ export default class Data {
     return this.getUserProfile('user-profile');
   }
 
-  async listPeers(): Promise<B58String[]> {
-    const peers = await this._ipfsNode.swarm.peers();
-    return peers.map(x => x.peer.toB58String());
-  }
+  // colonyJS
+  async getMetaColony(): Promise<MetaColony> {}
+
+  // colonyJS
+  // cache in OrbitDB
+  async getColony(colonyId: colonyId): Promise<Colony> {}
+
+  // OrbitDB, maybe UserProfile
+  async getUserColonies(): Promise<ColonyAddresses> {}
+
+  // colonyJS
+  async getSkills(): Promise<SkillsTree> {}
+
+  // colonyJS
+  async getDomain(Domain): Promise<SkillsTree> {}
+
+  // If not in OrbitDB, fetch and return from colonyJS, then cache in OrbitDB
+  // If in OrbitDB, return from OrbitDB, then update from colonyJS
+  async getTask(taskId): Promise<Task> {}
+
+  // same
+  async getTasks(taskId): Promise<Task> {}
+
+  // IPFS
+  async getTaskComments(taskId): Promise<Comments> {}
+
+  async addComment({
+    taskId,
+    commentString,
+    author,
+    date,
+  }): Promise<IPFShash> {}
+
+  // Store in orbitDB
+  // When submitted to a chain, replace in DDB with normal task
+  async taskDraft(): taskDraft<Comments> {}
 }

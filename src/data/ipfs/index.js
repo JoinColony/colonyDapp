@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-await-in-loop */
 import IPFS from 'ipfs';
-import { sleep } from '../utils/time';
+import { sleep } from '../../utils/time';
 import type {
   B58String,
   ColonyIPFSNode,
@@ -9,7 +9,7 @@ import type {
   IPFSNode,
   IPFSOptions,
   IPFSPeer,
-} from './types';
+} from '../types';
 
 export { IPFS };
 
@@ -112,6 +112,19 @@ export async function waitForPeer(
   }
 
   return true;
+}
+
+// export async function waitForPeer(peerID: B58String): Promise<boolean> {
+//   return this._ipfsNode.waitForPeer(peerID);
+// }
+
+export async function peerID(): Promise<B58String> {
+  return ipfs.getNodeID(this._ipfsNode);
+}
+
+export async function listPeers(): Promise<B58String[]> {
+  const peers = await this._ipfsNode.swarm.peers();
+  return peers.map(x => x.peer.id.toB58String());
 }
 
 /**

@@ -16,7 +16,7 @@ describe('Data component', () => {
     expect(data).toBeTruthy();
   });
 
-  test('The Data Object has a list peer method', async () => {
-    expect(data.listPeers).toBeTruthy();
-  });
+  // test('The Data Object has a list peer method', async () => {
+  //   expect(data.listPeers).toBeTruthy();
+  // });
 });
