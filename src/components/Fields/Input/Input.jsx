@@ -34,18 +34,8 @@ type Props = {
   label: string,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
-  /** `errors` object (formik) */
-  errors?: Object,
-  /** `touched` object (formik) */
-  touched?: Object,
-  /** `values` object (formik) */
-  values?: Object,
-  /** `handleChange` function (formik) */
-  handleChange?: Function,
-  /** `handleBlur` function (formik) */
-  handleBlur?: Function,
   /** @ignore Will be injected by `asField` */
-  id: string,
+  $id: string,
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
@@ -60,24 +50,20 @@ const Input = ({
   appearance = {},
   elementOnly,
   help,
-  id,
+  $id,
   label,
   name,
   $value,
   $error,
   $touched,
-  handleChange,
-  handleBlur,
   ...props
 }: Props) => {
   const inputProps = {
-    id,
+    id: $id,
     name,
     'aria-invalid': $touched && !!$error,
     className: getMainClasses(appearance, styles),
     value: $value,
-    onChange: handleChange,
-    onBlur: handleBlur,
     ...props,
   };
   if (elementOnly) {
@@ -90,7 +76,7 @@ const Input = ({
     <div className={containerClasses}>
       <InputLabel
         appearance={appearance}
-        inputId={id}
+        inputId={$id}
         label={label}
         error={$error}
         help={help}

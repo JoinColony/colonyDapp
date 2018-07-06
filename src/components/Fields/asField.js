@@ -2,7 +2,10 @@
 
 import type { HOC } from 'recompose';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { ComponentType } from 'react';
 
+import React from 'react';
+import { Field } from 'formik';
 import { injectIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import mapProps from 'recompose/mapProps';
@@ -13,6 +16,7 @@ type FormatMessage = (
 ) => string;
 
 type CommonProps = {
+  appearance?: Object,
   label?: MessageDescriptor | string,
   name: string,
   placeholder?: MessageDescriptor | string,
@@ -20,16 +24,24 @@ type CommonProps = {
 };
 
 type InProps = CommonProps & {
+  id?: string,
   intl: IntlShape,
-  touched?: Object,
-  values?: Object,
-  errors?: Object,
+  form: {
+    touched: Object,
+    errors: Object,
+  },
+  field: {
+    name: string,
+    value?: string,
+    onChange: Function,
+    onBlur: Function,
+  },
 };
 
 type OutProps = CommonProps & {
-  $error: string,
-  $value: string,
-  $touched: boolean,
+  $error?: string,
+  $value?: string,
+  $touched?: boolean,
 };
 
 const formatIntl = (
@@ -49,18 +61,16 @@ const enhance: HOC<*, OutProps> = compose(
   injectIntl,
   mapProps(
     ({
+      id,
+      intl: { formatMessage },
+      field: { name, value, onChange, onBlur },
+      form: { touched, errors },
       label,
-      name,
       placeholder,
       title,
-      intl: { formatMessage },
-      touched = {},
-      values = {},
-      errors = {},
       ...props
     }: InProps) => ({
       'aria-label': label,
-      id: name,
       label:
         formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
       name,
@@ -70,12 +80,19 @@ const enhance: HOC<*, OutProps> = compose(
         formatIntl(title, formatMessage) ||
         formatIntl(label, formatMessage) ||
         formatIntl(placeholder, formatMessage),
+      $id: id || name,
       $error: errors[name],
-      $value: values[name],
+      $value: value,
       $touched: touched[name],
+      onChange,
+      onBlur,
       ...props,
     }),
   ),
 );
 
-export default enhance;
+// TODO: check whether composing in render functions is a good idea
+const asField = (FieldComponent: ComponentType<Object>) => (props: Object) =>
+  React.createElement(Field, { component: enhance(FieldComponent), ...props });
+
+export default asField;

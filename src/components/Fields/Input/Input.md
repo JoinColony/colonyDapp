@@ -7,7 +7,7 @@
 ### Input text with error
 
 ```js
-<Input elementOnly name="inputerror" errors={{ inputerror: 'Wrong!' }} touched={{ inputerror: true }} placeholder="Hover over me to see error" label="Label" />
+<Input elementOnly name="inputerror" form={{ errors: { inputerror: 'Wrong!' }, touched: { inputerror: true }}} placeholder="Hover over me to see error" label="Label" />
 ```
 
 ### Input text with label
@@ -23,8 +23,7 @@
   name="inputlabelerror"
   placeholder="I'm wrong as well!"
   label="Label"
-  errors={{ inputlabelerror: 'This is not valid!' }}
-  touched={{ inputlabelerror: true }}
+  form={{ errors: { inputlabelerror: 'Wrong!' }, touched: { inputlabelerror: true }}}
 />
 ```
 
@@ -47,8 +46,7 @@
   name="inputhorizontalerror"
   placeholder="I'm horizontal and wrong!"
   label="Label"
-  errors={{ inputhorizontalerror: 'Wrong!' }}
-  touched={{ inputhorizontalerror: true }}
+  form={{ errors: { inputhorizontalerror: 'Wrong!' }, touched: { inputhorizontalerror: true }}}
 />
 ```
 
@@ -82,8 +80,7 @@
   name="inputunderlinederror"
   placeholder="I'm underlined"
   label="A label"
-  errors={{ inputunderlinederror: 'A meaningful error message' }}
-  touched={{ inputunderlinederror: true }}
+  form={{ errors: { inputunderlinederror: 'A meaningful error' }, touched: { inputunderlinederror: true }}}
 />
 ```
 
