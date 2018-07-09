@@ -1,4 +1,6 @@
 /* @flow */
+// We're disabling this as eslint is confused about exporting the HoC
+/* eslint-disable react/no-unused-prop-types */
 
 import type { HOC } from 'recompose';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
@@ -57,6 +59,7 @@ const formatIntl = (
   return formatMessage(prop);
 };
 
+// TODO: Cater for the case where neither field nor form are defined (component not connected to formik)
 const enhance: HOC<*, OutProps> = compose(
   injectIntl,
   mapProps(
@@ -91,8 +94,10 @@ const enhance: HOC<*, OutProps> = compose(
   ),
 );
 
-// TODO: check whether composing in render functions is a good idea
-const asField = (FieldComponent: ComponentType<Object>) => (props: Object) =>
-  React.createElement(Field, { component: enhance(FieldComponent), ...props });
+const asField = (FieldComponent: ComponentType<Object>) => {
+  const component = enhance(FieldComponent);
+  return (props: InProps) =>
+    React.createElement(Field, { component, ...props });
+};
 
 export default asField;
