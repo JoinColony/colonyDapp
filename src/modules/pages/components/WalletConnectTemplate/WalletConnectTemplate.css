@@ -1,0 +1,25 @@
+@import 'variables.css';
+
+:root {
+  --header-height: 60px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  height: var(--header-height);
+  width: 100%;
+  background-color: var(--total-white);
+}
+
+.logo {
+  flex: 1;
+  margin-left: 13px;
+  max-width: 90px;
+}
+
+.mainContent {
+  composes: stretchVertical flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  overflow-y: auto;
+}
