@@ -2,7 +2,10 @@
 
 import type { HOC } from 'recompose';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { ComponentType } from 'react';
 
+import React from 'react';
+import { Field } from 'formik';
 import { injectIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import mapProps from 'recompose/mapProps';
@@ -13,6 +16,7 @@ type FormatMessage = (
 ) => string;
 
 type CommonProps = {
+  appearance?: Object,
   label?: MessageDescriptor | string,
   name: string,
   placeholder?: MessageDescriptor | string,
@@ -20,16 +24,25 @@ type CommonProps = {
 };
 
 type InProps = CommonProps & {
+  connect?: boolean,
+  id?: string,
   intl: IntlShape,
-  touched?: Object,
-  values?: Object,
-  errors?: Object,
+  form: {
+    touched: Object,
+    errors: Object,
+  },
+  field: {
+    name: string,
+    value?: string,
+    onChange: Function,
+    onBlur: Function,
+  },
 };
 
 type OutProps = CommonProps & {
-  $error: string,
-  $value: string,
-  $touched: boolean,
+  $error?: string,
+  $value?: string,
+  $touched?: boolean,
 };
 
 const formatIntl = (
@@ -45,37 +58,51 @@ const formatIntl = (
   return formatMessage(prop);
 };
 
-const enhance: HOC<*, OutProps> = compose(
+const connectFormik = (FieldComponent: ComponentType<Object>) => ({
+  connect = true,
+  ...props
+}: InProps) =>
+  connect
+    ? React.createElement(Field, {
+        component: FieldComponent,
+        ...props,
+      })
+    : React.createElement(FieldComponent, props);
+
+const asField: HOC<*, OutProps> = compose(
   injectIntl,
+  connectFormik,
   mapProps(
     ({
+      id,
+      intl: { formatMessage },
+      field: { name: fieldName, value, onChange, onBlur } = {},
+      form: { touched, errors } = {},
       label,
       name,
       placeholder,
       title,
-      intl: { formatMessage },
-      touched = {},
-      values = {},
-      errors = {},
       ...props
     }: InProps) => ({
       'aria-label': label,
-      id: name,
       label:
         formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
-      name,
+      name: fieldName || name || id,
       placeholder: formatIntl(placeholder, formatMessage),
       title:
-        formatIntl(errors[name], formatMessage) ||
+        formatIntl(errors && errors[name], formatMessage) ||
         formatIntl(title, formatMessage) ||
         formatIntl(label, formatMessage) ||
         formatIntl(placeholder, formatMessage),
-      $error: errors[name],
-      $value: values[name],
-      $touched: touched[name],
+      $id: id || fieldName || name,
+      $error: errors && errors[name],
+      $value: value,
+      $touched: touched && touched[name],
+      onChange,
+      onBlur,
       ...props,
     }),
   ),
 );
 
-export default enhance;
+export default asField;

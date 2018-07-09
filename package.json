@@ -11,7 +11,7 @@
     "lint": "yarn run eslint && yarn run stylelint",
     "eslint": "eslint --fix 'src/**/*.{js,jsx}'",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
-    "jest": "jest --config=jest.conf.json",
+    "jest": "jest --config=jest.conf.json --coverage",
     "deploy": "gh-pages -d styleguide"
   },
   "author": "Christian Maniewski <chris@colony.io>",
@@ -69,6 +69,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "cleave.js": "^1.3.7",
+    "formik": "^1.0.0-beta.5",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
