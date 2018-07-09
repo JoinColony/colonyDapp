@@ -137,6 +137,10 @@
 ```js
 const { Formik } = require('formik');
 <Formik
+  initialValues={{
+    forminput1: '',
+    forminput2: '',
+  }}
   onSubmit={values => console.log(values)}
   render={
     ({ handleSubmit }) => (

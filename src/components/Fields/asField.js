@@ -96,7 +96,7 @@ const asField: HOC<*, OutProps> = compose(
         formatIntl(placeholder, formatMessage),
       $id: id || fieldName || name,
       $error: errors && errors[name],
-      $value: value || '',
+      $value: value,
       $touched: touched && touched[name],
       onChange,
       onBlur,
