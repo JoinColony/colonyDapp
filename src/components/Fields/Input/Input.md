@@ -83,6 +83,34 @@
 />
 ```
 
+### Input with dark color schema
+
+Looks great on dark backgrounds. This should also work for the fat theme.
+
+```js
+<Input
+  appearance={{ colorSchema: 'dark' }}
+  name="inputdark"
+  placeholder="I'm dark!"
+  label="Dark label"
+  connect={false}
+/>
+```
+
+### Input with transparent color schema
+
+Uses the background color of its background (same for text). This should also work for the fat theme.
+
+```js
+<Input
+  appearance={{ colorSchema: 'transparent' }}
+  name="inputdark"
+  placeholder="I'm a placeholder"
+  label="Cool label"
+  connect={false}
+/>
+```
+
 ### Fat input field
 
 ```js
