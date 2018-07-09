@@ -108,4 +108,41 @@
 />
 ```
 
-### A form
+### Formatting using [Cleave.js](https://nosir.github.io/cleave.js/)
+
+```js
+<Input
+  name="inputcleave"
+  placeholder="Put in a big number"
+  label="Number formatted"
+  formattingOptions={{ numeral: true, delimiter: ',' }}
+  connect={false}
+/>
+```
+
+### A form embedded in Formik
+
+```js
+const { Formik } = require('formik');
+<Formik
+  onSubmit={values => console.log(values)}
+  render={
+    ({ handleSubmit }) => (
+      <form onSubmit={handleSubmit}>
+        <Input
+          name="forminput1"
+          label="Type a string"
+          placeholder="Type here"
+        />
+        <Input
+          name="forminput2"
+          label="Type a number"
+          formattingOptions={{ numeral: true, delimiter: ',' }}
+          placeholder="And here"
+        />
+        <Button appearance={{ theme: 'primary' }} type="submit">And press me</Button>
+      </form>
+    )
+  }
+/>
+```
