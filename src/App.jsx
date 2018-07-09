@@ -13,6 +13,8 @@ import layout from '~styles/layout.css';
 import messages from './i18n/en.json';
 import rootReducer from './reducer';
 
+import ConnectWallet from './modules/wallet/components/ConnectWallet/ConnectWallet.jsx';
+
 /* eslint-disable-next-line max-len */
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 /* eslint-disable-next-line max-len */
@@ -87,6 +89,7 @@ export default function App() {
             <Route path="/dynamic-import-route" component={DynamicRoute} />
             <Route path="/start" component={WalletStart} />
             <Route path="/createwallet" component={CreateWalletWizard} />
+            <Route path="/connect-wallet/:provider" component={ConnectWallet} />
           </div>
         </Router>
       </Provider>
