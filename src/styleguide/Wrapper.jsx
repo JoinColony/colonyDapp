@@ -16,7 +16,7 @@ type Props = {
   children: Node,
 };
 
-// We're injecting ReactIntl and Formik into all of our components, even though it might not be needed everywhere
+// We're injecting ReactIntl into all of our components, even though it might not be needed everywhere
 const Wrapper = ({ children }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
     {children}

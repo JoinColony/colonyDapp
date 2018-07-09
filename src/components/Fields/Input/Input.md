@@ -16,9 +16,9 @@
 <Input
   elementOnly
   name="inputerror"
-  form={{ errors: { inputerror: 'Wrong!' }, touched: { inputerror: true }}}
   placeholder="Hover over me to see error"
   label="Label"
+  form={{ errors: { inputerror: 'Wrong!' }, touched: { inputerror: true }}}
   connect={false}
 />
 ```

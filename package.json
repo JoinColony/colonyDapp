@@ -11,7 +11,7 @@
     "lint": "yarn run eslint && yarn run stylelint",
     "eslint": "eslint --fix 'src/**/*.{js,jsx}'",
     "stylelint": "stylelint --fix \"src/**/*.css\"",
-    "jest": "jest --config=jest.conf.json",
+    "jest": "jest --config=jest.conf.json --coverage",
     "deploy": "gh-pages -d styleguide"
   },
   "author": "Christian Maniewski <chris@colony.io>",

@@ -12,10 +12,10 @@
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
     "collectCoverageFrom" : ["**/*.{js,jsx}"],
-    "coverageDirectory": "./coverage",
+    "coverageDirectory": "../coverage",
     "coverageThreshold": {
         "global": {
-            "branches": 40
+            "branches": 30
         }
     }
 }
