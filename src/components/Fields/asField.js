@@ -76,9 +76,10 @@ const asField: HOC<*, OutProps> = compose(
     ({
       id,
       intl: { formatMessage },
-      field: { name, value, onChange, onBlur } = {},
+      field: { name: fieldName, value, onChange, onBlur } = {},
       form: { touched, errors } = {},
       label,
+      name,
       placeholder,
       title,
       ...props
@@ -86,14 +87,14 @@ const asField: HOC<*, OutProps> = compose(
       'aria-label': label,
       label:
         formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
-      name,
+      name: fieldName || name || id,
       placeholder: formatIntl(placeholder, formatMessage),
       title:
         formatIntl(errors && errors[name], formatMessage) ||
         formatIntl(title, formatMessage) ||
         formatIntl(label, formatMessage) ||
         formatIntl(placeholder, formatMessage),
-      $id: id || name,
+      $id: id || fieldName || name,
       $error: errors && errors[name],
       $value: value,
       $touched: touched && touched[name],
