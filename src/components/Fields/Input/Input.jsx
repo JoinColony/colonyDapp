@@ -22,6 +22,8 @@ type Appearance = {
 type Props = {
   /** Appearance object */
   appearance?: Appearance,
+  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`) */
+  connect?: boolean,
   /** Just render the `<input>` element without label */
   elementOnly?: boolean,
   /** Input field name (form variable) */
@@ -48,6 +50,8 @@ const displayName = 'Fields.Input';
 
 const Input = ({
   appearance = {},
+  /* eslint-disable-next-line no-unused-vars */
+  connect = true,
   elementOnly,
   help,
   $id,

@@ -3,7 +3,6 @@
 import type { Node } from 'react';
 
 import React from 'react';
-import { Formik } from 'formik';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 
@@ -20,7 +19,7 @@ type Props = {
 // We're injecting ReactIntl and Formik into all of our components, even though it might not be needed everywhere
 const Wrapper = ({ children }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
-    <Formik>{children}</Formik>
+    {children}
   </IntlProvider>
 );
 

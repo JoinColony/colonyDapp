@@ -1,6 +1,4 @@
 /* @flow */
-// We're disabling this as eslint is confused about exporting the HoC
-/* eslint-disable react/no-unused-prop-types */
 
 import type { HOC } from 'recompose';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
@@ -26,6 +24,7 @@ type CommonProps = {
 };
 
 type InProps = CommonProps & {
+  connect?: boolean,
   id?: string,
   intl: IntlShape,
   form: {
@@ -59,15 +58,26 @@ const formatIntl = (
   return formatMessage(prop);
 };
 
-// TODO: Cater for the case where neither field nor form are defined (component not connected to formik)
-const enhance: HOC<*, OutProps> = compose(
+const connectFormik = (FieldComponent: ComponentType<Object>) => ({
+  connect = true,
+  ...props
+}: InProps) =>
+  connect
+    ? React.createElement(Field, {
+        component: FieldComponent,
+        ...props,
+      })
+    : React.createElement(FieldComponent, props);
+
+const asField: HOC<*, OutProps> = compose(
   injectIntl,
+  connectFormik,
   mapProps(
     ({
       id,
       intl: { formatMessage },
-      field: { name, value, onChange, onBlur },
-      form: { touched, errors },
+      field: { name, value, onChange, onBlur } = {},
+      form: { touched, errors } = {},
       label,
       placeholder,
       title,
@@ -79,25 +89,19 @@ const enhance: HOC<*, OutProps> = compose(
       name,
       placeholder: formatIntl(placeholder, formatMessage),
       title:
-        formatIntl(errors[name], formatMessage) ||
+        formatIntl(errors && errors[name], formatMessage) ||
         formatIntl(title, formatMessage) ||
         formatIntl(label, formatMessage) ||
         formatIntl(placeholder, formatMessage),
       $id: id || name,
-      $error: errors[name],
+      $error: errors && errors[name],
       $value: value,
-      $touched: touched[name],
+      $touched: touched && touched[name],
       onChange,
       onBlur,
       ...props,
     }),
   ),
 );
-
-const asField = (FieldComponent: ComponentType<Object>) => {
-  const component = enhance(FieldComponent);
-  return (props: InProps) =>
-    React.createElement(Field, { component, ...props });
-};
 
 export default asField;

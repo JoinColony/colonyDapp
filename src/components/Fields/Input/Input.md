@@ -1,19 +1,37 @@
 ### Input text
 
 ```js
-<Input elementOnly name="input" placeholder="I'm an input" label="Label" />
+<Input
+  elementOnly
+  name="input"
+  placeholder="I'm an input"
+  label="Label"
+  connect={false}
+/>
 ```
 
 ### Input text with error
 
 ```js
-<Input elementOnly name="inputerror" form={{ errors: { inputerror: 'Wrong!' }, touched: { inputerror: true }}} placeholder="Hover over me to see error" label="Label" />
+<Input
+  elementOnly
+  name="inputerror"
+  form={{ errors: { inputerror: 'Wrong!' }, touched: { inputerror: true }}}
+  placeholder="Hover over me to see error"
+  label="Label"
+  connect={false}
+/>
 ```
 
 ### Input text with label
 
 ```js
-<Input name="inputlabel" placeholder="I have a label" label="Your details" />
+<Input
+  name="inputlabel"
+  placeholder="I have a label"
+  label="Your details"
+  connect={false}
+/>
 ```
 
 ### Input text with label and error
@@ -24,6 +42,7 @@
   placeholder="I'm wrong as well!"
   label="Label"
   form={{ errors: { inputlabelerror: 'Wrong!' }, touched: { inputlabelerror: true }}}
+  connect={false}
 />
 ```
 
@@ -35,6 +54,7 @@
   name="inputhorizontal"
   placeholder="I'm horizontal!"
   label="Label"
+  connect={false}
 />
 ```
 
@@ -47,6 +67,7 @@
   placeholder="I'm horizontal and wrong!"
   label="Label"
   form={{ errors: { inputhorizontalerror: 'Wrong!' }, touched: { inputhorizontalerror: true }}}
+  connect={false}
 />
 ```
 
@@ -58,6 +79,7 @@
   name="inputfat"
   placeholder="I'm fat"
   label="Fat label"
+  connect={false}
 />
 ```
 
@@ -69,6 +91,7 @@
   name="inputunderlined"
   placeholder="I'm underlined"
   label="A label"
+  connect={false}
 />
 ```
 
@@ -81,6 +104,7 @@
   placeholder="I'm underlined"
   label="A label"
   form={{ errors: { inputunderlinederror: 'A meaningful error' }, touched: { inputunderlinederror: true }}}
+  connect={false}
 />
 ```
 
