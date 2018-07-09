@@ -34,6 +34,18 @@
 />
 ```
 
+### Input text aligned right
+
+```js
+<Input
+  appearance={{ align: 'right' }}
+  name="inputlabelright"
+  placeholder="I'm on the right side!"
+  label="You came to the right place"
+  connect={false}
+/>
+```
+
 ### Input text with label and error
 
 ```js

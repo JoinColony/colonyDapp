@@ -1,13 +1,5 @@
 @import 'variables.css';
 
-/* .main {
-  composes: main from '../Field/Field.css';
-} */
-
-/* .stateActive {
-  composes: stateActive from '../Field/Field.css';
-} */
-
 .container {
   composes: field from '~styles/fields.css';
 }
@@ -80,6 +72,10 @@
   border-color: var(--danger);
 }
 
+.alignRight {
+  text-align: right;
+}
+
 .error {
   margin-left: 5px;
   font-size: var(--size-tiny);
@@ -110,10 +106,6 @@
   &::placeholder {
     font-weight: var(--weight-semi);
   }
-}
-
-.alignRight .input {
-  text-align: right;
 }
 
 .colorSchemaDark .input {
