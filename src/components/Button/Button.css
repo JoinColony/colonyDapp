@@ -12,6 +12,7 @@
  */
 
 .main {
+  composes: field from '~styles/fields.css';
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
   padding: 4px 16px;
