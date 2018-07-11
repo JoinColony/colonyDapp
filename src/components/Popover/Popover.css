@@ -1,0 +1,9 @@
+@import 'variables.css';
+
+:root {
+  --arrow-size: 8px;
+  --arrow-border: 1px;
+  --tooltip-border: rgb(65, 67, 78);
+  --tooltip-shadow: inset 0 0 1px rgb(65, 67, 78);
+}
+

@@ -27,20 +27,22 @@ type Appearance = {
 type Props = {
   /** Appearance object */
   appearance?: Appearance,
+  /** `children` to render (only works if `value` is not set) */
+  children?: Node,
   /** Overwriting class name(s). Setting this will overwrite the `appearance` object */
   className?: string,
   /** Setting this to `true` will apply disabled styles via `aria-disabled` (disable interactions) */
   disabled?: boolean,
+  /** Pass a ref to the `<button>` element */
+  innerRef?: (ref: ?HTMLElement) => void,
   /** Setting this to `true` will apply loading styles via `aria-busy` (show a spinner) */
   loading?: boolean,
-  /** `children` to render (only works if `value` is not set) */
-  children?: Node,
   /** Standard html title attribute. Can be a string or a `messageDescriptor` */
   title?: MessageDescriptor | string,
-  /** A string or a `messageDescriptor` that make up the button's text label */
-  value?: MessageDescriptor | string,
   /** Button type (button|submit) */
   type: string,
+  /** A string or a `messageDescriptor` that make up the button's text label */
+  value?: MessageDescriptor | string,
   /** @ignore `react-intl` object, so that we have access to the `formatMessage()` method */
   intl: IntlShape,
 };
@@ -64,6 +66,7 @@ const Button = ({
   children,
   className,
   disabled = false,
+  innerRef,
   intl: { formatMessage },
   loading = false,
   title,
@@ -82,6 +85,7 @@ const Button = ({
       aria-busy={loading}
       title={titleText}
       type={type}
+      ref={innerRef}
       {...props}
     >
       {valueText || children}

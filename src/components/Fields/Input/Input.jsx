@@ -48,6 +48,8 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Pass a ref to the `<input>` element */
+  innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string,
   /** Values for label text (react-intl interpolation) */
@@ -82,17 +84,18 @@ class Input extends Component<Props> {
   };
 
   renderInput = inputProps => {
-    const { formattingOptions, ...props } = inputProps;
+    const { formattingOptions, innerRef, ...props } = inputProps;
     if (formattingOptions) {
       return (
         <Cleave
           {...props}
+          htmlRef={innerRef}
           options={formattingOptions}
           onChange={this.handleChange}
         />
       );
     }
-    return <input {...props} />;
+    return <input ref={innerRef} {...props} />;
   };
 
   render() {
