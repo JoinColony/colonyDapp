@@ -139,7 +139,11 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
 const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
-      <Heading appearance={{ size: 'mediumL' }} text={MSG.heading} />
+      <Heading
+        appearance={{ size: 'mediumL' }}
+        className={styles.skinnier}
+        text={MSG.heading}
+      />
     </div>
     <div className={styles.subtitle}>
       <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />

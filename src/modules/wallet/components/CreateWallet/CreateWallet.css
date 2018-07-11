@@ -61,6 +61,10 @@
   margin-top: 7px;
 }
 
+.skinnier {
+  font-weight: var(--weight-medium);
+}
+
 .actionText {
   flex: 6;
   text-align: left;
