@@ -32,7 +32,7 @@ type Props = {
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
-  /** @ignore `react-intl` object, so that we have access to the `formatMessage()` method */
+  /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
 

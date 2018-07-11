@@ -43,7 +43,7 @@ type Props = {
   type: string,
   /** A string or a `messageDescriptor` that make up the button's text label */
   value?: MessageDescriptor | string,
-  /** @ignore `react-intl` object, so that we have access to the `formatMessage()` method */
+  /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
 

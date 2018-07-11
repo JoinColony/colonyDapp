@@ -1,9 +1,11 @@
 /* @flow */
 
 import type { Node } from 'react';
+import type { IntlShape, MessageDescriptor } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import { Manager, Reference, Popper } from 'react-popper';
+import { injectIntl } from 'react-intl';
 import nanoid from 'nanoid';
 
 import type { ReactRef } from './types';
@@ -41,10 +43,16 @@ type Props = {
   children: React$Element<*> | (({ ref: ReactRef }) => Node),
   /** Whether the popover should close when clicking anywhere */
   closeOnBackdropClick?: boolean,
+  /** Popover content */
+  content: Node | MessageDescriptor | (({ close: () => void }) => Node),
+  /** Values for content (react-intl interpolation) */
+  intlValues?: { [string]: string },
   /** Popover placement */
   placement?: Placement,
-  /** How the popover gets triggered */
+  /** How the popover gets triggered. Won't work when using a render prop as `children` */
   trigger: 'always' | 'hover' | 'click' | 'disabled',
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
 };
 
 type State = {
@@ -137,11 +145,32 @@ class Popover extends Component<Props, State> {
       React.cloneElement(children, this.getChildProps(ref));
   };
 
+  renderContent = () => {
+    const {
+      content,
+      intlValues,
+      intl: { formatMessage },
+    } = this.props;
+    if (typeof content == 'string') {
+      return content;
+    }
+    if (typeof content == 'function') {
+      return content({ close: this.close });
+    }
+    if (React.isValidElement(content)) {
+      return content;
+    }
+    // How to tell flow that this can only be a MessageDescriptor in this case?
+    // $FlowFixMe - might be related to https://github.com/facebook/flow/issues/4775
+    return formatMessage(content, intlValues);
+  };
+
   render() {
     const {
       appearance,
       closeOnBackdropClick,
       placement: origPlacement,
+      intl: { formatMessage },
       trigger,
     } = this.props;
     const { isOpen } = this.state;
@@ -158,11 +187,12 @@ class Popover extends Component<Props, State> {
                 className={styles.backdrop}
                 onClick={this.close}
                 onKeyUp={this.handleBackdropKey}
-                aria-label="Close"
+                aria-label={formatMessage({ id: 'button.close' })}
               />
             ) : null}
             <Popper placement={origPlacement}>
               {({ ref, style, placement, arrowProps }) => (
+                // $FlowFixMe see above renderContent
                 <PopoverWrapper
                   appearance={{ ...appearance, placement }}
                   id={this.id}
@@ -171,7 +201,7 @@ class Popover extends Component<Props, State> {
                   placement={placement}
                   arrowProps={arrowProps}
                 >
-                  Popover content!
+                  {this.renderContent()}
                 </PopoverWrapper>
               )}
             </Popper>
@@ -182,4 +212,4 @@ class Popover extends Component<Props, State> {
   }
 }
 
-export default Popover;
+export default injectIntl(Popover);
