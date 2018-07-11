@@ -6,7 +6,7 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import styles from './PopoverContent.css';
+import styles from './PopoverWrapper.css';
 
 type Props = {
   appearance: Object,
@@ -18,7 +18,7 @@ type Props = {
   style: any,
 };
 
-const PopoverContent = ({
+const PopoverWrapper = ({
   appearance,
   arrowProps,
   children,
@@ -44,4 +44,4 @@ const PopoverContent = ({
   </span>
 );
 
-export default PopoverContent;
+export default PopoverWrapper;
