@@ -48,7 +48,7 @@
   max-height: 60px;
   width: 100%;
   border: none;
-  background-color: var(--total-white);
+  background-color: white;
   cursor: pointer;
 }
 

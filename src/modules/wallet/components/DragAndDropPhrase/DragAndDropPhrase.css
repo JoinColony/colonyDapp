@@ -52,7 +52,7 @@
   flex: 1;
   margin-top: 11px;
   margin-bottom: 9px;
-  font-weight: 600;
+  font-weight: var(--weight-semi);
 }
 
 .placeholder {
@@ -62,7 +62,7 @@
   left: 0;
   overflow: hidden;
   font-size: var(--size-normal);
-  font-weight: 600;
+  font-weight: var(--weight-semi);
   text-align: center;
   color: var(--temp-grey-12);
 }
@@ -75,13 +75,9 @@
   left: 0;
   overflow: hidden;
   font-size: var(--size-normal);
-  font-weight: 600;
+  font-weight: var(--weight-semi);
   text-align: center;
   color: var(--temp-grey-12);
-}
-
-.rowOutlier {
-  flex: 1;
 }
 
 .wordContainer {
