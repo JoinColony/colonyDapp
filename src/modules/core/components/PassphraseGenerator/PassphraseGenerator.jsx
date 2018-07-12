@@ -85,7 +85,7 @@ class PassphraseGenerator extends Component<Props, State> {
       <div>
         <div className={styles.buttons}>
           <Heading
-            appearance={{ size: 'boldSmall' }}
+            appearance={{ size: 'small', width: 'bold' }}
             text={MSG.titleBox}
             className={styles.heading}
           />

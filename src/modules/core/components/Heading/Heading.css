@@ -54,6 +54,10 @@
   margin-bottom: 0 !important;
 }
 
+.marginSmall {
+  margin-bottom: 6px !important;
+}
+
 /*
  * Sizing
  *
@@ -88,24 +92,21 @@
 .sizeTiny {
   composes: title from '~styles/titles.css';
   font-size: var(--size-tiny);
+}
+
+/*
+ * Font Width
+ *
+ * Next set of classes will define the headings's width
+ */
+.widthThin {
+  font-weight: var(--weight-medium);
+}
+
+.widthVeryThin {
   font-weight: var(--weight-thin);
 }
 
-.sizeThin {
-  composes: thin from '~styles/titles.css';
-}
-
-.sizeBoldSmall {
-  composes: boldSmall from '~styles/titles.css';
-  margin-bottom: 4px;
-  font-size: var(--size-small);
-}
-
-.sizeThinNormal {
-  composes: thinNormal from '~styles/titles.css';
-  font-size: var(--size-normal);
-}
-
-.sizeThinner {
-  composes: thinner from '~styles/titles.css';
+.widthBold {
+  font-weight: var(--weight-semi);
 }

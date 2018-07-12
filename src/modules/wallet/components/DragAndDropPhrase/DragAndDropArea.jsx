@@ -265,7 +265,7 @@ class DragAndDropArea extends Component<Props, State> {
       <DragDropContext onDragEnd={this.onDragEnd}>
         <div className={styles.buttonsToMakeYouDrag}>
           <Heading
-            appearance={{ size: 'boldSmall' }}
+            appearance={{ size: 'small', width: 'bold' }}
             text={MSG.titleBox}
             className={styles.heading}
           />
@@ -302,7 +302,7 @@ class DragAndDropArea extends Component<Props, State> {
                   )}
                 </Draggable>
               ))}
-              {!!this.state.items.length && (
+              {!!this.state.items.length === 0 && (
                 <Children>
                   <div className={styles.placeholderTop}>
                     <FormattedMessage {...MSG.placeholder} />

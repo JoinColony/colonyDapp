@@ -111,8 +111,14 @@ const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => {
         <Icon style={svgStyle} />
       </div>
       <div className={styles.rowContent}>
-        <Heading appearance={{ size: 'boldSmall' }} text={title} />
-        <Heading appearance={{ size: 'tiny' }} text={subTitle} />
+        <Heading
+          appearance={{ size: 'small', width: 'bold', margin: 'small' }}
+          text={title}
+        />
+        <Heading
+          appearance={{ size: 'tiny', width: 'veryThin', margin: 'small' }}
+          text={subTitle}
+        />
       </div>
       <ArrowRight className={styles.rowArrow} />
     </div>
@@ -140,13 +146,15 @@ const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
-        appearance={{ size: 'mediumL' }}
-        className={styles.skinnier}
+        appearance={{ size: 'mediumL', width: 'thin' }}
         text={MSG.heading}
       />
     </div>
     <div className={styles.subtitle}>
-      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+      <Heading
+        appearance={{ size: 'normal', width: 'thin' }}
+        text={MSG.subTitle}
+      />
     </div>
     {allTheRows}
     <Button onClick={handleSubmit(nextStep)} className={styles.callToAction}>
@@ -154,8 +162,14 @@ const WalletDetails = ({ nextStep, handleSubmit }: Props) => (
         <img src={jazz} alt="" width="22" height="22" />
       </div>
       <div className={styles.actionText}>
-        <Heading appearance={{ size: 'boldSmall' }} text={MSG.callToAction} />
-        <Heading appearance={{ size: 'tiny' }} text={MSG.callToActionSub} />
+        <Heading
+          appearance={{ size: 'small', width: 'bold', margin: 'small' }}
+          text={MSG.callToAction}
+        />
+        <Heading
+          appearance={{ size: 'tiny', width: 'VeryThin', margin: 'small' }}
+          text={MSG.callToActionSub}
+        />
       </div>
       <ArrowRight className={styles.rowArrow} />
     </Button>

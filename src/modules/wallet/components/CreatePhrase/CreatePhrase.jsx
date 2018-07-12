@@ -44,10 +44,16 @@ type Props = FormProps<CustomProps>;
 const CreatePhrase = ({ nextStep, previousStep, handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
-      <Heading appearance={{ size: 'thinner' }} text={MSG.heading} />
+      <Heading
+        appearance={{ size: 'mediumL', width: 'thin' }}
+        text={MSG.heading}
+      />
     </div>
     <div className={styles.subtitle}>
-      <Heading appearance={{ size: 'thinNormal' }} text={MSG.subTitle} />
+      <Heading
+        appearance={{ size: 'normal', width: 'thin' }}
+        text={MSG.subTitle}
+      />
     </div>
     <div className={styles.greyBox}>
       <ReduxFormField
