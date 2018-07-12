@@ -47,6 +47,8 @@ type Props = {
   content: Node | MessageDescriptor | (({ close: () => void }) => Node),
   /** Values for content (react-intl interpolation) */
   intlValues?: { [string]: string },
+  /** Delay opening of popover for `openDelay` ms */
+  openDelay?: number,
   /** Popover placement */
   placement?: Placement,
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
@@ -63,6 +65,8 @@ class Popover extends Component<Props, State> {
   backdropNode: HTMLElement;
 
   id: string;
+
+  openTimeout: TimeoutID;
 
   static defaultProps = {
     closeOnBackdropClick: true,
@@ -98,7 +102,7 @@ class Popover extends Component<Props, State> {
       childProps,
       {
         hover: {
-          onMouseEnter: this.open,
+          onMouseEnter: this.requestOpen,
           onMouseLeave: this.close,
         },
         click: { onClick: this.toggle },
@@ -108,20 +112,36 @@ class Popover extends Component<Props, State> {
     );
   };
 
+  requestOpen = () => {
+    const { isOpen } = this.state;
+    const { openDelay } = this.props;
+    if (isOpen) {
+      return;
+    }
+    if (openDelay) {
+      this.openTimeout = setTimeout(this.open.bind(this), openDelay);
+      return;
+    }
+    this.open();
+  };
+
   open = () => {
     this.setState({ isOpen: true }, () => {
       if (this.backdropNode) this.backdropNode.focus();
     });
   };
 
-  close = () => this.setState({ isOpen: false });
+  close = () => {
+    clearTimeout(this.openTimeout);
+    this.setState({ isOpen: false });
+  };
 
   toggle = () => {
     const { isOpen } = this.state;
     if (isOpen) {
       return this.close();
     }
-    return this.open();
+    return this.requestOpen();
   };
 
   handleBackdropRef = (node: ?HTMLElement) => {
@@ -136,10 +156,11 @@ class Popover extends Component<Props, State> {
 
   renderReference = () => {
     const { children } = this.props;
-    const { id, open, close, toggle } = this;
+    const { id, requestOpen, close, toggle } = this;
 
     if (typeof children == 'function') {
-      return ({ ref }: RefObj) => children({ ref, id, open, close, toggle });
+      return ({ ref }: RefObj) =>
+        children({ ref, id, open: requestOpen, close, toggle });
     }
     return ({ ref }: RefObj) =>
       React.cloneElement(children, this.getChildProps(ref));

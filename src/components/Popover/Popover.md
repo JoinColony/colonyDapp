@@ -71,6 +71,19 @@ The styles of the popover content are deliberately kept simple so that you can s
 </Popover>
 ```
 
+### Popover on hover with open delay
+
+```js
+<Popover
+  trigger="hover"
+  openDelay={250}
+  appearance={{ theme: 'dark' }}
+  content="You're hovering!"
+>
+  <Button appearance={{ theme: 'primary' }}>Hover over me</Button>
+</Popover>
+```
+
 ### Popover on click
 
 ```js
