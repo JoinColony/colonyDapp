@@ -19,6 +19,7 @@
         }
     ],
     "rules": {
+        "jsx-a11y/label-has-for": 0,
         "flowtype/require-valid-file-annotation": [1, "always"],
         "import/extensions": [2, {
             "js": "never",

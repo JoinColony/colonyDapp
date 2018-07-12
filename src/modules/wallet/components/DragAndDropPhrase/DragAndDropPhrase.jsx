@@ -46,33 +46,27 @@ type Props = {
   handleSubmit: (handler: () => void) => void,
   passphrase: string,
 };
+
 type State = {
-  nextStep: () => void,
-  previousStep: () => void,
-  handleSubmit: (handler: () => void) => void,
-  passphrase: string,
-  child?: any,
   allowSubmit: boolean,
 };
 
 class DragAndDropPhrase extends Component<Props, State> {
+  child: { current: null | DragAndDropArea };
+
   constructor(props) {
     super(props);
-    // $FlowFixMe
     this.child = React.createRef();
   }
 
   state = {
-    nextStep: this.props.nextStep,
-    previousStep: this.props.previousStep,
-    handleSubmit: this.props.handleSubmit,
-    passphrase: this.props.passphrase,
     allowSubmit: false,
   };
 
   checkCorrectSorting = () => {
-    // $FlowFixMe
-    this.child.current.checkSorting();
+    if (this.child.current) {
+      this.child.current.checkSorting();
+    }
   };
 
   enableSubmit = () => {
@@ -80,6 +74,8 @@ class DragAndDropPhrase extends Component<Props, State> {
   };
 
   render() {
+    const { allowSubmit } = this.state;
+    const { passphrase, previousStep, nextStep, handleSubmit } = this.props;
     return (
       <section className={styles.content}>
         <div className={styles.title}>
@@ -96,10 +92,9 @@ class DragAndDropPhrase extends Component<Props, State> {
         </div>
         <div className={styles.wordContainer}>
           <DragAndDropArea
-            // $FlowFixMe
             ref={this.child}
             onAllDropped={this.enableSubmit}
-            passphrase={this.state.passphrase}
+            passphrase={passphrase}
             text={MSG.dragAndDropBox.defaultMessage}
           />
         </div>
@@ -107,13 +102,13 @@ class DragAndDropPhrase extends Component<Props, State> {
           <Button
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
             value={MSG.backButton}
-            onClick={this.state.handleSubmit(this.state.previousStep)}
+            onClick={handleSubmit(previousStep)}
           />
-          {this.state.allowSubmit ? (
+          {allowSubmit ? (
             <Button
               appearance={{ theme: 'primary' }}
               onClick={() => {
-                this.state.handleSubmit(this.state.nextStep);
+                handleSubmit(nextStep);
                 this.checkCorrectSorting();
               }}
               value={MSG.nextButton}
@@ -122,7 +117,7 @@ class DragAndDropPhrase extends Component<Props, State> {
             <Button
               appearance={{ theme: 'tertiary' }}
               onClick={() => {
-                this.state.handleSubmit(this.state.nextStep);
+                handleSubmit(nextStep);
                 this.checkCorrectSorting();
               }}
               value={MSG.nextButton}

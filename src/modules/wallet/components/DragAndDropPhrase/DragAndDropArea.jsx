@@ -65,17 +65,20 @@ class DragAndDropArea extends Component<Props, State> {
     return Array.from({ length: count }, (word, index) => index).map(index => ({
       id: `item-${index + offset}`,
       sortOrder: index,
-      content: `${shuffled[index]}`,
+      content: String(shuffled[index]),
     }));
   }
 
-  state = {
-    selected: DragAndDropArea.getItems(this.props.passphrase, 12),
-    items: [],
-    matchingPhrase: false,
-    checked: false,
-    hasError: false,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      selected: this.constructor.getItems(props.passphrase, 12),
+      items: [],
+      matchingPhrase: false,
+      checked: false,
+      hasError: false,
+    };
+  }
 
   id2List = {
     target: 'items',
@@ -83,11 +86,14 @@ class DragAndDropArea extends Component<Props, State> {
   };
 
   allDropped = (items: Array<Droppable>) => {
+    const { onAllDropped } = this.props;
     if (items.length === 12) {
-      this.props.onAllDropped();
+      onAllDropped();
     }
   };
 
+  // This eslint rule is broken for this case
+  // eslint-disable-next-line react/destructuring-assignment
   getList = (id: string) => this.state[this.id2List[id]];
 
   /**
@@ -109,8 +115,9 @@ class DragAndDropArea extends Component<Props, State> {
    * Bring back words into the source area and remove error
    */
   reset = () => {
+    const { passphrase } = this.props;
     this.setState({
-      selected: DragAndDropArea.getItems(this.props.passphrase, 12),
+      selected: DragAndDropArea.getItems(passphrase, 12),
       items: [],
       hasError: false,
     });
@@ -201,12 +208,12 @@ class DragAndDropArea extends Component<Props, State> {
    * Join array of words back into passphrase to compare with the original one
    */
   checkSorting = () => {
+    const { items } = this.state;
+    const { passphrase } = this.props;
     this.setState({ checked: true });
-    const passPhraseToCheck = this.state.items
-      .map(element => element.content)
-      .join(' ');
+    const passPhraseToCheck = items.map(element => element.content).join(' ');
 
-    const matches = passPhraseToCheck === this.props.passphrase;
+    const matches = passPhraseToCheck === passphrase;
     if (matches) {
       this.setState({ matchingPhrase: true, hasError: false });
     } else {
@@ -259,6 +266,7 @@ class DragAndDropArea extends Component<Props, State> {
     const svgStyle = {
       position: 'absolute',
     };
+    const { hasError, items, selected } = this.state;
 
     const Children = props => props.children;
     return (
@@ -280,12 +288,9 @@ class DragAndDropArea extends Component<Props, State> {
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={this.getTargetStyle(
-                snapshot.isDraggingOver,
-                this.state.hasError,
-              )}
+              style={this.getTargetStyle(snapshot.isDraggingOver, hasError)}
             >
-              {this.state.items.map((item, index) => (
+              {items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
                   {(providedDrag, snapshotDrag) => (
                     <div
@@ -302,7 +307,7 @@ class DragAndDropArea extends Component<Props, State> {
                   )}
                 </Draggable>
               ))}
-              {!!this.state.items.length === 0 && (
+              {!!items.length === 0 && (
                 <Children>
                   <div className={styles.placeholderTop}>
                     <FormattedMessage {...MSG.placeholder} />
@@ -312,7 +317,7 @@ class DragAndDropArea extends Component<Props, State> {
                   </div>
                 </Children>
               )}
-              {!!this.state.hasError && (
+              {!!hasError && (
                 <Children>
                   <div className={styles.errorOverlay} />
                   <Grid style={svgStyle} />
@@ -321,7 +326,7 @@ class DragAndDropArea extends Component<Props, State> {
             </div>
           )}
         </Droppable>
-        {!!this.state.hasError && (
+        {!!hasError && (
           <div className={styles.errorMessage}>
             <FormattedMessage {...MSG.errorMessage} />
           </div>
@@ -329,7 +334,7 @@ class DragAndDropArea extends Component<Props, State> {
         <Droppable droppableId="source" direction="horizontal">
           {provided => (
             <div ref={provided.innerRef} style={this.getSourceStyle()}>
-              {this.state.selected.map((item, index) => (
+              {selected.map((item, index) => (
                 <Draggable
                   direction="horizontal"
                   key={item.id}

@@ -7,13 +7,13 @@ import CreateWallet from './CreateWallet.jsx'; // exporting the template that is
 import WalletDetails from './WalletDetails.jsx';
 import CreatePhrase, {
   reduxFormOpts as phraseReduxFormOpts,
-} from './../CreatePhrase/CreatePhrase.jsx';
+} from '../CreatePhrase/CreatePhrase.jsx';
 import BackupPhrase, {
   reduxFormOpts as backupReduxFormOpts,
-} from './../BackupPhrase/BackupPhrase.jsx';
+} from '../BackupPhrase/BackupPhrase.jsx';
 import DragAndDropPhrase, {
   reduxFormOpts as dragAndDropReduxFormOpts,
-} from './../DragAndDropPhrase/DragAndDropPhrase.jsx';
+} from '../DragAndDropPhrase/DragAndDropPhrase.jsx';
 
 const steps = [
   { Step: WalletDetails },

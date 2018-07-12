@@ -50,27 +50,39 @@ class PassphraseGenerator extends Component<Props, State> {
   state = { copied: false };
 
   componentDidMount() {
-    if (!this.props.input.value) {
+    const {
+      input: { value },
+    } = this.props;
+    if (!value) {
       this.generatePassphrase();
     }
   }
+
   componentWillUnmount() {
     clearTimeout(this.timeout);
   }
+
   timeout = undefined;
 
   generatePassphrase = () => {
-    const { input: { onChange } } = this.props;
+    const {
+      input: { onChange },
+    } = this.props;
 
     create().then(wallet => {
       onChange(wallet.mnemonic);
     });
   };
+
   copyToClipboard = () => {
-    copy(this.props.input.value);
+    const {
+      input: { value },
+    } = this.props;
+    copy(value);
     this.setState({ copied: true });
     this.timeout = setTimeout(() => this.setState({ copied: false }), 4000);
   };
+
   render() {
     const {
       elementOnly,

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './ProgressBar.css';
 
@@ -10,26 +10,27 @@ type Props = {
   step?: number,
 };
 
+const MSG = defineMessages({
+  step: {
+    id: 'ProgressBar.text.step',
+    defaultMessage: 'STEP {step} / {stepCount}',
+  },
+});
+
 class ProgressBar extends Component<Props> {
-  calculateStepProportion = () =>
-    this.props.step && this.props.stepCount
-      ? this.props.step / this.props.stepCount
-      : 0;
+  calculateStepProportion = () => {
+    const { step, stepCount } = this.props;
+    return step && stepCount ? step / stepCount : 0;
+  };
 
   render() {
+    const { step, stepCount } = this.props;
     const style = { width: `${this.calculateStepProportion() * 100}%` };
     return (
       <div className={styles.progressBarContainer}>
-        {!!this.props.stepCount && (
+        {!!stepCount && (
           <div className={styles.stepCounter}>
-            <FormattedMessage
-              id="stepCounter"
-              defaultMessage={`STEP {step} / {stepCount}`}
-              values={{
-                step: this.props.step,
-                stepCount: this.props.stepCount,
-              }}
-            />
+            <FormattedMessage {...MSG.step} values={{ step, stepCount }} />
           </div>
         )}
         <div className={styles.progressBar} style={style} />

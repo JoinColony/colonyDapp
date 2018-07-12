@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WizardTemplate component Renders initial component 1`] = `
-<main
-  className="undefined"
->
+<main>
   <header>
     <figure
       role="presentation"

@@ -17,7 +17,7 @@ type Props = {
 const displayName = 'pages.WizardTemplate';
 
 const WizardTemplate = ({ children, step, stepCount }: Props) => (
-  <main className={`${layout.stretchHorizontal}`}>
+  <main className={layout.stretchHorizontal}>
     <header className={styles.header}>
       <figure className={styles.logo} role="presentation">
         <Logo />
