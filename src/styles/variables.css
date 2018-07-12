@@ -48,12 +48,6 @@
   --z-index-notification: 6;
 
   /*
-   *
-   */
-  --shadow-popover: 0 9px 15px -5px rgba(0, 0, 0, 0.2);
-  --shadow-popover-error: 1px 1px 1px 2px rgba(0, 0, 0, 0.15);
-
-  /*
    * Fonts
    */
   --family-primary: "Avenir Next", sans-serif;

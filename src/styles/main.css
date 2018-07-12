@@ -76,12 +76,6 @@ th {
 
 /* minireset.css end */
 
-html, body, :global(#root) {
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-}
-
 html {
   background-color: var(--colony-white);
   font-size: var(--size-normal);
