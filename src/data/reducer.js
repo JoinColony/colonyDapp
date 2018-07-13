@@ -3,11 +3,15 @@ const SET_DATA_STATE = 'SET_DATA_STATE';
 const SET_PROFILE_STATE = 'SET_PROFILE_STATE';
 const SET_PROFILE_CONTENT = 'SET_PROFILE_CONTENT';
 
-export const STATE_NOTHING: string = 'nothing';
-export const STATE_LOADING: string = 'loading';
-export const STATE_READY: string = 'ready';
+export const STATE_NOTHING: 'nothing' = 'nothing';
+export const STATE_LOADING: 'loading' = 'loading';
+export const STATE_READY: 'ready' = 'ready';
 
-type State = STATE_NOTHING | STATE_LOADING | STATE_READY;
+type State =
+  | typeof STATE_NOTHING
+  | typeof STATE_LOADING
+  | typeof STATE_READY
+  | { my_profile: {} | string };
 
 export type DataReduxStore = {
   state: State,
@@ -17,6 +21,8 @@ export type DataReduxStore = {
     data: any, // @TODO
   },
 };
+
+type Action = { type: string, state: State, data: ?{}, content: ?{} };
 
 export const INITIAL_STATE: DataReduxStore = {
   state: STATE_NOTHING,
@@ -35,7 +41,7 @@ export function actionLoadState() {
   };
 }
 
-export function actionDataReady(data) {
+export function actionDataReady(data: ?{}) {
   return {
     type: SET_DATA_STATE,
     state: STATE_READY,
@@ -43,7 +49,7 @@ export function actionDataReady(data) {
   };
 }
 
-export function actionUserProfileReady(data) {
+export function actionUserProfileReady(data: ?{}) {
   return {
     type: SET_PROFILE_STATE,
     state: STATE_READY,
@@ -51,14 +57,14 @@ export function actionUserProfileReady(data) {
   };
 }
 
-export function actionSetUserProfileContent(content) {
+export function actionSetUserProfileContent(content: ?{}) {
   return {
     type: SET_PROFILE_CONTENT,
     content,
   };
 }
 
-export function reducer(state = INITIAL_STATE, action) {
+export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case SET_DATA_STATE:
       return { ...state, state: action.state, data: action.data };
