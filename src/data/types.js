@@ -15,6 +15,9 @@ type IPFSSwarmAddress = string;
 type IPFSBootstrapAddress = string;
 type path = string;
 
+export type ColonyAddress = string;
+export type IPFSHash = string;
+
 export type ColonyIPFSOptions = {
   swarm?: IPFSSwarmAddress[],
   bootstrap?: IPFSBootstrapAddress[],
@@ -52,19 +55,15 @@ export type Domain = {
   color: string,
 };
 
-export type Domains = Array<Domain>;
-
 export type Task = {
-  spec: ipfsHash,
-  dueDate: date,
+  spec: IPFSHash,
+  dueDate: Date,
   title: string,
-  comments: IPFShash[],
-  taskLabels: taskLabels[],
-  taskDomains: taskDomain[],
-  taskSkills: taskSkill[],
+  comments: IPFSHash[],
+  taskLabels: string[],
+  taskDomains: Domain[],
+  taskSkills: string[],
 };
-
-export type Tasks = Array<Task>;
 
 export type Colony = {
   Domains: Domain[],
@@ -76,7 +75,7 @@ export type Colony = {
 export type User = {
   name: string,
   colonies: ColonyAddress[],
-  reputation: rep[],
+  reputation: number[],
 };
 
 export type Token = {
