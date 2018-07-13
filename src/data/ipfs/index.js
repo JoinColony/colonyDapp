@@ -119,7 +119,7 @@ export async function waitForPeer(
 // }
 
 export async function peerID(): Promise<B58String> {
-  return ipfs.getNodeID(this._ipfsNode);
+  return getNodeID(this._ipfsNode);
 }
 
 export async function listPeers(): Promise<B58String[]> {

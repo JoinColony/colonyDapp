@@ -4,13 +4,15 @@ import { UserProfile, orbitSetup } from './orbit';
 import type {
   B58String,
   Colony,
+  ColonyAddress,
   ColonyIPFSNode,
   DataOptions,
-  Domains,
+  Domain,
+  IPFSHash,
   OrbitKVStore,
   OrbitNode,
   Pinner,
-  Tasks,
+  Task,
 } from './types';
 
 type PublicKey = string;
@@ -68,43 +70,46 @@ export default class Data {
   }
 
   async getMyUserProfile(): Promise<UserProfile> {
-    return this.getUserProfile('user-profile');
+    const store = await this.getUserProfile('user-profile');
+    await this._pinner.pinKVStore(store.address);
+    return;
   }
 
   // colonyJS
-  async getMetaColony(): Promise<MetaColony> {}
+  async getMetaColony(): Promise<Colony> {}
 
   // colonyJS
   // cache in OrbitDB
-  async getColony(colonyId: colonyId): Promise<Colony> {}
+  async getColony(colonyId: string): Promise<Colony> {
+    return Colony;
+  }
 
   // OrbitDB, maybe UserProfile
-  async getUserColonies(): Promise<ColonyAddresses> {}
+  async getUserColonies(): Promise<ColonyAddress[]> {}
 
   // colonyJS
   async getSkills(): Promise<SkillsTree> {}
 
   // colonyJS
-  async getDomain(Domain): Promise<SkillsTree> {}
+  async getDomain(domain: string): Promise<Domain[]> {}
 
   // If not in OrbitDB, fetch and return from colonyJS, then cache in OrbitDB
   // If in OrbitDB, return from OrbitDB, then update from colonyJS
-  async getTask(taskId): Promise<Task> {}
+  async getTask(taskId: string): Promise<Task> {}
 
   // same
-  async getTasks(taskId): Promise<Task> {}
+  async getTasks(taskId: string): Promise<Task> {}
 
   // IPFS
-  async getTaskComments(taskId): Promise<Comments> {}
+  async getTaskComments(taskId: string): Promise<Comment[]> {
+    return ['a comment'];
+  }
 
-  async addComment({
-    taskId,
-    commentString,
-    author,
-    date,
-  }): Promise<IPFShash> {}
+  async addComment(comment: Comment): Promise<IPFSHash> {}
 
   // Store in orbitDB
   // When submitted to a chain, replace in DDB with normal task
-  async taskDraft(): taskDraft<Comments> {}
+  async draftTask(task: Task): Promise<Task> {
+    return Task;
+  }
 }
