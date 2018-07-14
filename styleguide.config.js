@@ -20,5 +20,12 @@ module.exports = {
       name: 'Popovers & Modals',
       components: ['./src/modules/core/components/Popover/Popover.jsx'],
     },
+    {
+      name: 'Loaders',
+      components: [
+        './src/modules/core/components/Preloaders/LogoLoader.jsx',
+        './src/modules/core/components/Preloaders/SpinnerLoader.jsx',
+      ],
+    },
   ],
 };
