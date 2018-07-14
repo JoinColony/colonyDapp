@@ -4,7 +4,6 @@ import React from 'react';
 import type { Node } from 'react';
 
 import { getMainClasses } from '~utils/css';
-
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { Appearance } from '~types/css';
 
@@ -37,17 +36,16 @@ const Heading = ({
   const HeadingElement =
     tagName ||
     {
-      huge: 'h1',
-      thin: 'h1',
-      large: 'h2',
+      large: 'h1',
+      mediumL: 'h2',
       medium: 'h3',
-      small: 'h4',
-      tiny: 'h5',
+      normal: 'h4',
+      small: 'h5',
+      tiny: 'h6',
     }[size] ||
     'h3';
   const value =
     typeof text == 'string' ? text : intl.formatMessage(text, textValues);
-
   return (
     <HeadingElement
       title={value}

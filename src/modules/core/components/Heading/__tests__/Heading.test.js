@@ -33,44 +33,44 @@ describe('Heading component', () => {
      * Huge
      */
     let wrapper = mountWithIntl(
-      <Heading appearance={{ size: 'huge' }} text={mockTitle} />,
+      <Heading appearance={{ size: 'large' }} text={mockTitle} />,
     );
     expect(wrapper.find('h1')).toHaveLength(1);
     /*
      * Thin
      */
     wrapper = mountWithIntl(
-      <Heading appearance={{ size: 'thin' }} text={mockTitle} />,
-    );
-    expect(wrapper.find('h1')).toHaveLength(1);
-    /*
-     * Large
-     */
-    wrapper = mountWithIntl(
-      <Heading appearance={{ size: 'large' }} text={mockTitle} />,
+      <Heading appearance={{ size: 'mediumL' }} text={mockTitle} />,
     );
     expect(wrapper.find('h2')).toHaveLength(1);
     /*
-     * Medium
+     * Large
      */
     wrapper = mountWithIntl(
       <Heading appearance={{ size: 'medium' }} text={mockTitle} />,
     );
     expect(wrapper.find('h3')).toHaveLength(1);
     /*
+     * Medium
+     */
+    wrapper = mountWithIntl(
+      <Heading appearance={{ size: 'normal' }} text={mockTitle} />,
+    );
+    expect(wrapper.find('h4')).toHaveLength(1);
+    /*
      * Small
      */
     wrapper = mountWithIntl(
       <Heading appearance={{ size: 'small' }} text={mockTitle} />,
     );
-    expect(wrapper.find('h4')).toHaveLength(1);
+    expect(wrapper.find('h5')).toHaveLength(1);
     /*
      * Tiny
      */
     wrapper = mountWithIntl(
       <Heading appearance={{ size: 'tiny' }} text={mockTitle} />,
     );
-    expect(wrapper.find('h5')).toHaveLength(1);
+    expect(wrapper.find('h6')).toHaveLength(1);
   });
   test('Can overwrite the heading element', () => {
     const eliteElement = 'h1337';

@@ -25,10 +25,15 @@
 
 .tiny {
   composes: title;
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
 }
 
 .small {
+  composes: title;
+  font-size: var(--size-small);
+}
+
+.normal {
   composes: title;
   font-size: var(--size-normal);
 }
@@ -36,6 +41,11 @@
 .medium {
   composes: title;
   font-size: var(--size-medium);
+}
+
+.medium-l {
+  composes: title;
+  font-size: var(--size-medium-l);
 }
 
 .huge {
@@ -51,6 +61,12 @@
 .thin {
   composes: title;
   font-weight: var(--weight-normal);
+}
+
+.thinner {
+  composes: title;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-medium);
 }
 
 /*

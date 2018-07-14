@@ -4,9 +4,9 @@ import { createElement, Component } from 'react';
 import type { ComponentType } from 'react';
 import { reduxForm } from 'redux-form';
 
-type WizardProps = {};
+type Props = {};
 
-type WizardState = {
+type State = {
   step: number,
 };
 
@@ -24,7 +24,7 @@ type WizardArgs = {
 const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
   OuterComponent: ComponentType<any>,
 ) => {
-  class Wizard extends Component<WizardProps, WizardState> {
+  class Wizard extends Component<Props, State> {
     state = { step: 0 };
 
     next = () => {
@@ -42,21 +42,22 @@ const withWizard = ({ steps, form, reduxFormOpts }: WizardArgs) => (
     };
 
     render() {
-      const { step: currentStep } = this.state;
-      const { Step, validate, ...extraProps } = steps[currentStep];
+      const { step } = this.state;
+      const { Step, validate, ...extraProps } = steps[step];
       const WrappedStep = reduxForm({
         ...reduxFormOpts,
         form,
         validate,
         destroyOnUnmount: false,
       })(Step);
+      const WizardStep = createElement(WrappedStep, {
+        nextStep: this.next,
+        previousStep: this.prev,
+      });
       return createElement(
         OuterComponent,
-        { ...extraProps },
-        createElement(WrappedStep, {
-          nextStep: this.next,
-          previousStep: this.prev,
-        }),
+        { step, stepCount: steps.length, ...extraProps },
+        WizardStep,
       );
     }
   }

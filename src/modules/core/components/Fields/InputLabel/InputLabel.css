@@ -5,7 +5,7 @@
   margin-bottom: 6px;
   width: 100%;
   font-size: var(--size-small);
-  font-weight: 600;
+  font-weight: var(--weight-semi);
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
 

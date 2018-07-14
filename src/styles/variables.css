@@ -4,9 +4,11 @@
   --colony-white: rgb(251, 251, 251);
   --colony-black: rgb(31, 35, 39);
   --sky-blue: rgb(90, 145, 255);
+  --drop-blue: rgb(66, 129, 255);
   --pink: rgb(248, 43, 101); /* user mentions color */
   --danger: rgb(254, 94, 124);
   --grey-dark: rgb(47, 47, 47);
+  --grey-medium: rgb(60, 68, 77);
   --grey-1: rgb(58, 58, 58);
   --grey-3: rgb(82, 84, 85);
   --grey-4: rgb(124, 124, 124);
@@ -23,10 +25,12 @@
   --temp-grey-6: rgb(220, 226, 227);
   --temp-grey-8: rgb(52, 55, 56);
   --temp-grey-11: rgb(136, 136, 136); /* Used for the text color of time for the 'CardActivity' items */
+  --temp-grey-12: rgb(152, 164, 193); /* Used for Drag & Drop placeholder */
   --temp-grey-blue-1: rgb(242, 246, 246); /* Used for the background-color of comments ('CardActivity' comment items) */
   --temp-grey-blue-2: rgb(209, 214, 215); /* Used for the border of attachments preview ('CardActivity' attachment items) */
   --temp-grey-blue-3: rgb(251, 252, 253); /* Used for the board list item ('BordListItem' hover clickable) */
   --temp-grey-blue-4: rgb(200, 214, 247); /* Used for some box shadows */
+  --temp-grey-blue-5: rgb(207, 213, 229); /* Used for Drag & Drop items */
 
   /*
    * Radius
@@ -61,7 +65,9 @@
   --text: color(var(--grey-dark) alpha(70%));
   --text-dark: var(--colony-black);
   --text-invert: var(--colony-white);
+  --weight-thin: 300;
   --weight-normal: 400;
+  --weight-medium: 500;
   --weight-semi: 600;
   --size-unreadable: 10px;
   --size-tiny: 11px;

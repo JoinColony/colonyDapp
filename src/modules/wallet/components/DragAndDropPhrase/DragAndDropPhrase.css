@@ -1,0 +1,86 @@
+@import 'variables.css';
+
+.content {
+  width: 460px;
+}
+
+.title {
+  margin-top: 180px;
+}
+
+.subtitle {
+  margin-bottom: 65px;
+}
+
+.greyBox {
+  padding: 60px;
+  min-height: 86px;
+  position: relative;
+  border: 1px solid rgb(213, 213, 213);
+  border-radius: 3px;
+  background-color: rgb(232, 236, 245);
+  text-align: center;
+}
+
+.errorOverlay {
+  height: 110px;
+  width: 460px;
+  position: absolute;
+  background-color: var(--pink);
+  opacity: 0.1;
+}
+
+.errorMessage {
+  margin-top: 20px;
+  font-weight: var(--weight-medium);
+  color: var(--pink);
+}
+
+.buttonsToMakeYouDrag {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttonsForBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.heading {
+  flex: 1;
+  margin-top: 11px;
+  margin-bottom: 9px;
+  font-weight: var(--weight-semi);
+}
+
+.placeholder {
+  width: 100%;
+  position: absolute;
+  top: 500px;
+  left: 0;
+  overflow: hidden;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-semi);
+  text-align: center;
+  color: var(--temp-grey-12);
+}
+
+.placeholderTop {
+  margin-top: 35px;
+  width: 100%;
+  position: absolute;
+  top: 440px;
+  left: 0;
+  overflow: hidden;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-semi);
+  text-align: center;
+  color: var(--temp-grey-12);
+}
+
+.wordContainer {
+  overflow: hidden;
+  border-bottom: 1px solid var(--grey-blue-0);
+}

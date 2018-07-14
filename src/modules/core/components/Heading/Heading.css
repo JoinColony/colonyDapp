@@ -3,6 +3,7 @@
 .main {
   composes: medium from '~styles/titles.css';
   margin-bottom: 20px;
+  font-family: var(--family-primary);
   white-space: pre-line;
   color: var(--text);
 }
@@ -53,6 +54,10 @@
   margin-bottom: 0 !important;
 }
 
+.marginSmall {
+  margin-bottom: 6px !important;
+}
+
 /*
  * Sizing
  *
@@ -60,7 +65,8 @@
  */
 
 .sizeHuge {
-  composes: huge from '~styles/titles.css';
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-huge);
 }
 
 .sizeLarge {
@@ -68,15 +74,39 @@
   font-size: var(--size-large);
 }
 
-.sizeThin {
-  composes: thin from '~styles/titles.css';
+.sizeMediumL {
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-medium-l);
+}
+
+.sizeNormal {
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-normal);
 }
 
 .sizeSmall {
-  composes: small from '~styles/titles.css';
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-small);
 }
 
 .sizeTiny {
-  composes: tiny from '~styles/titles.css';
-  margin-bottom: 10px;
+  composes: title from '~styles/titles.css';
+  font-size: var(--size-tiny);
+}
+
+/*
+ * Font Width
+ *
+ * Next set of classes will define the headings's width
+ */
+.widthThin {
+  font-weight: var(--weight-medium);
+}
+
+.widthVeryThin {
+  font-weight: var(--weight-thin);
+}
+
+.widthBold {
+  font-weight: var(--weight-semi);
 }

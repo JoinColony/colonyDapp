@@ -14,13 +14,13 @@
 .main {
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
-  padding: 4px 16px;
-  height: 27px;
+  padding: 0 50px;
+  height: 44px;
   position: relative;
   border: 1px solid transparent;
   border-radius: var(--radius-tiny);
   background-color: transparent;
-  font-size: var(--size-small);
+  font-size: var(--size-normal);
   font-weight: var(--weight-semi);
   text-align: center;
   white-space: nowrap;
@@ -122,7 +122,7 @@
 
 .themePrimary {
   composes: main;
-  border-color: var(--primary);
+  border: none;
   background-color: var(--primary);
   color: var(--colony-white);
 }
@@ -160,6 +160,26 @@
 
 .themeSecondary.colorSchemaInverted:hover {
   color: color(var(--colony-white) shade(30%));
+}
+
+/*
+ * Secondary
+ * Buttons with grey background and no border
+ */
+
+.themeTertiary {
+  composes: main;
+  background-color: var(--temp-grey-5);
+  font-weight: var(--weight-normal);
+  color: var(--colony-white);
+}
+
+.themeTertiary:hover {
+  background-color: color(var(--temp-grey-5) shade(30%));
+}
+
+.themeTertiary.colorSchemaInverted {
+  color: var(--colony-white);
 }
 
 /*
@@ -226,6 +246,28 @@
 
 .themeGhost.colorSchemaGrey.sizeLarge {
   padding: 10px 32px;
+}
+
+.themeGhost.colorSchemaNoBorder {
+  padding: 3px 16px;
+  border: none;
+  color: var(--grey-4);
+}
+
+.themeGhost.colorSchemaNoBorder:hover {
+  border: none;
+  color: color(var(--text) shade(30%));
+}
+
+.themeGhost.colorSchemaNoBorderBlue {
+  padding: 3px 16px;
+  border: none;
+  color: var(--sky-blue);
+}
+
+.themeGhost.colorSchemaNoBorderBlue:hover {
+  border: none;
+  color: color(var(--sky-blue) shade(30%));
 }
 
 /*

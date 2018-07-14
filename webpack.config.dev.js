@@ -52,27 +52,12 @@ const config = {
       },
       {
         test: /\.svg$/,
-        include: path.resolve(__dirname, 'src', 'img'),
-        exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'images/image.[hash].svg',
-            },
-          },
-          {
-            loader: 'svgo-loader',
-            options: {
-              plugins: [
-                { removeTitle: true },
-                { convertColors: { shorthex: false } },
-                { convertPathData: false },
-              ],
-            },
-          },
-        ],
+        use: ['svgr/webpack'],
       },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: 'file-loader',
+      }
     ],
   },
   plugins: [
