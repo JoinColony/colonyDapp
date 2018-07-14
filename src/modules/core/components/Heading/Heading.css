@@ -1,0 +1,109 @@
+@import 'variables.css';
+
+.main {
+  margin-bottom: 20px;
+  font-family: var(--family-primary);
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-semi);
+  line-height: 1.5;
+  word-break: normal;
+  white-space: pre-line;
+  color: var(--text);
+}
+
+/*
+ * Theme-ing
+ *
+ * Next set of classes will define our various heading themes.
+ */
+
+/*
+ * Primary is using the `colony` `green` color, as opposes as a `dark-grey` color for the heading.
+ * This is done for consistency: everywhere we refer to something as `primary` we expect `colony` `green`.
+ */
+.themePrimary {
+  composes: main;
+  color: var(--primary);
+}
+
+.themeDark {
+  composes: main;
+  color: var(--grey-1);
+}
+
+.themeInvert {
+  composes: main;
+  color: var(--text-invert);
+}
+
+.themeUppercase {
+  composes: main;
+  text-transform: uppercase;
+  color: var(--temp-grey-11);
+}
+
+/*
+ * Margins
+ *
+ * Next set of classes will define the headings's margins
+ */
+
+.marginNone {
+  /* Need to overwrite the size class */
+  margin-bottom: 0 !important;
+}
+
+.marginSmall {
+  margin-bottom: 6px !important;
+}
+
+.marginDouble {
+  margin-bottom: 40px;
+}
+
+/*
+ * Sizing
+ *
+ * Next set of classes will define the headings's size
+ */
+
+.sizeTiny {
+  font-size: var(--size-tiny);
+}
+
+.sizeSmall {
+  font-size: var(--size-small);
+}
+
+.sizeNormal {
+  font-size: var(--size-normal);
+}
+
+.sizeMedium {
+  font-size: var(--size-medium-l);
+}
+
+.sizeLarge {
+  font-size: var(--size-large);
+}
+
+.sizeHuge {
+  font-size: var(--size-huge);
+}
+
+/*
+ * Font weight
+ *
+ * Next set of classes will define the headings's weight
+ */
+.weightThin {
+  font-weight: var(--weight-thin);
+}
+
+.weightMedium {
+  font-weight: var(--weight-medium);
+}
+
+.weightBold {
+  font-weight: var(--weight-semi);
+}

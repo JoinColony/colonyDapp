@@ -13,7 +13,6 @@ import styles from './Button.css';
 const displayName = 'core.Button';
 
 type Appearance = {
-  // eslint-disable-next-line flowtype/space-after-type-colon
   theme?:
     | 'primary'
     | 'secondary'
