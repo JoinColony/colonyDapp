@@ -86,7 +86,7 @@
     "lint-staged": "^7.1.1",
     "node-fetch": "^2.1.2",
     "plop": "^2.0.0",
-    "postcss": "^6.0.16",
+    "postcss": "^7.0.0",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^11.0.0",
     "postcss-loader": "^2.0.8",
