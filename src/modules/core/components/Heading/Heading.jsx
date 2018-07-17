@@ -25,23 +25,26 @@ type Props = {
   /** String that will hard set the heading element to render */
   tagName?: string,
   /** Used to extend the functionality of the component. This will not generate a title attribute on the element. */
-  children: Node,
+  children?: Node,
   /** A string or a `MessageDescriptor` that make up the headings's text */
-  text: MessageDescriptor | string,
-  /** Values for loading text (react-intl interpolation) */
-  textValues?: { [string]: string },
+  text?: MessageDescriptor | string,
+  /** Values for text (react-intl interpolation) */
+  textValues?: { [string]: any },
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
 
 const getText = (
   children: Node,
-  text: MessageDescriptor | string,
+  text?: MessageDescriptor | string,
   textValues,
   { formatMessage }: IntlShape,
 ) => {
   if (children) {
     return children;
+  }
+  if (!text) {
+    return '';
   }
   if (typeof text == 'string') {
     return text;
