@@ -56,6 +56,52 @@ const config = {
         test: /\.svg$/,
         use: ['@svgr/webpack'],
       },
+      /*
+      * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
+      * This loader also runs the images through a svg optimizer. See: https://github.com/svg/svgo#what-it-can-do
+      */
+      {
+        test: /\.svg$/,
+        include: path.resolve(__dirname, 'src', 'img', 'icons'),
+        use: [
+          {
+            loader: 'svg-sprite-loader',
+          },
+          {
+            loader: 'svgo-loader',
+            options: {
+              plugins: [
+                { removeTitle: true },
+                { convertColors: { shorthex: false }},
+                { convertPathData: false },
+              ],
+            },
+          },
+        ],
+      }
+      // {
+      //   test: /\.svg$/,
+      //   include: path.resolve(__dirname, 'src', 'img'),
+      //   exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
+      //   use: [
+      //     {
+      //       loader: 'file-loader',
+      //       options: {
+      //         name: 'images/image.[hash].svg',
+      //       },
+      //     },
+      //     {
+      //       loader: 'svgo-loader',
+      //       options: {
+      //         plugins: [
+      //           { removeTitle: true },
+      //           { convertColors: { shorthex: false } },
+      //           { convertPathData: false },
+      //         ],
+      //       },
+      //     },
+      //   ],
+      // },
     ],
   },
   plugins: [
