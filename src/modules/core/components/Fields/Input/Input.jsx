@@ -115,7 +115,7 @@ class Input extends Component<Props> {
     const inputProps = {
       id: $id,
       name,
-      'aria-invalid': $touched && !!$error,
+      'aria-invalid': $error ? true : null,
       className: getMainClasses(appearance, styles),
       value: $value,
       ...props,

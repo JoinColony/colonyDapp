@@ -90,14 +90,16 @@ const asField: HOC<*, OutProps> = compose(
       name: fieldName || name || id,
       placeholder: formatIntl(placeholder, formatMessage),
       title:
-        formatIntl(errors && errors[name], formatMessage) ||
+        formatIntl(errors && errors[fieldName], formatMessage) ||
         formatIntl(title, formatMessage) ||
         formatIntl(label, formatMessage) ||
         formatIntl(placeholder, formatMessage),
       $id: id || fieldName || name,
-      $error: errors && errors[name],
-      $value: value,
-      $touched: touched && touched[name],
+      $error: errors && errors[fieldName],
+      // This is assigning an empty string to the field's value.
+      // It might be problematic for some cases but for now I couldn't think of one
+      $value: value || '',
+      $touched: touched && touched[fieldName],
       onChange,
       onBlur,
       ...props,
