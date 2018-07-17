@@ -8,6 +8,10 @@ module.exports = {
   },
   sections: [
     {
+      name: 'Typography',
+      components: ['./src/modules/core/components/Heading/Heading.jsx'],
+    },
+    {
       name: 'Forms',
       components: [
         './src/modules/core/components/Fields/Input/Input.jsx',
