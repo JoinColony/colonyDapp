@@ -22,7 +22,7 @@ type State = {
  * @param {[type]} preloader A component to be rendered while the lazy loaded component is being downloaded. (optional)
  */
 export default class AsyncComponentLoader extends Component<Props, State> {
-  static displayName = 'core.AsyncComponentLoader';
+  static displayName = 'AsyncComponentLoader';
 
   state = {
     loadedComponent: null,

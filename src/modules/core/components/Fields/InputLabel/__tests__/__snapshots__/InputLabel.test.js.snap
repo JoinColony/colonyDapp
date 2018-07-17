@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`InputLabel intl={intl} component Renders initial component 1`] = `
-<core.Fields.InputLabel
+<InputLabel
   appearance={Object {}}
   error="red"
   help="halp"

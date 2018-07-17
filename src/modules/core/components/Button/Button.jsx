@@ -10,7 +10,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './Button.css';
 
-const displayName = 'core.Button';
+const displayName = 'Button';
 
 type Appearance = {
   theme?:

@@ -10,7 +10,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './Heading.css';
 
-const displayName = 'core.Heading';
+const displayName = 'Heading';
 
 type Appearance = {
   theme?: 'primary' | 'dark' | 'invert' | 'uppercase',

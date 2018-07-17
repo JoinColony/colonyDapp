@@ -9,7 +9,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './InputLabel.css';
 
-const displayName = 'core.Fields.InputLabel';
+const displayName = 'InputLabel';
 
 type Appearance = {
   theme?: 'fat' | 'underlined',

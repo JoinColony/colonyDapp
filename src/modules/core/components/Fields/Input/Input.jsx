@@ -66,9 +66,9 @@ type Props = {
   onChange: Function,
 };
 
-const displayName = 'Fields.Input';
-
 class Input extends Component<Props> {
+  static displayName = 'Input';
+
   static defaultProps = {
     appearance: {},
   };
@@ -144,7 +144,5 @@ class Input extends Component<Props> {
     );
   }
 }
-
-Input.displayName = displayName;
 
 export default asField(Input);

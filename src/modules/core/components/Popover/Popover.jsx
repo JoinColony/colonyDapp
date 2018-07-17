@@ -68,6 +68,8 @@ class Popover extends Component<Props, State> {
 
   openTimeout: TimeoutID;
 
+  static displayName = 'Popover';
+
   static defaultProps = {
     closeOnBackdropClick: true,
     placement: 'top',
