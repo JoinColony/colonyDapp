@@ -1,5 +1,7 @@
 Some introductory text describing forms followed by some cool examples.
 
+TODO: Write something about disconnecting form fields from Formik (`connect={false}`), setFieldValue, etc.
+
 ### Wizard
 
 ```js

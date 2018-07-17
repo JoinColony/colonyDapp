@@ -17,6 +17,7 @@ module.exports = {
         './src/modules/core/components/Fields/Input/Input.jsx',
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',
         './src/modules/core/components/Button/Button.jsx',
+        './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
       ],
       content: 'docs/Forms.md',
     },
