@@ -41,7 +41,9 @@ type Props = {
   /** Button type (button|submit) */
   type: string,
   /** A string or a `messageDescriptor` that make up the button's text label */
-  value?: MessageDescriptor | string,
+  text?: MessageDescriptor | string,
+  /** Values for loading text (react-intl interpolation) */
+  textValues?: { [string]: any },
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
@@ -69,14 +71,15 @@ const Button = ({
   intl: { formatMessage },
   loading = false,
   title,
-  value,
+  text,
+  textValues,
   type = 'button',
   ...props
 }: Props) => {
   const titleText =
     typeof title == 'string' ? title : title && formatMessage(title);
-  const valueText =
-    typeof value == 'string' ? value : value && formatMessage(value);
+  const buttonText =
+    typeof text == 'string' ? text : text && formatMessage(text, textValues);
   return (
     <button
       className={className || getMainClasses(appearance, styles)}
@@ -87,7 +90,7 @@ const Button = ({
       ref={innerRef}
       {...props}
     >
-      {valueText || children}
+      {buttonText || children}
     </button>
   );
 };

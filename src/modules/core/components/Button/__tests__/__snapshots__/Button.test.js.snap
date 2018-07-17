@@ -27,6 +27,6 @@ exports[`Button component Renders initial component 1`] = `
       "textComponent": "span",
     }
   }
-  value="Some Text"
+  text="Some Text"
 />
 `;

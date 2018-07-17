@@ -1,19 +1,19 @@
 ### Button themes
 
 ```js
-<Button appearance={{ theme: 'primary' }} value="primary button" />
-<Button appearance={{ theme: 'secondary' }} value="secondary button" />
-<Button appearance={{ theme: 'danger' }} value="danger button" />
-<Button appearance={{ theme: 'ghost' }} value="ghost button" />
-<Button appearance={{ theme: 'underlinedBold' }} value="underlinedBold button" />
-<Button appearance={{ theme: 'blue' }} value="blue button" />
+<Button appearance={{ theme: 'primary' }} text="primary button" />
+<Button appearance={{ theme: 'secondary' }} text="secondary button" />
+<Button appearance={{ theme: 'danger' }} text="danger button" />
+<Button appearance={{ theme: 'ghost' }} text="ghost button" />
+<Button appearance={{ theme: 'underlinedBold' }} text="underlinedBold button" />
+<Button appearance={{ theme: 'blue' }} text="blue button" />
 ```
 
 ### Button sizes
 
 ```js
-<Button appearance={{ theme: 'primary' }} value="normal button" />
-<Button appearance={{ theme: 'primary', size: 'large' }} value="large button" />
+<Button appearance={{ theme: 'primary' }} text="normal button" />
+<Button appearance={{ theme: 'primary', size: 'large' }} text="large button" />
 ```
 
 ### Button states
@@ -21,15 +21,15 @@
 #### Loading
 
 ```js
-<Button appearance={{ theme: 'primary' }} value="loading button" loading={true} />
-<Button appearance={{ theme: 'primary', size: 'large' }} value="loading button" loading={true} />
+<Button appearance={{ theme: 'primary' }} text="loading button" loading={true} />
+<Button appearance={{ theme: 'primary', size: 'large' }} text="loading button" loading={true} />
 ```
 
 #### Disabled
 
 ```js
-<Button appearance={{ theme: 'primary' }} value="disabled button" disabled={true} />
-<Button appearance={{ theme: 'primary', size: 'large' }} value="disabled button" disabled={true} />
+<Button appearance={{ theme: 'primary' }} text="disabled button" disabled={true} />
+<Button appearance={{ theme: 'primary', size: 'large' }} text="disabled button" disabled={true} />
 ```
 
 ### Button with children

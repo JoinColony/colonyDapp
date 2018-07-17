@@ -9,12 +9,12 @@ import Button from '../Button.jsx';
 
 describe('Button component', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl(<Button value="Some Text" />);
+    const wrapper = shallowWithIntl(<Button text="Some Text" />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   test('renders a plain value', () => {
-    const wrapper = mountWithIntl(<Button value="Some Text" />);
+    const wrapper = mountWithIntl(<Button text="Some Text" />);
     expect(wrapper.text()).toBe('Some Text');
   });
 
@@ -23,7 +23,7 @@ describe('Button component', () => {
       id: 'intl id',
       defaultMessage: 'intl default message',
     };
-    const wrapper = mountWithIntl(<Button value={intlMessage} />);
+    const wrapper = mountWithIntl(<Button text={intlMessage} />);
     expect(wrapper.text()).toBe('intl default message');
   });
 
@@ -44,18 +44,18 @@ describe('Button component', () => {
   });
 
   test('button is busy when loading', () => {
-    const wrapper = shallowWithIntl(<Button value="Some Text" loading />);
+    const wrapper = shallowWithIntl(<Button text="Some Text" loading />);
     expect(wrapper.html()).toContain('aria-busy="true"');
   });
 
   test('button is disabled', () => {
-    const wrapper = shallowWithIntl(<Button value="Some Text" disabled />);
+    const wrapper = shallowWithIntl(<Button text="Some Text" disabled />);
     expect(wrapper.prop('disabled')).toBe(true);
   });
 
   test('button has custom props', () => {
     const wrapper = shallowWithIntl(
-      <Button value="Some Text" data-test="test additional props" />,
+      <Button text="Some Text" data-test="test additional props" />,
     );
     expect(wrapper.prop('data-test')).toBe('test additional props');
   });
