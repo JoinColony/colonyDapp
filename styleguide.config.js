@@ -25,10 +25,12 @@ module.exports = {
       components: ['./src/modules/core/components/Popover/Popover.jsx'],
     },
     {
-      name: 'Loaders',
+      name: 'Loaders & Progress',
       components: [
         './src/modules/core/components/Preloaders/LogoLoader.jsx',
         './src/modules/core/components/Preloaders/SpinnerLoader.jsx',
+        './src/modules/core/components/ProgressBar/ProgressBar.jsx',
+        './src/modules/core/components/ProgressBar/StepBar.jsx',
       ],
     },
   ],
