@@ -4,7 +4,7 @@ Some introductory text describing forms followed by some cool examples.
 
 ```js
 const yup = require('yup');
-const withWizard = require('../src/modules/core/components/Wizard').default;
+const withWizard = require('../src/modules/core/components/Wizard/withWizard').default;
 const OuterTemplate = (({ children }) => <div>{children}</div>);
 const Step1 = ({ handleSubmit, step, values }) => (
   <form onSubmit={handleSubmit}>
