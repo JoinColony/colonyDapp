@@ -23,6 +23,7 @@
     "test": "jest --config=jest.conf.json",
     "test:integration": "jest --clearCache && jest --runInBand --config=jest-integration.conf.json",
     "test:integration:start-pinning": "cd src/lib/pinningService && yarn start",
+    "test:integration:ci:start-pinning": "cd src/lib/pinningService && yarn start:integration:ci",
     "test:integration:watch": "WATCH=true yarn test:integration --watchAll",
     "test:integration:debug": "DEBUG=true yarn test:integration --color | tee integration-testing-output.log",
     "test:integration:ci": "jest --clearCache && NODE_ENV=test jest --ci --bail --verbose --runInBand --config=jest-integration.conf.json --reporters='jest-junit'",
