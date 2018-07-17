@@ -51,7 +51,7 @@ type Props = {
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
-  label: string,
+  label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
   /** @ignore Will be injected by `asField` */
@@ -62,6 +62,8 @@ type Props = {
   $value?: string,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
+  /** @ignore Will be injected by `asField` */
+  setValue: (val: any) => void,
   /** @ignore Standard input field property */
   onChange: Function,
 };
@@ -109,6 +111,7 @@ class Input extends Component<Props> {
       $value,
       $error,
       $touched,
+      setValue,
       ...props
     } = this.props;
 

@@ -30,6 +30,11 @@ type InProps = CommonProps & {
   form: {
     touched: Object,
     errors: Object,
+    setFieldValue: (
+      field: string,
+      value: any,
+      shouldValidate?: boolean,
+    ) => void,
   },
   field: {
     name: string,
@@ -77,7 +82,7 @@ const asField: HOC<*, OutProps> = compose(
       id,
       intl: { formatMessage },
       field: { name: fieldName, value, onChange, onBlur } = {},
-      form: { touched, errors } = {},
+      form: { touched, errors, setFieldValue } = {},
       label,
       name,
       placeholder,
@@ -102,6 +107,7 @@ const asField: HOC<*, OutProps> = compose(
       $touched: touched && touched[fieldName],
       onChange,
       onBlur,
+      setValue: (val: any) => setFieldValue(fieldName, val),
       ...props,
     }),
   ),
