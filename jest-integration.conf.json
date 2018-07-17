@@ -7,7 +7,6 @@
         "utils"
     ],
     "setupFiles": [
-        "<rootDir>/utils/patch-node-crypto.js",
         "<rootDir>/utils/setup-accounts-global.js",
         "<rootDir>/utils/fetch-polyfill.js"
     ],
