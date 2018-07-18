@@ -5,7 +5,7 @@ import type { ComponentType } from 'react';
 import { createElement, Component } from 'react';
 import { withFormik } from 'formik';
 
-type SubmitFn = (values: Object, goodies: Object) => any;
+export type SubmitFn = (values: Object, goodies: Object) => any;
 
 type ValidationSchema = Object;
 
@@ -18,10 +18,10 @@ type State = {
 
 type StepType = {
   Step: ComponentType<any>,
+  onSubmit: SubmitFn,
   validationSchema?:
     | ValidationSchema
     | (({ [string]: any }) => ValidationSchema),
-  onSubmit: SubmitFn,
   formikConfig?: Object,
 };
 

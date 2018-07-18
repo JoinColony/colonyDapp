@@ -39,7 +39,7 @@ type Props = {
   /** Standard html title attribute. Can be a string or a `messageDescriptor` */
   title?: MessageDescriptor | string,
   /** Button type (button|submit) */
-  type: string,
+  type?: string,
   /** A string or a `messageDescriptor` that make up the button's text label */
   text?: MessageDescriptor | string,
   /** Values for loading text (react-intl interpolation) */

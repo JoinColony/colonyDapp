@@ -16,7 +16,7 @@ import rootReducer from './reducer';
 /* eslint-disable-next-line max-len */
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 // import CreateColony from './modules/dashboard/components/CreateColony';
-// import CreateWallet from './modules/wallet/components/CreateWallet';
+import CreateWalletWizard from './modules/createwallet/components/CreateWalletWizard';
 import { SpinnerLoader } from './modules/core/components/Preloaders';
 
 addLocaleData(en);
@@ -46,7 +46,7 @@ const Home = () => (
         </NavLink>
       </li>
       <li>
-        <NavLink style={{ color: 'blue' }} to="/create-wallet">
+        <NavLink style={{ color: 'blue' }} to="/createwallet">
           Create Wallet
         </NavLink>
       </li>
@@ -82,6 +82,7 @@ export default function App() {
           <div className={layout.stretch}>
             <Route exact path="/" component={Home} />
             <Route path="/dynamic-import-route" component={DynamicRoute} />
+            <Route path="/createwallet" component={CreateWalletWizard} />
           </div>
         </Router>
       </Provider>

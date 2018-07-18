@@ -1,0 +1,61 @@
+@import 'variables.css';
+
+.row {
+  display: flex;
+  padding: 12px 16px;
+  height: 64px;
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.rowContent {
+  flex: 6;
+}
+
+.rowIcon {
+  flex: 1;
+}
+
+.rowArrow {
+  flex: 1;
+}
+
+.content {
+  width: 340px;
+}
+
+.title {
+  margin-top: 124px;
+  margin-bottom: 45px;
+  font-weight: var(--weight-medium);
+}
+
+.subtitle {
+  margin-bottom: 47px;
+  font-size: 14px;
+}
+
+.callToAction {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 64px;
+  padding: 10px 16px;
+  max-height: 60px;
+  width: 100%;
+  border: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+.callToAction:focus {
+  outline: none;
+}
+
+.actionImage {
+  flex: 1;
+  margin-top: 7px;
+}
+
+.actionText {
+  flex: 6;
+  text-align: left;
+}
