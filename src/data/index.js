@@ -16,6 +16,8 @@ import type {
   Task,
 } from './types';
 
+import METACOLONY_ADDRESS from '../utils/constants';
+
 export default class Data {
   _pinner: ?Pinner;
   /*
