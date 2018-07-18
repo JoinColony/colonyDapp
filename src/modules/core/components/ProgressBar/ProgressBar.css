@@ -1,0 +1,26 @@
+@import 'variables.css';
+
+.main {
+  height: 4px;
+  width: 100%;
+  border: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.main::-webkit-progress-bar {
+  border-radius: 1px;
+  background-color: var(--temp-grey-5);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1) inset;
+}
+
+.main::-webkit-progress-value {
+  border-radius: 1px;
+  background-color: var(--primary);
+}
+
+.main::-moz-progress-bar {
+  border-radius: 1px;
+  background-color: var(--primary);
+}

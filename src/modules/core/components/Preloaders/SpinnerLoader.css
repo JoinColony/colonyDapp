@@ -1,0 +1,45 @@
+@import 'variables.css';
+
+@keyframes spin-around {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.main {
+  display: inline-block;
+  text-align: center;
+}
+
+.loader {
+  display: block;
+  margin: 0 auto;
+  height: 16px;
+  width: 16px;
+  position: relative;
+  border: 2px solid var(--grey-5);
+  border-radius: 50%;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  animation: spin-around 500ms infinite linear;
+  content: '';
+}
+
+.sizeSmall .loader {
+  height: 14px;
+  width: 14px;
+}
+
+.sizeMedium .loader {
+  height: 28px;
+  width: 28px;
+}
+
+.sizeLarge .loader {
+  height: 42px;
+  width: 42px;
+}

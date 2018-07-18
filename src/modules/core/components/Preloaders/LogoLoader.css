@@ -1,0 +1,50 @@
+@keyframes logo-loader-scale {
+  0% { transform: scale(1); }
+  5% { transform: scale(1.3); }
+  50% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.main svg path {
+  transform-origin: 50% 50%;
+  animation-name: logo-loader-scale;
+  animation-duration: 1200ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.group1 {
+  animation-delay: 0ms;
+}
+
+.group2 {
+  animation-delay: 60ms;
+}
+
+.group3 {
+  animation-delay: 120ms;
+}
+
+.group4 {
+  animation-delay: 180ms;
+}
+
+.group5 {
+  animation-delay: 240ms;
+}
+
+.group6 {
+  animation-delay: 300ms;
+}
+
+.group7 {
+  animation-delay: 360ms;
+}
+
+.group8 {
+  animation-delay: 420ms;
+}
+
+.group9 {
+  animation-delay: 480ms;
+}

@@ -1,0 +1,5 @@
+### SpinnerLoader
+
+```js
+<SpinnerLoader />
+```

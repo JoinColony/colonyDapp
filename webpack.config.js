@@ -1,16 +1,17 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 const config = {
-  // entry: './src/index.js',
-  // mode: 'development',
-  // output: {
-  //   filename: 'bundle.js',
-  //   path: path.resolve(__dirname, 'dist'),
-  // },
+  entry: './src/index.js',
+  mode: 'development',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
+  },
   resolve: {
     alias: {
       '~utils': path.resolve(__dirname, 'src/utils/'),
@@ -30,7 +31,7 @@ const config = {
       {
         test: /\.css$/,
         include: [
-          path.resolve(__dirname, 'src', 'components'),
+          path.resolve(__dirname, 'src', 'modules'),
           path.resolve(__dirname, 'src', 'styles'),
         ],
         use: [
@@ -48,33 +49,24 @@ const config = {
         ],
       },
       {
-        test: /\.(woff|woff2)$/,
+        test: /\.(woff|woff2|png|jpg|gif)$/,
         use: 'file-loader',
-      }
-      // {
-      //   test: /\.svg$/,
-      //   include: path.resolve(__dirname, 'src', 'img'),
-      //   exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
-      //   use: [
-      //     {
-      //       loader: 'file-loader',
-      //       options: {
-      //         name: 'images/image.[hash].svg',
-      //       },
-      //     },
-      //     {
-      //       loader: 'svgo-loader',
-      //       options: {
-      //         plugins: [
-      //           { removeTitle: true },
-      //           { convertColors: { shorthex: false } },
-      //           { convertPathData: false },
-      //         ],
-      //       },
-      //     },
-      //   ],
-      // },
+      },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
     ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/templates/index.html',
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
+  devServer: {
+    historyApiFallback: true,
+    hot: true,
   },
 };
 
