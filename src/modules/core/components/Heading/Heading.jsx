@@ -53,7 +53,7 @@ const getText = (
 };
 
 const Heading = ({
-  appearance = { size: 'medium' },
+  appearance = { size: 'huge' },
   children,
   intl,
   tagName,
@@ -71,7 +71,7 @@ const Heading = ({
       normal: 'h4',
       small: 'h5',
       tiny: 'h6',
-    }[size];
+    }[size || 'huge'];
   const value = getText(children, text, textValues, intl);
   return (
     <HeadingElement

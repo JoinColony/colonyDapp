@@ -25,7 +25,7 @@ describe('Heading component', () => {
   });
   test('Has default heading element props', () => {
     const wrapper = mountWithIntl(<Heading text={mockTitle} />);
-    expect(wrapper.html()).toContain('<h3');
+    expect(wrapper.html()).toContain('<h1');
   });
   test('Correctly generates heading elements', () => {
     /*
