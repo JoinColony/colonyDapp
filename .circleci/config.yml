@@ -72,9 +72,6 @@ workflows:
       - build-styleguide:
           requires:
             - test
-          filters:
-            branches:
-              only: master
       - deploy-styleguide:
           requires:
             - build-styleguide

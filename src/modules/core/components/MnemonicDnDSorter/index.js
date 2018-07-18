@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './MnemonicDndSorter.jsx';
+export { default } from './MnemonicDnDSorter.jsx';
