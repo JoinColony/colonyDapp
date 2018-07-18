@@ -49,7 +49,7 @@ Icon.displayName = displayName;
 /* eslint-disable import/no-dynamic-require */
 const icons = iconsList.reduce((prev, current) => {
   const iconObject = prev;
-  iconObject[current] = require(`../../img/icons/${current}.svg`); // eslint-disable-line global-require
+  iconObject[current] = require(`../../../../img/icons/${current}.svg`); // eslint-disable-line global-require
   return iconObject;
 }, {});
 

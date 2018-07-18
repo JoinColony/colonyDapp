@@ -13,9 +13,7 @@ module.exports = {
     },
     {
       name: 'Content',
-      components: [
-        './src/components/Icon/Icon.jsx',
-      ]
+      components: ['./src/modules/core/components/Icon/Icon.jsx'],
     },
     {
       name: 'Forms',

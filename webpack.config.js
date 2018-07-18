@@ -54,6 +54,7 @@ const config = {
       },
       {
         test: /\.svg$/,
+        exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
         use: ['@svgr/webpack'],
       },
       /*
