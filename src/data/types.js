@@ -14,6 +14,7 @@ export type IPFSOptions = {};
 type IPFSSwarmAddress = string;
 type IPFSBootstrapAddress = string;
 type path = string;
+export type PublicKey = string;
 
 export type ColonyAddress = string;
 export type IPFSHash = string;

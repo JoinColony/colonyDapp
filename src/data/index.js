@@ -12,13 +12,72 @@ import type {
   OrbitKVStore,
   OrbitNode,
   Pinner,
+  PublicKey,
   Task,
 } from './types';
 
-type PublicKey = string;
-
 export default class Data {
   _pinner: ?Pinner;
+  /*
+    Returns metadata for the given user.
+  */
+  async getUserProfile(key: PublicKey): Promise<UserProfile> {
+    const store = await this._orbitNode.kvstore(key);
+    await store.load();
+    return new UserProfile(store);
+  }
+
+  /*
+    Returns metadata for the logged-in user's profile.
+  */
+  async getMyUserProfile(): Promise<UserProfile> {
+    const store = await this.getUserProfile('user-profile');
+    await this._pinner.pinKVStore(store.address);
+    return store;
+  }
+
+  /*
+    Returns metadata for the MetaColony. Meta.
+  */
+  async getMetaColony(): Promise<Colony> {}
+
+  /*
+    Returns metadata for the given colony.
+  */
+  async getColony(colonyId: string): Promise<Colony> {
+    return Colony;
+  }
+
+  /*
+    Returns metadata and tasks for the given domain.
+  */
+  async getDomain(domain: string): Promise<Domain> {}
+
+  /*
+   Returns the IPFS documents corresponding to an array of hashes
+  */
+  async getComments(commentHashes: IPFSHash[]): Promise<Comment[]> {
+    return ['a comment'];
+  }
+
+  /*
+   Creates IPFS document, and stores the resulting hash in the task entry
+  */
+  async addComment(comment: Comment): Promise<IPFSHash> {}
+
+  /*
+   Stores a task in 'draft mode' in orbitDB
+   When the task is assigned, it is sent on-chain, and the draft task is deleted
+  */
+  async draftTask(task: Task): Promise<Task> {
+    return Task;
+  }
+
+  /*
+   Setup
+   */
+
+  _pinner: Pinner;
 
   _ipfsNode: ColonyIPFSNode;
 
@@ -26,6 +85,7 @@ export default class Data {
 
   _key: string;
 
+  // TODO Data class should not require consumers to start and pass in IPFS and Orbit
   constructor(pinner: ?Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
     this._pinner = pinner;
     this._ipfsNode = ipfsNode;
@@ -57,59 +117,5 @@ export default class Data {
     const orbitNode = await orbitSetup.getOrbitDB(ipfsNode, orbitConf);
 
     return new Data(pinner, ipfsNode, orbitNode);
-  }
-
-  async getUserProfile(key: PublicKey): Promise<UserProfile> {
-    const store = await this._orbitNode.kvstore(key);
-    await store.load();
-
-    if (this._pinner) {
-      await this._pinner.pin(store);
-    }
-    return new UserProfile(store);
-  }
-
-  async getMyUserProfile(): Promise<UserProfile> {
-    const store = await this.getUserProfile('user-profile');
-    await this._pinner.pinKVStore(store.address);
-    return;
-  }
-
-  // colonyJS
-  async getMetaColony(): Promise<Colony> {}
-
-  // colonyJS
-  // cache in OrbitDB
-  async getColony(colonyId: string): Promise<Colony> {
-    return Colony;
-  }
-
-  // OrbitDB, maybe UserProfile
-  async getUserColonies(): Promise<ColonyAddress[]> {}
-
-  // colonyJS
-  async getSkills(): Promise<SkillsTree> {}
-
-  // colonyJS
-  async getDomain(domain: string): Promise<Domain[]> {}
-
-  // If not in OrbitDB, fetch and return from colonyJS, then cache in OrbitDB
-  // If in OrbitDB, return from OrbitDB, then update from colonyJS
-  async getTask(taskId: string): Promise<Task> {}
-
-  // same
-  async getTasks(taskId: string): Promise<Task> {}
-
-  // IPFS
-  async getTaskComments(taskId: string): Promise<Comment[]> {
-    return ['a comment'];
-  }
-
-  async addComment(comment: Comment): Promise<IPFSHash> {}
-
-  // Store in orbitDB
-  // When submitted to a chain, replace in DDB with normal task
-  async draftTask(task: Task): Promise<Task> {
-    return Task;
   }
 }
