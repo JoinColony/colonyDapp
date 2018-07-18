@@ -80,6 +80,7 @@
     "nanoid": "^1.0.7",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
+    "react-beautiful-dnd": "^8.0.5",
     "react-dom": "^16.4.1",
     "react-intl": "^2.4.0",
     "react-popper": "^1.0.0",
