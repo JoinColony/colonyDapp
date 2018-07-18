@@ -18,7 +18,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-  build:
+  build-styleguide:
     docker:
       - image: circleci/node:10.1
     working_directory: ~/repo
@@ -30,7 +30,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run: yarn install
-      - run: yarn build
+      - run: yarn build:styleguide
       - persist_to_workspace:
           root: .
           paths:
@@ -39,7 +39,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-  deploy:
+  deploy-styleguide:
     docker:
       - image: circleci/node:10.1
     working_directory: ~/repo
@@ -62,22 +62,22 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
       - run: git config --global user.email "github@colony.io"
       - run: git config --global user.name "Colony Superuser"
-      - run: yarn deploy
+      - run: yarn deploy:styleguide
 
 workflows:
   version: 2
-  test-build-and-deploy:
+  styleguide:
     jobs:
       - test
-      - build:
+      - build-styleguide:
           requires:
             - test
           filters:
             branches:
               only: master
-      - deploy:
+      - deploy-styleguide:
           requires:
-            - build
+            - build-styleguide
           filters:
             branches:
               only: master
