@@ -49,19 +49,30 @@ export default class Data {
   /*
     Returns metadata for the MetaColony. Meta.
   */
-  async getMetaColony(): Promise<Colony> {}
+  async getMetaColony(): Promise<Colony> {
+    const metacolony = await this._orbitNode.kvstore(METACOLONY_ADDRESS);
+    await metacolony.load();
+    return metacolony;
+  }
 
   /*
     Returns metadata for the given colony.
   */
-  async getColony(colonyId: string): Promise<Colony> {
-    return Colony;
+  async getColony(colonyID: string): Promise<Colony> {
+    const colony = await this._orbitNode.kvstore(colonyID);
+    await colony.load();
+    return colony;
   }
 
   /*
     Returns metadata and tasks for the given domain.
   */
-  async getDomain(domain: string): Promise<Domain> {}
+  async getDomain(domainKey: string): Promise<Domain> {
+    const domain = await this._orbitNode.kvstore(domainKey);
+    await domain.load();
+    return domain;
+  }
+
   /*
     Returns the IPFS documents corresponding to an array of hashes
   */
@@ -91,8 +102,9 @@ export default class Data {
    Stores a task in 'draft mode' in orbitDB
    When the task is assigned, it is sent on-chain, and the draft task is deleted
   */
-  async draftTask(task: Task): Promise<Task> {
-    return Task;
+  async draftTask(domainKey: string, task: Task) {
+    const domain = await this.getDomain(domainKey);
+    await domain.addTask(task);
   }
 
   /*
