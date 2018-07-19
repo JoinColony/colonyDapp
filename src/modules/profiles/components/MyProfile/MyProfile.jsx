@@ -6,8 +6,8 @@ const MyProfile = () => (
   <div>
     <h2>My Profile</h2>
 
-    <CreateProfile/>
+    <CreateProfile />
   </div>
-)
+);
 
 export default MyProfile;

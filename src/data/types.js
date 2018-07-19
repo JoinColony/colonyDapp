@@ -51,26 +51,26 @@ export type StoreAddress = string;
 
 export type Pinner = { pin: StoreAddress => Promise<void> };
 
-export type Domain = {
-  name: string,
-  color: string,
-};
-
 export type Task = {
   spec: IPFSHash,
   dueDate: Date,
   title: string,
   comments: IPFSHash[],
   taskLabels: string[],
-  taskDomains: Domain[],
   taskSkills: string[],
+  createdAt: Date,
+  assignedTo: string,
+  bounty: number,
+  createdBy: string,
+  _id: string,
 };
 
-export type Colony = {
-  Domains: Domain[],
+export type Domain = {
+  name: string,
+  color: string,
+  addTask: Function,
+  addComment: Function,
   tasks: Task[],
-  Members: User[],
-  Funds: Token[],
 };
 
 export type User = {
@@ -83,4 +83,10 @@ export type Token = {
   name: string,
   symbol: string,
   decimals: string,
+};
+
+export type Colony = {
+  Domains: Domain[],
+  Members: User[],
+  Funds: Token[],
 };

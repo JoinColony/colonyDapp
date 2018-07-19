@@ -100,12 +100,12 @@ export async function waitForSomePeers(ipfs: IPFSNode): Promise<IPFSPeer[]> {
  */
 export async function waitForPeer(
   ipfs: IPFSNode,
-  peerID: B58String,
+  peerId: B58String,
 ): Promise<boolean> {
   let peers = await waitForSomePeers(ipfs);
   let peersB58 = peers.map(peerToB58String);
 
-  while (peersB58.indexOf(peerID) < 0) {
+  while (peersB58.indexOf(peerId) < 0) {
     await sleep(500);
     peers = await waitForSomePeers(ipfs);
     peersB58 = peers.map(peerToB58String);
@@ -193,7 +193,7 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
 
   ipfs.ready = () => isReady;
   ipfs.waitForSomePeers = () => waitForSomePeers(ipfs);
-  ipfs.waitForPeer = peerID => waitForPeer(ipfs, peerID);
+  ipfs.waitForPeer = peerId => waitForPeer(ipfs, peerId);
 
   return ipfs;
 }
