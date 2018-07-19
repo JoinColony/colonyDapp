@@ -62,12 +62,20 @@ export default class Data {
     Returns metadata and tasks for the given domain.
   */
   async getDomain(domain: string): Promise<Domain> {}
+  /*
+    Returns the IPFS documents corresponding to an array of hashes
+  */
+  async getComment(commentHash: IPFSHash): Promise<Comment[]> {
+    return this._ipfsNode.cat(commentHash);
+  }
 
   /*
    Returns the IPFS documents corresponding to an array of hashes
   */
-  async getComments(commentHashes: IPFSHash[]): Promise<Comment[]> {
-    return ['a comment'];
+  async getComments(commentHashes: IPFSHash[]) {
+    return Promise.all(
+      commentHashes.map(commentHash => this.getComment(commentHash)),
+    );
   }
 
   /*
