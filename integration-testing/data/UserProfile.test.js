@@ -89,4 +89,7 @@ describe('User Profile', () => {
     },
     DDBTestFactory.TIMEOUT,
   );
+
+  test.skip('Only I can edit my user profile', async () => {});
+  test.skip('My profile is pinned at the timeof creation', async () => {});
 });
