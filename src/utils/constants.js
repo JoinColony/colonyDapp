@@ -1,3 +1,5 @@
 // @flow
 
-export const METACOLONY_ADDRESS = 'metacolony_address';
+const METACOLONY_ADDRESS = 'metacolony_address';
+
+export default METACOLONY_ADDRESS;

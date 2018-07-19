@@ -34,7 +34,7 @@ export default class Data {
     key: PublicKey = 'user-profile',
   ): Promise<OrbitKVStore> {
     const store = await this.getUserProfile(key);
-    await this._pinner.pinKVStore(store.address);
+    await this._pinner.pinKVStore(store.address());
     return store;
   }
 
@@ -74,6 +74,7 @@ export default class Data {
     return;
   }
 
+  /*
     Returns metadata and tasks for the given domain.
   */
   async getDomain(domainKey: string): Promise<Domain> {
@@ -103,7 +104,7 @@ export default class Data {
   */
   async addComment(domainKey: string, taskID: string, comment: Comment) {
     const domain = await this.getDomain(domainKey);
-    const hash = ipfs.addComment(comment);
+    const hash = this._ipfsNode.addComment(comment);
     await domain.addComment(taskID, hash);
   }
 
@@ -114,6 +115,10 @@ export default class Data {
   async draftTask(domainKey: string, task: Task) {
     const domain = await this.getDomain(domainKey);
     await domain.addTask(task);
+  }
+
+  waitForPeer(peerID: B58String): Promise<boolean> {
+    return this._ipfsNode.waitForPeer(peerID);
   }
 
   /*
