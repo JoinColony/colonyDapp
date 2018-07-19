@@ -39,6 +39,14 @@ export default class Data {
   }
 
   /*
+    Adds a colony to the UserProfile
+  */
+  async joinColony(colonyHash: string) {
+    const store = await this.getUserProfile('user-profile');
+    await store.joinColony(colonyHash);
+  }
+
+  /*
     Returns metadata for the MetaColony. Meta.
   */
   async getMetaColony(): Promise<Colony> {}

@@ -1,7 +1,10 @@
+// @flow
+import type { OrbitKVStore } from '../types';
+
 class UserProfile {
   _store: OrbitKVStore;
 
-  constructor(store) {
+  constructor(store: OrbitKVStore) {
     this._store = store;
   }
 
@@ -16,6 +19,12 @@ class UserProfile {
     await this._store.put('name', name);
   }
 
+  async joinColony(colonyHash: string) {
+    const colonies = this._store.get('colonies');
+    colonies.push(colonyHash);
+    await this._store.put('colonies', colonies);
+  }
+
   getName() {
     return this._store.get('name');
   }
@@ -24,7 +33,7 @@ class UserProfile {
     return this._store.address;
   }
 
-  subscribe(f) {
+  subscribe(f: Function) {
     this._store.events.on('replicated', () => {
       f({ name: this.getName() });
     });
