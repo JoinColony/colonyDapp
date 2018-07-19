@@ -195,5 +195,19 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   ipfs.waitForSomePeers = () => waitForSomePeers(ipfs);
   ipfs.waitForPeer = peerId => waitForPeer(ipfs, peerId);
 
+  ipfs.addComment = comment => {
+    var buf = Buffer.from(JSON.stringify(comment));
+    const isAdded = new Promise((resolve, reject) => {
+      addResolve = resolve;
+      addReject = reject;
+    });
+
+    ipfs.files.add(buf, (error, files) => {
+      if (error) addReject(error);
+      addResolve(files);
+    });
+    return isAdded;
+  };
+
   return ipfs;
 }

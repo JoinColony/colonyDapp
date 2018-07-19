@@ -65,7 +65,11 @@ export default class Data {
   /*
    Creates IPFS document, and stores the resulting hash in the task entry
   */
-  async addComment(comment: Comment): Promise<IPFSHash> {}
+  async addComment(domainKey: string, taskID: string, comment: Comment) {
+    const domain = await this.getDomain(domainKey);
+    const hash = ipfs.addComment(comment);
+    await domain.addComment(taskID, hash);
+  }
 
   /*
    Stores a task in 'draft mode' in orbitDB
