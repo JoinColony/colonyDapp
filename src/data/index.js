@@ -2,9 +2,7 @@
 import * as ipfs from './ipfs';
 import { UserProfile, orbitSetup } from './orbit';
 import type {
-  B58String,
   Colony,
-  ColonyAddress,
   ColonyIPFSNode,
   DataOptions,
   Domain,
@@ -32,8 +30,10 @@ export default class Data {
   /*
     Returns metadata for the logged-in user's profile.
   */
-  async getMyUserProfile(): Promise<UserProfile> {
-    const store = await this.getUserProfile('user-profile');
+  async getMyUserProfile(
+    key: PublicKey = 'user-profile',
+  ): Promise<OrbitKVStore> {
+    const store = await this.getUserProfile(key);
     await this._pinner.pinKVStore(store.address);
     return store;
   }
