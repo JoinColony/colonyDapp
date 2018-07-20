@@ -35,24 +35,34 @@
  * Next set of classes will define the icons's size
  */
 
-.xSmall {
+.sizeTiny {
   height: 14px;
   width: 14px;
 }
 
-.small {
+.sizeSmall {
   height: 16px;
   width: 16px;
 }
 
-.medium {
+.sizeNormal {
+  height: 18px;
+  width: 18px;
+}
+
+.sizeMedium {
   height: 28px;
   width: 28px;
 }
 
-.large {
+.sizeLarge {
   height: 42px;
   width: 42px;
+}
+
+.sizeHuge {
+  height: 64px;
+  width: 64px;
 }
 
 /*
@@ -60,10 +70,10 @@
  *
  * Next set of classes will define our various icon themes.
  *
- * Some of them will also have an `inverted` version. This is for dark backgrounds.
+ * Some of them will also have an `invert` version. This is for dark backgrounds.
  */
 
-.default {
+.themePrimary {
   composes: main;
 
   & svg {
@@ -72,7 +82,7 @@
   }
 }
 
-.inverted {
+.themeInvert {
   composes: main;
 
   & svg {

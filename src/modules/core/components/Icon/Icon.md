@@ -35,8 +35,32 @@ class IconGrid extends React.Component {
 <IconGrid />
 ```
 
-### Icons
+### Default Size Icon
 
 ```jsx
 <Icon name="file" title="file" />
+```
+
+### Normal Icon with Sizes
+
+```jsx
+<Icon name="file" title="file" appearance={{ size: 'tiny' }} />
+<Icon name="file" title="file" appearance={{ size: 'small' }} />
+<Icon name="file" title="file" appearance={{ size: 'normal' }} />
+<Icon name="file" title="file" appearance={{ size: 'medium' }} />
+<Icon name="file" title="file" appearance={{ size: 'large' }} />
+<Icon name="file" title="file" appearance={{ size: 'huge' }} />
+```
+
+### Inverted Icon
+
+```jsx
+<div style={{ backgroundColor: 'black', padding: '10px', }}>
+  <Icon name="file" title="file" appearance={{ size: 'tiny', theme: 'invert' }} />
+  <Icon name="file" title="file" appearance={{ size: 'small', theme: 'invert' }} />
+  <Icon name="file" title="file" appearance={{ size: 'normal', theme: 'invert' }} />
+  <Icon name="file" title="file" appearance={{ size: 'medium', theme: 'invert' }} />
+  <Icon name="file" title="file" appearance={{ size: 'large', theme: 'invert' }} />
+  <Icon name="file" title="file" appearance={{ size: 'huge', theme: 'invert' }} />
+</div>
 ```
