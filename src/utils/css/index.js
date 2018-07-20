@@ -15,7 +15,7 @@ import { capitalize } from '../strings';
  *
  * @return {string} If existent, the provided style name, or, the default fallback
  */
-export const styleWithDefaults = (styleProp: string, defaultProp: string) =>
+export const styleWithDefaults = (styleProp: ?string, defaultProp: string) =>
   !styleProp || styleProp.trim() === 'default' ? defaultProp : styleProp;
 
 /**
