@@ -2,12 +2,6 @@
 
 ```jsx noeditor
 const { icons } = require('./icons.json');
-const iconStyle = {
-  float: 'left',
-  height: '70px',
-  width: '20%',
-  textAlign: 'center',
-}
 const stringSort = (a, b) => {
   if(a<b) {
     return -1
@@ -16,16 +10,29 @@ const stringSort = (a, b) => {
   }
   return 0
 }
-icons.sort(stringSort).map((icon, idx) => (
-  <div style={iconStyle} key={idx}>
-    <Icon name={icon} title={icon} /><br/>
-    {icon}
-  </div>
-));
-```
-
-```jsx noeditor
-<div style={{clear: 'both'}} />
+class IconGrid extends React.Component {
+  render() {
+    const iconGridStyles = {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+    };
+    const iconStyles = {
+      textAlign: 'center',
+      margin: '15px 10px 10px',
+    }
+    return (
+      <div style={iconGridStyles}>
+        {icons.sort(stringSort).map((icon, idx) => (
+          <div style={iconStyles} key={idx}>
+            <Icon name={icon} title={icon} /><br/>
+            {icon}
+          </div>
+        ))}
+      </div>
+    )
+  }
+}
+<IconGrid />
 ```
 
 ### Icons
