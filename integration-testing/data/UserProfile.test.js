@@ -31,9 +31,9 @@ describe('User Profile', () => {
   test(
     'Create my user profile component',
     async () => {
-      const p1 = await data1.getMyUserProfile();
-      expect(p1).toBeTruthy();
-      expect(p1.isEmpty()).toBeTruthy();
+      const profile = await data1.getMyUserProfile();
+      expect(profile).toBeTruthy();
+      expect(profile.isEmpty()).toBeTruthy();
     },
     DDBTestFactory.TIMEOUT,
   );
@@ -41,13 +41,13 @@ describe('User Profile', () => {
   test(
     'Create my user profile and set its name',
     async () => {
-      const p1 = await data2.getMyUserProfile();
+      const profile = await data2.getMyUserProfile();
       const name = factory.name('Kanye West');
 
-      await p1.setName(name);
+      await profile.setName(name);
 
-      expect(p1.isEmpty()).toBeFalsy();
-      expect(p1.getName()).toBe(name);
+      expect(profile.isEmpty()).toBeFalsy();
+      expect(profile.getName()).toBe(name);
     },
     DDBTestFactory.TIMEOUT,
   );
@@ -55,19 +55,19 @@ describe('User Profile', () => {
   test(
     'Create my user profile and set its name sync with another',
     async () => {
-      const p1 = await data3.getMyUserProfile();
-      const p2 = await data4.getUserProfile(p1.address());
+      const profile1 = await data3.getMyUserProfile();
+      const profile2 = await data4.getUserProfile(profile1.address());
       const name = factory.name('Franz Kafka');
 
-      await p1.setName(name);
+      await profile1.setName(name);
 
-      expect(p1.isEmpty()).toBeFalsy();
+      expect(profile1.isEmpty()).toBeFalsy();
       expect(
-        await retryUntilValue(() => p2.isEmpty(), { value: false }),
+        await retryUntilValue(() => profile2.isEmpty(), { value: false }),
       ).toBeFalsy();
-      expect(await retryUntilValue(() => p2.getName(), { value: name })).toBe(
-        name,
-      );
+      expect(
+        await retryUntilValue(() => profile2.getName(), { value: name }),
+      ).toBe(name);
     },
     DDBTestFactory.TIMEOUT,
   );
@@ -76,17 +76,17 @@ describe('User Profile', () => {
     'Create a user profile and subscribe to changes',
     async () => {
       // Arrange
-      const p1 = await data2.getMyUserProfile();
-      const p2 = await data3.getUserProfile(p1.address());
+      const profile1 = await data2.getMyUserProfile();
+      const profile2 = await data3.getUserProfile(profile1.address());
       const name = factory.name('Albert Camus');
 
       let update = {};
-      p2.subscribe(x => {
+      profile2.subscribe(x => {
         update = x;
       });
 
       // Act
-      await p1.setName(name);
+      await profile1.setName(name);
 
       // Assert
       expect(await retryUntilValue(() => update.name)).toEqual(name);
