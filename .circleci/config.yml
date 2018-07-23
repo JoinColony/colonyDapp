@@ -104,27 +104,11 @@ jobs:
   integration-testing-build:
     docker:
       - image: circleci/node:9.10
+      - image: redis:4.0
     parallelism: 2
     working_directory: ~/colonyDapp
     steps:
       - checkout
-      # Download redis for integration with the pinningService
-      # TODO: restore cache and skip the make phase
-      - run:
-          name: "Setup redis"
-          command: |
-            wget "http://download.redis.io/releases/redis-4.0.10.tar.gz"
-            tar xzf redis-4.0.10.tar.gz
-            cd redis-4.0.10 && make
-      - save_cache:
-          paths:
-            - redis-4.0.10
-          key: "redis-4.0.10"
-      - run:
-          name: "Start redis"
-          command: |
-            ./redis-4.0.10/src/redis-server --port 6379 --daemonize yes
-      # Go on with the JS stack
       - restore_cache:
           keys:
           - node-modules-{{ checksum "package.json" }}
