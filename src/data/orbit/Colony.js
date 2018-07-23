@@ -3,8 +3,15 @@ import type { OrbitKVStore } from '../types';
 class Colony {
   async addDomain(domainHash: string) {
     const domains = this._store.get('domains');
+    const domains = await this.getDomains();
     domains.push(domainHash);
     await this._store.put('domains', domains);
+  }
+
+  async getDomains() {
+    await this.initialize();
+    const domains = await this._store.get('domains');
+    return domains;
   }
 
   async addMember(userKey: string) {
