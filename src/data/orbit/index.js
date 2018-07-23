@@ -7,8 +7,7 @@ import type {
 } from '../types';
 
 import UserProfile from './UserProfile';
-
-export { UserProfile };
+import Kolonie from './Colony';
 
 const DEFAULT_DB_PATH = 'colonyOrbitdb';
 
@@ -26,4 +25,6 @@ export async function getOrbitDB(
   return new OrbitDB(ipfs, path, options);
 }
 
-export const orbitSetup = { getOrbitDB, makeOptions };
+const orbitSetup = { getOrbitDB, makeOptions };
+
+export { Kolonie, orbitSetup, UserProfile };

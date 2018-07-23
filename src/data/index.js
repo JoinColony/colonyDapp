@@ -1,6 +1,6 @@
 /* @flow */
 import * as ipfs from './ipfs';
-import { UserProfile, orbitSetup } from './orbit';
+import { Kolonie, orbitSetup, UserProfile } from './orbit';
 import type {
   Colony,
   ColonyIPFSNode,
@@ -61,7 +61,7 @@ export default class Data {
   async getColony(colonyID: string): Promise<Colony> {
     const colony = await this._orbitNode.kvstore(colonyID);
     await colony.load();
-    return colony;
+    return new Kolonie(colony);
   }
 
   /*
