@@ -83,6 +83,7 @@ export type Domain = {
   color: string,
   addTask: Function,
   addComment: Function,
+  getTasks: Function,
   tasks: Task[],
   pot: Pot,
 };
