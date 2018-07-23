@@ -8,10 +8,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import styles from './WalletStart.css';
 
-import styles from './StepWalletDetails.css';
-
+import WizardTemplate from '../../../pages/WizardTemplate';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 
@@ -25,62 +24,61 @@ import jazz from '../../../../img/icons/jazz.png';
 
 const icons = [MetaMask, Wallet, Phrase, File];
 
-// FIXME: Rename the ids to an appropriate name (it's not CreateWallet, this page)
 const MSG = defineMessages({
   heading: {
-    id: 'CreateWallet.WalletDetails.heading',
+    id: 'WalletStart.heading',
     defaultMessage: 'How would you like to access Colony?',
   },
   subTitle: {
-    id: 'CreateWallet.WalletDetails.subTitle',
+    id: 'WalletStart.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
       'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
   callToAction: {
-    id: 'CreateWallet.WalletDetails.callToAction',
+    id: 'WalletStart.callToAction',
     defaultMessage: 'Need a wallet? Let us help',
   },
   callToActionSub: {
-    id: 'CreateWallet.WalletDetails.callToActionSub',
+    id: 'WalletStart.callToActionSub',
     defaultMessage: 'Create an etherum wallet to join',
   },
 });
 
 const rowTitles = defineMessages({
   metaMaskTitle: {
-    id: 'CreateWallet.WalletDetails.metaMaskTitle',
+    id: 'WalletStart.metaMaskTitle',
     defaultMessage: 'MetaMask',
   },
   hardwareTitle: {
-    id: 'CreateWallet.WalletDetails.hardwareTitle',
+    id: 'WalletStart.hardwareTitle',
     defaultMessage: 'Hardware Wallet',
   },
   phraseTitle: {
-    id: 'CreateWallet.WalletDetails.phraseTitle',
+    id: 'WalletStart.phraseTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
   JSONTitle: {
-    id: 'CreateWallet.WalletDetails.JSONTitle',
+    id: 'WalletStart.JSONTitle',
     defaultMessage: 'JSON File',
   },
 });
 
 const rowSubTitles = defineMessages({
   metaMaskSubtTitle: {
-    id: 'CreateWallet.WalletDetails.subTitle1',
+    id: 'WalletStart.metaMaskSubtitle',
     defaultMessage: 'Require MetaMask browser extension',
   },
   hardwareSubtTitle: {
-    id: 'CreateWallet.WalletDetails.subTitle2',
+    id: 'WalletStart.hardwareSubtitle',
     defaultMessage: 'We support Ledger and Trezor',
   },
   phraseSubtTitle: {
-    id: 'CreateWallet.WalletDetails.subTitle3',
+    id: 'WalletStart.phraseSubtitle',
     defaultMessage: 'Access with your mnemonic phrase',
   },
   JSONSubtTitle: {
-    id: 'CreateWformallet.WalletDetails.subTitle4',
+    id: 'WalletStart.JSONSubtitle',
     defaultMessage: 'We do not recommend this method',
   },
 });
@@ -136,39 +134,39 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
 });
 
 const WalletDetails = () => (
-  <section className={styles.content}>
-    <div className={styles.title}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
-    </div>
-    <div className={styles.subtitle}>
-      <Heading
-        appearance={{ size: 'normal', weight: 'thin' }}
-        text={MSG.subTitle}
-      />
-    </div>
-    {allTheRows}
-    <Button className={styles.callToAction} type="submit">
-      <div className={styles.actionImage}>
-        <img src={jazz} alt="" width="22" height="22" />
-      </div>
-      <div className={styles.actionText}>
+  <WizardTemplate>
+    <section className={styles.content}>
+      <div className={styles.title}>
         <Heading
-          appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-          text={MSG.callToAction}
-        />
-        <Heading
-          appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-          text={MSG.callToActionSub}
+          appearance={{ size: 'medium', weight: 'thin' }}
+          text={MSG.heading}
         />
       </div>
-      <ArrowRight className={styles.rowArrow} />
-    </Button>
-  </section>
+      <div className={styles.subtitle}>
+        <Heading
+          appearance={{ size: 'normal', weight: 'thin' }}
+          text={MSG.subTitle}
+        />
+      </div>
+      {allTheRows}
+      <Button className={styles.callToAction} type="submit">
+        <div className={styles.actionImage}>
+          <img src={jazz} alt="" width="22" height="22" />
+        </div>
+        <div className={styles.actionText}>
+          <Heading
+            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+            text={MSG.callToAction}
+          />
+          <Heading
+            appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+            text={MSG.callToActionSub}
+          />
+        </div>
+        <ArrowRight className={styles.rowArrow} />
+      </Button>
+    </section>
+  </WizardTemplate>
 );
 
-export { WalletDetails as Step };
-
-export const onSubmit: SubmitFn = (values, { nextStep }) => nextStep();
+export default WalletDetails;

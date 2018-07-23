@@ -10,8 +10,8 @@ import styles from './WizardTemplate.css';
 
 type Props = {
   children: Node,
-  step: number,
-  stepCount: number,
+  step?: number,
+  stepCount?: number,
 };
 
 const displayName = 'pages.WizardTemplate';
@@ -22,9 +22,11 @@ const WizardTemplate = ({ children, step, stepCount }: Props) => (
       <figure className={styles.logo} role="presentation">
         <Logo />
       </figure>
-      <div className={styles.stepBarContainer}>
-        {step && <StepBar step={step} stepCount={stepCount} />}
-      </div>
+      {stepCount && (
+        <div className={styles.stepBarContainer}>
+          {step && <StepBar step={step} stepCount={stepCount} />}
+        </div>
+      )}
     </header>
     <article
       className={`${layout.flexContainerColumn} ${layout.flexAlignCenter} ${
