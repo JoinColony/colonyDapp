@@ -27,6 +27,12 @@ class Colony {
     await this._store.put('avatar', avatarHash);
   }
 
+  async getAvatar() {
+    await this.initialize();
+    const avatarHash = await this._store.get('avatar');
+    return avatarHash;
+  }
+
   address() {
     return this._store.address;
   }

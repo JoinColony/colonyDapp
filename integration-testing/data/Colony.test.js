@@ -2,6 +2,7 @@
 import DDBTestFactory from '../utils/DDBTestFactory';
 import { sleep } from '../../src/utils/time';
 import { retryUntilValue } from '../utils/tools';
+import logo from './logo.png';
 
 const factory = new DDBTestFactory('UserProfile.test');
 let data1 = null;
@@ -34,4 +35,11 @@ describe.only('Data: a colony', () => {
   });
 
   test('The colony database holds domain hashes', async () => {});
+  test('The colony database holds an avatar IPFS hash', async () => {
+    await data2.setColonyAvatar('fakeAddress', logo);
+    const p2 = await data2.getColony('fakeAddress');
+    const avatar = await p2.getAvatar();
+    expect(typeof avatar).toBe('string');
+    expect(avatar.length).toBe(46);
+  });
 });

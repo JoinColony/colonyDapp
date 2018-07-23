@@ -196,18 +196,14 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   ipfs.waitForPeer = peerId => waitForPeer(ipfs, peerId);
 
   ipfs.addImage = image => {
-    const reader = new FileReader();
-    const blob = reader.readAsDataURL(image);
-
     let addResolve, addReject;
     const isAdded = new Promise((resolve, reject) => {
       addResolve = resolve;
       addReject = reject;
     });
 
-    ipfs.files.add(blob, (error, files) => {
-      if (error) addReject(error);
-      addResolve(files);
+    ipfs.files.add(image, (error, files) => {
+      return error ? addReject(error) : addResolve(files[0].hash);
     });
     return isAdded;
   };

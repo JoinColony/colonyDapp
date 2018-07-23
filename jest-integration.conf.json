@@ -3,6 +3,10 @@
     "rootDir": "integration-testing",
     "globalSetup": "./utils/integration-testing-setup.js",
     "globalTeardown": "./utils/integration-testing-teardown.js",
+  "moduleNameMapper": { "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/assetsTransformer.js", "\\.(css|less)$": "<rootDir>/assetsTransformer.js" },
+    "setupFiles": [
+        "<rootDir>/utils/patch-node-crypto.js"
+    ],
     "testPathIgnorePatterns": [
         "utils"
     ],

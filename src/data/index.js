@@ -68,6 +68,16 @@ export default class Data {
     Given a colonyID and an image, sets the colony's avatar
   */
   async setColonyAvatar(colonyID: string, avatar: Image) {
+    const imageHash = await this._ipfsNode.addImage(avatar);
+    const colony = await this.getColony(colonyID);
+    await colony.setAvatar(imageHash);
+    return;
+  }
+
+  /*
+    Given a colonyID and an imageHash, returns the colony's avatar
+  */
+  async getColonyAvatar(colonyID: string, avatar: string) {
     const imageHash = this._ipfsNode.addImage(avatar);
     const colony = await this.getColony(colonyID);
     colony.setAvatar(imageHash);
