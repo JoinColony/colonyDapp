@@ -5,6 +5,7 @@ const ganache = require('ganache-cli');
 const chalk = require('chalk');
 const childProcess = require('child_process');
 const path = require('path');
+const net = require('net');
 const extfs = require('extfs');
 const git = require('simple-git/promise');
 const rimraf = require('rimraf');
@@ -38,6 +39,39 @@ if (global.DEBUG) {
   });
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const isPortAvailable = port =>
+  new Promise((resolve, reject) => {
+    const tester = net
+      .createServer()
+      .once(
+        'error',
+        err => (err.code === 'EADDRINUSE' ? resolve(false) : reject(err)),
+      )
+      .once('listening', () =>
+        tester.once('close', () => resolve(true)).close(),
+      )
+      .listen(port);
+  });
+
+const waitUntilPortIsTaken = async port => {
+  let count = 0;
+  // eslint-disable-next-line no-await-in-loop
+  while (await isPortAvailable(port)) {
+    // await in loop to block until the port is taken.
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(500);
+    count += 1;
+
+    if (count > 100) {
+      throw Error(`port ${port} is still not taken after 100 attempts.`);
+    }
+  }
+};
+
 /*
  * Paths
  */
@@ -45,6 +79,7 @@ const libPath = path.resolve('src', 'lib');
 const clientPath = path.resolve(libPath, 'colonyJS');
 const walletPath = path.resolve(libPath, 'colony-wallet');
 const networkPath = path.resolve(libPath, 'colonyNetwork');
+const pinningServicePath = path.resolve(libPath, 'pinningService');
 const ganacheAccountsFile = path.resolve('.', 'ganache-accounts.json');
 const contractsFolder = path.resolve(networkPath, 'build', 'contracts');
 
@@ -140,7 +175,8 @@ module.exports = async () => {
   if (
     isEmptySync(clientPath) ||
     isEmptySync(walletPath) ||
-    isEmptySync(networkPath)
+    isEmptySync(networkPath) ||
+    isEmptySync(pinningServicePath)
   ) {
     console.log(chalk.yellow.bold('Provisioning submodules'));
     await exec('yarn provision');
@@ -219,6 +255,36 @@ module.exports = async () => {
         `${chalk.gray('http://')}localhost:${trufflePigOptionsServerPort}`,
       ),
     );
+  }
+
+  /*
+   * Then start the pinning service if it's not already live.
+   */
+  const pinningServicePort = '9090';
+  const portAvailable = await isPortAvailable(pinningServicePort);
+  if (portAvailable) {
+    console.log(
+      chalk.green.bold('Pinning Service:'),
+      chalk.bold('starting...'),
+    );
+
+    global.pinningService = exec('yarn test:integration:start-pinning');
+    await waitUntilPortIsTaken(pinningServicePort);
+
+    console.log(
+      chalk.green.bold('Pinning Service:'),
+      chalk.bold('started'),
+      'on port:',
+      chalk.bold(pinningServicePort),
+    );
+  } else {
+    console.log(
+      chalk.green.bold('Pinning Service:'),
+      chalk.bold('skipped'),
+      chalk.gray.bold(pinningServicePort),
+      'is busy',
+    );
+    global.pinningService = null;
   }
 
   /*
