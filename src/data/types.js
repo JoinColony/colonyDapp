@@ -100,4 +100,6 @@ export type Colony = {
   pot: Pot,
   avatar: Image,
   setAvatar: Function,
+  addMember: Function,
+  getMembers: Function,
 };
