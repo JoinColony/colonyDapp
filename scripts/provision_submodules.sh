@@ -50,6 +50,5 @@ cd ${ROOT_PATH}
 # Build pinning service
 log "Building '${PINNING}' submodule"
 cd "${LIB_PATH}/${PINNING}"
-git submodule update --init
 yarn
 cd ${ROOT_PATH}
