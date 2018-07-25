@@ -31,13 +31,13 @@ global.DEBUG = process.env.DEBUG || false;
 global.WATCH = process.env.WATCH || false;
 global.WATCH_FIRST_RUN = true;
 
-if (global.DEBUG) {
-  exec = util.promisify((...args) => {
-    const runner = childProcess.exec(...args);
-    runner.stdout.on('data', output => process.stdout.write(output));
-    return runner;
-  });
-}
+const withLogging = f => (...args) => {
+  const runner = f(...args);
+  runner.stdout.on('data', output => process.stdout.write(output));
+  return runner;
+};
+
+exec = util.promisify(withLogging(childProcess.exec));
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -268,7 +268,16 @@ module.exports = async () => {
       chalk.bold('starting...'),
     );
 
-    global.pinningService = exec('yarn test:integration:start-pinning');
+    // Note: we use the regular exec, since we need access to the runner object.
+    // Note: we start in detached mode so we can start and kill the processes as a group:
+    //    When we spawn the pinning service through yarn it starts a tree of processes.
+    //    SIGKILL'ing the root process (yarn) leaves zombie processes. Including the server.
+    //    Detailed solution: https://azimi.me/2014/12/31/kill-child_process-node-js.html
+    global.pinningService = withLogging(childProcess.spawn)(
+      'yarn',
+      ['test:integration:start-pinning'],
+      { detached: true },
+    );
     await waitUntilPortIsTaken(pinningServicePort);
 
     console.log(
@@ -281,7 +290,8 @@ module.exports = async () => {
     console.log(
       chalk.green.bold('Pinning Service:'),
       chalk.bold('skipped'),
-      chalk.gray.bold(pinningServicePort),
+      'port:',
+      chalk.bold(pinningServicePort),
       'is busy',
     );
     global.pinningService = null;
