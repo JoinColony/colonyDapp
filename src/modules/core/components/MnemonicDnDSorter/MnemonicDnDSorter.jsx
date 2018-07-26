@@ -5,7 +5,7 @@ import type { MessageDescriptor } from 'react-intl';
 import React, { Component, Fragment } from 'react';
 // $FlowFixMe https://github.com/atlassian/react-beautiful-dnd/issues/650
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import InputLabel from '../Fields/InputLabel';
 import asField from '../Fields/asField';
@@ -20,14 +20,6 @@ import styles from './MnemonicDnDSorter.css';
 type StyleType = { [key: string]: string | number };
 
 const MSG = defineMessages({
-  placeholder: {
-    id: 'MnemonicDnDSorter.placeholder.title',
-    defaultMessage: 'Drag & Drop',
-  },
-  placeholderSub: {
-    id: 'MnemonicDnDSorter.placeholder.subtitle',
-    defaultMessage: 'Mnemonics here',
-  },
   buttonReset: {
     id: 'MnemonicDnDSorter.buttonReset',
     defaultMessage: 'Reset',
@@ -47,6 +39,8 @@ type Props = {
   label: string | MessageDescriptor,
   /** Input field name (form variable) */
   name: string,
+  /** Placeholder text (can also be a MessageDescriptor) */
+  placeholder?: string,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -265,6 +259,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
       $value,
       $touched,
       onBlur,
+      placeholder,
       setValue,
       ...props
     } = this.props;
@@ -290,9 +285,11 @@ class MnemonicDnDSorter extends Component<Props, State> {
         <Droppable droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
             <div
+              className={styles.main}
               ref={provided.innerRef}
               style={this.getTargetStyle(snapshot.isDraggingOver, !!$error)}
               id={$id}
+              data-placeholder={items.length || $error ? null : placeholder}
               {...props}
             >
               {items.map((item, index) => (
@@ -312,16 +309,6 @@ class MnemonicDnDSorter extends Component<Props, State> {
                   )}
                 </Draggable>
               ))}
-              {!!items.length === 0 && (
-                <Fragment>
-                  <div className={styles.placeholderTop}>
-                    <FormattedMessage {...MSG.placeholder} />
-                  </div>
-                  <div className={styles.placeholder}>
-                    <FormattedMessage {...MSG.placeholderSub} />
-                  </div>
-                </Fragment>
-              )}
               {!!$error && (
                 <Fragment>
                   <div className={styles.errorOverlay} />

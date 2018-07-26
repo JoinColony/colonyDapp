@@ -1,5 +1,20 @@
 @import 'variables.css';
 
+.main {
+  position: relative;
+}
+
+.main::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-semi);
+  color: var(--temp-grey-12);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .errorOverlay {
   height: 110px;
   width: 460px;
@@ -24,29 +39,4 @@
   margin-top: 11px;
   margin-bottom: 9px;
   font-weight: var(--weight-semi);
-}
-
-.placeholder {
-  width: 100%;
-  position: absolute;
-  top: 500px;
-  left: 0;
-  overflow: hidden;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-semi);
-  text-align: center;
-  color: var(--temp-grey-12);
-}
-
-.placeholderTop {
-  margin-top: 35px;
-  width: 100%;
-  position: absolute;
-  top: 440px;
-  left: 0;
-  overflow: hidden;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-semi);
-  text-align: center;
-  color: var(--temp-grey-12);
 }

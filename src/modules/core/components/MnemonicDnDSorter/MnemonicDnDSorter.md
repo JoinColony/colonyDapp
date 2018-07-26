@@ -8,5 +8,6 @@ const passphrase = 'cram object chronic analyst sadness tide gossip error snack 
   label="Drag your phrase here"
   passphrase={passphrase}
   setValue={passphrase => alert(passphrase)}
+  placeholder="Drag & Drop Phrase here"
 />
 ```
