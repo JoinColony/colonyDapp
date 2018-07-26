@@ -1,13 +1,16 @@
 /// @flow
 
-import type { IPFSHash, OrbitKVStore, Task } from '../types';
+import type { IPFSHash, OrbitKVStore, Pot, Task } from '../types';
 
 class Domain {
   async addTask(task: Task) {
     await this.initialize();
-    const tasks = await this.getDomains();
-    tasks.push(domainHash);
-    await this._store.put('tasks', domains);
+    if (!task.comments) {
+      task.comments = [];
+    }
+    const tasks = await this._store.get('tasks');
+    tasks.push(task);
+    await this._store.put('tasks', tasks);
   }
 
   async getTasks() {
@@ -21,16 +24,22 @@ class Domain {
   async setTitle() {}
   async getTitle() {}
 
-  async addComment(comment: IPFSHash) {
+  async addComment(taskID: string, comment: IPFSHash) {
     await this.initialize();
-    const comments = this._store.get('comments');
-    comments.push(comment);
-    await this._store.put('comments', comments);
+    const tasks = await this.getTasks();
+
+    const task = tasks.filter(t => t._id === taskID)[0];
+
+    task.comments.push(comment);
+    await this._store.put('tasks', tasks);
   }
 
-  async getCommentHashes() {
+  async getComments(taskID: string) {
     await this.initialize();
-    return this._store.get('comments');
+    const tasks = await this.getTasks();
+    const task = tasks.filter(t => t._id === taskID)[0];
+
+    return task.comments;
   }
 
   async setBounty(bounty: Pot) {

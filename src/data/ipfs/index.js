@@ -224,5 +224,19 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
     return isAdded;
   };
 
+  ipfs.getComment = hash => {
+    let addResolve, addReject;
+    const isAdded = new Promise((resolve, reject) => {
+      addResolve = resolve;
+      addReject = reject;
+    });
+
+    ipfs.files.cat(hash, (error, data) => {
+      if (error) addReject(error);
+      addResolve(data.toString());
+    });
+    return isAdded;
+  };
+
   return ipfs;
 }
