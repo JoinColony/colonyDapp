@@ -1,5 +1,5 @@
 // @flow
-import type { OrbitKVStore } from '../types';
+import type { OrbitKVStore, Pot } from '../types';
 
 class Colony {
   async addDomain(domainHash: string) {
@@ -20,6 +20,10 @@ class Colony {
     const members = this._store.get('members');
     members.push(userKey);
     await this._store.put('members', members);
+  }
+
+  async getMembers() {
+    return this._store.get('members');
   }
 
   async setTokenBalance(tokenName: string, amount: number) {
@@ -63,6 +67,8 @@ class Colony {
     if (this.isEmpty()) {
       await this._store.put('created', new Date().toUTCString());
       await this._store.put('domains', []);
+      await this._store.put('members', []);
+      await this._store.put('pot', {});
     }
     this.initialized = true;
   }

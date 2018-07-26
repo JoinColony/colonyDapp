@@ -35,18 +35,14 @@ describe('Data: a colony', () => {
     expect(domain[0]).toBe('domainAddress1');
   });
 
-  test('The colony database holds an avatar IPFS hash', async () => {
-    await data2.setColonyAvatar('fakeAddress', logo);
-    const p2 = await data2.getColony('fakeAddress');
-    const avatar = await p2.getAvatar();
-    expect(typeof avatar).toBe('string');
-    expect(avatar.length).toBe(46);
+  test('The colony model accepts members', async () => {
+    const p3 = await data2.getColony('fakeAddress2');
+    await p3.addMember('memberOneId');
+    const members = await p3.getMembers();
+    expect(members.length).toBe(1);
+    expect(members[0]).toBe('memberOneId');
   });
 
-  test('The colony database has members', async () => {
-    await data2.addMember('fakeAddress', 'memberOneId');
-    const p3 = await data2.getColony('fakeAddress');
-    const members = await p3.getMembers();
   test('The colony model accepts a funding pot', async () => {
     const p3 = await data2.getColony('fakeAddress2');
     await p3.setPot({ ETH: 1 });
@@ -60,6 +56,9 @@ describe('Data: a colony', () => {
     expect(pot.ETH).toBe(1);
   });
 
+  test('The Data API adds members to a colony', async () => {
+    await data2.addColonyMember('fakeAddress2', 'fakeID');
+    const members = await data2.getColonyMembers('fakeAddress2');
     expect(members.length).toBe(1);
     expect(members[0]).toBe('memberOneId');
   });

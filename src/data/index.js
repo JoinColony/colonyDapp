@@ -104,6 +104,21 @@ export default class Data {
     const domain = await this._orbitNode.kvstore(domainKey);
     await domain.load();
     return domain;
+  /*
+    Given a colonyID and a userID, adds a user to the colony's list 
+  */
+  async addColonyMember(colonyID: string, userID: string) {
+    const colony = await this.getColony(colonyID);
+    await colony.addMember(userID);
+    return;
+  }
+
+  /*
+    Returns the colony's users
+  */
+  async getColonyMembers(colonyID: string) {
+    const colony = await this.getColony(colonyID);
+    return colony.getMembers();
   }
 
   /*
