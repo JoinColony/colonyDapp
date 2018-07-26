@@ -98,6 +98,25 @@ export default class Data {
     const colony = await this.getColony(colonyID);
     return colony.getPot();
   }
+
+  /*
+    Given a colonyID and a domainID, adds a domain to the colony's list 
+  */
+  async addColonyDomain(colonyID: string, domainID: string) {
+    const colony = await this.getColony(colonyID);
+    await colony.addDomain(domainID);
+    return;
+  }
+
+  /*
+    Returns the colony's domains
+  */
+  async getColonyDomains(colonyID: string) {
+    const colony = await this.getColony(colonyID);
+    return colony.getDomains();
+  }
+
+  /*
     Returns metadata and tasks for the given domain.
   */
   async getDomain(domainKey: string): Promise<Domain> {

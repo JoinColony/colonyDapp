@@ -27,7 +27,7 @@ describe('Data: a colony', () => {
     expect(p1).toBeTruthy();
   });
 
-  test('The colony database holds domain hashes', async () => {
+  test('The colony model accepts domain hashes', async () => {
     const p1 = await data1.getColony('fakeAddress');
     await p1.addDomain('domainAddress1');
     const domain = await p1.getDomains();
@@ -62,4 +62,12 @@ describe('Data: a colony', () => {
     expect(members.length).toBe(1);
     expect(members[0]).toBe('memberOneId');
   });
+
+  test.skip('The Data API adds a domain to a colony', async () => {
+    await data1.addColonyDomain('fakeAddress', 'domainAddress2');
+    const domain = await data1.getColonyDomains('fakeAddress');
+    expect(domain.length).toBe(1);
+    expect(domain[0]).toBe('domainAddress1');
+  });
+
 });
