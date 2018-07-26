@@ -25,8 +25,18 @@ class Colony {
   async setTokenBalance(tokenName: string, amount: number) {
     await this.initialize();
     const pot = this._store.get('pot');
-    pot[tokenName][amount] = amount;
+    pot[tokenName] = amount;
     await this._store.put('pot', pot);
+  }
+
+  async setPot(pot: Pot) {
+    await this.initialize();
+    await this._store.put('pot', pot);
+  }
+
+  async getPot() {
+    await this.initialize();
+    return this._store.get('pot');
   }
 
   async setAvatar(avatarHash: string) {

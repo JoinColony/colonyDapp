@@ -10,6 +10,7 @@ import type {
   OrbitKVStore,
   OrbitNode,
   Pinner,
+  Pot,
   PublicKey,
   Task,
 } from './types';
@@ -81,10 +82,22 @@ export default class Data {
     const imageHash = this._ipfsNode.addImage(avatar);
     const colony = await this.getColony(colonyID);
     colony.setAvatar(imageHash);
+  /*
+    Given a colonyID and a funding pot, sets the colony's pot
+  */
+  async setColonyPot(colonyID: string, pot: Pot) {
+    const colony = await this.getColony(colonyID);
+    await colony.setPot(pot);
     return;
   }
 
   /*
+    Returns the colony's pot
+  */
+  async getColonyPot(colonyID: string) {
+    const colony = await this.getColony(colonyID);
+    return colony.getPot();
+  }
     Returns metadata and tasks for the given domain.
   */
   async getDomain(domainKey: string): Promise<Domain> {

@@ -47,6 +47,19 @@ describe('Data: a colony', () => {
     await data2.addMember('fakeAddress', 'memberOneId');
     const p3 = await data2.getColony('fakeAddress');
     const members = await p3.getMembers();
+  test('The colony model accepts a funding pot', async () => {
+    const p3 = await data2.getColony('fakeAddress2');
+    await p3.setPot({ ETH: 1 });
+    const pot = await p3.getPot();
+    expect(pot.ETH).toBe(1);
+  });
+
+  test('The Data API sets a colony pot', async () => {
+    await data2.setColonyPot('fakeAddress2', { ETH: 1 });
+    const pot = await data2.getColonyPot('fakeAddress2');
+    expect(pot.ETH).toBe(1);
+  });
+
     expect(members.length).toBe(1);
     expect(members[0]).toBe('memberOneId');
   });
