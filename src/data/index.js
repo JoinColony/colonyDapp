@@ -1,6 +1,6 @@
 /* @flow */
 import * as ipfs from './ipfs';
-import { Kolonie, orbitSetup, UserProfile } from './orbit';
+import { Domane, Kolonie, orbitSetup, UserProfile } from './orbit';
 import type {
   Colony,
   ColonyIPFSNode,
@@ -122,7 +122,44 @@ export default class Data {
   async getDomain(domainKey: string): Promise<Domain> {
     const domain = await this._orbitNode.kvstore(domainKey);
     await domain.load();
-    return domain;
+    return new Domane(domain);
+  }
+
+  /*
+    Given a domainID and a funding pot, sets the domain's pot
+  */
+  async setDomainPot(domainID: string, pot: Pot) {
+    const domain = await this.getDomain(domainID);
+    await domain.setPot(pot);
+    return;
+  }
+
+  /*
+    Returns the domain's pot
+  */
+  async getDomainPot(domainID: string) {
+    const domain = await this.getDomain(domainID);
+    return domain.getPot();
+  }
+
+  /*
+    Given a domainID and a userID, adds a user to the domain's list 
+  */
+  async addDomainMember(domainID: string, userID: string) {
+    const domain = await this.getDomain(domainID);
+    await domain.addMember(userID);
+    return;
+  }
+
+  /*
+    Returns the domain's users
+  */
+  async getDomainMembers(domainID: string) {
+    const domain = await this.getDomain(domainID);
+    const members = await domain.getMembers();
+    return members;
+  }
+
   /*
     Given a colonyID and a userID, adds a user to the colony's list 
   */

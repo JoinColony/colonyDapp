@@ -18,6 +18,28 @@ class Domain {
     return this._store.get('tasks');
   }
 
+  async setPot(pot: Pot) {
+    await this.initialize();
+    await this._store.put('pot', pot);
+  }
+
+  async getPot() {
+    await this.initialize();
+    return this._store.get('pot');
+  }
+
+  async addMember(userKey: string) {
+    await this.initialize();
+    const members = this._store.get('members');
+    members.push(userKey);
+    await this._store.put('members', members);
+  }
+
+  async getMembers() {
+    await this.initialize();
+    return this._store.get('members');
+  }
+
   async setSpec() {}
   async getSpec() {}
 
@@ -60,6 +82,7 @@ class Domain {
     if (this.isEmpty()) {
       await this._store.put('created', new Date().toUTCString());
       await this._store.put('tasks', []);
+      await this._store.put('members', []);
     }
     this.initialized = true;
   }

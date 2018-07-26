@@ -27,12 +27,21 @@ describe('Data: a domain', () => {
   test('Can access a domain', async () => {
     const p1 = await data1.getDomain('fakeAddress');
     expect(p1).toBeTruthy();
-    expect(typeof p1.address()).toBe('string');
+    expect(p1.address().path).toBe('fakeAddress');
   });
 
-  test('The domain database has a funding pot', async () => {});
+  test('The Data API sets a domain pot', async () => {
+    await data1.setDomainPot('fakeAddress2', { ETH: 1 });
+    const pot = await data1.getDomainPot('fakeAddress2');
+    expect(pot.ETH).toBe(1);
+  });
 
-  test('The domain database holds task objects', async () => {});
+  test('The Data API adds members to a domain', async () => {
+    await data2.addDomainMember('fakeAddress4', 'memberOneId');
+    const members = await data2.getDomainMembers('fakeAddress4');
+    expect(members.length).toBe(1);
+    expect(members[0]).toBe('memberOneId');
+  });
 
   test('The Data API adds a task to a domain', async () => {
     await data2.draftTask('fakeAddress3', {
