@@ -91,8 +91,9 @@ class MnemonicDnDSorter extends Component<Props, State> {
     source: 'selected',
   };
 
-  allDropped = (items: Array<Droppable>) => {
+  handleDrop = () => {
     const { setValue } = this.props;
+    const { items } = this.state;
     if (items.length === 12) {
       const passphrase = items.map(element => element.content).join(' ');
       setValue(passphrase);
@@ -226,7 +227,8 @@ class MnemonicDnDSorter extends Component<Props, State> {
       );
       const state =
         source.droppableId === 'source' ? { selected: items } : { items };
-      this.setState(state);
+
+      this.setState(state, this.handleDrop);
     } else {
       const position = this.move(
         this.getList(source.droppableId),
@@ -235,12 +237,13 @@ class MnemonicDnDSorter extends Component<Props, State> {
         destination,
       );
 
-      this.setState({
-        items: position.target,
-        selected: position.source,
-      });
-
-      this.allDropped(position.target);
+      this.setState(
+        {
+          items: position.target,
+          selected: position.source,
+        },
+        this.handleDrop,
+      );
     }
   };
 
