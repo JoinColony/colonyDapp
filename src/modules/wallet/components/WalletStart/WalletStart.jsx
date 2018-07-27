@@ -1,7 +1,5 @@
 /* @flow */
 
-// FIXME: This should not be a step. This should be an own route (like /acccess?), which then links to
-// /unlockwallet and /createwallet
 import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
@@ -12,7 +10,7 @@ import styles from './WalletStart.css';
 
 import WizardTemplate from '../../../pages/WizardTemplate';
 import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
+import Link from '../../../core/components/Link';
 
 // TODO: Icon component
 import MetaMask from '../../../../img/icons/metamask.svg';
@@ -149,22 +147,24 @@ const WalletDetails = () => (
         />
       </div>
       {allTheRows}
-      <Button className={styles.callToAction} type="submit">
-        <div className={styles.actionImage}>
-          <img src={jazz} alt="" width="22" height="22" />
+      <Link to="/createwallet">
+        <div className={styles.callToAction}>
+          <div className={styles.actionImage}>
+            <img src={jazz} alt="" width="22" height="22" />
+          </div>
+          <div className={styles.actionText}>
+            <Heading
+              appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+              text={MSG.callToAction}
+            />
+            <Heading
+              appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+              text={MSG.callToActionSub}
+            />
+          </div>
+          <ArrowRight className={styles.rowArrow} />
         </div>
-        <div className={styles.actionText}>
-          <Heading
-            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-            text={MSG.callToAction}
-          />
-          <Heading
-            appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-            text={MSG.callToActionSub}
-          />
-        </div>
-        <ArrowRight className={styles.rowArrow} />
-      </Button>
+      </Link>
     </section>
   </WizardTemplate>
 );

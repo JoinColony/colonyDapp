@@ -1,160 +1,120 @@
 /* @flow */
 
-// FIXME: This should be done by this component (MnemonicDnDSorter.onAllDropped prop)
-// checkSorting = () => {
-//   const { items } = this.state;
-//   const { passphrase } = this.props;
-//   this.setState({ checked: true });
-//   const passPhraseToCheck = items.map(element => element.content).join(' ');
+import type { FormikProps } from 'formik';
 
-//   const matches = passPhraseToCheck === passphrase;
-//   if (matches) {
-//     this.setState({ hasError: false });
-//   } else {
-//     this.setState({ hasError: true });
-//   }
-
-//   return matches;
-// };
-
-// FIXME: Remove redux-form
-
-import React, { Component } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
-import { formValueSelector } from 'redux-form';
-import { connect } from 'react-redux';
+import * as yup from 'yup';
 
-import styles from './DragAndDropPhrase.css';
+import styles from './StepDragAndDropMnemonic.css';
+
+import type { SubmitFn } from '../../../core/components/Wizard';
 
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
-import DragAndDropArea from './DragAndDropArea.jsx';
+import MnemonicDnDSorter from '../../../core/components/MnemonicDnDSorter';
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateWallet.DragAndDropPhrase.heading',
+    id: 'CreateWallet.StepDragAndDropMnemonic.heading',
     defaultMessage: 'Did you really back up your mnemoic phrase. Prove it!',
   },
   subTitle: {
-    id: 'CreateWallet.DragAndDropPhrase.subTitle',
+    id: 'CreateWallet.StepDragAndDropMnemonic.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
       'We do not store your mnemonic phrase anywhere which means we cannot recover it for any reason. Make an alternative backup to keep it extra safe.',
   },
   nextButton: {
-    id: 'CreateWallet.DragAndDropPhrase.confirmButton',
+    id: 'CreateWallet.StepDragAndDropMnemonic.confirmButton',
     defaultMessage: 'Next',
   },
   backButton: {
-    id: 'CreateWallet.DragAndDropPhrase.backButton',
+    id: 'CreateWallet.StepDragAndDropMnemonic.backButton',
     defaultMessage: 'Back',
   },
-  backupButton: {
-    id: 'CreateWallet.DragAndDropPhrase.backupButton',
-    defaultMessage: 'Backup Mnemonic',
+  mnemonicBoxLabel: {
+    id: 'MnemonicDnDSorter.mnemonicBoxLabel',
+    defaultMessage: 'Mnemonic Phrase',
   },
-  dragAndDropBox: {
-    id: 'CreateWallet.DragAndDropPhrase.dragAndDropBox',
-    defaultMessage: 'Drag & Drop Mnemonics Here',
+  mnemonicBoxLabelHelp: {
+    id: 'MnemonicDnDSorter.mnemonicBoxLabelHelp',
+    defaultMessage: 'Drag your Phrase in the right order',
+  },
+  mnemonicBoxPlaceholder: {
+    id: 'MnemonicDnDSorter.mnemonicBoxPlaceholder',
+    defaultMessage: 'Drag & Drop Mnemonic here',
+  },
+  validationSortedMnemonic: {
+    id: 'MnemonicDnDSorter.validation.sortedmnemonic',
+    defaultMessage: 'The two phrases do not match. Please try again',
   },
 });
 
-type Props = {
-  nextStep: () => void,
-  previousStep: () => void,
-  handleSubmit: (handler: () => void) => void,
+type FormValues = {
   passphrase: string,
+  sortedmnemonic: string,
 };
 
-type State = {
-  allowSubmit: boolean,
-};
+type Props = {
+  previousStep: () => void,
+} & FormikProps<FormValues>;
 
-class DragAndDropPhrase extends Component<Props, State> {
-  child: { current: null | DragAndDropArea };
+const StepDragAndDropMnemonic = ({
+  values: { passphrase },
+  previousStep,
+  handleSubmit,
+  isValid,
+}: Props) => (
+  <form onSubmit={handleSubmit}>
+    <section className={styles.content}>
+      <div className={styles.title}>
+        <Heading
+          appearance={{ size: 'medium', width: 'thin' }}
+          text={MSG.heading}
+        />
+      </div>
+      <div className={styles.subtitle}>
+        <Heading
+          appearance={{ size: 'normal', width: 'thin' }}
+          text={MSG.subTitle}
+        />
+      </div>
+      <div className={styles.wordContainer}>
+        <MnemonicDnDSorter
+          label={MSG.mnemonicBoxLabel}
+          help={MSG.mnemonicBoxLabelHelp}
+          placeholder={MSG.mnemonicBoxPlaceholder}
+          name="sortedmnemonic"
+          passphrase={passphrase}
+        />
+      </div>
+      <div className={styles.buttonsForBox}>
+        <Button
+          appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+          onClick={previousStep}
+          text={MSG.backButton}
+        />
+        <Button
+          appearance={{ theme: 'primary' }}
+          type="submit"
+          disabled={!isValid}
+          text={MSG.nextButton}
+        />
+      </div>
+    </section>
+  </form>
+);
 
-  constructor(props) {
-    super(props);
-    this.child = React.createRef();
-  }
+export const Step = StepDragAndDropMnemonic;
 
-  state = {
-    allowSubmit: false,
-  };
+export const validationSchema = yup.object({
+  passphrase: yup.string(),
+  sortedmnemonic: yup
+    .string()
+    .required()
+    .equalTo(yup.ref('passphrase'), MSG.validationSortedMnemonic),
+});
 
-  checkCorrectSorting = () => {
-    if (this.child.current) {
-      this.child.current.checkSorting();
-    }
-  };
-
-  enableSubmit = () => {
-    this.setState({ allowSubmit: true });
-  };
-
-  render() {
-    const { allowSubmit } = this.state;
-    const { passphrase, previousStep, nextStep, handleSubmit } = this.props;
-    return (
-      <section className={styles.content}>
-        <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'mediumL', width: 'thin' }}
-            text={MSG.heading}
-          />
-        </div>
-        <div className={styles.subtitle}>
-          <Heading
-            appearance={{ size: 'normal', width: 'thin' }}
-            text={MSG.subTitle}
-          />
-        </div>
-        <div className={styles.wordContainer}>
-          <DragAndDropArea
-            ref={this.child}
-            onAllDropped={this.enableSubmit}
-            passphrase={passphrase}
-            text={MSG.dragAndDropBox.defaultMessage}
-          />
-        </div>
-        <div className={styles.buttonsForBox}>
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-            value={MSG.backButton}
-            onClick={handleSubmit(previousStep)}
-          />
-          {allowSubmit ? (
-            <Button
-              appearance={{ theme: 'primary' }}
-              onClick={() => {
-                handleSubmit(nextStep);
-                this.checkCorrectSorting();
-              }}
-              value={MSG.nextButton}
-            />
-          ) : (
-            <Button
-              appearance={{ theme: 'tertiary' }}
-              onClick={() => {
-                handleSubmit(nextStep);
-                this.checkCorrectSorting();
-              }}
-              value={MSG.nextButton}
-            />
-          )}
-        </div>
-      </section>
-    );
-  }
-}
-
-// get pass phrase from previous step
-// will be passed in as props
-const selector = formValueSelector('create_wallet');
-const ConnectedDragAndDropPhrase = connect(state => ({
-  passphrase: selector(state, 'pass_phrase_outer'),
-}))(DragAndDropPhrase);
-
-export default ConnectedDragAndDropPhrase;
-
-export const reduxFormOpts = {};
+// TODO: submit function
+export const onSubmit: SubmitFn<FormValues> = () => null;

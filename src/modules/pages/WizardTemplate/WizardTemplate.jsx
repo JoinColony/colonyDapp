@@ -22,11 +22,12 @@ const WizardTemplate = ({ children, step, stepCount }: Props) => (
       <figure className={styles.logo} role="presentation">
         <Logo />
       </figure>
-      {stepCount && (
-        <div className={styles.stepBarContainer}>
-          {step && <StepBar step={step} stepCount={stepCount} />}
-        </div>
-      )}
+      {stepCount &&
+        step && (
+          <div className={styles.stepBarContainer}>
+            <StepBar step={step} stepCount={stepCount} />
+          </div>
+        )}
     </header>
     <article
       className={`${layout.flexContainerColumn} ${layout.flexAlignCenter} ${

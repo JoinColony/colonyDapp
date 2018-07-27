@@ -1,11 +1,18 @@
 /* @flow */
 
 import type { ComponentType } from 'react';
+import type { FormikActions } from 'formik';
 
 import { createElement, Component } from 'react';
 import { withFormik } from 'formik';
 
-export type SubmitFn = (values: Object, goodies: Object) => any;
+export type SubmitFn<Values> = (
+  values: Values,
+  goodies: FormikActions<Values> & {
+    nextStep: () => void,
+    previousStep: () => void,
+  },
+) => any;
 
 type ValidationSchema = Object;
 
@@ -18,7 +25,7 @@ type State = {
 
 type StepType = {
   Step: ComponentType<any>,
-  onSubmit: SubmitFn,
+  onSubmit: SubmitFn<Object>,
   validationSchema?:
     | ValidationSchema
     | (({ [string]: any }) => ValidationSchema),
@@ -53,7 +60,7 @@ const withWizard = ({ steps }: WizardArgs) => (
       }));
     };
 
-    handleStepSubmit = (onSubmitFn: SubmitFn) => (
+    handleStepSubmit = (onSubmitFn: SubmitFn<Object>) => (
       values: Object,
       bag: Object,
     ) =>

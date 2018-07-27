@@ -17,6 +17,7 @@ import rootReducer from './reducer';
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 // import CreateColony from './modules/dashboard/components/CreateColony';
 import WalletStart from './modules/wallet/components/WalletStart';
+import CreateWalletWizard from './modules/wallet/components/CreateWalletWizard';
 import { SpinnerLoader } from './modules/core/components/Preloaders';
 
 addLocaleData(en);
@@ -83,6 +84,7 @@ export default function App() {
             <Route exact path="/" component={Home} />
             <Route path="/dynamic-import-route" component={DynamicRoute} />
             <Route path="/start" component={WalletStart} />
+            <Route path="/createwallet" component={CreateWalletWizard} />
           </div>
         </Router>
       </Provider>

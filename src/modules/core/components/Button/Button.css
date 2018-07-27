@@ -96,9 +96,9 @@
  */
 
 .sizeSmall {
+  padding: 0 10px;
   height: 14px;
   font-size: var(--size-tiny);
-  padding: 0px 10px;
   font-weight: var(--weight-normal);
 }
 

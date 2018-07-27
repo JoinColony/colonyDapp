@@ -1,0 +1,5 @@
+{
+    "mixed": {
+        "equalTo": "${path} must be the same as ${reference}"
+    }
+}
