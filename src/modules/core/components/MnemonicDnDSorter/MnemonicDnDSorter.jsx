@@ -275,7 +275,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
               help={help}
             />
             <Button
-              appearance={{ theme: 'ghost' }}
+              appearance={{ theme: 'ghost', size: 'small' }}
               type="button"
               onClick={this.reset}
               text={MSG.buttonReset}

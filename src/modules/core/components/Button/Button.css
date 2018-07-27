@@ -95,6 +95,13 @@
  * Heads's up: don't compose `.main` in the button sizing classes, otherwise you'll end up with `.main` apply-ed two times on the element.
  */
 
+.sizeSmall {
+  height: 14px;
+  font-size: var(--size-tiny);
+  padding: 0px 10px;
+  font-weight: var(--weight-normal);
+}
+
 .sizeLarge {
   padding: 11px 32px;
   height: 43px;
