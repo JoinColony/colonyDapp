@@ -88,28 +88,35 @@ const asField: HOC<*, OutProps> = compose(
       placeholder,
       title,
       ...props
-    }: InProps) => ({
-      'aria-label': label,
-      label:
-        formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
-      name: fieldName || name || id,
-      placeholder: formatIntl(placeholder, formatMessage),
-      title:
-        formatIntl(errors && errors[fieldName], formatMessage) ||
-        formatIntl(title, formatMessage) ||
-        formatIntl(label, formatMessage) ||
-        formatIntl(placeholder, formatMessage),
-      $id: id || fieldName || name,
-      $error: errors && errors[fieldName],
+    }: InProps) => {
+      const htmlFieldName = fieldName || name;
+      const $error = errors && errors[htmlFieldName];
+      const $id = id || htmlFieldName;
+      const $touched = touched && touched[htmlFieldName];
       // This is assigning an empty string to the field's value.
       // It might be problematic for some cases but for now I couldn't think of one
-      $value: value || '',
-      $touched: touched && touched[fieldName],
-      onChange,
-      onBlur,
-      setValue: (val: any) => setFieldValue(fieldName, val),
-      ...props,
-    }),
+      const $value = value || '';
+      return {
+        'aria-label': label,
+        label:
+          formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
+        name: htmlFieldName || id,
+        placeholder: formatIntl(placeholder, formatMessage),
+        title:
+          formatIntl($error, formatMessage) ||
+          formatIntl(title, formatMessage) ||
+          formatIntl(label, formatMessage) ||
+          formatIntl(placeholder, formatMessage),
+        $id,
+        $error,
+        $value,
+        $touched,
+        onChange,
+        onBlur,
+        setValue: (val: any) => setFieldValue(htmlFieldName, val),
+        ...props,
+      };
+    },
   ),
 );
 

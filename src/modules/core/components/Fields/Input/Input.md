@@ -104,7 +104,7 @@ Uses the background color of its background (same for text). This should also wo
 ```js
 <Input
   appearance={{ colorSchema: 'transparent' }}
-  name="inputdark"
+  name="inputtransparent"
   placeholder="I'm a placeholder"
   label="Cool label"
   connect={false}
