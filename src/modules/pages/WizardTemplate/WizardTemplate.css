@@ -1,7 +1,7 @@
 @import 'variables.css';
 
-.main {
-  background-color: var(--grey-blue-2);
+.layoutMain {
+  composes: stretchHorizontal from '~styles/layout.css';
 }
 
 .header {
@@ -20,11 +20,8 @@
 }
 
 .content {
+  composes: flexContainerColumn flexAlignCenter from '~styles/layout.css';
   padding: 0 15%;
-}
-
-.content > form {
-  width: 100%;
 }
 
 .controls {

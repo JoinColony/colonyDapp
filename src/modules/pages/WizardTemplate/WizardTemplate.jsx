@@ -2,7 +2,6 @@
 
 import React from 'react';
 import type { Node } from 'react';
-import layout from '~styles/layout.css';
 
 import Logo from '../../../img/logo.svg';
 import { StepBar } from '../../core/components/ProgressBar';
@@ -17,7 +16,7 @@ type Props = {
 const displayName = 'pages.WizardTemplate';
 
 const WizardTemplate = ({ children, step, stepCount }: Props) => (
-  <main className={layout.stretchHorizontal}>
+  <main className={styles.layoutMain}>
     <header className={styles.header}>
       <figure className={styles.logo} role="presentation">
         <Logo />
@@ -29,13 +28,7 @@ const WizardTemplate = ({ children, step, stepCount }: Props) => (
           </div>
         )}
     </header>
-    <article
-      className={`${layout.flexContainerColumn} ${layout.flexAlignCenter} ${
-        styles.content
-      }`}
-    >
-      {children}
-    </article>
+    <article className={styles.content}>{children}</article>
   </main>
 );
 

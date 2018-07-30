@@ -15,8 +15,6 @@ exports[`WizardTemplate component Renders initial component 1`] = `
       />
     </div>
   </header>
-  <article
-    className="undefined undefined undefined"
-  />
+  <article />
 </main>
 `;

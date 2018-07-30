@@ -66,43 +66,41 @@ const StepDragAndDropMnemonic = ({
   handleSubmit,
   isValid,
 }: Props) => (
-  <form onSubmit={handleSubmit}>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', width: 'thin' }}
-          text={MSG.heading}
-        />
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', width: 'thin' }}
-          text={MSG.subTitle}
-        />
-      </div>
-      <div className={styles.wordContainer}>
-        <MnemonicDnDSorter
-          label={MSG.mnemonicBoxLabel}
-          help={MSG.mnemonicBoxLabelHelp}
-          placeholder={MSG.mnemonicBoxPlaceholder}
-          name="sortedmnemonic"
-          passphrase={passphrase}
-        />
-      </div>
-      <div className={styles.buttonsForBox}>
-        <Button
-          appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-          onClick={previousStep}
-          text={MSG.backButton}
-        />
-        <Button
-          appearance={{ theme: 'primary' }}
-          type="submit"
-          disabled={!isValid}
-          text={MSG.nextButton}
-        />
-      </div>
-    </section>
+  <form className={styles.content} onSubmit={handleSubmit}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', width: 'thin' }}
+        text={MSG.heading}
+      />
+    </div>
+    <div className={styles.subtitle}>
+      <Heading
+        appearance={{ size: 'normal', width: 'thin' }}
+        text={MSG.subTitle}
+      />
+    </div>
+    <div className={styles.wordContainer}>
+      <MnemonicDnDSorter
+        label={MSG.mnemonicBoxLabel}
+        help={MSG.mnemonicBoxLabelHelp}
+        placeholder={MSG.mnemonicBoxPlaceholder}
+        name="sortedmnemonic"
+        passphrase={passphrase}
+      />
+    </div>
+    <div className={styles.buttonsForBox}>
+      <Button
+        appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+        onClick={previousStep}
+        text={MSG.backButton}
+      />
+      <Button
+        appearance={{ theme: 'primary' }}
+        type="submit"
+        disabled={!isValid}
+        text={MSG.nextButton}
+      />
+    </div>
   </form>
 );
 

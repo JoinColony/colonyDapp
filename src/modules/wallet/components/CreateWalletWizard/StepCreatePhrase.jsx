@@ -11,7 +11,6 @@ import type { SubmitFn } from '../../../core/components/Wizard';
 
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
-import Link from '../../../core/components/Link';
 import MnemonicGenerator from '../../../core/components/MnemonicGenerator';
 
 // TODO: Replace this with actual creation function
@@ -46,32 +45,34 @@ type FormValues = {
 type Props = FormikProps<FormValues>;
 
 const StepCreatePhrase = ({ handleSubmit }: Props) => (
-  <form onSubmit={handleSubmit}>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', width: 'thin' }}
-          text={MSG.heading}
-        />
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', width: 'thin' }}
-          text={MSG.subTitle}
-        />
-      </div>
-      <div className={styles.greyBox}>
-        <MnemonicGenerator name="passphrase" generateFn={createMnemonic} />
-      </div>
-      <div className={styles.buttonsForBox}>
-        <Link to="/start" text={MSG.backLink} />
-        <Button
-          appearance={{ theme: 'primary' }}
-          type="submit"
-          text={MSG.confirmButton}
-        />
-      </div>
-    </section>
+  <form className={styles.content} onSubmit={handleSubmit}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', width: 'thin' }}
+        text={MSG.heading}
+      />
+    </div>
+    <div className={styles.subtitle}>
+      <Heading
+        appearance={{ size: 'normal', width: 'thin' }}
+        text={MSG.subTitle}
+      />
+    </div>
+    <div className={styles.greyBox}>
+      <MnemonicGenerator name="passphrase" generateFn={createMnemonic} />
+    </div>
+    <div className={styles.buttonsForBox}>
+      <Button
+        appearance={{ theme: 'ghost' }}
+        linkTo="/start"
+        text={MSG.backLink}
+      />
+      <Button
+        appearance={{ theme: 'primary' }}
+        type="submit"
+        text={MSG.confirmButton}
+      />
+    </div>
   </form>
 );
 

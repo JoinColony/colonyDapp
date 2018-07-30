@@ -54,41 +54,39 @@ const StepBackupPhrase = ({
   values: { passphrase },
   previousStep,
 }: Props) => (
-  <form onSubmit={handleSubmit}>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', width: 'thin' }}
-          text={MSG.heading}
-        />
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', width: 'thin' }}
-          text={MSG.subTitle}
-        />
-      </div>
+  <form className={styles.content} onSubmit={handleSubmit}>
+    <div className={styles.title}>
       <Heading
-        appearance={{ size: 'small', width: 'bold' }}
-        text={MSG.titleBox}
+        appearance={{ size: 'medium', width: 'thin' }}
+        text={MSG.heading}
       />
-      <div className={styles.greyBox}>{passphrase}</div>
-      <div className={styles.backupButton}>
-        <Button appearance={{ theme: 'primary' }} text={MSG.backupButton} />
-      </div>
-      <div className={styles.buttonsForBox}>
-        <Button
-          appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-          text={MSG.backButton}
-          onClick={previousStep}
-        />
-        <Button
-          type="submit"
-          appearance={{ theme: 'danger' }}
-          text={MSG.confirmButton}
-        />
-      </div>
-    </section>
+    </div>
+    <div className={styles.subtitle}>
+      <Heading
+        appearance={{ size: 'normal', width: 'thin' }}
+        text={MSG.subTitle}
+      />
+    </div>
+    <Heading
+      appearance={{ size: 'small', width: 'bold' }}
+      text={MSG.titleBox}
+    />
+    <div className={styles.greyBox}>{passphrase}</div>
+    <div className={styles.backupButton}>
+      <Button appearance={{ theme: 'primary' }} text={MSG.backupButton} />
+    </div>
+    <div className={styles.buttonsForBox}>
+      <Button
+        appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+        text={MSG.backButton}
+        onClick={previousStep}
+      />
+      <Button
+        type="submit"
+        appearance={{ theme: 'danger' }}
+        text={MSG.confirmButton}
+      />
+    </div>
   </form>
 );
 

@@ -13,26 +13,28 @@
 }
 
 .greyBox {
-  min-height: 86px;
-}
-
-@media only screen and (max-width: 1500px) {
-  .greyBox:hover::before {
-    display: none;
-  }
+  position: relative;
 }
 
 .greyBox:hover::before {
+  display: none;
   margin: auto;
   height: 55px;
   width: 211px;
   position: absolute;
-  top: 460px;
-  left: 370px;
+  top: 50%;
+  left: 0;
   background-size: 200px;
   background-image: url(../../../../img/icons/arrow-left-side.png);
   content: "";
   background-repeat: no-repeat;
+  transform: translate(-100%, 0);
+}
+
+@media only screen and (min-width: 1500px) {
+  .greyBox:hover::before {
+    display: block;
+  }
 }
 
 .buttonsForBox {
