@@ -27,7 +27,7 @@
 
 ```js
 <Input
-  name="inputlabel"
+  name="inputWithlabel"
   placeholder="I have a label"
   label="Your details"
   connect={false}
