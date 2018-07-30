@@ -1,0 +1,45 @@
+@import 'variables.css';
+
+.content {
+  width: 460px;
+}
+
+.title {
+  margin-top: 180px;
+}
+
+.subtitle {
+  margin-bottom: 65px;
+}
+
+.greyBox {
+  position: relative;
+}
+
+.greyBox:hover::before {
+  display: none;
+  margin: auto;
+  height: 55px;
+  width: 211px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background-size: 200px;
+  background-image: url(../../../../img/icons/arrow-left-side.png);
+  content: "";
+  background-repeat: no-repeat;
+  transform: translate(-100%, 0);
+}
+
+@media only screen and (min-width: 1500px) {
+  .greyBox:hover::before {
+    display: block;
+  }
+}
+
+.buttonsForBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}

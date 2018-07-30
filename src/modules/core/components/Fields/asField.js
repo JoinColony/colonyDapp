@@ -90,23 +90,24 @@ const asField: HOC<*, OutProps> = compose(
       ...props
     }: InProps) => {
       const htmlFieldName = fieldName || name;
-      const $error = errors && errors[htmlFieldName];
+      const $error =
+        errors &&
+        errors[fieldName] &&
+        formatIntl(errors[fieldName], formatMessage);
       const $id = id || htmlFieldName;
       const $touched = touched && touched[htmlFieldName];
+      const $title = formatIntl(title, formatMessage);
+      const $label = formatIntl(label, formatMessage);
+      const $placeholder = formatIntl(placeholder, formatMessage);
       // This is assigning an empty string to the field's value.
       // It might be problematic for some cases but for now I couldn't think of one
       const $value = value || '';
       return {
-        'aria-label': label,
-        label:
-          formatIntl(label, formatMessage) || formatIntl(title, formatMessage),
+        'aria-label': label || $title,
+        label: $label || $title,
         name: htmlFieldName || id,
-        placeholder: formatIntl(placeholder, formatMessage),
-        title:
-          formatIntl($error, formatMessage) ||
-          formatIntl(title, formatMessage) ||
-          formatIntl(label, formatMessage) ||
-          formatIntl(placeholder, formatMessage),
+        placeholder: $placeholder,
+        title: $error || $title || $label || $placeholder,
         $id,
         $error,
         $value,

@@ -1,0 +1,58 @@
+@import 'variables.css';
+
+.content {
+  width: 460px;
+}
+
+.title {
+  margin-top: 180px;
+}
+
+.subtitle {
+  margin-bottom: 81px;
+}
+
+.greyBox {
+  padding: 22px 60px;
+  position: relative;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: var(--radius-small);
+  background-color: var(--grey-blue-1);
+  font-weight: var(--weight-semi);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.greyBox:hover::before {
+  display: none;
+  height: 94px;
+  width: 230px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-size: 150px;
+  background-image: url(../../../../img/icons/arrow-right-side.png);
+  content: "";
+  background-repeat: no-repeat;
+  transform: translate(100%, -50%);
+}
+
+@media only screen and (min-width: 1500px) {
+  .greyBox:hover::before {
+    display: block;
+  }
+}
+
+.buttonsForBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.backupButton {
+  display: flex;
+  justify-content: flex-end;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--grey-blue-0);
+}

@@ -1,12 +1,15 @@
 /* @flow */
 
+import type { MessageDescriptor } from 'react-intl';
+
 import React, { Component, Fragment } from 'react';
 // $FlowFixMe https://github.com/atlassian/react-beautiful-dnd/issues/650
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
+import InputLabel from '../Fields/InputLabel';
+import asField from '../Fields/asField';
 import Button from '../Button';
-import Heading from '../Heading';
 import { shuffle } from '../../../../utils/arrays';
 
 // TODO: Maybe create grid using CSS?
@@ -17,43 +20,44 @@ import styles from './MnemonicDnDSorter.css';
 type StyleType = { [key: string]: string | number };
 
 const MSG = defineMessages({
-  placeholder: {
-    id: 'MnemonicDnDSorter.placeholder.title',
-    defaultMessage: 'Drag & Drop',
-  },
-  placeholderSub: {
-    id: 'MnemonicDnDSorter.placeholder.subtitle',
-    defaultMessage: 'Mnemonics here',
-  },
-  errorMessage: {
-    id: 'MnemonicDnDSorter.error.errorMessage',
-    defaultMessage: 'That’s incorrect. Press the Reset button to try again.',
-  },
   buttonReset: {
-    id: 'MnemonicDnDSorter.error.buttonReset',
+    id: 'MnemonicDnDSorter.buttonReset',
     defaultMessage: 'Reset',
-  },
-  titleBox: {
-    id: 'MnemonicDnDSorter.titles.titleBox',
-    defaultMessage: 'Drag your Mnemonic Phrase in the right order',
   },
 });
 
 type Props = {
   /** Mnemonic passphrase of space-separated words */
   passphrase: string,
-  /** Function to execute once all words are dropped. You have access to the reset and setError methods. */
-  onAllDropped: (
-    passphrase: string,
-    { reset: () => void, setError: () => void },
-  ) => void,
+  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
+  connect?: boolean,
+  /** Just render the element without label */
+  elementOnly?: boolean,
+  /** Help text (will appear next to label text) */
+  help?: string | MessageDescriptor,
+  /** Label text */
+  label: string | MessageDescriptor,
+  /** Input field name (form variable) */
+  name: string,
+  /** Placeholder text (can also be a MessageDescriptor) */
+  placeholder?: string,
+  /** @ignore Will be injected by `asField` */
+  $id: string,
+  /** @ignore Will be injected by `asField` */
+  $error?: string,
+  /** @ignore Will be injected by `asField` */
+  $value?: string,
+  /** @ignore Will be injected by `asField` */
+  $touched?: boolean,
+  /** @ignore Will be injected by `asField` */
+  setValue: (val: any) => void,
+  /** @ignore Standard input field property */
+  onBlur: Function,
 };
 
 type State = {
   selected: Array<Droppable>,
   items: Array<Droppable>,
-  checked: boolean,
-  hasError: boolean,
 };
 
 class MnemonicDnDSorter extends Component<Props, State> {
@@ -79,8 +83,6 @@ class MnemonicDnDSorter extends Component<Props, State> {
     this.state = {
       selected: this.constructor.getItems(props.passphrase, 12),
       items: [],
-      checked: false,
-      hasError: false,
     };
   }
 
@@ -89,11 +91,12 @@ class MnemonicDnDSorter extends Component<Props, State> {
     source: 'selected',
   };
 
-  allDropped = (items: Array<Droppable>) => {
-    const { onAllDropped } = this.props;
+  handleDrop = () => {
+    const { setValue } = this.props;
+    const { items } = this.state;
     if (items.length === 12) {
       const passphrase = items.map(element => element.content).join(' ');
-      onAllDropped(passphrase, { reset: this.reset, setError: this.setError });
+      setValue(passphrase);
     }
   };
 
@@ -124,7 +127,6 @@ class MnemonicDnDSorter extends Component<Props, State> {
     this.setState({
       selected: MnemonicDnDSorter.getItems(passphrase, 12),
       items: [],
-      hasError: false,
     });
   };
 
@@ -209,8 +211,6 @@ class MnemonicDnDSorter extends Component<Props, State> {
     height: 110,
   });
 
-  setError = () => this.setState({ hasError: true });
-
   onDragEnd = (result: any) => {
     const { source, destination } = result;
 
@@ -225,14 +225,10 @@ class MnemonicDnDSorter extends Component<Props, State> {
         source.index,
         destination.index,
       );
+      const state =
+        source.droppableId === 'source' ? { selected: items } : { items };
 
-      let state = { items };
-
-      if (source.droppableId === 'source') {
-        state = { selected: items };
-      }
-
-      this.setState(state);
+      this.setState(state, this.handleDrop);
     } else {
       const position = this.move(
         this.getList(source.droppableId),
@@ -241,12 +237,13 @@ class MnemonicDnDSorter extends Component<Props, State> {
         destination,
       );
 
-      this.setState({
-        items: position.target,
-        selected: position.source,
-      });
-
-      this.allDropped(position.target);
+      this.setState(
+        {
+          items: position.target,
+          selected: position.source,
+        },
+        this.handleDrop,
+      );
     }
   };
 
@@ -254,28 +251,49 @@ class MnemonicDnDSorter extends Component<Props, State> {
     const svgStyle = {
       position: 'absolute',
     };
-    const { hasError, items, selected } = this.state;
+    const { items, selected } = this.state;
+    const {
+      $error,
+      $id,
+      elementOnly,
+      label,
+      help,
+      name,
+      $value,
+      $touched,
+      onBlur,
+      placeholder,
+      setValue,
+      ...props
+    } = this.props;
 
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className={styles.buttonsToMakeYouDrag}>
-          <Heading
-            appearance={{ size: 'small', width: 'bold' }}
-            text={MSG.titleBox}
-            className={styles.heading}
-          />
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
-            type="button"
-            onClick={this.reset}
-            text={MSG.buttonReset}
-          />
-        </div>
+        {!elementOnly && (
+          <div className={styles.labelHeader}>
+            <InputLabel
+              inputId={$id}
+              label={label}
+              error={$error}
+              help={help}
+            />
+            <Button
+              appearance={{ theme: 'ghost', size: 'small' }}
+              type="button"
+              onClick={this.reset}
+              text={MSG.buttonReset}
+            />
+          </div>
+        )}
         <Droppable droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
             <div
+              className={styles.main}
               ref={provided.innerRef}
-              style={this.getTargetStyle(snapshot.isDraggingOver, hasError)}
+              style={this.getTargetStyle(snapshot.isDraggingOver, !!$error)}
+              id={$id}
+              data-placeholder={items.length || $error ? null : placeholder}
+              {...props}
             >
               {items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -294,17 +312,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
                   )}
                 </Draggable>
               ))}
-              {!!items.length === 0 && (
-                <Fragment>
-                  <div className={styles.placeholderTop}>
-                    <FormattedMessage {...MSG.placeholder} />
-                  </div>
-                  <div className={styles.placeholder}>
-                    <FormattedMessage {...MSG.placeholderSub} />
-                  </div>
-                </Fragment>
-              )}
-              {!!hasError && (
+              {!!$error && (
                 <Fragment>
                   <div className={styles.errorOverlay} />
                   <Grid style={svgStyle} />
@@ -313,11 +321,6 @@ class MnemonicDnDSorter extends Component<Props, State> {
             </div>
           )}
         </Droppable>
-        {!!hasError && (
-          <div className={styles.errorMessage}>
-            <FormattedMessage {...MSG.errorMessage} />
-          </div>
-        )}
         <Droppable droppableId="source" direction="horizontal">
           {provided => (
             <div ref={provided.innerRef} style={this.getSourceStyle()}>
@@ -352,4 +355,4 @@ class MnemonicDnDSorter extends Component<Props, State> {
   }
 }
 
-export default MnemonicDnDSorter;
+export default asField(MnemonicDnDSorter);

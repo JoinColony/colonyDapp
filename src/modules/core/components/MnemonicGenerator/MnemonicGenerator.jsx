@@ -146,10 +146,9 @@ class MnemonicGenerator extends Component<Props, State> {
           aria-invalid={!!$error}
           aria-disabled={disabled}
         >
-          {!elementOnly &&
-            label && (
-              <InputLabel id={$id} label={label} error={$error} help={help} />
-            )}
+          {!elementOnly && (
+            <InputLabel id={$id} label={label} error={$error} help={help} />
+          )}
           <div className={styles.generator}>
             <span className={styles.mnemonic}>{$value}</span>
           </div>
