@@ -92,8 +92,8 @@ const asField: HOC<*, OutProps> = compose(
       const htmlFieldName = fieldName || name;
       const $error =
         errors &&
-        errors[fieldName] &&
-        formatIntl(errors[fieldName], formatMessage);
+        errors[htmlFieldName] &&
+        formatIntl(errors[htmlFieldName], formatMessage);
       const $id = id || htmlFieldName;
       const $touched = touched && touched[htmlFieldName];
       const $title = formatIntl(title, formatMessage);
