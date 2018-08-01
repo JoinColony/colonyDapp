@@ -134,7 +134,7 @@ jobs:
           path: reports
       - store_artifacts:
           path: reports
-   build-styleguide:
+  build-styleguide:
     docker:
       - image: circleci/node:9.10
     working_directory: ~/repo
