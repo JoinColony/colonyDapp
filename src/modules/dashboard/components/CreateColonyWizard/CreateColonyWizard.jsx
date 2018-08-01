@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from '../../../pages/components/WizardTemplate';
+export { default } from '../../../pages/WizardTemplate';
