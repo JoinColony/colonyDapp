@@ -1,26 +1,54 @@
 /* @flow */
 
-import React from 'react';
 import type { Node } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
-import type { Appearance } from '~types/css';
+
+import React from 'react';
+import { injectIntl } from 'react-intl';
+import { NavLink } from 'react-router-dom';
 
 import { getMainClasses } from '~utils/css';
 
 import styles from './Button.css';
 
-const displayName = 'core.Button';
+const displayName = 'Button';
+
+type Appearance = {
+  theme?:
+    | 'primary'
+    | 'secondary'
+    | 'danger'
+    | 'ghost'
+    | 'underlinedBold'
+    | 'blue',
+  size?: 'small' | 'large',
+};
 
 type Props = {
-  appearance?: Appearance, // Appearance object
-  className?: string, // Overwriting class name(s). Setting this will overwrite `theme` and `size` values.
-  disabled?: boolean, // Setting this to `true` will apply disabled styles via `aria-disabled` (disable interactions)
-  loading?: boolean, // Setting this to `true` will apply loading styles via `aria-busy` (show a spinner)
-  children?: Node, // Acts exactly the way as `value`
-  intl: IntlShape, // `react-intl` object, so that we have access to the `formatMessage()` method.
-  title?: MessageDescriptor | string, // Standard html title element. Can be a string or a `messageDescriptor`.
-  value?: MessageDescriptor | string, // A string or a `messageDescriptor` that make up the button's text label
-  type: string,
+  /** Appearance object */
+  appearance?: Appearance,
+  /** `children` to render (only works if `value` is not set) */
+  children?: Node,
+  /** Overwriting class name(s). Setting this will overwrite the `appearance` object */
+  className?: string,
+  /** Setting this to `true` will apply disabled styles via `aria-disabled` (disable interactions) */
+  disabled?: boolean,
+  /** Pass a ref to the `<button>` element */
+  innerRef?: (ref: ?HTMLElement) => void,
+  /** Use a link instead of a button. Like ReactRouter's `to` property */
+  linkTo?: string,
+  /** Setting this to `true` will apply loading styles via `aria-busy` (show a spinner) */
+  loading?: boolean,
+  /** Standard html title attribute. Can be a string or a `messageDescriptor` */
+  title?: MessageDescriptor | string,
+  /** Button type (button|submit) */
+  type?: string,
+  /** A string or a `messageDescriptor` that make up the button's text label */
+  text?: MessageDescriptor | string,
+  /** Values for loading text (react-intl interpolation) */
+  textValues?: { [string]: any },
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
 };
 
 /*
@@ -41,18 +69,34 @@ const Button = ({
   appearance,
   children,
   className,
-  disabled,
+  disabled = false,
+  innerRef,
   intl: { formatMessage },
-  loading,
+  linkTo,
+  loading = false,
   title,
-  value,
+  text,
+  textValues,
   type = 'button',
   ...props
 }: Props) => {
   const titleText =
     typeof title == 'string' ? title : title && formatMessage(title);
-  const valueText =
-    typeof value == 'string' ? value : value && formatMessage(value);
+  const buttonText =
+    typeof text == 'string' ? text : text && formatMessage(text, textValues);
+
+  if (linkTo) {
+    return (
+      <NavLink
+        className={className || getMainClasses(appearance, styles)}
+        to={linkTo}
+        {...props}
+      >
+        {buttonText || children}
+      </NavLink>
+    );
+  }
+
   return (
     <button
       className={className || getMainClasses(appearance, styles)}
@@ -60,13 +104,14 @@ const Button = ({
       aria-busy={loading}
       title={titleText}
       type={type}
+      ref={innerRef}
       {...props}
     >
-      {valueText || children}
+      {buttonText || children}
     </button>
   );
 };
 
 Button.displayName = displayName;
 
-export default Button;
+export default injectIntl(Button);

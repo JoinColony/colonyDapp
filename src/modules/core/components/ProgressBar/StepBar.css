@@ -1,0 +1,12 @@
+@import 'variables.css';
+
+.main {
+  width: 120px;
+}
+
+.stepCounter {
+  padding-top: 5px;
+  font-size: var(--size-small);
+  text-align: center;
+  color: var(--temp-grey-4);
+}

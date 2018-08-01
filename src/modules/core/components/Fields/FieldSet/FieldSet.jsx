@@ -3,15 +3,20 @@
 import React from 'react';
 import type { Node } from 'react';
 
-import type { Appearance } from '~types/css';
 import { getMainClasses } from '~utils/css';
 
 import styles from './FieldSet.css';
 
-const displayName = 'core.Fields.Fieldset';
+const displayName = 'Fieldset';
+
+type Appearance = {
+  align: 'right',
+};
 
 type Props = {
+  /** Appearance object */
   appearance?: Appearance,
+  /** Children to render */
   children: Node,
 };
 

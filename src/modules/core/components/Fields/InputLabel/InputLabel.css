@@ -5,13 +5,17 @@
   margin-bottom: 6px;
   width: 100%;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: 600;
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
 
   i {
     margin-left: 5px;
   }
+}
+
+.themeFat {
+  composes: main;
 }
 
 .themeUnderlined {
@@ -31,10 +35,18 @@
   color: var(--grey-5);
 }
 
+.error, .help {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: var(--size-tiny);
+  font-weight: 400;
+  line-height: 1;
+}
+
 .error {
-  composes: error from '../Field/Field.css';
+  color: var(--danger);
 }
 
 .help {
-  composes: help from '../Field/Field.css';
+  color: var(--text);
 }

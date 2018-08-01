@@ -1,3 +1,5 @@
 /* @flow */
 
-export { default } from './Wizard';
+export type { SubmitFn } from './withWizard';
+
+export { default as withWizard } from './withWizard';

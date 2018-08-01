@@ -2,17 +2,11 @@
 
 import React from 'react';
 
-import type { Element } from 'react';
-
 import styles from './LogoLoader.css';
 
-type Props = {
-  className?: string,
-};
-
 /* eslint-disable max-len */
-const LogoLoader = ({ className = '' }: Props): Element => (
-  <figure className={`${styles.main} ${className}`}>
+const LogoLoader = () => (
+  <figure className={styles.main}>
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 294 334">
       <g>
         <path

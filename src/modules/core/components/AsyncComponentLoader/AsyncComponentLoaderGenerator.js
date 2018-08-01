@@ -1,7 +1,7 @@
 /* @flow */
 
 import { createElement } from 'react';
-import AsyncComponentLoader from './AsyncComponentLoader';
+import AsyncComponentLoader from './AsyncComponentLoader.jsx';
 
 /**
  * A wrapper for the AsyncComponentLoader Component to use in non-JSX places (eg: compose() methods)

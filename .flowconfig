@@ -5,6 +5,9 @@
 .*/src/lib/colonyJS/.*
 .*/src/lib/colony-wallet/.*
 .*/src/lib/colonyNetwork/.*
+.*/node_modules/findup/.*
+# https://github.com/atlassian/react-beautiful-dnd/issues/650
+.*/node_modules/react-beautiful-dnd/.*
 
 [include]
 .*/src/.*
@@ -14,10 +17,10 @@
 [lints]
 
 [options]
+module.ignore_non_literal_requires=true
 module.name_mapper='^.*\.css$' -> 'css-module-flow'
 module.name_mapper='^.*\.(svg)$' -> 'empty/string'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
-module.name_mapper='^\~types\/\(.*\)$' -> '<PROJECT_ROOT>/src/types/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
 
 [strict]

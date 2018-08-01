@@ -1,0 +1,92 @@
+@import 'variables.css';
+
+/*
+ * Base `Icon` styles
+ * Everything inherits from this
+ */
+
+.main {
+  display: inline-block;
+}
+
+.main svg {
+  vertical-align: top;
+}
+
+.main svg use {
+  pointer-events: none;
+}
+
+.main[role="button"] {
+  cursor: pointer;
+
+  &:active {
+    outline: none;
+  }
+
+  &:hover {
+    outline: none;
+  }
+}
+
+/*
+ * Sizing
+ *
+ * Next set of classes will define the icons's size
+ */
+
+.sizeTiny {
+  height: 14px;
+  width: 14px;
+}
+
+.sizeSmall {
+  height: 16px;
+  width: 16px;
+}
+
+.sizeNormal {
+  height: 18px;
+  width: 18px;
+}
+
+.sizeMedium {
+  height: 28px;
+  width: 28px;
+}
+
+.sizeLarge {
+  height: 42px;
+  width: 42px;
+}
+
+.sizeHuge {
+  height: 64px;
+  width: 64px;
+}
+
+/*
+ * Themeing
+ *
+ * Next set of classes will define our various icon themes.
+ *
+ * Some of them will also have an `invert` version. This is for dark backgrounds.
+ */
+
+.themePrimary {
+  composes: main;
+
+  & svg {
+    fill: var(--text);
+    stroke: var(--text);
+  }
+}
+
+.themeInvert {
+  composes: main;
+
+  & svg {
+    fill: var(--colony-white);
+    stroke: var(--colony-white);
+  }
+}

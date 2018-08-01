@@ -1,32 +1,47 @@
 /* @flow */
 
-import React from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 
-import type { Appearance } from '~types/css';
+import React from 'react';
+import { injectIntl } from 'react-intl';
+
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputLabel.css';
 
-const displayName = 'core.Fields.InputLabel';
+const displayName = 'InputLabel';
+
+type Appearance = {
+  theme?: 'fat' | 'underlined',
+  direction?: 'horizontal',
+  colorSchema?: 'dark' | 'transparent',
+};
 
 type Props = {
+  /** Appearance object */
   appearance?: Appearance,
+  /** Error text (if applicable) */
   error?: string,
+  /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
+  /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
-  id: string,
-  intl: IntlShape,
-  label?: string | MessageDescriptor,
+  /** `id` attribute value of accompanied input field */
+  inputId?: string,
+  /** Label text */
+  label: string | MessageDescriptor,
+  /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
 };
 
 const InputLabel = ({
-  appearance,
+  appearance = {},
   error,
   help,
   helpValues,
-  id,
+  inputId = '',
   intl: { formatMessage },
   label: inputLabel,
   labelValues,
@@ -40,11 +55,11 @@ const InputLabel = ({
   return (
     <label
       className={getMainClasses(appearance, styles)}
-      id={`${id}_label`}
-      htmlFor={id}
+      id={inputId ? `${inputId}_label` : null}
+      htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
-      {error && appearance && appearance.direction !== 'horizontal' ? (
+      {error && appearance.direction !== 'horizontal' ? (
         <span className={styles.error}>{error}</span>
       ) : (
         helpText && <span className={styles.help}>({helpText})</span>
@@ -55,4 +70,4 @@ const InputLabel = ({
 
 InputLabel.displayName = displayName;
 
-export default InputLabel;
+export default injectIntl(InputLabel);

@@ -29,26 +29,17 @@
   content: '';
 }
 
-.tiny {
-  composes: loader;
+.sizeSmall .loader {
   height: 14px;
   width: 14px;
 }
 
-.small {
-  composes: loader;
-  height: 16px;
-  width: 16px;
-}
-
-.medium {
-  composes: loader;
+.sizeMedium .loader {
   height: 28px;
   width: 28px;
 }
 
-.large {
-  composes: loader;
+.sizeLarge .loader {
   height: 42px;
   width: 42px;
 }

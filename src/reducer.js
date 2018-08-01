@@ -1,10 +1,7 @@
 /* @flow */
 
-import { reducer as formReducer } from 'redux-form';
 import { combineReducers } from 'redux';
 
-const rootReducer = combineReducers({
-  form: formReducer,
-});
+const rootReducer = combineReducers({});
 
 export default rootReducer;

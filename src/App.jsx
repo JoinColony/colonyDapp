@@ -15,9 +15,11 @@ import rootReducer from './reducer';
 
 /* eslint-disable-next-line max-len */
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
-import CreateColony from './modules/dashboard/components/CreateColony';
-import CreateWallet from './modules/wallet/components/CreateWallet';
-import SpinnerLoader from './modules/core/components/Preloaders/SpinnerLoader';
+/* eslint-disable-next-line max-len */
+import CreateColonyWizard from './modules/dashboard/components/CreateColonyWizard';
+import WalletStart from './modules/wallet/components/WalletStart';
+import CreateWalletWizard from './modules/wallet/components/CreateWalletWizard';
+import { SpinnerLoader } from './modules/core/components/Preloaders';
 
 addLocaleData(en);
 
@@ -46,8 +48,8 @@ const Home = () => (
         </NavLink>
       </li>
       <li>
-        <NavLink style={{ color: 'blue' }} to="/create-wallet">
-          Create Wallet
+        <NavLink style={{ color: 'blue' }} to="/start">
+          Start
         </NavLink>
       </li>
     </ul>
@@ -81,9 +83,10 @@ export default function App() {
         <Router>
           <div className={layout.stretch}>
             <Route exact path="/" component={Home} />
-            <Route path="/createcolony" component={CreateColony} />
+            <Route path="/createcolony" component={CreateColonyWizard} />
             <Route path="/dynamic-import-route" component={DynamicRoute} />
-            <Route path="/create-wallet" component={CreateWallet} />
+            <Route path="/start" component={WalletStart} />
+            <Route path="/createwallet" component={CreateWalletWizard} />
           </div>
         </Router>
       </Provider>

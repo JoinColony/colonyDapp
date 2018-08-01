@@ -1,39 +1,42 @@
 /* @flow */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
 import type { IntlShape, MessageDescriptor } from 'react-intl';
-import type { Appearance } from '~types/css';
 
 import styles from './SpinnerLoader.css';
 
+type Appearance = {
+  size: 'small' | 'medium' | 'large',
+};
+
 type Props = {
+  /** Appearance object */
   appearance?: Appearance,
-  className?: string,
-  intl: IntlShape,
+  /** Text to display while loading */
   loadingText?: MessageDescriptor | string,
+  /** Values for loading text (react-intl interpolation) */
   textValues?: { [string]: string },
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
 };
 
 const SpinnerLoader = ({
-  appearance,
-  intl,
+  appearance = { size: 'small' },
+  intl: { formatMessage },
   loadingText,
   textValues,
-  className,
-}: Props) => {
-  const size = (appearance && appearance.size) || 'small';
-  return (
-    <div className={className || getMainClasses(appearance, styles)}>
-      <div className={styles[size]} />
-      {loadingText &&
-        (typeof loadingText === 'string'
-          ? loadingText
-          : intl.formatMessage(loadingText, textValues))}
-    </div>
-  );
-};
+}: Props) => (
+  <div className={getMainClasses(appearance, styles)}>
+    <div className={styles.loader} />
+    {loadingText &&
+      (typeof loadingText === 'string'
+        ? loadingText
+        : formatMessage(loadingText, textValues))}
+  </div>
+);
 
-export default SpinnerLoader;
+export default injectIntl(SpinnerLoader);
