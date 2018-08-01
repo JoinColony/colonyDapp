@@ -21,6 +21,7 @@
 module.ignore_non_literal_requires=true
 module.name_mapper='^.*\.css$' -> 'css-module-flow'
 module.name_mapper='^.*\.(svg)$' -> 'empty/string'
+module.name_mapper='^\~lib\/\(.*\)$' -> '<PROJECT_ROOT>/src/lib/\1'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
 

@@ -1,0 +1,33 @@
+@import 'variables.css';
+
+.uploadItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.fileInfo {
+  display: flex;
+  flex: 1;
+}
+
+.itemProgress {
+  flex: 1;
+  margin-top: -3px; /* Shift progress bar up to align with text */
+  padding: 0 5px;
+}
+
+.itemIcon {
+  margin-right: 5px;
+
+  & svg {
+    stroke: var(--sky-blue);
+  }
+}
+
+[aria-invalid="true"] {
+  & .itemIcon {
+    & svg {
+      stroke: var(--danger);
+    }
+  }
+}
