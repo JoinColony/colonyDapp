@@ -42,21 +42,27 @@ type Props = {
   /** Allow specific types of files. See https://github.com/okonet/attr-accept for more information. Keep in mind that mime type determination is not reliable across platforms. CSV files, for example, are reported as text/plain under macOS but as application/vnd.ms-excel under Windows. In some cases there might not be a mime type set at all. See: https://github.com/react-dropzone/react-dropzone/issues/276 */
   accept?: Array<string>,
   /** Appearance object */
-  appearance?: Appearance,
+  appearance: Appearance,
   /** Connect upload items to form state (will inject `$value`, `$id`, `$error`, `$touched` to upload items), is `true` by default */
   connect?: boolean,
   /** Disable the file selection dialog box opening when clicking anywhere in the dropzone */
-  disableClick: boolean,
+  disableClick?: boolean,
   /** Standard html ID */
-  id: string,
+  id?: string,
   /** Component to act as the form field  */
   itemComponent: Function,
+  /** Maximum number of files to accept */
   maxFilesLimit: number,
+  /** Maximum filesize to accept (per-file) */
   maxFileSize: number,
-  onRemoved: Function,
-  onUploaded: Function,
+  /** Function called when a file is removed */
+  onRemoved?: Function,
+  /** Function called when a file is uploaded */
+  onUploaded?: Function,
+  /** Function to handle the actual uploading of the file */
   upload: Function,
-  removeActionText: MessageDescriptor | string,
+  /** Text used in the item component as the "remove" button */
+  removeActionText?: MessageDescriptor | string,
   /** Input field name (form variable) */
   name: string,
   /** Help text (will appear next to label text) */
@@ -64,7 +70,7 @@ type Props = {
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
   /** Label text */
-  label: string | MessageDescriptor,
+  label?: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
   /** @ignore injected by `react-intl` */

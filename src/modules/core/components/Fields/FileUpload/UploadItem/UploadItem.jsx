@@ -31,7 +31,7 @@ type Props = {
   /** Values for label text (react-intl interpolation) */
   removeActionTextValues?: { [string]: string },
   /** Function to be called if there's an error uploading the file */
-  onError: (errorMessage: string) => void,
+  onError?: (errorMessage: string) => void,
   /** Function to be called each time a file is uploaded */
   onUploaded: (idx: number, ipfsHash: string) => void,
   /** Function used to read each file during upload */
