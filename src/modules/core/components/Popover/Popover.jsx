@@ -11,6 +11,7 @@ import nanoid from 'nanoid';
 import type { ReactRef } from './types';
 import styles from './Popover.css';
 
+// eslint-disable-next-line import/no-cycle
 import PopoverWrapper from './PopoverWrapper.jsx';
 
 export type Placement =
@@ -32,9 +33,8 @@ export type Placement =
 // eslint-disable-next-line react/no-unused-prop-types
 type RefObj = { ref: ReactRef };
 
-type Appearance = {
+export type Appearance = {
   theme: 'dark',
-  placement: Placement,
 };
 
 type Props = {
@@ -46,7 +46,7 @@ type Props = {
   /** Popover content */
   content: Node | MessageDescriptor | (({ close: () => void }) => Node),
   /** Values for content (react-intl interpolation) */
-  intlValues?: { [string]: string },
+  contentValues?: { [string]: string },
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number,
   /** Popover placement */
@@ -171,7 +171,7 @@ class Popover extends Component<Props, State> {
   renderContent = () => {
     const {
       content,
-      intlValues,
+      contentValues,
       intl: { formatMessage },
     } = this.props;
     if (typeof content == 'string') {
@@ -185,7 +185,7 @@ class Popover extends Component<Props, State> {
     }
     // How to tell flow that this can only be a MessageDescriptor in this case?
     // $FlowFixMe - might be related to https://github.com/facebook/flow/issues/4775
-    return formatMessage(content, intlValues);
+    return formatMessage(content, contentValues);
   };
 
   render() {
