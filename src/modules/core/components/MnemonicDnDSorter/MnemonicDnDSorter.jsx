@@ -355,4 +355,4 @@ class MnemonicDnDSorter extends Component<Props, State> {
   }
 }
 
-export default asField(MnemonicDnDSorter);
+export default asField()(MnemonicDnDSorter);

@@ -1,23 +1,22 @@
 /* @flow */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { compose } from 'recompose';
 import Dropzone from 'react-dropzone';
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
-import nanoid from 'nanoid';
 
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { Dropzone as DropzoneType } from 'react-dropzone';
 
-import { immutableReplaceAt } from '~utils/arrays';
 import { getMainClasses } from '~utils/css';
 import fileReader from '~lib/fileReader';
 
+import asFieldArray from '../asFieldArray';
 import InputLabel from '../InputLabel';
 import UploadItem from './UploadItem';
 import styles from './FileUpload.css';
 
-// TODO replace with real file upload handler - this is only used here in defaultPorps during development
-const mockUploader = fileData =>
-  Promise.resolve(`someIpfsHash-${fileData.slice(20)}`);
+// TODO replace with real file upload handler - this is only used here in defaultProps during development
+const mockUploader = async fileData => `someIpfsHash-${fileData.slice(20)}`;
 
 const MSG = defineMessages({
   dropzoneText: {
@@ -43,8 +42,6 @@ type Props = {
   accept?: Array<string>,
   /** Appearance object */
   appearance: Appearance,
-  /** Connect upload items to form state (will inject `$value`, `$id`, `$error`, `$touched` to upload items), is `true` by default */
-  connect?: boolean,
   /** Disable the file selection dialog box opening when clicking anywhere in the dropzone */
   disableClick?: boolean,
   /** Standard html ID */
@@ -73,6 +70,12 @@ type Props = {
   label?: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
+  /** @ignore injected by `asFieldArray` */
+  form: { [string]: any },
+  /** @ignore injected by `asFieldArray` */
+  push: (file: Object) => void,
+  /** @ignore injected by `asFieldArray` */
+  remove: (idx: number) => void,
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
@@ -102,123 +105,63 @@ class FileUpload extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { maxFilesLimit, maxFileSize } = props;
-    this.state = {
-      files: [],
-      rejectedFiles: [],
-      errorMessage: '',
-    };
     this.readFiles = fileReader({ maxFilesLimit, maxFileSize });
   }
 
   addFiles = (filesToUpload: Array<File>): void => {
-    const { files } = this.state;
-    const { maxFilesLimit } = this.props;
-    const newFiles = Array.from(filesToUpload)
-      .slice(0, maxFilesLimit - files.length)
-      .map(file => ({
-        id: nanoid(),
-        fileRef: file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      }));
-    this.setState({
-      files: [...files, ...newFiles],
+    const {
+      form: { values },
+      name,
+      maxFilesLimit,
+      push,
+    } = this.props;
+    const files = values[name] || [];
+    const countAcceptedFiles = files.filter(file => !file.error);
+    const newFiles = Array.from(filesToUpload).slice(
+      0,
+      maxFilesLimit - countAcceptedFiles.length,
+    );
+    newFiles.forEach(file => {
+      push({
+        file,
+        uploaded: false,
+        error: null,
+      });
     });
   };
 
   addRejectedFiles = (attemptedFilesToUpload: Array<Object>): void => {
     const {
-      intl: { formatMessage },
+      form: { values },
       maxFilesLimit,
+      push,
+      name,
     } = this.props;
-    const { rejectedFiles } = this.state;
-    const newFiles = Array.from(attemptedFilesToUpload)
-      .slice(0, maxFilesLimit - rejectedFiles.length)
-      .map(file => ({
-        id: nanoid(),
-        fileRef: file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      }));
-    const updatedFiles = [...rejectedFiles, ...newFiles];
-    this.setState({
-      rejectedFiles: updatedFiles,
-      errorMessage: formatMessage(MSG.uploadErrorWrongFileText),
-    });
-  };
-
-  removeRejectedFile = (idx: number): void => {
-    const { errorMessage, rejectedFiles } = this.state;
-    const updatedFiles = rejectedFiles.length
-      ? rejectedFiles.filter((_, fileIdx) => idx !== fileIdx)
-      : [];
-    this.setState({
-      rejectedFiles: updatedFiles,
-      errorMessage: updatedFiles.length === 0 ? '' : errorMessage,
-    });
+    const files = values[name] || [];
+    attemptedFilesToUpload
+      .slice(0, maxFilesLimit - files.length)
+      .forEach(file => {
+        push({
+          file,
+          uploaded: false,
+          error: 'filetype',
+        });
+      });
   };
 
   read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
-
-  removeFile = (idx: number): void => {
-    const { onRemoved } = this.props;
-    const { errorMessage, files } = this.state;
-    const removedFile = files[idx];
-    const newFiles = files.length
-      ? files.filter((_, fileIdx) => idx !== fileIdx)
-      : [];
-    this.setState({
-      files: newFiles,
-      errorMessage: newFiles.length === 0 ? '' : errorMessage,
-    });
-    if (onRemoved) {
-      onRemoved(removedFile, newFiles);
-    }
-  };
 
   handleOpenFileDialog = (evt: SyntheticEvent<HTMLButtonElement>): void => {
     evt.stopPropagation();
     this.dropzone.open();
   };
 
-  handleUploaded = (idx: number, ipfsHash: string): void => {
-    const { files } = this.state;
-    const { onUploaded } = this.props;
-    const uploadedFile = { ...files[idx], fileRef: null, ipfsHash };
-    const newFiles = immutableReplaceAt(files, idx, uploadedFile);
-    this.setState({
-      files: newFiles,
-    });
-    if (onUploaded) {
-      onUploaded(uploadedFile, newFiles);
-    }
-  };
-
-  handleUploadError = (errorMessage?: MessageDescriptor | string): void => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
-    let formattedErrorMessage;
-    if (!errorMessage) {
-      formattedErrorMessage = formatMessage(MSG.uploadErrorText);
-    } else if (typeof errorMessage == 'object') {
-      formattedErrorMessage = formatMessage(errorMessage);
-    } else {
-      formattedErrorMessage = errorMessage;
-    }
-    this.setState({
-      errorMessage: formattedErrorMessage,
-    });
-  };
-
   render() {
     const {
       accept,
       appearance,
-      connect,
       disableClick,
+      form: { dirty, errors, isValid, values },
       help,
       helpValues,
       itemComponent: FileUploaderItem,
@@ -227,15 +170,15 @@ class FileUpload extends Component<Props, State> {
       labelValues,
       maxFilesLimit,
       name,
+      remove,
       removeActionText,
       upload,
     } = this.props;
 
-    const { errorMessage, files, rejectedFiles } = this.state;
+    const files = values[name] || [];
     const containerClasses = getMainClasses(appearance, styles);
 
-    const maxFileLimitNotMet =
-      files.length + rejectedFiles.length < maxFilesLimit;
+    const maxFileLimitNotMet = files.length < maxFilesLimit;
 
     const browseLink = (
       <button
@@ -260,7 +203,7 @@ class FileUpload extends Component<Props, State> {
         <div className={containerClasses}>
           <Dropzone
             accept={accept}
-            aria-invalid={!!errorMessage || rejectedFiles.length > 0}
+            aria-invalid={!isValid && dirty}
             ref={dropzone => {
               this.dropzone = dropzone;
             }}
@@ -279,48 +222,42 @@ class FileUpload extends Component<Props, State> {
                 />
               </div>
             )}
-            {(files.length > 0 || rejectedFiles.length > 0) &&
-              maxFileLimitNotMet && <hr />}
             {files &&
               files.length > 0 && (
-                <div className={styles.filesToUpload}>
-                  {files.map((file, idx) => (
-                    <FileUploaderItem
-                      connect={connect}
-                      key={file.id}
-                      file={file}
-                      idx={idx}
-                      name={`${name}-${idx}`}
-                      onError={this.handleUploadError}
-                      onUploaded={this.handleUploaded}
-                      read={this.read}
-                      remove={this.removeFile}
-                      upload={upload}
-                      removeActionText={removeActionText}
-                    />
-                  ))}
-                </div>
+                <Fragment>
+                  {maxFileLimitNotMet && <hr />}
+                  <div className={styles.filesToUpload}>
+                    {files.map((file, idx) => (
+                      <FileUploaderItem
+                        key={`${file.name}-${file.size}`}
+                        file={file}
+                        idx={idx}
+                        name={`${name}.${idx}`}
+                        read={this.read}
+                        remove={remove}
+                        upload={upload}
+                        removeActionText={removeActionText}
+                      />
+                    ))}
+                  </div>
+                </Fragment>
               )}
-            {rejectedFiles.map((file, idx) => (
-              <FileUploaderItem
-                connect={false}
-                idx={idx}
-                file={file}
-                key={file.id}
-                remove={this.removeRejectedFile}
-                read={this.read}
-              />
-            ))}
           </Dropzone>
         </div>
-        {errorMessage && (
-          <div className={styles.errorContainer}>
-            <p className={styles.errorText}>{errorMessage}</p>
-          </div>
-        )}
+        {errors &&
+          errors.length > 0 && (
+            <div className={styles.errorContainer}>
+              {errors.map(errorMessage => (
+                <p className={styles.errorText}>{errorMessage}</p>
+              ))}
+            </div>
+          )}
       </div>
     );
   }
 }
 
-export default injectIntl(FileUpload);
+export default compose(
+  injectIntl,
+  asFieldArray(),
+)(FileUpload);

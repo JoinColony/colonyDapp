@@ -148,4 +148,4 @@ class Input extends Component<Props> {
   }
 }
 
-export default asField(Input);
+export default asField()(Input);

@@ -158,4 +158,4 @@ class MnemonicGenerator extends Component<Props, State> {
   }
 }
 
-export default asField(MnemonicGenerator);
+export default asField()(MnemonicGenerator);

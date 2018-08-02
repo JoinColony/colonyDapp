@@ -1,10 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
+import { compose } from 'recompose';
 
-import type { MessageDescriptor } from 'react-intl';
-import fileReader from '~lib/fileReader';
+import type { IntlShape, MessageDescriptor } from 'react-intl';
 
 import asField from '../../asField';
 import Popover from '../../../Popover';
@@ -27,24 +27,23 @@ type Props = {
   /** Index of file in list of files to be uploaded */
   idx: number,
   /** Text to be shown for removing an item */
-  removeActionText: string | MessageDescriptor,
+  removeActionText?: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   removeActionTextValues?: { [string]: string },
+  /** Function to be called if there's an error uploading the file */
+  onError?: (errorMessage: string) => void,
+  /** Function to be called each time a file is uploaded */
+  onUploaded: (idx: number, ipfsHash: string) => void,
+  /** Function used to read each file during upload */
+  read: (file: Object) => any, // TODO better typing
   /** Function used to remove each file from the list of files to upload */
   remove: (idx: number) => void,
   /** Function used to perform the acutal upload action of the file */
   upload: (fileData: any) => any, // TODO better typing
   /** @ignore Will be injected by `asField` */
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: { [string]: string },
-  ) => string,
-  /** @ignore Will be injected by `asField` */
-  $error?: string,
-  /** @ignore Will be injected by `asField` */
-  setError: (error: string) => void,
-  /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
 };
 
 type State = {
@@ -55,36 +54,24 @@ type State = {
 const displayName = 'UploadItem';
 
 class UploadItem extends Component<Props, State> {
-  readFiles: (files: Array<Object>) => Promise<Array<Object>>;
-
-  static defaultProps = {
-    removeActionText: MSG.removeActionText,
-  };
-
   constructor(props: Props) {
     super(props);
 
-    // TODO remove fileslimit from filereader
-    this.readFiles = fileReader({ maxFilesLimit: 1 });
+    this.state = {
+      error: null,
+      uploaded: false,
+    };
   }
 
   componentDidMount() {
-    const {
-      $error: formError,
-      file: { error: fileError, file, uploaded },
-      setError,
-    } = this.props;
-
-    // FIXME this will re-mount each time, fix it!
-
-    if (!!fileError && !formError) {
-      setError(fileError);
-      return;
-    }
-
-    if (file && !uploaded && !formError) {
-      this.uploadFile(file);
-    }
+    const { file, setValue } = this.props;
+    setValue({
+      file,
+      uploaded: false,
+    });
+    // if (file.fileRef && !file.ipfsHash) {
+    //   this.uploadFile(file.fileRef);
+    // }
   }
 
   handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
@@ -93,44 +80,70 @@ class UploadItem extends Component<Props, State> {
     remove(idx);
   };
 
+  handleError = (e: any) => {
+    const { onError } = this.props;
+    const error = e.reason || e.message;
+    this.setState({
+      error,
+    });
+    if (onError) {
+      onError(error);
+    }
+  };
+
   async uploadFile(file: Object) {
-    const { setValue, upload, setError } = this.props;
+    const { idx, onUploaded, read, setValue, upload } = this.props;
     let readFile;
-    let fileReference;
+    let ipfsHash;
     try {
-      readFile = await this.read(file);
-      fileReference = await upload(readFile.data);
+      readFile = await read(file);
+      ipfsHash = await upload(readFile.data);
     } catch (e) {
-      // TODO better error handling here
-      setError(e.message);
+      this.handleError(e);
       return;
     }
-    setValue({ file, uploaded: true, fileReference });
+    onUploaded(idx, ipfsHash);
+    try {
+      setValue(ipfsHash);
+    } catch (e) {
+      // component isn't connected (connect=false)
+    }
+    this.setState({ uploaded: true });
   }
 
-  read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
-
-  render() {
+  renderRemoveActionText = () => {
     const {
-      $error,
-      file: { file, uploaded },
-      formatIntl,
       removeActionText,
       removeActionTextValues,
+      intl: { formatMessage },
     } = this.props;
+    if (!removeActionText) {
+      return formatMessage(MSG.removeActionText);
+    }
+    if (typeof removeActionText == 'object') {
+      return formatMessage(removeActionText, removeActionTextValues);
+    }
+    return removeActionText;
+  };
+
+  render() {
+    const { file } = this.props;
+    const { error, uploaded } = this.state;
+    const invalid = !!error;
+    const removeActionText = this.renderRemoveActionText();
     return (
-      <div className={styles.uploadItem} aria-invalid={!!$error}>
+      <div className={styles.uploadItem} aria-invalid={invalid}>
         <div className={styles.fileInfo}>
           <Popover
             placement="left"
-            content={$error}
-            trigger={$error ? 'hover' : 'disabled'}
+            content={error}
+            trigger={invalid ? 'hover' : 'disabled'}
           >
             <span className={styles.itemIcon}>
               <Icon name="file" title={file.name} />
             </span>
           </Popover>
-          {uploaded || $error ? (
+          {uploaded || error ? (
             <span className={styles.itemName}>{file.name}</span>
           ) : (
             <div className={styles.itemProgress}>
@@ -144,7 +157,7 @@ class UploadItem extends Component<Props, State> {
             onClick={this.handleRemoveClick}
             appearance={{ theme: 'blue' }}
           >
-            {formatIntl(removeActionText, removeActionTextValues)}
+            {removeActionText}
           </Button>
         </div>
       </div>
@@ -154,4 +167,7 @@ class UploadItem extends Component<Props, State> {
 
 UploadItem.displayName = displayName;
 
-export default asField({ alwaysConnected: true })(UploadItem);
+export default compose(
+  asField,
+  injectIntl,
+)(UploadItem);
