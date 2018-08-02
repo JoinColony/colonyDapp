@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WizardTemplate component Renders initial component 1`] = `
+<main>
+  <header>
+    <figure
+      role="presentation"
+    >
+      <test-file-stub />
+    </figure>
+    <div>
+      <InjectIntl(StepBar)
+        step={1}
+        stepCount={2}
+      />
+    </div>
+  </header>
+  <article />
+</main>
+`;

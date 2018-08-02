@@ -1,0 +1,195 @@
+@import 'variables.css';
+@import 'fonts.css';
+
+/*! minireset.css v0.0.3 | MIT License | github.com/jgthms/minireset.css */
+html,
+body,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+ul {
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  margin: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+img,
+embed,
+iframe,
+object,
+audio,
+video {
+  height: auto;
+  max-width: 100%;
+}
+
+iframe {
+  border: 0;
+}
+
+td,
+th {
+  padding: 0;
+  text-align: left;
+}
+
+/* minireset.css end */
+
+html {
+  background-color: var(--colony-white);
+  font-size: var(--size-normal);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+
+article,
+aside,
+figure,
+footer,
+header,
+hgroup,
+section {
+  display: block;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--family-primary);
+}
+
+code,
+pre {
+  font-family: var(--family-monospace);
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  line-height: 1.25;
+}
+
+body {
+  font-size: 1rem;
+  font-weight: var(--weight-normal);
+  line-height: 1.428571428571429;
+  color: var(--text);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    color: inherit;
+  }
+}
+
+code {
+  padding: 1px 2px 2px;
+  background-color: var(--colony-white);
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--danger);
+}
+
+hr {
+  display: block;
+  margin: 20px 0;
+  height: 1px;
+  border: none;
+  background-color: var(--temp-grey-5);
+}
+
+img {
+  max-width: 100%;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  vertical-align: baseline;
+}
+
+small {
+  font-size: var(--size-small);
+}
+
+span {
+  font-weight: inherit;
+  font-style: inherit;
+}
+
+strong {
+  font-weight: var(--weight-semi);
+  color: var(--grey-1);
+}
+
+pre {
+  background-color: var(--colony-white);
+  word-wrap: normal;
+  white-space: pre;
+  color: var(--text);
+
+  code {
+    display: block;
+    padding: 16px 20px;
+    overflow-x: auto;
+    background-color: var(--colony-white);
+    color: var(--text);
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  td,
+  th {
+    vertical-align: top;
+    text-align: left;
+  }
+}

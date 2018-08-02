@@ -1,0 +1,22 @@
+@font-face {
+  font-family: Avenir Next;
+  src:
+    url('../fonts/avenir-next-regular.woff2') format('woff2'),
+    url('../fonts/avenir-next-regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: Avenir Next;
+  font-weight: 500;
+  src:
+    url('../fonts/avenir-next-demi.woff2') format('woff2'),
+    url('../fonts/avenir-next-demi.woff') format('woff');
+}
+
+@font-face {
+  font-family: Avenir Next;
+  font-style: italic;
+  src:
+    url('../fonts/avenir-next-italic.woff2') format('woff2'),
+    url('../fonts/avenir-next-italic.woff') format('woff');
+}

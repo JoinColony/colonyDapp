@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './InputLabel';
+export { default } from './InputLabel.jsx';

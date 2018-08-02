@@ -1,137 +1,151 @@
 /* @flow */
 
+import type { MessageDescriptor } from 'react-intl';
 import React, { Component } from 'react';
 import Cleave from 'cleave.js/react';
+import cx from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
 import styles from './Input.css';
 
-import type {
-  CleaveHTMLInputElement,
-  CleaveOptions,
-  FieldComponentProps,
-} from '../flowTypes';
-
+import asField from '../asField';
 import InputLabel from '../InputLabel';
 
-/**
- * An input component (to be used as a redux form field) that is basically a standard (text|email|number) Input component.
- * Can receive formatting options leveraging cleave.js
- *
- * @method Input
- *
- * Can receive all the Field properties plus:
- *
- * @param {object} format Cleave.js formatting options
- */
-
-type CustomProps = {
-  formattingOptions?: CleaveOptions,
-  disabled?: boolean,
+type Appearance = {
+  theme?: 'fat' | 'underlined',
+  align?: 'right',
+  direction?: 'horizontal',
+  colorSchema?: 'dark' | 'transparent',
 };
 
-type Props = FieldComponentProps<CustomProps>;
+/* Cleave.js options. This is not an extensive list. Just the ones we're using for now */
+/* Full list: https://github.com/nosir/cleave.js/blob/master/doc/options.md */
+type CleaveOptions = {
+  prefix?: string,
+  rawValueTrimPrefix?: boolean,
+  numeral?: boolean,
+  delimiter?: string,
+  numeralThousandsGroupStyle?: string,
+  numeralDecimalScale?: number,
+  numeralPositiveOnly?: boolean,
+};
+
+type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
+
+type Props = {
+  /** Appearance object */
+  appearance?: Appearance,
+  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
+  connect?: boolean,
+  /** Just render the `<input>` element without label */
+  elementOnly?: boolean,
+  /** Options for cleave.js formatting */
+  formattingOptions?: CleaveOptions,
+  /** Input field name (form variable) */
+  name: string,
+  /** Help text (will appear next to label text) */
+  help?: string | MessageDescriptor,
+  /** Values for help text (react-intl interpolation) */
+  helpValues?: { [string]: string },
+  /** Pass a ref to the `<input>` element */
+  innerRef?: (ref: ?HTMLElement) => void,
+  /** Label text */
+  label: string | MessageDescriptor,
+  /** Values for label text (react-intl interpolation) */
+  labelValues?: { [string]: string },
+  /** @ignore Will be injected by `asField` */
+  $id: string,
+  /** @ignore Will be injected by `asField` */
+  $error?: string,
+  /** @ignore Will be injected by `asField` */
+  $value?: string,
+  /** @ignore Will be injected by `asField` */
+  $touched?: boolean,
+  /** @ignore Will be injected by `asField` */
+  setValue: (val: any) => void,
+  /** @ignore Standard input field property */
+  onChange: Function,
+};
 
 class Input extends Component<Props> {
-  inputElm: HTMLInputElement;
-
-  static displayName = 'core.Fields.Input';
+  static displayName = 'Input';
 
   static defaultProps = {
     appearance: {},
   };
 
-  handleBlur = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => {
-    const {
-      props: { input },
-    } = this;
-    input.onBlur(evt.currentTarget.rawValue);
-  };
-
   handleChange = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => {
     const {
-      props: { input },
+      props: { onChange },
     } = this;
-    input.onChange(evt.currentTarget.rawValue);
+    // We are reassigning the value here as cleave just adds a `rawValue` prop
+    // eslint-disable-next-line no-param-reassign
+    evt.currentTarget.value = evt.currentTarget.rawValue;
+    if (onChange) onChange(evt);
   };
 
-  // We're using a simple object here because redux-form is using its
-  // own event definition which doesn't make any sense
-  handleFocus = (evt: Object): void => {
-    const {
-      props: {
-        input: { onFocus },
-      },
-    } = this;
-    const { length } = evt.currentTarget.value;
-    setTimeout(() => {
-      if (!this.inputElm) return;
-      this.inputElm.selectionStart = length;
-      this.inputElm.selectionEnd = length;
-    });
-    return onFocus(evt);
-  };
-
-  handleRef = (elm: HTMLInputElement): void => {
-    this.inputElm = elm;
+  renderInput = inputProps => {
+    const { formattingOptions, innerRef, ...props } = inputProps;
+    if (formattingOptions) {
+      return (
+        <Cleave
+          {...props}
+          htmlRef={innerRef}
+          options={formattingOptions}
+          onChange={this.handleChange}
+        />
+      );
+    }
+    return <input ref={innerRef} {...props} />;
   };
 
   render() {
     const {
-      appearance,
+      appearance = {},
       elementOnly,
-      error,
-      hasError,
       help,
-      input,
-      inputProps,
-      passthroughProps: { formattingOptions, disabled, ...props },
+      $id,
       label,
-      meta: { active },
+      name,
+      $value,
+      $error,
+      $touched,
+      setValue,
+      ...props
     } = this.props;
+
+    const inputProps = {
+      id: $id,
+      name,
+      'aria-invalid': $error ? true : null,
+      className: getMainClasses(appearance, styles),
+      value: $value,
+      ...props,
+    };
+
+    if (elementOnly) {
+      return this.renderInput(inputProps);
+    }
+    const containerClasses = cx(styles.container, {
+      [styles.containerHorizontal]: appearance.direction === 'horizontal',
+    });
     return (
-      <div
-        className={getMainClasses(appearance, styles, { active })}
-        aria-invalid={hasError}
-        aria-disabled={disabled}
-      >
-        {!elementOnly && label ? (
-          <InputLabel
-            id={inputProps.id}
-            label={label}
-            error={hasError && error}
-            help={help}
-            appearance={appearance}
-          />
-        ) : null}
-        {formattingOptions ? (
-          <Cleave
-            {...props}
-            {...inputProps}
-            {...input}
-            className={styles.input}
-            options={formattingOptions}
-            htmlRef={this.handleRef}
-            onChange={this.handleChange}
-            onBlur={this.handleBlur}
-            onFocus={this.handleFocus}
-            value={active ? input.value : input.value || inputProps.placeholder}
-          />
-        ) : (
-          <input
-            {...props}
-            {...inputProps}
-            {...input}
-            className={styles.input}
-          />
-        )}
-        {appearance && appearance.direction === 'horizontal' ? (
-          <span className={styles.error}>{hasError && error}</span>
+      <div className={containerClasses}>
+        <InputLabel
+          appearance={appearance}
+          inputId={$id}
+          label={label}
+          error={$error}
+          help={help}
+        />
+        {this.renderInput(inputProps)}
+        {appearance.direction === 'horizontal' && $error ? (
+          <span className={styles.error}>{$error}</span>
         ) : null}
       </div>
     );
   }
 }
 
-export default Input;
+export default asField(Input);

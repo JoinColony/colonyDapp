@@ -1,0 +1,38 @@
+{
+  "icons": [
+    "archive",
+    "caret-right",
+    "caret-down-small",
+    "at-sign-circle",
+    "attachment",
+    "bell",
+    "checklist",
+    "circle-archive",
+    "circle-check",
+    "circle-close",
+    "circle-eye",
+    "circle-person",
+    "circle-plus",
+    "close",
+    "envelope",
+    "file",
+    "forbidden-signal",
+    "four-square",
+    "graph-line",
+    "line-arrow-circle",
+    "pencil",
+    "person",
+    "phrase",
+    "return-arrow",
+    "search",
+    "sign-off",
+    "square-plus",
+    "tag",
+    "three-dots-row",
+    "wallet"
+  ],
+  "multiColorIcons": [
+    "metamask",
+    "hugging"
+  ]
+}

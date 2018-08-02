@@ -12,15 +12,16 @@
  */
 
 .main {
+  composes: field from '~styles/fields.css';
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
-  padding: 0 50px;
-  height: 44px;
+  padding: 4px 16px;
+  height: 27px;
   position: relative;
   border: 1px solid transparent;
   border-radius: var(--radius-tiny);
   background-color: transparent;
-  font-size: var(--size-normal);
+  font-size: var(--size-small);
   font-weight: var(--weight-semi);
   text-align: center;
   white-space: nowrap;
@@ -94,6 +95,13 @@
  * Heads's up: don't compose `.main` in the button sizing classes, otherwise you'll end up with `.main` apply-ed two times on the element.
  */
 
+.sizeSmall {
+  padding: 0 10px;
+  height: 14px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-normal);
+}
+
 .sizeLarge {
   padding: 11px 32px;
   height: 43px;
@@ -122,7 +130,7 @@
 
 .themePrimary {
   composes: main;
-  border: none;
+  border-color: var(--primary);
   background-color: var(--primary);
   color: var(--colony-white);
 }
@@ -160,26 +168,6 @@
 
 .themeSecondary.colorSchemaInverted:hover {
   color: color(var(--colony-white) shade(30%));
-}
-
-/*
- * Secondary
- * Buttons with grey background and no border
- */
-
-.themeTertiary {
-  composes: main;
-  background-color: var(--temp-grey-5);
-  font-weight: var(--weight-normal);
-  color: var(--colony-white);
-}
-
-.themeTertiary:hover {
-  background-color: color(var(--temp-grey-5) shade(30%));
-}
-
-.themeTertiary.colorSchemaInverted {
-  color: var(--colony-white);
 }
 
 /*
@@ -246,28 +234,6 @@
 
 .themeGhost.colorSchemaGrey.sizeLarge {
   padding: 10px 32px;
-}
-
-.themeGhost.colorSchemaNoBorder {
-  padding: 3px 16px;
-  border: none;
-  color: var(--grey-4);
-}
-
-.themeGhost.colorSchemaNoBorder:hover {
-  border: none;
-  color: color(var(--text) shade(30%));
-}
-
-.themeGhost.colorSchemaNoBorderBlue {
-  padding: 3px 16px;
-  border: none;
-  color: var(--sky-blue);
-}
-
-.themeGhost.colorSchemaNoBorderBlue:hover {
-  border: none;
-  color: color(var(--sky-blue) shade(30%));
 }
 
 /*

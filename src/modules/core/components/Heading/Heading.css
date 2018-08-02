@@ -1,9 +1,12 @@
 @import 'variables.css';
 
 .main {
-  composes: medium from '~styles/titles.css';
   margin-bottom: 20px;
   font-family: var(--family-primary);
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-semi);
+  line-height: 1.5;
+  word-break: normal;
   white-space: pre-line;
   color: var(--text);
 }
@@ -18,22 +21,22 @@
  * Primary is using the `colony` `green` color, as opposes as a `dark-grey` color for the heading.
  * This is done for consistency: everywhere we refer to something as `primary` we expect `colony` `green`.
  */
-.primary {
+.themePrimary {
   composes: main;
   color: var(--primary);
 }
 
-.dark {
+.themeDark {
   composes: main;
   color: var(--grey-1);
 }
 
-.invert {
+.themeInvert {
   composes: main;
   color: var(--text-invert);
 }
 
-.uppercase {
+.themeUppercase {
   composes: main;
   text-transform: uppercase;
   color: var(--temp-grey-11);
@@ -45,10 +48,6 @@
  * Next set of classes will define the headings's margins
  */
 
-.marginDouble {
-  margin-bottom: 40px;
-}
-
 .marginNone {
   /* Need to overwrite the size class */
   margin-bottom: 0 !important;
@@ -58,55 +57,53 @@
   margin-bottom: 6px !important;
 }
 
+.marginDouble {
+  margin-bottom: 40px;
+}
+
 /*
  * Sizing
  *
  * Next set of classes will define the headings's size
  */
 
-.sizeHuge {
-  composes: title from '~styles/titles.css';
-  font-size: var(--size-huge);
-}
-
-.sizeLarge {
-  composes: title from '~styles/titles.css';
-  font-size: var(--size-large);
-}
-
-.sizeMediumL {
-  composes: title from '~styles/titles.css';
-  font-size: var(--size-medium-l);
-}
-
-.sizeNormal {
-  composes: title from '~styles/titles.css';
-  font-size: var(--size-normal);
-}
-
-.sizeSmall {
-  composes: title from '~styles/titles.css';
-  font-size: var(--size-small);
-}
-
 .sizeTiny {
-  composes: title from '~styles/titles.css';
   font-size: var(--size-tiny);
 }
 
-/*
- * Font Width
- *
- * Next set of classes will define the headings's width
- */
-.widthThin {
-  font-weight: var(--weight-medium);
+.sizeSmall {
+  font-size: var(--size-small);
 }
 
-.widthVeryThin {
+.sizeNormal {
+  font-size: var(--size-normal);
+}
+
+.sizeMedium {
+  font-size: var(--size-medium-l);
+}
+
+.sizeLarge {
+  font-size: var(--size-large);
+}
+
+.sizeHuge {
+  font-size: var(--size-huge);
+}
+
+/*
+ * Font weight
+ *
+ * Next set of classes will define the headings's weight
+ */
+.weightThin {
   font-weight: var(--weight-thin);
 }
 
-.widthBold {
+.weightMedium {
+  font-weight: var(--weight-medium);
+}
+
+.weightBold {
   font-weight: var(--weight-semi);
 }

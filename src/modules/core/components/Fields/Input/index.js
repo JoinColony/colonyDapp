@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './Input';
+export { default } from './Input.jsx';

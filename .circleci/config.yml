@@ -134,12 +134,66 @@ jobs:
           path: reports
       - store_artifacts:
           path: reports
+  build-styleguide:
+    docker:
+      - image: circleci/node:9.10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: yarn install
+      - run: yarn build:styleguide
+      - persist_to_workspace:
+          root: .
+          paths:
+            - styleguide
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+  deploy-styleguide:
+    docker:
+      - image: circleci/node:9.10
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "fd:cc:01:a2:10:09:76:43:06:1d:17:4d:44:4e:fb:24"
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: yarn install
+      - attach_workspace:
+          at: .
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - run: git config --global user.email "github@colony.io"
+      - run: git config --global user.name "Colony Superuser"
+      - run: yarn deploy:styleguide
 
 workflows:
   version: 2
   commit:
     jobs:
       - build-with-lockfile
+      - build-styleguide:
+          requires:
+            - build-with-lockfile
+      - deploy-styleguide:
+          requires:
+            - build-styleguide
+          filters:
+            branches:
+              only: master
   nightly:
     triggers:
       - schedule:

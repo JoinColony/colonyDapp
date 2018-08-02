@@ -5,6 +5,10 @@
   100% { transform: scale(1); }
 }
 
+.main svg {
+  overflow: visible;
+}
+
 .main svg path {
   transform-origin: 50% 50%;
   animation-name: logo-loader-scale;

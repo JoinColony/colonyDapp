@@ -1,23 +1,24 @@
 {
-    "testRegex": "/__tests__/.*\\.jsx?$",
+    "testRegex": "/__tests__/.*\\.test\\.jsx?$",
+    "testURL": "http://localhost/",
     "rootDir": "src",
     "moduleNameMapper": {
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
         "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
         "^\\~utils(.*)$": "<rootDir>/utils$1",
-        "^\\~types(.*)$": "<rootDir>/types$1"
+        "^testutils$": "<rootDir>/__tests__/utils.js"
     },
     "setupFiles": [
-        "<rootDir>/utils/test/shims.js",
-        "<rootDir>/utils/test/setup.js",
-        "<rootDir>/utils/test/patch-node-crypto.js"
+        "<rootDir>/__tests__/setup.js",
+        "<rootDir>/__tests__/shims.js",
+        "<rootDir>/__tests__/patch-node-crypto.js"
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
     "collectCoverageFrom" : ["**/*.{js,jsx}"],
     "coverageDirectory": "../coverage",
     "coverageThreshold": {
         "global": {
-            "branches": 40
+            "branches": 0
         }
     },
     "testPathIgnorePatterns": [
@@ -33,4 +34,4 @@
         "src/lib/colony-wallet",
         "src/lib/colonyNetwork"
     ]
-  }
+}
