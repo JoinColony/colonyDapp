@@ -29,7 +29,7 @@
     "postinstall": "yarn provision",
     "styleguide": "styleguidist server",
     "build:styleguide": "styleguidist build",
-    "deploy:styleguide": "gh-pages -d styleguide"
+    "deploy:styleguide": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git"
   },
   "repository": {
     "type": "git",
