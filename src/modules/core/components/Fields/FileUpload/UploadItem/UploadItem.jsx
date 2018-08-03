@@ -52,10 +52,10 @@ type State = {
   uploaded: boolean,
 };
 
-const displayName = 'UploadItem';
-
 class UploadItem extends Component<Props, State> {
   readFiles: (files: Array<Object>) => Promise<Array<Object>>;
+
+  static displayName = 'UploadItem';
 
   static defaultProps = {
     removeActionText: MSG.removeActionText,
@@ -111,24 +111,27 @@ class UploadItem extends Component<Props, State> {
   render() {
     const {
       $error,
-      file: { file, uploaded },
+      file: { file, uploaded, error: fileError },
       formatIntl,
       removeActionText,
       removeActionTextValues,
     } = this.props;
+
+    const instanceError = $error || fileError;
+
     return (
-      <div className={styles.uploadItem} aria-invalid={!!$error}>
+      <div className={styles.uploadItem} aria-invalid={!!instanceError}>
         <div className={styles.fileInfo}>
           <Popover
             placement="left"
-            content={$error}
-            trigger={$error ? 'hover' : 'disabled'}
+            content={instanceError}
+            trigger={instanceError ? 'hover' : 'disabled'}
           >
             <span className={styles.itemIcon}>
               <Icon name="file" title={file.name} />
             </span>
           </Popover>
-          {uploaded || $error ? (
+          {uploaded || instanceError ? (
             <span className={styles.itemName}>{file.name}</span>
           ) : (
             <div className={styles.itemProgress}>
@@ -149,7 +152,5 @@ class UploadItem extends Component<Props, State> {
     );
   }
 }
-
-UploadItem.displayName = displayName;
 
 export default asField({ alwaysConnected: true })(UploadItem);
