@@ -50,6 +50,14 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
+
+  /** @ignore Will be injected by `asField` */
+  setError: (val: any) => void,
+  /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
   /** @ignore Standard input field property */
   onBlur: Function,
@@ -255,6 +263,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
     const {
       $error,
       $id,
+      formatIntl,
       elementOnly,
       label,
       help,
@@ -263,6 +272,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
       $touched,
       onBlur,
       placeholder,
+      setError,
       setValue,
       ...props
     } = this.props;

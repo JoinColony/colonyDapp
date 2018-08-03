@@ -71,7 +71,7 @@ const { Formik } = require('formik');
       return (
         <form onSubmit={handleSubmit}>
           <FileUpload 
-            // accept={['json/application-data',]}
+            accept={['application/json',]}
             label="File upload with Formik" 
             name="fileUploadFormik"
           />

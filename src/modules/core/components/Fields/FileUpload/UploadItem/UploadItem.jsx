@@ -75,8 +75,6 @@ class UploadItem extends Component<Props, State> {
       setError,
     } = this.props;
 
-    // FIXME this will re-mount each time, fix it!
-
     if (!!fileError && !formError) {
       setError(fileError);
       return;

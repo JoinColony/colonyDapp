@@ -55,6 +55,13 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
+  /** @ignore Will be injected by `asField` */
+  setError: (val: any) => void,
+  /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
   /** @ignore Standard input field property */
   onBlur: Function,
@@ -103,6 +110,7 @@ class MnemonicGenerator extends Component<Props, State> {
     const {
       disabled,
       elementOnly,
+      formatIntl,
       help,
       generateFn,
       $id,
@@ -112,6 +120,7 @@ class MnemonicGenerator extends Component<Props, State> {
       $error,
       $touched,
       onBlur,
+      setError,
       setValue,
       ...props
     } = this.props;
