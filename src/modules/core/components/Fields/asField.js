@@ -5,7 +5,7 @@ import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { ComponentType } from 'react';
 
 import React from 'react';
-import { Field } from 'formik';
+import { Field, getIn } from 'formik';
 import { injectIntl } from 'react-intl';
 import compose from 'recompose/compose';
 import mapProps from 'recompose/mapProps';
@@ -75,15 +75,6 @@ const connectFormik = ({ alwaysConnected }) => (
       })
     : React.createElement(FieldComponent, props);
 
-const getError = (errors, fieldName): ?string => {
-  if (!errors) return '';
-  const [arrayFieldName, idx] = fieldName.split('.');
-  if (Array.isArray(errors[arrayFieldName])) {
-    return errors[arrayFieldName][parseInt(idx, 10)];
-  }
-  return errors[fieldName];
-};
-
 const asField = ({ alwaysConnected }: Object = {}) => {
   const enhance: HOC<*, OutProps> = compose(
     injectIntl,
@@ -101,10 +92,11 @@ const asField = ({ alwaysConnected }: Object = {}) => {
         ...props
       }: InProps) => {
         const htmlFieldName = fieldName || name;
-        const tempError = getError(errors, htmlFieldName);
-        const $error = tempError && formatIntl(tempError, formatMessage);
+        const $touched = getIn(touched, htmlFieldName);
+        const tempError = getIn(errors, htmlFieldName);
+        const $error =
+          $touched && tempError && formatIntl(tempError, formatMessage);
         const $id = id || htmlFieldName;
-        const $touched = touched && touched[htmlFieldName];
         const $title = formatIntl(title, formatMessage);
         const $label = formatIntl(label, formatMessage);
         const $placeholder = formatIntl(placeholder, formatMessage);
