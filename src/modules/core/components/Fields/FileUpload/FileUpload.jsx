@@ -8,7 +8,6 @@ import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { Dropzone as DropzoneType } from 'react-dropzone';
 
 import { getMainClasses } from '~utils/css';
-import fileReader from '~lib/fileReader';
 
 import asFieldArray from '../asFieldArray';
 import InputLabel from '../InputLabel';
@@ -102,12 +101,6 @@ class FileUpload extends Component<Props, State> {
     upload: mockUploader,
   };
 
-  constructor(props: Props) {
-    super(props);
-    const { maxFilesLimit, maxFileSize } = props;
-    this.readFiles = fileReader({ maxFilesLimit, maxFileSize });
-  }
-
   addFiles = (filesToUpload: Array<File>): void => {
     const {
       form: { values },
@@ -148,8 +141,6 @@ class FileUpload extends Component<Props, State> {
         });
       });
   };
-
-  read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
 
   handleOpenFileDialog = (evt: SyntheticEvent<HTMLButtonElement>): void => {
     evt.stopPropagation();
@@ -233,7 +224,6 @@ class FileUpload extends Component<Props, State> {
                         file={file}
                         idx={idx}
                         name={`${name}.${idx}`}
-                        read={this.read}
                         remove={remove}
                         upload={upload}
                         removeActionText={removeActionText}
