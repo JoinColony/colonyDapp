@@ -1,7 +1,9 @@
-// flow-typed signature: ce1db839957e12218888282d85fd2017
-// flow-typed version: 8af1131a30/formik_v0.11.x/flow_>=v0.59.x
+// flow-typed signature: 21b928d32aa4dc53d3081eb21030416c
+// flow-typed version: <<STUB>>/formik_v1.0.x/flow_v0.75.0
 
-declare module "formik" {
+declare module 'formik' {
+  import type { ComponentType } from "react";
+
   declare export type FormikErrors<Values> = {
     [field: $Keys<Values>]: ?string
   };
@@ -232,7 +234,16 @@ declare module "formik" {
   export default enhancer(MyFormikHoc);
    */
 
+  declare export function getIn(
+    obj: any,
+    key: string | string[],
+    def?: any,
+    p?: number,
+  ): any;
+
   declare export var Field: React$StatelessFunctionalComponent<any>;
+
+  declare export var FieldArray: React$StatelessFunctionalComponent<any>;
 
   declare export var Form: React$StatelessFunctionalComponent<any>;
 
