@@ -89,8 +89,6 @@ type State = {
 class FileUpload extends Component<Props, State> {
   dropzone: DropzoneType;
 
-  readFiles: Function;
-
   static displayName = 'FileUpload';
 
   static defaultProps = {
