@@ -64,28 +64,6 @@
     font-weight: var(--weight-semi);
   }
 }
-/*
-.themeUnderlined {
-  display: inline-block;
-  height: 45px;
-  border: 0;
-  border-bottom: 1px solid var(--colony-black);
-  border-radius: 0;
-  background-color: transparent;
-  font-size: var(--size-large);
-  text-align: right;
-  line-height: 45px;
-  color: var(--colony-black);
-  outline: none;
-}
-
-.themeUnderlined:focus {
-  border-color: var(--primary);
-}
-
-.themeUnderlined[aria-invalid="true"] {
-  border-color: var(--danger);
-} */
 
 .alignRight {
   text-align: right;
@@ -119,41 +97,3 @@
   font-size: var(--size-tiny);
   color: var(--danger);
 }
-
-/* .delegate {
-  flex: 1 1 0;
-  height: 100%;
-  width: 100%;
-  vertical-align: baseline;
-  border: none;
-  background-color: transparent;
-  font-size: var(--size-normal);
-  color: inherit;
-  outline: none;
-
-  &::placeholder {
-    font-size: var(--size-normal);
-    font-style: italic;
-    letter-spacing: var(--spacing-normal);
-  }
-}
-
-.themeFat .delegate {
-  font-size: var(--size-medium);
-
-  &::placeholder {
-    font-weight: var(--weight-semi);
-  }
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  color: inherit;
-}
-
-.controls svg {
-  fill: var(--grey-5);
-  stroke: var(--grey-5);
-}
-*/
