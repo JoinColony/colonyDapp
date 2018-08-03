@@ -2,6 +2,7 @@
 import React, { Component, Fragment } from 'react';
 import { compose } from 'recompose';
 import Dropzone from 'react-dropzone';
+import { getIn } from 'formik';
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 
 import type { IntlShape, MessageDescriptor } from 'react-intl';
@@ -108,7 +109,7 @@ class FileUpload extends Component<Props, State> {
       maxFilesLimit,
       push,
     } = this.props;
-    const files = values[name] || [];
+    const files = getIn(values, name) || [];
     const countAcceptedFiles = files.filter(file => !file.error);
     const newFiles = Array.from(filesToUpload).slice(
       0,
@@ -130,7 +131,7 @@ class FileUpload extends Component<Props, State> {
       push,
       name,
     } = this.props;
-    const files = values[name] || [];
+    const files = getIn(values, name) || [];
     attemptedFilesToUpload
       .slice(0, maxFilesLimit - files.length)
       .forEach(file => {
@@ -166,7 +167,7 @@ class FileUpload extends Component<Props, State> {
       upload,
     } = this.props;
 
-    const files = values[name] || [];
+    const files = getIn(values, name) || [];
     const containerClasses = getMainClasses(appearance, styles);
 
     const maxFileLimitNotMet = files.length < maxFilesLimit;
