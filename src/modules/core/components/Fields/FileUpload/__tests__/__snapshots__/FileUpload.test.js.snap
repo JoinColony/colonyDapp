@@ -1,14 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FileUpload component Renders initial component 1`] = `
-<FileUpload
-  appearance={
-    Object {
-      "align": "center",
-    }
-  }
+<Component
   connect={false}
-  disableClick={true}
   help="Some help text"
   intl={
     Object {
@@ -35,11 +29,8 @@ exports[`FileUpload component Renders initial component 1`] = `
       "textComponent": "span",
     }
   }
-  itemComponent={[Function]}
   label="Basic file upload"
-  maxFileSize={1048576}
   maxFilesLimit={3}
   name="fileUpload"
-  upload={[Function]}
 />
 `;
