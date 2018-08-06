@@ -53,20 +53,11 @@ type State = {
 };
 
 class UploadItem extends Component<Props, State> {
-  readFiles: (files: Array<Object>) => Promise<Array<Object>>;
-
   static displayName = 'UploadItem';
 
   static defaultProps = {
     removeActionText: MSG.removeActionText,
   };
-
-  constructor(props: Props) {
-    super(props);
-
-    // TODO remove fileslimit from filereader
-    this.readFiles = fileReader({ maxFilesLimit: 1 });
-  }
 
   componentDidMount() {
     const {
@@ -84,6 +75,10 @@ class UploadItem extends Component<Props, State> {
       this.uploadFile(file);
     }
   }
+
+  readFiles: (files: Array<Object>) => Promise<Array<Object>> = fileReader({
+    maxFilesLimit: 1,
+  });
 
   handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     const { idx, remove } = this.props;

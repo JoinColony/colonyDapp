@@ -100,7 +100,7 @@ class FileUpload extends Component<Props, State> {
     upload: mockUploader,
   };
 
-  addFiles = (filesToUpload: Array<File>): void => {
+  addFiles = (acceptedFiles: Array<File>): void => {
     const {
       form: { values },
       name,
@@ -109,7 +109,7 @@ class FileUpload extends Component<Props, State> {
     } = this.props;
     const files = getIn(values, name) || [];
     const countAcceptedFiles = files.filter(file => !file.error);
-    const newFiles = Array.from(filesToUpload).slice(
+    const newFiles = Array.from(acceptedFiles).slice(
       0,
       maxFilesLimit - countAcceptedFiles.length,
     );
@@ -122,7 +122,7 @@ class FileUpload extends Component<Props, State> {
     });
   };
 
-  addRejectedFiles = (attemptedFilesToUpload: Array<Object>): void => {
+  addRejectedFiles = (rejectedFiles: Array<Object>): void => {
     const {
       form: { values },
       maxFilesLimit,
@@ -130,15 +130,13 @@ class FileUpload extends Component<Props, State> {
       name,
     } = this.props;
     const files = getIn(values, name) || [];
-    attemptedFilesToUpload
-      .slice(0, maxFilesLimit - files.length)
-      .forEach(file => {
-        push({
-          file,
-          uploaded: false,
-          error: 'filetype',
-        });
+    rejectedFiles.slice(0, maxFilesLimit - files.length).forEach(file => {
+      push({
+        file,
+        uploaded: false,
+        error: 'filetype',
       });
+    });
   };
 
   handleOpenFileDialog = (evt: SyntheticEvent<HTMLButtonElement>): void => {
@@ -151,11 +149,12 @@ class FileUpload extends Component<Props, State> {
       accept,
       appearance,
       disableClick,
-      form: { dirty, errors, isValid, values },
+      form: { values },
       help,
       helpValues,
       itemComponent: FileUploaderItem,
       id,
+      intl: { formatMessage },
       label,
       labelValues,
       maxFilesLimit,
@@ -169,6 +168,12 @@ class FileUpload extends Component<Props, State> {
     const containerClasses = getMainClasses(appearance, styles);
 
     const maxFileLimitNotMet = files.length < maxFilesLimit;
+
+    // TODO get real errors from asField
+    const fileErrors = files
+      .filter(file => !!file.error)
+      .map(file => file.error);
+    const hasError = fileErrors.length > 0;
 
     const browseLink = (
       <button
@@ -193,14 +198,14 @@ class FileUpload extends Component<Props, State> {
         <div className={containerClasses}>
           <Dropzone
             accept={accept}
-            aria-invalid={!isValid && dirty}
+            aria-invalid={hasError}
             ref={dropzone => {
               this.dropzone = dropzone;
             }}
-            onDrop={this.addFiles}
             className={styles.dropzone}
             activeClassName={styles.dropzoneActive}
             rejectClassName={styles.dropzoneReject}
+            onDropAccepted={this.addFiles}
             onDropRejected={this.addRejectedFiles}
             disableClick={disableClick || !maxFileLimitNotMet}
           >
@@ -233,14 +238,13 @@ class FileUpload extends Component<Props, State> {
               )}
           </Dropzone>
         </div>
-        {errors &&
-          errors.length > 0 && (
-            <div className={styles.errorContainer}>
-              {errors.map(errorMessage => (
-                <p className={styles.errorText}>{errorMessage}</p>
-              ))}
-            </div>
-          )}
+        {hasError && (
+          <div className={styles.errorContainer}>
+            <p className={styles.errorText}>
+              {formatMessage(MSG.uploadErrorWrongFileText)}
+            </p>
+          </div>
+        )}
       </div>
     );
   }

@@ -93,9 +93,9 @@ const asField = ({ alwaysConnected }: Object = {}) => {
       }: InProps) => {
         const htmlFieldName = fieldName || name;
         const $touched = getIn(touched, htmlFieldName);
-        const tempError = getIn(errors, htmlFieldName);
+        const fieldError = getIn(errors, htmlFieldName);
         const $error =
-          $touched && tempError && formatIntl(tempError, formatMessage);
+          $touched && fieldError && formatIntl(fieldError, formatMessage);
         const $id = id || htmlFieldName;
         const $title = formatIntl(title, formatMessage);
         const $label = formatIntl(label, formatMessage);
