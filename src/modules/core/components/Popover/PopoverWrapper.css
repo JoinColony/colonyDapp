@@ -95,6 +95,7 @@
 }
 
 .themeDark {
+  composes: main;
   background-color: var(--popover-theme-dark-background-color);
   color: var(--colony-white);
 }

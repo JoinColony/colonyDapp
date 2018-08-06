@@ -6,10 +6,17 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
+// eslint-disable-next-line import/no-cycle
+import type { Appearance as PopoverAppearance, Placement } from './Popover.jsx';
+
 import styles from './PopoverWrapper.css';
 
+type Appearance = PopoverAppearance & {
+  placement?: Placement,
+};
+
 type Props = {
-  appearance: Object,
+  appearance?: Appearance,
   arrowProps: PopperArrowProps,
   children: Node,
   id: string,

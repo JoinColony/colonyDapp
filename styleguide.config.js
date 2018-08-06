@@ -28,7 +28,10 @@ module.exports = {
     },
     {
       name: 'Popovers & Modals',
-      components: ['./src/modules/core/components/Popover/Popover.jsx'],
+      components: [
+        './src/modules/core/components/Popover/Popover.jsx',
+        './src/modules/core/components/Popover/Tooltip.jsx',
+      ],
     },
     {
       name: 'Loaders & Progress',
