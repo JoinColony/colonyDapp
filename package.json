@@ -136,7 +136,7 @@
     "react-popper": "^1.0.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
-    "recompose": "^0.27.1",
+    "recompose": "^0.28.0",
     "redux": "^4.0.0",
     "svgr": "^1.10.0",
     "url-loader": "^1.0.1",
