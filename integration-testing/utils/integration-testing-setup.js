@@ -15,10 +15,6 @@ const TrufflePig = require('trufflepig');
 const { isEmptySync } = extfs;
 const { writeFile } = fs;
 
-let exec = util.promisify(childProcess.exec);
-const remove = util.promisify(rimraf);
-const write = util.promisify(writeFile);
-
 global.DEBUG = process.env.DEBUG || false;
 /*
  * If we're in watch mode, so we need to check if this is the first run or not.
@@ -46,7 +42,9 @@ const withLogging = func => {
   return func;
 };
 
-exec = util.promisify(withLogging(childProcess.exec));
+const remove = util.promisify(rimraf);
+const write = util.promisify(writeFile);
+const exec = util.promisify(withLogging(childProcess.exec));
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
