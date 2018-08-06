@@ -12,16 +12,16 @@
 
 .main {
   composes: field from '~styles/fields.css';
-  width: 100%;
   padding: 8px;
   min-height: 80px;
-  line-height: 1.2;
-  resize: none;
-  font-size: var(--size-normal);
+  width: 100%;
   border: 1px solid var(--temp-grey-5);
   border-radius: var(--radius-tiny);
   background-color: var(--colony-white);
+  font-size: var(--size-normal);
+  line-height: 1.2;
   color: var(--text);
+  resize: none;
   outline: none;
   letter-spacing: var(--spacing-normal);
   transition: border-color 0.1s ease-in;
@@ -44,9 +44,11 @@
 .resizableHorizontal {
   resize: horizontal;
 }
+
 .resizableVertical {
   resize: vertical;
 }
+
 .resizableBoth {
   resize: both;
 }
