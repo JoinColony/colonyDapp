@@ -31,10 +31,19 @@ global.DEBUG = process.env.DEBUG || false;
 global.WATCH = process.env.WATCH || false;
 global.WATCH_FIRST_RUN = true;
 
-const withLogging = f => (...args) => {
-  const runner = f(...args);
-  runner.stdout.on('data', output => process.stdout.write(output));
-  return runner;
+/**
+ * Take a process-starting function (exec, spawn, etc)
+ * and enable logging if we are in debug mode.
+ */
+const withLogging = func => {
+  if (global.DEBUG) {
+    return (...args) => {
+      const runner = func(...args);
+      runner.stdout.pipe(process.stdout);
+      return runner;
+    };
+  }
+  return func;
 };
 
 exec = util.promisify(withLogging(childProcess.exec));
