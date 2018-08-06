@@ -73,13 +73,7 @@ type Props = {
   intl: IntlShape,
 };
 
-type State = {
-  files: Array<Object>,
-  rejectedFiles: Array<Object>,
-  errorMessage: string,
-};
-
-class FileUpload extends Component<Props, State> {
+class FileUpload extends Component<Props> {
   dropzone: DropzoneType;
 
   static displayName = 'FileUpload';
