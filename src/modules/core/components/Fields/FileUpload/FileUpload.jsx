@@ -1,9 +1,8 @@
 /* @flow */
 import React, { Component, Fragment } from 'react';
-import { compose } from 'recompose';
 import Dropzone from 'react-dropzone';
 import { getIn } from 'formik';
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { Dropzone as DropzoneType } from 'react-dropzone';
@@ -15,21 +14,15 @@ import InputLabel from '../InputLabel';
 import UploadItem from './UploadItem';
 import styles from './FileUpload.css';
 
-// TODO replace with real file upload handler - this is only used here in defaultProps during development
-const mockUploader = async fileData => `someIpfsHash-${fileData.slice(20)}`;
-
 const MSG = defineMessages({
   dropzoneText: {
-    id: 'dropzoneText',
+    id: 'FileUpload.dropzoneText',
     defaultMessage: 'Drag or {browse}',
   },
-  uploadErrorText: {
-    id: 'dropzoneUploadErrorDisplay',
-    defaultMessage: 'There was an issue uploading one of your files',
-  },
-  uploadErrorWrongFileText: {
-    id: 'dropzoneUploadErrorWrongFileText',
-    defaultMessage: 'Oops, wrong file',
+  labelError: {
+    id: 'FileUpload.labelError',
+    defaultMessage:
+      'There was an error processing your file. Hover over its icon',
   },
 });
 
@@ -97,7 +90,6 @@ class FileUpload extends Component<Props, State> {
     itemComponent: UploadItem,
     maxFilesLimit: 1,
     maxFileSize: 1024 * 1024,
-    upload: mockUploader,
   };
 
   addFiles = (acceptedFiles: Array<File>): void => {
@@ -114,11 +106,7 @@ class FileUpload extends Component<Props, State> {
       maxFilesLimit - countAcceptedFiles.length,
     );
     newFiles.forEach(file => {
-      push({
-        file,
-        uploaded: false,
-        error: null,
-      });
+      push({ file });
     });
   };
 
@@ -131,11 +119,7 @@ class FileUpload extends Component<Props, State> {
     } = this.props;
     const files = getIn(values, name) || [];
     rejectedFiles.slice(0, maxFilesLimit - files.length).forEach(file => {
-      push({
-        file,
-        uploaded: false,
-        error: 'filetype',
-      });
+      push({ file, error: 'filetypeError' });
     });
   };
 
@@ -149,12 +133,11 @@ class FileUpload extends Component<Props, State> {
       accept,
       appearance,
       disableClick,
-      form: { values },
+      form: { values, isValid, dirty },
       help,
       helpValues,
       itemComponent: FileUploaderItem,
       id,
-      intl: { formatMessage },
       label,
       labelValues,
       maxFilesLimit,
@@ -168,12 +151,7 @@ class FileUpload extends Component<Props, State> {
     const containerClasses = getMainClasses(appearance, styles);
 
     const maxFileLimitNotMet = files.length < maxFilesLimit;
-
-    // TODO get real errors from asField
-    const fileErrors = files
-      .filter(file => !!file.error)
-      .map(file => file.error);
-    const hasError = fileErrors.length > 0;
+    const hasError = dirty && !isValid;
 
     const browseLink = (
       <button
@@ -191,6 +169,7 @@ class FileUpload extends Component<Props, State> {
           <InputLabel
             label={label}
             help={help}
+            error={hasError ? MSG.labelError : ''}
             labelValues={labelValues}
             helpValues={helpValues}
           />
@@ -225,7 +204,6 @@ class FileUpload extends Component<Props, State> {
                     {files.map((file, idx) => (
                       <FileUploaderItem
                         key={`${file.name}-${file.size}`}
-                        file={file}
                         idx={idx}
                         name={`${name}.${idx}`}
                         remove={remove}
@@ -238,19 +216,9 @@ class FileUpload extends Component<Props, State> {
               )}
           </Dropzone>
         </div>
-        {hasError && (
-          <div className={styles.errorContainer}>
-            <p className={styles.errorText}>
-              {formatMessage(MSG.uploadErrorWrongFileText)}
-            </p>
-          </div>
-        )}
       </div>
     );
   }
 }
 
-export default compose(
-  injectIntl,
-  asFieldArray(),
-)(FileUpload);
+export default asFieldArray()(FileUpload);

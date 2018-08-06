@@ -65,20 +65,21 @@ const formatIntl = (
   return formatMessage(text, textValues);
 };
 
-const connectFormik = ({ alwaysConnected }) => (
+const connectFormik = ({ alwaysConnected, validate }) => (
   FieldComponent: ComponentType<Object>,
 ) => ({ connect = true, ...props }: InProps) =>
   connect || alwaysConnected
     ? React.createElement(Field, {
         component: FieldComponent,
+        validate,
         ...props,
       })
     : React.createElement(FieldComponent, props);
 
-const asField = ({ alwaysConnected }: Object = {}) => {
+const asField = ({ alwaysConnected, validate }: Object = {}) => {
   const enhance: HOC<*, OutProps> = compose(
     injectIntl,
-    connectFormik({ alwaysConnected }),
+    connectFormik({ alwaysConnected, validate }),
     mapProps(
       ({
         id,
@@ -94,8 +95,7 @@ const asField = ({ alwaysConnected }: Object = {}) => {
         const htmlFieldName = fieldName || name;
         const $touched = getIn(touched, htmlFieldName);
         const fieldError = getIn(errors, htmlFieldName);
-        const $error =
-          $touched && fieldError && formatIntl(fieldError, formatMessage);
+        const $error = fieldError && formatIntl(fieldError, formatMessage);
         const $id = id || htmlFieldName;
         const $title = formatIntl(title, formatMessage);
         const $label = formatIntl(label, formatMessage);

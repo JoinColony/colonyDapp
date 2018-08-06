@@ -6,6 +6,8 @@ import { defineMessages } from 'react-intl';
 import type { MessageDescriptor } from 'react-intl';
 import fileReader from '~lib/fileReader';
 
+import type { UploadFile } from '../types';
+
 import asField from '../../asField';
 import Popover from '../../../Popover';
 import Button from '../../../Button';
@@ -19,11 +21,17 @@ const MSG = defineMessages({
     id: 'UploadItem.removeActionText',
     defaultMessage: 'Remove',
   },
+  uploadError: {
+    id: 'UploadItem.uploadError',
+    defaultMessage: 'There was an error uploading your file',
+  },
+  filetypeError: {
+    id: 'UploadItem.filetypeError',
+    defaultMessage: 'This filetype is not allowed',
+  },
 });
 
 type Props = {
-  /** File object */
-  file: Object,
   /** Index of file in list of files to be uploaded */
   idx: number,
   /** Text to be shown for removing an item */
@@ -40,19 +48,14 @@ type Props = {
     textValues?: { [string]: string },
   ) => string,
   /** @ignore Will be injected by `asField` */
-  $error?: string,
+  $value: UploadFile,
   /** @ignore Will be injected by `asField` */
-  setError: (error: string) => void,
+  $error?: string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
 };
 
-type State = {
-  error: any,
-  uploaded: boolean,
-};
-
-class UploadItem extends Component<Props, State> {
+class UploadItem extends Component<Props> {
   static displayName = 'UploadItem';
 
   static defaultProps = {
@@ -61,18 +64,11 @@ class UploadItem extends Component<Props, State> {
 
   componentDidMount() {
     const {
-      $error: formError,
-      file: { error: fileError, file, uploaded },
-      setError,
+      $value: { error, file, uploaded },
     } = this.props;
 
-    if (!!fileError && !formError) {
-      setError(fileError);
-      return;
-    }
-
-    if (file && !uploaded && !formError) {
-      this.uploadFile(file);
+    if (file && !error && !uploaded) {
+      this.uploadFile();
     }
   }
 
@@ -86,19 +82,20 @@ class UploadItem extends Component<Props, State> {
     remove(idx);
   };
 
-  async uploadFile(file: Object) {
-    const { setValue, upload, setError } = this.props;
+  async uploadFile() {
+    const { $value, setValue, upload } = this.props;
     let readFile;
     let fileReference;
+    const { file } = $value;
     try {
       readFile = await this.read(file);
       fileReference = await upload(readFile.data);
     } catch (e) {
       // TODO better error handling here
-      setError(e.message);
+      setValue({ ...$value, error: 'uploadError' });
       return;
     }
-    setValue({ file, uploaded: true, fileReference });
+    setValue({ ...$value, uploaded: fileReference });
   }
 
   read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
@@ -106,27 +103,25 @@ class UploadItem extends Component<Props, State> {
   render() {
     const {
       $error,
-      file: { file, uploaded, error: fileError },
+      $value: { file, uploaded },
       formatIntl,
       removeActionText,
       removeActionTextValues,
     } = this.props;
 
-    const instanceError = $error || fileError;
-
     return (
-      <div className={styles.uploadItem} aria-invalid={!!instanceError}>
+      <div className={styles.uploadItem} aria-invalid={!!$error}>
         <div className={styles.fileInfo}>
           <Popover
             placement="left"
-            content={instanceError}
-            trigger={instanceError ? 'hover' : 'disabled'}
+            content={$error}
+            trigger={$error ? 'hover' : 'disabled'}
           >
             <span className={styles.itemIcon}>
               <Icon name="file" title={file.name} />
             </span>
           </Popover>
-          {uploaded || instanceError ? (
+          {uploaded || $error ? (
             <span className={styles.itemName}>{file.name}</span>
           ) : (
             <div className={styles.itemProgress}>
@@ -148,4 +143,7 @@ class UploadItem extends Component<Props, State> {
   }
 }
 
-export default asField({ alwaysConnected: true })(UploadItem);
+const validate = (value: UploadFile) =>
+  value.error ? MSG[value.error] : undefined;
+
+export default asField({ alwaysConnected: true, validate })(UploadItem);

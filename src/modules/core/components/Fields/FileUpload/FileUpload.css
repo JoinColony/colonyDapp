@@ -41,11 +41,6 @@
   cursor: pointer;
 }
 
-.errorText {
-  composes: bold from '~styles/text.css';
-  color: var(--danger);
-}
-
 /* Appearance Section */
 
 /* appearance.align */

@@ -7,9 +7,9 @@ const { Formik } = require('formik');
   render={
     ({ handleSubmit, isValid }) => (
       <form onSubmit={handleSubmit}>
-        <FileUpload 
+        <FileUpload
           accept={['application/json',]}
-          label="File upload with Formik" 
+          label="File upload with Formik"
           name="fileUploadFormik"
         />
         <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">And press me</Button>
