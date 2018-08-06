@@ -15,7 +15,7 @@ type Appearance = {
   theme?: 'fat',
   align?: 'right',
   layout?: 'inline',
-  resizable?: 'yes',
+  resizable?: 'both' | 'horizontal' | 'vertical',
   direction?: 'horizontal',
   colorSchema?: 'dark' | 'transparent',
 };
@@ -25,15 +25,15 @@ type Props = {
   appearance?: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
-  /** Just render the `<input>` element without label */
+  /** Just render the `<textarea>` element without label */
   elementOnly?: boolean,
-  /** Input field name (form variable) */
+  /** Textarea field name (form variable) */
   name: string,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
-  /** Pass a ref to the `<input>` element */
+  /** Pass a ref to the `<textarea>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string | MessageDescriptor,
@@ -49,7 +49,7 @@ type Props = {
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
-  /** @ignore Standard input field property */
+  /** @ignore Standard textarea field property */
   onChange: Function,
 };
 
@@ -60,7 +60,7 @@ class Textarea extends Component<Props> {
     appearance: {},
   };
 
-  renderInput = inputProps => {
+  renderTextarea = inputProps => {
     const { innerRef, ...props } = inputProps;
     return <textarea ref={innerRef} {...props} />;
   };
@@ -90,12 +90,11 @@ class Textarea extends Component<Props> {
     };
 
     if (elementOnly) {
-      return this.renderInput(inputProps);
+      return this.renderTextarea(inputProps);
     }
-    const containerClasses = cx(styles.container);
 
     return (
-      <div className={containerClasses}>
+      <div className={styles.container}>
         <InputLabel
           appearance={appearance}
           inputId={$id}
@@ -103,7 +102,7 @@ class Textarea extends Component<Props> {
           error={$error}
           help={help}
         />
-        {this.renderInput(inputProps)}
+        {this.renderTextarea(inputProps)}
       </div>
     );
   }

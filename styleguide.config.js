@@ -20,6 +20,7 @@ module.exports = {
       components: [
         './src/modules/core/components/Fields/Input/Input.jsx',
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',
+        './src/modules/core/components/Fields/TextArea/TextArea.jsx',
         './src/modules/core/components/Button/Button.jsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
         './src/modules/core/components/MnemonicDnDSorter/MnemonicDnDSorter.jsx',
