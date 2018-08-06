@@ -12,7 +12,6 @@ describe('FileUpload component', () => {
     const wrapper = shallowWithIntl(
       <FileUpload
         name="fileUpload"
-        connect={false}
         label="Basic file upload"
         help="Some help text"
         maxFilesLimit={3}

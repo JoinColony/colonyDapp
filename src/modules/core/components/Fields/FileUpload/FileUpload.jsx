@@ -1,11 +1,14 @@
 /* @flow */
 import React, { Component, Fragment } from 'react';
+import { compose } from 'recompose';
 import Dropzone from 'react-dropzone';
 import { getIn } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 
+import type { ComponentType } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import type { Dropzone as DropzoneType } from 'react-dropzone';
+import type { UploadFile } from './types';
 
 import { getMainClasses } from '~utils/css';
 
@@ -24,6 +27,10 @@ const MSG = defineMessages({
     defaultMessage:
       'There was an error processing your file. Hover over its icon',
   },
+  dropzoneTextBrowseAction: {
+    id: 'FileUpload.dropzoneTextBrowseAction',
+    defaultMessage: 'browse',
+  },
 });
 
 type Appearance = {
@@ -40,17 +47,13 @@ type Props = {
   /** Standard html ID */
   id?: string,
   /** Component to act as the form field  */
-  itemComponent: Function,
+  itemComponent: ComponentType<*>,
   /** Maximum number of files to accept */
   maxFilesLimit: number,
   /** Maximum filesize to accept (per-file) */
   maxFileSize: number,
-  /** Function called when a file is removed */
-  onRemoved?: Function,
-  /** Function called when a file is uploaded */
-  onUploaded?: Function,
   /** Function to handle the actual uploading of the file */
-  upload: Function,
+  upload: (fileData: string) => string,
   /** Text used in the item component as the "remove" button */
   removeActionText?: MessageDescriptor | string,
   /** Input field name (form variable) */
@@ -66,7 +69,7 @@ type Props = {
   /** @ignore injected by `asFieldArray` */
   form: { [string]: any },
   /** @ignore injected by `asFieldArray` */
-  push: (file: Object) => void,
+  push: (file: UploadFile) => void,
   /** @ignore injected by `asFieldArray` */
   remove: (idx: number) => void,
   /** @ignore injected by `react-intl` */
@@ -132,6 +135,7 @@ class FileUpload extends Component<Props> {
       helpValues,
       itemComponent: FileUploaderItem,
       id,
+      intl: { formatMessage },
       label,
       labelValues,
       maxFilesLimit,
@@ -142,7 +146,7 @@ class FileUpload extends Component<Props> {
     } = this.props;
 
     const files = getIn(values, name) || [];
-    const containerClasses = getMainClasses(appearance, styles);
+    const main = getMainClasses(appearance, styles);
 
     const maxFileLimitNotMet = files.length < maxFilesLimit;
     const hasError = dirty && !isValid;
@@ -153,7 +157,7 @@ class FileUpload extends Component<Props> {
         onClick={this.handleOpenFileDialog}
         className={styles.browseButton}
       >
-        browse
+        {formatMessage(MSG.dropzoneTextBrowseAction)}
       </button>
     );
 
@@ -168,7 +172,7 @@ class FileUpload extends Component<Props> {
             helpValues={helpValues}
           />
         )}
-        <div className={containerClasses}>
+        <div className={main}>
           <Dropzone
             accept={accept}
             aria-invalid={hasError}
@@ -215,4 +219,7 @@ class FileUpload extends Component<Props> {
   }
 }
 
-export default asFieldArray()(FileUpload);
+export default compose(
+  injectIntl,
+  asFieldArray(),
+)(FileUpload);

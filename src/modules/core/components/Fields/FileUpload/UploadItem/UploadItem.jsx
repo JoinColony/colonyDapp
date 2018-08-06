@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { MessageDescriptor } from 'react-intl';
-import fileReader from '~lib/fileReader';
+import fileReader from '../../../../../../lib/fileReader';
 
 import type { UploadFile } from '../types';
 
 import asField from '../../asField';
-import Popover from '../../../Popover';
+import Tooltip from '../../../Popover/Tooltip.jsx';
 import Button from '../../../Button';
 import Icon from '../../../Icon';
 import ProgressBar from '../../../ProgressBar';
@@ -41,7 +41,7 @@ type Props = {
   /** Function used to remove each file from the list of files to upload */
   remove: (idx: number) => void,
   /** Function used to perform the acutal upload action of the file */
-  upload: (fileData: any) => any, // TODO better typing
+  upload: (fileData: string) => string,
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
@@ -112,7 +112,7 @@ class UploadItem extends Component<Props> {
     return (
       <div className={styles.uploadItem} aria-invalid={!!$error}>
         <div className={styles.fileInfo}>
-          <Popover
+          <Tooltip
             placement="left"
             content={$error}
             trigger={$error ? 'hover' : 'disabled'}
@@ -120,7 +120,7 @@ class UploadItem extends Component<Props> {
             <span className={styles.itemIcon}>
               <Icon name="file" title={file.name} />
             </span>
-          </Popover>
+          </Tooltip>
           {uploaded || $error ? (
             <span className={styles.itemName}>{file.name}</span>
           ) : (

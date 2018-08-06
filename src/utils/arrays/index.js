@@ -22,33 +22,6 @@ export const shuffle = (array: Array<string>) => {
   return array;
 };
 
-/*  Immutably move one array item to another spot in the array.
- *  Doesn't alter the original array
- */
-export const immutableMove = (
-  arr: Array<any>,
-  from: number,
-  to: number,
-): Array<any> =>
-  arr.reduce((prev, current, idx, self) => {
-    if (from === to) {
-      prev.push(current);
-    }
-    if (idx === from) {
-      return prev;
-    }
-    if (from < to) {
-      prev.push(current);
-    }
-    if (idx === to) {
-      prev.push(self[from]);
-    }
-    if (from > to) {
-      prev.push(current);
-    }
-    return prev;
-  }, []);
-
 /**
  * Return a unique Array from the provided source Array
  * Possible cases:
