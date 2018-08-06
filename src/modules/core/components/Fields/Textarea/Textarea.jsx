@@ -2,7 +2,6 @@
 
 import type { MessageDescriptor } from 'react-intl';
 import React, { Component } from 'react';
-import cx from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
