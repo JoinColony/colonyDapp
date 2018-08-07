@@ -13,7 +13,7 @@ import styles from './MetaMask.css';
 const MSG = defineMessages({
   heading: {
     id: 'ConnectWallet.providers.MetaMask.heading',
-    defaultMessage: 'You\'re connected to MetaMask',
+    defaultMessage: "You're connected to MetaMask",
   },
   subHeading: {
     id: 'ConnectWallet.providers.MetaMask.subHeading',
@@ -21,7 +21,7 @@ const MSG = defineMessages({
   },
   errorHeading: {
     id: 'ConnectWallet.providers.MetaMask.errorHeading',
-    defaultMessage: 'Oops we couldn\'t detect MetaMask',
+    defaultMessage: "Oops we couldn't detect MetaMask",
   },
 });
 
@@ -40,11 +40,11 @@ const BUTTON_MSG = defineMessages({
   },
 });
 
-type Props = {}
+type Props = {};
 
 type State = {
   isValid: boolean,
-}
+};
 
 type MetaMaskResponse = {
   chainId: number,
@@ -52,13 +52,12 @@ type MetaMaskResponse = {
   name: String,
   testnet: boolean,
   url: String,
-}
+};
 
 class MetaMask extends Component<Props, State> {
-  
-  state = { 
+  state = {
     isValid: false,
-  }
+  };
 
   componentDidMount() {
     this.connectMetaMask();
@@ -66,50 +65,53 @@ class MetaMask extends Component<Props, State> {
 
   connectMetaMask = () => {
     const provider: MetaMaskResponse = metamask();
-    const isValid = provider.chainId ? true : false;
+    const isValid = !!provider.chainId;
     this.setState({
       isValid,
     });
-  }
+  };
 
   handleOnRetryClick = () => {
     this.connectMetaMask();
-  }
+  };
 
   render() {
+    const { isValid } = this.state;
     return (
       <Fragment>
         <div className={styles.content}>
           <MetaMaskLogo />
-          {this.state.isValid
-            ? <Fragment>
-                <Heading text={MSG.heading} />
-                <Heading text={MSG.subHeading} />
-              </Fragment>
-            : <Fragment>
-                <Heading text={MSG.errorHeading} />
-              </Fragment>
-          }
+          {isValid ? (
+            <Fragment>
+              <Heading text={MSG.heading} />
+              <Heading text={MSG.subHeading} />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Heading text={MSG.errorHeading} />
+            </Fragment>
+          )}
         </div>
         <div className={styles.actions}>
-          <Button 
-            value={BUTTON_MSG.back} 
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }} 
+          <Button
+            value={BUTTON_MSG.back}
+            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
           />
-          {this.state.isValid
-            ? <Button 
-                value={BUTTON_MSG.advance} 
-                appearance={{ theme: 'primary' }}
-              />
-            : <Button 
-                value={BUTTON_MSG.retry}
-                appearance={{ theme: 'primary' }}
-                onClick={this.handleOnRetryClick}
-              />
-          }
+          {isValid ? (
+            <Button
+              value={BUTTON_MSG.advance}
+              appearance={{ theme: 'primary' }}
+            />
+          ) : (
+            <Button
+              value={BUTTON_MSG.retry}
+              appearance={{ theme: 'primary' }}
+              onClick={this.handleOnRetryClick}
+            />
+          )}
         </div>
       </Fragment>
-    )
+    );
   }
 }
 

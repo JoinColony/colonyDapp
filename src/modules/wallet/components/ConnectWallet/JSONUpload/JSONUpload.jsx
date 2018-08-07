@@ -31,26 +31,25 @@ const MSG = defineMessages({
   buttonRemove: {
     id: 'ConnectWallet.providers.JSONUpload.button.remove',
     defaultMessage: 'Remove',
-  }
+  },
 });
 
-type Props = {}
+type Props = {};
 
 type State = {
   hasFile: boolean,
   isValid: boolean,
-} 
+};
 
 class JSONUpload extends Component<Props, State> {
-  
-  state = { 
-    hasFile: false, 
+  state = {
+    hasFile: false,
     isValid: true,
-  }
+  };
 
   render() {
-
-    const canAdvance: boolean = this.state.hasFile && this.state.isValid;
+    const { hasFile, isValid } = this.state;
+    const canAdvance: boolean = hasFile && isValid;
 
     return (
       <Fragment>
@@ -58,23 +57,21 @@ class JSONUpload extends Component<Props, State> {
           <Heading text={MSG.heading} />
           <Heading text={MSG.instructionText} />
           {/* drop zone goes here */}
-          {!this.state.isValid &&
-            <Heading text={MSG.errorDescription} />
-          }
+          {!isValid && <Heading text={MSG.errorDescription} />}
         </div>
         <div className={styles.actions}>
-          <Button 
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }} 
-            value={MSG.buttonBack} 
+          <Button
+            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            value={MSG.buttonBack}
           />
-          <Button 
+          <Button
             appearance={{ theme: 'primary' }}
-            disabled={!canAdvance} 
+            disabled={!canAdvance}
             value={MSG.buttonAdvance}
           />
         </div>
       </Fragment>
-    )
+    );
   }
 }
 

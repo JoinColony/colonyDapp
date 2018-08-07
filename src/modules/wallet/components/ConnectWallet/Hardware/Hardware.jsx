@@ -1,12 +1,16 @@
 /* @flow */
 
-import React, { Component, Fragment } from 'react';
-import { defineMessages } from 'react-intl';
+import React, { Component, createElement, Fragment } from 'react';
+import { defineMessages, FormattedNumber } from 'react-intl';
+
+import type { MessageDescriptor } from 'react-intl';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import HardwareIcon from '../../../../../img/icons/wallet.svg';
 import styles from './Hardware.css';
+
+import hardwareWalletChoices from './__mocks__/hardwareWalletMock';
 
 const MSG = defineMessages({
   heading: {
@@ -17,17 +21,26 @@ const MSG = defineMessages({
     id: 'ConnectWallet.providers.Hardware.instructionText',
     defaultMessage: 'Select an address',
   },
+  searchInputPlacholder: {
+    id: 'ConnectWallet.providers.Hardware.searchInputPlaceholder',
+    defaultMessage: 'Search...',
+  },
   balanceText: {
     id: 'ConnectWallet.providers.Hardware.balanceText',
     defaultMessage: 'Balance',
   },
+  emptySearchResultsText: {
+    id: 'ConnectWallet.providers.Hardware.emptySearchResultsText',
+    defaultMessage: `Your search didn't return any connected wallets.`,
+  },
   errorHeading: {
     id: 'ConnectWallet.providers.Hardware.errorHeading',
-    defaultMessage: 'Oops, we couldn\'t find your hardware wallet',
+    defaultMessage: "Oops, we couldn't find your hardware wallet",
   },
   errorDescription: {
     id: 'ConnectWallet.providers.Hardware.errorDescription',
-    defaultMessage: 'Please check that your hardware wallet is connected and try again.',
+    defaultMessage:
+      'Please check that your hardware wallet is connected and try again.',
   },
   buttonAdvance: {
     id: 'ConnectWallet.providers.Hardware.button.advance',
@@ -35,7 +48,7 @@ const MSG = defineMessages({
   },
   buttonBack: {
     id: 'ConnectWallet.providers.Hardware.button.back',
-    defaultMessage: 'Back',
+    defaultMessage: 'Choose a different wallet',
   },
   buttonRetry: {
     id: 'ConnectWallet.providers.Hardware.button.retry',
@@ -43,72 +56,156 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {}
+type Props = {};
+
+type ActionButtonType = {
+  value: MessageDescriptor | string,
+  appearance: { [string]: any },
+};
 
 type State = {
   isValid: boolean,
+  searchQuery: string,
   walletChoices: Array<Object>,
-} 
+};
 
 class Hardware extends Component<Props, State> {
-  
-  state = { 
+  state = {
     isValid: true,
     walletChoices: [],
-  }
+    searchQuery: '',
+  };
 
   componentDidMount() {
     this.getWalletChoices();
   }
 
+  renderWalletAddress = (walletAddress: string): Element => {
+    const firstChunkSize = 5;
+    const lastChunkSize = 5;
+    const middleChunkSize =
+      walletAddress.length - firstChunkSize - lastChunkSize;
+    const middleChunkEnd = firstChunkSize + middleChunkSize;
+    const addressParts = [
+      walletAddress.slice(0, firstChunkSize),
+      walletAddress.slice(firstChunkSize, middleChunkEnd),
+      walletAddress.slice(middleChunkEnd, walletAddress.length),
+    ].map((part, idx) =>
+      createElement(
+        'span',
+        { className: styles.addressPart, key: `${idx}-${part}` },
+        part,
+      ),
+    );
+    return <p>{addressParts}</p>;
+  };
+
   getWalletChoices = () => {
     this.setState({
-      walletChoices: [
-        {value: 1, label: '0x20ejAJDSIOenoc0DJ0wefkl032ru09jae09tj'},
-        {value: 2, label: '98qweasdsjFUq000faJFwef'},
-        {value: 3, label: '4x0E0FJ9E0JJjoadfif024jDF'},
-      ]
-    }) 
-  }
+      walletChoices: hardwareWalletChoices,
+    });
+  };
+
+  handleChangeSearchQuery = (evt: SyntheticEvent<HTMLInputElement>) => {
+    this.setState({
+      searchQuery: evt.currentTarget.value,
+    });
+  };
+
+  renderActionButton = () => {
+    const { isValid } = this.state;
+    const actionButtonProps: ActionButtonType = isValid
+      ? {
+          value: MSG.buttonAdvance,
+          appearance: { theme: 'primary' },
+        }
+      : {
+          value: MSG.buttonRetry,
+          appearance: { theme: 'primary' },
+        };
+    return <Button {...actionButtonProps} />;
+  };
 
   render() {
+    const { isValid, searchQuery, walletChoices } = this.state;
+
+    const filteredWalletChoices = walletChoices.filter(wallet =>
+      wallet.address.includes(searchQuery),
+    );
 
     return (
       <Fragment>
         <div className={styles.content}>
-          {this.state.isValid
-            ? <Fragment>
+          <div className={styles.headingContainer}>
+            {isValid ? (
+              <Fragment>
                 <Heading text={MSG.heading} />
-                <Heading text={MSG.instructionText} appearance={{ size: 'small' }} />
-                <Heading text={MSG.balanceText} appearance={{ size: 'small' }} />
+                <Heading
+                  text={MSG.instructionText}
+                  appearance={{ size: 'small' }}
+                />
+                <div className={styles.choiceHeadingRow}>
+                  <div>
+                    <input
+                      onChange={this.handleChangeSearchQuery}
+                      placeholder={MSG.searchInputPlacholder}
+                    />
+                  </div>
+                  <div>
+                    <Heading
+                      text={MSG.balanceText}
+                      appearance={{ size: 'small' }}
+                    />
+                  </div>
+                </div>
               </Fragment>
-            : <Fragment>
+            ) : (
+              <Fragment>
                 <HardwareIcon />
                 <Heading text={MSG.errorHeading} />
                 <Heading text={MSG.errorDescription} />
               </Fragment>
-          }
-          {/* radio field will go here */}
-          
+            )}
+          </div>
+          <div className={styles.walletChoicesContainer}>
+            {/* TODO put real radio field here */}
+            {filteredWalletChoices.length === 0 &&
+              searchQuery.length > 0 && (
+                <Heading text={MSG.emptySearchResultsText} />
+              )}
+            {filteredWalletChoices.map(wallet => (
+              <div className={styles.choiceRow} key={wallet.address}>
+                <div className={styles.choiceInputContainer}>
+                  <input
+                    name="hardwareWalletChoice"
+                    type="radio"
+                    value={wallet.value}
+                  />
+                </div>
+                <div className={styles.choiceLabelContainer}>
+                  {this.renderWalletAddress(wallet.address)}
+                </div>
+                <div className={styles.choiceBalanceContainer}>
+                  <FormattedNumber
+                    value={wallet.balance}
+                    style="currency" // eslint-disable-line style-prop-object
+                    currency="ETH"
+                    currencyDisplay="name"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className={styles.actions}>
-          <Button 
+          <Button
             value={MSG.buttonBack}
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }} 
+            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
           />
-          {this.state.isValid
-            ? <Button
-                value={MSG.buttonAdvance} 
-                appearance={{ theme: 'primary' }}
-              />
-            : <Button 
-                value={MSG.buttonRetry}
-                appearance={{ theme: 'primary' }}
-              />
-          }
+          {this.renderActionButton()}
         </div>
       </Fragment>
-    )
+    );
   }
 }
 
