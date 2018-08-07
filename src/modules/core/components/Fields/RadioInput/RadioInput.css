@@ -1,0 +1,17 @@
+
+
+/* Appearance Section */
+
+/* directions */
+.directionHorizontal {
+  display: inline-block;
+}
+
+.directionVertical {
+  display: block;
+}
+
+/* themes */
+.themeFakeCheckbox {
+
+}
