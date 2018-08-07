@@ -5,6 +5,7 @@
 .*/src/lib/colonyJS/.*
 .*/src/lib/colony-wallet/.*
 .*/src/lib/colonyNetwork/.*
+.*/src/lib/pinningService/.*
 .*/node_modules/findup/.*
 # https://github.com/atlassian/react-beautiful-dnd/issues/650
 .*/node_modules/react-beautiful-dnd/.*

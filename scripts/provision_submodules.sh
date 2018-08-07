@@ -2,9 +2,12 @@
 
 # Paths
 LIB_PATH="src/lib"
+
 CLIENT="colonyJS"
 WALLET="colony-wallet"
 NETWORK="colonyNetwork"
+PINNING="pinningService"
+
 ROOT_PATH=$(pwd)
 
 log() {
@@ -41,5 +44,11 @@ cd ${ROOT_PATH}
 log "Building '${NETWORK}' submodule"
 cd "${LIB_PATH}/${NETWORK}"
 git submodule update --init
+yarn
+cd ${ROOT_PATH}
+
+# Build pinning service
+log "Building '${PINNING}' submodule"
+cd "${LIB_PATH}/${PINNING}"
 yarn
 cd ${ROOT_PATH}

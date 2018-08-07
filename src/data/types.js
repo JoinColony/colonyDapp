@@ -44,4 +44,4 @@ export type DataOptions = {
 export type OrbitNode = OrbitDB;
 
 export type StoreAddress = string;
-export type Pinner = { pinKVStore: StoreAddress => void };
+export type Pinner = { pin: StoreAddress => Promise<void> };

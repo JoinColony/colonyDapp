@@ -1,3 +1,5 @@
+/colonyIpfs
+/colonyOrbitdb
 coverage
 node_modules
 .env

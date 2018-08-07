@@ -9,6 +9,13 @@
 
 Clone this repository :)
 
+### Setup docker for the integration tests
+
+We use redis as a backend to the pinning service. For simplicity we run it through [docker](https://www.docker.com/) during integration tests.
+
+- You need to install docker on your machine, see the [documentation](https://docs.docker.com/install/#supported-platforms) for installation instructions.
+- We also assume docker is accessible as a non-root user, remember to complete the [post-install instructions](https://docs.docker.com/install/linux/linux-postinstall/) on linux.
+
 ### Provision dependent libraries
 
 This project depends on external libraries, so after cloning, they need to be provisioned:

@@ -41,7 +41,7 @@ describe('OrtbiDB peers management', () => {
     'an orbitdb store will be seen by the other node',
     async () => {
       const db = await orbit1.keyvalue(factory.name('share-store-test'));
-      await pinner.pinKVStore(db.address);
+      await pinner.pin(db);
       const db2 = await orbit2.keyvalue(db.address);
 
       await db.put('hello', 'world');

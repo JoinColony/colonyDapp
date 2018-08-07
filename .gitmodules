@@ -10,3 +10,6 @@
 	path = src/lib/colonyNetwork
 	url = git@github.com:JoinColony/colonyNetwork.git
 	branch = develop
+[submodule "src/lib/pinningService"]
+	path = src/lib/pinningService
+	url = git@github.com:JoinColony/pinningService.git

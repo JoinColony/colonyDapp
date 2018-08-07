@@ -46,7 +46,7 @@ class UserProfile {
 }
 
 export default class Data {
-  _pinner: Pinner;
+  _pinner: ?Pinner;
 
   _ipfsNode: ColonyIPFSNode;
 
@@ -54,7 +54,7 @@ export default class Data {
 
   _key: string;
 
-  constructor(pinner: Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
+  constructor(pinner: ?Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
     this._pinner = pinner;
     this._ipfsNode = ipfsNode;
     this._orbitNode = orbitNode;
@@ -83,11 +83,19 @@ export default class Data {
   }
 
   static async fromDefaultConfig(
-    pinner: Pinner,
+    pinner: ?Pinner,
     opts: DataOptions = { ipfs: {}, orbit: {} },
   ): Promise<Data> {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
+
+    await ipfsNode.ready();
+
+    // If we passed some bootstrap nodes,
+    // wait for some of them to be available.
+    if (opts.ipfs.bootstrap) {
+      await ipfsNode.waitForSomePeers();
+    }
 
     const orbitConf = orbit.makeOptions(opts.orbit);
     const orbitNode = await orbit.getOrbitDB(ipfsNode, orbitConf);
@@ -98,7 +106,10 @@ export default class Data {
   async getUserProfile(key: PublicKey): Promise<UserProfile> {
     const store = await this._orbitNode.kvstore(key);
     await store.load();
-    await this._pinner.pinKVStore(store.address);
+
+    if (this._pinner) {
+      await this._pinner.pin(store);
+    }
     return new UserProfile(store);
   }
 
@@ -108,6 +119,6 @@ export default class Data {
 
   async listPeers(): Promise<B58String[]> {
     const peers = await this._ipfsNode.swarm.peers();
-    return peers.map(x => x.peer.id.toB58String());
+    return peers.map(x => x.peer.toB58String());
   }
 }
