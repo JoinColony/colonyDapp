@@ -18,6 +18,11 @@ const config = {
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
       '@colony': path.resolve(__dirname, 'src/lib/colonyJS/packages'),
       'colony-wallet': path.resolve(__dirname, 'src/lib/colony-wallet/lib'),
+      // https://github.com/jquense/yup/issues/273
+      '@babel/runtime/helpers/builtin': path.resolve(
+        __dirname,
+        'node_modules/@babel/runtime/helpers',
+      ),
     },
   },
   module: {
@@ -74,7 +79,7 @@ const config = {
             options: {
               plugins: [
                 { removeTitle: true },
-                { convertColors: { shorthex: false }},
+                { convertColors: { shorthex: false } },
                 { convertPathData: false },
               ],
             },

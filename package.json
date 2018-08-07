@@ -126,8 +126,8 @@
     "dotenv-webpack": "^1.5.4",
     "es6-promisify": "^6.0.0",
     "ethers": "^3.0.8",
-    "ipfs": "~0.29.3",
     "formik": "^1.0.2",
+    "ipfs": "~0.29.3",
     "nanoid": "^1.0.7",
     "orbit-db": "0.19.8",
     "prop-types": "^15.6.2",
@@ -146,6 +146,6 @@
     "svgr": "^1.10.0",
     "url-loader": "^1.0.1",
     "web3-utils": "^1.0.0-beta.27",
-    "yup": "^0.25.1"
+    "yup": "^0.26.0"
   }
 }
