@@ -1,26 +1,28 @@
 /* @flow */
-import React, { createElement } from 'react';
-import styles from './ConnectWallet.jsx';
-import { compose } from 'recompose';
-import withProvider from './';
+import React from 'react';
 import routes from './routes';
+
+import WalletConnectTemplate from '../../../pages/WalletConnectTemplate';
 
 type Props = {
   match: {
-    url: string
-  }
-}
+    url: string,
+  },
+};
 
 const loadComponentFromRoute = (providerSlug: string) => {
-  const walletRoute = routes.find(walletRoute => `/${walletRoute.slug}` === providerSlug) || {}
+  const walletRoute =
+    routes.find(route => `/${route.slug}` === providerSlug) || {};
   return walletRoute.component;
-}
+};
 
-const ConnectWallet = ({match}: Props) => {
-
-  const child = loadComponentFromRoute(match.url);
-
-  return withProvider({ProviderComponent: child});
-}
+const ConnectWallet = ({ match }: Props) => {
+  const ProviderComponent = loadComponentFromRoute(match.url);
+  return (
+    <WalletConnectTemplate>
+      <ProviderComponent />
+    </WalletConnectTemplate>
+  );
+};
 
 export default ConnectWallet;

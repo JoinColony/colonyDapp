@@ -34,51 +34,42 @@ const BUTTON_MSG = defineMessages({
   },
 });
 
-type Props = {}
+type Props = {};
 
 type State = {
   isValid: boolean,
-} 
+};
 
 class Mnemonic extends Component<Props, State> {
-  
-  state = { 
-    isValid: true,
-  }
+  state = { isValid: true };
 
   render() {
+    const { isValid } = this.state;
     return (
       <Fragment>
         <div className={styles.content}>
           <Heading text={MSG.heading} />
-          <Textarea 
-            error={MSG.errorDescription}
-            hasError={true}
-            label={MSG.instructionText} 
-            name="connect_wallet_mnemonic" 
+          <Textarea
+            connect={false}
+            label={MSG.instructionText}
+            name="connectWalletMnemonic"
           />
-          {!this.state.isValid &&
-            <Heading text={MSG.errorDescription} />
-          }
+          {!isValid && <Heading text={MSG.errorDescription} />}
         </div>
         <div className={styles.actions}>
           <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }} 
-            value={BUTTON_MSG.back} 
+            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            text={BUTTON_MSG.back}
           />
-          <Button 
+          <Button
             appearance={{ theme: 'primary' }}
-            disabled={!this.state.isValid} 
-            value={BUTTON_MSG.advance}
+            disabled={!isValid}
+            text={BUTTON_MSG.advance}
           />
         </div>
       </Fragment>
-    )
+    );
   }
 }
-
-export const reduxFormOpts = {
-  form: 'connect_wallet',
-};
 
 export default Mnemonic;

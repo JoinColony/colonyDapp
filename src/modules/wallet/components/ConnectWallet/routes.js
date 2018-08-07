@@ -12,12 +12,12 @@ type Route = {
   slug: string,
 };
 
-type Routes = Array<Route>
+type Routes = Array<Route>;
 
-export const CONNECT_WALLET_SLUG_HARDWARE = 'create-wallet/hardware';
-export const CONNECT_WALLET_SLUG_JSON = 'create-wallet/json';
-export const CONNECT_WALLET_SLUG_METAMASK = 'create-wallet/metamask';
-export const CONNECT_WALLET_SLUG_MNEMONIC = 'create-wallet/mnemonic';
+export const CONNECT_WALLET_SLUG_HARDWARE = 'connectwallet/hardware';
+export const CONNECT_WALLET_SLUG_JSON = 'connectwallet/json';
+export const CONNECT_WALLET_SLUG_METAMASK = 'connectwallet/metamask';
+export const CONNECT_WALLET_SLUG_MNEMONIC = 'connectwallet/mnemonic';
 
 const connectWalletRoutes: Routes = [
   {
@@ -36,6 +36,6 @@ const connectWalletRoutes: Routes = [
     component: Mnemonic,
     slug: CONNECT_WALLET_SLUG_MNEMONIC,
   },
-]
+];
 
 export default connectWalletRoutes;

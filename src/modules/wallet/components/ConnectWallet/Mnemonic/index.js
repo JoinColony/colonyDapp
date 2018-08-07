@@ -1,4 +1,4 @@
-import { reduxForm } from 'redux-form';
-import Mnemonic, { reduxFormOpts } from './Mnemonic.jsx';
+/* @flow */
+import Mnemonic from './Mnemonic.jsx';
 
-export default reduxForm(reduxFormOpts)(Mnemonic);
+export default Mnemonic;

@@ -3,8 +3,10 @@
 import React, { Component, createElement, Fragment } from 'react';
 import { defineMessages, FormattedNumber } from 'react-intl';
 
+import type { Element } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 
+import Input from '../../../../core/components/Fields/Input';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import HardwareIcon from '../../../../../img/icons/wallet.svg';
@@ -80,7 +82,7 @@ class Hardware extends Component<Props, State> {
     this.getWalletChoices();
   }
 
-  renderWalletAddress = (walletAddress: string): Element => {
+  renderWalletAddress = (walletAddress: string): Element<*> => {
     const firstChunkSize = 5;
     const lastChunkSize = 5;
     const middleChunkSize =
@@ -116,11 +118,11 @@ class Hardware extends Component<Props, State> {
     const { isValid } = this.state;
     const actionButtonProps: ActionButtonType = isValid
       ? {
-          value: MSG.buttonAdvance,
+          text: MSG.buttonAdvance,
           appearance: { theme: 'primary' },
         }
       : {
-          value: MSG.buttonRetry,
+          text: MSG.buttonRetry,
           appearance: { theme: 'primary' },
         };
     return <Button {...actionButtonProps} />;
@@ -146,7 +148,9 @@ class Hardware extends Component<Props, State> {
                 />
                 <div className={styles.choiceHeadingRow}>
                   <div>
-                    <input
+                    <Input
+                      connect={false}
+                      name="hardwareWalletFilter"
                       onChange={this.handleChangeSearchQuery}
                       placeholder={MSG.searchInputPlacholder}
                     />
@@ -188,7 +192,7 @@ class Hardware extends Component<Props, State> {
                 <div className={styles.choiceBalanceContainer}>
                   <FormattedNumber
                     value={wallet.balance}
-                    style="currency" // eslint-disable-line style-prop-object
+                    style="currency" // eslint-disable-line
                     currency="ETH"
                     currencyDisplay="name"
                   />
@@ -199,7 +203,7 @@ class Hardware extends Component<Props, State> {
         </div>
         <div className={styles.actions}>
           <Button
-            value={MSG.buttonBack}
+            text={MSG.buttonBack}
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
           />
           {this.renderActionButton()}

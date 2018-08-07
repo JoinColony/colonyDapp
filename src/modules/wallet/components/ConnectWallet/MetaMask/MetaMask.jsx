@@ -7,7 +7,7 @@ import { metamask } from 'colony-wallet/providers';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
-import MetaMaskLogo from '../../../../../img/icons/metamask.svg';
+import Icon from '../../../../core/components/Icon';
 import styles from './MetaMask.css';
 
 const MSG = defineMessages({
@@ -80,7 +80,7 @@ class MetaMask extends Component<Props, State> {
     return (
       <Fragment>
         <div className={styles.content}>
-          <MetaMaskLogo />
+          <Icon name="metamask" title="metamask" />
           {isValid ? (
             <Fragment>
               <Heading text={MSG.heading} />
@@ -94,17 +94,17 @@ class MetaMask extends Component<Props, State> {
         </div>
         <div className={styles.actions}>
           <Button
-            value={BUTTON_MSG.back}
+            text={BUTTON_MSG.back}
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
           />
           {isValid ? (
             <Button
-              value={BUTTON_MSG.advance}
+              text={BUTTON_MSG.advance}
               appearance={{ theme: 'primary' }}
             />
           ) : (
             <Button
-              value={BUTTON_MSG.retry}
+              text={BUTTON_MSG.retry}
               appearance={{ theme: 'primary' }}
               onClick={this.handleOnRetryClick}
             />

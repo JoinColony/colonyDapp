@@ -2,9 +2,11 @@
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+import { Formik } from 'formik';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
+import FileUpload from '../../../../core/components/Fields/FileUpload';
 import styles from './JSONUpload.css';
 
 const MSG = defineMessages({
@@ -57,17 +59,26 @@ class JSONUpload extends Component<Props, State> {
           <Heading text={MSG.heading} />
           <Heading text={MSG.instructionText} />
           {/* drop zone goes here */}
+          <Formik
+            onsubmit={(values) => alert(values)}
+            render={() => (
+              <FileUpload
+                accept={['application/json']}
+                name="walletJsonFileUpload"
+              />
+            )}
+          />
           {!isValid && <Heading text={MSG.errorDescription} />}
         </div>
         <div className={styles.actions}>
           <Button
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-            value={MSG.buttonBack}
+            text={MSG.buttonBack}
           />
           <Button
             appearance={{ theme: 'primary' }}
             disabled={!canAdvance}
-            value={MSG.buttonAdvance}
+            text={MSG.buttonAdvance}
           />
         </div>
       </Fragment>
