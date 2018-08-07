@@ -12,7 +12,8 @@ import styles from './InputLabel.css';
 const displayName = 'InputLabel';
 
 type Appearance = {
-  theme?: 'fat' | 'underlined',
+  // Make it covariant: tell flow we're not changing it in here
+  +theme?: 'fat' | 'underlined',
   direction?: 'horizontal',
   colorSchema?: 'dark' | 'transparent',
 };
