@@ -9,7 +9,7 @@ import fileReader from '../../../../../../lib/fileReader';
 import type { UploadFile } from '../types';
 
 import asField from '../../asField';
-import Tooltip from '../../../Popover/Tooltip.jsx';
+import { Tooltip } from '../../../Popover';
 import Button from '../../../Button';
 import Icon from '../../../Icon';
 import ProgressBar from '../../../ProgressBar';
