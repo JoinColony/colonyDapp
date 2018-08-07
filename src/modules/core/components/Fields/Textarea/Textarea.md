@@ -150,7 +150,7 @@ Uses the background color of its background (same for text). This should also wo
 const { Formik } = require('formik');
 <Formik
   initialValues={{
-    textarea: 'Hello let me write some text',
+    textarea1: 'Hello let me write some text',
   }}
   onSubmit={values => console.log(values)}
   render={

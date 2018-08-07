@@ -60,7 +60,7 @@ class Textarea extends Component<Props> {
   };
 
   renderTextarea = inputProps => {
-    const { innerRef, ...props } = inputProps;
+    const { innerRef, formatIntl, setError, ...props } = inputProps;
     return <textarea ref={innerRef} {...props} />;
   };
 
@@ -107,4 +107,4 @@ class Textarea extends Component<Props> {
   }
 }
 
-export default asField(Textarea);
+export default asField()(Textarea);
