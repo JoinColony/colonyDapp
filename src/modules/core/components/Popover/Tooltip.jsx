@@ -29,7 +29,9 @@ type Placement =
 type Props = {
   /** Child element to trigger the popover */
   children: React$Element<*> | (({ ref: ReactRef }) => Node),
-  content: string | MessageDescriptor,
+  content: Node | MessageDescriptor,
+  /** How the popover gets triggered */
+  trigger: 'always' | 'hover' | 'click' | 'disabled',
   placement: Placement,
 };
 
@@ -40,10 +42,10 @@ const renderContent = content => (
   </div>
 );
 
-const Tooltip = ({ children, content, placement }: Props) => (
+const Tooltip = ({ children, content, placement, trigger }: Props) => (
   <Popover
     appearance={{ theme: 'dark' }}
-    trigger="hover"
+    trigger={content ? trigger : 'disabled'}
     openDelay={200}
     content={renderContent(content)}
     placement={placement}
@@ -51,5 +53,9 @@ const Tooltip = ({ children, content, placement }: Props) => (
     {children}
   </Popover>
 );
+
+Tooltip.defaultProps = {
+  trigger: 'hover',
+};
 
 export default Tooltip;

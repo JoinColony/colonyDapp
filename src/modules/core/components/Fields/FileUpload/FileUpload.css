@@ -1,0 +1,57 @@
+@import 'variables.css';
+
+.mainContainer {
+  composes: marginBottomMedium from '~styles/layout.css';
+}
+
+.dropzone {
+  padding: 35px;
+  border-top: 1px dashed var(--secondary);
+  border-right: 2px solid var(--grey-blue-0);
+  border-bottom: 1px dashed var(--secondary);
+  border-left: 2px solid var(--grey-blue-0);
+  background-color: var(--grey-blue-1);
+}
+
+.dropzoneAccept {
+  background-color: var(--grey-blue-2);
+}
+
+.dropzoneReject {
+  border: 1px solid var(--danger);
+  background-color: color(var(--danger) alpha(30%));
+}
+
+.dropzone[aria-invalid="true"] {
+  border: 1px solid var(--danger);
+  background-color: color(var(--danger) alpha(20%));
+}
+
+.dropzoneText {
+  font-weight: var(--weight-semi);
+}
+
+.browseButton {
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  color: var(--sky-blue);
+  cursor: pointer;
+}
+
+/* Appearance Section */
+
+/* appearance.align */
+.alignLeft {
+  text-align: left;
+}
+
+.alignCenter {
+  composes: alignCenter from '~styles/text.css';
+}
+
+.alignRight {
+  composes: alignRight from '~styles/text.css';
+}
