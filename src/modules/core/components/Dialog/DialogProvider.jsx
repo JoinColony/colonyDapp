@@ -14,6 +14,7 @@ type DialogType = {
   cancel: Cancel,
   close: Close,
   key: string,
+  props: { [string]: any },
 };
 
 type Props = {
@@ -34,7 +35,7 @@ class DialogProvider extends Component<Props, State> {
     openDialogs: [],
   };
 
-  pushDialog = (dialogKey: string) => {
+  pushDialog = (dialogKey: string, props: { [string]: any }) => {
     const { dialogComponents } = this.props;
     const Dialog = dialogComponents[dialogKey];
     if (!Dialog) {
@@ -63,6 +64,7 @@ class DialogProvider extends Component<Props, State> {
       cancel,
       close,
       key,
+      props,
     };
     this.setState(({ openDialogs }) => ({
       openDialogs: [...openDialogs, dialog],
@@ -90,8 +92,8 @@ class DialogProvider extends Component<Props, State> {
     return (
       <Fragment>
         <Provider value={{ openDialog: this.pushDialog }}>{children}</Provider>
-        {openDialogs.map(({ Dialog, ...props }) => (
-          <Dialog {...props} />
+        {openDialogs.map(({ Dialog, props, ...dialogProps }) => (
+          <Dialog {...dialogProps} {...props} />
         ))}
       </Fragment>
     );

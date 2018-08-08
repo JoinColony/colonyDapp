@@ -23,14 +23,14 @@ Dialogs need to be opened from various components. To be flexible in that regard
 const TaskWithDialogs = withDialog()(Task);
 ```
 
-`TaskWithDialogs` will get injected an `openDialog` function which you can call anytime to open that dialog. Its key maps to the one in the `dialogComponents` object that we passed to the `DialogProvider`:
+`TaskWithDialogs` will get injected an `openDialog` function which you can call anytime to open that dialog. Its key maps to the one in the `dialogComponents` object that we passed to the `DialogProvider`. You can also pass properties that are passed down to the dialg component:
 
 ```js static
-  const Task = ({ openDialog } => (
-    <div>
-      <Button onClick={() => openDialog('ConfirmDialog')}>Open dialog</Button>
-    </div>
-  );
+const Task = ({ openDialog } => (
+  <div>
+    <Button onClick={() => openDialog('ConfirmDialog', { heading: 'Cool dialog' })}>Open dialog</Button>
+  </div>
+);
 ```
 
 `openDialog()` will return a Promise that resolves (or rejects) when the user closes the dialog. Whether it resolves or rejects depends on whether the user closed it using the `close(val)` (resolves with `val`) or the `cancel()` (rejects) function. These get injected into all the Components that reside in `dialogComponents`.
@@ -44,7 +44,7 @@ const withDialog = require('./withDialog.js').default;
 const ComponentThatOpensADialog = ({ openDialog }) => (
   <div>
     <Button
-      onClick={() => openDialog('ConfirmDialog')
+      onClick={() => openDialog('ConfirmDialog', { heading: 'Cool dialog' })
         .then(() => alert('Confirmed!'), () => alert('Cancelled'))
       }
     >
