@@ -43,10 +43,11 @@
   --z-index-positioning: 1; /* z-index for absolute positioning in elements */
   --z-index-intercom: 2;
   --z-index-nav: 2;
-  --z-index-modal: 3;
-  --z-index-dialog: 4;
-  --z-index-popover: 5;
-  --z-index-notification: 6;
+  --z-index-modal-overlay: 3;
+  --z-index-modal: 4;
+  --z-index-dialog: 5;
+  --z-index-popover: 6;
+  --z-index-notification: 7;
 
   /*
    * Fonts
