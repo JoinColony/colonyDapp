@@ -6,6 +6,7 @@ import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 
+import store from './store';
 import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
