@@ -70,4 +70,15 @@ describe('Data: a colony', () => {
     expect(domain[0]).toBe('domainAddress1');
   });
 
+  test.skip('The Data API holds an avatar IPFS hash', async () => {
+    await data2.setColonyAvatar('fakeAddress', logo);
+    const p2 = await data2.getColony('fakeAddress');
+    const avatarHash = await p2.getAvatar();
+    expect(typeof avatarHash).toBe('string');
+    expect(avatarHash.length).toBe(46);
+
+    const avatar = await data2.getColonyAvatar('fakeAddress');
+    expect(avatar).toBe(logo);
+    expect(typeof avatar).toBe('string');
+  });
 });
