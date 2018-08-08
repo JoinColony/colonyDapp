@@ -6,6 +6,7 @@ const SET_PROFILE_CONTENT = 'SET_PROFILE_CONTENT';
 export const STATE_NOTHING: 'nothing' = 'nothing';
 export const STATE_LOADING: 'loading' = 'loading';
 export const STATE_READY: 'ready' = 'ready';
+export const JOIN_COLONY: 'JOIN_COLONY' = 'JOIN_COLONY';
 
 type State =
   | typeof STATE_NOTHING
@@ -64,8 +65,28 @@ export function actionSetUserProfileContent(content: ?{}) {
   };
 }
 
+export function actionAddColonyToUserProfile(colonyID: string) {
+  return {
+    type: JOIN_COLONY,
+    payload: { colonyID },
+  };
+}
+
+const INITIALIZE_DATA = 'INITIALIZE_DATA';
+
+export function actionInitializeData(Data: {}) {
+  console.log('initializing capn');
+  return {
+    type: INITIALIZE_DATA,
+    Data,
+  };
+}
+
 export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
   switch (action.type) {
+    case INITIALIZE_DATA:
+      console.log('initializing 2 capn');
+      return { ...state, Data: action.Data };
     case SET_DATA_STATE:
       return { ...state, state: action.state, data: action.data };
     case SET_PROFILE_STATE:
