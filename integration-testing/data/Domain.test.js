@@ -73,6 +73,8 @@ describe('Data: a domain', () => {
     );
   });
 
-  // TODO do we really need this?
-  test('Only the manager, worker, or evaluator can edit the task', async () => {});
+  test.skip('Only the manager, worker, or evaluator can edit the task', async () => {});
+  test.skip('Only a domain member can create a task', async () => {});
+  test.skip('The Data API adds a spec to a task', async () => {});
+  test.skip('Someone assigned to a task is also added to the domain', async () => {});
 });
