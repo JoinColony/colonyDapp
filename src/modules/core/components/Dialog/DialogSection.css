@@ -1,0 +1,14 @@
+@import 'variables.css';
+
+.main {
+  padding: 20px 30px;
+  border-bottom: 1px solid var(--grey-blue-1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.alignRight {
+  text-align: right;
+}

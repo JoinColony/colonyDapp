@@ -34,6 +34,10 @@ module.exports = {
         './src/modules/core/components/Popover/Popover.jsx',
         './src/modules/core/components/Popover/Tooltip.jsx',
         './src/modules/core/components/Modal/Modal.jsx',
+        './src/modules/core/components/Dialog/Dialog.jsx',
+        './src/modules/core/components/Dialog/DialogProvider.jsx',
+        './src/modules/core/components/Dialog/DialogSection.jsx',
+        './src/modules/core/components/Dialog/ConfirmDialog.jsx',
       ],
     },
     {
