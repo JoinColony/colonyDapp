@@ -76,12 +76,16 @@ export default class Data {
   }
 
   /*
-    Given a colonyID and an imageHash, returns the colony's avatar
+    Returns the colony's avatar
   */
-  async getColonyAvatar(colonyID: string, avatar: string) {
-    const imageHash = this._ipfsNode.addImage(avatar);
+  async getColonyAvatar(colonyID: string) {
     const colony = await this.getColony(colonyID);
-    colony.setAvatar(imageHash);
+    const avatarHash = await colony.getAvatar();
+
+    const avatar = await this._ipfsNode.ipfsCat(avatarHash);
+    return avatar;
+  }
+
   /*
     Given a colonyID and a funding pot, sets the colony's pot
   */

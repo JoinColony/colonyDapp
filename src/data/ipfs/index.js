@@ -195,6 +195,8 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   ipfs.waitForSomePeers = () => waitForSomePeers(ipfs);
   ipfs.waitForPeer = peerId => waitForPeer(ipfs, peerId);
 
+  // TODO make a factory for this promise pattern
+  // TODO make this work
   ipfs.addImage = image => {
     let addResolve, addReject;
     const isAdded = new Promise((resolve, reject) => {
@@ -202,8 +204,24 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
       addReject = reject;
     });
 
-    ipfs.files.add(image, (error, files) => {
+    const buf = global.Buffer(image); // Convert data into buffer
+    ipfs.files.add(buf, (err, result) => {
       return error ? addReject(error) : addResolve(files[0].hash);
+    });
+    // };
+    // reader.readAsArrayBuffer(image);
+    return isAdded;
+  };
+
+  ipfs.getImage = path => {
+    let addResolve, addReject;
+    const isAdded = new Promise((resolve, reject) => {
+      addResolve = resolve;
+      addReject = reject;
+    });
+
+    ipfs.dag.get(path, (error, file) => {
+      return error ? addReject(error) : addResolve(file);
     });
     return isAdded;
   };
