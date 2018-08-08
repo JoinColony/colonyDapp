@@ -181,7 +181,7 @@ export default class Data {
     Returns the IPFS documents corresponding to an array of hashes
   */
   async getComment(commentHash: IPFSHash): Promise<Comment[]> {
-    return this._ipfsNode.cat(commentHash);
+    return this._ipfsNode.getComment(commentHash);
   }
 
   /*
@@ -193,13 +193,19 @@ export default class Data {
     );
   }
 
+  async getTaskComments(domainID: string, taskID: string) {
+    const domain = await this.getDomain(domainID);
+    const commentHashes = await domain.getComments(taskID);
+    return this.getComments(commentHashes);
+  }
+
   /*
    Creates IPFS document, and stores the resulting hash in the task entry
   */
   async addComment(domainKey: string, taskID: string, comment: Comment) {
     const domain = await this.getDomain(domainKey);
-    const hash = this._ipfsNode.addComment(comment);
-    await domain.addComment(taskID, hash);
+    const hash = await this._ipfsNode.addComment(comment);
+    await domain.addComment(taskID, hash[0].hash);
   }
 
   /*
@@ -209,6 +215,14 @@ export default class Data {
   async draftTask(domainKey: string, task: Task) {
     const domain = await this.getDomain(domainKey);
     await domain.addTask(task);
+  }
+
+  /*
+    Returns the domain's tasks
+  */
+  async getDomainTasks(domainID: string) {
+    const domain = await this.getDomain(domainID);
+    return domain.getTasks();
   }
 
   waitForPeer(peerID: B58String): Promise<boolean> {
