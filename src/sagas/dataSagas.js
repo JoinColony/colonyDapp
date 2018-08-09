@@ -1,5 +1,5 @@
 import { put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import DDBTestFactory from '../../integration-testing/utils/DDBTestFactory';
+import Data from '../data';
 
 import {
   actionInitializeData,
@@ -17,11 +17,8 @@ function* joinColony(action) {
 }
 
 function* initializeData() {
-  const factory = new DDBTestFactory('DataSaga.test');
-  yield factory.pinner();
-  const Data = yield factory.Data('data');
-  yield factory.ready();
-  const action = actionInitializeData(Data);
+  const data = yield Data.fromDefaultConfig();
+  const action = actionInitializeData(data);
   yield put(action);
 }
 

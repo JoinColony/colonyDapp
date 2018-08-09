@@ -75,7 +75,6 @@ export function actionAddColonyToUserProfile(colonyID: string) {
 const INITIALIZE_DATA = 'INITIALIZE_DATA';
 
 export function actionInitializeData(Data: {}) {
-  console.log('initializing capn');
   return {
     type: INITIALIZE_DATA,
     Data,
@@ -85,7 +84,6 @@ export function actionInitializeData(Data: {}) {
 export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case INITIALIZE_DATA:
-      console.log('initializing 2 capn');
       return { ...state, Data: action.Data };
     case SET_DATA_STATE:
       return { ...state, state: action.state, data: action.data };

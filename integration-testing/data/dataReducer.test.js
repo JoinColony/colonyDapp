@@ -34,7 +34,13 @@ describe('Data reducer', () => {
 
   test('Redux holds Data class', async () => {
     const state = store.getState();
-    expect(state.Data).toBeTruthy();
+    expect(state.data.Data).toBeTruthy();
+  });
+
+  test('After action dispatch, the Redux state is updated', async () => {
+    store.dispatch(actionSetUserProfileContent('hello'));
+    const state = store.getState();
+    expect(state.data.my_profile.content).toBe('hello');
   });
 
   test('UserProfile shows colony after joining', async () => {
