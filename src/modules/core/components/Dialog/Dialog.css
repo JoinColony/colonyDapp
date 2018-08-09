@@ -1,0 +1,11 @@
+@import 'variables.css';
+
+.modal {
+  z-index: var(--z-index-dialog);
+}
+
+.main {
+  width: 560px;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+}

@@ -66,7 +66,7 @@ type Props = {
  */
 /* eslint-disable react/button-has-type */
 const Button = ({
-  appearance,
+  appearance = { theme: 'primary' },
   children,
   className,
   disabled = false,
