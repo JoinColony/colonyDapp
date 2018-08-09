@@ -73,6 +73,7 @@ const radioChoices = [
             key={`radio_input_children_${choice.value}`}
             name="radioInputChildren"
             value={choice.value}
+            // label={choice.value}
             children={`${choice.value} - radio child - ${choice.otherValue}`}
           />
         ))}

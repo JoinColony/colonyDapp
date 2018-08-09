@@ -1,17 +1,20 @@
 /* @flow */
-import React from 'react';
+import React, { Fragment } from 'react';
+import nanoid from 'nanoid';
 
 import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
+
+import InputLabel from '../InputLabel';
 import asField from '../asField';
 
 import styles from './RadioInput.css';
 
 type Appearance = {
   direction?: 'horizontal' | 'vertical',
-  theme?: 'fakeCheckbox',
+  theme?: 'fakeCheckbox' | 'colorPicker',
 };
 
 type Props = {
@@ -77,39 +80,46 @@ const RadioInput = ({
   setError,
   setValue,
   ...props
-}: Props) => (
-  <label
-    className={getMainClasses(appearance, styles)}
-    aria-invalid={!!$error}
-    aria-disabled={disabled}
-    aria-checked={checked}
-    htmlFor={elementOnly ? $id : null}
-  >
-    <input
-      className={styles.delegate}
-      value={$value}
-      name={name}
-      type="radio"
-      {...props}
-    />
-    <span className={styles.radio}>
-      {appearance.theme === 'fakeCheckbox' && (
-        <span className={styles.checkmark} />
-      )}
-    </span>
-    {!elementOnly && !!label ? (
-      <InputLabel
-        appearance={appearance}
-        inputId={$id}
-        label={label}
-        error={$error}
-        help={help}
-      />
-    ) : (
-      label || children
-    )}
-  </label>
-);
+}: Props) => {
+  const inputId = nanoid();
+  return (
+    <label
+      className={getMainClasses(appearance, styles)}
+      aria-invalid={!!$error}
+      aria-disabled={disabled}
+      aria-checked={checked}
+      htmlFor={elementOnly ? inputId : null}
+    >
+      <Fragment>
+        <input
+          className={styles.delegate}
+          value={$value}
+          name={name}
+          type="radio"
+          id={inputId}
+          {...props}
+        />
+        <span className={styles.radio}>
+          {!!appearance &&
+            appearance.theme === 'fakeCheckbox' && (
+              <span className={styles.checkmark} />
+            )}
+        </span>
+        {!elementOnly && !!label ? (
+          <InputLabel
+            appearance={{ direction: 'horizontal' }}
+            label={label}
+            error={$error}
+            help={help}
+            inputId={inputId}
+          />
+        ) : (
+          label || children
+        )}
+      </Fragment>
+    </label>
+  );
+};
 
 RadioInput.displayName = displayName;
 

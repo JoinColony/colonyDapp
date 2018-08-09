@@ -1,18 +1,11 @@
 @import 'variables.css';
 
-.main {
-  line-height: 1;
-}
-
 .delegate {
-  height: 16px;
-  width: 16px;
   position: absolute;
-  visibility: hidden;
+  opacity: 0;
 }
 
 .themeColorPicker {
-  composes: main;
   display: inline-block;
   margin: 8px 8px 0 0;
 }
@@ -23,15 +16,16 @@
 
 .radio {
   display: inline-block;
-  height: 18px;
-  width: 18px;
+  height: 14px;
+  width: 14px;
   position: relative;
-  border: 1px solid var(--primary);
+  border: 2px solid var(--grey-4);
   border-radius: 50%;
+  top: -2px;
 
   &::after {
-    height: 6px;
-    width: 6px;
+    height: 3px;
+    width: 3px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -44,8 +38,16 @@
   }
 }
 
-.main[aria-checked="true"] .radio::after {
-  opacity: 1;
+.delegate:focus + .radio {
+  outline: 2px solid var(--primary);
+}
+
+.main[aria-checked="true"] .radio {
+  border-color: var(--primary);
+
+  &::after {
+    opacity: 1;
+  }
 }
 
 .themeColorPicker[aria-checked="true"] .radio {
@@ -114,11 +116,21 @@
   background-color: var(--primary);
   content: '';
 }
-/* 
+
 .directionHorizontal {
   display: inline-block;
+  margin-right: 10px;
+
+  & .radio {
+    margin-right: 5px;
+  }
 }
 
 .directionVertical {
   display: block;
-} */
+  padding: 5px 0;
+
+  & .radio {
+    margin-right: 10px;
+  }
+}
