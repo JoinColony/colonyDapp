@@ -18,7 +18,7 @@ type Props = {
   /** Appearance object */
   appearance?: Appearance,
   /** If the input is checked initially */
-  checked?: boolean,
+  checked: boolean,
   /** Children to render */
   children?: Node,
   /** If the input is disabled initially */
@@ -43,6 +43,17 @@ type Props = {
   $value?: string,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
+  /** @ignore Will be injected by `asField` */
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
+  /** @ignore Will be injected by `asField` */
+  setValue: (val: any) => void,
+  /** @ignore Will be injected by `asField` */
+  setError: (val: any) => void,
+  /** @ignore Standard input field property */
+  onChange: Function,
 };
 
 const displayName = 'RadioInput';
@@ -75,7 +86,7 @@ const RadioInput = ({
     htmlFor={elementOnly ? $id : null}
   >
     <input
-      className={styles.radioInput}
+      className={styles.delegate}
       value={$value}
       name={name}
       type="radio"
@@ -86,15 +97,13 @@ const RadioInput = ({
         <span className={styles.checkmark} />
       )}
     </span>
-    {!elementOnly && label ? (
+    {!elementOnly && !!label ? (
       <InputLabel
         appearance={appearance}
         inputId={$id}
         label={label}
-        labelValues={labelValues}
         error={$error}
         help={help}
-        helpValues={helpValues}
       />
     ) : (
       label || children
@@ -107,9 +116,7 @@ RadioInput.displayName = displayName;
 RadioInput.defaultProps = {
   appearance: {
     direction: 'vertical',
-    theme: 'fakeCheckbox',
   },
-  checked: false,
   disabled: false,
   elementOnly: false,
 };

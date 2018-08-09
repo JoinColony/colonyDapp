@@ -1,17 +1,124 @@
+@import 'variables.css';
 
+.main {
+  line-height: 1;
+}
 
-/* Appearance Section */
+.delegate {
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  visibility: hidden;
+}
 
-/* directions */
+.themeColorPicker {
+  composes: main;
+  display: inline-block;
+  margin: 8px 8px 0 0;
+}
+
+.themeColorPicker + .themeColorPicker {
+  margin: 8px 8px 0 0;
+}
+
+.radio {
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  position: relative;
+  border: 1px solid var(--primary);
+  border-radius: 50%;
+
+  &::after {
+    height: 6px;
+    width: 6px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    background-color: var(--primary);
+    content: '';
+    transform: translate(-50%, -50%);
+    transition: opacity 30ms ease-in;
+    opacity: 0;
+  }
+}
+
+.main[aria-checked="true"] .radio::after {
+  opacity: 1;
+}
+
+.themeColorPicker[aria-checked="true"] .radio {
+  border-color: var(--primary);
+}
+
+.themeColorPicker .radio {
+  height: 18px;
+  width: 18px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.themeColorPicker .radio::after {
+  height: 16px;
+  width: 16px;
+  border: 2px solid var(--grey-1);
+  background-color: transparent;
+}
+
+.themeFakeCheckbox .radio {
+  display: inline-block;
+  flex: 0 0 auto;
+  margin-right: 5px;
+  height: 18px;
+  width: 18px;
+  position: relative;
+  border: 1px solid var(--primary);
+  border-radius: 2px;
+  background-color: var(--temp-grey-2);
+}
+
+.themeFakeCheckbox .radio::after {
+  opacity: 0;
+}
+
+/*
+ * We copied over the checkmerk styles here, as we can't compose in children
+ * This is something we might want to solve using some sort of mixins eventually
+ */
+.themeFakeCheckbox .checkmark {
+  display: inline-block;
+  height: 80%;
+  width: 80%;
+  position: absolute;
+  top: -20%;
+  transform: rotate(45deg);
+}
+
+.themeFakeCheckbox[aria-checked="true"] .checkmark::before {
+  height: 80%;
+  width: 2px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  content: '';
+}
+
+.themeFakeCheckbox[aria-checked="true"] .checkmark::after {
+  height: 2px;
+  width: 40%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  content: '';
+}
+/* 
 .directionHorizontal {
   display: inline-block;
 }
 
 .directionVertical {
   display: block;
-}
-
-/* themes */
-.themeFakeCheckbox {
-
-}
+} */
