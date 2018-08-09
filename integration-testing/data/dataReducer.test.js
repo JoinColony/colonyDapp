@@ -24,10 +24,12 @@ beforeAll(async () => {
 });
 
 describe('Data reducer', () => {
-  test('After action dispatch, the Redux state is updated', async () => {
-    store.dispatch(actionSetUserProfileContent('hello'));
+  test('Root reducer organizes properties under data and form', async () => {
     const state = store.getState();
-    expect(state.data.my_profile.content).toBe('hello');
+    const numKeys = Object.keys(state).length;
+    expect(numKeys).toBe(2);
+    expect(state.data).toBeTruthy();
+    expect(state.form).toBeTruthy();
   });
 
   test('Redux holds Data class', async () => {
