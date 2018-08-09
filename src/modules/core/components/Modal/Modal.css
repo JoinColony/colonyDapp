@@ -1,0 +1,39 @@
+@import 'variables.css';
+
+.portal {
+  /* portal style go here */
+}
+
+.overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-index-modal-overlay);
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlayAfterOpen {
+  /* overlay after open styles go here */
+}
+
+.overlayBeforeClose {
+  /* overlay before close styles go here */
+}
+
+.main {
+  z-index: var(--z-index-modal);
+}
+
+.mainAfterOpen {
+  /* main after open styles go here */
+}
+
+.mainBeforeClose {
+  /* main before close styles go here */
+}

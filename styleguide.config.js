@@ -29,10 +29,11 @@ module.exports = {
       content: 'docs/Forms.md',
     },
     {
-      name: 'Popovers & Modals',
+      name: 'Popovers, Modals & Dialogs',
       components: [
         './src/modules/core/components/Popover/Popover.jsx',
         './src/modules/core/components/Popover/Tooltip.jsx',
+        './src/modules/core/components/Modal/Modal.jsx',
       ],
     },
     {
