@@ -58,7 +58,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {};
+type Props = {
+  handleDidConnectWallet: () => void,
+  handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
+};
 
 type ActionButtonType = {
   value: MessageDescriptor | string,
@@ -130,6 +133,7 @@ class Hardware extends Component<Props, State> {
 
   render() {
     const { isValid, searchQuery, walletChoices } = this.state;
+    const { handleExit} = this.props;
 
     const filteredWalletChoices = walletChoices.filter(wallet =>
       wallet.address.includes(searchQuery),
@@ -205,6 +209,7 @@ class Hardware extends Component<Props, State> {
           <Button
             text={MSG.buttonBack}
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            onClick={handleExit}
           />
           {this.renderActionButton()}
         </div>

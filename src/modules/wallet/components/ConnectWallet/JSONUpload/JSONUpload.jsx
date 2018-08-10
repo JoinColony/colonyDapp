@@ -36,7 +36,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {};
+type Props = {
+  handleDidConnectWallet: () => void,
+  handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
+};
 
 type State = {
   hasFile: boolean,
@@ -51,6 +54,8 @@ class JSONUpload extends Component<Props, State> {
 
   render() {
     const { hasFile, isValid } = this.state;
+    const { handleExit } = this.props;
+
     const canAdvance: boolean = hasFile && isValid;
 
     return (
@@ -74,6 +79,7 @@ class JSONUpload extends Component<Props, State> {
           <Button
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
             text={MSG.buttonBack}
+            onClick={handleExit}
           />
           <Button
             appearance={{ theme: 'primary' }}

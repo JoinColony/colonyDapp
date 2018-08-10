@@ -40,7 +40,10 @@ const BUTTON_MSG = defineMessages({
   },
 });
 
-type Props = {};
+type Props = {
+  handleDidConnectWallet: () => void,
+  handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
+};
 
 type State = {
   isValid: boolean,
@@ -65,17 +68,25 @@ class MetaMask extends Component<Props, State> {
 
   connectMetaMask = () => {
     const provider: MetaMaskResponse = metamask();
-    const isValid = !!provider.chainId;
     this.setState({
-      isValid,
+      isValid: !!provider.chainId,
     });
   };
 
-  handleOnRetryClick = () => {
+  handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
     this.connectMetaMask();
   };
 
+  handleUseConnectedWallet = (evt: SyntheticEvent<HTMLButtonElement>) => {
+    const { handleDidConnectWallet } = this.props;
+    evt.preventDefault();
+    // TODO save wallet connection details here
+    handleDidConnectWallet();
+  };
+
   render() {
+    const { handleExit } = this.props;
     const { isValid } = this.state;
     return (
       <Fragment>
@@ -96,17 +107,19 @@ class MetaMask extends Component<Props, State> {
           <Button
             text={BUTTON_MSG.back}
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            onClick={handleExit}
           />
           {isValid ? (
             <Button
               text={BUTTON_MSG.advance}
               appearance={{ theme: 'primary' }}
+              onClick={this.handleUseConnectedWallet}
             />
           ) : (
             <Button
               text={BUTTON_MSG.retry}
               appearance={{ theme: 'primary' }}
-              onClick={this.handleOnRetryClick}
+              onClick={this.handleRetryClick}
             />
           )}
         </div>

@@ -34,7 +34,10 @@ const BUTTON_MSG = defineMessages({
   },
 });
 
-type Props = {};
+type Props = {
+  handleDidConnectWallet: () => void,
+  handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
+};
 
 type State = {
   isValid: boolean,
@@ -45,6 +48,7 @@ class Mnemonic extends Component<Props, State> {
 
   render() {
     const { isValid } = this.state;
+    const { handleExit } = this.props;
     return (
       <Fragment>
         <div className={styles.content}>
@@ -60,6 +64,7 @@ class Mnemonic extends Component<Props, State> {
           <Button
             appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
             text={BUTTON_MSG.back}
+            onClick={handleExit}
           />
           <Button
             appearance={{ theme: 'primary' }}
