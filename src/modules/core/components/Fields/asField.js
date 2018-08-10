@@ -28,6 +28,9 @@ type InProps = CommonProps & {
   connect?: boolean,
   id?: string,
   intl: IntlShape,
+  help?: string,
+  helpValues: Object,
+  labelValues: Object,
   form: {
     touched: Object,
     errors: Object,
@@ -43,6 +46,7 @@ type InProps = CommonProps & {
     value?: string,
     onChange: Function,
     onBlur: Function,
+    isSubmitting: boolean,
   },
 };
 
@@ -86,9 +90,12 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
         id,
         intl: { formatMessage },
         elementOnly,
-        field: { name: fieldName, value, onChange, onBlur } = {},
+        field: { name: fieldName, value, onChange, onBlur, isSubmitting } = {},
         form: { touched, errors, setFieldValue, setFieldError } = {},
+        help,
+        helpValues,
         label,
+        labelValues,
         name,
         placeholder,
         title,
@@ -100,16 +107,19 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
         const $error = fieldError && formatIntl(fieldError, formatMessage);
         const $id = id || htmlFieldName;
         const $title = formatIntl(title, formatMessage);
-        const $label = formatIntl(label, formatMessage) || $title;
+        const $label = formatIntl(label, formatMessage, labelValues) || $title;
+        const $help = formatIntl(help, formatMessage, helpValues);
         const $placeholder = formatIntl(placeholder, formatMessage);
         // This is assigning an empty string to the field's value.
         // It might be problematic for some cases but for now I couldn't think of one
         const $value = value || '';
         return {
           elementOnly,
+          'aria-invalid': !!$error,
           'aria-label': elementOnly ? $label : null,
           'arial-labelledby': elementOnly ? null : `${$id}-label`,
           label: $label,
+          help: $help,
           name: htmlFieldName || id,
           placeholder: $placeholder,
           title: $error || $title || $label || $placeholder,
@@ -119,7 +129,8 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
           $touched,
           onChange,
           onBlur,
-          // TODO create util object for the following items
+          // TODO create util / meta object for the following items
+          isSubmitting,
           formatIntl: (
             text?: string | MessageDescriptor,
             textValues?: { [string]: string },
