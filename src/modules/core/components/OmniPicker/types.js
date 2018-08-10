@@ -13,13 +13,6 @@ export type Select = (idx: number) => void;
 
 export type Data = { id: string };
 
-type WrapperProps = {
-  id: string,
-  role: 'combobox',
-  'aria-haspopup': 'listbox',
-  'aria-expanded': boolean,
-};
-
 export type WrappedComponentProps = {
   OmniPicker: ComponentType<{ itemComponent: ItemComponentType }>,
   inputProps: {
