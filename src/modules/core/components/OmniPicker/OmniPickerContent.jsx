@@ -15,7 +15,7 @@ type Props = {
   id: string,
   itemComponent: ItemComponentType,
   emptyComponent: ComponentType<{}>,
-  keyUsed?: boolean,
+  keyUsed: boolean,
   selected: number,
   onChoose: Choose,
   onSelect: Select,
