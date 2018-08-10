@@ -20,13 +20,13 @@ type Appearance = {
 type Props = {
   /** Appearance object */
   appearance?: Appearance,
-  /** If the input is checked initially */
+  /** If the input is checked */
   checked: boolean,
-  /** Children to render */
+  /** Children to render in place of the default label */
   children?: Node,
-  /** If the input is disabled initially */
+  /** Disable the input */
   disabled?: boolean,
-  /** Should display the element without label */
+  /** Display the element without label */
   elementOnly?: boolean,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
@@ -38,6 +38,8 @@ type Props = {
   labelValues?: { [string]: string },
   /** Input field name (form variable) */
   name: string,
+  /** Style object for the visible radio */
+  radioStyle?: { [string]: string },
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -77,6 +79,7 @@ const RadioInput = ({
   name,
   $value,
   $touched,
+  radioStyle,
   setError,
   setValue,
   ...props
@@ -97,9 +100,10 @@ const RadioInput = ({
           name={name}
           type="radio"
           id={inputId}
+          disabled={disabled}
           {...props}
         />
-        <span className={styles.radio}>
+        <span className={styles.radio} style={radioStyle}>
           {!!appearance &&
             appearance.theme === 'fakeCheckbox' && (
               <span className={styles.checkmark} />

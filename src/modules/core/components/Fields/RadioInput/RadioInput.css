@@ -16,12 +16,12 @@
 
 .radio {
   display: inline-block;
-  height: 14px;
-  width: 14px;
+  height: 12px;
+  width: 12px;
   position: relative;
   border: 2px solid var(--grey-4);
   border-radius: 50%;
-  top: -2px;
+  top: -3px; /* because the pseudo-radio is a bit smaller, let's shift it up a couple pixels */
 
   &::after {
     height: 3px;
@@ -39,7 +39,7 @@
 }
 
 .delegate:focus + .radio {
-  outline: 2px solid var(--primary);
+  box-shadow: 0 0 3px 1px var(--primary);
 }
 
 .main[aria-checked="true"] .radio {
@@ -59,6 +59,7 @@
   width: 18px;
   border: 1px solid transparent;
   cursor: pointer;
+  margin-right: 5px;
 }
 
 .themeColorPicker .radio::after {
