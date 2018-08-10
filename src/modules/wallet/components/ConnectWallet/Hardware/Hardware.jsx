@@ -63,11 +63,6 @@ type Props = {
   handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
 };
 
-type ActionButtonType = {
-  value: MessageDescriptor | string,
-  appearance: { [string]: any },
-};
-
 type State = {
   isValid: boolean,
   searchQuery: string,
@@ -119,21 +114,16 @@ class Hardware extends Component<Props, State> {
 
   renderActionButton = () => {
     const { isValid } = this.state;
-    const actionButtonProps: ActionButtonType = isValid
-      ? {
-          text: MSG.buttonAdvance,
-          appearance: { theme: 'primary' },
-        }
-      : {
-          text: MSG.buttonRetry,
-          appearance: { theme: 'primary' },
-        };
+    const actionButtonProps = {
+      text: isValid ? MSG.buttonAdvance : MSG.buttonRetry,
+      appearance: { theme: 'primary' },
+    };
     return <Button {...actionButtonProps} />;
   };
 
   render() {
     const { isValid, searchQuery, walletChoices } = this.state;
-    const { handleExit} = this.props;
+    const { handleExit } = this.props;
 
     const filteredWalletChoices = walletChoices.filter(wallet =>
       wallet.address.includes(searchQuery),
@@ -145,7 +135,7 @@ class Hardware extends Component<Props, State> {
           <div className={styles.headingContainer}>
             {isValid ? (
               <Fragment>
-                <Heading text={MSG.heading} />
+                <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
                 <Heading
                   text={MSG.instructionText}
                   appearance={{ size: 'small' }}

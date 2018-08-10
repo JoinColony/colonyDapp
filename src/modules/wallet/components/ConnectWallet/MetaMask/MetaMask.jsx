@@ -94,13 +94,11 @@ class MetaMask extends Component<Props, State> {
           <Icon name="metamask" title="metamask" />
           {isValid ? (
             <Fragment>
-              <Heading text={MSG.heading} />
-              <Heading text={MSG.subHeading} />
+              <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+              <Heading text={MSG.subHeading} appearance={{ size: 'medium' }} />
             </Fragment>
           ) : (
-            <Fragment>
-              <Heading text={MSG.errorHeading} />
-            </Fragment>
+            <Heading text={MSG.errorHeading} appearance={{ size: 'medium' }} />
           )}
         </div>
         <div className={styles.actions}>

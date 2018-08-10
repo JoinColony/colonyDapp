@@ -61,11 +61,11 @@ class JSONUpload extends Component<Props, State> {
     return (
       <Fragment>
         <div className={styles.content}>
-          <Heading text={MSG.heading} />
-          <Heading text={MSG.instructionText} />
+          <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+          <Heading text={MSG.instructionText} appearance={{ size: 'medium' }} />
           {/* drop zone goes here */}
           <Formik
-            onsubmit={(values) => alert(values)}
+            onSubmit={values => alert(values)}
             render={() => (
               <FileUpload
                 accept={['application/json']}

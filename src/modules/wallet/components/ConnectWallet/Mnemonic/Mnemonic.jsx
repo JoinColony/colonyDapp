@@ -52,7 +52,7 @@ class Mnemonic extends Component<Props, State> {
     return (
       <Fragment>
         <div className={styles.content}>
-          <Heading text={MSG.heading} />
+          <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
           <Textarea
             connect={false}
             label={MSG.instructionText}
