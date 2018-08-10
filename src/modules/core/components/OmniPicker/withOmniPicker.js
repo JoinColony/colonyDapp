@@ -8,40 +8,18 @@ import nanoid from 'nanoid';
 
 import { ESC, TAB, UP, DOWN, ENTER } from './keyTypes';
 
-import type { Data } from './types';
+import type { Data, ItemComponentType } from './types';
 
 import OmniPicker from './OmniPicker.jsx';
 
-type WrapperProps = {
-  id: string,
-  role: 'combobox',
-  'aria-haspopup': 'listbox',
-  'aria-expanded': boolean,
+type ExternalOmniPickerProps = {
+  itemComponent: ItemComponentType,
 };
 
-type WrappedComponentProps = {
-  OmniPicker: OmniPicker,
-  inputProps: {
-    id: string,
-    autoComplete: 'off',
-    onKeyUp: (evt: SyntheticKeyboardEvent<HTMLElement>) => void,
-    onKeyDown: (evt: SyntheticKeyboardEvent<HTMLElement>) => void,
-    onFocus: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
-    onBlur: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
-    onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
-    value: string,
-    'aria-autocomplete': 'list',
-    'aria-controls': string,
-    'aria-activedescendant': string,
-  },
-  registerInputNode: (inputNode: ?HTMLInputElement) => void,
-  OmniPickerWrapper: ComponentType<WrapperProps>,
-};
-
-type Opts = {
-  data: any,
+type Props = {
+  data: any | (any => any),
   filter: (data: any, filterStr: string) => Array<Data>,
-  getItem?: (data: Array<Data>, selectedIdx: number) => Data,
+  getItem: (data: Array<Data>, selectedIdx: number) => Data,
 };
 
 type State = {
@@ -51,28 +29,20 @@ type State = {
   keyUsed: boolean,
 };
 
-const getClass = (
-  WrappedComponent,
-  {
-    data,
-    filter,
-    getItem = (filteredData: Array<Data>, selectedIdx: number) =>
-      filteredData[selectedIdx],
-  },
-) => {
-  const getFilteredData = (props, filterValue) => {
-    const result = typeof data == 'function' ? data(props) : data;
-    return filter(result, filterValue);
-  };
-
-  class OmniPickerBase extends Component<Object, State> {
+const getClass = WrappedComponent => {
+  class OmniPickerBase extends Component<Props, State> {
     id: string;
 
     inputNode: ?HTMLInputElement;
 
     omniPicker: ?OmniPicker;
 
-    constructor(props: {}) {
+    static defaultProps = {
+      getItem: (filteredData: Array<Data>, selectedIdx: number) =>
+        filteredData[selectedIdx],
+    };
+
+    constructor(props: Props) {
       super(props);
       this.id = nanoid(6);
     }
@@ -92,6 +62,13 @@ const getClass = (
       this.omniPicker = omniPicker;
     };
 
+    getFilteredData = () => {
+      const { data, filter, ...props } = this.props;
+      const { filterValue } = this.state;
+      const result = typeof data == 'function' ? data(props) : data;
+      return filter(result, filterValue);
+    };
+
     open = () => {
       this.setState(
         {
@@ -100,6 +77,9 @@ const getClass = (
         () => {
           if (this.omniPicker) {
             this.omniPicker.handleOpen();
+          }
+          if (this.inputNode) {
+            this.inputNode.focus();
           }
         },
       );
@@ -126,6 +106,8 @@ const getClass = (
         {
           isOpen: false,
           filterValue: '',
+          selected: -1,
+          keyUsed: false,
         },
         () => {
           if (this.omniPicker) {
@@ -161,20 +143,24 @@ const getClass = (
       }
       const { key } = evt;
       const { isOpen } = this.state;
-      if (key === TAB) return this.close();
+      if (key === TAB) {
+        this.close();
+        return;
+      }
       if (key === UP && isOpen) {
         evt.preventDefault();
-        return this.goUp();
+        this.goUp();
+        return;
       }
       if (key === DOWN && isOpen) {
         evt.preventDefault();
-        return this.goDown();
+        this.goDown();
+        return;
       }
       if (key === ENTER && isOpen) {
         evt.preventDefault();
-        return this.choose();
+        this.choose();
       }
-      return null;
     };
 
     change = (evt: SyntheticInputEvent<HTMLInputElement>) => {
@@ -207,8 +193,9 @@ const getClass = (
     };
 
     goDown = () => {
-      const { filterValue, selected } = this.state;
-      const filteredData = getFilteredData(this.props, filterValue);
+      const { getItem } = this.props;
+      const { selected } = this.state;
+      const filteredData = this.getFilteredData();
       const next = getItem(filteredData, selected + 1);
       if (next) {
         this.setState({
@@ -219,8 +206,9 @@ const getClass = (
     };
 
     choose = () => {
-      const { filterValue, selected } = this.state;
-      const filteredData = getFilteredData(this.props, filterValue);
+      const { getItem } = this.props;
+      const { selected } = this.state;
+      const filteredData = this.getFilteredData();
       if (selected < 0) return;
       const itemData = getItem(filteredData, selected);
       if (this.omniPicker) {
@@ -236,26 +224,27 @@ const getClass = (
       });
     };
 
-    getOmniPicker = (props: {}) => {
-      const { isOpen, keyUsed, filterValue, selected } = this.state;
-      const filteredData = getFilteredData(this.props, filterValue);
+    getOmniPicker = ({ itemComponent, ...props }: ExternalOmniPickerProps) => {
+      const { getItem } = this.props;
+      const { isOpen, keyUsed, selected } = this.state;
+      const filteredData = this.getFilteredData();
       const { id } = this;
-      return (
-        isOpen &&
-        createElement(OmniPicker, {
-          ...props,
-          ref: this.registerOmniPicker,
-          getItem,
-          id,
-          inputRef: this.inputNode,
-          keyUsed,
-          filteredData,
-          choose: this.choose,
-          close: this.close,
-          select: this.select,
-          selected,
-        })
-      );
+      return isOpen
+        ? createElement(OmniPicker, {
+            ...props,
+            choose: this.choose,
+            close: this.close,
+            filteredData,
+            getItem,
+            id,
+            inputRef: this.inputNode,
+            itemComponent,
+            keyUsed,
+            ref: this.registerOmniPicker,
+            select: this.select,
+            selected,
+          })
+        : null;
     };
 
     getWrapper = (props: {}) => {
@@ -289,12 +278,16 @@ const getClass = (
     };
 
     render() {
+      const { isOpen } = this.state;
       const props = {
         ...this.props,
         OmniPicker: this.getOmniPicker,
         OmniPickerWrapper: this.getWrapper,
         inputProps: this.getInputProps(),
         registerInputNode: this.registerInputNode,
+        openOmniPicker: this.open,
+        omniPickerIsOpen: isOpen,
+        inputNode: this.inputNode,
       };
       return createElement(WrappedComponent, props);
     }
@@ -302,8 +295,7 @@ const getClass = (
   return OmniPickerBase;
 };
 
-const withOmniPicker = (opts: Opts) => (
-  WrappedComponent: ComponentType<WrappedComponentProps>,
-) => getClass(WrappedComponent, opts);
+const withOmniPicker = () => (WrappedComponent: ComponentType<*>) =>
+  getClass(WrappedComponent);
 
 export default withOmniPicker;

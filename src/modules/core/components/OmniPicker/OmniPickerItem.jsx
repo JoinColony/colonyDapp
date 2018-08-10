@@ -21,10 +21,22 @@ class OmniPickerItem extends Component<Props> {
     onSelect(idx);
   };
 
+  scrollToElement = (elm: ?HTMLElement) => {
+    const { selected, keyUsed } = this.props;
+    if (!elm || !selected || !keyUsed) {
+      return;
+    }
+    // $FlowFixMe Yeah, I know, but sometimes it IS there!
+    if (typeof elm.scrollIntoViewIfNeeded == 'function') {
+      elm.scrollIntoViewIfNeeded();
+    } else if (typeof elm.scrollIntoView == 'function') {
+      elm.scrollIntoView();
+    }
+  };
+
   render() {
     const {
       idx,
-      keyUsed,
       selected,
       itemData,
       itemComponent: ItemComponent,
@@ -35,13 +47,7 @@ class OmniPickerItem extends Component<Props> {
         role="option"
         aria-selected={selected}
         onMouseEnter={this.select}
-        ref={elm =>
-          selected &&
-          keyUsed &&
-          elm &&
-          elm.scrollIntoView &&
-          elm.scrollIntoView()
-        }
+        ref={ref => this.scrollToElement(ref)}
       >
         <ItemComponent itemData={itemData} selected={selected} />
       </li>

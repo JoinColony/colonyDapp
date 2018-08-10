@@ -57,10 +57,7 @@ const data = [
 
 const filter = (data, filterValue) => data.filter(user => user.username.toLowerCase().startsWith(filterValue.toLowerCase()));
 
-const WrappedUserPicker = withOmniPicker({
-  data: (props) => props.data,
-  filter: filter,
-})(SimpleUserPicker);
+const WrappedUserPicker = withOmniPicker()(SimpleUserPicker);
 
 <WrappedUserPicker data={data} filter={filter} itemComponent={Item} />
 ```

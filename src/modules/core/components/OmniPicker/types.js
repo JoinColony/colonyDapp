@@ -12,3 +12,32 @@ export type Choose = void => void;
 export type Select = (idx: number) => void;
 
 export type Data = { id: string };
+
+type WrapperProps = {
+  id: string,
+  role: 'combobox',
+  'aria-haspopup': 'listbox',
+  'aria-expanded': boolean,
+};
+
+export type WrappedComponentProps = {
+  OmniPicker: ComponentType<{ itemComponent: ItemComponentType }>,
+  inputProps: {
+    id: string,
+    autoComplete: 'off',
+    onKeyUp: (evt: SyntheticKeyboardEvent<HTMLElement>) => void,
+    onKeyDown: (evt: SyntheticKeyboardEvent<HTMLElement>) => void,
+    onFocus: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+    onBlur: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+    onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+    value: string,
+    'aria-autocomplete': 'list',
+    'aria-controls': string,
+    'aria-activedescendant': string,
+  },
+  registerInputNode: (inputNode: ?HTMLInputElement) => void,
+  OmniPickerWrapper: ComponentType<*>,
+  omniPickerIsOpen: boolean,
+  openOmniPicker: () => void,
+  inputNode: ?HTMLInputElement,
+};
