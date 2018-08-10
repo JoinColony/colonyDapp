@@ -18,12 +18,12 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.overlayTransparent {
+/* .overlayTransparent {
   composes: overlay;
   background-color: transparent;
-}
+} */
 
-.overlayNone {
+.overlayInvisible {
   composes: overlay;
   background-color: transparent;
   pointer-events: none;

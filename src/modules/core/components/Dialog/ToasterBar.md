@@ -1,6 +1,7 @@
 
 ### Example for ToasterBar with Interaction required
 
+
 ```js
 const withDialog = require('./withDialog.js').default;
 
@@ -10,7 +11,6 @@ const ComponentThatOpensAToasterBar = ({ openDialog }) => (
       onClick={() => openDialog('ToasterBar', {
         renderContent: ({ cancel, close, setRequiresInteraction, requiresInteraction }) =>
           <>
-
             { requiresInteraction ?
               (
                 <>

@@ -6,12 +6,14 @@ import Dialog from './Dialog.jsx';
 import Button from '../Button';
 import Icon from '../Icon';
 
+import modalStyles from '../Modal/Modal.css';
+
 import styles from './ToasterBar.css';
 
 type Props = {
   cancel: () => void,
   // close: (val: any) => void,
-  children: Node,
+  // children: Node,
   renderContent: (val: any) => Node,
   // heading?: string | MessageDescriptor,
   // text?: string | MessageDescriptor,
@@ -48,14 +50,19 @@ class ToasterBar extends Component<Props, State> {
     const { renderContent } = this.props;
     const { requiresInteraction } = this.state;
 
+    const overlayClassName = {
+      base: requiresInteraction ? modalStyles.overlay : modalStyles.overlayNone,
+      afterOpen: modalStyles.overlayAfterOpen,
+      beforeClose: modalStyles.overlayBeforeClose,
+    };
+
     return (
       <Dialog
-        overlayClassName={requiresInteraction ? 'overlay' : 'overlayNone'}
+        overlayClassName={overlayClassName}
+        shouldCloseOnEsc={!requiresInteraction}
+        shouldCloseOnOverlayClick={false}
         cancel={this.attemptDismiss}
       >
-        {/* shouldCloseOnEsc
-        shouldCloseOnOverlayClick
-        shouldFocusAfterRender */}
         <div className={styles.main}>
           <div className={styles.content}>
             {renderContent({
@@ -66,16 +73,13 @@ class ToasterBar extends Component<Props, State> {
           </div>
           <div className={styles.barControl}>
             {requiresInteraction || (
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
+              <Icon
+                role="button"
+                name="circle-close"
+                title="close"
                 onClick={this.attemptDismiss}
-              >
-                <Icon
-                  name="circle-close"
-                  title="file"
-                  appearance={{ size: 'normal' }}
-                />
-              </Button>
+                appearance={{ size: 'large', theme: 'invert' }}
+              />
             )}
           </div>
         </div>
