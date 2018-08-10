@@ -7,32 +7,41 @@ import { Formik } from 'formik';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import FileUpload from '../../../../core/components/Fields/FileUpload';
+import Input from '../../../../core/components/Fields/Input';
 import styles from './JSONUpload.css';
 
 const MSG = defineMessages({
   heading: {
     id: 'ConnectWallet.providers.JSONUpload.heading',
-    defaultMessage: 'Upload your .json wallet file to access Colony',
+    defaultMessage: 'Log in with your JSON file',
   },
-  instructionText: {
-    id: 'ConnectWallet.providers.JSONUpload.instructionText',
-    defaultMessage: 'Select your Wallet File (.json)',
+  fileUploadLabel: {
+    id: 'ConnectWallet.providers.JSONUpload.fileUploadLabel',
+    defaultMessage: 'Select your Wallet File',
+  },
+  fileUploadHelp: {
+    id: 'ConnectWallet.providers.JSONUpload.fileUploadHelp',
+    defaultMessage: '.json',
+  },
+  filePasswordLabel: {
+    id: 'ConnectWallet.providers.JSONUpload.filePasswordLabel',
+    defaultMessage: 'Password',
+  },
+  filePasswordHelp: {
+    id: 'ConnectWallet.providers.JSONUpload.filePasswordHelp',
+    defaultMessage: 'Optional',
   },
   errorDescription: {
     id: 'ConnectWallet.providers.JSONUpload.errorDescription',
     defaultMessage: 'Oops, wrong file',
   },
   buttonAdvance: {
-    id: 'ConnectWallet.providers.JSONUpload.button.advance',
+    id: 'ConnectWallet.providers.JSONUpload.buttonAdvance',
     defaultMessage: 'Go to Colony',
   },
   buttonBack: {
-    id: 'ConnectWallet.providers.JSONUpload.button.back',
+    id: 'ConnectWallet.providers.JSONUpload.buttonBack',
     defaultMessage: 'Back',
-  },
-  buttonRemove: {
-    id: 'ConnectWallet.providers.JSONUpload.button.remove',
-    defaultMessage: 'Remove',
   },
 });
 
@@ -62,18 +71,32 @@ class JSONUpload extends Component<Props, State> {
       <Fragment>
         <div className={styles.content}>
           <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-          <Heading text={MSG.instructionText} appearance={{ size: 'medium' }} />
           {/* drop zone goes here */}
           <Formik
-            onSubmit={values => alert(values)}
-            render={() => (
-              <FileUpload
-                accept={['application/json']}
-                name="walletJsonFileUpload"
-              />
+            onSubmit={values => alert(JSON.stringify(values))}
+            render={({ handleSubmit }) => (
+              <form onSubmit={handleSubmit}>
+                <FileUpload
+                  accept={['application/json']}
+                  name="walletJsonFileUpload"
+                  label={MSG.fileUploadLabel}
+                  help={MSG.fileUploadHelp}
+                />
+                <Input
+                  name="walletJsonPassword"
+                  label={MSG.filePasswordLabel}
+                  help={MSG.filePasswordHelp}
+                  type="password"
+                />
+              </form>
             )}
           />
-          {!isValid && <Heading text={MSG.errorDescription} />}
+          {!isValid && (
+            <Heading
+              text={MSG.errorDescription}
+              appearance={{ size: 'medium' }}
+            />
+          )}
         </div>
         <div className={styles.actions}>
           <Button
