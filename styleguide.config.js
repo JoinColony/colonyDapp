@@ -25,6 +25,7 @@ module.exports = {
         './src/modules/core/components/Fields/FileUpload/FileUpload.jsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
         './src/modules/core/components/MnemonicDnDSorter/MnemonicDnDSorter.jsx',
+        './src/modules/core/components/OmniPicker/OmniPicker.jsx',
       ],
       content: 'docs/Forms.md',
     },
