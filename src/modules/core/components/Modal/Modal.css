@@ -18,6 +18,17 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+.overlayTransparent {
+  composes: overlay;
+  background-color: transparent;
+}
+
+.overlayNone {
+  composes: overlay;
+  background-color: transparent;
+  pointer-events: none;
+}
+
 .overlayAfterOpen {
   /* overlay after open styles go here */
 }

@@ -1,0 +1,29 @@
+@import 'variables.css';
+
+.main {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  padding: var(--pad-small);
+  height: var(--ui-toaster-height);
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--colony-blue);
+}
+
+.content {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-invert);
+}
+
+.barControl {
+  flex-basis: var(--ui-toaster-height);
+  justify-content: center;
+  align-items: center;
+  color: var(--text-invert);
+}

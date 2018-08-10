@@ -3,6 +3,7 @@
   --secondary: rgb(0, 230, 196); /* greenish primary color */
   --colony-white: rgb(251, 251, 251);
   --colony-black: rgb(31, 35, 39);
+  --colony-blue: rgb(76, 93, 255);
   --sky-blue: rgb(90, 145, 255);
   --pink: rgb(248, 43, 101); /* user mentions color */
   --danger: rgb(254, 94, 124);
@@ -38,6 +39,17 @@
   --radius-large: 6px;
 
   /*
+   * Paddings
+   */
+
+  --pad-tiny: 3px;
+  --pad-small: 6px;
+  --pad-medium: 12px;
+  --pad-large: 24px;
+  --pad-huge: 48px;
+
+
+  /*
    * Z-Index values
    */
   --z-index-positioning: 1; /* z-index for absolute positioning in elements */
@@ -48,6 +60,7 @@
   --z-index-dialog: 5;
   --z-index-popover: 6;
   --z-index-notification: 7;
+  --z-index-toast: 8;
 
   /*
    * Fonts
@@ -70,6 +83,12 @@
   --size-large: 28px;
   --size-huge: 36px;
   --spacing-normal: 0.25px;
+
+  /*
+   * UI Component Settings
+   */
+
+  --ui-toaster-height: 50px;
 
   /*
    * Media queries
