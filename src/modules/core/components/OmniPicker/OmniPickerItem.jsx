@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import scrollIntoView from 'scroll-into-view-if-needed';
 
 import type { ItemComponentType } from './types';
 
@@ -26,12 +27,7 @@ class OmniPickerItem extends Component<Props> {
     if (!elm || !selected || !keyUsed) {
       return;
     }
-    // $FlowFixMe Yeah, I know, but sometimes it IS there!
-    if (typeof elm.scrollIntoViewIfNeeded == 'function') {
-      elm.scrollIntoViewIfNeeded();
-    } else if (typeof elm.scrollIntoView == 'function') {
-      elm.scrollIntoView();
-    }
+    scrollIntoView(elm, { behavior: 'smooth', scrollMode: 'if-needed' });
   };
 
   render() {
