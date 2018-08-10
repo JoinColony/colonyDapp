@@ -8,13 +8,13 @@ const radioChoices = ['foo', 'bar', 'baz'];
   render={
     ({ handleSubmit, values }) => (
       <form onSubmit={handleSubmit}>
-        <RadioInput
+        <Radio
           checked={values.radioInput === 'basicRadio'}
           name="radioInput"
           label="Basic radio"
           value="basicRadio"
         />
-        <RadioInput
+        <Radio
           checked={values.radioInput === 'disabledRadio'}
           name="radioInput"
           label="Disabled radio"
@@ -22,14 +22,14 @@ const radioChoices = ['foo', 'bar', 'baz'];
           disabled
         />
         <div style={{marginTop: '20px'}} />
-        <RadioInput
+        <Radio
           checked={values.radioInput === 'horizontal 1'}
           appearance={{ direction: 'horizontal' }}
           name="radioInput"
           label="Horizontal 1"
           value="horizontal 1"
         />
-        <RadioInput
+        <Radio
           checked={values.radioInput === 'horizontal 2'}
           appearance={{ direction: 'horizontal' }}
           name="radioInput"
@@ -37,7 +37,7 @@ const radioChoices = ['foo', 'bar', 'baz'];
           value="horizontal 2"
         />
         <div style={{marginTop: '20px'}} />
-        <RadioInput
+        <Radio
           checked={values.radioFakeCheckbox === 'fakeCheckbox'}
           appearance={{ theme: 'fakeCheckbox' }}
           name="radioFakeCheckbox"
@@ -45,7 +45,7 @@ const radioChoices = ['foo', 'bar', 'baz'];
           value="fakeCheckbox"
         />
         <div style={{marginTop: '20px'}} />
-        <RadioInput
+        <Radio
           checked={values.radioColorPicker === 'colorPicker'}
           appearance={{ theme: 'colorPicker' }}
           name="radioColorPicker"

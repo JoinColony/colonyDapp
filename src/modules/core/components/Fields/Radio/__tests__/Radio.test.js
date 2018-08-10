@@ -5,12 +5,12 @@ import toJson from 'enzyme-to-json';
 
 import { shallowWithIntl } from 'testutils';
 
-import RadioInput from '../RadioInput.jsx';
+import Radio from '../Radio.jsx';
 
-describe('RadioInput component', () => {
+describe('Radio component', () => {
   test('Renders initial component', () => {
     const wrapper = shallowWithIntl(
-      <RadioInput
+      <Radio
         name="radioInput"
         help="halp"
         label="awesome"

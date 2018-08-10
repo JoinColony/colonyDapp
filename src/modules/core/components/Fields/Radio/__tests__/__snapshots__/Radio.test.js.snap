@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RadioInput component Renders initial component 1`] = `
+exports[`Radio component Renders initial component 1`] = `
 <Component
   help="halp"
   intl={

@@ -10,7 +10,7 @@ import { getMainClasses } from '~utils/css';
 import InputLabel from '../InputLabel';
 import asField from '../asField';
 
-import styles from './RadioInput.css';
+import styles from './Radio.css';
 
 type Appearance = {
   direction?: 'horizontal' | 'vertical',
@@ -61,9 +61,9 @@ type Props = {
   onChange: Function,
 };
 
-const displayName = 'RadioInput';
+const displayName = 'Radio';
 
-const RadioInput = ({
+const Radio = ({
   appearance,
   checked,
   children,
@@ -125,9 +125,9 @@ const RadioInput = ({
   );
 };
 
-RadioInput.displayName = displayName;
+Radio.displayName = displayName;
 
-RadioInput.defaultProps = {
+Radio.defaultProps = {
   appearance: {
     direction: 'vertical',
   },
@@ -135,4 +135,4 @@ RadioInput.defaultProps = {
   elementOnly: false,
 };
 
-export default asField()(RadioInput);
+export default asField()(Radio);
