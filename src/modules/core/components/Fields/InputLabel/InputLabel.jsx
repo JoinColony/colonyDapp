@@ -58,7 +58,7 @@ const InputLabel = ({
   return (
     <label
       className={getMainClasses(appearance, styles)}
-      id={inputId ? `${inputId}_label` : null}
+      id={inputId ? `${inputId}-label` : null}
       htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
