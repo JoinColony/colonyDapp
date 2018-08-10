@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SingleUserPicker component Renders initial component 1`] = `
+<div
+  className=""
+>
+  <div>
+    <InjectIntl(withProps(core.Icon))
+      name="circle-person"
+    />
+    <div>
+      <input
+        autoComplete="off"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
