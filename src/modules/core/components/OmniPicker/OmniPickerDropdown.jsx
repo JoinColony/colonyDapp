@@ -9,8 +9,7 @@ import cx from 'classnames';
 
 import styles from './OmniPickerDropdown.css';
 
-// eslint-disable-next-line max-len
-import type { Data, ItemComponentType } from './types';
+import type { Choose, Data, ItemComponentType } from './types';
 
 import OmniPickerContent from './OmniPickerContent.jsx';
 import OmniPickerItemEmpty from './OmniPickerItemEmpty.jsx';
@@ -33,28 +32,20 @@ type Appearance = {
 type Props = {
   appearance: Appearance,
   contentClassName?: string,
-  data: any,
   emptyComponent: ComponentType<{}>,
+  filteredData: Array<Data>,
   id: string,
-  itemComponent: ItemComponentType,
-  title?: string | MessageDescriptor,
-  filter: (data: any, filterValue: string) => Array<Data>,
-  filterValue: string,
-  getItem: (data: Array<Data>, selectedIdx: number) => Data,
-  onClose?: () => void,
-  onReset?: () => void,
-  onSelect: Data => void,
-  // eslint-disable-next-line no-use-before-define
-  withRef?: (omniPickerInstance: OmniPickerDropdown) => void,
   inputRef: ?HTMLElement,
-};
-
-type State = {
-  selected: number,
+  itemComponent: ItemComponentType,
   keyUsed: boolean,
+  onChoose: Choose,
+  onClose?: () => void,
+  onSelect: (idx: number) => void,
+  selected: number,
+  title?: string | MessageDescriptor,
 };
 
-class OmniPickerDropdown extends Component<Props, State> {
+class OmniPickerDropdown extends Component<Props> {
   elm: ?HTMLElement;
 
   static displayName = 'OmniPickerDropdown';
@@ -62,22 +53,11 @@ class OmniPickerDropdown extends Component<Props, State> {
   static defaultProps = {
     appearance: { position: 'bottom' },
     emptyComponent: OmniPickerItemEmpty,
-    getItem: (filteredData: Array<Data>, selectedIdx: number) =>
-      filteredData[selectedIdx],
-  };
-
-  state = {
-    selected: -1,
-    keyUsed: false,
   };
 
   componentDidMount() {
-    const { withRef } = this.props;
     if (document.body) {
       document.body.addEventListener('click', this.handleOutsideClick, true);
-    }
-    if (withRef) {
-      withRef(this);
     }
   }
 
@@ -86,44 +66,6 @@ class OmniPickerDropdown extends Component<Props, State> {
       document.body.removeEventListener('click', this.handleOutsideClick, true);
     }
   }
-
-  goUp = () => {
-    const { selected } = this.state;
-    this.setState({
-      keyUsed: true,
-      selected: selected === 0 ? 0 : selected - 1,
-    });
-  };
-
-  goDown = () => {
-    const { selected } = this.state;
-    const { data, filter, filterValue, getItem } = this.props;
-    const filteredData = filter(data, filterValue);
-    const next = getItem(filteredData, selected + 1);
-    if (next) {
-      this.setState({
-        keyUsed: true,
-        selected: selected + 1,
-      });
-    }
-  };
-
-  choose = () => {
-    const {
-      data,
-      getItem,
-      onReset,
-      onSelect,
-      filter,
-      filterValue,
-    } = this.props;
-    const { selected } = this.state;
-    const filteredData = filter(data, filterValue);
-    if (selected < 0) return;
-    const itemData = getItem(filteredData, selected);
-    onSelect(itemData);
-    if (typeof onReset == 'function') onReset();
-  };
 
   handleOutsideClick = (evt: MouseEvent) => {
     const { inputRef, onClose } = this.props;
@@ -139,13 +81,6 @@ class OmniPickerDropdown extends Component<Props, State> {
 
   registerElement = (node: ?HTMLElement) => {
     this.elm = node;
-  };
-
-  select = (idx: number) => {
-    this.setState({
-      keyUsed: false,
-      selected: idx,
-    });
   };
 
   renderHeader = () => {
@@ -177,24 +112,24 @@ class OmniPickerDropdown extends Component<Props, State> {
   render() {
     const {
       contentClassName,
+      onChoose,
       appearance: { position },
+      emptyComponent,
+      filteredData,
       id,
       itemComponent,
-      emptyComponent,
-      data,
-      filter,
-      filterValue,
+      keyUsed,
+      onSelect,
+      selected,
     } = this.props;
-    const { keyUsed, selected } = this.state;
-    const filteredData = filter(data, filterValue);
     return (
       <div className={styles.main} ref={this.registerElement}>
         {position === 'top' && this.renderHeader()}
         <OmniPickerContent
           className={contentClassName}
-          choose={this.choose}
+          onChoose={onChoose}
           id={id}
-          select={this.select}
+          onSelect={onSelect}
           filteredData={filteredData}
           keyUsed={keyUsed}
           selected={selected}

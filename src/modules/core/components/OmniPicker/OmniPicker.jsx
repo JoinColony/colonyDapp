@@ -7,18 +7,18 @@ import { ESC, TAB, UP, DOWN, ENTER } from './keyTypes';
 
 import type { Data, ItemComponentType } from './types';
 
-import OmniPickerDropdown from './OmniPickerDropdown.jsx';
-
 type Props = {
   data: any,
   filter: (data: any, filterStr: string) => Array<Data>,
-  getItem?: (data: Array<Data>, selectedIdx: number) => Data,
+  getItem: (data: Array<Data>, selectedIdx: number) => Data,
   itemComponent: ItemComponentType,
 };
 
 type State = {
   omniPickerOpen: boolean,
   omniPickerFilterValue: string,
+  selected: number,
+  keyUsed: boolean,
 };
 
 class OmniPicker extends Component<Props, State> {
@@ -26,15 +26,13 @@ class OmniPicker extends Component<Props, State> {
 
   inputNode: ?HTMLInputElement;
 
-  omniPicker: OmniPickerDropdown;
-
   onOmniPickerOpen: (() => void) | void;
 
   onOmniPickerClose: (() => void) | void;
 
   onOmniPickerReset: (() => void) | void;
 
-  onDataSelect: ((data: any) => void) | void;
+  onOmniPickerPick: ((data: any) => void) | void;
 
   onOmniPickerKeyUp:
     | ((evt: SyntheticKeyboardEvent<HTMLElement>) => void)
@@ -58,6 +56,11 @@ class OmniPicker extends Component<Props, State> {
 
   static displayName = 'OmniPicker';
 
+  static defaultProps = {
+    getItem: (filteredData: Array<Data>, selectedIdx: number) =>
+      filteredData[selectedIdx],
+  };
+
   constructor(props: Props) {
     super(props);
     this.id = nanoid(6);
@@ -66,10 +69,8 @@ class OmniPicker extends Component<Props, State> {
   state = {
     omniPickerOpen: false,
     omniPickerFilterValue: '',
-  };
-
-  registerOmniPicker = (currentOmniPicker: OmniPickerDropdown) => {
-    this.omniPicker = currentOmniPicker;
+    selected: -1,
+    keyUsed: false,
   };
 
   registerInputNode = (inputNode: ?HTMLInputElement) => {
@@ -88,7 +89,7 @@ class OmniPicker extends Component<Props, State> {
     );
   };
 
-  closeOmniPicker = () => {
+  omniPickerClose = () => {
     this.setState(
       {
         omniPickerOpen: false,
@@ -104,7 +105,7 @@ class OmniPicker extends Component<Props, State> {
     );
   };
 
-  resetOmniPicker = () => {
+  omniPickerReset = () => {
     this.setState(
       {
         omniPickerOpen: false,
@@ -125,12 +126,6 @@ class OmniPicker extends Component<Props, State> {
     this.setState({ omniPickerFilterValue: value });
   };
 
-  dataSelect = (data: any) => {
-    if (typeof this.onDataSelect === 'function') {
-      this.onDataSelect(data);
-    }
-  };
-
   omniPickerKeyUp = (evt: SyntheticKeyboardEvent<HTMLElement>) => {
     if (typeof this.onOmniPickerKeyUp === 'function') {
       this.onOmniPickerKeyUp(evt);
@@ -140,7 +135,7 @@ class OmniPicker extends Component<Props, State> {
     if (key === ESC && omniPickerOpen) {
       evt.preventDefault();
       evt.stopPropagation();
-      this.resetOmniPicker();
+      this.omniPickerReset();
     }
   };
 
@@ -149,18 +144,18 @@ class OmniPicker extends Component<Props, State> {
       this.onOmniPickerKeyDown(evt);
     const { key } = evt;
     const { omniPickerOpen } = this.state;
-    if (key === TAB) return this.closeOmniPicker();
+    if (key === TAB) return this.omniPickerClose();
     if (key === UP && omniPickerOpen) {
       evt.preventDefault();
-      return this.omniPicker.goUp();
+      return this.omniPickerGoUp();
     }
     if (key === DOWN && omniPickerOpen) {
       evt.preventDefault();
-      return this.omniPicker.goDown();
+      return this.omniPickerGoDown();
     }
     if (key === ENTER && omniPickerOpen) {
       evt.preventDefault();
-      return this.omniPicker.choose();
+      return this.omniPickerChoose();
     }
     return null;
   };
@@ -183,6 +178,46 @@ class OmniPicker extends Component<Props, State> {
     if (typeof this.onOmniPickerBlur === 'function') this.onOmniPickerBlur(evt);
   };
 
+  omniPickerGoUp = () => {
+    const { selected } = this.state;
+    this.setState({
+      keyUsed: true,
+      selected: selected === 0 ? 0 : selected - 1,
+    });
+  };
+
+  omniPickerGoDown = () => {
+    const { omniPickerFilterValue, selected } = this.state;
+    const { data, filter, getItem } = this.props;
+    const filteredData = filter(data, omniPickerFilterValue);
+    const next = getItem(filteredData, selected + 1);
+    if (next) {
+      this.setState({
+        keyUsed: true,
+        selected: selected + 1,
+      });
+    }
+  };
+
+  omniPickerChoose = () => {
+    const { data, getItem, filter } = this.props;
+    const { omniPickerFilterValue, selected } = this.state;
+    const filteredData = filter(data, omniPickerFilterValue);
+    if (selected < 0) return;
+    const itemData = getItem(filteredData, selected);
+    if (typeof this.onOmniPickerPick == 'function') {
+      this.onOmniPickerPick(itemData);
+    }
+    this.omniPickerReset();
+  };
+
+  omniPickerSelect = (idx: number) => {
+    this.setState({
+      keyUsed: false,
+      selected: idx,
+    });
+  };
+
   getOmniPickerWrapperProps = () => {
     const { omniPickerOpen } = this.state;
     const { id } = this;
@@ -191,14 +226,13 @@ class OmniPicker extends Component<Props, State> {
       role: 'combobox',
       'aria-haspopup': 'listbox',
       'aria-expanded': omniPickerOpen,
+      style: { position: 'relative' },
     };
   };
 
   getOmniPickerInputProps = () => {
-    const { omniPickerFilterValue } = this.state;
+    const { omniPickerFilterValue, selected } = this.state;
     const { id } = this;
-    // TODO: we need to move the selected state into this component to get idx
-    const idx = 0;
     return {
       id: `omnipicker-${id}-input`,
       autoComplete: 'off',
@@ -210,28 +244,33 @@ class OmniPicker extends Component<Props, State> {
       value: omniPickerFilterValue,
       'aria-autocomplete': 'list',
       'aria-controls': `omnipicker-${id}-listbox`,
-      'aria-activedescendant': `omnipicker-${id}-item-${idx}`,
+      'aria-activedescendant': `omnipicker-${id}-item-${selected}`,
     };
   };
 
   getOmniPickerDropdownProps = () => {
     const { data, filter, getItem, itemComponent } = this.props;
-    const { omniPickerFilterValue } = this.state;
+    const { keyUsed, omniPickerFilterValue, selected } = this.state;
+    const filteredData = filter(data, omniPickerFilterValue);
     const { id } = this;
     return {
-      id,
-      data,
       getItem,
-      filter,
+      id,
       itemComponent,
       inputRef: this.inputNode,
-      filterValue: omniPickerFilterValue,
-      onSelect: this.dataSelect,
-      onReset: this.resetOmniPicker,
-      onClose: this.closeOmniPicker,
-      withRef: this.registerOmniPicker,
+      keyUsed,
+      filteredData,
+      onChoose: this.omniPickerChoose,
+      onClose: this.omniPickerClose,
+      onSelect: this.omniPickerSelect,
+      selected,
     };
   };
+
+  render() {
+    /* Please subclass this component and create your own render function */
+    return null;
+  }
 }
 
 export default OmniPicker;

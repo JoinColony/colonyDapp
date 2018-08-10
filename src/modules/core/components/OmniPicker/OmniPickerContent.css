@@ -2,9 +2,9 @@
 
 .main {
   max-height: 180px;
-  background-color: white;
   overflow-y: auto;
   border-top: 1px solid var(--primary);
-  border-left: 1px solid var(--primary);
   border-right: 1px solid var(--primary);
+  border-left: 1px solid var(--primary);
+  background-color: white;
 }

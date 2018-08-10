@@ -17,24 +17,24 @@ type Props = {
   emptyComponent: ComponentType<{}>,
   keyUsed?: boolean,
   selected: number,
-  choose: Choose,
-  select: Select,
+  onChoose: Choose,
+  onSelect: Select,
 };
 
 // The key events are handled by the OmniPickerBase class
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 const OmniPickerContent = ({
-  choose,
+  onChoose,
   filteredData = [],
   id,
   itemComponent,
   emptyComponent: EmptyComponent,
   keyUsed,
-  select,
+  onSelect,
   selected,
 }: Props) => (
   <div className={styles.main}>
-    <ul onClick={choose} role="listbox" id={`omnipicker-${id}-listbox`}>
+    <ul onClick={onChoose} role="listbox" id={`omnipicker-${id}-listbox`}>
       {filteredData.length ? (
         filteredData.map((itemData, idx) => (
           <OmniPickerItem
@@ -43,7 +43,7 @@ const OmniPickerContent = ({
             keyUsed={keyUsed}
             selected={selected === idx}
             itemData={itemData}
-            onSelect={select}
+            onSelect={onSelect}
             itemComponent={itemComponent}
           />
         ))

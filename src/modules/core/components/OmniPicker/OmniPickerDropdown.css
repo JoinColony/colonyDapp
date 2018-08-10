@@ -2,9 +2,11 @@
 
 .main {
   width: 100%;
+  position: absolute;
+  top: 100%;
   bottom: 0;
-  border-top-left-radius: var(--radius-large);
   border-top-right-radius: var(--radius-large);
+  border-top-left-radius: var(--radius-large);
 }
 
 .header {
@@ -26,14 +28,14 @@
 }
 
 .close {
-  text-align: right;
   font-weight: var(--weight-normal);
+  text-align: right;
   color: var(--colony-white);
 }
 
 .closeButton {
   border: none;
+  background-color: transparent;
   color: var(--colony-white);
   cursor: pointer;
-  background-color: transparent;
 }
