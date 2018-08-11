@@ -32,5 +32,4 @@ export type WrappedComponentProps = {
   OmniPickerWrapper: ComponentType<*>,
   omniPickerIsOpen: boolean,
   openOmniPicker: () => void,
-  inputNode: ?HTMLInputElement,
 };

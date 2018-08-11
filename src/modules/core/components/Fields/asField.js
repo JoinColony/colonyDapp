@@ -43,7 +43,7 @@ type InProps = CommonProps & {
   },
   field: {
     name: string,
-    value?: string,
+    value?: any,
     onChange: Function,
     onBlur: Function,
     isSubmitting: boolean,
@@ -52,7 +52,7 @@ type InProps = CommonProps & {
 
 type OutProps = CommonProps & {
   $error?: string,
-  $value?: string,
+  $value?: any,
   $touched?: boolean,
 };
 

@@ -287,7 +287,6 @@ const getClass = WrappedComponent => {
         registerInputNode: this.registerInputNode,
         openOmniPicker: this.open,
         omniPickerIsOpen: isOpen,
-        inputNode: this.inputNode,
       };
       return createElement(WrappedComponent, props);
     }

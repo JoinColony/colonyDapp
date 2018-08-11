@@ -70,7 +70,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value?: string,
+  $value?: UserData,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
@@ -84,26 +84,15 @@ type State = {
 class SingleUserPicker extends Component<Props, State> {
   static displayName = 'SingleUserPicker';
 
-  state = {
-    selectedUser: null,
-  };
-
   handleActiveUserClick = () => {
-    const { inputNode } = this.props;
-    this.setState(
-      {
-        selectedUser: null,
-      },
-      () => {
-        if (inputNode) inputNode.focus();
-      },
-    );
+    const { openOmniPicker, setValue } = this.props;
+    setValue(null);
+    openOmniPicker();
   };
 
   handlePick = (user: UserData) => {
-    this.setState({
-      selectedUser: user,
-    });
+    const { setValue } = this.props;
+    setValue(user);
   };
 
   render() {
@@ -113,6 +102,7 @@ class SingleUserPicker extends Component<Props, State> {
       // Form field
       $error,
       $touched,
+      $value,
       elementOnly,
       help,
       label,
@@ -125,7 +115,6 @@ class SingleUserPicker extends Component<Props, State> {
       registerInputNode,
     } = this.props;
 
-    const { selectedUser } = this.state;
     const labelAppearance = appearance
       ? { direction: appearance.direction }
       : undefined;
@@ -142,11 +131,11 @@ class SingleUserPicker extends Component<Props, State> {
                 appearance={labelAppearance}
               />
             )}
-          {selectedUser ? (
+          {$value ? (
             <div className={styles.avatarContainer}>
               <UserAvatar
                 className={styles.recipientAvatar}
-                userId={selectedUser.id}
+                userId={$value.id}
                 size="xs"
               />
             </div>
@@ -160,7 +149,7 @@ class SingleUserPicker extends Component<Props, State> {
           {}
           <div className={styles.container}>
             {/* eslint-disable jsx-a11y/click-events-have-key-events */
-            selectedUser && (
+            $value && (
               <div
                 role="button"
                 className={styles.recipientName}
@@ -168,7 +157,7 @@ class SingleUserPicker extends Component<Props, State> {
                 onFocus={this.handleActiveUserClick}
                 tabIndex="0"
               >
-                {selectedUser.fullName}
+                {$value.fullName}
               </div>
             )}
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}
@@ -178,7 +167,7 @@ class SingleUserPicker extends Component<Props, State> {
               }
               {...inputProps}
               placeholder={placeholder}
-              hidden={selectedUser}
+              hidden={!!$value}
               ref={registerInputNode}
             />
             {$error &&

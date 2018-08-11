@@ -1,4 +1,5 @@
 ```
+const { Formik } = require('formik');
 
 const Item = ({ itemData: { username, name }, selected }) => (
   <div style={{ backgroundColor: selected ? '#e7e8e8' : 'transparent', padding: '20px'}}>
@@ -17,5 +18,13 @@ const data = [
 
 const filter = (data, filterValue) => data.filter(user => user.username.toLowerCase().startsWith(filterValue.toLowerCase()));
 
-<SingleUserPicker label="Pick user" connect={false} itemComponent={Item} data={data} filter={filter} />
+<Formik>
+  <SingleUserPicker
+    name="singleuserpickerSimple"
+    label="Pick user"
+    itemComponent={Item}
+    data={data}
+    filter={filter}
+  />
+</Formik>
 ```
