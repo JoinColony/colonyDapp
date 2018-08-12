@@ -24,6 +24,7 @@ type CommonProps = {
 };
 
 type InProps = CommonProps & {
+  elementOnly?: boolean,
   connect?: boolean,
   id?: string,
   intl: IntlShape,
@@ -84,6 +85,7 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
       ({
         id,
         intl: { formatMessage },
+        elementOnly,
         field: { name: fieldName, value, onChange, onBlur } = {},
         form: { touched, errors, setFieldValue, setFieldError } = {},
         label,
@@ -98,14 +100,16 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
         const $error = fieldError && formatIntl(fieldError, formatMessage);
         const $id = id || htmlFieldName;
         const $title = formatIntl(title, formatMessage);
-        const $label = formatIntl(label, formatMessage);
+        const $label = formatIntl(label, formatMessage) || $title;
         const $placeholder = formatIntl(placeholder, formatMessage);
         // This is assigning an empty string to the field's value.
         // It might be problematic for some cases but for now I couldn't think of one
         const $value = value || '';
         return {
-          'aria-label': label || $title,
-          label: $label || $title,
+          elementOnly,
+          'aria-label': elementOnly ? $label : null,
+          'arial-labelledby': elementOnly ? null : `${$id}-label`,
+          label: $label,
           name: htmlFieldName || id,
           placeholder: $placeholder,
           title: $error || $title || $label || $placeholder,

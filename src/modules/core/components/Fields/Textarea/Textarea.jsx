@@ -47,7 +47,14 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
+  /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
+  /** @ignore Will be injected by `asField` */
+  setError: (val: any) => void,
   /** @ignore Standard textarea field property */
   onChange: Function,
 };
@@ -60,7 +67,7 @@ class Textarea extends Component<Props> {
   };
 
   renderTextarea = inputProps => {
-    const { innerRef, formatIntl, setError, ...props } = inputProps;
+    const { innerRef, ...props } = inputProps;
     return <textarea ref={innerRef} {...props} />;
   };
 
@@ -68,6 +75,7 @@ class Textarea extends Component<Props> {
     const {
       appearance = {},
       elementOnly,
+      formatIntl,
       help,
       $id,
       label,
@@ -75,6 +83,7 @@ class Textarea extends Component<Props> {
       $value,
       $error,
       $touched,
+      setError,
       setValue,
       ...props
     } = this.props;
