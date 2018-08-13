@@ -87,45 +87,47 @@ const Radio = ({
   setError,
   setValue,
   ...props
-}: Props) => (
-  <label
-    className={getMainClasses(appearance, styles)}
-    aria-checked={checked}
-    htmlFor={elementOnly ? inputId : null}
-  >
-    <Fragment>
-      <input
-        className={styles.delegate}
-        value={$value}
-        name={name}
-        type="radio"
-        id={inputId}
-        disabled={disabled}
-        aria-checked={checked}
-        aria-disabled={disabled}
-        aria-invalid={!!$error}
-        {...props}
-      />
-      <span className={styles.radio} style={radioStyle}>
-        {!!appearance &&
-          appearance.theme === 'fakeCheckbox' && (
-            <span className={styles.checkmark} />
-          )}
-      </span>
-      {!elementOnly && !!label ? (
-        <InputLabel
-          appearance={{ direction: 'horizontal' }}
-          label={label}
-          error={$error}
-          help={help}
-          inputId={inputId}
+}: Props) => {
+  const stateClass = checked ? styles.isChecked : styles.isUnchecked;
+  return (
+    <label
+      className={`${getMainClasses(appearance, styles)} ${stateClass}`}
+      htmlFor={elementOnly ? inputId : null}
+    >
+      <Fragment>
+        <input
+          className={styles.delegate}
+          value={$value}
+          name={name}
+          type="radio"
+          id={inputId}
+          disabled={disabled}
+          aria-checked={checked}
+          aria-disabled={disabled}
+          aria-invalid={!!$error}
+          {...props}
         />
-      ) : (
-        label || children
-      )}
-    </Fragment>
-  </label>
-);
+        <span className={styles.radio} style={radioStyle}>
+          {!!appearance &&
+            appearance.theme === 'fakeCheckbox' && (
+              <span className={styles.checkmark} />
+            )}
+        </span>
+        {!elementOnly && !!label ? (
+          <InputLabel
+            appearance={{ direction: 'horizontal' }}
+            label={label}
+            error={$error}
+            help={help}
+            inputId={inputId}
+          />
+        ) : (
+          label || children
+        )}
+      </Fragment>
+    </label>
+  );
+};
 
 Radio.displayName = displayName;
 

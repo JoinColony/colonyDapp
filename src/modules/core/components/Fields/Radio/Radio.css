@@ -42,7 +42,7 @@
   box-shadow: 0 0 3px 1px var(--primary);
 }
 
-.main[aria-checked="true"] .radio {
+.main.isChecked .radio {
   border-color: var(--primary);
 
   &::after {
@@ -50,7 +50,7 @@
   }
 }
 
-.themeColorPicker[aria-checked="true"] .radio {
+.themeColorPicker.isChecked .radio {
   border-color: var(--primary);
 }
 
@@ -98,7 +98,7 @@
   transform: rotate(45deg);
 }
 
-.themeFakeCheckbox[aria-checked="true"] .checkmark::before {
+.themeFakeCheckbox.isChecked .checkmark::before {
   height: 80%;
   width: 2px;
   position: absolute;
@@ -108,7 +108,7 @@
   content: '';
 }
 
-.themeFakeCheckbox[aria-checked="true"] .checkmark::after {
+.themeFakeCheckbox.isChecked .checkmark::after {
   height: 2px;
   width: 40%;
   position: absolute;
