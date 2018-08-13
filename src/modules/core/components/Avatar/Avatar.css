@@ -1,0 +1,81 @@
+@import 'variables.css';
+
+.main {
+  display: inline-block;
+  height: 45px;
+  width: 45px;
+  position: relative;
+}
+
+.xxs {
+  composes: main;
+  height: 16px;
+  width: 16px;
+}
+
+.xs {
+  composes: main;
+  height: 26px;
+  width: 26px;
+}
+
+.s {
+  composes: main;
+  height: 34px;
+  width: 34px;
+}
+
+.m {
+  composes: main;
+  height: 60px;
+  width: 60px;
+}
+
+.l {
+  composes: main;
+  height: 120px;
+  width: 120px;
+}
+
+.placeholderIcon {
+  height: 100%;
+  width: 100%;
+  opacity: 0.5;
+
+  & svg {
+    fill: var(--temp-grey-1);
+    stroke: var(--temp-grey-1);
+  }
+}
+
+.placeholderIconNotSet {
+  composes: placeholderIcon;
+  opacity: 1;
+}
+
+.image {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background-size: cover;
+}
+
+.highlighted {
+  composes: main;
+
+  & .image::before {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 2px solid var(--primary);
+    border-left: 2px solid transparent;
+    border-radius: 50%;
+    content: "";
+    transform: rotate(45deg);
+  }
+}

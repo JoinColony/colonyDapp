@@ -12,8 +12,11 @@ module.exports = {
       components: ['./src/modules/core/components/Heading/Heading.jsx'],
     },
     {
-      name: 'Content',
-      components: ['./src/modules/core/components/Icon/Icon.jsx'],
+      name: 'Images and Icons',
+      components: [
+        './src/modules/core/components/Icon/Icon.jsx',
+        './src/modules/core/components/UserAvatar/UserAvatar.jsx',
+      ],
     },
     {
       name: 'Forms',

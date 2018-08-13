@@ -128,6 +128,7 @@
     "ethers": "^3.0.8",
     "formik": "^1.0.2",
     "ipfs": "~0.29.3",
+    "lru-cache": "^4.1.3",
     "nanoid": "^1.0.7",
     "orbit-db": "0.19.8",
     "prop-types": "^15.6.2",
