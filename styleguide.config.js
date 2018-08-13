@@ -28,10 +28,15 @@ module.exports = {
         './src/modules/core/components/Fields/FileUpload/FileUpload.jsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
         './src/modules/core/components/MnemonicDnDSorter/MnemonicDnDSorter.jsx',
+      ],
+      content: 'docs/Forms.md',
+    },
+    {
+      name: 'Comboboxes / Pickers',
+      components: [
         './src/modules/core/components/OmniPicker/OmniPicker.jsx',
         './src/modules/core/components/SingleUserPicker/SingleUserPicker.jsx',
       ],
-      content: 'docs/Forms.md',
     },
     {
       name: 'Popovers, Modals & Dialogs',
