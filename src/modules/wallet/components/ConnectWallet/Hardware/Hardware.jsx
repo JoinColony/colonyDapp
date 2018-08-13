@@ -17,10 +17,14 @@ import hardwareWalletChoices from './__mocks__/hardwareWalletMock';
 const MSG = defineMessages({
   heading: {
     id: 'ConnectWallet.providers.Hardware.heading',
-    defaultMessage: 'Which wallet would you like to use to access Colony?',
+    defaultMessage: 'We detected a hardware wallet connection.',
   },
-  instructionText: {
-    id: 'ConnectWallet.providers.Hardware.instructionText',
+  subHeading: {
+    id: 'ConnectWallet.providers.Hardware.subHeading',
+    defaultMessage: 'Would you like to access colony with that?',
+  },
+  walletSelectionLabel: {
+    id: 'ConnectWallet.providers.Hardware.walletSelectionLabel',
     defaultMessage: 'Select an address',
   },
   searchInputPlacholder: {
@@ -136,16 +140,14 @@ class Hardware extends Component<Props, State> {
             {isValid ? (
               <Fragment>
                 <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-                <Heading
-                  text={MSG.instructionText}
-                  appearance={{ size: 'small' }}
-                />
                 <div className={styles.choiceHeadingRow}>
                   <div>
                     <Input
+                      appearance={{ colorSchema: 'transparent' }}
                       connect={false}
                       name="hardwareWalletFilter"
                       onChange={this.handleChangeSearchQuery}
+                      label={MSG.walletSelectionLabel}
                       placeholder={MSG.searchInputPlacholder}
                     />
                   </div>
