@@ -1,5 +1,5 @@
 
-### Example for ToasterBar with Interaction required
+### Example for ToasterBar
 
 
 ```js
