@@ -90,8 +90,6 @@ const Radio = ({
 }: Props) => (
   <label
     className={getMainClasses(appearance, styles)}
-    aria-invalid={!!$error}
-    aria-disabled={disabled}
     aria-checked={checked}
     htmlFor={elementOnly ? inputId : null}
   >
@@ -103,6 +101,9 @@ const Radio = ({
         type="radio"
         id={inputId}
         disabled={disabled}
+        aria-checked={checked}
+        aria-disabled={disabled}
+        aria-invalid={!!$error}
         {...props}
       />
       <span className={styles.radio} style={radioStyle}>
