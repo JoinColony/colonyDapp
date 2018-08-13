@@ -15,12 +15,9 @@ import type { OmniPickerProps, OmniPickerItemComponent } from '../OmniPicker';
 import { asField, InputLabel } from '../Fields';
 import Icon from '../Icon';
 import { withOmniPicker } from '../OmniPicker';
-// import UserAvatar from '../../../users/components/UserAvatar';
+import UserAvatar from '../UserAvatar';
 
-type UserData = {
-  id: string,
-  fullName: string,
-};
+import type { UserData } from './types';
 
 const MSG = defineMessages({
   selectMember: {
@@ -32,15 +29,6 @@ const MSG = defineMessages({
     defaultMessage: 'No Colony members match that search.',
   },
 });
-
-// TODO: Replace with proper UserAvatar component
-const UserAvatar = () => (
-  <Icon
-    className={styles.focusIcon}
-    name="circle-person"
-    title={MSG.selectMember}
-  />
-);
 
 type Appearance = {
   direction?: 'horizontal',
@@ -136,6 +124,7 @@ class SingleUserPicker extends Component<Props, State> {
               <UserAvatar
                 className={styles.recipientAvatar}
                 userId={$value.id}
+                username={$value.username || $value.id}
                 size="xs"
               />
             </div>
