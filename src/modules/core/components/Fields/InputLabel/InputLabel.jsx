@@ -14,8 +14,8 @@ const displayName = 'InputLabel';
 type Appearance = {
   // Make it covariant: tell flow we're not changing it in here
   +theme?: 'fat' | 'underlined',
-  direction?: 'horizontal',
-  colorSchema?: 'dark' | 'transparent',
+  +direction?: 'horizontal',
+  +colorSchema?: 'dark' | 'transparent',
 };
 
 type Props = {

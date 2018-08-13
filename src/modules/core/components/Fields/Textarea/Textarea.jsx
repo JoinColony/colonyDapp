@@ -38,6 +38,8 @@ type Props = {
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
+  /** Placeholder for input */
+  placeholder?: string,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */

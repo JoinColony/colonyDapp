@@ -1,6 +1,7 @@
 /* @flow */
 
-export { default } from './OmniPicker.jsx';
+export type { WrappedComponentProps as OmniPickerProps } from './types';
+export type { Data as OmniPickerData } from './types';
+export type { ItemComponentType as OmniPickerItemComponent } from './types';
 
-export { default as OmniPickerDropdown } from './OmniPickerDropdown.jsx';
-export { default as OmniPickerItem } from './OmniPickerItem.jsx';
+export { default as withOmniPicker } from './withOmniPicker';

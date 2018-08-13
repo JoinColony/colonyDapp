@@ -1,0 +1,108 @@
+@import 'variables.css';
+
+.main {
+  composes: field from '~styles/fields.css';
+}
+
+.directionHorizontal {
+  composes: main;
+}
+
+.labelWrap {
+  flex: 0 0 100%;
+}
+
+.directionHorizontal .labelWrap {
+  flex: 0 1 auto;
+}
+
+.container {
+  flex: 1 0 auto;
+  position: relative;
+}
+
+.inputContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.avatarContainer {
+  flex: 0 0 26px;
+}
+
+.icon {
+  flex: 0 0 26px;
+  height: 26px;
+  width: 26px;
+
+  & svg {
+    fill: var(--grey-5);
+    stroke: var(--grey-5);
+  }
+}
+
+.focusIcon {
+  composes: icon;
+
+  & svg {
+    fill: var(--sky-blue);
+    stroke: var(--sky-blue);
+  }
+}
+
+.input {
+  flex: 1 1 0;
+  margin-left: 10px;
+  padding: 3px;
+  width: 100%;
+  max-width: 450px;
+  vertical-align: baseline;
+  border: none;
+  border-bottom: 1px solid var(--colony-black);
+  background-color: transparent;
+  font-size: var(--size-medium-l);
+  color: var(--colony-black);
+  outline: none;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+
+  &[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+}
+
+.recipientName {
+  composes: input;
+  padding: 5px 3px;
+
+  &:hover {
+    cursor: text;
+  }
+
+  &:focus {
+    border-color: var(--colony-black);
+  }
+}
+
+.omniPickerContainer {
+  width: 100%;
+  max-width: 450px;
+  position: absolute;
+  top: 35px;
+  left: 10px;
+  z-index: 2;
+  border-bottom-left-radius: var(--radius-large);
+  border-bottom-right-radius: var(--radius-large);
+}
+
+.errorHorizontal {
+  margin-top: 5px;
+  position: absolute;
+  top: 100%;
+  right: 15px;
+  font-size: var(--size-tiny);
+  color: var(--danger);
+}

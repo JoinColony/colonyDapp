@@ -21,7 +21,10 @@ type Appearance = {
 };
 
 type Props = {
+  /** Appearance object */
   appearance?: Appearance,
+  /** className for icon. Will override anything in appearance */
+  className?: string,
   /** Name of icon sprite */
   name: string,
   /** Html title for the icon element */
@@ -46,6 +49,7 @@ const multiColorIcons = getIcons(multiColorIconNames);
 
 const Icon = ({
   appearance = { size: 'normal', theme: 'primary' },
+  className,
   intl: { formatMessage },
   viewBox: viewBoxOverride = '0 0 30 30',
   name,
@@ -64,7 +68,9 @@ const Icon = ({
   return (
     <i
       title={iconTitle}
-      className={getMainClasses(multiColorAppearance || appearance, styles)}
+      className={
+        className || getMainClasses(multiColorAppearance || appearance, styles)
+      }
       {...props}
     >
       <svg viewBox={viewBoxOverride}>

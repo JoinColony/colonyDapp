@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import scrollIntoView from 'scroll-into-view-if-needed';
 
 import type { ItemComponentType } from './types';
 
@@ -21,10 +22,17 @@ class OmniPickerItem extends Component<Props> {
     onSelect(idx);
   };
 
+  scrollToElement = (elm: ?HTMLElement) => {
+    const { selected, keyUsed } = this.props;
+    if (!elm || !selected || !keyUsed) {
+      return;
+    }
+    scrollIntoView(elm, { behavior: 'smooth', scrollMode: 'if-needed' });
+  };
+
   render() {
     const {
       idx,
-      keyUsed,
       selected,
       itemData,
       itemComponent: ItemComponent,
@@ -35,13 +43,7 @@ class OmniPickerItem extends Component<Props> {
         role="option"
         aria-selected={selected}
         onMouseEnter={this.select}
-        ref={elm =>
-          selected &&
-          keyUsed &&
-          elm &&
-          elm.scrollIntoView &&
-          elm.scrollIntoView()
-        }
+        ref={ref => this.scrollToElement(ref)}
       >
         <ItemComponent itemData={itemData} selected={selected} />
       </li>

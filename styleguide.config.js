@@ -12,8 +12,11 @@ module.exports = {
       components: ['./src/modules/core/components/Heading/Heading.jsx'],
     },
     {
-      name: 'Content',
-      components: ['./src/modules/core/components/Icon/Icon.jsx'],
+      name: 'Images and Icons',
+      components: [
+        './src/modules/core/components/Icon/Icon.jsx',
+        './src/modules/core/components/UserAvatar/UserAvatar.jsx',
+      ],
     },
     {
       name: 'Forms',
@@ -25,9 +28,15 @@ module.exports = {
         './src/modules/core/components/Fields/FileUpload/FileUpload.jsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
         './src/modules/core/components/MnemonicDnDSorter/MnemonicDnDSorter.jsx',
-        './src/modules/core/components/OmniPicker/OmniPicker.jsx',
       ],
       content: 'docs/Forms.md',
+    },
+    {
+      name: 'Comboboxes / Pickers',
+      components: [
+        './src/modules/core/components/OmniPicker/OmniPicker.jsx',
+        './src/modules/core/components/SingleUserPicker/SingleUserPicker.jsx',
+      ],
     },
     {
       name: 'Popovers, Modals & Dialogs',
