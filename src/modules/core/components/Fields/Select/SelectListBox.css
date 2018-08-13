@@ -1,0 +1,22 @@
+@import 'variables.css';
+
+.main {
+  height: auto;
+  max-height: 160px;
+  width: 100%;
+  position: absolute;
+  top: calc(100% + 2px);
+  z-index: 2;
+  overflow: auto;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: 0 0 2px 2px;
+  background-color: var(--grey-blue-2);
+  box-shadow: 0 3px 5px rgba(black, 0.05);
+}
+
+.alt {
+  composes: main;
+  width: auto;
+  min-width: 100%;
+  background-color: white;
+}

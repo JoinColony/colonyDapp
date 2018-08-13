@@ -1,0 +1,30 @@
+@import 'variables.css';
+
+.main {
+  padding: 0 30px 0 15px;
+  height: 32px;
+  overflow: hidden;
+  font-weight: var(--weight-semi);
+  text-overflow: ellipsis;
+  line-height: 32px;
+  white-space: nowrap;
+  color: var(--text);
+  cursor: pointer;
+
+  &[aria-selected="true"] {
+    background-color: var(--grey-blue-0);
+    outline: none;
+  }
+
+  &[aria-checked="true"] {
+    color: var(--grey-5);
+    pointer-events: none;
+  }
+}
+
+.checkedMsg {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: var(--size-small);
+  line-height: 1;
+}

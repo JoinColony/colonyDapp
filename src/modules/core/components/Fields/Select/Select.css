@@ -1,0 +1,62 @@
+@import 'variables.css';
+
+.main {
+  composes: main from '../Field/Field.css';
+  position: relative;
+}
+
+.select {
+  composes: input from '../Input/Input.css';
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  position: relative;
+  background-color: white;
+  font-style: normal;
+  transition: none;
+  cursor: pointer;
+}
+
+.select[aria-disabled="true"], .select[aria-busy="true"] {
+  opacity: 0.7;
+}
+
+.select svg {
+  fill: var(--grey-4);
+  stroke: var(--grey-4);
+}
+
+.select[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+.selectAlt {
+  color: pink;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 21px;
+  width: 21px;
+}
+
+.loading {
+  composes: loading from 'shared/elements.css';
+  height: 10px;
+  width: 10px;
+}
+
+.activeOption {
+  height: 100%;
+  overflow: hidden;
+  font-weight: var(--weight-semi);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select[aria-expanded="true"] .activeOption {
+  color: var(--sky-blue);
+}
