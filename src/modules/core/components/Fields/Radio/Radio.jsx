@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Fragment } from 'react';
 import nanoid from 'nanoid';
+import { compose, lifecycle } from 'recompose';
 
 import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
@@ -40,6 +41,8 @@ type Props = {
   name: string,
   /** Style object for the visible radio */
   radioStyle?: { [string]: string },
+  /** @ignore Will be injected by `lifecycle` from `enhance` */
+  inputId: string,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -73,6 +76,7 @@ const Radio = ({
   help,
   helpValues,
   $id,
+  inputId,
   label,
   labelValues,
   formatIntl,
@@ -83,47 +87,44 @@ const Radio = ({
   setError,
   setValue,
   ...props
-}: Props) => {
-  const inputId = nanoid();
-  return (
-    <label
-      className={getMainClasses(appearance, styles)}
-      aria-invalid={!!$error}
-      aria-disabled={disabled}
-      aria-checked={checked}
-      htmlFor={elementOnly ? inputId : null}
-    >
-      <Fragment>
-        <input
-          className={styles.delegate}
-          value={$value}
-          name={name}
-          type="radio"
-          id={inputId}
-          disabled={disabled}
-          {...props}
+}: Props) => (
+  <label
+    className={getMainClasses(appearance, styles)}
+    aria-invalid={!!$error}
+    aria-disabled={disabled}
+    aria-checked={checked}
+    htmlFor={elementOnly ? inputId : null}
+  >
+    <Fragment>
+      <input
+        className={styles.delegate}
+        value={$value}
+        name={name}
+        type="radio"
+        id={inputId}
+        disabled={disabled}
+        {...props}
+      />
+      <span className={styles.radio} style={radioStyle}>
+        {!!appearance &&
+          appearance.theme === 'fakeCheckbox' && (
+            <span className={styles.checkmark} />
+          )}
+      </span>
+      {!elementOnly && !!label ? (
+        <InputLabel
+          appearance={{ direction: 'horizontal' }}
+          label={label}
+          error={$error}
+          help={help}
+          inputId={inputId}
         />
-        <span className={styles.radio} style={radioStyle}>
-          {!!appearance &&
-            appearance.theme === 'fakeCheckbox' && (
-              <span className={styles.checkmark} />
-            )}
-        </span>
-        {!elementOnly && !!label ? (
-          <InputLabel
-            appearance={{ direction: 'horizontal' }}
-            label={label}
-            error={$error}
-            help={help}
-            inputId={inputId}
-          />
-        ) : (
-          label || children
-        )}
-      </Fragment>
-    </label>
-  );
-};
+      ) : (
+        label || children
+      )}
+    </Fragment>
+  </label>
+);
 
 Radio.displayName = displayName;
 
@@ -135,4 +136,14 @@ Radio.defaultProps = {
   elementOnly: false,
 };
 
-export default asField()(Radio);
+const enhance = compose(
+  asField(),
+  lifecycle({
+    componentDidMount() {
+      const inputId = nanoid();
+      this.setState({ inputId });
+    },
+  }),
+);
+
+export default enhance(Radio);
