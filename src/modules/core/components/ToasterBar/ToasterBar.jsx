@@ -1,9 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import type { Node } from 'react';
 
-import Dialog from './Dialog.jsx';
-import Button from '../Button';
+import type { Cancel, Close } from '../Dialog/types';
+
+import Modal from '../Modal';
 import Icon from '../Icon';
 
 import modalStyles from '../Modal/Modal.css';
@@ -11,16 +13,9 @@ import modalStyles from '../Modal/Modal.css';
 import styles from './ToasterBar.css';
 
 type Props = {
-  cancel: () => void,
-  // close: (val: any) => void,
-  // children: Node,
-  renderContent: (val: any) => Node,
-  // heading?: string | MessageDescriptor,
-  // text?: string | MessageDescriptor,
-  // cancelButtonText?: string | MessageDescriptor,
-  // confirmButtonText?: string | MessageDescriptor,
-  // requiresInteraction: boolean,
-  // setRequiresInteraction?: (val: any) => boolean,
+  cancel: Cancel,
+  close: Close,
+  children: Node,
 };
 
 type State = {
@@ -47,8 +42,8 @@ class ToasterBar extends Component<Props, State> {
   };
 
   render() {
-    const { renderContent } = this.props;
     const { requiresInteraction } = this.state;
+    const { close, cancel, children, ...passProps } = this.props;
 
     const overlayClassName = {
       base: requiresInteraction ? modalStyles.overlay : modalStyles.overlayNone,
@@ -56,22 +51,34 @@ class ToasterBar extends Component<Props, State> {
       beforeClose: modalStyles.overlayBeforeClose,
     };
 
+    // console.log('overlayClassName', overlayClassName);
+
+    const childProps = {
+      ...passProps,
+      requiresInteraction,
+      cancel,
+      close,
+      setRequiresInteraction: this._setRequiresInteraction,
+    };
+
     return (
-      <Dialog
+      <Modal
+        {...passProps}
+        role="dialog"
+        className={styles.modal}
         overlayClassName={overlayClassName}
+        onRequestClose={this.attemptDismiss}
+        cancel={this.attemptDismiss}
         shouldCloseOnEsc={!requiresInteraction}
         shouldCloseOnOverlayClick={false}
-        cancel={this.attemptDismiss}
+        isOpen
       >
         <div className={styles.main}>
           <div className={styles.content}>
-            {renderContent({
-              ...this.props,
-              setRequiresInteraction: this._setRequiresInteraction,
-              requiresInteraction,
-            })}
+            {children(childProps)}
+            {/* {React.Children.only(children, childProps)} */}
           </div>
-          <div className={styles.barControl}>
+          <div className={styles.control}>
             {requiresInteraction || (
               <Icon
                 role="button"
@@ -83,7 +90,7 @@ class ToasterBar extends Component<Props, State> {
             )}
           </div>
         </div>
-      </Dialog>
+      </Modal>
     );
   }
 }
