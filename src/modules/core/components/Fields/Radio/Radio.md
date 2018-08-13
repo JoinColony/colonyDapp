@@ -38,20 +38,30 @@ const radioChoices = ['foo', 'bar', 'baz'];
         />
         <div style={{marginTop: '20px'}} />
         <Radio
-          checked={values.radioFakeCheckbox === 'fakeCheckbox'}
+          checked={values.radioFakeCheckbox === 'fakeCheckbox1'}
           appearance={{ theme: 'fakeCheckbox' }}
           name="radioFakeCheckbox"
           label="fakeCheckbox theme"
-          value="fakeCheckbox"
+          value="fakeCheckbox1"
+          help="This is actually a radio!"
+        />
+        <Radio
+          checked={values.radioFakeCheckbox === 'fakeCheckbox2'}
+          appearance={{ theme: 'fakeCheckbox' }}
+          name="radioFakeCheckbox"
+          label="Another fakeCheckbox theme"
+          value="fakeCheckbox2"
+          help="This is a radio too!"
         />
         <div style={{marginTop: '20px'}} />
         <Radio
           checked={values.radioColorPicker === 'colorPicker'}
           appearance={{ theme: 'colorPicker' }}
           name="radioColorPicker"
-          label="And a colorPicker"
+          label="And a color field"
           radioStyle={{ backgroundColor: 'blue' }}
           value="blue"
+          help="Note - This doesn't provide an actual colorpicker input. This is still just a radio input"
         />
         <div style={{ marginTop: '20px' }} />
         <Button appearance={{ theme: 'primary' }} type="submit">And press me</Button>
