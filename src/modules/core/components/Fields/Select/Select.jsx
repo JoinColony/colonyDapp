@@ -297,10 +297,9 @@ class Select extends Component<Props, State> {
               <span className={styles.loading} />
             ) : (
               <Icon
-                name="arrow-down-small"
+                name="caret-down-small"
                 title="expand"
                 role="presentation"
-                size="small"
               />
             )}
           </span>
