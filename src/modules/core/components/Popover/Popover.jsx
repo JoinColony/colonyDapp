@@ -8,7 +8,7 @@ import { Manager, Reference, Popper } from 'react-popper';
 import { injectIntl } from 'react-intl';
 import nanoid from 'nanoid';
 
-import type { ReactRef } from './types';
+import type { PopoverTrigger, ReactRef } from './types';
 
 // eslint-disable-next-line import/no-cycle
 import PopoverWrapper from './PopoverWrapper.jsx';
@@ -39,15 +39,7 @@ export type Appearance = {
 type Props = {
   appearance?: Appearance,
   /** Child element to trigger the popover */
-  children:
-    | React$Element<*>
-    | (({
-        ref: ReactRef,
-        id: string,
-        open: () => void,
-        close: () => void,
-        toggle: () => void,
-      }) => ReactNode),
+  children: React$Element<*> | PopoverTrigger,
   /** Whether the popover should close when clicking anywhere */
   closeOnOutsideClick?: boolean,
   /** Popover content */
@@ -97,22 +89,31 @@ class Popover extends Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const { closeOnOutsideClick, trigger } = this.props;
+  componentDidUpdate({ closeOnOutsideClick, trigger }, { isOpen: prevOpen }) {
+    const { isOpen } = this.state;
     if (
+      isOpen &&
+      !prevOpen &&
       closeOnOutsideClick &&
       document.body &&
       (trigger === 'click' || !trigger)
     ) {
       document.body.addEventListener('click', this.handleOutsideClick, true);
     }
+    if (!isOpen && prevOpen) {
+      this.removeOutsideClickListener();
+    }
   }
 
   componentWillUnmount() {
+    this.removeOutsideClickListener();
+  }
+
+  removeOutsideClickListener = () => {
     if (document.body) {
       document.body.removeEventListener('click', this.handleOutsideClick, true);
     }
-  }
+  };
 
   getChildProps = (ref: ReactRef) => {
     const { id } = this;
