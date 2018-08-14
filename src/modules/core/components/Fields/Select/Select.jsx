@@ -219,9 +219,10 @@ class Select extends Component<Props, State> {
       // No change
       return;
     }
-    const { onChange, options } = this.props;
+    const { onChange, setValue, options } = this.props;
     const { value } = options[selectedOption];
     this.setState({ isLoading: true });
+    setValue(value);
     try {
       await onChange(value);
     } catch (e) {
@@ -245,6 +246,7 @@ class Select extends Component<Props, State> {
       disabled,
       $id,
       $value,
+      $touched,
       formatIntl,
       label,
       options,
