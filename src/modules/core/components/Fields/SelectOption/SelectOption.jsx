@@ -1,35 +1,48 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
+
+import type { MessageDescriptor } from 'react-intl';
+import type { SelectOptionType } from '../Select/types';
 
 import styles from './SelectOption.css';
 
-class SelectOption extends Component {
+type Props = {
+  checked: boolean,
+  id: string,
+  idx: number,
+  option: SelectOptionType,
+  selected: boolean,
+  onSelect: Function,
+  onClick: Function,
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
+};
+
+class SelectOption extends Component<Props> {
   static displayName = 'core.Fields.Select.SelectOption';
-  static propTypes = {
-    checked: PropTypes.bool,
-    id: PropTypes.string,
-    idx: PropTypes.number,
-    option: PropTypes.object,
-    selected: PropTypes.bool,
-    onSelect: PropTypes.func,
-    onClick: PropTypes.func,
-    utils: PropTypes.object,
-  }
-  constructor(props) {
-    super(props);
-    this.handleItemClick = this.handleItemClick.bind(this);
-    this.handleItemSelect = this.handleItemSelect.bind(this);
-  }
-  handleItemClick(evt) {
+
+  handleItemClick = (evt: SyntheticEvent<HTMLElement>) => {
+    const { onClick } = this.props;
     evt.stopPropagation();
-    this.props.onClick();
-  }
-  handleItemSelect() {
+    onClick();
+  };
+
+  handleItemKeyPress = (evt: SyntheticKeyboardEvent<*>) => {
+    const { onClick } = this.props;
+    evt.stopPropagation();
+    onClick();
+  };
+
+  handleItemSelect = () => {
     const { idx, onSelect } = this.props;
     onSelect(idx);
-  }
+  };
+
   render() {
-    const { checked, id, option, selected, utils } = this.props;
-    const label = utils.getIntlFormatted(option.label);
+    const { checked, id, option, selected, formatIntl } = this.props;
+    const label = formatIntl(option.label);
     return (
       <li
         className={styles.main}
@@ -40,6 +53,7 @@ class SelectOption extends Component {
         role="option"
         ref={e => selected && e && e.focus()}
         onClick={this.handleItemClick}
+        onKeyPress={this.handleItemKeyPress}
         onMouseEnter={this.handleItemSelect}
       >
         <span title={label}>{label}</span>

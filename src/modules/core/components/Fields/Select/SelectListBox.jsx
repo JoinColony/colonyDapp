@@ -1,33 +1,45 @@
-import React, { PropTypes } from 'react';
+/* @flow */
+import React from 'react';
 
-import { SelectOption } from '../SelectOption';
+import type { MessageDescriptor } from 'react-intl';
+import type { Appearance, SelectOptionType } from './types';
+
+import { getMainClasses } from '~utils/css';
+
+import SelectOption from '../SelectOption';
 import styles from './SelectListBox.css';
 
 const displayName = 'core.Fields.Select.SelectListBox';
 
-const propTypes = {
-  checkedOption: PropTypes.number,
-  listboxId: PropTypes.string,
-  options: PropTypes.array,
-  placement: PropTypes.string,
-  utils: PropTypes.object,
-  selectedOption: PropTypes.number,
-  theme: PropTypes.string,
-  onSelect: PropTypes.func,
-  onClick: PropTypes.func,
+type Props = {
+  appearance: Appearance,
+  checkedOption: number,
+  listboxId: string,
+  options: Array<SelectOptionType>,
+  selectedOption: number,
+  onSelect: Function,
+  onClick: Function,
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
 };
 
-const getPlacementStyle = placement => {
-  if (placement === 'left') {
-    return { right: '0' };
-  } else if (placement === 'right') {
-    return { left: '0' };
-  }
-  return { left: '50%', transform: 'translate(-50%)' };
-};
-
-const SelectListBox = ({ listboxId, options, selectedOption, checkedOption, onSelect, onClick, placement, utils, theme }) => (
-  <ul className={styles[theme] || styles.main} role="listbox" id={listboxId} style={getPlacementStyle(placement)}>
+const SelectListBox = ({
+  appearance,
+  listboxId,
+  options,
+  selectedOption,
+  checkedOption,
+  onSelect,
+  onClick,
+  formatIntl,
+}: Props) => (
+  <ul
+    className={getMainClasses(appearance, styles)}
+    role="listbox"
+    id={listboxId}
+  >
     {options.map((option, idx) => (
       <SelectOption
         id={`${listboxId}-option-${idx}`}
@@ -38,14 +50,12 @@ const SelectListBox = ({ listboxId, options, selectedOption, checkedOption, onSe
         option={option}
         onSelect={onSelect}
         onClick={onClick}
-        utils={utils}
+        formatIntl={formatIntl}
       />
     ))}
   </ul>
 );
 
 SelectListBox.displayName = displayName;
-
-SelectListBox.propTypes = propTypes;
 
 export default SelectListBox;

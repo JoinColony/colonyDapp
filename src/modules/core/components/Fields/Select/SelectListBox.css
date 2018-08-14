@@ -1,6 +1,8 @@
 @import 'variables.css';
 
-.main {
+
+/* theme */
+.themeDefault {
   height: auto;
   max-height: 160px;
   width: 100%;
@@ -14,9 +16,24 @@
   box-shadow: 0 3px 5px rgba(black, 0.05);
 }
 
-.alt {
-  composes: main;
+.themeAlt {
+  composes: themeDefault;
   width: auto;
   min-width: 100%;
   background-color: white;
+}
+
+/* align */
+
+.alignLeft { 
+  right: 0;
+}
+
+.alignRight { 
+  left: 0;
+ }
+
+.alignCenter {
+  left: 50%;
+  transform: translate(-50%);
 }

@@ -1,12 +1,12 @@
 @import 'variables.css';
 
 .main {
-  composes: main from '../Field/Field.css';
+  composes: field from '~styles/fields.css';
   position: relative;
 }
 
 .select {
-  composes: input from '../Input/Input.css';
+  composes: main from '../Input/Input.css';
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -44,7 +44,7 @@
 }
 
 .loading {
-  composes: loading from 'shared/elements.css';
+  composes: loading from '~styles/elements.css';
   height: 10px;
   width: 10px;
 }

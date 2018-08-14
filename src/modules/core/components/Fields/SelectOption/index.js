@@ -1,1 +1,3 @@
-export { default as SelectOption } from './SelectOption.jsx';
+/* @flow */
+
+export { default } from './SelectOption.jsx';
