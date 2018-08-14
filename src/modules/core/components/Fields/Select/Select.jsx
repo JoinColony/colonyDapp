@@ -47,7 +47,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value?: string,
+  $value: string,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
@@ -154,24 +154,34 @@ class Select extends Component<Props, State> {
 
   handleKeyOnOpen = (evt: SyntheticKeyboardEvent<*>) => {
     const { key } = evt;
+    const { checkedOption, selectedOption } = this.state;
     switch (key) {
-      case SPACE:
-        this.close();
-        break;
-      case UP:
-        this.goUp();
-        break;
-      case DOWN:
-        this.goDown();
-        break;
-      case TAB:
-        this.checkOption();
-        break;
+      case SPACE: {
+        // prevent page long-scroll when in view
+        evt.preventDefault();
+        return this.close();
+      }
+      case UP: {
+        // prevent page scroll when in view
+        evt.preventDefault();
+        return this.goUp();
+      }
+      case DOWN: {
+        // prevent page scroll when in view
+        evt.preventDefault();
+        return this.goDown();
+      }
+      case TAB: {
+        // open, but selection is unchanged
+        if (checkedOption === selectedOption) {
+          this.close();
+        }
+        return this.checkOption();
+      }
       case ENTER: {
         // Do not submit form
         evt.preventDefault();
-        this.checkOption();
-        break;
+        return this.checkOption();
       }
       default:
     }
@@ -181,6 +191,7 @@ class Select extends Component<Props, State> {
     const { key } = evt;
     const { checkedOption } = this.state;
     if ([UP, DOWN, SPACE].indexOf(key) > -1) {
+      evt.preventDefault();
       this.setState({ selectedOption: checkedOption });
       this.open();
     }
@@ -207,9 +218,11 @@ class Select extends Component<Props, State> {
 
   toggle = () => {
     const { isOpen } = this.state;
-    this.setState({
-      isOpen: !isOpen,
-    });
+    if (isOpen) {
+      this.close();
+    } else {
+      this.open();
+    }
   };
 
   checkOption = async () => {
@@ -269,7 +282,7 @@ class Select extends Component<Props, State> {
         role="presentation"
       >
         {!elementOnly && label ? (
-          <InputLabel id={$id} label={label} error={$error} help={help} />
+          <InputLabel inputId={$id} label={label} error={$error} help={help} />
         ) : null}
         <div
           className={styles.select}
@@ -278,12 +291,11 @@ class Select extends Component<Props, State> {
           aria-owns={listboxId}
           aria-expanded={isOpen}
           aria-label={elementOnly ? label : null}
-          aria-labelledby={!elementOnly ? `${$id}_label` : null}
+          aria-labelledby={!elementOnly ? `${$id}-label` : null}
           aria-disabled={disabled}
           aria-busy={isLoading}
           tabIndex="0"
           onClick={this.toggle}
-          onKeyDown={this.toggle}
           ref={e => {
             this.combobox = e;
           }}

@@ -1,6 +1,6 @@
 /* @flow */
 /*
- * The key names follow the format provided by React's syntetic event `key` property
+ * The key names follow the format provided by React's synthetic event `key` property
  */
 
 export const ENTER = 'Enter';
