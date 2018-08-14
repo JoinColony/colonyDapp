@@ -3,7 +3,8 @@
 import type { MessageDescriptor } from 'react-intl';
 
 export type Appearance = {
-  align?: 'left' | 'center' | 'right',
+  alignOptions?: 'left' | 'center' | 'right',
+  theme?: 'default' | 'alt',
 };
 
 export type SelectOptionType = {

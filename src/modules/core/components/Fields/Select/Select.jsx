@@ -11,15 +11,11 @@ import Icon from '../../Icon';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 
-import type { SelectOptionType } from './types';
+import type { Appearance, SelectOptionType } from './types';
 
 import SelectListBox from './SelectListBox.jsx';
 
 import { DOWN, ENTER, ESC, SPACE, UP, TAB } from './keyTypes';
-
-type Appearance = {
-  align?: 'left' | 'center' | 'right',
-};
 
 type Props = {
   /** Available `option`s for the select */
@@ -82,7 +78,7 @@ class Select extends Component<Props, State> {
   static displayName = 'Select';
 
   static defaultProps = {
-    appearance: { align: 'left' },
+    appearance: { alignOptions: 'left', theme: 'default' },
     options: [],
   };
 

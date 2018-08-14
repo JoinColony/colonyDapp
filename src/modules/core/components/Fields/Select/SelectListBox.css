@@ -22,17 +22,16 @@
   background-color: white;
 }
 
-/* align */
-
-.alignLeft {
-  right: 0;
-}
-
-.alignRight {
+/* alignOptions */
+.alignOptionsLeft {
   left: 0;
 }
 
-.alignCenter {
+.alignOptionsRight {
+  right: 0;
+}
+
+.alignOptionsCenter {
   left: 50%;
   transform: translate(-50%);
 }
