@@ -1,15 +1,17 @@
 /* @flow */
-import React from 'react';
-
 import type { MessageDescriptor } from 'react-intl';
-import type { Appearance, SelectOptionType } from './types';
+
+import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import SelectOption from '../SelectOption';
 import styles from './SelectListBox.css';
 
-const displayName = 'core.Fields.Select.SelectListBox';
+import SelectOption from '../SelectOption';
+
+import type { Appearance, SelectOptionType } from './types';
+
+const displayName = 'SelectListBox';
 
 type Props = {
   appearance: Appearance,

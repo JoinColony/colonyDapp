@@ -1,16 +1,19 @@
 /* @flow */
-import 'core-js/fn/array/find-index';
-import React, { Component } from 'react';
-
 import type { MessageDescriptor } from 'react-intl';
-import type { SelectOptionType } from './types';
 
-import asField from '../asField';
-import Icon from '../../Icon';
-import InputLabel from '../InputLabel';
-import SelectListBox from './SelectListBox.jsx';
+import React, { Component } from 'react';
+import 'core-js/fn/array/find-index';
 
 import styles from './Select.css';
+
+import Icon from '../../Icon';
+
+import asField from '../asField';
+import InputLabel from '../InputLabel';
+
+import type { SelectOptionType } from './types';
+
+import SelectListBox from './SelectListBox.jsx';
 
 import { DOWN, ENTER, ESC, SPACE, UP, TAB } from './keyTypes';
 

@@ -1,10 +1,11 @@
 // @flow
+import type { MessageDescriptor } from 'react-intl';
+
 import React, { Component } from 'react';
 
-import type { MessageDescriptor } from 'react-intl';
-import type { SelectOptionType } from '../Select/types';
-
 import styles from './SelectOption.css';
+
+import type { SelectOptionType } from '../Select/types';
 
 type Props = {
   checked: boolean,
@@ -21,7 +22,7 @@ type Props = {
 };
 
 class SelectOption extends Component<Props> {
-  static displayName = 'core.Fields.Select.SelectOption';
+  static displayName = 'SelectOption';
 
   handleItemClick = (evt: SyntheticEvent<HTMLElement>) => {
     const { onClick } = this.props;
