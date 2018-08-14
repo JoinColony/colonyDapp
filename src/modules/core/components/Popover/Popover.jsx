@@ -1,15 +1,14 @@
 /* @flow */
 
-import type { Node } from 'react';
+import type { Node as ReactNode } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Manager, Reference, Popper } from 'react-popper';
 import { injectIntl } from 'react-intl';
 import nanoid from 'nanoid';
 
 import type { ReactRef } from './types';
-import styles from './Popover.css';
 
 // eslint-disable-next-line import/no-cycle
 import PopoverWrapper from './PopoverWrapper.jsx';
@@ -40,19 +39,32 @@ export type Appearance = {
 type Props = {
   appearance?: Appearance,
   /** Child element to trigger the popover */
-  children: React$Element<*> | (({ ref: ReactRef }) => Node),
+  children:
+    | React$Element<*>
+    | (({
+        ref: ReactRef,
+        id: string,
+        open: () => void,
+        close: () => void,
+        toggle: () => void,
+      }) => ReactNode),
   /** Whether the popover should close when clicking anywhere */
-  closeOnBackdropClick?: boolean,
+  closeOnOutsideClick?: boolean,
   /** Popover content */
-  content: Node | MessageDescriptor | (({ close: () => void }) => Node),
+  content:
+    | ReactNode
+    | MessageDescriptor
+    | (({ close: () => void }) => ReactNode),
   /** Values for content (react-intl interpolation) */
   contentValues?: { [string]: string },
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number,
   /** Popover placement */
   placement?: Placement,
+  /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
+  retainRefFocus?: boolean,
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
-  trigger: 'always' | 'hover' | 'click' | 'disabled',
+  trigger?: 'always' | 'hover' | 'click' | 'disabled',
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
@@ -62,7 +74,9 @@ type State = {
 };
 
 class Popover extends Component<Props, State> {
-  backdropNode: HTMLElement;
+  refNode: ?HTMLElement;
+
+  contentNode: ?HTMLElement;
 
   id: string;
 
@@ -71,9 +85,8 @@ class Popover extends Component<Props, State> {
   static displayName = 'Popover';
 
   static defaultProps = {
-    closeOnBackdropClick: true,
+    closeOnOutsideClick: true,
     placement: 'top',
-    trigger: 'hover',
   };
 
   constructor(props: Props) {
@@ -82,6 +95,23 @@ class Popover extends Component<Props, State> {
     this.state = {
       isOpen: props.trigger === 'always',
     };
+  }
+
+  componentDidMount() {
+    const { closeOnOutsideClick, trigger } = this.props;
+    if (
+      closeOnOutsideClick &&
+      document.body &&
+      (trigger === 'click' || !trigger)
+    ) {
+      document.body.addEventListener('click', this.handleOutsideClick, true);
+    }
+  }
+
+  componentWillUnmount() {
+    if (document.body) {
+      document.body.removeEventListener('click', this.handleOutsideClick, true);
+    }
   }
 
   getChildProps = (ref: ReactRef) => {
@@ -102,16 +132,32 @@ class Popover extends Component<Props, State> {
     return Object.assign(
       {},
       childProps,
-      {
-        hover: {
-          onMouseEnter: this.requestOpen,
-          onMouseLeave: this.close,
-        },
-        click: { onClick: this.toggle },
-        disabled: null,
-        always: null,
-      }[trigger],
+      trigger
+        ? {
+            hover: {
+              onMouseEnter: this.requestOpen,
+              onMouseLeave: this.close,
+            },
+            click: { onClick: this.toggle },
+            disabled: null,
+            always: null,
+          }[trigger]
+        : null,
     );
+  };
+
+  handleOutsideClick = (evt: MouseEvent) => {
+    if (
+      (evt.target instanceof Node &&
+        this.contentNode &&
+        this.contentNode.contains(evt.target)) ||
+      (evt.target instanceof Node &&
+        this.refNode &&
+        this.refNode.contains(evt.target))
+    ) {
+      return;
+    }
+    this.close();
   };
 
   requestOpen = () => {
@@ -128,9 +174,7 @@ class Popover extends Component<Props, State> {
   };
 
   open = () => {
-    this.setState({ isOpen: true }, () => {
-      if (this.backdropNode) this.backdropNode.focus();
-    });
+    this.setState({ isOpen: true });
   };
 
   close = () => {
@@ -146,13 +190,24 @@ class Popover extends Component<Props, State> {
     return this.requestOpen();
   };
 
-  handleBackdropRef = (node: ?HTMLElement) => {
-    if (node) this.backdropNode = node;
+  registerRefNode = (node: ?HTMLElement) => {
+    this.refNode = node;
+  };
+
+  registerContentNode = (node: ?HTMLElement) => {
+    this.contentNode = node;
   };
 
   handleBackdropKey = ({ key }: SyntheticKeyboardEvent<HTMLElement>) => {
     if (key === 'Escape') {
       this.close();
+    }
+  };
+
+  handleWrapperFocus = () => {
+    const { retainRefFocus } = this.props;
+    if (retainRefFocus && this.refNode instanceof HTMLInputElement) {
+      this.refNode.focus();
     }
   };
 
@@ -189,46 +244,31 @@ class Popover extends Component<Props, State> {
   };
 
   render() {
-    const {
-      appearance,
-      closeOnBackdropClick,
-      placement: origPlacement,
-      intl: { formatMessage },
-      trigger,
-    } = this.props;
+    const { appearance, placement: origPlacement, retainRefFocus } = this.props;
     const { isOpen } = this.state;
     return (
       <Manager>
-        <Reference>{this.renderReference()}</Reference>
+        <Reference innerRef={this.registerRefNode}>
+          {this.renderReference()}
+        </Reference>
         {isOpen && (
-          <Fragment>
-            {closeOnBackdropClick && (trigger === 'click' || !trigger) ? (
-              <div
-                tabIndex="-1"
-                role="button"
-                ref={this.handleBackdropRef}
-                className={styles.backdrop}
-                onClick={this.close}
-                onKeyUp={this.handleBackdropKey}
-                aria-label={formatMessage({ id: 'button.close' })}
-              />
-            ) : null}
-            <Popper placement={origPlacement}>
-              {({ ref, style, placement, arrowProps }) => (
-                // $FlowFixMe see above renderContent
-                <PopoverWrapper
-                  appearance={{ ...appearance, placement }}
-                  id={this.id}
-                  innerRef={ref}
-                  style={style}
-                  placement={placement}
-                  arrowProps={arrowProps}
-                >
-                  {this.renderContent()}
-                </PopoverWrapper>
-              )}
-            </Popper>
-          </Fragment>
+          <Popper innerRef={this.registerContentNode} placement={origPlacement}>
+            {({ ref, style, placement, arrowProps }) => (
+              // $FlowFixMe see above renderContent
+              <PopoverWrapper
+                appearance={{ ...appearance, placement }}
+                id={this.id}
+                innerRef={ref}
+                style={style}
+                placement={placement}
+                arrowProps={arrowProps}
+                onFocus={this.handleWrapperFocus}
+                retainRefFocus={retainRefFocus}
+              >
+                {this.renderContent()}
+              </PopoverWrapper>
+            )}
+          </Popper>
         )}
       </Manager>
     );

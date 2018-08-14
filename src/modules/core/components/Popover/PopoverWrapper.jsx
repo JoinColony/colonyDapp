@@ -21,6 +21,8 @@ type Props = {
   children: Node,
   id: string,
   innerRef: (?HTMLElement) => void,
+  onFocus: (evt: SyntheticFocusEvent<HTMLElement>) => void,
+  retainRefFocus?: boolean,
   placement: string,
   style: any,
 };
@@ -31,16 +33,20 @@ const PopoverWrapper = ({
   children,
   id,
   innerRef,
+  onFocus,
   placement,
+  retainRefFocus,
   style,
 }: Props) => (
-  <span
+  <div
     className={getMainClasses(appearance, styles)}
     id={id}
     role="tooltip"
     ref={innerRef}
     style={style}
     data-placement={placement}
+    tabIndex={retainRefFocus ? '-1' : null}
+    onFocus={onFocus}
   >
     {children}
     <span
@@ -48,7 +54,7 @@ const PopoverWrapper = ({
       ref={arrowProps.ref}
       style={arrowProps.style}
     />
-  </span>
+  </div>
 );
 
 export default PopoverWrapper;
