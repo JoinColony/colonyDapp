@@ -1,21 +1,20 @@
 @import 'variables.css';
 
-.main {
-  composes: field from '~styles/fields.css';
-  position: relative;
-}
-
-.select {
-  composes: main from '../Input/Input.css';
+.baseSelect {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
+  width: auto;
   position: relative;
-  background-color: white;
   font-style: normal;
   transition: none;
   cursor: pointer;
+}
+
+.main {
+  composes: field from '~styles/fields.css';
+  position: relative;
 }
 
 .select[aria-disabled="true"], .select[aria-busy="true"] {
@@ -29,10 +28,6 @@
 
 .select[aria-expanded="true"] i {
   transform: rotate(180deg);
-}
-
-.selectAlt {
-  color: pink;
 }
 
 .loadingContainer {
@@ -59,4 +54,25 @@
 
 .select[aria-expanded="true"] .activeOption {
   color: var(--sky-blue);
+}
+
+/* themes */
+.themeDefault {
+  composes: main from '../Input/Input.css';
+  composes: baseSelect;
+  background-color: white;
+}
+
+.themeAlt {
+  composes: baseSelect;
+  padding: 5px 10px;
+  border-radius: var(--radius-normal);
+
+  &.select[aria-expanded="true"] {
+    background-color: var(--grey-blue-0);
+  }
+
+  &.select:focus {
+    outline: 0;
+  }
 }

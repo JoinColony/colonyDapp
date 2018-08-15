@@ -16,14 +16,14 @@ const options = [
         label="I'm a Select" 
         options={options} 
         placeholder="Select an option"
-        name="basicSelect1"
+        name="basicSelect"
       />
       <Select
-        appearance={{ alignOptions: 'right', theme: 'alt' }}
-        label="I'm another Select" 
+        appearance={{ alignOptions: 'left', theme: 'alt' }}
+        label="I'm an alt Select" 
         options={options} 
-        placeholder="Select another option"
-        name="basicSelect2"
+        placeholder="Select an alt option"
+        name="selecdtAltTheme"
       />
       <Button type="submit">Press Me</Button>
     </form>

@@ -2,10 +2,18 @@
 import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
+import { defineMessages } from 'react-intl';
 
 import styles from './SelectOption.css';
 
 import type { SelectOptionType } from '../Select/types';
+
+const MSG = defineMessages({
+  selectedLabelHelp: {
+    id: 'Select.SelectOption.selectedLabelHelp',
+    defaultMessage: 'selected',
+  },
+});
 
 type Props = {
   checked: boolean,
@@ -57,7 +65,14 @@ class SelectOption extends Component<Props> {
         onKeyPress={this.handleItemKeyPress}
         onMouseEnter={this.handleItemSelect}
       >
-        <span title={label}>{label}</span>
+        <span title={label}>
+          {label}
+          {checked && (
+            <small className={styles.selectedHelpText}>
+              ({formatIntl(MSG.selectedLabelHelp)})
+            </small>
+          )}
+        </span>
       </li>
     );
   }

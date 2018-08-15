@@ -8,7 +8,7 @@
   text-overflow: ellipsis;
   line-height: 32px;
   white-space: nowrap;
-  color: var(--text);
+  color: var(--grey-1);
   cursor: pointer;
 
   &[aria-selected="true"] {
@@ -17,7 +17,7 @@
   }
 
   &[aria-checked="true"] {
-    color: var(--grey-5);
+    color: var(--primary);
     pointer-events: none;
   }
 }
@@ -27,4 +27,9 @@
   margin-left: 5px;
   font-size: var(--size-small);
   line-height: 1;
+}
+
+.selectedHelpText {
+  padding-left: 5px;
+  font-weight: var(--weight-thin);
 }

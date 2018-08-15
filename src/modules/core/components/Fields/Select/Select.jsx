@@ -1,8 +1,10 @@
 /* @flow */
 import type { MessageDescriptor } from 'react-intl';
 
-import React, { Component } from 'react';
 import 'core-js/fn/array/find-index';
+import React, { Component } from 'react';
+
+import { getMainClasses } from '~utils/css';
 
 import styles from './Select.css';
 
@@ -291,7 +293,7 @@ class Select extends Component<Props, State> {
           <InputLabel inputId={$id} label={label} error={$error} help={help} />
         ) : null}
         <div
-          className={styles.select}
+          className={`${styles.select} ${getMainClasses(appearance, styles)}`}
           role="combobox"
           aria-controls={$id}
           aria-owns={listboxId}
