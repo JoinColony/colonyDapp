@@ -159,29 +159,34 @@ class Select extends Component<Props, State> {
       case SPACE: {
         // prevent page long-scroll when in view
         evt.preventDefault();
-        return this.close();
+        this.close();
+        break;
       }
       case UP: {
         // prevent page scroll when in view
         evt.preventDefault();
-        return this.goUp();
+        this.goUp();
+        break;
       }
       case DOWN: {
         // prevent page scroll when in view
         evt.preventDefault();
-        return this.goDown();
+        this.goDown();
+        break;
       }
       case TAB: {
-        // open, but selection is unchanged
-        if (checkedOption === selectedOption) {
+        if (checkedOption === selectedOption || selectedOption === -1) {
+          // no change
           this.close();
         }
-        return this.checkOption();
+        this.checkOption();
+        break;
       }
       case ENTER: {
         // Do not submit form
         evt.preventDefault();
-        return this.checkOption();
+        this.checkOption();
+        break;
       }
       default:
     }
@@ -274,6 +279,7 @@ class Select extends Component<Props, State> {
     return (
       <div
         className={styles.main}
+        onClick={this.toggle}
         onKeyUp={this.handleKeyUp}
         onKeyDown={this.handleKeyDown}
         ref={e => {
@@ -295,7 +301,6 @@ class Select extends Component<Props, State> {
           aria-disabled={disabled}
           aria-busy={isLoading}
           tabIndex="0"
-          onClick={this.toggle}
           ref={e => {
             this.combobox = e;
           }}
