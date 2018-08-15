@@ -38,6 +38,7 @@ module.exports = {
       components: [
         './src/modules/core/components/OmniPicker/OmniPicker.jsx',
         './src/modules/core/components/SingleUserPicker/SingleUserPicker.jsx',
+        './src/modules/core/components/DatePicker/DatePicker.jsx',
       ],
     },
     {

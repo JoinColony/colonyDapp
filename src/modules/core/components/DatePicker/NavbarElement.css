@@ -1,0 +1,22 @@
+@import 'variables.css';
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  height: 48px;
+  width: 100%;
+  padding: 1rem;
+}
+
+.navButton {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  svg {
+    fill: var(--colony-black);
+    stroke: var(--colony-black);
+  }
+}
