@@ -112,7 +112,11 @@ class Select extends Component<Props, State> {
   };
 
   handleOutsideClick = (evt: MouseEvent) => {
-    if (this.wrapper && !this.wrapper.contains(evt.target)) {
+    if (
+      this.wrapper &&
+      evt.target instanceof Node &&
+      !this.wrapper.contains(evt.target)
+    ) {
       this.close();
     }
   };
