@@ -73,6 +73,7 @@
   }
 
   &.select:focus {
-    outline: 0;
+    outline-color: var(--primary);
+    outline-width: 2px;
   }
 }
