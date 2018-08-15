@@ -2,6 +2,7 @@
 import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
+import 'core-js/fn/array/find-index';
 
 import { getMainClasses } from '~utils/css';
 
