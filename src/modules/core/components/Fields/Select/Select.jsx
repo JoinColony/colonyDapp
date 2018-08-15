@@ -44,12 +44,14 @@ type Props = {
   name: string,
   /** Placeholder for input */
   placeholder?: string,
+  /** Will be injected by `asField`, or must be supplied if unconnected */
+  $value: string,
+  /** Will be injected by `asField`, or must be manually supplied if unconnected */
+  setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
   $error?: string,
-  /** @ignore Will be injected by `asField` */
-  $value?: string,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
@@ -57,8 +59,6 @@ type Props = {
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
   ) => string,
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
   /** @ignore Standard input field property */
