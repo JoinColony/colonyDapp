@@ -1,7 +1,6 @@
 /* @flow */
 import type { MessageDescriptor } from 'react-intl';
 
-import 'core-js/fn/array/find-index';
 import React, { Component } from 'react';
 
 import { getMainClasses } from '~utils/css';
@@ -49,7 +48,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value: string,
+  $value?: string,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
@@ -68,7 +67,6 @@ type Props = {
 type State = {
   isLoading: boolean,
   isOpen: boolean,
-  checkedOption: number,
   selectedOption: number,
 };
 
@@ -84,31 +82,15 @@ class Select extends Component<Props, State> {
     options: [],
   };
 
-  constructor(props: Props, context) {
-    super(props, context);
+  state = {
+    isOpen: false,
+    isLoading: false,
+    selectedOption: -1,
+  };
 
-    const { $value } = props;
-
-    this.state = {
-      isOpen: false,
-      isLoading: false,
-      checkedOption: this.getCheckedOption($value),
-      selectedOption: -1,
-    };
-  }
-
-  componentWillReceiveProps({ $value: nextValue }: Props) {
-    const { $value } = this.props;
-    if ($value !== nextValue) {
-      this.setState({
-        checkedOption: this.getCheckedOption(nextValue),
-      });
-    }
-  }
-
-  getCheckedOption = (value: string) => {
-    const { options } = this.props;
-    return options.findIndex(option => option.value === value);
+  getCheckedOption = () => {
+    const { $value, options } = this.props;
+    return options.findIndex(option => option.value === $value);
   };
 
   handleOutsideClick = (evt: MouseEvent) => {
@@ -160,7 +142,8 @@ class Select extends Component<Props, State> {
 
   handleKeyOnOpen = (evt: SyntheticKeyboardEvent<*>) => {
     const { key } = evt;
-    const { checkedOption, selectedOption } = this.state;
+    const { selectedOption } = this.state;
+    const checkedOption = this.getCheckedOption();
     switch (key) {
       case SPACE: {
         // prevent page long-scroll when in view
@@ -200,7 +183,7 @@ class Select extends Component<Props, State> {
 
   handleKeyOnClosed = (evt: SyntheticKeyboardEvent<*>) => {
     const { key } = evt;
-    const { checkedOption } = this.state;
+    const checkedOption = this.getCheckedOption();
     if ([UP, DOWN, SPACE].indexOf(key) > -1) {
       evt.preventDefault();
       this.setState({ selectedOption: checkedOption });
@@ -237,7 +220,8 @@ class Select extends Component<Props, State> {
   };
 
   checkOption = async () => {
-    const { selectedOption, checkedOption } = this.state;
+    const { selectedOption } = this.state;
+    const checkedOption = this.getCheckedOption();
     if (selectedOption === checkedOption || selectedOption === -1) {
       // No change
       return;
@@ -245,12 +229,12 @@ class Select extends Component<Props, State> {
     const { onChange, setValue, options } = this.props;
     const { value } = options[selectedOption];
     this.setState({ isLoading: true });
-    setValue(value);
     try {
       await onChange(value);
     } catch (e) {
       // Do nothing (error handling happens in the action creator)
     } finally {
+      setValue(value);
       this.setState({ isLoading: false });
       this.close();
     }
@@ -278,7 +262,8 @@ class Select extends Component<Props, State> {
       setError,
       ...props
     } = this.props;
-    const { isOpen, isLoading, checkedOption, selectedOption } = this.state;
+    const { isOpen, isLoading, selectedOption } = this.state;
+    const checkedOption = this.getCheckedOption();
     const activeOption = options[checkedOption];
     const listboxId = `select-listbox-${$id}`;
     const activeOptionLabel = formatIntl(activeOption && activeOption.label);
