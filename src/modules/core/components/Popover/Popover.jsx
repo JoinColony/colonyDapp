@@ -8,25 +8,12 @@ import { Manager, Reference, Popper } from 'react-popper';
 import { injectIntl } from 'react-intl';
 import nanoid from 'nanoid';
 
-import type { PopoverTrigger, ReactRef } from './types';
+import type { ReactRef } from './types';
 
 // eslint-disable-next-line import/no-cycle
 import PopoverWrapper from './PopoverWrapper.jsx';
 
-export type Placement =
-  | 'auto'
-  | 'top'
-  | 'right'
-  | 'bottom'
-  | 'left'
-  | 'top-start'
-  | 'right-start'
-  | 'top-start'
-  | 'left-start'
-  | 'top-end'
-  | 'right-end'
-  | 'top-end'
-  | 'left-end';
+export type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 
 // This might be an eslint hiccup. Don't know where this is unused
 // eslint-disable-next-line react/no-unused-prop-types
@@ -35,6 +22,15 @@ type RefObj = { ref: ReactRef };
 export type Appearance = {
   theme: 'dark',
 };
+
+export type PopoverTrigger = ({
+  ref: ReactRef,
+  id: string,
+  isOpen: boolean,
+  open: () => void,
+  close: () => void,
+  toggle: () => void,
+}) => ReactNode;
 
 type Props = {
   appearance?: Appearance,
@@ -49,6 +45,8 @@ type Props = {
     | (({ close: () => void }) => ReactNode),
   /** Values for content (react-intl interpolation) */
   contentValues?: { [string]: string },
+  /** Called when Popover closes */
+  onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void,
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number,
   /** Popover placement */
@@ -99,8 +97,7 @@ class Popover extends Component<Props, State> {
       (trigger === 'click' || !trigger)
     ) {
       document.body.addEventListener('click', this.handleOutsideClick, true);
-    }
-    if (!isOpen && prevOpen) {
+    } else if (!isOpen && prevOpen) {
       this.removeOutsideClickListener();
     }
   }
@@ -118,12 +115,13 @@ class Popover extends Component<Props, State> {
   getChildProps = (ref: ReactRef) => {
     const { id } = this;
     const { children, trigger } = this.props;
+    const { isOpen } = this.state;
     const childProps: {
-      'aria-describedby': string,
+      'aria-describedby': ?string,
       innerRef?: ReactRef,
       ref?: ReactRef,
     } = {
-      'aria-describedby': id,
+      'aria-describedby': isOpen ? id : null,
     };
     if (typeof children.type == 'function') {
       childProps.innerRef = ref;
@@ -175,12 +173,18 @@ class Popover extends Component<Props, State> {
   };
 
   open = () => {
+    const { isOpen } = this.state;
+    if (isOpen) return;
     this.setState({ isOpen: true });
   };
 
-  close = () => {
+  close = (data?: any, modifiers?: { cancelled: boolean }) => {
+    const { onClose } = this.props;
+    const { isOpen } = this.state;
     clearTimeout(this.openTimeout);
+    if (!isOpen) return;
     this.setState({ isOpen: false });
+    if (typeof onClose == 'function') onClose(data, modifiers);
   };
 
   toggle = () => {
@@ -199,12 +203,6 @@ class Popover extends Component<Props, State> {
     this.contentNode = node;
   };
 
-  handleBackdropKey = ({ key }: SyntheticKeyboardEvent<HTMLElement>) => {
-    if (key === 'Escape') {
-      this.close();
-    }
-  };
-
   handleWrapperFocus = () => {
     const { retainRefFocus } = this.props;
     if (retainRefFocus && this.refNode instanceof HTMLInputElement) {
@@ -214,11 +212,12 @@ class Popover extends Component<Props, State> {
 
   renderReference = () => {
     const { children } = this.props;
+    const { isOpen } = this.state;
     const { id, requestOpen, close, toggle } = this;
 
     if (typeof children == 'function') {
       return ({ ref }: RefObj) =>
-        children({ ref, id, open: requestOpen, close, toggle });
+        children({ ref, id, isOpen, open: requestOpen, close, toggle });
     }
     return ({ ref }: RefObj) =>
       React.cloneElement(children, this.getChildProps(ref));

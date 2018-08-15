@@ -104,11 +104,11 @@ Use this method if you have complex elements for the trigger. You can also see h
 
 ```js
 <Popover content={({ close }) => <span>Render prop content</span>}>
-  {({ ref, id, open, close, toggle }) =>
+  {({ ref, id, isOpen, open, close, toggle }) =>
     <Button
       appearance={{ theme: 'primary' }}
       innerRef={ref}
-      aria-describedby={id}
+      aria-describedby={isOpen ? id : null}
       onMouseEnter={open}
       onMouseLeave={close}
     >
