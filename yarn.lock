@@ -11785,6 +11785,12 @@ react-codemirror2@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/react-codemirror2/-/react-codemirror2-5.1.0.tgz#62de4460178adea40eb52eabf7491669bf3794b8"
 
+react-day-picker@^7.1.10:
+  version "7.1.10"
+  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-7.1.10.tgz#c763b1acb141ce960e25654b7033c2207f0fc1c3"
+  dependencies:
+    prop-types "^15.6.1"
+
 react-dev-utils@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-5.0.1.tgz#1f396e161fe44b595db1b186a40067289bf06613"
@@ -13599,6 +13605,16 @@ subtext@^5.0.0:
     hoek "4.x.x"
     pez "2.x.x"
     wreck "12.x.x"
+
+sugar-core@^2.0.0, sugar-core@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/sugar-core/-/sugar-core-2.0.4.tgz#9db0730e6c47eb7d28184a79c4ab18b2b7946ca0"
+
+sugar-date@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/sugar-date/-/sugar-date-2.0.4.tgz#6b297276487445c246487a4239480a3cfabd55c2"
+  dependencies:
+    sugar-core "^2.0.0"
 
 sugarss@^1.0.0:
   version "1.0.1"

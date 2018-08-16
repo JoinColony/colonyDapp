@@ -1,16 +1,17 @@
 /* @flow */
 
 import type { MessageDescriptor } from 'react-intl';
-import React, { Component } from 'react';
-import Cleave from 'cleave.js/react';
+import React from 'react';
 import cx from 'classnames';
-
-import { getMainClasses } from '~utils/css';
 
 import styles from './Input.css';
 
 import asField from '../asField';
 import InputLabel from '../InputLabel';
+
+import type { CleaveOptions } from './types';
+
+import InputComponent from './InputComponent.jsx';
 
 type Appearance = {
   theme?: 'fat' | 'underlined',
@@ -19,28 +20,14 @@ type Appearance = {
   colorSchema?: 'dark' | 'transparent',
 };
 
-/* Cleave.js options. This is not an extensive list. Just the ones we're using for now */
-/* Full list: https://github.com/nosir/cleave.js/blob/master/doc/options.md */
-type CleaveOptions = {
-  prefix?: string,
-  rawValueTrimPrefix?: boolean,
-  numeral?: boolean,
-  delimiter?: string,
-  numeralThousandsGroupStyle?: string,
-  numeralDecimalScale?: number,
-  numeralPositiveOnly?: boolean,
-};
-
-type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
-
 type Props = {
   /** Appearance object */
-  appearance?: Appearance,
+  appearance: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
   /** Just render the `<input>` element without label */
   elementOnly?: boolean,
-  /** Options for cleave.js formatting */
+  /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */
   formattingOptions?: CleaveOptions,
   /** Input field name (form variable) */
   name: string,
@@ -73,90 +60,63 @@ type Props = {
   setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
-  /** @ignore Standard input field property */
-  onChange: Function,
 };
 
-class Input extends Component<Props> {
-  static displayName = 'Input';
-
-  static defaultProps = {
-    appearance: {},
+const Input = ({
+  appearance,
+  elementOnly,
+  formattingOptions,
+  formatIntl,
+  help,
+  $id,
+  innerRef,
+  label,
+  name,
+  $value,
+  $error,
+  $touched,
+  setValue,
+  setError,
+  ...props
+}: Props) => {
+  const inputProps = {
+    appearance,
+    formattingOptions,
+    id: $id,
+    innerRef,
+    name,
+    'aria-invalid': $error ? true : null,
+    value: $value,
+    ...props,
   };
 
-  handleChange = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => {
-    const {
-      props: { onChange },
-    } = this;
-    // We are reassigning the value here as cleave just adds a `rawValue` prop
-    // eslint-disable-next-line no-param-reassign
-    evt.currentTarget.value = evt.currentTarget.rawValue;
-    if (onChange) onChange(evt);
-  };
-
-  renderInput = inputProps => {
-    const { formattingOptions, innerRef, ...props } = inputProps;
-    if (formattingOptions) {
-      return (
-        <Cleave
-          {...props}
-          htmlRef={innerRef}
-          options={formattingOptions}
-          onChange={this.handleChange}
-        />
-      );
-    }
-    return <input ref={innerRef} {...props} />;
-  };
-
-  render() {
-    const {
-      appearance = {},
-      elementOnly,
-      formatIntl,
-      help,
-      $id,
-      label,
-      name,
-      $value,
-      $error,
-      $touched,
-      setValue,
-      setError,
-      ...props
-    } = this.props;
-
-    const inputProps = {
-      id: $id,
-      name,
-      'aria-invalid': $error ? true : null,
-      className: getMainClasses(appearance, styles),
-      value: $value,
-      ...props,
-    };
-
-    if (elementOnly) {
-      return this.renderInput(inputProps);
-    }
-    const containerClasses = cx(styles.container, {
-      [styles.containerHorizontal]: appearance.direction === 'horizontal',
-    });
-    return (
-      <div className={containerClasses}>
-        <InputLabel
-          appearance={appearance}
-          inputId={$id}
-          label={label}
-          error={$error}
-          help={help}
-        />
-        {this.renderInput(inputProps)}
-        {appearance.direction === 'horizontal' && $error ? (
-          <span className={styles.error}>{$error}</span>
-        ) : null}
-      </div>
-    );
+  if (elementOnly) {
+    return <InputComponent {...inputProps} />;
   }
-}
+  const containerClasses = cx(styles.container, {
+    [styles.containerHorizontal]: appearance.direction === 'horizontal',
+  });
+  return (
+    <div className={containerClasses}>
+      <InputLabel
+        appearance={appearance}
+        inputId={$id}
+        label={label}
+        error={$error}
+        help={help}
+      />
+      <InputComponent {...inputProps} />
+      {appearance.direction === 'horizontal' && $error ? (
+        <span className={styles.error}>{$error}</span>
+      ) : null}
+    </div>
+  );
+};
+
+Input.displayName = 'Input';
+
+Input.defaultProps = {
+  appearance: {},
+};
 
 export default asField()(Input);

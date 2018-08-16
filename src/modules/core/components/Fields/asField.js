@@ -112,7 +112,6 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
         const $placeholder = formatIntl(placeholder, formatMessage);
         // This is assigning an empty string to the field's value.
         // It might be problematic for some cases but for now I couldn't think of one
-        const $value = value || '';
         return {
           elementOnly,
           'aria-invalid': !!$error,
@@ -125,7 +124,7 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
           title: $error || $title || $label || $placeholder,
           $id,
           $error,
-          $value,
+          $value: value,
           $touched,
           onChange,
           onBlur,

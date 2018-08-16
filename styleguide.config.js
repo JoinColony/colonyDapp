@@ -22,6 +22,7 @@ module.exports = {
       name: 'Forms',
       components: [
         './src/modules/core/components/Fields/Input/Input.jsx',
+        './src/modules/core/components/Fields/Input/InputComponent.jsx',
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',
         './src/modules/core/components/Fields/Textarea/Textarea.jsx',
         './src/modules/core/components/Fields/Radio/Radio.jsx',
@@ -37,6 +38,7 @@ module.exports = {
       components: [
         './src/modules/core/components/OmniPicker/OmniPicker.jsx',
         './src/modules/core/components/SingleUserPicker/SingleUserPicker.jsx',
+        './src/modules/core/components/DatePicker/DatePicker.jsx',
       ],
     },
     {
