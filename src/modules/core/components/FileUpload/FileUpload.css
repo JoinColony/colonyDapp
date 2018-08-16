@@ -1,7 +1,7 @@
 @import 'variables.css';
 
-.mainContainer {
-  composes: marginBottomMedium from '~styles/layout.css';
+.main {
+  composes: field from '~styles/fields.css';
 }
 
 .dropzone {
@@ -27,7 +27,8 @@
   background-color: color(var(--danger) alpha(20%));
 }
 
-.dropzoneText {
+.placeholderText {
+  text-align: center;
   font-weight: var(--weight-semi);
 }
 
@@ -39,19 +40,4 @@
   font-weight: inherit;
   color: var(--sky-blue);
   cursor: pointer;
-}
-
-/* Appearance Section */
-
-/* appearance.align */
-.alignLeft {
-  text-align: left;
-}
-
-.alignCenter {
-  composes: alignCenter from '~styles/text.css';
-}
-
-.alignRight {
-  composes: alignRight from '~styles/text.css';
 }
