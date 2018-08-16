@@ -4,6 +4,7 @@
   composes: field from '~styles/fields.css';
   padding: 0 8px;
   height: 32px;
+  width: 100%;
   border: 1px solid var(--temp-grey-5);
   border-radius: var(--radius-tiny);
   background-color: var(--colony-white);
