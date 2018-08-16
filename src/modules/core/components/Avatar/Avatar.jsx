@@ -8,7 +8,7 @@ import styles from './Avatar.css';
 
 type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL?: string,
+  avatarURL?: ?string,
   /** Extra className */
   className?: string,
   /** Avatars that are not set have a different placeholder */

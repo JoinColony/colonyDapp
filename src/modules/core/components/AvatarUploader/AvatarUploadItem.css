@@ -1,0 +1,42 @@
+@import 'variables.css';
+
+.main {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.previewImage {
+  height: 100%;
+  background-size: contain;
+}
+
+.overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: var(--primary);
+  opacity: 0.7;
+}
+
+.loader {
+  composes: spin from '~styles/animations.css';
+  display: block;
+  height: 48px;
+  width: 48px;
+  position: relative;
+  border: 2px solid var(--danger);
+  border-radius: 50%;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  opacity: 0.8;
+  content: '';
+}
+
+.error {
+  composes: overlay;
+  background-color: var(--danger);
+}
