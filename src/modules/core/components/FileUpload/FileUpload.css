@@ -28,8 +28,8 @@
 }
 
 .placeholderText {
-  text-align: center;
   font-weight: var(--weight-semi);
+  text-align: center;
 }
 
 .browseButton {

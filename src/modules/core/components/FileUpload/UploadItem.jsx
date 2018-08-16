@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { MessageDescriptor } from 'react-intl';
 import fileReader from '../../../../lib/fileReader';
 
-import type { UploadFile } from './types';
+// eslint-disable-next-line import/no-cycle
+import type { UploadFile, FileReaderFile } from './FileUpload.jsx';
 
 import { asField } from '../Fields';
 import { Tooltip } from '../Popover';
@@ -34,19 +34,10 @@ const MSG = defineMessages({
 type Props = {
   /** Index of file in list of files to be uploaded */
   idx: number,
-  /** Text to be shown for removing an item */
-  removeActionText: string | MessageDescriptor,
-  /** Values for label text (react-intl interpolation) */
-  removeActionTextValues?: { [string]: string },
   /** Function used to remove each file from the list of files to upload */
   remove: (idx: number) => void,
   /** Function used to perform the acutal upload action of the file */
-  upload: (fileData: string) => string,
-  /** @ignore Will be injected by `asField` */
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: { [string]: string },
-  ) => string,
+  upload: (file: FileReaderFile) => any,
   /** @ignore Will be injected by `asField` */
   $value: UploadFile,
   /** @ignore Will be injected by `asField` */
@@ -57,10 +48,6 @@ type Props = {
 
 class UploadItem extends Component<Props> {
   static displayName = 'UploadItem';
-
-  static defaultProps = {
-    removeActionText: MSG.removeActionText,
-  };
 
   componentDidMount() {
     const {
@@ -89,13 +76,14 @@ class UploadItem extends Component<Props> {
     const { file } = $value;
     try {
       readFile = await this.read(file);
-      fileReference = await upload(readFile.data);
+      setValue({ ...$value, preview: readFile.data });
+      fileReference = await upload(readFile);
     } catch (e) {
       // TODO better error handling here
       setValue({ ...$value, error: 'uploadError' });
       return;
     }
-    setValue({ ...$value, uploaded: fileReference });
+    setValue({ ...$value, preview: readFile.data, uploaded: fileReference });
   }
 
   read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
@@ -104,9 +92,6 @@ class UploadItem extends Component<Props> {
     const {
       $error,
       $value: { file, uploaded },
-      formatIntl,
-      removeActionText,
-      removeActionTextValues,
     } = this.props;
 
     return (
@@ -134,9 +119,8 @@ class UploadItem extends Component<Props> {
             type="button"
             onClick={this.handleRemoveClick}
             appearance={{ theme: 'blue' }}
-          >
-            {formatIntl(removeActionText, removeActionTextValues)}
-          </Button>
+            text={MSG.removeActionText}
+          />
         </div>
       </div>
     );
