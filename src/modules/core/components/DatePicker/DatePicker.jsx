@@ -20,7 +20,7 @@ import CaptionElement from './CaptionElement.jsx';
 import NavbarElement from './NavbarElement.jsx';
 
 type Props = {
-  /** Appearance object, will be passed down to <Input> */
+  /** Appearance object, will be passed down to `Input`, see [InputComponent](#inputcomponent) */
   appearance?: InputComponentAppearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
@@ -40,14 +40,14 @@ type Props = {
   labelValues?: { [string]: string },
   /** Placeholder for input */
   placeholder?: string,
-  /** Custom trigger to render (render prop) */
+  /** Custom trigger to render (render prop), see [Popover](#popover) for details */
   renderTrigger?: PopoverTrigger,
+  /** Callback to call when a date is picked. Only needed when using `connect={false}` */
+  setValue: (val: Date) => void,
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
   $value?: Date,
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
   /** @ignore Will be injected by `asField` */
@@ -91,7 +91,7 @@ class DatePicker extends Component<Props, State> {
       setValue(day);
       this.setState({
         inputValue: getShortDate(day),
-        currentDate: day,
+        currentDate: null,
       });
       return;
     }
@@ -109,6 +109,7 @@ class DatePicker extends Component<Props, State> {
       setValue(currentDate);
       this.setState({
         inputValue: getShortDate(currentDate),
+        currentDate: null,
       });
     }
   };
@@ -160,7 +161,9 @@ class DatePicker extends Component<Props, State> {
   };
 
   render() {
+    const { $value } = this.props;
     const { currentDate } = this.state;
+    const selectedDay = currentDate || $value;
     return (
       <div className={styles.main}>
         <Popover
@@ -174,7 +177,7 @@ class DatePicker extends Component<Props, State> {
               enableOutsideDays
               month={currentDate || new Date()}
               onDayClick={close}
-              selectedDays={day => DateUtils.isSameDay(currentDate, day)}
+              selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
               captionElement={props => <CaptionElement {...props} />}
               navbarElement={props => <NavbarElement {...props} />}
             />
