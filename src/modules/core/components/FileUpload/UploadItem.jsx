@@ -4,15 +4,15 @@ import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { MessageDescriptor } from 'react-intl';
-import fileReader from '../../../../../../lib/fileReader';
+import fileReader from '../../../../lib/fileReader';
 
-import type { UploadFile } from '../types';
+import type { UploadFile } from './types';
 
-import asField from '../../asField';
-import { Tooltip } from '../../../Popover';
-import Button from '../../../Button';
-import Icon from '../../../Icon';
-import ProgressBar from '../../../ProgressBar';
+import { asField } from '../Fields';
+import { Tooltip } from '../Popover';
+import Button from '../Button';
+import Icon from '../Icon';
+import ProgressBar from '../ProgressBar';
 
 import styles from './UploadItem.css';
 

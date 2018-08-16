@@ -11,20 +11,7 @@ import Popover from './Popover.jsx';
 
 import styles from './Tooltip.css';
 
-type Placement =
-  | 'auto'
-  | 'top'
-  | 'right'
-  | 'bottom'
-  | 'left'
-  | 'top-start'
-  | 'right-start'
-  | 'top-start'
-  | 'left-start'
-  | 'top-end'
-  | 'right-end'
-  | 'top-end'
-  | 'left-end';
+type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 
 type Props = {
   /** Child element to trigger the popover */

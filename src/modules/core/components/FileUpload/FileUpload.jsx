@@ -12,9 +12,9 @@ import type { UploadFile } from './types';
 
 import { getMainClasses } from '~utils/css';
 
-import asFieldArray from '../asFieldArray';
-import InputLabel from '../InputLabel';
-import UploadItem from './UploadItem';
+import { asFieldArray } from '../Fields';
+import InputLabel from '../Fields/InputLabel';
+import UploadItem from './UploadItem.jsx';
 import styles from './FileUpload.css';
 
 const MSG = defineMessages({

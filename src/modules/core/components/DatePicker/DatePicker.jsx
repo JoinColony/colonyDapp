@@ -43,11 +43,11 @@ type Props = {
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */
   renderTrigger?: PopoverTrigger,
   /** Callback to call when a date is picked. Only needed when using `connect={false}` */
-  setValue: (val: Date) => void,
+  setValue: (val: ?Date) => void,
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value?: Date,
+  $value?: ?Date,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
   /** @ignore Will be injected by `asField` */
