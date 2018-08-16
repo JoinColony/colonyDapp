@@ -24,6 +24,7 @@ module.exports = {
         './src/modules/core/components/Fields/Input/Input.jsx',
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',
         './src/modules/core/components/Fields/Textarea/Textarea.jsx',
+        './src/modules/core/components/Fields/Radio/Radio.jsx',
         './src/modules/core/components/Button/Button.jsx',
         './src/modules/core/components/Fields/FileUpload/FileUpload.jsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
