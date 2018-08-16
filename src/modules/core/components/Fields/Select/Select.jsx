@@ -221,13 +221,13 @@ class Select extends Component<Props, State> {
   };
 
   checkOption = async () => {
+    const { onChange, setValue, options } = this.props;
     const { selectedOption } = this.state;
     const checkedOption = this.getCheckedOption();
     if (selectedOption === checkedOption || selectedOption === -1) {
       // No change
       return;
     }
-    const { onChange, setValue, options } = this.props;
     const { value } = options[selectedOption];
     this.setState({ isLoading: true });
     try {
