@@ -1,14 +1,16 @@
 @import 'variables.css';
 
 .main {
-  padding: 0 .5rem;
   display: table-caption;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
 }
 
 .monthName {
-  width: 70%;
   margin: 0 auto;
-  text-align: center;
+  width: 70%;
   border-bottom: 1px solid var(--colony-black);
+  font-weight: var(--weight-semi);
+  text-align: center;
+  color: var(--colony-black);
 }

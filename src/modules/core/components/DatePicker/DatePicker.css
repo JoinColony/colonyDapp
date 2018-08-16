@@ -68,10 +68,10 @@
 }
 
 .day {
-  height: 36px;
-  width: 36px;
   display: table-cell;
   padding: 8px;
+  height: 36px;
+  width: 36px;
   position: relative;
   vertical-align: middle;
   z-index: 0;
@@ -100,16 +100,6 @@
   padding-top: 0.5rem;
 }
 
-/*.todayButton {
-  border: none;
-  background-color: transparent;
-  background-image: none;
-  font-size: 0.875em;
-  color: #4a90e2;
-  box-shadow: none;
-  cursor: pointer;
-}*/
-
 /* Default modifiers */
 
 .selected {
@@ -122,7 +112,6 @@
     z-index: -1;
     border: 3px solid var(--primary);
     border-radius: 50%;
-    /*background-color: var(--colony-black);*/
     content: '';
   }
 }

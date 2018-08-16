@@ -122,10 +122,7 @@ class DatePicker extends Component<Props, State> {
         inputValue: evt.target.value,
       });
     } else {
-      this.setState({
-        inputValue: evt.target.value,
-        currentDate: null,
-      });
+      this.setState({ inputValue: evt.target.value });
     }
   };
 
