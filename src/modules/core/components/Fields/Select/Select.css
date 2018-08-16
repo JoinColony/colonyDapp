@@ -58,7 +58,7 @@
 
 /* themes */
 .themeDefault {
-  composes: main from '../Input/Input.css';
+  composes: main from '../Input/InputComponent.css';
   composes: baseSelect;
   background-color: white;
 }
