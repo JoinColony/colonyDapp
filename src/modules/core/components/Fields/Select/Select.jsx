@@ -287,7 +287,6 @@ class Select extends Component<Props, State> {
           className={`${styles.select} ${getMainClasses(appearance, styles)}`}
           role="combobox"
           aria-controls={$id}
-          aria-owns={listboxId}
           aria-expanded={isOpen}
           aria-label={elementOnly ? label : null}
           aria-labelledby={!elementOnly ? `${$id}-label` : null}
