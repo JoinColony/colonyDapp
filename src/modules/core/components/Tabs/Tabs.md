@@ -1,12 +1,14 @@
 Tabs are just a simple wrapper around [react-tabs](https://github.com/reactjs/react-tabs), which utilises our own styles. The props available for each component are mirrored here. For more documentation around this component and all the default values visit their site.
 
-You can impor Tabs into your component similarly:
+You can import Tabs into your component similarly:
 
 `import { Tab, Tabs, TabList, TabPanel } from '../Tabs';`
 
 ### Simple Tabs example
 
 ```js
+const { Tab, Tabs, TabList, TabPanel } = require('.');
+
 <Tabs>
   <TabList>
     <Tab>Cool option</Tab>
