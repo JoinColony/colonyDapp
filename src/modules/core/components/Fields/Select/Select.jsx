@@ -65,7 +65,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
   /** @ignore Standard input field property */
-  onChange: Function,
+  onChange: (val: any) => void,
 };
 
 type State = {
@@ -229,7 +229,7 @@ class Select extends Component<Props, State> {
     }
   };
 
-  checkOption = async () => {
+  checkOption = () => {
     const { onChange, setValue, options } = this.props;
     const { selectedOption } = this.state;
     const checkedOption = this.getCheckedOption();
@@ -238,16 +238,11 @@ class Select extends Component<Props, State> {
       return;
     }
     const { value } = options[selectedOption];
-    this.setState({ isLoading: true });
-    try {
-      await onChange(value);
-    } catch (e) {
-      // Do nothing (error handling happens in the action creator)
-    } finally {
-      setValue(value);
-      this.setState({ isLoading: false });
-      this.close();
+    if (onChange) {
+      onChange(value);
     }
+    setValue(value);
+    this.close();
   };
 
   selectOption = (idx: number) => {
@@ -280,9 +275,6 @@ class Select extends Component<Props, State> {
     return (
       <div
         className={styles.main}
-        onClick={this.toggle}
-        onKeyUp={this.handleKeyUp}
-        onKeyDown={this.handleKeyDown}
         ref={e => {
           this.wrapper = e;
         }}
@@ -306,6 +298,9 @@ class Select extends Component<Props, State> {
             this.combobox = e;
           }}
           id={$id}
+          onClick={this.toggle}
+          onKeyUp={this.handleKeyUp}
+          onKeyDown={this.handleKeyDown}
           {...props}
         >
           <div className={styles.selectInner}>

@@ -41,6 +41,7 @@ class SelectOption extends Component<Props> {
 
   handleItemKeyPress = (evt: SyntheticKeyboardEvent<*>) => {
     const { onClick } = this.props;
+    console.log('handleItemKeyPress')
     evt.stopPropagation();
     onClick();
   };
