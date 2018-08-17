@@ -9,7 +9,7 @@ import styles from './SelectListBox.css';
 
 import SelectOption from '../SelectOption';
 
-import type { Appearance, SelectOptionType } from './types';
+import type { Appearance } from './types';
 
 const displayName = 'SelectListBox';
 
@@ -17,7 +17,10 @@ type Props = {
   appearance: Appearance,
   checkedOption: number,
   listboxId: string,
-  options: Array<SelectOptionType>,
+  options: Array<{
+    label: MessageDescriptor | string,
+    value: string,
+  }>,
   selectedOption: number,
   onSelect: Function,
   onClick: Function,

@@ -6,8 +6,6 @@ import { defineMessages } from 'react-intl';
 
 import styles from './SelectOption.css';
 
-import type { SelectOptionType } from '../Select/types';
-
 const MSG = defineMessages({
   selectedLabelHelp: {
     id: 'Select.SelectOption.selectedLabelHelp',
@@ -19,7 +17,10 @@ type Props = {
   checked: boolean,
   id: string,
   idx: number,
-  option: SelectOptionType,
+  option: {
+    label: MessageDescriptor | string,
+    value: string,
+  },
   selected: boolean,
   onSelect: Function,
   onClick: Function,

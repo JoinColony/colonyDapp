@@ -13,7 +13,7 @@ import Icon from '../../Icon';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 
-import type { Appearance, SelectOptionType } from './types';
+import type { Appearance } from './types';
 
 import SelectListBox from './SelectListBox.jsx';
 
@@ -21,7 +21,10 @@ import { DOWN, ENTER, ESC, SPACE, UP, TAB } from './keyTypes';
 
 type Props = {
   /** Available `option`s for the select */
-  options: Array<SelectOptionType>,
+  options: Array<{
+    label: MessageDescriptor | string,
+    value: string,
+  }>,
   /** Appearance object */
   appearance: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -88,6 +91,12 @@ class Select extends Component<Props, State> {
     isLoading: false,
     selectedOption: -1,
   };
+
+  componentWillUnmount() {
+    if (document.body) {
+      document.body.removeEventListener('click', this.handleOutsideClick, true);
+    }
+  }
 
   getCheckedOption = () => {
     const { $value, options } = this.props;
