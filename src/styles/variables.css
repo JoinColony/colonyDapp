@@ -59,7 +59,6 @@
   --z-index-dialog: 5;
   --z-index-popover: 6;
   --z-index-notification: 7;
-  --z-index-toast: 8;
 
   /*
    * Fonts
@@ -82,12 +81,6 @@
   --size-large: 28px;
   --size-huge: 36px;
   --spacing-normal: 0.25px;
-
-  /*
-   * UI Component Settings
-   */
-
-  --ui-toaster-height: 50px;
 
   /*
    * Media queries

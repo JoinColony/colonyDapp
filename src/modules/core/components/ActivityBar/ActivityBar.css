@@ -1,10 +1,14 @@
 @import 'variables.css';
 
+:root {
+  --activity-bar-height: 50px;
+}
+
 .main {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
-  height: var(--ui-toaster-height);
+  height: var(--activity-bar-height);
   position: fixed;
   right: 0;
   bottom: 0;
@@ -25,7 +29,7 @@
 
 .control {
   display: flex;
-  flex-basis: var(--ui-toaster-height);
+  flex-basis: var(--activity-bar-height);
   justify-content: center;
   align-items: center;
   color: var(--text-invert);
