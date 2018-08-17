@@ -1,0 +1,10 @@
+@import 'variables.css';
+
+.main {
+  display: none;
+  padding: 20px 0 10px;
+}
+
+.selected {
+  display: block;
+}

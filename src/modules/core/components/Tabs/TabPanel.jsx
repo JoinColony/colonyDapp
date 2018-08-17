@@ -3,17 +3,20 @@
 import React from 'react';
 import { TabPanel as ReactTabPanel } from 'react-tabs';
 
-// className: string | Array<string> | { [string]: boolean }
-// default: "react-tabs__tab-panel"
-// selectedClassName: string
-// default: "react-tabs__tab-panel--selected"
+import styles from './TabPanel.css';
 
 type Props = {
   /** If set to true the tab will also be rendered if inactive. */
-  forceRender: boolean,
+  forceRender?: boolean,
 };
 
-const TabPanel = (props: Props) => <ReactTabPanel {...props} />;
+const TabPanel = (props: Props) => (
+  <ReactTabPanel
+    className={styles.main}
+    selectedClassName={styles.selected}
+    {...props}
+  />
+);
 
 TabPanel.tabsRole = 'TabPanel';
 

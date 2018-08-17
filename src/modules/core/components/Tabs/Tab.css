@@ -1,0 +1,29 @@
+@import 'variables.css';
+
+.main {
+  padding: 5px 10px 10px;
+  z-index: 0;
+  border-bottom: 2px solid transparent;
+  font-size: var(--size-medium);
+  font-weight: var(--weight-semi);
+  color: var(--colony-black);
+  cursor: pointer;
+
+  &:hover {
+    border-bottom-color: var(--primary);
+  }
+}
+
+.selected {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+.disabled {
+  color: var(--temp-grey-5);
+  cursor: default;
+
+  &:hover {
+    border-bottom-color: transparent;
+  }
+}

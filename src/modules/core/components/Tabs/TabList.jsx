@@ -3,12 +3,13 @@
 import React from 'react';
 import { TabList as ReactTabList } from 'react-tabs';
 
-// className: string | Array<string> | { [string]: boolean }
-// default: "react-tabs__tab-list"
+import styles from './TabList.css';
 
 type Props = {};
 
-const TabList = (props: Props) => <ReactTabList {...props} />;
+const TabList = (props: Props) => (
+  <ReactTabList className={styles.main} {...props} />
+);
 
 TabList.tabsRole = 'TabList';
 
