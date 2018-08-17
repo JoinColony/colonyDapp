@@ -33,18 +33,12 @@
   transform: rotate(180deg);
 }
 
-.loadingContainer {
+.selectExpandContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 21px;
   width: 21px;
-}
-
-.loading {
-  composes: loading from '~styles/elements.css';
-  height: 10px;
-  width: 10px;
 }
 
 .activeOption {

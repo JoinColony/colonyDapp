@@ -2,6 +2,7 @@
 import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
+import { defineMessages } from 'react-intl';
 import 'core-js/fn/array/find-index';
 
 import { getMainClasses } from '~utils/css';
@@ -18,6 +19,13 @@ import type { Appearance } from './types';
 import SelectListBox from './SelectListBox.jsx';
 
 import { DOWN, ENTER, ESC, SPACE, UP, TAB } from './keyTypes';
+
+const MSG = defineMessages({
+  expandIconHTMLTitle: {
+    id: 'Select.expandIconHTMLTitle',
+    defaultMessage: 'expand',
+  },
+});
 
 type Props = {
   /** Available `option`s for the select */
@@ -69,13 +77,12 @@ type Props = {
 };
 
 type State = {
-  isLoading: boolean,
   isOpen: boolean,
   selectedOption: number,
 };
 
 class Select extends Component<Props, State> {
-  combobox: ?HTMLElement;
+  comboboxNode: ?HTMLElement;
 
   wrapper: ?HTMLElement;
 
@@ -88,7 +95,6 @@ class Select extends Component<Props, State> {
 
   state = {
     isOpen: false,
-    isLoading: false,
     selectedOption: -1,
   };
 
@@ -115,10 +121,7 @@ class Select extends Component<Props, State> {
 
   open = () => {
     const { disabled } = this.props;
-    const { isLoading } = this.state;
-    if (disabled || isLoading) {
-      return;
-    }
+    if (disabled) return;
     this.setState({ isOpen: true });
     if (document.body) {
       document.body.addEventListener('click', this.handleOutsideClick, true);
@@ -127,8 +130,8 @@ class Select extends Component<Props, State> {
 
   close = () => {
     this.setState({ isOpen: false, selectedOption: -1 });
-    if (this.combobox) {
-      this.combobox.focus();
+    if (this.comboboxNode) {
+      this.comboboxNode.focus();
     }
     if (document.body) {
       document.body.removeEventListener('click', this.handleOutsideClick, true);
@@ -230,7 +233,7 @@ class Select extends Component<Props, State> {
   };
 
   checkOption = () => {
-    const { onChange, setValue, options } = this.props;
+    const { setValue, options } = this.props;
     const { selectedOption } = this.state;
     const checkedOption = this.getCheckedOption();
     if (selectedOption === checkedOption || selectedOption === -1) {
@@ -238,11 +241,12 @@ class Select extends Component<Props, State> {
       return;
     }
     const { value } = options[selectedOption];
-    if (onChange) {
-      onChange(value);
-    }
     setValue(value);
     this.close();
+  };
+
+  registerComboboxNode = (node: ?HTMLElement) => {
+    this.comboboxNode = node;
   };
 
   selectOption = (idx: number) => {
@@ -267,7 +271,7 @@ class Select extends Component<Props, State> {
       setError,
       ...props
     } = this.props;
-    const { isOpen, isLoading, selectedOption } = this.state;
+    const { isOpen, selectedOption } = this.state;
     const checkedOption = this.getCheckedOption();
     const activeOption = options[checkedOption];
     const listboxId = `select-listbox-${$id}`;
@@ -278,6 +282,9 @@ class Select extends Component<Props, State> {
         ref={e => {
           this.wrapper = e;
         }}
+        onClick={this.toggle}
+        onKeyUp={this.handleKeyUp}
+        onKeyDown={this.handleKeyDown}
         role="presentation"
       >
         {!elementOnly && label ? (
@@ -289,33 +296,18 @@ class Select extends Component<Props, State> {
           aria-controls={$id}
           aria-expanded={isOpen}
           aria-label={elementOnly ? label : null}
-          aria-labelledby={!elementOnly ? `${$id}-label` : null}
           aria-disabled={disabled}
-          aria-busy={isLoading}
           tabIndex="0"
-          ref={e => {
-            this.combobox = e;
-          }}
+          ref={e => this.registerComboboxNode(e)}
           id={$id}
-          onClick={this.toggle}
-          onKeyUp={this.handleKeyUp}
-          onKeyDown={this.handleKeyDown}
           {...props}
         >
           <div className={styles.selectInner}>
             <div className={styles.activeOption}>
               <span>{activeOptionLabel || placeholder}</span>
             </div>
-            <span className={styles.loadingContainer}>
-              {isLoading ? (
-                <span className={styles.loading} />
-              ) : (
-                <Icon
-                  name="caret-down-small"
-                  title="expand"
-                  role="presentation"
-                />
-              )}
+            <span className={styles.selectExpandContainer}>
+              <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
             </span>
           </div>
         </div>
