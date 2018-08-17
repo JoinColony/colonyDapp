@@ -12,10 +12,13 @@ import modalStyles from '../Modal/Modal.css';
 
 type Props = {
   cancel: Cancel,
-  close: Close,
+  close?: Close,
   children: Node,
+  /** Determines if the ActivityBar Modal can be dismissed */
   isDismissable?: boolean,
+  /** same as Dialog */
   shouldCloseOnEsc?: boolean,
+  /** same as Dialog */
   shouldCloseOnOverlayClick?: boolean,
 };
 
