@@ -70,21 +70,22 @@
   composes: baseSelect;
   padding: 5px 10px;
   border-radius: var(--radius-normal);
+}
 
-  & .selectInner {
-    padding: 0 10px;
-  }
+.themeAlt .selectInner {
+  padding: 0 10px;
+  border-bottom: 1px dotted transparent;
+}
 
-  &.select[aria-expanded="true"] {
-    background-color: var(--grey-blue-1);
+.themeAlt.select[aria-expanded="true"] {
+  background-color: var(--grey-blue-1);
+}
 
-    & .selectInner {
-      border-bottom: 1px dotted var(--grey-3);
-    }
-  }
+.themeAlt.select[aria-expanded="true"] .selectInner {
+  border-color: var(--grey-3);
+}
 
-  &.select:focus {
-    outline-color: var(--primary);
-    outline-width: 2px;
-  }
+.themeAlt.select[aria-expanded="true"].select:focus {
+  outline-color: var(--primary);
+  outline-width: 2px;
 }
