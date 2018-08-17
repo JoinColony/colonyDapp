@@ -56,6 +56,15 @@ module.exports = {
       ],
     },
     {
+      name: 'Tabs',
+      components: [
+        './src/modules/core/components/Tabs/Tabs.jsx',
+        './src/modules/core/components/Tabs/TabList.jsx',
+        './src/modules/core/components/Tabs/Tab.jsx',
+        './src/modules/core/components/Tabs/TabPanel.jsx',
+      ],
+    },
+    {
       name: 'Loaders & Progress',
       components: [
         './src/modules/core/components/Preloaders/LogoLoader.jsx',
