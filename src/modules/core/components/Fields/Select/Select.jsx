@@ -84,7 +84,7 @@ type State = {
 class Select extends Component<Props, State> {
   comboboxNode: ?HTMLElement;
 
-  wrapper: ?HTMLElement;
+  wrapperNode: ?HTMLElement;
 
   static displayName = 'Select';
 
@@ -111,9 +111,9 @@ class Select extends Component<Props, State> {
 
   handleOutsideClick = (evt: MouseEvent) => {
     if (
-      this.wrapper &&
+      this.wrapperNode &&
       evt.target instanceof Node &&
-      !this.wrapper.contains(evt.target)
+      !this.wrapperNode.contains(evt.target)
     ) {
       this.close();
     }
@@ -249,6 +249,10 @@ class Select extends Component<Props, State> {
     this.comboboxNode = node;
   };
 
+  registerWrapperNode = (node: ?HTMLElement) => {
+    this.wrapperNode = node;
+  };
+
   selectOption = (idx: number) => {
     this.setState({ selectedOption: idx });
   };
@@ -277,16 +281,7 @@ class Select extends Component<Props, State> {
     const listboxId = `select-listbox-${$id}`;
     const activeOptionLabel = formatIntl(activeOption && activeOption.label);
     return (
-      <div
-        className={styles.main}
-        ref={e => {
-          this.wrapper = e;
-        }}
-        onClick={this.toggle}
-        onKeyUp={this.handleKeyUp}
-        onKeyDown={this.handleKeyDown}
-        role="presentation"
-      >
+      <div className={styles.main} ref={this.registerWrapperNode}>
         {!elementOnly && label ? (
           <InputLabel inputId={$id} label={label} error={$error} help={help} />
         ) : null}
@@ -298,8 +293,11 @@ class Select extends Component<Props, State> {
           aria-label={elementOnly ? label : null}
           aria-disabled={disabled}
           tabIndex="0"
-          ref={e => this.registerComboboxNode(e)}
+          ref={this.registerComboboxNode}
           id={$id}
+          onClick={this.toggle}
+          onKeyUp={this.handleKeyUp}
+          onKeyDown={this.handleKeyDown}
           {...props}
         >
           <div className={styles.selectInner}>
