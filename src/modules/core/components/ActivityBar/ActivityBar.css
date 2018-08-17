@@ -1,0 +1,46 @@
+@import 'variables.css';
+
+:root {
+  --activity-bar-height: 50px;
+}
+
+.main {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  height: var(--activity-bar-height);
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--colony-blue);
+  pointer-events: all;
+}
+
+.content {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: center;
+  align-items: center;
+  padding: var(--pad-small);
+  font-weight: var(--weight-medium);
+  color: var(--text-invert);
+}
+
+.control {
+  display: flex;
+  flex-basis: var(--activity-bar-height);
+  justify-content: center;
+  align-items: center;
+  color: var(--text-invert);
+}
+
+.component {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.component > * {
+  margin-left: var(--pad-tiny);
+}
