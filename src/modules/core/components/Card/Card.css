@@ -1,0 +1,7 @@
+@import 'variables.css';
+
+.main {
+  border-radius: var(--radius-tiny);
+  box-shadow: 0 0 2px var(--grey-5);
+  padding: 5px;
+}
