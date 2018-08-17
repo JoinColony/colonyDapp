@@ -1,8 +1,11 @@
 /* @flow */
+import type { ContextRouter } from 'react-router-dom';
+
 import React from 'react';
-import routes from './routes';
 import { compose, withHandlers, withState } from 'recompose';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
+
+import routes from './routes';
 
 import WalletConnectTemplate from '../../../pages/WalletConnectTemplate';
 
@@ -22,11 +25,11 @@ const enhance = compose(
   withRouter,
   withState('isConnected', 'setIsConnected', false),
   withHandlers({
-    handleDidConnectWallet: props => () => {
+    handleDidConnectWallet: (props: ContextRouter) => () => {
       const { history } = props;
       history.push('/');
     },
-    handleExit: props => () => {
+    handleExit: (props: ContextRouter) => () => {
       const { history } = props;
       history.push('/start');
     },

@@ -1,12 +1,11 @@
 /* @flow */
-
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import { Formik } from 'formik';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
-import FileUpload from '../../../../core/components/Fields/FileUpload';
+import FileUpload from '../../../../core/components/FileUpload';
 import Input from '../../../../core/components/Fields/Input';
 import styles from './JSONUpload.css';
 

@@ -1,10 +1,8 @@
 /* @flow */
+import type { Element } from 'react';
 
 import React, { Component, createElement, Fragment } from 'react';
 import { defineMessages, FormattedNumber } from 'react-intl';
-
-import type { Element } from 'react';
-import type { MessageDescriptor } from 'react-intl';
 
 import Input from '../../../../core/components/Fields/Input';
 import Button from '../../../../core/components/Button';

@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
