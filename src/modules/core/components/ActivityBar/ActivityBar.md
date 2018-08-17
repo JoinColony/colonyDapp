@@ -22,6 +22,7 @@ You can toggle the mode to `isDismissable={false}` which makes the backdrop opaq
 
 
 ```js
+const ActivityBarExample = require('./ActivityBarExample.jsx').default;
 const withDialog = require('../Dialog/withDialog.js').default;
 
 const ComponentThatOpensAnActivityBar = ({ openDialog }) => (

@@ -51,7 +51,7 @@ const ActivityBar = ({ children, isDismissable, ...modalProps }: Props) => {
               name="circle-close"
               title="close"
               onClick={cancel}
-              appearance={{ size: 'large', theme: 'invert' }}
+              appearance={{ size: 'medium', theme: 'invert' }}
             />
           )}
         </div>

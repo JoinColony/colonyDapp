@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 
 import ActivityBar from './ActivityBar.jsx';
-import ActivityBarComponent from './ActivityBarComponent.jsx';
+import styles from './ActivityBar.css';
 
 import Button from '../Button';
 
@@ -32,18 +32,18 @@ class ActivityBarExample extends Component<Props, State> {
         shouldCloseOnEsc
       >
         {isDismissable ? (
-          <ActivityBarComponent>
+          <div className={styles.component}>
             <div>you can just dismiss me or ... </div>
             <Button onClick={() => this.setState({ isDismissable: false })}>
               make me require your attention
             </Button>
-          </ActivityBarComponent>
+          </div>
         ) : (
-          <ActivityBarComponent>
+          <div className={styles.component}>
             <div>HELLO I need your attention!!! You can now only... </div>
             <Button onClick={cancel}>dismiss</Button>
             <Button onClick={close}>or confirm</Button>
-          </ActivityBarComponent>
+          </div>
         )}
       </ActivityBar>
     );
