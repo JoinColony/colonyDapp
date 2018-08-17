@@ -3,7 +3,7 @@ import React from 'react';
 
 import type { Node } from 'react';
 
-import type { Cancel } from '../Dialog';
+import type { Cancel, Close } from '../Dialog';
 
 import Modal from '../Modal';
 import Icon from '../Icon';
@@ -12,6 +12,8 @@ import styles from './ActivityBar.css';
 import modalStyles from '../Modal/Modal.css';
 
 type Props = {
+  /** close prop from concrete ActivityBar component */
+  close?: Close,
   /** Needs a cancel prop from concrete ActivityBar component */
   cancel: Cancel,
   /** Children that get rendered into ActivityBar content */
