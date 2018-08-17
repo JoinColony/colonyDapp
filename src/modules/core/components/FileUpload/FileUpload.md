@@ -1,5 +1,3 @@
-### File upload
-
 ```js
 const { Formik } = require('formik');
 <Formik

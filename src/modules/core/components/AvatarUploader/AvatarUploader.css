@@ -1,0 +1,37 @@
+@import 'variables.css';
+
+.dropzone {
+  height: 120px;
+  width: 120px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.filesContainer {
+  height: 100%;
+  width: 100%;
+}
+
+.overlay {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--primary);
+  font-size: var(--size-medium);
+  font-weight: var(--weight-semi);
+  color: white;
+  opacity: 0.7;
+}
+
+.dropzoneActive .overlay {
+  display: flex;
+}
+
+.buttonContainer {
+  margin-top: 25px;
+}
