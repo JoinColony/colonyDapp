@@ -1,0 +1,7 @@
+@import 'variables.css';
+
+.main {
+  flex-direction: column;
+  overflow: visible;
+  overflow-x: visible;
+}
