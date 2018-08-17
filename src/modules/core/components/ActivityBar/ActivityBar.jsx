@@ -2,7 +2,8 @@
 import React from 'react';
 
 import type { Node } from 'react';
-import type { Cancel, Close } from '../Dialog/types';
+
+import type { Cancel } from '../Dialog';
 
 import Modal from '../Modal';
 import Icon from '../Icon';
@@ -11,14 +12,15 @@ import styles from './ActivityBar.css';
 import modalStyles from '../Modal/Modal.css';
 
 type Props = {
+  /** Needs a cancel prop from concrete ActivityBar component */
   cancel: Cancel,
-  close?: Close,
+  /** Children that get rendered into ActivityBar content */
   children: Node,
-  /** Determines if the ActivityBar Modal can be dismissed */
+  /** Determines if the ActivityBar can be dismissed */
   isDismissable?: boolean,
-  /** same as Dialog */
+  /** passed through to Modal, but will be prevented if isDimissable is falsy */
   shouldCloseOnEsc?: boolean,
-  /** same as Dialog */
+  /** passed through to Modal, but will be prevented if isDimissable is falsy */
   shouldCloseOnOverlayClick?: boolean,
 };
 
