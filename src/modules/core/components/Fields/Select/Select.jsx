@@ -299,20 +299,22 @@ class Select extends Component<Props, State> {
           id={$id}
           {...props}
         >
-          <div className={styles.activeOption}>
-            <span>{activeOptionLabel || placeholder}</span>
+          <div className={styles.selectInner}>
+            <div className={styles.activeOption}>
+              <span>{activeOptionLabel || placeholder}</span>
+            </div>
+            <span className={styles.loadingContainer}>
+              {isLoading ? (
+                <span className={styles.loading} />
+              ) : (
+                <Icon
+                  name="caret-down-small"
+                  title="expand"
+                  role="presentation"
+                />
+              )}
+            </span>
           </div>
-          <span className={styles.loadingContainer}>
-            {isLoading ? (
-              <span className={styles.loading} />
-            ) : (
-              <Icon
-                name="caret-down-small"
-                title="expand"
-                role="presentation"
-              />
-            )}
-          </span>
         </div>
         {isOpen &&
           options.length && (

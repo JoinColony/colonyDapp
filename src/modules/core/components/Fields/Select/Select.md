@@ -40,7 +40,7 @@ const options = [
   { label: 'Option three', value: 'three' },
 ];
 initialState = { $value: ''};
-<div style={{width: '100px'}}>
+<div style={{width: '120px'}}>
   <Select
     connect={false}
     // with connect={false}, `$value` and `setValue` are required

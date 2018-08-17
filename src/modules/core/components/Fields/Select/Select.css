@@ -1,9 +1,6 @@
 @import 'variables.css';
 
 .baseSelect {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 0 10px;
   width: auto;
   position: relative;
@@ -19,6 +16,12 @@
 
 .select[aria-disabled="true"], .select[aria-busy="true"] {
   opacity: 0.7;
+}
+
+.selectInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .select svg {
@@ -68,8 +71,16 @@
   padding: 5px 10px;
   border-radius: var(--radius-normal);
 
+  & .selectInner {
+    padding: 0 10px;
+  }
+
   &.select[aria-expanded="true"] {
-    background-color: var(--grey-blue-0);
+    background-color: var(--grey-blue-1);
+
+    & .selectInner {
+      border-bottom: 1px dotted var(--grey-3);
+    }
   }
 
   &.select:focus {
