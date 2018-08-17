@@ -191,7 +191,7 @@ class Select extends Component<Props, State> {
     }
   };
 
-  handleKeyOnClosed = (evt: SyntheticKeyboardEvent<*>) => {
+  handleKeyOnClosed = (evt: SyntheticKeyboardEvent<HTMLElement>) => {
     const { key } = evt;
     const checkedOption = this.getCheckedOption();
     if ([UP, DOWN, SPACE].indexOf(key) > -1) {
@@ -201,7 +201,7 @@ class Select extends Component<Props, State> {
     }
   };
 
-  handleKeyUp = (evt: SyntheticKeyboardEvent<*>) => {
+  handleKeyUp = (evt: SyntheticKeyboardEvent<HTMLElement>) => {
     // Special keyUp handling for ESC (modals)
     const { isOpen } = this.state;
     const { key } = evt;
@@ -211,7 +211,7 @@ class Select extends Component<Props, State> {
     }
   };
 
-  handleKeyDown = (evt: SyntheticKeyboardEvent<*>) => {
+  handleKeyDown = (evt: SyntheticKeyboardEvent<HTMLElement>) => {
     const { isOpen } = this.state;
     if (isOpen) {
       this.handleKeyOnOpen(evt);
