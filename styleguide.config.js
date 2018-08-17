@@ -52,8 +52,8 @@ module.exports = {
         './src/modules/core/components/Dialog/DialogProvider.jsx',
         './src/modules/core/components/Dialog/DialogSection.jsx',
         './src/modules/core/components/Dialog/ConfirmDialog.jsx',
-        './src/modules/core/components/ToasterBar/ToasterBar.jsx',
-        './src/modules/core/components/ToasterBar/ToasterBarExample.jsx',
+        './src/modules/core/components/ActivityBar/ActivityBar.jsx',
+        './src/modules/core/components/ActivityBar/ActivityBarExample.jsx',
       ],
     },
     {
