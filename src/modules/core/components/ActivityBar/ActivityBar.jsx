@@ -24,7 +24,11 @@ type Props = {
   shouldCloseOnOverlayClick?: boolean,
 };
 
-const ActivityBar = ({ children, isDismissable, ...modalProps }: Props) => {
+const ActivityBar = ({
+  children,
+  isDismissable = true,
+  ...modalProps
+}: Props) => {
   const { cancel, shouldCloseOnEsc, shouldCloseOnOverlayClick } = modalProps;
 
   const overlayClassName = {
@@ -60,10 +64,6 @@ const ActivityBar = ({ children, isDismissable, ...modalProps }: Props) => {
       </div>
     </Modal>
   );
-};
-
-ActivityBar.defaultProps = {
-  isDismissable: true,
 };
 
 export default ActivityBar;
