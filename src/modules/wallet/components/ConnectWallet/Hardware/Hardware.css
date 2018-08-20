@@ -20,6 +20,15 @@
   composes: flexContainerRow flexJustifyBetween from '~styles/layout.css';
 }
 
+.searchBox {
+  display: flex;
+  align-items: flex-end;
+}
+
+.searchBoxIconContainer {
+  margin-bottom: 5px;
+}
+
 .walletChoicesContainer {
   padding: 0 var(--containerPadding) var(--containerPadding) var(--containerPadding);
   max-height: 200px;

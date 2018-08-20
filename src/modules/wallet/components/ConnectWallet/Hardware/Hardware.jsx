@@ -4,6 +4,7 @@ import type { Element } from 'react';
 import React, { Component, createElement, Fragment } from 'react';
 import { defineMessages, FormattedNumber } from 'react-intl';
 
+import Icon from '../../../../core/components/Icon';
 import Input from '../../../../core/components/Fields/Input';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
@@ -137,9 +138,23 @@ class Hardware extends Component<Props, State> {
           <div className={styles.headingContainer}>
             {isValid ? (
               <Fragment>
-                <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+                <Heading
+                  text={MSG.heading}
+                  appearance={{
+                    size: 'medium',
+                    margin: 'none',
+                    weight: 'thin',
+                  }}
+                />
+                <Heading
+                  text={MSG.subHeading}
+                  appearance={{ size: 'medium', weight: 'thin' }}
+                />
                 <div className={styles.choiceHeadingRow}>
-                  <div>
+                  <div className={styles.searchBox}>
+                    <div className={styles.searchBoxIconContainer}>
+                      <Icon name="wallet" title="hardware wallet" />
+                    </div>
                     <Input
                       appearance={{ colorSchema: 'transparent' }}
                       connect={false}

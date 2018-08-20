@@ -84,14 +84,29 @@ class MetaMask extends Component<Props, State> {
     return (
       <Fragment>
         <div className={styles.content}>
-          <Icon name="metamask" title="metamask" />
+          <div className={styles.iconContainer}>
+            <Icon
+              name="metamask"
+              title="metamask"
+              appearance={{ size: 'medium' }}
+            />
+          </div>
           {isValid ? (
             <Fragment>
-              <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-              <Heading text={MSG.subHeading} appearance={{ size: 'medium' }} />
+              <Heading
+                text={MSG.heading}
+                appearance={{ size: 'medium', margin: 'none' }}
+              />
+              <Heading
+                text={MSG.subHeading}
+                appearance={{ size: 'medium', margin: 'none' }}
+              />
             </Fragment>
           ) : (
-            <Heading text={MSG.errorHeading} appearance={{ size: 'medium' }} />
+            <Heading
+              text={MSG.errorHeading}
+              appearance={{ size: 'medium', margin: 'none' }}
+            />
           )}
         </div>
         <div className={styles.actions}>

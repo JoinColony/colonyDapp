@@ -10,3 +10,7 @@
 .actions {
   composes: alignRight from '~styles/text.css';
 }
+
+.iconContainer {
+  composes: marginBottomMedium from '~styles/layout.css';
+}
