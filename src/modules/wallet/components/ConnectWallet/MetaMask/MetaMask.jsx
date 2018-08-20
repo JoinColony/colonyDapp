@@ -2,6 +2,8 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { ProviderType } from 'colony-wallet/flowtypes';
+
 import { metamask } from 'colony-wallet/providers';
 
 import Button from '../../../../core/components/Button';
@@ -48,14 +50,6 @@ type State = {
   isValid: boolean,
 };
 
-type MetaMaskResponse = {
-  chainId: number,
-  ensAddress: String,
-  name: String,
-  testnet: boolean,
-  url: String,
-};
-
 class MetaMask extends Component<Props, State> {
   state = {
     isValid: false,
@@ -66,9 +60,9 @@ class MetaMask extends Component<Props, State> {
   }
 
   connectMetaMask = () => {
-    const provider: MetaMaskResponse = metamask();
+    const provider: ProviderType = metamask();
     this.setState({
-      isValid: !!provider.chainId,
+      isValid: !!provider.ensAddress,
     });
   };
 
