@@ -59,7 +59,6 @@ class SelectOption extends Component<Props> {
         aria-selected={selected}
         aria-checked={checked}
         id={id}
-        tabIndex="-1"
         role="option"
         ref={e => selected && e && e.focus()}
         onClick={this.handleItemClick}
