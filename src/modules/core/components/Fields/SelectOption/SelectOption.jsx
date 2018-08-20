@@ -22,8 +22,8 @@ type Props = {
     value: string,
   },
   selected: boolean,
-  onSelect: Function,
-  onClick: Function,
+  onSelect: (idx: number) => void,
+  onClick: () => void,
   formatIntl: (
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
