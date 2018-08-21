@@ -4,6 +4,12 @@
   --header-height: 60px;
 }
 
+.main {
+  composes: stretchVertical from '~styles/layout.css';
+  flex: 1;
+  background-color: var(--grey-blue-2);
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -21,5 +27,6 @@
 
 .mainContent {
   composes: stretchVertical flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  margin-top: 124px;
   overflow-y: auto;
 }

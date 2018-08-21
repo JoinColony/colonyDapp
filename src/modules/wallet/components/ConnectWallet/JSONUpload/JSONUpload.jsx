@@ -101,7 +101,7 @@ class JSONUpload extends Component<Props, State> {
             </div>
             <div className={styles.actions}>
               <Button
-                appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+                appearance={{ theme: 'secondary' }}
                 text={MSG.buttonBack}
                 onClick={handleExit}
               />

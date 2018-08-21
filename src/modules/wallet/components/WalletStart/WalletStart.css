@@ -50,10 +50,6 @@
   outline: none;
 }
 
-.callToAction:focus {
-  outline: none;
-}
-
 .actionImage {
   flex: 1;
   margin-top: 7px;

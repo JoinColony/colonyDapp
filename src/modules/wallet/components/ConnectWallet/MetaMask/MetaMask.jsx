@@ -112,7 +112,7 @@ class MetaMask extends Component<Props, State> {
         <div className={styles.actions}>
           <Button
             text={BUTTON_MSG.back}
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            appearance={{ theme: 'secondary' }}
             onClick={handleExit}
           />
           {isValid ? (

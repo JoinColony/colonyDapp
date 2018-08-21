@@ -85,7 +85,7 @@ class Hardware extends Component<Props, State> {
     this.getWalletChoices();
   }
 
-  handleSubmit = values => {
+  handleSubmit = (values: Object) => {
     console.log(values);
   };
 
@@ -234,7 +234,7 @@ class Hardware extends Component<Props, State> {
         <div className={styles.actions}>
           <Button
             text={MSG.buttonBack}
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+            appearance={{ theme: 'secondary' }}
             onClick={handleExit}
           />
           {this.renderActionButton()}

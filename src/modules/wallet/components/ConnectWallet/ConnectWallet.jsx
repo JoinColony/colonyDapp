@@ -1,7 +1,7 @@
 /* @flow */
 import type { ContextRouter } from 'react-router-dom';
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import { compose, withHandlers, withState } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -41,7 +41,7 @@ const enhance = compose(
 const ConnectWallet = ({ match }: Props) => {
   const ProviderComponent = enhance(loadComponentFromRoute(match.url));
   return (
-    <Fragment>
+    <div className={styles.main}>
       <header className={styles.header}>
         <figure className={styles.logo} role="presentation">
           <Link to="/">
@@ -54,7 +54,7 @@ const ConnectWallet = ({ match }: Props) => {
           <ProviderComponent />
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 };
 
