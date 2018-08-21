@@ -1,6 +1,7 @@
 /* @flow */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
+import { Formik } from 'formik';
 
 import Textarea from '../../../../core/components/Fields/Textarea';
 import Button from '../../../../core/components/Button';
@@ -45,33 +46,49 @@ type State = {
 class Mnemonic extends Component<Props, State> {
   state = { isValid: true };
 
+  handleSubmit = (values: Object) => {
+    const mnemonic = values.connectwalletmnemonic;
+    this.handleWalletConnect(mnemonic);
+  };
+
+  handleWalletConnect = (mnemonicPhrase: string) => {
+    const { handleDidConnectWallet } = this.props;
+    console.log(mnemonicPhrase);
+    handleDidConnectWallet();
+  };
+
   render() {
     const { isValid } = this.state;
     const { handleExit } = this.props;
     return (
-      <Fragment>
-        <div className={styles.content}>
-          <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-          <Textarea
-            connect={false}
-            label={MSG.instructionText}
-            name="connectWalletMnemonic"
-          />
-          {!isValid && <Heading text={MSG.errorDescription} />}
-        </div>
-        <div className={styles.actions}>
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-            text={BUTTON_MSG.back}
-            onClick={handleExit}
-          />
-          <Button
-            appearance={{ theme: 'primary' }}
-            disabled={!isValid}
-            text={BUTTON_MSG.advance}
-          />
-        </div>
-      </Fragment>
+      <Formik
+        onSubmit={this.handleSubmit}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <div className={styles.content}>
+              <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+              <Textarea
+                label={MSG.instructionText}
+                name="connectwalletmnemonic"
+              />
+              {!isValid && <Heading text={MSG.errorDescription} />}
+            </div>
+            <div className={styles.actions}>
+              <Button
+                appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+                text={BUTTON_MSG.back}
+                onClick={handleExit}
+              />
+              <Button
+                appearance={{ theme: 'primary' }}
+                disabled={!isValid}
+                text={BUTTON_MSG.advance}
+                type="submit"
+              />
+            </div>
+          </form>
+        )}
+      />
     );
   }
 }

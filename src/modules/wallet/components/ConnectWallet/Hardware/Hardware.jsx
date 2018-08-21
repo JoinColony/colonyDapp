@@ -1,11 +1,13 @@
 /* @flow */
 import type { Element } from 'react';
 
+import { Formik } from 'formik';
 import React, { Component, createElement, Fragment } from 'react';
 import { defineMessages, FormattedNumber } from 'react-intl';
 
 import Icon from '../../../../core/components/Icon';
 import Input from '../../../../core/components/Fields/Input';
+import Radio from '../../../../core/components/Fields/Radio';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import HardwareIcon from '../../../../../img/icons/wallet.svg';
@@ -83,6 +85,10 @@ class Hardware extends Component<Props, State> {
     this.getWalletChoices();
   }
 
+  handleSubmit = values => {
+    console.log(values);
+  };
+
   renderWalletAddress = (walletAddress: string): Element<*> => {
     const firstChunkSize = 5;
     const lastChunkSize = 5;
@@ -100,7 +106,7 @@ class Hardware extends Component<Props, State> {
         part,
       ),
     );
-    return <p>{addressParts}</p>;
+    return <label className={styles.walletChoiceAddress}>{addressParts}</label>;
   };
 
   getWalletChoices = () => {
@@ -167,7 +173,7 @@ class Hardware extends Component<Props, State> {
                   <div>
                     <Heading
                       text={MSG.balanceText}
-                      appearance={{ size: 'small' }}
+                      appearance={{ size: 'normal' }}
                     />
                   </div>
                 </div>
@@ -186,28 +192,43 @@ class Hardware extends Component<Props, State> {
               searchQuery.length > 0 && (
                 <Heading text={MSG.emptySearchResultsText} />
               )}
-            {filteredWalletChoices.map(wallet => (
-              <div className={styles.choiceRow} key={wallet.address}>
-                <div className={styles.choiceInputContainer}>
-                  <input
-                    name="hardwareWalletChoice"
-                    type="radio"
-                    value={wallet.value}
-                  />
-                </div>
-                <div className={styles.choiceLabelContainer}>
-                  {this.renderWalletAddress(wallet.address)}
-                </div>
-                <div className={styles.choiceBalanceContainer}>
-                  <FormattedNumber
-                    value={wallet.balance}
-                    style="currency" // eslint-disable-line
-                    currency="ETH"
-                    currencyDisplay="name"
-                  />
-                </div>
-              </div>
-            ))}
+            <Formik
+              initialValues={{
+                hardwareWalletChoice: '',
+              }}
+              onSubmit={this.handleSubmit}
+              render={({ handleSubmit, values }) => (
+                <form onSubmit={handleSubmit}>
+                  {filteredWalletChoices.map(wallet => (
+                    <div className={styles.choiceRow} key={wallet.address}>
+                      <div className={styles.choiceInputContainer}>
+                        <Radio
+                          checked={
+                            values.hardwareWalletChoice === wallet.address
+                          }
+                          name="hardwareWalletChoice"
+                          value={wallet.address}
+                          elementOnly
+                        >
+                          {this.renderWalletAddress(wallet.address)}
+                        </Radio>
+                      </div>
+                      {/* <div className={styles.choiceLabelContainer}>
+                        {this.renderWalletAddress(wallet.address)}
+                      </div> */}
+                      <div className={styles.choiceBalanceContainer}>
+                        <FormattedNumber
+                          value={wallet.balance}
+                          style="currency" // eslint-disable-line
+                          currency="ETH"
+                          currencyDisplay="name"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </form>
+              )}
+            />
           </div>
         </div>
         <div className={styles.actions}>

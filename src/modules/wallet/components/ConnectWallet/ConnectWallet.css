@@ -10,7 +10,7 @@
   padding-top: 8px;
   height: var(--header-height);
   width: 100%;
-  background-color: var(--colony-white);
+  background-color: white;
 }
 
 .logo {

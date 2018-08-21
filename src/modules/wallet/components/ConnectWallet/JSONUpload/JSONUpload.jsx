@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import { Formik } from 'formik';
 
@@ -60,6 +60,12 @@ class JSONUpload extends Component<Props, State> {
     isValid: true,
   };
 
+  handleSubmit = (values: Object) => {
+    const { handleDidConnectWallet } = this.props;
+    console.log(values);
+    handleDidConnectWallet();
+  };
+
   render() {
     const { hasFile, isValid } = this.state;
     const { handleExit } = this.props;
@@ -67,49 +73,48 @@ class JSONUpload extends Component<Props, State> {
     const canAdvance: boolean = hasFile && isValid;
 
     return (
-      <Fragment>
-        <div className={styles.content}>
-          <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-          {/* drop zone goes here */}
-          <Formik
-            onSubmit={values => alert(JSON.stringify(values))}
-            render={({ handleSubmit }) => (
-              <form onSubmit={handleSubmit}>
-                <FileUpload
-                  accept={['application/json']}
-                  name="walletJsonFileUpload"
-                  label={MSG.fileUploadLabel}
-                  help={MSG.fileUploadHelp}
+      <Formik
+        onSubmit={this.handleSubmit}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <div className={styles.content}>
+              <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+              {/* drop zone goes here */}
+              <FileUpload
+                accept={['application/json']}
+                name="walletJsonFileUpload"
+                label={MSG.fileUploadLabel}
+                help={MSG.fileUploadHelp}
+              />
+              <Input
+                name="walletJsonPassword"
+                label={MSG.filePasswordLabel}
+                help={MSG.filePasswordHelp}
+                type="password"
+              />
+              {!isValid && (
+                <Heading
+                  text={MSG.errorDescription}
+                  appearance={{ size: 'medium' }}
                 />
-                <Input
-                  name="walletJsonPassword"
-                  label={MSG.filePasswordLabel}
-                  help={MSG.filePasswordHelp}
-                  type="password"
-                />
-              </form>
-            )}
-          />
-          {!isValid && (
-            <Heading
-              text={MSG.errorDescription}
-              appearance={{ size: 'medium' }}
-            />
-          )}
-        </div>
-        <div className={styles.actions}>
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-            text={MSG.buttonBack}
-            onClick={handleExit}
-          />
-          <Button
-            appearance={{ theme: 'primary' }}
-            disabled={!canAdvance}
-            text={MSG.buttonAdvance}
-          />
-        </div>
-      </Fragment>
+              )}
+            </div>
+            <div className={styles.actions}>
+              <Button
+                appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+                text={MSG.buttonBack}
+                onClick={handleExit}
+              />
+              <Button
+                appearance={{ theme: 'primary' }}
+                disabled={!canAdvance}
+                text={MSG.buttonAdvance}
+                type="submit"
+              />
+            </div>
+          </form>
+        )}
+      />
     );
   }
 }

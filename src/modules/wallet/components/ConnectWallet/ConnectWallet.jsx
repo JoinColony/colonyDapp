@@ -1,13 +1,15 @@
 /* @flow */
 import type { ContextRouter } from 'react-router-dom';
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { compose, withHandlers, withState } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+
+import styles from './ConnectWallet.css';
 
 import routes from './routes';
 
-import WalletConnectTemplate from '../../../pages/WalletConnectTemplate';
+import Logo from '../../../../img/logo.svg';
 
 type Props = {
   match: {
@@ -39,9 +41,20 @@ const enhance = compose(
 const ConnectWallet = ({ match }: Props) => {
   const ProviderComponent = enhance(loadComponentFromRoute(match.url));
   return (
-    <WalletConnectTemplate>
-      <ProviderComponent />
-    </WalletConnectTemplate>
+    <Fragment>
+      <header className={styles.header}>
+        <figure className={styles.logo} role="presentation">
+          <Link to="/">
+            <Logo />
+          </Link>
+        </figure>
+      </header>
+      <div className={styles.mainContent}>
+        <div>
+          <ProviderComponent />
+        </div>
+      </div>
+    </Fragment>
   );
 };
 

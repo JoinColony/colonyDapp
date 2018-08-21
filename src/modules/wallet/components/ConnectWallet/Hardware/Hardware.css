@@ -2,7 +2,7 @@
 
 :root {
   --choicePaddingHorizontal: 30px;
-  --choicePaddingVertical: 10px;
+  --choicePaddingVertical: 5px;
   --containerPadding: 50px;
 }
 
@@ -18,6 +18,7 @@
 
 .choiceHeadingRow {
   composes: flexContainerRow flexJustifyBetween from '~styles/layout.css';
+  align-items: baseline;
 }
 
 .searchBox {
@@ -44,7 +45,7 @@
 }
 
 .choiceInputContainer {
-  padding: var(--choicePaddingVertical) calc(var(--choicePaddingHorizontal)/2) var(--choicePaddingVertical) 0;
+  padding: var(--choicePaddingVertical) calc(var(--choicePaddingHorizontal) / 2) var(--choicePaddingVertical) 0;
 }
 
 .choiceLabelContainer {
@@ -58,7 +59,7 @@
   padding: var(--choicePaddingVertical) 0 var(--choicePaddingVertical) var(--choicePaddingHorizontal);
 }
 
-.addressPart+.addressPart {
+.addressPart + .addressPart {
   margin-left: 15px;
 }
 
