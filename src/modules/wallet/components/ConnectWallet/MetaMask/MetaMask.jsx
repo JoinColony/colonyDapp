@@ -112,19 +112,19 @@ class MetaMask extends Component<Props, State> {
         <div className={styles.actions}>
           <Button
             text={BUTTON_MSG.back}
-            appearance={{ theme: 'secondary' }}
+            appearance={{ theme: 'secondary', size: 'large' }}
             onClick={handleExit}
           />
           {isValid ? (
             <Button
               text={BUTTON_MSG.advance}
-              appearance={{ theme: 'primary' }}
+              appearance={{ theme: 'primary', size: 'large' }}
               onClick={this.handleUseConnectedWallet}
             />
           ) : (
             <Button
               text={BUTTON_MSG.retry}
-              appearance={{ theme: 'primary' }}
+              appearance={{ theme: 'primary', size: 'large' }}
               onClick={this.handleRetryClick}
             />
           )}

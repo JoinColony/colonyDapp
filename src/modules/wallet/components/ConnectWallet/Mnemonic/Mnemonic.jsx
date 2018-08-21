@@ -75,12 +75,12 @@ class Mnemonic extends Component<Props, State> {
             </div>
             <div className={styles.actions}>
               <Button
-                appearance={{ theme: 'secondary' }}
+                appearance={{ theme: 'secondary', size: 'large' }}
                 text={BUTTON_MSG.back}
                 onClick={handleExit}
               />
               <Button
-                appearance={{ theme: 'primary' }}
+                appearance={{ theme: 'primary', size: 'large' }}
                 disabled={!isValid}
                 text={BUTTON_MSG.advance}
                 type="submit"

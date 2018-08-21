@@ -101,12 +101,12 @@ class JSONUpload extends Component<Props, State> {
             </div>
             <div className={styles.actions}>
               <Button
-                appearance={{ theme: 'secondary' }}
+                appearance={{ theme: 'secondary', size: 'large' }}
                 text={MSG.buttonBack}
                 onClick={handleExit}
               />
               <Button
-                appearance={{ theme: 'primary' }}
+                appearance={{ theme: 'primary', size: 'large' }}
                 disabled={!canAdvance}
                 text={MSG.buttonAdvance}
                 type="submit"

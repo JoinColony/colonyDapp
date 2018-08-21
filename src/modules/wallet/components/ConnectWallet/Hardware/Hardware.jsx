@@ -125,7 +125,7 @@ class Hardware extends Component<Props, State> {
     const { isValid } = this.state;
     const actionButtonProps = {
       text: isValid ? MSG.buttonAdvance : MSG.buttonRetry,
-      appearance: { theme: 'primary' },
+      appearance: { theme: 'primary', size: 'large' },
     };
     return <Button {...actionButtonProps} />;
   };
@@ -234,7 +234,7 @@ class Hardware extends Component<Props, State> {
         <div className={styles.actions}>
           <Button
             text={MSG.buttonBack}
-            appearance={{ theme: 'secondary' }}
+            appearance={{ theme: 'secondary', size: 'large' }}
             onClick={handleExit}
           />
           {this.renderActionButton()}
