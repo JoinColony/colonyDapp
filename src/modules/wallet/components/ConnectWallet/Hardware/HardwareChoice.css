@@ -1,0 +1,25 @@
+@import 'variables.css';
+
+:root {
+  --choicePaddingHorizontal: 30px;
+  --choicePaddingVertical: 5px;
+}
+
+.choiceCell {
+  font-weight: var(--weight-medium);
+}
+
+.choiceInputContainer {
+  padding: var(--choicePaddingVertical) calc(var(--choicePaddingHorizontal) / 2) var(--choicePaddingVertical) 0;
+}
+
+.choiceLabelContainer {
+  composes: choiceCell;
+  composes: flexContent from '~styles/layout.css';
+  padding: var(--choicePaddingVertical) calc(var(--choicePaddingHorizontal) * 2) var(--choicePaddingVertical) 0;
+}
+
+.choiceBalanceContainer {
+  composes: choiceCell;
+  padding: var(--choicePaddingVertical) 0 var(--choicePaddingVertical) var(--choicePaddingHorizontal);
+}

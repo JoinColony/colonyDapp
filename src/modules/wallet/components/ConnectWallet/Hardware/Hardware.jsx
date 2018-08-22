@@ -1,16 +1,17 @@
 /* @flow */
 import type { Element } from 'react';
+import type { FormikBag, FormikProps } from 'formik';
 
-import { Formik } from 'formik';
+import { withFormik } from 'formik';
 import React, { Component, createElement, Fragment } from 'react';
-import { defineMessages, FormattedNumber } from 'react-intl';
+import { defineMessages } from 'react-intl';
+
+import HardwareChoice from './HardwareChoice.jsx';
 
 import Icon from '../../../../core/components/Icon';
 import Input from '../../../../core/components/Fields/Input';
-import Radio from '../../../../core/components/Fields/Radio';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
-import HardwareIcon from '../../../../../img/icons/wallet.svg';
 import styles from './Hardware.css';
 
 import hardwareWalletChoices from './__mocks__/hardwareWalletMock';
@@ -42,12 +43,16 @@ const MSG = defineMessages({
   },
   errorHeading: {
     id: 'ConnectWallet.providers.Hardware.errorHeading',
-    defaultMessage: "Oops, we couldn't find your hardware wallet",
+    defaultMessage: `Oops, we couldn't find your hardware wallet`,
   },
   errorDescription: {
     id: 'ConnectWallet.providers.Hardware.errorDescription',
     defaultMessage:
       'Please check that your hardware wallet is connected and try again.',
+  },
+  walletChoiceRequired: {
+    id: 'ConnectWallet.providers.Hardware.walletChoiceRequired',
+    defaultMessage: 'Please select one of the wallets below.',
   },
   buttonAdvance: {
     id: 'ConnectWallet.providers.Hardware.button.advance',
@@ -63,20 +68,22 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type FormValues = {
+  hardwareWalletChoice: string,
+};
+
+type Props = FormikProps<FormValues> & {
   handleDidConnectWallet: () => void,
   handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
 };
 
 type State = {
-  isValid: boolean,
   searchQuery: string,
   walletChoices: Array<Object>,
 };
 
 class Hardware extends Component<Props, State> {
   state = {
-    isValid: true,
     walletChoices: [],
     searchQuery: '',
   };
@@ -84,10 +91,6 @@ class Hardware extends Component<Props, State> {
   componentDidMount() {
     this.getWalletChoices();
   }
-
-  handleSubmit = (values: Object) => {
-    console.log(values);
-  };
 
   renderWalletAddress = (walletAddress: string): Element<*> => {
     const firstChunkSize = 5;
@@ -122,27 +125,30 @@ class Hardware extends Component<Props, State> {
   };
 
   renderActionButton = () => {
-    const { isValid } = this.state;
+    const { walletChoices } = this.state;
+    const { isValid } = this.props;
     const actionButtonProps = {
-      text: isValid ? MSG.buttonAdvance : MSG.buttonRetry,
+      text: walletChoices.length > 0 ? MSG.buttonAdvance : MSG.buttonRetry,
       appearance: { theme: 'primary', size: 'large' },
+      type: 'submit',
+      disabled: !isValid,
     };
     return <Button {...actionButtonProps} />;
   };
 
   render() {
-    const { isValid, searchQuery, walletChoices } = this.state;
-    const { handleExit } = this.props;
+    const { searchQuery, walletChoices } = this.state;
+    const { handleExit, handleSubmit, values } = this.props;
 
     const filteredWalletChoices = walletChoices.filter(wallet =>
       wallet.address.includes(searchQuery),
     );
 
     return (
-      <Fragment>
+      <form onSubmit={handleSubmit}>
         <div className={styles.content}>
           <div className={styles.headingContainer}>
-            {isValid ? (
+            {walletChoices.length > 0 ? (
               <Fragment>
                 <Heading
                   text={MSG.heading}
@@ -162,7 +168,7 @@ class Hardware extends Component<Props, State> {
                       <Icon name="wallet" title="hardware wallet" />
                     </div>
                     <Input
-                      appearance={{ colorSchema: 'transparent' }}
+                      appearance={{ theme: 'underlined' }}
                       connect={false}
                       name="hardwareWalletFilter"
                       onChange={this.handleChangeSearchQuery}
@@ -179,56 +185,36 @@ class Hardware extends Component<Props, State> {
                 </div>
               </Fragment>
             ) : (
-              <Fragment>
-                <HardwareIcon />
-                <Heading text={MSG.errorHeading} />
-                <Heading text={MSG.errorDescription} />
-              </Fragment>
+              <div className={styles.noWalletFound}>
+                <Icon name="wallet" title="hardware wallet" />
+                <Heading
+                  text={MSG.errorHeading}
+                  appearance={{ size: 'large' }}
+                />
+                <Heading
+                  text={MSG.errorDescription}
+                  appearance={{ size: 'normal' }}
+                />
+              </div>
             )}
           </div>
           <div className={styles.walletChoicesContainer}>
-            {/* TODO put real radio field here */}
             {filteredWalletChoices.length === 0 &&
               searchQuery.length > 0 && (
-                <Heading text={MSG.emptySearchResultsText} />
+                <Heading
+                  text={MSG.emptySearchResultsText}
+                  appearance={{ size: 'normal' }}
+                />
               )}
-            <Formik
-              initialValues={{
-                hardwareWalletChoice: '',
-              }}
-              onSubmit={this.handleSubmit}
-              render={({ handleSubmit, values }) => (
-                <form onSubmit={handleSubmit}>
-                  {filteredWalletChoices.map(wallet => (
-                    <div className={styles.choiceRow} key={wallet.address}>
-                      <div className={styles.choiceInputContainer}>
-                        <Radio
-                          checked={
-                            values.hardwareWalletChoice === wallet.address
-                          }
-                          name="hardwareWalletChoice"
-                          value={wallet.address}
-                          elementOnly
-                        >
-                          {this.renderWalletAddress(wallet.address)}
-                        </Radio>
-                      </div>
-                      {/* <div className={styles.choiceLabelContainer}>
-                        {this.renderWalletAddress(wallet.address)}
-                      </div> */}
-                      <div className={styles.choiceBalanceContainer}>
-                        <FormattedNumber
-                          value={wallet.balance}
-                          style="currency" // eslint-disable-line
-                          currency="ETH"
-                          currencyDisplay="name"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </form>
-              )}
-            />
+            {filteredWalletChoices.map(wallet => (
+              <div className={styles.choiceRow} key={wallet.address}>
+                <HardwareChoice
+                  wallet={wallet}
+                  checked={values.hardwareWalletChoice === wallet.address}
+                  renderWalletAddress={this.renderWalletAddress}
+                />
+              </div>
+            ))}
           </div>
         </div>
         <div className={styles.actions}>
@@ -239,9 +225,26 @@ class Hardware extends Component<Props, State> {
           />
           {this.renderActionButton()}
         </div>
-      </Fragment>
+      </form>
     );
   }
 }
 
-export default Hardware;
+const enhance = withFormik({
+  mapPropsToValues: () => ({ hardwareWalletChoice: '' }),
+  validate: values => {
+    const errors = {};
+    if (!values.hardwareWalletChoice) {
+      errors.hardwareWalletChoice = MSG.walletChoiceRequired;
+    }
+    return errors;
+  },
+  handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+    const {
+      props: { handleDidConnectWallet },
+    } = otherProps;
+    handleDidConnectWallet();
+  },
+});
+
+export default enhance(Hardware);

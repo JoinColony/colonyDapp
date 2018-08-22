@@ -36,7 +36,7 @@ const MSG = defineMessages({
   },
   buttonAdvance: {
     id: 'ConnectWallet.providers.JSONUpload.buttonAdvance',
-    defaultMessage: 'Go to Colony',
+    defaultMessage: 'Unlock your wallet',
   },
   buttonBack: {
     id: 'ConnectWallet.providers.JSONUpload.buttonBack',
