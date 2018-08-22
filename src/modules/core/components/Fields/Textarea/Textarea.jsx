@@ -49,6 +49,8 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
+  /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
@@ -87,6 +89,7 @@ class Textarea extends Component<Props> {
       $touched,
       setError,
       setValue,
+      isSubmitting,
       ...props
     } = this.props;
 

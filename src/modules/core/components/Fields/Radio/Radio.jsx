@@ -52,6 +52,8 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
+  /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
@@ -86,6 +88,7 @@ const Radio = ({
   radioStyle,
   setError,
   setValue,
+  isSubmitting,
   ...props
 }: Props) => {
   const stateClass = checked ? styles.isChecked : styles.isUnchecked;
