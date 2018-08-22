@@ -49,6 +49,15 @@ class HardwareChoice extends Component<Props, State> {
   render() {
     const { isLoading } = this.state;
     const { wallet, checked, renderWalletAddress } = this.props;
+
+    const formattedNumberProps = {
+      value: wallet.balance,
+      style: 'currency',
+      maximumFractionDigits: 18,
+      currency: 'ETH',
+      currencyDisplay: 'name',
+    };
+
     return (
       <Fragment>
         <div className={styles.choiceInputContainer}>
@@ -65,13 +74,7 @@ class HardwareChoice extends Component<Props, State> {
           {isLoading ? (
             <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           ) : (
-            <FormattedNumber
-              value={wallet.balance}
-              style="currency" // eslint-disable-line
-              maximumFractionDigits={18}
-              currency="ETH"
-              currencyDisplay="name"
-            />
+            <FormattedNumber {...formattedNumberProps} />
           )}
         </div>
       </Fragment>

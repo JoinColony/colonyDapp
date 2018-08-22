@@ -24,18 +24,15 @@ const MSG = defineMessages({
     id: 'ConnectWallet.providers.MetaMask.errorHeading',
     defaultMessage: "Oops we couldn't detect MetaMask",
   },
-});
-
-const BUTTON_MSG = defineMessages({
-  advance: {
+  buttonAdvance: {
     id: 'ConnectWallet.providers.MetaMask.button.advance',
     defaultMessage: 'Go to Colony',
   },
-  back: {
+  buttonBack: {
     id: 'ConnectWallet.providers.MetaMask.button.back',
     defaultMessage: 'Back',
   },
-  retry: {
+  buttonRetry: {
     id: 'ConnectWallet.providers.MetaMask.button.retry',
     defaultMessage: 'Try Again',
   },
@@ -47,11 +44,13 @@ type Props = {
 };
 
 type State = {
+  isLoading: boolean,
   isValid: boolean,
 };
 
 class MetaMask extends Component<Props, State> {
   state = {
+    isLoading: false,
     isValid: false,
   };
 
@@ -74,13 +73,14 @@ class MetaMask extends Component<Props, State> {
   handleUseConnectedWallet = (evt: SyntheticEvent<HTMLButtonElement>) => {
     const { handleDidConnectWallet } = this.props;
     evt.preventDefault();
+    this.setState({ isLoading: true });
     // TODO save wallet connection details here
     handleDidConnectWallet();
   };
 
   render() {
     const { handleExit } = this.props;
-    const { isValid } = this.state;
+    const { isLoading, isValid } = this.state;
     return (
       <Fragment>
         <div className={styles.content}>
@@ -111,19 +111,20 @@ class MetaMask extends Component<Props, State> {
         </div>
         <div className={styles.actions}>
           <Button
-            text={BUTTON_MSG.back}
+            text={MSG.buttonBack}
             appearance={{ theme: 'secondary', size: 'large' }}
             onClick={handleExit}
           />
           {isValid ? (
             <Button
-              text={BUTTON_MSG.advance}
+              text={MSG.buttonAdvance}
               appearance={{ theme: 'primary', size: 'large' }}
               onClick={this.handleUseConnectedWallet}
+              loading={isLoading}
             />
           ) : (
             <Button
-              text={BUTTON_MSG.retry}
+              text={MSG.buttonRetry}
               appearance={{ theme: 'primary', size: 'large' }}
               onClick={this.handleRetryClick}
             />

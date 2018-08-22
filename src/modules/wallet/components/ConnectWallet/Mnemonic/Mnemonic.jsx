@@ -1,7 +1,9 @@
 /* @flow */
-import React, { Component } from 'react';
+import type { FormikBag, FormikErrors, FormikProps } from 'formik';
+
+import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Formik } from 'formik';
+import { withFormik } from 'formik';
 
 import Textarea from '../../../../core/components/Fields/Textarea';
 import Button from '../../../../core/components/Button';
@@ -21,76 +23,74 @@ const MSG = defineMessages({
     id: 'ConnectWallet.providers.Mnemonic.errorDescription',
     defaultMessage: 'Oops, there is something wrong',
   },
-});
-
-const BUTTON_MSG = defineMessages({
-  advance: {
+  mnemonicRequired: {
+    id: 'ConnectWallet.providers.Mnemonic.mnemonicRequired',
+    defaultMessage: 'You must provide a mnemonic phrase.',
+  },
+  buttonAdvanceText: {
     id: 'ConnectWallet.providers.Mnemonic.button.advance',
     defaultMessage: 'Go to Colony',
   },
-  back: {
+  buttonBackText: {
     id: 'ConnectWallet.providers.Mnemonic.button.back',
     defaultMessage: 'Back',
   },
 });
 
-type Props = {
+type FormValues = {
+  connectwalletmnemonic: string,
+};
+
+type Props = FormikProps<FormValues> & {
   handleDidConnectWallet: () => void,
   handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
 };
 
-type State = {
-  isValid: boolean,
-};
-
-class Mnemonic extends Component<Props, State> {
-  state = { isValid: true };
-
-  handleSubmit = (values: Object) => {
-    const mnemonic = values.connectwalletmnemonic;
-    this.handleWalletConnect(mnemonic);
-  };
-
-  handleWalletConnect = (mnemonicPhrase: string) => {
-    const { handleDidConnectWallet } = this.props;
-    console.log(mnemonicPhrase);
-    handleDidConnectWallet();
-  };
-
-  render() {
-    const { isValid } = this.state;
-    const { handleExit } = this.props;
-    return (
-      <Formik
-        onSubmit={this.handleSubmit}
-        render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <div className={styles.content}>
-              <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-              <Textarea
-                label={MSG.instructionText}
-                name="connectwalletmnemonic"
-              />
-              {!isValid && <Heading text={MSG.errorDescription} />}
-            </div>
-            <div className={styles.actions}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                text={BUTTON_MSG.back}
-                onClick={handleExit}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                disabled={!isValid}
-                text={BUTTON_MSG.advance}
-                type="submit"
-              />
-            </div>
-          </form>
-        )}
+const Mnemonic = ({
+  handleSubmit,
+  handleExit,
+  isSubmitting,
+  isValid,
+}: Props) => (
+  <form onSubmit={handleSubmit}>
+    <div className={styles.content}>
+      <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+      <Textarea label={MSG.instructionText} name="connectwalletmnemonic" />
+    </div>
+    <div className={styles.actions}>
+      <Button
+        appearance={{ theme: 'secondary', size: 'large' }}
+        text={MSG.buttonBackText}
+        onClick={handleExit}
       />
-    );
-  }
-}
+      <Button
+        appearance={{ theme: 'primary', size: 'large' }}
+        disabled={!isValid}
+        text={MSG.buttonAdvanceText}
+        type="submit"
+        loading={isSubmitting}
+      />
+    </div>
+  </form>
+);
 
-export default Mnemonic;
+const enhance = withFormik({
+  mapPropsToValues: () => ({
+    connectwalletmnemonic: '',
+  }),
+  validate: (values: FormValues): FormikErrors<FormValues> => {
+    const errors = {};
+    if (!values.connectwalletmnemonic) {
+      errors.connectwalletmnemonic = MSG.mnemonicRequired;
+    }
+    return errors;
+  },
+  handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+    const {
+      props: { handleDidConnectWallet },
+    } = otherProps;
+    handleDidConnectWallet();
+  },
+});
+
+export default enhance(Mnemonic);

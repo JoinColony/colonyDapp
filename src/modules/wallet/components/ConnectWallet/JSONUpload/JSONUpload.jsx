@@ -79,7 +79,6 @@ class JSONUpload extends Component<Props, State> {
           <form onSubmit={handleSubmit}>
             <div className={styles.content}>
               <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-              {/* drop zone goes here */}
               <FileUpload
                 accept={['application/json']}
                 name="walletJsonFileUpload"
