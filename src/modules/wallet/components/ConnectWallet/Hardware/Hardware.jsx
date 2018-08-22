@@ -56,7 +56,7 @@ const MSG = defineMessages({
   },
   buttonAdvance: {
     id: 'ConnectWallet.providers.Hardware.button.advance',
-    defaultMessage: 'Go to Colony',
+    defaultMessage: 'Unlock Wallet',
   },
   buttonBack: {
     id: 'ConnectWallet.providers.Hardware.button.back',
@@ -126,12 +126,13 @@ class Hardware extends Component<Props, State> {
 
   renderActionButton = () => {
     const { walletChoices } = this.state;
-    const { isValid } = this.props;
+    const { isValid, isSubmitting } = this.props;
     const actionButtonProps = {
       text: walletChoices.length > 0 ? MSG.buttonAdvance : MSG.buttonRetry,
       appearance: { theme: 'primary', size: 'large' },
       type: 'submit',
       disabled: !isValid,
+      loading: isSubmitting,
     };
     return <Button {...actionButtonProps} />;
   };
