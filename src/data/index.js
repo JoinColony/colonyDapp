@@ -18,13 +18,16 @@ import type {
 import METACOLONY_ADDRESS from '../utils/constants';
 
 export default class Data {
-  _pinner: ?Pinner;
   /*
     Returns metadata for the given user.
   */
   async getUserProfile(key: PublicKey): Promise<UserProfile> {
     const store = await this._orbitNode.kvstore(key);
     await store.load();
+
+    if (this._pinner) {
+      await this._pinner.pin(store);
+    }
     return new UserProfile(store);
   }
 
@@ -35,7 +38,6 @@ export default class Data {
     key: PublicKey = 'user-profile',
   ): Promise<OrbitKVStore> {
     const store = await this.getUserProfile(key);
-    await this._pinner.pinKVStore(store.address());
     return store;
   }
 
@@ -45,6 +47,7 @@ export default class Data {
   async joinColony(colonyHash: string) {
     const store = await this.getUserProfile('user-profile');
     await store.joinColony(colonyHash);
+    return;
   }
 
   /*
@@ -62,6 +65,10 @@ export default class Data {
   async getColony(colonyID: string): Promise<Colony> {
     const colony = await this._orbitNode.kvstore(colonyID);
     await colony.load();
+
+    if (this._pinner) {
+      await this._pinner.pin(colony);
+    }
     return new Kolonie(colony);
   }
 
@@ -126,6 +133,11 @@ export default class Data {
   async getDomain(domainKey: string): Promise<Domain> {
     const domain = await this._orbitNode.kvstore(domainKey);
     await domain.load();
+
+    if (this._pinner) {
+      await this._pinner.pin(domain);
+    }
+
     return new Domane(domain);
   }
 
@@ -237,7 +249,7 @@ export default class Data {
    Setup
    */
 
-  _pinner: Pinner;
+  _pinner: ?Pinner;
 
   _ipfsNode: ColonyIPFSNode;
 
