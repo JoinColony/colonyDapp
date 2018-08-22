@@ -8,7 +8,7 @@ import sagas from '../../src/sagas';
 import {
   actionAddColonyToUserProfile,
   actionSetUserProfileContent,
-} from '../../src/reducers/dataReducer.js';
+} from '../../src/actions';
 
 let store;
 beforeAll(async () => {
