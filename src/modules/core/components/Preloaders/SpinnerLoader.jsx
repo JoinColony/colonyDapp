@@ -11,6 +11,7 @@ import styles from './SpinnerLoader.css';
 
 type Appearance = {
   size: 'small' | 'medium' | 'large',
+  theme?: 'primary',
 };
 
 type Props = {

@@ -43,3 +43,8 @@
   height: 42px;
   width: 42px;
 }
+
+.themePrimary .loader {
+  border-left-color: var(--primary);
+  border-bottom-color: var(--primary);
+}
