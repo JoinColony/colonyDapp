@@ -5,15 +5,17 @@ import React, { Component, Fragment } from 'react';
 
 import { FormattedNumber } from 'react-intl';
 
+import type { HardwareWallet } from './types';
+
 import styles from './HardwareChoice.css';
 
 import Radio from '../../../../core/components/Fields/Radio';
-import SpinnerLoader from '../../../../core/components/Preloaders/SpinnerLoader.jsx';
+import SpinnerLoader from '../../../../core/components/Preloaders/SpinnerLoader.jsx'; // eslint-disable-line max-len
 
 type Props = {
   checked: boolean,
   renderWalletAddress: (address: string) => Node,
-  wallet: Object,
+  wallet: HardwareWallet,
 };
 
 type State = {

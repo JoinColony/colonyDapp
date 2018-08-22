@@ -1,5 +1,8 @@
 /* @flow */
-const mockWalletChoices = [
+
+import type { HardwareWallet } from '../types';
+
+const mockWalletChoices: Array<HardwareWallet> = [
   {
     address: '0x20ejAJDSIOenoc0DJ0wefkl032ru09jae09tj',
     balance: 12.4,

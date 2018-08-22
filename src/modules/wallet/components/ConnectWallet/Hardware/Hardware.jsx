@@ -1,10 +1,12 @@
 /* @flow */
 import type { Element } from 'react';
-import type { FormikBag, FormikProps } from 'formik';
+import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
 import { withFormik } from 'formik';
 import React, { Component, createElement, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+
+import type { HardwareWallet } from './types';
 
 import HardwareChoice from './HardwareChoice.jsx';
 
@@ -70,6 +72,7 @@ const MSG = defineMessages({
 
 type FormValues = {
   hardwareWalletChoice: string,
+  hardwareWalletFilter: string,
 };
 
 type Props = FormikProps<FormValues> & {
@@ -78,14 +81,12 @@ type Props = FormikProps<FormValues> & {
 };
 
 type State = {
-  searchQuery: string,
-  walletChoices: Array<Object>,
+  walletChoices: Array<HardwareWallet>,
 };
 
 class Hardware extends Component<Props, State> {
   state = {
     walletChoices: [],
-    searchQuery: '',
   };
 
   componentDidMount() {
@@ -118,12 +119,6 @@ class Hardware extends Component<Props, State> {
     });
   };
 
-  handleChangeSearchQuery = (evt: SyntheticEvent<HTMLInputElement>) => {
-    this.setState({
-      searchQuery: evt.currentTarget.value,
-    });
-  };
-
   renderActionButton = () => {
     const { walletChoices } = this.state;
     const { isValid, isSubmitting } = this.props;
@@ -138,11 +133,11 @@ class Hardware extends Component<Props, State> {
   };
 
   render() {
-    const { searchQuery, walletChoices } = this.state;
+    const { walletChoices } = this.state;
     const { handleExit, handleSubmit, values } = this.props;
 
     const filteredWalletChoices = walletChoices.filter(wallet =>
-      wallet.address.includes(searchQuery),
+      wallet.address.includes(values.hardwareWalletFilter),
     );
 
     return (
@@ -170,9 +165,7 @@ class Hardware extends Component<Props, State> {
                     </div>
                     <Input
                       appearance={{ theme: 'underlined' }}
-                      connect={false}
                       name="hardwareWalletFilter"
-                      onChange={this.handleChangeSearchQuery}
                       label={MSG.walletSelectionLabel}
                       placeholder={MSG.searchInputPlacholder}
                     />
@@ -201,7 +194,7 @@ class Hardware extends Component<Props, State> {
           </div>
           <div className={styles.walletChoicesContainer}>
             {filteredWalletChoices.length === 0 &&
-              searchQuery.length > 0 && (
+              values.hardwareWalletFilter.length > 0 && (
                 <Heading
                   text={MSG.emptySearchResultsText}
                   appearance={{ size: 'normal' }}
@@ -232,8 +225,11 @@ class Hardware extends Component<Props, State> {
 }
 
 const enhance = withFormik({
-  mapPropsToValues: () => ({ hardwareWalletChoice: '' }),
-  validate: values => {
+  mapPropsToValues: () => ({
+    hardwareWalletChoice: '',
+    hardwareWalletFilter: '',
+  }),
+  validate: (values: FormValues): FormikErrors<FormValues> => {
     const errors = {};
     if (!values.hardwareWalletChoice) {
       errors.hardwareWalletChoice = MSG.walletChoiceRequired;
