@@ -77,6 +77,7 @@ th {
 /* minireset.css end */
 
 html {
+  height: 100%;
   background-color: var(--colony-white);
   font-size: var(--size-normal);
   -moz-osx-font-smoothing: grayscale;
@@ -112,10 +113,15 @@ pre {
 }
 
 body {
+  height: 100%;
   font-size: 1rem;
   font-weight: var(--weight-normal);
   line-height: 1.428571428571429;
   color: var(--text);
+}
+
+:global(#root) {
+  height: 100%;
 }
 
 a {
