@@ -62,11 +62,13 @@ class MetaMask extends Component<Props, State> {
     const provider: ProviderType = metamask();
     this.setState({
       isValid: !!provider.ensAddress,
+      isLoading: false,
     });
   };
 
   handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     evt.preventDefault();
+    this.setState({ isLoading: true });
     this.connectMetaMask();
   };
 
@@ -127,6 +129,7 @@ class MetaMask extends Component<Props, State> {
               text={MSG.buttonRetry}
               appearance={{ theme: 'primary', size: 'large' }}
               onClick={this.handleRetryClick}
+              loading={isLoading}
             />
           )}
         </div>

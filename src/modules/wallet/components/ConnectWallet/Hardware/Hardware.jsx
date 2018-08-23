@@ -119,22 +119,15 @@ class Hardware extends Component<Props, State> {
     });
   };
 
-  renderActionButton = () => {
-    const { walletChoices } = this.state;
-    const { isValid, isSubmitting } = this.props;
-    const actionButtonProps = {
-      text: walletChoices.length > 0 ? MSG.buttonAdvance : MSG.buttonRetry,
-      appearance: { theme: 'primary', size: 'large' },
-      type: 'submit',
-      disabled: !isValid,
-      loading: isSubmitting,
-    };
-    return <Button {...actionButtonProps} />;
-  };
-
   render() {
     const { walletChoices } = this.state;
-    const { handleExit, handleSubmit, values } = this.props;
+    const {
+      handleExit,
+      handleSubmit,
+      isSubmitting,
+      isValid,
+      values,
+    } = this.props;
 
     const filteredWalletChoices = walletChoices.filter(wallet =>
       wallet.address.includes(values.hardwareWalletFilter),
@@ -217,7 +210,15 @@ class Hardware extends Component<Props, State> {
             appearance={{ theme: 'secondary', size: 'large' }}
             onClick={handleExit}
           />
-          {this.renderActionButton()}
+          <Button
+            text={
+              walletChoices.length > 0 ? MSG.buttonAdvance : MSG.buttonRetry
+            }
+            appearance={{ theme: 'primary', size: 'large' }}
+            type="submit"
+            disabled={!isValid}
+            loading={isSubmitting}
+          />
         </div>
       </form>
     );
