@@ -5,3 +5,7 @@
 .actions {
   composes: alignRight from '~styles/text.css';
 }
+
+.uploadArea {
+  composes: marginBottomLarge from '~styles/layout.css';
+}

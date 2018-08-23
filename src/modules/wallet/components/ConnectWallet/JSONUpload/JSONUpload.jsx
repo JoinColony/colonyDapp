@@ -1,7 +1,11 @@
 /* @flow */
-import React, { Component } from 'react';
+import type { FormikBag, FormikErrors, FormikProps } from 'formik';
+
+import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Formik } from 'formik';
+import { withFormik } from 'formik';
+
+import type { UploadFile } from '../../../../core/components/FileUpload/types';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
@@ -44,78 +48,74 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type FormValues = {
+  walletJsonFileUpload: Array<UploadFile>,
+};
+
+type Props = FormikProps<FormValues> & {
   handleDidConnectWallet: () => void,
   handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
 };
 
-type State = {
-  hasFile: boolean,
-  isValid: boolean,
-};
-
-class JSONUpload extends Component<Props, State> {
-  state = {
-    hasFile: false,
-    isValid: true,
-  };
-
-  handleSubmit = (values: Object) => {
-    const { handleDidConnectWallet } = this.props;
-    console.log(values);
-    handleDidConnectWallet();
-  };
-
-  render() {
-    const { hasFile, isValid } = this.state;
-    const { handleExit } = this.props;
-
-    const canAdvance: boolean = hasFile && isValid;
-
-    return (
-      <Formik
-        onSubmit={this.handleSubmit}
-        render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <div className={styles.content}>
-              <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-              <FileUpload
-                accept={['application/json']}
-                name="walletJsonFileUpload"
-                label={MSG.fileUploadLabel}
-                help={MSG.fileUploadHelp}
-              />
-              <Input
-                name="walletJsonPassword"
-                label={MSG.filePasswordLabel}
-                help={MSG.filePasswordHelp}
-                type="password"
-              />
-              {!isValid && (
-                <Heading
-                  text={MSG.errorDescription}
-                  appearance={{ size: 'medium' }}
-                />
-              )}
-            </div>
-            <div className={styles.actions}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                text={MSG.buttonBack}
-                onClick={handleExit}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                disabled={!canAdvance}
-                text={MSG.buttonAdvance}
-                type="submit"
-              />
-            </div>
-          </form>
-        )}
+const JSONUpload = ({ handleExit, handleSubmit, isValid, values }: Props) => (
+  <form onSubmit={handleSubmit}>
+    <div className={styles.content}>
+      <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+      <div className={styles.uploadArea}>
+        <FileUpload
+          accept={['application/json']}
+          name="walletJsonFileUpload"
+          label={MSG.fileUploadLabel}
+          help={MSG.fileUploadHelp}
+        />
+      </div>
+      <Input
+        name="walletJsonPassword"
+        label={MSG.filePasswordLabel}
+        help={MSG.filePasswordHelp}
+        type="password"
       />
-    );
-  }
-}
+      {!isValid &&
+        values.walletJsonFileUpload.length > 0 && (
+          <Heading
+            text={MSG.errorDescription}
+            appearance={{ size: 'medium' }}
+          />
+        )}
+    </div>
+    <div className={styles.actions}>
+      <Button
+        appearance={{ theme: 'secondary', size: 'large' }}
+        text={MSG.buttonBack}
+        onClick={handleExit}
+      />
+      <Button
+        appearance={{ theme: 'primary', size: 'large' }}
+        disabled={!isValid}
+        text={MSG.buttonAdvance}
+        type="submit"
+      />
+    </div>
+  </form>
+);
 
-export default JSONUpload;
+const enhance = withFormik({
+  mapPropsToValues: () => ({
+    walletJsonFileUpload: [],
+  }),
+  validate: (values: FormValues): FormikErrors<FormValues> => {
+    const errors = {};
+    if (values.walletJsonFileUpload.length === 0) {
+      errors.walletJsonFileUpload = MSG.errorDescription;
+    }
+    return errors;
+  },
+  handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+    const {
+      props: { handleDidConnectWallet },
+    } = otherProps;
+    handleDidConnectWallet();
+  },
+});
+
+export default enhance(JSONUpload);

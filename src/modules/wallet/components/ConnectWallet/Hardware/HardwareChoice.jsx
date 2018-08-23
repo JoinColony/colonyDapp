@@ -40,7 +40,7 @@ class HardwareChoice extends Component<Props, State> {
   }
 
   getWalletBalance = () => {
-    const timeout = Math.floor(Math.random() * Math.floor(5)) * 1000;
+    const timeout = Math.floor(Math.random() * Math.floor(5)) * 1000 + 1000;
     this.timerHandle = setTimeout(() => {
       this.setState({ isLoading: false });
     }, timeout);

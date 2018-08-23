@@ -11,11 +11,7 @@ import routes from './routes';
 
 import Logo from '../../../../img/logo.svg';
 
-type Props = {
-  match: {
-    url: string,
-  },
-};
+type Props = ContextRouter;
 
 const loadComponentFromRoute = (providerSlug: string) => {
   const walletRoute =
@@ -38,8 +34,12 @@ const enhance = compose(
   }),
 );
 
-const ConnectWallet = ({ match }: Props) => {
-  const ProviderComponent = enhance(loadComponentFromRoute(match.url));
+const ConnectWallet = ({ history, match }: Props) => {
+  const providerComponent = loadComponentFromRoute(match.url);
+  if (!providerComponent) {
+    history.push('/');
+  }
+  const ProviderComponent = enhance(providerComponent);
   return (
     <div className={styles.main}>
       <header className={styles.header}>
@@ -50,7 +50,7 @@ const ConnectWallet = ({ match }: Props) => {
         </figure>
       </header>
       <div className={styles.mainContent}>
-        <div>
+        <div className={styles.contentInner}>
           <ProviderComponent />
         </div>
       </div>
