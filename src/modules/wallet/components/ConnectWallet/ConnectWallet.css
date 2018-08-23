@@ -6,7 +6,9 @@
 
 .main {
   composes: stretchVertical from '~styles/layout.css';
+  display: flex;
   flex: 1;
+  flex-direction: column;
   background-color: var(--grey-blue-2);
 }
 
@@ -26,9 +28,9 @@
 }
 
 .mainContent {
-  composes: stretchVertical flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
-  margin-top: 124px;
-  overflow-y: auto;
+  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  flex: 1;
+  overflow: auto;
 }
 
 .contentInner {
