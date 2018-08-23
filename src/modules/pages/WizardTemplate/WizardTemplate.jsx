@@ -1,7 +1,8 @@
 /* @flow */
+import type { Node } from 'react';
 
 import React from 'react';
-import type { Node } from 'react';
+import { Link } from 'react-router-dom';
 
 import Logo from '../../../img/logo.svg';
 import { StepBar } from '../../core/components/ProgressBar';
@@ -19,7 +20,9 @@ const WizardTemplate = ({ children, step, stepCount }: Props) => (
   <main className={styles.layoutMain}>
     <header className={styles.header}>
       <figure className={styles.logo} role="presentation">
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
       </figure>
       {stepCount &&
         step && (

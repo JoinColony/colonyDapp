@@ -1,38 +1,4 @@
-@import 'variables.css';
-
-:root {
-  --header-height: 60px;
-}
-
-.main {
-  composes: stretchVertical from '~styles/layout.css';
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  background-color: var(--grey-blue-2);
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 8px;
-  height: var(--header-height);
-  width: 100%;
-  background-color: white;
-}
-
-.logo {
-  flex: 1;
-  margin-left: 13px;
-  max-width: 90px;
-}
-
-.mainContent {
-  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
-  flex: 1;
-  overflow: auto;
-}
-
-.contentInner {
-  min-width: 500px;
+.connectContainer {
+  margin-top: 124px;
+  min-width: 520px;
 }

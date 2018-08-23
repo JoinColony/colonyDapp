@@ -3,15 +3,13 @@ import type { ContextRouter } from 'react-router-dom';
 
 import React from 'react';
 import { compose, withHandlers, withState } from 'recompose';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+
+import WizardTemplate from '../../../pages/WizardTemplate';
 
 import styles from './ConnectWallet.css';
 
 import routes from './routes';
-
-import Logo from '../../../../img/logo.svg';
-
-type Props = ContextRouter;
 
 const loadComponentFromRoute = (providerSlug: string) => {
   const walletRoute =
@@ -34,27 +32,18 @@ const enhance = compose(
   }),
 );
 
-const ConnectWallet = ({ history, match }: Props) => {
+const ConnectWallet = ({ history, match }: ContextRouter) => {
   const providerComponent = loadComponentFromRoute(match.url);
   if (!providerComponent) {
     history.push('/');
   }
   const ProviderComponent = enhance(providerComponent);
   return (
-    <div className={styles.main}>
-      <header className={styles.header}>
-        <figure className={styles.logo} role="presentation">
-          <Link to="/">
-            <Logo />
-          </Link>
-        </figure>
-      </header>
-      <div className={styles.mainContent}>
-        <div className={styles.contentInner}>
-          <ProviderComponent />
-        </div>
+    <WizardTemplate>
+      <div className={styles.connectContainer}>
+        <ProviderComponent />
       </div>
-    </div>
+    </WizardTemplate>
   );
 };
 
