@@ -115,4 +115,5 @@ export const validationSchema = yup.object({
 });
 
 // TODO: submit function
-export const onSubmit: SubmitFn<FormValues> = () => null;
+export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+  nextStep();
