@@ -6,6 +6,8 @@ import type { ProviderType } from 'colony-wallet/flowtypes';
 
 import { metamask } from 'colony-wallet/providers';
 
+import asProvider from '../asProvider';
+
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import Icon from '../../../../core/components/Icon';
@@ -49,6 +51,8 @@ type State = {
 };
 
 class MetaMask extends Component<Props, State> {
+  timerHandle: TimeoutID;
+
   state = {
     isLoading: false,
     isValid: false,
@@ -56,6 +60,12 @@ class MetaMask extends Component<Props, State> {
 
   componentDidMount() {
     this.connectMetaMask();
+  }
+
+  componentWilUnmount() {
+    if (this.timerHandle) {
+      clearTimeout(this.timerHandle);
+    }
   }
 
   connectMetaMask = () => {
@@ -69,7 +79,10 @@ class MetaMask extends Component<Props, State> {
   handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     evt.preventDefault();
     this.setState({ isLoading: true });
-    this.connectMetaMask();
+    // add a short timeout to show the loading spinner so the user knows there's something processing
+    this.timerHandle = setTimeout(() => {
+      this.connectMetaMask();
+    }, 500);
   };
 
   handleUseConnectedWallet = (evt: SyntheticEvent<HTMLButtonElement>) => {
@@ -138,4 +151,4 @@ class MetaMask extends Component<Props, State> {
   }
 }
 
-export default MetaMask;
+export default asProvider()(MetaMask);

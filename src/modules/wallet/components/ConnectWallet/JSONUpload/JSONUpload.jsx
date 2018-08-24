@@ -2,8 +2,11 @@
 import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
 import React from 'react';
+import { compose } from 'recompose';
 import { defineMessages } from 'react-intl';
 import { withFormik } from 'formik';
+
+import asProvider from '../asProvider';
 
 import type { UploadFile } from '../../../../core/components/FileUpload/types';
 
@@ -99,23 +102,26 @@ const JSONUpload = ({ handleExit, handleSubmit, isValid, values }: Props) => (
   </form>
 );
 
-const enhance = withFormik({
-  mapPropsToValues: () => ({
-    walletJsonFileUpload: [],
+const enhance = compose(
+  asProvider(),
+  withFormik({
+    mapPropsToValues: () => ({
+      walletJsonFileUpload: [],
+    }),
+    validate: (values: FormValues): FormikErrors<FormValues> => {
+      const errors = {};
+      if (values.walletJsonFileUpload.length === 0) {
+        errors.walletJsonFileUpload = MSG.errorDescription;
+      }
+      return errors;
+    },
+    handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+      const {
+        props: { handleDidConnectWallet },
+      } = otherProps;
+      handleDidConnectWallet();
+    },
   }),
-  validate: (values: FormValues): FormikErrors<FormValues> => {
-    const errors = {};
-    if (values.walletJsonFileUpload.length === 0) {
-      errors.walletJsonFileUpload = MSG.errorDescription;
-    }
-    return errors;
-  },
-  handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
-    const {
-      props: { handleDidConnectWallet },
-    } = otherProps;
-    handleDidConnectWallet();
-  },
-});
+);
 
 export default enhance(JSONUpload);

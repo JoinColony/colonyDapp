@@ -2,8 +2,11 @@
 import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
 import React from 'react';
+import { compose } from 'recompose';
 import { defineMessages } from 'react-intl';
 import { withFormik } from 'formik';
+
+import asProvider from '../asProvider';
 
 import Textarea from '../../../../core/components/Fields/Textarea';
 import Button from '../../../../core/components/Button';
@@ -74,23 +77,26 @@ const Mnemonic = ({
   </form>
 );
 
-const enhance = withFormik({
-  mapPropsToValues: () => ({
-    connectwalletmnemonic: '',
+const enhance = compose(
+  asProvider(),
+  withFormik({
+    mapPropsToValues: () => ({
+      connectwalletmnemonic: '',
+    }),
+    validate: (values: FormValues): FormikErrors<FormValues> => {
+      const errors = {};
+      if (!values.connectwalletmnemonic) {
+        errors.connectwalletmnemonic = MSG.mnemonicRequired;
+      }
+      return errors;
+    },
+    handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+      const {
+        props: { handleDidConnectWallet },
+      } = otherProps;
+      handleDidConnectWallet();
+    },
   }),
-  validate: (values: FormValues): FormikErrors<FormValues> => {
-    const errors = {};
-    if (!values.connectwalletmnemonic) {
-      errors.connectwalletmnemonic = MSG.mnemonicRequired;
-    }
-    return errors;
-  },
-  handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
-    const {
-      props: { handleDidConnectWallet },
-    } = otherProps;
-    handleDidConnectWallet();
-  },
-});
+);
 
 export default enhance(Mnemonic);

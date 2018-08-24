@@ -1,50 +1,32 @@
 /* @flow */
-import type { ContextRouter } from 'react-router-dom';
-
 import React from 'react';
-import { compose, withHandlers, withState } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import WizardTemplate from '../../../pages/WizardTemplate';
 
 import styles from './ConnectWallet.css';
 
-import routes from './routes';
+import Hardware from './Hardware';
+import JSONUpload from './JSONUpload';
+import MetaMask from './MetaMask';
+import Mnemonic from './Mnemonic';
 
-const loadComponentFromRoute = (providerSlug: string) => {
-  const walletRoute =
-    routes.find(route => `/${route.slug}` === providerSlug) || {};
-  return walletRoute.component;
-};
+import {
+  CONNECT_WALLET_SLUG_HARDWARE,
+  CONNECT_WALLET_SLUG_JSON,
+  CONNECT_WALLET_SLUG_METAMASK,
+  CONNECT_WALLET_SLUG_MNEMONIC,
+} from './routes';
 
-const enhance = compose(
-  withRouter,
-  withState('isConnected', 'setIsConnected', false),
-  withHandlers({
-    handleDidConnectWallet: (props: ContextRouter) => () => {
-      const { history } = props;
-      history.push('/');
-    },
-    handleExit: (props: ContextRouter) => () => {
-      const { history } = props;
-      history.push('/start');
-    },
-  }),
+const ConnectWallet = () => (
+  <WizardTemplate>
+    <div className={styles.mainContent}>
+      <Route path={CONNECT_WALLET_SLUG_HARDWARE} component={Hardware} />
+      <Route path={CONNECT_WALLET_SLUG_JSON} component={JSONUpload} />
+      <Route path={CONNECT_WALLET_SLUG_METAMASK} component={MetaMask} />
+      <Route path={CONNECT_WALLET_SLUG_MNEMONIC} component={Mnemonic} />
+    </div>
+  </WizardTemplate>
 );
-
-const ConnectWallet = ({ history, match }: ContextRouter) => {
-  const providerComponent = loadComponentFromRoute(match.url);
-  if (!providerComponent) {
-    history.push('/');
-  }
-  const ProviderComponent = enhance(providerComponent);
-  return (
-    <WizardTemplate>
-      <div className={styles.connectContainer}>
-        <ProviderComponent />
-      </div>
-    </WizardTemplate>
-  );
-};
 
 export default ConnectWallet;

@@ -3,11 +3,13 @@ import type { Element } from 'react';
 import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
 import { withFormik } from 'formik';
+import { compose } from 'recompose';
 import React, { Component, createElement, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { HardwareWallet } from './types';
 
+import asProvider from '../asProvider';
 import HardwareChoice from './HardwareChoice.jsx';
 
 import Icon from '../../../../core/components/Icon';
@@ -225,24 +227,27 @@ class Hardware extends Component<Props, State> {
   }
 }
 
-const enhance = withFormik({
-  mapPropsToValues: () => ({
-    hardwareWalletChoice: '',
-    hardwareWalletFilter: '',
+const enhance = compose(
+  asProvider(),
+  withFormik({
+    mapPropsToValues: () => ({
+      hardwareWalletChoice: '',
+      hardwareWalletFilter: '',
+    }),
+    validate: (values: FormValues): FormikErrors<FormValues> => {
+      const errors = {};
+      if (!values.hardwareWalletChoice) {
+        errors.hardwareWalletChoice = MSG.walletChoiceRequired;
+      }
+      return errors;
+    },
+    handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+      const {
+        props: { handleDidConnectWallet },
+      } = otherProps;
+      handleDidConnectWallet();
+    },
   }),
-  validate: (values: FormValues): FormikErrors<FormValues> => {
-    const errors = {};
-    if (!values.hardwareWalletChoice) {
-      errors.hardwareWalletChoice = MSG.walletChoiceRequired;
-    }
-    return errors;
-  },
-  handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
-    const {
-      props: { handleDidConnectWallet },
-    } = otherProps;
-    handleDidConnectWallet();
-  },
-});
+);
 
 export default enhance(Hardware);
