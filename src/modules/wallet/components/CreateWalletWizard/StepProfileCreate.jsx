@@ -50,18 +50,24 @@ type Props = {
 
 const StepProfileCreate = ({ handleSubmit, isValid, previousStep }: Props) => (
   <form className={styles.content} onSubmit={handleSubmit}>
-    <Heading
-      text={MSG.heading}
-      appearance={{ size: 'medium', margin: 'none', weight: 'thin' }}
-    />
-    <Heading
-      text={MSG.subHeading}
-      appearance={{ size: 'medium', weight: 'thin' }}
-    />
-    <Heading
-      text={MSG.instructionText}
-      appearance={{ size: 'small', weight: 'thin' }}
-    />
+    <div className={styles.title}>
+      <Heading
+        text={MSG.heading}
+        appearance={{ size: 'medium', margin: 'none', weight: 'thin' }}
+      />
+    </div>
+    <div className={styles.subTitle}>
+      <Heading
+        text={MSG.subHeading}
+        appearance={{ size: 'medium', weight: 'thin' }}
+      />
+    </div>
+    <div className={styles.instructionText}>
+      <Heading
+        text={MSG.instructionText}
+        appearance={{ size: 'small', weight: 'thin' }}
+      />
+    </div>
     <Input name="name" label={MSG.inputLabel} />
     <div className={styles.actionsContainer}>
       <Button
