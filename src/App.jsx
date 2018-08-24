@@ -21,6 +21,7 @@ import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader
 import CreateColonyWizard from './modules/dashboard/components/CreateColonyWizard';
 import WalletStart from './modules/wallet/components/WalletStart';
 import UserProfile from './modules/users/components/UserProfile';
+import ProfileCreate from './modules/wallet/components/ProfileCreate';
 import CreateWalletWizard from './modules/wallet/components/CreateWalletWizard';
 import { SpinnerLoader } from './modules/core/components/Preloaders';
 
@@ -97,6 +98,7 @@ export default function App() {
             <Route path="/createwallet" component={CreateWalletWizard} />
             <Route path="/connectwallet/:provider" component={ConnectWallet} />
             <Route path="/profile" component={UserProfile} />
+            <Route path="/createprofile" component={ProfileCreate} />
           </div>
         </Router>
       </Provider>

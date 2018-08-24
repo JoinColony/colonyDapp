@@ -16,7 +16,7 @@ const asProvider = (): Function =>
     withHandlers({
       handleDidConnectWallet: (props: Props) => () => {
         const { history } = props;
-        history.push('/');
+        history.push('/createprofile');
       },
       handleExit: (props: Props) => () => {
         const { history } = props;
