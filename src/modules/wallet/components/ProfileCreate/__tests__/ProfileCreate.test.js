@@ -5,7 +5,7 @@ import toJson from 'enzyme-to-json';
 
 import { shallowWithIntl } from 'testutils';
 
-import ProfileCreate from '../ProfileCreate.jsx';
+import ProfileCreate from '../ProfileCreate';
 
 describe('ProfileCreate component', () => {
   test('Renders initial component (snapshot)', () => {

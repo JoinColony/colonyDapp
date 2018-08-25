@@ -1,7 +1,7 @@
 /* @flow */
 import type { FormikProps, FormikBag } from 'formik';
 
-import React from 'react';
+import { createElement } from 'react';
 import { withFormik } from 'formik';
 import { compose, withHandlers } from 'recompose';
 
@@ -14,11 +14,12 @@ type Props = {
   handleBack: () => void,
 } & FormikProps<FormValues>;
 
-const ProfileCreate = (props: Props) => (
-  <WizardTemplate>
-    <ProfileCreateForm {...props} />
-  </WizardTemplate>
-);
+const ProfileCreate = (props: Props) =>
+  createElement(
+    WizardTemplate,
+    {},
+    createElement(ProfileCreateForm, { ...props }),
+  );
 
 const enhance = compose(
   withFormik({

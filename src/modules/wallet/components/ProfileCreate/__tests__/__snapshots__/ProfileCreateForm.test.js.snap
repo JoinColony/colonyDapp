@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProfileCreateForm component Renders initial component (snapshot) 1`] = `
+<form>
+  <div>
+    <InjectIntl(Heading)
+      appearance={
+        Object {
+          "margin": "none",
+          "size": "medium",
+          "weight": "thin",
+        }
+      }
+      text={
+        Object {
+          "defaultMessage": "Congrats, your wallet is all set up.",
+          "id": "ProfileCreate.heading",
+        }
+      }
+    />
+  </div>
+  <div>
+    <InjectIntl(Heading)
+      appearance={
+        Object {
+          "size": "medium",
+          "weight": "thin",
+        }
+      }
+      text={
+        Object {
+          "defaultMessage": "Let's finish your account!",
+          "id": "ProfileCreate.subHeading",
+        }
+      }
+    />
+  </div>
+  <div>
+    <InjectIntl(Heading)
+      appearance={
+        Object {
+          "size": "small",
+          "weight": "thin",
+        }
+      }
+      text={
+        Object {
+          "defaultMessage": "Add a name so people can identify you within Colony.",
+          "id": "ProfileCreate.instructionText",
+        }
+      }
+    />
+  </div>
+  <InjectIntl(Component)
+    label={
+      Object {
+        "defaultMessage": "Your name",
+        "id": "ProfileCreate.inputLabel",
+      }
+    }
+    name="profilename"
+  />
+  <div>
+    <InjectIntl(Button)
+      appearance={
+        Object {
+          "size": "large",
+          "theme": "secondary",
+        }
+      }
+      text={
+        Object {
+          "defaultMessage": "Back",
+          "id": "ProfileCreate.buttonBack",
+        }
+      }
+    />
+    <InjectIntl(Button)
+      appearance={
+        Object {
+          "size": "large",
+          "theme": "primary",
+        }
+      }
+      disabled={true}
+      text={
+        Object {
+          "defaultMessage": "Launch App",
+          "id": "ProfileCreate.buttonAdvance",
+        }
+      }
+      type="submit"
+    />
+  </div>
+</form>
+`;
