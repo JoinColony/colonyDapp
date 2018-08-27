@@ -5,8 +5,10 @@ import { initialData, setUserProfileContent } from '../actions';
 
 import {
   ADD_DOMAIN_TO_COLONY,
+  ADD_TASK_TO_DOMAIN,
   JOIN_COLONY,
   SET_COLONY_CONTENT,
+  SET_DOMAIN_CONTENT,
   SET_PROFILE_CONTENT,
 } from '../actions/actionConstants';
 
@@ -37,9 +39,18 @@ function* addColonyDomain(action) {
     },
   });
 }
+
+function* addTaskToDomain(action) {
+  const { domainId, task } = action.payload;
+  const Data = yield select(state => state.data.Data);
+  // yield Data.draftTask(domainId, task);
+
   yield put({
-    type: 'SET_PROFILE_CONTENT',
-    content: 'whaat',
+    type: SET_DOMAIN_CONTENT,
+    payload: {
+      content: { tasks: [task] },
+      target: domainId,
+    },
   });
 }
 
@@ -63,6 +74,7 @@ function* colonySagas() {
   yield initializeData();
   yield takeEvery(JOIN_COLONY, joinColony);
   yield takeEvery(ADD_DOMAIN_TO_COLONY, addColonyDomain);
+  yield takeEvery(ADD_TASK_TO_DOMAIN, addTaskToDomain);
 }
 
 export default colonySagas;

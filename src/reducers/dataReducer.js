@@ -5,6 +5,7 @@ import {
   INITIAL_STATE,
   JOIN_COLONY,
   SET_COLONY_CONTENT,
+  SET_DOMAIN_CONTENT,
   SET_DATA_STATE,
   SET_PROFILE_CONTENT,
   SET_PROFILE_STATE,
@@ -45,6 +46,13 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       return {
         ...state,
         data: { ...state.data, colonies },
+      };
+
+    case SET_DOMAIN_CONTENT:
+      const domains = mergeContent(state.data.domains, action.payload);
+      return {
+        ...state,
+        data: { ...state.data, domains },
       };
 
     case SET_PROFILE_CONTENT:

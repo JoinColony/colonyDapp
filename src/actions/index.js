@@ -2,6 +2,7 @@
 
 import {
   ADD_DOMAIN_TO_COLONY,
+  ADD_TASK_TO_DOMAIN,
   INITIALIZE_DATA,
   JOIN_COLONY,
   SET_DATA_STATE,
@@ -74,3 +75,10 @@ let actionJoinColony;
 let actionJoinDomain;
 let actionAddDomain;
 let action;
+export function addTaskToDomain(domainId: string, task: any): Action {
+  return {
+    type: ADD_TASK_TO_DOMAIN,
+    payload: { domainId, task },
+  };
+}
+

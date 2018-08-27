@@ -7,6 +7,7 @@ import sagas from '../../src/sagas';
 
 import {
   addDomainToColony,
+  addTaskToDomain,
   addColonyToUserProfile,
   setUserProfileContent,
 } from '../../src/actions';
@@ -60,7 +61,13 @@ describe('Data reducer', () => {
     );
   });
 
-  test.skip('UserProfile shows colonies of which the user is a member', async () => {});
+  test('Can add task to a domain', async () => {
+    store.dispatch(addTaskToDomain('fakeDomain', 'fakeTask'));
+    const state = store.getState();
+    expect(state.data.data.domains['fakeDomain'].tasks[0]).toBe('fakeTask');
+  });
+
+  test.skip('After login, UserProfile displays recent activity', async () => {});
 
   test.skip('User can navigate to those colonies from the UserProfile', async () => {});
 
