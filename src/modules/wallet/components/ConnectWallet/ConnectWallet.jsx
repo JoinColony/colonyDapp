@@ -1,6 +1,6 @@
 /* @flow */
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import WizardTemplate from '../../../pages/WizardTemplate';
 
@@ -21,10 +21,13 @@ import {
 const ConnectWallet = () => (
   <WizardTemplate>
     <div className={styles.mainContent}>
-      <Route path={CONNECT_WALLET_SLUG_HARDWARE} component={Hardware} />
-      <Route path={CONNECT_WALLET_SLUG_JSON} component={JSONUpload} />
-      <Route path={CONNECT_WALLET_SLUG_METAMASK} component={MetaMask} />
-      <Route path={CONNECT_WALLET_SLUG_MNEMONIC} component={Mnemonic} />
+      <Switch>
+        <Route path={CONNECT_WALLET_SLUG_HARDWARE} component={Hardware} />
+        <Route path={CONNECT_WALLET_SLUG_JSON} component={JSONUpload} />
+        <Route path={CONNECT_WALLET_SLUG_METAMASK} component={MetaMask} />
+        <Route path={CONNECT_WALLET_SLUG_MNEMONIC} component={Mnemonic} />
+        <Redirect to="/start" />
+      </Switch>
     </div>
   </WizardTemplate>
 );
