@@ -37,9 +37,12 @@ export function actionUserProfileReady(data: ?{}): Action {
 }
 
 export function actionSetUserProfileContent(content: ?{}): Action {
+
+/* User Actions */
+export function setUserProfileContent(content: ?{}): Action {
   return {
     type: SET_PROFILE_CONTENT,
-    content,
+    payload: { content },
   };
 }
 

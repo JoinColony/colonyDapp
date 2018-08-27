@@ -6,10 +6,22 @@ import {
   actionSetUserProfileContent,
 } from '../reducers/dataReducer.js';
 const JOIN_COLONY = 'JOIN_COLONY';
+  SET_PROFILE_CONTENT,
 
 function* joinColony(action) {
   const { colonyId } = action.payload;
-  const Data = select(state => state.Data);
+  const Data = yield select(state => state.data.Data);
+  // yield Data.joinColony(colonyId);
+
+  yield put({
+    type: SET_PROFILE_CONTENT,
+    payload: {
+      content: [colonyId],
+      target: 'colonies',
+    },
+  });
+}
+
   yield put({
     type: 'SET_PROFILE_CONTENT',
     content: 'whaat',

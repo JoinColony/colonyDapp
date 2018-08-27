@@ -4,6 +4,7 @@ import {
   actionLoadState,
   actionSetUserProfileContent,
   actionUserProfileReady,
+  setUserProfileContent,
   INITIAL_STATE,
   reducer,
   STATE_LOADING,
@@ -53,7 +54,7 @@ describe('Data Reducer Testing', () => {
   it('update the user profile when content is sent', () => {
     const state = reducer(
       INITIAL_STATE,
-      actionSetUserProfileContent(PROFILE_CONTENT_MOCK),
+      setUserProfileContent(PROFILE_CONTENT_MOCK),
     );
     expect(state.my_profile.content).toEqual(PROFILE_CONTENT_MOCK);
   });

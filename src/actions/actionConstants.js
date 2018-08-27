@@ -15,6 +15,11 @@ type State =
   | typeof STATE_READY
   | { my_profile: {} | string };
 
+type UserProfile = {
+  colonies: [],
+  avatar: string,
+};
+
 export type DataReduxStore = {
   state: State,
   data: any, // @TODO

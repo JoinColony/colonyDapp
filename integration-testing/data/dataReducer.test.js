@@ -7,7 +7,7 @@ import sagas from '../../src/sagas';
 
 import {
   actionAddColonyToUserProfile,
-  actionSetUserProfileContent,
+  setUserProfileContent,
 } from '../../src/actions';
 
 let store;
@@ -38,9 +38,9 @@ describe('Data reducer', () => {
   });
 
   test('After action dispatch, the Redux state is updated', async () => {
-    store.dispatch(actionSetUserProfileContent('hello'));
+    store.dispatch(setUserProfileContent({ greeting: 'hello' }));
     const state = store.getState();
-    expect(state.data.my_profile.content).toBe('hello');
+    expect(state.data.my_profile.data.greeting).toBe('hello');
   });
 
   test('UserProfile shows colony after joining', async () => {
