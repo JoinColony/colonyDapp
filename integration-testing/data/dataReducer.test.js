@@ -6,7 +6,7 @@ import reducers from '../../src/reducers';
 import sagas from '../../src/sagas';
 
 import {
-  actionAddColonyToUserProfile,
+  addDomainToColony,
   addColonyToUserProfile,
   setUserProfileContent,
 } from '../../src/actions';
@@ -51,7 +51,14 @@ describe('Data reducer', () => {
     expect(state.data.my_profile.data.colonies[0]).toBe('fakeAddress');
   });
 
-  test.skip('After login, UserProfile displays recent activity', async () => {});
+  test('Can add domain to a colony', async () => {
+    store.dispatch(addDomainToColony('fakeColony', 'fakeDomain'));
+    const state = store.getState();
+
+    expect(state.data.data.colonies['fakeColony'].domains[0]).toBe(
+      'fakeDomain',
+    );
+  });
 
   test.skip('UserProfile shows colonies of which the user is a member', async () => {});
 

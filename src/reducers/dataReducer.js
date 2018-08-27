@@ -4,10 +4,13 @@ import {
   INITIALIZE_DATA,
   INITIAL_STATE,
   JOIN_COLONY,
+  SET_COLONY_CONTENT,
   SET_DATA_STATE,
   SET_PROFILE_CONTENT,
   SET_PROFILE_STATE,
 } from '../actions/actionConstants';
+
+import type { Action } from '../actions/actionConstants';
 
 const mergeContent = (data, { target: key, content }) => {
   if (key && !data[key]) {
@@ -35,6 +38,13 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
           state: action.state,
           data: action.data,
         },
+      };
+
+    case SET_COLONY_CONTENT:
+      const colonies = mergeContent(state.data.colonies, action.payload);
+      return {
+        ...state,
+        data: { ...state.data, colonies },
       };
 
     case SET_PROFILE_CONTENT:

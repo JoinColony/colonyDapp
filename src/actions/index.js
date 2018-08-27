@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  ADD_DOMAIN_TO_COLONY,
   INITIALIZE_DATA,
   JOIN_COLONY,
   SET_DATA_STATE,
@@ -61,9 +62,11 @@ export function addColonyToUserProfile(colonyId: string): Action {
 }
 
 export function actionInitializeData(Data: {}): Action {
+// create domain database, add hash to colony domains list
+export function addDomainToColony(colonyId: string, domainId: string): Action {
   return {
-    type: INITIALIZE_DATA,
-    Data,
+    type: ADD_DOMAIN_TO_COLONY,
+    payload: { colonyId, domainId },
   };
 }
 
