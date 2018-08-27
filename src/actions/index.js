@@ -1,18 +1,19 @@
 // @flow
 
 import {
+  INITIALIZE_DATA,
   SET_DATA_STATE,
+  STATE_LOADING,
   SET_PROFILE_STATE,
   SET_PROFILE_CONTENT,
-  STATE_LOADING,
   STATE_READY,
-  JOIN_COLONY,
-  INITIALIZE_DATA,
 } from './actionConstants';
 
 import type { Action } from './actionConstants';
 
-export function actionLoadState(): Action {
+/* Setup */
+
+export function loadState(): Action {
   return {
     type: SET_DATA_STATE,
     state: STATE_LOADING,
@@ -20,7 +21,7 @@ export function actionLoadState(): Action {
   };
 }
 
-export function actionDataReady(data: ?{}): Action {
+export function dataReady(data: ?{}): Action {
   return {
     type: SET_DATA_STATE,
     state: STATE_READY,
@@ -28,7 +29,7 @@ export function actionDataReady(data: ?{}): Action {
   };
 }
 
-export function actionUserProfileReady(data: ?{}): Action {
+export function userProfileReady(data: ?{}): Action {
   return {
     type: SET_PROFILE_STATE,
     state: STATE_READY,
@@ -36,7 +37,12 @@ export function actionUserProfileReady(data: ?{}): Action {
   };
 }
 
-export function actionSetUserProfileContent(content: ?{}): Action {
+export function initialData(Data: {}): Action {
+  return {
+    type: INITIALIZE_DATA,
+    Data,
+  };
+}
 
 /* User Actions */
 export function setUserProfileContent(content: ?{}): Action {

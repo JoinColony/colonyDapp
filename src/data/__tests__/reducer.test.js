@@ -1,10 +1,9 @@
 /* eslint-env jest */
 import {
-  actionDataReady,
-  actionLoadState,
-  actionSetUserProfileContent,
-  actionUserProfileReady,
+  dataReady,
+  loadState,
   setUserProfileContent,
+  userProfileReady,
   INITIAL_STATE,
   reducer,
   STATE_LOADING,
@@ -23,7 +22,7 @@ describe('Data Reducer Testing', () => {
   });
 
   it('goes to loading when I load state', () => {
-    const state = reducer(INITIAL_STATE, actionLoadState());
+    const state = reducer(INITIAL_STATE, loadState());
 
     expect(state.state).toEqual(STATE_LOADING);
     expect(state.data).toBeNull();
@@ -31,8 +30,8 @@ describe('Data Reducer Testing', () => {
 
   it('goes to ready when state is loaded', () => {
     const state = reducer(
-      reducer(INITIAL_STATE, actionLoadState()),
-      actionDataReady(DATA_MOCK),
+      reducer(INITIAL_STATE, loadState()),
+      dataReady(DATA_MOCK),
     );
 
     expect(state.state).toEqual(STATE_READY);
@@ -45,7 +44,7 @@ describe('Data Reducer Testing', () => {
   });
 
   it('keeps the user profile when loaded', () => {
-    const state = reducer(INITIAL_STATE, actionUserProfileReady(PROFILE_MOCK));
+    const state = reducer(INITIAL_STATE, userProfileReady(PROFILE_MOCK));
 
     expect(state.my_profile.state).toEqual(STATE_READY);
     expect(state.my_profile.data).toEqual(PROFILE_MOCK);

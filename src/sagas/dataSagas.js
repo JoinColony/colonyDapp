@@ -1,11 +1,9 @@
 import { put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import Data from '../data';
 
+import { initialData, setUserProfileContent } from '../actions';
+
 import {
-  actionInitializeData,
-  actionSetUserProfileContent,
-} from '../reducers/dataReducer.js';
-const JOIN_COLONY = 'JOIN_COLONY';
   SET_PROFILE_CONTENT,
 
 function* joinColony(action) {
@@ -29,8 +27,18 @@ function* joinColony(action) {
 }
 
 function* initializeData() {
-  const data = yield Data.fromDefaultConfig();
-  const action = actionInitializeData(data);
+  const data = yield Data.fromDefaultConfig('no pinner', {
+    ipfs: {
+      swarm: ['/ip4/0.0.0.0/tcp/0'],
+
+      repo: `/tmp/tests/time/ipfs/ipfs`,
+    },
+    orbit: {
+      repo: `/tmp/tests/time/ipfs/orbit`,
+    },
+  });
+  // yield data.ready();
+  const action = initialData(data);
   yield put(action);
 }
 
