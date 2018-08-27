@@ -62,7 +62,17 @@ export function addColonyToUserProfile(colonyId: string): Action {
   };
 }
 
-export function actionInitializeData(Data: {}): Action {
+export function addOrChangeEmail() {}
+export function addOrChangeUserAvatar() {}
+
+// updates user's notifications database
+export function notifyUser() {}
+
+// user updates own events aka recent actions
+export function updateUserEvents() {}
+
+/* Colony Actions */
+
 // create domain database, add hash to colony domains list
 export function addDomainToColony(colonyId: string, domainId: string): Action {
   return {
@@ -71,10 +81,27 @@ export function addDomainToColony(colonyId: string, domainId: string): Action {
   };
 }
 
-let actionJoinColony;
-let actionJoinDomain;
-let actionAddDomain;
-let action;
+// grant permissions to user via smart contract
+export function setUserAsAdmin() {}
+
+// grant permissions to user via smart contract
+export function setUserAsMember() {}
+
+// creates colony database with given info, puts in redux
+export function createColony() {}
+
+// loads colony database into redux
+export function loadColony() {}
+export function editColony() {}
+export function storeColonyAvatarOnIPFS() {}
+export function removeColonyAvatar() {}
+
+/* Domain, Task, and Comment Actions */
+export function loadDomain() {}
+
+// grant permissions to user via smart contract
+export function addUserToDomain() {}
+
 export function addTaskToDomain(domainId: string, task: any): Action {
   return {
     type: ADD_TASK_TO_DOMAIN,
@@ -82,3 +109,23 @@ export function addTaskToDomain(domainId: string, task: any): Action {
   };
 }
 
+export function addCommentToTask() {}
+export function addTagToTask() {}
+export function removeTagFromTask() {}
+
+export function fetchCommentsForTask() {}
+export function uploadFileToIPFS() {}
+
+export function createWorkInvite() {}
+export function createWorkRequest() {}
+
+export function removeUserFromTask() {}
+export function assignTaskToUser() {}
+
+export function setTaskLastSeen() {}
+
+export function fetchTaskDescription() {}
+
+export function updateTaskTitle() {}
+
+export function updateTaskDescription() {}
