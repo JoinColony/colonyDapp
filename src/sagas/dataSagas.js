@@ -4,6 +4,8 @@ import Data from '../data';
 import { initialData, setUserProfileContent } from '../actions';
 
 import {
+  JOIN_COLONY,
+  SET_COLONY_CONTENT,
   SET_PROFILE_CONTENT,
 
 function* joinColony(action) {

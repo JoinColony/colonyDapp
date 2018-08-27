@@ -2,6 +2,7 @@
 
 import {
   INITIALIZE_DATA,
+  JOIN_COLONY,
   SET_DATA_STATE,
   STATE_LOADING,
   SET_PROFILE_STATE,
@@ -52,10 +53,10 @@ export function setUserProfileContent(content: ?{}): Action {
   };
 }
 
-export function actionAddColonyToUserProfile(colonyID: string): Action {
+export function addColonyToUserProfile(colonyId: string): Action {
   return {
     type: JOIN_COLONY,
-    payload: { colonyID },
+    payload: { colonyId },
   };
 }
 

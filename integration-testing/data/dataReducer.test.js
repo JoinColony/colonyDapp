@@ -7,6 +7,7 @@ import sagas from '../../src/sagas';
 
 import {
   actionAddColonyToUserProfile,
+  addColonyToUserProfile,
   setUserProfileContent,
 } from '../../src/actions';
 
@@ -44,9 +45,10 @@ describe('Data reducer', () => {
   });
 
   test('UserProfile shows colony after joining', async () => {
-    store.dispatch(actionAddColonyToUserProfile('fakeAddress'));
+    store.dispatch(addColonyToUserProfile('fakeAddress'));
     const state = store.getState();
-    expect(state.data.my_profile.content).toBe('whaat');
+
+    expect(state.data.my_profile.data.colonies[0]).toBe('fakeAddress');
   });
 
   test.skip('After login, UserProfile displays recent activity', async () => {});

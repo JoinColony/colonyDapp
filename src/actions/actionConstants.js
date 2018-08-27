@@ -34,7 +34,7 @@ export const INITIAL_STATE: DataReduxStore = {
   data: null,
   my_profile: {
     state: STATE_NOTHING,
-    data: null,
+    data: { colonies: [] },
   },
 };
 
