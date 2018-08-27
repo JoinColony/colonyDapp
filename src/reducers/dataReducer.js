@@ -9,6 +9,7 @@ import {
   SET_DATA_STATE,
   SET_PROFILE_CONTENT,
   SET_PROFILE_STATE,
+  SET_TASK_CONTENT,
 } from '../actions/actionConstants';
 
 import type { Action } from '../actions/actionConstants';
@@ -39,6 +40,24 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
           state: action.state,
           data: action.data,
         },
+      };
+
+    // todo generalize this
+    case SET_TASK_CONTENT:
+      const domainId = action.payload.target[0];
+      const taskId = action.payload.target[1];
+
+      const domane = state.data.domains[domainId];
+      let task = domane.tasks.filter(t => t._id === taskId)[0];
+
+      task = mergeContent(task, {
+        target: 'comments',
+        content: action.payload.content,
+      });
+
+      return {
+        ...state,
+        data: { ...state.data, domane },
       };
 
     case SET_COLONY_CONTENT:

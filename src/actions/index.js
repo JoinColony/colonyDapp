@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  ADD_COMMENT_TO_TASK,
   ADD_DOMAIN_TO_COLONY,
   ADD_TASK_TO_DOMAIN,
   INITIALIZE_DATA,
@@ -92,7 +93,9 @@ export function createColony() {}
 
 // loads colony database into redux
 export function loadColony() {}
+
 export function editColony() {}
+
 export function storeColonyAvatarOnIPFS() {}
 export function removeColonyAvatar() {}
 
@@ -109,7 +112,17 @@ export function addTaskToDomain(domainId: string, task: any): Action {
   };
 }
 
-export function addCommentToTask() {}
+export function addCommentToTask(
+  domainId: string,
+  taskId: string,
+  comment: string,
+): Action {
+  return {
+    type: ADD_COMMENT_TO_TASK,
+    payload: { domainId, taskId, comment },
+  };
+}
+
 export function addTagToTask() {}
 export function removeTagFromTask() {}
 

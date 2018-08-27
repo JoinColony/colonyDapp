@@ -6,6 +6,7 @@ import reducers from '../../src/reducers';
 import sagas from '../../src/sagas';
 
 import {
+  addCommentToTask,
   addDomainToColony,
   addTaskToDomain,
   addColonyToUserProfile,
@@ -62,9 +63,18 @@ describe('Data reducer', () => {
   });
 
   test('Can add task to a domain', async () => {
-    store.dispatch(addTaskToDomain('fakeDomain', 'fakeTask'));
+    const task = { title: 'fakeTask', _id: 'fakeTask' };
+    store.dispatch(addTaskToDomain('fakeDomain', task));
     const state = store.getState();
-    expect(state.data.data.domains['fakeDomain'].tasks[0]).toBe('fakeTask');
+    const title = state.data.data.domains['fakeDomain'].tasks[0].title;
+    expect(title).toBe('fakeTask');
+  });
+
+  test('Can add comment to a task', async () => {
+    store.dispatch(addCommentToTask('fakeDomain', 'fakeTask', 'fakeComment'));
+    const state = store.getState();
+    const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
+    expect(comment).toBe('fakeComment');
   });
 
   test.skip('After login, UserProfile displays recent activity', async () => {});
