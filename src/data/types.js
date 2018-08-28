@@ -95,6 +95,8 @@ export type User = {
 };
 
 export type Colony = {
+  id: string,
+  name: string,
   Domains: Domain[],
   Members: User[],
   pot: Pot,

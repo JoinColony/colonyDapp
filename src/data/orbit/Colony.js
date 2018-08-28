@@ -11,7 +11,7 @@ class Colony {
 
   async getDomains() {
     await this.initialize();
-    const domains = await this._store.get('domains');
+    const domains = this._store.get('domains');
     return domains;
   }
 
@@ -56,6 +56,15 @@ class Colony {
 
   address() {
     return this._store.address;
+  }
+
+  async allProperties() {
+    await this.initialize();
+    const avatarHash = this._store.get('avatar');
+    const pot = this._store.get('pot');
+    const domains = this._store.get('domains');
+    const members = this._store.get('members');
+    return { avatarHash, pot, domains, members };
   }
 
   isEmpty(): boolean {

@@ -59,17 +59,14 @@ export default class Data {
     return metacolony;
   }
 
+  // TODO load avatar from avatarHash
   /*
     Returns metadata for the given colony.
   */
-  async getColony(colonyID: string): Promise<Colony> {
-    const colony = await this._orbitNode.kvstore(colonyID);
-    await colony.load();
-
-    if (this._pinner) {
-      await this._pinner.pin(colony);
-    }
-    return new Kolonie(colony);
+  async loadColony(colonyId: string): Promise<Colony> {
+    const colony = await this._getColony(colonyId);
+    const data = await colony.allProperties();
+    return data;
   }
 
   /*
@@ -77,7 +74,7 @@ export default class Data {
   */
   async setColonyAvatar(colonyID: string, avatar: Image) {
     const imageHash = await this._ipfsNode.addImage(avatar);
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     await colony.setAvatar(imageHash);
     return;
   }
@@ -86,7 +83,7 @@ export default class Data {
     Returns the colony's avatar
   */
   async getColonyAvatar(colonyID: string) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     const avatarHash = await colony.getAvatar();
 
     const avatar = await this._ipfsNode.ipfsCat(avatarHash);
@@ -97,7 +94,7 @@ export default class Data {
     Given a colonyID and a funding pot, sets the colony's pot
   */
   async setColonyPot(colonyID: string, pot: Pot) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     await colony.setPot(pot);
     return;
   }
@@ -106,7 +103,7 @@ export default class Data {
     Returns the colony's pot
   */
   async getColonyPot(colonyID: string) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     return colony.getPot();
   }
 
@@ -114,7 +111,7 @@ export default class Data {
     Given a colonyID and a domainID, adds a domain to the colony's list 
   */
   async addColonyDomain(colonyID: string, domainID: string) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     await colony.addDomain(domainID);
     return;
   }
@@ -123,7 +120,7 @@ export default class Data {
     Returns the colony's domains
   */
   async getColonyDomains(colonyID: string) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     return colony.getDomains();
   }
 
@@ -180,7 +177,7 @@ export default class Data {
     Given a colonyID and a userID, adds a user to the colony's list 
   */
   async addColonyMember(colonyID: string, userID: string) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     await colony.addMember(userID);
     return;
   }
@@ -189,7 +186,7 @@ export default class Data {
     Returns the colony's users
   */
   async getColonyMembers(colonyID: string) {
-    const colony = await this.getColony(colonyID);
+    const colony = await this._getColony(colonyID);
     return colony.getMembers();
   }
 
@@ -256,6 +253,19 @@ export default class Data {
   _orbitNode: OrbitNode;
 
   _key: string;
+
+  /*
+   Not part of the API, used internally
+  */
+  async _getColony(colonyID: string): Promise<Colony> {
+    const colony = await this._orbitNode.kvstore(colonyID);
+    await colony.load();
+
+    if (this._pinner) {
+      await this._pinner.pin(colony);
+    }
+    return new Kolonie(colony);
+  }
 
   // TODO Data class should not require consumers to start and pass in IPFS and Orbit
   constructor(pinner: ?Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
