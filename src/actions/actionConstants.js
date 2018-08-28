@@ -5,6 +5,9 @@ export const SET_PROFILE_STATE = 'SET_PROFILE_STATE';
 export const SET_PROFILE_CONTENT = 'SET_PROFILE_CONTENT';
 export const SET_TASK_CONTENT = 'SET_TASK_CONTENT';
 
+export const LOAD_COLONY = 'LOAD_COLONY';
+export const RETURN_COLONY = 'RETURN_COLONY';
+
 export const STATE_NOTHING: 'nothing' = 'nothing';
 export const STATE_LOADING: 'loading' = 'loading';
 export const STATE_READY: 'ready' = 'ready';

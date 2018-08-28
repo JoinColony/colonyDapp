@@ -6,6 +6,7 @@ import {
   ADD_TASK_TO_DOMAIN,
   INITIALIZE_DATA,
   JOIN_COLONY,
+  RETURN_COLONY,
   SET_DATA_STATE,
   STATE_LOADING,
   SET_PROFILE_STATE,
@@ -92,7 +93,12 @@ export function setUserAsMember() {}
 export function createColony() {}
 
 // loads colony database into redux
-export function loadColony() {}
+export function loadColony(colonyId: string): Action {
+  return {
+    type: RETURN_COLONY,
+    payload: { colonyId },
+  };
+}
 
 export function editColony() {}
 

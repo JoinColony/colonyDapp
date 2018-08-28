@@ -10,6 +10,7 @@ import {
   addDomainToColony,
   addTaskToDomain,
   addColonyToUserProfile,
+  loadColony,
   setUserProfileContent,
 } from '../../src/actions';
 
@@ -75,6 +76,13 @@ describe('Data reducer', () => {
     const state = store.getState();
     const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
     expect(comment).toBe('fakeComment');
+  });
+
+  test("Fetches a colony's metadata", async () => {
+    store.dispatch(loadColony('fakeColony'));
+    const state = store.getState();
+    const colonyID = state.data.data.colonies['fakeColony'].id;
+    expect(colonyID).toBe('fakeColony');
   });
 
   test.skip('After login, UserProfile displays recent activity', async () => {});
