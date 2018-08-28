@@ -113,7 +113,7 @@ class Hardware extends Component<Props, State> {
         part,
       ),
     );
-    return <label className={styles.walletChoiceAddress}>{addressParts}</label>;
+    return <span className={styles.addressText}>{addressParts}</span>;
   };
 
   getWalletChoices = () => {

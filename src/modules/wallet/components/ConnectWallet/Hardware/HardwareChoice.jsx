@@ -72,7 +72,7 @@ class HardwareChoice extends Component<Props, State> {
         </div>
         <div className={styles.choiceBalanceContainer}>
           {isLoading ? (
-            <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
+            <SpinnerLoader appearance={{ size: 'medium', theme: 'primary' }} />
           ) : (
             <FormattedNumber {...formattedNumberProps} />
           )}
