@@ -46,6 +46,15 @@ class Domain {
   async setTitle() {}
   async getTitle() {}
 
+  async allProperties() {
+    await this.initialize();
+    const avatarHash = this._store.get('avatar');
+    const pot = this._store.get('pot');
+    const tasks = this._store.get('tasks');
+    const members = this._store.get('members');
+    return { avatarHash, pot, tasks, members };
+  }
+
   async addComment(taskID: string, comment: IPFSHash) {
     await this.initialize();
     const tasks = await this.getTasks();

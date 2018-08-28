@@ -127,22 +127,18 @@ export default class Data {
   /*
     Returns metadata and tasks for the given domain.
   */
-  async getDomain(domainKey: string): Promise<Domain> {
-    const domain = await this._orbitNode.kvstore(domainKey);
-    await domain.load();
 
-    if (this._pinner) {
-      await this._pinner.pin(domain);
-    }
-
-    return new Domane(domain);
+  async loadDomain(domainId) {
+    const domain = await this._getDomain(domainId);
+    const data = await domain.allProperties();
+    return data;
   }
 
   /*
     Given a domainID and a funding pot, sets the domain's pot
   */
   async setDomainPot(domainID: string, pot: Pot) {
-    const domain = await this.getDomain(domainID);
+    const domain = await this._getDomain(domainID);
     await domain.setPot(pot);
     return;
   }
@@ -151,7 +147,7 @@ export default class Data {
     Returns the domain's pot
   */
   async getDomainPot(domainID: string) {
-    const domain = await this.getDomain(domainID);
+    const domain = await this._getDomain(domainID);
     return domain.getPot();
   }
 
@@ -159,7 +155,7 @@ export default class Data {
     Given a domainID and a userID, adds a user to the domain's list 
   */
   async addDomainMember(domainID: string, userID: string) {
-    const domain = await this.getDomain(domainID);
+    const domain = await this._getDomain(domainID);
     await domain.addMember(userID);
     return;
   }
@@ -168,7 +164,7 @@ export default class Data {
     Returns the domain's users
   */
   async getDomainMembers(domainID: string) {
-    const domain = await this.getDomain(domainID);
+    const domain = await this._getDomain(domainID);
     const members = await domain.getMembers();
     return members;
   }
@@ -207,7 +203,7 @@ export default class Data {
   }
 
   async getTaskComments(domainID: string, taskID: string) {
-    const domain = await this.getDomain(domainID);
+    const domain = await this._getDomain(domainID);
     const commentHashes = await domain.getComments(taskID);
     return this.getComments(commentHashes);
   }
@@ -216,7 +212,7 @@ export default class Data {
    Creates IPFS document, and stores the resulting hash in the task entry
   */
   async addComment(domainKey: string, taskID: string, comment: Comment) {
-    const domain = await this.getDomain(domainKey);
+    const domain = await this._getDomain(domainKey);
     const hash = await this._ipfsNode.addComment(comment);
     await domain.addComment(taskID, hash[0].hash);
   }
@@ -226,7 +222,7 @@ export default class Data {
    When the task is assigned, it is sent on-chain, and the draft task is deleted
   */
   async draftTask(domainKey: string, task: Task) {
-    const domain = await this.getDomain(domainKey);
+    const domain = await this._getDomain(domainKey);
     await domain.addTask(task);
   }
 
@@ -234,12 +230,39 @@ export default class Data {
     Returns the domain's tasks
   */
   async getDomainTasks(domainID: string) {
-    const domain = await this.getDomain(domainID);
+    const domain = await this._getDomain(domainID);
     return domain.getTasks();
   }
 
   waitForPeer(peerID: B58String): Promise<boolean> {
     return this._ipfsNode.waitForPeer(peerID);
+  }
+
+  /*
+  Returns colony data class to interact with DDB
+  */
+  async _getColony(colonyID: string): Promise<Colony> {
+    const colony = await this._orbitNode.kvstore(colonyID);
+    await colony.load();
+
+    if (this._pinner) {
+      await this._pinner.pin(colony);
+    }
+    return new Kolonie(colony);
+  }
+
+  /*
+  Returns domain data class to interact with DDB
+  */
+  async _getDomain(domainKey: string): Promise<Domain> {
+    const domain = await this._orbitNode.kvstore(domainKey);
+    await domain.load();
+
+    if (this._pinner) {
+      await this._pinner.pin(domain);
+    }
+
+    return new Domane(domain);
   }
 
   /*
@@ -253,19 +276,6 @@ export default class Data {
   _orbitNode: OrbitNode;
 
   _key: string;
-
-  /*
-   Not part of the API, used internally
-  */
-  async _getColony(colonyID: string): Promise<Colony> {
-    const colony = await this._orbitNode.kvstore(colonyID);
-    await colony.load();
-
-    if (this._pinner) {
-      await this._pinner.pin(colony);
-    }
-    return new Kolonie(colony);
-  }
 
   // TODO Data class should not require consumers to start and pass in IPFS and Orbit
   constructor(pinner: ?Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
