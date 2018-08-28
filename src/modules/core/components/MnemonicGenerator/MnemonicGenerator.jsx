@@ -47,6 +47,8 @@ type Props = {
   /** Input field name (form variable) */
   name: string,
   /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
+  /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
   $error?: string,
@@ -114,6 +116,7 @@ class MnemonicGenerator extends Component<Props, State> {
       help,
       generateFn,
       $id,
+      isSubmitting,
       label,
       name,
       $value,

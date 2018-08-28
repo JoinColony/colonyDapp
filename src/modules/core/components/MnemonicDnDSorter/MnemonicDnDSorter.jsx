@@ -39,6 +39,8 @@ type Props = {
   label: string | MessageDescriptor,
   /** Input field name (form variable) */
   name: string,
+  /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
   /** Placeholder text (can also be a MessageDescriptor) */
   placeholder?: string,
   /** @ignore Will be injected by `asField` */
@@ -268,6 +270,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
       label,
       help,
       name,
+      isSubmitting,
       $value,
       $touched,
       onBlur,
