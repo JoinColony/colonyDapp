@@ -48,8 +48,9 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       const domainId = action.payload.target[0];
       const taskId = action.payload.target[1];
 
-      const domane = state.data.domains[domainId];
-      let task = domane.tasks.filter(t => t._id === taskId)[0];
+      let task = state.data.domains[domainId].tasks.filter(
+        t => t._id === taskId,
+      )[0];
 
       task = mergeContent(task, {
         target: 'comments',
@@ -62,13 +63,9 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       };
 
     case LOAD_COLONY:
-      const colonis = state.data.colonies;
-      colonis[action.payload.target] = action.payload.content;
+      state.data.colonies[action.payload.target] = action.payload.content;
 
-      return {
-        ...state,
-        data: { ...state.data, colonis },
-      };
+      return state;
 
     case SET_COLONY_CONTENT:
       const colonies = mergeContent(state.data.colonies, action.payload);
