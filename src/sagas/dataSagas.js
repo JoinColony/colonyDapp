@@ -9,6 +9,8 @@ import {
   ADD_TASK_TO_DOMAIN,
   LOAD_COLONY,
   RETURN_COLONY,
+  LOAD_DOMAIN,
+  RETURN_DOMAIN,
   JOIN_COLONY,
   SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
@@ -93,6 +95,26 @@ function* loadColony(action) {
   });
 }
 
+// TODO payload should be domain after Data class loads correctly
+function* loadDomain(action) {
+  const { domainId } = action.payload;
+  const Data = yield select(state => state.data.Data);
+  // const domain = yield Data.loadDomain(domainId);
+
+  yield put({
+    type: LOAD_DOMAIN,
+    payload: {
+      content: {
+        id: domainId,
+        members: ['geo'],
+        name: 'biotech',
+        pot: '1 MILLION dollars',
+      },
+      target: domainId,
+    },
+  });
+}
+
 function* initializeData() {
   const data = yield Data.fromDefaultConfig('no pinner', {
     ipfs: {
@@ -116,6 +138,7 @@ function* colonySagas() {
   yield takeEvery(ADD_TASK_TO_DOMAIN, addTaskToDomain);
   yield takeEvery(ADD_COMMENT_TO_TASK, addCommentToTask);
   yield takeEvery(RETURN_COLONY, loadColony);
+  yield takeEvery(RETURN_DOMAIN, loadDomain);
 }
 
 export default colonySagas;

@@ -8,6 +8,9 @@ export const SET_TASK_CONTENT = 'SET_TASK_CONTENT';
 export const LOAD_COLONY = 'LOAD_COLONY';
 export const RETURN_COLONY = 'RETURN_COLONY';
 
+export const LOAD_DOMAIN = 'LOAD_DOMAIN';
+export const RETURN_DOMAIN = 'RETURN_DOMAIN';
+
 export const STATE_NOTHING: 'nothing' = 'nothing';
 export const STATE_LOADING: 'loading' = 'loading';
 export const STATE_READY: 'ready' = 'ready';

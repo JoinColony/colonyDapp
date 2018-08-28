@@ -11,6 +11,7 @@ import {
   addTaskToDomain,
   addColonyToUserProfile,
   loadColony,
+  loadDomain,
   setUserProfileContent,
 } from '../../src/actions';
 
@@ -83,6 +84,15 @@ describe('Data reducer', () => {
     const state = store.getState();
     const colonyID = state.data.data.colonies['fakeColony'].id;
     expect(colonyID).toBe('fakeColony');
+  });
+
+  test("Fetches a domain's metadata", async () => {
+    store.dispatch(loadDomain('fakeDomain'));
+    const state = store.getState();
+    const domainID = state.data.data.domains['fakeDomain'].id;
+    const domainName = state.data.data.domains['fakeDomain'].name;
+    expect(domainID).toBe('fakeDomain');
+    expect(domainName).toBe('biotech');
   });
 
   test.skip('After login, UserProfile displays recent activity', async () => {});

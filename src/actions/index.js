@@ -7,6 +7,7 @@ import {
   INITIALIZE_DATA,
   JOIN_COLONY,
   RETURN_COLONY,
+  RETURN_DOMAIN,
   SET_DATA_STATE,
   STATE_LOADING,
   SET_PROFILE_STATE,
@@ -106,7 +107,12 @@ export function storeColonyAvatarOnIPFS() {}
 export function removeColonyAvatar() {}
 
 /* Domain, Task, and Comment Actions */
-export function loadDomain() {}
+export function loadDomain(domainId: string): Action {
+  return {
+    type: RETURN_DOMAIN,
+    payload: { domainId },
+  };
+}
 
 // grant permissions to user via smart contract
 export function addUserToDomain() {}

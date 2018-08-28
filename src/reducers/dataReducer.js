@@ -4,6 +4,7 @@ import {
   INITIALIZE_DATA,
   INITIAL_STATE,
   LOAD_COLONY,
+  LOAD_DOMAIN,
   JOIN_COLONY,
   SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
@@ -57,10 +58,12 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
         content: action.payload.content,
       });
 
-      return {
-        ...state,
-        data: { ...state.data, domane },
-      };
+      return state;
+
+    case LOAD_DOMAIN:
+      state.data.domains[action.payload.target] = action.payload.content;
+
+      return state;
 
     case LOAD_COLONY:
       state.data.colonies[action.payload.target] = action.payload.content;
