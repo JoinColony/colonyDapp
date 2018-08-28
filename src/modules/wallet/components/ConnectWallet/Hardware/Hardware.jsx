@@ -14,6 +14,7 @@ import HardwareChoice from './HardwareChoice.jsx';
 
 import Icon from '../../../../core/components/Icon';
 import Input from '../../../../core/components/Fields/Input';
+import InputLabel from '../../../../core/components/Fields/InputLabel';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import styles from './Hardware.css';
@@ -135,6 +136,10 @@ class Hardware extends Component<Props, State> {
       wallet.address.includes(values.hardwareWalletFilter),
     );
 
+    const iconClassName = values.hardwareWalletFilter
+      ? styles.searchBoxIconContainerActive
+      : styles.searchBoxIconContainer;
+
     return (
       <form onSubmit={handleSubmit}>
         <div className={styles.content}>
@@ -153,16 +158,18 @@ class Hardware extends Component<Props, State> {
                   text={MSG.subHeading}
                   appearance={{ size: 'medium', weight: 'thin' }}
                 />
+                <InputLabel label={MSG.walletSelectionLabel} />
                 <div className={styles.choiceHeadingRow}>
                   <div className={styles.searchBox}>
-                    <div className={styles.searchBoxIconContainer}>
+                    <div className={iconClassName}>
                       <Icon name="wallet" title="hardware wallet" />
                     </div>
                     <Input
-                      appearance={{ theme: 'underlined' }}
+                      appearance={{ theme: 'minimal' }}
                       name="hardwareWalletFilter"
                       label={MSG.walletSelectionLabel}
                       placeholder={MSG.searchInputPlacholder}
+                      elementOnly
                     />
                   </div>
                   <div>

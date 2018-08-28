@@ -10,7 +10,7 @@ import styles from './InputComponent.css';
 import type { CleaveOptions } from './types';
 
 export type Appearance = {
-  theme?: 'fat' | 'underlined',
+  theme?: 'fat' | 'underlined' | 'minimal',
   align?: 'right',
   colorSchema?: 'dark' | 'transparent',
 };

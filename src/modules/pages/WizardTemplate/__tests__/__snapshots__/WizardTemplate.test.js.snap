@@ -6,7 +6,12 @@ exports[`WizardTemplate component Renders initial component 1`] = `
     <figure
       role="presentation"
     >
-      <test-file-stub />
+      <Link
+        replace={false}
+        to="/"
+      >
+        <test-file-stub />
+      </Link>
     </figure>
     <div>
       <InjectIntl(StepBar)

@@ -26,6 +26,15 @@
 
 .searchBoxIconContainer {
   margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.searchBoxIconContainerActive {
+  composes: searchBoxIconContainer;
+
+  & svg {
+    stroke: var(--sky-blue);
+  }
 }
 
 .walletChoicesContainer {
