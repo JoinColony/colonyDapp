@@ -59,6 +59,18 @@ export default class Data {
     return metacolony;
   }
 
+  /*
+  Given a colonyId and an object with the property and value to set, updates a simple property
+  */
+  async updateColony(
+    colonyId: string,
+    { property, value }: {},
+  ): Promise<Colony> {
+    const colony = await this._getColony(colonyId);
+    await colony.setProperty(property, value);
+    return;
+  }
+
   // TODO load avatar from avatarHash
   /*
     Returns metadata for the given colony.

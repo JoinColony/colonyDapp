@@ -58,6 +58,12 @@ class Colony {
     return this._store.address;
   }
 
+  async setProperty(property, value) {
+    await this.initialize();
+    await this._store.put(property, value);
+    return;
+  }
+
   async allProperties() {
     await this.initialize();
     const avatarHash = this._store.get('avatar');
