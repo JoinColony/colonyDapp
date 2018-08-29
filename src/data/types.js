@@ -71,6 +71,7 @@ export type Task = {
   comments: IPFSHash[],
   taskLabels: string[],
   taskSkills: string[],
+  tags: string[],
   createdAt: Date,
   assignedTo: string,
   bounty: number,
@@ -90,6 +91,8 @@ export type Domain = {
 
 export type User = {
   name: string,
+  email: string,
+  bio: string,
   colonies: ColonyAddress[],
   reputation: number[],
 };
