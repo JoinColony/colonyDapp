@@ -14,6 +14,9 @@ export const UPDATE_COLONY = 'UPDATE_COLONY';
 export const EDIT_DOMAIN = 'EDIT_DOMAIN';
 export const UPDATE_DOMAIN = 'UPDATE_DOMAIN';
 
+export const EDIT_TASK = 'EDIT_TASK';
+export const UPDATE_TASK = 'UPDATE_TASK';
+
 export const LOAD_DOMAIN = 'LOAD_DOMAIN';
 export const RETURN_DOMAIN = 'RETURN_DOMAIN';
 

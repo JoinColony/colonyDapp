@@ -72,7 +72,7 @@ export default class Data {
   }
 
   /*
-  Given a colonyId and an object with the property and value to set, updates a simple property
+  Given a domainId and an object with the property and value to set, updates a simple property
   */
   async updateDomain(
     domainId: string,
@@ -80,6 +80,28 @@ export default class Data {
   ): Promise<Domain> {
     const domain = await this._getDomain(colonyId);
     await domain.setProperty(property, value);
+    return;
+  }
+
+  /*
+  Given a taskId and an object with the property and value to set, updates a simple property
+  */
+  async updateTask(
+    domainId: string,
+    taskId: string,
+    { property, value }: {},
+  ): Promise<Task> {
+    const domain = await this._getDomain(colonyId);
+    const tasks = domain.getTasks();
+    const task = tasks.filter(t => t._id === taskId)[0];
+
+    if (Array.isArray(task[property])) {
+      task[property].push(value);
+    } else {
+      task[property] = value;
+    }
+    await domain.setProperty('tasks', tasks);
+
     return;
   }
 

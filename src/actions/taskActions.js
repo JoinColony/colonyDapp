@@ -1,6 +1,6 @@
 // @flow
 
-import { ADD_COMMENT_TO_TASK } from './actionConstants';
+import { ADD_COMMENT_TO_TASK, EDIT_TASK } from './actionConstants';
 
 import type { Action } from './actionConstants';
 
@@ -16,12 +16,17 @@ export function addCommentToTask(
 }
 
 /*
-Changes simple properties: Name, Title, Bounty, Tag
+Changes simple properties: Name, Title, Bounty
 Call with { property, value }
 
 Task Spec goes onchain, DDB does not handle (?)
 */
-export function editTask() {}
+export function editTask(domainId, taskId, update): Action {
+  return {
+    type: EDIT_TASK,
+    payload: { domainId, taskId, update },
+  };
+}
 
 export function fetchCommentsForTask() {}
 export function removeUserFromTask() {}

@@ -16,6 +16,7 @@ import {
   SET_TASK_CONTENT,
   UPDATE_COLONY,
   UPDATE_DOMAIN,
+  UPDATE_TASK,
 } from '../actions/actionConstants';
 
 import type { Action } from '../actions/actionConstants';
@@ -101,6 +102,34 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
             [domainId]: {
               [domainProperty]: {
                 $set: domainValue,
+              },
+            },
+          },
+        },
+      });
+
+    case UPDATE_TASK:
+      const {
+        domainId: domain,
+        taskId: taskID,
+        update: { property: taskProperty, value: taskValue },
+      } = action.payload;
+      return update(state, {
+        data: {
+          domains: {
+            [domain]: {
+              tasks: {
+                $apply: ts =>
+                  ts.map(t => {
+                    if (t._id === taskID) {
+                      if (Array.isArray(t[taskProperty])) {
+                        t[taskProperty].push(taskValue);
+                      } else {
+                        t[taskProperty] = taskValue;
+                      }
+                    }
+                    return t;
+                  }),
               },
             },
           },

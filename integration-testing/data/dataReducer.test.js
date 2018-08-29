@@ -12,6 +12,7 @@ import {
   addColonyToUserProfile,
   editColony,
   editDomain,
+  editTask,
   loadColony,
   loadDomain,
   setUserProfileContent,
@@ -44,10 +45,13 @@ describe('Data reducer', () => {
     expect(state.data.Data).toBeTruthy();
   });
 
+  // TODO add permissions
   test('After action dispatch, the Redux state is updated', async () => {
     store.dispatch(setUserProfileContent({ greeting: 'hello' }));
+    store.dispatch(setUserProfileContent({ name: 'Geo' }));
     const state = store.getState();
     expect(state.data.my_profile.data.greeting).toBe('hello');
+    expect(state.data.my_profile.data.name).toBe('Geo');
   });
 
   test('UserProfile shows colony after joining', async () => {
@@ -67,7 +71,7 @@ describe('Data reducer', () => {
   });
 
   test('Can add task to a domain', async () => {
-    const task = { title: 'fakeTask', _id: 'fakeTask' };
+    const task = { title: 'fakeTask', _id: 'fakeTask', tags: [] };
     store.dispatch(addTaskToDomain('fakeDomain', task));
     const state = store.getState();
     const title = state.data.data.domains['fakeDomain'].tasks[0].title;
@@ -109,6 +113,29 @@ describe('Data reducer', () => {
     const domainColor = state.data.data.domains['fakeDomain'].color;
     expect(domainName).toBe('hello');
     expect(domainColor).toBe('blue');
+  });
+
+  test("Updates a task's simple properties", async () => {
+    store.dispatch(
+      editTask('fakeDomain', 'fakeTask', { property: 'title', value: 'hello' }),
+    );
+    store.dispatch(
+      editTask('fakeDomain', 'fakeTask', { property: 'bounty', value: 20 }),
+    );
+    store.dispatch(
+      editTask('fakeDomain', 'fakeTask', {
+        property: 'tags',
+        value: 'dancing',
+      }),
+    );
+
+    const state = store.getState();
+    const title = state.data.data.domains['fakeDomain'].tasks[0].title;
+    const bounty = state.data.data.domains['fakeDomain'].tasks[0].bounty;
+    const tag = state.data.data.domains['fakeDomain'].tasks[0].tags[0];
+    expect(title).toBe('hello');
+    expect(bounty).toBe(20);
+    expect(tag).toBe('dancing');
   });
 
   test("Fetches a domain's metadata", async () => {
