@@ -1,10 +1,9 @@
 /* @flow */
-import type { Element } from 'react';
 import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
 import { withFormik } from 'formik';
 import { compose } from 'recompose';
-import React, { Component, createElement, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { HardwareWallet } from './types';
@@ -96,26 +95,6 @@ class Hardware extends Component<Props, State> {
     this.getWalletChoices();
   }
 
-  renderWalletAddress = (walletAddress: string): Element<*> => {
-    const firstChunkSize = 5;
-    const lastChunkSize = 5;
-    const middleChunkSize =
-      walletAddress.length - firstChunkSize - lastChunkSize;
-    const middleChunkEnd = firstChunkSize + middleChunkSize;
-    const addressParts = [
-      walletAddress.slice(0, firstChunkSize),
-      walletAddress.slice(firstChunkSize, middleChunkEnd),
-      walletAddress.slice(middleChunkEnd, walletAddress.length),
-    ].map((part, idx) =>
-      createElement(
-        'span',
-        { className: styles.addressPart, key: `${idx}-${part}` },
-        part,
-      ),
-    );
-    return <span className={styles.addressText}>{addressParts}</span>;
-  };
-
   getWalletChoices = () => {
     this.setState({
       walletChoices: hardwareWalletChoices,
@@ -129,14 +108,14 @@ class Hardware extends Component<Props, State> {
       handleSubmit,
       isSubmitting,
       isValid,
-      values,
+      values: { hardwareWalletChoice, hardwareWalletFilter },
     } = this.props;
 
     const filteredWalletChoices = walletChoices.filter(wallet =>
-      wallet.address.includes(values.hardwareWalletFilter),
+      wallet.address.includes(hardwareWalletFilter),
     );
 
-    const iconClassName = values.hardwareWalletFilter
+    const iconClassName = hardwareWalletFilter
       ? styles.searchBoxIconContainerActive
       : styles.searchBoxIconContainer;
 
@@ -196,7 +175,7 @@ class Hardware extends Component<Props, State> {
           </div>
           <div className={styles.walletChoicesContainer}>
             {filteredWalletChoices.length === 0 &&
-              values.hardwareWalletFilter.length > 0 && (
+              hardwareWalletFilter.length > 0 && (
                 <Heading
                   text={MSG.emptySearchResultsText}
                   appearance={{ size: 'normal' }}
@@ -206,8 +185,8 @@ class Hardware extends Component<Props, State> {
               <div className={styles.choiceRow} key={wallet.address}>
                 <HardwareChoice
                   wallet={wallet}
-                  checked={values.hardwareWalletChoice === wallet.address}
-                  renderWalletAddress={this.renderWalletAddress}
+                  checked={hardwareWalletChoice === wallet.address}
+                  searchTerm={hardwareWalletFilter}
                 />
               </div>
             ))}

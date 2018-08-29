@@ -17,3 +17,12 @@
   composes: choiceCell;
   padding: var(--choicePaddingVertical) 0 var(--choicePaddingVertical) var(--choicePaddingHorizontal);
 }
+
+.walletAddressContainer .addressPart:nth-of-type(6),
+.walletAddressContainer .addressPart:nth-last-of-type(5) {
+  margin-left: 15px;
+}
+
+.highlight {
+  background-color: var(--primary);
+}

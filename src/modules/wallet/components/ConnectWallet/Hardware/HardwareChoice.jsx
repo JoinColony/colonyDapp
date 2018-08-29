@@ -1,6 +1,4 @@
 /* @flow */
-import type { Node } from 'react';
-
 import React, { Component, Fragment } from 'react';
 
 import { FormattedNumber } from 'react-intl';
@@ -14,8 +12,8 @@ import SpinnerLoader from '../../../../core/components/Preloaders/SpinnerLoader.
 
 type Props = {
   checked: boolean,
-  renderWalletAddress: (address: string) => Node,
   wallet: HardwareWallet,
+  searchTerm: string,
 };
 
 type State = {
@@ -46,12 +44,30 @@ class HardwareChoice extends Component<Props, State> {
     }, timeout);
   };
 
+  addressCharacter = (
+    character: string,
+    idx: number,
+    remainingVals: Array<string>,
+  ) => {
+    const itemKey = `${character}-${remainingVals.join('')}-${idx}`;
+
+    return (
+      <span className={styles.addressPart} key={itemKey}>
+        {character}
+      </span>
+    );
+  };
+
   render() {
     const { isLoading } = this.state;
-    const { wallet, checked, renderWalletAddress } = this.props;
+    const {
+      checked,
+      searchTerm,
+      wallet: { address, balance },
+    } = this.props;
 
     const formattedNumberProps = {
-      value: wallet.balance,
+      value: balance,
       style: 'currency',
       maximumFractionDigits: 18,
       currency: 'ETH',
@@ -64,10 +80,32 @@ class HardwareChoice extends Component<Props, State> {
           <Radio
             checked={checked}
             name="hardwareWalletChoice"
-            value={wallet.address}
+            value={address}
             elementOnly
           >
-            {renderWalletAddress(wallet.address)}
+            <span className={styles.walletAddressContainer}>
+              {searchTerm ? (
+                <Fragment>
+                  {address.split(searchTerm).reduce((prev, current, idx) => {
+                    if (!idx) {
+                      return [current.split('').map(this.addressCharacter)];
+                    }
+                    return prev.concat(
+                      <mark
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={`${searchTerm}-${idx}`}
+                        className={styles.highlight}
+                      >
+                        {searchTerm.split('').map(this.addressCharacter)}
+                      </mark>,
+                      current.split('').map(this.addressCharacter),
+                    );
+                  }, [])}
+                </Fragment>
+              ) : (
+                address.split('').map(this.addressCharacter)
+              )}
+            </span>
           </Radio>
         </div>
         <div className={styles.choiceBalanceContainer}>

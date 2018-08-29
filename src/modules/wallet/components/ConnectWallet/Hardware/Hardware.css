@@ -47,10 +47,6 @@
   composes: flexContainerRow flexJustifyBetween from '~styles/layout.css';
 }
 
-.addressPart + .addressPart {
-  margin-left: 15px;
-}
-
 .actions {
   composes: alignRight from '~styles/text.css';
 }
@@ -58,3 +54,4 @@
 .noWalletFound {
   composes: alignCenter from '~styles/text.css';
 }
+
