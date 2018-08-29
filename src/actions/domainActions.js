@@ -3,6 +3,7 @@
 import {
   ADD_DOMAIN_TO_COLONY,
   ADD_TASK_TO_DOMAIN,
+  EDIT_DOMAIN,
   RETURN_DOMAIN,
 } from './actionConstants';
 
@@ -20,7 +21,12 @@ export function addDomainToColony(colonyId: string, domainId: string): Action {
 Changes simple properties: name, color
 Call with { property, value }
 */
-export function editDomain() {}
+export function editDomain(domainId, update): Action {
+  return {
+    type: EDIT_DOMAIN,
+    payload: { domainId, update },
+  };
+}
 
 export function loadDomain(domainId: string): Action {
   return {

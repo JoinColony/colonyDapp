@@ -15,6 +15,7 @@ import {
   SET_PROFILE_STATE,
   SET_TASK_CONTENT,
   UPDATE_COLONY,
+  UPDATE_DOMAIN,
 } from '../actions/actionConstants';
 
 import type { Action } from '../actions/actionConstants';
@@ -30,7 +31,6 @@ const mergeContent = (data, { target: key, content }) => {
   return data;
 };
 
-// action.content: { 'property': 'value' }
 export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case INITIALIZE_DATA:
@@ -49,10 +49,10 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
 
     // todo generalize this
     case SET_TASK_CONTENT:
-      const domainId = action.payload.target[0];
+      const domainID = action.payload.target[0];
       const taskId = action.payload.target[1];
 
-      let task = state.data.domains[domainId].tasks.filter(
+      let task = state.data.domains[domainID].tasks.filter(
         t => t._id === taskId,
       )[0];
 
@@ -74,13 +74,33 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       return state;
 
     case UPDATE_COLONY:
-      const { colonyId, update: { property, value } } = action.payload;
+      const {
+        colonyId,
+        update: { property: colonyProperty, value: colonyValue },
+      } = action.payload;
       return update(state, {
         data: {
           colonies: {
             [colonyId]: {
-              [property]: {
-                $set: value,
+              [colonyProperty]: {
+                $set: colonyValue,
+              },
+            },
+          },
+        },
+      });
+
+    case UPDATE_DOMAIN:
+      const {
+        domainId,
+        update: { property: domainProperty, value: domainValue },
+      } = action.payload;
+      return update(state, {
+        data: {
+          domains: {
+            [domainId]: {
+              [domainProperty]: {
+                $set: domainValue,
               },
             },
           },

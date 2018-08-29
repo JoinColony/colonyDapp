@@ -11,6 +11,9 @@ export const RETURN_COLONY = 'RETURN_COLONY';
 export const EDIT_COLONY = 'EDIT_COLONY';
 export const UPDATE_COLONY = 'UPDATE_COLONY';
 
+export const EDIT_DOMAIN = 'EDIT_DOMAIN';
+export const UPDATE_DOMAIN = 'UPDATE_DOMAIN';
+
 export const LOAD_DOMAIN = 'LOAD_DOMAIN';
 export const RETURN_DOMAIN = 'RETURN_DOMAIN';
 

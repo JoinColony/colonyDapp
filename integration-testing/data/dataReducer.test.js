@@ -11,6 +11,7 @@ import {
   addTaskToDomain,
   addColonyToUserProfile,
   editColony,
+  editDomain,
   loadColony,
   loadDomain,
   setUserProfileContent,
@@ -94,6 +95,20 @@ describe('Data reducer', () => {
     const state = store.getState();
     const colonyName = state.data.data.colonies['fakeColony'].name;
     expect(colonyName).toBe('hello');
+  });
+
+  test("Updates a domain's simple properties", async () => {
+    store.dispatch(
+      editDomain('fakeDomain', { property: 'name', value: 'hello' }),
+    );
+    store.dispatch(
+      editDomain('fakeDomain', { property: 'color', value: 'blue' }),
+    );
+    const state = store.getState();
+    const domainName = state.data.data.domains['fakeDomain'].name;
+    const domainColor = state.data.data.domains['fakeDomain'].color;
+    expect(domainName).toBe('hello');
+    expect(domainColor).toBe('blue');
   });
 
   test("Fetches a domain's metadata", async () => {
