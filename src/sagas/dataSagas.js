@@ -9,6 +9,8 @@ import {
   ADD_TASK_TO_DOMAIN,
   LOAD_COLONY,
   RETURN_COLONY,
+  EDIT_COLONY,
+  UPDATE_COLONY,
   LOAD_DOMAIN,
   RETURN_DOMAIN,
   JOIN_COLONY,
@@ -95,6 +97,17 @@ function* loadColony(action) {
   });
 }
 
+function* editColony(action) {
+  const { colonyId, update } = action.payload;
+  const Data = yield select(state => state.data.Data);
+  // const colony = yield Data.updateColony(colonyId, update);
+
+  yield put({
+    type: UPDATE_COLONY,
+    payload: action.payload,
+  });
+}
+
 // TODO payload should be domain after Data class loads correctly
 function* loadDomain(action) {
   const { domainId } = action.payload;
@@ -139,6 +152,7 @@ function* colonySagas() {
   yield takeEvery(ADD_COMMENT_TO_TASK, addCommentToTask);
   yield takeEvery(RETURN_COLONY, loadColony);
   yield takeEvery(RETURN_DOMAIN, loadDomain);
+  yield takeEvery(EDIT_COLONY, editColony);
 }
 
 export default colonySagas;

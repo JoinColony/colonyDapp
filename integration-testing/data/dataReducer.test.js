@@ -10,6 +10,7 @@ import {
   addDomainToColony,
   addTaskToDomain,
   addColonyToUserProfile,
+  editColony,
   loadColony,
   loadDomain,
   setUserProfileContent,
@@ -84,6 +85,15 @@ describe('Data reducer', () => {
     const state = store.getState();
     const colonyID = state.data.data.colonies['fakeColony'].id;
     expect(colonyID).toBe('fakeColony');
+  });
+
+  test("Updates a colony's simple properties", async () => {
+    store.dispatch(
+      editColony('fakeColony', { property: 'name', value: 'hello' }),
+    );
+    const state = store.getState();
+    const colonyName = state.data.data.colonies['fakeColony'].name;
+    expect(colonyName).toBe('hello');
   });
 
   test("Fetches a domain's metadata", async () => {

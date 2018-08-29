@@ -1,5 +1,5 @@
 // @flow
-import { RETURN_COLONY } from './actionConstants';
+import { EDIT_COLONY, RETURN_COLONY } from './actionConstants';
 
 import type { Action } from './actionConstants';
 
@@ -18,7 +18,12 @@ export function createColony() {}
 Changes simple properties: name, any other simple property cached here
 Call with { property, value }
 */
-export function editColony() {}
+export function editColony(colonyId, update): Action {
+  return {
+    type: EDIT_COLONY,
+    payload: { colonyId, update },
+  };
+}
 
 export function storeColonyAvatarOnIPFS() {}
 

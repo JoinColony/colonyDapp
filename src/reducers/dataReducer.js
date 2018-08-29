@@ -1,5 +1,7 @@
 /* @flow */
 
+import update from 'react-addons-update';
+
 import {
   INITIALIZE_DATA,
   INITIAL_STATE,
@@ -12,6 +14,7 @@ import {
   SET_PROFILE_CONTENT,
   SET_PROFILE_STATE,
   SET_TASK_CONTENT,
+  UPDATE_COLONY,
 } from '../actions/actionConstants';
 
 import type { Action } from '../actions/actionConstants';
@@ -69,6 +72,20 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       state.data.colonies[action.payload.target] = action.payload.content;
 
       return state;
+
+    case UPDATE_COLONY:
+      const { colonyId, update: { property, value } } = action.payload;
+      return update(state, {
+        data: {
+          colonies: {
+            [colonyId]: {
+              [property]: {
+                $set: value,
+              },
+            },
+          },
+        },
+      });
 
     case SET_COLONY_CONTENT:
       const colonies = mergeContent(state.data.colonies, action.payload);
