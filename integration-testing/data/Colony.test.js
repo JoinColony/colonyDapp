@@ -23,30 +23,20 @@ afterAll(async () => {
 
 describe('Data: a colony', () => {
   test('Can access a colony', async () => {
-    const p1 = await data1.getColony('fakeAddress');
+    const p1 = await data1._getColony('fakeAddress');
     expect(p1).toBeTruthy();
   });
 
   test('The colony model accepts domain hashes', async () => {
-    const p1 = await data1.getColony('fakeAddress');
-    await p1.addDomain('domainAddress1');
-    const domain = await p1.getDomains();
+    await data1.addColonyDomain('fakeAddress', 'domainAddress1');
+    const domain = await data1.getColonyDomains('fakeAddress');
     expect(domain.length).toBe(1);
     expect(domain[0]).toBe('domainAddress1');
   });
 
-  test('The colony model accepts members', async () => {
-    const p3 = await data2.getColony('fakeAddress2');
-    await p3.addMember('memberOneId');
-    const members = await p3.getMembers();
-    expect(members.length).toBe(1);
-    expect(members[0]).toBe('memberOneId');
-  });
-
   test('The colony model accepts a funding pot', async () => {
-    const p3 = await data2.getColony('fakeAddress2');
-    await p3.setPot({ ETH: 1 });
-    const pot = await p3.getPot();
+    await data2.setColonyPot('fakeAddress2', { ETH: 1 });
+    const pot = await data2.getColonyPot('fakeAddress2');
     expect(pot.ETH).toBe(1);
   });
 
@@ -60,7 +50,7 @@ describe('Data: a colony', () => {
     await data2.addColonyMember('fakeAddress2', 'fakeID');
     const members = await data2.getColonyMembers('fakeAddress2');
     expect(members.length).toBe(1);
-    expect(members[0]).toBe('memberOneId');
+    expect(members[0]).toBe('fakeID');
   });
 
   test.skip('The Data API adds a domain to a colony', async () => {

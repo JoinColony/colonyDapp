@@ -25,7 +25,7 @@ afterAll(async () => {
 
 describe('Data: a domain', () => {
   test('Can access a domain', async () => {
-    const p1 = await data1.getDomain('fakeAddress');
+    const p1 = await data1._getDomain('fakeAddress');
     expect(p1).toBeTruthy();
     expect(p1.address().path).toBe('fakeAddress');
   });
