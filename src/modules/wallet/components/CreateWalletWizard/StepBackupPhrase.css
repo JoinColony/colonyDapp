@@ -12,6 +12,11 @@
   margin-bottom: 81px;
 }
 
+.mnemonicInstructions {
+  display: flex;
+  justify-content: space-between;
+}
+
 .greyBox {
   padding: 22px 60px;
   position: relative;
@@ -50,9 +55,7 @@
   margin-bottom: 10px;
 }
 
-.backupButton {
-  display: flex;
-  justify-content: flex-end;
-  padding: 40px 0;
+.divider {
+  margin-top: 40px;
   border-bottom: 1px solid var(--grey-blue-0);
 }
