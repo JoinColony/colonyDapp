@@ -71,6 +71,18 @@ export default class Data {
     return;
   }
 
+  /*
+  Given a colonyId and an object with the property and value to set, updates a simple property
+  */
+  async updateDomain(
+    domainId: string,
+    { property, value }: {},
+  ): Promise<Domain> {
+    const domain = await this._getDomain(colonyId);
+    await domain.setProperty(property, value);
+    return;
+  }
+
   // TODO load avatar from avatarHash
   /*
     Returns metadata for the given colony.

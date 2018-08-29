@@ -40,11 +40,14 @@ class Domain {
     return this._store.get('members');
   }
 
+  async setProperty(property, value) {
+    await this.initialize();
+    await this._store.put(property, value);
+    return;
+  }
+
   async setSpec() {}
   async getSpec() {}
-
-  async setTitle() {}
-  async getTitle() {}
 
   async allProperties() {
     await this.initialize();
