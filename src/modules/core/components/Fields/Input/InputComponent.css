@@ -2,12 +2,12 @@
 
 .main {
   composes: field from '~styles/fields.css';
-  padding: 0 8px;
+  padding: 0 16px;
   height: 32px;
   width: 100%;
   border: 1px solid var(--temp-grey-5);
   border-radius: var(--radius-tiny);
-  background-color: var(--colony-white);
+  background-color: white;
   font-size: var(--size-normal);
   line-height: 32px;
   color: var(--text);
@@ -87,6 +87,10 @@
 
 .alignRight {
   text-align: right;
+}
+
+.widthFull {
+  width: 100%;
 }
 
 .colorSchemaDark {
