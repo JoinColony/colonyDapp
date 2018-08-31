@@ -34,10 +34,13 @@ const MSG = defineMessages({
     id: 'CreateColony.StepColonyDetails.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
+<<<<<<< HEAD
   placeholder: {
     id: 'CreateColony.StepColonyDetails.placeholder',
     defaultMessage: 'Type a display name for a colony',
   },
+=======
+>>>>>>> differentiate between internal and external screens
   cancel: {
     id: 'CreateColony.StepColonyDetails.cancel',
     defaultMessage: 'Cancel',
