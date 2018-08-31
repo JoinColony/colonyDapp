@@ -1,5 +1,4 @@
-/* @flow */
-
+// @flow
 import type { FormikProps } from 'formik';
 
 import React from 'react';
@@ -16,7 +15,7 @@ import Button from '../../../core/components/Button';
 const { Formik } = require('formik');
 
 type FormValues = {
-  passphrase: string,
+  nextStep: () => void,
 };
 
 type Props = {
@@ -40,7 +39,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyDetails';
 
-const StepColonyDetails = ({ handleSubmit, isSubmitting }: Props) => (
+const StepColonyDetails = ({ handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -52,7 +51,7 @@ const StepColonyDetails = ({ handleSubmit, isSubmitting }: Props) => (
           colonyName: '',
         }}
         onSubmit={newColonyName => console.log(newColonyName)}
-        render={({ handleSubmit }) => (
+        render={() => (
           <form className={styles.nameForm} onSubmit={handleSubmit}>
             <Input
               name="colonyName"
@@ -79,7 +78,6 @@ StepColonyDetails.displayName = displayName;
 
 export const Step = StepColonyDetails;
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+export const onSubmit: SubmitFn<FormValues> = ({ nextStep }) => nextStep();
 
 export const sidebarChild = <FormattedMessage {...MSG.helpText} />;

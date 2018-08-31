@@ -117,7 +117,7 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
 });
 
 const WalletDetails = () => (
-  <WizardTemplate>
+  <WizardTemplate internal>
     <section className={styles.content}>
       <div className={styles.title}>
         <Heading

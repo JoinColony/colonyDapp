@@ -9,22 +9,22 @@
 }
 
 .title {
-  margin-top: 124px;
+  margin-top: 330px;
   margin-bottom: 45px;
   font-weight: var(--weight-medium);
 }
 
-.nameForm{
+.nameForm {
   margin-top: 40px;
   width: 460px;
 }
 
-.input{
+.input {
   width: 100%;
 }
 
-.buttons{
-  margin-top: 48px;
+.buttons {
   display: flex;
   justify-content: flex-end;
+  margin-top: 48px;
 }
