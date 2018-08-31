@@ -7,3 +7,24 @@
 .header {
   margin-bottom: 40px;
 }
+
+.title {
+  margin-top: 124px;
+  margin-bottom: 45px;
+  font-weight: var(--weight-medium);
+}
+
+.nameForm{
+  margin-top: 40px;
+  width: 460px;
+}
+
+.input{
+  width: 100%;
+}
+
+.buttons{
+  margin-top: 48px;
+  display: flex;
+  justify-content: flex-end;
+}
