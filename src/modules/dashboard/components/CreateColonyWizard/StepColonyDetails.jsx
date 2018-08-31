@@ -1,5 +1,4 @@
-/* @flow */
-
+// @flow
 import type { FormikProps } from 'formik';
 
 import React from 'react';
@@ -16,7 +15,7 @@ import Button from '../../../core/components/Button';
 const { Formik } = require('formik');
 
 type FormValues = {
-  passphrase: string,
+  nextStep: () => void,
 };
 
 type Props = {
@@ -36,11 +35,19 @@ const MSG = defineMessages({
     id: 'CreateColony.StepColonyDetails.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
+  cancel: {
+    id: 'CreateColony.StepColonyDetails.cancel',
+    defaultMessage: 'Cancel',
+  },
+  next: {
+    id: 'CreateColony.StepColonyDetails.next',
+    defaultMessage: 'Next',
+  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyDetails';
 
-const StepColonyDetails = ({ handleSubmit, isSubmitting }: Props) => (
+const StepColonyDetails = ({ handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -52,7 +59,7 @@ const StepColonyDetails = ({ handleSubmit, isSubmitting }: Props) => (
           colonyName: '',
         }}
         onSubmit={newColonyName => console.log(newColonyName)}
-        render={({ handleSubmit }) => (
+        render={() => (
           <form className={styles.nameForm} onSubmit={handleSubmit}>
             <Input
               name="colonyName"
@@ -61,12 +68,16 @@ const StepColonyDetails = ({ handleSubmit, isSubmitting }: Props) => (
               appearance={{ width: 'full' }}
             />
             <div className={styles.buttons}>
-              <Button appearance={{ theme: 'secondary' }} type="cancel">
-                Cancel
-              </Button>
-              <Button appearance={{ theme: 'primary' }} type="submit">
-                Next
-              </Button>
+              <Button
+                appearance={{ theme: 'secondary' }}
+                type="cancel"
+                text={MSG.cancel}
+              />
+              <Button
+                appearance={{ theme: 'primary' }}
+                type="submit"
+                text={MSG.next}
+              />
             </div>
           </form>
         )}
@@ -79,7 +90,6 @@ StepColonyDetails.displayName = displayName;
 
 export const Step = StepColonyDetails;
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+export const onSubmit: SubmitFn<FormValues> = ({ nextStep }) => nextStep();
 
 export const sidebarChild = <FormattedMessage {...MSG.helpText} />;
