@@ -173,7 +173,6 @@ export default class Data {
   /*
     Returns metadata and tasks for the given domain.
   */
-
   async loadDomain(domainId) {
     const domain = await this._getDomain(domainId);
     const data = await domain.allProperties();
@@ -235,14 +234,14 @@ export default class Data {
   /*
     Returns the IPFS documents corresponding to an array of hashes
   */
-  async getComment(commentHash: IPFSHash): Promise<Comment[]> {
+  async getComment(commentHash: IPFSHash): Promise<Comment> {
     return this._ipfsNode.getComment(commentHash);
   }
 
   /*
    Returns the IPFS documents corresponding to an array of hashes
   */
-  async getComments(commentHashes: IPFSHash[]) {
+  async getComments(commentHashes: IPFSHash[]): Promise<Comment[]> {
     return Promise.all(
       commentHashes.map(commentHash => this.getComment(commentHash)),
     );
@@ -323,7 +322,6 @@ export default class Data {
 
   _key: string;
 
-  // TODO Data class should not require consumers to start and pass in IPFS and Orbit
   constructor(pinner: ?Pinner, ipfsNode: ColonyIPFSNode, orbitNode: OrbitNode) {
     this._pinner = pinner;
     this._ipfsNode = ipfsNode;

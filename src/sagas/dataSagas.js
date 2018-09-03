@@ -7,6 +7,7 @@ import {
   ADD_COMMENT_TO_TASK,
   ADD_DOMAIN_TO_COLONY,
   ADD_TASK_TO_DOMAIN,
+  FETCH_COMMENTS,
   LOAD_COLONY,
   RETURN_COLONY,
   EDIT_COLONY,
@@ -154,7 +155,20 @@ function* loadDomain(action) {
   });
 }
 
-function* initializeData() {
+function* fetchComments(action) {
+  const { domainId, taskId } = action.payload;
+  const Data = yield select(state => state.data.Data);
+  /* const comments = yield Data.getTaskComments(domainId, taskId);*/
+
+  yield put({
+    type: UPDATE_TASK,
+    payload: {
+      update: { property: 'comments', value: comments },
+      ...action.payload,
+    },
+  });
+}
+
   const data = yield Data.fromDefaultConfig('no pinner', {
     ipfs: {
       swarm: ['/ip4/0.0.0.0/tcp/0'],

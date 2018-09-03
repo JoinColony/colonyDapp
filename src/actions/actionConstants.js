@@ -20,6 +20,8 @@ export const UPDATE_TASK = 'UPDATE_TASK';
 export const LOAD_DOMAIN = 'LOAD_DOMAIN';
 export const RETURN_DOMAIN = 'RETURN_DOMAIN';
 
+export const FETCH_COMMENTS = 'FETCH_COMMENTS';
+
 export const STATE_NOTHING: 'nothing' = 'nothing';
 export const STATE_LOADING: 'loading' = 'loading';
 export const STATE_READY: 'ready' = 'ready';

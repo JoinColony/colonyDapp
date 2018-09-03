@@ -1,6 +1,10 @@
 // @flow
 
-import { ADD_COMMENT_TO_TASK, EDIT_TASK } from './actionConstants';
+import {
+  ADD_COMMENT_TO_TASK,
+  FETCH_COMMENTS,
+  EDIT_TASK,
+} from './actionConstants';
 
 import type { Action } from './actionConstants';
 
@@ -28,7 +32,12 @@ export function editTask(domainId, taskId, update): Action {
   };
 }
 
-export function fetchCommentsForTask() {}
+export function fetchCommentsForTask(domainId, taskId): Action {
+  return {
+    type: FETCH_COMMENTS,
+    payload: { domainId, taskId },
+  };
+}
 export function removeUserFromTask() {}
 export function assignTaskToUser() {}
 export function setTaskLastSeen() {}

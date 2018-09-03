@@ -13,6 +13,7 @@ import {
   editColony,
   editDomain,
   editTask,
+  fetchCommentsForTask,
   loadColony,
   loadDomain,
   setUserProfileContent,
@@ -80,6 +81,14 @@ describe('Data reducer', () => {
 
   test('Can add comment to a task', async () => {
     store.dispatch(addCommentToTask('fakeDomain', 'fakeTask', 'fakeComment'));
+    const state = store.getState();
+    const comment =
+      state.data.data.domains['fakeDomain'].tasks[0].commentHashes[0];
+    expect(comment).toBe('fakeComment');
+  });
+
+  test("Fetches a task's comments", async () => {
+    store.dispatch(fetchComments('fakeDomain', 'fakeTask'));
     const state = store.getState();
     const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
     expect(comment).toBe('fakeComment');
