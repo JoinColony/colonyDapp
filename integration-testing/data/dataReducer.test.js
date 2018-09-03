@@ -88,7 +88,7 @@ describe('Data reducer', () => {
   });
 
   test("Fetches a task's comments", async () => {
-    store.dispatch(fetchComments('fakeDomain', 'fakeTask'));
+    store.dispatch(fetchCommentsForTask('fakeDomain', 'fakeTask'));
     const state = store.getState();
     const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
     expect(comment).toBe('fakeComment');

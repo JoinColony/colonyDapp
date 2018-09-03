@@ -260,6 +260,7 @@ export default class Data {
     const domain = await this._getDomain(domainKey);
     const hash = await this._ipfsNode.addComment(comment);
     await domain.addComment(taskID, hash[0].hash);
+    return hash;
   }
 
   /*

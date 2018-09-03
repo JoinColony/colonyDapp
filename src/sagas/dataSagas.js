@@ -71,7 +71,7 @@ function* addTaskToDomain(action) {
 function* addCommentToTask(action) {
   const { domainId, taskId, comment } = action.payload;
   const Data = yield select(state => state.data.Data);
-  // yield Data.addComment(domainId, taskId, comment);
+  // const commentHash = yield Data.addComment(domainId, taskId, comment);
 
   yield put({
     type: SET_TASK_CONTENT,
@@ -195,6 +195,7 @@ function* colonySagas() {
   yield takeEvery(EDIT_COLONY, editColony);
   yield takeEvery(EDIT_DOMAIN, editDomain);
   yield takeEvery(EDIT_TASK, editTask);
+  yield takeEvery(FETCH_COMMENTS, fetchComments);
 }
 
 export default colonySagas;
