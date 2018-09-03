@@ -6,7 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
-import styles from './StepColonyDetails.css';
+import styles from './ColonyName.css';
 
 import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';
@@ -24,22 +24,22 @@ type Props = {
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateColony.StepColonyDetails.heading',
+    id: 'CreateColony.ColonyName.heading',
     defaultMessage: 'What would you like to name your Colony?',
   },
   labelCreateColony: {
-    id: 'CreateColony.StepColonyDetails.label.createColony',
+    id: 'CreateColony.ColonyName.label.createColony',
     defaultMessage: 'Colony Name',
   },
   helpText: {
-    id: 'CreateColony.StepColonyDetails.helpText',
+    id: 'CreateColony.ColonyName.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyDetails';
+const displayName = 'dashboard.CreateColonyWizard.ColonyName';
 
-const StepColonyDetails = ({ handleSubmit }: Props) => (
+const ColonyName = ({ handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -74,10 +74,11 @@ const StepColonyDetails = ({ handleSubmit }: Props) => (
   </section>
 );
 
-StepColonyDetails.displayName = displayName;
+ColonyName.displayName = displayName;
 
-export const Step = StepColonyDetails;
+export const Step = ColonyName;
 
-export const onSubmit: SubmitFn<FormValues> = ({ nextStep }) => nextStep();
+export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+  nextStep();
 
 export const sidebarChild = <FormattedMessage {...MSG.helpText} />;
