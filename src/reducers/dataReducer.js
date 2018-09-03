@@ -65,9 +65,10 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       return state;
 
     case LOAD_DOMAIN:
-      state.data.domains[action.payload.target] = action.payload.content;
-
-      return state;
+      const { domainId, content } = action.payload;
+      return update(state, {
+        data: { domains: { [domainId]: { $set: content } } },
+      });
 
     case LOAD_COLONY:
       state.data.colonies[action.payload.target] = action.payload.content;

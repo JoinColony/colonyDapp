@@ -144,13 +144,13 @@ function* loadDomain(action) {
   yield put({
     type: LOAD_DOMAIN,
     payload: {
+      domainId,
       content: {
         id: domainId,
         members: ['geo'],
         name: 'biotech',
         pot: '1 MILLION dollars',
       },
-      target: domainId,
     },
   });
 }
