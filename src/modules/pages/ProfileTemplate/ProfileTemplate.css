@@ -1,0 +1,21 @@
+@import 'variables.css';
+
+:root {
+  --padding-horizontal: 90px;
+}
+
+.profileTemplate {
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar {
+  padding: 100px var(--padding-horizontal);
+  height: 100%;
+  width: 400px;
+  background: var(--gradient-default);
+}
+
+.mainContent {
+  padding: 20px var(--padding-horizontal);
+}

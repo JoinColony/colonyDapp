@@ -31,6 +31,11 @@
   --temp-grey-blue-4: rgb(200, 214, 247); /* Used for some box shadows */
 
   /*
+   * Gradients
+   */
+  --gradient-default: linear-gradient(to bottom, rgb(244, 238, 242) 0%, rgb(232, 242, 236) 100%);
+
+  /*
    * Radius
    */
   --radius-tiny: 2px;

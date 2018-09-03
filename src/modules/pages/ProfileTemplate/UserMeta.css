@@ -1,0 +1,17 @@
+@import 'variables.css';
+
+:root {
+  --contentMargin: 12px;
+}
+
+.bioContainer {
+  margin-top: var(--contentMargin);
+}
+
+.websiteContainer {
+  margin-top: var(--contentMargin);
+}
+
+.locationContainer {
+  margin-top: var(--contentMargin);
+}
