@@ -156,6 +156,14 @@ describe('Data reducer', () => {
     expect(domainName).toBe('biotech');
   });
 
+  // TODO change to use image after IPFS and images work
+  test('Can update user avatar', async () => {
+    store.dispatch(setUserProfileContent({ avatar: 'arty' }));
+
+    const state = store.getState();
+    expect(state.data.my_profile.data.avatar).toBe('arty');
+  });
+
   test.skip('After login, UserProfile displays recent activity', async () => {});
 
   test.skip('User can navigate to those colonies from the UserProfile', async () => {});
