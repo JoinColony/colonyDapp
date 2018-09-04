@@ -7,8 +7,8 @@ import type { UserType } from '../../users/types';
 
 import Button from '../../core/components/Button';
 import Heading from '../../core/components/Heading';
-import Link from '../../core/components/Link';
 import UserAvatar from '../../core/components/UserAvatar';
+import UserMention from '../../core/components/UserMention';
 
 import styles from './UserMeta.css';
 
@@ -82,7 +82,7 @@ class UserMeta extends Component<Props, State> {
           appearance={{ margin: 'none', size: 'large' }}
           text={displayName}
         />
-        <Link text={ensName} to="/" />
+        <UserMention ensName={ensName} to="/" />
         <p>
           {walletAddress}
           <Button

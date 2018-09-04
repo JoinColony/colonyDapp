@@ -10,7 +10,7 @@ const MockUser: UserType = {
     // eslint-disable-next-line max-len
     'During his long life Chewbacca has been many things: Wookiee warrior, ace smuggler and rebel hero. Chewie fought with the Republic on Kashyyyk during the Clone Wars, then befriended Han Solo while in Imperial captivity on Mimban. After adventures on Vandor and Kessel, he became Han’s co-pilot aboard the Millennium Falcon, and eventually helped the Alliance restore freedom to the galaxy. Known for his short temper and accuracy with a bowcaster, Chewie also had a big heart – and unflagging loyalty to his friends. He stuck with Han through years of turmoil, and flew the Falcon alongside Rey after the Corellian’s death.',
   displayName: 'Chewbacca',
-  ensName: '@Chewie',
+  ensName: 'Chewie',
   location: 'Kashyyyk',
   website: 'https://github.com/chewie',
 };
