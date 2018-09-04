@@ -1,6 +1,6 @@
 @import 'variables.css';
 
 .mentionLink {
-  color: var(--pink);
   font-weight: var(--weight-medium);
+  color: var(--pink);
 }

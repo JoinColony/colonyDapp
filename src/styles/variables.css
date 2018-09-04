@@ -33,7 +33,9 @@
   /*
    * Gradients
    */
-  --gradient-default: linear-gradient(to bottom, var(--grey-blue-1) 0%, var(--grey-blue-0) 100%);
+
+  /* --gradient-default: linear-gradient(to bottom, var(--grey-blue-1) 0%, var(--grey-blue-0) 100%); */
+  --gradient-default: linear-gradient(to bottom, rgb(244, 238, 242) 0%, rgb(231, 242, 246) 100%);
 
   /*
    * Radius
