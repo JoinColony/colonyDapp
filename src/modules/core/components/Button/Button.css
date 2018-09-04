@@ -118,7 +118,7 @@
  * - danger: button with danger colored background
  * - ghost: buttons with transparent background and border color
  * - underlined-bold: special button with fat underline
- * - blue: button with transparent background and border, blue semi bold text
+ * - blue: button with transparent background blue semi bold text and no padding
  *
  * Some of them will also have an `inverted` version. This is for dark backgrounds.
  */
@@ -271,6 +271,8 @@
   composes: main;
   font-weight: var(--weight-semi);
   color: var(--sky-blue);
+  padding: 0px;
+  height: 0px;
 }
 
 .themeBlue:hover {

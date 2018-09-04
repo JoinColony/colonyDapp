@@ -43,11 +43,6 @@ const Home = () => (
         </NavLink>
       </li>
       <li>
-        <NavLink style={{ color: 'blue' }} to="/createcolonytest">
-          Create Colony Test
-        </NavLink>
-      </li>
-      <li>
         <NavLink style={{ color: 'blue' }} to="/start">
           Start
         </NavLink>
