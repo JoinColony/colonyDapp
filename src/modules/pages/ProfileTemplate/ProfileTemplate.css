@@ -2,6 +2,7 @@
 
 :root {
   --padding-horizontal: 90px;
+  --sidebar-width: 420px;
 }
 
 .profileTemplate {
@@ -12,10 +13,13 @@
 .sidebar {
   padding: 100px var(--padding-horizontal);
   height: 100%;
-  width: 400px;
+  width: var(--sidebar-width);
+  position: fixed;
+  overflow: auto;
   background: var(--gradient-default);
 }
 
 .mainContent {
+  margin-left: var(--sidebar-width);
   padding: 20px var(--padding-horizontal);
 }

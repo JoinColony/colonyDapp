@@ -1,6 +1,7 @@
 /* @flow */
 
 export type UserType = {
+  walletAddress: string,
   avatar: string,
   displayName: string,
   ensName: string,
