@@ -9,7 +9,10 @@ module.exports = {
   sections: [
     {
       name: 'Typography',
-      components: ['./src/modules/core/components/Heading/Heading.jsx'],
+      components: [
+        './src/modules/core/components/Heading/Heading.jsx',
+        './src/modules/core/components/UserMention/UserMention.jsx',
+      ],
     },
     {
       name: 'Images and Icons',
