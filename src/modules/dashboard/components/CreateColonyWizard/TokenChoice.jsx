@@ -1,83 +1,70 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './TokenChoice.css';
 
 import WizardTemplate from '../../../pages/WizardTemplate';
 import Heading from '../../../core/components/Heading';
-import Link from '../../../core/components/Link';
-import Icon from '../../../core/components/Icon';
+import Button from '../../../core/components/Button';
 import DecisionHub from '../../../core/components/DecisionHub';
 
 type FormValues = {
   nextStep: () => void,
 };
 
-const icons = ['metamask', 'wallet', 'phrase', 'file'];
-
 const MSG = defineMessages({
   heading: {
-    id: 'WalletStart.heading',
-    defaultMessage: 'How would you like to access Colony?',
+    id: 'TokenChoice.heading',
+    defaultMessage:
+      'How would you like to create a new token or use an existing ERC20 token?',
   },
   subTitle: {
-    id: 'WalletStart.subTitle',
+    id: 'TokenChoice.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
-      'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
+      'Each Colony has a native token. When rewarding contributors with the native token, those users will also earn reputation in your Colony.',
   },
-  callToAction: {
-    id: 'WalletStart.callToAction',
-    defaultMessage: 'Need a wallet? Let us help',
+  subTitleWithLink: {
+    id: 'TokenChoice.subTitleWithLink',
+    defaultMessage: 'Not sure which option to choose?',
   },
-  callToActionSub: {
-    id: 'WalletStart.callToActionSub',
-    defaultMessage: 'Create an etherum wallet to join',
+  button: {
+    id: 'TokenChoice.button',
+    defaultMessage: 'Back',
+  },
+  learnMore: {
+    id: 'TokenChoice.learnMore',
+    defaultMessage: 'Learn More',
   },
 });
 
 const rowTitles = defineMessages({
   metaMaskTitle: {
-    id: 'WalletStart.metaMaskTitle',
-    defaultMessage: 'MetaMask',
+    id: 'TokenChoice.newToken',
+    defaultMessage: 'Create a new token',
   },
   hardwareTitle: {
-    id: 'WalletStart.hardwareTitle',
-    defaultMessage: 'Hardware Wallet',
-  },
-  phraseTitle: {
-    id: 'WalletStart.phraseTitle',
-    defaultMessage: 'Mnemonic Phrase',
-  },
-  JSONTitle: {
-    id: 'WalletStart.JSONTitle',
-    defaultMessage: 'JSON File',
+    id: 'TokenChoice.existingToken',
+    defaultMessage: 'Use an existing ERC20 token',
   },
 });
 
 const rowSubTitles = defineMessages({
   metaMaskSubtTitle: {
-    id: 'WalletStart.metaMaskSubtitle',
-    defaultMessage: 'Require MetaMask browser extension',
+    id: 'TokenChoice.newTokenSubtitle',
+    defaultMessage: 'Earn reputation for your tasks',
   },
   hardwareSubtTitle: {
-    id: 'WalletStart.hardwareSubtitle',
-    defaultMessage: 'We support Ledger and Trezor',
-  },
-  phraseSubtTitle: {
-    id: 'WalletStart.phraseSubtitle',
-    defaultMessage: 'Access with your mnemonic phrase',
-  },
-  JSONSubtTitle: {
-    id: 'WalletStart.JSONSubtitle',
-    defaultMessage: 'We do not recommend this method',
+    id: 'TokenChoice.existingTokenSubtitle',
+    defaultMessage: 'For example: DAI, EOS, SNT, etc',
   },
 });
 
 const TokenChoice = () => (
-  <WizardTemplate internal>
+  <WizardTemplate>
     <section className={styles.content}>
       <div className={styles.title}>
         <Heading
@@ -91,31 +78,28 @@ const TokenChoice = () => (
           text={MSG.subTitle}
         />
       </div>
-      {
-        <DecisionHub
-          icons={icons}
-          rowTitles={rowTitles}
-          rowSubTitles={rowSubTitles}
+      <div className={styles.subtitleWithLinkBox}>
+        <Heading
+          className={styles.subtitleWithLink}
+          appearance={{ size: 'normal', weight: 'thin' }}
+          text={MSG.subTitleWithLink}
         />
-      }
-      <Link to="/createwallet">
-        <div className={styles.callToAction}>
-          <div className={styles.actionImage}>
-            <Icon name="hugging" title="hugging-face" />
-          </div>
-          <div className={styles.actionText}>
-            <Heading
-              appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-              text={MSG.callToAction}
-            />
-            <Heading
-              appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-              text={MSG.callToActionSub}
-            />
-          </div>
-          <Icon name="caret-right" title="caret-right" />
+        <div className={styles.link}>
+          <Button
+            appearance={{ theme: 'blue' }}
+            type="continue"
+            text={MSG.learnMore}
+          />
         </div>
-      </Link>
+      </div>
+      {<DecisionHub rowTitles={rowTitles} rowSubTitles={rowSubTitles} />}
+      <div className={styles.buttonContainer}>
+        <Button
+          appearance={{ theme: 'secondary' }}
+          type="cancel"
+          text={MSG.button}
+        />
+      </div>
     </section>
   </WizardTemplate>
 );
