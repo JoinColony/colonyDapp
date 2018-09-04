@@ -37,6 +37,12 @@
   width: 120px;
 }
 
+.xl {
+  composes: main;
+  height: 160px;
+  width: 160px;
+}
+
 .placeholderIcon {
   height: 100%;
   width: 100%;
