@@ -1,3 +1,5 @@
+@import 'variables.css';
+
 .row {
     display: flex;
     padding-right:16px;
