@@ -9,7 +9,7 @@ import {
 /*
  * Increase the async timeout
  */
-jest.setTimeout(20000);
+jest.setTimeout(60000);
 
 const today = new Date();
 const tommorow = new Date();

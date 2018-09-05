@@ -1,5 +1,7 @@
 import { getNetworkClient } from './utils/network-client-helpers';
 
+jest.setTimeout(30000);
+
 describe('`ColonyClient` is able to', () => {
   test('Create a new Domain within the Colony', async () => {
     /*

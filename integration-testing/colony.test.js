@@ -10,6 +10,8 @@ const colonyCreatorAddress = Object.keys(
   global.ganacheAccounts.private_keys,
 )[0];
 
+jest.setTimeout(30000);
+
 describe('`ColonyClient` is able to', () => {
   test('Create a new Colony (instance)', async () => {
     /*

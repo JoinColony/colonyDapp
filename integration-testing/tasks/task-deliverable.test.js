@@ -5,7 +5,7 @@ import { WORKER_ROLE } from '../../src/lib/colonyJS/packages/colony-js-client';
 /*
  * Increase the async timeout
  */
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 const today = new Date();
 const tommorow = new Date();
