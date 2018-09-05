@@ -101,11 +101,11 @@ const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => (
     </div>
     <div className={styles.rowContent}>
       <Heading
-        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+        appearance={{ size: 'small', width: 'bold', margin: 'small' }}
         text={title}
       />
       <Heading
-        appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+        appearance={{ size: 'tiny', width: 'veryThin', margin: 'small' }}
         text={subTitle}
       />
     </div>
@@ -132,7 +132,7 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
 });
 
 const WalletDetails = () => (
-  <WizardTemplate internal>
+  <WizardTemplate>
     <section className={styles.content}>
       <div className={styles.title}>
         <Heading
