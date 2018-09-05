@@ -1,0 +1,68 @@
+@import 'variables.css';
+
+.rowArrow {
+  flex: 1;
+}
+
+.content {
+  width: 340px;
+}
+
+.title {
+  margin-top: 124px;
+  margin-bottom: 45px;
+  font-weight: var(--weight-medium);
+}
+
+.subtitle {
+  margin-bottom: -7px;
+  font-size: 14px;
+}
+.subtitleWithLink{
+    flex: 4;
+}
+
+.subtitleWithLinkBox{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.link{
+    flex: 2;
+    margin-top: -4px;
+    margin-left: -70px;
+}
+
+.callToAction {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 64px;
+  padding: 10px 16px;
+  max-height: 60px;
+  width: 100%;
+  border: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+.callToAction:focus {
+  outline: none;
+}
+
+.actionImage {
+  flex: 1;
+  margin-top: 7px;
+}
+
+.actionText {
+  flex: 6;
+  text-align: left;
+}
+
+.buttonContainer{
+  display: flex;
+  justify-content: flex-start;
+  margin-left: -16px;
+  margin-top: 5px;
+}
+

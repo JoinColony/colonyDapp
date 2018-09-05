@@ -17,6 +17,7 @@ type RowProps = {
   title: MessageDescriptor,
   subTitle: MessageDescriptor,
   rowIndex: number,
+  icons: Array,
 };
 
 type DecisionProps = {
@@ -28,9 +29,11 @@ type DecisionProps = {
 
 const DecisionOption = ({ title, subTitle, rowIndex, icons }: RowProps) => (
   <div className={styles.row}>
-    <div className={styles.rowIcon}>
-      <Icon name={icons[rowIndex]} title={icons[rowIndex]} />
-    </div>
+    {icons && (
+      <div className={styles.rowIcon}>
+        <Icon name={icons[rowIndex]} title={icons[rowIndex]} />
+      </div>
+    )}
     <div className={styles.rowContent}>
       <Heading
         appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
@@ -45,8 +48,7 @@ const DecisionOption = ({ title, subTitle, rowIndex, icons }: RowProps) => (
   </div>
 );
 
-const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => {
-  return Object.keys(rowTitles).map((key, i) => {
+const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => Object.keys(rowTitles).map((key, i) => {
     const keys = Object.keys(rowSubTitles);
     const title = rowTitles[key];
     const subTitle = rowSubTitles[keys[i]];
@@ -63,7 +65,6 @@ const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => {
       </NavLink>
     );
   });
-};
 
 DecisionHub.displayName = displayName;
 
