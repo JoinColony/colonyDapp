@@ -5,10 +5,11 @@ import withProps from 'recompose/withProps';
 
 import { withWizard } from '../../../core/components/Wizard';
 import CreateColony from './CreateColonyWizard.jsx';
-import * as StepColonyDetails from './StepColonyDetails.jsx';
 import * as StepCreateNewToken from './CreateNewToken.jsx';
+import * as ColonyName from './ColonyName.jsx';
+import * as TokenChoice from './TokenChoice.jsx';
 
-const steps = [StepColonyDetails, StepCreateNewToken];
+const steps = [ColonyName, TokenChoice, StepCreateNewToken];
 
 const CreateColonyContainer = compose(
   withWizard({

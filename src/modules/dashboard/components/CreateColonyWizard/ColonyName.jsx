@@ -7,7 +7,7 @@ import * as yup from 'yup';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
-import styles from './StepColonyDetails.css';
+import styles from './ColonyName.css';
 
 import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';
@@ -23,24 +23,21 @@ type Props = {
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateColony.StepColonyDetails.heading',
+    id: 'CreateColony.ColonyName.heading',
     defaultMessage: 'What would you like to name your Colony?',
   },
   labelCreateColony: {
-    id: 'CreateColony.StepColonyDetails.label.createColony',
+    id: 'CreateColony.ColonyName.label.createColony',
     defaultMessage: 'Colony Name',
   },
   helpText: {
-    id: 'CreateColony.StepColonyDetails.helpText',
+    id: 'CreateColony.ColonyName.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
-<<<<<<< HEAD
   placeholder: {
     id: 'CreateColony.StepColonyDetails.placeholder',
     defaultMessage: 'Type a display name for a colony',
   },
-=======
->>>>>>> differentiate between internal and external screens
   cancel: {
     id: 'CreateColony.StepColonyDetails.cancel',
     defaultMessage: 'Cancel',
@@ -51,9 +48,9 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyDetails';
+const displayName = 'dashboard.CreateColonyWizard.ColonyName';
 
-const StepColonyDetails = ({ handleSubmit }: Props) => (
+const ColonyName = ({ handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -83,13 +80,17 @@ const StepColonyDetails = ({ handleSubmit }: Props) => (
   </section>
 );
 
+<<<<<<< HEAD:src/modules/dashboard/components/CreateColonyWizard/StepColonyDetails.jsx
 export const validationSchema = yup.object({
   colonyName: yup.string().required(),
 });
 
 StepColonyDetails.displayName = displayName;
+=======
+ColonyName.displayName = displayName;
+>>>>>>> linkup naming and decision screen:src/modules/dashboard/components/CreateColonyWizard/ColonyName.jsx
 
-export const Step = StepColonyDetails;
+export const Step = ColonyName;
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
