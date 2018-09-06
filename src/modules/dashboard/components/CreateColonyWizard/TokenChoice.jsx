@@ -12,8 +12,13 @@ import Button from '../../../core/components/Button';
 import DecisionHub from '../../../core/components/DecisionHub';
 
 type FormValues = {
+  targetStep: number,
   nextStep: () => void,
 };
+
+type Props = {
+  previousStep: () => void,
+} & FormikProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
@@ -63,7 +68,11 @@ const rowSubTitles = defineMessages({
   },
 });
 
-const TokenChoice = () => (
+const TokenChoice = ({
+  handleSubmit,
+  values: { targetStep },
+  previousStep,
+}: Props) => (
   <WizardTemplate>
     <section className={styles.content}>
       <div className={styles.title}>
@@ -92,12 +101,25 @@ const TokenChoice = () => (
           />
         </div>
       </div>
-      {<DecisionHub rowTitles={rowTitles} rowSubTitles={rowSubTitles} />}
+      {/* pass in possible choices/links to DecisionHub as props since it doesn't
+      know yet what options it has and then find a way to send selected
+      choice back to TokenChoice screen to decide about next wizard step,
+      (the child should be calling a method on the parent)
+      ALTERNATIVE: Add route for each wizard step and link there directly
+      */}
+      {
+        <DecisionHub
+          rowTitles={rowTitles}
+          rowSubTitles={rowSubTitles}
+          choices={{ new: 2, existing: 3 }}
+        />
+      }
       <div className={styles.buttonContainer}>
         <Button
           appearance={{ theme: 'secondary' }}
           type="cancel"
           text={MSG.button}
+          onClick={previousStep}
         />
       </div>
     </section>
@@ -106,4 +128,5 @@ const TokenChoice = () => (
 
 export const Step = TokenChoice;
 
-export const onSubmit: SubmitFn<FormValues> = ({ nextStep }) => nextStep();
+export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+  nextStep();
