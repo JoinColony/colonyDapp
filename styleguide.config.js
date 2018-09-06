@@ -18,6 +18,7 @@ module.exports = {
       name: 'Images and Icons',
       components: [
         './src/modules/core/components/Icon/Icon.jsx',
+        './src/modules/core/components/ColonyAvatar/ColonyAvatar.jsx',
         './src/modules/core/components/UserAvatar/UserAvatar.jsx',
         './src/modules/core/components/AvatarUploader/AvatarUploader.jsx',
       ],
