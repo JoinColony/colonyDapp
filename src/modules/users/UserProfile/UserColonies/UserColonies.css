@@ -1,0 +1,14 @@
+@import 'variables.css';
+
+.main {
+  padding: 10px;
+  border-radius: var(--radius-large);
+  box-shadow: 0 10px 2px gray;
+}
+
+.colonyGrid {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
