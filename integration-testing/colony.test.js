@@ -1,7 +1,6 @@
 import { bigNumberify } from 'ethers/utils';
 import { isAddress } from 'web3-utils';
 import { getNetworkClient } from './utils/network-client-helpers';
-import { ADMIN_ROLE } from '../src/lib/colonyJS/packages/colony-js-client';
 
 let colonyToken;
 let colonyAddress;
@@ -123,12 +122,9 @@ describe('`ColonyClient` is able to', () => {
      * Get the existing colony
      */
     const colonyClient = await networkClient.getColonyClient(lastColonyId);
-    const setColonyAdminTransaction = await colonyClient.authority.setUserRole.send(
-      {
-        user: colonyCreatorAddress,
-        role: ADMIN_ROLE,
-      },
-    );
+    const setColonyAdminTransaction = await colonyClient.setAdminRole.send({
+      user: colonyCreatorAddress,
+    });
     expect(setColonyAdminTransaction).toHaveProperty('successful', true);
   });
 });

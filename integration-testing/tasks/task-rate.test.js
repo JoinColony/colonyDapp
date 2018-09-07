@@ -2,7 +2,6 @@ import { getNetworkClient } from '../utils/network-client-helpers';
 import multiHash from '../utils/ipfs-hash-helpers';
 import {
   WORKER_ROLE,
-  EVALUATOR_ROLE,
   MANAGER_ROLE,
 } from '../../src/lib/colonyJS/packages/colony-js-client';
 
@@ -81,11 +80,19 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Set a worker for the task
      */
-    await managerColonyClient.setTaskRoleUser.send({
-      taskId: newTaskId,
-      role: WORKER_ROLE,
-      user: workerAddress,
-    });
+    const multisigSetWorkerRoleManager = await managerColonyClient.setTaskWorkerRole.startOperation(
+      {
+        taskId: newTaskId,
+        user: workerAddress,
+      },
+    );
+    await multisigSetWorkerRoleManager.sign();
+    const multisigSetWorkerRoleWorker = await workerColonyClient.setTaskWorkerRole.restoreOperation(
+      multisigSetWorkerRoleManager.toJSON(),
+    );
+    await multisigSetWorkerRoleWorker.sign();
+    const setWorkerRoleTransaction = await multisigSetWorkerRoleWorker.send();
+    expect(setWorkerRoleTransaction).toHaveProperty('successful', true);
     /*
      * Begin a multisig operation by setting the new task due date
      */
@@ -116,13 +123,32 @@ describe('`ColonyClient` is able to', () => {
      */
     await multisigSetDueDateWorker.send();
     /*
-     * Set the evaluator for the task
+      Remove the manager as the (default) evaluator for the task
      */
-    await managerColonyClient.setTaskRoleUser.send({
-      taskId: newTaskId,
-      role: EVALUATOR_ROLE,
-      user: evaluatorAddress,
-    });
+    const multisigRemoveEvaluatorRoleManager = await managerColonyClient.removeTaskEvaluatorRole.startOperation(
+      {
+        taskId: newTaskId,
+      },
+    );
+    await multisigRemoveEvaluatorRoleManager.sign();
+    const removeEvaluatorRoleManagerTx = await multisigRemoveEvaluatorRoleManager.send();
+    expect(removeEvaluatorRoleManagerTx).toHaveProperty('successful', true);
+    /*
+     * Set an evaluator for the task
+     */
+    const multisigSetEvaluatorRoleManager = await managerColonyClient.setTaskEvaluatorRole.startOperation(
+      {
+        taskId: newTaskId,
+        user: evaluatorAddress,
+      },
+    );
+    await multisigSetEvaluatorRoleManager.sign();
+    const multisigSetEvaluatorRoleEvaluator = await evaluatorColonyClient.setTaskEvaluatorRole.restoreOperation(
+      multisigSetEvaluatorRoleManager.toJSON(),
+    );
+    await multisigSetEvaluatorRoleEvaluator.sign();
+    const setEvaluatorRoleTransaction = await multisigSetEvaluatorRoleEvaluator.send();
+    expect(setEvaluatorRoleTransaction).toHaveProperty('successful', true);
     /*
      * Submit the task's deliverable
      */

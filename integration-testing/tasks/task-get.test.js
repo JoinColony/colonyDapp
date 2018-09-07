@@ -1,6 +1,8 @@
 import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
 
+import { ACTIVE_TASK_STATUS } from '../../src/lib/colonyJS/packages/colony-js-client';
+
 const taskDescription = 'Integration Tests Task';
 
 /*
@@ -59,8 +61,7 @@ describe('`ColonyClient` is able to', () => {
      *
      * Most likely this will involve creating a new task specially just to read it.
      */
-    expect(existingTask).toHaveProperty('cancelled', false);
-    expect(existingTask).toHaveProperty('finalized', false);
+    expect(existingTask).toHaveProperty('status', ACTIVE_TASK_STATUS);
     /*
      * The task should have the correct speciification hash.
      */
