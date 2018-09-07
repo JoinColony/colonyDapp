@@ -57,10 +57,14 @@ class UserColonies extends Component<Props, State> {
           <SpinnerLoader appearance={{ size: 'large' }} />
         ) : (
           <Fragment>
-            <Heading text={MSG.title} appearance={{ size: 'medium' }} />
+            <div className={styles.sectionTitle}>
+              <Heading text={MSG.title} appearance={{ size: 'medium' }} />
+            </div>
             <div className={styles.colonyGrid}>
               {colonies.map(colony => (
-                <UserColonyItem colony={colony} />
+                <div className={styles.colonyGridItem}>
+                  <UserColonyItem colony={colony} />
+                </div>
               ))}
             </div>
           </Fragment>
