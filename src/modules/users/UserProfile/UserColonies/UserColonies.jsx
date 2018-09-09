@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Heading from '../../../core/components/Heading';
@@ -53,21 +53,21 @@ class UserColonies extends Component<Props, State> {
 
     return (
       <div className={styles.main}>
+        <div className={styles.sectionTitle}>
+          <Heading text={MSG.title} appearance={{ size: 'medium' }} />
+        </div>
         {isLoading ? (
-          <SpinnerLoader appearance={{ size: 'large' }} />
+          <div className={styles.loader}>
+            <SpinnerLoader appearance={{ size: 'large' }} />
+          </div>
         ) : (
-          <Fragment>
-            <div className={styles.sectionTitle}>
-              <Heading text={MSG.title} appearance={{ size: 'medium' }} />
-            </div>
-            <div className={styles.colonyGrid}>
-              {colonies.map(colony => (
-                <div className={styles.colonyGridItem}>
-                  <UserColonyItem colony={colony} />
-                </div>
-              ))}
-            </div>
-          </Fragment>
+          <div className={styles.colonyGrid}>
+            {colonies.map(colony => (
+              <div className={styles.colonyGridItem} key={colony.colonyAddress}>
+                <UserColonyItem colony={colony} />
+              </div>
+            ))}
+          </div>
         )}
       </div>
     );

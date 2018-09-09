@@ -27,3 +27,8 @@
   margin: 0 var(--container-padding-left);
   max-width: 68px;
 }
+
+.loader {
+  display: flex;
+  justify-content: center;
+}
