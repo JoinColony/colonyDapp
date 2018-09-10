@@ -20,7 +20,7 @@ import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader
 /* eslint-disable-next-line max-len */
 import CreateColonyWizard from './modules/dashboard/components/CreateColonyWizard';
 import WalletStart from './modules/wallet/components/WalletStart';
-import UserProfile from './modules/users/UserProfile';
+import UserProfile from './modules/users/components/UserProfile';
 import CreateWalletWizard from './modules/wallet/components/CreateWalletWizard';
 import { SpinnerLoader } from './modules/core/components/Preloaders';
 

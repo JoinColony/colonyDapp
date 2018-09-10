@@ -1,7 +1,7 @@
 /* @flow */
 import React from 'react';
 
-import ProfileTemplate from '../../pages/ProfileTemplate';
+import ProfileTemplate from '../../../pages/ProfileTemplate';
 
 import MockUser from './__mocks__/MockUser';
 
