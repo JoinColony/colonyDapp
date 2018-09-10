@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
-import Heading from '../../../core/components/Heading';
-import { SpinnerLoader } from '../../../core/components/Preloaders';
+import Heading from '../../../../core/components/Heading';
+import { SpinnerLoader } from '../../../../core/components/Preloaders';
 
 import UserColonyItem from '../UserColonyItem';
 

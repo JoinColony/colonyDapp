@@ -1,9 +1,9 @@
 /* @flow */
 import React from 'react';
 
-import ColonyAvatar from '../../../core/components/ColonyAvatar';
-import Heading from '../../../core/components/Heading';
-import Link from '../../../core/components/Link';
+import ColonyAvatar from '../../../../core/components/ColonyAvatar';
+import Heading from '../../../../core/components/Heading';
+import Link from '../../../../core/components/Link';
 
 import styles from './UserColonyItem.css';
 
