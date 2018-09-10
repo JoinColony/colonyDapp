@@ -20,6 +20,8 @@ type State = {
   isLoading: boolean,
 };
 
+const addressCharPaddingIndices = [5, 38];
+
 class HardwareChoice extends Component<Props, State> {
   timerHandle: TimeoutID; // for mocking balance lookup, so can clearTimeout in `componentWillUnmount`
 
@@ -47,13 +49,82 @@ class HardwareChoice extends Component<Props, State> {
   addressCharacter = (
     character: string,
     idx: number,
-    remainingVals: Array<string>,
+    trailingVals: Array<string>,
+    addressCharacterIdx: number,
   ) => {
-    const itemKey = `${character}-${remainingVals.join('')}-${idx}`;
+    const itemKey = `${character}-${trailingVals.join('')}-${idx}`;
+
+    const isPaddedChar =
+      addressCharPaddingIndices.indexOf(addressCharacterIdx) >= 0;
 
     return (
-      <span className={styles.addressPart} key={itemKey}>
+      <span
+        className={isPaddedChar ? styles.addressSpacer : styles.addressPart}
+        key={itemKey}
+      >
         {character}
+      </span>
+    );
+  };
+
+  renderFormattedAddress = () => {
+    const {
+      searchTerm,
+      wallet: { address },
+    } = this.props;
+    return (
+      <span className={styles.walletAddressContainer}>
+        {searchTerm ? (
+          <Fragment>
+            {address.split(searchTerm).reduce((prev, current, idx) => {
+              if (!idx) {
+                return current
+                  .split('')
+                  .map((char, localIdx, remainingVals) =>
+                    this.addressCharacter(
+                      char,
+                      localIdx,
+                      remainingVals,
+                      localIdx,
+                    ),
+                  );
+              }
+              let addressCharIdx = prev.length - 1;
+              return prev.concat(
+                <mark
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${searchTerm}-${idx}`}
+                  className={styles.highlight}
+                >
+                  {searchTerm.split('').map((char, localIdx, remainingVals) => {
+                    addressCharIdx += 1;
+                    return this.addressCharacter(
+                      char,
+                      localIdx,
+                      remainingVals,
+                      addressCharIdx,
+                    );
+                  })}
+                </mark>,
+                current.split('').map((char, localIdx, remainingVals) => {
+                  addressCharIdx += 1;
+                  return this.addressCharacter(
+                    char,
+                    localIdx,
+                    remainingVals,
+                    addressCharIdx,
+                  );
+                }),
+              );
+            }, [])}
+          </Fragment>
+        ) : (
+          address
+            .split('')
+            .map((char, localIdx, remainingVals) =>
+              this.addressCharacter(char, localIdx, remainingVals, localIdx),
+            )
+        )}
       </span>
     );
   };
@@ -62,7 +133,6 @@ class HardwareChoice extends Component<Props, State> {
     const { isLoading } = this.state;
     const {
       checked,
-      searchTerm,
       wallet: { address, balance },
     } = this.props;
 
@@ -83,29 +153,7 @@ class HardwareChoice extends Component<Props, State> {
             value={address}
             elementOnly
           >
-            <span className={styles.walletAddressContainer}>
-              {searchTerm ? (
-                <Fragment>
-                  {address.split(searchTerm).reduce((prev, current, idx) => {
-                    if (!idx) {
-                      return [current.split('').map(this.addressCharacter)];
-                    }
-                    return prev.concat(
-                      <mark
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={`${searchTerm}-${idx}`}
-                        className={styles.highlight}
-                      >
-                        {searchTerm.split('').map(this.addressCharacter)}
-                      </mark>,
-                      current.split('').map(this.addressCharacter),
-                    );
-                  }, [])}
-                </Fragment>
-              ) : (
-                address.split('').map(this.addressCharacter)
-              )}
-            </span>
+            {this.renderFormattedAddress()}
           </Radio>
         </div>
         <div className={styles.choiceBalanceContainer}>

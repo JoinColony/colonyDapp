@@ -18,8 +18,7 @@
   padding: var(--choicePaddingVertical) 0 var(--choicePaddingVertical) var(--choicePaddingHorizontal);
 }
 
-.walletAddressContainer .addressPart:nth-of-type(6),
-.walletAddressContainer .addressPart:nth-last-of-type(5) {
+.addressSpacer {
   margin-left: 15px;
 }
 
