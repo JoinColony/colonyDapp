@@ -1,0 +1,12 @@
+.content {
+  width: 400px;
+}
+
+.actionsContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title {
+  margin-top: 180px;
+}

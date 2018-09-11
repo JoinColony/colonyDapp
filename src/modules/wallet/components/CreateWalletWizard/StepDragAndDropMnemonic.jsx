@@ -114,5 +114,5 @@ export const validationSchema = yup.object({
     .equalTo(yup.ref('passphrase'), MSG.validationSortedMnemonic),
 });
 
-// TODO: submit function
-export const onSubmit: SubmitFn<FormValues> = () => null;
+export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+  nextStep();
