@@ -12,7 +12,7 @@ type Props = {
   /** Avatars that are not set have a different placeholder */
   notSet?: boolean,
   /** Avatar size (default is between `s` and `m`) */
-  size?: 'xxs' | 'xs' | 's' | 'm' | 'l',
+  size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
   /** For the title */
   username: string,
 };

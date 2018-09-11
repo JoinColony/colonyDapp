@@ -20,6 +20,7 @@ import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader
 /* eslint-disable-next-line max-len */
 import CreateColonyWizard from './modules/dashboard/components/CreateColonyWizard';
 import WalletStart from './modules/wallet/components/WalletStart';
+import UserProfile from './modules/users/components/UserProfile';
 import CreateWalletWizard from './modules/wallet/components/CreateWalletWizard';
 import { SpinnerLoader } from './modules/core/components/Preloaders';
 
@@ -52,6 +53,11 @@ const Home = () => (
       <li>
         <NavLink style={{ color: 'blue' }} to="/start">
           Start
+        </NavLink>
+      </li>
+      <li>
+        <NavLink style={{ color: 'blue' }} to="/profile">
+          User Profile
         </NavLink>
       </li>
     </ul>
@@ -90,6 +96,7 @@ export default function App() {
             <Route path="/start" component={WalletStart} />
             <Route path="/createwallet" component={CreateWalletWizard} />
             <Route path="/connectwallet/:provider" component={ConnectWallet} />
+            <Route path="/profile" component={UserProfile} />
           </div>
         </Router>
       </Provider>
