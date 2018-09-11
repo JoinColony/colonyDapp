@@ -77,7 +77,12 @@ class UserMeta extends Component<Props, State> {
 
     return (
       <div className={styles.main}>
-        <UserAvatar avatarURL={avatar} username={ensName} size="xl" />
+        <UserAvatar
+          className={styles.avatar}
+          avatarURL={avatar}
+          username={ensName}
+          size="xl"
+        />
         <Heading
           appearance={{ margin: 'none', size: 'large' }}
           text={displayName}
