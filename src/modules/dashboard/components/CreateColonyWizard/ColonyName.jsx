@@ -80,15 +80,11 @@ const ColonyName = ({ handleSubmit }: Props) => (
   </section>
 );
 
-<<<<<<< HEAD:src/modules/dashboard/components/CreateColonyWizard/StepColonyDetails.jsx
 export const validationSchema = yup.object({
   colonyName: yup.string().required(),
 });
 
-StepColonyDetails.displayName = displayName;
-=======
 ColonyName.displayName = displayName;
->>>>>>> linkup naming and decision screen:src/modules/dashboard/components/CreateColonyWizard/ColonyName.jsx
 
 export const Step = ColonyName;
 

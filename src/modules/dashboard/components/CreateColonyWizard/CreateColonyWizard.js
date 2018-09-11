@@ -8,8 +8,9 @@ import CreateColony from './CreateColonyWizard.jsx';
 import * as StepCreateNewToken from './CreateNewToken.jsx';
 import * as ColonyName from './ColonyName.jsx';
 import * as TokenChoice from './TokenChoice.jsx';
+import * as SelectToken from './SelectToken.jsx';
 
-const steps = [ColonyName, TokenChoice, StepCreateNewToken];
+const steps = [ColonyName, TokenChoice, StepCreateNewToken, SelectToken];
 
 const CreateColonyContainer = compose(
   withWizard({

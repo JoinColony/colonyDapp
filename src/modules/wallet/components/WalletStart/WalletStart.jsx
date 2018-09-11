@@ -101,11 +101,11 @@ const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => (
     </div>
     <div className={styles.rowContent}>
       <Heading
-        appearance={{ size: 'small', width: 'bold', margin: 'small' }}
+        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
         text={title}
       />
       <Heading
-        appearance={{ size: 'tiny', width: 'veryThin', margin: 'small' }}
+        appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
         text={subTitle}
       />
     </div>
