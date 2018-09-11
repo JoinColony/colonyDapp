@@ -23,6 +23,10 @@
   font-size: var(--size-medium);
 }
 
+.themeMinimal {
+  composes: main;
+}
+
 .directionHorizontal {
   display: inline-block;
   margin-bottom: 0;

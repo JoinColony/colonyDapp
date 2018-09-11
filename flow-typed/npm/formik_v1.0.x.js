@@ -3,9 +3,10 @@
 
 declare module 'formik' {
   import type { ComponentType } from "react";
+  import type { MessageDescriptor } from "react-intl";
 
   declare export type FormikErrors<Values> = {
-    [field: $Keys<Values>]: ?string
+    [field: $Keys<Values>]: ?string | MessageDescriptor
   };
 
   declare export type FormikTouched<Values> = {

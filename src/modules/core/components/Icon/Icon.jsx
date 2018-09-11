@@ -59,7 +59,7 @@ const Icon = ({
 }: Props) => {
   // Remove the theme if it's a multiColor icon
   const multiColorAppearance = multiColorIcons[name]
-    ? { size: 'normal' }
+    ? { size: appearance.size || 'normal' }
     : null;
   const icon = icons[name] || multiColorIcons[name];
   const iconHref = typeof icon == 'object' ? `#${icon.default.id}` : icon;

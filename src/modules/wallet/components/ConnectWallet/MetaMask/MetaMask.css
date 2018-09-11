@@ -1,0 +1,16 @@
+@import 'variables.css';
+
+.content {
+  composes: alignCenter from '~styles/text.css';
+  composes: marginBottomMedium from '~styles/layout.css';
+  padding: 50px;
+  background-color: var(--grey-blue-1);
+}
+
+.actions {
+  composes: alignRight from '~styles/text.css';
+}
+
+.iconContainer {
+  composes: marginBottomMedium from '~styles/layout.css';
+}

@@ -21,5 +21,6 @@ module.name_mapper='^.*\.css$' -> 'css-module-flow'
 module.name_mapper='^.*\.(svg)$' -> 'empty/string'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
+module.name_mapper='^colony-wallet\/\(.*\)' -> '<PROJECT_ROOT>/src/lib/colony-wallet/src/\1'
 
 [strict]

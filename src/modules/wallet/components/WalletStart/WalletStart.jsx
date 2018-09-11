@@ -13,6 +13,20 @@ import Heading from '../../../core/components/Heading';
 import Link from '../../../core/components/Link';
 import Icon from '../../../core/components/Icon';
 
+import {
+  CONNECT_WALLET_SLUG_HARDWARE,
+  CONNECT_WALLET_SLUG_JSON,
+  CONNECT_WALLET_SLUG_METAMASK,
+  CONNECT_WALLET_SLUG_MNEMONIC,
+} from '../ConnectWallet/routes';
+
+const walletSlugs = [
+  CONNECT_WALLET_SLUG_METAMASK,
+  CONNECT_WALLET_SLUG_HARDWARE,
+  CONNECT_WALLET_SLUG_MNEMONIC,
+  CONNECT_WALLET_SLUG_JSON,
+];
+
 const icons = ['metamask', 'wallet', 'phrase', 'file'];
 
 const MSG = defineMessages({
@@ -103,9 +117,10 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   const keys = Object.keys(rowSubTitles);
   const title = rowTitles[key];
   const subTitle = rowSubTitles[keys[i]];
+  const slug = walletSlugs[i];
 
   return (
-    <NavLink key={`Link${title.id}`} exact to="/">
+    <NavLink key={`Link${title.id}`} to={slug}>
       <DetailRow
         title={title}
         subTitle={subTitle}

@@ -1,0 +1,57 @@
+@import 'variables.css';
+
+:root {
+  --containerPadding: 50px;
+}
+
+.content {
+  composes: marginBottomMedium from '~styles/layout.css';
+  min-width: 700px;
+  background-color: var(--grey-blue-1);
+}
+
+.headingContainer {
+  padding: var(--containerPadding) var(--containerPadding) 0 var(--containerPadding);
+}
+
+.choiceHeadingRow {
+  composes: flexContainerRow flexJustifyBetween from '~styles/layout.css';
+  align-items: baseline;
+}
+
+.searchBox {
+  display: flex;
+  align-items: flex-end;
+}
+
+.searchBoxIconContainer {
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.searchBoxIconContainerActive {
+  composes: searchBoxIconContainer;
+
+  & svg {
+    stroke: var(--sky-blue);
+  }
+}
+
+.walletChoicesContainer {
+  padding: 0 var(--containerPadding) var(--containerPadding) var(--containerPadding);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.choiceRow {
+  composes: flexContainerRow flexJustifyBetween from '~styles/layout.css';
+}
+
+.actions {
+  composes: alignRight from '~styles/text.css';
+}
+
+.noWalletFound {
+  composes: alignCenter from '~styles/text.css';
+}
+

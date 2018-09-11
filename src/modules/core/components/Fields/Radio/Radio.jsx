@@ -52,6 +52,8 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
+  /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
@@ -86,12 +88,17 @@ const Radio = ({
   radioStyle,
   setError,
   setValue,
+  isSubmitting,
   ...props
 }: Props) => {
   const stateClass = checked ? styles.isChecked : styles.isUnchecked;
+  const childContentClass = children ? styles.radioWithCustomChildren : '';
   return (
     <label
-      className={`${getMainClasses(appearance, styles)} ${stateClass}`}
+      className={`${getMainClasses(
+        appearance,
+        styles,
+      )} ${stateClass} ${childContentClass}`}
       htmlFor={elementOnly ? inputId : null}
     >
       <Fragment>
@@ -114,13 +121,15 @@ const Radio = ({
             )}
         </span>
         {!elementOnly && !!label ? (
-          <InputLabel
-            appearance={{ direction: 'horizontal' }}
-            label={label}
-            error={$error}
-            help={help}
-            inputId={inputId}
-          />
+          <span className={styles.labelContainer}>
+            <InputLabel
+              appearance={{ direction: 'horizontal' }}
+              label={label}
+              error={$error}
+              help={help}
+              inputId={inputId}
+            />
+          </span>
         ) : (
           label || children
         )}

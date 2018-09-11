@@ -1,7 +1,9 @@
 @import 'variables.css';
 
 .layoutMain {
-  composes: stretchHorizontal from '~styles/layout.css';
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  overflow: auto;
+  background-color: var(--grey-blue-2);
 }
 
 .header {
@@ -20,13 +22,7 @@
 }
 
 .content {
-  composes: flexContainerColumn flexAlignCenter from '~styles/layout.css';
-  padding: 0 15%;
-}
-
-.controls {
-  margin-top: 60px;
-  text-align: right;
+  composes: flexContainerColumn flexAlignCenter flexJustifyCenter from '~styles/layout.css';
 }
 
 .section .logo-loader svg {

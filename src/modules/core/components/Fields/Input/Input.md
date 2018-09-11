@@ -148,6 +148,18 @@ Uses the background color of its background (same for text). This should also wo
 />
 ```
 
+### Minimal theme
+
+```js
+<Input
+  appearance={{ theme: 'minimal' }}
+  name="inputminimal"
+  placeholder="I'm minimal"
+  label="Minimal label"
+  connect={false}
+/>
+```
+
 ### Formatting using [Cleave.js](https://nosir.github.io/cleave.js/)
 
 ```js

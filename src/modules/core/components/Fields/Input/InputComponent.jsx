@@ -10,7 +10,7 @@ import styles from './InputComponent.css';
 import type { CleaveOptions } from './types';
 
 export type Appearance = {
-  theme?: 'fat' | 'underlined',
+  theme?: 'fat' | 'underlined' | 'minimal',
   align?: 'right',
   colorSchema?: 'dark' | 'transparent',
 };
@@ -24,6 +24,8 @@ type Props = {
   formattingOptions?: CleaveOptions,
   /** Input field name (form variable) */
   name: string,
+  /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLInputElement) => void,
   /** @ignore Standard input field property */
@@ -47,7 +49,13 @@ class InputComponent extends Component<Props> {
   };
 
   render() {
-    const { appearance, formattingOptions, innerRef, ...props } = this.props;
+    const {
+      appearance,
+      formattingOptions,
+      innerRef,
+      isSubmitting,
+      ...props
+    } = this.props;
     if (formattingOptions) {
       return (
         <Cleave

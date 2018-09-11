@@ -14,6 +14,15 @@
   margin: 8px 8px 0 0;
 }
 
+.labelContainer {
+  display: inline-block;
+  margin-top: 3px;
+}
+
+.radioWithCustomChildren .radio {
+  top: 0;
+}
+
 .radio {
   display: inline-block;
   height: 12px;

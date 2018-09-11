@@ -1,0 +1,11 @@
+.content {
+  composes: marginBottomMedium from '~styles/layout.css';
+}
+
+.actions {
+  composes: alignRight from '~styles/text.css';
+}
+
+.uploadArea {
+  composes: marginBottomLarge from '~styles/layout.css';
+}
