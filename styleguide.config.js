@@ -101,5 +101,9 @@ module.exports = {
         './src/modules/core/components/ProgressBar/StepBar.jsx',
       ],
     },
+    {
+      name: 'Layout',
+      components: ['./src/modules/core/components/DecisionHub/DecisionHub.jsx'],
+    },
   ],
 };
