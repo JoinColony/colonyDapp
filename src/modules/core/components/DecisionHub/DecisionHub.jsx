@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { NavLink } from 'react-router-dom';
 
 import type { MessageDescriptor } from 'react-intl';
 
@@ -54,7 +53,7 @@ const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => Objec
     const subTitle = rowSubTitles[keys[i]];
 
     return (
-      <NavLink key={`Link${title.id}`} exact to="/">
+      <div key={`Link${title.id}`}>
         <DecisionOption
           icons={icons}
           title={title}
@@ -62,7 +61,7 @@ const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => Objec
           key={`row${title.id}`}
           rowIndex={i}
         />
-      </NavLink>
+      </div>
     );
   });
 

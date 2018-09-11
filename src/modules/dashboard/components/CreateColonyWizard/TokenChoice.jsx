@@ -101,11 +101,10 @@ const TokenChoice = ({
           />
         </div>
       </div>
-      {/* pass in possible choices/links to DecisionHub as props since it doesn't
+      {/* TODO: pass in possible choices/links to DecisionHub as props since it doesn't
       know yet what options it has and then find a way to send selected
       choice back to TokenChoice screen to decide about next wizard step,
       (the child should be calling a method on the parent)
-      ALTERNATIVE: Add route for each wizard step and link there directly
       */}
       {
         <DecisionHub
