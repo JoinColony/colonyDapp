@@ -28,7 +28,6 @@
     "test:integration:debug": "DEBUG=true yarn test:integration --color | tee integration-testing-output.log",
     "test:integration:ci": "jest --clearCache && NODE_ENV=test jest --ci --bail --verbose --runInBand --config=jest-integration.conf.json --reporters='jest-junit'",
     "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --reporters='jest-junit'",
-    "postinstall": "yarn provision",
     "styleguide": "styleguidist server",
     "build:styleguide": "styleguidist build",
     "deploy:styleguide": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git"

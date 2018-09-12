@@ -19,7 +19,9 @@ jobs:
             yarn global add lerna
       - run:
           name: "Installing modules"
-          command: yarn install
+          command: |
+            yarn install
+            yarn provision
       - save_cache:
           paths:
             - node_modules
@@ -71,7 +73,9 @@ jobs:
           command: yarn global add lerna
       - run:
           name: "Installing modules"
-          command: yarn install
+          command: |
+            yarn install
+            yarn provision
       - save_cache:
           paths:
             - node_modules
@@ -118,7 +122,9 @@ jobs:
           command: yarn global add lerna
       - run:
           name: "Installing modules"
-          command: yarn install
+          command: |
+            yarn install
+            yarn provision
       - save_cache:
           paths:
             - node_modules
