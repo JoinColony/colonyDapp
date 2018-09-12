@@ -32,7 +32,7 @@ const MSG = defineMessages({
     id: 'CreateColony.SelectToken.label.createColony',
     defaultMessage: 'Token Contact Address',
   },
-  helpText: {
+  learnMore: {
     id: 'CreateColony.SelectToken.learnMore',
     defaultMessage: 'Learn More',
   },
@@ -64,12 +64,26 @@ const SelectToken = ({ handleSubmit }: Props) => (
         onSubmit={tokenAddress => console.log(tokenAddress)}
         render={() => (
           <form className={styles.nameForm} onSubmit={handleSubmit}>
-            <InputLabel label={MSG.labelCreateColony} />
+            <div className={styles.labelContainer}>
+              <InputLabel label={MSG.labelCreateColony} />
+              <Button
+                appearance={{ theme: 'blue' }}
+                type="continue"
+                text={MSG.learnMore}
+              />
+            </div>
             <Input
               name="colonyName"
-              placeholder="Type a display name for a colony"
+              placeholder="Type a token contact address"
               appearance={{ width: 'full' }}
             />
+            <div className={styles.tokenHint}>
+              <Button
+                appearance={{ theme: 'secondary' }}
+                type="continue"
+                text={MSG.hint}
+              />
+            </div>
             <div className={styles.buttons}>
               <Button
                 appearance={{ theme: 'secondary' }}
