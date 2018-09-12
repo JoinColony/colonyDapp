@@ -11,6 +11,10 @@ import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import DecisionHub from '../../../core/components/DecisionHub';
 
+import { CREATECOLONY_SLUG_CREATE, CREATECOLONY_SLUG_ACCESS } from './routes';
+
+const tokenSlugs = [CREATECOLONY_SLUG_CREATE, CREATECOLONY_SLUG_ACCESS];
+
 type FormValues = {
   targetStep: number,
   nextStep: () => void,
@@ -101,16 +105,11 @@ const TokenChoice = ({
           />
         </div>
       </div>
-      {/* TODO: pass in possible choices/links to DecisionHub as props since it doesn't
-      know yet what options it has and then find a way to send selected
-      choice back to TokenChoice screen to decide about next wizard step,
-      (the child should be calling a method on the parent)
-      */}
       {
         <DecisionHub
           rowTitles={rowTitles}
           rowSubTitles={rowSubTitles}
-          choices={{ new: 2, existing: 3 }}
+          slugs={tokenSlugs}
         />
       }
       <div className={styles.buttonContainer}>
