@@ -70,7 +70,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@^7.0.0-rc.1", "@babel/core@^7.0.1":
+"@babel/core@^7.0.1":
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.1.tgz#406658caed0e9686fa4feb5c2f3cefb6161c0f41"
   dependencies:
@@ -11827,14 +11827,6 @@ postcss-initial@^2.0.0:
     lodash.template "^4.2.4"
     postcss "^6.0.1"
 
-postcss-jsx@^0.33.0:
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/postcss-jsx/-/postcss-jsx-0.33.0.tgz#433f8aadd6f3b0ee403a62b441bca8db9c87471c"
-  dependencies:
-    "@babel/core" "^7.0.0-rc.1"
-  optionalDependencies:
-    postcss-styled ">=0.33.0"
-
 postcss-less@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/postcss-less/-/postcss-less-2.0.0.tgz#5d190b8e057ca446d60fe2e2587ad791c9029fb8"
@@ -12104,10 +12096,6 @@ postcss-sorting@^4.0.0:
   dependencies:
     lodash "^4.17.4"
     postcss "^7.0.0"
-
-postcss-styled@>=0.33.0:
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/postcss-styled/-/postcss-styled-0.33.0.tgz#69be377584105a582fda7e4f76888e5b97eed737"
 
 postcss-styled@^0.31.0:
   version "0.31.0"
