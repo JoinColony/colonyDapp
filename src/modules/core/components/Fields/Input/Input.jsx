@@ -17,7 +17,6 @@ type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal',
   align?: 'right',
   direction?: 'horizontal',
-  width?: 'full',
   colorSchema?: 'dark' | 'transparent',
 };
 

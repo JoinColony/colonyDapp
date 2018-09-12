@@ -65,7 +65,6 @@ const StepColonyDetails = ({ handleSubmit }: Props) => (
               name="colonyName"
               label={MSG.labelCreateColony}
               placeholder="Type a display name for a colony"
-              appearance={{ width: 'full' }}
             />
             <div className={styles.buttons}>
               <Button
