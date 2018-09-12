@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-
 import type { MessageDescriptor } from 'react-intl';
+import { Link } from 'react-router-dom';
 
 import styles from './DecisionHub.css';
 
@@ -24,6 +24,7 @@ type DecisionProps = {
   rowTitles: Object,
   rowSubTitles: Object,
   icons: Array,
+  slugs: Array,
 };
 
 const DecisionOption = ({ title, subTitle, rowIndex, icons }: RowProps) => (
@@ -47,13 +48,19 @@ const DecisionOption = ({ title, subTitle, rowIndex, icons }: RowProps) => (
   </div>
 );
 
-const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => Object.keys(rowTitles).map((key, i) => {
+const DecisionHub = ({
+  icons,
+  rowTitles,
+  rowSubTitles,
+  slugs,
+}: DecisionProps) =>
+  Object.keys(rowTitles).map((key, i) => {
     const keys = Object.keys(rowSubTitles);
     const title = rowTitles[key];
     const subTitle = rowSubTitles[keys[i]];
 
     return (
-      <div key={`Link${title.id}`}>
+      <Link key={`Link${title.id}`} to={slugs[i]}>
         <DecisionOption
           icons={icons}
           title={title}
@@ -61,7 +68,7 @@ const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => Objec
           key={`row${title.id}`}
           rowIndex={i}
         />
-      </div>
+      </Link>
     );
   });
 
