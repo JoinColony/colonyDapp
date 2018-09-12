@@ -1,8 +1,9 @@
 // @flow
 import type { FormikProps } from 'formik';
 
-import React from 'react';
+import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { TokenClient } from '@colony/colony-js-client/src/TokenClient';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
@@ -52,56 +53,81 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CreateColonyWizard.SelectToken';
 
-const SelectToken = ({ handleSubmit }: Props) => (
-  <section className={styles.content}>
-    <div className={styles.title}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
-      <Formik
-        initialValues={{ tokenAddress: '' }}
-        onSubmit={tokenAddress => console.log(tokenAddress)}
-        render={() => (
-          <form className={styles.nameForm} onSubmit={handleSubmit}>
-            <div className={styles.labelContainer}>
-              <InputLabel label={MSG.labelCreateColony} />
-              <Button
-                appearance={{ theme: 'blue' }}
-                type="continue"
-                text={MSG.learnMore}
-              />
-            </div>
-            <Input
-              name="colonyName"
-              placeholder="Type a token contact address"
-              appearance={{ width: 'full' }}
-            />
-            <div className={styles.tokenHint}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="continue"
-                text={MSG.hint}
-              />
-            </div>
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="cancel"
-                text={MSG.cancel}
-              />
-              <Button
-                appearance={{ theme: 'primary' }}
-                type="submit"
-                text={MSG.next}
-              />
-            </div>
-          </form>
-        )}
-      />
-    </div>
-  </section>
-);
+class SelectToken extends Component<Props> {
+  state = {
+    validAddress: false,
+  };
+
+  validateAddress = address => {
+    console.log('validateAddress()');
+    return true;
+  };
+  // TODO: use purser tomorrow
+
+  checkToken = address => {
+    console.log('checkToken()');
+    console.log(TokenClient);
+    TokenClient.getTokenInfo.call({ address }).then(res => console.log(res));
+  };
+
+  render() {
+    const { handleSubmit } = this.props;
+    return (
+      <section className={styles.content}>
+        <div className={styles.title}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'thin' }}
+            text={MSG.heading}
+          />
+          <Formik
+            onSubmit={tokenAddress => {
+              if (this.validateAddress(tokenAddress)) {
+                return this.checkToken(tokenAddress);
+              }
+            }}
+            render={() => (
+              <form className={styles.nameForm} onSubmit={handleSubmit}>
+                <div className={styles.labelContainer}>
+                  <InputLabel label={MSG.labelCreateColony} />
+                  <Button
+                    appearance={{ theme: 'blue' }}
+                    type="continue"
+                    text={MSG.learnMore}
+                  />
+                </div>
+                <Input
+                  elementOnly
+                  name="SelectToken"
+                  placeholder="Type a token contact address"
+                  connect={false}
+                />
+                <div className={styles.tokenHint}>
+                  <Button
+                    appearance={{ theme: 'secondary' }}
+                    type="continue"
+                    text={MSG.hint}
+                  />
+                </div>
+                <div className={styles.buttons}>
+                  <Button
+                    appearance={{ theme: 'secondary' }}
+                    type="cancel"
+                    text={MSG.cancel}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary' }}
+                    type="submit"
+                    text={MSG.next}
+                  />
+                </div>
+              </form>
+            )}
+          />
+        </div>
+      </section>
+    );
+  }
+}
 
 SelectToken.displayName = displayName;
 
