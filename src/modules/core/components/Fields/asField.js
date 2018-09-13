@@ -116,7 +116,7 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
           elementOnly,
           'aria-invalid': !!$error,
           'aria-label': elementOnly ? $label : null,
-          'arial-labelledby': elementOnly ? null : `${$id}-label`,
+          'aria-labelledby': elementOnly ? null : `${$id}-label`,
           label: $label,
           help: $help,
           name: htmlFieldName || id,
