@@ -22,6 +22,7 @@ type Props = {
     value: string,
   }>,
   selectedOption: number,
+  ariaLabelledby: string,
   onSelect: (idx: number) => void,
   onClick: () => void,
   formatIntl: (
@@ -39,29 +40,37 @@ const SelectListBox = ({
   onSelect,
   onClick,
   formatIntl,
-}: Props) => (
-  <ul
-    tabIndex={0}
-    className={getMainClasses(appearance, styles)}
-    role="listbox"
-    aria-activedescendant={options.find((_, idx) => checkedOption === idx)}
-    id={listboxId}
-  >
-    {options.map((option, idx) => (
-      <SelectOption
-        id={`${listboxId}-option-${idx}`}
-        idx={idx}
-        key={`${listboxId}-option-${option.value}`}
-        selected={selectedOption === idx}
-        checked={checkedOption === idx}
-        option={option}
-        onSelect={onSelect}
-        onClick={onClick}
-        formatIntl={formatIntl}
-      />
-    ))}
-  </ul>
-);
+  ariaLabelledby,
+}: Props) => {
+  const activeDescendant = options.find((_, idx) => checkedOption === idx);
+  const activeDescendantLabel = activeDescendant
+    ? activeDescendant.value
+    : null;
+  return (
+    <ul // eslint-disable-line jsx-a11y/aria-activedescendant-has-tabindex
+      tabIndex={-1}
+      className={getMainClasses(appearance, styles)}
+      role="listbox"
+      aria-activedescendant={activeDescendantLabel}
+      id={listboxId}
+      aria-labelledby={ariaLabelledby}
+    >
+      {options.map((option, idx) => (
+        <SelectOption
+          id={`${listboxId}-option-${idx}`}
+          idx={idx}
+          key={`${listboxId}-option-${option.value}`}
+          selected={selectedOption === idx}
+          checked={checkedOption === idx}
+          option={option}
+          onSelect={onSelect}
+          onClick={onClick}
+          formatIntl={formatIntl}
+        />
+      ))}
+    </ul>
+  );
+};
 
 SelectListBox.displayName = displayName;
 

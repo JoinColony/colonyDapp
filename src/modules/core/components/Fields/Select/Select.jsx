@@ -68,6 +68,8 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   isSubmitting?: boolean,
   /** @ignore Will be injected by `asField` */
+  'aria-labelledby': string,
+  /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
@@ -283,6 +285,7 @@ class Select extends Component<Props, State> {
     const activeOption = options[checkedOption];
     const listboxId = `select-listbox-${$id}`;
     const activeOptionLabel = formatIntl(activeOption && activeOption.label);
+    const ariaLabelledby = props['aria-labelledby'];
     return (
       <div className={styles.main} ref={this.registerWrapperNode}>
         {!elementOnly && label ? (
@@ -294,6 +297,7 @@ class Select extends Component<Props, State> {
           aria-controls={listboxId}
           aria-expanded={isOpen}
           aria-label={label}
+          aria-labelledby={ariaLabelledby}
           aria-disabled={disabled}
           tabIndex="0"
           ref={this.registerComboboxNode}
@@ -323,6 +327,7 @@ class Select extends Component<Props, State> {
               onClick={this.checkOption}
               formatIntl={formatIntl}
               appearance={appearance}
+              ariaLabelledby={ariaLabelledby}
             />
           )}
       </div>

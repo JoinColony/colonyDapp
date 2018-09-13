@@ -57,7 +57,6 @@ class SelectOption extends Component<Props> {
       <li
         className={styles.main}
         aria-selected={selected}
-        aria-checked={checked}
         id={id}
         role="option"
         ref={e => selected && e && e.focus()}
