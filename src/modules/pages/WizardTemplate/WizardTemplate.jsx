@@ -13,17 +13,19 @@ type Props = {
   step?: number,
   stepCount?: number,
   /* When internal is true it means that this would be a screen that's been shown after logging in */
-  internal: boolean,
+  external?: boolean,
 };
 
 const displayName = 'pages.WizardTemplate';
 
-const WizardTemplate = ({ children, step, stepCount, internal }: Props) => (
+const WizardTemplate = ({ children, step, stepCount, external }: Props) => (
   <main className={styles.layoutMain}>
-    {internal && (
+    {!external && (
       <header className={styles.header}>
         <figure className={styles.logo} role="presentation">
-          <Logo />
+          <Link to="/">
+            <Logo />
+          </Link>
         </figure>
         {stepCount &&
           step && (

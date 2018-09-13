@@ -58,7 +58,7 @@ const StepColonyDetails = ({ handleSubmit }: Props) => (
         initialValues={{
           colonyName: '',
         }}
-        onSubmit={newColonyName => console.log(newColonyName)}
+        onSubmit={newColonyName => newColonyName}
         render={() => (
           <form className={styles.nameForm} onSubmit={handleSubmit}>
             <Input

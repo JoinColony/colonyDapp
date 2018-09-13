@@ -12,7 +12,6 @@ import type { CleaveOptions } from './types';
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal',
   align?: 'right',
-  width?: 'full',
   colorSchema?: 'dark' | 'transparent',
 };
 
