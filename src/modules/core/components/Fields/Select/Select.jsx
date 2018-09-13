@@ -66,6 +66,8 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
+  isSubmitting?: boolean,
+  /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
@@ -272,6 +274,7 @@ class Select extends Component<Props, State> {
       options,
       placeholder,
       setValue,
+      isSubmitting,
       setError,
       ...props
     } = this.props;
