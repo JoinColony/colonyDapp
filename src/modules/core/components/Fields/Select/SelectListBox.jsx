@@ -41,8 +41,10 @@ const SelectListBox = ({
   formatIntl,
 }: Props) => (
   <ul
+    tabIndex={0}
     className={getMainClasses(appearance, styles)}
     role="listbox"
+    aria-activedescendant={options.find((_, idx) => checkedOption === idx)}
     id={listboxId}
   >
     {options.map((option, idx) => (

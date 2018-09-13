@@ -285,19 +285,19 @@ class Select extends Component<Props, State> {
         {!elementOnly && label ? (
           <InputLabel inputId={$id} label={label} error={$error} help={help} />
         ) : null}
-        <div
+        <button
           className={`${styles.select} ${getMainClasses(appearance, styles)}`}
-          role="combobox"
-          aria-controls={$id}
+          aria-haspopup="listbox"
+          aria-controls={listboxId}
           aria-expanded={isOpen}
-          aria-label={elementOnly ? label : null}
+          aria-label={label}
           aria-disabled={disabled}
           tabIndex="0"
           ref={this.registerComboboxNode}
-          id={$id}
           onClick={this.toggle}
           onKeyUp={this.handleKeyUp}
           onKeyDown={this.handleKeyDown}
+          type="button"
           {...props}
         >
           <div className={styles.selectInner}>
@@ -308,7 +308,7 @@ class Select extends Component<Props, State> {
               <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
             </span>
           </div>
-        </div>
+        </button>
         {isOpen &&
           options.length && (
             <SelectListBox

@@ -1,12 +1,18 @@
 @import 'variables.css';
 
 .baseSelect {
-  padding: 0 10px;
+  padding: 5px 10px;
   width: auto;
+  width: 100%;
   position: relative;
+  border: 0;
+  font-size: var(--size-normal);
   font-style: normal;
+  color: var(--text);
   transition: none;
   cursor: pointer;
+  outline-color: var(--primary);
+  outline-width: 1px;
 }
 
 .main {
@@ -14,14 +20,14 @@
   position: relative;
 }
 
-.select[aria-disabled="true"], .select[aria-busy="true"] {
-  opacity: 0.7;
-}
-
 .selectInner {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.select[aria-disabled="true"], .select[aria-busy="true"] {
+  opacity: 0.7;
 }
 
 .select svg {
@@ -55,31 +61,34 @@
 
 /* themes */
 .themeDefault {
-  composes: main from '../Input/InputComponent.css';
   composes: baseSelect;
+  border: 1px solid var(--temp-grey-5);
   background-color: white;
+}
+
+.themeDefault:focus {
+  border-color: var(--primary);
+  outline: 0;
 }
 
 .themeAlt {
   composes: baseSelect;
-  padding: 5px 10px;
   border-radius: var(--radius-normal);
 }
 
+.themeAlt:focus {
+  outline-style: solid;
+}
+
 .themeAlt .selectInner {
-  padding: 0 10px;
   border-bottom: 1px dotted transparent;
 }
 
 .themeAlt.select[aria-expanded="true"] {
   background-color: var(--grey-blue-1);
+  outline: 0;
 }
 
-.themeAlt.select[aria-expanded="true"] .selectInner {
+.themeAlt[aria-expanded="true"] .selectInner {
   border-color: var(--grey-3);
-}
-
-.themeAlt.select[aria-expanded="true"].select:focus {
-  outline-color: var(--primary);
-  outline-width: 2px;
 }
