@@ -33,6 +33,7 @@ module.exports = {
         './src/modules/core/components/Fields/Radio/Radio.jsx',
         './src/modules/core/components/Button/Button.jsx',
         './src/modules/core/components/FileUpload/FileUpload.jsx',
+        './src/modules/core/components/Fields/Select/Select.jsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.jsx',
         './src/modules/core/components/MnemonicDnDSorter/MnemonicDnDSorter.jsx',
       ],

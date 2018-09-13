@@ -1,0 +1,42 @@
+@import 'variables.css';
+
+/* theme */
+.baseTheme {
+  height: auto;
+  max-height: 160px;
+  width: auto;
+  min-width: 100%;
+  position: absolute;
+  top: calc(100% + 5px);
+  z-index: 2;
+  overflow: auto;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 3px 5px rgba(black, 0.05);
+}
+
+.themeDefault {
+  composes: baseTheme;
+  background-color: var(--grey-blue-2);
+}
+
+.themeAlt {
+  composes: baseTheme;
+  border-radius: var(--radius-tiny);
+  background-color: white;
+  box-shadow: 0 0 3px var(--temp-grey-5);
+}
+
+/* alignOptions */
+.alignOptionsLeft {
+  left: 0;
+}
+
+.alignOptionsRight {
+  right: 0;
+}
+
+.alignOptionsCenter {
+  left: 50%;
+  transform: translate(-50%);
+}

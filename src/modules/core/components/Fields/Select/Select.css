@@ -1,0 +1,94 @@
+@import 'variables.css';
+
+.baseSelect {
+  padding: 5px 10px;
+  width: auto;
+  width: 100%;
+  position: relative;
+  border: 0;
+  font-size: var(--size-normal);
+  font-style: normal;
+  color: var(--text);
+  transition: none;
+  cursor: pointer;
+  outline-color: var(--primary);
+  outline-width: 1px;
+}
+
+.main {
+  composes: field from '~styles/fields.css';
+  position: relative;
+}
+
+.selectInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select[aria-disabled="true"], .select[aria-busy="true"] {
+  opacity: 0.7;
+}
+
+.select svg {
+  fill: var(--grey-4);
+  stroke: var(--grey-4);
+}
+
+.select[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+.selectExpandContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 21px;
+  width: 21px;
+}
+
+.activeOption {
+  height: 100%;
+  overflow: hidden;
+  font-weight: var(--weight-semi);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select[aria-expanded="true"] .activeOption {
+  color: var(--sky-blue);
+}
+
+/* themes */
+.themeDefault {
+  composes: baseSelect;
+  border: 1px solid var(--temp-grey-5);
+  background-color: white;
+}
+
+.themeDefault:focus {
+  border-color: var(--primary);
+  outline: 0;
+}
+
+.themeAlt {
+  composes: baseSelect;
+  border-radius: var(--radius-normal);
+}
+
+.themeAlt:focus {
+  outline-style: solid;
+}
+
+.themeAlt .selectInner {
+  border-bottom: 1px dotted transparent;
+}
+
+.themeAlt.select[aria-expanded="true"] {
+  background-color: var(--grey-blue-1);
+  outline: 0;
+}
+
+.themeAlt[aria-expanded="true"] .selectInner {
+  border-color: var(--grey-3);
+}
