@@ -278,6 +278,7 @@ class Select extends Component<Props, State> {
       setValue,
       isSubmitting,
       setError,
+      name,
       ...props
     } = this.props;
     const { isOpen, selectedOption } = this.state;
@@ -305,6 +306,7 @@ class Select extends Component<Props, State> {
           onKeyUp={this.handleKeyUp}
           onKeyDown={this.handleKeyDown}
           type="button"
+          name={name}
           {...props}
         >
           <div className={styles.selectInner}>
@@ -328,6 +330,7 @@ class Select extends Component<Props, State> {
               formatIntl={formatIntl}
               appearance={appearance}
               ariaLabelledby={ariaLabelledby}
+              name={name}
             />
           )}
       </div>
