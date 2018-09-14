@@ -119,4 +119,6 @@ Input.defaultProps = {
   appearance: {},
 };
 
-export default asField()(Input);
+export default asField({
+  initialValue: '',
+})(Input);
