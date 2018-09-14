@@ -12,7 +12,8 @@ type Props = {
   children: Node,
   step?: number,
   stepCount?: number,
-  /* When internal is true it means that this would be a screen that's been shown after logging in */
+  /* When external is true it means that this
+  would be a screen that's been shown before looking in and creating a colony */
   external?: boolean,
 };
 

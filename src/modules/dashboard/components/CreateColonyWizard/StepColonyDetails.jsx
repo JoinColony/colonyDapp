@@ -35,6 +35,10 @@ const MSG = defineMessages({
     id: 'CreateColony.StepColonyDetails.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
+  placeholder: {
+    id: 'CreateColony.StepColonyDetails.placeholder',
+    defaultMessage: 'Type a display name for a colony',
+  },
   cancel: {
     id: 'CreateColony.StepColonyDetails.cancel',
     defaultMessage: 'Cancel',
@@ -64,7 +68,7 @@ const StepColonyDetails = ({ handleSubmit }: Props) => (
             <Input
               name="colonyName"
               label={MSG.labelCreateColony}
-              placeholder="Type a display name for a colony"
+              placeholder={MSG.placeholder}
             />
             <div className={styles.buttons}>
               <Button
