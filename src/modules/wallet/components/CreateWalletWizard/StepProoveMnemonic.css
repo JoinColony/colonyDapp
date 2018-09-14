@@ -14,6 +14,27 @@
   margin-top: 40px;
 }
 
+.error {
+  composes: main, sizeNormal, weightMedium from '../../../core/components/Heading/Heading.css';
+  color: var(--danger);
+}
+
+.customInput {
+  composes: themeFat from '../../../core/components/Fields/Input/InputComponent.css';
+  font-size: var(--size-normal);
+  font-weight: var(--weight-medium);
+}
+
+.customInput[aria-invalid="true"] {
+  background-color: color(var(--danger) alpha(20%));
+}
+
+.customInputError {
+  composes: customInput;
+  border-color: var(--danger);
+  background-color: color(var(--danger) alpha(20%));
+}
+
 .inputFields {
   margin-top: 40px;
 }
