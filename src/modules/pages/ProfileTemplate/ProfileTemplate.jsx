@@ -5,6 +5,8 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
+import AvatarDropdown from '../../users/components/AvatarDropdown';
+
 import styles from './ProfileTemplate.css';
 
 type Appearance = {
@@ -23,7 +25,9 @@ const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
     <aside className={styles.sidebar}>{asideContent}</aside>
     <div className={styles.mainContainer}>
-      {/* header will go here */}
+      <header className={styles.header}>
+        <AvatarDropdown />
+      </header>
       <main className={styles.mainContent}>{children}</main>
     </div>
   </div>
