@@ -32,12 +32,23 @@ type StepType = {
   formikConfig?: Object,
 };
 
+type StepsFn = (step: number, values: Object) => StepType;
+
+type Steps = Array<StepType> | StepsFn;
+
 type WizardArgs = {
-  steps: Array<StepType>,
+  steps: Steps,
   handleFinalSubmit?: (
     values: { [string]: string },
     bag: Object,
   ) => Promise<void> | void,
+};
+
+const getStep = (steps: Steps, step: number, values: Object) => {
+  if (typeof steps == 'function') {
+    return steps(step, values);
+  }
+  return steps[step];
 };
 
 const withWizard = ({ steps }: WizardArgs) => (
@@ -48,7 +59,7 @@ const withWizard = ({ steps }: WizardArgs) => (
 
     next = (values: { [string]: string }) => {
       this.setState(({ step, values: currentValues }) => ({
-        step: steps[step + 1] ? step + 1 : step,
+        step: getStep(steps, step + 1, currentValues) ? step + 1 : step,
         values: { ...currentValues, ...values },
       }));
     };
@@ -78,7 +89,7 @@ const withWizard = ({ steps }: WizardArgs) => (
         onSubmit,
         formikConfig,
         ...extraProps
-      } = steps[step];
+      } = getStep(steps, step, currentValues);
       const currentStep = step + 1;
       const stepCount = steps.length;
       const Form = ({ values, ...formikProps } = {}) =>
@@ -94,11 +105,20 @@ const withWizard = ({ steps }: WizardArgs) => (
             ...formikProps,
           }),
         );
+      const mapPropsToValues = props => {
+        if (!formikConfig || !formikConfig.mapPropsToValues) {
+          return currentValues;
+        }
+        return {
+          ...currentValues,
+          ...formikConfig.mapPropsToValues(props),
+        };
+      };
       const WrappedComponent = withFormik({
-        handleSubmit: this.handleStepSubmit(onSubmit),
         validationSchema,
-        mapPropsToValues: () => currentValues,
         ...formikConfig,
+        handleSubmit: this.handleStepSubmit(onSubmit),
+        mapPropsToValues,
       })(Form);
       return createElement(WrappedComponent, { ...this.props });
     }
