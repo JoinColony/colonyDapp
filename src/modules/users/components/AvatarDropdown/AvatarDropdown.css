@@ -1,0 +1,9 @@
+
+.avatarButton {
+  border: 0;
+  background: transparent;
+}
+
+.avatarButton:focus {
+  outline: 0;
+}
