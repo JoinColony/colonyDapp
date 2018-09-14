@@ -17,13 +17,15 @@ const createPromise = () => {
 
 const onSubmit = (values, { nextStep }) => nextStep();
 
-const Wrapper = ({ children, step, stepCount }) => (
+// eslint-disable-next-line react/prop-types
+const Wrapper = ({ children, step }) => (
   <div>
     <h1>Step: {step}</h1>
     <div>{children}</div>
   </div>
 );
 
+// eslint-disable-next-line react/prop-types
 const createStep = number => ({ handleSubmit }) => (
   <form onSubmit={handleSubmit}>
     <h2>Step number {number}</h2>
@@ -68,6 +70,66 @@ describe('withWizard HoC', () => {
     return promise.then(() => {
       wrapper.update();
       expect(wrapper.find('h1')).toHaveText('Step: 2');
+    });
+  });
+
+  test('Renders initial step - use with Steps function', () => {
+    const stepsArray = [
+      {
+        Step: createStep(1),
+        onSubmit,
+      },
+      {
+        Step: createStep(2),
+        onSubmit,
+      },
+    ];
+
+    // Very simple. See next test for complex example
+    const stepsFunction = step => stepsArray[step];
+
+    const Wizard = withWizard({ steps: stepsFunction })(Wrapper);
+    const wrapper = mount(<Wizard />);
+    expect(wrapper.find('h2')).toHaveText('Step number 1');
+  });
+
+  test('Renders second step - use with Steps function', () => {
+    const { promise, resolvePromise } = createPromise();
+    const stepsArray = [
+      {
+        Step: createStep(1),
+        onSubmit: (values, { nextStep }) => {
+          nextStep();
+          resolvePromise();
+        },
+        formikConfig: {
+          mapPropsToValues: () => ({ path: 'skip2' }),
+        },
+      },
+      {
+        Step: createStep(2),
+        onSubmit,
+      },
+      {
+        Step: createStep(3),
+        onSubmit,
+      },
+    ];
+
+    const stepsFunction = (step, { path }) => {
+      // if path == 'skip2' skip the second step
+      if (step === 1 && path === 'skip2') {
+        return stepsArray[2];
+      }
+      return stepsArray[step];
+    };
+
+    const Wizard = withWizard({ steps: stepsFunction })(Wrapper);
+    const wrapper = mount(<Wizard />);
+    wrapper.find('form').simulate('submit');
+    return promise.then(() => {
+      wrapper.update();
+      expect(wrapper.find('h2')).toHaveText('Step number 3');
     });
   });
 });
