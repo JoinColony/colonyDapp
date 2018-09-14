@@ -1,0 +1,7 @@
+@import 'variables.css';
+
+.main {
+  padding: 10px 16px;
+  font-size: var(--size-medium);
+  font-weight: var(--weight-semi);
+}

@@ -1,0 +1,16 @@
+@import 'variables.css';
+
+.main {
+  font-weight: var(--weight-semi);
+  text-overflow: ellipsis;
+  line-height: 2;
+  white-space: nowrap;
+}
+
+.main > * {
+  padding: 5px 16px;
+}
+
+.main:only-child > * {
+  padding: 6px 16px;
+}

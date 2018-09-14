@@ -1,0 +1,32 @@
+@import 'variables.css';
+
+.main {
+  min-width: 200px;
+}
+
+.main a {
+  display: block;
+}
+
+/* themes */
+.themeDefault a {
+  color: var(--grey-4);
+}
+
+.themeDefault a:hover {
+  background-color: var(--grey-blue-0);
+  color: var(--grey-1);
+}
+
+.themeDark {
+  background-color: var(--grey-1);
+  color: var(--colony-white);
+}
+
+.themeDark a {
+  color: var(--grey-4);
+}
+
+.themeDark a:hover {
+  color: var(--grey-blue-2);
+}
