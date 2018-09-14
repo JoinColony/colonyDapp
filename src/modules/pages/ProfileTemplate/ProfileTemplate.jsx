@@ -7,6 +7,8 @@ import { getMainClasses } from '~utils/css';
 
 import AvatarDropdown from '../../users/components/AvatarDropdown';
 
+import AvatarDropdown from '../../users/components/AvatarDropdown';
+
 import styles from './ProfileTemplate.css';
 
 type Appearance = {
