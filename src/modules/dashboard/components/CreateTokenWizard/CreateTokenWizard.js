@@ -1,6 +1,7 @@
 /* @flow */
 
 import { compose } from 'recompose';
+import withProps from 'recompose/withProps';
 
 import { withWizard } from '../../../core/components/Wizard';
 import CreateTokenWizard from './CreateTokenWizard.jsx';
@@ -12,6 +13,7 @@ const CreateTokenContainer = compose(
   withWizard({
     steps,
   }),
+  withProps(() => ({ external: true })),
 )(CreateTokenWizard);
 
 export default CreateTokenContainer;

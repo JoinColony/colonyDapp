@@ -12,7 +12,7 @@ import CreateTokenWizard from '../CreateTokenWizard';
 import { CREATECOLONY_SLUG_CREATE, CREATECOLONY_SLUG_ACCESS } from './routes';
 
 const AccessToken = () => (
-  <WizardTemplate>
+  <WizardTemplate external>
     <div className={styles.mainContent}>
       <Switch>
         <Route path={CREATECOLONY_SLUG_CREATE} component={CreateTokenWizard} />

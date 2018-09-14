@@ -3,8 +3,11 @@ import type { FormikProps } from 'formik';
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { TokenClient } from '@colony/colony-js-client/src/TokenClient';
+import { compose } from 'recompose';
+import ColonyJs from '@colony/colony-js-client';
+// import { validators } from '@colony/purser-core';
 
+import { withFormik } from 'formik';
 import type { SubmitFn } from '../../../core/components/Wizard';
 
 import styles from './SelectToken.css';
@@ -14,13 +17,12 @@ import InputLabel from '../../../core/components/Fields/InputLabel';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 
-const { Formik } = require('formik');
-
 type FormValues = {
   nextStep: () => void,
 };
 
 type Props = {
+  handleSubmit: () => void,
   previousStep: () => void,
 } & FormikProps<FormValues>;
 
@@ -41,6 +43,10 @@ const MSG = defineMessages({
     id: 'CreateColony.SelectToken.hint',
     defaultMessage: 'You can find them here https://etherscan.io/tokens',
   },
+  preview: {
+    id: 'CreateColony.SelectToken.preview',
+    defaultMessage: 'Token Preview',
+  },
   cancel: {
     id: 'CreateColony.SelectToken.back',
     defaultMessage: 'Back',
@@ -53,85 +59,84 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CreateColonyWizard.SelectToken';
 
-class SelectToken extends Component<Props> {
-  state = {
-    validAddress: false,
-  };
-
-  validateAddress = address => {
-    console.log('validateAddress()');
-    return true;
-  };
-  // TODO: use purser tomorrow
-
-  checkToken = address => {
-    console.log('checkToken()');
-    console.log(TokenClient);
-    TokenClient.getTokenInfo.call({ address }).then(res => console.log(res));
-  };
-
-  render() {
-    const { handleSubmit } = this.props;
-    return (
-      <section className={styles.content}>
-        <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'medium', weight: 'thin' }}
-            text={MSG.heading}
-          />
-          <Formik
-            onSubmit={tokenAddress => {
-              if (this.validateAddress(tokenAddress)) {
-                return this.checkToken(tokenAddress);
-              }
-            }}
-            render={() => (
-              <form className={styles.nameForm} onSubmit={handleSubmit}>
-                <div className={styles.labelContainer}>
-                  <InputLabel label={MSG.labelCreateColony} />
-                  <Button
-                    appearance={{ theme: 'blue' }}
-                    type="continue"
-                    text={MSG.learnMore}
-                  />
-                </div>
-                <Input
-                  elementOnly
-                  name="SelectToken"
-                  placeholder="Type a token contact address"
-                  connect={false}
-                />
-                <div className={styles.tokenHint}>
-                  <Button
-                    appearance={{ theme: 'secondary' }}
-                    type="continue"
-                    text={MSG.hint}
-                  />
-                </div>
-                <div className={styles.buttons}>
-                  <Button
-                    appearance={{ theme: 'secondary' }}
-                    type="cancel"
-                    text={MSG.cancel}
-                  />
-                  <Button
-                    appearance={{ theme: 'primary' }}
-                    type="submit"
-                    text={MSG.next}
-                  />
-                </div>
-              </form>
-            )}
+const SelectToken = ({ handleSubmit, errors }: Props) => (
+  <section className={styles.content}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', weight: 'thin' }}
+        text={MSG.heading}
+      />
+      <form className={styles.nameForm} onSubmit={handleSubmit}>
+        <div className={styles.labelContainer}>
+          <InputLabel label={MSG.labelCreateColony} />
+          <Button
+            appearance={{ theme: 'blue' }}
+            type="continue"
+            text={MSG.learnMore}
           />
         </div>
-      </section>
-    );
-  }
-}
+        <Input
+          elementOnly
+          name="tokenAddress"
+          placeholder="Type a token contact address"
+        />
+        <div className={styles.tokenHint}>
+          {!errors.validAddress && (
+            <Button
+              appearance={{ theme: 'secondary' }}
+              type="continue"
+              text={MSG.hint}
+            />
+          )}
+          {errors.existingToken ? (
+            <Button
+              appearance={{ theme: 'secondary' }}
+              type="continue"
+              text={MSG.preview}
+            />
+          ) : null}
+        </div>
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.cancel}
+          />
+          <Button
+            appearance={{ theme: 'primary' }}
+            type="submit"
+            text={MSG.next}
+          />
+        </div>
+      </form>
+    </div>
+  </section>
+);
+
+const enhance = compose(
+  withFormik({
+    mapPropsToValues: () => ({
+      tokenAddress: '',
+    }),
+    validate: (values: FormValues): FormikErrors<FormValues> => {
+      const errors = {};
+      if (!values.tokenAddress) {
+        errors.validAddress = true;
+      } else if (values.tokenAddress.length > 3) {
+        errors.existingToken = true;
+        errors.validAddress = true;
+      }
+      return errors;
+    },
+    handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+      console.log(values);
+    },
+  }),
+);
 
 SelectToken.displayName = displayName;
 
-export const Step = SelectToken;
+export const Step = enhance(SelectToken);
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
