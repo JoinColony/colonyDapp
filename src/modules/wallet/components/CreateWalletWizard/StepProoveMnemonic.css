@@ -1,0 +1,25 @@
+@import 'variables.css';
+
+@value wideButton: 160px;
+
+.main {
+  width: 460px;
+}
+
+.titleSection {
+  margin-top: 180px;
+}
+
+.instructions {
+  margin-top: 40px;
+}
+
+.inputFields {
+  margin-top: 40px;
+}
+
+.actionsContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 60px;
+}
