@@ -269,10 +269,10 @@
 
 .themeBlue {
   composes: main;
+  padding: 0;
+  height: 0;
   font-weight: var(--weight-semi);
   color: var(--sky-blue);
-  padding: 0px;
-  height: 0px;
 }
 
 .themeBlue:hover {

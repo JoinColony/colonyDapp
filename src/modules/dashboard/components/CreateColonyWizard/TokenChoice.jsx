@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import styles from './TokenChoice.css';
 
@@ -11,6 +11,8 @@ import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import DecisionHub from '../../../core/components/DecisionHub';
 
+import type { SubmitFn } from '../../../core/components/Wizard';
+
 type FormValues = {
   targetStep: number,
   nextStep: () => void,
@@ -18,19 +20,19 @@ type FormValues = {
 
 type Props = {
   previousStep: () => void,
-} & FormikProps<FormValues>;
+};
 
 const MSG = defineMessages({
   heading: {
     id: 'TokenChoice.heading',
-    defaultMessage:
-      'How would you like to create a new token or use an existing ERC20 token?',
+    defaultMessage: `Would you like to create
+      a new token or use an existing ERC20 token?`,
   },
   subTitle: {
     id: 'TokenChoice.subTitle',
-    defaultMessage:
-      /* eslint-disable max-len */
-      'Each Colony has a native token. When rewarding contributors with the native token, those users will also earn reputation in your Colony.',
+    defaultMessage: `Each Colony has a native token.
+      When rewarding contributors with the native token,
+      those users will also earn reputation in your Colony.`,
   },
   subTitleWithLink: {
     id: 'TokenChoice.subTitleWithLink',
@@ -68,11 +70,7 @@ const rowSubTitles = defineMessages({
   },
 });
 
-const TokenChoice = ({
-  handleSubmit,
-  values: { targetStep },
-  previousStep,
-}: Props) => (
+const TokenChoice = ({ previousStep }: Props) => (
   <WizardTemplate>
     <section className={styles.content}>
       <div className={styles.title}>
@@ -101,11 +99,6 @@ const TokenChoice = ({
           />
         </div>
       </div>
-      {/* TODO: pass in possible choices/links to DecisionHub as props since it doesn't
-      know yet what options it has and then find a way to send selected
-      choice back to TokenChoice screen to decide about next wizard step,
-      (the child should be calling a method on the parent)
-      */}
       {
         <DecisionHub
           rowTitles={rowTitles}

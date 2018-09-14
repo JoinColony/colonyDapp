@@ -18,17 +18,18 @@
   margin-bottom: -7px;
   font-size: 14px;
 }
-.subtitleWithLink{
-    flex: 4;
+
+.subtitleWithLink {
+  flex: 4;
 }
 
-.subtitleWithLinkBox{
-    display: flex;
-    margin-bottom: 20px;
+.subtitleWithLinkBox {
+  display: flex;
+  margin-bottom: 20px;
 }
 
-.link{
-    flex: 2;
+.link {
+  flex: 2;
 }
 
 .callToAction {
@@ -57,7 +58,7 @@
   text-align: left;
 }
 
-.buttonContainer{
+.buttonContainer {
   display: flex;
   justify-content: flex-start;
   margin-left: -16px;

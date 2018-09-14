@@ -16,14 +16,13 @@ type RowProps = {
   title: MessageDescriptor,
   subTitle: MessageDescriptor,
   rowIndex: number,
-  icons: Array,
+  icons?: Array<string>,
 };
 
 type DecisionProps = {
-  icons: Array,
   rowTitles: Object,
   rowSubTitles: Object,
-  icons: Array,
+  icons?: Array<string>,
 };
 
 const DecisionOption = ({ title, subTitle, rowIndex, icons }: RowProps) => (
@@ -47,7 +46,8 @@ const DecisionOption = ({ title, subTitle, rowIndex, icons }: RowProps) => (
   </div>
 );
 
-const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) => Object.keys(rowTitles).map((key, i) => {
+const DecisionHub = ({ icons, rowTitles, rowSubTitles }: DecisionProps) =>
+  Object.keys(rowTitles).map((key, i) => {
     const keys = Object.keys(rowSubTitles);
     const title = rowTitles[key];
     const subTitle = rowSubTitles[keys[i]];
