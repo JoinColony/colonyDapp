@@ -1,0 +1,4 @@
+
+.main {
+  composes: alignCenter from '~styles/text.css';
+}

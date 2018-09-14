@@ -19,7 +19,12 @@
   background: var(--gradient-default);
 }
 
+.mainContainer {
+  width: 100%;
+}
+
 .mainContent {
   margin-left: var(--sidebar-width);
   padding: 20px var(--padding-horizontal);
+  max-width: 930px;
 }

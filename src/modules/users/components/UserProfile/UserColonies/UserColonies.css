@@ -1,0 +1,34 @@
+@import 'variables.css';
+
+:root {
+  --container-padding-left: 30px;
+}
+
+.main {
+  padding: 20px 0;
+  border-radius: var(--radius-large);
+  box-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
+}
+
+.sectionTitle {
+  margin-left: var(--container-padding-left);
+}
+
+.colonyGrid {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  max-height: 165px;
+  overflow: auto;
+}
+
+.colonyGridItem {
+  margin: 0 var(--container-padding-left);
+  max-width: 68px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+}
