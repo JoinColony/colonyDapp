@@ -24,6 +24,12 @@ module.exports = {
       ],
     },
     {
+      name: 'Elements and Widgets',
+      components: [
+        './src/modules/core/components/CopyableAddress/CopyableAddress.jsx',
+      ],
+    },
+    {
       name: 'Forms',
       components: [
         './src/modules/core/components/Fields/Input/Input.jsx',
