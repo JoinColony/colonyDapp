@@ -2,12 +2,12 @@
 
 import React from 'react';
 
-import type { UserType } from '../../users/types';
+import type { UserType } from '../../types';
 
-import CopyableAddress from '../../core/components/CopyableAddress';
-import Heading from '../../core/components/Heading';
-import UserAvatar from '../../core/components/UserAvatar';
-import UserMention from '../../core/components/UserMention';
+import CopyableAddress from '../../../core/components/CopyableAddress';
+import Heading from '../../../core/components/Heading';
+import UserAvatar from '../../../core/components/UserAvatar';
+import UserMention from '../../../core/components/UserMention';
 
 import styles from './UserMeta.css';
 

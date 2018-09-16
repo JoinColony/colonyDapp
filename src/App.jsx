@@ -20,7 +20,9 @@ import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader
 /* eslint-disable-next-line max-len */
 import CreateColonyWizard from './modules/dashboard/components/CreateColonyWizard';
 import WalletStart from './modules/wallet/components/WalletStart';
-import UserProfile from './modules/users/components/UserProfile';
+import UserProfile, {
+  UserProfileEdit,
+} from './modules/users/components/UserProfile';
 import ProfileCreate from './modules/wallet/components/ProfileCreate';
 import CreateWalletWizard from './modules/wallet/components/CreateWalletWizard';
 import { SpinnerLoader } from './modules/core/components/Preloaders';
@@ -93,6 +95,9 @@ export default function App() {
             <Route path="/createwallet" component={CreateWalletWizard} />
             <Route path="/connectwallet/:provider" component={ConnectWallet} />
             <Route path="/profile" component={UserProfile} />
+            {/* eslint-disable-next-line */}
+            {/* TODO: to the router person: please find a way to have this be /profile/edit */}
+            <Route path="/profileedit" component={UserProfileEdit} />
             <Route path="/createprofile" component={ProfileCreate} />
           </div>
         </Router>
