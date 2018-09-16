@@ -112,7 +112,7 @@
         "stylelint-formatter-relative-junit": "^0.0.3",
         "stylelint-order": "^1.0.0",
         "svg-sprite-loader": "^3.8.0",
-        "svgo": "^1.0.5",
+        "svgo": "1.0.5",
         "svgo-loader": "^2.1.0",
         "trufflepig": "^1.0.4",
         "url-loader": "^1.0.1",
