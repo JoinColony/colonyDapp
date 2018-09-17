@@ -81,7 +81,7 @@ const connectFormik = ({ alwaysConnected, validate }) => (
       })
     : React.createElement(FieldComponent, props);
 
-const asField = ({ alwaysConnected, validate }: Object = {}) => {
+const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
   const enhance: HOC<*, OutProps> = compose(
     injectIntl,
     connectFormik({ alwaysConnected, validate }),
@@ -124,7 +124,7 @@ const asField = ({ alwaysConnected, validate }: Object = {}) => {
           title: $error || $title || $label || $placeholder,
           $id,
           $error,
-          $value: value,
+          $value: value || initialValue,
           $touched,
           onChange,
           onBlur,
