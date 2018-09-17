@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
   filetypeError: {
     id: 'AvatarUploadItem.filetypeError',
-    defaultMessage: 'This filetype is not allowed',
+    defaultMessage: 'This filetype is not allowed or file is too big',
   },
 });
 

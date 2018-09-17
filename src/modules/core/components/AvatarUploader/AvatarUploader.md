@@ -9,8 +9,16 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
 
 <AvatarUploader
   label="Upload your avatar!"
-  placeholderIcon="circle-person"
+  placeholder={
+    <UserAvatar
+      size="xl"
+      title="Upload it already!"
+      walletAddress="0x0"
+      username="testuser"
+    />
+  }
   upload={upload}
+  remove={async () => {}}
 />
 ```
 
@@ -46,9 +54,16 @@ class AvatarUploadWrapper extends Component {
   render() {
     return (
       <AvatarUploader
-        avatarURL={this.state.avatarURL}
         label="Upload your avatar!"
-        placeholderIcon="circle-person"
+        placeholder={
+          <UserAvatar
+            avatarURL={this.state.avatarURL}
+            size="xl"
+            title="Upload it already!"
+            walletAddress="0x0"
+            username="testuser"
+          />
+        }
         upload={this.uploadAvatar}
         remove={this.removeAvatar}
       />

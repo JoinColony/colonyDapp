@@ -17,7 +17,7 @@ const avatarURL = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pjxzdmc
 
 ### Placeholder not set
 
-The placeholder for users who are not set (e.g. as an assignee) are a bit more opaque.
+The placeholder for users who are not set (e.g. as an assignee) are different (as we don't have a wallet address here).
 
 ```
 <UserAvatar username="No one" notSet />

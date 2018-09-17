@@ -22,6 +22,7 @@ const UserMeta = ({
     <UserAvatar
       className={styles.avatar}
       avatarURL={avatar}
+      walletAddress={walletAddress}
       username={ensName}
       size="xl"
     />
