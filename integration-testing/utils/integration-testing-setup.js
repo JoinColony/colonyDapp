@@ -1,19 +1,13 @@
 /* eslint-disable flowtype/require-valid-file-annotation, no-console */
 
 const util = require('util');
-const ganache = require('ganache-cli');
 const chalk = require('chalk');
 const childProcess = require('child_process');
 const path = require('path');
 const net = require('net');
 const extfs = require('extfs');
-const git = require('simple-git/promise');
-const rimraf = require('rimraf');
-const fs = require('fs');
-const TrufflePig = require('trufflepig');
 
 const { isEmptySync } = extfs;
-const { writeFile } = fs;
 
 global.DEBUG = process.env.DEBUG || false;
 /*
@@ -42,8 +36,6 @@ const withLogging = func => {
   return func;
 };
 
-const remove = util.promisify(rimraf);
-const write = util.promisify(writeFile);
 const exec = util.promisify(withLogging(childProcess.exec));
 
 function sleep(ms) {
@@ -83,21 +75,7 @@ const waitUntilPortIsTaken = async port => {
  * Paths
  */
 const libPath = path.resolve('src', 'lib');
-const networkPath = path.resolve(libPath, 'colonyNetwork');
 const pinningServicePath = path.resolve(libPath, 'pinningService');
-const ganacheAccountsFile = path.resolve('.', 'ganache-accounts.json');
-const contractsFolder = path.resolve(networkPath, 'build', 'contracts');
-
-const cleanupArtifacts = message => {
-  console.log(chalk.green.bold(message));
-  const cleanupPaths = [ganacheAccountsFile, contractsFolder];
-  cleanupPaths.map(async artifactPath => {
-    if (global.DEBUG) {
-      console.log(`Removing: ${artifactPath}`);
-    }
-    await remove(artifactPath, { disableGlob: true });
-  });
-};
 
 module.exports = async () => {
   /*
@@ -114,150 +92,14 @@ module.exports = async () => {
   }
 
   /*
-   * Setup & configure ganache
-   */
-  const ganacheServerPort = '8545';
-  const ganacheServerOptions = {
-    default_balance_ether: 100,
-    total_accounts: 10,
-    gasLimit: 7000000,
-    vmErrorsOnRPCResponse: true,
-  };
-  const ganacheServerDebugOptions = {
-    debug: true,
-    logger: console,
-  };
-  const server = ganache.server(
-    Object.assign(
-      {},
-      ganacheServerOptions,
-      global.DEBUG ? ganacheServerDebugOptions : {},
-    ),
-  );
-
-  global.ganacheServer = {
-    listen: util.promisify(server.listen),
-    stop: util.promisify(server.close),
-  };
-
-  /*
-   * Generate the accounts object. These addresses are generated at startup by ganache.
-   *
-   * They will be written to a file so other services can access them
-   */
-  const ganacheAccounts = {
-    accounts: server.provider.manager.state.accounts,
-    private_keys: Object.keys(server.provider.manager.state.accounts).reduce(
-      (keys, address) =>
-        Object.assign({}, keys, {
-          [address]: server.provider.manager.state.accounts[
-            address
-          ].secretKey.toString('hex'),
-        }),
-      {},
-    ),
-  };
-
-  /*
-   * Setup & configure TrufflePig
-   */
-  const trufflePigOptionsServerPort = '3030';
-  const trufflePigOptions = {
-    contractDir: contractsFolder,
-    port: trufflePigOptionsServerPort,
-    verbose: global.DEBUG && true,
-    ganacheKeyFile: ganacheAccountsFile,
-  };
-
-  global.trufflePigServer = new TrufflePig(trufflePigOptions);
-
-  /*
    * Checking if submodules are provisioned. If they're not, just re-provision
    *
    * Maybe we also need to check here if we're in watch mode. Although it's very
    * unlikely that submodules are going to change during running of the tests.
    */
-  if (
-    isEmptySync(networkPath) ||
-    isEmptySync(pinningServicePath)
-  ) {
+  if (isEmptySync(pinningServicePath)) {
     console.log(chalk.yellow.bold('Provisioning submodules'));
     await exec('yarn provision --skip-colony-network-build');
-  }
-
-  /*
-   * After we provision the modules, grab the `colonyNetwork` package json
-   * so we can read values from it.
-   *
-   * Before this step, it may not be available
-   */
-  /* eslint-disable global-require, import/no-dynamic-require */
-  const networkPackage = require(path.resolve(networkPath, 'package.json'));
-
-  if (!global.WATCH || (global.WATCH && global.WATCH_FIRST_RUN)) {
-    /*
-     * Perform initial cleanup, since there's a good chance there are leftover
-     * artifacts (build folders)
-     */
-    global.cleanupArtifacts = cleanupArtifacts;
-    cleanupArtifacts('Removing leftover artifacts');
-
-    /*
-     * Start the ganache server
-     *
-     * In WATCH mode, only start the server if this is the first run
-     */
-    await global.ganacheServer.listen(ganacheServerPort);
-    console.log(
-      chalk.green.bold('Ganache Server started on'),
-      chalk.bold(`${chalk.gray('http://')}localhost:${ganacheServerPort}`),
-    );
-
-    /*
-     * Write the accounts to a Json file so they're available externally (most likely to trufflepig);
-     *
-     * If we're in WATCH mode, only write the file once.
-     */
-    await write(ganacheAccountsFile, JSON.stringify(ganacheAccounts));
-    /*
-     * If we're in DEBUG mode, tell the user we wrote the accounts file
-     */
-    if (global.DEBUG) {
-      console.log(
-        chalk.yellow.bold('Saved accounts to'),
-        chalk.bold(ganacheAccountsFile),
-        chalk.yellow.bold('JSON file'),
-      );
-    }
-
-    /*
-     * Compile the `colonyNetwork` contracts
-     *
-     * In WATCH mode, only compile contracts if this is the first run
-     */
-    const colonyNetworkSubmoduleHead = await git(networkPath).branchLocal();
-    console.log(
-      chalk.green.bold('Compiling Contracts using'),
-      chalk.bold(
-        `truffle${chalk.gray('@')}${networkPackage.devDependencies.truffle}`,
-      ),
-      chalk.green.bold('from'),
-      chalk.bold(
-        `colonyNetwork${chalk.gray('#')}${colonyNetworkSubmoduleHead.current}`,
-      ),
-    );
-    await exec(
-      `${networkPath}/node_modules/.bin/truffle migrate --reset --compile-all`,
-      { cwd: networkPath },
-    );
-
-    await global.trufflePigServer.start();
-    console.log(
-      chalk.green.bold('TrufflePig Server started on'),
-      chalk.bold(
-        `${chalk.gray('http://')}localhost:${trufflePigOptionsServerPort}`,
-      ),
-    );
   }
 
   /*

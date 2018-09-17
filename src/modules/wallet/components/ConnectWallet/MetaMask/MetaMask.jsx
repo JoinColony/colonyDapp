@@ -2,9 +2,7 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { ProviderType } from 'colony-wallet/flowtypes';
-
-import { metamask } from 'colony-wallet/providers';
+import { open } from '@colony/purser-metamask';
 
 import asProvider from '../asProvider';
 
@@ -59,7 +57,10 @@ class MetaMask extends Component<Props, State> {
   };
 
   componentDidMount() {
-    this.connectMetaMask();
+    // TODO
+    this.connectMetaMask()
+      .then()
+      .catch();
   }
 
   componentWilUnmount() {
@@ -68,10 +69,18 @@ class MetaMask extends Component<Props, State> {
     }
   }
 
-  connectMetaMask = () => {
-    const provider: ProviderType = metamask();
+  connectMetaMask = async () => {
+    // TODO should this throw an error?
+    let metamaskError = null;
+    let wallet;
+    try {
+      // const provider: ProviderType = metamask();
+      wallet = await open();
+    } catch (error) {
+      metamaskError = error;
+    }
     this.setState({
-      isValid: !!provider.ensAddress,
+      isValid: !metamaskError || !!(wallet && wallet.ensAddress),
       isLoading: false,
     });
   };
@@ -80,8 +89,8 @@ class MetaMask extends Component<Props, State> {
     evt.preventDefault();
     this.setState({ isLoading: true });
     // add a short timeout to show the loading spinner so the user knows there's something processing
-    this.timerHandle = setTimeout(() => {
-      this.connectMetaMask();
+    this.timerHandle = setTimeout(async () => {
+      await this.connectMetaMask();
     }, 500);
   };
 
