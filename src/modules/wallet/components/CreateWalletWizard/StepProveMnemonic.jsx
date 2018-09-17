@@ -4,7 +4,6 @@ import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { compose, withProps } from 'recompose';
 
 import styles from './StepProveMnemonic.css';
 
@@ -50,6 +49,14 @@ const MSG = defineMessages({
   },
 });
 
+/*
+ * @TODO The word choosen to test should be randomized
+ *
+ * This can be done by splitting the mnemonic, randomizing it, then extract the
+ * chosen word, before chosing another
+ */
+const chosenProofWords = [1, 4, 11];
+
 type FormValues = {
   firstProofWord: string,
   secondProofWord: string,
@@ -58,20 +65,13 @@ type FormValues = {
 
 type Props = {
   previousStep: () => void,
-  chosenProofWords: Array<number>,
-  generalError: boolean,
 } & FormikProps<FormValues>;
 
 type FormValidation = {
   passphrase: string,
 } & FormValues;
 
-const StepProveMnemonic = ({
-  chosenProofWords,
-  previousStep,
-  handleSubmit,
-  generalError,
-}: Props) => (
+const StepProveMnemonic = ({ previousStep, handleSubmit, isValid }: Props) => (
   <form className={styles.main} onSubmit={handleSubmit}>
     <section className={styles.titleSection}>
       <Heading
@@ -87,7 +87,7 @@ const StepProveMnemonic = ({
           appearance={{ size: 'normal', weight: 'bold', margin: 'none' }}
           text={MSG.instructions}
         />
-        {generalError && (
+        {!isValid && (
           <Heading text={MSG.errorWrongProofWords} className={styles.error} />
         )}
       </div>
@@ -99,7 +99,7 @@ const StepProveMnemonic = ({
       />
       <Input
         name="firstProofWord"
-        className={generalError ? styles.customInputError : styles.customInput}
+        className={!isValid ? styles.customInputError : styles.customInput}
         elementOnly
       />
       <InputLabel
@@ -108,7 +108,7 @@ const StepProveMnemonic = ({
       />
       <Input
         name="secondProofWord"
-        className={generalError ? styles.customInputError : styles.customInput}
+        className={!isValid ? styles.customInputError : styles.customInput}
         elementOnly
       />
       <InputLabel
@@ -117,7 +117,7 @@ const StepProveMnemonic = ({
       />
       <Input
         name="thirdProofWord"
-        className={generalError ? styles.customInputError : styles.customInput}
+        className={!isValid ? styles.customInputError : styles.customInput}
         elementOnly
       />
     </div>
@@ -138,21 +138,6 @@ const StepProveMnemonic = ({
 );
 
 /*
- * @TODO The word choosen to test should be randomized
- *
- * This can be done by splitting the mnemonic, randomizing it, then extract the
- * chosen word, before chosing another
- */
-const chosenProofWords = [1, 4, 11];
-
-const enhance = compose(
-  withProps(({ errors }) => ({
-    chosenProofWords,
-    generalError: Object.keys(errors).length !== 0,
-  })),
-);
-
-/*
  * Custom Formik validator trigger only onSubmit
  *
  * This is needed since we need access to the props passed down from the
@@ -161,6 +146,7 @@ const enhance = compose(
 export const formikConfig = {
   validateOnBlur: false,
   validateOnChange: false,
+  isInitialValid: true,
   validate: ({
     passphrase,
     firstProofWord,
@@ -185,4 +171,4 @@ export const formikConfig = {
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
 
-export const Step = enhance(StepProveMnemonic);
+export const Step = StepProveMnemonic;
