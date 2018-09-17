@@ -27,8 +27,8 @@
 .mainContent {
   margin-left: var(--sidebar-width);
   padding: 20px var(--padding-horizontal);
-  max-width: 930px;
   height: 100%;
+  max-width: 930px;
 }
 
 .themeAlt {
@@ -37,8 +37,8 @@
 }
 
 .themeAlt .sidebar {
-  background: none;
   border-right: 2px solid var(--grey-blue-0);
+  background: none;
 }
 
 .themeAlt .mainContent {

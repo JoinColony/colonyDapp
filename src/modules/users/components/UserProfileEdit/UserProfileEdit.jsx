@@ -1,0 +1,107 @@
+/* @flow */
+
+import React from 'react';
+import { defineMessages } from 'react-intl';
+import { Formik } from 'formik';
+
+import CopyableAddress from '~core/CopyableAddress';
+import UserMention from '~core/UserMention';
+import Heading from '~core/Heading';
+import { FieldSet, Input, InputLabel, Textarea } from '~core/Fields';
+import Button from '~core/Button';
+
+import styles from './UserProfileEdit.css';
+
+import ProfileTemplate from '../../../pages/ProfileTemplate';
+
+import Sidebar from './Sidebar.jsx';
+
+import MockUser from '../UserProfile/__mocks__/MockUser';
+
+const MSG = defineMessages({
+  heading: {
+    id: 'users.UserProfileEdit.heading',
+    defaultMessage: 'Profile',
+  },
+  labelWallet: {
+    id: 'users.UserProfileEdit.labelWallet',
+    defaultMessage: 'Your wallet',
+  },
+  labelUsername: {
+    id: 'users.UserProfileEdit.labelUsername',
+    defaultMessage: 'Unique username',
+  },
+  labelName: {
+    id: 'users.UserProfileEdit.labelName',
+    defaultMessage: 'Name',
+  },
+  labelBio: {
+    id: 'users.UserProfileEdit.labelBio',
+    defaultMessage: 'Bio',
+  },
+  labelWebsite: {
+    id: 'users.UserProfileEdit.labelWebsite',
+    defaultMessage: 'Website',
+  },
+  labelLocation: {
+    id: 'users.UserProfileEdit.labelLocation',
+    defaultMessage: 'Location',
+  },
+});
+
+const displayName = 'users.UserProfileEdit';
+
+const UserProfileEdit = () => (
+  <ProfileTemplate
+    appearance={{ theme: 'alt' }}
+    asideContent={
+      <Sidebar
+        walletAddress={MockUser.walletAddress}
+        username={MockUser.ensName}
+        avatarURL={MockUser.avatar}
+      />
+    }
+  >
+    <Heading
+      appearance={{ theme: 'dark', size: 'medium' }}
+      text={MSG.heading}
+    />
+    <Formik
+      onSubmit={values => console.log(values)}
+      initialValues={{
+        name: MockUser.displayName,
+        bio: MockUser.bio,
+        website: MockUser.website,
+        location: MockUser.location,
+      }}
+    >
+      {({ handleSubmit }) => (
+        <form onSubmit={handleSubmit}>
+          <FieldSet>
+            <InputLabel label={MSG.labelWallet} />
+            <CopyableAddress appearance={{ theme: 'big' }} full>
+              {MockUser.walletAddress}
+            </CopyableAddress>
+          </FieldSet>
+          <FieldSet>
+            <InputLabel label={MSG.labelUsername} />
+            <UserMention ensName={MockUser.ensName} />
+          </FieldSet>
+          <FieldSet className={styles.inputFieldSet}>
+            <Input label={MSG.labelName} name="name" maxLength={50} />
+            <Textarea label={MSG.labelBio} name="bio" maxLength={160} />
+            <Input label={MSG.labelWebsite} name="website" maxLength={100} />
+            <Input label={MSG.labelLocation} name="location" maxLength={70} />
+          </FieldSet>
+          <FieldSet>
+            <Button type="submit" text={{ id: 'button.save' }} />
+          </FieldSet>
+        </form>
+      )}
+    </Formik>
+  </ProfileTemplate>
+);
+
+UserProfileEdit.displayName = displayName;
+
+export default UserProfileEdit;

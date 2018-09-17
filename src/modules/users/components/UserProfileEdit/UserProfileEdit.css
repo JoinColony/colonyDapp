@@ -1,0 +1,5 @@
+@import 'variables.css';
+
+.inputFieldSet {
+  max-width: 360px;
+}

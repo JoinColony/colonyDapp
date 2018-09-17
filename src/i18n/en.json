@@ -14,6 +14,7 @@
     "button.close": "Close",
     "button.confirm": "Confirm",
     "button.next": "Next",
+    "button.save": "Save",
     "input.resetText": "Cancel",
     "label.name": "Name",
     "label.description": "Description",
