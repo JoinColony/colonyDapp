@@ -7,13 +7,13 @@ import CreateWalletWizard from './CreateWalletWizard.jsx';
 
 import * as StepCreatePhrase from './StepCreatePhrase.jsx';
 import * as StepBackupPhrase from './StepBackupPhrase.jsx';
-import * as StepProoveMnemonic from './StepProoveMnemonic.jsx';
+import * as StepProveMnemonic from './StepProveMnemonic.jsx';
 import * as StepProfileCreate from './StepProfileCreate.jsx';
 
 const steps = [
   StepCreatePhrase,
   StepBackupPhrase,
-  StepProoveMnemonic,
+  StepProveMnemonic,
   StepProfileCreate,
 ];
 

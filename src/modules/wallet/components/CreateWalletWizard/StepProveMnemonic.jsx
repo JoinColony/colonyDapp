@@ -6,7 +6,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { compose, withProps } from 'recompose';
 
-import styles from './StepProoveMnemonic.css';
+import styles from './StepProveMnemonic.css';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
@@ -16,11 +16,11 @@ import Button from '../../../core/components/Button';
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateWallet.StepProoveMnemonic.heading',
+    id: 'CreateWallet.StepProveMnemonic.heading',
     defaultMessage: 'Did you really back up your mnemoic phrase? Prove it!',
   },
   subTitle: {
-    id: 'CreateWallet.StepProoveMnemonic.subTitle',
+    id: 'CreateWallet.StepProveMnemonic.subTitle',
     defaultMessage: `
       We will not be able to recover your mnemonic phrase for any reason
       so we wanted to make sure you've got it safe. Yes, we know that we are
@@ -28,23 +28,23 @@ const MSG = defineMessages({
     `,
   },
   instructions: {
-    id: 'CreateWallet.StepProoveMnemonic.instructions',
+    id: 'CreateWallet.StepProveMnemonic.instructions',
     defaultMessage: 'Type the appropriate word from your mnemonic phrase',
   },
   nextButton: {
-    id: 'CreateWallet.StepProoveMnemonic.confirmButton',
+    id: 'CreateWallet.StepProveMnemonic.confirmButton',
     defaultMessage: 'Next',
   },
   backButton: {
-    id: 'CreateWallet.StepProoveMnemonic.backButton',
+    id: 'CreateWallet.StepProveMnemonic.backButton',
     defaultMessage: 'Back',
   },
   proofWord: {
-    id: 'CreateWallet.StepProoveMnemonic.firstProofWord',
+    id: 'CreateWallet.StepProveMnemonic.firstProofWord',
     defaultMessage: 'Word {count}',
   },
   errorWrongProofWords: {
-    id: 'CreateWallet.StepProoveMnemonic.Error.wrongProofWords',
+    id: 'CreateWallet.StepProveMnemonic.Error.wrongProofWords',
     defaultMessage:
       'Double check your words, seems like at least one of them is wrong.',
   },
@@ -66,7 +66,7 @@ type FormValidation = {
   passphrase: string,
 } & FormValues;
 
-const StepProoveMnemonic = ({
+const StepProveMnemonic = ({
   chosenProofWords,
   previousStep,
   handleSubmit,
@@ -185,4 +185,4 @@ export const formikConfig = {
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
 
-export const Step = enhance(StepProoveMnemonic);
+export const Step = enhance(StepProveMnemonic);
