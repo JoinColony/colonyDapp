@@ -33,12 +33,8 @@ beforeAll(async () => {
 
   sagaMiddleware.run(sagas);
 
-  // initializeData(store.dispatch.bind(store)).then(result =>
-  //   console.log(result),
-  // );
-  store.dispatch(initializeData());
-  await sleep(15000);
-}, 30000);
+  await initializeData(store.dispatch).then(result => console.log(result));
+});
 
 describe('Data reducer', () => {
   test('Root reducer organizes properties under data and form', async () => {

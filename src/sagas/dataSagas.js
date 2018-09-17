@@ -170,8 +170,7 @@ function* fetchComments(action) {
 }
 
 function* initializeData(action) {
-  // const { resolve, reject } = action.payload;
-  // console.warn('hello anyone', action);
+  const { resolve } = action;
 
   const data = yield call(Data.fromDefaultConfig, 'no pinner', {
     ipfs: {
@@ -186,14 +185,13 @@ function* initializeData(action) {
 
   yield call(data.ready);
 
-  // if (resolve) resolve(true);
-  console.log('i doubt we get past the yield');
+  yield call(resolve, 'working');
 
   yield put(initialData(data));
 }
 
 function* colonySagas() {
-  yield* initializeData();
+  yield takeEvery(INITIALIZE_DATA, initializeData);
   yield takeEvery(JOIN_COLONY, joinColony);
   yield takeEvery(ADD_DOMAIN_TO_COLONY, addColonyDomain);
   yield takeEvery(ADD_TASK_TO_DOMAIN, addTaskToDomain);

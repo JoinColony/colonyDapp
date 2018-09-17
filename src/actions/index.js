@@ -40,6 +40,16 @@ export function initialData(Data: {}): Action {
   };
 }
 
+/* export const initializeData = () => ({ type: INITIALIZE_DATA });*/
+export const initializeData = dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      type: 'INITIALIZE_DATA',
+      resolve,
+      reject,
+    }),
+  );
+
 export function uploadFileToIPFS() {}
 export function createWorkInvite() {}
 export function createWorkRequest() {}
