@@ -14,6 +14,7 @@ const config = {
   },
   resolve: {
     alias: {
+      '~core': path.resolve(__dirname, 'src/modules/core/components'),
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
       '@colony': path.resolve(__dirname, 'src/lib/colonyJS/packages'),
