@@ -139,7 +139,7 @@ export const formikConfig = {
     proofWord2,
     proofWord3,
   }: FormValidation) => {
-    const errorObject = { errror: true };
+    const errorObject: Object = { errror: true };
     const mnemonicWords: Array<string> = passphrase.split(' ');
     if (proofWord1 !== mnemonicWords[chosenProofWords[0]]) {
       return errorObject;
