@@ -83,8 +83,6 @@ const waitUntilPortIsTaken = async port => {
  * Paths
  */
 const libPath = path.resolve('src', 'lib');
-const clientPath = path.resolve(libPath, 'colonyJS');
-const walletPath = path.resolve(libPath, 'colony-wallet');
 const networkPath = path.resolve(libPath, 'colonyNetwork');
 const pinningServicePath = path.resolve(libPath, 'pinningService');
 const ganacheAccountsFile = path.resolve('.', 'ganache-accounts.json');
@@ -180,8 +178,6 @@ module.exports = async () => {
    * unlikely that submodules are going to change during running of the tests.
    */
   if (
-    isEmptySync(clientPath) ||
-    isEmptySync(walletPath) ||
     isEmptySync(networkPath) ||
     isEmptySync(pinningServicePath)
   ) {
