@@ -4375,6 +4375,12 @@ debug@^3.0.0, debug@^3.1.0, debug@~3.1.0:
   dependencies:
     ms "2.0.0"
 
+debug@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.0.1.tgz#f9bb36d439b8d1f0dd52d8fb6b46e4ebb8c1cd5b"
+  dependencies:
+    ms "^2.1.1"
+
 decamelize-keys@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/decamelize-keys/-/decamelize-keys-1.1.0.tgz#d171a87933252807eb3cb61dc1c1445d078df2d9"
@@ -10212,6 +10218,10 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
+ms@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
+
 multiaddr@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/multiaddr/-/multiaddr-4.0.0.tgz#70a8857c4f737350bc2c56914a70f1263889db33"
@@ -13881,11 +13891,11 @@ simple-get@^2.7.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-simple-git@^1.92.0:
-  version "1.92.0"
-  resolved "https://registry.yarnpkg.com/simple-git/-/simple-git-1.92.0.tgz#6061468eb7d19f0141078fc742e62457e910f547"
+simple-git@^1.100.0:
+  version "1.100.0"
+  resolved "https://registry.yarnpkg.com/simple-git/-/simple-git-1.100.0.tgz#6e781885fcde0e7751cabec0746b2b943ae4cce7"
   dependencies:
-    debug "^3.1.0"
+    debug "^4.0.1"
 
 simple-peer@^9.1.2:
   version "9.1.2"
