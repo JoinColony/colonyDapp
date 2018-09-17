@@ -169,7 +169,11 @@ function* fetchComments(action) {
   });
 }
 
-  const data = yield Data.fromDefaultConfig('no pinner', {
+function* initializeData(action) {
+  // const { resolve, reject } = action.payload;
+  // console.warn('hello anyone', action);
+
+  const data = yield call(Data.fromDefaultConfig, 'no pinner', {
     ipfs: {
       swarm: ['/ip4/0.0.0.0/tcp/0'],
 
@@ -179,13 +183,17 @@ function* fetchComments(action) {
       repo: `/tmp/tests/time/ipfs/orbit`,
     },
   });
-  // yield data.ready();
-  const action = initialData(data);
-  yield put(action);
+
+  yield call(data.ready);
+
+  // if (resolve) resolve(true);
+  console.log('i doubt we get past the yield');
+
+  yield put(initialData(data));
 }
 
 function* colonySagas() {
-  yield initializeData();
+  yield* initializeData();
   yield takeEvery(JOIN_COLONY, joinColony);
   yield takeEvery(ADD_DOMAIN_TO_COLONY, addColonyDomain);
   yield takeEvery(ADD_TASK_TO_DOMAIN, addTaskToDomain);

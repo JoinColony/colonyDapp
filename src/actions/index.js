@@ -5,6 +5,8 @@ import {
   SET_DATA_STATE,
   STATE_LOADING,
   STATE_READY,
+  STORE_DATA_CLASS,
+  INITIALIZE_DATA,
 } from './actionConstants';
 
 import type { Action } from './actionConstants';
@@ -33,7 +35,7 @@ export function dataReady(data: ?{}): Action {
 
 export function initialData(Data: {}): Action {
   return {
-    type: INITIALIZE_DATA,
+    type: STORE_DATA_CLASS,
     Data,
   };
 }

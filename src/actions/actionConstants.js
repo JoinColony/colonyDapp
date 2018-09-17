@@ -31,6 +31,7 @@ export const ADD_TASK_TO_DOMAIN = 'ADD_TASK_TO_DOMAIN';
 export const ADD_COMMENT_TO_TASK = 'ADD_COMMENT_TO_TASK';
 
 export const INITIALIZE_DATA = 'INITIALIZE_DATA';
+export const STORE_DATA_CLASS = 'STORE_DATA_CLASS';
 
 type State =
   | typeof STATE_NOTHING

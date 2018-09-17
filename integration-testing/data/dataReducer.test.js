@@ -2,18 +2,20 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
+import { sleep } from '../../src/utils/time';
 import reducers from '../../src/reducers';
 import sagas from '../../src/sagas';
 
 import {
+  addColonyToUserProfile,
   addCommentToTask,
   addDomainToColony,
   addTaskToDomain,
-  addColonyToUserProfile,
   editColony,
   editDomain,
   editTask,
   fetchCommentsForTask,
+  initializeData,
   loadColony,
   loadDomain,
   setUserProfileContent,
@@ -30,7 +32,13 @@ beforeAll(async () => {
   store = createStoreWithMiddleware(reducers, {});
 
   sagaMiddleware.run(sagas);
-});
+
+  // initializeData(store.dispatch.bind(store)).then(result =>
+  //   console.log(result),
+  // );
+  store.dispatch(initializeData());
+  await sleep(15000);
+}, 30000);
 
 describe('Data reducer', () => {
   test('Root reducer organizes properties under data and form', async () => {

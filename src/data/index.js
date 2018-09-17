@@ -328,6 +328,7 @@ export default class Data {
     this._ipfsNode = ipfsNode;
     this._orbitNode = orbitNode;
     this._key = 'helloworld';
+    this.ready = this.ready.bind(this);
   }
 
   // @TODO This design is time-dependent and relies
@@ -349,7 +350,6 @@ export default class Data {
   ): Promise<Data> {
     const ipfsConf = ipfs.makeOptions(opts.ipfs);
     const ipfsNode = ipfs.getIPFS(ipfsConf);
-
     const orbitConf = orbitSetup.makeOptions(opts.orbit);
     const orbitNode = await orbitSetup.getOrbitDB(ipfsNode, orbitConf);
 

@@ -3,7 +3,7 @@
 import update from 'react-addons-update';
 
 import {
-  INITIALIZE_DATA,
+  STORE_DATA_CLASS,
   INITIAL_STATE,
   LOAD_COLONY,
   LOAD_DOMAIN,
@@ -34,7 +34,7 @@ const mergeContent = (data, { target: key, content }) => {
 
 export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
   switch (action.type) {
-    case INITIALIZE_DATA:
+    case STORE_DATA_CLASS:
       return { ...state, Data: action.Data };
     case SET_DATA_STATE:
       return { ...state, state: action.state, data: action.data };
@@ -94,13 +94,13 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
 
     case UPDATE_DOMAIN:
       const {
-        domainId,
+        domainId: domainId1,
         update: { property: domainProperty, value: domainValue },
       } = action.payload;
       return update(state, {
         data: {
           domains: {
-            [domainId]: {
+            [domainId1]: {
               [domainProperty]: {
                 $set: domainValue,
               },
