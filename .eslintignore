@@ -5,7 +5,5 @@ flow-typed
 plopfile.js
 postcss.config.js
 webpack.config.*
-src/lib/colonyJS
-src/lib/colony-wallet
 src/lib/colonyNetwork
 src/lib/pinningService
