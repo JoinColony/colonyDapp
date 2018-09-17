@@ -9,6 +9,10 @@
 }
 
 /* themes */
+.themeDefault {
+  composes: main;
+}
+
 .themeDefault a {
   color: var(--grey-4);
 }
@@ -19,6 +23,7 @@
 }
 
 .themeDark {
+  composes: main;
   background-color: var(--grey-1);
   color: var(--colony-white);
 }

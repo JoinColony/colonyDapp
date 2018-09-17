@@ -12,7 +12,6 @@ type Appearance = {
 
 type Props = {
   children: Node,
-  className?: string,
   appearance?: Appearance,
 };
 
@@ -21,12 +20,9 @@ const displayName = 'DropdownMenu';
 const DropdownMenu = ({
   appearance = { theme: 'default' },
   children,
-  className,
-}: Props) => {
-  const themeClasses = getMainClasses(appearance, styles);
-  const classNames = className ? `${themeClasses} ${className}` : themeClasses;
-  return <div className={`${styles.main} ${classNames}`}>{children}</div>;
-};
+}: Props) => (
+  <div className={getMainClasses(appearance, styles)}>{children}</div>
+);
 
 DropdownMenu.displayName = displayName;
 

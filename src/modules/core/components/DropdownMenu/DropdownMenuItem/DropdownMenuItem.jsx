@@ -7,20 +7,15 @@ import styles from './DropdownMenuItem.css';
 
 type Props = {
   children: Node,
-  className?: string,
 };
 
 const displayName = 'DropdownMenuItem';
 
-const DropdownMenuItem = ({ className, children }: Props) => {
-  const mainClass = styles.main;
-  const classNames = className ? `${mainClass} ${className}` : mainClass;
-  return (
-    <li className={classNames} role="menuitem">
-      {children}
-    </li>
-  );
-};
+const DropdownMenuItem = ({ children }: Props) => (
+  <li className={styles.main} role="menuitem">
+    {children}
+  </li>
+);
 
 DropdownMenuItem.displayName = displayName;
 
