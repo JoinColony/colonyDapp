@@ -2,8 +2,6 @@
 .*\.yalc
 .*/__tests__/.*
 .*/utils/test/.*
-.*/src/lib/colonyJS/.*
-.*/src/lib/colony-wallet/.*
 .*/src/lib/colonyNetwork/.*
 .*/src/lib/pinningService/.*
 .*/node_modules/findup/.*
@@ -22,6 +20,5 @@ module.name_mapper='^.*\.(svg)$' -> 'empty/string'
 module.name_mapper='^\~core\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/core/components/\1'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
-module.name_mapper='^colony-wallet\/\(.*\)' -> '<PROJECT_ROOT>/src/lib/colony-wallet/src/\1'
 
 [strict]
