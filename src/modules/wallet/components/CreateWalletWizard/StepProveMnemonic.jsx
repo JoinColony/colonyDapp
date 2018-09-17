@@ -2,7 +2,7 @@
 
 import type { FormikProps } from 'formik';
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import styles from './StepProveMnemonic.css';
@@ -58,9 +58,9 @@ const MSG = defineMessages({
 const chosenProofWords = [1, 4, 11];
 
 type FormValues = {
-  firstProofWord: string,
-  secondProofWord: string,
-  thirdProofWord: string,
+  proofWord1: string,
+  proofWord2: string,
+  proofWord3: string,
 };
 
 type Props = {
@@ -93,33 +93,19 @@ const StepProveMnemonic = ({ previousStep, handleSubmit, isValid }: Props) => (
       </div>
     </section>
     <div className={styles.inputFields}>
-      <InputLabel
-        label={MSG.proofWord}
-        labelValues={{ count: `${chosenProofWords[0] + 1}` }}
-      />
-      <Input
-        name="firstProofWord"
-        className={!isValid ? styles.customInputError : styles.customInput}
-        elementOnly
-      />
-      <InputLabel
-        label={MSG.proofWord}
-        labelValues={{ count: `${chosenProofWords[1] + 1}` }}
-      />
-      <Input
-        name="secondProofWord"
-        className={!isValid ? styles.customInputError : styles.customInput}
-        elementOnly
-      />
-      <InputLabel
-        label={MSG.proofWord}
-        labelValues={{ count: `${chosenProofWords[2] + 1}` }}
-      />
-      <Input
-        name="thirdProofWord"
-        className={!isValid ? styles.customInputError : styles.customInput}
-        elementOnly
-      />
+      {chosenProofWords.map((wordIndex, arrayIndex) => (
+        <Fragment key={`proofWordKey_${wordIndex}`}>
+          <InputLabel
+            label={MSG.proofWord}
+            labelValues={{ count: `${wordIndex + 1}` }}
+          />
+          <Input
+            name={`proofWord${arrayIndex + 1}`}
+            className={!isValid ? styles.customInputError : styles.customInput}
+            elementOnly
+          />
+        </Fragment>
+      ))}
     </div>
     <div className={styles.actionsContainer}>
       <Button
@@ -149,19 +135,19 @@ export const formikConfig = {
   isInitialValid: true,
   validate: ({
     passphrase,
-    firstProofWord,
-    secondProofWord,
-    thirdProofWord,
+    proofWord1,
+    proofWord2,
+    proofWord3,
   }: FormValidation) => {
     const errorObject = { errror: true };
     const mnemonicWords: Array<string> = passphrase.split(' ');
-    if (firstProofWord !== mnemonicWords[chosenProofWords[0]]) {
+    if (proofWord1 !== mnemonicWords[chosenProofWords[0]]) {
       return errorObject;
     }
-    if (secondProofWord !== mnemonicWords[chosenProofWords[1]]) {
+    if (proofWord2 !== mnemonicWords[chosenProofWords[1]]) {
       return errorObject;
     }
-    if (thirdProofWord !== mnemonicWords[chosenProofWords[2]]) {
+    if (proofWord3 !== mnemonicWords[chosenProofWords[2]]) {
       return errorObject;
     }
     return {};
