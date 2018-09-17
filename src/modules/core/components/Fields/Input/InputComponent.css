@@ -7,7 +7,7 @@
   width: 100%;
   border: 1px solid var(--temp-grey-5);
   border-radius: var(--radius-tiny);
-  background-color: white;
+  background-color: var(--colony-white);
   font-size: var(--size-normal);
   line-height: 32px;
   color: var(--text);
@@ -87,10 +87,6 @@
 
 .alignRight {
   text-align: right;
-}
-
-.widthFull {
-  width: 100%;
 }
 
 .colorSchemaDark {

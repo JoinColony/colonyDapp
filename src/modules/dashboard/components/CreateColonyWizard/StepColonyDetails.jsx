@@ -3,6 +3,7 @@ import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import * as yup from 'yup';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
@@ -11,8 +12,6 @@ import styles from './StepColonyDetails.css';
 import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
-
-const { Formik } = require('formik');
 
 type FormValues = {
   nextStep: () => void,
@@ -58,36 +57,32 @@ const StepColonyDetails = ({ handleSubmit }: Props) => (
         appearance={{ size: 'medium', weight: 'thin' }}
         text={MSG.heading}
       />
-      <Formik
-        initialValues={{
-          colonyName: '',
-        }}
-        onSubmit={newColonyName => newColonyName}
-        render={() => (
-          <form className={styles.nameForm} onSubmit={handleSubmit}>
-            <Input
-              name="colonyName"
-              label={MSG.labelCreateColony}
-              placeholder={MSG.placeholder}
-            />
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="cancel"
-                text={MSG.cancel}
-              />
-              <Button
-                appearance={{ theme: 'primary' }}
-                type="submit"
-                text={MSG.next}
-              />
-            </div>
-          </form>
-        )}
-      />
+      <form className={styles.nameForm} onSubmit={handleSubmit}>
+        <Input
+          name="colonyName"
+          label={MSG.labelCreateColony}
+          placeholder={MSG.placeholder}
+        />
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.cancel}
+          />
+          <Button
+            appearance={{ theme: 'primary' }}
+            type="submit"
+            text={MSG.next}
+          />
+        </div>
+      </form>
     </div>
   </section>
 );
+
+export const validationSchema = yup.object({
+  colonyName: yup.string().required(),
+});
 
 StepColonyDetails.displayName = displayName;
 
