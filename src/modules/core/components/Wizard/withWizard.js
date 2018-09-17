@@ -59,7 +59,7 @@ const withWizard = ({ steps }: WizardArgs) => (
 
     next = (values: { [string]: string }) => {
       this.setState(({ step, values: currentValues }) => ({
-        step: getStep(steps, step + 1, currentValues) ? step + 1 : step,
+        step: step + 1,
         values: { ...currentValues, ...values },
       }));
     };

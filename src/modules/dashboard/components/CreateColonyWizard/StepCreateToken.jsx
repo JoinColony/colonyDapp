@@ -6,7 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
-import styles from './CreateToken.css';
+import styles from './StepCreateToken.css';
 
 import Input from '../../../core/components/Fields/Input';
 import InputLabel from '../../../core/components/Fields/InputLabel';

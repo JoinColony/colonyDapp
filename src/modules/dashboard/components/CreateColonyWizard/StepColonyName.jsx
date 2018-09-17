@@ -7,7 +7,7 @@ import * as yup from 'yup';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
-import styles from './ColonyName.css';
+import styles from './StepColonyName.css';
 
 import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';

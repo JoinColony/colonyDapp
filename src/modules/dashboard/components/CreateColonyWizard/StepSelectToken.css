@@ -12,9 +12,6 @@
   display: flex;
   justify-content: space-between;
 }
-.tokenHint{
-  margin-left: -15px;
-}
 
 .title {
   margin-top: 310px;

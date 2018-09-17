@@ -7,14 +7,12 @@ import { compose } from 'recompose';
 import ColonyJs from '@colony/colony-js-client';
 import * as yup from 'yup';
 
-import { withFormik } from 'formik';
 import type { SubmitFn } from '../../../core/components/Wizard';
 import type { FileReaderFile } from '../FileUpload';
 
-import styles from './SelectToken.css';
+import styles from './StepSelectToken.css';
 
 import Input from '../../../core/components/Fields/Input';
-import InputLabel from '../../../core/components/Fields/InputLabel';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import FileUpload from '../../../core/components/FileUpload';
@@ -69,6 +67,10 @@ const MSG = defineMessages({
     id: 'CreateColony.SelectToken.next',
     defaultMessage: 'Next',
   },
+  placeholderTokenAddress: {
+    id: 'CreateColony.SelectToken.tokenPlaceholder',
+    defaultMessage: 'Type a token contract address',
+  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.SelectToken';
@@ -78,16 +80,23 @@ class SelectToken extends Component<Props, State> {
     hasTokenData: false,
   };
 
-  checkToken(tokenAddress) {
+  componentDidUpdate() {
+    console.log(this.state);
+    console.log(this.props);
+  }
+
+  checkToken = tokenAddress => {
     /*
     if (requestFromEtherScan(tokenAddress)) {
       this.setState({ hasTokenData: true });
     }
     */
-  }
+  };
 
   render() {
     const { hasTokenData } = this.state;
+    const { handleSubmit, errors, touched, isValid } = this.props;
+
     return (
       <section className={styles.content}>
         <div className={styles.title}>
@@ -99,27 +108,20 @@ class SelectToken extends Component<Props, State> {
             <Input
               name="tokenAddress"
               label={MSG.labelCreateColony}
-              placeholder="Type a token contact address"
+              placeholder={MSG.placeholderTokenAddress}
             />
-            {!errors.validAddress && (
-              <div className={styles.tokenHint}>
-                <Button
-                  appearance={{ theme: 'secondary' }}
-                  type="continue"
-                  text={MSG.hint}
-                />
-              </div>
-            )}
-            {hasTokenData ? (
-              <div className={styles.tokenHint}>
-                <Button
-                  appearance={{ theme: 'secondary' }}
-                  type="continue"
-                  text={MSG.preview}
-                />
-              </div>
+            <Heading
+              appearance={{ size: 'small', weight: 'thin' }}
+              text={MSG.hint}
+            />
+            {!hasTokenData ? (
+              <Heading
+                appearance={{ theme: 'secondary' }}
+                type="continue"
+                text={MSG.preview}
+              />
             ) : (
-              [
+              <React.Fragment>
                 <Input
                   name="tokenName"
                   label={MSG.tokenName}
@@ -130,7 +132,7 @@ class SelectToken extends Component<Props, State> {
                   label={MSG.tokenSymbol}
                   placeholder="Type a token symbol"
                 />,
-              ]
+              </React.Fragment>
             )}
             <div className={styles.buttons}>
               <Button
@@ -155,11 +157,6 @@ export const formikConfig = {
   mapPropsToValues: props => ({ tokenAddress: '' }),
   validate: (values: FormValues): FormikErrors<FormValues> => {
     const errors = {};
-    console.log('Valid others');
-
-    if (values.tokenAddress.length > 3) {
-      errors.existingToken = 'existence';
-    }
     return errors;
   },
 };
@@ -169,6 +166,8 @@ export const validationSchema = yup.object({
     .string()
     .required()
     .address(),
+  tokenSymbol: yup.string().max(6, 'Too Long!'),
+  tokenName: yup.string(),
 });
 
 SelectToken.displayName = displayName;
