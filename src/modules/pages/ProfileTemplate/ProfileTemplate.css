@@ -5,13 +5,14 @@
   --sidebar-width: 420px;
 }
 
-.profileTemplate {
+.main {
   display: flex;
   flex-direction: row;
+  height: 100%;
 }
 
 .sidebar {
-  padding: 100px var(--padding-horizontal);
+  padding: 80px var(--padding-horizontal);
   height: 100%;
   width: var(--sidebar-width);
   position: fixed;
@@ -27,4 +28,19 @@
   margin-left: var(--sidebar-width);
   padding: 20px var(--padding-horizontal);
   max-width: 930px;
+  height: 100%;
+}
+
+.themeAlt {
+  composes: main;
+  background: var(--gradient-default);
+}
+
+.themeAlt .sidebar {
+  background: none;
+  border-right: 2px solid var(--grey-blue-0);
+}
+
+.themeAlt .mainContent {
+  padding: 80px var(--padding-horizontal);
 }
