@@ -2,6 +2,7 @@
 
 import type { MessageDescriptor } from 'react-intl';
 import React, { Component } from 'react';
+import cx from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
@@ -38,6 +39,8 @@ type Props = {
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: { [string]: string },
+  /** Maximum length (will show counter) */
+  maxLength?: number,
   /** Placeholder for input */
   placeholder?: string,
   /** @ignore Will be injected by `asField` */
@@ -71,8 +74,23 @@ class Textarea extends Component<Props> {
   };
 
   renderTextarea = inputProps => {
-    const { innerRef, ...props } = inputProps;
-    return <textarea ref={innerRef} {...props} />;
+    const { innerRef, maxLength, ...props } = inputProps;
+    const { $value } = this.props;
+    const length = $value ? $value.length : 0;
+    return (
+      <div className={styles.textareaWrapper}>
+        <textarea ref={innerRef} {...props} maxLength={maxLength} />
+        {maxLength && (
+          <span
+            className={cx(styles.count, {
+              [styles.limit]: length === maxLength,
+            })}
+          >
+            {length}/{maxLength}
+          </span>
+        )}
+      </div>
+    );
   };
 
   render() {
@@ -90,6 +108,7 @@ class Textarea extends Component<Props> {
       setError,
       setValue,
       isSubmitting,
+      maxLength = null,
       ...props
     } = this.props;
 
@@ -98,6 +117,7 @@ class Textarea extends Component<Props> {
       name,
       'aria-invalid': $error ? true : null,
       className: getMainClasses(appearance, styles),
+      maxLength,
       value: $value,
       ...props,
     };
