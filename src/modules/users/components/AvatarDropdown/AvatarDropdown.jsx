@@ -1,10 +1,10 @@
 /* @flow */
 import React from 'react';
 
-import Popover from '../../../core/components/Popover';
-import UserAvatar from '../../../core/components/UserAvatar';
+import Popover from '~core/Popover';
+import UserAvatar from '~core/UserAvatar';
 
-import MockUser from '../../__mocks__/MockUser';
+import MockUser from '../UserProfile/__mocks__/MockUser';
 
 import styles from './AvatarDropdown.css';
 
@@ -18,7 +18,11 @@ const AvatarDropdown = () => (
     trigger="click"
   >
     <button className={styles.avatarButton} type="button">
-      <UserAvatar username={MockUser.ensName} avatarURL={MockUser.avatar} />
+      <UserAvatar
+        username={MockUser.ensName}
+        avatarURL={MockUser.avatar}
+        walletAddress={MockUser.walletAddress}
+      />
     </button>
   </Popover>
 );
