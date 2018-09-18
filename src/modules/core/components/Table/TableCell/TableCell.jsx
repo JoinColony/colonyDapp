@@ -9,7 +9,9 @@ type Props = {
 
 const displayName = 'TableCell';
 
-const TableCell = ({ children }: Props) => <td>{children}</td>;
+const TableCell = ({ children, ...props }: Props) => (
+  <td {...props}>{children}</td>
+);
 
 TableCell.displayName = displayName;
 
