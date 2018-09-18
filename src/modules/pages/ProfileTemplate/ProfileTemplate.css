@@ -20,12 +20,18 @@
   background: var(--gradient-default);
 }
 
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 10px 0 0;
+}
+
 .mainContainer {
+  margin-left: var(--sidebar-width);
   width: 100%;
 }
 
 .mainContent {
-  margin-left: var(--sidebar-width);
   padding: 20px var(--padding-horizontal);
   height: 100%;
   max-width: 930px;

@@ -47,6 +47,12 @@ module.exports = {
       content: 'docs/Forms.md',
     },
     {
+      name: 'Menus',
+      components: [
+        './src/modules/core/components/DropdownMenu/DropdownMenu.jsx',
+      ],
+    },
+    {
       name: 'Comboboxes / Pickers',
       components: [
         './src/modules/core/components/OmniPicker/OmniPicker.jsx',

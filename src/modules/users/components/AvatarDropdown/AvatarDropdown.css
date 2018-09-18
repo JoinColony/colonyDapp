@@ -1,0 +1,12 @@
+
+.avatarButton {
+  margin: 7px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.avatarButton:focus {
+  outline: 0;
+}

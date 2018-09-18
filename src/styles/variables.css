@@ -39,16 +39,6 @@
   --gradient-default: linear-gradient(to bottom, var(--temp-grey-blue-5) 0%, var(--temp-grey-blue-6) 100%);
 
   /*
-   * Gradients
-   */
-  --gradient-default: linear-gradient(to bottom, rgb(244, 238, 242) 0%, rgb(232, 242, 236) 100%);
-
-  /*
-   * Gradients
-   */
-  --gradient-default: linear-gradient(to bottom, rgb(244, 238, 242) 0%, rgb(232, 242, 236) 100%);
-
-  /*
    * Radius
    */
   --radius-tiny: 2px;

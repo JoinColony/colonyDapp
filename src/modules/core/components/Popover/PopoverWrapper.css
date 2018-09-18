@@ -3,7 +3,7 @@
 :root {
   --popover-arrow-size: 8px;
   --popover-arrow-border: 1px;
-  --popover-shadow: 0 9px 15px -5px rgba(0, 0, 0, 0.2);
+  --popover-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
   --popover-background-color: var(--colony-white);
   --popover-theme-dark-background-color: var(--grey-1);
   --popover-tooltip-border: rgb(65, 67, 78);

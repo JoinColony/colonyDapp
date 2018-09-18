@@ -1,0 +1,37 @@
+@import 'variables.css';
+
+.baseStyles {
+  min-width: 200px;
+}
+
+.baseStyles a {
+  display: block;
+}
+
+/* themes */
+.main {
+  composes: baseStyles;
+}
+
+.main a {
+  color: var(--grey-4);
+}
+
+.main a:hover {
+  background-color: var(--grey-blue-0);
+  color: var(--grey-1);
+}
+
+.themeDark {
+  composes: baseStyles;
+  background-color: var(--grey-1);
+  color: var(--colony-white);
+}
+
+.themeDark a {
+  color: var(--grey-4);
+}
+
+.themeDark a:hover {
+  color: var(--grey-blue-2);
+}
