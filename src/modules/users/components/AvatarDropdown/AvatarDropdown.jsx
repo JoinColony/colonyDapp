@@ -15,18 +15,11 @@ const AvatarDropdown = () => (
     content={({ close }) => (
       <AvatarDropdownPopover user={MockUser} closePopover={close} />
     )}
+    trigger="click"
   >
-    {({ id, isOpen, toggle, ref }) => (
-      <button
-        aria-describedby={isOpen ? id : null}
-        className={styles.avatarButton}
-        onClick={toggle}
-        ref={ref}
-        type="button"
-      >
-        <UserAvatar username={MockUser.ensName} avatarURL={MockUser.avatar} />
-      </button>
-    )}
+    <button className={styles.avatarButton} type="button">
+      <UserAvatar username={MockUser.ensName} avatarURL={MockUser.avatar} />
+    </button>
   </Popover>
 );
 
