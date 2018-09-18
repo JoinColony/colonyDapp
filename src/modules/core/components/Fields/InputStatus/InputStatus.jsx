@@ -38,19 +38,24 @@ const InputStatus = ({
   const errorText = typeof error == 'object' ? formatMessage(error) : error;
   const statusText = typeof status == 'object' ? formatMessage(status) : status;
   const text = errorText || statusText;
-  if (!text) {
-    return null;
-  }
   return (
     <Fragment>
       {appearance.direction === 'horizontal' ? (
         <span
-          className={getMainClasses(appearance, styles, { error: !!error })}
+          className={getMainClasses(appearance, styles, {
+            error: !!error,
+            hidden: !text,
+          })}
         >
           {text}
         </span>
       ) : (
-        <p className={getMainClasses(appearance, styles, { error: !!error })}>
+        <p
+          className={getMainClasses(appearance, styles, {
+            error: !!error,
+            hidden: !text,
+          })}
+        >
           {text}
         </p>
       )}
