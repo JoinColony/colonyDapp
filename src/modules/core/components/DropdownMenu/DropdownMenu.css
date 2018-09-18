@@ -1,29 +1,29 @@
 @import 'variables.css';
 
-.main {
+.baseStyles {
   min-width: 200px;
 }
 
-.main a {
+.baseStyles a {
   display: block;
 }
 
 /* themes */
-.themeDefault {
-  composes: main;
+.main {
+  composes: baseStyles;
 }
 
-.themeDefault a {
+.main a {
   color: var(--grey-4);
 }
 
-.themeDefault a:hover {
+.main a:hover {
   background-color: var(--grey-blue-0);
   color: var(--grey-1);
 }
 
 .themeDark {
-  composes: main;
+  composes: baseStyles;
   background-color: var(--grey-1);
   color: var(--colony-white);
 }

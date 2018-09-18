@@ -7,7 +7,7 @@ import { getMainClasses } from '~utils/css';
 import styles from './DropdownMenu.css';
 
 type Appearance = {
-  theme?: 'default' | 'dark',
+  theme?: 'dark',
 };
 
 type Props = {
@@ -17,11 +17,7 @@ type Props = {
 
 const displayName = 'DropdownMenu';
 
-const DropdownMenu = ({
-  appearance = { theme: 'default' },
-  children,
-  ...props
-}: Props) => (
+const DropdownMenu = ({ appearance, children, ...props }: Props) => (
   <div className={getMainClasses(appearance, styles)} {...props}>
     {children}
   </div>
