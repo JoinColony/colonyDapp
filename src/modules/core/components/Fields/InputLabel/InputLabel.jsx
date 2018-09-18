@@ -21,8 +21,6 @@ type Appearance = {
 type Props = {
   /** Appearance object */
   appearance?: Appearance,
-  /** Error text (if applicable) */
-  error?: string | MessageDescriptor,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
@@ -39,7 +37,6 @@ type Props = {
 
 const InputLabel = ({
   appearance = {},
-  error,
   help,
   helpValues,
   inputId = '',
@@ -47,8 +44,6 @@ const InputLabel = ({
   label: inputLabel,
   labelValues,
 }: Props) => {
-  const errorText =
-    typeof error == 'object' ? formatMessage(error, helpValues) : error;
   const helpText =
     typeof help == 'object' ? formatMessage(help, helpValues) : help;
   const labelText =
@@ -62,11 +57,7 @@ const InputLabel = ({
       htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
-      {error && appearance.direction !== 'horizontal' ? (
-        <span className={styles.error}>{errorText}</span>
-      ) : (
-        helpText && <span className={styles.help}>({helpText})</span>
-      )}
+      {helpText && <span className={styles.help}>({helpText})</span>}
     </label>
   );
 };

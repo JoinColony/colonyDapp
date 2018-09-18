@@ -10,6 +10,7 @@ import styles from './Textarea.css';
 
 import asField from '../asField';
 import InputLabel from '../InputLabel';
+import InputStatus from '../InputStatus';
 
 type Appearance = {
   theme?: 'fat',
@@ -42,7 +43,9 @@ type Props = {
   /** Maximum length (will show counter) */
   maxLength?: number,
   /** Placeholder for input */
-  placeholder?: string,
+  placeholder?: string | MessageDescriptor,
+  /** Status text (if applicable) */
+  status?: string | MessageDescriptor,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -95,20 +98,21 @@ class Textarea extends Component<Props> {
 
   render() {
     const {
-      appearance = {},
-      elementOnly,
-      formatIntl,
-      help,
       $id,
-      label,
-      name,
       $value,
       $error,
       $touched,
+      appearance = {},
+      elementOnly,
+      formatIntl,
+      isSubmitting,
+      help,
+      label,
+      maxLength = null,
+      name,
       setError,
       setValue,
-      isSubmitting,
-      maxLength = null,
+      status,
       ...props
     } = this.props;
 
@@ -136,6 +140,7 @@ class Textarea extends Component<Props> {
           help={help}
         />
         {this.renderTextarea(inputProps)}
+        <InputStatus appearance={appearance} status={status} error={$error} />
       </div>
     );
   }

@@ -13,6 +13,7 @@
 .textareaWrapper {
   composes: field from '~styles/fields.css';
   position: relative;
+  line-height: 0;
 }
 
 .main {

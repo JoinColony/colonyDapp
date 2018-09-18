@@ -58,6 +58,18 @@
 />
 ```
 
+### Input text with label and status
+
+```js
+<Input
+  name="inputlabelstatus"
+  placeholder="I have a custom status!"
+  label="Look!"
+  status="This is all good now"
+  connect={false}
+/>
+```
+
 ### Input text with horizontal label
 
 ```js

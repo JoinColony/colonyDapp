@@ -8,6 +8,7 @@ import styles from './Input.css';
 
 import asField from '../asField';
 import InputLabel from '../InputLabel';
+import InputStatus from '../InputStatus';
 
 import type { CleaveOptions } from './types';
 
@@ -43,6 +44,8 @@ type Props = {
   labelValues?: { [string]: string },
   /** Placeholder for input */
   placeholder?: string,
+  /** Status text */
+  status?: string | MessageDescriptor,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -77,6 +80,7 @@ const Input = ({
   $touched,
   setValue,
   setError,
+  status,
   ...props
 }: Props) => {
   const inputProps = {
@@ -106,9 +110,7 @@ const Input = ({
         help={help}
       />
       <InputComponent {...inputProps} />
-      {appearance.direction === 'horizontal' && $error ? (
-        <span className={styles.error}>{$error}</span>
-      ) : null}
+      <InputStatus appearance={appearance} status={status} error={$error} />
     </div>
   );
 };

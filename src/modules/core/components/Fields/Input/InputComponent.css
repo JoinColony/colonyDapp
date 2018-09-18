@@ -1,7 +1,6 @@
 @import 'variables.css';
 
 .main {
-  composes: field from '~styles/fields.css';
   padding: 0 16px;
   height: 32px;
   width: 100%;

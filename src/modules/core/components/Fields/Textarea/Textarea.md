@@ -89,6 +89,19 @@
 />
 ```
 
+### Textarea with maximum length
+
+```js
+<Textarea
+  name="textareamaxlength"
+  $value="I have a maximum length"
+  onChange={() => {}}
+  label="Label"
+  connect={false}
+  maxLength={90}
+/>
+```
+
 ### Textarea resizable (only vertical!)
 
 ```js
