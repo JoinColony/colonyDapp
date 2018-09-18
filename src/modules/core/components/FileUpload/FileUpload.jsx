@@ -12,6 +12,7 @@ import styles from './FileUpload.css';
 
 import { asFieldArray } from '../Fields';
 import InputLabel from '../Fields/InputLabel';
+import InputStatus from '../Fields/InputStatus';
 
 // eslint-disable-next-line import/no-cycle
 import UploadItem from './UploadItem.jsx';
@@ -203,7 +204,6 @@ class FileUpload extends Component<Props> {
             <InputLabel
               label={label}
               help={help}
-              error={hasError ? MSG.labelError : ''}
               labelValues={labelValues}
               helpValues={helpValues}
             />
@@ -242,6 +242,7 @@ class FileUpload extends Component<Props> {
             </Fragment>
           )}
         </Dropzone>
+        <InputStatus error={hasError ? MSG.labelError : ''} />
       </div>
     );
   }

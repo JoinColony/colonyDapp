@@ -115,7 +115,6 @@ class SingleUserPicker extends Component<Props, State> {
                 inputId={inputProps.id}
                 label={label}
                 help={help}
-                error={$error}
                 appearance={labelAppearance}
               />
             )}

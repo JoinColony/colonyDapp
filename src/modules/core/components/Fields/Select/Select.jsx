@@ -290,7 +290,7 @@ class Select extends Component<Props, State> {
     return (
       <div className={styles.main} ref={this.registerWrapperNode}>
         {!elementOnly && label ? (
-          <InputLabel inputId={$id} label={label} error={$error} help={help} />
+          <InputLabel inputId={$id} label={label} help={help} />
         ) : null}
         <button
           className={`${styles.select} ${getMainClasses(appearance, styles)}`}

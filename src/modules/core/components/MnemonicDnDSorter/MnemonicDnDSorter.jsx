@@ -284,12 +284,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
       <DragDropContext onDragEnd={this.onDragEnd}>
         {!elementOnly && (
           <div className={styles.labelHeader}>
-            <InputLabel
-              inputId={$id}
-              label={label}
-              error={$error}
-              help={help}
-            />
+            <InputLabel inputId={$id} label={label} help={help} />
             <Button
               appearance={{ theme: 'ghost', size: 'small' }}
               type="button"
