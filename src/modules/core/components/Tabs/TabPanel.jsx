@@ -10,6 +10,8 @@ type Props = {
   forceRender?: boolean,
 };
 
+const displayName = 'TabPanel';
+
 const TabPanel = (props: Props) => (
   <ReactTabPanel
     className={styles.main}
@@ -19,5 +21,7 @@ const TabPanel = (props: Props) => (
 );
 
 TabPanel.tabsRole = 'TabPanel';
+
+TabPanel.displayName = displayName;
 
 export default TabPanel;

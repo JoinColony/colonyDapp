@@ -20,8 +20,12 @@ type Props = {
   selectedIndex?: number,
 };
 
+const displayName = 'Tabs';
+
 const Tabs = ({ innerRef, ...props }: Props) => (
   <ReactTabs className={styles.main} domRef={innerRef} {...props} />
 );
+
+Tabs.displayName = displayName;
 
 export default Tabs;

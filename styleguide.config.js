@@ -80,6 +80,7 @@ module.exports = {
       components: [
         './src/modules/core/components/Tabs/Tabs.jsx',
         './src/modules/core/components/Tabs/Tab.jsx',
+        './src/modules/core/components/Tabs/TabList.jsx',
         './src/modules/core/components/Tabs/TabPanel.jsx',
       ],
     },

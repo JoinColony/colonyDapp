@@ -1,17 +1,22 @@
 @import 'variables.css';
 
+.container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.container::before {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid var(--temp-grey-5);
+  content: '';
+}
+
 .main {
   display: flex;
   flex-grow: 1;
   justify-content: flex-start;
   align-items: center;
-  position: relative;
-}
-
-.main::before {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  border-top: 2px solid var(--temp-grey-5);
-  content: '';
 }
