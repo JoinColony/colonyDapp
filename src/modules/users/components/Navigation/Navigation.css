@@ -1,0 +1,35 @@
+@import 'variables.css';
+
+:root {
+  /*
+   * Unique color so far. If used again, please move to `variables`
+   */
+  --navigation-icon-blue: rgb(5, 81, 253);
+}
+
+.main {
+  display: flex;
+  align-items: center;
+}
+
+.navigationItem {
+  flex-grow: 0;
+  margin-right: 12px;
+  height: 34px;
+  width: 34px;
+  border-radius: var(--radius-tiny);
+  text-align: center;
+}
+
+.navigationItem:hover {
+  background-color: var(--temp-grey-6);
+}
+
+.navigationItem:hover svg {
+  fill: var(--navigation-icon-blue);
+  stroke: var(--navigation-icon-blue);
+}
+
+.navigationItem i {
+  padding: 8px 0;
+}

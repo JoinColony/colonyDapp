@@ -8,6 +8,7 @@ import { getMainClasses } from '~utils/css';
 import AvatarDropdown from '../../users/components/AvatarDropdown';
 
 import AvatarDropdown from '../../users/components/AvatarDropdown';
+import Navigation from '../../users/components/Navigation';
 
 import styles from './ProfileTemplate.css';
 
@@ -28,6 +29,7 @@ const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
     <aside className={styles.sidebar}>{asideContent}</aside>
     <div className={styles.mainContainer}>
       <header className={styles.header}>
+        <Navigation />
         <AvatarDropdown />
       </header>
       <main className={styles.mainContent}>{children}</main>
