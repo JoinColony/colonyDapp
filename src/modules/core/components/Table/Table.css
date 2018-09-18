@@ -1,9 +1,80 @@
 @import 'variables.css';
 
 .main {
-
+  border-radius: var(--radius-normal);
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
 }
 
-.striped tbody tr {
-  border-top: 2px solid var(--grey-blue-1);
+.main thead tr th {
+  padding: 20px 40px;
+}
+
+.main tbody tr td,
+.main tbody tr th {
+  padding: 40px;
+}
+
+/* Scrollable */
+
+.scrollable {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.scrollable tr {
+  display: flex;
+}
+
+.scrollable th,
+.scrollable td {
+  display: flex;
+  align-items: center;
+}
+
+.scrollable tbody {
+  display: block;
+  max-height: 100%;
+  overflow: auto;
+}
+
+/* Appearance */
+
+.separatorsBorders th,
+.separatorsBorders td {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.separatorsRows tbody tr:nth-child(n+2),
+.separatorsRows thead + tbody tr:first-child {
+  border-width: 2px;
+  border-style: solid;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.themeDefault {
+  composes: main;
+  border-color: var(--grey-blue-1);
+  background-color: var(--colony-white);
+
+  &.separatorsBorders td,
+  &.separatorsBorders th {
+    border-color: var(--grey-blue-1);
+  }
+}
+
+.themeDark {
+  composes: main;
+  border-color: color(var(--grey-blue-1) alpha(30%));
+  background-color: var(--grey-3);
+  color: var(--colony-white);
+
+  &.separatorsBorders td,
+  &.separatorsBorders th {
+    border-color: color(var(--grey-blue-1) alpha(30%));
+  }
 }
