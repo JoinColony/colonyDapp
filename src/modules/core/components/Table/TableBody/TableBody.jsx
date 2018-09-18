@@ -9,8 +9,12 @@ type Props = {
   children: Node,
 };
 
+const displayName = 'TableBody';
+
 const TableBody = ({ children }: Props) => (
   <tbody className={styles.main}>{children}</tbody>
 );
+
+TableBody.displayName = displayName;
 
 export default TableBody;

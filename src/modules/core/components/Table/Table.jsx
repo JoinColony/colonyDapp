@@ -18,11 +18,15 @@ type Props = {
   children: Node,
 };
 
+const displayName = 'Table';
+
 const Table = ({
   appearance = { theme: 'default', separators: 'rows' },
   children,
 }: Props) => (
   <table className={getMainClasses(appearance, styles)}>{children}</table>
 );
+
+Table.displayName = displayName;
 
 export default Table;
