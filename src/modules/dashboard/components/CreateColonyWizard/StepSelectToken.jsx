@@ -3,8 +3,10 @@ import type { FormikProps } from 'formik';
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { compose } from 'recompose';
-import ColonyJs from '@colony/colony-js-client';
+import ColonyNetworkClient from '@colony/colony-js-client';
+import EthersAdapter from '@colony/colony-js-adapter-ethers';
+import { providers } from 'ethers';
+import { EtherscanLoader } from '@colony/colony-js-contract-loader-http';
 import * as yup from 'yup';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
@@ -80,22 +82,43 @@ class SelectToken extends Component<Props, State> {
     hasTokenData: false,
   };
 
-  componentDidUpdate() {
-    console.log(this.state);
-    console.log(this.props);
+  componentDidMount() {
+    this.adapter = new EthersAdapter({
+      loader: new EtherscanLoader(),
+      provider: new providers.EtherscanProvider(),
+    });
   }
 
-  checkToken = tokenAddress => {
-    /*
-    if (requestFromEtherScan(tokenAddress)) {
-      this.setState({ hasTokenData: true });
+  componentDidUpdate({ values: { tokenAddress: previousAddress } }) {
+    // TODO: wrap in an interval to not call more often than once a second
+
+    const {
+      values: { tokenAddress },
+      isValid,
+    } = this.props;
+
+    if (tokenAddress !== previousAddress && isValid) {
+      this.checkToken(tokenAddress)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(error => console.log(error));
     }
-    */
+  }
+
+  checkToken = async tokenAddress => {
+
+    const token = new ColonyNetworkClient.TokenClient({
+      adapter: this.adapter,
+      query: { contractAddress: tokenAddress },
+    });
+    await token.init();
+    return token;
   };
 
   render() {
     const { hasTokenData } = this.state;
-    const { handleSubmit, errors, touched, isValid } = this.props;
+    const { handleSubmit, errors, touched, isValid, values } = this.props;
 
     return (
       <section className={styles.content}>
