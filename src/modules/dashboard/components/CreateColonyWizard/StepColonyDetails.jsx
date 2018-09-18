@@ -88,6 +88,7 @@ StepColonyDetails.displayName = displayName;
 
 export const Step = StepColonyDetails;
 
-export const onSubmit: SubmitFn<FormValues> = ({ nextStep }) => nextStep();
+export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+  nextStep();
 
 export const sidebarChild = <FormattedMessage {...MSG.helpText} />;
