@@ -1,0 +1,9 @@
+@import 'variables.css';
+
+.main {
+
+}
+
+.striped tbody tr {
+  border-top: 2px solid var(--grey-blue-1);
+}
