@@ -89,6 +89,30 @@
 />
 ```
 
+### Textarea text with label and status
+
+```js
+<Textarea
+  name="textareastatus"
+  placeholder="I have a status"
+  label="Label"
+  status="This status is looking good"
+  connect={false}
+/>
+```
+
+### Textarea text with label and hint
+
+```js
+<Textarea
+  name="textareastatus"
+  placeholder="I have a hint!"
+  label="Look right ->"
+  hint={<a href="#">I'm a hint!</a>}
+  connect={false}
+/>
+```
+
 ### Textarea with maximum length
 
 ```js

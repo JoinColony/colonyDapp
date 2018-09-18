@@ -70,6 +70,18 @@
 />
 ```
 
+### Input text with label and hint
+
+```js
+<Input
+  name="inputlabelhint"
+  placeholder="I have a hint!"
+  label="Look right ->"
+  hint={<a href="#">I'm a hint!</a>}
+  connect={false}
+/>
+```
+
 ### Input text with horizontal label
 
 ```js

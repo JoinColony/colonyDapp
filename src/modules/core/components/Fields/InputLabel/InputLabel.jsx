@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 
 import React from 'react';
@@ -25,6 +26,8 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Hint (will appear on the top right in the label) */
+  hint?: Node,
   /** `id` attribute value of accompanied input field */
   inputId?: string,
   /** Label text */
@@ -39,6 +42,7 @@ const InputLabel = ({
   appearance = {},
   help,
   helpValues,
+  hint,
   inputId = '',
   intl: { formatMessage },
   label: inputLabel,
@@ -58,6 +62,7 @@ const InputLabel = ({
     >
       <span className={styles.labelText}>{labelText}</span>
       {helpText && <span className={styles.help}>({helpText})</span>}
+      {hint && <span className={styles.hint}>{hint}</span>}
     </label>
   );
 };

@@ -1,6 +1,8 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
+
 import React, { Component } from 'react';
 import cx from 'classnames';
 
@@ -34,6 +36,8 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Hint (will appear on the top right in the label) */
+  hint?: Node,
   /** Pass a ref to the `<textarea>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
@@ -107,6 +111,7 @@ class Textarea extends Component<Props> {
       formatIntl,
       isSubmitting,
       help,
+      hint,
       label,
       maxLength = null,
       name,
@@ -138,6 +143,7 @@ class Textarea extends Component<Props> {
           label={label}
           error={$error}
           help={help}
+          hint={hint}
         />
         {this.renderTextarea(inputProps)}
         <InputStatus appearance={appearance} status={status} error={$error} />
