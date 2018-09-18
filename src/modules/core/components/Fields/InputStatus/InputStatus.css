@@ -1,20 +1,20 @@
 @import 'variables.css';
 
 .main {
-  height: 15px;
   margin-top: 4px;
+  height: 15px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-semi);
   white-space: nowrap;
 
   &::before {
-    content: '';
     display: inline-block;
     margin-right: 8px;
     height: 8px;
     width: 8px;
     border-radius: 50%;
     background-color: var(--primary);
+    content: '';
   }
 }
 

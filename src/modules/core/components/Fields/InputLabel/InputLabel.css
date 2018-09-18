@@ -2,9 +2,9 @@
 
 .main {
   display: block;
-  position: relative;
   margin-bottom: 6px;
   width: 100%;
+  position: relative;
   font-size: var(--size-small);
   font-weight: 600;
   text-align: left;
