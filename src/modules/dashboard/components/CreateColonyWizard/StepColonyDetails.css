@@ -7,3 +7,20 @@
 .header {
   margin-bottom: 40px;
 }
+
+.title {
+  margin-top: 330px;
+  margin-bottom: 45px;
+  font-weight: var(--weight-medium);
+}
+
+.nameForm {
+  margin-top: 40px;
+  width: 460px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 48px;
+}

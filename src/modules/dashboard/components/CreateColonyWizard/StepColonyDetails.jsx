@@ -1,21 +1,20 @@
-/* @flow */
-
+// @flow
 import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import * as yup from 'yup';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
-import layout from '~styles/layout.css';
 import styles from './StepColonyDetails.css';
 
-import Button from '../../../core/components/Button';
+import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';
-import { FieldSet } from '../../../core/components/Fields';
+import Button from '../../../core/components/Button';
 
 type FormValues = {
-  passphrase: string,
+  nextStep: () => void,
 };
 
 type Props = {
@@ -25,44 +24,70 @@ type Props = {
 const MSG = defineMessages({
   heading: {
     id: 'CreateColony.StepColonyDetails.heading',
-    defaultMessage: 'Create your very own Colony!',
+    defaultMessage: 'What would you like to name your Colony?',
   },
-  buttonCreateColony: {
-    id: 'CreateColony.StepColonyDetails.button.createColony',
-    defaultMessage: 'Create Colony',
+  labelCreateColony: {
+    id: 'CreateColony.StepColonyDetails.label.createColony',
+    defaultMessage: 'Colony Name',
   },
   helpText: {
     id: 'CreateColony.StepColonyDetails.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
+  placeholder: {
+    id: 'CreateColony.StepColonyDetails.placeholder',
+    defaultMessage: 'Type a display name for a colony',
+  },
+  cancel: {
+    id: 'CreateColony.StepColonyDetails.cancel',
+    defaultMessage: 'Cancel',
+  },
+  next: {
+    id: 'CreateColony.StepColonyDetails.next',
+    defaultMessage: 'Next',
+  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyDetails';
 
-const StepColonyDetails = ({ handleSubmit, isSubmitting }: Props) => (
-  <section className={`${styles.main} ${layout.flexContent}`}>
-    <header className={styles.header}>
-      <Heading appearance={{ size: 'small' }} text={MSG.heading} />
-    </header>
-    <form onSubmit={handleSubmit}>
-      <FieldSet appearance={{ align: 'right' }}>
-        <Button
-          theme="primary"
-          type="submit"
-          size="large"
-          loading={isSubmitting}
-          value={MSG.buttonCreateColony}
+const StepColonyDetails = ({ handleSubmit }: Props) => (
+  <section className={styles.content}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', weight: 'thin' }}
+        text={MSG.heading}
+      />
+      <form className={styles.nameForm} onSubmit={handleSubmit}>
+        <Input
+          name="colonyName"
+          label={MSG.labelCreateColony}
+          placeholder={MSG.placeholder}
         />
-      </FieldSet>
-    </form>
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.cancel}
+          />
+          <Button
+            appearance={{ theme: 'primary' }}
+            type="submit"
+            text={MSG.next}
+          />
+        </div>
+      </form>
+    </div>
   </section>
 );
+
+export const validationSchema = yup.object({
+  colonyName: yup.string().required(),
+});
 
 StepColonyDetails.displayName = displayName;
 
 export const Step = StepColonyDetails;
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+export const onSubmit: SubmitFn<FormValues> = ({ nextStep }) => nextStep();
 
 export const sidebarChild = <FormattedMessage {...MSG.helpText} />;
