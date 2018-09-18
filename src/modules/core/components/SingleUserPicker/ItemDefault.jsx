@@ -30,7 +30,12 @@ const ItemDefault = ({
   showAddress,
 }: Props) => (
   <span className={cx(styles.main, { [styles.showAddress]: showAddress })}>
-    <UserAvatar size="s" userId={id} username={username || id} />
+    <UserAvatar
+      size="s"
+      userId={id}
+      username={username || id}
+      walletAddress={id}
+    />
     <span className={styles.dataContainer}>
       {fullName && (
         <span className={styles.fullName}>

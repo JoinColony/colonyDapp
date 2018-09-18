@@ -1,5 +1,8 @@
 /* @flow */
 
+import type { Node } from 'react';
+import type { MessageDescriptor } from 'react-intl';
+
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Formik } from 'formik';
@@ -10,7 +13,7 @@ import styles from './AvatarUploader.css';
 import type { FileReaderFile } from '../FileUpload';
 
 import FileUpload from '../FileUpload';
-import Avatar from '../Avatar';
+
 import Button from '../Button';
 
 import AvatarUploadItem from './AvatarUploadItem.jsx';
@@ -27,18 +30,16 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  /** URL to avatar to show when not uploading */
-  avatarURL?: ?string,
   /** Only render the Uploader, no label */
   elementOnly?: boolean,
   /** Label to use */
-  label: string,
-  /** Placeholder icon, when no avatar is set */
-  placeholderIcon: string,
+  label: string | MessageDescriptor,
+  /** Placeholder to render when not uploading */
+  placeholder: Node,
   /** Function to handle removal of the avatar (should set avatarURL to null from outside) */
-  remove: () => void,
+  remove: () => Promise<void>,
   /** Function to handle the actual uploading of the file */
-  upload: (fileData: FileReaderFile) => string,
+  upload: (fileData: FileReaderFile) => Promise<string>,
 };
 
 class AvatarUploader extends Component<Props> {
@@ -54,18 +55,6 @@ class AvatarUploader extends Component<Props> {
     }
   };
 
-  renderPlaceholder = () => {
-    const { avatarURL, label, placeholderIcon } = this.props;
-    return (
-      <Avatar
-        avatarURL={avatarURL}
-        placeholderIcon={placeholderIcon}
-        size="l"
-        title={label}
-      />
-    );
-  };
-
   // FileUpload children are renderProps (functions)
   renderOverlay = () => () => (
     <div className={styles.overlay}>
@@ -74,7 +63,7 @@ class AvatarUploader extends Component<Props> {
   );
 
   render() {
-    const { elementOnly, label, remove, upload } = this.props;
+    const { elementOnly, label, placeholder, remove, upload } = this.props;
     // Formik is used for state and error handling through FileUpload, nothing else
     return (
       <Formik onSubmit={() => null}>
@@ -86,8 +75,8 @@ class AvatarUploader extends Component<Props> {
             accept={['image/jpeg', 'image/png']}
             label={label}
             maxFilesLimit={1}
-            name="avatar-uploader"
-            renderPlaceholder={this.renderPlaceholder()}
+            name="avatarUploader"
+            renderPlaceholder={placeholder}
             itemComponent={AvatarUploadItem}
             upload={upload}
           >

@@ -35,7 +35,10 @@ class DialogProvider extends Component<Props, State> {
     openDialogs: [],
   };
 
-  pushDialog = (dialogKey: string, props: { [string]: any }) => {
+  pushDialog = (
+    dialogKey: string,
+    props: { [string]: any },
+  ): Promise<any> | void => {
     const { dialogComponents } = this.props;
     const Dialog = dialogComponents[dialogKey];
     if (!Dialog) {

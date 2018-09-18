@@ -1,8 +1,8 @@
 @import 'variables.css';
 
 .dropzone {
-  height: 120px;
-  width: 120px;
+  height: 160px;
+  width: 160px;
   overflow: hidden;
   border-radius: 50%;
 }

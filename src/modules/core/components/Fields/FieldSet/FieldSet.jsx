@@ -1,7 +1,9 @@
 /* @flow */
 
-import React from 'react';
 import type { Node } from 'react';
+
+import React from 'react';
+import cx from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 
@@ -18,10 +20,14 @@ type Props = {
   appearance?: Appearance,
   /** Children to render */
   children: Node,
+  /** Optional className */
+  className?: string,
 };
 
-const FieldSet = ({ appearance, children }: Props) => (
-  <fieldset className={getMainClasses(appearance, styles)}>{children}</fieldset>
+const FieldSet = ({ appearance, children, className }: Props) => (
+  <fieldset className={cx(getMainClasses(appearance, styles), className)}>
+    {children}
+  </fieldset>
 );
 
 FieldSet.displayName = displayName;

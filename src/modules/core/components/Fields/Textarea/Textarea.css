@@ -10,8 +10,12 @@
   position: relative;
 }
 
-.main {
+.textareaWrapper {
   composes: field from '~styles/fields.css';
+  position: relative;
+}
+
+.main {
   padding: 8px;
   min-height: 80px;
   width: 100%;
@@ -97,5 +101,18 @@
 .error {
   margin-left: 5px;
   font-size: var(--size-tiny);
+  color: var(--danger);
+}
+
+.count {
+  position: absolute;
+  right: 5px;
+  bottom: 10px;
+  font-size: var(--size-unreadable);
+  font-weight: var(--weight-semi);
+  color: var(--temp-grey-4);
+}
+
+.count.limit {
   color: var(--danger);
 }

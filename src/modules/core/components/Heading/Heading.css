@@ -81,6 +81,7 @@
 
 .sizeMedium {
   font-size: var(--size-medium-l);
+  letter-spacing: 1px;
 }
 
 .sizeLarge {

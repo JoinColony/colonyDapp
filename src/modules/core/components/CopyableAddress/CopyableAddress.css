@@ -1,0 +1,10 @@
+@import 'variables.css';
+
+.main {
+  /* styles here */
+}
+
+.themeBig {
+  font-size: var(--size-medium-l);
+  letter-spacing: 1px;
+}

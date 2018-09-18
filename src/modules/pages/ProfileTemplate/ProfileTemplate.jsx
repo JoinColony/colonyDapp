@@ -3,24 +3,25 @@ import type { Node } from 'react';
 
 import React from 'react';
 
-import type { UserType } from '../../users/types';
+import { getMainClasses } from '~utils/css';
 
 import styles from './ProfileTemplate.css';
 
-import UserMeta from './UserMeta.jsx';
+type Appearance = {
+  theme: 'alt',
+};
 
 type Props = {
+  appearance?: Appearance,
   children: Node,
-  user: UserType,
+  asideContent: Node,
 };
 
 const displayName = 'pages.ProfileTemplate';
 
-const ProfileTemplate = ({ children, user }: Props) => (
-  <div className={styles.profileTemplate}>
-    <aside className={styles.sidebar}>
-      <UserMeta user={user} />
-    </aside>
+const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
+  <div className={getMainClasses(appearance, styles)}>
+    <aside className={styles.sidebar}>{asideContent}</aside>
     <div className={styles.mainContainer}>
       {/* header will go here */}
       <main className={styles.mainContent}>{children}</main>
