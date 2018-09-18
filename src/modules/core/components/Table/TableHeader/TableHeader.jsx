@@ -1,12 +1,14 @@
 /* @flow */
-import type { Node } from 'react';
+import type { ChildrenArray, Element as ElementType } from 'react';
 
 import React from 'react';
 
 import styles from './TableHeader.css';
 
+import TableRow from '../TableRow';
+
 type Props = {
-  children: Node,
+  children: ChildrenArray<ElementType<typeof TableRow>>,
 };
 
 const displayName = 'TableHeader';

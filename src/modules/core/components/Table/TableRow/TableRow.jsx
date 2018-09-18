@@ -1,12 +1,16 @@
 /* @flow */
-import type { Node } from 'react';
+import type { ChildrenArray, Element as ElementType } from 'react';
 
 import React from 'react';
 
 import styles from './TableRow.css';
 
+import TableCell from '../TableCell';
+import TableHeaderCell from '../TableHeaderCell';
+
 type Props = {
-  children: Node,
+  // eslint-disable-next-line max-len, prettier/prettier
+  children: ChildrenArray<ElementType<typeof TableCell | typeof TableHeaderCell>>,
 };
 
 const displayName = 'TableRow';
