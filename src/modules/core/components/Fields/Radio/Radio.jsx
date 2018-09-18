@@ -125,7 +125,6 @@ const Radio = ({
             <InputLabel
               appearance={{ direction: 'horizontal' }}
               label={label}
-              error={$error}
               help={help}
               inputId={inputId}
             />

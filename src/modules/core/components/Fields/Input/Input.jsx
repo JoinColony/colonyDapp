@@ -1,6 +1,8 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
+
 import React from 'react';
 import cx from 'classnames';
 
@@ -8,6 +10,7 @@ import styles from './Input.css';
 
 import asField from '../asField';
 import InputLabel from '../InputLabel';
+import InputStatus from '../InputStatus';
 
 import type { CleaveOptions } from './types';
 
@@ -35,6 +38,8 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Hint (will appear on the top right in the label) */
+  hint?: Node,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
@@ -43,6 +48,8 @@ type Props = {
   labelValues?: { [string]: string },
   /** Placeholder for input */
   placeholder?: string,
+  /** Status text */
+  status?: string | MessageDescriptor,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -68,6 +75,7 @@ const Input = ({
   formattingOptions,
   formatIntl,
   help,
+  hint,
   $id,
   innerRef,
   label,
@@ -77,6 +85,7 @@ const Input = ({
   $touched,
   setValue,
   setError,
+  status,
   ...props
 }: Props) => {
   const inputProps = {
@@ -104,11 +113,10 @@ const Input = ({
         label={label}
         error={$error}
         help={help}
+        hint={hint}
       />
       <InputComponent {...inputProps} />
-      {appearance.direction === 'horizontal' && $error ? (
-        <span className={styles.error}>{$error}</span>
-      ) : null}
+      <InputStatus appearance={appearance} status={status} error={$error} />
     </div>
   );
 };

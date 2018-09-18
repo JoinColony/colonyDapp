@@ -1,0 +1,35 @@
+@import 'variables.css';
+
+.main {
+  margin-top: 4px;
+  height: 15px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-semi);
+  white-space: nowrap;
+
+  &::before {
+    display: inline-block;
+    margin-right: 8px;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    content: '';
+  }
+}
+
+.directionHorizontal {
+  margin-left: 5px;
+}
+
+.stateHidden {
+  visibility: hidden;
+}
+
+.stateError {
+  color: var(--danger);
+
+  &::before {
+    background-color: var(--danger);
+  }
+}

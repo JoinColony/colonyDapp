@@ -1,6 +1,8 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
+
 import React, { Component } from 'react';
 import cx from 'classnames';
 
@@ -10,6 +12,7 @@ import styles from './Textarea.css';
 
 import asField from '../asField';
 import InputLabel from '../InputLabel';
+import InputStatus from '../InputStatus';
 
 type Appearance = {
   theme?: 'fat',
@@ -33,6 +36,8 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Hint (will appear on the top right in the label) */
+  hint?: Node,
   /** Pass a ref to the `<textarea>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
@@ -42,7 +47,9 @@ type Props = {
   /** Maximum length (will show counter) */
   maxLength?: number,
   /** Placeholder for input */
-  placeholder?: string,
+  placeholder?: string | MessageDescriptor,
+  /** Status text (if applicable) */
+  status?: string | MessageDescriptor,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -95,20 +102,22 @@ class Textarea extends Component<Props> {
 
   render() {
     const {
-      appearance = {},
-      elementOnly,
-      formatIntl,
-      help,
       $id,
-      label,
-      name,
       $value,
       $error,
       $touched,
+      appearance = {},
+      elementOnly,
+      formatIntl,
+      isSubmitting,
+      help,
+      hint,
+      label,
+      maxLength = null,
+      name,
       setError,
       setValue,
-      isSubmitting,
-      maxLength = null,
+      status,
       ...props
     } = this.props;
 
@@ -134,8 +143,10 @@ class Textarea extends Component<Props> {
           label={label}
           error={$error}
           help={help}
+          hint={hint}
         />
         {this.renderTextarea(inputProps)}
+        <InputStatus appearance={appearance} status={status} error={$error} />
       </div>
     );
   }

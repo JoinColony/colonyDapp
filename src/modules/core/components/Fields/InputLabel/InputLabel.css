@@ -4,14 +4,11 @@
   display: block;
   margin-bottom: 6px;
   width: 100%;
+  position: relative;
   font-size: var(--size-small);
   font-weight: 600;
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
-
-  i {
-    margin-left: 5px;
-  }
 }
 
 .themeFat {
@@ -53,4 +50,10 @@
 
 .help {
   color: var(--text);
+}
+
+.hint {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

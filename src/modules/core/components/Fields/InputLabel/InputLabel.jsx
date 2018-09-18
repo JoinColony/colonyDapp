@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 
 import React from 'react';
@@ -21,12 +22,12 @@ type Appearance = {
 type Props = {
   /** Appearance object */
   appearance?: Appearance,
-  /** Error text (if applicable) */
-  error?: string | MessageDescriptor,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Hint (will appear on the top right in the label) */
+  hint?: Node,
   /** `id` attribute value of accompanied input field */
   inputId?: string,
   /** Label text */
@@ -39,16 +40,14 @@ type Props = {
 
 const InputLabel = ({
   appearance = {},
-  error,
   help,
   helpValues,
+  hint,
   inputId = '',
   intl: { formatMessage },
   label: inputLabel,
   labelValues,
 }: Props) => {
-  const errorText =
-    typeof error == 'object' ? formatMessage(error, helpValues) : error;
   const helpText =
     typeof help == 'object' ? formatMessage(help, helpValues) : help;
   const labelText =
@@ -62,11 +61,8 @@ const InputLabel = ({
       htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
-      {error && appearance.direction !== 'horizontal' ? (
-        <span className={styles.error}>{errorText}</span>
-      ) : (
-        helpText && <span className={styles.help}>({helpText})</span>
-      )}
+      {helpText && <span className={styles.help}>({helpText})</span>}
+      {hint && <span className={styles.hint}>{hint}</span>}
     </label>
   );
 };
