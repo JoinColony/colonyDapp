@@ -11,8 +11,8 @@ type Props = {
 
 const displayName = 'DropdownMenuItem';
 
-const DropdownMenuItem = ({ children }: Props) => (
-  <li className={styles.main} role="menuitem">
+const DropdownMenuItem = ({ children, ...props }: Props) => (
+  <li className={styles.main} {...props} role="menuitem">
     {children}
   </li>
 );

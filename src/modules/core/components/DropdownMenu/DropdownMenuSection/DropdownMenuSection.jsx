@@ -12,8 +12,8 @@ type Props = {
 
 const displayName = 'DropdownMenuSection';
 
-const DropdownMenuSection = ({ children, separator }: Props) => (
-  <ul className={separator ? styles.separator : null} role="menu">
+const DropdownMenuSection = ({ children, separator, ...props }: Props) => (
+  <ul className={separator ? styles.separator : null} {...props} role="menu">
     {children}
   </ul>
 );

@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import DropdownMenu, {
@@ -49,75 +49,62 @@ type Props = {
 class UserDropdownPopover extends Component<Props> {
   static displayName = 'UserAvatarDropdown';
 
-  renderUserSection() {
-    const { closePopover } = this.props;
-    return (
-      <DropdownMenuSection>
-        <DropdownMenuItem onClick={closePopover}>
-          <Link to="/" text={MSG.myProfile} />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={closePopover}>
-          <Link to="/" text={MSG.settings} />
-        </DropdownMenuItem>
-      </DropdownMenuSection>
-    );
-  }
+  renderUserSection = () => (
+    <DropdownMenuSection>
+      <DropdownMenuItem>
+        <Link to="/" text={MSG.myProfile} />
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Link to="/" text={MSG.settings} />
+      </DropdownMenuItem>
+    </DropdownMenuSection>
+  );
 
-  renderColonySection() {
-    const { closePopover } = this.props;
-    return (
-      <DropdownMenuSection separator>
-        <DropdownMenuItem onClick={closePopover}>
-          <Link to="/" text={MSG.createColony} />
-        </DropdownMenuItem>
-      </DropdownMenuSection>
-    );
-  }
+  renderColonySection = () => (
+    <DropdownMenuSection separator>
+      <DropdownMenuItem>
+        <Link to="/" text={MSG.createColony} />
+      </DropdownMenuItem>
+    </DropdownMenuSection>
+  );
 
-  renderHelperSection() {
-    const { closePopover } = this.props;
-    return (
-      <DropdownMenuSection separator>
-        <DropdownMenuItem onClick={closePopover}>
-          <Link to="/" text={MSG.requestFeatures} />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={closePopover}>
-          <Link to="/" text={MSG.reportBugs} />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={closePopover}>
-          <a
-            href="https://help.colony.io/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FormattedMessage {...MSG.helpCenter} />
-          </a>
-        </DropdownMenuItem>
-      </DropdownMenuSection>
-    );
-  }
+  renderHelperSection = () => (
+    <DropdownMenuSection separator>
+      <DropdownMenuItem>
+        <Link to="/" text={MSG.requestFeatures} />
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Link to="/" text={MSG.reportBugs} />
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <a
+          href="https://help.colony.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FormattedMessage {...MSG.helpCenter} />
+        </a>
+      </DropdownMenuItem>
+    </DropdownMenuSection>
+  );
 
-  renderMetaSection() {
-    const { closePopover } = this.props;
-    return (
-      <DropdownMenuSection separator>
-        <DropdownMenuItem onClick={closePopover}>
-          <Link to="/" text={MSG.signOut} />
-        </DropdownMenuItem>
-      </DropdownMenuSection>
-    );
-  }
+  renderMetaSection = () => (
+    <DropdownMenuSection separator>
+      <DropdownMenuItem>
+        <Link to="/" text={MSG.signOut} />
+      </DropdownMenuItem>
+    </DropdownMenuSection>
+  );
 
   render() {
+    const { closePopover } = this.props;
     return (
-      <Fragment>
-        <DropdownMenu>
-          {this.renderUserSection()}
-          {this.renderColonySection()}
-          {this.renderHelperSection()}
-          {this.renderMetaSection()}
-        </DropdownMenu>
-      </Fragment>
+      <DropdownMenu onClick={closePopover}>
+        {this.renderUserSection()}
+        {this.renderColonySection()}
+        {this.renderHelperSection()}
+        {this.renderMetaSection()}
+      </DropdownMenu>
     );
   }
 }

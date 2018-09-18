@@ -11,8 +11,8 @@ type Props = {
 
 const displayName = 'DropdownMenuHeader';
 
-const DropdownMenuHeader = ({ children }: Props) => (
-  <li className={styles.main} role="menuitem">
+const DropdownMenuHeader = ({ children, ...props }: Props) => (
+  <li className={styles.main} {...props} role="menuitem">
     {children}
   </li>
 );

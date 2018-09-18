@@ -20,8 +20,11 @@ const displayName = 'DropdownMenu';
 const DropdownMenu = ({
   appearance = { theme: 'default' },
   children,
+  ...props
 }: Props) => (
-  <div className={getMainClasses(appearance, styles)}>{children}</div>
+  <div className={getMainClasses(appearance, styles)} {...props}>
+    {children}
+  </div>
 );
 
 DropdownMenu.displayName = displayName;
