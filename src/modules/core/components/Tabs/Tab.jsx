@@ -12,6 +12,8 @@ type Props = {
   tabIndex?: string,
 };
 
+const displayName = 'Tab';
+
 const Tab = (props: Props) => (
   <ReactTab
     className={styles.main}
@@ -22,5 +24,7 @@ const Tab = (props: Props) => (
 );
 
 Tab.tabsRole = 'Tab';
+
+Tab.displayName = displayName;
 
 export default Tab;

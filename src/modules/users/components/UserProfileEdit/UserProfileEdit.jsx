@@ -16,7 +16,7 @@ import ProfileTemplate from '../../../pages/ProfileTemplate';
 
 import Sidebar from './Sidebar.jsx';
 
-import MockUser from '../UserProfile/__mocks__/MockUser';
+import mockUser from '../UserProfile/__datamocks__/mockUser';
 
 const MSG = defineMessages({
   heading: {
@@ -56,9 +56,9 @@ const UserProfileEdit = () => (
     appearance={{ theme: 'alt' }}
     asideContent={
       <Sidebar
-        walletAddress={MockUser.walletAddress}
-        username={MockUser.ensName}
-        avatarURL={MockUser.avatar}
+        walletAddress={mockUser.walletAddress}
+        username={mockUser.ensName}
+        avatarURL={mockUser.avatar}
       />
     }
   >
@@ -69,10 +69,10 @@ const UserProfileEdit = () => (
     <Formik
       onSubmit={values => console.log(values)}
       initialValues={{
-        name: MockUser.displayName,
-        bio: MockUser.bio,
-        website: MockUser.website,
-        location: MockUser.location,
+        name: mockUser.displayName,
+        bio: mockUser.bio,
+        website: mockUser.website,
+        location: mockUser.location,
       }}
     >
       {({ handleSubmit }) => (
@@ -80,12 +80,12 @@ const UserProfileEdit = () => (
           <FieldSet>
             <InputLabel label={MSG.labelWallet} />
             <CopyableAddress appearance={{ theme: 'big' }} full>
-              {MockUser.walletAddress}
+              {mockUser.walletAddress}
             </CopyableAddress>
           </FieldSet>
           <FieldSet>
             <InputLabel label={MSG.labelUsername} />
-            <UserMention ensName={MockUser.ensName} />
+            <UserMention ensName={mockUser.ensName} />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
             <Input label={MSG.labelName} name="name" maxLength={50} />

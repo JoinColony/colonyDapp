@@ -10,7 +10,7 @@ You can import Tabs into your component similarly:
 const { Tab, Tabs, TabList, TabPanel } = require('.');
 
 <Tabs>
-  <TabList>
+  <TabList extra={<a href="#">I am an extra node!</a>}>
     <Tab>Cool option</Tab>
     <Tab>Cool as well</Tab>
     <Tab>More content</Tab>

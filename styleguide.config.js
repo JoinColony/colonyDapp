@@ -14,6 +14,7 @@ module.exports = {
         './src/modules/core/components/UserMention/UserMention.jsx',
         './src/modules/core/components/Link/Link.jsx',
         './src/modules/core/components/NavLink/NavLink.jsx',
+        './src/modules/core/components/ExternalLink/ExternalLink.jsx',
       ],
     },
     {
@@ -29,6 +30,7 @@ module.exports = {
       name: 'Elements and Widgets',
       components: [
         './src/modules/core/components/CopyableAddress/CopyableAddress.jsx',
+        './src/modules/core/components/ColonyGrid/ColonyGrid.jsx',
       ],
     },
     {
@@ -80,6 +82,7 @@ module.exports = {
       components: [
         './src/modules/core/components/Tabs/Tabs.jsx',
         './src/modules/core/components/Tabs/Tab.jsx',
+        './src/modules/core/components/Tabs/TabList.jsx',
         './src/modules/core/components/Tabs/TabPanel.jsx',
       ],
     },

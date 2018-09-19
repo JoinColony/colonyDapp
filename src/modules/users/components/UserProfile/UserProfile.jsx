@@ -1,16 +1,17 @@
 /* @flow */
 import React from 'react';
 
-import ProfileTemplate from '../../../pages/ProfileTemplate';
+import ColonyGrid from '~core/ColonyGrid';
 
-import UserColonies from './UserColonies';
+import ProfileTemplate from '../../../pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
 
-import MockUser from './__mocks__/MockUser';
+import mockColonies from './__datamocks__/mockColonies';
+import mockUser from './__datamocks__/mockUser';
 
 const UserProfile = () => (
-  <ProfileTemplate asideContent={<UserMeta user={MockUser} />}>
-    <UserColonies user={MockUser} />
+  <ProfileTemplate asideContent={<UserMeta user={mockUser} />}>
+    <ColonyGrid colonies={mockColonies} />
   </ProfileTemplate>
 );
 

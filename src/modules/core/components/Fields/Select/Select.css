@@ -55,7 +55,7 @@
   white-space: nowrap;
 }
 
-.select[aria-expanded="true"] .activeOption {
+.select[aria-expanded="true"] .activeOption, .select[aria-expanded="true"]:focus {
   color: var(--sky-blue);
 }
 
@@ -73,22 +73,14 @@
 
 .themeAlt {
   composes: baseSelect;
+  padding: 5px 0 5px 5px;
+  border: none;
   border-radius: var(--radius-normal);
+  background-color: transparent;
+  font-size: var(--size-small);
+  outline: none;
 }
 
-.themeAlt:focus {
-  outline-style: solid;
-}
-
-.themeAlt .selectInner {
-  border-bottom: 1px dotted transparent;
-}
-
-.themeAlt.select[aria-expanded="true"] {
-  background-color: var(--grey-blue-1);
-  outline: 0;
-}
-
-.themeAlt[aria-expanded="true"] .selectInner {
-  border-color: var(--grey-3);
+.themeAlt.select[aria-expanded="true"], .themeAlt:focus {
+  background-color: var(--temp-grey-5);
 }
