@@ -10,15 +10,15 @@ import { NavLink as NavLinkComponent } from 'react-router-dom';
 import styles from './NavLink.css';
 
 type Props = {
-  /** className to add when `to` matches the current route */
+  /** className to add to the existing classNames when `to` matches the current route (react-router's "activeClassName") */
   activeClassName?: string,
-  /** Link children to render inside link */
+  /** NavLink children to render inside the link */
   children?: Node,
-  /** Link to go to (react-router's "to") */
+  /** path to go to (react-router's "to") */
   to: string,
-  /** A string or a `messageDescriptor` that make up the button's text label */
+  /** A string or a `messageDescriptor` that make up the nav link's text */
   text?: MessageDescriptor | string,
-  /** Values for loading text (react-intl interpolation) */
+  /** Values for text (react-intl interpolation) */
   textValues?: { [string]: any },
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
