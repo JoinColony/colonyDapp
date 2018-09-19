@@ -1,7 +1,4 @@
 
 ```jsx
-const { BrowserRouter } = require('react-router-dom');
-<BrowserRouter>
-  <UserMention ensName="someUser" />
-</BrowserRouter>
+<UserMention ensName="someUser" />
 ```
