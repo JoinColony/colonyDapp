@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import Heading from '../Heading';
@@ -23,61 +23,33 @@ type Props = {
     displayName: string,
     colonyAddress: string,
   }>,
+  /** Indicates that the data is loading */
+  loading: boolean,
 };
 
-type State = {
-  isLoading: boolean,
-};
+const displayName = 'ColonyGrid';
 
-class ColonyGrid extends Component<Props, State> {
-  timeout: TimeoutID;
-
-  static displayName = 'ColonyGrid';
-
-  static defaultProps = {
-    colonies: [],
-  };
-
-  state = { isLoading: false };
-
-  componentDidMount() {
-    this.getColonyGrid();
-  }
-
-  getColonyGrid = () => {
-    this.setState({ isLoading: true });
-    this.timeout = setTimeout(() => {
-      this.setState({
-        isLoading: false,
-      });
-    }, 1000);
-  };
-
-  render() {
-    const { colonies } = this.props;
-    const { isLoading } = this.state;
-
-    return (
-      <div className={styles.main}>
-        <div className={styles.sectionTitle}>
-          <Heading text={MSG.title} appearance={{ size: 'medium' }} />
-        </div>
-        {isLoading ? (
-          <div className={styles.loader}>
-            <SpinnerLoader appearance={{ size: 'large' }} />
-          </div>
-        ) : (
-          <div className={styles.colonyGrid}>
-            {colonies.map(colony => (
-              <div className={styles.colonyGridItem} key={colony.colonyAddress}>
-                <ColonyGridItem colony={colony} />
-              </div>
-            ))}
-          </div>
-        )}
+const ColonyGrid = ({ colonies = [], loading }: Props) => (
+  <div className={styles.main}>
+    <div className={styles.sectionTitle}>
+      <Heading text={MSG.title} appearance={{ size: 'medium' }} />
+    </div>
+    {loading ? (
+      <div className={styles.loader}>
+        <SpinnerLoader appearance={{ size: 'large' }} />
       </div>
-    );
-  }
-}
+    ) : (
+      <div className={styles.colonyGrid}>
+        {colonies.map(colony => (
+          <div className={styles.colonyGridItem} key={colony.colonyAddress}>
+            <ColonyGridItem colony={colony} />
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+ColonyGrid.displayName = displayName;
 
 export default ColonyGrid;
