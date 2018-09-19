@@ -1,55 +1,61 @@
 /* @flow */
+
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
-import Heading from '../../../../core/components/Heading';
-import { SpinnerLoader } from '../../../../core/components/Preloaders';
+import Heading from '../Heading';
+import { SpinnerLoader } from '../Preloaders';
 
-import UserColonyItem from '../UserColonyItem';
+import ColonyGridItem from './ColonyGridItem.jsx';
 
-import styles from './UserColonies.css';
-
-import MockColonies from './__mocks__/MockColonies';
+import styles from './ColonyGrid.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'users.UserProfile.UserColonies.title',
+    id: 'ColonyGrid.title',
     defaultMessage: 'Colonies',
   },
 });
 
 type Props = {
-  // user: Object,
+  /** Array of colonies to display */
+  colonies: Array<{
+    displayName: string,
+    colonyAddress: string,
+  }>,
 };
 
 type State = {
-  colonies: Array<Object>,
   isLoading: boolean,
 };
 
-class UserColonies extends Component<Props, State> {
+class ColonyGrid extends Component<Props, State> {
   timeout: TimeoutID;
 
-  displayName = 'UserColonies';
+  static displayName = 'ColonyGrid';
 
-  state = { colonies: [], isLoading: false };
+  static defaultProps = {
+    colonies: [],
+  };
+
+  state = { isLoading: false };
 
   componentDidMount() {
-    this.getUserColonies();
+    this.getColonyGrid();
   }
 
-  getUserColonies = () => {
+  getColonyGrid = () => {
     this.setState({ isLoading: true });
     this.timeout = setTimeout(() => {
       this.setState({
         isLoading: false,
-        colonies: MockColonies,
       });
     }, 1000);
   };
 
   render() {
-    const { colonies, isLoading } = this.state;
+    const { colonies } = this.props;
+    const { isLoading } = this.state;
 
     return (
       <div className={styles.main}>
@@ -64,7 +70,7 @@ class UserColonies extends Component<Props, State> {
           <div className={styles.colonyGrid}>
             {colonies.map(colony => (
               <div className={styles.colonyGridItem} key={colony.colonyAddress}>
-                <UserColonyItem colony={colony} />
+                <ColonyGridItem colony={colony} />
               </div>
             ))}
           </div>
@@ -74,4 +80,4 @@ class UserColonies extends Component<Props, State> {
   }
 }
 
-export default UserColonies;
+export default ColonyGrid;

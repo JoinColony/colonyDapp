@@ -29,6 +29,7 @@ module.exports = {
       name: 'Elements and Widgets',
       components: [
         './src/modules/core/components/CopyableAddress/CopyableAddress.jsx',
+        './src/modules/core/components/ColonyGrid/ColonyGrid.jsx',
       ],
     },
     {
