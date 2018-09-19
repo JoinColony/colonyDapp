@@ -10,7 +10,7 @@ import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 
 type Appearance = {
-  theme?: 'default' | 'dark',
+  theme?: 'dark',
   separators?: 'borders' | 'none' | 'rows',
 };
 
@@ -19,16 +19,22 @@ type Props = {
   appearance?: Appearance,
   /** Child elements to render */
   children: ChildrenArray<ElementType<typeof TableHeader | typeof TableBody>>,
+  /** If table is expected to be larger than its parent, and will need to scroll to show all rows */
+  scrollable?: boolean,
 };
 
 const displayName = 'Table';
 
 const Table = ({
-  appearance = { theme: 'default', separators: 'rows' },
+  appearance = { separators: 'rows' },
   children,
+  scrollable = false,
   ...props
 }: Props) => (
-  <table className={getMainClasses(appearance, styles)} {...props}>
+  <table
+    className={getMainClasses(appearance, styles, { scrollable })}
+    {...props}
+  >
     {children}
   </table>
 );

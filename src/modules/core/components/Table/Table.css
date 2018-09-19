@@ -4,18 +4,18 @@
   --table-radii: var(--radius-normal);
 }
 
-.main {
+.baseStyles {
   border-radius: var(--table-radii);
   font-size: var(--size-normal);
   font-weight: var(--weight-normal);
 }
 
-.main thead tr th {
+.baseStyles thead tr th {
   padding: 20px 40px;
 }
 
-.main tbody tr td,
-.main tbody tr th {
+.baseStyles tbody tr td,
+.baseStyles tbody tr th {
   padding: 40px;
 }
 
@@ -25,68 +25,68 @@
 */
 
 /* top left cell */
-.main tbody tr:first-child td:first-child {
+.baseStyles tbody tr:first-child td:first-child {
   border-top-left-radius: var(--table-radii);
 }
 
 /* top left cell (of tbody) if thead */
-.main thead + tbody tr:first-child td:first-child {
+.baseStyles thead + tbody tr:first-child td:first-child {
   border-top-left-radius: 0;
 }
 
 /* top right cell */
-.main tbody tr:first-child td:last-child {
+.baseStyles tbody tr:first-child td:last-child {
   border-top-right-radius: var(--table-radii);
 }
 
 /* top right cell (of tbody) if thead */
-.main thead + tbody tr:first-child td:last-child {
+.baseStyles thead + tbody tr:first-child td:last-child {
   border-top-right-radius: 0;
 }
 
 /* top left table header */
-.main thead tr:first-child th:first-child {
+.baseStyles thead tr:first-child th:first-child {
   border-top-left-radius: var(--table-radii);
 }
 
 /* top right table header */
-.main thead tr:first-child th:last-child {
+.baseStyles thead tr:first-child th:last-child {
   border-top-right-radius: var(--table-radii);
 }
 
 /* bottom left cell */
-.main tbody tr:last-child td:first-child {
+.baseStyles tbody tr:last-child td:first-child {
   border-bottom-left-radius: var(--table-radii);
 }
 
 /* bottom right cell */
-.main tbody tr:last-child td:last-child {
+.baseStyles tbody tr:last-child td:last-child {
   border-bottom-right-radius: var(--table-radii);
 }
 
-/* Scrollable */
-
-.scrollable {
+/* State */
+/* 
+.stateScrollable {
   display: flex;
   flex-flow: column;
   height: 100%;
 }
 
-.scrollable tr {
+.stateScrollable tr {
   display: flex;
 }
 
-.scrollable th,
-.scrollable td {
+.stateScrollable th,
+.stateScrollable td {
   display: flex;
   align-items: center;
 }
 
-.scrollable tbody {
+.stateScrollable tbody {
   display: block;
   max-height: 100%;
   overflow: auto;
-}
+} */
 
 /* Appearance */
 
@@ -105,8 +105,8 @@
   border-bottom: 0;
 }
 
-.themeDefault {
-  composes: main;
+.main {
+  composes: baseStyles;
   border-color: var(--grey-blue-1);
   background-color: white;
   box-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
@@ -122,7 +122,7 @@
 }
 
 .themeDark {
-  composes: main;
+  composes: baseStyles;
   border-color: color(var(--grey-blue-1) alpha(30%));
   background-color: var(--grey-3);
   color: var(--colony-white);
