@@ -1,0 +1,11 @@
+@import 'variables.css';
+
+.layoutMain {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  overflow: auto;
+  background: var(--gradient-default);
+}
+
+.content {
+  padding: 15%;
+}

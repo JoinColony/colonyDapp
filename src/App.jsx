@@ -19,6 +19,7 @@ import ConnectWallet from './modules/wallet/components/ConnectWallet';
 import AsyncComponentLoader from './modules/core/components/AsyncComponentLoader';
 /* eslint-disable-next-line max-len */
 import CreateColonyWizard from './modules/dashboard/components/CreateColonyWizard';
+import Dashboard from './modules/dashboard/components/Dashboard';
 import WalletStart from './modules/wallet/components/WalletStart';
 import UserProfile from './modules/users/components/UserProfile';
 import UserProfileEdit from './modules/users/components/UserProfileEdit';
@@ -45,6 +46,11 @@ const Home = () => (
       <li>
         <NavLink style={{ color: 'blue' }} to="/createcolony">
           Create Colony Wizard
+        </NavLink>
+      </li>
+      <li>
+        <NavLink style={{ color: 'blue' }} to="/dashboard">
+          Dashboard
         </NavLink>
       </li>
       <li>
@@ -89,6 +95,7 @@ export default function App() {
           <div className={layout.stretch}>
             <Route exact path="/" component={Home} />
             <Route path="/createcolony" component={CreateColonyWizard} />
+            <Route path="/dashboard" component={Dashboard} />
             <Route path="/dynamic-import-route" component={DynamicRoute} />
             <Route path="/start" component={WalletStart} />
             <Route path="/createwallet" component={CreateWalletWizard} />
