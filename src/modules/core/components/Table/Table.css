@@ -65,7 +65,7 @@
 }
 
 /* State */
-/* 
+
 .stateScrollable {
   display: flex;
   flex-flow: column;
@@ -86,7 +86,7 @@
   display: block;
   max-height: 100%;
   overflow: auto;
-} */
+}
 
 /* Appearance */
 
