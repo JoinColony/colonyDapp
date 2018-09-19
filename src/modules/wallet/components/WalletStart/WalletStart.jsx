@@ -4,6 +4,7 @@ import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { NavLink } from 'react-router-dom';
 
 import styles from './WalletStart.css';
 
@@ -11,7 +12,6 @@ import WizardTemplate from '../../../pages/WizardTemplate';
 import Heading from '../../../core/components/Heading';
 import Link from '../../../core/components/Link';
 import Icon from '../../../core/components/Icon';
-import DecisionHub from '../../../core/components/DecisionHub';
 
 import {
   CONNECT_WALLET_SLUG_HARDWARE,
@@ -88,6 +88,49 @@ const rowSubTitles = defineMessages({
   },
 });
 
+type RowProps = {
+  title: MessageDescriptor,
+  subTitle: MessageDescriptor,
+  rowIndex: number,
+};
+
+const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => (
+  <div className={styles.row}>
+    <div className={styles.rowIcon}>
+      <Icon name={icons[rowIndex]} title={icons[rowIndex]} />
+    </div>
+    <div className={styles.rowContent}>
+      <Heading
+        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+        text={title}
+      />
+      <Heading
+        appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+        text={subTitle}
+      />
+    </div>
+    <Icon name="caret-right" title="caret-right" />
+  </div>
+);
+
+const allTheRows = Object.keys(rowTitles).map((key, i) => {
+  const keys = Object.keys(rowSubTitles);
+  const title = rowTitles[key];
+  const subTitle = rowSubTitles[keys[i]];
+  const slug = walletSlugs[i];
+
+  return (
+    <NavLink key={`Link${title.id}`} to={slug}>
+      <DetailRow
+        title={title}
+        subTitle={subTitle}
+        key={`row${title.id}`}
+        rowIndex={i}
+      />
+    </NavLink>
+  );
+});
+
 const WalletDetails = () => (
   <WizardTemplate>
     <section className={styles.content}>
@@ -103,14 +146,7 @@ const WalletDetails = () => (
           text={MSG.subTitle}
         />
       </div>
-      {
-        <DecisionHub
-          rowTitles={rowTitles}
-          rowSubTitles={rowSubTitles}
-          slugs={walletSlugs}
-          icons={icons}
-        />
-      }
+      {allTheRows}
       <Link to="/createwallet">
         <div className={styles.callToAction}>
           <div className={styles.actionImage}>

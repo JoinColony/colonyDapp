@@ -29,7 +29,7 @@ type Props = {
 
 const displayName = 'DecisionOption';
 
-class DecisionOption extends Component<Props, State> {
+class DecisionOption extends Component<Props> {
   makeDecision = () => {
     const {
       option: { value },

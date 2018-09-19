@@ -1,23 +1,22 @@
 // @flow
-import type { FormikProps } from 'formik';
 
 import React, { Component } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { providers } from 'ethers';
 import { EtherscanLoader } from '@colony/colony-js-contract-loader-http';
 import * as yup from 'yup';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
-import type { FileReaderFile } from '../FileUpload';
+import type { FormikProps } from 'formik';
 
 import styles from './StepSelectToken.css';
-
 import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import FileUpload from '../../../core/components/FileUpload';
+
+import type { SubmitFn } from '../../../core/components/Wizard';
 
 type FormValues = {
   nextStep: () => void,
@@ -85,7 +84,7 @@ const MSG = defineMessages({
   fileUploadHint: {
     id: 'CreateColony.SelectToken.fileUploadHint',
     defaultMessage: 'Recommended size for .png file is 60px by 60px, up to 1MB',
-  },
+  }
 });
 
 const displayName = 'dashboard.CreateColonyWizard.SelectToken';
@@ -103,26 +102,29 @@ class SelectToken extends Component<Props, State> {
   }
 
   componentDidUpdate({ values: { tokenAddress: previousAddress } }) {
-    // TODO: wrap in an interval to not call more often than once a second
-
     const {
       values: { tokenAddress },
       isValid,
     } = this.props;
 
     if (tokenAddress !== previousAddress && isValid) {
-      this.checkToken(tokenAddress)
-        .then(res => {
-          console.log(res);
+      this.intervalId = setInterval(() => {
+        this.checkToken(tokenAddress)
+          .then(res => {
+            //TODO: Get correct Etherscan response for exisiting token
 
-          MSG.preview = +res.name;
-          this.setState({ tokenDataNotFound: true });
-        })
-        .catch(error => {
-          this.setState({ tokenDataNotFound: true });
-          console.log(error);
-        });
+            MSG.preview = +res.name;
+            this.setState({ tokenDataNotFound: true });
+          })
+          .catch(() => {
+            this.setState({ tokenDataNotFound: true });
+          });
+      }, 1000);
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
   }
 
   checkToken = async tokenAddress => {
@@ -136,7 +138,7 @@ class SelectToken extends Component<Props, State> {
 
   render() {
     const { tokenDataNotFound } = this.state;
-    const { handleSubmit, errors, touched, isValid, values } = this.props;
+    const { handleSubmit, isValid, previousStep } = this.props;
 
     return (
       <section className={styles.content}>
@@ -171,12 +173,14 @@ class SelectToken extends Component<Props, State> {
                     }
                   />
                 </div>
-                <FileUpload
-                  accept={['svg', 'png']}
-                  label={MSG.fileUploadTitle}
-                  name="iconUpload"
-                  status={MSG.fileUploadHint}
-                />
+                <div className={styles.tokenDetails}>
+                  <FileUpload
+                    accept={['svg', 'png']}
+                    label={MSG.fileUploadTitle}
+                    name="iconUpload"
+                    status={MSG.fileUploadHint}
+                  />
+                </div>
               </React.Fragment>
             ) : (
               <Heading appearance={{ theme: 'secondary' }} text={MSG.preview} />
@@ -186,6 +190,7 @@ class SelectToken extends Component<Props, State> {
                 appearance={{ theme: 'secondary' }}
                 type="cancel"
                 text={MSG.cancel}
+                onClick={previousStep}
               />
               <Button
                 appearance={{ theme: 'primary' }}
@@ -200,14 +205,6 @@ class SelectToken extends Component<Props, State> {
     );
   }
 }
-
-export const formikConfig = {
-  mapPropsToValues: props => ({ tokenAddress: '' }),
-  validate: (values: FormValues): FormikErrors<FormValues> => {
-    const errors = {};
-    return errors;
-  },
-};
 
 export const validationSchema = yup.object({
   tokenAddress: yup

@@ -2,7 +2,7 @@
 import type { FormikProps } from 'formik';
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
@@ -12,8 +12,6 @@ import Input from '../../../core/components/Fields/Input';
 import InputLabel from '../../../core/components/Fields/InputLabel';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
-
-const { Formik } = require('formik');
 
 type FormValues = {
   nextStep: () => void,
@@ -59,32 +57,22 @@ const CreateToken = ({ handleSubmit }: Props) => (
         appearance={{ size: 'medium', weight: 'thin' }}
         text={MSG.heading}
       />
-      <Formik
-        initialValues={{ tokenAddress: '' }}
-        onSubmit={tokenAddress => console.log(tokenAddress)}
-        render={() => (
-          <form className={styles.nameForm} onSubmit={handleSubmit}>
-            <InputLabel label={MSG.labelCreateColony} />
-            <Input
-              name="colonyName"
-              placeholder="Type a display name for a colony"
-              appearance={{ width: 'full' }}
-            />
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="cancel"
-                text={MSG.cancel}
-              />
-              <Button
-                appearance={{ theme: 'primary' }}
-                type="submit"
-                text={MSG.next}
-              />
-            </div>
-          </form>
-        )}
-      />
+      <form className={styles.nameForm} onSubmit={handleSubmit}>
+        <InputLabel label={MSG.labelCreateColony} />
+        <Input name="tokenName" appearance={{ width: 'full' }} />
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.cancel}
+          />
+          <Button
+            appearance={{ theme: 'primary' }}
+            type="submit"
+            text={MSG.next}
+          />
+        </div>
+      </form>
     </div>
   </section>
 );

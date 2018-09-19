@@ -71,57 +71,51 @@ type FormValues = {
   nextStep: () => void,
 };
 
-type State = {
-  choice: string,
-};
-
 type Props = {
   previousStep: () => void,
   handleSubmit: () => void,
 } & FormikProps<FormValues>;
 
 const TokenChoice = ({ previousStep, handleSubmit }: Props) => (
-  <WizardTemplate>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', weight: 'thin' }}
-          text={MSG.heading}
-        />
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subTitle}
-        />
-      </div>
-      <div className={styles.subtitleWithLinkBox}>
-        <Heading
-          className={styles.subtitleWithLink}
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subTitleWithLink}
-        />
-        <div className={styles.link}>
-          <Button
-            appearance={{ theme: 'blue' }}
-            type="continue"
-            text={MSG.learnMore}
-          />
-        </div>
-      </div>
-      <form onSubmit={handleSubmit}>
-        {<DecisionHub name="tokenChoice" options={options} />}
-      </form>
-      <div className={styles.buttonContainer}>
+  <section className={styles.content}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', weight: 'thin' }}
+        text={MSG.heading}
+      />
+    </div>
+    <div className={styles.subtitle}>
+      <Heading
+        appearance={{ size: 'normal', weight: 'thin' }}
+        text={MSG.subTitle}
+      />
+    </div>
+    <div className={styles.subtitleWithLinkBox}>
+      <Heading
+        className={styles.subtitleWithLink}
+        appearance={{ size: 'normal', weight: 'thin' }}
+        text={MSG.subTitleWithLink}
+      />
+      <div className={styles.link}>
         <Button
-          appearance={{ theme: 'secondary' }}
-          type="cancel"
-          text={MSG.button}
-          onClick={previousStep}
+          appearance={{ theme: 'blue' }}
+          type="continue"
+          text={MSG.learnMore}
         />
       </div>
-    </section>
-  </WizardTemplate>
+    </div>
+    <form onSubmit={handleSubmit}>
+      {<DecisionHub name="tokenChoice" options={options} />}
+    </form>
+    <div className={styles.buttonContainer}>
+      <Button
+        appearance={{ theme: 'secondary' }}
+        type="cancel"
+        text={MSG.button}
+        onClick={previousStep}
+      />
+    </div>
+  </section>
 );
 
 export const Step = TokenChoice;
