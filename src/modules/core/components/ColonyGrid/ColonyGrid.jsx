@@ -24,7 +24,7 @@ type Props = {
     colonyAddress: string,
   }>,
   /** Indicates that the data is loading */
-  loading: boolean,
+  loading?: boolean,
 };
 
 const displayName = 'ColonyGrid';
