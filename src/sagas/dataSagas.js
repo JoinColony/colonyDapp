@@ -1,4 +1,4 @@
-import { put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import Data from '../data';
 
 import { initialData, setUserProfileContent } from '../actions';
@@ -7,28 +7,29 @@ import {
   ADD_COMMENT_TO_TASK,
   ADD_DOMAIN_TO_COLONY,
   ADD_TASK_TO_DOMAIN,
-  FETCH_COMMENTS,
-  LOAD_COLONY,
-  RETURN_COLONY,
   EDIT_COLONY,
-  UPDATE_COLONY,
   EDIT_DOMAIN,
-  UPDATE_DOMAIN,
   EDIT_TASK,
-  UPDATE_TASK,
-  LOAD_DOMAIN,
-  RETURN_DOMAIN,
+  FETCH_COMMENTS,
+  INITIALIZE_DATA,
   JOIN_COLONY,
+  LOAD_COLONY,
+  LOAD_DOMAIN,
+  RETURN_COLONY,
+  RETURN_DOMAIN,
   SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
   SET_PROFILE_CONTENT,
   SET_TASK_CONTENT,
+  UPDATE_COLONY,
+  UPDATE_DOMAIN,
+  UPDATE_TASK,
 } from '../actions/actionConstants';
 
 function* joinColony(action) {
   const { colonyId } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // yield Data.joinColony(colonyId);
+  const dataAPI = yield select(state => state.data.Data);
+  yield* call(dataAPI.joinColony, colonyId);
 
   yield put({
     type: SET_PROFILE_CONTENT,
@@ -41,8 +42,8 @@ function* joinColony(action) {
 
 function* addColonyDomain(action) {
   const { colonyId, domainId } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // yield Data.addColonyDomain(colonyId, domainId);
+  const dataAPI = yield select(state => state.data.Data);
+  yield* call(dataAPI.addColonyDomain, colonyId, domainId);
 
   yield put({
     type: SET_COLONY_CONTENT,
@@ -55,8 +56,8 @@ function* addColonyDomain(action) {
 
 function* addTaskToDomain(action) {
   const { domainId, task } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // yield Data.draftTask(domainId, task);
+  const dataAPI = yield select(state => state.data.Data);
+  yield* call(dataAPI.draftTask, domainId, task);
 
   yield put({
     type: SET_DOMAIN_CONTENT,
@@ -70,8 +71,13 @@ function* addTaskToDomain(action) {
 // TODO make this resemble the others
 function* addCommentToTask(action) {
   const { domainId, taskId, comment } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // const commentHash = yield Data.addComment(domainId, taskId, comment);
+  const dataAPI = yield select(state => state.data.Data);
+  const commentHash = yield* call(
+    dataAPI.addComment,
+    domainId,
+    taskId,
+    comment,
+  );
 
   yield put({
     type: SET_TASK_CONTENT,
@@ -85,8 +91,8 @@ function* addCommentToTask(action) {
 // TODO payload should be colony after Data class loads correctly
 function* loadColony(action) {
   const { colonyId } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // const colony = yield Data.loadColony(colonyId);
+  const dataAPI = yield select(state => state.data.Data);
+  const colony = yield* call(dataAPI.loadColony, colonyId);
 
   yield put({
     type: LOAD_COLONY,
@@ -104,8 +110,8 @@ function* loadColony(action) {
 
 function* editColony(action) {
   const { colonyId, update } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // const colony = yield Data.updateColony(colonyId, update);
+  const dataAPI = yield select(state => state.data.Data);
+  const colony = yield* call(dataAPI.updateColony, colonyId, update);
 
   yield put({
     type: UPDATE_COLONY,
@@ -115,8 +121,8 @@ function* editColony(action) {
 
 function* editDomain(action) {
   const { domainId, update } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // const domain = yield Data.updateDomain(domainId, update);
+  const dataAPI = yield select(state => state.data.Data);
+  const domain = yield* call(dataAPI.updateDomain, domainId, update);
 
   yield put({
     type: UPDATE_DOMAIN,
@@ -126,8 +132,8 @@ function* editDomain(action) {
 
 function* editTask(action) {
   const { domainId, taskId, update } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // const task = yield Data.updateTask(domainId, taskId, update);
+  const dataAPI = yield select(state => state.data.Data);
+  const task = yield* call(dataAPI.updateTask, domainId, taskId, update);
 
   yield put({
     type: UPDATE_TASK,
@@ -138,8 +144,8 @@ function* editTask(action) {
 // TODO payload should be domain after Data class loads correctly
 function* loadDomain(action) {
   const { domainId } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  // const domain = yield Data.loadDomain(domainId);
+  const dataAPI = yield select(state => state.data.Data);
+  const domain = yield* call(dataAPI.loadDomain, domainId);
 
   yield put({
     type: LOAD_DOMAIN,
@@ -157,8 +163,8 @@ function* loadDomain(action) {
 
 function* fetchComments(action) {
   const { domainId, taskId } = action.payload;
-  const Data = yield select(state => state.data.Data);
-  /* const comments = yield Data.getTaskComments(domainId, taskId);*/
+  const dataAPI = yield select(state => state.data.Data);
+  const comments = yield* call(dataAPI.getTaskComments, domainId, taskId);
 
   yield put({
     type: UPDATE_TASK,
@@ -182,8 +188,7 @@ function* initializeData(action) {
   });
 
   yield call(data.ready);
-
-  yield call(resolve, 'working');
+  yield call(resolve, 'data API started and stored in Redux');
 
   yield put(initialData(data));
 }
