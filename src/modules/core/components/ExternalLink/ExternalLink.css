@@ -1,0 +1,10 @@
+@import 'variables.css';
+
+.main {
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+}
+
+.main:hover {
+  text-decoration: underline;
+}
