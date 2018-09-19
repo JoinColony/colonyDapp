@@ -1,4 +1,5 @@
 /* @flow */
+import rimraf from 'rimraf';
 import * as ipfs from './ipfs';
 import { Domane, Kolonie, orbitSetup, UserProfile } from './orbit';
 import type {
@@ -342,6 +343,22 @@ export default class Data {
   async stop(): Promise<void> {
     await this._orbitNode.stop();
     return this._ipfsNode.stop();
+  }
+
+  // Probably only used in testing
+  async clear(rootRepo): Promise<void> {
+    if (this._pinner) {
+      this._pinner.stop();
+    }
+
+    await this.stop();
+    await new Promise((resolve, reject) => {
+      rimraf(
+        rootRepo,
+        {},
+        err => (err ? reject(err) : resolve('cleared root repo', rootRepo)),
+      );
+    });
   }
 
   static async fromDefaultConfig(

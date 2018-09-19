@@ -22,6 +22,8 @@ import {
 } from '../../src/actions';
 
 let store;
+const rootRepo = '/tmp/tests';
+
 beforeAll(async () => {
   const sagaMiddleware = createSagaMiddleware();
 
@@ -33,7 +35,18 @@ beforeAll(async () => {
 
   sagaMiddleware.run(sagas);
 
-  await initializeData(store.dispatch).then(result => console.log(result));
+  await initializeData(store.dispatch, rootRepo).then(result =>
+    console.log(result),
+  );
+});
+
+// TODO don't think this actually works as it does not log
+//      intent is to clear out store between runs
+afterAll(async () => {
+  const state = store.getState();
+  await state.data.Data.clear(rootRepo).then(result =>
+    console.log("all clear cap'n", result),
+  );
 });
 
 describe('Data reducer', () => {

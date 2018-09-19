@@ -170,16 +170,14 @@ function* fetchComments(action) {
 }
 
 function* initializeData(action) {
-  const { resolve } = action;
-
-  const data = yield call(Data.fromDefaultConfig, 'no pinner', {
+  const { resolve, rootRepo } = action;
+  const data = yield call(Data.fromDefaultConfig, null, {
     ipfs: {
       swarm: ['/ip4/0.0.0.0/tcp/0'],
-
-      repo: `/tmp/tests/time/ipfs/ipfs`,
+      repo: `${rootRepo}/ipfs`,
     },
     orbit: {
-      repo: `/tmp/tests/time/ipfs/orbit`,
+      repo: `${rootRepo}/orbit`,
     },
   });
 

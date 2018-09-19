@@ -1,7 +1,6 @@
 // @flow
 
 import {
-  INITIALIZE_DATA,
   SET_DATA_STATE,
   STATE_LOADING,
   STATE_READY,
@@ -41,12 +40,12 @@ export function initialData(Data: {}): Action {
 }
 
 /* export const initializeData = () => ({ type: INITIALIZE_DATA });*/
-export const initializeData = dispatch =>
+export const initializeData = (dispatch, rootRepo) =>
   new Promise((resolve, reject) =>
     dispatch({
       type: 'INITIALIZE_DATA',
       resolve,
-      reject,
+      rootRepo,
     }),
   );
 
