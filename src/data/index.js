@@ -46,9 +46,9 @@ export default class Data {
     Adds a colony to the UserProfile
   */
   async joinColony(colonyHash: string) {
-    const store = await this.getUserProfile('user-profile');
+    const store = await this.getMyUserProfile();
     await store.joinColony(colonyHash);
-    return;
+    return true;
   }
 
   /*
