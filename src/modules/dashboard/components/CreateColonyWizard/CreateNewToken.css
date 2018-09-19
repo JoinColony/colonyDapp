@@ -10,6 +10,22 @@
   margin-top: 180px;
 }
 
+.customInputHelp {
+  /*
+   * @NOTE Negative margins
+   *
+   * It was easier for this to have nagative margins so that the space between
+   * it an the input is smaller.
+   *
+   * The alternative would be to customize the Input's styles. This works better
+   * since this is already a custom element.
+   */
+  margin-top: -8px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  color: var(--temp-grey-11);
+}
+
 .actionsContainer {
   display: flex;
   justify-content: flex-end;

@@ -3,7 +3,7 @@
 import type { FormikProps } from 'formik';
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './CreateNewToken.css';
 
@@ -29,6 +29,11 @@ const MSG = defineMessages({
   labelNewToken: {
     id: 'CreateNewToken.labelNewToken',
     defaultMessage: 'Token Name (example: Colony Token)',
+  },
+  helpNewToken: {
+    id: 'CreateNewToken.helpNewToken',
+    defaultMessage:
+      '1. Please only use letters, number, periods, hyphens, and underscores.',
   },
 });
 
@@ -56,6 +61,9 @@ const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
         appearance={{ theme: 'fat' }}
         label={MSG.labelNewToken}
       />
+      <p className={styles.customInputHelp}>
+        <FormattedMessage {...MSG.helpNewToken} />
+      </p>
     </div>
     <div className={styles.actionsContainer}>
       <Button
