@@ -63,6 +63,12 @@ describe('Data reducer', () => {
     expect(state.data.Data).toBeTruthy();
   });
 
+  test('Data class works normally', async () => {
+    const state = store.getState();
+    const joined = await state.data.Data.joinColony('myColony'); // returns true
+    expect(joined).toBeTruthy();
+  });
+
   // TODO add permissions
   test('After action dispatch, the Redux state is updated', async () => {
     store.dispatch(setUserProfileContent({ greeting: 'hello' }));
