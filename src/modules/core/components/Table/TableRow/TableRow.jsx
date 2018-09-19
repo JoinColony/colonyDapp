@@ -15,8 +15,10 @@ type Props = {
 
 const displayName = 'TableRow';
 
-const TableRow = ({ children }: Props) => (
-  <tr className={styles.main}>{children}</tr>
+const TableRow = ({ children, ...props }: Props) => (
+  <tr className={styles.main} {...props}>
+    {children}
+  </tr>
 );
 
 TableRow.displayName = displayName;

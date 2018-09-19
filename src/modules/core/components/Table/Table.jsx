@@ -26,8 +26,11 @@ const displayName = 'Table';
 const Table = ({
   appearance = { theme: 'default', separators: 'rows' },
   children,
+  ...props
 }: Props) => (
-  <table className={getMainClasses(appearance, styles)}>{children}</table>
+  <table className={getMainClasses(appearance, styles)} {...props}>
+    {children}
+  </table>
 );
 
 Table.displayName = displayName;

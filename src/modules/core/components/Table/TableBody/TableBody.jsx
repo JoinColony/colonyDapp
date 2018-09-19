@@ -13,8 +13,10 @@ type Props = {
 
 const displayName = 'TableBody';
 
-const TableBody = ({ children }: Props) => (
-  <tbody className={styles.main}>{children}</tbody>
+const TableBody = ({ children, ...props }: Props) => (
+  <tbody className={styles.main} {...props}>
+    {children}
+  </tbody>
 );
 
 TableBody.displayName = displayName;
