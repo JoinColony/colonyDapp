@@ -89,24 +89,31 @@ describe('Data reducer', () => {
   });
 
   test('Can add task to a domain', async () => {
-    const task = { title: 'fakeTask', _id: 'fakeTask', tags: [] };
+    const task = { title: 'fakeTask', _id: 'fakeTask', tags: [], comments: [] };
     store.dispatch(addTaskToDomain('fakeDomain', task));
     const state = store.getState();
     const title = state.data.data.domains['fakeDomain'].tasks[0].title;
     expect(title).toBe('fakeTask');
   });
 
+  test('Task comment are empty after fetch if no comments', async () => {
+    store.dispatch(fetchCommentsForTask('fakeDomain', 'fakeTask'));
+    const state = store.getState();
+    const comments = state.data.data.domains['fakeDomain'].tasks[0].comments;
+    console.log(state.data.data.domains['fakeDomain'].tasks);
+    expect(comments.length).toBe(0);
+  });
+
   test('Can add comment to a task', async () => {
     store.dispatch(addCommentToTask('fakeDomain', 'fakeTask', 'fakeComment'));
     const state = store.getState();
-    const comment =
-      state.data.data.domains['fakeDomain'].tasks[0].commentHashes[0];
+    const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
     expect(comment).toBe('fakeComment');
   });
 
   test("Fetches a task's comments", async () => {
-    store.dispatch(fetchCommentsForTask('fakeDomain', 'fakeTask'));
     const state = store.getState();
+    store.dispatch(fetchCommentsForTask('fakeDomain', 'fakeTask'));
     const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
     expect(comment).toBe('fakeComment');
   });

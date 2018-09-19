@@ -115,6 +115,7 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
         taskId: taskID,
         update: { property: taskProperty, value: taskValue },
       } = action.payload;
+      if (!taskValue) return state;
       return update(state, {
         data: {
           domains: {
