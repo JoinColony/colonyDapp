@@ -29,7 +29,7 @@ type Props = {
 } & FormikProps<FormValues>;
 
 type State = {
-  hasTokenData: boolean,
+  tokenDataNotFound: boolean,
 };
 
 const MSG = defineMessages({
@@ -48,6 +48,10 @@ const MSG = defineMessages({
   hint: {
     id: 'CreateColony.SelectToken.hint',
     defaultMessage: 'You can find them here https://etherscan.io/tokens',
+  },
+  symbolHint: {
+    id: 'CreateColony.SelectToken.symbolHint',
+    defaultMessage: 'Max of 6 characters',
   },
   preview: {
     id: 'CreateColony.SelectToken.preview',
@@ -69,9 +73,18 @@ const MSG = defineMessages({
     id: 'CreateColony.SelectToken.next',
     defaultMessage: 'Next',
   },
-  placeholderTokenAddress: {
-    id: 'CreateColony.SelectToken.tokenPlaceholder',
-    defaultMessage: 'Type a token contract address',
+  invalidAddress: {
+    id: 'CreateColony.SelectToken.invalidAddress',
+    defaultMessage:
+      'Not a valid token address. Check: https://etherscan.io/tokens',
+  },
+  fileUploadTitle: {
+    id: 'CreateColony.SelectToken.fileUpload',
+    defaultMessage: 'Token Icon (.svg or .png)',
+  },
+  fileUploadHint: {
+    id: 'CreateColony.SelectToken.fileUploadHint',
+    defaultMessage: 'Recommended size for .png file is 60px by 60px, up to 1MB',
   },
 });
 
@@ -79,7 +92,7 @@ const displayName = 'dashboard.CreateColonyWizard.SelectToken';
 
 class SelectToken extends Component<Props, State> {
   state = {
-    hasTokenData: false,
+    tokenDataNotFound: false,
   };
 
   componentDidMount() {
@@ -101,13 +114,18 @@ class SelectToken extends Component<Props, State> {
       this.checkToken(tokenAddress)
         .then(res => {
           console.log(res);
+
+          MSG.preview = +res.name;
+          this.setState({ tokenDataNotFound: true });
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          this.setState({ tokenDataNotFound: true });
+          console.log(error);
+        });
     }
   }
 
   checkToken = async tokenAddress => {
-
     const token = new ColonyNetworkClient.TokenClient({
       adapter: this.adapter,
       query: { contractAddress: tokenAddress },
@@ -117,7 +135,7 @@ class SelectToken extends Component<Props, State> {
   };
 
   render() {
-    const { hasTokenData } = this.state;
+    const { tokenDataNotFound } = this.state;
     const { handleSubmit, errors, touched, isValid, values } = this.props;
 
     return (
@@ -131,31 +149,37 @@ class SelectToken extends Component<Props, State> {
             <Input
               name="tokenAddress"
               label={MSG.labelCreateColony}
-              placeholder={MSG.placeholderTokenAddress}
+              hint={
+                <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
+              }
+              status={MSG.hint}
             />
-            <Heading
-              appearance={{ size: 'small', weight: 'thin' }}
-              text={MSG.hint}
-            />
-            {!hasTokenData ? (
-              <Heading
-                appearance={{ theme: 'secondary' }}
-                type="continue"
-                text={MSG.preview}
-              />
-            ) : (
+            {tokenDataNotFound ? (
               <React.Fragment>
-                <Input
-                  name="tokenName"
-                  label={MSG.tokenName}
-                  placeholder="Type a token name"
-                />,
-                <Input
-                  name="tokenSymbol"
-                  label={MSG.tokenSymbol}
-                  placeholder="Type a token symbol"
-                />,
+                <div className={styles.tokenDetails}>
+                  <Input name="tokenName" label={MSG.tokenName} />
+                </div>
+                <div className={styles.tokenDetails}>
+                  <Input
+                    name="tokenSymbol"
+                    label={MSG.tokenSymbol}
+                    hint={
+                      <Heading
+                        appearance={{ size: 'small', weight: 'thin' }}
+                        text={MSG.symbolHint}
+                      />
+                    }
+                  />
+                </div>
+                <FileUpload
+                  accept={['svg', 'png']}
+                  label={MSG.fileUploadTitle}
+                  name="iconUpload"
+                  status={MSG.fileUploadHint}
+                />
               </React.Fragment>
+            ) : (
+              <Heading appearance={{ theme: 'secondary' }} text={MSG.preview} />
             )}
             <div className={styles.buttons}>
               <Button
@@ -166,6 +190,7 @@ class SelectToken extends Component<Props, State> {
               <Button
                 appearance={{ theme: 'primary' }}
                 type="submit"
+                disabled={!isValid}
                 text={MSG.next}
               />
             </div>
@@ -188,8 +213,8 @@ export const validationSchema = yup.object({
   tokenAddress: yup
     .string()
     .required()
-    .address(),
-  tokenSymbol: yup.string().max(6, 'Too Long!'),
+    .address(MSG.invalidAddress),
+  tokenSymbol: yup.string().max(6),
   tokenName: yup.string(),
 });
 

@@ -50,7 +50,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CreateColonyWizard.ColonyName';
 
-const ColonyName = ({ handleSubmit }: Props) => (
+const ColonyName = ({ handleSubmit, isValid }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -72,6 +72,7 @@ const ColonyName = ({ handleSubmit }: Props) => (
           <Button
             appearance={{ theme: 'primary' }}
             type="submit"
+            disabled={!isValid}
             text={MSG.next}
           />
         </div>

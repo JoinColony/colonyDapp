@@ -85,6 +85,8 @@ type Props = {
   upload: (fileData: FileReaderFile) => string,
   /** Input field name (form variable) */
   name: string,
+  /** Status text */
+  status?: string | MessageDescriptor,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
@@ -193,6 +195,7 @@ class FileUpload extends Component<Props> {
       renderPlaceholder,
       remove,
       upload,
+      status,
     } = this.props;
 
     const files = getIn(values, name) || [];
@@ -246,7 +249,7 @@ class FileUpload extends Component<Props> {
             </Fragment>
           )}
         </Dropzone>
-        <InputStatus error={hasError ? MSG.labelError : ''} />
+        <InputStatus status={status} error={hasError ? MSG.labelError : ''} />
       </div>
     );
   }

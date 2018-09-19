@@ -1,3 +1,5 @@
+@import 'variables.css';
+
 .main {
   margin-top: -100px;
   width: 100%;
@@ -22,6 +24,10 @@
 .nameForm {
   margin-top: 40px;
   width: 460px;
+}
+
+.tokenDetails{
+  margin-top: 50px;
 }
 
 .input {
