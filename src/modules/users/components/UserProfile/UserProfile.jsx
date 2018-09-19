@@ -6,8 +6,8 @@ import ColonyGrid from '~core/ColonyGrid';
 import ProfileTemplate from '../../../pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
 
-import mockColonies from './__mocks__/mockColonies';
-import mockUser from './__mocks__/mockUser';
+import mockColonies from './__datamocks__/mockColonies';
+import mockUser from './__datamocks__/mockUser';
 
 const UserProfile = () => (
   <ProfileTemplate asideContent={<UserMeta user={mockUser} />}>

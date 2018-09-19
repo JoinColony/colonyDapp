@@ -7,7 +7,7 @@ import ColonyGrid from '~core/ColonyGrid';
 
 import styles from './TabMyTasks.css';
 
-import mockColonies from './__mocks__/mockColonies';
+import mockColonies from './__datamocks__/mockColonies';
 
 const MSG = defineMessages({
   emptyText: {
