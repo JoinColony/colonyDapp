@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
+import ExternalLink from '~core/ExternalLink';
 
 import styles from './Dashboard.css';
 
@@ -26,6 +27,14 @@ const MSG = defineMessages({
   placeholderFilter: {
     id: 'dashboard.Dashboard.placeholderFilter',
     defaultMessage: 'Filter',
+  },
+  helpText: {
+    id: 'dashboard.Dashboard.helpText',
+    defaultMessage: 'Need help using Colony? Visit our Help Center',
+  },
+  linkHelpCenter: {
+    id: 'dashboard.Dashboard.linkHelpCenter',
+    defaultMessage: 'Help Center',
   },
 });
 
@@ -68,6 +77,14 @@ const Dashboard = () => {
           </TabPanel>
         </Tabs>
       </main>
+      <aside className={styles.sidebar}>
+        <p className={styles.helpText}>
+          <FormattedMessage {...MSG.helpText} />
+          <br />
+          <br />
+          <ExternalLink text={MSG.linkHelpCenter} href="#" />
+        </p>
+      </aside>
     </div>
   );
 };

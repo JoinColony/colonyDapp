@@ -2,10 +2,26 @@
 
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  padding: 15%;
   overflow: auto;
   background: var(--gradient-default);
+  grid-template-columns: auto 180px;
+  grid-template-rows: auto;
+  column-gap: 80px;
 }
 
 .content {
-  padding: 15%;
+  align-self: start;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.sidebar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.helpText {
+  margin-top: 65px;
 }

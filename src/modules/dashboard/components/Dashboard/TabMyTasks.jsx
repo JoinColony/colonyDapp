@@ -12,9 +12,8 @@ import mockColonies from './__datamocks__/mockColonies';
 const MSG = defineMessages({
   emptyText: {
     id: 'dashboard.Dashboard.TabMyTasks.emptyText',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      "It looks like you have not worked on any colonies. Why don't you check out one of these colonies for tasks that you can complete:",
+    defaultMessage: `It looks like you have not worked on any colonies.
+Why don't you check out one of these colonies for tasks that you can complete:`,
   },
 });
 
