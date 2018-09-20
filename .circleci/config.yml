@@ -21,7 +21,7 @@ jobs:
           name: "Installing modules"
           command: |
             yarn install
-            yarn provision
+            yarn provision --skip-colony-network-build
       - save_cache:
           paths:
             - node_modules
@@ -75,7 +75,7 @@ jobs:
           name: "Installing modules"
           command: |
             yarn install
-            yarn provision
+            yarn provision --skip-colony-network-build
       - save_cache:
           paths:
             - node_modules
@@ -124,7 +124,7 @@ jobs:
           name: "Installing modules"
           command: |
             yarn install
-            yarn provision
+            yarn provision --skip-colony-network-build
       - save_cache:
           paths:
             - node_modules

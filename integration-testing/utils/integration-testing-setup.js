@@ -182,7 +182,7 @@ module.exports = async () => {
     isEmptySync(pinningServicePath)
   ) {
     console.log(chalk.yellow.bold('Provisioning submodules'));
-    await exec('yarn provision');
+    await exec('yarn provision --skip-colony-network-build');
   }
 
   /*
