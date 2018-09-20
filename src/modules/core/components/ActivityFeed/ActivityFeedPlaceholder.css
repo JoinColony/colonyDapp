@@ -1,0 +1,14 @@
+@import 'variables.css';
+
+.main {
+  position: relative;
+  filter: blur(1.25px);
+}
+
+.coverUp {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  cursor: default;
+}

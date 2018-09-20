@@ -1,0 +1,16 @@
+@import 'variables.css';
+
+:root {
+  --container-padding-left: 30px;
+}
+
+.main {
+  border-radius: var(--radius-large);
+  background-color: white;
+  box-shadow: var(--box-shadow-grey-blue-large);
+}
+
+.sectionTitle {
+  padding: 20px 0 0 var(--container-padding-left);
+  border-bottom: 1px solid var(--grey-blue-1);
+}

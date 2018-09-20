@@ -1,0 +1,17 @@
+@import 'variables.css';
+
+:root {
+  --container-padding-horizontal: 30px;
+  --container-padding-vertical: 15px;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--container-padding-vertical) var(--container-padding-horizontal);
+}
+
+.main + .main {
+  border-top: 1px solid var(--grey-blue-1);
+}
