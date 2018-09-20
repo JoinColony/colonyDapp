@@ -4,6 +4,8 @@ import { getNetworkClient } from './utils/network-client-helpers';
 
 const tokensToMint = 1000;
 
+jest.setTimeout(30000);
+
 describe('`ColonyNetworkClient` is able to', () => {
   test('Create and deploy a new Token', async () => {
     const networkClient = await getNetworkClient();

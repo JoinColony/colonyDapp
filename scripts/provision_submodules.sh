@@ -44,7 +44,7 @@ cd ${ROOT_PATH}
 log "Building '${NETWORK}' submodule"
 cd "${LIB_PATH}/${NETWORK}"
 git submodule update --init
-yarn
+npm install
 cd ${ROOT_PATH}
 
 # Build pinning service

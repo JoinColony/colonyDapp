@@ -13,23 +13,31 @@ const workerAddress = Object.keys(global.ganacheAccounts.private_keys)[1];
 /*
  * Increase the async timeout
  */
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 describe('`ColonyClient` is able to', () => {
   test('Set the role for a task', async () => {
     /*
      * Get the network client
      */
-    const networkClient = await getNetworkClient(managerAddress);
+    const managerNetworkClient = await getNetworkClient(managerAddress);
+    const workerNetworkClient = await getNetworkClient(workerAddress);
     /*
      * Get the number of colonies. This will also represent the last created
      * colony's Id which we created in the previous step.
      */
-    const { count: lastColonyId } = await networkClient.getColonyCount.call();
+    const {
+      count: lastColonyId,
+    } = await managerNetworkClient.getColonyCount.call();
     /*
      * Get the existing colony
      */
-    const colonyClient = await networkClient.getColonyClient(lastColonyId);
+    const managerColonyClient = await managerNetworkClient.getColonyClient(
+      lastColonyId,
+    );
+    const workerColonyClient = await workerNetworkClient.getColonyClient(
+      lastColonyId,
+    );
     /*
      * This is a little jury-rigged, since later tests might create new colonies,
      * which in turn will make this value to not be reliable.
@@ -37,12 +45,14 @@ describe('`ColonyClient` is able to', () => {
      * But as it stands, this is the Id of the latest domain we created in this
      * colony during the `domain` integration tests.
      */
-    const { count: latestDomainId } = await colonyClient.getDomainCount.call();
+    const {
+      count: latestDomainId,
+    } = await managerColonyClient.getDomainCount.call();
     /*
      * Create the task under the last domain create in this colony.
      * (See above about the caveat on this)
      */
-    const newTaskTransaction = await colonyClient.createTask.send({
+    const newTaskTransaction = await managerColonyClient.createTask.send({
       specificationHash: multiHash.encode(taskDescription),
       domainId: latestDomainId,
     });
@@ -67,16 +77,21 @@ describe('`ColonyClient` is able to', () => {
      *
      * This will normalize them when checking one against the other
      */
-    const { address: managerRoleAddress } = await colonyClient.getTaskRole.call(
-      { taskId: newTaskId, role: MANAGER_ROLE },
-    );
+    const {
+      address: managerRoleAddress,
+    } = await managerColonyClient.getTaskRole.call({
+      taskId: newTaskId,
+      role: MANAGER_ROLE,
+    });
     expect(managerRoleAddress.toLowerCase()).toEqual(
       managerAddress.toLowerCase(),
     );
     /*
      * Check that the task does not have a worker role assigned
      */
-    const { address: workerRoleNull } = await colonyClient.getTaskRole.call({
+    const {
+      address: workerRoleNull,
+    } = await managerColonyClient.getTaskRole.call({
       taskId: newTaskId,
       role: WORKER_ROLE,
     });
@@ -84,16 +99,25 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Set another address as the worker
      */
-    const setTaskRoleTransaction = await colonyClient.setTaskRoleUser.send({
-      taskId: newTaskId,
-      role: WORKER_ROLE,
-      user: workerAddress,
-    });
-    expect(setTaskRoleTransaction).toHaveProperty('successful', true);
+    const multisigSetWorkerRoleManager = await managerColonyClient.setTaskWorkerRole.startOperation(
+      {
+        taskId: newTaskId,
+        user: workerAddress,
+      },
+    );
+    await multisigSetWorkerRoleManager.sign();
+    const multisigSetWorkerRoleWorker = await workerColonyClient.setTaskWorkerRole.restoreOperation(
+      multisigSetWorkerRoleManager.toJSON(),
+    );
+    await multisigSetWorkerRoleWorker.sign();
+    const setWorkerRoleTransaction = await multisigSetWorkerRoleWorker.send();
+    expect(setWorkerRoleTransaction).toHaveProperty('successful', true);
     /*
      * Check that the task now has a worker role, and is the correct one
      */
-    const { address: workerRoleAddress } = await colonyClient.getTaskRole.call({
+    const {
+      address: workerRoleAddress,
+    } = await managerColonyClient.getTaskRole.call({
       taskId: newTaskId,
       role: WORKER_ROLE,
     });

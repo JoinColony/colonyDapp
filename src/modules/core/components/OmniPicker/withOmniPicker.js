@@ -13,6 +13,9 @@ import type { Data, ItemComponentType } from './types';
 import OmniPicker from './OmniPicker.jsx';
 
 type ExternalOmniPickerProps = {
+  // It seems that PropTypes are not being used for this component,
+  // so this might be a false positive?
+  // eslint-disable-next-line react/no-unused-prop-types
   itemComponent: ItemComponentType,
 };
 

@@ -1,11 +1,10 @@
 import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
-import { WORKER_ROLE } from '../../src/lib/colonyJS/packages/colony-js-client';
 
 /*
  * Increase the async timeout
  */
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 const taskDescription = 'Integration Tests Task';
 const taskBrief = 'This task intends to test multisig operations';
@@ -63,11 +62,19 @@ describe('`ColonyClient` is able to', () => {
     /*
      * Set a worker for the task
      */
-    await managerColonyClient.setTaskRoleUser.send({
-      taskId: newTaskId,
-      role: WORKER_ROLE,
-      user: workerAddress,
-    });
+    const multisigSetWorkerRoleManager = await managerColonyClient.setTaskWorkerRole.startOperation(
+      {
+        taskId: newTaskId,
+        user: workerAddress,
+      },
+    );
+    await multisigSetWorkerRoleManager.sign();
+    const multisigSetWorkerRoleWorker = await workerColonyClient.setTaskWorkerRole.restoreOperation(
+      multisigSetWorkerRoleManager.toJSON(),
+    );
+    await multisigSetWorkerRoleWorker.sign();
+    const setWorkerRoleTransaction = await multisigSetWorkerRoleWorker.send();
+    expect(setWorkerRoleTransaction).toHaveProperty('successful', true);
     /*
      * Begin the multisig operation by setting the new task brief
      */

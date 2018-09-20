@@ -1,6 +1,8 @@
 import multiHash from '../utils/ipfs-hash-helpers';
 import { getNetworkClient } from '../utils/network-client-helpers';
 
+import { CANCELLED_TASK_STATUS } from '../../src/lib/colonyJS/packages/colony-js-client';
+
 const taskDescription = 'Integration Tests Task';
 
 const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
@@ -8,7 +10,7 @@ const managerAddress = Object.keys(global.ganacheAccounts.private_keys)[0];
 /*
  * Increase the async timeout
  */
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 describe('`ColonyClient` is able to', () => {
   test('Cancel a task', async () => {
@@ -63,10 +65,6 @@ describe('`ColonyClient` is able to', () => {
     const cancelledTask = await managerColonyClient.getTask.call({
       taskId: newTaskId,
     });
-    expect(cancelledTask).toHaveProperty('cancelled', true);
-    /*
-     * But it should not be finalized
-     */
-    expect(cancelledTask).toHaveProperty('finalized', false);
+    expect(cancelledTask).toHaveProperty('status', CANCELLED_TASK_STATUS);
   });
 });

@@ -52,23 +52,30 @@ describe('`ColonyNetworkClient` is able to', () => {
      * Setup the Network Client Instance
      */
     const networkClient = await getNetworkClient();
+    expect(networkClient).toHaveProperty('addColonyVersion');
+    expect(networkClient).toHaveProperty('addSkill');
+    expect(networkClient).toHaveProperty('createColony');
+    expect(networkClient).toHaveProperty('createMetaColony');
+    expect(networkClient).toHaveProperty('events');
+    expect(networkClient).toHaveProperty('getChildSkillId');
     expect(networkClient).toHaveProperty('getColony');
-    expect(networkClient).toHaveProperty('getMetaColonyClient');
-    expect(networkClient).toHaveProperty('getMetaColonyAddress');
     expect(networkClient).toHaveProperty('getColonyCount');
-    expect(networkClient).toHaveProperty('getColonyClient');
     expect(networkClient).toHaveProperty('getColonyVersionResolver');
-    expect(networkClient).toHaveProperty('createToken');
     expect(networkClient).toHaveProperty('getCurrentColonyVersion');
+    expect(networkClient).toHaveProperty('getMetaColonyAddress');
     expect(networkClient).toHaveProperty('getParentSkillId');
-    expect(networkClient).toHaveProperty('getReputationUpdateLogEntry');
-    expect(networkClient).toHaveProperty('getReputationUpdateLogLength');
+    expect(networkClient).toHaveProperty('getRootGlobalSkillId');
     expect(networkClient).toHaveProperty('getSkill');
     expect(networkClient).toHaveProperty('getSkillCount');
-    expect(networkClient).toHaveProperty('createColony');
-    expect(networkClient).toHaveProperty('deposit');
-    expect(networkClient).toHaveProperty('upgradeColony');
-    expect(networkClient).toHaveProperty('withdraw');
+    expect(networkClient).toHaveProperty('getTokenLocking');
+    expect(networkClient).toHaveProperty('isColony');
+    expect(networkClient).toHaveProperty('registerUserLabel');
+    expect(networkClient).toHaveProperty('setTokenLocking');
+    expect(networkClient).toHaveProperty('setupRegistrar');
+    expect(networkClient).toHaveProperty('startTokenAuction');
+    expect(networkClient.events).toHaveProperty('AuctionCreated');
+    expect(networkClient.events).toHaveProperty('ColonyAdded');
+    expect(networkClient.events).toHaveProperty('SkillAdded');
     /*
      * The Meta Colony should be available
      */
