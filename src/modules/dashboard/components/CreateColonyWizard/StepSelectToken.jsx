@@ -2,9 +2,12 @@
 
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
+// $FlowFixMe
 import ColonyNetworkClient from '@colony/colony-js-client';
+// $FlowFixMe
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { providers } from 'ethers';
+// $FlowFixMe
 import { EtherscanLoader } from '@colony/colony-js-contract-loader-http';
 import * as yup from 'yup';
 
@@ -20,7 +23,10 @@ import type { SubmitFn } from '../../../core/components/Wizard';
 
 type FormValues = {
   nextStep: () => void,
+  tokenAddress: string,
 };
+
+type Values = { [string]: { [?string]: [string] } };
 
 type Props = {
   handleSubmit: () => void,
@@ -84,7 +90,7 @@ const MSG = defineMessages({
   fileUploadHint: {
     id: 'CreateColony.SelectToken.fileUploadHint',
     defaultMessage: 'Recommended size for .png file is 60px by 60px, up to 1MB',
-  }
+  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.SelectToken';
@@ -101,7 +107,7 @@ class SelectToken extends Component<Props, State> {
     });
   }
 
-  componentDidUpdate({ values: { tokenAddress: previousAddress } }) {
+  componentDidUpdate({ values: { tokenAddress: previousAddress } }: Values) {
     const {
       values: { tokenAddress },
       isValid,
@@ -111,9 +117,13 @@ class SelectToken extends Component<Props, State> {
       this.intervalId = setInterval(() => {
         this.checkToken(tokenAddress)
           .then(res => {
-            //TODO: Get correct Etherscan response for exisiting token
-
-            MSG.preview = +res.name;
+            // TODO: Get correct Etherscan response for exisiting token
+            console.log('CHECK');
+            console.log(res);
+            console.log(MSG.preview.defaultMessage);
+            MSG.preview.defaultMessage = `
+              ${MSG.preview.defaultMessage}
+              ${res.name}`;
             this.setState({ tokenDataNotFound: true });
           })
           .catch(() => {
@@ -126,6 +136,10 @@ class SelectToken extends Component<Props, State> {
   componentWillUnmount() {
     clearInterval(this.intervalId);
   }
+
+  adapter = undefined;
+
+  intervalId = undefined;
 
   checkToken = async tokenAddress => {
     const token = new ColonyNetworkClient.TokenClient({

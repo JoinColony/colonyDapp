@@ -25,6 +25,8 @@ type StepValues = {
   tokenChoice: 'create' | 'select',
 };
 
+// this is an example step function it allow the wizard flow to branch
+// off into two instead of just stepping through an array in a linear manner
 const stepFunction = (step: number, values: StepValues) => {
   if (step === 2) {
     return stepArray[2][values.tokenChoice];
@@ -34,6 +36,10 @@ const stepFunction = (step: number, values: StepValues) => {
 
 const CreateColonyContainer = compose(
   withWizard({
+    // This is a bit tricky to type for some reason
+    // since it's a function or an array which we have specified but flow
+    // is still complaining
+    // $FlowFixMe
     steps: stepFunction,
   }),
   withProps(() => ({ external: true })),
