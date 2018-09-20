@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import Icon from '~core/Icon';
-import Link from '~core/Link';
+import NavLink from '~core/NavLink';
 
 import styles from './Navigation.css';
 
@@ -27,15 +27,27 @@ const MSG = defineMessages({
 
 const Navigation = () => (
   <nav className={styles.main}>
-    <Link to="/" className={styles.navigationItem}>
+    <NavLink
+      to="/profile"
+      className={styles.navigationItem}
+      activeClassName={styles.navigationItemActive}
+    >
       <Icon name="home" title={MSG.dashboardTitle} />
-    </Link>
-    <Link to="/" className={styles.navigationItem}>
+    </NavLink>
+    <NavLink
+      to="/wallet"
+      className={styles.navigationItem}
+      activeClassName={styles.navigationItemActive}
+    >
       <Icon name="wallet" title={MSG.walletTitle} />
-    </Link>
-    <Link to="/" className={styles.navigationItem}>
+    </NavLink>
+    <NavLink
+      to="/inbox"
+      className={styles.navigationItem}
+      activeClassName={styles.navigationItemActive}
+    >
       <Icon name="envelope" title={MSG.inboxTitle} />
-    </Link>
+    </NavLink>
   </nav>
 );
 

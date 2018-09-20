@@ -33,3 +33,8 @@
 .navigationItem i {
   padding: 8px 0;
 }
+
+.navigationItemActive svg {
+  fill: var(--navigation-icon-blue);
+  stroke: var(--navigation-icon-blue);
+}
