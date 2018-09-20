@@ -58,6 +58,9 @@ const withWizard = ({ steps }: WizardArgs) => (
     state = { step: 0, values: {} };
 
     next = (values: { [string]: string }) => {
+      // TODO: have a target step property in values that tells you
+      // where to jump to, if there no such property we we just jump
+      // to the next step
       this.setState(({ step, values: currentValues }) => ({
         step: getStep(steps, step + 1, currentValues) ? step + 1 : step,
         values: { ...currentValues, ...values },
