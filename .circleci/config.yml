@@ -187,8 +187,8 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-      - run: git config --global user.email "github@colony.io"
-      - run: git config --global user.name "Colony Superuser"
+      - run: git config user.email "github@colony.io"
+      - run: git config user.name "Colony Superuser"
       - run: yarn deploy:styleguide
 
 workflows:
