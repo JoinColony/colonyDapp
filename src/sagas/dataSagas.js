@@ -33,9 +33,9 @@ function* joinColony(action) {
 
   yield put({
     type: SET_PROFILE_CONTENT,
-    payload: {
-      content: [colonyId],
-      target: 'colonies',
+    update: {
+      value: colonyId,
+      property: 'colonies',
     },
   });
 }
@@ -47,10 +47,8 @@ function* addColonyDomain(action) {
 
   yield put({
     type: SET_COLONY_CONTENT,
-    payload: {
-      content: { domains: [domainId] },
-      target: colonyId,
-    },
+    colonyId,
+    update: { property: 'domains', value: domainId },
   });
 }
 
@@ -61,10 +59,8 @@ function* addTaskToDomain(action) {
 
   yield put({
     type: SET_DOMAIN_CONTENT,
-    payload: {
-      content: { tasks: [task] },
-      target: domainId,
-    },
+    domainId,
+    update: { property: 'tasks', value: task },
   });
 }
 
@@ -80,11 +76,8 @@ function* addCommentToTask(action) {
   );
 
   yield put({
-    type: SET_TASK_CONTENT,
-    payload: {
-      content: [comment],
-      target: [domainId, taskId],
-    },
+    type: UPDATE_TASK,
+    payload: action.payload,
   });
 }
 
