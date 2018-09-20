@@ -1,8 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 
@@ -11,7 +12,8 @@ import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
-import rootReducer from './reducer';
+import rootReducer from './reducers';
+import rootSaga from './sagas';
 
 import ConnectWallet from './modules/wallet/components/ConnectWallet';
 
@@ -29,11 +31,14 @@ import { SpinnerLoader } from './modules/core/components/Preloaders';
 
 addLocaleData(en);
 
+const sagaMiddleware = createSagaMiddleware();
 const store = createStore(
   rootReducer,
   // eslint-disable-next-line no-underscore-dangle
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(sagaMiddleware),
 );
+sagaMiddleware.run(rootSaga);
 
 const Home = () => (
   <div>
