@@ -4,6 +4,7 @@ import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import * as yup from 'yup';
 
 import styles from './CreateNewToken.css';
 
@@ -27,14 +28,14 @@ const MSG = defineMessages({
     id: 'CreateNewToken.backButton',
     defaultMessage: 'Back',
   },
-  labelNewToken: {
-    id: 'CreateNewToken.labelNewToken',
+  labelTokenName: {
+    id: 'CreateNewToken.labelTokenName',
     defaultMessage: 'Token Name (example: Colony Token)',
   },
-  helpNewToken: {
-    id: 'CreateNewToken.helpNewToken',
+  helpTokenName: {
+    id: 'CreateNewToken.helpTokenName',
     defaultMessage:
-      '1. Please only use letters, number, periods, hyphens, and underscores.',
+      '1. Please only use letters, numbers, periods, hyphens, and underscores.',
   },
   labelTokenSymbol: {
     id: 'CreateNewToken.labelTokenSymbol',
@@ -53,6 +54,16 @@ const MSG = defineMessages({
     defaultMessage:
       'Recommended size for .png file is 60px by 60px, up to 1 MB',
   },
+  errorTokenName: {
+    id: 'CreateNewToken.errorTokenName',
+    defaultMessage: `The token name can only contain letters, numbers, periods,
+      hyphens, and underscores`,
+  },
+  errorTokenSymbol: {
+    id: 'CreateNewToken.errorTokenSymbol',
+    defaultMessage: `The token symbol can only contain letters and numbers, and
+      can only have a length of 6`,
+  },
 });
 
 type FormValues = {
@@ -65,6 +76,8 @@ type Props = {
 
 const ACCEPTED_MIME_TYPES: Array<string> = ['image/svg+xml', 'image/png'];
 const ACCEPTED_MAX_FILE_SIZE: number = 1000000;
+
+const VALIDATE_TOKEN_NAME: RegExp = /^[A-Za-z0-9-_.]+$/;
 
 const displayName: string = 'createColonyWizard.CreateNewToken';
 
@@ -80,10 +93,10 @@ const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
       <Input
         name="tokenName"
         appearance={{ theme: 'fat' }}
-        label={MSG.labelNewToken}
+        label={MSG.labelTokenName}
       />
       <p className={styles.customInputHelp}>
-        <FormattedMessage {...MSG.helpNewToken} />
+        <FormattedMessage {...MSG.helpTokenName} />
       </p>
       <Input
         name="tokenSymbol"
@@ -118,6 +131,21 @@ const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
     </div>
   </form>
 );
+
+export const validationSchema = yup.object({
+  tokenName: yup
+    .string()
+    .required()
+    .matches(VALIDATE_TOKEN_NAME, MSG.errorTokenName),
+  tokenSymbol: yup
+    .string()
+    .required()
+    .max(6, MSG.errorTokenSymbol),
+  /*
+   * `tokenIcon` doesn't need extra validation as Dropzone takes care of that
+   * in the form of accepted mime types and file size
+   */
+});
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
