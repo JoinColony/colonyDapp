@@ -78,6 +78,10 @@ module.exports = {
       ],
     },
     {
+      name: 'Tables',
+      components: ['./src/modules/core/components/Table/Table.jsx'],
+    },
+    {
       name: 'Tabs',
       components: [
         './src/modules/core/components/Tabs/Tabs.jsx',
