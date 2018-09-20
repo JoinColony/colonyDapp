@@ -29,6 +29,7 @@
 .mainContainer {
   margin-left: var(--sidebar-width);
   width: 100%;
+  overflow: auto;
 }
 
 .mainContent {
