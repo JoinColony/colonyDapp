@@ -10,6 +10,10 @@
   margin-top: 180px;
 }
 
+.inputFields {
+  margin-top: 40px;
+}
+
 .customInputHelp {
   /*
    * @NOTE Negative margins
@@ -20,8 +24,8 @@
    * The alternative would be to customize the Input's styles. This works better
    * since this is already a custom element.
    */
-  margin-top: -8px;
-  font-size: var(--size-small);
+  margin: -9px 0 50px;
+  font-size: var(--size-tiny);
   font-weight: var(--weight-semi);
   color: var(--temp-grey-11);
 }

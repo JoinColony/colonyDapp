@@ -35,6 +35,14 @@ const MSG = defineMessages({
     defaultMessage:
       '1. Please only use letters, number, periods, hyphens, and underscores.',
   },
+  labelTokenSymbol: {
+    id: 'CreateNewToken.labelTokenSymbol',
+    defaultMessage: 'Token Symbol (example: CLNY)',
+  },
+  helpTokenSymbol: {
+    id: 'CreateNewToken.helpTokenSymbol',
+    defaultMessage: 'Max of 6 characters',
+  },
 });
 
 type FormValues = {
@@ -63,6 +71,14 @@ const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
       />
       <p className={styles.customInputHelp}>
         <FormattedMessage {...MSG.helpNewToken} />
+      </p>
+      <Input
+        name="tokenName"
+        appearance={{ theme: 'fat' }}
+        label={MSG.labelTokenSymbol}
+      />
+      <p className={styles.customInputHelp}>
+        <FormattedMessage {...MSG.helpTokenSymbol} />
       </p>
     </div>
     <div className={styles.actionsContainer}>
