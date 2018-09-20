@@ -12,6 +12,7 @@ import type { SubmitFn } from '../../../core/components/Wizard';
 import { Input } from '../../../core/components/Fields';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
+import FileUpload from '../../../core/components/FileUpload';
 
 const MSG = defineMessages({
   heading: {
@@ -43,6 +44,15 @@ const MSG = defineMessages({
     id: 'CreateNewToken.helpTokenSymbol',
     defaultMessage: 'Max of 6 characters',
   },
+  labelTokenIcon: {
+    id: 'CreateNewToken.labelTokenIcon',
+    defaultMessage: 'Token Icon (.svg or .png)',
+  },
+  helpTokenIcon: {
+    id: 'CreateNewToken.helpTokenIcon',
+    defaultMessage:
+      'Recommended size for .png file is 60px by 60px, up to 1 MB',
+  },
 });
 
 type FormValues = {
@@ -52,6 +62,9 @@ type FormValues = {
 type Props = {
   previousStep: () => void,
 } & FormikProps<FormValues>;
+
+const ACCEPTED_MIME_TYPES: Array<string> = ['image/svg+xml', 'image/png'];
+const ACCEPTED_MAX_FILE_SIZE: number = 1000000;
 
 const displayName: string = 'createColonyWizard.CreateNewToken';
 
@@ -73,12 +86,21 @@ const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
         <FormattedMessage {...MSG.helpNewToken} />
       </p>
       <Input
-        name="tokenName"
+        name="tokenSymbol"
         appearance={{ theme: 'fat' }}
         label={MSG.labelTokenSymbol}
       />
       <p className={styles.customInputHelp}>
         <FormattedMessage {...MSG.helpTokenSymbol} />
+      </p>
+      <FileUpload
+        accept={ACCEPTED_MIME_TYPES}
+        maxFileSize={ACCEPTED_MAX_FILE_SIZE}
+        name="tokenIcon"
+        label={MSG.labelTokenIcon}
+      />
+      <p className={styles.customInputHelp}>
+        <FormattedMessage {...MSG.helpTokenIcon} />
       </p>
     </div>
     <div className={styles.actionsContainer}>
