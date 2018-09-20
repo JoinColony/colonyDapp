@@ -17,8 +17,6 @@ const config = {
       '~core': path.resolve(__dirname, 'src/modules/core/components'),
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
-      '@colony': path.resolve(__dirname, 'src/lib/colonyJS/packages'),
-      'colony-wallet': path.resolve(__dirname, 'src/lib/colony-wallet/lib'),
       // https://github.com/jquense/yup/issues/273
       '@babel/runtime/helpers/builtin': path.resolve(
         __dirname,

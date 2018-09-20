@@ -4,31 +4,19 @@ const chalk = require('chalk');
 
 module.exports = async () => {
   /*
-   * Stop the ganache server
-   *
-   * In WATCH mode, only stop the server if this is the first run
-   */
-  if (!global.WATCH) {
-    await global.ganacheServer.stop();
-    console.log(chalk.green.bold('Ganache Server Stopped'));
-
-    global.trufflePigServer.close();
-    console.log(chalk.green.bold('TrufflePig Server Stopped'));
-
-    /*
-     * Cleanup
-     *
-     * In WATCH mode, only perform cleanup if this is the first run
-     */
-    global.cleanupArtifacts('Cleaning up unneeded files');
-  }
-
-  /*
-   * Then stop the pinning service if we started it.
+   * Stop the pinning service if we started it.
    */
   if (global.pinningService !== null) {
     console.log(chalk.green.bold('Pinning Service:'), chalk.bold('killing'));
-    process.kill(-global.pinningService.pid); // use `-` to target the process group.
+
+    // The process may have exited unexpectedly, so use a signal of `0`
+    // and ignore errors with the string `ESRCH` (indicating that the process
+    // wasn't found).
+    try {
+      process.kill(-global.pinningService.pid, 0); // use `-` to target the process group.
+    } catch (error) {
+      if (!error.toString().includes('ESRCH')) throw error;
+    }
   }
 
   /*

@@ -1,10 +1,23 @@
 #!/bin/bash
 
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --skip-colony-network-build)
+      SKIP_COLONY_NETWORK_BUILD=true
+      ;;
+    --skip-pinning-service-build)
+      SKIP_PINNING_SERVICE_BUILD=true
+      ;;
+    *)
+      echo "Invalid argument: $1"
+      exit 1
+  esac
+  shift
+done
+
 # Paths
 LIB_PATH="src/lib"
 
-CLIENT="colonyJS"
-WALLET="colony-wallet"
 NETWORK="colonyNetwork"
 PINNING="pinningService"
 
@@ -23,32 +36,21 @@ log() {
 log "Initialize submodule libs"
 git submodule update --init --recursive
 
-# Build client
-log "Building '${CLIENT}' submodule"
-# We need global lerna to build the client's packages, make sure we have installed globally
-#
-yarn global add lerna
-cd "${LIB_PATH}/${CLIENT}"
-yarn --ignore-engines
-lerna run build
-cd ${ROOT_PATH}
+if [ "$SKIP_COLONY_NETWORK_BUILD" != true ]
+then
+    # Build network
+    log "Building '${NETWORK}' submodule"
+    cd "${LIB_PATH}/${NETWORK}"
+    git submodule update --init
+    yarn
+    cd ${ROOT_PATH}
+fi
 
-# Build wallet
-log "Building '${WALLET}' submodule"
-cd "${LIB_PATH}/${WALLET}"
-yarn
-yarn build:dev
-cd ${ROOT_PATH}
-
-# Build network
-log "Building '${NETWORK}' submodule"
-cd "${LIB_PATH}/${NETWORK}"
-git submodule update --init
-yarn
-cd ${ROOT_PATH}
-
-# Build pinning service
-log "Building '${PINNING}' submodule"
-cd "${LIB_PATH}/${PINNING}"
-yarn
-cd ${ROOT_PATH}
+if [ "$SKIP_PINNING_SERVICE_BUILD" != true ]
+then
+    # Build pinning service
+    log "Building '${PINNING}' submodule"
+    cd "${LIB_PATH}/${PINNING}"
+    yarn
+    cd ${ROOT_PATH}
+fi
