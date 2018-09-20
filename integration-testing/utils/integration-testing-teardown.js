@@ -8,7 +8,15 @@ module.exports = async () => {
    */
   if (global.pinningService !== null) {
     console.log(chalk.green.bold('Pinning Service:'), chalk.bold('killing'));
-    process.kill(-global.pinningService.pid); // use `-` to target the process group.
+
+    // The process may have exited unexpectedly, so use a signal of `0`
+    // and ignore errors with the string `ESRCH` (indicating that the process
+    // wasn't found).
+    try {
+      process.kill(-global.pinningService.pid, 0); // use `-` to target the process group.
+    } catch (error) {
+      if (!error.toString().includes('ESRCH')) throw error;
+    }
   }
 
   /*
