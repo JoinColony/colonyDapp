@@ -10,7 +10,7 @@ import {
   SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
   SET_DATA_STATE,
-  SET_PROFILE_CONTENT,
+  UPDATE_PROFILE,
   SET_PROFILE_STATE,
   UPDATE_COLONY,
   UPDATE_DOMAIN,
@@ -157,7 +157,7 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
         },
       });
 
-    case SET_PROFILE_CONTENT:
+    case UPDATE_PROFILE:
       const {
         update: { property: profileProperty, value: profileValue },
       } = action.payload;

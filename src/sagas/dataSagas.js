@@ -9,6 +9,7 @@ import {
   ADD_TASK_TO_DOMAIN,
   EDIT_COLONY,
   EDIT_DOMAIN,
+  /* EDIT_PROFILE, */
   EDIT_TASK,
   FETCH_COMMENTS,
   INITIALIZE_DATA,
@@ -19,26 +20,12 @@ import {
   RETURN_DOMAIN,
   SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
-  SET_PROFILE_CONTENT,
   SET_TASK_CONTENT,
   UPDATE_COLONY,
   UPDATE_DOMAIN,
   UPDATE_TASK,
+  UPDATE_PROFILE,
 } from '../actions/actionConstants';
-
-function* joinColony(action) {
-  const { colonyId } = action.payload;
-  const dataAPI = yield select(state => state.data.Data);
-  yield* call(dataAPI.joinColony, colonyId);
-
-  yield put({
-    type: SET_PROFILE_CONTENT,
-    update: {
-      value: colonyId,
-      property: 'colonies',
-    },
-  });
-}
 
 function* addColonyDomain(action) {
   const { colonyId, domainId } = action.payload;
@@ -123,6 +110,20 @@ function* editDomain(action) {
   });
 }
 
+function* joinColony(action) {
+  const { colonyId } = action.payload;
+  const dataAPI = yield select(state => state.data.Data);
+  yield* call(dataAPI.joinColony, colonyId);
+
+  yield put({
+    type: UPDATE_PROFILE,
+    update: {
+      value: colonyId,
+      property: 'colonies',
+    },
+  });
+}
+
 function* editTask(action) {
   const { domainId, taskId, update } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
@@ -196,6 +197,7 @@ function* colonySagas() {
   yield takeEvery(RETURN_DOMAIN, loadDomain);
   yield takeEvery(EDIT_COLONY, editColony);
   yield takeEvery(EDIT_DOMAIN, editDomain);
+  yield takeEvery(EDIT_PROFILE, editProfile);
   yield takeEvery(EDIT_TASK, editTask);
   yield takeEvery(FETCH_COMMENTS, fetchComments);
 }
