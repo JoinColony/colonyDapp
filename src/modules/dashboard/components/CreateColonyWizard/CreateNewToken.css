@@ -3,7 +3,7 @@
 @value wideButton: 160px;
 
 .main {
-  width: 460px;
+  width: 560px;
 }
 
 .titleSection {
@@ -14,20 +14,8 @@
   margin-top: 40px;
 }
 
-.customInputHelp {
-  /*
-   * @NOTE Negative margins
-   *
-   * It was easier for this to have nagative margins so that the space between
-   * it an the input is smaller.
-   *
-   * The alternative would be to customize the Input's styles. This works better
-   * since this is already a custom element.
-   */
-  margin: -9px 0 50px;
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-semi);
-  color: var(--temp-grey-4);
+.inputFieldWrapper {
+  margin-bottom: 50px;
 }
 
 .actionsContainer {

@@ -18,7 +18,7 @@ import FileUpload from '../../../core/components/FileUpload';
 const MSG = defineMessages({
   heading: {
     id: 'CreateNewToken.heading',
-    defaultMessage: "Let's create your new token",
+    defaultMessage: "Let's create your new token. {learnMore}",
   },
   nextButton: {
     id: 'CreateNewToken.confirmButton',
@@ -34,8 +34,7 @@ const MSG = defineMessages({
   },
   helpTokenName: {
     id: 'CreateNewToken.helpTokenName',
-    defaultMessage:
-      '1. Please only use letters, numbers, periods, hyphens, and underscores.',
+    defaultMessage: 'Letters, numbers, periods, hyphens, and underscores.',
   },
   labelTokenSymbol: {
     id: 'CreateNewToken.labelTokenSymbol',
@@ -51,8 +50,7 @@ const MSG = defineMessages({
   },
   helpTokenIcon: {
     id: 'CreateNewToken.helpTokenIcon',
-    defaultMessage:
-      'Recommended size for .png file is 60px by 60px, up to 1 MB',
+    defaultMessage: 'Recommended 60px by 60px, up to 1 MB',
   },
   errorTokenName: {
     id: 'CreateNewToken.errorTokenName',
@@ -95,31 +93,31 @@ const CreateNewToken = ({ previousStep, handleSubmit, isValid }: Props) => (
       />
     </section>
     <div className={styles.inputFields}>
-      <Input
-        name="tokenName"
-        appearance={{ theme: 'fat' }}
-        label={MSG.labelTokenName}
-      />
-      <p className={styles.customInputHelp}>
-        <FormattedMessage {...MSG.helpTokenName} />
-      </p>
-      <Input
-        name="tokenSymbol"
-        appearance={{ theme: 'fat' }}
-        label={MSG.labelTokenSymbol}
-      />
-      <p className={styles.customInputHelp}>
-        <FormattedMessage {...MSG.helpTokenSymbol} />
-      </p>
-      <FileUpload
-        accept={ACCEPTED_MIME_TYPES}
-        maxFileSize={ACCEPTED_MAX_FILE_SIZE}
-        name="tokenIcon"
-        label={MSG.labelTokenIcon}
-      />
-      <p className={styles.customInputHelp}>
-        <FormattedMessage {...MSG.helpTokenIcon} />
-      </p>
+      <div className={styles.inputFieldWrapper}>
+        <Input
+          name="tokenName"
+          appearance={{ theme: 'fat' }}
+          label={MSG.labelTokenName}
+          hint={<FormattedMessage {...MSG.helpTokenName} />}
+        />
+      </div>
+      <div className={styles.inputFieldWrapper}>
+        <Input
+          name="tokenSymbol"
+          appearance={{ theme: 'fat' }}
+          label={MSG.labelTokenSymbol}
+          hint={<FormattedMessage {...MSG.helpTokenSymbol} />}
+        />
+      </div>
+      <div className={styles.inputFieldWrapper}>
+        <FileUpload
+          accept={ACCEPTED_MIME_TYPES}
+          maxFileSize={ACCEPTED_MAX_FILE_SIZE}
+          name="tokenIcon"
+          label={MSG.labelTokenIcon}
+          hint={<FormattedMessage {...MSG.helpTokenIcon} />}
+        />
+      </div>
     </div>
     <div className={styles.actionsContainer}>
       <Button
