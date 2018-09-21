@@ -5,13 +5,14 @@ import React from 'react';
 
 type Props = {
   children: Node,
+  padding?: string,
   width?: string,
 };
 
 const displayName = 'TableHeaderCell';
 
-const TableHeaderCell = ({ children, width, ...props }: Props) => (
-  <th style={{ width }} {...props}>
+const TableHeaderCell = ({ children, padding, width, ...props }: Props) => (
+  <th style={{ padding, width }} {...props}>
     {children}
   </th>
 );

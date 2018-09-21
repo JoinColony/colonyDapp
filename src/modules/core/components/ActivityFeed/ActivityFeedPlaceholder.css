@@ -1,11 +1,10 @@
 @import 'variables.css';
 
-.main {
+.placeholderItem {
   position: relative;
-  filter: blur(1.25px);
 }
 
-.coverUp {
+.placeholderCoverUp {
   height: 100%;
   width: 100%;
   position: absolute;
