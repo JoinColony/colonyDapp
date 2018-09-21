@@ -101,7 +101,7 @@ const config = {
   devServer: {
     historyApiFallback: true,
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
-    hot: true,
+    hotOnly: true,
   },
 };
 

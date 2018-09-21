@@ -4,7 +4,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
-import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
+import { ConnectedRouter } from 'connected-react-router';
+import { Route, Switch, NavLink } from 'react-router-dom';
 
 import layout from '~styles/layout.css';
 
@@ -61,15 +62,16 @@ const Home = () => (
 type Props = {
   store: Object,
   context: Object,
+  history: History,
 };
 
-export default function App({ store, context }: Props) {
+export default function App({ store, context, history }: Props) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages}>
       <ContextProvider value={context}>
         <Provider store={store}>
           <DialogProvider dialogComponents={dialogComponents}>
-            <Router>
+            <ConnectedRouter history={history}>
               <div className={layout.stretch}>
                 <Route exact path="/" component={Home} />
                 <Route path="/createcolony" component={CreateColonyWizard} />
@@ -86,7 +88,7 @@ export default function App({ store, context }: Props) {
                 <Route path="/profileedit" component={UserProfileEdit} />
                 <Route path="/createprofile" component={ProfileCreate} />
               </div>
-            </Router>
+            </ConnectedRouter>
           </DialogProvider>
         </Provider>
       </ContextProvider>
