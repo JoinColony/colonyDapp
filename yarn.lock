@@ -14646,7 +14646,7 @@ svg-baker-runtime@^1.3.3:
     mitt "1.1.2"
     svg-baker "^1.2.0"
 
-svg-baker@^1.2.0, svg-baker@^1.2.17:
+svg-baker@^1.2.0:
   version "1.2.17"
   resolved "https://registry.yarnpkg.com/svg-baker/-/svg-baker-1.2.17.tgz#452ceaa604f784e4b864740e4b6b3faf6458d016"
   dependencies:
@@ -14664,9 +14664,27 @@ svg-baker@^1.2.0, svg-baker@^1.2.17:
     query-string "^4.3.2"
     traverse "^0.6.6"
 
-svg-sprite-loader@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/svg-sprite-loader/-/svg-sprite-loader-4.0.0.tgz#487fa555d72b1c77ae93b6f5d62930b09383320f"
+svg-baker@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/svg-baker/-/svg-baker-1.3.0.tgz#93a454fcf9d39ad0caf72cbfbc700f3815c7fa07"
+  dependencies:
+    bluebird "^3.5.0"
+    clone "^2.1.1"
+    he "^1.1.1"
+    image-size "^0.5.1"
+    loader-utils "^1.1.0"
+    merge-options "0.0.64"
+    micromatch "3.1.0"
+    postcss "^5.2.17"
+    postcss-prefix-selector "^1.6.0"
+    posthtml-rename-id "^1.0"
+    posthtml-svg-mode "^1.0"
+    query-string "^4.3.2"
+    traverse "^0.6.6"
+
+svg-sprite-loader@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/svg-sprite-loader/-/svg-sprite-loader-4.1.1.tgz#8c999385d058f49793626fd5847b29b9e5682771"
   dependencies:
     bluebird "^3.5.0"
     deepmerge "1.3.2"
@@ -14674,7 +14692,7 @@ svg-sprite-loader@^4.0.0:
     escape-string-regexp "1.0.5"
     html-webpack-plugin "^3.2.0"
     loader-utils "^1.1.0"
-    svg-baker "^1.2.17"
+    svg-baker "^1.3.0"
     svg-baker-runtime "^1.3.3"
     url-slug "2.0.0"
     webpack "^4.12.1"
