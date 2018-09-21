@@ -1,7 +1,7 @@
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import Data from '../data';
 
-import { initialData, setUserProfileContent } from '../actions';
+import { initialData } from '../actions';
 
 import {
   ADD_COMMENT_TO_TASK,
@@ -20,7 +20,6 @@ import {
   RETURN_DOMAIN,
   SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
-  SET_TASK_CONTENT,
   UPDATE_COLONY,
   UPDATE_DOMAIN,
   UPDATE_TASK,
@@ -64,7 +63,7 @@ function* addCommentToTask(action) {
 
   yield put({
     type: UPDATE_TASK,
-    payload: action.payload,
+    update: action.payload,
   });
 }
 
@@ -188,18 +187,17 @@ function* initializeData(action) {
 }
 
 function* colonySagas() {
-  yield takeEvery(INITIALIZE_DATA, initializeData);
-  yield takeEvery(JOIN_COLONY, joinColony);
+  yield takeEvery(ADD_COMMENT_TO_TASK, addCommentToTask);
   yield takeEvery(ADD_DOMAIN_TO_COLONY, addColonyDomain);
   yield takeEvery(ADD_TASK_TO_DOMAIN, addTaskToDomain);
-  yield takeEvery(ADD_COMMENT_TO_TASK, addCommentToTask);
-  yield takeEvery(RETURN_COLONY, loadColony);
-  yield takeEvery(RETURN_DOMAIN, loadDomain);
   yield takeEvery(EDIT_COLONY, editColony);
   yield takeEvery(EDIT_DOMAIN, editDomain);
-  yield takeEvery(EDIT_PROFILE, editProfile);
   yield takeEvery(EDIT_TASK, editTask);
   yield takeEvery(FETCH_COMMENTS, fetchComments);
+  yield takeEvery(INITIALIZE_DATA, initializeData);
+  yield takeEvery(JOIN_COLONY, joinColony);
+  yield takeEvery(RETURN_COLONY, loadColony);
+  yield takeEvery(RETURN_DOMAIN, loadDomain);
 }
 
 export default colonySagas;

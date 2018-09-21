@@ -111,7 +111,13 @@ describe('Data reducer', () => {
   });
 
   test('Can add comment to a task', async () => {
-    store.dispatch(addCommentToTask('fakeDomain', 'fakeTask', 'fakeComment'));
+    store.dispatch(
+      addCommentToTask('fakeDomain', 'fakeTask', {
+        property: 'comments',
+        value: 'fakeComment',
+      }),
+    );
+
     const state = store.getState();
     const comment = state.data.data.domains['fakeDomain'].tasks[0].comments[0];
     expect(comment).toBe('fakeComment');
