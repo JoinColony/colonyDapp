@@ -64,6 +64,11 @@ const MSG = defineMessages({
     defaultMessage: `The token symbol can only contain letters and numbers, and
       can only have a length of 6`,
   },
+  errorTokenIcon: {
+    id: 'CreateNewToken.errorTokenIcon',
+    defaultMessage: `The token icon could not be uploaded. You can only upload
+    .svg and .png images, up to 1 MB in size.`,
+  },
 });
 
 type FormValues = {
@@ -81,7 +86,7 @@ const VALIDATE_TOKEN_NAME: RegExp = /^[A-Za-z0-9-_.]+$/;
 
 const displayName: string = 'createColonyWizard.CreateNewToken';
 
-const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
+const CreateNewToken = ({ previousStep, handleSubmit, isValid }: Props) => (
   <form className={styles.main} onSubmit={handleSubmit}>
     <section className={styles.titleSection}>
       <Heading
@@ -127,6 +132,7 @@ const CreateNewToken = ({ previousStep, handleSubmit }: Props) => (
         text={MSG.nextButton}
         type="submit"
         style={{ width: styles.wideButton }}
+        disabled={!isValid}
       />
     </div>
   </form>
@@ -141,10 +147,7 @@ export const validationSchema = yup.object({
     .string()
     .required()
     .max(6, MSG.errorTokenSymbol),
-  /*
-   * `tokenIcon` doesn't need extra validation as Dropzone takes care of that
-   * in the form of accepted mime types and file size
-   */
+  tokenIcon: yup.array().min(1, MSG.errorTokenIcon),
 });
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
