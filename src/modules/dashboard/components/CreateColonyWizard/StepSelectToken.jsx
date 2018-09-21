@@ -2,12 +2,10 @@
 
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
-// $FlowFixMe
+
 import ColonyNetworkClient from '@colony/colony-js-client';
-// $FlowFixMe
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { providers } from 'ethers';
-// $FlowFixMe
 import { EtherscanLoader } from '@colony/colony-js-contract-loader-http';
 import * as yup from 'yup';
 
@@ -101,9 +99,11 @@ class SelectToken extends Component<Props, State> {
   };
 
   componentDidMount() {
+    const provider = new providers.EtherscanProvider();
     this.adapter = new EthersAdapter({
       loader: new EtherscanLoader(),
-      provider: new providers.EtherscanProvider(),
+      provider,
+      wallet: { provider },
     });
   }
 
@@ -112,42 +112,52 @@ class SelectToken extends Component<Props, State> {
       values: { tokenAddress },
       isValid,
     } = this.props;
-
     if (tokenAddress !== previousAddress && isValid) {
-      this.intervalId = setInterval(() => {
+      this.throttle(
         this.checkToken(tokenAddress)
-          .then(res => {
-            // TODO: Get correct Etherscan response for exisiting token
-            console.log('CHECK');
-            console.log(res);
-            console.log(MSG.preview.defaultMessage);
-            MSG.preview.defaultMessage = `
-              ${MSG.preview.defaultMessage}
-              ${res.name}`;
-            this.setState({ tokenDataNotFound: true });
+          .then(({ name: tokenName, symbol: tokenSymbol }) => {
+            // eslint-disable-next-line no-console
+            MSG.hint.defaultMessage = `TokenPreview:
+              ${tokenName}
+              (${tokenSymbol})`;
+            this.setState({ tokenDataNotFound: false });
           })
-          .catch(() => {
+          .catch(error => {
+            // eslint-disable-next-line no-console
+            console.log(error);
             this.setState({ tokenDataNotFound: true });
-          });
-      }, 1000);
+          }),
+        1000,
+      );
     }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.intervalId);
   }
 
   adapter = undefined;
 
-  intervalId = undefined;
-
-  checkToken = async tokenAddress => {
+  checkToken = async contractAddress => {
     const token = new ColonyNetworkClient.TokenClient({
       adapter: this.adapter,
-      query: { contractAddress: tokenAddress },
+      query: { contractAddress },
     });
     await token.init();
-    return token;
+    return token.getTokenInfo.call();
+  };
+
+  throttle = (callback, wait, context = this) => {
+    let timeout = null;
+    let callbackArgs = null;
+
+    const later = () => {
+      callback.apply(context, callbackArgs);
+      timeout = null;
+    };
+
+    return (...args) => {
+      if (!timeout) {
+        callbackArgs = args;
+        timeout = setTimeout(later, wait);
+      }
+    };
   };
 
   render() {
@@ -196,9 +206,7 @@ class SelectToken extends Component<Props, State> {
                   />
                 </div>
               </React.Fragment>
-            ) : (
-              <Heading appearance={{ theme: 'secondary' }} text={MSG.preview} />
-            )}
+            ) : null}
             <div className={styles.buttons}>
               <Button
                 appearance={{ theme: 'secondary' }}
