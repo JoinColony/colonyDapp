@@ -25,6 +25,7 @@ exports[`Icon component Renders initial component 1`] = `
       "messages": Object {},
       "now": [Function],
       "textComponent": "span",
+      "timeZone": null,
     }
   }
   name="archive"
@@ -57,6 +58,7 @@ exports[`Icon component Works with MessageDescriptors 1`] = `
       "messages": Object {},
       "now": [Function],
       "textComponent": "span",
+      "timeZone": null,
     }
   }
   name="archive"
