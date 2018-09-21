@@ -6956,7 +6956,7 @@ jest-each@^23.6.0:
     chalk "^2.0.1"
     pretty-format "^23.6.0"
 
-jest-environment-enzyme@^6.1.1:
+jest-environment-enzyme@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/jest-environment-enzyme/-/jest-environment-enzyme-6.1.0.tgz#16e14318c930d7bb2ac08da51dde2cd0b7b5853a"
   dependencies:
@@ -6991,7 +6991,7 @@ jest-enzyme@^6.0.2:
   dependencies:
     enzyme-matchers "^6.1.1"
     enzyme-to-json "^3.3.0"
-    jest-environment-enzyme "^6.1.1"
+    jest-environment-enzyme "^6.1.0"
 
 jest-get-type@^22.1.0:
   version "22.4.3"
