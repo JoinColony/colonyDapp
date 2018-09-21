@@ -13,6 +13,10 @@ import type { Data, ItemComponentType } from './types';
 import OmniPicker from './OmniPicker.jsx';
 
 type ExternalOmniPickerProps = {
+  /*
+   * This prop is used, but apparently `eslint` get confused by something...
+   */
+  /* eslint-disable-next-line */
   itemComponent: ItemComponentType,
 };
 
