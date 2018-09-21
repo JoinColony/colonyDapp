@@ -8,17 +8,22 @@ import * as yup from 'yup';
 
 import styles from './CreateNewToken.css';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import type { SubmitFn } from '~core/Wizard';
 
-import { Input } from '../../../core/components/Fields';
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
-import FileUpload from '../../../core/components/FileUpload';
+import { Input } from '~core/Fields';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
+import FileUpload from '~core/FileUpload';
+import ExternalLink from '~core/ExternalLink';
 
 const MSG = defineMessages({
   heading: {
     id: 'CreateNewToken.heading',
-    defaultMessage: "Let's create your new token. {learnMore}",
+    defaultMessage: "Let's create your new token.",
+  },
+  learnMoreLink: {
+    id: 'CreateNewToken.learnMoreLink',
+    defaultMessage: 'Learn More',
   },
   nextButton: {
     id: 'CreateNewToken.confirmButton',
@@ -87,10 +92,8 @@ const displayName: string = 'createColonyWizard.CreateNewToken';
 const CreateNewToken = ({ previousStep, handleSubmit, isValid }: Props) => (
   <form className={styles.main} onSubmit={handleSubmit}>
     <section className={styles.titleSection}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
+      <Heading className={styles.customHeading} text={MSG.heading} />
+      <ExternalLink text={MSG.learnMoreLink} href="#" />
     </section>
     <div className={styles.inputFields}>
       <div className={styles.inputFieldWrapper}>
