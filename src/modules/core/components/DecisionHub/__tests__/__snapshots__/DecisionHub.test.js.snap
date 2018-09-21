@@ -1,55 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DecisionHub component Renders initial component 1`] = `
-<DecisionHub
-  intl={
-    Object {
-      "defaultFormats": Object {},
-      "defaultLocale": "en",
-      "formatDate": [Function],
-      "formatHTMLMessage": [Function],
-      "formatMessage": [Function],
-      "formatNumber": [Function],
-      "formatPlural": [Function],
-      "formatRelative": [Function],
-      "formatTime": [Function],
-      "formats": Object {},
-      "formatters": Object {
-        "getDateTimeFormat": [Function],
-        "getMessageFormat": [Function],
-        "getNumberFormat": [Function],
-        "getPluralFormat": [Function],
-        "getRelativeFormat": [Function],
-      },
-      "locale": "en",
-      "messages": Object {},
-      "now": [Function],
-      "textComponent": "span",
+<div>
+  <InjectIntl(Component)
+    key="row-create"
+    option={
+      Object {
+        "subtitle": Object {
+          "defaultMessage": "Collaborate with others",
+          "id": "ComponentName.exceptional",
+        },
+        "title": Object {
+          "defaultMessage": "Rule the world",
+          "id": "ComponentName.special",
+        },
+        "value": "create",
+      }
     }
-  }
-  rowSubTitles={
-    Object {
-      "evenMoreCreativeTitle": Object {
-        "defaultMessage": "And kick ass",
-        "id": "ComponentName.exceptionalSub",
-      },
-      "superCreativeTitle": Object {
-        "defaultMessage": "But be nice",
-        "id": "ComponentName.specialSub",
-      },
+  />
+  <InjectIntl(Component)
+    key="row-select"
+    option={
+      Object {
+        "subtitle": Object {
+          "defaultMessage": "Collaborate with others",
+          "id": "ComponentName.exceptional",
+        },
+        "title": Object {
+          "defaultMessage": "Rule the world",
+          "id": "ComponentName.special",
+        },
+        "value": "select",
+      }
     }
-  }
-  rowTitles={
-    Object {
-      "evenMoreCreativeTitle": Object {
-        "defaultMessage": "Collaborate with others",
-        "id": "ComponentName.exceptional",
-      },
-      "superCreativeTitle": Object {
-        "defaultMessage": "Rule the world",
-        "id": "ComponentName.special",
-      },
-    }
-  }
-/>
+  />
+</div>
 `;

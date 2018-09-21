@@ -6,10 +6,12 @@ import { defineMessages } from 'react-intl';
 
 import styles from './StepTokenChoice.css';
 
-import WizardTemplate from '../../../pages/WizardTemplate';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import DecisionHub from '../../../core/components/DecisionHub';
+
+import type { FormikProps } from 'formik';
+import type { SubmitFn } from '../../../core/components/Wizard';
 
 const MSG = defineMessages({
   heading: {

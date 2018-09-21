@@ -9,30 +9,40 @@ import DecisionHub from '../DecisionHub.jsx';
 
 describe('DecisionHub component', () => {
   test('Renders initial component', () => {
-    const rowTitles = {
-      superCreativeTitle: {
+
+    const MSG = {
+      createTokenTitle: {
         id: 'ComponentName.special',
         defaultMessage: 'Rule the world',
       },
-      evenMoreCreativeTitle: {
+      createTokenSubtitle: {
+        id: 'ComponentName.exceptional',
+        defaultMessage: 'Collaborate with others',
+      },
+      selectTokenTitle: {
+        id: 'ComponentName.special',
+        defaultMessage: 'Rule the world',
+      },
+      selectTokenSubtitle: {
         id: 'ComponentName.exceptional',
         defaultMessage: 'Collaborate with others',
       },
     };
 
-    const rowSubTitles = {
-      superCreativeTitle: {
-        id: 'ComponentName.specialSub',
-        defaultMessage: 'But be nice',
+    const options = [
+      {
+        value: 'create',
+        title: MSG.createTokenTitle,
+        subtitle: MSG.createTokenSubtitle,
       },
-      evenMoreCreativeTitle: {
-        id: 'ComponentName.exceptionalSub',
-        defaultMessage: 'And kick ass',
+      {
+        value: 'select',
+        title: MSG.selectTokenTitle,
+        subtitle: MSG.selectTokenSubtitle,
       },
-    };
-    const wrapper = shallowWithIntl(
-      <DecisionHub rowTitles={rowTitles} rowSubTitles={rowSubTitles} />,
-    );
+    ];
+
+    const wrapper = shallowWithIntl(<DecisionHub options={options} />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

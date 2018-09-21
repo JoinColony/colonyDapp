@@ -10,7 +10,7 @@
   margin-bottom: 40px;
 }
 
-.labelContainer{
+.labelContainer {
   display: flex;
   justify-content: space-between;
 }
@@ -26,7 +26,7 @@
   width: 460px;
 }
 
-.tokenDetails{
+.tokenDetails {
   margin-top: 50px;
 }
 

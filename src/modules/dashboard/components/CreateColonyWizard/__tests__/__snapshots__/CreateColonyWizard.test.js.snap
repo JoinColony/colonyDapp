@@ -2,6 +2,18 @@
 
 exports[`CreateColonyWizard component Renders initial component (snapshot) 1`] = `
 <main>
+  <header>
+    <figure
+      role="presentation"
+    >
+      <Link
+        replace={false}
+        to="/"
+      >
+        <test-file-stub />
+      </Link>
+    </figure>
+  </header>
   <article />
 </main>
 `;

@@ -22,7 +22,13 @@ import type { SubmitFn } from '../../../core/components/Wizard';
 type FormValues = {
   nextStep: () => void,
   tokenAddress: string,
+  // iconUpload: <any>,
 };
+
+type FormValidation = {
+  tokenAddress: string,
+  // iconUpload: <any>,
+} & FormValues;
 
 type Values = { [string]: { [?string]: [string] } };
 
@@ -103,6 +109,9 @@ class SelectToken extends Component<Props, State> {
     this.adapter = new EthersAdapter({
       loader: new EtherscanLoader(),
       provider,
+      /* The wallet property is not really required here I heard,
+      maybe it could be made optional */
+      // $FlowFixMe
       wallet: { provider },
     });
   }
@@ -116,13 +125,14 @@ class SelectToken extends Component<Props, State> {
       this.throttle(
         this.checkToken(tokenAddress)
           .then(({ name: tokenName, symbol: tokenSymbol }) => {
-            // eslint-disable-next-line no-console
             MSG.hint.defaultMessage = `TokenPreview:
               ${tokenName}
               (${tokenSymbol})`;
             this.setState({ tokenDataNotFound: false });
           })
           .catch(error => {
+            /* We might want to keep this log for a little while
+            for debugging purposes */
             // eslint-disable-next-line no-console
             console.log(error);
             this.setState({ tokenDataNotFound: true });
@@ -134,7 +144,7 @@ class SelectToken extends Component<Props, State> {
 
   adapter = undefined;
 
-  checkToken = async contractAddress => {
+  checkToken = async (contractAddress: string) => {
     const token = new ColonyNetworkClient.TokenClient({
       adapter: this.adapter,
       query: { contractAddress },
@@ -143,16 +153,19 @@ class SelectToken extends Component<Props, State> {
     return token.getTokenInfo.call();
   };
 
-  throttle = (callback, wait, context = this) => {
+  // We could either add the throttle funciton to a collection of helper
+  // function on the longterm or decide we use a library
+  throttle = (callback: Promise<any>, wait: number) => {
     let timeout = null;
-    let callbackArgs = null;
+    let callbackArgs: ?Array<any> = null;
 
     const later = () => {
-      callback.apply(context, callbackArgs);
+      // $FlowFixMe
+      callback.apply(this, callbackArgs);
       timeout = null;
     };
 
-    return (...args) => {
+    return (...args: Array<any>) => {
       if (!timeout) {
         callbackArgs = args;
         timeout = setTimeout(later, wait);
@@ -203,6 +216,7 @@ class SelectToken extends Component<Props, State> {
                     label={MSG.fileUploadTitle}
                     name="iconUpload"
                     status={MSG.fileUploadHint}
+                    maxFilesLimit={1}
                   />
                 </div>
               </React.Fragment>
@@ -229,10 +243,7 @@ class SelectToken extends Component<Props, State> {
 }
 
 export const validationSchema = yup.object({
-  tokenAddress: yup
-    .string()
-    .required()
-    .address(MSG.invalidAddress),
+  tokenAddress: yup.string().address(MSG.invalidAddress),
   tokenSymbol: yup.string().max(6),
   tokenName: yup.string(),
 });

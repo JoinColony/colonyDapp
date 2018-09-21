@@ -2,59 +2,86 @@
 The Decision Hub renders a list of links divided by borders
 
 ```js
+const { Formik } = require('formik');
 
-const rowTitles = {
-  superCreativeTitle: {
+const MSG = {
+  createTokenTitle: {
     id: 'ComponentName.special',
     defaultMessage: 'Rule the world',
   },
-  evenMoreCreativeTitle: {
+  createTokenSubtitle: {
     id: 'ComponentName.exceptional',
-    defaultMessage: 'Collaborate with others',
+    defaultMessage: 'And collaborate with others',
+  },
+  selectTokenTitle: {
+    id: 'ComponentName.special',
+    defaultMessage: 'Be nice',
+  },
+  selectTokenSubtitle: {
+    id: 'ComponentName.exceptional',
+    defaultMessage: 'And kick asses',
   },
 };
 
-const rowSubTitles = {
-  superCreativeTitle: {
-    id: 'ComponentName.specialSub',
-    defaultMessage: 'But be nice',
+const options = [
+  {
+    value: 'create',
+    title: MSG.createTokenTitle,
+    subtitle: MSG.createTokenSubtitle,
   },
-  evenMoreCreativeTitle: {
-    id: 'ComponentName.exceptionalSub',
-    defaultMessage: 'And kick ass',
+  {
+    value: 'select',
+    title: MSG.selectTokenTitle,
+    subtitle: MSG.selectTokenSubtitle,
   },
-};
+];
 
-<DecisionHub rowTitles={rowTitles} rowSubTitles={rowSubTitles} />
+<Formik>
+  <DecisionHub name="thatField" options={options} />
+</Formik>
 ```
 
 Decision Hub with icons for each row
 
 ```js
+const { Formik } = require('formik');
 
-const rowTitles = {
-  superCreativeTitle: {
+const MSG = {
+  createTokenTitle: {
     id: 'ComponentName.special',
     defaultMessage: 'Rule the world',
   },
-  evenMoreCreativeTitle: {
+  createTokenSubtitle: {
     id: 'ComponentName.exceptional',
-    defaultMessage: 'Collaborate with others',
+    defaultMessage: 'And collaborate with others',
+  },
+  selectTokenTitle: {
+    id: 'ComponentName.special',
+    defaultMessage: 'Be nice',
+  },
+  selectTokenSubtitle: {
+    id: 'ComponentName.exceptional',
+    defaultMessage: 'And kick asses',
   },
 };
 
-const rowSubTitles = {
-  superCreativeTitle: {
-    id: 'ComponentName.specialSub',
-    defaultMessage: 'But be nice',
+const options = [
+  {
+    value: 'create',
+    title: MSG.createTokenTitle,
+    subtitle: MSG.createTokenSubtitle,
+    icon: 'metamask',
   },
-  evenMoreCreativeTitle: {
-    id: 'ComponentName.exceptionalSub',
-    defaultMessage: 'And kick ass',
+  {
+    value: 'select',
+    title: MSG.selectTokenTitle,
+    subtitle: MSG.selectTokenSubtitle,
+    icon: 'wallet'
   },
-};
+];
 
-const icons = ['metamask', 'wallet'];
 
-<DecisionHub rowTitles={rowTitles} rowSubTitles={rowSubTitles} icons={icons}/>
+<Formik>
+  <DecisionHub name="thatField" options={options} />
+</Formik>
 ```

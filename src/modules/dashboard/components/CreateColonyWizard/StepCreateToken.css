@@ -1,32 +1,32 @@
 @import 'variables.css';
 
 .main {
-    margin-top: -100px;
-    width: 100%;
-    max-width: 520px;
-  }
+  margin-top: -100px;
+  width: 100%;
+  max-width: 520px;
+}
 
 .header {
-    margin-bottom: 40px;
+  margin-bottom: 40px;
 }
 
 .title {
-    margin-top: 310px;
-    margin-bottom: 45px;
-    font-weight: var(--weight-medium);
+  margin-top: 310px;
+  margin-bottom: 45px;
+  font-weight: var(--weight-medium);
 }
 
 .nameForm {
-    margin-top: 40px;
-    width: 460px;
+  margin-top: 40px;
+  width: 460px;
 }
 
 .input {
-    width: 100%;
+  width: 100%;
 }
 
 .buttons {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 48px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 48px;
 }

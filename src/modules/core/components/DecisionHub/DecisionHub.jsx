@@ -7,13 +7,15 @@ import DecisionOption from './DecisionOption.jsx';
 const displayName = 'DecisionHub';
 
 type Props = {
-  options: Array<{
-    value: string,
-    title: string,
-    subtitle: string,
-    icon?: string,
-  }>,
+  options: Array<Option>,
   name: string,
+};
+
+type Option = {
+  value: string,
+  title: {},
+  subtitle: {},
+  icon?: string,
 };
 
 const DecisionHub = ({ options, name }: Props) => (
