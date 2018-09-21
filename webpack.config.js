@@ -15,6 +15,9 @@ const config = {
   resolve: {
     alias: {
       '~core': path.resolve(__dirname, 'src/modules/core/components'),
+      '~dashboard': path.resolve(__dirname, 'src/modules/dashboard/components'),
+      '~users': path.resolve(__dirname, 'src/modules/users/components'),
+      '~wallet': path.resolve(__dirname, 'src/modules/wallet/components'),
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
       // https://github.com/jquense/yup/issues/273
