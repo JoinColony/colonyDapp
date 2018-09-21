@@ -18,6 +18,9 @@ module.ignore_non_literal_requires=true
 module.name_mapper='^.*\.css$' -> 'css-module-flow'
 module.name_mapper='^.*\.(svg)$' -> 'empty/string'
 module.name_mapper='^\~core\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/core/components/\1'
+module.name_mapper='^\~dashboard\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/dashboard/components/\1'
+module.name_mapper='^\~users\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/users/components/\1'
+module.name_mapper='^\~wallet\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/wallet/components/\1'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
 
