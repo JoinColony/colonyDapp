@@ -1,0 +1,23 @@
+@import 'variables.css';
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 48px;
+}
+
+.finalForm{
+  width: 500px;
+  height: 364px;
+  margin-top: 224px;
+  background: var(--colony-white);
+  border-radius: 5px;
+  border: 1px solid var(--temp-grey-0);
+  padding: 20px 30px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 48px;
+}
