@@ -6,7 +6,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import Link from '~core/Link';
+import Button from '~core/Button';
+
+import styles from './LoadingTemplate.css';
 
 const MSG = defineMessages({
   helpLinkText: {
@@ -21,13 +23,18 @@ type Props = {
 };
 
 const LoadingTemplate = ({ children, loadingText }: Props) => (
-  <div>
-    <header>
-      <Link to="/" text={MSG.helpLinkText} />
+  <div className={styles.main}>
+    <header className={styles.header}>
+      <Button to="/" text={MSG.helpLinkText} appearance={{ theme: 'blue' }} />
     </header>
-    <main>
-      <SpinnerLoader loadingText={loadingText} />
-      {children}
+    <main className={styles.mainContent}>
+      <div>
+        <SpinnerLoader
+          loadingText={loadingText}
+          appearance={{ theme: 'primary', size: 'massive' }}
+        />
+        {children}
+      </div>
     </main>
   </div>
 );
