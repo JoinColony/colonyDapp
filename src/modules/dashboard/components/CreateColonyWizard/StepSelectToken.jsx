@@ -22,13 +22,7 @@ import type { SubmitFn } from '../../../core/components/Wizard';
 type FormValues = {
   nextStep: () => void,
   tokenAddress: string,
-  // iconUpload: <any>,
 };
-
-type FormValidation = {
-  tokenAddress: string,
-  // iconUpload: <any>,
-} & FormValues;
 
 type Values = { [string]: { [?string]: [string] } };
 

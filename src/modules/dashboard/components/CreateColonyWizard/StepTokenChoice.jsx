@@ -4,13 +4,13 @@ import React from 'react';
 
 import { defineMessages } from 'react-intl';
 
+import type { FormikProps } from 'formik';
 import styles from './StepTokenChoice.css';
 
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import DecisionHub from '../../../core/components/DecisionHub';
 
-import type { FormikProps } from 'formik';
 import type { SubmitFn } from '../../../core/components/Wizard';
 
 const MSG = defineMessages({

@@ -9,7 +9,6 @@ import DecisionHub from '../DecisionHub.jsx';
 
 describe('DecisionHub component', () => {
   test('Renders initial component', () => {
-
     const MSG = {
       createTokenTitle: {
         id: 'ComponentName.special',

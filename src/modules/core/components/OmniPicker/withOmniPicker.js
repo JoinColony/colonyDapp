@@ -8,13 +8,7 @@ import nanoid from 'nanoid';
 
 import { ESC, TAB, UP, DOWN, ENTER } from './keyTypes';
 
-import type { Data, ItemComponentType } from './types';
-
 import OmniPicker from './OmniPicker.jsx';
-
-type ExternalOmniPickerProps = {
-  itemComponent: ItemComponentType,
-};
 
 type Props = {
   data: any | (any => any),
@@ -224,7 +218,7 @@ const getClass = WrappedComponent => {
       });
     };
 
-    getOmniPicker = ({ itemComponent, ...props }: ExternalOmniPickerProps) => {
+    getOmniPicker = ({ ...props }: ExternalOmniPickerProps) => {
       const { getItem } = this.props;
       const { isOpen, keyUsed, selected } = this.state;
       const filteredData = this.getFilteredData();
@@ -238,7 +232,6 @@ const getClass = WrappedComponent => {
             getItem,
             id,
             inputRef: this.inputNode,
-            itemComponent,
             keyUsed,
             ref: this.registerOmniPicker,
             select: this.select,
