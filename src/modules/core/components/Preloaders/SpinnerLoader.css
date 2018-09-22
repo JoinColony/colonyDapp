@@ -44,6 +44,16 @@
   width: 42px;
 }
 
+.sizeHuge .loader {
+  height: 54px;
+  width: 54px;
+}
+
+.sizeMassive .loader {
+  height: 210px;
+  width: 210px;
+}
+
 .themePrimary .loader {
   border-left-color: var(--primary);
   border-bottom-color: var(--primary);
