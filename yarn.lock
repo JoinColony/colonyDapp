@@ -741,7 +741,11 @@
     ethers "^3.0.29"
     hdkey "^1.1.0"
 
+<<<<<<< HEAD
 "@colony/purser-metamask@^1.0.0":
+=======
+"@colony/purser-metamask@^1.0.1":
+>>>>>>> Update: `purser` library packages and named imports
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-1.0.1.tgz#e484d2a94fc28bf71dfc00383089494172870004"
   dependencies:
@@ -749,7 +753,11 @@
     "@colony/purser-core" "1.0.1"
     lodash.isequal "^4.5.0"
 
+<<<<<<< HEAD
 "@colony/purser-software@^1.0.1":
+=======
+"@colony/purser-software@^1.0.2":
+>>>>>>> Update: `purser` library packages and named imports
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.0.2.tgz#1cb3861f1b1f6fdd380a491324f938a7c53ee569"
   dependencies:
@@ -4561,8 +4569,12 @@ ethers-wallet@^2.1.8:
     setimmediate "1.0.4"
     uuid "2.0.1"
 
+<<<<<<< HEAD
 ethers@^3.0.16, ethers@^3.0.27:
 >>>>>>> Add basic redux + saga structure
+=======
+ethers@^3.0.27, ethers@^3.0.29:
+>>>>>>> Update: `purser` library packages and named imports
   version "3.0.29"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-3.0.29.tgz#ce8139955b4ed44456eb6764b089bb117c86775d"
   dependencies:
@@ -7358,11 +7370,15 @@ jest-enzyme@^6.0.2:
     enzyme-matchers "^6.1.1"
     enzyme-to-json "^3.3.0"
 <<<<<<< HEAD
+<<<<<<< HEAD
     jest-environment-enzyme "^6.1.1"
 >>>>>>> Add basic redux + saga structure
 =======
     jest-environment-enzyme "^6.1.0"
 >>>>>>> Fix: manually fix `yarn` lock
+=======
+    jest-environment-enzyme "^6.1.1"
+>>>>>>> Update: `purser` library packages and named imports
 
 jest-get-type@^22.1.0:
   version "22.4.3"
