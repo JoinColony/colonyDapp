@@ -9,11 +9,12 @@ import './modules/validations';
 
 import App from './App.jsx';
 import store from './createReduxStore';
+import context from './context';
 
 const rootNode = document.getElementById('root');
 
 ReactModal.setAppElement(rootNode);
 
 if (rootNode) {
-  render(createElement(App, { store }), rootNode);
+  render(createElement(App, { store, context }), rootNode);
 }

@@ -10,6 +10,8 @@ import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
 
+import { Provider as ContextProvider } from './createReactContext';
+
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import Dashboard from '~dashboard/Dashboard';
 
@@ -50,11 +52,12 @@ const Home = () => (
 
 type Props = {
   store: Object,
+  context: Object,
 };
 
-export default function App({ store }: Props) {
-  return (
-    <IntlProvider locale="en" defaultLocale="en" messages={messages}>
+const App = ({ store, context }: Props) => (
+  <IntlProvider locale="en" defaultLocale="en" messages={messages}>
+    <ContextProvider value={context}>
       <Provider store={store}>
         <Router>
           <div className={layout.stretch}>
@@ -72,6 +75,8 @@ export default function App({ store }: Props) {
           </div>
         </Router>
       </Provider>
-    </IntlProvider>
-  );
-}
+    </ContextProvider>
+  </IntlProvider>
+);
+
+export default App;
