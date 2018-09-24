@@ -7318,6 +7318,7 @@ jest-each@^23.6.0:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 jest-environment-enzyme@^6.1.2:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/jest-environment-enzyme/-/jest-environment-enzyme-6.1.2.tgz#2612805a3cc0fa6934f9c3e62cf6255077d1b16b"
@@ -7329,6 +7330,11 @@ jest-environment-enzyme@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/jest-environment-enzyme/-/jest-environment-enzyme-6.1.0.tgz#16e14318c930d7bb2ac08da51dde2cd0b7b5853a"
 >>>>>>> Add basic redux + saga structure
+=======
+jest-environment-enzyme@^6.1.1:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/jest-environment-enzyme/-/jest-environment-enzyme-6.1.2.tgz#2612805a3cc0fa6934f9c3e62cf6255077d1b16b"
+>>>>>>> Add: initial react root context structure
   dependencies:
     jest-environment-jsdom "^22.4.1"
 

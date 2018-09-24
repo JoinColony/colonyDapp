@@ -10,6 +10,8 @@ import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
 
+import { Provider as ContextProvider } from './createReactContext';
+
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import Dashboard from '~dashboard/Dashboard';
 
@@ -58,30 +60,33 @@ const Home = () => (
 
 type Props = {
   store: Object,
+  context: Object,
 };
 
-export default function App({ store }: Props) {
+export default function App({ store, context }: Props) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages}>
-      <DialogProvider dialogComponents={dialogComponents}>
+      <ContextProvider value={context}>
         <Provider store={store}>
-          <Router>
-            <div className={layout.stretch}>
-              <Route exact path="/" component={Home} />
-              <Route path="/createcolony" component={CreateColonyWizard} />
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/start" component={WalletStart} />
-              <Route path="/createwallet" component={CreateWalletWizard} />
-              <Route path="/connectwallet/:provider" component={ConnectWallet} />
-              <Route path="/profile" component={UserProfile} />
-              {/* eslint-disable-next-line */}
-              {/* TODO: to the router person: please find a way to have this be /profile/edit */}
-              <Route path="/profileedit" component={UserProfileEdit} />
-              <Route path="/createprofile" component={ProfileCreate} />
-            </div>
-          </Router>
+          <DialogProvider dialogComponents={dialogComponents}>
+            <Router>
+              <div className={layout.stretch}>
+                <Route exact path="/" component={Home} />
+                <Route path="/createcolony" component={CreateColonyWizard} />
+                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/start" component={WalletStart} />
+                <Route path="/createwallet" component={CreateWalletWizard} />
+                <Route path="/connectwallet/:provider" component={ConnectWallet} />
+                <Route path="/profile" component={UserProfile} />
+                {/* eslint-disable-next-line */}
+                {/* TODO: to the router person: please find a way to have this be /profile/edit */}
+                <Route path="/profileedit" component={UserProfileEdit} />
+                <Route path="/createprofile" component={ProfileCreate} />
+              </div>
+            </Router>
+          </DialogProvider>
         </Provider>
-      </DialogProvider>
+      </ContextProvider>
     </IntlProvider>
   );
 }
