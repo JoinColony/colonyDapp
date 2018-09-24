@@ -6,7 +6,7 @@
   margin-top: 48px;
 }
 
-.finalForm{
+.finalForm {
   width: 500px;
   height: 364px;
   margin-top: 224px;
@@ -14,6 +14,23 @@
   border-radius: 5px;
   border: 1px solid var(--temp-grey-0);
   padding: 20px 30px;
+}
+
+.cardRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 40px 0px;
+}
+
+.fakeInput{
+  border: none;
+  background-color: var(--colony-white);
+  color: var(--text);
+  font-size: var(--size-normal);
+}
+
+.cardElement {
+  flex: 1;
 }
 
 .buttons {
