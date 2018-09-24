@@ -12,7 +12,7 @@ import {
 
 import styles from './ActivityFeed.css';
 
-import ActivityFeedPlaceholder from './ActivityFeedPlaceholder.jsx';
+import ActivityFeedItem from './ActivityFeedItem.jsx';
 
 const MSG = defineMessages({
   title: {
@@ -25,15 +25,19 @@ const MSG = defineMessages({
   },
 });
 
+type Props = {
+  activities: Array<Object>,
+};
+
 const displayName = 'ActivityFeed';
 
-const ActivityFeed = () => (
+const ActivityFeed = ({ activities }: Props) => (
   // TODO remove this `div.main` and associated styles once it's actually implemented
   <div className={styles.main}>
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHeaderCell>
+          <TableHeaderCell className={styles.activityFeedHeaderCell}>
             <FormattedMessage {...MSG.title} /> (<FormattedMessage
               {...MSG.comingSoonText}
             />)
@@ -41,7 +45,9 @@ const ActivityFeed = () => (
         </TableRow>
       </TableHeader>
       <TableBody>
-        <ActivityFeedPlaceholder />
+        {activities.map(activity => (
+          <ActivityFeedItem key={activity.id} activity={activity} />
+        ))}
       </TableBody>
     </Table>
   </div>

@@ -7,6 +7,7 @@ import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '../../../pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
 
+import mockActivities from './__datamocks__/mockActivities';
 import mockColonies from './__datamocks__/mockColonies';
 import mockUser from './__datamocks__/mockUser';
 
@@ -19,7 +20,7 @@ const UserProfile = () => (
       <ColonyGrid colonies={mockColonies} />
     </section>
     <section className={styles.sectionContainer}>
-      <ActivityFeed />
+      <ActivityFeed activities={mockActivities} />
     </section>
   </ProfileTemplate>
 );

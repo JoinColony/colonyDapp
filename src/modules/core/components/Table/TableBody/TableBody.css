@@ -1,8 +1,0 @@
-
-.main td {
-  padding: 20px;
-
-  &:not(:last-child) {
-    padding-right: 0;
-  }
-}

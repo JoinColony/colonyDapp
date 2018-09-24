@@ -1,5 +1,9 @@
 @import 'variables.css';
 
+.activityFeedItemCell {
+  padding: 20px 40px;
+}
+
 .placeholderItem {
   position: relative;
 }

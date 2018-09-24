@@ -1,7 +1,6 @@
 @import 'variables.css';
 
 .main .th {
-  padding-left: 20px;
   height: 46px;
   font-weight: var(--weight-semi);
   text-align: left;

@@ -5,16 +5,12 @@ import React from 'react';
 
 type Props = {
   children: Node,
-  padding?: string,
-  width?: string,
 };
 
 const displayName = 'TableHeaderCell';
 
-const TableHeaderCell = ({ children, padding, width, ...props }: Props) => (
-  <th style={{ padding, width }} {...props}>
-    {children}
-  </th>
+const TableHeaderCell = ({ children, ...props }: Props) => (
+  <th {...props}>{children}</th>
 );
 
 TableHeaderCell.displayName = displayName;
