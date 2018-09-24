@@ -11,6 +11,8 @@ import styles from './Dashboard.css';
 
 import TabMyTasks from './TabMyTasks.jsx';
 
+import mockTasks from './__datamocks__/mockTasks';
+
 const MSG = defineMessages({
   tabMyTasks: {
     id: 'dashboard.Dashboard.tabMyTasks',
@@ -70,7 +72,7 @@ const Dashboard = () => {
             </Tab>
           </TabList>
           <TabPanel>
-            <TabMyTasks tasks={[]} />
+            <TabMyTasks tasks={mockTasks} />
           </TabPanel>
           <TabPanel>
             <h2>This should not be visible</h2>

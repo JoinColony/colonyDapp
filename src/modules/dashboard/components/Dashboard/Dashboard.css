@@ -7,12 +7,13 @@
   overflow: auto;
   background: var(--gradient-default);
   grid-template-columns: auto 180px;
-  grid-template-rows: auto;
+  grid-template-rows: 100%;
   column-gap: 80px;
 }
 
 .content {
   align-self: start;
+  height: 100%;
   grid-column: 1;
   grid-row: 1;
 }
