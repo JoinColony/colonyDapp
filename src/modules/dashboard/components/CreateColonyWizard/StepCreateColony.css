@@ -1,32 +1,26 @@
 @import 'variables.css';
 
-.buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 48px;
-}
-
 .finalForm {
-  width: 500px;
-  height: 364px;
   margin-top: 224px;
-  background: var(--colony-white);
-  border-radius: 5px;
-  border: 1px solid var(--temp-grey-0);
   padding: 20px 30px;
+  height: 364px;
+  width: 500px;
+  border: 1px solid var(--temp-grey-0);
+  border-radius: 5px;
+  background: var(--colony-white);
 }
 
 .cardRow {
   display: flex;
   justify-content: space-between;
-  margin: 40px 0px;
+  margin: 50px 0;
 }
 
-.fakeInput{
+.fakeInput {
   border: none;
   background-color: var(--colony-white);
-  color: var(--text);
   font-size: var(--size-normal);
+  color: var(--text);
 }
 
 .cardElement {
