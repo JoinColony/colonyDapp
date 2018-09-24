@@ -1,8 +1,9 @@
 /* @flow */
+
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import metamask from '@colony/purser-metamask';
+import { open } from '@colony/purser-metamask';
 
 import asProvider from '../asProvider';
 
@@ -75,7 +76,7 @@ class MetaMask extends Component<Props, State> {
     let wallet;
     try {
       // const provider: ProviderType = metamask();
-      wallet = await metamask.open();
+      wallet = await open();
     } catch (error) {
       metamaskError = error;
     }

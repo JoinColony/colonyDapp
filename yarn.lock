@@ -731,32 +731,32 @@
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@colony/eslint-config-colony/-/eslint-config-colony-5.0.0.tgz#e466d019aebdf98104ddd542dd6709fdc96a2cc3"
 
-"@colony/purser-core@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@colony/purser-core/-/purser-core-1.0.0.tgz#2ca8b686f4faba6ae7ef102f7380107605aab3c9"
+"@colony/purser-core@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-core/-/purser-core-1.0.1.tgz#cafbb7c39fae84a39caaf7d3035db0b84dc3b294"
   dependencies:
     "@babel/runtime" "^7.0.0"
     bn.js "^4.11.8"
     ethereumjs-util "^5.2.0"
-    ethers "^3.0.16"
+    ethers "^3.0.29"
     hdkey "^1.1.0"
 
-"@colony/purser-metamask@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-1.0.0.tgz#fa49117a0141c6e3705f23ff85201719629a5e31"
+"@colony/purser-metamask@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-1.0.1.tgz#e484d2a94fc28bf71dfc00383089494172870004"
   dependencies:
     "@babel/runtime" "^7.0.0"
-    "@colony/purser-core" "1.0.0"
+    "@colony/purser-core" "1.0.1"
     lodash.isequal "^4.5.0"
 
-"@colony/purser-software@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.0.1.tgz#9cfd2b6fc45793c1dce069ebcacf35aed1984743"
+"@colony/purser-software@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.0.2.tgz#1cb3861f1b1f6fdd380a491324f938a7c53ee569"
   dependencies:
     "@babel/runtime" "^7.0.0"
-    "@colony/purser-core" "1.0.0"
+    "@colony/purser-core" "1.0.1"
     ethereumjs-util "^5.2.0"
-    ethers "^3.0.16"
+    ethers "^3.0.29"
 
 "@kironeducation/flow-junit-transformer@^0.3.0":
   version "0.3.0"
@@ -4280,7 +4280,7 @@ ethers-wallet@^2.1.8:
     setimmediate "1.0.4"
     uuid "2.0.1"
 
-ethers@^3.0.16, ethers@^3.0.27:
+ethers@^3.0.27, ethers@^3.0.29:
   version "3.0.29"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-3.0.29.tgz#ce8139955b4ed44456eb6764b089bb117c86775d"
   dependencies:
@@ -6991,7 +6991,7 @@ jest-enzyme@^6.0.2:
   dependencies:
     enzyme-matchers "^6.1.1"
     enzyme-to-json "^3.3.0"
-    jest-environment-enzyme "^6.1.0"
+    jest-environment-enzyme "^6.1.1"
 
 jest-get-type@^22.1.0:
   version "22.4.3"
