@@ -11,12 +11,12 @@
 }
 
 .baseStyles thead tr th {
-  padding: 20px 40px;
+  /* Bring your own padding */
 }
 
 .baseStyles tbody tr td,
 .baseStyles tbody tr th {
-  padding: 40px;
+  /* Bring your own padding */
 }
 
 /*
