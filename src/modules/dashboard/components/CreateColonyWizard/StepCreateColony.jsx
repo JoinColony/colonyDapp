@@ -4,8 +4,6 @@ import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
-import { compose, nest, withProps } from 'recompose';
-//import withProps from 'recompose/withProps';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
@@ -14,9 +12,7 @@ import styles from './StepCreateColony.css';
 import Input from '../../../core/components/Fields/Input';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
-import ActivityBar from '../../../core/components/ActivityBar/ActivityBar.jsx';
-import withDialog from '../../../core/components/Dialog/withDialog.js';
-import DialogProvider from '../../../core/components/Dialog/DialogProvider.jsx';
+import withDialog from '../../../core/components/Dialog/withDialog';
 
 type FormValues = {
   nextStep: () => void,
@@ -27,13 +23,13 @@ type Props = {
   handleSubmit: () => void,
 } & FormikProps<FormValues>;
 
-type CardProps = {
-  cardOptions: Array<Row>,
-};
-
 type Row = {
   title: MessageDescriptor,
   valueKey: string,
+};
+
+type CardProps = {
+  cardOptions: Array<Row>,
 };
 
 const MSG = defineMessages({
@@ -116,7 +112,6 @@ class StepCreateColony extends Component<Props> {
   openGasDialog = () => {};
 
   render() {
-    console.log(this.props);
     const { handleSubmit, openDialog } = this.props;
     return (
       <section className={styles.content}>
@@ -139,9 +134,8 @@ class StepCreateColony extends Component<Props> {
               text={MSG.back}
             />
             <Button
-              onClick={openDialog('ActivityBar')}
+              onClick={() => openDialog('ActivityBarExample')}
               appearance={{ theme: 'primary' }}
-              type="submit"
               text={MSG.confirm}
             />
           </div>
@@ -155,9 +149,7 @@ StepCreateColony.displayName = displayName;
 
 const StepWithDialog = withDialog()(StepCreateColony);
 
-const enhance = compose(withProps(() => ({ dialogComponents: ActivityBar })));
-
-export const Step = nest(DialogProvider, enhance(StepWithDialog));
+export const Step = StepWithDialog;
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();

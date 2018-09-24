@@ -1,5 +1,6 @@
 /* @flow */
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 
 import ActivityBar from './ActivityBar.jsx';
 import styles from './ActivityBar.css';
@@ -50,4 +51,4 @@ class ActivityBarExample extends Component<Props, State> {
   }
 }
 
-export default ActivityBarExample;
+export default injectIntl(ActivityBarExample);
