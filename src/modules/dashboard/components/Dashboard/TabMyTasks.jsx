@@ -7,6 +7,8 @@ import ColonyGrid from '~core/ColonyGrid';
 
 import styles from './TabMyTasks.css';
 
+import TaskList from '../TaskList';
+
 import mockColonies from './__datamocks__/mockColonies';
 
 const MSG = defineMessages({
@@ -25,7 +27,7 @@ type Props = {
 
 const TabMyTasks = ({ tasks }: Props) => {
   if (tasks && tasks.length) {
-    return <div>Task table here</div>;
+    return <TaskList tasks={tasks} />;
   }
   return (
     <Fragment>

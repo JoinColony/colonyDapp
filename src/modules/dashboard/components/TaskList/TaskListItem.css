@@ -1,0 +1,19 @@
+@import 'variables.css';
+
+.taskDetails {
+  width: calc(100% - 200px);
+}
+
+.taskDetailsTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskPayout {
+  width: 100px;
+}
+
+.userAvatar {
+  width: 100px;
+}
