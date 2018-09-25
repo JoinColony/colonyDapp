@@ -1,0 +1,53 @@
+@import 'variables.css';
+
+.main {
+  font-size: var(--size-normal);
+}
+
+/*
+* Sizing
+*
+* Next set of classes will define the number's size
+*/
+
+.sizeMedium {
+  font-size: var(--size-medium);
+}
+
+.sizeLarge {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: var(--size-large);
+
+  &::first-letter {
+    margin-right: 5px;
+    font-size: var(--size-medium);
+  }
+}
+
+/*
+* Theme-ing
+*
+* Next set of classes will define our various heading themes.
+*/
+
+.themePrimary {
+  composes: main;
+  color: var(--primary);
+
+  &::first-letter {
+    color: var(--primary);
+  }
+}
+
+.themeGrey {
+  color: var(--grey-4);
+
+  &::first-letter {
+    color: var(--grey-5);
+  }
+}
+
+.themeDark {
+  color: var(--grey-3);
+}

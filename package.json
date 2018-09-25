@@ -133,6 +133,8 @@
         "core-js": "^2.5.7",
         "es6-promisify": "^6.0.0",
         "ethers": "^3.0.27",
+        "ethjs-unit": "^0.1.6",
+        "format-number": "^3.0.0",
         "formik": "^1.0.2",
         "ipfs": "~0.29.3",
         "lru-cache": "^4.1.3",
