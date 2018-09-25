@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import type { MessageDescriptor } from 'react-intl';
 
 import { defineMessages } from 'react-intl';
 
@@ -19,12 +20,12 @@ const MSG = defineMessages({
 type Props = {
   option: {
     value: string,
-    title: string,
-    subtitle: string,
+    title: MessageDescriptor | string,
+    subtitle: MessageDescriptor | string,
     icon?: string,
   },
   /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void,
+  setValue: (val: string) => void,
 };
 
 const displayName = 'DecisionOption';
@@ -67,4 +68,4 @@ class DecisionOption extends Component<Props> {
 
 DecisionOption.displayName = displayName;
 
-export default asField()(DecisionOption);
+export default asField({ initialValue: '' })(DecisionOption);

@@ -42,7 +42,6 @@ class DialogProvider extends Component<Props, State> {
     const { dialogComponents } = this.props;
     const Dialog = dialogComponents[dialogKey];
     if (!Dialog) {
-      // eslint-disable-next-line no-console
       return console.warn(
         // eslint-disable-next-line max-len
         `Unknown Dialog: '${dialogKey}'. See dialogComponents in DialogProvider`,

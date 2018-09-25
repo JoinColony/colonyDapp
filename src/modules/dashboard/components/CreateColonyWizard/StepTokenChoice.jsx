@@ -7,11 +7,11 @@ import { defineMessages } from 'react-intl';
 import type { FormikProps } from 'formik';
 import styles from './StepTokenChoice.css';
 
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
-import DecisionHub from '../../../core/components/DecisionHub';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
+import DecisionHub from '~core/DecisionHub';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import type { SubmitFn } from '~core/Wizard';
 
 const MSG = defineMessages({
   heading: {
@@ -70,12 +70,12 @@ const options = [
 ];
 
 type FormValues = {
-  nextStep: () => void,
+  tokenChoice: string,
 };
 
 type Props = {
   previousStep: () => void,
-  handleSubmit: () => void,
+  nextStep: () => void,
 } & FormikProps<FormValues>;
 
 const TokenChoice = ({ previousStep, handleSubmit }: Props) => (

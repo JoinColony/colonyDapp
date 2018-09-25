@@ -102,7 +102,7 @@ module.exports = {
       ],
     },
     {
-      name: 'Layout',
+      name: 'Wizard',
       components: ['./src/modules/core/components/DecisionHub/DecisionHub.jsx'],
     },
   ],

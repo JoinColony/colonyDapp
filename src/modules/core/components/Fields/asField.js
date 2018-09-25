@@ -29,8 +29,9 @@ type InProps = CommonProps & {
   id?: string,
   intl: IntlShape,
   help?: string,
-  helpValues: Object,
-  labelValues: Object,
+  helpValues?: Object,
+  labelValues?: Object,
+  statusValues?: Object,
   status?: string | MessageDescriptor,
   form: {
     touched: Object,
@@ -100,6 +101,7 @@ const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
         name,
         placeholder,
         status,
+        statusValues,
         title,
         ...props
       }: InProps) => {
@@ -112,7 +114,7 @@ const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
         const $label = formatIntl(label, formatMessage, labelValues) || $title;
         const $help = formatIntl(help, formatMessage, helpValues);
         const $placeholder = formatIntl(placeholder, formatMessage);
-        const $status = formatIntl(status, formatMessage);
+        const $status = formatIntl(status, formatMessage, statusValues);
         // This is assigning an empty string to the field's value.
         // It might be problematic for some cases but for now I couldn't think of one
         return {

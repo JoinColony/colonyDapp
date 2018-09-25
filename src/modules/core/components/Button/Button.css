@@ -270,7 +270,7 @@
 .themeBlue {
   composes: main;
   padding: 0;
-  height: 0;
+  height: 20px;
   font-weight: var(--weight-semi);
   color: var(--sky-blue);
 }

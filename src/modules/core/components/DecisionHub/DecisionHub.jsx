@@ -2,14 +2,16 @@
 
 import React from 'react';
 
+import type { MessageDescriptor } from 'react-intl';
+
 import DecisionOption from './DecisionOption.jsx';
 
 const displayName = 'DecisionHub';
 
 type Option = {
   value: string,
-  title: {},
-  subtitle: {},
+  title: MessageDescriptor | string,
+  subtitle: MessageDescriptor | string,
   icon?: string,
 };
 

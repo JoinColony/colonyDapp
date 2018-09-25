@@ -1,38 +1,45 @@
-// @flow
+/* @flow */
+import type { IntlShape } from 'react-intl';
 
-import React, { Component } from 'react';
-import { defineMessages } from 'react-intl';
+import React, { Component, Fragment } from 'react';
+import { defineMessages, injectIntl } from 'react-intl';
 
 import ColonyNetworkClient from '@colony/colony-js-client';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { providers } from 'ethers';
 import { EtherscanLoader } from '@colony/colony-js-contract-loader-http';
 import * as yup from 'yup';
+import debounce from 'lodash/debounce';
 
 import type { FormikProps } from 'formik';
 
 import styles from './StepSelectToken.css';
-import Input from '../../../core/components/Fields/Input';
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
-import FileUpload from '../../../core/components/FileUpload';
+import Input from '~core/Fields/Input';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
+import FileUpload from '~core/FileUpload';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import type { SubmitFn } from '~core/Wizard';
 
 type FormValues = {
-  nextStep: () => void,
   tokenAddress: string,
+  tokenSymbol?: string,
+  tokenName?: string,
+  iconUpload?: string,
 };
 
-type Values = { [string]: { [?string]: [string] } };
-
 type Props = {
-  handleSubmit: () => void,
   previousStep: () => void,
+  nextStep: () => void,
+  intl: IntlShape,
 } & FormikProps<FormValues>;
 
 type State = {
-  tokenDataNotFound: boolean,
+  isLoading: boolean,
+  tokenData: {
+    symbol: string,
+    name: string,
+  } | null,
 };
 
 const MSG = defineMessages({
@@ -58,7 +65,7 @@ const MSG = defineMessages({
   },
   preview: {
     id: 'CreateColony.SelectToken.preview',
-    defaultMessage: 'Token Preview',
+    defaultMessage: 'Token Preview: {tokenName} ({tokenSymbol})',
   },
   tokenName: {
     id: 'CreateColony.SelectToken.tokenName',
@@ -94,8 +101,11 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateColonyWizard.SelectToken';
 
 class SelectToken extends Component<Props, State> {
+  adapter: EthersAdapter;
+
   state = {
-    tokenDataNotFound: false,
+    tokenData: null,
+    isLoading: false
   };
 
   componentDidMount() {
@@ -110,67 +120,45 @@ class SelectToken extends Component<Props, State> {
     });
   }
 
-  componentDidUpdate({ values: { tokenAddress: previousAddress } }: Values) {
+  componentDidUpdate({ values: { tokenAddress: previousAddress } }: Props) {
     const {
       values: { tokenAddress },
       isValid,
+      intl: { formatMessage },
     } = this.props;
+
     if (tokenAddress !== previousAddress && isValid) {
-      this.throttle(
+      const limitedCallCount = debounce(() => {
         this.checkToken(tokenAddress)
-          .then(({ name: tokenName, symbol: tokenSymbol }) => {
-            MSG.hint.defaultMessage = `TokenPreview:
-              ${tokenName}
-              (${tokenSymbol})`;
-            this.setState({ tokenDataNotFound: false });
+          .then(({ name, symbol }) => {
+
+            this.setState({ tokenData: { name, symbol }, isLoading: false});
           })
           .catch(error => {
             /* We might want to keep this log for a little while
             for debugging purposes */
             // eslint-disable-next-line no-console
             console.log(error);
-            this.setState({ tokenDataNotFound: true });
-          }),
-        1000,
-      );
+            this.setState({ tokenData: null, isLoading: false});
+          })
+        }, 1000);
+        limitedCallCount();
     }
   }
-
-  adapter = undefined;
 
   checkToken = async (contractAddress: string) => {
     const token = new ColonyNetworkClient.TokenClient({
       adapter: this.adapter,
       query: { contractAddress },
     });
+    this.setState({ isLoading: true});
     await token.init();
     return token.getTokenInfo.call();
   };
 
-  // We could either add the throttle funciton to a collection of helper
-  // function on the longterm or decide we use a library
-  throttle = (callback: Promise<any>, wait: number) => {
-    let timeout = null;
-    let callbackArgs: ?Array<any> = null;
-
-    const later = () => {
-      // $FlowFixMe
-      callback.apply(this, callbackArgs);
-      timeout = null;
-    };
-
-    return (...args: Array<any>) => {
-      if (!timeout) {
-        callbackArgs = args;
-        timeout = setTimeout(later, wait);
-      }
-    };
-  };
-
   render() {
-    const { tokenDataNotFound } = this.state;
-    const { handleSubmit, isValid, previousStep } = this.props;
-
+    const { tokenData, isLoading } = this.state;
+    const { handleSubmit, isValid, previousStep, values } = this.props;
     return (
       <section className={styles.content}>
         <div className={styles.title}>
@@ -185,10 +173,11 @@ class SelectToken extends Component<Props, State> {
               hint={
                 <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
               }
-              status={MSG.hint}
+              status={tokenData ? MSG.preview : MSG.hint}
+              statusValues={tokenData ? {tokenName: tokenData.name, tokenSymbol: tokenData.symbol} : {}}
             />
-            {tokenDataNotFound ? (
-              <React.Fragment>
+            {(!tokenData && !isLoading && values.tokenAddress) && (
+              <>
                 <div className={styles.tokenDetails}>
                   <Input name="tokenName" label={MSG.tokenName} />
                 </div>
@@ -213,8 +202,8 @@ class SelectToken extends Component<Props, State> {
                     maxFilesLimit={1}
                   />
                 </div>
-              </React.Fragment>
-            ) : null}
+              </>
+            )}
             <div className={styles.buttons}>
               <Button
                 appearance={{ theme: 'secondary' }}
@@ -244,7 +233,7 @@ export const validationSchema = yup.object({
 
 SelectToken.displayName = displayName;
 
-export const Step = SelectToken;
+export const Step = injectIntl(SelectToken);
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();

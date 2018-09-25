@@ -1,54 +1,56 @@
-// @flow
+/* @flow */
+
 import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import type { SubmitFn } from '~core/Wizard';
 
 import styles from './StepCreateToken.css';
 
-import Input from '../../../core/components/Fields/Input';
-import InputLabel from '../../../core/components/Fields/InputLabel';
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
+import Input from '~core/Fields/Input';
+import InputLabel from '~core/Fields/InputLabel';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
 
 type FormValues = {
-  nextStep: () => void,
+  tokenName: string,
 };
 
 type Props = {
   previousStep: () => void,
+  nextStep: () => void,
 } & FormikProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateColony.CreateToken.heading',
+    id: 'CreateColony.StepCreateToken.heading',
     defaultMessage: 'Lets create your new token',
   },
   labelCreateColony: {
-    id: 'CreateColony.CreateToken.label.createColony',
+    id: 'CreateColony.StepCreateToken.label.createColony',
     defaultMessage: 'Token Contact Address',
   },
   helpText: {
-    id: 'CreateColony.CreateToken.learnMore',
+    id: 'CreateColony.StepCreateToken.learnMore',
     defaultMessage: 'Learn More',
   },
   hint: {
-    id: 'CreateColony.CreateToken.hint',
+    id: 'CreateColony.StepCreateToken.hint',
     defaultMessage: 'You can find them here https://etherscan.io/tokens',
   },
   cancel: {
-    id: 'CreateColony.CreateToken.back',
+    id: 'CreateColony.StepCreateToken.back',
     defaultMessage: 'Back',
   },
   next: {
-    id: 'CreateColony.CreateToken.next',
+    id: 'CreateColony.StepCreateToken.next',
     defaultMessage: 'Next',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.CreateToken';
+const displayName = 'dashboard.CreateColonyWizard.StepCreateToken';
 
 const CreateToken = ({ handleSubmit }: Props) => (
   <section className={styles.content}>
