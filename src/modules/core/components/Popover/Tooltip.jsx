@@ -19,7 +19,7 @@ type Props = {
   content: Node | MessageDescriptor,
   /** How the popover gets triggered */
   trigger: 'always' | 'hover' | 'click' | 'disabled',
-  placement: Placement,
+  placement?: Placement,
 };
 
 const renderContent = content => (
@@ -29,7 +29,7 @@ const renderContent = content => (
   </div>
 );
 
-const Tooltip = ({ children, content, placement, trigger }: Props) => (
+const Tooltip = ({ children, content, placement = 'top', trigger }: Props) => (
   <Popover
     appearance={{ theme: 'dark' }}
     trigger={content ? trigger : 'disabled'}

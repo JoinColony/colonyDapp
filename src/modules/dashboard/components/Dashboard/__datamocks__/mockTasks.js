@@ -2,121 +2,169 @@
 
 import BigNumber from 'bn.js';
 
+const createBN = val =>
+  new BigNumber(val).mul(new BigNumber(10).pow(new BigNumber(17)));
+
 const mockTasks = [
   {
     id: 1,
     title: 'Develop Github integration',
-    reputation: new BigNumber('19.005'),
-    payout: [
-      { symbol: 'CLNY', amount: new BigNumber('6.00') },
-      { symbol: 'ETH', amount: new BigNumber('2.00105') },
-      { symbol: 'DAI', amount: new BigNumber('1.001') },
+    reputation: 19.5,
+    payouts: [
+      { symbol: 'CLNY', amount: createBN(600) },
+      { symbol: 'ETH', amount: createBN(200105) },
+      { symbol: 'DAI', amount: createBN(1001) },
     ],
-    assignee: '0xdeadbeef',
+    assignee: {
+      walletAddress: '0xdeadbeef',
+      username: 'user',
+    },
   },
   {
     id: 2,
     title: 'Write docs for JS library',
-    reputation: new BigNumber('3.5'),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('7') }],
-    assignee: '0xbeefdead',
+    reputation: 35,
+    payouts: [{ symbol: 'ETH', amount: createBN(7) }],
+    assignee: {
+      walletAddress: '0xbeefdead',
+      username: 'user',
+    },
   },
   {
     id: 3,
     title: 'Conduct user interviews on lo-fi prototypes',
-    reputation: new BigNumber(5),
-    payout: [
-      { symbol: 'ETH', amount: new BigNumber('2.00105') },
-      { symbol: 'DAI', amount: new BigNumber('4.001') },
+    reputation: 5,
+    payouts: [
+      { symbol: 'ETH', amount: createBN(200105) },
+      { symbol: 'DAI', amount: createBN(4001) },
     ],
-    assignee: '0xfeedbeef',
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 4,
     title: 'Create ux prototype of an Ethereum wallet',
-    reputation: new BigNumber(8),
-    payout: [
-      { symbol: 'CLNY', amount: new BigNumber('1.00') },
-      { symbol: 'ETH', amount: new BigNumber('9.00105') },
+    reputation: 8,
+    payouts: [
+      { symbol: 'CLNY', amount: createBN(100) },
+      { symbol: 'ETH', amount: createBN(900105) },
     ],
-    assignee: '0xdeadbeef',
+    assignee: {
+      walletAddress: '0xdeadbeef',
+      username: 'user',
+    },
   },
   {
     id: 5,
     title: 'Translate Colony whitepaper',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'CLNY', amount: new BigNumber('1.00') }],
-    assignee: '0xdeadbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'CLNY', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xdeadbeef',
+      username: 'user',
+    },
   },
   {
     id: 6,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 7,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 8,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 9,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 10,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 11,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 12,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 13,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 14,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
   {
     id: 15,
     title: '5 week open developer project',
-    reputation: new BigNumber(1),
-    payout: [{ symbol: 'ETH', amount: new BigNumber('1.00') }],
-    assignee: '0xfeedbeef',
+    reputation: 1,
+    payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    assignee: {
+      walletAddress: '0xfeedbeef',
+      username: 'user',
+    },
   },
 ];
 
