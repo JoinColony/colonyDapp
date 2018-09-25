@@ -16,6 +16,7 @@ const mockTasks = [
       { symbol: 'DAI', amount: createBN(1001) },
       { symbol: 'CLNY', amount: createBN(600) },
     ],
+    creator: '0xbeefdead',
     assignee: {
       walletAddress: '0xdeadbeef',
       username: 'user',
@@ -26,6 +27,7 @@ const mockTasks = [
     title: 'Write docs for JS library',
     reputation: 35,
     payouts: [{ symbol: 'ETH', amount: createBN(7) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xbeefdead',
       username: 'user',
@@ -39,6 +41,7 @@ const mockTasks = [
       { symbol: 'ETH', amount: createBN(200105) },
       { symbol: 'DAI', amount: createBN(4001) },
     ],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -52,6 +55,7 @@ const mockTasks = [
       { symbol: 'CLNY', amount: createBN(100) },
       { symbol: 'ETH', amount: createBN(900105) },
     ],
+    creator: '0xfeedbeef',
     assignee: {
       walletAddress: '0xdeadbeef',
       username: 'user',
@@ -62,6 +66,7 @@ const mockTasks = [
     title: 'Translate Colony whitepaper',
     reputation: 1,
     payouts: [{ symbol: 'CLNY', amount: createBN(100) }],
+    creator: '0xfeedbeef',
     assignee: {
       walletAddress: '0xdeadbeef',
       username: 'user',
@@ -72,6 +77,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -82,6 +88,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -92,6 +99,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -102,6 +110,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -112,6 +121,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -122,6 +132,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -132,6 +143,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -142,6 +154,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -152,6 +165,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
@@ -162,6 +176,7 @@ const mockTasks = [
     title: '5 week open developer project',
     reputation: 1,
     payouts: [{ symbol: 'ETH', amount: createBN(100) }],
+    creator: '0xdeadbeef',
     assignee: {
       walletAddress: '0xfeedbeef',
       username: 'user',
