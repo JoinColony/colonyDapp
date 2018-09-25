@@ -11,9 +11,10 @@ const mockTasks = [
     title: 'Develop Github integration',
     reputation: 19.5,
     payouts: [
-      { symbol: 'CLNY', amount: createBN(600) },
+      { symbol: 'COOL', amount: createBN(600) },
       { symbol: 'ETH', amount: createBN(200105) },
       { symbol: 'DAI', amount: createBN(1001) },
+      { symbol: 'CLNY', amount: createBN(600) },
     ],
     assignee: {
       walletAddress: '0xdeadbeef',

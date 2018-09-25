@@ -22,32 +22,8 @@ td.taskDetails {
 }
 
 td.taskPayouts {
-  flex-wrap: wrap;
+  justify-content: flex-end;
   width: 150px;
-  text-align: right;
-}
-
-.taskPayout {
-  width: 100%;
-  font-size: var(--size-small);
-  font-weight: var(--weight-semi);
-}
-
-.taskPayoutNumber {
-  font-size: inherit;
-}
-
-.popoverWrapper {
-  width: 100%;
-}
-
-.popoverContent {
-  display: flex;
-  flex-direction: column;
-}
-
-.taskPayoutPopover {
-  cursor: default;
 }
 
 td.userAvatar {
