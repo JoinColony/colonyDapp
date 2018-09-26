@@ -25,32 +25,32 @@ type Props = {
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateColony.ColonyName.heading',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
     defaultMessage: 'What would you like to name your Colony?',
   },
-  labelCreateColony: {
-    id: 'CreateColony.ColonyName.label.createColony',
+  label: {
+    id: 'dashboard.CreateColonyWizard.StepColonyName.label',
     defaultMessage: 'Colony Name',
   },
   helpText: {
-    id: 'CreateColony.ColonyName.helpText',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
   placeholder: {
-    id: 'CreateColony.ColonyName.placeholder',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.placeholder',
     defaultMessage: 'Type a display name for a colony',
   },
   cancel: {
-    id: 'CreateColony.ColonyName.cancel',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.cancel',
     defaultMessage: 'Cancel',
   },
   next: {
-    id: 'CreateColony.ColonyName.next',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.next',
     defaultMessage: 'Next',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.ColonyName';
+const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
 const StepColonyName = ({ handleSubmit, isValid }: Props) => (
   <section className={styles.content}>
@@ -62,7 +62,7 @@ const StepColonyName = ({ handleSubmit, isValid }: Props) => (
       <form className={styles.nameForm} onSubmit={handleSubmit}>
         <Input
           name="colonyName"
-          label={MSG.labelCreateColony}
+          label={MSG.label}
           placeholder={MSG.placeholder}
         />
         <div className={styles.buttons}>

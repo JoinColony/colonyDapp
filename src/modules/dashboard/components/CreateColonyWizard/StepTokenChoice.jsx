@@ -15,43 +15,43 @@ import type { SubmitFn } from '~core/Wizard';
 
 const MSG = defineMessages({
   heading: {
-    id: 'TokenChoice.heading',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.heading',
     defaultMessage:
       /* eslint-disable max-len */
       'How would you like to create a new token or use an existing ERC20 token?',
   },
   subTitle: {
-    id: 'TokenChoice.subTitle',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
       'Each Colony has a native token. When rewarding contributors with the native token, those users will also earn reputation in your Colony.',
   },
   subTitleWithLink: {
-    id: 'TokenChoice.subTitleWithLink',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.subTitleWithLink',
     defaultMessage: 'Not sure which option to choose?',
   },
   button: {
-    id: 'TokenChoice.button',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
     defaultMessage: 'Back',
   },
   learnMore: {
-    id: 'TokenChoice.learnMore',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.learnMore',
     defaultMessage: 'Learn More',
   },
   createTokenTitle: {
-    id: 'TokenChoice.newToken',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.newToken',
     defaultMessage: 'Create a new token',
   },
   selectTokenTitle: {
-    id: 'TokenChoice.existingToken',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.existingToken',
     defaultMessage: 'Use an existing ERC20 token',
   },
   createTokenSubtitle: {
-    id: 'TokenChoice.newTokenSubtitle',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.newTokenSubtitle',
     defaultMessage: 'Earn reputation for your tasks',
   },
   selectTokenSubtitle: {
-    id: 'TokenChoice.existingTokenSubtitle',
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.existingTokenSubtitle',
     defaultMessage: 'For example: DAI, EOS, SNT, etc',
   },
 });
@@ -78,7 +78,9 @@ type Props = {
   nextStep: () => void,
 } & FormikProps<FormValues>;
 
-const TokenChoice = ({ previousStep, handleSubmit }: Props) => (
+const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
+
+const StepTokenChoice = ({ previousStep, handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -120,7 +122,9 @@ const TokenChoice = ({ previousStep, handleSubmit }: Props) => (
   </section>
 );
 
-export const Step = TokenChoice;
+StepTokenChoice.displayName = displayName;
+
+export const Step = StepTokenChoice;
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();

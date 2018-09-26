@@ -25,34 +25,34 @@ type Props = {
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateColony.StepCreateToken.heading',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.heading',
     defaultMessage: 'Lets create your new token',
   },
-  labelCreateColony: {
-    id: 'CreateColony.StepCreateToken.label.createColony',
+  label: {
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.label',
     defaultMessage: 'Token Contact Address',
   },
   helpText: {
-    id: 'CreateColony.StepCreateToken.learnMore',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.learnMore',
     defaultMessage: 'Learn More',
   },
   hint: {
-    id: 'CreateColony.StepCreateToken.hint',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.hint',
     defaultMessage: 'You can find them here https://etherscan.io/tokens',
   },
   cancel: {
-    id: 'CreateColony.StepCreateToken.back',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.back',
     defaultMessage: 'Back',
   },
   next: {
-    id: 'CreateColony.StepCreateToken.next',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.next',
     defaultMessage: 'Next',
   },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.StepCreateToken';
 
-const CreateToken = ({ handleSubmit }: Props) => (
+const StepCreateToken = ({ handleSubmit }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -60,7 +60,7 @@ const CreateToken = ({ handleSubmit }: Props) => (
         text={MSG.heading}
       />
       <form className={styles.nameForm} onSubmit={handleSubmit}>
-        <InputLabel label={MSG.labelCreateColony} />
+        <InputLabel label={MSG.label} />
         <Input name="tokenName" appearance={{ width: 'full' }} />
         <div className={styles.buttons}>
           <Button
@@ -79,9 +79,9 @@ const CreateToken = ({ handleSubmit }: Props) => (
   </section>
 );
 
-CreateToken.displayName = displayName;
+StepCreateToken.displayName = displayName;
 
-export const Step = CreateToken;
+export const Step = StepCreateToken;
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();

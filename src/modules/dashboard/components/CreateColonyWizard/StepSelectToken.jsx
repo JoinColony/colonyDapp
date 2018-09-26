@@ -42,63 +42,63 @@ type State = {
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateColony.SelectToken.heading',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.heading',
     defaultMessage: 'Select an existing ERC20 Token',
   },
-  labelCreateColony: {
-    id: 'CreateColony.SelectToken.label.createColony',
+  label: {
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.label',
     defaultMessage: 'Token Contact Address',
   },
   learnMore: {
-    id: 'CreateColony.SelectToken.learnMore',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.learnMore',
     defaultMessage: 'Learn More',
   },
   hint: {
-    id: 'CreateColony.SelectToken.hint',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.hint',
     defaultMessage: 'You can find them here https://etherscan.io/tokens',
   },
   symbolHint: {
-    id: 'CreateColony.SelectToken.symbolHint',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.symbolHint',
     defaultMessage: 'Max of 6 characters',
   },
   preview: {
-    id: 'CreateColony.SelectToken.preview',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.preview',
     defaultMessage: 'Token Preview: {tokenName} ({tokenSymbol})',
   },
   tokenName: {
-    id: 'CreateColony.SelectToken.tokenName',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.tokenName',
     defaultMessage: 'Token Name',
   },
   tokenSymbol: {
-    id: 'CreateColony.SelectToken.tokenSymbol',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.tokenSymbol',
     defaultMessage: 'Token Symbol',
   },
   cancel: {
-    id: 'CreateColony.SelectToken.back',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.back',
     defaultMessage: 'Back',
   },
   next: {
-    id: 'CreateColony.SelectToken.next',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.next',
     defaultMessage: 'Next',
   },
   invalidAddress: {
-    id: 'CreateColony.SelectToken.invalidAddress',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.invalidAddress',
     defaultMessage:
       'Not a valid token address. Check: https://etherscan.io/tokens',
   },
   fileUploadTitle: {
-    id: 'CreateColony.SelectToken.fileUpload',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUpload',
     defaultMessage: 'Token Icon (.svg or .png)',
   },
   fileUploadHint: {
-    id: 'CreateColony.SelectToken.fileUploadHint',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUploadHint',
     defaultMessage: 'Recommended size for .png file is 60px by 60px, up to 1MB',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.SelectToken';
+const displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
 
-class SelectToken extends Component<Props, State> {
+class StepSelectToken extends Component<Props, State> {
   adapter: EthersAdapter;
 
   state = {
@@ -233,9 +233,9 @@ export const validationSchema = yup.object({
   tokenName: yup.string(),
 });
 
-SelectToken.displayName = displayName;
+StepSelectToken.displayName = displayName;
 
-export const Step = SelectToken;
+export const Step = StepSelectToken;
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
