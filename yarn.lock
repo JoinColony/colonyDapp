@@ -1682,13 +1682,7 @@
     core-js "^2.5.7"
     regenerator-runtime "^0.12.0"
 
-"@babel/runtime@7.0.0-rc.1":
-  version "7.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-rc.1.tgz#42f36fc5817911c89ea75da2b874054922967616"
-  dependencies:
-    regenerator-runtime "^0.12.0"
-
-"@babel/runtime@^7.0.0":
+"@babel/runtime@7.0.0", "@babel/runtime@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0.tgz#adeb78fedfc855aa05bc041640f3f6f98e85424c"
   dependencies:
@@ -1803,12 +1797,12 @@
     "@colony/colony-js-contract-loader" "^1.6.2"
     bn.js "^4.11.6"
 
-"@colony/colony-js-client@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.6.2.tgz#8e96fef05f6317575977afc6c5791206a20eefee"
+"@colony/colony-js-client@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.6.3.tgz#310bbfdc22bec26d7f8c3322d4de70c7691ffd43"
   dependencies:
     "@colony/colony-js-adapter" "^1.6.2"
-    "@colony/colony-js-contract-client" "^1.6.2"
+    "@colony/colony-js-contract-client" "^1.6.3"
     "@colony/colony-js-contract-loader" "^1.6.2"
     "@colony/colony-js-utils" "^1.5.4"
     assert "^1.4.1"
@@ -1817,9 +1811,9 @@
     isomorphic-fetch "^2.2.1"
     web3-utils "^1.0.0-beta.34"
 
-"@colony/colony-js-contract-client@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.6.2.tgz#c3a34bb522c8addff1539736ab4f88800a9b8a5d"
+"@colony/colony-js-contract-client@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.6.3.tgz#1ef11ca18769de8d08c070e6cac37123818c6399"
   dependencies:
     "@colony/colony-js-adapter" "^1.6.2"
     "@colony/colony-js-contract-loader" "^1.6.2"
@@ -6305,6 +6299,12 @@ functional-red-black-tree@^1.0.1, functional-red-black-tree@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
+ganache-cli@^6.1.0:
+  version "6.1.8"
+  resolved "https://registry.yarnpkg.com/ganache-cli/-/ganache-cli-6.1.8.tgz#49a8a331683a9652183f82ef1378d17e1814fcd3"
+  dependencies:
+    source-map-support "^0.5.3"
+
 gar@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/gar/-/gar-1.0.3.tgz#cd6e954dff11821697a9ed5852c7ac5f18df02ce"
@@ -9764,6 +9764,10 @@ lodash.uniqwith@^4.5.0:
 lodash.values@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.values/-/lodash.values-4.3.0.tgz#a3a6c2b0ebecc5c2cba1c17e6e620fe81b53d347"
+
+lodash@4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 lodash@=3.10.1:
   version "3.10.1"
@@ -14148,6 +14152,13 @@ source-map-resolve@^0.5.0:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
+source-map-support@^0.5.3:
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.9.tgz#41bc953b2534267ea2d605bccfa7bfa3111ced5f"
+  dependencies:
+    buffer-from "^1.0.0"
+    source-map "^0.6.0"
+
 source-map-support@^0.5.6:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.6.tgz#4435cee46b1aab62b8e8610ce60f788091c51c13"
@@ -14792,9 +14803,9 @@ symbol-tree@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
 
-synchronous-promise@^1.0.18:
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-1.0.18.tgz#936e8763e6554088cdcf78dc64f7473b972fcefc"
+synchronous-promise@^2.0.5:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-2.0.6.tgz#de76e0ea2b3558c1e673942e47e714a930fa64aa"
 
 table@^4.0.1, table@^4.0.3:
   version "4.0.3"
@@ -16296,15 +16307,15 @@ yeast@0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
 
-yup@^0.26.2:
-  version "0.26.2"
-  resolved "https://registry.yarnpkg.com/yup/-/yup-0.26.2.tgz#6dbced6124424bd099a4f310d7eed674c77359fe"
+yup@^0.26.6:
+  version "0.26.6"
+  resolved "https://registry.yarnpkg.com/yup/-/yup-0.26.6.tgz#07e216a1424861f17958fef1d4775c64ef985724"
   dependencies:
-    "@babel/runtime" "7.0.0-rc.1"
+    "@babel/runtime" "7.0.0"
     fn-name "~2.0.1"
     lodash "^4.17.10"
     property-expr "^1.5.0"
-    synchronous-promise "^1.0.18"
+    synchronous-promise "^2.0.5"
     toposort "^2.0.2"
 
 zcash-bitcore-lib@~0.13.20-rc3:

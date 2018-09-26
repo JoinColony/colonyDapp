@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as yup from 'yup';
+import { isAddress } from 'web3-utils';
 
 import en from '../i18n/en-validation.json';
 
@@ -10,7 +11,6 @@ yup.setLocale(en);
 function equalTo(ref, msg) {
   return this.test({
     name: 'equalTo',
-    exclusive: false,
     message: msg || en.mixed.equalTo,
     params: {
       reference: ref.path,
@@ -21,4 +21,15 @@ function equalTo(ref, msg) {
   });
 }
 
+function address(msg) {
+  return this.test({
+    name: 'address',
+    message: msg || en.string.address,
+    test(value) {
+      return isAddress(value);
+    },
+  });
+}
+
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
+yup.addMethod(yup.string, 'address', address);

@@ -13,6 +13,7 @@ import type { Data, ItemComponentType } from './types';
 import OmniPicker from './OmniPicker.jsx';
 
 type ExternalOmniPickerProps = {
+  // eslint-disable-next-line react/no-unused-prop-types
   itemComponent: ItemComponentType,
 };
 

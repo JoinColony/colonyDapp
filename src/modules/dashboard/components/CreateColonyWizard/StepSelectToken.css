@@ -1,0 +1,41 @@
+@import 'variables.css';
+
+.main {
+  margin-top: -100px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.labelContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title {
+  margin-top: 310px;
+  margin-bottom: 45px;
+  font-weight: var(--weight-medium);
+}
+
+.nameForm {
+  margin-top: 40px;
+  width: 460px;
+}
+
+.tokenDetails {
+  margin-top: 50px;
+}
+
+.input {
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 48px;
+}

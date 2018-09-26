@@ -6,7 +6,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import styles from './CreateNewToken.css';
+import styles from './StepCreateToken.css';
 
 import type { SubmitFn } from '~core/Wizard';
 
@@ -18,57 +18,57 @@ import ExternalLink from '~core/ExternalLink';
 
 const MSG = defineMessages({
   heading: {
-    id: 'CreateNewToken.heading',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.heading',
     defaultMessage: "Let's create your new token.",
   },
   learnMoreLink: {
-    id: 'CreateNewToken.learnMoreLink',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.learnMoreLink',
     defaultMessage: 'Learn More',
   },
   nextButton: {
-    id: 'CreateNewToken.confirmButton',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.confirmButton',
     defaultMessage: 'Create Token',
   },
   backButton: {
-    id: 'CreateNewToken.backButton',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.backButton',
     defaultMessage: 'Back',
   },
   labelTokenName: {
-    id: 'CreateNewToken.labelTokenName',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenName',
     defaultMessage: 'Token Name (example: Colony Token)',
   },
   helpTokenName: {
-    id: 'CreateNewToken.helpTokenName',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenName',
     defaultMessage: 'Letters, numbers, periods, hyphens, and underscores.',
   },
   labelTokenSymbol: {
-    id: 'CreateNewToken.labelTokenSymbol',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenSymbol',
     defaultMessage: 'Token Symbol (example: CLNY)',
   },
   helpTokenSymbol: {
-    id: 'CreateNewToken.helpTokenSymbol',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenSymbol',
     defaultMessage: 'Max of 6 characters',
   },
   labelTokenIcon: {
-    id: 'CreateNewToken.labelTokenIcon',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
     defaultMessage: 'Token Icon (.svg or .png)',
   },
   helpTokenIcon: {
-    id: 'CreateNewToken.helpTokenIcon',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenIcon',
     defaultMessage: 'Recommended 60px by 60px, up to 1 MB',
   },
   errorTokenName: {
-    id: 'CreateNewToken.errorTokenName',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenName',
     defaultMessage: `The token name can only contain letters, numbers, periods,
       hyphens, and underscores`,
   },
   errorTokenSymbol: {
-    id: 'CreateNewToken.errorTokenSymbol',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenSymbol',
     defaultMessage: `The token symbol can only contain letters and numbers, and
       can only have a length of 6`,
   },
   errorTokenIcon: {
-    id: 'CreateNewToken.errorTokenIcon',
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenIcon',
     defaultMessage: `The token icon could not be uploaded. You can only upload
     .svg and .png images, up to 1 MB in size.`,
   },
@@ -87,9 +87,9 @@ const ACCEPTED_MAX_FILE_SIZE: number = 1000000;
 
 const VALIDATE_TOKEN_NAME: RegExp = /^[A-Za-z0-9-_.]+$/;
 
-const displayName: string = 'createColonyWizard.CreateNewToken';
+const displayName: string = 'dashboard.CreateColonyWizard.CreateToken';
 
-const CreateNewToken = ({ previousStep, handleSubmit, isValid }: Props) => (
+const StepCreateToken = ({ previousStep, handleSubmit, isValid }: Props) => (
   <form className={styles.main} onSubmit={handleSubmit}>
     <section className={styles.titleSection}>
       <Heading className={styles.customHeading} text={MSG.heading} />
@@ -154,6 +154,6 @@ export const validationSchema = yup.object({
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
 
-CreateNewToken.displayName = displayName;
+StepCreateToken.displayName = displayName;
 
-export const Step = CreateNewToken;
+export const Step = StepCreateToken;

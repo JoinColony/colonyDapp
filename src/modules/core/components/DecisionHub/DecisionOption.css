@@ -1,0 +1,23 @@
+@import 'variables.css';
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 12px 0;
+  height: 64px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--grey-blue-0);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rowContent {
+  flex: 6;
+}
+
+.rowIcon {
+  flex: 1;
+  padding-left: 16px;
+}

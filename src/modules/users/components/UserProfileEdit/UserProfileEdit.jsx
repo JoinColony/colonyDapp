@@ -67,7 +67,10 @@ const UserProfileEdit = () => (
       text={MSG.heading}
     />
     <Formik
-      onSubmit={values => console.log(values)}
+      onSubmit={values => {
+        // eslint-disable-next-line no-console
+        console.log(values);
+      }}
       initialValues={{
         name: mockUser.displayName,
         bio: mockUser.bio,

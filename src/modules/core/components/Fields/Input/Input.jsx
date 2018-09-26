@@ -50,6 +50,8 @@ type Props = {
   placeholder?: string,
   /** Status text */
   status?: string | MessageDescriptor,
+  /** Values for status text (react-intl interpolation) */
+  statusValues?: { [string]: string },
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */

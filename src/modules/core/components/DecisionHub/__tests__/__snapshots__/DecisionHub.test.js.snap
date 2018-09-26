@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DecisionHub component Renders initial component 1`] = `
+<div>
+  <InjectIntl(Component)
+    key="row-create"
+    option={
+      Object {
+        "subtitle": Object {
+          "defaultMessage": "Collaborate with others",
+          "id": "ComponentName.exceptional",
+        },
+        "title": Object {
+          "defaultMessage": "Rule the world",
+          "id": "ComponentName.special",
+        },
+        "value": "create",
+      }
+    }
+  />
+  <InjectIntl(Component)
+    key="row-select"
+    option={
+      Object {
+        "subtitle": Object {
+          "defaultMessage": "Collaborate with others",
+          "id": "ComponentName.exceptional",
+        },
+        "title": Object {
+          "defaultMessage": "Rule the world",
+          "id": "ComponentName.special",
+        },
+        "value": "select",
+      }
+    }
+  />
+</div>
+`;

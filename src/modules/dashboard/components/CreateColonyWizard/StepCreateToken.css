@@ -14,7 +14,7 @@
  * This was needed due to the way we compose the intl values in the `Heading` component
  *
  * This also ties into a limitation of `react-intl`, where the legacy `formatMessage()` method
- * can't render JSX syntaxt, so everything you pass in as values will end up like: [Object object]
+ * can't render JSX syntax, so everything you pass in as values will end up like: [Object object]
  */
 .customHeading {
   /*
