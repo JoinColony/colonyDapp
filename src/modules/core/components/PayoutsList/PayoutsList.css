@@ -15,12 +15,13 @@
 .popoverContent {
   display: flex;
   flex-direction: column;
+  padding: 5px;
 }
 
 .payoutPopover {
   text-align: right;
   color: var(--grey-4);
-  cursor: default;
+  cursor: pointer;
 }
 
 .native {
