@@ -7266,7 +7266,7 @@ intl-messageformat@^2.0.0, intl-messageformat@^2.1.0:
   dependencies:
     intl-messageformat-parser "1.4.0"
 
-intl-relativeformat@^2.0.0:
+intl-relativeformat@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/intl-relativeformat/-/intl-relativeformat-2.1.0.tgz#010f1105802251f40ac47d0e3e1a201348a255df"
   dependencies:
@@ -12845,13 +12845,14 @@ react-icons@^2.2.7:
   dependencies:
     react-icon-base "2.1.0"
 
-react-intl@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-2.4.0.tgz#66c14dc9df9a73b2fbbfbd6021726e80a613eb15"
+react-intl@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-2.7.0.tgz#be1244769ce51f71476afb9556485a46090db5fa"
   dependencies:
+    hoist-non-react-statics "^2.5.5"
     intl-format-cache "^2.0.5"
     intl-messageformat "^2.1.0"
-    intl-relativeformat "^2.0.0"
+    intl-relativeformat "^2.1.0"
     invariant "^2.1.1"
 
 react-is@^16.4.2:
