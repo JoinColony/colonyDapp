@@ -1,3 +1,5 @@
+### FileUpload
+
 ```js
 const { Formik } = require('formik');
 <Formik
@@ -11,6 +13,28 @@ const { Formik } = require('formik');
           name="fileUploadFormik"
         />
         <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">And press me</Button>
+      </form>
+    )
+  }
+/>
+```
+
+### FileUpload with Hint
+
+```js
+const { Formik } = require('formik');
+<Formik
+  onSubmit={values => console.log(values)}
+  render={
+    ({ handleSubmit, isValid }) => (
+      <form onSubmit={handleSubmit}>
+        <FileUpload
+          accept={['application/json',]}
+          label="File upload"
+          name="fileUpload"
+          hint="<span>Wink! Wink!</span>"
+        />
+        <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">Upload everything!</Button>
       </form>
     )
   }

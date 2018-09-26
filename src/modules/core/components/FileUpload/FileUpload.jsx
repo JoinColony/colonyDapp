@@ -89,6 +89,8 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
+  /** Hint (will appear on the top right in the label) */
+  hint?: Node,
   /** Label text */
   label?: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
@@ -179,6 +181,7 @@ class FileUpload extends Component<Props> {
       dropzoneRef,
       form: { values, isValid, dirty, resetForm },
       help,
+      hint,
       helpValues,
       itemComponent: FileUploaderItem,
       id,
@@ -206,6 +209,7 @@ class FileUpload extends Component<Props> {
               help={help}
               labelValues={labelValues}
               helpValues={helpValues}
+              hint={hint}
             />
           )}
         <Dropzone
