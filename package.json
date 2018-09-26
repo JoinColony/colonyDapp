@@ -123,7 +123,7 @@
     "dependencies": {
         "@babel/runtime": "^7.0.0",
         "@colony/colony-js-adapter-ethers": "^1.6.2",
-        "@colony/colony-js-client": "^1.6.2",
+        "@colony/colony-js-client": "^1.6.3",
         "@colony/colony-js-contract-loader-http": "^1.6.2",
         "@colony/purser-metamask": "^1.0.0",
         "@colony/purser-software": "^1.0.1",
