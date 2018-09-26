@@ -91,7 +91,7 @@ class Dashboard extends Component<Props, State> {
     const { filterOption } = this.state;
     const filterSelect = (
       <Select
-        appearance={{ alignOptions: 'left', theme: 'alt' }}
+        appearance={{ alignOptions: 'right', theme: 'alt' }}
         connect={false}
         elementOnly
         label={MSG.labelFilter}
