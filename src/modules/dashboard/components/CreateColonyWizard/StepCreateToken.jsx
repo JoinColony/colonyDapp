@@ -101,7 +101,7 @@ const StepCreateToken = ({ previousStep, handleSubmit, isValid }: Props) => (
           name="tokenName"
           appearance={{ theme: 'fat' }}
           label={MSG.labelTokenName}
-          hint={<FormattedMessage {...MSG.helpTokenName} />}
+          extra={<FormattedMessage {...MSG.helpTokenName} />}
         />
       </div>
       <div className={styles.inputFieldWrapper}>
@@ -109,7 +109,7 @@ const StepCreateToken = ({ previousStep, handleSubmit, isValid }: Props) => (
           name="tokenSymbol"
           appearance={{ theme: 'fat' }}
           label={MSG.labelTokenSymbol}
-          hint={<FormattedMessage {...MSG.helpTokenSymbol} />}
+          extra={<FormattedMessage {...MSG.helpTokenSymbol} />}
         />
       </div>
       <div className={styles.inputFieldWrapper}>
@@ -118,7 +118,7 @@ const StepCreateToken = ({ previousStep, handleSubmit, isValid }: Props) => (
           maxFileSize={ACCEPTED_MAX_FILE_SIZE}
           name="tokenIcon"
           label={MSG.labelTokenIcon}
-          hint={<FormattedMessage {...MSG.helpTokenIcon} />}
+          extra={<FormattedMessage {...MSG.helpTokenIcon} />}
         />
       </div>
     </div>

@@ -30,6 +30,8 @@ type Props = {
   connect?: boolean,
   /** Just render the `<input>` element without label */
   elementOnly?: boolean,
+  /** Extra node to render on the top right in the label */
+  extra?: Node,
   /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */
   formattingOptions?: CleaveOptions,
   /** Input field name (form variable) */
@@ -38,8 +40,6 @@ type Props = {
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
-  /** Hint (will appear on the top right in the label) */
-  hint?: Node,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
@@ -77,7 +77,7 @@ const Input = ({
   formattingOptions,
   formatIntl,
   help,
-  hint,
+  extra,
   $id,
   innerRef,
   label,
@@ -115,7 +115,7 @@ const Input = ({
         label={label}
         error={$error}
         help={help}
-        hint={hint}
+        extra={extra}
       />
       <InputComponent {...inputProps} />
       <InputStatus appearance={appearance} status={status} error={$error} />

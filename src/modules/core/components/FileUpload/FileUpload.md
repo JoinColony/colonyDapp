@@ -19,7 +19,7 @@ const { Formik } = require('formik');
 />
 ```
 
-### FileUpload with Hint
+### FileUpload with `extra` node
 
 ```js
 const { Formik } = require('formik');
@@ -32,7 +32,7 @@ const { Formik } = require('formik');
           accept={['application/json',]}
           label="File upload"
           name="fileUpload"
-          hint="<span>Wink! Wink!</span>"
+          extra={<span>Wink! Wink!</span>}
         />
         <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">Upload everything!</Button>
       </form>

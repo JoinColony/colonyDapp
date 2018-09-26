@@ -52,7 +52,7 @@
   color: var(--text);
 }
 
-.hint {
+.extra {
   position: absolute;
   top: 0;
   right: 0;
