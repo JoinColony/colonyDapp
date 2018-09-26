@@ -1,6 +1,6 @@
 @import 'variables.css';
 
-.finalForm {
+.finalContainer {
   margin-top: 224px;
   padding: 20px 30px;
   height: 364px;
@@ -14,13 +14,6 @@
   display: flex;
   justify-content: space-between;
   margin: 50px 0;
-}
-
-.fakeInput {
-  border: none;
-  background-color: var(--colony-white);
-  font-size: var(--size-normal);
-  color: var(--text);
 }
 
 .cardElement {

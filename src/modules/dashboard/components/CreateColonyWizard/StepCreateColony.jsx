@@ -5,22 +5,20 @@ import type { MessageDescriptor } from 'react-intl';
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import type { SubmitFn } from '~core/Wizard';
 
 import styles from './StepCreateColony.css';
 
-import Input from '../../../core/components/Fields/Input';
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
-import withDialog from '../../../core/components/Dialog/withDialog';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
+import withDialog from '~core/Dialog/withDialog';
 
-type FormValues = {
-  nextStep: () => void,
-};
+type FormValues = {};
 
 type Props = {
+  nextStep: () => void,
   previousStep: () => void,
-  handleSubmit: () => void,
+  openDialog: string => void,
 } & FormikProps<FormValues>;
 
 type Row = {
@@ -89,8 +87,6 @@ const mockFormikValues = {
   tokenSymbol: 'STRF',
 };
 
-// To allow us to pass these through to the next step easily using Formik
-// we make values that have to be confirmed in this screen the input fields
 const CardRow = ({ cardOptions }: CardProps) =>
   cardOptions.map(option => (
     <div className={styles.cardRow} key={`option ${option.valueKey}`}>
@@ -98,48 +94,45 @@ const CardRow = ({ cardOptions }: CardProps) =>
         appearance={{ size: 'normal', weight: 'medium', margin: 'none' }}
         text={option.title}
       />
-      <Input
-        elementOnly
-        readOnly
-        className={styles.fakeInput}
-        value={mockFormikValues[option.valueKey]}
-        name={option.valueKey}
+      <Heading
+        appearance={{ size: 'normal', weight: 'thin', margin: 'none' }}
+        text={mockFormikValues[option.valueKey]}
       />
     </div>
   ));
 
 class StepCreateColony extends Component<Props> {
-  openGasDialog = () => {};
+  openGasDialog = () => {
+    const { openDialog } = this.props;
+    openDialog('ActivityBarExample');
+  };
 
   render() {
-    const { handleSubmit, openDialog } = this.props;
     return (
       <section className={styles.content}>
-        <form onSubmit={handleSubmit}>
-          <div className={styles.finalForm}>
-            <Heading
-              appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-              text={MSG.title}
-            />
-            <Heading
-              appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-              text={MSG.subtitle}
-            />
-            <CardRow cardOptions={options} />
-          </div>
-          <div className={styles.buttons}>
-            <Button
-              appearance={{ theme: 'secondary' }}
-              type="cancel"
-              text={MSG.back}
-            />
-            <Button
-              onClick={() => openDialog('ActivityBarExample')}
-              appearance={{ theme: 'primary' }}
-              text={MSG.confirm}
-            />
-          </div>
-        </form>
+        <div className={styles.finalContainer}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+            text={MSG.title}
+          />
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+            text={MSG.subtitle}
+          />
+          <CardRow cardOptions={options} />
+        </div>
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.back}
+          />
+          <Button
+            onClick={this.openGasDialog}
+            appearance={{ theme: 'primary' }}
+            text={MSG.confirm}
+          />
+        </div>
       </section>
     );
   }
