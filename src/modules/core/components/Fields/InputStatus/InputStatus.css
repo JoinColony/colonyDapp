@@ -33,3 +33,11 @@
     background-color: var(--danger);
   }
 }
+
+/*
+ * Themes with same name as the ones from `InputComponent` so that no extra
+ * styles are needed when one of the inputs has a theme applied.
+ */
+.themeFat, .themeUnderlined, .themeMinimal {
+  composes: main;
+}
