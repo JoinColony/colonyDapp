@@ -26,6 +26,9 @@ const stepFunction = (step: number, values: StepValues) => {
   if (step === 2 && values.tokenChoice === 'select') {
     return StepSelectToken;
   }
+  if (step === 3) {
+    return StepCreateColony;
+  }
   return stepArray[step];
 };
 
