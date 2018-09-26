@@ -3,7 +3,7 @@
 import type { FormikProps } from 'formik';
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
 import type { SubmitFn } from '~core/Wizard';

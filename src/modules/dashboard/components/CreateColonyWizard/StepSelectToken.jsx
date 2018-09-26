@@ -1,8 +1,7 @@
 /* @flow */
-import type { IntlShape } from 'react-intl';
 
-import React, { Component, Fragment } from 'react';
-import { defineMessages, injectIntl } from 'react-intl';
+import React, { Component } from 'react';
+import { defineMessages } from 'react-intl';
 
 import ColonyNetworkClient from '@colony/colony-js-client';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
@@ -31,7 +30,6 @@ type FormValues = {
 type Props = {
   previousStep: () => void,
   nextStep: () => void,
-  intl: IntlShape,
 } & FormikProps<FormValues>;
 
 type State = {
@@ -105,7 +103,7 @@ class SelectToken extends Component<Props, State> {
 
   state = {
     tokenData: null,
-    isLoading: false
+    isLoading: false,
   };
 
   componentDidMount() {
@@ -124,25 +122,23 @@ class SelectToken extends Component<Props, State> {
     const {
       values: { tokenAddress },
       isValid,
-      intl: { formatMessage },
     } = this.props;
 
     if (tokenAddress !== previousAddress && isValid) {
       const limitedCallCount = debounce(() => {
         this.checkToken(tokenAddress)
           .then(({ name, symbol }) => {
-
-            this.setState({ tokenData: { name, symbol }, isLoading: false});
+            this.setState({ tokenData: { name, symbol }, isLoading: false });
           })
           .catch(error => {
             /* We might want to keep this log for a little while
             for debugging purposes */
             // eslint-disable-next-line no-console
             console.log(error);
-            this.setState({ tokenData: null, isLoading: false});
-          })
-        }, 1000);
-        limitedCallCount();
+            this.setState({ tokenData: null, isLoading: false });
+          });
+      }, 1000);
+      limitedCallCount();
     }
   }
 
@@ -151,7 +147,7 @@ class SelectToken extends Component<Props, State> {
       adapter: this.adapter,
       query: { contractAddress },
     });
-    this.setState({ isLoading: true});
+    this.setState({ isLoading: true });
     await token.init();
     return token.getTokenInfo.call();
   };
@@ -174,36 +170,42 @@ class SelectToken extends Component<Props, State> {
                 <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
               }
               status={tokenData ? MSG.preview : MSG.hint}
-              statusValues={tokenData ? {tokenName: tokenData.name, tokenSymbol: tokenData.symbol} : {}}
+              statusValues={
+                tokenData
+                  ? { tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
+                  : {}
+              }
             />
-            {(!tokenData && !isLoading && values.tokenAddress) && (
-              <>
-                <div className={styles.tokenDetails}>
-                  <Input name="tokenName" label={MSG.tokenName} />
-                </div>
-                <div className={styles.tokenDetails}>
-                  <Input
-                    name="tokenSymbol"
-                    label={MSG.tokenSymbol}
-                    hint={
-                      <Heading
-                        appearance={{ size: 'small', weight: 'thin' }}
-                        text={MSG.symbolHint}
-                      />
-                    }
-                  />
-                </div>
-                <div className={styles.tokenDetails}>
-                  <FileUpload
-                    accept={['svg', 'png']}
-                    label={MSG.fileUploadTitle}
-                    name="iconUpload"
-                    status={MSG.fileUploadHint}
-                    maxFilesLimit={1}
-                  />
-                </div>
-              </>
-            )}
+            {!tokenData &&
+              !isLoading &&
+              values.tokenAddress && (
+                <>
+                  <div className={styles.tokenDetails}>
+                    <Input name="tokenName" label={MSG.tokenName} />
+                  </div>
+                  <div className={styles.tokenDetails}>
+                    <Input
+                      name="tokenSymbol"
+                      label={MSG.tokenSymbol}
+                      hint={
+                        <Heading
+                          appearance={{ size: 'small', weight: 'thin' }}
+                          text={MSG.symbolHint}
+                        />
+                      }
+                    />
+                  </div>
+                  <div className={styles.tokenDetails}>
+                    <FileUpload
+                      accept={['svg', 'png']}
+                      label={MSG.fileUploadTitle}
+                      name="iconUpload"
+                      status={MSG.fileUploadHint}
+                      maxFilesLimit={1}
+                    />
+                  </div>
+                </>
+              )}
             <div className={styles.buttons}>
               <Button
                 appearance={{ theme: 'secondary' }}
@@ -233,7 +235,7 @@ export const validationSchema = yup.object({
 
 SelectToken.displayName = displayName;
 
-export const Step = injectIntl(SelectToken);
+export const Step = SelectToken;
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();

@@ -5,10 +5,8 @@ import withProps from 'recompose/withProps';
 
 import { withWizard } from '../../../core/components/Wizard';
 import CreateColony from './CreateColonyWizard.jsx';
-import * as StepColonyName from './ColonyName.jsx';
-import * as StepTokenChoice from './TokenChoice.jsx';
-import * as StepColonyName from './StepColonyName.jsx';
 import * as StepTokenChoice from './StepTokenChoice.jsx';
+import * as StepColonyName from './StepColonyName.jsx';
 import * as StepSelectToken from './StepSelectToken.jsx';
 import * as StepCreateToken from './StepCreateToken.jsx';
 
