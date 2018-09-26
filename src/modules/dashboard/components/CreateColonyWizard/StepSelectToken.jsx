@@ -165,7 +165,7 @@ class StepSelectToken extends Component<Props, State> {
           <form className={styles.nameForm} onSubmit={handleSubmit}>
             <Input
               name="tokenAddress"
-              label={MSG.labelCreateColony}
+              label={MSG.label}
               hint={
                 <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
               }
