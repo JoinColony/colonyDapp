@@ -32,6 +32,7 @@ exports[`ProfileCreate component Renders initial component (snapshot) 1`] = `
       "messages": Object {},
       "now": [Function],
       "textComponent": "span",
+      "timeZone": null,
     }
   }
   isInitialValid={false}
