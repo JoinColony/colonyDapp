@@ -67,7 +67,7 @@ class AvatarUploader extends Component<Props> {
     // Formik is used for state and error handling through FileUpload, nothing else
     return (
       <Formik onSubmit={() => null}>
-        <div>
+        <form>
           <FileUpload
             dropzoneRef={this.registerDropzone}
             elementOnly={elementOnly}
@@ -90,7 +90,7 @@ class AvatarUploader extends Component<Props> {
             />
             <Button text={{ id: 'button.choose' }} onClick={this.choose} />
           </div>
-        </div>
+        </form>
       </Formik>
     );
   }

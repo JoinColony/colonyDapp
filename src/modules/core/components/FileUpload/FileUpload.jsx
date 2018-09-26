@@ -181,7 +181,7 @@ class FileUpload extends Component<Props> {
       disableClick,
       elementOnly,
       dropzoneRef,
-      form: { values, isValid, dirty, resetForm },
+      form: { values, errors, resetForm },
       help,
       extra,
       helpValues,
@@ -199,9 +199,10 @@ class FileUpload extends Component<Props> {
     } = this.props;
 
     const files = getIn(values, name) || [];
+    const fileErrors = getIn(errors, name) || [];
 
     const maxFileLimitNotMet = files.length < maxFilesLimit;
-    const hasError = dirty && !isValid;
+    const hasError = !!fileErrors.length;
 
     return (
       <div className={classNames.main} id={id}>
@@ -239,8 +240,8 @@ class FileUpload extends Component<Props> {
                         idx={idx}
                         name={`${name}.${idx}`}
                         remove={remove}
-                        upload={upload}
                         reset={resetForm}
+                        upload={upload}
                       />
                     ))}
                   </div>

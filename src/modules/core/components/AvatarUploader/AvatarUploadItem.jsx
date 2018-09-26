@@ -25,7 +25,7 @@ const MSG = defineMessages({
 type Props = {
   /** Function used to perform the acutal upload action of the file */
   upload: (file: FileReaderFile) => any,
-  /** Reset all files */
+  /** Will reset the entire AvatarUploader state */
   reset: () => void,
   /** @ignore Will be injected by `asField` */
   $value: UploadFile,
