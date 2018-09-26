@@ -1,0 +1,33 @@
+@import 'variables.css';
+
+/* Use td.className to be able to overwrite table styles */
+
+td.taskDetails {
+  flex-wrap: wrap;
+  width: calc(100% - 210px);
+  font-weight: var(--weight-semi);
+}
+
+.taskDetailsTitle {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--colony-black);
+}
+
+.taskDetailsReputation {
+  font-size: var(--size-small);
+  color: var(--violet);
+}
+
+td.taskPayouts {
+  justify-content: flex-end;
+  width: 150px;
+}
+
+td.userAvatar {
+  justify-content: center;
+  padding: 10px;
+  width: 60px;
+}

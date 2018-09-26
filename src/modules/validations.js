@@ -1,11 +1,10 @@
 /* @flow */
 
 import * as yup from 'yup';
-import { setLocale } from 'yup/lib/customLocale';
 
 import en from '../i18n/en-validation.json';
 
-setLocale(en);
+yup.setLocale(en);
 
 /* Custom validators */
 function equalTo(ref, msg) {

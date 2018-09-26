@@ -5,10 +5,8 @@ import React from 'react';
 
 import styles from './TableBody.css';
 
-import TableRow from '../TableRow';
-
 type Props = {
-  children: ChildrenArray<ElementType<typeof TableRow>>,
+  children: ChildrenArray<ElementType<*>>,
 };
 
 const displayName = 'TableBody';

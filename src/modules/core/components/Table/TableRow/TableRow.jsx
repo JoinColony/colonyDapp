@@ -3,13 +3,8 @@ import type { ChildrenArray, Element as ElementType } from 'react';
 
 import React from 'react';
 
-import TableCell from '../TableCell';
-import TableHeaderCell from '../TableHeaderCell';
-
-type ValidCell = typeof TableCell | typeof TableHeaderCell;
-
 type Props = {
-  children: ChildrenArray<ElementType<ValidCell>>,
+  children: ChildrenArray<ElementType<*>>,
 };
 
 const displayName = 'TableRow';

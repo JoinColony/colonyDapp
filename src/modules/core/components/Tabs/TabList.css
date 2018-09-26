@@ -1,8 +1,10 @@
 @import 'variables.css';
+@import 'tabsVariables.css';
 
 .container {
   display: flex;
   align-items: center;
+  height: var(--tabs-tab-list-container-height);
   position: relative;
 }
 
