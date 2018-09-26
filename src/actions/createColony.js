@@ -5,7 +5,7 @@ import {
   TOKEN_CREATED,
   CREATE_COLONY,
   COLONY_CREATED,
-} from './constants';
+} from './types';
 
 export const createToken = (name: String, symbol: String) => ({
   type: CREATE_TOKEN,
