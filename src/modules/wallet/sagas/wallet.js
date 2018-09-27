@@ -13,6 +13,7 @@ import {
   OPEN_METAMASK_WALLET,
   OPEN_HARDWARE_WALLET,
   OPEN_KEYSTORE_WALLET,
+  CREATE_WALLET,
   WALLET_SET,
 } from '../actionTypes';
 
@@ -135,11 +136,38 @@ function* openKeystoreWallet(action: Object): any {
   }
 }
 
+function* createWallet(action: Object): any {
+  const { mnemonic } = action.payload;
+  const { handleSubmit } = action;
+  /*
+   * Recreate the wallet based on the mnemonic
+   */
+  const newWallet: Object = yield call(softwareWallet.open, {
+    mnemonic,
+  });
+  /*
+   * Set the new wallet into the context
+   */
+  yield call(walletContext.setNewWallet, newWallet);
+  /*
+   * Set the wallet's address inside the store
+   */
+  yield put({
+    type: WALLET_SET,
+    payload: { currentAddress: newWallet.address },
+  });
+  /*
+   * Go to create profile
+   */
+  handleSubmit();
+}
+
 function* walletSagas(): any {
   yield takeEvery(OPEN_MNEMONIC_WALLET, openMnemonicWallet);
   yield takeEvery(OPEN_METAMASK_WALLET, openMetamaskWallet);
   yield takeEvery(OPEN_HARDWARE_WALLET, openHardwareWallet);
   yield takeEvery(OPEN_KEYSTORE_WALLET, openKeystoreWallet);
+  yield takeEvery(CREATE_WALLET, createWallet);
 }
 
 export default walletSagas;

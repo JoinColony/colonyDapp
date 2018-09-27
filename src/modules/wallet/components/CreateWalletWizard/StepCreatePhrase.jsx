@@ -4,6 +4,7 @@ import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import softwareWallet from '@colony/purser-software';
 
 import styles from './StepCreatePhrase.css';
 
@@ -12,10 +13,6 @@ import type { SubmitFn } from '../../../core/components/Wizard';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
 import MnemonicGenerator from '../../../core/components/MnemonicGenerator';
-
-// TODO: Replace this with actual creation function
-const createMnemonic = () =>
-  'local disorder era bring front sunset that scheme never unveil silent wood';
 
 const MSG = defineMessages({
   heading: {
@@ -43,6 +40,11 @@ type FormValues = {
 };
 
 type Props = FormikProps<FormValues>;
+
+const createMnemonic = async () => {
+  const newWalletInstance = await softwareWallet.create();
+  return newWalletInstance.mnemonic;
+};
 
 const StepCreatePhrase = ({ handleSubmit }: Props) => (
   <form className={styles.content} onSubmit={handleSubmit}>
