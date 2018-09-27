@@ -26,6 +26,7 @@ exports[`Select component Renders initial component 1`] = `
       "messages": Object {},
       "now": [Function],
       "textComponent": "span",
+      "timeZone": null,
     }
   }
   label="Select me"

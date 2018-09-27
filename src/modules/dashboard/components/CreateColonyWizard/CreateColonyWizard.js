@@ -9,8 +9,9 @@ import * as StepTokenChoice from './StepTokenChoice.jsx';
 import * as StepColonyName from './StepColonyName.jsx';
 import * as StepSelectToken from './StepSelectToken.jsx';
 import * as StepCreateToken from './StepCreateToken.jsx';
+import * as StepCreateColony from './StepCreateColony.jsx';
 
-const stepArray = [StepColonyName, StepTokenChoice];
+const stepArray = [StepColonyName, StepTokenChoice, StepCreateColony];
 
 type StepValues = {
   tokenChoice: 'create' | 'select',
@@ -24,6 +25,9 @@ const stepFunction = (step: number, values: StepValues) => {
   }
   if (step === 2 && values.tokenChoice === 'select') {
     return StepSelectToken;
+  }
+  if (step === 3) {
+    return StepCreateColony;
   }
   return stepArray[step];
 };
