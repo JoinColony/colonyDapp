@@ -1,25 +1,27 @@
 /* @flow */
 
-import { SET_NEW_WALLET, CLEAR_WALLET } from '../actionTypes';
-import type { SetNewWalletAction, ClearWalletAction } from '../actionTypes';
+import { WALLET_SET, WALLET_CLEARED } from '../actionTypes';
 
 type State = {
   currentAddress?: string,
 };
 
-type Action = SetNewWalletAction | ClearWalletAction;
+type Action = {
+  type: string,
+  payload: Object,
+};
 
 const INITIAL_STATE: State = {};
 
 const walletReducer = (state: State = INITIAL_STATE, action: Action): State => {
   switch (action.type) {
-    case SET_NEW_WALLET: {
+    case WALLET_SET: {
       const { currentAddress } = action.payload;
       return {
         currentAddress,
       };
     }
-    case CLEAR_WALLET: {
+    case WALLET_CLEARED: {
       return INITIAL_STATE;
     }
     default: {
