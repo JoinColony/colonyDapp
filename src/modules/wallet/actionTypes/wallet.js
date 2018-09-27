@@ -9,3 +9,4 @@ export const WALLET_CLEARED = 'wallet/CLEARED';
 export const OPEN_MNEMONIC_WALLET = 'wallet/OPEN_MNEMONIC';
 export const OPEN_METAMASK_WALLET = 'wallet/OPEN_METAMASK';
 export const OPEN_HARDWARE_WALLET = 'wallet/OPEN_HARDWARE';
+export const OPEN_KEYSTORE_WALLET = 'wallet/OPEN_KEYSTORE';

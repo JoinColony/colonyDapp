@@ -12,6 +12,7 @@ import {
   OPEN_MNEMONIC_WALLET,
   OPEN_METAMASK_WALLET,
   OPEN_HARDWARE_WALLET,
+  OPEN_KEYSTORE_WALLET,
   WALLET_SET,
 } from '../actionTypes';
 
@@ -20,6 +21,11 @@ export const MSG = defineMessages({
     id: 'error.wallet.openMnemonic',
     defaultMessage:
       'Could not open the wallet with the provided mnemonic phrase',
+  },
+  errorOpenKeystoreWallet: {
+    id: 'error.wallet.openKeystore',
+    defaultMessage:
+      'Could not open the wallet with the provided JSON file and password',
   },
 });
 
@@ -95,10 +101,45 @@ function* openHardwareWallet(action: Object): any {
   handleDidConnectWallet();
 }
 
+function* openKeystoreWallet(action: Object): any {
+  const { keystore, password } = action.payload;
+  const { setErrors, setSubmitting, handleDidConnectWallet } = action;
+  setSubmitting(true);
+  try {
+    /*
+     * Open the wallet with a mnemonic
+     */
+    const newKeystoreWallet: Object = yield call(softwareWallet.open, {
+      keystore,
+      password,
+    });
+    /*
+     * Set the new wallet into the context
+     */
+    yield call(walletContext.setNewWallet, newKeystoreWallet);
+    /*
+     * Set the wallet's address inside the store
+     */
+    yield put({
+      type: WALLET_SET,
+      payload: { currentAddress: newKeystoreWallet.address },
+    });
+    setSubmitting(false);
+    /*
+     * Go to create profile
+     */
+    handleDidConnectWallet();
+  } catch (caughtError) {
+    setSubmitting(false);
+    setErrors(MSG.errorOpenMnemonicWallet);
+  }
+}
+
 function* walletSagas(): any {
   yield takeEvery(OPEN_MNEMONIC_WALLET, openMnemonicWallet);
   yield takeEvery(OPEN_METAMASK_WALLET, openMetamaskWallet);
   yield takeEvery(OPEN_HARDWARE_WALLET, openHardwareWallet);
+  yield takeEvery(OPEN_KEYSTORE_WALLET, openKeystoreWallet);
 }
 
 export default walletSagas;
