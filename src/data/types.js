@@ -104,7 +104,7 @@ export type Colony = {
   Domains: Domain[],
   Members: User[],
   pot: Pot,
-  avatar: Image,
+  avatar: IPFSHash,
   setAvatar: Function,
   addMember: Function,
   getMembers: Function,
@@ -122,4 +122,12 @@ export type profileTask = {
   myTaskRole: string,
   taskTitle: string,
   colonyTitle: string,
+};
+
+export type UserProfile = {
+  name: string,
+  bio: string,
+  avatar: IPFSHash,
+  colonies: profileColony[],
+  tasks: profileTask[],
 };
