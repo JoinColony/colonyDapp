@@ -1,17 +1,26 @@
 /* @flow */
 
 import type { FormikProps } from 'formik';
-
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import styles from './StepProveMnemonic.css';
+
+import { withBoundActionCreators } from '~utils/redux';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
 
 import { Input, InputLabel } from '../../../core/components/Fields';
 import Heading from '../../../core/components/Heading';
 import Button from '../../../core/components/Button';
+
+import {
+  /*
+   * Prettier sugests a fix that would break the line length rule.
+   * This comment fixes that :)
+   */
+  createWallet as createWalletAction,
+} from '../../actionCreators/wallet';
 
 const MSG = defineMessages({
   heading: {
@@ -58,6 +67,7 @@ const MSG = defineMessages({
 const chosenProofWords = [1, 4, 11];
 
 type FormValues = {
+  passphrase: string,
   proofWord1: string,
   proofWord2: string,
   proofWord3: string,
@@ -65,14 +75,29 @@ type FormValues = {
 
 type Props = {
   previousStep: () => void,
+  createWalletAction: (string, *) => void,
 } & FormikProps<FormValues>;
 
 type FormValidation = {
   passphrase: string,
 } & FormValues;
 
-const StepProveMnemonic = ({ previousStep, handleSubmit, isValid }: Props) => (
-  <form className={styles.main} onSubmit={handleSubmit}>
+const StepProveMnemonic = ({
+  previousStep,
+  handleSubmit,
+  isValid,
+  values: { passphrase },
+  createWalletAction: createWallet,
+}: Props) => (
+  <form
+    className={styles.main}
+    /*
+     * We hook into the `onSubmit` prop of the form, because the `onSubmit` function
+     * exported by this Step won't receive (from `withWizard`) the bound action creator
+     * as a prop
+     */
+    onSubmit={() => createWallet(passphrase, handleSubmit)}
+  >
     <section className={styles.titleSection}>
       <Heading
         appearance={{ size: 'medium', weight: 'thin' }}
@@ -157,4 +182,6 @@ export const formikConfig = {
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
 
-export const Step = StepProveMnemonic;
+export const Step = withBoundActionCreators({ createWalletAction })(
+  StepProveMnemonic,
+);
