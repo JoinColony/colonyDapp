@@ -1,10 +1,15 @@
 /* @flow */
 
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
-import rootReducer from './reducers';
+import walletReducer from './modules/wallet/reducers';
+
 import rootSaga from './sagas';
+
+const rootReducer = combineReducers({
+  wallet: walletReducer,
+});
 
 const sagaMiddleware = createSagaMiddleware();
 

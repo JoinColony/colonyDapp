@@ -1,7 +1,7 @@
 /* @flow */
 
-import { SET_NEW_WALLET, CLEAR_WALLET } from '../actions/types';
-import type { SetNewWalletAction, ClearWalletAction } from '../actions/types';
+import { SET_NEW_WALLET, CLEAR_WALLET } from '../actionTypes';
+import type { SetNewWalletAction, ClearWalletAction } from '../actionTypes';
 
 type State = {
   currentAddress?: string,
