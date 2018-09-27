@@ -166,7 +166,7 @@ class StepSelectToken extends Component<Props, State> {
             <Input
               name="tokenAddress"
               label={MSG.label}
-              hint={
+              extra={
                 <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
               }
               status={tokenData ? MSG.preview : MSG.hint}

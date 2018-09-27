@@ -30,14 +30,14 @@ type Props = {
   connect?: boolean,
   /** Just render the `<textarea>` element without label */
   elementOnly?: boolean,
+  /** Extra node to render on the top right in the label */
+  extra?: Node,
   /** Textarea field name (form variable) */
   name: string,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: { [string]: string },
-  /** Hint (will appear on the top right in the label) */
-  hint?: Node,
   /** Pass a ref to the `<textarea>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
@@ -111,7 +111,7 @@ class Textarea extends Component<Props> {
       formatIntl,
       isSubmitting,
       help,
-      hint,
+      extra,
       label,
       maxLength = null,
       name,
@@ -143,7 +143,7 @@ class Textarea extends Component<Props> {
           label={label}
           error={$error}
           help={help}
-          hint={hint}
+          extra={extra}
         />
         {this.renderTextarea(inputProps)}
         <InputStatus appearance={appearance} status={status} error={$error} />

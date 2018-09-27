@@ -101,14 +101,14 @@
 />
 ```
 
-### Textarea text with label and hint
+### Textarea text with label and extra node
 
 ```js
 <Textarea
   name="textareastatus"
-  placeholder="I have a hint!"
+  placeholder="I have an extra!"
   label="Look right ->"
-  hint={<a href="#">I'm a hint!</a>}
+  extra={<a href="#">I'm an extra node!</a>}
   connect={false}
 />
 ```

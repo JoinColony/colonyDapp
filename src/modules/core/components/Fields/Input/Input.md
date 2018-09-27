@@ -70,14 +70,14 @@
 />
 ```
 
-### Input text with label and hint
+### Input text with label and extra node
 
 ```js
 <Input
-  name="inputlabelhint"
-  placeholder="I have a hint!"
+  name="inputlabelextra"
+  placeholder="I have an extra node!"
   label="Look right ->"
-  hint={<a href="#">I'm a hint!</a>}
+  extra={<a href="#">I'm an extra node!</a>}
   connect={false}
 />
 ```
