@@ -742,8 +742,21 @@
     hdkey "^1.1.0"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@colony/purser-metamask@^1.0.0":
 =======
+=======
+"@colony/purser-ledger@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-ledger/-/purser-ledger-1.0.1.tgz#2636fc922b068d1753daa28c080ada0ce0c509e4"
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    "@colony/purser-core" "1.0.1"
+    "@ledgerhq/hw-app-eth" "^4.19.0"
+    "@ledgerhq/hw-transport-u2f" "^4.20.0"
+    ethereumjs-tx "^1.3.6"
+
+>>>>>>> Add: wallet `openHardwareWallet` saga and actions
 "@colony/purser-metamask@^1.0.1":
 >>>>>>> Update: `purser` library packages and named imports
   version "1.0.1"
@@ -766,9 +779,37 @@
     ethereumjs-util "^5.2.0"
     ethers "^3.0.29"
 
+"@colony/purser-trezor@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-trezor/-/purser-trezor-1.0.1.tgz#09629da8e4496572da52ae27d562fa0a734ecd88"
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    "@colony/purser-core" "1.0.1"
+    bip32-path "^0.4.2"
+    ethereumjs-tx "^1.3.6"
+
 "@kironeducation/flow-junit-transformer@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@kironeducation/flow-junit-transformer/-/flow-junit-transformer-0.3.0.tgz#ea1e57b01d7096012254a3d3dafc8afc7d97b8fe"
+
+"@ledgerhq/hw-app-eth@^4.19.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-4.21.0.tgz#2d8bfbe5f09b92e8d6951ae685036d9d5aea96ff"
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.21.0"
+
+"@ledgerhq/hw-transport-u2f@^4.20.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-u2f/-/hw-transport-u2f-4.21.0.tgz#85695d7e853a5c21af7e7dcb0ce3919f2b65cdd9"
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.21.0"
+    u2f-api "0.2.7"
+
+"@ledgerhq/hw-transport@^4.21.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.21.0.tgz#50f85cfe115ba3f9d5bf94755c701e927175794f"
+  dependencies:
+    events "^2.0.0"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -1844,6 +1885,10 @@ bindings@^1.2.1, bindings@~1.3.0:
 bintrees@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/bintrees/-/bintrees-1.0.1.tgz#0e655c9b9c2435eaab68bf4027226d2b55a34524"
+
+bip32-path@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/bip32-path/-/bip32-path-0.4.2.tgz#5db0416ad6822712f077836e2557b8697c0c7c99"
 
 bip66@^1.1.0, bip66@^1.1.3:
   version "1.1.5"
@@ -4527,7 +4572,7 @@ ethereumjs-block@^1.7.1:
     ethereumjs-util "^5.0.0"
     merkle-patricia-tree "^2.1.2"
 
-ethereumjs-tx@^1.2.2, ethereumjs-tx@^1.3.3:
+ethereumjs-tx@^1.2.2, ethereumjs-tx@^1.3.3, ethereumjs-tx@^1.3.6:
   version "1.3.7"
   resolved "https://registry.yarnpkg.com/ethereumjs-tx/-/ethereumjs-tx-1.3.7.tgz#88323a2d875b10549b8347e09f4862b546f3d89a"
   dependencies:
@@ -4619,6 +4664,10 @@ eventemitter3@^3.0.0:
 events@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
+
+events@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/events/-/events-2.1.0.tgz#2a9a1e18e6106e0e812aa9ebd4a819b3c29c0ba5"
 
 eventsource@0.1.6:
   version "0.1.6"
@@ -14263,6 +14312,10 @@ typedarray@^0.0.6:
 typeforce@^1.11.3:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/typeforce/-/typeforce-1.12.0.tgz#ca40899919f1466d7819e37be039406beb912a2e"
+
+u2f-api@0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/u2f-api/-/u2f-api-0.2.7.tgz#17bf196b242f6bf72353d9858e6a7566cc192720"
 
 ua-parser-js@^0.7.18:
   version "0.7.18"

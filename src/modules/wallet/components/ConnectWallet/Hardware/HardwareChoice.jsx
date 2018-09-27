@@ -3,8 +3,6 @@ import React, { Component, Fragment } from 'react';
 
 import { FormattedNumber } from 'react-intl';
 
-import type { HardwareWallet } from './types';
-
 import styles from './HardwareChoice.css';
 
 import Radio from '../../../../core/components/Fields/Radio';
@@ -12,7 +10,7 @@ import SpinnerLoader from '../../../../core/components/Preloaders/SpinnerLoader.
 
 type Props = {
   checked: boolean,
-  wallet: HardwareWallet,
+  wallet: string,
   searchTerm: string,
 };
 
@@ -68,15 +66,12 @@ class HardwareChoice extends Component<Props, State> {
   };
 
   renderFormattedAddress = () => {
-    const {
-      searchTerm,
-      wallet: { address },
-    } = this.props;
+    const { searchTerm, wallet } = this.props;
     return (
       <span className={styles.walletAddressContainer}>
         {searchTerm ? (
           <Fragment>
-            {address.split(searchTerm).reduce((prev, current, idx) => {
+            {wallet.split(searchTerm).reduce((prev, current, idx) => {
               if (!idx) {
                 return current
                   .split('')
@@ -119,7 +114,7 @@ class HardwareChoice extends Component<Props, State> {
             }, [])}
           </Fragment>
         ) : (
-          address
+          wallet
             .split('')
             .map((char, localIdx, remainingVals) =>
               this.addressCharacter(char, localIdx, remainingVals, localIdx),
@@ -131,13 +126,10 @@ class HardwareChoice extends Component<Props, State> {
 
   render() {
     const { isLoading } = this.state;
-    const {
-      checked,
-      wallet: { address, balance },
-    } = this.props;
+    const { checked, wallet } = this.props;
 
     const formattedNumberProps = {
-      value: balance,
+      value: 0,
       style: 'currency',
       maximumFractionDigits: 18,
       currency: 'ETH',
@@ -150,7 +142,7 @@ class HardwareChoice extends Component<Props, State> {
           <Radio
             checked={checked}
             name="hardwareWalletChoice"
-            value={address}
+            value={wallet}
             elementOnly
           >
             {this.renderFormattedAddress()}
