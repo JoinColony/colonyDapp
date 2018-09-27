@@ -33,10 +33,15 @@ const SpinnerLoader = ({
 }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
     <div className={styles.loader} />
-    {loadingText &&
-      (typeof loadingText === 'string'
-        ? loadingText
-        : formatMessage(loadingText, textValues))}
+    {loadingText && (
+      <div className={styles.loadingTextContainer}>
+        <div className={styles.loadingTextContainerInner}>
+          {typeof loadingText === 'string'
+            ? loadingText
+            : formatMessage(loadingText, textValues)}
+        </div>
+      </div>
+    )}
   </div>
 );
 

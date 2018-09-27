@@ -49,9 +49,25 @@
   width: 54px;
 }
 
+.sizeMassive {
+  position: relative;
+}
+
 .sizeMassive .loader {
   height: 210px;
   width: 210px;
+}
+
+.sizeMassive .loadingTextContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: var(--size-medium);
 }
 
 .themePrimary .loader {
