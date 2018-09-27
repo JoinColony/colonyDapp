@@ -1,0 +1,17 @@
+@import 'variables.css';
+
+.layoutMain {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  padding: 15%;
+  overflow: auto;
+  background: var(--gradient-default);
+}
+
+.content {
+  align-self: start;
+  height: 100%;
+  grid-column: 1;
+  grid-row: 1;
+}
+

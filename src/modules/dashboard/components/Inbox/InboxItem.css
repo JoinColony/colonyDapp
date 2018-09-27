@@ -1,0 +1,27 @@
+@import 'variables.css';
+
+td.inboxDetails {
+  flex-wrap: wrap;
+  font-weight: var(--weight-semi);
+}
+
+.inboxDetail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--colony-black);
+  margin: 0px 5px;
+}
+.inboxAction {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 400;
+  color: var(--grey-3);
+}
+
+td.userAvatar {
+  justify-content: center;
+  padding: 10px;
+  width: 40px;
+}
