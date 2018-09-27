@@ -38,9 +38,8 @@ const ActivityFeed = ({ activities }: Props) => (
       <TableHeader>
         <TableRow>
           <TableHeaderCell className={styles.activityFeedHeaderCell}>
-            <FormattedMessage {...MSG.title} /> (<FormattedMessage
-              {...MSG.comingSoonText}
-            />)
+            <FormattedMessage {...MSG.title} /> (
+            <FormattedMessage {...MSG.comingSoonText} />)
           </TableHeaderCell>
         </TableRow>
       </TableHeader>

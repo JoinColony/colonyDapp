@@ -30,6 +30,7 @@ module.exports = {
     {
       name: 'Elements and Widgets',
       components: [
+        './src/modules/core/components/ActivityFeed/ActivityFeed.jsx',
         './src/modules/core/components/CopyableAddress/CopyableAddress.jsx',
         './src/modules/core/components/ColonyGrid/ColonyGrid.jsx',
         './src/modules/core/components/PayoutsList/PayoutsList.jsx',
