@@ -2,15 +2,25 @@
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+import { compose } from 'recompose';
 
 import { open } from '@colony/purser-metamask';
 
 import asProvider from '../asProvider';
+import { withBoundActionCreators } from '~utils/redux';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import Icon from '../../../../core/components/Icon';
 import styles from './MetaMask.css';
+
+import {
+  /*
+   * Prettier sugests a fix that would break the line length rule.
+   * This comment fixes that :)
+   */
+  openMetamaskWallet as openMetamaskWalletAction,
+} from '../../../actionCreators/wallet';
 
 const MSG = defineMessages({
   heading: {
@@ -42,6 +52,7 @@ const MSG = defineMessages({
 type Props = {
   handleDidConnectWallet: () => void,
   handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
+  openMetamaskWalletAction: (*) => void,
 };
 
 type State = {
@@ -74,6 +85,11 @@ class MetaMask extends Component<Props, State> {
     // TODO should this throw an error?
     let metamaskError = null;
     let wallet;
+    /*
+     * @TODO Detect metamask wallet state for better errors
+     * This should actually use `detect()` to check which metamask error this is
+     * and show the user a specific messages (locked, disabled, no account, etc)
+     */
     try {
       // const provider: ProviderType = metamask();
       wallet = await open();
@@ -96,11 +112,13 @@ class MetaMask extends Component<Props, State> {
   };
 
   handleUseConnectedWallet = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    const { handleDidConnectWallet } = this.props;
+    const {
+      handleDidConnectWallet,
+      openMetamaskWalletAction: openMetamaskWallet,
+    } = this.props;
     evt.preventDefault();
     this.setState({ isLoading: true });
-    // TODO save wallet connection details here
-    handleDidConnectWallet();
+    return openMetamaskWallet(handleDidConnectWallet);
   };
 
   render() {
@@ -161,4 +179,9 @@ class MetaMask extends Component<Props, State> {
   }
 }
 
-export default asProvider()(MetaMask);
+const enhance = compose(
+  asProvider(),
+  withBoundActionCreators({ openMetamaskWalletAction }),
+);
+
+export default enhance(MetaMask);

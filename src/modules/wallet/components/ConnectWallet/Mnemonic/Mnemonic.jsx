@@ -11,8 +11,6 @@ import type { MessageDescriptor } from 'react-intl';
 import asProvider from '../asProvider';
 import { withBoundActionCreators } from '~utils/redux';
 
-import softwareWallet from '@colony/purser-software';
-
 import {
   /*
    * Prettier sugests a fix that would break the line length rule.
@@ -26,9 +24,6 @@ import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import styles from './Mnemonic.css';
 
-
-console.log(softwareWallet)
-;
 const MSG = defineMessages({
   heading: {
     id: 'ConnectWallet.providers.Mnemonic.heading',
