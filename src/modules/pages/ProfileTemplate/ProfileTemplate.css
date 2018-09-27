@@ -15,8 +15,9 @@
   padding: 80px var(--padding-horizontal);
   height: 100%;
   width: var(--sidebar-width);
-  position: fixed;
   overflow: auto;
+  /* This is the flexbox equivalent for position fixed */
+  flex: 1 1 auto;
   background: var(--gradient-default);
 }
 
@@ -27,7 +28,6 @@
 }
 
 .mainContainer {
-  margin-left: var(--sidebar-width);
   width: 100%;
   overflow: auto;
 }

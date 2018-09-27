@@ -18,7 +18,7 @@ type Appearance = {
 type Props = {
   appearance?: Appearance,
   children: Node,
-  asideContent: Node,
+  asideContent?: Node,
 };
 
 // TODO: replace this with actual events, not sure where they will me from yet
@@ -28,7 +28,7 @@ const displayName = 'pages.ProfileTemplate';
 
 const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
-    <aside className={styles.sidebar}>{asideContent}</aside>
+    {asideContent && <aside className={styles.sidebar}>{asideContent}</aside>}
     <div className={styles.mainContainer}>
       <header className={styles.header}>
         <Navigation events={mockEvents} />

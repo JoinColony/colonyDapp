@@ -7,9 +7,12 @@ import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
 import InboxItem from './InboxItem.jsx';
-import styles from './Inbox.css';
+
+import ProfileTemplate from '../../../pages/ProfileTemplate';
+import UserMeta from '../../../users/components/UserProfile/UserMeta.jsx';
 
 import mockInbox from './__datamocks__/mockInbox';
+import mockUser from './__datamocks__/mockUser';
 
 const MSG = defineMessages({
   title: {
@@ -26,21 +29,19 @@ type Props = {
 };
 
 const Inbox = ({ items }: Props) => (
-  <div className={styles.layoutMain}>
-    <main className={styles.content}>
-      <Heading
-        appearance={{ size: 'medium', margin: 'small' }}
-        text={MSG.title}
-      />
-      <Table scrollable>
-        <TableBody>
-          {mockInbox.map(item => (
-            <InboxItem key={item.id} item={item} />
-          ))}
-        </TableBody>
-      </Table>
-    </main>
-  </div>
+  <ProfileTemplate>
+    <Heading
+      appearance={{ size: 'medium', margin: 'small' }}
+      text={MSG.title}
+    />
+    <Table scrollable>
+      <TableBody>
+        {mockInbox.map(item => (
+          <InboxItem key={item.id} item={item} />
+        ))}
+      </TableBody>
+    </Table>
+  </ProfileTemplate>
 );
 
 export default Inbox;
