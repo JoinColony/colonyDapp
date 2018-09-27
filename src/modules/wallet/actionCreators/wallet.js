@@ -1,6 +1,6 @@
 /* @flow */
 
-import { OPEN_MNEMONIC_WALLET } from '../actionTypes';
+import { OPEN_MNEMONIC_WALLET, OPEN_METAMASK_WALLET } from '../actionTypes';
 
 export const openMnemonicWallet = (
   mnemonic: String,
@@ -15,8 +15,7 @@ export const openMnemonicWallet = (
   handleDidConnectWallet,
 });
 
-const walletActionCreators: Object = {
-  openMnemonicWallet,
-};
-
-export default walletActionCreators;
+export const openMetamaskWallet = (handleDidConnectWallet: () => void) => ({
+  type: OPEN_METAMASK_WALLET,
+  handleDidConnectWallet,
+});

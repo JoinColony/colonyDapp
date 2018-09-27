@@ -1,12 +1,18 @@
 /* @flow */
 
 import { call, put, takeEvery } from 'redux-saga/effects';
-import softwareWallet from '@colony/purser-software';
 import { defineMessages } from 'react-intl';
+
+import softwareWallet from '@colony/purser-software';
+import metamaskWallet from '@colony/purser-metamask';
 
 import walletContext from '~context/wallet';
 
-import { OPEN_MNEMONIC_WALLET, WALLET_SET } from '../actionTypes';
+import {
+  OPEN_MNEMONIC_WALLET,
+  OPEN_METAMASK_WALLET,
+  WALLET_SET,
+} from '../actionTypes';
 
 export const MSG = defineMessages({
   errorOpenMnemonicWallet: {
@@ -28,7 +34,7 @@ function* openMnemonicWallet(action: Object): any {
       mnemonic,
     });
     /*
-     * Set the new wallet in the context
+     * Set the new wallet into the context
      */
     yield call(walletContext.setNewWallet, newMnemonicWallet);
     /*
@@ -49,8 +55,32 @@ function* openMnemonicWallet(action: Object): any {
   }
 }
 
+function* openMetamaskWallet(action: Object): any {
+  const { handleDidConnectWallet } = action;
+  /*
+   * Open the metamask wallet
+   */
+  const newMetamaskWallet: Object = yield call(metamaskWallet.open);
+  /*
+   * Set the new wallet into the context
+   */
+  yield call(walletContext.setNewWallet, newMetamaskWallet);
+  /*
+   * Set the wallet's address inside the store
+   */
+  yield put({
+    type: WALLET_SET,
+    payload: { currentAddress: newMetamaskWallet.address },
+  });
+  /*
+   * Go to create profile
+   */
+  handleDidConnectWallet();
+}
+
 function* walletSagas(): any {
   yield takeEvery(OPEN_MNEMONIC_WALLET, openMnemonicWallet);
+  yield takeEvery(OPEN_METAMASK_WALLET, openMetamaskWallet);
 }
 
 export default walletSagas;
