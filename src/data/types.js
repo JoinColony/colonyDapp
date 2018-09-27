@@ -17,6 +17,7 @@ type path = string;
 export type PublicKey = string;
 
 export type ColonyAddress = string;
+export type DomainAddress = string;
 export type IPFSHash = string;
 
 export type ColonyIPFSOptions = {
@@ -107,4 +108,18 @@ export type Colony = {
   setAvatar: Function,
   addMember: Function,
   getMembers: Function,
+};
+
+export type profileColony = {
+  colonyDBAddress: ColonyAddress,
+  colonyAvatarHash: IPFSHash,
+  colonyTitle: string,
+};
+
+export type profileTask = {
+  workerAvatarHash: IPFSHash,
+  domainDbAddress: DomainAddress,
+  myTaskRole: string,
+  taskTitle: string,
+  colonyTitle: string,
 };
