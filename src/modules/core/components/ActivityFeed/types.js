@@ -1,8 +1,10 @@
 /* @flow */
 
+export type ActivityAction = 'addedSkillTag' | 'assignedUser' | 'commentedOn';
+
 export type Activity = {
   id: number,
-  action: string,
+  actionType: ActivityAction,
   date: Date,
   user?: string,
   task: string,

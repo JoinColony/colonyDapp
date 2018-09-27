@@ -5,7 +5,7 @@ import type { Activity } from '~core/ActivityFeed/types';
 const mockActivities: Array<Activity> = [
   {
     id: 1,
-    action: 'Assigned',
+    actionType: 'assignedUser',
     date: new Date(2018, 8, 21),
     user: 'chris',
     task: 'Refactor CSS Component',
@@ -14,7 +14,7 @@ const mockActivities: Array<Activity> = [
   },
   {
     id: 2,
-    action: 'Commented on',
+    actionType: 'commentedOn',
     date: new Date(2018, 8, 20),
     task: 'Build Prototype Ideas',
     organization: 'Zirtual',
@@ -22,7 +22,7 @@ const mockActivities: Array<Activity> = [
   },
   {
     id: 3,
-    action: 'Added skill tag to',
+    actionType: 'addedSkillTag',
     date: new Date(2018, 8, 20),
     task: 'Usability Testing',
     organization: 'C21t',
@@ -30,7 +30,7 @@ const mockActivities: Array<Activity> = [
   },
   {
     id: 4,
-    action: 'Commented on',
+    actionType: 'commentedOn',
     date: new Date(2018, 8, 20),
     task: 'Build Prototype Ideas',
     organization: 'Zirtual',
@@ -38,7 +38,7 @@ const mockActivities: Array<Activity> = [
   },
   {
     id: 5,
-    action: 'Commented on',
+    actionType: 'commentedOn',
     date: new Date(2018, 8, 20),
     task: 'New Website Design',
     organization: 'Zirtual',
@@ -46,7 +46,7 @@ const mockActivities: Array<Activity> = [
   },
   {
     id: 6,
-    action: 'Assigned',
+    actionType: 'assignedUser',
     date: new Date(2018, 8, 20),
     user: 'pat',
     task: 'Conduct 5x Interviews',
