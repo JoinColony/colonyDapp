@@ -34,6 +34,7 @@ type Row = {
 
 type CardProps = {
   cardOptions: Array<Row>,
+  values: {},
 };
 
 const MSG = defineMessages({
@@ -82,16 +83,8 @@ const options = [
   },
 ];
 
-// TODO: Once we wire this step up with the previous
-// steps all we need to do is getting the "values"
-// prop from Formik and pass it throught to the CardRow component
-const mockFormikValues = {
-  colonyName: 'Encecladus',
-  tokenName: 'Starfleet Token',
-  tokenSymbol: 'STRF',
-};
-
-const CardRow = ({ cardOptions }: CardProps) =>
+const CardRow = ({ cardOptions, values }: CardProps) =>
+  console.log(values) ||
   cardOptions.map(option => (
     <div className={styles.cardRow} key={`option ${option.valueKey}`}>
       <Heading
@@ -100,7 +93,7 @@ const CardRow = ({ cardOptions }: CardProps) =>
       />
       <Heading
         appearance={{ size: 'normal', weight: 'thin', margin: 'none' }}
-        text={mockFormikValues[option.valueKey]}
+        text={values[option.valueKey]}
       />
     </div>
   ));

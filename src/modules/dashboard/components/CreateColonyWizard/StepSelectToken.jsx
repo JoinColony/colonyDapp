@@ -25,11 +25,16 @@ type FormValues = {
   tokenSymbol?: string,
   tokenName?: string,
   iconUpload?: string,
+  tokenData?: {
+    name: string,
+    symbol: string,
+  },
 };
 
 type Props = {
   previousStep: () => void,
   nextStep: () => void,
+  setValues: (val: {}) => void,
 } & FormikProps<FormValues>;
 
 type State = {
@@ -122,6 +127,7 @@ class StepSelectToken extends Component<Props, State> {
     const {
       values: { tokenAddress },
       isValid,
+      setValues,
     } = this.props;
 
     if (tokenAddress !== previousAddress && isValid) {
@@ -129,6 +135,7 @@ class StepSelectToken extends Component<Props, State> {
         this.checkToken(tokenAddress)
           .then(({ name, symbol }) => {
             this.setState({ tokenData: { name, symbol }, isLoading: false });
+            setValues({ tokenName: name, tokenSymbol: symbol });
           })
           .catch(error => {
             /* We might want to keep this log for a little while
