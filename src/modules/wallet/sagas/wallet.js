@@ -11,6 +11,7 @@ import walletContext from '~context/wallet';
 import {
   OPEN_MNEMONIC_WALLET,
   OPEN_METAMASK_WALLET,
+  OPEN_HARDWARE_WALLET,
   WALLET_SET,
 } from '../actionTypes';
 
@@ -78,9 +79,26 @@ function* openMetamaskWallet(action: Object): any {
   handleDidConnectWallet();
 }
 
+function* openHardwareWallet(action: Object): any {
+  const { selectedAddress } = action.payload;
+  const { handleDidConnectWallet } = action;
+  /*
+   * Set the wallet's address inside the store
+   */
+  yield put({
+    type: WALLET_SET,
+    payload: { currentAddress: selectedAddress },
+  });
+  /*
+   * Go to create profile
+   */
+  handleDidConnectWallet();
+}
+
 function* walletSagas(): any {
   yield takeEvery(OPEN_MNEMONIC_WALLET, openMnemonicWallet);
   yield takeEvery(OPEN_METAMASK_WALLET, openMetamaskWallet);
+  yield takeEvery(OPEN_HARDWARE_WALLET, openHardwareWallet);
 }
 
 export default walletSagas;
