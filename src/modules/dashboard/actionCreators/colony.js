@@ -5,7 +5,7 @@ import {
   TOKEN_CREATED,
   CREATE_COLONY,
   COLONY_CREATED,
-} from './types';
+} from '../actionTypes';
 
 export const createToken = (name: String, symbol: String) => ({
   type: CREATE_TOKEN,

@@ -2,13 +2,12 @@
 
 import { call, put, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
-import {
-  CREATE_TOKEN,
-  CREATE_COLONY,
-  tokenCreated,
-  colonyCreated,
-} from '../actions';
-import colonyNetwork from '../helpers/colonyNetwork';
+
+import { CREATE_TOKEN, CREATE_COLONY } from '../actionTypes';
+
+import { tokenCreated, colonyCreated } from '../actionCreators/colony';
+
+import colonyNetwork from '~utils/colonyNetwork';
 
 function* createToken({
   payload: { name, symbol },
