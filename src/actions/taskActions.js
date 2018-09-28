@@ -1,10 +1,6 @@
 // @flow
 
-import {
-  ADD_COMMENT_TO_TASK,
-  FETCH_COMMENTS,
-  EDIT_TASK,
-} from './actionConstants';
+import { ADD_COMMENT_TO_TASK, FETCH_COMMENTS, EDIT_TASK } from './constants';
 
 import type { Action } from './actionConstants';
 

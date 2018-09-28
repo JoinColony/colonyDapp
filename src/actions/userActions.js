@@ -5,7 +5,8 @@ import {
   SET_PROFILE_STATE,
   SET_PROFILE_CONTENT,
   STATE_READY,
-} from './actionConstants';
+  UPDATE_PROFILE,
+} from './constants';
 
 import type { Action } from './actionConstants';
 
@@ -17,11 +18,15 @@ export function userProfileReady(data: ?{}): Action {
   };
 }
 
-export function setUserProfileContent(content: ?{}): Action {
+export function setUserProfileContent({ property, value }): Action {
   return {
-    type: SET_PROFILE_CONTENT,
-    payload: { content },
+    type: UPDATE_PROFILE,
+    payload: { update: { property, value } },
   };
+}
+
+export function updateUserProfile({ type, update }) {
+  return { type: UPDATE_PROFILE, payload: update };
 }
 
 export function addColonyToUserProfile(colonyId: string): Action {
@@ -32,12 +37,6 @@ export function addColonyToUserProfile(colonyId: string): Action {
 }
 
 export function addOrChangeUserAvatar() {}
-
-/*
-Changes simple properties: name, bio, email
-Call with { property, value }
-*/
-export function editUserProfile() {}
 
 // updates user's notifications database
 export function notifyUser() {}

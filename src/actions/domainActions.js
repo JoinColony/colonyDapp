@@ -5,7 +5,7 @@ import {
   ADD_TASK_TO_DOMAIN,
   EDIT_DOMAIN,
   RETURN_DOMAIN,
-} from './actionConstants';
+} from './constants';
 
 import type { Action } from './actionConstants';
 

@@ -1,26 +1,23 @@
 // @flow
-import { EDIT_COLONY, RETURN_COLONY } from './actionConstants';
+import { UPDATE_COLONY, FETCH_COLONY, LOAD_COLONY } from './constants';
 
 import type { Action } from './actionConstants';
 
 // loads colony database into redux
-export function loadColony(colonyId: string): Action {
+export function fetchColony(colonyId: string): Action {
   return {
-    type: RETURN_COLONY,
+    type: FETCH_COLONY,
     payload: { colonyId },
   };
 }
 
-// creates colony database with given info, puts in redux
-export function createColony() {}
+export function loadColony(colonyId, colony): Action {
+  return { type: LOAD_COLONY, payload: { colonyId, colony } };
+}
 
-/*
-Changes simple properties: name, any other simple property cached here
-Call with { property, value }
-*/
-export function editColony(colonyId, update): Action {
+export function updateColony(colonyId, update): Action {
   return {
-    type: EDIT_COLONY,
+    type: UPDATE_COLONY,
     payload: { colonyId, update },
   };
 }
