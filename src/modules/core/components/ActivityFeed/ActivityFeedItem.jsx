@@ -74,8 +74,8 @@ const ActivityFeedItem = ({
                 domain: <Link to="/">#{domainTag}</Link>,
               }}
             />
-          </b>{' '}
-          |{' '}
+          </b>
+          <span className={styles.pipe}>|</span>
           <small>
             <Time value={activityDate} />
           </small>

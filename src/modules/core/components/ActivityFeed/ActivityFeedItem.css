@@ -15,3 +15,7 @@
   top: 0;
   cursor: default;
 }
+
+.pipe {
+  padding: 0 8px;
+}
