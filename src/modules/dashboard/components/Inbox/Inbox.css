@@ -1,27 +1,26 @@
 
 @import 'variables.css';
 
-.inboxContainer{
-    align-self: center;
-    max-width: 940px;
-    width: 98%;
-    overflow: scroll;
-    max-height: 525px;
-    box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
+.inboxContainer {
+  align-self: center;
+  max-height: 525px;
+  width: 98%;
+  max-width: 940px;
+  overflow: scroll;
+  box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
 }
 
-.inboxTitle{
-    position: fixed;
-    top: 60px;
+.inboxTitle {
+  position: fixed;
+  top: 60px;
 }
 
-.templateContainer{
-    background-color: var(--grey-blue-2);
-    height: 100%;
+.templateContainer {
+  height: 100%;
+  background-color: var(--grey-blue-2);
 }
 
-table.lego{
-
-    border: 1px solid var(--temp-grey-blue-2);
-    border-bottom: none;
+table.lego {
+  border: 1px solid var(--temp-grey-blue-2);
+  border-bottom: none;
 }

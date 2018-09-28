@@ -1,61 +1,63 @@
 @import 'variables.css';
 
 td.inboxDetails {
-  flex-wrap: wrap;
-  font-weight: var(--weight-semi);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  font-weight: var(--weight-semi);
 }
 
-tr.inboxRow{
+tr.inboxRow {
   height: 88px;
-  cursor: pointer;
   background-color: var(--colony-white);
+  cursor: pointer;
 }
 
-tr.inboxRow:hover{
+tr.inboxRow:hover {
   background-color: color(var(--temp-grey-6) alpha(5%));
 }
 
 .inboxDetail {
+  margin: 0 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--colony-black);
-  margin: 0px 5px;
 }
+
 .inboxAction {
   overflow: hidden;
+  font-weight: 400;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 400;
   color: var(--grey-3);
 }
 
-.additionalDetails{
-  width: 100%;
+.additionalDetails {
   display: flex;
-  font-size: var(--size-small);
   margin-top: 2px;
+  width: 100%;
+  font-size: var(--size-small);
 }
 
-.preposition{
+.preposition {
   margin: 0 4px;
 }
 
-.userAvatar{
+.userAvatar {
   margin: 0 5px;
 }
-.time{
+
+.time {
   font-weight: var(--weight-thin);
 }
 
-.pipe{
+.pipe {
   margin: 0 10px;
   font-weight: var(--weight-thin);
 }
 
-.inboxDomain{
+.inboxDomain {
   display: block;
 }
 
@@ -63,4 +65,3 @@ tr {
   border: 1px solid var(--temp-grey-blue-2);
   border-bottom: none;
 }
-

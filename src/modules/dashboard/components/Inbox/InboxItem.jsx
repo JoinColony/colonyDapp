@@ -1,8 +1,6 @@
 /* @flow */
 
 import React from 'react';
-import formatDate from 'sugar-date/date/format';
-import createDate from 'sugar-date/date/create';
 import relative from 'sugar-date/date/relative';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -24,9 +22,20 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
+type Item = {
+  user: {
+    username: string,
+    walletAddress: string,
+  },
+  action: string,
+  task: string,
+  domain: string,
+  colonyName: string,
+  createdAt: string,
+};
+
 type Props = {
-  // TODO: type better as soon as actual structure is known
-  item: Object,
+  item: Item,
 };
 
 const InboxItem = ({

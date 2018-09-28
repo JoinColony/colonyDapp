@@ -23,12 +23,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.Inbox';
 
-type Props = {
-  // TODO: type better as soon as actual structure is known
-  items: Array<Object>,
-};
-
-const Inbox = ({ items }: Props) => (
+const Inbox = () => (
   <div className={styles.templateContainer}>
     <ProfileTemplate>
       <div className={styles.inboxContainer}>
