@@ -76,7 +76,10 @@ export default function App({ store, context }: Props) {
                 <Route path="/dashboard" component={Dashboard} />
                 <Route path="/start" component={WalletStart} />
                 <Route path="/createwallet" component={CreateWalletWizard} />
-                <Route path="/connectwallet/:provider" component={ConnectWallet} />
+                <Route
+                  path="/connectwallet/:provider"
+                  component={ConnectWallet}
+                />
                 <Route path="/profile" component={UserProfile} />
                 {/* eslint-disable-next-line */}
                 {/* TODO: to the router person: please find a way to have this be /profile/edit */}
