@@ -1,4 +1,6 @@
 /* @flow */
+
+/* eslint-disable-next-line no-unused-vars */
 import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
 import React from 'react';
@@ -6,15 +8,28 @@ import { compose } from 'recompose';
 import { defineMessages } from 'react-intl';
 import { withFormik } from 'formik';
 
+import type { MessageDescriptor } from 'react-intl';
+
 import asProvider from '../asProvider';
+import { withBoundActionCreators } from '~utils/redux';
 
 import type { UploadFile } from '../../../../core/components/FileUpload/types';
+
+import {
+  /*
+   * Prettier sugests a fix that would break the line length rule.
+   * This comment fixes that :)
+   */
+  openKeystoreWallet as openKeystoreWalletAction,
+} from '../../../actionCreators/wallet';
 
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import FileUpload from '../../../../core/components/FileUpload';
 import Input from '../../../../core/components/Fields/Input';
 import styles from './JSONUpload.css';
+
+import keystoreMock from './__datamocks__/wallet-keystore-test.json';
 
 const MSG = defineMessages({
   heading: {
@@ -53,6 +68,7 @@ const MSG = defineMessages({
 
 type FormValues = {
   walletJsonFileUpload: Array<UploadFile>,
+  walletJsonPassword: string,
 };
 
 type Props = FormikProps<FormValues> & {
@@ -104,22 +120,40 @@ const JSONUpload = ({ handleExit, handleSubmit, isValid, values }: Props) => (
 
 const enhance = compose(
   asProvider(),
+  withBoundActionCreators({ openKeystoreWalletAction }),
   withFormik({
     mapPropsToValues: () => ({
       walletJsonFileUpload: [],
+      walletJsonPassword: '',
     }),
-    validate: (values: FormValues): FormikErrors<FormValues> => {
-      const errors = {};
-      if (values.walletJsonFileUpload.length === 0) {
-        errors.walletJsonFileUpload = MSG.errorDescription;
-      }
-      return errors;
-    },
+    /*
+     * @NOTE Re-enable when FileUpload had been fixed
+     */
+    // validate: (values: FormValues): FormikErrors<FormValues> => {
+    //   const errors = {};
+    //   if (values.walletJsonFileUpload.length === 0) {
+    //     errors.walletJsonFileUpload = MSG.errorDescription;
+    //   }
+    //   return errors;
+    // },
     handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+      const { walletJsonPassword } = values;
       const {
-        props: { handleDidConnectWallet },
+        setErrors,
+        setSubmitting,
+        props: {
+          handleDidConnectWallet,
+          openKeystoreWalletAction: openKeystoreWallet,
+        },
       } = otherProps;
-      handleDidConnectWallet();
+      return openKeystoreWallet(
+        JSON.stringify(keystoreMock),
+        walletJsonPassword,
+        (message: MessageDescriptor) =>
+          setErrors({ walletJsonFileUpload: message }),
+        setSubmitting,
+        handleDidConnectWallet,
+      );
     },
   }),
 );

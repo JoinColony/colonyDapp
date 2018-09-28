@@ -24,6 +24,7 @@ exports[`Heading component Renders initial component 1`] = `
       "locale": "en",
       "messages": Object {},
       "now": [Function],
+      "onError": [Function],
       "textComponent": "span",
       "timeZone": null,
     }
@@ -56,6 +57,7 @@ exports[`Heading component Works with MessageDescriptors 1`] = `
       "locale": "en",
       "messages": Object {},
       "now": [Function],
+      "onError": [Function],
       "textComponent": "span",
       "timeZone": null,
     }

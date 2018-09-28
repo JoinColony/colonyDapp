@@ -6,7 +6,18 @@ import { compose } from 'recompose';
 import { defineMessages } from 'react-intl';
 import { withFormik } from 'formik';
 
+import type { MessageDescriptor } from 'react-intl';
+
 import asProvider from '../asProvider';
+import { withBoundActionCreators } from '~utils/redux';
+
+import {
+  /*
+   * Prettier sugests a fix that would break the line length rule.
+   * This comment fixes that :)
+   */
+  openMnemonicWallet as openMnemonicWalletAction,
+} from '../../../actionCreators/wallet';
 
 import Textarea from '../../../../core/components/Fields/Textarea';
 import Button from '../../../../core/components/Button';
@@ -79,6 +90,7 @@ const Mnemonic = ({
 
 const enhance = compose(
   asProvider(),
+  withBoundActionCreators({ openMnemonicWalletAction }),
   withFormik({
     mapPropsToValues: () => ({
       connectwalletmnemonic: '',
@@ -90,11 +102,25 @@ const enhance = compose(
       }
       return errors;
     },
-    handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+    handleSubmit: (
+      { connectwalletmnemonic }: FormValues,
+      otherProps: FormikBag<Object, *>,
+    ) => {
       const {
-        props: { handleDidConnectWallet },
+        setErrors,
+        setSubmitting,
+        props: {
+          handleDidConnectWallet,
+          openMnemonicWalletAction: openMnemonicWallet,
+        },
       } = otherProps;
-      handleDidConnectWallet();
+      openMnemonicWallet(
+        connectwalletmnemonic,
+        (message: MessageDescriptor) =>
+          setErrors({ connectwalletmnemonic: message }),
+        setSubmitting,
+        handleDidConnectWallet,
+      );
     },
   }),
 );

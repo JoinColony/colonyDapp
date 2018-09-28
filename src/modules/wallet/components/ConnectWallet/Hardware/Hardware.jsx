@@ -6,10 +6,21 @@ import { compose } from 'recompose';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { HardwareWallet } from './types';
+import trezorWallet from '@colony/purser-trezor';
+import ledgerWallet from '@colony/purser-ledger';
 
 import asProvider from '../asProvider';
+import withContext from '~context/withContext';
+import { withBoundActionCreators } from '~utils/redux';
 import HardwareChoice from './HardwareChoice.jsx';
+
+import {
+  /*
+   * Prettier sugests a fix that would break the line length rule.
+   * This comment fixes that :)
+   */
+  openHardwareWallet as openHardwareWalletAction,
+} from '../../../actionCreators/wallet';
 
 import Icon from '../../../../core/components/Icon';
 import Input from '../../../../core/components/Fields/Input';
@@ -17,8 +28,6 @@ import InputLabel from '../../../../core/components/Fields/InputLabel';
 import Button from '../../../../core/components/Button';
 import Heading from '../../../../core/components/Heading';
 import styles from './Hardware.css';
-
-import hardwareWalletChoices from './__mocks__/hardwareWalletMock';
 
 const MSG = defineMessages({
   heading: {
@@ -80,10 +89,11 @@ type FormValues = {
 type Props = FormikProps<FormValues> & {
   handleDidConnectWallet: () => void,
   handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
+  context: Object,
 };
 
 type State = {
-  walletChoices: Array<HardwareWallet>,
+  walletChoices: Array<string>,
 };
 
 class Hardware extends Component<Props, State> {
@@ -95,10 +105,47 @@ class Hardware extends Component<Props, State> {
     this.getWalletChoices();
   }
 
-  getWalletChoices = () => {
-    this.setState({
-      walletChoices: hardwareWalletChoices,
-    });
+  getWalletChoices = async () => {
+    const {
+      context: { currentWallet },
+    } = this.props;
+    /*
+     * First we try to open the Trezor wallet
+     */
+    try {
+      const trezorWalletInstance = await trezorWallet.open({
+        addressCount: 100,
+      });
+      currentWallet.setNewWallet(trezorWalletInstance);
+      return this.setState({
+        walletChoices: trezorWalletInstance.otherAddresses,
+      });
+    } catch (caughtError) {
+      /*
+       * We fail silently
+       */
+    }
+    /*
+     * If that fails, we try to open the Ledger wallet
+     *
+     * @NOTE If both wallets are available, ledger will overwrite trezor
+     *
+     * @TODO Our dev environment needs to run on HTTPS for this to work
+     */
+    try {
+      const ledgerWalletInstance = await ledgerWallet.open({
+        addressCount: 100,
+      });
+      currentWallet.setNewWallet(ledgerWalletInstance);
+      return this.setState({
+        walletChoices: ledgerWalletInstance.otherAddresses,
+      });
+    } catch (caughtError) {
+      /*
+       * We fail silently
+       */
+    }
+    return false;
   };
 
   render() {
@@ -111,8 +158,8 @@ class Hardware extends Component<Props, State> {
       values: { hardwareWalletChoice, hardwareWalletFilter },
     } = this.props;
 
-    const filteredWalletChoices = walletChoices.filter(wallet =>
-      wallet.address.includes(hardwareWalletFilter),
+    const filteredWalletChoices = walletChoices.filter(address =>
+      address.includes(hardwareWalletFilter),
     );
 
     const iconClassName = hardwareWalletFilter
@@ -181,11 +228,11 @@ class Hardware extends Component<Props, State> {
                   appearance={{ size: 'normal' }}
                 />
               )}
-            {filteredWalletChoices.map(wallet => (
-              <div className={styles.choiceRow} key={wallet.address}>
+            {filteredWalletChoices.map(address => (
+              <div className={styles.choiceRow} key={address}>
                 <HardwareChoice
-                  wallet={wallet}
-                  checked={hardwareWalletChoice === wallet.address}
+                  wallet={address}
+                  checked={hardwareWalletChoice === address}
                   searchTerm={hardwareWalletFilter}
                 />
               </div>
@@ -215,6 +262,7 @@ class Hardware extends Component<Props, State> {
 
 const enhance = compose(
   asProvider(),
+  withBoundActionCreators({ openHardwareWalletAction }),
   withFormik({
     mapPropsToValues: () => ({
       hardwareWalletChoice: '',
@@ -228,12 +276,23 @@ const enhance = compose(
       return errors;
     },
     handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
+      const { hardwareWalletChoice } = values;
       const {
-        props: { handleDidConnectWallet },
+        props: {
+          handleDidConnectWallet,
+          openHardwareWalletAction: openHardwareWallet,
+          context: {
+            currentWallet: { instance: walletInstance },
+          },
+        },
       } = otherProps;
-      handleDidConnectWallet();
+      const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
+        address => address === hardwareWalletChoice,
+      );
+      walletInstance.setDefaultAddress(selectedAddressIndex);
+      return openHardwareWallet(walletInstance.address, handleDidConnectWallet);
     },
   }),
 );
 
-export default enhance(Hardware);
+export default withContext(enhance(Hardware));

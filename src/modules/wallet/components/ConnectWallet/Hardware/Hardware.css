@@ -54,4 +54,3 @@
 .noWalletFound {
   composes: alignCenter from '~styles/text.css';
 }
-
