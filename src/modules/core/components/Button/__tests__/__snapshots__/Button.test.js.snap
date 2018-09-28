@@ -24,6 +24,7 @@ exports[`Button component Renders initial component 1`] = `
       "locale": "en",
       "messages": Object {},
       "now": [Function],
+      "onError": [Function],
       "textComponent": "span",
       "timeZone": null,
     }
