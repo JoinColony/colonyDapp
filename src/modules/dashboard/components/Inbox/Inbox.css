@@ -3,6 +3,25 @@
 
 .inboxContainer{
     align-self: center;
-    width: 940px;
+    max-width: 940px;
+    width: 98%;
+    overflow: scroll;
+    max-height: 525px;
+    box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
+}
 
+.inboxTitle{
+    position: fixed;
+    top: 60px;
+}
+
+.templateContainer{
+    background-color: var(--grey-blue-2);
+    height: 100%;
+}
+
+table.lego{
+
+    border: 1px solid var(--temp-grey-blue-2);
+    border-bottom: none;
 }

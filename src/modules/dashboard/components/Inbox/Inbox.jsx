@@ -29,21 +29,25 @@ type Props = {
 };
 
 const Inbox = ({ items }: Props) => (
-  <ProfileTemplate>
-    <div className={styles.inboxContainer}>
-      <Heading
-        appearance={{ size: 'medium', margin: 'small' }}
-        text={MSG.title}
-      />
-      <Table scrollable>
-        <TableBody>
-          {mockInbox.map(item => (
-            <InboxItem key={item.id} item={item} />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  </ProfileTemplate>
+  <div className={styles.templateContainer}>
+    <ProfileTemplate>
+      <div className={styles.inboxContainer}>
+        <div className={styles.inboxTitle}>
+          <Heading
+            appearance={{ size: 'medium', margin: 'small' }}
+            text={MSG.title}
+          />
+        </div>
+        <Table className={styles.lego} scrollable>
+          <TableBody>
+            {mockInbox.map(item => (
+              <InboxItem key={item.id} item={item} />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </ProfileTemplate>
+  </div>
 );
 
 Inbox.displayName = displayName;

@@ -1,6 +1,9 @@
 /* @flow */
 
 import React from 'react';
+import formatDate from 'sugar-date/date/format';
+import createDate from 'sugar-date/date/create';
+import relative from 'sugar-date/date/relative';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
@@ -27,7 +30,7 @@ type Props = {
 };
 
 const InboxItem = ({
-  item: { user, action, task, domain, colonyName },
+  item: { user, action, task, domain, colonyName, createdAt },
 }: Props) => (
   <TableRow className={styles.inboxRow}>
     <TableCell className={styles.inboxDetails}>
@@ -53,6 +56,7 @@ const InboxItem = ({
         </span>
         <span>{domain}</span>
         <span className={styles.pipe}>|</span>
+        <span className={styles.time}>{relative(new Date(createdAt))}</span>
       </span>
     </TableCell>
   </TableRow>

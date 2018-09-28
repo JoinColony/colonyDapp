@@ -3,10 +3,18 @@
 td.inboxDetails {
   flex-wrap: wrap;
   font-weight: var(--weight-semi);
+  display: flex;
+  align-items: center;
 }
 
 tr.inboxRow{
   height: 88px;
+  cursor: pointer;
+  background-color: var(--colony-white);
+}
+
+tr.inboxRow:hover{
+  background-color: color(var(--temp-grey-6) alpha(5%));
 }
 
 .inboxDetail {
@@ -28,6 +36,7 @@ tr.inboxRow{
   width: 100%;
   display: flex;
   font-size: var(--size-small);
+  margin-top: 2px;
 }
 
 .preposition{
@@ -37,12 +46,21 @@ tr.inboxRow{
 .userAvatar{
   margin: 0 5px;
 }
+.time{
+  font-weight: var(--weight-thin);
+}
 
 .pipe{
   margin: 0 10px;
+  font-weight: var(--weight-thin);
 }
 
 .inboxDomain{
   display: block;
+}
+
+tr {
+  border: 1px solid var(--temp-grey-blue-2);
+  border-bottom: none;
 }
 
