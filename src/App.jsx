@@ -8,12 +8,9 @@ import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 
-import store from './store';
 import layout from '~styles/layout.css';
 
 import messages from './i18n/en.json';
-import rootReducer from './reducers';
-import rootSaga from './sagas';
 
 import { Provider as ContextProvider } from './createReactContext';
 
@@ -29,15 +26,6 @@ import ProfileCreate from '~wallet/ProfileCreate';
 import CreateWalletWizard from '~wallet/CreateWalletWizard';
 
 addLocaleData(en);
-
-const sagaMiddleware = createSagaMiddleware();
-const store = createStore(
-  rootReducer,
-  // eslint-disable-next-line no-underscore-dangle
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  applyMiddleware(sagaMiddleware),
-);
-sagaMiddleware.run(rootSaga);
 
 const Home = () => (
   <ul>
