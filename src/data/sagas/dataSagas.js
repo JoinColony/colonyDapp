@@ -1,7 +1,5 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
-import Data from '../data';
-
-import { initialData } from '../actions';
+import Data from '../Data';
 
 import {
   ADD_COMMENT_TO_TASK,
@@ -14,28 +12,25 @@ import {
   FETCH_COMMENTS,
   INITIALIZE_DATA,
   JOIN_COLONY,
-  LOAD_COLONY,
   LOAD_DOMAIN,
-  RETURN_COLONY,
+  FETCH_COLONY,
   RETURN_DOMAIN,
-  SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
-  UPDATE_COLONY,
   UPDATE_DOMAIN,
   UPDATE_TASK,
   UPDATE_PROFILE,
-} from '../actions/actionConstants';
+  loadColony,
+  updateColony,
+  initialData,
+  setUserProfileContent,
+} from '../../actions';
 
 function* addColonyDomain(action) {
   const { colonyId, domainId } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
   yield* call(dataAPI.addColonyDomain, colonyId, domainId);
 
-  yield put({
-    type: SET_COLONY_CONTENT,
-    colonyId,
-    update: { property: 'domains', value: domainId },
-  });
+  yield put(updateColony(colonyId, { property: 'domains', value: domainId }));
 }
 
 function* addTaskToDomain(action) {
@@ -67,35 +62,22 @@ function* addCommentToTask(action) {
   });
 }
 
-// TODO payload should be colony after Data class loads correctly
-function* loadColony(action) {
+function* fetchColony(action) {
   const { colonyId } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
-  const colony = yield* call(dataAPI.loadColony, colonyId);
-
-  yield put({
-    type: LOAD_COLONY,
-    payload: {
-      content: {
-        id: colonyId,
-        members: ['geo'],
-        domain: 'biotech',
-        pot: '1 MILLION dollars',
-      },
-      target: colonyId,
-    },
-  });
+  const colony = yield call(dataAPI.loadColony, colonyId);
+  yield put(loadColony(colonyId, colony));
 }
 
 function* editColony(action) {
   const { colonyId, update } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
   const colony = yield* call(dataAPI.updateColony, colonyId, update);
-
-  yield put({
-    type: UPDATE_COLONY,
-    payload: action.payload,
-  });
+  yield put(colonyId, update);
+  /* yield put({
+   *   type: UPDATE_COLONY,
+   *   payload: action.payload,
+   * });*/
 }
 
 function* editDomain(action) {
@@ -112,15 +94,10 @@ function* editDomain(action) {
 function* joinColony(action) {
   const { colonyId } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
-  yield* call(dataAPI.joinColony, colonyId);
-
-  yield put({
-    type: UPDATE_PROFILE,
-    update: {
-      value: colonyId,
-      property: 'colonies',
-    },
-  });
+  const joinedColony = yield call(dataAPI.joinColony, colonyId);
+  yield put(
+    setUserProfileContent({ property: 'colonies', value: joinedColony }),
+  );
 }
 
 function* editTask(action) {
@@ -182,11 +159,11 @@ function* initializeData(action) {
 
   yield call(data.ready);
   yield call(resolve, 'data API started and stored in Redux');
-
-  yield put(initialData(data));
+  const init = initialData(data);
+  yield put(init);
 }
 
-function* colonySagas() {
+export function* dataSagas() {
   yield takeEvery(ADD_COMMENT_TO_TASK, addCommentToTask);
   yield takeEvery(ADD_DOMAIN_TO_COLONY, addColonyDomain);
   yield takeEvery(ADD_TASK_TO_DOMAIN, addTaskToDomain);
@@ -196,8 +173,6 @@ function* colonySagas() {
   yield takeEvery(FETCH_COMMENTS, fetchComments);
   yield takeEvery(INITIALIZE_DATA, initializeData);
   yield takeEvery(JOIN_COLONY, joinColony);
-  yield takeEvery(RETURN_COLONY, loadColony);
+  yield takeEvery(FETCH_COLONY, fetchColony);
   yield takeEvery(RETURN_DOMAIN, loadDomain);
 }
-
-export default colonySagas;

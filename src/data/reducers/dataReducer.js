@@ -7,7 +7,6 @@ import {
   INITIAL_STATE,
   LOAD_COLONY,
   LOAD_DOMAIN,
-  SET_COLONY_CONTENT,
   SET_DOMAIN_CONTENT,
   SET_DATA_STATE,
   UPDATE_PROFILE,
@@ -15,11 +14,14 @@ import {
   UPDATE_COLONY,
   UPDATE_DOMAIN,
   UPDATE_TASK,
-} from '../actions/actionConstants';
+} from '../../actions';
 
-import type { Action } from '../actions/actionConstants';
+import type { Action } from '../../actions';
 
-export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
+export function dataReducer(
+  state: DataReduxStore = INITIAL_STATE,
+  action: Action,
+) {
   switch (action.type) {
     case STORE_DATA_CLASS:
       return { ...state, Data: action.Data };
@@ -42,22 +44,12 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       });
 
     case LOAD_COLONY:
-      state.data.colonies[action.payload.target] = action.payload.content;
-
-      return state;
-
-    case UPDATE_COLONY:
-      const {
-        colonyId,
-        update: { property: colonyProperty, value: colonyValue },
-      } = action.payload;
+      const { colonyId: loadColonyId, colony: loadColony } = action.payload;
       return update(state, {
         data: {
           colonies: {
-            [colonyId]: {
-              [colonyProperty]: {
-                $set: colonyValue,
-              },
+            [loadColonyId]: {
+              $set: loadColony,
             },
           },
         },
@@ -109,13 +101,13 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
         },
       });
 
-    case SET_COLONY_CONTENT:
+    case UPDATE_COLONY:
       const {
         colonyId: colony,
         update: { property: colonyProp, value: colonyVal },
       } = action.payload;
 
-      return update(state, {
+      const myUpdate = update(state, {
         data: {
           colonies: {
             [colony]: {
@@ -123,8 +115,9 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
                 $apply: prop => {
                   if (Array.isArray(prop)) {
                     prop.push(colonyVal);
+                    return prop;
                   } else {
-                    prop = colonyValue;
+                    return colonyValue;
                   }
                 },
               },
@@ -132,6 +125,8 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
           },
         },
       });
+      console.log(myUpdate);
+      return myUpdate;
 
     case SET_DOMAIN_CONTENT:
       const {
@@ -163,14 +158,15 @@ export function reducer(state: DataReduxStore = INITIAL_STATE, action: Action) {
       } = action.payload;
 
       return update(state, {
-        data: {
-          my_profile: {
+        my_profile: {
+          data: {
             [profileProperty]: {
               $apply: prop => {
                 if (Array.isArray(prop)) {
                   prop.push(profileValue);
+                  return prop;
                 } else {
-                  prop = profileValue;
+                  return profileValue;
                 }
               },
             },
