@@ -29,10 +29,12 @@ const LoadingTemplate = ({ children, loadingText }: Props) => (
     </header>
     <main className={styles.mainContent}>
       <div>
-        <SpinnerLoader
-          loadingText={loadingText}
-          appearance={{ theme: 'primary', size: 'massive' }}
-        />
+        <div className={styles.loaderContainer}>
+          <SpinnerLoader
+            loadingText={loadingText}
+            appearance={{ theme: 'primary', size: 'massive' }}
+          />
+        </div>
         {children}
       </div>
     </main>

@@ -1,8 +1,11 @@
+@import 'variables.css';
 
 .main {
-  composes: stretch from '~styles/layout.css';
-  display: flex;
-  flex-direction: column;
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  position: absolute;
+  top: 0;
+  overflow: auto;
+  background: var(--gradient-default);
 }
 
 .header {
@@ -12,9 +15,11 @@
 }
 
 .mainContent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
+  margin-top: 160px;
+  padding-bottom: var(--pad-large);
   text-align: center;
+}
+
+.loaderContainer {
+  composes: marginBottomLarge from '~styles/layout.css';
 }
