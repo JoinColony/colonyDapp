@@ -8,23 +8,26 @@ import LoadingTemplate from '../../../pages/LoadingTemplate';
 
 const MSG = defineMessages({
   loadingText: {
-    id: 'CreateColonyWizard.CreatingColony.loadingText',
+    id: 'CreateColonyWizard.CreatingToken.loadingText',
     defaultMessage: 'Token creation...',
   },
   loaderDescription: {
-    id: 'CreateColonyWizard.CreatingColony.loaderDescription',
+    id: 'CreateColonyWizard.CreatingToken.loaderDescription',
     defaultMessage: 'Please wait while your new token is being created.',
   },
 });
 
-const displayName = 'CreateColonyWizard.CreatingColony';
+const displayName = 'CreateColonyWizard.CreatingToken';
 
-const CreatingColony = () => (
+const CreatingToken = () => (
   <LoadingTemplate loadingText={MSG.loadingText}>
-    <Heading text={MSG.loaderDescription} appearance={{ size: 'small' }} />
+    <Heading
+      text={MSG.loaderDescription}
+      appearance={{ size: 'medium', weight: 'thin' }}
+    />
   </LoadingTemplate>
 );
 
-CreatingColony.displayName = displayName;
+CreatingToken.displayName = displayName;
 
-export default CreatingColony;
+export default CreatingToken;
