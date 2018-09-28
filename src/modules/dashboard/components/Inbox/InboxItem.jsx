@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
@@ -13,6 +13,10 @@ const MSG = defineMessages({
     id: 'dashboard.Inbox.InboxItem.reputation',
     defaultMessage: '+{reputation} max rep',
   },
+  preposition: {
+    id: 'dashboard.Inbox.InboxItem.preposition',
+    defaultMessage: 'in',
+  },
 });
 
 const displayName = 'dashboard.Inbox.InboxItem';
@@ -22,16 +26,17 @@ type Props = {
   item: Object,
 };
 
-const InboxItem = ({ item: { user, action, task } }: Props) => (
-  <TableRow>
-    <TableCell className={styles.userAvatar}>
+const InboxItem = ({
+  item: { user, action, task, domain, colonyName },
+}: Props) => (
+  <TableRow className={styles.inboxRow}>
+    <TableCell className={styles.inboxDetails}>
       <UserAvatar
         size="xxs"
         walletAddress={user.walletAddress}
         username={user.username}
+        className={styles.UserAvatar}
       />
-    </TableCell>
-    <TableCell className={styles.inboxDetails}>
       <span className={styles.inboxDetail} title={user.username}>
         {user.username}
       </span>
@@ -40,6 +45,14 @@ const InboxItem = ({ item: { user, action, task } }: Props) => (
       </span>
       <span className={styles.inboxDetail} title={user.username}>
         {task}
+      </span>
+      <span className={styles.additionalDetails}>
+        <span>{colonyName}</span>
+        <span className={styles.preposition}>
+          <FormattedMessage {...MSG.preposition} />
+        </span>
+        <span>{domain}</span>
+        <span className={styles.pipe}>|</span>
       </span>
     </TableCell>
   </TableRow>

@@ -35,7 +35,7 @@
 .mainContent {
   padding: 20px var(--padding-horizontal);
   height: 100%;
-  max-width: 930px;
+  /* max-width: 930px; */
 }
 
 .themeAlt {

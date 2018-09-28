@@ -9,10 +9,10 @@ import Heading from '~core/Heading';
 import InboxItem from './InboxItem.jsx';
 
 import ProfileTemplate from '../../../pages/ProfileTemplate';
-import UserMeta from '../../../users/components/UserProfile/UserMeta.jsx';
 
 import mockInbox from './__datamocks__/mockInbox';
-import mockUser from './__datamocks__/mockUser';
+
+import styles from './Inbox.css';
 
 const MSG = defineMessages({
   title: {
@@ -25,23 +25,27 @@ const displayName = 'dashboard.Inbox';
 
 type Props = {
   // TODO: type better as soon as actual structure is known
-  tasks: Array<Object>,
+  items: Array<Object>,
 };
 
 const Inbox = ({ items }: Props) => (
   <ProfileTemplate>
-    <Heading
-      appearance={{ size: 'medium', margin: 'small' }}
-      text={MSG.title}
-    />
-    <Table scrollable>
-      <TableBody>
-        {mockInbox.map(item => (
-          <InboxItem key={item.id} item={item} />
-        ))}
-      </TableBody>
-    </Table>
+    <div className={styles.inboxContainer}>
+      <Heading
+        appearance={{ size: 'medium', margin: 'small' }}
+        text={MSG.title}
+      />
+      <Table scrollable>
+        <TableBody>
+          {mockInbox.map(item => (
+            <InboxItem key={item.id} item={item} />
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   </ProfileTemplate>
 );
+
+Inbox.displayName = displayName;
 
 export default Inbox;

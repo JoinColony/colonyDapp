@@ -5,6 +5,10 @@ td.inboxDetails {
   font-weight: var(--weight-semi);
 }
 
+tr.inboxRow{
+  height: 88px;
+}
+
 .inboxDetail {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -20,8 +24,25 @@ td.inboxDetails {
   color: var(--grey-3);
 }
 
-td.userAvatar {
-  justify-content: center;
-  padding: 10px;
-  width: 40px;
+.additionalDetails{
+  width: 100%;
+  display: flex;
+  font-size: var(--size-small);
 }
+
+.preposition{
+  margin: 0 4px;
+}
+
+.userAvatar{
+  margin: 0 5px;
+}
+
+.pipe{
+  margin: 0 10px;
+}
+
+.inboxDomain{
+  display: block;
+}
+
