@@ -33,7 +33,7 @@ function* createColony({
   yield put(colonyCreated(colonyId, colonyAddress));
 }
 
-export default function* colony(): Saga<*> {
+export default function* colony(): any {
   yield takeEvery(CREATE_TOKEN, createToken);
   yield takeEvery(CREATE_COLONY, createColony);
 }
