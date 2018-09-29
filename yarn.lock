@@ -12695,9 +12695,9 @@ simple-get@^2.7.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-simple-git@^1.92.0:
-  version "1.102.0"
-  resolved "https://registry.yarnpkg.com/simple-git/-/simple-git-1.102.0.tgz#5e159a15fcfcb1eca212a4fdceb4384166c71e7d"
+simple-git@^1.103.0:
+  version "1.103.0"
+  resolved "https://registry.yarnpkg.com/simple-git/-/simple-git-1.103.0.tgz#491d2f11f7c7f90eae33772a9b7c48bba37d811d"
   dependencies:
     debug "^4.0.1"
 
