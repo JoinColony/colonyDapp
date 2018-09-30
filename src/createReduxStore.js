@@ -6,6 +6,7 @@ import { all } from 'redux-saga/effects';
 
 import walletReducer from './modules/wallet/reducers';
 
+import coreSagas from './modules/core/sagas';
 import walletSagas from './modules/wallet/sagas';
 import colonySagas from './modules/dashboard/sagas';
 
@@ -14,7 +15,7 @@ const rootReducer = combineReducers({
 });
 
 function* rootSaga(): any {
-  yield all([walletSagas(), colonySagas()]);
+  yield all([coreSagas(), walletSagas(), colonySagas()]);
 }
 
 const sagaMiddleware = createSagaMiddleware();

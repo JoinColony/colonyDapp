@@ -1,32 +1,30 @@
 /* @flow */
 
-import {
-  CREATE_TOKEN,
-  TOKEN_CREATED,
-  CREATE_COLONY,
-  COLONY_CREATED,
-} from '../actionTypes';
+import { CREATE_TOKEN, CREATE_COLONY } from '../actionTypes';
 
-export const createToken = (name: String, symbol: String) => ({
+export const createToken = (
+  name: string,
+  symbol: string,
+  setErrors: () => void,
+  setSubmitting: () => void,
+  handleTokenCreated: () => void,
+) => ({
   type: CREATE_TOKEN,
   payload: { name, symbol },
+  setErrors,
+  setSubmitting,
+  handleTokenCreated,
 });
 
-export const tokenCreated = (
-  name: String,
-  symbol: String,
-  tokenAddress: String,
+export const createColony = (
+  tokenAddress: string,
+  setErrors: () => void,
+  setSubmitting: () => void,
+  handleColonyCreated: () => void,
 ) => ({
-  type: TOKEN_CREATED,
-  payload: { name, symbol, tokenAddress },
-});
-
-export const createColony = (tokenAddress: String) => ({
   type: CREATE_COLONY,
   payload: { tokenAddress },
-});
-
-export const colonyCreated = (colonyId: String, colonyAddress: String) => ({
-  type: COLONY_CREATED,
-  payload: { colonyId, colonyAddress },
+  setErrors,
+  setSubmitting,
+  handleColonyCreated,
 });

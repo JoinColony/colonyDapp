@@ -4,33 +4,47 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 
 import { CREATE_TOKEN, CREATE_COLONY } from '../actionTypes';
+import { LOAD_NETWORK } from '../../core/actionTypes';
 
-import { tokenCreated, colonyCreated } from '../actionCreators/colony';
+import networkContext from '~context/network';
 
-import colonyNetwork from '~utils/colonyNetwork';
+function* createToken(action: Object): Saga<*> {
+  const { name, symbol } = action.payload;
+  const { setErrors, setSubmitting, handleTokenCreated } = action;
 
-function* createToken({
-  payload: { name, symbol },
-}: {
-  payload: { name: String, symbol: String },
-}): Saga<*> {
-  const network = yield call(colonyNetwork);
-  const tokenAddress = yield call(network.createToken, { name, symbol });
-  yield put(tokenCreated(name, symbol, tokenAddress));
+  setSubmitting(true);
+  yield put.resolve({ type: LOAD_NETWORK });
+
+  try {
+    const tokenAddress = yield call(networkContext.instance.createToken, {
+      name,
+      symbol,
+    });
+    setSubmitting(false);
+    handleTokenCreated(tokenAddress);
+  } catch (error) {
+    setSubmitting(false);
+    setErrors('Could not create Token'); // TODO: actual error with intl
+  }
 }
 
-function* createColony({
-  payload: { tokenAddress },
-}: {
-  payload: {
-    tokenAddress: String,
-  },
-}): Saga<*> {
-  const network = yield call(colonyNetwork);
-  const {
-    eventData: { colonyId, colonyAddress },
-  } = yield call(network.createColony.send, { tokenAddress });
-  yield put(colonyCreated(colonyId, colonyAddress));
+function* createColony(action: Object): Saga<*> {
+  const { tokenAddress } = action.payload;
+  const { setErrors, setSubmitting, handleColonyCreated } = action;
+
+  setSubmitting(true);
+  yield put.resolve({ type: LOAD_NETWORK });
+
+  try {
+    const {
+      eventData: { colonyId, colonyAddress },
+    } = yield call(networkContext.instance.createColony.send, { tokenAddress });
+    setSubmitting(false);
+    handleColonyCreated(colonyId, colonyAddress);
+  } catch (error) {
+    setSubmitting(false);
+    setErrors('Could not create Colony'); // TODO: actual error with intl
+  }
 }
 
 export default function* colony(): any {

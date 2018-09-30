@@ -6,6 +6,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import type { MessageDescriptor } from 'react-intl';
 import styles from './StepCreateToken.css';
 
 import type { SubmitFn } from '~core/Wizard';
@@ -15,6 +16,10 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import FileUpload from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
+
+import { withBoundActionCreators } from '~utils/redux';
+
+import { createToken as createTokenAction } from '../../actionCreators/colony';
 
 const MSG = defineMessages({
   heading: {
@@ -76,10 +81,21 @@ const MSG = defineMessages({
 
 type FormValues = {
   tokenName: string,
+  tokenSymbol: string,
+  tokenAddress: string,
+  tokenCreated: boolean,
 };
 
 type Props = {
   previousStep: () => void,
+  // TODO: types
+  createTokenAction: (
+    name: string,
+    symbol: string,
+    setErrors: *,
+    setSubmitting: *,
+    handleTokenCreated: *,
+  ) => void,
 } & FormikProps<FormValues>;
 
 const ACCEPTED_MIME_TYPES: Array<string> = ['image/svg+xml', 'image/png'];
@@ -89,8 +105,34 @@ const VALIDATE_TOKEN_NAME: RegExp = /^[A-Za-z0-9-_.]+$/;
 
 const displayName: string = 'dashboard.CreateColonyWizard.CreateToken';
 
-const StepCreateToken = ({ previousStep, handleSubmit, isValid }: Props) => (
-  <form className={styles.main} onSubmit={handleSubmit}>
+const StepCreateToken = ({
+  previousStep,
+  handleSubmit,
+  isValid,
+  setErrors,
+  setSubmitting,
+  values,
+  createTokenAction: createToken,
+  setFieldValue,
+}: Props) => (
+  <form
+    className={styles.main}
+    onSubmit={e => {
+      e.preventDefault();
+      createToken(
+        values.tokenName,
+        values.tokenSymbol,
+        // eslint-disable-next-line no-unused-vars
+        (message: MessageDescriptor) => setErrors({}), // TODO: handle errors
+        setSubmitting,
+        tokenAddress => {
+          setFieldValue('tokenAddress', tokenAddress);
+          setFieldValue('tokenCreated', true);
+          handleSubmit(e);
+        },
+      );
+    }}
+  >
     <section className={styles.titleSection}>
       <Heading className={styles.customHeading} text={MSG.heading} />
       <ExternalLink text={MSG.learnMoreLink} href="#" />
@@ -156,4 +198,6 @@ export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
 
 StepCreateToken.displayName = displayName;
 
-export const Step = StepCreateToken;
+export const Step = withBoundActionCreators({ createTokenAction })(
+  StepCreateToken,
+);

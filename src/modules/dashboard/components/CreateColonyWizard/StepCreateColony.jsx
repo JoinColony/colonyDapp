@@ -13,12 +13,28 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 
-type FormValues = {};
+import { withBoundActionCreators } from '~utils/redux';
+
+import {
+  // comment to line break for eslint
+  createColony as createColonyAction,
+} from '../../actionCreators/colony';
+
+type FormValues = {
+  tokenAddress: string,
+  tokenCreated: boolean,
+};
 
 type Props = {
   nextStep: () => void,
   previousStep: () => void,
   openDialog: string => void,
+  createColonyAction: (
+    tokenAddress: string,
+    setErrors: *,
+    setSubmitting: *,
+    handleColonyCreated: *,
+  ) => void,
 } & FormikProps<FormValues>;
 
 type Row = {
@@ -28,6 +44,7 @@ type Row = {
 
 type CardProps = {
   cardOptions: Array<Row>,
+  values: FormValues,
 };
 
 const MSG = defineMessages({
@@ -78,16 +95,7 @@ const options = [
   },
 ];
 
-// TODO: Once we wire this step up with the previous
-// steps all we need to do is getting the "values"
-// prop from Formik and pass it throught to the CardRow component
-const mockFormikValues = {
-  colonyName: 'Encecladus',
-  tokenName: 'Starfleet Token',
-  tokenSymbol: 'STRF',
-};
-
-const CardRow = ({ cardOptions }: CardProps) =>
+const CardRow = ({ cardOptions, values }: CardProps) =>
   cardOptions.map(option => (
     <div className={styles.cardRow} key={`option ${option.valueKey}`}>
       <Heading
@@ -96,18 +104,32 @@ const CardRow = ({ cardOptions }: CardProps) =>
       />
       <Heading
         appearance={{ size: 'normal', weight: 'thin', margin: 'none' }}
-        text={mockFormikValues[option.valueKey]}
+        text={values[option.valueKey]}
       />
     </div>
   ));
 
 class StepCreateColony extends Component<Props> {
-  openGasDialog = () => {
-    const { openDialog } = this.props;
-    openDialog('ActivityBarExample');
+  createColony = () => {
+    const {
+      openDialog,
+      createColonyAction: createColony,
+      values: { tokenAddress },
+      setErrors,
+      setSubmitting,
+    } = this.props;
+
+    createColony(
+      tokenAddress,
+      // eslint-disable-next-line no-unused-vars
+      (message: MessageDescriptor) => setErrors({}), // TODO: handle errors
+      setSubmitting,
+      () => openDialog('ActivityBarExample'),
+    );
   };
 
   render() {
+    const { values, previousStep } = this.props;
     return (
       <section className={styles.content}>
         <div className={styles.finalContainer}>
@@ -119,16 +141,19 @@ class StepCreateColony extends Component<Props> {
             appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
             text={MSG.subtitle}
           />
-          <CardRow cardOptions={options} />
+          <CardRow cardOptions={options} values={values} />
         </div>
         <div className={styles.buttons}>
+          {!values.tokenCreated && (
+            <Button
+              appearance={{ theme: 'secondary' }}
+              type="cancel"
+              text={MSG.back}
+              onClick={previousStep}
+            />
+          )}
           <Button
-            appearance={{ theme: 'secondary' }}
-            type="cancel"
-            text={MSG.back}
-          />
-          <Button
-            onClick={this.openGasDialog}
+            onClick={this.createColony}
             appearance={{ theme: 'primary' }}
             text={MSG.confirm}
           />
@@ -142,7 +167,9 @@ StepCreateColony.displayName = displayName;
 
 const StepWithDialog = withDialog()(StepCreateColony);
 
-export const Step = StepWithDialog;
+export const Step = withBoundActionCreators({ createColonyAction })(
+  StepWithDialog,
+);
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
