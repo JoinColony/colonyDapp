@@ -26,14 +26,12 @@ const displayName = 'dashboard.Inbox';
 const Inbox = () => (
   <div className={styles.templateContainer}>
     <ProfileTemplate>
+      <Heading
+        appearance={{ size: 'medium', margin: 'small' }}
+        text={MSG.title}
+      />
       <div className={styles.inboxContainer}>
-        <div className={styles.inboxTitle}>
-          <Heading
-            appearance={{ size: 'medium', margin: 'small' }}
-            text={MSG.title}
-          />
-        </div>
-        <Table className={styles.lego} scrollable>
+        <Table scrollable appearance={{ separators: 'borders' }}>
           <TableBody>
             {mockInbox.map(item => (
               <InboxItem key={item.id} item={item} />

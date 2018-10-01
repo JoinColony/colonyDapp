@@ -18,6 +18,7 @@ const config = {
       '~context': path.resolve(__dirname, 'src/context'),
       '~core': path.resolve(__dirname, 'src/modules/core/components'),
       '~dashboard': path.resolve(__dirname, 'src/modules/dashboard/components'),
+      '~inbox': path.resolve(__dirname, 'src/modules/inbox/components'),
       '~users': path.resolve(__dirname, 'src/modules/users/components'),
       '~wallet': path.resolve(__dirname, 'src/modules/wallet/components'),
       '~routes': path.resolve(__dirname, 'src/routes'),

@@ -5,12 +5,15 @@ td.inboxDetails {
   flex-wrap: wrap;
   align-items: center;
   font-weight: var(--weight-semi);
+  width: 100%;
 }
 
 tr.inboxRow {
-  height: 88px;
+  min-height: 88px;
   background-color: var(--colony-white);
   cursor: pointer;
+  border-bottom: none;
+  border-color: var(--temp-grey-blue-2);
 }
 
 tr.inboxRow:hover {
@@ -59,9 +62,4 @@ tr.inboxRow:hover {
 
 .inboxDomain {
   display: block;
-}
-
-tr {
-  border: 1px solid var(--temp-grey-blue-2);
-  border-bottom: none;
 }
