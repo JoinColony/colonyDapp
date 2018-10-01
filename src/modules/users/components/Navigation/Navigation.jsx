@@ -3,6 +3,8 @@ import React from 'react';
 
 import { defineMessages } from 'react-intl';
 
+import { INBOX_ROUTE, USER_ROUTE, WALLET_ROUTE } from '~routes';
+
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
 
@@ -28,21 +30,21 @@ const MSG = defineMessages({
 const Navigation = () => (
   <nav className={styles.main}>
     <NavLink
-      to="/profile"
+      to={USER_ROUTE}
       className={styles.navigationItem}
       activeClassName={styles.navigationItemActive}
     >
       <Icon name="home" title={MSG.dashboardTitle} />
     </NavLink>
     <NavLink
-      to="/wallet"
+      to={WALLET_ROUTE}
       className={styles.navigationItem}
       activeClassName={styles.navigationItemActive}
     >
       <Icon name="wallet" title={MSG.walletTitle} />
     </NavLink>
     <NavLink
-      to="/inbox"
+      to={INBOX_ROUTE}
       className={styles.navigationItem}
       activeClassName={styles.navigationItemActive}
     >

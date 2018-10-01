@@ -12,6 +12,7 @@ import WizardTemplate from '../../../pages/WizardTemplate';
 import Heading from '../../../core/components/Heading';
 import Link from '../../../core/components/Link';
 import Icon from '../../../core/components/Icon';
+import { CREATE_WALLET_ROUTE } from '~routes';
 
 import {
   CONNECT_WALLET_SLUG_HARDWARE,
@@ -147,7 +148,7 @@ const WalletDetails = () => (
         />
       </div>
       {allTheRows}
-      <Link to="/createwallet">
+      <Link to={CREATE_WALLET_ROUTE}>
         <div className={styles.callToAction}>
           <div className={styles.actionImage}>
             <Icon name="hugging" title="hugging-face" />

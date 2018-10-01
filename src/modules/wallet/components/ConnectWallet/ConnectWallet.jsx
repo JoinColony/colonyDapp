@@ -2,6 +2,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
+import { START_ROUTE } from '~routes';
 import WizardTemplate from '../../../pages/WizardTemplate';
 
 import styles from './ConnectWallet.css';
@@ -26,7 +27,7 @@ const ConnectWallet = () => (
         <Route path={CONNECT_WALLET_SLUG_JSON} component={JSONUpload} />
         <Route path={CONNECT_WALLET_SLUG_METAMASK} component={MetaMask} />
         <Route path={CONNECT_WALLET_SLUG_MNEMONIC} component={Mnemonic} />
-        <Redirect to="/start" />
+        <Redirect to={START_ROUTE} />
       </Switch>
     </div>
   </WizardTemplate>
