@@ -1,11 +1,5 @@
 // @flow
-import type {
-  IPFSHash,
-  OrbitKVStore,
-  profileColony,
-  profileTask,
-  UserProfile,
-} from '../types';
+import type { OrbitKVStore, UserProfileType } from '../types';
 
 class UserProfile {
   _store: OrbitKVStore;
@@ -19,59 +13,36 @@ class UserProfile {
     return !this._store.get('created');
   }
 
-  async setName(name: string) {
+  async setProperty(property: string, value: any) {
     await this.initialize();
-    await this._store.put('name', name);
+    let prop = this._store.get(property);
+    if (Array.isArray(prop)) {
+      prop.push(value);
+    } else {
+      prop = value;
+    }
+
+    await this._store.put(property, prop);
   }
 
-  getName() {
-    return this._store.get('name');
-  }
-
-  async setBio(bio: string) {
+  async getProperty(property: string) {
     await this.initialize();
-    await this._store.put('bio', bio);
+    return this._store.get(property);
   }
 
-  getBio() {
-    return this._store.get('bio');
-  }
-
-  async setAvatar(avatar: IPFSHash) {
+  async setWholeProfile(properties: UserProfileType) {
     await this.initialize();
-    await this._store.put('avatar', avatar);
+    const keys = Object.keys(properties);
+    keys.forEach(key => this._store.put(key, properties[key]));
   }
 
-  getAvatar(): IPFSHash {
-    return this._store.get('avatar');
-  }
-
-  async joinColony(colony: profileColony) {
-    await this.initialize();
-    const colonies = this._store.get('colonies');
-    colonies.push(colony);
-    await this._store.put('colonies', colonies);
-  }
-
-  async addTask(task: profileTask) {
-    await this.initialize();
-    const tasks = await this._store.get('tasks');
-    tasks.push(task);
-    await this._store.put('tasks', tasks);
-  }
-
-  async getTasks(): profileTask[] {
-    await this.initialize();
-    return this._store.get('tasks');
-  }
-
-  async getWholeProfile(): UserProfile {
+  async getWholeProfile(): UserProfileType {
     await this.initialize();
     const name = this._store.get('name');
     const bio = this._store.get('bio');
     const avatarHash = this._store.get('avatar');
-    const tasks = this._store.get('tasks');
     const colonies = this._store.get('colonies');
+    const tasks = this._store.get('tasks');
     return { name, bio, avatarHash, colonies, tasks };
   }
 
@@ -81,12 +52,8 @@ class UserProfile {
 
   subscribe(f: Function) {
     this._store.events.on('replicated', () => {
-      f({ name: this.getName() });
+      f({ profile: this.getWholeProfile() });
     });
-  }
-
-  isEmpty(): boolean {
-    return !this._store.get('created');
   }
 
   async initialize() {
@@ -95,6 +62,8 @@ class UserProfile {
       await this._store.put('created', new Date().toUTCString());
       await this._store.put('colonies', []);
       await this._store.put('tasks', []);
+      await this._store.put('name', 'unset');
+      await this._store.put('bio', 'unset');
     }
     this.initialized = true;
   }
