@@ -1,7 +1,6 @@
 /* @flow */
 
 import { createElement } from 'react';
-import { connectRouter } from 'connected-react-router';
 import { render } from 'react-dom';
 import ReactModal from 'react-modal';
 
