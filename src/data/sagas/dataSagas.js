@@ -7,23 +7,47 @@ import {
   ADD_TASK_TO_DOMAIN,
   EDIT_COLONY,
   EDIT_DOMAIN,
-  /* EDIT_PROFILE, */
+  EDIT_PROFILE,
   EDIT_TASK,
   FETCH_COMMENTS,
   INITIALIZE_DATA,
-  JOIN_COLONY,
   LOAD_DOMAIN,
+  LOAD_PROFILE,
   FETCH_COLONY,
   RETURN_DOMAIN,
   SET_DOMAIN_CONTENT,
   UPDATE_DOMAIN,
   UPDATE_TASK,
-  UPDATE_PROFILE,
   loadColony,
   updateColony,
   initialData,
   setUserProfileContent,
 } from '../../actions';
+
+function* editProfile(action) {
+  const { update: { property, value } } = action.payload;
+  const dataAPI = yield select(state => state.data.Data);
+  const result = yield call(dataAPI.editUserProfile, property, value);
+  yield put(setUserProfileContent({ property, value: result }));
+}
+
+function* getWholeProfile(action) {
+  const { key } = action.payload;
+  const dataAPI = yield select(state => state.data.Data);
+  const result = yield call(dataAPI.getUserProfileData, key);
+  yield put(setUserProfileContent({ property: 'profile', value: result }));
+}
+
+function* editTask(action) {
+  const { domainId, taskId, update } = action.payload;
+  const dataAPI = yield select(state => state.data.Data);
+  const task = yield* call(dataAPI.updateTask, domainId, taskId, update);
+
+  yield put({
+    type: UPDATE_TASK,
+    payload: action.payload,
+  });
+}
 
 function* addColonyDomain(action) {
   const { colonyId, domainId } = action.payload;
@@ -73,11 +97,10 @@ function* editColony(action) {
   const { colonyId, update } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
   const colony = yield* call(dataAPI.updateColony, colonyId, update);
-  yield put(colonyId, update);
-  /* yield put({
-   *   type: UPDATE_COLONY,
-   *   payload: action.payload,
-   * });*/
+  yield put({
+    type: UPDATE_COLONY,
+    payload: action.payload,
+  });
 }
 
 function* editDomain(action) {
@@ -87,26 +110,6 @@ function* editDomain(action) {
 
   yield put({
     type: UPDATE_DOMAIN,
-    payload: action.payload,
-  });
-}
-
-function* joinColony(action) {
-  const { colonyId } = action.payload;
-  const dataAPI = yield select(state => state.data.Data);
-  const joinedColony = yield call(dataAPI.joinColony, colonyId);
-  yield put(
-    setUserProfileContent({ property: 'colonies', value: joinedColony }),
-  );
-}
-
-function* editTask(action) {
-  const { domainId, taskId, update } = action.payload;
-  const dataAPI = yield select(state => state.data.Data);
-  const task = yield* call(dataAPI.updateTask, domainId, taskId, update);
-
-  yield put({
-    type: UPDATE_TASK,
     payload: action.payload,
   });
 }
@@ -172,7 +175,8 @@ export function* dataSagas() {
   yield takeEvery(EDIT_TASK, editTask);
   yield takeEvery(FETCH_COMMENTS, fetchComments);
   yield takeEvery(INITIALIZE_DATA, initializeData);
-  yield takeEvery(JOIN_COLONY, joinColony);
+  yield takeEvery(EDIT_PROFILE, editProfile);
+  yield takeEvery(LOAD_PROFILE, getWholeProfile);
   yield takeEvery(FETCH_COLONY, fetchColony);
   yield takeEvery(RETURN_DOMAIN, loadDomain);
 }
