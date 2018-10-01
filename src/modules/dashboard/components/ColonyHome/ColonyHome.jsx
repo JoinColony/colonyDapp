@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import styles from './ColonyHome.css';
 
@@ -8,7 +8,9 @@ const displayName: string = 'dashboard.ColonyHome';
 
 const ColonyHome = () => (
   <div className={styles.main}>
-    <Fragment>Colony Home</Fragment>
+    <aside className={styles.colonyInfo}>Colony Info</aside>
+    <main className={styles.content}>Main Content</main>
+    <aside className={styles.sidebar}>Sidebar</aside>
   </div>
 );
 
