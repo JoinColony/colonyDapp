@@ -13,10 +13,11 @@ import history from './history';
 
 const rootReducer = combineReducers({
   wallet: walletReducer,
+  data: dataReducer,
 });
 
 function* rootSaga(): any {
-  yield all([walletSagas(), colonySagas()]);
+  yield all([walletSagas(), colonySagas(), dataSagas()]);
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -31,5 +32,8 @@ const store = createStore(
 );
 
 sagaMiddleware.run(rootSaga);
+
+const rootRepo = '/tmp/dataTests';
+initializeData(store.dispatch, rootRepo).then(result => console.log(result));
 
 export default store;
