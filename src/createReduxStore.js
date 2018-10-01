@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
 });
 
 function* rootSaga(): any {
-  yield all([walletSagas(), coreSagas(), dashboardSagas()]);
+  yield all([walletSagas(), dashboardSagas(), coreSagas()]);
 }
 
 const sagaMiddleware = createSagaMiddleware({ context });
