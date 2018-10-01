@@ -26,16 +26,17 @@ export function dataReducer(
       } = action.payload;
 
       return profileProperty === 'profile'
-        ? update(state, { profiles: { [profileKey]: { $set: profileValue } } })
+        ? update(state, {
+            data: { profiles: { [profileKey]: { $set: profileValue } } },
+          })
         : update(state, {
-            profiles: {
-              [profileKey]: {
-                data: {
+            data: {
+              profiles: {
+                [profileKey]: {
                   [profileProperty]: {
                     $apply: prop => {
                       if (Array.isArray(prop)) {
-                        prop.push(profileValue);
-                        return prop;
+                        return prop.concat(profileValue);
                       }
                       return profileValue;
                     },
