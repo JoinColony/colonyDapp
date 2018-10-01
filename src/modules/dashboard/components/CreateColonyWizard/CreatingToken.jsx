@@ -1,8 +1,11 @@
 /* @flow */
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { compose, lifecycle } from 'recompose';
 
+import DialogProvider from '~core/Dialog/DialogProvider.jsx';
 import Heading from '~core/Heading';
+import withDialog from '~core/Dialog/withDialog';
 
 import LoadingTemplate from '../../../pages/LoadingTemplate';
 
@@ -20,14 +23,26 @@ const MSG = defineMessages({
 const displayName = 'CreateColonyWizard.CreatingToken';
 
 const CreatingToken = () => (
-  <LoadingTemplate loadingText={MSG.loadingText}>
-    <Heading
-      text={MSG.loaderDescription}
-      appearance={{ size: 'medium', weight: 'thin' }}
-    />
-  </LoadingTemplate>
+  <DialogProvider>
+    <LoadingTemplate loadingText={MSG.loadingText}>
+      <Heading
+        text={MSG.loaderDescription}
+        appearance={{ size: 'medium', weight: 'thin' }}
+      />
+    </LoadingTemplate>
+  </DialogProvider>
 );
 
 CreatingToken.displayName = displayName;
 
-export default CreatingToken;
+const enhance = compose(
+  withDialog(),
+  lifecycle({
+    componentDidMount() {
+      const { openDialog } = this.props;
+      openDialog('ActivityBarExample');
+    },
+  }),
+);
+
+export default enhance(CreatingToken);
