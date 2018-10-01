@@ -39,8 +39,8 @@ export default class Data {
     Adds to or edits the UserProfile
     Also used to set all properties at once
   */
-  async editUserProfile(property: string, value: any) {
-    const store = await this._getMyUserProfile();
+  async editUserProfile(property: string, value: any, profileKey: string) {
+    const store = await this._getMyUserProfile(profileKey);
     const result = await store.setProperty(property, value);
     return result;
   }
@@ -83,6 +83,10 @@ export default class Data {
     this._orbitNode = orbitNode;
     this._key = 'helloworld';
     this.ready = this.ready.bind(this);
+    this.editUserProfile = this.editUserProfile.bind(this);
+    this._getUserProfile = this._getUserProfile.bind(this);
+    this._getMyUserProfile = this._getMyUserProfile.bind(this);
+    this.getUserProfileData = this.getUserProfileData.bind(this);
   }
 
   // @TODO This design is time-dependent and relies
