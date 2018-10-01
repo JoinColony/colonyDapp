@@ -6,6 +6,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
+import Button from '~core/Button';
+import Heading from '~core/Heading';
 
 import TaskList from '../TaskList';
 
@@ -13,6 +15,7 @@ import styles from './ColonyHome.css';
 
 import mockTasks from './__datamocks__/mockTasks';
 import mockColonies from './__datamocks__/mockColonies';
+import mockDomains from './__datamocks__/mockDomains';
 
 const MSG = defineMessages({
   tabContribute: {
@@ -48,12 +51,25 @@ const MSG = defineMessages({
     defaultMessage: `It looks like you have not worked on any colonies.
 Why don't you check out one of these colonies for tasks that you can complete:`,
   },
+  newTaskButton: {
+    id: 'dashboard.ColonyHome.newTaskButton',
+    defaultMessage: 'New Task',
+  },
+  sidebarDomainsTitle: {
+    id: 'dashboard.ColonyHome.sidebarDomainsTitle',
+    defaultMessage: 'Domains',
+  },
+  allDomains: {
+    id: 'dashboard.ColonyHome.allDomains',
+    defaultMessage: 'All',
+  },
 });
 
 type Props = {};
 
 type State = {
   filterOption: 'all' | 'created' | 'assigned' | 'completed',
+  filteredDomainId: number,
 };
 
 const filterOptions = [
@@ -68,6 +84,7 @@ export default class ColonyHome extends Component<Props, State> {
 
   state = {
     filterOption: 'all',
+    filteredDomainId: 0,
   };
 
   /*
@@ -85,6 +102,18 @@ export default class ColonyHome extends Component<Props, State> {
     });
   };
 
+  /*
+   * @TODO Replace with actual filtering logic
+   */
+  setDomainFilter = (id: number = 0) => this.setState({ filteredDomainId: id });
+
+  getActiveDomainFilterClass = (id: number = 0) => {
+    const { filteredDomainId } = this.state;
+    return filteredDomainId === id
+      ? styles.filterItemActive
+      : styles.filterItem;
+  };
+
   render() {
     const { filterOption } = this.state;
     /*
@@ -92,6 +121,7 @@ export default class ColonyHome extends Component<Props, State> {
      */
     const tasks = mockTasks;
     const colonies = mockColonies;
+    const domains = mockDomains;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -129,7 +159,39 @@ export default class ColonyHome extends Component<Props, State> {
             </TabPanel>
           </Tabs>
         </main>
-        <aside className={styles.sidebar}>Sidebar</aside>
+        <aside className={styles.sidebar}>
+          <Button
+            text={MSG.newTaskButton}
+            appearance={{ theme: 'primary', size: 'large' }}
+            onClick={() => console.log('Create a new task')}
+          />
+          <ul className={styles.domainsFilters}>
+            <Heading
+              appearance={{ size: 'normal', weight: 'bold' }}
+              text={MSG.sidebarDomainsTitle}
+            />
+            <li>
+              <button
+                type="button"
+                className={this.getActiveDomainFilterClass()}
+                onClick={() => this.setDomainFilter()}
+              >
+                <FormattedMessage {...MSG.allDomains} />
+              </button>
+            </li>
+            {domains.map(({ id, name }) => (
+              <li key={`domain_${id}`}>
+                <button
+                  type="button"
+                  className={this.getActiveDomainFilterClass(id)}
+                  onClick={() => this.setDomainFilter(id)}
+                >
+                  {name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
       </div>
     );
   }
