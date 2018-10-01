@@ -61,7 +61,6 @@ class Colony {
   async setProperty(property, value) {
     await this.initialize();
     await this._store.put(property, value);
-    return;
   }
 
   async allProperties() {

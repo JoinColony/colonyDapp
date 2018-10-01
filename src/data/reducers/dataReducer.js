@@ -37,13 +37,14 @@ export function dataReducer(
         },
       };
 
-    case LOAD_DOMAIN:
+    case LOAD_DOMAIN: {
       const { domainId, content } = action.payload;
       return update(state, {
         data: { domains: { [domainId]: { $set: content } } },
       });
+    }
 
-    case LOAD_COLONY:
+    case LOAD_COLONY: {
       const { colonyId: loadColonyId, colony: loadColony } = action.payload;
       return update(state, {
         data: {
@@ -54,8 +55,9 @@ export function dataReducer(
           },
         },
       });
+    }
 
-    case UPDATE_DOMAIN:
+    case UPDATE_DOMAIN: {
       const {
         domainId: domaneId,
         update: { property: domainProperty, value: domainValue },
@@ -71,8 +73,9 @@ export function dataReducer(
           },
         },
       });
+    }
 
-    case UPDATE_TASK:
+    case UPDATE_TASK: {
       const {
         domainId: domain,
         taskId: taskID,
@@ -86,6 +89,7 @@ export function dataReducer(
               tasks: {
                 $apply: ts =>
                   ts.map(t => {
+                    // eslint-disable-next-line no-underscore-dangle
                     if (t._id === taskID) {
                       if (Array.isArray(t[taskProperty])) {
                         t[taskProperty].push(taskValue);
@@ -100,8 +104,8 @@ export function dataReducer(
           },
         },
       });
-
-    case UPDATE_COLONY:
+    }
+    case UPDATE_COLONY: {
       const {
         colonyId: colony,
         update: { property: colonyProp, value: colonyVal },
@@ -116,19 +120,18 @@ export function dataReducer(
                   if (Array.isArray(prop)) {
                     prop.push(colonyVal);
                     return prop;
-                  } else {
-                    return colonyValue;
                   }
+                  return colonyVal;
                 },
               },
             },
           },
         },
       });
-      console.log(myUpdate);
       return myUpdate;
+    }
 
-    case SET_DOMAIN_CONTENT:
+    case SET_DOMAIN_CONTENT: {
       const {
         domainId: domainID,
         update: { property: domainProp, value: domainVal },
@@ -142,17 +145,18 @@ export function dataReducer(
                 $apply: prop => {
                   if (Array.isArray(prop)) {
                     prop.push(domainVal);
-                  } else {
-                    prop = domainValue;
+                    return prop;
                   }
+                  return domainVal;
                 },
               },
             },
           },
         },
       });
+    }
 
-    case UPDATE_PROFILE:
+    case UPDATE_PROFILE: {
       const {
         update: { profileKey, property: profileProperty, value: profileValue },
       } = action.payload;
@@ -168,15 +172,15 @@ export function dataReducer(
                       if (Array.isArray(prop)) {
                         prop.push(profileValue);
                         return prop;
-                      } else {
-                        return profileValue;
                       }
+                      return profileValue;
                     },
                   },
                 },
               },
             },
           });
+    }
 
     default:
       return state;

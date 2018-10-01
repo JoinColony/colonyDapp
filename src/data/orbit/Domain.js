@@ -1,4 +1,4 @@
-/// @flow
+// / @flow
 
 import type { IPFSHash, OrbitKVStore, Pot, Task } from '../types';
 
@@ -43,11 +43,7 @@ class Domain {
   async setProperty(property, value) {
     await this.initialize();
     await this._store.put(property, value);
-    return;
   }
-
-  async setSpec() {}
-  async getSpec() {}
 
   async allProperties() {
     await this.initialize();
@@ -62,6 +58,7 @@ class Domain {
     await this.initialize();
     const tasks = await this.getTasks();
 
+    // eslint-disable-next-line no-underscore-dangle
     const task = tasks.filter(t => t._id === taskID)[0];
 
     task.comments.push(comment);
@@ -71,6 +68,8 @@ class Domain {
   async getComments(taskID: string) {
     await this.initialize();
     const tasks = await this.getTasks();
+
+    // eslint-disable-next-line no-underscore-dangle
     const task = tasks.filter(t => t._id === taskID)[0];
 
     return task.comments;

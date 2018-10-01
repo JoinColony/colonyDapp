@@ -1,15 +1,17 @@
 /* eslint-env jest */
+
 import {
-  dataReady,
-  loadState,
   setUserProfileContent,
-  userProfileReady,
-  INITIAL_STATE,
-  reducer,
   STATE_LOADING,
   STATE_NOTHING,
   STATE_READY,
-} from '../reducer';
+  INITIAL_STATE,
+  userProfileReady,
+} from '../../actions';
+
+let dataReady;
+let loadState;
+let reducer;
 
 const DATA_MOCK = 'data_mock';
 const PROFILE_MOCK = 'profile_mock';

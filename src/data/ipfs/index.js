@@ -198,38 +198,43 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   // TODO make a factory for this promise pattern
   // TODO make this work
   ipfs.addImage = image => {
-    let addResolve, addReject;
+    let addResolve;
+    let addReject;
     const isAdded = new Promise((resolve, reject) => {
       addResolve = resolve;
       addReject = reject;
     });
 
     const buf = global.Buffer(image); // Convert data into buffer
-    ipfs.files.add(buf, (err, result) => {
-      return error ? addReject(error) : addResolve(files[0].hash);
-    });
+    ipfs.files.add(
+      buf,
+      (error, files) => (error ? addReject(error) : addResolve(files[0].hash)),
+    );
     // };
     // reader.readAsArrayBuffer(image);
     return isAdded;
   };
 
   ipfs.getImage = path => {
-    let addResolve, addReject;
+    let addResolve;
+    let addReject;
     const isAdded = new Promise((resolve, reject) => {
       addResolve = resolve;
       addReject = reject;
     });
 
-    ipfs.dag.get(path, (error, file) => {
-      return error ? addReject(error) : addResolve(file);
-    });
+    ipfs.dag.get(
+      path,
+      (error, file) => (error ? addReject(error) : addResolve(file)),
+    );
     return isAdded;
   };
 
   ipfs.addComment = comment => {
-    var buf = Buffer.from(JSON.stringify(comment));
+    const buf = Buffer.from(JSON.stringify(comment));
 
-    let addResolve, addReject;
+    let addResolve;
+    let addReject;
     const isAdded = new Promise((resolve, reject) => {
       addResolve = resolve;
       addReject = reject;
@@ -243,7 +248,8 @@ export function getIPFS(options: IPFSOptions): ColonyIPFSNode {
   };
 
   ipfs.getComment = hash => {
-    let addResolve, addReject;
+    let addResolve;
+    let addReject;
     const isAdded = new Promise((resolve, reject) => {
       addResolve = resolve;
       addReject = reject;

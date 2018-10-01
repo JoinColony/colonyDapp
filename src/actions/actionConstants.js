@@ -1,3 +1,4 @@
+// @flow
 import { STATE_LOADING, STATE_NOTHING, STATE_READY } from './constants';
 
 type State =
@@ -6,18 +7,9 @@ type State =
   | typeof STATE_READY
   | { my_profile: {} | string };
 
-type UserProfile = {
-  colonies: [],
-  avatar: string,
-};
-
 export type DataReduxStore = {
   state: State,
   data: any, // @TODO
-  my_profile: {
-    state: State,
-    data: any, // @TODO
-  },
 };
 
 export const INITIAL_STATE: DataReduxStore = {
@@ -29,4 +21,4 @@ export const INITIAL_STATE: DataReduxStore = {
   },
 };
 
-export type Action = { type: string, state: State, data: ?{}, content: ?{} };
+export type Action = { type: string, payload: {} };

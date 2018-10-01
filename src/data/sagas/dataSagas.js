@@ -1,3 +1,4 @@
+// @flow
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import Data from '../Data';
 
@@ -18,6 +19,7 @@ import {
   SET_DOMAIN_CONTENT,
   UPDATE_DOMAIN,
   UPDATE_TASK,
+  UPDATE_COLONY,
   loadColony,
   updateColony,
   initialData,
@@ -25,7 +27,9 @@ import {
 } from '../../actions';
 
 function* editProfile(action) {
-  const { update: { property, value } } = action.payload;
+  const {
+    update: { property, value },
+  } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
   const result = yield call(dataAPI.editUserProfile, property, value);
   yield put(setUserProfileContent({ property, value: result }));
@@ -45,7 +49,7 @@ function* editTask(action) {
 
   yield put({
     type: UPDATE_TASK,
-    payload: action.payload,
+    payload: task,
   });
 }
 
@@ -82,7 +86,7 @@ function* addCommentToTask(action) {
 
   yield put({
     type: UPDATE_TASK,
-    update: action.payload,
+    update: commentHash,
   });
 }
 
@@ -99,7 +103,7 @@ function* editColony(action) {
   const colony = yield* call(dataAPI.updateColony, colonyId, update);
   yield put({
     type: UPDATE_COLONY,
-    payload: action.payload,
+    payload: colony,
   });
 }
 
@@ -110,7 +114,7 @@ function* editDomain(action) {
 
   yield put({
     type: UPDATE_DOMAIN,
-    payload: action.payload,
+    payload: { domainId, domain },
   });
 }
 
@@ -125,10 +129,7 @@ function* loadDomain(action) {
     payload: {
       domainId,
       content: {
-        id: domainId,
-        members: ['geo'],
-        name: 'biotech',
-        pot: '1 MILLION dollars',
+        domain,
       },
     },
   });

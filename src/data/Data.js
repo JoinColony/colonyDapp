@@ -92,7 +92,6 @@ export default class Data {
   ): Promise<Colony> {
     const colony = await this._getColony(colonyId);
     await colony.setProperty(property, value);
-    return;
   }
 
   /*
@@ -102,9 +101,8 @@ export default class Data {
     domainId: string,
     { property, value }: {},
   ): Promise<Domain> {
-    const domain = await this._getDomain(colonyId);
+    const domain = await this._getDomain(domainId);
     await domain.setProperty(property, value);
-    return;
   }
 
   /*
@@ -115,8 +113,9 @@ export default class Data {
     taskId: string,
     { property, value }: {},
   ): Promise<Task> {
-    const domain = await this._getDomain(colonyId);
+    const domain = await this._getDomain(domainId);
     const tasks = domain.getTasks();
+    // eslint-disable-next-line no-underscore-dangle
     const task = tasks.filter(t => t._id === taskId)[0];
 
     if (Array.isArray(task[property])) {
@@ -146,7 +145,6 @@ export default class Data {
     const imageHash = await this._ipfsNode.addImage(avatar);
     const colony = await this._getColony(colonyID);
     await colony.setAvatar(imageHash);
-    return;
   }
 
   /*
@@ -183,7 +181,6 @@ export default class Data {
   async addColonyDomain(colonyID: string, domainID: string) {
     const colony = await this._getColony(colonyID);
     await colony.addDomain(domainID);
-    return;
   }
 
   /*
@@ -209,7 +206,6 @@ export default class Data {
   async setDomainPot(domainID: string, pot: Pot) {
     const domain = await this._getDomain(domainID);
     await domain.setPot(pot);
-    return;
   }
 
   /*
@@ -226,7 +222,6 @@ export default class Data {
   async addDomainMember(domainID: string, userID: string) {
     const domain = await this._getDomain(domainID);
     await domain.addMember(userID);
-    return;
   }
 
   /*
@@ -244,7 +239,6 @@ export default class Data {
   async addColonyMember(colonyID: string, userID: string) {
     const colony = await this._getColony(colonyID);
     await colony.addMember(userID);
-    return;
   }
 
   /*
