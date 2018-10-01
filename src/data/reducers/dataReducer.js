@@ -154,25 +154,29 @@ export function dataReducer(
 
     case UPDATE_PROFILE:
       const {
-        update: { property: profileProperty, value: profileValue },
+        update: { profileKey, property: profileProperty, value: profileValue },
       } = action.payload;
 
-      return update(state, {
-        my_profile: {
-          data: {
-            [profileProperty]: {
-              $apply: prop => {
-                if (Array.isArray(prop)) {
-                  prop.push(profileValue);
-                  return prop;
-                } else {
-                  return profileValue;
-                }
+      return profileProperty === 'profile'
+        ? update(state, { profiles: { [profileKey]: { $set: profileValue } } })
+        : update(state, {
+            profiles: {
+              [profileKey]: {
+                data: {
+                  [profileProperty]: {
+                    $apply: prop => {
+                      if (Array.isArray(prop)) {
+                        prop.push(profileValue);
+                        return prop;
+                      } else {
+                        return profileValue;
+                      }
+                    },
+                  },
+                },
               },
             },
-          },
-        },
-      });
+          });
 
     default:
       return state;

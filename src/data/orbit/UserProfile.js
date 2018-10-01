@@ -15,7 +15,11 @@ class UserProfile {
 
   async setProperty(property: string, value: any) {
     await this.initialize();
-    let prop = this._store.get(property);
+    if (property === 'profile') {
+      return this.setWholeProfile(value);
+    }
+
+    let prop = this.getProperty(property);
     if (Array.isArray(prop)) {
       prop.push(value);
     } else {
@@ -23,6 +27,7 @@ class UserProfile {
     }
 
     await this._store.put(property, prop);
+    return prop;
   }
 
   async getProperty(property: string) {
@@ -64,6 +69,7 @@ class UserProfile {
       await this._store.put('tasks', []);
       await this._store.put('name', 'unset');
       await this._store.put('bio', 'unset');
+      await this._store.put('avatar', 'unset');
     }
     this.initialized = true;
   }
