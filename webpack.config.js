@@ -7,6 +7,7 @@ const webpack = require('webpack');
 const config = {
   entry: './src/index.js',
   mode: 'development',
+  devtool: 'source-map',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -19,6 +20,7 @@ const config = {
       '~dashboard': path.resolve(__dirname, 'src/modules/dashboard/components'),
       '~users': path.resolve(__dirname, 'src/modules/users/components'),
       '~wallet': path.resolve(__dirname, 'src/modules/wallet/components'),
+      '~routes': path.resolve(__dirname, 'src/routes'),
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
       // https://github.com/jquense/yup/issues/273
@@ -100,7 +102,7 @@ const config = {
   devServer: {
     historyApiFallback: true,
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
-    hot: true,
+    hotOnly: true,
   },
 };
 

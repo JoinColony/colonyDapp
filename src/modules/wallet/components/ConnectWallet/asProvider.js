@@ -1,8 +1,9 @@
 /* @flow */
 import type { ContextRouter } from 'react-router-dom';
-
 import { compose, withHandlers, withState } from 'recompose';
 import { withRouter } from 'react-router-dom';
+
+import { CREATE_PROFILE_ROUTE, START_ROUTE } from '~routes';
 
 type Props = ContextRouter & {
   isConnected: boolean,
@@ -16,11 +17,11 @@ const asProvider = (): Function =>
     withHandlers({
       handleDidConnectWallet: (props: Props) => () => {
         const { history } = props;
-        history.push('/createprofile');
+        history.push(CREATE_PROFILE_ROUTE);
       },
       handleExit: (props: Props) => () => {
         const { history } = props;
-        history.push('/start');
+        history.push(START_ROUTE);
       },
     }),
   );
