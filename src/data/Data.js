@@ -82,6 +82,7 @@ export default class Data {
     this._ipfsNode = ipfsNode;
     this._orbitNode = orbitNode;
     this._key = 'helloworld';
+    this.ready = this.ready.bind(this);
   }
 
   // @TODO This design is time-dependent and relies
