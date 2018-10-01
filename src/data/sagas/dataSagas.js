@@ -11,17 +11,24 @@ import {
 } from '../actions';
 
 function* editProfile(action) {
-  const { update: { property, value } } = action.payload;
+  const { update: { profileKey, property, value } } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
-  const result = yield call(dataAPI.editUserProfile, property, value);
-  yield put(setUserProfileContent({ property, value: result }));
+  const result = yield call(
+    dataAPI.editUserProfile,
+    property,
+    value,
+    profileKey,
+  );
+  yield put(setUserProfileContent({ profileKey, property, value: result }));
 }
 
 function* getWholeProfile(action) {
-  const { key } = action.payload;
+  const { profileKey } = action.payload;
   const dataAPI = yield select(state => state.data.Data);
-  const result = yield call(dataAPI.getUserProfileData, key);
-  yield put(setUserProfileContent({ property: 'profile', value: result }));
+  const result = yield call(dataAPI.getUserProfileData, profileKey);
+  yield put(
+    setUserProfileContent({ profileKey, property: 'profile', value: result }),
+  );
 }
 
 function* initializeData(action) {

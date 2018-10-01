@@ -11,67 +11,87 @@ import type { Action } from '../types';
 
 // Sagas use this action to update Redux
 export function setUserProfileContent({
+  profileKey = 'my-profile',
   property,
   value,
 }: {
+  profileKey: string,
   property: string,
   value: any,
 }): Action {
   return {
     type: UPDATE_PROFILE,
-    payload: { update: { property, value } },
+    payload: { update: { profileKey, property, value } },
   };
 }
 
 /*
    Dapp uses the following actions to call Sagas to edit profile and update Redux
 */
-export function editWholeProfile(profile: {}): Action {
+export function editWholeProfile(
+  profile: {},
+  profileKey: string = 'my-profile',
+): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { property: 'profile', value: profile } },
+    payload: { update: { profileKey, property: 'profile', value: profile } },
   };
 }
 
-export function fetchWholeProfile(key: string): Action {
+export function fetchWholeProfile(profileKey: string = 'my-profile'): Action {
   return {
     type: LOAD_PROFILE,
-    payload: { key },
+    payload: { profileKey },
   };
 }
 
-export function addColonyToUserProfile(colonyId: string): Action {
+export function addColonyToUserProfile(
+  profileKey: string = 'my-profile',
+  colonyId: string,
+): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { property: 'colonies', value: colonyId } },
+    payload: { update: { profileKey, property: 'colonies', value: colonyId } },
   };
 }
 
-export function addTaskToUserProfile(task: {}): Action {
+export function addTaskToUserProfile(
+  profileKey: string = 'my-profile',
+  task: {},
+): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { property: 'tasks', value: task } },
+    payload: { update: { profileKey, property: 'tasks', value: task } },
   };
 }
 
-export function setUserAvatar(avatarHash: string): Action {
+export function setUserAvatar(
+  profileKey: string = 'my-profile',
+  avatarHash: string,
+): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { property: 'avatar', value: avatarHash } },
+    payload: { update: { profileKey, property: 'avatar', value: avatarHash } },
   };
 }
 
-export function setUserBio(bio: string): Action {
+export function setUserBio(
+  profileKey: string = 'my-profile',
+  bio: string,
+): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { property: 'bio', value: bio } },
+    payload: { update: { profileKey, property: 'bio', value: bio } },
   };
 }
 
-export function setUserName(name: string): Action {
+export function setUserName(
+  profileKey: string = 'my-profile',
+  name: string,
+): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { property: 'name', value: name } },
+    payload: { update: { profileKey, property: 'name', value: name } },
   };
 }
 
