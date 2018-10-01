@@ -81,7 +81,7 @@
         "eslint-plugin-react": "^7.11.0",
         "extfs": "^0.0.7",
         "file-loader": "^2.0.0",
-        "flow-bin": "^0.81.0",
+        "flow-bin": "^0.82.0",
         "gh-pages": "^2.0.0",
         "html-webpack-plugin": "^3.2.0",
         "husky": "^1.0.0-rc.14",
