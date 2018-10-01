@@ -3,10 +3,10 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 10% 10% 10% 0;
+  padding: 10% 80px 10% 80px;
   overflow: auto;
   background: var(--gradient-default);
-  grid-template-columns: 420px auto 180px;
+  grid-template-columns: 340px auto 200px;
   grid-template-rows: 100%;
   column-gap: 80px;
 }
@@ -20,6 +20,13 @@
   height: 100%;
   grid-column: 2;
   grid-row: 1;
+}
+
+.noTasks {
+  margin-bottom: 30px;
+  max-width: 420px;
+  font-size: var(--size-medium-l);
+  line-height: 2em;
 }
 
 .sidebar {
