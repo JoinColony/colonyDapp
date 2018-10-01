@@ -14,6 +14,7 @@ import type {
   Pot,
   PublicKey,
   Task,
+  UserProfile as UserProfileType,
 } from './types';
 
 import METACOLONY_ADDRESS from '../utils/constants';
@@ -22,7 +23,7 @@ export default class Data {
   /*
     Returns metadata for the given user.
   */
-  async getUserProfile(key: PublicKey): Promise<UserProfile> {
+  async _getUserProfile(key: PublicKey): Promise<UserProfile> {
     const store = await this._orbitNode.kvstore(key);
     await store.load();
 
@@ -35,22 +36,42 @@ export default class Data {
   /*
     Returns metadata for the logged-in user's profile.
   */
-  async getMyUserProfile(
+  async _getMyUserProfile(
     key: PublicKey = 'user-profile',
   ): Promise<OrbitKVStore> {
-    const store = await this.getUserProfile(key);
+    const store = await this._getUserProfile(key);
     return store;
   }
 
   /*
-    Adds a colony to the UserProfile
+    Adds to or edits the UserProfile
+    Also used to set all properties at once
   */
-  async joinColony(colonyHash: string) {
-    const store = await this.getMyUserProfile();
-    console.log(store);
-    const result = await store.joinColony(colonyHash);
-    console.log(result);
-    return colonyHash;
+  async editUserProfile(property, value) {
+    const store = await this._getMyUserProfile();
+    const result = await store.setProperty(property, value);
+    return result;
+  }
+
+  /*
+  Returns value of given profile property
+  */
+  async getUserProfileProperty(
+    key: PublicKey = 'user-profile',
+    property: string,
+  ) {
+    const store = await this._getUserProfile(key);
+    const result = await store.getProperty(property);
+    return result;
+  }
+
+  /*
+  Returns all profile data as an object
+  */
+  async getUserProfileData(key: PublicKey = 'user-profile'): UserProfileType {
+    const store = await this._getUserProfile(key);
+    const profile = await store.getWholeProfile();
+    return profile;
   }
 
   /*
