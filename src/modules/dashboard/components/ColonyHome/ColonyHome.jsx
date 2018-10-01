@@ -9,7 +9,8 @@ import ColonyGrid from '~core/ColonyGrid';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 
-import TaskList from '../TaskList';
+import TaskList from '~dashboard/TaskList';
+import ColonyMeta from './ColonyMeta.jsx';
 
 import styles from './ColonyHome.css';
 
@@ -137,7 +138,9 @@ export default class ColonyHome extends Component<Props, State> {
     );
     return (
       <div className={styles.main}>
-        <aside className={styles.colonyInfo}>Colony Info</aside>
+        <aside className={styles.colonyInfo}>
+          <ColonyMeta />
+        </aside>
         <main className={styles.content}>
           <Tabs>
             <TabList extra={filterSelect}>
