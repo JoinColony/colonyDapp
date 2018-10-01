@@ -25,10 +25,7 @@ export const INITIAL_STATE: DataReduxStore = {
   data: {
     colonies: { mycolony: { domains: [] } },
     domains: { mydomain: { tasks: [] } },
-  },
-  my_profile: {
-    state: STATE_NOTHING,
-    data: { colonies: [] },
+    profiles: {},
   },
 };
 
