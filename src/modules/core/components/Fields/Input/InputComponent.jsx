@@ -30,7 +30,8 @@ type Props = {
   innerRef?: (ref: ?HTMLInputElement) => void,
   /** @ignore Standard input field property */
   onChange?: (
-    | SyntheticInputEvent<HTMLInputElement>
+    // eslint-disable-next-line prettier/prettier
+    SyntheticInputEvent<HTMLInputElement>
     | SyntheticInputEvent<CleaveHTMLInputElement>,
   ) => void,
 };
