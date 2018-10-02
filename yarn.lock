@@ -9300,9 +9300,9 @@ nano-json-stream-parser@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/nano-json-stream-parser/-/nano-json-stream-parser-0.1.2.tgz#0cc8f6d0e2b622b479c40d499c46d64b755c6f5f"
 
-nanoid@^1.0.7:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-1.2.4.tgz#4f0e19e7e63341e9fe9adaa8d96ba594f5dcc6db"
+nanoid@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-1.2.6.tgz#5b9427cabf41f5df1fc371b14c969ffcd3b095aa"
 
 nanomatch@^1.2.1, nanomatch@^1.2.9:
   version "1.2.13"
