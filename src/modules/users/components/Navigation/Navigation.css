@@ -38,3 +38,20 @@
   fill: var(--navigation-icon-blue);
   stroke: var(--navigation-icon-blue);
 }
+
+.unhandled {
+  & svg {
+    stroke: var(--sky-blue);
+  }
+
+  &::after {
+    height: 8px;
+    width: 8px;
+    position: absolute;
+    top: 31px;
+    right: 87px;
+    border-radius: 50%;
+    background-color: var(--danger);
+    content: '';
+  }
+}

@@ -1,5 +1,5 @@
 /* @flow */
-import React from 'react';
+import React, { Component } from 'react';
 
 import { defineMessages } from 'react-intl';
 
@@ -27,8 +27,12 @@ const MSG = defineMessages({
   },
 });
 
-const Navigation = () => (
-  <nav className={styles.main}>
+type Props = {
+  events: Array,
+};
+
+const Navigation = ({ events } :Props}) => (
+  <nav className={`${styles.main} ${(events && events.filter(event => !event.handled).length) ? styles.unhandled : ''}`}>
     <NavLink
       to={USER_ROUTE}
       className={styles.navigationItem}
@@ -52,6 +56,7 @@ const Navigation = () => (
     </NavLink>
   </nav>
 );
+
 
 Navigation.displayName = displayName;
 
