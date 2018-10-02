@@ -1,5 +1,6 @@
 /* @flow */
 
+export const COLONY_HOME_ROUTE = '/colony';
 export const CONNECT_WALLET_ROUTE = '/connect-wallet/:provider';
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_PROFILE_ROUTE = '/create-profile';
