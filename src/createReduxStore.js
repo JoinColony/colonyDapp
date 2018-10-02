@@ -13,6 +13,7 @@ import userReducer from './modules/user/reducers';
 import dashboardSagas from './modules/dashboard/sagas';
 import coreSagas from './modules/core/sagas';
 import userSagas from './modules/user/sagas';
+
 import history from './history';
 
 import { DDB, SCHEMAS } from './lib/database';
