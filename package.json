@@ -146,6 +146,7 @@
         "lru-cache": "^4.1.3",
         "nanoid": "^1.0.7",
         "orbit-db": "github:thiagodelgado111/orbit-db#maintenance/new-orbit-db-store",
+        "orbit-db-store": "github:orbitdb/orbit-db-store#516ba0a24d34b8d447413d984ff567a6e806d864",
         "prop-types": "^15.6.2",
         "react": "^16.4.1",
         "react-beautiful-dnd": "^9.0.0",
