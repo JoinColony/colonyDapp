@@ -88,13 +88,12 @@ type FormValues = {
 
 type Props = {
   previousStep: () => void,
-  // TODO: types
   createTokenAction: (
     name: string,
     symbol: string,
-    setErrors: *,
-    setSubmitting: *,
-    handleTokenCreated: *,
+    setErrors: (message: MessageDescriptor) => void,
+    setSubmitting: (submitting: boolean) => void,
+    handleTokenCreated: (tokenAddress: string) => void,
   ) => void,
 } & FormikProps<FormValues>;
 
@@ -122,8 +121,9 @@ const StepCreateToken = ({
       createToken(
         values.tokenName,
         values.tokenSymbol,
+        // TODO: set error on correct form value
         // eslint-disable-next-line no-unused-vars
-        (message: MessageDescriptor) => setErrors({}), // TODO: handle errors
+        (message: MessageDescriptor) => setErrors({ tokenName: message }),
         setSubmitting,
         tokenAddress => {
           setFieldValue('tokenAddress', tokenAddress);

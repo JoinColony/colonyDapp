@@ -1,0 +1,4 @@
+/* @flow */
+
+export const LOAD_COLONY_NETWORK = 'LOAD_COLONY_NETWORK';
+export const COLONY_NETWORK_LOADED = 'COLONY_NETWORK_LOADED';

@@ -31,9 +31,9 @@ type Props = {
   openDialog: string => void,
   createColonyAction: (
     tokenAddress: string,
-    setErrors: *,
-    setSubmitting: *,
-    handleColonyCreated: *,
+    setErrors: (message: MessageDescriptor) => void,
+    setSubmitting: (submitting: boolean) => void,
+    handleColonyCreated: (colonyId: number, colonyAddress: string) => void,
   ) => void,
 } & FormikProps<FormValues>;
 
@@ -121,8 +121,9 @@ class StepCreateColony extends Component<Props> {
 
     createColony(
       tokenAddress,
+      // TODO: set error on correct form value
       // eslint-disable-next-line no-unused-vars
-      (message: MessageDescriptor) => setErrors({}), // TODO: handle errors
+      (message: MessageDescriptor) => setErrors({ tokenAddress: message }),
       setSubmitting,
       () => openDialog('ActivityBarExample'),
     );
