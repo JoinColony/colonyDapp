@@ -3,12 +3,11 @@
 const mockInbox = [
   {
     id: 1,
-    action: 'assigned you a task:',
+    action: 'actionAddedSkillTag',
     task: 'Develop Github integration',
     domain: '#Development',
     colonyName: 'Zirtual',
-    createdAt:
-      'Fri Sep 28 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 20),
     user: {
       walletAddress: '0xdeadbeef',
       username: 'Brad Pitt',
@@ -16,12 +15,11 @@ const mockInbox = [
   },
   {
     id: 2,
-    action: 'asks to confirm assignment:',
+    action: 'actionAssignedUser',
     task: 'Write docs for JS library',
     domain: '#Development',
     colonyName: 'UNDP',
-    createdAt:
-      'Fri Sep 27 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 19),
     user: {
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
@@ -29,12 +27,11 @@ const mockInbox = [
   },
   {
     id: 3,
-    action: 'lets you know that it is ready:',
+    action: 'actionCommentedOn',
     task: 'Design Landing Page',
     domain: '#Design',
     colonyName: 'GitCoin',
-    createdAt:
-      'Fri Sep 25 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 18),
     user: {
       walletAddress: '0xbeefdwad',
       username: 'Cornelia Bodenbaum',
@@ -42,12 +39,11 @@ const mockInbox = [
   },
   {
     id: 4,
-    action: 'has a question about:',
+    action: 'actionAddedSkillTag',
     task: 'Provide user research',
     domain: '#UX',
     colonyName: 'UPort',
-    createdAt:
-      'Fri Sep 24 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 16),
     user: {
       walletAddress: '0xbeefdeid',
       username: 'Stefan Zweig',
@@ -55,12 +51,11 @@ const mockInbox = [
   },
   {
     id: 5,
-    action: 'asks to confirm assignment:',
+    action: 'actionCommentedOn',
     task: 'Write financial report',
     domain: '#Finance',
     colonyName: 'UPort',
-    createdAt:
-      'Fri Sep 23 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 15),
     user: {
       walletAddress: '0xbeefdeid',
       username: 'Carlos Martinez',
@@ -68,12 +63,11 @@ const mockInbox = [
   },
   {
     id: 6,
-    action: 'commented on:',
+    action: 'actionAssignedUser',
     task: 'Prepare presentation',
     domain: '#Social Science',
     colonyName: 'OECD',
-    createdAt:
-      'Fri Sep 22 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 14),
     user: {
       walletAddress: '0xbeefdeid',
       username: 'Ludwig Kartoffelstampfer',
@@ -81,12 +75,11 @@ const mockInbox = [
   },
   {
     id: 7,
-    action: 'commented on:',
+    action: 'actionAddedSkillTag',
     task: 'Provide Feedback to students',
     domain: '#Math',
     colonyName: 'Cornelsen',
-    createdAt:
-      'Fri Sep 21 2018 15:43:13 GMT+0200 (Central European Summer Time)',
+    createdAt: new Date(2018, 8, 13),
     user: {
       walletAddress: '0xbeefdeid',
       username: 'Axel Mäusezahn',

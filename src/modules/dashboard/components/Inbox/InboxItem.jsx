@@ -9,33 +9,39 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './InboxItem.css';
 
+import type { InboxElement } from './types';
+
 const MSG = defineMessages({
-  reputation: {
-    id: 'dashboard.Inbox.InboxItem.reputation',
-    defaultMessage: '+{reputation} max rep',
-  },
   preposition: {
     id: 'dashboard.Inbox.InboxItem.preposition',
     defaultMessage: 'in',
+  },
+  actionAddedSkillTag: {
+    id: 'ActivityFeedItem.actionAddedSkillTag',
+    defaultMessage: '{user} added skill tag to {task}',
+  },
+  actionAssignedUser: {
+    id: 'ActivityFeedItem.actionAssignedUser',
+    defaultMessage: '{user} assigned {task}',
+  },
+  actionCommentedOn: {
+    id: 'ActivityFeedItem.actionCommentedOn',
+    defaultMessage: '{user} commented on {task}',
+  },
+  actionAsksToConfirmAssignment: {
+    id: 'ActivityFeedItem.actionAsksToConfirmAssignment',
+    defaultMessage: '{user} asks to confirm assignment {task}',
+  },
+  actionAssignedYouATask: {
+    id: 'ActivityFeedItem.actionAssignedYouATask',
+    defaultMessage: '{user} assigned you {task}',
   },
 });
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
-type Item = {
-  user: {
-    username: string,
-    walletAddress: string,
-  },
-  action: string,
-  task: string,
-  domain: string,
-  colonyName: string,
-  createdAt: string,
-};
-
 type Props = {
-  item: Item,
+  item: InboxElement,
 };
 
 const InboxItem = ({
@@ -49,15 +55,23 @@ const InboxItem = ({
         username={user.username}
         className={styles.UserAvatar}
       />
-      <span className={styles.inboxDetail} title={user.username}>
-        {user.username}
-      </span>
-      <span className={styles.inboxAction} title={action}>
-        {action}
-      </span>
-      <span className={styles.inboxDetail} title={user.username}>
-        {task}
-      </span>
+      <FormattedMessage
+        className={styles.inboxAction}
+        {...MSG[action]}
+        values={{
+          user: (
+            <span className={styles.inboxDetail} title={user.username}>
+              {user.username}
+            </span>
+          ),
+          task: (
+            <span className={styles.inboxDetail} title={user.username}>
+              {task}
+            </span>
+          ),
+        }}
+      />
+
       <span className={styles.additionalDetails}>
         <span>{colonyName}</span>
         <span className={styles.preposition}>

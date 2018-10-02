@@ -3,11 +3,11 @@
 
 .inboxContainer {
   align-self: center;
+  height: 525px;
   width: 98%;
   max-width: 940px;
-  box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
-  height: 525px;
   overflow: scroll;
+  box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
 }
 
 .templateContainer {

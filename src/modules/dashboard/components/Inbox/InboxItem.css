@@ -4,16 +4,16 @@ td.inboxDetails {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  font-weight: var(--weight-semi);
   width: 100%;
+  font-weight: var(--weight-semi);
 }
 
 tr.inboxRow {
   min-height: 88px;
+  border-color: var(--temp-grey-blue-2);
+  border-bottom: none;
   background-color: var(--colony-white);
   cursor: pointer;
-  border-bottom: none;
-  border-color: var(--temp-grey-blue-2);
 }
 
 tr.inboxRow:hover {
@@ -23,6 +23,7 @@ tr.inboxRow:hover {
 .inboxDetail {
   margin: 0 5px;
   overflow: hidden;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--colony-black);

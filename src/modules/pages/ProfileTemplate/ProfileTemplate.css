@@ -37,7 +37,8 @@
   padding: 20px var(--padding-horizontal);
   height: 100%;
 }
-.sidebar + .mainContainer .mainContent{
+
+.sidebar + .mainContainer .mainContent {
   max-width: 930px;
 }
 
