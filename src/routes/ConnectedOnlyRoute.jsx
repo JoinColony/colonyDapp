@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-
-import type { Component as ReactComponent } from 'react';
+import type { ComponentType } from 'react';
 
 import { START_ROUTE } from './routeConstants';
 
@@ -12,7 +11,7 @@ const ConnectedOnlyRoute = ({
   isConnected,
   ...rest
 }: {
-  component: ReactComponent,
+  component: ComponentType<*>,
   isConnected?: boolean,
 }) => (
   <Route

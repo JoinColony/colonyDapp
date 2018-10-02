@@ -19,7 +19,7 @@ const adapter = new EthersAdapter({
 
 let instance;
 const loadNetwork = async () => {
-  const networkClient = new ColonyNetworkClient({ adapter });
+  const networkClient = new ColonyNetworkClient({ adapter, query: {} });
   await networkClient.init();
   instance = networkClient;
   return instance;
