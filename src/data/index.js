@@ -2,5 +2,5 @@
 
 export { dataSagas } from './sagas';
 export { dataReducer } from './reducers';
-export { default as Data } from './Data';
+export { default as DataAPI } from './DataAPI';
 export { initializeData } from './actions';
