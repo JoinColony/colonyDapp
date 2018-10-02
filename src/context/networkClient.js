@@ -1,10 +1,12 @@
 /* @flow */
 
-let networkInstance: Object | void;
+import type ColonyNetworkClient from '@colony/colony-js-client';
+
+let networkInstance: ColonyNetworkClient | void;
 
 const networkContext: Object = {
   instance: networkInstance,
-  setInstance: (newNetworkInstance: Object) => {
+  setInstance: (newNetworkInstance: ColonyNetworkClient) => {
     networkContext.clearInstance();
     networkContext.instance = newNetworkInstance;
   },

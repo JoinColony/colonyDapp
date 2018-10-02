@@ -2,8 +2,8 @@
 
 import { all } from 'redux-saga/effects';
 
-import networkSagas from './network';
+import networkClientSagas from './networkClient';
 
-export default function* rootSaga(): any {
-  yield all([networkSagas()]);
+export default function* coreSagas(): any {
+  yield all([networkClientSagas()]);
 }

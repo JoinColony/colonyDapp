@@ -1,11 +1,11 @@
 /* @flow */
 
 import walletContext from './wallet';
-import networkContext from './network';
+import networkClientContext from './networkClient';
 
 const rootContext: Object = {
   currentWallet: walletContext,
-  network: networkContext,
+  networkClient: networkClientContext,
 };
 
 export { default as withContext } from './withContext';
