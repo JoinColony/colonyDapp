@@ -1,7 +1,8 @@
 // @flow
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
-import Data from '../Data';
+import Data from '../DataAPI';
+import dataContext from '~context/dataAPI';
 
 import {
   EDIT_PROFILE,
@@ -13,7 +14,7 @@ import {
 
 function* editProfile(action): Saga<void> {
   const { update: { profileKey, property, value } } = action.payload;
-  const dataAPI = yield select(state => state.data.Data);
+  const dataAPI = dataContext.dataAPI;
   const result = yield call(
     dataAPI.editUserProfile,
     property,
@@ -25,7 +26,7 @@ function* editProfile(action): Saga<void> {
 
 function* getWholeProfile(action): Saga<void> {
   const { profileKey } = action.payload;
-  const dataAPI = yield select(state => state.data.Data);
+  const dataAPI = dataContext.dataAPI;
   const result = yield call(dataAPI.getUserProfileData, profileKey);
   yield put(
     setUserProfileContent({ profileKey, property: 'profile', value: result }),
@@ -34,7 +35,7 @@ function* getWholeProfile(action): Saga<void> {
 
 function* initializeData(action): Saga<void> {
   const { resolve, rootRepo } = action;
-  const data = yield call(Data.fromDefaultConfig, null, {
+  const dataAPI = yield call(Data.fromDefaultConfig, null, {
     ipfs: {
       swarm: ['/ip4/0.0.0.0/tcp/0'],
       repo: `${rootRepo}/ipfs`,
@@ -44,10 +45,10 @@ function* initializeData(action): Saga<void> {
     },
   });
 
-  yield call(data.ready);
-  yield call(resolve, 'data API started and stored in Redux');
-  const init = initialData(data);
-  yield put(init);
+  yield call(dataAPI.ready);
+  yield call(resolve, 'data API started and stored in context');
+
+  yield call(dataContext.initializeData, dataAPI);
 }
 
 export function* dataSagas(): any {
