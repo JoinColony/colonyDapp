@@ -5,7 +5,7 @@ import camelcase from 'camelcase';
 
 import { TableRow, TableCell } from '~core/Table';
 import Link from '~core/Link';
-import Time from '~core/Time';
+import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 
 import type { Activity, ActivityAction } from './types';
@@ -77,7 +77,7 @@ const ActivityFeedItem = ({
           </b>
           <span className={styles.pipe}>|</span>
           <small>
-            <Time value={activityDate} />
+            <TimeRelative value={activityDate} />
           </small>
         </p>
         <div className={styles.placeholderCoverUp} />

@@ -16,6 +16,7 @@ module.exports = {
         './src/modules/core/components/NavLink/NavLink.jsx',
         './src/modules/core/components/ExternalLink/ExternalLink.jsx',
         './src/modules/core/components/Number/Number.jsx',
+        './src/modules/core/components/TimeRelative/TimeRelative.jsx',
       ],
     },
     {
