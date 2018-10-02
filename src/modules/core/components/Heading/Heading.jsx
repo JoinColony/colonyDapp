@@ -35,7 +35,7 @@ type Props = {
 };
 
 const getText = (
-  children: Node,
+  children?: Node,
   text?: MessageDescriptor | string,
   textValues,
   { formatMessage }: IntlShape,

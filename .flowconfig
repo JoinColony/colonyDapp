@@ -4,7 +4,10 @@
 .*/utils/test/.*
 .*/src/lib/colonyNetwork/.*
 .*/src/lib/pinningService/.*
+# We need to remove these as soon as they fixed flow support
 .*/node_modules/findup/.*
+# https://github.com/atlassian/react-beautiful-dnd/issues/851
+.*/node_modules/react-beautiful-dnd/.*
 
 [include]
 .*/src/.*
