@@ -38,8 +38,10 @@ class UserProfile {
 
   async setWholeProfile(properties: UserProfileType) {
     await this.initialize();
-    const keys = Object.keys(properties);
-    keys.forEach(key => this._store.put(key, properties[key]));
+    Object.keys(properties).forEach(key =>
+      this._store.put(key, properties[key]),
+    );
+    return properties;
   }
 
   async getWholeProfile(): Promise<UserProfileType> {
@@ -66,7 +68,7 @@ class UserProfile {
     };
   }
 
-  address() {
+  get address() {
     return this._store.address;
   }
 
