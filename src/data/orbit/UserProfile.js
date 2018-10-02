@@ -42,14 +42,28 @@ class UserProfile {
     keys.forEach(key => this._store.put(key, properties[key]));
   }
 
-  async getWholeProfile(): any {
+  async getWholeProfile(): Promise<UserProfileType> {
     await this.initialize();
     const name = this._store.get('name');
     const bio = this._store.get('bio');
     const avatar = this._store.get('avatar');
     const colonies = this._store.get('colonies');
     const tasks = this._store.get('tasks');
-    return { name, bio, avatar, colonies, tasks };
+    const ensName = this._store.get('ensName');
+    const location = this._store.get('location');
+    const walletAddress = this._store.get('walletAddress');
+    const website = this._store.get('website');
+    return {
+      name,
+      bio,
+      avatar,
+      colonies,
+      tasks,
+      ensName,
+      location,
+      walletAddress,
+      website,
+    };
   }
 
   address() {
@@ -71,6 +85,10 @@ class UserProfile {
       await this._store.put('name', 'unset');
       await this._store.put('bio', 'unset');
       await this._store.put('avatar', 'unset');
+      await this._store.put('ensName', 'unset');
+      await this._store.put('location', 'unset');
+      await this._store.put('walletAddress', 'unset');
+      await this._store.put('website', 'unset');
     }
     this.initialized = true;
   }

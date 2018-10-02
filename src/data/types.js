@@ -132,7 +132,10 @@ export type UserProfileType = {
   avatar: IPFSHash,
   colonies: profileColony[],
   tasks: profileTask[],
-  initialized: boolean,
+  walletAddress: string,
+  ensName: string,
+  website: string,
+  location: string,
 };
 
 type State =
