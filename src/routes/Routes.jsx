@@ -4,6 +4,7 @@ import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
+import ColonyHome from '~dashboard/ColonyHome';
 import Dashboard from '~dashboard/Dashboard';
 import WalletStart from '~wallet/WalletStart';
 import ConnectWallet from '~wallet/ConnectWallet';
@@ -14,6 +15,7 @@ import ProfileCreate from '~wallet/ProfileCreate';
 import withContext from '~context/withContext';
 
 import {
+  COLONY_HOME_ROUTE,
   CONNECT_WALLET_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_PROFILE_ROUTE,
@@ -77,6 +79,11 @@ const Routes = ({
         isConnected={isConnected}
         path={DASHBOARD_ROUTE}
         component={Dashboard}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        path={COLONY_HOME_ROUTE}
+        component={ColonyHome}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
