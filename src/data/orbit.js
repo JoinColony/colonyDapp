@@ -1,12 +1,13 @@
 /* @flow */
+
 import OrbitDB from 'orbit-db';
 import Keystore from 'orbit-db-keystore';
 import type { ColonyIPFSNode, ColonyOrbitOptions, OrbitOptions } from './types';
 
-const ETHEREUM_PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
-const DEFAULT_DB_PATH = 'colonyOrbitdb';
-
 type WrappedOptions = { path: ?string, options: OrbitOptions };
+
+const DEFAULT_DB_PATH = 'colonyOrbitdb';
+const ETHEREUM_PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
 const { IdentityProvider: OrbitDBIdentityProvider } = OrbitDB;
 const orbitKeystore = Keystore.create();
@@ -21,6 +22,60 @@ export async function getOrbitDB(
   { path, options }: WrappedOptions = { path: DEFAULT_DB_PATH, options: {} },
 ) {
   return new OrbitDB(ipfs, path, options);
+}
+
+// @TODO: apply flow
+
+/**
+ * Implements access control using an ethereum account previously linked to
+ * an orbit key
+ * @type {EthereumAccountAccessController}
+ */
+export class EthereumAccountAccessController {
+  /**
+   * Creates an EthereumAccountAccessController instance
+   * @param {String}   [address]           Ethereum account address
+   * @param {Function} [verifySignatureFn] Signature verification function
+   */
+  constructor(address, verifySignatureFn) {
+    if (!address) throw new Error('An ethereum account address is required');
+    if (!verifySignatureFn)
+      throw new Error('A signature verification function is required');
+
+    this._accountAddress = address;
+    this._verifySignatureFn = verifySignatureFn;
+  }
+
+  async canAppend(entry, provider) {
+    const {
+      identity: {
+        id: walletAddress,
+        publicKey: orbitPublicKey,
+        signatures,
+        type,
+      },
+    } = entry;
+
+    if (walletAddress !== this._accountAddress) return false;
+    if (type !== ETHEREUM_PROVIDER_TYPE) return false;
+
+    // Current wallet is the only one that can write to this store so we use the current wallet to check the signature
+    // const isWalletSignatureValid = await this._verifySignatureFn({
+    //   message: orbitPublicKey + signatures.id,
+    //   signature: signatures.publicKey,
+    // });
+
+    const data = orbitPublicKey + signatures.id;
+    const signature = signatures.publicKey;
+    const isWalletSignatureValid = this._verifySignatureFn(
+      walletAddress,
+      data,
+      signature,
+    );
+    if (!isWalletSignatureValid) return false;
+
+    return provider.verify(signatures.id, orbitPublicKey, walletAddress);
+  }
 }
 
 /**
