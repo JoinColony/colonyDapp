@@ -50,7 +50,7 @@ function* initializeData(action): Saga<void> {
   yield put(init);
 }
 
-export function* dataSagas(): Saga<void> {
+export function* dataSagas(): any {
   yield takeEvery(INITIALIZE_DATA, initializeData);
   yield takeEvery(EDIT_PROFILE, editProfile);
   yield takeEvery(LOAD_PROFILE, getWholeProfile);

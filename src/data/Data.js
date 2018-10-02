@@ -90,7 +90,7 @@ export default class DataAPI {
   */
   getUserProfileData = async (
     key: PublicKey = 'user-profile',
-  ): UserProfileType => {
+  ): Promise<UserProfileType> => {
     const store = await this._getUserProfile(key);
     const profile = await store.getWholeProfile();
     return profile;
