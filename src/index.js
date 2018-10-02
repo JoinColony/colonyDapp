@@ -18,4 +18,5 @@ ReactModal.setAppElement(rootNode);
 
 if (rootNode) render(createElement(App, { store, context, history }), rootNode);
 
+// $FlowFixMe
 if (module.hot) module.hot.accept();

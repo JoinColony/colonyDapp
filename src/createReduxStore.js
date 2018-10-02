@@ -21,8 +21,9 @@ function* rootSaga(): any {
 
 const sagaMiddleware = createSagaMiddleware();
 
-// eslint-disable-next-line no-underscore-dangle
-const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancer: Function =
+  // eslint-disable-next-line no-underscore-dangle
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
   connectRouter(history)(rootReducer),
