@@ -26,12 +26,10 @@ export function dataReducer(
               profiles: {
                 [profileKey]: {
                   [profileProperty]: {
-                    $apply: prop => {
-                      if (Array.isArray(prop)) {
-                        return prop.concat(profileValue);
-                      }
-                      return profileValue;
-                    },
+                    $apply: prop =>
+                      Array.isArray(prop)
+                        ? prop.concat(profileValue)
+                        : profileValue,
                   },
                 },
               },
