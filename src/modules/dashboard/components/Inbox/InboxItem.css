@@ -7,6 +7,9 @@ td.inboxDetails {
   width: 100%;
   font-weight: var(--weight-semi);
 }
+td.inboxDetails:hover{
+  background-color: color(var(--temp-grey-6) alpha(10%));
+}
 
 tr.inboxRow {
   min-height: 88px;
@@ -14,10 +17,6 @@ tr.inboxRow {
   border-bottom: none;
   background-color: var(--colony-white);
   cursor: pointer;
-}
-
-tr.inboxRow:hover {
-  background-color: color(var(--temp-grey-6) alpha(5%));
 }
 
 .inboxDetail {
