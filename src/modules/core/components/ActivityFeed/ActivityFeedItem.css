@@ -1,0 +1,21 @@
+@import 'variables.css';
+
+.activityFeedItemCell {
+  padding: 20px 40px;
+}
+
+.placeholderItem {
+  position: relative;
+}
+
+.placeholderCoverUp {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  cursor: default;
+}
+
+.pipe {
+  padding: 0 8px;
+}

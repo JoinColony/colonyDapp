@@ -40,6 +40,11 @@
   --gradient-default: linear-gradient(to bottom, var(--temp-grey-blue-5) 0%, var(--temp-grey-blue-6) 100%);
 
   /*
+   * Box Shadows
+   */
+  --box-shadow-grey-blue-large: 0 0 20px -2px var(--temp-grey-blue-4);
+
+  /*
    * Radius
    */
   --radius-tiny: 2px;

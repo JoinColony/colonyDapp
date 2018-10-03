@@ -10,15 +10,6 @@
   font-weight: var(--weight-normal);
 }
 
-.baseStyles thead tr th {
-  /* Bring your own padding */
-}
-
-.baseStyles tbody tr td,
-.baseStyles tbody tr th {
-  /* Bring your own padding */
-}
-
 /*
   Border radii for corner cells of table
   =====================
