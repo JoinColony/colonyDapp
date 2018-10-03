@@ -33,7 +33,7 @@ const Task = ({ openDialog } => (
 );
 ```
 
-`openDialog()` will return a Promise that resolves (or rejects) when the user closes the dialog. Whether it resolves or rejects depends on whether the user closed it using the `close(val)` (resolves with `val`) or the `cancel()` (rejects) function. These get injected into all the Components that reside in `dialogComponents`.
+`openDialog()` will return a Object which contains a Promise (`afterClosed`) that resolves (or rejects) when the user closes the dialog. Whether it resolves or rejects depends on whether the user closed it using the `close(val)` (resolves with `val`) or the `cancel()` (rejects) function. These get injected into all the Components that reside in `dialogComponents`.
 
 
 ### Example for the whole dialog workflow
@@ -45,7 +45,7 @@ const ComponentThatOpensADialog = ({ openDialog }) => (
   <div>
     <Button
       onClick={() => openDialog('ConfirmDialog', { heading: 'Cool dialog' })
-        .then(() => alert('Confirmed!'), () => alert('Cancelled'))
+        .afterClosed.then(() => alert('Confirmed!'), () => alert('Cancelled'))
       }
     >
       Click to open ConfirmDialog

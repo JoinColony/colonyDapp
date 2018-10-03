@@ -10,3 +10,12 @@ export type DialogComponent = ComponentType<{
   cancel: Cancel,
   close: Close,
 }>;
+
+export type DialogType = {
+  Dialog: DialogComponent,
+  cancel: Cancel,
+  close: Close,
+  key: string,
+  props: { [string]: any },
+  afterClosed: Promise<any>,
+};

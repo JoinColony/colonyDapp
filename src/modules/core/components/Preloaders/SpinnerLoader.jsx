@@ -10,7 +10,7 @@ import type { IntlShape, MessageDescriptor } from 'react-intl';
 import styles from './SpinnerLoader.css';
 
 type Appearance = {
-  size: 'small' | 'medium' | 'large',
+  size: 'small' | 'medium' | 'large' | 'huge' | 'massive',
   theme?: 'primary',
 };
 
@@ -33,10 +33,15 @@ const SpinnerLoader = ({
 }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
     <div className={styles.loader} />
-    {loadingText &&
-      (typeof loadingText === 'string'
-        ? loadingText
-        : formatMessage(loadingText, textValues))}
+    {loadingText && (
+      <div className={styles.loadingTextContainer}>
+        <div className={styles.loadingTextContainerInner}>
+          {typeof loadingText === 'string'
+            ? loadingText
+            : formatMessage(loadingText, textValues)}
+        </div>
+      </div>
+    )}
   </div>
 );
 

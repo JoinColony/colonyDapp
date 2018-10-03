@@ -1,12 +1,9 @@
 /* @flow */
-
 import type { FormikProps } from 'formik';
 
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-
-import styles from './StepCreateToken.css';
 
 import type { SubmitFn } from '~core/Wizard';
 
@@ -15,6 +12,10 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import FileUpload from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
+
+import styles from './StepCreateToken.css';
+
+import CreatingToken from './CreatingToken.jsx';
 
 const MSG = defineMessages({
   heading: {
@@ -82,62 +83,102 @@ type Props = {
   previousStep: () => void,
 } & FormikProps<FormValues>;
 
+type State = {
+  isCreatingToken: boolean,
+};
+
 const ACCEPTED_MIME_TYPES: Array<string> = ['image/svg+xml', 'image/png'];
 const ACCEPTED_MAX_FILE_SIZE: number = 1000000;
 
 const VALIDATE_TOKEN_NAME: RegExp = /^[A-Za-z0-9-_.]+$/;
 
-const displayName: string = 'dashboard.CreateColonyWizard.CreateToken';
+class StepCreateToken extends Component<Props, State> {
+  timeoutId: TimeoutID;
 
-const StepCreateToken = ({ previousStep, handleSubmit, isValid }: Props) => (
-  <form className={styles.main} onSubmit={handleSubmit}>
-    <section className={styles.titleSection}>
-      <Heading className={styles.customHeading} text={MSG.heading} />
-      <ExternalLink text={MSG.learnMoreLink} href="#" />
-    </section>
-    <div className={styles.inputFields}>
-      <div className={styles.inputFieldWrapper}>
-        <Input
-          name="tokenName"
-          appearance={{ theme: 'fat' }}
-          label={MSG.labelTokenName}
-          extra={<FormattedMessage {...MSG.helpTokenName} />}
-        />
-      </div>
-      <div className={styles.inputFieldWrapper}>
-        <Input
-          name="tokenSymbol"
-          appearance={{ theme: 'fat' }}
-          label={MSG.labelTokenSymbol}
-          extra={<FormattedMessage {...MSG.helpTokenSymbol} />}
-        />
-      </div>
-      <div className={styles.inputFieldWrapper}>
-        <FileUpload
-          accept={ACCEPTED_MIME_TYPES}
-          maxFileSize={ACCEPTED_MAX_FILE_SIZE}
-          name="tokenIcon"
-          label={MSG.labelTokenIcon}
-          extra={<FormattedMessage {...MSG.helpTokenIcon} />}
-        />
-      </div>
-    </div>
-    <div className={styles.actionsContainer}>
-      <Button
-        text={MSG.backButton}
-        appearance={{ theme: 'secondary', size: 'large' }}
-        onClick={previousStep}
-      />
-      <Button
-        appearance={{ theme: 'primary', size: 'large' }}
-        text={MSG.nextButton}
-        type="submit"
-        style={{ width: styles.wideButton }}
-        disabled={!isValid}
-      />
-    </div>
-  </form>
-);
+  static displayName = 'dashboard.CreateColonyWizard.CreateToken';
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isCreatingToken: false,
+    };
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId);
+  }
+
+  handleTokenCreate = (e: SyntheticEvent<any>) => {
+    const { handleSubmit } = this.props;
+    // TODO actually create a token here - this is currently waiting to submit the form,
+    // as it's just mocking creation to show the loading screen
+    e.persist();
+    this.setState({ isCreatingToken: true });
+    this.timeoutId = setTimeout(() => {
+      handleSubmit(e);
+    }, 5000);
+  };
+
+  render() {
+    const { previousStep, isValid } = this.props;
+    const { isCreatingToken } = this.state;
+    return (
+      <Fragment>
+        {isCreatingToken ? (
+          <CreatingToken />
+        ) : (
+          <form className={styles.main} onSubmit={this.handleTokenCreate}>
+            <section className={styles.titleSection}>
+              <Heading className={styles.customHeading} text={MSG.heading} />
+              <ExternalLink text={MSG.learnMoreLink} href="#" />
+            </section>
+            <div className={styles.inputFields}>
+              <div className={styles.inputFieldWrapper}>
+                <Input
+                  name="tokenName"
+                  appearance={{ theme: 'fat' }}
+                  label={MSG.labelTokenName}
+                  extra={<FormattedMessage {...MSG.helpTokenName} />}
+                />
+              </div>
+              <div className={styles.inputFieldWrapper}>
+                <Input
+                  name="tokenSymbol"
+                  appearance={{ theme: 'fat' }}
+                  label={MSG.labelTokenSymbol}
+                  extra={<FormattedMessage {...MSG.helpTokenSymbol} />}
+                />
+              </div>
+              <div className={styles.inputFieldWrapper}>
+                <FileUpload
+                  accept={ACCEPTED_MIME_TYPES}
+                  maxFileSize={ACCEPTED_MAX_FILE_SIZE}
+                  name="tokenIcon"
+                  label={MSG.labelTokenIcon}
+                  extra={<FormattedMessage {...MSG.helpTokenIcon} />}
+                />
+              </div>
+            </div>
+            <div className={styles.actionsContainer}>
+              <Button
+                text={MSG.backButton}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={previousStep}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                text={MSG.nextButton}
+                type="submit"
+                style={{ width: styles.wideButton }}
+                disabled={!isValid}
+              />
+            </div>
+          </form>
+        )}
+      </Fragment>
+    );
+  }
+}
 
 export const validationSchema = yup.object({
   tokenName: yup
@@ -153,7 +194,5 @@ export const validationSchema = yup.object({
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
-
-StepCreateToken.displayName = displayName;
 
 export const Step = StepCreateToken;
