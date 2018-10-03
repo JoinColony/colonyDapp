@@ -136,4 +136,16 @@ export type UserProfileType = {
   location: string,
 };
 
+export const UserProfileSchema = {
+  name: 'unset',
+  bio: 'unset',
+  avatar: 'unset',
+  colonies: [],
+  tasks: [],
+  walletAddress: 'unset',
+  ensName: 'unset',
+  website: 'unset',
+  location: 'unset',
+};
+
 export type Action = { type: string, payload: any };
