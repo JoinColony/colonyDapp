@@ -40,10 +40,11 @@ class UserProfile {
   }
 
   async setWholeProfile(properties: UserProfileType) {
-    Object.keys(properties).forEach(key =>
-      this._store.put(key, properties[key]),
+    const putPromises = Object.keys(properties).map(
+      async key => await this._store.put(key, properties[key]),
     );
-    return properties;
+
+    return await Promise.all(putPromises).then(() => properties);
   }
 
   getWholeProfile(): Promise<UserProfileType> {
