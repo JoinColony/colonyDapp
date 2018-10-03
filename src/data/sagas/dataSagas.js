@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 import Data from '../DataAPI';
 import dataContext from '~context/dataAPI';
 
-import { setUserProfileContent } from '../actionCreators';
+import { setEntireUserProfile, setUserProfileContent } from '../actionCreators';
 
 import {
   EDIT_PROFILE,
@@ -14,9 +14,7 @@ import {
 } from '../actionTypes';
 
 function* editProfile(action): Saga<void> {
-  const {
-    update: { profileKey, property, value },
-  } = action.payload;
+  const { update: { profileKey, property, value } } = action.payload;
   const { dataAPI } = dataContext;
   const result = yield call(
     dataAPI.editUserProfile,
@@ -24,6 +22,7 @@ function* editProfile(action): Saga<void> {
     value,
     profileKey,
   );
+
   yield put(setUserProfileContent({ profileKey, property, value: result }));
 }
 
@@ -34,15 +33,15 @@ function* setWholeProfile(action): Saga<void> {
     profileKey === 'localStorage'
       ? yield call(putInLocalStorage, properties, profileKey)
       : yield call(dataAPI.setUserProfile, properties, profileKey);
-  yield put(
-    setUserProfileContent({ profileKey, property: 'profile', value: result }),
-  );
+
+  yield put(setEntireUserProfile({ profileKey, value: result }));
 }
 
 function* getWholeProfile(action): Saga<void> {
   const { profileKey } = action.payload;
   const { dataAPI } = dataContext;
   const result = yield call(dataAPI.getUserProfileData, profileKey);
+
   yield put(
     setUserProfileContent({ profileKey, property: 'profile', value: result }),
   );
@@ -59,7 +58,6 @@ function* initializeData(action): Saga<void> {
       repo: `${rootRepo}/orbit`,
     },
   });
-
   yield call(dataAPI.ready);
   yield call(resolve, STARTED_RESPONSE);
 

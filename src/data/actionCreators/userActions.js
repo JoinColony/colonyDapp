@@ -1,6 +1,11 @@
 // @flow
 
-import { EDIT_PROFILE, LOAD_PROFILE, UPDATE_PROFILE } from '../actionTypes';
+import {
+  EDIT_PROFILE,
+  LOAD_PROFILE,
+  UPDATE_ENTIRE_PROFILE,
+  UPDATE_PROFILE,
+} from '../actionTypes';
 
 import type { Action } from '../types';
 
@@ -17,6 +22,19 @@ export function setUserProfileContent({
   return {
     type: UPDATE_PROFILE,
     payload: { update: { profileKey, property, value } },
+  };
+}
+
+export function setEntireUserProfile({
+  profileKey = 'my-profile',
+  value,
+}: {
+  profileKey: string,
+  value: any,
+}): Action {
+  return {
+    type: UPDATE_ENTIRE_PROFILE,
+    payload: { update: { profileKey, value } },
   };
 }
 
