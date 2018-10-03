@@ -33,6 +33,7 @@ const store = createStore(
 
 sagaMiddleware.run(rootSaga);
 
+// Actually this action should be run upon login
 const rootRepo = '/tmp/dataTests';
 initializeData(store.dispatch, rootRepo).then(result => console.log(result));
 

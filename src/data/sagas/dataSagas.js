@@ -1,21 +1,23 @@
 // @flow
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import Data from '../DataAPI';
 import dataContext from '~context/dataAPI';
+
+import { setUserProfileContent } from '../actionCreators';
 
 import {
   EDIT_PROFILE,
   INITIALIZE_DATA,
   LOAD_PROFILE,
-  initialData,
-  setUserProfileContent,
   STARTED_RESPONSE,
-} from '../actions';
+} from '../actionTypes';
 
 function* editProfile(action): Saga<void> {
-  const { update: { profileKey, property, value } } = action.payload;
-  const dataAPI = dataContext.dataAPI;
+  const {
+    update: { profileKey, property, value },
+  } = action.payload;
+  const { dataAPI } = dataContext;
   const result = yield call(
     dataAPI.editUserProfile,
     property,
@@ -27,7 +29,7 @@ function* editProfile(action): Saga<void> {
 
 function* getWholeProfile(action): Saga<void> {
   const { profileKey } = action.payload;
-  const dataAPI = dataContext.dataAPI;
+  const { dataAPI } = dataContext;
   const result = yield call(dataAPI.getUserProfileData, profileKey);
   yield put(
     setUserProfileContent({ profileKey, property: 'profile', value: result }),

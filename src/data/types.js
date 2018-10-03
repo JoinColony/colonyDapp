@@ -4,8 +4,6 @@ import type PeerInfo from 'peer-info';
 import type MultiAddr from 'multiaddr';
 import OrbitDB from 'orbit-db';
 
-import { STATE_NOTHING, STATE_LOADING, STATE_READY } from './actions';
-
 export type { Store as OrbitStore } from 'orbit-db-store';
 export type { KeyValueStore as OrbitKVStore } from 'orbit-db-kvstore';
 
@@ -136,26 +134,6 @@ export type UserProfileType = {
   ensName: string,
   website: string,
   location: string,
-};
-
-type State =
-  | typeof STATE_NOTHING
-  | typeof STATE_LOADING
-  | typeof STATE_READY
-  | { my_profile: {} | string };
-
-export type DataReduxStore = {
-  state: State,
-  data: any, // @TODO
-};
-
-export const INITIAL_STATE: DataReduxStore = {
-  state: STATE_NOTHING,
-  data: {
-    colonies: { mycolony: { domains: [] } },
-    domains: { mydomain: { tasks: [] } },
-    profiles: {},
-  },
 };
 
 export type Action = { type: string, payload: any };
