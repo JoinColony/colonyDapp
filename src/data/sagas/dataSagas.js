@@ -13,16 +13,16 @@ import {
   STARTED_RESPONSE,
 } from '../actionTypes';
 
+let putInLocalStorage;
+let fetchFromLocalStorage;
+
 function* editProfile(action): Saga<void> {
   const { update: { profileKey, property, value } } = action.payload;
   const { dataAPI } = dataContext;
-  const result = yield call(
-    dataAPI.editUserProfile,
-    property,
-    value,
-    profileKey,
-  );
-
+  const result =
+    profileKey === 'localStorage'
+      ? yield call(putInLocalStorage, property, value, profileKey)
+      : yield call(dataAPI.editUserProfile, property, value, profileKey);
   yield put(setUserProfileContent({ profileKey, property, value: result }));
 }
 
@@ -40,8 +40,10 @@ function* setWholeProfile(action): Saga<void> {
 function* getWholeProfile(action): Saga<void> {
   const { profileKey } = action.payload;
   const { dataAPI } = dataContext;
-  const result = yield call(dataAPI.getUserProfileData, profileKey);
-
+  const result =
+    profileKey === 'localStorage'
+      ? yield call(fetchFromLocalStorage, profileKey)
+      : yield call(dataAPI.getUserProfileData, profileKey);
   yield put(
     setUserProfileContent({ profileKey, property: 'profile', value: result }),
   );
