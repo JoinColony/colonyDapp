@@ -16,10 +16,6 @@ class UserProfile {
 
   async setProperty(property: string, value: any) {
     await this.initialize();
-    if (property === 'profile') {
-      return this.setWholeProfile(value);
-    }
-
     let prop = this.getProperty(property);
     if (Array.isArray(prop)) {
       prop.push(value);

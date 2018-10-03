@@ -61,7 +61,6 @@ export default class DataAPI {
 
   /*
     Adds to or edits the UserProfile
-    Also used to set all properties at once
   */
   editUserProfile = async (
     property: string,
@@ -70,6 +69,15 @@ export default class DataAPI {
   ) => {
     const store = await this._getMyUserProfile(profileKey);
     const result = await store.setProperty(property, value);
+    return result;
+  };
+
+  /*
+      Sets (replaces) all UserProfile properties at once
+    */
+  setUserProfile = async (properties: UserProfileType, profileKey: string) => {
+    const store = await this._getMyUserProfile(profileKey);
+    const result = await store.setWholeProfile(properties);
     return result;
   };
 
