@@ -12,12 +12,16 @@ import LoadingTemplate from '../../../pages/LoadingTemplate';
 
 const MSG = defineMessages({
   loadingText: {
-    id: 'CreateColonyWizard.CreatingToken.loadingText',
-    defaultMessage: 'Token creation...',
+    id: 'CreateColonyWizard.CreatingColony.loadingText',
+    defaultMessage: 'Colony creation...',
   },
   loaderDescription: {
-    id: 'CreateColonyWizard.CreatingToken.loaderDescription',
-    defaultMessage: 'Please wait while your new token is being created.',
+    id: 'CreateColonyWizard.CreatingColony.loaderDescription',
+    defaultMessage: 'Please wait while your colony is being created.',
+  },
+  loaderSubtext: {
+    id: 'CreateColonyWizard.CreatingColony.loaderSubtext',
+    defaultMessage: 'Your colony is being built as we speak.',
   },
 });
 
@@ -25,19 +29,19 @@ type Props = {
   openDialog: (dialogName: string) => DialogType,
 };
 
-class CreatingToken extends Component<Props> {
-  tokenCreationDialog: DialogType;
+class CreatingColony extends Component<Props> {
+  colonyCreationDialog: DialogType;
 
-  static displayName = 'CreateColonyWizard.CreatingToken';
+  static displayName = 'CreateColonyWizard.CreatingColony';
 
   componentDidMount() {
     const { openDialog } = this.props;
     // TODO use gas station dialog here once implemented
-    this.tokenCreationDialog = openDialog('ActivityBarExample');
+    this.colonyCreationDialog = openDialog('ActivityBarExample');
   }
 
   componentWillUnmount() {
-    this.tokenCreationDialog.close();
+    this.colonyCreationDialog.close();
   }
 
   render() {
@@ -48,10 +52,14 @@ class CreatingToken extends Component<Props> {
             text={MSG.loaderDescription}
             appearance={{ size: 'medium', weight: 'thin' }}
           />
+          <Heading
+            text={MSG.loaderSubtext}
+            appearance={{ size: 'normal', weight: 'thin' }}
+          />
         </LoadingTemplate>
       </DialogProvider>
     );
   }
 }
 
-export default withDialog()(CreatingToken);
+export default withDialog()(CreatingColony);

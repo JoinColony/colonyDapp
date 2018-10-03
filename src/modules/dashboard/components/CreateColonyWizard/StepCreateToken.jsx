@@ -1,14 +1,9 @@
 /* @flow */
-
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-
-import styles from './StepCreateToken.css';
-
-import type { SubmitFn } from '~core/Wizard';
 
 import { Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -16,7 +11,11 @@ import Button from '~core/Button';
 import FileUpload from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
 
+import styles from './StepCreateToken.css';
+
 import CreatingToken from './CreatingToken.jsx';
+
+import type { SubmitFn } from '~core/Wizard';
 
 const MSG = defineMessages({
   heading: {
@@ -112,7 +111,7 @@ class StepCreateToken extends Component<Props, State> {
   handleTokenCreate = (e: SyntheticEvent<any>) => {
     const { handleSubmit } = this.props;
     // TODO actually create a token here - this is currently waiting to submit the form,
-    // which isn't how this will work once wired up.
+    // as it's just mocking creation to show the loading screen
     e.persist();
     this.setState({ isCreatingToken: true });
     this.timeoutId = setTimeout(() => {

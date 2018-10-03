@@ -1,17 +1,18 @@
-// @flow
+/* @flow */
 import type { FormikProps } from 'formik';
 import type { MessageDescriptor } from 'react-intl';
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-
-import type { SubmitFn } from '~core/Wizard';
-
-import styles from './StepCreateColony.css';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import withDialog from '~core/Dialog/withDialog';
+
+import styles from './StepCreateColony.css';
+
+import CreatingColony from './CreatingColony.jsx';
+
+import type { SubmitFn } from '~core/Wizard';
 
 type FormValues = {};
 
@@ -20,6 +21,10 @@ type Props = {
   previousStep: () => void,
   openDialog: string => void,
 } & FormikProps<FormValues>;
+
+type State = {
+  isCreatingColony: boolean,
+};
 
 type Row = {
   title: MessageDescriptor,
@@ -61,8 +66,6 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
-
 const options = [
   {
     title: MSG.colonyName,
@@ -101,48 +104,61 @@ const CardRow = ({ cardOptions }: CardProps) =>
     </div>
   ));
 
-class StepCreateColony extends Component<Props> {
-  openGasDialog = () => {
-    const { openDialog } = this.props;
-    openDialog('ActivityBarExample');
+class StepCreateColony extends Component<Props, State> {
+  static displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isCreatingColony: false,
+    };
+  }
+
+  handleColonyCreate = () => {
+    // TODO actually create a colony here, and then do something once successful.
+    // This is currently just infinitely mocking creation to show the loading screen
+    this.setState({ isCreatingColony: true });
   };
 
   render() {
+    const { isCreatingColony } = this.state;
     return (
-      <section className={styles.content}>
-        <div className={styles.finalContainer}>
-          <Heading
-            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-            text={MSG.title}
-          />
-          <Heading
-            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-            text={MSG.subtitle}
-          />
-          <CardRow cardOptions={options} />
-        </div>
-        <div className={styles.buttons}>
-          <Button
-            appearance={{ theme: 'secondary' }}
-            type="cancel"
-            text={MSG.back}
-          />
-          <Button
-            onClick={this.openGasDialog}
-            appearance={{ theme: 'primary' }}
-            text={MSG.confirm}
-          />
-        </div>
-      </section>
+      <Fragment>
+        {isCreatingColony ? (
+          <CreatingColony />
+        ) : (
+          <section className={styles.content}>
+            <div className={styles.finalContainer}>
+              <Heading
+                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+                text={MSG.title}
+              />
+              <Heading
+                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+                text={MSG.subtitle}
+              />
+              <CardRow cardOptions={options} />
+            </div>
+            <div className={styles.buttons}>
+              <Button
+                appearance={{ theme: 'secondary' }}
+                type="cancel"
+                text={MSG.back}
+              />
+              <Button
+                onClick={this.handleColonyCreate}
+                appearance={{ theme: 'primary' }}
+                text={MSG.confirm}
+              />
+            </div>
+          </section>
+        )}
+      </Fragment>
     );
   }
 }
 
-StepCreateColony.displayName = displayName;
-
-const StepWithDialog = withDialog()(StepCreateColony);
-
-export const Step = StepWithDialog;
-
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
+
+export const Step = StepCreateColony;
