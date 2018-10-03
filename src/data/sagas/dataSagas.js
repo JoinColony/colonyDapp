@@ -54,7 +54,7 @@ function* initializeData(action): Saga<void> {
   yield call(dataContext.initializeData, dataAPI);
 }
 
-export function* dataSagas(): any {
+export default function* dataSagas(): any {
   yield takeEvery(INITIALIZE_DATA, initializeData);
   yield takeEvery(EDIT_PROFILE, editProfile);
   yield takeEvery(LOAD_PROFILE, getWholeProfile);

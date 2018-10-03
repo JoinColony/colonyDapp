@@ -1,2 +1,4 @@
 // @flow
-export * from './dataReducer';
+import dataReducer from './dataReducer';
+
+export default dataReducer;

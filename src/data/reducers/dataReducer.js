@@ -6,7 +6,7 @@ import { INITIAL_STATE, UPDATE_PROFILE } from '../actionTypes';
 
 import type { Action } from '../types';
 
-export function dataReducer(state: {} = INITIAL_STATE, action: Action) {
+export default function dataReducer(state: {} = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case UPDATE_PROFILE: {
       const {
