@@ -27,6 +27,18 @@ function* editProfile(action): Saga<void> {
   yield put(setUserProfileContent({ profileKey, property, value: result }));
 }
 
+function* setWholeProfile(action): Saga<void> {
+  const { update: { profileKey, properties } } = action.payload;
+  const { dataAPI } = dataContext;
+  const result =
+    profileKey === 'localStorage'
+      ? yield call(putInLocalStorage, properties, profileKey)
+      : yield call(dataAPI.setUserProfile, properties, profileKey);
+  yield put(
+    setUserProfileContent({ profileKey, property: 'profile', value: result }),
+  );
+}
+
 function* getWholeProfile(action): Saga<void> {
   const { profileKey } = action.payload;
   const { dataAPI } = dataContext;
