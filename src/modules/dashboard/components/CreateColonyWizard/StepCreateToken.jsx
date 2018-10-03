@@ -5,6 +5,8 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import type { SubmitFn } from '~core/Wizard';
+
 import { Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -14,8 +16,6 @@ import ExternalLink from '~core/ExternalLink';
 import styles from './StepCreateToken.css';
 
 import CreatingToken from './CreatingToken.jsx';
-
-import type { SubmitFn } from '~core/Wizard';
 
 const MSG = defineMessages({
   heading: {

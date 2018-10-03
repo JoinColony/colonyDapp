@@ -22,7 +22,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  openDialog: (dialogName: string) => DialogType,
+  openDialog: string => DialogType,
 };
 
 class CreatingToken extends Component<Props> {

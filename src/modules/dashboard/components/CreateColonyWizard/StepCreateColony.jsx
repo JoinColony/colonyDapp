@@ -5,6 +5,9 @@ import type { MessageDescriptor } from 'react-intl';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { SubmitFn } from '~core/Wizard';
+import type { DialogType } from '~core/Dialog';
+
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
@@ -12,14 +15,12 @@ import styles from './StepCreateColony.css';
 
 import CreatingColony from './CreatingColony.jsx';
 
-import type { SubmitFn } from '~core/Wizard';
-
 type FormValues = {};
 
 type Props = {
   nextStep: () => void,
   previousStep: () => void,
-  openDialog: string => void,
+  openDialog: string => DialogType,
 } & FormikProps<FormValues>;
 
 type State = {
