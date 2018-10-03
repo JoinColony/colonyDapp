@@ -1,4 +1,7 @@
+### A Simple Card
 
 ```jsx
-<Card />
+<Card>
+  <p>This is some card content</p>
+</Card>
 ```

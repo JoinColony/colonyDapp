@@ -1,10 +1,41 @@
 
 .main {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  display: grid;
+  grid-gap: 20px;
 }
 
-.cardItem {
-  flex: 1;
+.numColsAuto {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.numCols2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.numCols3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.numCols4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.numCols5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.numCols6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.numCols7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.numCols8 {
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.numCols9 {
+  grid-template-columns: repeat(9, 1fr);
 }
