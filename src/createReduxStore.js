@@ -10,6 +10,7 @@ import walletReducer from './modules/wallet/reducers';
 import walletSagas from './modules/wallet/sagas';
 import colonySagas from './modules/dashboard/sagas';
 import history from './history';
+import { dataReducer, dataSagas, initializeData } from './data';
 
 const rootReducer = combineReducers({
   wallet: walletReducer,
@@ -33,7 +34,7 @@ const store = createStore(
 
 sagaMiddleware.run(rootSaga);
 
-// Actually this action should be run upon login
+// TODO this action should be run upon login
 const rootRepo = '/tmp/dataTests';
 initializeData(store.dispatch, rootRepo).then(result => console.log(result));
 
