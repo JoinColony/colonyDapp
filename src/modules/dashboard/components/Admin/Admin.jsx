@@ -6,7 +6,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-git a
+
+import AdminNavigation from './AdminNavigation.jsx';
+
 import styles from './Admin.css';
 
 const MSG = defineMessages({
@@ -73,7 +75,9 @@ export default class Admin extends Component<Props, State> {
   render() {
     return (
       <div className={styles.main}>
-        <aside className={styles.colonyInfo}>Colony Settings</aside>
+        <aside className={styles.colonyInfo}>
+          <AdminNavigation />
+        </aside>
         <main className={styles.content}>
           <Tabs>
             <TabList>
