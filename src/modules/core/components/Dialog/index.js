@@ -2,4 +2,4 @@
 
 export { default } from './Dialog.jsx';
 
-export type { Cancel, Close, DialogComponent } from './types';
+export type { Cancel, Close, DialogComponent, DialogType } from './types';

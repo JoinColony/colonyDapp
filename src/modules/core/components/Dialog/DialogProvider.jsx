@@ -5,17 +5,9 @@ import type { Node } from 'react';
 import React, { Component, Fragment } from 'react';
 import nanoid from 'nanoid';
 
-import type { Cancel, Close, DialogComponent } from './types';
+import type { DialogComponent, DialogType } from './types';
 
 const { Provider, Consumer: ContextConsumer } = React.createContext({});
-
-type DialogType = {
-  Dialog: DialogComponent,
-  cancel: Cancel,
-  close: Close,
-  key: string,
-  props: { [string]: any },
-};
 
 type Props = {
   children: Node,
@@ -38,7 +30,7 @@ class DialogProvider extends Component<Props, State> {
   pushDialog = (
     dialogKey: string,
     props: { [string]: any },
-  ): Promise<any> | void => {
+  ): DialogType | void => {
     const { dialogComponents } = this.props;
     const Dialog = dialogComponents[dialogKey];
     if (!Dialog) {
@@ -69,11 +61,12 @@ class DialogProvider extends Component<Props, State> {
       close,
       key,
       props,
+      afterClosed: promise,
     };
     this.setState(({ openDialogs }) => ({
       openDialogs: [...openDialogs, dialog],
     }));
-    return promise;
+    return dialog;
   };
 
   closeDialog = (key: string) => {

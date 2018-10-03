@@ -1,7 +1,8 @@
 /* @flow */
-import React from 'react';
+import type { DialogType } from '~core/Dialog';
+
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
-import { compose, lifecycle } from 'recompose';
 
 import DialogProvider from '~core/Dialog/DialogProvider.jsx';
 import Heading from '~core/Heading';
@@ -22,27 +23,37 @@ const MSG = defineMessages({
 
 const displayName = 'CreateColonyWizard.CreatingToken';
 
-const CreatingToken = () => (
-  <DialogProvider>
-    <LoadingTemplate loadingText={MSG.loadingText}>
-      <Heading
-        text={MSG.loaderDescription}
-        appearance={{ size: 'medium', weight: 'thin' }}
-      />
-    </LoadingTemplate>
-  </DialogProvider>
-);
+type Props = {
+  openDialog: (dialogName: string) => DialogType,
+};
+
+class CreatingToken extends Component<Props> {
+  tokenCreationDialog: DialogType;
+
+  componentDidMount() {
+    const { openDialog } = this.props;
+    // TODO use gas station dialog here once implemented
+    this.tokenCreationDialog = openDialog('ActivityBarExample');
+  }
+
+  componentWillUnmount() {
+    this.tokenCreationDialog.close();
+  }
+
+  render() {
+    return (
+      <DialogProvider>
+        <LoadingTemplate loadingText={MSG.loadingText}>
+          <Heading
+            text={MSG.loaderDescription}
+            appearance={{ size: 'medium', weight: 'thin' }}
+          />
+        </LoadingTemplate>
+      </DialogProvider>
+    );
+  }
+}
 
 CreatingToken.displayName = displayName;
 
-const enhance = compose(
-  withDialog(),
-  lifecycle({
-    componentDidMount() {
-      const { openDialog } = this.props;
-      openDialog('ActivityBarExample');
-    },
-  }),
-);
-
-export default enhance(CreatingToken);
+export default withDialog()(CreatingToken);
