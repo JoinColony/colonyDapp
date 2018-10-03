@@ -41,3 +41,6 @@ export const JOIN_COLONY: 'JOIN_COLONY' = 'JOIN_COLONY';
 export const ADD_DOMAIN_TO_COLONY = 'ADD_DOMAIN_TO_COLONY';
 export const ADD_TASK_TO_DOMAIN = 'ADD_TASK_TO_DOMAIN';
 export const ADD_COMMENT_TO_TASK = 'ADD_COMMENT_TO_TASK';
+
+export const STARTED_RESPONSE: string =
+  'data API started and stored in context';

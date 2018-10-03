@@ -10,6 +10,7 @@ import {
   LOAD_PROFILE,
   initialData,
   setUserProfileContent,
+  STARTED_RESPONSE,
 } from '../actions';
 
 function* editProfile(action): Saga<void> {
@@ -46,7 +47,7 @@ function* initializeData(action): Saga<void> {
   });
 
   yield call(dataAPI.ready);
-  yield call(resolve, 'data API started and stored in context');
+  yield call(resolve, STARTED_RESPONSE);
 
   yield call(dataContext.initializeData, dataAPI);
 }
