@@ -1,13 +1,21 @@
 // @flow
 import type { OrbitKVStore, UserProfileType } from '../types';
 
+const NOT_INITIALIZED_MESSAGE =
+  'Please use UserProfile.create to initialize the class before attempting to use it.';
+
 class UserProfile {
   _store: OrbitKVStore;
   initialized: boolean;
 
   constructor(store: OrbitKVStore) {
     this._store = store;
-    this.initialize();
+  }
+
+  static async create(store: OrbitKVStore) {
+    const userProfile = new UserProfile(store);
+    await userProfile.initialize();
+    return userProfile;
   }
 
   isEmpty(): boolean {
@@ -15,7 +23,6 @@ class UserProfile {
   }
 
   async setProperty(property: string, value: any) {
-    await this.initialize();
     let prop = this.getProperty(property);
     if (Array.isArray(prop)) {
       prop.push(value);
@@ -27,21 +34,20 @@ class UserProfile {
     return prop;
   }
 
-  async getProperty(property: string) {
-    await this.initialize();
+  getProperty(property: string) {
+    if (!this.initialized) throw new Error(NOT_INITIALIZED_MESSAGE);
     return this._store.get(property);
   }
 
   async setWholeProfile(properties: UserProfileType) {
-    await this.initialize();
     Object.keys(properties).forEach(key =>
       this._store.put(key, properties[key]),
     );
     return properties;
   }
 
-  async getWholeProfile(): Promise<UserProfileType> {
-    await this.initialize();
+  getWholeProfile(): Promise<UserProfileType> {
+    if (!this.initialized) throw new Error(NOT_INITIALIZED_MESSAGE);
     const name = this._store.get('name');
     const bio = this._store.get('bio');
     const avatar = this._store.get('avatar');
