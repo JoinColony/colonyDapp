@@ -7,7 +7,7 @@ import { fromWei } from 'ethjs-unit';
 
 import { getMainClasses } from '~utils/css';
 
-import styles from './Number.css';
+import styles from './Numeral.css';
 
 type Appearance = {
   theme: 'primary' | 'grey' | 'dark',
@@ -33,7 +33,7 @@ type Props = {
   integerSeparator?: string,
 };
 
-const Number = ({
+const Numeral = ({
   appearance,
   className,
   decimals: truncate,
@@ -68,4 +68,4 @@ const Number = ({
   );
 };
 
-export default Number;
+export default Numeral;

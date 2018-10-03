@@ -5,7 +5,7 @@ import BN from 'bn.js';
 import cx from 'classnames';
 
 import { Tooltip } from '../Popover';
-import Number from '../Number';
+import Numeral from '../Numeral';
 
 import styles from './PayoutsList.css';
 
@@ -45,7 +45,7 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
     <div className={styles.main}>
       <div className={styles.payout}>
         {firstPayouts.map(payout => (
-          <Number
+          <Numeral
             className={cx(styles.payoutNumber, {
               [styles.native]: payout.symbol === nativeToken,
             })}
@@ -62,7 +62,7 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
           content={
             <div className={styles.popoverContent}>
               {extraPayouts.map(payout => (
-                <Number
+                <Numeral
                   className={cx(styles.payoutNumber, {
                     [styles.native]: payout.symbol === nativeToken,
                   })}
