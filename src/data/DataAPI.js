@@ -46,7 +46,9 @@ export default class DataAPI {
     if (this._pinner) {
       await this._pinner.pin(store);
     }
-    return new UserProfile(store);
+    const userProfile = await UserProfile.create(store);
+
+    return userProfile;
   };
 
   /*
