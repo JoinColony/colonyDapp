@@ -2,15 +2,11 @@
 
 import update from 'react-addons-update';
 
-import { UPDATE_PROFILE } from '../actions';
+import { INITIAL_STATE, UPDATE_PROFILE } from '../actionTypes';
 
-import { INITIAL_STATE } from '../types';
-import type { Action, DataReduxStore } from '../types';
+import type { Action } from '../types';
 
-export function dataReducer(
-  state: DataReduxStore = INITIAL_STATE,
-  action: Action,
-) {
+export function dataReducer(state: {} = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case UPDATE_PROFILE: {
       const {

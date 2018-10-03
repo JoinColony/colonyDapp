@@ -1,3 +1,4 @@
 /* @flow */
+
 export * from './constants';
-export * from './userActions';
+export * from './user';

@@ -1,11 +1,6 @@
 // @flow
 
-import {
-  STATE_READY,
-  EDIT_PROFILE,
-  LOAD_PROFILE,
-  UPDATE_PROFILE,
-} from './constants';
+import { EDIT_PROFILE, LOAD_PROFILE, UPDATE_PROFILE } from '../actionTypes';
 
 import type { Action } from '../types';
 
