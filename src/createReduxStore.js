@@ -13,15 +13,17 @@ import dashboardSagas from './modules/dashboard/sagas';
 import walletSagas from './modules/wallet/sagas';
 import coreSagas from './modules/core/sagas';
 import history from './history';
+import { dataReducer, dataSagas, initializeData } from './data';
 
 import reduxPromiseListener from './createPromiseListener';
 
 const rootReducer = combineReducers({
   wallet: walletReducer,
+  data: dataReducer,
 });
 
 function* rootSaga(): any {
-  yield all([walletSagas(), dashboardSagas(), coreSagas()]);
+  yield all([walletSagas(), dashboardSagas(), coreSagas(), dataSagas()]);
 }
 
 const sagaMiddleware = createSagaMiddleware({ context });
@@ -42,5 +44,9 @@ const store = createStore(
 );
 
 sagaMiddleware.run(rootSaga);
+
+// TODO this action should be run upon login
+const rootRepo = '/tmp/dataTests';
+initializeData(store.dispatch, rootRepo).then(result => console.log(result));
 
 export default store;
