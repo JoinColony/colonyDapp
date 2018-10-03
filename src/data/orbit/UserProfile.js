@@ -1,5 +1,6 @@
 // @flow
 import type { OrbitKVStore, UserProfileType } from '../types';
+import { UserProfileSchema } from '../types';
 
 const NOT_INITIALIZED_MESSAGE =
   'Please use UserProfile.create to initialize the class before attempting to use it.';
@@ -49,26 +50,13 @@ class UserProfile {
 
   getWholeProfile(): Promise<UserProfileType> {
     if (!this.initialized) throw new Error(NOT_INITIALIZED_MESSAGE);
-    const name = this._store.get('name');
-    const bio = this._store.get('bio');
-    const avatar = this._store.get('avatar');
-    const colonies = this._store.get('colonies');
-    const tasks = this._store.get('tasks');
-    const ensName = this._store.get('ensName');
-    const location = this._store.get('location');
-    const walletAddress = this._store.get('walletAddress');
-    const website = this._store.get('website');
-    return {
-      name,
-      bio,
-      avatar,
-      colonies,
-      tasks,
-      ensName,
-      location,
-      walletAddress,
-      website,
-    };
+
+    const profile = {};
+    Object.keys(UserProfileSchema).forEach(key => {
+      profile[key] = this._store.get(key);
+    });
+
+    return profile;
   }
 
   get address() {
@@ -85,15 +73,10 @@ class UserProfile {
     if (this.initialized) return;
     if (this.isEmpty()) {
       await this._store.put('created', new Date().toUTCString());
-      await this._store.put('colonies', []);
-      await this._store.put('tasks', []);
-      await this._store.put('name', 'unset');
-      await this._store.put('bio', 'unset');
-      await this._store.put('avatar', 'unset');
-      await this._store.put('ensName', 'unset');
-      await this._store.put('location', 'unset');
-      await this._store.put('walletAddress', 'unset');
-      await this._store.put('website', 'unset');
+      const putPromises = Object.keys(UserProfileSchema).map(
+        async key => await this._store.put(key, UserProfileSchema[key]),
+      );
+      await Promise.all(putPromises);
     }
     this.initialized = true;
   }
