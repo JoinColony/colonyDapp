@@ -1,6 +1,6 @@
 /* @flow */
 
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 import { INITIAL_STATE, UPDATE_PROFILE } from '../actionTypes';
 
