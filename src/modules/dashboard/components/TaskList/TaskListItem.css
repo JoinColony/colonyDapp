@@ -2,9 +2,15 @@
 
 /* Use td.className to be able to overwrite table styles */
 
+:root {
+  --cell-padding-vertical: 25px;
+  --cell-padding-horizontal: 40px;
+}
+
 td.taskDetails {
   flex-wrap: wrap;
-  width: calc(100% - 210px);
+  padding: var(--cell-padding-vertical) var(--cell-padding-horizontal);
+  width: calc(100% - 230px);
   font-weight: var(--weight-semi);
 }
 
@@ -23,11 +29,12 @@ td.taskDetails {
 
 td.taskPayouts {
   justify-content: flex-end;
+  padding: var(--cell-padding-vertical) 0;
   width: 150px;
 }
 
 td.userAvatar {
   justify-content: center;
-  padding: 10px;
+  padding: var(--cell-padding-vertical) 0;
   width: 60px;
 }
