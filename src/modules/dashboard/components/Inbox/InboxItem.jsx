@@ -1,9 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import relative from 'sugar-date/date/relative';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 
@@ -79,7 +79,9 @@ const InboxItem = ({
         </span>
         <span>{domain}</span>
         <span className={styles.pipe}>|</span>
-        <span className={styles.time}>{relative(new Date(createdAt))}</span>
+        <span className={styles.time}>
+          <TimeRelative value={createdAt} />
+        </span>
       </span>
     </TableCell>
   </TableRow>
