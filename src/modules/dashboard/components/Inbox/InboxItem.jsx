@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import camelcase from 'camelcase';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
@@ -9,7 +10,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './InboxItem.css';
 
-import type { InboxElement } from './types';
+import type { InboxElement, InboxAction } from './types';
 
 const MSG = defineMessages({
   preposition: {
@@ -17,24 +18,28 @@ const MSG = defineMessages({
     defaultMessage: 'in',
   },
   actionAddedSkillTag: {
-    id: 'ActivityFeedItem.actionAddedSkillTag',
+    id: 'dashboard.Inbox.InboxItem.actionAddedSkillTag',
     defaultMessage: '{user} added skill tag to {task}',
   },
   actionAssignedUser: {
-    id: 'ActivityFeedItem.actionAssignedUser',
+    id: 'dashboard.Inbox.InboxItem.actionAssignedUser',
     defaultMessage: '{user} assigned {task}',
   },
   actionCommentedOn: {
-    id: 'ActivityFeedItem.actionCommentedOn',
+    id: 'dashboard.Inbox.InboxItem.actionCommentedOn',
     defaultMessage: '{user} commented on {task}',
   },
   actionAsksToConfirmAssignment: {
-    id: 'ActivityFeedItem.actionAsksToConfirmAssignment',
+    id: 'dashboard.Inbox.InboxItem.actionAsksToConfirmAssignment',
     defaultMessage: '{user} asks to confirm assignment {task}',
   },
   actionAssignedYouATask: {
-    id: 'ActivityFeedItem.actionAssignedYouATask',
+    id: 'dashboard.Inbox.InboxItem.actionAssignedYouATask',
     defaultMessage: '{user} assigned you {task}',
+  },
+  inboxMeta: {
+    id: 'dashboard.Inbox.InboxItem.inboxMeta',
+    defaultMessage: '{colonyName} in {domain}',
   },
 });
 
@@ -43,6 +48,9 @@ const displayName = 'dashboard.Inbox.InboxItem';
 type Props = {
   item: InboxElement,
 };
+
+const getEventActionKey = (actionType: InboxAction) =>
+  camelcase(`action-${actionType}`);
 
 const InboxItem = ({
   item: { user, action, task, domain, colonyName, createdAt },
@@ -57,7 +65,7 @@ const InboxItem = ({
       />
       <FormattedMessage
         className={styles.inboxAction}
-        {...MSG[action]}
+        {...MSG[getEventActionKey(action)]}
         values={{
           user: (
             <span className={styles.inboxDetail} title={user.username}>
@@ -73,11 +81,14 @@ const InboxItem = ({
       />
 
       <span className={styles.additionalDetails}>
-        <span>{colonyName}</span>
-        <span className={styles.preposition}>
-          <FormattedMessage {...MSG.preposition} />
-        </span>
-        <span>{domain}</span>
+        <FormattedMessage
+          {...MSG.inboxMeta}
+          values={{
+            colonyName,
+            domain,
+          }}
+        />
+
         <span className={styles.pipe}>|</span>
         <span className={styles.time}>
           <TimeRelative value={createdAt} />

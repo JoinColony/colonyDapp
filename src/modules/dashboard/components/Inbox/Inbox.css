@@ -2,15 +2,17 @@
 @import 'variables.css';
 
 .inboxContainer {
-  align-self: center;
   height: 525px;
-  width: 98%;
   max-width: 940px;
-  overflow: scroll;
   box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
 }
 
 .templateContainer {
   height: 100%;
-  background-color: var(--grey-blue-2);
+  overflow: auto;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
 }

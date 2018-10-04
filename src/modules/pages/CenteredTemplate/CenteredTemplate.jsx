@@ -9,7 +9,7 @@ import AvatarDropdown from '../../users/components/AvatarDropdown';
 
 import Navigation from '../../users/components/Navigation';
 
-import styles from './ProfileTemplate.css';
+import styles from './CenteredTemplate.css';
 
 type Appearance = {
   theme: 'alt',
@@ -18,20 +18,15 @@ type Appearance = {
 type Props = {
   appearance?: Appearance,
   children: Node,
-  asideContent?: Node,
 };
 
-// TODO: replace this with actual events, not sure where they will me from yet
-const mockEvents = [{ handled: true }];
+const displayName = 'pages.CenteredTemplate';
 
-const displayName = 'pages.ProfileTemplate';
-
-const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
+const CenteredTemplate = ({ appearance, children }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
-    <aside className={styles.sidebar}>{asideContent}</aside>
     <div className={styles.mainContainer}>
       <header className={styles.header}>
-        <Navigation events={mockEvents} />
+        <Navigation />
         <AvatarDropdown />
       </header>
       <main className={styles.mainContent}>{children}</main>
@@ -39,6 +34,6 @@ const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
   </div>
 );
 
-ProfileTemplate.displayName = displayName;
+CenteredTemplate.displayName = displayName;
 
-export default ProfileTemplate;
+export default CenteredTemplate;

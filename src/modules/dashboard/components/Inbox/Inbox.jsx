@@ -8,7 +8,7 @@ import Heading from '~core/Heading';
 
 import InboxItem from './InboxItem.jsx';
 
-import ProfileTemplate from '../../../pages/ProfileTemplate';
+import CenteredTemplate from '../../../pages/CenteredTemplate';
 
 import mockInbox from './__datamocks__/mockInbox';
 
@@ -25,21 +25,23 @@ const displayName = 'dashboard.Inbox';
 
 const Inbox = () => (
   <div className={styles.templateContainer}>
-    <ProfileTemplate>
-      <Heading
-        appearance={{ size: 'medium', margin: 'small' }}
-        text={MSG.title}
-      />
-      <div className={styles.inboxContainer}>
-        <Table scrollable appearance={{ separators: 'borders' }}>
-          <TableBody>
-            {mockInbox.map(item => (
-              <InboxItem key={item.id} item={item} />
-            ))}
-          </TableBody>
-        </Table>
+    <CenteredTemplate>
+      <div className={styles.contentContainer}>
+        <Heading
+          appearance={{ size: 'medium', margin: 'small' }}
+          text={MSG.title}
+        />
+        <div className={styles.inboxContainer}>
+          <Table scrollable appearance={{ separators: 'borders' }}>
+            <TableBody>
+              {mockInbox.map(item => (
+                <InboxItem key={item.id} item={item} />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-    </ProfileTemplate>
+    </CenteredTemplate>
   </div>
 );
 

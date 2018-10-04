@@ -3,7 +3,7 @@
 const mockInbox = [
   {
     id: 1,
-    action: 'actionAddedSkillTag',
+    action: 'addedSkillTag',
     task: 'Develop Github integration',
     domain: '#Development',
     colonyName: 'Zirtual',
@@ -15,7 +15,7 @@ const mockInbox = [
   },
   {
     id: 2,
-    action: 'actionAssignedUser',
+    action: 'assignedUser',
     task: 'Write docs for JS library',
     domain: '#Development',
     colonyName: 'UNDP',
@@ -27,7 +27,7 @@ const mockInbox = [
   },
   {
     id: 3,
-    action: 'actionCommentedOn',
+    action: 'commentedOn',
     task: 'Design Landing Page',
     domain: '#Design',
     colonyName: 'GitCoin',
@@ -39,7 +39,7 @@ const mockInbox = [
   },
   {
     id: 4,
-    action: 'actionAddedSkillTag',
+    action: 'addedSkillTag',
     task: 'Provide user research',
     domain: '#UX',
     colonyName: 'UPort',
@@ -51,7 +51,7 @@ const mockInbox = [
   },
   {
     id: 5,
-    action: 'actionCommentedOn',
+    action: 'commentedOn',
     task: 'Write financial report',
     domain: '#Finance',
     colonyName: 'UPort',
@@ -63,7 +63,7 @@ const mockInbox = [
   },
   {
     id: 6,
-    action: 'actionAssignedUser',
+    action: 'assignedUser',
     task: 'Prepare presentation',
     domain: '#Social Science',
     colonyName: 'OECD',
@@ -75,7 +75,7 @@ const mockInbox = [
   },
   {
     id: 7,
-    action: 'actionAddedSkillTag',
+    action: 'addedSkillTag',
     task: 'Provide Feedback to students',
     domain: '#Math',
     colonyName: 'Cornelsen',

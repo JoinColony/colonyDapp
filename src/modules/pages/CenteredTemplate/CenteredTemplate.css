@@ -1,0 +1,37 @@
+@import 'variables.css';
+
+:root {
+  --padding-horizontal: 90px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 10px 0 0;
+}
+
+.mainContainer {
+  width: 100%;
+}
+
+.mainContent {
+  display: flex;
+  justify-content: center;
+  padding: 20px var(--padding-horizontal);
+  height: 100%;
+}
+
+.themeAlt {
+  composes: main;
+  background-color: var(--grey-blue-2);
+}
+
+.themeAlt .mainContent {
+  padding: 80px var(--padding-horizontal);
+}

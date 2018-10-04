@@ -1,10 +1,10 @@
 /* @flow */
 export type InboxAction =
-  | 'actionAssignedYouATask'
-  | 'actionAsksToConfirmAssignment'
-  | 'actionCommentedOn'
-  | 'actionAddedSkillTag'
-  | 'actionAssignedUser';
+  | 'assignedYouATask'
+  | 'asksToConfirmAssignment'
+  | 'commentedOn'
+  | 'addedSkillTag'
+  | 'assignedUser';
 
 export type InboxElement = {
   id: number,
