@@ -6,3 +6,5 @@ export const UPDATE_ENTIRE_PROFILE = 'UPDATE_ENTIRE_PROFILE';
 
 export const LOAD_PROFILE = 'LOAD_PROFILE';
 export const FETCH_PROFILE = 'FETCH_PROFILE';
+
+export const SET_PROFILE = 'SET_PROFILE';

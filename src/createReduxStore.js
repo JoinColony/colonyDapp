@@ -36,6 +36,6 @@ sagaMiddleware.run(rootSaga);
 
 // TODO this action should be run upon login
 const rootRepo = '/tmp/dataTests';
-initializeData(store.dispatch, rootRepo).then(result => console.log(result));
+initializeData(store.dispatch, rootRepo);
 
 export default store;

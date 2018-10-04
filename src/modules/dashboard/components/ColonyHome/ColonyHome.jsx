@@ -163,7 +163,7 @@ export default class ColonyHome extends Component<Props, State> {
           <Button
             text={MSG.newTaskButton}
             appearance={{ theme: 'primary', size: 'large' }}
-            onClick={() => console.log('Create a new task')}
+            onClick={() => 'unset'}
           />
           <ul className={styles.domainsFilters}>
             <Heading

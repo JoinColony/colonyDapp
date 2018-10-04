@@ -13,7 +13,9 @@ import type { Action } from '../types';
 export default function dataReducer(state: {} = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case UPDATE_ENTIRE_PROFILE: {
-      const { update: { profileKey, value: profileValue } } = action.payload;
+      const {
+        update: { profileKey, value: profileValue },
+      } = action.payload;
 
       return update(state, {
         data: { profiles: { [profileKey]: { $set: profileValue } } },
