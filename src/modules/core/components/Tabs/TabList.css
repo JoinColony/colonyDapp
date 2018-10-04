@@ -22,3 +22,25 @@
   justify-content: flex-start;
   align-items: center;
 }
+
+/*
+ * Themeing
+ *
+ * Note: For the tab list the theme is optional!
+ * At this point in time there is only the vertical theme.
+ */
+
+/*
+ * Vertical:
+ * Dark NavLinks with turquoise active state
+ */
+
+.themeVertical > ul {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  line-height: 3;
+  font-weight: var(--weight-medium);
+  color: var(--colony-black);
+  margin-left: 10px;
+}

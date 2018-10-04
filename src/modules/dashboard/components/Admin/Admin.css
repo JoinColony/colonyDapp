@@ -16,47 +16,11 @@
 .colonyInfo {
   grid-column: 1;
   grid-row: 1;
+  border-right: 1px solid grey;
 }
 
 .content {
   height: 100%;
   grid-column: 2;
   grid-row: 1;
-}
-
-.noTasks {
-  margin-bottom: 30px;
-  max-width: 420px;
-  font-size: var(--size-medium-l);
-  line-height: 2em;
-}
-
-.sidebar {
-  grid-column: 3;
-  grid-row: 1;
-}
-
-.domainsFilters {
-  margin-top: 40px;
-}
-
-.filterItem {
-  margin: 0 0 20px 10px;
-  padding: 0;
-  border: none;
-  background: none;
-  font-weight: var(--weight-semi);
-  color: var(--text);
-  cursor: pointer;
-  outline: none;
-}
-
-.filterItem:hover {
-  color: var(--primary);
-  opacity: 0.8;
-}
-
-.filterItemActive {
-  composes: filterItem;
-  color: var(--primary);
 }

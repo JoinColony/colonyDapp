@@ -3,19 +3,16 @@ import React from 'react';
 
 import { defineMessages } from 'react-intl';
 
-import { INBOX_ROUTE, USER_ROUTE, WALLET_ROUTE } from '~routes';
-
-import Icon from '~core/Icon';
-import NavLink from '~core/NavLink';
+import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import styles from './AdminNavigation.css';
 
 const displayName = 'users.AdminNavigation';
 
 const MSG = defineMessages({
-  dashboardTitle: {
-    id: 'AdminNavigation.dashboardTitle',
-    defaultMessage: 'Go to your Dashboard',
+  colonySettings: {
+    id: 'AdminNavigation.colonySettings',
+    defaultMessage: 'Colony Settings',
   },
   walletTitle: {
     id: 'AdminNavigation.walletTitle',
@@ -28,35 +25,27 @@ const MSG = defineMessages({
 });
 
 const AdminNavigation = () => (
-  <nav className={styles.main}>
-    <NavLink
-      to={USER_ROUTE}
-      className={styles.adminNavigationItem}
-      activeClassName={styles.adminNavigationItemActive}
-    >
-      Profile
-    </NavLink>
-    <NavLink
-      to={USER_ROUTE}
-      className={styles.adminNavigationItem}
-      activeClassName={styles.adminNavigationItemActive}
-    >
-      Tokens
-    </NavLink>
-    <NavLink
-      to={USER_ROUTE}
-      className={styles.adminNavigationItem}
-      activeClassName={styles.adminNavigationItemActive}
-    >
-      Transaction
-    </NavLink>
-    <NavLink
-      to={USER_ROUTE}
-      className={styles.adminNavigationItem}
-      activeClassName={styles.adminNavigationItemActive}
-    >
-      Organisation
-    </NavLink>
+  <nav>
+    <Tabs className={styles.navigationTabContainer}>
+      <TabList appearance={{ theme: 'vertical' }} headline={MSG.colonySettings}>
+        <Tab className={styles.oneTab}>Profile</Tab>
+        <Tab className={styles.oneTab}>Tokens</Tab>
+        <Tab className={styles.oneTab}>Transaction</Tab>
+        <Tab className={styles.oneTab}>Organisation</Tab>
+      </TabList>
+    </Tabs>
+    <TabPanel>
+      <div className={styles.placeHolder} />
+    </TabPanel>
+    <TabPanel>
+      <div className={styles.placeHolder} />
+    </TabPanel>
+    <TabPanel>
+      <div className={styles.placeHolder} />
+    </TabPanel>
+    <TabPanel>
+      <div className={styles.placeHolder} />
+    </TabPanel>
   </nav>
 );
 
