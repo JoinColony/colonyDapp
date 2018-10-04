@@ -3,10 +3,11 @@ import type { OrbitKVStore, UserProfileType } from '../types';
 import { UserProfileSchema } from '../types';
 
 const NOT_INITIALIZED_MESSAGE =
-  'Please use UserProfile.create to initialize the class before attempting to use it.';
+  'Please use UserProfile.create to initialize the class.';
 
 class UserProfile {
   _store: OrbitKVStore;
+
   initialized: boolean;
 
   constructor(store: OrbitKVStore) {
@@ -41,11 +42,11 @@ class UserProfile {
   }
 
   async setWholeProfile(properties: UserProfileType) {
-    const putPromises = Object.keys(properties).map(
-      async key => await this._store.put(key, properties[key]),
+    const putPromises = Object.keys(properties).map(key =>
+      this._store.put(key, properties[key]),
     );
 
-    return await Promise.all(putPromises).then(() => properties);
+    return Promise.all(putPromises).then(() => properties);
   }
 
   getWholeProfile(): Promise<UserProfileType> {
@@ -73,8 +74,8 @@ class UserProfile {
     if (this.initialized) return;
     if (this.isEmpty()) {
       await this._store.put('created', new Date().toUTCString());
-      const putPromises = Object.keys(UserProfileSchema).map(
-        async key => await this._store.put(key, UserProfileSchema[key]),
+      const putPromises = Object.keys(UserProfileSchema).map(key =>
+        this._store.put(key, UserProfileSchema[key]),
       );
       await Promise.all(putPromises);
     }

@@ -11,10 +11,13 @@ import {
   INITIALIZE_DATA,
   LOAD_PROFILE,
   STARTED_RESPONSE,
+  SET_PROFILE,
 } from '../actionTypes';
 
 function* editProfile(action): Saga<void> {
-  const { update: { profileKey, property, value } } = action.payload;
+  const {
+    update: { profileKey, property, value },
+  } = action.payload;
   const { dataAPI } = dataContext;
   const result = yield call(
     dataAPI.editUserProfile,
@@ -27,12 +30,11 @@ function* editProfile(action): Saga<void> {
 }
 
 function* setWholeProfile(action): Saga<void> {
-  const { update: { profileKey, properties } } = action.payload;
+  const {
+    update: { profileKey, properties },
+  } = action.payload;
   const { dataAPI } = dataContext;
-  const result =
-    profileKey === 'localStorage'
-      ? yield call(putInLocalStorage, properties, profileKey)
-      : yield call(dataAPI.setUserProfile, properties, profileKey);
+  const result = yield call(dataAPI.setUserProfile, properties, profileKey);
 
   yield put(setEntireUserProfile({ profileKey, value: result }));
 }
@@ -67,5 +69,6 @@ function* initializeData(action): Saga<void> {
 export default function* dataSagas(): any {
   yield takeEvery(INITIALIZE_DATA, initializeData);
   yield takeEvery(EDIT_PROFILE, editProfile);
+  yield takeEvery(SET_PROFILE, setWholeProfile);
   yield takeEvery(LOAD_PROFILE, getWholeProfile);
 }
