@@ -1,11 +1,11 @@
 /* eslint-env jest */
-import Data from '../index';
+import { DataAPI } from '../index';
 
 describe('Data component', () => {
   let data = null;
 
   beforeAll(async () => {
-    data = await Data.fromDefaultConfig();
+    data = await DataAPI.fromDefaultConfig();
   });
 
   afterAll(async () => {
@@ -16,7 +16,7 @@ describe('Data component', () => {
     expect(data).toBeTruthy();
   });
 
-  test('The Data Object has a list peer method', async () => {
-    expect(data.listPeers).toBeTruthy();
+  test('The Data Object has a getUserProfileData method', async () => {
+    expect(data.getUserProfileData).toBeTruthy();
   });
 });

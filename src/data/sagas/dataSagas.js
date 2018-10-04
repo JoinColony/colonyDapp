@@ -2,7 +2,7 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import Data from '../DataAPI';
-import dataContext from '~context/dataAPI';
+import dataContext from '../../context/dataAPI';
 
 import { setEntireUserProfile, setUserProfileContent } from '../actionCreators';
 
