@@ -13,29 +13,25 @@ import styles from './InboxItem.css';
 import type { InboxElement, InboxAction } from './types';
 
 const MSG = defineMessages({
-  preposition: {
-    id: 'dashboard.Inbox.InboxItem.preposition',
-    defaultMessage: 'in',
-  },
   actionAddedSkillTag: {
     id: 'dashboard.Inbox.InboxItem.actionAddedSkillTag',
-    defaultMessage: '{user} added skill tag to {task}',
+    defaultMessage: '{user} added skill tag to: {task}',
   },
   actionAssignedUser: {
     id: 'dashboard.Inbox.InboxItem.actionAssignedUser',
-    defaultMessage: '{user} assigned {task}',
+    defaultMessage: '{user} assigned you a task: {task}',
   },
   actionCommentedOn: {
     id: 'dashboard.Inbox.InboxItem.actionCommentedOn',
-    defaultMessage: '{user} commented on {task}',
+    defaultMessage: '{user} commented on: {task}',
   },
   actionAsksToConfirmAssignment: {
     id: 'dashboard.Inbox.InboxItem.actionAsksToConfirmAssignment',
-    defaultMessage: '{user} asks to confirm assignment {task}',
+    defaultMessage: '{user} asks to confirm assignment: {task}',
   },
   actionAssignedYouATask: {
     id: 'dashboard.Inbox.InboxItem.actionAssignedYouATask',
-    defaultMessage: '{user} assigned you {task}',
+    defaultMessage: '{user} assigned you a task: {task}',
   },
   inboxMeta: {
     id: 'dashboard.Inbox.InboxItem.inboxMeta',

@@ -11,12 +11,15 @@ td.inboxDetails {
 }
 
 .inboxDetail {
-  margin: 0 5px;
   overflow: hidden;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--colony-black);
+}
+
+.inboxDetail:first-of-type {
+  margin-left: 5px;
 }
 
 .inboxAction {
@@ -34,12 +37,8 @@ td.inboxDetails {
   font-size: var(--size-small);
 }
 
-.preposition {
-  margin: 0 4px;
-}
-
 .userAvatar {
-  margin: 0 5px;
+  margin: 0 10px;
 }
 
 .time {

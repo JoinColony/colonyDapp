@@ -18,7 +18,7 @@ type Appearance = {
 type Props = {
   appearance?: Appearance,
   children: Node,
-  asideContent?: Node,
+  asideContent: Node,
 };
 
 // TODO: replace this with actual events, not sure where they will me from yet
