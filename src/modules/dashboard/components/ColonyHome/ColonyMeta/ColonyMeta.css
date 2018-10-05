@@ -1,0 +1,16 @@
+@import 'variables.css';
+
+.avatar {
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0 20px var(--temp-grey-blue-2);
+}
+
+.description {
+  margin-top: 15px;
+}
+
+.website {
+  margin-top: 25px;
+}

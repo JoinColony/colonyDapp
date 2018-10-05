@@ -10,17 +10,18 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 
 import TaskList from '~dashboard/TaskList';
-import ColonyMeta from './ColonyMeta.jsx';
+import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
 
+import mockColony from './__datamocks__/mockColony';
 import mockTasks from './__datamocks__/mockTasks';
 import mockColonies from './__datamocks__/mockColonies';
 import mockDomains from './__datamocks__/mockDomains';
 
 const MSG = defineMessages({
   tabContribute: {
-    id: 'dashboard.Dashboard.tabContribute',
+    id: 'dashboard.ColonyHome.tabContribute',
     defaultMessage: 'Contribute',
   },
   labelFilter: {
@@ -139,7 +140,7 @@ export default class ColonyHome extends Component<Props, State> {
     return (
       <div className={styles.main}>
         <aside className={styles.colonyInfo}>
-          <ColonyMeta />
+          <ColonyMeta colony={mockColony} isAdmin />
         </aside>
         <main className={styles.content}>
           <Tabs>
