@@ -61,6 +61,13 @@ module.exports = {
       ],
     },
     {
+      name: 'Cards',
+      components: [
+        './src/modules/core/components/Card/Card.jsx',
+        './src/modules/core/components/CardList/CardList.jsx',
+      ],
+    },
+    {
       name: 'Comboboxes / Pickers',
       components: [
         './src/modules/core/components/OmniPicker/OmniPicker.jsx',

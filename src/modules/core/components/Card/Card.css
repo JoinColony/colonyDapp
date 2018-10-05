@@ -1,0 +1,8 @@
+@import 'variables.css';
+
+.main {
+  padding: 10px 15px;
+  border-radius: var(--radius-tiny);
+  list-style: none;
+  box-shadow: 0 0 6px color(var(--grey-5) alpha(60%));
+}
