@@ -878,27 +878,27 @@
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
 
-"@svgr/core@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@svgr/core/-/core-3.0.0.tgz#f18f042d58f17f2f44f0a5323ded76feaad412fb"
+"@svgr/core@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@svgr/core/-/core-3.1.0.tgz#49fa80a604e250bc9fc6517edcfb94950c230538"
   dependencies:
     camelcase "^5.0.0"
     cosmiconfig "^5.0.6"
-    h2x-core "^1.1.0"
-    h2x-plugin-jsx "^1.1.0"
+    h2x-core "^1.1.1"
+    h2x-plugin-jsx "^1.2.0"
     merge-deep "^3.0.2"
     prettier "^1.14.3"
     svgo "^1.1.1"
 
-"@svgr/webpack@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@svgr/webpack/-/webpack-3.0.0.tgz#edfa25cc2f0d1d689f6008d9d3b2d5a9f69ff28c"
+"@svgr/webpack@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@svgr/webpack/-/webpack-3.1.0.tgz#030f22ac2eaeb88bf788a43998ea2faa6a7f6fce"
   dependencies:
     "@babel/core" "^7.1.2"
     "@babel/plugin-transform-react-constant-elements" "^7.0.0"
     "@babel/preset-env" "^7.1.0"
     "@babel/preset-react" "^7.0.0"
-    "@svgr/core" "^3.0.0"
+    "@svgr/core" "^3.1.0"
     loader-utils "^1.1.0"
 
 "@types/node@*":
@@ -3266,7 +3266,7 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/cssom/-/cssom-0.3.4.tgz#8cd52e8a3acfd68d3aed38ee0a640177d2f9d797"
 
-cssstyle@^1.0.0:
+cssstyle@^1.0.0, cssstyle@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-1.1.1.tgz#18b038a9c44d65f7a8e428a653b9f6fe42faf5fb"
   dependencies:
@@ -5407,12 +5407,20 @@ gzip-size@3.0.0:
   dependencies:
     duplexer "^0.1.1"
 
-h2x-core@^1.0.0, h2x-core@^1.1.0:
+h2x-core@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/h2x-core/-/h2x-core-1.1.0.tgz#dfbf2460043d8ab76c6fa90902a1557f8330221a"
   dependencies:
     h2x-generate "^1.1.0"
     h2x-parse "^1.1.0"
+    h2x-traverse "^1.1.0"
+
+h2x-core@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/h2x-core/-/h2x-core-1.1.1.tgz#7fb31ab28e30ebf11818e3c7d183487ecf489f9f"
+  dependencies:
+    h2x-generate "^1.1.0"
+    h2x-parse "^1.1.1"
     h2x-traverse "^1.1.0"
 
 h2x-generate@^1.1.0:
@@ -5428,9 +5436,22 @@ h2x-parse@^1.1.0:
     h2x-types "^1.1.0"
     jsdom "^12.0.0"
 
-h2x-plugin-jsx@^1.0.0, h2x-plugin-jsx@^1.1.0:
+h2x-parse@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/h2x-parse/-/h2x-parse-1.1.1.tgz#875712cd3be75cf736c610d279b8653b24f58385"
+  dependencies:
+    h2x-types "^1.1.0"
+    jsdom ">=11.0.0"
+
+h2x-plugin-jsx@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/h2x-plugin-jsx/-/h2x-plugin-jsx-1.1.0.tgz#cb2595c7c69e4c171f748445a1988dcc653c56e2"
+  dependencies:
+    h2x-types "^1.1.0"
+
+h2x-plugin-jsx@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/h2x-plugin-jsx/-/h2x-plugin-jsx-1.2.0.tgz#211fa02e5c4e0a07307b0005629923910e631c01"
   dependencies:
     h2x-types "^1.1.0"
 
@@ -7494,6 +7515,36 @@ jsbn@1.1.0:
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
+
+jsdom@>=11.0.0:
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-12.1.0.tgz#2c8fbd12a2c690c8a8e14cce164afa11879e57f4"
+  dependencies:
+    abab "^2.0.0"
+    acorn "^5.7.1"
+    acorn-globals "^4.1.0"
+    array-equal "^1.0.0"
+    cssom ">= 0.3.2 < 0.4.0"
+    cssstyle "^1.1.1"
+    data-urls "^1.0.1"
+    domexception "^1.0.1"
+    escodegen "^1.11.0"
+    html-encoding-sniffer "^1.0.2"
+    nwsapi "^2.0.8"
+    parse5 "5.1.0"
+    pn "^1.1.0"
+    request "^2.88.0"
+    request-promise-native "^1.0.5"
+    saxes "^3.1.2"
+    symbol-tree "^3.2.2"
+    tough-cookie "^2.4.3"
+    w3c-hr-time "^1.0.1"
+    webidl-conversions "^4.0.2"
+    whatwg-encoding "^1.0.4"
+    whatwg-mimetype "^2.1.0"
+    whatwg-url "^7.0.0"
+    ws "^6.0.0"
+    xml-name-validator "^3.0.0"
 
 jsdom@^11.5.1:
   version "11.12.0"
@@ -12543,6 +12594,12 @@ sax@>=0.6.0, sax@^1.2.4, sax@~1.2.1, sax@~1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
 
+saxes@^3.1.2:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/saxes/-/saxes-3.1.3.tgz#334ab3b802a465ccda96fff9bdefbd505546ffa8"
+  dependencies:
+    xmlchars "^1.3.1"
+
 schedule@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/schedule/-/schedule-0.5.0.tgz#c128fffa0b402488b08b55ae74bb9df55cc29cc8"
@@ -14851,6 +14908,10 @@ xmlbuilder@^8.2.2:
 xmlbuilder@~9.0.1:
   version "9.0.7"
   resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-9.0.7.tgz#132ee63d2ec5565c557e20f4c22df9aca686b10d"
+
+xmlchars@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-1.3.1.tgz#1dda035f833dbb4f86a0c28eaa6ca769214793cf"
 
 xmlhttprequest-ssl@~1.5.4:
   version "1.5.5"
