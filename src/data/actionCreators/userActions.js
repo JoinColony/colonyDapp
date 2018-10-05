@@ -4,6 +4,7 @@ import {
   EDIT_PROFILE,
   GET_PROFILE_PROPERTY,
   LOAD_PROFILE,
+  SET_PROFILE,
   UPDATE_ENTIRE_PROFILE,
   UPDATE_PROFILE,
 } from '../actionTypes';
@@ -43,8 +44,8 @@ export function setEntireUserProfile({
    Dapp uses the following actions to call Sagas to edit profile and update Redux
 */
 export function editWholeProfile(
-  profile: {},
   profileKey: string = 'my-profile',
+  profile: {},
 ): Action {
   return {
     type: SET_PROFILE,

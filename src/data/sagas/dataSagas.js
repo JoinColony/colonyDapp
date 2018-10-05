@@ -40,9 +40,9 @@ function* getWholeProfile(action): Saga<void> {
   const { profileKey } = action.payload;
   const { dataAPI } = dataContext;
   const result = yield call(dataAPI.getUserProfileData, profileKey);
+  yield put(setEntireUserProfile({ profileKey, value: result }));
+}
 
-  yield put(
-    setUserProfileContent({ profileKey, property: 'profile', value: result }),
 function* getProfileProperty(action): Saga<void> {
   const { profileKey, property } = action.payload;
   const { dataAPI } = dataContext;
