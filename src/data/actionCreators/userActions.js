@@ -22,7 +22,7 @@ export function setUserProfileContent({
 }): Action {
   return {
     type: UPDATE_PROFILE,
-    payload: { update: { profileKey, property, value } },
+    payload: { profileKey, property, value },
   };
 }
 
@@ -35,7 +35,7 @@ export function setEntireUserProfile({
 }): Action {
   return {
     type: UPDATE_ENTIRE_PROFILE,
-    payload: { update: { profileKey, value } },
+    payload: { profileKey, value },
   };
 }
 
@@ -47,8 +47,8 @@ export function editWholeProfile(
   profileKey: string = 'my-profile',
 ): Action {
   return {
-    type: EDIT_PROFILE,
-    payload: { update: { profileKey, property: 'profile', value: profile } },
+    type: SET_PROFILE,
+    payload: { profileKey, value: profile },
   };
 }
 
@@ -75,7 +75,7 @@ export function addColonyToUserProfile(
 ): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { profileKey, property: 'colonies', value: colonyId } },
+    payload: { profileKey, property: 'colonies', value: colonyId },
   };
 }
 
@@ -85,7 +85,7 @@ export function addTaskToUserProfile(
 ): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { profileKey, property: 'tasks', value: task } },
+    payload: { profileKey, property: 'tasks', value: task },
   };
 }
 
@@ -95,7 +95,7 @@ export function setUserAvatar(
 ): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { profileKey, property: 'avatar', value: avatarHash } },
+    payload: { profileKey, property: 'avatar', value: avatarHash },
   };
 }
 
@@ -105,7 +105,7 @@ export function setUserBio(
 ): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { profileKey, property: 'bio', value: bio } },
+    payload: { profileKey, property: 'bio', value: bio },
   };
 }
 
@@ -115,7 +115,7 @@ export function setUserName(
 ): Action {
   return {
     type: EDIT_PROFILE,
-    payload: { update: { profileKey, property: 'name', value: name } },
+    payload: { profileKey, property: 'name', value: name },
   };
 }
 

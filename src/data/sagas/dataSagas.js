@@ -16,9 +16,7 @@ import {
 } from '../actionTypes';
 
 function* editProfile(action): Saga<void> {
-  const {
-    update: { profileKey, property, value },
-  } = action.payload;
+  const { profileKey, property, value } = action.payload;
   const { dataAPI } = dataContext;
   const result = yield call(
     dataAPI.editUserProfile,
@@ -31,9 +29,7 @@ function* editProfile(action): Saga<void> {
 }
 
 function* setWholeProfile(action): Saga<void> {
-  const {
-    update: { profileKey, properties },
-  } = action.payload;
+  const { profileKey, value: properties } = action.payload;
   const { dataAPI } = dataContext;
   const result = yield call(dataAPI.setUserProfile, properties, profileKey);
 
