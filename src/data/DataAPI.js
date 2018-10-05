@@ -91,7 +91,7 @@ export default class DataAPI {
     property: string,
   ) => {
     const store = await this._getUserProfile(key);
-    const result = await store.getProperty(property);
+    const result = store.getProperty(property);
     return result;
   };
 
@@ -102,7 +102,7 @@ export default class DataAPI {
     key: PublicKey = 'user-profile',
   ): Promise<UserProfileType> => {
     const store = await this._getUserProfile(key);
-    const profile = await store.getWholeProfile();
+    const profile = store.getWholeProfile();
     return profile;
   };
 
