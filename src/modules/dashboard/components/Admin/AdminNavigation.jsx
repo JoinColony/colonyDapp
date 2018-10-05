@@ -1,7 +1,7 @@
 /* @flow */
 import React from 'react';
 
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
@@ -11,16 +11,24 @@ const displayName = 'users.AdminNavigation';
 
 const MSG = defineMessages({
   colonySettings: {
-    id: 'AdminNavigation.colonySettings',
+    id: 'dashboard.Admin.AdminNavigation.colonySettings',
     defaultMessage: 'Colony Settings',
   },
-  walletTitle: {
-    id: 'AdminNavigation.walletTitle',
+  tabProfile: {
+    id: 'dashboard.Admin.AdminNavigation.tabProfile',
     defaultMessage: 'Go to your Wallet',
   },
-  inboxTitle: {
-    id: 'AdminNavigation.inboxTitle',
-    defaultMessage: 'Go to your Inbox',
+  tabTokens: {
+    id: 'dashboard.Admin.AdminNavigation.tabTokens',
+    defaultMessage: 'Tokens',
+  },
+  tabTransaction: {
+    id: 'dashboard.Admin.AdminNavigation.tabTransaction',
+    defaultMessage: 'Transaction',
+  },
+  tabOrganisation: {
+    id: 'dashboard.Admin.AdminNavigation.tabOrganisation',
+    defaultMessage: 'Organisation',
   },
 });
 
@@ -28,24 +36,24 @@ const AdminNavigation = () => (
   <nav>
     <Tabs className={styles.navigationTabContainer}>
       <TabList appearance={{ theme: 'vertical' }} headline={MSG.colonySettings}>
-        <Tab className={styles.oneTab}>Profile</Tab>
-        <Tab className={styles.oneTab}>Tokens</Tab>
-        <Tab className={styles.oneTab}>Transaction</Tab>
-        <Tab className={styles.oneTab}>Organisation</Tab>
+        <Tab className={styles.oneTab}>
+          <FormattedMessage {...MSG.tabProfile} />
+        </Tab>
+        <Tab className={styles.oneTab}>
+          <FormattedMessage {...MSG.tabTokens} />
+        </Tab>
+        <Tab className={styles.oneTab}>
+          <FormattedMessage {...MSG.tabTransaction} />
+        </Tab>
+        <Tab className={styles.oneTab}>
+          <FormattedMessage {...MSG.tabOrganisation} />
+        </Tab>
       </TabList>
+      <TabPanel />
+      <TabPanel />
+      <TabPanel />
+      <TabPanel />
     </Tabs>
-    <TabPanel>
-      <div className={styles.placeHolder} />
-    </TabPanel>
-    <TabPanel>
-      <div className={styles.placeHolder} />
-    </TabPanel>
-    <TabPanel>
-      <div className={styles.placeHolder} />
-    </TabPanel>
-    <TabPanel>
-      <div className={styles.placeHolder} />
-    </TabPanel>
   </nav>
 );
 

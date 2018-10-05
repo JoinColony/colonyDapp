@@ -19,7 +19,7 @@ type Appearance = {
 type Props = {
   /** Node to render into the right of the TabList */
   extra?: Node,
-  appearance: Appearance,
+  appearance?: Appearance,
   headline?: MessageDescriptor | string,
 };
 

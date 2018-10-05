@@ -1,11 +1,9 @@
 /* @flow */
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
-import Button from '~core/Button';
-import Heading from '~core/Heading';
 
 import AdminNavigation from './AdminNavigation.jsx';
 
@@ -19,47 +17,6 @@ const MSG = defineMessages({
   tabAdvanced: {
     id: 'dashboard.Dashboard.tabAdvanced',
     defaultMessage: 'Advanced',
-  },
-  labelFilter: {
-    id: 'dashboard.Admin.labelFilter',
-    defaultMessage: 'Filter',
-  },
-  placeholderFilter: {
-    id: 'dashboard.Admin.placeholderFilter',
-    defaultMessage: 'Filter',
-  },
-  filterOptionAll: {
-    id: 'dashboard.Admin.filterOptionAll',
-    defaultMessage: 'All open tasks',
-  },
-  filterOptionCreated: {
-    id: 'dashboard.Admin.filterOptionCreated',
-    defaultMessage: 'Created by you',
-  },
-  filterOptionAssigned: {
-    id: 'dashboard.Admin.filterOptionAssigned',
-    defaultMessage: 'Assigned to you',
-  },
-  filterOptionCompleted: {
-    id: 'dashboard.Admin.filterOptionCompleted',
-    defaultMessage: 'Completed',
-  },
-  emptyText: {
-    id: 'dashboard.Admin.emptyText',
-    defaultMessage: `It looks like you have not worked on any colonies.
-Why don't you check out one of these colonies for tasks that you can complete:`,
-  },
-  newTaskButton: {
-    id: 'dashboard.Admin.newTaskButton',
-    defaultMessage: 'New Task',
-  },
-  sidebarDomainsTitle: {
-    id: 'dashboard.Admin.sidebarDomainsTitle',
-    defaultMessage: 'Domains',
-  },
-  allDomains: {
-    id: 'dashboard.Admin.allDomains',
-    defaultMessage: 'All',
   },
 });
 

@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Node } from 'react';
+import type { IntlShape, MessageDescriptor } from 'react-intl';
 
 import React from 'react';
 import { injectIntl } from 'react-intl';

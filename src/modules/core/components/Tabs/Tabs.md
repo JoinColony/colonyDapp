@@ -31,3 +31,31 @@ const { Tab, Tabs, TabList, TabPanel } = require('.');
   </TabPanel>
 </Tabs>
 ```
+
+### Vertical Tabs example
+
+```js
+const { Tab, Tabs, TabList, TabPanel } = require('.');
+
+<Tabs>
+  <TabList appearance={{theme: 'vertical'}} headline={'Best Tabs'} >
+    <Tab>Cool option</Tab>
+    <Tab>Cool as well</Tab>
+    <Tab>More content</Tab>
+    <Tab disabled>Disabled!</Tab>
+  </TabList>
+
+  <TabPanel>
+    <h2>Any content 1</h2>
+  </TabPanel>
+  <TabPanel>
+    <h2>Any content 2</h2>
+  </TabPanel>
+  <TabPanel>
+    <h2>Any content 3</h2>
+  </TabPanel>
+  <TabPanel>
+    <h2>This should not be visible</h2>
+  </TabPanel>
+</Tabs>
+```
