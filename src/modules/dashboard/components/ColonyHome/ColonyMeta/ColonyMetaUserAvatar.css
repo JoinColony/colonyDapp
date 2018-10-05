@@ -1,0 +1,6 @@
+@import 'variables.css';
+
+.main {
+  display: inline-block;
+  margin: 9px 9px 0 0;
+}
