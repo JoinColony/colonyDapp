@@ -1,8 +1,11 @@
 /* @flow */
 
-// import type { UserType } from '../../../types';
+import MockUser from '~users/UserProfile/__datamocks__/mockUser';
 
-const mockColony: Object = {
+import type { UserType } from '../../../../users/types';
+import type { ColonyType } from '../../../types';
+
+export const mockColony: ColonyType = {
   address: '0x000000000000000000000000000000000000000',
   avatar:
     // eslint-disable-next-line max-len
@@ -15,4 +18,12 @@ const mockColony: Object = {
   guideline: 'http://colony.io/guidelines',
 };
 
-export default mockColony;
+export const mockColonyOwners: Array<UserType> = [MockUser];
+
+export const mockColonyAdmins: Array<UserType> = [
+  MockUser,
+  MockUser,
+  MockUser,
+  MockUser,
+  MockUser,
+];

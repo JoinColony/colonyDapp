@@ -2,6 +2,7 @@
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { connect } from 'react-redux';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -14,7 +15,11 @@ import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
 
-import mockColony from './__datamocks__/mockColony';
+import {
+  mockColony,
+  mockColonyOwners,
+  mockColonyAdmins,
+} from './__datamocks__/mockColony';
 import mockTasks from './__datamocks__/mockTasks';
 import mockColonies from './__datamocks__/mockColonies';
 import mockDomains from './__datamocks__/mockDomains';
@@ -67,7 +72,9 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
   },
 });
 
-type Props = {};
+type Props = {
+  userWalletAddress: string,
+};
 
 type State = {
   filterOption: 'all' | 'created' | 'assigned' | 'completed',
@@ -81,7 +88,7 @@ const filterOptions = [
   { label: MSG.filterOptionCompleted, value: 'completed' },
 ];
 
-export default class ColonyHome extends Component<Props, State> {
+class ColonyHome extends Component<Props, State> {
   static displayName = 'dashboard.ColonyHome';
 
   state = {
@@ -118,6 +125,7 @@ export default class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
+    const { userWalletAddress } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -140,7 +148,15 @@ export default class ColonyHome extends Component<Props, State> {
     return (
       <div className={styles.main}>
         <aside className={styles.colonyInfo}>
-          <ColonyMeta colony={mockColony} isAdmin />
+          <ColonyMeta
+            colony={mockColony}
+            owners={mockColonyOwners}
+            admins={mockColonyAdmins}
+            /*
+             * This needs real logic to determine if the user is an admin
+             */
+            isAdmin={!!userWalletAddress}
+          />
         </aside>
         <main className={styles.content}>
           <Tabs>
@@ -200,3 +216,7 @@ export default class ColonyHome extends Component<Props, State> {
     );
   }
 }
+
+export default connect((state: Object) => ({
+  userWalletAddress: state.wallet.currentAddress,
+}))(ColonyHome);

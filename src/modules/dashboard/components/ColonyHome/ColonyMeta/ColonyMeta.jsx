@@ -7,10 +7,12 @@ import { stripProtocol } from '~utils/strings';
 
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
+import ColonyMetaUserAvatar from './ColonyMetaUserAvatar.jsx';
 
 import styles from './ColonyMeta.css';
 
 import type { ColonyType } from '../../../types';
+import type { UserType } from '../../../../users/types';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -21,18 +23,30 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.guidelineLabel',
     defaultMessage: 'Contribute Guidelines',
   },
+  owenersLabel: {
+    id: 'dashboard.ColonyHome.ColonyMeta.owenersLabel',
+    defaultMessage: 'Colony Owners',
+  },
+  adminsLabel: {
+    id: 'dashboard.ColonyHome.ColonyMeta.adminsLabel',
+    defaultMessage: 'Colony Admins',
+  },
 });
 
-const componentDisplayName: string = 'dashboard.ColonyHome.ColonyMeta';
+const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
 
 type Props = {
   colony: ColonyType,
+  owners: Array<UserType>,
+  admins: Array<UserType>,
 };
 
 const ColonyMeta = ({
   colony: { avatar, name, address, description, website, guideline },
+  owners,
+  admins,
 }: Props) => (
-  <div className={styles.main}>
+  <div>
     <ColonyAvatar
       className={styles.avatar}
       avatarURL={avatar}
@@ -50,7 +64,7 @@ const ColonyMeta = ({
       </section>
     )}
     {website && (
-      <section className={styles.website}>
+      <section className={styles.dynamicSection}>
         <Heading
           appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
           text={MSG.websiteLabel}
@@ -61,7 +75,7 @@ const ColonyMeta = ({
       </section>
     )}
     {guideline && (
-      <section className={styles.website}>
+      <section className={styles.dynamicSection}>
         <Heading
           appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
           text={MSG.guidelineLabel}
@@ -71,9 +85,31 @@ const ColonyMeta = ({
         </a>
       </section>
     )}
+    {owners.length && (
+      <section className={styles.dynamicSection}>
+        <Heading
+          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+          text={MSG.owenersLabel}
+        />
+        {owners.map((owner: UserType, index: number) => (
+          <ColonyMetaUserAvatar user={owner} key={`owner_${index + 1}`} />
+        ))}
+      </section>
+    )}
+    {admins.length && (
+      <section className={styles.dynamicSection}>
+        <Heading
+          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+          text={MSG.adminsLabel}
+        />
+        {admins.map((admin: UserType, index: number) => (
+          <ColonyMetaUserAvatar user={admin} key={`owner_${index + 1}`} />
+        ))}
+      </section>
+    )}
   </div>
 );
 
-ColonyMeta.displayName = componentDisplayName;
+ColonyMeta.displayName = displayName;
 
 export default ColonyMeta;
