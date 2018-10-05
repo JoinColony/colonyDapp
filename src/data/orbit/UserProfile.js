@@ -49,7 +49,7 @@ class UserProfile {
     return Promise.all(putPromises).then(() => properties);
   }
 
-  getWholeProfile(): Promise<UserProfileType> {
+  getWholeProfile(): UserProfileType {
     if (!this.initialized) throw new Error(NOT_INITIALIZED_MESSAGE);
 
     const profile = {};
