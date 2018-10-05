@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
 import { getMainClasses } from '~utils/css';
+import { maskAddress } from '~utils/strings';
 
 import styles from './CopyableAddress.css';
 
@@ -65,9 +66,7 @@ class CopyableAddress extends Component<Props, State> {
     if (full) {
       return address;
     }
-    const firstPart = address.slice(0, 6);
-    const lastPart = address.slice(address.length - 4, address.length);
-    return `${firstPart} ... ${lastPart}`;
+    return maskAddress(address);
   };
 
   render() {

@@ -1,5 +1,8 @@
 /* @flow */
 
+import { addressValidator } from '@colony/purser-core/validators';
+import { addressNormalizer } from '@colony/purser-core/normalizers';
+
 const HTTP_PROTOCOL: string = 'http://';
 const HTTPS_PROTOCOL: string = 'https://';
 
@@ -52,7 +55,7 @@ export const humanReadableFileSize = (size: number) => {
  * @param {string} word The word / string to capitalize
  * @return {string} The capitalized string
  */
-export const capitalize = (word: string) =>
+export const capitalize = (word: string): string =>
   word && word.charAt(0).toUpperCase() + word.slice(1);
 
 /**
@@ -74,3 +77,25 @@ export const stripProtocol = (urlString: string) =>
   (urlString.startsWith(HTTPS_PROTOCOL) &&
     urlString.replace(HTTPS_PROTOCOL, '')) ||
   urlString;
+
+/**
+ * Mask an BIP32 address and only show it's start and end 4bit sections,
+ * hidden by a configurable string mask
+ *
+ * @NOTE We also validate the address here, if it's correct this will throw
+ *
+ * @method maskAddress
+ *
+ * @param {string} address The address to mask (must be valid!)
+ * @param {string} mask The string mask to apply
+ *
+ * @return {string} The masked address
+ */
+export const maskAddress = (address: string, mask: string = '...'): string => {
+  addressValidator(address);
+  const HEX_HEADER: string = '0x';
+  const rawAddress: string = addressNormalizer(address, false);
+  const addressStart: string = rawAddress.slice(0, 4);
+  const addressEnd: string = rawAddress.slice(-4);
+  return `${HEX_HEADER}${addressStart}${mask}${addressEnd}`;
+};
