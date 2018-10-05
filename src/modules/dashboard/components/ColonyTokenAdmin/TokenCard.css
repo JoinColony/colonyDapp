@@ -1,0 +1,39 @@
+@import 'variables.css';
+
+:root {
+  --header-footer-heights: 30px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+}
+
+.cardHeading {
+  display: flex;
+  align-items: center;
+  height: var(--header-footer-heights);
+}
+
+.tokenSymbol {
+  margin: 3px 0 0 6px;
+}
+
+.balanceContent {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(var(--header-footer-heights) / 2);
+  font-size: var(--size-medium-l);
+}
+
+.cardFooter {
+  composes: marginBottomMedium from '~styles/layout.css';
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: var(--header-footer-heights);
+  font-weight: var(--weight-thin);
+  color: var(--temp-grey-4);
+}
