@@ -1,0 +1,15 @@
+@import 'variables.css';
+
+.main {
+  padding: 6px;
+}
+
+.name {
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: white;
+}
+
+.address {
+  color: var(--grey-5);
+}
