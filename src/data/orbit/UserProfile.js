@@ -41,13 +41,14 @@ class UserProfile {
     return this._store.get(property);
   }
 
+  /* eslint-disable no-await-in-loop */
   async setWholeProfile(properties: UserProfileType) {
-    const putPromises = Object.keys(properties).map(key =>
-      this._store.put(key, properties[key]),
-    );
-
-    return Promise.all(putPromises).then(() => properties);
+    Object.keys(properties).forEach(async key => {
+      await this._store.put(key, properties[key]);
+    });
+    return properties;
   }
+  /* eslint-enable no-await-in-loop */
 
   getWholeProfile(): UserProfileType {
     if (!this.initialized) throw new Error(NOT_INITIALIZED_MESSAGE);
