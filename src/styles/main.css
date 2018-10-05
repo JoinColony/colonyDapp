@@ -193,9 +193,14 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 
-  td,
-  th {
+  & tbody, & tr {
+    border-color: inherit;
+  }
+
+  & td,
+  & th {
     vertical-align: top;
+    border-color: inherit;
     text-align: left;
   }
 }
