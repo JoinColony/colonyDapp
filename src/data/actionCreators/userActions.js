@@ -2,6 +2,7 @@
 
 import {
   EDIT_PROFILE,
+  GET_PROFILE_PROPERTY,
   LOAD_PROFILE,
   UPDATE_ENTIRE_PROFILE,
   UPDATE_PROFILE,
@@ -55,6 +56,16 @@ export function fetchWholeProfile(profileKey: string = 'my-profile'): Action {
   return {
     type: LOAD_PROFILE,
     payload: { profileKey },
+  };
+}
+
+export function fetchProfileProperty(
+  profileKey: string = 'my-profile',
+  property: string,
+): Action {
+  return {
+    type: GET_PROFILE_PROPERTY,
+    payload: { profileKey, property },
   };
 }
 

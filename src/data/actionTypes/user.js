@@ -1,6 +1,9 @@
 /* @flow */
 
 export const EDIT_PROFILE = 'EDIT_PROFILE';
+
+export const GET_PROFILE_PROPERTY = 'GET_PROFILE_PROPERTY';
+
 export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const UPDATE_ENTIRE_PROFILE = 'UPDATE_ENTIRE_PROFILE';
 

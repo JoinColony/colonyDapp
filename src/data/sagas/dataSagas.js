@@ -8,6 +8,7 @@ import { setEntireUserProfile, setUserProfileContent } from '../actionCreators';
 
 import {
   EDIT_PROFILE,
+  GET_PROFILE_PROPERTY,
   INITIALIZE_DATA,
   LOAD_PROFILE,
   STARTED_RESPONSE,
@@ -46,7 +47,15 @@ function* getWholeProfile(action): Saga<void> {
 
   yield put(
     setUserProfileContent({ profileKey, property: 'profile', value: result }),
+function* getProfileProperty(action): Saga<void> {
+  const { profileKey, property } = action.payload;
+  const { dataAPI } = dataContext;
+  const result = yield call(
+    dataAPI.getUserProfileProperty,
+    profileKey,
+    property,
   );
+  yield put(setUserProfileContent({ profileKey, property, value: result }));
 }
 
 function* initializeData(action): Saga<void> {
@@ -71,4 +80,5 @@ export default function* dataSagas(): any {
   yield takeEvery(EDIT_PROFILE, editProfile);
   yield takeEvery(SET_PROFILE, setWholeProfile);
   yield takeEvery(LOAD_PROFILE, getWholeProfile);
+  yield takeEvery(GET_PROFILE_PROPERTY, getProfileProperty);
 }
