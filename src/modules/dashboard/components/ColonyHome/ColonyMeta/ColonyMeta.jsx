@@ -1,12 +1,15 @@
 /* @flow */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
 
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
+import Icon from '~core/Icon';
+import NavLink from '~core/NavLink';
+
 import ColonyMetaUserAvatar from './ColonyMetaUserAvatar.jsx';
 
 import styles from './ColonyMeta.css';
@@ -31,6 +34,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.adminsLabel',
     defaultMessage: 'Colony Admins',
   },
+  editColonyTitle: {
+    id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
+    defaultMessage: 'Edit Colony',
+  },
 });
 
 const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
@@ -39,12 +46,14 @@ type Props = {
   colony: ColonyType,
   owners: Array<UserType>,
   admins: Array<UserType>,
+  isAdmin: boolean,
 };
 
 const ColonyMeta = ({
   colony: { avatar, name, address, description, website, guideline },
   owners,
   admins,
+  isAdmin,
 }: Props) => (
   <div>
     <ColonyAvatar
@@ -54,10 +63,16 @@ const ColonyMeta = ({
       colonyName={name}
       size="xl"
     />
-    <Heading
-      appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}
-      text={name}
-    />
+    <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
+      <Fragment>
+        <span>{name}</span>
+        {isAdmin && (
+          <NavLink className={styles.editColony} to="/dashboard">
+            <Icon name="settings" title={MSG.editColonyTitle} />
+          </NavLink>
+        )}
+      </Fragment>
+    </Heading>
     {description && (
       <section className={styles.description}>
         <p>{description}</p>

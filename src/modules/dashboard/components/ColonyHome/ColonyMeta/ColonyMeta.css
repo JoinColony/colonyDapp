@@ -14,3 +14,15 @@
 .dynamicSection {
   margin-top: 25px;
 }
+
+.editColony {
+  display: inline-block;
+
+  /*
+   * @NOTE Negative Margins
+   * Added in order to perfectly align the settings icon
+   */
+  margin: -2px 0 0 6px;
+  padding: 0;
+  vertical-align: -webkit-baseline-middle;
+}
