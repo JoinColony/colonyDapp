@@ -12,7 +12,7 @@ const mockColony: Object = {
     // eslint-disable-next-line max-len
     'The Meta colony is responsible for building the colony protoco, JS library, and dApp. Contribute to our open source work to gain reputation, earn tokens, and help create the future of work',
   website: 'https://colony.io',
-  guideline: 'https://colony.io/guidelines',
+  guideline: 'http://colony.io/guidelines',
 };
 
 export default mockColony;

@@ -1,5 +1,8 @@
 /* @flow */
 
+const HTTP_PROTOCOL: string = 'http://';
+const HTTPS_PROTOCOL: string = 'https://';
+
 /*
   Removes line breaks and replaces them with spaces
 */
@@ -51,3 +54,23 @@ export const humanReadableFileSize = (size: number) => {
  */
 export const capitalize = (word: string) =>
   word && word.charAt(0).toUpperCase() + word.slice(1);
+
+/**
+ * Strip the normal and secure website protocol from the start of a string.
+ * If will only check for the specific 'http' and 'https' strings and strip them out,
+ * otherwise it will just return the original string.
+ *
+ * Most use cases would be do display just to domain (and path) part of a website
+ *
+ * @method stripProtocol
+ *
+ * @param {string} urlString The string to remove the protocol from
+ *
+ * @return {string} The new string (stripped of the protocol) or the original one
+ */
+export const stripProtocol = (urlString: string) =>
+  (urlString.startsWith(HTTP_PROTOCOL) &&
+    urlString.replace(HTTP_PROTOCOL, '')) ||
+  (urlString.startsWith(HTTPS_PROTOCOL) &&
+    urlString.replace(HTTPS_PROTOCOL, '')) ||
+  urlString;

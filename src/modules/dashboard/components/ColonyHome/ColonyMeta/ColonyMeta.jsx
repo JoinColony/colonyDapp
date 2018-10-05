@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import { stripProtocol } from '~utils/strings';
+
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
 
@@ -54,7 +56,7 @@ const ColonyMeta = ({
           text={MSG.websiteLabel}
         />
         <a href={website} rel="noopener noreferrer" target="_blank">
-          {website}
+          {stripProtocol(website)}
         </a>
       </section>
     )}
@@ -65,7 +67,7 @@ const ColonyMeta = ({
           text={MSG.guidelineLabel}
         />
         <a href={guideline} rel="noopener noreferrer" target="_blank">
-          {guideline}
+          {stripProtocol(guideline)}
         </a>
       </section>
     )}
