@@ -14,8 +14,16 @@ import ColonyMetaUserAvatar from './ColonyMetaUserAvatar.jsx';
 
 import styles from './ColonyMeta.css';
 
-import type { ColonyType } from '../../../types';
 import type { UserType } from '../../../../users/types';
+
+type ColonyType = {
+  address: string,
+  avatar: string,
+  name: string,
+  description?: string,
+  website?: string,
+  guideline?: string,
+};
 
 const MSG = defineMessages({
   websiteLabel: {

@@ -77,7 +77,7 @@ const Routes = ({
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={DASHBOARD_ROUTE}
-        component={Dashboard}
+        component={ColonyHome}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
