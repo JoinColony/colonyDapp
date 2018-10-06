@@ -14,6 +14,8 @@ import { Provider as ContextProvider } from './createReactContext';
 import DialogProvider from '~core/Dialog/DialogProvider.jsx';
 import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
 
+import './data';
+
 addLocaleData(en);
 
 const dialogComponents = {

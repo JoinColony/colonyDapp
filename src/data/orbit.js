@@ -19,9 +19,11 @@ export function makeOptions({ repo }: ColonyOrbitOptions = {}): WrappedOptions {
 
 export async function getOrbitDB(
   ipfs: ColonyIPFSNode,
-  { path, options }: WrappedOptions = { path: DEFAULT_DB_PATH, options: {} },
+  identity,
+  options,
+  // { path, options }: WrappedOptions = { path: DEFAULT_DB_PATH, options: {} },
 ) {
-  return new OrbitDB(ipfs, path, options);
+  return new OrbitDB(ipfs, identity, options);
 }
 
 // @TODO: apply flow
@@ -46,6 +48,17 @@ export class EthereumAccountAccessController {
     this._verifySignatureFn = verifySignatureFn;
   }
 
+  async createManifest (ipfs, name, type) {
+    const manifest = {
+      name: name,
+      type: type,
+      account: `/ethereum/${this._accountAddress}`,
+    };
+    const dag = await ipfs.object.put(Buffer.from(JSON.stringify(manifest)));
+    console.log('Manifest created', dag);
+    return dag.toJSON().multihash.toString();
+  }
+
   async canAppend(entry, provider) {
     const {
       identity: {
@@ -67,15 +80,18 @@ export class EthereumAccountAccessController {
 
     const data = orbitPublicKey + signatures.id;
     const signature = signatures.publicKey;
-    const isWalletSignatureValid = this._verifySignatureFn(
+    const isWalletSignatureValid = await this._verifySignatureFn(
       walletAddress,
       data,
       signature,
     );
     if (!isWalletSignatureValid) return false;
 
+    // const pubKey = await orbitKeystore.importPublicKey(orbitPublicKey);
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
+
+  async load() {}
 }
 
 /**
