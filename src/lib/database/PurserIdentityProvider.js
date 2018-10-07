@@ -11,9 +11,9 @@ type PurserWallet = WalletObjectType;
 
 type Options = {};
 
-type ProviderType = 'PURSER_ACCOUNT';
+type ProviderType = 'ETHEREUM_ACCOUNT';
 
-const PROVIDER_TYPE = 'PURSER_ACCOUNT';
+const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
 class PurserIdentityProvider {
   _keystore: Keystore;

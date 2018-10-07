@@ -25,7 +25,6 @@ type PublicKey = string;
       'vibrant crane range exhaust guide culture total blossom genuine error manual lock',
   });
 
-  const accessController = new PurserAccessController(wallet);
   const identityProvider = new PurserIdentityProvider(wallet);
   const identity = await identityProvider.createIdentity();
 
@@ -36,6 +35,7 @@ type PublicKey = string;
 
   const orbitNode = await orbit.getOrbitDB(ipfsNode, identity, orbitConf);
 
+  const accessController = new PurserAccessController(wallet);
   // Uncomment to create a store
   const kv = await orbitNode.kvstore('my-store', {
     accessController,
