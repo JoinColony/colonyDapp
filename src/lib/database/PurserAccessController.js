@@ -9,9 +9,9 @@ import PurserIdentityProvider from './PurserIdentityProvider';
 // TODO: Use actual type for common wallet interface
 type PurserWallet = WalletObjectType;
 
-type ProviderType = 'PURSER_ACCOUNT';
+type ProviderType = 'ETHEREUM_ACCOUNT';
 
-const PROVIDER_TYPE = 'PURSER_ACCOUNT';
+const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
 /**
  * Access controller for Purser based Ethereum wallets
