@@ -1,5 +1,3 @@
-/* @flow */
-
 import OrbitDB from 'orbit-db';
 import Keystore from 'orbit-db-keystore';
 import type { ColonyIPFSNode, ColonyOrbitOptions, OrbitOptions } from './types';

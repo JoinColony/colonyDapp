@@ -5,6 +5,9 @@ import { open as openWallet } from '@colony/purser-software';
 import * as ipfs from './ipfs';
 import * as orbit from './orbit';
 
+import PurserIdentityProvider from '../lib/database/PurserIdentityProvider';
+import PurserAccessController from '../lib/database/PurserAccessController';
+
 import type {
   B58String,
   ColonyIPFSNode,
@@ -16,29 +19,15 @@ import type {
 
 type PublicKey = string;
 
-window.orbit = orbit;
-window.ipfs = ipfs;
-
 (async function() {
   const wallet = await openWallet({
     mnemonic:
       'vibrant crane range exhaust guide culture total blossom genuine error manual lock',
   });
 
-  const verifySignatureFn = async (walletAddress, data, signature) =>
-    wallet.verifyMessage({
-      message: data,
-      signature,
-    });
-
-  const acl = new orbit.EthereumAccountAccessController(
-    wallet.address,
-    verifySignatureFn,
-  );
-
-  // Uncomment to create an identity
-  // const identity = await orbit.createOrbitIdentity(wallet, wallet.address);
-  const identity = await orbit.getOrbitIdentity(wallet, wallet.address);
+  const accessController = new PurserAccessController(wallet);
+  const identityProvider = new PurserIdentityProvider(wallet);
+  const identity = await identityProvider.createIdentity();
 
   const ipfsConf = ipfs.makeOptions();
   const ipfsNode = ipfs.getIPFS(ipfsConf);
@@ -48,18 +37,18 @@ window.ipfs = ipfs;
   const orbitNode = await orbit.getOrbitDB(ipfsNode, identity, orbitConf);
 
   // Uncomment to create a store
-  // const kv = await orbitNode.kvstore('my-store', {
-  //   accessController: acl,
-  // });
-  const kv = await orbitNode.kvstore(
-    '/orbitdb/QmcKkpwTvwE7tebFRLcHN9qChGUaX8kePovW7xYLcy3bkv/my-store',
-    {
-      accessController: acl,
-    },
-  );
+  const kv = await orbitNode.kvstore('my-store', {
+    accessController,
+  });
+  // const kv = await orbitNode.kvstore(
+  //   '/orbitdb/QmcKkpwTvwE7tebFRLcHN9qChGUaX8kePovW7xYLcy3bkv/my-store',
+  //   {
+  //     accessController: acl,
+  //   },
+  // );
 
   // Uncomment to populate the store
-  // await kv.put('foo', 'bar');
+  await kv.put('foo', 'bar');
   await kv.load();
   const foo = await kv.get('foo');
   console.log(foo);
