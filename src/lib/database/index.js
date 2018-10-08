@@ -1,6 +1,5 @@
 /* @flow */
 
-
 /*
 
 const ddb = await DDB.createDatabase(ipfsNode, new DDB.PurserIdentity(wallet))
@@ -20,5 +19,3 @@ ddb.getStore({
 
 
 */
-
-
