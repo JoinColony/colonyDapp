@@ -1,6 +1,5 @@
 /* @flow */
 import type { FormikProps } from 'formik';
-import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -14,6 +13,7 @@ import Button from '~core/Button';
 import styles from './StepCreateColony.css';
 
 import CreatingColony from './CreatingColony.jsx';
+import CardRow from './CreateColonyCardRow.jsx';
 
 type FormValues = {};
 
@@ -25,15 +25,6 @@ type Props = {
 
 type State = {
   isCreatingColony: boolean,
-};
-
-type Row = {
-  title: MessageDescriptor,
-  valueKey: string,
-};
-
-type CardProps = {
-  cardOptions: Array<Row>,
 };
 
 const MSG = defineMessages({
@@ -82,29 +73,6 @@ const options = [
   },
 ];
 
-// TODO: Once we wire this step up with the previous
-// steps all we need to do is getting the "values"
-// prop from Formik and pass it throught to the CardRow component
-const mockFormikValues = {
-  colonyName: 'Encecladus',
-  tokenName: 'Starfleet Token',
-  tokenSymbol: 'STRF',
-};
-
-const CardRow = ({ cardOptions }: CardProps) =>
-  cardOptions.map(option => (
-    <div className={styles.cardRow} key={`option ${option.valueKey}`}>
-      <Heading
-        appearance={{ size: 'normal', weight: 'medium', margin: 'none' }}
-        text={option.title}
-      />
-      <Heading
-        appearance={{ size: 'normal', weight: 'thin', margin: 'none' }}
-        text={mockFormikValues[option.valueKey]}
-      />
-    </div>
-  ));
-
 class StepCreateColony extends Component<Props, State> {
   static displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
 
@@ -123,6 +91,8 @@ class StepCreateColony extends Component<Props, State> {
 
   render() {
     const { isCreatingColony } = this.state;
+    const { values } = this.props;
+
     return (
       <Fragment>
         {isCreatingColony ? (
@@ -138,7 +108,7 @@ class StepCreateColony extends Component<Props, State> {
                 appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
                 text={MSG.subtitle}
               />
-              <CardRow cardOptions={options} />
+              <CardRow cardOptions={options} values={values} />
             </div>
             <div className={styles.buttons}>
               <Button
