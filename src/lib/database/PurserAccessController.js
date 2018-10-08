@@ -71,8 +71,9 @@ class PurserAccessController {
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async load() {
-    /* Implement me */
+    console.log('Implement me');
   }
 }
 
