@@ -84,7 +84,6 @@ const options = [
 ];
 
 const CardRow = ({ cardOptions, values }: CardProps) =>
-  console.log(values) ||
   cardOptions.map(option => (
     <div className={styles.cardRow} key={`option ${option.valueKey}`}>
       <Heading
@@ -116,6 +115,8 @@ class StepCreateColony extends Component<Props, State> {
 
   render() {
     const { isCreatingColony } = this.state;
+    const { values } = this.props;
+
     return (
       <Fragment>
         {isCreatingColony ? (
@@ -131,7 +132,7 @@ class StepCreateColony extends Component<Props, State> {
                 appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
                 text={MSG.subtitle}
               />
-              <CardRow cardOptions={options} />
+              <CardRow cardOptions={options} values={values} />
             </div>
             <div className={styles.buttons}>
               <Button

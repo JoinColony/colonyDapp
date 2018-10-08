@@ -34,7 +34,7 @@ type FormValues = {
 type Props = {
   previousStep: () => void,
   nextStep: () => void,
-  setValues: (val: {}) => void,
+  setValues: (val: { tokenName: string, tokenSymbol: string }) => void,
 } & FormikProps<FormValues>;
 
 type State = {
