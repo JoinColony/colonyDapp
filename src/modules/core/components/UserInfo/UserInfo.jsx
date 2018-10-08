@@ -53,7 +53,11 @@ const UserInfo = ({
     }
     trigger={trigger}
   >
-    {children}
+    {/*
+      * This wrapper is needed because, if the child in an in-line element, the
+      * tooltip component won't trigger
+      */}
+    <div className={styles.content}>{children}</div>
   </Tooltip>
 );
 
