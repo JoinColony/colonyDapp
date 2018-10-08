@@ -104,6 +104,15 @@ const config = {
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
     hotOnly: true,
   },
+  /*
+   * Fix for the XMLHttpRequest compile-time bug.
+   *
+   * See for more details:
+   * https://github.com/webpack/webpack-dev-server/issues/66
+   */
+  externals:[{
+    xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
+  }],
 };
 
 module.exports = () => config;

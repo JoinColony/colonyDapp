@@ -788,49 +788,49 @@
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@colony/eslint-config-colony/-/eslint-config-colony-6.0.0.tgz#85b26e9b92bc48679095fe4ac351bc8c2eeffa82"
 
-"@colony/purser-core@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@colony/purser-core/-/purser-core-1.0.1.tgz#cafbb7c39fae84a39caaf7d3035db0b84dc3b294"
+"@colony/purser-core@1.1.1", "@colony/purser-core@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-core/-/purser-core-1.1.1.tgz#5fac9586870733e8b513da5c35d919245faca33a"
   dependencies:
     "@babel/runtime" "^7.0.0"
     bn.js "^4.11.8"
     ethereumjs-util "^5.2.0"
-    ethers "^3.0.29"
+    ethers "^4.0.0"
     hdkey "^1.1.0"
 
-"@colony/purser-ledger@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@colony/purser-ledger/-/purser-ledger-1.0.1.tgz#2636fc922b068d1753daa28c080ada0ce0c509e4"
+"@colony/purser-ledger@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-ledger/-/purser-ledger-1.1.1.tgz#b14af44cc46e935d9fbe8d9907289c551010f22f"
   dependencies:
     "@babel/runtime" "^7.0.0"
-    "@colony/purser-core" "1.0.1"
+    "@colony/purser-core" "1.1.1"
     "@ledgerhq/hw-app-eth" "^4.19.0"
     "@ledgerhq/hw-transport-u2f" "^4.20.0"
     ethereumjs-tx "^1.3.6"
 
-"@colony/purser-metamask@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-1.0.1.tgz#e484d2a94fc28bf71dfc00383089494172870004"
+"@colony/purser-metamask@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-1.1.1.tgz#357229e21757951c190a23b17e0f64fb230395f3"
   dependencies:
     "@babel/runtime" "^7.0.0"
-    "@colony/purser-core" "1.0.1"
+    "@colony/purser-core" "1.1.1"
     lodash.isequal "^4.5.0"
 
-"@colony/purser-software@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.0.2.tgz#1cb3861f1b1f6fdd380a491324f938a7c53ee569"
+"@colony/purser-software@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.1.2.tgz#aea4c417a748821c514e49ce06c6a339001f1bc8"
   dependencies:
     "@babel/runtime" "^7.0.0"
-    "@colony/purser-core" "1.0.1"
+    "@colony/purser-core" "1.1.1"
     ethereumjs-util "^5.2.0"
-    ethers "^3.0.29"
+    ethers "^4.0.0"
 
-"@colony/purser-trezor@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@colony/purser-trezor/-/purser-trezor-1.0.1.tgz#09629da8e4496572da52ae27d562fa0a734ecd88"
+"@colony/purser-trezor@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@colony/purser-trezor/-/purser-trezor-1.1.1.tgz#96fa3469e2d19cf71a0220ce4cb82a787ef9458e"
   dependencies:
     "@babel/runtime" "^7.0.0"
-    "@colony/purser-core" "1.0.1"
+    "@colony/purser-core" "1.1.1"
     bip32-path "^0.4.2"
     ethereumjs-tx "^1.3.6"
 
@@ -904,6 +904,10 @@
 "@types/node@*":
   version "10.11.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.11.2.tgz#59508b88ce90fe2742f7b8414c6f5db3e359570d"
+
+"@types/node@^10.3.2":
+  version "10.11.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.11.4.tgz#e8bd933c3f78795d580ae41d86590bfc1f4f389d"
 
 "@vxna/mini-html-webpack-template@^0.1.7":
   version "0.1.7"
@@ -4426,7 +4430,7 @@ ethers-wallet@^2.1.8:
     setimmediate "1.0.4"
     uuid "2.0.1"
 
-ethers@^3.0.27, ethers@^3.0.29:
+ethers@^3.0.27:
   version "3.0.29"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-3.0.29.tgz#ce8139955b4ed44456eb6764b089bb117c86775d"
   dependencies:
@@ -4437,6 +4441,21 @@ ethers@^3.0.27, ethers@^3.0.29:
     inherits "2.0.1"
     js-sha3 "0.5.7"
     scrypt-js "2.0.3"
+    setimmediate "1.0.4"
+    uuid "2.0.1"
+    xmlhttprequest "1.8.0"
+
+ethers@^4.0.0:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.4.tgz#d3f85e8b27f4b59537e06526439b0fb15b44dc65"
+  dependencies:
+    "@types/node" "^10.3.2"
+    aes-js "3.0.0"
+    bn.js "^4.4.0"
+    elliptic "6.3.3"
+    hash.js "1.1.3"
+    js-sha3 "0.5.7"
+    scrypt-js "2.0.4"
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
@@ -5567,6 +5586,13 @@ hash-base@^3.0.0:
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
+
+hash.js@1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/hash.js/-/hash.js-1.1.3.tgz#340dedbe6290187151c1ea1d777a3448935df846"
+  dependencies:
+    inherits "^2.0.3"
+    minimalistic-assert "^1.0.0"
 
 hash.js@^1.0.0, hash.js@^1.0.3:
   version "1.1.5"
@@ -12573,6 +12599,10 @@ scroll-into-view-if-needed@^2.2.16:
 scrypt-js@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-2.0.3.tgz#bb0040be03043da9a012a2cea9fc9f852cfc87d4"
+
+scrypt-js@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-2.0.4.tgz#32f8c5149f0797672e551c07e230f834b6af5f16"
 
 seamless-immutable@^7.1.2, seamless-immutable@^7.1.3:
   version "7.1.4"
