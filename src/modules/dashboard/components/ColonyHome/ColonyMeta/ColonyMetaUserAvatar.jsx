@@ -20,7 +20,11 @@ const ColonyMetaUserAvatar = ({
   user: { avatar, ensName, displayName, walletAddress },
 }: Props) => (
   <div className={styles.main}>
-    <UserInfo name={displayName} handle={ensName} walletAddress={walletAddress}>
+    <UserInfo
+      displayName={displayName}
+      username={ensName}
+      walletAddress={walletAddress}
+    >
       <div>
         {/*
           * The user avatar needs to be wrapped in a div element otherwise the

@@ -9,7 +9,7 @@ import UserMention from '~core/UserMention';
 
 import styles from './UserInfo.css';
 
-const displayName: string = 'core.UserInfo';
+const componentDisplayName: string = 'core.UserInfo';
 
 type Props = {
   /*
@@ -19,25 +19,30 @@ type Props = {
   /*
    * The user's name (aka Display Name)
    */
-  name: string,
+  displayName: string,
   /*
    * Users's handle (aka Username)
    */
-  handle: string,
+  username: string,
   /*
    * User's wallet address
    */
   walletAddress: string,
 };
 
-const UserInfo = ({ name, handle, walletAddress, children }: Props) => (
+const UserInfo = ({
+  displayName,
+  username,
+  walletAddress,
+  children,
+}: Props) => (
   <Tooltip
     content={
       <div className={styles.main}>
-        {name && <p className={styles.name}>{name}</p>}
-        {handle && <UserMention ensName={handle} to="" />}
+        {displayName && <p className={styles.displayName}>{displayName}</p>}
+        {username && <UserMention ensName={username} to="" />}
         {walletAddress && (
-          <p className={styles.address}>{maskAddress(walletAddress)}</p>
+          <p className={styles.walletAddress}>{maskAddress(walletAddress)}</p>
         )}
       </div>
     }
@@ -46,6 +51,6 @@ const UserInfo = ({ name, handle, walletAddress, children }: Props) => (
   </Tooltip>
 );
 
-UserInfo.displayName = displayName;
+UserInfo.displayName = componentDisplayName;
 
 export default UserInfo;
