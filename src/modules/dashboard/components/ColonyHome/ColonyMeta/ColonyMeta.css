@@ -26,3 +26,8 @@
   padding: 0;
   vertical-align: -webkit-baseline-middle;
 }
+
+.userAvatar {
+  display: inline-block;
+  margin: 9px 9px 0 0;
+}

@@ -9,8 +9,7 @@ import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-
-import ColonyMetaUserAvatar from './ColonyMetaUserAvatar.jsx';
+import UserAvatar from '~core/UserAvatar';
 
 import styles from './ColonyMeta.css';
 
@@ -114,9 +113,27 @@ const ColonyMeta = ({
           appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
           text={MSG.owenersLabel}
         />
-        {owners.map((owner: UserType, index: number) => (
-          <ColonyMetaUserAvatar user={owner} key={`owner_${index + 1}`} />
-        ))}
+        {owners.map(
+          (
+            {
+              avatar: ownerAvatar,
+              walletAddress: ownerWalletAddress,
+              displayName: ownerDisplayName,
+              ensName: ownerUsername,
+            }: UserType,
+            index: number,
+          ) => (
+            <UserAvatar
+              key={`owner_${index + 1}`}
+              className={styles.userAvatar}
+              avatarURL={ownerAvatar}
+              walletAddress={ownerWalletAddress}
+              displayName={ownerDisplayName}
+              username={ownerUsername}
+              hasUserInfo
+            />
+          ),
+        )}
       </section>
     )}
     {admins.length && (
@@ -125,9 +142,27 @@ const ColonyMeta = ({
           appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
           text={MSG.adminsLabel}
         />
-        {admins.map((admin: UserType, index: number) => (
-          <ColonyMetaUserAvatar user={admin} key={`owner_${index + 1}`} />
-        ))}
+        {admins.map(
+          (
+            {
+              avatar: adminAvatar,
+              walletAddress: adminWalletAddress,
+              displayName: adminDisplayName,
+              ensName: adminUsername,
+            }: UserType,
+            index: number,
+          ) => (
+            <UserAvatar
+              key={`admin_${index + 1}`}
+              className={styles.userAvatar}
+              avatarURL={adminAvatar}
+              walletAddress={adminWalletAddress}
+              displayName={adminDisplayName}
+              username={adminUsername}
+              hasUserInfo
+            />
+          ),
+        )}
       </section>
     )}
   </div>
