@@ -15,6 +15,16 @@
   column-gap: 80px;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 125px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
 .colonyInfo {
   grid-column: 1;
   grid-row: 1;
