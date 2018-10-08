@@ -72,6 +72,9 @@ const displayName = 'dashboard.ColonyTokenAdmin';
 
 const ColonyTokenAdmin = ({ tokens = mockTokens }: Props) => {
   const nativeToken = tokens.find(token => token.isNative);
+  const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
+  const isUserColonyOwner = true; // TODO determine this value.
+  const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
   return (
     <div className={styles.main}>
       <main>
@@ -98,20 +101,25 @@ const ColonyTokenAdmin = ({ tokens = mockTokens }: Props) => {
         </div>
       </main>
       <aside className={styles.sidebar}>
-        <ul>
-          <li>
-            <Button
-              text={MSG.navItemMintNewTokens}
-              appearance={{ theme: 'blue' }}
-            />
-          </li>
-          <li>
-            <Button
-              text={MSG.navItemEditTokens}
-              appearance={{ theme: 'blue' }}
-            />
-          </li>
-        </ul>
+        {isColonyAdmin && (
+          <ul>
+            {isUserColonyOwner &&
+              canMintNewTokens && (
+                <li>
+                  <Button
+                    text={MSG.navItemMintNewTokens}
+                    appearance={{ theme: 'blue' }}
+                  />
+                </li>
+              )}
+            <li>
+              <Button
+                text={MSG.navItemEditTokens}
+                appearance={{ theme: 'blue' }}
+              />
+            </li>
+          </ul>
+        )}
       </aside>
     </div>
   );
