@@ -2,10 +2,9 @@
 
 import React from 'react';
 
-import { maskAddress } from '~utils/strings';
-
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
+import MaskedAddress from '~core/MaskedAddress';
 
 import styles from './UserInfo.css';
 
@@ -47,7 +46,9 @@ const UserInfo = ({
         {displayName && <p className={styles.displayName}>{displayName}</p>}
         {username && <UserMention ensName={username} to="" />}
         {walletAddress && (
-          <p className={styles.walletAddress}>{maskAddress(walletAddress)}</p>
+          <p className={styles.walletAddress}>
+            <MaskedAddress address={walletAddress} />
+          </p>
         )}
       </div>
     }

@@ -5,7 +5,8 @@ import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
 import { getMainClasses } from '~utils/css';
-import { maskAddress } from '~utils/strings';
+
+import MaskedAddress from '~core/MaskedAddress';
 
 import styles from './CopyableAddress.css';
 
@@ -66,7 +67,7 @@ class CopyableAddress extends Component<Props, State> {
     if (full) {
       return address;
     }
-    return maskAddress(address);
+    return <MaskedAddress address={address} />;
   };
 
   render() {
