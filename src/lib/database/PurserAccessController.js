@@ -4,6 +4,8 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import IPFS from 'ipfs';
 
+import type { AccessController, Entry } from './AccessController';
+
 import PurserIdentityProvider from './PurserIdentityProvider';
 
 // TODO: Use actual type for common wallet interface
@@ -16,7 +18,7 @@ const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 /**
  * Access controller for Purser based Ethereum wallets
  */
-class PurserAccessController {
+class PurserAccessController implements AccessController {
   _purserWallet: PurserWallet;
 
   _type: ProviderType;
@@ -30,24 +32,31 @@ class PurserAccessController {
     }
   }
 
-  async createManifest(ipfs: IPFS, name: string, type: ProviderType) {
+  async createManifest(
+    ipfs: IPFS,
+    name: string,
+    storeType: string,
+  ): Promise<string> {
     if (!this._purserWallet.address) {
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
     const manifest = {
       name,
-      type,
+      type: storeType,
       account: `/ethereum/${this._purserWallet.address}`,
     };
 
     const dag = await ipfs.object.put(Buffer.from(JSON.stringify(manifest)));
-    console.log('Manifest created', dag);
     return dag.toJSON().multihash.toString();
   }
 
-  // TODO: type entry better
-  async canAppend(entry: any, provider: PurserIdentityProvider) {
+  async canAppend(
+    entry: Entry,
+    // TODO: It's this issue that we need to solve: https://flow.org/try/#0PQKgBAAgZgNg9gdzCYAoVBLAdgFwKYBOUAhgMZ5gCSAQmAN6pgCQUccAFMQFxUCCAlDwDOOAtgDmAblQBfdNnxEyFSr3qomAagD6AIx41pc1KRjEhQsGowBbAA4w8NvLkur1TPT2pH0p85a0tg5OLjhutAwsbJw8AupgiUkEeDgArgRYYADkrHDZ0klgcnJAA
+    // $FlowFixMe
+    provider: PurserIdentityProvider,
+  ): Promise<boolean> {
     const {
       identity: {
         id: walletAddress,

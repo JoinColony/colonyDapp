@@ -4,6 +4,8 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import Keystore from 'orbit-db-keystore';
 
+import type { IdentityProvider } from './IdentityProvider';
+
 import PurserIdentity from './PurserIdentity';
 
 // TODO: Use actual type for common wallet interface
@@ -15,7 +17,7 @@ type ProviderType = 'ETHEREUM_ACCOUNT';
 
 const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
-class PurserIdentityProvider {
+class PurserIdentityProvider implements IdentityProvider {
   _keystore: Keystore;
 
   _options: Options;
@@ -33,7 +35,7 @@ class PurserIdentityProvider {
     this._type = PROVIDER_TYPE;
   }
 
-  async createIdentity() {
+  async createIdentity(): Promise<PurserIdentity> {
     const walletAddress = this._purserWallet.address;
     if (!walletAddress) {
       throw new Error('Could not get wallet address. Is it unlocked?');
@@ -65,7 +67,9 @@ class PurserIdentityProvider {
     );
   }
 
-  async sign(identity: PurserIdentity, data: any) {
+  // TODO: It's this issue that we need to solve: https://flow.org/try/#0PQKgBAAgZgNg9gdzCYAoVBLAdgFwKYBOUAhgMZ5gCSAQmAN6pgCQUccAFMQFxUCCAlDwDOOAtgDmAblQBfdNnxEyFSr3qomAagD6AIx41pc1KRjEhQsGowBbAA4w8NvLkur1TPT2pH0p85a0tg5OLjhutAwsbJw8AupgiUkEeDgArgRYYADkrHDZ0klgcnJAA
+  // $FlowFixMe
+  async sign(identity: PurserIdentity, data: any): Promise<string> {
     const signingKey = await this._keystore.getKey(identity.id);
 
     if (!signingKey)
@@ -74,7 +78,11 @@ class PurserIdentityProvider {
     return this._keystore.sign(signingKey, data);
   }
 
-  async verify(signature: string, publicKey: string, data: any) {
+  async verify(
+    signature: string,
+    publicKey: string,
+    data: any,
+  ): Promise<boolean> {
     return this._keystore.verify(signature, publicKey, data);
   }
 }
