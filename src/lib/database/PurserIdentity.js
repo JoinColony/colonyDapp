@@ -6,9 +6,11 @@
 
 import Keystore from 'orbit-db-keystore';
 
+import type { Identity } from './Identity';
+
 import PurserIdentityProvider from './PurserIdentityProvider';
 
-class PurserIdentity {
+class PurserIdentity implements Identity {
   _id: string;
 
   _idSignature: string;
