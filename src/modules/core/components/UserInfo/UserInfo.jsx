@@ -9,7 +9,7 @@ import UserMention from '~core/UserMention';
 
 import styles from './UserInfo.css';
 
-const componentDisplayName: string = 'core.UserInfo';
+const displayName: string = 'core.UserInfo';
 
 type Props = {
   /*
@@ -46,6 +46,6 @@ const UserInfo = ({ name, handle, walletAddress, children }: Props) => (
   </Tooltip>
 );
 
-UserInfo.displayName = componentDisplayName;
+UserInfo.displayName = displayName;
 
 export default UserInfo;
