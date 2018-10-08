@@ -1,6 +1,5 @@
 /* @flow */
 import type { FormikProps } from 'formik';
-import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -14,6 +13,7 @@ import Button from '~core/Button';
 import styles from './StepCreateColony.css';
 
 import CreatingColony from './CreatingColony.jsx';
+import CardRow from './CreateColonyCardRow.jsx';
 
 type FormValues = {};
 
@@ -25,16 +25,6 @@ type Props = {
 
 type State = {
   isCreatingColony: boolean,
-};
-
-type Row = {
-  title: MessageDescriptor,
-  valueKey: string,
-};
-
-type CardProps = {
-  cardOptions: Array<Row>,
-  values: {},
 };
 
 const MSG = defineMessages({
@@ -82,20 +72,6 @@ const options = [
     valueKey: 'tokenSymbol',
   },
 ];
-
-const CardRow = ({ cardOptions, values }: CardProps) =>
-  cardOptions.map(option => (
-    <div className={styles.cardRow} key={`option ${option.valueKey}`}>
-      <Heading
-        appearance={{ size: 'normal', weight: 'medium', margin: 'none' }}
-        text={option.title}
-      />
-      <Heading
-        appearance={{ size: 'normal', weight: 'thin', margin: 'none' }}
-        text={values[option.valueKey]}
-      />
-    </div>
-  ));
 
 class StepCreateColony extends Component<Props, State> {
   static displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
