@@ -82,7 +82,7 @@ export const stripProtocol = (urlString: string) =>
  * Mask an BIP32 address and only show it's start and end 4bit sections,
  * hidden by a configurable string mask
  *
- * @NOTE We also validate the address here, if it's correct this will throw
+ * @NOTE We also validate the address here. If it's not correct this will throw
  *
  * @method maskAddress
  *
