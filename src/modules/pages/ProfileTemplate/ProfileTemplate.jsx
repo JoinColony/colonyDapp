@@ -21,6 +21,9 @@ type Props = {
   asideContent: Node,
 };
 
+// TODO: replace this with actual events, not sure where they will me from yet
+const mockEvents = [{ handled: true }];
+
 const displayName = 'pages.ProfileTemplate';
 
 const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
@@ -28,7 +31,7 @@ const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
     <aside className={styles.sidebar}>{asideContent}</aside>
     <div className={styles.mainContainer}>
       <header className={styles.header}>
-        <Navigation />
+        <Navigation events={mockEvents} />
         <AvatarDropdown />
       </header>
       <main className={styles.mainContent}>{children}</main>

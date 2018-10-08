@@ -27,31 +27,40 @@ const MSG = defineMessages({
   },
 });
 
-const Navigation = () => (
-  <nav className={styles.main}>
-    <NavLink
-      to={USER_ROUTE}
-      className={styles.navigationItem}
-      activeClassName={styles.navigationItemActive}
-    >
-      <Icon name="home" title={MSG.dashboardTitle} />
-    </NavLink>
-    <NavLink
-      to={WALLET_ROUTE}
-      className={styles.navigationItem}
-      activeClassName={styles.navigationItemActive}
-    >
-      <Icon name="wallet" title={MSG.walletTitle} />
-    </NavLink>
-    <NavLink
-      to={INBOX_ROUTE}
-      className={styles.navigationItem}
-      activeClassName={styles.navigationItemActive}
-    >
-      <Icon name="envelope" title={MSG.inboxTitle} />
-    </NavLink>
-  </nav>
-);
+type Props = {
+  events?: Array<{ handled: boolean }>,
+};
+
+const Navigation = ({ events }: Props) => {
+  const unhandled = events && !events.find(event => !event.handled);
+  return (
+    <nav className={styles.main}>
+      <NavLink
+        to={USER_ROUTE}
+        className={styles.navigationItem}
+        activeClassName={styles.navigationItemActive}
+      >
+        <Icon name="home" title={MSG.dashboardTitle} />
+      </NavLink>
+      <NavLink
+        to={WALLET_ROUTE}
+        className={styles.navigationItem}
+        activeClassName={styles.navigationItemActive}
+      >
+        <Icon name="wallet" title={MSG.walletTitle} />
+      </NavLink>
+      <NavLink
+        to={INBOX_ROUTE}
+        className={`${
+          unhandled ? styles.navigationItemHasCircle : styles.navigationItem
+        }`}
+        activeClassName={styles.navigationItemActive}
+      >
+        <Icon name="envelope" title={MSG.inboxTitle} />
+      </NavLink>
+    </nav>
+  );
+};
 
 Navigation.displayName = displayName;
 
