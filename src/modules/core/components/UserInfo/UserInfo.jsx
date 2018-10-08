@@ -28,12 +28,17 @@ type Props = {
    * User's wallet address
    */
   walletAddress: string,
+  /*
+   * How the popover gets triggered
+   */
+  trigger?: 'always' | 'hover' | 'click' | 'disabled',
 };
 
 const UserInfo = ({
   displayName,
   username,
   walletAddress,
+  trigger = 'hover',
   children,
 }: Props) => (
   <Tooltip
@@ -46,6 +51,7 @@ const UserInfo = ({
         )}
       </div>
     }
+    trigger={trigger}
   >
     {children}
   </Tooltip>
