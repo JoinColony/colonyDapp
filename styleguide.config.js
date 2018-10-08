@@ -115,5 +115,11 @@ module.exports = {
       name: 'Wizard',
       components: ['./src/modules/core/components/DecisionHub/DecisionHub.jsx'],
     },
+    {
+      name: 'Errors',
+      components: [
+        './src/modules/core/components/ErrorBoundry/ErrorBoundry.jsx',
+      ],
+    },
   ],
 };
