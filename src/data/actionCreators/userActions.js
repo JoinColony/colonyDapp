@@ -70,56 +70,6 @@ export function fetchProfileProperty(
   };
 }
 
-export function addColonyToUserProfile(
-  profileKey: string = 'my-profile',
-  colonyId: string,
-): Action {
-  return {
-    type: EDIT_PROFILE,
-    payload: { profileKey, property: 'colonies', value: colonyId },
-  };
-}
-
-export function addTaskToUserProfile(
-  profileKey: string = 'my-profile',
-  task: {},
-): Action {
-  return {
-    type: EDIT_PROFILE,
-    payload: { profileKey, property: 'tasks', value: task },
-  };
-}
-
-export function setUserAvatar(
-  profileKey: string = 'my-profile',
-  avatarHash: string,
-): Action {
-  return {
-    type: EDIT_PROFILE,
-    payload: { profileKey, property: 'avatar', value: avatarHash },
-  };
-}
-
-export function setUserBio(
-  profileKey: string = 'my-profile',
-  bio: string,
-): Action {
-  return {
-    type: EDIT_PROFILE,
-    payload: { profileKey, property: 'bio', value: bio },
-  };
-}
-
-export function setUserName(
-  profileKey: string = 'my-profile',
-  name: string,
-): Action {
-  return {
-    type: EDIT_PROFILE,
-    payload: { profileKey, property: 'name', value: name },
-  };
-}
-
 // updates user's notifications database
 export function notifyUser() {}
 
