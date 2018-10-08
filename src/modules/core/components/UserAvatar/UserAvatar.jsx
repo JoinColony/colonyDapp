@@ -9,7 +9,7 @@ import UserInfo from '~core/UserInfo';
 
 type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL: ?string,
+  avatarURL?: ?string,
   /** Is passed through to Avatar */
   className?: string,
   /** Avatars that are not set have a different placeholder */
