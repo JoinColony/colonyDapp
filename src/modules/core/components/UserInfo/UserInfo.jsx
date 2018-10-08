@@ -9,7 +9,7 @@ import UserMention from '~core/UserMention';
 
 import styles from './UserInfo.css';
 
-const componentDisplayName: string = 'core.UserInfo';
+const componentDisplayName: string = 'UserInfo';
 
 type Props = {
   /*
@@ -19,15 +19,15 @@ type Props = {
   /*
    * The user's name (aka Display Name)
    */
-  displayName: string,
+  displayName?: string,
   /*
    * Users's handle (aka Username)
    */
-  username: string,
+  username?: string,
   /*
    * User's wallet address
    */
-  walletAddress: string,
+  walletAddress?: string,
   /*
    * How the popover gets triggered
    */

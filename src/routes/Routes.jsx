@@ -52,7 +52,7 @@ const Routes = ({
       <DisconnectedOnlyRoute
         isConnected={isConnected}
         path={START_ROUTE}
-        component={ColonyHome}
+        component={WalletStart}
       />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
