@@ -4,7 +4,7 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import Keystore from 'orbit-db-keystore';
 
-import type { IdentityProvider } from './IdentityProvider';
+import type { IdentityProvider } from './types';
 
 import PurserIdentity from './PurserIdentity';
 
