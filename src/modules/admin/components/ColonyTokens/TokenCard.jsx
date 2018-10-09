@@ -1,4 +1,5 @@
 /* @flow */
+
 import React from 'react';
 
 import type { Token } from './types';
@@ -18,7 +19,7 @@ type Props = {
  */
 const getEthUsd = (/* ethValue: number */): number => 201.34;
 
-const displayName = 'dashboard.ColonyTokenAdmin.TokenCard';
+const displayName = 'admin.ColonyTokens.TokenCard';
 
 const TokenCard = ({
   token: { id: tokenId, icon, tokenSymbol, isNative, balance },

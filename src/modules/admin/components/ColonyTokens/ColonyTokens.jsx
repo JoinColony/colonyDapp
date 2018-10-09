@@ -1,4 +1,5 @@
 /* @flow */
+
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -8,7 +9,7 @@ import Button from '~core/Button';
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 
-import styles from './ColonyTokenAdmin.css';
+import styles from './ColonyTokens.css';
 
 import TokenCard from './TokenCard.jsx';
 
@@ -68,7 +69,7 @@ const sortTokens = (prevToken: Token, nextToken: Token): number => {
   return 0;
 };
 
-const displayName = 'dashboard.ColonyTokenAdmin';
+const displayName = 'admin.ColonyTokens';
 
 const ColonyTokenAdmin = ({ tokens = mockTokens }: Props) => {
   const nativeToken = tokens.find(token => token.isNative);
