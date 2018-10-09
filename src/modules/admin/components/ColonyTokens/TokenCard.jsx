@@ -6,7 +6,6 @@ import { withProps } from 'recompose';
 import type { Token } from './types';
 
 import Card from '~core/Card';
-import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 
@@ -16,11 +15,9 @@ type InProps = {
   token: Token,
 };
 
-type OutProps = {
+type Props = InProps & {
   isEth: boolean,
 };
-
-type Props = InProps & OutProps;
 
 type State = {
   ethUsd: number | null,
@@ -36,6 +33,8 @@ class TokenCard extends Component<Props, State> {
   componentDidMount() {
     const { isEth } = this.props;
     /*
+     * TODO retrieve tokenIcon image data from ipfs. Currently using mock data.
+     *
      * TODO either look up ethUsd or remove this. Also update required `Numeral` below.
      */
     if (isEth) {
@@ -55,19 +54,15 @@ class TokenCard extends Component<Props, State> {
   render() {
     const {
       isEth,
-      token: { id: tokenId, icon, tokenSymbol, isNative, balance },
+      token: { id: tokenId, tokenIcon, tokenSymbol, isNative, balance },
     } = this.props;
     const { ethUsd } = this.state;
     return (
       <Card key={tokenId} className={styles.main}>
         <div className={styles.cardHeading}>
-          {!!icon && (
+          {!!tokenIcon && (
             <div className={styles.iconContainer}>
-              <Icon
-                name="metamask"
-                title={tokenSymbol}
-                appearance={{ size: 'medium' }}
-              />
+              <img src={tokenIcon.data} alt={tokenIcon.name} />
             </div>
           )}
           <div className={styles.tokenSymbol}>
@@ -92,10 +87,8 @@ class TokenCard extends Component<Props, State> {
   }
 }
 
-const enhance = withProps(
-  ({ token: { tokenSymbol } }: InProps): OutProps => ({
-    isEth: tokenSymbol.toLowerCase() === 'eth',
-  }),
-);
+const enhance = withProps(({ token: { tokenSymbol } }: InProps) => ({
+  isEth: !!tokenSymbol && tokenSymbol.toLowerCase() === 'eth',
+}));
 
 export default enhance(TokenCard);
