@@ -34,18 +34,18 @@ const MSG = defineMessages({
 
 const AdminNavigation = () => (
   <nav>
-    <Tabs className={styles.navigationTabContainer}>
+    <Tabs>
       <TabList appearance={{ theme: 'vertical' }} headline={MSG.colonySettings}>
-        <Tab className={styles.oneTab}>
+        <Tab>
           <FormattedMessage {...MSG.tabProfile} />
         </Tab>
-        <Tab className={styles.oneTab}>
+        <Tab>
           <FormattedMessage {...MSG.tabTokens} />
         </Tab>
-        <Tab className={styles.oneTab}>
+        <Tab>
           <FormattedMessage {...MSG.tabTransaction} />
         </Tab>
-        <Tab className={styles.oneTab}>
+        <Tab>
           <FormattedMessage {...MSG.tabOrganisation} />
         </Tab>
       </TabList>

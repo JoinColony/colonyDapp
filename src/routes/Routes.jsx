@@ -43,7 +43,7 @@ const Routes = ({
     currentWallet: { instance },
   },
 }: Object) => {
-  const isConnected = !instance;
+  const isConnected = !!instance;
   return (
     <Switch>
       <Route

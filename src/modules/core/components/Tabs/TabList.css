@@ -41,7 +41,11 @@
   align-items: start;
   margin-left: 10px;
   font-weight: var(--weight-medium);
-  line-height: 3;
+  line-height: 2.8;
   color: var(--colony-black);
   cursor: pointer;
+}
+
+.themeVertical > ul > li {
+  border-bottom: none;
 }
