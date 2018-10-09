@@ -4,8 +4,7 @@ td.inboxDetails {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  padding: 20px;
-  height: 88px;
+  padding: 24px 20px;
   width: 100%;
   font-weight: var(--weight-semi);
 }

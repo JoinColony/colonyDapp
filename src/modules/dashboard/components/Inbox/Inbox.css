@@ -7,11 +7,6 @@
   box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
 }
 
-.templateContainer {
-  height: 100%;
-  overflow: auto;
-}
-
 .contentContainer {
   display: flex;
   flex-direction: column;

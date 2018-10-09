@@ -24,25 +24,23 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Inbox';
 
 const Inbox = () => (
-  <div className={styles.templateContainer}>
-    <CenteredTemplate>
-      <div className={styles.contentContainer}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'small' }}
-          text={MSG.title}
-        />
-        <div className={styles.inboxContainer}>
-          <Table scrollable appearance={{ separators: 'borders' }}>
-            <TableBody>
-              {mockInbox.map(item => (
-                <InboxItem key={item.id} item={item} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+  <CenteredTemplate>
+    <div className={styles.contentContainer}>
+      <Heading
+        appearance={{ size: 'medium', margin: 'small' }}
+        text={MSG.title}
+      />
+      <div className={styles.inboxContainer}>
+        <Table scrollable appearance={{ separators: 'borders' }}>
+          <TableBody>
+            {mockInbox.map(item => (
+              <InboxItem key={item.id} item={item} />
+            ))}
+          </TableBody>
+        </Table>
       </div>
-    </CenteredTemplate>
-  </div>
+    </div>
+  </CenteredTemplate>
 );
 
 Inbox.displayName = displayName;
