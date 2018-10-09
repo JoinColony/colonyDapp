@@ -51,6 +51,6 @@ then
     # Build pinning service
     log "Building '${PINNING}' submodule"
     cd "${LIB_PATH}/${PINNING}"
-    yarn
+    yarn && yarn build
     cd ${ROOT_PATH}
 fi
