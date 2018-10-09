@@ -2,23 +2,27 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery, getContext } from 'redux-saga/effects';
-import { providers } from 'ethers';
+import { call, put, takeLatest, getContext } from 'redux-saga/effects';
+import { providers, Wallet } from 'ethers';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
-import NetworkLoader from '@colony/colony-js-contract-loader-network';
 import ColonyNetworkClient from '@colony/colony-js-client';
 
-import { LOAD_COLONY_NETWORK } from '../actionTypes';
-import {
-  loadColonyNetworkError,
-  loadColonyNetworkSuccess,
-} from '../actionCreators';
-import EthersWrappedWallet from '../../../lib/EthersWrappedWallet';
+// TODO in #429 - reinstate this import.
+// import NetworkLoader from '@colony/colony-js-contract-loader-network';
 
+import {
+  LOAD_COLONY_NETWORK,
+  LOAD_COLONY_NETWORK_ERROR,
+  LOAD_COLONY_NETWORK_SUCCESS,
+} from '../actionTypes';
+import { WALLET_SET } from '../../user/actionTypes';
+
+/**
+ * Return an initialized ColonyNetworkClient instance.
+ */
 function* initColonyNetworkClient() {
   const provider = new providers.JsonRpcProvider();
-  const { instance: wallet } = yield getContext('currentWallet');
 
   let loader;
   switch (process.env.NETWORK_CLIENT_LOADER) {
@@ -26,15 +30,22 @@ function* initColonyNetworkClient() {
       loader = new TrufflepigLoader();
       break;
     default:
-      loader = new NetworkLoader('rinkeby');
-      break;
+      // TODO in #429 - reinstate the default loader and remove the error.
+      // loader = new NetworkLoader('rinkeby');
+      // break;
+      throw new Error(
+        // eslint-disable-next-line max-len
+        'The `NETWORK_CLIENT_LOADER` environment variable must be set to `trufflepig` at this time',
+      );
   }
 
+  // TODO in #429 - use `EthersWrappedWallet` with the wallet context (rather
+  // than an `ethers` wallet with a private key from Trufflepig.
+  const { privateKey } = yield loader.getAccount(0);
   const adapter = new EthersAdapter({
     loader,
     provider,
-    // $FlowFixMe colonyJS IWallet uses sync methods, but async works also
-    wallet: new EthersWrappedWallet(wallet, provider),
+    wallet: new Wallet(privateKey, provider),
   });
 
   const networkClient = new ColonyNetworkClient({ adapter, query: {} });
@@ -44,31 +55,45 @@ function* initColonyNetworkClient() {
   return networkClient;
 }
 
-function* loadColonyNetwork(): Saga<*> {
+/**
+ * Initialise a network client and set the `networkClient` context
+ */
+function* loadColonyNetwork(): Saga<typeof undefined> {
+  let networkClient;
+
   try {
-    const { instance, setInstance } = yield getContext('networkClient');
-    let networkClient = instance;
+    const { setInstance } = yield getContext('networkClient');
 
-    // If already loaded into context, don't reload
-    if (networkClient) {
-      yield put(loadColonyNetworkSuccess(networkClient));
-      return;
-    }
-
-    // Initialise a new network client
+    // Attempt to get a new network client instance
     networkClient = yield call(initColonyNetworkClient);
 
-    // Set the context to the newly-loaded network client
+    // Set the networkClient context to the new network client
     yield call(setInstance, networkClient);
-
-    yield put(loadColonyNetworkSuccess(networkClient));
   } catch (error) {
-    yield put(loadColonyNetworkError(error));
+    yield put({
+      type: LOAD_COLONY_NETWORK_ERROR,
+      payload: { error: error.message },
+    });
+    return;
   }
+
+  yield put({
+    type: LOAD_COLONY_NETWORK_SUCCESS,
+    payload: { address: networkClient.contract.address },
+  });
+}
+
+/**
+ * When the wallet is set, the network client should be loaded with
+ * the new wallet.
+ */
+function* setWallet(): Saga<typeof undefined> {
+  yield put({ type: LOAD_COLONY_NETWORK });
 }
 
 function* networkClientSagas(): any {
-  yield takeEvery(LOAD_COLONY_NETWORK, loadColonyNetwork);
+  yield takeLatest(LOAD_COLONY_NETWORK, loadColonyNetwork);
+  yield takeLatest(WALLET_SET, setWallet);
 }
 
 export default networkClientSagas;
