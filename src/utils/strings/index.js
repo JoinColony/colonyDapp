@@ -82,7 +82,8 @@ export const stripProtocol = (urlString: string) =>
  * Mask an BIP32 address and only show it's start and end 4bit sections,
  * hidden by a configurable string mask
  *
- * @NOTE We also validate the address here. If it's not correct this will throw
+ * @NOTE We also validate the address here. If it's not correct this will throw, but we catch it and
+ * just return the error message in that case
  *
  * @method maskAddress
  *
@@ -92,10 +93,14 @@ export const stripProtocol = (urlString: string) =>
  * @return {string} The masked address
  */
 export const maskAddress = (address: string, mask: string = '...'): string => {
-  addressValidator(address);
-  const HEX_HEADER: string = '0x';
-  const rawAddress: string = addressNormalizer(address, false);
-  const addressStart: string = rawAddress.slice(0, 4);
-  const addressEnd: string = rawAddress.slice(-4);
-  return `${HEX_HEADER}${addressStart}${mask}${addressEnd}`;
+  try {
+    addressValidator(address);
+    const HEX_HEADER: string = '0x';
+    const rawAddress: string = addressNormalizer(address, false);
+    const addressStart: string = rawAddress.slice(0, 4);
+    const addressEnd: string = rawAddress.slice(-4);
+    return `${HEX_HEADER}${addressStart}${mask}${addressEnd}`;
+  } catch (caughtError) {
+    return caughtError.message;
+  }
 };
