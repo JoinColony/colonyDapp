@@ -6,6 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import type { SubmitFn } from '~core/Wizard';
+import type { DialogType } from '~core/Dialog';
 
 import { Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -18,6 +19,10 @@ import styles from './StepCreateToken.css';
 import CreatingToken from './CreatingToken.jsx';
 
 const MSG = defineMessages({
+  errorCreateToken: {
+    id: 'error.colony.createToken',
+    defaultMessage: 'Could not create Token',
+  },
   heading: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.heading',
     defaultMessage: "Let's create your new token.",
@@ -77,52 +82,38 @@ const MSG = defineMessages({
 
 type FormValues = {
   tokenName: string,
+  tokenSymbol: string,
+  tokenAddress: string,
+  tokenCreated: boolean,
 };
 
 type Props = {
+  openDialog: () => DialogType,
   previousStep: () => void,
 } & FormikProps<FormValues>;
-
-type State = {
-  isCreatingToken: boolean,
-};
 
 const ACCEPTED_MIME_TYPES: Array<string> = ['image/svg+xml', 'image/png'];
 const ACCEPTED_MAX_FILE_SIZE: number = 1000000;
 
 const VALIDATE_TOKEN_NAME: RegExp = /^[A-Za-z0-9-_.]+$/;
 
-class StepCreateToken extends Component<Props, State> {
-  timeoutId: TimeoutID;
-
+class StepCreateToken extends Component<Props> {
   static displayName = 'dashboard.CreateColonyWizard.CreateToken';
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isCreatingToken: false,
-    };
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timeoutId);
-  }
 
   // TODO use store
   handleTokenCreate = (e: SyntheticEvent<any>) => {
     // TODO actually create a token here - this is currently waiting to submit the form,
     // as it's just mocking creation to show the loading screen
     e.persist();
-    this.setState({ isCreatingToken: true });
   };
 
   render() {
-    const { previousStep, isValid } = this.props;
-    const { isCreatingToken } = this.state;
+    const { openDialog, previousStep, isSubmitting, isValid } = this.props;
     return (
       <Fragment>
-        {isCreatingToken ? (
-          <CreatingToken />
+        {isSubmitting ? (
+          <CreatingToken openDialog={openDialog} />
         ) : (
           <div className={styles.main}>
             <section className={styles.titleSection}>

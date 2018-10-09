@@ -1,7 +1,10 @@
 /* @flow */
+
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
+import { bindActionCreators, Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import { defineMessages } from 'react-intl';
 
 import type { SubmitFn } from '~core/Wizard';
@@ -15,19 +18,28 @@ import styles from './StepCreateColony.css';
 import CreatingColony from './CreatingColony.jsx';
 import CardRow from './CreateColonyCardRow.jsx';
 
-type FormValues = {};
+import {
+  // comment to line break for eslint
+  createColony as createColonyAction,
+} from '../../actionCreators/colony';
+
+type FormValues = {
+  tokenAddress: string,
+  tokenCreated: boolean,
+};
 
 type Props = {
   nextStep: () => void,
   previousStep: () => void,
   openDialog: string => DialogType,
+  createColonyAction: (tokenAddress: string) => void,
 } & FormikProps<FormValues>;
 
-type State = {
-  isCreatingColony: boolean,
-};
-
 const MSG = defineMessages({
+  errorCreateColony: {
+    id: 'error.colony.createColony',
+    defaultMessage: 'Could not create Colony',
+  },
   title: {
     id: 'CreateColony.StepCreateColony.title',
     defaultMessage: `Almost there! Confirm your details`,
@@ -73,30 +85,54 @@ const options = [
   },
 ];
 
-class StepCreateColony extends Component<Props, State> {
+class StepCreateColony extends Component<Props> {
   static displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isCreatingColony: false,
-    };
+  componentDidUpdate({
+    createColony: {
+      isSubmitting: prevIsSubmitting,
+      error: prevError,
+      colonyAddress: prevColonyAddress,
+    },
+  }) {
+    const {
+      createColony: { isSubmitting, error, colonyAddress } = {},
+      openDialog,
+      setErrors,
+      setSubmitting,
+    } = this.props;
+    if (
+      typeof isSubmitting !== 'undefined' &&
+      isSubmitting !== prevIsSubmitting
+    )
+      setSubmitting(isSubmitting);
+
+    if (error && error !== prevError)
+      setErrors({ tokenAddress: MSG.errorCreateColony });
+
+    if (colonyAddress && colonyAddress !== prevColonyAddress)
+      openDialog('ActivityBarExample');
   }
 
-  handleColonyCreate = () => {
-    // TODO actually create a colony here, and then do something once successful.
-    // This is currently just infinitely mocking creation to show the loading screen
-    this.setState({ isCreatingColony: true });
+  handleCreateColony = (e: SyntheticEvent<any>) => {
+    e.preventDefault();
+
+    const {
+      setSubmitting,
+      createColonyAction: createColony,
+      values: { tokenAddress },
+    } = this.props;
+
+    setSubmitting(true);
+    createColony(tokenAddress);
   };
 
   render() {
-    const { isCreatingColony } = this.state;
-    const { values } = this.props;
-
+    const { values, previousStep, isSubmitting, openDialog } = this.props;
     return (
       <Fragment>
-        {isCreatingColony ? (
-          <CreatingColony />
+        {isSubmitting ? (
+          <CreatingColony openDialog={openDialog} />
         ) : (
           <section className={styles.content}>
             <div className={styles.finalContainer}>
@@ -115,9 +151,10 @@ class StepCreateColony extends Component<Props, State> {
                 appearance={{ theme: 'secondary' }}
                 type="cancel"
                 text={MSG.back}
+                onClick={previousStep}
               />
               <Button
-                onClick={this.handleColonyCreate}
+                onClick={this.handleCreateColony}
                 appearance={{ theme: 'primary' }}
                 text={MSG.confirm}
               />
@@ -132,4 +169,11 @@ class StepCreateColony extends Component<Props, State> {
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
   nextStep();
 
-export const Step = StepCreateColony;
+export const Step = connect(
+  ({
+    dashboard: {
+      colony: { createColony },
+    },
+  }) => ({ createColony }),
+  (dispatch: Dispatch) => bindActionCreators({ createColonyAction }, dispatch),
+)(StepCreateColony);

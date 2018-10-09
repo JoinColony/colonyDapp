@@ -9,9 +9,22 @@ import {
   CREATE_TOKEN_SUCCESS,
 } from '../actionTypes';
 
-export const createToken = (name: String, symbol: String) => ({
+// TODO later; supply tx options
+export const createToken = (name: string, symbol: string) => ({
   type: CREATE_TOKEN,
-  payload: { name, symbol },
+  payload: {
+    params: { name, symbol },
+  },
+});
+
+// TODO later; supply tx options
+export const createColony = (tokenAddress: string) => ({
+  type: CREATE_COLONY,
+  payload: {
+    params: { tokenAddress },
+    // TODO nicer way of dealing with tx ID
+    transactionId: Math.random().toString(),
+  },
 });
 
 export const createTokenError = (error: Object) => ({
@@ -26,11 +39,6 @@ export const createTokenSuccess = (
 ) => ({
   type: CREATE_TOKEN_SUCCESS,
   payload: { name, symbol, address },
-});
-
-export const createColony = (tokenAddress: String) => ({
-  type: CREATE_COLONY,
-  payload: { tokenAddress },
 });
 
 export const createColonyError = (error: Object) => ({

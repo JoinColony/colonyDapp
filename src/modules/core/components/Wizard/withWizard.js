@@ -57,12 +57,8 @@ type WizardArgs = {
 
 type SetSubmitting = (isSubmitting: boolean) => void;
 
-const getStep = (steps: Steps, step: number, values: Object) => {
-  if (typeof steps == 'function') {
-    return steps(step, values);
-  }
-  return steps[step];
-};
+const getStep = (steps: Steps, step: number, values: Object) =>
+  typeof steps === 'function' ? steps(step, values) : steps[step];
 
 const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
@@ -103,7 +99,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
       ...rest
     }: ActionSubmit<AnyValues>) => {
       const { values } = this.state;
-      const extendedActionSubmit = {
+      return {
         ...rest,
         onSuccess: onSuccess
           ? (res: any, bag: FormikBag<Object, AnyValues>) =>
@@ -114,7 +110,6 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
               onError(res, this.extendBag(values, bag))
           : undefined,
       };
-      return extendedActionSubmit;
     };
 
     render() {
@@ -127,13 +122,9 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
         ...extraProps
       } = getStep(steps, step, currentValues);
 
-      if (!Step) {
-        throw new Error('Step needs to be implemented!');
-      }
+      if (!Step) throw new Error('Step needs to be implemented!');
 
-      if (!onSubmit) {
-        throw new Error('onSubmit needs to be implemented!');
-      }
+      if (!onSubmit) throw new Error('onSubmit needs to be implemented!');
 
       const currentStep = step + 1;
       const stepCount = maxSteps || steps.length;
@@ -147,9 +138,9 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
         ...configInitialValues,
       };
 
-      const FormComponent = typeof onSubmit == 'function' ? Form : ActionForm;
+      const FormComponent = typeof onSubmit === 'function' ? Form : ActionForm;
       const submitProps =
-        typeof onSubmit == 'function'
+        typeof onSubmit === 'function'
           ? { onSubmit: this.handleStepSubmit(onSubmit) }
           : this.handleActionSubmit(onSubmit);
 

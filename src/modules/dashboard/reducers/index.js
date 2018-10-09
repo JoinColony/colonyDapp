@@ -2,8 +2,10 @@
 
 import { combineReducers } from 'redux';
 
-import colony from './colony';
+import colonyReducer from './colony';
 
-const dashboardReducer = combineReducers({ colony });
+const dashboardReducer = combineReducers({
+  colony: colonyReducer,
+});
 
 export default dashboardReducer;
