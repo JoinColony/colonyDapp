@@ -24,7 +24,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Inbox';
 
 const Inbox = () => (
-  <CenteredTemplate>
+  <CenteredTemplate appearance={{ theme: 'alt' }}>
     <div className={styles.contentContainer}>
       <Heading
         appearance={{ size: 'medium', margin: 'small' }}
