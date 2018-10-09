@@ -2,8 +2,7 @@
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-type Dispatch = (*) => any;
+import type { Dispatch } from 'redux';
 
 /**
  * Helper method to bind action creators with dispatch
