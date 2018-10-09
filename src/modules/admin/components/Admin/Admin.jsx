@@ -28,14 +28,10 @@ const MSG = defineMessages({
 
 type Props = {};
 
-type State = {};
-
-export default class Admin extends Component<Props, State> {
+export default class Admin extends Component<Props> {
   colonyName: 'Colony';
 
   static displayName = 'dashboard.Admin';
-
-  state = {};
 
   componentWillMount() {
     // TODO: get current Colony from Redux

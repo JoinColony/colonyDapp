@@ -5,9 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
-import styles from './AdminNavigation.css';
-
-const displayName = 'users.AdminNavigation';
+const displayName = 'Admin.AdminNavigation';
 
 const MSG = defineMessages({
   colonySettings: {
