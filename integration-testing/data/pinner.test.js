@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import PinnerClient from '../../src/lib/pinningService/packages/pinning-service-client/src';
+import PinnerClient from '../../src/lib/pinningService/packages/pinning-service-client';
 import DDBTestFactory from '../utils/DDBTestFactory';
 import { retryUntilValue } from '../utils/tools';
 
