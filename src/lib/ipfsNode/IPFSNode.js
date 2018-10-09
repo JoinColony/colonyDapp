@@ -1,7 +1,7 @@
 /* @flow */
 
 import IPFS from 'ipfs';
-import promisify from 'es6-promisify';
+import { promisify } from 'es6-promisify';
 
 import { sleep } from '../../utils/time';
 
@@ -63,7 +63,7 @@ class IPFSNode {
   /**
    * Get the IPFS instance (to use in 3rd party libraries (e.g. orbit-db))
    */
-  getIpfs() {
+  getIPFS() {
     return this._ipfs;
   }
 

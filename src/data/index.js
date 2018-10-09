@@ -20,7 +20,7 @@ import ipfsNode from '../lib/ipfsNode';
 
   await ipfsNode.ready;
 
-  const orbitNode = new OrbitDB(ipfsNode.getIpfs(), identity, {
+  const orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
     path: 'colonyOrbitdb',
   });
 

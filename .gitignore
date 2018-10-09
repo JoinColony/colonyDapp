@@ -1,5 +1,7 @@
 /colonyIpfs
 /colonyOrbitdb
+/keystore
+/orbitdb
 coverage
 node_modules
 .env
