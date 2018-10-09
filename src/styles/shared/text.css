@@ -52,5 +52,5 @@
   font-size: var(--size-small);
   font-weight: var(--weight-semi);
   text-align: left;
-  line-height: var(--size-small) + 2px;
+  line-height: calc(var(--size-small) + 2px);
 }
