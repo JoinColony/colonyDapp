@@ -7,6 +7,7 @@ import { all } from 'redux-saga/effects';
 
 import context from '~context/';
 
+import coreReducer from './modules/core/reducers';
 import userReducer from './modules/user/reducers';
 
 import dashboardSagas from './modules/dashboard/sagas';
@@ -23,6 +24,7 @@ DDB.registerSchema('userProfile', SCHEMAS.UserProfile);
 
 const rootReducer = combineReducers({
   user: userReducer,
+  core: coreReducer,
 });
 
 function* rootSaga(): any {
