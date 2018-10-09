@@ -149,6 +149,7 @@ class StepSelectToken extends Component<Props, State> {
     }
   }
 
+  // TODO saga me!
   checkToken = async (contractAddress: string) => {
     const token = new ColonyNetworkClient.TokenClient({
       adapter: this.adapter,

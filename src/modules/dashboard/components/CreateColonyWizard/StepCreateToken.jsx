@@ -108,6 +108,7 @@ class StepCreateToken extends Component<Props, State> {
     clearTimeout(this.timeoutId);
   }
 
+  // TODO use store
   handleTokenCreate = (e: SyntheticEvent<any>) => {
     // TODO actually create a token here - this is currently waiting to submit the form,
     // as it's just mocking creation to show the loading screen
