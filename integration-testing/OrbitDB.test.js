@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import DDBTestFactory from '../utils/DDBTestFactory';
+import DDBTestFactory from './utils/DDBTestFactory';
 
 const factory = new DDBTestFactory('orbitdb.test');
 let orbit1 = null;

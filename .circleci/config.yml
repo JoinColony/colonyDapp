@@ -130,9 +130,6 @@ jobs:
             - node_modules
           key: node-modules-{{ checksum "package.json" }}
       - run:
-          name: "Linting Integration Tests Javascript code"
-          command: yarn lint:integration:ci
-      - run:
           name: "Start pinningService Integration mode"
           command: "yarn test:integration:ci:start-pinning"
           background: true

@@ -2,9 +2,9 @@
 
 import merge from 'deepmerge';
 
-import IPFSNode from '../../src/lib/ipfsNode/IPFSNode';
-import { sleep } from '../../src/utils/time';
-import DDBTestFactory from '../utils/DDBTestFactory';
+import IPFSNode from '../src/lib/ipfsNode/IPFSNode';
+import { sleep } from '../src/utils/time';
+import DDBTestFactory from './utils/DDBTestFactory';
 
 let pinner = null;
 let node1 = null;
