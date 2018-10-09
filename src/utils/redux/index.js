@@ -14,7 +14,7 @@ import type { Dispatch } from 'redux';
 export const withBoundActionCreators = (actionCreators: Object = {}) =>
   connect(
     null,
-    (dispatch: Dispatch) => bindActionCreators(actionCreators, dispatch),
+    (dispatch: Dispatch<*>) => bindActionCreators(actionCreators, dispatch),
   );
 
 const reduxUtils: Object = {
