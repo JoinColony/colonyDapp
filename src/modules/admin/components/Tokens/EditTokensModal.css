@@ -1,0 +1,41 @@
+@import 'variables.css';
+
+.modalContent {
+  padding: 20px 30px;
+  min-width: 400px;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+}
+
+.modalOuterActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+}
+
+.closeIconButton {
+  padding: 0;
+  border: 0;
+  background: 0;
+}
+
+.closeIconButton svg {
+  fill: var(--colony-white);
+  stroke: var(--colony-white);
+}
+
+.tokenChoice {
+  display: flex;
+  align-items: center;
+}
+
+.tokenChoiceIcon {
+  margin-right: 6px;
+  max-height: 36px;
+  max-width: 36px;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+}
