@@ -34,6 +34,8 @@ type Props = {
   elementOnly?: boolean,
   /** Label to use */
   label: string | MessageDescriptor,
+  /** Help text (will appear next to label text) */
+  help?: string | MessageDescriptor,
   /** Placeholder to render when not uploading */
   placeholder: Node,
   /** Function to handle removal of the avatar (should set avatarURL to null from outside) */
@@ -63,7 +65,14 @@ class AvatarUploader extends Component<Props> {
   );
 
   render() {
-    const { elementOnly, label, placeholder, remove, upload } = this.props;
+    const {
+      elementOnly,
+      label,
+      help,
+      placeholder,
+      remove,
+      upload,
+    } = this.props;
     // Formik is used for state and error handling through FileUpload, nothing else
     return (
       <Formik onSubmit={() => null}>
@@ -74,6 +83,7 @@ class AvatarUploader extends Component<Props> {
             classNames={styles}
             accept={['image/jpeg', 'image/png']}
             label={label}
+            help={help}
             maxFilesLimit={1}
             name="avatarUploader"
             renderPlaceholder={placeholder}
