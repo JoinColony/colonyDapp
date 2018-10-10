@@ -25,6 +25,7 @@ import {
   CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
+  COLONY_ADMIN_ROUTE,
   INBOX_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
@@ -42,7 +43,7 @@ const Routes = ({
     currentWallet: { instance },
   },
 }: Object) => {
-  const isConnected = !!instance;
+  const isConnected = !instance;
   return (
     <Switch>
       <Route
@@ -76,6 +77,11 @@ const Routes = ({
         isConnected={isConnected}
         path={DASHBOARD_ROUTE}
         component={Dashboard}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        path={COLONY_ADMIN_ROUTE}
+        component={Admin}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}

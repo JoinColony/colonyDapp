@@ -1,0 +1,62 @@
+@import 'variables.css';
+
+@value wideButton: 160px;
+
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  padding: 10% 80px 10% 80px;
+  overflow: auto;
+  background: var(--gradient-default);
+  grid-template-columns: minmax(200px, 340px) minmax(360px, auto) minmax(120px, 200px);
+  grid-template-rows: 100%;
+  column-gap: 80px;
+}
+
+.colonyInfo {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.content {
+  height: 100%;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.noTasks {
+  margin-bottom: 30px;
+  max-width: 420px;
+  font-size: var(--size-medium-l);
+  line-height: 2em;
+}
+
+.sidebar {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.domainsFilters {
+  margin-top: 40px;
+}
+
+.filterItem {
+  margin: 0 0 20px 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-weight: var(--weight-semi);
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+
+.filterItem:hover {
+  color: var(--primary);
+  opacity: 0.8;
+}
+
+.filterItemActive {
+  composes: filterItem;
+  color: var(--primary);
+}

@@ -1,6 +1,7 @@
 /* @flow */
 
 export const CONNECT_ROUTE = '/connect';
+export const COLONY_ADMIN_ROUTE = '/admin';
 export const COLONY_HOME_ROUTE = '/colony';
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_PROFILE_ROUTE = '/create-profile';
