@@ -92,7 +92,10 @@ export const stripProtocol = (urlString: string) =>
  *
  * @return {string} The masked address
  */
-export const maskAddress = (address: string, mask: string = '...'): string => {
+export const maskAddress = (
+  address: string,
+  mask: string = '...',
+): string | Error => {
   try {
     addressValidator(address);
     const HEX_HEADER: string = '0x';
@@ -101,6 +104,6 @@ export const maskAddress = (address: string, mask: string = '...'): string => {
     const addressEnd: string = rawAddress.slice(-4);
     return `${HEX_HEADER}${addressStart}${mask}${addressEnd}`;
   } catch (caughtError) {
-    return caughtError.message;
+    return caughtError;
   }
 };
