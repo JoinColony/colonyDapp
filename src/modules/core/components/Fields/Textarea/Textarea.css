@@ -65,6 +65,7 @@
 
 .themeFat {
   composes: main;
+  padding: 16px;
   font-size: var(--size-medium);
 
   &::placeholder {
