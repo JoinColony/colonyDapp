@@ -1,4 +1,5 @@
 /* @flow */
+
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 

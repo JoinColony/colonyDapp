@@ -4,7 +4,7 @@ import React from 'react';
 import Popover from '~core/Popover';
 import UserAvatar from '~core/UserAvatar';
 
-import mockUser from '../UserProfile/__datamocks__/mockUser';
+import mockUser from './__datamocks__/mockUser';
 
 import styles from './AvatarDropdown.css';
 

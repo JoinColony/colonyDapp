@@ -7,23 +7,23 @@ import { all } from 'redux-saga/effects';
 
 import context from '~context/';
 
-import walletReducer from './modules/wallet/reducers';
+import userReducer from './modules/user/reducers';
 
 import dashboardSagas from './modules/dashboard/sagas';
-import walletSagas from './modules/wallet/sagas';
 import coreSagas from './modules/core/sagas';
+import userSagas from './modules/user/sagas';
 import history from './history';
 import { dataReducer, dataSagas, initializeData } from './data';
 
 import reduxPromiseListener from './createPromiseListener';
 
 const rootReducer = combineReducers({
-  wallet: walletReducer,
+  user: userReducer,
   data: dataReducer,
 });
 
 function* rootSaga(): any {
-  yield all([walletSagas(), dashboardSagas(), coreSagas(), dataSagas()]);
+  yield all([userSagas(), dashboardSagas(), coreSagas(), dataSagas()]);
 }
 
 const sagaMiddleware = createSagaMiddleware({ context });
