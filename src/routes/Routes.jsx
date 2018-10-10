@@ -9,14 +9,16 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Dashboard from '~dashboard/Dashboard';
 
+import Admin from '../modules/admin/components/Admin';
 import Inbox from '~dashboard/Inbox';
 
-import AdminProfile from '../modules/admin/components/Profile';
 import ConnectWalletWizard from '~user/ConnectWalletWizard';
 import CreateWalletWizard from '~user/CreateWalletWizard';
 import UserProfile from '~user/UserProfile';
 import UserProfileEdit from '~user/UserProfileEdit';
 import ProfileCreate from '~user/ProfileCreate';
+
+import AdminProfile from '../modules/admin/components/Profile';
 
 import {
   CONNECT_ROUTE,

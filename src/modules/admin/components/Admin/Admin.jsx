@@ -7,8 +7,6 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 
-import AdminNavigation from './AdminNavigation.jsx';
-
 import styles from './Admin.css';
 
 const MSG = defineMessages({
@@ -23,6 +21,26 @@ const MSG = defineMessages({
   backButton: {
     id: 'dashboard.Admin.backButton',
     defaultMessage: 'Go to {colonyName}',
+  },
+  colonySettings: {
+    id: 'dashboard.Admin.colonySettings',
+    defaultMessage: 'Colony Settings',
+  },
+  tabProfile: {
+    id: 'dashboard.Admin.tabProfile',
+    defaultMessage: 'Go to your Wallet',
+  },
+  tabTokens: {
+    id: 'dashboard.Admin.tabTokens',
+    defaultMessage: 'Tokens',
+  },
+  tabTransaction: {
+    id: 'dashboard.Admin.tabTransaction',
+    defaultMessage: 'Transaction',
+  },
+  tabOrganisation: {
+    id: 'dashboard.Admin.tabOrganisation',
+    defaultMessage: 'Organisation',
   },
 });
 
@@ -53,23 +71,30 @@ export default class Admin extends Component<Props> {
               />
             </NavLink>
           </header>
-          <AdminNavigation />
         </aside>
-        <main className={styles.content}>
-          <Tabs>
-            <TabList>
-              <Tab>
-                <FormattedMessage {...MSG.tabColonyProfile} />
-              </Tab>
-              <Tab>
-                <FormattedMessage {...MSG.tabAdvanced} />
-              </Tab>
-            </TabList>
-            <TabPanel />
-            <TabPanel />
-          </Tabs>
-        </main>
-        <aside className={styles.sidebar} />
+        <Tabs>
+          <TabList
+            appearance={{ theme: 'vertical' }}
+            headline={MSG.colonySettings}
+          >
+            <Tab>
+              <FormattedMessage {...MSG.tabProfile} />
+            </Tab>
+            <Tab>
+              <FormattedMessage {...MSG.tabTokens} />
+            </Tab>
+            <Tab>
+              <FormattedMessage {...MSG.tabTransaction} />
+            </Tab>
+            <Tab>
+              <FormattedMessage {...MSG.tabOrganisation} />
+            </Tab>
+          </TabList>
+          <TabPanel> YO1 </TabPanel>
+          <TabPanel> YO2 </TabPanel>
+          <TabPanel> YO3 </TabPanel>
+          <TabPanel> YO4 </TabPanel>
+        </Tabs>
       </div>
     );
   }

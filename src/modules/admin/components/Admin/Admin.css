@@ -6,13 +6,14 @@
 
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  display: grid;
   padding: 10% 80px 10% 80px;
   overflow: auto;
   background: var(--gradient-default);
-  grid-template-columns: minmax(200px, 340px) minmax(360px, auto) minmax(120px, 200px);
+  display: inline-block;
+  /*   grid-template-columns: minmax(200px, 340px) minmax(360px, auto) minmax(120px, 200px);
+  display: grid;
   grid-template-rows: 100%;
-  column-gap: 80px;
+  column-gap: 80px; */
 }
 
 .header {
@@ -23,11 +24,6 @@
   position: fixed;
   top: 20px;
   left: 20px;
-}
-
-.colonyInfo {
-  grid-column: 1;
-  grid-row: 1;
 }
 
 .colonyInfo::before {
