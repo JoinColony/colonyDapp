@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { compose, withHandlers, withProps, withState } from 'recompose';
 
 import type { TokenType } from '~types/token';
 
@@ -13,6 +14,7 @@ import { sortObjectsBy } from '~utils/arrays';
 
 import styles from './Tokens.css';
 
+import EditTokensModal from './EditTokensModal.jsx';
 import TokenCard from './TokenCard.jsx';
 
 import mockTokens from './__datamocks__/mockTokens';
@@ -38,6 +40,10 @@ const MSG = defineMessages({
 
 type Props = {
   tokens?: Array<TokenType>,
+  isEditingTokens: boolean,
+  openEditTokensModal: () => void,
+  closeEditTokensModal: () => void,
+  toggleEditTokensModal: (current: boolean) => void,
 };
 
 const isEthSort = (prev: string, next: string): number => {
@@ -51,18 +57,15 @@ const isEthSort = (prev: string, next: string): number => {
 
 const displayName = 'admin.Tokens';
 
-const Tokens = ({ tokens = mockTokens }: Props) => {
+const Tokens = ({
+  tokens = [],
+  isEditingTokens,
+  openEditTokensModal,
+}: Props) => {
   const nativeToken = tokens.find(token => token.isNative);
   const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
   const isUserColonyOwner = true; // TODO determine this value.
   const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
-  const sortedTokens = tokens.sort(
-    sortObjectsBy(
-      'isNative',
-      { name: 'tokenSymbol', compareFn: isEthSort },
-      'id',
-    ),
-  );
   return (
     <div className={styles.main}>
       <main>
@@ -82,7 +85,7 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
         </div>
         <div className={styles.tokenCardContainer}>
           <CardList>
-            {sortedTokens.map(token => (
+            {tokens.map(token => (
               <TokenCard key={token.id} token={token} />
             ))}
           </CardList>
@@ -104,7 +107,9 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
               <Button
                 text={MSG.navItemEditTokens}
                 appearance={{ theme: 'blue' }}
+                onClick={openEditTokensModal}
               />
+              <EditTokensModal isOpen={isEditingTokens} tokens={tokens} />
             </li>
           </ul>
         </aside>
@@ -115,4 +120,25 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
 
 Tokens.displayName = displayName;
 
-export default Tokens;
+const enhance = compose(
+  withState('isEditingTokens', 'setIsEditingTokens', false),
+  withHandlers({
+    openEditTokensModal: ({ setIsEditingTokens }) => () =>
+      setIsEditingTokens(true),
+    closeEditTokensModal: ({ setIsEditingTokens }) => () =>
+      setIsEditingTokens(false),
+    toggleEditTokensModal: ({ setIsEditingTokens }) => () =>
+      setIsEditingTokens(current => !current),
+  }),
+  withProps(() => ({
+    tokens: mockTokens.sort(
+      sortObjectsBy(
+        'isNative',
+        { name: 'tokenSymbol', compareFn: isEthSort },
+        'id',
+      ),
+    ),
+  })),
+);
+
+export default enhance(Tokens);
