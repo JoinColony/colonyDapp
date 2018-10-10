@@ -50,6 +50,7 @@ module.exports = {
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',
         './src/modules/core/components/Fields/InputStatus/InputStatus.jsx',
         './src/modules/core/components/Fields/Textarea/Textarea.jsx',
+        './src/modules/core/components/Fields/Checkbox/Checkbox.jsx',
         './src/modules/core/components/Fields/Radio/Radio.jsx',
         './src/modules/core/components/Fields/Select/Select.jsx',
         './src/modules/core/components/Fields/FormStatus/FormStatus.jsx',
