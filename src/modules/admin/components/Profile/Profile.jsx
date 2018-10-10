@@ -5,7 +5,12 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
+import ProfileEdit from './ProfileEdit.jsx';
+import ProfileAdvanced from './ProfileAdvanced.jsx';
+
 import styles from './Profile.css';
+
+import { mockColony } from '~dashboard/ColonyHome/__datamocks__/mockColony';
 
 const MSG = defineMessages({
   tabProfile: {
@@ -21,22 +26,32 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Profile';
 
 const Profile = () => (
-  <div className={styles.main}>
-    <Tabs>
-      <TabList>
-        <Tab>
-          <FormattedMessage {...MSG.tabProfile} />
-        </Tab>
-        <Tab>
-          <FormattedMessage {...MSG.tabAdvaced} />
-        </Tab>
-      </TabList>
-      <TabPanel>Colony Profile Tab Content</TabPanel>
-      <TabPanel>Advanced Tab Content</TabPanel>
-    </Tabs>
+  <div className={styles.tempAdminMain}>
+    <aside className={styles.tempAdminNav}>Navigation</aside>
+    <div className={styles.main}>
+      <Tabs>
+        <TabList>
+          <Tab>
+            <FormattedMessage {...MSG.tabProfile} />
+          </Tab>
+          <Tab>
+            <FormattedMessage {...MSG.tabAdvaced} />
+          </Tab>
+        </TabList>
+        <TabPanel
+          className={styles.overwrittenTabPanel}
+          selectedClassName={styles.overwrittenSelectedTabPanel}
+        >
+          <ProfileEdit colony={mockColony} />
+        </TabPanel>
+        <TabPanel>
+          <ProfileAdvanced colony={mockColony} />
+        </TabPanel>
+      </Tabs>
+    </div>
   </div>
 );
 
-Profile.dispalyName = displayName;
+Profile.displayName = displayName;
 
 export default Profile;
