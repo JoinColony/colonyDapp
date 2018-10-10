@@ -18,13 +18,22 @@ type Props = {
   onSelect?: (index: number, lastIndex: number, event: Event) => ?boolean,
   /** Set the currently selected tab. This enables controlled mode, which also requires onSelect to be set */
   selectedIndex?: number,
+  /** Allow passing through an optional class for additonal styling i.e. vertical Tabs */
+  className?: string,
 };
 
 const displayName = 'Tabs';
 
-const Tabs = ({ innerRef, ...props }: Props) => (
-  <ReactTabs className={styles.main} domRef={innerRef} {...props} />
-);
+const Tabs = ({ innerRef, ...props }: Props) => {
+  const { className } = props;
+  return (
+    <ReactTabs
+      className={`styles.main ${className}`}
+      domRef={innerRef}
+      {...props}
+    />
+  );
+};
 
 Tabs.displayName = displayName;
 

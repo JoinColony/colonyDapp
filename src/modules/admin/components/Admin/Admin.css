@@ -10,10 +10,6 @@
   overflow: auto;
   background: var(--gradient-default);
   display: inline-block;
-  /*   grid-template-columns: minmax(200px, 340px) minmax(360px, auto) minmax(120px, 200px);
-  display: grid;
-  grid-template-rows: 100%;
-  column-gap: 80px; */
 }
 
 .header {
@@ -35,8 +31,7 @@
   content: '';
 }
 
-.content {
-  height: 100%;
-  grid-column: 2;
-  grid-row: 1;
+.vertical{
+  display: flex;
 }
+

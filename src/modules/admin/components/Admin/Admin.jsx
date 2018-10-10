@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
   tabProfile: {
     id: 'dashboard.Admin.tabProfile',
-    defaultMessage: 'Go to your Wallet',
+    defaultMessage: 'Profile',
   },
   tabTokens: {
     id: 'dashboard.Admin.tabTokens',
@@ -72,7 +72,7 @@ export default class Admin extends Component<Props> {
             </NavLink>
           </header>
         </aside>
-        <Tabs>
+        <Tabs className={styles.vertical}>
           <TabList
             appearance={{ theme: 'vertical' }}
             headline={MSG.colonySettings}
