@@ -51,7 +51,7 @@ Modal.defaultProps = {
     afterOpen: styles.overlayAfterOpen,
     beforeClose: styles.overlayBeforeClose,
   },
-  role: null,
+  role: 'dialog',
   shouldFocusAfterRender: true,
   shouldCloseOnOverlayClick: true,
   shouldCloseOnEsc: true,
