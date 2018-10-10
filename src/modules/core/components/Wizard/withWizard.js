@@ -51,8 +51,8 @@ type StepsFn = (step: number, values: Object) => StepType;
 type Steps = Array<StepType> | StepsFn;
 
 type WizardArgs = {
+  stepCount?: number,
   steps: Steps,
-  handleFinalSubmit?: (values: AnyValues, bag: Object) => Promise<void> | void,
 };
 
 type SetSubmitting = (isSubmitting: boolean) => void;
@@ -64,7 +64,7 @@ const getStep = (steps: Steps, step: number, values: Object) => {
   return steps[step];
 };
 
-const withWizard = ({ steps }: WizardArgs) => (
+const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
 ) => {
   class Wizard extends Component<Props, State> {
@@ -136,7 +136,7 @@ const withWizard = ({ steps }: WizardArgs) => (
       }
 
       const currentStep = step + 1;
-      const stepCount = steps.length;
+      const stepCount = maxSteps || steps.length;
 
       const configInitialValues = formikConfig
         ? formikConfig.initialValues

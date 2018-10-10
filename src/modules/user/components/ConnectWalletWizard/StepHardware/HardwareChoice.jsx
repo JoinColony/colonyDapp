@@ -1,12 +1,13 @@
 /* @flow */
+
 import React, { Component, Fragment } from 'react';
 
 import { FormattedNumber } from 'react-intl';
 
 import styles from './HardwareChoice.css';
 
-import Radio from '../../../../core/components/Fields/Radio';
-import SpinnerLoader from '../../../../core/components/Preloaders/SpinnerLoader.jsx'; // eslint-disable-line max-len
+import Radio from '~core/Fields/Radio';
+import SpinnerLoader from '~core/Preloaders/SpinnerLoader.jsx';
 
 type Props = {
   checked: boolean,

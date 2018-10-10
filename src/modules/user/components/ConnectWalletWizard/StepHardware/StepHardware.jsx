@@ -1,7 +1,8 @@
 /* @flow */
-import type { FormikBag, FormikErrors, FormikProps } from 'formik';
 
-import { withFormik } from 'formik';
+import type { FormikProps } from 'formik';
+import * as yup from 'yup';
+
 import { compose } from 'recompose';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -9,7 +10,8 @@ import { defineMessages } from 'react-intl';
 import trezorWallet from '@colony/purser-trezor';
 import ledgerWallet from '@colony/purser-ledger';
 
-import asProvider from '../asProvider';
+import type { SubmitFn } from '~core/Wizard';
+
 import withContext from '~context/withContext';
 import { withBoundActionCreators } from '~utils/redux';
 import HardwareChoice from './HardwareChoice.jsx';
@@ -22,61 +24,61 @@ import {
   openHardwareWallet as openHardwareWalletAction,
 } from '../../../actionCreators/wallet';
 
-import Icon from '../../../../core/components/Icon';
-import Input from '../../../../core/components/Fields/Input';
-import InputLabel from '../../../../core/components/Fields/InputLabel';
-import Button from '../../../../core/components/Button';
-import Heading from '../../../../core/components/Heading';
-import styles from './Hardware.css';
+import Icon from '~core/Icon';
+import Input from '~core/Fields/Input';
+import InputLabel from '~core/Fields/InputLabel';
+import Button from '~core/Button';
+import Heading from '~core/Heading';
+import styles from './StepHardware.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'ConnectWallet.providers.Hardware.heading',
+    id: 'user.ConnectWalletWizard.StepHardware.heading',
     defaultMessage: 'We detected a hardware wallet connection.',
   },
   subHeading: {
-    id: 'ConnectWallet.providers.Hardware.subHeading',
+    id: 'user.ConnectWalletWizard.StepHardware.subHeading',
     defaultMessage: 'Would you like to access colony with that?',
   },
   walletSelectionLabel: {
-    id: 'ConnectWallet.providers.Hardware.walletSelectionLabel',
+    id: 'user.ConnectWalletWizard.StepHardware.walletSelectionLabel',
     defaultMessage: 'Select an address',
   },
   searchInputPlacholder: {
-    id: 'ConnectWallet.providers.Hardware.searchInputPlaceholder',
+    id: 'user.ConnectWalletWizard.StepHardware.searchInputPlaceholder',
     defaultMessage: 'Search...',
   },
   balanceText: {
-    id: 'ConnectWallet.providers.Hardware.balanceText',
+    id: 'user.ConnectWalletWizard.StepHardware.balanceText',
     defaultMessage: 'Balance',
   },
   emptySearchResultsText: {
-    id: 'ConnectWallet.providers.Hardware.emptySearchResultsText',
+    id: 'user.ConnectWalletWizard.StepHardware.emptySearchResultsText',
     defaultMessage: `Your search didn't return any connected wallets.`,
   },
   errorHeading: {
-    id: 'ConnectWallet.providers.Hardware.errorHeading',
+    id: 'user.ConnectWalletWizard.StepHardware.errorHeading',
     defaultMessage: `Oops, we couldn't find your hardware wallet`,
   },
   errorDescription: {
-    id: 'ConnectWallet.providers.Hardware.errorDescription',
+    id: 'user.ConnectWalletWizard.StepHardware.errorDescription',
     defaultMessage:
       'Please check that your hardware wallet is connected and try again.',
   },
   walletChoiceRequired: {
-    id: 'ConnectWallet.providers.Hardware.walletChoiceRequired',
+    id: 'user.ConnectWalletWizard.StepHardware.walletChoiceRequired',
     defaultMessage: 'Please select one of the wallets below.',
   },
   buttonAdvance: {
-    id: 'ConnectWallet.providers.Hardware.button.advance',
+    id: 'user.ConnectWalletWizard.StepHardware.button.advance',
     defaultMessage: 'Unlock Wallet',
   },
   buttonBack: {
-    id: 'ConnectWallet.providers.Hardware.button.back',
+    id: 'user.ConnectWalletWizard.StepHardware.button.back',
     defaultMessage: 'Choose a different wallet',
   },
   buttonRetry: {
-    id: 'ConnectWallet.providers.Hardware.button.retry',
+    id: 'user.ConnectWalletWizard.StepHardware.button.retry',
     defaultMessage: 'Try Again',
   },
 });
@@ -87,16 +89,19 @@ type FormValues = {
 };
 
 type Props = FormikProps<FormValues> & {
-  handleDidConnectWallet: () => void,
-  handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
   context: Object,
+  handleDidConnectWallet: () => void,
+  previousStep: () => void,
+  nextStep: () => void,
 };
 
 type State = {
   walletChoices: Array<string>,
 };
 
-class Hardware extends Component<Props, State> {
+class StepHardware extends Component<Props, State> {
+  static displayName = 'user.ConnectWalletWizard.StepHardware';
+
   state = {
     walletChoices: [],
   };
@@ -151,11 +156,11 @@ class Hardware extends Component<Props, State> {
   render() {
     const { walletChoices } = this.state;
     const {
-      handleExit,
       handleSubmit,
       isSubmitting,
       isValid,
-      values: { hardwareWalletChoice, hardwareWalletFilter },
+      previousStep,
+      values: { hardwareWalletChoice = '', hardwareWalletFilter = '' },
     } = this.props;
 
     const filteredWalletChoices = walletChoices.filter(address =>
@@ -243,7 +248,7 @@ class Hardware extends Component<Props, State> {
           <Button
             text={MSG.buttonBack}
             appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={handleExit}
+            onClick={previousStep}
           />
           <Button
             text={
@@ -261,38 +266,31 @@ class Hardware extends Component<Props, State> {
 }
 
 const enhance = compose(
-  asProvider(),
+  withContext,
   withBoundActionCreators({ openHardwareWalletAction }),
-  withFormik({
-    mapPropsToValues: () => ({
-      hardwareWalletChoice: '',
-      hardwareWalletFilter: '',
-    }),
-    validate: (values: FormValues): FormikErrors<FormValues> => {
-      const errors = {};
-      if (!values.hardwareWalletChoice) {
-        errors.hardwareWalletChoice = MSG.walletChoiceRequired;
-      }
-      return errors;
-    },
-    handleSubmit: (values: FormValues, otherProps: FormikBag<Object, *>) => {
-      const { hardwareWalletChoice } = values;
-      const {
-        props: {
-          handleDidConnectWallet,
-          openHardwareWalletAction: openHardwareWallet,
-          context: {
-            currentWallet: { instance: walletInstance },
-          },
-        },
-      } = otherProps;
-      const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
-        address => address === hardwareWalletChoice,
-      );
-      walletInstance.setDefaultAddress(selectedAddressIndex);
-      return openHardwareWallet(walletInstance.address, handleDidConnectWallet);
-    },
-  }),
 );
 
-export default withContext(enhance(Hardware));
+export const onSubmit: SubmitFn<FormValues> = (values, { props }) => {
+  const { hardwareWalletChoice } = values;
+  const {
+    handleDidConnectWallet,
+    openHardwareWalletAction: openHardwareWallet,
+    context: {
+      currentWallet: { instance: walletInstance },
+    },
+  } = props;
+  const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
+    address => address === hardwareWalletChoice,
+  );
+  walletInstance.setDefaultAddress(selectedAddressIndex);
+  return openHardwareWallet(walletInstance.address, handleDidConnectWallet);
+};
+
+export const validationSchema = yup.object({
+  hardwareWalletChoice: yup
+    .string()
+    .address()
+    .required(MSG.walletChoiceRequired),
+});
+
+export const Step = enhance(StepHardware);

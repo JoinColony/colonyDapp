@@ -1,18 +1,19 @@
 /* @flow */
 
+import type { FormikProps } from 'formik';
+
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import { compose } from 'recompose';
 
 import { open } from '@colony/purser-metamask';
 
-import asProvider from '../asProvider';
 import { withBoundActionCreators } from '~utils/redux';
 
-import Button from '../../../../core/components/Button';
-import Heading from '../../../../core/components/Heading';
-import Icon from '../../../../core/components/Icon';
-import styles from './MetaMask.css';
+import type { SubmitFn } from '~core/Wizard';
+import Button from '~core/Button';
+import Heading from '~core/Heading';
+import Icon from '~core/Icon';
+import styles from './StepMetaMask.css';
 
 import {
   /*
@@ -24,36 +25,39 @@ import {
 
 const MSG = defineMessages({
   heading: {
-    id: 'ConnectWallet.providers.MetaMask.heading',
+    id: 'user.ConnectWalletWizard.StepMetaMask.heading',
     defaultMessage: "You're connected to MetaMask",
   },
   subHeading: {
-    id: 'ConnectWallet.providers.MetaMask.subHeading',
+    id: 'user.ConnectWalletWizard.StepMetaMask.subHeading',
     defaultMessage: 'Would you like to access Colony with that?',
   },
   errorHeading: {
-    id: 'ConnectWallet.providers.MetaMask.errorHeading',
+    id: 'user.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: "Oops we couldn't detect MetaMask",
   },
   buttonAdvance: {
-    id: 'ConnectWallet.providers.MetaMask.button.advance',
+    id: 'user.ConnectWalletWizard.StepMetaMask.button.advance',
     defaultMessage: 'Go to Colony',
   },
   buttonBack: {
-    id: 'ConnectWallet.providers.MetaMask.button.back',
+    id: 'user.ConnectWalletWizard.StepMetaMask.button.back',
     defaultMessage: 'Back',
   },
   buttonRetry: {
-    id: 'ConnectWallet.providers.MetaMask.button.retry',
+    id: 'user.ConnectWalletWizard.StepMetaMask.button.retry',
     defaultMessage: 'Try Again',
   },
 });
 
+type FormValues = {};
+
 type Props = {
+  previousStep: () => void,
+  nextStep: () => void,
   handleDidConnectWallet: () => void,
-  handleExit: (evt: SyntheticEvent<HTMLButtonElement>) => void,
   openMetamaskWalletAction: (*) => void,
-};
+} & FormikProps<FormValues>;
 
 type State = {
   isLoading: boolean,
@@ -62,6 +66,8 @@ type State = {
 
 class MetaMask extends Component<Props, State> {
   timerHandle: TimeoutID;
+
+  static displayName = 'user.ConnectWalletWizard.StepMetaMask';
 
   state = {
     isLoading: false,
@@ -122,7 +128,7 @@ class MetaMask extends Component<Props, State> {
   };
 
   render() {
-    const { handleExit } = this.props;
+    const { previousStep } = this.props;
     const { isLoading, isValid } = this.state;
     return (
       <div>
@@ -156,7 +162,7 @@ class MetaMask extends Component<Props, State> {
           <Button
             text={MSG.buttonBack}
             appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={handleExit}
+            onClick={previousStep}
           />
           {isValid ? (
             <Button
@@ -179,9 +185,9 @@ class MetaMask extends Component<Props, State> {
   }
 }
 
-const enhance = compose(
-  asProvider(),
-  withBoundActionCreators({ openMetamaskWalletAction }),
-);
+const enhance = withBoundActionCreators({ openMetamaskWalletAction });
 
-export default enhance(MetaMask);
+export const Step = enhance(MetaMask);
+
+// TODO: Maybe we would like to use this for something
+export const onSubmit: SubmitFn<FormValues> = () => {};

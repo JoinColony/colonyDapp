@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { FormikProps } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -13,53 +14,53 @@ import styles from './StepStart.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'ConnectWalletWizard.WalletStart.heading',
+    id: 'ConnectWalletWizard.StepStart.heading',
     defaultMessage: 'How would you like to access Colony?',
   },
   subTitle: {
-    id: 'ConnectWalletWizard.WalletStart.subTitle',
+    id: 'ConnectWalletWizard.StepStart.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
       'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
   createWalletTitle: {
-    id: 'ConnectWalletWizard.WalletStart.createWalletTitle',
+    id: 'ConnectWalletWizard.StepStart.createWalletTitle',
     defaultMessage: 'Need a wallet? Let us help',
   },
   createWalletSubtitle: {
-    id: 'ConnectWalletWizard.WalletStart.createWalletSubtitle',
+    id: 'ConnectWalletWizard.StepStart.createWalletSubtitle',
     defaultMessage: 'Create an etherum wallet to join',
   },
   metaMaskTitle: {
-    id: 'ConnectWalletWizard.WalletStart.metaMaskTitle',
+    id: 'ConnectWalletWizard.StepStart.metaMaskTitle',
     defaultMessage: 'MetaMask',
   },
   hardwareTitle: {
-    id: 'ConnectWalletWizard.WalletStart.hardwareTitle',
+    id: 'ConnectWalletWizard.StepStart.hardwareTitle',
     defaultMessage: 'Hardware Wallet',
   },
   phraseTitle: {
-    id: 'ConnectWalletWizard.WalletStart.phraseTitle',
+    id: 'ConnectWalletWizard.StepStart.phraseTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
   JSONTitle: {
-    id: 'ConnectWalletWizard.WalletStart.JSONTitle',
+    id: 'ConnectWalletWizard.StepStart.JSONTitle',
     defaultMessage: 'JSON File',
   },
   metaMaskSubtitle: {
-    id: 'ConnectWalletWizard.WalletStart.metaMaskSubtitle',
+    id: 'ConnectWalletWizard.StepStart.metaMaskSubtitle',
     defaultMessage: 'Require MetaMask browser extension',
   },
   hardwareSubtitle: {
-    id: 'ConnectWalletWizard.WalletStart.hardwareSubtitle',
+    id: 'ConnectWalletWizard.StepStart.hardwareSubtitle',
     defaultMessage: 'We support Ledger and Trezor',
   },
   phraseSubtitle: {
-    id: 'ConnectWalletWizard.WalletStart.phraseSubtitle',
+    id: 'ConnectWalletWizard.StepStart.phraseSubtitle',
     defaultMessage: 'Access with your mnemonic phrase',
   },
   JSONSubtitle: {
-    id: 'ConnectWalletWizard.WalletStart.JSONSubtitle',
+    id: 'ConnectWalletWizard.StepStart.JSONSubtitle',
     defaultMessage: 'We do not recommend this method',
   },
 });
@@ -69,6 +70,11 @@ type FormValues = {
 };
 
 const displayName = 'user.ConnectWalletWizard.StepStart';
+
+type Props = {
+  previousStep: () => void,
+  nextStep: () => void,
+} & FormikProps<FormValues>;
 
 const options = [
   {
@@ -104,8 +110,8 @@ const createWalletOption = {
   icon: 'hugging',
 };
 
-const StepStart = () => (
-  <section className={styles.content}>
+const StepStart = ({ handleSubmit }: Props) => (
+  <form className={styles.content} onSubmit={handleSubmit}>
     <div className={styles.title}>
       <Heading
         appearance={{ size: 'medium', weight: 'thin' }}
@@ -127,7 +133,7 @@ const StepStart = () => (
         link={CREATE_WALLET_ROUTE}
       />
     </div>
-  </section>
+  </form>
 );
 
 StepStart.displayName = displayName;
