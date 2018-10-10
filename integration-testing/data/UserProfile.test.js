@@ -2,6 +2,9 @@
 import DDBTestFactory from '../utils/DDBTestFactory';
 import { sleep } from '../../src/utils/time';
 import { retryUntilValue } from '../utils/tools';
+import PinnerClient from '../../src/lib/pinningService/packages/pinning-service-client';
+
+const PINNER_URL = process.env.PINNING_SERVICE_URL || 'http://localhost:9090';
 
 const factory = new DDBTestFactory('UserProfile.test');
 let data1 = null;
@@ -10,7 +13,9 @@ let data3 = null;
 let data4 = null;
 
 beforeAll(async () => {
-  await factory.pinner();
+  const pinnerClient = PinnerClient.fromConfig({ host: PINNER_URL });
+  await pinnerClient.ready();
+  await factory.pinner(pinnerClient);
 
   data1 = await factory.Data('data1');
   await sleep(400); // prevent nodes with same keys

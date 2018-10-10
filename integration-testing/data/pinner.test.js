@@ -3,7 +3,7 @@ import PinnerClient from '../../src/lib/pinningService/packages/pinning-service-
 import DDBTestFactory from '../utils/DDBTestFactory';
 import { retryUntilValue } from '../utils/tools';
 
-const PINNER_URL = 'http://localhost:9090';
+const PINNER_URL = process.env.PINNING_SERVICE_URL || 'http://localhost:9090';
 
 const factory = new DDBTestFactory('pinner.test');
 let pinnerClient = null;
@@ -13,8 +13,8 @@ let data2 = null;
 beforeAll(async () => {
   pinnerClient = PinnerClient.fromConfig({ host: PINNER_URL });
   await pinnerClient.ready();
-
   await factory.pinner(pinnerClient);
+
   data1 = await factory.Data('data1');
   data2 = await factory.Data('data2');
   await factory.ready();
