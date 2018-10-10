@@ -3,8 +3,8 @@
 import type { OrbitDBStore } from './OrbitDBStore';
 
 export interface OrbitDBKVStore extends OrbitDBStore {
-  put(key: any, value: any): Promise<void>;
-  set(key: any, value: any): Promise<void>;
+  put(key: string, value: any): Promise<void>;
+  set(key: string, value: any): Promise<void>;
 
-  get(key: any): any;
+  get(key: string): any;
 }
