@@ -9,6 +9,8 @@ import Icon from '~core/Icon';
 
 import styles from './Admin.css';
 
+import Profile from './Profile.jsx';
+
 const MSG = defineMessages({
   tabColonyProfile: {
     id: 'dashboard.Admin.tabColonyProfile',
@@ -62,7 +64,7 @@ export default class Admin extends Component<Props> {
         <aside className={styles.colonyInfo}>
           <header className={styles.header}>
             <Icon name="back" title="back" appearance={{ size: 'medium' }} />
-            <NavLink to="/colony">
+            <NavLink className={styles.boldLink} to="/colony">
               <FormattedMessage
                 {...MSG.backButton}
                 values={{
@@ -90,10 +92,12 @@ export default class Admin extends Component<Props> {
               <FormattedMessage {...MSG.tabOrganisation} />
             </Tab>
           </TabList>
-          <TabPanel> YO1 </TabPanel>
-          <TabPanel> YO2 </TabPanel>
-          <TabPanel> YO3 </TabPanel>
-          <TabPanel> YO4 </TabPanel>
+          <TabPanel>
+            <Profile />
+          </TabPanel>
+          <TabPanel>Tokens</TabPanel>
+          <TabPanel>Transaction</TabPanel>
+          <TabPanel>Organisation</TabPanel>
         </Tabs>
       </div>
     );

@@ -9,17 +9,20 @@
   padding: 10% 80px 10% 80px;
   overflow: auto;
   background: var(--gradient-default);
-  display: inline-block;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 120px;
+  width: 125px;
   position: fixed;
   top: 20px;
   left: 20px;
+}
+
+.boldLink {
+  font-weight: var(--weight-medium);
 }
 
 .colonyInfo::before {
@@ -31,7 +34,6 @@
   content: '';
 }
 
-.vertical{
+.vertical {
   display: flex;
 }
-

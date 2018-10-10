@@ -28,7 +28,7 @@ const Tabs = ({ innerRef, ...props }: Props) => {
   const { className } = props;
   return (
     <ReactTabs
-      className={`styles.main ${className}`}
+      className={`${styles.main} ${className}`}
       domRef={innerRef}
       {...props}
     />

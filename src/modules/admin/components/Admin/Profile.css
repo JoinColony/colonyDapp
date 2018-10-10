@@ -1,0 +1,6 @@
+@import 'variables.css';
+
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  padding: 0 0 20px 40px;
+}
