@@ -5,9 +5,13 @@ import type { MessageDescriptor } from 'react-intl';
 
 import { defineMessages } from 'react-intl';
 
+import { getMainClasses } from '~utils/css';
+
 import Icon from '../Icon';
+import Link from '../Link';
 import Heading from '../Heading';
 import { asField } from '../Fields';
+
 import styles from './DecisionOption.css';
 
 const MSG = defineMessages({
@@ -17,13 +21,19 @@ const MSG = defineMessages({
   },
 });
 
+type Appearance = {
+  theme?: 'alt',
+};
+
 type Props = {
+  appearance?: Appearance,
   option: {
     value: string,
     title: MessageDescriptor | string,
     subtitle: MessageDescriptor | string,
     icon?: string,
   },
+  link?: string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: string) => void,
 };
@@ -41,10 +51,19 @@ class DecisionOption extends Component<Props> {
 
   render() {
     const {
+      appearance,
       option: { icon, subtitle, title },
+      link,
     } = this.props;
+    const Element = link ? Link : 'button';
+    const elmProps = link ? { to: link } : { onClick: this.makeDecision };
+
     return (
-      <button onClick={this.makeDecision} type="submit" className={styles.row}>
+      <Element
+        type="submit"
+        className={getMainClasses(appearance, styles)}
+        {...elmProps}
+      >
         {icon && (
           <div className={styles.rowIcon}>
             <Icon name={icon} title={title} />
@@ -61,7 +80,7 @@ class DecisionOption extends Component<Props> {
           />
         </div>
         <Icon name="caret-right" title={MSG.iconTitle} />
-      </button>
+      </Element>
     );
   }
 }

@@ -1,6 +1,6 @@
 @import 'variables.css';
 
-.row {
+.main {
   display: flex;
   align-items: center;
   padding: 12px 16px 12px 0;
@@ -11,13 +11,22 @@
   background: none;
   text-align: left;
   cursor: pointer;
+
+  &:only-of-type {
+    border-bottom-color: transparent;
+  }
+}
+
+.themeAlt {
+  composes: main;
+  background-color: white;
 }
 
 .rowContent {
-  flex: 6;
+  flex: 1;
 }
 
 .rowIcon {
-  flex: 1;
-  padding-left: 16px;
+  flex: 0 0 50px;
+  text-align: center;
 }

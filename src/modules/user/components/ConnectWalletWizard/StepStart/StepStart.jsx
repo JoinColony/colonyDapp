@@ -1,142 +1,108 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
-
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { NavLink } from 'react-router-dom';
 
 import type { SubmitFn } from '~core/Wizard';
 
 import Heading from '~core/Heading';
-import Link from '~core/Link';
-import Icon from '~core/Icon';
+import DecisionHub, { DecisionOption } from '~core/DecisionHub';
 import { CREATE_WALLET_ROUTE } from '~routes';
 
 import styles from './StepStart.css';
 
-// import {
-//   CONNECT_WALLET_SLUG_HARDWARE,
-//   CONNECT_WALLET_SLUG_JSON,
-//   CONNECT_WALLET_SLUG_METAMASK,
-//   CONNECT_WALLET_SLUG_MNEMONIC,
-// } from '../ConnectWalletWizard/routes';
-
-// const walletSlugs = [
-//   CONNECT_WALLET_SLUG_METAMASK,
-//   CONNECT_WALLET_SLUG_HARDWARE,
-//   CONNECT_WALLET_SLUG_MNEMONIC,
-//   CONNECT_WALLET_SLUG_JSON,
-// ];
-
-const icons = ['metamask', 'wallet', 'phrase', 'file'];
-
 const MSG = defineMessages({
   heading: {
-    id: 'WalletStart.heading',
+    id: 'ConnectWalletWizard.WalletStart.heading',
     defaultMessage: 'How would you like to access Colony?',
   },
   subTitle: {
-    id: 'WalletStart.subTitle',
+    id: 'ConnectWalletWizard.WalletStart.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
       'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
-  callToAction: {
-    id: 'WalletStart.callToAction',
+  createWalletTitle: {
+    id: 'ConnectWalletWizard.WalletStart.createWalletTitle',
     defaultMessage: 'Need a wallet? Let us help',
   },
-  callToActionSub: {
-    id: 'WalletStart.callToActionSub',
+  createWalletSubtitle: {
+    id: 'ConnectWalletWizard.WalletStart.createWalletSubtitle',
     defaultMessage: 'Create an etherum wallet to join',
   },
-});
-
-const rowTitles = defineMessages({
   metaMaskTitle: {
-    id: 'WalletStart.metaMaskTitle',
+    id: 'ConnectWalletWizard.WalletStart.metaMaskTitle',
     defaultMessage: 'MetaMask',
   },
   hardwareTitle: {
-    id: 'WalletStart.hardwareTitle',
+    id: 'ConnectWalletWizard.WalletStart.hardwareTitle',
     defaultMessage: 'Hardware Wallet',
   },
   phraseTitle: {
-    id: 'WalletStart.phraseTitle',
+    id: 'ConnectWalletWizard.WalletStart.phraseTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
   JSONTitle: {
-    id: 'WalletStart.JSONTitle',
+    id: 'ConnectWalletWizard.WalletStart.JSONTitle',
     defaultMessage: 'JSON File',
   },
-});
-
-const rowSubTitles = defineMessages({
-  metaMaskSubtTitle: {
-    id: 'WalletStart.metaMaskSubtitle',
+  metaMaskSubtitle: {
+    id: 'ConnectWalletWizard.WalletStart.metaMaskSubtitle',
     defaultMessage: 'Require MetaMask browser extension',
   },
-  hardwareSubtTitle: {
-    id: 'WalletStart.hardwareSubtitle',
+  hardwareSubtitle: {
+    id: 'ConnectWalletWizard.WalletStart.hardwareSubtitle',
     defaultMessage: 'We support Ledger and Trezor',
   },
-  phraseSubtTitle: {
-    id: 'WalletStart.phraseSubtitle',
+  phraseSubtitle: {
+    id: 'ConnectWalletWizard.WalletStart.phraseSubtitle',
     defaultMessage: 'Access with your mnemonic phrase',
   },
-  JSONSubtTitle: {
-    id: 'WalletStart.JSONSubtitle',
+  JSONSubtitle: {
+    id: 'ConnectWalletWizard.WalletStart.JSONSubtitle',
     defaultMessage: 'We do not recommend this method',
   },
 });
 
-type RowProps = {
-  title: MessageDescriptor,
-  subTitle: MessageDescriptor,
-  rowIndex: number,
+type FormValues = {
+  method: 'metamask' | 'hardware' | 'phrase' | 'json',
 };
 
-const DetailRow = ({ title, subTitle, rowIndex }: RowProps) => (
-  <div className={styles.row}>
-    <div className={styles.rowIcon}>
-      <Icon name={icons[rowIndex]} title={icons[rowIndex]} />
-    </div>
-    <div className={styles.rowContent}>
-      <Heading
-        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-        text={title}
-      />
-      <Heading
-        appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-        text={subTitle}
-      />
-    </div>
-    <Icon name="caret-right" title="caret-right" />
-  </div>
-);
-
-const allTheRows = Object.keys(rowTitles).map((key, i) => {
-  const keys = Object.keys(rowSubTitles);
-  const title = rowTitles[key];
-  const subTitle = rowSubTitles[keys[i]];
-  // FIXME: Yep.
-  const slug = 'xxx';
-
-  return (
-    <NavLink key={`Link${title.id}`} to={slug}>
-      <DetailRow
-        title={title}
-        subTitle={subTitle}
-        key={`row${title.id}`}
-        rowIndex={i}
-      />
-    </NavLink>
-  );
-});
-
-type FormValues = {};
-
 const displayName = 'user.ConnectWalletWizard.StepStart';
+
+const options = [
+  {
+    value: 'metamask',
+    title: MSG.metaMaskTitle,
+    subtitle: MSG.metaMaskSubtitle,
+    icon: 'metamask',
+  },
+  {
+    value: 'hardware',
+    title: MSG.hardwareTitle,
+    subtitle: MSG.hardwareSubtitle,
+    icon: 'wallet',
+  },
+  {
+    value: 'phrase',
+    title: MSG.phraseTitle,
+    subtitle: MSG.phraseSubtitle,
+    icon: 'wallet',
+  },
+  {
+    value: 'json',
+    title: MSG.JSONTitle,
+    subtitle: MSG.JSONSubtitle,
+    icon: 'file',
+  },
+];
+
+const createWalletOption = {
+  value: null,
+  title: MSG.createWalletTitle,
+  subtitle: MSG.createWalletSubtitle,
+  icon: 'hugging',
+};
 
 const StepStart = () => (
   <section className={styles.content}>
@@ -152,25 +118,15 @@ const StepStart = () => (
         text={MSG.subTitle}
       />
     </div>
-    {allTheRows}
-    <Link to={CREATE_WALLET_ROUTE}>
-      <div className={styles.callToAction}>
-        <div className={styles.actionImage}>
-          <Icon name="hugging" title="hugging-face" />
-        </div>
-        <div className={styles.actionText}>
-          <Heading
-            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-            text={MSG.callToAction}
-          />
-          <Heading
-            appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-            text={MSG.callToActionSub}
-          />
-        </div>
-        <Icon name="caret-right" title="caret-right" />
-      </div>
-    </Link>
+    <DecisionHub name="method" options={options} />
+    <div className={styles.createWalletLink}>
+      <DecisionOption
+        appearance={{ theme: 'alt' }}
+        name="create"
+        option={createWalletOption}
+        link={CREATE_WALLET_ROUTE}
+      />
+    </div>
   </section>
 );
 
