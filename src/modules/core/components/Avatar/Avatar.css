@@ -5,15 +5,6 @@
   height: 45px;
   width: 45px;
   position: relative;
-
-  /*
-   * This is needed otherwise transparent images don't have an edge
-   * and break the design
-   *
-   * There's an argument to be made here about the specific backogrund color,
-   * or that no backogrund should be set, but instead a delimiter border
-   */
-  background-color: white;
 }
 
 .xxs {

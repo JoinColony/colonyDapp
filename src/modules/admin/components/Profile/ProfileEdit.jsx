@@ -8,6 +8,8 @@ import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
 import { FieldSet, Input, InputLabel, Textarea } from '~core/Fields';
 import Button from '~core/Button';
+import AvatarUploader from '~core/AvatarUploader';
+import ColonyAvatar from '~core/ColonyAvatar';
 
 import styles from './ProfileEdit.css';
 
@@ -37,12 +39,33 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileEdit.labelGuidelines',
     defaultMessage: 'Contribution Guidelines',
   },
+  labelProfilePicture: {
+    id: 'admin.Profile.ProfileEdit.labelProfilePicture',
+    defaultMessage: 'Colony Profile Picture',
+  },
+  labelUploader: {
+    id: 'admin.Profile.ProfileEdit.labelUploader',
+    defaultMessage: 'at least 250 by 250px, up to 1MB',
+  },
 });
 
 /*
  * This is due to `displayName` already being declared in the Component's scope
  */
 const componentDisplayName: string = 'admin.Profile.ProfileEdit';
+
+/*
+ * @TODO Replace with ACTUAL upload & remove methods
+ */
+const placeholderUpload = async () => {
+  const uploadMessage: string = `[${componentDisplayName}] Uploaded Image`;
+  console.log(uploadMessage);
+  return uploadMessage;
+};
+const placeholderRemove = async () => {
+  console.log(`[${componentDisplayName}] Removed Image`);
+  return undefined;
+};
 
 /*
  * We should really start having a central location for flow types, as these
@@ -73,6 +96,7 @@ const ProfileEdit = ({
     description,
     website,
     guideline,
+    avatar,
   },
 }: Props) => (
   <div className={styles.main}>
@@ -152,7 +176,27 @@ const ProfileEdit = ({
         )}
       </Formik>
     </main>
-    <aside className={styles.sidebar}>Sidebar</aside>
+    <aside className={styles.sidebar}>
+      <AvatarUploader
+        label={MSG.labelProfilePicture}
+        help={MSG.labelUploader}
+        placeholder={
+          <ColonyAvatar
+            /*
+             * @NOTE Unlike other components this does not override the main class
+             * But appends the current one to that
+             */
+            className={styles.avatar}
+            avatarURL={avatar}
+            size="xl"
+            colonyAddress={address}
+            colonyName={ensName}
+          />
+        }
+        upload={placeholderUpload}
+        remove={placeholderRemove}
+      />
+    </aside>
   </div>
 );
 

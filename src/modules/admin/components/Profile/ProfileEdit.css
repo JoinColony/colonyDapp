@@ -43,3 +43,17 @@
   composes: section;
   padding-right: 120px;
 }
+
+/*
+ * This is needed otherwise transparent images don't have an edge
+ * and brake the design
+ *
+ * There's an argument to be made here about this specific backoground color being
+ * available at the core component level.
+ *
+ * Even more so, the argument should also include if this color should actually
+ * be set or instead we should add a delimiter border
+ */
+.avatar {
+  background-color: white;
+}
