@@ -6,6 +6,8 @@ import copy from 'copy-to-clipboard';
 
 import { getMainClasses } from '~utils/css';
 
+import MaskedAddress from '~core/MaskedAddress';
+
 import styles from './CopyableAddress.css';
 
 import Button from '../Button';
@@ -65,9 +67,7 @@ class CopyableAddress extends Component<Props, State> {
     if (full) {
       return address;
     }
-    const firstPart = address.slice(0, 6);
-    const lastPart = address.slice(address.length - 4, address.length);
-    return `${firstPart} ... ${lastPart}`;
+    return <MaskedAddress address={address} />;
   };
 
   render() {

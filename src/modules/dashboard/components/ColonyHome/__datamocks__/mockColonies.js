@@ -1,12 +1,30 @@
 /* @flow */
 
 const mockColonies = [
-  { displayName: 'Twitch.tv', colonyAddress: '0x123456789' },
-  { displayName: 'Zirtual', colonyAddress: '0x987654321' },
-  { displayName: 'C21t', colonyAddress: '0x123459876' },
-  { displayName: 'Twitch.tv', colonyAddress: '0x1234567891' },
-  { displayName: 'Zirtual', colonyAddress: '0x9876543211' },
-  { displayName: 'C21t', colonyAddress: '0x1234598761' },
+  {
+    displayName: 'Twitch.tv',
+    colonyAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
+  },
+  {
+    displayName: 'Zirtual',
+    colonyAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
+  },
+  {
+    displayName: 'C21t',
+    colonyAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
+  },
+  {
+    displayName: 'Twitch.tv',
+    colonyAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
+  },
+  {
+    displayName: 'Zirtual',
+    colonyAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
+  },
+  {
+    displayName: 'C21t',
+    colonyAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
+  },
 ];
 
 export default mockColonies;

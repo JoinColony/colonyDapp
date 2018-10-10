@@ -1,0 +1,33 @@
+@import 'variables.css';
+
+.avatar {
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0 20px var(--temp-grey-blue-2);
+}
+
+.description {
+  margin-top: 15px;
+}
+
+.dynamicSection {
+  margin-top: 25px;
+}
+
+.editColony {
+  display: inline-block;
+
+  /*
+   * @NOTE Negative Margins
+   * Added in order to perfectly align the settings icon
+   */
+  margin: -2px 0 0 6px;
+  padding: 0;
+  vertical-align: -webkit-baseline-middle;
+}
+
+.userAvatar {
+  display: inline-block;
+  margin: 9px 9px 0 0;
+}

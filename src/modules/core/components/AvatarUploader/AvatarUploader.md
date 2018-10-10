@@ -13,7 +13,7 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
     <UserAvatar
       size="xl"
       title="Upload it already!"
-      walletAddress="0x0"
+      walletAddress="0x1afb213afa8729fa7908154b90e256f1be70989a"
       username="testuser"
     />
   }
@@ -60,7 +60,7 @@ class AvatarUploadWrapper extends Component {
             avatarURL={this.state.avatarURL}
             size="xl"
             title="Upload it already!"
-            walletAddress="0x0"
+            walletAddress="0x1afb213afa8729fa7908154b90e256f1be70989a"
             username="testuser"
           />
         }
@@ -73,5 +73,3 @@ class AvatarUploadWrapper extends Component {
 
 <AvatarUploadWrapper />
 ```
-
-

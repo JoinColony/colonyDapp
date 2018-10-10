@@ -1,5 +1,11 @@
 /* @flow */
 
+import { addressValidator } from '@colony/purser-core/validators';
+import { addressNormalizer } from '@colony/purser-core/normalizers';
+
+const HTTP_PROTOCOL: string = 'http://';
+const HTTPS_PROTOCOL: string = 'https://';
+
 /*
   Removes line breaks and replaces them with spaces
 */
@@ -49,5 +55,55 @@ export const humanReadableFileSize = (size: number) => {
  * @param {string} word The word / string to capitalize
  * @return {string} The capitalized string
  */
-export const capitalize = (word: string) =>
+export const capitalize = (word: string): string =>
   word && word.charAt(0).toUpperCase() + word.slice(1);
+
+/**
+ * Strip the normal and secure website protocol from the start of a string.
+ * If will only check for the specific 'http' and 'https' strings and strip them out,
+ * otherwise it will just return the original string.
+ *
+ * Most use cases would be do display just to domain (and path) part of a website
+ *
+ * @method stripProtocol
+ *
+ * @param {string} urlString The string to remove the protocol from
+ *
+ * @return {string} The new string (stripped of the protocol) or the original one
+ */
+export const stripProtocol = (urlString: string) =>
+  (urlString.startsWith(HTTP_PROTOCOL) &&
+    urlString.replace(HTTP_PROTOCOL, '')) ||
+  (urlString.startsWith(HTTPS_PROTOCOL) &&
+    urlString.replace(HTTPS_PROTOCOL, '')) ||
+  urlString;
+
+/**
+ * Mask an BIP32 address and only show it's start and end 4bit sections,
+ * hidden by a configurable string mask
+ *
+ * @NOTE We also validate the address here. If it's not correct this will throw, but we catch it and
+ * just return the error message in that case
+ *
+ * @method maskAddress
+ *
+ * @param {string} address The address to mask (must be valid!)
+ * @param {string} mask The string mask to apply
+ *
+ * @return {string} The masked address
+ */
+export const maskAddress = (
+  address: string,
+  mask: string = '...',
+): string | Error => {
+  try {
+    addressValidator(address);
+    const HEX_HEADER: string = '0x';
+    const rawAddress: string = addressNormalizer(address, false);
+    const addressStart: string = rawAddress.slice(0, 4);
+    const addressEnd: string = rawAddress.slice(-4);
+    return `${HEX_HEADER}${addressStart}${mask}${addressEnd}`;
+  } catch (caughtError) {
+    return caughtError;
+  }
+};
