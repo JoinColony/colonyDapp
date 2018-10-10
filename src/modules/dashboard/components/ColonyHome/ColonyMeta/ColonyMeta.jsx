@@ -66,7 +66,7 @@ const ColonyMeta = ({
       <Fragment>
         <span>{name}</span>
         {isAdmin && (
-          <NavLink className={styles.editColony} to="/dashboard">
+          <NavLink className={styles.editColony} to="/admin/profile">
             <Icon name="settings" title={MSG.editColonyTitle} />
           </NavLink>
         )}
