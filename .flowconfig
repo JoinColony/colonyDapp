@@ -24,6 +24,7 @@ module.name_mapper='^\~users\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/users/comp
 module.name_mapper='^\~wallet\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/wallet/components/\1'
 module.name_mapper='^\~utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
+module.name_mapper='^\~types\/\(.*\)$' -> '<PROJECT_ROOT>/src/types/\1'
 module.name_mapper='^\~routes\/\(.*\)$' -> '<PROJECT_ROOT>/src/routes/\1'
 module.name_mapper='^\~routes' -> '<PROJECT_ROOT>/src/routes'
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { UserType } from '../../types';
+import type { UserType } from '~types/user';
 
 import CopyableAddress from '../../../core/components/CopyableAddress';
 import Heading from '../../../core/components/Heading';

@@ -13,6 +13,8 @@ import ColonyAvatar from '~core/ColonyAvatar';
 
 import styles from './ProfileEdit.css';
 
+import type { ColonyType } from '~types/colony';
+
 const MSG = defineMessages({
   labelAddress: {
     id: 'admin.Profile.ProfileEdit.labelAddress',
@@ -65,23 +67,6 @@ const placeholderUpload = async () => {
 const placeholderRemove = async () => {
   console.log(`[${componentDisplayName}] Removed Image`);
   return undefined;
-};
-
-/*
- * We should really start having a central location for flow types, as these
- * are shared with ColonyHome / ColonyMeta already, and as we go forward, this
- * duplication will only increase...
- *
- * @TODO Move `ColonyType` to (not-yet-created) flowtype centralized location
- */
-type ColonyType = {
-  address: string,
-  avatar: string,
-  name: string,
-  ensName: string,
-  description?: string,
-  website?: string,
-  guideline?: string,
 };
 
 type Props = {

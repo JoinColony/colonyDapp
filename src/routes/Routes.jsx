@@ -3,6 +3,12 @@
 import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
+/*
+ * @NOTE Temporary import for development
+ * If this made it to review, raise hell!
+ */
+import AdminProfile from '../modules/admin/components/Profile';
+
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Dashboard from '~dashboard/Dashboard';
@@ -52,7 +58,7 @@ const Routes = ({
       <DisconnectedOnlyRoute
         isConnected={isConnected}
         path={START_ROUTE}
-        component={WalletStart}
+        component={AdminProfile}
       />
       <DisconnectedOnlyRoute
         isConnected={isConnected}

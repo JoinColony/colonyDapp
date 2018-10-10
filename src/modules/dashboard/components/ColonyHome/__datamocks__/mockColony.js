@@ -2,9 +2,10 @@
 
 import MockUser from '~users/UserProfile/__datamocks__/mockUser';
 
-import type { UserType } from '../../../../users/types';
+import type { UserType } from '~types/user';
+import type { ColonyType } from '~types/colony';
 
-export const mockColony: Object = {
+export const mockColony: ColonyType = {
   address: '0x1afb213afa8729fa7908154b90e256f1be70989a',
   avatar:
     // eslint-disable-next-line max-len

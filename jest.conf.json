@@ -7,6 +7,7 @@
         "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
         "^\\~core(.*)$": "<rootDir>/modules/core/components$1",
         "^\\~utils(.*)$": "<rootDir>/utils$1",
+        "^\\~types(.*)$": "<rootDir>/types$1",
         "^testutils$": "<rootDir>/__tests__/utils.js"
     },
     "setupFiles": [

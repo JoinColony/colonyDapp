@@ -8,7 +8,7 @@ import DropdownMenu, {
 } from '../../../core/components/DropdownMenu';
 import Link from '../../../core/components/Link';
 
-import type { UserType } from '../../types';
+import type { UserType } from '~types/user';
 
 const MSG = defineMessages({
   myProfile: {

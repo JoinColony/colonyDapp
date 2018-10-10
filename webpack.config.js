@@ -23,6 +23,7 @@ const config = {
       '~routes': path.resolve(__dirname, 'src/routes'),
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
+      '~types': path.resolve(__dirname, 'src/types/'),
       // https://github.com/jquense/yup/issues/273
       '@babel/runtime/helpers/builtin': path.resolve(
         __dirname,

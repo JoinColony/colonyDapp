@@ -8,6 +8,8 @@ import Button from '~core/Button';
 
 import styles from './ProfileAdvanced.css';
 
+import type { ColonyType } from '~types/colony';
+
 const MSG = defineMessages({
   labelVersion: {
     id: 'admin.Profile.ProfileAdvanced.labelVersion',
@@ -28,25 +30,6 @@ const MSG = defineMessages({
 });
 
 const displayName: string = 'admin.Profile.ProfileAdvanced';
-
-/*
- * We should really start having a central location for flow types, as these
- * are shared with ColonyHome / ColonyMeta already, and as we go forward, this
- * duplication will only increase...
- *
- * @TODO Move `ColonyType` to (not-yet-created) flowtype centralized location
- */
-type ColonyType = {
-  address: string,
-  avatar: string,
-  name: string,
-  ensName: string,
-  description?: string,
-  website?: string,
-  guideline?: string,
-  version?: string,
-  id?: string,
-};
 
 type Props = {
   colony: ColonyType,
