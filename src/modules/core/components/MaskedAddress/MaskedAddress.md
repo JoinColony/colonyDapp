@@ -17,7 +17,9 @@ _Note: this component will catch any errors and show a fallback message, if the 
 />
 ```
 
-### MaskedAddress catches if the address is not in the correct format (and displays a fallback message)
+### MaskedAddress can deal with a wrong address string
+
+If the address format is incorrect the `<MaskedAddress />` component will display the _"Address format is wrong!"_ message.
 
 ```jsx
 <MaskedAddress address="0x0" />

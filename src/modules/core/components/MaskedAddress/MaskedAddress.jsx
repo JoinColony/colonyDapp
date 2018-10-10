@@ -1,11 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { maskAddress } from '~utils/strings';
-
-import ErrorBoundry from '~core/ErrorBoundry';
 
 const MSG = defineMessages({
   wrongAddressFormat: {
@@ -25,18 +23,12 @@ type Props = {
   mask?: string,
 };
 
-/*
- * This intermediate component is needed since `componentDidCatch` catch only
- * triggers for the `render` method
- */
-const MaskAddress = ({ address, mask = '...' }: Props) => (
-  <span>{maskAddress(address, mask)}</span>
-);
-
-const MaskedAddress = ({ address, mask }: Props) => (
-  <ErrorBoundry message={MSG.wrongAddressFormat}>
-    <MaskAddress address={address} mask={mask} />
-  </ErrorBoundry>
-);
+const MaskedAddress = ({ address, mask }: Props) => {
+  const maskedAddress: string | Error = maskAddress(address, mask);
+  if (maskedAddress instanceof Error) {
+    return <FormattedMessage {...MSG.wrongAddressFormat} />;
+  }
+  return <span>{maskedAddress}</span>;
+};
 
 export default MaskedAddress;
