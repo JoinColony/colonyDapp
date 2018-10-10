@@ -26,29 +26,26 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Profile';
 
 const Profile = () => (
-  <div className={styles.tempAdminMain}>
-    <aside className={styles.tempAdminNav}>Navigation</aside>
-    <div className={styles.main}>
-      <Tabs>
-        <TabList>
-          <Tab>
-            <FormattedMessage {...MSG.tabProfile} />
-          </Tab>
-          <Tab>
-            <FormattedMessage {...MSG.tabAdvaced} />
-          </Tab>
-        </TabList>
-        <TabPanel
-          className={styles.overwrittenTabPanel}
-          selectedClassName={styles.overwrittenSelectedTabPanel}
-        >
-          <ProfileEdit colony={mockColony} />
-        </TabPanel>
-        <TabPanel>
-          <ProfileAdvanced colony={mockColony} />
-        </TabPanel>
-      </Tabs>
-    </div>
+  <div className={styles.main}>
+    <Tabs>
+      <TabList>
+        <Tab>
+          <FormattedMessage {...MSG.tabProfile} />
+        </Tab>
+        <Tab>
+          <FormattedMessage {...MSG.tabAdvaced} />
+        </Tab>
+      </TabList>
+      <TabPanel
+        className={styles.overwrittenTabPanel}
+        selectedClassName={styles.overwrittenSelectedTabPanel}
+      >
+        <ProfileEdit colony={mockColony} />
+      </TabPanel>
+      <TabPanel>
+        <ProfileAdvanced colony={mockColony} />
+      </TabPanel>
+    </Tabs>
   </div>
 );
 
