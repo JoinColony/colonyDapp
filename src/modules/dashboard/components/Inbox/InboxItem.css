@@ -1,0 +1,54 @@
+@import 'variables.css';
+
+td.inboxDetails {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 24px 20px;
+  width: 100%;
+  font-weight: var(--weight-semi);
+}
+
+.inboxDetail {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--colony-black);
+}
+
+.inboxDetail:first-of-type {
+  margin-left: 5px;
+}
+
+.inboxAction {
+  overflow: hidden;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--grey-3);
+}
+
+.additionalDetails {
+  display: flex;
+  margin-top: 2px;
+  width: 100%;
+  font-size: var(--size-small);
+}
+
+.userAvatar {
+  margin: 0 10px;
+}
+
+.time {
+  font-weight: var(--weight-thin);
+}
+
+.pipe {
+  margin: 0 10px;
+  font-weight: var(--weight-thin);
+}
+
+.inboxDomain {
+  display: block;
+}

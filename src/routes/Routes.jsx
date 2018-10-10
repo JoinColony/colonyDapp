@@ -6,6 +6,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Dashboard from '~dashboard/Dashboard';
+import Inbox from '~dashboard/Inbox';
 import WalletStart from '~wallet/WalletStart';
 import ConnectWallet from '~wallet/ConnectWallet';
 import CreateWalletWizard from '~wallet/CreateWalletWizard';
@@ -31,8 +32,6 @@ import {
 import ConnectedOnlyRoute from './ConnectedOnlyRoute.jsx';
 import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 
-// XXX These are placeholders and will be replaced soon
-const Inbox = () => <h1 style={{ fontSize: '32px' }}>Inbox</h1>;
 const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
 const Routes = ({
