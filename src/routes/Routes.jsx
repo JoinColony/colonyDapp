@@ -12,22 +12,20 @@ import Dashboard from '~dashboard/Dashboard';
 import Inbox from '~dashboard/Inbox';
 
 import AdminProfile from '../modules/admin/components/Profile';
-import WalletStart from '~user/WalletStart';
-import ConnectWallet from '~user/ConnectWallet';
+import ConnectWalletWizard from '~user/ConnectWalletWizard';
 import CreateWalletWizard from '~user/CreateWalletWizard';
 import UserProfile from '~user/UserProfile';
 import UserProfileEdit from '~user/UserProfileEdit';
 import ProfileCreate from '~user/ProfileCreate';
 
 import {
+  CONNECT_ROUTE,
   COLONY_HOME_ROUTE,
-  CONNECT_WALLET_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
   INBOX_ROUTE,
-  START_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
@@ -51,18 +49,13 @@ const Routes = ({
         exact
         path="/"
         render={() => (
-          <Redirect to={isConnected ? DASHBOARD_ROUTE : START_ROUTE} />
+          <Redirect to={isConnected ? DASHBOARD_ROUTE : CONNECT_ROUTE} />
         )}
       />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
-        path={START_ROUTE}
-        component={WalletStart}
-      />
-      <DisconnectedOnlyRoute
-        isConnected={isConnected}
-        path={CONNECT_WALLET_ROUTE}
-        component={ConnectWallet}
+        path={CONNECT_ROUTE}
+        component={ConnectWalletWizard}
       />
       <DisconnectedOnlyRoute
         isConnected={isConnected}

@@ -6,27 +6,28 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
-import styles from './WalletStart.css';
+import type { SubmitFn } from '~core/Wizard';
 
-import WizardTemplate from '../../../pages/WizardTemplate';
-import Heading from '../../../core/components/Heading';
-import Link from '../../../core/components/Link';
-import Icon from '../../../core/components/Icon';
+import Heading from '~core/Heading';
+import Link from '~core/Link';
+import Icon from '~core/Icon';
 import { CREATE_WALLET_ROUTE } from '~routes';
 
-import {
-  CONNECT_WALLET_SLUG_HARDWARE,
-  CONNECT_WALLET_SLUG_JSON,
-  CONNECT_WALLET_SLUG_METAMASK,
-  CONNECT_WALLET_SLUG_MNEMONIC,
-} from '../ConnectWallet/routes';
+import styles from './StepStart.css';
 
-const walletSlugs = [
-  CONNECT_WALLET_SLUG_METAMASK,
-  CONNECT_WALLET_SLUG_HARDWARE,
-  CONNECT_WALLET_SLUG_MNEMONIC,
-  CONNECT_WALLET_SLUG_JSON,
-];
+// import {
+//   CONNECT_WALLET_SLUG_HARDWARE,
+//   CONNECT_WALLET_SLUG_JSON,
+//   CONNECT_WALLET_SLUG_METAMASK,
+//   CONNECT_WALLET_SLUG_MNEMONIC,
+// } from '../ConnectWalletWizard/routes';
+
+// const walletSlugs = [
+//   CONNECT_WALLET_SLUG_METAMASK,
+//   CONNECT_WALLET_SLUG_HARDWARE,
+//   CONNECT_WALLET_SLUG_MNEMONIC,
+//   CONNECT_WALLET_SLUG_JSON,
+// ];
 
 const icons = ['metamask', 'wallet', 'phrase', 'file'];
 
@@ -118,7 +119,8 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   const keys = Object.keys(rowSubTitles);
   const title = rowTitles[key];
   const subTitle = rowSubTitles[keys[i]];
-  const slug = walletSlugs[i];
+  // FIXME: Yep.
+  const slug = 'xxx';
 
   return (
     <NavLink key={`Link${title.id}`} to={slug}>
@@ -132,42 +134,49 @@ const allTheRows = Object.keys(rowTitles).map((key, i) => {
   );
 });
 
-const WalletDetails = () => (
-  <WizardTemplate>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', weight: 'thin' }}
-          text={MSG.heading}
-        />
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subTitle}
-        />
-      </div>
-      {allTheRows}
-      <Link to={CREATE_WALLET_ROUTE}>
-        <div className={styles.callToAction}>
-          <div className={styles.actionImage}>
-            <Icon name="hugging" title="hugging-face" />
-          </div>
-          <div className={styles.actionText}>
-            <Heading
-              appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-              text={MSG.callToAction}
-            />
-            <Heading
-              appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-              text={MSG.callToActionSub}
-            />
-          </div>
-          <Icon name="caret-right" title="caret-right" />
+type FormValues = {};
+
+const displayName = 'user.ConnectWalletWizard.StepStart';
+
+const StepStart = () => (
+  <section className={styles.content}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', weight: 'thin' }}
+        text={MSG.heading}
+      />
+    </div>
+    <div className={styles.subtitle}>
+      <Heading
+        appearance={{ size: 'normal', weight: 'thin' }}
+        text={MSG.subTitle}
+      />
+    </div>
+    {allTheRows}
+    <Link to={CREATE_WALLET_ROUTE}>
+      <div className={styles.callToAction}>
+        <div className={styles.actionImage}>
+          <Icon name="hugging" title="hugging-face" />
         </div>
-      </Link>
-    </section>
-  </WizardTemplate>
+        <div className={styles.actionText}>
+          <Heading
+            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+            text={MSG.callToAction}
+          />
+          <Heading
+            appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+            text={MSG.callToActionSub}
+          />
+        </div>
+        <Icon name="caret-right" title="caret-right" />
+      </div>
+    </Link>
+  </section>
 );
 
-export default WalletDetails;
+StepStart.displayName = displayName;
+
+export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+  nextStep();
+
+export const Step = StepStart;

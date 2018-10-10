@@ -3,7 +3,7 @@ import type { ContextRouter } from 'react-router-dom';
 import { compose, withHandlers, withState } from 'recompose';
 import { withRouter } from 'react-router-dom';
 
-import { CREATE_PROFILE_ROUTE, START_ROUTE } from '~routes';
+import { CREATE_PROFILE_ROUTE, CONNECT_ROUTE } from '~routes';
 
 type Props = ContextRouter & {
   isConnected: boolean,
@@ -21,7 +21,7 @@ const asProvider = (): Function =>
       },
       handleExit: (props: Props) => () => {
         const { history } = props;
-        history.push(START_ROUTE);
+        history.push(CONNECT_ROUTE);
       },
     }),
   );

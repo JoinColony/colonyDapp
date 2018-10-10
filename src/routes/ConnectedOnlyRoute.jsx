@@ -4,7 +4,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import type { ComponentType } from 'react';
 
-import { START_ROUTE } from './routeConstants';
+import { CONNECT_ROUTE } from './routeConstants';
 
 const ConnectedOnlyRoute = ({
   component: Component,
@@ -17,7 +17,7 @@ const ConnectedOnlyRoute = ({
   <Route
     {...rest}
     render={props =>
-      isConnected ? <Component {...props} /> : <Redirect to={START_ROUTE} />
+      isConnected ? <Component {...props} /> : <Redirect to={CONNECT_ROUTE} />
     }
   />
 );
