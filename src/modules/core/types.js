@@ -1,9 +1,6 @@
 /* @flow */
 
-// TODO update colonyJS for this import and remove the temporary types below.
-// import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
-type SendOptions = Object;
-type ContractResponse = Object;
+import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 
 export type Sender<Params: Object> = {
   client: {
@@ -14,7 +11,7 @@ export type Sender<Params: Object> = {
       },
     },
   },
-  send(params: Params, options: SendOptions): Promise<ContractResponse>,
+  send(params: Params, options: SendOptions): Promise<ContractResponse<*>>,
 };
 
 export type TransactionAction<Params: Object> = {
