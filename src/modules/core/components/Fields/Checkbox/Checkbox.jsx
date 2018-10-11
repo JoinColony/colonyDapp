@@ -25,7 +25,7 @@ type Props = {
   /** Children to render in place of the default label */
   children?: Node,
   /** Disable the input */
-  disabled?: boolean,
+  disabled: boolean,
   /** Display the element without label */
   elementOnly?: boolean,
   /** Help text (will appear next to label text) */
@@ -82,11 +82,11 @@ class Checkbox extends Component<Props, State> {
       form: { values },
       onChange,
     } = this.props;
-    if (e.currentTarget.checked) {
-      push(value);
-    } else {
-      const idx = values[name].indexOf(value);
+    const idx = values[name].indexOf(value);
+    if (idx >= 0) {
       remove(idx);
+    } else {
+      push(value);
     }
     if (onChange) {
       onChange(e);
@@ -107,8 +107,11 @@ class Checkbox extends Component<Props, State> {
       name,
     } = this.props;
     const { inputId } = this.state;
-    const checked = values[name].indexOf(value) >= 0;
-    const mainClasses = getMainClasses(appearance, styles);
+    const isChecked = values[name].indexOf(value) >= 0;
+    const mainClasses = getMainClasses(appearance, styles, {
+      isChecked,
+      disabled,
+    });
     const classNames = className ? `${mainClasses} ${className}` : mainClasses;
     return (
       <label className={classNames} htmlFor={elementOnly ? inputId : null}>
@@ -120,12 +123,10 @@ class Checkbox extends Component<Props, State> {
             type="checkbox"
             disabled={disabled}
             onChange={this.handleOnChange}
-          />
-          <span
             aria-disabled={disabled}
-            aria-checked={checked}
-            className={styles.checkbox}
-          >
+            aria-checked={isChecked}
+          />
+          <span className={styles.checkbox}>
             <span className={styles.checkmark} />
           </span>
           {!elementOnly && !!label ? (
