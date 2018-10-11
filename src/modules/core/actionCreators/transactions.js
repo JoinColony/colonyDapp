@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { SendOptions } from '@colony/colony-js-client';
+
 import {
   TRANSACTION_EVENT_DATA_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -9,10 +11,6 @@ import {
   TRANSACTION_SENT,
   TRANSACTION_STARTED,
 } from '../actionTypes';
-
-// TODO update colonyJS for this import and remove the temporary type below.
-// import type { SendOptions } from '@colony/colony-js-client';
-type SendOptions = Object;
 
 export function startTransaction(
   transactionId: string,
