@@ -1,5 +1,6 @@
 /* @flow */
 
+export { default as Form, ActionForm } from './Form';
 export { default as FieldSet } from './FieldSet';
 export { default as Input } from './Input';
 export { default as InputLabel } from './InputLabel';
