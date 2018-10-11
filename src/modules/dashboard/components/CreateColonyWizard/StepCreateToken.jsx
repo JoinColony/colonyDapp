@@ -109,14 +109,10 @@ class StepCreateToken extends Component<Props, State> {
   }
 
   handleTokenCreate = (e: SyntheticEvent<any>) => {
-    const { handleSubmit } = this.props;
     // TODO actually create a token here - this is currently waiting to submit the form,
     // as it's just mocking creation to show the loading screen
     e.persist();
     this.setState({ isCreatingToken: true });
-    this.timeoutId = setTimeout(() => {
-      handleSubmit(e);
-    }, 5000);
   };
 
   render() {
@@ -127,12 +123,12 @@ class StepCreateToken extends Component<Props, State> {
         {isCreatingToken ? (
           <CreatingToken />
         ) : (
-          <form className={styles.main} onSubmit={this.handleTokenCreate}>
+          <div className={styles.main}>
             <section className={styles.titleSection}>
               <Heading className={styles.customHeading} text={MSG.heading} />
               <ExternalLink text={MSG.learnMoreLink} href="#" />
             </section>
-            <div className={styles.inputFields}>
+            <section className={styles.inputFields}>
               <div className={styles.inputFieldWrapper}>
                 <Input
                   name="tokenName"
@@ -158,8 +154,8 @@ class StepCreateToken extends Component<Props, State> {
                   extra={<FormattedMessage {...MSG.helpTokenIcon} />}
                 />
               </div>
-            </div>
-            <div className={styles.actionsContainer}>
+            </section>
+            <section className={styles.actionsContainer}>
               <Button
                 text={MSG.backButton}
                 appearance={{ theme: 'secondary', size: 'large' }}
@@ -172,8 +168,8 @@ class StepCreateToken extends Component<Props, State> {
                 style={{ width: styles.wideButton }}
                 disabled={!isValid}
               />
-            </div>
-          </form>
+            </section>
+          </div>
         )}
       </Fragment>
     );
