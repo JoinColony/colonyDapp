@@ -31,18 +31,10 @@ const Organizations = () => (
       <Tabs>
         <TabList>
           <Tab>
-            <FormattedMessage {...MSG.tabContributors} />
-          </Tab>
-          <Tab>
             <FormattedMessage {...MSG.tabAdmins} />
           </Tab>
-          <Tab>
-            <FormattedMessage {...MSG.tabDomains} />
-          </Tab>
         </TabList>
-        <TabPanel>Contributors panel content</TabPanel>
         <TabPanel>Admins panel content</TabPanel>
-        <TabPanel>Domains panel content</TabPanel>
       </Tabs>
     </div>
   </div>
