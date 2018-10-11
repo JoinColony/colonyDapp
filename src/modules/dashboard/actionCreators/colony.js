@@ -1,10 +1,12 @@
 /* @flow */
 
 import {
-  CREATE_TOKEN,
-  TOKEN_CREATED,
   CREATE_COLONY,
-  COLONY_CREATED,
+  CREATE_COLONY_ERROR,
+  CREATE_COLONY_SUCCESS,
+  CREATE_TOKEN,
+  CREATE_TOKEN_ERROR,
+  CREATE_TOKEN_SUCCESS,
 } from '../actionTypes';
 
 export const createToken = (name: String, symbol: String) => ({
@@ -12,13 +14,18 @@ export const createToken = (name: String, symbol: String) => ({
   payload: { name, symbol },
 });
 
-export const tokenCreated = (
+export const createTokenError = (error: Object) => ({
+  type: CREATE_TOKEN_ERROR,
+  payload: { error },
+});
+
+export const createTokenSuccess = (
   name: String,
   symbol: String,
-  tokenAddress: String,
+  address: String,
 ) => ({
-  type: TOKEN_CREATED,
-  payload: { name, symbol, tokenAddress },
+  type: CREATE_TOKEN_SUCCESS,
+  payload: { name, symbol, address },
 });
 
 export const createColony = (tokenAddress: String) => ({
@@ -26,7 +33,15 @@ export const createColony = (tokenAddress: String) => ({
   payload: { tokenAddress },
 });
 
-export const colonyCreated = (colonyId: String, colonyAddress: String) => ({
-  type: COLONY_CREATED,
+export const createColonyError = (error: Object) => ({
+  type: CREATE_COLONY_ERROR,
+  payload: { error },
+});
+
+export const createColonySuccess = (
+  colonyId: String,
+  colonyAddress: String,
+) => ({
+  type: CREATE_COLONY_SUCCESS,
   payload: { colonyId, colonyAddress },
 });

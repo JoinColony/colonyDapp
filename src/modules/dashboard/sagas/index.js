@@ -3,6 +3,6 @@ import { all } from 'redux-saga/effects';
 
 import colonySagas from './colony';
 
-export default function* rootSaga(): any {
+export default function* dashboardSagas(): any {
   yield all([colonySagas()]);
 }
