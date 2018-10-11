@@ -8,19 +8,23 @@
   height: 16px;
   width: 16px;
   position: absolute;
-  visibility: hidden;
+  opacity: 0;
 }
 
 .checkbox {
   display: inline-block;
   flex: 0 0 auto;
-  margin-right: 5px;
+  margin: 0 5px 0 3px; /* left margin to fix box-shadow on focus in overflow situations */
   height: 18px;
   width: 18px;
   position: relative;
   border: 1px solid var(--primary);
   border-radius: 2px;
   background-color: var(--colony-white);
+}
+
+.delegate:focus + .checkbox {
+  box-shadow: 0 0 3px 1px var(--primary);
 }
 
 .checkmark {
@@ -30,26 +34,6 @@
   position: absolute;
   top: -20%;
   transform: rotate(45deg);
-}
-
-.checkbox[aria-checked="true"] .checkmark::before {
-  height: 80%;
-  width: 2px;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background-color: var(--primary);
-  content: '';
-}
-
-.checkbox[aria-checked="true"] .checkmark::after {
-  height: 2px;
-  width: 40%;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background-color: var(--primary);
-  content: '';
 }
 
 /* Theme */
@@ -66,4 +50,35 @@
 
 .directionVertical {
   display: block;
+}
+
+/* State */
+
+.stateIsChecked .checkbox .checkmark::before {
+  height: 80%;
+  width: 2px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  content: '';
+}
+
+.stateIsChecked .checkbox .checkmark::after {
+  height: 2px;
+  width: 40%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  content: '';
+}
+
+.stateDisabled .checkbox {
+  border-color: var(--grey-5);
+}
+
+.stateDisabled .checkbox .checkmark::before,
+.stateDisabled .checkbox .checkmark::after {
+  background-color: var(--grey-5);
 }
