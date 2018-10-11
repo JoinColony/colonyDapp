@@ -82,21 +82,18 @@ type FormValidation = {
   passphrase: string,
 } & FormValues;
 
-const StepProveMnemonic = ({
-  previousStep,
-  handleSubmit,
-  isValid,
-  values: { passphrase },
-  createWalletAction: createWallet,
-}: Props) => (
-  <form
+// values: { passphrase },
+// handleSubmit,
+// createWalletAction: createWallet,
+const StepProveMnemonic = ({ previousStep, isValid }: Props) => (
+  <main
     className={styles.main}
     /*
      * We hook into the `onSubmit` prop of the form, because the `onSubmit` function
      * exported by this Step won't receive (from `withWizard`) the bound action creator
      * as a prop
      */
-    onSubmit={() => createWallet(passphrase, handleSubmit)}
+    // onSubmit={() => createWallet(passphrase, handleSubmit)}
   >
     <section className={styles.titleSection}>
       <Heading
@@ -145,7 +142,7 @@ const StepProveMnemonic = ({
         style={{ width: styles.wideButton }}
       />
     </div>
-  </form>
+  </main>
 );
 
 /*

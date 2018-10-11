@@ -2,12 +2,11 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Formik } from 'formik';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
-import { FieldSet, Input, InputLabel, Textarea } from '~core/Fields';
+import { FieldSet, Form, Input, InputLabel, Textarea } from '~core/Fields';
 import Button from '~core/Button';
 
 import styles from './UserProfileEdit.css';
@@ -66,7 +65,7 @@ const UserProfileEdit = () => (
       appearance={{ theme: 'dark', size: 'medium' }}
       text={MSG.heading}
     />
-    <Formik
+    <Form
       onSubmit={values => {
         // eslint-disable-next-line no-console
         console.log(values);
@@ -78,8 +77,8 @@ const UserProfileEdit = () => (
         location: mockUser.location,
       }}
     >
-      {({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
+      {() => (
+        <div>
           <FieldSet>
             <InputLabel label={MSG.labelWallet} />
             <CopyableAddress appearance={{ theme: 'big' }} full>
@@ -99,9 +98,9 @@ const UserProfileEdit = () => (
           <FieldSet>
             <Button type="submit" text={{ id: 'button.save' }} />
           </FieldSet>
-        </form>
+        </div>
       )}
-    </Formik>
+    </Form>
   </ProfileTemplate>
 );
 

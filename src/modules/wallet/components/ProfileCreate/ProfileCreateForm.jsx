@@ -1,4 +1,5 @@
 /* @flow */
+
 import type { FormikProps } from 'formik';
 
 import React from 'react';
@@ -44,8 +45,8 @@ type Props = {
   handleBack: () => void,
 } & FormikProps<FormValues>;
 
-const ProfileCreateForm = ({ handleSubmit, handleBack, isValid }: Props) => (
-  <form className={styles.content} onSubmit={handleSubmit}>
+const ProfileCreateForm = ({ handleBack, isValid }: Props) => (
+  <main className={styles.content}>
     <div className={styles.title}>
       <Heading
         text={MSG.heading}
@@ -78,7 +79,7 @@ const ProfileCreateForm = ({ handleSubmit, handleBack, isValid }: Props) => (
         disabled={!isValid}
       />
     </div>
-  </form>
+  </main>
 );
 
 export const validationSchema = yup.object({

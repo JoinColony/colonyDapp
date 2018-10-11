@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
-
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import softwareWallet from '@colony/purser-software';
@@ -39,15 +37,13 @@ type FormValues = {
   passphrase: string,
 };
 
-type Props = FormikProps<FormValues>;
-
 const createMnemonic = async () => {
   const newWalletInstance = await softwareWallet.create();
   return newWalletInstance.mnemonic;
 };
 
-const StepCreatePhrase = ({ handleSubmit }: Props) => (
-  <form className={styles.content} onSubmit={handleSubmit}>
+const StepCreatePhrase = () => (
+  <main className={styles.content}>
     <div className={styles.title}>
       <Heading
         appearance={{ size: 'medium', width: 'thin' }}
@@ -75,7 +71,7 @@ const StepCreatePhrase = ({ handleSubmit }: Props) => (
         text={MSG.confirmButton}
       />
     </div>
-  </form>
+  </main>
 );
 
 export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>

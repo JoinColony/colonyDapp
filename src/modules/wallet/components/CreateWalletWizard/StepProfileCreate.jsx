@@ -1,4 +1,5 @@
 /* @flow */
+
 import type { FormikProps } from 'formik';
 
 import { createElement } from 'react';
@@ -31,9 +32,9 @@ const enhance = mapProps(
 );
 
 export const formikConfig = {
-  mapPropsToValues: () => ({
+  initialValues: {
     profilename: '',
-  }),
+  },
 };
 
 export const Step = enhance(StepProfileCreate);

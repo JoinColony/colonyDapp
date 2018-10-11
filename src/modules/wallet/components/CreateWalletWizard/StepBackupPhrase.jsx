@@ -77,14 +77,13 @@ class StepBackupPhrase extends Component<Props, State> {
 
   render() {
     const {
-      handleSubmit,
       values: { passphrase },
       previousStep,
     } = this.props;
     const { copied } = this.state;
 
     return (
-      <form className={styles.content} onSubmit={handleSubmit}>
+      <main className={styles.content}>
         <div className={styles.title}>
           <Heading
             appearance={{ size: 'medium', width: 'thin' }}
@@ -124,7 +123,7 @@ class StepBackupPhrase extends Component<Props, State> {
             text={MSG.confirmButton}
           />
         </div>
-      </form>
+      </main>
     );
   }
 }
