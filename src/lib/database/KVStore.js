@@ -4,7 +4,8 @@ import type { OrbitDBKVStore, Schema } from './types';
 import Store from './Store';
 
 class KVStore extends Store {
-  _orbitStore: OrbitDBKVStore;
+  // https://github.com/babel/babel/issues/8417#issuecomment-415508558
+  +_orbitStore: OrbitDBKVStore = this._orbitStore;
 
   constructor(orbitStore: OrbitDBKVStore, schemaId: string, schema: Schema) {
     super(orbitStore, schemaId, schema);
@@ -34,6 +35,18 @@ class KVStore extends Store {
 
   get(key: string): any {
     return this._orbitStore.get(key);
+  }
+
+  all(): any {
+    const schemaProps = Object.keys(this._schema);
+    return schemaProps.reduce((data, key) => {
+      const val = this._orbitStore.get(key);
+      if (val) {
+        // eslint-disable-next-line no-param-reassign
+        data[key] = val;
+      }
+      return data;
+    }, {});
   }
 
   // TODO: Do we need an append method for arrays? Probably

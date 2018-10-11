@@ -9,3 +9,12 @@ export type { OrbitDBKVStore } from './OrbitDBKVStore';
 export type Schema = {
   [string]: any,
 };
+
+export type IPFSHash = string;
+
+export type StoreType =
+  | 'counter'
+  | 'eventlog'
+  | 'feed'
+  | 'docstore'
+  | 'keyvalue';

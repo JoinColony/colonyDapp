@@ -1,8 +1,9 @@
 /* @flow */
 
+import type { Saga } from 'redux-saga';
+
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { defineMessages } from 'react-intl';
-import { replace } from 'connected-react-router';
 
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet from '@colony/purser-metamask';
@@ -32,7 +33,7 @@ export const MSG = defineMessages({
   },
 });
 
-function* openMnemonicWallet(action: Object): any {
+function* openMnemonicWallet(action: Object): Saga<void> {
   const { mnemonic } = action.payload;
   const { setErrors, setSubmitting, handleDidConnectWallet } = action;
   setSubmitting(true);
@@ -65,7 +66,7 @@ function* openMnemonicWallet(action: Object): any {
   }
 }
 
-function* openMetamaskWallet(action: Object): any {
+function* openMetamaskWallet(action: Object): Saga<void> {
   const { handleDidConnectWallet } = action;
   /*
    * Open the metamask wallet
@@ -88,7 +89,7 @@ function* openMetamaskWallet(action: Object): any {
   handleDidConnectWallet();
 }
 
-function* openHardwareWallet(action: Object): any {
+function* openHardwareWallet(action: Object): Saga<void> {
   const { selectedAddress } = action.payload;
   const { handleDidConnectWallet } = action;
   /*
@@ -104,7 +105,7 @@ function* openHardwareWallet(action: Object): any {
   handleDidConnectWallet();
 }
 
-function* openKeystoreWallet(action: Object): any {
+function* openKeystoreWallet(action: Object): Saga<void> {
   const { keystore, password } = action.payload;
   const { setErrors, setSubmitting, handleDidConnectWallet } = action;
   setSubmitting(true);
@@ -138,7 +139,7 @@ function* openKeystoreWallet(action: Object): any {
   }
 }
 
-function* createWallet(action: Object): any {
+function* createWallet(action: Object): Saga<void> {
   const { mnemonic } = action.payload;
   let newWallet: Object;
   /*
@@ -166,8 +167,6 @@ function* createWallet(action: Object): any {
     type: WALLET_SET,
     payload: { currentAddress: newWallet.address },
   });
-  // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
-  yield put(replace('/dashboard'));
 }
 
 function* walletSagas(): any {

@@ -22,8 +22,11 @@ const MSG = defineMessages({
 const displayName = 'Form.ActionForm';
 
 type Props = FormikConfig<Object> & {
+  /** SUBMIT action */
   submit: string,
+  /** SUCCESS action listener */
   success: string,
+  /** ERROR action listener */
   error: string,
   onSuccess?: (any, FormikBag<Object, Object>) => void,
   onError?: (any, FormikBag<Object, Object>) => void,

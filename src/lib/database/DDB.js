@@ -3,15 +3,20 @@
 import OrbitDB from 'orbit-db';
 import nanoid from 'nanoid';
 
-import type { Identity, IdentityProvider, OrbitDBStore, Schema } from './types';
+import type {
+  Identity,
+  IdentityProvider,
+  OrbitDBStore,
+  Schema,
+  StoreType,
+} from './types';
 
 import IPFSNode from '../ipfsNode/IPFSNode';
+import Store from './Store';
 import KVStore from './KVStore';
 
 // TODO: better typing
 type Resolver = Object;
-
-type StoreType = 'counter' | 'eventlog' | 'feed' | 'docstore' | 'keyvalue';
 
 type DatabaseOptions = {
   resolvers?: { [string]: Resolver },
@@ -98,17 +103,23 @@ class DDB {
       address,
       options,
     );
-    return this._makeStore(orbitStore, schemaId);
+    // TODO: hoping "type" is the correct property here
+    return this._makeStore(orbitStore, schemaId, orbitStore.type);
   }
 
-  _makeStore(orbitStore: OrbitDBStore, schemaId: string): Store {
+  _makeStore(
+    orbitStore: OrbitDBStore,
+    schemaId: string,
+    storeType: StoreType,
+  ): Store {
     const schema = SCHEMAS.get(schemaId);
     if (!schema) {
       throw new Error(
         `Store schema with id ${schemaId} not found. Did you register it?`,
       );
     }
-    const store = new Store(orbitStore, schemaId, schema);
+    const StoreClass = DDB.getStoreClass(storeType);
+    const store = new StoreClass(orbitStore, schemaId, schema);
     const { root, path } = store.address;
     this._stores.set(`${root}/${path}`, store);
     return store;
@@ -166,7 +177,7 @@ class DDB {
       type,
       options,
     );
-    return this._makeStore(orbitStore, schemaId);
+    return this._makeStore(orbitStore, schemaId, type);
   }
 }
 

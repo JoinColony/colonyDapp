@@ -2,12 +2,13 @@
 
 import IPFS from 'ipfs';
 import EventEmitter from 'events';
+import type { StoreType } from './index';
 import type { Identity } from './Identity';
 
 export interface OrbitDBStore {
   address: { root: string, path: string };
   key: any;
-  type: string;
+  type: StoreType;
   replicationStatus: {
     buffered: number,
     queued: number,
