@@ -1,6 +1,6 @@
 /* @flow */
 
-import { CORE_NAMESPACE as ns } from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../namespace';
 
 /*
  * Colony Action Types
