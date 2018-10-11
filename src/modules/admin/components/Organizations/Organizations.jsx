@@ -25,23 +25,26 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations';
 
 const Organizations = () => (
-  <div className={styles.main}>
-    <Tabs>
-      <TabList>
-        <Tab>
-          <FormattedMessage {...MSG.tabContributors} />
-        </Tab>
-        <Tab>
-          <FormattedMessage {...MSG.tabAdmins} />
-        </Tab>
-        <Tab>
-          <FormattedMessage {...MSG.tabDomains} />
-        </Tab>
-      </TabList>
-      <TabPanel>Contributors panel content</TabPanel>
-      <TabPanel>Admins panel content</TabPanel>
-      <TabPanel>Domains panel content</TabPanel>
-    </Tabs>
+  <div className={styles.tempAdminMain}>
+    <aside className={styles.tempAdminNav}>Navigation</aside>
+    <div className={styles.main}>
+      <Tabs>
+        <TabList>
+          <Tab>
+            <FormattedMessage {...MSG.tabContributors} />
+          </Tab>
+          <Tab>
+            <FormattedMessage {...MSG.tabAdmins} />
+          </Tab>
+          <Tab>
+            <FormattedMessage {...MSG.tabDomains} />
+          </Tab>
+        </TabList>
+        <TabPanel>Contributors panel content</TabPanel>
+        <TabPanel>Admins panel content</TabPanel>
+        <TabPanel>Domains panel content</TabPanel>
+      </Tabs>
+    </div>
   </div>
 );
 
