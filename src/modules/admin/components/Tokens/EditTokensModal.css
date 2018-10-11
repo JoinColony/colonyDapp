@@ -24,15 +24,25 @@
   stroke: var(--colony-white);
 }
 
+.tokenChoiceContainer {
+  max-height: 250px;
+  overflow: auto;
+}
+
 .tokenChoice {
   display: flex;
   align-items: center;
+  margin: 20px 0;
 }
 
 .tokenChoiceIcon {
-  margin-right: 6px;
+  margin: 0 10px;
   max-height: 36px;
-  max-width: 36px;
+  width: 36px;
+}
+
+.tokenChoiceSymbol {
+  margin: 0 10px;
 }
 
 .modalFooter {

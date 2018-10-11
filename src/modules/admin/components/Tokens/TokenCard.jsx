@@ -102,7 +102,14 @@ class TokenCard extends Component<Props, State> {
   render() {
     const {
       isEth,
-      token: { id: tokenId, tokenIcon, tokenSymbol, isNative, balance },
+      token: {
+        id: tokenId,
+        tokenIcon,
+        tokenName,
+        tokenSymbol,
+        isNative,
+        balance,
+      },
     } = this.props;
     const { ethUsd } = this.state;
     return (
@@ -110,7 +117,7 @@ class TokenCard extends Component<Props, State> {
         <div className={styles.cardHeading}>
           {!!tokenIcon && (
             <div className={styles.iconContainer}>
-              <img src={tokenIcon.data} alt={tokenIcon.name} />
+              <img src={tokenIcon} alt={tokenName} />
             </div>
           )}
           <div className={styles.tokenSymbol}>
