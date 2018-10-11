@@ -5,6 +5,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
+import OrganizationsAdmins from './OrganizationsAdmins.jsx';
+
 import styles from './Organizations.css';
 
 const MSG = defineMessages({
@@ -34,7 +36,9 @@ const Organizations = () => (
             <FormattedMessage {...MSG.tabAdmins} />
           </Tab>
         </TabList>
-        <TabPanel>Admins panel content</TabPanel>
+        <TabPanel>
+          <OrganizationsAdmins />
+        </TabPanel>
       </Tabs>
     </div>
   </div>
