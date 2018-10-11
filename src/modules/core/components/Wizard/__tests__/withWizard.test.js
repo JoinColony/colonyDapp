@@ -25,12 +25,7 @@ const Wrapper = ({ children, step }) => (
   </div>
 );
 
-// eslint-disable-next-line react/prop-types
-const createStep = number => ({ handleSubmit }) => (
-  <form onSubmit={handleSubmit}>
-    <h2>Step number {number}</h2>
-  </form>
-);
+const createStep = number => () => <h2>Step number {number}</h2>;
 
 describe('withWizard HoC', () => {
   test('Renders initial step - use with Steps array', () => {
@@ -103,7 +98,7 @@ describe('withWizard HoC', () => {
           resolvePromise();
         },
         formikConfig: {
-          mapPropsToValues: () => ({ path: 'skip2' }),
+          initialValues: { path: 'skip2' },
         },
       },
       {

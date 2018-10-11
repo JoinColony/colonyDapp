@@ -1,14 +1,15 @@
 /* @flow */
 
 import type { ComponentType } from 'react';
-import type { FormikActions } from 'formik';
+import type { FormikBag } from 'formik';
 
 import { createElement, Component } from 'react';
-import { withFormik } from 'formik';
+
+import { Form } from '~core/Fields';
 
 export type SubmitFn<Values> = (
   values: Values,
-  goodies: FormikActions<Values> & {
+  goodies: FormikBag<Object, Object> & {
     nextStep: () => void,
     previousStep: () => void,
   },
@@ -92,35 +93,38 @@ const withWizard = ({ steps }: WizardArgs) => (
       } = getStep(steps, step, currentValues);
       const currentStep = step + 1;
       const stepCount = steps.length;
-      const Form = ({ values, ...formikProps } = {}) =>
-        createElement(
-          OuterComponent,
-          { step: currentStep, stepCount, ...extraProps },
-          createElement(Step, {
-            step: currentStep,
-            stepCount,
-            nextStep: () => this.next(values),
-            previousStep: () => this.prev(values),
-            values,
-            ...formikProps,
-          }),
-        );
-      const mapPropsToValues = props => {
-        if (!formikConfig || !formikConfig.mapPropsToValues) {
-          return currentValues;
-        }
-        return {
-          ...currentValues,
-          ...formikConfig.mapPropsToValues(props),
-        };
+
+      const configInitialValues = formikConfig
+        ? formikConfig.initialValues
+        : {};
+
+      const initialValues = {
+        ...currentValues,
+        ...configInitialValues,
       };
-      const WrappedComponent = withFormik({
-        validationSchema,
-        ...formikConfig,
-        handleSubmit: this.handleStepSubmit(onSubmit),
-        mapPropsToValues,
-      })(Form);
-      return createElement(WrappedComponent, { ...this.props });
+
+      return createElement(
+        OuterComponent,
+        { step: currentStep, stepCount, ...extraProps, ...this.props },
+        createElement(
+          Form,
+          {
+            ...formikConfig,
+            validationSchema,
+            onSubmit: this.handleStepSubmit(onSubmit),
+            initialValues,
+          },
+          ({ values, ...formikProps }) =>
+            createElement(Step, {
+              step: currentStep,
+              stepCount,
+              nextStep: () => this.next(values),
+              previousStep: () => this.prev(values),
+              values,
+              ...formikProps,
+            }),
+        ),
+      );
     }
   }
   return Wizard;
