@@ -60,6 +60,7 @@ const displayName = 'admin.Tokens';
 const Tokens = ({
   tokens = [],
   isEditingTokens,
+  closeEditTokensModal,
   openEditTokensModal,
 }: Props) => {
   const nativeToken = tokens.find(token => token.isNative);
@@ -85,7 +86,7 @@ const Tokens = ({
         </div>
         <div className={styles.tokenCardContainer}>
           <CardList>
-            {tokens.map(token => (
+            {tokens.filter(token => token.isEnabled).map(token => (
               <TokenCard key={token.id} token={token} />
             ))}
           </CardList>
@@ -109,7 +110,11 @@ const Tokens = ({
                 appearance={{ theme: 'blue' }}
                 onClick={openEditTokensModal}
               />
-              <EditTokensModal isOpen={isEditingTokens} tokens={tokens} />
+              <EditTokensModal
+                isOpen={isEditingTokens}
+                tokens={tokens}
+                closeModal={closeEditTokensModal}
+              />
             </li>
           </ul>
         </aside>
