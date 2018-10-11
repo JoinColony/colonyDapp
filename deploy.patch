@@ -1,0 +1,27 @@
+diff --git a/src/history.js b/src/history.js
+index 636d40f..021f1bf 100644
+--- a/src/history.js
++++ b/src/history.js
+@@ -2,6 +2,8 @@
+ 
+ import { createBrowserHistory } from 'history';
+ 
+-const history = createBrowserHistory();
++const history = createBrowserHistory({
++  basename: '/dapp',
++});
+ 
+ export default history;
+diff --git a/webpack.config.js b/webpack.config.js
+index ba0a840..c0b8322 100644
+--- a/webpack.config.js
++++ b/webpack.config.js
+@@ -11,7 +11,7 @@ const config = {
+   output: {
+     filename: 'bundle.js',
+     path: path.resolve(__dirname, 'dist'),
+-    publicPath: '/',
++    publicPath: '/dapp',
+   },
+   resolve: {
+     alias: {

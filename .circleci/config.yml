@@ -187,6 +187,22 @@ jobs:
       - run: git config user.email "github@colony.io"
       - run: git config user.name "Colony Superuser"
       - run: yarn deploy:styleguide
+  push-image:
+    docker:
+      - image: circleci/node:9.10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup-remote-docker
+      - run: curl -OL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-203.0.0-linux-x86_64.tar.gz
+      - run: sudo tar -xz -C /usr/bin -f google-cloud-sdk-203.0.0-linux-x86_64.tar.gz && CLOUDSDK_CORE_DISABLE_PROMPTS=1 sudo /usr/bin/google-cloud-sdk/install.sh --quiet
+      - run: sudo  /usr/bin/google-cloud-sdk/bin/gcloud --quiet components update
+      - run: yarn install
+      - run: git apply deploy.patch
+      - run: yarn run build
+      - run: docker build -t eu.gcr.io/${PROJECT_NAME}/dapp:$CIRCLE_SHA1 .
+      - run: chmod +x pushImage.sh
+      - run: ./pushImage.sh
 
 workflows:
   version: 2
@@ -202,6 +218,8 @@ workflows:
           filters:
             branches:
               only: master
+      - push-image
+
   nightly:
     triggers:
       - schedule:
