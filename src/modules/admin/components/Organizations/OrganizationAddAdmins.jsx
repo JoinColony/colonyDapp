@@ -8,22 +8,22 @@ import { defineMessages } from 'react-intl';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 
-import styles from './OrganizationsAdmins.css';
+import styles from './OrganizationAddAdmins.css';
 
 import type { FormikProps } from 'formik';
 import type { UserData } from '~core/SingleUserPicker';
 
 const MSG = defineMessages({
   labelAddAdmins: {
-    id: 'admin.Organizations.OrganizationsAdmins.labelAddAdmins',
+    id: 'admin.Organizations.OrganizationAddAdmins.labelAddAdmins',
     defaultMessage: 'Add new admin',
   },
   placeholderAddAdmins: {
-    id: 'admin.Organizations.OrganizationsAdmins.placeholderAddAdmins',
+    id: 'admin.Organizations.OrganizationAddAdmins.placeholderAddAdmins',
     defaultMessage: 'Search for a user or paste a wallet address',
   },
   buttonAddAdmin: {
-    id: 'admin.Organizations.OrganizationsAdmins.buttonAddAdmin',
+    id: 'admin.Organizations.OrganizationAddAdmins.buttonAddAdmin',
     defaultMessage: 'Add Admin',
   },
 });
@@ -34,7 +34,7 @@ const filter = (data, filterValue) =>
   );
 const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 
-const displayName: string = 'admin.Organizations.OrganizationsAdmins';
+const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
 
 const validationSchema = yup.object({
   newAdminUser: yup
@@ -55,7 +55,7 @@ type Props = {
   availableAdmins: Array<UserData>,
 };
 
-const OrganizationsAdmins = ({ availableAdmins }: Props) => (
+const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
   <div className={styles.main}>
     <Formik onSubmit={console.log} validationSchema={validationSchema}>
       {({ handleSubmit, isValid }: FormikProps<FormValues>) => (
@@ -83,6 +83,6 @@ const OrganizationsAdmins = ({ availableAdmins }: Props) => (
   </div>
 );
 
-OrganizationsAdmins.displayName = displayName;
+OrganizationAddAdmins.displayName = displayName;
 
-export default OrganizationsAdmins;
+export default OrganizationAddAdmins;

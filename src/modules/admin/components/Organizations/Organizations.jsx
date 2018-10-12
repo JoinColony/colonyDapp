@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
-import OrganizationsAdmins from './OrganizationsAdmins.jsx';
+import OrganizationAddAdmins from './OrganizationAddAdmins.jsx';
 
 import styles from './Organizations.css';
 
@@ -39,7 +39,7 @@ const Organizations = () => (
           </Tab>
         </TabList>
         <TabPanel>
-          <OrganizationsAdmins availableAdmins={usersMocks} />
+          <OrganizationAddAdmins availableAdmins={usersMocks} />
         </TabPanel>
       </Tabs>
     </div>
