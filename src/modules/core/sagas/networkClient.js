@@ -22,11 +22,11 @@ function* initColonyNetworkClient() {
 
   let loader;
   switch (process.env.NETWORK_CLIENT_LOADER) {
-    case 'rinkeby':
-      loader = new NetworkLoader('rinkeby');
+    case 'trufflepig':
+      loader = new TrufflepigLoader();
       break;
     default:
-      loader = new TrufflepigLoader();
+      loader = new NetworkLoader('rinkeby');
       break;
   }
 
