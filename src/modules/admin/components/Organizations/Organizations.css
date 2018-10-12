@@ -1,8 +1,13 @@
 @import 'variables.css';
 
+.main {
+  height: 100%;
+}
+
 .userListWrapper {
   margin-top: 40px;
   padding-right: 20%;
+  height: 100%;
 }
 
 .noCurrentAdmins {
