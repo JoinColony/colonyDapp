@@ -67,21 +67,27 @@ const UserList = ({
         text={label}
       />
     )}
-    <Table scrollable>
-      <TableBody>
-        {users.map(user => (
-          <UserListItem
-            key={user.id}
-            user={user}
-            showDisplayName={showDisplayName}
-            showUsername={showUsername}
-            showMaskedAddress={showMaskedAddress}
-            viewOnly={viewOnly}
-            onRemove={() => onRemove(user)}
-          />
-        ))}
-      </TableBody>
-    </Table>
+    <div className={styles.listWrapper}>
+      <Table scrollable>
+        <TableBody>
+          {users.map((user, currentIndex) => (
+            <UserListItem
+              /*
+               * This is just so we can have duplicate data inside datamocks
+               * Might as well remove it when the *real* data comes in
+               */
+              key={`${user.id}${currentIndex + 1}`}
+              user={user}
+              showDisplayName={showDisplayName}
+              showUsername={showUsername}
+              showMaskedAddress={showMaskedAddress}
+              viewOnly={viewOnly}
+              onRemove={() => onRemove(user)}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   </div>
 );
 
