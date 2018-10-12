@@ -30,7 +30,7 @@ const MSG = defineMessages({
 
 const filter = (data, filterValue) =>
   data.filter(user =>
-    user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
+    user.username.toLowerCase().includes(filterValue.toLowerCase()),
   );
 const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 
@@ -66,7 +66,14 @@ const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
               label={MSG.labelAddAdmins}
               placeholder={MSG.placeholderAddAdmins}
               itemComponent={ItemWithAddress}
-              data={availableAdmins}
+              /*
+               * This is temporary since we doubled data in the list.
+               * This prevents React from going haywire since multiple keys
+               * will have the same value.
+               *
+               * Remove it when the *real* data comes in
+               */
+              data={availableAdmins.slice(0, 5)}
               filter={filter}
             />
           </div>
