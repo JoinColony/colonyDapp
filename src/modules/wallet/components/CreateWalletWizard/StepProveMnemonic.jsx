@@ -6,21 +6,13 @@ import { defineMessages } from 'react-intl';
 
 import styles from './StepProveMnemonic.css';
 
-import { withBoundActionCreators } from '~utils/redux';
+import type { ActionSubmit } from '~core/Wizard';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import { Input, InputLabel } from '~core/Fields';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
 
-import { Input, InputLabel } from '../../../core/components/Fields';
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
-
-import {
-  /*
-   * Prettier sugests a fix that would break the line length rule.
-   * This comment fixes that :)
-   */
-  createWallet as createWalletAction,
-} from '../../actionCreators/wallet';
+import { CREATE_WALLET, WALLET_SET } from '../../actionTypes';
 
 const MSG = defineMessages({
   heading: {
@@ -67,7 +59,7 @@ const MSG = defineMessages({
 const chosenProofWords = [1, 4, 11];
 
 type FormValues = {
-  passphrase: string,
+  mnemonic: string,
   proofWord1: string,
   proofWord2: string,
   proofWord3: string,
@@ -79,22 +71,11 @@ type Props = {
 } & FormikProps<FormValues>;
 
 type FormValidation = {
-  passphrase: string,
+  mnemonic: string,
 } & FormValues;
 
-// values: { passphrase },
-// handleSubmit,
-// createWalletAction: createWallet,
-const StepProveMnemonic = ({ previousStep, isValid }: Props) => (
-  <main
-    className={styles.main}
-    /*
-     * We hook into the `onSubmit` prop of the form, because the `onSubmit` function
-     * exported by this Step won't receive (from `withWizard`) the bound action creator
-     * as a prop
-     */
-    // onSubmit={() => createWallet(passphrase, handleSubmit)}
-  >
+const StepProveMnemonic = ({ previousStep, isValid, isSubmitting }: Props) => (
+  <main className={styles.main}>
     <section className={styles.titleSection}>
       <Heading
         appearance={{ size: 'medium', weight: 'thin' }}
@@ -139,6 +120,7 @@ const StepProveMnemonic = ({ previousStep, isValid }: Props) => (
         appearance={{ theme: 'primary', size: 'large' }}
         text={MSG.nextButton}
         type="submit"
+        loading={isSubmitting}
         style={{ width: styles.wideButton }}
       />
     </div>
@@ -156,13 +138,13 @@ export const formikConfig = {
   validateOnChange: false,
   isInitialValid: true,
   validate: ({
-    passphrase,
+    mnemonic,
     proofWord1,
     proofWord2,
     proofWord3,
   }: FormValidation) => {
     const errorObject: Object = { errror: true };
-    const mnemonicWords: Array<string> = passphrase.split(' ');
+    const mnemonicWords: Array<string> = mnemonic.split(' ');
     if (proofWord1 !== mnemonicWords[chosenProofWords[0]]) {
       return errorObject;
     }
@@ -176,9 +158,12 @@ export const formikConfig = {
   },
 };
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+export const onSubmit: ActionSubmit<FormValues> = {
+  submit: CREATE_WALLET,
+  success: WALLET_SET,
+  // TODO: We don't have that, I don't know how to catch errors in sagas. Maybe it's not necessary
+  // I'll leave the required type in as a friendly reminder that we ALWAYS want error handling
+  error: 'XXXXXX',
+};
 
-export const Step = withBoundActionCreators({ createWalletAction })(
-  StepProveMnemonic,
-);
+export const Step = StepProveMnemonic;

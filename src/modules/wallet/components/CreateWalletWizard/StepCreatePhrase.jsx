@@ -57,7 +57,7 @@ const StepCreatePhrase = () => (
       />
     </div>
     <div className={styles.greyBox}>
-      <MnemonicGenerator name="passphrase" generateFn={createMnemonic} />
+      <MnemonicGenerator name="mnemonic" generateFn={createMnemonic} />
     </div>
     <div className={styles.buttonsForBox}>
       <Button
