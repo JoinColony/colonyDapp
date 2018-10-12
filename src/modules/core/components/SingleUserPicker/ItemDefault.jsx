@@ -59,11 +59,12 @@ const ItemDefault = ({
       )}
       {username && <span className={styles.username}>{`@${username}`}</span>}
       {showAddress && <span className={styles.address}>{id}</span>}
-      {showMaskedAddress && (
-        <span className={styles.address}>
-          <MaskedAddress address={id} />
-        </span>
-      )}
+      {!showAddress &&
+        showMaskedAddress && (
+          <span className={styles.address}>
+            <MaskedAddress address={id} />
+          </span>
+        )}
     </span>
   </span>
 );

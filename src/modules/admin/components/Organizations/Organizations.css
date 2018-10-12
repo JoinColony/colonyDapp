@@ -1,34 +1,5 @@
 @import 'variables.css';
 
-/*
- * Temporary styles to simulate the not-yet-merged `Admin` and `AdminNaviation`
- * components.
- *
- * If they slipped through to the review, raise hell!
- */
-.tempAdminMain {
-  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  display: grid;
-  padding: 10% 80px 10% 80px;
-  background: var(--gradient-default);
-  grid-template-columns: minmax(200px, 340px) minmax(360px, auto);
-  grid-template-rows: 100%;
-  column-gap: 80px;
-}
-
-.tempAdminNav {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-/*
- * Actual styles
- */
-.main {
-  grid-column: 2;
-  grid-row: 1;
-}
-
 .userListWrapper {
   margin-top: 40px;
   padding-right: 20%;

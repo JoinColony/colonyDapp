@@ -33,36 +33,33 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations';
 
 const Organizations = () => (
-  <div className={styles.tempAdminMain}>
-    <aside className={styles.tempAdminNav}>Navigation</aside>
-    <div className={styles.main}>
-      <Tabs>
-        <TabList>
-          <Tab>
-            <FormattedMessage {...MSG.tabAdmins} />
-          </Tab>
-        </TabList>
-        <TabPanel>
-          <OrganizationAddAdmins availableAdmins={usersMocks} />
-          <div className={styles.userListWrapper}>
-            {/*
-              * UserList follows the design principles from TaskList in dashboard,
-              * but if it turns out we're going to use this in multiple places,
-              * we should consider moving it to core
-              */}
-            <UserList
-              users={usersMocks}
-              label={MSG.labelAdminList}
-              showDisplayName
-              showUsername
-              showMaskedAddress
-              viewOnly={false}
-              onRemove={console.log}
-            />
-          </div>
-        </TabPanel>
-      </Tabs>
-    </div>
+  <div className={styles.main}>
+    <Tabs>
+      <TabList>
+        <Tab>
+          <FormattedMessage {...MSG.tabAdmins} />
+        </Tab>
+      </TabList>
+      <TabPanel>
+        <OrganizationAddAdmins availableAdmins={usersMocks} />
+        <div className={styles.userListWrapper}>
+          {/*
+            * UserList follows the design principles from TaskList in dashboard,
+            * but if it turns out we're going to use this in multiple places,
+            * we should consider moving it to core
+            */}
+          <UserList
+            users={usersMocks}
+            label={MSG.labelAdminList}
+            showDisplayName
+            showUsername
+            showMaskedAddress
+            viewOnly={false}
+            onRemove={console.log}
+          />
+        </div>
+      </TabPanel>
+    </Tabs>
   </div>
 );
 
