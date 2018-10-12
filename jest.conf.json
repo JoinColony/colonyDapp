@@ -7,6 +7,10 @@
         "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
         "^\\~context(.*)$": "<rootDir>/context$1",
         "^\\~core(.*)$": "<rootDir>/modules/core/components$1",
+        "^\\~dashboard(.*)$": "<rootDir>/modules/dashboard/components$1",
+        "^\\~users(.*)$": "<rootDir>/modules/users/components$1",
+        "^\\~wallet(.*)$": "<rootDir>/modules/wallet/components$1",
+        "^\\~routes(.*)$": "<rootDir>/routes$1",
         "^\\~utils(.*)$": "<rootDir>/utils$1",
         "^\\~types(.*)$": "<rootDir>/types$1",
         "^testutils$": "<rootDir>/__tests__/utils.js"

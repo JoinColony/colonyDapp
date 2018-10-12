@@ -9,8 +9,6 @@ import metamaskWallet from '@colony/purser-metamask';
 
 import walletContext from '~context/wallet';
 
-import { DASHBOARD_ROUTE } from '~routes';
-
 import {
   OPEN_MNEMONIC_WALLET,
   OPEN_METAMASK_WALLET,
@@ -159,7 +157,7 @@ function* createWallet(action: Object): any {
     payload: { currentAddress: newWallet.address },
   });
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
-  yield put(replace(DASHBOARD_ROUTE));
+  yield put(replace('/dashboard'));
 }
 
 function* walletSagas(): any {
