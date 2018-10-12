@@ -28,3 +28,8 @@
   grid-column: 2;
   grid-row: 1;
 }
+
+.userListWrapper {
+  margin-top: 40px;
+  padding-right: 20%;
+}
