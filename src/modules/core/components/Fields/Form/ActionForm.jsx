@@ -16,7 +16,7 @@ type Props = FormikConfig<Object> & {
   success: string,
   error: string,
   onSuccess?: (any, FormikBag<Object, Object>) => void,
-  onError?: (Error, FormikBag<Object, Object>) => void,
+  onError?: (any, FormikBag<Object, Object>) => void,
 };
 
 const ActionForm = ({
@@ -37,11 +37,13 @@ const ActionForm = ({
       const handleSubmit = (values, formikBag) =>
         asyncFunc(values, formikBag).then(
           res => {
+            formikBag.setSubmitting(false);
             if (typeof onSuccess == 'function') {
               onSuccess(res, formikBag);
             }
           },
           err => {
+            formikBag.setSubmitting(false);
             if (typeof onError == 'function') {
               onError(err, formikBag);
             }
