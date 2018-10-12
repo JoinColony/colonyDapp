@@ -5,6 +5,8 @@ import createSagaMiddleware from 'redux-saga';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { all } from 'redux-saga/effects';
 
+import context from '~context/';
+
 import walletReducer from './modules/wallet/reducers';
 
 import dashboardSagas from './modules/dashboard/sagas';
@@ -12,7 +14,7 @@ import walletSagas from './modules/wallet/sagas';
 import coreSagas from './modules/core/sagas';
 import history from './history';
 
-import context from '~context/';
+import reduxPromiseListener from './createPromiseListener';
 
 const rootReducer = combineReducers({
   wallet: walletReducer,
@@ -30,7 +32,13 @@ const composeEnhancer: Function =
 
 const store = createStore(
   connectRouter(history)(rootReducer),
-  composeEnhancer(applyMiddleware(routerMiddleware(history), sagaMiddleware)),
+  composeEnhancer(
+    applyMiddleware(
+      routerMiddleware(history),
+      sagaMiddleware,
+      reduxPromiseListener.middleware,
+    ),
+  ),
 );
 
 sagaMiddleware.run(rootSaga);

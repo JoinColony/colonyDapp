@@ -52,25 +52,21 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
-const StepColonyName = ({ handleSubmit, isValid }: Props) => (
+const StepColonyName = ({ isValid }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
         appearance={{ size: 'medium', weight: 'thin' }}
         text={MSG.heading}
       />
-      <form className={styles.nameForm} onSubmit={handleSubmit}>
+      <div className={styles.nameForm}>
         <Input
           name="colonyName"
           label={MSG.label}
           placeholder={MSG.placeholder}
         />
         <div className={styles.buttons}>
-          <Button
-            appearance={{ theme: 'secondary' }}
-            type="cancel"
-            text={MSG.cancel}
-          />
+          <Button appearance={{ theme: 'secondary' }} text={MSG.cancel} />
           <Button
             appearance={{ theme: 'primary' }}
             type="submit"
@@ -78,7 +74,7 @@ const StepColonyName = ({ handleSubmit, isValid }: Props) => (
             text={MSG.next}
           />
         </div>
-      </form>
+      </div>
     </div>
   </section>
 );

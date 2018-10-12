@@ -14,7 +14,7 @@ import Button from '../../../core/components/Button';
 import type { SubmitFn } from '../../../core/components/Wizard';
 
 type FormValues = {
-  passphrase: string,
+  mnemonic: string,
 };
 
 type Props = {
@@ -68,23 +68,22 @@ class StepBackupPhrase extends Component<Props, State> {
 
   copyToClipboard = () => {
     const {
-      values: { passphrase },
+      values: { mnemonic },
     } = this.props;
-    copy(passphrase);
+    copy(mnemonic);
     this.setState({ copied: true });
     this.timeout = setTimeout(() => this.setState({ copied: false }), 4000);
   };
 
   render() {
     const {
-      handleSubmit,
-      values: { passphrase },
+      values: { mnemonic },
       previousStep,
     } = this.props;
     const { copied } = this.state;
 
     return (
-      <form className={styles.content} onSubmit={handleSubmit}>
+      <main className={styles.content}>
         <div className={styles.title}>
           <Heading
             appearance={{ size: 'medium', width: 'thin' }}
@@ -110,7 +109,7 @@ class StepBackupPhrase extends Component<Props, State> {
             textValues={{ copied }}
           />
         </div>
-        <div className={styles.greyBox}>{passphrase}</div>
+        <div className={styles.greyBox}>{mnemonic}</div>
         <div className={styles.divider} />
         <div className={styles.buttonsForBox}>
           <Button
@@ -124,7 +123,7 @@ class StepBackupPhrase extends Component<Props, State> {
             text={MSG.confirmButton}
           />
         </div>
-      </form>
+      </main>
     );
   }
 }

@@ -78,7 +78,7 @@ declare module 'formik' {
     enableReinitialize?: boolean
   };
 
-  declare export type FormikConfig<Values: Object> = FormikSharedConfig & {
+  declare export type FormikConfig<Values: Object> = {
     /**
      * Initial values of the form
      */
@@ -92,7 +92,7 @@ declare module 'formik' {
     /**
      * Submission handler
      */
-    onSubmit: (values: Values, formikActions: FormikActions<Values>) => any,
+    onSubmit: (values: Values, formikActions: FormikBag<Object, Values>) => any,
 
     /**
      * Form component to render
@@ -118,7 +118,18 @@ declare module 'formik' {
     /**
      * React children or child render callback
      */
-    children?: ((props: FormikProps<Values>) => React$Node) | React$Node
+    children?: ((props: FormikProps<Values>) => React$Node) | React$Node,
+
+    /* Copied SharedConfig here because flow _sigh_ */
+
+    /** Tells Formik to validate the form on each input's onChange event */
+    validateOnChange?: boolean,
+    /** Tells Formik to validate the form on each input's onBlur event */
+    validateOnBlur?: boolean,
+    /** Tell Formik if initial form values are valid or not on first render */
+    isInitialValid?: boolean | ((props: {}) => boolean | void),
+    /** Should Formik reset the form when new initialValues change */
+    enableReinitialize?: boolean
   };
 
   /**

@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import ColonyNetworkClient from '@colony/colony-js-client';
@@ -161,7 +161,7 @@ class StepSelectToken extends Component<Props, State> {
 
   render() {
     const { tokenData, isLoading } = this.state;
-    const { handleSubmit, isValid, previousStep, values } = this.props;
+    const { isValid, previousStep, values } = this.props;
     return (
       <section className={styles.content}>
         <div className={styles.title}>
@@ -169,7 +169,7 @@ class StepSelectToken extends Component<Props, State> {
             appearance={{ size: 'medium', weight: 'thin' }}
             text={MSG.heading}
           />
-          <form className={styles.nameForm} onSubmit={handleSubmit}>
+          <div className={styles.nameForm}>
             <Input
               name="tokenAddress"
               label={MSG.label}
@@ -186,7 +186,7 @@ class StepSelectToken extends Component<Props, State> {
             {!tokenData &&
               !isLoading &&
               values.tokenAddress && (
-                <>
+                <Fragment>
                   <div className={styles.tokenDetails}>
                     <Input name="tokenName" label={MSG.tokenName} />
                   </div>
@@ -211,7 +211,7 @@ class StepSelectToken extends Component<Props, State> {
                       maxFilesLimit={1}
                     />
                   </div>
-                </>
+                </Fragment>
               )}
             <div className={styles.buttons}>
               <Button
@@ -227,7 +227,7 @@ class StepSelectToken extends Component<Props, State> {
                 text={MSG.next}
               />
             </div>
-          </form>
+          </div>
         </div>
       </section>
     );

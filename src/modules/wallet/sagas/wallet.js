@@ -2,6 +2,7 @@
 
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { defineMessages } from 'react-intl';
+import { replace } from 'connected-react-router';
 
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet from '@colony/purser-metamask';
@@ -14,6 +15,7 @@ import {
   OPEN_HARDWARE_WALLET,
   OPEN_KEYSTORE_WALLET,
   CREATE_WALLET,
+  CREATE_WALLET_ERROR,
   WALLET_SET,
 } from '../actionTypes';
 
@@ -138,13 +140,21 @@ function* openKeystoreWallet(action: Object): any {
 
 function* createWallet(action: Object): any {
   const { mnemonic } = action.payload;
-  const { handleSubmit } = action;
+  let newWallet: Object;
   /*
    * Recreate the wallet based on the mnemonic
    */
-  const newWallet: Object = yield call(softwareWallet.open, {
-    mnemonic,
-  });
+  try {
+    newWallet = yield call(softwareWallet.open, {
+      mnemonic,
+    });
+  } catch (error) {
+    yield put({
+      type: CREATE_WALLET_ERROR,
+      payload: error,
+    });
+    return;
+  }
   /*
    * Set the new wallet into the context
    */
@@ -156,10 +166,8 @@ function* createWallet(action: Object): any {
     type: WALLET_SET,
     payload: { currentAddress: newWallet.address },
   });
-  /*
-   * Go to create profile
-   */
-  handleSubmit();
+  // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
+  yield put(replace('/dashboard'));
 }
 
 function* walletSagas(): any {

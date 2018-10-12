@@ -80,7 +80,7 @@ type Props = {
 
 const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
-const StepTokenChoice = ({ previousStep, handleSubmit }: Props) => (
+const StepTokenChoice = ({ previousStep }: Props) => (
   <section className={styles.content}>
     <div className={styles.title}>
       <Heading
@@ -108,9 +108,7 @@ const StepTokenChoice = ({ previousStep, handleSubmit }: Props) => (
         />
       </div>
     </div>
-    <form onSubmit={handleSubmit}>
-      {<DecisionHub name="tokenChoice" options={options} />}
-    </form>
+    <DecisionHub name="tokenChoice" options={options} />
     <div className={styles.buttonContainer}>
       <Button
         appearance={{ theme: 'secondary' }}

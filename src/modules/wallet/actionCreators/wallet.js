@@ -5,7 +5,6 @@ import {
   OPEN_METAMASK_WALLET,
   OPEN_HARDWARE_WALLET,
   OPEN_KEYSTORE_WALLET,
-  CREATE_WALLET,
 } from '../actionTypes';
 
 export const openMnemonicWallet = (
@@ -47,10 +46,4 @@ export const openKeystoreWallet = (
   setErrors,
   setSubmitting,
   handleDidConnectWallet,
-});
-
-export const createWallet = (mnemonic: string, handleSubmit: () => void) => ({
-  type: CREATE_WALLET,
-  payload: { mnemonic },
-  handleSubmit,
 });
