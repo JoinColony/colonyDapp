@@ -1,0 +1,50 @@
+@import 'variables.css';
+
+/* Use td.className to be able to overwrite table styles */
+
+:root {
+  --cell-padding: 25px;
+  --name-margin: 10px;
+}
+
+tr.main:hover .customRemoveButton {
+  display: inline-block;
+}
+
+td.userAvatar {
+  padding: var(--cell-padding) var(--cell-padding);
+  width: 76px;
+}
+
+td.userDetails {
+  flex-wrap: wrap;
+  padding: var(--cell-padding) var(--cell-padding) var(--cell-padding) 0;
+  width: calc(100% - 226px);
+}
+
+td.userRemove {
+  padding: var(--cell-padding) var(--cell-padding);
+  width: 150px;
+}
+
+.fullName {
+  margin-right: var(--name-margin);
+  font-weight: var(--weight-medium);
+}
+
+.username {
+  margin-right: var(--name-margin);
+  font-weight: var(--weight-medium);
+  color: var(--pink);
+}
+
+.address {
+  width: 100%;
+  font-size: var(--size-small);
+}
+
+.customRemoveButton {
+  composes: themePrimary from '~core/Button/Button.css';
+  display: none;
+  width: 100%;
+}
