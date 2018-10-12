@@ -2,6 +2,10 @@
 
 @value wideButton: 160px;
 
+.main {
+  margin-top: 10px;
+}
+
 .pickerWrapper {
   display: inline-block;
   margin-right: 60px;
