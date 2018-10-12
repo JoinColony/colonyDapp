@@ -46,9 +46,9 @@
 
 /*
  * This is needed otherwise transparent images don't have an edge
- * and brake the design
+ * and break the design
  *
- * There's an argument to be made here about this specific backoground color being
+ * There's an argument to be made here about this specific background color being
  * available at the core component level.
  *
  * Even more so, the argument should also include if this color should actually

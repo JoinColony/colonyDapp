@@ -47,7 +47,7 @@ const MSG = defineMessages({
   },
   labelUploader: {
     id: 'admin.Profile.ProfileEdit.labelUploader',
-    defaultMessage: 'at least 250 by 250px, up to 1MB',
+    defaultMessage: 'at least 250px by 250px, up to 1MB',
   },
 });
 
