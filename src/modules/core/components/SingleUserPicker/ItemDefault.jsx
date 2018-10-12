@@ -6,7 +6,8 @@ import cx from 'classnames';
 
 import type { UserData } from './types';
 
-import UserAvatar from '../UserAvatar';
+import UserAvatar from '~core/UserAvatar';
+import MaskedAddress from '~core/MaskedAddress';
 
 import styles from './ItemDefault.css';
 
@@ -22,14 +23,23 @@ type Props = {
   itemData: UserData,
   selected?: boolean,
   showAddress?: boolean,
+  /*
+   * Same as showAddress, just display a masked (shortened) address instead
+   */
+  showMaskedAddress?: boolean,
 };
 
 const ItemDefault = ({
   currentUserId,
   itemData: { id, fullName, username },
   showAddress,
+  showMaskedAddress,
 }: Props) => (
-  <span className={cx(styles.main, { [styles.showAddress]: showAddress })}>
+  <span
+    className={cx(styles.main, {
+      [styles.showAddress]: showAddress || showMaskedAddress,
+    })}
+  >
     <UserAvatar
       size="s"
       userId={id}
@@ -49,6 +59,11 @@ const ItemDefault = ({
       )}
       {username && <span className={styles.username}>{`@${username}`}</span>}
       {showAddress && <span className={styles.address}>{id}</span>}
+      {showMaskedAddress && (
+        <span className={styles.address}>
+          <MaskedAddress address={id} />
+        </span>
+      )}
     </span>
   </span>
 );
