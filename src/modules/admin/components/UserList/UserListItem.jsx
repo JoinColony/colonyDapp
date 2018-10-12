@@ -43,6 +43,11 @@ type Props = {
    * Whether to show the remove button
    */
   viewOnly: boolean,
+  /*
+   * Method to call when clicking the remove button
+   * Gets passed down to `UserListItem`
+   */
+  onRemove: UserData => any,
 };
 
 const UserListItem = ({
@@ -51,6 +56,7 @@ const UserListItem = ({
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
+  onRemove,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.userAvatar}>
@@ -82,6 +88,7 @@ const UserListItem = ({
           className={styles.customRemoveButton}
           appearance={{ theme: 'primary' }}
           text={MSG.buttonRemove}
+          onClick={onRemove}
         />
       )}
     </TableCell>

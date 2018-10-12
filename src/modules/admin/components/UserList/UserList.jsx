@@ -42,6 +42,11 @@ type Props = {
    * Title to show before the list
    */
   label?: string | MessageDescriptor,
+  /*
+   * Method to call when removing the user
+   * Gets passed down to `UserListItem`
+   */
+  onRemove: UserData => any,
 };
 
 const displayName: string = 'admin.UserList';
@@ -53,6 +58,7 @@ const UserList = ({
   showMaskedAddress,
   viewOnly = true,
   label,
+  onRemove,
 }: Props) => (
   <div className={styles.main}>
     {label && (
@@ -71,6 +77,7 @@ const UserList = ({
             showUsername={showUsername}
             showMaskedAddress={showMaskedAddress}
             viewOnly={viewOnly}
+            onRemove={() => onRemove(user)}
           />
         ))}
       </TableBody>
