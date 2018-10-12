@@ -1,5 +1,6 @@
 /* @flow */
-import type { UserType } from '../../../types';
+
+import type { UserType } from '~types/user';
 
 const MockUser: UserType = {
   walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',

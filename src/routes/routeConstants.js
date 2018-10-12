@@ -11,3 +11,4 @@ export const START_ROUTE = '/start';
 export const USER_EDIT_ROUTE = '/user/edit';
 export const USER_ROUTE = '/user/:userId';
 export const WALLET_ROUTE = '/wallet';
+export const ADMIN_PROFILE_EDIT = '/admin/profile';

@@ -1,0 +1,59 @@
+@import 'variables.css';
+
+@value wideButton: 160px;
+@value textareaHeight: 120px;
+
+:root {
+  --top-padding: 50px;
+}
+
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  grid-template-columns: auto minmax(300px, 320px);
+  grid-template-rows: 100%;
+  column-gap: 0;
+}
+
+.content {
+  padding: var(--top-padding) 60px 0 8px;
+  border-right: 1px solid var(--temp-grey-5);
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.sidebar {
+  padding: var(--top-padding) 0 0 60px;
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.section {
+  margin-bottom: 50px;
+}
+
+.divider {
+  composes: section;
+  height: 1px;
+  width: 100%;
+  border-bottom: 1px solid var(--temp-grey-5);
+}
+
+.inputSection {
+  composes: section;
+  padding-right: 120px;
+}
+
+/*
+ * This is needed otherwise transparent images don't have an edge
+ * and break the design
+ *
+ * There's an argument to be made here about this specific background color being
+ * available at the core component level.
+ *
+ * Even more so, the argument should also include if this color should actually
+ * be set or instead we should add a delimiter border
+ */
+.avatar {
+  background-color: white;
+}

@@ -13,16 +13,8 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './ColonyMeta.css';
 
-import type { UserType } from '../../../../users/types';
-
-type ColonyType = {
-  address: string,
-  avatar: string,
-  name: string,
-  description?: string,
-  website?: string,
-  guideline?: string,
-};
+import type { ColonyType } from '~types/colony';
+import type { UserType } from '~types/user';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -74,7 +66,7 @@ const ColonyMeta = ({
       <Fragment>
         <span>{name}</span>
         {isAdmin && (
-          <NavLink className={styles.editColony} to="/dashboard">
+          <NavLink className={styles.editColony} to="/admin/profile">
             <Icon name="settings" title={MSG.editColonyTitle} />
           </NavLink>
         )}

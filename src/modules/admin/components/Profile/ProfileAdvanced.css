@@ -1,0 +1,21 @@
+@import 'variables.css';
+
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  padding: 28px 60px 0 8px;
+}
+
+.section {
+  margin-bottom: 50px;
+}
+
+.withInlineButton {
+  display: inline-block;
+  margin-right: 100px;
+  vertical-align: top;
+}
+
+.advancedNumeric {
+  margin-top: 2px;
+  font-size: var(--size-medium-l);
+}

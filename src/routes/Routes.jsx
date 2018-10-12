@@ -3,17 +3,22 @@
 import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
+import withContext from '~context/withContext';
+
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Dashboard from '~dashboard/Dashboard';
 import Inbox from '~dashboard/Inbox';
+
 import WalletStart from '~wallet/WalletStart';
 import ConnectWallet from '~wallet/ConnectWallet';
 import CreateWalletWizard from '~wallet/CreateWalletWizard';
+import ProfileCreate from '~wallet/ProfileCreate';
+
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
-import ProfileCreate from '~wallet/ProfileCreate';
-import withContext from '~context/withContext';
+
+import AdminProfile from '../modules/admin/components/Profile';
 
 import {
   COLONY_HOME_ROUTE,
@@ -27,6 +32,7 @@ import {
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
+  ADMIN_PROFILE_EDIT,
 } from './routeConstants';
 
 import ConnectedOnlyRoute from './ConnectedOnlyRoute.jsx';
@@ -103,6 +109,11 @@ const Routes = ({
         isConnected={isConnected}
         path={CREATE_PROFILE_ROUTE}
         component={ProfileCreate}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        path={ADMIN_PROFILE_EDIT}
+        component={AdminProfile}
       />
     </Switch>
   );
