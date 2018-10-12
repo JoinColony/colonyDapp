@@ -1,1 +1,10 @@
 @import 'variables.css';
+
+@value wideButton: 160px;
+
+.pickerWrapper {
+  display: inline-block;
+  margin-right: 60px;
+  min-width: 380px;
+  vertical-align: bottom;
+}

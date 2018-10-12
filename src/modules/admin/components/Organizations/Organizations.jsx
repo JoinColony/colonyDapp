@@ -9,6 +9,8 @@ import OrganizationsAdmins from './OrganizationsAdmins.jsx';
 
 import styles from './Organizations.css';
 
+import usersMocks from './__datamocks__/usersMocks';
+
 const MSG = defineMessages({
   tabContributors: {
     id: 'admin.Organizations.tabContributors',
@@ -37,7 +39,7 @@ const Organizations = () => (
           </Tab>
         </TabList>
         <TabPanel>
-          <OrganizationsAdmins />
+          <OrganizationsAdmins availableAdmins={usersMocks} />
         </TabPanel>
       </Tabs>
     </div>
