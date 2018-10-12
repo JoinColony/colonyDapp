@@ -13,7 +13,6 @@ import dashboardSagas from './modules/dashboard/sagas';
 import coreSagas from './modules/core/sagas';
 import userSagas from './modules/user/sagas';
 import history from './history';
-import { dataReducer, dataSagas, initializeData } from './data';
 
 import { DDB, SCHEMAS } from './lib/database';
 import ipfsNode from './lib/ipfsNode';
@@ -24,11 +23,10 @@ DDB.registerSchema('userProfile', SCHEMAS.UserProfile);
 
 const rootReducer = combineReducers({
   user: userReducer,
-  data: dataReducer,
 });
 
 function* rootSaga(): any {
-  yield all([userSagas(), dashboardSagas(), coreSagas(), dataSagas()]);
+  yield all([userSagas(), dashboardSagas(), coreSagas()]);
 }
 
 // TODO: this is bad, refactor!
@@ -53,9 +51,5 @@ const store = createStore(
 );
 
 sagaMiddleware.run(rootSaga);
-
-// TODO this action should be run upon login
-const rootRepo = '/tmp/dataTests';
-initializeData(store.dispatch, rootRepo);
 
 export default store;

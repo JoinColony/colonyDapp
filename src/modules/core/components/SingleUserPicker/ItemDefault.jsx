@@ -58,7 +58,7 @@ const ItemDefault = ({
           )}
         </span>
       )}
-      {username && <UserMention ensName={username} />}
+      {username && <UserMention username={username} />}
       {showAddress && <span className={styles.address}>{id}</span>}
       {!showAddress &&
         showMaskedAddress && (

@@ -44,7 +44,7 @@ const UserInfo = ({
     content={
       <div className={styles.main}>
         {displayName && <p className={styles.displayName}>{displayName}</p>}
-        {username && <UserMention ensName={username} to="" />}
+        {username && <UserMention username={username} to="" />}
         {walletAddress && (
           <p className={styles.walletAddress}>
             <MaskedAddress address={walletAddress} />

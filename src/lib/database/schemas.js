@@ -2,31 +2,27 @@
 
 import * as yup from 'yup';
 
-import type { IPFSHash } from './types';
+import type { UserType } from '~types/user';
 
-export type UserProfileType = {
-  name: string,
-  bio: string,
-  avatar: IPFSHash,
+export type UserProfileType = UserType & {
   // colonies: profileColony[],
   // tasks: profileTask[],
-  walletAddress: string,
-  ensName: string,
-  website: string,
-  location: string,
 };
 
 // eslint-disable-next-line import/prefer-default-export
 export const UserProfile = {
-  name: yup.string(),
+  displayName: yup.string(),
   bio: yup.string(),
   // TODO: IPFS hash add yup validation for IPFS hash
   avatar: yup.string(),
   // colonies: [],
   // tasks: [],
-  walletAddress: yup.string().address(),
+  walletAddress: yup
+    .string()
+    .address()
+    .required(),
   // TODO: required?
-  username: yup.string(),
+  username: yup.string().required(),
   website: yup.string(),
   location: yup.string(),
 };

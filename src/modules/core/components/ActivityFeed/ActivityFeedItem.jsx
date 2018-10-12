@@ -55,7 +55,7 @@ const ActivityFeedItem = ({
           <FormattedMessage
             {...MSG[getEventActionKey(actionType)]}
             values={{
-              user: user ? <UserMention ensName={user} /> : null,
+              user: user ? <UserMention username={user} /> : null,
               task: (
                 <b>
                   <Link to="/">{task}</Link>

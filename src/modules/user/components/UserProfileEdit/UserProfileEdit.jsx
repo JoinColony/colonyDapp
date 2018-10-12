@@ -56,7 +56,7 @@ const UserProfileEdit = () => (
     asideContent={
       <Sidebar
         walletAddress={mockUser.walletAddress}
-        username={mockUser.ensName}
+        username={mockUser.username}
         avatarURL={mockUser.avatar}
       />
     }
@@ -87,7 +87,7 @@ const UserProfileEdit = () => (
           </FieldSet>
           <FieldSet>
             <InputLabel label={MSG.labelUsername} />
-            <UserMention ensName={mockUser.ensName} />
+            <UserMention username={mockUser.username} />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
             <Input label={MSG.labelName} name="name" maxLength={50} />

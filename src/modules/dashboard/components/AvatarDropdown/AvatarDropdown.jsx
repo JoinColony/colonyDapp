@@ -19,7 +19,7 @@ const AvatarDropdown = () => (
   >
     <button className={styles.avatarButton} type="button">
       <UserAvatar
-        username={mockUser.ensName}
+        username={mockUser.username}
         avatarURL={mockUser.avatar}
         walletAddress={mockUser.walletAddress}
       />

@@ -9,7 +9,7 @@ import {
 } from '../actionTypes';
 
 import type { Action } from '~types/';
-import type { UserType } from '../../types';
+import type { UserType } from '~types/user';
 
 type State = {
   currentUser: {
@@ -28,11 +28,9 @@ export default function dataReducer(
   switch (action.type) {
     case SET_CURRENT_USER: {
       const { walletAddress, set } = action.payload;
-      const newState = update(state, {
+      return update(state, {
         currentUser: { $set: { walletAddress, profile: set } },
       });
-      console.log(newState);
-      return newState;
     }
 
     case SET_USER_PROFILE: {

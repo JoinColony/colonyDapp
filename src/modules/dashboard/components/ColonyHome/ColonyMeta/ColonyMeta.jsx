@@ -111,7 +111,7 @@ const ColonyMeta = ({
               avatar: ownerAvatar,
               walletAddress: ownerWalletAddress,
               displayName: ownerDisplayName,
-              ensName: ownerUsername,
+              username: ownerUsername,
             }: UserType,
             index: number,
           ) => (
@@ -140,7 +140,7 @@ const ColonyMeta = ({
               avatar: adminAvatar,
               walletAddress: adminWalletAddress,
               displayName: adminDisplayName,
-              ensName: adminUsername,
+              username: adminUsername,
             }: UserType,
             index: number,
           ) => (

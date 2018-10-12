@@ -16,21 +16,29 @@ type Props = {
 };
 
 const UserMeta = ({
-  user: { avatar, ensName, displayName, bio, website, location, walletAddress },
+  user: {
+    avatar,
+    username,
+    displayName,
+    bio,
+    website,
+    location,
+    walletAddress,
+  },
 }: Props) => (
   <div className={styles.main}>
     <UserAvatar
       className={styles.avatar}
       avatarURL={avatar}
       walletAddress={walletAddress}
-      username={ensName}
+      username={username}
       size="xl"
     />
     <Heading
       appearance={{ margin: 'none', size: 'large' }}
       text={displayName}
     />
-    <UserMention ensName={ensName} to="/" />
+    <UserMention username={username} to="/" />
     <CopyableAddress>{walletAddress}</CopyableAddress>
     {bio && (
       <div className={styles.bioContainer}>
