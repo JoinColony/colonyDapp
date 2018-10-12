@@ -1,9 +1,10 @@
 /* @flow */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
+import Heading from '~core/Heading';
 import UserList from '../UserList';
 import OrganizationAddAdmins from './OrganizationAddAdmins.jsx';
 
@@ -28,6 +29,13 @@ const MSG = defineMessages({
     id: 'admin.Organizations.labelAdminList',
     defaultMessage: 'Name',
   },
+  noCurrentAdmins: {
+    id: 'admin.Organizations.noCurrentAdmins',
+    defaultMessage: `
+      It looks like no admins are currently added to this colony. You can one
+      by selecting it from the list above.
+    `,
+  },
 });
 
 const displayName: string = 'admin.Organizations';
@@ -48,15 +56,27 @@ const Organizations = () => (
             * but if it turns out we're going to use this in multiple places,
             * we should consider moving it to core
             */}
-          <UserList
-            users={usersMocks}
-            label={MSG.labelAdminList}
-            showDisplayName
-            showUsername
-            showMaskedAddress
-            viewOnly={false}
-            onRemove={console.log}
-          />
+          {usersMocks && usersMocks.length ? (
+            <UserList
+              users={usersMocks}
+              label={MSG.labelAdminList}
+              showDisplayName
+              showUsername
+              showMaskedAddress
+              viewOnly={false}
+              onRemove={console.log}
+            />
+          ) : (
+            <Fragment>
+              <Heading
+                appearance={{ size: 'small', wight: 'bold', margin: 'small' }}
+                text={MSG.labelAdminList}
+              />
+              <p className={styles.noCurrentAdmins}>
+                <FormattedMessage {...MSG.noCurrentAdmins} />
+              </p>
+            </Fragment>
+          )}
         </div>
       </TabPanel>
     </Tabs>
