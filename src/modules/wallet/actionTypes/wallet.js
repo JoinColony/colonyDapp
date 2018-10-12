@@ -12,3 +12,4 @@ export const OPEN_HARDWARE_WALLET = 'wallet/OPEN_HARDWARE';
 export const OPEN_KEYSTORE_WALLET = 'wallet/OPEN_KEYSTORE';
 
 export const CREATE_WALLET = 'wallet/CREATE';
+export const CREATE_WALLET_ERROR = 'wallet/CREATE_ERROR';

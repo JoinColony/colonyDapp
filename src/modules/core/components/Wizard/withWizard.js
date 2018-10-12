@@ -108,11 +108,11 @@ const withWizard = ({ steps }: WizardArgs) => (
         onSuccess: onSuccess
           ? (res: any, bag: FormikBag<Object, AnyValues>) =>
               onSuccess(res, this.extendBag(values, bag))
-          : null,
+          : undefined,
         onError: onError
           ? (res: any, bag: FormikBag<Object, AnyValues>) =>
               onError(res, this.extendBag(values, bag))
-          : null,
+          : undefined,
       };
       return extendedActionSubmit;
     };

@@ -15,6 +15,7 @@ import {
   OPEN_HARDWARE_WALLET,
   OPEN_KEYSTORE_WALLET,
   CREATE_WALLET,
+  CREATE_WALLET_ERROR,
   WALLET_SET,
 } from '../actionTypes';
 
@@ -139,12 +140,21 @@ function* openKeystoreWallet(action: Object): any {
 
 function* createWallet(action: Object): any {
   const { mnemonic } = action.payload;
+  let newWallet: Object;
   /*
    * Recreate the wallet based on the mnemonic
    */
-  const newWallet: Object = yield call(softwareWallet.open, {
-    mnemonic,
-  });
+  try {
+    newWallet = yield call(softwareWallet.open, {
+      mnemonic,
+    });
+  } catch (error) {
+    yield put({
+      type: CREATE_WALLET_ERROR,
+      payload: error,
+    });
+    return;
+  }
   /*
    * Set the new wallet into the context
    */

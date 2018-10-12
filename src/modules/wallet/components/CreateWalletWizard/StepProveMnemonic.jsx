@@ -8,11 +8,15 @@ import styles from './StepProveMnemonic.css';
 
 import type { ActionSubmit } from '~core/Wizard';
 
-import { Input, InputLabel } from '~core/Fields';
+import { FormStatus, Input, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
-import { CREATE_WALLET, WALLET_SET } from '../../actionTypes';
+import {
+  CREATE_WALLET,
+  CREATE_WALLET_ERROR,
+  WALLET_SET,
+} from '../../actionTypes';
 
 const MSG = defineMessages({
   heading: {
@@ -74,7 +78,12 @@ type FormValidation = {
   mnemonic: string,
 } & FormValues;
 
-const StepProveMnemonic = ({ previousStep, isValid, isSubmitting }: Props) => (
+const StepProveMnemonic = ({
+  previousStep,
+  isValid,
+  isSubmitting,
+  status,
+}: Props) => (
   <main className={styles.main}>
     <section className={styles.titleSection}>
       <Heading
@@ -110,6 +119,7 @@ const StepProveMnemonic = ({ previousStep, isValid, isSubmitting }: Props) => (
         </Fragment>
       ))}
     </div>
+    <FormStatus status={status} />
     <div className={styles.actionsContainer}>
       <Button
         text={MSG.backButton}
@@ -161,9 +171,7 @@ export const formikConfig = {
 export const onSubmit: ActionSubmit<FormValues> = {
   submit: CREATE_WALLET,
   success: WALLET_SET,
-  // TODO: We don't have that, I don't know how to catch errors in sagas. Maybe it's not necessary
-  // I'll leave the required type in as a friendly reminder that we ALWAYS want error handling
-  error: 'XXXXXX',
+  error: CREATE_WALLET_ERROR,
 };
 
 export const Step = StepProveMnemonic;
