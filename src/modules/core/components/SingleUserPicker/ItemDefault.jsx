@@ -8,6 +8,7 @@ import type { UserData } from './types';
 
 import UserAvatar from '~core/UserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
+import UserMention from '~core/UserMention';
 
 import styles from './ItemDefault.css';
 
@@ -57,7 +58,7 @@ const ItemDefault = ({
           )}
         </span>
       )}
-      {username && <span className={styles.username}>{`@${username}`}</span>}
+      {username && <UserMention ensName={username} />}
       {showAddress && <span className={styles.address}>{id}</span>}
       {!showAddress &&
         showMaskedAddress && (
