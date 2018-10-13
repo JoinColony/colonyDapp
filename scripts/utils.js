@@ -1,8 +1,12 @@
 const exec = require('child_process').exec;
 const chalk = require('chalk');
 const path = require('path');
+const promisify = require('util').promisify;
+const fs = require('fs');
 
+const readDir = promisify(fs.readdir);
 const DAPP_MODULES_PATH = path.resolve('.', 'src', 'modules');
+const FILES_MATCH_REGEX = /\..{1,3}/g;
 
 /**
  * Wrapper method for node's `child_process` `exec` to get the live output of a shell command.
@@ -41,18 +45,22 @@ const shell = (
 
 const generateWebpackAlias = (
   dappModuleName,
-  pathToModules = DAPP_MODULES_PATH
+  searchPath = DAPP_MODULES_PATH
 ) => ({
   [`~${dappModuleName}`]: path.resolve(
-    pathToModules,
+    searchPath,
     dappModuleName,
     'components',
   ),
 });
 
-console.log(generateWebpackAlias('admin'));
+const getDappModules = async (searchPath = DAPP_MODULES_PATH) => {
+  const modules = await readDir(searchPath);
+  return modules.filter(module => !module.match(FILES_MATCH_REGEX));
+};
 
 module.exports = {
   shell,
   generateWebpackAlias,
-}
+  getDappModules,
+};
