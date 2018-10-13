@@ -1,5 +1,8 @@
 const exec = require('child_process').exec;
 const chalk = require('chalk');
+const path = require('path');
+
+const DAPP_MODULES_PATH = path.resolve('.', 'src', 'modules');
 
 /**
  * Wrapper method for node's `child_process` `exec` to get the live output of a shell command.
@@ -36,6 +39,20 @@ const shell = (
   return runner;
 };
 
+const generateWebpackAlias = (
+  dappModuleName,
+  pathToModules = DAPP_MODULES_PATH
+) => ({
+  [`~${dappModuleName}`]: path.resolve(
+    pathToModules,
+    dappModuleName,
+    'components',
+  ),
+});
+
+console.log(generateWebpackAlias('admin'));
+
 module.exports = {
   shell,
+  generateWebpackAlias,
 }
