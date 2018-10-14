@@ -120,15 +120,17 @@ export const validationSchema = yup.object({
 });
 
 export const onSubmit: SubmitFn<FormValues> = (
-  values,
-  { props, setErrors, setSubmitting },
-) => {
-  const { walletJsonPassword } = values;
-  const {
-    handleDidConnectWallet,
-    openKeystoreWalletAction: openKeystoreWallet,
-  } = props;
-  return openKeystoreWallet(
+  { walletJsonPassword },
+  {
+    props: {
+      handleDidConnectWallet,
+      openKeystoreWalletAction: openKeystoreWallet,
+    },
+    setErrors,
+    setSubmitting,
+  },
+) =>
+  openKeystoreWallet(
     JSON.stringify(keystoreMock),
     walletJsonPassword,
     (message: MessageDescriptor) =>
@@ -136,7 +138,6 @@ export const onSubmit: SubmitFn<FormValues> = (
     setSubmitting,
     handleDidConnectWallet,
   );
-};
 
 StepJSONUpload.displayName = displayName;
 

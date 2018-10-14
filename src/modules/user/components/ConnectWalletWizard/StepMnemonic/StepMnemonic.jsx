@@ -99,12 +99,15 @@ export const validationSchema = yup.object({
 
 export const onSubmit: SubmitFn<FormValues> = (
   { connectwalletmnemonic },
-  { props, setErrors, setSubmitting },
-) => {
-  const {
-    handleDidConnectWallet,
-    openMnemonicWalletAction: openMnemonicWallet,
-  } = props;
+  {
+    props: {
+      handleDidConnectWallet,
+      openMnemonicWalletAction: openMnemonicWallet,
+    },
+    setErrors,
+    setSubmitting,
+  },
+) =>
   openMnemonicWallet(
     connectwalletmnemonic,
     (message: MessageDescriptor) =>
@@ -112,7 +115,6 @@ export const onSubmit: SubmitFn<FormValues> = (
     setSubmitting,
     handleDidConnectWallet,
   );
-};
 
 const enhance = withBoundActionCreators({ openMnemonicWalletAction });
 
