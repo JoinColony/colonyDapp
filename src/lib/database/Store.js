@@ -2,6 +2,10 @@
 
 import type { OrbitDBStore, Schema } from './types';
 
+/**
+ * A parent claass for a wrapper around an orbit store that can hold it's schema
+ * and can do certain validations based on the store type
+ */
 class Store {
   +_orbitStore: OrbitDBStore;
 

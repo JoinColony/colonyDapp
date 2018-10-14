@@ -43,8 +43,22 @@ type StoreIdentifier = string | OrbitDBAddress;
 
 const { isValidAddress, parseAddress } = OrbitDB;
 
+const STORE_CLASSES = {
+  keyvalue: KVStore,
+  // TODO: more to come
+  counter: Store,
+  eventlog: Store,
+  feed: Store,
+  docstore: Store,
+};
+
 const SCHEMAS: Map<string, Schema> = new Map();
 
+/**
+ * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
+ * schemas, create new Stores and keep track of the created ones. It also includes
+ * means to add resolvers for resolving store addresses
+ */
 class DDB {
   _orbitNode: OrbitDB;
 
@@ -57,14 +71,7 @@ class DDB {
   }
 
   static getStoreClass(storeType: StoreType) {
-    return {
-      keyvalue: KVStore,
-      // TODO: more to come
-      counter: Store,
-      eventlog: Store,
-      feed: Store,
-      docstore: Store,
-    }[storeType];
+    return STORE_CLASSES[storeType];
   }
 
   static async createDatabase(
@@ -80,30 +87,34 @@ class DDB {
   constructor(
     ipfsNode: IPFSNode,
     identity: Identity,
-    options: DatabaseOptions = {},
+    { resolvers = {} }: DatabaseOptions = {},
   ) {
     this._stores = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
       path: 'colonyOrbitdb',
     });
-    this._resolvers = options.resolvers || {};
+    this._resolvers = resolvers;
   }
 
   async getStore(
     identifier: StoreIdentifier,
     options?: OrbitStoreOpenOpts,
-  ): Promise<Store | null> {
+  ): Promise<Store> {
     const address = await this._getStoreAddress(identifier);
-    if (!address) return null;
+    if (!address) {
+      throw new Error(`Could not find store with address ${address}`);
+    }
     const cachedStore = this._getCachedStore(address);
     if (cachedStore) return cachedStore;
     const schemaId = address.path.split('.')[0];
+    if (!SCHEMAS.has(schemaId)) {
+      throw new Error(`Schema ${schemaId} not found in schemas.`);
+    }
     const orbitStore: OrbitDBStore = await this._orbitNode.open(
       address,
       options,
     );
-    // TODO: hoping "type" is the correct property here
     return this._makeStore(orbitStore, schemaId, orbitStore.type);
   }
 
@@ -144,10 +155,12 @@ class DDB {
     return null;
   }
 
-  async _getStoreAddress(
-    identifier: StoreIdentifier,
-  ): Promise<OrbitDBAddress | null> {
-    if (!identifier) return null;
+  async _getStoreAddress(identifier: StoreIdentifier): Promise<OrbitDBAddress> {
+    if (!identifier) {
+      throw new Error(
+        'Please define an identifier for the store you want to retrieve',
+      );
+    }
     if (typeof identifier == 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
@@ -155,12 +168,14 @@ class DDB {
       }
       // Otherwise it might be a resolver identifier (e.g. 'user.someusername')
       const addressString = await this._resolveStoreAddress(identifier);
-      return isValidAddress(addressString) ? parseAddress(addressString) : null;
+      if (!isValidAddress(addressString)) {
+        throw new Error(
+          `Address found not valid: ${addressString || 'none given'}`,
+        );
+      }
+      return parseAddress(addressString);
     }
-    if (identifier.root && identifier.path) {
-      return identifier;
-    }
-    return null;
+    return identifier;
   }
 
   async createStore(

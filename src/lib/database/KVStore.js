@@ -3,6 +3,10 @@
 import type { OrbitDBKVStore, Schema } from './types';
 import Store from './Store';
 
+/**
+ * The wrapper Store class for orbit's key-value stores. Includes functions to
+ * set and get entire objects and schema validation
+ */
 class KVStore extends Store {
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBKVStore = this._orbitStore;
@@ -12,7 +16,7 @@ class KVStore extends Store {
     this._orbitStore.put('created', new Date().toUTCString());
   }
 
-  async put(keyOrObject: string | {}, value?: any): Promise<any> {
+  async set(keyOrObject: string | {}, value?: any): Promise<any> {
     // TODO: schema validation. Obviously
     if (typeof keyOrObject == 'string') {
       return this._orbitStore.put(keyOrObject, value);
@@ -27,10 +31,6 @@ class KVStore extends Store {
       })
       .filter(i => !!i);
     return Promise.all(actions);
-  }
-
-  async set(keyOrObject: string | {}, value?: any): Promise<any> {
-    return this.put(keyOrObject, value);
   }
 
   get(key: string): any {

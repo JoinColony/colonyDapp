@@ -9,11 +9,7 @@ import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 
 describe('Database setup', () => {
   test('Using purser', async () => {
-    const wallet = await openWallet({
-      // eslint-disable-next-line max-len
-      mnemonic:
-        'vibrant crane range exhaust guide culture total blossom genuine error manual lock',
-    });
+    const wallet = await openWallet();
 
     const identityProvider = new PurserIdentityProvider(wallet);
 
