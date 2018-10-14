@@ -63,7 +63,7 @@ const generateWebpackAlias = (
   [`~${moduleName}`]: path.resolve(
     searchPath,
     moduleName,
-    'components',
+    COMPONENTS_FOLDER,
   ),
 });
 
