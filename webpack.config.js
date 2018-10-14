@@ -4,6 +4,27 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+const utils = require('./scripts/utils');
+
+/*
+ * Wrapper method to generate aliases for all the dapp's modules
+ *
+ * @NOTE It's declared here instead of `utils` so you can *get* it's purpouse
+ * at a glance when reading the webpack config
+ */
+const generateModulesAliases = () => {
+  let modulesAliases = {};
+  const foundDappModules = utils.getDappModules();
+  foundDappModules.map(dappModule => {
+    modulesAliases = Object.assign(
+      {},
+      modulesAliases,
+      utils.generateWebpackAlias(dappModule),
+    );
+  });
+  return modulesAliases;
+};
+
 const config = {
   entry: './src/index.js',
   mode: 'development',
@@ -16,14 +37,11 @@ const config = {
   resolve: {
     alias: {
       '~context': path.resolve(__dirname, 'src/context'),
-      '~core': path.resolve(__dirname, 'src/modules/core/components'),
-      '~dashboard': path.resolve(__dirname, 'src/modules/dashboard/components'),
-      '~users': path.resolve(__dirname, 'src/modules/users/components'),
-      '~wallet': path.resolve(__dirname, 'src/modules/wallet/components'),
       '~routes': path.resolve(__dirname, 'src/routes'),
       '~utils': path.resolve(__dirname, 'src/utils/'),
       '~styles': path.resolve(__dirname, 'src/styles/shared'),
       '~types': path.resolve(__dirname, 'src/types/'),
+      ...generateModulesAliases(),
       // https://github.com/jquense/yup/issues/273
       '@babel/runtime/helpers/builtin': path.resolve(
         __dirname,
