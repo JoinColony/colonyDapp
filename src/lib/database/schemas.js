@@ -4,10 +4,7 @@ import * as yup from 'yup';
 
 import type { UserType } from '~types/user';
 
-export type UserProfileType = UserType & {
-  // colonies: profileColony[],
-  // tasks: profileTask[],
-};
+export type UserProfileType = UserType;
 
 // eslint-disable-next-line import/prefer-default-export
 export const UserProfile = {
@@ -15,8 +12,6 @@ export const UserProfile = {
   bio: yup.string(),
   // TODO: IPFS hash add yup validation for IPFS hash
   avatar: yup.string(),
-  // colonies: [],
-  // tasks: [],
   walletAddress: yup
     .string()
     .address()
