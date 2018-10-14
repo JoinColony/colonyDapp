@@ -29,7 +29,7 @@ class KVStore extends Store {
         }
         return null;
       })
-      .filter(i => !!i);
+      .filter(Boolean);
     return Promise.all(actions);
   }
 
@@ -38,8 +38,7 @@ class KVStore extends Store {
   }
 
   all(): any {
-    const schemaProps = Object.keys(this._schema);
-    return schemaProps.reduce((data, key) => {
+    return Object.keys(this._schema).reduce((data, key) => {
       const val = this._orbitStore.get(key);
       if (val) {
         // eslint-disable-next-line no-param-reassign
