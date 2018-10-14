@@ -16,31 +16,44 @@ import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider
 
 import { all } from '../../../lib/database/commands';
 
-import { WALLET_SET, SET_CURRENT_USER } from '../actionTypes';
+import {
+  WALLET_SET,
+  SET_CURRENT_USER,
+  SET_CURRENT_USER_ERROR,
+} from '../actionTypes';
 
 function* initializeUser(action: Object): Saga<void> {
   const { currentAddress } = action.payload;
 
-  const DDB = yield getContext('DDB');
-  const wallet = yield getContext('currentWallet');
-  const ipfsNode = yield getContext('ipfsNode');
+  let store;
 
-  const identityProvider = new PurserIdentityProvider(wallet.instance);
+  try {
+    const DDB = yield getContext('DDB');
+    const wallet = yield getContext('currentWallet');
+    const ipfsNode = yield getContext('ipfsNode');
 
-  const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
+    const identityProvider = new PurserIdentityProvider(wallet.instance);
+    const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
 
-  yield setContext({ ddb });
-
-  // TODO: First try to get the store, then create it
-  const store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
+    yield setContext({ ddb });
+    // TODO: First try to get the store, then create it
+    store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
+  } catch (error) {
+    yield put({
+      type: SET_CURRENT_USER_ERROR,
+      payload: error,
+    });
+    return;
+  }
 
   // TODO: We pre-fill the store here so we have something to see
+  // Remove this once we can actually get a store
   yield call([store, store.put], {
     name: 'Tim',
     bio: 'from Texas',
   });
 
-  const user = all(store);
+  const user = yield call(all, store);
 
   yield put({
     type: SET_CURRENT_USER,

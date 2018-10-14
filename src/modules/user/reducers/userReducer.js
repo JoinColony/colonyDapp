@@ -16,12 +16,12 @@ type State = {
     walletAddress: string,
     profile: UserType,
   } | null,
-  profiles: { [string]: UserType },
+  profiles: { [walletAddress: string]: UserType },
 };
 
 const INITIAL_STATE = { currentUser: null, profiles: {} };
 
-export default function dataReducer(
+export default function userReducer(
   state: State = INITIAL_STATE,
   action: Action,
 ) {
