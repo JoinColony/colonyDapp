@@ -35,13 +35,6 @@
   width: auto;
 }
 
-.username {
-  font-size: var(--size-small);
-  font-weight: var(--weight-semi);
-  line-height: 1.5;
-  color: var(--pink);
-}
-
 .address {
   width: 100%;
   font-size: var(--size-small);

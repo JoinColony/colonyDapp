@@ -14,6 +14,7 @@ const data = [
 const filter = (data, filterValue) => data.filter(user => user.username.toLowerCase().startsWith(filterValue.toLowerCase()));
 
 const ItemWithAddress = (props) => <ItemDefault showAddress {...props} />;
+const ItemWithMakedAddress = (props) => <ItemDefault showMaskedAddress {...props} />;
 const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {...props} />;
 
 <Formik>
@@ -32,6 +33,14 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       name="singleuserpickerAddress"
       label="Pick user"
       itemComponent={ItemWithAddress}
+      data={data}
+      filter={filter}
+    />
+    <Heading appearance={{ size: "medium" }}>With masked address</Heading>
+    <SingleUserPicker
+      name="singleuserpickerAddress"
+      label="Pick user"
+      itemComponent={ItemWithMakedAddress}
       data={data}
       filter={filter}
     />
