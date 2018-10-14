@@ -39,8 +39,8 @@ const MSG = defineMessages({
     id: 'ConnectWalletWizard.StepStart.hardwareTitle',
     defaultMessage: 'Hardware Wallet',
   },
-  phraseTitle: {
-    id: 'ConnectWalletWizard.StepStart.phraseTitle',
+  mnemonicTitle: {
+    id: 'ConnectWalletWizard.StepStart.mnemonicTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
   JSONTitle: {
@@ -55,9 +55,9 @@ const MSG = defineMessages({
     id: 'ConnectWalletWizard.StepStart.hardwareSubtitle',
     defaultMessage: 'We support Ledger and Trezor',
   },
-  phraseSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.phraseSubtitle',
-    defaultMessage: 'Access with your mnemonic phrase',
+  mnemonicSubtitle: {
+    id: 'ConnectWalletWizard.StepStart.mnemonicSubtitle',
+    defaultMessage: 'Access with your mnemonic mnemonic',
   },
   JSONSubtitle: {
     id: 'ConnectWalletWizard.StepStart.JSONSubtitle',
@@ -66,7 +66,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: 'metamask' | 'hardware' | 'phrase' | 'json',
+  method: 'metamask' | 'hardware' | 'mnemonic' | 'json',
 };
 
 const displayName = 'user.ConnectWalletWizard.StepStart';
@@ -90,9 +90,9 @@ const options = [
     icon: 'wallet',
   },
   {
-    value: 'phrase',
-    title: MSG.phraseTitle,
-    subtitle: MSG.phraseSubtitle,
+    value: 'mnemonic',
+    title: MSG.mnemonicTitle,
+    subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
   },
   {
