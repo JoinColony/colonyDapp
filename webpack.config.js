@@ -35,19 +35,22 @@ const config = {
     publicPath: '/',
   },
   resolve: {
-    alias: {
-      '~context': path.resolve(__dirname, 'src/context'),
-      '~routes': path.resolve(__dirname, 'src/routes'),
-      '~utils': path.resolve(__dirname, 'src/utils/'),
-      '~styles': path.resolve(__dirname, 'src/styles/shared'),
-      '~types': path.resolve(__dirname, 'src/types/'),
-      ...generateModulesAliases(),
-      // https://github.com/jquense/yup/issues/273
-      '@babel/runtime/helpers/builtin': path.resolve(
-        __dirname,
-        'node_modules/@babel/runtime/helpers',
-      ),
-    },
+    alias: Object.assign(
+      {},
+      {
+        '~context': path.resolve(__dirname, 'src/context'),
+        '~routes': path.resolve(__dirname, 'src/routes'),
+        '~utils': path.resolve(__dirname, 'src/utils/'),
+        '~styles': path.resolve(__dirname, 'src/styles/shared'),
+        '~types': path.resolve(__dirname, 'src/types/'),
+        // https://github.com/jquense/yup/issues/273
+        '@babel/runtime/helpers/builtin': path.resolve(
+          __dirname,
+          'node_modules/@babel/runtime/helpers',
+        ),
+      },
+      generateModulesAliases(),
+    ),
   },
   module: {
     rules: [
