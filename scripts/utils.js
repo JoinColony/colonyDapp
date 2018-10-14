@@ -43,6 +43,19 @@ const shell = (
   return runner;
 };
 
+/**
+ * Helper method to generate a specific webpack alias format entry object
+ *
+ * See the webpack alias format:
+ * https://webpack.js.org/configuration/resolve/#resolve-alias
+ *
+ * @method generateWebpackAlias
+ *
+ * @param {string} moduleName Module name to generate the entry for
+ * @param {string} searchPath The search path where the module can be found
+ *
+ * @return {Object} A new object with the alias entry
+ */
 const generateWebpackAlias = (
   moduleName,
   searchPath = DAPP_MODULES
@@ -54,12 +67,23 @@ const generateWebpackAlias = (
   ),
 });
 
+/**
+ * Method to list all dapp module folders in a specific location.
+ * The way this method interprets modules is:
+ * - It must be a folder
+ * - It must contain a `components` subfolder
+ *
+ * @NOTE We're using the syncronous version of `readdir` because this method
+ * will ultimately be called from webpack's config export and we don't want
+ * to screw with it's internal build process.
+ *
+ * @method getDappModules
+ *
+ * @param {string} searchPath Path to search for modules
+ *
+ * @return {Array<string>} An array of strings containing valid module names
+ */
 const getDappModules = (searchPath = DAPP_MODULES) => {
-  /*
-   * @NOTE We're using the syncronous version of `readdir` because this method
-   * will ultimately be called from webpack's config export and we don't want
-   * to screw with it's internal build process.
-   */
   const dappModules = readdirSync(searchPath);
   return dappModules.filter(
     dappModule => fs.existsSync(
