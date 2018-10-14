@@ -1,12 +1,12 @@
 const exec = require('child_process').exec;
 const chalk = require('chalk');
 const path = require('path');
-const promisify = require('util').promisify;
 const fs = require('fs');
+const PATHS = require('./paths');
 
-const readDir = promisify(fs.readdir);
-const DAPP_MODULES_PATH = path.resolve('.', 'src', 'modules');
-const FILES_MATCH_REGEX = /\..{1,3}/g;
+const { readdirSync, existsSync } = fs;
+const { DAPP_MODULES, COMPONENTS_FOLDER } = PATHS;
+
 
 /**
  * Wrapper method for node's `child_process` `exec` to get the live output of a shell command.
@@ -44,19 +44,28 @@ const shell = (
 };
 
 const generateWebpackAlias = (
-  dappModuleName,
-  searchPath = DAPP_MODULES_PATH
+  moduleName,
+  searchPath = DAPP_MODULES
 ) => ({
-  [`~${dappModuleName}`]: path.resolve(
+  [`~${moduleName}`]: path.resolve(
     searchPath,
-    dappModuleName,
+    moduleName,
     'components',
   ),
 });
 
-const getDappModules = async (searchPath = DAPP_MODULES_PATH) => {
-  const modules = await readDir(searchPath);
-  return modules.filter(module => !module.match(FILES_MATCH_REGEX));
+const getDappModules = (searchPath = DAPP_MODULES) => {
+  /*
+   * @NOTE We're using the syncronous version of `readdir` because this method
+   * will ultimately be called from webpack's config export and we don't want
+   * to screw with it's internal build process.
+   */
+  const dappModules = readdirSync(searchPath);
+  return dappModules.filter(
+    dappModule => fs.existsSync(
+      path.resolve(searchPath, dappModule, COMPONENTS_FOLDER),
+    ),
+  );
 };
 
 module.exports = {
