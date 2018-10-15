@@ -3,12 +3,11 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { Node } from 'react';
-
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
-import VerticalNavigation from '~core/VerticalNavigation';
 import Heading from '~core/Heading';
+
+import VerticalNavigation from '~pages/VerticalNavigation';
 
 import Profile from '~admin/Profile';
 import Organizations from '~admin/Organizations';
@@ -51,23 +50,10 @@ type Props = {
   colonyName?: string,
 };
 
-type WrappedContentProps = {
-  content: Node,
-  children?: Node,
-};
-
-/*
- * This is just to reduce code repetition, since we want to able to control
- * the padding of the inner content from a central location
- */
-const WrappedContent = ({ content, children }: WrappedContentProps) => (
-  <div className={styles.contentWrapper}>{content || children}</div>
-);
-
 const navigationItems: Array<Object> = [
   {
     name: MSG.tabProfile,
-    content: <WrappedContent content={<Profile />} />,
+    content: <Profile />,
   },
   {
     name: MSG.tabTokens,
@@ -79,7 +65,7 @@ const navigationItems: Array<Object> = [
   },
   {
     name: MSG.tabOrganisation,
-    content: <WrappedContent content={<Organizations />} />,
+    content: <Organizations />,
   },
 ];
 

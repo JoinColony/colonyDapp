@@ -19,13 +19,3 @@
   margin-top: 70px;
   padding-left: 50px;
 }
-
-.contentWrapper {
-  /*
-   * @NOTE Static top padding to make the horizontal tabs align with the
-   * vertical navigation heading (as per spec)
-   */
-  padding: 120px 80px;
-  height: 100%;
-  overflow: auto;
-}
