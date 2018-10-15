@@ -1,6 +1,6 @@
 const path = require('path');
 const postCSSImport = require('postcss-import');
-const postCSSNext = require('postcss-cssnext');
+const postCSSPresetEnv = require('postcss-preset-env');
 
 // Aliases for CSS @import rules (relative to this file)
 const aliases = {
@@ -17,6 +17,6 @@ module.exports = {
         return id;
       },
     }),
-    postCSSNext(),
+    postCSSPresetEnv(),
   ],
 };
