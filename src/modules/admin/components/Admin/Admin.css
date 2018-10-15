@@ -1,39 +1,21 @@
 @import 'variables.css';
 
-:root {
-  --sidebar-width: 350px;
-}
-
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  padding: 10% 80px 10% 80px;
-  overflow: auto;
   background: var(--gradient-default);
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 125px;
-  position: fixed;
-  top: 20px;
-  left: 20px;
-}
-
-.boldLink {
+.backNavigation {
+  margin: 20px 0 0 20px;
   font-weight: var(--weight-medium);
 }
 
-.colonyInfo::before {
-  height: 100%;
-  position: absolute;
-  bottom: 0;
-  left: var(--sidebar-width);
-  border-right: 1px solid var(--temp-grey-5);
-  content: '';
+.backNavigation i {
+  vertical-align: middle;
+  margin-right: 10px;
 }
 
-.vertical {
-  display: flex;
+.headingWrapper {
+  padding-left: 50px;
+  margin-top: 70px;
 }

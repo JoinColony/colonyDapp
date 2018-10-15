@@ -1,23 +1,16 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React from 'react';
+import { defineMessages } from 'react-intl';
 
-import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
+import VerticalNavigation from '~core/VerticalNavigation';
+import Heading from '~core/Heading';
 
 import styles from './Admin.css';
 
 const MSG = defineMessages({
-  tabColonyProfile: {
-    id: 'dashboard.Admin.tabColonyProfile',
-    defaultMessage: 'Colony Profile',
-  },
-  tabAdvanced: {
-    id: 'dashboard.Admin.tabAdvanced',
-    defaultMessage: 'Advanced',
-  },
   backButton: {
     id: 'dashboard.Admin.backButton',
     defaultMessage: 'Go to {colonyName}',
@@ -44,58 +37,62 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {};
+type Props = {
+  /*
+   * This will most likely come from the redux state
+   * The most obvious way to achieve this is to enhance this component with
+   * a connect call
+   */
+  colonyName?: string,
+};
 
-export default class Admin extends Component<Props> {
-  colonyName: 'Colony';
+const displayName = 'admin.AdminDashboard';
 
-  static displayName = 'dashboard.Admin';
+const navigationItems: Array<Object> = [
+  {
+    name: MSG.tabProfile,
+    content: <div>Profile Content</div>,
+  },
+  {
+    name: MSG.tabTokens,
+    content: <div>Tokens Content</div>,
+  },
+  {
+    name: MSG.tabTransaction,
+    content: <div>Transaction Content</div>,
+  },
+  {
+    name: MSG.tabOrganisation,
+    content: <div>Organisation Content</div>,
+  },
+];
 
-  componentWillMount() {
-    // TODO: get current Colony from Redux
-    this.colonyName = 'Colony';
-  }
-
-  render() {
-    return (
-      <div className={styles.main}>
-        <aside className={styles.colonyInfo}>
-          <header className={styles.header}>
-            <Icon name="back" title="back" appearance={{ size: 'medium' }} />
-            <NavLink className={styles.boldLink} to="/colony">
-              <FormattedMessage
-                {...MSG.backButton}
-                values={{
-                  colonyName: this.colonyName,
-                }}
-              />
-            </NavLink>
-          </header>
-        </aside>
-        <Tabs className={styles.vertical}>
-          <TabList
-            appearance={{ theme: 'vertical' }}
-            headline={MSG.colonySettings}
-          >
-            <Tab>
-              <FormattedMessage {...MSG.tabProfile} />
-            </Tab>
-            <Tab>
-              <FormattedMessage {...MSG.tabTokens} />
-            </Tab>
-            <Tab>
-              <FormattedMessage {...MSG.tabTransaction} />
-            </Tab>
-            <Tab>
-              <FormattedMessage {...MSG.tabOrganisation} />
-            </Tab>
-          </TabList>
-          <TabPanel>Profile</TabPanel>
-          <TabPanel>Tokens</TabPanel>
-          <TabPanel>Transaction</TabPanel>
-          <TabPanel>Organisation</TabPanel>
-        </Tabs>
+const AdminDashboard = ({ colonyName = 'The Meta Colony' }: Props) => (
+  <div className={styles.main}>
+    <VerticalNavigation navigationItems={navigationItems}>
+      <div className={styles.backNavigation}>
+        <Icon name="back" title="back" appearance={{ size: 'medium' }} />
+        <NavLink
+          to="/colony"
+          text={MSG.backButton}
+          textValues={{ colonyName }}
+        />
       </div>
-    );
-  }
-}
+      <div className={styles.headingWrapper}>
+        <Heading
+          appearance={{
+            size: 'normal',
+            weight: 'medium',
+            margin: 'small',
+            theme: 'dark',
+          }}
+          text={MSG.colonySettings}
+        />
+      </div>
+    </VerticalNavigation>
+  </div>
+);
+
+AdminDashboard.displayName = displayName;
+
+export default AdminDashboard;
