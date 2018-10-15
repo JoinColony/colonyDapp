@@ -3,7 +3,7 @@
 import ColonyNetworkClient from '@colony/colony-js-client';
 import namehash from 'eth-ens-namehash';
 
-interface ENSResolve {
+interface ENSResolverType {
   type: string;
 }
 
@@ -13,20 +13,20 @@ type OrbitDBAddress = {
 };
 
 export default class ENSResolver {
-  _resolvers: Map<string, ENSResolve>;
+  _resolvers: Map<string, ENSResolverType>;
 
   constructor(){
     this._resolvers = new Map()
   }
 
-  _createResolver(type: string): ENSResolve {
-    const resolverType = this._getResolverClass(type);
-    const resolver = new resolverType();
+  _createResolver(type: string): ENSResolverType {
+    const resolverClass = this._getResolverClass(type);
+    const resolver = new resolverClass();
     this._cacheResolver(type, resolver)
     return resolver;
   }
 
-  _getCachedResolver (type): ENSResolve{
+  _getCachedResolver (type): ENSResolverType{
     return this._resolvers.has(type)
       ? this._resolvers.get(type)
       : null;
@@ -39,11 +39,11 @@ export default class ENSResolver {
     }[type]
   }
 
-  _cacheResolver(type: string, resolver: ENSResolve) {
+  _cacheResolver(type: string, resolver: ENSResolverType) {
     this._resolvers.set(type, resolver);
   }
 
-  getResolver(type): ENSResolve {
+  getResolver(type): ENSResolverType {
     const cached = this._getCachedResolver(type);
     return cached ? cached : this._createResolver(type)
   }
