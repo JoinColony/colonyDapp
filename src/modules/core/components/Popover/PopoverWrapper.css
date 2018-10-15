@@ -37,7 +37,7 @@
 }
 
 .placementTop {
-  top: calc(0 - var(--popover-arrow-size)) !important;
+  top: calc(0px - var(--popover-arrow-size)) !important;
 }
 
 .placementRight {
@@ -49,7 +49,7 @@
 }
 
 .placementLeft {
-  left: calc(0 - var(--popover-arrow-size) - var(--popover-arrow-border) * 2) !important;
+  left: calc(0px - var(--popover-arrow-size) - var(--popover-arrow-border) * 2) !important;
 }
 
 .placementTop .arrow {
