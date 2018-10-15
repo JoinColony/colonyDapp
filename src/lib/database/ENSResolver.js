@@ -49,14 +49,19 @@ export default class ENSResolver {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async lookupUsernameFromAddress() {
-    const username = await ColonyNetworkClient.lookupRegisteredENSDomain();
+  async lookupUsernameFromAddress(ensAddress: string) {
+    const username = await ColonyNetworkClient.lookupRegisteredENSDomain(
+      ensAddress,
+    );
     return username;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async getAddressForENSHash() {
-    const address = await ColonyNetworkClient.getAddressForENSHash();
+  async getENSAddressForENSName(name: string): string {
+    const hashedIdentifier = namehash.hash(name);
+    const address = await ColonyNetworkClient.getAddressForENSHash(
+      hashedIdentifier,
+    );
     return address;
   }
 }
