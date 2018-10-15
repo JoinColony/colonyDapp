@@ -101,8 +101,8 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
           </CardList>
         </div>
       </main>
-      <aside className={styles.sidebar}>
-        {isColonyAdmin && (
+      {isColonyAdmin && (
+        <aside className={styles.sidebar}>
           <ul>
             {isUserColonyOwner &&
               canMintNewTokens && (
@@ -120,8 +120,8 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
               />
             </li>
           </ul>
-        )}
-      </aside>
+        </aside>
+      )}
     </div>
   );
 };
