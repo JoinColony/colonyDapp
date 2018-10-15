@@ -8,7 +8,7 @@ import DialogProvider from '~core/Dialog/DialogProvider.jsx';
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
 
-import LoadingTemplate from '../../../pages/LoadingTemplate';
+import LoadingTemplate from '~pages/LoadingTemplate';
 
 const MSG = defineMessages({
   loadingText: {

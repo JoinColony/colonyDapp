@@ -8,7 +8,7 @@ import { compose, withHandlers } from 'recompose';
 import type { FormValues } from './types';
 
 import ProfileCreateForm, { validationSchema } from './ProfileCreateForm.jsx';
-import WizardTemplate from '../../../pages/WizardTemplate';
+import WizardTemplate from '~pages/WizardTemplate';
 
 type Props = {
   handleBack: () => void,

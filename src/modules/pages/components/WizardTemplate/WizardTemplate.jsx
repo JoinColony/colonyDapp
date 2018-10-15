@@ -4,8 +4,8 @@ import type { Node } from 'react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import Logo from '../../../img/logo.svg';
-import { StepBar } from '../../core/components/ProgressBar';
+import Logo from '../../../../img/logo.svg';
+import { StepBar } from '~core/ProgressBar';
 import styles from './WizardTemplate.css';
 
 type Props = {
