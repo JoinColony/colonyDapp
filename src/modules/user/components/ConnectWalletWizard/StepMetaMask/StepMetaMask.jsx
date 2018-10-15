@@ -131,7 +131,7 @@ class MetaMask extends Component<Props, State> {
     const { previousStep } = this.props;
     const { isLoading, isValid } = this.state;
     return (
-      <div>
+      <main>
         <div className={styles.content}>
           <div className={styles.iconContainer}>
             <Icon
@@ -180,7 +180,7 @@ class MetaMask extends Component<Props, State> {
             />
           )}
         </div>
-      </div>
+      </main>
     );
   }
 }

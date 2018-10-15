@@ -78,7 +78,7 @@ type Props = {
 const displayName = 'user.ConnectWalletWizard.StepJSONUpload';
 
 const StepJSONUpload = ({ previousStep, handleSubmit, isValid }: Props) => (
-  <form onSubmit={handleSubmit}>
+  <main>
     <div className={styles.content}>
       <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
       <div className={styles.uploadArea}>
@@ -109,7 +109,7 @@ const StepJSONUpload = ({ previousStep, handleSubmit, isValid }: Props) => (
         type="submit"
       />
     </div>
-  </form>
+  </main>
 );
 
 const enhance = withBoundActionCreators({ openKeystoreWalletAction });

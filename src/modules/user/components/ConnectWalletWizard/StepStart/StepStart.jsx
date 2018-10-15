@@ -111,7 +111,7 @@ const createWalletOption = {
 };
 
 const StepStart = ({ handleSubmit }: Props) => (
-  <form className={styles.content} onSubmit={handleSubmit}>
+  <main className={styles.content}>
     <div className={styles.title}>
       <Heading
         appearance={{ size: 'medium', weight: 'thin' }}
@@ -133,7 +133,7 @@ const StepStart = ({ handleSubmit }: Props) => (
         link={CREATE_WALLET_ROUTE}
       />
     </div>
-  </form>
+  </main>
 );
 
 StepStart.displayName = displayName;

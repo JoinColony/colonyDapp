@@ -172,7 +172,7 @@ class StepHardware extends Component<Props, State> {
       : styles.searchBoxIconContainer;
 
     return (
-      <form onSubmit={handleSubmit}>
+      <main>
         <div className={styles.content}>
           <div className={styles.headingContainer}>
             {walletChoices.length > 0 ? (
@@ -260,7 +260,7 @@ class StepHardware extends Component<Props, State> {
             loading={isSubmitting}
           />
         </div>
-      </form>
+      </main>
     );
   }
 }

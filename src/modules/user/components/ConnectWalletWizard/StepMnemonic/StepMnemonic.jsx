@@ -69,7 +69,7 @@ const StepMnemonic = ({
   isSubmitting,
   isValid,
 }: Props) => (
-  <form onSubmit={handleSubmit}>
+  <main>
     <div className={styles.content}>
       <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
       <Textarea label={MSG.instructionText} name="connectwalletmnemonic" />
@@ -88,7 +88,7 @@ const StepMnemonic = ({
         loading={isSubmitting}
       />
     </div>
-  </form>
+  </main>
 );
 
 StepMnemonic.displayName = displayName;
