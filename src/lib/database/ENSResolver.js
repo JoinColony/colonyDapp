@@ -12,7 +12,7 @@ type OrbitDBAddress = {
   path: string,
 };
 
-export default class ENSResolver {
+class ENSResolver {
   _resolvers: Map<string, ENSResolverType>;
 
   constructor() {
@@ -83,3 +83,5 @@ class ColonyResolver extends ENSResolver {
     throw new Error('cannot yet look up colony databases');
   }
 }
+
+export default ENSResolver;

@@ -62,7 +62,7 @@ const SCHEMAS: Map<string, Schema> = new Map();
 class DDB {
   _orbitNode: OrbitDB;
 
-  _resolvers: { [string]: Resolver };
+  _resolver: Resolver;
 
   _stores: Map<string, Store>;
 
