@@ -20,9 +20,10 @@ export default class ENSResolver {
   }
 
   _createResolver(type: string): ENSResolverType {
-    const resolverClass = this._getResolverClass(type);
-    const resolver = new resolverClass();
-    this._cacheResolver(type, resolver)
+    const ResolverClass = this._getResolverClass(type);
+    if (!ResolverClass) return null;
+    const resolver = new ResolverClass();
+    this._cacheResolver(type, resolver);
     return resolver;
   }
 
