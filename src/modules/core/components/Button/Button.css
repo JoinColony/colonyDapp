@@ -47,7 +47,7 @@
   color: transparent !important;
   pointer-events: none;
 
-  svg {
+  & svg {
     stroke: transparent !important;
     fill: transparent !important;
   }

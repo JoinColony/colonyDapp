@@ -15,7 +15,7 @@
   background-color: transparent;
   cursor: pointer;
 
-  svg {
+  & svg {
     fill: var(--colony-black);
     stroke: var(--colony-black);
   }
