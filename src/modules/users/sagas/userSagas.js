@@ -33,10 +33,17 @@ function* initializeUser(action: Object): Saga<void> {
     const DDB = yield getContext('DDB');
     const wallet = yield getContext('currentWallet');
     const ipfsNode = yield getContext('ipfsNode');
-
+    const ENSResolver = yield getContext('ENSResolver');
+    const resolver = new ENSResolver();
     const identityProvider = new PurserIdentityProvider(wallet.instance);
-    const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
+    const ddbOptions = { resolver };
 
+    const ddb = yield call(
+      DDB.createDatabase,
+      ipfsNode,
+      identityProvider,
+      ddbOptions,
+    );
     yield setContext({ ddb });
     // TODO: First try to get the store, then create it
     store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
