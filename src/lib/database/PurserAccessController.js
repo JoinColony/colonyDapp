@@ -4,7 +4,7 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import IPFS from 'ipfs';
 
-import type { AccessController, Entry } from './AccessController';
+import type { AccessController, Entry } from './types';
 
 import PurserIdentityProvider from './PurserIdentityProvider';
 

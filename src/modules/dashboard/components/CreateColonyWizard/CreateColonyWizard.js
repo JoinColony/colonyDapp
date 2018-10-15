@@ -34,6 +34,7 @@ const stepFunction = (step: number, values: StepValues) => {
 const CreateColonyContainer = compose(
   withWizard({
     steps: stepFunction,
+    stepCount: 4,
   }),
 )(CreateColony);
 

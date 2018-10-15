@@ -43,11 +43,6 @@ const config = {
         '~utils': path.resolve(__dirname, 'src/utils/'),
         '~styles': path.resolve(__dirname, 'src/styles/shared'),
         '~types': path.resolve(__dirname, 'src/types/'),
-        // https://github.com/jquense/yup/issues/273
-        '@babel/runtime/helpers/builtin': path.resolve(
-          __dirname,
-          'node_modules/@babel/runtime/helpers',
-        ),
       },
       generateModulesAliases(),
     ),

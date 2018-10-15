@@ -7,22 +7,31 @@ import { all } from 'redux-saga/effects';
 
 import context from '~context/';
 
-import walletReducer from './modules/wallet/reducers';
+import userReducer from './modules/user/reducers';
 
 import dashboardSagas from './modules/dashboard/sagas';
-import walletSagas from './modules/wallet/sagas';
 import coreSagas from './modules/core/sagas';
+import userSagas from './modules/user/sagas';
 import history from './history';
+
+import { DDB, SCHEMAS } from './lib/database';
+import ipfsNode from './lib/ipfsNode';
 
 import reduxPromiseListener from './createPromiseListener';
 
+DDB.registerSchema('userProfile', SCHEMAS.UserProfile);
+
 const rootReducer = combineReducers({
-  wallet: walletReducer,
+  user: userReducer,
 });
 
 function* rootSaga(): any {
-  yield all([walletSagas(), coreSagas(), dashboardSagas()]);
+  yield all([userSagas(), dashboardSagas(), coreSagas()]);
 }
+
+// TODO: this is bad, refactor!
+context.DDB = DDB;
+context.ipfsNode = ipfsNode;
 
 const sagaMiddleware = createSagaMiddleware({ context });
 

@@ -1,0 +1,20 @@
+@import 'variables.css';
+
+.content {
+  width: 340px;
+}
+
+.title {
+  margin-top: 120px;
+  margin-bottom: 50px;
+  font-weight: var(--weight-medium);
+}
+
+.subtitle {
+  margin-bottom: 50px;
+  font-size: 14px;
+}
+
+.createWalletLink {
+  margin-top: 64px;
+}

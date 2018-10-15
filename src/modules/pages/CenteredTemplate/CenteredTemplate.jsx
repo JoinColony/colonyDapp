@@ -5,9 +5,9 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import AvatarDropdown from '../../users/components/AvatarDropdown';
+import AvatarDropdown from '../../dashboard/components/AvatarDropdown';
 
-import Navigation from '../../users/components/Navigation';
+import Navigation from '../../dashboard/components/Navigation';
 
 import styles from './CenteredTemplate.css';
 

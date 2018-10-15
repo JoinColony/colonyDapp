@@ -2,10 +2,10 @@
 
 export type UserType = {
   walletAddress: string,
-  avatar: string,
-  displayName: string,
-  ensName: string,
-  bio: string,
-  website: string,
-  location: string,
+  username: string,
+  avatar?: string,
+  displayName?: string,
+  bio?: string,
+  website?: string,
+  location?: string,
 };

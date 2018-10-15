@@ -6,7 +6,7 @@
 
 import Keystore from 'orbit-db-keystore';
 
-import type { Identity } from './Identity';
+import type { Identity } from './types';
 
 import PurserIdentityProvider from './PurserIdentityProvider';
 

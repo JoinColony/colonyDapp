@@ -22,10 +22,15 @@ const MSG = defineMessages({
 const displayName = 'Form.ActionForm';
 
 type Props = FormikConfig<Object> & {
+  /** Redux action to dispatch on submit (e.g. CREATE_XXX) */
   submit: string,
+  /** Redux action listener for successful action (e.g. CREATE_XXX_SUCCESS) */
   success: string,
+  /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
   error: string,
+  /** Function to call after successful action was dispatched */
   onSuccess?: (any, FormikBag<Object, Object>) => void,
+  /** Function to call after error action was dispatched */
   onError?: (any, FormikBag<Object, Object>) => void,
 };
 
