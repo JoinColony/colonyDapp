@@ -102,6 +102,8 @@ module.exports = {
         './src/modules/core/components/Tabs/Tab.jsx',
         './src/modules/core/components/Tabs/TabList.jsx',
         './src/modules/core/components/Tabs/TabPanel.jsx',
+        /* eslint-disable-next-line max-len */
+        './src/modules/core/components/VerticalNavigation/VerticalNavigation.jsx',
       ],
     },
     {

@@ -1,0 +1,43 @@
+@import 'variables.css';
+
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+}
+
+.tabs {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  grid-template-columns: minmax(240px, 340px) auto;
+  grid-template-rows: 100%;
+}
+
+.tabList {
+  height: 100%;
+  border-right: 1px solid var(--temp-grey-5);
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.tab {
+  padding: 5px 10px 5px 60px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-semi);
+  color: var(--colony-black);
+  cursor: pointer;
+}
+
+.tabSelected {
+  color: var(--primary);
+}
+
+.tabDisabled {
+  color: var(--primary);
+  color: var(--temp-grey-4);
+  cursor: default;
+}
+
+.tabPanel {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  grid-column: 2;
+  grid-row: 1;
+}
