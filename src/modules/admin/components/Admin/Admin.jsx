@@ -9,8 +9,6 @@ import Icon from '~core/Icon';
 
 import styles from './Admin.css';
 
-import Profile from './Profile.jsx';
-
 const MSG = defineMessages({
   tabColonyProfile: {
     id: 'dashboard.Admin.tabColonyProfile',
@@ -92,9 +90,7 @@ export default class Admin extends Component<Props> {
               <FormattedMessage {...MSG.tabOrganisation} />
             </Tab>
           </TabList>
-          <TabPanel>
-            <Profile />
-          </TabPanel>
+          <TabPanel>Profile</TabPanel>
           <TabPanel>Tokens</TabPanel>
           <TabPanel>Transaction</TabPanel>
           <TabPanel>Organisation</TabPanel>
