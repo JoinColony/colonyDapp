@@ -19,7 +19,7 @@ import KVStore from './KVStore';
 type Resolver = Object;
 
 type DatabaseOptions = {
-  resolvers?: { [string]: Resolver },
+  resolver?: Resolver,
 };
 type OrbitStoreCreateOpts = {
   directory?: string,
@@ -87,14 +87,14 @@ class DDB {
   constructor(
     ipfsNode: IPFSNode,
     identity: Identity,
-    { resolvers = {} }: DatabaseOptions = {},
+    { resolver = {} }: DatabaseOptions = {},
   ) {
     this._stores = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
       path: 'colonyOrbitdb',
     });
-    this._resolvers = resolvers;
+    this._resolver = resolver;
   }
 
   async getStore(
@@ -146,13 +146,9 @@ class DDB {
   async _resolveStoreAddress(identifier: string): Promise<string | null> {
     const [resolverKey, id] = identifier.split('.');
     if (!resolverKey || !id) return null;
-    const resolvers = Object.keys(this._resolvers);
-    for (let i = 0; i < resolvers.length; i += 1) {
-      if (resolverKey === resolvers[i]) {
-        return this._resolvers[resolverKey].resolve(id);
-      }
-    }
-    return null;
+
+    const resolver = this._resolver.getResolver(resolverKey);
+    return resolver ? resolver.resolve(id) : null;
   }
 
   async _getStoreAddress(identifier: StoreIdentifier): Promise<OrbitDBAddress> {
