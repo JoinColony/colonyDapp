@@ -4,9 +4,8 @@ import React from 'react';
 import type { Element, Node } from 'react';
 import nanoid from 'nanoid';
 import { FormattedMessage } from 'react-intl';
-import { TabList as ReactTabList } from 'react-tabs';
 
-import { Tab, Tabs, TabPanel } from '~core/Tabs';
+import { Tab, Tabs, VerticalTabList, TabPanel } from '~core/Tabs';
 
 import type { MessageDescriptor } from 'react-intl';
 
@@ -37,20 +36,14 @@ type Props = {
   children?: Node,
 };
 
-const displayName = 'VerticalNavigation';
+const displayName = 'pages.VerticalNavigation';
 
 const VerticalNavigation = ({ navigationItems, children }: Props) => (
   <div className={styles.main}>
     {navigationItems &&
       navigationItems.length && (
         <Tabs className={styles.tabs}>
-          {/*
-            * We're using the original `ReactTabList` component instead of our
-            * `TabList` to not have to brutally modify it and complicate it with
-            * extra, one-off props. (We would need to remove all the container
-            * styles just to get rid of the border)
-            */}
-          <ReactTabList className={styles.tabList}>
+          <VerticalTabList className={styles.tabList}>
             {children}
             {navigationItems.map(({ name }, index) => (
               <Tab
@@ -66,10 +59,10 @@ const VerticalNavigation = ({ navigationItems, children }: Props) => (
                 )}
               </Tab>
             ))}
-          </ReactTabList>
+          </VerticalTabList>
           {navigationItems.map(({ content }, index) => (
             <TabPanel key={nanoid(index)} className={styles.tabPanel}>
-              {content}
+              <div className={styles.contentWrapper}>{content}</div>
             </TabPanel>
           ))}
         </Tabs>
