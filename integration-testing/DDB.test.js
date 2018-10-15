@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { open as openWallet } from '@colony/purser-software';
+import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
 import ipfsNode from '../src/lib/ipfsNode';
 import DDB from '../src/lib/database/DDB';
@@ -9,7 +9,7 @@ import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 
 describe('Database setup', () => {
   test('Using purser', async () => {
-    const wallet = await openWallet();
+    const wallet = await createWallet();
 
     const identityProvider = new PurserIdentityProvider(wallet);
 
