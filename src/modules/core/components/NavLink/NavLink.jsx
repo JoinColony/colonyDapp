@@ -22,15 +22,12 @@ type Props = {
   textValues?: { [string]: any },
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
-  /** Sometimes needs to be styled a little different */
-  className?: string,
 };
 
 const NavLink = ({
   activeClassName = styles.active,
   children,
   intl: { formatMessage },
-  className,
   text,
   textValues,
   to,
@@ -40,12 +37,7 @@ const NavLink = ({
     typeof text == 'string' ? text : text && formatMessage(text, textValues);
 
   return (
-    <NavLinkComponent
-      to={to}
-      className={className}
-      activeClassName={activeClassName}
-      {...linkProps}
-    >
+    <NavLinkComponent to={to} activeClassName={activeClassName} {...linkProps}>
       {linkText || children}
     </NavLinkComponent>
   );
