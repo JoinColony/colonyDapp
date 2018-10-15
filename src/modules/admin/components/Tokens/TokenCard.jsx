@@ -26,7 +26,7 @@ type State = {
 class TokenCard extends Component<Props, State> {
   timeoutId: TimeoutID;
 
-  static displayName = 'admin.ColonyTokens.TokenCard';
+  static displayName = 'admin.Tokens.TokenCard';
 
   state = { ethUsd: null };
 

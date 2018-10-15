@@ -9,7 +9,7 @@ import Button from '~core/Button';
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 
-import styles from './ColonyTokens.css';
+import styles from './Tokens.css';
 
 import TokenCard from './TokenCard.jsx';
 
@@ -17,19 +17,19 @@ import mockTokens from './__datamocks__/mockTokens';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ColonyTokenAdmin.title',
+    id: 'dashboard.Tokens.title',
     defaultMessage: 'Token Balances',
   },
   nativeTokenText: {
-    id: 'dashboard.ColonyTokenAdmin.nativeTokenText',
+    id: 'dashboard.Tokens.nativeTokenText',
     defaultMessage: '*Native token: {nativeToken}',
   },
   navItemMintNewTokens: {
-    id: 'dashboard.ColonyTokenAdmin.navItemMintNewTokens',
+    id: 'dashboard.Tokens.navItemMintNewTokens',
     defaultMessage: 'Mint New Tokens',
   },
   navItemEditTokens: {
-    id: 'dashboard.ColonyTokenAdmin.navItemEditTokens',
+    id: 'dashboard.Tokens.navItemEditTokens',
     defaultMessage: 'Edit Tokens',
   },
 });
@@ -69,9 +69,9 @@ const sortTokens = (prevToken: Token, nextToken: Token): number => {
   return 0;
 };
 
-const displayName = 'admin.ColonyTokens';
+const displayName = 'admin.Tokens';
 
-const ColonyTokenAdmin = ({ tokens = mockTokens }: Props) => {
+const Tokens = ({ tokens = mockTokens }: Props) => {
   const nativeToken = tokens.find(token => token.isNative);
   const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
   const isUserColonyOwner = true; // TODO determine this value.
@@ -126,6 +126,6 @@ const ColonyTokenAdmin = ({ tokens = mockTokens }: Props) => {
   );
 };
 
-ColonyTokenAdmin.displayName = displayName;
+Tokens.displayName = displayName;
 
-export default ColonyTokenAdmin;
+export default Tokens;
