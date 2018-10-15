@@ -8,7 +8,7 @@ import Heading from '~core/Heading';
 
 import InboxItem from './InboxItem.jsx';
 
-import CenteredTemplate from '../../../pages/CenteredTemplate';
+import CenteredTemplate from '~pages/CenteredTemplate';
 
 import mockInbox from './__datamocks__/mockInbox';
 

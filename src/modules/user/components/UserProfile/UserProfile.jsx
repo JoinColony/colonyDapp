@@ -4,7 +4,7 @@ import React from 'react';
 import ColonyGrid from '~core/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
 
-import ProfileTemplate from '../../../pages/ProfileTemplate';
+import ProfileTemplate from '~pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
 
 import mockActivities from './__datamocks__/mockActivities';

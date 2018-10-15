@@ -2,7 +2,7 @@
 
 import { compose } from 'recompose';
 
-import withWizard from '../../../core/components/Wizard/withWizard';
+import withWizard from '~core/Wizard/withWizard';
 import ConnectWalletWizard from './ConnectWalletWizard.jsx';
 
 import * as StepStart from './StepStart';

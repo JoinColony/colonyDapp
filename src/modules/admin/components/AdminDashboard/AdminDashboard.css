@@ -1,0 +1,21 @@
+@import 'variables.css';
+
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  background: var(--gradient-default);
+}
+
+.backNavigation {
+  margin: 20px 0 0 20px;
+  font-weight: var(--weight-medium);
+}
+
+.backNavigation i {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.headingWrapper {
+  margin-top: 70px;
+  padding-left: 50px;
+}

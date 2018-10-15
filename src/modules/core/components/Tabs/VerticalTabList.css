@@ -1,0 +1,11 @@
+@import 'variables.css';
+@import 'tabsVariables.css';
+
+.main {
+  height: 100%;
+  border-right: 1px solid var(--temp-grey-5);
+}
+
+.main li {
+  border-bottom: none;
+}

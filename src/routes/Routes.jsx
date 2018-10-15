@@ -11,12 +11,13 @@ import Dashboard from '~dashboard/Dashboard';
 
 import Inbox from '~dashboard/Inbox';
 
-import AdminProfile from '../modules/admin/components/Profile';
 import ConnectWalletWizard from '~user/ConnectWalletWizard';
 import CreateWalletWizard from '~user/CreateWalletWizard';
 import UserProfile from '~user/UserProfile';
 import UserProfileEdit from '~user/UserProfileEdit';
 import ProfileCreate from '~user/ProfileCreate';
+
+import AdminDashboard from '~admin/AdminDashboard';
 
 import {
   CONNECT_ROUTE,
@@ -25,11 +26,11 @@ import {
   CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
+  ADMIN_DASHBOARD_ROUTE,
   INBOX_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
-  ADMIN_PROFILE_EDIT,
 } from './routeConstants';
 
 import ConnectedOnlyRoute from './ConnectedOnlyRoute.jsx';
@@ -79,6 +80,11 @@ const Routes = ({
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
+        path={ADMIN_DASHBOARD_ROUTE}
+        component={AdminDashboard}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
       />
@@ -101,11 +107,6 @@ const Routes = ({
         isConnected={isConnected}
         path={CREATE_PROFILE_ROUTE}
         component={ProfileCreate}
-      />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={ADMIN_PROFILE_EDIT}
-        component={AdminProfile}
       />
     </Switch>
   );

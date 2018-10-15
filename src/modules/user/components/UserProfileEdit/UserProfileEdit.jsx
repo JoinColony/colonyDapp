@@ -11,7 +11,7 @@ import Button from '~core/Button';
 
 import styles from './UserProfileEdit.css';
 
-import ProfileTemplate from '../../../pages/ProfileTemplate';
+import ProfileTemplate from '~pages/ProfileTemplate';
 
 import Sidebar from './Sidebar.jsx';
 
