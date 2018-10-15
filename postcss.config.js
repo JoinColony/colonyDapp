@@ -17,6 +17,11 @@ module.exports = {
         return id;
       },
     }),
-    postCSSPresetEnv(),
+    postCSSPresetEnv({
+      features: {
+        'nesting-rules': true,
+        'color-mod-function': { unresolved: 'warn' }
+      },
+    }),
   ],
 };
