@@ -14,6 +14,14 @@ import Organizations from '~admin/Organizations';
 
 import styles from './AdminDashboard.css';
 
+import type {
+  /*
+   * Again, the same trick of making prettier not suggest a fix that would
+   * break the eslint rules, by just adding a comment
+   */
+  NavigationItem,
+} from '~pages/VerticalNavigation/VerticalNavigation.jsx';
+
 const MSG = defineMessages({
   backButton: {
     id: 'dashboard.Admin.backButton',
@@ -50,21 +58,21 @@ type Props = {
   colonyName?: string,
 };
 
-const navigationItems: Array<Object> = [
+const navigationItems: Array<NavigationItem> = [
   {
-    name: MSG.tabProfile,
+    title: MSG.tabProfile,
     content: <Profile />,
   },
   {
-    name: MSG.tabTokens,
+    title: MSG.tabTokens,
     content: <div>Tokens Content</div>,
   },
   {
-    name: MSG.tabTransaction,
+    title: MSG.tabTransaction,
     content: <div>Transaction Content</div>,
   },
   {
-    name: MSG.tabOrganisation,
+    title: MSG.tabOrganisation,
     content: <Organizations />,
   },
 ];

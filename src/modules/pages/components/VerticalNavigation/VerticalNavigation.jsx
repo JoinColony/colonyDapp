@@ -11,12 +11,12 @@ import type { MessageDescriptor } from 'react-intl';
 
 import styles from './VerticalNavigation.css';
 
-type NavigationItem = {
+export type NavigationItem = {
   /*
    * Name for the tab entry.
    * Can be anything: message descriptor, string, or even an React Element
    */
-  name: MessageDescriptor | string | Element<*>,
+  title: MessageDescriptor | string | Element<*>,
   /*
    * Content to render in the tab panel
    */
@@ -45,17 +45,17 @@ const VerticalNavigation = ({ navigationItems, children }: Props) => (
         <Tabs className={styles.tabs}>
           <VerticalTabList className={styles.tabList}>
             {children}
-            {navigationItems.map(({ name }, index) => (
+            {navigationItems.map(({ title }, index) => (
               <Tab
                 key={nanoid(index)}
                 className={styles.tab}
                 selectedClassName={styles.tabSelected}
                 disabledClassName={styles.tabDisabled}
               >
-                {name instanceof Object && name.id ? (
-                  <FormattedMessage {...name} />
+                {title instanceof Object && title.id ? (
+                  <FormattedMessage {...title} />
                 ) : (
-                  name
+                  title
                 )}
               </Tab>
             ))}
