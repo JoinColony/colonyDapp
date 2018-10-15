@@ -7,7 +7,13 @@ import styles from './VerticalTabList.css';
 
 type Props = {};
 
-const displayName: string = 'VerticalTabList';
+/*
+ * @NOTE This is breaking convention and might get confusing
+ *
+ * But if we don't name the component `TabList`, `react-tabs` won't detect it and will
+ * break it's functionality (because it goes by name and not by rendered component)
+ */
+const displayName: string = 'TabList';
 
 const VerticalTabList = ({ ...props }: Props) => (
   <ReactTabList className={styles.main} {...props} />
