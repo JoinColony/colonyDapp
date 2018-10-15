@@ -19,12 +19,12 @@
 
 .dropzoneReject {
   border: 1px solid var(--danger);
-  background-color: color(var(--danger) alpha(30%));
+  background-color: color-mod(var(--danger) alpha(30%));
 }
 
 .dropzone[aria-invalid="true"] {
   border: 1px solid var(--danger);
-  background-color: color(var(--danger) alpha(20%));
+  background-color: color-mod(var(--danger) alpha(20%));
 }
 
 .placeholderText {

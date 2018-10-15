@@ -114,14 +114,14 @@
 
 .themeDark {
   composes: baseStyles;
-  border-color: color(var(--grey-blue-1) alpha(30%));
+  border-color: color-mod(var(--grey-blue-1) alpha(30%));
   background-color: var(--grey-3);
   color: var(--colony-white);
   box-shadow: 0 0 20px -2px var(--grey-4);
 
   &.separatorsBorders td,
   &.separatorsBorders th {
-    border-color: color(var(--grey-blue-1) alpha(30%));
+    border-color: color-mod(var(--grey-blue-1) alpha(30%));
   }
 
   & tbody tr:hover {

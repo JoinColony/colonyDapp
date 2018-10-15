@@ -26,13 +26,13 @@
 }
 
 .customInput[aria-invalid="true"] {
-  background-color: color(var(--danger) alpha(20%));
+  background-color: color-mod(var(--danger) alpha(20%));
 }
 
 .customInputError {
   composes: customInput;
   border-color: var(--danger);
-  background-color: color(var(--danger) alpha(20%));
+  background-color: color-mod(var(--danger) alpha(20%));
 }
 
 .inputFields {

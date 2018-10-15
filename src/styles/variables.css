@@ -79,7 +79,7 @@
    */
   --family-primary: "Avenir Next", sans-serif;
   --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
-  --text: color(var(--grey-dark) alpha(70%));
+  --text: color-mod(var(--grey-dark) alpha(70%));
   --text-dark: var(--colony-black);
   --text-invert: var(--colony-white);
   --weight-thin: 300;
