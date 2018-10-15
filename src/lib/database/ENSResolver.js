@@ -15,8 +15,8 @@ type OrbitDBAddress = {
 export default class ENSResolver {
   _resolvers: Map<string, ENSResolverType>;
 
-  constructor(){
-    this._resolvers = new Map()
+  constructor() {
+    this._resolvers = new Map();
   }
 
   _createResolver(type: string): ENSResolverType {
@@ -27,17 +27,16 @@ export default class ENSResolver {
     return resolver;
   }
 
-  _getCachedResolver (type): ENSResolverType{
-    return this._resolvers.has(type)
-      ? this._resolvers.get(type)
-      : null;
+  _getCachedResolver(type): ENSResolverType {
+    return this._resolvers.has(type) ? this._resolvers.get(type) : null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _getResolverClass(type: string) {
     return {
-      user: UserResolver,
-      colony: ColonyResolver
-    }[type]
+      user: UserResolver, // eslint-disable-line no-use-before-define
+      colony: ColonyResolver, // eslint-disable-line no-use-before-define
+    }[type];
   }
 
   _cacheResolver(type: string, resolver: ENSResolverType) {
@@ -46,29 +45,36 @@ export default class ENSResolver {
 
   getResolver(type): ENSResolverType {
     const cached = this._getCachedResolver(type);
-    return cached ? cached : this._createResolver(type)
+    return cached || this._createResolver(type);
   }
 
-  async lookupUsernameFromAddress (){
-    const username = await ColonyNetworkClient.lookupRegisteredENSDomain()
+  // eslint-disable-next-line class-methods-use-this
+  async lookupUsernameFromAddress() {
+    const username = await ColonyNetworkClient.lookupRegisteredENSDomain();
     return username;
   }
+
+  // eslint-disable-next-line class-methods-use-this
   async getAddressForENSHash() {
-    const address = await ColonyNetworkClient.getAddressForENSHash()
-    return address
+    const address = await ColonyNetworkClient.getAddressForENSHash();
+    return address;
   }
 }
 
-class UserResolver extends ENSResolver{
-  async resolve (identifier: string): OrbitDBAddress {
+class UserResolver extends ENSResolver {
+  // eslint-disable-next-line class-methods-use-this
+  async resolve(identifier: string): OrbitDBAddress {
     const hashedIdentifier = namehash.hash(identifier);
-    const dbAddress = await ColonyNetworkClient.getProfileDBAddress(hashedIdentifier)
+    const dbAddress = await ColonyNetworkClient.getProfileDBAddress(
+      hashedIdentifier,
+    );
     return dbAddress;
   }
 }
 
-class ColonyResolver extends ENSResolver{
-  resolve(){
-    throw new Error('cannot yet look up colony databases')
+class ColonyResolver extends ENSResolver {
+  // eslint-disable-next-line class-methods-use-this
+  resolve() {
+    throw new Error('cannot yet look up colony databases');
   }
 }
