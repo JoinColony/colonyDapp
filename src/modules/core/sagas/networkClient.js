@@ -3,9 +3,10 @@
 import type { Saga } from 'redux-saga';
 
 import { call, put, takeEvery, getContext } from 'redux-saga/effects';
-import { providers, Wallet } from 'ethers';
+import { providers } from 'ethers';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
+import NetworkLoader from '@colony/colony-js-contract-loader-network';
 import ColonyNetworkClient from '@colony/colony-js-client';
 
 import { LOAD_COLONY_NETWORK } from '../actionTypes';
@@ -13,19 +14,27 @@ import {
   loadColonyNetworkError,
   loadColonyNetworkSuccess,
 } from '../actionCreators';
+import EthersWrappedWallet from '../../../lib/EthersWrappedWallet';
 
-// XXX Just for local testing; either make this configurable or replace it.
-function* initLocalColonyNetworkClient() {
-  const loader = new TrufflepigLoader();
+function* initColonyNetworkClient() {
   const provider = new providers.JsonRpcProvider();
+  const { instance: wallet } = yield getContext('currentWallet');
 
-  const privateKey = yield loader.getAccount(0);
-  const privateWallet = new Wallet(privateKey, provider);
+  let loader;
+  switch (process.env.NETWORK_CLIENT_LOADER) {
+    case 'trufflepig':
+      loader = new TrufflepigLoader();
+      break;
+    default:
+      loader = new NetworkLoader('rinkeby');
+      break;
+  }
 
   const adapter = new EthersAdapter({
     loader,
     provider,
-    wallet: privateWallet,
+    // $FlowFixMe colonyJS IWallet uses sync methods, but async works also
+    wallet: new EthersWrappedWallet(wallet, provider),
   });
 
   const networkClient = new ColonyNetworkClient({ adapter, query: {} });
@@ -47,8 +56,7 @@ function* loadColonyNetwork(): Saga<*> {
     }
 
     // Initialise a new network client
-    // XXX Currently using a local client for testing.
-    networkClient = yield call(initLocalColonyNetworkClient);
+    networkClient = yield call(initColonyNetworkClient);
 
     // Set the context to the newly-loaded network client
     yield call(setInstance, networkClient);
