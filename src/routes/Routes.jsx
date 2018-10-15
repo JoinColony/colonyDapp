@@ -9,7 +9,7 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Dashboard from '~dashboard/Dashboard';
 
-import Admin from '../modules/admin/components/Admin';
+import AdminDashboard from '../modules/admin/components/AdminDashboard';
 import Inbox from '~dashboard/Inbox';
 
 import ConnectWalletWizard from '~user/ConnectWalletWizard';
@@ -83,7 +83,7 @@ const Routes = ({
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={COLONY_ADMIN_ROUTE}
-        component={Admin}
+        component={AdminDashboard}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}

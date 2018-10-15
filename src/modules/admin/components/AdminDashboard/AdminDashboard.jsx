@@ -8,7 +8,7 @@ import Icon from '~core/Icon';
 import VerticalNavigation from '~core/VerticalNavigation';
 import Heading from '~core/Heading';
 
-import styles from './Admin.css';
+import styles from './AdminDashboard.css';
 
 const MSG = defineMessages({
   backButton: {
