@@ -7,6 +7,12 @@ import type { OrbitDBAddress } from './types';
 
 interface ENSResolverType {
   type: string;
+
+  _networkClient: ColonyNetworkClient;
+
+  lookupUsernameFromAddress(ensAddress: string): Promise<string>;
+
+  getENSAddressForENSName(name: string): Promise<string>;
 }
 
 class ENSResolver {
