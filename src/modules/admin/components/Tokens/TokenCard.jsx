@@ -23,33 +23,81 @@ type State = {
   ethUsd: number | null,
 };
 
-class TokenCard extends Component<Props, State> {
-  timeoutId: TimeoutID;
+type EthUsdResponse = {
+  status: string,
+  message: string,
+  result: {
+    ethbtc: string,
+    ethbtc_timestamp: string,
+    ethusd: string,
+    ethusd_timestamp: string,
+  },
+};
 
-  static displayName = 'admin.Tokens.TokenCard';
+const displayName = 'admin.Tokens.TokenCard';
+
+class TokenCard extends Component<Props, State> {
+  static displayName = displayName;
 
   state = { ethUsd: null };
 
   componentDidMount() {
     const { isEth } = this.props;
-    /*
-     * TODO retrieve tokenIcon image data from ipfs. Currently using mock data.
-     *
-     * TODO either look up ethUsd or remove this. Also update required `Numeral` below.
-     */
     if (isEth) {
-      const ethUsd = 201.34;
-      this.timeoutId = setTimeout(() => {
-        this.setState({
-          ethUsd,
-        });
-      }, 2000);
+      this.getEthToUsd();
     }
   }
 
-  componentWillUnmount() {
-    clearTimeout(this.timeoutId);
-  }
+  convertBalanceToUsd = (ethUsdConversionRate: number): number => {
+    const {
+      token: { balance },
+    } = this.props;
+    return +(balance * ethUsdConversionRate).toFixed(2);
+  };
+
+  getEthToUsd = () => {
+    const ethUsdKey = `${displayName}.ethUsd`;
+    const ethUsdTimestampKey = `${displayName}.ethUsdTimestamp`;
+
+    const conversionRateEndpoint =
+      'https://api.etherscan.io/api?module=stats&action=ethprice';
+
+    const cachedEthUsd = localStorage.getItem(ethUsdKey) || null;
+    if (cachedEthUsd) {
+      this.setState({
+        ethUsd: this.convertBalanceToUsd(Number(cachedEthUsd)),
+      });
+    }
+    const cachedEthUsdTimestamp = localStorage.getItem(ethUsdTimestampKey);
+    const currentTimestamp = new Date().getTime();
+    if (
+      !cachedEthUsdTimestamp ||
+      currentTimestamp - Number(cachedEthUsdTimestamp) > 10000
+    ) {
+      fetch(conversionRateEndpoint)
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${displayName}: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then((response: EthUsdResponse) => {
+          const {
+            result: { ethusd: ethUsd },
+            status,
+          } = response;
+          if (status !== '1') {
+            throw Error(`${displayName}: Invalid response data.`);
+          }
+          localStorage.setItem(ethUsdKey, ethUsd);
+          localStorage.setItem(ethUsdTimestampKey, currentTimestamp.toString());
+          this.setState({
+            ethUsd: this.convertBalanceToUsd(Number(ethUsd)),
+          });
+        })
+        .catch(console.warn);
+    }
+  };
 
   render() {
     const {
