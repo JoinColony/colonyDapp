@@ -8,7 +8,7 @@ import { createElement, Component } from 'react';
 
 import { ActionForm, Form } from '~core/Fields';
 
-import type { WizardFormikBag, SubmitFn, ActionSubmit } from './types';
+import type { SubmitFn, ActionSubmit } from './types';
 
 type ValidationSchema = Object;
 

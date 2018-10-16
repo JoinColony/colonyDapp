@@ -6,12 +6,8 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { MessageDescriptor } from 'react-intl';
-
-import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
+import type { WizardFormikBag } from '~core/Wizard';
 import type { FileReaderFile, UploadFile } from '~core/FileUpload';
-
-import { withBoundActionCreators } from '~utils/redux';
 
 import {
   OPEN_KEYSTORE_WALLET,
@@ -52,7 +48,8 @@ const MSG = defineMessages({
   },
   errorUnlockWallet: {
     id: 'user.ConnectWalletWizard.StepJSONUpload.errorUnlockWallet',
-    defaultMessage: 'Could not unlock your wallet. Please double check your password',
+    defaultMessage:
+      'Could not unlock your wallet. Please double check your password',
   },
   buttonAdvance: {
     id: 'user.ConnectWalletWizard.StepJSONUpload.buttonAdvance',
@@ -89,9 +86,9 @@ const readKeystoreFromFileData = (file: FileReaderFile) => {
     throw new Error('Could not parse keystore data');
   }
   return keystore;
-}
+};
 
-const StepJSONUpload = ({ previousStep, handleSubmit, isValid, status }: Props) => (
+const StepJSONUpload = ({ previousStep, isValid, status }: Props) => (
   <main>
     <div className={styles.content}>
       <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -129,11 +126,7 @@ const StepJSONUpload = ({ previousStep, handleSubmit, isValid, status }: Props) 
 );
 
 export const validationSchema = yup.object({
-  // FIXME: try to validate this
-  // walletJsonFileUpload: yup.object({
-  //   address: yup.string().required(),
-  //   version: yup.number().required(),
-  // }).required(MSG.errorKeystore),
+  walletJsonFileUpload: yup.array().of(yup.object()),
   walletJsonPassword: yup.string(),
 });
 
@@ -146,11 +139,14 @@ export const onSubmit = {
     setStatus({ error: MSG.errorUnlockWallet });
   },
   // Transform payload because it's ugly
-  setPayload(action: Object, { walletJsonFileUpload, walletJsonPassword }: FormValues) {
+  setPayload(
+    action: Object,
+    { walletJsonFileUpload, walletJsonPassword }: FormValues,
+  ) {
     const [file] = walletJsonFileUpload;
     const keystore = file.uploaded;
     return { ...action, payload: { keystore, password: walletJsonPassword } };
-  }
+  },
 };
 
 StepJSONUpload.displayName = displayName;

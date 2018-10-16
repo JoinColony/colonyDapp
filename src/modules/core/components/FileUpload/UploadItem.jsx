@@ -61,7 +61,7 @@ class UploadItem extends Component<Props> {
       maxFilesLimit: 1,
       maxFileSize,
       allowedTypes: accept,
-    })
+    });
   }
 
   componentDidMount() {
@@ -90,7 +90,6 @@ class UploadItem extends Component<Props> {
       setValue({ ...$value, preview: readFile.data });
       fileReference = await upload(readFile);
     } catch (e) {
-      console.log(e);
       // TODO better error handling here
       setValue({ ...$value, error: 'uploadError' });
       return;

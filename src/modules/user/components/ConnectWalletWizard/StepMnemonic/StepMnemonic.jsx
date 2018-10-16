@@ -6,10 +6,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { MessageDescriptor } from 'react-intl';
-
 import type { WizardFormikBag } from '~core/Wizard';
-import { withBoundActionCreators } from '~utils/redux';
 
 import {
   OPEN_MNEMONIC_WALLET,
@@ -37,7 +34,8 @@ const MSG = defineMessages({
   },
   errorOpenMnemonic: {
     id: 'user.ConnectWalletWizard.StepMnemonic.errorOpenMnemonic',
-    defaultMessage: 'Oops, there is something wrong. Check the format of your mnemonic',
+    defaultMessage:
+      'Oops, there is something wrong. Check the format of your mnemonic',
   },
   mnemonicRequired: {
     id: 'user.ConnectWalletWizard.StepMnemonic.mnemonicRequired',
@@ -65,7 +63,6 @@ type Props = {
 const displayName = 'user.ConnectWalletWizard.StepMnemonic';
 
 const StepMnemonic = ({
-  handleSubmit,
   previousStep,
   isSubmitting,
   isValid,

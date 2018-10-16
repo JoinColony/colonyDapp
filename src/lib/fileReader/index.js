@@ -18,14 +18,9 @@ const fileReaderFactory = (options: Object): Function => {
       );
     }
 
-    if (
-      config.maxFilesLimit &&
-      files.length > config.maxFilesLimit
-    ) {
+    if (config.maxFilesLimit && files.length > config.maxFilesLimit) {
       throw new Error(
-        `You can only have ${
-          config.maxFilesLimit
-        } or less attached file(s)`,
+        `You can only have ${config.maxFilesLimit} or less attached file(s)`,
       );
     }
 
@@ -37,13 +32,8 @@ const fileReaderFactory = (options: Object): Function => {
       );
     }
 
-    const allowedTypesValidationErrors = files.filter(
-      hasValidType,
-    );
-    if (
-      allowedTypesValidationErrors &&
-      allowedTypesValidationErrors.length
-    ) {
+    const allowedTypesValidationErrors = files.filter(hasValidType);
+    if (allowedTypesValidationErrors && allowedTypesValidationErrors.length) {
       const allowedTypes = config.allowedTypes.join(', ');
       throw new Error(
         `Only types: ${allowedTypes} are allowed to be uploaded.`,
@@ -59,11 +49,7 @@ const fileReaderFactory = (options: Object): Function => {
   }
 
   function hasInvalidFileSize(file) {
-    return (
-      file &&
-      config.maxFileSize &&
-      file.size > config.maxFileSize
-    );
+    return file && config.maxFileSize && file.size > config.maxFileSize;
   }
 
   function defaultFileReadingFunction(reader, file) {

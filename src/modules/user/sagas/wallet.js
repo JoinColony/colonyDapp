@@ -35,7 +35,6 @@ export const MSG = defineMessages({
 function* openMnemonicWallet(action: Object): Saga<void> {
   const { connectwalletmnemonic } = action.payload;
 
-  let newMetamaskWallet: Object;
   try {
     const currentWallet = yield getContext('currentWallet');
     /*
@@ -58,9 +57,8 @@ function* openMnemonicWallet(action: Object): Saga<void> {
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message }
-    })
-    return;
+      payload: { error: caughtError.message },
+    });
   }
 }
 
@@ -83,8 +81,8 @@ function* openMetamaskWallet(): Saga<void> {
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message }
-    })
+      payload: { error: caughtError.message },
+    });
     return;
   }
   yield put({
@@ -106,8 +104,8 @@ function* openHardwareWallet(action: Object): Saga<void> {
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message }
-    })
+      payload: { error: caughtError.message },
+    });
     return;
   }
   /*
@@ -139,8 +137,8 @@ function* openKeystoreWallet(action: Object): Saga<void> {
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message }
-    })
+      payload: { error: caughtError.message },
+    });
     return;
   }
   /*

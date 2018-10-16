@@ -7,9 +7,7 @@ import { defineMessages } from 'react-intl';
 
 import { open } from '@colony/purser-metamask';
 
-import { withBoundActionCreators } from '~utils/redux';
-
-import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
+import type { WizardFormikBag } from '~core/Wizard';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';

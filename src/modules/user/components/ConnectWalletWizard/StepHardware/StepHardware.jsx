@@ -9,10 +9,9 @@ import { defineMessages } from 'react-intl';
 
 import ledgerWallet from '@colony/purser-ledger';
 
-import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
+import type { WizardFormikBag } from '~core/Wizard';
 
 import withContext from '~context/withContext';
-import { withBoundActionCreators } from '~utils/redux';
 import HardwareChoice from './HardwareChoice.jsx';
 
 import {
@@ -63,9 +62,8 @@ const MSG = defineMessages({
   },
   errorPickAddress: {
     id: 'user.ConnectWalletWizard.StepHardware.errorPickAddress',
-    defaultMessage:
-      'Something went wrong. That is probably not your fault!',
-    },
+    defaultMessage: 'Something went wrong. That is probably not your fault!',
+  },
   walletChoiceRequired: {
     id: 'user.ConnectWalletWizard.StepHardware.walletChoiceRequired',
     defaultMessage: 'Please select one of the wallets below.',
@@ -132,7 +130,6 @@ class StepHardware extends Component<Props, State> {
         walletChoices: ledgerWalletInstance.otherAddresses,
       });
     } catch (caughtError) {
-      console.log(caughtError);
       /*
        * We fail silently
        */
@@ -143,7 +140,6 @@ class StepHardware extends Component<Props, State> {
   render() {
     const { walletChoices } = this.state;
     const {
-      handleSubmit,
       isSubmitting,
       isValid,
       previousStep,
@@ -254,9 +250,7 @@ class StepHardware extends Component<Props, State> {
   }
 }
 
-const enhance = compose(
-  withContext,
-);
+const enhance = compose(withContext);
 
 export const onSubmit = {
   submit: OPEN_HARDWARE_WALLET,
