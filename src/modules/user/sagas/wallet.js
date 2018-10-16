@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, getContext } from 'redux-saga/effects';
 import { defineMessages } from 'react-intl';
 
 import softwareWallet from '@colony/purser-software';
@@ -91,25 +91,32 @@ function* openMetamaskWallet(action: Object): Saga<void> {
 }
 
 function* openHardwareWallet(action: Object): Saga<void> {
-  const { selectedAddress } = action.payload;
-  const { handleDidConnectWallet } = action;
+  const { hardwareWalletChoice } = action.payload;
+
+  try {
+    const currentWallet = yield getContext('currentWallet');
+    const { instance: walletInstance } = currentWallet;
+    const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
+      address => address === hardwareWalletChoice,
+    );
+    walletInstance.setDefaultAddress(selectedAddressIndex);
+  } catch (caughtError) {
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message }
+    })
+  }
   /*
    * Set the wallet's address inside the store
    */
   yield put({
     type: WALLET_SET,
-    payload: { currentAddress: selectedAddress },
+    payload: { currentAddress: hardwareWalletChoice },
   });
-  /*
-   * Go to create profile
-   */
-  handleDidConnectWallet();
 }
 
 function* openKeystoreWallet(action: Object): Saga<void> {
   const { keystore, password } = action.payload;
-  // const { setErrors, setSubmitting, handleDidConnectWallet } = action;
-  // setSubmitting(true);
   try {
     /*
      * Open the wallet with a mnemonic
@@ -129,18 +136,11 @@ function* openKeystoreWallet(action: Object): Saga<void> {
       type: WALLET_SET,
       payload: { currentAddress: newKeystoreWallet.address },
     });
-    // setSubmitting(false);
-    /*
-     * Go to create profile
-     */
-    // handleDidConnectWallet();
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
       payload: { error: caughtError.message }
     })
-    // setSubmitting(false);
-    // setErrors(MSG.errorOpenMnemonicWallet);
   }
 }
 
