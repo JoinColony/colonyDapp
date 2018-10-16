@@ -10,7 +10,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './InboxItem.css';
 
-import type { InboxElement, InboxAction } from './types';
+import type { InboxElement, InboxAction, ActionType } from './types';
 
 const MSG = defineMessages({
   actionAddedSkillTag: {
@@ -43,53 +43,71 @@ const displayName = 'dashboard.Inbox.InboxItem';
 
 type Props = {
   item: InboxElement,
+  markAsRead: (id: number) => void,
 };
 
 const getEventActionKey = (actionType: InboxAction) =>
   camelcase(`action-${actionType}`);
 
-const InboxItem = ({
-  item: { user, action, task, domain, colonyName, createdAt },
-}: Props) => (
-  <TableRow className={styles.inboxRow}>
-    <TableCell className={styles.inboxDetails}>
-      <UserAvatar
-        size="xxs"
-        walletAddress={user.walletAddress}
-        username={user.username}
-        className={styles.UserAvatar}
-      />
-      <FormattedMessage
-        className={styles.inboxAction}
-        {...MSG[getEventActionKey(action)]}
-        values={{
-          user: (
-            <span className={styles.inboxDetail} title={user.username}>
-              {user.username}
-            </span>
-          ),
-          task: (
-            <span className={styles.inboxDetail} title={user.username}>
-              {task}
-            </span>
-          ),
-        }}
-      />
+const UnreadIndicator = ({ type }: { type: ActionType }) => (
+  <div
+    className={`${styles.inboxUnread} ${
+      type === 'action'
+        ? styles.inboxUnreadAction
+        : styles.inboxUnreadNotification
+    }`}
+  />
+);
 
-      <span className={styles.additionalDetails}>
+const InboxItem = ({
+  item: { id, user, action, task, domain, colonyName, createdAt, unread, type },
+  markAsRead,
+}: Props) => (
+  <TableRow
+    className={styles.inboxRow}
+    onClick={() => unread && markAsRead(id)}
+  >
+    <TableCell className={styles.inboxRowCell}>
+      <div className={styles.inboxDetails}>
+        {unread && <UnreadIndicator type={type} />}
+        <UserAvatar
+          size="xxs"
+          walletAddress={user.walletAddress}
+          username={user.username}
+          className={styles.UserAvatar}
+        />
         <FormattedMessage
-          {...MSG.inboxMeta}
+          className={styles.inboxAction}
+          {...MSG[getEventActionKey(action)]}
           values={{
-            colonyName,
-            domain,
+            user: (
+              <span className={styles.inboxDetail} title={user.username}>
+                {user.username}
+              </span>
+            ),
+            task: (
+              <span className={styles.inboxDetail} title={user.username}>
+                {task}
+              </span>
+            ),
           }}
         />
 
-        <span className={styles.pipe}>|</span>
-        <span className={styles.time}>
-          <TimeRelative value={createdAt} />
+        <span className={styles.additionalDetails}>
+          <FormattedMessage
+            {...MSG.inboxMeta}
+            values={{
+              colonyName,
+              domain,
+            }}
+          />
+
+          <span className={styles.pipe}>|</span>
+          <span className={styles.time}>
+            <TimeRelative value={createdAt} />
+          </span>
         </span>
-      </span>
+      </div>
     </TableCell>
   </TableRow>
 );

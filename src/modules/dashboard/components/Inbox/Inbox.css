@@ -9,3 +9,9 @@
   display: flex;
   flex-direction: column;
 }
+
+.inboxHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

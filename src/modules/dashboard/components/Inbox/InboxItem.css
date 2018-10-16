@@ -1,9 +1,13 @@
-td.inboxDetails {
+.inboxRowCell {
+  width: 100%;
+}
+
+.inboxDetails {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   padding: 24px 20px;
-  width: 100%;
+  position: relative;
   font-weight: var(--weight-semi);
 }
 
@@ -49,4 +53,19 @@ td.inboxDetails {
 
 .inboxDomain {
   display: block;
+}
+
+.inboxUnread {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.inboxUnreadAction {
+  border-left: 2px solid var(--pink);
+}
+
+.inboxUnreadNotification {
+  border-left: 2px solid var(--sky-blue);
 }
