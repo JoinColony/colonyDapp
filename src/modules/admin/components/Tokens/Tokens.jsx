@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { Token } from './types';
+import type { TokenType } from '~types/token';
 
 import Button from '~core/Button';
 import CardList from '~core/CardList';
@@ -35,10 +35,10 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  tokens?: Array<Token>,
+  tokens?: Array<TokenType>,
 };
 
-const sortTokens = (prevToken: Token, nextToken: Token): number => {
+const sortTokens = (prevToken: TokenType, nextToken: TokenType): number => {
   /*
    *
    * Sort tokens by:

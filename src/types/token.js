@@ -1,13 +1,13 @@
 /* @flow */
 
-export type TokenIcon = {
+export type TokenIconType = {
   name: string,
   data: string,
 };
 
-export type Token = {
+export type TokenType = {
   balance: number,
-  tokenIcon?: TokenIcon,
+  tokenIcon?: TokenIconType,
   id: number,
   isNative: boolean,
   tokenSymbol: string,

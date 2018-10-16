@@ -2,9 +2,9 @@
 
 /* eslint-disable max-len */
 
-import type { Token } from '../types';
+import type { TokenType } from '~types/token';
 
-const mockTokens: Array<Token> = [
+const mockTokens: Array<TokenType> = [
   {
     id: 4,
     tokenSymbol: 'GNT',

@@ -3,7 +3,7 @@
 import React, { Component, Fragment } from 'react';
 import { withProps } from 'recompose';
 
-import type { Token } from './types';
+import type { TokenType } from '~types/token';
 
 import Card from '~core/Card';
 import Numeral from '~core/Numeral';
@@ -12,7 +12,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import styles from './TokenCard.css';
 
 type InProps = {
-  token: Token,
+  token: TokenType,
 };
 
 type Props = InProps & {
