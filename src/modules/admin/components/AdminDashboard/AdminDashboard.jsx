@@ -70,7 +70,7 @@ const navigationItems: Array<NavigationItem> = [
   },
   {
     title: MSG.tabTransaction,
-    content: <div>Transaction Content</div>,
+    content: <Transactions />,
   },
   {
     title: MSG.tabOrganisation,
