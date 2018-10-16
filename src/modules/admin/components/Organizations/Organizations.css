@@ -8,7 +8,7 @@
   height: calc(100% - 40px);
 }
 
-.noCurrentAdmins {
+.noCurrent {
   padding: 25px 40px;
   border-color: var(--grey-blue-1);
   border-radius: var(--radius-normal);
