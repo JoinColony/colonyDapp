@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .main {
   font-weight: var(--weight-semi);
   text-overflow: ellipsis;

@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .modal {
   z-index: var(--z-index-dialog);
 }

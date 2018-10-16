@@ -20,8 +20,9 @@ module.exports = {
     postCSSPresetEnv({
       features: {
         'nesting-rules': true,
-        'color-mod-function': { unresolved: 'warn' }
+        'color-mod-function': { unresolved: 'warn' },
       },
+      importFrom: './src/styles/variables.css',
     }),
   ],
 };

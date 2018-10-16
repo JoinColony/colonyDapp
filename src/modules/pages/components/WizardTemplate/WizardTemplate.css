@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   overflow: auto;
