@@ -17,27 +17,27 @@ import styles from './EditTokensModal.css';
 
 const MSG = defineMessages({
   closeIconTitle: {
-    id: 'admin.ColonyTokens.EditTokensModal.closeIconTitle',
+    id: 'admin.Tokens.EditTokensModal.closeIconTitle',
     defaultMessage: 'Close',
   },
   title: {
-    id: 'admin.ColonyTokens.EditTokensModal.title',
+    id: 'admin.Tokens.EditTokensModal.title',
     defaultMessage: 'Add Token',
   },
   instructionText: {
-    id: 'admin.ColonyTokens.EditTokensModal.instructionText',
+    id: 'admin.Tokens.EditTokensModal.instructionText',
     defaultMessage: 'Please select from these ERC20 tokens.',
   },
   fieldLabel: {
-    id: 'admin.ColonyTokens.EditTokensModal.fieldLabel',
+    id: 'admin.Tokens.EditTokensModal.fieldLabel',
     defaultMessage: 'Add Tokens',
   },
   buttonCancel: {
-    id: 'admin.ColonyTokens.EditTokensModal.buttonCancel',
+    id: 'admin.Tokens.EditTokensModal.buttonCancel',
     defaultMessage: 'Cancel',
   },
   buttonConfirm: {
-    id: 'admin.ColonyTokens.EditTokensModal.buttonConfirm',
+    id: 'admin.Tokens.EditTokensModal.buttonConfirm',
     defaultMessage: 'Confirm',
   },
 });
@@ -50,7 +50,7 @@ type Props = {
 
 const tokenChoicesFieldName = 'colonyTokens';
 
-const displayName = 'admin.ColonyTokens.EditTokensModal';
+const displayName = 'admin.Tokens.EditTokensModal';
 
 const EditTokensModal = ({ isOpen, tokens, closeModal }: Props) => (
   <Modal isOpen={isOpen}>
