@@ -42,6 +42,9 @@ module.exports = {
     {
       name: 'Forms',
       components: [
+        './src/modules/core/components/Fields/Form/Form.jsx',
+        './src/modules/core/components/Fields/Form/ActionForm.jsx',
+        './src/modules/core/components/Fields/FieldSet/FieldSet.jsx',
         './src/modules/core/components/Fields/Input/Input.jsx',
         './src/modules/core/components/Fields/Input/InputComponent.jsx',
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',

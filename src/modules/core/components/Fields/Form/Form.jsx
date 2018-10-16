@@ -7,7 +7,9 @@ import { Formik, Form as FormikForm } from 'formik';
 
 const displayName = 'Form';
 
-const Form = ({ children, ...props }: FormikConfig<Object>) => (
+type Props = FormikConfig<Object>;
+
+const Form = ({ children, ...props }: Props) => (
   <Formik {...props}>
     {injectedProps => (
       <FormikForm>
