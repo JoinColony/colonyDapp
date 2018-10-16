@@ -9,6 +9,8 @@ import Button from '~core/Button';
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 
+import { sortObjectsBy } from '~utils/arrays';
+
 import styles from './Tokens.css';
 
 import TokenCard from './TokenCard.jsx';
@@ -38,33 +40,11 @@ type Props = {
   tokens?: Array<TokenType>,
 };
 
-const sortTokens = (prevToken: TokenType, nextToken: TokenType): number => {
-  /*
-   *
-   * Sort tokens by:
-   *  1. native === true
-   *  2. symbol === 'ETH'
-   *  3. alphabetically thereafter
-   *
-   */
-  if (prevToken.isNative || nextToken.isNative) {
-    return prevToken.isNative ? -1 : 1;
-  }
-
-  const { tokenSymbol: prevSymbolRaw } = prevToken;
-  const { tokenSymbol: nextSymbolRaw } = nextToken;
-  const prevSymbol = prevSymbolRaw.toLowerCase();
-  const nextSymbol = nextSymbolRaw.toLowerCase();
-
-  if (prevSymbol === 'eth' || nextSymbol === 'eth') {
-    return prevSymbol === 'eth' ? -1 : 1;
-  }
-
-  if (prevSymbol < nextSymbol) {
-    return -1;
-  }
-  if (prevSymbol > nextSymbol) {
-    return 1;
+const isEthSort = (prev: string, next: string): number => {
+  const prevVal = prev.toLowerCase();
+  const nextVal = next.toLowerCase();
+  if (prevVal === 'eth' || nextVal === 'eth') {
+    return prevVal === 'eth' ? -1 : 1;
   }
   return 0;
 };
@@ -76,6 +56,13 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
   const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
   const isUserColonyOwner = true; // TODO determine this value.
   const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
+  const sortedTokens = tokens.sort(
+    sortObjectsBy(
+      'isNative',
+      { name: 'tokenSymbol', compareFn: isEthSort },
+      'id',
+    ),
+  );
   return (
     <div className={styles.main}>
       <main>
@@ -95,7 +82,7 @@ const Tokens = ({ tokens = mockTokens }: Props) => {
         </div>
         <div className={styles.tokenCardContainer}>
           <CardList>
-            {tokens.sort(sortTokens).map(token => (
+            {sortedTokens.map(token => (
               <TokenCard key={token.id} token={token} />
             ))}
           </CardList>
