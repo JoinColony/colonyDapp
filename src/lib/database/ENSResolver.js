@@ -1,8 +1,8 @@
 /* @flow */
 
-import ColonyNetworkClient from '@colony/colony-js-client';
 import namehash from 'eth-ens-namehash';
 
+import type ColonyNetworkClient from '@colony/colony-js-client';
 import type { OrbitDBAddress } from './types';
 
 interface ENSResolverType {
@@ -12,12 +12,14 @@ interface ENSResolverType {
 class ENSResolver {
   _resolvers: Map<string, ENSResolverType>;
 
-  constructor(networkClient) {
+  _networkClient: ColonyNetworkClient;
+
+  constructor(networkClient: ColonyNetworkClient) {
     this._resolvers = new Map();
     this._networkClient = networkClient;
-    }
+  }
 
-  _createResolver(type: string): ENSResolverType {
+  _createResolver(type: string): ENSResolverType | null {
     const ResolverClass = this._getResolverClass(type);
     if (!ResolverClass) return null;
     const resolver = new ResolverClass();
@@ -25,7 +27,7 @@ class ENSResolver {
     return resolver;
   }
 
-  _getCachedResolver(type): ENSResolverType {
+  _getCachedResolver(type: string): ENSResolverType | null {
     return this._resolvers.has(type) ? this._resolvers.get(type) : null;
   }
 
@@ -41,7 +43,7 @@ class ENSResolver {
     this._resolvers.set(type, resolver);
   }
 
-    getResolver(type: string): ENSResolverType {
+  getResolver(type: string): ENSResolverType | null {
     const cached = this._getCachedResolver(type);
     return cached || this._createResolver(type);
   }
