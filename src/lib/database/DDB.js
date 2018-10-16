@@ -6,6 +6,7 @@ import nanoid from 'nanoid';
 import type {
   Identity,
   IdentityProvider,
+  OrbitDBAddress,
   OrbitDBStore,
   Schema,
   StoreType,
@@ -35,10 +36,6 @@ type OrbitStoreOpenOpts = {
   replicate?: boolean,
 };
 
-type OrbitDBAddress = {
-  root: string,
-  path: string,
-};
 type StoreIdentifier = string | OrbitDBAddress;
 
 const { isValidAddress, parseAddress } = OrbitDB;

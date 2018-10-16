@@ -19,3 +19,8 @@ export type StoreType =
   | 'feed'
   | 'docstore'
   | 'keyvalue';
+
+export type OrbitDBAddress = {
+  root: string,
+  path: string,
+};

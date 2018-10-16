@@ -3,14 +3,11 @@
 import ColonyNetworkClient from '@colony/colony-js-client';
 import namehash from 'eth-ens-namehash';
 
+import type { OrbitDBAddress } from './types';
+
 interface ENSResolverType {
   type: string;
 }
-
-type OrbitDBAddress = {
-  root: string,
-  path: string,
-};
 
 class ENSResolver {
   _resolvers: Map<string, ENSResolverType>;
