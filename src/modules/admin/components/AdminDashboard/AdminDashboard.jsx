@@ -83,7 +83,7 @@ const AdminDashboard = ({ colonyName = 'The Meta Colony' }: Props) => (
   <div className={styles.main}>
     <VerticalNavigation navigationItems={navigationItems}>
       <div className={styles.backNavigation}>
-        <Icon name="back" title="back" appearance={{ size: 'medium' }} />
+        <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
         <NavLink
           to="/colony"
           text={MSG.backButton}
