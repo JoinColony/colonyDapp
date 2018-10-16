@@ -8,6 +8,11 @@
   height: calc(100% - 40px);
 }
 
+.domainListWrapper {
+  margin-top: 40px;
+  padding-right: 20%;
+}
+
 .noCurrent {
   padding: 25px 40px;
   border-color: var(--grey-blue-1);
