@@ -2,13 +2,10 @@
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+import { isAddress } from 'web3-utils';
 
-import ColonyNetworkClient from '@colony/colony-js-client';
-import EthersAdapter from '@colony/colony-js-adapter-ethers';
-import { providers } from 'ethers';
-import { EtherscanLoader } from '@colony/colony-js-contract-loader-http';
 import * as yup from 'yup';
-import debounce from 'lodash/debounce';
+import MakeAsyncFunction from 'react-redux-promise-listener';
 
 import type { FormikProps } from 'formik';
 
@@ -20,30 +17,38 @@ import FileUpload from '~core/FileUpload';
 
 import type { SubmitFn } from '~core/Wizard';
 
+import {
+  GET_TOKEN_INFO,
+  GET_TOKEN_INFO_SUCCESS,
+  GET_TOKEN_INFO_ERROR,
+} from '../../actionTypes/colony';
+import promiseListener from '../../../../createPromiseListener';
+
 type FormValues = {
   tokenAddress: string,
   tokenSymbol?: string,
   tokenName?: string,
   iconUpload?: string,
-  tokenData?: {
+  tokenData: {
     name: string,
     symbol: string,
+  } | null,
+};
+
+type State = {
+  isLoading: boolean,
+  tokenData: ?{
+    symbol: string,
+    name: string,
   },
 };
 
 type Props = {
-  previousStep: () => void,
+  handleTokenAddressChange: (e: SyntheticEvent<HTMLInputElement>) => void,
   nextStep: () => void,
-  setValues: (val: { tokenName: string, tokenSymbol: string }) => void,
-} & FormikProps<FormValues>;
-
-type State = {
-  isLoading: boolean,
-  tokenData: {
-    symbol: string,
-    name: string,
-  } | null,
-};
+  previousStep: () => void,
+} & State &
+  FormikProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
@@ -101,148 +106,173 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
-
-class StepSelectToken extends Component<Props, State> {
-  adapter: EthersAdapter;
-
-  state = {
-    tokenData: null,
-    isLoading: false,
-  };
-
-  componentDidMount() {
-    const provider = new providers.EtherscanProvider();
-    this.adapter = new EthersAdapter({
-      loader: new EtherscanLoader(),
-      provider,
-      /* The wallet property is not really required here I heard,
-      maybe it could be made optional */
-      // $FlowFixMe
-      wallet: { provider },
-    });
-  }
-
-  componentDidUpdate({ values: { tokenAddress: previousAddress } }: Props) {
-    const {
-      values: { tokenAddress },
-      isValid,
-      setValues,
-    } = this.props;
-
-    if (tokenAddress !== previousAddress && isValid) {
-      const limitedCallCount = debounce(() => {
-        this.checkToken(tokenAddress)
-          .then(({ name, symbol }) => {
-            this.setState({ tokenData: { name, symbol }, isLoading: false });
-            setValues({ tokenName: name, tokenSymbol: symbol });
-          })
-          .catch(error => {
-            /* We might want to keep this log for a little while
-            for debugging purposes */
-            // eslint-disable-next-line no-console
-            console.log(error);
-            this.setState({ tokenData: null, isLoading: false });
-          });
-      }, 1000);
-      limitedCallCount();
-    }
-  }
-
-  checkToken = async (contractAddress: string) => {
-    const token = new ColonyNetworkClient.TokenClient({
-      adapter: this.adapter,
-      query: { contractAddress },
-    });
-    this.setState({ isLoading: true });
-    await token.init();
-    return token.getTokenInfo.call();
-  };
-
-  render() {
-    const { tokenData, isLoading } = this.state;
-    const { isValid, previousStep, values } = this.props;
-    return (
-      <section className={styles.content}>
-        <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'medium', weight: 'thin' }}
-            text={MSG.heading}
-          />
-          <div className={styles.nameForm}>
-            <Input
-              name="tokenAddress"
-              label={MSG.label}
-              extra={
-                <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
-              }
-              status={tokenData ? MSG.preview : MSG.hint}
-              statusValues={
-                tokenData
-                  ? { tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
-                  : {}
-              }
-            />
-            {!tokenData &&
-              !isLoading &&
-              values.tokenAddress && (
-                <Fragment>
-                  <div className={styles.tokenDetails}>
-                    <Input name="tokenName" label={MSG.tokenName} />
-                  </div>
-                  <div className={styles.tokenDetails}>
-                    <Input
-                      name="tokenSymbol"
-                      label={MSG.tokenSymbol}
-                      hint={
-                        <Heading
-                          appearance={{ size: 'small', weight: 'thin' }}
-                          text={MSG.symbolHint}
-                        />
-                      }
-                    />
-                  </div>
-                  <div className={styles.tokenDetails}>
-                    <FileUpload
-                      accept={['svg', 'png']}
-                      label={MSG.fileUploadTitle}
-                      name="iconUpload"
-                      status={MSG.fileUploadHint}
-                      maxFilesLimit={1}
-                    />
-                  </div>
-                </Fragment>
-              )}
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="cancel"
-                text={MSG.cancel}
-                onClick={previousStep}
-              />
-              <Button
-                appearance={{ theme: 'primary' }}
-                type="submit"
-                disabled={!isValid}
-                text={MSG.next}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-}
-
 export const validationSchema = yup.object({
   tokenAddress: yup.string().address(MSG.invalidAddress),
   tokenSymbol: yup.string().max(6),
   tokenName: yup.string(),
 });
 
-StepSelectToken.displayName = displayName;
+// TODO in #453 - show inputs for minimal ERC20 contracts
+const StepSelectTokenForm = ({
+  handleTokenAddressChange,
+  isLoading,
+  isValid,
+  previousStep,
+  tokenData,
+  values: { tokenAddress },
+}: Props) => (
+  <section className={styles.content}>
+    <div className={styles.title}>
+      <Heading
+        appearance={{ size: 'medium', weight: 'thin' }}
+        text={MSG.heading}
+      />
+      <div className={styles.nameForm}>
+        <Input
+          name="tokenAddress"
+          label={MSG.label}
+          extra={<Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />}
+          status={tokenData ? MSG.preview : MSG.hint}
+          onChange={handleTokenAddressChange}
+          statusValues={
+            tokenData
+              ? { tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
+              : {}
+          }
+        />
+        {!tokenData &&
+          !isLoading &&
+          tokenAddress && (
+            <Fragment>
+              <div className={styles.tokenDetails}>
+                <Input name="tokenName" label={MSG.tokenName} />
+              </div>
+              <div className={styles.tokenDetails}>
+                <Input
+                  name="tokenSymbol"
+                  label={MSG.tokenSymbol}
+                  hint={
+                    <Heading
+                      appearance={{ size: 'small', weight: 'thin' }}
+                      text={MSG.symbolHint}
+                    />
+                  }
+                />
+              </div>
+              <div className={styles.tokenDetails}>
+                <FileUpload
+                  accept={['svg', 'png']}
+                  label={MSG.fileUploadTitle}
+                  name="iconUpload"
+                  status={MSG.fileUploadHint}
+                  maxFilesLimit={1}
+                />
+              </div>
+            </Fragment>
+          )}
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.cancel}
+            onClick={previousStep}
+          />
+          <Button
+            appearance={{ theme: 'primary' }}
+            type="submit"
+            disabled={!isValid}
+            text={MSG.next}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+class StepSelectToken extends Component<Props, State> {
+  static displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { isLoading: false, tokenData: null };
+  }
+
+  render() {
+    const { handleChange, isSubmitting, setFieldValue } = this.props;
+    const { isLoading, tokenData } = this.state;
+    return (
+      <MakeAsyncFunction
+        listener={promiseListener}
+        start={GET_TOKEN_INFO}
+        resolve={GET_TOKEN_INFO_SUCCESS}
+        reject={GET_TOKEN_INFO_ERROR}
+        setPayload={(action: *, tokenAddress: *) => ({
+          ...action,
+          payload: { tokenAddress },
+        })}
+      >
+        {asyncFunc => {
+          // Handle changes to the `tokenAddress field.
+          const handleTokenAddressChange = event => {
+            // Immediately let formik handle the event.
+            handleChange(event);
+
+            // If the form is submitting or we're loading token info,
+            // nothing more to do here.
+            if (isSubmitting || isLoading) return;
+
+            // Get the current `tokenAddress` value from the event.
+            const {
+              currentTarget: { value: tokenAddress },
+            } = event;
+
+            // For a valid address, attempt to load token info.
+            if (isAddress(tokenAddress)) {
+              this.setState({ isLoading: true });
+
+              // Call the async function we created (dispatches `start` action).
+              asyncFunc(tokenAddress).then(
+                ({ name = '', symbol = '' }) => {
+                  // XXX using `setValues` will cause this handler to re-run,
+                  // so it is easier to set values separately.
+                  setFieldValue('tokenName', name);
+                  setFieldValue('tokenSymbol', symbol);
+                  this.setState({
+                    isLoading: false,
+                    tokenData:
+                      name.length || symbol.length ? { name, symbol } : null,
+                  });
+                },
+                error => {
+                  setFieldValue('tokenName', '');
+                  setFieldValue('tokenSymbol', '');
+                  this.setState({ isLoading: false, tokenData: null });
+                  // TODO later: show error feedback
+                  console.info(error); // eslint-disable-line no-console
+                },
+              );
+            }
+          };
+          return (
+            <StepSelectTokenForm
+              {...this.props}
+              handleTokenAddressChange={handleTokenAddressChange}
+              isLoading={isLoading}
+              tokenData={tokenData}
+            />
+          );
+        }}
+      </MakeAsyncFunction>
+    );
+  }
+}
 
 export const Step = StepSelectToken;
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+export const onSubmit: SubmitFn<FormValues> = (
+  { tokenAddress },
+  { nextStep, setFieldValue },
+) => {
+  setFieldValue('tokenAddress', tokenAddress);
   nextStep();
+};

@@ -18,16 +18,12 @@ type StepValues = {
 
 // This is a step function to allow the wizard flow to branch
 // off into two instead of just stepping through an array in a linear manner
-const stepFunction = (step: number, values: StepValues) => {
-  if (step === 2 && values.tokenChoice === 'create') {
-    return StepCreateToken;
+const stepFunction = (step: number, { tokenChoice }: StepValues) => {
+  if (step === 2) {
+    if (tokenChoice === 'create') return StepCreateToken;
+    if (tokenChoice === 'select') return StepSelectToken;
   }
-  if (step === 2 && values.tokenChoice === 'select') {
-    return StepSelectToken;
-  }
-  if (step === 3) {
-    return StepCreateColony;
-  }
+  if (step === 3) return StepCreateColony;
   return stepArray[step];
 };
 

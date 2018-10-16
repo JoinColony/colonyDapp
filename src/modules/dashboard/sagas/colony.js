@@ -2,46 +2,168 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, takeEvery, getContext, put } from 'redux-saga/effects';
-
-import { CREATE_COLONY, CREATE_TOKEN } from '../actionTypes';
+import { providers } from 'ethers';
+import ColonyNetworkClient from '@colony/colony-js-client';
+import EthersAdapter from '@colony/colony-js-adapter-ethers';
+import { delay } from 'redux-saga';
 import {
-  createColonyError,
-  createColonySuccess,
-  createTokenError,
-  createTokenSuccess,
-} from '../actionCreators';
+  call,
+  getContext,
+  put,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
+import { replace } from 'connected-react-router';
 
-function* createToken({ payload: { name, symbol } }: Object): Saga<*> {
-  try {
-    const { instance: networkClient } = yield getContext('networkClient');
+import { DASHBOARD_ROUTE } from '~routes';
 
-    const address = yield call([networkClient, networkClient.createToken], {
-      name,
-      symbol,
-    });
-    yield put(createTokenSuccess(name, symbol, address));
-  } catch (error) {
-    yield put(createTokenError(error));
-  }
+import type { TransactionAction } from '../../core/types';
+import sendTransactionTask from '../../core/utils/transactions';
+
+// A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
+// `decimals` entries included.
+import TokenABI from './TokenABI.json';
+
+import {
+  CREATE_COLONY,
+  CREATE_COLONY_ERROR,
+  CREATE_COLONY_SUCCESS,
+  CREATE_TOKEN,
+  CREATE_TOKEN_ERROR,
+  CREATE_TOKEN_SUCCESS,
+  GET_TOKEN_INFO,
+  GET_TOKEN_INFO_ERROR,
+  GET_TOKEN_INFO_SUCCESS,
+} from '../actionTypes';
+
+/**
+ * Given a method name and success/error action types, return a saga function
+ * that calls the given method and `put`s the given success/error action.
+ */
+function networkMethodSagaFactory<Params: Object, EventData: Object>(
+  methodName,
+  successType,
+  errorType,
+) {
+  return function* networkMethodSaga(
+    action: TransactionAction<Params>,
+  ): Saga<typeof undefined> {
+    try {
+      // Get the named method from the `networkClient` context.
+      const {
+        instance: { [methodName]: method },
+      } = yield getContext('networkClient');
+
+      // Execute the send transaction task and get the error/success response.
+      const {
+        error,
+        receipt,
+        eventData,
+      }: {
+        error?: Error,
+        receipt?: Object,
+        eventData?: EventData,
+      } = yield call(sendTransactionTask, method, action);
+
+      // Depending on the response, `put` the given success/error action.
+      yield put(
+        error
+          ? { type: errorType, payload: error }
+          : { type: successType, payload: { receipt, eventData } },
+      );
+    } catch (error) {
+      // Unexpected errors `put` the given error action.
+      yield put({ type: errorType, payload: error });
+    }
+  };
 }
 
-function* createColony({ tokenAddress }: Object): Saga<*> {
-  try {
-    const { instance: networkClient } = yield getContext('networkClient');
-
-    const {
-      eventData: { colonyId, colonyAddress },
-    } = yield call([networkClient, networkClient.createColony.send], {
-      tokenAddress,
-    });
-    yield put(createColonySuccess(colonyId, colonyAddress));
-  } catch (error) {
-    yield put(createColonyError(error));
-  }
+/**
+ * On successful colony creation, redirect to the dashboard.
+ */
+function* createColonySuccess(): Saga<typeof undefined> {
+  yield put(replace(DASHBOARD_ROUTE));
 }
 
-export default function* colony(): any {
-  yield takeEvery(CREATE_TOKEN, createToken);
+/**
+ * Rather than use e.g. the Etherscan loader and make more/larger requests than
+ * necessary, provide a loader to simply return the minimal Token ABI and the
+ * given token contract address.
+ */
+const tokenABILoader = {
+  async load({ contractAddress: address }) {
+    return { abi: TokenABI, address };
+  },
+};
+
+/**
+ * Given a token contract address, create a `TokenClient` with the minimal
+ * token ABI loader and get the token info. The promise will be rejected if
+ * the functions do not exist on the contract.
+ */
+async function getTokenClientInfo(contractAddress: string) {
+  const provider = new providers.EtherscanProvider();
+  const adapter = new EthersAdapter({
+    // $FlowFixMe The `ContractLoader` type is currently not exported
+    loader: tokenABILoader,
+    provider,
+    // $FlowFixMe This minimal provider doesn't have all Provider features
+    wallet: { provider },
+  });
+
+  const client = new ColonyNetworkClient.TokenClient({
+    adapter,
+    query: { contractAddress },
+  });
+
+  await client.init();
+
+  return client.getTokenInfo.call();
+}
+
+/**
+ * Get the token info for a given `tokenAddress`.
+ */
+function* getTokenInfo({ payload: { tokenAddress } }): Saga<*> {
+  // Debounce with 1000ms, since this is intended to run directly following
+  // user keyboard input.
+
+  // `delay` yields a Promise, which makes it hard to pin down a single return
+  // type (i.e. the generic `*`) for this Saga.
+  // $FlowFixMe
+  yield delay(1000);
+
+  let info;
+  try {
+    // Attempt to get the token info from a new `TokenClient` instance.
+    info = yield call(getTokenClientInfo, tokenAddress);
+  } catch (error) {
+    yield put({
+      type: GET_TOKEN_INFO_ERROR,
+      payload: { error: error.message },
+    });
+    return;
+  }
+  yield put({ type: GET_TOKEN_INFO_SUCCESS, payload: info });
+}
+
+// Generate sagas for the methods on the network client which we are
+// currently using.
+const createColony = networkMethodSagaFactory<
+  { tokenAddress: string },
+  { colonyAddress: string, colonyId: number },
+>('createColony', CREATE_COLONY_SUCCESS, CREATE_COLONY_ERROR);
+const createToken = networkMethodSagaFactory<
+  { name: string, symbol: string },
+  {},
+>('createToken', CREATE_TOKEN_SUCCESS, CREATE_TOKEN_ERROR);
+
+export default function* colonySagas(): any {
   yield takeEvery(CREATE_COLONY, createColony);
+  yield takeEvery(CREATE_COLONY_SUCCESS, createColonySuccess);
+  yield takeEvery(CREATE_TOKEN, createToken);
+
+  // Note that this is `takeLatest` because it runs on user keyboard input
+  // and uses the `delay` saga helper.
+  yield takeLatest(GET_TOKEN_INFO, getTokenInfo);
 }
