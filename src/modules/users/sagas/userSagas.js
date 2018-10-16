@@ -34,7 +34,9 @@ function* initializeUser(action: Object): Saga<void> {
     const wallet = yield getContext('currentWallet');
     const ipfsNode = yield getContext('ipfsNode');
     const ENSResolver = yield getContext('ENSResolver');
-    const resolver = new ENSResolver();
+    const colonyNetwork = yield getContext('colonyNetwork');
+
+    const resolver = new ENSResolver(colonyNetwork);
     const identityProvider = new PurserIdentityProvider(wallet.instance);
     const ddbOptions = { resolver };
 

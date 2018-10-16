@@ -15,9 +15,10 @@ type OrbitDBAddress = {
 class ENSResolver {
   _resolvers: Map<string, ENSResolverType>;
 
-  constructor() {
+  constructor(networkClient) {
     this._resolvers = new Map();
-  }
+    this._networkClient = networkClient;
+    }
 
   _createResolver(type: string): ENSResolverType {
     const ResolverClass = this._getResolverClass(type);
@@ -50,7 +51,7 @@ class ENSResolver {
 
   // eslint-disable-next-line class-methods-use-this
   async lookupUsernameFromAddress(ensAddress: string) {
-    const username = await ColonyNetworkClient.lookupRegisteredENSDomain(
+    const username = await this._networkClient.lookupRegisteredENSDomain(
       ensAddress,
     );
     return username;
@@ -59,7 +60,7 @@ class ENSResolver {
   // eslint-disable-next-line class-methods-use-this
   async getENSAddressForENSName(name: string): string {
     const hashedIdentifier = namehash.hash(name);
-    const address = await ColonyNetworkClient.getAddressForENSHash(
+    const address = await this._networkClient.getAddressForENSHash(
       hashedIdentifier,
     );
     return address;
@@ -70,7 +71,7 @@ class UserResolver extends ENSResolver {
   // eslint-disable-next-line class-methods-use-this
   async resolve(identifier: string): OrbitDBAddress {
     const hashedIdentifier = namehash.hash(identifier);
-    const dbAddress = await ColonyNetworkClient.getProfileDBAddress(
+    const dbAddress = await this._networkClient.getProfileDBAddress(
       hashedIdentifier,
     );
     return dbAddress;
