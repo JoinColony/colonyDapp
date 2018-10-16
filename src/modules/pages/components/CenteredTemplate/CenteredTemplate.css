@@ -1,6 +1,4 @@
-:root {
-  --padding-horizontal: 90px;
-}
+@value paddingHorizontal: 90px;
 
 .main {
   display: flex;
@@ -22,7 +20,7 @@
 .mainContent {
   display: flex;
   justify-content: center;
-  padding: 20px var(--padding-horizontal);
+  padding: 20px paddingHorizontal;
   height: 100%;
 }
 
@@ -32,5 +30,5 @@
 }
 
 .themeAlt .mainContent {
-  padding: 80px var(--padding-horizontal);
+  padding: 80px paddingHorizontal;
 }

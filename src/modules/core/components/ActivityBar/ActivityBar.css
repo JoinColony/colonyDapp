@@ -1,12 +1,10 @@
-:root {
-  --activity-bar-height: 50px;
-}
+@value barHeight: 50px;
 
 .main {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
-  height: var(--activity-bar-height);
+  height: barHeight;
   position: fixed;
   right: 0;
   bottom: 0;
@@ -27,7 +25,7 @@
 
 .control {
   display: flex;
-  flex-basis: var(--activity-bar-height);
+  flex-basis: barHeight;
   justify-content: center;
   align-items: center;
   color: var(--text-invert);

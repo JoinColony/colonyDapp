@@ -1,4 +1,4 @@
-@value wide-button: 160px;
+@value wideButton: 160px;
 
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';

@@ -1,6 +1,6 @@
-@value wide-button: 160px;
-@value text-area-height: 120px;
-@value top-padding: 50px;
+@value wideButton: 160px;
+@value textAreaHeight: 120px;
+@value topPadding: 50px;
 
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
@@ -11,14 +11,14 @@
 }
 
 .content {
-  padding: top-padding 60px 0 8px;
+  padding: topPadding 60px 0 8px;
   border-right: 1px solid var(--temp-grey-5);
   grid-row: 1;
   grid-column: 1;
 }
 
 .sidebar {
-  padding: top-padding 0 0 60px;
+  padding: topPadding 0 0 60px;
   grid-row: 1;
   grid-column: 2;
 }

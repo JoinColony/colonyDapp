@@ -1,9 +1,9 @@
-@value tabs-tab-list-container-height from './TabList.css';
+@value tabListContainerHeight from './TabList.css';
 
 .main {
   display: none;
   padding: 20px 0 0;
-  height: calc(100% - tabs-tab-list-container-height);
+  height: calc(100% - tabListContainerHeight);
 }
 
 .selected {

@@ -1,6 +1,4 @@
-:root {
-  --containerPadding: 50px;
-}
+@value containerPadding: 50px;
 
 .content {
   composes: marginBottomMedium from '~styles/layout.css';
@@ -9,7 +7,7 @@
 }
 
 .headingContainer {
-  padding: var(--containerPadding) var(--containerPadding) 0 var(--containerPadding);
+  padding: containerPadding containerPadding 0 containerPadding;
 }
 
 .choiceHeadingRow {
@@ -36,7 +34,7 @@
 }
 
 .walletChoicesContainer {
-  padding: 0 var(--containerPadding) var(--containerPadding) var(--containerPadding);
+  padding: 0 containerPadding containerPadding containerPadding;
   max-height: 200px;
   overflow-y: auto;
 }

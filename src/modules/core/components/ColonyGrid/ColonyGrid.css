@@ -1,6 +1,4 @@
-:root {
-  --container-padding-left: 30px;
-}
+@value containerMarginLeft: 30px;
 
 .main {
   padding: 20px 0;
@@ -10,7 +8,7 @@
 }
 
 .sectionTitle {
-  margin-left: var(--container-padding-left);
+  margin-left: containerMarginLeft;
 }
 
 .colonyGrid {
@@ -23,7 +21,7 @@
 }
 
 .colonyGridItem {
-  margin: 0 var(--container-padding-left);
+  margin: 0 containerMarginLeft;
   max-width: 68px;
 }
 

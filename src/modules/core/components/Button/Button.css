@@ -1,8 +1,6 @@
-:root {
-  --disabled-background: rgb(194, 204, 204);
-  --disabled-color: rgb(250, 251, 251);
-  --ghost-border: rgb(194, 204, 204);
-}
+@value disabledBackground: rgb(194, 204, 204);
+@value disabledColor: rgb(250, 251, 251);
+@value ghostBorder: rgb(194, 204, 204);
 
 /*
  * Base `Button` styles
@@ -71,9 +69,9 @@
  */
 
 .main[disabled]:not([aria-busy="true"]) {
-  border-color: var(--disabled-background);
-  background-color: var(--disabled-background);
-  color: var(--disabled-color);
+  border-color: disabledBackground;
+  background-color: disabledBackground;
+  color: disabledColor;
   cursor: default;
 }
 
@@ -199,12 +197,12 @@
 
 .themeGhost {
   composes: main;
-  border-color: var(--ghost-border);
+  border-color: ghostBorder;
   color: var(--colony-black);
 }
 
 .themeGhost:hover {
-  border-color: var(--ghost-border);
+  border-color: ghostBorder;
   color: color-mod(var(--colony-black) tint(15%));
 }
 
@@ -280,7 +278,7 @@
 .themeBlue[disabled]:not([aria-busy="true"]) {
   border-color: transparent;
   background-color: transparent;
-  color: var(--disabled-background);
+  color: disabledBackground;
   cursor: default;
 }
 

@@ -1,17 +1,15 @@
-:root {
-  --contentMargin: 12px;
-}
+@value contentMargin: 12px;
 
 .bioContainer {
-  margin-top: var(--contentMargin);
+  margin-top: contentMargin;
 }
 
 .websiteContainer {
-  margin-top: var(--contentMargin);
+  margin-top: contentMargin;
 }
 
 .locationContainer {
-  margin-top: var(--contentMargin);
+  margin-top: contentMargin;
 }
 
 .avatar {
