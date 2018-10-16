@@ -46,32 +46,34 @@ class ENSResolver {
     return cached || this._createResolver(type);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async lookupUsernameFromAddress(ensAddress: string): Promise<string> {
-    const username = await this._networkClient.lookupRegisteredENSDomain(
-      ensAddress,
+    const { domain } = await this._networkClient.lookupRegisteredENSDomain.call(
+      {
+        ensAddress,
+      },
     );
-    return username;
+    return domain;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async getENSAddressForENSName(name: string): Promise<string> {
-    const hashedIdentifier = namehash.hash(name);
-    const address = await this._networkClient.getAddressForENSHash(
-      hashedIdentifier,
-    );
-    return address;
+    const nameHash = namehash.hash(name);
+    const { ensAddress } = await this._networkClient.getAddressForENSHash.call({
+      nameHash,
+    });
+    return ensAddress;
   }
 }
 
 class UserResolver extends ENSResolver {
-  // eslint-disable-next-line class-methods-use-this
   async resolve(identifier: string): Promise<OrbitDBAddress> {
-    const hashedIdentifier = namehash.hash(identifier);
-    const dbAddress = await this._networkClient.getProfileDBAddress(
-      hashedIdentifier,
-    );
-    return dbAddress;
+    const nameHash = namehash.hash(identifier);
+    const {
+      orbitDBAddress,
+    } = await this._networkClient.getProfileDBAddress.call({
+      nameHash,
+    });
+
+    return orbitDBAddress;
   }
 }
 
