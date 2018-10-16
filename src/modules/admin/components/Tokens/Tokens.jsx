@@ -132,8 +132,6 @@ const enhance = compose(
       setIsEditingTokens(true),
     closeEditTokensModal: ({ setIsEditingTokens }) => () =>
       setIsEditingTokens(false),
-    toggleEditTokensModal: ({ setIsEditingTokens }) => () =>
-      setIsEditingTokens(current => !current),
   }),
   withProps(() => ({
     tokens: mockTokens.sort(
