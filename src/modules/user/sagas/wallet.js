@@ -8,8 +8,6 @@ import { defineMessages } from 'react-intl';
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet from '@colony/purser-metamask';
 
-import walletContext from '~context/wallet';
-
 import {
   OPEN_MNEMONIC_WALLET,
   OPEN_METAMASK_WALLET,
@@ -35,20 +33,21 @@ export const MSG = defineMessages({
 });
 
 function* openMnemonicWallet(action: Object): Saga<void> {
-  const { mnemonic } = action.payload;
-  const { setErrors, setSubmitting, handleDidConnectWallet } = action;
-  setSubmitting(true);
+  const { connectwalletmnemonic } = action.payload;
+
+  let newMetamaskWallet: Object;
   try {
+    const currentWallet = yield getContext('currentWallet');
     /*
      * Open the wallet with a mnemonic
      */
     const newMnemonicWallet: Object = yield call(softwareWallet.open, {
-      mnemonic,
+      mnemonic: connectwalletmnemonic,
     });
     /*
      * Set the new wallet into the context
      */
-    yield call(walletContext.setNewWallet, newMnemonicWallet);
+    yield call(currentWallet.setNewWallet, newMnemonicWallet);
     /*
      * Set the wallet's address inside the store
      */
@@ -56,14 +55,12 @@ function* openMnemonicWallet(action: Object): Saga<void> {
       type: WALLET_SET,
       payload: { currentAddress: newMnemonicWallet.address },
     });
-    setSubmitting(false);
-    /*
-     * Go to create profile
-     */
-    handleDidConnectWallet();
   } catch (caughtError) {
-    setSubmitting(false);
-    setErrors(MSG.errorOpenMnemonicWallet);
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message }
+    })
+    return;
   }
 }
 
@@ -127,6 +124,7 @@ function* openKeystoreWallet(action: Object): Saga<void> {
   let newKeystoreWallet: Object;
 
   try {
+    const currentWallet = yield getContext('currentWallet');
     /*
      * Open the wallet with a mnemonic
      */
@@ -137,7 +135,7 @@ function* openKeystoreWallet(action: Object): Saga<void> {
     /*
      * Set the new wallet into the context
      */
-    yield call(walletContext.setNewWallet, newKeystoreWallet);
+    yield call(currentWallet.setNewWallet, newKeystoreWallet);
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
@@ -161,9 +159,16 @@ function* createWallet(action: Object): Saga<void> {
    * Recreate the wallet based on the mnemonic
    */
   try {
+    const currentWallet = yield getContext('currentWallet');
+
     newWallet = yield call(softwareWallet.open, {
       mnemonic,
     });
+
+    /*
+     * Set the new wallet into the context
+     */
+    yield call(currentWallet.setNewWallet, newWallet);
   } catch (error) {
     yield put({
       type: CREATE_WALLET_ERROR,
@@ -171,10 +176,6 @@ function* createWallet(action: Object): Saga<void> {
     });
     return;
   }
-  /*
-   * Set the new wallet into the context
-   */
-  yield call(walletContext.setNewWallet, newWallet);
   /*
    * Set the wallet's address inside the store
    */

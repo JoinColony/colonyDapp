@@ -8,18 +8,16 @@ import * as yup from 'yup';
 
 import type { MessageDescriptor } from 'react-intl';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { WizardFormikBag } from '~core/Wizard';
 import { withBoundActionCreators } from '~utils/redux';
 
 import {
-  /*
-   * Prettier sugests a fix that would break the line length rule.
-   * This comment fixes that :)
-   */
-  openMnemonicWallet as openMnemonicWalletAction,
-} from '../../../actionCreators/wallet';
+  OPEN_MNEMONIC_WALLET,
+  WALLET_SET,
+  WALLET_SET_ERROR,
+} from '../../../actionTypes';
 
-import Textarea from '~core/Fields/Textarea';
+import { Textarea, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepMnemonic.css';
@@ -36,6 +34,10 @@ const MSG = defineMessages({
   errorDescription: {
     id: 'user.ConnectWalletWizard.StepMnemonic.errorDescription',
     defaultMessage: 'Oops, there is something wrong',
+  },
+  errorOpenMnemonic: {
+    id: 'user.ConnectWalletWizard.StepMnemonic.errorOpenMnemonic',
+    defaultMessage: 'Oops, there is something wrong. Check the format of your mnemonic',
   },
   mnemonicRequired: {
     id: 'user.ConnectWalletWizard.StepMnemonic.mnemonicRequired',
@@ -56,7 +58,6 @@ type FormValues = {
 };
 
 type Props = {
-  handleDidConnectWallet: () => void,
   nextStep: () => void,
   previousStep: () => void,
 } & FormikProps<FormValues>;
@@ -68,12 +69,14 @@ const StepMnemonic = ({
   previousStep,
   isSubmitting,
   isValid,
+  status,
 }: Props) => (
   <main>
     <div className={styles.content}>
       <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
       <Textarea label={MSG.instructionText} name="connectwalletmnemonic" />
     </div>
+    <FormStatus status={status} />
     <div className={styles.actions}>
       <Button
         appearance={{ theme: 'secondary', size: 'large' }}
@@ -97,25 +100,14 @@ export const validationSchema = yup.object({
   connectwalletmnemonic: yup.string().required(MSG.mnemonicRequired),
 });
 
-export const onSubmit: SubmitFn<FormValues> = (
-  { connectwalletmnemonic },
-  {
-    props: {
-      handleDidConnectWallet,
-      openMnemonicWalletAction: openMnemonicWallet,
-    },
-    setErrors,
-    setSubmitting,
+export const onSubmit = {
+  submit: OPEN_MNEMONIC_WALLET,
+  success: WALLET_SET,
+  error: WALLET_SET_ERROR,
+  // onSuccess() {},
+  onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
+    setStatus({ error: MSG.errorOpenMnemonic });
   },
-) =>
-  openMnemonicWallet(
-    connectwalletmnemonic,
-    (message: MessageDescriptor) =>
-      setErrors({ connectwalletmnemonic: message }),
-    setSubmitting,
-    handleDidConnectWallet,
-  );
+};
 
-const enhance = withBoundActionCreators({ openMnemonicWalletAction });
-
-export const Step = enhance(StepMnemonic);
+export const Step = StepMnemonic;
