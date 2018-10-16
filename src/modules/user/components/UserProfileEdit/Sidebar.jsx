@@ -55,7 +55,7 @@ const Sidebar = ({ avatarURL, walletAddress, username }: Props) => (
     <Link className={styles.backLink} to="/profile">
       <Icon
         appearance={{ size: 'medium' }}
-        name="back-arrow"
+        name="circle-back"
         title={MSG.iconBack}
       />
       <span className={styles.backLinkText}>
