@@ -4,15 +4,40 @@ import type { Saga } from 'redux-saga';
 
 import { call, takeEvery, getContext, put } from 'redux-saga/effects';
 
-import { CREATE_COLONY, CREATE_TOKEN } from '../actionTypes';
-import {
-  createColonyError,
-  createColonySuccess,
-  createTokenError,
-  createTokenSuccess,
-} from '../actionCreators';
+import type { TransactionAction } from '../../core/types';
 
-function* createToken({ payload: { name, symbol } }: Object): Saga<*> {
+import { methodSagaFactory } from '../../core/utils/transactions';
+
+import {
+  CREATE_COLONY,
+  CREATE_COLONY_SUCCESS,
+  CREATE_COLONY_ERROR,
+  CREATE_TOKEN,
+} from '../actionTypes';
+import { createTokenError, createTokenSuccess } from '../actionCreators';
+
+const NETWORK_METHODS = {
+  [CREATE_COLONY]: ['createColony', CREATE_COLONY_SUCCESS, CREATE_COLONY_ERROR],
+  // Add methods as needed.
+};
+
+const NETWORK_METHOD_TYPES = Object.keys(NETWORK_METHODS);
+
+function* networkMethodSaga(action: TransactionAction<*, *>) {
+  const [methodName, successType, errorType] = NETWORK_METHODS[action.type];
+  try {
+    const {
+      instance: { [methodName]: method },
+    } = yield getContext('networkClient');
+    const saga = methodSagaFactory(method, action, successType, errorType);
+    yield call(saga);
+  } catch (error) {
+    yield put({ type: errorType, payload: { error } });
+  }
+}
+
+// `createToken` is not a regular sender and thus needs some special treatment.
+function* createTokenSaga({ payload: { name, symbol } }: Object): Saga<*> {
   try {
     const { instance: networkClient } = yield getContext('networkClient');
 
@@ -26,22 +51,7 @@ function* createToken({ payload: { name, symbol } }: Object): Saga<*> {
   }
 }
 
-function* createColony({ tokenAddress }: Object): Saga<*> {
-  try {
-    const { instance: networkClient } = yield getContext('networkClient');
-
-    const {
-      eventData: { colonyId, colonyAddress },
-    } = yield call([networkClient, networkClient.createColony.send], {
-      tokenAddress,
-    });
-    yield put(createColonySuccess(colonyId, colonyAddress));
-  } catch (error) {
-    yield put(createColonyError(error));
-  }
-}
-
-export default function* colony(): any {
-  yield takeEvery(CREATE_TOKEN, createToken);
-  yield takeEvery(CREATE_COLONY, createColony);
+export default function* colonySagas() {
+  yield takeEvery(CREATE_TOKEN, createTokenSaga);
+  yield takeEvery(NETWORK_METHOD_TYPES, networkMethodSaga);
 }
