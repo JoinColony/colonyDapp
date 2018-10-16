@@ -1,25 +1,11 @@
 /* @flow */
 
 const fileReaderFactory = (options: Object): Function => {
-  const defaultOptions = Object.assign(
+  const config = Object.assign(
     {
       maxFileSize: 1024 * 1024, // that's about 1MB
       maxFilesLimit: 10,
-      allowedExtensions: [
-        'gif',
-        'png',
-        'jpg',
-        'jpeg',
-        'pdf',
-        'psd',
-        'docx',
-        'xlsx',
-        'zip',
-        'rar',
-        'txt',
-        'markdown',
-        'md',
-      ],
+      allowedTypes: [],
       fileReadingFn: defaultFileReadingFunction,
     },
     options,
@@ -33,34 +19,34 @@ const fileReaderFactory = (options: Object): Function => {
     }
 
     if (
-      defaultOptions.maxFilesLimit &&
-      files.length > defaultOptions.maxFilesLimit
+      config.maxFilesLimit &&
+      files.length > config.maxFilesLimit
     ) {
       throw new Error(
         `You can only have ${
-          defaultOptions.maxFilesLimit
+          config.maxFilesLimit
         } or less attached file(s)`,
       );
     }
 
     const sizeValidationErrors = files.filter(hasInvalidFileSize);
     if (sizeValidationErrors && sizeValidationErrors.length) {
-      const fileSize = defaultOptions.maxFileSize / (1024 * 1024);
+      const fileSize = config.maxFileSize / (1024 * 1024);
       throw new Error(
         `Please provide files that is smaller or equal to ${fileSize}MB`,
       );
     }
 
-    const allowedExtensionsValidationErrors = files.filter(
-      hasInvalidExtensions,
+    const allowedTypesValidationErrors = files.filter(
+      hasValidType,
     );
     if (
-      allowedExtensionsValidationErrors &&
-      allowedExtensionsValidationErrors.length
+      allowedTypesValidationErrors &&
+      allowedTypesValidationErrors.length
     ) {
-      const allowedExtensions = defaultOptions.allowedExtensions.join(', ');
+      const allowedTypes = config.allowedTypes.join(', ');
       throw new Error(
-        `Only extensions: ${allowedExtensions} are allowed to be uploaded.`,
+        `Only types: ${allowedTypes} are allowed to be uploaded.`,
       );
     }
 
@@ -68,25 +54,15 @@ const fileReaderFactory = (options: Object): Function => {
     return Promise.all(fileReadingPromises);
   };
 
-  function getFileExtension(filename) {
-    return filename.split('.').pop();
-  }
-
-  function hasInvalidExtensions(file) {
-    return (
-      file &&
-      defaultOptions.allowedExtensions &&
-      defaultOptions.allowedExtensions.indexOf(
-        getFileExtension(file.name.toLowerCase()),
-      ) === -1
-    );
+  function hasValidType(file) {
+    return !config.allowedTypes.includes(file.type);
   }
 
   function hasInvalidFileSize(file) {
     return (
       file &&
-      defaultOptions.maxFileSize &&
-      file.size > defaultOptions.maxFileSize
+      config.maxFileSize &&
+      file.size > config.maxFileSize
     );
   }
 
@@ -118,7 +94,7 @@ const fileReaderFactory = (options: Object): Function => {
         });
       };
 
-      defaultOptions.fileReadingFn(reader, file);
+      config.fileReadingFn(reader, file);
     });
   }
 };

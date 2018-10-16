@@ -5,8 +5,7 @@ import { defineMessages } from 'react-intl';
 
 import fileReader from '../../../../lib/fileReader';
 
-// eslint-disable-next-line import/no-cycle
-import type { UploadFile, FileReaderFile } from './FileUpload.jsx';
+import type { UploadFile, FileReaderFile } from './types';
 
 import { asField } from '../Fields';
 import { Tooltip } from '../Popover';
@@ -32,8 +31,12 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  /** Array of allowed file types */
+  accept?: string[],
   /** Index of file in list of files to be uploaded */
   idx: number,
+  /** Maximum size of file in bytes */
+  maxFileSize?: number,
   /** Function used to remove each file from the list of files to upload */
   remove: (idx: number) => void,
   /** Function used to perform the acutal upload action of the file */
@@ -47,7 +50,19 @@ type Props = {
 };
 
 class UploadItem extends Component<Props> {
+  _readFiles: (files: Array<Object>) => Promise<Array<Object>>;
+
   static displayName = 'UploadItem';
+
+  constructor(props: Props) {
+    super(props);
+    const { accept, maxFileSize } = props;
+    this._readFiles = fileReader({
+      maxFilesLimit: 1,
+      maxFileSize,
+      allowedTypes: accept,
+    })
+  }
 
   componentDidMount() {
     const {
@@ -58,10 +73,6 @@ class UploadItem extends Component<Props> {
       this.uploadFile();
     }
   }
-
-  readFiles: (files: Array<Object>) => Promise<Array<Object>> = fileReader({
-    maxFilesLimit: 1,
-  });
 
   handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     const { idx, remove } = this.props;
@@ -79,6 +90,7 @@ class UploadItem extends Component<Props> {
       setValue({ ...$value, preview: readFile.data });
       fileReference = await upload(readFile);
     } catch (e) {
+      console.log(e);
       // TODO better error handling here
       setValue({ ...$value, error: 'uploadError' });
       return;
@@ -86,7 +98,7 @@ class UploadItem extends Component<Props> {
     setValue({ ...$value, preview: readFile.data, uploaded: fileReference });
   }
 
-  read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
+  read = (file: File) => this._readFiles([file]).then(contents => contents[0]);
 
   render() {
     const {
