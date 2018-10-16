@@ -15,7 +15,7 @@ type Appearance = {
 };
 
 type Props = {
-  appearance: Appearance,
+  appearance?: Appearance,
   children: ChildrenArray<ElementType<*>>,
   className?: string,
 };

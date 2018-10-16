@@ -11,6 +11,7 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 
 import Profile from '~admin/Profile';
 import Organizations from '~admin/Organizations';
+import Tokens from '~admin/Tokens';
 
 import styles from './AdminDashboard.css';
 
@@ -65,7 +66,7 @@ const navigationItems: Array<NavigationItem> = [
   },
   {
     title: MSG.tabTokens,
-    content: <div>Tokens Content</div>,
+    content: <Tokens />,
   },
   {
     title: MSG.tabTransaction,
