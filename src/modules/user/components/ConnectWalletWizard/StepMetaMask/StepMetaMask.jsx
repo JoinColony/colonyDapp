@@ -9,19 +9,18 @@ import { open } from '@colony/purser-metamask';
 
 import { withBoundActionCreators } from '~utils/redux';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
+
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import styles from './StepMetaMask.css';
 
 import {
-  /*
-   * Prettier sugests a fix that would break the line length rule.
-   * This comment fixes that :)
-   */
-  openMetamaskWallet as openMetamaskWalletAction,
-} from '../../../actionCreators/wallet';
+  OPEN_METAMASK_WALLET,
+  WALLET_SET,
+  WALLET_SET_ERROR,
+} from '../../../actionTypes';
 
 const MSG = defineMessages({
   heading: {
@@ -35,6 +34,10 @@ const MSG = defineMessages({
   errorHeading: {
     id: 'user.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: "Oops we couldn't detect MetaMask",
+  },
+  errorOpenMetamask: {
+    id: 'user.ConnectWalletWizard.StepMetaMask.errorOpenMetamask',
+    defaultMessage: 'We could not connect to MetaMask',
   },
   buttonAdvance: {
     id: 'user.ConnectWalletWizard.StepMetaMask.button.advance',
@@ -117,18 +120,8 @@ class MetaMask extends Component<Props, State> {
     }, 500);
   };
 
-  handleUseConnectedWallet = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    const {
-      handleDidConnectWallet,
-      openMetamaskWalletAction: openMetamaskWallet,
-    } = this.props;
-    evt.preventDefault();
-    this.setState({ isLoading: true });
-    return openMetamaskWallet(handleDidConnectWallet);
-  };
-
   render() {
-    const { previousStep } = this.props;
+    const { previousStep, isSubmitting, status } = this.props;
     const { isLoading, isValid } = this.state;
     return (
       <main>
@@ -153,7 +146,7 @@ class MetaMask extends Component<Props, State> {
             </Fragment>
           ) : (
             <Heading
-              text={MSG.errorHeading}
+              text={status && status.error ? status.error : MSG.errorHeading}
               appearance={{ size: 'medium', margin: 'none' }}
             />
           )}
@@ -168,15 +161,15 @@ class MetaMask extends Component<Props, State> {
             <Button
               text={MSG.buttonAdvance}
               appearance={{ theme: 'primary', size: 'large' }}
-              onClick={this.handleUseConnectedWallet}
-              loading={isLoading}
+              type="submit"
+              loading={isLoading || isSubmitting}
             />
           ) : (
             <Button
               text={MSG.buttonRetry}
               appearance={{ theme: 'primary', size: 'large' }}
               onClick={this.handleRetryClick}
-              loading={isLoading}
+              loading={isLoading || isSubmitting}
             />
           )}
         </div>
@@ -185,9 +178,14 @@ class MetaMask extends Component<Props, State> {
   }
 }
 
-const enhance = withBoundActionCreators({ openMetamaskWalletAction });
+export const Step = MetaMask;
 
-export const Step = enhance(MetaMask);
-
-// TODO: Maybe we would like to use this for something
-export const onSubmit: SubmitFn<FormValues> = () => {};
+export const onSubmit = {
+  submit: OPEN_METAMASK_WALLET,
+  success: WALLET_SET,
+  error: WALLET_SET_ERROR,
+  // onSuccess() {},
+  onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
+    setStatus({ error: MSG.errorOpenMetamask });
+  },
+};

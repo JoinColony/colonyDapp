@@ -22,8 +22,7 @@ import {
 } from '../../../actionTypes';
 
 import Icon from '~core/Icon';
-import Input from '~core/Fields/Input';
-import InputLabel from '~core/Fields/InputLabel';
+import { Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepHardware.css';
@@ -148,6 +147,7 @@ class StepHardware extends Component<Props, State> {
       isSubmitting,
       isValid,
       previousStep,
+      status,
       values: { hardwareWalletChoice = '', hardwareWalletFilter = '' },
     } = this.props;
 
@@ -232,6 +232,7 @@ class StepHardware extends Component<Props, State> {
             ))}
           </div>
         </div>
+        <FormStatus status={status} />
         <div className={styles.actions}>
           <Button
             text={MSG.buttonBack}

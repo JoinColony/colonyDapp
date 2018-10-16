@@ -67,27 +67,33 @@ function* openMnemonicWallet(action: Object): Saga<void> {
   }
 }
 
-function* openMetamaskWallet(action: Object): Saga<void> {
-  const { handleDidConnectWallet } = action;
-  /*
-   * Open the metamask wallet
-   */
-  const newMetamaskWallet: Object = yield call(metamaskWallet.open);
-  /*
-   * Set the new wallet into the context
-   */
-  yield call(walletContext.setNewWallet, newMetamaskWallet);
-  /*
-   * Set the wallet's address inside the store
-   */
+function* openMetamaskWallet(): Saga<void> {
+  let newMetamaskWallet: Object;
+
+  try {
+    const currentWallet = yield getContext('currentWallet');
+    /*
+     * Open the metamask wallet
+     */
+    newMetamaskWallet = yield call(metamaskWallet.open);
+    /*
+     * Set the new wallet into the context
+     */
+    yield call(currentWallet.setNewWallet, newMetamaskWallet);
+    /*
+     * Set the wallet's address inside the store
+     */
+  } catch (caughtError) {
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message }
+    })
+    return;
+  }
   yield put({
     type: WALLET_SET,
     payload: { currentAddress: newMetamaskWallet.address },
   });
-  /*
-   * Go to create profile
-   */
-  handleDidConnectWallet();
 }
 
 function* openHardwareWallet(action: Object): Saga<void> {
@@ -105,6 +111,7 @@ function* openHardwareWallet(action: Object): Saga<void> {
       type: WALLET_SET_ERROR,
       payload: { error: caughtError.message }
     })
+    return;
   }
   /*
    * Set the wallet's address inside the store
@@ -117,11 +124,13 @@ function* openHardwareWallet(action: Object): Saga<void> {
 
 function* openKeystoreWallet(action: Object): Saga<void> {
   const { keystore, password } = action.payload;
+  let newKeystoreWallet: Object;
+
   try {
     /*
      * Open the wallet with a mnemonic
      */
-    const newKeystoreWallet: Object = yield call(softwareWallet.open, {
+    newKeystoreWallet = yield call(softwareWallet.open, {
       keystore,
       password,
     });
@@ -129,19 +138,20 @@ function* openKeystoreWallet(action: Object): Saga<void> {
      * Set the new wallet into the context
      */
     yield call(walletContext.setNewWallet, newKeystoreWallet);
-    /*
-     * Set the wallet's address inside the store
-     */
-    yield put({
-      type: WALLET_SET,
-      payload: { currentAddress: newKeystoreWallet.address },
-    });
   } catch (caughtError) {
     yield put({
       type: WALLET_SET_ERROR,
       payload: { error: caughtError.message }
     })
+    return;
   }
+  /*
+   * Set the wallet's address inside the store
+   */
+  yield put({
+    type: WALLET_SET,
+    payload: { currentAddress: newKeystoreWallet.address },
+  });
 }
 
 function* createWallet(action: Object): Saga<void> {
