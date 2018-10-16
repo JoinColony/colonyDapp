@@ -8,23 +8,7 @@ import { createElement, Component } from 'react';
 
 import { ActionForm, Form } from '~core/Fields';
 
-type WizardFormikBag<Values> = FormikBag<Object, Values> & {
-  nextStep: () => void,
-  previousStep: () => void,
-};
-
-export type SubmitFn<Values> = (
-  values: Values,
-  goodies: WizardFormikBag<Values>,
-) => any;
-
-export type ActionSubmit<Values> = {
-  submit: string,
-  success: string,
-  error: string,
-  onSuccess?: (any, WizardFormikBag<Values>) => void,
-  onError?: (any, WizardFormikBag<Values>) => void,
-};
+import type { WizardFormikBag, SubmitFn, ActionSubmit } from './types';
 
 type ValidationSchema = Object;
 

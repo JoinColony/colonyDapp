@@ -18,6 +18,7 @@ import {
   CREATE_WALLET,
   CREATE_WALLET_ERROR,
   WALLET_SET,
+  WALLET_SET_ERROR,
 } from '../actionTypes';
 
 export const MSG = defineMessages({
@@ -107,8 +108,8 @@ function* openHardwareWallet(action: Object): Saga<void> {
 
 function* openKeystoreWallet(action: Object): Saga<void> {
   const { keystore, password } = action.payload;
-  const { setErrors, setSubmitting, handleDidConnectWallet } = action;
-  setSubmitting(true);
+  // const { setErrors, setSubmitting, handleDidConnectWallet } = action;
+  // setSubmitting(true);
   try {
     /*
      * Open the wallet with a mnemonic
@@ -128,14 +129,18 @@ function* openKeystoreWallet(action: Object): Saga<void> {
       type: WALLET_SET,
       payload: { currentAddress: newKeystoreWallet.address },
     });
-    setSubmitting(false);
+    // setSubmitting(false);
     /*
      * Go to create profile
      */
-    handleDidConnectWallet();
+    // handleDidConnectWallet();
   } catch (caughtError) {
-    setSubmitting(false);
-    setErrors(MSG.errorOpenMnemonicWallet);
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message }
+    })
+    // setSubmitting(false);
+    // setErrors(MSG.errorOpenMnemonicWallet);
   }
 }
 

@@ -8,26 +8,22 @@ import * as yup from 'yup';
 
 import type { MessageDescriptor } from 'react-intl';
 
-import type { SubmitFn } from '~core/Wizard';
-import type { UploadFile } from '~core/FileUpload/types';
+import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
+import type { FileReaderFile, UploadFile } from '~core/FileUpload';
 
 import { withBoundActionCreators } from '~utils/redux';
 
 import {
-  /*
-   * Prettier sugests a fix that would break the line length rule.
-   * This comment fixes that :)
-   */
-  openKeystoreWallet as openKeystoreWalletAction,
-} from '../../../actionCreators/wallet';
+  OPEN_KEYSTORE_WALLET,
+  WALLET_SET,
+  WALLET_SET_ERROR,
+} from '../../../actionTypes';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import FileUpload from '~core/FileUpload';
-import { Input } from '~core/Fields';
+import { Input, FormStatus } from '~core/Fields';
 import styles from './StepJSONUpload.css';
-
-import keystoreMock from './__datamocks__/wallet-keystore-test.json';
 
 const MSG = defineMessages({
   heading: {
@@ -50,9 +46,13 @@ const MSG = defineMessages({
     id: 'user.ConnectWalletWizard.StepJSONUpload.filePasswordHelp',
     defaultMessage: 'Optional',
   },
-  errorDescription: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.errorDescription',
-    defaultMessage: 'Oops, wrong file',
+  errorKeystore: {
+    id: 'user.ConnectWalletWizard.StepJSONUpload.errorKeystore',
+    defaultMessage: 'This does not look like a valid keystore',
+  },
+  errorUnlockWallet: {
+    id: 'user.ConnectWalletWizard.StepJSONUpload.errorUnlockWallet',
+    defaultMessage: 'Could not unlock your wallet. Please double check your password',
   },
   buttonAdvance: {
     id: 'user.ConnectWalletWizard.StepJSONUpload.buttonAdvance',
@@ -77,7 +77,21 @@ type Props = {
 
 const displayName = 'user.ConnectWalletWizard.StepJSONUpload';
 
-const StepJSONUpload = ({ previousStep, handleSubmit, isValid }: Props) => (
+const readKeystoreFromFileData = (file: FileReaderFile) => {
+  if (!file || !file.data) {
+    throw new Error('No file data received');
+  }
+  const base64Str = file.data.split('base64,').pop();
+  let keystore;
+  try {
+    keystore = atob(base64Str);
+  } catch (e) {
+    throw new Error('Could not parse keystore data');
+  }
+  return keystore;
+}
+
+const StepJSONUpload = ({ previousStep, handleSubmit, isValid, status }: Props) => (
   <main>
     <div className={styles.content}>
       <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -87,6 +101,7 @@ const StepJSONUpload = ({ previousStep, handleSubmit, isValid }: Props) => (
           name="walletJsonFileUpload"
           label={MSG.fileUploadLabel}
           help={MSG.fileUploadHelp}
+          upload={readKeystoreFromFileData}
         />
       </div>
       <Input
@@ -96,6 +111,7 @@ const StepJSONUpload = ({ previousStep, handleSubmit, isValid }: Props) => (
         type="password"
       />
     </div>
+    <FormStatus status={status} />
     <div className={styles.actions}>
       <Button
         appearance={{ theme: 'secondary', size: 'large' }}
@@ -112,33 +128,31 @@ const StepJSONUpload = ({ previousStep, handleSubmit, isValid }: Props) => (
   </main>
 );
 
-const enhance = withBoundActionCreators({ openKeystoreWalletAction });
-
 export const validationSchema = yup.object({
-  walletJsonFileUpload: yup.string().required(MSG.errorDescription),
+  // FIXME: try to validate this
+  // walletJsonFileUpload: yup.object({
+  //   address: yup.string().required(),
+  //   version: yup.number().required(),
+  // }).required(MSG.errorKeystore),
   walletJsonPassword: yup.string(),
 });
 
-export const onSubmit: SubmitFn<FormValues> = (
-  { walletJsonPassword },
-  {
-    props: {
-      handleDidConnectWallet,
-      openKeystoreWalletAction: openKeystoreWallet,
-    },
-    setErrors,
-    setSubmitting,
+export const onSubmit = {
+  submit: OPEN_KEYSTORE_WALLET,
+  success: WALLET_SET,
+  error: WALLET_SET_ERROR,
+  // onSuccess() {},
+  onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
+    setStatus({ error: MSG.errorUnlockWallet });
   },
-) =>
-  openKeystoreWallet(
-    JSON.stringify(keystoreMock),
-    walletJsonPassword,
-    (message: MessageDescriptor) =>
-      setErrors({ walletJsonFileUpload: message }),
-    setSubmitting,
-    handleDidConnectWallet,
-  );
+  // Transform payload because it's ugly
+  setPayload(action: Object, { walletJsonFileUpload, walletJsonPassword }: FormValues) {
+    const [file] = walletJsonFileUpload;
+    const keystore = file.uploaded;
+    return { ...action, payload: { keystore, password: walletJsonPassword } };
+  }
+};
 
 StepJSONUpload.displayName = displayName;
 
-export const Step = enhance(StepJSONUpload);
+export const Step = StepJSONUpload;
