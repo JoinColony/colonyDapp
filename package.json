@@ -156,7 +156,7 @@
         "react-beautiful-dnd": "^9.0.0",
         "react-day-picker": "^7.1.10",
         "react-dom": "^16.4.1",
-        "react-dropzone": "^6.0.0",
+        "react-dropzone": "^6.2.4",
         "react-hot-loader": "^4.3.11",
         "react-intl": "^2.4.0",
         "react-modal": "^3.5.1",
