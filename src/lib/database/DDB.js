@@ -20,7 +20,7 @@ import KVStore from './KVStore';
 type Resolver = Object;
 
 type DatabaseOptions = {
-  resolver?: Resolver,
+  resolver: Resolver,
 };
 type OrbitStoreCreateOpts = {
   directory?: string,
@@ -74,7 +74,7 @@ class DDB {
   static async createDatabase(
     ipfsNode: IPFSNode,
     identityProvider: IdentityProvider,
-    options: DatabaseOptions = {},
+    options: DatabaseOptions,
   ): Promise<DDB> {
     const identity = await identityProvider.createIdentity();
     await ipfsNode.ready;
@@ -84,7 +84,7 @@ class DDB {
   constructor(
     ipfsNode: IPFSNode,
     identity: Identity,
-    { resolver = {} }: DatabaseOptions = {},
+    { resolver }: DatabaseOptions,
   ) {
     this._stores = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
