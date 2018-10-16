@@ -22,8 +22,6 @@ export const createColony = (tokenAddress: string) => ({
   type: CREATE_COLONY,
   payload: {
     params: { tokenAddress },
-    // TODO nicer way of dealing with tx ID
-    transactionId: Math.random().toString(),
   },
 });
 

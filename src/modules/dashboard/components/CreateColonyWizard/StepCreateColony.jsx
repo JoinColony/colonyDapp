@@ -2,12 +2,10 @@
 
 import type { FormikProps } from 'formik';
 
-import React, { Component, Fragment } from 'react';
-import { bindActionCreators, Dispatch } from 'redux';
-import { connect } from 'react-redux';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { ActionSubmit } from '~core/Wizard';
 import type { DialogType } from '~core/Dialog';
 
 import Heading from '~core/Heading';
@@ -19,9 +17,10 @@ import CreatingColony from './CreatingColony.jsx';
 import CardRow from './CreateColonyCardRow.jsx';
 
 import {
-  // comment to line break for eslint
-  createColony as createColonyAction,
-} from '../../actionCreators/colony';
+  CREATE_COLONY,
+  CREATE_COLONY_ERROR,
+  CREATE_COLONY_SUCCESS,
+} from '../../actionTypes';
 
 type FormValues = {
   tokenAddress: string,
@@ -85,95 +84,63 @@ const options = [
   },
 ];
 
-class StepCreateColony extends Component<Props> {
-  static displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
+const StepCreateColony = ({
+  isSubmitting,
+  isValid,
+  openDialog,
+  previousStep,
+  values,
+}: Props) => (
+  <Fragment>
+    {isSubmitting ? (
+      <CreatingColony openDialog={openDialog} />
+    ) : (
+      <section className={styles.content}>
+        <div className={styles.finalContainer}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+            text={MSG.title}
+          />
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+            text={MSG.subtitle}
+          />
+          <CardRow cardOptions={options} values={values} />
+        </div>
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.back}
+            onClick={previousStep}
+          />
+          <Button
+            appearance={{ theme: 'primary', size: 'large' }}
+            disabled={!isValid}
+            style={{ width: styles.wideButton }}
+            text={MSG.confirm}
+            type="submit"
+          />
+        </div>
+      </section>
+    )}
+  </Fragment>
+);
 
-  componentDidUpdate({
-    createColony: {
-      isSubmitting: prevIsSubmitting,
-      error: prevError,
-      colonyAddress: prevColonyAddress,
-    },
-  }) {
-    const {
-      createColony: { isSubmitting, error, colonyAddress } = {},
-      openDialog,
-      setErrors,
-      setSubmitting,
-    } = this.props;
-    if (
-      typeof isSubmitting !== 'undefined' &&
-      isSubmitting !== prevIsSubmitting
-    )
-      setSubmitting(isSubmitting);
+StepCreateColony.displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
 
-    if (error && error !== prevError)
-      setErrors({ tokenAddress: MSG.errorCreateColony });
+// FIXME do we need to transform the values and use the actionCreator?
 
-    if (colonyAddress && colonyAddress !== prevColonyAddress)
-      openDialog('ActivityBarExample');
-  }
+export const onSubmit: ActionSubmit = {
+  error: CREATE_COLONY_ERROR,
+  submit: CREATE_COLONY,
+  success: CREATE_COLONY_SUCCESS,
+  onError(error: *, bag: *) {
+    console.log(error, bag);
+  },
+  onSuccess(response: *, { nextStep }: *) {
+    nextStep();
+  },
+};
 
-  handleCreateColony = (e: SyntheticEvent<any>) => {
-    e.preventDefault();
-
-    const {
-      setSubmitting,
-      createColonyAction: createColony,
-      values: { tokenAddress },
-    } = this.props;
-
-    setSubmitting(true);
-    createColony(tokenAddress);
-  };
-
-  render() {
-    const { values, previousStep, isSubmitting, openDialog } = this.props;
-    return (
-      <Fragment>
-        {isSubmitting ? (
-          <CreatingColony openDialog={openDialog} />
-        ) : (
-          <section className={styles.content}>
-            <div className={styles.finalContainer}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-                text={MSG.title}
-              />
-              <Heading
-                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-                text={MSG.subtitle}
-              />
-              <CardRow cardOptions={options} values={values} />
-            </div>
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="cancel"
-                text={MSG.back}
-                onClick={previousStep}
-              />
-              <Button
-                onClick={this.handleCreateColony}
-                appearance={{ theme: 'primary' }}
-                text={MSG.confirm}
-              />
-            </div>
-          </section>
-        )}
-      </Fragment>
-    );
-  }
-}
-
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
-
-export const Step = connect(
-  ({
-    dashboard: {
-      colony: { createColony },
-    },
-  }) => ({ createColony }),
-  (dispatch: Dispatch) => bindActionCreators({ createColonyAction }, dispatch),
-)(StepCreateColony);
+export const Step = StepCreateColony;
