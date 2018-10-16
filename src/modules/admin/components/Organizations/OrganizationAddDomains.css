@@ -9,8 +9,13 @@
 .inputWrapper {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .submitButton{
-  margin-top: 9px;
+  margin-left: 10px;
+}
+
+.domainInput{
+  flex-grow: 0.5;
 }

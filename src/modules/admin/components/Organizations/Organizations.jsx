@@ -30,7 +30,7 @@ const MSG = defineMessages({
   },
   labelAdminList: {
     id: 'admin.Organizations.labelAdminList',
-    defaultMessage: 'Domain',
+    defaultMessage: 'Domains',
   },
   noCurrentAdmins: {
     id: 'admin.Organizations.noCurrentAdmins',
@@ -94,7 +94,7 @@ const Organizations = () => (
       </TabPanel>
       <TabPanel>
         <OrganizationAddDomains availableAdmins={domainMocks} />
-        <div className={styles.userListWrapper}>
+        <div className={styles.domainListWrapper}>
           {/*
             * DomainList follows the design principles from TaskList in dashboard,
             * but if it turns out we're going to use this in multiple places,
