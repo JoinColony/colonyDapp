@@ -2,15 +2,13 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Formik, Form } from 'formik';
 
 import type { TokenType } from '~types/token';
 
 import Button from '~core/Button';
-import Checkbox from '~core/Fields/Checkbox';
+import { Checkbox, Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
-import InputLabel from '~core/Fields/InputLabel';
 import Modal from '~core/Modal';
 
 import styles from './EditTokensModal.css';
@@ -64,7 +62,7 @@ const EditTokensModal = ({ isOpen, tokens, closeModal }: Props) => (
       </button>
     </div>
     <div className={styles.modalContent}>
-      <Formik
+      <Form
         initialValues={{
           [tokenChoicesFieldName]: tokens
             .filter(token => token.isEnabled || token.isNative)
@@ -72,55 +70,51 @@ const EditTokensModal = ({ isOpen, tokens, closeModal }: Props) => (
         }}
         onSubmit={console.log}
       >
-        {() => (
-          <Form>
-            <Heading text={MSG.title} appearance={{ size: 'normal' }} />
-            <Heading
-              text={MSG.instructionText}
-              appearance={{ size: 'normal', weight: 'thin' }}
-            />
-            <InputLabel label={MSG.fieldLabel} />
-            <div className={styles.tokenChoiceContainer}>
-              {tokens.map(token => (
-                <Checkbox
-                  className={styles.tokenChoice}
-                  key={token.id}
-                  value={token.tokenSymbol}
-                  name={tokenChoicesFieldName}
-                  disabled={token.isNative}
-                >
-                  {!!token.tokenIcon && (
-                    <img
-                      src={token.tokenIcon}
-                      alt={token.tokenName}
-                      className={styles.tokenChoiceIcon}
-                    />
-                  )}
-                  <span className={styles.tokenChoiceSymbol}>
-                    <Heading
-                      text={token.tokenSymbol}
-                      appearance={{ size: 'small', margin: 'none' }}
-                    />
-                    {token.tokenName}
-                  </span>
-                </Checkbox>
-              ))}
-            </div>
-            <div className={styles.modalFooter}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                text={MSG.buttonCancel}
-                onClick={closeModal}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                text={MSG.buttonConfirm}
-                type="submit"
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
+        <Heading text={MSG.title} appearance={{ size: 'normal' }} />
+        <Heading
+          text={MSG.instructionText}
+          appearance={{ size: 'normal', weight: 'thin' }}
+        />
+        <InputLabel label={MSG.fieldLabel} />
+        <div className={styles.tokenChoiceContainer}>
+          {tokens.map(token => (
+            <Checkbox
+              className={styles.tokenChoice}
+              key={token.id}
+              value={token.tokenSymbol}
+              name={tokenChoicesFieldName}
+              disabled={token.isNative}
+            >
+              {!!token.tokenIcon && (
+                <img
+                  src={token.tokenIcon}
+                  alt={token.tokenName}
+                  className={styles.tokenChoiceIcon}
+                />
+              )}
+              <span className={styles.tokenChoiceSymbol}>
+                <Heading
+                  text={token.tokenSymbol}
+                  appearance={{ size: 'small', margin: 'none' }}
+                />
+                {token.tokenName}
+              </span>
+            </Checkbox>
+          ))}
+        </div>
+        <div className={styles.modalFooter}>
+          <Button
+            appearance={{ theme: 'secondary', size: 'large' }}
+            text={MSG.buttonCancel}
+            onClick={closeModal}
+          />
+          <Button
+            appearance={{ theme: 'primary', size: 'large' }}
+            text={MSG.buttonConfirm}
+            type="submit"
+          />
+        </div>
+      </Form>
     </div>
   </Modal>
 );
