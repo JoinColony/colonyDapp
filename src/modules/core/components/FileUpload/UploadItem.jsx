@@ -99,7 +99,7 @@ class UploadItem extends Component<Props> {
         <div className={styles.fileInfo}>
           <Tooltip
             placement="left"
-            content={$error}
+            content={$error || null}
             trigger={$error ? 'hover' : 'disabled'}
           >
             <span className={styles.itemIcon}>
