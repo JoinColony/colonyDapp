@@ -20,7 +20,7 @@ const fileReaderFactory = (options: Object): Function => {
 
     if (config.maxFilesLimit && files.length > config.maxFilesLimit) {
       throw new Error(
-        `You can only have ${config.maxFilesLimit} or less attached file(s)`,
+        `You can only have ${config.maxFilesLimit} or fewer attached file(s)`,
       );
     }
 
