@@ -2,13 +2,11 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, getContext } from 'redux-saga/effects';
 import { defineMessages } from 'react-intl';
 
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet from '@colony/purser-metamask';
-
-import walletContext from '~context/wallet';
 
 import {
   OPEN_MNEMONIC_WALLET,
@@ -18,6 +16,7 @@ import {
   CREATE_WALLET,
   CREATE_WALLET_ERROR,
   WALLET_SET,
+  WALLET_SET_ERROR,
 } from '../actionTypes';
 
 export const MSG = defineMessages({
@@ -34,20 +33,20 @@ export const MSG = defineMessages({
 });
 
 function* openMnemonicWallet(action: Object): Saga<void> {
-  const { mnemonic } = action.payload;
-  const { setErrors, setSubmitting, handleDidConnectWallet } = action;
-  setSubmitting(true);
+  const { connectwalletmnemonic } = action.payload;
+
   try {
+    const currentWallet = yield getContext('currentWallet');
     /*
      * Open the wallet with a mnemonic
      */
     const newMnemonicWallet: Object = yield call(softwareWallet.open, {
-      mnemonic,
+      mnemonic: connectwalletmnemonic,
     });
     /*
      * Set the new wallet into the context
      */
-    yield call(walletContext.setNewWallet, newMnemonicWallet);
+    yield call(currentWallet.setNewWallet, newMnemonicWallet);
     /*
      * Set the wallet's address inside the store
      */
@@ -55,88 +54,100 @@ function* openMnemonicWallet(action: Object): Saga<void> {
       type: WALLET_SET,
       payload: { currentAddress: newMnemonicWallet.address },
     });
-    setSubmitting(false);
-    /*
-     * Go to create profile
-     */
-    handleDidConnectWallet();
   } catch (caughtError) {
-    setSubmitting(false);
-    setErrors(MSG.errorOpenMnemonicWallet);
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message },
+    });
   }
 }
 
-function* openMetamaskWallet(action: Object): Saga<void> {
-  const { handleDidConnectWallet } = action;
-  /*
-   * Open the metamask wallet
-   */
-  const newMetamaskWallet: Object = yield call(metamaskWallet.open);
-  /*
-   * Set the new wallet into the context
-   */
-  yield call(walletContext.setNewWallet, newMetamaskWallet);
-  /*
-   * Set the wallet's address inside the store
-   */
+function* openMetamaskWallet(): Saga<void> {
+  let newMetamaskWallet: Object;
+
+  try {
+    const currentWallet = yield getContext('currentWallet');
+    /*
+     * Open the metamask wallet
+     */
+    newMetamaskWallet = yield call(metamaskWallet.open);
+    /*
+     * Set the new wallet into the context
+     */
+    yield call(currentWallet.setNewWallet, newMetamaskWallet);
+    /*
+     * Set the wallet's address inside the store
+     */
+  } catch (caughtError) {
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message },
+    });
+    return;
+  }
   yield put({
     type: WALLET_SET,
     payload: { currentAddress: newMetamaskWallet.address },
   });
-  /*
-   * Go to create profile
-   */
-  handleDidConnectWallet();
 }
 
 function* openHardwareWallet(action: Object): Saga<void> {
-  const { selectedAddress } = action.payload;
-  const { handleDidConnectWallet } = action;
+  const { hardwareWalletChoice } = action.payload;
+
+  try {
+    const currentWallet = yield getContext('currentWallet');
+    const { instance: walletInstance } = currentWallet;
+    const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
+      address => address === hardwareWalletChoice,
+    );
+    walletInstance.setDefaultAddress(selectedAddressIndex);
+  } catch (caughtError) {
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message },
+    });
+    return;
+  }
   /*
    * Set the wallet's address inside the store
    */
   yield put({
     type: WALLET_SET,
-    payload: { currentAddress: selectedAddress },
+    payload: { currentAddress: hardwareWalletChoice },
   });
-  /*
-   * Go to create profile
-   */
-  handleDidConnectWallet();
 }
 
 function* openKeystoreWallet(action: Object): Saga<void> {
   const { keystore, password } = action.payload;
-  const { setErrors, setSubmitting, handleDidConnectWallet } = action;
-  setSubmitting(true);
+  let newKeystoreWallet: Object;
+
   try {
+    const currentWallet = yield getContext('currentWallet');
     /*
      * Open the wallet with a mnemonic
      */
-    const newKeystoreWallet: Object = yield call(softwareWallet.open, {
+    newKeystoreWallet = yield call(softwareWallet.open, {
       keystore,
       password,
     });
     /*
      * Set the new wallet into the context
      */
-    yield call(walletContext.setNewWallet, newKeystoreWallet);
-    /*
-     * Set the wallet's address inside the store
-     */
-    yield put({
-      type: WALLET_SET,
-      payload: { currentAddress: newKeystoreWallet.address },
-    });
-    setSubmitting(false);
-    /*
-     * Go to create profile
-     */
-    handleDidConnectWallet();
+    yield call(currentWallet.setNewWallet, newKeystoreWallet);
   } catch (caughtError) {
-    setSubmitting(false);
-    setErrors(MSG.errorOpenMnemonicWallet);
+    yield put({
+      type: WALLET_SET_ERROR,
+      payload: { error: caughtError.message },
+    });
+    return;
   }
+  /*
+   * Set the wallet's address inside the store
+   */
+  yield put({
+    type: WALLET_SET,
+    payload: { currentAddress: newKeystoreWallet.address },
+  });
 }
 
 function* createWallet(action: Object): Saga<void> {
@@ -146,9 +157,16 @@ function* createWallet(action: Object): Saga<void> {
    * Recreate the wallet based on the mnemonic
    */
   try {
+    const currentWallet = yield getContext('currentWallet');
+
     newWallet = yield call(softwareWallet.open, {
       mnemonic,
     });
+
+    /*
+     * Set the new wallet into the context
+     */
+    yield call(currentWallet.setNewWallet, newWallet);
   } catch (error) {
     yield put({
       type: CREATE_WALLET_ERROR,
@@ -156,10 +174,6 @@ function* createWallet(action: Object): Saga<void> {
     });
     return;
   }
-  /*
-   * Set the new wallet into the context
-   */
-  yield call(walletContext.setNewWallet, newWallet);
   /*
    * Set the wallet's address inside the store
    */

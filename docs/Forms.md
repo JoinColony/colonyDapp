@@ -4,6 +4,8 @@ TODO: Write something about disconnecting form fields from Formik (`connect={fal
 
 ### Wizard
 
+You can either use a normal onSubmit function for the wizard steps or use an object that contains all the props for the `ActionForm` to wrap your wizard step in an `ActionForm`.
+
 ```js
 const yup = require('yup');
 const withWizard = require('../src/modules/core/components/Wizard/withWizard').default;

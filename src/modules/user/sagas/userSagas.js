@@ -48,7 +48,7 @@ function* initializeUser(action: Object): Saga<void> {
 
   // TODO: We pre-fill the store here so we have something to see
   // Remove this once we can actually get a store
-  yield call([store, store.put], {
+  yield call([store, store.set], {
     name: 'Tim',
     bio: 'from Texas',
   });

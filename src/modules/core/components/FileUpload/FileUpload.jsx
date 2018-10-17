@@ -14,7 +14,8 @@ import { asFieldArray } from '../Fields';
 import InputLabel from '../Fields/InputLabel';
 import InputStatus from '../Fields/InputStatus';
 
-// eslint-disable-next-line import/no-cycle
+import type { FileReaderFile, UploadFile } from './types';
+
 import UploadItem from './UploadItem.jsx';
 
 const MSG = defineMessages({
@@ -32,22 +33,6 @@ const MSG = defineMessages({
     defaultMessage: 'browse',
   },
 });
-
-export type FileReaderFile = {
-  name: string,
-  type: string,
-  size: number,
-  lastModified: string,
-  uploadDate: Date,
-  data: string,
-};
-
-export type UploadFile = {
-  file: File,
-  uploaded?: string,
-  error?: string,
-  preview?: string,
-};
 
 type ChildProps = {
   isDragActive: boolean,
@@ -236,6 +221,7 @@ class FileUpload extends Component<Props> {
                   <div className={classNames.filesContainer}>
                     {files.map(({ file }, idx) => (
                       <FileUploaderItem
+                        accept={accept}
                         key={`${file.name}-${file.size}`}
                         idx={idx}
                         name={`${name}.${idx}`}

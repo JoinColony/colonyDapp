@@ -7,26 +7,21 @@ import { compose } from 'recompose';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import trezorWallet from '@colony/purser-trezor';
 import ledgerWallet from '@colony/purser-ledger';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { WizardFormikBag } from '~core/Wizard';
 
 import withContext from '~context/withContext';
-import { withBoundActionCreators } from '~utils/redux';
 import HardwareChoice from './HardwareChoice.jsx';
 
 import {
-  /*
-   * Prettier sugests a fix that would break the line length rule.
-   * This comment fixes that :)
-   */
-  openHardwareWallet as openHardwareWalletAction,
-} from '../../../actionCreators/wallet';
+  OPEN_HARDWARE_WALLET,
+  WALLET_SET,
+  WALLET_SET_ERROR,
+} from '../../../actionTypes';
 
 import Icon from '~core/Icon';
-import Input from '~core/Fields/Input';
-import InputLabel from '~core/Fields/InputLabel';
+import { Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepHardware.css';
@@ -64,6 +59,10 @@ const MSG = defineMessages({
     id: 'user.ConnectWalletWizard.StepHardware.errorDescription',
     defaultMessage:
       'Please check that your hardware wallet is connected and try again.',
+  },
+  errorPickAddress: {
+    id: 'user.ConnectWalletWizard.StepHardware.errorPickAddress',
+    defaultMessage: 'Something went wrong. That is probably not your fault!',
   },
   walletChoiceRequired: {
     id: 'user.ConnectWalletWizard.StepHardware.walletChoiceRequired',
@@ -110,26 +109,11 @@ class StepHardware extends Component<Props, State> {
     this.getWalletChoices();
   }
 
+  // TODO: try to move the handling to sagas and get data from redux store
   getWalletChoices = async () => {
     const {
       context: { currentWallet },
     } = this.props;
-    /*
-     * First we try to open the Trezor wallet
-     */
-    try {
-      const trezorWalletInstance = await trezorWallet.open({
-        addressCount: 100,
-      });
-      currentWallet.setNewWallet(trezorWalletInstance);
-      return this.setState({
-        walletChoices: trezorWalletInstance.otherAddresses,
-      });
-    } catch (caughtError) {
-      /*
-       * We fail silently
-       */
-    }
     /*
      * If that fails, we try to open the Ledger wallet
      *
@@ -156,10 +140,10 @@ class StepHardware extends Component<Props, State> {
   render() {
     const { walletChoices } = this.state;
     const {
-      handleSubmit,
       isSubmitting,
       isValid,
       previousStep,
+      status,
       values: { hardwareWalletChoice = '', hardwareWalletFilter = '' },
     } = this.props;
 
@@ -172,7 +156,7 @@ class StepHardware extends Component<Props, State> {
       : styles.searchBoxIconContainer;
 
     return (
-      <form onSubmit={handleSubmit}>
+      <main>
         <div className={styles.content}>
           <div className={styles.headingContainer}>
             {walletChoices.length > 0 ? (
@@ -244,6 +228,7 @@ class StepHardware extends Component<Props, State> {
             ))}
           </div>
         </div>
+        <FormStatus status={status} />
         <div className={styles.actions}>
           <Button
             text={MSG.buttonBack}
@@ -260,30 +245,20 @@ class StepHardware extends Component<Props, State> {
             loading={isSubmitting}
           />
         </div>
-      </form>
+      </main>
     );
   }
 }
 
-const enhance = compose(
-  withContext,
-  withBoundActionCreators({ openHardwareWalletAction }),
-);
+const enhance = compose(withContext);
 
-export const onSubmit: SubmitFn<FormValues> = (values, { props }) => {
-  const { hardwareWalletChoice } = values;
-  const {
-    handleDidConnectWallet,
-    openHardwareWalletAction: openHardwareWallet,
-    context: {
-      currentWallet: { instance: walletInstance },
-    },
-  } = props;
-  const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
-    address => address === hardwareWalletChoice,
-  );
-  walletInstance.setDefaultAddress(selectedAddressIndex);
-  return openHardwareWallet(walletInstance.address, handleDidConnectWallet);
+export const onSubmit = {
+  submit: OPEN_HARDWARE_WALLET,
+  success: WALLET_SET,
+  error: WALLET_SET_ERROR,
+  onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
+    setStatus({ error: MSG.errorPickAddress });
+  },
 };
 
 export const validationSchema = yup.object({

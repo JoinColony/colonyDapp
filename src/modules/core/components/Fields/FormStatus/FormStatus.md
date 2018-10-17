@@ -1,3 +1,5 @@
+A simple component to display a status in a form (show general form errors for example). It can be placed anywhere in a form. See the `Form` component for an example.
+
 ### FormStatus info
 
 ```js

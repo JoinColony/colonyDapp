@@ -1,7 +1,7 @@
 @import 'variables.css';
 
 .main {
-  /* TODO: Maybe better main styles */
+  padding-bottom: 20px;
 }
 
 .text {

@@ -32,6 +32,8 @@ type Props = FormikConfig<Object> & {
   onSuccess?: (any, FormikBag<Object, Object>) => void,
   /** Function to call after error action was dispatched */
   onError?: (any, FormikBag<Object, Object>) => void,
+  /** A function to set the payload (the parameter passed to the async function). Defaults to (action, payload) => ({ ...action, payload }) */
+  setPayload?: (action: Object, payload: any) => Object,
 };
 
 const defaultOnErrror = (err, { setStatus }) =>
@@ -43,6 +45,7 @@ const ActionForm = ({
   error,
   onSuccess,
   onError = defaultOnErrror,
+  setPayload,
   ...props
 }: Props) => (
   <MakeAsyncFunction
@@ -50,6 +53,7 @@ const ActionForm = ({
     start={submit}
     resolve={success}
     reject={error}
+    setPayload={setPayload}
   >
     {asyncFunc => {
       const handleSubmit = (values, formikBag) =>

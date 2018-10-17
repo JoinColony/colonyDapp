@@ -1,6 +1,5 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -71,11 +70,6 @@ type FormValues = {
 
 const displayName = 'user.ConnectWalletWizard.StepStart';
 
-type Props = {
-  previousStep: () => void,
-  nextStep: () => void,
-} & FormikProps<FormValues>;
-
 const options = [
   {
     value: 'metamask',
@@ -110,8 +104,8 @@ const createWalletOption = {
   icon: 'hugging',
 };
 
-const StepStart = ({ handleSubmit }: Props) => (
-  <form className={styles.content} onSubmit={handleSubmit}>
+const StepStart = () => (
+  <main className={styles.content}>
     <div className={styles.title}>
       <Heading
         appearance={{ size: 'medium', weight: 'thin' }}
@@ -133,7 +127,7 @@ const StepStart = ({ handleSubmit }: Props) => (
         link={CREATE_WALLET_ROUTE}
       />
     </div>
-  </form>
+  </main>
 );
 
 StepStart.displayName = displayName;
