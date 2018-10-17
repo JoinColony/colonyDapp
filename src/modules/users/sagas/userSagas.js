@@ -16,6 +16,8 @@ import { DASHBOARD_ROUTE } from '~routes';
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
 
+import { Resolvers } from './lib/database';
+
 import { all } from '../../../lib/database/commands';
 
 import {
@@ -33,18 +35,17 @@ function* initializeUser(action: Object): Saga<void> {
     const DDB = yield getContext('DDB');
     const wallet = yield getContext('currentWallet');
     const ipfsNode = yield getContext('ipfsNode');
-    const ENSResolver = yield getContext('ENSResolver');
     const colonyNetwork = yield getContext('colonyNetwork');
 
-    const resolver = new ENSResolver(colonyNetwork);
     const identityProvider = new PurserIdentityProvider(wallet.instance);
-    const ddbOptions = { resolver };
+
+    DDB.addResolver('user', new Resolvers.UserResolver(colonyNetwork));
 
     const ddb = yield call(
       DDB.createDatabase,
       ipfsNode,
       identityProvider,
-      ddbOptions,
+      {},
     );
     yield setContext({ ddb });
     // TODO: First try to get the store, then create it

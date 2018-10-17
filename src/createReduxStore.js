@@ -15,7 +15,7 @@ import coreSagas from './modules/core/sagas';
 import userSagas from './modules/users/sagas';
 import history from './history';
 
-import { DDB, SCHEMAS, ENSResolver } from './lib/database';
+import { DDB, SCHEMAS } from './lib/database';
 import ipfsNode from './lib/ipfsNode';
 
 import reduxPromiseListener from './createPromiseListener';
@@ -34,7 +34,6 @@ function* rootSaga(): any {
 // TODO: this is bad, refactor!
 context.DDB = DDB;
 context.ipfsNode = ipfsNode;
-context.ENSResolver = ENSResolver;
 
 const sagaMiddleware = createSagaMiddleware({ context });
 
