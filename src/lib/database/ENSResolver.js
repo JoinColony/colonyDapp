@@ -3,7 +3,6 @@
 import namehash from 'eth-ens-namehash';
 
 import type ColonyNetworkClient from '@colony/colony-js-client';
-import type { ENSResolverType, OrbitDBAddress } from './types';
 
 class ENSResolver {
   _resolvers: Map<string, ENSResolverType>;
@@ -59,26 +58,6 @@ class ENSResolver {
       nameHash,
     });
     return ensAddress;
-  }
-}
-
-class UserResolver extends ENSResolver {
-  async resolve(identifier: string): Promise<OrbitDBAddress> {
-    const nameHash = namehash.hash(identifier);
-    const {
-      orbitDBAddress,
-    } = await this._networkClient.getProfileDBAddress.call({
-      nameHash,
-    });
-
-    return orbitDBAddress;
-  }
-}
-
-class ColonyResolver extends ENSResolver {
-  // eslint-disable-next-line class-methods-use-this
-  resolve() {
-    throw new Error('cannot yet look up colony databases');
   }
 }
 
