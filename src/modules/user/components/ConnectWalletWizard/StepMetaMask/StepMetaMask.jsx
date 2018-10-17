@@ -183,7 +183,7 @@ export const onSubmit = {
   success: WALLET_SET,
   error: WALLET_SET_ERROR,
   // onSuccess() {},
-  onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
+  onError(errorMessage: string, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorOpenMetamask });
   },
 };
