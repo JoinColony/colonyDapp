@@ -1,4 +1,5 @@
 /* @flow */
+import type { FormikProps } from 'formik';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
@@ -40,13 +41,15 @@ const MSG = defineMessages({
   },
 });
 
+type FormValues = {
+  colonyTokens: Array<string>,
+};
+
 type Props = {
   closeModal: () => void,
   isOpen: boolean,
   tokens: Array<TokenType>,
-};
-
-const tokenChoicesFieldName = 'colonyTokens';
+} & FormikProps<FormValues>;
 
 const displayName = 'admin.Tokens.EditTokensModal';
 
@@ -64,7 +67,7 @@ const EditTokensModal = ({ isOpen, tokens, closeModal }: Props) => (
     <div className={styles.modalContent}>
       <Form
         initialValues={{
-          [tokenChoicesFieldName]: tokens
+          colonyTokens: tokens
             .filter(token => token.isEnabled || token.isNative)
             .map(token => token.tokenSymbol),
         }}
@@ -82,7 +85,7 @@ const EditTokensModal = ({ isOpen, tokens, closeModal }: Props) => (
               className={styles.tokenChoice}
               key={token.id}
               value={token.tokenSymbol}
-              name={tokenChoicesFieldName}
+              name="colonyTokens"
               disabled={token.isNative}
             >
               {!!token.tokenIcon && (
