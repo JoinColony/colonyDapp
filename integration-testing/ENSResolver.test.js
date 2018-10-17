@@ -1,5 +1,6 @@
 /* eslint-env jest */
-import ENSResolver from '../src/lib/database/ENSResolver';
+import { Resolvers } from '../src/lib/database';
+import ENSResolver from '../src/lib/database/resolvers/ENSResolver';
 
 let resolver;
 let colonyResolver;
@@ -11,8 +12,8 @@ describe('ENSResolver', () => {
     expect(typeof resolver.lookupUsernameFromAddress).toBe('function');
   });
   test('User and colony resolvers inherit from ENSResolver', () => {
-    userResolver = resolver.getResolver('user');
-    colonyResolver = resolver.getResolver('colony');
+    userResolver = new Resolvers.UserResolver('user');
+    colonyResolver = new Resolvers.ColonyResolver('colony');
 
     expect(userResolver instanceof ENSResolver).toBeTruthy();
     expect(colonyResolver instanceof ENSResolver).toBeTruthy();

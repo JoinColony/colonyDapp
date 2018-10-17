@@ -16,8 +16,7 @@ import { DASHBOARD_ROUTE } from '~routes';
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
 
-import { Resolvers } from './lib/database';
-
+import { Resolvers } from '../../../lib/database';
 import { all } from '../../../lib/database/commands';
 
 import {
@@ -41,12 +40,7 @@ function* initializeUser(action: Object): Saga<void> {
 
     DDB.addResolver('user', new Resolvers.UserResolver(colonyNetwork));
 
-    const ddb = yield call(
-      DDB.createDatabase,
-      ipfsNode,
-      identityProvider,
-      {},
-    );
+    const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider, {});
     yield setContext({ ddb });
     // TODO: First try to get the store, then create it
     store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
