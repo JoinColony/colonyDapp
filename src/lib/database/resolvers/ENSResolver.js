@@ -5,11 +5,9 @@ import namehash from 'eth-ens-namehash';
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
 class ENSResolver {
-
   _networkClient: ColonyNetworkClient;
 
   constructor(networkClient: ColonyNetworkClient) {
-    this._resolvers = new Map();
     this._networkClient = networkClient;
   }
 

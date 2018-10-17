@@ -2,7 +2,7 @@
 
 import namehash from 'eth-ens-namehash';
 import ENSResolver from './ENSResolver';
-import type { OrbitDBAddress } from './types';
+import type { OrbitDBAddress } from '../types';
 
 class UserResolver extends ENSResolver {
   async resolve(identifier: string): Promise<OrbitDBAddress> {
