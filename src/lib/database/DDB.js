@@ -50,6 +50,7 @@ const STORE_CLASSES = {
 };
 
 const SCHEMAS: Map<string, Schema> = new Map();
+const Resolvers: Map<string, Resolver> = new Map();
 
 /**
  * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
@@ -59,12 +60,16 @@ const SCHEMAS: Map<string, Schema> = new Map();
 class DDB {
   _orbitNode: OrbitDB;
 
-  _resolver: Resolver;
-
   _stores: Map<string, Store>;
+
+  _options: DatabaseOptions;
 
   static registerSchema(schemaId: string, schema: Schema) {
     SCHEMAS.set(schemaId, schema);
+  }
+
+  static addResolver(resolverId: string, resolver: Resolver) {
+    Resolvers.set(resolverId, resolver);
   }
 
   static getStoreClass(storeType: StoreType) {
@@ -84,14 +89,14 @@ class DDB {
   constructor(
     ipfsNode: IPFSNode,
     identity: Identity,
-    { resolver }: DatabaseOptions,
+    options: DatabaseOptions,
   ) {
     this._stores = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
       path: 'colonyOrbitdb',
     });
-    this._resolver = resolver;
+    this._options = options;
   }
 
   async getStore(
@@ -140,11 +145,18 @@ class DDB {
       : null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async _resolveStoreAddress(identifier: string): Promise<string | null> {
     const [resolverKey, id] = identifier.split('.');
     if (!resolverKey || !id) return null;
 
-    const resolver = this._resolver.getResolver(resolverKey);
+    const resolver = Resolvers.get(resolverKey);
+    if (!resolver) {
+      throw new Error(
+        `Resolver with key ${resolverKey} not found. Did you register it?`,
+      );
+    }
+
     return resolver ? resolver.resolve(id) : null;
   }
 
