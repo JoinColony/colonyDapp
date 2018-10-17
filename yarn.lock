@@ -2186,7 +2186,7 @@ bser@^2.0.0:
   dependencies:
     node-int64 "^0.4.0"
 
-buble@^0.19.3:
+buble@0.19.4:
   version "0.19.4"
   resolved "https://registry.yarnpkg.com/buble/-/buble-0.19.4.tgz#0b51466592555ee34ff5fbe1030a97f3812e4d0a"
   dependencies:
@@ -12092,14 +12092,14 @@ react-router@^4.3.1:
     prop-types "^15.6.1"
     warning "^4.0.1"
 
-react-styleguidist@^7.0.19:
-  version "7.3.10"
-  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-7.3.10.tgz#fa062fe7b994d7da6c5fce014fbc3189586f1c04"
+react-styleguidist@^7.3.11:
+  version "7.3.11"
+  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-7.3.11.tgz#4538ae407f7f13d3fb79feae0103d91f3d3331b5"
   dependencies:
     "@vxna/mini-html-webpack-template" "^0.1.7"
     acorn "^5.7.1"
     ast-types "^0.11.5"
-    buble "^0.19.3"
+    buble "0.19.4"
     classnames "^2.2.6"
     clean-webpack-plugin "^0.1.19"
     clipboard-copy "^2.0.0"
