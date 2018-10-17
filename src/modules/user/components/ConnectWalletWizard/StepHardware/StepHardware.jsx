@@ -256,7 +256,6 @@ export const onSubmit = {
   submit: OPEN_HARDWARE_WALLET,
   success: WALLET_SET,
   error: WALLET_SET_ERROR,
-  // onSuccess() {},
   onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorPickAddress });
   },
