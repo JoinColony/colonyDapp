@@ -49,9 +49,10 @@ type Props = {
    */
   incoming?: boolean,
   /*
-   *
+   * Method to call when clicking the 'Claim' button
+   * Only by setting this method, will the actual button show up
    */
-  onClaim: Object => any,
+  onClaim: TransactionType => any,
 };
 
 const TransactionListItem = ({
@@ -94,20 +95,21 @@ const TransactionListItem = ({
         />
       </TableCell>
       <TableCell className={styles.transactionAmountActions}>
+        {onClaim && (
+          <div className={styles.buttonWrapper}>
+            <Button
+              text={MSG.buttonClaim}
+              onClick={onClaim}
+              className={styles.customButton}
+            />
+          </div>
+        )}
         <Numeral
           value={amount}
           unit="ether"
           decimals={1}
           suffix={` ${symbol}`}
         />
-        {onClaim && (
-          <Button
-            className={styles.customRemoveButton}
-            appearance={{ theme: 'primary' }}
-            text={MSG.buttonClaim}
-            onClick={onClaim}
-          />
-        )}
       </TableCell>
     </TableRow>
   );
