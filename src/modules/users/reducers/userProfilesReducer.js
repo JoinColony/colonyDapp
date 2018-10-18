@@ -13,7 +13,7 @@ type State = {
 
 const INITIAL_STATE = {};
 
-const userProfileReducer = (state: State = INITIAL_STATE, action: Action) => {
+const userProfilesReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case SET_USER_PROFILE: {
       const { walletAddress, set } = action.payload;
@@ -51,4 +51,4 @@ const userProfileReducer = (state: State = INITIAL_STATE, action: Action) => {
   }
 };
 
-export default userProfileReducer;
+export default userProfilesReducer;

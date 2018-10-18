@@ -3,12 +3,12 @@
 import { combineReducers } from 'redux';
 import walletReducer from './wallet';
 import currentUserReducer from './currentUserReducer';
-import userProfileReducer from './userProfileReducer';
+import userProfilesReducer from './userProfilesReducer';
 
 const rootReducer = combineReducers({
   currentUser: currentUserReducer,
   wallet: walletReducer,
-  userProfile: userProfileReducer,
+  userProfiles: userProfilesReducer,
 });
 
 export default rootReducer;
