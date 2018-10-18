@@ -1,9 +1,11 @@
 .modal {
   z-index: var(--z-index-dialog);
+  outline: none;
 }
 
 .main {
   width: 560px;
+  position: relative;
   border-radius: var(--radius-large);
   background-color: var(--colony-white);
 }

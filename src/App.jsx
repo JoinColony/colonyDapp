@@ -13,12 +13,14 @@ import { Provider as ContextProvider } from './createReactContext';
 
 import DialogProvider from '~core/Dialog/DialogProvider.jsx';
 import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
+import TokenEditDialog from '~admin/Tokens/TokenEditDialog.jsx';
 
 addLocaleData(en);
 
 const dialogComponents = {
   // Hint: Once we have the gas station we just have to add it here
   ActivityBarExample,
+  TokenEditDialog,
 };
 
 type Props = {

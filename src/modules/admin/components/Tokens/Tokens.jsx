@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { compose, withHandlers, withProps, withState } from 'recompose';
 
 import type { TokenType } from '~types/token';
 
@@ -10,14 +9,9 @@ import Button from '~core/Button';
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 
-import { sortObjectsBy } from '~utils/arrays';
-
 import styles from './Tokens.css';
 
-import EditTokensModal from './EditTokensModal.jsx';
 import TokenCard from './TokenCard.jsx';
-
-import mockTokens from './__datamocks__/mockTokens';
 
 const MSG = defineMessages({
   title: {
@@ -39,30 +33,14 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  tokens?: Array<TokenType>,
-  isEditingTokens: boolean,
-  openEditTokensModal: () => void,
-  closeEditTokensModal: () => void,
-  toggleEditTokensModal: (current: boolean) => void,
-};
-
-const isEthSort = (prev: string, next: string): number => {
-  const prevVal = prev.toLowerCase();
-  const nextVal = next.toLowerCase();
-  if (prevVal === 'eth' || nextVal === 'eth') {
-    return prevVal === 'eth' ? -1 : 1;
-  }
-  return 0;
+  handleOpenTokenEditDialog: () => void,
+  handleSumbitTokenEditForm: (colonyTokens: Array<string>) => void,
+  tokens: Array<TokenType>,
 };
 
 const displayName = 'admin.Tokens';
 
-const Tokens = ({
-  tokens = [],
-  isEditingTokens,
-  closeEditTokensModal,
-  openEditTokensModal,
-}: Props) => {
+const Tokens = ({ handleOpenTokenEditDialog, tokens = [] }: Props) => {
   const nativeToken = tokens.find(token => token.isNative);
   const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
   const isUserColonyOwner = true; // TODO determine this value.
@@ -108,12 +86,7 @@ const Tokens = ({
               <Button
                 text={MSG.navItemEditTokens}
                 appearance={{ theme: 'blue' }}
-                onClick={openEditTokensModal}
-              />
-              <EditTokensModal
-                isOpen={isEditingTokens}
-                tokens={tokens}
-                closeModal={closeEditTokensModal}
+                onClick={handleOpenTokenEditDialog}
               />
             </li>
           </ul>
@@ -125,23 +98,4 @@ const Tokens = ({
 
 Tokens.displayName = displayName;
 
-const enhance = compose(
-  withState('isEditingTokens', 'setIsEditingTokens', false),
-  withHandlers({
-    openEditTokensModal: ({ setIsEditingTokens }) => () =>
-      setIsEditingTokens(true),
-    closeEditTokensModal: ({ setIsEditingTokens }) => () =>
-      setIsEditingTokens(false),
-  }),
-  withProps(() => ({
-    tokens: mockTokens.sort(
-      sortObjectsBy(
-        'isNative',
-        { name: 'tokenSymbol', compareFn: isEthSort },
-        'id',
-      ),
-    ),
-  })),
-);
-
-export default enhance(Tokens);
+export default Tokens;
