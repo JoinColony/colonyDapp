@@ -12,6 +12,13 @@ tr.main:hover .etherscanButtonWrapper {
 
 .main td {
   padding: cellPadding;
+
+  /*
+   * @NOTE Without this positioning the hover doesn't work properly on the
+   * undelying flexbox. It will only detect hover when passing over
+   * actual content, not whitespace
+   */
+  position: relative;
 }
 
 td.transactionDate {
