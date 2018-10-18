@@ -2,10 +2,7 @@
 
 import update from 'immutability-helper';
 
-import {
-  SET_USER_PROFILE,
-  UPDATE_USER_PROFILE,
-} from '../actionTypes';
+import { SET_USER_PROFILE, UPDATE_USER_PROFILE } from '../actionTypes';
 
 import type { Action } from '~types/';
 import type { UserType } from '~types/user';
@@ -16,12 +13,8 @@ type State = {
 
 const INITIAL_STATE = {};
 
-const userProfileReducer = (
-  state: State = INITIAL_STATE,
-  action: Action,
-) => {
+const userProfileReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
-
     case SET_USER_PROFILE: {
       const { walletAddress, set } = action.payload;
       return update(state, { [walletAddress]: { $set: set } });
@@ -56,6 +49,6 @@ const userProfileReducer = (
     default:
       return state;
   }
-}
+};
 
 export default userProfileReducer;
