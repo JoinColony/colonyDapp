@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 @value cellPadding: 20px;
 
 tr.main:hover {
