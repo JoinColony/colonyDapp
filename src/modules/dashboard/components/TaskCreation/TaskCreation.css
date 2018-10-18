@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .main {
   display: flex;
   flex-direction: row;
@@ -7,6 +5,26 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+}
+
+.backNavigation {
+  margin: 20px 0 0 20px;
+  font-weight: var(--weight-medium);
+}
+
+.mainNav{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.backNavigation i {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.navigation{
+  background-color: var(--gradient-default);
+  height: 50px;
 }
 
 .sidebar {
