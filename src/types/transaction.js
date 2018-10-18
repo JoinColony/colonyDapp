@@ -1,23 +1,42 @@
 /* @flow */
 
+import BigNumber from 'bn.js';
+
 /*
  * @NOTE This is transaction type that is to be consumed and displayed by the
  * dapp not actually the real ethereum transaction
  */
 
 export type TransactionType = {
-  type: 'pot' | 'colony' | 'task' | 'transaction',
-  details?: string,
-  date: any,
-  from: string,
   /*
-   * Left optional because of contract deployments
+   * Will these transactions have nonce(s) ?
    */
+  nonce: number,
+  date: Date,
+  /*
+   * these are optional, since in case of transactions, there's no sender or
+   * receiver address
+   */
+  from?: string,
   to?: string,
   /*
    * These two might not end up quite like this, since there's a good chance
    * we'll have to inferr the token's symbol
    */
-  value: string,
+  amount: number | string | BigNumber,
   symbol: string,
+  /*
+   * Augmented values
+   */
+  userDetails?: {
+    username?: string,
+    displayName?: string,
+  },
+  colonyDetails?: {
+    name?: string,
+  },
+  task?: {
+    id: number,
+    title?: string,
+  },
 };
