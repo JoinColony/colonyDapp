@@ -38,5 +38,17 @@ td.transactionDetails {
 td.transactionAmountActions {
   flex-direction: row-reverse;
   padding-right: 30px;
-  width: 200px;
+  width: 50%;
+}
+
+.customButton {
+  composes: themePrimary from '~core/Button/Button.css';
+  width: 100%;
+}
+
+.buttonWrapper {
+  margin-left: cellPadding;
+  padding-left: cellPadding;
+  width: 130px;
+  border-left: 1px solid var(--grey-blue-1);
 }

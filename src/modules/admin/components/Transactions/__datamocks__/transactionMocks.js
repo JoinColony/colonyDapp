@@ -18,6 +18,7 @@ export const mockTransactions: Array<TransactionType> = [
    * Incoming, from user to colony.
    */
   {
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
     nonce: 10000,
     date: new Date(),
     from: '0x58dFd17cF6a6596AeBbbF1CbbF0F415b2d0A059F',
@@ -26,10 +27,23 @@ export const mockTransactions: Array<TransactionType> = [
     symbol: 'ETH',
   },
   /*
+   * Incoming, from an unkown user to colony.
+   */
+  {
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+    nonce: 10001,
+    date: new Date(),
+    from: '0x437a502354CE30d0273803AC5986247c0A51CE33',
+    to: '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507',
+    amount: createBN(1),
+    symbol: 'ETH',
+  },
+  /*
    * Incoming, from a task to colony.
    */
   {
-    nonce: 10001,
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+    nonce: 10002,
     date: new Date(),
     to: '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507',
     amount: createBN(300),
@@ -39,7 +53,8 @@ export const mockTransactions: Array<TransactionType> = [
    * Outgoing, from a colony to an user.
    */
   {
-    nonce: 10002,
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+    nonce: 10003,
     date: new Date(),
     from: '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507',
     to: '0x044d83437c464Db2F33b863327ea60444FC587b2',
@@ -50,10 +65,35 @@ export const mockTransactions: Array<TransactionType> = [
    * Outgoing, from a colony to a task.
    */
   {
-    nonce: 10003,
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+    nonce: 10004,
     date: new Date(),
     from: '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507',
     amount: createBN(9000),
+    symbol: 'FFLY',
+  },
+  /*
+   * Outgoing, from an unkown colony to a task.
+   * This shouldn't really happen since we should always know the colony's name,
+   * but for UI completeness sake, we're setting this up as well
+   */
+  {
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+    nonce: 10005,
+    date: new Date(),
+    from: '0x62B79Ed3CAefdc32963cCc96Ae619D606B825E6C',
+    amount: createBN('0.05'),
+    symbol: 'FFLY',
+  },
+  /*
+   * Outgoing, from a task to an user.
+   */
+  {
+    hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+    nonce: 10006,
+    date: new Date(),
+    to: '0x044d83437c464Db2F33b863327ea60444FC587b2',
+    amount: createBN(1002),
     symbol: 'FFLY',
   },
 ];
@@ -83,15 +123,20 @@ export const mockedTasksList: Object = {
    * Right now we are indexing these based on nonces, but this will most likely
    * have some sort of other type of anchor point (transaction hash?)
    */
-  '10001': {
+  '10002': {
     id: 203,
     title: 'Rent out the shuttle',
   },
-  '10003': {
+  '10004': {
     id: 204,
     title: 'That business you helped with back on Persephone',
   },
+  '10005': {
+    id: 205,
+    title: 'Watch how I soar',
+  },
+  '10006': {
+    id: 206,
+    title: "You can't stop the signal",
+  },
 };
-
-// 0x437a502354CE30d0273803AC5986247c0A51CE33
-// 0x62B79Ed3CAefdc32963cCc96Ae619D606B825E6C
