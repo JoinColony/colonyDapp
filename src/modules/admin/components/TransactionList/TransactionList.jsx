@@ -7,8 +7,6 @@ import Heading from '~core/Heading';
 
 import TransactionListItem from './TransactionListItem.jsx';
 
-import styles from './TransactionList.css';
-
 import type { MessageDescriptor } from 'react-intl';
 import type { TransactionType } from '~types/transaction';
 
@@ -56,7 +54,7 @@ const TransactionList = ({
   onClaim,
   onEtherscan,
 }: Props) => (
-  <div className={styles.main}>
+  <div>
     {label && (
       <Heading
         appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
