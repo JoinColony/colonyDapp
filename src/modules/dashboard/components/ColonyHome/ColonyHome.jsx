@@ -9,6 +9,7 @@ import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import NavLink from '~core/NavLink';
 
 import TaskList from '~dashboard/TaskList';
 import ColonyMeta from './ColonyMeta';
@@ -180,11 +181,13 @@ class ColonyHome extends Component<Props, State> {
           </Tabs>
         </main>
         <aside className={styles.sidebar}>
-          <Button
-            text={MSG.newTaskButton}
-            appearance={{ theme: 'primary', size: 'large' }}
-            onClick={() => 'unset'}
-          />
+          <NavLink to="/task">
+            <Button
+              text={MSG.newTaskButton}
+              appearance={{ theme: 'primary', size: 'large' }}
+              onClick={() => 'unset'}
+            />
+          </NavLink>
           <ul className={styles.domainsFilters}>
             <Heading
               appearance={{ size: 'normal', weight: 'bold' }}

@@ -2,6 +2,7 @@
 
 export const CONNECT_ROUTE = '/connect';
 export const COLONY_HOME_ROUTE = '/colony';
+export const CREATE_TASK_ROUTE = '/create-task';
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_PROFILE_ROUTE = '/create-profile';
 export const CREATE_WALLET_ROUTE = '/create-wallet';

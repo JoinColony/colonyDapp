@@ -1,0 +1,101 @@
+@import 'variables.css';
+
+.main {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  height: 100%;
+  width: 470px;
+  border-right: 1px solid var(--grey-blue-0);
+}
+
+.container {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  width: calc(100% - 500px);
+}
+
+.section {
+  margin: 0 11px 11px;
+  padding: 15px;
+  border: 1px solid var(--grey-blue-0);
+  border-radius: var(--radius-tiny);
+  background-color: var(--grey-blue-3);
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  height: 60px;
+  border-bottom: 1px solid var(--grey-blue-0);
+  background: var(--grey-blue-3);
+}
+
+.headerAside {
+  display: flex;
+  flex-direction: row;
+  height: 60px;
+  justify-content: space-between;
+}
+
+.headerIconContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  border-left: 1px solid var(--grey-blue-0);
+}
+
+.icon {
+  & svg {
+    fill: var(--grey-4);
+    stroke: var(--grey-4);
+  }
+
+  &:hover svg {
+    fill: var(--grey-1);
+    stroke: var(--grey-1);
+  }
+}
+
+.icon[aria-disabled="true"] {
+  cursor: default;
+
+  & svg {
+    fill: var(--grey-5);
+    stroke: var(--grey-5);
+  }
+}
+
+.activityContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: calc(100% - 60px);
+  width: 100%;
+  overflow: hidden;
+}
+
+.activityContainer :global(.spinner-loader) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.activityContainer :global(.spinner-loader .loader) {
+  height: 100px;
+  width: 100px;
+  border: 2px solid var(--primary);
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
