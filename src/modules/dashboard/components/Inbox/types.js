@@ -1,24 +1,31 @@
 /* @flow */
-export type InboxAction =
-  | 'assignedYouATask'
-  | 'asksToConfirmAssignment'
-  | 'commentedOn'
-  | 'addedSkillTag'
-  | 'assignedUser';
 
-export type ActionType = 'action' | 'notification';
+import messages from './messages';
+
+export type InboxEvent = $Keys<typeof messages>;
+
+export type EventType = 'action' | 'notification';
 
 export type InboxElement = {
   id: number,
-  action: InboxAction,
-  task: string,
-  domain: string,
-  colonyName: string,
+  event: InboxEvent,
   createdAt: Date,
-  user: {
+  unread: boolean,
+
+  /* present depending on event */
+  colonyName?: string,
+  domainName?: string,
+  taskName?: string,
+  amount?: {
+    unit: string,
+    value: number,
+  },
+  user?: {
     walletAddress: string,
     username: string,
   },
-  unread: boolean,
-  type: ActionType,
+  otherUser?: string,
+  comment?: string,
+  dueDate?: Date,
+  onClickRoute?: string,
 };

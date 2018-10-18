@@ -30,6 +30,17 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.Inbox';
 
+const sortItems = items =>
+  items
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .map(item => ({ ...item, type: item.event.split(/[A-Z]/)[0] }))
+    .sort((a, b) => {
+      // $FlowFixMe doesn't recognise that b.type will now be set
+      if (a.unread && a.type === 'action') return -1;
+      if (b.unread && b.type === 'action') return 1;
+      return 0;
+    });
+
 const Inbox = ({
   inboxItems,
   markAsRead,
@@ -73,10 +84,15 @@ class MockInbox extends Component<{}, { inboxItems: Array<InboxElement> }> {
     inboxItems: mockInbox,
   };
 
+  componentDidMount() {
+    this.setState(({ inboxItems }) => ({ inboxItems: sortItems(inboxItems) }));
+  }
+
   markAsRead = (id: number) =>
     this.setState(prev => {
       const { inboxItems } = prev;
-      inboxItems[id - 1].unread = false;
+      const found = inboxItems.find(item => item.id === id);
+      if (found) found.unread = false;
       return { inboxItems };
     });
 
