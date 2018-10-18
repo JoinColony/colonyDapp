@@ -1,6 +1,7 @@
 .content {
   composes: alignCenter from '~styles/text.css';
   composes: marginBottomMedium from '~styles/layout.css';
+  margin-top: 180px;
   padding: 50px;
   background-color: var(--grey-blue-1);
 }
