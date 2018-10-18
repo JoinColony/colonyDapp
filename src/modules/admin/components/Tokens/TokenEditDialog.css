@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .tokenChoiceContainer {
   max-height: 250px;
   overflow: auto;
