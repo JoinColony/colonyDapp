@@ -6,6 +6,10 @@ tr.main:hover {
   background-color: var(--colony-white);
 }
 
+tr.main:hover .etherscanButtonWrapper {
+  display: block;
+}
+
 .main td {
   padding: cellPadding;
 }
@@ -51,4 +55,9 @@ td.transactionAmountActions {
   padding-left: cellPadding;
   width: 130px;
   border-left: 1px solid var(--grey-blue-1);
+}
+
+.etherscanButtonWrapper {
+  composes: buttonWrapper;
+  display: none;
 }
