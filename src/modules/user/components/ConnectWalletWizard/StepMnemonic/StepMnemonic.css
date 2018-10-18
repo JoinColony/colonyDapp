@@ -1,5 +1,6 @@
 .content {
   composes: marginBottomMedium from '~styles/layout.css';
+  margin-top: 180px;
 }
 
 .actions {
