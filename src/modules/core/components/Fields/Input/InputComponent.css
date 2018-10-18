@@ -82,6 +82,21 @@
   border-color: var(--danger);
 }
 
+.themeDotted {
+  display: block;
+  padding: 5px 0;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--grey-dark);
+  border-style: dotted;
+  background-color: transparent;
+  font-size: var(--size-medium);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
+  outline: none;
+}
+
+
 .alignRight {
   text-align: right;
 }

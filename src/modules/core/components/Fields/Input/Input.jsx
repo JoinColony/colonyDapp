@@ -17,7 +17,7 @@ import type { CleaveOptions } from './types';
 import InputComponent from './InputComponent.jsx';
 
 type Appearance = {
-  theme?: 'fat' | 'underlined' | 'minimal',
+  theme?: 'fat' | 'underlined' | 'minimal' | 'dotted',
   align?: 'right',
   direction?: 'horizontal',
   colorSchema?: 'dark' | 'transparent',

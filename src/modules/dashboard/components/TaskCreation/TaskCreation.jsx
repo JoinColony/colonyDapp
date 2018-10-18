@@ -7,6 +7,7 @@ import { Formik } from 'formik';
 
 import styles from './TaskCreation.css';
 
+import Input from '~core/Fields/Input';
 import Icon from '~core/Icon';
 import Navigation from '~dashboard/Navigation';
 import AvatarDropdown from '~dashboard/AvatarDropdown';
@@ -36,6 +37,22 @@ const MSG = defineMessages({
     id: 'dashboard.TaskCreation.backButton',
     defaultMessage: 'Go to {colonyName}',
   },
+  taskTitle: {
+    id: 'dashboard.TaskCreation.taskTitle',
+    defaultMessage: 'Task Title',
+  },
+  taskDescription: {
+    id: 'dashboard.TaskCreation.taskDescription',
+    defaultMessage: 'Task Description',
+  },
+  add: {
+    id: 'dashboard.TaskCreation.add',
+    defaultMessage: 'Add +',
+  },
+  domain: {
+    id: 'dashboard.TaskCreation.domain',
+    defaultMessage: 'Domain',
+  },
 });
 
 type Props = {
@@ -53,7 +70,7 @@ const filter = (data, filterValue) =>
   );
 
 const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
-  <div className={styles.main} data-wd-hook="card-details">
+  <div>
     <div className={styles.navigation}>
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
@@ -62,10 +79,10 @@ const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
           text={MSG.backButton}
           textValues={{ colonyName }}
         />
-        <div className={styles.mainNav}>
-          <Navigation />
-          <AvatarDropdown />
-        </div>
+      </div>
+      <div className={styles.mainNav}>
+        <Navigation />
+        <AvatarDropdown />
       </div>
     </div>
     <Formik
@@ -75,24 +92,46 @@ const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
       }}
     >
       {({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
-          {/* <TaskCreationClosedMessage closed={task.closed} /> */}
+        <form className={styles.main} onSubmit={handleSubmit}>
           <aside className={styles.sidebar}>
-            <header className={styles.headerAside}>
-              <Heading
-                appearance={{ size: 'medium' }}
-                text={MSG.assignmentFunding}
-              />
-              <Button appearance={{ theme: 'blue' }} text={MSG.details} />
-            </header>
             <section className={styles.section}>
-              {/* //TODO: replace this with TaskAssignment component in colonyDapp#403 */}
+              <header className={styles.headerAside}>
+                <Heading
+                  appearance={{ size: 'normal' }}
+                  text={MSG.assignmentFunding}
+                />
+                <Button appearance={{ theme: 'blue' }} text={MSG.details} />
+              </header>
+              {/* //TODO: replace this with TaskAssignment
+                component in colonyDapp#403 */}
               <SingleUserPicker
                 name="assignee"
                 itemComponent={ItemDefault}
                 data={userMocks}
                 filter={filter}
               />
+            </section>
+            <section className={styles.section}>
+              {/* //TODO: replace this with TaskDescription component */}
+              <Input
+                appearance={{ theme: 'dotted' }}
+                name="taskDescription"
+                placeholder={MSG.taskTitle}
+              />
+              <Input
+                appearance={{ theme: 'dotted' }}
+                name="taskTitle"
+                placeholder={MSG.taskDescription}
+              />
+            </section>
+            <section className={`${styles.section} ${styles.last}`}>
+              <div className={`${styles.editor} ${styles.last}`}>
+                <Heading
+                  appearance={{ size: 'normal', margin: 'small' }}
+                  text={MSG.domain}
+                />
+                <Button appearance={{ theme: 'blue' }} text={MSG.add} />
+              </div>
             </section>
           </aside>
           <div className={styles.container}>

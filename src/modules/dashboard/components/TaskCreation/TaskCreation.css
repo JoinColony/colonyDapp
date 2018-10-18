@@ -1,10 +1,12 @@
+@value sidbarWidth: 470px;
+@value headerHeight: 60px;
+
 .main {
   display: flex;
   flex-direction: row;
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 .backNavigation {
@@ -23,25 +25,31 @@
 }
 
 .navigation{
-  background-color: var(--gradient-default);
-  height: 50px;
+  background: var(--gradient-default);
+  background-attachment: fixed;
+  height: 75px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .sidebar {
   height: 100%;
-  width: 470px;
+  width: sidbarWidth;
   border-right: 1px solid var(--grey-blue-0);
+  padding: 11px;
+}
+
+.sidebar.last{
+  margin-bottom: 50vw;
+  color: tomato;
 }
 
 .container {
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  width: calc(100% - 500px);
+  align-items: flex-start;
+  width: 100%;
 }
 
 .section {
-  margin: 0 11px 11px;
   padding: 15px;
   border: 1px solid var(--grey-blue-0);
   border-radius: var(--radius-tiny);
@@ -52,68 +60,24 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  height: 60px;
+  height: headerHeight;
   border-bottom: 1px solid var(--grey-blue-0);
-  background: var(--grey-blue-3);
+  padding: 11px;
 }
 
 .headerAside {
   display: flex;
   flex-direction: row;
-  height: 60px;
+  height: headerHeight;
   justify-content: space-between;
 }
 
-.headerIconContainer {
+.editor {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 60px;
-  border-left: 1px solid var(--grey-blue-0);
+  flex-direction: row;
+  height: headerHeight;
 }
-
-.icon {
-  & svg {
-    fill: var(--grey-4);
-    stroke: var(--grey-4);
-  }
-
-  &:hover svg {
-    fill: var(--grey-1);
-    stroke: var(--grey-1);
-  }
-}
-
-.icon[aria-disabled="true"] {
-  cursor: default;
-
-  & svg {
-    fill: var(--grey-5);
-    stroke: var(--grey-5);
-  }
-}
-
-.activityContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: calc(100% - 60px);
-  width: 100%;
-  overflow: hidden;
-}
-
-.activityContainer :global(.spinner-loader) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-}
-
-.activityContainer :global(.spinner-loader .loader) {
-  height: 100px;
-  width: 100px;
-  border: 2px solid var(--primary);
-  border-right-color: transparent;
-  border-top-color: transparent;
+.editor.last {
+  margin-right: 5px;
+  color: tomato;
 }
