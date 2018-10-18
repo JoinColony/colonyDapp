@@ -9,3 +9,8 @@
   font-size: var(--size-small);
   color: var(--grey-3);
 }
+
+.taskLink:hover {
+  border-bottom: 1px solid var(--sky-blue);
+  color: var(--sky-blue);
+}
