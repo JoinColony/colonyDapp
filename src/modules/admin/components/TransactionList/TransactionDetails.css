@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .primaryText {
   font-weight: var(--weight-medium);
 }
