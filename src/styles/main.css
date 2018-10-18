@@ -179,7 +179,7 @@ pre {
   white-space: pre;
   color: var(--text);
 
-  code {
+  & code {
     display: block;
     padding: 16px 20px;
     overflow-x: auto;

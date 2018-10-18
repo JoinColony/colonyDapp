@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .mentionLink {
   font-weight: var(--weight-medium);
   color: var(--pink);

@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 td.inboxDetails {
   display: flex;
   flex-wrap: wrap;

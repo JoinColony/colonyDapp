@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .content {
   composes: alignCenter from '~styles/text.css';
   composes: marginBottomMedium from '~styles/layout.css';

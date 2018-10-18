@@ -1,11 +1,7 @@
-@import 'variables.css';
-
-:root {
-  /*
-   * Unique color so far. If used again, please move to `variables`
-   */
-  --navigation-icon-blue: rgb(5, 81, 253);
-}
+/*
+ * Unique color so far. If used again, please move to `variables`
+ */
+@value navigationIconBlue: rgb(5, 81, 253);
 
 .main {
   display: flex;
@@ -41,8 +37,8 @@
 }
 
 .navigationItem:hover svg {
-  fill: var(--navigation-icon-blue);
-  stroke: var(--navigation-icon-blue);
+  fill: navigationIconBlue;
+  stroke: navigationIconBlue;
 }
 
 .navigationItem i {
@@ -50,6 +46,6 @@
 }
 
 .navigationItemActive svg {
-  fill: var(--navigation-icon-blue);
-  stroke: var(--navigation-icon-blue);
+  fill: navigationIconBlue;
+  stroke: navigationIconBlue;
 }

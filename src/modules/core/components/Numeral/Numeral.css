@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .main {
   font-size: var(--size-normal);
 }

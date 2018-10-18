@@ -1,21 +1,14 @@
-@import 'variables.css';
-
-:root {
-  --popover-arrow-size: 8px;
-  --popover-arrow-border: 1px;
-  --popover-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
-  --popover-background-color: var(--colony-white);
-  --popover-theme-dark-background-color: var(--grey-1);
-  --popover-tooltip-border: rgb(65, 67, 78);
-  --popover-tooltip-shadow: inset 0 0 1px rgb(65, 67, 78);
-}
+@value arrowSize: 8px;
+@value arrowBorder: 1px;
+@value backgroundColor: rgb(251, 251, 251); /* --colony-white */
+@value themeDarkBackgroundColor: rgb(58, 58, 58); /* --grey-1 */
 
 .main {
   z-index: calc(var(--z-index-notification) + 1);
   border-radius: var(--radius-small);
-  background-color: var(--popover-background-color);
+  background-color: backgroundColor;
   color: var(--grey-4);
-  box-shadow: var(--popover-shadow);
+  box-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
 }
 
 .arrow {
@@ -24,7 +17,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  border: calc(var(--popover-arrow-size) + var(--popover-arrow-border)) solid transparent;
+  border: calc(arrowSize + arrowBorder) solid transparent;
   pointer-events: none;
 }
 
@@ -32,82 +25,82 @@
   height: 0;
   width: 0;
   position: absolute;
-  border: var(--popover-arrow-size) solid transparent;
+  border: arrowSize solid transparent;
   content: '';
 }
 
 .placementTop {
-  top: calc(0 - var(--popover-arrow-size)) !important;
+  top: calc(0px - arrowSize) !important;
 }
 
 .placementRight {
-  left: calc(var(--popover-arrow-size) + var(--popover-arrow-border) * 2) !important;
+  left: calc(arrowSize + arrowBorder * 2) !important;
 }
 
 .placementBottom {
-  top: var(--popover-arrow-size) !important;
+  top: arrowSize !important;
 }
 
 .placementLeft {
-  left: calc(0 - var(--popover-arrow-size) - var(--popover-arrow-border) * 2) !important;
+  left: calc(0px - arrowSize - arrowBorder * 2) !important;
 }
 
 .placementTop .arrow {
   top: auto;
-  bottom: calc((-2 * var(--popover-arrow-size)) - var(--popover-arrow-border));
-  border-top-color: var(--popover-background-color);
+  bottom: calc((-2 * arrowSize) - arrowBorder);
+  border-top-color: backgroundColor;
 }
 
 .placementTop .arrow::before {
-  bottom: calc(-1 * (var(--popover-arrow-size) - var(--popover-arrow-border)));
-  left: calc(-1 * var(--popover-arrow-size));
+  bottom: calc(-1 * (arrowSize - arrowBorder));
+  left: calc(-1 * arrowSize);
 }
 
 .placementRight .arrow {
-  left: calc(-2 * (var(--popover-arrow-size) + var(--popover-arrow-border)));
-  border-right-color: var(--popover-background-color);
+  left: calc(-2 * (arrowSize + arrowBorder));
+  border-right-color: backgroundColor;
 }
 
 .placementRight .arrow::before {
-  top: calc(-1 * var(--popover-arrow-size));
-  left: calc(-1 * (var(--popover-arrow-size) - var(--popover-arrow-border)));
+  top: calc(-1 * arrowSize);
+  left: calc(-1 * (arrowSize - arrowBorder));
 }
 
 .placementBottom .arrow {
-  top: calc(-2 * (var(--popover-arrow-size) + var(--popover-arrow-border)));
-  border-bottom-color: var(--popover-background-color);
+  top: calc(-2 * (arrowSize + arrowBorder));
+  border-bottom-color: backgroundColor;
 }
 
 .placementBottom .arrow::before {
-  top: calc(-1 * (var(--popover-arrow-size) - var(--popover-arrow-border)));
-  left: calc(-1 * var(--popover-arrow-size));
+  top: calc(-1 * (arrowSize - arrowBorder));
+  left: calc(-1 * arrowSize);
 }
 
 .placementLeft .arrow {
-  right: calc(-2 * (var(--popover-arrow-size) + var(--popover-arrow-border)));
+  right: calc(-2 * (arrowSize + arrowBorder));
   left: auto;
-  border-left-color: var(--popover-background-color);
+  border-left-color: backgroundColor;
 }
 
 .placementLeft .arrow::before {
-  top: calc(-1 * var(--popover-arrow-size));
-  right: calc(-1 * (var(--popover-arrow-size) - var(--popover-arrow-border)));
+  top: calc(-1 * arrowSize);
+  right: calc(-1 * (arrowSize - arrowBorder));
 }
 
 .themeDark {
   composes: main;
-  background-color: var(--popover-theme-dark-background-color);
+  background-color: themeDarkBackgroundColor;
   color: var(--colony-white);
 }
 
 .themeDark.placementTop .arrow { border-top-color: transparent; }
-.themeDark.placementTop .arrow::before { border-top-color: var(--popover-theme-dark-background-color); }
+.themeDark.placementTop .arrow::before { border-top-color: themeDarkBackgroundColor; }
 
 .themeDark.placementRight .arrow { border-right-color: transparent; }
-.themeDark.placementRight .arrow::before { border-right-color: var(--popover-theme-dark-background-color); }
+.themeDark.placementRight .arrow::before { border-right-color: themeDarkBackgroundColor; }
 
 .themeDark.placementBottom .arrow { border-bottom-color: transparent; }
-.themeDark.placementBottom .arrow::before { border-bottom-color: var(--popover-theme-dark-background-color); }
+.themeDark.placementBottom .arrow::before { border-bottom-color: themeDarkBackgroundColor; }
 
 .themeDark.placementLeft .arrow { border-left-color: transparent; }
-.themeDark.placementLeft .arrow::before { border-left-color: var(--popover-theme-dark-background-color); }
+.themeDark.placementLeft .arrow::before { border-left-color: themeDarkBackgroundColor; }

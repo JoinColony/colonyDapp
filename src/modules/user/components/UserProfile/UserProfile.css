@@ -1,4 +1,3 @@
-
 .sectionContainer {
   composes: marginBottomLarge from '~styles/layout.css';
 }

@@ -1,9 +1,5 @@
-@import 'variables.css';
-
-:root {
-  --padding-horizontal: 90px;
-  --sidebar-width: 420px;
-}
+@value paddingHorizontal: 90px;
+@value sidebarWidth: 420px;
 
 .main {
   display: flex;
@@ -12,9 +8,9 @@
 }
 
 .sidebar {
-  padding: 80px var(--padding-horizontal);
+  padding: 80px paddingHorizontal;
   height: 100%;
-  width: var(--sidebar-width);
+  width: sidebarWidth;
   position: fixed;
   overflow: auto;
   background: var(--gradient-default);
@@ -27,13 +23,13 @@
 }
 
 .mainContainer {
-  margin-left: var(--sidebar-width);
+  margin-left: sidebarWidth;
   width: 100%;
   overflow: auto;
 }
 
 .mainContent {
-  padding: 20px var(--padding-horizontal);
+  padding: 20px paddingHorizontal;
   height: 100%;
   max-width: 930px;
 }
@@ -49,5 +45,5 @@
 }
 
 .themeAlt .mainContent {
-  padding: 80px var(--padding-horizontal);
+  padding: 80px paddingHorizontal;
 }

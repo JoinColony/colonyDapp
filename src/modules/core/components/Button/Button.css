@@ -1,10 +1,6 @@
-@import 'variables.css';
-
-:root {
-  --disabled-background: rgb(194, 204, 204);
-  --disabled-color: rgb(250, 251, 251);
-  --ghost-border: rgb(194, 204, 204);
-}
+@value disabledBackground: rgb(194, 204, 204);
+@value disabledColor: rgb(250, 251, 251);
+@value ghostBorder: rgb(194, 204, 204);
 
 /*
  * Base `Button` styles
@@ -47,7 +43,7 @@
   color: transparent !important;
   pointer-events: none;
 
-  svg {
+  & svg {
     stroke: transparent !important;
     fill: transparent !important;
   }
@@ -73,9 +69,9 @@
  */
 
 .main[disabled]:not([aria-busy="true"]) {
-  border-color: var(--disabled-background);
-  background-color: var(--disabled-background);
-  color: var(--disabled-color);
+  border-color: disabledBackground;
+  background-color: disabledBackground;
+  color: disabledColor;
   cursor: default;
 }
 
@@ -136,8 +132,8 @@
 }
 
 .themePrimary:hover {
-  border-color: color(var(--primary) shade(15%));
-  background-color: color(var(--primary) shade(15%));
+  border-color: color-mod(var(--primary) shade(15%));
+  background-color: color-mod(var(--primary) shade(15%));
   color: var(--colony-white);
 }
 
@@ -159,7 +155,7 @@
 }
 
 .themeSecondary:hover {
-  color: color(var(--text) shade(30%));
+  color: color-mod(var(--text) shade(30%));
 }
 
 .themeSecondary.colorSchemaInverted {
@@ -167,7 +163,7 @@
 }
 
 .themeSecondary.colorSchemaInverted:hover {
-  color: color(var(--colony-white) shade(30%));
+  color: color-mod(var(--colony-white) shade(30%));
 }
 
 /*
@@ -184,7 +180,7 @@
 
 .themeDanger:hover {
   border-color: var(--danger);
-  background-color: color(var(--danger) shade(15%));
+  background-color: color-mod(var(--danger) shade(15%));
   color: var(--colony-white);
 }
 
@@ -201,13 +197,13 @@
 
 .themeGhost {
   composes: main;
-  border-color: var(--ghost-border);
+  border-color: ghostBorder;
   color: var(--colony-black);
 }
 
 .themeGhost:hover {
-  border-color: var(--ghost-border);
-  color: color(var(--colony-black) tint(15%));
+  border-color: ghostBorder;
+  color: color-mod(var(--colony-black) tint(15%));
 }
 
 .themeGhost.colorSchemaInverted {
@@ -217,7 +213,7 @@
 
 .themeGhost.colorSchemaInverted:hover {
   border-color: var(--colony-white);
-  color: color(var(--colony-white) shade(30%));
+  color: color-mod(var(--colony-white) shade(30%));
 }
 
 .themeGhost.colorSchemaGrey {
@@ -229,7 +225,7 @@
 
 .themeGhost.colorSchemaGrey:hover {
   border-color: var(--temp-grey-1);
-  color: color(var(--text) shade(30%));
+  color: color-mod(var(--text) shade(30%));
 }
 
 .themeGhost.colorSchemaGrey.sizeLarge {
@@ -282,7 +278,7 @@
 .themeBlue[disabled]:not([aria-busy="true"]) {
   border-color: transparent;
   background-color: transparent;
-  color: var(--disabled-background);
+  color: disabledBackground;
   cursor: default;
 }
 

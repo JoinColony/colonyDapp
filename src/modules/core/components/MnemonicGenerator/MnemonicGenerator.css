@@ -1,9 +1,3 @@
-@import 'variables.css';
-
-:root {
-  --custom-ghost-border: rgb(159, 159, 159);
-}
-
 .main {
   composes: field from '~styles/fields.css';
 }
@@ -40,5 +34,5 @@
  */
 .customGhostButton {
   composes: default ghost from '../Button/Button.css';
-  border-color: var(--custom-ghost-border);
+  border-color: rgb(159, 159, 159);
 }

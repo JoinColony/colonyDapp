@@ -1,11 +1,7 @@
-@import 'variables.css';
-
-:root {
-  --table-radii: var(--radius-normal);
-}
+@value tableRadii: 4px; /* --radius-normal */
 
 .baseStyles {
-  border-radius: var(--table-radii);
+  border-radius: tableRadii;
   font-size: var(--size-normal);
   font-weight: var(--weight-normal);
 }
@@ -17,7 +13,7 @@
 
 /* top left cell */
 .baseStyles tbody tr:first-child td:first-child {
-  border-top-left-radius: var(--table-radii);
+  border-top-left-radius: tableRadii;
 }
 
 /* top left cell (of tbody) if thead */
@@ -27,7 +23,7 @@
 
 /* top right cell */
 .baseStyles tbody tr:first-child td:last-child {
-  border-top-right-radius: var(--table-radii);
+  border-top-right-radius: tableRadii;
 }
 
 /* top right cell (of tbody) if thead */
@@ -37,22 +33,22 @@
 
 /* top left table header */
 .baseStyles thead tr:first-child th:first-child {
-  border-top-left-radius: var(--table-radii);
+  border-top-left-radius: tableRadii;
 }
 
 /* top right table header */
 .baseStyles thead tr:first-child th:last-child {
-  border-top-right-radius: var(--table-radii);
+  border-top-right-radius: tableRadii;
 }
 
 /* bottom left cell */
 .baseStyles tbody tr:last-child td:first-child {
-  border-bottom-left-radius: var(--table-radii);
+  border-bottom-left-radius: tableRadii;
 }
 
 /* bottom right cell */
 .baseStyles tbody tr:last-child td:last-child {
-  border-bottom-right-radius: var(--table-radii);
+  border-bottom-right-radius: tableRadii;
 }
 
 /* State */
@@ -114,14 +110,14 @@
 
 .themeDark {
   composes: baseStyles;
-  border-color: color(var(--grey-blue-1) alpha(30%));
+  border-color: color-mod(var(--grey-blue-1) alpha(30%));
   background-color: var(--grey-3);
   color: var(--colony-white);
   box-shadow: 0 0 20px -2px var(--grey-4);
 
   &.separatorsBorders td,
   &.separatorsBorders th {
-    border-color: color(var(--grey-blue-1) alpha(30%));
+    border-color: color-mod(var(--grey-blue-1) alpha(30%));
   }
 
   & tbody tr:hover {

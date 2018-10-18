@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .uploadItem {
   display: flex;
   justify-content: space-between;
@@ -24,7 +22,7 @@
   }
 }
 
-[aria-invalid="true"] {
+.uploadItem[aria-invalid="true"] {
   & .itemIcon {
     & svg {
       stroke: var(--danger);

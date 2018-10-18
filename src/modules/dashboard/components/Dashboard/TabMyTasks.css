@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 .emptyText {
   max-width: 420px;
   font-size: var(--size-medium-l);

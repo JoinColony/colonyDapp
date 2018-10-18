@@ -1,10 +1,9 @@
-@import 'variables.css';
-@import 'tabsVariables.css';
+@value tabListContainerHeight: 36px;
 
 .container {
   display: flex;
   align-items: center;
-  height: var(--tabs-tab-list-container-height);
+  height: tabListContainerHeight;
   position: relative;
 }
 
