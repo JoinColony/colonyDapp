@@ -1,14 +1,19 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import Button from '~core/Button';
+import Heading from '~core/Heading';
+import Icon from '~core/Icon';
+
+import styles from './ConfirmDialog.css';
+
 import Dialog from './Dialog.jsx';
 import DialogSection from './DialogSection.jsx';
-import Heading from '../Heading';
-import Button from '../Button';
 
 const MSG = defineMessages({
   defaultHeading: {
@@ -33,7 +38,7 @@ type Props = {
   cancel: () => void,
   close: (val: any) => void,
   heading?: string | MessageDescriptor,
-  text?: string | MessageDescriptor,
+  children?: Node,
   cancelButtonText?: string | MessageDescriptor,
   confirmButtonText?: string | MessageDescriptor,
 };
@@ -44,18 +49,23 @@ const ConfirmDialog = ({
   // $FlowFixMe https://github.com/facebook/flow/issues/183#issuecomment-267274206
   heading = MSG.defaultHeading,
   // $FlowFixMe
-  text = MSG.defaultText,
+  children,
   // $FlowFixMe
   cancelButtonText = MSG.defaultCancelButton,
   // $FlowFixMe
   confirmButtonText = MSG.defaultConfirmButton,
 }: Props) => (
   <Dialog cancel={cancel}>
+    <div className={styles.dialogOuterActions}>
+      <button type="button" className={styles.closeIconButton} onClick={cancel}>
+        <Icon name="circle-close" title={cancelButtonText} />
+      </button>
+    </div>
     <DialogSection>
       <Heading appearance={{ size: 'medium', margin: 'none' }} text={heading} />
     </DialogSection>
     <DialogSection>
-      {typeof text == 'string' ? text : <FormattedMessage {...text} />}
+      {children || <FormattedMessage {...MSG.defaultText} />}
     </DialogSection>
     <DialogSection appearance={{ align: 'right' }}>
       <Button
