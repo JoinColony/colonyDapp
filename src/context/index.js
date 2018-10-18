@@ -1,18 +1,22 @@
 /* @flow */
 
+import type ColonyNetworkClient from '@colony/colony-js-client';
+
 import walletContext from './wallet';
-import networkClientContext from './networkClientContext';
 import ipfsNodeContext from './ipfsNodeContext';
 import DDBContext from './DDBContext';
 
 // TODO: type all the things!!
 
-const rootContext: Object = {
+type RootContext = {
+  networkClient: ?ColonyNetworkClient,
+};
+
+const rootContext: RootContext = {
   currentWallet: walletContext,
-  networkClient: networkClientContext,
+  networkClient: null,
   ipfsNode: ipfsNodeContext,
   DDB: DDBContext,
-  // networkclient: null,
   // currentWallet: null,
 };
 
