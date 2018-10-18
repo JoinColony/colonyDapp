@@ -9,6 +9,10 @@ import BigNumber from 'bn.js';
 
 export type TransactionType = {
   /*
+   * Optional, since if the transaction has not been sent yet, it won't have a hash
+   */
+  hash?: string,
+  /*
    * Will these transactions have nonce(s) ?
    */
   nonce: number,

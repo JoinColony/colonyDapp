@@ -32,9 +32,18 @@ type Props = {
    */
   showMaskedAddress?: boolean,
   /*
-   *
+   * Method to call when clicking the 'Claim' button
+   * Only by setting this method, will the actual button show up
    */
-  onClaim?: Object => any,
+  onClaim?: TransactionType => any,
+  /*
+   * Method to call when clicking the 'Etherscan' button
+   * This should. in theory redirect you to etherscan, but it can be customized
+   *
+   * @NOTE that if this set that onClaim will not have any effect since
+   * the *Clain* button won't show up anymore
+   */
+  onEtherscan?: TransactionType => any,
 };
 
 const displayName: string = 'admin.TransactionList';
@@ -45,6 +54,7 @@ const TransactionList = ({
   currentColonyAddress,
   showMaskedAddress,
   onClaim,
+  onEtherscan,
 }: Props) => (
   <div className={styles.main}>
     {label && (
@@ -70,6 +80,14 @@ const TransactionList = ({
                   {...(typeof onClaim === 'function'
                     ? {
                         onClaim: () => onClaim(transaction),
+                      }
+                    : {})}
+                  /*
+                   * Only pass down the onEtherscan prop if one was provided
+                   */
+                  {...(typeof onEtherscan === 'function'
+                    ? {
+                        onEtherscan: () => onEtherscan(transaction),
                       }
                     : {})}
                 />

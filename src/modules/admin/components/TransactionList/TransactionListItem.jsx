@@ -18,6 +18,10 @@ const MSG = defineMessages({
     id: 'admin.TransactionList.TransactionListItem.buttonClaim',
     defaultMessage: 'Claim',
   },
+  buttonEtherscan: {
+    id: 'admin.TransactionList.TransactionListItem.buttonEtherscan',
+    defaultMessage: 'Etherscan',
+  },
   incomingTransactionTitle: {
     id: 'admin.TransactionList.TransactionListItem.incomingTransactionTitle',
     defaultMessage: 'Incoming Transaction',
@@ -53,6 +57,14 @@ type Props = {
    * Only by setting this method, will the actual button show up
    */
   onClaim: TransactionType => any,
+  /*
+   * Method to call when clicking the 'Etherscan' button
+   * This should. in theory redirect you to etherscan, but it can be customized
+   *
+   * @NOTE that if this set that onClaim will not have any effect since
+   * the *Clain* button won't show up anymore
+   */
+  onEtherscan?: TransactionType => any,
 };
 
 const TransactionListItem = ({
@@ -60,6 +72,7 @@ const TransactionListItem = ({
   showMaskedAddress = true,
   incoming = true,
   onClaim,
+  onEtherscan,
 }: Props) => {
   const { date, amount, symbol } = transaction;
   return (
@@ -95,11 +108,21 @@ const TransactionListItem = ({
         />
       </TableCell>
       <TableCell className={styles.transactionAmountActions}>
-        {onClaim && (
-          <div className={styles.buttonWrapper}>
+        {!onEtherscan &&
+          onClaim && (
+            <div className={styles.buttonWrapper}>
+              <Button
+                text={MSG.buttonClaim}
+                onClick={onClaim}
+                className={styles.customButton}
+              />
+            </div>
+          )}
+        {onEtherscan && (
+          <div className={styles.etherscanButtonWrapper}>
             <Button
-              text={MSG.buttonClaim}
-              onClick={onClaim}
+              text={MSG.buttonEtherscan}
+              onClick={onEtherscan}
               className={styles.customButton}
             />
           </div>
