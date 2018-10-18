@@ -4,6 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import MaskedAddress from '~core/MaskedAddress';
+import NavLink from '~core/NavLink';
 
 import styles from './TransactionDetails.css';
 
@@ -72,8 +73,13 @@ const ColonyDetails = ({ name = '', address = '' }: Object) => (
   </span>
 );
 
-const TaskDetails = ({ title = '' }: Object) => (
-  <span>{title && <span>{title}</span>}</span>
+const TaskDetails = ({ title = '', id }: Object) => (
+  <span>
+    {title &&
+      id && (
+        <NavLink text={title} to={`/task/${id}`} className={styles.taskLink} />
+      )}
+  </span>
 );
 
 const TransactionDetails = ({
