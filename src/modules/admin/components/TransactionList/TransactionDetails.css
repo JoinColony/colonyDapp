@@ -1,7 +1,11 @@
 @import 'variables.css';
 
-.main {}
+.primaryText {
+  font-weight: var(--weight-medium);
+}
 
-.primaryText {}
-
-.secondaryText {}
+.secondaryText {
+  margin-top: 2px;
+  font-size: var(--size-small);
+  color: var(--grey-3);
+}
