@@ -1,8 +1,4 @@
-@import 'variables.css';
-
-:root {
-  --header-footer-heights: 30px;
-}
+@value headerFooterHeights: 30px;
 
 .main {
   display: flex;
@@ -14,7 +10,7 @@
 .cardHeading {
   display: flex;
   align-items: center;
-  height: var(--header-footer-heights);
+  height: headerFooterHeights;
 }
 
 .iconContainer {
@@ -35,7 +31,7 @@
 .balanceContent {
   display: flex;
   justify-content: center;
-  margin-top: calc(var(--header-footer-heights) / 2);
+  margin-top: calc(headerFooterHeights / 2);
   font-size: var(--size-medium-l);
 }
 
@@ -44,7 +40,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  height: var(--header-footer-heights);
+  height: headerFooterHeights;
   font-weight: var(--weight-thin);
   color: var(--temp-grey-4);
 }
