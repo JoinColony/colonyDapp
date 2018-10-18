@@ -1,6 +1,6 @@
 /* @flow */
 
-import { compose, withProps } from 'recompose';
+import { compose, withHandlers, withProps } from 'recompose';
 
 import withDialog from '~core/Dialog/withDialog';
 import { sortObjectsBy } from '~utils/arrays';
@@ -29,6 +29,12 @@ const enhance = compose(
       ),
     ),
   })),
+  withHandlers({
+    handleOpenTokenMintDialog: ({ openDialog, tokens }) => () => {
+      const nativeToken = tokens.find(token => token.isNative);
+      openDialog('TokenMintDialog', { nativeToken });
+    },
+  }),
 );
 
 export default enhance(Tokens);
