@@ -12,6 +12,7 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import Profile from '~admin/Profile';
 import Organizations from '~admin/Organizations';
 import Tokens from '~admin/Tokens';
+import Transactions from '~admin/Transactions';
 
 import styles from './AdminDashboard.css';
 

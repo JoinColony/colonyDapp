@@ -61,7 +61,7 @@ const augmentedTransactions: Array<TransactionType> = mockTransactions.map(
     });
   },
 );
-const augmentedPendingTransactions = augmentedTransactions.slice(0, 10);
+const augmentedPendingTransactions = augmentedTransactions.slice(0, 4);
 /*
 * @NOTE Mock methods
 * These are also mocks basically, since the actual ones might change
