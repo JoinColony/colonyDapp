@@ -2,10 +2,16 @@
 
 import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
-import ipfsNode from '../src/lib/ipfsNode';
+import { IPFSNode } from '../src/lib/ipfs';
 import DDB from '../src/lib/database/DDB';
 import PurserIdentity from '../src/lib/database/PurserIdentity';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
+
+let ipfsNode;
+
+beforeAll(() => {
+  ipfsNode = new IPFSNode();
+});
 
 describe('Database setup', () => {
   test('Using purser', async () => {

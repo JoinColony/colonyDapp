@@ -1,6 +1,6 @@
 import merge from 'deepmerge';
 
-import IPFSNode from '../../src/lib/ipfsNode/IPFSNode';
+import { IPFSNode } from '../../src/lib/ipfs';
 
 const createIPFSNode = async ipfsOptions => {
   const options = merge(IPFSNode.DEFAULT_OPTIONS, {

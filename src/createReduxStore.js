@@ -15,12 +15,7 @@ import coreSagas from './modules/core/sagas';
 import userSagas from './modules/users/sagas';
 import history from './history';
 
-import { DDB, SCHEMAS } from './lib/database';
-import ipfsNode from './lib/ipfsNode';
-
 import reduxPromiseListener from './createPromiseListener';
-
-DDB.registerSchema('userProfile', SCHEMAS.UserProfile);
 
 const rootReducer = combineReducers({
   core: coreReducer,
@@ -30,10 +25,6 @@ const rootReducer = combineReducers({
 function* rootSaga(): any {
   yield all([userSagas(), dashboardSagas(), coreSagas()]);
 }
-
-// TODO: this is bad, refactor!
-context.DDB = DDB;
-context.ipfsNode = ipfsNode;
 
 const sagaMiddleware = createSagaMiddleware({ context });
 
