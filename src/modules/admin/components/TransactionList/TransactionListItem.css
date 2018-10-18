@@ -1,1 +1,42 @@
 @import 'variables.css';
+
+@value cellPadding: 20px;
+
+tr.main:hover {
+  background-color: var(--colony-white);
+}
+
+.main td {
+  padding: cellPadding;
+}
+
+td.transactionDate {
+  flex-wrap: wrap;
+  padding-left: 30px;
+  width: 75px;
+}
+
+.dateDay {
+  font-size: var(--size-medium-l);
+}
+
+.dateMonth {
+  font-size: var(--size-small);
+  text-transform: uppercase;
+  color: var(--grey-3);
+}
+
+td.transactionStatus {
+  padding: cellPadding 5px;
+  width: 40px;
+}
+
+td.transactionDetails {
+  width: calc(100% - 315px);
+}
+
+td.transactionAmountActions {
+  flex-direction: row-reverse;
+  padding-right: 30px;
+  width: 200px;
+}
