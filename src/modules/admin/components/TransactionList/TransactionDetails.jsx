@@ -61,14 +61,14 @@ const UserDetails = ({
   <span>
     {userDisplayName && <span>{`${userDisplayName} `}</span>}
     {username && <span>{`@${username} `}</span>}
-    {address && <span>{address}</span>}
+    {!userDisplayName && !username && address && <span>{address}</span>}
   </span>
 );
 
 const ColonyDetails = ({ name = '', address = '' }: Object) => (
   <span>
     {name && <span>{`${name} `}</span>}
-    {address && <span>{address}</span>}
+    {!name && address && <span>{address}</span>}
   </span>
 );
 
@@ -168,7 +168,8 @@ const TransactionDetails = ({
           {/*
             * To a task
             */}
-          {task &&
+          {!to &&
+            task &&
             task.id && (
               <FormattedMessage
                 {...MSG.toText}
@@ -180,19 +181,36 @@ const TransactionDetails = ({
           * From the colony
           */}
         <p className={styles.secondaryText}>
-          <FormattedMessage
-            {...MSG.fromText}
-            values={{
-              senderString: (
-                <ColonyDetails
-                  {...colonyDetails}
-                  address={
-                    showMaskedAddress ? <MaskedAddress address={from} /> : from
-                  }
-                />
-              ),
-            }}
-          />
+          {from && (
+            <FormattedMessage
+              {...MSG.fromText}
+              values={{
+                senderString: (
+                  <ColonyDetails
+                    {...colonyDetails}
+                    address={
+                      showMaskedAddress ? (
+                        <MaskedAddress address={from} />
+                      ) : (
+                        from
+                      )
+                    }
+                  />
+                ),
+              }}
+            />
+          )}
+          {/*
+            * From a task
+            */}
+          {!from &&
+            task &&
+            task.id && (
+              <FormattedMessage
+                {...MSG.fromText}
+                values={{ senderString: <TaskDetails {...task} /> }}
+              />
+            )}
         </p>
       </div>
     )}
