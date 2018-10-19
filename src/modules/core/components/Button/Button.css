@@ -98,12 +98,6 @@
   font-weight: var(--weight-normal);
 }
 
-.sizeMedium {
-  padding: 2px 5px;
-  height: 30px;
-  font-size: var(--size-normal);
-}
-
 .sizeLarge {
   padding: 11px 32px;
   height: 43px;

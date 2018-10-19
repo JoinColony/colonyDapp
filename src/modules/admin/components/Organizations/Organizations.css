@@ -2,15 +2,10 @@
   height: 100%;
 }
 
-.userListWrapper {
+.listWrapper {
   margin-top: 40px;
   padding-right: 20%;
   height: calc(100% - 40px);
-}
-
-.domainListWrapper {
-  margin-top: 40px;
-  padding-right: 20%;
 }
 
 .noCurrent {

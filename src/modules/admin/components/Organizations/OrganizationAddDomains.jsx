@@ -16,9 +16,9 @@ const MSG = defineMessages({
     id: 'admin.Organizations.OrganizationAddDomains.labelAddDomain',
     defaultMessage: 'Add New Domain',
   },
-  placeholderAddAdmins: {
-    id: 'admin.Organizations.OrganizationAddDomains.placeholderAddAdmins',
-    defaultMessage: 'Search for a user or paste a wallet address',
+  placeholderAddDomains: {
+    id: 'admin.Organizations.OrganizationAddDomains.placeholderAddDomains',
+    defaultMessage: 'Type a domain name',
   },
   buttonAddDomain: {
     id: 'admin.Organizations.OrganizationAddDomains.buttonAddDomain',
@@ -29,33 +29,35 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations.OrganizationAddDomains';
 
 const validationSchema = yup.object({
-  domain: yup
-    .object()
-    .shape({
-      domainName: yup.string(),
-    })
-    .required(),
+  domainName: yup.string().required(),
 });
 
 type FormValues = {
-  domainName: UserData,
+  domainName: string,
 };
 
 const OrganizationAddDomains = () => (
   <div className={styles.main}>
-    <Formik onSubmit={console.log} validationSchema={validationSchema}>
-      {({ handleSubmit, isValid }: FormikProps<FormValues>) => (
+    <Formik
+      initialValues={{
+        domainName: 'yo',
+      }}
+      onSubmit={console.log}
+      validationSchema={validationSchema}
+    >
+      {({ handleSubmit, isValid, handleChange }: FormikProps<FormValues>) => (
         <form onSubmit={handleSubmit} className={styles.inputWrapper}>
           <div className={styles.domainInput}>
             <Input
+              appearance={{ theme: 'fat' }}
               name="domainName"
               label={MSG.labelAddDomain}
-              connect={false}
+              onChange={handleChange}
             />
           </div>
           <div className={styles.submitButton}>
             <Button
-              appearance={{ theme: 'primary', size: 'medium' }}
+              appearance={{ theme: 'primary', size: 'large' }}
               style={{ width: styles.wideButton }}
               text={MSG.buttonAddDomain}
               type="submit"

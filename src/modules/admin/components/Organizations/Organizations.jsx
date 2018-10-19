@@ -35,15 +35,15 @@ const MSG = defineMessages({
   noCurrentAdmins: {
     id: 'admin.Organizations.noCurrentAdmins',
     defaultMessage: `
-      It looks like no admins are currently added to this colony. You can add one
-      by selecting it from the list above.
+      It looks like no admins are currently added to this colony.
+      You can add one by selecting it from the list above.
     `,
   },
   noCurrentDomains: {
     id: 'admin.Organizations.noCurrentDomains',
     defaultMessage: `
-      It looks like no domains are currently added to this colony. You can add one
-      by adding through the input field above.
+      It looks like no domains are currently added to this colony.
+      You can add one by adding through the input field above.
     `,
   },
 });
@@ -63,7 +63,7 @@ const Organizations = () => (
       </TabList>
       <TabPanel>
         <OrganizationAddAdmins availableAdmins={usersMocks} />
-        <div className={styles.userListWrapper}>
+        <div className={styles.listWrapper}>
           {/*
             * UserList follows the design principles from TaskList in dashboard,
             * but if it turns out we're going to use this in multiple places,
@@ -94,7 +94,7 @@ const Organizations = () => (
       </TabPanel>
       <TabPanel>
         <OrganizationAddDomains availableAdmins={domainMocks} />
-        <div className={styles.domainListWrapper}>
+        <div className={styles.listWrapper}>
           {/*
             * DomainList follows the design principles from TaskList in dashboard,
             * but if it turns out we're going to use this in multiple places,

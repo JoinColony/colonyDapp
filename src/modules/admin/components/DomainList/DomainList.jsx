@@ -5,12 +5,10 @@ import React from 'react';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
+import type { MessageDescriptor } from 'react-intl';
 import DomainListItem from './DomainListItem.jsx';
 
 import styles from './DomainList.css';
-
-import type { MessageDescriptor } from 'react-intl';
-import type { UserData } from '~core/SingleUserPicker';
 
 type DomainData = {
   domainName: string,
@@ -19,7 +17,7 @@ type DomainData = {
 
 type Props = {
   /*
-   * Array of user data, follows the same format as UserPicker
+   * Array of domain data
    */
   domains: Array<DomainData>,
   /*
@@ -32,10 +30,10 @@ type Props = {
    */
   label?: string | MessageDescriptor,
   /*
-   * Method to call when removing the user
+   * Method to call when removing the domain
    * Gets passed down to `DomainListItem`
    */
-  onRemove: UserData => any,
+  onRemove: DomainData => any,
 };
 
 const displayName: string = 'admin.DomainList';

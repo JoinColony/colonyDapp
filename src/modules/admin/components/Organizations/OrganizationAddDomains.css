@@ -1,5 +1,3 @@
-@import 'variables.css';
-
 @value wideButton: 160px;
 
 .main {
@@ -12,10 +10,10 @@
   align-items: center;
 }
 
-.submitButton{
+.submitButton {
   margin-left: 10px;
 }
 
-.domainInput{
+.domainInput {
   flex-grow: 0.5;
 }

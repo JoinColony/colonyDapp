@@ -28,7 +28,7 @@ type DomainData = {
 
 type Props = {
   /*
-   * User data Object, follows the same format as UserPicker
+   * Domain data object
    */
   domain: DomainData,
   viewOnly: boolean,
@@ -53,7 +53,7 @@ const DomainListItem = ({
         <FormattedMessage values={{ contributions }} {...MSG.contributions} />
       </span>
     </TableCell>
-    <TableCell className={styles.userRemove}>
+    <TableCell className={styles.domainRemove}>
       {!viewOnly && (
         <Button
           className={styles.customRemoveButton}
