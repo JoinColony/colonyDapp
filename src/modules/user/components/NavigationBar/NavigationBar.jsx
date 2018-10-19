@@ -1,4 +1,5 @@
 /* @flow */
+
 import React from 'react';
 
 import { defineMessages } from 'react-intl';
@@ -8,21 +9,21 @@ import { INBOX_ROUTE, USER_ROUTE, WALLET_ROUTE } from '~routes';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
 
-import styles from './Navigation.css';
+import styles from './NavigationBar.css';
 
-const displayName = 'users.Navigation';
+const displayName = 'user.NavigationBar';
 
 const MSG = defineMessages({
   dashboardTitle: {
-    id: 'Navigation.dashboardTitle',
+    id: `${displayName}.dashboardTitle`,
     defaultMessage: 'Go to your Dashboard',
   },
   walletTitle: {
-    id: 'Navigation.walletTitle',
+    id: `${displayName}.walletTitle`,
     defaultMessage: 'Go to your Wallet',
   },
   inboxTitle: {
-    id: 'Navigation.inboxTitle',
+    id: `${displayName}.inboxTitle`,
     defaultMessage: 'Go to your Inbox',
   },
 });
@@ -31,7 +32,7 @@ type Props = {
   events?: Array<{ handled: boolean }>,
 };
 
-const Navigation = ({ events }: Props) => {
+const NavigationBar = ({ events }: Props) => {
   const unhandled = events && !events.find(event => !event.handled);
   return (
     <nav className={styles.main}>
@@ -62,6 +63,6 @@ const Navigation = ({ events }: Props) => {
   );
 };
 
-Navigation.displayName = displayName;
+NavigationBar.displayName = displayName;
 
-export default Navigation;
+export default NavigationBar;
