@@ -7,7 +7,7 @@ import { getMainClasses } from '~utils/css';
 
 import AvatarDropdown from '~dashboard/AvatarDropdown';
 
-import Navigation from '~dashboard/Navigation';
+import NavigationBar from '~user/NavigationBar';
 
 import styles from './ProfileTemplate.css';
 
@@ -31,7 +31,7 @@ const ProfileTemplate = ({ appearance, children, asideContent }: Props) => (
     <aside className={styles.sidebar}>{asideContent}</aside>
     <div className={styles.mainContainer}>
       <header className={styles.header}>
-        <Navigation events={mockEvents} />
+        <NavigationBar events={mockEvents} />
         <AvatarDropdown />
       </header>
       <main className={styles.mainContent}>{children}</main>

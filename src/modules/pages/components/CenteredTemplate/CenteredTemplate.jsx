@@ -7,7 +7,7 @@ import { getMainClasses } from '~utils/css';
 
 import AvatarDropdown from '~dashboard/AvatarDropdown';
 
-import Navigation from '~dashboard/Navigation';
+import NavigationBar from '~user/NavigationBar';
 
 import styles from './CenteredTemplate.css';
 
@@ -26,7 +26,7 @@ const CenteredTemplate = ({ appearance, children }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
     <div className={styles.mainContainer}>
       <header className={styles.header}>
-        <Navigation />
+        <NavigationBar />
         <AvatarDropdown />
       </header>
       <main className={styles.mainContent}>{children}</main>
