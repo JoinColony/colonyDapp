@@ -16,9 +16,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
-import userMocks from './__datamocks__/mockUser';
-
-// import CommentForm from '../CommentForm';
+import userMocks from './__datamocks__/mockUsers';
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -52,6 +50,14 @@ const MSG = defineMessages({
   domain: {
     id: 'dashboard.TaskCreation.domain',
     defaultMessage: 'Domain',
+  },
+  skill: {
+    id: 'dashboard.TaskCreation.skill',
+    defaultMessage: 'Skill',
+  },
+  dueDate: {
+    id: 'dashboard.TaskCreation.dueDate',
+    defaultMessage: 'Due Date',
   },
 });
 
@@ -103,7 +109,7 @@ const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
                 <Button appearance={{ theme: 'blue' }} text={MSG.details} />
               </header>
               {/* //TODO: replace this with TaskAssignment
-                component in colonyDapp#403 */}
+                component in colonyDapp#445 */}
               <SingleUserPicker
                 name="assignee"
                 itemComponent={ItemDefault}
@@ -112,7 +118,7 @@ const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
               />
             </section>
             <section className={styles.section}>
-              {/* //TODO: replace this with TaskDescription component */}
+              {/* //TODO: replace this with TaskDescription component colonyDapp#439 */}
               <Input
                 appearance={{ theme: 'dotted' }}
                 name="taskDescription"
@@ -124,12 +130,19 @@ const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
                 placeholder={MSG.taskDescription}
               />
             </section>
-            <section className={`${styles.section} ${styles.last}`}>
-              <div className={`${styles.editor} ${styles.last}`}>
-                <Heading
-                  appearance={{ size: 'normal', margin: 'small' }}
-                  text={MSG.domain}
-                />
+            <section className={styles.section}>
+              <div className={styles.editor}>
+                {/* //TODO: Add domain colonyDapp#408 */}
+                <Heading appearance={{ size: 'normal' }} text={MSG.domain} />
+                <Button appearance={{ theme: 'blue' }} text={MSG.add} />
+              </div>
+              <div className={styles.editor}>
+                <Heading appearance={{ size: 'normal' }} text={MSG.skill} />
+                <Button appearance={{ theme: 'blue' }} text={MSG.add} />
+              </div>
+              <div className={styles.editor}>
+                {/* //TODO: Add due date colonyDapp#410 */}
+                <Heading appearance={{ size: 'normal' }} text={MSG.dueDate} />
                 <Button appearance={{ theme: 'blue' }} text={MSG.add} />
               </div>
             </section>
@@ -138,6 +151,8 @@ const TaskCreation = ({ colonyName = 'The Meta Colony' }: Props) => (
             <section className={styles.header}>
               <Button appearance={{ theme: 'primary' }} text={MSG.closeTask} />
             </section>
+            {/* //TODO: replace this with task comments component
+                component in colonyDapp#440 */}
             <section className={styles.activityContainer} />
           </div>
         </form>

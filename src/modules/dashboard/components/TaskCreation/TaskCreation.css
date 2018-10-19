@@ -36,12 +36,7 @@
   height: 100%;
   width: sidbarWidth;
   border-right: 1px solid var(--grey-blue-0);
-  padding: 11px;
-}
-
-.sidebar.last{
-  margin-bottom: 50vw;
-  color: tomato;
+  padding: 11px 11px 50vw 11px;
 }
 
 .container {
@@ -75,9 +70,7 @@
 .editor {
   display: flex;
   flex-direction: row;
-  height: headerHeight;
 }
-.editor.last {
+.editor > h4{
   margin-right: 5px;
-  color: tomato;
 }
