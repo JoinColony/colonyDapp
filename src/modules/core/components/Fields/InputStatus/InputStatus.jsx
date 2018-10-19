@@ -11,7 +11,7 @@ import styles from './InputStatus.css';
 
 type Appearance = {
   // Make it covariant: tell flow we're not changing it in here
-  +theme?: 'fat' | 'underlined' | 'minimal',
+  +theme?: 'fat' | 'underlined' | 'minimal' | 'dotted',
   +direction?: 'horizontal',
   +colorSchema?: 'dark' | 'transparent',
 };

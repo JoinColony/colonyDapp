@@ -85,12 +85,12 @@ const Routes = ({
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
       />
-      <Route
+      <ConnectedOnlyRoute
         isConnected={isConnected}
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
       />
-      <Route
+      <ConnectedOnlyRoute
         isConnected={isConnected}
         path={CREATE_TASK_ROUTE}
         component={CreateTask}

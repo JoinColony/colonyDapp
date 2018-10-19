@@ -14,7 +14,7 @@
   font-weight: var(--weight-medium);
 }
 
-.mainNav{
+.mainNav {
   display: flex;
   justify-content: flex-end;
 }
@@ -24,19 +24,19 @@
   vertical-align: middle;
 }
 
-.navigation{
-  background: var(--gradient-default);
-  background-attachment: fixed;
-  height: 75px;
+.navigation {
   display: flex;
   justify-content: space-between;
+  height: 75px;
+  background: var(--gradient-default);
+  background-attachment: fixed;
 }
 
 .sidebar {
+  padding: 11px 11px 50vw 11px;
   height: 100%;
   width: sidbarWidth;
   border-right: 1px solid var(--grey-blue-0);
-  padding: 11px 11px 50vw 11px;
 }
 
 .container {
@@ -55,22 +55,23 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  padding: 11px;
   height: headerHeight;
   border-bottom: 1px solid var(--grey-blue-0);
-  padding: 11px;
 }
 
 .headerAside {
   display: flex;
   flex-direction: row;
-  height: headerHeight;
   justify-content: space-between;
+  height: headerHeight;
 }
 
 .editor {
   display: flex;
   flex-direction: row;
 }
-.editor > h4{
+
+.editor > h4 {
   margin-right: 5px;
 }
