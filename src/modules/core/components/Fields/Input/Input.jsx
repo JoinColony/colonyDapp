@@ -21,6 +21,7 @@ type Appearance = {
   align?: 'right',
   direction?: 'horizontal',
   colorSchema?: 'dark' | 'transparent',
+  size?: 'small',
 };
 
 type Props = {

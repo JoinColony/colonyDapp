@@ -12,7 +12,8 @@ import type { CleaveOptions } from './types';
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted',
   align?: 'right',
-  colorSchema?: 'dark' | 'transparent',
+  colorSchema?: 'dark' | 'grey' | 'transparent',
+  size?: 'small',
 };
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };

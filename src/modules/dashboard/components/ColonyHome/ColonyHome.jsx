@@ -21,7 +21,6 @@ import {
   mockColonyOwners,
   mockColonyAdmins,
 } from './__datamocks__/mockColony';
-import mockUser from './__datamocks__/mockUser';
 import mockTasks from './__datamocks__/mockTasks';
 import mockColonies from './__datamocks__/mockColonies';
 import mockDomains from './__datamocks__/mockDomains';
@@ -132,7 +131,6 @@ class ColonyHome extends Component<Props, State> {
      * Tasks and colonies will most likely end up being passed in via props
      */
     const tasks = mockTasks;
-    const user = mockUser;
     const colonies = mockColonies;
     const domains = mockDomains;
     const filterSelect = (
@@ -183,6 +181,7 @@ class ColonyHome extends Component<Props, State> {
           </Tabs>
         </main>
         <aside className={styles.sidebar}>
+          {/* //TODO: Show this only to admins once we know user roles */}
           <NavLink to="/task">
             <Button
               text={MSG.newTaskButton}

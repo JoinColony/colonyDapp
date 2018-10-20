@@ -17,6 +17,7 @@ type Appearance = {
   +theme?: 'fat' | 'underlined' | 'minimal' | 'dotted',
   +direction?: 'horizontal',
   +colorSchema?: 'dark' | 'transparent',
+  +size?: 'small',
 };
 
 type Props = {

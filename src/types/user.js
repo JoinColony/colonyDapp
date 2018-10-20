@@ -8,5 +8,4 @@ export type UserType = {
   bio?: string,
   website?: string,
   location?: string,
-  role?: string,
 };
