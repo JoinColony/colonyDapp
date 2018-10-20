@@ -146,7 +146,7 @@
         "ipfs": "0.32.2",
         "lodash": "4.17.11",
         "lru-cache": "^4.1.3",
-        "nanoid": "^1.0.7",
+        "nanoid": "^1.3.1",
         "orbit-db": "https://github.com/thiagodelgado111/orbit-db#maintenance/new-orbit-db-store",
         "orbit-db-keystore": "https://github.com/orbitdb/orbit-db-keystore#fix/verification",
         "orbit-db-kvstore": "https://github.com/thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log",
