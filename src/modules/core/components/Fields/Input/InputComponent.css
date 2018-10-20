@@ -63,6 +63,7 @@
 .themeMinimal {
   display: block;
   padding: 5px 0;
+  width: 100%;
   border: 0;
   border-radius: 0;
   border-bottom: 1px solid var(--grey-4);
