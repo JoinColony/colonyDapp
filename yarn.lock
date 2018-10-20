@@ -723,11 +723,11 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@colony/colony-js-adapter-ethers@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.6.2.tgz#b8c73d8abb2c373e15c0fb9f5c9f1c9a29e2b143"
+"@colony/colony-js-adapter-ethers@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.7.0.tgz#5b34f61710ba8cb67e9a35780e7e3828594beecb"
   dependencies:
-    "@colony/colony-js-adapter" "^1.6.2"
+    "@colony/colony-js-adapter" "^1.7.0"
     "@colony/colony-js-contract-loader" "^1.6.2"
     "@colony/colony-js-utils" "^1.5.4"
     babel-runtime "^6.26.0"
@@ -736,6 +736,13 @@
 "@colony/colony-js-adapter@^1.6.2":
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.6.2.tgz#0fd89d56898ef13b3e0164d9b1f02199152f6687"
+  dependencies:
+    "@colony/colony-js-contract-loader" "^1.6.2"
+    bn.js "^4.11.6"
+
+"@colony/colony-js-adapter@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.7.0.tgz#3f41781f4369dcec79b58df28c702542eeaa25a4"
   dependencies:
     "@colony/colony-js-contract-loader" "^1.6.2"
     bn.js "^4.11.6"
