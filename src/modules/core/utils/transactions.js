@@ -163,7 +163,7 @@ function getMethodTxPromise<Params: *>(
 export default function* sendTransactionTask<Params: Object, EventData: Object>(
   method: Sender<Params>,
   action: TransactionAction<Params>,
-): * {
+): Saga<{ error?: Error, receipt?: Object, eventData?: EventData }> {
   let response;
   let task;
   try {
