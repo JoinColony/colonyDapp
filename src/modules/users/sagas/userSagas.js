@@ -11,8 +11,6 @@ import {
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
-import { DASHBOARD_ROUTE } from '~routes';
-
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
 
@@ -66,9 +64,6 @@ function* initializeUser(action: Object): Saga<void> {
     type: SET_CURRENT_USER,
     payload: { set: user, walletAddress: currentAddress },
   });
-
-  // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
-  yield put(replace(DASHBOARD_ROUTE));
 }
 
 function* userSagas(): any {
