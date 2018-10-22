@@ -10,7 +10,7 @@ import { withRouter } from 'react-router-dom';
 
 // import styles from './HistoryNavigation.css';
 
-const displayName = 'user.NavigationBar.HistoryNavigation';
+const displayName = 'pages.NavigationBar.HistoryNavigation';
 
 // const MSG = defineMessages({
 //   dashboardTitle: {

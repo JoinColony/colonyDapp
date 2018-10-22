@@ -11,19 +11,19 @@ import NavLink from '~core/NavLink';
 
 import styles from './UserNavigation.css';
 
-const displayName = 'user.NavigationBar.UserNavigation';
+const displayName = 'pages.NavigationBar.UserNavigation';
 
 const MSG = defineMessages({
   dashboardTitle: {
-    id: `${displayName}.dashboardTitle`,
+    id: 'pages.NavigationBar.UserNavigation.dashboardTitle',
     defaultMessage: 'Go to your Dashboard',
   },
   walletTitle: {
-    id: `${displayName}.walletTitle`,
+    id: 'pages.NavigationBar.UserNavigation.walletTitle',
     defaultMessage: 'Go to your Wallet',
   },
   inboxTitle: {
-    id: `${displayName}.inboxTitle`,
+    id: 'pages.NavigationBar.UserNavigation.inboxTitle',
     defaultMessage: 'Go to your Inbox',
   },
 });
