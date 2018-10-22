@@ -125,12 +125,12 @@ class StepHardware extends Component<Props, State> {
      * @TODO Our dev environment needs to run on HTTPS for this to work
      */
     try {
-      const wlletInstance = await hardwareWalletType.open({
+      const walletInstance = await hardwareWalletType.open({
         addressCount: 100,
       });
-      currentWallet.setNewWallet(wlletInstance);
+      currentWallet.setNewWallet(walletInstance);
       return this.setState({
-        walletChoices: wlletInstance.otherAddresses,
+        walletChoices: walletInstance.otherAddresses,
       });
     } catch (caughtError) {
       /*
