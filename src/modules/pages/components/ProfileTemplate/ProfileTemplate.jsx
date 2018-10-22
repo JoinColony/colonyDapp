@@ -5,7 +5,7 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import AvatarDropdown from '~dashboard/AvatarDropdown';
+import AvatarDropdown from '~user/AvatarDropdown';
 
 import NavigationBar from '~pages/NavigationBar';
 
