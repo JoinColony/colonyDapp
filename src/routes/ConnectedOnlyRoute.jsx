@@ -6,19 +6,57 @@ import type { ComponentType } from 'react';
 
 import { CONNECT_ROUTE } from './routeConstants';
 
+import NavigationBar from '~pages/NavigationBar';
+
+type Props = {
+  /*
+   * Route path
+   */
+  path: string,
+  /*
+   * Component to render (with or without navigation)
+   */
+  component: ComponentType<*>,
+  /*
+   * Authorization check
+   *
+   * If we're connected to a wallet, proceed to the designated route, otherwise
+   * redirect to the start page (connect route)
+   */
+  isConnected?: boolean,
+  /*
+   * Wheater or not to wrap the route's component inside the NavigationBar
+   */
+  hasNavigation?: boolean,
+};
+
 const ConnectedOnlyRoute = ({
   component: Component,
   isConnected,
+  hasNavigation = true,
+  path,
+  /*
+   * ConnectedRoute props that are passed directly to the NavigationBar
+   */
   ...rest
-}: {
-  component: ComponentType<*>,
-  isConnected?: boolean,
-}) => (
+}: Props) => (
   <Route
-    {...rest}
-    render={props =>
-      isConnected ? <Component {...props} /> : <Redirect to={CONNECT_ROUTE} />
-    }
+    path={path}
+    /*
+     * Render props that are passed directly to the route Component
+     */
+    render={props => {
+      if (isConnected) {
+        return hasNavigation ? (
+          <NavigationBar {...rest}>
+            <Component {...props} />
+          </NavigationBar>
+        ) : (
+          <Component {...props} />
+        );
+      }
+      return <Redirect to={CONNECT_ROUTE} />;
+    }}
   />
 );
 
