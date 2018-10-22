@@ -4,7 +4,7 @@ import React from 'react';
 
 import { defineMessages } from 'react-intl';
 
-import { INBOX_ROUTE, USER_ROUTE, WALLET_ROUTE } from '~routes';
+import { INBOX_ROUTE, DASHBOARD_ROUTE, WALLET_ROUTE } from '~routes';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
@@ -48,7 +48,7 @@ const UserNavigation = ({ events = mockEvents }: Props) => {
   return (
     <nav className={styles.main}>
       <NavLink
-        to={USER_ROUTE}
+        to={DASHBOARD_ROUTE}
         className={styles.navigationItem}
         activeClassName={styles.navigationItemActive}
       >
