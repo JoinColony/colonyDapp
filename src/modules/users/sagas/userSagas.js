@@ -22,6 +22,8 @@ import {
   SET_CURRENT_USER_ERROR,
 } from '../actionTypes';
 
+import { DASHBOARD_ROUTE } from '~routes';
+
 function* initializeUser(action: Object): Saga<void> {
   const { currentAddress } = action.payload;
 
@@ -61,7 +63,7 @@ function* initializeUser(action: Object): Saga<void> {
   });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
-  yield put(replace('/dashboard'));
+  yield put(replace(DASHBOARD_ROUTE));
 }
 
 function* userSagas(): any {

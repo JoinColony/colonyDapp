@@ -5,6 +5,8 @@ import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
 
+import { ADMIN_DASHBOARD_ROUTE } from '~routes';
+
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
@@ -66,7 +68,7 @@ const ColonyMeta = ({
       <Fragment>
         <span>{name}</span>
         {isAdmin && (
-          <NavLink className={styles.editColony} to="/admin/profile">
+          <NavLink className={styles.editColony} to={ADMIN_DASHBOARD_ROUTE}>
             <Icon name="settings" title={MSG.editColonyTitle} />
           </NavLink>
         )}
