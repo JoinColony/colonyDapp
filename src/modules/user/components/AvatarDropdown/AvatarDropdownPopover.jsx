@@ -48,7 +48,7 @@ type Props = {
 };
 
 class UserDropdownPopover extends Component<Props> {
-  static displayName = 'UserAvatarDropdown';
+  static displayName = 'user.AvatarDropdown.AvatarDropdownPopover';
 
   renderUserSection = () => (
     <DropdownMenuSection>

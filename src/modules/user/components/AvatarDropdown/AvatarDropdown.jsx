@@ -10,6 +10,8 @@ import styles from './AvatarDropdown.css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover.jsx';
 
+const displayName: string = 'user.AvatarDropdown';
+
 const AvatarDropdown = () => (
   <Popover
     content={({ close }) => (
@@ -26,5 +28,7 @@ const AvatarDropdown = () => (
     </button>
   </Popover>
 );
+
+AvatarDropdown.displayName = displayName;
 
 export default AvatarDropdown;
