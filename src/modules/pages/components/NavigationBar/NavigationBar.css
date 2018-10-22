@@ -1,0 +1,16 @@
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 70px auto;
+}
+
+.navigation {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.content {
+  grid-column: 1;
+  grid-row: 2;
+}
