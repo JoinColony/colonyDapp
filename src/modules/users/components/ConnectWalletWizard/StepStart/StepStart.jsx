@@ -34,9 +34,21 @@ const MSG = defineMessages({
     id: 'ConnectWalletWizard.StepStart.metaMaskTitle',
     defaultMessage: 'MetaMask',
   },
-  hardwareTitle: {
-    id: 'ConnectWalletWizard.StepStart.hardwareTitle',
-    defaultMessage: 'Hardware Wallet',
+  trezorTitle: {
+    id: 'ConnectWalletWizard.StepStart.trezorTitle',
+    defaultMessage: 'Trezor Hardware Wallet',
+  },
+  trezorSubtitle: {
+    id: 'ConnectWalletWizard.StepStart.trezorSubtitle',
+    defaultMessage: 'Login using the Trezor hardware wallet',
+  },
+  ledgerTitle: {
+    id: 'ConnectWalletWizard.StepStart.ledgerTitle',
+    defaultMessage: 'Ledger Hardware Wallet',
+  },
+  ledgerSubtitle: {
+    id: 'ConnectWalletWizard.StepStart.ledgerSubtitle',
+    defaultMessage: 'Login using the Ledger hardware wallet',
   },
   mnemonicTitle: {
     id: 'ConnectWalletWizard.StepStart.mnemonicTitle',
@@ -50,13 +62,9 @@ const MSG = defineMessages({
     id: 'ConnectWalletWizard.StepStart.metaMaskSubtitle',
     defaultMessage: 'Require MetaMask browser extension',
   },
-  hardwareSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.hardwareSubtitle',
-    defaultMessage: 'We support Ledger and Trezor',
-  },
   mnemonicSubtitle: {
     id: 'ConnectWalletWizard.StepStart.mnemonicSubtitle',
-    defaultMessage: 'Access with your mnemonic mnemonic',
+    defaultMessage: 'Access with your mnemonic',
   },
   JSONSubtitle: {
     id: 'ConnectWalletWizard.StepStart.JSONSubtitle',
@@ -65,7 +73,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: 'metamask' | 'hardware' | 'mnemonic' | 'json',
+  method: 'metamask' | 'trezor' | 'ledger' | 'mnemonic' | 'json',
 };
 
 const displayName = 'user.ConnectWalletWizard.StepStart';
@@ -78,9 +86,15 @@ const options = [
     icon: 'metamask',
   },
   {
-    value: 'hardware',
-    title: MSG.hardwareTitle,
-    subtitle: MSG.hardwareSubtitle,
+    value: 'ledger',
+    title: MSG.ledgerTitle,
+    subtitle: MSG.ledgerSubtitle,
+    icon: 'wallet',
+  },
+  {
+    value: 'trezor',
+    title: MSG.trezorTitle,
+    subtitle: MSG.trezorSubtitle,
     icon: 'wallet',
   },
   {

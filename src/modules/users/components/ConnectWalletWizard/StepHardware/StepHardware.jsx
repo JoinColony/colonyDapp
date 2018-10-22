@@ -8,6 +8,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import ledgerWallet from '@colony/purser-ledger';
+import trezorWallet from '@colony/purser-trezor';
 
 import type { WizardFormikBag } from '~core/Wizard';
 
@@ -89,6 +90,7 @@ type FormValues = {
 
 type Props = FormikProps<FormValues> & {
   context: Object,
+  hardwareWalletType: ledgerWallet | trezorWallet,
   handleDidConnectWallet: () => void,
   previousStep: () => void,
   nextStep: () => void,
@@ -113,6 +115,7 @@ class StepHardware extends Component<Props, State> {
   getWalletChoices = async () => {
     const {
       context: { currentWallet },
+      hardwareWalletType,
     } = this.props;
     /*
      * If that fails, we try to open the Ledger wallet
@@ -122,12 +125,12 @@ class StepHardware extends Component<Props, State> {
      * @TODO Our dev environment needs to run on HTTPS for this to work
      */
     try {
-      const ledgerWalletInstance = await ledgerWallet.open({
+      const walletInstance = await hardwareWalletType.open({
         addressCount: 100,
       });
-      currentWallet.setNewWallet(ledgerWalletInstance);
+      currentWallet.setNewWallet(walletInstance);
       return this.setState({
-        walletChoices: ledgerWalletInstance.otherAddresses,
+        walletChoices: walletInstance.otherAddresses,
       });
     } catch (caughtError) {
       /*
