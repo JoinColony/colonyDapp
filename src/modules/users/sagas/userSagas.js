@@ -25,3 +25,20 @@ export function* getUser(): Saga<Object> {
   const user = yield call(all, store);
   return user;
 }
+
+function* editProfile(action) {
+  const { currentAddress, update } = action.payload;
+  const ddb = yield getContext('ddb');
+  const store = ddb.getStore(currentAddress);
+  yield store.set(update);
+  const currentState = yield call(all, store);
+
+  yield put(updateUserProfile(currentState, currentAddress));
+}
+
+function* userSagas(): any {
+  yield takeLatest(EDIT_USER_PROFILE, editProfile);
+  yield takeLatest(WALLET_SET, initializeUser);
+}
+
+export default userSagas;
