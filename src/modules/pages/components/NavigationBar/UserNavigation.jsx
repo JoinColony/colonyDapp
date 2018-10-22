@@ -8,6 +8,7 @@ import { INBOX_ROUTE, USER_ROUTE, WALLET_ROUTE } from '~routes';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
+import AvatarDropdown from '~user/AvatarDropdown';
 
 import styles from './UserNavigation.css';
 
@@ -59,6 +60,7 @@ const UserNavigation = ({ events }: Props) => {
       >
         <Icon name="envelope" title={MSG.inboxTitle} />
       </NavLink>
+      <AvatarDropdown />
     </nav>
   );
 };
