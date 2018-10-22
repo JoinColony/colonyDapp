@@ -6,14 +6,39 @@ import { call, getContext } from 'redux-saga/effects';
 
 import { all } from '../../../lib/database/commands';
 
-/* TODO: User is not properly typed yet due to the temporary nature of this */
-// eslint-disable-next-line import/prefer-default-export
-export function* getUser(): Saga<Object> {
-  const ddb = yield getContext('ddb');
+import { EDIT_USER_PROFILE, WALLET_SET } from '../actionTypes';
 
-  // TODO: get the store first, if it doesn't exist, create it
-  // We also need to make sure we create the profile (ENS)
-  const store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
+import {
+  setCurrentUser,
+  setCurrentUserError,
+  updateUserProfile,
+  updateUserProfileError,
+} from '../actionCreators';
+
+function* initializeUser(action: Object): Saga<void> {
+  const { currentAddress } = action.payload;
+
+  let store;
+
+  try {
+    const DDB = yield getContext('DDB');
+    const wallet = yield getContext('currentWallet');
+    const ipfsNode = yield getContext('ipfsNode');
+    const colonyNetwork = yield getContext('colonyNetwork');
+
+    const identityProvider = new PurserIdentityProvider(wallet.instance);
+
+    const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
+
+    ddb.addResolver('user', new Resolvers.UserResolver(colonyNetwork));
+
+    yield setContext({ ddb });
+    // TODO: First try to get the store, then create it
+    store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
+  } catch (error) {
+    yield put(setCurrentUserError(error));
+    return;
+  }
 
   // TODO: We pre-fill the store here so we have something to see
   // Remove this once we can actually get a store
@@ -23,7 +48,11 @@ export function* getUser(): Saga<Object> {
   });
 
   const user = yield call(all, store);
-  return user;
+
+  yield put(setCurrentUser(user, currentAddress));
+
+  // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
+  yield put(replace(DASHBOARD_ROUTE));
 }
 
 function* editProfile(action) {
