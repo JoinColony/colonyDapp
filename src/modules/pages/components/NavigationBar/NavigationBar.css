@@ -6,10 +6,26 @@
 }
 
 .navigation {
-  padding: 16px 20px;
+  display: flex;
+  align-content: stretch;
+  padding: 0 20px;
   border: 1px solid transparent;
   grid-column: 1;
   grid-row: 1;
+}
+
+.history {
+  order: 1;
+  flex-grow: 1;
+  align-self: center;
+  text-align: left;
+}
+
+.user {
+  order: 2;
+  flex-grow: 1;
+  align-self: center;
+  text-align: right;
 }
 
 .content {

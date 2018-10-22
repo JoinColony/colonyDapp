@@ -43,8 +43,12 @@ const NavigationBar = ({
   <div className={className || getMainClasses(appearance, styles)}>
     <div className={styles.wrapper}>
       <nav className={styles.navigation}>
-        <HistoryNavigation />
-        <UserNavigation />
+        <div className={styles.history}>
+          <HistoryNavigation />
+        </div>
+        <div className={styles.user}>
+          <UserNavigation />
+        </div>
       </nav>
       <main className={styles.content}>
         {children && cloneElement(children, { ...props })}
