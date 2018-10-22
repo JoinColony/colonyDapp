@@ -4,6 +4,8 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import softwareWallet from '@colony/purser-software';
 
+import { CONNECT_ROUTE } from '~routes';
+
 import styles from './StepCreatePhrase.css';
 
 import type { SubmitFn } from '../../../core/components/Wizard';
@@ -62,7 +64,7 @@ const StepCreatePhrase = () => (
     <div className={styles.buttonsForBox}>
       <Button
         appearance={{ theme: 'ghost' }}
-        linkTo="/start"
+        linkTo={CONNECT_ROUTE}
         text={MSG.backLink}
       />
       <Button

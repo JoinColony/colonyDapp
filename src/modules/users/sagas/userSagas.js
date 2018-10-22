@@ -24,6 +24,8 @@ import {
   SET_CURRENT_USER_ERROR,
 } from '../actionTypes';
 
+import { DASHBOARD_ROUTE } from '~routes';
+
 function* initializeUser(action: Object): Saga<void> {
   const { currentAddress } = action.payload;
 

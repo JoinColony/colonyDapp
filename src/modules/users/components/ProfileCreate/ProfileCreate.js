@@ -5,6 +5,8 @@ import { createElement } from 'react';
 import { withFormik } from 'formik';
 import { compose, withHandlers } from 'recompose';
 
+import { CONNECT_ROUTE } from '~routes';
+
 import type { FormValues } from './types';
 
 import ProfileCreateForm, { validationSchema } from './ProfileCreateForm.jsx';
@@ -38,7 +40,7 @@ const enhance = compose(
   withHandlers({
     handleBack: props => () => {
       const { history } = props;
-      history.push('/start');
+      history.push(CONNECT_ROUTE);
     },
   }),
 );

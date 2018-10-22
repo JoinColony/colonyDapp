@@ -7,6 +7,8 @@ import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 
+import { COLONY_HOME_ROUTE } from '~routes';
+
 import VerticalNavigation from '~pages/VerticalNavigation';
 
 import Profile from '~admin/Profile';
@@ -87,7 +89,7 @@ const AdminDashboard = ({ colonyName = 'The Meta Colony' }: Props) => (
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
         <NavLink
-          to="/colony"
+          to={COLONY_HOME_ROUTE}
           text={MSG.backButton}
           textValues={{ colonyName }}
         />
