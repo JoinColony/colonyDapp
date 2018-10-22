@@ -61,10 +61,7 @@ function* initializeUser(action: Object): Saga<void> {
 
   const user = yield call(Commands.all, store);
 
-  yield put({
-    type: SET_CURRENT_USER,
-    payload: { set: user, walletAddress: currentAddress },
-  });
+  yield put(setCurrentUser(user, currentAddress));
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
   yield put(replace(DASHBOARD_ROUTE));
