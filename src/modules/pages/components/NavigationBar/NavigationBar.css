@@ -1,6 +1,7 @@
 .wrapper {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
+  background: var(--gradient-default);
   grid-template-columns: 100%;
   grid-template-rows: 70px auto;
 }
@@ -36,6 +37,10 @@
 /*
  * Theme-ing
  */
+
+.themeGray, .themeTransparent {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+}
 
 .themeGray .navigation {
   border-color: var(--grey-blue-0);
