@@ -12,7 +12,15 @@ import AvatarDropdown from '~user/AvatarDropdown';
 
 import styles from './UserNavigation.css';
 
-const displayName = 'pages.NavigationBar.UserNavigation';
+/*
+ * Mocked Events
+ *
+ * These should be added directly in here, so we won't have to deal with passing
+ * down of props
+ *
+ * @TODO replace this with actual events, not sure where they will me from yet
+ */
+const mockEvents = [{ handled: true }];
 
 const MSG = defineMessages({
   dashboardTitle: {
@@ -29,11 +37,13 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'pages.NavigationBar.UserNavigation';
+
 type Props = {
   events?: Array<{ handled: boolean }>,
 };
 
-const UserNavigation = ({ events }: Props) => {
+const UserNavigation = ({ events = mockEvents }: Props) => {
   const unhandled = events && !events.find(event => !event.handled);
   return (
     <nav className={styles.main}>
