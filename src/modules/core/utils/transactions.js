@@ -88,7 +88,8 @@ function* sendTransaction<Params: *>(
   txPromise: Promise<*>,
   { type, payload: { params, options } }: TransactionAction<Params>,
 ): * {
-  // Used to track the state of the transaction if it receives a transactionHash
+  // Used to track the state of the transaction before it receives
+  // a `transactionHash` property
   const transactionId = nanoid();
 
   // Dispatch a generic action to start the transaction.

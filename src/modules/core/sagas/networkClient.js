@@ -8,7 +8,7 @@ import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import ColonyNetworkClient from '@colony/colony-js-client';
 
-// TODO in #429 - reinstate this import.
+// TODO in #452 - reinstate this import.
 // import NetworkLoader from '@colony/colony-js-contract-loader-network';
 
 import {
@@ -30,7 +30,7 @@ function* initColonyNetworkClient() {
       loader = new TrufflepigLoader();
       break;
     default:
-      // TODO in #429 - reinstate the default loader and remove the error.
+      // TODO in #452 - reinstate the default loader and remove the error.
       // loader = new NetworkLoader('rinkeby');
       // break;
       throw new Error(
@@ -39,7 +39,7 @@ function* initColonyNetworkClient() {
       );
   }
 
-  // TODO in #429 - use `EthersWrappedWallet` with the wallet context (rather
+  // TODO in #452 - use `EthersWrappedWallet` with the wallet context (rather
   // than an `ethers` wallet with a private key from Trufflepig.
   const { privateKey } = yield loader.getAccount(0);
   const adapter = new EthersAdapter({
