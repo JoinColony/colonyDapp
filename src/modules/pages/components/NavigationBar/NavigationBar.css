@@ -1,4 +1,4 @@
-.main {
+.wrapper {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
   grid-template-columns: 100%;
@@ -6,6 +6,8 @@
 }
 
 .navigation {
+  padding: 16px 20px;
+  border: 1px solid transparent;
   grid-column: 1;
   grid-row: 1;
 }
@@ -13,4 +15,18 @@
 .content {
   grid-column: 1;
   grid-row: 2;
+}
+
+/*
+ * Theme-ing
+ */
+
+.themeGray .navigation {
+  border-color: var(--grey-blue-0);
+  background-color: var(--grey-blue-3);
+}
+
+.themeTransparent .navigation {
+  border-color: transparent;
+  background-color: transparent;
 }

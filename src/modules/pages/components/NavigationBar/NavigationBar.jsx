@@ -1,26 +1,55 @@
 /* @flow */
 
-import React from 'react';
+import React, { cloneElement } from 'react';
+import type { Element } from 'react';
 
 import HistoryNavigation from './HistoryNavigation.jsx';
 import UserNavigation from './UserNavigation.jsx';
 
+import { getMainClasses } from '~utils/css';
+
 import styles from './NavigationBar.css';
 
-const displayName = 'user.NavigationBar';
+const displayName = 'pages.NavigationBar';
 
-type Props = {
-  appearance: Object,
-  children: any,
+type Appearance = {
+  theme?: 'gray' | 'transparent',
 };
 
-const NavigationBar = ({ children }: Props) => (
-  <div className={styles.main}>
-    <nav className={styles.navigation}>
-      <HistoryNavigation />
-      <UserNavigation />
-    </nav>
-    <main className={styles.content}>{children}</main>
+type Props = {
+  /*
+   * Appearance object for theme-ing (see above)
+   */
+  appearance?: Appearance,
+  /*
+   * Classname to overwrite the theme object
+   */
+  className?: string,
+  /*
+   * Childrent to render in the main section
+   */
+  children?: Element<*>,
+};
+
+const NavigationBar = ({
+  children,
+  className,
+  appearance = { theme: 'gray' },
+  /*
+   * All the remaining props are passed down to the the children
+   */
+  ...props
+}: Props) => (
+  <div className={className || getMainClasses(appearance, styles)}>
+    <div className={styles.wrapper}>
+      <nav className={styles.navigation}>
+        <HistoryNavigation />
+        <UserNavigation />
+      </nav>
+      <main className={styles.content}>
+        {children && cloneElement(children, { ...props })}
+      </main>
+    </div>
   </div>
 );
 
