@@ -19,11 +19,14 @@ import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider
 import { Resolvers } from '../../../lib/database';
 import { all } from '../../../lib/database/commands';
 
+import { EDIT_USER_PROFILE, WALLET_SET } from '../actionTypes';
+
 import {
-  WALLET_SET,
-  SET_CURRENT_USER,
-  SET_CURRENT_USER_ERROR,
-} from '../actionTypes';
+  setCurrentUser,
+  setCurrentUserError,
+  updateUserProfile,
+  updateUserProfileError,
+} from '../actionCreators';
 
 function* initializeUser(action: Object): Saga<void> {
   const { currentAddress } = action.payload;
@@ -46,10 +49,7 @@ function* initializeUser(action: Object): Saga<void> {
     // TODO: First try to get the store, then create it
     store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
   } catch (error) {
-    yield put({
-      type: SET_CURRENT_USER_ERROR,
-      payload: error,
-    });
+    yield put(setCurrentUserError(error));
     return;
   }
 
@@ -62,10 +62,7 @@ function* initializeUser(action: Object): Saga<void> {
 
   const user = yield call(all, store);
 
-  yield put({
-    type: SET_CURRENT_USER,
-    payload: { set: user, walletAddress: currentAddress },
-  });
+  yield put(setCurrentUser(user, currentAddress));
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
   yield put(replace(DASHBOARD_ROUTE));
