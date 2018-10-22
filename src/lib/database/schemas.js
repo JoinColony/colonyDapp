@@ -12,10 +12,7 @@ export const UserProfile = {
   bio: yup.string(),
   // TODO: IPFS hash add yup validation for IPFS hash
   avatar: yup.string(),
-  walletAddress: yup
-    .string()
-    .address()
-    .required(),
+  walletAddress: yup.string().required(),
   // TODO: required?
   username: yup.string().required(),
   website: yup.string(),
