@@ -77,21 +77,26 @@ const Routes = ({
         isConnected={isConnected}
         path={DASHBOARD_ROUTE}
         component={Dashboard}
+        hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
+        hasNavigation={false}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
+        overwriteBackRoute={DASHBOARD_ROUTE}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={CREATE_COLONY_ROUTE}
         component={CreateColonyWizard}
+        hasNavigation={false}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
