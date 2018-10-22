@@ -2,7 +2,7 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { SET_USER_PROFILE, UPDATE_USER_PROFILE } from '../actionTypes';
+import { SET_USER_PROFILE } from '../actionTypes';
 
 import type { Action } from '~types/index';
 
