@@ -1,6 +1,6 @@
 /* @flow */
 
-import MockUser from '~user/UserProfile/__datamocks__/mockUser';
+import MockUser from '~users/UserProfile/__datamocks__/mockUser';
 
 import type { UserType } from '~types/user';
 import type { ColonyType } from '~types/colony';

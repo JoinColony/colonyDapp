@@ -218,5 +218,5 @@ class ColonyHome extends Component<Props, State> {
 }
 
 export default connect((state: Object) => ({
-  userWalletAddress: state.wallet.currentAddress,
+  userWalletAddress: state.users.currentUser.walletAddress,
 }))(ColonyHome);

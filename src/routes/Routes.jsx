@@ -11,11 +11,11 @@ import Dashboard from '~dashboard/Dashboard';
 
 import Inbox from '~dashboard/Inbox';
 
-import ConnectWalletWizard from '~user/ConnectWalletWizard';
-import CreateWalletWizard from '~user/CreateWalletWizard';
-import UserProfile from '~user/UserProfile';
-import UserProfileEdit from '~user/UserProfileEdit';
-import ProfileCreate from '~user/ProfileCreate';
+import ConnectWalletWizard from '~users/ConnectWalletWizard';
+import CreateWalletWizard from '~users/CreateWalletWizard';
+import UserProfile from '~users/UserProfile';
+import UserProfileEdit from '~users/UserProfileEdit';
+import ProfileCreate from '~users/ProfileCreate';
 
 import AdminDashboard from '~admin/AdminDashboard';
 
