@@ -3,7 +3,6 @@
   display: grid;
   padding: 15%;
   overflow: auto;
-  background: var(--gradient-default);
   grid-template-columns: auto 180px;
   grid-template-rows: 100%;
   column-gap: 80px;
