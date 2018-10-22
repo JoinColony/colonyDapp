@@ -7,7 +7,7 @@ import { getMainClasses } from '~utils/css';
 
 import AvatarDropdown from '~dashboard/AvatarDropdown';
 
-import NavigationBar from '~user/NavigationBar';
+import NavigationBar from '~pages/NavigationBar';
 
 import styles from './CenteredTemplate.css';
 
