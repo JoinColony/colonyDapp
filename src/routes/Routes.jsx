@@ -90,7 +90,7 @@ const Routes = ({
         isConnected={isConnected}
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
-        overwriteBackRoute={DASHBOARD_ROUTE}
+        backRoute={DASHBOARD_ROUTE}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
