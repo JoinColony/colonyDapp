@@ -2,6 +2,7 @@
 
 .content {
   composes: marginBottomMedium from '~styles/layout.css';
+  margin-top: 180px;
   min-width: 700px;
   background-color: var(--grey-blue-1);
 }
