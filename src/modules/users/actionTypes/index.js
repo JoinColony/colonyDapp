@@ -1,5 +1,5 @@
 /* @flow */
 
-export * from './wallet';
+export * from './walletActionTypes';
 export * from './currentUserActionTypes';
 export * from './userProfileActionTypes';
