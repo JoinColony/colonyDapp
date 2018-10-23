@@ -98,7 +98,7 @@
         "postcss-preset-env": "^6.0.10",
         "prettier": "^1.14.3",
         "react-styleguidist": "^7.0.19",
-        "react-test-renderer": "^16.1.1",
+        "react-test-renderer": "^16.6.0",
         "redux-mock-store": "^1.4.0",
         "rimraf": "^2.6.2",
         "simple-git": "^1.92.0",
