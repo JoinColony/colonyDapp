@@ -8,14 +8,16 @@ import * as yup from 'yup';
 
 import type { TokenType } from '~types/token';
 
-import ConfirmDialog from '~core/Dialog/ConfirmDialog.jsx';
+import Button from '~core/Button';
+import Dialog from '~core/Dialog';
+import DialogSection from '~core/Dialog/DialogSection.jsx';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 
 import styles from './TokenMintDialog.css';
 
 const MSG = defineMessages({
-  dialogTitle: {
+  title: {
     id: 'admin.Tokens.TokenMintDialog.dialogTitle',
     defaultMessage: 'Mint new tokens',
   },
@@ -27,6 +29,10 @@ const MSG = defineMessages({
   amountLabel: {
     id: 'admin.Tokens.TokenMintDialog.amountLabel',
     defaultMessage: 'Amount',
+  },
+  buttonCancel: {
+    id: 'admin.Tokens.TokenMintDialog.buttonCancel',
+    defaultMessage: 'Cancel',
   },
   buttonConfirm: {
     id: 'admin.Tokens.TokenMintDialog.buttonConfirm',
@@ -60,13 +66,21 @@ const validationSchema = yup.object().shape({
 });
 
 class TokenMintDialog extends Component<Props> {
+  timeoutId: TimeoutID;
+
   static displayName = 'admin.Tokens.TokenMintDialog';
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId);
+  }
 
   handleSubmitTokenForm = ({ mintAmount }: FormValues) => {
     const { close } = this.props;
     // TODO handle form data here
     console.log(mintAmount);
-    close();
+    this.timeoutId = setTimeout(() => {
+      close();
+    }, 500);
   };
 
   render() {
@@ -75,48 +89,69 @@ class TokenMintDialog extends Component<Props> {
       nativeToken: { tokenName, tokenSymbol },
     } = this.props;
     return (
-      <Form
-        initialValues={{
-          mintAmount: 0,
-        }}
-        onSubmit={this.handleSubmitTokenForm}
-        validationSchema={validationSchema}
-      >
-        {({ handleSubmit }: FormikProps<FormValues>) => (
-          <ConfirmDialog
-            cancel={cancel}
-            close={handleSubmit}
-            confirmButtonText={MSG.buttonConfirm}
-            heading={MSG.dialogTitle}
-          >
+      <Dialog cancel={cancel}>
+        <Form
+          initialValues={{
+            mintAmount: 0,
+          }}
+          onSubmit={this.handleSubmitTokenForm}
+          validationSchema={validationSchema}
+        >
+          {({
+            handleSubmit,
+            isSubmitting,
+            isValid,
+          }: FormikProps<FormValues>) => (
             <Fragment>
-              <Heading
-                appearance={{
-                  margin: 'double',
-                  size: 'normal',
-                  weight: 'thin',
-                }}
-                text={MSG.descriptionText}
-              />
-              <div className={styles.inputContainer}>
-                <div className={styles.input}>
-                  <Input
-                    appearance={{ theme: 'minimal' }}
-                    label={MSG.amountLabel}
-                    min={0}
-                    name="mintAmount"
-                    step={10}
-                    type="number"
-                  />
+              <DialogSection>
+                <Heading
+                  appearance={{ size: 'medium', margin: 'none' }}
+                  text={MSG.title}
+                />
+              </DialogSection>
+              <DialogSection>
+                <Heading
+                  appearance={{
+                    margin: 'double',
+                    size: 'normal',
+                    weight: 'thin',
+                  }}
+                  text={MSG.descriptionText}
+                />
+                <div className={styles.inputContainer}>
+                  <div className={styles.input}>
+                    <Input
+                      appearance={{ theme: 'minimal' }}
+                      label={MSG.amountLabel}
+                      min={0}
+                      name="mintAmount"
+                      step={10}
+                      type="number"
+                    />
+                  </div>
+                  <span className={styles.nativeToken} title={tokenName}>
+                    {tokenSymbol}
+                  </span>
                 </div>
-                <span className={styles.nativeToken} title={tokenName}>
-                  {tokenSymbol}
-                </span>
-              </div>
+              </DialogSection>
+              <DialogSection appearance={{ align: 'right' }}>
+                <Button
+                  appearance={{ theme: 'secondary', size: 'large' }}
+                  onClick={cancel}
+                  text={MSG.buttonCancel}
+                />
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  onClick={handleSubmit}
+                  text={MSG.buttonConfirm}
+                  loading={isSubmitting}
+                  disabled={!isValid}
+                />
+              </DialogSection>
             </Fragment>
-          </ConfirmDialog>
-        )}
-      </Form>
+          )}
+        </Form>
+      </Dialog>
     );
   }
 }
