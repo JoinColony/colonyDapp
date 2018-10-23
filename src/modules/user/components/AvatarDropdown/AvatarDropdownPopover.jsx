@@ -16,31 +16,31 @@ import type { UserType } from '~types/user';
 
 const MSG = defineMessages({
   myProfile: {
-    id: 'UserDropdownPopover.link.myProfile',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.myProfile',
     defaultMessage: 'My Profile',
   },
   settings: {
-    id: 'UserDropdownPopover.link.colonySettings',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.colonySettings',
     defaultMessage: 'Settings',
   },
   createColony: {
-    id: 'UserDropdownPopover.link.createColony',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.createColony',
     defaultMessage: 'Create a Colony',
   },
   requestFeatures: {
-    id: 'UserDropdownPopover.link.requestFeatures',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.requestFeatures',
     defaultMessage: 'Request Features',
   },
   reportBugs: {
-    id: 'UserDropdownPopover.link.reportBugs',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.reportBugs',
     defaultMessage: 'Report Bugs',
   },
   helpCenter: {
-    id: 'UserDropdownPopover.link.helpCenter',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.helpCenter',
     defaultMessage: 'Help Center',
   },
   signOut: {
-    id: 'UserDropdownPopover.link.signOut',
+    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.signOut',
     defaultMessage: 'Sign Out',
   },
 });
@@ -50,7 +50,7 @@ type Props = {
   user: UserType,
 };
 
-class UserDropdownPopover extends Component<Props> {
+class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'user.AvatarDropdown.AvatarDropdownPopover';
 
   renderUserSection = () => (
@@ -113,4 +113,4 @@ class UserDropdownPopover extends Component<Props> {
   }
 }
 
-export default UserDropdownPopover;
+export default AvatarDropdownPopover;
