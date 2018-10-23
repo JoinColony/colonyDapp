@@ -30,7 +30,11 @@ const MSG = defineMessages({
   },
   labelAdminList: {
     id: 'admin.Organizations.labelAdminList',
-    defaultMessage: 'Domains',
+    defaultMessage: 'Name',
+  },
+  labelDomainList: {
+    id: 'admin.Organizations.labelDomainList',
+    defaultMessage: 'Name',
   },
   noCurrentAdmins: {
     id: 'admin.Organizations.noCurrentAdmins',
@@ -82,7 +86,7 @@ const Organizations = () => (
           ) : (
             <Fragment>
               <Heading
-                appearance={{ size: 'small', wight: 'bold', margin: 'small' }}
+                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
                 text={MSG.labelAdminList}
               />
               <p className={styles.noCurrent}>
@@ -110,7 +114,7 @@ const Organizations = () => (
           ) : (
             <Fragment>
               <Heading
-                appearance={{ size: 'small', wight: 'bold', margin: 'small' }}
+                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
                 text={MSG.labelAdminList}
               />
               <p className={styles.noCurrent}>

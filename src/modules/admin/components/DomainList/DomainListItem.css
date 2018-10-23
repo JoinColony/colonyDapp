@@ -1,9 +1,7 @@
 /* Use td.className to be able to overwrite table styles */
 
-:root {
-  --cell-padding: 25px;
-  --name-margin: 10px;
-}
+@value cell-padding 25px;
+@value name-margin: 10px;
 
 tr.main:hover .customRemoveButton {
   display: inline-block;
@@ -11,17 +9,17 @@ tr.main:hover .customRemoveButton {
 
 td.domainDetails {
   flex-wrap: wrap;
-  padding: var(--cell-padding);
-  width: calc(100% - 226px);
+  padding: cell-padding;
+  width: calc(100% - 100px);
 }
 
 td.domainRemove {
-  padding: var(--cell-padding) var(--cell-padding);
+  padding-right: cell-padding;
   width: 150px;
 }
 
 .domainName {
-  margin-right: var(--name-margin);
+  margin-right: name-margin;
   font-weight: var(--weight-medium);
 }
 

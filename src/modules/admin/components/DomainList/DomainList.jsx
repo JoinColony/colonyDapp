@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import nanoid from 'nanoid';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -12,14 +13,14 @@ import styles from './DomainList.css';
 
 type DomainData = {
   domainName: string,
-  contributions: number,
+  contributions?: number,
 };
 
 type Props = {
   /*
    * Array of domain data
    */
-  domains: Array<DomainData>,
+  domains?: Array<DomainData>,
   /*
    * Whether to show the remove button
    * Gets passed down to `DomainListItem`
@@ -49,14 +50,20 @@ const DomainList = ({ domains, viewOnly = true, label, onRemove }: Props) => (
     <div className={styles.listWrapper}>
       <Table scrollable>
         <TableBody>
-          {domains.map((domain, currentIndex) => (
-            <DomainListItem
-              key={`${domain.domainName}${currentIndex + 1}`}
-              domain={domain}
-              viewOnly={viewOnly}
-              onRemove={() => onRemove(domain)}
-            />
-          ))}
+          {domains ? (
+            domains.map((domain, currentIndex) => (
+              <DomainListItem
+                key={nanoid(currentIndex)}
+                domain={domain}
+                viewOnly={viewOnly}
+                onRemove={() => onRemove(domain)}
+              />
+            ))
+          ) : (
+            <div>
+              {/* //TODO: Add empty state here once we have it designed */}
+            </div>
+          )}
         </TableBody>
       </Table>
     </div>
