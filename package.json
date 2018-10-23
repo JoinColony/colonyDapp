@@ -152,7 +152,7 @@
         "orbit-db-kvstore": "https://github.com/thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log",
         "orbit-db-store": "https://github.com/thiagodelgado111/orbit-db-store#fix/sync",
         "prop-types": "^15.6.2",
-        "react": "^16.4.1",
+        "react": "^16.6.0",
         "react-beautiful-dnd": "^9.0.0",
         "react-day-picker": "^7.1.10",
         "react-dom": "^16.4.1",
