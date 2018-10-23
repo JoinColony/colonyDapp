@@ -4,6 +4,7 @@
  * User Action Types
  */
 
+export const EDIT_USER_PROFILE = 'user/EDIT_USER_PROFILE';
 export const UPDATE_USER_PROFILE = 'users/UPDATE_USER_PROFILE';
 export const UPDATE_USER_PROFILE_ERROR = 'users/UPDATE_USER_PROFILE_ERROR';
 
