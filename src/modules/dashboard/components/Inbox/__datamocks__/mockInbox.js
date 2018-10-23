@@ -12,6 +12,8 @@ const mockInbox = [
       walletAddress: '0xdeadbeef',
       username: 'Brad Pitt',
     },
+    unread: false,
+    type: 'notification',
   },
   {
     id: 2,
@@ -24,6 +26,8 @@ const mockInbox = [
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
     },
+    unread: true,
+    type: 'notification',
   },
   {
     id: 3,
@@ -36,6 +40,8 @@ const mockInbox = [
       walletAddress: '0xbeefdwad',
       username: 'Cornelia Bodenbaum',
     },
+    unread: true,
+    type: 'action',
   },
   {
     id: 4,
@@ -48,6 +54,8 @@ const mockInbox = [
       walletAddress: '0xbeefdeid',
       username: 'Stefan Zweig',
     },
+    unread: false,
+    type: 'notification',
   },
   {
     id: 5,
@@ -60,6 +68,8 @@ const mockInbox = [
       walletAddress: '0xbeefdeid',
       username: 'Carlos Martinez',
     },
+    unread: true,
+    type: 'notification',
   },
   {
     id: 6,
@@ -72,6 +82,8 @@ const mockInbox = [
       walletAddress: '0xbeefdeid',
       username: 'Ludwig Kartoffelstampfer',
     },
+    unread: false,
+    type: 'notification',
   },
   {
     id: 7,
@@ -84,6 +96,8 @@ const mockInbox = [
       walletAddress: '0xbeefdeid',
       username: 'Axel Mäusezahn',
     },
+    unread: false,
+    type: 'notification',
   },
 ];
 

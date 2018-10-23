@@ -6,6 +6,8 @@ export type InboxAction =
   | 'addedSkillTag'
   | 'assignedUser';
 
+export type ActionType = 'action' | 'notification';
+
 export type InboxElement = {
   id: number,
   action: InboxAction,
@@ -17,4 +19,6 @@ export type InboxElement = {
     walletAddress: string,
     username: string,
   },
+  unread: boolean,
+  type: ActionType,
 };
