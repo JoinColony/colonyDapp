@@ -4,6 +4,7 @@ import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import type { TokenType } from '~types/token';
 
@@ -31,6 +32,14 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokenMintDialog.buttonConfirm',
     defaultMessage: 'Confirm',
   },
+  errorAmountMin: {
+    id: 'admin.Tokens.TokenMintDialog.errorAmountMin',
+    defaultMessage: 'Please enter an amount greater than 0.',
+  },
+  errorAmountRequired: {
+    id: 'admin.Tokens.TokenMintDialog.errorAmountRequired',
+    defaultMessage: 'Please enter an amount greater than 0.',
+  },
 });
 
 type FormValues = {
@@ -42,6 +51,13 @@ type Props = {
   close: () => void,
   nativeToken: TokenType,
 };
+
+const validationSchema = yup.object().shape({
+  mintAmount: yup
+    .number()
+    .required(MSG.errorAmountRequired)
+    .min(1, MSG.errorAmountMin),
+});
 
 class TokenMintDialog extends Component<Props> {
   static displayName = 'admin.Tokens.TokenMintDialog';
@@ -61,9 +77,10 @@ class TokenMintDialog extends Component<Props> {
     return (
       <Form
         initialValues={{
-          mintAmount: null,
+          mintAmount: 0,
         }}
         onSubmit={this.handleSubmitTokenForm}
+        validationSchema={validationSchema}
       >
         {({ handleSubmit }: FormikProps<FormValues>) => (
           <ConfirmDialog
