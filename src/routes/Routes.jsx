@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -39,7 +39,11 @@ import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 
 const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
-const Routes = ({ walletAddress }: { walletAddress?: string }) => {
+const Routes = ({
+  currentUser: { walletAddress },
+}: {
+  currentUser: { walletAddress?: string },
+}) => {
   const isConnected = !!walletAddress;
   return (
     <Switch>
@@ -119,9 +123,10 @@ const Routes = ({ walletAddress }: { walletAddress?: string }) => {
   );
 };
 
-export default withRouter(
-  connect(
-    ({ user: { currentUser } }) => currentUser || {},
-    null,
-  )(Routes),
-);
+export default connect(
+  ({ user: { currentUser }, router: { location } }) => ({
+    currentUser: currentUser || {},
+    location,
+  }),
+  null,
+)(Routes);
