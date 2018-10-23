@@ -55,17 +55,14 @@ const TransactionList = ({
   onEtherscan,
 }: Props) => (
   <div>
-    {label && (
-      <Heading
-        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-        text={label}
-      />
-    )}
-    {transactions &&
-      /*
-       * Needs to be typecast, otherwise React will just print the value (eg: 0)
-       */
-      !!transactions.length && (
+    {transactions && transactions.length ? (
+      <div>
+        {label && (
+          <Heading
+            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+            text={label}
+          />
+        )}
         <Table scrollable>
           <TableBody>
             {transactions.map((transaction: TransactionType) => (
@@ -94,7 +91,8 @@ const TransactionList = ({
             ))}
           </TableBody>
         </Table>
-      )}
+      </div>
+    ) : null}
   </div>
 );
 
