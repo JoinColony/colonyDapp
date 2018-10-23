@@ -24,20 +24,20 @@ const mockEvents = [{ handled: true }];
 
 const MSG = defineMessages({
   dashboardTitle: {
-    id: 'pages.NavigationBar.UserNavigation.dashboardTitle',
+    id: 'pages.NavigationWrapper.UserNavigation.dashboardTitle',
     defaultMessage: 'Go to your Dashboard',
   },
   walletTitle: {
-    id: 'pages.NavigationBar.UserNavigation.walletTitle',
+    id: 'pages.NavigationWrapper.UserNavigation.walletTitle',
     defaultMessage: 'Go to your Wallet',
   },
   inboxTitle: {
-    id: 'pages.NavigationBar.UserNavigation.inboxTitle',
+    id: 'pages.NavigationWrapper.UserNavigation.inboxTitle',
     defaultMessage: 'Go to your Inbox',
   },
 });
 
-const displayName = 'pages.NavigationBar.UserNavigation';
+const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 type Props = {
   events?: Array<{ handled: boolean }>,
