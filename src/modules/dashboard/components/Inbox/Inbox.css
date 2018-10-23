@@ -1,5 +1,6 @@
 
 .inboxContainer {
+  flex-grow: 1;
   height: 525px;
   max-width: 940px;
   box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);

@@ -19,16 +19,33 @@ import type { InboxElement } from './types';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Inbox.Inbox.title',
+    id: 'dashboard.Inbox.title',
     defaultMessage: 'Inbox',
   },
   markAllRead: {
-    id: 'dashboard.Inbox.Inbox.markAllRead',
+    id: 'dashboard.Inbox.markAllRead',
     defaultMessage: 'Mark all as read',
   },
 });
 
 const displayName = 'dashboard.Inbox';
+
+const sortItems = items =>
+  items
+    // sort by date, newest first
+    .sort((a, b) => b.createdAt - a.createdAt)
+    // set `type` to first word of camelCase event type
+    // either `action` or `notification`
+    .map(item => ({ ...item, type: item.event.split(/[A-Z]/)[0] }))
+    // move unread `action` events to front
+    .sort((a, b) => {
+      // $FlowFixMe doesn't recognise that b.type will now be set
+      if (a.unread && a.type === 'action' && (b.type !== 'action' || !b.unread))
+        return -1;
+      if (b.unread && b.type === 'action' && (a.type !== 'action' || !a.unread))
+        return 1;
+      return 0;
+    });
 
 const Inbox = ({
   inboxItems,
@@ -73,10 +90,15 @@ class MockInbox extends Component<{}, { inboxItems: Array<InboxElement> }> {
     inboxItems: mockInbox,
   };
 
+  componentDidMount() {
+    this.setState(({ inboxItems }) => ({ inboxItems: sortItems(inboxItems) }));
+  }
+
   markAsRead = (id: number) =>
     this.setState(prev => {
       const { inboxItems } = prev;
-      inboxItems[id - 1].unread = false;
+      const found = inboxItems.find(item => item.id === id);
+      if (found) found.unread = false;
       return { inboxItems };
     });
 

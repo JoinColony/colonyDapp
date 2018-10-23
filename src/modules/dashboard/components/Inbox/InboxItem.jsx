@@ -1,43 +1,18 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import camelcase from 'camelcase';
+import { FormattedMessage } from 'react-intl';
+import { Link } from 'react-router-dom';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 
+import type { Node } from 'react';
 import styles from './InboxItem.css';
+import MSG from './messages';
 
-import type { InboxElement, InboxAction, ActionType } from './types';
-
-const MSG = defineMessages({
-  actionAddedSkillTag: {
-    id: 'dashboard.Inbox.InboxItem.actionAddedSkillTag',
-    defaultMessage: '{user} added skill tag to: {task}',
-  },
-  actionAssignedUser: {
-    id: 'dashboard.Inbox.InboxItem.actionAssignedUser',
-    defaultMessage: '{user} assigned you a task: {task}',
-  },
-  actionCommentedOn: {
-    id: 'dashboard.Inbox.InboxItem.actionCommentedOn',
-    defaultMessage: '{user} commented on: {task}',
-  },
-  actionAsksToConfirmAssignment: {
-    id: 'dashboard.Inbox.InboxItem.actionAsksToConfirmAssignment',
-    defaultMessage: '{user} asks to confirm assignment: {task}',
-  },
-  actionAssignedYouATask: {
-    id: 'dashboard.Inbox.InboxItem.actionAssignedYouATask',
-    defaultMessage: '{user} assigned you a task: {task}',
-  },
-  inboxMeta: {
-    id: 'dashboard.Inbox.InboxItem.inboxMeta',
-    defaultMessage: '{colonyName} in {domain}',
-  },
-});
+import type { InboxElement, EventType } from './types';
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
@@ -46,10 +21,19 @@ type Props = {
   markAsRead: (id: number) => void,
 };
 
-const getEventActionKey = (actionType: InboxAction) =>
-  camelcase(`action-${actionType}`);
+const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
+  value ? (
+    <span className={styles.inboxDetail}>
+      {formatFn ? formatFn(value) : value}
+    </span>
+  ) : null;
 
-const UnreadIndicator = ({ type }: { type: ActionType }) => (
+const getType = (event: string): EventType => {
+  const type = event.split(/[A-Z]/)[0];
+  return type === 'action' || type === 'notification' ? type : 'notification';
+};
+
+const UnreadIndicator = ({ type }: { type: EventType }) => (
   <div
     className={`${styles.inboxUnread} ${
       type === 'action'
@@ -59,8 +43,31 @@ const UnreadIndicator = ({ type }: { type: ActionType }) => (
   />
 );
 
+const ConditionalLink = ({ to, children }: { to?: string, children: Node }) =>
+  to ? (
+    <Link to={to}>
+      <div className={styles.inboxDetails}>{children}</div>
+    </Link>
+  ) : (
+    <div className={styles.inboxDetails}>{children}</div>
+  );
+
 const InboxItem = ({
-  item: { id, user, action, task, domain, colonyName, createdAt, unread, type },
+  item: {
+    amount,
+    colonyName,
+    comment,
+    createdAt,
+    domainName,
+    dueDate,
+    event,
+    id,
+    otherUser,
+    taskName,
+    unread,
+    user,
+    onClickRoute,
+  },
   markAsRead,
 }: Props) => (
   <TableRow
@@ -68,46 +75,70 @@ const InboxItem = ({
     onClick={() => unread && markAsRead(id)}
   >
     <TableCell className={styles.inboxRowCell}>
-      <div className={styles.inboxDetails}>
-        {unread && <UnreadIndicator type={type} />}
-        <UserAvatar
-          size="xxs"
-          walletAddress={user.walletAddress}
-          username={user.username}
-          className={styles.UserAvatar}
-        />
+      <ConditionalLink to={onClickRoute}>
+        {unread && <UnreadIndicator type={getType(event)} />}
+        {user && (
+          <UserAvatar
+            size="xxs"
+            walletAddress={user.walletAddress}
+            username={user.username}
+            className={styles.UserAvatar}
+          />
+        )}
+
         <FormattedMessage
           className={styles.inboxAction}
-          {...MSG[getEventActionKey(action)]}
+          {...MSG[event]}
           values={{
-            user: (
-              <span className={styles.inboxDetail} title={user.username}>
-                {user.username}
-              </span>
+            amount: makeInboxDetail(
+              amount,
+              value => `${value.unit}${value.value}`,
             ),
-            task: (
-              <span className={styles.inboxDetail} title={user.username}>
-                {task}
-              </span>
-            ),
+            colony: makeInboxDetail(colonyName),
+            comment: makeInboxDetail(comment),
+            domain: makeInboxDetail(domainName),
+            other: makeInboxDetail(otherUser),
+            task: makeInboxDetail(taskName),
+            time: makeInboxDetail(dueDate, value => (
+              <TimeRelative value={value} />
+            )),
+            user: makeInboxDetail(user, value => value.username),
           }}
         />
 
         <span className={styles.additionalDetails}>
-          <FormattedMessage
-            {...MSG.inboxMeta}
-            values={{
-              colonyName,
-              domain,
-            }}
-          />
+          {colonyName && domainName ? (
+            <FormattedMessage
+              {...MSG.metaColonyAndDomain}
+              values={{
+                colony: colonyName,
+                domain: domainName,
+              }}
+            />
+          ) : (
+            <FormattedMessage
+              {...MSG.metaColonyOnly}
+              values={{
+                colony: colonyName,
+              }}
+            />
+          )}
+
+          {amount && (
+            <span>
+              <span className={styles.pipe}>|</span>
+              <span className={styles.amount}>
+                {amount.unit} {amount.value}
+              </span>
+            </span>
+          )}
 
           <span className={styles.pipe}>|</span>
           <span className={styles.time}>
             <TimeRelative value={createdAt} />
           </span>
         </span>
-      </div>
+      </ConditionalLink>
     </TableCell>
   </TableRow>
 );
