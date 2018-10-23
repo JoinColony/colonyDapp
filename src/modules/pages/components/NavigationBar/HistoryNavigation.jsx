@@ -26,15 +26,15 @@ type Props = {
   /*
    * If set, the the back link will redirect back to a specific route
    */
-  overwriteBackRoute?: string,
+  backRoute?: string,
   /*
    * If set, it will change the default back link text
    */
-  overwriteBackText?: string | MessageDescriptor,
+  backText?: string | MessageDescriptor,
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  overwriteBackTextValues?: Object,
+  backTextValues?: Object,
   /*
    * Browser history object injected so that we can access the previous route
    */
@@ -47,22 +47,22 @@ type Props = {
 
 const HistoryNavigation = ({
   history,
-  overwriteBackRoute,
-  overwriteBackText,
-  overwriteBackTextValues,
+  backRoute,
+  backText,
+  backTextValues,
   intl: { formatMessage },
 }: Props) => {
   let linkText: string = formatMessage(MSG.backHistoryLink);
-  if (overwriteBackText) {
+  if (backText) {
     linkText =
-      typeof overwriteBackText === 'string'
-        ? overwriteBackText
-        : formatMessage(overwriteBackText, overwriteBackTextValues);
+      typeof backText === 'string'
+        ? backText
+        : formatMessage(backText, backTextValues);
   }
   return (
     <div className={styles.main}>
-      {overwriteBackRoute ? (
-        <NavLink to={overwriteBackRoute} className={styles.back}>
+      {backRoute ? (
+        <NavLink to={backRoute} className={styles.back}>
           <Icon
             name="circle-back"
             title={linkText}

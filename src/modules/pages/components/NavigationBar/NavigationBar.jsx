@@ -30,15 +30,15 @@ type Props = {
   /*
    * If set, the the back link will redirect back to a specific route
    */
-  overwriteBackRoute?: string,
+  backRoute?: string,
   /*
    * If set, it will change the default back link text
    */
-  overwriteBackText?: string | MessageDescriptor,
+  backText?: string | MessageDescriptor,
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  overwriteBackTextValues?: Object,
+  backTextValues?: Object,
   /*
    * Apperance object
    *
@@ -46,9 +46,9 @@ type Props = {
    */
   appearance?: Appearance,
   /*
-   * Classname to overwrite the main themes
+   * Classname to  the main themes
    *
-   * Seting this will overwrite the theme classes
+   * Seting this will  the theme classes
    */
   className?: string,
   /*
@@ -63,9 +63,9 @@ type Props = {
 const NavigationBar = ({
   hasBackLink = true,
   hasUserNavigation = true,
-  overwriteBackRoute,
-  overwriteBackText,
-  overwriteBackTextValues,
+  backRoute,
+  backText,
+  backTextValues,
   children,
   className,
   appearance = { theme: 'gray' },
@@ -80,9 +80,9 @@ const NavigationBar = ({
         {hasBackLink && (
           <div className={styles.history}>
             <HistoryNavigation
-              overwriteBackRoute={overwriteBackRoute}
-              overwriteBackText={overwriteBackText}
-              overwriteBackTextValues={overwriteBackTextValues}
+              backRoute={backRoute}
+              backText={backText}
+              backTextValues={backTextValues}
             />
           </div>
         )}
