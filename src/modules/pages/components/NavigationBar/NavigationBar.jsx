@@ -40,7 +40,7 @@ type Props = {
    */
   backTextValues?: Object,
   /*
-   * Apperance object
+   * Appearance object
    *
    * It's recommended you use this to keep designs standardized
    */
@@ -48,7 +48,7 @@ type Props = {
   /*
    * Classname to  the main themes
    *
-   * Seting this will  the theme classes
+   * Setting this will  the theme classes
    */
   className?: string,
   /*
