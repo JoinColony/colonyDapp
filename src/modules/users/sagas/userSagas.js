@@ -25,7 +25,6 @@ import {
   setCurrentUser,
   setCurrentUserError,
   updateUserProfile,
-  updateUserProfileError,
 } from '../actionCreators';
 
 function* initializeUser(action: Object): Saga<void> {
