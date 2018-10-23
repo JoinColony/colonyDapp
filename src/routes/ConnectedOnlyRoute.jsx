@@ -6,7 +6,7 @@ import type { ComponentType } from 'react';
 
 import { CONNECT_ROUTE } from './routeConstants';
 
-import NavigationBar from '~pages/NavigationBar';
+import NavigationWrapper from '~pages/NavigationWrapper';
 
 type Props = {
   /*
@@ -48,9 +48,9 @@ const ConnectedOnlyRoute = ({
     render={props => {
       if (isConnected) {
         return hasNavigation ? (
-          <NavigationBar {...rest}>
+          <NavigationWrapper {...rest}>
             <Component {...props} />
-          </NavigationBar>
+          </NavigationWrapper>
         ) : (
           <Component {...props} />
         );

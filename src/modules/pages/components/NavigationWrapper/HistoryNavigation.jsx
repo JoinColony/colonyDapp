@@ -13,11 +13,11 @@ import NavLink from '~core/NavLink';
 
 import styles from './HistoryNavigation.css';
 
-const displayName = 'pages.NavigationBar.HistoryNavigation';
+const displayName = 'pages.NavigationWrapper.HistoryNavigation';
 
 const MSG = defineMessages({
   backHistoryLink: {
-    id: `pages.NavigationBar.HistoryNavigation.backHistoryLink`,
+    id: `pages.NavigationWrapper.HistoryNavigation.backHistoryLink`,
     defaultMessage: 'Go back',
   },
 });

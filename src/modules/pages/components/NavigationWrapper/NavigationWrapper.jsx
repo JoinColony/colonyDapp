@@ -10,9 +10,9 @@ import UserNavigation from './UserNavigation.jsx';
 
 import { getMainClasses } from '~utils/css';
 
-import styles from './NavigationBar.css';
+import styles from './NavigationWrapper.css';
 
-const displayName = 'pages.NavigationBar';
+const displayName = 'pages.NavigationWrapper';
 
 type Appearance = {
   theme?: 'grey' | 'transparent',
@@ -60,7 +60,7 @@ type Props = {
   children: Element<*>,
 };
 
-const NavigationBar = ({
+const NavigationWrapper = ({
   hasBackLink = true,
   hasUserNavigation = true,
   backRoute,
@@ -99,6 +99,6 @@ const NavigationBar = ({
   </div>
 );
 
-NavigationBar.displayName = displayName;
+NavigationWrapper.displayName = displayName;
 
-export default NavigationBar;
+export default NavigationWrapper;
