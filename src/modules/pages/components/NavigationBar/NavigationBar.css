@@ -38,11 +38,11 @@
  * Theme-ing
  */
 
-.themeGray, .themeTransparent {
+.themeGrey, .themeTransparent {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
 }
 
-.themeGray .navigation {
+.themeGrey .navigation {
   border-color: var(--grey-blue-0);
   background-color: var(--grey-blue-3);
 }
