@@ -12,11 +12,11 @@ import type { TransactionType } from '~types/transaction';
 
 const MSG = defineMessages({
   fromText: {
-    id: 'admin.TransactionList.TransactionListItem.TransactionDetails.fromText',
+    id: 'admin.TransactionList.TransactionDetails.fromText',
     defaultMessage: 'From {senderString}',
   },
   toText: {
-    id: 'admin.TransactionList.TransactionListItem.TransactionDetails.toText',
+    id: 'admin.TransactionList.TransactionDetails.toText',
     defaultMessage: 'To {recipientString}',
   },
 });
@@ -24,8 +24,7 @@ const MSG = defineMessages({
 /*
  * And the chain goes on... :(
  */
-const displayName =
-  'admin.TransactionList.TransactionListItem.TransactionDetails';
+const displayName = 'admin.TransactionList.TransactionDetails';
 
 type Props = {
   /*
