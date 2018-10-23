@@ -15,7 +15,7 @@ import styles from './NavigationBar.css';
 const displayName = 'pages.NavigationBar';
 
 type Appearance = {
-  theme?: 'gray' | 'transparent',
+  theme?: 'grey' | 'transparent',
 };
 
 type Props = {
@@ -68,7 +68,7 @@ const NavigationBar = ({
   backTextValues,
   children,
   className,
-  appearance = { theme: 'gray' },
+  appearance = { theme: 'grey' },
   /*
    * All the remaining props are passed down to the the children
    */
