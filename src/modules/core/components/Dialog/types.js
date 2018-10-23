@@ -9,6 +9,7 @@ export type Close = (val: any) => void;
 export type DialogComponent = ComponentType<{
   cancel: Cancel,
   close: Close,
+  [string]: any,
 }>;
 
 export type DialogType = {

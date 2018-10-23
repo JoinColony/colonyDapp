@@ -6,7 +6,7 @@ import { createElement } from 'react';
 
 import { Consumer } from './DialogProvider.jsx';
 
-const withDialog = () => (Component: ComponentType<Object>) => (
+const withDialog = () => (Component: ComponentType<{ [string]: any }>) => (
   props: Object,
 ) =>
   createElement(Consumer, null, value =>

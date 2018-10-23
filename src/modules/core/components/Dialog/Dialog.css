@@ -1,11 +1,30 @@
 .modal {
+  position: relative;
   z-index: var(--z-index-dialog);
   outline: none;
 }
 
 .main {
   width: 560px;
-  position: relative;
   border-radius: var(--radius-large);
   background-color: var(--colony-white);
+}
+
+.dialogOuterActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -25px;
+  position: absolute;
+  right: 0;
+}
+
+.closeIconButton {
+  padding: 0;
+  border: 0;
+  background: 0;
+}
+
+.closeIconButton svg {
+  fill: var(--colony-white);
+  stroke: var(--colony-white);
 }

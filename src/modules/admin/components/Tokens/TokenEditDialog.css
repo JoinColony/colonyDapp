@@ -18,8 +18,3 @@
 .tokenChoiceSymbol {
   margin: 0 10px;
 }
-
-.modalFooter {
-  display: flex;
-  justify-content: flex-end;
-}
