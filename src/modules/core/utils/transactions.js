@@ -158,6 +158,43 @@ function getMethodTxPromise<Params: *>(
 }
 
 /**
+ * Given a method and success/error action types, return a saga function
+ * that calls the given method and `put`s the given success/error action.
+ */
+export function methodSagaFactory<Params: Object, EventData: Object>(
+  method: Sender<Params, EventData>,
+  successType,
+  errorType,
+) {
+  return function* methodSaga(
+    action: TransactionAction<Params>,
+  ): Saga<typeof undefined> {
+    try {
+      // Execute the send transaction task and get the error/success response.
+      const {
+        error,
+        receipt,
+        eventData,
+      }: {
+        error?: Error,
+        receipt?: Object,
+        eventData?: EventData,
+      } = yield call(sendTransactionTask, method, action);
+
+      // Depending on the response, `put` the given success/error action.
+      yield put(
+        error
+          ? { type: errorType, payload: error }
+          : { type: successType, payload: { receipt, eventData } },
+      );
+    } catch (error) {
+      // Unexpected errors `put` the given error action.
+      yield put({ type: errorType, payload: error });
+    }
+  };
+}
+
+/**
  * Given a contract method and an action to send a transaction, execute a task
  * to send the transaction, and return the transaction response.
  */
