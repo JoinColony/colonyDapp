@@ -71,22 +71,8 @@ const TransactionList = ({
                 transaction={transaction}
                 showMaskedAddress={showMaskedAddress}
                 incoming={transaction.to === currentColonyAddress}
-                /*
-                 * Only pass down the onClaim prop if one was provided
-                 */
-                {...(typeof onClaim === 'function'
-                  ? {
-                      onClaim: () => onClaim(transaction),
-                    }
-                  : {})}
-                /*
-                 * Only pass down the onEtherscan prop if one was provided
-                 */
-                {...(typeof onEtherscan === 'function'
-                  ? {
-                      onEtherscan: () => onEtherscan(transaction),
-                    }
-                  : {})}
+                onClaim={onClaim}
+                onEtherscan={onEtherscan}
               />
             ))}
           </TableBody>

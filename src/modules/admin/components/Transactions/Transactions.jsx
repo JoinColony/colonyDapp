@@ -50,7 +50,7 @@ const colonyAddress: string = '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507';
  *
  * This should be done somewhere in a `reselect` maybe?
  */
-const augmentedTransactions: Array<TransactionType> = [].map(
+const augmentedTransactions: Array<TransactionType> = mockTransactions.map(
   (transaction: TransactionType): TransactionType => {
     const { to, from, nonce } = transaction;
     return Object.assign({}, transaction, {

@@ -56,7 +56,7 @@ type Props = {
    * Method to call when clicking the 'Claim' button
    * Only by setting this method, will the actual button show up
    */
-  onClaim: TransactionType => any,
+  onClaim?: TransactionType => any,
   /*
    * Method to call when clicking the 'Etherscan' button
    * This should. in theory redirect you to etherscan, but it can be customized
@@ -113,7 +113,7 @@ const TransactionListItem = ({
             <div className={styles.buttonWrapper}>
               <Button
                 text={MSG.buttonClaim}
-                onClick={onClaim}
+                onClick={() => onClaim(transaction)}
                 className={styles.customButton}
               />
             </div>
@@ -122,7 +122,7 @@ const TransactionListItem = ({
           <div className={styles.etherscanButtonWrapper}>
             <Button
               text={MSG.buttonEtherscan}
-              onClick={onEtherscan}
+              onClick={() => onEtherscan(transaction)}
               className={styles.customButton}
             />
           </div>
