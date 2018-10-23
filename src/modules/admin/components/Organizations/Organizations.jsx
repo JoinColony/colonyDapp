@@ -30,20 +30,24 @@ const MSG = defineMessages({
   },
   labelAdminList: {
     id: 'admin.Organizations.labelAdminList',
-    defaultMessage: 'Domains',
+    defaultMessage: 'Name',
+  },
+  labelDomainList: {
+    id: 'admin.Organizations.labelDomainList',
+    defaultMessage: 'Name',
   },
   noCurrentAdmins: {
     id: 'admin.Organizations.noCurrentAdmins',
     defaultMessage: `
-      It looks like no admins are currently added to this colony. You can add one
-      by selecting it from the list above.
+      It looks like no admins are currently added to this colony.
+      You can add one by selecting it from the list above.
     `,
   },
   noCurrentDomains: {
     id: 'admin.Organizations.noCurrentDomains',
     defaultMessage: `
-      It looks like no domains are currently added to this colony. You can add one
-      by adding through the input field above.
+      It looks like no domains are currently added to this colony.
+      You can add one by adding through the input field above.
     `,
   },
 });
@@ -97,21 +101,22 @@ const Organizations = () => (
         <OrganizationAddDomains availableAdmins={domainMocks} />
         <div className={styles.domainListWrapper}>
           {/*
-            * DomainList follows the design principles from TaskList in dashboard,
-            * but if it turns out we're going to use this in multiple places,
-            * we should consider moving it to core
-            */}
+           * DomainList follows the design principles from TaskList in dashboard,
+           * but if it turns out we're going to use this in multiple places,
+           * we should consider moving it to core
+           */}
           {domainMocks && domainMocks.length ? (
             <DomainList
               domains={domainMocks}
               label={MSG.labelAdminList}
               viewOnly={false}
+              // eslint-disable-next-line no-console
               onRemove={console.log}
             />
           ) : (
             <Fragment>
               <Heading
-                appearance={{ size: 'small', wight: 'bold', margin: 'small' }}
+                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
                 text={MSG.labelAdminList}
               />
               <p className={styles.noCurrent}>

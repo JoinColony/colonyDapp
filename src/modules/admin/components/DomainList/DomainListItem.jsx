@@ -23,7 +23,7 @@ const displayName = 'admin.DomainList.DomainListItem';
 
 type DomainData = {
   domainName: string,
-  contributions: number,
+  contributions?: number,
 };
 
 type Props = {
@@ -40,7 +40,7 @@ type Props = {
 };
 
 const DomainListItem = ({
-  domain: { domainName = '', contributions = 0 },
+  domain: { domainName = '', contributions },
   viewOnly = true,
   onRemove,
 }: Props) => (
@@ -49,9 +49,11 @@ const DomainListItem = ({
       <span className={styles.domainName} title={domainName}>
         #{domainName}
       </span>
-      <span className={styles.contributions}>
-        <FormattedMessage values={{ contributions }} {...MSG.contributions} />
-      </span>
+      {contributions && (
+        <span className={styles.contributions}>
+          <FormattedMessage values={{ contributions }} {...MSG.contributions} />
+        </span>
+      )}
     </TableCell>
     <TableCell className={styles.userRemove}>
       {!viewOnly && (

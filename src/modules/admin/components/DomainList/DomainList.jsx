@@ -1,27 +1,26 @@
 /* @flow */
 
 import React from 'react';
+import nanoid from 'nanoid';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
+import type { MessageDescriptor } from 'react-intl';
 import DomainListItem from './DomainListItem.jsx';
 
 import styles from './DomainList.css';
 
-import type { MessageDescriptor } from 'react-intl';
-import type { UserData } from '~core/SingleUserPicker';
-
 type DomainData = {
   domainName: string,
-  contributions: number,
+  contributions?: number,
 };
 
 type Props = {
   /*
-   * Array of user data, follows the same format as UserPicker
+   * Array of domain data
    */
-  domains: Array<DomainData>,
+  domains?: Array<DomainData>,
   /*
    * Whether to show the remove button
    * Gets passed down to `DomainListItem`
@@ -32,10 +31,10 @@ type Props = {
    */
   label?: string | MessageDescriptor,
   /*
-   * Method to call when removing the user
+   * Method to call when removing the domain
    * Gets passed down to `DomainListItem`
    */
-  onRemove: UserData => any,
+  onRemove: DomainData => any,
 };
 
 const displayName: string = 'admin.DomainList';
@@ -51,14 +50,20 @@ const DomainList = ({ domains, viewOnly = true, label, onRemove }: Props) => (
     <div className={styles.listWrapper}>
       <Table scrollable>
         <TableBody>
-          {domains.map((domain, currentIndex) => (
-            <DomainListItem
-              key={`${domain.domainName}${currentIndex + 1}`}
-              domain={domain}
-              viewOnly={viewOnly}
-              onRemove={() => onRemove(domain)}
-            />
-          ))}
+          {domains ? (
+            domains.map((domain, currentIndex) => (
+              <DomainListItem
+                key={nanoid(currentIndex)}
+                domain={domain}
+                viewOnly={viewOnly}
+                onRemove={() => onRemove(domain)}
+              />
+            ))
+          ) : (
+            <div>
+              {/* //TODO: Add empty state here once we have it designed */}
+            </div>
+          )}
         </TableBody>
       </Table>
     </div>
