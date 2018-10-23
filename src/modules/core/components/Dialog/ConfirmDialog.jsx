@@ -8,9 +8,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
-
-import styles from './ConfirmDialog.css';
 
 import Dialog from './Dialog.jsx';
 import DialogSection from './DialogSection.jsx';
@@ -56,11 +53,6 @@ const ConfirmDialog = ({
   confirmButtonText = MSG.defaultConfirmButton,
 }: Props) => (
   <Dialog cancel={cancel}>
-    <div className={styles.dialogOuterActions}>
-      <button type="button" className={styles.closeIconButton} onClick={cancel}>
-        <Icon name="circle-close" title={cancelButtonText} />
-      </button>
-    </div>
     <DialogSection>
       <Heading appearance={{ size: 'medium', margin: 'none' }} text={heading} />
     </DialogSection>
