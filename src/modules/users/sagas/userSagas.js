@@ -9,7 +9,6 @@ import {
   getContext,
   setContext,
 } from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
 
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
