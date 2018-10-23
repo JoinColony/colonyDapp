@@ -126,6 +126,10 @@ const Routes = ({
 export default connect(
   ({ user: { currentUser }, router: { location } }) => ({
     currentUser: currentUser || {},
+    // The `location` prop is given to the component to ensure that updates
+    // are not blocked when the location changes (e.g. redirects).
+    // `withRouter()` could accomplish the same thing, but it is slightly
+    // less performant: https://github.com/ReactTraining/react-router/pull/5552#issuecomment-331502281
     location,
   }),
   null,
