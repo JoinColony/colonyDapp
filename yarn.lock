@@ -12306,9 +12306,9 @@ react-icons@^2.2.7:
   dependencies:
     react-icon-base "2.1.0"
 
-react-intl@^2.4.0:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-2.7.1.tgz#1223e3cc632d75ce33cc8acb44df0fff1818bf51"
+react-intl@^2.7.2:
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-2.7.2.tgz#efe97e3fc0e99b4e88a6e6150854d3d1852a4381"
   dependencies:
     hoist-non-react-statics "^2.5.5"
     intl-format-cache "^2.0.5"
