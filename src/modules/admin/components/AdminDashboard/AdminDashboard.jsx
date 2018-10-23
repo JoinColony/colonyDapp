@@ -43,7 +43,7 @@ const MSG = defineMessages({
   },
   tabTransaction: {
     id: 'dashboard.Admin.tabTransaction',
-    defaultMessage: 'Transaction',
+    defaultMessage: 'Transactions',
   },
   tabOrganisation: {
     id: 'dashboard.Admin.tabOrganisation',
