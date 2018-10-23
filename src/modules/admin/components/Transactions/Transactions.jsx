@@ -50,7 +50,7 @@ const colonyAddress: string = '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507';
  *
  * This should be done somewhere in a `reselect` maybe?
  */
-const augmentedTransactions: Array<TransactionType> = mockTransactions.map(
+const augmentedTransactions: Array<TransactionType> = [].map(
   (transaction: TransactionType): TransactionType => {
     const { to, from, nonce } = transaction;
     return Object.assign({}, transaction, {
@@ -94,20 +94,16 @@ const Transactions = () => (
       />
     </div>
     <div className={styles.transactionsWrapper}>
-      {augmentedPendingTransactions &&
-        /*
-         * Needs to be typecast, otherwise React will just print the value (eg: 0)
-         */
-        !!augmentedPendingTransactions.length && (
-          <div className={styles.pendingTransactionsWrapper}>
-            <TransactionList
-              label={MSG.pendingTransactionsTitle}
-              currentColonyAddress={colonyAddress}
-              transactions={augmentedPendingTransactions}
-              onClaim={handleClaim}
-            />
-          </div>
-        )}
+      {augmentedPendingTransactions && augmentedPendingTransactions.length ? (
+        <div className={styles.pendingTransactionsWrapper}>
+          <TransactionList
+            label={MSG.pendingTransactionsTitle}
+            currentColonyAddress={colonyAddress}
+            transactions={augmentedPendingTransactions}
+            onClaim={handleClaim}
+          />
+        </div>
+      ) : null}
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
           label={MSG.transactionHistoryTitle}
