@@ -3,10 +3,14 @@
 /*
  * Wallet Action Types
  */
+export const WALLET_SET = 'users/WALLET_SET';
+export const WALLET_SET_ERROR = 'users/WALLET_SET_ERROR';
+export const WALLET_CLEARED = 'users/WALLET_CLEARED';
 
-export const CHANGE_WALLET = 'wallet/CHANGE';
-export const CHANGE_WALLET_ERROR = 'wallet/CHANGE_ERROR';
+export const OPEN_MNEMONIC_WALLET = 'users/WALLET_OPEN_MNEMONIC';
+export const OPEN_METAMASK_WALLET = 'users/WALLET_OPEN_METAMASK';
+export const OPEN_HARDWARE_WALLET = 'users/WALLET_OPEN_HARDWARE';
+export const OPEN_KEYSTORE_WALLET = 'users/WALLET_OPEN_KEYSTORE';
 
-export const WALLET_FETCH_ACCOUNTS = 'wallet/FETCH_ACCOUNTS';
-export const WALLET_FETCH_ACCOUNTS_ERROR = 'wallet/FETCH_ACCOUNTS_ERROR';
-export const WALLET_FETCHED_ACCOUNTS = 'wallet/FETCHED_ACCOUNTS';
+export const CREATE_WALLET = 'users/WALLET_CREATE';
+export const CREATE_WALLET_ERROR = 'users/WALLET_CREATE_ERROR';
