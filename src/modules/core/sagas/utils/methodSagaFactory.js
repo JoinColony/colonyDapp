@@ -6,7 +6,7 @@ import { call, put } from 'redux-saga/effects';
 
 import type { TransactionAction, Sender } from '../../types';
 
-import { sendTransaction } from './sendTransaction';
+import sendMethodTransaction from './sendMethodTransaction';
 
 /**
  * Given a method and success/error action types, return a saga function
@@ -14,8 +14,8 @@ import { sendTransaction } from './sendTransaction';
  */
 export default function methodSagaFactory<Params: Object, EventData: Object>(
   method: Sender<Params, EventData>,
-  successType,
-  errorType,
+  successType: string,
+  errorType: string,
 ) {
   return function* methodSaga(
     action: TransactionAction<Params>,
@@ -30,7 +30,7 @@ export default function methodSagaFactory<Params: Object, EventData: Object>(
         error?: Error,
         receipt?: Object,
         eventData?: EventData,
-      } = yield call(sendTransaction, method, action);
+      } = yield call(sendMethodTransaction, method, action);
 
       // Depending on the response, `put` the given success/error action.
       yield put(

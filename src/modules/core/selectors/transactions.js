@@ -8,7 +8,7 @@ import type { Transaction, TransactionsState } from '../types';
 
 type State = { [typeof ns]: { transactions: TransactionsState } };
 
-type TransactionSelector = (tx: Transaction) => Boolean;
+type TransactionSelector = (tx: Transaction) => boolean;
 
 type TransactionsSelector = (state: State) => TransactionsState;
 
@@ -20,7 +20,7 @@ const isPending: TransactionSelector = ({ hash }) => !hash;
 // TODO for `isConfirmed`, ideally we should count the confirmations and
 // ensure that a minimum threshold is met.
 const isConfirmed: TransactionSelector = tx =>
-  tx.receiptReceived && Object.hasOwnProperty.call(tx, 'eventData');
+  !!(tx.receiptReceived && Object.hasOwnProperty.call(tx, 'eventData'));
 
 /**
  * Transactions sorting functions.
@@ -41,7 +41,7 @@ const createdAtDesc = (
  * )(PendingTxsComponent);
  */
 export const allTransactions: TransactionsSelector = state =>
-  state.getIn([ns, 'transactions']);
+  state[ns].transactions;
 export const pendingTransactions: TransactionsSelector = createSelector(
   allTransactions,
   transactions => transactions.filter(isPending).sort(createdAtDesc),

@@ -4,7 +4,7 @@ import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 
 import type { Map as ImmutableMap } from 'immutable';
 
-export type Sender<Params: Object> = {
+export type Sender<Params: Object, EventData: Object> = {
   client: {
     adapter: {
       provider: {
@@ -13,7 +13,10 @@ export type Sender<Params: Object> = {
       },
     },
   },
-  send(params: Params, options: SendOptions): Promise<ContractResponse<*>>,
+  send(
+    params: Params,
+    options: SendOptions,
+  ): Promise<ContractResponse<EventData>>,
 };
 
 export type TransactionAction<Params: Object> = {

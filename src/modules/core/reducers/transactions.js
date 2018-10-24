@@ -14,13 +14,13 @@ import type { TransactionsState, TransactionId } from '../types';
 
 type Action = {
   type: string,
-  payload: { id: TransactionId }, // `id` is required, but the type is unsealed
+  payload: { id: TransactionId } & Object, // `id` is required, but the type is unsealed
 };
 
 const transactionsReducer = (
   state: TransactionsState = new ImmutableMap(),
-  { type, payload = {} }: Action = {},
-): State => {
+  { type, payload }: Action = {},
+): TransactionsState => {
   switch (type) {
     case TRANSACTION_STARTED: {
       const { actionType, createdAt, id, options, params } = payload;

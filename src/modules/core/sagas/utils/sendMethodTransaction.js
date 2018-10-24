@@ -12,8 +12,8 @@ import { getTransactionResponse, sendTransaction } from './sendTransaction';
  * Given a method and a transaction action, create a promise for sending the
  * transaction with the method.
  */
-function getMethodTxPromise<Params: *>(
-  method: Sender<Params>,
+function getMethodTxPromise<Params: *, EventData: *>(
+  method: Sender<Params, EventData>,
   { payload: { params, options } }: TransactionAction<Params>,
 ) {
   return method.send(
@@ -30,7 +30,7 @@ export default function* sendMethodTransaction<
   Params: Object,
   EventData: Object,
 >(
-  method: Sender<Params>,
+  method: Sender<Params, EventData>,
   action: TransactionAction<Params>,
 ): Saga<{ error?: Error, receipt?: Object, eventData?: EventData }> {
   let response;
