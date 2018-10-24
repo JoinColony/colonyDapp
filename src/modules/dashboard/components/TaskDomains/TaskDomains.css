@@ -23,23 +23,21 @@
  * styles to different classes
  */
 .domain {
+  overflow: hidden;
   font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--grey-dark);
 }
 
 .currentDomain {
   composes: domain;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.domainListWrapper {
-  padding: 12px;
 }
 
 .domainList {
-  width: 340px;
+  padding: 12px;
+  width: 300px;
+  border-bottom: 1px solid var(--grey-blue-0);
 }
 
 .domainList li {
@@ -50,7 +48,7 @@
   composes: domain;
   display: block;
   margin: 0;
-  padding: 0;
+  padding: 0 12px 0 0;
   width: 100%;
   border: none;
   background-color: transparent;
@@ -65,4 +63,9 @@
 
 .selectedDomain .domainItem {
   color: var(--colony-blue);
+}
+
+.domainControls {
+  padding: 12px;
+  text-align: right;
 }
