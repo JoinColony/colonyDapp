@@ -1,0 +1,82 @@
+.main {
+  display: block;
+}
+
+.delegate {
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  opacity: 0;
+}
+
+.checkbox {
+  display: inline-block;
+  flex: 0 0 auto;
+  margin: 0 5px 0 3px; /* left margin to fix box-shadow on focus in overflow situations */
+  height: 18px;
+  width: 18px;
+  position: relative;
+  border: 1px solid var(--primary);
+  border-radius: 2px;
+  background-color: var(--colony-white);
+}
+
+.delegate:focus + .checkbox {
+  box-shadow: 0 0 3px 1px var(--primary);
+}
+
+.checkmark {
+  display: inline-block;
+  height: 80%;
+  width: 80%;
+  position: absolute;
+  top: -20%;
+  transform: rotate(45deg);
+}
+
+/* Theme */
+
+.themeDark .checkbox {
+  background-color: var(--temp-grey-2);
+}
+
+/* Direction */
+
+.directionHorizontal {
+  display: inline-block;
+}
+
+.directionVertical {
+  display: block;
+}
+
+/* State */
+
+.stateIsChecked .checkbox .checkmark::before {
+  height: 80%;
+  width: 2px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  content: '';
+}
+
+.stateIsChecked .checkbox .checkmark::after {
+  height: 2px;
+  width: 40%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  content: '';
+}
+
+.stateDisabled .checkbox {
+  border-color: var(--grey-5);
+}
+
+.stateDisabled .checkbox .checkmark::before,
+.stateDisabled .checkbox .checkmark::after {
+  background-color: var(--grey-5);
+}

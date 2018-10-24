@@ -31,5 +31,16 @@ function address(msg) {
   });
 }
 
+function includes(searchVal, msg) {
+  return this.test({
+    name: 'includes',
+    message: msg || en.mixed.required,
+    test(value) {
+      return value.includes(searchVal);
+    },
+  });
+}
+
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
 yup.addMethod(yup.string, 'address', address);
+yup.addMethod(yup.array, 'includes', includes);

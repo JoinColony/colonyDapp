@@ -1,5 +1,6 @@
 /* @flow */
 
+export { default as Checkbox } from './Checkbox';
 export { default as Form, ActionForm } from './Form';
 export { default as FormStatus } from './FormStatus';
 export { default as FieldSet } from './FieldSet';

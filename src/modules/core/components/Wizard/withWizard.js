@@ -24,9 +24,7 @@ type State = {
 type StepType = {
   Step: ComponentType<any>,
   onSubmit: SubmitFn<AnyValues> | ActionSubmit<AnyValues>,
-  validationSchema?:
-    | ValidationSchema
-    | (({ [string]: any }) => ValidationSchema),
+  validationSchema?: ValidationSchema | (() => ValidationSchema),
   formikConfig?: Object,
 };
 
