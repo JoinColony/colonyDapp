@@ -42,9 +42,13 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokenMintDialog.errorAmountMin',
     defaultMessage: 'Please enter an amount greater than 0.',
   },
+  errorAmountNumeral: {
+    id: 'admin.Tokens.TokenMintDialog.errorAmountNumeral',
+    defaultMessage: 'Please enter a number.',
+  },
   errorAmountRequired: {
     id: 'admin.Tokens.TokenMintDialog.errorAmountRequired',
-    defaultMessage: 'Please enter an amount greater than 0.',
+    defaultMessage: 'Please enter an amount.',
   },
 });
 
@@ -60,7 +64,7 @@ type Props = {
 
 const validationSchema = yup.object().shape({
   mintAmount: yup
-    .number()
+    .number(MSG.errorAmountNumeral)
     .required(MSG.errorAmountRequired)
     .min(0.000000000000000001, MSG.errorAmountMin),
 });
