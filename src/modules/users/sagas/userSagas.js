@@ -16,8 +16,7 @@ import { DASHBOARD_ROUTE } from '~routes';
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
 
-import { Resolvers } from '../../../lib/database';
-import { all } from '../../../lib/database/commands';
+import { Commands, Resolvers } from '../../../lib/database';
 import {
   SET_CURRENT_USER,
   SET_CURRENT_USER_ERROR,
@@ -60,7 +59,7 @@ function* initializeUser(action: Object): Saga<void> {
     bio: 'from Texas',
   });
 
-  const user = yield call(all, store);
+  const user = yield call(Commands.all, store);
 
   yield put({
     type: SET_CURRENT_USER,
@@ -78,7 +77,7 @@ function* editProfile(action) {
   const store = ddb.getStore(currentAddress);
 
   yield store.set(update);
-  const user = yield call(all, store);
+  const user = yield call(Commands.all, store);
 
   yield put({
     type: SET_CURRENT_USER,
