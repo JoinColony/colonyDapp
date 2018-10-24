@@ -28,22 +28,21 @@ const transactionsReducer = (
     }
     case TRANSACTION_SENT: {
       const { id, hash } = payload;
-      return state.set(id, { ...state.get(id), hash });
+      return state.setIn([id, 'hash'], hash);
     }
     case TRANSACTION_RECEIPT_RECEIVED: {
       const { id } = payload;
-      return state.set(id, { ...state.get(id), receiptReceived: true });
+      return state.setIn([id, 'receiptReceived'], true);
     }
     case TRANSACTION_EVENT_DATA_RECEIVED: {
       const { eventData, id } = payload;
-      return state.set(id, { ...state.get(id), eventData });
+      return state.setIn([id, 'eventData'], eventData);
     }
     case TRANSACTION_ERROR: {
       const { error, id } = payload;
-      return state.update(id, tx => ({
-        ...tx,
-        errors: (tx.errors || []).concat(error),
-      }));
+      return state.updateIn([id, 'errors'], (errors = []) =>
+        errors.concat(error),
+      );
     }
     default:
       return state;
