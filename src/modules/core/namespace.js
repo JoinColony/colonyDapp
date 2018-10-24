@@ -1,4 +1,5 @@
 /* @flow */
 
-// eslint-disable-next-line import/prefer-default-export
-export const CORE_NAMESPACE = 'core';
+const CORE_NAMESPACE = 'core';
+
+export default CORE_NAMESPACE;

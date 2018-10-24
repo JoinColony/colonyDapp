@@ -1,6 +1,6 @@
 /* @flow */
 
-import { CORE_NAMESPACE as ns } from '../namespace';
+import ns from '../namespace';
 
 export const LOAD_COLONY_NETWORK = `${ns}/LOAD_COLONY_NETWORK`;
 export const LOAD_COLONY_NETWORK_ERROR = `${ns}/LOAD_COLONY_NETWORK_ERROR`;

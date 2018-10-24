@@ -6,7 +6,7 @@ import ns from '../namespace';
 
 import type { Transaction, TransactionsState } from '../types';
 
-type State = { [ns]: { transactions: TransactionsState } };
+type State = { [typeof ns]: { transactions: TransactionsState } };
 
 type TransactionSelector = (tx: Transaction) => Boolean;
 

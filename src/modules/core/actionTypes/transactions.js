@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import { CORE_NAMESPACE as ns } from '../namespace';
+import ns from '../namespace';
 
 export const TRANSACTION_ERROR = `${ns}/TRANSACTION_ERROR`;
 export const TRANSACTION_EVENT_DATA_RECEIVED = `${ns}/TRANSACTION_EVENT_DATA_RECEIVED`;
