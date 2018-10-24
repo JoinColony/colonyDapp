@@ -172,7 +172,7 @@ class TaskDomains extends Component<Props, State> {
             placement="bottom"
             onClose={this.handleCleanup}
             content={({ close }) => (
-              <div>
+              <div className={styles.domainsWrapper}>
                 <ul className={styles.domainList}>
                   {allDomains.map((domain: ConsumableDomain) =>
                     this.renderDomainListItem(domain),

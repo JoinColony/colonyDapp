@@ -1,3 +1,5 @@
+@value paddingValue: 12px;
+
 .main {
   padding-right: 20px;
   width: 100%;
@@ -34,10 +36,14 @@
   composes: domain;
 }
 
+.domainsWrapper {
+  padding: paddingValue;
+}
+
 .domainList {
-  padding: 12px;
+  max-height: 250px;
   width: 300px;
-  border-bottom: 1px solid var(--grey-blue-0);
+  overflow: auto;
 }
 
 .domainList li {
@@ -48,8 +54,8 @@
   composes: domain;
   display: block;
   margin: 0;
-  padding: 0 12px 0 0;
-  width: 100%;
+  padding: 0 paddingValue 0 0;
+  width: calc(100% - paddingValue);
   border: none;
   background-color: transparent;
   text-align: left;
@@ -66,6 +72,8 @@
 }
 
 .domainControls {
-  padding: 12px;
+  margin-top: paddingValue;
+  padding: paddingValue 0 0 0;
+  border-top: 1px solid var(--grey-blue-0);
   text-align: right;
 }
