@@ -20,6 +20,8 @@ import userMocks from './__datamocks__/mockUsers';
 import userMock from '~dashboard/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
 
+const displayName = 'dashboard.Task';
+
 const MSG = defineMessages({
   assignmentFunding: {
     id: 'dashboard.Task.assignmentFunding',
@@ -126,7 +128,7 @@ const Task = ({ colonyName = 'The Meta Colony' }: Props) => {
                 </header>
                 {/* //TODO: replace this with TaskAssignment
                 component in colonyDapp#445 */}
-                <div className={styles.assignmentAndFunding}>
+                <div className={styles.section}>
                   <SingleUserPicker
                     name="assignee"
                     itemComponent={ItemDefault}
@@ -189,12 +191,12 @@ const Task = ({ colonyName = 'The Meta Colony' }: Props) => {
               <section className={styles.header}>
                 {isTaskCreator ? (
                   <Button
-                    appearance={{ theme: 'primary', size: 'medium' }}
+                    appearance={{ theme: 'primary' }}
                     text={MSG.closeTask}
                   />
                 ) : (
                   <Button
-                    appearance={{ theme: 'primary', size: 'medium' }}
+                    appearance={{ theme: 'primary' }}
                     text={MSG.requestToWork}
                   />
                 )}
@@ -210,5 +212,7 @@ const Task = ({ colonyName = 'The Meta Colony' }: Props) => {
     </div>
   );
 };
+
+Task.displayName = displayName;
 
 export default Task;

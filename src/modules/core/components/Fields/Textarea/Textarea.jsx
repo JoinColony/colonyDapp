@@ -21,6 +21,7 @@ type Appearance = {
   resizable?: 'both' | 'horizontal' | 'vertical',
   direction?: 'horizontal',
   colorSchema?: 'dark' | 'transparent',
+  size?: 'small',
 };
 
 type Props = {
