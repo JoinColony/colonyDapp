@@ -5,6 +5,7 @@ import type { Saga } from 'redux-saga';
 import {
   call,
   put,
+  select,
   takeLatest,
   getContext,
   setContext,
@@ -18,8 +19,10 @@ import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider
 
 import { Commands, Resolvers } from '../../../lib/database';
 import {
+  FETCH_USER_PROFILE,
   SET_CURRENT_USER,
   SET_CURRENT_USER_ERROR,
+  SET_USER_PROFILE,
   EDIT_USER_PROFILE,
   WALLET_SET,
 } from '../actionTypes';
@@ -108,8 +111,23 @@ function* editProfile(action: Object): Saga<void> {
   });
 }
 
+function* fetchProfile(): Saga<void> {
+  const username = select(state => state.router.location.pathname).slice(1);
+
+  const ddb = yield getContext('ddb');
+  const store = yield call([ddb, ddb.getStore], username);
+
+  const user = yield call(Commands.all, store);
+
+  yield put({
+    type: SET_USER_PROFILE,
+    payload: { set: user, walletAddress: user.walletAddress },
+  });
+}
+
 function* userSagas(): any {
   yield takeLatest(EDIT_USER_PROFILE, editProfile);
+  yield takeLatest(FETCH_USER_PROFILE, fetchProfile);
   yield takeLatest(WALLET_SET, initializeUser);
 }
 
