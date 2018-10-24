@@ -31,7 +31,9 @@ type ConsumableDomain = {
   name: string,
 };
 
-type Props = {};
+type Props = {
+  isTaskCreator?: boolean,
+};
 
 type State = {
   /*
@@ -155,6 +157,7 @@ class TaskDomains extends Component<Props, State> {
   render() {
     const {
       state: { setDomain: setDomainId, listTouched },
+      props: { isTaskCreator = false },
       allDomains,
     } = this;
     const currentDomain: ConsumableDomain | void = allDomains.find(
@@ -167,39 +170,41 @@ class TaskDomains extends Component<Props, State> {
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.title}
           />
-          <Popover
-            trigger="click"
-            placement="bottom"
-            onClose={this.handleCleanup}
-            content={({ close }) => (
-              <div className={styles.domainsWrapper}>
-                <ul className={styles.domainList}>
-                  {allDomains.map((domain: ConsumableDomain) =>
-                    this.renderDomainListItem(domain),
-                  )}
-                </ul>
-                <div className={styles.domainControls}>
-                  <Button
-                    appearance={{ theme: 'secondary' }}
-                    text={{ id: 'button.cancel' }}
-                    onClick={() => this.handleCleanup(close)}
-                  />
-                  <Button
-                    appearance={{ theme: 'primary' }}
-                    text={{ id: 'button.confirm' }}
-                    disabled={!listTouched}
-                    onClick={() => this.handleSetDomain(close)}
-                  />
+          {isTaskCreator && (
+            <Popover
+              trigger="click"
+              placement="bottom"
+              onClose={this.handleCleanup}
+              content={({ close }) => (
+                <div className={styles.domainsWrapper}>
+                  <ul className={styles.domainList}>
+                    {allDomains.map((domain: ConsumableDomain) =>
+                      this.renderDomainListItem(domain),
+                    )}
+                  </ul>
+                  <div className={styles.domainControls}>
+                    <Button
+                      appearance={{ theme: 'secondary' }}
+                      text={{ id: 'button.cancel' }}
+                      onClick={() => this.handleCleanup(close)}
+                    />
+                    <Button
+                      appearance={{ theme: 'primary' }}
+                      text={{ id: 'button.confirm' }}
+                      disabled={!listTouched}
+                      onClick={() => this.handleSetDomain(close)}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-          >
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={MSG.selectDomain}
-              textValues={{ domainSelected: setDomainId }}
-            />
-          </Popover>
+              )}
+            >
+              <Button
+                appearance={{ theme: 'blue', size: 'small' }}
+                text={MSG.selectDomain}
+                textValues={{ domainSelected: setDomainId }}
+              />
+            </Popover>
+          )}
         </div>
         <div className={styles.currentDomain}>
           {currentDomain && `#${currentDomain.name}`}
