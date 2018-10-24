@@ -19,9 +19,6 @@ import KVStore from './KVStore';
 // TODO: better typing
 type Resolver = Object;
 
-type DatabaseOptions = {
-  resolver: Resolver,
-};
 type OrbitStoreCreateOpts = {
   directory?: string,
   write?: string[],
@@ -50,7 +47,6 @@ const STORE_CLASSES = {
 };
 
 const SCHEMAS: Map<string, Schema> = new Map();
-const Resolvers: Map<string, Resolver> = new Map();
 
 /**
  * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
@@ -62,14 +58,14 @@ class DDB {
 
   _stores: Map<string, Store>;
 
-  _options: DatabaseOptions;
+  _resolvers: Map<string, Resolver>;
 
   static registerSchema(schemaId: string, schema: Schema) {
     SCHEMAS.set(schemaId, schema);
   }
 
-  static addResolver(resolverId: string, resolver: Resolver) {
-    Resolvers.set(resolverId, resolver);
+  addResolver(resolverId: string, resolver: Resolver) {
+    this._resolvers.set(resolverId, resolver);
   }
 
   static getStoreClass(storeType: StoreType) {
@@ -79,24 +75,19 @@ class DDB {
   static async createDatabase(
     ipfsNode: IPFSNode,
     identityProvider: IdentityProvider,
-    options: DatabaseOptions,
   ): Promise<DDB> {
     const identity = await identityProvider.createIdentity();
     await ipfsNode.ready;
-    return new DDB(ipfsNode, identity, options);
+    return new DDB(ipfsNode, identity);
   }
 
-  constructor(
-    ipfsNode: IPFSNode,
-    identity: Identity,
-    options: DatabaseOptions,
-  ) {
+  constructor(ipfsNode: IPFSNode, identity: Identity) {
     this._stores = new Map();
+    this._resolvers = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
       path: 'colonyOrbitdb',
     });
-    this._options = options;
   }
 
   async getStore(
@@ -145,12 +136,11 @@ class DDB {
       : null;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async _resolveStoreAddress(identifier: string): Promise<string | null> {
+  _resolveStoreAddress(identifier: string): Promise<string | null> {
     const [resolverKey, id] = identifier.split('.');
     if (!resolverKey || !id) return null;
 
-    const resolver = Resolvers.get(resolverKey);
+    const resolver = this._resolvers.get(resolverKey);
     if (!resolver) {
       throw new Error(
         `Resolver with key ${resolverKey} not found. Did you register it?`,
