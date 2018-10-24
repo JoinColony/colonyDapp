@@ -53,13 +53,14 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  mintAmount: string,
+  mintAmount: number,
 };
 
 type Props = {
   cancel: () => void,
   close: () => void,
   nativeToken: TokenType,
+  handleMintNewTokensSubmit: (tokenSymbol: string, amount: number) => void,
 };
 
 const validationSchema = yup.object().shape({
@@ -79,11 +80,15 @@ class TokenMintDialog extends Component<Props> {
   }
 
   handleSubmitTokenForm = ({ mintAmount }: FormValues) => {
-    const { close } = this.props;
+    const {
+      close,
+      handleMintNewTokensSubmit,
+      nativeToken: { tokenSymbol },
+    } = this.props;
     // TODO handle form data here
-    console.log(mintAmount);
     this.timeoutId = setTimeout(() => {
       close();
+      handleMintNewTokensSubmit(tokenSymbol, mintAmount);
     }, 500);
   };
 
