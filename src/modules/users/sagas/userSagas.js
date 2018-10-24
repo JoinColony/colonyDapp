@@ -61,7 +61,10 @@ function* initializeUser(action: Object): Saga<void> {
 
   const user = yield call(Commands.all, store);
 
-  yield put(setCurrentUser(user, currentAddress));
+  yield put({
+    type: SET_CURRENT_USER,
+    payload: { set: user, walletAddress: currentAddress },
+  });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
   yield put(replace(DASHBOARD_ROUTE));
@@ -93,11 +96,16 @@ function* editProfile(action: Object): Saga<void> {
 function* editProfile(action) {
   const { currentAddress, update } = action.payload;
   const ddb = yield getContext('ddb');
+  // TODO create stores so that they can be retrieved with currentAddress
   const store = ddb.getStore(currentAddress);
-  yield store.set(update);
-  const currentState = yield call(all, store);
 
-  yield put(updateUserProfile(currentState, currentAddress));
+  yield store.set(update);
+  const user = yield call(all, store);
+
+  yield put({
+    type: SET_CURRENT_USER,
+    payload: { set: user, walletAddress: currentAddress },
+  });
 }
 
 function* userSagas(): any {
