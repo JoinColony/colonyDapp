@@ -18,7 +18,7 @@ import { replace } from 'connected-react-router';
 import { DASHBOARD_ROUTE } from '~routes';
 
 import type { TransactionAction } from '../../core/types';
-import sendTransactionTask from '../../core/utils/transactions';
+import methodSagaFactory from '../../core/sagas/utils/methodSagaFactory';
 
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
 // `decimals` entries included.
@@ -36,10 +36,6 @@ import {
   GET_TOKEN_INFO_SUCCESS,
 } from '../actionTypes';
 
-/**
- * Given a method name and success/error action types, return a saga function
- * that calls the given method and `put`s the given success/error action.
- */
 function networkMethodSagaFactory<Params: Object, EventData: Object>(
   methodName,
   successType,
@@ -47,32 +43,22 @@ function networkMethodSagaFactory<Params: Object, EventData: Object>(
 ) {
   return function* networkMethodSaga(
     action: TransactionAction<Params>,
-  ): Saga<typeof undefined> {
+  ): Saga<void> {
     try {
       // Get the named method from the `networkClient` context.
       const {
         instance: { [methodName]: method },
       } = yield getContext('networkClient');
 
-      // Execute the send transaction task and get the error/success response.
-      const {
-        error,
-        receipt,
-        eventData,
-      }: {
-        error?: Error,
-        receipt?: Object,
-        eventData?: EventData,
-      } = yield call(sendTransactionTask, method, action);
-
-      // Depending on the response, `put` the given success/error action.
-      yield put(
-        error
-          ? { type: errorType, payload: error }
-          : { type: successType, payload: { receipt, eventData } },
+      // Create a saga for this method and given success/error action types,
+      // then immediately call it with the given action.
+      const saga = methodSagaFactory<Params, EventData>(
+        method,
+        successType,
+        errorType,
       );
+      yield call(saga, action);
     } catch (error) {
-      // Unexpected errors `put` the given error action.
       yield put({ type: errorType, payload: error });
     }
   };
