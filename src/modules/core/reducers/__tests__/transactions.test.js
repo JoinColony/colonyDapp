@@ -1,14 +1,16 @@
+import { Map as ImmutableMap } from 'immutable';
+
 import reducer from '../transactions';
 
 import {
-  TRANSACTION_STARTED,
-  TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_EVENT_DATA_ERROR,
-  TRANSACTION_RECEIPT_ERROR,
-  TRANSACTION_SEND_ERROR,
-  TRANSACTION_RECEIPT_RECEIVED,
-  TRANSACTION_SENT,
-} from '../../actionTypes';
+  sendTransaction,
+  startTransaction,
+  transactionEventDataError,
+  transactionEventDataReceived,
+  transactionReceiptError,
+  transactionReceiptReceived,
+  transactionSendError,
+} from '../../actionCreators';
 
 const testActions = (actions, initialState) =>
   actions.reduce((state, [action, assertions]) => {
@@ -19,12 +21,10 @@ const testActions = (actions, initialState) =>
 
 describe(`core: reducers (transactions)`, () => {
   test('Initial state', () => {
-    expect(
-      reducer(undefined, { type: 'NOT_SUPPORTED_BY_THIS_REDUCER' }),
-    ).toEqual({
-      pending: {},
-      outgoing: {},
+    const newState = reducer(undefined, {
+      type: 'NOT_SUPPORTED_BY_THIS_REDUCER',
     });
+    expect(newState).toEqual(new ImmutableMap());
   });
 
   const actionType = 'my action type';
@@ -32,149 +32,97 @@ describe(`core: reducers (transactions)`, () => {
   const hash = 'my transaction hash';
   const options = { gasPrice: 4 };
   const params = { param1: 123 };
-  const transactionId = 'my transaction id';
+  const id = 'my transaction id';
 
-  const initialState = {
-    pending: {
-      someOtherTxId: {
-        actionType: 'some other action type',
-      },
+  const initialState = new ImmutableMap({
+    'some tx id': {
+      actionType: 'some other action type',
+      createdAt: new Date(2018, 0, 1),
     },
-    outgoing: {
-      someOtherTxHash: {
-        actionType: 'different action type',
-        receiptReceived: true,
-      },
-    },
-  };
+  });
 
   // Actions
-  const startTransaction = {
-    type: TRANSACTION_STARTED,
-    payload: {
-      actionType,
-      options,
-      params,
-      transactionId,
-    },
-  };
-  const sendTransaction = {
-    type: TRANSACTION_SENT,
-    payload: {
-      hash,
-      transactionId,
-    },
-  };
-  const receiptReceived = {
-    type: TRANSACTION_RECEIPT_RECEIVED,
-    payload: {
-      hash,
-    },
-  };
-  const eventDataReceived = {
-    type: TRANSACTION_EVENT_DATA_RECEIVED,
-    payload: {
-      eventData,
-      hash,
-    },
-  };
-  const sendError = {
-    type: TRANSACTION_SEND_ERROR,
-    payload: {
-      sendError: 'send error',
-      transactionId,
-    },
-  };
-  const receiptError = {
-    type: TRANSACTION_RECEIPT_ERROR,
-    payload: {
-      receiptError: 'receipt error',
-      hash,
-    },
-  };
-  const eventDataError = {
-    type: TRANSACTION_EVENT_DATA_ERROR,
-    payload: {
-      eventDataError: 'event data error',
-      hash,
-    },
-  };
+  const transactionStarted = startTransaction(id, actionType, params, options);
+  const transactionSent = sendTransaction(id, hash);
+  const receiptReceived = transactionReceiptReceived(id, { hash });
+  const eventDataReceived = transactionEventDataReceived(id, eventData);
+  const sendError = transactionSendError(id, 'send error');
+  const receiptError = transactionReceiptError(id, 'receipt error');
+  const eventDataError = transactionEventDataError(id, 'event data error');
 
   test('Sends successfully', () => {
     testActions(
       [
         [
-          startTransaction,
+          transactionStarted,
           state => {
-            expect(state).toEqual({
-              pending: {
-                [transactionId]: {
-                  actionType,
-                  options,
-                  params,
-                },
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                someOtherTxHash: expect.any(Object),
-              },
+            // TODO ideally we should evaluate the state based on the whole
+            // map, but jest has some unexpected results when using `toEqual`
+            // with immutable maps.
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              id,
+              options,
+              params,
             });
           },
         ],
         [
-          sendTransaction,
+          transactionSent,
           state => {
-            expect(state).toEqual({
-              pending: {
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                [hash]: {
-                  actionType,
-                  options,
-                  params,
-                },
-                someOtherTxHash: expect.any(Object),
-              },
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              hash, // hash should have been set
+              id,
+              options,
+              params,
             });
           },
         ],
         [
           receiptReceived,
           state => {
-            expect(state).toEqual({
-              pending: {
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                [hash]: {
-                  actionType,
-                  options,
-                  params,
-                  receiptReceived: true,
-                },
-                someOtherTxHash: expect.any(Object),
-              },
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              hash,
+              id,
+              options,
+              params,
+              receiptReceived: true, // should have been set
             });
           },
         ],
         [
           eventDataReceived,
           state => {
-            expect(state).toEqual({
-              pending: {
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                [hash]: {
-                  actionType,
-                  eventData,
-                  options,
-                  params,
-                  receiptReceived: true,
-                },
-                someOtherTxHash: expect.any(Object),
-              },
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              eventData, // should have been set
+              hash,
+              id,
+              options,
+              params,
+              receiptReceived: true,
             });
           },
         ],
@@ -186,23 +134,21 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles send error', () => {
     testActions(
       [
-        [startTransaction],
+        [transactionStarted],
         [
           sendError,
           state => {
-            expect(state).toEqual({
-              pending: {
-                [transactionId]: {
-                  actionType,
-                  options,
-                  params,
-                  sendError: 'send error',
-                },
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                someOtherTxHash: expect.any(Object),
-              },
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              errors: [{ type: 'send', message: 'send error' }],
+              id,
+              options,
+              params,
             });
           },
         ],
@@ -214,24 +160,23 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles receipt error', () => {
     testActions(
       [
-        [startTransaction],
-        [sendTransaction],
+        [transactionStarted],
+        [transactionSent],
         [
           receiptError,
           state => {
-            expect(state).toEqual({
-              pending: {
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                [hash]: {
-                  actionType,
-                  options,
-                  params,
-                  receiptError: 'receipt error',
-                },
-                someOtherTxHash: expect.any(Object),
-              },
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              errors: [{ type: 'receipt', message: 'receipt error' }],
+              id,
+              hash,
+              options,
+              params,
             });
           },
         ],
@@ -243,26 +188,25 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles event data error', () => {
     testActions(
       [
-        [startTransaction],
-        [sendTransaction],
+        [transactionStarted],
+        [transactionSent],
         [receiptReceived],
         [
           eventDataError,
           state => {
-            expect(state).toEqual({
-              pending: {
-                someOtherTxId: expect.any(Object),
-              },
-              outgoing: {
-                [hash]: {
-                  actionType,
-                  options,
-                  params,
-                  receiptReceived: true,
-                  eventDataError: 'event data error',
-                },
-                someOtherTxHash: expect.any(Object),
-              },
+            expect(state.size).toBe(2);
+            expect(state.get('some tx id')).toEqual(
+              initialState.get('some tx id'),
+            );
+            expect(state.get(id)).toEqual({
+              actionType,
+              createdAt: expect.any(Date),
+              errors: [{ type: 'eventData', message: 'event data error' }],
+              hash,
+              id,
+              options,
+              params,
+              receiptReceived: true,
             });
           },
         ],

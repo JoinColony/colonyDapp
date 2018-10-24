@@ -3,17 +3,15 @@
 import type { SendOptions } from '@colony/colony-js-client';
 
 import {
-  TRANSACTION_EVENT_DATA_ERROR,
+  TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_RECEIPT_ERROR,
   TRANSACTION_RECEIPT_RECEIVED,
-  TRANSACTION_SEND_ERROR,
   TRANSACTION_SENT,
   TRANSACTION_STARTED,
 } from '../actionTypes';
 
 export function startTransaction(
-  transactionId: string,
+  id: string,
   actionType: string,
   params: Object,
   options: SendOptions,
@@ -22,57 +20,55 @@ export function startTransaction(
     type: TRANSACTION_STARTED,
     payload: {
       actionType,
+      createdAt: new Date(),
+      id,
       options,
       params,
-      transactionId,
     },
   };
 }
 
-export function transactionSendError(transactionId: string, sendError: string) {
+export function transactionSendError(id: string, message: string) {
   return {
-    type: TRANSACTION_SEND_ERROR,
-    payload: { transactionId, sendError },
+    type: TRANSACTION_ERROR,
+    payload: { id, error: { type: 'send', message } },
   };
 }
 
-export function transactionEventDataError(
-  hash: string,
-  eventDataError: string,
-) {
+export function transactionEventDataError(id: string, message: string) {
   return {
-    type: TRANSACTION_EVENT_DATA_ERROR,
-    payload: { hash, eventDataError },
+    type: TRANSACTION_ERROR,
+    payload: { id, error: { type: 'eventData', message } },
   };
 }
 
-export function transactionReceiptError(hash: string, receiptError: string) {
+export function transactionReceiptError(id: string, message: string) {
   return {
-    type: TRANSACTION_RECEIPT_ERROR,
-    payload: { hash, receiptError },
+    type: TRANSACTION_ERROR,
+    payload: { id, error: { type: 'receipt', message } },
   };
 }
 
-export function transactionReceiptReceived(hash: string, receipt: Object) {
+export function transactionReceiptReceived(id: string, receipt: Object) {
   return {
     type: TRANSACTION_RECEIPT_RECEIVED,
-    payload: { hash, receipt },
+    payload: { id, receipt },
   };
 }
 
-export function sendTransaction(hash: string, transactionId: string) {
+export function sendTransaction(id: string, hash: string) {
   return {
     type: TRANSACTION_SENT,
-    payload: { hash, transactionId },
+    payload: { id, hash },
   };
 }
 
 export function transactionEventDataReceived<EventData>(
-  hash: string,
+  id: string,
   eventData: EventData,
 ) {
   return {
     type: TRANSACTION_EVENT_DATA_RECEIVED,
-    payload: { hash, eventData },
+    payload: { id, eventData },
   };
 }

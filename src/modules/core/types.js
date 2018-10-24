@@ -2,6 +2,8 @@
 
 import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 
+import type { Map as ImmutableMap } from 'immutable';
+
 export type Sender<Params: Object> = {
   client: {
     adapter: {
@@ -21,3 +23,21 @@ export type TransactionAction<Params: Object> = {
     params: Params,
   },
 };
+
+export type TransactionError = {
+  type: 'send' | 'receipt' | 'eventData',
+  message: string,
+};
+
+export type TransactionId = string;
+
+export type Transaction = {
+  createdAt: Date,
+  errors?: Array<TransactionError>,
+  eventData?: Object,
+  hash?: string,
+  id: TransactionId,
+  receiptReceived?: boolean,
+};
+
+export type TransactionsState = ImmutableMap<TransactionId, Transaction>;
