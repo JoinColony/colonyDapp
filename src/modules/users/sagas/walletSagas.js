@@ -2,13 +2,25 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery, getContext } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  takeLatest,
+  getContext,
+  setContext,
+} from 'redux-saga/effects';
 import { defineMessages } from 'react-intl';
 
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet from '@colony/purser-metamask';
+import ledgerWallet from '@colony/purser-ledger';
+import trezorWallet from '@colony/purser-trezor';
 
 import {
+  WALLET_FETCH_ACCOUNTS,
+  WALLET_FETCH_ACCOUNTS_ERROR,
+  WALLET_FETCHED_ACCOUNTS,
   OPEN_MNEMONIC_WALLET,
   OPEN_METAMASK_WALLET,
   OPEN_HARDWARE_WALLET,
@@ -32,6 +44,31 @@ export const MSG = defineMessages({
   },
 });
 
+const hardwareWallets = {
+  ledger: ledgerWallet,
+  trezor: trezorWallet,
+};
+
+function* fetchAccounts(action: Object): Saga<void> {
+  const { walletType } = action.payload;
+
+  try {
+    const wallet = yield call(hardwareWallets[walletType].open, {
+      // TODO: is 100 addresses really what we want?
+      addressCount: 100,
+    });
+    yield put({
+      type: WALLET_FETCHED_ACCOUNTS,
+      payload: { allAddresses: wallet.otherAddresses },
+    });
+  } catch (e) {
+    yield put({
+      type: WALLET_FETCH_ACCOUNTS_ERROR,
+      payload: { error: e.message },
+    });
+  }
+}
+
 function* openMnemonicWallet(action: Object): Saga<void> {
   const { connectwalletmnemonic } = action.payload;
 
@@ -54,10 +91,10 @@ function* openMnemonicWallet(action: Object): Saga<void> {
       type: WALLET_SET,
       payload: { currentAddress: newMnemonicWallet.address },
     });
-  } catch (caughtError) {
+  } catch (e) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message },
+      payload: { error: e.message },
     });
   }
 }
@@ -78,10 +115,10 @@ function* openMetamaskWallet(): Saga<void> {
     /*
      * Set the wallet's address inside the store
      */
-  } catch (caughtError) {
+  } catch (e) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message },
+      payload: { error: e.message },
     });
     return;
   }
@@ -92,29 +129,31 @@ function* openMetamaskWallet(): Saga<void> {
 }
 
 function* openHardwareWallet(action: Object): Saga<void> {
-  const { hardwareWalletChoice } = action.payload;
+  const { hardwareWalletChoice, method } = action.payload;
 
   try {
-    const currentWallet = yield getContext('currentWallet');
-    const { instance: walletInstance } = currentWallet;
-    const selectedAddressIndex = walletInstance.otherAddresses.findIndex(
+    const wallet = yield call(hardwareWallets[method].open, {
+      // TODO: is 100 addresses really what we want?
+      addressCount: 100,
+    });
+    const selectedAddressIndex = wallet.otherAddresses.findIndex(
       address => address === hardwareWalletChoice,
     );
-    walletInstance.setDefaultAddress(selectedAddressIndex);
-  } catch (caughtError) {
+
+    wallet.setDefaultAddress(selectedAddressIndex);
+
+    yield setContext({ currentWallet: wallet });
+
+    yield put({
+      type: WALLET_SET,
+      payload: { currentAddress: hardwareWalletChoice },
+    });
+  } catch (e) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message },
+      payload: { error: e.message },
     });
-    return;
   }
-  /*
-   * Set the wallet's address inside the store
-   */
-  yield put({
-    type: WALLET_SET,
-    payload: { currentAddress: hardwareWalletChoice },
-  });
 }
 
 function* openKeystoreWallet(action: Object): Saga<void> {
@@ -134,10 +173,10 @@ function* openKeystoreWallet(action: Object): Saga<void> {
      * Set the new wallet into the context
      */
     yield call(currentWallet.setNewWallet, newKeystoreWallet);
-  } catch (caughtError) {
+  } catch (e) {
     yield put({
       type: WALLET_SET_ERROR,
-      payload: { error: caughtError.message },
+      payload: { error: e.message },
     });
     return;
   }
@@ -184,6 +223,7 @@ function* createWallet(action: Object): Saga<void> {
 }
 
 function* walletSagas(): any {
+  yield takeLatest(WALLET_FETCH_ACCOUNTS, fetchAccounts);
   yield takeEvery(OPEN_MNEMONIC_WALLET, openMnemonicWallet);
   yield takeEvery(OPEN_METAMASK_WALLET, openMetamaskWallet);
   yield takeEvery(OPEN_HARDWARE_WALLET, openHardwareWallet);

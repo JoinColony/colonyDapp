@@ -1,10 +1,11 @@
 /* @flow */
 
-import { all } from 'redux-saga/effects';
+import { all, setContext } from 'redux-saga/effects';
 
-import walletSagas from './wallet';
+import walletSagas from './walletSagas';
 import userSagas from './userSagas';
 
 export default function* rootSaga(): any {
+  yield setContext({ foo: 'bar' });
   yield all([userSagas(), walletSagas()]);
 }

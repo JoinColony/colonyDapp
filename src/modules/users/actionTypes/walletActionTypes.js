@@ -3,6 +3,11 @@
 /*
  * Wallet Action Types
  */
+
+export const WALLET_FETCH_ACCOUNTS = 'wallet/FETCH_ACCOUNTS';
+export const WALLET_FETCH_ACCOUNTS_ERROR = 'wallet/FETCH_ACCOUNTS_ERROR';
+export const WALLET_FETCHED_ACCOUNTS = 'wallet/FETCHED_ACCOUNTS';
+
 export const WALLET_SET = 'users/WALLET_SET';
 export const WALLET_SET_ERROR = 'users/WALLET_SET_ERROR';
 export const WALLET_CLEARED = 'users/WALLET_CLEARED';
