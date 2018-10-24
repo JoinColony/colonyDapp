@@ -10,12 +10,59 @@
 
 .controls button {
   margin-left: 5px;
+
+  /*
+   * @NOTE We need to manually set it here, otherwise some parent class from
+   * `.form` will set it's bottom margin to 15px
+   */
+  margin-bottom: 0 !important;
 }
 
-.selectedDomain {
-  overflow: hidden;
+/*
+ * @NOTE this isn't really used externally, just internally to compose same
+ * styles to different classes
+ */
+.domain {
   font-weight: var(--weight-medium);
+  color: var(--grey-dark);
+}
+
+.currentDomain {
+  composes: domain;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--grey-dark);
+}
+
+.domainListWrapper {
+  padding: 12px;
+}
+
+.domainList {
+  width: 340px;
+}
+
+.domainList li {
+  padding: 6px 0;
+}
+
+.domainItem {
+  composes: domain;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+.domainItem:hover {
+  color: color-mod(var(--colony-blue) alpha(70%));
+}
+
+.selectedDomain .domainItem {
+  color: var(--colony-blue);
 }
