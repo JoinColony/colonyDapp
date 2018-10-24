@@ -16,6 +16,8 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
+import TaskDomains from '../TaskDomains';
+
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~dashboard/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
@@ -50,10 +52,6 @@ const MSG = defineMessages({
   add: {
     id: 'dashboard.Task.add',
     defaultMessage: 'Add +',
-  },
-  domain: {
-    id: 'dashboard.Task.domain',
-    defaultMessage: 'Domain',
   },
   skill: {
     id: 'dashboard.Task.skill',
@@ -157,14 +155,7 @@ const Task = ({ colonyName = 'The Meta Colony' }: Props) => {
               </section>
               <section className={styles.section}>
                 <div className={styles.editor}>
-                  {/* //TODO: Add domain colonyDapp#408 */}
-                  <Heading appearance={{ size: 'small' }} text={MSG.domain} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
+                  <TaskDomains isTaskCreator />
                 </div>
                 <div className={styles.editor}>
                   <Heading appearance={{ size: 'small' }} text={MSG.skill} />
