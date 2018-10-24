@@ -1,6 +1,6 @@
 /* @flow */
 
-import { CORE_NAMESPACE as ns } from '../namespace';
+import ns from '../namespace';
 
 /*
  * Colony Action Types

@@ -2,6 +2,7 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
 const utils = require('./scripts/utils');
@@ -111,6 +112,7 @@ const config = {
     ],
   },
   plugins: [
+    new Dotenv(),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
     }),

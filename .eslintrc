@@ -15,6 +15,9 @@
             "files":  "**/__tests__/*.js",
             "rules": {
                 "flowtype/require-valid-file-annotation": "off"
+            },
+            "env": {
+              "jest": true
             }
         }
     ],

@@ -2,8 +2,7 @@
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-type Dispatch = (*) => any;
+import type { Dispatch } from 'redux';
 
 /**
  * Helper method to bind action creators with dispatch
@@ -15,7 +14,7 @@ type Dispatch = (*) => any;
 export const withBoundActionCreators = (actionCreators: Object = {}) =>
   connect(
     null,
-    (dispatch: Dispatch) => bindActionCreators(actionCreators, dispatch),
+    (dispatch: Dispatch<*>) => bindActionCreators(actionCreators, dispatch),
   );
 
 const reduxUtils: Object = {
