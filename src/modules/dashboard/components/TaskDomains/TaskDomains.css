@@ -1,0 +1,21 @@
+.main {
+  padding-right: 20px;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+}
+
+.controls button {
+  margin-left: 5px;
+}
+
+.selectedDomain {
+  overflow: hidden;
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--grey-dark);
+}
