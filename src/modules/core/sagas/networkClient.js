@@ -58,7 +58,7 @@ function* initColonyNetworkClient() {
 /**
  * Initialise a network client and set the `networkClient` context
  */
-function* loadColonyNetwork(): Saga<typeof undefined> {
+function* loadColonyNetwork(): Saga<void> {
   let networkClient;
 
   try {
@@ -87,7 +87,7 @@ function* loadColonyNetwork(): Saga<typeof undefined> {
  * When the wallet is set, the network client should be loaded with
  * the new wallet.
  */
-function* setWallet(): Saga<typeof undefined> {
+function* setWallet(): Saga<void> {
   yield put({ type: LOAD_COLONY_NETWORK });
 }
 

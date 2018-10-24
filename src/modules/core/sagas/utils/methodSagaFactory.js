@@ -17,9 +17,7 @@ export default function methodSagaFactory<Params: Object, EventData: Object>(
   successType: string,
   errorType: string,
 ) {
-  return function* methodSaga(
-    action: TransactionAction<Params>,
-  ): Saga<typeof undefined> {
+  return function* methodSaga(action: TransactionAction<Params>): Saga<void> {
     try {
       // Execute the send transaction task and get the error/success response.
       const {
