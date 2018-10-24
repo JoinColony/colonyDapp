@@ -58,11 +58,11 @@ function* initializeUser(action: Object): Saga<void> {
   yield put(replace(DASHBOARD_ROUTE));
 }
 
-function* editProfile(action) {
+function* editProfile(action: Object): Saga<void> {
   const { currentAddress, update } = action.payload;
   const ddb = yield getContext('ddb');
   // TODO create stores so that they can be retrieved with currentAddress
-  const store = ddb.getStore(currentAddress);
+  const store = yield call([ddb, ddb.getStore], currentAddress);
 
   yield store.set(update);
   const user = yield call(Commands.all, store);
