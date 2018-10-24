@@ -101,7 +101,7 @@ class TokenEditDialog extends Component<Props> {
           onSubmit={this.handleSubmitTokenForm}
           validationSchema={validateNativeTokenSelect(nativeToken)}
         >
-          {({ handleSubmit, isSubmitting }: FormikProps<FormValues>) => (
+          {({ isSubmitting }: FormikProps<FormValues>) => (
             <Fragment>
               <DialogSection>
                 <Heading
@@ -150,9 +150,9 @@ class TokenEditDialog extends Component<Props> {
                 />
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
-                  onClick={handleSubmit}
-                  text={MSG.buttonConfirm}
                   loading={isSubmitting}
+                  text={MSG.buttonConfirm}
+                  type="submit"
                 />
               </DialogSection>
             </Fragment>
