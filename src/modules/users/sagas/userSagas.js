@@ -5,14 +5,12 @@ import type { Saga } from 'redux-saga';
 import { call, getContext } from 'redux-saga/effects';
 
 import { all } from '../../../lib/database/commands';
-
-import { EDIT_USER_PROFILE, WALLET_SET } from '../actionTypes';
-
 import {
-  setCurrentUser,
-  setCurrentUserError,
-  updateUserProfile,
-} from '../actionCreators';
+  SET_CURRENT_USER,
+  SET_CURRENT_USER_ERROR,
+  EDIT_USER_PROFILE,
+  WALLET_SET,
+} from '../actionTypes';
 
 function* initializeUser(action: Object): Saga<void> {
   const { currentAddress } = action.payload;
@@ -35,7 +33,10 @@ function* initializeUser(action: Object): Saga<void> {
     // TODO: First try to get the store, then create it
     store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
   } catch (error) {
-    yield put(setCurrentUserError(error));
+    yield put({
+      type: SET_CURRENT_USER_ERROR,
+      payload: { error },
+    });
     return;
   }
 
@@ -48,7 +49,10 @@ function* initializeUser(action: Object): Saga<void> {
 
   const user = yield call(all, store);
 
-  yield put(setCurrentUser(user, currentAddress));
+  yield put({
+    type: SET_CURRENT_USER,
+    payload: { set: user, walletAddress: currentAddress },
+  });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
   yield put(replace(DASHBOARD_ROUTE));
@@ -57,11 +61,16 @@ function* initializeUser(action: Object): Saga<void> {
 function* editProfile(action) {
   const { currentAddress, update } = action.payload;
   const ddb = yield getContext('ddb');
+  // TODO create stores so that they can be retrieved with currentAddress
   const store = ddb.getStore(currentAddress);
-  yield store.set(update);
-  const currentState = yield call(all, store);
 
-  yield put(updateUserProfile(currentState, currentAddress));
+  yield store.set(update);
+  const user = yield call(all, store);
+
+  yield put({
+    type: SET_CURRENT_USER,
+    payload: { set: user, walletAddress: currentAddress },
+  });
 }
 
 function* userSagas(): any {
