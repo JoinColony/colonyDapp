@@ -30,14 +30,16 @@ function* initializeUser(action: Object): Saga<void> {
 
   let store;
 
+  const foo = yield getContext('foo');
+  console.log(foo);
+
   try {
     const DDB = yield getContext('DDB');
     const wallet = yield getContext('currentWallet');
     const ipfsNode = yield getContext('ipfsNode');
     const colonyNetwork = yield getContext('colonyNetwork');
 
-    const identityProvider = new PurserIdentityProvider(wallet.instance);
-
+    const identityProvider = new PurserIdentityProvider(wallet);
     const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
 
     ddb.addResolver('user', new Resolvers.UserResolver(colonyNetwork));
@@ -45,10 +47,10 @@ function* initializeUser(action: Object): Saga<void> {
     yield setContext({ ddb });
     // TODO: First try to get the store, then create it
     store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
-  } catch (error) {
+  } catch (e) {
     yield put({
       type: SET_CURRENT_USER_ERROR,
-      payload: error,
+      payload: { error: e.message },
     });
     return;
   }

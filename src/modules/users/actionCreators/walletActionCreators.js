@@ -1,11 +1,19 @@
 /* @flow */
 
 import {
+  WALLET_FETCH_ACCOUNTS,
   OPEN_MNEMONIC_WALLET,
   OPEN_METAMASK_WALLET,
   OPEN_HARDWARE_WALLET,
   OPEN_KEYSTORE_WALLET,
 } from '../actionTypes';
+
+type WalletType = 'ledger' | 'trezor';
+
+export const fetchAccounts = (walletType: WalletType) => ({
+  type: WALLET_FETCH_ACCOUNTS,
+  payload: { walletType },
+});
 
 export const openMnemonicWallet = (
   mnemonic: String,
