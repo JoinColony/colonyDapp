@@ -56,8 +56,39 @@ function* editProfile(action: Object): Saga<void> {
   }
 }
 
+function* editProfile(action: Object): Saga<void> {
+  const { currentAddress, update } = action.payload;
+  const ddb = yield getContext('ddb');
+  // TODO create stores so that they can be retrieved with currentAddress
+  const store = yield call([ddb, ddb.getStore], currentAddress);
+
+  yield store.set(update);
+  const user = yield call(all, store);
+
+  yield put({
+    type: SET_CURRENT_USER,
+    payload: { set: user, walletAddress: currentAddress },
+  });
+}
+
+function* fetchProfile(): Saga<void> {
+  const username = select(state => state.router.location.pathname).slice(1);
+
+  const ddb = yield getContext('ddb');
+  const store = yield call([ddb, ddb.getStore], username);
+
+  const user = yield call(Commands.all, store);
+
+  yield put({
+    type: SET_USER_PROFILE,
+    payload: { set: user, walletAddress: user.walletAddress },
+  });
+}
+
 function* userSagas(): any {
-  yield takeLatest(USER_PROFILE_UPDATE, editProfile);
+  yield takeLatest(EDIT_USER_PROFILE, editProfile);
+  yield takeLatest(FETCH_USER_PROFILE, fetchProfile);
+  yield takeLatest(WALLET_SET, initializeUser);
 }
 
 export default userSagas;
