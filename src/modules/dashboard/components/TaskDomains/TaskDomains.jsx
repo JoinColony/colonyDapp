@@ -1,10 +1,12 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
+import nanoid from 'nanoid';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import Popover from '~core/Popover';
 
 import styles from './TaskDomains.css';
 
@@ -15,9 +17,12 @@ const MSG = defineMessages({
     id: 'dashboard.TaskDomains.title',
     defaultMessage: 'Domain',
   },
-  addDomain: {
-    id: 'dashboard.TaskDomains.add',
-    defaultMessage: 'Add +',
+  selectDomain: {
+    id: 'dashboard.TaskDomains.selectDomain',
+    defaultMessage: `{domainSelected, select,
+      true {Modify}
+      other {Add +}
+    }`,
   },
 });
 
@@ -43,7 +48,7 @@ class TaskDomains extends Component<Props, State> {
   static displayName = 'dashboard.TaskDomains';
 
   state = {
-    selectedDomain: undefined,
+    selectedDomain: 1,
     setDomain: undefined,
   };
 
@@ -63,6 +68,61 @@ class TaskDomains extends Component<Props, State> {
     }
   }
 
+  /*
+   * Handle clicking on each individual domain in the list
+   */
+
+  handleSelectDomain = this.handleSelectDomain.bind(this);
+
+  handleSelectDomain(id: number) {
+    this.setState({ selectedDomain: id });
+  }
+
+  /*
+   * Handle cleanup when closing the popover (or pressing cancel)
+   *
+   * If a domain was selected, but not set (didn't submit the form) then we
+   * need to re-set it back to the original set domain.
+   *
+   * Otherwise the next time it will open it will show the selected one, and not
+   * the actual set one.
+   */
+
+  handleCleanup = this.handleCleanup.bind(this);
+
+  handleCleanup() {
+    const { setDomain } = this.state || undefined;
+    this.setState({ selectedDomain: setDomain });
+  }
+
+  /*
+   * Helper to render an entry in the domains list
+   */
+
+  renderDomainListItem = this.renderDomainListItem.bind(this);
+
+  renderDomainListItem({ id, name }: ConsumableDomain) {
+    const { selectedDomain } = this.state;
+    return (
+      <li
+        className={selectedDomain === id ? styles.selectedDomain : null}
+        key={nanoid(id)}
+      >
+        <button
+          type="button"
+          className={styles.domainItem}
+          onClick={() => this.handleSelectDomain(id)}
+        >
+          {`#${name}`}
+        </button>
+      </li>
+    );
+  }
+
+  /*
+   * @TODO Most likely this is temporary, and the way we'll fetch the *real* data
+   * won't require having this here
+   */
   allDomains: Array<ConsumableDomain> = [];
 
   render() {
@@ -80,12 +140,28 @@ class TaskDomains extends Component<Props, State> {
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.title}
           />
-          <Button
-            appearance={{ theme: 'blue', size: 'small' }}
-            text={MSG.addDomain}
-          />
+          <Popover
+            trigger="click"
+            placement="bottom"
+            onClose={this.handleCleanup}
+            content={
+              <div className={styles.domainListWrapper}>
+                <ul className={styles.domainList}>
+                  {allDomains.map((domain: ConsumableDomain) =>
+                    this.renderDomainListItem(domain),
+                  )}
+                </ul>
+              </div>
+            }
+          >
+            <Button
+              appearance={{ theme: 'blue', size: 'small' }}
+              text={MSG.selectDomain}
+              textValues={{ domainSelected: !!setDomainId }}
+            />
+          </Popover>
         </div>
-        <div className={styles.selectedDomain}>
+        <div className={styles.currentDomain}>
           {currentDomain && `#${currentDomain.name}`}
         </div>
       </div>
