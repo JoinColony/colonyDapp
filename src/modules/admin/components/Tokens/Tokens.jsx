@@ -46,6 +46,12 @@ class Tokens extends Component<Props> {
     openDialog('TokenEditDialog', { tokens });
   };
 
+  handleOpenTokenMintDialog = () => {
+    const { openDialog, tokens } = this.props;
+    const nativeToken = tokens.find(token => token.isNative);
+    openDialog('TokenMintDialog', { nativeToken });
+  };
+
   render() {
     const { tokens = [] } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
@@ -86,6 +92,7 @@ class Tokens extends Component<Props> {
                     <Button
                       text={MSG.navItemMintNewTokens}
                       appearance={{ theme: 'blue' }}
+                      onClick={this.handleOpenTokenMintDialog}
                     />
                   </li>
                 )}

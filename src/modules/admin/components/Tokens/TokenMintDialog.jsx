@@ -62,7 +62,7 @@ const validationSchema = yup.object().shape({
   mintAmount: yup
     .number()
     .required(MSG.errorAmountRequired)
-    .min(1, MSG.errorAmountMin),
+    .min(0.000000000000000001, MSG.errorAmountMin),
 });
 
 class TokenMintDialog extends Component<Props> {
@@ -122,11 +122,13 @@ class TokenMintDialog extends Component<Props> {
                   <div className={styles.input}>
                     <Input
                       appearance={{ theme: 'minimal' }}
+                      formattingOptions={{
+                        numeral: true,
+                        numeralPositiveOnly: true,
+                        numeralDecimalScale: 18,
+                      }}
                       label={MSG.amountLabel}
-                      min={0}
                       name="mintAmount"
-                      step={10}
-                      type="number"
                     />
                   </div>
                   <span className={styles.nativeToken} title={tokenName}>
