@@ -16,7 +16,7 @@ import {
   LOAD_COLONY_NETWORK_ERROR,
   LOAD_COLONY_NETWORK_SUCCESS,
 } from '../actionTypes';
-import { WALLET_SET } from '../../user/actionTypes';
+import { WALLET_SET } from '../../users/actionTypes';
 
 /**
  * Return an initialized ColonyNetworkClient instance.
