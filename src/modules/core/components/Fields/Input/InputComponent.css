@@ -72,6 +72,10 @@
   font-weight: var(--weight-medium);
   color: var(--grey-dark);
   outline: none;
+
+  &:focus {
+    border-color: var(--primary);
+  }
 }
 
 .themeMinimal::placeholder {
