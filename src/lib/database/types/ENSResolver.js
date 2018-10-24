@@ -12,7 +12,7 @@ export interface ENSResolverType {
 
   _networkClient: ColonyNetworkClient;
 
-  lookupUsernameFromAddress(ensAddress: string): Promise<string>;
+  lookupDomainNameFromAddress(ensAddress: string): Promise<string>;
 
   getENSAddressForENSName(name: string): Promise<string>;
 

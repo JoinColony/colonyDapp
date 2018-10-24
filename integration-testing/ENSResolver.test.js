@@ -9,7 +9,7 @@ describe('ENSResolver', () => {
   test('Get a resolver', () => {
     resolver = new ENSResolver();
     expect(resolver).toBeTruthy();
-    expect(typeof resolver.lookupUsernameFromAddress).toBe('function');
+    expect(typeof resolver.lookupDomainNameFromAddress).toBe('function');
   });
   test('User and colony resolvers inherit from ENSResolver', () => {
     userResolver = new Resolvers.UserResolver('user');
