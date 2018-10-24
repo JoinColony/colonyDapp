@@ -2,13 +2,15 @@
 
 import type { GenericWallet } from '@colony/purser-core/es';
 
+import { hexSequenceNormalizer } from '@colony/purser-core/normalizers';
 import BigNumber from 'bn.js';
+import EthereumTx from 'ethereumjs-tx';
 import { utils } from 'ethers';
 
 import type {
-  Transaction,
   TransactionOptions,
   TransactionReceipt,
+  TransactionRequest,
 } from './types';
 
 export default class EthersWrappedWallet {
@@ -25,76 +27,91 @@ export default class EthersWrappedWallet {
     return this.wallet.address;
   }
 
-  async signMessage(message: string): Promise<string> {
+  async signMessage(message: any): Promise<string> {
     const messageString = utils.isArrayish(message)
       ? utils.toUtf8String(message)
       : message;
     return this.wallet.signMessage({ message: messageString });
   }
 
-  async sendTransaction(
-    {
-      gasLimit,
-      gasPrice,
-      data: inputData,
-      networkId: chainId,
-      ...tx
-    }: Transaction,
-    {
-      gasPrice: gasPriceOption,
-      gasLimit: gasLimitOption,
-      ...options
-    }: TransactionOptions = {},
-  ): Promise<TransactionReceipt> {
+  /**
+   * Given a partial transaction request, sets the remaining required fields,
+   * signs the transaction with the Purser wallet and sends it using the
+   * provider.
+   */
+  async sendTransaction(tx: TransactionRequest): Promise<TransactionReceipt> {
+    const { chainId, data, gasLimit, gasPrice, nonce, to, value } = tx;
     const signOptions = {
-      gasPrice: new BigNumber(gasPrice),
-      gasLimit: new BigNumber(gasLimit),
-      chainId,
-      inputData,
-      ...tx,
-      ...options,
+      chainId: chainId || this.provider.chainId,
+      data,
+      gasLimit: gasLimit ? new BigNumber(gasLimit) : await this.estimateGas(tx),
+      gasPrice: gasPrice ? new BigNumber(gasPrice) : await this.getGasPrice(),
+      nonce: nonce || (await this.getTransactionCount()),
+      to,
+      value: new BigNumber(value),
     };
-
-    if (gasPriceOption) signOptions.gasPrice = new BigNumber(gasPriceOption);
-    if (gasLimitOption) signOptions.gasLimit = new BigNumber(gasLimitOption);
-
     const signedTx = await this.sign(signOptions);
+
+    // if metamask, tx has already been sent
+    // TODO: add `online` main wallet type or similar to Purser
+    if (this.wallet.subtype === 'metamask') {
+      const parsedSignedTx = new EthereumTx(signedTx);
+      const txHash = hexSequenceNormalizer(
+        parsedSignedTx.hash().toString('hex'),
+      );
+      return this.provider.getTransaction(txHash);
+    }
     return this.provider.sendTransaction(signedTx);
   }
 
-  async estimateGas(tx: Transaction): Promise<BigNumber> {
-    return this.provider.estimateGas(tx);
+  /**
+   * Estimates the gas cost of a transaction using the provider and converts to
+   * our BN format.
+   */
+  async estimateGas(tx: TransactionRequest): Promise<BigNumber> {
+    const estimate = await this.provider.estimateGas(tx);
+    return new BigNumber(estimate.toString());
+  }
+
+  /**
+   * Gets the gas price from the provider and converts to our BN format.
+   */
+  async getGasPrice(): Promise<BigNumber> {
+    const price = await this.provider.getGasPrice();
+    return new BigNumber(price.toString());
   }
 
   async getBalance(): Promise<BigNumber> {
-    return this.provider.getBalance(await this.getAddress());
+    const address = await this.getAddress();
+    return this.provider.getBalance(address);
   }
 
   async getTransactionCount(): Promise<number> {
-    return this.provider.getTransactionCount(await this.getAddress());
+    const address = await this.getAddress();
+    return this.provider.getTransactionCount(address);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  parseTransaction(tx: string): Transaction {
+  parseTransaction(tx: string): Object {
     return utils.parseTransaction(tx);
   }
 
   async send(
-    addressOrName: string,
-    amountWei: string,
-    { gasPrice, gasLimit, nonce }: TransactionOptions = {},
+    to: string,
+    value: string,
+    options: TransactionOptions = {},
   ): Promise<TransactionReceipt> {
-    const signedTx = await this.sign({
-      gasPrice,
-      gasLimit,
-      nonce,
-      to: addressOrName,
-      value: new BigNumber(amountWei),
+    return this.sendTransaction({
+      to,
+      value,
+      ...options,
     });
-    return this.provider.sendTransaction(signedTx);
   }
 
-  async sign({ data, ...tx }: Transaction): Promise<string> {
+  /**
+   * Sign a given complete transaction request in Ethers format using Purser.
+   */
+  async sign({ data, ...tx }: TransactionRequest): Promise<string> {
     return this.wallet.sign({ ...tx, inputData: data });
   }
 
