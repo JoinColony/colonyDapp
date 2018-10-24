@@ -34,12 +34,18 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  openDialog: (dialogName: string, dialogProps: Object) => DialogType,
+  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
   tokens: Array<TokenType>,
 };
 
 class Tokens extends Component<Props> {
+  timeoutId: TimeoutID;
+
   static displayName = 'admin.Tokens';
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId);
+  }
 
   handleOpenTokenEditDialog = (): void => {
     const { openDialog, tokens } = this.props;
@@ -49,7 +55,21 @@ class Tokens extends Component<Props> {
   handleOpenTokenMintDialog = () => {
     const { openDialog, tokens } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
-    openDialog('TokenMintDialog', { nativeToken });
+    openDialog('TokenMintDialog', {
+      handleMintNewTokensSubmit: this.handleMintNewTokensSubmit,
+      nativeToken,
+    });
+  };
+
+  handleMintNewTokensSubmit = (tokenSymbol: string, amount: number): void => {
+    const { openDialog } = this.props;
+    console.log(tokenSymbol, amount);
+    // TODO: Actually submit the form
+    // TODO: Open the gas station here once implemented
+    const mintingNewTokensDialog = openDialog('ActivityBarExample');
+    this.timeoutId = setTimeout(() => {
+      mintingNewTokensDialog.close();
+    }, 3000);
   };
 
   render() {
