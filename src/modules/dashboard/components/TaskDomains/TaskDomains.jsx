@@ -10,7 +10,7 @@ import Popover from '~core/Popover';
 
 import styles from './TaskDomains.css';
 
-import { selectedDomainMock, domainMocks } from './__datamocks__/mockDomains';
+import { domainMocks } from './__datamocks__/mockDomains';
 
 const MSG = defineMessages({
   title: {
@@ -20,8 +20,8 @@ const MSG = defineMessages({
   selectDomain: {
     id: 'dashboard.TaskDomains.selectDomain',
     defaultMessage: `{domainSelected, select,
-      true {Modify}
-      other {Add +}
+      undefined {Add +}
+      other {Modify}
     }`,
   },
 });
@@ -34,6 +34,10 @@ type ConsumableDomain = {
 type Props = {};
 
 type State = {
+  /*
+   * This values determines if any domain in the (newly opened) list was selected
+   */
+  listTouched: boolean,
   /*
    * Domain selected in the popover list
    */
@@ -48,24 +52,16 @@ class TaskDomains extends Component<Props, State> {
   static displayName = 'dashboard.TaskDomains';
 
   state = {
-    selectedDomain: 1,
+    listTouched: false,
+    selectedDomain: undefined,
     setDomain: undefined,
   };
 
-  componentDidMount() {
+  componentWillMount() {
     /*
      * This should be fetch from somewhere like the DDB
      */
     this.allDomains = domainMocks;
-    /*
-     * If a domain is already set on the task, set it directly as `setDomain`
-     * Most likely we'll get this value from the redux state
-     */
-    if (selectedDomainMock) {
-      this.setState({
-        setDomain: selectedDomainMock,
-      });
-    }
   }
 
   /*
@@ -75,7 +71,7 @@ class TaskDomains extends Component<Props, State> {
   handleSelectDomain = this.handleSelectDomain.bind(this);
 
   handleSelectDomain(id: number) {
-    this.setState({ selectedDomain: id });
+    this.setState({ selectedDomain: id, listTouched: true });
   }
 
   /*
@@ -90,9 +86,40 @@ class TaskDomains extends Component<Props, State> {
 
   handleCleanup = this.handleCleanup.bind(this);
 
-  handleCleanup() {
+  handleCleanup(callback: () => void) {
     const { setDomain } = this.state || undefined;
-    this.setState({ selectedDomain: setDomain });
+    this.setState({ selectedDomain: setDomain, listTouched: false }, callback);
+  }
+
+  /*
+   * Set the domain when clicking the confirm button
+   *
+   * This will most likely call an action creator at some point
+   */
+
+  handleSetDomain = this.handleSetDomain.bind(this);
+
+  handleSetDomain(callback: () => void) {
+    const {
+      state: { selectedDomain },
+      allDomains,
+    } = this;
+    this.setState(
+      {
+        setDomain: selectedDomain,
+        selectedDomain: undefined,
+        listTouched: false,
+      },
+      callback,
+    );
+    /*
+     * @NOTE Here we should be caling the action creator
+     * Maybe even before changing the state
+     */
+    const newlySetDomain: ConsumableDomain | void = allDomains.find(
+      ({ id }) => id === selectedDomain,
+    );
+    console.log(TaskDomains.displayName, newlySetDomain);
   }
 
   /*
@@ -127,7 +154,7 @@ class TaskDomains extends Component<Props, State> {
 
   render() {
     const {
-      state: { setDomain: setDomainId },
+      state: { setDomain: setDomainId, listTouched },
       allDomains,
     } = this;
     const currentDomain: ConsumableDomain | void = allDomains.find(
@@ -144,20 +171,33 @@ class TaskDomains extends Component<Props, State> {
             trigger="click"
             placement="bottom"
             onClose={this.handleCleanup}
-            content={
-              <div className={styles.domainListWrapper}>
+            content={({ close }) => (
+              <div>
                 <ul className={styles.domainList}>
                   {allDomains.map((domain: ConsumableDomain) =>
                     this.renderDomainListItem(domain),
                   )}
                 </ul>
+                <div className={styles.domainControls}>
+                  <Button
+                    appearance={{ theme: 'secondary' }}
+                    text={{ id: 'button.cancel' }}
+                    onClick={() => this.handleCleanup(close)}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary' }}
+                    text={{ id: 'button.confirm' }}
+                    disabled={!listTouched}
+                    onClick={() => this.handleSetDomain(close)}
+                  />
+                </div>
               </div>
-            }
+            )}
           >
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectDomain}
-              textValues={{ domainSelected: !!setDomainId }}
+              textValues={{ domainSelected: setDomainId }}
             />
           </Popover>
         </div>
