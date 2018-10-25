@@ -18,7 +18,7 @@ const MSG = defineMessages({
     id: 'dashboard.TaskDate.selectDate',
     defaultMessage: `{dateSelected, select,
       false {Add +}
-      others {Modify}
+      other {Modify}
     }`,
     // defaultMessage: 'Due Date',
   },
@@ -87,11 +87,35 @@ class TaskDate extends Component<Props, State> {
     console.log(TaskDate.displayName, selectedDate);
   }
 
+  /*
+   * When opening the datepicker, we need to set the currently selected date
+   * as the current set date (if one exist)
+   *
+   * Otherwise the date picker might show the wrong selected day (state won't reset)
+   */
+
   handleOpen = this.handleOpen.bind(this);
 
   handleOpen(callback: () => void) {
     const { setDate } = this.state;
     this.setState({ selectedDate: setDate }, callback);
+  }
+
+  /*
+   * Handle cleanup when closing the popover (or pressing cancel)
+   *
+   * If a domain was selected, but not set (didn't submit the form) then we
+   * need to re-set it back to the original set domain.
+   *
+   * Otherwise the next time it will open it will show the selected one, and not
+   * the actual set one.
+   */
+
+  handleCleanup = this.handleCleanup.bind(this);
+
+  handleCleanup(callback: () => void) {
+    const { setDate = undefined } = this.state;
+    this.setState({ selectedDate: setDate, touched: false }, callback);
   }
 
   render() {
@@ -119,13 +143,29 @@ class TaskDate extends Component<Props, State> {
                   appearance={{ theme: 'blue', size: 'small' }}
                   text={MSG.selectDate}
                   textValues={{
-                    dateSelected: !!(setDate && setDate.getDate()),
+                    dateSelected: !!setDate,
                   }}
                   innerRef={ref}
                   onClick={() => this.handleOpen(open)}
                 />
               )}
-            />
+            >
+              {({ close }) => (
+                <div className={styles.dateControls}>
+                  <Button
+                    appearance={{ theme: 'secondary' }}
+                    text={{ id: 'button.cancel' }}
+                    onClick={() => this.handleCleanup(close)}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary' }}
+                    text={{ id: 'button.confirm' }}
+                    disabled={!touched}
+                    onClick={() => this.handleSetDate(close)}
+                  />
+                </div>
+              )}
+            </DatePicker>
           )}
         </div>
         <div className={styles.currentDate} />
