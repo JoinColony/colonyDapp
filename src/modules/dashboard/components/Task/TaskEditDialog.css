@@ -1,0 +1,20 @@
+.taskEditContainer {
+    max-height: 250px;
+    overflow: auto;
+}
+
+.taskEdit {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.taskEditIcon {
+    margin: 0 10px;
+    max-height: 36px;
+    width: 36px;
+}
+
+.taskEditSymbol {
+    margin: 0 10px;
+}

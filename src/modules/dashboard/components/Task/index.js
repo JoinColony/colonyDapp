@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './Task.jsx';
+export { default } from './Task.js';

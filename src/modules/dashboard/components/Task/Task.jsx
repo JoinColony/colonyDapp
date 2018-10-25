@@ -1,7 +1,9 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
+
+import type { DialogType } from '~core/Dialog';
 
 import styles from './Task.css';
 
@@ -72,10 +74,11 @@ const MSG = defineMessages({
 type Props = {
   /*
    * The redux state will contain the current task details if there's any already
-   * and the current user details
+   * and the current user details `taskDetails`
    *
    */
   colonyName?: string,
+  openDialog: (dialogName: string, dialogProps: Object) => DialogType,
 };
 
 const filter = (data, filterValue) =>
@@ -83,135 +86,156 @@ const filter = (data, filterValue) =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
-const Task = ({ colonyName = 'The Meta Colony' }: Props) => {
-  const isTaskCreator =
-    taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
+class Task extends Component<Props> {
+  handleClickToOpenDialog = () => {
+    console.log('clicking');
 
-  return (
-    <div>
-      <div className={styles.navigation}>
-        <div className={styles.backNavigation}>
-          <Icon
-            name="circle-back"
-            title="back"
-            appearance={{ size: 'medium' }}
-          />
-          <NavLink
-            to="/colony"
-            text={MSG.backButton}
-            textValues={{ colonyName }}
-          />
-        </div>
-        <div className={styles.mainNav}>
-          <Navigation />
-          <AvatarDropdown />
-        </div>
-      </div>
-      <Form
-        onSubmit={console.log}
-        initialValues={{
-          taskName: '',
-        }}
-      >
-        {({ status }) => (
-          <div className={styles.main}>
-            <aside className={styles.sidebar}>
-              <section className={styles.section}>
-                <header className={styles.headerAside}>
-                  <Heading
-                    appearance={{ size: 'normal' }}
-                    text={MSG.assignmentFunding}
-                  />
-                  {isTaskCreator && (
-                    <Button appearance={{ theme: 'blue' }} text={MSG.details} />
-                  )}
-                </header>
-                {/* //TODO: replace this with TaskAssignment
-                component in colonyDapp#445 */}
-                <div className={styles.section}>
-                  <SingleUserPicker
-                    name="assignee"
-                    itemComponent={ItemDefault}
-                    data={userMocks}
-                    filter={filter}
-                  />
-                </div>
-              </section>
-              <section className={styles.section}>
-                {/* //TODO: replace this with TaskDescription
-                component colonyDapp#439 */}
-                <Input
-                  appearance={{ theme: 'dotted', colorSchema: 'grey' }}
-                  name="taskDescription"
-                  placeholder={MSG.taskTitle}
-                />
-                <Input
-                  appearance={{
-                    theme: 'dotted',
-                    colorSchema: 'grey',
-                    size: 'small',
-                  }}
-                  name="taskTitle"
-                  placeholder={MSG.taskDescription}
-                />
-              </section>
-              <section className={styles.section}>
-                <div className={styles.editor}>
-                  {/* //TODO: Add domain colonyDapp#408 */}
-                  <Heading appearance={{ size: 'small' }} text={MSG.domain} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
-                </div>
-                <div className={styles.editor}>
-                  <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
-                </div>
-                <div className={styles.editor}>
-                  {/* //TODO: Add due date colonyDapp#410 */}
-                  <Heading appearance={{ size: 'small' }} text={MSG.dueDate} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
-                </div>
-              </section>
-            </aside>
-            <div className={styles.container}>
-              <section className={styles.header}>
-                {isTaskCreator ? (
-                  <Button
-                    appearance={{ theme: 'primary' }}
-                    text={MSG.closeTask}
-                  />
-                ) : (
-                  <Button
-                    appearance={{ theme: 'primary' }}
-                    text={MSG.requestToWork}
-                  />
-                )}
-              </section>
-              {/* //TODO: replace this with task comments component
-                component in colonyDapp#440 */}
-              <section className={styles.activityContainer} />
-            </div>
-            <FormStatus status={status} />
+    const { openDialog } = this.props;
+    // TODO: pass in Taskdetails of current task as { taskDetails }
+    openDialog('TaskEditDialog');
+  };
+
+  render() {
+    const isTaskCreator =
+      taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
+
+    const { colonyName } = this.props;
+
+    return (
+      <div>
+        <div className={styles.navigation}>
+          <div className={styles.backNavigation}>
+            <Icon
+              name="circle-back"
+              title="back"
+              appearance={{ size: 'medium' }}
+            />
+            <NavLink
+              to="/colony"
+              text={MSG.backButton}
+              textValues={{ colonyName }}
+            />
           </div>
-        )}
-      </Form>
-    </div>
-  );
-};
+          <div className={styles.mainNav}>
+            <Navigation />
+            <AvatarDropdown />
+          </div>
+        </div>
+        <Form
+          onSubmit={console.log}
+          initialValues={{
+            taskName: '',
+          }}
+        >
+          {({ status }) => (
+            <div className={styles.main}>
+              <aside className={styles.sidebar}>
+                <section className={styles.section}>
+                  <header className={styles.headerAside}>
+                    <Heading
+                      appearance={{ size: 'normal' }}
+                      text={MSG.assignmentFunding}
+                    />
+                    {isTaskCreator && (
+                      <Button
+                        appearance={{ theme: 'blue' }}
+                        text={MSG.details}
+                        onClick={this.handleClickToOpenDialog}
+                      />
+                    )}
+                  </header>
+                  {/* //TODO: replace this with TaskAssignment
+                  component in colonyDapp#445 */}
+                  <div className={styles.section}>
+                    <SingleUserPicker
+                      name="assignee"
+                      itemComponent={ItemDefault}
+                      data={userMocks}
+                      filter={filter}
+                    />
+                  </div>
+                </section>
+                <section className={styles.section}>
+                  {/* //TODO: replace this with TaskDescription
+                  component colonyDapp#439 */}
+                  <Input
+                    appearance={{ theme: 'dotted', colorSchema: 'grey' }}
+                    name="taskDescription"
+                    placeholder={MSG.taskTitle}
+                  />
+                  <Input
+                    appearance={{
+                      theme: 'dotted',
+                      colorSchema: 'grey',
+                      size: 'small',
+                    }}
+                    name="taskTitle"
+                    placeholder={MSG.taskDescription}
+                  />
+                </section>
+                <section className={styles.section}>
+                  <div className={styles.editor}>
+                    {/* //TODO: Add domain colonyDapp#408 */}
+                    <Heading appearance={{ size: 'small' }} text={MSG.domain} />
+                    {isTaskCreator && (
+                      <Button
+                        appearance={{ theme: 'blue', size: 'small' }}
+                        text={MSG.add}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.editor}>
+                    <Heading appearance={{ size: 'small' }} text={MSG.skill} />
+                    {isTaskCreator && (
+                      <Button
+                        appearance={{ theme: 'blue', size: 'small' }}
+                        text={MSG.add}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.editor}>
+                    {/* //TODO: Add due date colonyDapp#410 */}
+                    <Heading
+                      appearance={{ size: 'small' }}
+                      text={MSG.dueDate}
+                    />
+                    {isTaskCreator && (
+                      <Button
+                        appearance={{ theme: 'blue', size: 'small' }}
+                        text={MSG.add}
+                      />
+                    )}
+                  </div>
+                </section>
+              </aside>
+              <div className={styles.container}>
+                <section className={styles.header}>
+                  {isTaskCreator ? (
+                    <Button
+                      appearance={{ theme: 'primary' }}
+                      text={MSG.closeTask}
+                    />
+                  ) : (
+                    <Button
+                      appearance={{ theme: 'primary' }}
+                      text={MSG.requestToWork}
+                    />
+                  )}
+                </section>
+                {/* //TODO: replace this with task comments component
+                  component in colonyDapp#440 */}
+                <section className={styles.activityContainer} />
+              </div>
+              <FormStatus status={status} />
+            </div>
+          )}
+        </Form>
+      </div>
+    );
+  }
+}
+
+Task.defaultProps = { colonyName: 'The Meta Colony' };
 
 Task.displayName = displayName;
 
