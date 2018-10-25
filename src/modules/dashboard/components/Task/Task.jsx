@@ -7,11 +7,10 @@ import styles from './Task.css';
 
 import Input from '~core/Fields/Input';
 import Form from '~core/Fields/Form';
+import FormStatus from '~core/Fields/FormStatus';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
-
-import TaskDate from '~dashboard/TaskDate';
 
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~user/AvatarDropdown/__datamocks__/mockUser';
@@ -77,101 +76,108 @@ const Task = () => {
 
   return (
     <div>
-      <div className={styles.main}>
-        <aside className={styles.sidebar}>
-          <section className={styles.section}>
-            <header className={styles.headerAside}>
-              <Heading
-                appearance={{ size: 'normal' }}
-                text={MSG.assignmentFunding}
-              />
-              {isTaskCreator && (
-                <Button appearance={{ theme: 'blue' }} text={MSG.details} />
-              )}
-            </header>
-            {/* //TODO: replace this with TaskAssignment
-            component in colonyDapp#445 */}
-            <Form
-              onSubmit={console.log}
-              initialValues={{
-                assignee: '',
-              }}
-            >
-              <SingleUserPicker
-                name="assignee"
-                itemComponent={ItemDefault}
-                data={userMocks}
-                filter={filter}
-              />
-            </Form>
-          </section>
-          <section className={styles.section}>
-            {/* //TODO: replace this with TaskDescription
-            component colonyDapp#439 */}
-            <Form
-              onSubmit={console.log}
-              initialValues={{
-                taskTitle: '',
-                taskDescription: '',
-              }}
-            >
-              <Input
-                appearance={{ theme: 'dotted', colorSchema: 'grey' }}
-                name="taskDescription"
-                placeholder={MSG.taskTitle}
-              />
-              <Input
-                appearance={{
-                  theme: 'dotted',
-                  colorSchema: 'grey',
-                  size: 'small',
-                }}
-                name="taskTitle"
-                placeholder={MSG.taskDescription}
-              />
-            </Form>
-          </section>
-          <section className={styles.section}>
-            <div className={styles.editor}>
-              {/* //TODO: Add domain colonyDapp#408 */}
-              <Heading appearance={{ size: 'small' }} text={MSG.domain} />
-              {isTaskCreator && (
-                <Button
-                  appearance={{ theme: 'blue', size: 'small' }}
-                  text={MSG.add}
+      <Form
+        onSubmit={console.log}
+        initialValues={{
+          taskName: '',
+        }}
+      >
+        {({ status }) => (
+          <div className={styles.main}>
+            <aside className={styles.sidebar}>
+              <section className={styles.section}>
+                <header className={styles.headerAside}>
+                  <Heading
+                    appearance={{ size: 'normal' }}
+                    text={MSG.assignmentFunding}
+                  />
+                  {isTaskCreator && (
+                    <Button appearance={{ theme: 'blue' }} text={MSG.details} />
+                  )}
+                </header>
+                {/* //TODO: replace this with TaskAssignment
+                component in colonyDapp#445 */}
+                <div className={styles.section}>
+                  <SingleUserPicker
+                    name="assignee"
+                    itemComponent={ItemDefault}
+                    data={userMocks}
+                    filter={filter}
+                  />
+                </div>
+              </section>
+              <section className={styles.section}>
+                {/* //TODO: replace this with TaskDescription
+                component colonyDapp#439 */}
+                <Input
+                  appearance={{ theme: 'dotted', colorSchema: 'grey' }}
+                  name="taskDescription"
+                  placeholder={MSG.taskTitle}
                 />
-              )}
-            </div>
-            <div className={styles.editor}>
-              <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-              {isTaskCreator && (
-                <Button
-                  appearance={{ theme: 'blue', size: 'small' }}
-                  text={MSG.add}
+                <Input
+                  appearance={{
+                    theme: 'dotted',
+                    colorSchema: 'grey',
+                    size: 'small',
+                  }}
+                  name="taskTitle"
+                  placeholder={MSG.taskDescription}
                 />
-              )}
+              </section>
+              <section className={styles.section}>
+                <div className={styles.editor}>
+                  {/* //TODO: Add domain colonyDapp#408 */}
+                  <Heading appearance={{ size: 'small' }} text={MSG.domain} />
+                  {isTaskCreator && (
+                    <Button
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.add}
+                    />
+                  )}
+                </div>
+                <div className={styles.editor}>
+                  <Heading appearance={{ size: 'small' }} text={MSG.skill} />
+                  {isTaskCreator && (
+                    <Button
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.add}
+                    />
+                  )}
+                </div>
+                <div className={styles.editor}>
+                  {/* //TODO: Add due date colonyDapp#410 */}
+                  <Heading appearance={{ size: 'small' }} text={MSG.dueDate} />
+                  {isTaskCreator && (
+                    <Button
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.add}
+                    />
+                  )}
+                </div>
+              </section>
+            </aside>
+            <div className={styles.container}>
+              <section className={styles.header}>
+                {isTaskCreator ? (
+                  <Button
+                    appearance={{ theme: 'primary' }}
+                    text={MSG.closeTask}
+                  />
+                ) : (
+                  <Button
+                    appearance={{ theme: 'primary' }}
+                    text={MSG.requestToWork}
+                  />
+                )}
+              </section>
+              {/* //TODO: replace this with task comments component
+                component in colonyDapp#440 */}
+              <section className={styles.activityContainer} />
             </div>
-            <div className={styles.editor}>
-              <TaskDate isTaskCreator />
-            </div>
-          </section>
-        </aside>
-        <div className={styles.container}>
-          <section className={styles.header}>
-            {isTaskCreator ? (
-              <Button appearance={{ theme: 'primary' }} text={MSG.closeTask} />
-            ) : (
-              <Button
-                appearance={{ theme: 'primary' }}
-                text={MSG.requestToWork}
-              />
-            )}
-          </section>
-          {/* //TODO: replace this with task comments component
-            component in colonyDapp#440 */}
-          <section className={styles.activityContainer} />
-        </div>
-      </div>
+            <FormStatus status={status} />
+          </div>
+        )}
+      </Form>
     </div>
   );
 };
