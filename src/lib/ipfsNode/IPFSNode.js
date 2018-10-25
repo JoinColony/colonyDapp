@@ -15,7 +15,10 @@ class IPFSNode {
         Bootstrap: [],
         Addresses: {
           Gateway: '',
-          Swarm: [],
+          Swarm: [
+            '/ip4/0.0.0.0/tcp/4002',
+            '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
+          ],
         },
       },
       EXPERIMENTAL: {
