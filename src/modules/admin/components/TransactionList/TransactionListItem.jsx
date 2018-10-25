@@ -62,7 +62,7 @@ type Props = {
    * If to show the button to link to etherscan (or not)
    *
    * @NOTE that if this set that onClaim will not have any effect since
-   * the *Clain* button won't show up anymore
+   * the *Claim* button won't show up anymore
    */
   linkToEtherscan: boolean,
 };
