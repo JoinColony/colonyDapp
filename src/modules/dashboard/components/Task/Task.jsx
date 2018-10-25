@@ -75,7 +75,6 @@ const Task = () => {
   return (
     <div>
       <Form
-        // eslint-disable-next-line no-console
         onSubmit={console.log}
         initialValues={{
           taskName: '',
@@ -113,19 +112,26 @@ const Task = () => {
                   name="taskDescription"
                   placeholder={MSG.taskTitle}
                 />
-                <Input
-                  appearance={{
-                    theme: 'dotted',
-                    colorSchema: 'grey',
-                    size: 'small',
-                  }}
-                  name="taskTitle"
-                  placeholder={MSG.taskDescription}
+              )}
+            </div>
+            <div className={styles.editor}>
+              <Heading appearance={{ size: 'small' }} text={MSG.skill} />
+              {isTaskCreator && (
+                <Button
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  text={MSG.add}
                 />
               </section>
               <section className={styles.section}>
                 <div className={styles.editor}>
-                  <TaskDomains isTaskCreator />
+                  {/* //TODO: Add domain colonyDapp#408 */}
+                  <Heading appearance={{ size: 'small' }} text={MSG.domain} />
+                  {isTaskCreator && (
+                    <Button
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.add}
+                    />
+                  )}
                 </div>
                 <div className={styles.editor}>
                   <Heading appearance={{ size: 'small' }} text={MSG.skill} />
@@ -137,14 +143,7 @@ const Task = () => {
                   )}
                 </div>
                 <div className={styles.editor}>
-                  {/* //TODO: Add due date colonyDapp#410 */}
-                  <Heading appearance={{ size: 'small' }} text={MSG.dueDate} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
+                  <TaskDate isTaskCreator />
                 </div>
               </section>
             </aside>
