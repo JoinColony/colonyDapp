@@ -8,16 +8,12 @@ import styles from './Task.css';
 import Input from '~core/Fields/Input';
 import Form from '~core/Fields/Form';
 import FormStatus from '~core/Fields/FormStatus';
-import Icon from '~core/Icon';
-import Navigation from '~dashboard/Navigation';
-import AvatarDropdown from '~dashboard/AvatarDropdown';
-import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
 import userMocks from './__datamocks__/mockUsers';
-import userMock from '~dashboard/AvatarDropdown/__datamocks__/mockUser';
+import userMock from '~user/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
 
 const displayName = 'dashboard.Task';
@@ -69,44 +65,17 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  /*
-   * The redux state will contain the current task details if there's any already
-   * and the current user details
-   *
-   */
-  colonyName?: string,
-};
-
 const filter = (data, filterValue) =>
   data.filter(user =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
-const Task = ({ colonyName = 'The Meta Colony' }: Props) => {
+const Task = () => {
   const isTaskCreator =
     taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
 
   return (
     <div>
-      <div className={styles.navigation}>
-        <div className={styles.backNavigation}>
-          <Icon
-            name="circle-back"
-            title="back"
-            appearance={{ size: 'medium' }}
-          />
-          <NavLink
-            to="/colony"
-            text={MSG.backButton}
-            textValues={{ colonyName }}
-          />
-        </div>
-        <div className={styles.mainNav}>
-          <Navigation />
-          <AvatarDropdown />
-        </div>
-      </div>
       <Form
         onSubmit={console.log}
         initialValues={{
