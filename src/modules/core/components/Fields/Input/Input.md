@@ -184,6 +184,18 @@ Uses the background color of its background (same for text). This should also wo
 />
 ```
 
+### Underline Dotted theme
+
+```js
+<Input
+  appearance={{ theme: 'dotted', colorSchema: 'grey' }}
+  name="inputdotted"
+  placeholder="I have funny dots"
+  label="Dotted label"
+  connect={false}
+/>
+```
+
 ### Formatting using [Cleave.js](https://nosir.github.io/cleave.js/)
 
 ```js

@@ -8,6 +8,7 @@
 .*/node_modules/findup/.*
 # https://github.com/atlassian/react-beautiful-dnd/issues/851
 .*/node_modules/react-beautiful-dnd/.*
+.*/node_modules/oboe/test/json/incomplete.json
 
 [include]
 .*/src/.*

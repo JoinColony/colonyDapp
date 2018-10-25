@@ -7,6 +7,7 @@ import withContext from '~context/withContext';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
+import Task from '~dashboard/Task';
 import Dashboard from '~dashboard/Dashboard';
 
 import Inbox from '~dashboard/Inbox';
@@ -23,6 +24,7 @@ import {
   CONNECT_ROUTE,
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
+  TASK_ROUTE,
   CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
@@ -87,6 +89,11 @@ const Routes = ({
         isConnected={isConnected}
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        path={TASK_ROUTE}
+        component={Task}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}

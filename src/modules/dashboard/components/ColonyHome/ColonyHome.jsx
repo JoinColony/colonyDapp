@@ -180,6 +180,7 @@ class ColonyHome extends Component<Props, State> {
           </Tabs>
         </main>
         <aside className={styles.sidebar}>
+          {/* //TODO: Show this only to admins once we know user roles */}
           <Button
             text={MSG.newTaskButton}
             appearance={{ theme: 'primary', size: 'large' }}

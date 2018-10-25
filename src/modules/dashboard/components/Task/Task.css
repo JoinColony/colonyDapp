@@ -1,0 +1,80 @@
+@value sidbarWidth: 470px;
+@value headerHeight: 45px;
+
+.main {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.backNavigation {
+  margin: 25px 0 0 20px;
+  font-weight: var(--weight-medium);
+}
+
+.mainNav {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+
+.backNavigation i {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  height: 70px;
+  background: var(--gradient-default);
+  background-attachment: fixed;
+}
+
+.sidebar {
+  padding: 11px;
+  height: 100vh;
+  width: sidbarWidth;
+  border-right: 1px solid var(--grey-blue-0);
+}
+
+.container {
+  align-items: flex-start;
+  width: calc(100% - sidbarWidth);
+}
+
+.section {
+  padding: 15px;
+  border: 1px solid var(--grey-blue-0);
+  border-radius: var(--radius-tiny);
+  background-color: var(--grey-blue-3);
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-right: 7px;
+  padding: 11px;
+  height: headerHeight;
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.headerAside {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 25px;
+}
+
+.editor {
+  display: flex;
+  flex-direction: row;
+  margin: 30px 0;
+}
+
+.editor > h5 {
+  margin-right: 5px;
+}
