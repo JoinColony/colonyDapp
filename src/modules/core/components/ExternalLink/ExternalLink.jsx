@@ -16,6 +16,11 @@ type Props = {
   textValues?: { [string]: any },
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
+  /*
+   * Allows for link style customization (Eg: we need to disquise the link as a button)
+   * Don't abuse it!
+   */
+  className?: string,
 };
 
 const ExternalLink = ({
@@ -23,12 +28,13 @@ const ExternalLink = ({
   text,
   textValues,
   intl: { formatMessage },
+  className,
 }: Props) => {
   const linkText =
     typeof text == 'string' ? text : text && formatMessage(text, textValues);
   return (
     <a
-      className={styles.main}
+      className={className || styles.main}
       href={href}
       target="_blank"
       rel="noreferrer noopener"
