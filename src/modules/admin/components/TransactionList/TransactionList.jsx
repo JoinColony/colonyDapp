@@ -35,13 +35,12 @@ type Props = {
    */
   onClaim?: TransactionType => any,
   /*
-   * Method to call when clicking the 'Etherscan' button
-   * This should. in theory redirect you to etherscan, but it can be customized
+   * If to show the button to link to etherscan (or not)
    *
    * @NOTE that if this set that onClaim will not have any effect since
    * the *Clain* button won't show up anymore
    */
-  onEtherscan?: TransactionType => any,
+  linkToEtherscan?: boolean,
 };
 
 const displayName: string = 'admin.TransactionList';
@@ -52,7 +51,7 @@ const TransactionList = ({
   currentColonyAddress,
   showMaskedAddress,
   onClaim,
-  onEtherscan,
+  linkToEtherscan = true,
 }: Props) => (
   <div>
     {transactions && transactions.length ? (
@@ -72,7 +71,7 @@ const TransactionList = ({
                 showMaskedAddress={showMaskedAddress}
                 incoming={transaction.to === currentColonyAddress}
                 onClaim={onClaim}
-                onEtherscan={onEtherscan}
+                linkToEtherscan={linkToEtherscan}
               />
             ))}
           </TableBody>

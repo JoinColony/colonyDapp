@@ -7,6 +7,7 @@ import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
+import ExternalLink from '~core/ExternalLink';
 import TransactionDetails from './TransactionDetails.jsx';
 
 import styles from './TransactionListItem.css';
@@ -58,13 +59,12 @@ type Props = {
    */
   onClaim?: TransactionType => any,
   /*
-   * Method to call when clicking the 'Etherscan' button
-   * This should. in theory redirect you to etherscan, but it can be customized
+   * If to show the button to link to etherscan (or not)
    *
    * @NOTE that if this set that onClaim will not have any effect since
    * the *Clain* button won't show up anymore
    */
-  onEtherscan?: TransactionType => any,
+  linkToEtherscan: boolean,
 };
 
 const TransactionListItem = ({
@@ -72,7 +72,7 @@ const TransactionListItem = ({
   showMaskedAddress = true,
   incoming = true,
   onClaim,
-  onEtherscan,
+  linkToEtherscan,
 }: Props) => {
   const { date, amount, symbol } = transaction;
   return (
@@ -108,7 +108,7 @@ const TransactionListItem = ({
         />
       </TableCell>
       <TableCell className={styles.transactionAmountActions}>
-        {!onEtherscan &&
+        {!linkToEtherscan &&
           onClaim && (
             <div className={styles.buttonWrapper}>
               <Button
@@ -118,11 +118,11 @@ const TransactionListItem = ({
               />
             </div>
           )}
-        {onEtherscan && (
+        {linkToEtherscan && (
           <div className={styles.etherscanButtonWrapper}>
-            <Button
+            <ExternalLink
+              href={`https://rinkeby.etherscan.io/tx/${transaction.hash || 0}`}
               text={MSG.buttonEtherscan}
-              onClick={() => onEtherscan(transaction)}
               className={styles.customButton}
             />
           </div>

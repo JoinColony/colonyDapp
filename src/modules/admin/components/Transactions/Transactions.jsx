@@ -72,18 +72,6 @@ const augmentedPendingTransactions = augmentedTransactions.slice(0, 4);
 const handleClaim = (transaction: TransactionType) => {
   console.log(`[${displayName}] Claimed transaction`, transaction);
 };
-/*
- * Method to call when clicking the *Etherscan* button
- */
-const handleEtherscan = (transaction: TransactionType) => {
-  console.log(`[${displayName}] Redirecting to Etherscan`, transaction);
-  if (transaction && transaction.hash) {
-    return global.location.assign(
-      `https://rinkeby.etherscan.io/tx/${transaction.hash}`,
-    );
-  }
-  return false;
-};
 
 const Transactions = () => (
   <div className={styles.main}>
@@ -101,6 +89,7 @@ const Transactions = () => (
             currentColonyAddress={colonyAddress}
             transactions={augmentedPendingTransactions}
             onClaim={handleClaim}
+            linkToEtherscan={false}
           />
         </div>
       ) : null}
@@ -109,7 +98,7 @@ const Transactions = () => (
           label={MSG.transactionHistoryTitle}
           currentColonyAddress={colonyAddress}
           transactions={augmentedTransactions}
-          onEtherscan={handleEtherscan}
+          linkToEtherscan
         />
       </div>
     </div>
