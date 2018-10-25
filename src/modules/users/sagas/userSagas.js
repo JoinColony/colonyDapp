@@ -5,7 +5,6 @@ import type { Saga } from 'redux-saga';
 import {
   call,
   put,
-  select,
   takeLatest,
   getContext,
   setContext,
@@ -20,6 +19,7 @@ import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider
 import { Commands, Resolvers } from '../../../lib/database';
 import {
   FETCH_USER_PROFILE,
+  FETCH_USER_PROFILE_ERROR,
   SET_CURRENT_USER,
   SET_CURRENT_USER_ERROR,
   SET_USER_PROFILE,
@@ -96,33 +96,26 @@ function* editProfile(action: Object): Saga<void> {
   }
 }
 
-function* editProfile(action: Object): Saga<void> {
-  const { currentAddress, update } = action.payload;
+function* fetchProfile(action: Object): Saga<void> {
+  const { username } = action.payload;
   const ddb = yield getContext('ddb');
-  // TODO create stores so that they can be retrieved with currentAddress
-  const store = yield call([ddb, ddb.getStore], currentAddress);
 
-  yield store.set(update);
-  const user = yield call(all, store);
+  try {
+    // should throw an error if username is not registered
+    const store = yield call([ddb, ddb.getStore], username);
 
-  yield put({
-    type: SET_CURRENT_USER,
-    payload: { set: user, walletAddress: currentAddress },
-  });
-}
+    const user = yield call(Commands.all, store);
 
-function* fetchProfile(): Saga<void> {
-  const username = select(state => state.router.location.pathname).slice(1);
-
-  const ddb = yield getContext('ddb');
-  const store = yield call([ddb, ddb.getStore], username);
-
-  const user = yield call(Commands.all, store);
-
-  yield put({
-    type: SET_USER_PROFILE,
-    payload: { set: user, walletAddress: user.walletAddress },
-  });
+    yield put({
+      type: SET_USER_PROFILE,
+      payload: { set: user, walletAddress: user.walletAddress },
+    });
+  } catch (error) {
+    yield put({
+      type: FETCH_USER_PROFILE_ERROR,
+      payload: { error },
+    });
+  }
 }
 
 function* userSagas(): any {
