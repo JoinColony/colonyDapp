@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedDate } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -20,7 +20,6 @@ const MSG = defineMessages({
       false {Add +}
       other {Modify}
     }`,
-    // defaultMessage: 'Due Date',
   },
 });
 
@@ -168,7 +167,16 @@ class TaskDate extends Component<Props, State> {
             </DatePicker>
           )}
         </div>
-        <div className={styles.currentDate} />
+        <div className={styles.currentDate}>
+          {setDate && (
+            <FormattedDate
+              value={setDate}
+              month="long"
+              day="numeric"
+              year="numeric"
+            />
+          )}
+        </div>
       </div>
     );
   }
