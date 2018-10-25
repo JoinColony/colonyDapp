@@ -26,12 +26,16 @@ td.transactionDate {
 }
 
 .dateDay {
+  width: 100%;
   font-size: var(--size-medium-l);
+  text-align: center;
 }
 
 .dateMonth {
+  width: 100%;
   font-size: var(--size-small);
   text-transform: uppercase;
+  text-align: center;
   color: var(--grey-3);
 }
 
