@@ -47,25 +47,34 @@ class Tokens extends Component<Props> {
     clearTimeout(this.timeoutId);
   }
 
-  handleOpenTokenEditDialog = (): void => {
+  handleOpenTokenEditDialog = () => {
     const { openDialog, tokens } = this.props;
-    openDialog('TokenEditDialog', { tokens });
+    const tokenEditDialg = openDialog('TokenEditDialog', { tokens });
+    tokenEditDialg.afterClosed.catch(() => {
+      // cancel actions here
+    });
   };
 
   handleOpenTokenMintDialog = () => {
     const { openDialog, tokens } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
-    openDialog('TokenMintDialog', {
-      handleMintNewTokensSubmit: this.handleMintNewTokensSubmit,
+    const mintNewTokensDialog = openDialog('TokenMintDialog', {
+      onMintNewTokensSubmitted: this.onMintNewTokensSubmitted,
       nativeToken,
+    });
+    mintNewTokensDialog.afterClosed.catch(() => {
+      // cancel actions here
     });
   };
 
-  handleMintNewTokensSubmit = (tokenSymbol: string, amount: number): void => {
+  onMintNewTokensSubmitted = () => {
+    /*
+     * TODO: Open the gas station here once implemented
+     *
+     * There's a chance this will happen in a reducer or some
+     * other place at some point, but it's here now for demo purposes
+     */
     const { openDialog } = this.props;
-    console.log(tokenSymbol, amount);
-    // TODO: Actually submit the form
-    // TODO: Open the gas station here once implemented
     const mintingNewTokensDialog = openDialog('ActivityBarExample');
     this.timeoutId = setTimeout(() => {
       mintingNewTokensDialog.close();

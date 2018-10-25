@@ -60,7 +60,7 @@ type Props = {
   cancel: () => void,
   close: () => void,
   nativeToken: TokenType,
-  handleMintNewTokensSubmit: (tokenSymbol: string, amount: number) => void,
+  onMintNewTokensSubmitted: (tokenSymbol: string, amount: number) => void,
 };
 
 const validationSchema = yup.object().shape({
@@ -82,13 +82,14 @@ class TokenMintDialog extends Component<Props> {
   handleSubmitTokenForm = ({ mintAmount }: FormValues) => {
     const {
       close,
-      handleMintNewTokensSubmit,
+      onMintNewTokensSubmitted,
       nativeToken: { tokenSymbol },
     } = this.props;
     // TODO handle form data here
+    console.log(mintAmount);
     this.timeoutId = setTimeout(() => {
       close();
-      handleMintNewTokensSubmit(tokenSymbol, mintAmount);
+      onMintNewTokensSubmitted(tokenSymbol, mintAmount);
     }, 500);
   };
 
