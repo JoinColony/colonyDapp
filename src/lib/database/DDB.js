@@ -147,7 +147,7 @@ class DDB {
       );
     }
 
-    return resolver ? resolver.resolve(id) : null;
+    return resolver.resolve(id);
   }
 
   async _getStoreAddress(identifier: StoreIdentifier): Promise<OrbitDBAddress> {
