@@ -12,6 +12,7 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import Profile from '~admin/Profile';
 import Organizations from '~admin/Organizations';
 import Tokens from '~admin/Tokens';
+import Transactions from '~admin/Transactions';
 
 import styles from './AdminDashboard.css';
 
@@ -42,7 +43,7 @@ const MSG = defineMessages({
   },
   tabTransaction: {
     id: 'dashboard.Admin.tabTransaction',
-    defaultMessage: 'Transaction',
+    defaultMessage: 'Transactions',
   },
   tabOrganisation: {
     id: 'dashboard.Admin.tabOrganisation',
@@ -70,7 +71,7 @@ const navigationItems: Array<NavigationItem> = [
   },
   {
     title: MSG.tabTransaction,
-    content: <div>Transaction Content</div>,
+    content: <Transactions />,
   },
   {
     title: MSG.tabOrganisation,

@@ -1,6 +1,6 @@
 /* Use td.className to be able to overwrite table styles */
 
-@value cellPadding: 25px;
+@value cellPadding: 20px;
 @value nameMargin: 10px;
 
 tr.main:hover .customRemoveButton {
