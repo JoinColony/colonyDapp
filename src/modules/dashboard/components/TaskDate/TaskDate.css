@@ -1,0 +1,36 @@
+@value paddingValue: 12px;
+
+.main {
+  /* padding-right: 20px;
+  width: 100%; */
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+}
+
+.controls button {
+  margin-left: 5px;
+
+  /*
+   * @NOTE We need to manually set it here, otherwise some parent class from
+   * `.form` will set it's bottom margin to 15px
+   */
+  margin-bottom: 0 !important;
+}
+
+.dateControls {
+  margin-top: paddingValue;
+  padding: paddingValue 0 0 0;
+  border-top: 1px solid var(--grey-blue-0);
+  text-align: right;
+}
+
+.currentDate {
+  overflow: hidden;
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--grey-dark);
+}

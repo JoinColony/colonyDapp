@@ -113,14 +113,14 @@ const Task = () => {
                   name="taskDescription"
                   placeholder={MSG.taskTitle}
                 />
-              )}
-            </div>
-            <div className={styles.editor}>
-              <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-              {isTaskCreator && (
-                <Button
-                  appearance={{ theme: 'blue', size: 'small' }}
-                  text={MSG.add}
+                <Input
+                  appearance={{
+                    theme: 'dotted',
+                    colorSchema: 'grey',
+                    size: 'small',
+                  }}
+                  name="taskTitle"
+                  placeholder={MSG.taskDescription}
                 />
               </section>
               <section className={styles.section}>
