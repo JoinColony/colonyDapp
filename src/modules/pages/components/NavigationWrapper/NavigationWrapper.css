@@ -1,0 +1,53 @@
+.wrapper {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  background: var(--gradient-default);
+  grid-template-columns: 100%;
+  grid-template-rows: 70px auto;
+}
+
+.navigation {
+  display: flex;
+  align-content: stretch;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.history {
+  order: 1;
+  flex-grow: 1;
+  align-self: center;
+  text-align: left;
+}
+
+.user {
+  order: 2;
+  flex-grow: 1;
+  align-self: center;
+  text-align: right;
+}
+
+.content {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+/*
+ * Theme-ing
+ */
+
+.themeMain, .themeTransparent {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+}
+
+.themeMain .navigation {
+  border-color: var(--grey-blue-0);
+  background-color: var(--grey-blue-3);
+}
+
+.themeTransparent .navigation {
+  border-color: transparent;
+  background-color: transparent;
+}

@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { USER_ROUTE } from '~routes';
+
 import AvatarUploader from '~core/AvatarUploader';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -52,7 +54,7 @@ const remove = async () => {};
 
 const Sidebar = ({ avatarURL, walletAddress, username }: Props) => (
   <div>
-    <Link className={styles.backLink} to="/profile">
+    <Link className={styles.backLink} to={USER_ROUTE}>
       <Icon
         appearance={{ size: 'medium' }}
         name="circle-back"

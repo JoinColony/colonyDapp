@@ -5,10 +5,6 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import AvatarDropdown from '~dashboard/AvatarDropdown';
-
-import Navigation from '~dashboard/Navigation';
-
 import styles from './CenteredTemplate.css';
 
 type Appearance = {
@@ -25,10 +21,6 @@ const displayName = 'pages.CenteredTemplate';
 const CenteredTemplate = ({ appearance, children }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
     <div className={styles.mainContainer}>
-      <header className={styles.header}>
-        <Navigation />
-        <AvatarDropdown />
-      </header>
       <main className={styles.mainContent}>{children}</main>
     </div>
   </div>

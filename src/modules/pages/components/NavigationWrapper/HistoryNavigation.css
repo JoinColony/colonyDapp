@@ -1,0 +1,20 @@
+.back {
+  display: flex;
+  align-items: center;
+  margin: 0;
+
+  /*
+   * @NOTE Increase the click-able area
+   */
+  padding: 10px 15px 10px 0;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  cursor: pointer;
+
+  & i {
+    margin-right: 10px;
+  }
+}

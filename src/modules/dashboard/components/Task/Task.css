@@ -7,30 +7,7 @@
   padding: 0;
   height: 100%;
   width: 100%;
-}
-
-.backNavigation {
-  margin: 25px 0 0 20px;
-  font-weight: var(--weight-medium);
-}
-
-.mainNav {
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 10px;
-}
-
-.backNavigation i {
-  margin-right: 10px;
-  vertical-align: middle;
-}
-
-.navigation {
-  display: flex;
-  justify-content: space-between;
-  height: 70px;
-  background: var(--gradient-default);
-  background-attachment: fixed;
+  background: var(--colony-white);
 }
 
 .sidebar {
