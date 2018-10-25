@@ -30,7 +30,7 @@ const NavbarElement = ({ onPreviousClick, onNextClick }: Props) => (
       type="button"
       onClick={() => onPreviousClick()}
     >
-      <Icon name="caret-right" size="small" title={MSG.nextMonth} />
+      <Icon name="caret-left" size="small" title={MSG.nextMonth} />
     </button>
     <button
       className={styles.navButton}
