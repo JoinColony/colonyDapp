@@ -60,6 +60,10 @@ type Props = {
    * If the children are a function, pass them the close method.
    */
   children?: Node | ((val: any) => void),
+  /*
+   * If set, it will not close the popover when clicking the new date
+   */
+  preventClose?: boolean,
 };
 
 type State = {
@@ -164,7 +168,7 @@ class DatePicker extends Component<Props, State> {
   };
 
   render() {
-    const { $value, children } = this.props;
+    const { $value, children, preventClose } = this.props;
     const { currentDate } = this.state;
     const selectedDay = currentDate || $value;
     return (
@@ -180,7 +184,7 @@ class DatePicker extends Component<Props, State> {
                 classNames={styles}
                 enableOutsideDays
                 month={currentDate || new Date()}
-                onDayClick={this.handlePopoverClose}
+                onDayClick={preventClose ? this.handlePopoverClose : close}
                 selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
                 captionElement={props => <CaptionElement {...props} />}
                 navbarElement={props => <NavbarElement {...props} />}
