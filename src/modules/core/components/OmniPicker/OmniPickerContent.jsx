@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react';
 
 import React from 'react';
+import nanoid from 'nanoid';
 
 import styles from './OmniPickerContent.css';
 
@@ -38,7 +39,7 @@ const OmniPickerContent = ({
       {filteredData.length ? (
         filteredData.map((itemData, idx) => (
           <OmniPickerItem
-            key={itemData.id}
+            key={nanoid(idx)}
             idx={idx}
             keyUsed={keyUsed}
             selected={selected === idx}

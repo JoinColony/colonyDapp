@@ -14,7 +14,6 @@ import Assignment from '~core/Assignment';
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { DialogType } from '~core/Dialog';
-import withDialog from '~core/Dialog/withDialog';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
@@ -76,7 +75,11 @@ const Task = ({ openDialog }: Props) => {
               text={MSG.assignmentFunding}
             />
             {preventEdit && (
-              <Button appearance={{ theme: 'blue' }} text={MSG.details} />
+              <Button
+                appearance={{ theme: 'blue' }}
+                text={MSG.details}
+                onClick={() => openDialog('TaskEditDialog', {})}
+              />
             )}
           </header>
           <Form
@@ -203,4 +206,4 @@ const Task = ({ openDialog }: Props) => {
 
 Task.displayName = displayName;
 
-export default withDialog()(Task);
+export default Task;

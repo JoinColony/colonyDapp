@@ -92,7 +92,7 @@ const Routes = ({ currentUser }) => {
         component={ColonyHome}
         backRoute={DASHBOARD_ROUTE}
       />
-      <ConnectedOnlyRoute
+      <Route
         isConnected={isConnected}
         path={TASK_ROUTE}
         component={Task}
