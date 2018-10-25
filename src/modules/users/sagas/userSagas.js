@@ -64,13 +64,22 @@ function* editProfile(action: Object): Saga<void> {
   // TODO create stores so that they can be retrieved with currentAddress
   const store = yield call([ddb, ddb.getStore], currentAddress);
 
-  yield store.set(update);
-  const user = yield call(Commands.all, store);
+  try {
+    // if user is not allowed to write to store, this should throw an error
+    yield store.set(update);
+    const user = yield call(Commands.all, store);
 
-  yield put({
-    type: SET_CURRENT_USER,
-    payload: { set: user, walletAddress: currentAddress },
-  });
+    yield put({
+      type: SET_CURRENT_USER,
+      payload: { set: user, walletAddress: currentAddress },
+    });
+  } catch (error) {
+    yield put({
+      type: SET_CURRENT_USER_ERROR,
+      payload: { error },
+    });
+    return;
+  }
 }
 
 function* userSagas(): any {
