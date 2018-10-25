@@ -1,16 +1,16 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
-
 import React, { Component } from 'react';
 import createDate from 'sugar-date/date/create';
 import formatDate from 'sugar-date/date/format';
 import DayPicker, { DateUtils } from 'react-day-picker';
 
-import styles from './DatePicker.css';
-
+import type { MessageDescriptor } from 'react-intl';
+import type { Node } from 'react';
 import type { InputComponentAppearance } from '../Fields/Input';
 import type { PopoverTrigger } from '../Popover';
+
+import styles from './DatePicker.css';
 
 import { asField } from '../Fields';
 import Popover from '../Popover';
@@ -54,6 +54,12 @@ type Props = {
   onBlur: (evt: SyntheticFocusEvent<HTMLInputElement>) => void,
   /** @ignore Will be injected by `asField` */
   onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+  /*
+   * Render children under the date picker, inside the popover
+   *
+   * If the children are a function, pass them the close method.
+   */
+  children?: Node | ((val: any) => void),
 };
 
 type State = {
@@ -158,7 +164,7 @@ class DatePicker extends Component<Props, State> {
   };
 
   render() {
-    const { $value } = this.props;
+    const { $value, children } = this.props;
     const { currentDate } = this.state;
     const selectedDay = currentDate || $value;
     return (
@@ -169,15 +175,18 @@ class DatePicker extends Component<Props, State> {
           retainRefFocus
           onClose={this.handlePopoverClose}
           content={({ close }) => (
-            <DayPicker
-              classNames={styles}
-              enableOutsideDays
-              month={currentDate || new Date()}
-              onDayClick={close}
-              selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
-              captionElement={props => <CaptionElement {...props} />}
-              navbarElement={props => <NavbarElement {...props} />}
-            />
+            <div>
+              <DayPicker
+                classNames={styles}
+                enableOutsideDays
+                month={currentDate || new Date()}
+                onDayClick={this.handlePopoverClose}
+                selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
+                captionElement={props => <CaptionElement {...props} />}
+                navbarElement={props => <NavbarElement {...props} />}
+              />
+              {typeof children == 'function' ? children({ close }) : children}
+            </div>
           )}
         >
           {this.getTrigger()}
