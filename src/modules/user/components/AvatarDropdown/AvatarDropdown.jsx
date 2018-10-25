@@ -10,7 +10,7 @@ import styles from './AvatarDropdown.css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover.jsx';
 
-const displayName: string = 'user.AvatarDropdown';
+const displayName = 'user.AvatarDropdown';
 
 const AvatarDropdown = () => (
   <Popover
