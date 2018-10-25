@@ -5,6 +5,7 @@ import type { Saga } from 'redux-saga';
 import {
   call,
   put,
+  select,
   takeLatest,
   getContext,
   setContext,
@@ -73,8 +74,9 @@ function* initializeUser(action: Object): Saga<void> {
 function* editProfile(action: Object): Saga<void> {
   const { currentAddress, update } = action.payload;
   const ddb = yield getContext('ddb');
-  // TODO create stores so that they can be retrieved with currentAddress
-  const store = yield call([ddb, ddb.getStore], currentAddress);
+  const username = select(state => state.router.location.pathname).slice(1);
+
+  const store = yield call([ddb, ddb.getStore], username);
 
   try {
     // if user is not allowed to write to store, this should throw an error
