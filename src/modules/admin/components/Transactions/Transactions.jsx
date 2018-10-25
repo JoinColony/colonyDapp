@@ -36,7 +36,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName: string = 'admin.Transactions';
+const displayName = 'admin.Transactions';
 
 /*
  * @NOTE Mock values.
