@@ -13,7 +13,7 @@
 .dialogOuterActions {
   display: flex;
   justify-content: flex-end;
-  margin-top: -25px;
+  margin-top: -35px;
   position: absolute;
   right: 0;
 }
@@ -27,4 +27,5 @@
 .closeIconButton svg {
   fill: var(--colony-white);
   stroke: var(--colony-white);
+  cursor: pointer;
 }
