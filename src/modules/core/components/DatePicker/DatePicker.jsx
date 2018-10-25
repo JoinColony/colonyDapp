@@ -58,12 +58,22 @@ type Props = {
    * Render children under the date picker, inside the popover
    *
    * If the children are a function, pass them the close method.
+   * Useful to combine with `preventClose`
    */
   children?: Node | ((val: any) => void),
   /*
    * If set, it will not close the popover when clicking the new date
    */
   preventClose?: boolean,
+  /*
+   * If set, it will manually overwrite the currently selected date
+   *
+   * It's kind of a hardswitch to be able to select a date even when you're not
+   * connected to a form.
+   *
+   * This implies you handle the state on you're own.
+   */
+  selectedDate?: ?Date,
 };
 
 type State = {
@@ -168,9 +178,14 @@ class DatePicker extends Component<Props, State> {
   };
 
   render() {
-    const { $value, children, preventClose } = this.props;
+    const {
+      $value,
+      children,
+      preventClose,
+      selectedDate: manuallySelectedDate,
+    } = this.props;
     const { currentDate } = this.state;
-    const selectedDay = currentDate || $value;
+    const selectedDay = manuallySelectedDate || currentDate || $value;
     return (
       <div className={styles.main}>
         <Popover
