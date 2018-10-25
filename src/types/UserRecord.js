@@ -1,6 +1,8 @@
 /* @flow */
 
-export type UserType = {
+import type { RecordOf } from 'immutable';
+
+export type UserProps = {
   walletAddress: string,
   username: string,
   avatar?: string,
@@ -9,3 +11,5 @@ export type UserType = {
   website?: string,
   location?: string,
 };
+
+export type UserRecord = RecordOf<UserProps>;

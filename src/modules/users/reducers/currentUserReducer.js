@@ -3,11 +3,11 @@
 import { SET_CURRENT_USER } from '../actionTypes';
 
 import type { Action } from '~types/';
-import type { UserType } from '~types/user';
+import type { UserRecord } from '~types/UserRecord';
 
 type State = {
   walletAddress: string,
-  profile: UserType,
+  profile: UserRecord,
 } | null;
 
 const INITIAL_STATE = null;

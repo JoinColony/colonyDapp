@@ -4,11 +4,13 @@ import { createSelector } from 'reselect';
 
 import ns from '../namespace';
 
-import type { Transaction, TransactionsState } from '../types';
+import type { TransactionsState } from '../types';
+
+import type { TransactionRecord } from '~types/TransactionRecord';
 
 type State = { [typeof ns]: { transactions: TransactionsState } };
 
-type TransactionSelector = (tx: Transaction) => boolean;
+type TransactionSelector = (tx: TransactionRecord) => boolean;
 
 type TransactionsSelector = (state: State) => TransactionsState;
 
@@ -26,8 +28,8 @@ const isConfirmed: TransactionSelector = tx =>
  * Transactions sorting functions.
  */
 const createdAtDesc = (
-  { createdAt: createdAtA }: Transaction,
-  { createdAt: createdAtB }: Transaction,
+  { createdAt: createdAtA }: TransactionRecord,
+  { createdAt: createdAtB }: TransactionRecord,
 ) => createdAtB - createdAtA;
 
 /**

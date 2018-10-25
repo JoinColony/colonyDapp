@@ -1,8 +1,8 @@
 /* @flow */
 
-import type { UserType } from '~types/user';
+import { User } from '../../../../users/records';
 
-const MockUser: UserType = {
+const MockUser = User({
   walletAddress: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',
   avatar:
     // eslint-disable-next-line max-len
@@ -14,6 +14,6 @@ const MockUser: UserType = {
   username: 'chewie',
   location: 'Kashyyyk',
   website: 'https://github.com/chewie',
-};
+});
 
 export default MockUser;

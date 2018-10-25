@@ -2,31 +2,28 @@
 
 import { WALLET_SET, WALLET_CLEARED } from '../actionTypes';
 
-type State = {
-  currentAddress?: string,
-};
+import { Wallet } from '../records';
 
 type Action = {
   type: string,
   payload: Object,
 };
 
-const INITIAL_STATE: State = {};
+const INITIAL_STATE = Wallet({});
 
-const walletReducer = (state: State = INITIAL_STATE, action: Action): State => {
+const walletReducer = (
+  state: Wallet = INITIAL_STATE,
+  action: Action,
+): Wallet => {
   switch (action.type) {
     case WALLET_SET: {
       const { currentAddress } = action.payload;
-      return {
-        currentAddress,
-      };
+      return state.set('currentAddress', currentAddress);
     }
-    case WALLET_CLEARED: {
+    case WALLET_CLEARED:
       return INITIAL_STATE;
-    }
-    default: {
+    default:
       return state;
-    }
   }
 };
 
