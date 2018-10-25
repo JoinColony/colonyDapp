@@ -12,6 +12,8 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
+import TaskDate from '../TaskDate';
+
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~user/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
@@ -145,14 +147,7 @@ const Task = () => {
                   )}
                 </div>
                 <div className={styles.editor}>
-                  {/* //TODO: Add due date colonyDapp#410 */}
-                  <Heading appearance={{ size: 'small' }} text={MSG.dueDate} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
+                  <TaskDate isTaskCreator />
                 </div>
               </section>
             </aside>
