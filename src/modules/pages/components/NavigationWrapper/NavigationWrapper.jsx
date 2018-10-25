@@ -15,7 +15,7 @@ import styles from './NavigationWrapper.css';
 const displayName = 'pages.NavigationWrapper';
 
 type Appearance = {
-  theme?: 'grey' | 'transparent',
+  theme?: 'main' | 'transparent',
 };
 
 type Props = {
@@ -68,7 +68,7 @@ const NavigationWrapper = ({
   backTextValues,
   children,
   className,
-  appearance = { theme: 'grey' },
+  appearance = { theme: 'main' },
   /*
    * All the remaining props are passed down to the the children
    */
