@@ -5,7 +5,6 @@ import type { Saga } from 'redux-saga';
 import {
   call,
   put,
-  select,
   takeLatest,
   getContext,
   setContext,
@@ -72,9 +71,8 @@ function* initializeUser(action: Object): Saga<void> {
 }
 
 function* editProfile(action: Object): Saga<void> {
-  const { currentAddress, update } = action.payload;
+  const { currentAddress, update, username } = action.payload;
   const ddb = yield getContext('ddb');
-  const username = select(state => state.router.location.pathname).slice(1);
 
   const store = yield call([ddb, ddb.getStore], username);
 
@@ -92,7 +90,6 @@ function* editProfile(action: Object): Saga<void> {
       type: SET_CURRENT_USER_ERROR,
       payload: { error },
     });
-    return;
   }
 }
 
