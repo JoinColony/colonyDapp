@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as yup from 'yup';
+import '../../modules/validations';
 
 import type { UserType } from '~types/user';
 
@@ -12,7 +13,10 @@ export const UserProfile = {
   bio: yup.string(),
   // TODO: IPFS hash add yup validation for IPFS hash
   avatar: yup.string(),
-  walletAddress: yup.string().required(),
+  walletAddress: yup
+    .string()
+    .address()
+    .required(),
   // TODO: required?
   username: yup.string().required(),
   website: yup.string(),
