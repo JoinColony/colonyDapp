@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default as IPFSNode } from './IPFSNode';
+export { default } from './IPFSNode';
