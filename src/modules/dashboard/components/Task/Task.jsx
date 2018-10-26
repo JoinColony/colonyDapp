@@ -13,7 +13,7 @@ import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
 import userMocks from './__datamocks__/mockUsers';
-import userMock from '~user/AvatarDropdown/__datamocks__/mockUser';
+import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
 
 const displayName = 'dashboard.Task';

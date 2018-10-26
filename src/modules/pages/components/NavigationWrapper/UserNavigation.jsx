@@ -8,7 +8,7 @@ import { INBOX_ROUTE, DASHBOARD_ROUTE, WALLET_ROUTE } from '~routes';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-import AvatarDropdown from '~user/AvatarDropdown';
+import AvatarDropdown from '~users/AvatarDropdown';
 
 import styles from './UserNavigation.css';
 

@@ -16,31 +16,31 @@ import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   myProfile: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.myProfile',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.myProfile',
     defaultMessage: 'My Profile',
   },
   settings: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.colonySettings',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.colonySettings',
     defaultMessage: 'Settings',
   },
   createColony: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.createColony',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.createColony',
     defaultMessage: 'Create a Colony',
   },
   requestFeatures: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.requestFeatures',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.requestFeatures',
     defaultMessage: 'Request Features',
   },
   reportBugs: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.reportBugs',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.reportBugs',
     defaultMessage: 'Report Bugs',
   },
   helpCenter: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.helpCenter',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.helpCenter',
     defaultMessage: 'Help Center',
   },
   signOut: {
-    id: 'user.AvatarDropdown.AvatarDropdownPopover.link.signOut',
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.signOut',
     defaultMessage: 'Sign Out',
   },
 });
@@ -51,7 +51,7 @@ type Props = {
 };
 
 class AvatarDropdownPopover extends Component<Props> {
-  static displayName = 'user.AvatarDropdown.AvatarDropdownPopover';
+  static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
   renderUserSection = () => (
     <DropdownMenuSection separator>
