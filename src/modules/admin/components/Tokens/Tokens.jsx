@@ -34,16 +34,51 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  openDialog: (dialogName: string, dialogProps: Object) => DialogType,
+  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
   tokens: Array<TokenType>,
 };
 
 class Tokens extends Component<Props> {
+  timeoutId: TimeoutID;
+
   static displayName = 'admin.Tokens';
 
-  handleOpenTokenEditDialog = (): void => {
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId);
+  }
+
+  handleOpenTokenEditDialog = () => {
     const { openDialog, tokens } = this.props;
-    openDialog('TokenEditDialog', { tokens });
+    const tokenEditDialg = openDialog('TokenEditDialog', { tokens });
+    tokenEditDialg.afterClosed.catch(() => {
+      // cancel actions here
+    });
+  };
+
+  handleOpenTokenMintDialog = () => {
+    const { openDialog, tokens } = this.props;
+    const nativeToken = tokens.find(token => token.isNative);
+    const mintNewTokensDialog = openDialog('TokenMintDialog', {
+      onMintNewTokensSubmitted: this.onMintNewTokensSubmitted,
+      nativeToken,
+    });
+    mintNewTokensDialog.afterClosed.catch(() => {
+      // cancel actions here
+    });
+  };
+
+  onMintNewTokensSubmitted = () => {
+    /*
+     * TODO: Open the gas station here once implemented
+     *
+     * There's a chance this will happen in a reducer or some
+     * other place at some point, but it's here now for demo purposes
+     */
+    const { openDialog } = this.props;
+    const mintingNewTokensDialog = openDialog('ActivityBarExample');
+    this.timeoutId = setTimeout(() => {
+      mintingNewTokensDialog.close();
+    }, 3000);
   };
 
   render() {
@@ -86,6 +121,7 @@ class Tokens extends Component<Props> {
                     <Button
                       text={MSG.navItemMintNewTokens}
                       appearance={{ theme: 'blue' }}
+                      onClick={this.handleOpenTokenMintDialog}
                     />
                   </li>
                 )}

@@ -47,7 +47,11 @@ const Dialog = ({
           className={styles.closeIconButton}
           onClick={cancel}
         >
-          <Icon name="circle-close" title={MSG.buttonCancel} />
+          <Icon
+            appearance={{ size: 'medium' }}
+            name="circle-close"
+            title={MSG.buttonCancel}
+          />
         </button>
       </div>
     )}

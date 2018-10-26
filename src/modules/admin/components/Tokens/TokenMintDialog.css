@@ -1,0 +1,17 @@
+.inputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.input {
+  flex-grow: 1;
+
+  & input {
+    text-align: right;
+  }
+}
+
+.nativeToken {
+  padding: 0 50px 0 20px;
+}
