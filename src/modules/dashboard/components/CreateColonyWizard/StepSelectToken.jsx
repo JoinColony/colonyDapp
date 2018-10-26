@@ -5,7 +5,6 @@ import { defineMessages } from 'react-intl';
 import { isAddress } from 'web3-utils';
 
 import * as yup from 'yup';
-import MakeAsyncFunction from 'react-redux-promise-listener';
 
 import type { FormikProps } from 'formik';
 
@@ -195,74 +194,83 @@ class StepSelectToken extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { isLoading: false, tokenData: null };
+    this.getToken = promiseListener.generateAsyncFunction(
+      GET_TOKEN_INFO,
+      GET_TOKEN_INFO_SUCCESS,
+      GET_TOKEN_INFO_ERROR,
+    );
+  }
+
+  componentDidUpdate({ values: { tokenAddress: prevTokenAddress } }) {
+    const {
+      values: { tokenAddress },
+      isSubmitting,
+    } = this.props;
+    const { isLoading } = this.state;
+
+    // Guard against updates that don't include a new, valid `tokenAddress`,
+    // or if the form is submitting or loading.
+    if (
+      !(tokenAddress && tokenAddress.length) ||
+      tokenAddress === prevTokenAddress ||
+      !isAddress(tokenAddress) ||
+      isSubmitting ||
+      isLoading
+    )
+      return;
+
+    // For a valid address, attempt to load token info.
+    // XXX this is setting state during `componentDidUpdate`, which is
+    // generally a bad idea, but we are guarding against it by checking the
+    // state first.
+    this.setLoading(true);
+
+    // Get the token address and handle success/error
+    this.getToken
+      .asyncFunction(tokenAddress)
+      .then(this.handleGetTokenSuccess)
+      .catch(this.handleGetTokenError);
+  }
+
+  componentWillUnmount() {
+    this.getToken.unsubscribe();
+  }
+
+  setLoading(isLoading: boolean) {
+    this.setState({ isLoading });
+  }
+
+  handleGetTokenSuccess({ name = '', symbol = '' }) {
+    const { setFieldValue } = this.props;
+    // XXX using `setValues` will cause this handler to re-run,
+    // so it is easier to set values separately.
+    setFieldValue('tokenName', name);
+    setFieldValue('tokenSymbol', symbol);
+
+    this.setState({
+      isLoading: false,
+      tokenData: name.length || symbol.length ? { name, symbol } : null,
+    });
+  }
+
+  handleGetTokenError(error: Error) {
+    const { setFieldValue } = this.props;
+    setFieldValue('tokenName', '');
+    setFieldValue('tokenSymbol', '');
+
+    this.setState({ isLoading: false, tokenData: null });
+    // TODO later: show error feedback
+    console.info(error); // eslint-disable-line no-console
   }
 
   render() {
-    const { handleChange, isSubmitting, setFieldValue } = this.props;
     const { isLoading, tokenData } = this.state;
     return (
-      <MakeAsyncFunction
-        listener={promiseListener}
-        start={GET_TOKEN_INFO}
-        resolve={GET_TOKEN_INFO_SUCCESS}
-        reject={GET_TOKEN_INFO_ERROR}
-        setPayload={(action: *, tokenAddress: *) => ({
-          ...action,
-          payload: { tokenAddress },
-        })}
-      >
-        {asyncFunc => {
-          // Handle changes to the `tokenAddress field.
-          const handleTokenAddressChange = event => {
-            // Immediately let formik handle the event.
-            handleChange(event);
-
-            // If the form is submitting or we're loading token info,
-            // nothing more to do here.
-            if (isSubmitting || isLoading) return;
-
-            // Get the current `tokenAddress` value from the event.
-            const {
-              currentTarget: { value: tokenAddress },
-            } = event;
-
-            // For a valid address, attempt to load token info.
-            if (isAddress(tokenAddress)) {
-              this.setState({ isLoading: true });
-
-              // Call the async function we created (dispatches `start` action).
-              asyncFunc(tokenAddress).then(
-                ({ name = '', symbol = '' }) => {
-                  // XXX using `setValues` will cause this handler to re-run,
-                  // so it is easier to set values separately.
-                  setFieldValue('tokenName', name);
-                  setFieldValue('tokenSymbol', symbol);
-                  this.setState({
-                    isLoading: false,
-                    tokenData:
-                      name.length || symbol.length ? { name, symbol } : null,
-                  });
-                },
-                error => {
-                  setFieldValue('tokenName', '');
-                  setFieldValue('tokenSymbol', '');
-                  this.setState({ isLoading: false, tokenData: null });
-                  // TODO later: show error feedback
-                  console.info(error); // eslint-disable-line no-console
-                },
-              );
-            }
-          };
-          return (
-            <StepSelectTokenForm
-              {...this.props}
-              handleTokenAddressChange={handleTokenAddressChange}
-              isLoading={isLoading}
-              tokenData={tokenData}
-            />
-          );
-        }}
-      </MakeAsyncFunction>
+      <StepSelectTokenForm
+        {...this.props}
+        isLoading={isLoading}
+        tokenData={tokenData}
+      />
     );
   }
 }
