@@ -13,6 +13,11 @@ import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
 import { getNetworkClient } from './networkClient';
 import { getDDB } from './ddb';
 
+/**
+ * Given an action to get the user’s wallet, use this wallet to initialise the initial
+ * context that depends on it (the wallet itself, the DDB, the network client),
+ * and then any other context that depends on that.
+ */
 function* setupUserContext(action: Object): any {
   try {
     const wallet = yield call(getWallet, action);
