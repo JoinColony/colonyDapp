@@ -8,11 +8,13 @@ import { CONNECT_ROUTE } from '~routes';
 
 import styles from './StepCreatePhrase.css';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import { CONNECT_ROUTE } from '~routes';
 
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
-import MnemonicGenerator from '../../../core/components/MnemonicGenerator';
+import type { SubmitFn } from '~core/Wizard';
+
+import Heading from '~core/Heading';
+import Button from '~core/Button';
+import MnemonicGenerator from '~core/MnemonicGenerator';
 
 const MSG = defineMessages({
   heading: {
