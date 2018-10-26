@@ -10,6 +10,7 @@ import styles from './DialogSection.css';
 
 type Appearance = {
   align: 'right',
+  border: 'grey',
 };
 
 type Props = {

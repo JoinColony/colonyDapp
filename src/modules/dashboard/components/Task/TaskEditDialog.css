@@ -1,20 +1,39 @@
 .taskEditContainer {
     max-height: 250px;
+    max-width: 500px;
     overflow: auto;
 }
 
-.taskEdit {
+.buttonContainer{
     display: flex;
-    align-items: center;
+    align-items: end;
     margin: 20px 0;
 }
 
-.taskEditIcon {
-    margin: 0 10px;
-    max-height: 36px;
-    width: 36px;
+.editor {
+    display: flex;
+    flex-direction: row;
+}
+.amountEditor {
+    display: flex;
+    justify-content: space-between;
 }
 
-.taskEditSymbol {
-    margin: 0 10px;
+.editor > h4 {
+    margin-right: 5px;
+}
+
+.backdrop{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    z-index: var(--z-index-modal-overlay);
+    overflow: hidden;
+    background-color: white;
 }

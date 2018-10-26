@@ -2,147 +2,118 @@
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenType } from '~types/token';
-
 import Button from '~core/Button';
+import Form from '~core/Fields/Form';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
-import { Checkbox, Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 
 import styles from './TaskEditDialog.css';
 
 const MSG = defineMessages({
-  title: {
-    id: 'admin.Tokens.TokenEditDialog.title',
-    defaultMessage: 'Add Token',
+  titleAssignment: {
+    id: 'dashboard.task.taskEditDialog.titleAssignment',
+    defaultMessage: 'Assignment',
   },
-  instructionText: {
-    id: 'admin.Tokens.TokenEditDialog.instructionText',
-    defaultMessage: 'Please select from these ERC20 tokens.',
+  titleFunding: {
+    id: 'dashboard.task.taskEditDialog.titleFunding',
+    defaultMessage: 'Funding',
   },
-  fieldLabel: {
-    id: 'admin.Tokens.TokenEditDialog.fieldLabel',
-    defaultMessage: 'Add Tokens',
+  add: {
+    id: 'dashboard.task.taskEditDialog.add',
+    defaultMessage: 'Add +',
   },
-  buttonCancel: {
-    id: 'admin.Tokens.EditTokensModal.buttonCancel',
-    defaultMessage: 'Cancel',
+  amount: {
+    id: 'dashboard.task.taskEditDialog.amount',
+    defaultMessage: 'Amount',
+  },
+  modify: {
+    id: 'dashboard.task.taskEditDialog.modify',
+    defaultMessage: 'Modify',
+  },
+  notSet: {
+    id: 'dashboard.task.taskEditDialog.notSet',
+    defaultMessage: 'Not set',
   },
   buttonConfirm: {
-    id: 'admin.Tokens.EditTokensModal.buttonConfirm',
+    id: 'dashboard.task.taskEditDialog.buttonConfirm',
     defaultMessage: 'Confirm',
   },
-  errorNativeTokenRequired: {
-    id: 'admin.Tokens.EditTokensModal.errorNativeTokenRequired',
-    defaultMessage: 'The native token must be selected.',
+  buttonCancel: {
+    id: 'dashboard.task.taskEditDialog.buttonCancel',
+    defaultMessage: 'Back',
   },
 });
 
 type FormValues = {
-  colonyTokens: Array<string>,
+  amount: Array<string>,
 };
+
+type Payout = {};
 
 type Props = {
   cancel: () => void,
   close: () => void,
-  tokens: Array<TokenType>,
+  payouts: Array<Payout>,
 };
 
-const validateNativeTokenSelect = (nativeToken?: TokenType): any => {
-  if (nativeToken) {
-    const { tokenSymbol } = nativeToken;
-    return yup.object().shape({
-      colonyTokens: yup
-        .array()
-        .of(yup.string())
-        .includes(tokenSymbol, MSG.errorNativeTokenRequired),
-    });
-  }
-  return null;
-};
+const validateFunding = (): any =>
+  yup.object({
+    amount: yup.number(),
+  });
 
 class TokenEditDialog extends Component<Props> {
-  timeoutId: TimeoutID;
-
-  static displayName = 'admin.Tokens.TokenEditDialog';
+  static displayName = 'dashboard.task.taskEditDialog';
 
   static defaultProps = {
-    tokens: [],
+    payouts: [],
   };
 
-  componentWillUnmount() {
-    clearTimeout(this.timeoutId);
-  }
-
-  handleSubmitTokenForm = ({ colonyTokens }: FormValues) => {
-    const { close } = this.props;
-    // TODO handle form value submission
-    console.log(colonyTokens);
-    this.timeoutId = setTimeout(() => {
-      close();
-    }, 500);
-  };
+  handleSubmitFunding = () => {};
 
   render() {
-    const { tokens, cancel } = this.props;
-    const nativeToken = tokens.find(token => token.isNative);
+    const { payouts, cancel } = this.props;
     return (
-      <Dialog cancel={cancel}>
+      <Dialog cancel={cancel} backdrop={styles.backdrop}>
         <Form
-          initialValues={{
-            colonyTokens: tokens
-              .filter(token => token.isEnabled || token.isNative)
-              .map(token => token.tokenSymbol),
-          }}
-          onSubmit={this.handleSubmitTokenForm}
-          validationSchema={validateNativeTokenSelect(nativeToken)}
+          initialValues={{ payouts }}
+          onSubmit={this.handleSubmitFunding}
+          validationSchema={validateFunding()}
         >
           {({ isSubmitting }: FormikProps<FormValues>) => (
             <Fragment>
-              <DialogSection>
+              <DialogSection appearance={{ border: 'grey' }}>
                 <Heading
-                  appearance={{ size: 'medium', margin: 'none' }}
-                  text={MSG.title}
+                  appearance={{ size: 'normal', margin: 'none' }}
+                  text={MSG.titleAssignment}
                 />
               </DialogSection>
-              <DialogSection>
-                <Heading
-                  text={MSG.instructionText}
-                  appearance={{ size: 'normal', weight: 'thin' }}
-                />
-                <InputLabel label={MSG.fieldLabel} />
+              <DialogSection appearance={{ border: 'grey' }}>
                 <div className={styles.taskEditContainer}>
-                  {tokens.map(token => (
-                    <Checkbox
-                      className={styles.taskEdit}
-                      key={token.id}
-                      value={token.tokenSymbol}
-                      name="colonyTokens"
-                      disabled={token.isNative}
-                    >
-                      {!!token.tokenIcon && (
-                        <img
-                          src={token.tokenIcon}
-                          alt={token.tokenName}
-                          className={styles.taskEditIcon}
-                        />
-                      )}
-                      <span className={styles.taskEditSymbol}>
-                        <Heading
-                          text={token.tokenSymbol}
-                          appearance={{ size: 'small', margin: 'none' }}
-                        />
-                        {token.tokenName}
-                      </span>
-                    </Checkbox>
-                  ))}
+                  <div className={styles.editor}>
+                    <Heading
+                      appearance={{ size: 'normal' }}
+                      text={MSG.titleFunding}
+                    />
+                    <Button
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.add}
+                    />
+                  </div>
+                  <div className={styles.amountEditor}>
+                    <Heading appearance={{ size: 'small' }} text={MSG.amount} />
+                    <FormattedMessage {...MSG.notSet}/>
+                    <Button
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.modify}
+                    />
+                  </div>
                 </div>
               </DialogSection>
-              <DialogSection appearance={{ align: 'right' }}>
+              <div className={styles.buttonContainer}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
                   onClick={cancel}
@@ -154,7 +125,7 @@ class TokenEditDialog extends Component<Props> {
                   text={MSG.buttonConfirm}
                   type="submit"
                 />
-              </DialogSection>
+              </div>
             </Fragment>
           )}
         </Form>

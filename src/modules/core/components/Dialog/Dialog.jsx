@@ -18,11 +18,20 @@ const MSG = defineMessages({
   },
 });
 
+type ModalStyles = {
+  base: string,
+  afterOpen: string,
+  beforeClose: string,
+};
+
 type Props = {
   /** Dialog needs the cancel function from your Dialog component */
   cancel: () => void,
   /** Children to render in this Dialog */
   children: Node,
+  /** optional styles for overlay that appears behind modal, default is a transparent grey,
+   * but occasionaly we need specific styles for that */
+  backdrop?: ModalStyles,
   /** Determines if the Dialog can be dismissed */
   isDismissable?: boolean,
 };
@@ -30,6 +39,7 @@ type Props = {
 const Dialog = ({
   children,
   cancel,
+  backdrop,
   isDismissable = true,
   ...props
 }: Props) => (
@@ -37,6 +47,7 @@ const Dialog = ({
     {...props}
     role="dialog"
     className={styles.modal}
+    overlayClassName={backdrop}
     onRequestClose={cancel}
     isOpen
   >
