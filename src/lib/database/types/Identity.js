@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { IdentityProvider } from './IdentityProvider';
+import type { KeyPair } from './KeyPair';
 
 type Signatures = {
   id: string,
@@ -17,6 +18,8 @@ export type IdentityObject = {
 export interface Identity {
   _id: string;
 
+  _orbitKey: KeyPair;
+
   +_provider: IdentityProvider;
 
   _publicKey: string;
@@ -26,6 +29,8 @@ export interface Identity {
   _type: string;
 
   get id(): string;
+
+  get orbitKey(): KeyPair;
 
   get provider(): IdentityProvider;
 
