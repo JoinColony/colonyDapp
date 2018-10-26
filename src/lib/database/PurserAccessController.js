@@ -1,35 +1,30 @@
 /* @flow */
-
-import type { WalletObjectType } from '@colony/purser-core/flowtypes';
+/* eslint-disable no-console, class-methods-use-this */
 
 import IPFS from 'ipfs';
+import { utils } from 'ethers';
 
 import type { AccessController, Entry } from './types';
 
 import PurserIdentityProvider from './PurserIdentityProvider';
 
 // TODO: Use actual type for common wallet interface
-type PurserWallet = WalletObjectType;
-
 type ProviderType = 'ETHEREUM_ACCOUNT';
-
 const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
 /**
  * Access controller for Purser based Ethereum wallets
  */
-class PurserAccessController implements AccessController {
-  _purserWallet: PurserWallet;
+class EthereumAccessController implements AccessController {
+  _accountAddress: string;
 
   _type: ProviderType;
 
-  constructor(purserWallet: PurserWallet) {
-    this._purserWallet = purserWallet;
+  constructor(accountAddress: string) {
+    if (!accountAddress)
+      throw new Error('Ethereum account address is required');
+    this._accountAddress = accountAddress;
     this._type = PROVIDER_TYPE;
-
-    if (!this._purserWallet.address) {
-      throw new Error('Could not get wallet address. Is it unlocked?');
-    }
   }
 
   async createManifest(
@@ -37,14 +32,14 @@ class PurserAccessController implements AccessController {
     name: string,
     storeType: string,
   ): Promise<string> {
-    if (!this._purserWallet.address) {
+    if (!this._accountAddress) {
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
     const manifest = {
       name,
       type: storeType,
-      account: `/ethereum/${this._purserWallet.address}`,
+      account: `/ethereum/${this._accountAddress}`,
     };
 
     const dag = await ipfs.object.put(Buffer.from(JSON.stringify(manifest)));
@@ -66,24 +61,21 @@ class PurserAccessController implements AccessController {
       },
     } = entry;
 
-    if (walletAddress !== this._purserWallet.address) return false;
+    if (walletAddress !== this._accountAddress) return false;
     if (type !== this._type) return false;
 
-    const data = orbitPublicKey + signatures.id;
+    const message = orbitPublicKey + signatures.id;
     const signature = signatures.publicKey;
-    const isWalletSignatureValid = await this._purserWallet.verifyMessage({
-      message: data,
-      signature,
-    });
+    const isWalletSignatureValid =
+      utils.verifyMessage(message, signature) === this._accountAddress;
     if (!isWalletSignatureValid) return false;
 
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async load() {
     console.log('Implement me');
   }
 }
 
-export default PurserAccessController;
+export default EthereumAccessController;
