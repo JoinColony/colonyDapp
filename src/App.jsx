@@ -9,7 +9,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import messages from './i18n/en.json';
 import Routes from './routes';
 import layout from '~styles/layout.css';
-import { Provider as ContextProvider } from './createReactContext';
 
 import DialogProvider from '~core/Dialog/DialogProvider.jsx';
 import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
@@ -27,23 +26,20 @@ const dialogComponents = {
 
 type Props = {
   store: Object,
-  context: Object,
   history: History,
 };
 
-const App = ({ store, context, history }: Props) => (
+const App = ({ store, history }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
-    <ContextProvider value={context}>
-      <ReduxProvider store={store}>
-        <DialogProvider dialogComponents={dialogComponents}>
-          <ConnectedRouter history={history}>
-            <div className={layout.stretch}>
-              <Routes />
-            </div>
-          </ConnectedRouter>
-        </DialogProvider>
-      </ReduxProvider>
-    </ContextProvider>
+    <ReduxProvider store={store}>
+      <DialogProvider dialogComponents={dialogComponents}>
+        <ConnectedRouter history={history}>
+          <div className={layout.stretch}>
+            <Routes />
+          </div>
+        </ConnectedRouter>
+      </DialogProvider>
+    </ReduxProvider>
   </IntlProvider>
 );
 

@@ -1,9 +1,53 @@
 /* @flow */
 
-import { all } from 'redux-saga/effects';
+import { all, call, put, takeLatest, setContext } from 'redux-saga/effects';
 
-import networkClientSagas from './networkClient';
+import {
+  CHANGE_WALLET,
+  CHANGE_WALLET_ERROR,
+  SET_CURRENT_USER,
+} from '../../users/actionTypes';
 
-export default function* coreSagas(): any {
-  yield all([networkClientSagas()]);
+import setupUsersSagas, { getWallet, getDDB, getUser } from '../../users/sagas';
+
+function* setupUserContext(action: Object): any {
+  try {
+    const wallet = yield call(getWallet, action);
+    yield setContext({ wallet });
+    const ddb = yield call(getDDB);
+    yield setContext({ ddb });
+    const user = yield call(getUser);
+    put({
+      type: SET_CURRENT_USER,
+      payload: {
+        walletAddress: wallet.address,
+        set: user,
+      },
+    });
+  } catch (err) {
+    // TOOD: I think we want a putError effect maybe?
+    // Base i18n on type
+    put({
+      type: CHANGE_WALLET_ERROR,
+      payload: {
+        error: {
+          message: err.message,
+          stack: err.stack,
+        },
+      },
+    });
+  }
 }
+
+function* rootSaga(): any {
+  /*
+   * CHANGE_WALLET
+   * is the entry point for all other sagas that depend on the user having a wallet
+   * -> ddb, colonyJS, etc and all subsequent actions
+   */
+  yield takeLatest(CHANGE_WALLET, setupUserContext);
+  // Everything else that does not require a wallet
+  yield all([setupUsersSagas()]);
+}
+
+export default rootSaga;

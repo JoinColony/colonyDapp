@@ -5,7 +5,8 @@
 .*/src/lib/colonyNetwork/.*
 .*/src/lib/pinningService/.*
 # We need to remove these as soon as they fixed flow support
-.*/node_modules/findup/.*
+.*/node_modules/findup/.*?\.json
+.*/node_modules/oboe/.*?\.json
 # https://github.com/atlassian/react-beautiful-dnd/issues/851
 .*/node_modules/react-beautiful-dnd/.*
 .*/node_modules/oboe/test/json/incomplete.json
