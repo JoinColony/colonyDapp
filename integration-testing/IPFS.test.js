@@ -2,7 +2,7 @@
 
 import merge from 'deepmerge';
 
-import { IPFSNode } from '../src/lib/ipfs';
+import IPFSNode from '../src/lib/ipfs';
 import { sleep } from '../src/utils/time';
 import DDBTestFactory from './utils/DDBTestFactory';
 
