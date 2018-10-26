@@ -135,6 +135,7 @@
         "connected-react-router": "^4.4.1",
         "copy-to-clipboard": "^3.0.8",
         "core-js": "^2.5.7",
+        "draft-js": "^0.10.5",
         "elliptic": "^6.4.1",
         "es6-promisify": "^6.0.0",
         "eth-ens-namehash": "^2.0.8",
