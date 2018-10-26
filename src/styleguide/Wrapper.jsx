@@ -7,6 +7,7 @@ import { addLocaleData, IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 
+import 'draft-js/dist/Draft.css';
 import '../styles/main.css';
 
 import messages from '../i18n/en.json';

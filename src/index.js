@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { render } from 'react-dom';
 import ReactModal from 'react-modal';
 
+import 'draft-js/dist/Draft.css';
 import './styles/main.css';
 import './modules/validations';
 
