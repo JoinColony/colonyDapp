@@ -78,6 +78,16 @@ const config = {
         ],
       },
       {
+        test: /\.css$/,
+        include: [
+          path.resolve('node_modules', 'draft-js'),
+        ],
+        use: [
+          'style-loader',
+          'css-loader',
+        ]
+      },
+      {
         test: /\.(woff|woff2|png|jpg|gif)$/,
         use: 'file-loader',
       },
