@@ -8,16 +8,21 @@ import {
   SET_CURRENT_USER,
 } from '../../users/actionTypes';
 
-import setupUsersSagas, { getWallet, getDDB, getUser } from '../../users/sagas';
+import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
+import { getNetworkClient } from './networkClient';
+import { getDDB } from './ddb';
 
 function* setupUserContext(action: Object): any {
   try {
     const wallet = yield call(getWallet, action);
     yield setContext({ wallet });
-    const ddb = yield call(getDDB);
-    yield setContext({ ddb });
+    const [ddb, networkClient] = yield all([
+      call(getDDB),
+      call(getNetworkClient),
+    ]);
+    yield setContext({ ddb, networkClient });
     const user = yield call(getUser);
-    put({
+    yield put({
       type: SET_CURRENT_USER,
       payload: {
         walletAddress: wallet.address,
@@ -27,7 +32,7 @@ function* setupUserContext(action: Object): any {
   } catch (err) {
     // TOOD: I think we want a putError effect maybe?
     // Base i18n on type
-    put({
+    yield put({
       type: CHANGE_WALLET_ERROR,
       payload: {
         error: {
