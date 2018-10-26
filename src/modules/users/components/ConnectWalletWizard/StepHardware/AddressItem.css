@@ -6,8 +6,8 @@
 }
 
 .choiceInputContainer {
-  font-family: var(--family-monospace);
   padding: paddingVertical calc(paddingHorizontal / 2) paddingVertical 0;
+  font-family: var(--family-monospace);
 }
 
 .choiceBalanceContainer {
