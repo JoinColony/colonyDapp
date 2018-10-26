@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './UserProfile.jsx';
+export { default } from './UserProfile';
