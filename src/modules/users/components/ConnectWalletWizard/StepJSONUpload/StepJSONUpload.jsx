@@ -9,16 +9,19 @@ import * as yup from 'yup';
 import type { WizardFormikBag } from '~core/Wizard';
 import type { FileReaderFile, UploadFile } from '~core/FileUpload';
 
-import {
-  OPEN_KEYSTORE_WALLET,
-  WALLET_SET,
-  WALLET_SET_ERROR,
-} from '../../../actionTypes';
-
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import FileUpload from '~core/FileUpload';
 import { Input, FormStatus } from '~core/Fields';
+
+import type { WalletMethod } from '../../../types';
+
+import {
+  CHANGE_WALLET,
+  SET_CURRENT_USER,
+  CHANGE_WALLET_ERROR,
+} from '../../../actionTypes';
+
 import styles from './StepJSONUpload.css';
 
 const MSG = defineMessages({
@@ -62,6 +65,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
+  method: WalletMethod,
   walletJsonFileUpload: Array<UploadFile>,
   walletJsonPassword: string,
 };
@@ -131,20 +135,23 @@ export const validationSchema = yup.object({
 });
 
 export const onSubmit = {
-  submit: OPEN_KEYSTORE_WALLET,
-  success: WALLET_SET,
-  error: WALLET_SET_ERROR,
+  submit: CHANGE_WALLET,
+  success: SET_CURRENT_USER,
+  error: CHANGE_WALLET_ERROR,
   onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorUnlockWallet });
   },
   // Transform payload because it's ugly
   setPayload(
     action: Object,
-    { walletJsonFileUpload, walletJsonPassword }: FormValues,
+    { method, walletJsonFileUpload, walletJsonPassword }: FormValues,
   ) {
     const [file] = walletJsonFileUpload;
     const keystore = file.uploaded;
-    return { ...action, payload: { keystore, password: walletJsonPassword } };
+    return {
+      ...action,
+      payload: { keystore, method, password: walletJsonPassword },
+    };
   },
 };
 

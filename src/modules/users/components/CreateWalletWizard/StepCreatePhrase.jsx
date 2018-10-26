@@ -4,17 +4,15 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import softwareWallet from '@colony/purser-software';
 
-import { CONNECT_ROUTE } from '~routes';
-
-import styles from './StepCreatePhrase.css';
-
-import { CONNECT_ROUTE } from '~routes';
-
 import type { SubmitFn } from '~core/Wizard';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import MnemonicGenerator from '~core/MnemonicGenerator';
+
+import { CONNECT_ROUTE } from '~routes';
+
+import styles from './StepCreatePhrase.css';
 
 const MSG = defineMessages({
   heading: {

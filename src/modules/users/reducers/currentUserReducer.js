@@ -19,7 +19,6 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
       // stage; what can we do to improve this?
       return new User({ walletAddress, username: '' });
     }
-
     default:
       return state;
   }

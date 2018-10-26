@@ -5,6 +5,9 @@ import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 
 import withWizard from '~core/Wizard/withWizard';
+
+import type { WalletMethod } from '../../types';
+
 import ConnectWalletWizard from './ConnectWalletWizard.jsx';
 
 import * as StepStart from './StepStart';
@@ -16,7 +19,7 @@ import * as StepJSONUpload from './StepJSONUpload';
 const stepArray = [StepStart];
 
 type StepValues = {
-  method: 'metamask' | 'trezor' | 'ledger' | 'mnemonic' | 'json',
+  method: WalletMethod,
 };
 
 /*

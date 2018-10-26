@@ -16,7 +16,7 @@ import {
   LOAD_COLONY_NETWORK_ERROR,
   LOAD_COLONY_NETWORK_SUCCESS,
 } from '../actionTypes';
-import { WALLET_SET } from '../../users/actionTypes';
+// import { WALLET_SET } from '../../users/actionTypes';
 
 /**
  * Return an initialized ColonyNetworkClient instance.
@@ -87,13 +87,13 @@ function* loadColonyNetwork(): Saga<void> {
  * When the wallet is set, the network client should be loaded with
  * the new wallet.
  */
-function* setWallet(): Saga<void> {
-  yield put({ type: LOAD_COLONY_NETWORK });
-}
+// function* setWallet(): Saga<void> {
+//   yield put({ type: LOAD_COLONY_NETWORK });
+// }
 
 function* networkClientSagas(): any {
   yield takeLatest(LOAD_COLONY_NETWORK, loadColonyNetwork);
-  yield takeLatest(WALLET_SET, setWallet);
+  // yield takeLatest(WALLET_SET, setWallet);
 }
 
 export default networkClientSagas;
