@@ -6,8 +6,9 @@ import { call, getContext } from 'redux-saga/effects';
 
 import { all } from '../../../lib/database/commands';
 
+/* TODO: User is not properly typed yet due to the temporary nature of this */
 // eslint-disable-next-line import/prefer-default-export
-export function* getUser(): Saga<void> {
+export function* getUser(): Saga<Object> {
   const ddb = yield getContext('ddb');
 
   // TODO: get the store first, if it doesn't exist, create it

@@ -6,11 +6,12 @@ import { call, getContext } from 'redux-saga/effects';
 
 import { create } from '~utils/saga/effects';
 
+import { DDB as DDBClass } from '../../../lib/database';
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
 
 // eslint-disable-next-line import/prefer-default-export
-export function* getDDB(): Saga<void> {
+export function* getDDB(): Saga<DDBClass> {
   const wallet = yield getContext('wallet');
   const DDB = yield getContext('DDB');
   const ipfsNode = yield getContext('ipfsNode');
@@ -20,7 +21,6 @@ export function* getDDB(): Saga<void> {
   }
 
   const identityProvider = yield create(PurserIdentityProvider, wallet);
-  // const identityProvider = new PurserIdentityProvider(wallet);
   const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
 
   return ddb;

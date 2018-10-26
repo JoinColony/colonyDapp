@@ -17,7 +17,7 @@ import { create } from '~utils/saga/effects';
  * Return an initialized ColonyNetworkClient instance.
  */
 // eslint-disable-next-line import/prefer-default-export
-export function* getNetworkClient(): Saga<void> {
+export function* getNetworkClient(): Saga<ColonyNetworkClient> {
   const provider = yield create(providers.JsonRpcProvider);
 
   let loader;

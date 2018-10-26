@@ -39,6 +39,7 @@ import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
 const Routes = () => {
+  // TODO: please connect that to the redux store, this is just temporary
   const isConnected = false;
   return (
     <Switch>

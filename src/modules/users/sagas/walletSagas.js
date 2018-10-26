@@ -82,7 +82,7 @@ function* createWallet(action: Object): Saga<void> {
   });
 }
 
-export function* getWallet(action: Object): WalletInstance {
+export function* getWallet(action: Object): Saga<WalletInstance> {
   const { method } = action.payload;
   switch (method) {
     case 'create':
