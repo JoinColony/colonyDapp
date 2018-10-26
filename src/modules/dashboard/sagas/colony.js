@@ -46,9 +46,7 @@ function networkMethodSagaFactory<Params: Object, EventData: Object>(
   ): Saga<void> {
     try {
       // Get the named method from the `networkClient` context.
-      const {
-        instance: { [methodName]: method },
-      } = yield getContext('networkClient');
+      const { [methodName]: method } = yield getContext('networkClient');
 
       // Create a saga for this method and given success/error action types,
       // then immediately call it with the given action.

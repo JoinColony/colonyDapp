@@ -8,6 +8,7 @@ import {
   SET_CURRENT_USER,
 } from '../../users/actionTypes';
 
+import setupDashboardSagas from '../../dashboard/sagas';
 import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
 import { getNetworkClient } from './networkClient';
 import { getDDB } from './ddb';
@@ -29,6 +30,7 @@ function* setupUserContext(action: Object): any {
         set: user,
       },
     });
+    yield call(setupContextSagas);
   } catch (err) {
     // TOOD: I think we want a putError effect maybe?
     // Base i18n on type
@@ -42,6 +44,10 @@ function* setupUserContext(action: Object): any {
       },
     });
   }
+}
+
+function* setupContextSagas(): any {
+  yield all([setupDashboardSagas()]);
 }
 
 function* rootSaga(): any {
