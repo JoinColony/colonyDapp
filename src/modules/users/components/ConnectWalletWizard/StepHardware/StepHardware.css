@@ -2,9 +2,9 @@
   composes: marginBottomMedium from '~styles/layout.css';
   composes: alignCenter from '~styles/text.css';
   margin-top: 180px;
+  padding: 50px;
   min-width: 700px;
   background-color: var(--grey-blue-1);
-  padding: 50px;
 }
 
 .choiceHeadingRow {
