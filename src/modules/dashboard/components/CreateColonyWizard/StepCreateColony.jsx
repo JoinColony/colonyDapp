@@ -1,11 +1,11 @@
 /* @flow */
+
 import type { FormikProps } from 'formik';
 
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { SubmitFn } from '~core/Wizard';
-import type { DialogType } from '~core/Dialog';
+import type { ActionSubmit } from '~core/Wizard';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -15,19 +15,28 @@ import styles from './StepCreateColony.css';
 import CreatingColony from './CreatingColony.jsx';
 import CardRow from './CreateColonyCardRow.jsx';
 
-type FormValues = {};
+import {
+  CREATE_COLONY,
+  CREATE_COLONY_ERROR,
+  CREATE_COLONY_SUCCESS,
+} from '../../actionTypes';
+
+type FormValues = {
+  tokenAddress: string,
+  tokenCreated: boolean,
+};
 
 type Props = {
   nextStep: () => void,
   previousStep: () => void,
-  openDialog: string => DialogType,
+  createColonyAction: (tokenAddress: string) => void,
 } & FormikProps<FormValues>;
 
-type State = {
-  isCreatingColony: boolean,
-};
-
 const MSG = defineMessages({
+  errorCreateColony: {
+    id: 'error.colony.createColony',
+    defaultMessage: 'Could not create Colony',
+  },
   title: {
     id: 'CreateColony.StepCreateColony.title',
     defaultMessage: `Almost there! Confirm your details`,
@@ -73,63 +82,56 @@ const options = [
   },
 ];
 
-class StepCreateColony extends Component<Props, State> {
-  static displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
+const StepCreateColony = ({ isSubmitting, previousStep, values }: Props) => (
+  <Fragment>
+    {isSubmitting ? (
+      <CreatingColony />
+    ) : (
+      <section className={styles.content}>
+        <div className={styles.finalContainer}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+            text={MSG.title}
+          />
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
+            text={MSG.subtitle}
+          />
+          <CardRow cardOptions={options} values={values} />
+        </div>
+        <div className={styles.buttons}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.back}
+            onClick={previousStep}
+          />
+          <Button
+            appearance={{ theme: 'primary', size: 'large' }}
+            style={{ width: styles.wideButton }}
+            text={MSG.confirm}
+            type="submit"
+          />
+        </div>
+      </section>
+    )}
+  </Fragment>
+);
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isCreatingColony: false,
-    };
-  }
+StepCreateColony.displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
 
-  handleColonyCreate = () => {
-    // TODO actually create a colony here, and then do something once successful.
-    // This is currently just infinitely mocking creation to show the loading screen
-    this.setState({ isCreatingColony: true });
-  };
-
-  render() {
-    const { isCreatingColony } = this.state;
-    const { values } = this.props;
-
-    return (
-      <Fragment>
-        {isCreatingColony ? (
-          <CreatingColony />
-        ) : (
-          <section className={styles.content}>
-            <div className={styles.finalContainer}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-                text={MSG.title}
-              />
-              <Heading
-                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-                text={MSG.subtitle}
-              />
-              <CardRow cardOptions={options} values={values} />
-            </div>
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'secondary' }}
-                type="cancel"
-                text={MSG.back}
-              />
-              <Button
-                onClick={this.handleColonyCreate}
-                appearance={{ theme: 'primary' }}
-                text={MSG.confirm}
-              />
-            </div>
-          </section>
-        )}
-      </Fragment>
-    );
-  }
-}
-
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+export const onSubmit: ActionSubmit<{ tokenAddress: string }> = {
+  submit: CREATE_COLONY,
+  error: CREATE_COLONY_ERROR,
+  success: CREATE_COLONY_SUCCESS,
+  setPayload(action: *, { tokenAddress }: *) {
+    return { ...action, payload: { params: { tokenAddress } } };
+  },
+  // eslint-disable-next-line no-unused-vars
+  onError(error: *, bag: *) {
+    // TODO later: show error feedback
+    console.warn(error); // eslint-disable-line no-console
+  },
+};
 
 export const Step = StepCreateColony;

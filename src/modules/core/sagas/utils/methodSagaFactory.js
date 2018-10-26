@@ -12,7 +12,7 @@ import sendMethodTransaction from './sendMethodTransaction';
  * Given a method and success/error action types, return a saga function
  * that calls the given method and `put`s the given success/error action.
  */
-export default function methodSagaFactory<Params: Object, EventData: Object>(
+export default function methodSagaFactory<Params: *, EventData: *>(
   method: Sender<Params, EventData>,
   successType: string,
   errorType: string,
