@@ -1,7 +1,6 @@
 /* @flow */
 
 import * as yup from 'yup';
-import '../../modules/validations';
 
 import type { UserType } from '~types/user';
 

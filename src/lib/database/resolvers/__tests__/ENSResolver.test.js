@@ -1,5 +1,4 @@
 import ENSResolver from '../ENSResolver';
-import ColonyResolver from '../ColonyResolver';
 
 let resolver;
 describe('ENSResolver', () => {
