@@ -2,14 +2,18 @@
 
 import { all, call, put, takeLatest, setContext } from 'redux-saga/effects';
 
+import { create } from '~utils/saga/effects';
+
 import {
   CHANGE_WALLET,
   CHANGE_WALLET_ERROR,
   SET_CURRENT_USER,
 } from '../../users/actionTypes';
 
+import { Resolvers } from '../../../lib/database';
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
+
 import { getNetworkClient } from './networkClient';
 import { getDDB } from './ddb';
 
@@ -26,6 +30,11 @@ function* setupUserContext(action: Object): any {
       call(getDDB),
       call(getNetworkClient),
     ]);
+
+    // Add username ENS resolver
+    const userResolver = yield create(Resolvers.UserResolver, networkClient);
+    yield call([ddb, ddb.addResolver], 'user', userResolver);
+
     yield setContext({ ddb, networkClient });
     const user = yield call(getUser);
     yield put({
