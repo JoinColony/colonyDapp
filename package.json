@@ -9,10 +9,10 @@
     "main": "index.js",
     "scripts": {
         "dev": "webpack-dev-server --config webpack.config.js",
-        "provision": "sh scripts/provision_submodules.sh",
+        "provision": "scripts/provision_submodules.sh",
         "build": "webpack-cli --config webpack.config.js",
         "flow": "flow check",
-        "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
+        "flow:ci": "scripts/flow_ci.sh",
         "lint": "eslint --fix 'src/**/*.{js,jsx}' 'integration-testing/**/*.js'",
         "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}' 'integration-testing/**/*.js'",
         "scaffold": "plop",
