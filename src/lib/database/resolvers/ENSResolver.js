@@ -1,6 +1,7 @@
 /* @flow */
 
 import namehash from 'eth-ens-namehash';
+import { isAddress } from 'web3-utils';
 
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
@@ -9,6 +10,19 @@ class ENSResolver {
 
   static ensHash(name: string): string {
     return namehash.hash(name);
+  }
+
+  static isAddress(address: string): boolean {
+    return isAddress(address);
+  }
+
+  getDomain(identifier: string): string {
+    const { suffix } = this.constructor;
+    if (!identifier.includes('.')) {
+      return `${identifier}.${suffix}.joincolony.eth`;
+    } else {
+      return identifier;
+    }
   }
 
   constructor(networkClient: ColonyNetworkClient) {
