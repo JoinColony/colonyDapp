@@ -6,6 +6,7 @@ export type { IdentityProvider } from './IdentityProvider';
 export type { KeyPair } from './KeyPair';
 export type { OrbitDBStore } from './OrbitDBStore';
 export type { OrbitDBKVStore } from './OrbitDBKVStore';
+export type { ENSResolverType } from './ENSResolver';
 
 export type Schema = {
   [string]: any,
@@ -19,3 +20,8 @@ export type StoreType =
   | 'feed'
   | 'docstore'
   | 'keyvalue';
+
+export type OrbitDBAddress = {
+  root: string,
+  path: string,
+};

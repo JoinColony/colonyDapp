@@ -137,6 +137,7 @@
         "core-js": "^2.5.7",
         "elliptic": "^6.4.1",
         "es6-promisify": "^6.0.0",
+        "eth-ens-namehash": "^2.0.8",
         "ethers": "^3.0.27",
         "ethjs-unit": "^0.1.6",
         "format-number": "^3.0.0",

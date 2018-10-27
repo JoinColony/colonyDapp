@@ -6,6 +6,7 @@ import nanoid from 'nanoid';
 import type {
   Identity,
   IdentityProvider,
+  OrbitDBAddress,
   OrbitDBStore,
   Schema,
   StoreType,
@@ -18,9 +19,6 @@ import KVStore from './KVStore';
 // TODO: better typing
 type Resolver = Object;
 
-type DatabaseOptions = {
-  resolvers?: { [string]: Resolver },
-};
 type OrbitStoreCreateOpts = {
   directory?: string,
   write?: string[],
@@ -35,10 +33,6 @@ type OrbitStoreOpenOpts = {
   replicate?: boolean,
 };
 
-type OrbitDBAddress = {
-  root: string,
-  path: string,
-};
 type StoreIdentifier = string | OrbitDBAddress;
 
 const { isValidAddress, parseAddress } = OrbitDB;
@@ -62,12 +56,16 @@ const SCHEMAS: Map<string, Schema> = new Map();
 class DDB {
   _orbitNode: OrbitDB;
 
-  _resolvers: { [string]: Resolver };
-
   _stores: Map<string, Store>;
+
+  _resolvers: Map<string, Resolver>;
 
   static registerSchema(schemaId: string, schema: Schema) {
     SCHEMAS.set(schemaId, schema);
+  }
+
+  addResolver(resolverId: string, resolver: Resolver) {
+    this._resolvers.set(resolverId, resolver);
   }
 
   static getStoreClass(storeType: StoreType) {
@@ -77,24 +75,19 @@ class DDB {
   static async createDatabase(
     ipfsNode: IPFSNode,
     identityProvider: IdentityProvider,
-    options: DatabaseOptions = {},
   ): Promise<DDB> {
     const identity = await identityProvider.createIdentity();
     await ipfsNode.ready;
-    return new DDB(ipfsNode, identity, options);
+    return new DDB(ipfsNode, identity);
   }
 
-  constructor(
-    ipfsNode: IPFSNode,
-    identity: Identity,
-    { resolvers = {} }: DatabaseOptions = {},
-  ) {
+  constructor(ipfsNode: IPFSNode, identity: Identity) {
     this._stores = new Map();
+    this._resolvers = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
       path: 'colonyOrbitdb',
     });
-    this._resolvers = resolvers;
   }
 
   async getStore(
@@ -143,16 +136,20 @@ class DDB {
       : null;
   }
 
-  async _resolveStoreAddress(identifier: string): Promise<string | null> {
+  _resolveStoreAddress(identifier: string): Promise<string> {
     const [resolverKey, id] = identifier.split('.');
-    if (!resolverKey || !id) return null;
-    const resolvers = Object.keys(this._resolvers);
-    for (let i = 0; i < resolvers.length; i += 1) {
-      if (resolverKey === resolvers[i]) {
-        return this._resolvers[resolverKey].resolve(id);
-      }
+    if (!resolverKey || !id) {
+      throw new Error('Identifier is not in a valid form');
     }
-    return null;
+
+    const resolver = this._resolvers.get(resolverKey);
+    if (!resolver) {
+      throw new Error(
+        `Resolver with key ${resolverKey} not found. Did you register it?`,
+      );
+    }
+
+    return resolver.resolve(id);
   }
 
   async _getStoreAddress(identifier: StoreIdentifier): Promise<OrbitDBAddress> {
