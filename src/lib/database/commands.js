@@ -10,7 +10,7 @@ export const get = (store: Store, key: string): any => {
   return null;
 };
 
-export const all = (store: Store): any => {
+export const getAll = (store: Store): any => {
   if (store.all) {
     return store.all();
   }
