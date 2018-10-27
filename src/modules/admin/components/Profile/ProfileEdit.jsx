@@ -61,12 +61,10 @@ const componentDisplayName: string = 'admin.Profile.ProfileEdit';
  */
 const placeholderUpload = async () => {
   const uploadMessage: string = `[${componentDisplayName}] Uploaded Image`;
-  console.log(uploadMessage);
   return uploadMessage;
 };
 const placeholderRemove = async () => {
-  console.log(`[${componentDisplayName}] Removed Image`);
-  return undefined;
+  // Implement me
 };
 
 type Props = {
@@ -87,6 +85,7 @@ const ProfileEdit = ({
   <div className={styles.main}>
     <main className={styles.content}>
       <Formik
+        // eslint-disable-next-line no-console
         onSubmit={console.log}
         initialValues={{
           colonyDisplayName: displayName,

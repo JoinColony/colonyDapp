@@ -69,8 +69,9 @@ const augmentedPendingTransactions = augmentedTransactions.slice(0, 4);
 /*
  * Method to call when claiming the pot
  */
+// eslint-disable-next-line no-unused-vars
 const handleClaim = (transaction: TransactionType) => {
-  console.log(`[${displayName}] Claimed transaction`, transaction);
+  // Implement me
 };
 
 const Transactions = () => (

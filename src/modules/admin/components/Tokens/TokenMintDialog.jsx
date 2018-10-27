@@ -86,7 +86,6 @@ class TokenMintDialog extends Component<Props> {
       nativeToken: { tokenSymbol },
     } = this.props;
     // TODO handle form data here
-    console.log(mintAmount);
     this.timeoutId = setTimeout(() => {
       close();
       onMintNewTokensSubmitted(tokenSymbol, mintAmount);

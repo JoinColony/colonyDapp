@@ -64,6 +64,7 @@ const Organizations = () => (
               showUsername
               showMaskedAddress
               viewOnly={false}
+              // eslint-disable-next-line no-console
               onRemove={console.log}
             />
           ) : (

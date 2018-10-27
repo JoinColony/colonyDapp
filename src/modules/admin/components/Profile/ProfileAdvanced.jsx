@@ -48,6 +48,7 @@ const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
       <Button
         appearance={{ theme: 'primary', size: 'large' }}
         text={MSG.buttonUpdate}
+        // eslint-disable-next-line no-console
         onClick={() => console.log(`[${displayName}] Updating the colony`)}
       />
     </section>
@@ -64,6 +65,7 @@ const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
     <Button
       appearance={{ theme: 'blue' }}
       text={MSG.buttonRecovery}
+      // eslint-disable-next-line no-console
       onClick={() => console.log(`[${displayName}] Entering recovery mode`)}
     />
   </div>

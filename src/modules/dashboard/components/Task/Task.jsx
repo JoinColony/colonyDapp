@@ -77,6 +77,7 @@ const Task = () => {
   return (
     <div>
       <Form
+        // eslint-disable-next-line no-console
         onSubmit={console.log}
         initialValues={{
           taskName: '',
