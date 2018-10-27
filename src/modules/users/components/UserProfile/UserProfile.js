@@ -1,11 +1,22 @@
 /* @flow */
 
 import React from 'react';
-import { compose, lifecycle, branch, renderComponent } from 'recompose';
+import {
+  compose,
+  lifecycle,
+  branch,
+  renderComponent,
+  withHandlers,
+  withProps,
+} from 'recompose';
+
+import { connect } from 'react-redux';
 import { defineMessages } from 'react-intl';
 
 import UserProfile from './UserProfile.jsx';
 import LoadingTemplate from '~pages/LoadingTemplate';
+
+const FETCH_USER_PROFILE = 'FETCH_USER_PROFILE';
 
 const MSG = defineMessages({
   loadingText: {
@@ -18,22 +29,38 @@ const MSG = defineMessages({
   },
 });
 
-const spinner = () => <LoadingTemplate loadingText={MSG.loadingText} />;
+const Spinner = () => <LoadingTemplate loadingText={MSG.loadingText} />;
 const withUserData = lifecycle({
-  state: { loading: false },
+  componentDidMount() {
+    if (!this.props.targetProfile) {
+      this.props.fetchUserProfile(this.props.targetUserId);
+    }
+  },
 });
 
-const isLoading = ({ loading }) => loading;
+// TODO make this placeholder real
+const isError = ({ targetProfile }) => typeof targetProfile === 'Error';
+const isLoading = ({ targetProfile }) => !targetProfile;
 
-const withSpinnerWhileLoading = branch(isLoading, renderComponent(spinner));
+const mapStateToProps = state => ({
+  userProfiles: state.user.userProfiles,
+});
+
 const enhance = compose(
+  connect(mapStateToProps),
+  withProps(props => ({
+    targeProfile: !!props.userProfiles[props.match.params.userId],
+    targetUserId: props.match.params.userId,
+  })),
+  withHandlers({
+    fetchUserProfile: ({ dispatch }) => username => {
+      dispatch({ type: FETCH_USER_PROFILE, payload: username });
+    },
+  }),
   withUserData,
-  withSpinnerWhileLoading,
+  branch(isError, renderComponent(Spinner)),
+  branch(isLoading, renderComponent(Spinner)),
 );
-
-// If error, show error and redirect
-// If loading, show loading
-// If profile info in Redux, return UserProfile
 
 const UserProfileContainer = enhance(UserProfile);
 
