@@ -2,17 +2,17 @@
     "name": "colony-dapp",
     "private": true,
     "engines": {
-        "node": "9.10"
+        "node": "10.12"
     },
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
         "dev": "webpack-dev-server --config webpack.config.js",
-        "provision": "sh scripts/provision_submodules.sh",
+        "provision": "scripts/provision_submodules.sh",
         "build": "webpack-cli --config webpack.config.js",
         "flow": "flow check",
-        "flow:ci": "flow check --json | flow-junit-transformer > reports/flow/flow-results.xml",
+        "flow:ci": "scripts/flow_ci.sh",
         "lint": "eslint --fix 'src/**/*.{js,jsx}' 'integration-testing/**/*.js'",
         "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}' 'integration-testing/**/*.js'",
         "scaffold": "plop",
@@ -112,7 +112,6 @@
         "svgo": "^1.0.5",
         "svgo-loader": "^2.1.0",
         "svgr": "^1.10.0",
-        "trufflepig": "^1.0.4",
         "url-loader": "^1.0.1",
         "webpack": "4.22.0",
         "webpack-cli": "^3.1.0",

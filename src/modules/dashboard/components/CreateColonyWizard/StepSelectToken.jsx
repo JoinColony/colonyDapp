@@ -14,7 +14,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import FileUpload from '~core/FileUpload';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
 
 import {
   GET_TOKEN_INFO,
@@ -23,31 +23,29 @@ import {
 } from '../../actionTypes/colony';
 import promiseListener from '../../../../createPromiseListener';
 
+type TokenData = {
+  name: string,
+  symbol: string,
+};
+
 type FormValues = {
   tokenAddress: string,
   tokenSymbol?: string,
   tokenName?: string,
   iconUpload?: string,
-  tokenData: {
-    name: string,
-    symbol: string,
-  } | null,
+  tokenData: ?TokenData,
 };
 
 type State = {
   isLoading: boolean,
-  tokenData: ?{
-    symbol: string,
-    name: string,
-  },
+  tokenData: ?TokenData,
 };
 
 type Props = {
   handleTokenAddressChange: (e: SyntheticEvent<HTMLInputElement>) => void,
   nextStep: () => void,
   previousStep: () => void,
-} & State &
-  FormikProps<FormValues>;
+} & FormikProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
@@ -112,83 +110,12 @@ export const validationSchema = yup.object({
 });
 
 // TODO in #453 - show inputs for minimal ERC20 contracts
-const StepSelectTokenForm = ({
-  handleTokenAddressChange,
-  isLoading,
-  isValid,
-  previousStep,
-  tokenData,
-  values: { tokenAddress },
-}: Props) => (
-  <section className={styles.content}>
-    <div className={styles.title}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
-      <div className={styles.nameForm}>
-        <Input
-          name="tokenAddress"
-          label={MSG.label}
-          extra={<Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />}
-          status={tokenData ? MSG.preview : MSG.hint}
-          onChange={handleTokenAddressChange}
-          statusValues={
-            tokenData
-              ? { tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
-              : {}
-          }
-        />
-        {!tokenData &&
-          !isLoading &&
-          tokenAddress && (
-            <Fragment>
-              <div className={styles.tokenDetails}>
-                <Input name="tokenName" label={MSG.tokenName} />
-              </div>
-              <div className={styles.tokenDetails}>
-                <Input
-                  name="tokenSymbol"
-                  label={MSG.tokenSymbol}
-                  hint={
-                    <Heading
-                      appearance={{ size: 'small', weight: 'thin' }}
-                      text={MSG.symbolHint}
-                    />
-                  }
-                />
-              </div>
-              <div className={styles.tokenDetails}>
-                <FileUpload
-                  accept={['svg', 'png']}
-                  label={MSG.fileUploadTitle}
-                  name="iconUpload"
-                  status={MSG.fileUploadHint}
-                  maxFilesLimit={1}
-                />
-              </div>
-            </Fragment>
-          )}
-        <div className={styles.buttons}>
-          <Button
-            appearance={{ theme: 'secondary' }}
-            type="cancel"
-            text={MSG.cancel}
-            onClick={previousStep}
-          />
-          <Button
-            appearance={{ theme: 'primary' }}
-            type="submit"
-            disabled={!isValid}
-            text={MSG.next}
-          />
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
 class StepSelectToken extends Component<Props, State> {
+  getToken: (
+    values: FormValues,
+    bag: WizardFormikBag<FormValues>,
+  ) => Promise<any>;
+
   static displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
 
   constructor(props: Props) {
@@ -201,7 +128,7 @@ class StepSelectToken extends Component<Props, State> {
     );
   }
 
-  componentDidUpdate({ values: { tokenAddress: prevTokenAddress } }) {
+  componentDidUpdate({ values: { tokenAddress: prevTokenAddress } }: Props) {
     const {
       values: { tokenAddress },
       isSubmitting,
@@ -240,7 +167,7 @@ class StepSelectToken extends Component<Props, State> {
     this.setState({ isLoading });
   }
 
-  handleGetTokenSuccess({ name = '', symbol = '' }) {
+  handleGetTokenSuccess({ name = '', symbol = '' }: TokenData) {
     const { setFieldValue } = this.props;
     // XXX using `setValues` will cause this handler to re-run,
     // so it is easier to set values separately.
@@ -264,13 +191,82 @@ class StepSelectToken extends Component<Props, State> {
   }
 
   render() {
+    const {
+      handleTokenAddressChange,
+      isValid,
+      previousStep,
+      values: { tokenAddress },
+    } = this.props;
     const { isLoading, tokenData } = this.state;
     return (
-      <StepSelectTokenForm
-        {...this.props}
-        isLoading={isLoading}
-        tokenData={tokenData}
-      />
+      <section className={styles.content}>
+        <div className={styles.title}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'thin' }}
+            text={MSG.heading}
+          />
+          <div className={styles.nameForm}>
+            <Input
+              name="tokenAddress"
+              label={MSG.label}
+              extra={
+                <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
+              }
+              status={tokenData ? MSG.preview : MSG.hint}
+              onChange={handleTokenAddressChange}
+              statusValues={
+                tokenData
+                  ? { tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
+                  : {}
+              }
+            />
+            {!tokenData &&
+              !isLoading &&
+              tokenAddress && (
+                <Fragment>
+                  <div className={styles.tokenDetails}>
+                    <Input name="tokenName" label={MSG.tokenName} />
+                  </div>
+                  <div className={styles.tokenDetails}>
+                    <Input
+                      name="tokenSymbol"
+                      label={MSG.tokenSymbol}
+                      hint={
+                        <Heading
+                          appearance={{ size: 'small', weight: 'thin' }}
+                          text={MSG.symbolHint}
+                        />
+                      }
+                    />
+                  </div>
+                  <div className={styles.tokenDetails}>
+                    <FileUpload
+                      accept={['svg', 'png']}
+                      label={MSG.fileUploadTitle}
+                      name="iconUpload"
+                      status={MSG.fileUploadHint}
+                      maxFilesLimit={1}
+                    />
+                  </div>
+                </Fragment>
+              )}
+            <div className={styles.buttons}>
+              <Button
+                appearance={{ theme: 'secondary' }}
+                type="cancel"
+                text={MSG.cancel}
+                onClick={previousStep}
+              />
+              <Button
+                appearance={{ theme: 'primary' }}
+                type="submit"
+                disabled={!isValid}
+                text={MSG.next}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
     );
   }
 }

@@ -25,10 +25,10 @@ ROOT_PATH=$(pwd)
 
 log() {
   # Colors
-  GREEN='\033[0;32m'
-  NC='\033[0m' # No Color
+  GREEN=`tput setaf 2`
+  NC=`tput sgr0`
   # Weights
-  BOLD='\033[1m'
+  BOLD=`tput bold`
   echo "${GREEN}${BOLD}$1${NC}"
 }
 
