@@ -4,9 +4,7 @@
  * orbit-db-identity-provider-purser (?)
  */
 
-import Keystore from 'orbit-db-keystore';
-
-import type { Identity } from './types';
+import type { Identity, KeyPair } from './types';
 
 import PurserIdentityProvider from './PurserIdentityProvider';
 
@@ -15,7 +13,7 @@ class PurserIdentity implements Identity {
 
   _idSignature: string;
 
-  _keystore: Keystore;
+  _orbitKey: KeyPair;
 
   _provider: PurserIdentityProvider;
 
@@ -37,6 +35,7 @@ class PurserIdentity implements Identity {
     pubKeyIdSignature: string,
     type: string,
     provider: PurserIdentityProvider,
+    orbitKey: KeyPair,
   ) {
     if (!id) {
       throw new Error('Identity id is required');
@@ -62,8 +61,12 @@ class PurserIdentity implements Identity {
       throw new Error('Identity provider is required');
     }
 
+    if (!orbitKey) {
+      throw new Error('Orbit key is required');
+    }
+
     this._id = id;
-    this._keystore = Keystore.create();
+    this._orbitKey = orbitKey;
     this._provider = provider;
     this._publicKey = publicKey;
     this._signatures = {
@@ -95,6 +98,10 @@ class PurserIdentity implements Identity {
 
   get provider() {
     return this._provider;
+  }
+
+  get orbitKey() {
+    return this._orbitKey;
   }
 
   toJSON() {
