@@ -3,9 +3,9 @@ import ColonyResolver from '../ColonyResolver';
 
 let colonyResolver;
 
-describe('ENSResolver', () => {
+describe('Colony Resolver', () => {
   test('Colony resolver inherits from ENSResolver', () => {
-    colonyResolver = new ColonyResolver('user');
+    colonyResolver = new ColonyResolver({});
 
     expect(colonyResolver instanceof ENSResolver).toBeTruthy();
   });

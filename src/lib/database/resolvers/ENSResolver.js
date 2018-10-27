@@ -8,6 +8,8 @@ import type ColonyNetworkClient from '@colony/colony-js-client';
 class ENSResolver {
   _networkClient: ColonyNetworkClient;
 
+  static suffix: string;
+
   static ensHash(name: string): string {
     return namehash.hash(name);
   }
@@ -16,17 +18,16 @@ class ENSResolver {
     return isAddress(address);
   }
 
+  constructor(networkClient: ColonyNetworkClient) {
+    this._networkClient = networkClient;
+  }
+
   getDomain(identifier: string): string {
     const { suffix } = this.constructor;
     if (!identifier.includes('.')) {
       return `${identifier}.${suffix}.joincolony.eth`;
-    } else {
-      return identifier;
     }
-  }
-
-  constructor(networkClient: ColonyNetworkClient) {
-    this._networkClient = networkClient;
+    return identifier;
   }
 
   // Returns a human-readable colony or user name, when given an ensAddress / Ethereum address
