@@ -8,6 +8,8 @@ import { User } from '../records';
 
 type State = User | null;
 
+// TODO pair with James to make look like userProfilesReducer
+
 const INITIAL_STATE = null;
 
 // TODO better types for action payloads
