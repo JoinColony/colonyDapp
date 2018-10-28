@@ -3,7 +3,8 @@
 import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
 import ipfsNode from '../src/lib/ipfsNode';
-import { Commands, DDB, SCHEMAS } from '../src/lib/database';
+import { DDB, SCHEMAS } from '../src/lib/database';
+import { getAll } from '../src/lib/database/commands';
 import PurserIdentity from '../src/lib/database/PurserIdentity';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 
@@ -31,7 +32,7 @@ describe('Database setup', () => {
   test('Can edit multiple attributes', async () => {
     const store = await ddb.createStore('keyvalue', 'userProfile');
     await store.set({ username: 'hello', bio: 'born in Warsaw' });
-    const state = Commands.all(store);
+    const state = getAll(store);
     expect(Object.keys(state).length).toBe(2);
   });
 });
