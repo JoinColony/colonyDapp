@@ -21,7 +21,7 @@ const userProfilesReducer = (
   switch (action.type) {
     case SET_USER_PROFILE: {
       const { walletAddress, set } = action.payload;
-      return state.set(walletAddress, new User({ walletAddress, ...set }));
+      return state.set(walletAddress, User({ walletAddress, ...set }));
     }
     case UPDATE_USER_PROFILE: {
       const { walletAddress, update } = action.payload;

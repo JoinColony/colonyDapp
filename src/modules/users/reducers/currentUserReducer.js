@@ -14,10 +14,10 @@ const INITIAL_STATE = null;
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case SET_CURRENT_USER: {
-      const { walletAddress } = action.payload;
-      // TODO username is a required property, but we don't have it at this
-      // stage; what can we do to improve this?
-      return new User({ walletAddress, username: '' });
+      const { walletAddress, set } = action.payload;
+      // TODO username is a required property, but we don't have it yet
+      const username = set.username || walletAddress;
+      return User({ walletAddress, ...set, username });
     }
 
     default:
