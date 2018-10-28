@@ -61,7 +61,6 @@ export const TRANSACTION_ERROR = `${ns}/TRANSACTION_ERROR`; // -> 'core/TRANSACT
 
 ### Action creators
 
-* FIXME do we always need actionCreators? When would we not want to use them?
 * For the sake of being explicit, action creators should generally be very simple and take named parameters rather than objects, e.g.:
 
 ```js

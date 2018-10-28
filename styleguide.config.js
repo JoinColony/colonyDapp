@@ -8,6 +8,10 @@ module.exports = {
   },
   sections: [
     {
+      name: 'Component conventions',
+      content: 'docs/Components.md',
+    },
+    {
       name: 'Typography',
       components: [
         './src/modules/core/components/Heading/Heading.jsx',
