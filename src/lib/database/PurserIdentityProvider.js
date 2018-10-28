@@ -14,7 +14,7 @@ type ProviderType = 'ETHEREUM_ACCOUNT';
 
 const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
-class PurserIdentityProvider implements IdentityProvider {
+class PurserIdentityProvider implements IdentityProvider<PurserIdentity> {
   _options: Options;
 
   _type: ProviderType;
@@ -58,8 +58,6 @@ class PurserIdentityProvider implements IdentityProvider {
     );
   }
 
-  // @TODO: It's this issue that we need to solve: https://flow.org/try/#0PQKgBAAgZgNg9gdzCYAoVBLAdgFwKYBOUAhgMZ5gCSAQmAN6pgCQUccAFMQFxUCCAlDwDOOAtgDmAblQBfdNnxEyFSr3qomAagD6AIx41pc1KRjEhQsGowBbAA4w8NvLkur1TPT2pH0p85a0tg5OLjhutAwsbJw8AupgiUkEeDgArgRYYADkrHDZ0klgcnJAA
-  // $FlowFixMe
   async sign(identity: PurserIdentity, data: any): Promise<string> {
     const signingKey = identity.orbitKey;
     if (!signingKey)

@@ -72,9 +72,9 @@ class DDB {
     return STORE_CLASSES[storeType];
   }
 
-  static async createDatabase(
+  static async createDatabase<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
-    identityProvider: IdentityProvider,
+    identityProvider: P,
   ): Promise<DDB> {
     const identity = await identityProvider.createIdentity();
     await ipfsNode.ready;
