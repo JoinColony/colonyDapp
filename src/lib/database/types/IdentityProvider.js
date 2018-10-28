@@ -2,12 +2,12 @@
 
 import type { Identity } from './Identity';
 
-export interface IdentityProvider {
+export interface IdentityProvider<+T: Identity> {
   +_type: string;
 
-  createIdentity(): Promise<Identity>;
+  createIdentity(): Promise<T>;
 
-  sign<T: Identity>(identity: T, data: any): Promise<string>;
+  sign(identity: T, data: any): Promise<string>;
 
   verify(signature: string, publicKey: string, data: any): Promise<boolean>;
 }

@@ -2,7 +2,7 @@
 
 import IPFS from 'ipfs';
 
-import type { IdentityObject } from './Identity';
+import type { Identity, IdentityObject } from './Identity';
 import type { IdentityProvider } from './IdentityProvider';
 
 type LamportClock = {
@@ -27,7 +27,10 @@ export interface AccessController {
 
   createManifest(ipfs: IPFS, name: string, type: string): Promise<string>;
 
-  canAppend(entry: Entry, provider: IdentityProvider): Promise<boolean>;
+  canAppend(
+    entry: Entry,
+    provider: IdentityProvider<Identity>,
+  ): Promise<boolean>;
 
   load(): Promise<void>;
 }

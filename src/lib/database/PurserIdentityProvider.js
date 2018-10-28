@@ -14,7 +14,7 @@ type ProviderType = 'ETHEREUM_ACCOUNT';
 
 const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
-class PurserIdentityProvider implements IdentityProvider {
+class PurserIdentityProvider implements IdentityProvider<PurserIdentity> {
   _options: Options;
 
   _type: ProviderType;

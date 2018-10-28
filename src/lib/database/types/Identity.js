@@ -20,7 +20,7 @@ export interface Identity {
 
   _orbitKey: KeyPair;
 
-  +_provider: IdentityProvider;
+  +_provider: IdentityProvider<Identity>;
 
   _publicKey: string;
 
@@ -32,7 +32,7 @@ export interface Identity {
 
   get orbitKey(): KeyPair;
 
-  get provider(): IdentityProvider;
+  get provider(): IdentityProvider<Identity>;
 
   toJSON(): IdentityObject;
 }
