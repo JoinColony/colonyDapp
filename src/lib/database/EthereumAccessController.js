@@ -6,6 +6,7 @@ import { utils } from 'ethers';
 
 import type { AccessController, Entry } from './types';
 
+import PurserIdentity from './PurserIdentity';
 import PurserIdentityProvider from './PurserIdentityProvider';
 
 // TODO: Use actual type for common wallet interface
@@ -15,7 +16,8 @@ const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 /**
  * Access controller for Purser based Ethereum wallets
  */
-class EthereumAccessController implements AccessController {
+class EthereumAccessController
+  implements AccessController<PurserIdentity, PurserIdentityProvider> {
   _accountAddress: string;
 
   _type: ProviderType;
@@ -48,8 +50,6 @@ class EthereumAccessController implements AccessController {
 
   async canAppend(
     entry: Entry,
-    // TODO: It's this issue that we need to solve: https://flow.org/try/#0PQKgBAAgZgNg9gdzCYAoVBLAdgFwKYBOUAhgMZ5gCSAQmAN6pgCQUccAFMQFxUCCAlDwDOOAtgDmAblQBfdNnxEyFSr3qomAagD6AIx41pc1KRjEhQsGowBbAA4w8NvLkur1TPT2pH0p85a0tg5OLjhutAwsbJw8AupgiUkEeDgArgRYYADkrHDZ0klgcnJAA
-    // $FlowFixMe
     provider: PurserIdentityProvider,
   ): Promise<boolean> {
     const {

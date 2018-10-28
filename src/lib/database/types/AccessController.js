@@ -22,15 +22,12 @@ export type Entry = {
   identity: IdentityObject,
 };
 
-export interface AccessController {
+export interface AccessController<I: Identity, P: IdentityProvider<I>> {
   +_type: string;
 
   createManifest(ipfs: IPFS, name: string, type: string): Promise<string>;
 
-  canAppend(
-    entry: Entry,
-    provider: IdentityProvider<Identity>,
-  ): Promise<boolean>;
+  canAppend(entry: Entry, provider: P): Promise<boolean>;
 
   load(): Promise<void>;
 }
