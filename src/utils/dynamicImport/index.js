@@ -1,5 +1,3 @@
-/* @flow */
-
 type InjectFunctionType = (*) => Object;
 type CallbackFunctionType = (*, InjectFunctionType) => {};
 
@@ -34,3 +32,4 @@ export const loadRoute = (
 export const errorLoadingRoute = (err: Error) =>
   /* eslint-disable-next-line no-console */
   console.error('Component chunk loading failed', err);
+/* @flow */

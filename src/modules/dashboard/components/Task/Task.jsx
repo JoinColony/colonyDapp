@@ -3,6 +3,8 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { DialogType } from '~core/Dialog';
+
 import styles from './Task.css';
 
 import Form from '~core/Fields/Form';

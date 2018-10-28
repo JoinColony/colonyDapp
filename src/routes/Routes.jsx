@@ -92,7 +92,11 @@ const Routes = ({ currentUser }) => {
         component={ColonyHome}
         backRoute={DASHBOARD_ROUTE}
       />
+<<<<<<< HEAD
       <Route
+=======
+      <ConnectedOnlyRoute
+>>>>>>> 0534d589... Take out eth conversion into util
         isConnected={isConnected}
         path={TASK_ROUTE}
         component={Task}
