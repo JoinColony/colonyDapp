@@ -34,7 +34,6 @@
             2,
             { "devDependencies": ["**/*.test.js", "./src/__tests__/*.js", "./src/__mocks__/*.js", "./*.js"] }
         ],
-        "no-console": "warn",
         "react/default-props-match-prop-types": 0,
         "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
         "react/jsx-wrap-multilines": 0,

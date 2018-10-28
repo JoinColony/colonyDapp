@@ -78,10 +78,10 @@ class TokenEditDialog extends Component<Props> {
     clearTimeout(this.timeoutId);
   }
 
+  // eslint-disable-next-line no-unused-vars
   handleSubmitTokenForm = ({ colonyTokens }: FormValues) => {
     const { close } = this.props;
     // TODO handle form value submission
-    console.log(colonyTokens);
     this.timeoutId = setTimeout(() => {
       close();
     }, 500);

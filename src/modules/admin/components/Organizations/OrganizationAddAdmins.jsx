@@ -57,7 +57,7 @@ type Props = {
 
 const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
   <div className={styles.main}>
-    <Formik onSubmit={console.log} validationSchema={validationSchema}>
+    <Formik onSubmit={() => {}} validationSchema={validationSchema}>
       {({ handleSubmit, isValid }: FormikProps<FormValues>) => (
         <form onSubmit={handleSubmit}>
           <div className={styles.pickerWrapper}>
