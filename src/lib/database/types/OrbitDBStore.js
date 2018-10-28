@@ -26,7 +26,7 @@ export interface OrbitDBStore {
   ): OrbitDBStore;
 
   load(): Promise<void>;
-  load(smount: number): Promise<void>;
+  load(amount: number): Promise<void>;
 
   close(): Promise<void>;
   drop(): Promise<void>;
