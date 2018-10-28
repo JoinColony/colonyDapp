@@ -21,9 +21,11 @@ type Action = {
   payload: { id: TransactionId } & Object, // `id` is required, but the type is unsealed
 };
 
+const INITIAL_STATE = new ImmutableMap();
+
 const transactionsReducer = (
-  state: TransactionsState = new ImmutableMap(),
-  { type, payload }: Action = {},
+  state: TransactionsState = INITIAL_STATE,
+  { type, payload }: Action,
 ): TransactionsState => {
   switch (type) {
     case TRANSACTION_STARTED: {
