@@ -5,6 +5,7 @@ import type { Saga } from 'redux-saga';
 import {
   call,
   put,
+  select,
   takeLatest,
   getContext,
   setContext,
@@ -23,12 +24,12 @@ import {
   SET_CURRENT_USER,
   SET_CURRENT_USER_ERROR,
   EDIT_USER_PROFILE,
+  EDIT_USER_PROFILE_SUCCESS,
+  EDIT_USER_PROFILE_ERROR,
   WALLET_SET,
 } from '../actionTypes';
 
-function* initializeUser(action: Object): Saga<void> {
-  const { currentAddress } = action.payload;
-
+function* initializeUser(): Saga<void> {
   let store;
 
   try {
@@ -73,8 +74,6 @@ function* initializeUser(action: Object): Saga<void> {
 }
 
 function* editProfile(action: Object): Saga<void> {
-  const { username, bio, website, location } = action.payload;
-
   const currentAddress = select(state => state.wallet.currentAddress);
 
   const ddb = yield getContext('ddb');
@@ -83,17 +82,16 @@ function* editProfile(action: Object): Saga<void> {
 
   try {
     // if user is not allowed to write to store, this should throw an error
-    // TODO check out immutable records for users
-    yield store.set({ username, bio, website, location });
+    yield store.set(action.payload);
     const user = yield call(getAll, store);
 
     yield put({
-      type: SET_CURRENT_USER,
+      type: EDIT_USER_PROFILE_SUCCESS,
       payload: { user },
     });
   } catch (error) {
     yield put({
-      type: SET_CURRENT_USER_ERROR,
+      type: EDIT_USER_PROFILE_ERROR,
       payload: { error },
     });
   }
