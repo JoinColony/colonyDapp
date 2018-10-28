@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
+import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -123,14 +123,16 @@ const Routes = ({
   );
 };
 
-export default connect(
-  ({ user: { currentUser }, router: { location } }) => ({
-    currentUser: currentUser || {},
-    // The `location` prop is given to the component to ensure that updates
-    // are not blocked when the location changes (e.g. redirects).
-    // `withRouter()` could accomplish the same thing, but it is slightly
-    // less performant: https://github.com/ReactTraining/react-router/pull/5552#issuecomment-331502281
-    location,
-  }),
-  null,
+// XXX we need `withRouter` here because (surprisingly) react-router-dom is not
+// using the router context property (available to e.g. each `Switch`):
+// https://github.com/ReactTraining/react-router/issues/4671
+// We are using `withRouter` to get around `connect()`'s `shouldComponentUpdate`
+// function blocking updates when the route location changes.
+export default withRouter(
+  connect(
+    ({ user: { currentUser } }) => ({
+      currentUser: currentUser || {},
+    }),
+    null,
+  ),
 )(Routes);
