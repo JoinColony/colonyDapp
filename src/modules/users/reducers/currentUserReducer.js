@@ -2,7 +2,7 @@
 
 import { SET_CURRENT_USER } from '../actionTypes';
 
-import type { Action } from '~types/';
+import type { Action } from '~types/index';
 import type { UserRecord } from '~types/UserRecord';
 
 type State = {

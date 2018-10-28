@@ -6,7 +6,7 @@ import { Map as ImmutableMap, Record } from 'immutable';
 
 import { SET_USER_PROFILE, UPDATE_USER_PROFILE } from '../actionTypes';
 
-import type { Action } from '~types/';
+import type { Action } from '~types/index';
 import type { UserRecord, UserProps } from '~types/UserRecord';
 
 const defaultValues: UserProps = {
