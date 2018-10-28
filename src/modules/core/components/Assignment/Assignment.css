@@ -1,5 +1,6 @@
 .main {
   composes: field from '~styles/fields.css';
+  margin-bottom: 15px;
 }
 
 .directionHorizontal {
@@ -45,11 +46,6 @@
     fill: var(--grey-5);
     stroke: var(--grey-5);
   }
-}
-
-.removeButton {
-  margin-bottom: 16px;
-  margin-left: 10px;
 }
 
 .focusIcon {

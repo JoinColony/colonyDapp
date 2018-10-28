@@ -34,12 +34,8 @@ const MSG = defineMessages({
     defaultMessage: 'Remove',
   },
 });
-type Appearance = {
-  direction?: 'horizontal',
-};
+
 type Props = {
-  /** Appearance object */
-  appearance?: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
   /** Just render the `<textarea>` element without label */
@@ -83,14 +79,12 @@ class Assignment extends Component<Props> {
   };
 
   resetSelection = () => {
-    console.log('reset');
     const { setValue } = this.props;
     setValue(null);
   };
 
   render() {
     const {
-      appearance,
       itemComponent,
       // Form field
       $error,
@@ -107,22 +101,13 @@ class Assignment extends Component<Props> {
       omniPickerIsOpen,
       registerInputNode,
     } = this.props;
-    const labelAppearance = appearance
-      ? { direction: appearance.direction }
-      : undefined;
-    console.log($value);
     return (
       <div className={styles.omniContainer}>
-        <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
+        <OmniPickerWrapper>
           <div className={styles.inputContainer}>
             {!elementOnly &&
               label && (
-                <InputLabel
-                  inputId={inputProps.id}
-                  label={label}
-                  help={help}
-                  appearance={labelAppearance}
-                />
+                <InputLabel inputId={inputProps.id} label={label} help={help} />
               )}
             {$value ? (
               <div className={styles.avatarContainer}>
@@ -165,11 +150,6 @@ class Assignment extends Component<Props> {
                 hidden={!!$value}
                 ref={registerInputNode}
               />
-              {$error &&
-                appearance &&
-                appearance.direction === 'horizontal' && (
-                  <span className={styles.errorHorizontal}>{$error}</span>
-                )}
               <div className={styles.omniPickerContainer}>
                 <OmniPicker
                   itemComponent={itemComponent}
@@ -180,13 +160,11 @@ class Assignment extends Component<Props> {
           </div>
         </OmniPickerWrapper>
         {$value && (
-          <div className={styles.removeButton}>
-            <Button
-              onClick={this.resetSelection}
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={MSG.remove}
-            />
-          </div>
+          <Button
+            onClick={this.resetSelection}
+            appearance={{ theme: 'blue', size: 'small' }}
+            text={MSG.remove}
+          />
         )}
       </div>
     );

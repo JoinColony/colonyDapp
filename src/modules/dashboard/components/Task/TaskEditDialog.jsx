@@ -4,6 +4,7 @@ import type { FormikProps } from 'formik';
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import nanoid from 'nanoid';
 
 import Assignment, { ItemDefault } from '~core/Assignment';
 import Button from '~core/Button';
@@ -11,6 +12,7 @@ import Form from '~core/Fields/Form';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
+import Payout from './Payout.jsx';
 
 import userMocks from './__datamocks__/mockUsers';
 import taskMock from './__datamocks__/mockTask';
@@ -64,12 +66,11 @@ type FormValues = {
   amount: Array<string>,
 };
 
-type Payout = {};
-
 type Props = {
+  /* This will soon get the current payout array if there's one set already
+  passed in as props */
   cancel: () => void,
   close: () => void,
-  payouts: Array<Payout>,
 };
 
 const validateFunding = (): any =>
@@ -82,17 +83,15 @@ const filter = (data, filterValue) =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
-class TokenEditDialog extends Component<Props> {
+class TaskEditDialog extends Component<Props> {
   static displayName = 'dashboard.task.taskEditDialog';
-
-  static defaultProps = {
-    payouts: [],
-  };
 
   handleSubmitFunding = () => {};
 
   render() {
-    const { payouts, cancel } = this.props;
+    const { cancel } = this.props;
+    const { payouts } = taskMock;
+
     return (
       <Dialog cancel={cancel} backdrop={styles.backdrop}>
         <Form
@@ -128,14 +127,14 @@ class TokenEditDialog extends Component<Props> {
                       text={MSG.add}
                     />
                   </div>
-                  <div className={styles.amountEditor}>
-                    <Heading appearance={{ size: 'small' }} text={MSG.amount} />
-                    <FormattedMessage {...MSG.notSet} />
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.modify}
-                    />
-                  </div>
+                  {payouts &&
+                    payouts.map((payout, index) => (
+                      <Payout
+                        key={nanoid(index)}
+                        amount={payout.amount}
+                        symbol={payout.symbol}
+                      />
+                    ))}
                 </div>
               </DialogSection>
               <div className={styles.buttonContainer}>
@@ -159,4 +158,4 @@ class TokenEditDialog extends Component<Props> {
   }
 }
 
-export default TokenEditDialog;
+export default TaskEditDialog;

@@ -13,13 +13,10 @@
 .editor {
     display: flex;
     flex-direction: row;
-}
-.amountEditor {
-    display: flex;
-    justify-content: space-between;
+    align-items: baseline;
 }
 
-.editor > h4 {
+.editor > h3 {
     margin-right: 5px;
 }
 
