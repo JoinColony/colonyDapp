@@ -16,7 +16,9 @@ import { DASHBOARD_ROUTE } from '~routes';
 // eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
 
-import { Commands, Resolvers } from '../../../lib/database';
+import { resolvers } from '../../../lib/database';
+import { getAll } from '../../../lib/database/commands';
+
 import {
   SET_CURRENT_USER,
   SET_CURRENT_USER_ERROR,
@@ -39,7 +41,7 @@ function* initializeUser(action: Object): Saga<void> {
 
     const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
 
-    ddb.addResolver('user', new Resolvers.UserResolver(colonyNetwork));
+    ddb.addResolver('user', new resolvers.UserResolver(colonyNetwork));
 
     yield setContext({ ddb });
     // TODO: First try to get the store, then create it
@@ -55,15 +57,15 @@ function* initializeUser(action: Object): Saga<void> {
   // TODO: We pre-fill the store here so we have something to see
   // Remove this once we can actually get a store
   yield call([store, store.set], {
-    displayName: 'Tim',
+    username: 'Tim',
     bio: 'from Texas',
   });
 
-  const user = yield call(Commands.all, store);
+  const user = yield call(getAll, store);
 
   yield put({
     type: SET_CURRENT_USER,
-    payload: { set: user, walletAddress: currentAddress },
+    payload: { set: user },
   });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
@@ -71,19 +73,23 @@ function* initializeUser(action: Object): Saga<void> {
 }
 
 function* editProfile(action: Object): Saga<void> {
-  const { currentAddress, update, username } = action.payload;
+  const { username, bio, website, location } = action.payload;
+
+  const currentAddress = select(state => state.wallet.currentAddress);
+
   const ddb = yield getContext('ddb');
 
-  const store = yield call([ddb, ddb.getStore], username);
+  const store = yield call([ddb, ddb.getStore], currentAddress);
 
   try {
     // if user is not allowed to write to store, this should throw an error
-    yield store.set(update);
-    const user = yield call(Commands.all, store);
+    // TODO check out immutable records for users
+    yield store.set({ username, bio, website, location });
+    const user = yield call(getAll, store);
 
     yield put({
       type: SET_CURRENT_USER,
-      payload: { set: user, walletAddress: currentAddress },
+      payload: { user },
     });
   } catch (error) {
     yield put({
