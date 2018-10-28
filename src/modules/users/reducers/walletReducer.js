@@ -4,10 +4,7 @@ import { WALLET_SET, WALLET_CLEARED } from '../actionTypes';
 
 import { Wallet } from '../records';
 
-type Action = {
-  type: string,
-  payload: Object,
-};
+import type { Action } from '~types/index';
 
 const INITIAL_STATE = Wallet({});
 

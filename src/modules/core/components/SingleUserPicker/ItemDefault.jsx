@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 
-import type { UserData } from './types';
+import type { UserRecord } from '~types/index';
 
 import UserAvatar from '~core/UserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
@@ -21,7 +21,7 @@ const MSG = defineMessages({
 
 type Props = {
   currentUserId?: string,
-  itemData: UserData,
+  itemData: UserRecord,
   selected?: boolean,
   showAddress?: boolean,
   /*
@@ -32,7 +32,7 @@ type Props = {
 
 const ItemDefault = ({
   currentUserId,
-  itemData: { id, fullName, username },
+  itemData: { walletAddress, displayName, username },
   showAddress,
   showMaskedAddress,
 }: Props) => (
@@ -43,15 +43,15 @@ const ItemDefault = ({
   >
     <UserAvatar
       size="s"
-      userId={id}
-      username={username || id}
-      walletAddress={id}
+      userId={walletAddress}
+      username={username || walletAddress}
+      walletAddress={walletAddress}
     />
     <span className={styles.dataContainer}>
-      {fullName && (
-        <span className={styles.fullName}>
-          {fullName}
-          {currentUserId === id && (
+      {displayName && (
+        <span className={styles.displayName}>
+          {displayName}
+          {currentUserId === walletAddress && (
             <span className={styles.thatsYou}>
               <FormattedMessage {...MSG.ownName} />
             </span>
@@ -59,11 +59,11 @@ const ItemDefault = ({
         </span>
       )}
       {username && <UserMention username={username} />}
-      {showAddress && <span className={styles.address}>{id}</span>}
+      {showAddress && <span className={styles.address}>{walletAddress}</span>}
       {!showAddress &&
         showMaskedAddress && (
           <span className={styles.address}>
-            <MaskedAddress address={id} />
+            <MaskedAddress address={walletAddress} />
           </span>
         )}
     </span>

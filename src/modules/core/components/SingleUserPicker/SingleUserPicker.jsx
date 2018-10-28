@@ -17,7 +17,7 @@ import Icon from '../Icon';
 import { withOmniPicker } from '../OmniPicker';
 import UserAvatar from '../UserAvatar';
 
-import type { UserData } from './types';
+import type { UserRecord } from '~types/index';
 
 const MSG = defineMessages({
   selectMember: {
@@ -58,7 +58,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value?: UserData,
+  $value?: UserRecord,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
@@ -66,7 +66,7 @@ type Props = {
 } & OmniPickerProps;
 
 type State = {
-  selectedUser: ?UserData,
+  selectedUser: ?UserRecord,
 };
 
 class SingleUserPicker extends Component<Props, State> {
@@ -78,7 +78,7 @@ class SingleUserPicker extends Component<Props, State> {
     openOmniPicker();
   };
 
-  handlePick = (user: UserData) => {
+  handlePick = (user: UserRecord) => {
     const { setValue } = this.props;
     setValue(user);
   };
@@ -122,9 +122,9 @@ class SingleUserPicker extends Component<Props, State> {
             <div className={styles.avatarContainer}>
               <UserAvatar
                 className={styles.recipientAvatar}
-                userId={$value.id}
-                walletAddress={$value.id}
-                username={$value.username || $value.id}
+                userId={$value.walletAddress}
+                walletAddress={$value.walletAddress}
+                username={$value.username || $value.walletAddress}
                 size="xs"
               />
             </div>
@@ -146,7 +146,7 @@ class SingleUserPicker extends Component<Props, State> {
                 onFocus={this.handleActiveUserClick}
                 tabIndex="0"
               >
-                {$value.fullName}
+                {$value.displayName}
               </div>
             )}
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}

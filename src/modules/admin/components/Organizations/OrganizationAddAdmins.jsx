@@ -11,7 +11,7 @@ import Button from '~core/Button';
 import styles from './OrganizationAddAdmins.css';
 
 import type { FormikProps } from 'formik';
-import type { UserData } from '~core/SingleUserPicker';
+import type { UserRecord } from '~types/index';
 
 const MSG = defineMessages({
   labelAddAdmins: {
@@ -48,11 +48,11 @@ const validationSchema = yup.object({
 });
 
 type FormValues = {
-  newAdminUser: UserData,
+  newAdminUser: UserRecord,
 };
 
 type Props = {
-  availableAdmins: Array<UserData>,
+  availableAdmins: Array<UserRecord>,
 };
 
 const OrganizationAddAdmins = ({ availableAdmins }: Props) => (

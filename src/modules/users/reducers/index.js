@@ -1,7 +1,7 @@
 /* @flow */
 
 import { combineReducers } from 'redux';
-import walletReducer from './wallet';
+import walletReducer from './walletReducer';
 import currentUserReducer from './currentUserReducer';
 import userProfilesReducer from './userProfilesReducer';
 

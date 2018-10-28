@@ -1,36 +1,27 @@
 /* @flow */
 
-import type { RecordFactory } from 'immutable';
-
-import { Map as ImmutableMap, Record } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 import { SET_USER_PROFILE, UPDATE_USER_PROFILE } from '../actionTypes';
 
 import type { Action } from '~types/index';
-import type { UserRecord, UserProps } from '~types/UserRecord';
 
-const defaultValues: UserProps = {
-  walletAddress: '',
-  username: '',
-  avatar: undefined,
-  displayName: undefined,
-  bio: undefined,
-  website: undefined,
-  location: undefined,
-};
-
-const User: RecordFactory<UserProps> = Record(defaultValues);
+import { User } from '../records';
 
 type WalletAddress = string;
-type State = ImmutableMap<WalletAddress, UserRecord>;
+type UserProfilesState = ImmutableMap<WalletAddress, User>;
 
-const INITIAL_STATE = new ImmutableMap();
+const INITIAL_STATE: UserProfilesState = new ImmutableMap();
 
-const userProfilesReducer = (state: State = INITIAL_STATE, action: Action) => {
+// TODO better types for action payloads
+const userProfilesReducer = (
+  state: UserProfilesState = INITIAL_STATE,
+  action: Action,
+) => {
   switch (action.type) {
     case SET_USER_PROFILE: {
       const { walletAddress, set } = action.payload;
-      return state.set(walletAddress, User(set));
+      return state.set(walletAddress, new User({ walletAddress, ...set }));
     }
     case UPDATE_USER_PROFILE: {
       const { walletAddress, update } = action.payload;
