@@ -8,8 +8,7 @@ const { Formik } = require('formik');
   { id: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A', username: 'Alex', fullName: 'Alex Rea'},
   { id: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A', username: 'Collin', fullName: 'Collin Vine'},
 ];
- const reputation = 7;
- const payouts = [{symbol: 'ETH', amount: 440305}];
+
  const filter = (data, filterValue) => data.filter(user => user.username.toLowerCase().startsWith(filterValue.toLowerCase()));
  const ItemWithAddress = (props) => <ItemDefault showAddress {...props} />;
 const ItemWithMakedAddress = (props) => <ItemDefault showMaskedAddress {...props} />;
@@ -23,8 +22,6 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       itemComponent={ItemDefault}
       data={data}
       filter={filter}
-      reputation={reputation}
-      payouts={payouts}
     />
     <br />
   </div>

@@ -16,8 +16,7 @@ import { asField, InputLabel } from '~core/Fields';
 import Icon from '~core/Icon';
 import { withOmniPicker } from '~core/OmniPicker';
 import UserAvatar from '~core/UserAvatar';
-import NavLink from '~core/NavLink';
-import PayoutsList from '~core/PayoutsList';
+import Button from '~core/Button';
 
 import type { Payout, UserData } from './types';
 
@@ -30,17 +29,9 @@ const MSG = defineMessages({
     id: 'Assignment.emptyMessage',
     defaultMessage: 'No Colony members match that search.',
   },
-  fundingNotSet: {
-    id: 'Assignment.fundingNotSet',
-    defaultMessage: 'Funding not set',
-  },
-  pendingAssignment: {
-    id: 'Assignment.pendingAssignment',
-    defaultMessage: 'Pending',
-  },
-  reputation: {
-    id: 'dashboard.TaskList.TaskListItem.reputation',
-    defaultMessage: '+{reputation} max rep',
+  remove: {
+    id: 'dashboard.TaskList.TaskListItem.remove',
+    defaultMessage: 'Remove',
   },
 });
 type Appearance = {
@@ -75,20 +66,10 @@ type Props = {
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
-  /** Array of payouts per token that has been set for a task */
-  payouts?: Array<Payout>,
-  /** current user reputation */
-  reputation?: number,
 } & OmniPickerProps;
-type State = {
-  pendingAssignment?: boolean,
-};
-class Assignment extends Component<Props, State> {
-  static displayName = 'Assignment';
 
-  state = {
-    pendingAssignment: false,
-  };
+class Assignment extends Component<Props> {
+  static displayName = 'Assignment';
 
   handleActiveUserClick = () => {
     const { openOmniPicker, setValue } = this.props;
@@ -98,8 +79,13 @@ class Assignment extends Component<Props, State> {
 
   handlePick = (user: UserData) => {
     const { setValue } = this.props;
-    this.setState({ pendingAssignment: true });
     setValue(user);
+  };
+
+  resetSelection = () => {
+    console.log('reset');
+    const { setValue } = this.props;
+    setValue(null);
   };
 
   render() {
@@ -120,28 +106,25 @@ class Assignment extends Component<Props, State> {
       OmniPickerWrapper,
       omniPickerIsOpen,
       registerInputNode,
-      // Funding
-      payouts,
-      reputation,
     } = this.props;
-    const { pendingAssignment } = this.state;
     const labelAppearance = appearance
       ? { direction: appearance.direction }
       : undefined;
+    console.log($value);
     return (
-      <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
-        <div className={styles.inputContainer}>
-          {!elementOnly &&
-            label && (
-              <InputLabel
-                inputId={inputProps.id}
-                label={label}
-                help={help}
-                appearance={labelAppearance}
-              />
-            )}
-          {$value ? (
-            <NavLink to={`user/${$value.id}`}>
+      <div className={styles.omniContainer}>
+        <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
+          <div className={styles.inputContainer}>
+            {!elementOnly &&
+              label && (
+                <InputLabel
+                  inputId={inputProps.id}
+                  label={label}
+                  help={help}
+                  appearance={labelAppearance}
+                />
+              )}
+            {$value ? (
               <div className={styles.avatarContainer}>
                 <UserAvatar
                   className={styles.recipientAvatar}
@@ -151,75 +134,61 @@ class Assignment extends Component<Props, State> {
                   size="xs"
                 />
               </div>
-            </NavLink>
-          ) : (
-            <Icon
-              className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-              name="circle-person"
-              title={MSG.selectMember}
-            />
-          )}
-          {}
-          <div className={styles.container}>
-            {/* eslint-disable jsx-a11y/click-events-have-key-events */
-            $value && (
-              <div
-                role="button"
-                className={
-                  pendingAssignment ? styles.pending : styles.assigneeName
-                }
-                onClick={this.handleActiveUserClick}
-                onFocus={this.handleActiveUserClick}
-                tabIndex="0"
-              >
-                {$value.fullName}
-                {pendingAssignment && (
-                  <span className={styles.pendingLabel}>
-                    <FormattedMessage {...MSG.pendingAssignment} />
-                  </span>
-                )}
-              </div>
-            )}
-            {/* eslint-enable jsx-a11y/click-events-have-key-events */}
-            <input
-              className={
-                $touched && $error ? styles.inputInvalid : styles.input
-              }
-              {...inputProps}
-              placeholder={placeholder}
-              hidden={!!$value}
-              ref={registerInputNode}
-            />
-            {$error &&
-              appearance &&
-              appearance.direction === 'horizontal' && (
-                <span className={styles.errorHorizontal}>{$error}</span>
-              )}
-            <div className={styles.omniPickerContainer}>
-              <OmniPicker
-                itemComponent={itemComponent}
-                onPick={this.handlePick}
+            ) : (
+              <Icon
+                className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
+                name="circle-person"
+                title={MSG.selectMember}
               />
+            )}
+            {}
+            <div className={styles.container}>
+              {/* eslint-disable jsx-a11y/click-events-have-key-events */
+              $value && (
+                <div
+                  role="button"
+                  className={styles.assigneeName}
+                  onClick={this.handleActiveUserClick}
+                  onFocus={this.handleActiveUserClick}
+                  tabIndex="0"
+                >
+                  {$value.fullName}
+                </div>
+              )}
+              {/* eslint-enable jsx-a11y/click-events-have-key-events */}
+              <input
+                className={
+                  $touched && $error ? styles.inputInvalid : styles.input
+                }
+                {...inputProps}
+                placeholder={placeholder}
+                hidden={!!$value}
+                ref={registerInputNode}
+              />
+              {$error &&
+                appearance &&
+                appearance.direction === 'horizontal' && (
+                  <span className={styles.errorHorizontal}>{$error}</span>
+                )}
+              <div className={styles.omniPickerContainer}>
+                <OmniPicker
+                  itemComponent={itemComponent}
+                  onPick={this.handlePick}
+                />
+              </div>
             </div>
           </div>
-          <div className={styles.fundingContainer}>
-            {reputation && (
-              // TODO: check if funding token is native once we have a helper for it
-              <span className={styles.reputation}>
-                <FormattedMessage
-                  {...MSG.reputation}
-                  values={{ reputation: reputation.toString() }}
-                />
-              </span>
-            )}
-            {payouts ? (
-              <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
-            ) : (
-              <FormattedMessage {...MSG.fundingNotSet} />
-            )}
+        </OmniPickerWrapper>
+        {$value && (
+          <div className={styles.removeButton}>
+            <Button
+              onClick={this.resetSelection}
+              appearance={{ theme: 'blue', size: 'small' }}
+              text={MSG.remove}
+            />
           </div>
-        </div>
-      </OmniPickerWrapper>
+        )}
+      </div>
     );
   }
 }

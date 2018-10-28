@@ -1,6 +1,5 @@
 .main {
   composes: field from '~styles/fields.css';
-  max-width: 345px;
 }
 
 .directionHorizontal {
@@ -21,7 +20,13 @@
   position: relative;
 }
 
+.omniContainer {
+  display: flex;
+  align-items: flex-end;
+}
+
 .inputContainer {
+  margin-top: 35px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -42,6 +47,11 @@
   }
 }
 
+.removeButton {
+  margin-bottom: 16px;
+  margin-left: 10px;
+}
+
 .focusIcon {
   composes: icon;
 
@@ -54,12 +64,12 @@
 .input {
   flex: 1 1 0;
   margin-left: 10px;
-  width: 100%;
+  width: 330px;;
   vertical-align: baseline;
   border: none;
   border-bottom: 1px solid var(--colony-black);
   background-color: transparent;
-  font-size: var(--size-medium-l);
+  font-size: var(--size-normal);
   color: var(--colony-black);
   outline: none;
 
@@ -72,30 +82,13 @@
   }
 
   &::placeholder {
-    font-size: var(--size-normal);
     font-weight: var(--weight-medium);
     color: var(--grey-4);
   }
 }
 
-.pending {
-  composes: input;
-  border-color: var(--danger);
-  font-size: var(--size-normal);
-  font-weight: var(--weight-medium);
-  color: var(--text);
-}
-
-.pendingLabel {
-  margin-left: 15px;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-medium);
-  color: var(--danger);
-}
-
 .assigneeName {
   composes: input;
-  font-size: var(--size-normal);
   font-weight: var(--weight-medium);
 
   &:hover {
@@ -124,23 +117,4 @@
   right: 15px;
   font-size: var(--size-tiny);
   color: var(--danger);
-}
-
-.fundingContainer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-  width: 100%;
-  font-size: var(--size-small);
-}
-
-.payout {
-  color: var(--sky-blue);
-}
-
-.reputation {
-  margin-right: 20px;
-  font-size: inherit;
-  font-weight: var(--weight-medium);
-  color: var(--violet);
 }

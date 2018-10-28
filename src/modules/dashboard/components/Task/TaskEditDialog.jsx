@@ -5,11 +5,15 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import Assignment, { ItemDefault } from '~core/Assignment';
 import Button from '~core/Button';
 import Form from '~core/Fields/Form';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
+
+import userMocks from './__datamocks__/mockUsers';
+import taskMock from './__datamocks__/mockTask';
 
 import styles from './TaskEditDialog.css';
 
@@ -46,6 +50,14 @@ const MSG = defineMessages({
     id: 'dashboard.task.taskEditDialog.buttonCancel',
     defaultMessage: 'Back',
   },
+  search: {
+    id: 'dashboard.task.taskEditDialog.search',
+    defaultMessage: 'Search...',
+  },
+  selectAssignee: {
+    id: 'dashboard.task.taskEditDialog.selectAssignee',
+    defaultMessage: 'Select Assignee',
+  },
 });
 
 type FormValues = {
@@ -64,6 +76,11 @@ const validateFunding = (): any =>
   yup.object({
     amount: yup.number(),
   });
+
+const filter = (data, filterValue) =>
+  data.filter(user =>
+    user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
+  );
 
 class TokenEditDialog extends Component<Props> {
   static displayName = 'dashboard.task.taskEditDialog';
@@ -87,15 +104,23 @@ class TokenEditDialog extends Component<Props> {
             <Fragment>
               <DialogSection appearance={{ border: 'grey' }}>
                 <Heading
-                  appearance={{ size: 'normal', margin: 'none' }}
+                  appearance={{ size: 'medium', margin: 'none' }}
                   text={MSG.titleAssignment}
+                />
+                <Assignment
+                  name="assignee"
+                  itemComponent={ItemDefault}
+                  label={MSG.selectAssignee}
+                  data={userMocks}
+                  filter={filter}
+                  placeholder={MSG.search}
                 />
               </DialogSection>
               <DialogSection appearance={{ border: 'grey' }}>
                 <div className={styles.taskEditContainer}>
                   <div className={styles.editor}>
                     <Heading
-                      appearance={{ size: 'normal' }}
+                      appearance={{ size: 'medium' }}
                       text={MSG.titleFunding}
                     />
                     <Button
@@ -105,7 +130,7 @@ class TokenEditDialog extends Component<Props> {
                   </div>
                   <div className={styles.amountEditor}>
                     <Heading appearance={{ size: 'small' }} text={MSG.amount} />
-                    <FormattedMessage {...MSG.notSet}/>
+                    <FormattedMessage {...MSG.notSet} />
                     <Button
                       appearance={{ theme: 'blue', size: 'small' }}
                       text={MSG.modify}

@@ -1,11 +1,8 @@
 /* @flow */
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import cx from 'classnames';
 import type { UserData } from './types';
 import UserAvatar from '~core/UserAvatar';
-import MaskedAddress from '~core/MaskedAddress';
-import UserMention from '~core/UserMention';
 import styles from './ItemDefault.css';
 
 const MSG = defineMessages({
@@ -27,14 +24,8 @@ type Props = {
 const ItemDefault = ({
   currentUserId,
   itemData: { id, fullName, username },
-  showAddress,
-  showMaskedAddress,
 }: Props) => (
-  <span
-    className={cx(styles.main, {
-      [styles.showAddress]: showAddress || showMaskedAddress,
-    })}
-  >
+  <span className={styles.main}>
     <UserAvatar
       size="s"
       userId={id}
@@ -52,14 +43,6 @@ const ItemDefault = ({
           )}
         </span>
       )}
-      {username && <UserMention username={username} />}
-      {showAddress && <span className={styles.address}>{id}</span>}
-      {!showAddress &&
-        showMaskedAddress && (
-          <span className={styles.address}>
-            <MaskedAddress address={id} />
-          </span>
-        )}
     </span>
   </span>
 );
