@@ -23,10 +23,6 @@ const userProfilesReducer = (
       const { walletAddress, set } = action.payload;
       return state.set(walletAddress, User({ walletAddress, ...set }));
     }
-    case UPDATE_USER_PROFILE: {
-      const { walletAddress, update } = action.payload;
-      return state.mergeIn(walletAddress, update);
-    }
     default:
       return state;
   }
