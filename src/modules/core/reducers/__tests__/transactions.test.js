@@ -1,6 +1,8 @@
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Record } from 'immutable';
 
 import reducer from '../transactions';
+
+import { Transaction } from '../../records';
 
 import {
   sendTransaction,
@@ -33,12 +35,13 @@ describe(`core: reducers (transactions)`, () => {
   const options = { gasPrice: 4 };
   const params = { param1: 123 };
   const id = 'my transaction id';
+  const existingTxId = 'my existing tx id';
 
   const initialState = new ImmutableMap({
-    'some tx id': {
+    [existingTxId]: Transaction({
       actionType: 'some other action type',
       createdAt: new Date(2018, 0, 1),
-    },
+    }),
   });
 
   // Actions
@@ -60,70 +63,106 @@ describe(`core: reducers (transactions)`, () => {
             // map, but jest has some unexpected results when using `toEqual`
             // with immutable maps.
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              id,
-              options,
-              params,
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [],
+                id,
+                options,
+                params,
+              }),
+            );
           },
         ],
         [
           transactionSent,
           state => {
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              hash, // hash should have been set
-              id,
-              options,
-              params,
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [],
+                id,
+                hash, // hash should have been set
+                options,
+                params,
+              }),
+            );
           },
         ],
         [
           receiptReceived,
           state => {
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              hash,
-              id,
-              options,
-              params,
-              receiptReceived: true, // should have been set
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [],
+                hash,
+                id,
+                options,
+                params,
+                receiptReceived: true, // should have been set
+              }),
+            );
           },
         ],
         [
           eventDataReceived,
           state => {
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              eventData, // should have been set
-              hash,
-              id,
-              options,
-              params,
-              receiptReceived: true,
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [],
+                eventData, // should have been set
+                hash,
+                id,
+                options,
+                params,
+                receiptReceived: true,
+              }),
+            );
           },
         ],
       ],
@@ -139,17 +178,25 @@ describe(`core: reducers (transactions)`, () => {
           sendError,
           state => {
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              errors: [{ type: 'send', message: 'send error' }],
-              id,
-              options,
-              params,
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [{ type: 'send', message: 'send error' }],
+                id,
+                options,
+                params,
+              }),
+            );
           },
         ],
       ],
@@ -166,18 +213,25 @@ describe(`core: reducers (transactions)`, () => {
           receiptError,
           state => {
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              errors: [{ type: 'receipt', message: 'receipt error' }],
-              id,
-              hash,
-              options,
-              params,
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [{ type: 'receipt', message: 'receipt error' }],
+                id,
+                options,
+                params,
+              }),
+            );
           },
         ],
       ],
@@ -195,19 +249,25 @@ describe(`core: reducers (transactions)`, () => {
           eventDataError,
           state => {
             expect(state.size).toBe(2);
-            expect(state.get('some tx id')).toEqual(
-              initialState.get('some tx id'),
+
+            const existingTx = state.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.get(existingTxId).toJS(),
             );
-            expect(state.get(id)).toEqual({
-              actionType,
-              createdAt: expect.any(Date),
-              errors: [{ type: 'eventData', message: 'event data error' }],
-              hash,
-              id,
-              options,
-              params,
-              receiptReceived: true,
-            });
+
+            const tx = state.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual(
+              expect.objectContaining({
+                actionType,
+                createdAt: expect.any(Date),
+                errors: [{ type: 'eventData', message: 'event data error' }],
+                id,
+                options,
+                params,
+              }),
+            );
           },
         ],
       ],

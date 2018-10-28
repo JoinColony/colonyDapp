@@ -2,10 +2,6 @@
 
 import * as yup from 'yup';
 
-import type { UserType } from '~types/user';
-
-export type UserProfileType = UserType;
-
 // eslint-disable-next-line import/prefer-default-export
 export const UserProfile = {
   displayName: yup.string(),

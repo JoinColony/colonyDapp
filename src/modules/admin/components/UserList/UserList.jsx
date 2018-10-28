@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { MessageDescriptor } from 'react-intl';
+
 import React from 'react';
 
 import { Table, TableBody } from '~core/Table';
@@ -9,14 +11,13 @@ import UserListItem from './UserListItem.jsx';
 
 import styles from './UserList.css';
 
-import type { MessageDescriptor } from 'react-intl';
-import type { UserData } from '~core/SingleUserPicker';
+import type { UserRecord } from '~types/index';
 
 type Props = {
   /*
    * Array of user data, follows the same format as UserPicker
    */
-  users: Array<UserData>,
+  users: Array<UserRecord>,
   /*
    * Whether to show the fullname
    * Gets passed down to `UserListItem`
@@ -46,7 +47,7 @@ type Props = {
    * Method to call when removing the user
    * Gets passed down to `UserListItem`
    */
-  onRemove: UserData => any,
+  onRemove: UserRecord => any,
 };
 
 const displayName: string = 'admin.UserList';
@@ -76,7 +77,7 @@ const UserList = ({
                * This is just so we can have duplicate data inside datamocks
                * Might as well remove it when the *real* data comes in
                */
-              key={`${user.id}${currentIndex + 1}`}
+              key={`${user.walletAddress}${currentIndex + 1}`}
               user={user}
               showDisplayName={showDisplayName}
               showUsername={showUsername}

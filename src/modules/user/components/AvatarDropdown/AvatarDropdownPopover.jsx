@@ -12,7 +12,7 @@ import DropdownMenu, {
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
-import type { UserType } from '~types/user';
+import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   myProfile: {
@@ -47,7 +47,7 @@ const MSG = defineMessages({
 
 type Props = {
   closePopover: () => void,
-  user: UserType,
+  user: UserRecord,
 };
 
 class AvatarDropdownPopover extends Component<Props> {

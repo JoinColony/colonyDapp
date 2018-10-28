@@ -10,21 +10,30 @@ import {
   TRANSACTION_STARTED,
 } from '../actionTypes';
 
-import type { TransactionsState, TransactionId } from '../types';
+import { Transaction } from '../records';
+
+import type { TransactionsState } from '../types';
+
+import type { TransactionId } from '~types/TransactionRecord';
 
 type Action = {
   type: string,
   payload: { id: TransactionId } & Object, // `id` is required, but the type is unsealed
 };
 
+const INITIAL_STATE = new ImmutableMap();
+
 const transactionsReducer = (
-  state: TransactionsState = new ImmutableMap(),
-  { type, payload }: Action = {},
+  state: TransactionsState = INITIAL_STATE,
+  { type, payload }: Action,
 ): TransactionsState => {
   switch (type) {
     case TRANSACTION_STARTED: {
       const { actionType, createdAt, id, options, params } = payload;
-      return state.set(id, { id, createdAt, actionType, options, params });
+      return state.set(
+        id,
+        Transaction({ id, createdAt, actionType, options, params }),
+      );
     }
     case TRANSACTION_SENT: {
       const { id, hash } = payload;
@@ -40,9 +49,7 @@ const transactionsReducer = (
     }
     case TRANSACTION_ERROR: {
       const { error, id } = payload;
-      return state.updateIn([id, 'errors'], (errors = []) =>
-        errors.concat(error),
-      );
+      return state.updateIn([id, 'errors'], errors => errors.push(error));
     }
     default:
       return state;

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { UserType } from '~types/user';
+import type { UserRecord } from '~types/UserRecord';
 
 import CopyableAddress from '../../../core/components/CopyableAddress';
 import Heading from '../../../core/components/Heading';
@@ -12,7 +12,7 @@ import UserMention from '../../../core/components/UserMention';
 import styles from './UserMeta.css';
 
 type Props = {
-  user: UserType,
+  user: UserRecord,
 };
 
 const UserMeta = ({

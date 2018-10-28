@@ -10,7 +10,7 @@ import Button from '~core/Button';
 
 import styles from './UserListItem.css';
 
-import type { UserData } from '~core/SingleUserPicker';
+import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -19,13 +19,13 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'admin.UserList.UserListItem';
+const componentDisplayName = 'admin.UserList.UserListItem';
 
 type Props = {
   /*
    * User data Object, follows the same format as UserPicker
    */
-  user: UserData,
+  user: UserRecord,
   /*
    * Whether to show the fullname
    */
@@ -47,11 +47,11 @@ type Props = {
    * Method to call when clicking the remove button
    * Gets passed down to `UserListItem`
    */
-  onRemove: UserData => any,
+  onRemove: UserRecord => any,
 };
 
 const UserListItem = ({
-  user: { id, username = '', fullName = '' },
+  user: { walletAddress, username = '', displayName = '' },
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
@@ -60,13 +60,13 @@ const UserListItem = ({
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.userAvatar}>
-      <UserAvatar size="xs" walletAddress={id} username={username} />
+      <UserAvatar size="xs" walletAddress={walletAddress} username={username} />
     </TableCell>
     <TableCell className={styles.userDetails}>
       {showDisplayName &&
-        fullName && (
-          <span className={styles.fullName} title={fullName}>
-            {fullName}
+        displayName && (
+          <span className={styles.displayName} title={displayName}>
+            {displayName}
           </span>
         )}
       {showUsername &&
@@ -79,7 +79,11 @@ const UserListItem = ({
           </span>
         )}
       <span className={styles.address}>
-        {showMaskedAddress ? <MaskedAddress address={id} /> : <span>{id}</span>}
+        {showMaskedAddress ? (
+          <MaskedAddress address={walletAddress} />
+        ) : (
+          <span>{walletAddress}</span>
+        )}
       </span>
     </TableCell>
     <TableCell className={styles.userRemove}>
@@ -95,6 +99,6 @@ const UserListItem = ({
   </TableRow>
 );
 
-UserListItem.displayName = displayName;
+UserListItem.displayName = componentDisplayName;
 
 export default UserListItem;

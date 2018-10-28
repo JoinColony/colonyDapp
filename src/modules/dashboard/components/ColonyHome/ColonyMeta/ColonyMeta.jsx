@@ -16,7 +16,7 @@ import UserAvatar from '~core/UserAvatar';
 import styles from './ColonyMeta.css';
 
 import type { ColonyType } from '~types/colony';
-import type { UserType } from '~types/user';
+import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -45,8 +45,8 @@ const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
 
 type Props = {
   colony: ColonyType,
-  owners: Array<UserType>,
-  admins: Array<UserType>,
+  owners: Array<UserRecord>,
+  admins: Array<UserRecord>,
   isAdmin: boolean,
 };
 
@@ -114,7 +114,7 @@ const ColonyMeta = ({
               walletAddress: ownerWalletAddress,
               displayName: ownerDisplayName,
               username: ownerUsername,
-            }: UserType,
+            }: UserRecord,
             index: number,
           ) => (
             <UserAvatar
@@ -143,7 +143,7 @@ const ColonyMeta = ({
               walletAddress: adminWalletAddress,
               displayName: adminDisplayName,
               username: adminUsername,
-            }: UserType,
+            }: UserRecord,
             index: number,
           ) => (
             <UserAvatar
