@@ -1,20 +1,21 @@
 /* @flow */
 
+import type { MessageDescriptor } from 'react-intl';
+import type { Node } from 'react';
+
 import React, { Component } from 'react';
 import createDate from 'sugar-date/date/create';
 import formatDate from 'sugar-date/date/format';
 import DayPicker, { DateUtils } from 'react-day-picker';
 
-import type { MessageDescriptor } from 'react-intl';
-import type { Node } from 'react';
-import type { InputComponentAppearance } from '../Fields/Input';
-import type { PopoverTrigger } from '../Popover';
-
-import styles from './DatePicker.css';
-
 import { asField } from '../Fields';
 import Popover from '../Popover';
 import InputField from './InputField.jsx';
+
+import styles from './DatePicker.css';
+
+import type { InputComponentAppearance } from '../Fields/Input';
+import type { PopoverTrigger } from '../Popover';
 
 import CaptionElement from './CaptionElement.jsx';
 import NavbarElement from './NavbarElement.jsx';
