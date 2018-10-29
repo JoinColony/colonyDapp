@@ -54,10 +54,6 @@ const MSG = defineMessages({
     id: 'dashboard.Task.skill',
     defaultMessage: 'Skill',
   },
-  dueDate: {
-    id: 'dashboard.Task.dueDate',
-    defaultMessage: 'Due Date',
-  },
   requestToWork: {
     id: 'dashboard.Task.requestToWork',
     defaultMessage: 'Request To Work',
@@ -76,6 +72,7 @@ const Task = () => {
   return (
     <div>
       <Form
+        /* eslint-disable-next-line no-console */
         onSubmit={console.log}
         initialValues={{
           taskName: '',
