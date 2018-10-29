@@ -121,6 +121,7 @@ class TaskDomains extends Component<Props, State> {
     const newlySetDomain: ConsumableDomain | void = allDomains.find(
       ({ id }) => id === selectedDomain,
     );
+    /* eslint-disable-next-line no-console */
     console.log(TaskDomains.displayName, newlySetDomain);
   }
 
@@ -141,6 +142,7 @@ class TaskDomains extends Component<Props, State> {
           type="button"
           className={styles.domainItem}
           onClick={() => this.handleSelectDomain(id)}
+          title={name}
         >
           {`#${name}`}
         </button>
@@ -206,7 +208,10 @@ class TaskDomains extends Component<Props, State> {
             </Popover>
           )}
         </div>
-        <div className={styles.currentDomain}>
+        <div
+          className={styles.currentDomain}
+          title={currentDomain && `#${currentDomain.name}`}
+        >
           {currentDomain && `#${currentDomain.name}`}
         </div>
       </div>
