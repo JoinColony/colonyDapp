@@ -55,18 +55,18 @@ type Props = {
   onBlur: (evt: SyntheticFocusEvent<HTMLInputElement>) => void,
   /** @ignore Will be injected by `asField` */
   onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
-  /*
+  /**
    * Render children under the date picker, inside the popover
    *
    * If the children are a function, pass them the close method.
    * Useful to combine with `preventClose`
    */
   children?: Node | ((val: any) => void),
-  /*
+  /**
    * If set, it will not close the popover when clicking the new date
    */
   preventClose?: boolean,
-  /*
+  /**
    * If set, it will manually overwrite the currently selected date
    *
    * It's kind of a hardswitch to be able to select a date even when you're not
