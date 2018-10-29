@@ -29,9 +29,10 @@ import {
   WALLET_SET,
 } from '../actionTypes';
 
-function* initializeUser(): Saga<void> {
+function* initializeUser(action: Object): Saga<void> {
   let store;
 
+  const { currentAddress } = action.payload;
   try {
     const DDB = yield getContext('DDB');
     const wallet = yield getContext('currentWallet');
@@ -66,7 +67,7 @@ function* initializeUser(): Saga<void> {
 
   yield put({
     type: SET_CURRENT_USER,
-    payload: { user },
+    payload: { walletAddress: currentAddress, ...user },
   });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.

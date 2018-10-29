@@ -1,13 +1,6 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
-
-import {
-  USER_PROFILE_UPDATE_ERROR,
-  USER_PROFILE_UPDATE_SUCCESS,
-  SET_CURRENT_USER_SUCCESS,
-  SET_CURRENT_USER_ERROR,
-} from '../actionTypes';
+import { USER_PROFILE_UPDATE_SUCCESS, SET_CURRENT_USER } from '../actionTypes';
 
 import type { Action } from '~types/index';
 
@@ -22,12 +15,11 @@ const currentUserReducer = (
   action: Action,
 ) => {
   switch (action.type) {
-    case SET_CURRENT_USER_SUCCESS:
+    case SET_CURRENT_USER:
     case USER_PROFILE_UPDATE_SUCCESS: {
-      const { user } = action.payload;
       // TODO username is a required property, but we don't have it at this
       // stage; what can we do to improve this?
-      return User(user);
+      return User(action.payload);
     }
 
     default:
