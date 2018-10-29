@@ -60,7 +60,7 @@
         "bs58": "^4.0.1",
         "caniuse-lite": "^1.0.30000860",
         "chalk": "^2.4.0",
-        "css-loader": "^1.0.0",
+        "css-loader": "^1.0.1",
         "css-module-flow": "^1.0.0",
         "deepmerge": "^2.2.1",
         "dotenv-webpack": "^1.5.4",
