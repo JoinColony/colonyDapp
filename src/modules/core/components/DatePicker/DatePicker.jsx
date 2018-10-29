@@ -1,20 +1,21 @@
 /* @flow */
 
 import type { MessageDescriptor } from 'react-intl';
+import type { Node } from 'react';
 
 import React, { Component } from 'react';
 import createDate from 'sugar-date/date/create';
 import formatDate from 'sugar-date/date/format';
 import DayPicker, { DateUtils } from 'react-day-picker';
 
+import { asField } from '../Fields';
+import Popover from '../Popover';
+import InputField from './InputField.jsx';
+
 import styles from './DatePicker.css';
 
 import type { InputComponentAppearance } from '../Fields/Input';
 import type { PopoverTrigger } from '../Popover';
-
-import { asField } from '../Fields';
-import Popover from '../Popover';
-import InputField from './InputField.jsx';
 
 import CaptionElement from './CaptionElement.jsx';
 import NavbarElement from './NavbarElement.jsx';
@@ -54,6 +55,26 @@ type Props = {
   onBlur: (evt: SyntheticFocusEvent<HTMLInputElement>) => void,
   /** @ignore Will be injected by `asField` */
   onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+  /**
+   * Render children under the date picker, inside the popover
+   *
+   * If the children are a function, pass them the close method.
+   * Useful to combine with `preventClose`
+   */
+  children?: Node | ((val: any) => void),
+  /**
+   * If set, it will not close the popover when clicking the new date
+   */
+  preventClose?: boolean,
+  /**
+   * If set, it will manually overwrite the currently selected date
+   *
+   * It's kind of a hardswitch to be able to select a date even when you're not
+   * connected to a form.
+   *
+   * This implies you handle the state on you're own.
+   */
+  selectedDate?: ?Date,
 };
 
 type State = {
@@ -158,9 +179,14 @@ class DatePicker extends Component<Props, State> {
   };
 
   render() {
-    const { $value } = this.props;
+    const {
+      $value,
+      children,
+      preventClose,
+      selectedDate: manuallySelectedDate,
+    } = this.props;
     const { currentDate } = this.state;
-    const selectedDay = currentDate || $value;
+    const selectedDay = manuallySelectedDate || currentDate || $value;
     return (
       <div className={styles.main}>
         <Popover
@@ -169,15 +195,18 @@ class DatePicker extends Component<Props, State> {
           retainRefFocus
           onClose={this.handlePopoverClose}
           content={({ close }) => (
-            <DayPicker
-              classNames={styles}
-              enableOutsideDays
-              month={currentDate || new Date()}
-              onDayClick={close}
-              selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
-              captionElement={props => <CaptionElement {...props} />}
-              navbarElement={props => <NavbarElement {...props} />}
-            />
+            <div>
+              <DayPicker
+                classNames={styles}
+                enableOutsideDays
+                month={currentDate || new Date()}
+                onDayClick={preventClose ? this.handlePopoverClose : close}
+                selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
+                captionElement={props => <CaptionElement {...props} />}
+                navbarElement={props => <NavbarElement {...props} />}
+              />
+              {typeof children == 'function' ? children({ close }) : children}
+            </div>
           )}
         >
           {this.getTrigger()}

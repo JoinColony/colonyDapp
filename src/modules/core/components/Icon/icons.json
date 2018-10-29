@@ -1,11 +1,12 @@
 {
   "icons": [
     "archive",
-    "caret-right",
-    "caret-down-small",
     "at-sign-circle",
     "attachment",
     "bell",
+    "caret-left",
+    "caret-right",
+    "caret-down-small",
     "checklist",
     "circle-archive",
     "circle-arrow-back",

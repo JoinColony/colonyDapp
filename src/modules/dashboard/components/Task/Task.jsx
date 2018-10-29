@@ -12,7 +12,8 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
-import TaskDomains from '../TaskDomains';
+import TaskDate from '~dashboard/TaskDate';
+import TaskDomains from '~dashboard/TaskDomains';
 
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~user/AvatarDropdown/__datamocks__/mockUser';
@@ -53,10 +54,6 @@ const MSG = defineMessages({
     id: 'dashboard.Task.skill',
     defaultMessage: 'Skill',
   },
-  dueDate: {
-    id: 'dashboard.Task.dueDate',
-    defaultMessage: 'Due Date',
-  },
   requestToWork: {
     id: 'dashboard.Task.requestToWork',
     defaultMessage: 'Request To Work',
@@ -75,7 +72,7 @@ const Task = () => {
   return (
     <div>
       <Form
-        // eslint-disable-next-line no-console
+        /* eslint-disable-next-line no-console */
         onSubmit={console.log}
         initialValues={{
           taskName: '',
@@ -137,14 +134,7 @@ const Task = () => {
                   )}
                 </div>
                 <div className={styles.editor}>
-                  {/* //TODO: Add due date colonyDapp#410 */}
-                  <Heading appearance={{ size: 'small' }} text={MSG.dueDate} />
-                  {isTaskCreator && (
-                    <Button
-                      appearance={{ theme: 'blue', size: 'small' }}
-                      text={MSG.add}
-                    />
-                  )}
+                  <TaskDate isTaskCreator />
                 </div>
               </section>
             </aside>

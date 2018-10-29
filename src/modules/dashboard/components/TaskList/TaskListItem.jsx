@@ -6,8 +6,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
+import NavLink from '~core/NavLink';
 
 import styles from './TaskListItem.css';
+
+import { TASK_ROUTE } from '~routes';
 
 const MSG = defineMessages({
   reputation: {
@@ -28,9 +31,12 @@ const TaskListItem = ({
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
-      <span className={styles.taskDetailsTitle} title={title}>
-        {title}
-      </span>
+      <NavLink
+        title={title}
+        className={styles.taskDetailsTitle}
+        to={TASK_ROUTE}
+        text={title}
+      />
       {reputation && (
         <span className={styles.taskDetailsReputation}>
           <FormattedMessage
