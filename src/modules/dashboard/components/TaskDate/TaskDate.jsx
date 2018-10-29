@@ -54,22 +54,16 @@ class TaskDate extends Component<Props, State> {
   /*
    * Handle clicking on each individual domain in the list
    */
-
-  handleSelectDate = this.handleSelectDate.bind(this);
-
-  handleSelectDate(date: ?Date) {
+  handleSelectDate = (date: ?Date) => {
     this.setState({ selectedDate: date, touched: true });
-  }
+  };
 
   /*
    * Set the domain when clicking the confirm button
    *
    * This will most likely call an action creator at some point
    */
-
-  handleSetDate = this.handleSetDate.bind(this);
-
-  handleSetDate(callback: () => void) {
+  handleSetDate = (callback: () => void) => {
     const { selectedDate } = this.state;
     this.setState(
       {
@@ -83,8 +77,9 @@ class TaskDate extends Component<Props, State> {
      * @NOTE Here we should be caling the action creator
      * Maybe even before changing the state
      */
+    /* eslint-disable-next-line no-console */
     console.log(TaskDate.displayName, selectedDate);
-  }
+  };
 
   /*
    * When opening the datepicker, we need to set the currently selected date
@@ -92,13 +87,10 @@ class TaskDate extends Component<Props, State> {
    *
    * Otherwise the date picker might show the wrong selected day (state won't reset)
    */
-
-  handleOpen = this.handleOpen.bind(this);
-
-  handleOpen(callback: () => void) {
+  handleOpen = (callback: () => void) => {
     const { setDate } = this.state;
     this.setState({ selectedDate: setDate }, callback);
-  }
+  };
 
   /*
    * Handle cleanup when closing the popover (or pressing cancel)
@@ -109,13 +101,10 @@ class TaskDate extends Component<Props, State> {
    * Otherwise the next time it will open it will show the selected one, and not
    * the actual set one.
    */
-
-  handleCleanup = this.handleCleanup.bind(this);
-
-  handleCleanup(callback: () => void) {
+  handleCleanup = (callback: () => void) => {
     const { setDate = undefined } = this.state;
     this.setState({ selectedDate: setDate, touched: false }, callback);
-  }
+  };
 
   render() {
     const {
