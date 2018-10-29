@@ -67,7 +67,7 @@ function* initializeUser(action: Object): Saga<void> {
 
   yield put({
     type: SET_CURRENT_USER,
-    payload: { walletAddress: currentAddress, ...user },
+    payload: { user: { walletAddress: currentAddress, ...user } },
   });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
@@ -83,7 +83,7 @@ function* editProfile(action: Object): Saga<void> {
 
   try {
     // if user is not allowed to write to store, this should throw an error
-    yield store.set(action.payload);
+    yield call([store, store.set], action.payload);
     const user = yield call(getAll, store);
 
     yield put({

@@ -17,9 +17,10 @@ const currentUserReducer = (
   switch (action.type) {
     case SET_CURRENT_USER:
     case USER_PROFILE_UPDATE_SUCCESS: {
+      const { user } = action.payload;
       // TODO username is a required property, but we don't have it at this
       // stage; what can we do to improve this?
-      return User(action.payload);
+      return User(user);
     }
 
     default:
