@@ -69,12 +69,9 @@ class TaskDomains extends Component<Props, State> {
   /*
    * Handle clicking on each individual domain in the list
    */
-
-  handleSelectDomain = this.handleSelectDomain.bind(this);
-
-  handleSelectDomain(id: number) {
+  handleSelectDomain = (id: number) => {
     this.setState({ selectedDomain: id, listTouched: true });
-  }
+  };
 
   /*
    * Handle cleanup when closing the popover (or pressing cancel)
@@ -85,23 +82,17 @@ class TaskDomains extends Component<Props, State> {
    * Otherwise the next time it will open it will show the selected one, and not
    * the actual set one.
    */
-
-  handleCleanup = this.handleCleanup.bind(this);
-
-  handleCleanup(callback: () => void) {
+  handleCleanup = (callback?: () => void): void => {
     const { setDomain } = this.state || undefined;
     this.setState({ selectedDomain: setDomain, listTouched: false }, callback);
-  }
+  };
 
   /*
    * Set the domain when clicking the confirm button
    *
    * This will most likely call an action creator at some point
    */
-
-  handleSetDomain = this.handleSetDomain.bind(this);
-
-  handleSetDomain(callback: () => void) {
+  handleSetDomain = (callback: () => void) => {
     const {
       state: { selectedDomain },
       allDomains,
@@ -123,15 +114,12 @@ class TaskDomains extends Component<Props, State> {
     );
     /* eslint-disable-next-line no-console */
     console.log(TaskDomains.displayName, newlySetDomain);
-  }
+  };
 
   /*
    * Helper to render an entry in the domains list
    */
-
-  renderDomainListItem = this.renderDomainListItem.bind(this);
-
-  renderDomainListItem({ id, name }: ConsumableDomain) {
+  renderDomainListItem = ({ id, name }: ConsumableDomain) => {
     const { selectedDomain } = this.state;
     return (
       <li
@@ -148,7 +136,7 @@ class TaskDomains extends Component<Props, State> {
         </button>
       </li>
     );
-  }
+  };
 
   /*
    * @TODO Most likely this is temporary, and the way we'll fetch the *real* data
