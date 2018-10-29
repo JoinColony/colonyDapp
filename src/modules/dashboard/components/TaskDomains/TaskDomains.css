@@ -58,6 +58,7 @@
   width: calc(100% - paddingValue);
   border: none;
   background-color: transparent;
+  font-size: var(--size-normal);
   text-align: left;
   cursor: pointer;
   outline: none;
