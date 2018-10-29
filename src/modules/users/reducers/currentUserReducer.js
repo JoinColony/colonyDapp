@@ -3,17 +3,18 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
-  EDIT_USER_PROFILE_ERROR,
-  EDIT_USER_PROFILE_SUCCESS,
-  SET_CURRENT_USER,
+  USER_PROFILE_UPDATE_ERROR,
+  USER_PROFILE_UPDATE_SUCCESS,
+  SET_CURRENT_USER_SUCCESS,
+  SET_CURRENT_USER_ERROR,
 } from '../actionTypes';
 
 import type { Action } from '~types/index';
 
 import { User } from '../records';
 
-type CurrentUserProfileState = ImmutableMap<string, User>;
-const INITIAL_STATE: CurrentUserProfileState = new ImmutableMap();
+type CurrentUserProfileState = User | null;
+const INITIAL_STATE: CurrentUserProfileState = null;
 
 // TODO better types for action payloads
 const currentUserReducer = (
@@ -21,15 +22,14 @@ const currentUserReducer = (
   action: Action,
 ) => {
   switch (action.type) {
-    case SET_CURRENT_USER: {
-      const { walletAddress, set } = action.payload;
-      // TODO username is a required property, but we don't have it yet
-      const username = set.username || walletAddress;
-      return User({ walletAddress, ...set, username });
+    case SET_CURRENT_USER_SUCCESS:
+    case USER_PROFILE_UPDATE_SUCCESS: {
+      const { user } = action.payload;
+      // TODO username is a required property, but we don't have it at this
+      // stage; what can we do to improve this?
+      return User(user);
     }
 
-    case EDIT_USER_PROFILE_ERROR: {
-    }
     default:
       return state;
   }

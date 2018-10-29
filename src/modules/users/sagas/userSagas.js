@@ -23,9 +23,9 @@ import { getAll } from '../../../lib/database/commands';
 import {
   SET_CURRENT_USER,
   SET_CURRENT_USER_ERROR,
-  EDIT_USER_PROFILE,
-  EDIT_USER_PROFILE_SUCCESS,
-  EDIT_USER_PROFILE_ERROR,
+  USER_PROFILE_UPDATE,
+  USER_PROFILE_UPDATE_SUCCESS,
+  USER_PROFILE_UPDATE_ERROR,
   WALLET_SET,
 } from '../actionTypes';
 
@@ -66,7 +66,7 @@ function* initializeUser(): Saga<void> {
 
   yield put({
     type: SET_CURRENT_USER,
-    payload: { set: user },
+    payload: { user },
   });
 
   // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
@@ -86,19 +86,19 @@ function* editProfile(action: Object): Saga<void> {
     const user = yield call(getAll, store);
 
     yield put({
-      type: EDIT_USER_PROFILE_SUCCESS,
+      type: USER_PROFILE_UPDATE_SUCCESS,
       payload: { user },
     });
   } catch (error) {
     yield put({
-      type: EDIT_USER_PROFILE_ERROR,
+      type: USER_PROFILE_UPDATE_ERROR,
       payload: { error },
     });
   }
 }
 
 function* userSagas(): any {
-  yield takeLatest(EDIT_USER_PROFILE, editProfile);
+  yield takeLatest(USER_PROFILE_UPDATE, editProfile);
   yield takeLatest(WALLET_SET, initializeUser);
 }
 
