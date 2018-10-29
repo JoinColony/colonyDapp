@@ -19,7 +19,6 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
       const username = set.username || walletAddress;
       return User({ walletAddress, ...set, username });
     }
-
     default:
       return state;
   }

@@ -9,6 +9,8 @@ import Heading from '~core/Heading';
 import DecisionHub, { DecisionOption } from '~core/DecisionHub';
 import { CREATE_WALLET_ROUTE } from '~routes';
 
+import type { WalletMethod } from '../../../types';
+
 import styles from './StepStart.css';
 
 const MSG = defineMessages({
@@ -73,7 +75,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: 'metamask' | 'trezor' | 'ledger' | 'mnemonic' | 'json',
+  method: WalletMethod,
 };
 
 const displayName = 'user.ConnectWalletWizard.StepStart';

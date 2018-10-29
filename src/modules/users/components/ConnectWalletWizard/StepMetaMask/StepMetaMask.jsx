@@ -15,9 +15,9 @@ import Icon from '~core/Icon';
 import styles from './StepMetaMask.css';
 
 import {
-  OPEN_METAMASK_WALLET,
-  WALLET_SET,
-  WALLET_SET_ERROR,
+  CHANGE_WALLET,
+  SET_CURRENT_USER,
+  CHANGE_WALLET_ERROR,
 } from '../../../actionTypes';
 
 const MSG = defineMessages({
@@ -179,9 +179,9 @@ class MetaMask extends Component<Props, State> {
 export const Step = MetaMask;
 
 export const onSubmit = {
-  submit: OPEN_METAMASK_WALLET,
-  success: WALLET_SET,
-  error: WALLET_SET_ERROR,
+  submit: CHANGE_WALLET,
+  success: SET_CURRENT_USER,
+  error: CHANGE_WALLET_ERROR,
   // onSuccess() {},
   onError(errorMessage: string, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorOpenMetamask });

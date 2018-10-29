@@ -1,13 +1,19 @@
 /* @flow */
 
-import walletContext from './wallet';
-import networkClientContext from './networkClient';
+import { DDB } from '../lib/database';
+import IPFSNode from '../lib/ipfs';
 
-const rootContext: Object = {
-  currentWallet: walletContext,
-  networkClient: networkClientContext,
+import ipfsNodeContext from './ipfsNodeContext';
+import DDBContext from './DDBContext';
+
+type RootContext = {
+  ipfsNode: IPFSNode,
+  DDB: typeof DDB,
 };
 
-export { default as withContext } from './withContext';
+const rootContext: RootContext = {
+  ipfsNode: ipfsNodeContext,
+  DDB: DDBContext,
+};
 
 export default rootContext;

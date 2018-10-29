@@ -2,23 +2,22 @@
 
 import type { FormikProps } from 'formik';
 import * as yup from 'yup';
-
-import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import ledgerWallet from '@colony/purser-ledger';
-import trezorWallet from '@colony/purser-trezor';
-
 import type { WizardFormikBag } from '~core/Wizard';
 
-import withContext from '~context/withContext';
-import HardwareChoice from './HardwareChoice.jsx';
+import { SpinnerLoader } from '~core/Preloaders';
+
+import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
+
+import AddressItem from './AddressItem.jsx';
 
 import {
-  OPEN_HARDWARE_WALLET,
-  WALLET_SET,
-  WALLET_SET_ERROR,
+  CHANGE_WALLET,
+  SET_CURRENT_USER,
+  CHANGE_WALLET_ERROR,
 } from '../../../actionTypes';
 
 import Icon from '~core/Icon';
@@ -30,15 +29,16 @@ import styles from './StepHardware.css';
 const MSG = defineMessages({
   heading: {
     id: 'user.ConnectWalletWizard.StepHardware.heading',
-    defaultMessage: 'We detected a hardware wallet connection.',
-  },
-  subHeading: {
-    id: 'user.ConnectWalletWizard.StepHardware.subHeading',
-    defaultMessage: 'Would you like to access colony with that?',
+    defaultMessage:
+      'We found a hardware wallet! Which address would you like to use?',
   },
   walletSelectionLabel: {
     id: 'user.ConnectWalletWizard.StepHardware.walletSelectionLabel',
     defaultMessage: 'Select an address',
+  },
+  walletIconTitle: {
+    id: 'user.ConnectWalletWizard.StepHardware.walletIconTitle',
+    defaultMessage: 'Hardware wallet',
   },
   searchInputPlacholder: {
     id: 'user.ConnectWalletWizard.StepHardware.searchInputPlaceholder',
@@ -70,147 +70,104 @@ const MSG = defineMessages({
     defaultMessage: 'Please select one of the wallets below.',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepHardware.button.advance',
+    id: 'user.ConnectWalletWizard.StepHardware.buttonAdvance',
     defaultMessage: 'Unlock Wallet',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepHardware.button.back',
+    id: 'user.ConnectWalletWizard.StepHardware.buttonBack',
     defaultMessage: 'Choose a different wallet',
   },
   buttonRetry: {
-    id: 'user.ConnectWalletWizard.StepHardware.button.retry',
+    id: 'user.ConnectWalletWizard.StepHardware.buttonRetry',
     defaultMessage: 'Try Again',
+  },
+  loadingAddresses: {
+    id: 'user.ConnectWalletWizard.StepHardware.loadingAddresses',
+    defaultMessage: 'Loading available addresses...',
   },
 });
 
 type FormValues = {
+  method: 'ledger' | 'trezor',
   hardwareWalletChoice: string,
   hardwareWalletFilter: string,
 };
 
 type Props = FormikProps<FormValues> & {
-  context: Object,
-  hardwareWalletType: ledgerWallet | trezorWallet,
-  handleDidConnectWallet: () => void,
+  // TODO: How do we want to type actionCreators in the future to avoid duplication?
+  // We could export the types from the actionCreator file itself?
+  fetchAccounts: (
+    method: $PropertyType<FormValues, 'method'>,
+  ) => { type: string },
+  isLoading: boolean,
+  availableAddresses: string[],
   previousStep: () => void,
   nextStep: () => void,
 };
 
-type State = {
-  walletChoices: Array<string>,
-};
-
-class StepHardware extends Component<Props, State> {
+class StepHardware extends Component<Props> {
   static displayName = 'user.ConnectWalletWizard.StepHardware';
 
-  state = {
-    walletChoices: [],
+  static defaultProps = {
+    availableAddresses: [],
   };
 
   componentDidMount() {
-    this.getWalletChoices();
+    const {
+      fetchAccounts,
+      values: { method },
+    } = this.props;
+    fetchAccounts(method);
   }
 
-  // TODO: try to move the handling to sagas and get data from redux store
-  getWalletChoices = async () => {
+  renderContent() {
     const {
-      context: { currentWallet },
-      hardwareWalletType,
-    } = this.props;
-    /*
-     * If that fails, we try to open the Ledger wallet
-     *
-     * @NOTE If both wallets are available, ledger will overwrite trezor
-     *
-     * @TODO Our dev environment needs to run on HTTPS for this to work
-     */
-    try {
-      const walletInstance = await hardwareWalletType.open({
-        addressCount: 100,
-      });
-      currentWallet.setNewWallet(walletInstance);
-      return this.setState({
-        walletChoices: walletInstance.otherAddresses,
-      });
-    } catch (caughtError) {
-      /*
-       * We fail silently
-       */
-    }
-    return false;
-  };
-
-  render() {
-    const { walletChoices } = this.state;
-    const {
-      isSubmitting,
-      isValid,
-      previousStep,
-      status,
+      availableAddresses,
+      isLoading,
       values: { hardwareWalletChoice = '', hardwareWalletFilter = '' },
     } = this.props;
 
-    const filteredWalletChoices = walletChoices.filter(address =>
-      address.includes(hardwareWalletFilter),
-    );
+    if (isLoading) {
+      return (
+        <SpinnerLoader
+          loadingText={MSG.loadingAddresses}
+          appearance={{ size: 'massive' }}
+        />
+      );
+    }
 
-    const iconClassName = hardwareWalletFilter
-      ? styles.searchBoxIconContainerActive
-      : styles.searchBoxIconContainer;
+    if (availableAddresses.length) {
+      const filteredWalletChoices = availableAddresses.filter(address =>
+        address.includes(hardwareWalletFilter),
+      );
 
-    return (
-      <main>
-        <div className={styles.content}>
-          <div className={styles.headingContainer}>
-            {walletChoices.length > 0 ? (
-              <Fragment>
-                <Heading
-                  text={MSG.heading}
-                  appearance={{
-                    size: 'medium',
-                    margin: 'none',
-                    weight: 'thin',
-                  }}
-                />
-                <Heading
-                  text={MSG.subHeading}
-                  appearance={{ size: 'medium', weight: 'thin' }}
-                />
-                <InputLabel label={MSG.walletSelectionLabel} />
-                <div className={styles.choiceHeadingRow}>
-                  <div className={styles.searchBox}>
-                    <div className={iconClassName}>
-                      <Icon name="wallet" title="hardware wallet" />
-                    </div>
-                    <Input
-                      appearance={{ theme: 'minimal' }}
-                      name="hardwareWalletFilter"
-                      label={MSG.walletSelectionLabel}
-                      placeholder={MSG.searchInputPlacholder}
-                      elementOnly
-                    />
-                  </div>
-                  <div>
-                    <Heading
-                      text={MSG.balanceText}
-                      appearance={{ size: 'normal' }}
-                    />
-                  </div>
-                </div>
-              </Fragment>
-            ) : (
-              <div className={styles.noWalletFound}>
-                <Icon name="wallet" title="hardware wallet" />
-                <Heading
-                  text={MSG.errorHeading}
-                  appearance={{ size: 'large' }}
-                />
-                <Heading
-                  text={MSG.errorDescription}
-                  appearance={{ size: 'normal' }}
-                />
+      const iconClassName = hardwareWalletFilter
+        ? styles.searchBoxIconContainerActive
+        : styles.searchBoxIconContainer;
+
+      return (
+        <Fragment>
+          <Heading
+            text={MSG.heading}
+            appearance={{ size: 'medium', weight: 'thin' }}
+          />
+          <InputLabel label={MSG.walletSelectionLabel} />
+          <div className={styles.choiceHeadingRow}>
+            <div className={styles.searchBox}>
+              <div className={iconClassName}>
+                <Icon name="wallet" title={MSG.walletIconTitle} />
               </div>
-            )}
+              <Input
+                appearance={{ theme: 'minimal' }}
+                name="hardwareWalletFilter"
+                label={MSG.walletSelectionLabel}
+                placeholder={MSG.searchInputPlacholder}
+                elementOnly
+              />
+            </div>
+            <div>
+              <Heading text={MSG.balanceText} appearance={{ size: 'normal' }} />
+            </div>
           </div>
           <div className={styles.walletChoicesContainer}>
             {filteredWalletChoices.length === 0 &&
@@ -222,15 +179,39 @@ class StepHardware extends Component<Props, State> {
               )}
             {filteredWalletChoices.map(address => (
               <div className={styles.choiceRow} key={address}>
-                <HardwareChoice
-                  wallet={address}
+                <AddressItem
+                  address={address}
                   checked={hardwareWalletChoice === address}
                   searchTerm={hardwareWalletFilter}
                 />
               </div>
             ))}
           </div>
-        </div>
+        </Fragment>
+      );
+    }
+
+    return (
+      <Fragment>
+        <Icon name="wallet" title={MSG.walletIconTitle} />
+        <Heading text={MSG.errorHeading} appearance={{ size: 'large' }} />
+        <Heading text={MSG.errorDescription} appearance={{ size: 'normal' }} />
+      </Fragment>
+    );
+  }
+
+  render() {
+    const {
+      availableAddresses,
+      isSubmitting,
+      isValid,
+      previousStep,
+      status,
+    } = this.props;
+
+    return (
+      <div>
+        <section className={styles.content}>{this.renderContent()}</section>
         <FormStatus status={status} />
         <div className={styles.actions}>
           <Button
@@ -240,7 +221,9 @@ class StepHardware extends Component<Props, State> {
           />
           <Button
             text={
-              walletChoices.length > 0 ? MSG.buttonAdvance : MSG.buttonRetry
+              availableAddresses.length > 0
+                ? MSG.buttonAdvance
+                : MSG.buttonRetry
             }
             appearance={{ theme: 'primary', size: 'large' }}
             type="submit"
@@ -248,17 +231,15 @@ class StepHardware extends Component<Props, State> {
             loading={isSubmitting}
           />
         </div>
-      </main>
+      </div>
     );
   }
 }
 
-const enhance = compose(withContext);
-
 export const onSubmit = {
-  submit: OPEN_HARDWARE_WALLET,
-  success: WALLET_SET,
-  error: WALLET_SET_ERROR,
+  submit: CHANGE_WALLET,
+  success: SET_CURRENT_USER,
+  error: CHANGE_WALLET_ERROR,
   onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorPickAddress });
   },
@@ -270,5 +251,13 @@ export const validationSchema = yup.object({
     .address()
     .required(MSG.walletChoiceRequired),
 });
+
+const enhance = connect(
+  ({ user }) => ({
+    isLoading: user.wallet.loading,
+    availableAddresses: user.wallet.availableAddresses,
+  }),
+  { fetchAccounts: fetchAccountsAction },
+);
 
 export const Step = enhance(StepHardware);

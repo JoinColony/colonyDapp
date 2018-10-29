@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import { User } from '../../../../users/records';
+import { User } from '../../../records';
 
 const MockUser = User({
   walletAddress: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',

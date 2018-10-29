@@ -16,7 +16,7 @@ import TaskDate from '~dashboard/TaskDate';
 import TaskDomains from '~dashboard/TaskDomains';
 
 import userMocks from './__datamocks__/mockUsers';
-import userMock from '~user/AvatarDropdown/__datamocks__/mockUser';
+import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
 
 const displayName = 'dashboard.Task';

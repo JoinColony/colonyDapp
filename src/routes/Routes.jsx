@@ -3,8 +3,6 @@
 import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
-import withContext from '~context/withContext';
-
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
@@ -40,12 +38,9 @@ import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 
 const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
-const Routes = ({
-  context: {
-    currentWallet: { instance },
-  },
-}: Object) => {
-  const isConnected = !!instance;
+const Routes = () => {
+  // TODO: please connect that to the redux store, this is just temporary
+  const isConnected = false;
   return (
     <Switch>
       <Route
@@ -124,4 +119,4 @@ const Routes = ({
   );
 };
 
-export default withContext(Routes);
+export default Routes;

@@ -12,7 +12,7 @@ import type {
   StoreType,
 } from './types';
 
-import IPFSNode from '../ipfsNode/IPFSNode';
+import IPFSNode from '../ipfs';
 import Store from './Store';
 import KVStore from './KVStore';
 
