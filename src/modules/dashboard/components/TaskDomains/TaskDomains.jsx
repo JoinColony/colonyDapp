@@ -26,10 +26,16 @@ const MSG = defineMessages({
   },
 });
 
+/*
+ * Eslint is bugging out confusing this type declaration with the actual Prop,
+ * and claiming we're not using it.
+ */
+/* eslint-disable react/no-unused-prop-types */
 type ConsumableDomain = {
   id: number,
   name: string,
 };
+/* eslint-enable react/no-unused-prop-types */
 
 type Props = {
   isTaskCreator?: boolean,
