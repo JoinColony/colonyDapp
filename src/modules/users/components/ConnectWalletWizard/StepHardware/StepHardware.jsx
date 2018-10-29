@@ -36,6 +36,10 @@ const MSG = defineMessages({
     id: 'user.ConnectWalletWizard.StepHardware.walletSelectionLabel',
     defaultMessage: 'Select an address',
   },
+  walletIconTitle: {
+    id: 'user.ConnectWalletWizard.StepHardware.walletIconTitle',
+    defaultMessage: 'Hardware wallet',
+  },
   searchInputPlacholder: {
     id: 'user.ConnectWalletWizard.StepHardware.searchInputPlaceholder',
     defaultMessage: 'Search...',
@@ -151,7 +155,7 @@ class StepHardware extends Component<Props> {
           <div className={styles.choiceHeadingRow}>
             <div className={styles.searchBox}>
               <div className={iconClassName}>
-                <Icon name="wallet" title="hardware wallet" />
+                <Icon name="wallet" title={MSG.walletIconTitle} />
               </div>
               <Input
                 appearance={{ theme: 'minimal' }}
@@ -189,7 +193,7 @@ class StepHardware extends Component<Props> {
 
     return (
       <Fragment>
-        <Icon name="wallet" title="hardware wallet" />
+        <Icon name="wallet" title={MSG.walletIconTitle} />
         <Heading text={MSG.errorHeading} appearance={{ size: 'large' }} />
         <Heading text={MSG.errorDescription} appearance={{ size: 'normal' }} />
       </Fragment>
