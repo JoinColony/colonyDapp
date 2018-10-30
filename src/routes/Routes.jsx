@@ -39,11 +39,10 @@ import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 
 const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
-const Routes = ({
-  currentUser: { walletAddress },
-}: {
-  currentUser: { walletAddress?: string },
-}) => {
+// We cannot add types to this component's props because of how we're using
+// `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
+// eslint-disable-next-line react/prop-types
+const Routes = ({ currentUser: { walletAddress } }) => {
   const isConnected = !!walletAddress;
   return (
     <Switch>
@@ -123,16 +122,16 @@ const Routes = ({
   );
 };
 
+const RoutesContainer = connect(
+  ({ user: { currentUser } }) => ({
+    currentUser: currentUser || {},
+  }),
+  null,
+)(Routes);
+
 // XXX we need `withRouter` here because (surprisingly) react-router-dom is not
 // using the router context property (available to e.g. each `Switch`):
 // https://github.com/ReactTraining/react-router/issues/4671
 // We are using `withRouter` to get around `connect()`'s `shouldComponentUpdate`
 // function blocking updates when the route location changes.
-export default withRouter(
-  connect(
-    ({ user: { currentUser } }) => ({
-      currentUser: currentUser || {},
-    }),
-    null,
-  )(Routes),
-);
+export default withRouter(RoutesContainer);
