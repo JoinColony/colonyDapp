@@ -1,13 +1,14 @@
 .taskEditContainer {
     max-height: 250px;
-    max-width: 500px;
     overflow: auto;
 }
 
 .buttonContainer{
     display: flex;
     align-items: end;
-    margin: 20px 0;
+    margin-top: 35px;
+    position: absolute;
+    margin-left: 228px;
 }
 
 .editor {
@@ -18,6 +19,12 @@
 
 .editor > h3 {
     margin-right: 5px;
+}
+
+.taskDialog {
+    background-color: var(--colony-white);
+    width: 500px;
+    border-radius: var(--radius-large);
 }
 
 .backdrop{

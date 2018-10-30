@@ -29,6 +29,8 @@ type Props = {
   cancel: () => void,
   /** Children to render in this Dialog */
   children: Node,
+  /** Occasionally the dialog needs special styles */
+  className?: ModalStyles,
   /** optional styles for overlay that appears behind modal, default is a transparent grey,
    * but occasionaly we need specific styles for that */
   backdrop?: ModalStyles,
@@ -40,6 +42,7 @@ const Dialog = ({
   children,
   cancel,
   backdrop,
+  className,
   isDismissable = true,
   ...props
 }: Props) => (
@@ -62,7 +65,7 @@ const Dialog = ({
         </button>
       </div>
     )}
-    <div className={styles.main}>{children}</div>
+    <div className={className || styles.main}>{children}</div>
   </Modal>
 );
 

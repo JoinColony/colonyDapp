@@ -31,7 +31,14 @@ type Props = {
 export const Payout = ({ amount, symbol }: Props) => (
   <div className={styles.amountEditor}>
     <Heading appearance={{ size: 'small' }} text={MSG.amount} />
-    <FormattedMessage {...MSG.notSet} />
+    {amount && symbol ? (
+      <div>
+        <span className={styles.amount}>{amount}</span>
+        <span>{symbol}</span>
+      </div>
+    ) : (
+      <FormattedMessage {...MSG.notSet} />
+    )}
     <Button appearance={{ theme: 'blue', size: 'small' }} text={MSG.modify} />
   </div>
 );

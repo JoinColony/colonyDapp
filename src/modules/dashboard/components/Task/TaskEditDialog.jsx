@@ -50,7 +50,7 @@ const MSG = defineMessages({
   },
   buttonCancel: {
     id: 'dashboard.task.taskEditDialog.buttonCancel',
-    defaultMessage: 'Back',
+    defaultMessage: 'Cancel',
   },
   search: {
     id: 'dashboard.task.taskEditDialog.search',
@@ -64,6 +64,10 @@ const MSG = defineMessages({
 
 type FormValues = {
   amount: Array<string>,
+};
+
+type State = {
+  payouts: [],
 };
 
 type Props = {
@@ -83,23 +87,39 @@ const filter = (data, filterValue) =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
-class TaskEditDialog extends Component<Props> {
+class TaskEditDialog extends Component<Props, State> {
   static displayName = 'dashboard.task.taskEditDialog';
+
+  state = {
+    payouts: taskMock.payouts,
+  };
 
   handleSubmitFunding = () => {};
 
+  addTokenFunding = () => {
+    const { payouts } = this.state;
+
+    this.setState({
+      payouts: payouts.concat([{ symbol: '', amount: undefined }]),
+    });
+  };
+
   render() {
     const { cancel } = this.props;
-    const { payouts } = taskMock;
+    const { payouts } = this.state;
 
     return (
-      <Dialog cancel={cancel} backdrop={styles.backdrop}>
+      <Dialog
+        cancel={cancel}
+        backdrop={styles.backdrop}
+        className={styles.taskDialog}
+      >
         <Form
           initialValues={{ payouts }}
           onSubmit={this.handleSubmitFunding}
           validationSchema={validateFunding()}
         >
-          {({ isSubmitting }: FormikProps<FormValues>) => (
+          {({ isSubmitting, dirty }: FormikProps<FormValues>) => (
             <Fragment>
               <DialogSection appearance={{ border: 'grey' }}>
                 <Heading
@@ -125,6 +145,7 @@ class TaskEditDialog extends Component<Props> {
                     <Button
                       appearance={{ theme: 'blue', size: 'small' }}
                       text={MSG.add}
+                      onClick={this.addTokenFunding}
                     />
                   </div>
                   {payouts &&
@@ -136,20 +157,21 @@ class TaskEditDialog extends Component<Props> {
                       />
                     ))}
                 </div>
+                <div className={styles.buttonContainer}>
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'large' }}
+                    onClick={cancel}
+                    text={MSG.buttonCancel}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    loading={isSubmitting}
+                    text={MSG.buttonConfirm}
+                    type="submit"
+                    disabled={!dirty}
+                  />
+                </div>
               </DialogSection>
-              <div className={styles.buttonContainer}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={MSG.buttonCancel}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  loading={isSubmitting}
-                  text={MSG.buttonConfirm}
-                  type="submit"
-                />
-              </div>
             </Fragment>
           )}
         </Form>
