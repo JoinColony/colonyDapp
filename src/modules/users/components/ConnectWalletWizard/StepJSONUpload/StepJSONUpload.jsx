@@ -17,9 +17,9 @@ import { Input, FormStatus } from '~core/Fields';
 import type { WalletMethod } from '../../../types';
 
 import {
-  CHANGE_WALLET,
-  SET_CURRENT_USER,
-  CHANGE_WALLET_ERROR,
+  WALLET_CHANGE,
+  CURRENT_USER_CREATE,
+  WALLET_CHANGE_ERROR,
 } from '../../../actionTypes';
 
 import styles from './StepJSONUpload.css';
@@ -135,9 +135,9 @@ export const validationSchema = yup.object({
 });
 
 export const onSubmit = {
-  submit: CHANGE_WALLET,
-  success: SET_CURRENT_USER,
-  error: CHANGE_WALLET_ERROR,
+  submit: WALLET_CHANGE,
+  success: CURRENT_USER_CREATE,
+  error: WALLET_CHANGE_ERROR,
   onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorUnlockWallet });
   },

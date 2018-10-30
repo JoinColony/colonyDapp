@@ -17,9 +17,9 @@ import FileUpload from '~core/FileUpload';
 import type { SubmitFn, WizardFormikBag } from '~core/Wizard';
 
 import {
-  GET_TOKEN_INFO,
-  GET_TOKEN_INFO_SUCCESS,
-  GET_TOKEN_INFO_ERROR,
+  TOKEN_INFO_FETCH,
+  TOKEN_INFO_FETCH_SUCCESS,
+  TOKEN_INFO_FETCH_ERROR,
 } from '../../actionTypes/colony';
 import promiseListener from '../../../../createPromiseListener';
 
@@ -122,9 +122,9 @@ class StepSelectToken extends Component<Props, State> {
     super(props);
     this.state = { isLoading: false, tokenData: null };
     this.getToken = promiseListener.generateAsyncFunction(
-      GET_TOKEN_INFO,
-      GET_TOKEN_INFO_SUCCESS,
-      GET_TOKEN_INFO_ERROR,
+      TOKEN_INFO_FETCH,
+      TOKEN_INFO_FETCH_SUCCESS,
+      TOKEN_INFO_FETCH_ERROR,
     );
   }
 

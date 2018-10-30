@@ -17,9 +17,9 @@ import styles from './StepCreateToken.css';
 
 import CreatingToken from './CreatingToken.jsx';
 import {
-  CREATE_TOKEN,
-  CREATE_TOKEN_ERROR,
-  CREATE_TOKEN_SUCCESS,
+  TOKEN_CREATE,
+  TOKEN_CREATE_ERROR,
+  TOKEN_CREATE_SUCCESS,
 } from '../../actionTypes';
 
 const MSG = defineMessages({
@@ -175,9 +175,9 @@ export const onSubmit: ActionSubmit<{
   tokenName: string,
   tokenSymbol: string,
 }> = {
-  submit: CREATE_TOKEN,
-  error: CREATE_TOKEN_ERROR,
-  success: CREATE_TOKEN_SUCCESS,
+  submit: TOKEN_CREATE,
+  error: TOKEN_CREATE_ERROR,
+  success: TOKEN_CREATE_SUCCESS,
   setPayload(action: *, { tokenName: name, tokenSymbol: symbol }: *) {
     return {
       ...action,

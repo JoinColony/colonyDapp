@@ -22,7 +22,7 @@ import AdminDashboard from '~admin/AdminDashboard';
 import {
   CONNECT_ROUTE,
   COLONY_HOME_ROUTE,
-  CREATE_COLONY_ROUTE,
+  COLONY_CREATE_ROUTE,
   TASK_ROUTE,
   CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
@@ -99,7 +99,7 @@ const Routes = ({ currentUser: { walletAddress } }) => {
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        path={CREATE_COLONY_ROUTE}
+        path={COLONY_CREATE_ROUTE}
         component={CreateColonyWizard}
         hasNavigation={false}
       />

@@ -5,12 +5,12 @@ import ns from '../namespace';
 /*
  * Colony Action Types
  */
-export const CREATE_TOKEN = `${ns}/CREATE_TOKEN`;
-export const CREATE_TOKEN_ERROR = `${ns}/CREATE_TOKEN_ERROR`;
-export const CREATE_TOKEN_SUCCESS = `${ns}/CREATE_TOKEN_SUCCESS`;
-export const CREATE_COLONY = `${ns}/CREATE_COLONY`;
-export const CREATE_COLONY_ERROR = `${ns}/CREATE_COLONY_ERROR`;
-export const CREATE_COLONY_SUCCESS = `${ns}/CREATE_COLONY_SUCCESS`;
-export const GET_TOKEN_INFO = `${ns}/GET_TOKEN_INFO`;
-export const GET_TOKEN_INFO_ERROR = `${ns}/GET_TOKEN_INFO_ERROR`;
-export const GET_TOKEN_INFO_SUCCESS = `${ns}/GET_TOKEN_INFO_SUCCESS`;
+export const TOKEN_CREATE = `${ns}/TOKEN_CREATE`;
+export const TOKEN_CREATE_ERROR = `${ns}/TOKEN_CREATE_ERROR`;
+export const TOKEN_CREATE_SUCCESS = `${ns}/TOKEN_CREATE_SUCCESS`;
+export const COLONY_CREATE = `${ns}/COLONY_CREATE`;
+export const COLONY_CREATE_ERROR = `${ns}/COLONY_CREATE_ERROR`;
+export const COLONY_CREATE_SUCCESS = `${ns}/COLONY_CREATE_SUCCESS`;
+export const TOKEN_INFO_FETCH = `${ns}/TOKEN_INFO_FETCH`;
+export const TOKEN_INFO_FETCH_ERROR = `${ns}/TOKEN_INFO_FETCH_ERROR`;
+export const TOKEN_INFO_FETCH_SUCCESS = `${ns}/TOKEN_INFO_FETCH_SUCCESS`;

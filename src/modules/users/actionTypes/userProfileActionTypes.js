@@ -4,7 +4,8 @@
  * User Action Types
  */
 
-export const SET_USER_PROFILE = 'user/SET_PROFILE';
-export const SET_USER_PROFILE_ERROR = 'user/SET_PROFILE_ERROR';
+export const USER_PROFILE_CREATE = 'users/USER_PROFILE_CREATE';
+export const USER_PROFILE_UPDATE = 'users/USER_PROFILE_UPDATE';
+export const USER_PROFILE_UPDATE_ERROR = 'users/USER_PROFILE_UPDATE_ERROR';
 
-export const FETCH_USER_PROFILE = 'user/FETCH_PROFILE';
+export const USER_PROFILE_FETCH = 'users/USER_PROFILE_FETCH';
