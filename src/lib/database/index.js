@@ -1,9 +1,7 @@
 /* @flow */
 
-import * as schemas from './schemas';
-
-import * as Resolvers from './resolvers';
+import * as resolvers from './resolvers';
+import * as SCHEMAS from './schemas';
 
 export { default as DDB } from './DDB';
-export const SCHEMAS = schemas;
-export { Resolvers };
+export { resolvers, SCHEMAS };

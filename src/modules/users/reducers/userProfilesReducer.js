@@ -2,7 +2,7 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { SET_USER_PROFILE, UPDATE_USER_PROFILE } from '../actionTypes';
+import { SET_USER_PROFILE } from '../actionTypes';
 
 import type { Action } from '~types/index';
 
@@ -22,10 +22,6 @@ const userProfilesReducer = (
     case SET_USER_PROFILE: {
       const { walletAddress, set } = action.payload;
       return state.set(walletAddress, User({ walletAddress, ...set }));
-    }
-    case UPDATE_USER_PROFILE: {
-      const { walletAddress, update } = action.payload;
-      return state.mergeIn(walletAddress, update);
     }
     default:
       return state;
