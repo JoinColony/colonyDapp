@@ -1,0 +1,55 @@
+.main {
+  composes: field from '~styles/fields.css';
+}
+
+.notEditingValueWrapper {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notEditingValueContainer {
+  display: inline-block;
+  margin: 0 0 15px 0;
+  padding-top: 6px;
+  border-bottom: 1px color-mod(var(--text) alpha(50%)) dotted;
+  color: color-mod(var(--text) alpha(50%));
+}
+
+.notEditingValueContainer:focus {
+  outline: none;
+}
+
+.notEditingValue {
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: text;
+}
+
+.inputContainer {
+  position: relative;
+
+  & input {
+    padding: 0 5px 10px 5px;
+    height: 42px;
+  }
+}
+
+.maxLengthText {
+  position: absolute;
+  right: 2px;
+  bottom: 0;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-5);
+}
+
+/* State */
+
+.stateHasValue .notEditingValueContainer {
+  border-bottom-color: transparent;
+  color: var(--text);
+}
+
+.stateHasReachedMaxLength .maxLengthText {
+  color: var(--danger);
+}
