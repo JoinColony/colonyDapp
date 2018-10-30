@@ -8,3 +8,7 @@
     font-size: var(--size-medium-l);
     padding-right: 5px;
 }
+
+.editContainer{
+    display: flex;
+}

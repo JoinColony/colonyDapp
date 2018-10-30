@@ -6,6 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
+import Select from '~core/Fields/Select';
 
 import styles from './Payout.css';
 
@@ -44,6 +45,11 @@ class Payout extends Component<State, Props> {
   render() {
     const { amount, symbol } = this.props;
     const { editing } = this.state;
+    const mockOptions = [
+      { label: 'CLNY', value: 1 },
+      { label: 'ETH', value: 2 },
+    ];
+
     return (
       <div>
         {editing ? (
@@ -59,11 +65,14 @@ class Payout extends Component<State, Props> {
                 onClick={this.toggleEdit}
               />
             </div>
-            <Input
-              appearance={{ theme: 'minimal', align: 'right' }}
-              name="amount"
-              formattingOptions={{ numeral: true, delimiter: ',' }}
-            />
+            <div className={styles.editContainer}>
+              <Input
+                appearance={{ theme: 'minimal', align: 'right' }}
+                name="amount"
+                formattingOptions={{ numeral: true, delimiter: '.' }}
+              />
+              <Select options={mockOptions} name="symbol" />
+            </div>
           </div>
         ) : (
           <div className={styles.amountEditor}>
