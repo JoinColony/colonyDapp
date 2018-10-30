@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { USER_ROUTE, COLONY_HOME_ROUTE, COLONY_CREATE_ROUTE } from '~routes';
+import { USER_ROUTE, COLONY_HOME_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 
 import DropdownMenu, {
   DropdownMenuSection,
@@ -67,7 +67,7 @@ class AvatarDropdownPopover extends Component<Props> {
   renderColonySection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
-        <NavLink to={COLONY_CREATE_ROUTE} text={MSG.createColony} />
+        <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
       </DropdownMenuItem>
     </DropdownMenuSection>
   );
