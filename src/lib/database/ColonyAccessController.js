@@ -5,7 +5,7 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import IPFS from 'ipfs';
 import { utils } from 'ethers';
 
-import type { AccessController, Entry } from './AccessController';
+import type { AccessController, Entry } from './types';
 
 import PurserIdentityProvider from './PurserIdentityProvider';
 
@@ -23,7 +23,9 @@ class ColonyAccessController implements AccessController {
 
   _type: ProviderType;
 
-  _manifest: Object;
+  _manifest: Object; // FIXME define type
+
+  _actions: Array<any>; // FIXME define type
 
   constructor(
     attributesBasedAccessController: Object,
@@ -32,14 +34,21 @@ class ColonyAccessController implements AccessController {
     this._purserWallet = purserWallet;
     this._type = PROVIDER_TYPE;
     this._attributesBasedAccessController = attributesBasedAccessController;
+    this._checkWalletAddress();
+  }
 
-    if (!this._purserWallet.address) {
+  _checkWalletAddress() {
+    if (!this._purserWallet.address)
       throw new Error('Could not get wallet address. Is it unlocked?');
-    }
+  }
+
+  get walletAddress() {
+    this._checkWalletAddress();
+    return this._purserWallet.address;
   }
 
   // @TODO: should we add the colony address in the context object?
-  async can(action, context = {}) {
+  async can(action: string, context: Object = {}) {
     return this._attributesBasedAccessController.can(
       action,
       this._purserWallet,
@@ -52,24 +61,19 @@ class ColonyAccessController implements AccessController {
     name: string,
     storeType: string,
   ): Promise<string> {
-    if (!this._purserWallet.address) {
-      throw new Error('Could not get wallet address. Is it unlocked?');
-    }
-
     const isAllowed = await this.can('create-colony-database');
-    if (!isAllowed) {
+    if (!isAllowed)
       throw new Error('Cannot create colony database, user not allowed');
-    }
 
     const signature = await this._purserWallet.signMessage({
-      message: this._purserWallet.address,
+      message: this.walletAddress,
     });
 
     const manifest = {
       name,
       type: storeType,
       signature,
-      owner: this._purserWallet.address,
+      owner: this.walletAddress,
     };
 
     const dag = await ipfs.object.put(Buffer.from(JSON.stringify(manifest)));
