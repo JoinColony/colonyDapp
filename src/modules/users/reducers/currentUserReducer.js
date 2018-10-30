@@ -1,6 +1,9 @@
 /* @flow */
 
-import { CURRENT_USER_CREATE, USER_PROFILE_UPDATE_SUCCESS } from '../actionTypes';
+import {
+  CURRENT_USER_CREATE,
+  USER_PROFILE_UPDATE_SUCCESS,
+} from '../actionTypes';
 
 import type { Action } from '~types/index';
 
