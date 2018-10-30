@@ -2,76 +2,34 @@
 
 import type { Saga } from 'redux-saga';
 
-import {
-  call,
-  put,
-  select,
-  takeLatest,
-  getContext,
-  setContext,
-} from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
+import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
 
-import { DASHBOARD_ROUTE } from '~routes';
-
-// eslint-disable-next-line max-len
-import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
-
-import { resolvers } from '../../../lib/database';
 import { getAll } from '../../../lib/database/commands';
 
 import {
-  SET_CURRENT_USER,
-  SET_CURRENT_USER_ERROR,
   USER_PROFILE_UPDATE,
-  USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
-  WALLET_SET,
+  USER_PROFILE_UPDATE_SUCCESS,
 } from '../actionTypes';
 
-function* initializeUser(action: Object): Saga<void> {
-  let store;
+/* TODO: User is not properly typed yet due to the temporary nature of this */
+// eslint-disable-next-line import/prefer-default-export
+export function* getUser(): Saga<Object> {
+  const ddb = yield getContext('ddb');
 
-  const { currentAddress } = action.payload;
-  try {
-    const DDB = yield getContext('DDB');
-    const wallet = yield getContext('currentWallet');
-    const ipfsNode = yield getContext('ipfsNode');
-    const colonyNetwork = yield getContext('colonyNetwork');
-
-    const identityProvider = new PurserIdentityProvider(wallet.instance);
-
-    const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
-
-    ddb.addResolver('user', new resolvers.UserResolver(colonyNetwork));
-
-    yield setContext({ ddb });
-    // TODO: First try to get the store, then create it
-    store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
-  } catch (error) {
-    yield put({
-      type: SET_CURRENT_USER_ERROR,
-      payload: { error },
-    });
-    return;
-  }
+  // TODO: get the store first, if it doesn't exist, create it
+  // We also need to make sure we create the profile (ENS)
+  const store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
 
   // TODO: We pre-fill the store here so we have something to see
   // Remove this once we can actually get a store
   yield call([store, store.set], {
-    username: 'Tim',
+    displayName: 'Tim',
     bio: 'from Texas',
   });
 
   const user = yield call(getAll, store);
-
-  yield put({
-    type: SET_CURRENT_USER,
-    payload: { user: { walletAddress: currentAddress, ...user } },
-  });
-
-  // TODO: This should NOT be necessary, I think the routes should automatically redirect when the wallet is set.
-  yield put(replace(DASHBOARD_ROUTE));
+  return user;
 }
 
 function* editProfile(action: Object): Saga<void> {
@@ -88,7 +46,7 @@ function* editProfile(action: Object): Saga<void> {
 
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
-      payload: { user },
+      payload: { set: user, walletAddress: currentAddress },
     });
   } catch (error) {
     yield put({
@@ -100,7 +58,6 @@ function* editProfile(action: Object): Saga<void> {
 
 function* userSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, editProfile);
-  yield takeLatest(WALLET_SET, initializeUser);
 }
 
 export default userSagas;

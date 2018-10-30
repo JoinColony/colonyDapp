@@ -2,7 +2,7 @@
 
 import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
-import ipfsNode from '../src/lib/ipfsNode';
+import ipfsNode from '../src/lib/ipfs';
 import { DDB, SCHEMAS } from '../src/lib/database';
 import { getAll } from '../src/lib/database/commands';
 import PurserIdentity from '../src/lib/database/PurserIdentity';

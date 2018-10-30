@@ -10,7 +10,7 @@ import {
   SET_CURRENT_USER,
 } from '../../users/actionTypes';
 
-import { Resolvers } from '../../../lib/database';
+import { resolvers } from '../../../lib/database';
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
 
@@ -32,7 +32,7 @@ function* setupUserContext(action: Object): any {
     ]);
 
     // Add username ENS resolver
-    const userResolver = yield create(Resolvers.UserResolver, networkClient);
+    const userResolver = yield create(resolvers.UserResolver, networkClient);
     yield call([ddb, ddb.addResolver], 'user', userResolver);
 
     yield setContext({ ddb, networkClient });
