@@ -2,7 +2,7 @@
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import nanoid from 'nanoid';
 
