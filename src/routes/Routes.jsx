@@ -1,7 +1,8 @@
 /* @flow */
 
 import React from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
+import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
@@ -38,9 +39,11 @@ import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 
 const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
-const Routes = () => {
-  // TODO: please connect that to the redux store, this is just temporary
-  const isConnected = false;
+// We cannot add types to this component's props because of how we're using
+// `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
+// eslint-disable-next-line react/prop-types
+const Routes = ({ currentUser: { walletAddress } }) => {
+  const isConnected = !!walletAddress;
   return (
     <Switch>
       <Route
@@ -119,4 +122,16 @@ const Routes = () => {
   );
 };
 
-export default Routes;
+const RoutesContainer = connect(
+  ({ user: { currentUser } }) => ({
+    currentUser: currentUser || {},
+  }),
+  null,
+)(Routes);
+
+// XXX we need `withRouter` here because (surprisingly) react-router-dom is not
+// using the router context property (available to e.g. each `Switch`):
+// https://github.com/ReactTraining/react-router/issues/4671
+// We are using `withRouter` to get around `connect()`'s `shouldComponentUpdate`
+// function blocking updates when the route location changes.
+export default withRouter(RoutesContainer);
