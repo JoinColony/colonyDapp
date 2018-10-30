@@ -1,22 +1,32 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
+
+import Button from '~core/Button';
 
 import styles from './TaskRequestWork.css';
 
 const MSG = defineMessages({
-  title: {
-    id: 'dashboard.TaskRequestWork.title',
+  closeTask: {
+    id: 'dashboard.TaskRequestWork.closeTask',
+    defaultMessage: 'Close Task',
+  },
+  requestWork: {
+    id: 'dashboard.TaskRequestWork.requestWork',
     defaultMessage: 'Request Work',
   },
 });
 
 const displayName = 'dashboard.TaskRequestWork';
 
-const TaskRequestWork = () => (
+type Props = {
+  isTaskCreator?: boolean,
+};
+
+const TaskRequestWork = ({ isTaskCreator = false }: Props) => (
   <div className={styles.main}>
-    <FormattedMessage {...MSG.title} />
+    <Button text={isTaskCreator ? MSG.closeTask : MSG.requestWork} />
   </div>
 );
 
