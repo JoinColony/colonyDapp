@@ -71,7 +71,7 @@ function* fetchProfile(action: Object): Saga<void> {
 
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
-      payload: { set: user, walletAddress: user.walletAddress },
+      payload: { user, walletAddress: user.walletAddress },
     });
   } catch (error) {
     yield put({
