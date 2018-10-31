@@ -13,7 +13,7 @@ const mapStateToProps = (state, ownProps) => ({
   targetProfile: state.user.userProfiles[ownProps.match.params.userId],
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   fetchUserProfile: username => {
     dispatch({ type: USER_PROFILE_FETCH, payload: username });
   },
