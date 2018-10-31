@@ -81,6 +81,22 @@ function* fetchProfile(action: Object): Saga<void> {
   }
 }
 
+function* createENSProfile(action: Object): Saga<void> {
+  const { username, walletAddress } = action.payload;
+
+  const colonyNetwork = yield getContext('colonyNetwork');
+  const ddb = yield getContext('ddb');
+
+  const store = yield call([ddb, ddb.getStore], username);
+  const orbitDBAddress = yield store.address();
+
+  const {
+    user,
+    label,
+    UserLabelRegistered,
+  } = colonyNetwork.registerUserLabel.send({ username, orbitDBAddress });
+}
+
 function* userSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_PROFILE_FETCH, fetchProfile);

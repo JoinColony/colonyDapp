@@ -16,6 +16,10 @@ class KVStore extends Store {
     this._orbitStore.put('created', new Date().toUTCString());
   }
 
+  address(): string {
+    return this._orbitStore.address;
+  }
+
   async set(keyOrObject: string | {}, value?: any): Promise<any> {
     // TODO: schema validation. Obviously
     if (typeof keyOrObject == 'string') {
