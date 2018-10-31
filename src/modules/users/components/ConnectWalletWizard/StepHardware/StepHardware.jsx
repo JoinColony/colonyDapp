@@ -15,9 +15,9 @@ import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
 import AddressItem from './AddressItem.jsx';
 
 import {
-  WALLET_CHANGE,
+  WALLET_CREATE,
   CURRENT_USER_CREATE,
-  WALLET_CHANGE_ERROR,
+  WALLET_CREATE_ERROR,
 } from '../../../actionTypes';
 
 import Icon from '~core/Icon';
@@ -237,9 +237,9 @@ class StepHardware extends Component<Props> {
 }
 
 export const onSubmit = {
-  submit: WALLET_CHANGE,
+  submit: WALLET_CREATE,
   success: CURRENT_USER_CREATE,
-  error: WALLET_CHANGE_ERROR,
+  error: WALLET_CREATE_ERROR,
   onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorPickAddress });
   },

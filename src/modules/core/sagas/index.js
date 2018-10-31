@@ -5,8 +5,8 @@ import { all, call, put, takeLatest, setContext } from 'redux-saga/effects';
 import { create } from '~utils/saga/effects';
 
 import {
-  WALLET_CHANGE,
-  WALLET_CHANGE_ERROR,
+  WALLET_CREATE,
+  WALLET_CREATE_ERROR,
   CURRENT_USER_CREATE,
 } from '../../users/actionTypes';
 
@@ -49,7 +49,7 @@ function* setupUserContext(action: Object): any {
     // TOOD: I think we want a putError effect maybe?
     // Base i18n on type
     yield put({
-      type: WALLET_CHANGE_ERROR,
+      type: WALLET_CREATE_ERROR,
       payload: {
         error: {
           message: err.message,
@@ -66,11 +66,11 @@ function* setupContextSagas(): any {
 
 function* rootSaga(): any {
   /*
-   * WALLET_CHANGE
+   * WALLET_CREATE
    * is the entry point for all other sagas that depend on the user having a wallet
    * -> ddb, colonyJS, etc and all subsequent actions
    */
-  yield takeLatest(WALLET_CHANGE, setupUserContext);
+  yield takeLatest(WALLET_CREATE, setupUserContext);
   // Everything else that does not require a wallet
   yield all([setupUsersSagas()]);
 }
