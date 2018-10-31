@@ -133,7 +133,7 @@ const Task = () => {
             </aside>
             <div className={styles.container}>
               <section className={styles.header}>
-                <TaskRequestWork isTaskCreator />
+                <TaskRequestWork isTaskCreator={false} />
               </section>
               {/* //TODO: replace this with task comments component
                 component in colonyDapp#440 */}
