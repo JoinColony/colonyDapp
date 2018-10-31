@@ -49,6 +49,8 @@ module.exports = {
         './src/modules/core/components/Fields/Input/InputComponent.jsx',
         './src/modules/core/components/Fields/InputLabel/InputLabel.jsx',
         './src/modules/core/components/Fields/InputStatus/InputStatus.jsx',
+        './src/modules/core/components/Fields/InlineEdit/SingleLineEdit/SingleLineEdit.jsx',
+        './src/modules/core/components/Fields/InlineEdit/MultiLineEdit/MultiLineEdit.jsx',
         './src/modules/core/components/Fields/Textarea/Textarea.jsx',
         './src/modules/core/components/Fields/Checkbox/Checkbox.jsx',
         './src/modules/core/components/Fields/Radio/Radio.jsx',
