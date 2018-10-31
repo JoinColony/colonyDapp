@@ -17,7 +17,7 @@ import styles from './UserProfile.css';
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
 type Props = {
-  fetchUserProfile: func,
+  fetchUserProfile: Function,
   targetProfile: Object,
   targetUserId: string,
   isLoading: boolean,
