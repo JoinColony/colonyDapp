@@ -1,7 +1,21 @@
+@value borderColor: var(--grey-blue-0);
+
 .main {
   padding: 20px 30px;
 }
 
 .alignRight {
   text-align: right;
+}
+
+.borderNone {
+  border-color: transparent;
+}
+
+.borderTop {
+  border-top: 1px solid borderColor;
+}
+
+.borderBottom {
+  border-bottom: 1px solid borderColor;
 }
