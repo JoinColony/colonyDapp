@@ -12,7 +12,7 @@ import trezorWallet from '@colony/purser-trezor';
 import {
   WALLET_FETCH_ACCOUNTS,
   WALLET_FETCH_ACCOUNTS_ERROR,
-  WALLET_FETCHED_ACCOUNTS,
+  WALLET_FETCH_ACCOUNTS_SUCCESS,
 } from '../actionTypes';
 
 // TODO: type better
@@ -32,7 +32,7 @@ function* fetchAccounts(action: Object): Saga<void> {
       addressCount: 100,
     });
     yield put({
-      type: WALLET_FETCHED_ACCOUNTS,
+      type: WALLET_FETCH_ACCOUNTS_SUCCESS,
       payload: { allAddresses: wallet.otherAddresses },
     });
   } catch (e) {

@@ -13,9 +13,9 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 
 import {
-  CHANGE_WALLET,
-  SET_CURRENT_USER,
-  CHANGE_WALLET_ERROR,
+  WALLET_CREATE,
+  CURRENT_USER_CREATE,
+  WALLET_CREATE_ERROR,
 } from '../../actionTypes';
 
 const MSG = defineMessages({
@@ -172,9 +172,9 @@ export const formikConfig = {
 };
 
 export const onSubmit: ActionSubmit<FormValues> = {
-  submit: CHANGE_WALLET,
-  success: SET_CURRENT_USER,
-  error: CHANGE_WALLET_ERROR,
+  submit: WALLET_CREATE,
+  success: CURRENT_USER_CREATE,
+  error: WALLET_CREATE_ERROR,
 };
 
 export const Step = StepProveMnemonic;

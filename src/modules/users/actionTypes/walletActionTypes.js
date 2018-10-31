@@ -1,12 +1,14 @@
 /* @flow */
 
+import ns from '../namespace';
+
 /*
  * Wallet Action Types
  */
 
-export const CHANGE_WALLET = 'wallet/CHANGE';
-export const CHANGE_WALLET_ERROR = 'wallet/CHANGE_ERROR';
+export const WALLET_CREATE = `${ns}/WALLET_CREATE`;
+export const WALLET_CREATE_ERROR = `${ns}/WALLET_CREATE_ERROR`;
 
-export const WALLET_FETCH_ACCOUNTS = 'wallet/FETCH_ACCOUNTS';
-export const WALLET_FETCH_ACCOUNTS_ERROR = 'wallet/FETCH_ACCOUNTS_ERROR';
-export const WALLET_FETCHED_ACCOUNTS = 'wallet/FETCHED_ACCOUNTS';
+export const WALLET_FETCH_ACCOUNTS = `${ns}/WALLET_FETCH_ACCOUNTS`;
+export const WALLET_FETCH_ACCOUNTS_ERROR = `${ns}/WALLET_FETCH_ACCOUNTS_ERROR`;
+export const WALLET_FETCH_ACCOUNTS_SUCCESS = `${ns}/WALLET_FETCH_ACCOUNTS_SUCCESS`; // eslint-disable-line max-len

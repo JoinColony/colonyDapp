@@ -7,7 +7,7 @@ import type { Action } from '~types/index';
 import {
   WALLET_FETCH_ACCOUNTS,
   WALLET_FETCH_ACCOUNTS_ERROR,
-  WALLET_FETCHED_ACCOUNTS,
+  WALLET_FETCH_ACCOUNTS_SUCCESS,
 } from '../actionTypes';
 
 const INITIAL_STATE = Wallet({});
@@ -21,7 +21,7 @@ const walletReducer = (
       return state.set('isLoading', true);
     case WALLET_FETCH_ACCOUNTS_ERROR:
       return state.set('isLoading', false);
-    case WALLET_FETCHED_ACCOUNTS: {
+    case WALLET_FETCH_ACCOUNTS_SUCCESS: {
       const { allAddresses } = action.payload;
       return state.merge({
         availableAddresses: allAddresses,

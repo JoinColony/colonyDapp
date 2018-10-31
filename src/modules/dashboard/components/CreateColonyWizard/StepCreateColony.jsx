@@ -16,9 +16,9 @@ import CreatingColony from './CreatingColony.jsx';
 import CardRow from './CreateColonyCardRow.jsx';
 
 import {
-  CREATE_COLONY,
-  CREATE_COLONY_ERROR,
-  CREATE_COLONY_SUCCESS,
+  COLONY_CREATE,
+  COLONY_CREATE_ERROR,
+  COLONY_CREATE_SUCCESS,
 } from '../../actionTypes';
 
 type FormValues = {
@@ -121,9 +121,9 @@ const StepCreateColony = ({ isSubmitting, previousStep, values }: Props) => (
 StepCreateColony.displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
 
 export const onSubmit: ActionSubmit<{ tokenAddress: string }> = {
-  submit: CREATE_COLONY,
-  error: CREATE_COLONY_ERROR,
-  success: CREATE_COLONY_SUCCESS,
+  submit: COLONY_CREATE,
+  error: COLONY_CREATE_ERROR,
+  success: COLONY_CREATE_SUCCESS,
   setPayload(action: *, { tokenAddress }: *) {
     return { ...action, payload: { params: { tokenAddress } } };
   },

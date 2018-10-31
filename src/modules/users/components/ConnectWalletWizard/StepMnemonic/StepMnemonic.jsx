@@ -9,9 +9,9 @@ import * as yup from 'yup';
 import type { WizardFormikBag } from '~core/Wizard';
 
 import {
-  CHANGE_WALLET,
-  SET_CURRENT_USER,
-  CHANGE_WALLET_ERROR,
+  WALLET_CREATE,
+  CURRENT_USER_CREATE,
+  WALLET_CREATE_ERROR,
 } from '../../../actionTypes';
 
 import { Textarea, FormStatus } from '~core/Fields';
@@ -98,9 +98,9 @@ export const validationSchema = yup.object({
 });
 
 export const onSubmit = {
-  submit: CHANGE_WALLET,
-  success: SET_CURRENT_USER,
-  error: CHANGE_WALLET_ERROR,
+  submit: WALLET_CREATE,
+  success: CURRENT_USER_CREATE,
+  error: WALLET_CREATE_ERROR,
   // onSuccess() {},
   onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
     setStatus({ error: MSG.errorOpenMnemonic });

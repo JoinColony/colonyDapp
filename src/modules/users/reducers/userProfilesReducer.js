@@ -2,7 +2,7 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { SET_USER_PROFILE } from '../actionTypes';
+import { USER_PROFILE_FETCH_SUCCESS } from '../actionTypes';
 
 import type { Action } from '~types/index';
 
@@ -19,7 +19,7 @@ const userProfilesReducer = (
   action: Action,
 ) => {
   switch (action.type) {
-    case SET_USER_PROFILE: {
+    case USER_PROFILE_FETCH_SUCCESS: {
       const { walletAddress, set } = action.payload;
       return state.set(walletAddress, User({ walletAddress, ...set }));
     }

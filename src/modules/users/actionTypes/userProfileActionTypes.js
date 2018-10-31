@@ -1,10 +1,11 @@
 /* @flow */
 
+import ns from '../namespace';
+
 /*
  * User Action Types
  */
 
-export const SET_USER_PROFILE = 'user/SET_PROFILE';
-export const SET_USER_PROFILE_ERROR = 'user/SET_PROFILE_ERROR';
-
-export const FETCH_USER_PROFILE = 'user/FETCH_PROFILE';
+export const USER_PROFILE_FETCH = `${ns}/USER_PROFILE_FETCH`;
+export const USER_PROFILE_FETCH_ERROR = `${ns}/USER_PROFILE_FETCH_ERROR`;
+export const USER_PROFILE_FETCH_SUCCESS = `${ns}/USER_PROFILE_FETCH_SUCCESS`;

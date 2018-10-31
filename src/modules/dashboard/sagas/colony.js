@@ -25,15 +25,15 @@ import methodSagaFactory from '../../core/sagas/utils/methodSagaFactory';
 import TokenABI from './TokenABI.json';
 
 import {
-  CREATE_COLONY,
-  CREATE_COLONY_ERROR,
-  CREATE_COLONY_SUCCESS,
-  CREATE_TOKEN,
-  CREATE_TOKEN_ERROR,
-  CREATE_TOKEN_SUCCESS,
-  GET_TOKEN_INFO,
-  GET_TOKEN_INFO_ERROR,
-  GET_TOKEN_INFO_SUCCESS,
+  COLONY_CREATE,
+  COLONY_CREATE_ERROR,
+  COLONY_CREATE_SUCCESS,
+  TOKEN_CREATE,
+  TOKEN_CREATE_ERROR,
+  TOKEN_CREATE_SUCCESS,
+  TOKEN_INFO_FETCH,
+  TOKEN_INFO_FETCH_ERROR,
+  TOKEN_INFO_FETCH_SUCCESS,
 } from '../actionTypes';
 
 function networkMethodSagaFactory<Params: Object, EventData: Object>(
@@ -123,12 +123,12 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<*> {
     info = yield call(getTokenClientInfo, tokenAddress);
   } catch (error) {
     yield put({
-      type: GET_TOKEN_INFO_ERROR,
+      type: TOKEN_INFO_FETCH_ERROR,
       payload: { error: error.message },
     });
     return;
   }
-  yield put({ type: GET_TOKEN_INFO_SUCCESS, payload: info });
+  yield put({ type: TOKEN_INFO_FETCH_SUCCESS, payload: info });
 }
 
 // Generate sagas for the methods on the network client which we are
@@ -136,18 +136,18 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<*> {
 const createColony = networkMethodSagaFactory<
   { tokenAddress: string },
   { colonyAddress: string, colonyId: number },
->('createColony', CREATE_COLONY_SUCCESS, CREATE_COLONY_ERROR);
+>('createColony', COLONY_CREATE_SUCCESS, COLONY_CREATE_ERROR);
 const createToken = networkMethodSagaFactory<
   { name: string, symbol: string },
   {},
->('createToken', CREATE_TOKEN_SUCCESS, CREATE_TOKEN_ERROR);
+>('createToken', TOKEN_CREATE_SUCCESS, TOKEN_CREATE_ERROR);
 
 export default function* colonySagas(): any {
-  yield takeEvery(CREATE_COLONY, createColony);
-  yield takeEvery(CREATE_COLONY_SUCCESS, createColonySuccess);
-  yield takeEvery(CREATE_TOKEN, createToken);
+  yield takeEvery(COLONY_CREATE, createColony);
+  yield takeEvery(COLONY_CREATE_SUCCESS, createColonySuccess);
+  yield takeEvery(TOKEN_CREATE, createToken);
 
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
-  yield takeLatest(GET_TOKEN_INFO, getTokenInfo);
+  yield takeLatest(TOKEN_INFO_FETCH, getTokenInfo);
 }
