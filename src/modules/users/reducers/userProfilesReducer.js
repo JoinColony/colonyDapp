@@ -1,28 +1,44 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
-
-import { USER_PROFILE_FETCH_SUCCESS } from '../actionTypes';
+import {
+  USER_PROFILE_FETCH,
+  USER_PROFILE_FETCH_ERROR,
+  USER_PROFILE_FETCH_SUCCESS,
+} from '../actionTypes';
 
 import type { Action } from '~types/index';
 
-import { User } from '../records';
+import { User, UserProfilesState } from '../records';
 
-type WalletAddress = string;
-type UserProfilesState = ImmutableMap<WalletAddress, User>;
-
-const INITIAL_STATE: UserProfilesState = new ImmutableMap();
+const INITIAL_STATE: any = UserProfilesState();
 
 // TODO better types for action payloads
-const userProfilesReducer = (
-  state: UserProfilesState = INITIAL_STATE,
-  action: Action,
-) => {
+const userProfilesReducer = (state: any = INITIAL_STATE, action: Action) => {
   switch (action.type) {
+    case USER_PROFILE_FETCH: {
+      return state.merge({ isLoading: true });
+    }
+
     case USER_PROFILE_FETCH_SUCCESS: {
       const { walletAddress, user } = action.payload;
-      return state.set(walletAddress, User({ walletAddress, ...set }));
+      const userProfiles = state.userProfiles.set(
+        walletAddress,
+        User({ walletAddress, ...user }),
+      );
+      return state.merge({
+        isLoading: false,
+        isError: false,
+        userProfiles,
+      });
     }
+
+    case USER_PROFILE_FETCH_ERROR: {
+      return state.merge({
+        isLoading: false,
+        isError: true,
+      });
+    }
+
     default:
       return state;
   }
