@@ -9,12 +9,17 @@
 import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
 import TokenEditDialog from '~admin/Tokens/TokenEditDialog.jsx';
 import TokenMintDialog from '~admin/Tokens/TokenMintDialog.jsx';
+import TaskRequestWorkDialog from /*
+ * Again, the same trick of making prettier not suggest a fix that would
+ * break the eslint rules, by just adding a comment
+ */ '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 
 const dialogComponents: Object = {
   // Hint: Once we have the gas station we just have to add it here
   ActivityBarExample,
   TokenEditDialog,
   TokenMintDialog,
+  TaskRequestWorkDialog,
 };
 
 export default dialogComponents;
