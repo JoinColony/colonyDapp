@@ -121,11 +121,11 @@ class StepSelectToken extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { isLoading: false, tokenData: null };
-    this.getToken = promiseListener.generateAsyncFunction(
-      TOKEN_INFO_FETCH,
-      TOKEN_INFO_FETCH_SUCCESS,
-      TOKEN_INFO_FETCH_ERROR,
-    );
+    this.getToken = promiseListener.createAsyncFunction({
+      start: TOKEN_INFO_FETCH,
+      resolve: TOKEN_INFO_FETCH_SUCCESS,
+      reject: TOKEN_INFO_FETCH_ERROR,
+    });
   }
 
   componentDidUpdate({ values: { tokenAddress: prevTokenAddress } }: Props) {
@@ -154,9 +154,9 @@ class StepSelectToken extends Component<Props, State> {
 
     // Get the token address and handle success/error
     this.getToken
-      .asyncFunction(tokenAddress)
-      .then(this.handleGetTokenSuccess)
-      .catch(this.handleGetTokenError);
+      .asyncFunction({ tokenAddress })
+      .then((...args) => this.handleGetTokenSuccess(...args))
+      .catch(error => this.handleGetTokenError(error));
   }
 
   componentWillUnmount() {
@@ -192,7 +192,6 @@ class StepSelectToken extends Component<Props, State> {
 
   render() {
     const {
-      handleTokenAddressChange,
       isValid,
       previousStep,
       values: { tokenAddress },
@@ -213,7 +212,6 @@ class StepSelectToken extends Component<Props, State> {
                 <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
               }
               status={tokenData ? MSG.preview : MSG.hint}
-              onChange={handleTokenAddressChange}
               statusValues={
                 tokenData
                   ? { tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
