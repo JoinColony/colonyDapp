@@ -29,7 +29,7 @@ class TaskRequestWorkDialog extends Component<Props> {
   handleClose = () => {
     const { close } = this.props;
     /* eslint-disable-next-line no-console */
-    console.log('I submit!@!!!!');
+    console.log(TaskRequestWorkDialog.displayName, 'Confirm task work request');
     close();
   };
 
