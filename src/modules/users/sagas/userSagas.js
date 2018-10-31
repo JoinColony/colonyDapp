@@ -7,6 +7,9 @@ import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
 import { getAll } from '../../../lib/database/commands';
 
 import {
+  USER_PROFILE_FETCH,
+  USER_PROFILE_FETCH_SUCCESS,
+  USER_PROFILE_FETCH_ERROR,
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_ERROR,
   USER_PROFILE_UPDATE_SUCCESS,
@@ -32,7 +35,7 @@ export function* getUser(): Saga<Object> {
   return user;
 }
 
-function* editProfile(action: Object): Saga<void> {
+function* updateProfile(action: Object): Saga<void> {
   const currentAddress = select(state => state.wallet.currentAddress);
 
   const ddb = yield getContext('ddb');
@@ -64,24 +67,23 @@ function* fetchProfile(action: Object): Saga<void> {
     // should throw an error if username is not registered
     const store = yield call([ddb, ddb.getStore], username);
 
-    const user = yield call(Commands.all, store);
+    const user = yield call(getAll, store);
 
     yield put({
-      type: SET_USER_PROFILE,
+      type: USER_PROFILE_FETCH_SUCCESS,
       payload: { set: user, walletAddress: user.walletAddress },
     });
   } catch (error) {
     yield put({
-      type: FETCH_USER_PROFILE_ERROR,
+      type: USER_PROFILE_FETCH_ERROR,
       payload: { error },
     });
   }
 }
 
 function* userSagas(): any {
-  yield takeLatest(EDIT_USER_PROFILE, editProfile);
-  yield takeLatest(FETCH_USER_PROFILE, fetchProfile);
-  yield takeLatest(WALLET_SET, initializeUser);
+  yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
+  yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
 }
 
 export default userSagas;
