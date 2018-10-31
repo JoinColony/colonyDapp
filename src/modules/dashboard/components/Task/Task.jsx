@@ -5,7 +5,6 @@ import { defineMessages } from 'react-intl';
 
 import styles from './Task.css';
 
-import Input from '~core/Fields/Input';
 import Form from '~core/Fields/Form';
 import FormStatus from '~core/Fields/FormStatus';
 import Heading from '~core/Heading';
@@ -13,6 +12,7 @@ import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
 import TaskDate from '~dashboard/TaskDate';
+import TaskDescription from '~dashboard/TaskDescription';
 import TaskDomains from '~dashboard/TaskDomains';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 
@@ -34,14 +34,6 @@ const MSG = defineMessages({
   backButton: {
     id: 'dashboard.Task.backButton',
     defaultMessage: 'Go to {colonyName}',
-  },
-  taskTitle: {
-    id: 'dashboard.Task.taskTitle',
-    defaultMessage: 'Task Title',
-  },
-  taskDescription: {
-    id: 'dashboard.Task.taskDescription',
-    defaultMessage: 'Task Description',
   },
   add: {
     id: 'dashboard.Task.add',
@@ -96,22 +88,7 @@ const Task = () => {
                 </div>
               </section>
               <section className={styles.section}>
-                {/* //TODO: replace this with TaskDescription
-                component colonyDapp#439 */}
-                <Input
-                  appearance={{ theme: 'dotted', colorSchema: 'grey' }}
-                  name="taskDescription"
-                  placeholder={MSG.taskTitle}
-                />
-                <Input
-                  appearance={{
-                    theme: 'dotted',
-                    colorSchema: 'grey',
-                    size: 'small',
-                  }}
-                  name="taskTitle"
-                  placeholder={MSG.taskDescription}
-                />
+                <TaskDescription />
               </section>
               <section className={styles.section}>
                 <div className={styles.editor}>
