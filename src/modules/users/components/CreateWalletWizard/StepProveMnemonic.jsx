@@ -21,7 +21,7 @@ import {
 const MSG = defineMessages({
   heading: {
     id: 'CreateWallet.StepProveMnemonic.heading',
-    defaultMessage: 'Did you really back up your mnemoic phrase? Prove it!',
+    defaultMessage: 'Did you really back up your mnemonic phrase? Prove it!',
   },
   subTitle: {
     id: 'CreateWallet.StepProveMnemonic.subTitle',
