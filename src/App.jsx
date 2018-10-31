@@ -11,18 +11,9 @@ import Routes from './routes';
 import layout from '~styles/layout.css';
 
 import DialogProvider from '~core/Dialog/DialogProvider.jsx';
-import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
-import TokenEditDialog from '~admin/Tokens/TokenEditDialog.jsx';
-import TokenMintDialog from '~admin/Tokens/TokenMintDialog.jsx';
+import dialogComponents from './dialogComponents';
 
 addLocaleData(en);
-
-const dialogComponents = {
-  // Hint: Once we have the gas station we just have to add it here
-  ActivityBarExample,
-  TokenEditDialog,
-  TokenMintDialog,
-};
 
 type Props = {
   store: Object,
