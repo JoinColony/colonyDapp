@@ -58,7 +58,7 @@
         "babel-loader": "^8.0.2",
         "babel-plugin-react-intl": "^3.0.0",
         "bs58": "^4.0.1",
-        "caniuse-lite": "^1.0.30000860",
+        "caniuse-lite": "^1.0.30000903",
         "chalk": "^2.4.0",
         "css-loader": "^1.0.0",
         "css-module-flow": "^1.0.0",
