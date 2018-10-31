@@ -20,7 +20,7 @@ const userProfilesReducer = (
 ) => {
   switch (action.type) {
     case USER_PROFILE_FETCH_SUCCESS: {
-      const { walletAddress, set } = action.payload;
+      const { walletAddress, user } = action.payload;
       return state.set(walletAddress, User({ walletAddress, ...set }));
     }
     default:
