@@ -76,7 +76,7 @@ function* fetchProfile(action: Object): Saga<void> {
   } catch (error) {
     yield put({
       type: USER_PROFILE_FETCH_ERROR,
-      payload: { error },
+      payload: { error: error.message },
     });
   }
 }
