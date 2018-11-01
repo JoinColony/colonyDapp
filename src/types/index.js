@@ -5,7 +5,7 @@ export * from './token';
 export * from './transaction';
 export * from './TransactionRecord';
 export * from './UserRecord';
-export * from './UserProfileStateRecord';
+export * from './UserProfilesRecord';
 export * from './WalletRecord';
 
 // TODO consider making this accept generics so that we can better test
