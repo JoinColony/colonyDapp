@@ -45,7 +45,7 @@ const Routes = ({
     currentWallet: { instance },
   },
 }: Object) => {
-  const isConnected = !!instance;
+  const isConnected = !instance;
   return (
     <Switch>
       <Route
@@ -90,11 +90,7 @@ const Routes = ({
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
       />
-      <Route
-        isConnected={isConnected}
-        path={TASK_ROUTE}
-        component={Task}
-      />
+      <Route isConnected={isConnected} path={TASK_ROUTE} component={Task} />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={CREATE_COLONY_ROUTE}

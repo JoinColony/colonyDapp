@@ -1,0 +1,37 @@
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-index-dialog);
+  background-color: white;
+  outline: none;
+}
+
+.dialogOuterActions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.closeIconButton {
+  padding: 0;
+  border: 0;
+  background: 0;
+}
+
+.closeIconButton svg {
+  fill: var(--colony-black);
+  stroke: var(--colony-black);
+}
+
+.overlay {
+  z-index: var(--z-index-modal-overlay);
+}

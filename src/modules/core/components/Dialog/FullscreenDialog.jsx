@@ -7,7 +7,7 @@ import { defineMessages } from 'react-intl';
 
 import Icon from '~core/Icon';
 
-import styles from './Dialog.css';
+import styles from './FullscreenDialog.css';
 
 import Modal from '../Modal';
 
@@ -27,7 +27,7 @@ type Props = {
   isDismissable?: boolean,
 };
 
-const Dialog = ({
+const FullscreenDialog = ({
   children,
   cancel,
   isDismissable = true,
@@ -35,8 +35,9 @@ const Dialog = ({
 }: Props) => (
   <Modal
     {...props}
-    role="dialog"
     className={styles.modal}
+    role="dialog"
+    overlayClassName={styles.overlay}
     onRequestClose={cancel}
     isOpen
   >
@@ -55,4 +56,4 @@ const Dialog = ({
   </Modal>
 );
 
-export default Dialog;
+export default FullscreenDialog;

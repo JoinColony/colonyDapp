@@ -27,14 +27,38 @@ const MSG = defineMessages({
     id: 'dashboard.task.taskEditDialog.notSet',
     defaultMessage: 'Not set',
   },
+  reputation: {
+    id: 'dashboard.task.taskEditDialog.reputation',
+    defaultMessage: '{reputation} max rep',
+  },
+  ethUsd: {
+    id: 'dashboard.task.taskEditDialog.ethUsd',
+    defaultMessage: '~ USD {ethUsd}',
+  },
 });
+
+type State = {
+  ethUsd: null,
+};
 
 type Props = {
   amount: number,
   symbol: string,
+  reputation: number,
+  isEth: boolean,
+  isNative: boolean,
 };
 class Payout extends Component<State, Props> {
   state = { editing: true };
+
+  componentDidMount() {
+    const { isEth } = this.props;
+    if (isEth) {
+      this.getEthToUsd();
+    }
+  }
+
+  getEthToUsd = () => {};
 
   toggleEdit = () => {
     this.setState(prevState => ({
@@ -43,8 +67,10 @@ class Payout extends Component<State, Props> {
   };
 
   render() {
-    const { amount, symbol } = this.props;
-    const { editing } = this.state;
+    const { amount, symbol, reputation, isEth, isNative } = this.props;
+    const { editing, ethUsd } = this.state;
+
+    // TODO: Obviously link up with actual tokens :-)
     const mockOptions = [
       { label: 'CLNY', value: 1 },
       { label: 'ETH', value: 2 },
@@ -54,7 +80,7 @@ class Payout extends Component<State, Props> {
       <div>
         {editing ? (
           <div>
-            <div className={styles.amountEditor}>
+            <div className={styles.row}>
               <Heading
                 appearance={{ size: 'small', margin: 'small' }}
                 text={MSG.amount}
@@ -66,21 +92,40 @@ class Payout extends Component<State, Props> {
               />
             </div>
             <div className={styles.editContainer}>
-              <Input
-                appearance={{ theme: 'minimal', align: 'right' }}
-                name="amount"
-                formattingOptions={{ numeral: true, delimiter: '.' }}
-              />
-              <Select options={mockOptions} name="symbol" />
+              <div className={styles.setAmount}>
+                <Input
+                  appearance={{ theme: 'minimal', align: 'right' }}
+                  name="amount"
+                  formattingOptions={{ numeral: true, delimiter: '.' }}
+                />
+              </div>
+              <div className={styles.selectToken}>
+                <Select options={mockOptions} name="symbol" />
+              </div>
             </div>
           </div>
         ) : (
-          <div className={styles.amountEditor}>
+          <div className={styles.row}>
             <Heading appearance={{ size: 'small' }} text={MSG.amount} />
             {amount ? (
               <div>
-                <span className={styles.amount}>{amount}</span>
-                <span>{symbol}</span>
+                <div>
+                  <span className={styles.amount}>{amount}</span>
+                  <span>{symbol}</span>
+                </div>
+                {isNative && (
+                  <div className={styles.reputation}>
+                    <FormattedMessage
+                      {...MSG.reputation}
+                      values={{ reputation }}
+                    />
+                  </div>
+                )}
+                {isEth && (
+                  <div className={styles.conversion}>
+                    <FormattedMessage {...MSG.ethUsd} values={{ ethUsd }} />
+                  </div>
+                )}
               </div>
             ) : (
               <FormattedMessage {...MSG.notSet} />

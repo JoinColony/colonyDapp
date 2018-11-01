@@ -1,14 +1,33 @@
-.amountEditor {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
 }
 
-.amount{
-    font-size: var(--size-medium-l);
-    padding-right: 5px;
+.amount {
+  padding-right: 5px;
+  font-size: var(--size-medium-l);
 }
 
-.editContainer{
-    display: flex;
+.editContainer {
+  display: flex;
+}
+
+.selectToken {
+  flex: 1;
+}
+
+.setAmount {
+  flex: 1;
+}
+
+.reputation {
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+}
+
+.conversion {
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
 }

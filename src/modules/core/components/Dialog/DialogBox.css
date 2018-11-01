@@ -1,0 +1,9 @@
+
+.dialogBox {
+  max-height: 415px;
+  width: 500px;
+  overflow: hidden;
+  border: 1px solid var(--temp-grey-0);
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+}
