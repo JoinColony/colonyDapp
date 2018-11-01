@@ -21,11 +21,11 @@ type Props = {
   /*
    * @TODO Interaction for this button if the user is the task creator
    */
-  isTaskCreator?: boolean,
+  isTaskCreator: boolean,
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
-const TaskRequestWork = ({ isTaskCreator = false, openDialog }: Props) => (
+const TaskRequestWork = ({ isTaskCreator, openDialog }: Props) => (
   <Button
     text={MSG.requestWork}
     disabled={isTaskCreator}
