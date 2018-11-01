@@ -7,10 +7,10 @@ import UserProfile from './UserProfile.jsx';
 import { USER_PROFILE_FETCH } from '../../actionTypes';
 
 const mapStateToProps = (state, ownProps) => ({
-  isLoading: state.user.userProfiles.isLoading,
-  isError: state.user.userProfiles.isError,
+  isLoading: state.user.users.isLoading,
+  isError: state.user.users.isError,
   targetUserId: ownProps.match.params.userId,
-  targetProfile: state.user.userProfiles[ownProps.match.params.userId],
+  targetProfile: state.user.users[ownProps.match.params.userId],
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
