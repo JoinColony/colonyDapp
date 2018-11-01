@@ -115,7 +115,7 @@ const Task = () => {
               </section>
               <section className={styles.section}>
                 <div className={styles.editor}>
-                  <TaskDomains isTaskCreator />
+                  <TaskDomains isTaskCreator={isTaskCreator} />
                 </div>
                 <div className={styles.editor}>
                   <Heading appearance={{ size: 'small' }} text={MSG.skill} />
@@ -127,13 +127,13 @@ const Task = () => {
                   )}
                 </div>
                 <div className={styles.editor}>
-                  <TaskDate isTaskCreator />
+                  <TaskDate isTaskCreator={isTaskCreator} />
                 </div>
               </section>
             </aside>
             <div className={styles.container}>
               <section className={styles.header}>
-                <TaskRequestWork isTaskCreator={false} />
+                <TaskRequestWork isTaskCreator={isTaskCreator} />
               </section>
               {/* //TODO: replace this with task comments component
                 component in colonyDapp#440 */}
