@@ -158,7 +158,7 @@
         "react-day-picker": "^7.1.10",
         "react-dom": "^16.4.1",
         "react-dropzone": "^7.0.0",
-        "react-hot-loader": "^4.3.11",
+        "react-hot-loader": "^4.3.12",
         "react-intl": "^2.4.0",
         "react-modal": "^3.5.1",
         "react-popper": "^1.0.0",
