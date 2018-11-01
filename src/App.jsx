@@ -21,7 +21,7 @@ type Props = {
 };
 
 const App = ({ store, history }: Props) => (
-  <IntlProvider locale="en" defaultLocale="en" messages={messages}>
+  <IntlProvider locale={1} defaultLocale="en" messages={messages}>
     <ReduxProvider store={store}>
       <DialogProvider dialogComponents={dialogComponents}>
         <ConnectedRouter history={history}>
