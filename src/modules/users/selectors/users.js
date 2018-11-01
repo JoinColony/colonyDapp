@@ -4,11 +4,11 @@
 
 import ns from '../namespace';
 
-import type { UsersRecord } from '~types/UsersRecord';
+import type { Users, UsersRecord } from '~types/UsersRecord';
 
 type State = { [typeof ns]: { users: UsersRecord } };
 
-type UsersSelector = (state: State) => UsersRecord;
+type UsersSelector = (state: State) => Users;
 
 // eslint-disable-next-line import/prefer-default-export
 export const allUsers: UsersSelector = state => state[ns].users.users;
