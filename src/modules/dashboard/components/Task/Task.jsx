@@ -14,6 +14,7 @@ import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDomains from '~dashboard/TaskDomains';
+import TaskRequestWork from '~dashboard/TaskRequestWork';
 
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
@@ -29,10 +30,6 @@ const MSG = defineMessages({
   details: {
     id: 'dashboard.Task.details',
     defaultMessage: 'Details',
-  },
-  closeTask: {
-    id: 'dashboard.Task.closeTask',
-    defaultMessage: 'Close Task',
   },
   backButton: {
     id: 'dashboard.Task.backButton',
@@ -53,10 +50,6 @@ const MSG = defineMessages({
   skill: {
     id: 'dashboard.Task.skill',
     defaultMessage: 'Skill',
-  },
-  requestToWork: {
-    id: 'dashboard.Task.requestToWork',
-    defaultMessage: 'Request To Work',
   },
 });
 
@@ -122,7 +115,7 @@ const Task = () => {
               </section>
               <section className={styles.section}>
                 <div className={styles.editor}>
-                  <TaskDomains isTaskCreator />
+                  <TaskDomains isTaskCreator={isTaskCreator} />
                 </div>
                 <div className={styles.editor}>
                   <Heading appearance={{ size: 'small' }} text={MSG.skill} />
@@ -134,23 +127,13 @@ const Task = () => {
                   )}
                 </div>
                 <div className={styles.editor}>
-                  <TaskDate isTaskCreator />
+                  <TaskDate isTaskCreator={isTaskCreator} />
                 </div>
               </section>
             </aside>
             <div className={styles.container}>
               <section className={styles.header}>
-                {isTaskCreator ? (
-                  <Button
-                    appearance={{ theme: 'primary' }}
-                    text={MSG.closeTask}
-                  />
-                ) : (
-                  <Button
-                    appearance={{ theme: 'primary' }}
-                    text={MSG.requestToWork}
-                  />
-                )}
+                <TaskRequestWork isTaskCreator={isTaskCreator} />
               </section>
               {/* //TODO: replace this with task comments component
                 component in colonyDapp#440 */}

@@ -53,10 +53,10 @@ const ConfirmDialog = ({
   confirmButtonText = MSG.defaultConfirmButton,
 }: Props) => (
   <Dialog cancel={cancel}>
-    <DialogSection>
+    <DialogSection appearance={{ border: 'bottom' }}>
       <Heading appearance={{ size: 'medium', margin: 'none' }} text={heading} />
     </DialogSection>
-    <DialogSection>
+    <DialogSection appearance={{ border: 'bottom' }}>
       {children || <FormattedMessage {...MSG.defaultText} />}
     </DialogSection>
     <DialogSection appearance={{ align: 'right' }}>

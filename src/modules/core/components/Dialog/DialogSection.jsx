@@ -9,7 +9,8 @@ import { getMainClasses } from '~utils/css';
 import styles from './DialogSection.css';
 
 type Appearance = {
-  align: 'right',
+  align?: 'right',
+  border?: 'top' | 'bottom' | 'none',
 };
 
 type Props = {
