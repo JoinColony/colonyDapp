@@ -5,12 +5,12 @@ import type { Map as ImmutableMap, RecordOf } from 'immutable';
 import type { UserRecord as User } from './UserRecord';
 
 type WalletAddress = string;
-type UserProfiles = ImmutableMap<WalletAddress, User>;
+type Users = ImmutableMap<WalletAddress, User>;
 
-export type UserProfilesProps = {
-  userProfiles: UserProfiles,
+export type UsersProps = {
+  users: Users,
   isLoading?: boolean,
   isError?: boolean,
 };
 
-export type UserProfilesRecord = RecordOf<UserProfilesProps>;
+export type UsersRecord = RecordOf<UsersProps>;

@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './userProfiles';
+export * from './users';

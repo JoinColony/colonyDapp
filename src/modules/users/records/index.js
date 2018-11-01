@@ -1,7 +1,7 @@
 /* @flow */
 
 import User from './User';
-import UserProfiles from './UserProfiles';
+import Users from './Users';
 import Wallet from './Wallet';
 
-export { User, UserProfiles, Wallet };
+export { User, Users, Wallet };

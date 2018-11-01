@@ -8,15 +8,12 @@ import {
 
 import type { Action } from '~types/index';
 
-import { User, UserProfiles } from '../records';
+import { User, Users } from '../records';
 
-const INITIAL_STATE = UserProfiles({});
+const INITIAL_STATE = Users({});
 
 // TODO better types for action payloads
-const userProfilesReducer = (
-  state: UserProfiles = INITIAL_STATE,
-  action: Action,
-) => {
+const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case USER_PROFILE_FETCH:
       return state.set('isLoading', true);
@@ -24,10 +21,7 @@ const userProfilesReducer = (
     case USER_PROFILE_FETCH_SUCCESS: {
       const { walletAddress, user } = action.payload;
       return state
-        .setIn(
-          ['userProfiles', walletAddress],
-          User({ walletAddress, ...user }),
-        )
+        .setIn(['users', walletAddress], User({ walletAddress, ...user }))
         .merge({
           isLoading: false,
           isError: false,
@@ -45,4 +39,4 @@ const userProfilesReducer = (
   }
 };
 
-export default userProfilesReducer;
+export default usersReducer;
