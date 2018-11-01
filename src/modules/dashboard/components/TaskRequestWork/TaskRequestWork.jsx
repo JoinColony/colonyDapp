@@ -8,8 +8,6 @@ import type { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
 
-import styles from './TaskRequestWork.css';
-
 const MSG = defineMessages({
   requestWork: {
     id: 'dashboard.TaskRequestWork.requestWork',
@@ -28,13 +26,11 @@ type Props = {
 };
 
 const TaskRequestWork = ({ isTaskCreator = false, openDialog }: Props) => (
-  <div className={styles.main}>
-    <Button
-      text={MSG.requestWork}
-      disabled={isTaskCreator}
-      onClick={() => openDialog('TaskRequestWorkDialog')}
-    />
-  </div>
+  <Button
+    text={MSG.requestWork}
+    disabled={isTaskCreator}
+    onClick={() => openDialog('TaskRequestWorkDialog')}
+  />
 );
 
 TaskRequestWork.displayName = displayName;
