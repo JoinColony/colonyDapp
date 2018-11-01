@@ -13,6 +13,7 @@ import {
 import { resolvers } from '../../../lib/database';
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
+import userSagas from '../../users/sagas/userSagas';
 
 import { getNetworkClient } from './networkClient';
 import { getDDB } from './ddb';
@@ -61,7 +62,7 @@ function* setupUserContext(action: Object): any {
 }
 
 function* setupContextSagas(): any {
-  yield all([setupDashboardSagas()]);
+    yield all([setupDashboardSagas(), userSagas()]);
 }
 
 function* rootSaga(): any {
