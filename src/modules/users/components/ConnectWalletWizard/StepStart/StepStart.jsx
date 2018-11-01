@@ -48,6 +48,10 @@ const MSG = defineMessages({
     id: 'ConnectWalletWizard.StepStart.ledgerTitle',
     defaultMessage: 'Ledger Hardware Wallet',
   },
+  trufflepigTitle: {
+    id: 'ConnectWalletWizard.StepStart.trufflepigTitle',
+    defaultMessage: 'TrufflePig',
+  },
   ledgerSubtitle: {
     id: 'ConnectWalletWizard.StepStart.ledgerSubtitle',
     defaultMessage: 'Login using the Ledger hardware wallet',
@@ -71,6 +75,10 @@ const MSG = defineMessages({
   JSONSubtitle: {
     id: 'ConnectWalletWizard.StepStart.JSONSubtitle',
     defaultMessage: 'We do not recommend this method',
+  },
+  trufflepigSubtitle: {
+    id: 'ConnectWalletWizard.StepStart.trufflepigSubtitle',
+    defaultMessage: 'Use wallet from TrufflePig (dev mode only)',
   },
 });
 
@@ -112,6 +120,15 @@ const options = [
     icon: 'file',
   },
 ];
+
+if (process.env.NODE_ENV === 'development') {
+  options.push({
+    value: 'trufflepig',
+    title: MSG.trufflepigTitle,
+    subtitle: MSG.trufflepigSubtitle,
+    icon: 'wallet',
+  });
+}
 
 const createWalletOption = {
   value: null,
