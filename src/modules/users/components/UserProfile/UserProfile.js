@@ -15,7 +15,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchUserProfile: username => {
-    dispatch({ type: USER_PROFILE_FETCH, payload: username });
+    dispatch({ type: USER_PROFILE_FETCH, payload: { username } });
   },
 });
 
