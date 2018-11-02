@@ -15,6 +15,7 @@ import * as StepHardware from './StepHardware';
 import * as StepMetaMask from './StepMetaMask';
 import * as StepMnemonic from './StepMnemonic';
 import * as StepJSONUpload from './StepJSONUpload';
+import * as StepTrufflePig from './StepTrufflePig';
 
 const stepArray = [StepStart];
 
@@ -48,6 +49,8 @@ const stepFunction = (step: number, { method }: StepValues) => {
         return StepMnemonic;
       case 'json':
         return StepJSONUpload;
+      case 'trufflepig':
+        return StepTrufflePig;
       default:
         break;
     }

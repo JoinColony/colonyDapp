@@ -2,48 +2,43 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call } from 'redux-saga/effects';
-import { providers, Wallet } from 'ethers';
+import { call, getContext } from 'redux-saga/effects';
+import { providers } from 'ethers';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import ColonyNetworkClient from '@colony/colony-js-client';
-
-// TODO in #452 - reinstate this import.
-// import NetworkLoader from '@colony/colony-js-contract-loader-network';
+import NetworkLoader from '@colony/colony-js-contract-loader-network';
 
 import { create } from '~utils/saga/effects';
+import EthersWrappedWallet from '../../../lib/EthersWrappedWallet';
 
 /**
  * Return an initialized ColonyNetworkClient instance.
  */
 // eslint-disable-next-line import/prefer-default-export
 export function* getNetworkClient(): Saga<ColonyNetworkClient> {
-  const provider = yield create(providers.JsonRpcProvider);
+  const network = process.env.NETWORK || 'rinkeby';
+  const provider =
+    network === 'local'
+      ? yield create(providers.JsonRpcProvider)
+      : yield call(providers.getDefaultProvider, network);
+  const wallet = yield getContext('wallet');
 
   let loader;
-  switch (process.env.NETWORK_CLIENT_LOADER) {
+  switch (process.env.LOADER) {
     case 'trufflepig':
       loader = yield create(TrufflepigLoader);
       break;
     default:
-      // TODO in #452 - reinstate the default loader and remove the error.
-      // TODO: use `yield create`
-      // loader = new NetworkLoader('rinkeby');
-      // break;
-      throw new Error(
-        // eslint-disable-next-line max-len
-        'The `NETWORK_CLIENT_LOADER` environment variable must be set to `trufflepig` at this time',
-      );
+      loader = yield create(NetworkLoader, { network });
+      break;
   }
 
-  // TODO in #452 - use `EthersWrappedWallet` with the wallet context (rather
-  // than an `ethers` wallet with a private key from Trufflepig.
-  // You can use `const wallet = yield getContext('wallet')`
-  const { privateKey } = yield loader.getAccount(0);
   const adapter = yield create(EthersAdapter, {
     loader,
     provider,
-    wallet: new Wallet(privateKey, provider),
+    // $FlowFixMe colonyJS IWallet types are wrong!
+    wallet: yield create(EthersWrappedWallet, wallet, provider),
   });
 
   const networkClient = yield create(ColonyNetworkClient, {

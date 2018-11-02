@@ -8,7 +8,9 @@ import softwareWallet from '@colony/purser-software';
 import metamaskWallet from '@colony/purser-metamask';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
+import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
+import { create } from '~utils/saga/effects';
 import {
   WALLET_FETCH_ACCOUNTS,
   WALLET_FETCH_ACCOUNTS_ERROR,
@@ -75,6 +77,14 @@ function* openKeystoreWallet(action: Object): Saga<void> {
   });
 }
 
+function* openTrufflepigWallet(): Saga<void> {
+  const loader = yield create(TrufflepigLoader);
+  const { privateKey } = yield call([loader, loader.getAccount], 0);
+  return yield call(softwareWallet.open, {
+    privateKey,
+  });
+}
+
 function* createWallet(action: Object): Saga<void> {
   const { mnemonic } = action.payload;
   return yield call(softwareWallet.open, {
@@ -97,6 +107,8 @@ export function* getWallet(action: Object): Saga<WalletInstance> {
       return yield call(openMnemonicWallet, action);
     case 'json':
       return yield call(openKeystoreWallet, action);
+    case 'trufflepig':
+      return yield call(openTrufflepigWallet, action);
     default:
       throw new Error(
         `Method ${method} is not recognized for getting a wallet`,
