@@ -44,7 +44,12 @@ const TaskComments = () => (
     >
       {({ isSubmitting, isValid, status }: FormikProps<FormValues>) => (
         <Fragment>
-          <Textarea elementOnly name="comment" placeholder={MSG.placeholder} />
+          <Textarea
+            elementOnly
+            name="comment"
+            placeholder={MSG.placeholder}
+            appearance={{ colorSchema: 'transparent' }}
+          />
           <FormStatus status={status} />
           <div className={styles.commentControls}>
             <Button
