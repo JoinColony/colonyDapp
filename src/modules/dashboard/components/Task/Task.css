@@ -55,3 +55,17 @@
 .editor > h5 {
   margin-right: 5px;
 }
+
+.activityContainer {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: flex;
+  flex-direction: column;
+}
+
+.activity {
+  flex: 1 1 auto;
+}
+
+.commentBox {
+  flex: 0 0 100px;
+}

@@ -135,9 +135,14 @@ const Task = () => {
         <section className={styles.header}>
           <TaskRequestWork isTaskCreator={isTaskCreator} />
         </section>
-        {/* //TODO: replace this with task comments component
-          component in colonyDapp#440 */}
-        <section className={styles.activityContainer} />
+        <div className={styles.activityContainer}>
+          <section className={styles.activity}>
+            Task comment activity placeholder
+          </section>
+          <section className={styles.commentBox}>
+            Comment box placeholder
+          </section>
+        </div>
       </div>
     </div>
   );
