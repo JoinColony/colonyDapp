@@ -1,0 +1,17 @@
+@value wideButton: 120px;
+
+.main {
+  padding: 10px;
+  min-height: 172px;
+  border: 1px solid var(--temp-grey-5);
+  background-color: var(--grey-blue-0);
+}
+
+.commentControls {
+  /*
+   * @NOTE This negative margin counteracts the default margin added by the `.fields` class
+   */
+  margin-top: -15px;
+  height: 30px;
+  text-align: right;
+}

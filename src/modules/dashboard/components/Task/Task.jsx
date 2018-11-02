@@ -14,6 +14,7 @@ import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import TaskDate from '~dashboard/TaskDate';
 import TaskDomains from '~dashboard/TaskDomains';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
+import TaskComments from '~dashboard/TaskComments';
 
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
@@ -140,7 +141,7 @@ const Task = () => {
             Task comment activity placeholder
           </section>
           <section className={styles.commentBox}>
-            Comment box placeholder
+            <TaskComments />
           </section>
         </div>
       </div>
