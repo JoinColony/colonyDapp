@@ -9,7 +9,7 @@
       "git add"
     ],
     "integration-testing/**/*.js": [
-      "yarn lint:integration",
+      "yarn lint",
       "git add"
     ]
   },
