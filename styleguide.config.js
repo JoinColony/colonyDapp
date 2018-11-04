@@ -84,7 +84,6 @@ module.exports = {
         './src/modules/core/components/OmniPicker/OmniPicker.jsx',
         './src/modules/core/components/SingleUserPicker/SingleUserPicker.jsx',
         './src/modules/core/components/DatePicker/DatePicker.jsx',
-        './src/modules/core/components/Assignment/Assignment.jsx',
       ],
     },
     {

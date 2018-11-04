@@ -14,6 +14,7 @@ import type { OmniPickerProps, OmniPickerItemComponent } from '../OmniPicker';
 
 import { asField, InputLabel } from '../Fields';
 import Icon from '../Icon';
+import Button from '../Button';
 import { withOmniPicker } from '../OmniPicker';
 import UserAvatar from '../UserAvatar';
 
@@ -27,6 +28,10 @@ const MSG = defineMessages({
   emptyMessage: {
     id: 'SingleUserPicker.emptyMessage',
     defaultMessage: 'No Colony members match that search.',
+  },
+  remove: {
+    id: 'SingleUserPicker.remove',
+    defaultMessage: 'Remove',
   },
 });
 
@@ -43,6 +48,10 @@ type Props = {
   elementOnly?: boolean,
   /** Textarea field name (form variable) */
   name: string,
+  /** Renders an extra button to remove selection */
+  isResettable?: boolean,
+  /** Renders an extra button to remove selection */
+  disabled?: boolean,
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
@@ -73,9 +82,11 @@ class SingleUserPicker extends Component<Props, State> {
   static displayName = 'SingleUserPicker';
 
   handleActiveUserClick = () => {
-    const { openOmniPicker, setValue } = this.props;
+    const { openOmniPicker, setValue, disabled } = this.props;
     setValue(null);
-    openOmniPicker();
+    if (!disabled) {
+      openOmniPicker();
+    }
   };
 
   handlePick = (user: UserRecord) => {
@@ -83,8 +94,14 @@ class SingleUserPicker extends Component<Props, State> {
     setValue(user);
   };
 
+  resetSelection = () => {
+    const { setValue } = this.props;
+    setValue(null);
+  };
+
   render() {
     const {
+      isResettable,
       appearance,
       itemComponent,
       // Form field
@@ -107,72 +124,82 @@ class SingleUserPicker extends Component<Props, State> {
       ? { direction: appearance.direction }
       : undefined;
     return (
-      <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
-        <div className={styles.inputContainer}>
-          {!elementOnly &&
-            label && (
-              <InputLabel
-                inputId={inputProps.id}
-                label={label}
-                help={help}
-                appearance={labelAppearance}
-              />
-            )}
-          {$value ? (
-            <div className={styles.avatarContainer}>
-              <UserAvatar
-                className={styles.recipientAvatar}
-                userId={$value.walletAddress}
-                walletAddress={$value.walletAddress}
-                username={$value.username || $value.walletAddress}
-                size="xs"
-              />
-            </div>
-          ) : (
-            <Icon
-              className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-              name="circle-person"
-              title={MSG.selectMember}
-            />
-          )}
-          {}
-          <div className={styles.container}>
-            {/* eslint-disable jsx-a11y/click-events-have-key-events */
-            $value && (
-              <div
-                role="button"
-                className={styles.recipientName}
-                onClick={this.handleActiveUserClick}
-                onFocus={this.handleActiveUserClick}
-                tabIndex="0"
-              >
-                {$value.displayName}
-              </div>
-            )}
-            {/* eslint-enable jsx-a11y/click-events-have-key-events */}
-            <input
-              className={
-                $touched && $error ? styles.inputInvalid : styles.input
-              }
-              {...inputProps}
-              placeholder={placeholder}
-              hidden={!!$value}
-              ref={registerInputNode}
-            />
-            {$error &&
-              appearance &&
-              appearance.direction === 'horizontal' && (
-                <span className={styles.errorHorizontal}>{$error}</span>
+      <div className={styles.omniContainer}>
+        <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
+          <div className={styles.inputContainer}>
+            {!elementOnly &&
+              label && (
+                <InputLabel
+                  inputId={inputProps.id}
+                  label={label}
+                  help={help}
+                  appearance={labelAppearance}
+                />
               )}
-            <div className={styles.omniPickerContainer}>
-              <OmniPicker
-                itemComponent={itemComponent}
-                onPick={this.handlePick}
+            {$value ? (
+              <div className={styles.avatarContainer}>
+                <UserAvatar
+                  className={styles.recipientAvatar}
+                  userId={$value.walletAddress}
+                  walletAddress={$value.walletAddress}
+                  username={$value.username || $value.walletAddress}
+                  size="xs"
+                />
+              </div>
+            ) : (
+              <Icon
+                className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
+                name="circle-person"
+                title={MSG.selectMember}
               />
+            )}
+            {}
+            <div className={styles.container}>
+              {/* eslint-disable jsx-a11y/click-events-have-key-events */
+              $value && (
+                <div
+                  role="button"
+                  className={styles.recipientName}
+                  onClick={this.handleActiveUserClick}
+                  onFocus={this.handleActiveUserClick}
+                  tabIndex="0"
+                >
+                  {$value.displayName}
+                </div>
+              )}
+              {/* eslint-enable jsx-a11y/click-events-have-key-events */}
+              <input
+                className={
+                  $touched && $error ? styles.inputInvalid : styles.input
+                }
+                {...inputProps}
+                placeholder={placeholder}
+                hidden={!!$value}
+                ref={registerInputNode}
+              />
+              {$error &&
+                appearance &&
+                appearance.direction === 'horizontal' && (
+                  <span className={styles.errorHorizontal}>{$error}</span>
+                )}
+              <div className={styles.omniPickerContainer}>
+                <OmniPicker
+                  itemComponent={itemComponent}
+                  onPick={this.handlePick}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </OmniPickerWrapper>
+        </OmniPickerWrapper>
+        {$value &&
+          isResettable && (
+            <Button
+              onClick={this.resetSelection}
+              appearance={{ theme: 'blue', size: 'small' }}
+              text={{ id: 'button.remove' }}
+            />
+          )}
+      </div>
     );
   }
 }

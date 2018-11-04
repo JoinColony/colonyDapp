@@ -1,8 +1,10 @@
 /* @flow */
+
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import nanoid from 'nanoid';
+
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
@@ -12,8 +14,10 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import Payout from './Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
+
 import userMocks from './__datamocks__/mockUsers';
 import taskMock from './__datamocks__/mockTask';
+
 import styles from './TaskEditDialog.css';
 
 const MSG = defineMessages({
@@ -42,31 +46,36 @@ const MSG = defineMessages({
     defaultMessage: 'Select Assignee',
   },
 });
+
 type State = {
   touched: boolean,
 };
+
 type Props = {
   /* This will soon get the current payout array if there's one set already
   passed in as props */
   cancel: () => void,
 };
+
 const validateFunding = (): any =>
   yup.object().shape({
     payouts: yup
       .array()
       .of(
         yup.object().shape({
-          symbol: yup.number().required(),
+          symbol: yup.string().required(),
           amount: yup.number().required(),
         }),
       )
       .max(2),
     // For the MVP we decided to pick from ETH and CLNY
   });
+
 const filter = (data, filterValue) =>
   data.filter(user =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
+
 class TaskEditDialog extends Component<Props, State> {
   static displayName = 'dashboard.task.taskEditDialog';
 
@@ -74,34 +83,39 @@ class TaskEditDialog extends Component<Props, State> {
     touched: false,
   };
 
-  addTokenFunding = (helpers: () => void) => {
-    helpers.push({
-      symbol: '',
-      amount: undefined,
-      isNative: false,
-      isEth: false,
-    });
-    this.setState({
-      touched: true,
-    });
+  addTokenFunding = (values: { payouts: Array<any> }, helpers: () => void) => {
+    // As far as I understand we are using ETH and CLNY for the initial release.
+    if (values.payouts.length < 2) {
+      helpers.push({
+        symbol: '',
+        amount: undefined,
+        isNative: false,
+        isEth: false,
+      });
+
+      this.setState({
+        touched: true,
+      });
+    }
   };
 
   render() {
     const { cancel } = this.props;
     const { touched } = this.state;
-    const { reputation } = taskMock;
-    const { payouts } = taskMock;
+    const { reputation, payouts } = taskMock;
+
     const assignee = null;
+
     return (
       <FullscreenDialog cancel={cancel}>
         <ActionForm
-           submit="CREATE_COOL_THING"
-           success="COOL_THING_CREATED"
-           error="COOL_THING_CREATE_ERROR"
-           initialValues={{ payouts, assignee }}
-           validationSchema={validateFunding()}
-         >
-           {({ status, values }) => (
+          submit="CREATE_COOL_THING"
+          success="COOL_THING_CREATED"
+          error="COOL_THING_CREATE_ERROR"
+          initialValues={{ payouts, assignee }}
+          validationSchema={validateFunding()}
+        >
+          {({ status, values }) => (
             <Fragment>
               <FormStatus status={status} />
               <DialogBox>
@@ -133,7 +147,9 @@ class TaskEditDialog extends Component<Props, State> {
                           <Button
                             appearance={{ theme: 'blue', size: 'small' }}
                             text={MSG.add}
-                            onClick={() => this.addTokenFunding(arrayHelpers)}
+                            onClick={() =>
+                              this.addTokenFunding(values, arrayHelpers)
+                            }
                           />
                         </div>
                         {values.payouts &&
@@ -170,9 +186,10 @@ class TaskEditDialog extends Component<Props, State> {
               </div>
             </Fragment>
           )}
-         </ActionForm>
+        </ActionForm>
       </FullscreenDialog>
     );
   }
 }
+
 export default TaskEditDialog;

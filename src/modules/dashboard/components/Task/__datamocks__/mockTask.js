@@ -23,10 +23,8 @@ export const mockTask = {
   title: 'Develop Github integration',
   reputation: 19.5,
   payouts: [
-    { symbol: 'COOL', amount: 600 },
-    { symbol: 'ETH', amount: 200105 },
-    { symbol: 'DAI', amount: 1001 },
-    { symbol: 'CLNY', amount: 600 },
+    { symbol: 'ETH', amount: 21545, isEth: true },
+    { symbol: 'CLNY', amount: 6007, isNative: true },
   ],
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',
   assignee: {

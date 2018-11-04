@@ -8,6 +8,10 @@
 * Next set of classes will define the number's size
 */
 
+.sizeSmall {
+  font-size: var(--size-small);
+}
+
 .sizeMedium {
   font-size: var(--size-medium);
 }

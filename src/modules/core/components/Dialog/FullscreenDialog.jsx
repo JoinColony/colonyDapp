@@ -1,22 +1,9 @@
 /* @flow */
-
 import type { Node } from 'react';
-
 import React from 'react';
-import { defineMessages } from 'react-intl';
-
 import Icon from '~core/Icon';
-
-import styles from './Dialog.css';
-
+import styles from './FullscreenDialog.css';
 import Modal from '../Modal';
-
-const MSG = defineMessages({
-  buttonCancel: {
-    id: 'core.Dialog.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-});
 
 type Props = {
   /** Dialog needs the cancel function from your Dialog component */
@@ -26,8 +13,7 @@ type Props = {
   /** Determines if the Dialog can be dismissed */
   isDismissable?: boolean,
 };
-
-const Dialog = ({
+const FullscreenDialog = ({
   children,
   cancel,
   isDismissable = true,
@@ -35,8 +21,9 @@ const Dialog = ({
 }: Props) => (
   <Modal
     {...props}
-    role="dialog"
     className={styles.modal}
+    role="dialog"
+    overlayClassName={styles.overlay}
     onRequestClose={cancel}
     isOpen
   >
@@ -47,16 +34,11 @@ const Dialog = ({
           className={styles.closeIconButton}
           onClick={cancel}
         >
-          <Icon
-            appearance={{ size: 'medium' }}
-            name="circle-close"
-            title={MSG.buttonCancel}
-          />
+          <Icon name="circle-close" title={{ id: 'button.cancel' }} />
         </button>
       </div>
     )}
     <div className={styles.main}>{children}</div>
   </Modal>
 );
-
-export default Dialog;
+export default FullscreenDialog;

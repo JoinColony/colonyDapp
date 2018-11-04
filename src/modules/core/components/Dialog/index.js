@@ -1,6 +1,7 @@
 /* @flow */
 
 export { default } from './Dialog.jsx';
+export { default as FullscreenDialog } from './FullscreenDialog.jsx';
 
 export { default as DialogProvider } from './DialogProvider.jsx';
 export { default as ConfirmDialog } from './ConfirmDialog.jsx';

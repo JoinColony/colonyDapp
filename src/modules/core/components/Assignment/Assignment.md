@@ -40,3 +40,6 @@ const payouts = [
     { symbol: 'DAI', amount: 1001 },
     { symbol: 'CLNY', amount: 600 },
 ];
+
+<Assignment assignee={assignee} payouts={payouts} reputation={reputation} />
+```

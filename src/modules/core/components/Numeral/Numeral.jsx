@@ -11,7 +11,7 @@ import styles from './Numeral.css';
 
 type Appearance = {
   theme: 'primary' | 'grey' | 'dark',
-  size: 'medium' | 'large',
+  size: 'medium' | 'large' | 'small',
 };
 
 type Props = {
