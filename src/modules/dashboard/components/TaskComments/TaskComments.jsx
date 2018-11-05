@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { FormikProps } from 'formik';
+// import type { SyntheticKeyboardEvent } from 'react';
 
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -8,6 +9,8 @@ import * as yup from 'yup';
 
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
+
+import { ENTER } from './keyTypes';
 
 import styles from './TaskComments.css';
 
@@ -32,17 +35,38 @@ const validationSchema = yup.object().shape({
   comment: yup.string().required(),
 });
 
+const handleCommentSubmit = ({ comment }: FormValues) =>
+  /* eslint-disable-next-line no-console */
+  console.log(`[${displayName}]`, comment);
+
+const handleKeyboardSubmit = (
+  capturedEvent: SyntheticKeyboardEvent<*>,
+  callback: (e: SyntheticEvent<any>) => any,
+) => {
+  const { key, ctrlKey, metaKey } = capturedEvent;
+  /*
+   * The meta key is interpreted on MacOS as the command ⌘ key
+   */
+  if ((ctrlKey || metaKey) && key === ENTER) {
+    capturedEvent.preventDefault();
+    return callback(capturedEvent);
+  }
+  return false;
+};
+
 const TaskComments = () => (
   <div className={styles.main}>
     <Form
       initialValues={{ comment: '' }}
       validationSchema={validationSchema}
-      onSubmit={({ comment }: FormValues) =>
-        /* eslint-disable-next-line no-console */
-        console.log(`[${displayName}]`, comment)
-      }
+      onSubmit={handleCommentSubmit}
     >
-      {({ isSubmitting, isValid, status }: FormikProps<FormValues>) => (
+      {({
+        isSubmitting,
+        isValid,
+        status,
+        handleSubmit,
+      }: FormikProps<FormValues>) => (
         <Fragment>
           <TextareaAutoresize
             elementOnly
@@ -51,6 +75,8 @@ const TaskComments = () => (
             appearance={{ colorSchema: 'transparent' }}
             minRows={3}
             maxRows={8}
+            onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
+            disabled={isSubmitting}
           />
           <FormStatus status={status} />
           <div className={styles.commentControls}>
