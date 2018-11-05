@@ -1,5 +1,5 @@
 /* @flow */
 
-const USERS_NAMESPACE = 'users';
+const USER_NAMESPACE = 'user';
 
-export default USERS_NAMESPACE;
+export default USER_NAMESPACE;
