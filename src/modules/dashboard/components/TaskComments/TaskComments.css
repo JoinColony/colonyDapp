@@ -4,6 +4,10 @@
   padding: 10px 10px 10px 5px;
   border: 1px solid var(--temp-grey-5);
   background-color: var(--grey-blue-0);
+
+  &:focus-within {
+    border-color: var(--grey-4);
+  }
 }
 
 .commentControls {
