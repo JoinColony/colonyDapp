@@ -6,7 +6,7 @@ import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { Form, FormStatus, Textarea } from '~core/Fields';
+import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 
 import styles from './TaskComments.css';
@@ -44,7 +44,7 @@ const TaskComments = () => (
     >
       {({ isSubmitting, isValid, status }: FormikProps<FormValues>) => (
         <Fragment>
-          <Textarea
+          <TextareaAutoresize
             elementOnly
             name="comment"
             placeholder={MSG.placeholder}
