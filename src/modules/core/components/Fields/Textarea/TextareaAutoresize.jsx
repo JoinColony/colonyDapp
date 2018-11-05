@@ -87,7 +87,7 @@ class TextareaAutoresize extends Component<Props> {
     const { innerRef, ...props } = inputProps;
     return (
       <div className={styles.TextareaAutoresizeWrapper}>
-        <Textarea innerRef={innerRef} {...props} />
+        <Textarea ref={innerRef} {...props} />
       </div>
     );
   };
