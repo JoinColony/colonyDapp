@@ -8,7 +8,7 @@ import styles from './Task.css';
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
+import Assignment from '~core/Assignment';
 
 /*
  * @TODO Temporary, please remove when wiring in the rating modals
@@ -56,11 +56,6 @@ const MSG = defineMessages({
   },
 });
 
-const filter = (data, filterValue) =>
-  data.filter(user =>
-    user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
-  );
-
 const Task = ({ openDialog }: Props) => {
   const isTaskCreator =
     taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
@@ -78,21 +73,16 @@ const Task = ({ openDialog }: Props) => {
               <Button appearance={{ theme: 'blue' }} text={MSG.details} />
             )}
           </header>
-          {/* //TODO: replace this with TaskAssignment
-          component in colonyDapp#445 */}
-          <div className={styles.section}>
-            <Form
-              /* eslint-disable-next-line no-console */
-              onSubmit={console.log}
-            >
-              <SingleUserPicker
-                name="assignee"
-                itemComponent={ItemDefault}
-                data={userMocks}
-                filter={filter}
-              />
-            </Form>
-          </div>
+          <Form
+            /* eslint-disable-next-line no-console */
+            onSubmit={console.log}
+          >
+            <Assignment
+              assignee={taskMock.assignee}
+              reputation={taskMock.reputation}
+              payouts={taskMock.payouts}
+            />
+          </Form>
         </section>
         <section className={styles.section}>
           <Form
