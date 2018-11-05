@@ -5,12 +5,18 @@ import { connect } from 'react-redux';
 import UserProfile from './UserProfile.jsx';
 
 import { USER_PROFILE_FETCH } from '../../actionTypes';
+import {
+  isError,
+  isLoading,
+  targetUserId,
+  targetUserProfile,
+} from '../../selectors';
 
 const mapStateToProps = (state, ownProps) => ({
-  isLoading: state.user.users.isLoading,
-  isError: state.user.users.isError,
-  targetUserId: ownProps.match.params.userId,
-  targetProfile: state.user.users[ownProps.match.params.userId],
+  isLoading: isLoading(state),
+  isError: isError(state),
+  targetUserId: targetUserId(ownProps),
+  targetUserProfile: targetUserProfile(state, ownProps),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
