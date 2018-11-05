@@ -16,7 +16,7 @@ type ErrorSelector = (users: UsersRecord) => boolean;
 type UserIdSelector = (props: Object) => string;
 type UserProfileSelector = (state: State, props: Object) => User;
 
-export const userState: UserKeySelector = state => state[ns];
+export const userState: UserKeySelector = state => state[ns].users;
 export const allUsers: UsersSelector = createSelector(
   userState,
   state => state.users,
