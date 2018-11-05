@@ -1,16 +1,37 @@
 /* @flow */
 
-// import { createSelector } from 'reselect';
+import { createSelector } from 'reselect';
 
 import ns from '../namespace';
 
-import type { Users, UsersRecord } from '~types/UsersRecord';
+// TODO should not need /index here
+import type { UserRecord as User, Users, UsersRecord } from '~types/index';
 
-type State = { [typeof ns]: { users: UsersRecord } };
+type State = { [typeof ns]: UsersRecord };
 
-type UsersSelector = (state: State) => Users;
+type UserKeySelector = (state: State) => UsersRecord;
+type UsersSelector = (userState: UsersRecord) => Users;
+type LoadingSelector = (users: UsersRecord) => boolean;
+type ErrorSelector = (users: UsersRecord) => boolean;
+type UserIdSelector = (props: Object) => string;
+type UserProfileSelector = (state: State, props: Object) => User;
 
-// eslint-disable-next-line import/prefer-default-export
-export const allUsers: UsersSelector = state => state[ns].users.users;
-
-// TODO add selectors based on `allUsers` as needed (with `reselect`)
+export const userState: UserKeySelector = state => state[ns];
+export const allUsers: UsersSelector = createSelector(
+  userState,
+  state => state.users,
+);
+export const isLoading: LoadingSelector = createSelector(
+  userState,
+  state => state.isLoading,
+);
+export const isError: ErrorSelector = createSelector(
+  userState,
+  state => state.isError,
+);
+export const targetUserId: UserIdSelector = props =>
+  props.match ? props.match.params.userId : '';
+export const targetUserProfile: UserProfileSelector = createSelector(
+  [allUsers, targetUserId],
+  (users, targetId) => users[targetId],
+);
