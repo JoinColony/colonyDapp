@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { FormikProps } from 'formik';
-// import type { SyntheticKeyboardEvent } from 'react';
 
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -15,15 +14,26 @@ import { ENTER } from './keyTypes';
 import styles from './TaskComments.css';
 
 const MSG = defineMessages({
-  placeholder: {
-    id: 'dashboard.TaskComments.placeholder',
+  placeholderWinNix: {
+    id: 'dashboard.TaskComments.placeholderWinNix',
     defaultMessage: "Type a comment and hit 'Ctrl'+'Return'",
+  },
+  placeholderMac: {
+    id: 'dashboard.TaskComments.placeholderMac',
+    defaultMessage: "Type a comment and hit '⌘'+'Return'",
   },
   button: {
     id: 'dashboard.TaskComments.button',
     defaultMessage: 'Comment',
   },
 });
+
+/*
+ * @NOTE This a poor man's way of detecting the Mac os platform (even though
+ * it has a bit of future proofing baked in), but it's a good alternative for
+ * now, until we have time to come back and make a proper detector.
+ */
+const isMac: boolean = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 type FormValues = {
   comment: string,
@@ -71,7 +81,12 @@ const TaskComments = () => (
           <TextareaAutoresize
             elementOnly
             name="comment"
-            placeholder={MSG.placeholder}
+            /*
+             * @NOTE We need two message descriptors here, and can't just use
+             * selectors, since the placeholder prop doesn't support passing over
+             * message descriptors values
+             */
+            placeholder={isMac ? MSG.placeholderMac : MSG.placeholderWinNix}
             appearance={{ colorSchema: 'transparent' }}
             minRows={3}
             maxRows={8}
