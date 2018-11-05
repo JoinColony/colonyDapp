@@ -14,10 +14,6 @@ const MSG = defineMessages({
     id: 'Assignment.selectMember',
     defaultMessage: 'Select member',
   },
-  emptyMessage: {
-    id: 'Assignment.emptyMessage',
-    defaultMessage: 'No Colony members match that search.',
-  },
   fundingNotSet: {
     id: 'Assignment.fundingNotSet',
     defaultMessage: 'Funding not set',

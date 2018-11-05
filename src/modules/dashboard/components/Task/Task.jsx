@@ -23,7 +23,6 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
 
-import userMocks from './__datamocks__/mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
 
