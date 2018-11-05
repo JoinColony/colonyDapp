@@ -49,6 +49,8 @@ const TaskComments = () => (
             name="comment"
             placeholder={MSG.placeholder}
             appearance={{ colorSchema: 'transparent' }}
+            minRows={3}
+            maxRows={8}
           />
           <FormStatus status={status} />
           <div className={styles.commentControls}>
