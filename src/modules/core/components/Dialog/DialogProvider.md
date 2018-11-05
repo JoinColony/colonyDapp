@@ -17,6 +17,8 @@ where `dialogComponents` is a list of Components that will be rendered once it i
 
 ### Using `withDialog`
 
+**Heads up! You might not need this!** Take a look at the [`DialogLink`](#dialoglink) component instead.
+
 Dialogs need to be opened from various components. To be flexible in that regard we created the `withDialog` higher order component. If you need to open one or more dialogs in a component, wrap it in the `withDialog` HoC like so:
 
 ```js static
@@ -33,7 +35,7 @@ const Task = ({ openDialog } => (
 );
 ```
 
-`openDialog()` will return a Object which contains a Promise (`afterClosed`) that resolves (or rejects) when the user closes the dialog. Whether it resolves or rejects depends on whether the user closed it using the `close(val)` (resolves with `val`) or the `cancel()` (rejects) function. These get injected into all the Components that reside in `dialogComponents`.
+`openDialog()` will return a Object which contains an `afterClosed` function which returns a Promise that resolves (or rejects) when the user closes the dialog. Whether it resolves or rejects depends on whether the user closed it using the `close(val)` (resolves with `val`) or the `cancel()` (rejects) function. These get injected into all the Components that reside in `dialogComponents`.
 
 
 ### Example for the whole dialog workflow
@@ -45,7 +47,7 @@ const ComponentThatOpensADialog = ({ openDialog }) => (
   <div>
     <Button
       onClick={() => openDialog('ConfirmDialog', { heading: 'Cool dialog' })
-        .afterClosed.then(() => alert('Confirmed!'), () => alert('Cancelled'))
+        .afterClosed().then(() => alert('Confirmed!'), () => alert('Cancelled'))
       }
     >
       Click to open ConfirmDialog
