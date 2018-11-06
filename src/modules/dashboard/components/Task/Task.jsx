@@ -88,7 +88,7 @@ const Task = () => {
                 </div>
               </section>
               <section className={styles.section}>
-                <TaskDescription />
+                <TaskDescription isTaskCreator={isTaskCreator} />
               </section>
               <section className={styles.section}>
                 <div className={styles.editor}>

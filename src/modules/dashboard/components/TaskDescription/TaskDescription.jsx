@@ -16,16 +16,22 @@ const MSG = defineMessages({
   },
 });
 
-const TaskDescription = () => (
+type Props = {
+  isTaskCreator: boolean,
+};
+
+const TaskDescription = ({ isTaskCreator }: Props) => (
   <Fragment>
     <SingleLineEdit
       maxLength={90}
       name="taskTitle"
       placeholder={MSG.taskTitlePlaceholder}
+      readOnly={!isTaskCreator}
     />
     <MultiLineEdit
       name="taskDescription"
       placeholder={MSG.taskDescriptionPlaceholder}
+      readOnly={!isTaskCreator}
     />
   </Fragment>
 );

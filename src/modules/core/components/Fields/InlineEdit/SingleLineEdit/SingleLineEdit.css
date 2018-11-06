@@ -53,3 +53,7 @@
 .stateHasReachedMaxLength .maxLengthText {
   color: var(--danger);
 }
+
+.stateReadOnly .notEditingValue {
+  cursor: default;
+}

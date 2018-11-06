@@ -43,6 +43,8 @@ type Props = {
   placeholder?: string | MessageDescriptor,
   /** Values for placeholder text (react-intl interpolation) */
   placeholderValues?: { [string]: string },
+  /** Should the component be read only */
+  readOnly?: boolean,
   /** Status text */
   status?: string | MessageDescriptor,
   /** Values for status text (react-intl interpolation) */
@@ -74,6 +76,10 @@ type State = {
 
 class SingleLineEdit extends Component<Props, State> {
   inputRef: ElementRef<typeof HTMLInputElement>;
+
+  static defaultProps = {
+    readOnly: false,
+  };
 
   static displayName = 'SingleLineEdit';
 
@@ -134,6 +140,16 @@ class SingleLineEdit extends Component<Props, State> {
   };
 
   setIsEditing = (isEditing: boolean) => {
+    const { readOnly } = this.props;
+    if (readOnly) {
+      const { isEditing: currentEditingState } = this.state;
+      if (currentEditingState) {
+        this.setState({
+          isEditing: false,
+        });
+      }
+      return;
+    }
     this.setState({
       isEditing,
     });
@@ -174,6 +190,7 @@ class SingleLineEdit extends Component<Props, State> {
       name,
       placeholder,
       placeholderValues,
+      readOnly,
       setError,
       setValue,
       $touched,
@@ -202,6 +219,7 @@ class SingleLineEdit extends Component<Props, State> {
         className={getMainClasses(appearance, styles, {
           hasReachedMaxLength: $value.length === maxLength,
           hasValue: !!$value,
+          readOnly,
         })}
       >
         {isEditing ? (
