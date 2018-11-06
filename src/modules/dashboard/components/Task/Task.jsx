@@ -21,6 +21,7 @@ import TaskDescription from '~dashboard/TaskDescription';
 import TaskDomains from '~dashboard/TaskDomains';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
+import TaskFeed from '~dashboard/TaskFeed';
 
 import userMocks from './__datamocks__/mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
@@ -155,7 +156,7 @@ const Task = ({ openDialog }: Props) => {
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            Task comment activity placeholder
+            <TaskFeed feedItems={taskMock.feedItems} currentUser={userMock} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments />

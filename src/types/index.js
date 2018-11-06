@@ -1,6 +1,7 @@
 /* @flow */
 
 export * from './colony';
+export * from './TaskRecord';
 export * from './token';
 export * from './transaction';
 export * from './TransactionRecord';

@@ -1,0 +1,43 @@
+.comment {
+  display: flex;
+  margin: var(--pad-huge) 0;
+}
+
+.commentSelf {
+  margin-left: 20%;
+}
+
+.commentOther {
+  margin-right: 20%;
+}
+
+.commentAvatar {
+  margin-right: var(--pad-medium);
+}
+
+.commentMain {
+  flex-grow: 1;
+}
+
+.commentUsername {
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+}
+
+.commentBody {
+  margin: var(--pad-tiny) 0;
+  padding: var(--pad-medium);
+  border-radius: var(--radius-normal);
+}
+
+.commentSelf .commentBody {
+  background-color: var(--grey-blue-3);
+}
+
+.commentOther .commentBody {
+  background-color: var(--grey-blue-1);
+}
+
+.commentTimestamp {
+  font-size: var(--size-small);
+}
