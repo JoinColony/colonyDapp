@@ -77,7 +77,7 @@ class MultiLineEdit extends Component<Props> {
   static displayName = 'MultiLineEdit';
 
   static defaultProps = {
-    allowReturns: false,
+    allowReturns: true,
     elementOnly: true,
     readOnly: false,
     spellCheck: false,

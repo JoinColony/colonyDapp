@@ -13,7 +13,6 @@ const { EditorState } = require('draft-js');
   }}
 >
   <MultiLineEdit
-    allowReturns
     label="Multi Line Edit"
     name="multiLineEdit"
     placeholder="This is placeholder text for the MultiLineEdit component"
