@@ -12,7 +12,12 @@ import {
 
 import { resolvers } from '../../../lib/database';
 import setupDashboardSagas from '../../dashboard/sagas';
-import setupUsersSagas, { getWallet, getUser } from '../../users/sagas';
+import {
+  getWallet,
+  getUser,
+  setupUserSagas,
+  setupWalletSagas,
+} from '../../users/sagas';
 
 import { getNetworkClient } from './networkClient';
 import { getDDB } from './ddb';
@@ -61,7 +66,7 @@ function* setupUserContext(action: Object): any {
 }
 
 function* setupContextSagas(): any {
-  yield all([setupDashboardSagas()]);
+  yield all([setupDashboardSagas(), setupUserSagas()]);
 }
 
 function* rootSaga(): any {
@@ -72,7 +77,7 @@ function* rootSaga(): any {
    */
   yield takeLatest(WALLET_CREATE, setupUserContext);
   // Everything else that does not require a wallet
-  yield all([setupUsersSagas()]);
+  yield all([setupWalletSagas()]);
 }
 
 export default rootSaga;

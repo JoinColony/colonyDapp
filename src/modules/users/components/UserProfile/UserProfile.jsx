@@ -1,5 +1,6 @@
 /* @flow */
-import React from 'react';
+
+import React, { Component } from 'react';
 
 import ColonyGrid from '~core/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
@@ -13,16 +14,39 @@ import mockUser from './__datamocks__/mockUser';
 
 import styles from './UserProfile.css';
 
-// @NOTE userId can be accessed from the props: `{ match: { userId } }`
-const UserProfile = () => (
-  <ProfileTemplate asideContent={<UserMeta user={mockUser} />}>
-    <section className={styles.sectionContainer}>
-      <ColonyGrid colonies={mockColonies} />
-    </section>
-    <section className={styles.sectionContainer}>
-      <ActivityFeed activities={mockActivities} />
-    </section>
-  </ProfileTemplate>
-);
+import UserProfileSpinner from './UserProfileSpinner.jsx';
 
+import type { ActionCreator, UserRecord } from '~types/index';
+
+type Props = {
+  fetchUserProfile: ActionCreator,
+  targetProfile: UserRecord,
+  targetUserId: string,
+  isLoading: boolean,
+};
+
+class UserProfile extends Component<Props> {
+  componentDidMount() {
+    const { fetchUserProfile, targetProfile, targetUserId } = this.props;
+    if (!targetProfile) {
+      fetchUserProfile(targetUserId);
+    }
+  }
+
+  render() {
+    const { isLoading } = this.props;
+    return isLoading ? (
+      <UserProfileSpinner />
+    ) : (
+      <ProfileTemplate asideContent={<UserMeta user={mockUser} />}>
+        <section className={styles.sectionContainer}>
+          <ColonyGrid colonies={mockColonies} />
+        </section>
+        <section className={styles.sectionContainer}>
+          <ActivityFeed activities={mockActivities} />
+        </section>
+      </ProfileTemplate>
+    );
+  }
+}
 export default UserProfile;

@@ -29,10 +29,7 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
     }
 
     case USER_PROFILE_FETCH_ERROR:
-      return state.merge({
-        isLoading: false,
-        isError: true,
-      });
+      return state.set('isLoading', false);
 
     default:
       return state;

@@ -12,3 +12,4 @@ export const USER_EDIT_ROUTE = '/user/edit';
 export const USER_ROUTE = '/user/:userId';
 export const WALLET_ROUTE = '/wallet';
 export const ADMIN_DASHBOARD_ROUTE = '/admin';
+export const NOT_FOUND_ROUTE = '/404';
