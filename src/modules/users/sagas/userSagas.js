@@ -88,9 +88,7 @@ function* fetchProfile(action: Object): Saga<void> {
   }
 }
 
-function* userSagas(): any {
+export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
 }
-
-export default userSagas;
