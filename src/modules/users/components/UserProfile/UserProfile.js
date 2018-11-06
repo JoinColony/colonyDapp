@@ -6,7 +6,6 @@ import UserProfile from './UserProfile.jsx';
 
 import { USER_PROFILE_FETCH } from '../../actionTypes';
 import {
-  isError,
   isLoading,
   targetUserId,
   targetUserProfile,
@@ -14,7 +13,6 @@ import {
 
 const mapStateToProps = (state, ownProps) => ({
   isLoading: isLoading(state),
-  isError: isError(state),
   targetUserId: targetUserId(ownProps),
   targetUserProfile: targetUserProfile(state, ownProps),
 });
