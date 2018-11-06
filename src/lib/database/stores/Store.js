@@ -3,7 +3,7 @@
 
 import type { ObjectSchema } from 'yup';
 
-import type { OrbitDBStore } from './types';
+import type { OrbitDBStore } from '../types/index';
 
 /**
  * A parent class for a wrapper around an orbit store that can hold its schema
