@@ -6,6 +6,10 @@ import ns from '../namespace';
  * Current User Action Types
  */
 
+export const USERNAME_CREATE = `${ns}/USERNAME_CREATE`;
+export const USERNAME_CREATE_ERROR = `${ns}/USERNAME_CREATE_ERRO`;
+export const USERNAME_CREATE_SUCCESS = `${ns}/USERNAME_CREATE_SUCCESS`;
+
 export const CURRENT_USER_CREATE = `${ns}/CURRENT_USER_CREATE`;
 export const CURRENT_USER_CREATE_ERROR = `${ns}/CURRENT_USER_CREATE_ERROR`;
 export const CURRENT_USER_CREATE_SUCCESS = `${ns}/CURRENT_USER_CREATE_SUCCESS`;
