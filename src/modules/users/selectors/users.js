@@ -2,8 +2,6 @@
 
 import { createSelector } from 'reselect';
 
-import ns from '../namespace';
-
 // TODO should not need /index here
 import type { UserRecord as User, Users, UsersRecord } from '~types/index';
 
@@ -16,7 +14,7 @@ type ErrorSelector = (users: UsersRecord) => boolean;
 type UserIdSelector = (props: Object) => string;
 type UserProfileSelector = (state: State, props: Object) => User;
 
-export const userState: UserKeySelector = state => state[ns].users;
+export const userState: UserKeySelector = state => state.user.users;
 export const allUsers: UsersSelector = createSelector(
   userState,
   state => state.users,
