@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
+import EthereumQRPlugin from 'ethereum-qr-code';
 
 import { getMainClasses } from '~utils/css';
 
@@ -33,6 +34,8 @@ type Props = {
   children: string,
   /** Indicates that the full addrres should be shown instead of an abbreviated one */
   full?: boolean,
+  /**  Add QR code to Ethereum address */
+  qrCode?: boolean,
 };
 
 type State = {
@@ -45,6 +48,25 @@ class CopyableAddress extends Component<Props, State> {
   state = {
     copiedAddress: false,
   };
+
+  componentDidMount() {
+    const { qrCode, children: address } = this.props;
+
+    if (qrCode) {
+      const qr = new EthereumQRPlugin();
+
+      qr.toCanvas(
+        {
+          to: address,
+        },
+        {
+          size: 25,
+          selector: '#qr-code',
+          options: { margin: 0 },
+        },
+      );
+    }
+  }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
@@ -71,11 +93,12 @@ class CopyableAddress extends Component<Props, State> {
   };
 
   render() {
-    const { appearance } = this.props;
+    const { appearance, qrCode } = this.props;
     const { copiedAddress } = this.state;
 
     return (
       <div className={getMainClasses(appearance, styles)}>
+        {qrCode && <div className={styles.qr} id="qr-code" />}
         {this.getAddress()}
         <Button
           appearance={{ size: 'small', theme: 'blue' }}

@@ -1,8 +1,16 @@
 .main {
-  /* styles here */
+  display: flex;
+  align-items: flex-end;
 }
 
 .themeBig {
   font-size: var(--size-medium-l);
   letter-spacing: 1px;
+  display: flex;
+  align-items: flex-end;
+}
+
+canvas {
+  margin-right: 10px;
+  margin-bottom: -6px;
 }

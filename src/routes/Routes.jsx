@@ -8,8 +8,8 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
 import Dashboard from '~dashboard/Dashboard';
-
 import Inbox from '~dashboard/Inbox';
+import Wallet from '~dashboard/Wallet';
 
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import CreateWalletWizard from '~users/CreateWalletWizard';
@@ -36,8 +36,6 @@ import {
 
 import ConnectedOnlyRoute from './ConnectedOnlyRoute.jsx';
 import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
-
-const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 
 // We cannot add types to this component's props because of how we're using
 // `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
@@ -72,6 +70,8 @@ const Routes = ({ currentUser }) => {
         isConnected={isConnected}
         path={WALLET_ROUTE}
         component={Wallet}
+        hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}

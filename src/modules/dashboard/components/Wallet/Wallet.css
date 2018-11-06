@@ -1,0 +1,29 @@
+.layoutMain {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  padding: 0 15%;
+  overflow: auto;
+  grid-template-columns: auto 180px;
+  grid-template-rows: 100%;
+  column-gap: 80px;
+}
+
+.content {
+  align-self: start;
+  height: 100%;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.sidebar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.helpText {
+  margin-top: 65px;
+}
+
+.walletDetails {
+  margin-bottom: 40px;
+}
