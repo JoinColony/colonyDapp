@@ -1,8 +1,12 @@
 /* @flow */
 
+import { replace } from 'connected-react-router';
+
 import type { Saga } from 'redux-saga';
 
 import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
+
+import { NOT_FOUND_ROUTE } from '~routes';
 
 import { getAll } from '../../../lib/database/commands';
 
@@ -74,6 +78,9 @@ function* fetchProfile(action: Object): Saga<void> {
       payload: { user, walletAddress: user.walletAddress },
     });
   } catch (error) {
+    yield put(replace(NOT_FOUND_ROUTE));
+
+    // TODO normalize error object handling
     yield put({
       type: USER_PROFILE_FETCH_ERROR,
       payload: { error: error.message },
