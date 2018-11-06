@@ -9,6 +9,8 @@ import type { MessageDescriptor } from 'react-intl';
 import React, { Component } from 'react';
 import { ContentState, Editor, EditorState } from 'draft-js';
 
+import 'draft-js/dist/Draft.css';
+
 import { asField, InputLabel } from '~core/Fields';
 import InputStatus from '~core/Fields/InputStatus';
 import { getMainClasses } from '~utils/css';
