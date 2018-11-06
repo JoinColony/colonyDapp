@@ -4,12 +4,9 @@ import { connect } from 'react-redux';
 
 import UserProfile from './UserProfile.jsx';
 
-import { USER_PROFILE_FETCH } from '../../actionTypes';
-import {
-  isLoading,
-  targetUserId,
-  targetUserProfile,
-} from '../../selectors';
+import { fetchUserProfile } from '../../actionCreators';
+
+import { isLoading, targetUserId, targetUserProfile } from '../../selectors';
 
 const mapStateToProps = (state, ownProps) => ({
   isLoading: isLoading(state),
@@ -17,11 +14,9 @@ const mapStateToProps = (state, ownProps) => ({
   targetUserProfile: targetUserProfile(state, ownProps),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  fetchUserProfile: username => {
-    dispatch({ type: USER_PROFILE_FETCH, payload: { username } });
-  },
-});
+const mapDispatchToProps = {
+  fetchUserProfile,
+};
 
 export default connect(
   mapStateToProps,

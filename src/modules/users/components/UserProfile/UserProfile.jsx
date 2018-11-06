@@ -16,9 +16,11 @@ import styles from './UserProfile.css';
 
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
+import type { ActionCreator, UserRecord } from '~types/index';
+
 type Props = {
-  fetchUserProfile: Function,
-  targetProfile: Object,
+  fetchUserProfile: ActionCreator,
+  targetProfile: UserRecord,
   targetUserId: string,
   isLoading: boolean,
 };
