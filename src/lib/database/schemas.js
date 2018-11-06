@@ -3,7 +3,7 @@
 import * as yup from 'yup';
 
 // eslint-disable-next-line import/prefer-default-export
-export const UserProfile = {
+export const UserProfile = yup.object({
   displayName: yup.string(),
   bio: yup.string(),
   // TODO: IPFS hash add yup validation for IPFS hash
@@ -16,4 +16,4 @@ export const UserProfile = {
   username: yup.string().required(),
   website: yup.string(),
   location: yup.string(),
-};
+});
