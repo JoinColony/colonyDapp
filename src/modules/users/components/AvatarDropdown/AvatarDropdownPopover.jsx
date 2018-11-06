@@ -9,12 +9,17 @@ import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
 } from '~core/DropdownMenu';
+import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
 import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
+  buttonGetStarted: {
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.buttonGetStarted',
+    defaultMessage: 'Get started',
+  },
   myProfile: {
     id: 'users.AvatarDropdown.AvatarDropdownPopover.link.myProfile',
     defaultMessage: 'My Profile',
@@ -55,6 +60,15 @@ class AvatarDropdownPopover extends Component<Props> {
 
   renderUserSection = () => (
     <DropdownMenuSection separator>
+      <DropdownMenuItem>
+        <DialogLink to="CreateUsernameDialog">
+          {({ open }) => (
+            <button type="button" onClick={open}>
+              <FormattedMessage {...MSG.buttonGetStarted} />
+            </button>
+          )}
+        </DialogLink>
+      </DropdownMenuItem>
       <DropdownMenuItem>
         <NavLink to={USER_ROUTE} text={MSG.myProfile} />
       </DropdownMenuItem>

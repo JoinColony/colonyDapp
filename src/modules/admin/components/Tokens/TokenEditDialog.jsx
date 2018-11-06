@@ -8,8 +8,7 @@ import * as yup from 'yup';
 import type { TokenType } from '~types/token';
 
 import Button from '~core/Button';
-import Dialog from '~core/Dialog';
-import DialogSection from '~core/Dialog/DialogSection.jsx';
+import Dialog, { DialogSection } from '~core/Dialog';
 import { Checkbox, Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 
