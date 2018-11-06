@@ -10,7 +10,7 @@ import { isLoading, targetUserId, targetUserProfile } from '../../selectors';
 
 const mapStateToProps = (state, ownProps) => ({
   isLoading: isLoading(state),
-  targetUserId: targetUserId(ownProps),
+  targetUserId: targetUserId(state, ownProps),
   targetUserProfile: targetUserProfile(state, ownProps),
 });
 
