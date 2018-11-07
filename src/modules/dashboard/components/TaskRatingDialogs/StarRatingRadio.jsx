@@ -13,7 +13,7 @@ import styles from './StarRatingRadio.css';
 
 const MSG = defineMessages({
   ratingStar: {
-    id: 'dashboard.TaskRatingDialog.ratingStar',
+    id: 'dashboard.TaskRatingDialogs.ratingStar',
     defaultMessage: 'Rating Star',
   },
 });
@@ -44,7 +44,7 @@ type Props = {
   descriptionValues?: Object,
 };
 
-const displayName = 'dashboard.TaskRatingDialog.StarRatingRadio';
+const displayName = 'dashboard.TaskRatingDialogs.StarRatingRadio';
 
 const StarRatingRadio = ({
   title,
