@@ -14,7 +14,7 @@ import type {
 } from './types';
 
 import IPFSNode from '../ipfs';
-import { Store, KVStore } from './stores/index';
+import { Store, KVStore } from './stores';
 
 // TODO: better typing
 type Resolver = Object;
@@ -64,10 +64,6 @@ class DDB {
     SCHEMAS.set(schemaId, schema);
   }
 
-  addResolver(resolverId: string, resolver: Resolver) {
-    this._resolvers.set(resolverId, resolver);
-  }
-
   static getStoreClass(storeType: StoreType) {
     return STORE_CLASSES[storeType];
   }
@@ -86,8 +82,13 @@ class DDB {
     this._resolvers = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
+      // TODO should this be a constant, or configurable? and `colonyOrbitDB`?
       path: 'colonyOrbitdb',
     });
+  }
+
+  addResolver(resolverId: string, resolver: Resolver) {
+    this._resolvers.set(resolverId, resolver);
   }
 
   async getStore(
@@ -158,7 +159,7 @@ class DDB {
         'Please define an identifier for the store you want to retrieve',
       );
     }
-    if (typeof identifier == 'string') {
+    if (typeof identifier === 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
         return parseAddress(identifier);
