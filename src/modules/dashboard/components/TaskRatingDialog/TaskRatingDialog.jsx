@@ -5,13 +5,15 @@ import type { FormikProps } from 'formik';
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import nanoid from 'nanoid';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
-import { Form, Radio, Input } from '~core/Fields';
+import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
+
+import StarRatingRadio from './StarRatingRadio.jsx';
 
 import styles from './TaskRatingDialog.css';
 
@@ -54,30 +56,21 @@ const MSG = defineMessages({
     id: 'dashboard.TaskRatingDialog.ratingStar',
     defaultMessage: 'Rating Star',
   },
-  managerRating3Title: {
-    id: 'dashboard.TaskRatingDialog.managerRating3Title',
-    defaultMessage: 'Above and beyond',
+  managerRatingTitle: {
+    id: 'dashboard.TaskRatingDialog.managerRatingTitle',
+    defaultMessage: `{value, select,
+      3 {Above and beyond}
+      2 {Good}
+      1 {Unacceptable}
+    }`,
   },
-  managerRating3Description: {
-    id: 'dashboard.TaskRatingDialog.managerRating3Description',
-    defaultMessage: 'The manager went above and beyond in their role.',
-  },
-  managerRating2Title: {
-    id: 'dashboard.TaskRatingDialog.managerRating2Title',
-    defaultMessage: 'Good',
-  },
-  managerRating2Description: {
-    id: 'dashboard.TaskRatingDialog.managerRating2Description',
-    defaultMessage: 'The manager performed their role well and as expected.',
-  },
-  managerRating1Title: {
-    id: 'dashboard.TaskRatingDialog.managerRating1Title',
-    defaultMessage: 'Unacceptable',
-  },
-  managerRating1Description: {
-    id: 'dashboard.TaskRatingDialog.managerRating1Description',
-    defaultMessage:
-      'Warning: this may result in a reputation penalty to the manager.',
+  managerRatingDescription: {
+    id: 'dashboard.TaskRatingDialog.managerRatingDescription',
+    defaultMessage: `{value, select,
+      3 {The manager went above and beyond in their role.}
+      2 {The manager performed their role well and as expected.}
+      1 {Warning: this may result in a reputation penalty to the manager.}
+    }`,
   },
 });
 
@@ -153,117 +146,18 @@ const TaskRatingDialog = ({ cancel, workSubmitted }: Props) => (
                 <FormattedMessage {...MSG.rateManagerDescription} />
               </p>
               <section className={styles.ratingSection}>
-                {/*
-                 * Three star rating
-                 */}
-                <Radio
-                  checked={parseInt(rating, 10) === 3}
-                  name="rating"
-                  value={3}
-                >
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingText}>
-                      <Heading
-                        appearance={{ size: 'normal', margin: 'none' }}
-                        text={MSG.managerRating3Title}
-                      />
-                      <p className={styles.ratingItemDescription}>
-                        <FormattedMessage {...MSG.managerRating3Description} />
-                      </p>
-                    </div>
-                    <div className={styles.ratingStars}>
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        appearance={{ size: 'tiny', theme: 'primary' }}
-                      />
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        appearance={{ size: 'tiny', theme: 'primary' }}
-                      />
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        appearance={{ size: 'tiny', theme: 'primary' }}
-                      />
-                    </div>
-                  </div>
-                </Radio>
-                {/*
-                 * Two star rating
-                 */}
-                <Radio
-                  checked={parseInt(rating, 10) === 2}
-                  name="rating"
-                  value={2}
-                >
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingText}>
-                      <Heading
-                        appearance={{ size: 'normal', margin: 'none' }}
-                        text={MSG.managerRating2Title}
-                      />
-                      <p className={styles.ratingItemDescription}>
-                        <FormattedMessage {...MSG.managerRating2Description} />
-                      </p>
-                    </div>
-                    <div className={styles.ratingStars}>
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        appearance={{ size: 'tiny', theme: 'primary' }}
-                      />
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        appearance={{ size: 'tiny', theme: 'primary' }}
-                      />
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        className={styles.ratingStarUnselected}
-                      />
-                    </div>
-                  </div>
-                </Radio>
-                {/*
-                 * One star rating
-                 */}
-                <Radio
-                  checked={parseInt(rating, 10) === 1}
-                  name="rating"
-                  value={1}
-                >
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingText}>
-                      <Heading
-                        appearance={{ size: 'normal', margin: 'none' }}
-                        text={MSG.managerRating1Title}
-                      />
-                      <p className={styles.ratingItemWarning}>
-                        <FormattedMessage {...MSG.managerRating1Description} />
-                      </p>
-                    </div>
-                    <div className={styles.ratingStars}>
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        appearance={{ size: 'tiny', theme: 'primary' }}
-                      />
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        className={styles.ratingStarUnselected}
-                      />
-                      <Icon
-                        name="star"
-                        title={MSG.ratingStar}
-                        className={styles.ratingStarUnselected}
-                      />
-                    </div>
-                  </div>
-                </Radio>
+                {[3, 2, 1].map(value => (
+                  <StarRatingRadio
+                    key={nanoid(value)}
+                    checked={parseInt(rating, 10) === value}
+                    name="rating"
+                    value={value}
+                    title={MSG.managerRatingTitle}
+                    titleValues={{ value }}
+                    description={MSG.managerRatingDescription}
+                    descriptionValues={{ value }}
+                  />
+                ))}
               </section>
             </div>
           </DialogSection>
