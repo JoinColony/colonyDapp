@@ -10,7 +10,7 @@ import nanoid from 'nanoid';
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
-import { Form, Input } from '~core/Fields';
+import { Form } from '~core/Fields';
 import Heading from '~core/Heading';
 
 import StarRatingRadio from './StarRatingRadio.jsx';
@@ -18,65 +18,47 @@ import StarRatingRadio from './StarRatingRadio.jsx';
 import styles from './TaskRatingDialogs.css';
 
 const MSG = defineMessages({
-  rateManager: {
-    id: 'dashboard.WorkerRatingDialog.rateManager',
-    defaultMessage: 'Rate Manager',
+  rateWorker: {
+    id: 'dashboard.WorkerRatingDialog.rateWorker',
+    defaultMessage: 'Rate Worker',
   },
-  rateManagerDescription: {
-    id: 'dashboard.WorkerRatingDialog.rateManagerDescription',
+  rateWorkerDescription: {
+    id: 'dashboard.WorkerRatingDialog.rateWorkerDescription',
     defaultMessage:
-      'Please rate the manager of this task based on the criteria below.',
+      "Please rate the worker's performance based on the criteria below.",
   },
-  submitWork: {
-    id: 'dashboard.WorkerRatingDialog.submitWork',
-    defaultMessage: 'Submit Work',
+  endTask: {
+    id: 'dashboard.WorkerRatingDialog.endTask',
+    defaultMessage: 'End Task',
   },
-  submitWorkDescription: {
-    id: 'dashboard.WorkerRatingDialog.submitWorkDescription',
+  endTaskDescription: {
+    id: 'dashboard.WorkerRatingDialog.endTaskDescription',
     defaultMessage: `
-      Are you ready to submit your work? You will not be able to re-submit so
-      be sure you have talked to the task creator to confirm that your work
-      will be accepted.
+      Are you sure you want to end the task? The worker will not be able to
+      submit their work after you do this. Be sure to talk to the worker and
+      confirm that the task is ready to be completed.
     `,
   },
-  workDescriptionLabel: {
-    id: 'dashboard.WorkerRatingDialog.workDescriptionLabel',
-    defaultMessage: 'WorkDescription',
-  },
-  workDescriptionHelp: {
-    id: 'dashboard.WorkerRatingDialog.workDescriptionHelp',
-    defaultMessage:
-      'Please enter a short description or URL of the work you are submitting',
-  },
-  workDescriptionError: {
-    id: 'dashboard.WorkerRatingDialog.workDescriptionError',
-    defaultMessage: 'You must enter a brief description for the submitted work',
-  },
-  ratingStar: {
-    id: 'dashboard.WorkerRatingDialog.ratingStar',
-    defaultMessage: 'Rating Star',
-  },
-  managerRatingTitle: {
-    id: 'dashboard.WorkerRatingDialog.managerRatingTitle',
+  workerRatingTitle: {
+    id: 'dashboard.WorkerRatingDialog.workerRatingTitle',
     defaultMessage: `{value, select,
       3 {Above and beyond}
       2 {Good}
       1 {Unacceptable}
     }`,
   },
-  managerRatingDescription: {
-    id: 'dashboard.WorkerRatingDialog.managerRatingDescription',
+  workerRatingDescription: {
+    id: 'dashboard.WorkerRatingDialog.workerRatingDescription',
     defaultMessage: `{value, select,
-      3 {The manager went above and beyond in their role.}
-      2 {The manager performed their role well and as expected.}
-      1 {Warning: this may result in a reputation penalty to the manager.}
+      3 {The worker will receive their payout and 1.5x reputation.}
+      2 {The worker will receive their payout and reputation.}
+      1 {The worker will receive no tokens and a reputation penalty.}
     }`,
   },
 });
 
 type FormValues = {
   rating: number,
-  workDescription: string,
 };
 
 type Props = {
@@ -94,28 +76,15 @@ const validationSchema = yup.object().shape({
   rating: yup.string().required(),
 });
 
-/*
- * @NOTE In case we also have the work description input field, validate against that too.
- *
- * We need to do it this way since otherwise, in the case where the work isn't already submitted
- * it would always throw an error since the Input field wouldn't actually show up
- */
-const validationSchemaExtended = validationSchema.shape({
-  workDescription: yup.string().required(MSG.workDescriptionError),
-});
-
 const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <Form
       initialValues={{
         rating: '',
-        workDescription: '',
       }}
       /* eslint-disable-next-line no-console */
       onSubmit={(values: FormValues) => console.log(`[${displayName}]`, values)}
-      validationSchema={
-        workSubmitted ? validationSchemaExtended : validationSchema
-      }
+      validationSchema={validationSchema}
     >
       {({
         isSubmitting,
@@ -127,26 +96,15 @@ const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
             <div className={styles.contentWrapper}>
               {workSubmitted && (
                 <section className={styles.workSubmittedSection}>
-                  <Heading
-                    appearance={{ size: 'medium' }}
-                    text={MSG.submitWork}
-                  />
+                  <Heading appearance={{ size: 'medium' }} text={MSG.endTask} />
                   <p className={styles.descriptionText}>
-                    <FormattedMessage {...MSG.submitWorkDescription} />
+                    <FormattedMessage {...MSG.endTaskDescription} />
                   </p>
-                  <div className={styles.workDescription}>
-                    <Input
-                      appearance={{ theme: 'fat' }}
-                      label={MSG.workDescriptionLabel}
-                      help={MSG.workDescriptionHelp}
-                      name="workDescription"
-                    />
-                  </div>
                 </section>
               )}
-              <Heading appearance={{ size: 'medium' }} text={MSG.rateManager} />
+              <Heading appearance={{ size: 'medium' }} text={MSG.rateWorker} />
               <p className={styles.descriptionText}>
-                <FormattedMessage {...MSG.rateManagerDescription} />
+                <FormattedMessage {...MSG.rateWorkerDescription} />
               </p>
               <section className={styles.ratingSection}>
                 {[3, 2, 1].map(value => (
@@ -155,9 +113,9 @@ const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
                     checked={parseInt(rating, 10) === value}
                     name="rating"
                     value={value}
-                    title={MSG.managerRatingTitle}
+                    title={MSG.workerRatingTitle}
                     titleValues={{ value }}
-                    description={MSG.managerRatingDescription}
+                    description={MSG.workerRatingDescription}
                     descriptionValues={{ value }}
                   />
                 ))}
