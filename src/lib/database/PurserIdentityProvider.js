@@ -14,7 +14,7 @@ type ProviderType = 'ETHEREUM_ACCOUNT';
 
 const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
 
-class PurserIdentityProvider implements IdentityProvider<PurserIdentity> {
+class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
   _options: Options;
 
   _type: ProviderType;
@@ -28,7 +28,7 @@ class PurserIdentityProvider implements IdentityProvider<PurserIdentity> {
     this._options = options;
   }
 
-  async createIdentity(): Promise<PurserIdentity> {
+  async createIdentity() {
     const walletAddress = this._purserWallet.address;
     if (!walletAddress) {
       throw new Error('Could not get wallet address. Is it unlocked?');
