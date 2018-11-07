@@ -3,23 +3,23 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import styles from './TaskRating.css';
+import styles from './TaskRatingDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.TaskRating.title',
+    id: 'dashboard.TaskRatingDialog.title',
     defaultMessage: 'Task Rating',
   },
 });
 
-const displayName = 'dashboard.TaskRating';
+const displayName = 'dashboard.TaskRatingDialog';
 
-const TaskRating = () => (
+const TaskRatingDialog = () => (
   <div className={styles.main}>
     <FormattedMessage {...MSG.title} />
   </div>
 );
 
-TaskRating.displayName = displayName;
+TaskRatingDialog.displayName = displayName;
 
-export default TaskRating;
+export default TaskRatingDialog;
