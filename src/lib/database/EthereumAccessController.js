@@ -2,7 +2,7 @@
 /* eslint-disable no-console, class-methods-use-this */
 
 import IPFS from 'ipfs';
-import { utils } from 'ethers';
+import { Wallet } from 'ethers';
 
 import type { AccessController, Entry } from './types';
 
@@ -36,7 +36,9 @@ class EthereumAccessController
     storeType: string,
   ): Promise<string> {
     if (!this._accountAddress) {
-      throw new Error('Could not get wallet address. Is it unlocked?');
+      throw new Error(
+        'This access controller needs an account address to work',
+      );
     }
 
     const manifest = {
@@ -67,9 +69,10 @@ class EthereumAccessController
 
     const message = orbitPublicKey + signatures.id;
     const signature = signatures.publicKey;
-    const isWalletSignatureValid =
-      utils.verifyMessage(message, signature) === this._accountAddress;
-    if (!isWalletSignatureValid) return false;
+    const signedAddress = Wallet.verifyMessage(message, signature);
+    if (signedAddress.toLowerCase() !== this._accountAddress.toLowerCase()) {
+      return false;
+    }
 
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }

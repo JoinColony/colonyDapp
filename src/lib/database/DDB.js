@@ -6,6 +6,7 @@ import OrbitDB from 'orbit-db';
 import nanoid from 'nanoid';
 
 import type {
+  AccessController,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
@@ -19,7 +20,10 @@ import { Store, KVStore } from './stores';
 // TODO: better typing
 type Resolver = Object;
 
+type AC = AccessController<Identity, IdentityProvider<Identity>>;
+
 type OrbitStoreCreateOpts = {
+  accessController?: AC,
   directory?: string,
   write?: string[],
   overwrite?: boolean,
@@ -94,11 +98,9 @@ class DDB {
   async getStore(
     identifier: StoreIdentifier,
     options?: OrbitStoreOpenOpts,
-  ): Promise<Store> {
+  ): Promise<Store | null> {
     const address = await this._getStoreAddress(identifier);
-    if (!address) {
-      throw new Error(`Could not find store with address ${address}`);
-    }
+    if (!address) return null;
     const cachedStore = this._getCachedStore(address);
     if (cachedStore) return cachedStore;
     const schemaId = address.path.split('.')[0];
@@ -153,7 +155,9 @@ class DDB {
     return resolver.resolve(id);
   }
 
-  async _getStoreAddress(identifier: StoreIdentifier): Promise<OrbitDBAddress> {
+  async _getStoreAddress(
+    identifier: StoreIdentifier,
+  ): Promise<OrbitDBAddress | null> {
     if (!identifier) {
       throw new Error(
         'Please define an identifier for the store you want to retrieve',
@@ -166,10 +170,11 @@ class DDB {
       }
       // Otherwise it might be a resolver identifier (e.g. 'user.someusername')
       const addressString = await this._resolveStoreAddress(identifier);
+      if (!addressString) {
+        return null;
+      }
       if (!isValidAddress(addressString)) {
-        throw new Error(
-          `Address found not valid: ${addressString || 'none given'}`,
-        );
+        throw new Error(`Address found not valid: ${addressString}`);
       }
       return parseAddress(addressString);
     }
@@ -179,12 +184,17 @@ class DDB {
   async createStore(
     type: StoreType,
     schemaId: string,
-    options?: OrbitStoreCreateOpts,
+    options?: OrbitStoreCreateOpts = {},
   ) {
     if (schemaId.includes('.')) {
       throw new Error('A dot (.) in schemaIds is not allowed');
     }
     const id = `${schemaId}.${nanoid()}`;
+    if (!options.accessController) {
+      console.warn(
+        `Store with schema ${schemaId} created without an accessController`,
+      );
+    }
     const orbitStore: OrbitDBStore = await this._orbitNode.create(
       id,
       type,
