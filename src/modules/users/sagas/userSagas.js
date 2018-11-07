@@ -6,8 +6,13 @@ import type { Saga } from 'redux-saga';
 
 import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
 
+import type { Action, UserRecord } from '~types/index';
+
 import { NOT_FOUND_ROUTE } from '~routes';
 
+import { KVStore } from '../../../lib/database/stores';
+// eslint-disable-next-line max-len
+import EthereumAccessController from '../../../lib/database/EthereumAccessController';
 import { getAll } from '../../../lib/database/commands';
 
 import {
@@ -15,37 +20,31 @@ import {
   USER_PROFILE_FETCH_SUCCESS,
   USER_PROFILE_FETCH_ERROR,
   USER_PROFILE_UPDATE,
-  USER_PROFILE_UPDATE_ERROR,
   USER_PROFILE_UPDATE_SUCCESS,
+  USER_PROFILE_UPDATE_ERROR,
+  // USERNAME_CREATE,
+  // USERNAME_CREATE_SUCCESS,
+  // USERNAME_CREATE_ERROR,
 } from '../actionTypes';
 
-/* TODO: User is not properly typed yet due to the temporary nature of this */
-// eslint-disable-next-line import/prefer-default-export
-export function* getUser(): Saga<Object> {
+export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
 
-  // TODO: get the store first, if it doesn't exist, create it
-  // We also need to make sure we create the profile (ENS)
-  const store = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile');
-
-  // TODO: We pre-fill the store here so we have something to see
-  // Remove this once we can actually get a store
-  yield call([store, store.set], {
-    bio: 'from Texas',
-    displayName: 'Tim',
-    location: 'TX',
-    username: 'XxTimDawgXx',
-    walletAddress: '0xab5801a7d398351b8be11c439e05c5b3259aec9b',
-    website: 'http://www.texastim.com/',
-    avatar:
-      // eslint-disable-next-line max-len
-      'https://static1.funidelia.com/54007-f4_large/aufblasbares-cowboy-mit-pferd-kostum-fur-herren.jpg',
+  const accessController = new EthereumAccessController(walletAddress);
+  const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
+    accessController,
   });
+  if (store) return store;
+  return yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
+    accessController,
+  });
+}
 
+export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
 }
 
-function* updateProfile(action: Object): Saga<void> {
+function* updateProfile(action: Action): Saga<void> {
   const currentAddress = select(state => state.wallet.currentAddress);
 
   const ddb = yield getContext('ddb');
@@ -69,7 +68,7 @@ function* updateProfile(action: Object): Saga<void> {
   }
 }
 
-function* fetchProfile(action: Object): Saga<void> {
+function* fetchProfile(action: Action): Saga<void> {
   const { username } = action.payload;
   const ddb = yield getContext('ddb');
 
