@@ -8,7 +8,7 @@ type PermissionVerifyFunction = (user: string, context: *) => Promise<boolean>;
 
 type Permission = PermissionVerifyFunction | { inherits: ActionId };
 
-type PermissionsManifest = {
+export type PermissionsManifest = {
   [actionId: ActionId]: Permission,
 };
 
