@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
   workDescriptionLabel: {
     id: 'dashboard.ManagerRatingDialog.workDescriptionLabel',
-    defaultMessage: 'WorkDescription',
+    defaultMessage: 'Work Description',
   },
   workDescriptionHelp: {
     id: 'dashboard.ManagerRatingDialog.workDescriptionHelp',
