@@ -14,6 +14,14 @@
   line-height: 0;
 }
 
+.TextareaAutoresizeWrapper {
+  composes: textareaWrapper;
+
+  & .main {
+    min-height: auto;
+  }
+}
+
 .main {
   padding: 8px;
   min-height: 80px;
@@ -92,10 +100,18 @@
 }
 
 .colorSchemaTransparent {
-  border: 1px solid var(--grey-5);
+  border: 1px solid transparent;
   background-color: transparent;
   color: inherit;
   box-shadow: none;
+
+  &:focus {
+    border-color: transparent;
+  }
+
+  &[aria-invalid="true"] {
+    border-color: transparent;
+  }
 }
 
 .error {

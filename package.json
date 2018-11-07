@@ -167,6 +167,7 @@
         "react-redux-promise-listener": "^1.0.0",
         "react-router-dom": "^4.3.1",
         "react-tabs": "^2.2.2",
+        "react-textarea-autosize": "^7.1.0-1",
         "recompose": "^0.30.0",
         "redux": "^4.0.0",
         "redux-promise-listener": "^1.1.0",

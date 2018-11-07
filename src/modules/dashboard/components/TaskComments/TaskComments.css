@@ -1,0 +1,20 @@
+@value wideButton: 120px;
+
+.main {
+  padding: 10px 10px 10px 5px;
+  border: 1px solid var(--temp-grey-5);
+  background-color: var(--grey-blue-0);
+
+  &:focus-within {
+    border-color: var(--grey-4);
+  }
+}
+
+.commentControls {
+  /*
+   * @NOTE This negative margin counteracts (we just need 10px, not 15px) the default margin added by the `.fields` class
+   */
+  margin-top: -5px;
+  height: 30px;
+  text-align: right;
+}
