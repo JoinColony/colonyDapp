@@ -38,7 +38,7 @@ const UserMeta = ({
       appearance={{ margin: 'none', size: 'large' }}
       text={displayName}
     />
-    <UserMention username={username} to="/" />
+    <UserMention username={username || walletAddress} to="/" />
     <CopyableAddress>{walletAddress}</CopyableAddress>
     {bio && (
       <div className={styles.bioContainer}>
