@@ -1,0 +1,28 @@
+@value padding: 15px;
+
+.section {
+  padding: 15px;
+}
+
+.descriptionText {
+  margin-top: 30px;
+}
+
+.contentWrapper {
+  margin-top: 10px;
+}
+
+.customCancelButton {
+  composes: sizeLarge from "~core/Button/Button.css";
+  composes: themeSecondary from "~core/Button/Button.css";
+
+  /*
+   * @NOTE Important declaration to counteract the globally set form .field styles
+   * (coming from styles/shared/fields.css) and that apply to all form elements, including
+   * these two buttons.
+   *
+   * Although in all fainrness they shouldn't, since those styles were designed for row
+   * alignment of elements, not them being stacked side by side.
+   */
+  margin-bottom: 0px !important;
+}
