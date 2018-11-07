@@ -10,6 +10,10 @@ import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
+/*
+ * @TODO Temporary, please remove when wiring in the rating modals
+ */
+import withDialog from '~core/Dialog/withDialog';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDomains from '~dashboard/TaskDomains';
@@ -135,6 +139,46 @@ const Task = () => {
       <div className={styles.container}>
         <section className={styles.header}>
           <TaskRequestWork isTaskCreator={isTaskCreator} />
+          {/*
+           * @TODO This are temporary buttons to be able to show the rating
+           * modals until they will get wired up.
+           */}
+          {/* $FlowFixMe */}
+          {withDialog()(({ openDialog }) => (
+            <Button
+              text="Rate Manager"
+              onClick={() =>
+                openDialog('ManagerRatingDialog', { workSubmitted: false })
+              }
+            />
+          ))()}
+          {/* $FlowFixMe */}
+          {withDialog()(({ openDialog }) => (
+            <Button
+              text="Rate Manager (Work Submitted)"
+              onClick={() =>
+                openDialog('ManagerRatingDialog', { workSubmitted: true })
+              }
+            />
+          ))()}
+          {/* $FlowFixMe */}
+          {withDialog()(({ openDialog }) => (
+            <Button
+              text="Rate Worker"
+              onClick={() =>
+                openDialog('WorkerRatingDialog', { workSubmitted: false })
+              }
+            />
+          ))()}
+          {/* $FlowFixMe */}
+          {withDialog()(({ openDialog }) => (
+            <Button
+              text="Rate Worker (Work Submitted)"
+              onClick={() =>
+                openDialog('WorkerRatingDialog', { workSubmitted: true })
+              }
+            />
+          ))()}
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
