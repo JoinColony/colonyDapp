@@ -11,15 +11,11 @@ import PurserIdentityProvider from './PurserIdentityProvider';
 class PurserIdentity implements Identity {
   _id: string;
 
-  _idSignature: string;
-
   _orbitKey: KeyPair;
 
   _provider: PurserIdentityProvider;
 
   _publicKey: string;
-
-  _pubKeyIdSignature: string;
 
   _signatures: {
     id: string,
