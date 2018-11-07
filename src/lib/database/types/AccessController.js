@@ -11,23 +11,27 @@ type LamportClock = {
 };
 
 export type Entry = {
-  hash: string,
-  id: string,
-  payload: Object,
-  next: string[],
-  v: number,
-  clock: LamportClock,
-  sig: string,
-  key: string,
-  identity: IdentityObject,
+  hash: string, // IPFS hash of the entry
+  id: string, // IPFS ID
+  payload: Object, // The operation payload
+  next: string[], // Array of the next IPFS hashes
+  v: number, // Format version of the entry
+  clock: LamportClock, // Used to order the operations
+  sig: string, // The entry signature (signs everything but the hash)
+  key: string, // Public key used to sign the data, hex encoded
+  identity: IdentityObject, // The identity used to sign the entry
 };
 
 export interface AccessController<I: Identity, P: IdentityProvider<I>> {
-  +_type: string;
+  // static getter: `type: string`
 
   createManifest(ipfs: IPFS, name: string, type: string): Promise<string>;
 
-  canAppend(entry: Entry, provider: P): Promise<boolean>;
+  isAuthorized(entry: Entry, provider: P): Promise<boolean>;
 
-  load(): Promise<void>;
+  setup(): Promise<void>;
+
+  grant(actionId: string, address: string): boolean;
+
+  revoke(actionId: string, address: string): boolean;
 }
