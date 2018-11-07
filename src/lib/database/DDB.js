@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { ObjectSchema } from 'yup';
+
 import OrbitDB from 'orbit-db';
 import nanoid from 'nanoid';
 
@@ -8,7 +10,6 @@ import type {
   IdentityProvider,
   OrbitDBAddress,
   OrbitDBStore,
-  Schema,
   StoreType,
 } from './types';
 
@@ -46,7 +47,7 @@ const STORE_CLASSES = {
   docstore: Store,
 };
 
-const SCHEMAS: Map<string, Schema> = new Map();
+const SCHEMAS: Map<string, ObjectSchema> = new Map();
 
 /**
  * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
@@ -60,7 +61,7 @@ class DDB {
 
   _resolvers: Map<string, Resolver>;
 
-  static registerSchema(schemaId: string, schema: Schema) {
+  static registerSchema(schemaId: string, schema: ObjectSchema) {
     SCHEMAS.set(schemaId, schema);
   }
 
