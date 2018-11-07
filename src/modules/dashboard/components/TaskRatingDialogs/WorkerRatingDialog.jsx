@@ -19,20 +19,20 @@ import styles from './TaskRatingDialogs.css';
 
 const MSG = defineMessages({
   rateManager: {
-    id: 'dashboard.ManagerRatingDialog.rateManager',
+    id: 'dashboard.WorkerRatingDialog.rateManager',
     defaultMessage: 'Rate Manager',
   },
   rateManagerDescription: {
-    id: 'dashboard.ManagerRatingDialog.rateManagerDescription',
+    id: 'dashboard.WorkerRatingDialog.rateManagerDescription',
     defaultMessage:
       'Please rate the manager of this task based on the criteria below.',
   },
   submitWork: {
-    id: 'dashboard.ManagerRatingDialog.submitWork',
+    id: 'dashboard.WorkerRatingDialog.submitWork',
     defaultMessage: 'Submit Work',
   },
   submitWorkDescription: {
-    id: 'dashboard.ManagerRatingDialog.submitWorkDescription',
+    id: 'dashboard.WorkerRatingDialog.submitWorkDescription',
     defaultMessage: `
       Are you ready to submit your work? You will not be able to re-submit so
       be sure you have talked to the task creator to confirm that your work
@@ -40,24 +40,24 @@ const MSG = defineMessages({
     `,
   },
   workDescriptionLabel: {
-    id: 'dashboard.ManagerRatingDialog.workDescriptionLabel',
+    id: 'dashboard.WorkerRatingDialog.workDescriptionLabel',
     defaultMessage: 'WorkDescription',
   },
   workDescriptionHelp: {
-    id: 'dashboard.ManagerRatingDialog.workDescriptionHelp',
+    id: 'dashboard.WorkerRatingDialog.workDescriptionHelp',
     defaultMessage:
       'Please enter a short description or URL of the work you are submitting',
   },
   workDescriptionError: {
-    id: 'dashboard.ManagerRatingDialog.workDescriptionError',
+    id: 'dashboard.WorkerRatingDialog.workDescriptionError',
     defaultMessage: 'You must enter a brief description for the submitted work',
   },
   ratingStar: {
-    id: 'dashboard.ManagerRatingDialog.ratingStar',
+    id: 'dashboard.WorkerRatingDialog.ratingStar',
     defaultMessage: 'Rating Star',
   },
   managerRatingTitle: {
-    id: 'dashboard.ManagerRatingDialog.managerRatingTitle',
+    id: 'dashboard.WorkerRatingDialog.managerRatingTitle',
     defaultMessage: `{value, select,
       3 {Above and beyond}
       2 {Good}
@@ -65,7 +65,7 @@ const MSG = defineMessages({
     }`,
   },
   managerRatingDescription: {
-    id: 'dashboard.ManagerRatingDialog.managerRatingDescription',
+    id: 'dashboard.WorkerRatingDialog.managerRatingDescription',
     defaultMessage: `{value, select,
       3 {The manager went above and beyond in their role.}
       2 {The manager performed their role well and as expected.}
@@ -88,7 +88,7 @@ type Props = {
   workSubmitted: boolean,
 };
 
-const displayName = 'dashboard.ManagerRatingDialog';
+const displayName = 'dashboard.WorkerRatingDialog';
 
 const validationSchema = yup.object().shape({
   rating: yup.string().required(),
@@ -104,7 +104,7 @@ const validationSchemaExtended = validationSchema.shape({
   workDescription: yup.string().required(MSG.workDescriptionError),
 });
 
-const ManagerRatingDialog = ({ cancel, workSubmitted }: Props) => (
+const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <Form
       initialValues={{
@@ -184,6 +184,6 @@ const ManagerRatingDialog = ({ cancel, workSubmitted }: Props) => (
   </Dialog>
 );
 
-ManagerRatingDialog.displayName = displayName;
+WorkerRatingDialog.displayName = displayName;
 
-export default ManagerRatingDialog;
+export default WorkerRatingDialog;

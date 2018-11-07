@@ -13,7 +13,10 @@ import TaskRequestWorkDialog from /*
  * Again, the same trick of making prettier not suggest a fix that would
  * break the eslint rules, by just adding a comment
  */ '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
-import { ManagerRatingDialog } from '~dashboard/TaskRatingDialogs';
+import {
+  ManagerRatingDialog,
+  WorkerRatingDialog,
+} from '~dashboard/TaskRatingDialogs';
 
 const dialogComponents: Object = {
   // Hint: Once we have the gas station we just have to add it here
@@ -22,6 +25,7 @@ const dialogComponents: Object = {
   TokenMintDialog,
   TaskRequestWorkDialog,
   ManagerRatingDialog,
+  WorkerRatingDialog,
 };
 
 export default dialogComponents;
