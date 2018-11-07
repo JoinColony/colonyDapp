@@ -14,7 +14,8 @@
         {
             "files":  "**/__tests__/*.js",
             "rules": {
-                "flowtype/require-valid-file-annotation": "off"
+                "flowtype/require-valid-file-annotation": "off",
+                "no-underscore-dangle": "off"
             },
             "env": {
               "jest": true
