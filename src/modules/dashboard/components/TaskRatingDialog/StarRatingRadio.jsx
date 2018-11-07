@@ -39,14 +39,18 @@ type Props = {
   value: 1 | 2 | 3,
   checked: boolean,
   title: MessageDescriptor,
+  titleValues?: Object,
   description: MessageDescriptor,
+  descriptionValues?: Object,
 };
 
 const displayName = 'dashboard.TaskRatingDialog.StarRatingRadio';
 
 const StarRatingRadio = ({
   title,
+  titleValues = {},
   description,
+  descriptionValues = {},
   value = 3,
   name,
   checked = false,
@@ -54,7 +58,11 @@ const StarRatingRadio = ({
   <Radio checked={checked} name={name} value={value}>
     <div className={styles.ratingItem}>
       <div className={styles.ratingText}>
-        <Heading appearance={{ size: 'normal', margin: 'none' }} text={title} />
+        <Heading
+          appearance={{ size: 'normal', margin: 'none' }}
+          text={title}
+          textValues={titleValues}
+        />
         <p
           className={
             value === 1
@@ -62,7 +70,7 @@ const StarRatingRadio = ({
               : styles.ratingItemDescription
           }
         >
-          <FormattedMessage {...description} />
+          <FormattedMessage {...description} values={descriptionValues} />
         </p>
       </div>
       <div className={styles.ratingStars}>
