@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
-import { Form, Radio } from '~core/Fields';
+import { Form, Radio, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 
@@ -20,10 +20,35 @@ const MSG = defineMessages({
     id: 'dashboard.TaskRatingDialog.rateManager',
     defaultMessage: 'Rate Manager',
   },
-  endTaskRateManagerDescription: {
-    id: 'dashboard.TaskRatingDialog.endTaskRateManagerDescription',
+  rateManagerDescription: {
+    id: 'dashboard.TaskRatingDialog.rateManagerDescription',
     defaultMessage:
       'Please rate the manager of this task based on the criteria below.',
+  },
+  submitWork: {
+    id: 'dashboard.TaskRatingDialog.submitWork',
+    defaultMessage: 'Submit Work',
+  },
+  submitWorkDescription: {
+    id: 'dashboard.TaskRatingDialog.submitWorkDescription',
+    defaultMessage: `
+      Are you ready to submit your work? You will not be able to re-submit so
+      be sure you have talked to the task creator to confirm that your work
+      will be accepted.
+    `,
+  },
+  workDescriptionLabel: {
+    id: 'dashboard.TaskRatingDialog.workDescriptionLabel',
+    defaultMessage: 'WorkDescription',
+  },
+  workDescriptionHelp: {
+    id: 'dashboard.TaskRatingDialog.workDescriptionHelp',
+    defaultMessage:
+      'Please enter a short description or URL of the work you are submitting',
+  },
+  workDescriptionError: {
+    id: 'dashboard.TaskRatingDialog.workDescriptionError',
+    defaultMessage: 'You must enter a brief description for the submitted work',
   },
   ratingStar: {
     id: 'dashboard.TaskRatingDialog.ratingStar',
@@ -58,28 +83,43 @@ const MSG = defineMessages({
 
 type FormValues = {
   rating: number,
+  workDescription: string,
 };
 
 type Props = {
   cancel: () => void,
   close: () => void,
+  workSubmitted: boolean,
 };
 
 const displayName = 'dashboard.TaskRatingDialog';
 
 const validationSchema = yup.object().shape({
-  rating: yup.string().required('ARg!!!!'),
+  rating: yup.string().required(),
 });
 
-const TaskRatingDialog = ({ cancel }: Props) => (
+/*
+ * @NOTE In case we also have the work description input field, validate against that too.
+ *
+ * We need to do it this way since otherwise, in the case where the work isn't already submitted
+ * it would always throw an error since the Input field wouldn't actually show up
+ */
+const validationSchemaExtended = validationSchema.shape({
+  workDescription: yup.string().required(MSG.workDescriptionError),
+});
+
+const TaskRatingDialog = ({ cancel, workSubmitted }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <Form
       initialValues={{
         rating: '',
+        workDescription: '',
       }}
       /* eslint-disable-next-line no-console */
       onSubmit={(values: FormValues) => console.log(`[${displayName}]`, values)}
-      validationSchema={validationSchema}
+      validationSchema={
+        workSubmitted ? validationSchemaExtended : validationSchema
+      }
     >
       {({
         isSubmitting,
@@ -89,9 +129,28 @@ const TaskRatingDialog = ({ cancel }: Props) => (
         <Fragment>
           <DialogSection>
             <div className={styles.contentWrapper}>
+              {workSubmitted && (
+                <section className={styles.workSubmittedSection}>
+                  <Heading
+                    appearance={{ size: 'medium' }}
+                    text={MSG.submitWork}
+                  />
+                  <p className={styles.descriptionText}>
+                    <FormattedMessage {...MSG.submitWorkDescription} />
+                  </p>
+                  <div className={styles.workDescription}>
+                    <Input
+                      appearance={{ theme: 'fat' }}
+                      label={MSG.workDescriptionLabel}
+                      help={MSG.workDescriptionHelp}
+                      name="workDescription"
+                    />
+                  </div>
+                </section>
+              )}
               <Heading appearance={{ size: 'medium' }} text={MSG.rateManager} />
               <p className={styles.descriptionText}>
-                <FormattedMessage {...MSG.endTaskRateManagerDescription} />
+                <FormattedMessage {...MSG.rateManagerDescription} />
               </p>
               <section className={styles.ratingSection}>
                 {/*
