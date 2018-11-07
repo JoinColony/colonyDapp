@@ -8,11 +8,10 @@
 }
 
 .notEditingValueContainer {
-  display: inline-block;
   margin: 0 0 15px 0;
   padding-top: 6px;
-  border-bottom: 1px color-mod(var(--text) alpha(50%)) dotted;
   color: color-mod(var(--text) alpha(50%));
+  cursor: text;
 }
 
 .notEditingValueContainer:focus {
@@ -20,9 +19,10 @@
 }
 
 .notEditingValue {
+  display: inline-block;
+  border-bottom: 1px color-mod(var(--text) alpha(50%)) dotted;
   font-weight: var(--weight-medium);
   white-space: nowrap;
-  cursor: text;
 }
 
 .inputContainer {
@@ -45,7 +45,7 @@
 
 /* State */
 
-.stateHasValue .notEditingValueContainer {
+.stateHasValue .notEditingValueContainer .notEditingValue {
   border-bottom-color: transparent;
   color: var(--text);
 }
