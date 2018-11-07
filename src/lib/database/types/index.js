@@ -8,12 +8,9 @@ export type { OrbitDBStore } from './OrbitDBStore';
 export type { OrbitDBKVStore } from './OrbitDBKVStore';
 export type { ENSResolverType } from './ENSResolver';
 
-export type Schema = {
-  [string]: any,
-};
-
 export type IPFSHash = string;
 
+// IPFS store types
 export type StoreType =
   | 'counter'
   | 'eventlog'
