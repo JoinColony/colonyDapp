@@ -60,7 +60,7 @@ class CopyableAddress extends Component<Props, State> {
           to: address,
         },
         {
-          size: 25,
+          size: 40,
           selector: '#qr-code',
           options: { margin: 0 },
         },

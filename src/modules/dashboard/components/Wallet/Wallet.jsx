@@ -35,6 +35,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.Wallet';
+
 const Wallet = () => (
   <div className={styles.layoutMain}>
     <main className={styles.content}>
@@ -70,5 +72,7 @@ const Wallet = () => (
     </aside>
   </div>
 );
+
+Wallet.displayName = displayName;
 
 export default Wallet;

@@ -1,16 +1,16 @@
 .main {
   display: flex;
   align-items: flex-end;
+  line-height: 23px;
 }
 
 .themeBig {
-  font-size: var(--size-medium-l);
-  letter-spacing: 1px;
   display: flex;
   align-items: flex-end;
+  font-size: var(--size-medium-l);
+  letter-spacing: 1px;
 }
 
 canvas {
   margin-right: 10px;
-  margin-bottom: -6px;
 }
