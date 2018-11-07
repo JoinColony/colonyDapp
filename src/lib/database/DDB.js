@@ -13,8 +13,7 @@ import type {
 } from './types';
 
 import IPFSNode from '../ipfs';
-import Store from './Store';
-import KVStore from './KVStore';
+import { Store, KVStore } from './stores/index';
 
 // TODO: better typing
 type Resolver = Object;
