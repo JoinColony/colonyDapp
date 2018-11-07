@@ -14,8 +14,8 @@ import type {
 } from './types';
 
 import IPFSNode from '../ipfs';
-import Store from './Store';
-import KVStore from './KVStore';
+import Store from './stores/Store';
+import KVStore from './stores/KVStore';
 
 // TODO: better typing
 type Resolver = Object;
@@ -159,7 +159,7 @@ class DDB {
         'Please define an identifier for the store you want to retrieve',
       );
     }
-    if (typeof identifier == 'string') {
+    if (typeof identifier === 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
         return parseAddress(identifier);
