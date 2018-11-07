@@ -6,23 +6,16 @@ import { providers } from 'ethers';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { delay } from 'redux-saga';
-import {
-  call,
-  getContext,
-  put,
-  takeEvery,
-  takeLatest,
-} from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
 import { DASHBOARD_ROUTE } from '~routes';
 
-import type { TransactionAction } from '../../core/types';
-import methodSagaFactory from '../../core/sagas/utils/methodSagaFactory';
-
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
+
+import { networkMethodSagaFactory } from '../../core/sagas/networkClient';
 
 import {
   COLONY_CREATE,
@@ -36,39 +29,10 @@ import {
   TOKEN_INFO_FETCH_SUCCESS,
 } from '../actionTypes';
 
-function networkMethodSagaFactory<Params: Object, EventData: Object>(
-  methodName,
-  lifecycleActionTypes,
-) {
-  return function* networkMethodSaga(
-    action: TransactionAction<Params>,
-  ): Saga<void> {
-    try {
-      // Get the named method from the `networkClient` context.
-      const { [methodName]: method } = yield getContext('networkClient');
-
-      // Create a saga for this method and given success/error action types,
-      // then immediately call it with the given action.
-      const saga = methodSagaFactory<Params, EventData>(
-        method,
-        lifecycleActionTypes,
-      );
-      yield call(saga, action);
-    } catch (error) {
-      const { error: errorType } = lifecycleActionTypes;
-      if (errorType) {
-        yield put({ type: errorType, payload: error });
-      } else {
-        throw error;
-      }
-    }
-  };
-}
-
 /**
  * On successful colony creation, redirect to the dashboard.
  */
-function* createColonySuccess(): Saga<typeof undefined> {
+function* createColonySuccess(): Saga<void> {
   yield put(replace(DASHBOARD_ROUTE));
 }
 
@@ -111,7 +75,7 @@ async function getTokenClientInfo(contractAddress: string) {
 /**
  * Get the token info for a given `tokenAddress`.
  */
-function* getTokenInfo({ payload: { tokenAddress } }): Saga<*> {
+function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
 
