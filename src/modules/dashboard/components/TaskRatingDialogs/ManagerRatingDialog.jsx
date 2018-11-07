@@ -52,10 +52,6 @@ const MSG = defineMessages({
     id: 'dashboard.ManagerRatingDialog.workDescriptionError',
     defaultMessage: 'You must enter a brief description for the submitted work',
   },
-  ratingStar: {
-    id: 'dashboard.ManagerRatingDialog.ratingStar',
-    defaultMessage: 'Rating Star',
-  },
   managerRatingTitle: {
     id: 'dashboard.ManagerRatingDialog.managerRatingTitle',
     defaultMessage: `{value, select,
