@@ -4,7 +4,11 @@ import type { Saga } from 'redux-saga';
 
 import { call, put } from 'redux-saga/effects';
 
-import type { TransactionAction, Sender } from '../../types';
+import type {
+  TransactionAction,
+  Sender,
+  LifecycleActionTypes,
+} from '../../types';
 
 import sendMethodTransaction from './sendMethodTransaction';
 
@@ -14,8 +18,7 @@ import sendMethodTransaction from './sendMethodTransaction';
  */
 export default function methodSagaFactory<Params: *, EventData: *>(
   method: Sender<Params, EventData>,
-  successType: string,
-  errorType: string,
+  lifecycleActionTypes: LifecycleActionTypes = {},
 ) {
   return function* methodSaga(action: TransactionAction<Params>): Saga<void> {
     try {
@@ -28,17 +31,23 @@ export default function methodSagaFactory<Params: *, EventData: *>(
         error?: Error,
         receipt?: Object,
         eventData?: EventData,
-      } = yield call(sendMethodTransaction, method, action);
+      } = yield call(
+        sendMethodTransaction,
+        method,
+        action,
+        lifecycleActionTypes,
+      );
 
       // Depending on the response, `put` the given success/error action.
-      yield put(
-        error
-          ? { type: errorType, payload: error }
-          : { type: successType, payload: { receipt, eventData } },
-      );
+      const { error: errorType, success: successType } = lifecycleActionTypes;
+      if (error) {
+        if (errorType) yield put({ type: errorType, payload: error });
+      } else if (successType)
+        yield put({ type: successType, payload: { receipt, eventData } });
     } catch (error) {
       // Unexpected errors `put` the given error action.
-      yield put({ type: errorType, payload: error });
+      const { error: type } = lifecycleActionTypes;
+      if (type) yield put({ type, payload: error });
     }
   };
 }

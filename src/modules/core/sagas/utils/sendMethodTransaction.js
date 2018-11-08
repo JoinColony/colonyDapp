@@ -4,7 +4,11 @@ import type { Saga } from 'redux-saga';
 
 import { cancel, call, fork } from 'redux-saga/effects';
 
-import type { Sender, TransactionAction } from '../../types';
+import type {
+  Sender,
+  TransactionAction,
+  LifecycleActionTypes,
+} from '../../types';
 
 import { getTransactionResponse, sendTransaction } from './sendTransaction';
 
@@ -32,6 +36,7 @@ export default function* sendMethodTransaction<
 >(
   method: Sender<Params, EventData>,
   action: TransactionAction<Params>,
+  lifecycleActionTypes: LifecycleActionTypes,
 ): Saga<{ error?: Error, receipt?: Object, eventData?: EventData }> {
   let response;
   let task;
@@ -40,7 +45,7 @@ export default function* sendMethodTransaction<
     const txPromise = getMethodTxPromise(method, action);
 
     // Create a task to send the transaction for the given action.
-    task = yield fork(sendTransaction, txPromise, action);
+    task = yield fork(sendTransaction, txPromise, action, lifecycleActionTypes);
 
     // Get the successful/erroneous transaction response.
     response = yield call(getTransactionResponse);

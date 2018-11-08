@@ -38,8 +38,7 @@ import {
 
 function networkMethodSagaFactory<Params: Object, EventData: Object>(
   methodName,
-  successType,
-  errorType,
+  lifecycleActionTypes,
 ) {
   return function* networkMethodSaga(
     action: TransactionAction<Params>,
@@ -52,12 +51,16 @@ function networkMethodSagaFactory<Params: Object, EventData: Object>(
       // then immediately call it with the given action.
       const saga = methodSagaFactory<Params, EventData>(
         method,
-        successType,
-        errorType,
+        lifecycleActionTypes,
       );
       yield call(saga, action);
     } catch (error) {
-      yield put({ type: errorType, payload: error });
+      const { error: errorType } = lifecycleActionTypes;
+      if (errorType) {
+        yield put({ type: errorType, payload: error });
+      } else {
+        throw error;
+      }
     }
   };
 }
@@ -136,11 +139,14 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<*> {
 const createColony = networkMethodSagaFactory<
   { tokenAddress: string },
   { colonyAddress: string, colonyId: number },
->('createColony', COLONY_CREATE_SUCCESS, COLONY_CREATE_ERROR);
+>('createColony', {
+  success: COLONY_CREATE_SUCCESS,
+  error: COLONY_CREATE_ERROR,
+});
 const createToken = networkMethodSagaFactory<
   { name: string, symbol: string },
   {},
->('createToken', TOKEN_CREATE_SUCCESS, TOKEN_CREATE_ERROR);
+>('createToken', { success: TOKEN_CREATE_SUCCESS, error: TOKEN_CREATE_ERROR });
 
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColony);
