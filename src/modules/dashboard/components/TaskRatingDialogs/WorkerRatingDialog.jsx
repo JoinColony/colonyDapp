@@ -92,16 +92,18 @@ const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
         values: { rating },
       }: FormikProps<FormValues>) => (
         <Fragment>
+          {workSubmitted && (
+            <DialogSection appearance={{ border: 'bottom' }}>
+              <section className={styles.workSubmittedSection}>
+                <Heading appearance={{ size: 'medium' }} text={MSG.endTask} />
+                <p className={styles.descriptionText}>
+                  <FormattedMessage {...MSG.endTaskDescription} />
+                </p>
+              </section>
+            </DialogSection>
+          )}
           <DialogSection>
             <div className={styles.contentWrapper}>
-              {workSubmitted && (
-                <section className={styles.workSubmittedSection}>
-                  <Heading appearance={{ size: 'medium' }} text={MSG.endTask} />
-                  <p className={styles.descriptionText}>
-                    <FormattedMessage {...MSG.endTaskDescription} />
-                  </p>
-                </section>
-              )}
               <Heading appearance={{ size: 'medium' }} text={MSG.rateWorker} />
               <p className={styles.descriptionText}>
                 <FormattedMessage {...MSG.rateWorkerDescription} />
