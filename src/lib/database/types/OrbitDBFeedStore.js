@@ -2,7 +2,7 @@
 
 import type { OrbitDBStore } from './OrbitDBStore';
 
-type FeedStoreOptions = {
+export type FeedIteratorOptions = {
   gt?: string,
   gte?: string,
   lt?: string,
@@ -15,5 +15,5 @@ export interface OrbitDBFeedStore extends OrbitDBStore {
   add(value: any): Promise<string>;
   remove(key: string): Promise<string>;
   get(key: string): Object;
-  iterator(options?: FeedStoreOptions): { collect: () => Array<Object> };
+  iterator(options?: FeedIteratorOptions): { collect: () => Array<Object> };
 }
