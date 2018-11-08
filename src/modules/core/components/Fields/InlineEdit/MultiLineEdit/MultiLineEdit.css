@@ -1,0 +1,24 @@
+.main {
+  & :global {
+    & .DraftEditor-root {
+      padding: 5px 0;
+      border: 1px solid transparent;
+
+      &:focus-within {
+        padding: 5px;
+        border-color: var(--primary);
+        background-color: var(--colony-white);
+      }
+    }
+
+    & .public-DraftEditorPlaceholder-root {
+      border-bottom: 1px dotted var(--grey-4);
+      color: var(--grey-4);
+
+      &.public-DraftEditorPlaceholder-hasFocus {
+        border-bottom-color: transparent;
+        font-style: italic;
+      }
+    }
+  }
+}

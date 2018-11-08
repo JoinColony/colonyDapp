@@ -7,6 +7,11 @@
 # We need to remove these as soon as they fixed flow support
 .*/node_modules/findup/.*?\.json
 .*/node_modules/oboe/.*?\.json
+# https://github.com/facebook/draft-js/issues/1621
+.*/node_modules/draft-js/lib/ContentBlock.js.flow
+.*/node_modules/draft-js/lib/ContentBlockNode.js.flow
+.*/node_modules/draft-js/lib/DraftEditor.react.js.flow
+.*/node_modules/draft-js/lib/DraftEditorLeaf.react.js.flow
 # https://github.com/atlassian/react-beautiful-dnd/issues/851
 .*/node_modules/react-beautiful-dnd/.*
 
