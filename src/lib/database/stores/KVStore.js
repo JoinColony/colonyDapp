@@ -60,7 +60,7 @@ class KVStore extends Store {
   }
 
   all() {
-    return Object.keys(this._schema).reduce((data, key) => {
+    return Object.keys(this._schema.fields).reduce((data, key) => {
       const value = this._orbitStore.get(key);
       // XXX We could `.cast()` the values from the schema instead of removing
       // undefined values, but that could potentially throw errors.
