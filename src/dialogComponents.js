@@ -16,6 +16,7 @@ import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
 import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import CreateUsernameDialog from '~users/CreateUsernameDialog';
 import TaskClaimRewardDialog from '~dashboard/TaskClaimRewardDialog';
+import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
 
 const dialogComponents: Object = {
   // Hint: Once we have the gas station we just have to add it here
