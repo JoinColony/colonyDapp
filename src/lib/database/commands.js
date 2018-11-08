@@ -1,6 +1,7 @@
 /* @flow */
 
-import type { Store, KVStore } from './stores/index';
+import type Store from './Store';
+import type KVStore from './KVStore';
 
 // This file is in preparation to handle multiple store types with one command
 // and to add more complex functionality

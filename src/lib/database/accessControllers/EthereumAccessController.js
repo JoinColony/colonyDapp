@@ -37,7 +37,7 @@ class EthereumAccessController<
     return this.constructor._putManifest(ipfs, {
       name,
       type: storeType,
-      account: `/${this.constructor.type}/${this.signingAddress}`, // FIXME owner instead of type ?
+      account: `/${this.constructor.type}/${this.signingAddress}`,
     });
   }
 }

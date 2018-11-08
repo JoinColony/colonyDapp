@@ -10,6 +10,9 @@ export type { ENSResolverType } from './ENSResolver';
 
 export type IPFSHash = string;
 
+// TODO use yup's `object` type
+export type Schema = Object;
+
 // IPFS store types
 export type StoreType =
   | 'counter'
