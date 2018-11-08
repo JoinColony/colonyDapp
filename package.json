@@ -146,7 +146,7 @@
         "formik": "^1.0.2",
         "history": "^4.7.2",
         "immutable": "^4.0.0-rc.10",
-        "ipfs": "0.33.0",
+        "ipfs": "^0.33.1",
         "linkify-it": "^2.0.3",
         "lodash": "4.17.11",
         "lru-cache": "^4.1.3",
