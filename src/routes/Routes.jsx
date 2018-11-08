@@ -19,6 +19,8 @@ import ProfileCreate from '~users/ProfileCreate';
 
 import AdminDashboard from '~admin/AdminDashboard';
 
+import { currentUserState } from '../modules/users/selectors';
+
 import {
   CONNECT_ROUTE,
   COLONY_HOME_ROUTE,
@@ -42,8 +44,8 @@ const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 // We cannot add types to this component's props because of how we're using
 // `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
 // eslint-disable-next-line react/prop-types
-const Routes = ({ currentUser: { walletAddress } }) => {
-  const isConnected = !!walletAddress;
+const Routes = ({ currentUser }) => {
+  const isConnected = !!(currentUser && currentUser.walletAddress);
   return (
     <Switch>
       <Route
@@ -123,8 +125,8 @@ const Routes = ({ currentUser: { walletAddress } }) => {
 };
 
 const RoutesContainer = connect(
-  ({ user: { currentUser } }) => ({
-    currentUser: currentUser || {},
+  state => ({
+    currentUser: currentUserState(state),
   }),
   null,
 )(Routes);

@@ -5,21 +5,33 @@ import { createSelector } from 'reselect';
 // TODO should not need /index here
 import type { UserRecord as User, Users, UsersRecord } from '~types/index';
 
-type State = { user: { users: UsersRecord } };
+type RootState = {
+  users: {
+    allUsers: UsersRecord,
+    currentUser: User,
+  },
+};
 
-type UserKeySelector = (state: State) => UsersRecord;
-type UsersSelector = (userState: UsersRecord) => Users;
+type AllUsersStateSelector = (state: RootState) => UsersRecord;
+type CurrentUserStateSelector = (state: RootState) => User;
+type UsersSelector = (allUsersState: UsersRecord) => Users;
 type LoadingSelector = (users: UsersRecord) => boolean;
-type UserIdSelector = (state: State, props: Object) => string;
-type UserProfileSelector = (state: State, props: Object) => User;
+type UserIdSelector = (state: RootState, props: Object) => string;
+type UserProfileSelector = (state: RootState, props: Object) => User;
+type UserOrbitAddressSelector = (state: RootState) => string;
 
-export const userState: UserKeySelector = state => state.user.users;
+const root = 'users';
+
+export const allUsersState: AllUsersStateSelector = state =>
+  state[root].allUsers;
+export const currentUserState: CurrentUserStateSelector = state =>
+  state[root].currentUser;
 export const allUsers: UsersSelector = createSelector(
-  userState,
+  allUsersState,
   state => state.users,
 );
 export const isLoading: LoadingSelector = createSelector(
-  userState,
+  allUsersState,
   state => state.isLoading,
 );
 export const targetUserId: UserIdSelector = (_, props) =>
@@ -28,4 +40,8 @@ export const targetUserProfile: UserProfileSelector = createSelector(
   allUsers,
   targetUserId,
   (users, targetId) => users[targetId],
+);
+export const userOrbitAddress: UserOrbitAddressSelector = createSelector(
+  currentUserState,
+  state => state.orbitStore,
 );

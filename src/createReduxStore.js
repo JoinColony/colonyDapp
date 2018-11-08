@@ -16,7 +16,7 @@ import reduxPromiseListener from './createPromiseListener';
 
 const rootReducer = combineReducers({
   core: coreReducer,
-  user: userReducer,
+  users: userReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware({ context });
