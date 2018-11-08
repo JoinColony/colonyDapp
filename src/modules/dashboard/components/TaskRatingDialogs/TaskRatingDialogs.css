@@ -9,14 +9,7 @@
 }
 
 .workSubmittedSection {
-  /*
-   * @NOTE Negative margins added so that we can override the default padding brought by
-   * `DialogSection`, so that we can stretch the bottom borders from one margin to another
-   *  (Otherwise they will stop at the padding limit)
-   */
-  margin: 0 -30px 20px;
-  padding: 0 30px 20px;
-  border-bottom: 1px solid var(--temp-grey-0);
+  margin-top: 10px;
 }
 
 .workDescription {
@@ -25,7 +18,7 @@
    */
   margin: 30px -30px 0 -30px;
   padding: 30px 30px 0;
-  border-top: 1px solid var(--temp-grey-0);
+  border-top: 1px solid var(--grey-blue-0);
 }
 
 .customCancelButton {

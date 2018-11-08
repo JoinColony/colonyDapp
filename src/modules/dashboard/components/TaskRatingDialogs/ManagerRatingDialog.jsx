@@ -119,27 +119,29 @@ const ManagerRatingDialog = ({ cancel, workSubmitted }: Props) => (
         values: { rating },
       }: FormikProps<FormValues>) => (
         <Fragment>
+          {workSubmitted && (
+            <DialogSection appearance={{ border: 'bottom' }}>
+              <section className={styles.workSubmittedSection}>
+                <Heading
+                  appearance={{ size: 'medium' }}
+                  text={MSG.submitWork}
+                />
+                <p className={styles.descriptionText}>
+                  <FormattedMessage {...MSG.submitWorkDescription} />
+                </p>
+                <div className={styles.workDescription}>
+                  <Input
+                    appearance={{ theme: 'fat' }}
+                    label={MSG.workDescriptionLabel}
+                    help={MSG.workDescriptionHelp}
+                    name="workDescription"
+                  />
+                </div>
+              </section>
+            </DialogSection>
+          )}
           <DialogSection>
             <div className={styles.contentWrapper}>
-              {workSubmitted && (
-                <section className={styles.workSubmittedSection}>
-                  <Heading
-                    appearance={{ size: 'medium' }}
-                    text={MSG.submitWork}
-                  />
-                  <p className={styles.descriptionText}>
-                    <FormattedMessage {...MSG.submitWorkDescription} />
-                  </p>
-                  <div className={styles.workDescription}>
-                    <Input
-                      appearance={{ theme: 'fat' }}
-                      label={MSG.workDescriptionLabel}
-                      help={MSG.workDescriptionHelp}
-                      name="workDescription"
-                    />
-                  </div>
-                </section>
-              )}
               <Heading appearance={{ size: 'medium' }} text={MSG.rateManager} />
               <p className={styles.descriptionText}>
                 <FormattedMessage {...MSG.rateManagerDescription} />
