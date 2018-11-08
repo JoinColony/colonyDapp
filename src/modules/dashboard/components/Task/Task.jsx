@@ -114,6 +114,11 @@ const Task = ({ openDialog }: Props) => {
         <section className={styles.header}>
           <TaskRequestWork isTaskCreator={isTaskCreator} />
           {/*
+           * @TODO This should only be shown, if we're a worker, and the task
+           * has a reward and was finalized (due date passed or work was submitted and rated)
+           */}
+          <TaskClaimReward workRating={1} />
+          {/*
            * @TODO This are temporary buttons to be able to show the rating
            * modals until they will get wired up.
            */}
