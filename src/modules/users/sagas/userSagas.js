@@ -31,12 +31,18 @@ export function* getUser(): Saga<Object> {
   // TODO: We pre-fill the store here so we have something to see
   // Remove this once we can actually get a store
   yield call([store, store.set], {
-    displayName: 'Tim',
     bio: 'from Texas',
+    displayName: 'Tim',
+    location: 'TX',
+    username: 'XxTimDawgXx',
+    walletAddress: '0xab5801a7d398351b8be11c439e05c5b3259aec9b',
+    website: 'http://www.texastim.com/',
+    avatar:
+      // eslint-disable-next-line max-len
+      'https://static1.funidelia.com/54007-f4_large/aufblasbares-cowboy-mit-pferd-kostum-fur-herren.jpg',
   });
 
-  const user = yield call(getAll, store);
-  return user;
+  return yield call(getAll, store);
 }
 
 function* updateProfile(action: Object): Saga<void> {
