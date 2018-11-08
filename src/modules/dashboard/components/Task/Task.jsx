@@ -10,6 +10,12 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 
+/*
+ * @TODO Temporary, please remove when wiring in the rating modals
+ */
+import type { DialogType } from '~core/Dialog';
+import withDialog from '~core/Dialog/withDialog';
+
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
 import TaskDomains from '~dashboard/TaskDomains';
@@ -21,6 +27,10 @@ import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import taskMock from './__datamocks__/mockTask';
 
 const displayName = 'dashboard.Task';
+
+type Props = {
+  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
+};
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -50,7 +60,7 @@ const filter = (data, filterValue) =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
-const Task = () => {
+const Task = ({ openDialog }: Props) => {
   const isTaskCreator =
     taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
 
@@ -112,6 +122,36 @@ const Task = () => {
       <div className={styles.container}>
         <section className={styles.header}>
           <TaskRequestWork isTaskCreator={isTaskCreator} />
+          {/*
+           * @TODO This are temporary buttons to be able to show the rating
+           * modals until they will get wired up.
+           */}
+          <Button
+            text="Rate Manager"
+            onClick={() =>
+              openDialog('ManagerRatingDialog', {
+                workSubmitted: false,
+              })
+            }
+          />
+          <Button
+            text="Rate Manager (Work Submitted)"
+            onClick={() =>
+              openDialog('ManagerRatingDialog', { workSubmitted: true })
+            }
+          />
+          <Button
+            text="Rate Worker"
+            onClick={() =>
+              openDialog('WorkerRatingDialog', { workSubmitted: false })
+            }
+          />
+          <Button
+            text="Rate Worker (Work Submitted)"
+            onClick={() =>
+              openDialog('WorkerRatingDialog', { workSubmitted: true })
+            }
+          />
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
@@ -128,4 +168,4 @@ const Task = () => {
 
 Task.displayName = displayName;
 
-export default Task;
+export default withDialog()(Task);
