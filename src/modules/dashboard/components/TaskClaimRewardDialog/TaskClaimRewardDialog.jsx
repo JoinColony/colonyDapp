@@ -19,26 +19,30 @@ const MSG = defineMessages({
 
 type Props = {
   cancel: () => void,
+  close: () => void,
 };
 
 const displayName = 'dashboard.TaskClaimRewardDialog';
 
-const TaskClaimRewardDialog = ({ cancel }: Props) => (
-  <Dialog cancel={cancel}>
+const TaskClaimRewardDialog = ({ cancel, close }: Props) => (
+  <Dialog cancel={cancel} className={styles.main}>
     <DialogSection appearance={{ border: 'bottom' }}>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
     </DialogSection>
     <DialogSection appearance={{ align: 'right' }}>
       <Button
-        className={styles.customCancelButton}
+        appearance={{ theme: 'secondary', size: 'large' }}
         onClick={cancel}
         text={{ id: 'button.cancel' }}
       />
       <Button
         appearance={{ theme: 'primary', size: 'large' }}
         text={{ id: 'button.continue' }}
-        /* eslint-disable-next-line no-console */
-        onClick={() => console.log(`[${displayName}]`, 'Claim the reward!')}
+        onClick={() => {
+          /* eslint-disable-next-line no-console */
+          console.log(`[${displayName}]`, 'Claimed that sweet, sweet reward!');
+          return close();
+        }}
       />
     </DialogSection>
   </Dialog>

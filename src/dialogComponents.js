@@ -15,6 +15,7 @@ import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
 // eslint-disable-next-line max-len
 import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import CreateUsernameDialog from '~users/CreateUsernameDialog';
+import TaskClaimRewardDialog from '~dashboard/TaskClaimRewardDialog';
 
 const dialogComponents: Object = {
   // Hint: Once we have the gas station we just have to add it here
@@ -25,6 +26,7 @@ const dialogComponents: Object = {
   TaskRequestWorkDialog,
   ManagerRatingDialog,
   WorkerRatingDialog,
+  TaskClaimRewardDialog,
 };
 
 export default dialogComponents;
