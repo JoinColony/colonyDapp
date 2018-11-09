@@ -14,8 +14,10 @@ const createBN = val =>
 export const mockTaskReward = {
   workerRating: 3,
   payoutsEarned: [
+    { symbol: 'DAI', amount: 1001 },
     { symbol: 'CLNY', amount: 600 },
     { symbol: 'ETH', amount: 200105 },
+    { symbol: 'COOL', amount: 600 },
   ],
   reputationEarned: 1045,
 };
