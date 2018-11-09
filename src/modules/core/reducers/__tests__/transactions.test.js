@@ -45,7 +45,13 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   // Actions
-  const transactionStarted = startTransaction(id, actionType, params, options);
+  const transactionStarted = startTransaction(
+    id,
+    actionType,
+    params,
+    null,
+    options,
+  );
   const transactionSent = sendTransaction(id, hash);
   const receiptReceived = transactionReceiptReceived(id, { hash });
   const eventDataReceived = transactionEventDataReceived(id, eventData);
