@@ -1,4 +1,7 @@
 /* @flow */
 
-export { default as KVStore } from './KVStore';
-export { default as Store } from './Store';
+import FeedStore from './FeedStore';
+import KVStore from './KVStore';
+import Store from './Store';
+
+export { FeedStore, KVStore, Store };
