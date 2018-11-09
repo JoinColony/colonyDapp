@@ -29,8 +29,16 @@ declare module 'yup' {
     };
   }
 
-  declare export function object(props?: Object): ObjectSchema;
+  declare export interface Ref {
+    }
 
+  declare export interface DateSchema extends Schema {
+    min(limit: Date | string | Ref, message?: string): DateSchema;
+    max(limit: Date | string | Ref, message?: string): DateSchema;
+    default(value: any): Schema;
+}
+
+  declare export function object(props?: Object): ObjectSchema;
   declare export function mixed(any): Schema;
   declare export function setLocale(any): void;
   declare export function addMethod(...any): void;
@@ -38,4 +46,5 @@ declare module 'yup' {
   declare export function number(any): Function;
   declare export function required(any): Function;
   declare export function string(any): Function;
+  declare export function date(any): DateSchema;
 }
