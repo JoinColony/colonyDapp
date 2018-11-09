@@ -50,7 +50,11 @@ const displayName = 'dashboard.TaskClaimRewardDialog';
 const TaskClaimRewardDialog = ({
   cancel,
   close,
-  taskReward: { workerRating: rating, reputationEarned: reputation },
+  taskReward: {
+    workerRating: rating,
+    reputationEarned: reputation,
+    payoutsEarned,
+  },
   taskTitle,
   nativeTokenSymbol,
 }: Props) => (
@@ -87,43 +91,47 @@ const TaskClaimRewardDialog = ({
           />
         </div>
       </section>
-      <section className={styles.earnedReputation}>
-        <p className={styles.starRatingDescription}>
-          <FormattedMessage {...MSG.yourReputation} />
-          {rating === 3 && (
-            <p className={styles.earnedReputationDetails}>
-              <FormattedMessage
-                {...MSG.reputationDetails}
-                values={{ rating }}
-              />
-            </p>
-          )}
-          {rating === 1 && (
-            <p className={styles.earnedReputationPenalty}>
-              <FormattedMessage
-                {...MSG.reputationDetails}
-                values={{ rating }}
-              />
-            </p>
-          )}
-          {rating !== 3 &&
-            rating !== 1 && (
-              <p className={styles.earnedReputationPenalty}>
+      {payoutsEarned.find(
+        payout => payout && payout.symbol === nativeTokenSymbol,
+      ) && (
+        <section className={styles.earnedReputation}>
+          <p className={styles.starRatingDescription}>
+            <FormattedMessage {...MSG.yourReputation} />
+            {rating === 3 && (
+              <p className={styles.earnedReputationDetails}>
                 <FormattedMessage
-                  {...MSG.reputationPenalty}
-                  values={{ ratedOnTime: true }}
+                  {...MSG.reputationDetails}
+                  values={{ rating }}
                 />
               </p>
             )}
-        </p>
-        <div className={styles.reputationValue}>
-          <Numeral
-            value={reputation}
-            suffix=" REP"
-            appearance={{ size: 'medium', theme: 'primary' }}
-          />
-        </div>
-      </section>
+            {rating === 1 && (
+              <p className={styles.earnedReputationPenalty}>
+                <FormattedMessage
+                  {...MSG.reputationDetails}
+                  values={{ rating }}
+                />
+              </p>
+            )}
+            {rating !== 3 &&
+              rating !== 1 && (
+                <p className={styles.earnedReputationPenalty}>
+                  <FormattedMessage
+                    {...MSG.reputationPenalty}
+                    values={{ ratedOnTime: true }}
+                  />
+                </p>
+              )}
+          </p>
+          <div className={styles.reputationValue}>
+            <Numeral
+              value={reputation}
+              suffix=" REP"
+              appearance={{ size: 'medium', theme: 'primary' }}
+            />
+          </div>
+        </section>
+      )}
     </DialogSection>
     <DialogSection appearance={{ align: 'right' }}>
       <Button
