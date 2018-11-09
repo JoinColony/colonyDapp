@@ -22,11 +22,6 @@ class FeedStore extends Store {
     schema: ObjectSchema,
   ) {
     super(orbitStore, schemaId, schema);
-    this._orbitStore.add({
-      userAction: 'Joined Colony 🎉🎉',
-      createdAt: new Date().toUTCString(),
-      colonyName: '',
-    });
   }
 
   async validate(value?: any, options?: ValidateOptions = { strict: true }) {
@@ -41,11 +36,14 @@ class FeedStore extends Store {
   get(hashOrOptions: string | FeedIteratorOptions) {
     return typeof hashOrOptions === 'string'
       ? this._orbitStore.get(hashOrOptions)
-      : this._orbitStore.iterator(hashOrOptions).collect();
+      : this.all(hashOrOptions);
   }
 
-  all() {
-    return this._orbitStore.iterator().collect();
+  all(options: FeedIteratorOptions = {}) {
+    return this._orbitStore
+      .iterator({ ...options, limit: -1 })
+      .collect()
+      .map(item => item.payload.value);
   }
 }
 export default FeedStore;
