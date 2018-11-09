@@ -14,6 +14,9 @@ import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
 import EthereumAccessController from '../../../lib/database/EthereumAccessController';
 import { getAll } from '../../../lib/database/commands';
+import { networkMethodSagaFactory } from '../../core/sagas/networkClient';
+
+import { userOrbitAddress } from '../selectors';
 
 import {
   USER_PROFILE_FETCH,
@@ -22,10 +25,18 @@ import {
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
-  // USERNAME_CREATE,
-  // USERNAME_CREATE_SUCCESS,
-  // USERNAME_CREATE_ERROR,
+  USERNAME_CREATE,
+  USERNAME_CREATE_SUCCESS,
+  USERNAME_CREATE_ERROR,
 } from '../actionTypes';
+
+const registerUserLabel = networkMethodSagaFactory<
+  { username: string, orbitDBPath: string },
+  { user: string, label: string },
+>('registerUserLabel', {
+  sent: USERNAME_CREATE_SUCCESS,
+  error: USERNAME_CREATE_ERROR,
+});
 
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
@@ -93,7 +104,25 @@ function* fetchProfile(action: Action): Saga<void> {
   }
 }
 
+function* createUsername(action: Action): Saga<void> {
+  const { username } = action.payload;
+  const orbitDBPath = yield select(userOrbitAddress);
+
+  // $FlowFixMe will be fixed in ColonyJS
+  yield call(registerUserLabel, {
+    type: action.type,
+    payload: {
+      params: { username, orbitDBPath },
+      options: {
+        // / TODO: this should go into ColonyJS
+        gasLimit: 250000,
+      },
+    },
+  });
+}
+
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
+  yield takeLatest(USERNAME_CREATE, createUsername);
 }

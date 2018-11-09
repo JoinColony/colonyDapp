@@ -122,8 +122,8 @@ export function* sendTransaction<Params: *>(
   const id = nanoid();
 
   // Dispatch a generic action to start the transaction.
-  yield put(startTransaction(id, type, params, options));
-  if (started) yield put(startTransaction(id, type, params, options, started));
+  yield put(startTransaction(id, type, params, null, options));
+  if (started) yield put(startTransaction(id, type, params, started, options));
 
   // Create an event channel to send the transaction.
   const channel = yield call(transactionChannel, txPromise, id);
