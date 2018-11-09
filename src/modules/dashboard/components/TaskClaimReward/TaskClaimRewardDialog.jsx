@@ -111,8 +111,8 @@ const TaskClaimRewardDialog = ({
     .filter(
       payout =>
         payout &&
-        nativeTokenPayout &&
-        payout.symbol !== nativeTokenPayout.symbol,
+        ((nativeTokenPayout && payout.symbol !== nativeTokenPayout.symbol) ||
+          !nativeTokenPayout),
     )
     /*
      * Calculate the network fees
@@ -229,10 +229,12 @@ const TaskClaimRewardDialog = ({
                 <FormattedMessage {...MSG.yourReward} />
               </p>
               <span className={styles.rewardItemValue}>
-                <Numeral
-                  value={nativeTokenPayout.amount}
-                  suffix={` ${nativeTokenPayout.symbol}`}
-                />
+                {nativeTokenPayout && (
+                  <Numeral
+                    value={nativeTokenPayout.amount}
+                    suffix={` ${nativeTokenPayout.symbol}`}
+                  />
+                )}
                 {restTokenPayouts.map(({ amount, symbol }, index) => (
                   <Numeral
                     key={nanoid(index)}
@@ -250,11 +252,13 @@ const TaskClaimRewardDialog = ({
                 <FormattedMessage {...MSG.networkFee} />
               </p>
               <span className={styles.rewardItemValue}>
-                <Numeral
-                  value={nativeTokenPayout.networkFee}
-                  prefix="- "
-                  suffix={` ${nativeTokenPayout.symbol}`}
-                />
+                {nativeTokenPayout && (
+                  <Numeral
+                    value={nativeTokenPayout.networkFee}
+                    prefix="- "
+                    suffix={` ${nativeTokenPayout.symbol}`}
+                  />
+                )}
                 {restTokenPayouts.map(({ networkFee, symbol }, index) => (
                   <Numeral
                     key={nanoid(index)}
@@ -273,12 +277,14 @@ const TaskClaimRewardDialog = ({
                 <FormattedMessage {...MSG.total} />
               </p>
               <span className={styles.rewardItemValue}>
-                <Numeral
-                  value={
-                    nativeTokenPayout.amount - nativeTokenPayout.networkFee
-                  }
-                  suffix={` ${nativeTokenPayout.symbol}`}
-                />
+                {nativeTokenPayout && (
+                  <Numeral
+                    value={
+                      nativeTokenPayout.amount - nativeTokenPayout.networkFee
+                    }
+                    suffix={` ${nativeTokenPayout.symbol}`}
+                  />
+                )}
                 {restTokenPayouts.map(
                   ({ amount, networkFee, symbol }, index) => (
                     <Numeral
