@@ -8,9 +8,12 @@ import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 
+import WalletTransactions from '../WalletTransactions';
+
 import styles from './Wallet.css';
 
 import mockUser from './__datamocks__/mockUser';
+import mockTransactions from './__datamocks__/mockTransactions';
 
 const MSG = defineMessages({
   tabTokens: {
@@ -58,8 +61,13 @@ const Wallet = () => (
             <FormattedMessage {...MSG.tabTransactions} />
           </Tab>
         </TabList>
-        <TabPanel>Transactions</TabPanel>
         <TabPanel>Token</TabPanel>
+        <TabPanel>
+          <WalletTransactions
+            transactions={mockTransactions}
+            userAddress={mockUser.walletAddress}
+          />
+        </TabPanel>
       </Tabs>
     </main>
     <aside className={styles.sidebar}>
