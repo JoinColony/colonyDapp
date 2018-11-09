@@ -92,3 +92,8 @@
   padding-top: 20px;
   border-top: 1px solid var(--grey-4);
 }
+
+.oneStarRating {
+  font-weight: var(--weight-medium);
+  color: var(--danger);
+}
