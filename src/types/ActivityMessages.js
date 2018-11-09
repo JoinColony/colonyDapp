@@ -1,6 +1,8 @@
 /* @flow */
 /* eslint max-len: 0 */
 
+// TODO move this file to the UserActivity component folder when it exists
+
 import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({

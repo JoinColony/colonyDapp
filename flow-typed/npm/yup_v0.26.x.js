@@ -30,7 +30,8 @@ declare module 'yup' {
   }
 
   declare export interface Ref {
-    }
+    [key: string]: any;
+   }
 
   declare export interface DateSchema extends Schema {
     min(limit: Date | string | Ref, message?: string): DateSchema;
