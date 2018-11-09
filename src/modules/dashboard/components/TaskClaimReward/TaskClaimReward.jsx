@@ -27,17 +27,19 @@ type Props = {
    * will change
    */
   taskReward: Object,
+  taskTitle: string,
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
 const displayName = 'dashboard.TaskClaimReward';
 
-const TaskClaimReward = ({ openDialog, taskReward }: Props) => (
+const TaskClaimReward = ({ openDialog, taskReward, taskTitle }: Props) => (
   <Button
     text={MSG.claimRewards}
     onClick={() =>
       openDialog('TaskClaimRewardDialog', {
         taskReward,
+        taskTitle,
         nativeTokenSymbol: MOCK_NATIVE_TOKEN_SYMBOL,
       })
     }

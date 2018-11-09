@@ -1,0 +1,47 @@
+.starRating {
+  display: flex;
+  margin-top: 30px;
+}
+
+.starRatingDescription {
+  flex: 1 1 auto;
+  font-weight: var(--weight-medium);
+}
+
+.stars {
+  flex: 0 0 auto;
+  text-align: right;
+
+  & i {
+    margin-left: 3px;
+  }
+}
+
+.earnedReputation {
+  display: flex;
+  margin-top: 50px;
+}
+
+.earnedReputationDescription {
+  flex: 1 1 auto;
+  font-weight: var(--weight-medium);
+}
+
+.earnedReputationDetails {
+  font-size: var(--size-small);
+  color: var(--violet);
+}
+
+.earnedReputationPenalty {
+  composes: earnedReputationDetails;
+  color: var(--danger);
+}
+
+.reputationValue {
+  flex: 0 0 auto;
+  text-align: right;
+
+  & span {
+    color: var(--violet);
+  }
+}
