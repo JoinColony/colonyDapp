@@ -4,7 +4,9 @@ import { replace } from 'connected-react-router';
 
 import type { Saga } from 'redux-saga';
 
+import { delay } from 'redux-saga';
 import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
+import namehash from 'eth-ens-namehash-ms';
 
 import type { Action, UserRecord } from '~types/index';
 
@@ -25,6 +27,9 @@ import {
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
+  USERNAME_VALIDATE,
+  USERNAME_VALIDATE_SUCCESS,
+  USERNAME_VALIDATE_ERROR,
   USERNAME_CREATE,
   USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
@@ -105,6 +110,33 @@ function* fetchProfile(action: Action): Saga<void> {
   }
 }
 
+function* validateUsername(action: Action): Saga<void> {
+  // Debounce 300ms
+  yield call(delay, 300);
+  const { username } = action.payload;
+
+  // TODO: consider factoring out this functionality (re-use in ENSResolver)
+  const nameHash = namehash.hash(`${username}.user.joincolony.eth`);
+  const networkClient = yield getContext('networkClient');
+  const { ensAddress } = yield call(
+    [
+      networkClient.getAddressForENSHash,
+      networkClient.getAddressForENSHash.call,
+    ],
+    { nameHash },
+  );
+
+  if (ensAddress) {
+    yield put({
+      type: USERNAME_VALIDATE_ERROR,
+    });
+  } else {
+    yield put({
+      type: USERNAME_VALIDATE_SUCCESS,
+    });
+  }
+}
+
 function* createUsername(action: Action): Saga<void> {
   const { username } = action.payload;
   const ddb = yield getContext('ddb');
@@ -124,5 +156,6 @@ function* createUsername(action: Action): Saga<void> {
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
+  yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
 }

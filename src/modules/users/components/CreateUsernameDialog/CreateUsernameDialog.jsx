@@ -10,16 +10,25 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, FieldSet, Input } from '~core/Fields';
 
+import promiseListener from '../../../../createPromiseListener';
+
 import {
   USERNAME_CREATE,
   USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
+  USERNAME_VALIDATE,
+  USERNAME_VALIDATE_SUCCESS,
+  USERNAME_VALIDATE_ERROR,
 } from '../../actionTypes';
 
 const MSG = defineMessages({
   usernameLabel: {
     id: 'users.CreateUsernameDialog.usernameLabel',
     defaultMessage: 'Your desired username',
+  },
+  errorUsernameTaken: {
+    id: 'users.CreateUsernameDialog.erorrUsernameTaken',
+    defaultMessage: 'This username is already taken',
   },
 });
 
@@ -40,7 +49,26 @@ const validationSchema = yup.object({
 });
 
 class CreateUsernameDialog extends Component<Props> {
-  doStuff = () => {};
+  componentWillUnmount() {
+    this.checkUsernameTaken.unsubscribe();
+  }
+
+  checkUsernameTaken = promiseListener.createAsyncFunction({
+    start: USERNAME_VALIDATE,
+    resolve: USERNAME_VALIDATE_SUCCESS,
+    reject: USERNAME_VALIDATE_ERROR,
+  });
+
+  validateUsername = async (values: FormValues) => {
+    const error = {
+      username: MSG.errorUsernameTaken,
+    };
+    try {
+      await this.checkUsernameTaken.asyncFunction(values);
+    } catch (e) {
+      throw error;
+    }
+  };
 
   render() {
     const { cancel, close } = this.props;
@@ -51,6 +79,7 @@ class CreateUsernameDialog extends Component<Props> {
           success={USERNAME_CREATE_SUCCESS}
           error={USERNAME_CREATE_ERROR}
           validationSchema={validationSchema}
+          validate={this.validateUsername}
           onSuccess={close}
         >
           {({ isSubmitting }) => (
