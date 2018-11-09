@@ -52,6 +52,22 @@ const MSG = defineMessages({
     id: 'dashboard.TaskClaimRewardDialog.total',
     defaultMessage: 'Total',
   },
+  noRewardsTitle: {
+    id: 'dashboard.TaskClaimRewardDialog.noRewardsTitle',
+    defaultMessage: 'What does it mean?',
+  },
+  noRewardsDescription: {
+    id: 'dashboard.TaskClaimRewardDialog.noRewardsDescription',
+    defaultMessage: `
+      You have been rated {oneStarRating}. This means you have failed to submit
+      work that meets the task requirements. You will not receive any tokens
+      and your reputation has been penalized.
+    `,
+  },
+  oneStarRating: {
+    id: 'dashboard.TaskClaimRewardDialog.oneStarRating',
+    defaultMessage: 'one star',
+  },
 });
 
 type Props = {
@@ -192,7 +208,11 @@ const TaskClaimRewardDialog = ({
                   )}
               </p>
               <div className={styles.reputationValue}>
-                <Numeral value={reputation} suffix=" REP" />
+                <Numeral
+                  value={reputation}
+                  prefix={rating === 1 ? '- ' : ''}
+                  suffix=" REP"
+                />
               </div>
             </section>
           )}
@@ -273,6 +293,21 @@ const TaskClaimRewardDialog = ({
           </section>
         </DialogSection>
       ) : null}
+      {rating === 1 && (
+        <DialogSection>
+          <Heading appearance={{ size: 'medium' }} text={MSG.noRewardsTitle} />
+          <FormattedMessage
+            {...MSG.noRewardsDescription}
+            values={{
+              oneStarRating: (
+                <span className={styles.oneStarRating}>
+                  <FormattedMessage {...MSG.oneStarRating} />
+                </span>
+              ),
+            }}
+          />
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
