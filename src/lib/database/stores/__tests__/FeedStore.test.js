@@ -1,13 +1,31 @@
 import createSandbox from 'jest-sandbox';
-import * as yup from 'yup';
 
+import { create as createWallet } from '@colony/purser-software';
+import DDB from '../../DDB';
+import PurserIdentityProvider from '../../PurserIdentityProvider';
 import FeedStore from '../FeedStore';
+import { UserActivity as schema } from '../../schemas';
+import IPFSNode from '../../../ipfs';
 
-describe('KVStore', () => {
+describe('FeedStore', () => {
   const sandbox = createSandbox();
 
   beforeEach(() => {
     sandbox.clear();
+  });
+
+  let wallet;
+  let identityProvider;
+  let ddb;
+
+  beforeAll(async () => {
+    DDB.registerSchema('userActivity', schema);
+
+    wallet = await createWallet();
+
+    identityProvider = new PurserIdentityProvider(wallet);
+    const ipfs = new IPFSNode();
+    ddb = await DDB.createDatabase(ipfs, identityProvider);
   });
 
   const mockOrbitStore = {
@@ -22,31 +40,21 @@ describe('KVStore', () => {
     type: 'orbit store type',
   };
 
-  const schemaId = 'test schema id';
-
-  const schema = yup.object({
-    requiredProp: yup.string().required(),
-    optionalProp: yup.string(),
-  });
+  const schemaId = 'UserActivity';
 
   test('It creates a FeedStore', () => {
-    mockOrbitStore.add.mockResolvedValueOnce(null);
-
     const store = new FeedStore(mockOrbitStore, schemaId, schema);
     expect(store._orbitStore).toBe(mockOrbitStore);
     expect(store._schemaId).toBe(schemaId);
     expect(store._schema).toBe(schema);
-    expect(store._orbitStore.add).toHaveBeenCalledWith({
-      userAction: 'Joined Colony 🎉🎉',
-      createdAt: expect.any(String),
-      colonyName: '',
-    });
   });
-  test('It validates objects against the schema', async () => {
-    mockOrbitStore.add.mockResolvedValueOnce(null);
+  test('It validates an activity event against the schema', async () => {
     const store = new FeedStore(mockOrbitStore, schemaId, schema);
     sandbox.spyOn(store._schema, 'validate');
-    const validProps = { requiredProp: 'foo', optionalProp: 'bar' };
+    const validProps = {
+      colonyName: 'Zombies',
+      userAction: { joinedColony: 'joinedColony' },
+    };
     const validated = await store.validate(validProps);
     expect(validated).toEqual(validProps);
     expect(store._schema.validate).toHaveBeenCalledWith(
@@ -54,7 +62,7 @@ describe('KVStore', () => {
       expect.any(Object),
     );
     // Missing `requiredProp`
-    const invalidProps = { optionalProp: 'bar' };
+    const invalidProps = { colonyName: 'bar' };
     try {
       await store.validate(invalidProps);
       expect(false).toBe(true); // unreachable
@@ -63,33 +71,28 @@ describe('KVStore', () => {
         invalidProps,
         expect.any(Object),
       );
-      expect(error.toString()).toMatch('requiredProp is a required field');
+      expect(error.toString()).toMatch('userAction is a required field');
     }
   });
-  test('It validates a key/value pair against the schema', async () => {
-    mockOrbitStore.add.mockResolvedValueOnce(null);
-    const store = new FeedStore(mockOrbitStore, schemaId, schema);
-    const key = 'requiredProp';
-    const value = 'foo';
-    sandbox.spyOn(store._schema.fields[key], 'validate');
-    const validated = await store.validate(key, value);
-    expect(validated).toEqual({ [key]: value });
-    expect(store._schema.fields[key].validate).toHaveBeenCalledWith(
-      value,
-      expect.any(Object),
-    );
-    // Missing a value
-    try {
-      await store.validate(key);
-      expect(false).toBe(true); // unreachable
-    } catch (error) {
-      expect(store._schema.fields[key].validate).toHaveBeenCalledWith(
-        undefined,
-        expect.any(Object),
-      );
-      expect(error.toString()).toMatch('this is a required field');
-    }
-  });
+  test('The all() method returns events in the order added', async () => {
+    const store = await ddb.createStore('feed', 'userActivity');
+    const firstActivity = {
+      colonyName: 'Zombies',
+      userAction: { joinedColony: 'joinedColony' },
+    };
+    const secondActivity = {
+      colonyName: 'Zombies2',
+      userAction: {
+        acceptedTask: 'I will help you bear this burden, Bilbo Baggins',
+      },
+    };
 
-  // TODO test: all(), get()
+    await store.add(firstActivity);
+    await store.add(secondActivity);
+
+    const events = store.all();
+    expect(events.length).toBe(2);
+    expect(events[0].colonyName).toBe('Zombies');
+    expect(events[1].colonyName).toBe('Zombies2');
+  });
 });
