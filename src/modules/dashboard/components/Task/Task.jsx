@@ -24,7 +24,7 @@ import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
 
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
-import taskMock from './__datamocks__/mockTask';
+import { mockTask, mockTaskReward } from './__datamocks__/mockTask';
 
 const displayName = 'dashboard.Task';
 
@@ -137,7 +137,10 @@ const Task = ({ openDialog }: Props) => {
                 * @TODO This should only be shown, if we're a worker, and the task
                 * has a reward and was finalized (due date passed or work was submitted and rated)
                 */}
-              <TaskClaimReward taskReward={mockTaskReward} />
+              <TaskClaimReward
+                taskReward={mockTaskReward}
+                taskTitle={mockTask.title}
+              />
               {/*
                * @TODO This are temporary buttons to be able to show the rating
                * modals until they will get wired up.
