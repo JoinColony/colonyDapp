@@ -12,8 +12,8 @@ import type { Saga } from 'redux-saga';
 import type { TransactionAction, LifecycleActionTypes } from '../../types';
 
 import {
-  sendTransaction as sendTransactionActionCreator,
-  startTransaction,
+  transactionStarted,
+  transactionSent,
   transactionEventDataError,
   transactionEventDataReceived,
   transactionReceiptError,
@@ -46,7 +46,7 @@ export function transactionChannel<EventData>(
             transaction: { hash },
           },
         }) => {
-          emit(sendTransactionActionCreator(id, hash));
+          emit(transactionSent(id, hash));
 
           // XXX these promises will be present in the contract response, but
           // we need to check for them, because we're using the
@@ -122,8 +122,10 @@ export function* sendTransaction<Params: *>(
   const id = nanoid();
 
   // Dispatch a generic action to start the transaction.
-  yield put(startTransaction(id, type, params, null, options));
-  if (started) yield put(startTransaction(id, type, params, started, options));
+  yield put(transactionStarted(id, type, params, null, options));
+  if (started) {
+    yield put(transactionStarted(id, type, params, started, options));
+  }
 
   // Create an event channel to send the transaction.
   const channel = yield call(transactionChannel, txPromise, id);
@@ -136,8 +138,7 @@ export function* sendTransaction<Params: *>(
 
       switch (action.type) {
         case TRANSACTION_SENT:
-          if (sent)
-            yield put(transactionReceiptReceived(id, payload.receipt, sent));
+          if (sent) yield put(transactionSent(id, payload.receipt, sent));
           break;
 
         case TRANSACTION_RECEIPT_RECEIVED:
