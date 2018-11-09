@@ -1,12 +1,8 @@
 /* @flow */
 
-import type { ObjectSchema, ValidateOptions } from 'yup';
+import type { ValidateOptions } from 'yup';
 
-import type {
-  FeedIteratorOptions,
-  OrbitDBFeedStore,
-  OrbitDBStore,
-} from '../types/index';
+import type { FeedIteratorOptions, OrbitDBFeedStore } from '../types/index';
 import Store from './Store';
 
 /**
@@ -15,14 +11,6 @@ import Store from './Store';
  */
 class FeedStore extends Store {
   +_orbitStore: OrbitDBFeedStore = this._orbitStore;
-
-  constructor(
-    orbitStore: OrbitDBStore,
-    schemaId: string,
-    schema: ObjectSchema,
-  ) {
-    super(orbitStore, schemaId, schema);
-  }
 
   async validate(value?: any, options?: ValidateOptions = { strict: true }) {
     return this._schema.validate(value, options);
