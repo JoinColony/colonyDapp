@@ -8,14 +8,18 @@ import type { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
 
+/*
+ * This should most likely come from the redux state, so we can compare against
+ * the tasks's payouts
+ */
+const MOCK_NATIVE_TOKEN_SYMBOL: string = 'CLNY';
+
 const MSG = defineMessages({
   claimRewards: {
     id: 'dashboard.TaskClaimReward.claimRewards',
     defaultMessage: 'Claim Rewards',
   },
 });
-
-const displayName = 'dashboard.TaskClaimReward';
 
 type Props = {
   /*
@@ -26,10 +30,17 @@ type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
+const displayName = 'dashboard.TaskClaimReward';
+
 const TaskClaimReward = ({ openDialog, taskReward }: Props) => (
   <Button
     text={MSG.claimRewards}
-    onClick={() => openDialog('TaskClaimRewardDialog', { taskReward })}
+    onClick={() =>
+      openDialog('TaskClaimRewardDialog', {
+        taskReward,
+        nativeTokenSymbol: MOCK_NATIVE_TOKEN_SYMBOL,
+      })
+    }
   />
 );
 
