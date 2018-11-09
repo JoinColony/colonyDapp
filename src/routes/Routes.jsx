@@ -15,7 +15,6 @@ import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
-import ProfileCreate from '~users/ProfileCreate';
 
 import AdminDashboard from '~admin/AdminDashboard';
 
@@ -26,7 +25,6 @@ import {
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   TASK_ROUTE,
-  CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
   ADMIN_DASHBOARD_ROUTE,
@@ -114,11 +112,6 @@ const Routes = ({ currentUser }) => {
         isConnected={isConnected}
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
-      />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={CREATE_PROFILE_ROUTE}
-        component={ProfileCreate}
       />
     </Switch>
   );

@@ -8,14 +8,8 @@ import CreateWalletWizard from './CreateWalletWizard.jsx';
 import * as StepCreatePhrase from './StepCreatePhrase.jsx';
 import * as StepBackupPhrase from './StepBackupPhrase.jsx';
 import * as StepProveMnemonic from './StepProveMnemonic.jsx';
-import * as StepProfileCreate from './StepProfileCreate.jsx';
 
-const steps = [
-  StepCreatePhrase,
-  StepBackupPhrase,
-  StepProveMnemonic,
-  StepProfileCreate,
-];
+const steps = [StepCreatePhrase, StepBackupPhrase, StepProveMnemonic];
 
 const CreateWalletContainer = compose(withWizard({ steps }))(
   CreateWalletWizard,
