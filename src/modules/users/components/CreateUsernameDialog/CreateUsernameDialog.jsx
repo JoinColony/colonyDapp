@@ -82,7 +82,7 @@ class CreateUsernameDialog extends Component<Props> {
           validate={this.validateUsername}
           onSuccess={close}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, isValid }) => (
             <Fragment>
               <DialogSection>
                 <FieldSet>
@@ -100,6 +100,7 @@ class CreateUsernameDialog extends Component<Props> {
                   type="submit"
                   text={{ id: 'button.confirm' }}
                   loading={isSubmitting}
+                  disabled={!isValid}
                 />
               </DialogSection>
             </Fragment>
