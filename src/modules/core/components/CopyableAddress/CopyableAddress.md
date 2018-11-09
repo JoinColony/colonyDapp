@@ -11,13 +11,6 @@ Just showing a wallet address that can be copied to clipboard.
 ```js
 <CopyableAddress appearance={{ theme: 'big' }} full>0x1afb213afa8729fa7908154b90e256f1be70989a</CopyableAddress>
 ```
-
-### Version that also shows QR code
-
-```js
-<CopyableAddress appearance={{ theme: 'big' }} full qrCode >0x1afb213afa8729fa7908154b90e256f1be70989a</CopyableAddress>
-```
-
 ### Abbreviated version
 
 ```js

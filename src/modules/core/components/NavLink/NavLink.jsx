@@ -2,6 +2,7 @@
 
 import type { Node } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { LocationShape } from 'react-router-dom';
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
@@ -15,7 +16,7 @@ type Props = {
   /** NavLink children to render inside the link */
   children?: Node,
   /** path to go to (react-router's "to") */
-  to: string,
+  to: string | LocationShape,
   /** A string or a `messageDescriptor` that make up the nav link's text */
   text?: MessageDescriptor | string,
   /** Values for text (react-intl interpolation) */

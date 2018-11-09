@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
-import ExternalLink from '~core/ExternalLink';
+import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 
 import styles from './Wallet.css';
@@ -37,15 +37,20 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.Wallet';
 
+const location = {
+  pathname: '/admin',
+  state: { fromWallet: true },
+};
+
 const Wallet = () => (
   <div className={styles.layoutMain}>
     <main className={styles.content}>
       <div className={styles.walletDetails}>
         <Heading
           text={MSG.titleWallet}
-          appearance={{ size: 'medium', margin: 'small', weight: 'thin' }}
+          appearance={{ size: 'medium', margin: 'small' }}
         />
-        <CopyableAddress appearance={{ theme: 'big' }} full qrCode>
+        <CopyableAddress appearance={{ theme: 'big' }} full>
           {mockUser.walletAddress}
         </CopyableAddress>
       </div>
@@ -54,7 +59,7 @@ const Wallet = () => (
           <Tab>
             <FormattedMessage {...MSG.tabTokens} />
           </Tab>
-          <Tab disabled>
+          <Tab>
             <FormattedMessage {...MSG.tabTransactions} />
           </Tab>
         </TabList>
@@ -65,9 +70,11 @@ const Wallet = () => (
     <aside className={styles.sidebar}>
       <p className={styles.helpText}>
         <FormattedMessage {...MSG.helpText} />
-        <br />
-        <br />
-        <ExternalLink text={MSG.linkEditToken} href="#" />
+        <NavLink
+          text={MSG.linkEditToken}
+          to={location}
+          className={styles.tokenLink}
+        />
       </p>
     </aside>
   </div>

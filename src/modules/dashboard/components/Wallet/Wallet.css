@@ -21,9 +21,16 @@
 }
 
 .helpText {
+  display: flex;
+  flex-direction: column;
   margin-top: 65px;
 }
 
 .walletDetails {
   margin-bottom: 40px;
+}
+
+.tokenLink {
+  font-weight: var(--weight-medium);
+  color: var(--sky-blue);
 }
