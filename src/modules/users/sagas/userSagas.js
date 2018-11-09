@@ -34,6 +34,7 @@ const registerUserLabel = networkMethodSagaFactory<
   { username: string, orbitDBPath: string },
   { user: string, label: string },
 >('registerUserLabel', {
+  // TODO: We might want to have another action dispatched on event data (which then feeds the reducer, instead of this one)
   sent: USERNAME_CREATE_SUCCESS,
   error: USERNAME_CREATE_ERROR,
 });
@@ -106,17 +107,16 @@ function* fetchProfile(action: Action): Saga<void> {
 
 function* createUsername(action: Action): Saga<void> {
   const { username } = action.payload;
+  const ddb = yield getContext('ddb');
   const orbitDBPath = yield select(userOrbitAddress);
 
-  // $FlowFixMe will be fixed in ColonyJS
+  const store = yield call([ddb, ddb.getStore], orbitDBPath);
+  yield call([store, store.set], 'username', username);
+
   yield call(registerUserLabel, {
     type: action.type,
     payload: {
       params: { username, orbitDBPath },
-      options: {
-        // / TODO: this should go into ColonyJS
-        gasLimit: 250000,
-      },
     },
   });
 }
