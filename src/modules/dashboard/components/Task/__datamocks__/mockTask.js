@@ -1,10 +1,26 @@
 /* @flow */
 /* eslint-disable max-len */
 
+import BigNumber from 'bn.js';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 
-const mockTask = {
+const createBN = val =>
+  new BigNumber(val).mul(new BigNumber(10).pow(new BigNumber(17)));
+
+/*
+ * This should only be available, once the task is finalized
+ */
+export const mockTaskReward = {
+  workerRating: 3,
+  payoutsEarned: [
+    { symbol: 'CLNY', amount: 600 },
+    { symbol: 'ETH', amount: 200105 },
+  ],
+  reputationEarned: 1045,
+};
+
+export const mockTask = {
   id: 1,
   title: 'Develop Github integration',
   reputation: 19.5,

@@ -137,7 +137,7 @@ const Task = ({ openDialog }: Props) => {
                 * @TODO This should only be shown, if we're a worker, and the task
                 * has a reward and was finalized (due date passed or work was submitted and rated)
                 */}
-              <TaskClaimReward workRating={1} />
+              <TaskClaimReward taskReward={mockTaskReward} />
               {/*
                * @TODO This are temporary buttons to be able to show the rating
                * modals until they will get wired up.

@@ -18,14 +18,18 @@ const MSG = defineMessages({
 const displayName = 'dashboard.TaskClaimReward';
 
 type Props = {
-  workRating: number,
+  /*
+   * We're not putting a custom defined type on this since it all likeliness it
+   * will change
+   */
+  taskReward: Object,
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
-const TaskClaimReward = ({ openDialog, workRating }: Props) => (
+const TaskClaimReward = ({ openDialog, taskReward }: Props) => (
   <Button
     text={MSG.claimRewards}
-    onClick={() => openDialog('TaskClaimRewardDialog', { workRating })}
+    onClick={() => openDialog('TaskClaimRewardDialog', { taskReward })}
   />
 );
 
