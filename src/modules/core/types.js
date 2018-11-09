@@ -33,3 +33,12 @@ export type TransactionAction<Params: Object> = {
 };
 
 export type TransactionsState = ImmutableMap<TransactionId, TransactionRecord>;
+
+export type LifecycleActionTypes = {
+  started?: string,
+  sent?: string,
+  error?: string,
+  eventDataReceived?: string,
+  receiptReceived?: string,
+  success?: string,
+};

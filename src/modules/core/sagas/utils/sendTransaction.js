@@ -9,7 +9,7 @@ import { eventChannel, END } from 'redux-saga';
 import { all, call, put, race, take } from 'redux-saga/effects';
 
 import type { Saga } from 'redux-saga';
-import type { TransactionAction } from '../../types';
+import type { TransactionAction, LifecycleActionTypes } from '../../types';
 
 import {
   sendTransaction as sendTransactionActionCreator,
@@ -22,6 +22,7 @@ import {
 } from '../../actionCreators/index';
 
 import {
+  TRANSACTION_SENT,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
   TRANSACTION_RECEIPT_RECEIVED,
@@ -114,6 +115,7 @@ export function* getTransactionResponse<EventData: *>(): Saga<*> {
 export function* sendTransaction<Params: *>(
   txPromise: Promise<*>,
   { type, payload: { params, options } }: TransactionAction<Params>,
+  { started, sent, eventDataReceived, receiptReceived }: LifecycleActionTypes,
 ): * {
   // Used to track the state of the transaction before it receives
   // a `transactionHash` property
@@ -121,6 +123,7 @@ export function* sendTransaction<Params: *>(
 
   // Dispatch a generic action to start the transaction.
   yield put(startTransaction(id, type, params, options));
+  if (started) yield put(startTransaction(id, type, params, options, started));
 
   // Create an event channel to send the transaction.
   const channel = yield call(transactionChannel, txPromise, id);
@@ -129,6 +132,36 @@ export function* sendTransaction<Params: *>(
     // Take all actions the channel emits and dispatch them.
     while (true) {
       const action = yield take(channel);
+      const { payload } = action;
+
+      switch (action.type) {
+        case TRANSACTION_SENT:
+          if (sent)
+            yield put(transactionReceiptReceived(id, payload.receipt, sent));
+          break;
+
+        case TRANSACTION_RECEIPT_RECEIVED:
+          if (receiptReceived)
+            yield put(
+              transactionReceiptReceived(id, payload.receipt, receiptReceived),
+            );
+          break;
+
+        case TRANSACTION_EVENT_DATA_RECEIVED:
+          if (eventDataReceived)
+            yield put(
+              transactionEventDataReceived(
+                id,
+                payload.eventData,
+                eventDataReceived,
+              ),
+            );
+          break;
+
+        default:
+          break;
+      }
+
       yield put(action);
     }
   } finally {

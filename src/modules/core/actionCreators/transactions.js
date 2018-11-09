@@ -12,14 +12,15 @@ import {
 
 export function startTransaction(
   id: string,
-  actionType: string,
+  transactionActionType: string,
   params: Object,
   options: SendOptions,
+  actionType?: string,
 ) {
   return {
-    type: TRANSACTION_STARTED,
+    type: actionType || TRANSACTION_STARTED,
     payload: {
-      actionType,
+      actionType: transactionActionType,
       createdAt: new Date(),
       id,
       options,
@@ -28,37 +29,53 @@ export function startTransaction(
   };
 }
 
-export function transactionSendError(id: string, message: string) {
+export function transactionSendError(
+  id: string,
+  message: string,
+  actionType?: string,
+) {
   return {
-    type: TRANSACTION_ERROR,
+    type: actionType || TRANSACTION_ERROR,
     payload: { id, error: { type: 'send', message } },
   };
 }
 
-export function transactionEventDataError(id: string, message: string) {
+export function transactionEventDataError(
+  id: string,
+  message: string,
+  actionType?: string,
+) {
   return {
-    type: TRANSACTION_ERROR,
+    type: actionType || TRANSACTION_ERROR,
     payload: { id, error: { type: 'eventData', message } },
   };
 }
 
-export function transactionReceiptError(id: string, message: string) {
+export function transactionReceiptError(
+  id: string,
+  message: string,
+  actionType?: string,
+) {
   return {
-    type: TRANSACTION_ERROR,
+    type: actionType || TRANSACTION_ERROR,
     payload: { id, error: { type: 'receipt', message } },
   };
 }
 
-export function transactionReceiptReceived(id: string, receipt: Object) {
+export function transactionReceiptReceived(
+  id: string,
+  receipt: Object,
+  actionType?: string,
+) {
   return {
-    type: TRANSACTION_RECEIPT_RECEIVED,
+    type: actionType || TRANSACTION_RECEIPT_RECEIVED,
     payload: { id, receipt },
   };
 }
 
-export function sendTransaction(id: string, hash: string) {
+export function sendTransaction(id: string, hash: string, actionType?: string) {
   return {
-    type: TRANSACTION_SENT,
+    type: actionType || TRANSACTION_SENT,
     payload: { id, hash },
   };
 }
@@ -66,9 +83,10 @@ export function sendTransaction(id: string, hash: string) {
 export function transactionEventDataReceived<EventData>(
   id: string,
   eventData: EventData,
+  actionType?: string,
 ) {
   return {
-    type: TRANSACTION_EVENT_DATA_RECEIVED,
+    type: actionType || TRANSACTION_EVENT_DATA_RECEIVED,
     payload: { id, eventData },
   };
 }
