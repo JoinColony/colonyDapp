@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-
+import { replace } from 'connected-react-router';
 import { delay } from 'redux-saga';
 
 import {
@@ -52,7 +52,7 @@ import { registerUserLabel } from '../actionCreators';
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
 
-  let store = yield call(
+  let profileStore = yield call(
     [ddb, ddb.getStore],
     userProfileStore,
     `user.${walletAddress}`,
@@ -60,23 +60,37 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
       walletAddress,
     },
   );
-  if (store) {
-    yield call([store, store.load]);
-    return store;
+  if (profileStore) {
+    yield call([profileProfileStore, store.load]);
+    return profileStore;
   }
 
-  store = yield call([ddb, ddb.createStore], userProfileStore, {
+  profileStore = yield call([ddb, ddb.createStore], userProfileStore, {
     walletAddress,
   });
-  yield call([store, store.set], { createdAt: new Date() });
+  yield call([profileProfileStore, store.set], { createdAt: new Date() });
 
-  return store;
+  const activityStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
+    accessController,
+  });
+
+  const joinedEvent = {
+    colonyName: '',
+    userAction: {
+      joinedColony: {
+        id: 'userActivity.joinedColony',
+        defaultMessage: 'Joined Colony 🎉🎉',
+      },
+    },
+    createdAt: Date.now(),
+  };
+  yield call([profileStore, profileStore.append], 'databases', activityStore.address.toString());
+  yield call([activityStore, activityStore.add], joinedEvent);
+  return profileStore;
 }
-
 export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
 }
-
 function* updateProfile(action: Action): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
@@ -102,7 +116,6 @@ function* updateProfile(action: Action): Saga<void> {
     } = action.payload;
     yield call([store, store.set], update);
     const user = yield call(getAll, store);
-
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
       payload: user,
@@ -111,7 +124,6 @@ function* updateProfile(action: Action): Saga<void> {
     yield putError(USER_PROFILE_UPDATE_ERROR, error);
   }
 }
-
 function* fetchProfile(action: Action): Saga<void> {
   const { username } = action.payload;
 
@@ -131,16 +143,15 @@ function* fetchProfile(action: Action): Saga<void> {
     );
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
-
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
       payload: { user },
     });
   } catch (error) {
+    yield put(replace(NOT_FOUND_ROUTE));
     yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
-
 function* validateUsername(action: Action): Saga<void> {
   const { username } = action.payload;
   yield call(delay, 300);
@@ -165,7 +176,6 @@ function* validateUsername(action: Action): Saga<void> {
   }
   yield put({ type: USERNAME_VALIDATE_SUCCESS });
 }
-
 function* createUsername(action: Action): Saga<void> {
   const { username } = action.payload;
 
