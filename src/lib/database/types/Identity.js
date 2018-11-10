@@ -4,15 +4,15 @@ import type { IdentityProvider } from './IdentityProvider';
 import type { KeyPair } from './KeyPair';
 
 type Signatures = {
-  id: string,
-  publicKey: string,
+  id: string, // The 'wallet signature' (the Ethereum account address, signed by Orbit's key)
+  publicKey: string, // The opposite: the Orbit key's public key plus the previous signature (concatenated and signed)
 };
 
 export type IdentityObject = {
-  id: string,
-  publicKey: string,
+  id: string, // IPFS ID
+  publicKey: string, // Orbit public key
   signatures: Signatures,
-  type: string,
+  type: string, // Provider type
 };
 
 export interface Identity {

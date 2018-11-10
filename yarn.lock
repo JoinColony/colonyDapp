@@ -834,13 +834,13 @@
     "@colony/colony-js-contract-loader" "^1.6.2"
     bn.js "^4.11.6"
 
-"@colony/colony-js-client@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.7.0.tgz#0acb622d31811e44866ec4098b3aaad1f823d214"
-  integrity sha512-Kg1UXphyVDY0kqyz8Z90Cro3JadRhnWShzYKk7n6n37qq4tPg07Q3reiDYdS/fTpJnR4P2BUL+VMZWy9XooZ9g==
+"@colony/colony-js-client@^1.7.3":
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.7.3.tgz#0d63e771c099c135257dbd6361c8d620e28b2e16"
+  integrity sha512-sPkiieZilYUIDFtje8RWmsOnSgcbP0o4ww2IG82t+DS8MFnUCx+3GH0EwuXLO5hlwVw1PYMlhOvMvsVJ0auteQ==
   dependencies:
     "@colony/colony-js-adapter" "^1.7.0"
-    "@colony/colony-js-contract-client" "^1.7.0"
+    "@colony/colony-js-contract-client" "^1.7.3"
     "@colony/colony-js-contract-loader" "^1.6.2"
     "@colony/colony-js-utils" "^1.5.4"
     assert "^1.4.1"
@@ -849,10 +849,10 @@
     isomorphic-fetch "^2.2.1"
     web3-utils "^1.0.0-beta.34"
 
-"@colony/colony-js-contract-client@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.7.0.tgz#afbb2b6e245ecfc0a47c43b3e20dff663272142f"
-  integrity sha512-gqkJpIQx3UiyrpKgBWkZmmcpK8b8k1OCAkLZfgWWq6GZZTzA84bLSAAHZDNq74VEkWdvI4jp1lMkrrm/LK+VXw==
+"@colony/colony-js-contract-client@^1.7.3":
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.7.3.tgz#921671c3fa56b54c417552c03767f654a3f7b7d0"
+  integrity sha512-l7soEl+3FyxLV/d77srPccXK9ezZIXy5JnIM1+0IHC+C0PwvGNBK2KwPgPm/Xf5W+YELbpWKesguVWsmgFFE+Q==
   dependencies:
     "@colony/colony-js-adapter" "^1.7.0"
     "@colony/colony-js-contract-loader" "^1.6.2"

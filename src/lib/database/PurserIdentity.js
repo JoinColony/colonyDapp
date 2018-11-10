@@ -13,7 +13,7 @@ class PurserIdentity implements Identity {
 
   _orbitKey: KeyPair;
 
-  _provider: PurserIdentityProvider;
+  _provider: PurserIdentityProvider<*>;
 
   _publicKey: string;
 
@@ -30,7 +30,7 @@ class PurserIdentity implements Identity {
     idSignature: string,
     pubKeyIdSignature: string,
     type: string,
-    provider: PurserIdentityProvider,
+    provider: PurserIdentityProvider<*>,
     orbitKey: KeyPair,
   ) {
     if (!id) {

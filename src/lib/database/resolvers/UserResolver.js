@@ -7,12 +7,10 @@ class UserResolver extends ENSResolver {
   static suffix = 'user';
 
   async resolve(identifier: string): Promise<OrbitDBAddress> {
-    let domain;
-    if (ENSResolver.isAddress(identifier)) {
-      domain = await this.lookupDomainNameFromAddress(identifier);
-    } else {
-      domain = this.getDomain(identifier);
-    }
+    const domain = ENSResolver.isAddress(identifier)
+      ? await this.lookupDomainNameFromAddress(identifier)
+      : this.getDomain(identifier);
+
     const nameHash = ENSResolver.ensHash(domain);
     const {
       orbitDBAddress,

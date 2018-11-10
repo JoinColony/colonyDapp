@@ -17,7 +17,8 @@ const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
  * Access controller for Purser based Ethereum wallets
  */
 class EthereumAccessController
-  implements AccessController<PurserIdentity, PurserIdentityProvider> {
+  implements
+    AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>> {
   _accountAddress: string;
 
   _type: ProviderType;
@@ -50,7 +51,7 @@ class EthereumAccessController
 
   async canAppend(
     entry: Entry,
-    provider: PurserIdentityProvider,
+    provider: PurserIdentityProvider<PurserIdentity>,
   ): Promise<boolean> {
     const {
       identity: {
@@ -73,9 +74,19 @@ class EthereumAccessController
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
 
-  async load() {
+  /* eslint-disable no-unused-vars,class-methods-use-this */
+  async setup() {
     console.log('Implement me');
   }
+
+  async grant(actionId: string, address: string) {
+    throw new Error('Not implemented yet');
+  }
+
+  async revoke(actionId: string, address: string) {
+    throw new Error('Not implemented yet');
+  }
+  /* eslint-enable no-unused-vars,class-methods-use-this */
 }
 
 export default EthereumAccessController;

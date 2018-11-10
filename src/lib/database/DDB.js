@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { ObjectSchema } from 'yup';
+
 import OrbitDB from 'orbit-db';
 import nanoid from 'nanoid';
 
@@ -8,12 +10,11 @@ import type {
   IdentityProvider,
   OrbitDBAddress,
   OrbitDBStore,
-  Schema,
   StoreType,
 } from './types';
 
 import IPFSNode from '../ipfs';
-import { Store, KVStore } from './stores/index';
+import { Store, KVStore } from './stores';
 
 // TODO: better typing
 type Resolver = Object;
@@ -45,7 +46,7 @@ const STORE_CLASSES = {
   docstore: Store,
 };
 
-const SCHEMAS: Map<string, Schema> = new Map();
+const SCHEMAS: Map<string, ObjectSchema> = new Map();
 
 /**
  * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
@@ -59,12 +60,8 @@ class DDB {
 
   _resolvers: Map<string, Resolver>;
 
-  static registerSchema(schemaId: string, schema: Schema) {
+  static registerSchema(schemaId: string, schema: ObjectSchema) {
     SCHEMAS.set(schemaId, schema);
-  }
-
-  addResolver(resolverId: string, resolver: Resolver) {
-    this._resolvers.set(resolverId, resolver);
   }
 
   static getStoreClass(storeType: StoreType) {
@@ -85,8 +82,13 @@ class DDB {
     this._resolvers = new Map();
     this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
       // TODO: is there a case where this could not be the default?
+      // TODO should this be a constant, or configurable? and `colonyOrbitDB`?
       path: 'colonyOrbitdb',
     });
+  }
+
+  addResolver(resolverId: string, resolver: Resolver) {
+    this._resolvers.set(resolverId, resolver);
   }
 
   async getStore(
@@ -157,7 +159,7 @@ class DDB {
         'Please define an identifier for the store you want to retrieve',
       );
     }
-    if (typeof identifier == 'string') {
+    if (typeof identifier === 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
         return parseAddress(identifier);

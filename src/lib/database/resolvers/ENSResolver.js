@@ -24,10 +24,9 @@ class ENSResolver {
 
   getDomain(identifier: string): string {
     const { suffix } = this.constructor;
-    if (!identifier.includes('.')) {
-      return `${identifier}.${suffix}.joincolony.eth`;
-    }
-    return identifier;
+    return identifier.includes('.')
+      ? identifier
+      : `${identifier}.${suffix}.joincolony.eth`;
   }
 
   // Returns a human-readable colony or user name, when given an ensAddress / Ethereum address
