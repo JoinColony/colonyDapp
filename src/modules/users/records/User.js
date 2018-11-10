@@ -9,6 +9,7 @@ import type { UserProps } from '~types/UserRecord';
 const defaultValues: UserProps = {
   walletAddress: '',
   orbitStore: '',
+  databases: {},
   username: undefined,
   avatar: undefined,
   displayName: undefined,

@@ -11,6 +11,7 @@ export type UserProps = {
   bio?: string,
   website?: string,
   location?: string,
+  databases: Object,
 };
 
 export type UserRecord = RecordOf<UserProps>;
