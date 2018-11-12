@@ -19,9 +19,8 @@ export const UserProfile = yup.object({
 
 export const UserActivity = yup.object({
   userAction: yup
-    .object()
-    .shape(messages)
-    .noUnknown()
+    .string()
+    .oneOf(Object.keys(messages))
     .required(),
   colonyName: yup.string().required(),
   domainName: yup.string(),
