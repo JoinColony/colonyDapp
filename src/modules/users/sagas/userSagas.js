@@ -126,6 +126,7 @@ function* validateUsername(action: Action): Saga<void> {
     { nameHash },
   );
 
+  // If we found a value for `ensAddress`, then this name was previously registered.
   if (ensAddress) {
     yield put({
       type: USERNAME_VALIDATE_ERROR,
