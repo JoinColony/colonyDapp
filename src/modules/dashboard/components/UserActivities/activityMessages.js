@@ -40,8 +40,8 @@ const messages = defineMessages({
   },
   joinedColony: {
     id: 'dashboard.UserActivity.joinedColony',
-    defaultMessage: 'Joined Colony ',
+    // TODO use SVG in #160
+    defaultMessage: 'Joined Colony 🎉🎉',
   },
 });
-
 export default messages;
