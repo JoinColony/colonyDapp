@@ -102,12 +102,14 @@ const Task = ({ openDialog }: Props) => {
           </div>
           <div className={styles.editor}>
             <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-            {isTaskCreator && (
-              <Button
-                appearance={{ theme: 'blue', size: 'small' }}
-                text={MSG.add}
-              />
-            )}
+            {taskMock &&
+              !taskMock.finalized &&
+              isTaskCreator && (
+                <Button
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  text={MSG.add}
+                />
+              )}
           </div>
           <div className={styles.editor}>
             <TaskDate isTaskCreator={isTaskCreator} />
