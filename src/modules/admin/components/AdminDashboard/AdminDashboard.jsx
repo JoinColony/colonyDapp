@@ -66,7 +66,7 @@ type Props = {
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
    */
-  location?: LocationShape,
+  location?: ?LocationShape,
 };
 
 const navigationItems: Array<NavigationItem> = [
@@ -88,22 +88,13 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const AdminDashboard = ({
-  colonyName,
-  // There's actually a flowtype for it so it shouldn't throw a flow error
-  // $FlowFixMe
-  location: {
-    // $FlowFixMe
-    state: {
-      // $FlowFixMe
-      fromWallet,
-    },
-  },
-}: Props) => (
+const AdminDashboard = ({ colonyName, location }: Props) => (
   <div className={styles.main}>
     <VerticalNavigation
       navigationItems={navigationItems}
-      initialTab={fromWallet ? 1 : 0}
+      initialTab={
+        location && location.state && location.state.initialTab ? 1 : 0
+      }
     >
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />

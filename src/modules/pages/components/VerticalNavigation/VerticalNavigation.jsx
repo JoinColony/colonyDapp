@@ -24,7 +24,7 @@ export type NavigationItem = {
 };
 
 type State = {
-  tabIndex: 0,
+  tabIndex: number,
   /*
    * We have to check for initial render to open specific tabs only
    * then when required
@@ -52,20 +52,25 @@ type Props = {
 const displayName = 'pages.VerticalNavigation';
 
 class VerticalNavigation extends Component<Props, State> {
+  static defaultProps = { initialTab: 0 };
+
   state = { tabIndex: 0, initialRender: true };
 
   componentWillMount() {
-    /*
-    * If there's a selectedTab prop set it otherwise
-    * handle tab setting like normal
-    */
+    /**
+     * If there's a selectedTab prop set it otherwise
+     * handle tab setting like normal
+     */
     const { initialTab } = this.props;
     const { initialRender } = this.state;
-    if (initialTab && initialRender) {
-      // $FlowFixMe
+    if (initialTab !== 0 && initialRender) {
       this.setState({ tabIndex: initialTab, initialRender: false });
     }
   }
+
+  setTabIndex = (tabIndex: number) => {
+    this.setState({ tabIndex });
+  };
 
   render() {
     const { navigationItems, children } = this.props;
@@ -77,7 +82,7 @@ class VerticalNavigation extends Component<Props, State> {
             <Tabs
               className={styles.tabs}
               selectedIndex={tabIndex}
-              onSelect={() => this.setState({ tabIndex })}
+              onSelect={newIndex => this.setTabIndex(newIndex)}
             >
               <VerticalTabList className={styles.tabList}>
                 {children}

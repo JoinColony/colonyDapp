@@ -1,12 +1,8 @@
 .main {
-  display: flex;
-  align-items: flex-end;
-  line-height: 23px;
+  /* styles here */
 }
 
 .themeBig {
-  display: flex;
-  align-items: flex-end;
   font-size: var(--size-medium-l);
   letter-spacing: 1px;
 }

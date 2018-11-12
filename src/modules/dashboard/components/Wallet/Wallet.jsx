@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
-import NavLink from '~core/NavLink';
+import Button from '~core/Button';
 import Heading from '~core/Heading';
 
 import styles from './Wallet.css';
@@ -37,11 +37,6 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.Wallet';
 
-const location = {
-  pathname: '/admin',
-  state: { fromWallet: true },
-};
-
 const Wallet = () => (
   <div className={styles.layoutMain}>
     <main className={styles.content}>
@@ -63,17 +58,16 @@ const Wallet = () => (
             <FormattedMessage {...MSG.tabTransactions} />
           </Tab>
         </TabList>
-        <TabPanel />
-        <TabPanel />
+        <TabPanel>Transactions</TabPanel>
+        <TabPanel>Token</TabPanel>
       </Tabs>
     </main>
     <aside className={styles.sidebar}>
       <p className={styles.helpText}>
         <FormattedMessage {...MSG.helpText} />
-        <NavLink
+        <Button
+          appearance={{ theme: 'blue', margin: 'none', size: 'small' }}
           text={MSG.linkEditToken}
-          to={location}
-          className={styles.tokenLink}
         />
       </p>
     </aside>
