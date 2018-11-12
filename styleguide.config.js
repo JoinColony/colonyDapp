@@ -89,8 +89,6 @@ module.exports = {
     {
       name: 'Popovers, Modals & Dialogs',
       components: [
-        './src/modules/core/components/Popover/Popover.jsx',
-        './src/modules/core/components/Popover/Tooltip.jsx',
         './src/modules/core/components/Modal/Modal.jsx',
         './src/modules/core/components/Dialog/Dialog.jsx',
         './src/modules/core/components/Dialog/DialogProvider.jsx',
@@ -98,6 +96,10 @@ module.exports = {
         './src/modules/core/components/Dialog/DialogSection.jsx',
         './src/modules/core/components/Dialog/ConfirmDialog.jsx',
         './src/modules/core/components/ActivityBar/ActivityBar.jsx',
+        './src/modules/core/components/Popover/Popover.jsx',
+        './src/modules/core/components/Popover/Tooltip.jsx',
+        './src/modules/core/components/Popover/PopoverProvider.jsx',
+        './src/modules/core/components/Popover/RegisteredPopover.jsx',
       ],
     },
     {

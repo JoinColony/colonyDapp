@@ -32,7 +32,7 @@ export type PopoverTrigger = ({
   toggle: () => void,
 }) => ReactNode;
 
-type Props = {
+export type Props = {
   appearance?: Appearance,
   /** Child element to trigger the popover */
   children: React$Element<*> | PopoverTrigger,

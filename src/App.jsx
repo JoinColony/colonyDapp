@@ -10,7 +10,8 @@ import messages from './i18n/en.json';
 import Routes from './routes';
 import layout from '~styles/layout.css';
 
-import DialogProvider from '~core/Dialog/DialogProvider.jsx';
+import { DialogProvider } from '~core/Dialog';
+import { PopoverProvider } from '~core/Popover';
 import dialogComponents from './dialogComponents';
 
 addLocaleData(en);
@@ -23,13 +24,15 @@ type Props = {
 const App = ({ store, history }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
     <ReduxProvider store={store}>
-      <DialogProvider dialogComponents={dialogComponents}>
-        <ConnectedRouter history={history}>
-          <div className={layout.stretch}>
-            <Routes />
-          </div>
-        </ConnectedRouter>
-      </DialogProvider>
+      <PopoverProvider>
+        <DialogProvider dialogComponents={dialogComponents}>
+          <ConnectedRouter history={history}>
+            <div className={layout.stretch}>
+              <Routes />
+            </div>
+          </ConnectedRouter>
+        </DialogProvider>
+      </PopoverProvider>
     </ReduxProvider>
   </IntlProvider>
 );

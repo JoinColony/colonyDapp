@@ -19,6 +19,8 @@ type State = {
 };
 
 class DialogProvider extends Component<Props, State> {
+  static displayName = 'DialogProvider';
+
   static defaultProps = {
     dialogComponents: {},
   };
