@@ -76,6 +76,7 @@ const Wallet = () => (
         <Button
           appearance={{ theme: 'blue', margin: 'none', size: 'small' }}
           text={MSG.linkEditToken}
+          className={styles.tokenLink}
         />
       </p>
     </aside>
