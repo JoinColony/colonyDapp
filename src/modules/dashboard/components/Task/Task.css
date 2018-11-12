@@ -73,3 +73,8 @@
   flex: 0 0 auto;
   position: relative;
 }
+
+.completedDescription {
+  margin-right: 10px;
+  font-size: var(--size-small);
+}

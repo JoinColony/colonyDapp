@@ -1,7 +1,7 @@
 /* @flow */
 
-import React from 'react';
-import { defineMessages } from 'react-intl';
+import React, { Fragment } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './Task.css';
 
@@ -52,6 +52,10 @@ const MSG = defineMessages({
   skill: {
     id: 'dashboard.Task.skill',
     defaultMessage: 'Skill',
+  },
+  completed: {
+    id: 'dashboard.Task.completed',
+    defaultMessage: 'Task completed',
   },
 });
 
@@ -112,37 +116,54 @@ const Task = ({ openDialog }: Props) => {
       </aside>
       <div className={styles.container}>
         <section className={styles.header}>
-          <TaskRequestWork isTaskCreator={isTaskCreator} />
-          {/*
-           * @TODO This are temporary buttons to be able to show the rating
-           * modals until they will get wired up.
-           */}
-          <Button
-            text="Rate Manager"
-            onClick={() =>
-              openDialog('ManagerRatingDialog', {
-                workSubmitted: false,
-              })
-            }
-          />
-          <Button
-            text="Rate Manager (Work Submitted)"
-            onClick={() =>
-              openDialog('ManagerRatingDialog', { workSubmitted: true })
-            }
-          />
-          <Button
-            text="Rate Worker"
-            onClick={() =>
-              openDialog('WorkerRatingDialog', { workSubmitted: false })
-            }
-          />
-          <Button
-            text="Rate Worker (Work Submitted)"
-            onClick={() =>
-              openDialog('WorkerRatingDialog', { workSubmitted: true })
-            }
-          />
+          {taskMock && !taskMock.finalized ? (
+            <Fragment>
+              <TaskRequestWork isTaskCreator={isTaskCreator} />
+              {/*
+               * @TODO This are temporary buttons to be able to show the rating
+               * modals until they will get wired up.
+               */}
+              <Button
+                text="Rate Manager"
+                onClick={() =>
+                  openDialog('ManagerRatingDialog', {
+                    workSubmitted: false,
+                  })
+                }
+              />
+              <Button
+                text="Rate Manager (Work Submitted)"
+                onClick={() =>
+                  openDialog('ManagerRatingDialog', { workSubmitted: true })
+                }
+              />
+              <Button
+                text="Rate Worker"
+                onClick={() =>
+                  openDialog('WorkerRatingDialog', { workSubmitted: false })
+                }
+              />
+              <Button
+                text="Rate Worker (Work Submitted)"
+                onClick={() =>
+                  openDialog('WorkerRatingDialog', { workSubmitted: true })
+                }
+              />
+            </Fragment>
+          ) : (
+            <Fragment>
+              {!taskMock.payoutClaimed ? (
+                /*
+                 * @NOTE This is a placeholder until #559 gets merged
+                 */
+                <Button text="Claim Rewards" />
+              ) : (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
+            </Fragment>
+          )}
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
