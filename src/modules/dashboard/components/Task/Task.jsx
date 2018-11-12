@@ -98,7 +98,9 @@ const Task = ({ openDialog }: Props) => {
         </section>
         <section className={styles.section}>
           <div className={styles.editor}>
-            <TaskDomains isTaskCreator={isTaskCreator} />
+            <TaskDomains
+              isTaskCreator={taskMock && !taskMock.finalized && isTaskCreator}
+            />
           </div>
           <div className={styles.editor}>
             <Heading appearance={{ size: 'small' }} text={MSG.skill} />
