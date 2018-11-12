@@ -63,6 +63,8 @@ const Task = ({ openDialog }: Props) => {
   const isTaskCreator =
     taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
 
+  const preventEdit = taskMock && !taskMock.finalized && isTaskCreator;
+
   return (
     <div className={styles.main}>
       <aside className={styles.sidebar}>
@@ -92,31 +94,28 @@ const Task = ({ openDialog }: Props) => {
           <Form
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
+            initialValues={{
+              taskTitle: taskMock.title,
+            }}
           >
-            <TaskDescription isTaskCreator={isTaskCreator} />
+            <TaskDescription isTaskCreator={preventEdit} />
           </Form>
         </section>
         <section className={styles.section}>
           <div className={styles.editor}>
-            <TaskDomains
-              isTaskCreator={taskMock && !taskMock.finalized && isTaskCreator}
-            />
+            <TaskDomains isTaskCreator={preventEdit} />
           </div>
           <div className={styles.editor}>
             <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-            {taskMock &&
-              !taskMock.finalized &&
-              isTaskCreator && (
-                <Button
-                  appearance={{ theme: 'blue', size: 'small' }}
-                  text={MSG.add}
-                />
-              )}
+            {preventEdit && (
+              <Button
+                appearance={{ theme: 'blue', size: 'small' }}
+                text={MSG.add}
+              />
+            )}
           </div>
           <div className={styles.editor}>
-            <TaskDate
-              isTaskCreator={taskMock && !taskMock.finalized && isTaskCreator}
-            />
+            <TaskDate isTaskCreator={preventEdit} />
           </div>
         </section>
       </aside>
