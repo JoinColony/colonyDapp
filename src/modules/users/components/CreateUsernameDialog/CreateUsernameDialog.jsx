@@ -60,12 +60,13 @@ class CreateUsernameDialog extends Component<Props> {
   });
 
   validateUsername = async (values: FormValues) => {
-    const error = {
-      username: MSG.errorUsernameTaken,
-    };
     try {
       await this.checkUsernameTaken.asyncFunction(values);
     } catch (e) {
+      const error = {
+        username: MSG.errorUsernameTaken,
+      };
+      // eslint doesn't allow for throwing object literals
       throw error;
     }
   };
