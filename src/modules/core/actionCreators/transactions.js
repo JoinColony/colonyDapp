@@ -14,7 +14,7 @@ export function transactionStarted(
   id: string,
   transactionActionType: string,
   params: Object,
-  actionType?: ?string,
+  actionType: ?string,
   options?: SendOptions,
 ) {
   return {

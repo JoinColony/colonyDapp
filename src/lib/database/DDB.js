@@ -139,7 +139,7 @@ class DDB {
       : null;
   }
 
-  _resolveStoreAddress(identifier: string): Promise<string> {
+  _resolveStoreAddress(identifier: string) {
     const [resolverKey, id] = identifier.split('.');
     if (!resolverKey || !id) {
       throw new Error('Identifier is not in a valid form');
