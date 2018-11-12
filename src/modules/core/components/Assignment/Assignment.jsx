@@ -65,8 +65,9 @@ const Assignment = ({
   pending,
   nativeToken,
 }: Props) => {
-  const fundingWithNativeToken = (): any =>
+  const fundingWithNativeToken =
     payouts && payouts.find(payout => payout.symbol === nativeToken);
+
   return (
     <div>
       <div className={styles.displayContainer}>

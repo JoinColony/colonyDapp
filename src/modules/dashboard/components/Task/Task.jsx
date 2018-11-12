@@ -80,7 +80,6 @@ const Task = ({ openDialog }: Props) => {
               assignee={taskMock.assignee}
               reputation={taskMock.reputation}
               payouts={taskMock.payouts}
-              pending
               nativeToken="CLNY"
             />
           </Form>
