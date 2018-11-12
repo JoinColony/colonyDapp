@@ -54,68 +54,77 @@ type Props = {
    * since this component is only
    */
   pending?: boolean,
+  /** We need to be aware of the native token to adjust the UI */
+  nativeToken: string,
 };
 
-const Assignment = ({ assignee, payouts, reputation, pending }: Props) => (
-  <div>
-    <div className={styles.displayContainer}>
-      {assignee ? (
-        <div className={styles.avatarContainer}>
-          <UserAvatar
-            className={styles.recipientAvatar}
-            userId={assignee.walletAddress}
-            walletAddress={assignee.walletAddress}
-            username={assignee.username || assignee.walletAddress}
-            size="xs"
+const Assignment = ({
+  assignee,
+  payouts,
+  reputation,
+  pending,
+  nativeToken,
+}: Props) => {
+  const fundingWithNativeToken = (): any =>
+    payouts && payouts.find(payout => payout.symbol === nativeToken);
+  return (
+    <div>
+      <div className={styles.displayContainer}>
+        {assignee ? (
+          <div className={styles.avatarContainer}>
+            <UserAvatar
+              className={styles.recipientAvatar}
+              userId={assignee.walletAddress}
+              walletAddress={assignee.walletAddress}
+              username={assignee.username || assignee.walletAddress}
+              size="xs"
+            />
+          </div>
+        ) : (
+          <Icon
+            className={styles.icon}
+            name="circle-person"
+            title={MSG.selectMember}
           />
+        )}
+        <div className={styles.container}>
+          {assignee ? (
+            <div
+              role="button"
+              className={pending ? styles.pending : styles.assigneeName}
+            >
+              {assignee.displayName}
+              {pending && (
+                <span className={styles.pendingLabel}>
+                  <FormattedMessage {...MSG.pendingAssignment} />
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className={styles.placeholder}>
+              <FormattedMessage {...MSG.placeholder} />
+            </div>
+          )}
         </div>
-      ) : (
-        <Icon
-          className={styles.icon}
-          name="circle-person"
-          title={MSG.selectMember}
-        />
-      )}
-      {}
-      <div className={styles.container}>
-        {/* eslint-disable jsx-a11y/click-events-have-key-events */
-        assignee ? (
-          <div
-            role="button"
-            className={pending ? styles.pending : styles.assigneeName}
-            tabIndex="0"
-          >
-            {assignee.displayName}
-            {pending && (
-              <span className={styles.pendingLabel}>
-                <FormattedMessage {...MSG.pendingAssignment} />
+        <div className={styles.fundingContainer}>
+          {reputation &&
+            fundingWithNativeToken && (
+              <span className={styles.reputation}>
+                <FormattedMessage
+                  {...MSG.reputation}
+                  values={{ reputation: reputation.toString() }}
+                />
               </span>
             )}
-          </div>
-        ) : (
-          <div className={styles.placeholder}>
-            <FormattedMessage {...MSG.placeholder} />
-          </div>
-        )}
-      </div>
-      <div className={styles.fundingContainer}>
-        {reputation && (
-          // TODO: check if funding token is native once we have a helper for it
-          <span className={styles.reputation}>
-            <FormattedMessage
-              {...MSG.reputation}
-              values={{ reputation: reputation.toString() }}
-            />
-          </span>
-        )}
-        {payouts ? (
-          <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
-        ) : (
-          <FormattedMessage {...MSG.fundingNotSet} />
-        )}
+          {payouts ? (
+            <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
+          ) : (
+            <FormattedMessage {...MSG.fundingNotSet} />
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Assignment;
