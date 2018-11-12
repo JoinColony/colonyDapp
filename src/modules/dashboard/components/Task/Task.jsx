@@ -114,7 +114,9 @@ const Task = ({ openDialog }: Props) => {
               )}
           </div>
           <div className={styles.editor}>
-            <TaskDate isTaskCreator={isTaskCreator} />
+            <TaskDate
+              isTaskCreator={taskMock && !taskMock.finalized && isTaskCreator}
+            />
           </div>
         </section>
       </aside>
