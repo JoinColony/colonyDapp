@@ -1,4 +1,5 @@
 @value sidbarWidth: 470px;
+@value headerHeight: 45px;
 
 .main {
   display: flex;
@@ -34,9 +35,9 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  align-items: center;
   margin-right: 7px;
-  padding: 11px;
-  width: 100%;
+  height: headerHeight;
   border-bottom: 1px solid var(--grey-blue-0);
 }
 
