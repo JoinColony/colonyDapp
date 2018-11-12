@@ -7,7 +7,7 @@ import Store from './Store';
 
 /**
  * The wrapper Store class for orbit's feed stores.
- * Includes schema validation
+ * Includes function to return all values, and schema validation.
  */
 class FeedStore extends Store {
   +_orbitStore: OrbitDBFeedStore = this._orbitStore;
@@ -27,9 +27,9 @@ class FeedStore extends Store {
       : this.all(hashOrOptions);
   }
 
-  all(options: FeedIteratorOptions = {}) {
+  all(options: FeedIteratorOptions = { limit: -1 }) {
     return this._orbitStore
-      .iterator({ ...options, limit: -1 })
+      .iterator(options)
       .collect()
       .map(item => item.payload.value);
   }

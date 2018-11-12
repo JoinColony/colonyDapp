@@ -61,7 +61,7 @@ describe('FeedStore', () => {
       validProps,
       expect.any(Object),
     );
-    // Missing `requiredProp`
+    // Missing `userAction`
     const invalidProps = { colonyName: 'bar' };
     try {
       await store.validate(invalidProps);
