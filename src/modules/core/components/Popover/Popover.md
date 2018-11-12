@@ -4,7 +4,7 @@ The styles of the popover content are deliberately kept simple so that you can s
 
 ```js
 <Popover
-  trigger="always"
+  isOpen={true}
   content="Simple popover"
 >
   <Button appearance={{ theme: 'primary' }}>Hi</Button>
@@ -15,7 +15,7 @@ The styles of the popover content are deliberately kept simple so that you can s
 
 ```js
 <Popover
-  trigger="always"
+  isOpen={true}
   placement="right"
   content="Right!"
 >
@@ -27,7 +27,7 @@ The styles of the popover content are deliberately kept simple so that you can s
 
 ```js
 <Popover
-  trigger="always"
+  isOpen={true}
   placement="bottom"
   content="I'm on the bottom!"
 >
@@ -39,7 +39,7 @@ The styles of the popover content are deliberately kept simple so that you can s
 
 ```js
 <Popover
-  trigger="always"
+  isOpen={true}
   placement="left"
   content="Left hand side!"
 >
@@ -51,7 +51,7 @@ The styles of the popover content are deliberately kept simple so that you can s
 
 ```js
 <Popover
-  trigger="always"
+  isOpen={true}
   appearance={{ theme: 'dark' }}
   content="Booo!"
 >

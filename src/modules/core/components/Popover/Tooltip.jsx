@@ -16,9 +16,11 @@ type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 type Props = {
   /** Child element to trigger the popover */
   children: React$Element<*> | (({ ref: ReactRef }) => Node),
+  /** The tooltips' content */
   content: Node | MessageDescriptor,
   /** How the popover gets triggered */
-  trigger: 'always' | 'hover' | 'click' | 'disabled',
+  trigger: 'hover' | 'click' | 'disabled',
+  /** The tooltips' placement */
   placement?: Placement,
 };
 
