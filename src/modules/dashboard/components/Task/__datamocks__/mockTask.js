@@ -20,8 +20,8 @@ const mockTask = {
     username: 'Elena',
     displayName: 'Elena Dimitrova',
   },
-  payoutClaimed: true,
-  finalized: true,
+  payoutClaimed: false,
+  finalized: false,
   feedItems: [
     {
       id: 0,
