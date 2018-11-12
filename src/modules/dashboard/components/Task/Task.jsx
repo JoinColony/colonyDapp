@@ -74,7 +74,7 @@ const Task = ({ openDialog }: Props) => {
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
-            {isTaskCreator && (
+            {preventEdit && (
               <Button appearance={{ theme: 'blue' }} text={MSG.details} />
             )}
           </header>
@@ -82,6 +82,15 @@ const Task = ({ openDialog }: Props) => {
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
           >
+          {/*
+            * TODO: replace this with TaskAssignment component in colonyDapp#445
+            *
+            * This should also add in a `readOnly` prop for the `SingleUserPicker`
+            * to prevent opening when the task has been finalized.
+            *
+            * See:
+            * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
+            */}
             <Assignment
               assignee={taskMock.assignee}
               reputation={taskMock.reputation}
