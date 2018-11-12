@@ -1,47 +1,45 @@
 /* @flow */
 /* eslint max-len: 0 */
 
-// TODO move this file to the UserActivity component folder when it exists
-
 import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
   createdColony: {
-    id: 'userActivity.createdColony',
+    id: 'dashboard.UserActivity.createdColony',
     defaultMessage: 'Created {colonyName}.',
   },
   createdTask: {
-    id: 'userActivity.createdTask',
+    id: 'dashboard.UserActivity.createdTask',
     defaultMessage: 'Created {taskName}.',
   },
   acceptedTask: {
-    id: 'userActivity.acceptedTask',
+    id: 'dashboard.UserActivity.acceptedTask',
     defaultMessage: 'Accepted {taskName}.',
   },
   assignedTask: {
-    id: 'userActivity.assignedTask',
+    id: 'dashboard.UserActivity.assignedTask',
     defaultMessage: 'Assigned @{userName} to {taskName}.',
   },
   receivedWorkerRating: {
-    id: 'userActivity.receivedWorkerRating',
+    id: 'dashboard.UserActivity.receivedWorkerRating',
     defaultMessage:
-      'Recieved {numberOfStars}-star rating for completing taskName.',
+      'Received {numberOfStars}-star rating for completing taskName.',
   },
   receivedAdminRating: {
-    id: 'userActivity.receivedAdminRating',
+    id: 'dashboard.UserActivity.receivedAdminRating',
     defaultMessage:
-      'Recieved {numberOfStars}-star rating for completed taskName.',
+      'Received {numberOfStars}-star rating for completed taskName.',
   },
   taskComment: {
-    id: 'userActivity.taskComment',
+    id: 'dashboard.UserActivity.taskComment',
     defaultMessage: 'Commented on {taskName}.',
   },
   fileUpload: {
-    id: 'userActivity.fileUpload',
+    id: 'dashboard.UserActivity.fileUpload',
     defaultMessage: 'Uploaded a file to {taskName}.',
   },
   joinedColony: {
-    id: 'userActivity.joinedColony',
+    id: 'dashboard.UserActivity.joinedColony',
     defaultMessage: 'Joined Colony ',
   },
 });

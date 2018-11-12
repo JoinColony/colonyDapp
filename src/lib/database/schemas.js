@@ -1,7 +1,9 @@
 /* @flow */
 
 import * as yup from 'yup';
-import messages from '../../types/ActivityMessages';
+
+// eslint-disable-next-line max-len
+import { activityMessages } from '../../modules/dashboard/components/UserActivities';
 
 // eslint-disable-next-line import/prefer-default-export
 export const UserProfile = yup.object({
@@ -20,7 +22,7 @@ export const UserProfile = yup.object({
 export const UserActivity = yup.object({
   userAction: yup
     .string()
-    .oneOf(Object.keys(messages))
+    .oneOf(Object.keys(activityMessages))
     .required(),
   colonyName: yup.string().required(),
   domainName: yup.string(),
