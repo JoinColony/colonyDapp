@@ -4,7 +4,6 @@ export const CONNECT_ROUTE = '/connect';
 export const COLONY_HOME_ROUTE = '/colony';
 export const TASK_ROUTE = '/task/:taskId';
 export const CREATE_COLONY_ROUTE = '/create-colony';
-export const CREATE_PROFILE_ROUTE = '/create-profile';
 export const CREATE_WALLET_ROUTE = '/create-wallet';
 export const DASHBOARD_ROUTE = '/dashboard';
 export const INBOX_ROUTE = '/inbox';

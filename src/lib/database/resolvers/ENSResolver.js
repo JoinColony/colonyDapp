@@ -1,6 +1,6 @@
 /* @flow */
 
-import namehash from 'eth-ens-namehash';
+import namehash from 'eth-ens-namehash-ms';
 import { isAddress } from 'web3-utils';
 
 import type ColonyNetworkClient from '@colony/colony-js-client';

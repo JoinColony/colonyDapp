@@ -6,16 +6,28 @@
   display: block;
 }
 
+.baseStyles button {
+  /* Reset button styles to look like a link in here */
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  text-align: inherit;
+  line-height: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
 /* themes */
 .main {
   composes: baseStyles;
-}
-
-.main a {
   color: var(--grey-4);
 }
 
-.main a:hover {
+.main a:hover, .main button:hover {
   background-color: var(--grey-blue-0);
   color: var(--grey-1);
 }
@@ -26,10 +38,10 @@
   color: var(--colony-white);
 }
 
-.themeDark a {
+.themeDark a, .themeDark button {
   color: var(--grey-4);
 }
 
-.themeDark a:hover {
+.themeDark a:hover .themeDark button:hover {
   color: var(--grey-blue-2);
 }

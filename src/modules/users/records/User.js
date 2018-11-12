@@ -8,7 +8,8 @@ import type { UserProps } from '~types/UserRecord';
 
 const defaultValues: UserProps = {
   walletAddress: '',
-  username: '',
+  orbitStore: '',
+  username: undefined,
   avatar: undefined,
   displayName: undefined,
   bio: undefined,
@@ -17,7 +18,7 @@ const defaultValues: UserProps = {
 };
 
 // TODO: Ideally, we should be able to validate the required properties
-// (`walletAddress`, `username`) before creating a record, rather than using
+// (`walletAddress`, `orbitStore`) before creating a record, rather than using
 // empty strings.
 const User: RecordFactory<UserProps> = Record(defaultValues);
 

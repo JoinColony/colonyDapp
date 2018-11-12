@@ -15,16 +15,16 @@ import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
-import ProfileCreate from '~users/ProfileCreate';
 
 import AdminDashboard from '~admin/AdminDashboard';
+
+import { currentUserState } from '../modules/users/selectors';
 
 import {
   CONNECT_ROUTE,
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   TASK_ROUTE,
-  CREATE_PROFILE_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
   ADMIN_DASHBOARD_ROUTE,
@@ -42,8 +42,8 @@ const Wallet = () => <h1 style={{ fontSize: '32px' }}>Wallet</h1>;
 // We cannot add types to this component's props because of how we're using
 // `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
 // eslint-disable-next-line react/prop-types
-const Routes = ({ currentUser: { walletAddress } }) => {
-  const isConnected = !!walletAddress;
+const Routes = ({ currentUser }) => {
+  const isConnected = !!(currentUser && currentUser.walletAddress);
   return (
     <Switch>
       <Route
@@ -113,18 +113,13 @@ const Routes = ({ currentUser: { walletAddress } }) => {
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
       />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={CREATE_PROFILE_ROUTE}
-        component={ProfileCreate}
-      />
     </Switch>
   );
 };
 
 const RoutesContainer = connect(
-  ({ user: { currentUser } }) => ({
-    currentUser: currentUser || {},
+  state => ({
+    currentUser: currentUserState(state),
   }),
   null,
 )(Routes);

@@ -17,6 +17,11 @@ export type DialogType = {
   cancel: Cancel,
   close: Close,
   key: string,
-  props: { [string]: any },
-  afterClosed: Promise<any>,
+  props?: { [string]: any },
+  afterClosed: () => Promise<any>,
 };
+
+export type OpenDialog = (
+  dialogKey: string,
+  props?: { [string]: any },
+) => DialogType | void;

@@ -21,7 +21,10 @@ const MSG = defineMessages({
 
 const displayName = 'Form.ActionForm';
 
-type Props = FormikConfig<Object> & {
+// We remove the onSubmit function from the props as it is provided by the ActionForm itself
+type ActionFormikConfig = $Rest<FormikConfig<Object>, {| onSubmit: Function |}>;
+
+type Props = ActionFormikConfig & {
   /** Redux action to dispatch on submit (e.g. CREATE_XXX) */
   submit: string,
   /** Redux action listener for successful action (e.g. CREATE_XXX_SUCCESS) */

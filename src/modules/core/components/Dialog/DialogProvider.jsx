@@ -29,7 +29,7 @@ class DialogProvider extends Component<Props, State> {
 
   pushDialog = (
     dialogKey: string,
-    props: { [string]: any },
+    props?: { [string]: any },
   ): DialogType | void => {
     const { dialogComponents } = this.props;
     const Dialog = dialogComponents[dialogKey];
@@ -43,17 +43,13 @@ class DialogProvider extends Component<Props, State> {
     let resolvePromise;
     let rejectPromise;
     const key = nanoid();
-    const promise = new Promise((resolve, reject) => {
-      resolvePromise = resolve;
-      rejectPromise = reject;
-    });
     const close = (val: any) => {
       this.closeDialog(key);
-      resolvePromise(val);
+      if (resolvePromise) resolvePromise(val);
     };
     const cancel = () => {
       this.closeDialog(key);
-      rejectPromise(new Error('User cancelled'));
+      if (rejectPromise) rejectPromise(new Error('User cancelled'));
     };
     const dialog = {
       Dialog,
@@ -61,7 +57,11 @@ class DialogProvider extends Component<Props, State> {
       close,
       key,
       props,
-      afterClosed: promise,
+      afterClosed: () =>
+        new Promise((resolve, reject) => {
+          resolvePromise = resolve;
+          rejectPromise = reject;
+        }),
     };
     this.setState(({ openDialogs }) => ({
       openDialogs: [...openDialogs, dialog],

@@ -49,8 +49,8 @@ class Tokens extends Component<Props> {
 
   handleOpenTokenEditDialog = () => {
     const { openDialog, tokens } = this.props;
-    const tokenEditDialg = openDialog('TokenEditDialog', { tokens });
-    tokenEditDialg.afterClosed.catch(() => {
+    const tokenEditDialog = openDialog('TokenEditDialog', { tokens });
+    tokenEditDialog.afterClosed().catch(() => {
       // cancel actions here
     });
   };
@@ -62,7 +62,7 @@ class Tokens extends Component<Props> {
       onMintNewTokensSubmitted: this.onMintNewTokensSubmitted,
       nativeToken,
     });
-    mintNewTokensDialog.afterClosed.catch(() => {
+    mintNewTokensDialog.afterClosed().catch(() => {
       // cancel actions here
     });
   };

@@ -27,7 +27,7 @@ export type Sender<Params: Object, EventData: Object> = {
 export type TransactionAction<Params: Object> = {
   type: string,
   payload: {
-    options: SendOptions,
+    options?: SendOptions,
     params: Params,
   },
 };

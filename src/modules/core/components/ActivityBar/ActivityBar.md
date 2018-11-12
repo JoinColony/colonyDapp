@@ -28,7 +28,7 @@ const withDialog = require('../Dialog/withDialog.js').default;
 const ComponentThatOpensAnActivityBar = ({ openDialog }) => (
   <div>
     <Button
-      onClick={() => openDialog('ActivityBarExample').afterClosed.then(
+      onClick={() => openDialog('ActivityBarExample').afterClosed().then(
         () => alert('Confirmed'),
         () => alert('Cancelled')
       )}

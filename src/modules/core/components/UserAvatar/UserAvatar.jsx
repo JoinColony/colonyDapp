@@ -21,7 +21,7 @@ type Props = {
    */
   displayName?: string,
   /** For the title */
-  username: string,
+  username?: string,
   /** Address of the current user for identicon fallback */
   walletAddress: string,
   /* Whether to show or not show the UserInfo tooltip over the avatar */
@@ -50,7 +50,7 @@ const UserAvatar = ({
       notSet={notSet}
       placeholderIcon="circle-person"
       size={size}
-      title={!hasUserInfo ? username : ''}
+      title={username || walletAddress}
     />
   </UserInfo>
 );

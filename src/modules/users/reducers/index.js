@@ -8,7 +8,7 @@ import usersReducer from './usersReducer';
 const rootReducer = combineReducers({
   currentUser: currentUserReducer,
   wallet: walletReducer,
-  users: usersReducer,
+  allUsers: usersReducer,
 });
 
 export default rootReducer;

@@ -14,6 +14,7 @@ import { resolvers } from '../../../lib/database';
 import setupDashboardSagas from '../../dashboard/sagas';
 import {
   getWallet,
+  getUserStore,
   getUser,
   setupUserSagas,
   setupWalletSagas,
@@ -41,12 +42,17 @@ function* setupUserContext(action: Object): any {
     yield call([ddb, ddb.addResolver], 'user', userResolver);
 
     yield setContext({ ddb, networkClient });
-    const user = yield call(getUser);
+
+    const userStore = yield call(getUserStore, wallet.address);
+    const user = yield call(getUser, userStore);
+
     yield put({
       type: CURRENT_USER_CREATE,
       payload: {
+        user,
         walletAddress: wallet.address,
-        set: user,
+        // Address is an orbit address object
+        orbitStore: userStore.address.toString(),
       },
     });
     yield call(setupContextSagas);

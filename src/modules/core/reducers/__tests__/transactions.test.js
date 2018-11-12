@@ -5,8 +5,8 @@ import reducer from '../transactions';
 import { Transaction } from '../../records';
 
 import {
-  sendTransaction,
-  startTransaction,
+  transactionSent,
+  transactionStarted,
   transactionEventDataError,
   transactionEventDataReceived,
   transactionReceiptError,
@@ -45,8 +45,8 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   // Actions
-  const transactionStarted = startTransaction(id, actionType, params, options);
-  const transactionSent = sendTransaction(id, hash);
+  const startedTx = transactionStarted(id, actionType, params, null, options);
+  const sentTx = transactionSent(id, hash);
   const receiptReceived = transactionReceiptReceived(id, { hash });
   const eventDataReceived = transactionEventDataReceived(id, eventData);
   const sendError = transactionSendError(id, 'send error');
@@ -57,7 +57,7 @@ describe(`core: reducers (transactions)`, () => {
     testActions(
       [
         [
-          transactionStarted,
+          startedTx,
           state => {
             // TODO ideally we should evaluate the state based on the whole
             // map, but jest has some unexpected results when using `toEqual`
@@ -85,7 +85,7 @@ describe(`core: reducers (transactions)`, () => {
           },
         ],
         [
-          transactionSent,
+          sentTx,
           state => {
             expect(state.size).toBe(2);
 
@@ -173,7 +173,7 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles send error', () => {
     testActions(
       [
-        [transactionStarted],
+        [startedTx],
         [
           sendError,
           state => {
@@ -207,8 +207,8 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles receipt error', () => {
     testActions(
       [
-        [transactionStarted],
-        [transactionSent],
+        [startedTx],
+        [sentTx],
         [
           receiptError,
           state => {
@@ -242,8 +242,8 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles event data error', () => {
     testActions(
       [
-        [transactionStarted],
-        [transactionSent],
+        [startedTx],
+        [sentTx],
         [receiptReceived],
         [
           eventDataError,

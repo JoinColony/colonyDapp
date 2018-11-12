@@ -7,20 +7,19 @@
  */
 
 import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
-import TokenEditDialog from '~admin/Tokens/TokenEditDialog.jsx';
-import TokenMintDialog from '~admin/Tokens/TokenMintDialog.jsx';
-import TaskRequestWorkDialog from /*
- * Again, the same trick of making prettier not suggest a fix that would
- * break the eslint rules, by just adding a comment
- */ '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import {
   ManagerRatingDialog,
   WorkerRatingDialog,
 } from '~dashboard/TaskRatingDialogs';
+import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
+// eslint-disable-next-line max-len
+import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
+import CreateUsernameDialog from '~users/CreateUsernameDialog';
 
 const dialogComponents: Object = {
   // Hint: Once we have the gas station we just have to add it here
   ActivityBarExample,
+  CreateUsernameDialog,
   TokenEditDialog,
   TokenMintDialog,
   TaskRequestWorkDialog,

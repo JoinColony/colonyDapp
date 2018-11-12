@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, getContext } from 'redux-saga/effects';
+import { call, getContext, put } from 'redux-saga/effects';
 import { providers } from 'ethers';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
@@ -11,6 +11,10 @@ import NetworkLoader from '@colony/colony-js-contract-loader-network';
 
 import { create } from '~utils/saga/effects';
 import EthersWrappedWallet from '../../../lib/EthersWrappedWallet';
+
+import type { TransactionAction, LifecycleActionTypes } from '../types';
+
+import methodSagaFactory from './utils/methodSagaFactory';
 
 /**
  * Return an initialized ColonyNetworkClient instance.
@@ -49,4 +53,33 @@ export function* getNetworkClient(): Saga<ColonyNetworkClient> {
   yield call([networkClient, networkClient.init]);
 
   return networkClient;
+}
+
+export function networkMethodSagaFactory<Params: Object, EventData: Object>(
+  methodName: string,
+  lifecycleActionTypes: LifecycleActionTypes,
+) {
+  return function* networkMethodSaga(
+    action: TransactionAction<Params>,
+  ): Saga<void> {
+    try {
+      // Get the named method from the `networkClient` context.
+      const { [methodName]: method } = yield getContext('networkClient');
+
+      // Create a saga for this method and given success/error action types,
+      // then immediately call it with the given action.
+      const saga = methodSagaFactory<Params, EventData>(
+        method,
+        lifecycleActionTypes,
+      );
+      yield call(saga, action);
+    } catch (error) {
+      const { error: errorType } = lifecycleActionTypes;
+      if (errorType) {
+        yield put({ type: errorType, payload: error });
+      } else {
+        throw error;
+      }
+    }
+  };
 }

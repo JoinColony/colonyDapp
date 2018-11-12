@@ -3,6 +3,8 @@
         "equalTo": "${path} must be the same as ${reference}"
     },
     "string": {
-        "address": "This is not a valid address"
+        "address": "This is not a valid address",
+        "ensAddress": "This is not a valid ENS address",
+        "username": "This is not a valid username"
     }
 }

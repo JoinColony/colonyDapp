@@ -10,12 +10,12 @@ import {
   TRANSACTION_STARTED,
 } from '../actionTypes';
 
-export function startTransaction(
+export function transactionStarted(
   id: string,
   transactionActionType: string,
   params: Object,
-  options: SendOptions,
-  actionType?: string,
+  actionType: ?string,
+  options?: SendOptions,
 ) {
   return {
     type: actionType || TRANSACTION_STARTED,
@@ -73,7 +73,7 @@ export function transactionReceiptReceived(
   };
 }
 
-export function sendTransaction(id: string, hash: string, actionType?: string) {
+export function transactionSent(id: string, hash: string, actionType?: string) {
   return {
     type: actionType || TRANSACTION_SENT,
     payload: { id, hash },
