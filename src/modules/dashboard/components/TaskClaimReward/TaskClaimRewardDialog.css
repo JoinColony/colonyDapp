@@ -80,10 +80,6 @@
   & span {
     display: block;
     font-size: valuesFontSize;
-
-    &::first-letter {
-      color: var(--grey-4);
-    }
   }
 }
 
