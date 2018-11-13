@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextDecorator utility React component text decoration Multiple decorations 1`] = `
+<span>
+  Hi 
+  <a
+    href="http://google.com"
+  >
+    google.com
+  </a>
+   CoolCool text 
+  <a
+    href="mailto:hi@ho.de"
+  >
+    Mail to: 
+    hi@ho.de
+  </a>
+   @chmanie @@boss
+</span>
+`;
+
+exports[`TextDecorator utility React component text decoration Overriding decorators 1`] = `
+<span>
+  Hi 
+  <a
+    href="http://google.com"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    google.com
+  </a>
+   CoolCool text hi@ho.de @chmanie @@boss
+</span>
+`;
+
+exports[`TextDecorator utility React component text decoration Overriding tagName, extra props 1`] = `
+<div
+  className="comment"
+>
+  Hi 
+  <a
+    href="http://google.com"
+  >
+    google.com
+  </a>
+   CoolCool text hi@ho.de @chmanie @@boss
+</div>
+`;
+
+exports[`TextDecorator utility React component text decoration Single decoration 1`] = `
+<span>
+  Hi 
+  <a
+    href="http://google.com"
+  >
+    google.com
+  </a>
+   CoolCool text hi@ho.de @chmanie @@boss
+</span>
+`;
