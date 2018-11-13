@@ -1,7 +1,5 @@
 /* @flow */
 
-import IPFS from 'ipfs';
-
 import type { Identity, IdentityObject } from './Identity';
 import type { IdentityProvider } from './IdentityProvider';
 
@@ -25,11 +23,11 @@ export type Entry = {
 export interface AccessController<I: Identity, P: IdentityProvider<I>> {
   // static getter: `type: string`
 
-  createManifest(ipfs: IPFS, name: string, type: string): Promise<string>;
-
   canAppend(entry: Entry, provider: P): Promise<boolean>;
 
   setup(): Promise<void>;
+
+  save(): Promise<string>;
 
   grant(actionId: string, address: string): Promise<boolean>;
 
