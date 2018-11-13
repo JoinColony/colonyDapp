@@ -1,0 +1,12 @@
+.main {
+  display: flex;
+  align-items: center;
+}
+
+.ratingPart + .ratingPart {
+  padding-left: 10px;
+}
+
+.ratingPartText {
+  margin-top: -3px;
+}
