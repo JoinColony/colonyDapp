@@ -23,7 +23,7 @@ const UserMention = ({ username, to, hasLink }: Props) =>
 
 UserMention.defaultProps = {
   to: '/',
-  link: true,
+  hasLink: true,
 };
 
 export default UserMention;

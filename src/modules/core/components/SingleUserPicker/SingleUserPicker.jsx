@@ -82,11 +82,9 @@ class SingleUserPicker extends Component<Props, State> {
   static displayName = 'SingleUserPicker';
 
   handleActiveUserClick = () => {
-    const { openOmniPicker, setValue, disabled } = this.props;
+    const { openOmniPicker, setValue } = this.props;
     setValue(null);
-    if (!disabled) {
-      openOmniPicker();
-    }
+    openOmniPicker();
   };
 
   handlePick = (user: UserRecord) => {
@@ -102,6 +100,7 @@ class SingleUserPicker extends Component<Props, State> {
   render() {
     const {
       isResettable,
+      disabled,
       appearance,
       itemComponent,
       // Form field
@@ -169,6 +168,7 @@ class SingleUserPicker extends Component<Props, State> {
               )}
               {/* eslint-enable jsx-a11y/click-events-have-key-events */}
               <input
+                disabled={disabled}
                 className={
                   $touched && $error ? styles.inputInvalid : styles.input
                 }

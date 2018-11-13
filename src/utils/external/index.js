@@ -19,7 +19,6 @@ const convertBalanceToUsd = (
 /*
   Request dollar conversion value from etherScan
 */
-// $FlowFixMe eslint-disable-next-line no-use-before-define
 export const getEthToUsd = (ethValue: number) => {
   const ethUsdKey = 'ethUsd';
   const ethUsdTimestampKey = 'ethUsdTimestamp';
