@@ -2,7 +2,7 @@
 
 import { all, call, put, takeLatest, setContext } from 'redux-saga/effects';
 
-import { create } from '~utils/saga/effects';
+import { create, putError } from '~utils/saga/effects';
 
 import {
   WALLET_CREATE,
@@ -57,17 +57,7 @@ function* setupUserContext(action: Object): any {
     });
     yield call(setupContextSagas);
   } catch (err) {
-    // TOOD: I think we want a putError effect maybe?
-    // Base i18n on type
-    yield put({
-      type: WALLET_CREATE_ERROR,
-      payload: {
-        error: {
-          message: err.message,
-          stack: err.stack,
-        },
-      },
-    });
+    yield putError(WALLET_CREATE_ERROR, err);
   }
 }
 

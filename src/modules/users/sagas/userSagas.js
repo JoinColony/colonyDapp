@@ -11,6 +11,7 @@ import namehash from 'eth-ens-namehash-ms';
 import type { Action, UserRecord } from '~types/index';
 
 import { NOT_FOUND_ROUTE } from '~routes';
+import { putError } from '~utils/saga/effects';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
@@ -78,10 +79,7 @@ function* updateProfile(action: Action): Saga<void> {
       payload: { set: user, walletAddress: currentAddress },
     });
   } catch (error) {
-    yield put({
-      type: USER_PROFILE_UPDATE_ERROR,
-      payload: { error },
-    });
+    yield putError(USER_PROFILE_UPDATE_ERROR, error);
   }
 }
 
@@ -101,12 +99,7 @@ function* fetchProfile(action: Action): Saga<void> {
     });
   } catch (error) {
     yield put(replace(NOT_FOUND_ROUTE));
-
-    // TODO normalize error object handling
-    yield put({
-      type: USER_PROFILE_FETCH_ERROR,
-      payload: { error: error.message },
-    });
+    yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
 
@@ -128,9 +121,10 @@ function* validateUsername(action: Action): Saga<void> {
 
   // If we found a value for `ensAddress`, then this name was previously registered.
   if (ensAddress) {
-    yield put({
-      type: USERNAME_VALIDATE_ERROR,
-    });
+    yield putError(
+      USERNAME_VALIDATE_ERROR,
+      new Error('ENS address already exists'),
+    );
   } else {
     yield put({
       type: USERNAME_VALIDATE_SUCCESS,

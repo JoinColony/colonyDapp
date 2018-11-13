@@ -9,6 +9,7 @@ import { delay } from 'redux-saga';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
+import { putError } from '~utils/saga/effects';
 import { DASHBOARD_ROUTE } from '~routes';
 
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
@@ -79,20 +80,14 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
 
-  // `delay` yields a Promise, which makes it hard to pin down a single return
-  // type (i.e. the generic `*`) for this Saga.
-  // $FlowFixMe
-  yield delay(1000);
+  yield call(delay, 1000);
 
   let info;
   try {
     // Attempt to get the token info from a new `TokenClient` instance.
     info = yield call(getTokenClientInfo, tokenAddress);
   } catch (error) {
-    yield put({
-      type: TOKEN_INFO_FETCH_ERROR,
-      payload: { error: error.message },
-    });
+    yield putError(TOKEN_INFO_FETCH_ERROR, error);
     return;
   }
   yield put({ type: TOKEN_INFO_FETCH_SUCCESS, payload: info });
