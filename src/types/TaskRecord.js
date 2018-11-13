@@ -10,18 +10,24 @@ export type TaskPayout = {
 
 export type TaskFeedItemTypes = 'comment' | 'rating'; // TODO: other item types
 
-export type TaskFeedItemGeneral = {
-  type: string,
-};
-
-export type TaskFeedItemComment = TaskFeedItemGeneral & {
+export type TaskFeedItemComment = {|
   id: number,
+  type: TaskFeedItemTypes,
   user: UserRecord,
   body: string,
   timestamp: Date,
-};
+|};
 
-export type TaskFeedItem = TaskFeedItemComment;
+export type TaskFeedItemRating = {|
+  id: number,
+  type: TaskFeedItemTypes,
+  rater: UserRecord,
+  ratee: UserRecord,
+  rating: number,
+  timestamp: Date,
+|};
+
+export type TaskFeedItem = TaskFeedItemComment | TaskFeedItemRating;
 
 export type TaskProps = {
   id: number,

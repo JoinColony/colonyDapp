@@ -96,6 +96,22 @@ more often.`,
       user: userMock,
       type: 'comment',
     },
+    {
+      id: 8,
+      rater: usersMock[0],
+      ratee: usersMock[1],
+      rating: 2,
+      timestamp: new Date('2018-11-08 11:00'),
+      type: 'rating',
+    },
+    {
+      id: 9,
+      rater: usersMock[1],
+      ratee: usersMock[0],
+      rating: 3,
+      timestamp: new Date('2018-11-08 11:00'),
+      type: 'rating',
+    },
   ],
 };
 
