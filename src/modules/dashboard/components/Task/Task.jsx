@@ -22,6 +22,7 @@ import TaskDomains from '~dashboard/TaskDomains';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
+import TaskClaimReward from '~dashboard/TaskClaimReward';
 
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import { mockTask, mockTaskReward } from './__datamocks__/mockTask';
@@ -92,9 +93,9 @@ const Task = ({ openDialog }: Props) => {
             * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
             */}
             <Assignment
-              assignee={taskMock.assignee}
-              reputation={taskMock.reputation}
-              payouts={taskMock.payouts}
+              assignee={mockTask.assignee}
+              reputation={mockTask.reputation}
+              payouts={mockTask.payouts}
               nativeToken="CLNY"
             />
           </Form>
@@ -189,7 +190,7 @@ const Task = ({ openDialog }: Props) => {
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed feedItems={taskMock.feedItems} currentUser={userMock} />
+            <TaskFeed feedItems={mockTask.feedItems} currentUser={userMock} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments />
