@@ -25,6 +25,7 @@
 }
 
 .section {
+  margin-bottom: 15px;
   padding: 15px;
   border: 1px solid var(--grey-blue-0);
   border-radius: var(--radius-tiny);
@@ -36,8 +37,9 @@
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  margin-right: 7px;
+  padding-right: 11px;
   height: headerHeight;
+  width: 100%;
   border-bottom: 1px solid var(--grey-blue-0);
 }
 
