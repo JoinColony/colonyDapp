@@ -11,26 +11,16 @@ import styles from './UserInfo.css';
 const componentDisplayName: string = 'UserInfo';
 
 type Props = {
-  /*
-   * Children elemnts or components to wrap the tooltip around
-   */
+  /** Children elemnts or components to wrap the tooltip around */
   children: React$Element<*>,
-  /*
-   * The user's name (aka Display Name)
-   */
+  /** The user's name (aka Display Name) */
   displayName?: string,
-  /*
-   * Users's handle (aka Username)
-   */
+  /** Users's handle (aka Username) */
   username?: string,
-  /*
-   * User's wallet address
-   */
+  /** User's wallet address */
   walletAddress?: string,
-  /*
-   * How the popover gets triggered
-   */
-  trigger?: 'always' | 'hover' | 'click' | 'disabled',
+  /** How the popover gets triggered */
+  trigger?: 'hover' | 'click' | 'disabled',
 };
 
 const UserInfo = ({

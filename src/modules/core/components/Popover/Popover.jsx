@@ -32,7 +32,7 @@ export type PopoverTrigger = ({
   toggle: () => void,
 }) => ReactNode;
 
-type Props = {
+export type Props = {
   appearance?: Appearance,
   /** Child element to trigger the popover */
   children: React$Element<*> | PopoverTrigger,
@@ -45,6 +45,8 @@ type Props = {
     | (({ close: () => void }) => ReactNode),
   /** Values for content (react-intl interpolation) */
   contentValues?: { [string]: string },
+  /** Set the open state from outside */
+  isOpen?: boolean,
   /** Called when Popover closes */
   onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void,
   /** Delay opening of popover for `openDelay` ms */
@@ -54,7 +56,7 @@ type Props = {
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean,
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
-  trigger?: 'always' | 'hover' | 'click' | 'disabled',
+  trigger?: 'hover' | 'click' | 'disabled',
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
@@ -77,17 +79,22 @@ class Popover extends Component<Props, State> {
   static defaultProps = {
     closeOnOutsideClick: true,
     placement: 'top',
+    trigger: 'click',
   };
 
   constructor(props: Props) {
     super(props);
     this.id = nanoid();
     this.state = {
-      isOpen: props.trigger === 'always',
+      isOpen: props.isOpen || false,
     };
   }
 
-  componentDidUpdate({ closeOnOutsideClick, trigger }, { isOpen: prevOpen }) {
+  componentDidUpdate(
+    { closeOnOutsideClick, isOpen: prevIsOpenProp, trigger },
+    { isOpen: prevOpen },
+  ) {
+    const { isOpen: isOpenProp } = this.props;
     const { isOpen } = this.state;
     if (
       isOpen &&
@@ -99,6 +106,14 @@ class Popover extends Component<Props, State> {
       document.body.addEventListener('click', this.handleOutsideClick, true);
     } else if (!isOpen && prevOpen) {
       this.removeOutsideClickListener();
+    }
+    if (isOpenProp !== prevIsOpenProp) {
+      // We are guarded perfectly fine against this, only when the outside prop changes we change the state as well
+      // Maybe there's a better way that I'm not seeing right now
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        isOpen: isOpenProp,
+      });
     }
   }
 
@@ -139,7 +154,6 @@ class Popover extends Component<Props, State> {
             },
             click: { onClick: this.toggle },
             disabled: null,
-            always: null,
           }[trigger]
         : null,
     );

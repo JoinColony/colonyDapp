@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Consumer } from './DialogProvider.jsx';
+import { Consumer } from './PopoverProvider.jsx';
 
 import { withConsumerFactory } from '~utils/hoc';
 
