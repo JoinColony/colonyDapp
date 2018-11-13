@@ -4,15 +4,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
+import type { Props as WrapperProps } from './TaskClaimReward';
 
-import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
-
-/*
- * This should most likely come from the redux state, so we can compare against
- * the tasks's payouts
- */
-const MOCK_NATIVE_TOKEN_SYMBOL: string = 'CLNY';
 
 const MSG = defineMessages({
   claimRewards: {
@@ -21,26 +15,33 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+export type Props = WrapperProps & {
   /*
    * We're not putting a custom defined type on this since it all likeliness it
    * will change
    */
-  taskReward: Object,
-  taskTitle: string,
+  sortedPayouts: Array<Object>,
+  nativeTokenPayout: Object | void,
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
 const displayName = 'dashboard.TaskClaimReward';
 
-const TaskClaimReward = ({ openDialog, taskReward, taskTitle }: Props) => (
+const TaskClaimReward = ({
+  openDialog,
+  taskReward,
+  taskTitle,
+  sortedPayouts,
+  nativeTokenPayout,
+}: Props) => (
   <Button
     text={MSG.claimRewards}
     onClick={() =>
       openDialog('TaskClaimRewardDialog', {
         taskReward,
         taskTitle,
-        nativeTokenSymbol: MOCK_NATIVE_TOKEN_SYMBOL,
+        sortedPayouts,
+        nativeTokenPayout,
       })
     }
   />
@@ -48,4 +49,4 @@ const TaskClaimReward = ({ openDialog, taskReward, taskTitle }: Props) => (
 
 TaskClaimReward.displayName = displayName;
 
-export default withDialog()(TaskClaimReward);
+export default TaskClaimReward;
