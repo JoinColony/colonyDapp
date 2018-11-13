@@ -1,7 +1,6 @@
 /* @flow */
 /* eslint-disable no-console, class-methods-use-this */
 
-import IPFS from 'ipfs';
 import { Wallet } from 'ethers';
 
 import type { AccessController, Entry } from './types';
@@ -30,25 +29,14 @@ class EthereumAccessController
     this._type = PROVIDER_TYPE;
   }
 
-  async createManifest(
-    ipfs: IPFS,
-    name: string,
-    storeType: string,
-  ): Promise<string> {
+  async save(): Promise<string> {
     if (!this._accountAddress) {
       throw new Error(
         'This access controller needs an account address to work',
       );
     }
 
-    const manifest = {
-      name,
-      type: storeType,
-      account: `/ethereum/${this._accountAddress}`,
-    };
-
-    const dag = await ipfs.object.put(Buffer.from(JSON.stringify(manifest)));
-    return dag.toJSON().multihash.toString();
+    return `/ethereum/${this._accountAddress}`;
   }
 
   async canAppend(
@@ -79,6 +67,12 @@ class EthereumAccessController
 
   /* eslint-disable no-unused-vars,class-methods-use-this */
   async setup() {
+    /**
+     * @TODO:
+     * Do any sort of setup here, although this could just return true in the
+     * abstract access controller. The ColonyAccessController would use it to
+     * put the permission manifest together though
+     */
     console.log('Implement me');
   }
 

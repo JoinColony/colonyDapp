@@ -11483,13 +11483,12 @@ orbit-db-cache@~0.2.4:
     logplease "^1.2.14"
     mkdirp "^0.5.1"
 
-orbit-db-counterstore@^1.4.0:
+"orbit-db-counterstore@github:shamb0t/orbit-db-counterstore#feat/new-ipfs-log":
   version "1.4.0"
-  resolved "https://registry.yarnpkg.com/orbit-db-counterstore/-/orbit-db-counterstore-1.4.0.tgz#3f900b26341df62431ef66aceaef5ae58b0aadad"
-  integrity sha512-L7GBp1q1LawWi398wHqMgN6LwdGssB1GomwsSCeSHTMO0iPPUNe7S+lsAuJ+ZWc07qH0wvHnWkd6CC2JJaLOIA==
+  resolved "https://codeload.github.com/shamb0t/orbit-db-counterstore/tar.gz/4bd6942f5d1c2498134ee8504e99744346780e2f"
   dependencies:
     crdts "~0.1.2"
-    orbit-db-store "~2.5.0"
+    orbit-db-store "github:orbitdb/orbit-db-store"
 
 orbit-db-docstore@~1.4.3:
   version "1.4.3"
@@ -11533,9 +11532,9 @@ orbit-db-identity-provider@^0.0.2:
 
 "orbit-db-kvstore@github:thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log", "orbit-db-kvstore@https://github.com/thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log":
   version "1.4.0"
-  resolved "https://github.com/thiagodelgado111/orbit-db-kvstore#0af402f11490b4951d628dd5ed7b71bcd2d73179"
+  resolved "https://github.com/thiagodelgado111/orbit-db-kvstore#6a82b70eeb9442248d79e45ccf1346de9fb91868"
   dependencies:
-    orbit-db-store "github:thiagodelgado111/orbit-db-store#fix/sync"
+    orbit-db-store "github:orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2"
 
 orbit-db-pubsub@~0.5.5:
   version "0.5.5"
@@ -11546,24 +11545,24 @@ orbit-db-pubsub@~0.5.5:
     logplease "~1.2.14"
     p-series "^1.1.0"
 
-"orbit-db-store@github:thiagodelgado111/orbit-db-store#fix/sync", "orbit-db-store@https://github.com/thiagodelgado111/orbit-db-store#fix/sync", orbit-db-store@~2.5.0:
+"orbit-db-store@github:orbitdb/orbit-db-store", "orbit-db-store@github:orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2", "orbit-db-store@https://github.com/orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2", orbit-db-store@~2.5.0:
   version "2.5.3"
-  resolved "https://github.com/thiagodelgado111/orbit-db-store#82608a2787c0a167f00af9a76fd8f6119bb16c2f"
+  resolved "https://github.com/orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2"
   dependencies:
     ipfs-log "github:orbitdb/ipfs-log"
     logplease "^1.2.14"
     p-each-series "^1.0.0"
     readable-stream "~2.3.5"
 
-"orbit-db@https://github.com/thiagodelgado111/orbit-db#maintenance/new-orbit-db-store":
+"orbit-db@https://github.com/thiagodelgado111/orbit-db#feature/verifiable-address":
   version "0.19.9"
-  resolved "https://github.com/thiagodelgado111/orbit-db#33ea766631f5a08bcb1a72c2ec9a592edd1cd9c7"
+  resolved "https://github.com/thiagodelgado111/orbit-db#39a9066d6d5d47792719773377602a9f8356af14"
   dependencies:
     ipfs-pubsub-1on1 "~0.0.4"
     logplease "^1.2.14"
     multihashes "^0.4.12"
     orbit-db-cache "~0.2.4"
-    orbit-db-counterstore "^1.4.0"
+    orbit-db-counterstore "github:shamb0t/orbit-db-counterstore#feat/new-ipfs-log"
     orbit-db-docstore "~1.4.3"
     orbit-db-eventstore "~1.4.0"
     orbit-db-feedstore "~1.4.0"
@@ -11571,7 +11570,7 @@ orbit-db-pubsub@~0.5.5:
     orbit-db-keystore "github:orbitdb/orbit-db-keystore#fix/verification"
     orbit-db-kvstore "github:thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log"
     orbit-db-pubsub "~0.5.5"
-    orbit-db-store "github:thiagodelgado111/orbit-db-store#fix/sync"
+    orbit-db-store "github:orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2"
 
 original@>=0.0.5, original@^1.0.0:
   version "1.0.2"
