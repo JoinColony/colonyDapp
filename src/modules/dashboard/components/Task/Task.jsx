@@ -1,7 +1,7 @@
 /* @flow */
 
-import React from 'react';
-import { defineMessages } from 'react-intl';
+import React, { Fragment } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './Task.css';
 
@@ -53,11 +53,17 @@ const MSG = defineMessages({
     id: 'dashboard.Task.skill',
     defaultMessage: 'Skill',
   },
+  completed: {
+    id: 'dashboard.Task.completed',
+    defaultMessage: 'Task completed',
+  },
 });
 
 const Task = ({ openDialog }: Props) => {
   const isTaskCreator =
     taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
+
+  const preventEdit = taskMock && !taskMock.finalized && isTaskCreator;
 
   return (
     <div className={styles.main}>
@@ -68,7 +74,7 @@ const Task = ({ openDialog }: Props) => {
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
-            {isTaskCreator && (
+            {preventEdit && (
               <Button appearance={{ theme: 'blue' }} text={MSG.details} />
             )}
           </header>
@@ -76,6 +82,15 @@ const Task = ({ openDialog }: Props) => {
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
           >
+            {/*
+            * TODO: replace this with TaskAssignment component in colonyDapp#445
+            *
+            * This should also add in a `readOnly` prop for the `SingleUserPicker`
+            * to prevent opening when the task has been finalized.
+            *
+            * See:
+            * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
+            */}
             <Assignment
               assignee={taskMock.assignee}
               reputation={taskMock.reputation}
@@ -88,17 +103,20 @@ const Task = ({ openDialog }: Props) => {
           <Form
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
+            initialValues={{
+              taskTitle: taskMock.title,
+            }}
           >
-            <TaskDescription isTaskCreator={isTaskCreator} />
+            <TaskDescription isTaskCreator={preventEdit} />
           </Form>
         </section>
         <section className={styles.section}>
           <div className={styles.editor}>
-            <TaskDomains isTaskCreator={isTaskCreator} />
+            <TaskDomains isTaskCreator={preventEdit} />
           </div>
           <div className={styles.editor}>
             <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-            {isTaskCreator && (
+            {preventEdit && (
               <Button
                 appearance={{ theme: 'blue', size: 'small' }}
                 text={MSG.add}
@@ -106,43 +124,60 @@ const Task = ({ openDialog }: Props) => {
             )}
           </div>
           <div className={styles.editor}>
-            <TaskDate isTaskCreator={isTaskCreator} />
+            <TaskDate isTaskCreator={preventEdit} />
           </div>
         </section>
       </aside>
       <div className={styles.container}>
         <section className={styles.header}>
-          <TaskRequestWork isTaskCreator={isTaskCreator} />
-          {/*
-           * @TODO This are temporary buttons to be able to show the rating
-           * modals until they will get wired up.
-           */}
-          <Button
-            text="Rate Manager"
-            onClick={() =>
-              openDialog('ManagerRatingDialog', {
-                workSubmitted: false,
-              })
-            }
-          />
-          <Button
-            text="Rate Manager (Work Submitted)"
-            onClick={() =>
-              openDialog('ManagerRatingDialog', { workSubmitted: true })
-            }
-          />
-          <Button
-            text="Rate Worker"
-            onClick={() =>
-              openDialog('WorkerRatingDialog', { workSubmitted: false })
-            }
-          />
-          <Button
-            text="Rate Worker (Work Submitted)"
-            onClick={() =>
-              openDialog('WorkerRatingDialog', { workSubmitted: true })
-            }
-          />
+          {taskMock && !taskMock.finalized ? (
+            <Fragment>
+              <TaskRequestWork isTaskCreator={isTaskCreator} />
+              {/*
+               * @TODO This are temporary buttons to be able to show the rating
+               * modals until they will get wired up.
+               */}
+              <Button
+                text="Rate Manager"
+                onClick={() =>
+                  openDialog('ManagerRatingDialog', {
+                    workSubmitted: false,
+                  })
+                }
+              />
+              <Button
+                text="Rate Manager (Work Submitted)"
+                onClick={() =>
+                  openDialog('ManagerRatingDialog', { workSubmitted: true })
+                }
+              />
+              <Button
+                text="Rate Worker"
+                onClick={() =>
+                  openDialog('WorkerRatingDialog', { workSubmitted: false })
+                }
+              />
+              <Button
+                text="Rate Worker (Work Submitted)"
+                onClick={() =>
+                  openDialog('WorkerRatingDialog', { workSubmitted: true })
+                }
+              />
+            </Fragment>
+          ) : (
+            <Fragment>
+              {!taskMock.payoutClaimed ? (
+                /*
+                 * @NOTE This is a placeholder until #559 gets merged
+                 */
+                <Button text="Claim Rewards" />
+              ) : (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
+            </Fragment>
+          )}
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
