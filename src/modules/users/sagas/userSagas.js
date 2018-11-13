@@ -52,7 +52,8 @@ import { registerUserLabel } from '../actionCreators';
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
 
-  let profileStore = yield call(
+  let profileStore;
+  profileStore = yield call(
     [ddb, ddb.getStore],
     userProfileStore,
     `user.${walletAddress}`,
@@ -60,37 +61,55 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
       walletAddress,
     },
   );
+
   if (profileStore) {
-    yield call([profileProfileStore, store.load]);
+    yield call([profileStore, profileStore.load]);
     return profileStore;
   }
 
-  profileStore = yield call([ddb, ddb.createStore], userProfileStore, {
-    walletAddress,
-  });
-  yield call([profileProfileStore, store.set], { createdAt: new Date() });
-
-  const activityStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
+  profileStore = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
     accessController,
   });
 
-  const joinedEvent = {
-    colonyName: '',
-    userAction: {
-      joinedColony: {
-        id: 'userActivity.joinedColony',
-        defaultMessage: 'Joined Colony 🎉🎉',
-      },
-    },
-    createdAt: Date.now(),
-  };
-  yield call([profileStore, profileStore.append], 'databases', activityStore.address.toString());
-  yield call([activityStore, activityStore.add], joinedEvent);
+  const activitiesStore = yield getUserActivitiesStore(walletAddress);
+
+  yield call(
+    [profileStore, profileStore.update],
+    'databases',
+    'userActivities',
+    activitiesStore.address.toString(),
+  );
+
   return profileStore;
 }
+
+export function* getUserActivitiesStore(walletAddress: string): Saga<KVStore> {
+  const ddb = yield getContext('ddb');
+  const accessController = new EthereumAccessController(walletAddress);
+
+  const activitiesStore = yield call(
+    [ddb, ddb.createStore],
+    'feed',
+    'userActivity',
+    {
+      accessController,
+    },
+  );
+
+  const joinedEvent = {
+    colonyName: '',
+    userAction: 'joinedColony',
+    createdAt: Date.now(),
+  };
+
+  yield call([activitiesStore, activitiesStore.add], joinedEvent);
+  return activitiesStore;
+}
+
 export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
 }
+
 function* updateProfile(action: Action): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
@@ -124,6 +143,7 @@ function* updateProfile(action: Action): Saga<void> {
     yield putError(USER_PROFILE_UPDATE_ERROR, error);
   }
 }
+
 function* fetchProfile(action: Action): Saga<void> {
   const { username } = action.payload;
 
@@ -152,6 +172,7 @@ function* fetchProfile(action: Action): Saga<void> {
     yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
+
 function* validateUsername(action: Action): Saga<void> {
   const { username } = action.payload;
   yield call(delay, 300);
@@ -176,6 +197,7 @@ function* validateUsername(action: Action): Saga<void> {
   }
   yield put({ type: USERNAME_VALIDATE_SUCCESS });
 }
+
 function* createUsername(action: Action): Saga<void> {
   const { username } = action.payload;
 
