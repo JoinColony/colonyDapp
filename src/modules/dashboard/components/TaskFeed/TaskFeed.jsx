@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import type { UserRecord, TaskFeedItem } from '~types/index';
 
 import Comment from './TaskFeedComment.jsx';
+import Rating from './TaskFeedRating.jsx';
 
 import styles from './TaskFeed.css';
 
@@ -49,7 +50,7 @@ class TaskFeed extends Component<Props> {
 
                 case 'rating':
                   // TODO: display rating component
-                  return null;
+                  return <Rating rater={user} ratee={user} rating={2} />;
 
                 default:
                   return null;
