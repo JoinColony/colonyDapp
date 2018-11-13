@@ -1,0 +1,95 @@
+/*
+ * @NOTE Non-standard font size not font anywhere else
+ * (Not in C-132, or in any dimmension)
+ */
+@value valuesFontSize: 15px;
+
+.starRating {
+  display: flex;
+  margin-top: 30px;
+}
+
+.starRatingDescription {
+  flex: 1 1 auto;
+  font-weight: var(--weight-medium);
+}
+
+.stars {
+  flex: 0 0 auto;
+  text-align: right;
+
+  & i {
+    margin-left: 3px;
+  }
+}
+
+.earnedReputation {
+  display: flex;
+  margin-top: 50px;
+}
+
+.earnedReputationDescription {
+  flex: 1 1 auto;
+  font-weight: var(--weight-medium);
+}
+
+.earnedReputationDetails {
+  display: block;
+  font-size: var(--size-small);
+  color: var(--violet);
+}
+
+.earnedReputationPenalty {
+  composes: earnedReputationDetails;
+  color: var(--danger);
+}
+
+.reputationValue {
+  flex: 0 0 auto;
+  text-align: right;
+
+  & span {
+    font-size: valuesFontSize;
+    color: var(--violet);
+  }
+}
+
+.rewards {
+  margin-top: 20px;
+}
+
+.rewardItem {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+
+  &:first-child {
+    margin-top: 10px;
+  }
+}
+
+.rewardItemDescription {
+  flex: 1 1 auto;
+  font-weight: var(--weight-medium);
+}
+
+.rewardItemValue {
+  flex: 0 0 auto;
+  text-align: right;
+
+  & span {
+    display: block;
+    font-size: valuesFontSize;
+  }
+}
+
+.total {
+  composes: rewardItem;
+  padding-top: 20px;
+  border-top: 1px solid var(--grey-4);
+}
+
+.oneStarRating {
+  font-weight: var(--weight-medium);
+  color: var(--danger);
+}

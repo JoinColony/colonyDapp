@@ -4,7 +4,21 @@
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 
-const mockTask = {
+/*
+ * This should only be available, once the task is finalized
+ */
+export const mockTaskReward = {
+  workerRating: 3,
+  payoutsEarned: [
+    { symbol: 'DAI', amount: 1001 },
+    { symbol: 'CLNY', amount: 600 },
+    { symbol: 'ETH', amount: 200105 },
+    { symbol: 'COOL', amount: 600 },
+  ],
+  reputationEarned: 1045,
+};
+
+export const mockTask = {
   id: 1,
   title: 'Develop Github integration',
   reputation: 19.5,

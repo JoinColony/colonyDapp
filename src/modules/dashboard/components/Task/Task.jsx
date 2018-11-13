@@ -22,9 +22,10 @@ import TaskDomains from '~dashboard/TaskDomains';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
+import TaskClaimReward from '~dashboard/TaskClaimReward';
 
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
-import taskMock from './__datamocks__/mockTask';
+import { mockTask, mockTaskReward } from './__datamocks__/mockTask';
 
 const displayName = 'dashboard.Task';
 
@@ -61,9 +62,9 @@ const MSG = defineMessages({
 
 const Task = ({ openDialog }: Props) => {
   const isTaskCreator =
-    taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
+    mockTask.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
 
-  const preventEdit = taskMock && !taskMock.finalized && isTaskCreator;
+  const preventEdit = mockTask && !mockTask.finalized && isTaskCreator;
 
   return (
     <div className={styles.main}>
@@ -92,9 +93,9 @@ const Task = ({ openDialog }: Props) => {
             * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
             */}
             <Assignment
-              assignee={taskMock.assignee}
-              reputation={taskMock.reputation}
-              payouts={taskMock.payouts}
+              assignee={mockTask.assignee}
+              reputation={mockTask.reputation}
+              payouts={mockTask.payouts}
               nativeToken="CLNY"
             />
           </Form>
@@ -104,7 +105,7 @@ const Task = ({ openDialog }: Props) => {
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
             initialValues={{
-              taskTitle: taskMock.title,
+              taskTitle: mockTask.title,
             }}
           >
             <TaskDescription isTaskCreator={preventEdit} />
@@ -130,9 +131,17 @@ const Task = ({ openDialog }: Props) => {
       </aside>
       <div className={styles.container}>
         <section className={styles.header}>
-          {taskMock && !taskMock.finalized ? (
+          {mockTask && !mockTask.finalized ? (
             <Fragment>
               <TaskRequestWork isTaskCreator={isTaskCreator} />
+              {/*
+                * @TODO This should only be shown, if we're a worker, and the task
+                * has a reward and was finalized (due date passed or work was submitted and rated)
+                */}
+              <TaskClaimReward
+                taskReward={mockTaskReward}
+                taskTitle={mockTask.title}
+              />
               {/*
                * @TODO This are temporary buttons to be able to show the rating
                * modals until they will get wired up.
@@ -166,7 +175,7 @@ const Task = ({ openDialog }: Props) => {
             </Fragment>
           ) : (
             <Fragment>
-              {!taskMock.payoutClaimed ? (
+              {!mockTask.payoutClaimed ? (
                 /*
                  * @NOTE This is a placeholder until #559 gets merged
                  */
@@ -181,7 +190,7 @@ const Task = ({ openDialog }: Props) => {
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed feedItems={taskMock.feedItems} currentUser={userMock} />
+            <TaskFeed feedItems={mockTask.feedItems} currentUser={userMock} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments />
