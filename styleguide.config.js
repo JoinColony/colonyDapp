@@ -37,6 +37,7 @@ module.exports = {
         './src/modules/core/components/ColonyGrid/ColonyGrid.jsx',
         './src/modules/core/components/PayoutsList/PayoutsList.jsx',
         './src/modules/core/components/UserInfo/UserInfo.jsx',
+        './src/modules/core/components/Assignment/Assignment.jsx',
       ],
     },
     {
