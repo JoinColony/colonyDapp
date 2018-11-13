@@ -10,7 +10,7 @@ import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
-import { create } from '~utils/saga/effects';
+import { create, putError } from '~utils/saga/effects';
 import {
   WALLET_FETCH_ACCOUNTS,
   WALLET_FETCH_ACCOUNTS_ERROR,
@@ -37,11 +37,8 @@ function* fetchAccounts(action: Object): Saga<void> {
       type: WALLET_FETCH_ACCOUNTS_SUCCESS,
       payload: { allAddresses: wallet.otherAddresses },
     });
-  } catch (e) {
-    yield put({
-      type: WALLET_FETCH_ACCOUNTS_ERROR,
-      payload: { error: e.message },
-    });
+  } catch (err) {
+    yield putError(WALLET_FETCH_ACCOUNTS_ERROR, err);
   }
 }
 
