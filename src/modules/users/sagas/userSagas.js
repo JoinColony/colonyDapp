@@ -181,6 +181,10 @@ function* createUsername(action: Action): Saga<void> {
     type: action.type,
     payload: {
       params: { username, orbitDBPath },
+      // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
+      options: {
+        gasLimit: 500000,
+      },
     },
   });
 }
