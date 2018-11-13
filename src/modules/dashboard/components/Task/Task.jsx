@@ -82,7 +82,7 @@ const Task = ({ openDialog }: Props) => {
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
           >
-          {/*
+            {/*
             * TODO: replace this with TaskAssignment component in colonyDapp#445
             *
             * This should also add in a `readOnly` prop for the `SingleUserPicker`
