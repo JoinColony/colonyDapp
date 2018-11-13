@@ -23,8 +23,12 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  /** Array of allowed file types */
+  accept?: string[],
   /** Function used to perform the acutal upload action of the file */
   upload: (file: FileReaderFile) => any,
+  /** Maximum size of file in bytes */
+  maxFileSize?: number,
   /** Will reset the entire AvatarUploader state */
   reset: () => void,
   /** @ignore Will be injected by `asField` */
@@ -36,7 +40,19 @@ type Props = {
 };
 
 class AvatarUploadItem extends Component<Props> {
+  readFiles: (files: Array<Object>) => Promise<Array<Object>>;
+
   static displayName = 'AvatarUploadItem';
+
+  constructor(props: Props) {
+    super(props);
+    const { accept, maxFileSize } = props;
+    this.readFiles = fileReader({
+      maxFilesLimit: 1,
+      maxFileSize,
+      allowedTypes: accept,
+    });
+  }
 
   componentDidMount() {
     const {
@@ -47,10 +63,6 @@ class AvatarUploadItem extends Component<Props> {
       this.uploadFile();
     }
   }
-
-  readFiles: (files: Array<Object>) => Promise<Array<Object>> = fileReader({
-    maxFilesLimit: 1,
-  });
 
   async uploadFile() {
     const { $value, setValue, reset, upload } = this.props;

@@ -34,6 +34,12 @@ import {
   USERNAME_CREATE,
   USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
+  USER_UPLOAD_AVATAR,
+  USER_UPLOAD_AVATAR_SUCCESS,
+  USER_UPLOAD_AVATAR_ERROR,
+  USER_REMOVE_AVATAR,
+  USER_REMOVE_AVATAR_SUCCESS,
+  USER_REMOVE_AVATAR_ERROR,
 } from '../actionTypes';
 
 const registerUserLabel = networkMethodSagaFactory<
@@ -193,9 +199,55 @@ function* createUsername(action: Action): Saga<void> {
   });
 }
 
+function* uploadAvatar(action: Action): Saga<void> {
+  const { data } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+  const ipfs = yield call([ipfsNode, ipfsNode.getIPFS]);
+  const ddb = yield getContext('ddb');
+  const orbitDBPath = yield select(userOrbitAddress);
+
+  try {
+    // first attempt upload to IPFS
+    const results = yield call(
+      [ipfs, ipfs.files.add],
+      ipfs.types.Buffer.from(data, 'base64'),
+    );
+    if (!results.length) throw new Error('Failed to upload to IPFS');
+
+    // if we uploaded okay, put the hash in the user orbit store
+    const store = yield call([ddb, ddb.getStore], orbitDBPath);
+    yield call([store, store.set], 'avatar', results[0].path);
+
+    yield put({
+      type: USER_UPLOAD_AVATAR_SUCCESS,
+      payload: { ...results[0] },
+    });
+  } catch (error) {
+    yield putError(USER_UPLOAD_AVATAR_ERROR, error);
+  }
+}
+
+function* removeAvatar(): Saga<void> {
+  const ddb = yield getContext('ddb');
+  const orbitDBPath = yield select(userOrbitAddress);
+
+  try {
+    const store = yield call([ddb, ddb.getStore], orbitDBPath);
+    // TODO: does this unset the value?
+    yield call([store, store.set], 'avatar', undefined);
+    yield put({
+      type: USER_REMOVE_AVATAR_SUCCESS,
+    });
+  } catch (error) {
+    yield putError(USER_REMOVE_AVATAR_ERROR, error);
+  }
+}
+
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
+  yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
+  yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
 }
