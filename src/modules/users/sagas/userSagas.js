@@ -11,7 +11,7 @@ import namehash from 'eth-ens-namehash-ms';
 import type { Action, UserRecord } from '~types/index';
 
 import { NOT_FOUND_ROUTE } from '~routes';
-import { putError } from '~utils/saga/effects';
+import { create, putError } from '~utils/saga/effects';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
@@ -48,7 +48,10 @@ const registerUserLabel = networkMethodSagaFactory<
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
 
-  const accessController = new EthereumAccessController(walletAddress);
+  const accessController = yield create(
+    EthereumAccessController,
+    walletAddress,
+  );
   const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
     accessController,
   });

@@ -46,12 +46,16 @@ describe(`core: reducers (transactions)`, () => {
 
   // Actions
   const startedTx = transactionStarted(id, actionType, params, null, options);
-  const sentTx = transactionSent(id, hash);
+  const sentTx = transactionSent(id, { hash });
   const receiptReceived = transactionReceiptReceived(id, { hash });
-  const eventDataReceived = transactionEventDataReceived(id, eventData);
-  const sendError = transactionSendError(id, 'send error');
-  const receiptError = transactionReceiptError(id, 'receipt error');
-  const eventDataError = transactionEventDataError(id, 'event data error');
+  const eventDataReceived = transactionEventDataReceived(id, { eventData });
+  const sendError = transactionSendError(id, { message: 'send error' });
+  const receiptError = transactionReceiptError(id, {
+    message: 'receipt error',
+  });
+  const eventDataError = transactionEventDataError(id, {
+    message: 'event data error',
+  });
 
   test('Sends successfully', () => {
     testActions(
