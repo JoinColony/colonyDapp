@@ -4,6 +4,8 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 
+import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
+
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
@@ -73,10 +75,7 @@ const MSG = defineMessages({
 type Props = {
   cancel: () => void,
   close: () => void,
-  taskReward: Object,
-  taskTitle: string,
-  nativeTokenSymbol: string,
-};
+} & TaskClaimRewardProps;
 
 const displayName = 'dashboard.TaskClaimRewardDialog';
 
@@ -89,253 +88,196 @@ const TaskClaimRewardDialog = ({
     payoutsEarned,
   },
   taskTitle,
-  nativeTokenSymbol,
-}: Props) => {
-  /*
-   * @NOTE This two values might make more sense to be
-   * transformed inside a selector
-   */
-  const nativeTokenPayout = payoutsEarned.find(
-    payout => payout && payout.symbol === nativeTokenSymbol,
-  );
-  /*
-   * If we have a native token, calculate the network fee
-   */
-  if (nativeTokenPayout && nativeTokenPayout.amount) {
-    nativeTokenPayout.networkFee = nativeTokenPayout.amount * 0.01;
-  }
-  const restTokenPayouts = payoutsEarned
-    /*
-     * Take out the native token
-     */
-    .filter(
-      payout =>
-        payout &&
-        ((nativeTokenPayout && payout.symbol !== nativeTokenPayout.symbol) ||
-          !nativeTokenPayout),
-    )
-    /*
-     * Calculate the network fees
-     */
-    .map(payout =>
-      Object.assign({}, payout, {
-        networkFee: payout.amount * 0.01,
-      }),
-    )
-    /*
-     * Sort them alphabetically (with ETH at the top)
-     */
-    .sort(({ symbol: firstTokenSymbol }, { symbol: secondTokenSymbol }) => {
-      const firstToken = firstTokenSymbol.toUpperCase();
-      const secondToken = secondTokenSymbol.toUpperCase();
-      /*
-       * Always sort ETH to the top
-       */
-      if (firstToken === 'ETH') {
-        return -1;
-      }
-      if (firstToken < secondToken) {
-        return -1;
-      }
-      if (firstToken > secondToken) {
-        return 1;
-      }
-      return 0;
-    });
-  return (
-    <Dialog cancel={cancel} className={styles.main}>
-      <DialogSection appearance={{ border: 'bottom' }}>
-        <Heading appearance={{ size: 'medium' }} text={taskTitle} />
-        <section className={styles.starRating}>
-          <p className={styles.starRatingDescription}>
-            <FormattedMessage {...MSG.yourRating} />
-          </p>
-          <div className={styles.stars}>
-            {/*
-             * @NOTE No logic has been applied to the rating icons
-             *
-             * This is because #556 adds a core `StarRating` component which will
-             * replace this (and has the rating logic built it)
-             *
-             * Tip: use `taskReward.rating` for this
-             */}
-            <Icon
-              name="star"
-              title="star"
-              appearance={{ size: 'tiny', theme: 'primary' }}
-            />
-            <Icon
-              name="star"
-              title="star"
-              appearance={{ size: 'tiny', theme: 'primary' }}
-            />
-            <Icon
-              name="star"
-              title="star"
-              appearance={{ size: 'tiny', theme: 'primary' }}
-            />
-          </div>
-        </section>
-        {nativeTokenPayout &&
-          nativeTokenPayout.symbol === nativeTokenSymbol && (
-            <section className={styles.earnedReputation}>
-              <p className={styles.starRatingDescription}>
-                <FormattedMessage {...MSG.yourReputation} />
-                {rating === 3 && (
-                  <span className={styles.earnedReputationDetails}>
-                    <FormattedMessage
-                      {...MSG.reputationDetails}
-                      values={{ rating }}
-                    />
-                  </span>
-                )}
-                {rating === 1 && (
+  sortedPayouts,
+  nativeTokenPayout,
+}: Props) => (
+  <Dialog cancel={cancel} className={styles.main}>
+    <DialogSection appearance={{ border: 'bottom' }}>
+      <Heading appearance={{ size: 'medium' }} text={taskTitle} />
+      <section className={styles.starRating}>
+        <p className={styles.starRatingDescription}>
+          <FormattedMessage {...MSG.yourRating} />
+        </p>
+        <div className={styles.stars}>
+          {/*
+           * @NOTE No logic has been applied to the rating icons
+           *
+           * This is because #556 adds a core `StarRating` component which will
+           * replace this (and has the rating logic built it)
+           *
+           * Tip: use `taskReward.rating` for this
+           */}
+          <Icon
+            name="star"
+            title="star"
+            appearance={{ size: 'tiny', theme: 'primary' }}
+          />
+          <Icon
+            name="star"
+            title="star"
+            appearance={{ size: 'tiny', theme: 'primary' }}
+          />
+          <Icon
+            name="star"
+            title="star"
+            appearance={{ size: 'tiny', theme: 'primary' }}
+          />
+        </div>
+      </section>
+      {nativeTokenPayout &&
+        nativeTokenPayout.symbol && (
+          <section className={styles.earnedReputation}>
+            <p className={styles.starRatingDescription}>
+              <FormattedMessage {...MSG.yourReputation} />
+              {rating === 3 && (
+                <span className={styles.earnedReputationDetails}>
+                  <FormattedMessage
+                    {...MSG.reputationDetails}
+                    values={{ rating }}
+                  />
+                </span>
+              )}
+              {rating === 1 && (
+                <p className={styles.earnedReputationPenalty}>
+                  <FormattedMessage
+                    {...MSG.reputationDetails}
+                    values={{ rating }}
+                  />
+                </p>
+              )}
+              {rating !== 3 &&
+                rating !== 1 && (
                   <p className={styles.earnedReputationPenalty}>
                     <FormattedMessage
-                      {...MSG.reputationDetails}
-                      values={{ rating }}
+                      {...MSG.reputationPenalty}
+                      values={{ ratedOnTime: true }}
                     />
                   </p>
                 )}
-                {rating !== 3 &&
-                  rating !== 1 && (
-                    <p className={styles.earnedReputationPenalty}>
-                      <FormattedMessage
-                        {...MSG.reputationPenalty}
-                        values={{ ratedOnTime: true }}
-                      />
-                    </p>
-                  )}
-              </p>
-              <div className={styles.reputationValue}>
-                <Numeral
-                  value={reputation}
-                  prefix={rating === 1 ? '- ' : ''}
-                  suffix=" REP"
-                />
-              </div>
-            </section>
-          )}
-      </DialogSection>
-      {(rating === 2 || rating === 3) && payoutsEarned.length ? (
-        <DialogSection>
-          <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
-          <section className={styles.rewards}>
-            {/*
-              * Rewards
-              */}
-            <div className={styles.rewardItem}>
-              <p className={styles.rewardItemDescription}>
-                <FormattedMessage {...MSG.yourReward} />
-              </p>
-              <span className={styles.rewardItemValue}>
-                {nativeTokenPayout && (
-                  <Numeral
-                    value={nativeTokenPayout.amount}
-                    suffix={` ${nativeTokenPayout.symbol}`}
-                  />
-                )}
-                {restTokenPayouts.map(({ amount, symbol }, index) => (
-                  <Numeral
-                    key={nanoid(index)}
-                    value={amount}
-                    suffix={` ${symbol}`}
-                  />
-                ))}
-              </span>
-            </div>
-            {/*
-              * Network Fee
-              */}
-            <div className={styles.rewardItem}>
-              <p className={styles.rewardItemDescription}>
-                <FormattedMessage {...MSG.networkFee} />
-              </p>
-              <span className={styles.rewardItemValue}>
-                {nativeTokenPayout && (
-                  <Numeral
-                    value={nativeTokenPayout.networkFee}
-                    prefix="- "
-                    suffix={` ${nativeTokenPayout.symbol}`}
-                  />
-                )}
-                {restTokenPayouts.map(({ networkFee, symbol }, index) => (
-                  <Numeral
-                    key={nanoid(index)}
-                    value={networkFee}
-                    prefix="- "
-                    suffix={` ${symbol}`}
-                  />
-                ))}
-              </span>
-            </div>
-            {/*
-              * Totals
-              */}
-            <div className={styles.total}>
-              <p className={styles.rewardItemDescription}>
-                <FormattedMessage {...MSG.total} />
-              </p>
-              <span className={styles.rewardItemValue}>
-                {nativeTokenPayout && (
-                  <Numeral
-                    value={
-                      nativeTokenPayout.amount - nativeTokenPayout.networkFee
-                    }
-                    suffix={` ${nativeTokenPayout.symbol}`}
-                  />
-                )}
-                {restTokenPayouts.map(
-                  ({ amount, networkFee, symbol }, index) => (
-                    <Numeral
-                      key={nanoid(index)}
-                      value={amount - networkFee}
-                      suffix={` ${symbol}`}
-                    />
-                  ),
-                )}
-              </span>
+            </p>
+            <div className={styles.reputationValue}>
+              <Numeral
+                value={reputation}
+                prefix={rating === 1 ? '- ' : ''}
+                suffix=" REP"
+              />
             </div>
           </section>
-        </DialogSection>
-      ) : null}
-      {rating === 1 && (
-        <DialogSection>
-          <Heading appearance={{ size: 'medium' }} text={MSG.noRewardsTitle} />
-          <FormattedMessage
-            {...MSG.noRewardsDescription}
-            values={{
-              oneStarRating: (
-                <span className={styles.oneStarRating}>
-                  <FormattedMessage {...MSG.oneStarRating} />
-                </span>
-              ),
-            }}
-          />
-        </DialogSection>
-      )}
-      <DialogSection appearance={{ align: 'right' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={cancel}
-          text={{ id: 'button.cancel' }}
-        />
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.continue' }}
-          onClick={() => {
-            /* eslint-disable-next-line no-console */
-            console.log(
-              `[${displayName}]`,
-              'Claimed that sweet, sweet reward!',
-            );
-            return close();
+        )}
+    </DialogSection>
+    {(rating === 2 || rating === 3) && payoutsEarned.length ? (
+      <DialogSection>
+        <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
+        <section className={styles.rewards}>
+          {/*
+            * Rewards
+            */}
+          <div className={styles.rewardItem}>
+            <p className={styles.rewardItemDescription}>
+              <FormattedMessage {...MSG.yourReward} />
+            </p>
+            <span className={styles.rewardItemValue}>
+              {nativeTokenPayout && (
+                <Numeral
+                  value={nativeTokenPayout.amount}
+                  suffix={` ${nativeTokenPayout.symbol}`}
+                />
+              )}
+              {sortedPayouts.map(({ amount, symbol }, index) => (
+                <Numeral
+                  key={nanoid(index)}
+                  value={amount}
+                  suffix={` ${symbol}`}
+                />
+              ))}
+            </span>
+          </div>
+          {/*
+            * Network Fee
+            */}
+          <div className={styles.rewardItem}>
+            <p className={styles.rewardItemDescription}>
+              <FormattedMessage {...MSG.networkFee} />
+            </p>
+            <span className={styles.rewardItemValue}>
+              {nativeTokenPayout && (
+                <Numeral
+                  value={nativeTokenPayout.networkFee}
+                  prefix="- "
+                  suffix={` ${nativeTokenPayout.symbol}`}
+                />
+              )}
+              {sortedPayouts.map(({ networkFee, symbol }, index) => (
+                <Numeral
+                  key={nanoid(index)}
+                  value={networkFee}
+                  prefix="- "
+                  suffix={` ${symbol}`}
+                />
+              ))}
+            </span>
+          </div>
+          {/*
+            * Totals
+            */}
+          <div className={styles.total}>
+            <p className={styles.rewardItemDescription}>
+              <FormattedMessage {...MSG.total} />
+            </p>
+            <span className={styles.rewardItemValue}>
+              {nativeTokenPayout && (
+                <Numeral
+                  value={
+                    nativeTokenPayout.amount - nativeTokenPayout.networkFee
+                  }
+                  suffix={` ${nativeTokenPayout.symbol}`}
+                />
+              )}
+              {sortedPayouts.map(({ amount, networkFee, symbol }, index) => (
+                <Numeral
+                  key={nanoid(index)}
+                  value={amount - networkFee}
+                  suffix={` ${symbol}`}
+                />
+              ))}
+            </span>
+          </div>
+        </section>
+      </DialogSection>
+    ) : null}
+    {rating === 1 && (
+      <DialogSection>
+        <Heading appearance={{ size: 'medium' }} text={MSG.noRewardsTitle} />
+        <FormattedMessage
+          {...MSG.noRewardsDescription}
+          values={{
+            oneStarRating: (
+              <span className={styles.oneStarRating}>
+                <FormattedMessage {...MSG.oneStarRating} />
+              </span>
+            ),
           }}
         />
       </DialogSection>
-    </Dialog>
-  );
-};
+    )}
+    <DialogSection appearance={{ align: 'right' }}>
+      <Button
+        appearance={{ theme: 'secondary', size: 'large' }}
+        onClick={cancel}
+        text={{ id: 'button.cancel' }}
+      />
+      <Button
+        appearance={{ theme: 'primary', size: 'large' }}
+        text={{ id: 'button.continue' }}
+        onClick={() => {
+          /* eslint-disable-next-line no-console */
+          console.log(`[${displayName}]`, 'Claimed that sweet, sweet reward!');
+          return close();
+        }}
+      />
+    </DialogSection>
+  </Dialog>
+);
 
 TaskClaimRewardDialog.displayName = displayName;
 
