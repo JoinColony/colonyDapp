@@ -29,6 +29,10 @@ class Store {
   get address() {
     return this._orbitStore.address;
   }
+
+  load() {
+    return this._orbitStore.load();
+  }
 }
 
 export default Store;
