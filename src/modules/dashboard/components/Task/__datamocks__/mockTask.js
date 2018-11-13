@@ -1,12 +1,8 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import BigNumber from 'bn.js';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
-
-const createBN = val =>
-  new BigNumber(val).mul(new BigNumber(10).pow(new BigNumber(17)));
 
 /*
  * This should only be available, once the task is finalized

@@ -62,9 +62,9 @@ const MSG = defineMessages({
 
 const Task = ({ openDialog }: Props) => {
   const isTaskCreator =
-    taskMock.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
+    mockTask.creator.toLowerCase() === userMock.walletAddress.toLowerCase();
 
-  const preventEdit = taskMock && !taskMock.finalized && isTaskCreator;
+  const preventEdit = mockTask && !mockTask.finalized && isTaskCreator;
 
   return (
     <div className={styles.main}>
@@ -105,7 +105,7 @@ const Task = ({ openDialog }: Props) => {
             /* eslint-disable-next-line no-console */
             onSubmit={console.log}
             initialValues={{
-              taskTitle: taskMock.title,
+              taskTitle: mockTask.title,
             }}
           >
             <TaskDescription isTaskCreator={preventEdit} />
@@ -131,7 +131,7 @@ const Task = ({ openDialog }: Props) => {
       </aside>
       <div className={styles.container}>
         <section className={styles.header}>
-          {taskMock && !taskMock.finalized ? (
+          {mockTask && !mockTask.finalized ? (
             <Fragment>
               <TaskRequestWork isTaskCreator={isTaskCreator} />
               {/*
@@ -175,7 +175,7 @@ const Task = ({ openDialog }: Props) => {
             </Fragment>
           ) : (
             <Fragment>
-              {!taskMock.payoutClaimed ? (
+              {!mockTask.payoutClaimed ? (
                 /*
                  * @NOTE This is a placeholder until #559 gets merged
                  */
