@@ -2,6 +2,7 @@
 
 import type { OrbitDBStore } from './OrbitDBStore';
 
+// NOTE reverse option appears to have no effect
 export type FeedIteratorOptions = {
   gt?: string,
   gte?: string,

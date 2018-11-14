@@ -11,15 +11,6 @@ describe('FeedStore', () => {
   });
 
   const mockOrbitStore = {
-    _addOperation: sandbox.fn(),
-    address: 'orbit store address',
-    close: sandbox.fn(),
-    drop: sandbox.fn(),
-    add: sandbox.fn(),
-    key: 'orbit store key',
-    load: sandbox.fn(),
-    get: sandbox.fn(),
-    type: 'orbit store type',
   };
 
   const schemaId = 'UserActivity';

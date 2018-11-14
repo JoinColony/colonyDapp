@@ -52,7 +52,6 @@ test('The all() method can limit to most recent events', async () => {
   await store.add(firstActivity);
   await store.add(secondActivity);
 
-  // Without limit, reverse will return only 1 event
   const events = store.all({ limit: 3 });
   const recent = store.all({ limit: 1 });
 
