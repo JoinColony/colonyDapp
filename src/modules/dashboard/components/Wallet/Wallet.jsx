@@ -8,12 +8,20 @@ import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 
+<<<<<<< HEAD
 import WalletTransactions from '../WalletTransactions';
+=======
+import TokenList from '~admin/Tokens/TokenList.jsx';
+>>>>>>> Extract TokenList to use it in Wallet screen
 
 import styles from './Wallet.css';
 
 import mockUser from './__datamocks__/mockUser';
+<<<<<<< HEAD
 import mockTransactions from './__datamocks__/mockTransactions';
+=======
+import mockTokens from './__datamocks__/mockTokens';
+>>>>>>> Extract TokenList to use it in Wallet screen
 
 const MSG = defineMessages({
   tabTokens: {
@@ -61,6 +69,7 @@ const Wallet = () => (
             <FormattedMessage {...MSG.tabTransactions} />
           </Tab>
         </TabList>
+<<<<<<< HEAD
         <TabPanel>Token</TabPanel>
         <TabPanel>
           <WalletTransactions
@@ -68,6 +77,12 @@ const Wallet = () => (
             userAddress={mockUser.walletAddress}
           />
         </TabPanel>
+=======
+        <TabPanel>
+          <TokenList tokens={mockTokens} appearance={{ numCols: '3' }} />
+        </TabPanel>
+        <TabPanel />
+>>>>>>> Extract TokenList to use it in Wallet screen
       </Tabs>
     </main>
     <aside className={styles.sidebar}>
