@@ -89,23 +89,23 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
 export function* getUserActivitiesStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
   const accessController = new EthereumAccessController(walletAddress);
+  let activitiesStore;
+  activitiesStore = yield call([ddb, ddb.getStore], 'feed', 'userActivity', {
+    accessController,
+  });
 
-  const activitiesStore = yield call(
-    [ddb, ddb.createStore],
-    'feed',
-    'userActivity',
-    {
-      accessController,
-    },
-  );
+  if (activitiesStore) return activitiesStore;
 
+  activitiesStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
+    accessController,
+  });
   const joinedEvent = {
     colonyName: '',
     userAction: 'joinedColony',
     createdAt: Date.now(),
   };
-
   yield call([activitiesStore, activitiesStore.add], joinedEvent);
+
   return activitiesStore;
 }
 
