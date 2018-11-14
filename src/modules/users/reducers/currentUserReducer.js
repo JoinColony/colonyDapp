@@ -20,7 +20,11 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
       const { walletAddress, user, orbitStore } = action.payload;
-      return User({ ...user, walletAddress, orbitStore });
+      return state.setIn(
+        ['users', 'currentUser', 'profile'],
+        User({ ...user, walletAddress, orbitStore }),
+      );
+    }
 
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
