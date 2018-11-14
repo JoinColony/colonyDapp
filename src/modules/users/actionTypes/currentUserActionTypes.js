@@ -19,7 +19,9 @@ export const CURRENT_USER_CREATE_ERROR = `${ns}/CURRENT_USER_CREATE_ERROR`;
 export const CURRENT_USER_CREATE_SUCCESS = `${ns}/CURRENT_USER_CREATE_SUCCESS`;
 
 export const USER_ACTIVITIES_UPDATE = `${ns}/USER_ACTIVITIES_UPDATE`;
+// eslint-disable-next-line max-len
 export const USER_ACTIVITIES_UPDATE_ERROR = `${ns}/USER_ACTIVITIES_UPDATE_ERROR`;
+// eslint-disable-next-line max-len
 export const USER_ACTIVITIES_UPDATE_SUCCESS = `${ns}/USER_ACTIVITIES_UPDATE_SUCCESS`;
 
 export const USER_PROFILE_UPDATE = `${ns}/USER_PROFILE_UPDATE`;
