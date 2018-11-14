@@ -2,6 +2,7 @@
 
 import {
   CURRENT_USER_CREATE,
+  USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_SUCCESS,
   USERNAME_CREATE_SUCCESS,
   USER_UPLOAD_AVATAR_SUCCESS,
@@ -20,6 +21,10 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     case CURRENT_USER_CREATE: {
       const { walletAddress, user, orbitStore } = action.payload;
       return User({ ...user, walletAddress, orbitStore });
+
+    case USER_ACTIVITIES_UPDATE_SUCCESS: {
+      const { activities } = action.payload;
+      return state.setIn(['users', 'currentUser', 'activities'], activities);
     }
     case USER_PROFILE_UPDATE_SUCCESS: {
       if (state) {
