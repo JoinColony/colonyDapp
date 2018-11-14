@@ -118,7 +118,7 @@ export function* getUserActivities(walletAddress: string): Array<UserActivity> {
   return activitiesStore.all();
 }
 
-export function* addUserActivity(walletAddress: string, activity): Saga<void> {
+export function* addUserActivity(walletAddress: string, activity: UserActivity): Saga<void> {
   const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
 
   try {
