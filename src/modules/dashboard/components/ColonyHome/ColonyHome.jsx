@@ -9,8 +9,10 @@ import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-
 import TaskList from '~dashboard/TaskList';
+
+import { walletAddressSelector } from '../../../users/selectors/users';
+
 import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
@@ -73,7 +75,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
-  userWalletAddress: string,
+  walletAddress: string,
 };
 
 type State = {
@@ -125,7 +127,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { userWalletAddress } = this.props;
+    const { walletAddress } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -155,7 +157,7 @@ class ColonyHome extends Component<Props, State> {
             /*
              * This needs real logic to determine if the user is an admin
              */
-            isAdmin={!!userWalletAddress}
+            isAdmin={!!walletAddress}
           />
         </aside>
         <main className={styles.content}>
@@ -219,5 +221,5 @@ class ColonyHome extends Component<Props, State> {
 }
 
 export default connect((state: Object) => ({
-  userWalletAddress: state.user.wallet.currentAddress,
+  walletAddress: walletAddressSelector(state),
 }))(ColonyHome);
