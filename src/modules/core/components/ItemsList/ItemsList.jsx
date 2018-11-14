@@ -28,8 +28,7 @@ type ConsumableItem = {
 /* eslint-enable react/no-unused-prop-types */
 
 type Props = {
-  handleSubmit: (...any) => void,
-  itemsList: Array<ConsumableItem>,
+  list: Array<ConsumableItem>,
   children?: React$Element<*>,
   itemDisplayPrefix?: string,
   itemDisplaySuffix?: string,
@@ -60,7 +59,7 @@ class ItemsList extends Component<Props, State> {
   };
 
   /*
-   * Handle clicking on each individual domain in the list
+   * Handle clicking on each individual item in the list
    */
   handleSelectItem = (id: number) => {
     this.setState({ selectedItem: id, listTouched: true });
@@ -69,8 +68,8 @@ class ItemsList extends Component<Props, State> {
   /*
    * Handle cleanup when closing the popover (or pressing cancel)
    *
-   * If a domain was selected, but not set (didn't submit the form) then we
-   * need to re-set it back to the original set domain.
+   * If an item was selected, but not set (didn't submit the form) then we
+   * need to re-set it back to the original set item.
    *
    * Otherwise the next time it will open it will show the selected one, and not
    * the actual set one.
@@ -78,6 +77,23 @@ class ItemsList extends Component<Props, State> {
   handleCleanup = (callback?: () => void): void => {
     const { setItem } = this.state || undefined;
     this.setState({ selectedItem: setItem, listTouched: false }, callback);
+  };
+
+  /*
+   * Set the item when clicking the confirm button
+   */
+  handleSetItem = (close: () => void) => {
+    const {
+      state: { selectedItem },
+    } = this;
+    this.setState(
+      {
+        setItem: selectedItem,
+        selectedItem: undefined,
+        listTouched: false,
+      },
+      close,
+    );
   };
 
   /*
@@ -106,15 +122,15 @@ class ItemsList extends Component<Props, State> {
     const {
       state: { setItem: setItemId, listTouched },
       props: {
-        handleSubmit: handleManualSubmit,
-        itemsList = [],
+        list = [],
         children,
         itemDisplayPrefix = '',
         itemDisplaySuffix = '',
       },
+      handleSetItem,
       renderListItem,
     } = this;
-    const currentItem: ConsumableItem | void = itemsList.find(
+    const currentItem: ConsumableItem | void = list.find(
       ({ id }) => id === setItemId,
     );
     return (
@@ -126,7 +142,7 @@ class ItemsList extends Component<Props, State> {
           content={({ close }) => (
             <div className={styles.itemsWrapper}>
               <ul className={styles.itemList}>
-                {itemsList.map((item: ConsumableItem) => renderListItem(item))}
+                {list.map((item: ConsumableItem) => renderListItem(item))}
               </ul>
               <div className={styles.controls}>
                 <Button
@@ -138,7 +154,7 @@ class ItemsList extends Component<Props, State> {
                   appearance={{ theme: 'primary' }}
                   text={{ id: 'button.confirm' }}
                   disabled={!listTouched}
-                  onClick={() => handleManualSubmit(close)}
+                  onClick={() => handleSetItem(close)}
                 />
               </div>
             </div>
@@ -150,11 +166,16 @@ class ItemsList extends Component<Props, State> {
              * fallback button
              */
             <Button
-              appearance={{ size: 'small' }}
+              appearance={{ theme: 'primary' }}
               text={MSG.fallbackListButton}
             />
           )}
         </Popover>
+        {/*
+          * @TODO This should be passed _somehow_ outside of this component, so
+          * that displaying it has a bigger degree of customization.
+          * (Consumers maybe?)
+          */}
         <div
           className={styles.selectedItemDisplay}
           title={
