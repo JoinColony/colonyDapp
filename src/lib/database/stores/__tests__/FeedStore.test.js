@@ -10,8 +10,7 @@ describe('FeedStore', () => {
     sandbox.clear();
   });
 
-  const mockOrbitStore = {
-  };
+  const mockOrbitStore = {};
 
   const schemaId = 'UserActivity';
 

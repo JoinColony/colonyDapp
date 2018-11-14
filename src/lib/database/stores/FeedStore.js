@@ -33,5 +33,9 @@ class FeedStore extends Store {
       .collect()
       .map(item => item.payload.value);
   }
+
+  remove(key: string) {
+    return this._orbitStore.remove(key);
+  }
 }
 export default FeedStore;
