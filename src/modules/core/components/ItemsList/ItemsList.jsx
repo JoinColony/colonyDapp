@@ -31,6 +31,8 @@ type Props = {
   handleSubmit: (...any) => void,
   itemsList: Array<ConsumableItem>,
   children?: React$Element<*>,
+  itemDisplayPrefix?: string,
+  itemDisplaySuffix?: string,
 };
 
 type State = {
@@ -103,7 +105,13 @@ class ItemsList extends Component<Props, State> {
   render() {
     const {
       state: { setItem: setItemId, listTouched },
-      props: { handleSubmit, itemsList = [], children },
+      props: {
+        handleSubmit: handleManualSubmit,
+        itemsList = [],
+        children,
+        itemDisplayPrefix = '',
+        itemDisplaySuffix = '',
+      },
       renderListItem,
     } = this;
     const currentItem: ConsumableItem | void = itemsList.find(
@@ -130,7 +138,7 @@ class ItemsList extends Component<Props, State> {
                   appearance={{ theme: 'primary' }}
                   text={{ id: 'button.confirm' }}
                   disabled={!listTouched}
-                  onClick={() => handleSubmit(close)}
+                  onClick={() => handleManualSubmit(close)}
                 />
               </div>
             </div>
@@ -149,9 +157,13 @@ class ItemsList extends Component<Props, State> {
         </Popover>
         <div
           className={styles.selectedItemDisplay}
-          title={currentItem && `#${currentItem.name}`}
+          title={
+            currentItem &&
+            `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`
+          }
         >
-          {currentItem && `#${currentItem.name}`}
+          {currentItem &&
+            `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`}
         </div>
       </div>
     );
