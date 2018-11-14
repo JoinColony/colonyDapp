@@ -175,7 +175,8 @@ function* createUsername(action: Action): Saga<void> {
     accessController,
   });
 
-  yield call([store, store.set], { username, walletAddress });
+  yield call([store, store.set], 'username', username);
+  yield call([store, store.set], 'walletAddress', walletAddress);
 
   yield call(registerUserLabel, {
     type: action.type,

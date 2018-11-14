@@ -18,11 +18,11 @@ type AllUsersStateSelector = (state: RootState) => UsersRecord;
 type CurrentUserSelector = (state: RootState) => User;
 type UsersSelector = (allUsersState: UsersRecord) => Users;
 type LoadingSelector = (users: UsersRecord) => boolean;
-type UserIdSelector = (state: RootState, props: Object) => string;
 type UserProfileSelector = (state: RootState, props: Object) => User;
 type OrbitAddressSelector = (state: RootState) => string;
 type WalletAddressSelector = (state: RootState) => string;
 type UsernameSelector = (state: RootState) => string;
+type UserNameFromRouter = (state: RootState, props: Object) => string;
 
 export const allUsersState: AllUsersStateSelector = state => state[ns].allUsers;
 export const currentUser: CurrentUserSelector = state => state[ns].currentUser;
@@ -34,12 +34,12 @@ export const isLoading: LoadingSelector = createSelector(
   allUsersState,
   state => state.isLoading,
 );
-export const targetUserId: UserIdSelector = (_, props) =>
-  props ? props.match.params.userId : '';
-export const targetUserProfile: UserProfileSelector = createSelector(
+export const usernameFromRouter: UserNameFromRouter = (state, props) =>
+  props.match.params.username;
+export const userSelector: UserProfileSelector = createSelector(
   allUsers,
-  targetUserId,
-  (users, targetId) => users[targetId],
+  usernameFromRouter,
+  (users, username) => users.get(username),
 );
 export const orbitAddress: OrbitAddressSelector = createSelector(
   currentUser,

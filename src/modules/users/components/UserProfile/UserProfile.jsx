@@ -10,7 +10,6 @@ import UserMeta from './UserMeta.jsx';
 
 import mockActivities from './__datamocks__/mockActivities';
 import mockColonies from './__datamocks__/mockColonies';
-import mockUser from './__datamocks__/mockUser';
 
 import styles from './UserProfile.css';
 
@@ -20,25 +19,25 @@ import type { ActionCreator, UserRecord } from '~types/index';
 
 type Props = {
   fetchUserProfile: ActionCreator,
-  targetProfile: UserRecord,
-  targetUserId: string,
+  user: UserRecord,
+  username: string,
   isLoading: boolean,
 };
 
 class UserProfile extends Component<Props> {
   componentDidMount() {
-    const { fetchUserProfile, targetProfile, targetUserId } = this.props;
-    if (!targetProfile) {
-      fetchUserProfile(targetUserId);
+    const { fetchUserProfile, user, username } = this.props;
+    if (!user) {
+      fetchUserProfile(username);
     }
   }
 
   render() {
-    const { isLoading } = this.props;
-    return isLoading ? (
+    const { isLoading, user } = this.props;
+    return isLoading || !user ? (
       <UserProfileSpinner />
     ) : (
-      <ProfileTemplate asideContent={<UserMeta user={mockUser} />}>
+      <ProfileTemplate asideContent={<UserMeta user={user} />}>
         <section className={styles.sectionContainer}>
           <ColonyGrid colonies={mockColonies} />
         </section>
