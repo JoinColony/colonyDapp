@@ -16,10 +16,15 @@ const INITIAL_STATE = null;
 
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
-    case CURRENT_USER_CREATE:
-    case USER_PROFILE_UPDATE_SUCCESS: {
+    case CURRENT_USER_CREATE: {
       const { walletAddress, user, orbitStore } = action.payload;
       return User({ ...user, walletAddress, orbitStore });
+    }
+    case USER_PROFILE_UPDATE_SUCCESS: {
+      if (state) {
+        return state.merge(action.payload);
+      }
+      return state;
     }
     case USERNAME_CREATE_SUCCESS: {
       // TODO: This might change (maybe transaction: { params: { username }})

@@ -9,11 +9,27 @@ import type { UserRecord } from '~types/index';
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
-import { FieldSet, Form, Input, InputLabel, Textarea } from '~core/Fields';
+import {
+  FieldSet,
+  ActionForm,
+  FormStatus,
+  Input,
+  InputLabel,
+  Textarea,
+} from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
+// eslint-disable-next-line max-len
+import { UserProfile as UserProfileSchema } from '../../../../lib/database/schemas';
+
 import { currentUser } from '../../selectors';
+
+import {
+  USER_PROFILE_UPDATE,
+  USER_PROFILE_UPDATE_SUCCESS,
+  USER_PROFILE_UPDATE_ERROR,
+} from '../../actionTypes';
 
 import styles from './UserProfileEdit.css';
 
@@ -71,19 +87,19 @@ const UserProfileEdit = ({ user }: Props) => (
       appearance={{ theme: 'dark', size: 'medium' }}
       text={MSG.heading}
     />
-    <Form
-      onSubmit={values => {
-        // eslint-disable-next-line no-console
-        console.log(values);
-      }}
+    <ActionForm
+      submit={USER_PROFILE_UPDATE}
+      success={USER_PROFILE_UPDATE_SUCCESS}
+      error={USER_PROFILE_UPDATE_ERROR}
       initialValues={{
-        name: user.displayName,
+        displayName: user.displayName,
         bio: user.bio,
         website: user.website,
         location: user.location,
       }}
+      validationSchema={UserProfileSchema}
     >
-      {() => (
+      {({ status, isSubmitting }) => (
         <div>
           <FieldSet>
             <InputLabel label={MSG.labelWallet} />
@@ -96,17 +112,22 @@ const UserProfileEdit = ({ user }: Props) => (
             <UserMention username={user.username || user.walletAddress} />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
-            <Input label={MSG.labelName} name="name" maxLength={50} />
+            <Input label={MSG.labelName} name="displayName" />
             <Textarea label={MSG.labelBio} name="bio" maxLength={160} />
-            <Input label={MSG.labelWebsite} name="website" maxLength={100} />
-            <Input label={MSG.labelLocation} name="location" maxLength={70} />
+            <Input label={MSG.labelWebsite} name="website" />
+            <Input label={MSG.labelLocation} name="location" />
           </FieldSet>
           <FieldSet>
-            <Button type="submit" text={{ id: 'button.save' }} />
+            <Button
+              type="submit"
+              text={{ id: 'button.save' }}
+              loading={isSubmitting}
+            />
           </FieldSet>
+          <FormStatus status={status} />
         </div>
       )}
-    </Form>
+    </ActionForm>
   </ProfileTemplate>
 );
 

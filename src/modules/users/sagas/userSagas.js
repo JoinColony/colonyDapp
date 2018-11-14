@@ -70,27 +70,34 @@ export function* getUser(store: KVStore): Saga<UserRecord> {
 }
 
 function* updateProfile(action: Action): Saga<void> {
-  const walletAddress = yield select(walletAddressSelector);
-
-  const ddb = yield getContext('ddb');
-
-  const accessController = yield create(
-    EthereumAccessController,
-    walletAddress,
-  );
-
-  const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
-    accessController,
-  });
-
   try {
+    const walletAddress = yield select(walletAddressSelector);
+
+    const ddb = yield getContext('ddb');
+
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+
+    const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
+      accessController,
+    });
+
     // if user is not allowed to write to store, this should throw an error
-    yield call([store, store.set], action.payload);
+    // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
+    const {
+      orbitStore,
+      walletAddress: removedWalletAddress,
+      username,
+      ...update
+    } = action.payload;
+    yield call([store, store.set], update);
     const user = yield call(getAll, store);
 
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
-      payload: { user, walletAddress },
+      payload: user,
     });
   } catch (error) {
     yield putError(USER_PROFILE_UPDATE_ERROR, error);

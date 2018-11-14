@@ -8,12 +8,10 @@ export const UserProfile = yup.object({
   bio: yup.string(),
   // TODO: IPFS hash add yup validation for IPFS hash
   avatar: yup.string(),
-  walletAddress: yup
-    .string()
-    .address()
-    .required(),
-  // TODO: required?
-  username: yup.string().required(),
-  website: yup.string(),
+  walletAddress: yup.string().address(),
+  // TODO: yup validation for orbit address
+  orbitAddress: yup.string(),
+  username: yup.string(),
+  website: yup.string().url(),
   location: yup.string(),
 });

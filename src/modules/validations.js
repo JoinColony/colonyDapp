@@ -27,6 +27,7 @@ function address(msg) {
     name: 'address',
     message: msg || en.string.address,
     test(value) {
+      if (typeof value == 'undefined') return true;
       return isAddress(value);
     },
   });
