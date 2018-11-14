@@ -74,7 +74,7 @@ describe('FeedStore database type', () => {
     };
 
     const firstHash = await store.add(firstActivity);
-    const secondHash = await store.add(secondActivity);
+    await store.add(secondActivity);
 
     const twoEvents = store.all();
     expect(twoEvents.length).toBe(2);
@@ -83,5 +83,49 @@ describe('FeedStore database type', () => {
     const oneEvent = store.all();
     expect(oneEvent.length).toBe(1);
     expect(oneEvent[0].colonyName).toBe('Zombies2');
+  });
+  test('Can filter events with gt and gte, but not reverse', async () => {
+    const store = await ddb.createStore('feed', 'userActivity');
+    const firstActivity = {
+      colonyName: 'Zombies',
+      userAction: 'joinedColony',
+    };
+    const secondActivity = {
+      colonyName: 'Zombies2',
+      userAction: 'acceptedTask',
+    };
+    const thirdActivity = {
+      colonyName: 'Zombies3',
+      userAction: 'acceptedTask',
+    };
+    const fourthActivity = {
+      colonyName: 'Zombies4',
+      userAction: 'acceptedTask',
+    };
+
+    const firstHash = await store.add(firstActivity);
+    const secondHash = await store.add(secondActivity);
+    await store.add(thirdActivity);
+    await store.add(fourthActivity);
+
+    const all = store.all();
+    expect(all.length).toBe(4);
+
+    const first = store.get({ gt: firstHash, limit: -1 });
+    expect(first.length).toBe(3);
+    expect(first[0].colonyName).toBe('Zombies2');
+
+    const second = store.get({ gte: secondHash, limit: -1 });
+    expect(second.length).toBe(3);
+    expect(second[0].colonyName).toBe('Zombies2');
+
+    // Does not reverse despite option
+    const secondReverse = store.get({
+      gte: secondHash,
+      limit: -1,
+      reverse: true,
+    });
+    expect(secondReverse.length).toBe(3);
+    expect(secondReverse[0].colonyName).toBe('Zombies2');
   });
 });
