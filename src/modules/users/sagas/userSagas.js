@@ -30,6 +30,9 @@ import {
   USER_PROFILE_FETCH,
   USER_PROFILE_FETCH_SUCCESS,
   USER_PROFILE_FETCH_ERROR,
+  USER_ACTIVITIES_UPDATE,
+  USER_ACTIVITIES_UPDATE_SUCCESS,
+  USER_ACTIVITIES_UPDATE_ERROR,
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
@@ -108,6 +111,26 @@ export function* getUserActivitiesStore(walletAddress: string): Saga<KVStore> {
 
 export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
+}
+
+export function* getUserActivities(walletAddress: string): Array<UserActivity> {
+  const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
+  return activitiesStore.all();
+}
+
+export function* addUserActivity(walletAddress: string, activity): Saga<void> {
+  const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
+
+  try {
+    yield call([activitiesStore, activitiesStore.add], activity);
+
+    yield put({
+      type: USER_ACTIVITIES_UPDATE_SUCCESS,
+      payload: { set: activity, walletAddress },
+    });
+  } catch (error) {
+    yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
+  }
 }
 
 function* updateProfile(action: Action): Saga<void> {
@@ -299,12 +322,13 @@ function* removeAvatar(): Saga<void> {
 
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
+  yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
+  yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
 
   // each of these should be handled
-  yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
   yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
 }
