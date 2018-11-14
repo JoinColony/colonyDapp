@@ -19,10 +19,7 @@ import EthereumAccessController from '../../../lib/database/EthereumAccessContro
 import { getAll } from '../../../lib/database/commands';
 import { networkMethodSagaFactory } from '../../core/sagas/networkClient';
 
-import {
-  orbitAddress as orbitAddressSelector,
-  walletAddress as walletAddressSelector,
-} from '../selectors';
+import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 
 import {
   USER_PROFILE_FETCH,

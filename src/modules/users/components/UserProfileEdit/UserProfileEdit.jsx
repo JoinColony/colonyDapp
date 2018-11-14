@@ -2,20 +2,22 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { connect } from 'react-redux';
+
+import type { UserRecord } from '~types/index';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
 import { FieldSet, Form, Input, InputLabel, Textarea } from '~core/Fields';
 import Button from '~core/Button';
+import ProfileTemplate from '~pages/ProfileTemplate';
+
+import { currentUser } from '../../selectors';
 
 import styles from './UserProfileEdit.css';
 
-import ProfileTemplate from '~pages/ProfileTemplate';
-
 import Sidebar from './Sidebar.jsx';
-
-import mockUser from '../UserProfile/__datamocks__/mockUser';
 
 const MSG = defineMessages({
   heading: {
@@ -48,16 +50,20 @@ const MSG = defineMessages({
   },
 });
 
+type Props = {
+  user: UserRecord,
+};
+
 const displayName = 'users.UserProfileEdit';
 
-const UserProfileEdit = () => (
+const UserProfileEdit = ({ user }: Props) => (
   <ProfileTemplate
     appearance={{ theme: 'alt' }}
     asideContent={
       <Sidebar
-        walletAddress={mockUser.walletAddress}
-        username={mockUser.username || mockUser.walletAddress}
-        avatarURL={mockUser.avatar}
+        walletAddress={user.walletAddress}
+        username={user.username || user.walletAddress}
+        avatarURL={user.avatar}
       />
     }
   >
@@ -71,10 +77,10 @@ const UserProfileEdit = () => (
         console.log(values);
       }}
       initialValues={{
-        name: mockUser.displayName,
-        bio: mockUser.bio,
-        website: mockUser.website,
-        location: mockUser.location,
+        name: user.displayName,
+        bio: user.bio,
+        website: user.website,
+        location: user.location,
       }}
     >
       {() => (
@@ -82,14 +88,12 @@ const UserProfileEdit = () => (
           <FieldSet>
             <InputLabel label={MSG.labelWallet} />
             <CopyableAddress appearance={{ theme: 'big' }} full>
-              {mockUser.walletAddress}
+              {user.walletAddress}
             </CopyableAddress>
           </FieldSet>
           <FieldSet>
             <InputLabel label={MSG.labelUsername} />
-            <UserMention
-              username={mockUser.username || mockUser.walletAddress}
-            />
+            <UserMention username={user.username || user.walletAddress} />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
             <Input label={MSG.labelName} name="name" maxLength={50} />
@@ -108,4 +112,8 @@ const UserProfileEdit = () => (
 
 UserProfileEdit.displayName = displayName;
 
-export default UserProfileEdit;
+const mapStateToProps = state => ({
+  user: currentUser(state),
+});
+
+export default connect(mapStateToProps)(UserProfileEdit);

@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { UserRecord } from '~types/UserRecord';
 
-import { COLONY_HOME_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
+import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
@@ -77,9 +77,11 @@ class AvatarDropdownPopover extends Component<Props> {
             <NavLink to={`/user/${username}`} text={MSG.myProfile} />
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem>
-          <NavLink to={COLONY_HOME_ROUTE} text={MSG.settings} />
-        </DropdownMenuItem>
+        {username && (
+          <DropdownMenuItem>
+            <NavLink to={USER_EDIT_ROUTE} text={MSG.settings} />
+          </DropdownMenuItem>
+        )}
       </DropdownMenuSection>
     );
   };

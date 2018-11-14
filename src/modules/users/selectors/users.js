@@ -24,32 +24,32 @@ type WalletAddressSelector = (state: RootState) => string;
 type UsernameSelector = (state: RootState) => string;
 type UserNameFromRouter = (state: RootState, props: Object) => string;
 
-export const allUsersState: AllUsersStateSelector = state => state[ns].allUsers;
+export const allUsers: AllUsersStateSelector = state => state[ns].allUsers;
 export const currentUser: CurrentUserSelector = state => state[ns].currentUser;
-export const allUsers: UsersSelector = createSelector(
-  allUsersState,
+export const allUsersSelector: UsersSelector = createSelector(
+  allUsers,
   state => state.users,
 );
-export const isLoading: LoadingSelector = createSelector(
-  allUsersState,
+export const isLoadingSelector: LoadingSelector = createSelector(
+  allUsers,
   state => state.isLoading,
 );
 export const usernameFromRouter: UserNameFromRouter = (state, props) =>
   props.match.params.username;
 export const userSelector: UserProfileSelector = createSelector(
-  allUsers,
+  allUsersSelector,
   usernameFromRouter,
   (users, username) => users.get(username),
 );
-export const orbitAddress: OrbitAddressSelector = createSelector(
+export const orbitAddressSelector: OrbitAddressSelector = createSelector(
   currentUser,
   state => state.orbitStore,
 );
-export const walletAddress: WalletAddressSelector = createSelector(
+export const walletAddressSelector: WalletAddressSelector = createSelector(
   currentUser,
   state => state.walletAddress,
 );
-export const username: UsernameSelector = createSelector(
+export const usernameSelector: UsernameSelector = createSelector(
   currentUser,
   state => state.username,
 );
