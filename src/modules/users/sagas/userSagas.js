@@ -34,6 +34,9 @@ import {
   USERNAME_CREATE,
   USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
+  USER_AVATAR_FETCH,
+  USER_AVATAR_FETCH_SUCCESS,
+  USER_AVATAR_FETCH_ERROR,
   USER_UPLOAD_AVATAR,
   USER_UPLOAD_AVATAR_SUCCESS,
   USER_UPLOAD_AVATAR_ERROR,
@@ -199,6 +202,33 @@ function* createUsername(action: Action): Saga<void> {
   });
 }
 
+function* fetchAvatar(action: Action): Saga<void> {
+  const { username } = action.payload;
+  const ddb = yield getContext('ddb');
+  const ipfsNode = yield getContext('ipfsNode');
+  const ipfs = yield call([ipfsNode, ipfsNode.getIPFS]);
+
+  try {
+    const store = yield call([ddb, ddb.getStore], username);
+    const user = yield call(getAll, store);
+
+    if (!user.avatar) throw new Error('Avatar not set');
+
+    const results = yield call([ipfs, ipfs.files.add], user.avatar);
+
+    if (!user.length) throw new Error('Unable to fetch avatar from IPFS');
+
+    const avatarData = results[0].content.toString('base64');
+
+    yield put({
+      type: USER_AVATAR_FETCH_SUCCESS,
+      payload: { user, avatarData },
+    });
+  } catch (error) {
+    yield putError(USER_AVATAR_FETCH_ERROR, error);
+  }
+}
+
 function* uploadAvatar(action: Action): Saga<void> {
   const { data } = action.payload;
   const ipfsNode = yield getContext('ipfsNode');
@@ -248,6 +278,7 @@ export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
+  yield takeLatest(USER_AVATAR_FETCH, fetchAvatar);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
 }

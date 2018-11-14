@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
 import AvatarUploader from '~core/AvatarUploader';
-import UserAvatar from '~core/UserAvatar';
+import ConnectedUserAvatar from '../ConnectedUserAvatar';
 
 import promiseListener from '../../../../createPromiseListener';
 
@@ -86,7 +86,7 @@ class UserAvatarUploader extends Component<Props, State> {
       <AvatarUploader
         label={MSG.uploaderLabel}
         placeholder={
-          <UserAvatar
+          <ConnectedUserAvatar
             avatarURL={avatarURL}
             size="xl"
             title={MSG.uploaderLabel}

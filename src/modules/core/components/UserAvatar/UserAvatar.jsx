@@ -7,7 +7,7 @@ import getIcon from '../../../../lib/identicon';
 import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
 
-type Props = {
+export type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
   avatarURL?: ?string,
   /** Is passed through to Avatar */
