@@ -115,10 +115,13 @@ export function* getUser(store: KVStore): Saga<UserRecord> {
 
 export function* getUserActivities(walletAddress: string): Array<UserActivity> {
   const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
-  return activitiesStore.all();
+  return yield call([activitiesStore, activitiesStore.all]);
 }
 
-export function* addUserActivity(walletAddress: string, activity: UserActivity): Saga<void> {
+export function* addUserActivity(
+  walletAddress: string,
+  activity: UserActivity,
+): Saga<void> {
   const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
 
   try {
