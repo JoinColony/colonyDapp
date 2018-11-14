@@ -122,7 +122,7 @@ function* fetchProfile(action: Action): Saga<void> {
 
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
-      payload: { user, walletAddress: user.walletAddress },
+      payload: { user },
     });
   } catch (error) {
     yield put(replace(NOT_FOUND_ROUTE));
@@ -175,7 +175,7 @@ function* createUsername(action: Action): Saga<void> {
     accessController,
   });
 
-  yield call([store, store.set], 'username', username);
+  yield call([store, store.set], { username, walletAddress });
 
   yield call(registerUserLabel, {
     type: action.type,

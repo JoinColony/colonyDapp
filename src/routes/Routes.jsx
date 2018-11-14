@@ -18,7 +18,7 @@ import UserProfileEdit from '~users/UserProfileEdit';
 
 import AdminDashboard from '~admin/AdminDashboard';
 
-import { currentUserState } from '../modules/users/selectors';
+import { currentUser as currentUserSelector } from '../modules/users/selectors';
 
 import {
   CONNECT_ROUTE,
@@ -119,7 +119,7 @@ const Routes = ({ currentUser }) => {
 
 const RoutesContainer = connect(
   state => ({
-    currentUser: currentUserState(state),
+    currentUser: currentUserSelector(state),
   }),
   null,
 )(Routes);

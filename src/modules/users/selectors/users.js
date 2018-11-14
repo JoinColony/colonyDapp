@@ -15,17 +15,17 @@ type RootState = {
 };
 
 type AllUsersStateSelector = (state: RootState) => UsersRecord;
-type CurrentUserStateSelector = (state: RootState) => User;
+type CurrentUserSelector = (state: RootState) => User;
 type UsersSelector = (allUsersState: UsersRecord) => Users;
 type LoadingSelector = (users: UsersRecord) => boolean;
 type UserIdSelector = (state: RootState, props: Object) => string;
 type UserProfileSelector = (state: RootState, props: Object) => User;
 type OrbitAddressSelector = (state: RootState) => string;
 type WalletAddressSelector = (state: RootState) => string;
+type UsernameSelector = (state: RootState) => string;
 
 export const allUsersState: AllUsersStateSelector = state => state[ns].allUsers;
-export const currentUserState: CurrentUserStateSelector = state =>
-  state[ns].currentUser;
+export const currentUser: CurrentUserSelector = state => state[ns].currentUser;
 export const allUsers: UsersSelector = createSelector(
   allUsersState,
   state => state.users,
@@ -42,10 +42,14 @@ export const targetUserProfile: UserProfileSelector = createSelector(
   (users, targetId) => users[targetId],
 );
 export const orbitAddress: OrbitAddressSelector = createSelector(
-  currentUserState,
+  currentUser,
   state => state.orbitStore,
 );
 export const walletAddress: WalletAddressSelector = createSelector(
-  currentUserState,
+  currentUser,
   state => state.walletAddress,
+);
+export const username: UsernameSelector = createSelector(
+  currentUser,
+  state => state.username,
 );

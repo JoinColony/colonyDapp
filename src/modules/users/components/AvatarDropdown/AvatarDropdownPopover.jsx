@@ -3,8 +3,9 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { USER_ROUTE, COLONY_HOME_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
+import type { UserRecord } from '~types/UserRecord';
 
+import { COLONY_HOME_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
@@ -12,8 +13,6 @@ import DropdownMenu, {
 import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
-
-import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   buttonGetStarted: {
@@ -58,25 +57,32 @@ type Props = {
 class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
-  renderUserSection = () => (
-    <DropdownMenuSection separator>
-      <DropdownMenuItem>
-        <DialogLink to="CreateUsernameDialog">
-          {({ open }) => (
-            <button type="button" onClick={open}>
-              <FormattedMessage {...MSG.buttonGetStarted} />
-            </button>
-          )}
-        </DialogLink>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <NavLink to={USER_ROUTE} text={MSG.myProfile} />
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <NavLink to={COLONY_HOME_ROUTE} text={MSG.settings} />
-      </DropdownMenuItem>
-    </DropdownMenuSection>
-  );
+  renderUserSection = () => {
+    const {
+      user: { username },
+    } = this.props;
+    return (
+      <DropdownMenuSection separator>
+        <DropdownMenuItem>
+          <DialogLink to="CreateUsernameDialog">
+            {({ open }) => (
+              <button type="button" onClick={open}>
+                <FormattedMessage {...MSG.buttonGetStarted} />
+              </button>
+            )}
+          </DialogLink>
+        </DropdownMenuItem>
+        {username && (
+          <DropdownMenuItem>
+            <NavLink to={`/user/${username}`} text={MSG.myProfile} />
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem>
+          <NavLink to={COLONY_HOME_ROUTE} text={MSG.settings} />
+        </DropdownMenuItem>
+      </DropdownMenuSection>
+    );
+  };
 
   renderColonySection = () => (
     <DropdownMenuSection separator>
