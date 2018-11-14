@@ -121,7 +121,7 @@ class TokenEditDialog extends Component<Props> {
                       key={token.id}
                       value={token.tokenSymbol}
                       name="colonyTokens"
-                      disabled={token.isNative}
+                      disabled={token.isNative || token.isBlocked}
                     >
                       {!!token.tokenIcon && (
                         <img

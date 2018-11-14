@@ -7,12 +7,11 @@ import type { DialogType } from '~core/Dialog';
 import type { TokenType } from '~types/token';
 
 import Button from '~core/Button';
-import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 
-import styles from './Tokens.css';
+import TokenList from './TokenList.jsx';
 
-import TokenCard from './TokenCard.jsx';
+import styles from './Tokens.css';
 
 const MSG = defineMessages({
   title: {
@@ -104,13 +103,7 @@ class Tokens extends Component<Props> {
               </Heading>
             )}
           </div>
-          <div className={styles.tokenCardContainer}>
-            <CardList>
-              {tokens.filter(token => token.isEnabled).map(token => (
-                <TokenCard key={token.id} token={token} />
-              ))}
-            </CardList>
-          </div>
+          <TokenList tokens={tokens} />
         </main>
         {isColonyAdmin && (
           <aside className={styles.sidebar}>

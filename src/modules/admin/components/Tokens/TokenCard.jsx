@@ -22,7 +22,7 @@ type Props = InProps & {
 };
 
 type State = {
-  ethUsd: number | null,
+  ethUsd: number | null | string,
 };
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -33,7 +33,15 @@ class TokenCard extends Component<Props, State> {
   state = { ethUsd: null };
 
   componentDidMount() {
-    this.mounted = true;
+    const { isEth } = this.props;
+    if (isEth) {
+      this.getEthToUsd();
+    }
+  }
+
+  isNotPositive = number => Number(number) <= 0;
+
+  convertBalanceToUsd = (ethUsdConversionRate: number): number => {
     const {
       isEth,
       token: { balance },
@@ -47,7 +55,7 @@ class TokenCard extends Component<Props, State> {
         }
       });
     }
-  }
+  };
 
   componentWillUnmount() {
     this.mounted = false;
@@ -81,12 +89,26 @@ class TokenCard extends Component<Props, State> {
             {isNative && <span>*</span>}
           </div>
         </div>
-        <div className={styles.balanceContent}>{balance}</div>
+        <div
+          className={
+            this.isNotPositive(balance)
+              ? styles.balanceNotPositive
+              : styles.balanceContent
+          }
+        >
+          {balance.toFixed(2)}
+        </div>
         <div className={styles.cardFooter}>
           {isEth && (
             <Fragment>
-              {ethUsd ? (
-                <Numeral value={ethUsd} prefix="~ " suffix=" USD" />
+              {ethUsd === 0 || ethUsd ? (
+                <Numeral
+                  value={ethUsd}
+                  prefix="~ "
+                  suffix=" USD"
+                  integerSeparator="."
+                  decimals={2}
+                />
               ) : (
                 <SpinnerLoader />
               )}
