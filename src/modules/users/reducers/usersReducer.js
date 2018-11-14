@@ -1,6 +1,7 @@
 /* @flow */
 
 import {
+  USER_ACTIVITIES_FETCH_SUCCESS,
   USER_PROFILE_FETCH,
   USER_PROFILE_FETCH_ERROR,
   USER_PROFILE_FETCH_SUCCESS,
@@ -40,6 +41,13 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
       return state.setIn(['avatars', hash], avatarData);
     }
 
+    case USER_ACTIVITIES_FETCH_SUCCESS: {
+      const { activities, walletAddress } = action.payload;
+      return state.setIn(
+        ['users', 'allUsers', walletAddress, 'activities'],
+        activities,
+      );
+    }
     default:
       return state;
   }
