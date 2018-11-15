@@ -15,12 +15,7 @@
 }
 
 .stars {
-  flex: 0 0 auto;
   text-align: right;
-
-  & i {
-    margin-left: 3px;
-  }
 }
 
 .earnedReputation {

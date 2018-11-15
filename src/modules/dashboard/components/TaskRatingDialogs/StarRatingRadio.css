@@ -49,22 +49,4 @@
   display: inline-block;
   margin-top: 4px;
   vertical-align: middle;
-
-  & i {
-    margin-left: 4px;
-  }
-
-  & i:first-child {
-    margin-left: 0px;
-  }
-}
-
-.ratingStarUnselected {
-  composes: themePrimary from "~core/Icon/Icon.css";
-  composes: sizeTiny from "~core/Icon/Icon.css";
-
-  & svg {
-    fill: var(--temp-grey-1);
-    stroke: var(--temp-grey-1);
-  }
 }
