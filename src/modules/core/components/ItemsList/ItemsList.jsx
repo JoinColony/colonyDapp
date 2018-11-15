@@ -93,21 +93,36 @@ class ItemsList extends Component<Props, State> {
    *
    * @NOTE This will recursevly render nested children
    */
-  renderListItem = ({ id, name, children }: ConsumableItem) => {
+  renderListItem = (
+    { id, name, children }: ConsumableItem,
+    nestingCounter: number = 0,
+  ) => {
     const { selectedItem } = this.state;
     const { itemDisplayPrefix = '', itemDisplaySuffix = '' } = this.props;
+    /*
+     * Add prefix/suffix
+     */
     const decoratedName = `${itemDisplayPrefix}${name}${itemDisplaySuffix}`;
+    /*
+     * Recursevly render nested children
+     */
     const recursiveChildRender = () => {
       if (children && children.length) {
         return children.map((item: ConsumableItem) =>
-          this.renderListItem(item),
+          this.renderListItem(item, nestingCounter + 1),
         );
       }
       return null;
     };
     return (
       <Fragment key={nanoid(id)}>
-        <li className={selectedItem === id ? styles.selectedItem : null}>
+        <li
+          className={selectedItem === id ? styles.selectedItem : null}
+          style={{
+            paddingLeft: `${nestingCounter *
+              parseInt(styles.paddingValue, 10)}px`,
+          }}
+        >
           <button
             type="button"
             className={styles.item}
