@@ -29,54 +29,54 @@ export const transactionStarted = (
 
 export const transactionSendError = (
   id: string,
-  message: string,
+  payload: { message: string, params: Object },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'send', message } },
+  payload: { id, error: { type: 'send', ...payload } },
 });
 
 export const transactionEventDataError = (
   id: string,
-  message: string,
+  payload: { message: string, params: Object },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'eventData', message } },
+  payload: { id, error: { type: 'eventData', ...payload } },
 });
 
 export const transactionReceiptError = (
   id: string,
-  message: string,
+  payload: { message: string, params: Object },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'receipt', message } },
+  payload: { id, error: { type: 'receipt', ...payload } },
 });
 
 export const transactionReceiptReceived = (
   id: string,
-  receipt: Object,
+  payload: { receipt: Object, params: Object },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_RECEIPT_RECEIVED,
-  payload: { id, receipt },
+  payload: { id, ...payload },
 });
 
 export const transactionSent = (
   id: string,
-  hash: string,
+  payload: { hash: string, params: Object },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_SENT,
-  payload: { id, hash },
+  payload: { id, ...payload },
 });
 
 export const transactionEventDataReceived = <EventData>(
   id: string,
-  eventData: EventData,
+  payload: { eventData: EventData, params: Object },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_EVENT_DATA_RECEIVED,
-  payload: { id, eventData },
+  payload: { id, ...payload },
 });

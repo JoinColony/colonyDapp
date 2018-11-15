@@ -8,7 +8,6 @@ import type { UsersProps } from '~types/UsersRecord';
 
 const defaultState: UsersProps = {
   isLoading: false,
-  isError: false,
   users: new ImmutableMap(),
 };
 

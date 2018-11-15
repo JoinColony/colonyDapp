@@ -46,6 +46,8 @@ function* setupUserContext(action: Object): any {
     const userStore = yield call(getUserStore, wallet.address);
     const user = yield call(getUser, userStore);
 
+    // TODO: the user could potentially alter their username on the DDB w/o changing it on the DDB
+
     yield put({
       type: CURRENT_USER_CREATE,
       payload: {

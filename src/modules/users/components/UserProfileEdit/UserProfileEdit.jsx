@@ -2,20 +2,38 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { connect } from 'react-redux';
+
+import type { UserRecord } from '~types/index';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
-import { FieldSet, Form, Input, InputLabel, Textarea } from '~core/Fields';
+import {
+  FieldSet,
+  ActionForm,
+  FormStatus,
+  Input,
+  InputLabel,
+  Textarea,
+} from '~core/Fields';
 import Button from '~core/Button';
+import ProfileTemplate from '~pages/ProfileTemplate';
+
+// eslint-disable-next-line max-len
+import { UserProfile as UserProfileSchema } from '../../../../lib/database/schemas';
+
+import { currentUser } from '../../selectors';
+
+import {
+  USER_PROFILE_UPDATE,
+  USER_PROFILE_UPDATE_SUCCESS,
+  USER_PROFILE_UPDATE_ERROR,
+} from '../../actionTypes';
 
 import styles from './UserProfileEdit.css';
 
-import ProfileTemplate from '~pages/ProfileTemplate';
-
 import Sidebar from './Sidebar.jsx';
-
-import mockUser from '../UserProfile/__datamocks__/mockUser';
 
 const MSG = defineMessages({
   heading: {
@@ -48,16 +66,20 @@ const MSG = defineMessages({
   },
 });
 
+type Props = {
+  user: UserRecord,
+};
+
 const displayName = 'users.UserProfileEdit';
 
-const UserProfileEdit = () => (
+const UserProfileEdit = ({ user }: Props) => (
   <ProfileTemplate
     appearance={{ theme: 'alt' }}
     asideContent={
       <Sidebar
-        walletAddress={mockUser.walletAddress}
-        username={mockUser.username || mockUser.walletAddress}
-        avatarURL={mockUser.avatar}
+        walletAddress={user.walletAddress}
+        username={user.username || user.walletAddress}
+        avatarURL={user.avatar}
       />
     }
   >
@@ -65,47 +87,54 @@ const UserProfileEdit = () => (
       appearance={{ theme: 'dark', size: 'medium' }}
       text={MSG.heading}
     />
-    <Form
-      onSubmit={values => {
-        // eslint-disable-next-line no-console
-        console.log(values);
-      }}
+    <ActionForm
+      submit={USER_PROFILE_UPDATE}
+      success={USER_PROFILE_UPDATE_SUCCESS}
+      error={USER_PROFILE_UPDATE_ERROR}
       initialValues={{
-        name: mockUser.displayName,
-        bio: mockUser.bio,
-        website: mockUser.website,
-        location: mockUser.location,
+        displayName: user.displayName,
+        bio: user.bio,
+        website: user.website,
+        location: user.location,
       }}
+      validationSchema={UserProfileSchema}
     >
-      {() => (
+      {({ status, isSubmitting }) => (
         <div>
           <FieldSet>
             <InputLabel label={MSG.labelWallet} />
             <CopyableAddress appearance={{ theme: 'big' }} full>
-              {mockUser.walletAddress}
+              {user.walletAddress}
             </CopyableAddress>
           </FieldSet>
           <FieldSet>
             <InputLabel label={MSG.labelUsername} />
-            <UserMention
-              username={mockUser.username || mockUser.walletAddress}
-            />
+            <UserMention username={user.username || user.walletAddress} />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
-            <Input label={MSG.labelName} name="name" maxLength={50} />
+            <Input label={MSG.labelName} name="displayName" />
             <Textarea label={MSG.labelBio} name="bio" maxLength={160} />
-            <Input label={MSG.labelWebsite} name="website" maxLength={100} />
-            <Input label={MSG.labelLocation} name="location" maxLength={70} />
+            <Input label={MSG.labelWebsite} name="website" />
+            <Input label={MSG.labelLocation} name="location" />
           </FieldSet>
           <FieldSet>
-            <Button type="submit" text={{ id: 'button.save' }} />
+            <Button
+              type="submit"
+              text={{ id: 'button.save' }}
+              loading={isSubmitting}
+            />
           </FieldSet>
+          <FormStatus status={status} />
         </div>
       )}
-    </Form>
+    </ActionForm>
   </ProfileTemplate>
 );
 
 UserProfileEdit.displayName = displayName;
 
-export default UserProfileEdit;
+const mapStateToProps = state => ({
+  user: currentUser(state),
+});
+
+export default connect(mapStateToProps)(UserProfileEdit);

@@ -11,7 +11,7 @@ import namehash from 'eth-ens-namehash-ms';
 import type { Action, UserRecord } from '~types/index';
 
 import { NOT_FOUND_ROUTE } from '~routes';
-import { putError } from '~utils/saga/effects';
+import { create, putError } from '~utils/saga/effects';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
@@ -19,7 +19,7 @@ import EthereumAccessController from '../../../lib/database/EthereumAccessContro
 import { getAll } from '../../../lib/database/commands';
 import { networkMethodSagaFactory } from '../../core/sagas/networkClient';
 
-import { userOrbitAddress } from '../selectors';
+import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 
 import {
   USER_PROFILE_FETCH,
@@ -48,11 +48,18 @@ const registerUserLabel = networkMethodSagaFactory<
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
 
-  const accessController = new EthereumAccessController(walletAddress);
+  const accessController = yield create(
+    EthereumAccessController,
+    walletAddress,
+  );
+
   const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
     accessController,
   });
-  if (store) return store;
+  if (store) {
+    yield call([store, store.load]);
+    return store;
+  }
   return yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
     accessController,
   });
@@ -63,20 +70,34 @@ export function* getUser(store: KVStore): Saga<UserRecord> {
 }
 
 function* updateProfile(action: Action): Saga<void> {
-  const currentAddress = select(state => state.wallet.currentAddress);
-
-  const ddb = yield getContext('ddb');
-
-  const store = yield call([ddb, ddb.getStore], currentAddress);
-
   try {
+    const walletAddress = yield select(walletAddressSelector);
+
+    const ddb = yield getContext('ddb');
+
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+
+    const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
+      accessController,
+    });
+
     // if user is not allowed to write to store, this should throw an error
-    yield call([store, store.set], action.payload);
+    // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
+    const {
+      orbitStore,
+      walletAddress: removedWalletAddress,
+      username,
+      ...update
+    } = action.payload;
+    yield call([store, store.set], update);
     const user = yield call(getAll, store);
 
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
-      payload: { set: user, walletAddress: currentAddress },
+      payload: user,
     });
   } catch (error) {
     yield putError(USER_PROFILE_UPDATE_ERROR, error);
@@ -85,17 +106,27 @@ function* updateProfile(action: Action): Saga<void> {
 
 function* fetchProfile(action: Action): Saga<void> {
   const { username } = action.payload;
+
+  const walletAddress = yield select(walletAddressSelector);
+
   const ddb = yield getContext('ddb');
 
+  // should throw an error if username is not registered
   try {
-    // should throw an error if username is not registered
-    const store = yield call([ddb, ddb.getStore], username);
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+
+    const store = yield call([ddb, ddb.getStore], `user.${username}`, {
+      accessController,
+    });
 
     const user = yield call(getAll, store);
 
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
-      payload: { user, walletAddress: user.walletAddress },
+      payload: { user },
     });
   } catch (error) {
     yield put(replace(NOT_FOUND_ROUTE));
@@ -134,16 +165,30 @@ function* validateUsername(action: Action): Saga<void> {
 
 function* createUsername(action: Action): Saga<void> {
   const { username } = action.payload;
-  const ddb = yield getContext('ddb');
-  const orbitDBPath = yield select(userOrbitAddress);
 
-  const store = yield call([ddb, ddb.getStore], orbitDBPath);
-  yield call([store, store.set], 'username', username);
+  const ddb = yield getContext('ddb');
+  const orbitDBPath = yield select(orbitAddressSelector);
+  const walletAddress = yield select(walletAddressSelector);
+
+  const accessController = yield create(
+    EthereumAccessController,
+    walletAddress,
+  );
+
+  const store = yield call([ddb, ddb.getStore], orbitDBPath, {
+    accessController,
+  });
+
+  yield call([store, store.set], { username, walletAddress });
 
   yield call(registerUserLabel, {
     type: action.type,
     payload: {
       params: { username, orbitDBPath },
+      // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
+      options: {
+        gasLimit: 500000,
+      },
     },
   });
 }

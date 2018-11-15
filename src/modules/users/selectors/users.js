@@ -15,32 +15,41 @@ type RootState = {
 };
 
 type AllUsersStateSelector = (state: RootState) => UsersRecord;
-type CurrentUserStateSelector = (state: RootState) => User;
+type CurrentUserSelector = (state: RootState) => User;
 type UsersSelector = (allUsersState: UsersRecord) => Users;
 type LoadingSelector = (users: UsersRecord) => boolean;
-type UserIdSelector = (state: RootState, props: Object) => string;
 type UserProfileSelector = (state: RootState, props: Object) => User;
-type UserOrbitAddressSelector = (state: RootState) => string;
+type OrbitAddressSelector = (state: RootState) => string;
+type WalletAddressSelector = (state: RootState) => string;
+type UsernameSelector = (state: RootState) => string;
+type UserNameFromRouter = (state: RootState, props: Object) => string;
 
-export const allUsersState: AllUsersStateSelector = state => state[ns].allUsers;
-export const currentUserState: CurrentUserStateSelector = state =>
-  state[ns].currentUser;
-export const allUsers: UsersSelector = createSelector(
-  allUsersState,
+export const allUsers: AllUsersStateSelector = state => state[ns].allUsers;
+export const currentUser: CurrentUserSelector = state => state[ns].currentUser;
+export const allUsersSelector: UsersSelector = createSelector(
+  allUsers,
   state => state.users,
 );
-export const isLoading: LoadingSelector = createSelector(
-  allUsersState,
+export const isLoadingSelector: LoadingSelector = createSelector(
+  allUsers,
   state => state.isLoading,
 );
-export const targetUserId: UserIdSelector = (_, props) =>
-  props ? props.match.params.userId : '';
-export const targetUserProfile: UserProfileSelector = createSelector(
-  allUsers,
-  targetUserId,
-  (users, targetId) => users[targetId],
+export const usernameFromRouter: UserNameFromRouter = (state, props) =>
+  props.match.params.username;
+export const userSelector: UserProfileSelector = createSelector(
+  allUsersSelector,
+  usernameFromRouter,
+  (users, username) => users.get(username),
 );
-export const userOrbitAddress: UserOrbitAddressSelector = createSelector(
-  currentUserState,
+export const orbitAddressSelector: OrbitAddressSelector = createSelector(
+  currentUser,
   state => state.orbitStore,
+);
+export const walletAddressSelector: WalletAddressSelector = createSelector(
+  currentUser,
+  state => state.walletAddress,
+);
+export const usernameSelector: UsernameSelector = createSelector(
+  currentUser,
+  state => state.username,
 );

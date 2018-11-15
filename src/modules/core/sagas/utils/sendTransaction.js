@@ -35,6 +35,7 @@ import {
 export function transactionChannel<EventData>(
   txPromise: Promise<ContractResponse<EventData>>,
   id: string, // Transaction ID (not a hash, just for the store).
+  params: Object,
 ) {
   return eventChannel(emit => {
     txPromise
@@ -46,7 +47,7 @@ export function transactionChannel<EventData>(
             transaction: { hash },
           },
         }) => {
-          emit(transactionSent(id, hash));
+          emit(transactionSent(id, { hash, params }));
 
           // XXX these promises will be present in the contract response, but
           // we need to check for them, because we're using the
@@ -54,25 +55,35 @@ export function transactionChannel<EventData>(
           if (receiptPromise)
             receiptPromise
               .then(receipt => {
-                emit(transactionReceiptReceived(id, receipt));
+                emit(transactionReceiptReceived(id, { params, receipt }));
               })
               .catch(receiptError => {
-                emit(transactionReceiptError(id, receiptError.message));
+                emit(
+                  transactionReceiptError(id, {
+                    message: receiptError.message,
+                    params,
+                  }),
+                );
               });
 
           if (eventDataPromise)
             eventDataPromise
               .then(eventData => {
-                emit(transactionEventDataReceived(id, eventData));
+                emit(transactionEventDataReceived(id, { eventData, params }));
                 emit(END);
               })
               .catch(eventDataError => {
-                emit(transactionEventDataError(id, eventDataError.message));
+                emit(
+                  transactionEventDataError(id, {
+                    message: eventDataError.message,
+                    params,
+                  }),
+                );
               });
         },
       )
       .catch(sendError => {
-        emit(transactionSendError(id, sendError.message));
+        emit(transactionSendError(id, { message: sendError.message, params }));
         emit(END);
       });
     return () => {};
@@ -128,7 +139,7 @@ export function* sendTransaction<Params: *>(
   }
 
   // Create an event channel to send the transaction.
-  const channel = yield call(transactionChannel, txPromise, id);
+  const channel = yield call(transactionChannel, txPromise, id, params);
 
   try {
     // Take all actions the channel emits and dispatch them.
@@ -138,24 +149,18 @@ export function* sendTransaction<Params: *>(
 
       switch (action.type) {
         case TRANSACTION_SENT:
-          if (sent) yield put(transactionSent(id, payload.receipt, sent));
+          if (sent) yield put(transactionSent(id, payload, sent));
           break;
 
         case TRANSACTION_RECEIPT_RECEIVED:
           if (receiptReceived)
-            yield put(
-              transactionReceiptReceived(id, payload.receipt, receiptReceived),
-            );
+            yield put(transactionReceiptReceived(id, payload, receiptReceived));
           break;
 
         case TRANSACTION_EVENT_DATA_RECEIVED:
           if (eventDataReceived)
             yield put(
-              transactionEventDataReceived(
-                id,
-                payload.eventData,
-                eventDataReceived,
-              ),
+              transactionEventDataReceived(id, payload, eventDataReceived),
             );
           break;
 
