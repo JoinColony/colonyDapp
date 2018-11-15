@@ -14,7 +14,7 @@ type EthUsdResponse = {
 const convertBalanceToUsd = (
   ethUsdConversionRate: number,
   balance: number,
-): number => +(balance * ethUsdConversionRate).toFixed(2);
+): number => balance * ethUsdConversionRate || 0;
 
 /*
   Request dollar conversion value from etherScan

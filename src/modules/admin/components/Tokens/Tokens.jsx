@@ -48,7 +48,10 @@ class Tokens extends Component<Props> {
 
   handleOpenTokenEditDialog = () => {
     const { openDialog, tokens } = this.props;
-    const tokenEditDialog = openDialog('TokenEditDialog', { tokens });
+    const tokenEditDialog = openDialog('TokenEditDialog', {
+      tokens,
+      tokenOwner: 'Colony',
+    });
     tokenEditDialog.afterClosed().catch(() => {
       // cancel actions here
     });
