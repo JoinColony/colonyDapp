@@ -6,10 +6,6 @@ const skillMocks = [
     name: 'Daily Standup',
   },
   {
-    id: 1,
-    name: 'Random',
-  },
-  {
     id: 10,
     name: 'Design',
     parent: 0,
@@ -30,6 +26,10 @@ const skillMocks = [
     parent: 11,
   },
   {
+    id: 1,
+    name: 'Random',
+  },
+  {
     id: 20,
     name: 'Time Off',
     parent: 1,
@@ -38,6 +38,21 @@ const skillMocks = [
     id: 21,
     name: 'Website',
     parent: 1,
+  },
+  {
+    id: 1110,
+    name: 'Strings',
+    parent: 111,
+  },
+  {
+    id: 1111,
+    name: 'Objects',
+    parent: 111,
+  },
+  {
+    id: 1112,
+    name: 'Arrays',
+    parent: 111,
   },
 ];
 

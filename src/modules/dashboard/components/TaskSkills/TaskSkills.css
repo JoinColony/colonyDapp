@@ -1,0 +1,27 @@
+@value paddingValue: 12px;
+
+.main {
+  padding-right: 20px;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+
+  /*
+   * @NOTE This is only needed to better position the Popover's top arrow,
+   * it doesn't actually affect the box's width
+   */
+  width: 130px;
+}
+
+.controls button {
+  margin-left: 5px;
+
+  /*
+   * @NOTE We need to manually set it here, otherwise some parent class from
+   * `.form` will set it's bottom margin to 15px
+   */
+  margin-bottom: 0 !important;
+}
