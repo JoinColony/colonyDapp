@@ -19,3 +19,8 @@
 .borderBottom {
   border-bottom: 1px solid borderColor;
 }
+
+.borderGrey {
+  border: 1px solid var(--grey-blue-0);
+  border-radius: var(--radius-tiny);
+}

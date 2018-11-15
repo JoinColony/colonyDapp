@@ -53,6 +53,16 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       data={data}
       filter={filter}
     />
+    <br />
+    <Heading appearance={{ size: "medium" }}>Disabled</Heading>
+    <SingleUserPicker
+      name="singleuserpickerCurrentUser"
+      label="Pick user"
+      itemComponent={ItemWithCurrentUser}
+      data={data}
+      disabled
+      filter={filter}
+    />
   </div>
 </Formik>
 ```

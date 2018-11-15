@@ -18,6 +18,10 @@
   width: 322px;
 }
 
+.inputContainer > label {
+  margin-bottom: 20px;
+}
+
 .avatarContainer {
   flex: 0 0 26px;
 }

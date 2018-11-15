@@ -104,3 +104,10 @@
   font-size: var(--size-tiny);
   color: var(--danger);
 }
+
+.omniContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 5px;
+}

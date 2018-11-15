@@ -47,3 +47,8 @@
   font-size: var(--size-small);
   font-weight: var(--weight-normal);
 }
+
+.mention {
+  font-weight: var(--weight-medium);
+  color: var(--pink);
+}

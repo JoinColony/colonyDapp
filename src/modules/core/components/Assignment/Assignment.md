@@ -43,4 +43,3 @@ const payouts = [
 
 <Assignment assignee={assignee} payouts={payouts} reputation={reputation} />
 ```
-
