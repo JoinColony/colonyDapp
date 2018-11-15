@@ -7,11 +7,8 @@ import BigNumber from 'bn.js';
 import EthereumTx from 'ethereumjs-tx';
 import { utils } from 'ethers';
 
-import type {
-  TransactionOptions,
-  TransactionReceipt,
-  TransactionRequest,
-} from './types';
+import type { TransactionOptions, TransactionRequest } from './types';
+import type { TransactionReceipt } from '~types/index';
 
 export default class EthersWrappedWallet {
   wallet: GenericWallet;
