@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import nanoid from 'nanoid';
 
@@ -20,6 +20,7 @@ const MSG = defineMessages({
 
 type Props = {
   collapsedList: Array<ConsumableItem>,
+  list: Array<ConsumableItem>,
   children?: React$Element<*>,
   itemDisplayPrefix?: string,
   itemDisplaySuffix?: string,
@@ -89,23 +90,35 @@ class ItemsList extends Component<Props, State> {
 
   /*
    * Helper to render an entry in the domains list
+   *
+   * @NOTE This will recursevly render nested children
    */
-  renderListItem = ({ id, name }: ConsumableItem) => {
+  renderListItem = ({ id, name, children }: ConsumableItem) => {
     const { selectedItem } = this.state;
+    const { itemDisplayPrefix = '', itemDisplaySuffix = '' } = this.props;
+    const decoratedName = `${itemDisplayPrefix}${name}${itemDisplaySuffix}`;
+    const recursiveChildRender = () => {
+      if (children && children.length) {
+        return children.map((item: ConsumableItem) =>
+          this.renderListItem(item),
+        );
+      }
+      return null;
+    };
     return (
-      <li
-        className={selectedItem === id ? styles.selectedItem : null}
-        key={nanoid(id)}
-      >
-        <button
-          type="button"
-          className={styles.item}
-          onClick={() => this.handleSelectItem(id)}
-          title={name}
-        >
-          {`#${name}`}
-        </button>
-      </li>
+      <Fragment key={nanoid(id)}>
+        <li className={selectedItem === id ? styles.selectedItem : null}>
+          <button
+            type="button"
+            className={styles.item}
+            onClick={() => this.handleSelectItem(id)}
+            title={decoratedName}
+          >
+            {decoratedName}
+          </button>
+        </li>
+        {recursiveChildRender()}
+      </Fragment>
     );
   };
 
@@ -113,6 +126,7 @@ class ItemsList extends Component<Props, State> {
     const {
       state: { setItem: setItemId, listTouched },
       props: {
+        list = [],
         collapsedList = [],
         children,
         itemDisplayPrefix = '',
@@ -121,7 +135,7 @@ class ItemsList extends Component<Props, State> {
       handleSetItem,
       renderListItem,
     } = this;
-    const currentItem: ConsumableItem | void = collapsedList.find(
+    const currentItem: ConsumableItem | void = list.find(
       ({ id }) => id === setItemId,
     );
     return (

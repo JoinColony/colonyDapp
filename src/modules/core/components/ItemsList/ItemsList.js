@@ -10,6 +10,7 @@ export type ConsumableItem = {
   id: number,
   name: string,
   parent?: number,
+  children?: Array<ConsumableItem>,
 };
 
 type PartialProps = {
@@ -24,12 +25,39 @@ const enhance = compose(
     *
     * Also, that why we sort the list initially, to make sure that the lower
     * ids are at the top
+    *
+    * As for what this list does, is to take an array of `ConsumableItem` object
+    * and create a structure of nested ones.
+    *
+    * Eg:
+    * [
+    *   { id: 1 },
+    *   { id: 2, parent: 1 },
+    *   { id: 3, parent: 2 }
+    * ]
+    *
+    * Is going to be transformed into:
+    * [
+    *   {
+    *     id: 1,
+    *     children: [
+    *       {
+    *         id: 2,
+    *         children: [
+    *           {
+    *             id: 3,
+    *           },
+    *         ],
+    *       },
+    *     ],
+    *   },
+    * ]
     */
     let collapsedList: Array<Object> = list.slice().sort(sortObjectsBy('id'));
     /*
      * Construct a list of items to remove (after they were nested)
      */
-    const listToClear = [];
+    const listToClear: Array<number> = [];
     /*
      * Iterate trough children and gather they're ids into the parent
      */
