@@ -4,9 +4,10 @@ import type { RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { UserProps } from '~types/UserRecord';
+import type { ProfileProps, UserProps } from '~types/UserRecord';
+import type { UserActivity } from '../../dashboard/components/UserActivities';
 
-const defaultValues: UserProps = {
+const defaultProfileValues: ProfileProps = {
   walletAddress: '',
   orbitStore: '',
   databases: {},
@@ -16,6 +17,13 @@ const defaultValues: UserProps = {
   bio: undefined,
   website: undefined,
   location: undefined,
+};
+
+const defaultActivities: Array<UserActivity> = [];
+
+const defaultValues: UserProps = {
+  profile: defaultProfileValues,
+  activities: defaultActivities,
 };
 
 // TODO: Ideally, we should be able to validate the required properties
