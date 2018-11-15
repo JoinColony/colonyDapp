@@ -24,6 +24,7 @@ type Props = {
   children?: React$Element<*>,
   itemDisplayPrefix?: string,
   itemDisplaySuffix?: string,
+  handleSetItem?: (value: ConsumableItem) => void,
 };
 
 type State = {
@@ -74,17 +75,30 @@ class ItemsList extends Component<Props, State> {
   /*
    * Set the item when clicking the confirm button
    */
-  handleSetItem = (close: () => void) => {
+  handleSet = (close: () => void) => {
     const {
-      state: { selectedItem },
+      state: { selectedItem: selectedItemId },
+      props: {
+        handleSetItem: callback = (value: ConsumableItem) => value,
+        list = [],
+      },
     } = this;
-    this.setState(
+    const { id: itemId, name } =
+      list.find(({ id }) => id === selectedItemId) || {};
+    return this.setState(
       {
-        setItem: selectedItem,
+        setItem: selectedItemId,
         selectedItem: undefined,
         listTouched: false,
       },
-      close,
+      () => {
+        close();
+        /*
+         * @NOTE If we don't deconstruct here and filter the values passed down,
+         * the nested values will also be passed down
+         */
+        return callback({ id: itemId, name });
+      },
     );
   };
 
@@ -147,7 +161,7 @@ class ItemsList extends Component<Props, State> {
         itemDisplayPrefix = '',
         itemDisplaySuffix = '',
       },
-      handleSetItem,
+      handleSet,
       renderListItem,
     } = this;
     const currentItem: ConsumableItem | void = list.find(
@@ -176,7 +190,7 @@ class ItemsList extends Component<Props, State> {
                   appearance={{ theme: 'primary' }}
                   text={{ id: 'button.confirm' }}
                   disabled={!listTouched}
-                  onClick={() => handleSetItem(close)}
+                  onClick={() => handleSet(close)}
                 />
               </div>
             </div>
