@@ -12,23 +12,20 @@ import type { Action } from '~types/index';
 
 import { User } from '../records';
 
-type State = User | null;
+type State = User;
 
-const INITIAL_STATE = null;
+const INITIAL_STATE = User({});
 
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
       const { walletAddress, user, orbitStore } = action.payload;
-      return state.setIn(
-        ['users', 'currentUser', 'profile'],
-        User({ ...user, walletAddress, orbitStore }),
-      );
+      return state.set('profile', { ...user, walletAddress, orbitStore });
     }
 
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
-      return state.setIn(['users', 'currentUser', 'activities'], activities);
+      return state.set('activities', activities);
     }
     case USER_PROFILE_UPDATE_SUCCESS: {
       if (state) {

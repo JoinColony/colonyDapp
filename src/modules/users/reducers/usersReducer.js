@@ -10,7 +10,7 @@ import {
 
 import type { Action } from '~types/index';
 
-import { User, Users } from '../records';
+import { Users } from '../records';
 
 const INITIAL_STATE = Users({});
 
@@ -23,10 +23,7 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
     case USER_PROFILE_FETCH_SUCCESS: {
       const { walletAddress, user } = action.payload;
       return state
-        .setIn(
-          ['users', 'allUsers', walletAddress],
-          User({ walletAddress, ...user }),
-        )
+        .setIn(['users', walletAddress, 'profile'], { walletAddress, ...user })
         .merge({
           isLoading: false,
           isError: false,
@@ -43,10 +40,7 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
 
     case USER_ACTIVITIES_FETCH_SUCCESS: {
       const { activities, walletAddress } = action.payload;
-      return state.setIn(
-        ['users', 'allUsers', walletAddress, 'activities'],
-        activities,
-      );
+      return state.setIn(['users', walletAddress, 'activities'], activities);
     }
     default:
       return state;

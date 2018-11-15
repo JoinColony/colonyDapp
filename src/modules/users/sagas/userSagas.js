@@ -113,23 +113,25 @@ export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
 }
 
-export function* getUserActivities(walletAddress: string): Array<UserActivity> {
+// TODO fix typing
+export function* getUserActivities(walletAddress: string): Generator<*, *, *> {
   const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
-  return yield call([activitiesStore, activitiesStore.all]);
+  const all = yield call([activitiesStore, activitiesStore.all]);
+  return all;
 }
 
-export function* addUserActivity(
-  walletAddress: string,
-  activity: UserActivity,
-): Saga<void> {
+export function* addUserActivity(action: Action): Saga<void> {
+  const { walletAddress, activity } = action.payload;
+
   const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
 
   try {
     yield call([activitiesStore, activitiesStore.add], activity);
+    const activities = yield call([activitiesStore, activitiesStore.all]);
 
     yield put({
       type: USER_ACTIVITIES_UPDATE_SUCCESS,
-      payload: { set: activity, walletAddress },
+      payload: { activities, walletAddress },
     });
   } catch (error) {
     yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
