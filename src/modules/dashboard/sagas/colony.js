@@ -16,7 +16,7 @@ import { DASHBOARD_ROUTE } from '~routes';
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
 
-import { networkMethodSagaFactory } from '../../core/sagas/networkClient';
+import { networkMethodSagaFactory } from '../../core/sagas/utils';
 
 import {
   COLONY_CREATE,
@@ -95,17 +95,17 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
 
 // Generate sagas for the methods on the network client which we are
 // currently using.
-const createColony = networkMethodSagaFactory<
-  { tokenAddress: string },
-  { colonyAddress: string, colonyId: number },
->('createColony', {
-  success: COLONY_CREATE_SUCCESS,
-  error: COLONY_CREATE_ERROR,
-});
-const createToken = networkMethodSagaFactory<
-  { name: string, symbol: string },
-  {},
->('createToken', { success: TOKEN_CREATE_SUCCESS, error: TOKEN_CREATE_ERROR });
+const createColony = networkMethodSagaFactory<{ tokenAddress: string }>(
+  'createColony',
+  {
+    success: COLONY_CREATE_SUCCESS,
+    error: COLONY_CREATE_ERROR,
+  },
+);
+const createToken = networkMethodSagaFactory<{ name: string, symbol: string }>(
+  'createToken',
+  { success: TOKEN_CREATE_SUCCESS, error: TOKEN_CREATE_ERROR },
+);
 
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColony);
