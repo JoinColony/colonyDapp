@@ -8,8 +8,8 @@ import type { Props as UserAvatarProps } from '~core/UserAvatar/UserAvatar.jsx';
 
 import UserAvatar from '~core/UserAvatar';
 
-import { targetUserProfile } from '../../selectors';
-import { fetchUserProfile } from '../../actionCreators';
+import { avatarSelector } from '../../selectors';
+import { fetchUserAvatar } from '../../actionCreators';
 
 type Props = UserAvatarProps & {
   loadUser: (username: string) => void,
@@ -27,13 +27,12 @@ class ConnectedUserAvatar extends Component<Props> {
 }
 
 const mapStateToProps = (state, props) => ({
-  // TODO: select `avatarData` from this
-  avatarURL: targetUserProfile(state, props),
+  avatarURL: avatarSelector(state, props),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<*>) => ({
   loadUser: username => {
-    dispatch(fetchUserProfile(username));
+    dispatch(fetchUserAvatar(username));
   },
 });
 

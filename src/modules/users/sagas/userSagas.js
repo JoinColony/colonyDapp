@@ -7,6 +7,7 @@ import type { Saga } from 'redux-saga';
 import { delay } from 'redux-saga';
 import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
 import namehash from 'eth-ens-namehash-ms';
+import fileType from 'file-type';
 
 import type { Action, UserRecord } from '~types/index';
 
@@ -209,16 +210,23 @@ function* fetchAvatar(action: Action): Saga<void> {
   const ipfs = yield call([ipfsNode, ipfsNode.getIPFS]);
 
   try {
-    const store = yield call([ddb, ddb.getStore], username);
+    const accessController = yield create(EthereumAccessController, username);
+    const store = yield call([ddb, ddb.getStore], `user.${username}`, {
+      accessController,
+    });
     const user = yield call(getAll, store);
 
     if (!user.avatar) throw new Error('Avatar not set');
 
-    const results = yield call([ipfs, ipfs.files.add], user.avatar);
+    const results = yield call([ipfs, ipfs.files.cat], user.avatar);
 
-    if (!user.length) throw new Error('Unable to fetch avatar from IPFS');
+    if (!results) throw new Error('Unable to fetch avatar from IPFS');
 
-    const avatarData = results[0].content.toString('base64');
+    // determine the mimetype and convert to base64 data URI
+    const { mime: avatarMime } = fileType(results);
+    const avatarData = `data:${avatarMime};base64,${results.toString(
+      'base64',
+    )}`;
 
     yield put({
       type: USER_AVATAR_FETCH_SUCCESS,
@@ -234,18 +242,25 @@ function* uploadAvatar(action: Action): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
   const ipfs = yield call([ipfsNode, ipfsNode.getIPFS]);
   const ddb = yield getContext('ddb');
-  const orbitDBPath = yield select(userOrbitAddress);
+  const orbitDBPath = yield select(orbitAddressSelector);
+  const walletAddress = yield select(walletAddressSelector);
 
   try {
     // first attempt upload to IPFS
     const results = yield call(
       [ipfs, ipfs.files.add],
-      ipfs.types.Buffer.from(data, 'base64'),
+      ipfs.types.Buffer.from(data.split(',')[1], 'base64'),
     );
     if (!results.length) throw new Error('Failed to upload to IPFS');
 
     // if we uploaded okay, put the hash in the user orbit store
-    const store = yield call([ddb, ddb.getStore], orbitDBPath);
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+    const store = yield call([ddb, ddb.getStore], orbitDBPath, {
+      accessController,
+    });
     yield call([store, store.set], 'avatar', results[0].path);
 
     yield put({
@@ -259,14 +274,24 @@ function* uploadAvatar(action: Action): Saga<void> {
 
 function* removeAvatar(): Saga<void> {
   const ddb = yield getContext('ddb');
-  const orbitDBPath = yield select(userOrbitAddress);
+  const orbitDBPath = yield select(orbitAddressSelector);
+  const walletAddress = yield select(walletAddressSelector);
 
   try {
-    const store = yield call([ddb, ddb.getStore], orbitDBPath);
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+    const store = yield call([ddb, ddb.getStore], orbitDBPath, {
+      accessController,
+    });
+
     // TODO: does this unset the value?
     yield call([store, store.set], 'avatar', undefined);
+    const user = yield call(getAll, store);
     yield put({
       type: USER_REMOVE_AVATAR_SUCCESS,
+      payload: { user },
     });
   } catch (error) {
     yield putError(USER_REMOVE_AVATAR_ERROR, error);

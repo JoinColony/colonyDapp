@@ -31,28 +31,21 @@ type Props = {
   username: string,
 };
 
-type State = {
-  avatarURL: ?string,
-};
+class UserAvatarUploader extends Component<Props> {
+  remove: () => Promise<*>;
 
-class UserAvatarUploader extends Component<Props, State> {
-  _remove: () => Promise<*>;
-
-  _upload: (file: *) => Promise<*>;
+  upload: (file: *) => Promise<*>;
 
   static displayName = 'users.UserProfileEdit.UserAvatarUploader';
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      avatarURL: null,
-    };
-    this._remove = promiseListener.createAsyncFunction({
+    this.remove = promiseListener.createAsyncFunction({
       start: USER_REMOVE_AVATAR,
       resolve: USER_REMOVE_AVATAR_SUCCESS,
       reject: USER_REMOVE_AVATAR_ERROR,
     });
-    this._upload = promiseListener.createAsyncFunction({
+    this.upload = promiseListener.createAsyncFunction({
       start: USER_UPLOAD_AVATAR,
       resolve: USER_UPLOAD_AVATAR_SUCCESS,
       reject: USER_UPLOAD_AVATAR_ERROR,
@@ -60,42 +53,25 @@ class UserAvatarUploader extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this._remove.unsubscribe();
-    this._upload.unsubscribe();
+    this.remove.unsubscribe();
+    this.upload.unsubscribe();
   }
-
-  remove = async () => {
-    await this._remove.asyncFunction();
-    this.setState({
-      avatarURL: null,
-    });
-  };
-
-  upload = async (file: *) => {
-    await this._upload.asyncFunction(file);
-    this.setState({
-      avatarURL: file.data,
-    });
-    return file.data;
-  };
 
   render() {
     const { walletAddress, username } = this.props;
-    const { avatarURL } = this.state;
     return (
       <AvatarUploader
         label={MSG.uploaderLabel}
         placeholder={
           <ConnectedUserAvatar
-            avatarURL={avatarURL}
             size="xl"
             title={MSG.uploaderLabel}
             walletAddress={walletAddress}
             username={username}
           />
         }
-        upload={this.upload}
-        remove={this.remove}
+        upload={this.upload.asyncFunction}
+        remove={this.remove.asyncFunction}
       />
     );
   }

@@ -11,6 +11,7 @@ export type Users = ImmutableMap<WalletAddress, User>;
 export type UsersProps = {
   users: Users,
   isLoading?: boolean,
+  avatars: ImmutableMap<WalletAddress, string>,
 };
 
 export type UsersRecord = RecordOf<UsersProps>;

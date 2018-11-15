@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { setContext, call, all, put } from 'redux-saga/effects';
+import { setContext, call, all, put, fork } from 'redux-saga/effects';
 
 import { create, putError } from '~utils/saga/effects';
 
@@ -58,6 +58,11 @@ export default function* setupUserContext(action: Action): Saga<void> {
 
     // TODO: the user could potentially alter their username on the DDB w/o changing it on the DDB
 
+    // This needs to happen first because CURRENT_USER_CREATE causes a redirect
+    // to dashboard, which needs context for sagas which happen on load.
+    // TODO: what are the implications of forking here?
+    yield fork(setupContextSagas);
+
     yield put({
       type: CURRENT_USER_CREATE,
       payload: {
@@ -67,7 +72,6 @@ export default function* setupUserContext(action: Action): Saga<void> {
         orbitStore: userStore.address.toString(),
       },
     });
-    yield call(setupContextSagas);
   } catch (err) {
     yield putError(WALLET_CREATE_ERROR, err);
   }
