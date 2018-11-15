@@ -23,9 +23,6 @@ const enhance = compose(
     * @NOTE The parent must be always be declared (have a lower id) than the child
     * While normal logic would imply this, you might run into issues, so take care.
     *
-    * Also, that why we sort the list initially, to make sure that the lower
-    * ids are at the top
-    *
     * As for what this list does, is to take an array of `ConsumableItem` object
     * and create a structure of nested ones.
     *
@@ -53,7 +50,7 @@ const enhance = compose(
     *   },
     * ]
     */
-    let collapsedList: Array<Object> = list.slice().sort(sortObjectsBy('id'));
+    let collapsedList: Array<Object> = list.slice().sort(sortObjectsBy('name'));
     /*
      * Construct a list of items to remove (after they were nested)
      */
