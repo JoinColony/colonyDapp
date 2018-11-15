@@ -35,26 +35,42 @@ class TaskFeed extends Component<Props> {
       <div className={styles.main}>
         <div className={styles.items}>
           <div>
-            {feedItems.map(({ id, user, body, timestamp, type }) => {
-              switch (type) {
-                case 'comment':
-                  return (
-                    <Comment
-                      key={id}
-                      user={user}
-                      body={body}
-                      timestamp={timestamp}
-                      currentUser={isSameUser(user, currentUser)}
-                    />
-                  );
-
-                case 'rating':
-                  // TODO: display rating component
-                  return <Rating rater={user} ratee={user} rating={2} />;
-
-                default:
-                  return null;
+            {feedItems.map((feedItem: TaskFeedItem) => {
+              const { id } = feedItem;
+              if (
+                feedItem.type === 'comment' &&
+                feedItem.user &&
+                feedItem.body &&
+                feedItem.timestamp
+              ) {
+                const { user, body, timestamp } = feedItem;
+                return (
+                  <Comment
+                    key={id}
+                    user={user}
+                    body={body}
+                    timestamp={timestamp}
+                    currentUser={isSameUser(user, currentUser)}
+                  />
+                );
               }
+              if (
+                feedItem.type === 'rating' &&
+                feedItem.rater &&
+                feedItem.ratee &&
+                feedItem.rating
+              ) {
+                const { ratee, rater, rating } = feedItem;
+                return (
+                  <Rating
+                    key={id}
+                    rater={rater}
+                    ratee={ratee}
+                    rating={rating}
+                  />
+                );
+              }
+              return null;
             })}
             <div
               ref={el => {
