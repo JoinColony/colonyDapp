@@ -36,14 +36,6 @@ const MSG = defineMessages({
     id: 'dashboard.Task.backButton',
     defaultMessage: 'Go to {colonyName}',
   },
-  add: {
-    id: 'dashboard.Task.add',
-    defaultMessage: 'Add +',
-  },
-  skill: {
-    id: 'dashboard.Task.skill',
-    defaultMessage: 'Skill',
-  },
   completed: {
     id: 'dashboard.Task.completed',
     defaultMessage: 'Task completed',
@@ -124,13 +116,7 @@ const Task = ({
           <TaskDomains isTaskCreator={preventEdit} />
         </div>
         <div className={styles.editor}>
-          <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-          {preventEdit && (
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={MSG.add}
-            />
-          )}
+          <TaskSkills isTaskCreator={preventEdit} />
         </div>
         <div className={styles.editor}>
           <TaskDate isTaskCreator={preventEdit} />
