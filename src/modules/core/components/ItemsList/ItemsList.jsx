@@ -19,11 +19,17 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  /** The already nested list, generated from list by the wrapper */
   collapsedList: Array<ConsumableItem>,
+  /** The intial list of items to display (before collapsing it) */
   list: Array<ConsumableItem>,
+  /** Children to render and to use as a trigger for the Popover */
   children?: React$Element<*>,
+  /** Prefix to display before the individual item when rendering it */
   itemDisplayPrefix?: string,
+  /** Suffix to display after the individual item when rendering it */
   itemDisplaySuffix?: string,
+  /** Callback to call when setting a new item */
   handleSetItem?: (value: ConsumableItem) => void,
 };
 
