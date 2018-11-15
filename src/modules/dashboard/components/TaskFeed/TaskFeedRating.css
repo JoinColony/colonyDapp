@@ -8,5 +8,10 @@
 }
 
 .ratingPartText {
+  /* Negative margin here to better-align the text with the icons & avatar */
   margin-top: -3px;
+}
+
+.userPart {
+  font-weight: var(--weight-semi);
 }

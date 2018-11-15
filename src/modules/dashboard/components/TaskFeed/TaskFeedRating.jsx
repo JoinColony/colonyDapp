@@ -49,18 +49,16 @@ const TaskFeedRating = ({
       />
     </div>
     <div className={styles.ratingPart}>
-      <FormattedMessage
-        {...MSG.actionRatedText}
-        values={{
-          rater: raterDisplayName,
-          ratee: rateeDisplayName,
-          rating,
-        }}
-      >
-        {translatedContent => (
-          <div className={styles.ratingPartText}>{translatedContent}</div>
-        )}
-      </FormattedMessage>
+      <div className={styles.ratingPartText}>
+        <FormattedMessage
+          {...MSG.actionRatedText}
+          values={{
+            rater: <span className={styles.userPart}>{raterDisplayName}</span>,
+            ratee: <span className={styles.userPart}>{rateeDisplayName}</span>,
+            rating,
+          }}
+        />
+      </div>
     </div>
     <div className={styles.ratingPart}>
       <StarRating rating={rating} />
