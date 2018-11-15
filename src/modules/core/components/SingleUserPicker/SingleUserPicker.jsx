@@ -138,9 +138,9 @@ class SingleUserPicker extends Component<Props, State> {
               <div className={styles.avatarContainer}>
                 <UserAvatar
                   className={styles.recipientAvatar}
-                  userId={$value.walletAddress}
-                  walletAddress={$value.walletAddress}
-                  username={$value.username || $value.walletAddress}
+                  userId={$value.profile.walletAddress}
+                  walletAddress={$value.profile.walletAddress}
+                  username={$value.profile.username || $value.profile.walletAddress}
                   size="xs"
                 />
               </div>

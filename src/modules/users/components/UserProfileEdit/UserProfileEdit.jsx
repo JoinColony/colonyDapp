@@ -76,9 +76,9 @@ const UserProfileEdit = ({ user }: Props) => (
     appearance={{ theme: 'alt' }}
     asideContent={
       <Sidebar
-        walletAddress={user.walletAddress}
-        username={user.username || user.walletAddress}
-        avatarURL={user.avatar}
+        walletAddress={user.profile.walletAddress}
+        username={user.profile.username || user.profile.walletAddress}
+        avatarURL={user.profile.avatar}
       />
     }
   >
@@ -91,10 +91,10 @@ const UserProfileEdit = ({ user }: Props) => (
       success={USER_PROFILE_UPDATE_SUCCESS}
       error={USER_PROFILE_UPDATE_ERROR}
       initialValues={{
-        displayName: user.displayName,
-        bio: user.bio,
-        website: user.website,
-        location: user.location,
+        displayName: user.profile.displayName,
+        bio: user.profile.bio,
+        website: user.profile.website,
+        location: user.profile.location,
       }}
       validationSchema={userProfileStore.schema}
     >
@@ -103,12 +103,12 @@ const UserProfileEdit = ({ user }: Props) => (
           <FieldSet>
             <InputLabel label={MSG.labelWallet} />
             <CopyableAddress appearance={{ theme: 'big' }} full>
-              {user.walletAddress}
+              {user.profile.walletAddress}
             </CopyableAddress>
           </FieldSet>
           <FieldSet>
             <InputLabel label={MSG.labelUsername} />
-            <UserMention username={user.username || user.walletAddress} />
+            <UserMention username={user.profile.username || user.profile.walletAddress} />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
             <Input label={MSG.labelName} name="displayName" />

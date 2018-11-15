@@ -28,7 +28,11 @@ const AvatarDropdown = ({ user }: Props) => (
     trigger="click"
   >
     <button className={styles.avatarButton} type="button">
-      <UserAvatar username={user.username} walletAddress={user.walletAddress} />
+      <UserAvatar
+        username={user.profile.username}
+        avatarURL={user.profile.avatar}
+        walletAddress={user.profile.walletAddress}
+      />
     </button>
   </Popover>
 );

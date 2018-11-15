@@ -14,6 +14,8 @@ import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
+import type { ProfileProps } from '~types/UserRecord';
+
 const MSG = defineMessages({
   buttonGetStarted: {
     id: 'users.AvatarDropdown.AvatarDropdownPopover.buttonGetStarted',
@@ -51,7 +53,7 @@ const MSG = defineMessages({
 
 type Props = {
   closePopover: () => void,
-  user: UserRecord,
+  user: ProfileProps,
 };
 
 class AvatarDropdownPopover extends Component<Props> {
