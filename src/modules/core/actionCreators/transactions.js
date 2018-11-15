@@ -2,81 +2,130 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
+import type { LifecycleActionTypes } from '../types';
+import type { TransactionParams, TransactionEventData } from '~types/index';
+
 import {
+  TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_GAS_SET,
+  TRANSACTION_GAS_SUGGESTED,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
-  TRANSACTION_STARTED,
 } from '../actionTypes';
 
-export const transactionStarted = (
+export const transactionCreated = <P: TransactionParams>({
+  actionType,
+  contextName,
+  createdActionType,
+  id,
+  lifecycleActionTypes,
+  methodName,
+  options,
+  params,
+}: {
+  actionType: string,
+  contextName: string,
+  createdActionType?: string,
   id: string,
-  transactionActionType: string,
-  params: Object,
-  actionType: ?string,
+  lifecycleActionTypes: LifecycleActionTypes,
+  methodName: string,
   options?: SendOptions,
-) => ({
-  type: actionType || TRANSACTION_STARTED,
+  params: P,
+}) => ({
+  type: createdActionType || TRANSACTION_CREATED,
   payload: {
-    actionType: transactionActionType,
+    actionType,
+    contextName,
     createdAt: new Date(),
     id,
+    lifecycleActionTypes,
+    methodName,
     options,
     params,
   },
 });
 
-export const transactionSendError = (
+export const transactionSendError = <P: TransactionParams>(
   id: string,
-  payload: { message: string, params: Object },
+  payload: { message: string, params: P },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_ERROR,
   payload: { id, error: { type: 'send', ...payload } },
 });
 
-export const transactionEventDataError = (
+export const transactionEventDataError = <P: TransactionParams>(
   id: string,
-  payload: { message: string, params: Object },
+  payload: { message: string, params: P },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_ERROR,
   payload: { id, error: { type: 'eventData', ...payload } },
 });
 
-export const transactionReceiptError = (
+export const transactionReceiptError = <P: TransactionParams>(
   id: string,
-  payload: { message: string, params: Object },
+  payload: { message: string, params: P },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_ERROR,
   payload: { id, error: { type: 'receipt', ...payload } },
 });
 
-export const transactionReceiptReceived = (
+export const transactionReceiptReceived = <P: TransactionParams>(
   id: string,
-  payload: { receipt: Object, params: Object },
+  payload: { receipt: Object, params: P },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_RECEIPT_RECEIVED,
   payload: { id, ...payload },
 });
 
-export const transactionSent = (
+export const transactionSent = <P: TransactionParams>(
   id: string,
-  payload: { hash: string, params: Object },
+  payload: { hash: string, params: P },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_SENT,
   payload: { id, ...payload },
 });
 
-export const transactionEventDataReceived = <EventData>(
+export const transactionEventDataReceived = <
+  P: TransactionParams,
+  E: TransactionEventData,
+>(
   id: string,
-  payload: { eventData: EventData, params: Object },
+  payload: { eventData: E, params: P },
   actionType?: string,
 ) => ({
   type: actionType || TRANSACTION_EVENT_DATA_RECEIVED,
   payload: { id, ...payload },
+});
+
+export const transactionGasSuggested = (
+  id: string,
+  suggestedGasLimit: number,
+  suggestedGasPrice: number,
+) => ({
+  type: TRANSACTION_GAS_SUGGESTED,
+  payload: {
+    id,
+    suggestedGasLimit,
+    suggestedGasPrice,
+  },
+});
+
+export const transactionGasSet = (
+  id: string,
+  gasLimit: number,
+  gasPrice: number,
+) => ({
+  type: TRANSACTION_GAS_SET,
+  payload: {
+    id,
+    gasLimit,
+    gasPrice,
+  },
 });

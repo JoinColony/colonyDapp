@@ -3,11 +3,13 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
+  TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_GAS_SET,
+  TRANSACTION_GAS_SUGGESTED,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
-  TRANSACTION_STARTED,
 } from '../actionTypes';
 
 import { Transaction } from '../records';
@@ -28,12 +30,41 @@ const transactionsReducer = (
   { type, payload }: Action,
 ): TransactionsState => {
   switch (type) {
-    case TRANSACTION_STARTED: {
-      const { actionType, createdAt, id, options, params } = payload;
+    case TRANSACTION_CREATED: {
+      const {
+        actionType,
+        contextName,
+        createdAt,
+        id,
+        lifecycleActionTypes,
+        methodName,
+        options,
+        params,
+      } = payload;
       return state.set(
         id,
-        Transaction({ id, createdAt, actionType, options, params }),
+        Transaction({
+          actionType,
+          contextName,
+          createdAt,
+          id,
+          lifecycleActionTypes,
+          methodName,
+          options,
+          params,
+        }),
       );
+    }
+    case TRANSACTION_GAS_SUGGESTED: {
+      const { id, suggestedGasLimit, suggestedGasPrice } = payload;
+      return state.mergeIn([id], {
+        suggestedGasLimit,
+        suggestedGasPrice,
+      });
+    }
+    case TRANSACTION_GAS_SET: {
+      const { id, gasLimit, gasPrice } = payload;
+      return state.mergeIn([id, 'options'], { gasLimit, gasPrice });
     }
     case TRANSACTION_SENT: {
       const { id, hash } = payload;

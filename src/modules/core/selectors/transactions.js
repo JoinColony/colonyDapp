@@ -10,7 +10,7 @@ import type { TransactionRecord } from '~types/TransactionRecord';
 
 type State = { [typeof ns]: { transactions: TransactionsState } };
 
-type TransactionSelector = (tx: TransactionRecord) => boolean;
+type TransactionSelector = (tx: TransactionRecord<*, *>) => boolean;
 
 type TransactionsSelector = (state: State) => TransactionsState;
 
@@ -28,8 +28,8 @@ const isConfirmed: TransactionSelector = tx =>
  * Transactions sorting functions.
  */
 const createdAtDesc = (
-  { createdAt: createdAtA }: TransactionRecord,
-  { createdAt: createdAtB }: TransactionRecord,
+  { createdAt: createdAtA }: TransactionRecord<*, *>,
+  { createdAt: createdAtB }: TransactionRecord<*, *>,
 ) => createdAtB - createdAtA;
 
 /**

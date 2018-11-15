@@ -17,7 +17,7 @@ import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
 import EthereumAccessController from '../../../lib/database/EthereumAccessController';
 import { getAll } from '../../../lib/database/commands';
-import { networkMethodSagaFactory } from '../../core/sagas/networkClient';
+import { networkMethodSagaFactory } from '../../core/sagas/utils';
 
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 
