@@ -22,7 +22,7 @@ type Props = InProps & {
 };
 
 type State = {
-  ethUsd: number | null | string,
+  ethUsd: number | null,
 };
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -33,15 +33,7 @@ class TokenCard extends Component<Props, State> {
   state = { ethUsd: null };
 
   componentDidMount() {
-    const { isEth } = this.props;
-    if (isEth) {
-      this.getEthToUsd();
-    }
-  }
-
-  isNotPositive = number => Number(number) <= 0;
-
-  convertBalanceToUsd = (ethUsdConversionRate: number): number => {
+    this.mounted = true;
     const {
       isEth,
       token: { balance },
@@ -55,11 +47,13 @@ class TokenCard extends Component<Props, State> {
         }
       });
     }
-  };
+  }
 
   componentWillUnmount() {
     this.mounted = false;
   }
+
+  isNotPositive = number => Number(number) <= 0;
 
   mounted = false;
 
