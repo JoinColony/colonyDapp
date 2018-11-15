@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './ItemsList.jsx';
+export { default } from './ItemsList';

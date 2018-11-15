@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import nanoid from 'nanoid';
 
+import type { ConsumableItem } from './ItemsList';
+
 import Button from '~core/Button';
 import Popover from '~core/Popover';
 
@@ -16,19 +18,8 @@ const MSG = defineMessages({
   },
 });
 
-/*
- * Eslint is bugging out confusing this type declaration with the actual Prop,
- * and claiming we're not using it.
- */
-/* eslint-disable react/no-unused-prop-types */
-type ConsumableItem = {
-  id: number,
-  name: string,
-};
-/* eslint-enable react/no-unused-prop-types */
-
 type Props = {
-  list: Array<ConsumableItem>,
+  collapsedList: Array<ConsumableItem>,
   children?: React$Element<*>,
   itemDisplayPrefix?: string,
   itemDisplaySuffix?: string,
@@ -122,7 +113,7 @@ class ItemsList extends Component<Props, State> {
     const {
       state: { setItem: setItemId, listTouched },
       props: {
-        list = [],
+        collapsedList = [],
         children,
         itemDisplayPrefix = '',
         itemDisplaySuffix = '',
@@ -130,7 +121,7 @@ class ItemsList extends Component<Props, State> {
       handleSetItem,
       renderListItem,
     } = this;
-    const currentItem: ConsumableItem | void = list.find(
+    const currentItem: ConsumableItem | void = collapsedList.find(
       ({ id }) => id === setItemId,
     );
     return (
@@ -142,7 +133,9 @@ class ItemsList extends Component<Props, State> {
           content={({ close }) => (
             <div className={styles.itemsWrapper}>
               <ul className={styles.itemList}>
-                {list.map((item: ConsumableItem) => renderListItem(item))}
+                {collapsedList.map((item: ConsumableItem) =>
+                  renderListItem(item),
+                )}
               </ul>
               <div className={styles.controls}>
                 <Button
