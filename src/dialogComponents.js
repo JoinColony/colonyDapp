@@ -17,6 +17,7 @@ import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDia
 import TaskEditDialog from '~dashboard/Task/TaskEditDialog.jsx';
 import CreateUsernameDialog from '~users/CreateUsernameDialog';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
+import UnfinishedProfileDialog from '~users/UnfinishedProfileDialog';
 
 const dialogComponents: Object = {
   // Hint: Once we have the gas station we just have to add it here
@@ -29,6 +30,7 @@ const dialogComponents: Object = {
   ManagerRatingDialog,
   WorkerRatingDialog,
   TaskClaimRewardDialog,
+  UnfinishedProfileDialog,
 };
 
 export default dialogComponents;
