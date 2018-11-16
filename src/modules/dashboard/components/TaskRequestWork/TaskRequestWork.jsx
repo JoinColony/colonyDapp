@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { DialogType } from '~core/Dialog';
+import type { OpenDialog } from '~core/Dialog/types';
 
 import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
@@ -22,14 +22,30 @@ type Props = {
    * @TODO Interaction for this button if the user is the task creator
    */
   isTaskCreator: boolean,
-  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
+  /*
+   * If the user hasn't yet claimed the profile show the call to action dialog,
+   * and prevent normal functionality of requesting to work on the task
+   */
+  claimedProfile: boolean,
+  openDialog: OpenDialog,
 };
 
-const TaskRequestWork = ({ isTaskCreator, openDialog }: Props) => (
+const TaskRequestWork = ({
+  isTaskCreator,
+  claimedProfile,
+  openDialog,
+}: Props) => (
   <Button
     text={MSG.requestWork}
     disabled={isTaskCreator}
-    onClick={() => openDialog('TaskRequestWorkDialog')}
+    onClick={() => {
+      if (claimedProfile) {
+        return openDialog('UnfinishedProfileDialog')
+          .afterClosed()
+          .then(() => openDialog('CreateUsernameDialog'));
+      }
+      return openDialog('TaskRequestWorkDialog');
+    }}
   />
 );
 
