@@ -12,26 +12,25 @@ import type { Action } from '~types/index';
 
 import { User } from '../records';
 
-type State = User;
+type State = User | null;
 
-const INITIAL_STATE = User({});
+const INITIAL_STATE = null;
 
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
       const { walletAddress, user, orbitStore } = action.payload;
-      return state.set('profile', { ...user, walletAddress, orbitStore });
+      return state
+        ? state.set('profile', { ...user, walletAddress, orbitStore })
+        : state;
     }
 
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
-      return state.set('activities', activities);
+      return state ? state.set('activities', activities) : state;
     }
     case USER_PROFILE_UPDATE_SUCCESS: {
-      if (state) {
-        return state.merge(action.payload);
-      }
-      return state;
+      return state ? state.merge(action.payload) : state;
     }
     case USERNAME_CREATE_SUCCESS: {
       // TODO: This might change (maybe transaction: { params: { username }})
