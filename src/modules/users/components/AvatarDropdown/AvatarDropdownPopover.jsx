@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserRecord } from '~types/UserRecord';
-
 import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,

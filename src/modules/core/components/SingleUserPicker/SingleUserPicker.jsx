@@ -140,7 +140,9 @@ class SingleUserPicker extends Component<Props, State> {
                   className={styles.recipientAvatar}
                   userId={$value.profile.walletAddress}
                   walletAddress={$value.profile.walletAddress}
-                  username={$value.profile.username || $value.profile.walletAddress}
+                  username={
+                    $value.profile.username || $value.profile.walletAddress
+                  }
                   size="xs"
                 />
               </div>
@@ -162,7 +164,7 @@ class SingleUserPicker extends Component<Props, State> {
                   onFocus={this.handleActiveUserClick}
                   tabIndex="0"
                 >
-                  {$value.displayName}
+                  {$value.profile.displayName}
                 </div>
               )}
               {/* eslint-enable jsx-a11y/click-events-have-key-events */}

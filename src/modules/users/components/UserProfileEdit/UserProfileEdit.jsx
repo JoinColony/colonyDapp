@@ -108,7 +108,9 @@ const UserProfileEdit = ({ user }: Props) => (
           </FieldSet>
           <FieldSet>
             <InputLabel label={MSG.labelUsername} />
-            <UserMention username={user.profile.username || user.profile.walletAddress} />
+            <UserMention
+              username={user.profile.username || user.profile.walletAddress}
+            />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
             <Input label={MSG.labelName} name="displayName" />
