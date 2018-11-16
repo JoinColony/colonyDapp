@@ -3,7 +3,8 @@
 import type { ObjectSchema } from 'yup';
 
 import OrbitDB from 'orbit-db';
-import nanoid from 'nanoid';
+import generate from 'nanoid/generate';
+import urlDictionary from 'nanoid/url';
 
 import type {
   AccessController,
@@ -16,6 +17,8 @@ import type {
 
 import IPFSNode from '../ipfs';
 import { Store, KVStore } from './stores';
+
+const generateId = () => generate(urlDictionary, 21);
 
 // TODO: better typing
 type Resolver = Object;
@@ -189,7 +192,7 @@ class DDB {
     if (schemaId.includes('.')) {
       throw new Error('A dot (.) in schemaIds is not allowed');
     }
-    const id = `${schemaId}.${nanoid()}`;
+    const id = `${schemaId}.${generateId()}`;
     if (!options.accessController) {
       console.warn(
         `Store with schema ${schemaId} created without an accessController`,
