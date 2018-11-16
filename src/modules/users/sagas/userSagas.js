@@ -88,7 +88,10 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
 
 export function* getUserActivitiesStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
-  const accessController = new EthereumAccessController(walletAddress);
+  const accessController = yield create(
+    EthereumAccessController,
+    walletAddress,
+  );
   let activitiesStore;
   activitiesStore = yield call([ddb, ddb.getStore], 'feed', 'userActivity', {
     accessController,
@@ -197,6 +200,7 @@ function* fetchProfile(action: Action): Saga<void> {
     });
   } catch (error) {
     yield put(replace(NOT_FOUND_ROUTE));
+    // TODO normalize error object handling
     yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
