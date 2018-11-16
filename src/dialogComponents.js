@@ -15,12 +15,13 @@ import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
 import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import TaskEditDialog from '~dashboard/Task/TaskEditDialog.jsx';
 import CreateUsernameDialog from '~users/CreateUsernameDialog';
+import ClaimProfileDialog from '~users/ClaimProfileDialog';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
 import UnfinishedProfileDialog from '~users/UnfinishedProfileDialog';
 
 const dialogComponents: Object = {
-  // Hint: Once we have the gas station we just have to add it here
   ActivityBarExample,
+  ClaimProfileDialog,
   CreateUsernameDialog,
   TokenEditDialog,
   TokenMintDialog,
