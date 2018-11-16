@@ -79,7 +79,7 @@ class Wallet extends Component<Props> {
               appearance={{ size: 'medium', margin: 'small' }}
             />
             <CopyableAddress appearance={{ theme: 'big' }} full>
-              {mockUser.walletAddress}
+              {mockUser.profile.walletAddress}
             </CopyableAddress>
           </div>
           <Tabs>
@@ -97,7 +97,7 @@ class Wallet extends Component<Props> {
             <TabPanel>
               <WalletTransactions
                 transactions={mockTransactions}
-                userAddress={mockUser.walletAddress}
+                userAddress={mockUser.profile.walletAddress}
               />
             </TabPanel>
           </Tabs>
