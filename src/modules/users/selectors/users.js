@@ -45,9 +45,14 @@ export const usernameFromRouter: UserNameFromRouter = (state, props) =>
   props.match.params.username;
 export const usernameFromProps: UserNameFromProps = (state, props) =>
   props.username;
-export const userSelector: UserProfileSelector = createSelector(
+export const routerUserSelector: UserProfileSelector = createSelector(
   allUsersSelector,
   usernameFromRouter,
+  (users, username) => users.get(username),
+);
+export const userSelector: UserProfileSelector = createSelector(
+  allUsersSelector,
+  usernameFromProps,
   (users, username) => users.get(username),
 );
 export const avatarSelector: UserAvatarSelector = createSelector(

@@ -124,6 +124,29 @@ class IPFSNode {
   }
 
   /**
+   * Return a file from IPFS as text
+   */
+  async getString(hash: string): Promise<string> {
+    await this.ready;
+    const result = await this._ipfs.files.cat(hash);
+    if (!result) throw new Error('No such file');
+    return result.toString();
+  }
+
+  /**
+   * Upload a string
+   * @return hash of the uploaded string
+   */
+  async addString(data: string): Promise<string> {
+    await this.ready;
+    const results = await this._ipfs.files.add(
+      this._ipfs.types.Buffer.from(data),
+    );
+    if (!results.length) throw new Error('Failed to upload to IPFS');
+    return results[0].path;
+  }
+
+  /**
    * Promise that returns the given node ID
    */
   getNodeID(): Promise<B58String> {

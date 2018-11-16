@@ -9,7 +9,6 @@ import type { UsersProps } from '~types/UsersRecord';
 const defaultState: UsersProps = {
   isLoading: false,
   users: new ImmutableMap(),
-  avatars: new ImmutableMap(),
 };
 
 const Users: RecordFactory<UsersProps> = Record(defaultState);

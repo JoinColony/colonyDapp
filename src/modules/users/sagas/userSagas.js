@@ -7,12 +7,12 @@ import type { Saga } from 'redux-saga';
 import { delay } from 'redux-saga';
 import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
 import namehash from 'eth-ens-namehash-ms';
-import fileType from 'file-type';
 
 import type { Action, UserRecord } from '~types/index';
 
 import { NOT_FOUND_ROUTE } from '~routes';
 import { create, putError } from '~utils/saga/effects';
+import { avatarCache } from '~core/Avatar';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
@@ -204,33 +204,15 @@ function* createUsername(action: Action): Saga<void> {
 }
 
 function* fetchAvatar(action: Action): Saga<void> {
-  const { username } = action.payload;
-  const ddb = yield getContext('ddb');
+  const { hash } = action.payload;
   const ipfsNode = yield getContext('ipfsNode');
-  const ipfs = yield call([ipfsNode, ipfsNode.getIPFS]);
 
   try {
-    const accessController = yield create(EthereumAccessController, username);
-    const store = yield call([ddb, ddb.getStore], `user.${username}`, {
-      accessController,
-    });
-    const user = yield call(getAll, store);
-
-    if (!user.avatar) throw new Error('Avatar not set');
-
-    const results = yield call([ipfs, ipfs.files.cat], user.avatar);
-
-    if (!results) throw new Error('Unable to fetch avatar from IPFS');
-
-    // determine the mimetype and convert to base64 data URI
-    const { mime: avatarMime } = fileType(results);
-    const avatarData = `data:${avatarMime};base64,${results.toString(
-      'base64',
-    )}`;
-
+    const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
+    avatarCache.set(hash, avatarData);
     yield put({
       type: USER_AVATAR_FETCH_SUCCESS,
-      payload: { user, avatarData },
+      payload: { hash, avatarData },
     });
   } catch (error) {
     yield putError(USER_AVATAR_FETCH_ERROR, error);
@@ -240,18 +222,13 @@ function* fetchAvatar(action: Action): Saga<void> {
 function* uploadAvatar(action: Action): Saga<void> {
   const { data } = action.payload;
   const ipfsNode = yield getContext('ipfsNode');
-  const ipfs = yield call([ipfsNode, ipfsNode.getIPFS]);
   const ddb = yield getContext('ddb');
   const orbitDBPath = yield select(orbitAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
 
   try {
     // first attempt upload to IPFS
-    const results = yield call(
-      [ipfs, ipfs.files.add],
-      ipfs.types.Buffer.from(data.split(',')[1], 'base64'),
-    );
-    if (!results.length) throw new Error('Failed to upload to IPFS');
+    const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     // if we uploaded okay, put the hash in the user orbit store
     const accessController = yield create(
@@ -261,11 +238,11 @@ function* uploadAvatar(action: Action): Saga<void> {
     const store = yield call([ddb, ddb.getStore], orbitDBPath, {
       accessController,
     });
-    yield call([store, store.set], 'avatar', results[0].path);
+    yield call([store, store.set], 'avatar', hash);
 
     yield put({
       type: USER_UPLOAD_AVATAR_SUCCESS,
-      payload: { ...results[0] },
+      payload: { hash },
     });
   } catch (error) {
     yield putError(USER_UPLOAD_AVATAR_ERROR, error);
@@ -286,7 +263,6 @@ function* removeAvatar(): Saga<void> {
       accessController,
     });
 
-    // TODO: does this unset the value?
     yield call([store, store.set], 'avatar', undefined);
     const user = yield call(getAll, store);
     yield put({

@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { FileReaderFile } from '~core/FileUpload';
+
 import AvatarUploader from '~core/AvatarUploader';
 import ConnectedUserAvatar from '../ConnectedUserAvatar';
 
@@ -32,9 +34,9 @@ type Props = {
 };
 
 class UserAvatarUploader extends Component<Props> {
-  remove: () => Promise<*>;
+  remove: () => Promise<empty>;
 
-  upload: (file: *) => Promise<*>;
+  upload: (file: FileReaderFile) => Promise<empty>;
 
   static displayName = 'users.UserProfileEdit.UserAvatarUploader';
 

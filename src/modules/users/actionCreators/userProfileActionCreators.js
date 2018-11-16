@@ -7,7 +7,7 @@ export const fetchUserProfile = (username: string) => ({
   payload: { username },
 });
 
-export const fetchUserAvatar = (username: string) => ({
+export const fetchUserAvatar = (hash: string) => ({
   type: USER_AVATAR_FETCH,
-  payload: { username },
+  payload: { hash },
 });
