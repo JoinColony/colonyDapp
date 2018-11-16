@@ -39,7 +39,7 @@ const TaskRequestWork = ({
     text={MSG.requestWork}
     disabled={isTaskCreator}
     onClick={() => {
-      if (claimedProfile) {
+      if (!claimedProfile) {
         return openDialog('UnfinishedProfileDialog')
           .afterClosed()
           .then(() => openDialog('CreateUsernameDialog'));
