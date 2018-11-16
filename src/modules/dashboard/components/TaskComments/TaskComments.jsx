@@ -57,7 +57,7 @@ const validationSchema = yup.object().shape({
   comment: yup.string().required(),
 });
 
-const TaskComments = ({ claimedProfile }: Props) => {
+const TaskComments = ({ claimedProfile, openDialog }: Props) => {
   const handleKeyboardSubmit = (
     capturedEvent: SyntheticKeyboardEvent<*>,
     callback: (e: SyntheticEvent<any>) => any,
@@ -77,8 +77,32 @@ const TaskComments = ({ claimedProfile }: Props) => {
     /* eslint-disable-next-line no-console */
     console.log(`[${displayName}]`, comment);
 
+  const handleUnclaimedProfile = () => {
+    if (!claimedProfile) {
+      return openDialog('UnfinishedProfileDialog')
+        .afterClosed()
+        .then(() => openDialog('CreateUsernameDialog'));
+    }
+    return false;
+  };
+
   return (
-    <div className={styles.main}>
+    <div
+      className={styles.main}
+      onClick={handleUnclaimedProfile}
+      /*
+       * @NOTE Aria forces us to add a keyboard handler to all non-interactive
+       * elements that also have a click handler
+       */
+      onKeyDown={handleUnclaimedProfile}
+      /*
+       * @NOTE The `role` and `tabIndex` props are set because we're breaking
+       * standard and adding click and keyboard handlers to a non-interactive
+       * element
+       */
+      role="textbox"
+      tabIndex={-1}
+    >
       <Form
         initialValues={{ comment: '' }}
         validationSchema={validationSchema}
