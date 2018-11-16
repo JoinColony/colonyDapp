@@ -29,23 +29,31 @@ beforeAll(async () => {
 });
 
 describe('Database setup', () => {
-  test('Using purser', async () => {
-    /* eslint-disable no-underscore-dangle */
-    expect(ddb._orbitNode).toBeInstanceOf(OrbitDB);
-    expect(ddb._orbitNode.identity).toBeInstanceOf(PurserIdentity);
-    /* eslint-enable no-underscore-dangle */
-  });
-  test('Can edit multiple attributes', async () => {
-    const accessController = new EthereumAccessController(wallet.address);
-    const store = await ddb.createStore('keyvalue', 'userProfile', {
-      accessController,
-    });
-    await store.set({
-      username: 'hello',
-      bio: 'born in Warsaw',
-      walletAddress: wallet.address,
-    });
-    const state = getAll(store);
-    expect(Object.keys(state).length).toBe(3);
-  });
+  test(
+    'Using purser',
+    async () => {
+      /* eslint-disable no-underscore-dangle */
+      expect(ddb._orbitNode).toBeInstanceOf(OrbitDB);
+      expect(ddb._orbitNode.identity).toBeInstanceOf(PurserIdentity);
+      /* eslint-enable no-underscore-dangle */
+    },
+    25000,
+  );
+  test(
+    'Can edit multiple attributes',
+    async () => {
+      const accessController = new EthereumAccessController(wallet.address);
+      const store = await ddb.createStore('keyvalue', 'userProfile', {
+        accessController,
+      });
+      await store.set({
+        username: 'hello',
+        bio: 'born in Warsaw',
+        walletAddress: wallet.address,
+      });
+      const state = getAll(store);
+      expect(Object.keys(state).length).toBe(3);
+    },
+    25000,
+  );
 });
