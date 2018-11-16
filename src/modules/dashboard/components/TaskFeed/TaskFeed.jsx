@@ -12,8 +12,9 @@ import styles from './TaskFeed.css';
 const displayName = 'dashboard.TaskFeed';
 
 type Props = {
-  feedItems: Array<TaskFeedItem>,
   currentUser: UserRecord,
+  feedItems: Array<TaskFeedItem>,
+  isRevealEnded: boolean,
 };
 
 const isSameUser = (a: UserRecord, b: UserRecord) =>
@@ -30,13 +31,21 @@ class TaskFeed extends Component<Props> {
   }
 
   render() {
-    const { feedItems, currentUser } = this.props;
+    const { currentUser, isRevealEnded, feedItems } = this.props;
     return (
       <div className={styles.main}>
         <div className={styles.items}>
           <div>
             {feedItems.map((feedItem: TaskFeedItem) => {
               const { id } = feedItem;
+              /*
+               * Feed Comment
+               *
+               * Check properties on `feedItem` for flow exact object type
+               * Note: can't pull this out into an `isComment` function, as
+               * flow isn't clever enough to validate the property checking
+               * there.
+               */
               if (
                 feedItem.type === 'comment' &&
                 feedItem.user &&
@@ -54,11 +63,22 @@ class TaskFeed extends Component<Props> {
                   />
                 );
               }
+              /*
+               * Feed Rating
+               *
+               * Check properties on `feedItem` for flow exact object type
+               * Note: can't pull this out into an `isRating` function, as
+               * flow isn't clever enough to validate the property checking
+               * there.
+               */
               if (
                 feedItem.type === 'rating' &&
                 feedItem.rater &&
                 feedItem.ratee &&
-                feedItem.rating
+                feedItem.rating &&
+                feedItem.timestamp &&
+                // also check that the reveal period is over
+                isRevealEnded
               ) {
                 const { ratee, rater, rating } = feedItem;
                 return (
