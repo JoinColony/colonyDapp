@@ -2,17 +2,23 @@
 
 import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
-import ipfsNode from '../src/lib/ipfs';
+import DDBTestFactory from './utils/DDBTestFactory';
 import { DDB, SCHEMAS } from '../src/lib/database';
 import { getAll } from '../src/lib/database/commands';
 import PurserIdentity from '../src/lib/database/PurserIdentity';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
+import EthereumAccessController from '../src/lib/database/EthereumAccessController';
 
 let wallet;
 let identityProvider;
 let ddb;
+let ipfsNode;
+
+const factory = new DDBTestFactory('ddb.test');
 
 beforeAll(async () => {
+  ipfsNode = await factory.node('ddb1');
+
   DDB.registerSchema('userProfile', SCHEMAS.UserProfile);
 
   wallet = await createWallet();
@@ -30,9 +36,16 @@ describe('Database setup', () => {
     /* eslint-enable no-underscore-dangle */
   });
   test('Can edit multiple attributes', async () => {
-    const store = await ddb.createStore('keyvalue', 'userProfile');
-    await store.set({ username: 'hello', bio: 'born in Warsaw' });
+    const accessController = new EthereumAccessController(wallet.address);
+    const store = await ddb.createStore('keyvalue', 'userProfile', {
+      accessController,
+    });
+    await store.set({
+      username: 'hello',
+      bio: 'born in Warsaw',
+      walletAddress: wallet.address,
+    });
     const state = getAll(store);
-    expect(Object.keys(state).length).toBe(2);
+    expect(Object.keys(state).length).toBe(3);
   });
 });

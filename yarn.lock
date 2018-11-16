@@ -11556,7 +11556,7 @@ orbit-db-pubsub@~0.5.5:
 
 "orbit-db@https://github.com/thiagodelgado111/orbit-db#feature/verifiable-address":
   version "0.19.9"
-  resolved "https://github.com/thiagodelgado111/orbit-db#39a9066d6d5d47792719773377602a9f8356af14"
+  resolved "https://github.com/thiagodelgado111/orbit-db#73a67d9d8a509f325d06f69cbde1bc7f18617f4c"
   dependencies:
     ipfs-pubsub-1on1 "~0.0.4"
     logplease "^1.2.14"

@@ -193,6 +193,7 @@ workflows:
   commit:
     jobs:
       - build-with-lockfile
+      - integration-testing-build
       - build-styleguide:
           requires:
             - build-with-lockfile
@@ -212,10 +213,3 @@ workflows:
     jobs:
       - nightly-build
       - integration-testing-build
-  manual:
-    jobs:
-      - integration-testing:
-          type: approval
-      - integration-testing-build:
-          requires:
-            - integration-testing

@@ -5,10 +5,7 @@ import { timePrefix } from './tools';
 import createIPFSNode from './createIPFSNode';
 import createOrbitNode from './createOrbitNode';
 
-// import * as ipfs from '../../src/data/ipfs';
-// import * as orbit from '../../src/data/orbit';
 import makePinner from './pinner.mock';
-// import Data from '../../src/data';
 
 const ROOT_REPO = '/tmp/tests/';
 
@@ -56,7 +53,6 @@ export default class DDBTestFactory {
 
   async _bootstrap() {
     if (!this._pinner) {
-      // eslint-disable-next-line no-console
       console.warn('You probably need a pinner service.');
       return [];
     }
@@ -87,14 +83,12 @@ export default class DDBTestFactory {
       repo: `${this._rootRepo}/ipfs/${name}`,
       config: {
         Bootstrap: await this._bootstrap(),
+        Addresses: {
+          Gateway: '',
+          Swarm: [],
+        },
       },
     });
-    // const node = ipfs.getIPFS(
-    //   ipfs.makeOptions({
-    //     repo: `${this._rootRepo}/ipfs/${name}`,
-    //     bootstrap: await this._bootstrap(),
-    //   }),
-    // );
     this._ipfsNodes.push(node);
     return node;
   }
@@ -104,39 +98,15 @@ export default class DDBTestFactory {
     const orbitNode = await createOrbitNode(ipfsNode.getIPFS(), name, {
       path: `${this._rootRepo}/orbit/${name}`,
     });
-    // const orbitNode = await orbit.getOrbitDB(
-    //   node,
-    //   orbit.makeOptions({
-    //     repo: `${this._rootRepo}/orbit/${name}`,
-    //   }),
-    // );
     this._orbitNodes.push(orbitNode);
     return orbitNode;
   }
 
-  // async Data(name) {
-  //   const data = await Data.fromDefaultConfig(this._pinner, {
-  //     ipfs: {
-  //       swarm: ['/ip4/0.0.0.0/tcp/0'],
-  //       repo: `${this._rootRepo}/ipfs/${name}`,
-  //       bootstrap: await this._bootstrap(),
-  //     },
-  //     orbit: {
-  //       repo: `${this._rootRepo}/ipfs/${name}`,
-  //     },
-  //   });
-
-  //   this._datas.push(data);
-  //   return data;
-  // }
-
   async ready() {
     // Wait for the ipfs nodes to be up
-    await Promise.all(this._ipfsNodes.map(ipfsNode => ipfsNode.ready));
-    // await Promise.all(this._datas.map(x => x.ready()));
     // @TODO at this point we may need to wait for the node to be connected to a pinner node
-
     // No need to wait for orbit-db nodes
+    await Promise.all(this._ipfsNodes.map(ipfsNode => ipfsNode.ready));
   }
 
   async clear() {
@@ -144,7 +114,6 @@ export default class DDBTestFactory {
       this._pinner.stop();
     }
 
-    // await Promise.all(this._datas.map(x => x.stop()));
     await Promise.all(this._orbitNodes.map(orbit => orbit.stop()));
     await Promise.all(
       this._ipfsNodes.map(ipfsNode => ipfsNode.getIPFS().stop()),
