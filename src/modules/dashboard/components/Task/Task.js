@@ -22,6 +22,7 @@ const enhance = compose(
       user,
       isTaskCreator,
       preventEdit: task && !task.finalized && isTaskCreator,
+      userClaimedProfile: !!(user && user.username),
     };
   }),
 );

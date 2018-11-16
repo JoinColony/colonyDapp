@@ -57,6 +57,7 @@ type Props = {
   user: Object,
   isTaskCreator?: boolean,
   preventEdit?: boolean,
+  userClaimedProfile?: boolean,
 };
 
 const displayName = 'dashboard.Task';
@@ -68,6 +69,7 @@ const Task = ({
   user,
   isTaskCreator = false,
   preventEdit = true,
+  userClaimedProfile = false,
 }: Props) => (
   <div className={styles.main}>
     <aside className={styles.sidebar}>
@@ -139,7 +141,10 @@ const Task = ({
       <section className={styles.header}>
         {task && !task.finalized ? (
           <Fragment>
-            <TaskRequestWork isTaskCreator={isTaskCreator} />
+            <TaskRequestWork
+              isTaskCreator={isTaskCreator}
+              claimedProfile={userClaimedProfile}
+            />
             {/*
               * @TODO This should only be shown, if we're a worker, and the task
               * has a reward and was finalized (due date passed or work was submitted and rated)
@@ -196,7 +201,7 @@ const Task = ({
           <TaskFeed feedItems={task.feedItems} currentUser={user} />
         </section>
         <section className={styles.commentBox}>
-          <TaskComments />
+          <TaskComments claimedProfile={userClaimedProfile} />
         </section>
       </div>
     </div>
