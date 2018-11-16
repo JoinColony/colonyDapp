@@ -24,4 +24,4 @@ export type DialogType = {
 export type OpenDialog = (
   dialogKey: string,
   props?: { [string]: any },
-) => DialogType | void;
+) => DialogType;
