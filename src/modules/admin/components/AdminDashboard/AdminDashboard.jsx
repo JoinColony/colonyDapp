@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { LocationShape } from 'react-router-dom';
+
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
@@ -60,6 +62,11 @@ type Props = {
    * a connect call
    */
   colonyName?: string,
+  /*
+   * The flow type for this exists
+   * This location object  will allow opening a tab on initial render
+   */
+  location?: ?LocationShape,
 };
 
 const navigationItems: Array<NavigationItem> = [
@@ -81,11 +88,14 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const displayName = 'admin.AdminDashboard';
-
-const AdminDashboard = ({ colonyName = 'The Meta Colony' }: Props) => (
+const AdminDashboard = ({ colonyName, location }: Props) => (
   <div className={styles.main}>
-    <VerticalNavigation navigationItems={navigationItems}>
+    <VerticalNavigation
+      navigationItems={navigationItems}
+      initialTab={
+        location && location.state && location.state.initialTab ? 1 : 0
+      }
+    >
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
         <NavLink
@@ -109,6 +119,10 @@ const AdminDashboard = ({ colonyName = 'The Meta Colony' }: Props) => (
   </div>
 );
 
-AdminDashboard.displayName = displayName;
+AdminDashboard.defaultProps = {
+  colonyName: 'The Meta Colony',
+};
+
+AdminDashboard.displayName = 'admin.AdminDashboard';
 
 export default AdminDashboard;

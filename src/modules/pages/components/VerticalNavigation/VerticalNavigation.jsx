@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 import type { Element, Node } from 'react';
 import nanoid from 'nanoid';
 import { FormattedMessage } from 'react-intl';
@@ -23,6 +23,15 @@ export type NavigationItem = {
   content: Node,
 };
 
+type State = {
+  tabIndex: number,
+  /*
+   * We have to check for initial render to open specific tabs only
+   * then when required
+   */
+  initialRender: boolean,
+};
+
 type Props = {
   /*
    * Array of `NavigationItem` object to render into vertical tab format
@@ -34,41 +43,75 @@ type Props = {
    * @NOTE That this will render before the tab list
    */
   children?: Node,
+  /*
+   * Index of tab that should be open initially
+   */
+  initialTab?: number,
 };
 
 const displayName = 'pages.VerticalNavigation';
 
-const VerticalNavigation = ({ navigationItems, children }: Props) => (
-  <div className={styles.main}>
-    {navigationItems &&
-      navigationItems.length && (
-        <Tabs className={styles.tabs}>
-          <VerticalTabList className={styles.tabList}>
-            {children}
-            {navigationItems.map(({ title }, index) => (
-              <Tab
-                key={nanoid(index)}
-                className={styles.tab}
-                selectedClassName={styles.tabSelected}
-                disabledClassName={styles.tabDisabled}
-              >
-                {title instanceof Object && title.id ? (
-                  <FormattedMessage {...title} />
-                ) : (
-                  title
-                )}
-              </Tab>
-            ))}
-          </VerticalTabList>
-          {navigationItems.map(({ content }, index) => (
-            <TabPanel key={nanoid(index)} className={styles.tabPanel}>
-              <div className={styles.contentWrapper}>{content}</div>
-            </TabPanel>
-          ))}
-        </Tabs>
-      )}
-  </div>
-);
+class VerticalNavigation extends Component<Props, State> {
+  static defaultProps = { initialTab: 0 };
+
+  state = { tabIndex: 0, initialRender: true };
+
+  componentWillMount() {
+    /**
+     * If there's a selectedTab prop set it otherwise
+     * handle tab setting like normal
+     */
+    const { initialTab } = this.props;
+    const { initialRender } = this.state;
+    if (initialTab !== 0 && initialRender) {
+      this.setState({ tabIndex: initialTab, initialRender: false });
+    }
+  }
+
+  setTabIndex = (tabIndex: number) => {
+    this.setState({ tabIndex });
+  };
+
+  render() {
+    const { navigationItems, children } = this.props;
+    const { tabIndex } = this.state;
+    return (
+      <div className={styles.main}>
+        {navigationItems &&
+          navigationItems.length && (
+            <Tabs
+              className={styles.tabs}
+              selectedIndex={tabIndex}
+              onSelect={newIndex => this.setTabIndex(newIndex)}
+            >
+              <VerticalTabList className={styles.tabList}>
+                {children}
+                {navigationItems.map(({ title }, index) => (
+                  <Tab
+                    key={nanoid(index)}
+                    className={styles.tab}
+                    selectedClassName={styles.tabSelected}
+                    disabledClassName={styles.tabDisabled}
+                  >
+                    {title instanceof Object && title.id ? (
+                      <FormattedMessage {...title} />
+                    ) : (
+                      title
+                    )}
+                  </Tab>
+                ))}
+              </VerticalTabList>
+              {navigationItems.map(({ content }, index) => (
+                <TabPanel key={nanoid(index)} className={styles.tabPanel}>
+                  <div className={styles.contentWrapper}>{content}</div>
+                </TabPanel>
+              ))}
+            </Tabs>
+          )}
+      </div>
+    );
+  }
+}
 
 VerticalNavigation.displayName = displayName;
 
