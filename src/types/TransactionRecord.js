@@ -7,7 +7,7 @@ import type { RecordOf, List } from 'immutable';
 import type { LifecycleActionTypes } from '../modules/core/types';
 
 export type TransactionError = {
-  type: 'send' | 'receipt' | 'eventData',
+  type: 'send' | 'receipt' | 'eventData' | 'unsuccessful',
   message: string,
 };
 
