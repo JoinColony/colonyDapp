@@ -40,6 +40,7 @@ import {
   transactionReceiptReceived,
   transactionSendError,
   transactionSent,
+  transactionUnsuccessfulError,
 } from '../../actionCreators/index';
 import { getMethodFromContext } from '../utils/index';
 
@@ -47,7 +48,10 @@ import { getMethodFromContext } from '../utils/index';
  * Given a promise for sending a transaction, send the transaction and
  * emit actions with the transaction status.
  */
-const transactionChannel = <P: TransactionParams, E: TransactionEventData>(
+export const transactionChannel = <
+  P: TransactionParams,
+  E: TransactionEventData,
+>(
   txPromise: Promise<ContractResponse<E>>,
   tx: TransactionRecord<P, E>,
 ) =>
@@ -71,6 +75,42 @@ const transactionChannel = <P: TransactionParams, E: TransactionEventData>(
             receiptPromise
               .then(receipt => {
                 emit(transactionReceiptReceived(id, { params, receipt }));
+                if (receipt.status === 1) {
+                  // If the receipt received and the transaction was successful,
+                  // wait for event data.
+                  if (eventDataPromise) {
+                    eventDataPromise
+                      .then(eventData => {
+                        emit(
+                          transactionEventDataReceived(id, {
+                            eventData,
+                            params,
+                          }),
+                        );
+                        emit(END);
+                      })
+                      .catch(eventDataError => {
+                        emit(
+                          transactionEventDataError(id, {
+                            message: eventDataError.message,
+                            params,
+                          }),
+                        );
+                        emit(END);
+                      });
+                  }
+                } else {
+                  // If the receipt was received but the tx wasn't successful,
+                  // emit an error event and stop the channel.
+                  emit(
+                    transactionUnsuccessfulError(id, {
+                      // TODO use revert reason strings (once supported)
+                      message: 'The transaction was unsuccessful',
+                      params,
+                    }),
+                  );
+                  emit(END);
+                }
               })
               .catch(receiptError => {
                 emit(
@@ -79,21 +119,7 @@ const transactionChannel = <P: TransactionParams, E: TransactionEventData>(
                     params,
                   }),
                 );
-              });
-
-          if (eventDataPromise)
-            eventDataPromise
-              .then(eventData => {
-                emit(transactionEventDataReceived(id, { eventData, params }));
                 emit(END);
-              })
-              .catch(eventDataError => {
-                emit(
-                  transactionEventDataError(id, {
-                    message: eventDataError.message,
-                    params,
-                  }),
-                );
               });
         },
       )
