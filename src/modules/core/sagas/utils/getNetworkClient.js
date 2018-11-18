@@ -8,7 +8,7 @@ import ColonyNetworkClient from '@colony/colony-js-client';
 import NetworkLoader from '@colony/colony-js-contract-loader-network';
 
 import { create } from '~utils/saga/effects';
-import EthersWrappedWallet from '../../../../../lib/EthersWrappedWallet/index';
+import EthersWrappedWallet from '../../../../lib/EthersWrappedWallet/index';
 
 /*
  * Return an initialized ColonyNetworkClient instance.
