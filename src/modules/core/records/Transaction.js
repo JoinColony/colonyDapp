@@ -8,7 +8,6 @@ import nanoid from 'nanoid';
 import type { TransactionProps } from '~types/TransactionRecord';
 
 const defaultValues: TransactionProps<*, *> = {
-  actionType: '',
   contextName: '',
   createdAt: new Date(),
   errors: new List(),

@@ -18,25 +18,22 @@ import {
 export const transactionCreated = <P: TransactionParams>({
   actionType,
   contextName,
-  createdActionType,
   id,
   lifecycleActionTypes,
   methodName,
   options,
   params,
 }: {
-  actionType: string,
+  actionType?: string,
   contextName: string,
-  createdActionType?: string,
   id: string,
   lifecycleActionTypes: LifecycleActionTypes,
   methodName: string,
   options?: SendOptions,
   params: P,
 }) => ({
-  type: createdActionType || TRANSACTION_CREATED,
+  type: actionType || TRANSACTION_CREATED,
   payload: {
-    actionType,
     contextName,
     createdAt: new Date(),
     id,

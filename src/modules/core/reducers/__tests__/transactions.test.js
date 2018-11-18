@@ -29,7 +29,6 @@ describe(`core: reducers (transactions)`, () => {
     expect(newState).toEqual(new ImmutableMap());
   });
 
-  const actionType = 'my action type';
   const eventData = { myEventParam: 123 };
   const hash = 'my transaction hash';
   const options = { gasPrice: 4 };
@@ -42,7 +41,6 @@ describe(`core: reducers (transactions)`, () => {
 
   const initialState = new ImmutableMap({
     [existingTxId]: Transaction({
-      actionType: 'some other action type',
       createdAt: new Date(2018, 0, 1),
     }),
   });
@@ -50,7 +48,6 @@ describe(`core: reducers (transactions)`, () => {
   // Actions
   const createdTx = transactionCreated({
     id,
-    actionType,
     contextName,
     methodName,
     params,
@@ -88,7 +85,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [],
@@ -117,7 +113,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [],
@@ -146,7 +141,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [],
@@ -175,7 +169,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [],
@@ -213,7 +206,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [{ type: 'send', message: 'send error' }],
@@ -252,7 +244,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [{ type: 'receipt', message: 'receipt error' }],
@@ -292,7 +283,6 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              actionType,
               contextName,
               createdAt: expect.any(Date),
               errors: [{ type: 'eventData', message: 'event data error' }],

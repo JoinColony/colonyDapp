@@ -38,7 +38,6 @@ function* suggestMethodTransactionGas<P: TransactionParams>(
 }
 
 export default function* createMethodTransaction<P: TransactionParams>({
-  type,
   payload: { contextName, lifecycleActionTypes, methodName, options, params },
 }: CreateTransactionAction<P>): Saga<void> {
   // Used to track the state of the transaction before it receives
@@ -50,7 +49,6 @@ export default function* createMethodTransaction<P: TransactionParams>({
   // Dispatch a generic action to create a draft transaction.
   yield put(
     transactionCreated({
-      actionType: type,
       contextName,
       id,
       lifecycleActionTypes,
@@ -61,13 +59,12 @@ export default function* createMethodTransaction<P: TransactionParams>({
   );
 
   // If lifecycle action type for `created` was given, dispatch that action.
-  const { created: createdActionType } = lifecycleActionTypes;
-  if (createdActionType)
+  const { created: actionType } = lifecycleActionTypes;
+  if (actionType)
     yield put(
       transactionCreated({
-        actionType: type,
+        actionType,
         contextName,
-        createdActionType,
         id,
         lifecycleActionTypes,
         methodName,

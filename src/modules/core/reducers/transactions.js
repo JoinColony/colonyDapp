@@ -32,7 +32,6 @@ const transactionsReducer = (
   switch (type) {
     case TRANSACTION_CREATED: {
       const {
-        actionType,
         contextName,
         createdAt,
         id,
@@ -44,7 +43,6 @@ const transactionsReducer = (
       return state.set(
         id,
         Transaction({
-          actionType,
           contextName,
           createdAt,
           id,
