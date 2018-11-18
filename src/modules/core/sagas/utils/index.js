@@ -1,5 +1,7 @@
 /* @flow */
 
+import getDDB from './getDDB';
+import getNetworkClient from './getNetworkClient';
+
 export * from './transactions';
-export * from './networkClient';
-export * from './ddb';
+export { getDDB, getNetworkClient };
