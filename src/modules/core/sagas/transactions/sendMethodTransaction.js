@@ -4,28 +4,14 @@ import type { Saga } from 'redux-saga';
 import type { ContractResponse } from '@colony/colony-js-client';
 
 import { END, eventChannel } from 'redux-saga';
-import {
-  all,
-  call,
-  cancel,
-  fork,
-  put,
-  race,
-  select,
-  take,
-} from 'redux-saga/effects';
+import { call, put, select, take } from 'redux-saga/effects';
 
 import type {
   TransactionRecord,
-  TransactionReceipt,
   TransactionParams,
   TransactionEventData,
 } from '~types/index';
-import type {
-  Sender,
-  SendTransactionAction,
-  TransactionResponse,
-} from '../../types';
+import type { Sender, SendTransactionAction } from '../../types';
 
 import {
   TRANSACTION_ERROR,
@@ -187,31 +173,51 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
   txPromise: Promise<ContractResponse<E>>,
   tx: TransactionRecord<P, E>,
 ): Generator<*, *, *> {
+  let receipt;
+  let eventData: E;
+
   const {
     id,
-    lifecycleActionTypes: { sent, receiptReceived, eventDataReceived },
+    lifecycleActionTypes: {
+      error: errorType,
+      eventDataReceived,
+      receiptReceived,
+      sent,
+      success: successType,
+    },
   } = tx;
 
   // Create an event channel to send the transaction.
   const channel = yield call(transactionChannel, txPromise, tx);
 
   try {
+    let putSuccess = false;
     // Take all actions the channel emits and dispatch them.
     while (true) {
       const action = yield take(channel);
-      const { payload } = action;
 
+      // Put the action to the store as-is
+      yield put(action);
+
+      // Handle lifecycle action types
+      const { payload } = action;
       switch (action.type) {
+        case TRANSACTION_ERROR:
+          if (errorType) yield put({ type: errorType, payload });
+          break;
+
         case TRANSACTION_SENT:
           if (sent) yield put(transactionSent(id, payload, sent));
           break;
 
         case TRANSACTION_RECEIPT_RECEIVED:
+          ({ receipt } = payload);
           if (receiptReceived)
             yield put(transactionReceiptReceived(id, payload, receiptReceived));
           break;
 
         case TRANSACTION_EVENT_DATA_RECEIVED:
+          ({ eventData } = payload);
           if (eventDataReceived)
             yield put(
               transactionEventDataReceived(id, payload, eventDataReceived),
@@ -222,49 +228,15 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
           break;
       }
 
-      yield put(action);
+      if (successType && receipt && eventData && !putSuccess) {
+        yield put({ type: successType, payload: { receipt, eventData } });
+        putSuccess = true;
+      }
     }
   } finally {
     // Close the event channel when we receive an `END` event.
     channel.close();
   }
-}
-
-/*
- * Race a successful response (receipt and event data) against an
- * erroneous one (any event/receipt/send error).
- */
-// eslint-disable-next-line flowtype/generic-spacing
-function* getResponse<E: TransactionEventData>(): Generator<
-  *,
-  TransactionResponse<E>,
-  *,
-> {
-  const {
-    receiptAndEventData: [
-      {
-        payload: { receipt },
-      },
-      {
-        payload: { eventData },
-      },
-    ] = [{ payload: {} }, { payload: {} }],
-    error,
-  }: {
-    receiptAndEventData: [
-      { payload: { receipt: TransactionReceipt } },
-      { payload: { eventData: E } },
-    ],
-    error?: Object,
-  } = yield race({
-    receiptAndEventData: all([
-      take(TRANSACTION_RECEIPT_RECEIVED),
-      take(TRANSACTION_EVENT_DATA_RECEIVED),
-    ]),
-    error: take(TRANSACTION_ERROR),
-  });
-
-  return { receipt, eventData, error };
 }
 
 /*
@@ -275,7 +247,6 @@ export default function* sendMethodTransaction<
   P: TransactionParams,
   E: TransactionEventData,
 >({ payload: { id } }: SendTransactionAction): Saga<void> {
-  let task;
   let tx;
 
   try {
@@ -294,34 +265,16 @@ export default function* sendMethodTransaction<
     // TODO explore using `call` without `yield` to make this more testable.
     const txPromise = getMethodTransactionPromise<P, E>(method, tx);
 
-    // Fork off a task to send the transaction.
-    task = yield fork(sendTransaction, txPromise, tx);
-
-    // Blocking call: handle the error/success response for this transaction.
-    // TODO this needs to be refactored to take events from a specific channel;
-    // this is taking the events from the entire store, which could lead to
-    // unexpected results.
-    const { error, receipt, eventData } = yield call(getResponse);
-
-    // Depending on the response, `put` the given success/error action.
-    const {
-      lifecycleActionTypes: { error: errorType, success: successType },
-    } = tx;
-    if (error) {
-      if (errorType) yield put({ type: errorType, payload: error });
-    } else if (successType) {
-      yield put({ type: successType, payload: { receipt, eventData } });
-    }
+    // Send the transaction.
+    yield call(sendTransaction, txPromise, tx);
   } catch (caughtError) {
-    // Unexpected errors `put` the given error action.
-    if (tx) {
-      const {
-        lifecycleActionTypes: { error: errorType },
-      } = tx;
+    // Unexpected errors `put` the given error action...
+    const { lifecycleActionTypes: { error: errorType } = {} } = tx || {};
+    if (errorType) {
       yield put({ type: errorType, payload: caughtError });
+    } else {
+      // ...or re-throw if the error type was not found.
+      throw caughtError;
     }
-  } finally {
-    // Cancel the task (if we were able to start it successfully).
-    if (task) yield cancel(task);
   }
 }
