@@ -59,16 +59,16 @@ export default function* createMethodTransaction<P: TransactionParams>({
   );
 
   // If lifecycle action type for `created` was given, dispatch that action.
-  const { created: actionType } = lifecycleActionTypes;
-  if (actionType)
+  const { created: overrideActionType } = lifecycleActionTypes;
+  if (overrideActionType)
     yield put(
       transactionCreated({
-        actionType,
         contextName,
         id,
         lifecycleActionTypes,
         methodName,
         options,
+        overrideActionType,
         params,
       }),
     );

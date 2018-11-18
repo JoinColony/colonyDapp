@@ -16,16 +16,19 @@ import {
 function* jimmysDiscountGas({
   payload: { id },
 }: SendTransactionAction): Saga<void> {
-  const { actionType, suggestedGasLimit, suggestedGasPrice } = yield select(
-    state => state.core.transactions.get(id),
-  );
+  const {
+    contextName,
+    methodName,
+    suggestedGasLimit,
+    suggestedGasPrice,
+  } = yield select(state => state.core.transactions.get(id));
   if (
     process.env.SKIP_GAS_STATION_CONFIRM === 'true' ||
     // eslint-disable-next-line no-alert
     window.confirm(
       `Welcome to Jimmy’s Discount Gas
 ------------------------------------
-Send ${actionType} transaction?
+Send ${contextName}/${methodName} transaction?
 Gas limit: ${
         suggestedGasLimit ? suggestedGasLimit.toNumber() : 'not set'
       }, gas price: ${
