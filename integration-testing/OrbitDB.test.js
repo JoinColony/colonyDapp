@@ -1,23 +1,22 @@
-/* eslint-env jest */
+import test from 'ava';
 
 import DDBTestFactory from './utils/DDBTestFactory';
 
 const factory = new DDBTestFactory('orbitdb.test');
-let orbit1 = null;
 
-beforeAll(async () => {
-  orbit1 = await factory.orbit('orbit1');
+test.before(async t => {
+  const orbit1 = await factory.orbit('orbit1');
   await factory.ready();
-}, DDBTestFactory.TIMEOUT);
+  t.context = { orbit1 };
+});
 
-afterAll(async () => {
+test.after.always(async () => {
   await factory.clear();
-}, DDBTestFactory.TIMEOUT);
+});
 
-describe('OrbitDB store management', () => {
-  test('Get an orbitdb store', async () => {
-    const db = await orbit1.keyvalue(factory.name('get-store-test'));
-    await db.put('key', 'value');
-    expect(db.get('key')).toBe('value');
-  });
+test('Get an orbitdb store', async t => {
+  const { orbit1 } = t.context;
+  const db = await orbit1.keyvalue(factory.name('get-store-test'));
+  await db.put('key', 'value');
+  t.is(db.get('key'), 'value');
 });

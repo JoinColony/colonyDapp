@@ -205,6 +205,19 @@ class DDB {
     );
     return this._makeStore(orbitStore, schemaId, type);
   }
+
+  async stop() {
+    // Doing some checks for good measure
+    /* eslint-disable no-underscore-dangle */
+    if (!this._orbitNode._ipfs.isOnline()) {
+      // If we stop the orbitNode and ipfs is not connected, it will throw
+      // (the infamous libp2p hasn't started yet error), so we start it again
+      await this._orbitNode._ipfs.start();
+    }
+    await this._orbitNode.stop();
+    return this._orbitNode._ipfs.stop();
+    /* eslint-enable no-underscore-dangle */
+  }
 }
 
 export default DDB;

@@ -129,6 +129,16 @@ class IPFSNode {
   getNodeID(): Promise<B58String> {
     return promisify(this._ipfs.id.bind(this._ipfs))().then(node => node.id);
   }
+
+  /** Start the connection to IPFS (if not connected already) */
+  start(): Promise<void> {
+    return this._ipfs.start();
+  }
+
+  /** Stop the connection to IPFS */
+  stop(): Promise<void> {
+    return this._ipfs.stop();
+  }
 }
 
 export default IPFSNode;
