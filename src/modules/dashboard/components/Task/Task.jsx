@@ -22,6 +22,7 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
+import TaskSkills from '~dashboard/TaskSkills';
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -196,4 +197,4 @@ const Task = ({
 
 Task.displayName = displayName;
 
-export default Task;
+export default withDialog()(Task);
