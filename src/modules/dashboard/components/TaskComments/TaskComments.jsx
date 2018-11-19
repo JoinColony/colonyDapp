@@ -89,19 +89,19 @@ const TaskComments = ({ claimedProfile, openDialog }: Props) => {
   return (
     <div
       className={styles.main}
-      onClick={handleUnclaimedProfile}
       /*
-       * @NOTE Aria forces us to add a keyboard handler to all non-interactive
-       * elements that also have a click handler
+       * @NOTE We're ussing the onFocus handler instead of click and key since this covers both
+       * normal usage (click and key trigger a focus) and aria users who will focus this via
+       * different means
        */
-      onKeyDown={handleUnclaimedProfile}
+      onFocus={handleUnclaimedProfile}
       /*
        * @NOTE The `role` and `tabIndex` props are set because we're breaking
        * standard and adding click and keyboard handlers to a non-interactive
        * element
        */
       role="textbox"
-      tabIndex={-1}
+      tabIndex={0}
     >
       <Form
         initialValues={{ comment: '' }}
