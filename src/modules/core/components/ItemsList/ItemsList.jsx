@@ -53,8 +53,6 @@ class ItemsList extends Component<Props, State> {
 
   state = {
     listTouched: false,
-    selectedItem: undefined,
-    setItem: undefined,
   };
 
   /*
