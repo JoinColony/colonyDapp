@@ -5,7 +5,7 @@ import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 
-import TransactionList from '../TransactionList';
+import TransactionList from '~core/TransactionList';
 
 import styles from './Transactions.css';
 
@@ -87,7 +87,7 @@ const Transactions = () => (
         <div className={styles.pendingTransactionsWrapper}>
           <TransactionList
             label={MSG.pendingTransactionsTitle}
-            currentColonyAddress={colonyAddress}
+            currentAddress={colonyAddress}
             transactions={augmentedPendingTransactions}
             onClaim={handleClaim}
             linkToEtherscan={false}
@@ -97,7 +97,7 @@ const Transactions = () => (
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
           label={MSG.transactionHistoryTitle}
-          currentColonyAddress={colonyAddress}
+          currentAddress={colonyAddress}
           transactions={augmentedTransactions}
           linkToEtherscan
         />

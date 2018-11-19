@@ -20,9 +20,9 @@ type Props = {
    */
   transactions: Array<TransactionType>,
   /*
-   * The current conlony's address.
+   * The current Colony or user address.
    */
-  currentColonyAddress: string,
+  currentAddress: string,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -48,7 +48,7 @@ const displayName: string = 'admin.TransactionList';
 const TransactionList = ({
   label,
   transactions,
-  currentColonyAddress,
+  currentAddress,
   showMaskedAddress,
   onClaim,
   linkToEtherscan = true,
@@ -69,7 +69,10 @@ const TransactionList = ({
                 key={transaction.nonce}
                 transaction={transaction}
                 showMaskedAddress={showMaskedAddress}
-                incoming={transaction.to === currentColonyAddress}
+                incoming={
+                  !!transaction.to &&
+                  transaction.to.toLowerCase() === currentAddress.toLowerCase()
+                }
                 onClaim={onClaim}
                 linkToEtherscan={linkToEtherscan}
               />
