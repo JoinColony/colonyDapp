@@ -25,7 +25,7 @@ type Props = {
   rating: number,
 };
 
-const displayName = 'TaskFeedRating';
+const displayName = 'dashboard.TaskFeed.TaskFeedRating';
 
 const TaskFeedRating = ({
   rater: {
