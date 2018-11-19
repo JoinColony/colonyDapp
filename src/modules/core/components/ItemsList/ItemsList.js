@@ -63,7 +63,7 @@ const enhance = compose(
       /*
        * Iterate trough children and gather they're ids into the parent
        */
-      collapsedList.map(item => {
+      collapsedList.forEach(item => {
         /*
          * Check if we have a parent it, meaning we're not a top-level item
          */
@@ -88,7 +88,7 @@ const enhance = compose(
          * Have anoter pass and check for children nesting
          */
         if (item.children) {
-          item.children.map((child, index) => {
+          item.children.forEach((child, index) => {
             /*
              * Add a new child to the nested list
              */
