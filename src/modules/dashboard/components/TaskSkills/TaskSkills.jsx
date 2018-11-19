@@ -56,7 +56,11 @@ class TaskSkills extends Component<Props, State> {
     return (
       <div className={styles.main}>
         {isTaskCreator && (
-          <ItemsList list={skillMocks} handleSetItem={this.handleSetSkill}>
+          <ItemsList
+            list={skillMocks}
+            handleSetItem={this.handleSetSkill}
+            connect={false}
+          >
             <div className={styles.controls}>
               <Heading
                 appearance={{ size: 'small', margin: 'none' }}

@@ -1,11 +1,14 @@
 /* @flow */
 
+import type { MessageDescriptor } from 'react-intl';
+
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import nanoid from 'nanoid';
 
 import type { ConsumableItem } from './ItemsList';
 
+import { asField } from '~core/Fields';
 import Button from '~core/Button';
 import Popover from '~core/Popover';
 
@@ -19,6 +22,10 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
+  connect?: boolean,
+  /** Input field name (form variable) */
+  name?: string,
   /** The already nested list, generated from list by the wrapper */
   collapsedList: Array<ConsumableItem>,
   /** The intial list of items to display (before collapsing it) */
@@ -29,8 +36,24 @@ type Props = {
   itemDisplayPrefix?: string,
   /** Suffix to display after the individual item when rendering it */
   itemDisplaySuffix?: string,
-  /** Callback to call when setting a new item */
+  /** Callback to call when setting a new item (only when the Form isn't connected) */
   handleSetItem?: (value: ConsumableItem) => void,
+  /** @ignore Will be injected by `asField` */
+  $id: string,
+  /** @ignore Will be injected by `asField` */
+  $error?: string,
+  /** @ignore Will be injected by `asField` */
+  $value?: string,
+  /** @ignore Will be injected by `asField` */
+  $touched?: boolean,
+  /** @ignore Will be injected by `asField` */
+  formatIntl: (
+    text: string | MessageDescriptor,
+    textValues?: { [string]: string },
+  ) => string,
+  setValue: (val: any) => void,
+  /** @ignore Will be injected by `asField` */
+  setError: (val: any) => void,
 };
 
 type State = {
@@ -53,6 +76,8 @@ class ItemsList extends Component<Props, State> {
 
   state = {
     listTouched: false,
+    setItem: undefined,
+    selectedItem: undefined,
   };
 
   /*
@@ -85,6 +110,12 @@ class ItemsList extends Component<Props, State> {
       props: {
         handleSetItem: callback = (value: ConsumableItem) => value,
         list = [],
+        /*
+         * @NOTE We're using the id's value injected by the `asField` wrapper to try and detect
+         * if this component is connected to a Form
+         */
+        $id: isConnected,
+        setValue,
       },
     } = this;
     const { id: itemId, name } =
@@ -101,7 +132,10 @@ class ItemsList extends Component<Props, State> {
          * @NOTE If we don't deconstruct here and filter the values passed down,
          * the nested values will also be passed down
          */
-        return callback({ id: itemId, name });
+        if (!isConnected) {
+          return callback({ id: itemId, name });
+        }
+        return setValue(selectedItemId);
       },
     );
   };
@@ -171,6 +205,7 @@ class ItemsList extends Component<Props, State> {
     const currentItem: ConsumableItem | void = list.find(
       ({ id }) => id === setItemId,
     );
+
     return (
       <div className={styles.main}>
         <Popover
@@ -231,4 +266,6 @@ class ItemsList extends Component<Props, State> {
   }
 }
 
-export default ItemsList;
+export default asField({
+  initialValue: '',
+})(ItemsList);

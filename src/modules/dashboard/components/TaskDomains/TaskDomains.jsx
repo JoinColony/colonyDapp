@@ -60,6 +60,7 @@ class TaskDomains extends Component<Props, State> {
             list={domainMocks}
             itemDisplayPrefix="#"
             handleSetItem={this.handleSetDomain}
+            connect={false}
           >
             <div className={styles.controls}>
               <Heading
