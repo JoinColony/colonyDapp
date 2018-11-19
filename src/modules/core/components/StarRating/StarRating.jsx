@@ -29,11 +29,11 @@ type Props = {
 
 const displayName = 'StarRating';
 
-const StarRating = ({ highestPossible = 3, rating }: Props) => {
-  const ratingKeys = [...Array(highestPossible).keys()].map(val => val + 1);
-  return (
-    <Fragment>
-      {ratingKeys.map(possibleValue => (
+const StarRating = ({ highestPossible = 3, rating }: Props) => (
+  <Fragment>
+    {[...Array(highestPossible).keys()]
+      .map(val => val + 1)
+      .map(possibleValue => (
         <Icon
           key={`star-rating-${possibleValue}`}
           name="star"
@@ -49,9 +49,8 @@ const StarRating = ({ highestPossible = 3, rating }: Props) => {
           }
         />
       ))}
-    </Fragment>
-  );
-};
+  </Fragment>
+);
 
 StarRating.displayName = displayName;
 
