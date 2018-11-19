@@ -1,10 +1,36 @@
-This is a `Popoup` wrapped component that displays a list of items.
+This is a `Popover` wrapped component that displays a list of items.
 
 It can handle both single and multi levels of lists.
 
 Most common usage: Skills, Domains.
 
-### Single Level List
+### Connected to a Form (default)
+
+```jsx
+const { Form, Formik } = require('formik');
+
+const singleLevel = [
+  { id: 1, name: 'Abruzzenhund' },
+  { id: 2, name: 'Affenpinscher' },
+  { id: 3, name: 'Afghan Hound' },
+];
+
+<Formik
+  initialValues={{ 'connectedItemList': '' }}
+  onSubmit={console.log}
+  render={({ values }) => (
+    <Form>
+      <ItemsList list={singleLevel} name="connectedItemList">
+        <span style={{ fontWeight: 'bold', color: 'blue' }}>Select a hound</span>
+      </ItemsList>
+      <pre>{JSON.stringify(values, null, 2)}</pre>
+      <Button type="submit">Submit Hound</Button>
+    </Form>
+  )}
+/>
+```
+
+### Single Level List (unconnected)
 
 ```js
 const singleLevel = [
@@ -30,10 +56,10 @@ const singleLevel = [
   { id: 20, name: 'American Alsatian' },
 ];
 
-<ItemsList list={singleLevel} />
+<ItemsList list={singleLevel} connect={false} />
 ```
 
-### Multi Level, Nested List
+### Multi Level, Nested List (unconnected)
 
 ```js
 const multiLevel = [
@@ -54,7 +80,7 @@ const multiLevel = [
   { id: 302, name: 'AB-Negative', parent: 30 },
 ];
 
-<ItemsList list={multiLevel}>
+<ItemsList list={multiLevel} connect={false}>
   <span>This is a nested list (click me!)</span>
 </ItemsList>
 ```
