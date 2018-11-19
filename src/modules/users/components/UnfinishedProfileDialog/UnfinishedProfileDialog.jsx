@@ -9,18 +9,18 @@ import styles from './UnfinishedProfileDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'user.UnfinishedProfileDialog.title',
+    id: 'users.UnfinishedProfileDialog.title',
     defaultMessage: 'Finish setting up your Colony account',
   },
   description: {
-    id: 'user.UnfinishedProfileDialog.description',
+    id: 'users.UnfinishedProfileDialog.description',
     defaultMessage: `
       Before working on a task, you'll need to finish setting up your account.
       As soon as you're done, you can begin earning tokens and reputation in
       colonies.`,
   },
   callToAction: {
-    id: 'user.UnfinishedProfileDialog.callToAction',
+    id: 'users.UnfinishedProfileDialog.callToAction',
     defaultMessage: `
       You're almost there: click Continue below to create your unique username.
     `,
@@ -33,7 +33,7 @@ type Props = {
 };
 
 class UnfinishedProfileDialog extends Component<Props> {
-  static displayName = 'dashboard.UnfinishedProfileDialog';
+  static displayName = 'users.UnfinishedProfileDialog';
 
   handleContinue = () => {
     const { close } = this.props;
