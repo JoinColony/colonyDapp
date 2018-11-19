@@ -4,22 +4,17 @@
 }
 
 .controls {
-  display: flex;
-  flex-direction: row;
-
-  /*
-   * @NOTE This is only needed to better position the Popover's top arrow,
-   * it doesn't actually affect the box's width
-   */
-  width: 130px;
+  display: inline-block;
 }
 
 .controls button {
   margin-left: 5px;
+}
 
-  /*
-   * @NOTE We need to manually set it here, otherwise some parent class from
-   * `.form` will set it's bottom margin to 15px
-   */
-  margin-bottom: 0 !important;
+/*
+ * @NOTE Modifying the heading element directly since it's easier this way, than re-creating the
+ * Heading component as custom composed classes
+ */
+.controls h5 {
+  display: inline-block;
 }
