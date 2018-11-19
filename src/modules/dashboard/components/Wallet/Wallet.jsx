@@ -11,23 +11,13 @@ import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 
-<<<<<<< HEAD
 import WalletTransactions from '../WalletTransactions';
-=======
 import TokenList from '~admin/Tokens/TokenList.jsx';
->>>>>>> Extract TokenList to use it in Wallet screen
 
 import styles from './Wallet.css';
 
 import mockUser from './__datamocks__/mockUser';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import mockTransactions from './__datamocks__/mockTransactions';
-=======
-import mockTokens from './__datamocks__/mockTokens';
->>>>>>> Extract TokenList to use it in Wallet screen
-=======
->>>>>>> Show modal to edit tokens
 
 const MSG = defineMessages({
   tabTokens: {
@@ -67,11 +57,15 @@ class Wallet extends Component<Props> {
       tokenOwner: 'User',
     });
 
-    tokenDialog.afterClosed().catch(() => {
-      /* eslint-disable-next-line no-console */
-      console.log(tokenDialog.props);
-      // cancel actions here
-    });
+    tokenDialog
+      .afterClosed()
+      .then(() => {
+        /* eslint-disable-next-line no-console */
+        console.log(tokenDialog.props);
+      })
+      .catch(() => {
+        // cancel actions here
+      });
   };
 
   render() {
@@ -98,9 +92,14 @@ class Wallet extends Component<Props> {
               </Tab>
             </TabList>
             <TabPanel>
-              <TokenList tokens={tokens} />
+              <TokenList tokens={tokens} appearance={{ numCols: '3' }} />
             </TabPanel>
-            <TabPanel />
+            <TabPanel>
+              <WalletTransactions
+                transactions={mockTransactions}
+                userAddress={mockUser.walletAddress}
+              />
+            </TabPanel>
           </Tabs>
         </main>
         <aside className={styles.sidebar}>
@@ -114,49 +113,9 @@ class Wallet extends Component<Props> {
           </p>
         </aside>
       </div>
-<<<<<<< HEAD
-      <Tabs>
-        <TabList>
-          <Tab>
-            <FormattedMessage {...MSG.tabTokens} />
-          </Tab>
-          <Tab>
-            <FormattedMessage {...MSG.tabTransactions} />
-          </Tab>
-        </TabList>
-<<<<<<< HEAD
-        <TabPanel>Token</TabPanel>
-        <TabPanel>
-          <WalletTransactions
-            transactions={mockTransactions}
-            userAddress={mockUser.walletAddress}
-          />
-        </TabPanel>
-=======
-        <TabPanel>
-          <TokenList tokens={mockTokens} appearance={{ numCols: '3' }} />
-        </TabPanel>
-        <TabPanel />
->>>>>>> Extract TokenList to use it in Wallet screen
-      </Tabs>
-    </main>
-    <aside className={styles.sidebar}>
-      <p className={styles.helpText}>
-        <FormattedMessage {...MSG.helpText} />
-        <Button
-          appearance={{ theme: 'blue', margin: 'none', size: 'small' }}
-          text={MSG.linkEditToken}
-          className={styles.tokenLink}
-        />
-      </p>
-    </aside>
-  </div>
-);
-=======
     );
   }
 }
->>>>>>> Show modal to edit tokens
 
 Wallet.displayName = displayName;
 
