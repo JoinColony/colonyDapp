@@ -13,7 +13,7 @@ import styles from './ItemsList.css';
 
 const MSG = defineMessages({
   fallbackListButton: {
-    id: 'dashboard.TaskDomains.fallbackListButton',
+    id: 'ItemsList.fallbackListButton',
     defaultMessage: 'Open List',
   },
 });
@@ -35,21 +35,21 @@ type Props = {
 
 type State = {
   /*
-   * This values determines if any domain in the (newly opened) list was selected
+   * This values determines if any item in the (newly opened) list was selected
    */
   listTouched: boolean,
   /*
-   * Domain selected in the popover list
+   * Item selected in the popover list
    */
   selectedItem: number | void,
   /*
-   * Domain that is actually set on the task
+   * Item that is actually set on the task
    */
   setItem: number | void,
 };
 
 class ItemsList extends Component<Props, State> {
-  static displayName = 'dashboard.TaskDomains';
+  static displayName = 'ItemsList';
 
   state = {
     listTouched: false,
@@ -109,7 +109,7 @@ class ItemsList extends Component<Props, State> {
   };
 
   /*
-   * Helper to render an entry in the domains list
+   * Helper to render an entry in the items list
    *
    * @NOTE This will recursevly render nested children
    */
