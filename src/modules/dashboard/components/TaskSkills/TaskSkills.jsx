@@ -59,6 +59,7 @@ class TaskSkills extends Component<Props, State> {
           <ItemsList
             list={skillMocks}
             handleSetItem={this.handleSetSkill}
+            name="taskSkills"
             connect={false}
           >
             <div className={styles.controls}>

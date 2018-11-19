@@ -1,5 +1,8 @@
 /* @flow */
 
+import type { HOC } from 'recompose';
+import type { MessageDescriptor } from 'react-intl';
+
 import { compose, withProps } from 'recompose';
 
 import { sortObjectsBy } from '~utils/arrays';
@@ -17,9 +20,20 @@ type PartialProps = {
   list: Array<ConsumableItem>,
   itemDisplayPrefix?: string,
   itemDisplaySuffix?: string,
+  /*
+   * @NOTE Everything below is injected by `asField`
+   */
+  appearance?: Object,
+  $error?: string,
+  $value?: string,
+  $touched?: boolean,
+  label?: MessageDescriptor | string,
+  name: string,
+  placeholder?: MessageDescriptor | string,
+  title?: MessageDescriptor | string,
 };
 
-const enhance = compose(
+const enhance: HOC<*, PartialProps> = compose(
   withProps(
     ({ list = [], itemDisplayPrefix, itemDisplaySuffix }: PartialProps) => {
       /*

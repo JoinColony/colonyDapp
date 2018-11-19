@@ -25,7 +25,7 @@ type Props = {
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
   /** Input field name (form variable) */
-  name?: string,
+  name: string,
   /** The already nested list, generated from list by the wrapper */
   collapsedList: Array<ConsumableItem>,
   /** The intial list of items to display (before collapsing it) */
