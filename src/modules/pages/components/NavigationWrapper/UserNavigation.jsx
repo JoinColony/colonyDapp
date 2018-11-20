@@ -4,10 +4,12 @@ import React from 'react';
 
 import { defineMessages } from 'react-intl';
 
-import { INBOX_ROUTE, DASHBOARD_ROUTE, WALLET_ROUTE } from '~routes';
+import { INBOX_ROUTE, DASHBOARD_ROUTE } from '~routes';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
+import { PopoverProvider, RegisteredPopover } from '~core/Popover';
+import GasStation from '~dashboard/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 
 import styles from './UserNavigation.css';
@@ -54,13 +56,32 @@ const UserNavigation = ({ events = mockEvents }: Props) => {
       >
         <Icon name="home" title={MSG.dashboardTitle} />
       </NavLink>
-      <NavLink
-        to={WALLET_ROUTE}
-        className={styles.navigationItem}
-        activeClassName={styles.navigationItemActive}
-      >
-        <Icon name="wallet" title={MSG.walletTitle} />
-      </NavLink>
+      <PopoverProvider>
+        <RegisteredPopover
+          appearance={{ theme: 'grey' }}
+          content={({ close }) => <GasStation close={close} />}
+          name="GasStationPopover"
+          placement="bottom"
+          showArrow={false}
+        >
+          {({ isOpen, toggle, ref }) => (
+            <button
+              type="button"
+              className={styles.navigationItemButton}
+              ref={ref}
+              onClick={toggle}
+            >
+              <div
+                className={`${styles.navigationItem} ${
+                  isOpen ? styles.navigationItemActive : ''
+                }`}
+              >
+                <Icon name="wallet" title={MSG.walletTitle} />
+              </div>
+            </button>
+          )}
+        </RegisteredPopover>
+      </PopoverProvider>
       <NavLink
         to={INBOX_ROUTE}
         className={`${

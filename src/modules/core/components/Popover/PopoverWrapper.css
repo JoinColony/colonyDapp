@@ -2,6 +2,7 @@
 @value arrowBorder: 1px;
 @value backgroundColor: rgb(251, 251, 251); /* --colony-white */
 @value themeDarkBackgroundColor: rgb(58, 58, 58); /* --grey-1 */
+@value themeGreyBackgroundColor: var(--grey-blue-2);
 
 .main {
   z-index: calc(var(--z-index-notification) + 1);
@@ -104,6 +105,24 @@
 
 .themeDark.placementLeft .arrow { border-left-color: transparent; }
 .themeDark.placementLeft .arrow::before { border-left-color: themeDarkBackgroundColor; }
+
+.themeGrey {
+  composes: main;
+  background-color: themeGreyBackgroundColor;
+  box-shadow: 0 0 20px -2px var(--grey-5);
+}
+
+.themeGrey.placementTop .arrow { border-top-color: transparent; }
+.themeGrey.placementTop .arrow::before { border-top-color: themeGreyBackgroundColor; }
+
+.themeGrey.placementRight .arrow { border-right-color: transparent; }
+.themeGrey.placementRight .arrow::before { border-right-color: themeGreyBackgroundColor; }
+
+.themeGrey.placementBottom .arrow { border-bottom-color: transparent; }
+.themeGrey.placementBottom .arrow::before { border-bottom-color: themeGreyBackgroundColor; }
+
+.themeGrey.placementLeft .arrow { border-left-color: transparent; }
+.themeGrey.placementLeft .arrow::before { border-left-color: themeGreyBackgroundColor; }
 
 /* State */
 

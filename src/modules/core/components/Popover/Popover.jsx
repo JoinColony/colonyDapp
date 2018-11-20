@@ -20,7 +20,7 @@ export type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 type RefObj = { ref: ReactRef };
 
 export type Appearance = {
-  theme: 'dark',
+  theme: 'dark' | 'grey',
 };
 
 export type PopoverTrigger = ({
