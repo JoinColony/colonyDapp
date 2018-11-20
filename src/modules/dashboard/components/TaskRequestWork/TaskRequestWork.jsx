@@ -44,7 +44,7 @@ const TaskRequestWork = ({
           .afterClosed()
           .then(() => openDialog('CreateUsernameDialog'));
       }
-      return openDialog('TaskRequestWorkDialog');
+      return openDialog('ClaimProfileDialog');
     }}
   />
 );
