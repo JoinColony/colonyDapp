@@ -15,7 +15,8 @@ type DialogListItem = {
   /** Text in the second row of the second column */
   subtitleElement: Node,
   /** Icon to be rendered in the first column */
-  icon: string,
+  icon?: string,
+  imageUrl?: string,
   /** This can be whatever other component since we
    * sometimes require a button but other times s link */
   extra?: Node,
@@ -29,13 +30,12 @@ const displayName = 'DialogList';
 
 const DialogList = ({ items }: Props) => (
   <div className={styles.container}>
-    {items.map(({ title, subtitleElement, icon, extra }) => (
+    {items.map(({ title, subtitleElement, icon, extra, imageUrl }) => (
       <div key={`element${icon}`} className={styles.main}>
-        {icon && (
-          <div className={styles.rowIcon}>
-            <Icon name={icon} title={title} />
-          </div>
-        )}
+        <div className={styles.rowIcon}>
+          {icon && <Icon name={icon} title={title} />}
+          {imageUrl && <img src={imageUrl} alt="logo" />}
+        </div>
         <div className={styles.rowContent}>
           <Heading
             appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
