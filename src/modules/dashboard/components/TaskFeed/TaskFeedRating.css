@@ -1,6 +1,7 @@
 .main {
   display: flex;
   align-items: center;
+  margin-bottom: 5px;
 }
 
 .ratingPart + .ratingPart {

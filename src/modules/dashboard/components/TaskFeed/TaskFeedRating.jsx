@@ -42,7 +42,7 @@ const TaskFeedRating = ({
       <UserAvatar
         avatarUrl={raterAvatar}
         displayName={raterDisplayName}
-        size="s"
+        size="xs"
         username={raterUserName}
         walletAddress={raterWalletAddress}
         hasUserInfo
