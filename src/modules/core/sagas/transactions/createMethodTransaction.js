@@ -16,6 +16,13 @@ import {
 
 import { getMethodFromContext } from '../utils/index';
 
+/*
+ * @area: including a bit of buffer on the gas sent can be a good thing.
+ * Your tx might be applied against a different state from when you
+ * estimateGas'd it, which might cause it to still work, but use a bit more gas
+ */
+const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
+
 function* suggestMethodTransactionGas<P: TransactionParams>(
   id: string,
   params: P,
@@ -31,7 +38,9 @@ function* suggestMethodTransactionGas<P: TransactionParams>(
   yield put(
     transactionGasSuggested(
       id,
-      new BigNumber(suggestedGasLimit.toNumber()),
+      new BigNumber(
+        parseInt(suggestedGasLimit.toNumber() * SAFE_GAS_LIMIT_MULTIPLIER, 10),
+      ),
       new BigNumber(suggestedGasPrice.toNumber()),
     ),
   );
