@@ -8,6 +8,7 @@ Most common usage: Skills, Domains.
 
 ```jsx
 const { Form, Formik } = require('formik');
+const WrappedItemsList = require('./ItemsList.js').default;
 
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
@@ -20,9 +21,9 @@ const singleLevel = [
   onSubmit={console.log}
   render={({ values }) => (
     <Form>
-      <ItemsList list={singleLevel} name="connectedItemList">
+      <WrappedItemsList list={singleLevel} name="connectedItemList">
         <span style={{ fontWeight: 'bold', color: 'blue' }}>Select a hound</span>
-      </ItemsList>
+      </WrappedItemsList>
       <pre>{JSON.stringify(values, null, 2)}</pre>
       <Button type="submit">Submit Hound</Button>
     </Form>
@@ -33,6 +34,8 @@ const singleLevel = [
 ### Single Level List (unconnected)
 
 ```js
+const WrappedItemsList = require('./ItemsList.js').default;
+
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
   { id: 2, name: 'Affenpinscher' },
@@ -56,12 +59,14 @@ const singleLevel = [
   { id: 20, name: 'American Alsatian' },
 ];
 
-<ItemsList list={singleLevel} connect={false} />
+<WrappedItemsList list={singleLevel} connect={false} />
 ```
 
 ### Multi Level, Nested List (unconnected)
 
 ```js
+const WrappedItemsList = require('./ItemsList.js').default;
+
 const multiLevel = [
   { id: 1, name: 'Metals' },
   { id: 2, name: 'Gases' },
@@ -80,7 +85,7 @@ const multiLevel = [
   { id: 302, name: 'AB-Negative', parent: 30 },
 ];
 
-<ItemsList list={multiLevel} connect={false}>
+<WrappedItemsList list={multiLevel} connect={false}>
   <span>This is a nested list (click me!)</span>
-</ItemsList>
+</WrappedItemsList>
 ```
