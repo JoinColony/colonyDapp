@@ -951,10 +951,10 @@
     "@colony/colony-js-contract-loader" "^1.6.2"
     bn.js "^4.11.6"
 
-"@colony/colony-js-client@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.7.3.tgz#0d63e771c099c135257dbd6361c8d620e28b2e16"
-  integrity sha512-sPkiieZilYUIDFtje8RWmsOnSgcbP0o4ww2IG82t+DS8MFnUCx+3GH0EwuXLO5hlwVw1PYMlhOvMvsVJ0auteQ==
+"@colony/colony-js-client@^1.7.4":
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.7.4.tgz#7fa3eb9130ecba1bdfd6be4b37669f7acea3ecf2"
+  integrity sha512-mBF7ddw4IRqQFEvr0CBGJ5VwXS9FN0yGdtlVyHXyxMAdjUQEBxvhxK8nc07ZWRw0E5YqGQcweN20kt33SPEPVA==
   dependencies:
     "@colony/colony-js-adapter" "^1.7.0"
     "@colony/colony-js-contract-client" "^1.7.3"
