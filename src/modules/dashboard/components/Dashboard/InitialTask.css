@@ -1,0 +1,33 @@
+/* Use td.className to be able to overwrite table styles */
+
+.main {
+  margin-bottom: 20px;
+}
+
+td.taskDetails {
+  flex-wrap: wrap;
+  width: calc(100% - 230px);
+}
+
+.taskDetailsTitle {
+  margin: 0;
+  padding: 0 0 0 40px;
+  height: 87px;
+  width: 100%;
+  overflow: hidden;
+  border: none;
+  background-color: transparent;
+  font-weight: var(--weight-semi);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--colony-black);
+  cursor: pointer;
+  outline: none;
+}
+
+td.userAvatar {
+  justify-content: center;
+  padding: 30px 0 25px;
+  width: 60px;
+}
