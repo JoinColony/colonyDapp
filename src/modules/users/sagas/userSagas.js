@@ -1,18 +1,21 @@
 /* @flow */
 
-import { replace } from 'connected-react-router';
-
 import type { Saga } from 'redux-saga';
 
 import { delay } from 'redux-saga';
-import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  select,
+  getContext,
+  takeLatest,
+  takeEvery,
+} from 'redux-saga/effects';
 import namehash from 'eth-ens-namehash-ms';
 
 import type { Action, UserRecord } from '~types/index';
 
-import { NOT_FOUND_ROUTE } from '~routes';
 import { create, putError } from '~utils/saga/effects';
-import { avatarCache } from '~core/Avatar';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
@@ -131,7 +134,7 @@ function* fetchProfile(action: Action): Saga<void> {
     const store = yield call([ddb, ddb.getStore], `user.${username}`, {
       accessController,
     });
-
+    if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
 
     yield put({
@@ -139,7 +142,6 @@ function* fetchProfile(action: Action): Saga<void> {
       payload: { user },
     });
   } catch (error) {
-    yield put(replace(NOT_FOUND_ROUTE));
     yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
@@ -209,7 +211,6 @@ function* fetchAvatar(action: Action): Saga<void> {
 
   try {
     const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
-    avatarCache.set(hash, avatarData);
     yield put({
       type: USER_AVATAR_FETCH_SUCCESS,
       payload: { hash, avatarData },
@@ -276,10 +277,12 @@ function* removeAvatar(): Saga<void> {
 
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
-  yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
-  yield takeLatest(USER_AVATAR_FETCH, fetchAvatar);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
+
+  // each of these should be handled
+  yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
+  yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
 }

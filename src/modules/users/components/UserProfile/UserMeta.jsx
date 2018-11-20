@@ -7,7 +7,7 @@ import type { UserRecord } from '~types/UserRecord';
 import CopyableAddress from '../../../core/components/CopyableAddress';
 import Heading from '../../../core/components/Heading';
 import UserMention from '../../../core/components/UserMention';
-import ConnectedUserAvatar from '../ConnectedUserAvatar';
+import UserAvatar from '~core/UserAvatar';
 
 import styles from './UserMeta.css';
 
@@ -19,7 +19,7 @@ const UserMeta = ({
   user: { username, displayName, bio, website, location, walletAddress },
 }: Props) => (
   <div className={styles.main}>
-    <ConnectedUserAvatar
+    <UserAvatar
       className={styles.avatar}
       walletAddress={walletAddress}
       username={username}

@@ -60,7 +60,8 @@ export default function* setupUserContext(action: Action): Saga<void> {
 
     // This needs to happen first because CURRENT_USER_CREATE causes a redirect
     // to dashboard, which needs context for sagas which happen on load.
-    // TODO: what are the implications of forking here?
+    // Forking is okay because each `takeEvery` etc happens immediately anyway,
+    // but we then do not wait for a return value (which will never come).
     yield fork(setupContextSagas);
 
     yield put({

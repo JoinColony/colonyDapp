@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl';
 import type { FileReaderFile } from '~core/FileUpload';
 
 import AvatarUploader from '~core/AvatarUploader';
-import ConnectedUserAvatar from '../ConnectedUserAvatar';
+import UserAvatar from '~core/UserAvatar';
 
 import promiseListener from '../../../../createPromiseListener';
 
@@ -65,7 +65,7 @@ class UserAvatarUploader extends Component<Props> {
       <AvatarUploader
         label={MSG.uploaderLabel}
         placeholder={
-          <ConnectedUserAvatar
+          <UserAvatar
             size="xl"
             title={MSG.uploaderLabel}
             walletAddress={walletAddress}

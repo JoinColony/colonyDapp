@@ -57,8 +57,8 @@ export const userSelector: UserProfileSelector = createSelector(
 );
 export const avatarSelector: UserAvatarSelector = createSelector(
   avatarsSelector,
-  usernameFromProps,
-  (avatars, username) => avatars.get(username),
+  (state, props) => (props.user ? props.user.avatar : undefined),
+  (avatars, hash) => avatars.get(hash),
 );
 export const orbitAddressSelector: OrbitAddressSelector = createSelector(
   currentUser,

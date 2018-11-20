@@ -7,7 +7,7 @@ import lifecycle from 'recompose/lifecycle';
 import mapProps from 'recompose/mapProps';
 
 import { userSelector, currentUser as currentUserSelector } from '../selectors';
-import { fetchUserProfile as fetchUserProfileAC } from '../actionCreators';
+import { fetchUserProfile as fetchUserProfileAction } from '../actionCreators';
 
 const withUser = compose(
   connect(
@@ -15,7 +15,7 @@ const withUser = compose(
       user: userSelector(state, props),
       currentUser: currentUserSelector(state),
     }),
-    { fetchUserProfile: fetchUserProfileAC },
+    { fetchUserProfile: fetchUserProfileAction },
   ),
   mapProps(props => {
     const { currentUser, username, user } = props;

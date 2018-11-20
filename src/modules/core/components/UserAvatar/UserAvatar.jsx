@@ -1,60 +1,43 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 
-import getIcon from '../../../../lib/identicon';
+import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
+import type { UserRecord } from '~types/UserRecord';
 
-import Avatar from '~core/Avatar';
-import UserInfo from '~core/UserInfo';
+import UserAvatarDisplay from './UserAvatarDisplay.jsx';
 
-export type Props = {
-  /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL?: ?string,
-  /** Is passed through to Avatar */
-  className?: string,
-  /** Avatars that are not set have a different placeholder */
-  notSet?: boolean,
-  /** Avatar size (default is between `s` and `m`) */
-  size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
-  /*
-   * The user's name (aka Display Name)
-   */
-  displayName?: string,
-  /** For the title */
-  username?: string,
-  /** Address of the current user for identicon fallback */
-  walletAddress: string,
-  /* Whether to show or not show the UserInfo tooltip over the avatar */
-  hasUserInfo?: boolean,
+import { withUser } from '../../../users/composers';
+import { avatarSelector } from '../../../users/selectors';
+// eslint-disable-next-line max-len
+import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionCreators';
+
+type Props = UserAvatarProps & {
+  user?: UserRecord,
+  avatarData?: string,
+  fetchUserAvatar: (hash: string) => void,
 };
 
-const UserAvatar = ({
-  avatarURL,
-  className,
-  notSet,
-  size,
-  displayName,
-  username,
-  walletAddress,
-  hasUserInfo = false,
-}: Props) => (
-  <UserInfo
-    displayName={displayName}
-    username={username}
-    walletAddress={walletAddress}
-    trigger={hasUserInfo ? 'hover' : 'disabled'}
-  >
-    <Avatar
-      avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
-      className={className}
-      notSet={notSet}
-      placeholderIcon="circle-person"
-      size={size}
-      title={username || walletAddress}
-    />
-  </UserInfo>
-);
+class UserAvatar extends Component<Props> {
+  componentDidMount() {
+    const { avatarData, user, fetchUserAvatar } = this.props;
+    if (user && user.avatar && !avatarData) fetchUserAvatar(user.avatar);
+  }
 
-UserAvatar.displayName = 'UserAvatar';
+  render() {
+    const { avatarData } = this.props;
+    return <UserAvatarDisplay {...this.props} avatarURL={avatarData} />;
+  }
+}
 
-export default UserAvatar;
+export default compose(
+  withUser,
+  connect(
+    (state, props) => ({
+      avatarData: avatarSelector(state, props),
+    }),
+    { fetchUserAvatar: fetchUserAvatarAction },
+  ),
+)(UserAvatar);
