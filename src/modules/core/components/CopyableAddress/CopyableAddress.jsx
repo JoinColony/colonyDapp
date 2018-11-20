@@ -31,8 +31,10 @@ type Props = {
   appearance?: Appearance,
   /** Address to display */
   children: string,
-  /** Indicates that the full addrres should be shown instead of an abbreviated one */
+  /** Indicates that the full address should be shown instead of an abbreviated one */
   full?: boolean,
+  /** In some occasions we want to show the button to copy only */
+  showAddress?: boolean,
 };
 
 type State = {
@@ -71,21 +73,19 @@ class CopyableAddress extends Component<Props, State> {
   };
 
   render() {
-    const { appearance } = this.props;
+    const { appearance, showAddress } = this.props;
     const { copiedAddress } = this.state;
 
     return (
       <div className={getMainClasses(appearance, styles)}>
-        {this.getAddress()}
-        <span className={styles.copyButton}>
-          <Button
-            appearance={{ size: 'small', theme: 'blue' }}
-            disabled={copiedAddress}
-            onClick={this.handleCopyAddress}
-            text={{ ...MSG.buttonCopy }}
-            textValues={{ copiedAddress }}
-          />
-        </span>
+        {showAddress && this.getAddress()}
+        <Button
+          appearance={{ size: 'small', theme: 'blue' }}
+          disabled={copiedAddress}
+          onClick={this.handleCopyAddress}
+          text={{ ...MSG.buttonCopy }}
+          textValues={{ copiedAddress }}
+        />
       </div>
     );
   }

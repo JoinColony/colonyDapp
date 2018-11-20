@@ -1,0 +1,26 @@
+.main {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 12px 0;
+  height: 64px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--grey-blue-0);
+  border-top: 1px solid var(--grey-blue-0);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+
+  &:only-of-type {
+    border-bottom-color: transparent;
+  }
+}
+
+.rowContent {
+  flex: 1;
+}
+
+.rowIcon {
+  flex: 0 0 50px;
+  text-align: center;
+}

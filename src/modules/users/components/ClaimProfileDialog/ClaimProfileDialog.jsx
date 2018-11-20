@@ -8,7 +8,9 @@ import * as yup from 'yup';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import Dialog, { DialogSection } from '~core/Dialog';
+import CopyableAddress from '~core/CopyableAddress';
+import MaskedAddress from '~core/MaskedAddress';
+import Dialog, { DialogSection, DialogList } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
 import styles from './ClaimProfileDialog.css';
@@ -43,6 +45,10 @@ const MSG = defineMessages({
     id: 'users.ClaimProfileDialog.iWillDoItLater',
     defaultMessage: `I'll do it later`,
   },
+  depositEther: {
+    id: 'users.ClaimProfileDialog.depositEther',
+    defaultMessage: 'Directly Deposit Ether',
+  },
 });
 
 type FormValues = {};
@@ -50,6 +56,7 @@ type FormValues = {};
 type Props = {
   cancel: () => void,
   close: () => void,
+  walletAddress: string,
 } & FormikProps<FormValues>;
 
 const validationSchema = yup.object({
@@ -59,68 +66,87 @@ const validationSchema = yup.object({
     .username(),
 });
 
-const ClaimProfileDialog = ({ cancel, close }: Props) => (
-  <Dialog cancel={cancel}>
-    <ActionForm
-      submit="ENS_NAME_CREATE"
-      success="ENS_NAME_CREATE_SUCCESS"
-      error="ENS_NAME_CREATE_ERROR"
-      validationSchema={validationSchema}
-      onSuccess={close}
-    >
-      {({ isSubmitting, isValid }) => (
-        <Fragment>
-          <DialogSection appearance={{ border: 'bottom' }}>
-            <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'bold' }}
-                text={MSG.title}
-              />
-            </div>
-            <div className={styles.subTitle}>
-              <Heading
-                appearance={{ size: 'normal', weight: 'thin' }}
-                text={MSG.subTitle}
-              />
-            </div>
-          </DialogSection>
-          <DialogSection>
-            <div className={styles.titleAndButton}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
-                text={MSG.stepTitle}
+const ClaimProfileDialog = ({ cancel, close, walletAddress }: Props) => {
+  const listItems = [
+    {
+      title: MSG.depositEther,
+      subtitle: <MaskedAddress address={walletAddress} />,
+      icon: 'wallet',
+      extra: (
+        <CopyableAddress showAddress={false}>{walletAddress}</CopyableAddress>
+      ),
+    },
+  ];
+
+  return (
+    <Dialog cancel={cancel}>
+      <ActionForm
+        submit="ENS_NAME_CREATE"
+        success="ENS_NAME_CREATE_SUCCESS"
+        error="ENS_NAME_CREATE_ERROR"
+        validationSchema={validationSchema}
+        onSuccess={close}
+      >
+        {({ isSubmitting, isValid }) => (
+          <Fragment>
+            <DialogSection appearance={{ border: 'bottom' }}>
+              <div className={styles.title}>
+                <Heading
+                  appearance={{ size: 'medium', weight: 'bold' }}
+                  text={MSG.title}
+                />
+              </div>
+              <div className={styles.subTitle}>
+                <Heading
+                  appearance={{ size: 'normal', weight: 'thin' }}
+                  text={MSG.subTitle}
+                />
+              </div>
+            </DialogSection>
+            <DialogSection>
+              <div className={styles.titleAndButton}>
+                <Heading
+                  appearance={{
+                    size: 'medium',
+                    weight: 'bold',
+                    margin: 'none',
+                  }}
+                  text={MSG.stepTitle}
+                />
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  type="continue"
+                  text={MSG.learnMore}
+                />
+              </div>
+              <div className={styles.subTitle}>
+                <Heading
+                  appearance={{ size: 'normal', weight: 'thin' }}
+                  text={MSG.stepText}
+                />
+              </div>
+            </DialogSection>
+            <DialogList items={listItems} />
+            <DialogSection appearance={{ align: 'right' }}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                text={MSG.iWillDoItLater}
+                onClick={cancel}
+                disabled={isSubmitting}
               />
               <Button
-                appearance={{ theme: 'blue' }}
-                type="continue"
-                text={MSG.learnMore}
+                type="submit"
+                appearance={{ size: 'large' }}
+                text={{ id: 'button.confirm' }}
+                loading={isSubmitting}
+                disabled={!isValid}
               />
-            </div>
-            <div className={styles.subTitle}>
-              <Heading
-                appearance={{ size: 'normal', weight: 'thin' }}
-                text={MSG.stepText}
-              />
-            </div>
-          </DialogSection>
-          <DialogSection appearance={{ align: 'right' }}>
-            <Button
-              appearance={{ theme: 'secondary' }}
-              text={MSG.iWillDoItLater}
-              onClick={cancel}
-              disabled={isSubmitting}
-            />
-            <Button
-              type="submit"
-              text={{ id: 'button.confirm' }}
-              loading={isSubmitting}
-              disabled={!isValid}
-            />
-          </DialogSection>
-        </Fragment>
-      )}
-    </ActionForm>
-  </Dialog>
-);
+            </DialogSection>
+          </Fragment>
+        )}
+      </ActionForm>
+    </Dialog>
+  );
+};
 
 export default ClaimProfileDialog;
