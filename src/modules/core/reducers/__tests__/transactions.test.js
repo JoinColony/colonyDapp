@@ -6,7 +6,7 @@ import { Transaction } from '../../records';
 
 import {
   transactionSent,
-  transactionStarted,
+  transactionCreated,
   transactionEventDataError,
   transactionEventDataReceived,
   transactionReceiptError,
@@ -29,23 +29,31 @@ describe(`core: reducers (transactions)`, () => {
     expect(newState).toEqual(new ImmutableMap());
   });
 
-  const actionType = 'my action type';
   const eventData = { myEventParam: 123 };
   const hash = 'my transaction hash';
   const options = { gasPrice: 4 };
   const params = { param1: 123 };
   const id = 'my transaction id';
   const existingTxId = 'my existing tx id';
+  const lifecycleActionTypes = { created: 'lifecycle action type for created' };
+  const contextName = 'networkClient';
+  const methodName = 'createColony';
 
   const initialState = new ImmutableMap({
     [existingTxId]: Transaction({
-      actionType: 'some other action type',
       createdAt: new Date(2018, 0, 1),
     }),
   });
 
   // Actions
-  const startedTx = transactionStarted(id, actionType, params, null, options);
+  const createdTx = transactionCreated({
+    id,
+    contextName,
+    methodName,
+    params,
+    lifecycleActionTypes,
+    options,
+  });
   const sentTx = transactionSent(id, { hash });
   const receiptReceived = transactionReceiptReceived(id, { hash });
   const eventDataReceived = transactionEventDataReceived(id, { eventData });
@@ -61,7 +69,7 @@ describe(`core: reducers (transactions)`, () => {
     testActions(
       [
         [
-          startedTx,
+          createdTx,
           state => {
             // TODO ideally we should evaluate the state based on the whole
             // map, but jest has some unexpected results when using `toEqual`
@@ -76,16 +84,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [],
-                id,
-                options,
-                params,
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [],
+              eventData: undefined,
+              hash: undefined,
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: undefined,
+            });
           },
         ],
         [
@@ -101,17 +112,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [],
-                id,
-                hash, // hash should have been set
-                options,
-                params,
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [],
+              eventData: undefined,
+              hash, // hash should have been set
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: undefined,
+            });
           },
         ],
         [
@@ -127,18 +140,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [],
-                hash,
-                id,
-                options,
-                params,
-                receiptReceived: true, // should have been set
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [],
+              eventData: undefined,
+              hash,
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: true, // should have been set
+            });
           },
         ],
         [
@@ -154,19 +168,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [],
-                eventData, // should have been set
-                hash,
-                id,
-                options,
-                params,
-                receiptReceived: true,
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [],
+              eventData, // should have been set
+              hash,
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: true,
+            });
           },
         ],
       ],
@@ -177,7 +191,7 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles send error', () => {
     testActions(
       [
-        [startedTx],
+        [createdTx],
         [
           sendError,
           state => {
@@ -191,16 +205,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [{ type: 'send', message: 'send error' }],
-                id,
-                options,
-                params,
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [{ type: 'send', message: 'send error' }],
+              eventData: undefined,
+              hash: undefined,
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: undefined,
+            });
           },
         ],
       ],
@@ -211,7 +228,7 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles receipt error', () => {
     testActions(
       [
-        [startedTx],
+        [createdTx],
         [sentTx],
         [
           receiptError,
@@ -226,16 +243,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [{ type: 'receipt', message: 'receipt error' }],
-                id,
-                options,
-                params,
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [{ type: 'receipt', message: 'receipt error' }],
+              eventData: undefined,
+              hash,
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: undefined,
+            });
           },
         ],
       ],
@@ -246,7 +266,7 @@ describe(`core: reducers (transactions)`, () => {
   test('Handles event data error', () => {
     testActions(
       [
-        [startedTx],
+        [createdTx],
         [sentTx],
         [receiptReceived],
         [
@@ -262,16 +282,19 @@ describe(`core: reducers (transactions)`, () => {
 
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
-            expect(tx.toJS()).toEqual(
-              expect.objectContaining({
-                actionType,
-                createdAt: expect.any(Date),
-                errors: [{ type: 'eventData', message: 'event data error' }],
-                id,
-                options,
-                params,
-              }),
-            );
+            expect(tx.toJS()).toEqual({
+              contextName,
+              createdAt: expect.any(Date),
+              errors: [{ type: 'eventData', message: 'event data error' }],
+              eventData: undefined,
+              hash,
+              id,
+              lifecycleActionTypes,
+              methodName,
+              options,
+              params,
+              receiptReceived: true,
+            });
           },
         ],
       ],

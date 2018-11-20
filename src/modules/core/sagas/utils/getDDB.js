@@ -1,17 +1,14 @@
 /* @flow */
 
-import type { Saga } from 'redux-saga';
-
 import { call, getContext } from 'redux-saga/effects';
 
 import { create } from '~utils/saga/effects';
 
-import { DDB as DDBClass } from '../../../lib/database';
+import { DDB as DDBClass } from '../../../../lib/database/index';
 // eslint-disable-next-line max-len
-import PurserIdentityProvider from '../../../lib/database/PurserIdentityProvider';
+import PurserIdentityProvider from '../../../../lib/database/PurserIdentityProvider';
 
-// eslint-disable-next-line import/prefer-default-export
-export function* getDDB(): Saga<DDBClass> {
+export default function* getDDB(): Generator<*, DDBClass, *> {
   const wallet = yield getContext('wallet');
   const DDB = yield getContext('DDB');
   const ipfsNode = yield getContext('ipfsNode');

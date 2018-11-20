@@ -5,6 +5,7 @@ export * from './TaskRecord';
 export * from './token';
 export * from './transaction';
 export * from './TransactionRecord';
+export * from './TransactionReceipt';
 export * from './UserRecord';
 export * from './UsersRecord';
 export * from './WalletRecord';

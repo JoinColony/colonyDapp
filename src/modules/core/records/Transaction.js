@@ -7,18 +7,24 @@ import nanoid from 'nanoid';
 
 import type { TransactionProps } from '~types/TransactionRecord';
 
-const defaultValues: TransactionProps = {
-  actionType: undefined,
+const defaultValues: TransactionProps<*, *> = {
+  contextName: '',
   createdAt: new Date(),
   errors: new List(),
   eventData: undefined,
   hash: undefined,
   id: nanoid(),
-  options: undefined,
-  params: undefined,
+  lifecycleActionTypes: {},
+  methodName: '',
+  options: {},
+  params: {},
   receiptReceived: undefined,
+  suggestedGasLimit: undefined,
+  suggestedGasPrice: undefined,
 };
 
-const Transaction: RecordFactory<TransactionProps> = Record(defaultValues);
+const Transaction: RecordFactory<TransactionProps<*, *>> = Record(
+  defaultValues,
+);
 
 export default Transaction;
