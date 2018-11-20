@@ -4,7 +4,6 @@ jobs:
   build-with-lockfile:
     docker:
       - image: circleci/node:10.12
-    parallelism: 2
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -60,7 +59,6 @@ jobs:
   nightly-build:
     docker:
       - image: circleci/node:10.12
-    parallelism: 2
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -109,7 +107,6 @@ jobs:
     docker:
       - image: circleci/node:10.12
       - image: redis:4.0
-    parallelism: 2
     working_directory: ~/colonyDapp
     steps:
       - checkout

@@ -192,7 +192,8 @@
         "orbit-db": "https://github.com/thiagodelgado111/orbit-db#feature/verifiable-address",
         "orbit-db-kvstore": "https://github.com/thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log",
         "orbit-db-store": "https://github.com/orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2",
-        "orbit-db-keystore": "https://github.com/orbitdb/orbit-db-keystore#fix/verification"
+        "orbit-db-keystore": "https://github.com/orbitdb/orbit-db-keystore#fix/verification",
+        "ipld-bitcoin": "https://github.com/ipld/js-ipld-bitcoin.git"
     },
     "greenkeeper": {
         "ignore": [
