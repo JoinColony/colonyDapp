@@ -4,6 +4,7 @@ import {
   CURRENT_USER_CREATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USERNAME_CREATE_SUCCESS,
+  USER_UPLOAD_AVATAR_SUCCESS,
 } from '../actionTypes';
 
 import type { Action } from '~types/index';
@@ -33,6 +34,10 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
         params: { username },
       } = action.payload;
       return state ? state.set('username', username) : state;
+    }
+    case USER_UPLOAD_AVATAR_SUCCESS: {
+      const { hash } = action.payload;
+      return state ? state.set('avatar', hash) : state;
     }
     default:
       return state;

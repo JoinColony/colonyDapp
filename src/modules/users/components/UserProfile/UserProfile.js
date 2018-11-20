@@ -9,13 +9,13 @@ import { fetchUserProfile } from '../../actionCreators';
 import {
   isLoadingSelector,
   usernameFromRouter,
-  userSelector,
+  routerUserSelector,
 } from '../../selectors';
 
 const mapStateToProps = (state, props) => ({
   isLoading: isLoadingSelector(state),
   username: usernameFromRouter(state, props),
-  user: userSelector(state, props),
+  user: routerUserSelector(state, props),
 });
 
 const mapDispatchToProps = {

@@ -1,16 +1,20 @@
 /* @flow */
 
-import { replace } from 'connected-react-router';
-
 import type { Saga } from 'redux-saga';
 
 import { delay } from 'redux-saga';
-import { call, put, select, getContext, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  select,
+  getContext,
+  takeLatest,
+  takeEvery,
+} from 'redux-saga/effects';
 import namehash from 'eth-ens-namehash-ms';
 
 import type { Action, UserRecord } from '~types/index';
 
-import { NOT_FOUND_ROUTE } from '~routes';
 import { create, putError } from '~utils/saga/effects';
 
 import { KVStore } from '../../../lib/database/stores';
@@ -34,6 +38,15 @@ import {
   USERNAME_CREATE,
   USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
+  USER_AVATAR_FETCH,
+  USER_AVATAR_FETCH_SUCCESS,
+  USER_AVATAR_FETCH_ERROR,
+  USER_UPLOAD_AVATAR,
+  USER_UPLOAD_AVATAR_SUCCESS,
+  USER_UPLOAD_AVATAR_ERROR,
+  USER_REMOVE_AVATAR,
+  USER_REMOVE_AVATAR_SUCCESS,
+  USER_REMOVE_AVATAR_ERROR,
 } from '../actionTypes';
 
 const registerUserLabel = networkMethodSagaFactory<
@@ -121,7 +134,7 @@ function* fetchProfile(action: Action): Saga<void> {
     const store = yield call([ddb, ddb.getStore], `user.${username}`, {
       accessController,
     });
-
+    if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
 
     yield put({
@@ -129,7 +142,6 @@ function* fetchProfile(action: Action): Saga<void> {
       payload: { user },
     });
   } catch (error) {
-    yield put(replace(NOT_FOUND_ROUTE));
     yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
@@ -193,9 +205,84 @@ function* createUsername(action: Action): Saga<void> {
   });
 }
 
+function* fetchAvatar(action: Action): Saga<void> {
+  const { hash } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
+    yield put({
+      type: USER_AVATAR_FETCH_SUCCESS,
+      payload: { hash, avatarData },
+    });
+  } catch (error) {
+    yield putError(USER_AVATAR_FETCH_ERROR, error);
+  }
+}
+
+function* uploadAvatar(action: Action): Saga<void> {
+  const { data } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+  const ddb = yield getContext('ddb');
+  const orbitDBPath = yield select(orbitAddressSelector);
+  const walletAddress = yield select(walletAddressSelector);
+
+  try {
+    // first attempt upload to IPFS
+    const hash = yield call([ipfsNode, ipfsNode.addString], data);
+
+    // if we uploaded okay, put the hash in the user orbit store
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+    const store = yield call([ddb, ddb.getStore], orbitDBPath, {
+      accessController,
+    });
+    yield call([store, store.set], 'avatar', hash);
+
+    yield put({
+      type: USER_UPLOAD_AVATAR_SUCCESS,
+      payload: { hash },
+    });
+  } catch (error) {
+    yield putError(USER_UPLOAD_AVATAR_ERROR, error);
+  }
+}
+
+function* removeAvatar(): Saga<void> {
+  const ddb = yield getContext('ddb');
+  const orbitDBPath = yield select(orbitAddressSelector);
+  const walletAddress = yield select(walletAddressSelector);
+
+  try {
+    const accessController = yield create(
+      EthereumAccessController,
+      walletAddress,
+    );
+    const store = yield call([ddb, ddb.getStore], orbitDBPath, {
+      accessController,
+    });
+
+    yield call([store, store.set], 'avatar', undefined);
+    const user = yield call(getAll, store);
+    yield put({
+      type: USER_REMOVE_AVATAR_SUCCESS,
+      payload: { user },
+    });
+  } catch (error) {
+    yield putError(USER_REMOVE_AVATAR_ERROR, error);
+  }
+}
+
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
-  yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
+  yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
+  yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
+
+  // each of these should be handled
+  yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
+  yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
 }

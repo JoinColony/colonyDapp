@@ -4,6 +4,7 @@ import {
   USER_PROFILE_FETCH,
   USER_PROFILE_FETCH_ERROR,
   USER_PROFILE_FETCH_SUCCESS,
+  USER_AVATAR_FETCH_SUCCESS,
 } from '../actionTypes';
 
 import type { Action } from '~types/index';
@@ -27,6 +28,11 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
 
     case USER_PROFILE_FETCH_ERROR:
       return state.set('isLoading', false);
+
+    case USER_AVATAR_FETCH_SUCCESS: {
+      const { hash, avatarData } = action.payload;
+      return state.setIn(['avatars', hash], avatarData);
+    }
 
     default:
       return state;

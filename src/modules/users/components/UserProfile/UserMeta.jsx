@@ -6,8 +6,8 @@ import type { UserRecord } from '~types/UserRecord';
 
 import CopyableAddress from '../../../core/components/CopyableAddress';
 import Heading from '../../../core/components/Heading';
-import UserAvatar from '../../../core/components/UserAvatar';
 import UserMention from '../../../core/components/UserMention';
+import UserAvatar from '~core/UserAvatar';
 
 import styles from './UserMeta.css';
 
@@ -16,20 +16,11 @@ type Props = {
 };
 
 const UserMeta = ({
-  user: {
-    avatar,
-    username,
-    displayName,
-    bio,
-    website,
-    location,
-    walletAddress,
-  },
+  user: { username, displayName, bio, website, location, walletAddress },
 }: Props) => (
   <div className={styles.main}>
     <UserAvatar
       className={styles.avatar}
-      avatarURL={avatar}
       walletAddress={walletAddress}
       username={username}
       size="xl"

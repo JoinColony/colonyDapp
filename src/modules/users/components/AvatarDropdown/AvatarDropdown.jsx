@@ -1,10 +1,10 @@
 /* @flow */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Popover from '~core/Popover';
 import UserAvatar from '~core/UserAvatar';
-import { connect } from 'react-redux';
 
 import type { UserRecord } from '~types/UserRecord';
 
@@ -28,11 +28,7 @@ const AvatarDropdown = ({ user }: Props) => (
     trigger="click"
   >
     <button className={styles.avatarButton} type="button">
-      <UserAvatar
-        username={user.username}
-        avatarURL={user.avatar}
-        walletAddress={user.walletAddress}
-      />
+      <UserAvatar username={user.username} walletAddress={user.walletAddress} />
     </button>
   </Popover>
 );
