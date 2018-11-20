@@ -89,6 +89,7 @@ const Radio = ({
   setError,
   setValue,
   isSubmitting,
+  connect,
   ...props
 }: Props) => {
   const stateClass = checked ? styles.isChecked : styles.isUnchecked;

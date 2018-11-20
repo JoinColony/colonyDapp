@@ -195,6 +195,7 @@ class SingleLineEdit extends Component<Props, State> {
       setValue,
       $touched,
       $value,
+      connect,
       ...rest
     } = this.props;
 

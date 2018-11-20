@@ -79,9 +79,14 @@ const connectFormik = ({ alwaysConnected, validate }) => (
     ? React.createElement(Field, {
         component: FieldComponent,
         validate,
+        /*
+         * @NOTE Expose the connect prop to use in more complex form wrapped components
+         * Eg: ItemsList
+         */
+        connect,
         ...props,
       })
-    : React.createElement(FieldComponent, props);
+    : React.createElement(FieldComponent, { connect, ...props });
 
 const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
   const enhance: HOC<*, OutProps> = compose(

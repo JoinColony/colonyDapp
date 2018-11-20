@@ -51,6 +51,7 @@ type Props = {
     text: string | MessageDescriptor,
     textValues?: { [string]: string },
   ) => string,
+  /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
@@ -110,11 +111,7 @@ class ItemsList extends Component<Props, State> {
       props: {
         handleSetItem: callback = (value: ConsumableItem) => value,
         list = [],
-        /*
-         * @NOTE We're using the id's value injected by the `asField` wrapper to try and detect
-         * if this component is connected to a Form
-         */
-        $id: isConnected,
+        connect,
         setValue,
       },
     } = this;
@@ -132,7 +129,7 @@ class ItemsList extends Component<Props, State> {
          * @NOTE If we don't deconstruct here and filter the values passed down,
          * the nested values will also be passed down
          */
-        if (!isConnected) {
+        if (!connect) {
           return callback({ id: itemId, name });
         }
         return setValue(selectedItemId);
