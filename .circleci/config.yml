@@ -135,9 +135,9 @@ jobs:
           background: true
       - run:
           name: "Running Integration Tests"
-          command: yarn test:integration:ci
-          environment:
-            JEST_JUNIT_OUTPUT: "reports/jest/jest-integration-tests-results.xml"
+          command: |
+            mkdir -p reports/ava
+            yarn test:integration:ci
       - store_test_results:
           path: reports
       - store_artifacts:
