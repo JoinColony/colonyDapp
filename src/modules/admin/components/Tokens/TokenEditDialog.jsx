@@ -49,6 +49,8 @@ type Props = {
   cancel: () => void,
   close: () => void,
   tokens: Array<TokenType>,
+  /* We need to be aware of who own the tokens since it changes the UI */
+  tokenOwner: 'Colony' | 'User',
 };
 
 const validateNativeTokenSelect = (nativeToken?: TokenType): any => {
@@ -87,7 +89,7 @@ class TokenEditDialog extends Component<Props> {
   };
 
   render() {
-    const { tokens, cancel } = this.props;
+    const { tokens, cancel, tokenOwner } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
     return (
       <Dialog cancel={cancel}>
@@ -121,7 +123,11 @@ class TokenEditDialog extends Component<Props> {
                       key={token.id}
                       value={token.tokenSymbol}
                       name="colonyTokens"
-                      disabled={token.isNative}
+                      disabled={
+                        tokenOwner === 'Colony'
+                          ? token.isNative
+                          : token.isBlocked
+                      }
                     >
                       {!!token.tokenIcon && (
                         <img

@@ -35,6 +35,11 @@
   font-size: var(--size-medium-l);
 }
 
+.balanceNotPositive {
+  composes: balanceContent;
+  color: var(--pink);
+}
+
 .cardFooter {
   composes: marginBottomMedium from '~styles/layout.css';
   display: flex;

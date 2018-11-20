@@ -53,6 +53,8 @@ class TokenCard extends Component<Props, State> {
     this.mounted = false;
   }
 
+  isNotPositive = number => Number(number) <= 0;
+
   mounted = false;
 
   render() {
@@ -81,12 +83,26 @@ class TokenCard extends Component<Props, State> {
             {isNative && <span>*</span>}
           </div>
         </div>
-        <div className={styles.balanceContent}>{balance}</div>
+        <div
+          className={
+            this.isNotPositive(balance)
+              ? styles.balanceNotPositive
+              : styles.balanceContent
+          }
+        >
+          {balance.toFixed(2)}
+        </div>
         <div className={styles.cardFooter}>
           {isEth && (
             <Fragment>
-              {ethUsd ? (
-                <Numeral value={ethUsd} prefix="~ " suffix=" USD" />
+              {ethUsd === 0 || ethUsd ? (
+                <Numeral
+                  value={ethUsd}
+                  prefix="~ "
+                  suffix=" USD"
+                  integerSeparator="."
+                  decimals={2}
+                />
               ) : (
                 <SpinnerLoader />
               )}

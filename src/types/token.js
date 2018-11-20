@@ -8,4 +8,5 @@ export type TokenType = {
   isEnabled: boolean,
   isNative: boolean,
   tokenSymbol: string,
+  isBlocked?: boolean,
 };
