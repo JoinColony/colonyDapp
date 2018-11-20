@@ -15,9 +15,13 @@ type Appearance = PopoverAppearance & {
   placement?: Placement,
 };
 
+type ArrowProps = PopperArrowProps & {
+  showArrow: boolean,
+};
+
 type Props = {
   appearance?: Appearance,
-  arrowProps: PopperArrowProps,
+  arrowProps: ArrowProps,
   children: Node,
   id: string,
   innerRef: (?HTMLElement) => void,
@@ -39,7 +43,9 @@ const PopoverWrapper = ({
   style,
 }: Props) => (
   <div
-    className={getMainClasses(appearance, styles)}
+    className={getMainClasses(appearance, styles, {
+      hideArrow: !arrowProps.showArrow,
+    })}
     id={id}
     role="tooltip"
     ref={innerRef}

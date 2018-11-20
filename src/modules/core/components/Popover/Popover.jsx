@@ -55,6 +55,8 @@ export type Props = {
   placement?: Placement,
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean,
+  /** Whether there should be an arrow on the popover */
+  showArrow: boolean,
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
   trigger?: 'hover' | 'click' | 'disabled',
   /** @ignore injected by `react-intl` */
@@ -79,6 +81,7 @@ class Popover extends Component<Props, State> {
   static defaultProps = {
     closeOnOutsideClick: true,
     placement: 'top',
+    showArrow: true,
     trigger: 'click',
   };
 
@@ -258,7 +261,12 @@ class Popover extends Component<Props, State> {
   };
 
   render() {
-    const { appearance, placement: origPlacement, retainRefFocus } = this.props;
+    const {
+      appearance,
+      placement: origPlacement,
+      retainRefFocus,
+      showArrow,
+    } = this.props;
     const { isOpen } = this.state;
     return (
       <Manager>
@@ -275,7 +283,10 @@ class Popover extends Component<Props, State> {
                 innerRef={ref}
                 style={style}
                 placement={placement}
-                arrowProps={arrowProps}
+                arrowProps={{
+                  ...arrowProps,
+                  showArrow,
+                }}
                 onFocus={this.handleWrapperFocus}
                 retainRefFocus={retainRefFocus}
               >

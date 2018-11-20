@@ -104,3 +104,9 @@
 
 .themeDark.placementLeft .arrow { border-left-color: transparent; }
 .themeDark.placementLeft .arrow::before { border-left-color: themeDarkBackgroundColor; }
+
+/* State */
+
+.stateHideArrow .arrow {
+  display: none;
+}
