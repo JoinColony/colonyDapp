@@ -16,7 +16,7 @@ import type {
 } from './types';
 
 import IPFSNode from '../ipfs';
-import { Store, KVStore } from './stores';
+import { Store, FeedStore, KVStore } from './stores';
 
 const generateId = () => generate(urlDictionary, 21);
 
@@ -49,7 +49,7 @@ const STORE_CLASSES = {
   // TODO: more to come
   counter: Store,
   eventlog: Store,
-  feed: Store,
+  feed: FeedStore,
   docstore: Store,
 };
 
