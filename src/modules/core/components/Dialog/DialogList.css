@@ -5,14 +5,13 @@
   height: 64px;
   width: 100%;
   border: none;
-  border-bottom: 1px solid var(--grey-blue-0);
   border-top: 1px solid var(--grey-blue-0);
   background: none;
   text-align: left;
   cursor: pointer;
 
-  &:only-of-type {
-    border-bottom-color: transparent;
+  &:last-of-type {
+    border-bottom: 1px solid var(--grey-blue-0);
   }
 }
 
@@ -23,4 +22,8 @@
 .rowIcon {
   flex: 0 0 50px;
   text-align: center;
+}
+
+.container {
+  padding: 0px 30px;
 }

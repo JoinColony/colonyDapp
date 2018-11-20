@@ -8,6 +8,7 @@ import * as yup from 'yup';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import ExternalLink from '~core/ExternalLink';
 import CopyableAddress from '~core/CopyableAddress';
 import MaskedAddress from '~core/MaskedAddress';
 import Dialog, { DialogSection, DialogList } from '~core/Dialog';
@@ -49,6 +50,18 @@ const MSG = defineMessages({
     id: 'users.ClaimProfileDialog.depositEther',
     defaultMessage: 'Directly Deposit Ether',
   },
+  buyEther: {
+    id: 'users.ClaimProfileDialog.buyEther',
+    defaultMessage: 'Buy Ether on Coinbase',
+  },
+  continue: {
+    id: 'users.ClaimProfileDialog.continue',
+    defaultMessage: 'Continue to Coinbase',
+  },
+  depositWallet: {
+    id: 'users.ClaimProfileDialog.depositWallet',
+    defaultMessage: 'And deposit into your wallet',
+  },
 });
 
 type FormValues = {};
@@ -70,11 +83,20 @@ const ClaimProfileDialog = ({ cancel, close, walletAddress }: Props) => {
   const listItems = [
     {
       title: MSG.depositEther,
-      subtitle: <MaskedAddress address={walletAddress} />,
+      subtitleElement: <MaskedAddress address={walletAddress} />,
       icon: 'wallet',
-      extra: (
-        <CopyableAddress showAddress={false}>{walletAddress}</CopyableAddress>
+      extra: <CopyableAddress hideAddress>{walletAddress}</CopyableAddress>,
+    },
+    {
+      title: MSG.buyEther,
+      subtitleElement: (
+        <Heading
+          appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+          text={MSG.depositEther}
+        />
       ),
+      icon: 'coinbase',
+      extra: <ExternalLink text={MSG.continue} href="/coinbase" />,
     },
   ];
 
