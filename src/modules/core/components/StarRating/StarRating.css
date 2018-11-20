@@ -1,0 +1,20 @@
+.baseStar {
+  composes: sizeTiny themePrimary from "~core/Icon/Icon.css";
+
+  & + .baseStar {
+    margin-left: 3px;
+  }
+}
+
+.ratingStarSelected {
+  composes: baseStar;
+}
+
+.ratingStarUnselected {
+  composes: baseStar;
+
+  & svg {
+    fill: var(--temp-grey-1);
+    stroke: var(--temp-grey-1);
+  }
+}

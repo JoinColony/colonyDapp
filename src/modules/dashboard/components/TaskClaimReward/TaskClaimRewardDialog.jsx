@@ -10,8 +10,8 @@ import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
+import StarRating from '~core/StarRating';
 
 import styles from './TaskClaimRewardDialog.css';
 
@@ -99,29 +99,7 @@ const TaskClaimRewardDialog = ({
           <FormattedMessage {...MSG.yourRating} />
         </p>
         <div className={styles.stars}>
-          {/*
-           * @NOTE No logic has been applied to the rating icons
-           *
-           * This is because #556 adds a core `StarRating` component which will
-           * replace this (and has the rating logic built it)
-           *
-           * Tip: use `taskReward.rating` for this
-           */}
-          <Icon
-            name="star"
-            title="star"
-            appearance={{ size: 'tiny', theme: 'primary' }}
-          />
-          <Icon
-            name="star"
-            title="star"
-            appearance={{ size: 'tiny', theme: 'primary' }}
-          />
-          <Icon
-            name="star"
-            title="star"
-            appearance={{ size: 'tiny', theme: 'primary' }}
-          />
+          <StarRating rating={rating} />
         </div>
       </section>
       {nativeTokenPayout &&

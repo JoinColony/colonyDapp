@@ -3,31 +3,13 @@
 import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { Radio } from '~core/Fields';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
+import StarRating from '~core/StarRating';
 
 import styles from './StarRatingRadio.css';
-
-const MSG = defineMessages({
-  ratingStar: {
-    id: 'dashboard.TaskRatingDialogs.ratingStar',
-    defaultMessage: 'Rating Star',
-  },
-});
-
-const getUnselectedProps = (isUnselected: boolean) => {
-  if (isUnselected) {
-    return {
-      className: styles.ratingStarUnselected,
-    };
-  }
-  return {
-    appearance: { size: 'tiny', theme: 'primary' },
-  };
-};
 
 type Props = {
   name: string,
@@ -74,21 +56,7 @@ const StarRatingRadio = ({
         </p>
       </div>
       <div className={styles.ratingStars}>
-        <Icon
-          name="star"
-          title={MSG.ratingStar}
-          appearance={{ size: 'tiny', theme: 'primary' }}
-        />
-        <Icon
-          name="star"
-          title={MSG.ratingStar}
-          {...getUnselectedProps(value === 1)}
-        />
-        <Icon
-          name="star"
-          title={MSG.ratingStar}
-          {...getUnselectedProps(value === 1 || value === 2)}
-        />
+        <StarRating rating={value} />
       </div>
     </div>
   </Radio>

@@ -185,7 +185,11 @@ const Task = ({
       </section>
       <div className={styles.activityContainer}>
         <section className={styles.activity}>
-          <TaskFeed feedItems={task.feedItems} currentUser={user} />
+          <TaskFeed
+            feedItems={task.feedItems}
+            currentUser={user}
+            isRevealEnded={task.finalized}
+          />
         </section>
         <section className={styles.commentBox}>
           <TaskComments claimedProfile={userClaimedProfile} />
