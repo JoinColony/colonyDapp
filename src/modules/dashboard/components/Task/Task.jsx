@@ -197,4 +197,4 @@ const Task = ({
 
 Task.displayName = displayName;
 
-export default withDialog()(Task);
+export default Task;
