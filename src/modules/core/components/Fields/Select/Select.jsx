@@ -279,6 +279,7 @@ class Select extends Component<Props, State> {
       isSubmitting,
       setError,
       name,
+      connect,
       ...props
     } = this.props;
     const { isOpen, selectedOption } = this.state;

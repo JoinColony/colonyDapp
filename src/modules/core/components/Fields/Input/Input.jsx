@@ -89,6 +89,7 @@ const Input = ({
   setValue,
   setError,
   status,
+  connect,
   ...props
 }: Props) => {
   const inputProps = {

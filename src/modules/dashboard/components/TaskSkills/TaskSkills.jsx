@@ -7,18 +7,18 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
 
-import styles from './TaskDomains.css';
+import styles from './TaskSkills.css';
 
-import { domainMocks } from './__datamocks__/mockDomains';
+import skillMocks from './__datamocks__/mockSkills';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.TaskDomains.title',
-    defaultMessage: 'Domain',
+    id: 'dashboard.TaskSkills.title',
+    defaultMessage: 'Skills',
   },
-  selectDomain: {
-    id: 'dashboard.TaskDomains.selectDomain',
-    defaultMessage: `{domainSelected, select,
+  selectSkill: {
+    id: 'dashboard.TaskSkills.selectSkill',
+    defaultMessage: `{skillSelected, select,
       undefined {Add +}
       other {Modify}
     }`,
@@ -30,37 +30,36 @@ type Props = {
 };
 
 type State = {
-  selectedDomainId: number | void,
+  selectedSkillId: number | void,
 };
 
-class TaskDomains extends Component<Props, State> {
-  static displayName = 'dashboard.TaskDomains';
+class TaskSkills extends Component<Props, State> {
+  static displayName = 'dashboard.TaskSkills';
 
   state = {
-    selectedDomainId: undefined,
+    selectedSkillId: undefined,
   };
 
-  handleSetDomain = (domainValue: Object) => {
-    this.setState({ selectedDomainId: domainValue.id });
+  handleSetSkill = (skillValue: Object) => {
+    this.setState({ selectedSkillId: skillValue.id });
     /*
      * @TODO This should call (most likely) an action creator, or otherwise,
      * do something the domain value
      */
     /* eslint-disable-next-line no-console */
-    return console.log(TaskDomains.displayName, domainValue);
+    return console.log(TaskSkills.displayName, skillValue);
   };
 
   render() {
     const { isTaskCreator } = this.props;
-    const { selectedDomainId } = this.state;
+    const { selectedSkillId } = this.state;
     return (
       <div className={styles.main}>
         {isTaskCreator && (
           <ItemsList
-            list={domainMocks}
-            itemDisplayPrefix="#"
-            handleSetItem={this.handleSetDomain}
-            name="taskDomains"
+            list={skillMocks}
+            handleSetItem={this.handleSetSkill}
+            name="taskSkills"
             connect={false}
           >
             <div className={styles.controls}>
@@ -70,8 +69,8 @@ class TaskDomains extends Component<Props, State> {
               />
               <Button
                 appearance={{ theme: 'blue', size: 'small' }}
-                text={MSG.selectDomain}
-                textValues={{ domainSelected: selectedDomainId }}
+                text={MSG.selectSkill}
+                textValues={{ skillSelected: selectedSkillId }}
               />
             </div>
           </ItemsList>
@@ -81,4 +80,4 @@ class TaskDomains extends Component<Props, State> {
   }
 }
 
-export default TaskDomains;
+export default TaskSkills;

@@ -22,6 +22,7 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
+import TaskSkills from '~dashboard/TaskSkills';
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -35,14 +36,6 @@ const MSG = defineMessages({
   backButton: {
     id: 'dashboard.Task.backButton',
     defaultMessage: 'Go to {colonyName}',
-  },
-  add: {
-    id: 'dashboard.Task.add',
-    defaultMessage: 'Add +',
-  },
-  skill: {
-    id: 'dashboard.Task.skill',
-    defaultMessage: 'Skill',
   },
   completed: {
     id: 'dashboard.Task.completed',
@@ -124,13 +117,7 @@ const Task = ({
           <TaskDomains isTaskCreator={preventEdit} />
         </div>
         <div className={styles.editor}>
-          <Heading appearance={{ size: 'small' }} text={MSG.skill} />
-          {preventEdit && (
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={MSG.add}
-            />
-          )}
+          <TaskSkills isTaskCreator={preventEdit} />
         </div>
         <div className={styles.editor}>
           <TaskDate isTaskCreator={preventEdit} />

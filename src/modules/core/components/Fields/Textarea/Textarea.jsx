@@ -119,6 +119,7 @@ class Textarea extends Component<Props> {
       setError,
       setValue,
       status,
+      connect,
       ...props
     } = this.props;
 
