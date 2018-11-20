@@ -3,11 +3,13 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { InitialTaskType } from './InitialTask.jsx';
+
 import ColonyGrid from '~core/ColonyGrid';
+import TaskList from '~dashboard/TaskList';
+import InitialTask from './InitialTask.jsx';
 
 import styles from './TabMyTasks.css';
-
-import TaskList from '../TaskList';
 
 import mockColonies from './__datamocks__/mockColonies';
 
@@ -23,9 +25,19 @@ type Props = {
   // TODO: Type better when data structure is known
   /** Tasks for MyTasks table */
   tasks: Array<Object>,
+  initialTask: InitialTaskType,
+  userClaimedProfile: boolean,
 };
 
-const TabMyTasks = ({ tasks }: Props) => {
+const TabMyTasks = ({ tasks, initialTask, userClaimedProfile }: Props) => {
+  if (!userClaimedProfile) {
+    return (
+      <Fragment>
+        <InitialTask task={initialTask} />
+        {tasks && tasks.length ? <TaskList tasks={tasks} /> : null}
+      </Fragment>
+    );
+  }
   if (tasks && tasks.length) {
     return <TaskList tasks={tasks} />;
   }
