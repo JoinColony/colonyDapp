@@ -13,9 +13,9 @@ type DialogListItem = {
   /** Text in the first row of the second column */
   title: MessageDescriptor | string,
   /** Text in the second row of the second column */
-  subtitle: MessageDescriptor | string | Node,
+  subtitleElement: Node,
   /** Icon to be rendered in the first column */
-  icon?: string,
+  icon: string,
   /** This can be whatever other component since we
    * sometimes require a button but other times s link */
   extra?: Node,
@@ -28,9 +28,9 @@ type Props = {
 const displayName = 'DialogList';
 
 const DialogList = ({ items }: Props) => (
-  <div>
-    {items.map(({ title, subtitle, icon, extra }) => (
-      <div key={`${title}`} className={styles.main}>
+  <div className={styles.container}>
+    {items.map(({ title, subtitleElement, icon, extra }) => (
+      <div key={`element${icon}`} className={styles.main}>
         {icon && (
           <div className={styles.rowIcon}>
             <Icon name={icon} title={title} />
@@ -41,14 +41,7 @@ const DialogList = ({ items }: Props) => (
             appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
             text={title}
           />
-          {subtitle.id ? (
-            <Heading
-              appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-              text={subtitle}
-            />
-          ) : (
-            subtitle
-          )}
+          {subtitleElement}
         </div>
         {extra}
       </div>
