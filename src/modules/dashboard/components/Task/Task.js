@@ -15,14 +15,15 @@ const enhance = compose(
     const task = mockTask;
     const user = userMock;
     const isTaskCreator =
-      task.creator.toLowerCase() === user.walletAddress.toLowerCase() || false;
+      task.creator.toLowerCase() === user.profile.walletAddress.toLowerCase() ||
+      false;
     return {
       task,
       user,
       isTaskCreator,
       preventEdit:
         !!task && !task.currentState === 'finalized' && isTaskCreator,
-      userClaimedProfile: !!(user && user.username),
+      userClaimedProfile: !!(user && user.profile.username),
     };
   }),
 );

@@ -22,7 +22,7 @@ import { DDB } from '../../../lib/database';
 import { KVStore } from '../../../lib/database/stores';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
-
+import { NOT_FOUND_ROUTE } from '../../../routes';
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 import { userProfileStore } from '../stores';
 

@@ -42,7 +42,7 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     }
     case USER_UPLOAD_AVATAR_SUCCESS: {
       const { hash } = action.payload;
-      return state ? state.set('avatar', hash) : state;
+      return state ? state.setIn(['profile', 'avatar'], hash) : state;
     }
     default:
       return state;
