@@ -63,15 +63,17 @@ class AvatarDropdownPopover extends Component<Props> {
     } = this.props;
     return (
       <DropdownMenuSection separator>
-        <DropdownMenuItem>
-          <DialogLink to="CreateUsernameDialog">
-            {({ open }) => (
-              <button type="button" onClick={open}>
-                <FormattedMessage {...MSG.buttonGetStarted} />
-              </button>
-            )}
-          </DialogLink>
-        </DropdownMenuItem>
+        {!username && (
+          <DropdownMenuItem>
+            <DialogLink to="CreateUsernameDialog">
+              {({ open }) => (
+                <button type="button" onClick={open}>
+                  <FormattedMessage {...MSG.buttonGetStarted} />
+                </button>
+              )}
+            </DialogLink>
+          </DropdownMenuItem>
+        )}
         {username && (
           <DropdownMenuItem>
             <NavLink to={`/user/${username}`} text={MSG.myProfile} />
