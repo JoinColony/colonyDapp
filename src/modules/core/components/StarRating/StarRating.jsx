@@ -39,8 +39,8 @@ const StarRating = ({ highestPossible = 3, rating }: Props) => (
           name="star"
           title={MSG.starCountTitle}
           titleValues={{
-            rating: rating.toString(),
-            highestPossible: highestPossible.toString(),
+            rating,
+            highestPossible,
           }}
           className={
             rating >= possibleValue

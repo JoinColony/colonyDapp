@@ -30,7 +30,7 @@ type Props = {
   /** Html title for the icon element */
   title: string | MessageDescriptor,
   /** Values for html title (react-intl interpolation) */
-  titleValues?: { [string]: string },
+  titleValues?: { [string]: string | number },
   /** SVG viewbox string */
   viewBox?: string,
   /** @ignore injected by `react-intl` */
