@@ -1,15 +1,15 @@
 {
   "linters": {
     "src/**/*.{js,jsx}": [
-      "yarn lint",
+      "eslint --fix",
       "git add"
     ],
     "src/**/*.css": [
-      "yarn stylelint",
+      "stylelint --fix",
       "git add"
     ],
     "integration-testing/**/*.js": [
-      "yarn lint",
+      "eslint --fix",
       "git add"
     ]
   },
