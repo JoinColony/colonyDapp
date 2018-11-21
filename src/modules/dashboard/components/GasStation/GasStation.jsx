@@ -8,6 +8,7 @@ import type { TransactionType } from '~types/transaction';
 import { WALLET_ROUTE } from '~routes';
 
 import { getMainClasses } from '~utils/css';
+import CardList from '~core/CardList';
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -75,11 +76,11 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
     </div>
     <div className={styles.transactionsContainer}>
       {transactions && transactions.length > 0 ? (
-        <div>
-          Transaction list goes here
+        <CardList appearance={{ numCols: '1' }}>
+          <p>Transaction list goes here</p>
           {/* @TODO: Transaction card list for issue
             #472 https://github.com/JoinColony/colonyDapp/issues/472 */}
-        </div>
+        </CardList>
       ) : (
         <Heading
           appearance={{ margin: 'none', size: 'normal' }}
