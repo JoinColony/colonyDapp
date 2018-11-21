@@ -30,8 +30,8 @@ const displayName = 'DialogList';
 
 const DialogList = ({ items }: Props) => (
   <div className={styles.container}>
-    {items.map(({ title, subtitleElement, icon, extra, imageUrl }) => (
-      <div key={`element${icon}`} className={styles.main}>
+    {items.map(({ title, subtitleElement, icon, extra, imageUrl }, i) => (
+      <div key={`element${i}`} className={styles.main}>
         <div className={styles.rowIcon}>
           {icon && <Icon name={icon} title={title} />}
           {imageUrl && <img src={imageUrl} alt="logo" />}

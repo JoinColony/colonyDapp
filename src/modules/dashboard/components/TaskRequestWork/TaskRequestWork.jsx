@@ -39,12 +39,16 @@ const TaskRequestWork = ({
     text={MSG.requestWork}
     disabled={isTaskCreator}
     onClick={() => {
+      console.log('TaskRequestWork');
+      console.log(claimedProfile);
       if (!claimedProfile) {
         return openDialog('UnfinishedProfileDialog')
           .afterClosed()
-          .then(() => openDialog('CreateUsernameDialog'));
+          .then(() => openDialog('ClaimProfileDialog'));
+        /*           .afterClosed()
+          .then(() => openDialog('ENSNameDialog')); */
       }
-      return openDialog('ClaimProfileDialog');
+      return false;
     }}
   />
 );
