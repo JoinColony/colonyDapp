@@ -3,6 +3,7 @@
 import type { Saga } from 'redux-saga';
 
 import { delay } from 'redux-saga';
+
 import {
   call,
   put,
@@ -137,11 +138,10 @@ function* fetchProfile(action: Action): Saga<void> {
 }
 
 function* validateUsername(action: Action): Saga<void> {
-  // Debounce 300ms
-  yield call(delay, 300);
   const { username } = action.payload;
+  yield call(delay, 300);
 
-  const nameHash = getHashedENSDomainString(username, 'user');
+  const nameHash = yield call(getHashedENSDomainString, username, 'user');
 
   const getAddressForENSHash = yield call(
     getNetworkMethod,
@@ -152,17 +152,14 @@ function* validateUsername(action: Action): Saga<void> {
     { nameHash },
   );
 
-  // If we found a value for `ensAddress`, then this name was previously registered.
   if (ensAddress) {
     yield putError(
       USERNAME_VALIDATE_ERROR,
       new Error('ENS address already exists'),
     );
-  } else {
-    yield put({
-      type: USERNAME_VALIDATE_SUCCESS,
-    });
+    return;
   }
+  yield put({ type: USERNAME_VALIDATE_SUCCESS });
 }
 
 function* createUsername(action: Action): Saga<void> {

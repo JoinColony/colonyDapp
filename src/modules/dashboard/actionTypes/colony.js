@@ -1,4 +1,5 @@
 /* @flow */
+/* eslint-disable max-len */
 
 import ns from '../namespace';
 
@@ -17,3 +18,7 @@ export const TOKEN_INFO_FETCH_SUCCESS = `${ns}/TOKEN_INFO_FETCH_SUCCESS`;
 export const COLONY_CREATE_LABEL = `${ns}/COLONY_CREATE_LABEL`;
 export const COLONY_CREATE_LABEL_ERROR = `${ns}/COLONY_CREATE_LABEL_ERROR`;
 export const COLONY_CREATE_LABEL_SUCCESS = `${ns}/COLONY_CREATE_LABEL_SUCCESS`;
+
+export const COLONY_DOMAIN_VALIDATE = `${ns}/COLONY_DOMAIN_VALIDATE`;
+export const COLONY_DOMAIN_VALIDATE_SUCCESS = `${ns}/COLONY_DOMAIN_VALIDATE_SUCCESS`;
+export const COLONY_DOMAIN_VALIDATE_ERROR = `${ns}/COLONY_DOMAIN_VALIDATE_ERROR`;

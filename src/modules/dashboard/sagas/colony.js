@@ -7,31 +7,30 @@ import ColonyNetworkClient from '@colony/colony-js-client';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { delay } from 'redux-saga';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
+
+import type { Action } from '~types/index';
 
 import { putError } from '~utils/saga/effects';
-import { DASHBOARD_ROUTE } from '~routes';
+import { getHashedENSDomainString } from '~utils/ens';
 
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
 
+import { getNetworkMethod } from '../../core/sagas/utils';
+
 import {
   COLONY_CREATE,
-  COLONY_CREATE_SUCCESS,
+  COLONY_DOMAIN_VALIDATE,
+  COLONY_DOMAIN_VALIDATE_SUCCESS,
+  COLONY_DOMAIN_VALIDATE_ERROR,
   TOKEN_CREATE,
   TOKEN_INFO_FETCH,
   TOKEN_INFO_FETCH_ERROR,
   TOKEN_INFO_FETCH_SUCCESS,
 } from '../actionTypes';
-import { createColony, createToken } from '../actionCreators';
 
-/**
- * On successful colony creation, redirect to the dashboard.
- */
-function* createColonySuccess(): Saga<void> {
-  yield put(replace(DASHBOARD_ROUTE));
-}
+import { createColony, createToken } from '../actionCreators';
 
 /**
  * Rather than use e.g. the Etherscan loader and make more/larger requests than
@@ -105,13 +104,36 @@ function* createTokenSaga({
   yield put(createToken({ name, symbol }));
 }
 
+function* validateColonyDomain(action: Action): Saga<void> {
+  const { ensName } = action.payload;
+  yield call(delay, 300);
+
+  const nameHash = yield call(getHashedENSDomainString, ensName, 'colony');
+
+  const getAddressForENSHash = yield call(
+    getNetworkMethod,
+    'getAddressForENSHash',
+  );
+  const { ensAddress } = yield call(
+    [getAddressForENSHash, getAddressForENSHash.call],
+    { nameHash },
+  );
+
+  if (ensAddress) {
+    yield putError(
+      COLONY_DOMAIN_VALIDATE_ERROR,
+      new Error('ENS address already exists'),
+    );
+    return;
+  }
+  yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS });
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(TOKEN_CREATE, createTokenSaga);
-
-  yield takeEvery(COLONY_CREATE_SUCCESS, createColonySuccess);
-
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(TOKEN_INFO_FETCH, getTokenInfo);
+  yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
 }
