@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { UserRecord } from '~types/index';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
@@ -61,7 +63,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  currentUser: Object,
+  currentUser: UserRecord,
   userClaimedProfile?: boolean,
 };
 
