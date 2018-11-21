@@ -24,6 +24,9 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
+import taskMock from './__datamocks__/mockTask';
+import userMocks from './__datamocks__/mockUsers';
+
 const MSG = defineMessages({
   assignmentFunding: {
     id: 'dashboard.Task.assignmentFunding',
@@ -53,6 +56,19 @@ type Props = {
   userClaimedProfile?: boolean,
 };
 
+const availableTokens = [
+  {
+    symbol: 'ETH',
+    isEth: true,
+    isNative: false,
+  },
+  {
+    symbol: 'CLNY',
+    isEth: false,
+    isNative: true,
+  },
+];
+
 const displayName = 'dashboard.Task';
 
 const Task = ({
@@ -76,7 +92,23 @@ const Task = ({
             <Button
               appearance={{ theme: 'blue' }}
               text={MSG.details}
-              onClick={() => openDialog('TaskEditDialog', {})}
+              onClick={() =>
+                openDialog('TaskEditDialog', {
+                  assignee: taskMock.assignee,
+                  availableTokens,
+                  maxTokens: 2,
+                  payouts: taskMock.payouts.map(payout => ({
+                    token: `${availableTokens.indexOf(
+                      availableTokens.find(
+                        token => token.symbol === payout.symbol,
+                      ),
+                    )}`,
+                    amount: payout.amount,
+                  })),
+                  reputation: taskMock.reputation,
+                  users: userMocks,
+                })
+              }
             />
           )}
         </header>

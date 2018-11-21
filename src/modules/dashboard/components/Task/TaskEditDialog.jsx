@@ -3,7 +3,6 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
-import nanoid from 'nanoid';
 
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -15,8 +14,7 @@ import Heading from '~core/Heading';
 import Payout from './Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 
-import userMocks from './__datamocks__/mockUsers';
-import taskMock from './__datamocks__/mockTask';
+import type { UserRecord } from '~types/';
 
 import styles from './TaskEditDialog.css';
 
@@ -51,60 +49,77 @@ type State = {
   touched: boolean,
 };
 
-type Props = {
-  /* This will soon get the current payout array if there's one set already
-  passed in as props */
-  cancel: () => void,
+type Token = {
+  symbol: string,
+  isEth?: boolean,
+  isNative?: boolean,
 };
 
-const validateFunding = (): any =>
-  yup.object().shape({
-    payouts: yup
-      .array()
-      .of(
-        yup.object().shape({
-          symbol: yup.string().required(),
-          amount: yup.number().required(),
-        }),
-      )
-      .max(2),
-    // For the MVP we decided to pick from ETH and CLNY
-  });
+type Props = {
+  assignee?: UserRecord,
+  availableTokens: Array<Token>,
+  maxTokens?: number,
+  payouts?: Array<Object>,
+  reputation?: number,
+  users: Array<UserRecord>,
+  cancel: () => void,
+};
 
 const filter = (data, filterValue) =>
   data.filter(user =>
     user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
+const canAddTokens = (values, maxTokens) =>
+  !maxTokens || (values.payouts && values.payouts.length < maxTokens);
+
 class TaskEditDialog extends Component<Props, State> {
   static displayName = 'dashboard.task.taskEditDialog';
 
-  state = {
-    touched: false,
+  addTokenFunding = (values: { payouts?: Array<any> }, helpers: () => void) => {
+    const { maxTokens } = this.props;
+    if (canAddTokens(values, maxTokens)) helpers.push({});
   };
 
-  addTokenFunding = (values: { payouts: Array<any> }, helpers: () => void) => {
-    // As far as I understand we are using ETH and CLNY for the initial release.
-    if (values.payouts.length < 2) {
-      helpers.push({
-        symbol: '',
-        amount: undefined,
-        isNative: false,
-        isEth: false,
-      });
-
-      this.setState({
-        touched: true,
-      });
-    }
+  setPayload = (action: Object, { assignee, payouts }: Object) => {
+    const { availableTokens } = this.props;
+    return {
+      ...action,
+      payload: {
+        assignee,
+        payouts: payouts.map(({ token, amount }) => ({
+          amount,
+          token: availableTokens[Number(token)],
+        })),
+      },
+    };
   };
 
   render() {
-    const { cancel } = this.props;
-    const { touched } = this.state;
-    const { reputation, payouts } = taskMock;
-
-    const assignee = null;
+    const {
+      cancel,
+      reputation,
+      payouts,
+      assignee,
+      maxTokens,
+      availableTokens,
+      users,
+    } = this.props;
+    const validateFunding = yup.object().shape({
+      payouts: yup
+        .array()
+        .of(
+          yup.object().shape({
+            token: yup.string().required(),
+            amount: yup.string().required(),
+          }),
+        )
+        .max(2), // only ETH and CLNY for MVP
+    });
+    const tokenOptions = availableTokens.map(({ symbol }, i) => ({
+      value: `${i}`,
+      label: symbol,
+    }));
 
     return (
       <FullscreenDialog cancel={cancel}>
@@ -112,10 +127,11 @@ class TaskEditDialog extends Component<Props, State> {
           submit="CREATE_COOL_THING"
           success="COOL_THING_CREATED"
           error="COOL_THING_CREATE_ERROR"
-          initialValues={{ payouts, assignee }}
-          validationSchema={validateFunding()}
+          initialValues={{ payouts: payouts || [], assignee }}
+          validationSchema={validateFunding}
+          setPayload={this.setPayload}
         >
-          {({ status, values }) => (
+          {({ status, values, dirty, isSubmitting }) => (
             <Fragment>
               <FormStatus status={status} />
               <DialogBox>
@@ -129,7 +145,7 @@ class TaskEditDialog extends Component<Props, State> {
                     isResettable
                     itemComponent={ItemDefault}
                     label={MSG.selectAssignee}
-                    data={userMocks}
+                    data={users}
                     filter={filter}
                     placeholder={MSG.search}
                   />
@@ -144,31 +160,39 @@ class TaskEditDialog extends Component<Props, State> {
                             appearance={{ size: 'medium' }}
                             text={MSG.titleFunding}
                           />
-                          <Button
-                            appearance={{ theme: 'blue', size: 'small' }}
-                            text={MSG.add}
-                            onClick={() =>
-                              this.addTokenFunding(values, arrayHelpers)
-                            }
-                          />
+                          {canAddTokens(values, maxTokens) && (
+                            <Button
+                              appearance={{ theme: 'blue', size: 'small' }}
+                              text={MSG.add}
+                              onClick={() =>
+                                this.addTokenFunding(values, arrayHelpers)
+                              }
+                            />
+                          )}
                         </div>
                         {values.payouts &&
                           values.payouts.map((payout, index) => {
-                            const { amount, symbol, isNative, isEth } = payout;
+                            const { amount, token: tokenIndex } = payout;
+                            const token =
+                              availableTokens[Number(tokenIndex)] || {};
                             return (
                               <Payout
-                                key={nanoid(index)}
+                                // eslint-disable-next-line react/no-array-index-key
+                                key={index}
+                                name={`payouts.${index}`}
                                 amount={amount}
-                                symbol={symbol}
-                                reputation={reputation}
-                                isNative={isNative}
-                                isEth={isEth}
+                                symbol={token.symbol}
+                                reputation={reputation || 0}
+                                isNative={token.isNative}
+                                isEth={token.isEth}
+                                tokenOptions={tokenOptions}
                               />
                             );
                           })}
                       </div>
                     )}
                   />
+                  {JSON.stringify(values)}
                 </DialogSection>
               </DialogBox>
               <div className={styles.buttonContainer}>
@@ -181,7 +205,7 @@ class TaskEditDialog extends Component<Props, State> {
                   appearance={{ theme: 'primary', size: 'large' }}
                   text={{ id: 'button.confirm' }}
                   type="submit"
-                  disabled={touched}
+                  disabled={!dirty || isSubmitting}
                 />
               </div>
             </Fragment>
