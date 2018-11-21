@@ -20,8 +20,9 @@
 }
 
 .rowIcon {
-  flex: 0 0 50px;
-  text-align: center;
+  margin: 0 10px;
+  max-height: 36px;
+  width: 36px;
 }
 
 .container {

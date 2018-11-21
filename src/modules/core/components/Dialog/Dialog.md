@@ -2,6 +2,7 @@ The Dialog component is a wrapper for all modal-like components which function a
 
 ```js static
 // Dialog requires the `cancel` function from your outer component to work!
+
 <Dialog cancel={cancel} shouldCloseOnOverlayClick={false}>
   <DialogSection>
     Here is stuff

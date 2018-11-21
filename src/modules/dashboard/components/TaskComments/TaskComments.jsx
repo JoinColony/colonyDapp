@@ -81,7 +81,9 @@ const TaskComments = ({ claimedProfile, openDialog }: Props) => {
     if (!claimedProfile) {
       return openDialog('UnfinishedProfileDialog')
         .afterClosed()
-        .then(() => openDialog('ClaimProfileDialog'));
+        .then(() => openDialog('ClaimProfileDialog'))
+        .afterClosed()
+        .then(() => openDialog('ENSNameDialog'));
     }
     return false;
   };

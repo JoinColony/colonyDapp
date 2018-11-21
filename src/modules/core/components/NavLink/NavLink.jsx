@@ -11,6 +11,8 @@ import { NavLink as NavLinkComponent } from 'react-router-dom';
 import styles from './NavLink.css';
 
 type Props = {
+  /** className to add to the existing classNames */
+  className?: string,
   /** className to add to the existing classNames when `to` matches the current route (react-router's "activeClassName") */
   activeClassName?: string,
   /** NavLink children to render inside the link */
@@ -32,13 +34,19 @@ const NavLink = ({
   text,
   textValues,
   to,
+  className,
   ...linkProps
 }: Props) => {
   const linkText =
     typeof text == 'string' ? text : text && formatMessage(text, textValues);
 
   return (
-    <NavLinkComponent to={to} activeClassName={activeClassName} {...linkProps}>
+    <NavLinkComponent
+      className={className}
+      to={to}
+      activeClassName={activeClassName}
+      {...linkProps}
+    >
       {linkText || children}
     </NavLinkComponent>
   );
