@@ -15,7 +15,9 @@ import styles from './InitialTask.css';
 
 export type InitialTaskType = {
   title: MessageDescriptor,
-  titleValues?: Object,
+  titleValues?: {
+    [string]: string | number | boolean,
+  },
   walletAddress: string,
 };
 
