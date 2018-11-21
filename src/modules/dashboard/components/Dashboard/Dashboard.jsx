@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { UserRecord } from '~types/index';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
@@ -54,9 +56,16 @@ const MSG = defineMessages({
     id: 'dashboard.Dashboard.filterOptionCompleted',
     defaultMessage: 'Completed',
   },
+  initialTaskTitle: {
+    id: 'dashboard.Dashboard.initialTaskTitle',
+    defaultMessage: 'Get started with Colony',
+  },
 });
 
-type Props = {};
+type Props = {
+  currentUser: UserRecord,
+  userClaimedProfile?: boolean,
+};
 
 type State = {
   filterOption: 'all' | 'created' | 'assigned' | 'completed',
@@ -89,6 +98,7 @@ class Dashboard extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
+    const { currentUser, userClaimedProfile = false } = this.props;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -115,7 +125,14 @@ class Dashboard extends Component<Props, State> {
               </Tab>
             </TabList>
             <TabPanel>
-              <TabMyTasks tasks={mockTasks} />
+              <TabMyTasks
+                tasks={mockTasks}
+                initialTask={{
+                  title: MSG.initialTaskTitle,
+                  walletAddress: currentUser.walletAddress,
+                }}
+                userClaimedProfile={userClaimedProfile}
+              />
             </TabPanel>
             <TabPanel>
               <h2>This should not be visible</h2>
