@@ -15,6 +15,11 @@ export type InProps = {
 const enhance: HOC<*, InProps> = compose(
   withProps(() => ({
     balance: 0.25,
+    /*
+     * @TODO: handle the logic for `showClaimInfoCard`
+     * i.e. User has claimed profile, but not signed any transactions yet
+     */
+    showClaimInfoCard: !!mockUser.username,
     transactions: mockTransactions,
     walletAddress: mockUser.walletAddress,
   })),
