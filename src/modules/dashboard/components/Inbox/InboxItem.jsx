@@ -82,29 +82,30 @@ const InboxItem = ({
             size="xxs"
             walletAddress={user.walletAddress}
             username={user.username}
-            className={styles.UserAvatar}
+            className={styles.userAvatar}
           />
         )}
 
-        <FormattedMessage
-          className={styles.inboxAction}
-          {...MSG[event]}
-          values={{
-            amount: makeInboxDetail(
-              amount,
-              value => `${value.unit}${value.value}`,
-            ),
-            colony: makeInboxDetail(colonyName),
-            comment: makeInboxDetail(comment),
-            domain: makeInboxDetail(domainName),
-            other: makeInboxDetail(otherUser),
-            task: makeInboxDetail(taskName),
-            time: makeInboxDetail(dueDate, value => (
-              <TimeRelative value={value} />
-            )),
-            user: makeInboxDetail(user, value => value.username),
-          }}
-        />
+        <span className={styles.inboxAction}>
+          <FormattedMessage
+            {...MSG[event]}
+            values={{
+              amount: makeInboxDetail(
+                amount,
+                value => `${value.unit}${value.value}`,
+              ),
+              colony: makeInboxDetail(colonyName),
+              comment: makeInboxDetail(comment),
+              domain: makeInboxDetail(domainName),
+              other: makeInboxDetail(otherUser),
+              task: makeInboxDetail(taskName),
+              time: makeInboxDetail(dueDate, value => (
+                <TimeRelative value={value} />
+              )),
+              user: makeInboxDetail(user, value => value.username),
+            }}
+          />
+        </span>
 
         <span className={styles.additionalDetails}>
           {colonyName && domainName ? (
