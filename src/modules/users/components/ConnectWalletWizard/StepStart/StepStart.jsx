@@ -3,9 +3,11 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
+import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
+import { Form } from '~core/Fields';
 import DecisionHub, { DecisionOption } from '~core/DecisionHub';
 import { CREATE_WALLET_ROUTE } from '~routes';
 
@@ -121,7 +123,7 @@ const options = [
   },
 ];
 
-if (process.env.NODE_ENV === 'development') {
+if (isDev) {
   options.push({
     value: 'trufflepig',
     title: MSG.trufflepigTitle,
@@ -137,35 +139,41 @@ const createWalletOption = {
   icon: 'hugging',
 };
 
-const StepStart = () => (
-  <main className={styles.content}>
-    <div className={styles.title}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
-    </div>
-    <div className={styles.subtitle}>
-      <Heading
-        appearance={{ size: 'normal', weight: 'thin' }}
-        text={MSG.subTitle}
-      />
-    </div>
-    <DecisionHub name="method" options={options} />
-    <div className={styles.createWalletLink}>
-      <DecisionOption
-        appearance={{ theme: 'alt' }}
-        name="create"
-        option={createWalletOption}
-        link={CREATE_WALLET_ROUTE}
-      />
-    </div>
-  </main>
+type Props = WizardProps<FormValues>;
+
+const StepStart = ({ nextStep, wizardValues }: Props) => (
+  <Form onSubmit={nextStep} initalValues={wizardValues}>
+    <main className={styles.content}>
+      <div className={styles.title}>
+        <Heading
+          appearance={{ size: 'medium', weight: 'thin' }}
+          text={MSG.heading}
+        />
+      </div>
+      <div className={styles.subtitle}>
+        <Heading
+          appearance={{ size: 'normal', weight: 'thin' }}
+          text={MSG.subTitle}
+        />
+      </div>
+      <DecisionHub name="method" options={options} />
+      <div className={styles.createWalletLink}>
+        <DecisionOption
+          appearance={{ theme: 'alt' }}
+          name="create"
+          option={createWalletOption}
+          link={CREATE_WALLET_ROUTE}
+        />
+      </div>
+    </main>
+  </Form>
 );
 
 StepStart.displayName = displayName;
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+// export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
+//   nextStep();
 
-export const Step = StepStart;
+// export const Step = StepStart;
+
+export default StepStart;

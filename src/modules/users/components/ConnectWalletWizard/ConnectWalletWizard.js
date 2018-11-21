@@ -10,12 +10,12 @@ import type { WalletMethod } from '../../types';
 
 import ConnectWalletWizard from './ConnectWalletWizard.jsx';
 
-import * as StepStart from './StepStart';
-import * as StepHardware from './StepHardware';
-import * as StepMetaMask from './StepMetaMask';
-import * as StepMnemonic from './StepMnemonic';
-import * as StepJSONUpload from './StepJSONUpload';
-import * as StepTrufflePig from './StepTrufflePig';
+import StepStart from './StepStart';
+import StepHardware from './StepHardware';
+import StepMetaMask from './StepMetaMask';
+import StepMnemonic from './StepMnemonic';
+import StepJSONUpload from './StepJSONUpload';
+import StepTrufflePig from './StepTrufflePig';
 
 const stepArray = [StepStart];
 
@@ -29,10 +29,7 @@ type StepValues = {
  */
 const enhancedHardwareStep = (
   hardwareWalletType: ledgerWallet | trezorWallet,
-) =>
-  Object.assign({}, StepHardware, {
-    Step: withProps({ hardwareWalletType })(StepHardware.Step),
-  });
+) => withProps({ hardwareWalletType })(StepHardware);
 
 // This is a step function to allow the wizard flow to branch
 // off into two instead of just stepping through an array in a linear manner

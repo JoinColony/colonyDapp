@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './StepJSONUpload.jsx';
+export { default } from './StepJSONUpload.jsx';

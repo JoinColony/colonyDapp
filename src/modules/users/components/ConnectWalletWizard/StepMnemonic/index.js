@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './StepMnemonic.jsx';
+export { default } from './StepMnemonic.jsx';

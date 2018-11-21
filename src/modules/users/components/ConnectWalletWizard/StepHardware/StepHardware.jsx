@@ -1,12 +1,12 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
+import type { FormikBag } from 'formik';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { WizardFormikBag } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
 import { SpinnerLoader } from '~core/Preloaders';
 
@@ -21,7 +21,7 @@ import {
 } from '../../../actionTypes';
 
 import Icon from '~core/Icon';
-import { Input, InputLabel, FormStatus } from '~core/Fields';
+import { ActionForm, Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepHardware.css';
@@ -87,13 +87,20 @@ const MSG = defineMessages({
   },
 });
 
+const validationSchema = yup.object({
+  hardwareWalletChoice: yup
+    .string()
+    .address()
+    .required(MSG.walletChoiceRequired),
+});
+
 type FormValues = {
   method: 'ledger' | 'trezor',
   hardwareWalletChoice: string,
   hardwareWalletFilter: string,
 };
 
-type Props = FormikProps<FormValues> & {
+type Props = WizardProps<FormValues> & {
   // TODO: How do we want to type actionCreators in the future to avoid duplication?
   // We could export the types from the actionCreator file itself?
   fetchAccounts: (
@@ -101,8 +108,6 @@ type Props = FormikProps<FormValues> & {
   ) => { type: string },
   isLoading: boolean,
   availableAddresses: string[],
-  previousStep: () => void,
-  nextStep: () => void,
 };
 
 class StepHardware extends Component<Props> {
@@ -115,17 +120,14 @@ class StepHardware extends Component<Props> {
   componentDidMount() {
     const {
       fetchAccounts,
-      values: { method },
+      wizardValues: { method },
     } = this.props;
     fetchAccounts(method);
   }
 
-  renderContent() {
-    const {
-      availableAddresses,
-      isLoading,
-      values: { hardwareWalletChoice = '', hardwareWalletFilter = '' },
-    } = this.props;
+  renderContent(formValues: FormValues) {
+    const { availableAddresses, isLoading } = this.props;
+    const { hardwareWalletChoice = '', hardwareWalletFilter = '' } = formValues;
 
     if (isLoading) {
       return (
@@ -201,56 +203,48 @@ class StepHardware extends Component<Props> {
   }
 
   render() {
-    const {
-      availableAddresses,
-      isSubmitting,
-      isValid,
-      previousStep,
-      status,
-    } = this.props;
-
+    const { availableAddresses, previousStep, wizardValues } = this.props;
     return (
-      <div>
-        <section className={styles.content}>{this.renderContent()}</section>
-        <FormStatus status={status} />
-        <div className={styles.actions}>
-          <Button
-            text={MSG.buttonBack}
-            appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={previousStep}
-          />
-          <Button
-            text={
-              availableAddresses.length > 0
-                ? MSG.buttonAdvance
-                : MSG.buttonRetry
-            }
-            appearance={{ theme: 'primary', size: 'large' }}
-            type="submit"
-            disabled={!isValid}
-            loading={isSubmitting}
-          />
-        </div>
-      </div>
+      <ActionForm
+        submit={WALLET_CREATE}
+        success={CURRENT_USER_CREATE}
+        error={WALLET_CREATE_ERROR}
+        onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
+          setStatus({ error: MSG.errorPickAddress })
+        }
+        validationSchema={validationSchema}
+        initialValues={wizardValues}
+      >
+        {({ isSubmitting, isValid, status, values }) => (
+          <div>
+            <section className={styles.content}>
+              {this.renderContent(values)}
+            </section>
+            <FormStatus status={status} />
+            <div className={styles.actions}>
+              <Button
+                text={MSG.buttonBack}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={previousStep}
+              />
+              <Button
+                text={
+                  availableAddresses.length > 0
+                    ? MSG.buttonAdvance
+                    : MSG.buttonRetry
+                }
+                appearance={{ theme: 'primary', size: 'large' }}
+                type="submit"
+                disabled={!isValid}
+                loading={isSubmitting}
+              />
+            </div>
+          </div>
+        )}
+      </ActionForm>
     );
   }
 }
-
-export const onSubmit = {
-  submit: WALLET_CREATE,
-  success: CURRENT_USER_CREATE,
-  error: WALLET_CREATE_ERROR,
-  onError(_: Object, { setStatus }: WizardFormikBag<FormValues>) {
-    setStatus({ error: MSG.errorPickAddress });
-  },
-};
-
-export const validationSchema = yup.object({
-  hardwareWalletChoice: yup
-    .string()
-    .address()
-    .required(MSG.walletChoiceRequired),
-});
 
 const enhance = connect(
   ({ user }) => ({
@@ -260,4 +254,4 @@ const enhance = connect(
   { fetchAccounts: fetchAccountsAction },
 );
 
-export const Step = enhance(StepHardware);
+export default enhance(StepHardware);

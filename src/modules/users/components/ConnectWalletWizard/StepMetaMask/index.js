@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './StepMetaMask.jsx';
+export { default } from './StepMetaMask.jsx';
