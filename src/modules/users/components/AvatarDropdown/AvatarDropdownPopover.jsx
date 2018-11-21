@@ -86,13 +86,21 @@ class AvatarDropdownPopover extends Component<Props> {
     );
   };
 
-  renderColonySection = () => (
-    <DropdownMenuSection separator>
-      <DropdownMenuItem>
-        <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
-      </DropdownMenuItem>
-    </DropdownMenuSection>
-  );
+  renderColonySection = () => {
+    const {
+      user: { username },
+    } = this.props;
+    if (username) {
+      return (
+        <DropdownMenuSection separator>
+          <DropdownMenuItem>
+            <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
+          </DropdownMenuItem>
+        </DropdownMenuSection>
+      );
+    }
+    return null;
+  };
 
   renderHelperSection = () => (
     <DropdownMenuSection separator>
