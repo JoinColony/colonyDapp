@@ -210,7 +210,7 @@ const messages = defineMessages({
   notificationUserClaimedProfile: {
     id: 'dashboard.Inbox.InboxItem.notificationUserClaimedProfile',
     defaultMessage:
-      'Your first transaction is complete! Your username is {user}. Enjoy colony',
+      'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
   },
 });
 
