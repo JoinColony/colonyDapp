@@ -4,13 +4,20 @@ import { compose } from 'recompose';
 
 import { withWizard } from '../../../core/components/Wizard';
 import CreateColony from './CreateColonyWizard.jsx';
+
 import StepTokenChoice from './StepTokenChoice.jsx';
 import StepColonyName from './StepColonyName.jsx';
 import StepSelectToken from './StepSelectToken.jsx';
 import StepCreateToken from './StepCreateToken.jsx';
 import StepCreateColony from './StepCreateColony.jsx';
+import StepCreateENSName from './StepCreateENSName.jsx';
 
-const stepArray = [StepColonyName, StepTokenChoice, StepCreateColony];
+const stepArray = [
+  StepColonyName,
+  StepTokenChoice,
+  StepCreateColony,
+  StepCreateENSName,
+];
 
 type StepValues = {
   tokenChoice: 'create' | 'select',
@@ -24,13 +31,14 @@ const stepFunction = (step: number, { tokenChoice }: StepValues) => {
     if (tokenChoice === 'select') return StepSelectToken;
   }
   if (step === 3) return StepCreateColony;
+  if (step === 4) return StepCreateENSName;
   return stepArray[step];
 };
 
 const CreateColonyContainer = compose(
   withWizard({
     steps: stepFunction,
-    stepCount: 4,
+    stepCount: 5,
   }),
 )(CreateColony);
 

@@ -45,7 +45,7 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    .username(),
+    .ensAddress(),
 });
 
 class CreateUsernameDialog extends Component<Props> {

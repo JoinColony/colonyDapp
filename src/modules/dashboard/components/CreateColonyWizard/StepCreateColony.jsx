@@ -24,7 +24,8 @@ import {
 
 type FormValues = {
   tokenAddress: string,
-  tokenCreated: boolean,
+  colonyId: string,
+  colonyAddress: string,
 };
 
 type Props = WizardProps<FormValues>;
@@ -80,11 +81,7 @@ const options = [
   },
 ];
 
-const StepCreateColony = ({
-  previousStep,
-  wizardForm,
-  wizardValues,
-}: Props) => (
+const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <ActionForm
     submit={COLONY_CREATE}
     error={COLONY_CREATE_ERROR}
@@ -93,6 +90,13 @@ const StepCreateColony = ({
       ...action,
       payload: { tokenAddress: wizardValues.tokenAddress },
     })}
+    onSuccess={({ eventData: { colonyId, colonyAddress } }) =>
+      nextStep({
+        colonyId,
+        colonyAddress,
+        tokenAddress: wizardValues.tokenAddress,
+      })
+    }
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
       setStatus({ error: MSG.errorCreateColony })
     }
@@ -113,13 +117,6 @@ const StepCreateColony = ({
         </div>
         <FormStatus status={status} />
         <div className={styles.buttons}>
-          <Button
-            appearance={{ theme: 'secondary', size: 'large' }}
-            type="cancel"
-            text={MSG.back}
-            onClick={() => previousStep(values)}
-            disabled={isSubmitting}
-          />
           <Button
             appearance={{ theme: 'primary', size: 'large' }}
             type="submit"
