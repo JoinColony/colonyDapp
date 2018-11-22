@@ -1,0 +1,15 @@
+.contentSection {
+  /*
+   * This class isn't intended to be used externally;
+   * just for composition within this file.
+   */
+  border-top: 2px solid var(--grey-blue-1);
+}
+
+.transactionSpeedContainer {
+  composes: contentSection;
+}
+
+.transactionFeeContainer {
+  composes: contentSection;
+}
