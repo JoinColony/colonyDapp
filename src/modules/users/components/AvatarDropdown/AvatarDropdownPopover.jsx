@@ -63,15 +63,17 @@ class AvatarDropdownPopover extends Component<Props> {
     } = this.props;
     return (
       <DropdownMenuSection separator>
-        <DropdownMenuItem>
-          <DialogLink to="CreateUsernameDialog">
-            {({ open }) => (
-              <button type="button" onClick={open}>
-                <FormattedMessage {...MSG.buttonGetStarted} />
-              </button>
-            )}
-          </DialogLink>
-        </DropdownMenuItem>
+        {!username && (
+          <DropdownMenuItem>
+            <DialogLink to="CreateUsernameDialog">
+              {({ open }) => (
+                <button type="button" onClick={open}>
+                  <FormattedMessage {...MSG.buttonGetStarted} />
+                </button>
+              )}
+            </DialogLink>
+          </DropdownMenuItem>
+        )}
         {username && (
           <DropdownMenuItem>
             <NavLink to={`/user/${username}`} text={MSG.myProfile} />
@@ -86,13 +88,21 @@ class AvatarDropdownPopover extends Component<Props> {
     );
   };
 
-  renderColonySection = () => (
-    <DropdownMenuSection separator>
-      <DropdownMenuItem>
-        <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
-      </DropdownMenuItem>
-    </DropdownMenuSection>
-  );
+  renderColonySection = () => {
+    const {
+      user: { username },
+    } = this.props;
+    if (username) {
+      return (
+        <DropdownMenuSection separator>
+          <DropdownMenuItem>
+            <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
+          </DropdownMenuItem>
+        </DropdownMenuSection>
+      );
+    }
+    return null;
+  };
 
   renderHelperSection = () => (
     <DropdownMenuSection separator>
