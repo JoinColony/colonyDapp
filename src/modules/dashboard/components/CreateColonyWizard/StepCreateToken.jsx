@@ -124,13 +124,8 @@ const StepCreateToken = ({ nextStep, previousStep, wizardValues }: Props) => (
       // TODO later: show error feedback
       console.warn(error); // eslint-disable-line no-console
     }}
-    onSuccess={(
-      { receipt: { contractAddress } },
-      { setFieldValue },
-      values,
-    ) => {
-      setFieldValue('tokenAddress', contractAddress);
-      nextStep(values);
+    onSuccess={({ receipt: { contractAddress } }, bag, values) => {
+      nextStep({ ...values, tokenAddress: contractAddress });
     }}
     initialValues={wizardValues}
     validationSchema={validationSchema}
