@@ -127,7 +127,7 @@ class MetaMask extends Component<Props, State> {
         }}
         initialValues={wizardValues}
       >
-        {({ isSubmitting, status }) => (
+        {({ isSubmitting, status, values }) => (
           <main>
             <div className={styles.content}>
               <div className={styles.iconContainer}>
@@ -161,7 +161,7 @@ class MetaMask extends Component<Props, State> {
               <Button
                 text={MSG.buttonBack}
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={previousStep}
+                onClick={() => previousStep(values)}
               />
               {isValid ? (
                 <Button

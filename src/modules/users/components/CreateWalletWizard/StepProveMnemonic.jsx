@@ -114,7 +114,7 @@ const StepProveMnemonic = ({ previousStep, wizardValues }: Props) => (
       initialValues={{ ...wizardValues, method: 'create' }}
       {...formikConfig}
     >
-      {({ isValid, isSubmitting, status }) => (
+      {({ isValid, isSubmitting, status, values }) => (
         <Fragment>
           <section className={styles.titleSection}>
             <Heading
@@ -160,7 +160,7 @@ const StepProveMnemonic = ({ previousStep, wizardValues }: Props) => (
             <Button
               text={MSG.backButton}
               appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={previousStep}
+              onClick={() => previousStep(values)}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}

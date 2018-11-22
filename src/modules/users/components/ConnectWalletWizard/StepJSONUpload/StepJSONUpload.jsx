@@ -118,7 +118,7 @@ const StepJSONUpload = ({ previousStep, wizardValues }: Props) => (
     initialValues={wizardValues}
     validationSchema={validationSchema}
   >
-    {({ status, isValid }) => (
+    {({ status, isValid, values }) => (
       <main>
         <div className={styles.content}>
           <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -143,7 +143,7 @@ const StepJSONUpload = ({ previousStep, wizardValues }: Props) => (
           <Button
             appearance={{ theme: 'secondary', size: 'large' }}
             text={MSG.buttonBack}
-            onClick={previousStep}
+            onClick={() => previousStep(values)}
           />
           <Button
             appearance={{ theme: 'primary', size: 'large' }}

@@ -74,7 +74,7 @@ const StepMnemonic = ({ previousStep, wizardValues }: Props) => (
     initialValues={wizardValues}
     validationSchema={validationSchema}
   >
-    {({ isSubmitting, isValid, status }) => (
+    {({ isSubmitting, isValid, status, values }) => (
       <main>
         <div className={styles.content}>
           <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -85,7 +85,7 @@ const StepMnemonic = ({ previousStep, wizardValues }: Props) => (
           <Button
             appearance={{ theme: 'secondary', size: 'large' }}
             text={MSG.buttonBackText}
-            onClick={previousStep}
+            onClick={() => previousStep(values)}
           />
           <Button
             appearance={{ theme: 'primary', size: 'large' }}

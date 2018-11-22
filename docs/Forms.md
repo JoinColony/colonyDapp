@@ -21,10 +21,14 @@ const Step1 = ({ nextStep, step, wizardValues }) => (
 
 const Step2 = ({ nextStep, previousStep, step, wizardValues }) => (
   <Form onSubmit={nextStep} initialValues={wizardValues}>
-    <h1>Step {step}</h1>
-    <Input name="username" label="username" />
-    <Button appearance={{ theme: 'secondary' }} onClick={previousStep}>Previous</Button>
-    <Button appearance={{ theme: 'primary' }} type="submit">Next</Button>
+    {({ values }) => (
+      <div>
+        <h1>Step {step}</h1>
+        <Input name="username" label="username" />
+        <Button appearance={{ theme: 'secondary' }} onClick={() => previousStep(values)}>Previous</Button>
+        <Button appearance={{ theme: 'primary' }} type="submit">Next</Button>
+      </div>
+    )}
   </Form>
 );
 

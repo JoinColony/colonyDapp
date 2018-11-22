@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
@@ -79,45 +79,49 @@ class StepBackupPhrase extends Component<Props, State> {
     return (
       <main className={styles.content}>
         <Form onSubmit={nextStep} initialValues={wizardValues}>
-          <div className={styles.title}>
-            <Heading
-              appearance={{ size: 'medium', width: 'thin' }}
-              text={MSG.heading}
-            />
-          </div>
-          <div className={styles.subtitle}>
-            <Heading
-              appearance={{ size: 'normal', width: 'thin' }}
-              text={MSG.subTitle}
-            />
-          </div>
-          <div className={styles.mnemonicInstructions}>
-            <Heading
-              appearance={{ margin: 'none', size: 'small', width: 'bold' }}
-              text={MSG.titleBox}
-            />
-            <Button
-              appearance={{ theme: 'blue' }}
-              disabled={copied}
-              onClick={() => this.copyToClipboard()}
-              text={{ ...MSG.copyButton }}
-              textValues={{ copied }}
-            />
-          </div>
-          <div className={styles.greyBox}>{wizardValues.mnemonic}</div>
-          <div className={styles.divider} />
-          <div className={styles.buttonsForBox}>
-            <Button
-              appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-              text={MSG.backButton}
-              onClick={previousStep}
-            />
-            <Button
-              type="submit"
-              appearance={{ theme: 'danger' }}
-              text={MSG.confirmButton}
-            />
-          </div>
+          {({ values }) => (
+            <Fragment>
+              <div className={styles.title}>
+                <Heading
+                  appearance={{ size: 'medium', width: 'thin' }}
+                  text={MSG.heading}
+                />
+              </div>
+              <div className={styles.subtitle}>
+                <Heading
+                  appearance={{ size: 'normal', width: 'thin' }}
+                  text={MSG.subTitle}
+                />
+              </div>
+              <div className={styles.mnemonicInstructions}>
+                <Heading
+                  appearance={{ margin: 'none', size: 'small', width: 'bold' }}
+                  text={MSG.titleBox}
+                />
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  disabled={copied}
+                  onClick={() => this.copyToClipboard()}
+                  text={{ ...MSG.copyButton }}
+                  textValues={{ copied }}
+                />
+              </div>
+              <div className={styles.greyBox}>{wizardValues.mnemonic}</div>
+              <div className={styles.divider} />
+              <div className={styles.buttonsForBox}>
+                <Button
+                  appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+                  text={MSG.backButton}
+                  onClick={() => previousStep(values)}
+                />
+                <Button
+                  type="submit"
+                  appearance={{ theme: 'danger' }}
+                  text={MSG.confirmButton}
+                />
+              </div>
+            </Fragment>
+          )}
         </Form>
       </main>
     );

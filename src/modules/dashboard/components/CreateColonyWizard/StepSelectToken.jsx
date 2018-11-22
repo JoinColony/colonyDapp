@@ -119,16 +119,16 @@ class StepSelectToken extends Component<Props, State> {
           initialValues={wizardValues}
           validationSchema={validationSchema}
         >
-          {({ values: { tokenAddress }, isValid, setFieldValue }) => (
+          {({ isValid, setFieldValue, values }) => (
             <div>
               <TokenSelector
-                tokenAddress={tokenAddress}
+                tokenAddress={values.tokenAddress}
                 onTokenSelect={data =>
                   this.handleTokenSelect(data, setFieldValue)
                 }
                 tokenData={tokenData}
               />
-              {tokenAddress &&
+              {values.tokenAddress &&
                 tokenData === null && (
                   <Fragment>
                     <div className={styles.tokenDetails}>
@@ -162,7 +162,7 @@ class StepSelectToken extends Component<Props, State> {
                   appearance={{ theme: 'secondary' }}
                   type="cancel"
                   text={MSG.cancel}
-                  onClick={previousStep}
+                  onClick={() => previousStep(values)}
                 />
                 <Button
                   appearance={{ theme: 'primary' }}

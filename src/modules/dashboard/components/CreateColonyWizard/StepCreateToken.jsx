@@ -130,7 +130,7 @@ const StepCreateToken = ({ nextStep, previousStep, wizardValues }: Props) => (
     initialValues={wizardValues}
     validationSchema={validationSchema}
   >
-    {({ isSubmitting, isValid }) =>
+    {({ isSubmitting, isValid, values }) =>
       isSubmitting ? (
         <CreatingToken />
       ) : (
@@ -170,7 +170,7 @@ const StepCreateToken = ({ nextStep, previousStep, wizardValues }: Props) => (
             <Button
               text={MSG.backButton}
               appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={previousStep}
+              onClick={() => previousStep(values)}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}

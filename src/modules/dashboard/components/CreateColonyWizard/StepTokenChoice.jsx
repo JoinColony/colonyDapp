@@ -79,43 +79,45 @@ const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
 const StepTokenChoice = ({ nextStep, previousStep, wizardValues }: Props) => (
   <Form onSubmit={nextStep} initialValues={wizardValues}>
-    <section className={styles.content}>
-      <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', weight: 'thin' }}
-          text={MSG.heading}
-        />
-      </div>
-      <div className={styles.subtitle}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subTitle}
-        />
-      </div>
-      <div className={styles.subtitleWithLinkBox}>
-        <Heading
-          className={styles.subtitleWithLink}
-          appearance={{ size: 'normal', weight: 'thin' }}
-          text={MSG.subTitleWithLink}
-        />
-        <div className={styles.link}>
-          <Button
-            appearance={{ theme: 'blue' }}
-            type="continue"
-            text={MSG.learnMore}
+    {({ values }) => (
+      <section className={styles.content}>
+        <div className={styles.title}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'thin' }}
+            text={MSG.heading}
           />
         </div>
-      </div>
-      <DecisionHub name="tokenChoice" options={options} />
-      <div className={styles.buttonContainer}>
-        <Button
-          appearance={{ theme: 'secondary' }}
-          type="cancel"
-          text={MSG.button}
-          onClick={previousStep}
-        />
-      </div>
-    </section>
+        <div className={styles.subtitle}>
+          <Heading
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subTitle}
+          />
+        </div>
+        <div className={styles.subtitleWithLinkBox}>
+          <Heading
+            className={styles.subtitleWithLink}
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subTitleWithLink}
+          />
+          <div className={styles.link}>
+            <Button
+              appearance={{ theme: 'blue' }}
+              type="continue"
+              text={MSG.learnMore}
+            />
+          </div>
+        </div>
+        <DecisionHub name="tokenChoice" options={options} />
+        <div className={styles.buttonContainer}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="cancel"
+            text={MSG.button}
+            onClick={() => previousStep(values)}
+          />
+        </div>
+      </section>
+    )}
   </Form>
 );
 

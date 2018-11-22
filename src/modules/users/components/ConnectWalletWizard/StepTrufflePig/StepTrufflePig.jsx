@@ -120,7 +120,7 @@ class StepTrufflePig extends Component<Props, State> {
         }}
         initialValues={wizardValues}
       >
-        {({ status, isSubmitting }) => (
+        {({ status, isSubmitting, values }) => (
           <main>
             <div className={styles.content}>
               <div className={styles.iconContainer}>
@@ -154,7 +154,7 @@ class StepTrufflePig extends Component<Props, State> {
               <Button
                 text={MSG.buttonBack}
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={previousStep}
+                onClick={() => previousStep(values)}
               />
               {isValid ? (
                 <Button

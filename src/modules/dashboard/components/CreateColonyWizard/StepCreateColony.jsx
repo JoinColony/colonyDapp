@@ -114,7 +114,7 @@ const StepCreateColony = ({ previousStep, wizardValues }: Props) => (
               appearance={{ theme: 'secondary' }}
               type="cancel"
               text={MSG.back}
-              onClick={previousStep}
+              onClick={() => previousStep(values)}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
