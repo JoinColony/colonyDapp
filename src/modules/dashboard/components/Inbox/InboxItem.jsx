@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
+import Numeral from '~core/Numeral';
 
 import type { Node } from 'react';
 import styles from './InboxItem.css';
@@ -90,10 +91,9 @@ const InboxItem = ({
           <FormattedMessage
             {...MSG[event]}
             values={{
-              amount: makeInboxDetail(
-                amount,
-                value => `${value.unit}${value.value}`,
-              ),
+              amount: makeInboxDetail(amount, ({ unit, value }) => (
+                <Numeral prefix={unit} value={value} />
+              )),
               colony: makeInboxDetail(colonyName),
               comment: makeInboxDetail(comment),
               domain: makeInboxDetail(domainName),
