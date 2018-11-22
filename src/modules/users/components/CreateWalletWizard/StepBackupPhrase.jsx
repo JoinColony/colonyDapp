@@ -1,25 +1,22 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
-
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
 import styles from './StepBackupPhrase.css';
 
-import Heading from '../../../core/components/Heading';
-import Button from '../../../core/components/Button';
+import type { WizardProps } from '~core/Wizard';
 
-import type { SubmitFn } from '../../../core/components/Wizard';
+import Heading from '~core/Heading';
+import Button from '~core/Button';
+import { Form } from '~core/Fields';
 
 type FormValues = {
   mnemonic: string,
 };
 
-type Props = {
-  previousStep: () => void,
-} & FormikProps<FormValues>;
+type Props = WizardProps<FormValues>;
 
 type State = {
   copied: boolean,
@@ -68,7 +65,7 @@ class StepBackupPhrase extends Component<Props, State> {
 
   copyToClipboard = () => {
     const {
-      values: { mnemonic },
+      wizardValues: { mnemonic },
     } = this.props;
     copy(mnemonic);
     this.setState({ copied: true });
@@ -76,59 +73,55 @@ class StepBackupPhrase extends Component<Props, State> {
   };
 
   render() {
-    const {
-      values: { mnemonic },
-      previousStep,
-    } = this.props;
+    const { nextStep, previousStep, wizardValues } = this.props;
     const { copied } = this.state;
 
     return (
       <main className={styles.content}>
-        <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'medium', width: 'thin' }}
-            text={MSG.heading}
-          />
-        </div>
-        <div className={styles.subtitle}>
-          <Heading
-            appearance={{ size: 'normal', width: 'thin' }}
-            text={MSG.subTitle}
-          />
-        </div>
-        <div className={styles.mnemonicInstructions}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', width: 'bold' }}
-            text={MSG.titleBox}
-          />
-          <Button
-            appearance={{ theme: 'blue' }}
-            disabled={copied}
-            onClick={this.copyToClipboard}
-            text={{ ...MSG.copyButton }}
-            textValues={{ copied }}
-          />
-        </div>
-        <div className={styles.greyBox}>{mnemonic}</div>
-        <div className={styles.divider} />
-        <div className={styles.buttonsForBox}>
-          <Button
-            appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
-            text={MSG.backButton}
-            onClick={previousStep}
-          />
-          <Button
-            type="submit"
-            appearance={{ theme: 'danger' }}
-            text={MSG.confirmButton}
-          />
-        </div>
+        <Form onSubmit={nextStep} initialValues={wizardValues}>
+          <div className={styles.title}>
+            <Heading
+              appearance={{ size: 'medium', width: 'thin' }}
+              text={MSG.heading}
+            />
+          </div>
+          <div className={styles.subtitle}>
+            <Heading
+              appearance={{ size: 'normal', width: 'thin' }}
+              text={MSG.subTitle}
+            />
+          </div>
+          <div className={styles.mnemonicInstructions}>
+            <Heading
+              appearance={{ margin: 'none', size: 'small', width: 'bold' }}
+              text={MSG.titleBox}
+            />
+            <Button
+              appearance={{ theme: 'blue' }}
+              disabled={copied}
+              onClick={() => this.copyToClipboard()}
+              text={{ ...MSG.copyButton }}
+              textValues={{ copied }}
+            />
+          </div>
+          <div className={styles.greyBox}>{wizardValues.mnemonic}</div>
+          <div className={styles.divider} />
+          <div className={styles.buttonsForBox}>
+            <Button
+              appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+              text={MSG.backButton}
+              onClick={previousStep}
+            />
+            <Button
+              type="submit"
+              appearance={{ theme: 'danger' }}
+              text={MSG.confirmButton}
+            />
+          </div>
+        </Form>
       </main>
     );
   }
 }
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
-
-export const Step = StepBackupPhrase;
+export default StepBackupPhrase;
