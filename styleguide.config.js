@@ -14,6 +14,7 @@ module.exports = {
     {
       name: 'Typography',
       components: [
+        './src/modules/core/components/Alert/Alert.jsx',
         './src/modules/core/components/Heading/Heading.jsx',
         './src/modules/core/components/UserMention/UserMention.jsx',
         './src/modules/core/components/Link/Link.jsx',
