@@ -110,6 +110,7 @@ class MnemonicGenerator extends Component<Props, State> {
 
   render() {
     const {
+      connect,
       disabled,
       elementOnly,
       formatIntl,
