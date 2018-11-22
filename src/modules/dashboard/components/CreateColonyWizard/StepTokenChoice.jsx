@@ -102,7 +102,7 @@ const StepTokenChoice = ({ nextStep, previousStep, wizardValues }: Props) => (
           <div className={styles.link}>
             <Button
               appearance={{ theme: 'blue' }}
-              type="continue"
+              type="button"
               text={MSG.learnMore}
             />
           </div>
@@ -111,7 +111,7 @@ const StepTokenChoice = ({ nextStep, previousStep, wizardValues }: Props) => (
         <div className={styles.buttonContainer}>
           <Button
             appearance={{ theme: 'secondary' }}
-            type="cancel"
+            type="button"
             text={MSG.button}
             onClick={() => previousStep(values)}
           />
