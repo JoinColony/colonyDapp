@@ -3,38 +3,42 @@
 import type { FormikProps } from 'formik';
 
 import React, { Fragment } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import Button from '~core/Button';
 import Heading from '~core/Heading';
+import Input from '~core/Fields/Input';
+import Button from '~core/Button';
 
-import Dialog from '~core/Dialog';
+import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
 import styles from './ENSNameDialog.css';
 
 const MSG = defineMessages({
-  title: {
-    id: 'users.ENSNameDialog.title',
-    defaultMessage: 'Welcome to Colony!',
+  iWillDoItLater: {
+    id: 'users.ENSNameDialog.iWillDoItLater',
+    defaultMessage: `I'll do it later`,
   },
-  subTitle: {
-    id: 'users.ENSNameDialog.subTitle',
-    defaultMessage: `Colony is a fully decentralized application (dApp) running
-      on the Ethereum blockchain. Follow the steps below to set up your account
-      and begin earning tokens and reputation in Colony.`,
+  inputLabel: {
+    id: 'users.ENSNameDialog.inputLabel',
+    defaultMessage: 'Enter a unique username',
   },
   stepTitle: {
     id: 'users.ENSNameDialog.stepTitle',
-    defaultMessage: 'Step 1/3: Fund your account with ether',
+    defaultMessage: 'Step 2/3: Choose your .joincolony.eth username',
   },
   stepText: {
     id: 'users.ENSNameDialog.stepText',
-    defaultMessage: `Like other dApps, you’ll need some ether (ETH) in your
-      wallet to cover transaction fees. Transactions are how you interact
-      with the blockchain; the fees go to the miners
-      who keep Ethereum running.`,
+    defaultMessage: `We’ll use this username to create a mapping between
+      your wallet address, a distributed database, and the blockchain.
+      Not only is the username necessary, it also enables @mentions and
+      a personalized URL for your profile. Next, you’ll sign your first
+      transaction and claim this username “on chain".`,
+  },
+  helpENSName: {
+    id: 'users.ENSNameDialog.helpENSName',
+    defaultMessage: 'Only use letters, numbers, and dashes',
   },
 });
 
@@ -43,17 +47,18 @@ type FormValues = {};
 type Props = {
   cancel: () => void,
   close: () => void,
-  walletAddress: string,
 } & FormikProps<FormValues>;
 
 const validationSchema = yup.object({
+  // TODO: Validate ENS name further by checking blacklist, check also if unique
+  // and if there's incorrect characters etc.
   ensname: yup
     .string()
     .required()
     .username(),
 });
 
-const ENSNameDialog = ({ cancel, close, walletAddress }: Props) => (
+const ENSNameDialog = ({ cancel, close }: Props) => (
   <Dialog cancel={cancel}>
     <ActionForm
       submit="ENS_NAME_CREATE"
@@ -62,20 +67,42 @@ const ENSNameDialog = ({ cancel, close, walletAddress }: Props) => (
       validationSchema={validationSchema}
       onSuccess={close}
     >
-      {({ isSubmitting, isValid }) => (
+      {isValid => (
         <Fragment>
-          <div className={styles.title}>
+          <DialogSection>
             <Heading
-              appearance={{ size: 'medium', weight: 'bold' }}
-              text={MSG.title}
+              appearance={{ size: 'medium', margin: 'none' }}
+              text={MSG.stepTitle}
             />
-          </div>
-          <div className={styles.subTitle}>
-            <Heading
-              appearance={{ size: 'normal', weight: 'thin' }}
-              text={MSG.subTitle}
+          </DialogSection>
+          <DialogSection>
+            <div className={styles.subTitle}>
+              <Heading
+                appearance={{ size: 'normal', weight: 'thin' }}
+                text={MSG.stepText}
+              />
+            </div>
+            <Input
+              name="ENSname"
+              label={MSG.inputLabel}
+              appearance={{ theme: 'fat' }}
+              extensionString=".joincolony.eth"
+              extra={<FormattedMessage {...MSG.helpENSName} />}
             />
-          </div>
+          </DialogSection>
+          <DialogSection appearance={{ align: 'right' }}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={cancel}
+              text={MSG.iWillDoItLater}
+            />
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              onClick={close}
+              text={{ id: 'button.confirm' }}
+              disabled={!isValid}
+            />
+          </DialogSection>
         </Fragment>
       )}
     </ActionForm>

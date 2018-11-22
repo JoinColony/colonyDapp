@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import type { MessageDescriptor } from 'react-intl';
 import Cleave from 'cleave.js/react';
 
 import { getMainClasses } from '~utils/css';
@@ -19,6 +20,8 @@ export type Appearance = {
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
 type Props = {
+  /** Allow passing through string as placeholder */
+  placeholder?: string | MessageDescriptor,
   /** Appearance object */
   appearance?: Appearance,
   /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */

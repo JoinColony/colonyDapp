@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './ClaimProfileDialog.jsx';
+export { default } from './ENSNameDialog.jsx';

@@ -81,9 +81,16 @@ const TaskComments = ({ claimedProfile, openDialog }: Props) => {
     if (!claimedProfile) {
       return openDialog('UnfinishedProfileDialog')
         .afterClosed()
-        .then(() => openDialog('ClaimProfileDialog'))
-        .afterClosed()
-        .then(() => openDialog('ENSNameDialog'));
+        .then(() =>
+          openDialog('ClaimProfileDialog')
+            .afterClosed()
+            .then(() => openDialog('ENSNameDialog'))
+            .catch(err => {
+              // eslint-disable-next-line no-console
+              console.log(err);
+            }),
+        );
+      // TODO: Open Gasstation after the last modal
     }
     return false;
   };
