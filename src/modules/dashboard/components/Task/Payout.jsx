@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { getEthToUsd } from '~utils/external';
-
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
@@ -15,17 +13,16 @@ import styles from './Payout.css';
 
 const MSG = defineMessages({
   notSet: {
-    id: 'dashboard.task.Payout.notSet',
+    id: 'dashboard.Task.Payout.notSet',
     defaultMessage: 'Not set',
   },
   reputation: {
-    id: 'dashboard.task.Payout.reputation',
+    id: 'dashboard.Task.Payout.reputation',
     defaultMessage: '{reputation} max rep',
   },
 });
 
 type State = {
-  ethUsd: number | null,
   editing: boolean,
 };
 
@@ -34,22 +31,12 @@ type Props = {
   amount?: string,
   symbol?: string,
   reputation?: number,
-  isEth?: boolean,
-  isNative?: boolean,
+  usdAmount?: string,
   tokenOptions: Array<Object>,
+  remove: () => void,
 };
 class Payout extends Component<Props, State> {
-  state = { editing: false, ethUsd: null };
-
-  componentDidMount() {
-    const { isEth, amount } = this.props;
-
-    if (isEth) {
-      getEthToUsd(Number(amount)).then(dollar =>
-        this.setState({ ethUsd: dollar }),
-      );
-    }
-  }
+  state = { editing: false };
 
   toggleEdit = () => {
     this.setState(prevState => ({
@@ -62,12 +49,12 @@ class Payout extends Component<Props, State> {
       amount,
       symbol,
       reputation,
-      isEth,
-      isNative,
       name,
       tokenOptions,
+      usdAmount,
+      remove,
     } = this.props;
-    const { editing, ethUsd } = this.state;
+    const { editing } = this.state;
 
     return (
       <div>
@@ -79,8 +66,8 @@ class Payout extends Component<Props, State> {
             />
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
-              text={{ id: 'button.cancel' }}
-              onClick={this.toggleEdit}
+              text={{ id: 'button.remove' }}
+              onClick={remove}
             />
           </div>
           <div className={styles.editContainer}>
@@ -113,7 +100,7 @@ class Payout extends Component<Props, State> {
                   </span>
                   <span>{symbol}</span>
                 </div>
-                {isNative && (
+                {reputation && (
                   <div className={styles.reputation}>
                     <FormattedMessage
                       {...MSG.reputation}
@@ -121,11 +108,11 @@ class Payout extends Component<Props, State> {
                     />
                   </div>
                 )}
-                {isEth && (
+                {usdAmount && (
                   <div className={styles.conversion}>
                     <Numeral
                       appearance={{ theme: 'grey', size: 'small' }}
-                      value={ethUsd}
+                      value={usdAmount}
                       prefix="~ "
                       suffix=" USD"
                     />

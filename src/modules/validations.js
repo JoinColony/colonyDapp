@@ -4,6 +4,8 @@ import * as yup from 'yup';
 import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
+import { bnLessThan } from '../utils/numbers';
+
 import en from '../i18n/en-validation.json';
 
 yup.setLocale(en);
@@ -18,6 +20,22 @@ function equalTo(ref, msg) {
     },
     test(value) {
       return value === this.resolve(ref);
+    },
+  });
+}
+
+// Used by `TaskEditDialog` to check there are sufficient funds for the
+// selected token.
+function lessThanPot(availableTokens, msg) {
+  return this.test({
+    name: 'lessThanPot',
+    message: msg,
+    test(value) {
+      // $FlowFixMe `yup.ref` not recognised
+      const tokenIndex = this.resolve(yup.ref('token'));
+      if (!tokenIndex) return true;
+      const { balance } = availableTokens[tokenIndex - 1];
+      return balance === undefined || bnLessThan(value, balance);
     },
   });
 }
@@ -77,6 +95,7 @@ function includes(searchVal, msg) {
 }
 
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
+yup.addMethod(yup.mixed, 'lessThanPot', lessThanPot);
 yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.string, 'username', username);
