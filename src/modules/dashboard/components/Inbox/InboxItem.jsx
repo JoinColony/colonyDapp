@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Link } from 'react-router-dom';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
+import NavLink from '~core/NavLink';
 
 import type { Node } from 'react';
 import styles from './InboxItem.css';
@@ -46,9 +46,9 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
 
 const ConditionalLink = ({ to, children }: { to?: string, children: Node }) =>
   to ? (
-    <Link to={to}>
+    <NavLink to={to} className={styles.fullWidthLink}>
       <div className={styles.inboxDetails}>{children}</div>
-    </Link>
+    </NavLink>
   ) : (
     <div className={styles.inboxDetails}>{children}</div>
   );

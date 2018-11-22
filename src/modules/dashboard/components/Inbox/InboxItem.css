@@ -70,3 +70,7 @@
 .inboxUnreadNotification {
   border-left: 2px solid var(--sky-blue);
 }
+
+.fullWidthLink {
+  width: 100%;
+}
