@@ -2,6 +2,17 @@
 
 const mockInbox = [
   {
+    id: 0,
+    event: 'notificationUserClaimedProfile',
+    createdAt: new Date(2018, 10, 1),
+    unread: true,
+    user: {
+      walletAddress: '0xF822d689a2e10c1511dcD54dF5Ce43a9d393e75c',
+      username: 'Ragny',
+    },
+    colonyName: 'The Nords',
+  },
+  {
     id: 1,
     event: 'actionColonyFundingReceived',
     createdAt: new Date(2018, 8, 19),

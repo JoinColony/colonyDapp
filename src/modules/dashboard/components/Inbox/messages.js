@@ -207,6 +207,11 @@ const messages = defineMessages({
     defaultMessage:
       "{task}'s reveal period has ended and you've been penalized.",
   },
+  notificationUserClaimedProfile: {
+    id: 'dashboard.Inbox.InboxItem.notificationUserClaimedProfile',
+    defaultMessage:
+      'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
+  },
 });
 
 export default messages;

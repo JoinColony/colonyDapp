@@ -19,11 +19,12 @@
   color: var(--colony-black);
 }
 
-.inboxDetail:first-of-type {
-  margin-left: 5px;
-}
-
 .inboxAction {
+  /*
+   * @NOTE Netative margins used to better align
+   * the event's copy with the user's avatar
+   */
+  margin-top: -5px;
   overflow: hidden;
   font-weight: 400;
   text-overflow: ellipsis;
@@ -39,7 +40,7 @@
 }
 
 .userAvatar {
-  margin: 0 10px;
+  margin-right: 10px;
 }
 
 .time {
@@ -68,4 +69,8 @@
 
 .inboxUnreadNotification {
   border-left: 2px solid var(--sky-blue);
+}
+
+.fullWidthLink {
+  width: 100%;
 }

@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Link } from 'react-router-dom';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
+import Numeral from '~core/Numeral';
+import NavLink from '~core/NavLink';
 
 import type { Node } from 'react';
 import styles from './InboxItem.css';
@@ -45,9 +46,9 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
 
 const ConditionalLink = ({ to, children }: { to?: string, children: Node }) =>
   to ? (
-    <Link to={to}>
+    <NavLink to={to} className={styles.fullWidthLink}>
       <div className={styles.inboxDetails}>{children}</div>
-    </Link>
+    </NavLink>
   ) : (
     <div className={styles.inboxDetails}>{children}</div>
   );
@@ -82,29 +83,29 @@ const InboxItem = ({
             size="xxs"
             walletAddress={user.walletAddress}
             username={user.username}
-            className={styles.UserAvatar}
+            className={styles.userAvatar}
           />
         )}
 
-        <FormattedMessage
-          className={styles.inboxAction}
-          {...MSG[event]}
-          values={{
-            amount: makeInboxDetail(
-              amount,
-              value => `${value.unit}${value.value}`,
-            ),
-            colony: makeInboxDetail(colonyName),
-            comment: makeInboxDetail(comment),
-            domain: makeInboxDetail(domainName),
-            other: makeInboxDetail(otherUser),
-            task: makeInboxDetail(taskName),
-            time: makeInboxDetail(dueDate, value => (
-              <TimeRelative value={value} />
-            )),
-            user: makeInboxDetail(user, value => value.username),
-          }}
-        />
+        <span className={styles.inboxAction}>
+          <FormattedMessage
+            {...MSG[event]}
+            values={{
+              amount: makeInboxDetail(amount, ({ unit, value }) => (
+                <Numeral prefix={unit} value={value} />
+              )),
+              colony: makeInboxDetail(colonyName),
+              comment: makeInboxDetail(comment),
+              domain: makeInboxDetail(domainName),
+              other: makeInboxDetail(otherUser),
+              task: makeInboxDetail(taskName),
+              time: makeInboxDetail(dueDate, value => (
+                <TimeRelative value={value} />
+              )),
+              user: makeInboxDetail(user, value => value.username),
+            }}
+          />
+        </span>
 
         <span className={styles.additionalDetails}>
           {colonyName && domainName ? (
