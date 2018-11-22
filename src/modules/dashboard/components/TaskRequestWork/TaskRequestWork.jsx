@@ -32,21 +32,26 @@ type Props = {
 
 const TaskRequestWork = ({
   isTaskCreator,
-  claimedProfile,
+  claimedProfile = false,
   openDialog,
 }: Props) => (
   <Button
     text={MSG.requestWork}
     disabled={isTaskCreator}
     onClick={() => {
-      console.log('TaskRequestWork');
-      console.log(claimedProfile);
       if (!claimedProfile) {
         return openDialog('UnfinishedProfileDialog')
           .afterClosed()
-          .then(() => openDialog('ClaimProfileDialog'));
-        /*           .afterClosed()
-          .then(() => openDialog('ENSNameDialog')); */
+          .then(() =>
+            openDialog('ClaimProfileDialog')
+              .afterClosed()
+              .then(() => openDialog('ENSNameDialog'))
+              .catch(err => {
+                // eslint-disable-next-line no-console
+                console.log(err);
+              }),
+          );
+        // TODO: Open Gasstation after the last modal
       }
       return false;
     }}

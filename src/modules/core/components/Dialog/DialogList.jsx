@@ -2,6 +2,7 @@
 
 import type { Node } from 'react';
 import React from 'react';
+import nanoid from 'nanoid';
 import type { MessageDescriptor } from 'react-intl';
 
 import Icon from '../Icon';
@@ -31,7 +32,7 @@ const displayName = 'DialogList';
 const DialogList = ({ items }: Props) => (
   <div className={styles.container}>
     {items.map(({ title, subtitleElement, icon, extra, imageUrl }, i) => (
-      <div key={`element${i}`} className={styles.main}>
+      <div key={nanoid(i)} className={styles.listMain}>
         <div className={styles.rowIcon}>
           {icon && <Icon name={icon} title={title} />}
           {imageUrl && <img src={imageUrl} alt="logo" />}
