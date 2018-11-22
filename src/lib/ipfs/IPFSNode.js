@@ -7,6 +7,8 @@ import { sleep } from '../../utils/time';
 
 import type { IPFSNodeOptions, B58String, IPFSPeer } from './types';
 
+const TIMEOUT = process.env.CI ? 50000 : 10000;
+
 class IPFSNode {
   static DEFAULT_OPTIONS = {
     ipfs: {
@@ -30,7 +32,7 @@ class IPFSNode {
         },
       },
     },
-    timeout: 10000,
+    timeout: TIMEOUT,
   };
 
   /**
@@ -49,6 +51,11 @@ class IPFSNode {
   ) {
     this._ipfs = new IPFS(ipfsOptions);
     this.ready = new Promise((resolve, reject) => {
+      // Check whether IPFS is already connected?
+      if (this._ipfs.isOnline()) {
+        resolve(true);
+        return;
+      }
       const connectTimeout = setTimeout(() => {
         reject(new Error('IPFS connection timed out.'));
       }, timeout);
