@@ -20,10 +20,3 @@ if (require.main === module) {
   stdio = 'pipe';
   module.exports = startGanache;
 }
-
-
-
-
-
-
-

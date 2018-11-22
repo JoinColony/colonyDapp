@@ -7,12 +7,9 @@ const { NETWORK_ROOT } = require('./paths');
 let stdio;
 
 const deployContracts = () => {
-  return spawn('truffle', ['migrate', '--reset', '--compile-all'], {
+  return spawn('node_modules/.bin/truffle', ['migrate', '--reset', '--compile-all'], {
     stdio,
     cwd: NETWORK_ROOT,
-    env: {
-      PATH: `${process.env.PATH}:node_modules/.bin`,
-    },
   });
 }
 
