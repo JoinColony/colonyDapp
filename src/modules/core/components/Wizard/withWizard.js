@@ -84,6 +84,15 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
             // It must be valid if we submitted values for this step before
             isInitialValid: ({ initialValues }) => !!initialValues,
           },
+          formHelpers: {
+            includeWizardValues: (action: *, currentValues: Values) => ({
+              ...action,
+              payload: {
+                ...currentValues,
+                ...allValues,
+              },
+            }),
+          },
         }),
       );
     }

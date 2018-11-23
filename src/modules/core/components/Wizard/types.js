@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Action } from '~types/index';
+
 export type WizardProps<FormValues> = {
   step: number,
   stepCount: number,
@@ -9,5 +11,8 @@ export type WizardProps<FormValues> = {
   wizardForm: {
     initialValues: { [formValue: string]: any },
     isInitialValid: Object => boolean,
+  },
+  formHelpers: {
+    includeWizardValues: (action: Action, currentValues: Object) => Action,
   },
 };
