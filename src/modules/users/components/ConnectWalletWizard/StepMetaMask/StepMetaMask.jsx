@@ -23,31 +23,31 @@ import {
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.heading',
+    id: 'users.ConnectWalletWizard.StepMetaMask.heading',
     defaultMessage: "You're connected to MetaMask",
   },
   subHeading: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.subHeading',
+    id: 'users.ConnectWalletWizard.StepMetaMask.subHeading',
     defaultMessage: 'Would you like to access Colony with that?',
   },
   errorHeading: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.errorHeading',
+    id: 'users.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: "Oops we couldn't detect MetaMask",
   },
   errorOpenMetamask: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.errorOpenMetamask',
+    id: 'users.ConnectWalletWizard.StepMetaMask.errorOpenMetamask',
     defaultMessage: 'We could not connect to MetaMask',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.button.advance',
+    id: 'users.ConnectWalletWizard.StepMetaMask.button.advance',
     defaultMessage: 'Go to Colony',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.button.back',
+    id: 'users.ConnectWalletWizard.StepMetaMask.button.back',
     defaultMessage: 'Back',
   },
   buttonRetry: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.button.retry',
+    id: 'users.ConnectWalletWizard.StepMetaMask.button.retry',
     defaultMessage: 'Try Again',
   },
 });
@@ -64,7 +64,7 @@ type State = {
 class MetaMask extends Component<Props, State> {
   timerHandle: TimeoutID;
 
-  static displayName = 'user.ConnectWalletWizard.StepMetaMask';
+  static displayName = 'users.ConnectWalletWizard.StepMetaMask';
 
   state = {
     isLoading: false,

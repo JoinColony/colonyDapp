@@ -26,40 +26,40 @@ import styles from './StepJSONUpload.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.heading',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.heading',
     defaultMessage: 'Log in with your JSON file',
   },
   fileUploadLabel: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.fileUploadLabel',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.fileUploadLabel',
     defaultMessage: 'Select your Wallet File',
   },
   fileUploadHelp: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.fileUploadHelp',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.fileUploadHelp',
     defaultMessage: '.json',
   },
   filePasswordLabel: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.filePasswordLabel',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.filePasswordLabel',
     defaultMessage: 'Password',
   },
   filePasswordHelp: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.filePasswordHelp',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.filePasswordHelp',
     defaultMessage: 'Optional',
   },
   errorKeystore: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.errorKeystore',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.errorKeystore',
     defaultMessage: 'This does not look like a valid keystore',
   },
   errorUnlockWallet: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.errorUnlockWallet',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.errorUnlockWallet',
     defaultMessage:
       'Could not unlock your wallet. Please double check your password',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.buttonAdvance',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.buttonAdvance',
     defaultMessage: 'Unlock your wallet',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepJSONUpload.buttonBack',
+    id: 'users.ConnectWalletWizard.StepJSONUpload.buttonBack',
     defaultMessage: 'Back',
   },
 });
@@ -90,7 +90,7 @@ const transformPayload = (
 
 type Props = WizardProps<FormValues>;
 
-const displayName = 'user.ConnectWalletWizard.StepJSONUpload';
+const displayName = 'users.ConnectWalletWizard.StepJSONUpload';
 
 const readKeystoreFromFileData = (file: FileReaderFile) => {
   if (!file || !file.data) {

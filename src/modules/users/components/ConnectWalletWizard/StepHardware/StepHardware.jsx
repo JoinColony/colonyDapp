@@ -28,61 +28,61 @@ import styles from './StepHardware.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepHardware.heading',
+    id: 'users.ConnectWalletWizard.StepHardware.heading',
     defaultMessage:
       'We found a hardware wallet! Which address would you like to use?',
   },
   walletSelectionLabel: {
-    id: 'user.ConnectWalletWizard.StepHardware.walletSelectionLabel',
+    id: 'users.ConnectWalletWizard.StepHardware.walletSelectionLabel',
     defaultMessage: 'Select an address',
   },
   walletIconTitle: {
-    id: 'user.ConnectWalletWizard.StepHardware.walletIconTitle',
+    id: 'users.ConnectWalletWizard.StepHardware.walletIconTitle',
     defaultMessage: 'Hardware wallet',
   },
   searchInputPlacholder: {
-    id: 'user.ConnectWalletWizard.StepHardware.searchInputPlaceholder',
+    id: 'users.ConnectWalletWizard.StepHardware.searchInputPlaceholder',
     defaultMessage: 'Search...',
   },
   balanceText: {
-    id: 'user.ConnectWalletWizard.StepHardware.balanceText',
+    id: 'users.ConnectWalletWizard.StepHardware.balanceText',
     defaultMessage: 'Balance',
   },
   emptySearchResultsText: {
-    id: 'user.ConnectWalletWizard.StepHardware.emptySearchResultsText',
+    id: 'users.ConnectWalletWizard.StepHardware.emptySearchResultsText',
     defaultMessage: `Your search didn't return any connected wallets.`,
   },
   errorHeading: {
-    id: 'user.ConnectWalletWizard.StepHardware.errorHeading',
+    id: 'users.ConnectWalletWizard.StepHardware.errorHeading',
     defaultMessage: `Oops, we couldn't find your hardware wallet`,
   },
   errorDescription: {
-    id: 'user.ConnectWalletWizard.StepHardware.errorDescription',
+    id: 'users.ConnectWalletWizard.StepHardware.errorDescription',
     defaultMessage:
       'Please check that your hardware wallet is connected and try again.',
   },
   errorPickAddress: {
-    id: 'user.ConnectWalletWizard.StepHardware.errorPickAddress',
+    id: 'users.ConnectWalletWizard.StepHardware.errorPickAddress',
     defaultMessage: 'Something went wrong. That is probably not your fault!',
   },
   walletChoiceRequired: {
-    id: 'user.ConnectWalletWizard.StepHardware.walletChoiceRequired',
+    id: 'users.ConnectWalletWizard.StepHardware.walletChoiceRequired',
     defaultMessage: 'Please select one of the wallets below.',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepHardware.buttonAdvance',
+    id: 'users.ConnectWalletWizard.StepHardware.buttonAdvance',
     defaultMessage: 'Unlock Wallet',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepHardware.buttonBack',
+    id: 'users.ConnectWalletWizard.StepHardware.buttonBack',
     defaultMessage: 'Choose a different wallet',
   },
   buttonRetry: {
-    id: 'user.ConnectWalletWizard.StepHardware.buttonRetry',
+    id: 'users.ConnectWalletWizard.StepHardware.buttonRetry',
     defaultMessage: 'Try Again',
   },
   loadingAddresses: {
-    id: 'user.ConnectWalletWizard.StepHardware.loadingAddresses',
+    id: 'users.ConnectWalletWizard.StepHardware.loadingAddresses',
     defaultMessage: 'Loading available addresses...',
   },
 });
@@ -111,7 +111,7 @@ type Props = WizardProps<FormValues> & {
 };
 
 class StepHardware extends Component<Props> {
-  static displayName = 'user.ConnectWalletWizard.StepHardware';
+  static displayName = 'users.ConnectWalletWizard.StepHardware';
 
   static defaultProps = {
     availableAddresses: [],

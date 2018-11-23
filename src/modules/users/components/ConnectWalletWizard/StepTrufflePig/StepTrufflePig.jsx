@@ -23,31 +23,31 @@ import {
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.heading',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.heading',
     defaultMessage: "You're connected using a TrufflePig account",
   },
   subHeading: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.subHeading',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.subHeading',
     defaultMessage: 'Would you like to access Colony with that?',
   },
   errorHeading: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.errorHeading',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.errorHeading',
     defaultMessage: "Oops we couldn't load from TrufflePig",
   },
   errorOpenTrufflepig: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.errorOpenTrufflepig',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.errorOpenTrufflepig',
     defaultMessage: 'We could not connect to TrufflePig',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.button.advance',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.button.advance',
     defaultMessage: 'Go to Colony',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.button.back',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.button.back',
     defaultMessage: 'Back',
   },
   buttonRetry: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.button.retry',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.button.retry',
     defaultMessage: 'Try Again',
   },
 });
@@ -64,7 +64,7 @@ type State = {
 class StepTrufflePig extends Component<Props, State> {
   timerHandle: TimeoutID;
 
-  static displayName = 'user.ConnectWalletWizard.StepTrufflePig';
+  static displayName = 'users.ConnectWalletWizard.StepTrufflePig';
 
   state = {
     isLoading: false,

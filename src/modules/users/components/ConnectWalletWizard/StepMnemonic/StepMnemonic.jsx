@@ -21,32 +21,32 @@ import styles from './StepMnemonic.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.heading',
+    id: 'users.ConnectWalletWizard.StepMnemonic.heading',
     defaultMessage: 'Access Colony with your Mnemonic Phrase',
   },
   instructionText: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.instructionText',
+    id: 'users.ConnectWalletWizard.StepMnemonic.instructionText',
     defaultMessage: 'Your Mnemonic Phrase',
   },
   errorDescription: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.errorDescription',
+    id: 'users.ConnectWalletWizard.StepMnemonic.errorDescription',
     defaultMessage: 'Oops, there is something wrong',
   },
   errorOpenMnemonic: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.errorOpenMnemonic',
+    id: 'users.ConnectWalletWizard.StepMnemonic.errorOpenMnemonic',
     defaultMessage:
       'Oops, there is something wrong. Check the format of your mnemonic',
   },
   mnemonicRequired: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.mnemonicRequired',
+    id: 'users.ConnectWalletWizard.StepMnemonic.mnemonicRequired',
     defaultMessage: 'You must provide a mnemonic phrase.',
   },
   buttonAdvanceText: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.button.advance',
+    id: 'users.ConnectWalletWizard.StepMnemonic.button.advance',
     defaultMessage: 'Go to Colony',
   },
   buttonBackText: {
-    id: 'user.ConnectWalletWizard.StepMnemonic.button.back',
+    id: 'users.ConnectWalletWizard.StepMnemonic.button.back',
     defaultMessage: 'Back',
   },
 });
@@ -61,7 +61,7 @@ type FormValues = {
 
 type Props = WizardProps<FormValues>;
 
-const displayName = 'user.ConnectWalletWizard.StepMnemonic';
+const displayName = 'users.ConnectWalletWizard.StepMnemonic';
 
 const StepMnemonic = ({
   previousStep,

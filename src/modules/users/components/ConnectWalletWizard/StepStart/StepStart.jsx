@@ -17,69 +17,69 @@ import styles from './StepStart.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'ConnectWalletWizard.StepStart.heading',
+    id: 'users.ConnectWalletWizard.StepStart.heading',
     defaultMessage: 'How would you like to access Colony?',
   },
   subTitle: {
-    id: 'ConnectWalletWizard.StepStart.subTitle',
+    id: 'users.ConnectWalletWizard.StepStart.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
       'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
   createWalletTitle: {
-    id: 'ConnectWalletWizard.StepStart.createWalletTitle',
+    id: 'users.ConnectWalletWizard.StepStart.createWalletTitle',
     defaultMessage: 'Need a wallet? Let us help',
   },
   createWalletSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.createWalletSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.createWalletSubtitle',
     defaultMessage: 'Create an etherum wallet to join',
   },
   metaMaskTitle: {
-    id: 'ConnectWalletWizard.StepStart.metaMaskTitle',
+    id: 'users.ConnectWalletWizard.StepStart.metaMaskTitle',
     defaultMessage: 'MetaMask',
   },
   trezorTitle: {
-    id: 'ConnectWalletWizard.StepStart.trezorTitle',
+    id: 'users.ConnectWalletWizard.StepStart.trezorTitle',
     defaultMessage: 'Trezor Hardware Wallet',
   },
   trezorSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.trezorSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
     defaultMessage: 'Login using the Trezor hardware wallet',
   },
   ledgerTitle: {
-    id: 'ConnectWalletWizard.StepStart.ledgerTitle',
+    id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
     defaultMessage: 'Ledger Hardware Wallet',
   },
   trufflepigTitle: {
-    id: 'ConnectWalletWizard.StepStart.trufflepigTitle',
+    id: 'users.ConnectWalletWizard.StepStart.trufflepigTitle',
     defaultMessage: 'TrufflePig',
   },
   ledgerSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.ledgerSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
     defaultMessage: 'Login using the Ledger hardware wallet',
   },
   mnemonicTitle: {
-    id: 'ConnectWalletWizard.StepStart.mnemonicTitle',
+    id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
   JSONTitle: {
-    id: 'ConnectWalletWizard.StepStart.JSONTitle',
+    id: 'users.ConnectWalletWizard.StepStart.JSONTitle',
     defaultMessage: 'JSON File',
   },
   metaMaskSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.metaMaskSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.metaMaskSubtitle',
     defaultMessage: 'Require MetaMask browser extension',
   },
   mnemonicSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.mnemonicSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
     defaultMessage: 'Access with your mnemonic',
   },
   JSONSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.JSONSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.JSONSubtitle',
     defaultMessage: 'We do not recommend this method',
   },
   trufflepigSubtitle: {
-    id: 'ConnectWalletWizard.StepStart.trufflepigSubtitle',
+    id: 'users.ConnectWalletWizard.StepStart.trufflepigSubtitle',
     defaultMessage: 'Use wallet from TrufflePig (dev mode only)',
   },
 });
@@ -88,7 +88,7 @@ type FormValues = {
   method: WalletMethod,
 };
 
-const displayName = 'user.ConnectWalletWizard.StepStart';
+const displayName = 'users.ConnectWalletWizard.StepStart';
 
 const options = [
   {
@@ -170,10 +170,5 @@ const StepStart = ({ nextStep, wizardValues }: Props) => (
 );
 
 StepStart.displayName = displayName;
-
-// export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-//   nextStep();
-
-// export const Step = StepStart;
 
 export default StepStart;
