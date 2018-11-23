@@ -73,12 +73,17 @@ class StepBackupPhrase extends Component<Props, State> {
   };
 
   render() {
-    const { nextStep, previousStep, wizardValues } = this.props;
+    const {
+      nextStep,
+      previousStep,
+      wizardForm,
+      wizardValues: { mnemonic },
+    } = this.props;
     const { copied } = this.state;
 
     return (
       <main className={styles.content}>
-        <Form onSubmit={nextStep} initialValues={wizardValues}>
+        <Form onSubmit={nextStep} {...wizardForm}>
           {({ values }) => (
             <Fragment>
               <div className={styles.title}>
@@ -106,7 +111,7 @@ class StepBackupPhrase extends Component<Props, State> {
                   textValues={{ copied }}
                 />
               </div>
-              <div className={styles.greyBox}>{wizardValues.mnemonic}</div>
+              <div className={styles.greyBox}>{mnemonic}</div>
               <div className={styles.divider} />
               <div className={styles.buttonsForBox}>
                 <Button

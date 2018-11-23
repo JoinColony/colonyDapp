@@ -47,9 +47,9 @@ const createMnemonic = async () => {
   return newWalletInstance.mnemonic;
 };
 
-const StepCreatePhrase = ({ nextStep, wizardValues }: Props) => (
+const StepCreatePhrase = ({ nextStep, wizardForm }: Props) => (
   <main className={styles.content}>
-    <Form onSubmit={nextStep} initialValues={wizardValues}>
+    <Form onSubmit={nextStep} {...wizardForm}>
       <div className={styles.title}>
         <Heading
           appearance={{ size: 'medium', width: 'thin' }}
