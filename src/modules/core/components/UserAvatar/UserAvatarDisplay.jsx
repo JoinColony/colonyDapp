@@ -6,6 +6,7 @@ import getIcon from '../../../../lib/identicon';
 
 import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
+import NavLink from '../NavLink';
 
 export type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
@@ -26,6 +27,8 @@ export type Props = {
   walletAddress: string,
   /* Whether to show or not show the UserInfo tooltip over the avatar */
   hasUserInfo?: boolean,
+  /** Allow exceptions where you don't link to the user profile */
+  link?: boolean,
 };
 
 const UserAvatarDisplay = ({
@@ -37,23 +40,31 @@ const UserAvatarDisplay = ({
   username,
   walletAddress,
   hasUserInfo = false,
-}: Props) => (
-  <UserInfo
-    displayName={displayName}
-    username={username}
-    walletAddress={walletAddress}
-    trigger={hasUserInfo ? 'hover' : 'disabled'}
-  >
-    <Avatar
-      avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
-      className={className}
-      notSet={notSet}
-      placeholderIcon="circle-person"
-      size={size}
-      title={username || walletAddress}
-    />
-  </UserInfo>
-);
+  link = true,
+}: Props) => {
+  const avatarAndInfo = (
+    <UserInfo
+      displayName={displayName}
+      username={username}
+      walletAddress={walletAddress}
+      trigger={hasUserInfo ? 'hover' : 'disabled'}
+    >
+      <Avatar
+        avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
+        className={className}
+        notSet={notSet}
+        placeholderIcon="circle-person"
+        size={size}
+        title={username || walletAddress}
+      />
+    </UserInfo>
+  );
+  return link && username ? (
+    <NavLink to={`/user/${username.toLowerCase()}`}>{avatarAndInfo}</NavLink>
+  ) : (
+    avatarAndInfo
+  );
+};
 
 UserAvatarDisplay.displayName = 'UserAvatarDisplay';
 
