@@ -25,7 +25,9 @@ export interface AccessController<I: Identity, P: IdentityProvider<I>> {
 
   canAppend(entry: Entry, provider: P): Promise<boolean>;
 
-  setup(): Promise<void>;
+  setup(options: any): Promise<void>;
+
+  save(): Promise<string>;
 
   save(): Promise<string>;
 
