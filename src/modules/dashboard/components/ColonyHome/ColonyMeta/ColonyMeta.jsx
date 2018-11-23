@@ -10,7 +10,7 @@ import { ADMIN_DASHBOARD_ROUTE } from '~routes';
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
-import NavLink from '~core/NavLink';
+import Link from '~core/Link';
 import UserAvatar from '~core/UserAvatar';
 
 import styles from './ColonyMeta.css';
@@ -68,9 +68,9 @@ const ColonyMeta = ({
       <Fragment>
         <span>{name}</span>
         {isAdmin && (
-          <NavLink className={styles.editColony} to={ADMIN_DASHBOARD_ROUTE}>
+          <Link className={styles.editColony} to={ADMIN_DASHBOARD_ROUTE}>
             <Icon name="settings" title={MSG.editColonyTitle} />
-          </NavLink>
+          </Link>
         )}
       </Fragment>
     </Heading>

@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import MaskedAddress from '~core/MaskedAddress';
-import NavLink from '~core/NavLink';
+import Link from '~core/Link';
 
 import styles from './TransactionDetails.css';
 
@@ -76,7 +76,7 @@ const TaskDetails = ({ title = '', id }: Object) => (
   <span>
     {title &&
       id && (
-        <NavLink text={title} to={`/task/${id}`} className={styles.taskLink} />
+        <Link text={title} to={`/task/${id}`} className={styles.taskLink} />
       )}
   </span>
 );
