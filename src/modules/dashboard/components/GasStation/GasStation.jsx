@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { InProps } from './GasStation';
@@ -8,16 +8,15 @@ import type { TransactionType } from '~types/transaction';
 import { WALLET_ROUTE } from '~routes';
 
 import { getMainClasses } from '~utils/css';
-import CardList from '~core/CardList';
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 
-import styles from './GasStation.css';
+import GasStationCard from './GasStationCard';
 
-import GasStationClaimCard from './GasStationClaimCard';
+import styles from './GasStation.css';
 
 const MSG = defineMessages({
   transactionsEmptyStateText: {
@@ -32,18 +31,11 @@ const MSG = defineMessages({
 
 type Props = InProps & {
   balance: number,
-  showClaimInfoCard: boolean,
   transactions: Array<TransactionType>,
   walletAddress: string,
 };
 
-const GasStation = ({
-  balance,
-  close,
-  showClaimInfoCard,
-  transactions,
-  walletAddress,
-}: Props) => (
+const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
   <div
     className={getMainClasses({}, styles, {
       isEmpty: transactions.length === 0,
@@ -85,13 +77,7 @@ const GasStation = ({
     </div>
     <div className={styles.transactionsContainer}>
       {transactions && transactions.length > 0 ? (
-        <CardList appearance={{ numCols: '1' }}>
-          <Fragment>
-            {showClaimInfoCard && <GasStationClaimCard />}
-            {/* @TODO: Transaction card list for issue
-              #472 https://github.com/JoinColony/colonyDapp/issues/472 */}
-          </Fragment>
-        </CardList>
+        <GasStationCard />
       ) : (
         <Heading
           appearance={{ margin: 'none', size: 'normal' }}
