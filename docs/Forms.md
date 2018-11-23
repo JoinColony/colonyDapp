@@ -11,16 +11,20 @@ const yup = require('yup');
 const withWizard = require('../src/modules/core/components/Wizard/withWizard').default;
 const OuterTemplate = (({ children }) => <div>{children}</div>);
 
-const Step1 = ({ nextStep, step, wizardValues }) => (
-  <Form onSubmit={nextStep} initialValues={wizardValues}>
-    <h1>Step {step}</h1>
-    <Input name="email" label="eMail" />
-    <Button appearance={{ theme: 'primary' }} type="submit">Next</Button>
+const Step1 = ({ nextStep, step, wizardForm }) => (
+  <Form onSubmit={nextStep} {...wizardForm}>
+    {({ isValid }) => (
+      <div>
+        <h1>Step {step}</h1>
+        <Input name="email" label="eMail" />
+        <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">Next</Button>
+      </div>
+    )}
   </Form>
 );
 
-const Step2 = ({ nextStep, previousStep, step, wizardValues }) => (
-  <Form onSubmit={nextStep} initialValues={wizardValues}>
+const Step2 = ({ nextStep, previousStep, step, wizardForm }) => (
+  <Form onSubmit={nextStep} {...wizardForm}>
     {({ values }) => (
       <div>
         <h1>Step {step}</h1>
@@ -33,7 +37,7 @@ const Step2 = ({ nextStep, previousStep, step, wizardValues }) => (
 );
 
 const Step3 = ({ nextStep, wizardValues }) => (
-  <Form onSubmit={() => window.alert(JSON.stringify(wizardValues))} initialValues={wizardValues}>
+  <Form onSubmit={() => window.alert(JSON.stringify(wizardValues))}>
     <pre>Value 1: {wizardValues.email}</pre>
     <pre>Value 2: {wizardValues.username}</pre>
     <Button appearance={{ theme: 'danger' }} type="submit">Submit these values</Button>
