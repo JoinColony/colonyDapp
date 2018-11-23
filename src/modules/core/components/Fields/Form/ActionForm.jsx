@@ -24,6 +24,12 @@ const displayName = 'Form.ActionForm';
 // We remove the onSubmit function from the props as it is provided by the ActionForm itself
 type ActionFormikConfig = $Rest<FormikConfig<Object>, {| onSubmit: Function |}>;
 
+type OnError = (
+  error: any,
+  bag: FormikBag<Object, Object>,
+  values?: Object,
+) => void;
+
 type Props = ActionFormikConfig & {
   /** Redux action to dispatch on submit (e.g. CREATE_XXX) */
   submit: string,
@@ -32,14 +38,18 @@ type Props = ActionFormikConfig & {
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
   error: string,
   /** Function to call after successful action was dispatched */
-  onSuccess?: (any, FormikBag<Object, Object>) => void,
+  onSuccess?: (
+    result: any,
+    bag: FormikBag<Object, Object>,
+    values: Object,
+  ) => void,
   /** Function to call after error action was dispatched */
-  onError?: (any, FormikBag<Object, Object>) => void,
+  onError?: OnError,
   /** A function to set the payload (the parameter passed to the async function). Defaults to (action, payload) => ({ ...action, payload }) */
   setPayload?: (action: Object, payload: any) => Object,
 };
 
-const defaultOnErrror = (err, { setStatus }) =>
+const defaultOnErrror: OnError = (err, { setStatus }) =>
   setStatus({ error: MSG.defaultError });
 
 const ActionForm = ({
@@ -63,11 +73,13 @@ const ActionForm = ({
         asyncFunc(values, formikBag).then(
           res => {
             formikBag.setSubmitting(false);
-            if (typeof onSuccess === 'function') onSuccess(res, formikBag);
+            if (typeof onSuccess === 'function') {
+              onSuccess(res, formikBag, values);
+            }
           },
           err => {
             formikBag.setSubmitting(false);
-            if (typeof onError === 'function') onError(err, formikBag);
+            if (typeof onError === 'function') onError(err, formikBag, values);
           },
         );
       return <Form {...props} onSubmit={handleSubmit} />;

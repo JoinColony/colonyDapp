@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './StepTrufflePig.jsx';
+export { default } from './StepTrufflePig.jsx';

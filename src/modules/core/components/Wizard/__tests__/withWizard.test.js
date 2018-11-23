@@ -5,18 +5,6 @@ import { mount } from 'enzyme';
 
 import withWizard from '../withWizard';
 
-const createPromise = () => {
-  let resolvePromise;
-  let rejectPromise;
-  const promise = new Promise((resolve, reject) => {
-    resolvePromise = resolve;
-    rejectPromise = reject;
-  });
-  return { promise, resolvePromise, rejectPromise };
-};
-
-const onSubmit = (values, { nextStep }) => nextStep();
-
 // eslint-disable-next-line react/prop-types
 const Wrapper = ({ children, step }) => (
   <div>
@@ -25,60 +13,34 @@ const Wrapper = ({ children, step }) => (
   </div>
 );
 
-const createStep = number => () => <h2>Step number {number}</h2>;
+// eslint-disable-next-line react/prop-types
+const createStep = (number, customValues) => ({ nextStep }) => (
+  <div>
+    <h2>Step number {number}</h2>
+    <button type="button" onClick={() => nextStep(customValues)}>
+      Click me
+    </button>
+  </div>
+);
 
 describe('withWizard HoC', () => {
   test('Renders initial step - use with Steps array', () => {
-    const stepsArray = [
-      {
-        Step: createStep(1),
-        onSubmit,
-      },
-      {
-        Step: createStep(2),
-        onSubmit,
-      },
-    ];
+    const stepsArray = [createStep(1), createStep(2)];
     const Wizard = withWizard({ steps: stepsArray })(Wrapper);
     const wrapper = mount(<Wizard />);
     expect(wrapper.find('h1')).toHaveText('Step: 1');
   });
 
-  test('Renders second step after form submit - use with Steps array', () => {
-    const { promise, resolvePromise } = createPromise();
-    const stepsArray = [
-      {
-        Step: createStep(1),
-        onSubmit: (values, { nextStep }) => {
-          nextStep();
-          resolvePromise();
-        },
-      },
-      {
-        Step: createStep(2),
-        onSubmit,
-      },
-    ];
+  test('Renders second step nextStep is called - use with Steps array', () => {
+    const stepsArray = [createStep(1), createStep(2)];
     const Wizard = withWizard({ steps: stepsArray })(Wrapper);
     const wrapper = mount(<Wizard />);
-    wrapper.find('form').simulate('submit');
-    return promise.then(() => {
-      wrapper.update();
-      expect(wrapper.find('h1')).toHaveText('Step: 2');
-    });
+    wrapper.find('button').simulate('click');
+    expect(wrapper.find('h1')).toHaveText('Step: 2');
   });
 
   test('Renders initial step - use with Steps function', () => {
-    const stepsArray = [
-      {
-        Step: createStep(1),
-        onSubmit,
-      },
-      {
-        Step: createStep(2),
-        onSubmit,
-      },
-    ];
+    const stepsArray = [createStep(1), createStep(2)];
 
     // Very simple. See next test for complex example
     const stepsFunction = step => stepsArray[step];
@@ -89,26 +51,10 @@ describe('withWizard HoC', () => {
   });
 
   test('Renders second step - use with Steps function', () => {
-    const { promise, resolvePromise } = createPromise();
     const stepsArray = [
-      {
-        Step: createStep(1),
-        onSubmit: (values, { nextStep }) => {
-          nextStep();
-          resolvePromise();
-        },
-        formikConfig: {
-          initialValues: { path: 'skip2' },
-        },
-      },
-      {
-        Step: createStep(2),
-        onSubmit,
-      },
-      {
-        Step: createStep(3),
-        onSubmit,
-      },
+      createStep(1, { path: 'skip2' }),
+      createStep(2),
+      createStep(3),
     ];
 
     const stepsFunction = (step, { path }) => {
@@ -121,10 +67,7 @@ describe('withWizard HoC', () => {
 
     const Wizard = withWizard({ steps: stepsFunction })(Wrapper);
     const wrapper = mount(<Wizard />);
-    wrapper.find('form').simulate('submit');
-    return promise.then(() => {
-      wrapper.update();
-      expect(wrapper.find('h2')).toHaveText('Step number 3');
-    });
+    wrapper.find('button').simulate('click');
+    expect(wrapper.find('h2')).toHaveText('Step number 3');
   });
 });

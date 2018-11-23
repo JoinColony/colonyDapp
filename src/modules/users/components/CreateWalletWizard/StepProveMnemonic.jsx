@@ -1,14 +1,14 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import styles from './StepProveMnemonic.css';
 
-import type { ActionSubmit } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
-import { FormStatus, Input, InputLabel } from '~core/Fields';
+import { ActionForm, FormStatus, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
@@ -47,10 +47,9 @@ const MSG = defineMessages({
     id: 'CreateWallet.StepProveMnemonic.firstProofWord',
     defaultMessage: 'Word {count}',
   },
-  errorWrongProofWords: {
-    id: 'CreateWallet.StepProveMnemonic.Error.wrongProofWords',
-    defaultMessage:
-      'Double check your words, seems like at least one of them is wrong.',
+  errorWrongWord: {
+    id: 'CreateWallet.StepProveMnemonic.errorWrongWord',
+    defaultMessage: 'This is not the correct word',
   },
 });
 
@@ -69,112 +68,96 @@ type FormValues = {
   proofWord3: string,
 };
 
-type Props = {
-  previousStep: () => void,
-  createWalletAction: (string, *) => void,
-} & FormikProps<FormValues>;
-
-type FormValidation = {
-  mnemonic: string,
-} & FormValues;
+type Props = WizardProps<FormValues>;
 
 const StepProveMnemonic = ({
   previousStep,
-  isValid,
-  isSubmitting,
-  status,
-}: Props) => (
-  <main className={styles.main}>
-    <section className={styles.titleSection}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
-      <Heading
-        appearance={{ size: 'normal', weight: 'thin' }}
-        text={MSG.subTitle}
-      />
-      <div className={styles.instructions}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'bold', margin: 'none' }}
-          text={MSG.instructions}
-        />
-        {!isValid && (
-          <Heading text={MSG.errorWrongProofWords} className={styles.error} />
+  wizardForm,
+  wizardValues: { mnemonic },
+}: Props) => {
+  const mnemonicWords = mnemonic.split(' ');
+  return (
+    <main className={styles.main}>
+      <ActionForm
+        submit={WALLET_CREATE}
+        success={CURRENT_USER_CREATE}
+        error={WALLET_CREATE_ERROR}
+        setPayload={(action: *) => ({
+          ...action,
+          payload: { method: 'create', mnemonic },
+        })}
+        validationSchema={yup.object().shape({
+          proofWord1: yup
+            .string()
+            .required()
+            .oneOf([mnemonicWords[chosenProofWords[0]]], MSG.errorWrongWord),
+          proofWord2: yup
+            .string()
+            .required()
+            .oneOf([mnemonicWords[chosenProofWords[1]]], MSG.errorWrongWord),
+          proofWord3: yup
+            .string()
+            .required()
+            .oneOf([mnemonicWords[chosenProofWords[2]]], MSG.errorWrongWord),
+        })}
+        validateOnBlur={false}
+        validateOnChange={false}
+        {...wizardForm}
+      >
+        {({ isSubmitting, status, values }) => (
+          <Fragment>
+            <section className={styles.titleSection}>
+              <Heading
+                appearance={{ size: 'medium', weight: 'thin' }}
+                text={MSG.heading}
+              />
+              <Heading
+                appearance={{ size: 'normal', weight: 'thin' }}
+                text={MSG.subTitle}
+              />
+              <div className={styles.instructions}>
+                <Heading
+                  appearance={{
+                    size: 'normal',
+                    weight: 'bold',
+                    margin: 'none',
+                  }}
+                  text={MSG.instructions}
+                />
+              </div>
+            </section>
+            <div className={styles.inputFields}>
+              {chosenProofWords.map((wordIndex, arrayIndex) => (
+                <Fragment key={`proofWordKey_${wordIndex}`}>
+                  <Input
+                    label={MSG.proofWord}
+                    labelValues={{ count: `${wordIndex + 1}` }}
+                    name={`proofWord${arrayIndex + 1}`}
+                  />
+                </Fragment>
+              ))}
+            </div>
+            <FormStatus status={status} />
+            <div className={styles.actionsContainer}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                disabled={isSubmitting}
+                text={MSG.backButton}
+                onClick={() => previousStep(values)}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                text={MSG.nextButton}
+                type="submit"
+                loading={isSubmitting}
+                style={{ width: styles.wideButton }}
+              />
+            </div>
+          </Fragment>
         )}
-      </div>
-    </section>
-    <div className={styles.inputFields}>
-      {chosenProofWords.map((wordIndex, arrayIndex) => (
-        <Fragment key={`proofWordKey_${wordIndex}`}>
-          <InputLabel
-            label={MSG.proofWord}
-            labelValues={{ count: `${wordIndex + 1}` }}
-          />
-          <Input
-            name={`proofWord${arrayIndex + 1}`}
-            className={!isValid ? styles.customInputError : styles.customInput}
-            elementOnly
-          />
-        </Fragment>
-      ))}
-    </div>
-    <FormStatus status={status} />
-    <div className={styles.actionsContainer}>
-      <Button
-        text={MSG.backButton}
-        appearance={{ theme: 'secondary', size: 'large' }}
-        onClick={previousStep}
-      />
-      <Button
-        appearance={{ theme: 'primary', size: 'large' }}
-        text={MSG.nextButton}
-        type="submit"
-        loading={isSubmitting}
-        style={{ width: styles.wideButton }}
-      />
-    </div>
-  </main>
-);
-
-/*
- * Custom Formik validator trigger only onSubmit
- *
- * This is needed since we need access to the props passed down from the
- * previous step, so that we can specifically test against each word
- */
-export const formikConfig = {
-  validateOnBlur: false,
-  validateOnChange: false,
-  isInitialValid: true,
-  initialValues: {
-    method: 'create',
-  },
-  validate: ({
-    mnemonic,
-    proofWord1,
-    proofWord2,
-    proofWord3,
-  }: FormValidation) => {
-    const errorObject: Object = { errror: true };
-    const mnemonicWords: Array<string> = mnemonic.split(' ');
-    if (proofWord1 !== mnemonicWords[chosenProofWords[0]]) {
-      return errorObject;
-    }
-    if (proofWord2 !== mnemonicWords[chosenProofWords[1]]) {
-      return errorObject;
-    }
-    if (proofWord3 !== mnemonicWords[chosenProofWords[2]]) {
-      return errorObject;
-    }
-    return {};
-  },
+      </ActionForm>
+    </main>
+  );
 };
 
-export const onSubmit: ActionSubmit<FormValues> = {
-  submit: WALLET_CREATE,
-  success: CURRENT_USER_CREATE,
-  error: WALLET_CREATE_ERROR,
-};
-
-export const Step = StepProveMnemonic;
+export default StepProveMnemonic;

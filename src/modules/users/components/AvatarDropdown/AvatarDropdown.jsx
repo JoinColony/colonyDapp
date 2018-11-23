@@ -18,7 +18,7 @@ type Props = {
   user: UserRecord,
 };
 
-const displayName = 'user.AvatarDropdown';
+const displayName = 'users.AvatarDropdown';
 
 const AvatarDropdown = ({ user }: Props) => (
   <Popover

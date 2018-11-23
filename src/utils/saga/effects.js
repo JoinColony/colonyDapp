@@ -4,6 +4,8 @@ import type { MessageDescriptor } from 'react-intl';
 
 import { call, put } from 'redux-saga/effects';
 
+import { isDev, log } from '~utils/debug';
+
 /*
  * Effect to create a new class instance of Class (use instead of "new Class")
  */
@@ -25,8 +27,8 @@ export const putError = (
       meta: {},
     },
   };
-  if (process.env.NODE_ENV === 'development') {
-    console.error(error);
+  if (isDev) {
+    log(error);
     action.payload.meta = {
       message: error.message,
       stack: error.stack,

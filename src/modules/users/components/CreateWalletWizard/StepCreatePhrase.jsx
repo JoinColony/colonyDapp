@@ -4,10 +4,11 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import softwareWallet from '@colony/purser-software';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import { Form } from '~core/Fields';
 import MnemonicGenerator from '~core/MnemonicGenerator';
 
 import { CONNECT_ROUTE } from '~routes';
@@ -39,44 +40,45 @@ type FormValues = {
   passphrase: string,
 };
 
+type Props = WizardProps<FormValues>;
+
 const createMnemonic = async () => {
   const newWalletInstance = await softwareWallet.create();
   return newWalletInstance.mnemonic;
 };
 
-const StepCreatePhrase = () => (
+const StepCreatePhrase = ({ nextStep, wizardForm }: Props) => (
   <main className={styles.content}>
-    <div className={styles.title}>
-      <Heading
-        appearance={{ size: 'medium', width: 'thin' }}
-        text={MSG.heading}
-      />
-    </div>
-    <div className={styles.subtitle}>
-      <Heading
-        appearance={{ size: 'normal', width: 'thin' }}
-        text={MSG.subTitle}
-      />
-    </div>
-    <div className={styles.greyBox}>
-      <MnemonicGenerator name="mnemonic" generateFn={createMnemonic} />
-    </div>
-    <div className={styles.buttonsForBox}>
-      <Button
-        appearance={{ theme: 'ghost' }}
-        linkTo={CONNECT_ROUTE}
-        text={MSG.backLink}
-      />
-      <Button
-        appearance={{ theme: 'primary' }}
-        type="submit"
-        text={MSG.confirmButton}
-      />
-    </div>
+    <Form onSubmit={nextStep} {...wizardForm}>
+      <div className={styles.title}>
+        <Heading
+          appearance={{ size: 'medium', width: 'thin' }}
+          text={MSG.heading}
+        />
+      </div>
+      <div className={styles.subtitle}>
+        <Heading
+          appearance={{ size: 'normal', width: 'thin' }}
+          text={MSG.subTitle}
+        />
+      </div>
+      <div className={styles.greyBox}>
+        <MnemonicGenerator name="mnemonic" generateFn={createMnemonic} />
+      </div>
+      <div className={styles.buttonsForBox}>
+        <Button
+          appearance={{ theme: 'ghost' }}
+          linkTo={CONNECT_ROUTE}
+          text={MSG.backLink}
+        />
+        <Button
+          appearance={{ theme: 'primary' }}
+          type="submit"
+          text={MSG.confirmButton}
+        />
+      </div>
+    </Form>
   </main>
 );
 
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
-
-export const Step = StepCreatePhrase;
+export default StepCreatePhrase;

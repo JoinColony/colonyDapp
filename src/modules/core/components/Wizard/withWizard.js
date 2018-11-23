@@ -1,34 +1,24 @@
 /* @flow */
-/* eslint-disable react/no-unused-prop-types */
 
 import type { ComponentType } from 'react';
-import type { FormikBag } from 'formik';
 
 import { createElement, Component } from 'react';
-
-import { ActionForm, Form } from '~core/Fields';
-
-import type { SubmitFn, ActionSubmit } from './types';
-
-type ValidationSchema = Object;
+import { List, Map as ImmutableMap } from 'immutable';
 
 type Props = {};
 
-type AnyValues = { [string]: any };
+type Values = { [formValue: string]: any };
+
+type ValueList = List<Values>;
 
 type State = {
   step: number,
-  values: AnyValues,
+  values: ValueList,
 };
 
-type StepType = {
-  Step: ComponentType<any>,
-  onSubmit: SubmitFn<AnyValues> | ActionSubmit<AnyValues>,
-  validationSchema?: ValidationSchema | (() => ValidationSchema),
-  formikConfig?: Object,
-};
+type StepType = ComponentType<any>;
 
-type StepsFn = (step: number, values: Object) => StepType;
+type StepsFn = (step: number, values: Values) => StepType;
 
 type Steps = Array<StepType> | StepsFn;
 
@@ -37,7 +27,8 @@ type WizardArgs = {
   steps: Steps,
 };
 
-type SetSubmitting = (isSubmitting: boolean) => void;
+const all = (values: ValueList) =>
+  values.reduce((map, curr) => map.merge(curr), new ImmutableMap()).toJS();
 
 const getStep = (steps: Steps, step: number, values: Object) =>
   typeof steps === 'function' ? steps(step, values) : steps[step];
@@ -46,107 +37,63 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
 ) => {
   class Wizard extends Component<Props, State> {
-    state = { step: 0, values: {} };
+    state = { step: 0, values: new List() };
 
-    next = (values: AnyValues, setSubmitting: SetSubmitting) => {
-      setSubmitting(false);
+    next = (values: Values) => {
       this.setState(({ step, values: currentValues }) => ({
         step: step + 1,
-        values: { ...currentValues, ...values },
+        values: currentValues.set(step, values),
       }));
     };
 
-    prev = (values: AnyValues, setSubmitting: SetSubmitting) => {
-      setSubmitting(false);
+    // Todo: when going back we could instead store the isValid state of the form when going back
+    prev = (values?: Values) => {
       this.setState(({ step, values: currentValues }) => ({
         step: step === 0 ? 0 : step - 1,
-        values: { ...currentValues, ...values },
+        // Going back we only want to set values when we actually have some
+        values:
+          values && Object.keys(values).length
+            ? currentValues.set(step, values)
+            : currentValues,
       }));
-    };
-
-    extendBag = (values: AnyValues, bag: FormikBag<Object, AnyValues>) => ({
-      ...bag,
-      nextStep: () => this.next(values, bag.setSubmitting),
-      previousStep: () => this.prev(values, bag.setSubmitting),
-    });
-
-    handleStepSubmit = (onSubmitFn: SubmitFn<AnyValues>) => (
-      values: Object,
-      bag: Object,
-    ) => onSubmitFn(values, this.extendBag(values, bag));
-
-    handleActionSubmit = ({
-      onSuccess,
-      onError,
-      ...rest
-    }: ActionSubmit<AnyValues>) => {
-      const { values } = this.state;
-      return {
-        ...rest,
-        onSuccess: onSuccess
-          ? (res: any, bag: FormikBag<Object, AnyValues>) =>
-              onSuccess(res, this.extendBag(values, bag))
-          : undefined,
-        onError: onError
-          ? (res: any, bag: FormikBag<Object, AnyValues>) =>
-              onError(res, this.extendBag(values, bag))
-          : undefined,
-      };
     };
 
     render() {
-      const { step, values: currentValues } = this.state;
-      const {
-        Step,
-        validationSchema,
-        onSubmit,
-        formikConfig,
-        ...extraProps
-      } = getStep(steps, step, currentValues);
+      const { step, values } = this.state;
+      const allValues = all(values);
+      const Step = getStep(steps, step, allValues);
 
       if (!Step) throw new Error('Step needs to be implemented!');
-
-      if (!onSubmit) throw new Error('onSubmit needs to be implemented!');
 
       const currentStep = step + 1;
       const stepCount = maxSteps || steps.length;
 
-      const configInitialValues = formikConfig
-        ? formikConfig.initialValues
-        : {};
-
-      const initialValues = {
-        ...currentValues,
-        ...configInitialValues,
-      };
-
-      const FormComponent = typeof onSubmit === 'function' ? Form : ActionForm;
-      const submitProps =
-        typeof onSubmit === 'function'
-          ? { onSubmit: this.handleStepSubmit(onSubmit) }
-          : this.handleActionSubmit(onSubmit);
-
       return createElement(
         OuterComponent,
-        { step: currentStep, stepCount, ...extraProps, ...this.props },
-        createElement(
-          FormComponent,
-          {
-            ...formikConfig,
-            ...submitProps,
-            validationSchema,
-            initialValues,
+        { step: currentStep, stepCount, ...this.props },
+        createElement(Step, {
+          step: currentStep,
+          stepCount,
+          nextStep: this.next,
+          previousStep: this.prev,
+          wizardValues: allValues,
+          // Wizard form helpers to take some shortcuts if needed
+          wizardForm: {
+            // Get values just for this step
+            initialValues: values.get(step),
+            // It must be valid if we submitted values for this step before
+            isInitialValid: ({ initialValues }) => !!initialValues,
           },
-          ({ values, ...formikProps }) =>
-            createElement(Step, {
-              step: currentStep,
-              stepCount,
-              nextStep: () => this.next(values, formikProps.setSubmitting),
-              previousStep: () => this.prev(values, formikProps.setSubmitting),
-              values,
-              ...formikProps,
+          formHelpers: {
+            includeWizardValues: (action: *, currentValues: Values) => ({
+              ...action,
+              payload: {
+                ...currentValues,
+                ...allValues,
+              },
             }),
-        ),
+          },
+        }),
       );
     }
   }

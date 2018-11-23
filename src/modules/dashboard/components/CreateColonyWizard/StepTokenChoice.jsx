@@ -4,14 +4,14 @@ import React from 'react';
 
 import { defineMessages } from 'react-intl';
 
-import type { FormikProps } from 'formik';
 import styles from './StepTokenChoice.css';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import DecisionHub from '~core/DecisionHub';
+import { Form } from '~core/Fields';
 
-import type { SubmitFn } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
 const MSG = defineMessages({
   heading: {
@@ -73,56 +73,54 @@ type FormValues = {
   tokenChoice: string,
 };
 
-type Props = {
-  previousStep: () => void,
-  nextStep: () => void,
-} & FormikProps<FormValues>;
+type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
-const StepTokenChoice = ({ previousStep }: Props) => (
-  <section className={styles.content}>
-    <div className={styles.title}>
-      <Heading
-        appearance={{ size: 'medium', weight: 'thin' }}
-        text={MSG.heading}
-      />
-    </div>
-    <div className={styles.subtitle}>
-      <Heading
-        appearance={{ size: 'normal', weight: 'thin' }}
-        text={MSG.subTitle}
-      />
-    </div>
-    <div className={styles.subtitleWithLinkBox}>
-      <Heading
-        className={styles.subtitleWithLink}
-        appearance={{ size: 'normal', weight: 'thin' }}
-        text={MSG.subTitleWithLink}
-      />
-      <div className={styles.link}>
-        <Button
-          appearance={{ theme: 'blue' }}
-          type="continue"
-          text={MSG.learnMore}
-        />
-      </div>
-    </div>
-    <DecisionHub name="tokenChoice" options={options} />
-    <div className={styles.buttonContainer}>
-      <Button
-        appearance={{ theme: 'secondary' }}
-        type="cancel"
-        text={MSG.button}
-        onClick={previousStep}
-      />
-    </div>
-  </section>
+const StepTokenChoice = ({ nextStep, previousStep, wizardForm }: Props) => (
+  <Form onSubmit={nextStep} {...wizardForm}>
+    {({ values }) => (
+      <section className={styles.content}>
+        <div className={styles.title}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'thin' }}
+            text={MSG.heading}
+          />
+        </div>
+        <div className={styles.subtitle}>
+          <Heading
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subTitle}
+          />
+        </div>
+        <div className={styles.subtitleWithLinkBox}>
+          <Heading
+            className={styles.subtitleWithLink}
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subTitleWithLink}
+          />
+          <div className={styles.link}>
+            <Button
+              appearance={{ theme: 'blue' }}
+              type="button"
+              text={MSG.learnMore}
+            />
+          </div>
+        </div>
+        <DecisionHub name="tokenChoice" options={options} />
+        <div className={styles.buttonContainer}>
+          <Button
+            appearance={{ theme: 'secondary' }}
+            type="button"
+            text={MSG.button}
+            onClick={() => previousStep(values)}
+          />
+        </div>
+      </section>
+    )}
+  </Form>
 );
 
 StepTokenChoice.displayName = displayName;
 
-export const Step = StepTokenChoice;
-
-export const onSubmit: SubmitFn<FormValues> = (values, { nextStep }) =>
-  nextStep();
+export default StepTokenChoice;

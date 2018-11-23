@@ -1,17 +1,18 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
+import type { FormikBag } from 'formik';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
-import type { WizardFormikBag } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import { ActionForm } from '~core/Fields';
 import styles from './StepTrufflePig.css';
 
 import {
@@ -22,52 +23,48 @@ import {
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.heading',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.heading',
     defaultMessage: "You're connected using a TrufflePig account",
   },
   subHeading: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.subHeading',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.subHeading',
     defaultMessage: 'Would you like to access Colony with that?',
   },
   errorHeading: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.errorHeading',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.errorHeading',
     defaultMessage: "Oops we couldn't load from TrufflePig",
   },
   errorOpenTrufflepig: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.errorOpenTrufflepig',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.errorOpenTrufflepig',
     defaultMessage: 'We could not connect to TrufflePig',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.button.advance',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.button.advance',
     defaultMessage: 'Go to Colony',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.button.back',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.button.back',
     defaultMessage: 'Back',
   },
   buttonRetry: {
-    id: 'user.ConnectWalletWizard.StepTrufflePig.button.retry',
+    id: 'users.ConnectWalletWizard.StepTrufflePig.button.retry',
     defaultMessage: 'Try Again',
   },
 });
 
 type FormValues = {};
 
-type Props = {
-  previousStep: () => void,
-  nextStep: () => void,
-  handleDidConnectWallet: () => void,
-} & FormikProps<FormValues>;
+type Props = WizardProps<FormValues>;
 
 type State = {
   isLoading: boolean,
   isValid: boolean,
 };
 
-class TrufflePig extends Component<Props, State> {
+class StepTrufflePig extends Component<Props, State> {
   timerHandle: TimeoutID;
 
-  static displayName = 'user.ConnectWalletWizard.StepTrufflePig';
+  static displayName = 'users.ConnectWalletWizard.StepTrufflePig';
 
   state = {
     isLoading: false,
@@ -108,71 +105,83 @@ class TrufflePig extends Component<Props, State> {
   };
 
   render() {
-    const { previousStep, isSubmitting, status } = this.props;
+    const {
+      previousStep,
+      wizardForm,
+      formHelpers: { includeWizardValues },
+    } = this.props;
     const { isLoading, isValid } = this.state;
     return (
-      <main>
-        <div className={styles.content}>
-          <div className={styles.iconContainer}>
-            <Icon
-              name="wallet"
-              title="wallet"
-              appearance={{ size: 'medium' }}
-            />
-          </div>
-          {isValid ? (
-            <Fragment>
-              <Heading
-                text={MSG.heading}
-                appearance={{ size: 'medium', margin: 'none' }}
+      <ActionForm
+        submit={WALLET_CREATE}
+        success={CURRENT_USER_CREATE}
+        error={WALLET_CREATE_ERROR}
+        onError={(
+          errorMessage: string,
+          { setStatus }: FormikBag<Object, FormValues>,
+        ) => {
+          setStatus({ error: MSG.errorOpenTrufflepig });
+        }}
+        setPayload={includeWizardValues}
+        {...wizardForm}
+      >
+        {({ status, isSubmitting, values }) => (
+          <main>
+            <div className={styles.content}>
+              <div className={styles.iconContainer}>
+                <Icon
+                  name="wallet"
+                  title="wallet"
+                  appearance={{ size: 'medium' }}
+                />
+              </div>
+              {isValid ? (
+                <Fragment>
+                  <Heading
+                    text={MSG.heading}
+                    appearance={{ size: 'medium', margin: 'none' }}
+                  />
+                  <Heading
+                    text={MSG.subHeading}
+                    appearance={{ size: 'medium', margin: 'none' }}
+                  />
+                </Fragment>
+              ) : (
+                <Heading
+                  text={
+                    status && status.error ? status.error : MSG.errorHeading
+                  }
+                  appearance={{ size: 'medium', margin: 'none' }}
+                />
+              )}
+            </div>
+            <div className={styles.actions}>
+              <Button
+                text={MSG.buttonBack}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={() => previousStep(values)}
               />
-              <Heading
-                text={MSG.subHeading}
-                appearance={{ size: 'medium', margin: 'none' }}
-              />
-            </Fragment>
-          ) : (
-            <Heading
-              text={status && status.error ? status.error : MSG.errorHeading}
-              appearance={{ size: 'medium', margin: 'none' }}
-            />
-          )}
-        </div>
-        <div className={styles.actions}>
-          <Button
-            text={MSG.buttonBack}
-            appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={previousStep}
-          />
-          {isValid ? (
-            <Button
-              text={MSG.buttonAdvance}
-              appearance={{ theme: 'primary', size: 'large' }}
-              type="submit"
-              loading={isLoading || isSubmitting}
-            />
-          ) : (
-            <Button
-              text={MSG.buttonRetry}
-              appearance={{ theme: 'primary', size: 'large' }}
-              onClick={this.handleRetryClick}
-              loading={isLoading || isSubmitting}
-            />
-          )}
-        </div>
-      </main>
+              {isValid ? (
+                <Button
+                  text={MSG.buttonAdvance}
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  type="submit"
+                  loading={isLoading || isSubmitting}
+                />
+              ) : (
+                <Button
+                  text={MSG.buttonRetry}
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  onClick={this.handleRetryClick}
+                  loading={isLoading || isSubmitting}
+                />
+              )}
+            </div>
+          </main>
+        )}
+      </ActionForm>
     );
   }
 }
 
-export const Step = TrufflePig;
-
-export const onSubmit = {
-  submit: WALLET_CREATE,
-  success: CURRENT_USER_CREATE,
-  error: WALLET_CREATE_ERROR,
-  // onSuccess() {},
-  onError(errorMessage: string, { setStatus }: WizardFormikBag<FormValues>) {
-    setStatus({ error: MSG.errorOpenTrufflepig });
-  },
-};
+export default StepTrufflePig;

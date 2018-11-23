@@ -1,22 +1,18 @@
 /* @flow */
 
-import type { FormikBag } from 'formik';
+import type { Action } from '~types/index';
 
-export type WizardFormikBag<Values> = FormikBag<Object, Values> & {
-  nextStep: () => void,
-  previousStep: () => void,
-};
-
-export type SubmitFn<Values> = (
-  values: Values,
-  goodies: WizardFormikBag<Values>,
-) => any;
-
-export type ActionSubmit<Values> = {
-  submit: string,
-  success: string,
-  error: string,
-  onSuccess?: (any, WizardFormikBag<Values>) => void,
-  onError?: (any, WizardFormikBag<Values>) => void,
-  setPayload?: (action: Object, payload: any) => Object,
+export type WizardProps<FormValues> = {
+  step: number,
+  stepCount: number,
+  nextStep: (values: FormValues) => void,
+  previousStep: (values?: FormValues) => void,
+  wizardValues: FormValues,
+  wizardForm: {
+    initialValues: { [formValue: string]: any },
+    isInitialValid: Object => boolean,
+  },
+  formHelpers: {
+    includeWizardValues: (action: Action, currentValues: Object) => Action,
+  },
 };

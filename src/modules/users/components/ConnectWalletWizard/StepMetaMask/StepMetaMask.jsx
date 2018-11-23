@@ -1,17 +1,18 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
+import type { FormikBag } from 'formik';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { open } from '@colony/purser-metamask';
 
-import type { WizardFormikBag } from '~core/Wizard';
+import type { WizardProps } from '~core/Wizard';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import { ActionForm } from '~core/Fields';
 import styles from './StepMetaMask.css';
 
 import {
@@ -22,43 +23,38 @@ import {
 
 const MSG = defineMessages({
   heading: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.heading',
+    id: 'users.ConnectWalletWizard.StepMetaMask.heading',
     defaultMessage: "You're connected to MetaMask",
   },
   subHeading: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.subHeading',
+    id: 'users.ConnectWalletWizard.StepMetaMask.subHeading',
     defaultMessage: 'Would you like to access Colony with that?',
   },
   errorHeading: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.errorHeading',
+    id: 'users.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: "Oops we couldn't detect MetaMask",
   },
   errorOpenMetamask: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.errorOpenMetamask',
+    id: 'users.ConnectWalletWizard.StepMetaMask.errorOpenMetamask',
     defaultMessage: 'We could not connect to MetaMask',
   },
   buttonAdvance: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.button.advance',
+    id: 'users.ConnectWalletWizard.StepMetaMask.button.advance',
     defaultMessage: 'Go to Colony',
   },
   buttonBack: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.button.back',
+    id: 'users.ConnectWalletWizard.StepMetaMask.button.back',
     defaultMessage: 'Back',
   },
   buttonRetry: {
-    id: 'user.ConnectWalletWizard.StepMetaMask.button.retry',
+    id: 'users.ConnectWalletWizard.StepMetaMask.button.retry',
     defaultMessage: 'Try Again',
   },
 });
 
 type FormValues = {};
 
-type Props = {
-  previousStep: () => void,
-  nextStep: () => void,
-  handleDidConnectWallet: () => void,
-  openMetamaskWalletAction: (*) => void,
-} & FormikProps<FormValues>;
+type Props = WizardProps<FormValues>;
 
 type State = {
   isLoading: boolean,
@@ -68,7 +64,7 @@ type State = {
 class MetaMask extends Component<Props, State> {
   timerHandle: TimeoutID;
 
-  static displayName = 'user.ConnectWalletWizard.StepMetaMask';
+  static displayName = 'users.ConnectWalletWizard.StepMetaMask';
 
   state = {
     isLoading: false,
@@ -119,71 +115,80 @@ class MetaMask extends Component<Props, State> {
   };
 
   render() {
-    const { previousStep, isSubmitting, status } = this.props;
+    const {
+      previousStep,
+      wizardForm,
+      formHelpers: { includeWizardValues },
+    } = this.props;
     const { isLoading, isValid } = this.state;
     return (
-      <main>
-        <div className={styles.content}>
-          <div className={styles.iconContainer}>
-            <Icon
-              name="metamask"
-              title="metamask"
-              appearance={{ size: 'medium' }}
-            />
-          </div>
-          {isValid ? (
-            <Fragment>
-              <Heading
-                text={MSG.heading}
-                appearance={{ size: 'medium', margin: 'none' }}
+      <ActionForm
+        submit={WALLET_CREATE}
+        success={CURRENT_USER_CREATE}
+        error={WALLET_CREATE_ERROR}
+        onError={(_: string, { setStatus }: FormikBag<Object, FormValues>) => {
+          setStatus({ error: MSG.errorOpenMetamask });
+        }}
+        setPayload={includeWizardValues}
+        {...wizardForm}
+      >
+        {({ isSubmitting, status, values }) => (
+          <main>
+            <div className={styles.content}>
+              <div className={styles.iconContainer}>
+                <Icon
+                  name="metamask"
+                  title="metamask"
+                  appearance={{ size: 'medium' }}
+                />
+              </div>
+              {isValid ? (
+                <Fragment>
+                  <Heading
+                    text={MSG.heading}
+                    appearance={{ size: 'medium', margin: 'none' }}
+                  />
+                  <Heading
+                    text={MSG.subHeading}
+                    appearance={{ size: 'medium', margin: 'none' }}
+                  />
+                </Fragment>
+              ) : (
+                <Heading
+                  text={
+                    status && status.error ? status.error : MSG.errorHeading
+                  }
+                  appearance={{ size: 'medium', margin: 'none' }}
+                />
+              )}
+            </div>
+            <div className={styles.actions}>
+              <Button
+                text={MSG.buttonBack}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={() => previousStep(values)}
               />
-              <Heading
-                text={MSG.subHeading}
-                appearance={{ size: 'medium', margin: 'none' }}
-              />
-            </Fragment>
-          ) : (
-            <Heading
-              text={status && status.error ? status.error : MSG.errorHeading}
-              appearance={{ size: 'medium', margin: 'none' }}
-            />
-          )}
-        </div>
-        <div className={styles.actions}>
-          <Button
-            text={MSG.buttonBack}
-            appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={previousStep}
-          />
-          {isValid ? (
-            <Button
-              text={MSG.buttonAdvance}
-              appearance={{ theme: 'primary', size: 'large' }}
-              type="submit"
-              loading={isLoading || isSubmitting}
-            />
-          ) : (
-            <Button
-              text={MSG.buttonRetry}
-              appearance={{ theme: 'primary', size: 'large' }}
-              onClick={this.handleRetryClick}
-              loading={isLoading || isSubmitting}
-            />
-          )}
-        </div>
-      </main>
+              {isValid ? (
+                <Button
+                  text={MSG.buttonAdvance}
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  type="submit"
+                  loading={isLoading || isSubmitting}
+                />
+              ) : (
+                <Button
+                  text={MSG.buttonRetry}
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  onClick={this.handleRetryClick}
+                  loading={isLoading || isSubmitting}
+                />
+              )}
+            </div>
+          </main>
+        )}
+      </ActionForm>
     );
   }
 }
 
-export const Step = MetaMask;
-
-export const onSubmit = {
-  submit: WALLET_CREATE,
-  success: CURRENT_USER_CREATE,
-  error: WALLET_CREATE_ERROR,
-  // onSuccess() {},
-  onError(errorMessage: string, { setStatus }: WizardFormikBag<FormValues>) {
-    setStatus({ error: MSG.errorOpenMetamask });
-  },
-};
+export default MetaMask;

@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './StepHardware.jsx';
+export { default } from './StepHardware.jsx';
