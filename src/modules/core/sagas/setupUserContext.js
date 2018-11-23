@@ -21,7 +21,7 @@ import {
   WALLET_CREATE_ERROR,
 } from '../../users/actionTypes';
 
-import { getDDB, getNetworkClient } from './utils';
+import { getDDB, getColonyManager } from './utils';
 
 import * as resolvers from '../../../lib/database/resolvers';
 
@@ -35,23 +35,26 @@ function* setupContextSagas(): any {
 
 /**
  * Given an action to get the user’s wallet, use this wallet to initialise the initial
- * context that depends on it (the wallet itself, the DDB, the network client),
+ * context that depends on it (the wallet itself, the DDB, the ColonyManager),
  * and then any other context that depends on that.
  */
 export default function* setupUserContext(action: Action): Saga<void> {
   try {
     const wallet = yield call(getWallet, action);
     yield setContext({ wallet });
-    const [ddb, networkClient] = yield all([
+    const [ddb, colonyManager] = yield all([
       call(getDDB),
-      call(getNetworkClient),
+      call(getColonyManager),
     ]);
 
     // Add username ENS resolver
-    const userResolver = yield create(resolvers.UserResolver, networkClient);
+    const userResolver = yield create(
+      resolvers.UserResolver,
+      colonyManager.networkClient,
+    );
     yield call([ddb, ddb.addResolver], 'user', userResolver);
 
-    yield setContext({ ddb, networkClient });
+    yield setContext({ ddb, colonyManager });
 
     const userStore = yield call(getUserStore, wallet.address);
     const user = yield call(getUser, userStore);

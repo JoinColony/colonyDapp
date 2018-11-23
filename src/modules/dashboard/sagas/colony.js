@@ -16,15 +16,8 @@ import { DASHBOARD_ROUTE } from '~routes';
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
 
-import { networkMethodSagaFactory } from '../../core/sagas/utils';
-
 import {
-  COLONY_CREATE,
-  COLONY_CREATE_ERROR,
   COLONY_CREATE_SUCCESS,
-  TOKEN_CREATE,
-  TOKEN_CREATE_ERROR,
-  TOKEN_CREATE_SUCCESS,
   TOKEN_INFO_FETCH,
   TOKEN_INFO_FETCH_ERROR,
   TOKEN_INFO_FETCH_SUCCESS,
@@ -93,24 +86,8 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
   yield put({ type: TOKEN_INFO_FETCH_SUCCESS, payload: info });
 }
 
-// Generate sagas for the methods on the network client which we are
-// currently using.
-const createColony = networkMethodSagaFactory<{ tokenAddress: string }>(
-  'createColony',
-  {
-    success: COLONY_CREATE_SUCCESS,
-    error: COLONY_CREATE_ERROR,
-  },
-);
-const createToken = networkMethodSagaFactory<{ name: string, symbol: string }>(
-  'createToken',
-  { success: TOKEN_CREATE_SUCCESS, error: TOKEN_CREATE_ERROR },
-);
-
 export default function* colonySagas(): any {
-  yield takeEvery(COLONY_CREATE, createColony);
   yield takeEvery(COLONY_CREATE_SUCCESS, createColonySuccess);
-  yield takeEvery(TOKEN_CREATE, createToken);
 
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.

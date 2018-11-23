@@ -12,6 +12,11 @@ import type {
 } from '~types/TransactionRecord';
 import type { TransactionReceipt } from '~types/index';
 
+import type {
+  ColonyIdentifier,
+  ColonyContext,
+} from '../../lib/ColonyManager/types';
+
 export type Sender<P: TransactionParams, E: TransactionEventData> = {
   client: {
     adapter: {
@@ -44,8 +49,10 @@ export type LifecycleActionTypes = {
 export type CreateTransactionAction<P: TransactionParams> = {
   type: string,
   payload: {
-    contextName: string,
-    lifecycleActionTypes: LifecycleActionTypes,
+    context: ColonyContext,
+    id: string,
+    identifier?: ColonyIdentifier,
+    lifecycle: LifecycleActionTypes,
     methodName: string,
     options?: SendOptions,
     params: P,

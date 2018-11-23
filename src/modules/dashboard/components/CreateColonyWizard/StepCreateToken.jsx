@@ -113,12 +113,6 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
     submit={TOKEN_CREATE}
     error={TOKEN_CREATE_ERROR}
     success={TOKEN_CREATE_SUCCESS}
-    setPayload={(action: *, { tokenName: name, tokenSymbol: symbol }: *) => ({
-      ...action,
-      payload: {
-        params: { name, symbol },
-      },
-    })}
     // eslint-disable-next-line no-unused-vars
     onError={(error: *, bag: *) => {
       // TODO later: show error feedback

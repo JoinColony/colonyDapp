@@ -35,8 +35,8 @@ describe(`core: reducers (transactions)`, () => {
   const params = { param1: 123 };
   const id = 'my transaction id';
   const existingTxId = 'my existing tx id';
-  const lifecycleActionTypes = { created: 'lifecycle action type for created' };
-  const contextName = 'networkClient';
+  const lifecycle = { created: 'lifecycle action type for created' };
+  const context = 'network';
   const methodName = 'createColony';
 
   const initialState = new ImmutableMap({
@@ -48,10 +48,10 @@ describe(`core: reducers (transactions)`, () => {
   // Actions
   const createdTx = transactionCreated({
     id,
-    contextName,
+    context,
     methodName,
     params,
-    lifecycleActionTypes,
+    lifecycle,
     options,
   });
   const sentTx = transactionSent(id, { hash });
@@ -85,13 +85,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [],
               eventData: undefined,
               hash: undefined,
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,
@@ -113,13 +113,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [],
               eventData: undefined,
               hash, // hash should have been set
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,
@@ -141,13 +141,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [],
               eventData: undefined,
               hash,
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,
@@ -169,13 +169,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [],
               eventData, // should have been set
               hash,
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,
@@ -206,13 +206,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [{ type: 'send', message: 'send error' }],
               eventData: undefined,
               hash: undefined,
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,
@@ -244,13 +244,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [{ type: 'receipt', message: 'receipt error' }],
               eventData: undefined,
               hash,
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,
@@ -283,13 +283,13 @@ describe(`core: reducers (transactions)`, () => {
             const tx = state.get(id);
             expect(Record.isRecord(tx)).toBe(true);
             expect(tx.toJS()).toEqual({
-              contextName,
+              context,
               createdAt: expect.any(Date),
               errors: [{ type: 'eventData', message: 'event data error' }],
               eventData: undefined,
               hash,
               id,
-              lifecycleActionTypes,
+              lifecycle,
               methodName,
               options,
               params,

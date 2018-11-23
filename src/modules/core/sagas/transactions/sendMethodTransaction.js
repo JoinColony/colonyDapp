@@ -13,6 +13,8 @@ import type {
 } from '~types/index';
 import type { Sender, SendTransactionAction } from '../../types';
 
+import { getMethod } from '../utils';
+
 import {
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -28,7 +30,6 @@ import {
   transactionSent,
   transactionUnsuccessfulError,
 } from '../../actionCreators/index';
-import { getMethodFromContext } from '../utils/index';
 
 /*
  * Given a promise for sending a transaction, send the transaction and
@@ -178,7 +179,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 
   const {
     id,
-    lifecycleActionTypes: {
+    lifecycle: {
       error: errorType,
       eventDataReceived,
       receiptReceived,
@@ -253,12 +254,13 @@ export default function* sendMethodTransaction<
     // Get the created (but not yet sent) transaction from the store.
     tx = yield call(getUnsentTransaction, id);
 
-    // Get the method from the transactions's context/method names.
-    const { methodName, contextName } = tx;
+    // Get the method from the transactions's context/method name/colony identifier.
+    const { methodName, context, identifier } = tx;
     const method: Sender<P, E> = yield call(
-      getMethodFromContext,
-      contextName,
+      getMethod,
+      context,
       methodName,
+      identifier,
     );
 
     // Create a promise to send the transaction with the given method.
@@ -269,7 +271,7 @@ export default function* sendMethodTransaction<
     yield call(sendTransaction, txPromise, tx);
   } catch (caughtError) {
     // Unexpected errors `put` the given error action...
-    const { lifecycleActionTypes: { error: errorType } = {} } = tx || {};
+    const { lifecycle: { error: errorType } = {} } = tx || {};
     if (errorType) {
       yield put({ type: errorType, payload: caughtError });
     } else {
