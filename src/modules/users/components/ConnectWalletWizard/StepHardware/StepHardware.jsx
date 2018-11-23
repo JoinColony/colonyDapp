@@ -203,7 +203,12 @@ class StepHardware extends Component<Props> {
   }
 
   render() {
-    const { availableAddresses, previousStep, wizardValues } = this.props;
+    const {
+      availableAddresses,
+      previousStep,
+      wizardForm,
+      formHelpers: { includeWizardValues },
+    } = this.props;
     return (
       <ActionForm
         submit={WALLET_CREATE}
@@ -213,7 +218,8 @@ class StepHardware extends Component<Props> {
           setStatus({ error: MSG.errorPickAddress })
         }
         validationSchema={validationSchema}
-        initialValues={wizardValues}
+        setPayload={includeWizardValues}
+        {...wizardForm}
       >
         {({ isSubmitting, isValid, status, values }) => (
           <div>

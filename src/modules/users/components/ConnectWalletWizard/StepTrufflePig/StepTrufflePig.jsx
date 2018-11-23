@@ -105,7 +105,11 @@ class StepTrufflePig extends Component<Props, State> {
   };
 
   render() {
-    const { previousStep, wizardValues } = this.props;
+    const {
+      previousStep,
+      wizardForm,
+      formHelpers: { includeWizardValues },
+    } = this.props;
     const { isLoading, isValid } = this.state;
     return (
       <ActionForm
@@ -118,7 +122,8 @@ class StepTrufflePig extends Component<Props, State> {
         ) => {
           setStatus({ error: MSG.errorOpenTrufflepig });
         }}
-        initialValues={wizardValues}
+        setPayload={includeWizardValues}
+        {...wizardForm}
       >
         {({ status, isSubmitting, values }) => (
           <main>
