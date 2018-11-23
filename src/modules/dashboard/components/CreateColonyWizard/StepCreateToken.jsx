@@ -108,7 +108,7 @@ type FormValues = {
 
 type Props = WizardProps<FormValues>;
 
-const StepCreateToken = ({ nextStep, previousStep, wizardValues }: Props) => (
+const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
   <ActionForm
     submit={TOKEN_CREATE}
     error={TOKEN_CREATE_ERROR}
@@ -127,8 +127,8 @@ const StepCreateToken = ({ nextStep, previousStep, wizardValues }: Props) => (
     onSuccess={({ receipt: { contractAddress } }, bag, values) => {
       nextStep({ ...values, tokenAddress: contractAddress });
     }}
-    initialValues={wizardValues}
     validationSchema={validationSchema}
+    {...wizardForm}
   >
     {({ isSubmitting, isValid, values }) =>
       isSubmitting ? (

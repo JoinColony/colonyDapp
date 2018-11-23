@@ -77,23 +77,27 @@ const options = [
   },
 ];
 
-const StepCreateColony = ({ previousStep, wizardValues }: Props) => (
+const StepCreateColony = ({
+  previousStep,
+  wizardForm,
+  wizardValues,
+}: Props) => (
   <ActionForm
     submit={COLONY_CREATE}
     error={COLONY_CREATE_ERROR}
     success={COLONY_CREATE_SUCCESS}
-    setPayload={(action: *, { tokenAddress }: *) => ({
+    setPayload={(action: *) => ({
       ...action,
-      payload: { params: { tokenAddress } },
+      payload: { params: { tokenAddress: wizardValues.tokenAddress } },
     })}
     // eslint-disable-next-line no-unused-vars
     onError={(error: *, bag: *) => {
       // TODO later: show error feedback
       console.warn(error); // eslint-disable-line no-console
     }}
-    initialValues={wizardValues}
+    {...wizardForm}
   >
-    {({ isSubmitting, values }) =>
+    {({ isSubmitting }) =>
       isSubmitting ? (
         <CreatingColony />
       ) : (
@@ -107,14 +111,13 @@ const StepCreateColony = ({ previousStep, wizardValues }: Props) => (
               appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
               text={MSG.subtitle}
             />
-            <CardRow cardOptions={options} values={values} />
+            <CardRow cardOptions={options} values={wizardValues} />
           </div>
           <div className={styles.buttons}>
             <Button
               appearance={{ theme: 'secondary' }}
-              type="cancel"
               text={MSG.back}
-              onClick={() => previousStep(values)}
+              onClick={() => previousStep()}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}

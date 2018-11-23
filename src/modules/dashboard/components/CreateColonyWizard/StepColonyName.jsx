@@ -51,12 +51,8 @@ type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
-const StepColonyName = ({ nextStep, wizardValues }: Props) => (
-  <Form
-    onSubmit={nextStep}
-    initialValues={wizardValues}
-    validationSchema={validationSchema}
-  >
+const StepColonyName = ({ nextStep, wizardForm }: Props) => (
+  <Form onSubmit={nextStep} validationSchema={validationSchema} {...wizardForm}>
     {({ isValid }) => (
       <section className={styles.content}>
         <div className={styles.title}>

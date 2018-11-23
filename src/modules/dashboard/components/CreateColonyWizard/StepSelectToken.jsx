@@ -103,7 +103,7 @@ class StepSelectToken extends Component<Props, State> {
   };
 
   render() {
-    const { nextStep, previousStep, wizardValues } = this.props;
+    const { nextStep, previousStep, wizardForm } = this.props;
     const { tokenData } = this.state;
     return (
       <section className={styles.main}>
@@ -116,8 +116,8 @@ class StepSelectToken extends Component<Props, State> {
         <Form
           className={styles.nameForm}
           onSubmit={nextStep}
-          initialValues={wizardValues}
           validationSchema={validationSchema}
+          {...wizardForm}
         >
           {({ isValid, setFieldValue, values }) => (
             <div>
@@ -160,7 +160,6 @@ class StepSelectToken extends Component<Props, State> {
               <div className={styles.buttons}>
                 <Button
                   appearance={{ theme: 'secondary' }}
-                  type="cancel"
                   text={MSG.cancel}
                   onClick={() => previousStep(values)}
                 />
