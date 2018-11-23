@@ -28,7 +28,7 @@
   composes: contentSection;
   min-height: 70px;
   max-height: 456px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .walletHeading {
