@@ -60,7 +60,7 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
           <div className={styles.goToWalletIcon}>
             <Icon
               appearance={{ size: 'medium' }}
-              name="go-to-wallet"
+              name="arrow-wallet"
               title={MSG.goToWalletLinkTitle}
             />
           </div>
