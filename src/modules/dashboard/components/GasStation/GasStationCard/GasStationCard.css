@@ -1,0 +1,4 @@
+.transactionDescription {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-medium);
+}
