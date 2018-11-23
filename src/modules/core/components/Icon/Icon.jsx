@@ -3,7 +3,7 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
 
-import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
@@ -30,7 +30,7 @@ type Props = {
   /** Html title for the icon element */
   title: string | MessageDescriptor,
   /** Values for html title (react-intl interpolation) */
-  titleValues?: { [string]: string | number },
+  titleValues?: MessageValues,
   /** SVG viewbox string */
   viewBox?: string,
   /** @ignore injected by `react-intl` */

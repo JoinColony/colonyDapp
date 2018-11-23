@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { HOC } from 'recompose';
-import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 import type { ComponentType } from 'react';
 
 import React from 'react';
@@ -12,7 +12,7 @@ import mapProps from 'recompose/mapProps';
 
 type FormatMessage = (
   messageDescriptor: MessageDescriptor,
-  values?: Object,
+  values?: MessageValues,
 ) => string;
 
 type CommonProps = {
@@ -29,9 +29,9 @@ type InProps = CommonProps & {
   id?: string,
   intl: IntlShape,
   help?: string,
-  helpValues?: Object,
-  labelValues?: Object,
-  statusValues?: Object,
+  helpValues?: MessageValues,
+  labelValues?: MessageValues,
+  statusValues?: MessageValues,
   status?: string | MessageDescriptor,
   form: {
     touched: Object,
@@ -61,7 +61,7 @@ type OutProps = CommonProps & {
 const formatIntl = (
   text?: MessageDescriptor | string,
   formatMessage: FormatMessage,
-  textValues?: { [string]: string },
+  textValues?: MessageValues,
 ): string => {
   if (!text) {
     return '';
@@ -143,7 +143,7 @@ const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
           isSubmitting,
           formatIntl: (
             text?: string | MessageDescriptor,
-            textValues?: { [string]: string },
+            textValues?: MessageValues,
           ): string => formatIntl(text, formatMessage, textValues),
           setError: (errorMessage: string) =>
             setFieldError(htmlFieldName, errorMessage),

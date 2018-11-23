@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Node as ReactNode } from 'react';
-import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 import { Manager, Reference, Popper } from 'react-popper';
@@ -44,7 +44,7 @@ export type Props = {
     | MessageDescriptor
     | (({ close: () => void }) => ReactNode),
   /** Values for content (react-intl interpolation) */
-  contentValues?: { [string]: string },
+  contentValues?: MessageValues,
   /** Set the open state from outside */
   isOpen?: boolean,
   /** Called when Popover closes */

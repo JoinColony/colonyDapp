@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -49,7 +49,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,

@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Node } from 'react';
-import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
@@ -28,13 +28,13 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** `id` attribute value of accompanied input field */
   inputId?: string,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };

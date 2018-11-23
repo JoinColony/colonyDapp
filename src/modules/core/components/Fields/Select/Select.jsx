@@ -1,5 +1,5 @@
 /* @flow */
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
@@ -32,6 +32,7 @@ type Props = {
   options: Array<{
     label: MessageDescriptor | string,
     value: string,
+    labelValues?: MessageValues,
   }>,
   /** Appearance object */
   appearance: Appearance,
@@ -44,13 +45,13 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Input field name (form variable) */
   name: string,
   /** Placeholder for input */
@@ -72,7 +73,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,

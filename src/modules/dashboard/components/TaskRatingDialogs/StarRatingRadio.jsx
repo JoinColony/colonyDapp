@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
+import type {
+  MessageDescriptor,
+  MessageValues,
+  FormattedMessageValues,
+} from 'react-intl';
 
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -21,9 +25,9 @@ type Props = {
   value: 1 | 2 | 3,
   checked: boolean,
   title: MessageDescriptor,
-  titleValues?: Object,
+  titleValues?: MessageValues,
   description: MessageDescriptor,
-  descriptionValues?: Object,
+  descriptionValues?: FormattedMessageValues,
 };
 
 const displayName = 'dashboard.TaskRatingDialogs.StarRatingRadio';

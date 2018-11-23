@@ -1,5 +1,5 @@
 // @flow
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
@@ -20,13 +20,14 @@ type Props = {
   option: {
     label: MessageDescriptor | string,
     value: string,
+    labelValues?: MessageValues,
   },
   selected: boolean,
   onSelect: (idx: number) => void,
   onClick: () => void,
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
 };
 
@@ -52,7 +53,7 @@ class SelectOption extends Component<Props> {
 
   render() {
     const { checked, id, option, selected, formatIntl } = this.props;
-    const label = formatIntl(option.label);
+    const label = formatIntl(option.label, option.labelValues);
     return (
       <li
         className={styles.main}

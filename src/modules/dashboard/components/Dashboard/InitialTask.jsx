@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, FormattedMessageValues } from 'react-intl';
 
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -15,9 +15,7 @@ import styles from './InitialTask.css';
 
 export type InitialTaskType = {
   title: MessageDescriptor,
-  titleValues?: {
-    [string]: string | number | boolean,
-  },
+  titleValues?: FormattedMessageValues,
   walletAddress: string,
 };
 

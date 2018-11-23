@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Node } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React from 'react';
 import cx from 'classnames';
@@ -40,19 +40,19 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Placeholder for input */
   placeholder?: string,
   /** Status text */
   status?: string | MessageDescriptor,
   /** Values for status text (react-intl interpolation) */
-  statusValues?: { [string]: string },
+  statusValues?: MessageValues,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -64,7 +64,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,

@@ -1,9 +1,8 @@
 /* @flow */
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { cloneElement } from 'react';
 import type { Element } from 'react';
-
-import type { MessageDescriptor } from 'react-intl';
 
 import HistoryNavigation from './HistoryNavigation.jsx';
 import UserNavigation from './UserNavigation.jsx';
@@ -38,7 +37,7 @@ type Props = {
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  backTextValues?: Object,
+  backTextValues?: MessageValues,
   /*
    * Appearance object
    *

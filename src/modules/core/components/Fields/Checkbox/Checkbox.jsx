@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Node } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import nanoid from 'nanoid';
@@ -31,11 +31,11 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Input field name (form variable) */
   name: string,
   /** Input field value */
@@ -102,7 +102,9 @@ class Checkbox extends Component<Props, State> {
       elementOnly,
       form: { values },
       help,
+      helpValues,
       label,
+      labelValues,
       value,
       name,
     } = this.props;
@@ -133,7 +135,9 @@ class Checkbox extends Component<Props, State> {
             <InputLabel
               inputId={inputId}
               label={label}
+              labelValues={labelValues}
               help={help}
+              helpValues={helpValues}
               appearance={{ direction: 'horizontal' }}
             />
           ) : (
