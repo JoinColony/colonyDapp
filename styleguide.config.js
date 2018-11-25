@@ -65,6 +65,7 @@ module.exports = {
         './src/modules/core/components/Fields/Textarea/TextareaAutoresize.jsx',
         './src/modules/core/components/Fields/Checkbox/Checkbox.jsx',
         './src/modules/core/components/Fields/Radio/Radio.jsx',
+        './src/modules/core/components/Fields/RadioGroup/RadioGroup.jsx',
         './src/modules/core/components/Fields/Select/Select.jsx',
         './src/modules/core/components/Fields/FormStatus/FormStatus.jsx',
         './src/modules/core/components/Button/Button.jsx',
