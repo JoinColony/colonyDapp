@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -12,10 +12,15 @@ import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
+import promiseListener from '../../../../createPromiseListener';
+
 import {
   COLONY_CREATE_LABEL,
   COLONY_CREATE_LABEL_ERROR,
   COLONY_CREATE_LABEL_SUCCESS,
+  COLONY_DOMAIN_VALIDATE,
+  COLONY_DOMAIN_VALIDATE_SUCCESS,
+  COLONY_DOMAIN_VALIDATE_ERROR,
 } from '../../actionTypes';
 
 type FormValues = {
@@ -57,6 +62,10 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepCreateENSName.done',
     defaultMessage: 'Done',
   },
+  errorDomainTaken: {
+    id: 'users.CreateUsernameDialog.errorDomainTaken',
+    defaultMessage: 'This colony domain name is already taken',
+  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.StepCreateENSName';
@@ -68,58 +77,86 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepCreateENSName = ({ wizardForm }: Props) => (
-  <ActionForm
-    submit={COLONY_CREATE_LABEL}
-    error={COLONY_CREATE_LABEL_ERROR}
-    success={COLONY_CREATE_LABEL_SUCCESS}
-    validationSchema={validationSchema}
-    {...wizardForm}
-  >
-    {({ isValid, isSubmitting }) => (
-      <section className={styles.main}>
-        <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'medium', weight: 'thin' }}
-            text={MSG.heading}
-          />
-          <p className={styles.paragraph}>
-            <FormattedMessage
-              {...MSG.descriptionOne}
-              values={{
-                boldText: (
-                  <FormattedMessage
-                    tagName="strong"
-                    {...MSG.descriptionBoldText}
-                  />
-                ),
-              }}
-            />
-          </p>
-          <p className={styles.paragraph}>
-            <FormattedMessage {...MSG.descriptionTwo} />
-          </p>
-          <div className={styles.nameForm}>
-            <Input
-              appearance={{ theme: 'fat' }}
-              name="ensName"
-              label={MSG.label}
-            />
-            <div className={styles.buttons}>
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                type="submit"
-                disabled={!isValid}
-                loading={isSubmitting}
-                text={MSG.done}
+class StepCreateENSName extends Component<Props> {
+  componentWillUnmount() {
+    this.checkDomainTaken.unsubscribe();
+  }
+
+  checkDomainTaken = promiseListener.createAsyncFunction({
+    start: COLONY_DOMAIN_VALIDATE,
+    resolve: COLONY_DOMAIN_VALIDATE_SUCCESS,
+    reject: COLONY_DOMAIN_VALIDATE_ERROR,
+  });
+
+  validateDomain = async (values: FormValues) => {
+    try {
+      await this.checkDomainTaken.asyncFunction(values);
+    } catch (e) {
+      const error = {
+        ensName: MSG.errorDomainTaken,
+      };
+      // eslint doesn't allow for throwing object literals
+      throw error;
+    }
+  };
+
+  render() {
+    const { wizardForm } = this.props;
+    return (
+      <ActionForm
+        submit={COLONY_CREATE_LABEL}
+        error={COLONY_CREATE_LABEL_ERROR}
+        success={COLONY_CREATE_LABEL_SUCCESS}
+        validationSchema={validationSchema}
+        validate={this.validateDomain}
+        {...wizardForm}
+      >
+        {({ isValid, isSubmitting }) => (
+          <section className={styles.main}>
+            <div className={styles.title}>
+              <Heading
+                appearance={{ size: 'medium', weight: 'thin' }}
+                text={MSG.heading}
               />
+              <p className={styles.paragraph}>
+                <FormattedMessage
+                  {...MSG.descriptionOne}
+                  values={{
+                    boldText: (
+                      <FormattedMessage
+                        tagName="strong"
+                        {...MSG.descriptionBoldText}
+                      />
+                    ),
+                  }}
+                />
+              </p>
+              <p className={styles.paragraph}>
+                <FormattedMessage {...MSG.descriptionTwo} />
+              </p>
+              <div className={styles.nameForm}>
+                <Input
+                  appearance={{ theme: 'fat' }}
+                  name="ensName"
+                  label={MSG.label}
+                />
+                <div className={styles.buttons}>
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    type="submit"
+                    disabled={!isValid}
+                    loading={isSubmitting}
+                    text={MSG.done}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-    )}
-  </ActionForm>
-);
+          </section>
+        )}
+      </ActionForm>
+    );
+  }
+}
 
 StepCreateENSName.displayName = displayName;
 

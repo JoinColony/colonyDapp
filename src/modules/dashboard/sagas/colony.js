@@ -6,7 +6,13 @@ import { providers } from 'ethers';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { delay } from 'redux-saga';
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  getContext,
+  put,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 
 import type { Action } from '~types/index';
 
@@ -21,6 +27,7 @@ import { getNetworkMethod } from '../../core/sagas/utils';
 
 import {
   COLONY_CREATE,
+  COLONY_CREATE_LABEL,
   COLONY_DOMAIN_VALIDATE,
   COLONY_DOMAIN_VALIDATE_SUCCESS,
   COLONY_DOMAIN_VALIDATE_ERROR,
@@ -30,7 +37,11 @@ import {
   TOKEN_INFO_FETCH_SUCCESS,
 } from '../actionTypes';
 
-import { createColony, createToken } from '../actionCreators';
+import {
+  createColony,
+  createToken,
+  createColonyLabel,
+} from '../actionCreators';
 
 /**
  * Rather than use e.g. the Etherscan loader and make more/larger requests than
@@ -104,6 +115,40 @@ function* createTokenSaga({
   yield put(createToken({ name, symbol }));
 }
 
+function* createColonyLabelSaga({
+  payload: {
+    colonyId,
+    colonyAddress,
+    colonyName,
+    ensName,
+    tokenAddress,
+    tokenName,
+    tokenSymbol,
+    tokenIcon,
+  },
+}: Action): Saga<void> {
+  const ddb = yield getContext('ddb');
+  // TODO: No access controller available yet
+  const store = yield call([ddb, ddb.createStore], 'keyvalue', 'colony');
+  // TODO: we might want to change that later in the colony store. Maybe have a "meta" property?
+  yield call([store, store.set], {
+    colonyId,
+    colonyAddress,
+    colonyName,
+    tokenAddress,
+    tokenName,
+    tokenSymbol,
+    tokenIcon,
+  });
+  const action = createColonyLabel({
+    colonyName: ensName,
+    orbitDBPath: store.address.toString(),
+  });
+  yield put(action);
+  // TODO: redirect to newly created colony?
+  // yield takeTX('success', action) ?
+}
+
 function* validateColonyDomain(action: Action): Saga<void> {
   const { ensName } = action.payload;
   yield call(delay, 300);
@@ -132,6 +177,7 @@ function* validateColonyDomain(action: Action): Saga<void> {
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(TOKEN_CREATE, createTokenSaga);
+  yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(TOKEN_INFO_FETCH, getTokenInfo);
