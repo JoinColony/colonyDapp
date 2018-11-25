@@ -18,6 +18,7 @@ import CardList from '~core/CardList';
 
 import GasStationCard from './GasStationCard';
 import GasStationClaimCard from './GasStationClaimCard';
+import GasStationPrice from './GasStationPrice';
 
 import styles from './GasStation.css';
 
@@ -164,6 +165,9 @@ class GasStation extends Component<Props, State> {
               text={MSG.transactionsEmptyStateText}
             />
           )}
+        </div>
+        <div>
+          <GasStationPrice />
         </div>
       </div>
     );
