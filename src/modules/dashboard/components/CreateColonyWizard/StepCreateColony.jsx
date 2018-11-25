@@ -88,13 +88,13 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
     success={COLONY_CREATE_SUCCESS}
     setPayload={(action: Action) => ({
       ...action,
-      payload: { tokenAddress: wizardValues.tokenAddress },
+      payload: wizardValues,
     })}
     onSuccess={({ eventData: { colonyId, colonyAddress } }) =>
       nextStep({
         colonyId,
         colonyAddress,
-        tokenAddress: wizardValues.tokenAddress,
+        ...wizardValues,
       })
     }
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
@@ -102,7 +102,7 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
     }
     {...wizardForm}
   >
-    {({ isSubmitting, status, values }) => (
+    {({ isSubmitting, status }) => (
       <section className={styles.content}>
         <div className={styles.finalContainer}>
           <Heading
@@ -113,7 +113,7 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
             appearance={{ size: 'medium', weight: 'bold', margin: 'none' }}
             text={MSG.subtitle}
           />
-          <CardRow cardOptions={options} values={values} />
+          <CardRow cardOptions={options} values={wizardValues} />
         </div>
         <FormStatus status={status} />
         <div className={styles.buttons}>

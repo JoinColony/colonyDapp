@@ -27,7 +27,7 @@ const MSG = defineMessages({
     defaultMessage: 'Your desired username',
   },
   errorUsernameTaken: {
-    id: 'users.CreateUsernameDialog.erorrUsernameTaken',
+    id: 'users.CreateUsernameDialog.errorUsernameTaken',
     defaultMessage: 'This username is already taken',
   },
 });
