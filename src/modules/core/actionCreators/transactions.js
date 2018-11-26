@@ -26,7 +26,7 @@ import {
   TRANSACTION_SENT,
 } from '../actionTypes';
 
-export const transactionCreated = <P: TransactionParams>({
+export const createTransaction = <P: TransactionParams>({
   context,
   identifier,
   lifecycle = {},
@@ -56,30 +56,30 @@ export const transactionCreated = <P: TransactionParams>({
   },
 });
 
-export const networkTransactionCreated = <P: TransactionParams>({
+export const createNetworkTransaction = <P: TransactionParams>({
   methodName,
   params,
   ...payload
 }: {
   methodName: string,
   params: P,
-}) =>
-  transactionCreated({
+}): CreateTransactionAction<P> =>
+  createTransaction<P>({
     context: NETWORK_CONTEXT,
     methodName,
     params,
     ...payload,
   });
 
-export const colonyTransactionCreated = <P: TransactionParams>({
+export const createColonyTransaction = <P: TransactionParams>({
   methodName,
   params,
   ...payload
 }: {
   methodName: string,
   params: P,
-}) =>
-  transactionCreated({
+}): CreateTransactionAction<P> =>
+  createTransaction({
     context: COLONY_CONTEXT,
     methodName,
     params,

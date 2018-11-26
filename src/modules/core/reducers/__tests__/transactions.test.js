@@ -6,7 +6,7 @@ import { Transaction } from '../../records';
 
 import {
   transactionSent,
-  transactionCreated,
+  createTransaction,
   transactionEventDataError,
   transactionEventDataReceived,
   transactionReceiptError,
@@ -46,7 +46,7 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   // Actions
-  const createdTx = transactionCreated({
+  const createdTx = createTransaction({
     id,
     context,
     methodName,

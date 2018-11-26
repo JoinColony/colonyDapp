@@ -1,6 +1,6 @@
 /* @flow */
 
-import { networkTransactionCreated } from '../../core/actionCreators';
+import { createNetworkTransaction } from '../../core/actionCreators';
 import {
   USER_PROFILE_FETCH,
   USER_AVATAR_FETCH,
@@ -9,7 +9,7 @@ import {
 } from '../actionTypes';
 
 export const registerUserLabel = ({ params, ...payload }: *) =>
-  networkTransactionCreated<{ username: string, orbitDBPath: string }>({
+  createNetworkTransaction<{ username: string, orbitDBPath: string }>({
     params,
     methodName: 'registerUserLabel',
     lifecycle: {
