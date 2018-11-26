@@ -15,3 +15,17 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-medium);
 }
+
+.counter {
+  display: inline-block;
+  padding-top: 2px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--pink);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
+}

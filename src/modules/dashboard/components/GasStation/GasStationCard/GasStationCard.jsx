@@ -35,7 +35,9 @@ const GasStationCard = () => (
             <FormattedMessage {...MSG.transactionDescriptionSample} />
           </p>
         </div>
-        <div className={styles.status} />
+        <div className={styles.status}>
+          <span className={styles.counter}>3</span>
+        </div>
       </Card>
     </CardList>
   </div>
