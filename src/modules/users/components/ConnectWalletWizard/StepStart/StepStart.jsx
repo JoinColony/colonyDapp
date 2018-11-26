@@ -157,7 +157,7 @@ const StepStart = ({ nextStep, wizardValues }: Props) => (
         />
       </div>
       <DecisionHub name="method" options={options} />
-      <div className={styles.createWalletLink}>
+      <div className={styles.createWalletLink} data-test="createWalletLink">
         <DecisionOption
           appearance={{ theme: 'alt' }}
           name="create"
