@@ -7,6 +7,7 @@ export type TokenType = {
   id: number,
   isEnabled: boolean,
   isNative: boolean,
+  isEth: boolean,
   tokenSymbol: string,
   isBlocked?: boolean,
 };

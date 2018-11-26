@@ -1,10 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import BN from 'bn.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
-import { getEthToUsd } from '~utils/external';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -16,49 +13,30 @@ import styles from './Payout.css';
 
 const MSG = defineMessages({
   notSet: {
-    id: 'dashboard.task.Payout.notSet',
+    id: 'dashboard.Task.Payout.notSet',
     defaultMessage: 'Not set',
   },
   reputation: {
-    id: 'dashboard.task.Payout.reputation',
+    id: 'dashboard.Task.Payout.reputation',
     defaultMessage: '{reputation} max rep',
   },
 });
 
 type State = {
-  ethUsd: number | null,
   editing: boolean,
 };
 
 type Props = {
-  amount: number | string | BN,
-  symbol: string,
-  reputation: number,
-  isEth: boolean,
-  isNative: boolean,
+  name: string,
+  amount?: string,
+  symbol?: string,
+  reputation?: number,
+  usdAmount?: string,
+  tokenOptions: Array<Object>,
+  remove: () => void,
 };
 class Payout extends Component<Props, State> {
-  state = { editing: false, ethUsd: null };
-
-  componentDidMount() {
-    this.mounted = true;
-
-    const { isEth, amount } = this.props;
-
-    if (isEth) {
-      getEthToUsd(Number(amount)).then(dollar => {
-        if (this.mounted) {
-          this.setState({ ethUsd: dollar });
-        }
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  mounted = false;
+  state = { editing: false };
 
   toggleEdit = () => {
     this.setState(prevState => ({
@@ -67,43 +45,45 @@ class Payout extends Component<Props, State> {
   };
 
   render() {
-    const { amount, symbol, reputation, isEth, isNative } = this.props;
-    const { editing, ethUsd } = this.state;
-
-    const mockOptions = [
-      { label: 'CLNY', value: 1 },
-      { label: 'ETH', value: 2 },
-    ];
+    const {
+      amount,
+      symbol,
+      reputation,
+      name,
+      tokenOptions,
+      usdAmount,
+      remove,
+    } = this.props;
+    const { editing } = this.state;
 
     return (
       <div>
-        {editing ? (
-          <div>
-            <div className={styles.row}>
-              <Heading
-                appearance={{ size: 'small', margin: 'small' }}
-                text={{ id: 'label.amount' }}
-              />
-              <Button
-                appearance={{ theme: 'blue', size: 'small' }}
-                text={{ id: 'button.cancel' }}
-                onClick={this.toggleEdit}
+        <div hidden={!editing}>
+          <div className={styles.row}>
+            <Heading
+              appearance={{ size: 'small', margin: 'small' }}
+              text={{ id: 'label.amount' }}
+            />
+            <Button
+              appearance={{ theme: 'blue', size: 'small' }}
+              text={{ id: 'button.remove' }}
+              onClick={remove}
+            />
+          </div>
+          <div className={styles.editContainer}>
+            <div className={styles.setAmount}>
+              <Input
+                appearance={{ theme: 'minimal', align: 'right' }}
+                name={`${name}.amount`}
+                formattingOptions={{ numeral: true, delimiter: ',' }}
               />
             </div>
-            <div className={styles.editContainer}>
-              <div className={styles.setAmount}>
-                <Input
-                  appearance={{ theme: 'minimal', align: 'right' }}
-                  name="amount"
-                  formattingOptions={{ numeral: true, delimiter: '.' }}
-                />
-              </div>
-              <div className={styles.selectToken}>
-                <Select options={mockOptions} name="symbol" />
-              </div>
+            <div className={styles.selectToken}>
+              <Select options={tokenOptions} name={`${name}.token`} />
             </div>
           </div>
-        ) : (
+        </div>
+        <div hidden={editing}>
           <div className={styles.row}>
             <Heading
               appearance={{ size: 'small' }}
@@ -120,7 +100,7 @@ class Payout extends Component<Props, State> {
                   </span>
                   <span>{symbol}</span>
                 </div>
-                {isNative && (
+                {reputation && (
                   <div className={styles.reputation}>
                     <FormattedMessage
                       {...MSG.reputation}
@@ -128,11 +108,11 @@ class Payout extends Component<Props, State> {
                     />
                   </div>
                 )}
-                {isEth && (
+                {usdAmount && (
                   <div className={styles.conversion}>
                     <Numeral
                       appearance={{ theme: 'grey', size: 'small' }}
-                      value={ethUsd}
+                      value={usdAmount}
                       prefix="~ "
                       suffix=" USD"
                     />
@@ -148,7 +128,7 @@ class Payout extends Component<Props, State> {
               onClick={this.toggleEdit}
             />
           </div>
-        )}
+        </div>
       </div>
     );
   }
