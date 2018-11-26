@@ -1,6 +1,8 @@
 /* @flow */
 
-import { networkTransactionCreated } from '../../core/actionCreators';
+import type { SendOptions } from '@colony/colony-js-client';
+
+import { createNetworkTransaction } from '../../core/actionCreators';
 
 import {
   COLONY_CREATE_ERROR,
@@ -9,24 +11,30 @@ import {
   TOKEN_CREATE_SUCCESS,
 } from '../actionTypes';
 
-export const createColony = ({ params, ...payload }: *) =>
-  networkTransactionCreated<{ tokenAddress: string }>({
+export const createColony = (
+  params: { tokenAddress: string },
+  options?: SendOptions,
+) =>
+  createNetworkTransaction({
     params,
+    options,
     methodName: 'createColony',
     lifecycle: {
       error: COLONY_CREATE_ERROR,
       success: COLONY_CREATE_SUCCESS,
     },
-    ...payload,
   });
 
-export const createToken = ({ params, ...payload }: *) =>
-  networkTransactionCreated<{ name: string, symbol: string }>({
+export const createToken = (
+  params: { name: string, symbol: string },
+  options?: SendOptions,
+) =>
+  createNetworkTransaction({
     params,
+    options,
     methodName: 'createToken',
     lifecycle: {
       error: TOKEN_CREATE_ERROR,
       success: TOKEN_CREATE_SUCCESS,
     },
-    ...payload,
   });

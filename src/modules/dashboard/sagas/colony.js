@@ -17,11 +17,14 @@ import { DASHBOARD_ROUTE } from '~routes';
 import TokenABI from './TokenABI.json';
 
 import {
+  COLONY_CREATE,
   COLONY_CREATE_SUCCESS,
+  TOKEN_CREATE,
   TOKEN_INFO_FETCH,
   TOKEN_INFO_FETCH_ERROR,
   TOKEN_INFO_FETCH_SUCCESS,
 } from '../actionTypes';
+import { createColony, createToken } from '../actionCreators';
 
 /**
  * On successful colony creation, redirect to the dashboard.
@@ -86,7 +89,26 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
   yield put({ type: TOKEN_INFO_FETCH_SUCCESS, payload: info });
 }
 
+/*
+ * Simply forward on the form params to create a transaction.
+ */
+function* createColonySaga({ payload: params }: *): Saga<void> {
+  yield put(createColony(params));
+}
+
+/*
+ * Forward on the renamed form params to create a transaction.
+ */
+function* createTokenSaga({
+  payload: { tokenName: name, tokenSymbol: symbol },
+}: *): Saga<void> {
+  yield put(createToken({ name, symbol }));
+}
+
 export default function* colonySagas(): any {
+  yield takeEvery(COLONY_CREATE, createColonySaga);
+  yield takeEvery(TOKEN_CREATE, createTokenSaga);
+
   yield takeEvery(COLONY_CREATE_SUCCESS, createColonySuccess);
 
   // Note that this is `takeLatest` because it runs on user keyboard input

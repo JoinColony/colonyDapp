@@ -33,15 +33,14 @@ export default class ColonyManager {
   }
 
   _findColonyClient(identifier: ColonyIdentifier) {
-    // eslint-disable-next-line no-unused-vars
-    const [_, client] =
+    const entry =
       [...this.clients.entries()].find(
         ([{ address, ensName, id }]) =>
           address === identifier.address ||
           id === identifier.id ||
           ensName === identifier.ensName,
       ) || [];
-    return client;
+    return entry[1];
   }
 
   async setColonyClient(identifier: ColonyIdentifier) {
