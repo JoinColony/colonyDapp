@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 // $FlowFixMe https://github.com/atlassian/react-beautiful-dnd/issues/650
@@ -54,7 +54,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
 
   /** @ignore Will be injected by `asField` */

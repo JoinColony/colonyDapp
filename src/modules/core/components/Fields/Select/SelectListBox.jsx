@@ -1,5 +1,5 @@
 /* @flow */
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React from 'react';
 
@@ -20,6 +20,7 @@ type Props = {
   options: Array<{
     label: MessageDescriptor | string,
     value: string,
+    labelValues?: MessageValues,
   }>,
   selectedOption: number,
   ariaLabelledby: string,
@@ -28,7 +29,7 @@ type Props = {
   onClick: () => void,
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
 };
 

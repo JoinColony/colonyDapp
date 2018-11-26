@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Node as ReactNode } from 'react';
-import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 import { Manager, Reference, Popper } from 'react-popper';
@@ -20,7 +20,7 @@ export type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 type RefObj = { ref: ReactRef };
 
 export type Appearance = {
-  theme: 'dark',
+  theme: 'dark' | 'grey',
 };
 
 export type PopoverTrigger = ({
@@ -44,7 +44,7 @@ export type Props = {
     | MessageDescriptor
     | (({ close: () => void }) => ReactNode),
   /** Values for content (react-intl interpolation) */
-  contentValues?: { [string]: string },
+  contentValues?: MessageValues,
   /** Set the open state from outside */
   isOpen?: boolean,
   /** Called when Popover closes */
@@ -55,6 +55,8 @@ export type Props = {
   placement?: Placement,
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean,
+  /** Whether there should be an arrow on the popover */
+  showArrow: boolean,
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
   trigger?: 'hover' | 'click' | 'disabled',
   /** @ignore injected by `react-intl` */
@@ -79,6 +81,7 @@ class Popover extends Component<Props, State> {
   static defaultProps = {
     closeOnOutsideClick: true,
     placement: 'top',
+    showArrow: true,
     trigger: 'click',
   };
 
@@ -258,7 +261,12 @@ class Popover extends Component<Props, State> {
   };
 
   render() {
-    const { appearance, placement: origPlacement, retainRefFocus } = this.props;
+    const {
+      appearance,
+      placement: origPlacement,
+      retainRefFocus,
+      showArrow,
+    } = this.props;
     const { isOpen } = this.state;
     return (
       <Manager>
@@ -275,7 +283,10 @@ class Popover extends Component<Props, State> {
                 innerRef={ref}
                 style={style}
                 placement={placement}
-                arrowProps={arrowProps}
+                arrowProps={{
+                  ...arrowProps,
+                  showArrow,
+                }}
                 onFocus={this.handleWrapperFocus}
                 retainRefFocus={retainRefFocus}
               >

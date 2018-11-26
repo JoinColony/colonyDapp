@@ -2,6 +2,10 @@
   /* add main styles here */
 }
 
+.copyButton {
+  margin-left: 5px;
+}
+
 .themeBig {
   font-size: var(--size-medium-l);
   letter-spacing: 1px;

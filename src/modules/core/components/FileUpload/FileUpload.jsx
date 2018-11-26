@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { ComponentType, Node } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import Dropzone from 'react-dropzone';
@@ -75,13 +75,13 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Extra node to render on the top right in the label */
   extra?: Node,
   /** Label text */
   label?: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Placeholder element for when no files have been picked yet (renderProp) */
   renderPlaceholder?: ?Node,
   /** @ignore injected by `asFieldArray` */

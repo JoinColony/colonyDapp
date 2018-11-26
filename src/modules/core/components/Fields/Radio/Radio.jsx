@@ -4,7 +4,7 @@ import nanoid from 'nanoid';
 import { compose, lifecycle } from 'recompose';
 
 import type { Node } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
@@ -32,11 +32,11 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Input field name (form variable) */
   name: string,
   /** Style object for the visible radio */
@@ -56,7 +56,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,

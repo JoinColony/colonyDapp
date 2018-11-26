@@ -16,6 +16,11 @@
   width: 34px;
   border-radius: var(--radius-tiny);
   text-align: center;
+  cursor: pointer;
+}
+
+.navigationItemButton {
+  composes: button from '~styles/reset.css';
 }
 
 .navigationItemHasCircle {

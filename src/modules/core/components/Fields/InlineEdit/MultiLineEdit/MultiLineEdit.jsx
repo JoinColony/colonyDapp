@@ -4,7 +4,7 @@ import type {
   Editor as EditorType,
   EditorState as EditorStateType,
 } from 'draft-js';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 import { ContentState, Editor, EditorState } from 'draft-js';
@@ -31,21 +31,21 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Input field name (form variable) */
   name: string,
   /** Placeholder for input */
   placeholder?: string | MessageDescriptor,
   /** Values for placeholder text (react-intl interpolation) */
-  placeholderValues?: { [string]: string },
+  placeholderValues?: MessageValues,
   /** Status text */
   status?: string | MessageDescriptor,
   /** Values for status text (react-intl interpolation) */
-  statusValues?: { [string]: string },
+  statusValues?: MessageValues,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -55,7 +55,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
   /** Called when the editor loses focus */
   onEditorBlur?: (
@@ -129,14 +129,17 @@ class MultiLineEdit extends Component<Props> {
       extra,
       formatIntl,
       help,
+      helpValues,
       $id,
       label,
+      labelValues,
       name,
       placeholder,
       placeholderValues,
       readOnly,
       spellCheck,
       status,
+      statusValues,
       $value,
     } = this.props;
     const placeholderText =
@@ -146,7 +149,14 @@ class MultiLineEdit extends Component<Props> {
     return (
       <div className={getMainClasses(appearance, styles)}>
         {!elementOnly && (
-          <InputLabel error={$error} help={help} extra={extra} label={label} />
+          <InputLabel
+            error={$error}
+            help={help}
+            helpValues={helpValues}
+            extra={extra}
+            label={label}
+            labelValues={labelValues}
+          />
         )}
         <Editor
           name={name}
@@ -160,7 +170,11 @@ class MultiLineEdit extends Component<Props> {
           spellCheck={spellCheck}
           stripPastedStyles
         />
-        <InputStatus status={status} error={$error} />
+        <InputStatus
+          status={status}
+          statusValues={statusValues}
+          error={$error}
+        />
       </div>
     );
   }

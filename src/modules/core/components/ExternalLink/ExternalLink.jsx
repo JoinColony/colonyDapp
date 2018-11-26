@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
@@ -13,7 +13,7 @@ type Props = {
   /** A string or a `messageDescriptor` that make up the link's text */
   text: MessageDescriptor | string,
   /** Values for text (react-intl interpolation) */
-  textValues?: { [string]: any },
+  textValues?: MessageValues,
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
   /*

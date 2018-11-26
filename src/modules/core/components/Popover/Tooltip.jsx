@@ -22,6 +22,8 @@ type Props = {
   trigger: 'hover' | 'click' | 'disabled',
   /** The tooltips' placement */
   placement?: Placement,
+  /** Whether there should be an arrow on the tooltip */
+  showArrow: boolean,
 };
 
 const renderContent = content => (
@@ -31,13 +33,20 @@ const renderContent = content => (
   </div>
 );
 
-const Tooltip = ({ children, content, placement = 'top', trigger }: Props) => (
+const Tooltip = ({
+  children,
+  content,
+  placement = 'top',
+  showArrow,
+  trigger,
+}: Props) => (
   <Popover
     appearance={{ theme: 'dark' }}
     trigger={content ? trigger : 'disabled'}
     openDelay={200}
     content={renderContent(content)}
     placement={placement}
+    showArrow={showArrow}
   >
     {children}
   </Popover>
@@ -45,6 +54,7 @@ const Tooltip = ({ children, content, placement = 'top', trigger }: Props) => (
 
 Tooltip.defaultProps = {
   trigger: 'hover',
+  showArrow: true,
 };
 
 export default Tooltip;

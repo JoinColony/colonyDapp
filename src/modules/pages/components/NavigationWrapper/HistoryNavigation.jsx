@@ -1,12 +1,11 @@
 /* @flow */
+import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
+import type { IBrowserHistory } from 'history';
 
 import React from 'react';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { defineMessages, injectIntl } from 'react-intl';
-
-import type { MessageDescriptor, IntlShape } from 'react-intl';
-import type { IBrowserHistory } from 'history';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
@@ -34,7 +33,7 @@ type Props = {
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  backTextValues?: Object,
+  backTextValues?: MessageValues,
   /*
    * Browser history object injected so that we can access the previous route
    */

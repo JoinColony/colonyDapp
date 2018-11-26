@@ -1,0 +1,60 @@
+
+.main {
+  width: 450px;
+  text-align: left;
+}
+
+.contentSection {
+  /* This class not used externally; intended for composing via css only */
+  padding: 15px 10px;
+}
+
+.gasStationHeader {
+  composes: contentSection;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--grey-blue-1);
+}
+
+.walletDetails {
+  align-self: center;
+}
+
+.actionsContainer {
+  display: flex;
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+.transactionsContainer {
+  composes: contentSection;
+  min-height: 70px;
+  max-height: 456px;
+  overflow-y: auto;
+}
+
+.walletHeading {
+  display: inline-block;
+}
+
+.walletAddress {
+  display: inline-block;
+  padding-left: 8px;
+}
+
+.goToWalletIcon {
+  /* Negative margin to align with close icon - this icon is wide and has a lot of vertical padding */
+  margin-top: -5px;
+}
+
+.closeButton {
+  composes: button from '~styles/reset.css';
+  margin-left: 5px;
+}
+
+/* State */
+
+.stateIsEmpty .transactionsContainer {
+  display: flex;
+  align-items: center;
+}

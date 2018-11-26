@@ -6,7 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
-import NavLink from '~core/NavLink';
+import Link from '~core/Link';
 
 import styles from './TaskListItem.css';
 
@@ -31,7 +31,7 @@ const TaskListItem = ({
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
-      <NavLink
+      <Link
         title={title}
         className={styles.taskDetailsTitle}
         to={TASK_ROUTE}

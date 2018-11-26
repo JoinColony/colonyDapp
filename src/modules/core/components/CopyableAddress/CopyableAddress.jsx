@@ -77,13 +77,15 @@ class CopyableAddress extends Component<Props, State> {
     return (
       <div className={getMainClasses(appearance, styles)}>
         {this.getAddress()}
-        <Button
-          appearance={{ size: 'small', theme: 'blue' }}
-          disabled={copiedAddress}
-          onClick={this.handleCopyAddress}
-          text={{ ...MSG.buttonCopy }}
-          textValues={{ copiedAddress }}
-        />
+        <span className={styles.copyButton}>
+          <Button
+            appearance={{ size: 'small', theme: 'blue' }}
+            disabled={copiedAddress}
+            onClick={this.handleCopyAddress}
+            text={{ ...MSG.buttonCopy }}
+            textValues={{ copiedAddress }}
+          />
+        </span>
       </div>
     );
   }

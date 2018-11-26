@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 import type { Node } from 'react';
 
 import React, { Component } from 'react';
@@ -32,13 +32,13 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** Placeholder for input */
   placeholder?: string,
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */

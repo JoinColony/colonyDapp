@@ -7,18 +7,23 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './CardList.css';
 
-type ValidCols = 'auto' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+type ValidCols = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
 type Appearance = {
-  /** Number of columns the grid should contain at its widest (read: max number of columns). Should be auto, or between 2 and 9 (inclusive). Default is `auto`. */
+  /** Number of columns the grid should contain at its widest (read: max number of columns). Should be auto, or between 1 and 9 (inclusive). Default is `auto`. */
   numCols: ValidCols,
 };
 
 type Props = {
+  /** Appearance object */
   appearance?: Appearance,
+  /** Child content to render in the list */
   children: ChildrenArray<ElementType<*>>,
+  /** Optional additional className for further styling */
   className?: string,
 };
+
+const displayName = 'CardList';
 
 const CardList = ({
   appearance = { numCols: 'auto' },
@@ -34,5 +39,7 @@ const CardList = ({
     </ul>
   );
 };
+
+CardList.displayName = displayName;
 
 export default CardList;

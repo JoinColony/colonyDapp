@@ -1,6 +1,6 @@
 /* @flow */
 import type { ElementRef } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 
@@ -30,25 +30,25 @@ type Props = {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
-  helpValues?: { [string]: string },
+  helpValues?: MessageValues,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
-  labelValues?: { [string]: string },
+  labelValues?: MessageValues,
   /** The maximum length of the input value. If provided, remaining character count will be displayed */
   maxLength?: number,
   /** Placeholder for input */
   placeholder?: string | MessageDescriptor,
   /** Values for placeholder text (react-intl interpolation) */
-  placeholderValues?: { [string]: string },
+  placeholderValues?: MessageValues,
   /** Should the component be read only */
   readOnly?: boolean,
   /** Status text */
   status?: string | MessageDescriptor,
   /** Values for status text (react-intl interpolation) */
-  statusValues?: { [string]: string },
+  statusValues?: MessageValues,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -60,7 +60,7 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: { [string]: string },
+    textValues?: MessageValues,
   ) => string,
   /** onBlur callback */
   onBlur?: (event: any) => void,

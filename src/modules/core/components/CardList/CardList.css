@@ -8,6 +8,10 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
+.numCols1 {
+  grid-template-columns: 1fr;
+}
+
 .numCols2 {
   grid-template-columns: repeat(2, 1fr);
 }
