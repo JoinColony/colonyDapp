@@ -6,7 +6,7 @@ import type { RecordOf, List } from 'immutable';
 
 import type { LifecycleActionTypes } from '../modules/core/types';
 import type {
-  ColonyIdentifier,
+  AddressOrENSName,
   ColonyContext,
 } from '../lib/ColonyManager/types';
 
@@ -28,7 +28,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   eventData?: E,
   hash?: string,
   id: TransactionId,
-  identifier?: ColonyIdentifier,
+  identifier?: AddressOrENSName,
   lifecycle: LifecycleActionTypes,
   methodName: string,
   options: SendOptions,

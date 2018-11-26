@@ -8,7 +8,4 @@ export type ENSName = string;
 
 export type Address = string;
 
-export type ColonyIdentifier = {|
-  address?: Address,
-  ensName?: ENSName,
-|};
+export type AddressOrENSName = Address | ENSName;

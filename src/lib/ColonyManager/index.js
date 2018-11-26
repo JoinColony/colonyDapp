@@ -7,26 +7,14 @@ import { getHashedENSDomainString } from '~utils/ens';
 
 import type {
   Address,
+  AddressOrENSName,
   ColonyContext,
-  ColonyIdentifier,
   ENSName,
 } from './types';
 
 import { NETWORK_CONTEXT } from './constants';
 
 export default class ColonyManager {
-  static validateIdentifier(identifier?: any): ColonyIdentifier {
-    if (
-      !(
-        identifier &&
-        (isAddress(identifier.address) ||
-          typeof identifier.ensName === 'string')
-      )
-    )
-      throw new Error('Invalid colony identifier provided');
-    return identifier;
-  }
-
   clients: Map<Address, ColonyNetworkClient.ColonyClient>;
 
   ensCache: Map<ENSName, Address>;
@@ -38,59 +26,36 @@ export default class ColonyManager {
     this.networkClient = networkClient;
   }
 
-  _findColonyClient(identifier: ColonyIdentifier) {
-    const entry =
-      [...this.clients.entries()].find(
-        ([{ address, ensName, id }]) =>
-          address === identifier.address ||
-          id === identifier.id ||
-          ensName === identifier.ensName,
-      ) || [];
-    return entry[1];
+  async resolveColonyIdentifier(identifier: AddressOrENSName) {
+    if (isAddress(identifier)) return identifier;
+
+    // Get the address and update the ENS cache
+    const { ensAddress } = await this.networkClient.getAddressForENSHash.call({
+      nameHash: getHashedENSDomainString(identifier, 'user'),
+    });
+    this.ensCache.set(identifier, ensAddress);
+    return ensAddress;
   }
 
-  async resolveColonyIdentifier({
-    ensName,
-    address: givenAddress,
-  }: ColonyIdentifier) {
-    let address = givenAddress;
-
-    if (ensName) {
-      // Get the address and update the ENS cache
-      ({
-        ensAddress: address,
-      } = await this.networkClient.getAddressForENSHash.call({
-        nameHash: getHashedENSDomainString(ensName, 'user'),
-      }));
-      this.ensCache.set(ensName, address);
-    }
-
-    return address;
-  }
-
-  async setColonyClient(identifier: ColonyIdentifier) {
-    const address = this.resolveColonyIdentifier(identifier);
-
-    const client = await this.networkClient.getColony.call({ address });
-
+  async setColonyClient(address: Address) {
+    const client = await this.networkClient.getColonyClientByAddress(address);
     this.clients.set(address, client);
-
     return client;
   }
 
-  async getColonyClient(identifier?: ColonyIdentifier) {
-    const validatedId = this.constructor.validateIdentifier(identifier);
+  async getColonyClient(identifier?: AddressOrENSName) {
+    if (!(typeof identifier === 'string' && identifier.length))
+      throw new Error('A colony address or ENS name must be provided');
 
-    return (
-      this._findColonyClient(validatedId) || this.setColonyClient(validatedId)
-    );
+    const address = await this.resolveColonyIdentifier(identifier);
+    return this.clients.get(address) || this.setColonyClient(address);
   }
 
   getNetworkMethod(methodName: string) {
     return Reflect.get(this.networkClient, methodName);
   }
 
-  async getColonyMethod(methodName: string, identifier?: ColonyIdentifier) {
+  async getColonyMethod(methodName: string, identifier?: AddressOrENSName) {
     const client = await this.getColonyClient(identifier);
     return Reflect.get(client, methodName);
   }
@@ -107,7 +72,7 @@ export default class ColonyManager {
   >(
     context: ColonyContext,
     methodName: string,
-    identifier?: ColonyIdentifier,
+    identifier?: AddressOrENSName,
   ): Promise<M> {
     return context === NETWORK_CONTEXT
       ? this.getNetworkMethod(methodName)

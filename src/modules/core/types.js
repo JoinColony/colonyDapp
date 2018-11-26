@@ -13,7 +13,7 @@ import type {
 import type { TransactionReceipt } from '~types/index';
 
 import type {
-  ColonyIdentifier,
+  AddressOrENSName,
   ColonyContext,
 } from '../../lib/ColonyManager/types';
 
@@ -51,7 +51,7 @@ export type CreateTransactionAction<P: TransactionParams> = {
   payload: {
     context: ColonyContext,
     id: string,
-    identifier?: ColonyIdentifier,
+    identifier?: AddressOrENSName,
     lifecycle: LifecycleActionTypes,
     methodName: string,
     options?: SendOptions,

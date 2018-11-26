@@ -7,8 +7,8 @@ import nanoid from 'nanoid';
 import type { CreateTransactionAction, LifecycleActionTypes } from '../types';
 import type { TransactionParams, TransactionEventData } from '~types/index';
 import type {
+  AddressOrENSName,
   ColonyContext,
-  ColonyIdentifier,
 } from '../../../lib/ColonyManager/types';
 
 import {
@@ -36,7 +36,7 @@ export const createTransaction = <P: TransactionParams>({
   ...payload
 }: {
   context: ColonyContext,
-  identifier?: ColonyIdentifier,
+  identifier?: AddressOrENSName,
   lifecycle?: LifecycleActionTypes,
   methodName: string,
   options?: SendOptions,
