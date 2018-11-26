@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { SendOptions } from '@colony/colony-js-client';
+
 import { createNetworkTransaction } from '../../core/actionCreators';
 import {
   USER_PROFILE_FETCH,
@@ -8,15 +10,18 @@ import {
   USERNAME_CREATE_SUCCESS,
 } from '../actionTypes';
 
-export const registerUserLabel = ({ params, ...payload }: *) =>
-  createNetworkTransaction<{ username: string, orbitDBPath: string }>({
+export const registerUserLabel = (
+  params: { username: string, orbitDBPath: string },
+  options?: SendOptions,
+) =>
+  createNetworkTransaction({
     params,
+    options,
     methodName: 'registerUserLabel',
     lifecycle: {
       error: USERNAME_CREATE_ERROR,
       sent: USERNAME_CREATE_SUCCESS,
     },
-    ...payload,
   });
 
 export const fetchUserProfile = (username: string) => ({

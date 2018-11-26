@@ -184,13 +184,13 @@ function* createUsername(action: Action): Saga<void> {
   yield call([store, store.set], { username, walletAddress });
 
   yield put(
-    registerUserLabel({
-      params: { username, orbitDBPath },
+    registerUserLabel(
+      { username, orbitDBPath },
       // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
-      options: {
+      {
         gasLimit: 500000,
       },
-    }),
+    ),
   );
 }
 
