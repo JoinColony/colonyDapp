@@ -8,13 +8,14 @@ import nanoid from 'nanoid';
 import type { TransactionProps } from '~types/TransactionRecord';
 
 const defaultValues: TransactionProps<*, *> = {
-  contextName: '',
+  context: undefined,
   createdAt: new Date(),
   errors: new List(),
   eventData: undefined,
   hash: undefined,
   id: nanoid(),
-  lifecycleActionTypes: {},
+  identifier: undefined,
+  lifecycle: {},
   methodName: '',
   options: {},
   params: {},

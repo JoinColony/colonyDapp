@@ -2,8 +2,19 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
-import type { LifecycleActionTypes } from '../types';
+import nanoid from 'nanoid';
+
+import type { CreateTransactionAction, LifecycleActionTypes } from '../types';
 import type { TransactionParams, TransactionEventData } from '~types/index';
+import type {
+  AddressOrENSName,
+  ColonyContext,
+} from '../../../lib/ColonyManager/types';
+
+import {
+  COLONY_CONTEXT,
+  NETWORK_CONTEXT,
+} from '../../../lib/ColonyManager/constants';
 
 import {
   TRANSACTION_CREATED,
@@ -15,34 +26,65 @@ import {
   TRANSACTION_SENT,
 } from '../actionTypes';
 
-export const transactionCreated = <P: TransactionParams>({
-  contextName,
-  id,
-  lifecycleActionTypes,
+export const createTransaction = <P: TransactionParams>({
+  context,
+  identifier,
+  lifecycle = {},
   methodName,
   options,
-  overrideActionType,
   params,
+  ...payload
 }: {
-  contextName: string,
-  id: string,
-  lifecycleActionTypes: LifecycleActionTypes,
+  context: ColonyContext,
+  identifier?: AddressOrENSName,
+  lifecycle?: LifecycleActionTypes,
   methodName: string,
   options?: SendOptions,
-  overrideActionType?: string,
   params: P,
-}) => ({
-  type: overrideActionType || TRANSACTION_CREATED,
+}): CreateTransactionAction<P> => ({
+  type: TRANSACTION_CREATED,
   payload: {
-    contextName,
+    context,
     createdAt: new Date(),
-    id,
-    lifecycleActionTypes,
+    id: nanoid(),
+    identifier,
+    lifecycle,
     methodName,
     options,
     params,
+    ...payload,
   },
 });
+
+export const createNetworkTransaction = <P: TransactionParams>({
+  methodName,
+  params,
+  ...payload
+}: {
+  methodName: string,
+  params: P,
+}): CreateTransactionAction<P> =>
+  createTransaction<P>({
+    context: NETWORK_CONTEXT,
+    methodName,
+    params,
+    ...payload,
+  });
+
+export const createColonyTransaction = <P: TransactionParams>({
+  methodName,
+  params,
+  ...payload
+}: {
+  methodName: string,
+  params: P,
+}): CreateTransactionAction<P> =>
+  createTransaction({
+    context: COLONY_CONTEXT,
+    methodName,
+    params,
+    ...payload,
+  });
 
 export const transactionSendError = <P: TransactionParams>(
   id: string,

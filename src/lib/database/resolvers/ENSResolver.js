@@ -5,6 +5,9 @@ import { isAddress } from 'web3-utils';
 
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
+// TODO use `~utils/ens` as the import path when `ava` can resolve it
+import { getENSDomainString } from '../../../utils/ens';
+
 class ENSResolver {
   _networkClient: ColonyNetworkClient;
 
@@ -26,7 +29,7 @@ class ENSResolver {
     const { suffix } = this.constructor;
     return identifier.includes('.')
       ? identifier
-      : `${identifier}.${suffix}.joincolony.eth`;
+      : getENSDomainString(identifier, suffix);
   }
 
   // Returns a human-readable colony or user name, when given an ensAddress / Ethereum address
@@ -41,7 +44,7 @@ class ENSResolver {
 
   // Returns an Ethereum address, when given the human-readable name
   async getENSAddressForENSName(name: string): Promise<string> {
-    const nameHash = namehash.hash(name);
+    const nameHash = this.constructor.ensHash(name);
     const { ensAddress } = await this._networkClient.getAddressForENSHash.call({
       nameHash,
     });

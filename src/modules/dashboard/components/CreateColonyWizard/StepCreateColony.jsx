@@ -88,7 +88,7 @@ const StepCreateColony = ({
     success={COLONY_CREATE_SUCCESS}
     setPayload={(action: *) => ({
       ...action,
-      payload: { params: { tokenAddress: wizardValues.tokenAddress } },
+      payload: { tokenAddress: wizardValues.tokenAddress },
     })}
     // eslint-disable-next-line no-unused-vars
     onError={(error: *, bag: *) => {

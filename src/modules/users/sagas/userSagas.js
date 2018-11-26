@@ -11,17 +11,17 @@ import {
   takeLatest,
   takeEvery,
 } from 'redux-saga/effects';
-import namehash from 'eth-ens-namehash-ms';
 
 import type { Action, UserRecord } from '~types/index';
 
 import { create, putError } from '~utils/saga/effects';
+import { getHashedENSDomainString } from '~utils/ens';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
 import EthereumAccessController from '../../../lib/database/EthereumAccessController';
 import { getAll } from '../../../lib/database/commands';
-import { networkMethodSagaFactory } from '../../core/sagas/utils';
+import { getNetworkMethod } from '../../core/sagas/utils';
 
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 
@@ -36,8 +36,6 @@ import {
   USERNAME_VALIDATE_SUCCESS,
   USERNAME_VALIDATE_ERROR,
   USERNAME_CREATE,
-  USERNAME_CREATE_SUCCESS,
-  USERNAME_CREATE_ERROR,
   USER_AVATAR_FETCH,
   USER_AVATAR_FETCH_SUCCESS,
   USER_AVATAR_FETCH_ERROR,
@@ -48,15 +46,7 @@ import {
   USER_REMOVE_AVATAR_SUCCESS,
   USER_REMOVE_AVATAR_ERROR,
 } from '../actionTypes';
-
-const registerUserLabel = networkMethodSagaFactory<
-  { username: string, orbitDBPath: string },
-  { user: string, label: string },
->('registerUserLabel', {
-  // TODO: We might want to have another action dispatched on event data (which then feeds the reducer, instead of this one)
-  sent: USERNAME_CREATE_SUCCESS,
-  error: USERNAME_CREATE_ERROR,
-});
+import { registerUserLabel } from '../actionCreators';
 
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
@@ -151,14 +141,14 @@ function* validateUsername(action: Action): Saga<void> {
   yield call(delay, 300);
   const { username } = action.payload;
 
-  // TODO: consider factoring out this functionality (re-use in ENSResolver)
-  const nameHash = namehash.hash(`${username}.user.joincolony.eth`);
-  const networkClient = yield getContext('networkClient');
+  const nameHash = getHashedENSDomainString(username, 'user');
+
+  const getAddressForENSHash = yield call(
+    getNetworkMethod,
+    'getAddressForENSHash',
+  );
   const { ensAddress } = yield call(
-    [
-      networkClient.getAddressForENSHash,
-      networkClient.getAddressForENSHash.call,
-    ],
+    [getAddressForENSHash, getAddressForENSHash.call],
     { nameHash },
   );
 
@@ -193,16 +183,15 @@ function* createUsername(action: Action): Saga<void> {
 
   yield call([store, store.set], { username, walletAddress });
 
-  yield call(registerUserLabel, {
-    type: action.type,
-    payload: {
-      params: { username, orbitDBPath },
+  yield put(
+    registerUserLabel(
+      { username, orbitDBPath },
       // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
-      options: {
+      {
         gasLimit: 500000,
       },
-    },
-  });
+    ),
+  );
 }
 
 function* fetchAvatar(action: Action): Saga<void> {

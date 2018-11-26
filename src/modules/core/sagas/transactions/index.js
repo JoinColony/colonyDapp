@@ -7,8 +7,10 @@ import { takeEvery, select, put } from 'redux-saga/effects';
 import type { SendTransactionAction } from '../../types';
 
 import sendMethodTransaction from './sendMethodTransaction';
+import suggestMethodTransactionGas from './suggestMethodTransactionGas';
 import {
   METHOD_TRANSACTION_SENT,
+  TRANSACTION_CREATED,
   TRANSACTION_GAS_SUGGESTED,
 } from '../../actionTypes';
 
@@ -17,7 +19,7 @@ function* jimmysDiscountGas({
   payload: { id },
 }: SendTransactionAction): Saga<void> {
   const {
-    contextName,
+    context,
     methodName,
     suggestedGasLimit,
     suggestedGasPrice,
@@ -28,7 +30,7 @@ function* jimmysDiscountGas({
     window.confirm(
       `Welcome to Jimmy’s Discount Gas
 ------------------------------------
-Send ${contextName}/${methodName} transaction?
+Send ${context}/${methodName} transaction?
 Gas limit: ${
         suggestedGasLimit ? suggestedGasLimit.toNumber() : 'not set'
       }, gas price: ${
@@ -41,14 +43,22 @@ Gas limit: ${
 
 export default function* transactionsSagas(): any {
   /*
-   * METHOD_TRANSACTION_SENT
+   * 1. TRANSACTION_CREATED
+   * When new outgoing transactions are created, a saga is run to get
+   * suggested gas values for the transaction.
+   */
+  yield takeEvery(TRANSACTION_CREATED, suggestMethodTransactionGas);
+  /*
+   * 2. TRANSACTION_GAS_SUGGESTED
+   * TODO replace me with the real gas station/wallet!
+   * When the suggested gas values have been set, this saga prompts the user
+   * to send the transaction (then the next action is dispatched, to send it).
+   */
+  yield takeEvery(TRANSACTION_GAS_SUGGESTED, jimmysDiscountGas);
+  /*
+   * 3. METHOD_TRANSACTION_SENT
    * is responsible for sending transactions which have been created with
    * a specific method, for a specific client.
    */
   yield takeEvery(METHOD_TRANSACTION_SENT, sendMethodTransaction);
-  /*
-   * TRANSACTION_GAS_SUGGESTED
-   * TODO replace me with the real gas station/wallet!
-   */
-  yield takeEvery(TRANSACTION_GAS_SUGGESTED, jimmysDiscountGas);
 }
