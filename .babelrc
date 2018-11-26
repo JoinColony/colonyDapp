@@ -1,5 +1,4 @@
 {
-
   "env": {
     "test": {
       "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow"],
@@ -12,7 +11,7 @@
            "enforceDescriptions": false
           }]
         ],
-       },
+      },
     "development": {
       "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow"],
       "plugins": [
@@ -26,9 +25,17 @@
         ],
        },
     "production": {
+      "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow"],
       "plugins": [
-        "react-remove-properties"
-      ]
+        "react-remove-properties",
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-transform-runtime",
+        ["react-intl", {
+          "messagesDir": "./dist/i18n",
+          "enforceDescriptions": false
+         }]
+       ]
     }
   }
 }
