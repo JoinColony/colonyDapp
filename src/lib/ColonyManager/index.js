@@ -5,7 +5,12 @@ import { isAddress } from 'web3-utils';
 
 import { getHashedENSDomainString } from '~utils/ens';
 
-import type { ColonyContext, ColonyIdentifier } from './types';
+import type {
+  Address,
+  ColonyContext,
+  ColonyIdentifier,
+  ENSName,
+} from './types';
 
 import { NETWORK_CONTEXT } from './constants';
 
@@ -15,7 +20,6 @@ export default class ColonyManager {
       !(
         identifier &&
         (isAddress(identifier.address) ||
-          Number.isInteger(identifier.id) ||
           typeof identifier.ensName === 'string')
       )
     )
@@ -23,7 +27,9 @@ export default class ColonyManager {
     return identifier;
   }
 
-  clients: Map<ColonyIdentifier, ColonyNetworkClient.ColonyClient>;
+  clients: Map<Address, ColonyNetworkClient.ColonyClient>;
+
+  ensCache: Map<ENSName, Address>;
 
   networkClient: ColonyNetworkClient;
 
@@ -43,24 +49,31 @@ export default class ColonyManager {
     return entry[1];
   }
 
-  async setColonyClient(identifier: ColonyIdentifier) {
-    const { ensName, address, id } = identifier;
-    const query = {};
+  async resolveColonyIdentifier({
+    ensName,
+    address: givenAddress,
+  }: ColonyIdentifier) {
+    let address = givenAddress;
 
     if (ensName) {
-      const { ensAddress } = await this.networkClient.getAddressForENSHash.call(
-        { nameHash: getHashedENSDomainString(ensName, 'user') },
-      );
-      query.address = ensAddress;
-    } else if (address) {
-      query.address = address;
-    } else if (id) {
-      query.id = id;
+      // Get the address and update the ENS cache
+      ({
+        ensAddress: address,
+      } = await this.networkClient.getAddressForENSHash.call({
+        nameHash: getHashedENSDomainString(ensName, 'user'),
+      }));
+      this.ensCache.set(ensName, address);
     }
 
-    const client = await this.networkClient.getColony.call(query);
+    return address;
+  }
 
-    this.clients.set(identifier, client);
+  async setColonyClient(identifier: ColonyIdentifier) {
+    const address = this.resolveColonyIdentifier(identifier);
+
+    const client = await this.networkClient.getColony.call({ address });
+
+    this.clients.set(address, client);
 
     return client;
   }
