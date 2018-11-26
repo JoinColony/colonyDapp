@@ -4,6 +4,11 @@
   max-width: 520px;
 }
 
+.paragraph {
+  margin-top: 1.5em;
+  font-size: var(--size-medium);
+}
+
 .nameForm {
   margin-top: 40px;
 }

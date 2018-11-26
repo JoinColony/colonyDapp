@@ -54,7 +54,7 @@ const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 const StepColonyName = ({ nextStep, wizardForm }: Props) => (
   <Form onSubmit={nextStep} validationSchema={validationSchema} {...wizardForm}>
     {({ isValid }) => (
-      <section className={styles.content}>
+      <section className={styles.main}>
         <div className={styles.title}>
           <Heading
             appearance={{ size: 'medium', weight: 'thin' }}
@@ -62,14 +62,18 @@ const StepColonyName = ({ nextStep, wizardForm }: Props) => (
           />
           <div className={styles.nameForm}>
             <Input
+              appearance={{ theme: 'fat' }}
               name="colonyName"
               label={MSG.label}
               placeholder={MSG.placeholder}
             />
             <div className={styles.buttons}>
-              <Button appearance={{ theme: 'secondary' }} text={MSG.cancel} />
               <Button
-                appearance={{ theme: 'primary' }}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                text={MSG.cancel}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
                 disabled={!isValid}
                 text={MSG.next}

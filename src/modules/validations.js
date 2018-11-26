@@ -66,24 +66,6 @@ function ensAddress(msg) {
   });
 }
 
-function username(msg) {
-  return this.test({
-    name: 'username',
-    message: msg || en.string.username,
-    test(value) {
-      // We do not allow dots although _technically_ they are allowed in UTS46
-      // http://unicode.org/reports/tr46/
-      if (value && value.includes('.')) return false;
-      try {
-        ensNormalize(value);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-  });
-}
-
 function includes(searchVal, msg) {
   return this.test({
     name: 'includes',
@@ -98,5 +80,4 @@ yup.addMethod(yup.mixed, 'equalTo', equalTo);
 yup.addMethod(yup.mixed, 'lessThanPot', lessThanPot);
 yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
-yup.addMethod(yup.string, 'username', username);
 yup.addMethod(yup.array, 'includes', includes);

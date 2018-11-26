@@ -3,8 +3,8 @@
 import { all, takeLatest } from 'redux-saga/effects';
 
 import { WALLET_CREATE } from '../../users/actionTypes';
-
 import { setupWalletSagas } from '../../users/sagas';
+
 import setupUserContext from './setupUserContext';
 
 export default function* rootSaga(): any {

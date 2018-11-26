@@ -27,7 +27,7 @@ const MSG = defineMessages({
     defaultMessage: 'Your desired username',
   },
   errorUsernameTaken: {
-    id: 'users.CreateUsernameDialog.erorrUsernameTaken',
+    id: 'users.CreateUsernameDialog.errorUsernameTaken',
     defaultMessage: 'This username is already taken',
   },
 });
@@ -45,7 +45,7 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    .username(),
+    .ensAddress(),
 });
 
 class CreateUsernameDialog extends Component<Props> {

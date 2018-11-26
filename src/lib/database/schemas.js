@@ -28,3 +28,13 @@ export const UserActivity = yup.object({
   domainName: yup.string(),
   createdAt: yup.date().default(() => new Date()),
 });
+
+export const Colony = yup.object({
+  colonyId: yup.number(),
+  colonyAddress: yup.string().address(),
+  colonyName: yup.string(),
+  tokenAddress: yup.string().address(),
+  tokenName: yup.string(),
+  tokenSymbol: yup.string(),
+  tokenIcon: yup.string(),
+});
