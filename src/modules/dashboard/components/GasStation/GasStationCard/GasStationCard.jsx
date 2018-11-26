@@ -25,14 +25,17 @@ const displayName = 'dashboard.GasStation.GasStationCard';
 const GasStationCard = () => (
   <div className={styles.main}>
     <CardList appearance={{ numCols: '1' }}>
-      <Card>
-        <Heading
-          appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-          text={MSG.transactionTitleSample}
-        />
-        <p className={styles.transactionDescription}>
-          <FormattedMessage {...MSG.transactionDescriptionSample} />
-        </p>
+      <Card className={styles.card}>
+        <div className={styles.description}>
+          <Heading
+            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+            text={MSG.transactionTitleSample}
+          />
+          <p className={styles.transactionDescription}>
+            <FormattedMessage {...MSG.transactionDescriptionSample} />
+          </p>
+        </div>
+        <div className={styles.status} />
       </Card>
     </CardList>
   </div>
