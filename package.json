@@ -30,7 +30,8 @@
         "deploy:styleguide": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git",
         "trufflepig": "scripts/start_trufflepig.js",
         "ganache": "scripts/start_ganache.js",
-        "deploy:contracts": "scripts/deploy_contracts.js"
+        "deploy:contracts": "scripts/deploy_contracts.js",
+        "cypress:open": "cypress open"
     },
     "repository": {
         "type": "git",
