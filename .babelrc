@@ -1,12 +1,21 @@
 {
-    "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow"],
-    "plugins": [
-        "@babel/plugin-proposal-class-properties",
-        "@babel/plugin-syntax-dynamic-import",
-        "@babel/plugin-transform-runtime",
-        ["react-intl", {
-            "messagesDir": "./dist/i18n",
-            "enforceDescriptions": false
-        }]
-    ]
+  "env": {
+    "development": {
+      "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow"],
+      "plugins": [
+         "@babel/plugin-proposal-class-properties",
+         "@babel/plugin-syntax-dynamic-import",
+         "@babel/plugin-transform-runtime",
+         ["react-intl", {
+           "messagesDir": "./dist/i18n",
+           "enforceDescriptions": false
+          }]
+        ],
+       },
+    "production": {
+      "plugins": [
+        "react-remove-properties"
+      ]
+    }
+  }
 }
