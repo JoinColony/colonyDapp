@@ -30,6 +30,15 @@
   box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
 }
 
+.failed {
+  display: inline-block;
+  width: 20px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: var(--danger);
+}
+
 .pending {
   display: inline-block;
   margin-right: 5px;
