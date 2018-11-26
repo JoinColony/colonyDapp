@@ -29,3 +29,12 @@
   color: white;
   box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
 }
+
+.pending {
+  display: inline-block;
+  margin-right: 5px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
