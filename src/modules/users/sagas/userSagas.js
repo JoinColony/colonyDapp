@@ -86,7 +86,9 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
   return profileStore;
 }
 
-export function* getUserActivitiesStore(walletAddress: string): Saga<KVStore> {
+export function* getOrCreateUserActivitiesStore(
+  walletAddress: string,
+): Saga<KVStore> {
   const ddb = yield getContext('ddb');
   const accessController = yield create(
     EthereumAccessController,
@@ -117,8 +119,13 @@ export function* getUser(store: KVStore): Saga<UserRecord> {
 }
 
 // TODO fix typing
-export function* getUserActivities(walletAddress: string): Generator<*, *, *> {
-  const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
+export function* getOrCreateUserActivities(
+  walletAddress: string,
+): Generator<*, *, *> {
+  const activitiesStore = yield call(
+    getOrCreateUserActivitiesStore,
+    walletAddress,
+  );
   const all = yield call([activitiesStore, activitiesStore.all]);
   return all;
 }
@@ -126,7 +133,10 @@ export function* getUserActivities(walletAddress: string): Generator<*, *, *> {
 export function* addUserActivity(action: Action): Saga<void> {
   const { walletAddress, activity } = action.payload;
 
-  const activitiesStore = yield call(getUserActivitiesStore, walletAddress);
+  const activitiesStore = yield call(
+    getOrCreateUserActivitiesStore,
+    walletAddress,
+  );
 
   try {
     yield call([activitiesStore, activitiesStore.add], activity);
