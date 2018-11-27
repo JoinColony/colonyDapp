@@ -1,3 +1,17 @@
+.main {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+
+  &[disabled] {
+    cursor: default;
+  }
+}
+
 .card {
   display: flex;
   align-items: center;
@@ -23,7 +37,7 @@
 
 .counter {
   display: inline-block;
-  padding-top: 2px;
+  padding-top: 3px;
   height: 20px;
   width: 20px;
   border-radius: 50%;

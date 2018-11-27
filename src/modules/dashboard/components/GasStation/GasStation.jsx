@@ -91,6 +91,11 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
                */
               key={nanoid(transaction.nonce)}
               transaction={transaction}
+              onClick={
+                transaction.set && transaction.set.length
+                  ? event => console.log(event)
+                  : undefined
+              }
             />
           ))}
         </CardList>
