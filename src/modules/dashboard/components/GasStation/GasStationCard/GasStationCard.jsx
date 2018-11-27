@@ -1,7 +1,8 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import nanoid from 'nanoid';
 
 import type { TransactionType } from '~types/transaction';
 
@@ -30,6 +31,10 @@ const MSG = defineMessages({
     id: 'dashboard.GasStation.GasStationCard.transactionDescriptionSample',
     defaultMessage: 'The Meta Colony / #Javascript / Github Integration',
   },
+  actionDescriptionSample: {
+    id: 'dashboard.GasStation.GasStationCard.actionDescriptionSample',
+    defaultMessage: `{index}. Create Task`,
+  },
 });
 
 const displayName = 'dashboard.GasStation.GasStationCard';
@@ -54,39 +59,62 @@ const GasStationCard = ({
     type="button"
     className={styles.main}
     onClick={onClick}
-    disabled={!onClick}
+    disabled={expanded || !onClick}
   >
-    <Card className={styles.card}>
-      <div className={styles.description}>
-        <Heading
-          appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-          text={MSG.transactionTitleSample}
-        />
-        <Link
-          className={styles.transactionLink}
-          text={MSG.transactionDescriptionSample}
-          to={DASHBOARD_ROUTE}
-          /*
-           * @NOTE If this is an expanded card, and has an onclick handler,
-           * don't bubble the click up as this link will most likely redirect to
-           * another place, so there's no reason to change the state prior to that
-           */
-          onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
-        />
+    <Card className={expanded ? styles.cardExpanded : styles.card}>
+      <div className={styles.summary}>
+        <div className={styles.description}>
+          <Heading
+            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+            text={MSG.transactionTitleSample}
+          />
+          <Link
+            className={styles.transactionLink}
+            text={MSG.transactionDescriptionSample}
+            to={DASHBOARD_ROUTE}
+            /*
+             * @NOTE If this is an expanded card, and has an onclick handler,
+             * don't bubble the click up as this link will most likely redirect to
+             * another place, so there's no reason to change the state prior to that
+             */
+            onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
+          />
+        </div>
+        {status && (
+          <div className={styles.status}>
+            {status === 'pending' && <span className={styles.pending} />}
+            {status === 'failed' && <span className={styles.failed}>!</span>}
+          </div>
+        )}
+        {set && set.length ? (
+          <div className={styles.status}>
+            <span className={styles.counter}>{set.length}</span>
+          </div>
+        ) : null}
       </div>
-      {status && (
-        <div className={styles.status}>
-          {status === 'pending' && <span className={styles.pending} />}
-          {status === 'failed' && <span className={styles.failed}>!</span>}
-        </div>
-      )}
-      {set && set.length ? (
-        <div className={styles.status}>
-          <span className={styles.counter}>{set.length}</span>
-        </div>
+      {expanded && set && set.length ? (
+        <ul className={styles.expanded}>
+          {set.map((transaction: TransactionType, index) => (
+            <li
+              /*
+               * @NOTE I would like to create the id from the transaction's hash
+               * rather than from the nonce.
+               * Unfortunatelly nanoid doesn't play well with hex strings apparently...
+               */
+              key={nanoid(transaction.nonce)}
+            >
+              <div className={styles.description}>
+                <FormattedMessage
+                  {...MSG.actionDescriptionSample}
+                  values={{ index: index + 1 }}
+                />
+              </div>
+              <div className={styles.status}>?</div>
+            </li>
+          ))}
+        </ul>
       ) : null}
     </Card>
-    {expanded && <div>This list is expanded</div>}
   </button>
 );
 

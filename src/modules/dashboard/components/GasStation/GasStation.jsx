@@ -82,7 +82,7 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
     <div className={styles.transactionsContainer}>
       {transactions && transactions.length > 0 ? (
         <CardList appearance={{ numCols: '1' }}>
-          {transactions.map((transaction: TransactionType) => (
+          {transactions.slice(2, 3).map((transaction: TransactionType) => (
             <GasStationCard
               /*
                * @NOTE I would like to create the id from the transaction's hash
@@ -96,6 +96,7 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
                   ? event => console.log(event)
                   : undefined
               }
+              expanded
             />
           ))}
         </CardList>
