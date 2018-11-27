@@ -1,8 +1,7 @@
 /* @flow */
 
 import type { RecordOf } from 'immutable';
-// eslint-disable-next-line max-len
-import type { UserActivity } from '../modules/dashboard/components/UserActivities';
+import type { UserActivity } from './UserActivity';
 
 export type ProfileProps = {
   orbitStore?: string,

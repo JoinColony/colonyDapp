@@ -4,8 +4,7 @@ import type { RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { ProfileProps, UserProps } from '~types/UserRecord';
-import type { UserActivity } from '../../dashboard/components/UserActivities';
+import type { ProfileProps, UserActivity, UserProps } from '~types/index';
 
 const defaultProfileValues: ProfileProps = {
   walletAddress: '',

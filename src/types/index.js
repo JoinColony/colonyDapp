@@ -8,6 +8,7 @@ export * from './token';
 export * from './transaction';
 export * from './TransactionRecord';
 export * from './TransactionReceipt';
+export * from './UserActivity';
 export * from './UserRecord';
 export * from './UsersRecord';
 export * from './WalletRecord';

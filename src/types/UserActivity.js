@@ -2,9 +2,10 @@
 
 import type { RecordOf } from 'immutable';
 
-import messages from './activityMessages';
+// eslint-disable-next-line max-len
+import { activityMessages } from '../modules/dashboard/components/UserActivities';
 
-export type ActivityEvent = $Keys<typeof messages>;
+export type ActivityEvent = $Keys<typeof activityMessages>;
 
 type ActivityElement = {
   userAction: ActivityEvent,
