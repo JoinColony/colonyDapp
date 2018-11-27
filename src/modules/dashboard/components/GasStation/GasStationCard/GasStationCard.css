@@ -11,9 +11,14 @@
   flex: 0 1 auto;
 }
 
-.transactionDescription {
+.transactionLink {
   font-size: var(--size-tiny);
   font-weight: var(--weight-medium);
+
+  &:hover {
+    border-bottom: 1px solid var(--sky-blue);
+    color: var(--sky-blue);
+  }
 }
 
 .counter {
