@@ -1,11 +1,18 @@
 //* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import CardList from '~core/CardList';
 import Card from '~core/Card';
+import Link from '~core/Link';
+
+/*
+ * @NOTE This is just temporary and should be replaced with a dynamic route
+ * coming from the transaction object
+ */
+import { DASHBOARD_ROUTE } from '~routes';
 
 import styles from './GasStationCard.css';
 
@@ -31,9 +38,11 @@ const GasStationCard = () => (
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
             text={MSG.transactionTitleSample}
           />
-          <p className={styles.transactionDescription}>
-            <FormattedMessage {...MSG.transactionDescriptionSample} />
-          </p>
+          <Link
+            className={styles.transactionLink}
+            text={MSG.transactionDescriptionSample}
+            to={DASHBOARD_ROUTE}
+          />
         </div>
         <div className={styles.status}>
           <span className={styles.counter}>3</span>
@@ -45,9 +54,11 @@ const GasStationCard = () => (
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
             text={MSG.transactionTitleSample}
           />
-          <p className={styles.transactionDescription}>
-            <FormattedMessage {...MSG.transactionDescriptionSample} />
-          </p>
+          <Link
+            className={styles.transactionLink}
+            text={MSG.transactionDescriptionSample}
+            to={DASHBOARD_ROUTE}
+          />
         </div>
         <div className={styles.status}>
           <span className={styles.failed}>!</span>
@@ -59,9 +70,11 @@ const GasStationCard = () => (
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
             text={MSG.transactionTitleSample}
           />
-          <p className={styles.transactionDescription}>
-            <FormattedMessage {...MSG.transactionDescriptionSample} />
-          </p>
+          <Link
+            className={styles.transactionLink}
+            text={MSG.transactionDescriptionSample}
+            to={DASHBOARD_ROUTE}
+          />
         </div>
         <div className={styles.status}>
           <span className={styles.pending} />
