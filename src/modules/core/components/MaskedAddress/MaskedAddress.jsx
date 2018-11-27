@@ -5,6 +5,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { maskAddress } from '~utils/strings';
 
+import styles from './MaskedAddress.css';
+
 const MSG = defineMessages({
   wrongAddressFormat: {
     id: 'MaskedAddress.wrongAddressFormat',
@@ -28,7 +30,7 @@ const MaskedAddress = ({ address, mask }: Props) => {
   if (maskedAddress instanceof Error) {
     return <FormattedMessage {...MSG.wrongAddressFormat} />;
   }
-  return <span>{maskedAddress}</span>;
+  return <span className={styles.address}>{maskedAddress}</span>;
 };
 
 export default MaskedAddress;

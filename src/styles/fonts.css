@@ -20,3 +20,19 @@
     url('../fonts/avenir-next-italic.woff2') format('woff2'),
     url('../fonts/avenir-next-italic.woff') format('woff');
 }
+
+@font-face {
+  font-family: IBM Plex Mono;
+  font-weight: 500;
+  src:
+    url('../fonts/IBMPlexMono-Medium.woff') format('woff'),
+    url('../fonts/IBMPlexMono-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: IBM Plex Mono;
+  font-weight: 400;
+  src:
+    url('../fonts/IBMPlexMono-Regular.woff') format('woff'),
+    url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
+}

@@ -107,3 +107,40 @@ export const maskAddress = (
     return caughtError;
   }
 };
+
+type AddressElements = {
+  start: string,
+  middle: string,
+  end: string,
+};
+
+/**
+ * Split an BIP32 address to highlight start and end sections,
+ * hidden by a configurable string mask
+ *
+ * @NOTE We also validate the address here. If it's not correct this will throw, but we catch it and
+ * just return the error message in that case
+ *
+ * @method splitAddress
+ *
+ * @param {string} address The address to mask (must be valid!)
+ *
+ * @return {array} The split address in an array of strings
+ */
+export const splitAddress = (address: string): AddressElements | Error => {
+  try {
+    addressValidator(address);
+    const HEX_HEADER: string = '0x';
+    const rawAddress: string = addressNormalizer(address, false);
+    const addressStart: string = rawAddress.slice(0, 4);
+    const addressMiddle: string = rawAddress.slice(4, -4);
+    const addressEnd: string = rawAddress.slice(-4);
+    return {
+      start: `${HEX_HEADER}${addressStart}`,
+      middle: `${addressMiddle}`,
+      end: addressEnd,
+    };
+  } catch (caughtError) {
+    return caughtError;
+  }
+};

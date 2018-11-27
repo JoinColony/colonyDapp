@@ -25,10 +25,17 @@
 }
 
 .walletDetails {
+  display: flex;
   margin-bottom: 40px;
 }
 
 .tokenLink {
   font-weight: var(--weight-medium);
   color: var(--sky-blue);
+}
+
+.address {
+  margin-left: 20px;
+  margin-top: -5px;
+  line-height: 37px;
 }

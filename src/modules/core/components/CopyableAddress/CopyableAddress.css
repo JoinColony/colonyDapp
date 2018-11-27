@@ -1,5 +1,6 @@
 .main {
   /* add main styles here */
+  display: flex;
 }
 
 .copyButton {
@@ -7,6 +8,19 @@
 }
 
 .themeBig {
+  display: flex;
   font-size: var(--size-medium-l);
   letter-spacing: 1px;
+}
+
+.addressContainer {
+  font-family: var(--family-techie);
+}
+
+.address {
+  margin: 0 5px;
+}
+
+.boldAddress {
+  font-weight: var(--weight-medium);
 }

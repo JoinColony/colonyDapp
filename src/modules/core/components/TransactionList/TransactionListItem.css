@@ -29,6 +29,7 @@ td.transactionDate {
   width: 100%;
   font-size: var(--size-medium-l);
   text-align: center;
+  color: var(--grey-1);
 }
 
 .dateMonth {

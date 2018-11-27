@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import EthereumQRPlugin from 'ethereum-qr-code';
 
 import type { DialogType } from '~core/Dialog';
 import type { TokenRecord } from '~immutable';
@@ -47,10 +48,31 @@ const displayName = 'dashboard.Wallet';
 
 type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: List<TokenRecord>,
+  tokens: Array<TokenType>,
+  /**  Add QR code to Ethereum address */
+  qrCode: boolean,
 };
 
 class Wallet extends Component<Props> {
+  componentDidMount() {
+    const { qrCode } = this.props;
+
+    if (qrCode) {
+      const qr = new EthereumQRPlugin();
+
+      qr.toCanvas(
+        {
+          to: mockUser.walletAddress,
+        },
+        {
+          size: 50,
+          selector: '#qr-code',
+          options: { margin: 0 },
+        },
+      );
+    }
+  }
+
   handleEditToken = () => {
     const { openDialog, tokens } = this.props;
     const tokenDialog = openDialog('TokenEditDialog', {
@@ -70,18 +92,21 @@ class Wallet extends Component<Props> {
   };
 
   render() {
-    const { tokens } = this.props;
+    const { tokens, qrCode } = this.props;
     return (
       <div className={styles.layoutMain}>
         <main className={styles.content}>
           <div className={styles.walletDetails}>
-            <Heading
-              text={MSG.titleWallet}
-              appearance={{ size: 'medium', margin: 'small' }}
-            />
-            <CopyableAddress appearance={{ theme: 'big' }} full>
-              {mockUser.profile.walletAddress}
-            </CopyableAddress>
+            {qrCode && <div className={styles.qr} id="qr-code" />}
+            <div className={styles.address}>
+              <Heading
+                text={MSG.titleWallet}
+                appearance={{ size: 'medium', margin: 'small' }}
+              />
+              <CopyableAddress appearance={{ theme: 'big' }} full>
+                {mockUser.walletAddress}
+              </CopyableAddress>
+            </div>
           </div>
           <Tabs>
             <TabList>
