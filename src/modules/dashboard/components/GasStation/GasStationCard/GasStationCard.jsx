@@ -9,6 +9,7 @@ import type { TransactionType } from '~types/transaction';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import Link from '~core/Link';
+import { Tooltip } from '~core/Popover';
 
 /*
  * @NOTE This is just temporary and should be replaced with a dynamic route
@@ -18,11 +19,20 @@ import { DASHBOARD_ROUTE } from '~routes';
 
 import styles from './GasStationCard.css';
 
-/*
- * @NOTE These are just temporary as the actual name / path combinations for
- * the various actions-transactions will be implemented in #542
- */
 const MSG = defineMessages({
+  transactionState: {
+    id: 'dashboard.GasStation.GasStationCard.transactionState',
+    defaultMessage: `{status, select,
+      pending {Waiting on {username} to sign}
+      failed {Failed transaction. Try again}
+      other {Generic transaction}
+    }`,
+  },
+  /*
+   * @NOTE Below this line are just temporary message desriptors as the actual
+   * name / path combinations for the various actions-transactions
+   * should be implemented in #542
+   */
   transactionTitleSample: {
     id: 'dashboard.GasStation.GasStationCard.transactionTitleSample',
     defaultMessage: 'Create Task',
@@ -84,14 +94,41 @@ const GasStationCard = ({
             />
           </div>
           <div className={styles.status}>
-            {status && (
-              <Fragment>
-                {status === 'pending' && <span className={styles.pending} />}
-                {status === 'failed' && (
-                  <span className={styles.failed}>!</span>
+            <Tooltip
+              placement="top"
+              showArrow
+              content={
+                <FormattedMessage
+                  {...MSG.transactionState}
+                  values={{
+                    status,
+                    username: (
+                      /*
+                       * @TODO Add actual username from the multisig address
+                       */
+                      <span className={styles.tooltipUsername}>@ragny</span>
+                    ),
+                  }}
+                />
+              }
+            >
+              {/*
+               * @NOTE The tooltip content needs to be wrapped inside a block
+               * element otherwise it won't detect the hover event
+               */}
+              <div>
+                {status && (
+                  <Fragment>
+                    {status === 'pending' && (
+                      <span className={styles.pending} />
+                    )}
+                    {status === 'failed' && (
+                      <span className={styles.failed}>!</span>
+                    )}
+                  </Fragment>
                 )}
-              </Fragment>
-            )}
+              </div>
+            </Tooltip>
             {!status && haveActions ? (
               <span className={styles.counter}>{set.length}</span>
             ) : null}
