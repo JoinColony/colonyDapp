@@ -1,6 +1,7 @@
 /* @flow */
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import nanoid from 'nanoid';
 
 import type { InProps } from './GasStation';
 import type { TransactionType } from '~types/transaction';
@@ -13,6 +14,7 @@ import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
+import CardList from '~core/CardList';
 
 import GasStationCard from './GasStationCard';
 
@@ -77,7 +79,19 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
     </div>
     <div className={styles.transactionsContainer}>
       {transactions && transactions.length > 0 ? (
-        <GasStationCard />
+        <CardList appearance={{ numCols: '1' }}>
+          {transactions.map((transaction: TransactionType) => (
+            <GasStationCard
+              /*
+               * @NOTE I would like to create the id from the transaction's hash
+               * rather than from the nonce.
+               * Unfortunatelly nanoid doesn't play well with hex strings apparently...
+               */
+              key={nanoid(transaction.nonce)}
+              transaction={transaction}
+            />
+          ))}
+        </CardList>
       ) : (
         <Heading
           appearance={{ margin: 'none', size: 'normal' }}

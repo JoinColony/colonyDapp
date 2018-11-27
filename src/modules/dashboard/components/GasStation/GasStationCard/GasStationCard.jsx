@@ -1,10 +1,9 @@
-//* @flow */
+/* @flow */
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
-import CardList from '~core/CardList';
 import Card from '~core/Card';
 import Link from '~core/Link';
 
@@ -30,58 +29,22 @@ const MSG = defineMessages({
 const displayName = 'dashboard.GasStation.GasStationCard';
 
 const GasStationCard = () => (
-  <div className={styles.main}>
-    <CardList appearance={{ numCols: '1' }}>
-      <Card className={styles.card}>
-        <div className={styles.description}>
-          <Heading
-            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitleSample}
-          />
-          <Link
-            className={styles.transactionLink}
-            text={MSG.transactionDescriptionSample}
-            to={DASHBOARD_ROUTE}
-          />
-        </div>
-        <div className={styles.status}>
-          <span className={styles.counter}>3</span>
-        </div>
-      </Card>
-      <Card className={styles.card}>
-        <div className={styles.description}>
-          <Heading
-            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitleSample}
-          />
-          <Link
-            className={styles.transactionLink}
-            text={MSG.transactionDescriptionSample}
-            to={DASHBOARD_ROUTE}
-          />
-        </div>
-        <div className={styles.status}>
-          <span className={styles.failed}>!</span>
-        </div>
-      </Card>
-      <Card className={styles.card}>
-        <div className={styles.description}>
-          <Heading
-            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitleSample}
-          />
-          <Link
-            className={styles.transactionLink}
-            text={MSG.transactionDescriptionSample}
-            to={DASHBOARD_ROUTE}
-          />
-        </div>
-        <div className={styles.status}>
-          <span className={styles.pending} />
-        </div>
-      </Card>
-    </CardList>
-  </div>
+  <Card className={styles.card}>
+    <div className={styles.description}>
+      <Heading
+        appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+        text={MSG.transactionTitleSample}
+      />
+      <Link
+        className={styles.transactionLink}
+        text={MSG.transactionDescriptionSample}
+        to={DASHBOARD_ROUTE}
+      />
+    </div>
+    <div className={styles.status}>
+      <span className={styles.counter}>3</span>
+    </div>
+  </Card>
 );
 
 GasStationCard.displayName = displayName;
