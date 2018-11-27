@@ -36,28 +36,45 @@ const displayName = 'dashboard.GasStation.GasStationCard';
 
 type Props = {
   transaction: TransactionType,
+  /*
+   * @NOTE When the card is in the expanded mode, it's intent is to be rendered
+   * as a single element, and not part of a list.
+   * It is up to you do handle that rendering logic.
+   */
+  expanded?: boolean,
 };
 
-const GasStationCard = ({ transaction: { status } }: Props) => (
-  <Card className={styles.card}>
-    <div className={styles.description}>
-      <Heading
-        appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-        text={MSG.transactionTitleSample}
-      />
-      <Link
-        className={styles.transactionLink}
-        text={MSG.transactionDescriptionSample}
-        to={DASHBOARD_ROUTE}
-      />
-    </div>
-    {status && (
-      <div className={styles.status}>
-        {status === 'pending' && <span className={styles.pending} />}
-        {status === 'failed' && <span className={styles.failed}>!</span>}
+const GasStationCard = ({
+  transaction: { status, set },
+  expanded = false,
+}: Props) => (
+  <div className={styles.main}>
+    <Card className={styles.card}>
+      <div className={styles.description}>
+        <Heading
+          appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+          text={MSG.transactionTitleSample}
+        />
+        <Link
+          className={styles.transactionLink}
+          text={MSG.transactionDescriptionSample}
+          to={DASHBOARD_ROUTE}
+        />
       </div>
-    )}
-  </Card>
+      {status && (
+        <div className={styles.status}>
+          {status === 'pending' && <span className={styles.pending} />}
+          {status === 'failed' && <span className={styles.failed}>!</span>}
+        </div>
+      )}
+      {set && set.length ? (
+        <div className={styles.status}>
+          <span className={styles.counter}>{set.length}</span>
+        </div>
+      ) : null}
+    </Card>
+    {expanded && <div>This list is expanded</div>}
+  </div>
 );
 
 GasStationCard.displayName = displayName;
