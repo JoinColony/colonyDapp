@@ -11,6 +11,9 @@ import type {
   TransactionParams,
   TransactionEventData,
 } from '~types/index';
+
+import { putError } from '~utils/saga/effects';
+
 import type { Sender, SendTransactionAction } from '../../types';
 
 import { getMethod } from '../utils';
@@ -285,10 +288,10 @@ export default function* sendMethodTransaction<
     // Unexpected errors `put` the given error action...
     const { lifecycle: { error: errorType } = {} } = tx || {};
     if (errorType) {
-      yield put({ type: errorType, payload: caughtError });
+      yield putError(errorType, caughtError);
     } else {
-      // ...or re-throw if the error type was not found.
-      throw caughtError;
+      // We still dispatch this error as a general TRANASACTION_ERROR
+      yield putError(TRANSACTION_ERROR, caughtError);
     }
   }
 }
