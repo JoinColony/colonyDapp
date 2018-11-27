@@ -3,8 +3,6 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { Given } from '~utils/hoc';
-
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
@@ -25,6 +23,8 @@ import {
 import mockTasks from './__datamocks__/mockTasks';
 import mockColonies from './__datamocks__/mockColonies';
 import mockDomains from './__datamocks__/mockDomains';
+
+import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
 
@@ -77,6 +77,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
+  colonyLabel: string,
   walletAddress: string,
   given: Given,
 };
@@ -134,7 +135,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, given } = this.props;
+    const { walletAddress, given, colonyLabel } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -176,7 +177,7 @@ class ColonyHome extends Component<Props, State> {
             </TabList>
             <TabPanel>
               {tasks && tasks.length ? (
-                <TaskList tasks={tasks} />
+                <TaskList colonyLabel={colonyLabel} tasks={tasks} />
               ) : (
                 <Fragment>
                   <p className={styles.noTasks}>

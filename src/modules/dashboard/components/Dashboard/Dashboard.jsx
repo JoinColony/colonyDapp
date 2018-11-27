@@ -63,6 +63,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  colonyLabel: string,
   currentUser: UserRecord,
   userClaimedProfile?: boolean,
 };
@@ -98,7 +99,7 @@ class Dashboard extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { currentUser, userClaimedProfile = false } = this.props;
+    const { colonyLabel, currentUser, userClaimedProfile = false } = this.props;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -126,6 +127,7 @@ class Dashboard extends Component<Props, State> {
             </TabList>
             <TabPanel>
               <TabMyTasks
+                colonyLabel={colonyLabel}
                 tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,

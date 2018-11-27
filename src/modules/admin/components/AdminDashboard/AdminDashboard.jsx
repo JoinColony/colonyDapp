@@ -4,23 +4,18 @@ import type { LocationShape } from 'react-router-dom';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { connect } from 'react-redux';
 
-import type { Given } from '~utils/hoc';
-
-import NavLink from '~core/NavLink';
-import Icon from '~core/Icon';
 import Heading from '~core/Heading';
-
-import { COLONY_HOME_ROUTE } from '~routes';
-
-import VerticalNavigation from '~pages/VerticalNavigation';
-
-import Profile from '~admin/Profile';
+import Icon from '~core/Icon';
+import NavLink from '~core/NavLink';
 import Organizations from '~admin/Organizations';
+import Profile from '~admin/Profile';
+import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
-import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-
+import VerticalNavigation from '~pages/VerticalNavigation';
+import { COLONY_HOME_ROUTE } from '~routes';
 import { withFeatureFlags } from '~utils/hoc';
 
 import styles from './AdminDashboard.css';
@@ -32,6 +27,7 @@ import type {
    */
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
+import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
   backButton: {
@@ -63,12 +59,8 @@ const MSG = defineMessages({
 const mockColonyRecoveryMode = true;
 
 type Props = {
-  /*
-   * This will most likely come from the redux state
-   * The most obvious way to achieve this is to enhance this component with
-   * a connect call
-   */
-  colonyName?: string,
+  colonyLabel: string,
+  colonyName: string,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -100,7 +92,12 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const AdminDashboard = ({ colonyName, location, given }: Props) => (
+const AdminDashboard = ({
+  colonyLabel,
+  colonyName,
+  given,
+  location,
+}: Props) => (
   <div className={styles.main}>
     <VerticalNavigation
       navigationItems={navigationItems}
@@ -111,7 +108,7 @@ const AdminDashboard = ({ colonyName, location, given }: Props) => (
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
         <NavLink
-          to={COLONY_HOME_ROUTE}
+          to={COLONY_HOME_ROUTE.replace(':colonyLabel', colonyLabel)}
           text={MSG.backButton}
           textValues={{ colonyName }}
         />
@@ -136,6 +133,7 @@ const AdminDashboard = ({ colonyName, location, given }: Props) => (
 );
 
 AdminDashboard.defaultProps = {
+  colonyLabel: 'meta-colony',
   colonyName: 'The Meta Colony',
 };
 

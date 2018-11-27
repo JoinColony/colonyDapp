@@ -72,15 +72,18 @@ export const createNetworkTransaction = <P: TransactionParams>({
   });
 
 export const createColonyTransaction = <P: TransactionParams>({
+  identifier,
   methodName,
   params,
   ...payload
 }: {
+  identifier: AddressOrENSName,
   methodName: string,
   params: P,
 }): CreateTransactionAction<P> =>
   createTransaction({
     context: COLONY_CONTEXT,
+    identifier,
     methodName,
     params,
     ...payload,

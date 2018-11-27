@@ -2,6 +2,8 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
+import type { AddressOrENSName } from '../../../lib/ColonyManager/types';
+
 import {
   createNetworkTransaction,
   createColonyTransaction,
@@ -61,7 +63,7 @@ export const createToken = (
   });
 
 export const createColonyLabel = (
-  identifier: string,
+  identifier: AddressOrENSName,
   params: {
     colonyName: string,
     orbitDBPath: string,
