@@ -21,7 +21,7 @@ const enhance: HOC<*, InProps> = compose(
      */
     showClaimInfoCard: !!mockUser.username,
     transactions: mockTransactions,
-    walletAddress: mockUser.walletAddress,
+    walletAddress: mockUser.profile.walletAddress,
   })),
 );
 

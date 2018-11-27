@@ -12,7 +12,7 @@ import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
-import type { ProfileProps } from '~types/UserRecord';
+import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   buttonGetStarted: {
@@ -51,7 +51,7 @@ const MSG = defineMessages({
 
 type Props = {
   closePopover: () => void,
-  user: ProfileProps,
+  user: UserRecord,
 };
 
 class AvatarDropdownPopover extends Component<Props> {
@@ -59,7 +59,9 @@ class AvatarDropdownPopover extends Component<Props> {
 
   renderUserSection = () => {
     const {
-      user: { username },
+      user: {
+        profile: { username },
+      },
     } = this.props;
     return (
       <DropdownMenuSection separator>
@@ -90,7 +92,9 @@ class AvatarDropdownPopover extends Component<Props> {
 
   renderColonySection = () => {
     const {
-      user: { username },
+      user: {
+        profile: { username },
+      },
     } = this.props;
     if (username) {
       return (
