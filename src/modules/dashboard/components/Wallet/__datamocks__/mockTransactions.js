@@ -27,6 +27,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN(1),
     symbol: 'ETH',
+    status: 'pending',
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -45,6 +46,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN(52),
     symbol: 'FFLY',
+    status: 'pending',
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -54,6 +56,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN(9000),
     symbol: 'FFLY',
+    status: 'failed',
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -72,6 +75,7 @@ const mockTransactions: Array<TransactionType> = [
     to: '0x044d83437c464Db2F33b863327ea60444FC587b2',
     amount: createBN(1002),
     symbol: 'FFLY',
+    status: 'failed',
   },
 ];
 

@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { TransactionType } from '~types/transaction';
+
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import Link from '~core/Link';
@@ -15,6 +17,10 @@ import { DASHBOARD_ROUTE } from '~routes';
 
 import styles from './GasStationCard.css';
 
+/*
+ * @NOTE These are just temporary as the actual name / path combinations for
+ * the various actions-transactions will be implemented in #542
+ */
 const MSG = defineMessages({
   transactionTitleSample: {
     id: 'dashboard.GasStation.GasStationCard.transactionTitleSample',
@@ -28,7 +34,11 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.GasStation.GasStationCard';
 
-const GasStationCard = () => (
+type Props = {
+  transaction: TransactionType,
+};
+
+const GasStationCard = ({ transaction: { status } }: Props) => (
   <Card className={styles.card}>
     <div className={styles.description}>
       <Heading
@@ -41,9 +51,12 @@ const GasStationCard = () => (
         to={DASHBOARD_ROUTE}
       />
     </div>
-    <div className={styles.status}>
-      <span className={styles.counter}>3</span>
-    </div>
+    {status && (
+      <div className={styles.status}>
+        {status === 'pending' && <span className={styles.pending} />}
+        {status === 'failed' && <span className={styles.failed}>!</span>}
+      </div>
+    )}
   </Card>
 );
 
