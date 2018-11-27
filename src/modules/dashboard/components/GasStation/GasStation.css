@@ -29,7 +29,11 @@
 .transactionsContainer {
   composes: contentSection;
   min-height: 70px;
-  max-height: 456px;
+
+  /*
+   * @TODO If this makes it into the review, raise hell!
+   */
+  max-height: 1456px;
   overflow-y: auto;
 }
 

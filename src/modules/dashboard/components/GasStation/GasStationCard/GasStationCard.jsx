@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 
@@ -51,72 +51,78 @@ type Props = {
 };
 
 const GasStationCard = ({
-  transaction: { status, set },
+  transaction: { status, set = [] },
   expanded = false,
   onClick,
-}: Props) => (
-  <button
-    type="button"
-    className={styles.main}
-    onClick={onClick}
-    disabled={expanded || !onClick}
-  >
-    <Card className={expanded ? styles.cardExpanded : styles.card}>
-      <div className={styles.summary}>
-        <div className={styles.description}>
-          <Heading
-            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitleSample}
-          />
-          <Link
-            className={styles.transactionLink}
-            text={MSG.transactionDescriptionSample}
-            to={DASHBOARD_ROUTE}
-            /*
-             * @NOTE If this is an expanded card, and has an onclick handler,
-             * don't bubble the click up as this link will most likely redirect to
-             * another place, so there's no reason to change the state prior to that
-             */
-            onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
-          />
-        </div>
-        {status && (
-          <div className={styles.status}>
-            {status === 'pending' && <span className={styles.pending} />}
-            {status === 'failed' && <span className={styles.failed}>!</span>}
-          </div>
-        )}
-        {set && set.length ? (
-          <div className={styles.status}>
-            <span className={styles.counter}>{set.length}</span>
-          </div>
-        ) : null}
-      </div>
-      {expanded && set && set.length ? (
-        <ul className={styles.expanded}>
-          {set.map((transaction: TransactionType, index) => (
-            <li
+}: Props) => {
+  const haveActions = set && set.length;
+  const canWeExpand = expanded && haveActions;
+  return (
+    <button
+      type="button"
+      className={styles.main}
+      onClick={onClick}
+      disabled={expanded || !onClick}
+    >
+      <Card className={canWeExpand ? styles.cardExpanded : styles.card}>
+        <div className={styles.summary}>
+          <div className={styles.description}>
+            <Heading
+              appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+              text={MSG.transactionTitleSample}
+            />
+            <Link
+              className={styles.transactionLink}
+              text={MSG.transactionDescriptionSample}
+              to={DASHBOARD_ROUTE}
               /*
-               * @NOTE I would like to create the id from the transaction's hash
-               * rather than from the nonce.
-               * Unfortunatelly nanoid doesn't play well with hex strings apparently...
+               * @NOTE If this is an expanded card, and has an onclick handler,
+               * don't bubble the click up as this link will most likely redirect to
+               * another place, so there's no reason to change the state prior to that
                */
-              key={nanoid(transaction.nonce)}
-            >
-              <div className={styles.description}>
-                <FormattedMessage
-                  {...MSG.actionDescriptionSample}
-                  values={{ index: index + 1 }}
-                />
-              </div>
-              <div className={styles.status}>?</div>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </Card>
-  </button>
-);
+              onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
+            />
+          </div>
+          <div className={styles.status}>
+            {status && (
+              <Fragment>
+                {status === 'pending' && <span className={styles.pending} />}
+                {status === 'failed' && (
+                  <span className={styles.failed}>!</span>
+                )}
+              </Fragment>
+            )}
+            {!status && haveActions ? (
+              <span className={styles.counter}>{set.length}</span>
+            ) : null}
+          </div>
+        </div>
+        {canWeExpand ? (
+          <ul className={styles.expanded}>
+            {set.map((transaction: TransactionType, index) => (
+              <li
+                /*
+                 * @NOTE I would like to create the id from the transaction's hash
+                 * rather than from the nonce.
+                 * Unfortunatelly nanoid doesn't play well with hex strings apparently...
+                 */
+                key={nanoid(transaction.nonce)}
+              >
+                <div className={styles.description}>
+                  <FormattedMessage
+                    {...MSG.actionDescriptionSample}
+                    values={{ index: index + 1 }}
+                  />
+                </div>
+                <div className={styles.status}>?</div>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </Card>
+    </button>
+  );
+};
 
 GasStationCard.displayName = displayName;
 
