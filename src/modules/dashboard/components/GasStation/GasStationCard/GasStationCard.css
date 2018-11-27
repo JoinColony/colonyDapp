@@ -9,12 +9,26 @@
 
   &[disabled] {
     cursor: default;
+    pointer-events: none;
   }
 }
 
 .card {
+  padding: 15px 0;
+}
+
+.cardExpanded {
+  composes: card;
+  padding-bottom: 0;
+  border-bottom-left-radius: var(--radius-normal);
+  border-bottom-right-radius: var(--radius-normal);
+}
+
+.summary {
   display: flex;
   align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .description {
@@ -65,4 +79,18 @@
   width: 10px;
   border-radius: 50%;
   background-color: var(--golden);
+}
+
+.expanded {
+  margin-top: 15px;
+
+  & li {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-left: 3px solid var(--temp-grey-5);
+    border-top: 1px solid var(--grey-blue-1);
+    font-size: var(--size-small);
+    font-weight: var(--weight-medium);
+  }
 }
