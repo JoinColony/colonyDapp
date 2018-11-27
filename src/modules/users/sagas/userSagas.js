@@ -13,7 +13,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, UserRecord } from '~types/index';
+import type { Action, UserActivity, UserRecord } from '~types/index';
 
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
@@ -52,7 +52,7 @@ import {
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
-export function* getUserStore(walletAddress: string): Saga<KVStore> {
+export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
 
   let profileStore;
@@ -70,7 +70,7 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
     return profileStore;
   }
 
-  profileStore = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
+  profileStore = yield call([ddb, ddb.createStore], `user.${walletAddress}`, {
     accessController,
   });
 
@@ -118,10 +118,9 @@ export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
 }
 
-// TODO fix typing
-export function* getOrCreateUserActivities(
+export function* getUserActivities(
   walletAddress: string,
-): Generator<*, *, *> {
+): Saga<Array<UserActivity>> {
   const activitiesStore = yield call(
     getOrCreateUserActivitiesStore,
     walletAddress,
@@ -133,12 +132,12 @@ export function* getOrCreateUserActivities(
 export function* addUserActivity(action: Action): Saga<void> {
   const { walletAddress, activity } = action.payload;
 
-  const activitiesStore = yield call(
-    getOrCreateUserActivitiesStore,
-    walletAddress,
-  );
-
   try {
+    const activitiesStore = yield call(
+      getOrCreateUserActivitiesStore,
+      walletAddress,
+    );
+
     yield call([activitiesStore, activitiesStore.add], activity);
     const activities = yield call([activitiesStore, activitiesStore.all]);
 
