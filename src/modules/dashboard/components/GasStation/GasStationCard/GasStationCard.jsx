@@ -42,13 +42,20 @@ type Props = {
    * It is up to you do handle that rendering logic.
    */
   expanded?: boolean,
+  onClick?: (event: SyntheticEvent<>) => void,
 };
 
 const GasStationCard = ({
   transaction: { status, set },
   expanded = false,
+  onClick,
 }: Props) => (
-  <div className={styles.main}>
+  <button
+    type="button"
+    className={styles.main}
+    onClick={onClick}
+    disabled={!onClick}
+  >
     <Card className={styles.card}>
       <div className={styles.description}>
         <Heading
@@ -59,6 +66,12 @@ const GasStationCard = ({
           className={styles.transactionLink}
           text={MSG.transactionDescriptionSample}
           to={DASHBOARD_ROUTE}
+          /*
+           * @NOTE If this is an expanded card, and has an onclick handler,
+           * don't bubble the click up as this link will most likely redirect to
+           * another place, so there's no reason to change the state prior to that
+           */
+          onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
         />
       </div>
       {status && (
@@ -74,7 +87,7 @@ const GasStationCard = ({
       ) : null}
     </Card>
     {expanded && <div>This list is expanded</div>}
-  </div>
+  </button>
 );
 
 GasStationCard.displayName = displayName;
