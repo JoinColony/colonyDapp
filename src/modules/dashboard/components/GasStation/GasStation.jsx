@@ -31,6 +31,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'dashboard.GasStation';
+
 type Props = InProps & {
   balance: number,
   transactions: Array<TransactionType>,
@@ -101,5 +103,7 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
     </div>
   </div>
 );
+
+GasStation.displayName = displayName;
 
 export default GasStation;
