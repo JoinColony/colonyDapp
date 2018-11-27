@@ -8,7 +8,7 @@ import { DDB, SCHEMAS } from '../src/lib/database';
 import { getAll } from '../src/lib/database/commands';
 import PurserIdentity from '../src/lib/database/PurserIdentity';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
-import EthereumAccessController from '../src/lib/database/EthereumAccessController';
+import EthereumWalletAccessController from '../src/lib/database/accessControllers/EthereumWalletAccessController';
 
 const factory = new DDBTestFactory('ddb.test');
 
@@ -38,7 +38,7 @@ test('Using purser', t => {
 
 test('Can edit multiple attributes', async t => {
   const { ddb, wallet } = t.context;
-  const accessController = new EthereumAccessController(wallet.address);
+  const accessController = new EthereumWalletAccessController(wallet.address);
   const store = await ddb.createStore('keyvalue', 'userProfile', {
     accessController,
   });

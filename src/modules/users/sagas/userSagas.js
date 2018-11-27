@@ -20,7 +20,7 @@ import { getHashedENSDomainString } from '~utils/ens';
 
 import { KVStore } from '../../../lib/database/stores';
 // eslint-disable-next-line max-len
-import EthereumAccessController from '../../../lib/database/EthereumAccessController';
+import EthereumWalletAccessController from '../../../lib/database/accessControllers/EthereumWalletAccessController';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 
@@ -53,7 +53,7 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb = yield getContext('ddb');
 
   const accessController = yield create(
-    EthereumAccessController,
+    EthereumWalletAccessController,
     walletAddress,
   );
 
@@ -80,7 +80,7 @@ function* updateProfile(action: Action): Saga<void> {
     const ddb = yield getContext('ddb');
 
     const accessController = yield create(
-      EthereumAccessController,
+      EthereumWalletAccessController,
       walletAddress,
     );
 
@@ -118,7 +118,7 @@ function* fetchProfile(action: Action): Saga<void> {
   // should throw an error if username is not registered
   try {
     const accessController = yield create(
-      EthereumAccessController,
+      EthereumWalletAccessController,
       walletAddress,
     );
 
@@ -170,7 +170,7 @@ function* createUsername(action: Action): Saga<void> {
   const walletAddress = yield select(walletAddressSelector);
 
   const accessController = yield create(
-    EthereumAccessController,
+    EthereumWalletAccessController,
     walletAddress,
   );
 
@@ -219,7 +219,7 @@ function* uploadAvatar(action: Action): Saga<void> {
 
     // if we uploaded okay, put the hash in the user orbit store
     const accessController = yield create(
-      EthereumAccessController,
+      EthereumWalletAccessController,
       walletAddress,
     );
     const store = yield call([ddb, ddb.getStore], orbitDBPath, {
@@ -243,7 +243,7 @@ function* removeAvatar(): Saga<void> {
 
   try {
     const accessController = yield create(
-      EthereumAccessController,
+      EthereumWalletAccessController,
       walletAddress,
     );
     const store = yield call([ddb, ddb.getStore], orbitDBPath, {
