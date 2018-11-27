@@ -2,7 +2,7 @@
 
 import type { FormikBag } from 'formik';
 
-import React from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -21,7 +21,11 @@ import {
   TOKEN_CREATE,
   TOKEN_CREATE_ERROR,
   TOKEN_CREATE_SUCCESS,
+  TOKEN_ICON_UPLOAD,
+  TOKEN_ICON_UPLOAD_ERROR,
+  TOKEN_ICON_UPLOAD_SUCCESS,
 } from '../../actionTypes';
+import promiseListener from '../../../../createPromiseListener';
 
 const MSG = defineMessages({
   heading: {
@@ -85,7 +89,10 @@ const validationSchema = yup.object({
     .string()
     .required()
     .max(6, MSG.errorTokenSymbol),
-  tokenIcon: yup.array().min(1, MSG.errorTokenIcon),
+  tokenIcon: yup
+    .array()
+    .required()
+    .min(1, MSG.errorTokenIcon),
 });
 
 type FormValues = {
@@ -96,73 +103,100 @@ type FormValues = {
 
 type Props = WizardProps<FormValues>;
 
-const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
-  <ActionForm
-    submit={TOKEN_CREATE}
-    error={TOKEN_CREATE_ERROR}
-    success={TOKEN_CREATE_SUCCESS}
-    onSuccess={({ receipt: { contractAddress } }, bag, values) => {
-      nextStep({ ...values, tokenAddress: contractAddress });
-    }}
-    onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
-      setStatus({ error: MSG.errorCreateToken })
-    }
-    validationSchema={validationSchema}
-    {...wizardForm}
-  >
-    {({ isSubmitting, isValid, status, values }) => (
-      <div className={styles.main}>
-        <section className={styles.titleSection}>
-          <Heading className={styles.customHeading} text={MSG.heading} />
-          <ExternalLink text={MSG.learnMoreLink} href="#" />
-        </section>
-        <section className={styles.inputFields}>
-          <div className={styles.inputFieldWrapper}>
-            <Input
-              name="tokenName"
-              appearance={{ theme: 'fat' }}
-              label={MSG.labelTokenName}
-            />
-          </div>
-          <div className={styles.inputFieldWrapper}>
-            <Input
-              name="tokenSymbol"
-              appearance={{ theme: 'fat' }}
-              label={MSG.labelTokenSymbol}
-              help={MSG.helpTokenSymbol}
-            />
-          </div>
-          <div className={styles.inputFieldWrapper}>
-            <FileUpload
-              accept={ACCEPTED_MIME_TYPES}
-              maxFileSize={ACCEPTED_MAX_FILE_SIZE}
-              name="tokenIcon"
-              label={MSG.labelTokenIcon}
-              help={MSG.helpTokenIcon}
-            />
-          </div>
-        </section>
-        <FormStatus status={status} />
-        <section className={styles.actionsContainer}>
-          <Button
-            text={MSG.backButton}
-            appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={() => previousStep(values)}
-            disabled={isSubmitting}
-          />
-          <Button
-            appearance={{ theme: 'primary', size: 'large' }}
-            text={MSG.nextButton}
-            type="submit"
-            disabled={!isValid}
-            loading={isSubmitting}
-          />
-        </section>
-      </div>
-    )}
-  </ActionForm>
-);
+class StepCreateToken extends Component<Props> {
+  uploadTokenIcon: (file: *) => Promise<any>;
 
-StepCreateToken.displayName = 'dashboard.CreateColonyWizard.CreateToken';
+  displayName = 'dashboard.CreateColonyWizard.CreateToken';
+
+  constructor(props: Props) {
+    super(props);
+    this.uploadTokenIcon = promiseListener.createAsyncFunction({
+      start: TOKEN_ICON_UPLOAD,
+      resolve: TOKEN_ICON_UPLOAD_SUCCESS,
+      reject: TOKEN_ICON_UPLOAD_ERROR,
+    });
+  }
+
+  componentWillUnmount() {
+    this.uploadTokenIcon.unsubscribe();
+  }
+
+  render() {
+    const { nextStep, previousStep, wizardForm } = this.props;
+    const uploadTokenIcon = this.uploadTokenIcon.asyncFunction;
+
+    return (
+      <ActionForm
+        submit={TOKEN_CREATE}
+        error={TOKEN_CREATE_ERROR}
+        success={TOKEN_CREATE_SUCCESS}
+        onSuccess={({ receipt: { contractAddress } }, bag, values) => {
+          nextStep({
+            ...values,
+            tokenAddress: contractAddress,
+            tokenIcon: values.tokenIcon[0].uploaded.hash,
+          });
+        }}
+        onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
+          setStatus({ error: MSG.errorCreateToken })
+        }
+        validationSchema={validationSchema}
+        {...wizardForm}
+      >
+        {({ isSubmitting, isValid, status, values }) => (
+          <div className={styles.main}>
+            <section className={styles.titleSection}>
+              <Heading className={styles.customHeading} text={MSG.heading} />
+              <ExternalLink text={MSG.learnMoreLink} href="#" />
+            </section>
+            <section className={styles.inputFields}>
+              <div className={styles.inputFieldWrapper}>
+                <Input
+                  name="tokenName"
+                  appearance={{ theme: 'fat' }}
+                  label={MSG.labelTokenName}
+                />
+              </div>
+              <div className={styles.inputFieldWrapper}>
+                <Input
+                  name="tokenSymbol"
+                  appearance={{ theme: 'fat' }}
+                  label={MSG.labelTokenSymbol}
+                  help={MSG.helpTokenSymbol}
+                />
+              </div>
+              <div className={styles.inputFieldWrapper}>
+                <FileUpload
+                  accept={ACCEPTED_MIME_TYPES}
+                  maxFileSize={ACCEPTED_MAX_FILE_SIZE}
+                  name="tokenIcon"
+                  label={MSG.labelTokenIcon}
+                  help={MSG.helpTokenIcon}
+                  upload={uploadTokenIcon}
+                />
+              </div>
+            </section>
+            <FormStatus status={status} />
+            <section className={styles.actionsContainer}>
+              <Button
+                text={MSG.backButton}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={() => previousStep(values)}
+                disabled={isSubmitting}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                text={MSG.nextButton}
+                type="submit"
+                disabled={!isValid}
+                loading={isSubmitting}
+              />
+            </section>
+          </div>
+        )}
+      </ActionForm>
+    );
+  }
+}
 
 export default StepCreateToken;
