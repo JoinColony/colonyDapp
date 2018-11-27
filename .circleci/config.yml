@@ -67,9 +67,6 @@ jobs:
           - node-modules-{{ checksum "package.json" }}
           - node-modules-
       - run:
-          name: "Set up global packages"
-          command: yarn global add lerna
-      - run:
           name: "Installing modules"
           command: |
             yarn install
@@ -103,7 +100,7 @@ jobs:
       - run:
           name: "Building library"
           command: yarn build
-  integration-testing-build:
+  integration-testing:
     docker:
       - image: circleci/node:10.12
       - image: redis:4.0
@@ -114,9 +111,6 @@ jobs:
           keys:
           - node-modules-{{ checksum "package.json" }}
           - node-modules-
-      - run:
-          name: "Set up global packages"
-          command: yarn global add lerna
       - run:
           name: "Installing modules"
           command: |
@@ -135,6 +129,39 @@ jobs:
           command: |
             mkdir -p reports/ava
             yarn test:integration:ci
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports
+  e2e-testing:
+    docker:
+      - image: joincolony/colony-circle-cypress-docker-image
+    environment:
+      LOADER: trufflepig
+      NETWORK: local
+    working_directory: ~/colonyDapp
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - node-modules-{{ checksum "package.json" }}
+          - node-modules-
+      - run:
+          name: "Installing modules"
+          command: |
+            node --version
+            yarn install
+            yarn provision --skip-pinning-service-build
+      - save_cache:
+          paths:
+            - node_modules
+          key: node-modules-{{ checksum "package.json" }}
+      - setup_remote_docker
+      - run:
+          name: "Running E2E Tests"
+          command: |
+            docker pull ethereum/solc:0.4.23
+            yarn test:e2e:ci
       - store_test_results:
           path: reports
       - store_artifacts:
@@ -190,7 +217,8 @@ workflows:
   commit:
     jobs:
       - build-with-lockfile
-      - integration-testing-build
+      - integration-testing
+      - e2e-testing
       - build-styleguide:
           requires:
             - build-with-lockfile
@@ -209,4 +237,5 @@ workflows:
               only: master
     jobs:
       - nightly-build
-      - integration-testing-build
+      - integration-testing
+      - e2e-testing

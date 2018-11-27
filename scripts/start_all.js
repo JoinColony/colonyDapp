@@ -53,25 +53,31 @@ const webpackPromise = () =>
   });
 
 const startAll = async () => {
-  console.info('Starting ganache...');
-  const ganacheProcess = await startGanache();
+  try {
+    console.info('Starting ganache...');
+    const ganacheProcess = await startGanache();
 
-  console.info('Deploying contracts...');
-  await deployContractsPromise();
+    console.info('Deploying contracts...');
+    await deployContractsPromise();
 
-  console.info('Starting trufflepig...');
-  const trufflepigProcess = await trufflePigPromise();
+    console.info('Starting trufflepig...');
+    const trufflepigProcess = await trufflePigPromise();
 
-  console.info('Starting webpack...');
-  const webpackProcess = await webpackPromise();
+    console.info('Starting webpack...');
+    const webpackProcess = await webpackPromise();
 
-  const pids = {
-    ganache: ganacheProcess.pid,
-    trufflepig: trufflepigProcess.pid,
-    webpack: webpackProcess.pid,
-  };
+    const pids = {
+      ganache: ganacheProcess.pid,
+      trufflepig: trufflepigProcess.pid,
+      webpack: webpackProcess.pid,
+    };
 
-  fs.writeFileSync(PID_FILE, JSON.stringify(pids));
+    fs.writeFileSync(PID_FILE, JSON.stringify(pids));
+  } catch (e) {
+    console.info('Stack start failed.');
+    console.info(e.message);
+    process.exit(1);
+  }
 
   console.info('Stack started successfully.');
 };
