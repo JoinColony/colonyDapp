@@ -7,7 +7,8 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
-const PROVIDER_TYPE: 'ETHEREUM' = 'ETHEREUM';
+// @FIXME: Use provider's type
+const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
 
 class EthereumWalletAccessController extends AbstractAccessController<
   PurserIdentity,

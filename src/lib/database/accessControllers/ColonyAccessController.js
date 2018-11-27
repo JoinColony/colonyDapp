@@ -11,7 +11,7 @@ import PermissionManager from './PermissionManager';
 import type { AccessController, Entry } from '../types/index';
 import type { PermissionsManifest } from './PermissionManager';
 
-const PROVIDER_TYPE: 'COLONY' = 'COLONY';
+const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
 
 class ColonyAccessController extends AbstractAccessController<
   PurserIdentity,
