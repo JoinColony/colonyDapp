@@ -9,7 +9,6 @@
 
   &[disabled] {
     cursor: default;
-    pointer-events: none;
   }
 }
 
@@ -37,6 +36,7 @@
 
 .status {
   flex: 0 1 auto;
+  cursor: default;
 }
 
 .transactionLink {
@@ -51,7 +51,7 @@
 
 .counter {
   display: inline-block;
-  padding-top: 3px;
+  padding-top: 2px;
   height: 20px;
   width: 20px;
   border-radius: 50%;
@@ -83,14 +83,19 @@
 
 .expanded {
   margin-top: 15px;
+}
 
-  & li {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    border-left: 3px solid var(--temp-grey-5);
-    border-top: 1px solid var(--grey-blue-1);
-    font-size: var(--size-small);
-    font-weight: var(--weight-medium);
+.expanded li {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-left: 3px solid var(--temp-grey-5);
+  border-top: 1px solid var(--grey-blue-1);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+
+  &:hover {
+    border-left-color: var(--colony-blue);
+    background-color: var(--temp-grey-blue-6);
   }
 }
