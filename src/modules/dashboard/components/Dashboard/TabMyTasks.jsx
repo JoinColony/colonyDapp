@@ -22,6 +22,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
+  colonyLabel: string,
   // TODO: Type better when data structure is known
   /** Tasks for MyTasks table */
   tasks: Array<Object>,
@@ -29,17 +30,24 @@ type Props = {
   userClaimedProfile: boolean,
 };
 
-const TabMyTasks = ({ tasks, initialTask, userClaimedProfile }: Props) => {
+const TabMyTasks = ({
+  colonyLabel,
+  initialTask,
+  tasks,
+  userClaimedProfile,
+}: Props) => {
   if (!userClaimedProfile) {
     return (
       <Fragment>
         <InitialTask task={initialTask} />
-        {tasks && tasks.length ? <TaskList tasks={tasks} /> : null}
+        {tasks && tasks.length ? (
+          <TaskList colonyLabel={colonyLabel} tasks={tasks} />
+        ) : null}
       </Fragment>
     );
   }
   if (tasks && tasks.length) {
-    return <TaskList tasks={tasks} />;
+    return <TaskList colonyLabel={colonyLabel} tasks={tasks} />;
   }
   return (
     <Fragment>

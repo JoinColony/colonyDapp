@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { connect } from 'react-redux';
 
 import type { LocationShape } from 'react-router-dom';
 
@@ -56,12 +57,8 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  /*
-   * This will most likely come from the redux state
-   * The most obvious way to achieve this is to enhance this component with
-   * a connect call
-   */
-  colonyName?: string,
+  colonyLabel: string,
+  colonyName: string,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -92,7 +89,7 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const AdminDashboard = ({ colonyName, location }: Props) => (
+const AdminDashboard = ({ colonyName, colonyLabel, location }: Props) => (
   <div className={styles.main}>
     <VerticalNavigation
       navigationItems={navigationItems}
@@ -103,7 +100,7 @@ const AdminDashboard = ({ colonyName, location }: Props) => (
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
         <NavLink
-          to={COLONY_HOME_ROUTE}
+          to={COLONY_HOME_ROUTE.replace(':colonyLabel', colonyLabel)}
           text={MSG.backButton}
           textValues={{ colonyName }}
         />
@@ -124,9 +121,19 @@ const AdminDashboard = ({ colonyName, location }: Props) => (
 );
 
 AdminDashboard.defaultProps = {
+  colonyLabel: 'meta-colony',
   colonyName: 'The Meta Colony',
 };
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
-export default AdminDashboard;
+// FIXME use selectors
+export default connect(
+  ({ router: { location, props: { colonyLabel } = {} } }, props) => ({
+    ...props,
+    location,
+    colonyLabel,
+    // FIXME add colonyName
+  }),
+  null,
+)(AdminDashboard);

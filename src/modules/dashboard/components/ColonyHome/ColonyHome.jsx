@@ -75,6 +75,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
+  colonyLabel: string,
   walletAddress: string,
 };
 
@@ -127,7 +128,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress } = this.props;
+    const { walletAddress, colonyLabel } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -169,7 +170,7 @@ class ColonyHome extends Component<Props, State> {
             </TabList>
             <TabPanel>
               {tasks && tasks.length ? (
-                <TaskList tasks={tasks} />
+                <TaskList colonyLabel={colonyLabel} tasks={tasks} />
               ) : (
                 <Fragment>
                   <p className={styles.noTasks}>
@@ -221,5 +222,7 @@ class ColonyHome extends Component<Props, State> {
 }
 
 export default connect((state: Object) => ({
+  // FIXME use selector
+  colonyLabel: 'Example Colony Home',
   walletAddress: walletAddressSelector(state),
 }))(ColonyHome);

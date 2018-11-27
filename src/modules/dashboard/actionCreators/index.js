@@ -2,6 +2,8 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
+import type { AddressOrENSName } from '../../../lib/ColonyManager/types';
+
 import {
   createNetworkTransaction,
   createColonyTransaction,
@@ -57,16 +59,18 @@ export const createToken = (
   });
 
 export const createColonyLabel = (
+  identifier: AddressOrENSName,
   params: {
     colonyName: string,
     orbitDBPath: string,
   },
   options?: SendOptions,
 ) =>
-  createNetworkTransaction({
+  createColonyTransaction({
     params,
     options,
     methodName: 'registerColonyLabel',
+    identifier,
     lifecycle: {
       error: COLONY_CREATE_LABEL_ERROR,
       success: COLONY_CREATE_LABEL_SUCCESS,
