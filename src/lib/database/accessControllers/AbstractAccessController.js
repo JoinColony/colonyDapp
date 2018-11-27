@@ -19,7 +19,7 @@ export default class AbstractAccessController<
     throw new Error('Not implemented');
   }
 
-  _isEntrySignedMessageVerified({
+  static _walletDidVerifyOrbitKey({
     identity: {
       id: walletAddress,
       publicKey: orbitPublicKey,
@@ -49,7 +49,7 @@ export default class AbstractAccessController<
    */
   async canAppend(entry: Entry, provider: P): Promise<boolean> {
     const {
-      identity: { id: walletAddress, type },
+      identity: { type },
     } = entry;
     // @FIXME: Add logs here with debug so we have a verbose mode that gives us a clue on what's going on
 
@@ -57,7 +57,9 @@ export default class AbstractAccessController<
     const isTypeValid = type === this.constructor.type;
     if (!isTypeValid) return false;
 
-    const isWalletSignatureValid = this._isEntrySignedMessageVerified(entry);
+    const isWalletSignatureValid = this.constructor._walletDidVerifyOrbitKey(
+      entry,
+    );
     if (!isWalletSignatureValid) return false;
 
     // Did the wallet allow the orbit key to write on its behalf and vice-versa?

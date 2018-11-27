@@ -2,13 +2,11 @@
 /* eslint-disable no-underscore-dangle */
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
-import ColonyNetworkClient from '@colony/colony-js-client';
-
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 import PermissionManager from './PermissionManager';
-import type { AccessController, Entry } from '../types/index';
+import type { Entry } from '../types/index';
 import type { PermissionsManifest } from './PermissionManager';
 
 const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
@@ -36,11 +34,11 @@ class ColonyAccessController extends AbstractAccessController<
     this._colonyAddress = colonyAddress;
     this._purserWallet = purserWallet;
     this._manager = new PermissionManager(
-      // permissionsManifest
-      {
-        // eslint-disable-next-line no-unused-vars
-        'dummy-permission': async (user, context) => true,
-      },
+      permissionsManifest,
+      // {
+      //   // eslint-disable-next-line no-unused-vars
+      //   'dummy-permission': async (user, context) => true,
+      // },
     );
 
     this._checkWalletAddress();

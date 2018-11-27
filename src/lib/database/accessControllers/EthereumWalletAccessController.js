@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
 
-import type { AccessController, Entry } from '../types/index';
+import type { Entry } from '../types/index';
 
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
@@ -39,10 +39,10 @@ class EthereumWalletAccessController extends AbstractAccessController<
   }
 
   async save() {
-    // FIXME owner instead of type ?
     return `/${this.constructor.type}/${this._walletAddress}`;
   }
 
+  /* eslint-disable no-unused-vars,class-methods-use-this */
   async grant(actionId: string, address: string) {
     throw new Error(
       'The wallet owner is the only one allowed to write to this database',
@@ -54,6 +54,7 @@ class EthereumWalletAccessController extends AbstractAccessController<
       'The wallet owner is the only one allowed to write to this database',
     );
   }
+  /* eslint-enable no-unused-vars,class-methods-use-this */
 }
 
 export default EthereumWalletAccessController;
