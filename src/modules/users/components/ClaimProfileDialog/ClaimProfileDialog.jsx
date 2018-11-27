@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { FormikProps } from 'formik';
-
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -10,7 +8,8 @@ import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import CopyableAddress from '~core/CopyableAddress';
 import MaskedAddress from '~core/MaskedAddress';
-import Dialog, { DialogSection, DialogList } from '~core/Dialog';
+import GroupList from '~core/GroupList';
+import Dialog, { DialogSection } from '~core/Dialog';
 
 import styles from './ClaimProfileDialog.css';
 
@@ -62,15 +61,14 @@ const MSG = defineMessages({
   },
 });
 
-type FormValues = {};
-
 type Props = {
   cancel: () => void,
   close: () => void,
   walletAddress: string,
-} & FormikProps<FormValues>;
-
+};
 class ClaimProfileDialog extends Component<Props> {
+  static displayName = 'users.ClaimProfileDialog';
+
   handleContinue = () => {
     const { close } = this.props;
     close();
@@ -116,12 +114,10 @@ class ClaimProfileDialog extends Component<Props> {
           />
         </DialogSection>
         <DialogSection appearance={{ border: 'bottom' }}>
-          <div className={styles.subTitle}>
-            <Heading
-              appearance={{ size: 'normal', weight: 'thin' }}
-              text={MSG.subTitle}
-            />
-          </div>
+          <Heading
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subTitle}
+          />
         </DialogSection>
         <DialogSection>
           <div className={styles.titleAndButton}>
@@ -146,7 +142,7 @@ class ClaimProfileDialog extends Component<Props> {
             />
           </div>
         </DialogSection>
-        <DialogList items={listItems} />
+        <GroupList items={listItems} />
         <DialogSection appearance={{ align: 'right' }}>
           <Button
             appearance={{ theme: 'secondary', size: 'large' }}

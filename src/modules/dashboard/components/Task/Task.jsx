@@ -352,7 +352,10 @@ class Task extends Component<Props> {
               />
             </section>
             <section className={styles.commentBox}>
-              <TaskComments claimedProfile={userClaimedProfile} />
+              <TaskComments
+                claimedProfile={userClaimedProfile}
+                walletAddress={userMocks[0].walletAddress}
+              />
             </section>
           </div>
         </div>

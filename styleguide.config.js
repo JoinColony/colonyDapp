@@ -45,6 +45,7 @@ module.exports = {
         './src/modules/core/components/UserInfo/UserInfo.jsx',
         './src/modules/core/components/Assignment/Assignment.jsx',
         './src/modules/core/components/ItemsList/ItemsList.jsx',
+        './src/modules/core/components/GroupList/GroupList.jsx',
       ],
     },
     {
