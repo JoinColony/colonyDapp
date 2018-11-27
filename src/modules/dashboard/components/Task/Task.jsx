@@ -243,6 +243,7 @@ class Task extends Component<Props> {
                 <TaskRequestWork
                   isTaskCreator={isTaskCreator}
                   claimedProfile={userClaimedProfile}
+                  walletAddress={userMocks[0].walletAddress}
                 />
                 {/*
               * @TODO This should only be shown, if we're a worker, and the task
@@ -344,7 +345,10 @@ class Task extends Component<Props> {
               />
             </section>
             <section className={styles.commentBox}>
-              <TaskComments claimedProfile={userClaimedProfile} />
+              <TaskComments
+                claimedProfile={userClaimedProfile}
+                walletAddress={userMocks[0].walletAddress}
+              />
             </section>
           </div>
         </div>

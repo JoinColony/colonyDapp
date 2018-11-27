@@ -13,8 +13,6 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import styles from './ENSNameDialog.css';
-
 const MSG = defineMessages({
   iWillDoItLater: {
     id: 'users.ENSNameDialog.iWillDoItLater',
@@ -32,9 +30,17 @@ const MSG = defineMessages({
     id: 'users.ENSNameDialog.stepText',
     defaultMessage: `We’ll use this username to create a mapping between
       your wallet address, a distributed database, and the blockchain.
-      Not only is the username necessary, it also enables @mentions and
-      a personalized URL for your profile. Next, you’ll sign your first
+      Not only is the username necessary, it also enables {mention} and
+      a {url} for your profile. Next, you’ll sign your first
       transaction and claim this username “on chain".`,
+  },
+  url: {
+    id: 'users.ENSNameDialog.url',
+    defaultMessage: 'personalized URL',
+  },
+  mention: {
+    id: 'users.ENSNameDialog.mention',
+    defaultMessage: '@mentions',
   },
   helpENSName: {
     id: 'users.ENSNameDialog.helpENSName',
@@ -42,7 +48,9 @@ const MSG = defineMessages({
   },
 });
 
-type FormValues = {};
+type FormValues = {
+  ENSname: string,
+};
 
 type Props = {
   cancel: () => void,
@@ -52,11 +60,10 @@ type Props = {
 const validationSchema = yup.object({
   // TODO: Validate ENS name further by checking blacklist, check also if unique
   // and if there's incorrect characters etc.
-  ensname: yup
-    .string()
-    .required()
-    .username(),
+  ENSname: yup.string().required(),
 });
+
+const displayName = 'users.ENSNameDialog';
 
 const ENSNameDialog = ({ cancel, close }: Props) => (
   <Dialog cancel={cancel}>
@@ -76,12 +83,28 @@ const ENSNameDialog = ({ cancel, close }: Props) => (
             />
           </DialogSection>
           <DialogSection>
-            <div className={styles.subTitle}>
-              <Heading
-                appearance={{ size: 'normal', weight: 'thin' }}
-                text={MSG.stepText}
+            <Heading
+              appearance={{ size: 'normal', weight: 'thin' }}
+              text={MSG.stepText}
+            >
+              <FormattedMessage
+                {...MSG.stepText}
+                values={{
+                  url: (
+                    <b>
+                      <FormattedMessage {...MSG.url} />
+                    </b>
+                  ),
+                  mention: (
+                    <b>
+                      <FormattedMessage {...MSG.mention} />
+                    </b>
+                  ),
+                }}
               />
-            </div>
+            </Heading>
+          </DialogSection>
+          <DialogSection>
             <Input
               name="ENSname"
               label={MSG.inputLabel}
@@ -108,5 +131,7 @@ const ENSNameDialog = ({ cancel, close }: Props) => (
     </ActionForm>
   </Dialog>
 );
+
+ENSNameDialog.displayName = displayName;
 
 export default ENSNameDialog;

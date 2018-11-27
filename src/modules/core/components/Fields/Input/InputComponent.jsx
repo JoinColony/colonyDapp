@@ -1,8 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { MessageDescriptor, IntlShape, MessageValues } from 'react-intl';
 import Cleave from 'cleave.js/react';
+import { injectIntl } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
@@ -22,6 +23,8 @@ type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 type Props = {
   /** Allow passing through string as placeholder */
   placeholder?: string | MessageDescriptor,
+  /** Values for html title (react-intl interpolation) */
+  placeholderValues?: MessageValues,
   /** Appearance object */
   appearance?: Appearance,
   /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */
@@ -30,6 +33,8 @@ type Props = {
   name: string,
   /** @ignore Will be injected by `asField` */
   isSubmitting?: boolean,
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLInputElement) => void,
   /** @ignore Standard input field property */
@@ -59,8 +64,16 @@ class InputComponent extends Component<Props> {
       formattingOptions,
       innerRef,
       isSubmitting,
+      placeholder,
+      placeholderValues,
+      intl: { formatMessage },
       ...props
     } = this.props;
+    const placeholderText =
+      typeof placeholder == 'string'
+        ? placeholder
+        : placeholder && formatMessage(placeholder, placeholderValues);
+
     if (formattingOptions) {
       return (
         <Cleave
@@ -76,10 +89,11 @@ class InputComponent extends Component<Props> {
       <input
         className={getMainClasses(appearance, styles)}
         ref={innerRef}
+        placeholder={placeholderText}
         {...props}
       />
     );
   }
 }
 
-export default InputComponent;
+export default injectIntl(InputComponent);
