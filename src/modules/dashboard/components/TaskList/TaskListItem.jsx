@@ -22,19 +22,24 @@ const MSG = defineMessages({
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {
+  colonyLabel: string,
   // TODO: type better as soon as actual structure is known
   task: Object,
 };
 
 const TaskListItem = ({
-  task: { assignee, payouts, reputation, title },
+  colonyLabel,
+  task: { assignee, id, payouts, reputation, title },
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
       <Link
         title={title}
         className={styles.taskDetailsTitle}
-        to={TASK_ROUTE}
+        to={TASK_ROUTE.replace(':colonyLabel', colonyLabel).replace(
+          ':taskId',
+          id,
+        )}
         text={title}
       />
       {reputation && (

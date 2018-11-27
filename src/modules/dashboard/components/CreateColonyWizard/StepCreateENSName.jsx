@@ -114,6 +114,10 @@ class StepCreateENSName extends Component<Props> {
         })}
         validationSchema={validationSchema}
         validate={this.validateDomain}
+        setPayload={(action, values) => ({
+          ...action,
+          payload: { ...wizardValues, ...values },
+        })}
         {...wizardForm}
       >
         {({ isValid, isSubmitting }) => (

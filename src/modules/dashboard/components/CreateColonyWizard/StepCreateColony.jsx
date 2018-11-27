@@ -88,13 +88,13 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
     success={COLONY_CREATE_SUCCESS}
     setPayload={(action: Action) => ({
       ...action,
-      payload: wizardValues,
+      payload: { tokenAddress: wizardValues.tokenAddress },
     })}
     onSuccess={({ eventData: { colonyId, colonyAddress } }) =>
       nextStep({
+        ...wizardValues,
         colonyId,
         colonyAddress,
-        ...wizardValues,
       })
     }
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>

@@ -13,9 +13,11 @@ import {
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
+import { replace } from 'connected-react-router';
 
 import type { Action } from '~types/index';
 
+import { COLONY_HOME_ROUTE } from '~routes';
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
@@ -27,6 +29,7 @@ import { colonyStore } from '../stores';
 import {
   COLONY_CREATE,
   COLONY_CREATE_LABEL,
+  COLONY_CREATE_LABEL_SUCCESS,
   COLONY_DOMAIN_VALIDATE,
   COLONY_DOMAIN_VALIDATE_SUCCESS,
   COLONY_DOMAIN_VALIDATE_ERROR,
@@ -222,12 +225,27 @@ function* getTokenIcon(action: Action): Saga<void> {
   }
 }
 
+/*
+ * Redirect to the colony home for the given (newly-registered) label
+ */
+function* createColonyLabelSuccessSaga(action: Action): Saga<void> {
+  const {
+    payload: {
+      // FIXME this event data is not available yet (waiting on colonyNetwork#443)
+      // so we will need to create a workaround to get the label from this action.
+      eventData: { address, label }, // eslint-disable-line
+    },
+  } = action;
+  yield put(replace(COLONY_HOME_ROUTE.replace(':colonyLabel', label)));
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(TOKEN_CREATE, createTokenSaga);
   yield takeEvery(TOKEN_ICON_UPLOAD, uploadTokenIcon);
   yield takeEvery(TOKEN_ICON_FETCH, getTokenIcon);
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
+  yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(TOKEN_INFO_FETCH, getTokenInfo);
