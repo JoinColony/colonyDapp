@@ -43,4 +43,8 @@ export type TransactionType = {
     id: number,
     title?: string,
   },
+  /*
+   * @TODO This should most likely come from a separate call to etherscan
+   */
+  status?: 'pending' | 'failed',
 };
