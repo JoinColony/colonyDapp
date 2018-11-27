@@ -73,7 +73,7 @@ class ColonyAccessController extends AbstractAccessController<
     provider: PurserIdentityProvider<PurserIdentity>,
   ): Promise<boolean> {
     const isAuthorized = await super.canAppend(entry, provider);
-    if (!isAuthorized) return Promise.resolve(false);
+    if (!isAuthorized) return false;
 
     // Is the wallet signature valid?
     const {
@@ -82,7 +82,10 @@ class ColonyAccessController extends AbstractAccessController<
     return this.can(value.__eventType, value);
   }
 
-  async can<Context: Object>(actionId: string, context: Context) {
+  async can<Context: Object>(
+    actionId: string,
+    context: Context,
+  ): Promise<boolean> {
     return this._manager.can(
       this._purserWallet.address,
       actionId,

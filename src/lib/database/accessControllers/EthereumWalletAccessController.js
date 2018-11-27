@@ -34,7 +34,7 @@ class EthereumWalletAccessController extends AbstractAccessController<
     } = entry;
 
     // @NOTE: This is only necessary for the EthereumWalletAccessController
-    if (walletAddress !== this._walletAddress) return Promise.resolve(false);
+    if (walletAddress !== this._walletAddress) return false;
     return super.canAppend(entry, provider);
   }
 
