@@ -20,14 +20,14 @@ const startThePig = () => {
     contractDir,
     ganacheKeyFile,
   });
+  pig.on('ready', apiUrl => console.log(`Serving contracts under ${apiUrl}`))
+  pig.on('log', console.log);
   pig.start();
   return pig;
 }
 
 if (require.main === module) {
   const pig = startThePig();
-  pig.on('ready', apiUrl => console.log(`Serving contracts under ${apiUrl}`))
-  pig.on('log', console.log);
   process.on('SIGINT', () => {
     console.log('Gracefully shutting down the pig...');
     stopThePig();

@@ -1,0 +1,73 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true
+    },
+    "extends": [
+        "@colony/eslint-config-colony",
+        "plugin:flowtype/recommended",
+        "eslint-config-airbnb/rules/react",
+        "eslint-config-airbnb/rules/react-a11y"
+    ],
+    "overrides": [
+        {
+            "files":  "**/__tests__/*.js",
+            "rules": {
+                "flowtype/require-valid-file-annotation": "off",
+                "no-underscore-dangle": "off"
+            },
+            "env": {
+              "jest": true
+            }
+        }, {
+            "files": "integration-testing/**/*.js",
+            "plugins": ["ava"],
+            "rules": {
+                "no-param-reassign": "off",
+                "no-underscore-dangle": "off",
+                "flowtype/require-valid-file-annotation": "off",
+                "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+                "max-len": "off"
+            }
+        }
+    ],
+    "rules": {
+        "jsx-a11y/label-has-for": 0,
+        "flowtype/space-after-type-colon": 0,
+        "flowtype/require-valid-file-annotation": [1, "always"],
+        "import/extensions": [2, {
+            "js": "never",
+            "jsx": "always",
+            "json": "always"
+        }],
+        "import/no-extraneous-dependencies": [
+            2,
+            { "devDependencies": ["**/*.test.js", "./src/__tests__/*.js", "./src/__mocks__/*.js", "./*.js", "./cypress/**/*.js"] }
+        ],
+        "react/default-props-match-prop-types": 0,
+        "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
+        "react/jsx-wrap-multilines": 0,
+        "react/require-default-props": 0,
+        "react/sort-comp": [2, {
+            "order": [
+                "type-annotations",
+                "static-methods",
+                "lifecycle",
+                "everything-else",
+                "render"
+            ]
+        }],
+        "react/jsx-one-expression-per-line": 0,
+    },
+    "settings": {
+        "import/resolver": {
+            "jest": {
+              "jestConfigFile": "./jest.conf.json"
+            },
+            "webpack": {
+              "config": "./webpack.config.js"
+            }
+        }
+    }
+}
