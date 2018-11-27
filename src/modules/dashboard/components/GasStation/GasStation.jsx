@@ -1,7 +1,6 @@
 /* @flow */
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import nanoid from 'nanoid';
 
 import type { InProps } from './GasStation';
 import type { TransactionType } from '~types/transaction';
@@ -85,11 +84,10 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
           {transactions.map((transaction: TransactionType) => (
             <GasStationCard
               /*
-               * @NOTE I would like to create the id from the transaction's hash
-               * rather than from the nonce.
-               * Unfortunatelly nanoid doesn't play well with hex strings apparently...
+               * @NOTE Nonces are unique, but our mock data might add duplicates.
+               * In case you see duplicate key errors in the console, don't panic.
                */
-              key={nanoid(transaction.nonce)}
+              key={transaction.nonce}
               transaction={transaction}
               onClick={
                 transaction.set && transaction.set.length

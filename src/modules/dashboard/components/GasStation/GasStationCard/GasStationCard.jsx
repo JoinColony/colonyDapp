@@ -2,7 +2,6 @@
 
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import nanoid from 'nanoid';
 
 import type { TransactionType } from '~types/transaction';
 
@@ -139,11 +138,10 @@ const GasStationCard = ({
             {set.map((transaction: TransactionType, index) => (
               <li
                 /*
-                 * @NOTE I would like to create the id from the transaction's hash
-                 * rather than from the nonce.
-                 * Unfortunatelly nanoid doesn't play well with hex strings apparently...
+                 * @NOTE Nonces are unique, but our mock data might add duplicates.
+                 * In case you see duplicate key errors in the console, don't panic.
                  */
-                key={nanoid(transaction.nonce)}
+                key={transaction.nonce}
               >
                 <div className={styles.description}>
                   <FormattedMessage
