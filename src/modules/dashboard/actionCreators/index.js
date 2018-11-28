@@ -2,7 +2,10 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
-import { createNetworkTransaction } from '../../core/actionCreators';
+import {
+  createNetworkTransaction,
+  createColonyTransaction,
+} from '../../core/actionCreators';
 
 import {
   COLONY_CREATE_ERROR,
@@ -11,6 +14,8 @@ import {
   COLONY_CREATE_LABEL_SUCCESS,
   TOKEN_CREATE_ERROR,
   TOKEN_CREATE_SUCCESS,
+  TASK_SUBMIT_WORK_ERROR,
+  TASK_SUBMIT_WORK_SUCCESS,
 } from '../actionTypes';
 
 export const createColony = (
@@ -55,5 +60,25 @@ export const createColonyLabel = (
     lifecycle: {
       error: COLONY_CREATE_LABEL_ERROR,
       success: COLONY_CREATE_LABEL_SUCCESS,
+    },
+  });
+
+export const taskSubmitWork = (
+  identifier: string,
+  params: {
+    taskId: string,
+    deliverableHash: string,
+    secret: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'submitTaskDeliverableAndRating',
+    identifier,
+    lifecycle: {
+      error: TASK_SUBMIT_WORK_ERROR,
+      success: TASK_SUBMIT_WORK_SUCCESS,
     },
   });

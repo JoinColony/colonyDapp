@@ -99,15 +99,14 @@ const validationSchemaExtended = validationSchema.shape({
   workDescription: yup.string().required(MSG.workDescriptionError),
 });
 
-const ManagerRatingDialog = ({ cancel, workSubmitted }: Props) => (
+const ManagerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <Form
       initialValues={{
         rating: '',
         workDescription: '',
       }}
-      /* eslint-disable-next-line no-console */
-      onSubmit={(values: FormValues) => console.log(`[${displayName}]`, values)}
+      onSubmit={close}
       validationSchema={
         workSubmitted ? validationSchemaExtended : validationSchema
       }

@@ -3,7 +3,8 @@
 import { all } from 'redux-saga/effects';
 
 import colonySagas from './colony';
+import taskSagas from './task';
 
 export default function* dashboardSagas(): any {
-  yield all([colonySagas()]);
+  yield all([colonySagas(), taskSagas()]);
 }
