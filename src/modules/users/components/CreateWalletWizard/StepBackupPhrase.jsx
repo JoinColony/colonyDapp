@@ -123,6 +123,7 @@ class StepBackupPhrase extends Component<Props, State> {
                   type="submit"
                   appearance={{ theme: 'danger' }}
                   text={MSG.confirmButton}
+                  data-test="confirmCreatedPhraseBackupButton"
                 />
               </div>
             </Fragment>

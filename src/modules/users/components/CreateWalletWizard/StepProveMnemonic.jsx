@@ -126,7 +126,7 @@ const StepProveMnemonic = ({
                 />
               </div>
             </section>
-            <div className={styles.inputFields}>
+            <div className={styles.inputFields} data-test="hello">
               {chosenProofWords.map((wordIndex, arrayIndex) => (
                 <Fragment key={`proofWordKey_${wordIndex}`}>
                   <Input
@@ -151,6 +151,7 @@ const StepProveMnemonic = ({
                 type="submit"
                 loading={isSubmitting}
                 style={{ width: styles.wideButton }}
+                data-test="proveBackupPhraseButton"
               />
             </div>
           </Fragment>

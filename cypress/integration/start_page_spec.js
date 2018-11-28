@@ -7,5 +7,4 @@ describe('The Home Page', function() {
     cy.get('[data-test="createWalletLink"]').click()
     cy.url().should('include', '/create-wallet')
   })
-
 })
