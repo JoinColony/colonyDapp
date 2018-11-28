@@ -17,7 +17,7 @@ import Numeral from '~core/Numeral';
 
 import styles from './GasStation.css';
 
-import GasStationClaimCard from '~dashboard/GasStationClaimCard';
+import GasStationClaimCard from './GasStationClaimCard';
 
 const MSG = defineMessages({
   transactionsEmptyStateText: {
