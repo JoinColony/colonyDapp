@@ -17,6 +17,7 @@ import Numeral from '~core/Numeral';
 import CardList from '~core/CardList';
 
 import GasStationCard from './GasStationCard';
+import GasStationClaimCard from './GasStationClaimCard';
 
 import styles from './GasStation.css';
 
@@ -37,6 +38,7 @@ const MSG = defineMessages({
 
 type Props = InProps & {
   balance: number,
+  showClaimInfoCard: boolean,
   transactions: Array<TransactionType>,
   walletAddress: string,
 };
@@ -107,7 +109,13 @@ class GasStation extends Component<Props, State> {
   }
 
   render() {
-    const { balance, close, transactions, walletAddress } = this.props;
+    const {
+      balance,
+      close,
+      transactions,
+      walletAddress,
+      showClaimInfoCard,
+    } = this.props;
     const { expandedTransactionId } = this.state;
     return (
       <div
@@ -156,11 +164,16 @@ class GasStation extends Component<Props, State> {
         <div className={styles.transactionsContainer}>
           {transactions && transactions.length > 0 ? (
             <CardList appearance={{ numCols: '1' }}>
-              {expandedTransactionId >= 0
-                ? this.renderExpandedTransaction(
-                    transactions[expandedTransactionId],
-                  )
-                : this.renderTransactionsSummary(transactions)}
+              {expandedTransactionId >= 0 ? (
+                this.renderExpandedTransaction(
+                  transactions[expandedTransactionId],
+                )
+              ) : (
+                <Fragment>
+                  {showClaimInfoCard && <GasStationClaimCard />}
+                  {this.renderTransactionsSummary(transactions)}
+                </Fragment>
+              )}
             </CardList>
           ) : (
             <Heading
