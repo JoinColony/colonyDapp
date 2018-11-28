@@ -85,12 +85,26 @@ type State = {
 class GasStationCard extends Component<Props, State> {
   static displayName = 'dashboard.GasStation.GasStationCard';
 
+  state = {
+    actionToCancel: undefined,
+  };
+
+  handleClearCancel() {
+    return this.setState({ actionToCancel: undefined });
+  }
+
   handleCancel() {
     /* eslint-disable-next-line no-console */
     console.log('Cancelled the action');
+    return this.handleClearCancel();
+  }
+
+  handleCancelClick(actionIndexToCancel: number) {
+    return this.setState({ actionToCancel: actionIndexToCancel });
   }
 
   render() {
+    const { actionToCancel } = this.state;
     const {
       transaction: { status, set = [] },
       expanded = false,
@@ -175,11 +189,11 @@ class GasStationCard extends Component<Props, State> {
                    */
                   key={action.nonce}
                   disabled={action.dependency}
-                  className={
+                  className={`${
                     action.status && action.status === 'failed'
-                      ? styles.failedAction
+                      ? styles.failedActionItem
                       : styles.actionItem
-                  }
+                  } ${actionToCancel === index ? styles.cancelActionItem : ''}`}
                 >
                   <div className={styles.description}>
                     <Tooltip
@@ -292,17 +306,43 @@ class GasStationCard extends Component<Props, State> {
                        * instead of an `a`, since that implies an anchor
                        */}
                       {!action.status && (
-                        <span
-                          role="button"
-                          tabIndex={0}
-                          className={styles.cancelAction}
-                          /* eslint-disable-next-line no-console */
-                          onClick={() => console.log('Action cancelled')}
-                          /* eslint-disable-next-line no-console */
-                          onKeyDown={() => console.log('Action cancelled')}
-                        >
-                          <FormattedMessage {...{ id: 'button.cancel' }} />
-                        </span>
+                        <Fragment>
+                          {actionToCancel === index ? (
+                            <Fragment>
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                className={styles.cancelAction}
+                                onClick={() => this.handleCancel()}
+                                onKeyDown={this.handleCancel}
+                              >
+                                <FormattedMessage {...{ id: 'button.yes' }} />
+                              </span>
+                              <span className={styles.cancelActionsDecision}>
+                                /
+                              </span>
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                className={styles.cancelAction}
+                                onClick={() => this.handleClearCancel()}
+                                onKeyDown={this.handleClearCancel}
+                              >
+                                <FormattedMessage {...{ id: 'button.no' }} />
+                              </span>
+                            </Fragment>
+                          ) : (
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              className={styles.cancelAction}
+                              onClick={() => this.handleCancelClick(index)}
+                              onKeyDown={() => this.handleCancelClick(index)}
+                            >
+                              <FormattedMessage {...{ id: 'button.cancel' }} />
+                            </span>
+                          )}
+                        </Fragment>
                       )}
                     </div>
                   )}
