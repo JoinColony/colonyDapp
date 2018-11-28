@@ -5,6 +5,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Card from '~core/Card';
 import Heading from '~core/Heading';
 
+import styles from './GasStationClaimCard.css';
+
 const MSG = defineMessages({
   headingText: {
     id: 'dashboard.GasStationClaimCard.headingText',
@@ -30,17 +32,19 @@ type Props = {
 const displayName = 'dashboard.GasStationClaimCard';
 
 const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => (
-  // eslint-disable-next-line no-console
-  <Card isDismissible onCardDismissed={() => console.log('Dismissed')}>
-    <Heading
-      appearance={{ margin: 'none', size: 'normal' }}
-      text={MSG.headingText}
-      textValues={{
-        numberOfSteps,
-      }}
-    />
-    <FormattedMessage {...MSG.bodyText} />
-  </Card>
+  <div className={styles.main}>
+    {/* eslint-disable-next-line no-console */}
+    <Card isDismissible onCardDismissed={() => console.log('Dismissed')}>
+      <Heading
+        appearance={{ margin: 'none', size: 'normal' }}
+        text={MSG.headingText}
+        textValues={{
+          numberOfSteps,
+        }}
+      />
+      <FormattedMessage {...MSG.bodyText} />
+    </Card>
+  </div>
 );
 
 GasStationClaimCard.displayName = displayName;
