@@ -10,6 +10,8 @@ import Card from '~core/Card';
 import Link from '~core/Link';
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
+import ExternalLink from '~core/ExternalLink';
+import { SpinnerLoader } from '~core/Preloaders';
 
 /*
  * @NOTE This is just temporary and should be replaced with a dynamic route
@@ -31,6 +33,10 @@ const MSG = defineMessages({
   dependentAction: {
     id: 'dashboard.GasStation.GasStationCard.dependentAction',
     defaultMessage: 'Dependent transaction',
+  },
+  pendingAction: {
+    id: 'dashboard.GasStation.GasStationCard.pendingAction',
+    defaultMessage: 'Pending transaction',
   },
   /*
    * @NOTE Below this line are just temporary message desriptors as the actual
@@ -140,14 +146,14 @@ const GasStationCard = ({
         </div>
         {canWeExpand ? (
           <ul className={styles.expanded}>
-            {set.map((transaction: TransactionType, index) => (
+            {set.map((action: TransactionType, index) => (
               <li
                 /*
                  * @NOTE Nonces are unique, but our mock data might add duplicates.
                  * In case you see duplicate key errors in the console, don't panic.
                  */
-                key={transaction.nonce}
-                disabled={transaction.dependency}
+                key={action.nonce}
+                disabled={action.dependency}
               >
                 <div className={styles.description}>
                   <Tooltip
@@ -158,7 +164,7 @@ const GasStationCard = ({
                         <FormattedMessage {...MSG.dependentAction} />
                       </span>
                     }
-                    trigger={transaction.dependency ? 'hover' : 'disabled'}
+                    trigger={action.dependency ? 'hover' : 'disabled'}
                   >
                     {/*
                      * @NOTE The tooltip content needs to be wrapped inside a block
@@ -172,25 +178,61 @@ const GasStationCard = ({
                     </div>
                   </Tooltip>
                 </div>
-                {!transaction.dependency && (
+                {!action.dependency && (
                   <div className={styles.status}>
+                    {action.status === 'pending' && (
+                      <Fragment>
+                        <ExternalLink
+                          href={`https://rinkeby.etherscan.io/tx/${
+                            /*
+                             * @NOTE This is just here because otherwise prettier
+                             * goes crazy and suggest a wrong fix
+                             */
+                            action.hash || 0
+                          }`}
+                          text={{ id: 'etherscan' }}
+                          className={styles.actionInteraction}
+                        />
+                        <Tooltip
+                          placement="top"
+                          showArrow
+                          content={
+                            <span className={styles.tooltipContentReset}>
+                              <FormattedMessage {...MSG.pendingAction} />
+                            </span>
+                          }
+                        >
+                          {/*
+                           * @NOTE The tooltip content needs to be wrapped inside a block
+                           * element otherwise it won't detect the hover event
+                           */}
+                          <div className={styles.spinner}>
+                            <SpinnerLoader
+                              appearance={{ size: 'small', theme: 'primary' }}
+                            />
+                          </div>
+                        </Tooltip>
+                      </Fragment>
+                    )}
                     {/*
                      * @NOTE Can't use a `button` here since we're already a descendent of
                      * a button, and React will go nuts.
                      * Also, as jsx-a11y points out, it's better to use a `span`/`div`
                      * instead of an `a`, since that implies an anchor
                      */}
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      className={styles.cancelAction}
-                      /* eslint-disable-next-line no-console */
-                      onClick={() => console.log('Action cancelled')}
-                      /* eslint-disable-next-line no-console */
-                      onKeyDown={() => console.log('Action cancelled')}
-                    >
-                      <FormattedMessage {...{ id: 'button.cancel' }} />
-                    </span>
+                    {!action.status && (
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        className={styles.cancelAction}
+                        /* eslint-disable-next-line no-console */
+                        onClick={() => console.log('Action cancelled')}
+                        /* eslint-disable-next-line no-console */
+                        onKeyDown={() => console.log('Action cancelled')}
+                      >
+                        <FormattedMessage {...{ id: 'button.cancel' }} />
+                      </span>
+                    )}
                   </div>
                 )}
               </li>
