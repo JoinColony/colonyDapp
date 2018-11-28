@@ -81,10 +81,6 @@
   background-color: var(--golden);
 }
 
-.tooltipUsername {
-  font-weight: var(--weight-medium);
-}
-
 .expanded {
   margin-top: 15px;
 }

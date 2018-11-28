@@ -9,6 +9,7 @@ import Heading from '~core/Heading';
 import Card from '~core/Card';
 import Link from '~core/Link';
 import { Tooltip } from '~core/Popover';
+import UserMention from '~core/UserMention';
 
 /*
  * @NOTE This is just temporary and should be replaced with a dynamic route
@@ -105,7 +106,7 @@ const GasStationCard = ({
                       /*
                        * @TODO Add actual username from the multisig address
                        */
-                      <span className={styles.tooltipUsername}>@ragny</span>
+                      <UserMention username="user" hasLink={false} />
                     ),
                   }}
                 />
