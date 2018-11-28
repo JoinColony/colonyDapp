@@ -44,6 +44,10 @@ const MSG = defineMessages({
     id: 'dashboard.GasStation.GasStationCard.dependentAction',
     defaultMessage: 'Dependent transaction',
   },
+  failedAction: {
+    id: 'dashboard.GasStation.GasStationCard.failedAction',
+    defaultMessage: 'Failed transaction. Try again.',
+  },
   /*
    * @NOTE Below this line are just temporary message desriptors as the actual
    * name / path combinations for the various actions-transactions
@@ -160,6 +164,11 @@ const GasStationCard = ({
                  */
                 key={action.nonce}
                 disabled={action.dependency}
+                className={
+                  action.status && action.status === 'failed'
+                    ? styles.failedAction
+                    : styles.actionItem
+                }
               >
                 <div className={styles.description}>
                   <Tooltip
@@ -181,6 +190,12 @@ const GasStationCard = ({
                         {...MSG.actionDescriptionSample}
                         values={{ index: index + 1 }}
                       />
+                      {action.status &&
+                        action.status === 'failed' && (
+                          <span className={styles.failedActionDescription}>
+                            <FormattedMessage {...MSG.failedAction} />
+                          </span>
+                        )}
                     </div>
                   </Tooltip>
                 </div>

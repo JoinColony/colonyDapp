@@ -95,7 +95,7 @@
   font-weight: var(--weight-normal);
 }
 
-.expanded li {
+.actionItem {
   display: flex;
   align-items: center;
   padding: 12px 20px;
@@ -165,4 +165,35 @@
 .multisigAction {
   composes: multisig;
   margin-right: 0;
+}
+
+.failedAction {
+  composes: actionItem;
+  border-left-color: var(--danger);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: color-mod(var(--danger) alpha(90%));
+    background-color: color-mod(var(--danger) alpha(15%));
+  }
+}
+
+.failedActionDescription {
+  display: block;
+
+  /*
+   * @NOTE AAAAARRRGGGGGHHHH@!!!!!!111
+   *
+   * Why must we break consistency? Couldn't the failed transaction use a nice status
+   * symbol along with a Tooltip, the same way all other states have.
+   * No! This one had to have skewed small text displayed. Not like the red background
+   * isn't visible enough.
+   *
+   * This also applies to the font-size since I had to hard code it in. It's smaller
+   * than anything we use in the dApp
+   */
+  margin: -1px 0 -12px 14px;
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  color: var(--danger);
 }
