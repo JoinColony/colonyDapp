@@ -85,6 +85,16 @@
   margin-top: 15px;
 }
 
+/*
+ * @NOTE Use this if the tooltip content you're about to show resides under a
+ * class that changes the font size and weight
+ * Eg: under the `.expanded` list items
+ */
+.tooltipContentReset {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+}
+
 .expanded li {
   display: flex;
   align-items: center;
@@ -93,9 +103,19 @@
   border-top: 1px solid var(--grey-blue-1);
   font-size: var(--size-small);
   font-weight: var(--weight-medium);
+  color: var(--grey-dark);
 
   &:hover {
     border-left-color: var(--colony-blue);
     background-color: var(--temp-grey-blue-6);
+  }
+
+  &[disabled] {
+    color: var(--grey-text);
+    cursor: default;
+
+    &:hover {
+      background-color: var(--temp-grey-blue-1);
+    }
   }
 }
