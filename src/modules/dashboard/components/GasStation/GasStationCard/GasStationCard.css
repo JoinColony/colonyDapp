@@ -112,7 +112,7 @@
   }
 
   &:hover .cancelAction {
-    display: block;
+    display: inline;
   }
 
   &[disabled] {
@@ -141,6 +141,10 @@
   display: none;
 }
 
+.cancelActionsDecision {
+  margin: 0 10px;
+}
+
 .actionStatusTooltipWrapper {
   display: inline-block;
   margin-left: 15px;
@@ -167,7 +171,7 @@
   margin-right: 0;
 }
 
-.failedAction {
+.failedActionItem {
   composes: actionItem;
   border-left-color: var(--danger);
   background-color: color-mod(var(--danger) alpha(20%));
@@ -175,6 +179,21 @@
   &:hover {
     border-left-color: color-mod(var(--danger) alpha(90%));
     background-color: color-mod(var(--danger) alpha(15%));
+  }
+}
+
+.cancelActionItem {
+  composes: actionItem;
+  border-left-color: var(--colony-blue);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: var(--colony-blue);
+    background-color: color-mod(var(--danger) alpha(20%));
+  }
+
+  & .cancelAction {
+    display: inline;
   }
 }
 
