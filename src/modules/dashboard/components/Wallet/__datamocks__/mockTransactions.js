@@ -84,6 +84,7 @@ const mockTransactions: Array<TransactionType> = [
         to: mockUser.walletAddress,
         amount: createBN(52),
         symbol: 'FFLY',
+        status: 'succeeded',
       },
       {
         hash:
@@ -151,6 +152,7 @@ const mockTransactions: Array<TransactionType> = [
         to: mockUser.walletAddress,
         amount: createBN(52),
         symbol: 'FFLY',
+        status: 'succeeded',
       },
       {
         hash:
@@ -207,6 +209,7 @@ const mockTransactions: Array<TransactionType> = [
         to: mockUser.walletAddress,
         amount: createBN(52),
         symbol: 'FFLY',
+        status: 'succeeded',
       },
       {
         hash:

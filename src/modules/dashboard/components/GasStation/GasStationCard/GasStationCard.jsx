@@ -12,6 +12,7 @@ import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
 import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
 
 /*
  * @NOTE This is just temporary and should be replaced with a dynamic route
@@ -30,13 +31,18 @@ const MSG = defineMessages({
       other {Generic transaction}
     }`,
   },
+  actionState: {
+    id: 'dashboard.GasStation.GasStationCard.actionState',
+    defaultMessage: `{status, select,
+      multisig {Waiting on {username} to sign}
+      pending {Pending transaction}
+      succeeded {Your transaction was successful}
+      other {Generic transaction}
+    }`,
+  },
   dependentAction: {
     id: 'dashboard.GasStation.GasStationCard.dependentAction',
     defaultMessage: 'Dependent transaction',
-  },
-  pendingAction: {
-    id: 'dashboard.GasStation.GasStationCard.pendingAction',
-    defaultMessage: 'Pending transaction',
   },
   /*
    * @NOTE Below this line are just temporary message desriptors as the actual
@@ -103,46 +109,44 @@ const GasStationCard = ({
               onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
             />
           </div>
-          <div className={styles.status}>
-            <Tooltip
-              placement="top"
-              showArrow
-              content={
-                <FormattedMessage
-                  {...MSG.transactionState}
-                  values={{
-                    status,
-                    username: (
-                      /*
-                       * @TODO Add actual username from the multisig address
-                       */
-                      <UserMention username="user" hasLink={false} />
-                    ),
-                  }}
-                />
-              }
-            >
-              {/*
-               * @NOTE The tooltip content needs to be wrapped inside a block
-               * element otherwise it won't detect the hover event
-               */}
-              <div>
-                {status && (
-                  <Fragment>
-                    {status === 'pending' && (
-                      <span className={styles.pending} />
-                    )}
-                    {status === 'failed' && (
-                      <span className={styles.failed}>!</span>
-                    )}
-                  </Fragment>
-                )}
-              </div>
-            </Tooltip>
-            {!status && haveActions ? (
+          {status && (
+            <div className={styles.status}>
+              <Tooltip
+                placement="top"
+                showArrow
+                content={
+                  <FormattedMessage
+                    {...MSG.transactionState}
+                    values={{
+                      status,
+                      username: (
+                        /*
+                         * @TODO Add actual username from the multisig address
+                         */
+                        <UserMention username="user" hasLink={false} />
+                      ),
+                    }}
+                  />
+                }
+              >
+                {/*
+                 * @NOTE The tooltip content needs to be wrapped inside a block
+                 * element otherwise it won't detect the hover event
+                 */}
+                <div>
+                  {status === 'pending' && <span className={styles.pending} />}
+                  {status === 'failed' && (
+                    <span className={styles.failed}>!</span>
+                  )}
+                </div>
+              </Tooltip>
+            </div>
+          )}
+          {!status && haveActions ? (
+            <div className={styles.status}>
               <span className={styles.counter}>{set.length}</span>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
         {canWeExpand ? (
           <ul className={styles.expanded}>
@@ -180,7 +184,7 @@ const GasStationCard = ({
                 </div>
                 {!action.dependency && (
                   <div className={styles.status}>
-                    {action.status === 'pending' && (
+                    {action.status && (
                       <Fragment>
                         <ExternalLink
                           href={`https://rinkeby.etherscan.io/tx/${
@@ -198,7 +202,21 @@ const GasStationCard = ({
                           showArrow
                           content={
                             <span className={styles.tooltipContentReset}>
-                              <FormattedMessage {...MSG.pendingAction} />
+                              <FormattedMessage
+                                {...MSG.actionState}
+                                values={{
+                                  status: action.status,
+                                  username: (
+                                    /*
+                                     * @TODO Add actual username from the multisig address
+                                     */
+                                    <UserMention
+                                      username="user"
+                                      hasLink={false}
+                                    />
+                                  ),
+                                }}
+                              />
                             </span>
                           }
                         >
@@ -206,10 +224,30 @@ const GasStationCard = ({
                            * @NOTE The tooltip content needs to be wrapped inside a block
                            * element otherwise it won't detect the hover event
                            */}
-                          <div className={styles.spinner}>
-                            <SpinnerLoader
-                              appearance={{ size: 'small', theme: 'primary' }}
-                            />
+                          <div className={styles.actionStatusTooltipWrapper}>
+                            {action.status === 'succeeded' && (
+                              <span className={styles.completedAction}>
+                                <Icon
+                                  appearance={{ size: 'tiny' }}
+                                  name="check-mark"
+                                  /*
+                                   * @NOTE We disable the title since we already
+                                   * have a tooltip around it
+                                   */
+                                  title=""
+                                />
+                              </span>
+                            )}
+                            {action.status === 'pending' && (
+                              <div className={styles.spinner}>
+                                <SpinnerLoader
+                                  appearance={{
+                                    size: 'small',
+                                    theme: 'primary',
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
                         </Tooltip>
                       </Fragment>

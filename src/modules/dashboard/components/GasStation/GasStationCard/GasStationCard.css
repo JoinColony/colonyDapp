@@ -141,11 +141,23 @@
   display: none;
 }
 
+.actionStatusTooltipWrapper {
+  display: inline-block;
+  margin-left: 15px;
+}
+
 .spinner {
   display: inline-block;
 
   /*
    * @NOTE We're using negative margins to better align the spinner with the link
    */
-  margin: 0 0 -2px 15px;
+  margin-bottom: -3px;
+}
+
+.completedAction {
+  & svg {
+    fill: var(--primary);
+    stroke: var(--primary);
+  }
 }
