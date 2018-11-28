@@ -1,5 +1,5 @@
 /* @flow */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { InProps } from './GasStation';
@@ -17,6 +17,8 @@ import Numeral from '~core/Numeral';
 
 import styles from './GasStation.css';
 
+import GasStationClaimCard from './GasStationClaimCard';
+
 const MSG = defineMessages({
   transactionsEmptyStateText: {
     id: 'dashboard.GasStation.transactionsEmptyStateText',
@@ -30,11 +32,18 @@ const MSG = defineMessages({
 
 type Props = InProps & {
   balance: number,
+  showClaimInfoCard: boolean,
   transactions: Array<TransactionType>,
   walletAddress: string,
 };
 
-const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
+const GasStation = ({
+  balance,
+  close,
+  showClaimInfoCard,
+  transactions,
+  walletAddress,
+}: Props) => (
   <div
     className={getMainClasses({}, styles, {
       isEmpty: transactions.length === 0,
@@ -77,9 +86,11 @@ const GasStation = ({ balance, close, transactions, walletAddress }: Props) => (
     <div className={styles.transactionsContainer}>
       {transactions && transactions.length > 0 ? (
         <CardList appearance={{ numCols: '1' }}>
-          <p>Transaction list goes here</p>
-          {/* @TODO: Transaction card list for issue
-            #472 https://github.com/JoinColony/colonyDapp/issues/472 */}
+          <Fragment>
+            {showClaimInfoCard && <GasStationClaimCard />}
+            {/* @TODO: Transaction card list for issue
+              #472 https://github.com/JoinColony/colonyDapp/issues/472 */}
+          </Fragment>
         </CardList>
       ) : (
         <Heading
