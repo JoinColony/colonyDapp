@@ -45,6 +45,7 @@ const PopoverWrapper = ({
   <div
     className={getMainClasses(appearance, styles, {
       hideArrow: !arrowProps.showArrow,
+      showArrow: arrowProps.showArrow,
     })}
     id={id}
     role="tooltip"

@@ -129,3 +129,7 @@
 .stateHideArrow .arrow {
   display: none;
 }
+
+.stateshowArrow .arrow {
+  display: block;
+}
