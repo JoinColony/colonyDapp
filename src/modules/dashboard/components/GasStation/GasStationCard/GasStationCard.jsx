@@ -26,7 +26,7 @@ const MSG = defineMessages({
   transactionState: {
     id: 'dashboard.GasStation.GasStationCard.transactionState',
     defaultMessage: `{status, select,
-      pending {Waiting on {username} to sign}
+      multisig {Waiting on {username} to sign}
       failed {Failed transaction. Try again}
       other {Generic transaction}
     }`,
@@ -134,7 +134,9 @@ const GasStationCard = ({
                  * element otherwise it won't detect the hover event
                  */}
                 <div>
-                  {status === 'pending' && <span className={styles.pending} />}
+                  {status === 'multisig' && (
+                    <span className={styles.multisig} />
+                  )}
                   {status === 'failed' && (
                     <span className={styles.failed}>!</span>
                   )}
@@ -186,17 +188,19 @@ const GasStationCard = ({
                   <div className={styles.status}>
                     {action.status && (
                       <Fragment>
-                        <ExternalLink
-                          href={`https://rinkeby.etherscan.io/tx/${
-                            /*
-                             * @NOTE This is just here because otherwise prettier
-                             * goes crazy and suggest a wrong fix
-                             */
-                            action.hash || 0
-                          }`}
-                          text={{ id: 'etherscan' }}
-                          className={styles.actionInteraction}
-                        />
+                        {action.status !== 'multisig' && (
+                          <ExternalLink
+                            href={`https://rinkeby.etherscan.io/tx/${
+                              /*
+                               * @NOTE This is just here because otherwise prettier
+                               * goes crazy and suggest a wrong fix
+                               */
+                              action.hash || 0
+                            }`}
+                            text={{ id: 'etherscan' }}
+                            className={styles.actionInteraction}
+                          />
+                        )}
                         <Tooltip
                           placement="top"
                           showArrow
@@ -247,6 +251,9 @@ const GasStationCard = ({
                                   }}
                                 />
                               </div>
+                            )}
+                            {action.status === 'multisig' && (
+                              <span className={styles.multisigAction} />
                             )}
                           </div>
                         </Tooltip>

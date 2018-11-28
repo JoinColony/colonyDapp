@@ -46,7 +46,7 @@ export type TransactionType = {
   /*
    * @TODO This should most likely come from a separate call to etherscan
    */
-  status?: 'pending' | 'failed' | 'succeeded',
+  status?: 'pending' | 'failed' | 'succeeded' | 'multisig',
   /*
    * @TODO The logic, for the related transactions will be added in as part of #542
    * We're just using this prop as helper to display them
