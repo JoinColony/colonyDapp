@@ -172,6 +172,27 @@ const GasStationCard = ({
                     </div>
                   </Tooltip>
                 </div>
+                {!transaction.dependency && (
+                  <div className={styles.status}>
+                    {/*
+                     * @NOTE Can't use a `button` here since we're already a descendent of
+                     * a button, and React will go nuts.
+                     * Also, as jsx-a11y points out, it's better to use a `span`/`div`
+                     * instead of an `a`, since that implies an anchor
+                     */}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className={styles.cancelAction}
+                      /* eslint-disable-next-line no-console */
+                      onClick={() => console.log('Action cancelled')}
+                      /* eslint-disable-next-line no-console */
+                      onKeyDown={() => console.log('Action cancelled')}
+                    >
+                      <FormattedMessage {...{ id: 'button.cancel' }} />
+                    </span>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

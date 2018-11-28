@@ -99,6 +99,7 @@
   display: flex;
   align-items: center;
   padding: 12px 20px;
+  height: 40px;
   border-left: 3px solid var(--temp-grey-5);
   border-top: 1px solid var(--grey-blue-1);
   font-size: var(--size-small);
@@ -110,6 +111,10 @@
     background-color: var(--temp-grey-blue-6);
   }
 
+  &:hover .cancelAction {
+    display: block;
+  }
+
   &[disabled] {
     color: var(--grey-text);
     cursor: default;
@@ -117,5 +122,16 @@
     &:hover {
       background-color: var(--temp-grey-blue-1);
     }
+  }
+}
+
+.cancelAction {
+  display: none;
+  border-bottom: 1px solid transparent;
+  color: var(--sky-blue);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--sky-blue);
   }
 }
