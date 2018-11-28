@@ -1,6 +1,7 @@
 {
     "home": "Home",
     "wallet": "Wallet",
+    "etherscan": "Etherscan",
     "role.disabled": "Disabled",
     "role.member": "Member",
     "role.admin": "Admin",

@@ -125,13 +125,27 @@
   }
 }
 
-.cancelAction {
-  display: none;
+.actionInteraction {
   border-bottom: 1px solid transparent;
   color: var(--sky-blue);
   cursor: pointer;
 
   &:hover {
     border-color: var(--sky-blue);
+    color: var(--sky-blue);
   }
+}
+
+.cancelAction {
+  composes: actionInteraction;
+  display: none;
+}
+
+.spinner {
+  display: inline-block;
+
+  /*
+   * @NOTE We're using negative margins to better align the spinner with the link
+   */
+  margin: 0 0 -2px 15px;
 }

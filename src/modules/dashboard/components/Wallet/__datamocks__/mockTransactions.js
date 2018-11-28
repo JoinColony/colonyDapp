@@ -50,6 +50,7 @@ const mockTransactions: Array<TransactionType> = [
         to: mockUser.walletAddress,
         amount: createBN(52),
         symbol: 'FFLY',
+        status: 'pending',
       },
       {
         hash:
@@ -93,6 +94,7 @@ const mockTransactions: Array<TransactionType> = [
         to: mockUser.walletAddress,
         amount: createBN(9000),
         symbol: 'FFLY',
+        status: 'pending',
       },
       {
         hash:
@@ -159,8 +161,7 @@ const mockTransactions: Array<TransactionType> = [
         to: mockUser.walletAddress,
         amount: createBN(9000),
         symbol: 'FFLY',
-        dependency:
-          '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
+        status: 'pending',
       },
       {
         hash:
