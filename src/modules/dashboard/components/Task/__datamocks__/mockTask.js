@@ -21,6 +21,7 @@ export const mockTaskReward = {
 export const mockTask = {
   id: 1,
   title: 'Develop Github integration',
+  colonyAddress: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
   reputation: 19.5,
   payouts: [
     { symbol: 'ETH', amount: 21545, isEth: true },

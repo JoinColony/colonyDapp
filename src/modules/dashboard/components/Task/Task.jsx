@@ -24,6 +24,13 @@ import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
+import DialogActionButton from './DialogActionButton.jsx';
+
+import {
+  TASK_SUBMIT_WORK,
+  TASK_SUBMIT_WORK_ERROR,
+  TASK_SUBMIT_WORK_SUCCESS,
+} from '../../actionTypes';
 
 import taskMock from './__datamocks__/mockTask';
 import userMocks from './__datamocks__/mockUsers';
@@ -45,6 +52,10 @@ const MSG = defineMessages({
   completed: {
     id: 'dashboard.Task.completed',
     defaultMessage: 'Task completed',
+  },
+  submitWork: {
+    id: 'dashboard.Task.submitWork',
+    defaultMessage: 'Submit Work',
   },
 });
 
@@ -182,12 +193,26 @@ class Task extends Component<Props> {
                     })
                   }
                 />
-                <Button
-                  text="Rate Manager (Work Submitted)"
-                  onClick={() =>
-                    openDialog('ManagerRatingDialog', { workSubmitted: true })
-                  }
-                />
+                {!task.workSubmitted && (
+                  <DialogActionButton
+                    dialog="ManagerRatingDialog"
+                    options={{
+                      workSubmitted: true,
+                    }}
+                    text={MSG.submitWork}
+                    submit={TASK_SUBMIT_WORK}
+                    success={TASK_SUBMIT_WORK_SUCCESS}
+                    error={TASK_SUBMIT_WORK_ERROR}
+                    setPayload={(action, values) => ({
+                      ...action,
+                      payload: {
+                        ...values,
+                        colonyIdentifier: task.colonyAddress,
+                        taskId: task.id,
+                      },
+                    })}
+                  />
+                )}
                 <Button
                   text="Rate Worker"
                   onClick={() =>
