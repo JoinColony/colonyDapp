@@ -52,4 +52,10 @@ export type TransactionType = {
    * We're just using this prop as helper to display them
    */
   set?: Array<TransactionType>,
+  /*
+   * @NOTE Used to determine if this particular action depends on a prior one being
+   * executed first.
+   * Most likely this will change when the *real* data comes in
+   */
+  dependency?: string,
 };

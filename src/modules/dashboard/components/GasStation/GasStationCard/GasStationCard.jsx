@@ -28,6 +28,10 @@ const MSG = defineMessages({
       other {Generic transaction}
     }`,
   },
+  dependentAction: {
+    id: 'dashboard.GasStation.GasStationCard.dependentAction',
+    defaultMessage: 'Dependent transaction',
+  },
   /*
    * @NOTE Below this line are just temporary message desriptors as the actual
    * name / path combinations for the various actions-transactions
@@ -143,14 +147,31 @@ const GasStationCard = ({
                  * In case you see duplicate key errors in the console, don't panic.
                  */
                 key={transaction.nonce}
+                disabled={transaction.dependency}
               >
                 <div className={styles.description}>
-                  <FormattedMessage
-                    {...MSG.actionDescriptionSample}
-                    values={{ index: index + 1 }}
-                  />
+                  <Tooltip
+                    placement="top"
+                    showArrow
+                    content={
+                      <span className={styles.tooltipContentReset}>
+                        <FormattedMessage {...MSG.dependentAction} />
+                      </span>
+                    }
+                    trigger={transaction.dependency ? 'hover' : 'disabled'}
+                  >
+                    {/*
+                     * @NOTE The tooltip content needs to be wrapped inside a block
+                     * element otherwise it won't detect the hover event
+                     */}
+                    <div>
+                      <FormattedMessage
+                        {...MSG.actionDescriptionSample}
+                        values={{ index: index + 1 }}
+                      />
+                    </div>
+                  </Tooltip>
                 </div>
-                <div className={styles.status}>?</div>
               </li>
             ))}
           </ul>
