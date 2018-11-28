@@ -32,7 +32,7 @@
         "ganache": "scripts/start_ganache.js",
         "deploy:contracts": "scripts/deploy_contracts.js",
         "test:e2e": "rimraf .dappPids.json && scripts/start_all.js & wait-on .dappPids.json && cypress run; scripts/stop_all.js",
-        "test:e2e:ci": "scripts/start_all.js & wait-on .dappPids.json && cypress run"
+        "test:e2e:ci": "scripts/start_all.js & wait-on .dappPids.json && cypress run --browser chrome"
     },
     "repository": {
         "type": "git",
