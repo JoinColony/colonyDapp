@@ -161,7 +161,9 @@ class MnemonicGenerator extends Component<Props, State> {
         >
           {!elementOnly && <InputLabel id={$id} label={label} help={help} />}
           <div className={styles.generator}>
-            <span className={styles.mnemonic}>{$value}</span>
+            <span className={styles.mnemonic} data-test="mnemonicPhrase">
+              {$value}
+            </span>
           </div>
         </div>
       </div>
