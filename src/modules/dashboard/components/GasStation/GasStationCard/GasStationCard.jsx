@@ -85,6 +85,51 @@ type State = {
 class GasStationCard extends Component<Props, State> {
   static displayName = 'dashboard.GasStation.GasStationCard';
 
+  /*
+   * @NOTE This needs to be static since we don't use any props from the
+   * Component's own instance (Eg: `this`)
+   *
+   * This also changes the way we need to call it, as again, it's not available
+   * on the actual instance.
+   */
+  static renderActionDescription(
+    hasDependency: boolean,
+    status?: string,
+    actionIndex: number,
+  ) {
+    return (
+      <div className={styles.description}>
+        <Tooltip
+          placement="top"
+          showArrow
+          content={
+            <span className={styles.tooltipContentReset}>
+              <FormattedMessage {...MSG.dependentAction} />
+            </span>
+          }
+          trigger={hasDependency ? 'hover' : 'disabled'}
+        >
+          {/*
+           * @NOTE The tooltip content needs to be wrapped inside a block
+           * element otherwise it won't detect the hover event
+           */}
+          <div>
+            <FormattedMessage
+              {...MSG.actionDescriptionSample}
+              values={{ index: actionIndex + 1 }}
+            />
+            {status &&
+              status === 'failed' && (
+                <span className={styles.failedActionDescription}>
+                  <FormattedMessage {...MSG.failedAction} />
+                </span>
+              )}
+          </div>
+        </Tooltip>
+      </div>
+    );
+  }
+
   state = {
     actionToCancel: undefined,
   };
@@ -94,6 +139,9 @@ class GasStationCard extends Component<Props, State> {
   }
 
   handleCancel() {
+    /*
+     * @TODO Actually cancel the action, not just log to the console...
+     */
     /* eslint-disable-next-line no-console */
     console.log('Cancelled the action');
     return this.handleClearCancel();
@@ -103,51 +151,168 @@ class GasStationCard extends Component<Props, State> {
     return this.setState({ actionToCancel: actionIndexToCancel });
   }
 
-  render() {
+  getActionItemClasses(action: TransactionType, actionIndex: number) {
     const { actionToCancel } = this.state;
+    /*
+     * Default class
+     */
+    let className: string = styles.actionItem;
+    /*
+     * If the action is failed, switch the default class
+     */
+    if (action.status && action.status === 'failed') {
+      className = styles.failedActionItem;
+    }
+    /*
+     * If we're cancelling the action, attach this class, since it's only temporary
+     */
+    if (actionToCancel === actionIndex) {
+      className += ` ${styles.cancelActionItem}`;
+    }
+
+    return className;
+  }
+
+  renderSummary() {
     const {
       transaction: { status, set = [] },
-      expanded = false,
-      onClick,
     } = this.props;
-    const haveActions = set && set.length;
-    const canWeExpand = expanded && haveActions;
     return (
-      <button
-        type="button"
-        className={styles.main}
-        onClick={onClick}
-        disabled={expanded || !onClick}
-      >
-        <Card className={canWeExpand ? styles.cardExpanded : styles.card}>
-          <div className={styles.summary}>
-            <div className={styles.description}>
-              <Heading
-                appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-                text={MSG.transactionTitleSample}
-              />
-              <Link
-                className={styles.transactionLink}
-                text={MSG.transactionDescriptionSample}
-                to={DASHBOARD_ROUTE}
-                /*
-                 * @NOTE If this is an expanded card, and has an onclick handler,
-                 * don't bubble the click up as this link will most likely redirect to
-                 * another place, so there's no reason to change the state prior to that
-                 */
-                onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
-              />
-            </div>
-            {status && (
-              <div className={styles.status}>
-                <Tooltip
-                  placement="top"
-                  showArrow
-                  content={
+      <div className={styles.summary}>
+        <div className={styles.description}>
+          <Heading
+            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+            text={MSG.transactionTitleSample}
+          />
+          <Link
+            className={styles.transactionLink}
+            text={MSG.transactionDescriptionSample}
+            to={DASHBOARD_ROUTE}
+            /*
+             * @NOTE If this is an expanded card, and has an onclick handler,
+             * don't bubble the click up as this link will most likely redirect to
+             * another place, so there's no reason to change the state prior to that
+             */
+            onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
+          />
+        </div>
+        {status && (
+          <div className={styles.status}>
+            <Tooltip
+              placement="top"
+              showArrow
+              content={
+                <FormattedMessage
+                  {...MSG.transactionState}
+                  values={{
+                    status,
+                    username: (
+                      /*
+                       * @TODO Add actual username from the multisig address
+                       */
+                      <UserMention username="user" hasLink={false} />
+                    ),
+                  }}
+                />
+              }
+            >
+              {/*
+               * @NOTE The tooltip content needs to be wrapped inside a block
+               * element otherwise it won't detect the hover event
+               */}
+              <div>
+                {status === 'multisig' && <span className={styles.multisig} />}
+                {status === 'failed' && (
+                  <span className={styles.failed}>!</span>
+                )}
+              </div>
+            </Tooltip>
+          </div>
+        )}
+        {!status && set && set.length ? (
+          <div className={styles.status}>
+            <span className={styles.counter}>{set.length}</span>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  renderCancelInteraction(actionIndex: number) {
+    const { actionToCancel } = this.state;
+    /*
+     * @NOTE Can't use a `button` here since we're already a descendent of
+     * a button, and React will go nuts.
+     * Also, as jsx-a11y points out, it's better to use a `span`/`div`
+     * instead of an `a`, since that implies an anchor
+     */
+    return (
+      <Fragment>
+        {actionToCancel === actionIndex ? (
+          <Fragment>
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.cancelAction}
+              onClick={() => this.handleCancel()}
+              onKeyDown={this.handleCancel}
+            >
+              <FormattedMessage {...{ id: 'button.yes' }} />
+            </span>
+            <span className={styles.cancelActionsDecision}>/</span>
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.cancelAction}
+              onClick={() => this.handleClearCancel()}
+              onKeyDown={this.handleClearCancel}
+            >
+              <FormattedMessage {...{ id: 'button.no' }} />
+            </span>
+          </Fragment>
+        ) : (
+          <span
+            role="button"
+            tabIndex={0}
+            className={styles.cancelAction}
+            onClick={() => this.handleCancelClick(actionIndex)}
+            onKeyDown={() => this.handleCancelClick(actionIndex)}
+          >
+            <FormattedMessage {...{ id: 'button.cancel' }} />
+          </span>
+        )}
+      </Fragment>
+    );
+  }
+
+  renderActionStatus(action: TransactionType, actionIndex: number) {
+    if (!action.dependency) {
+      return (
+        <div className={styles.status}>
+          {action.status && (
+            <Fragment>
+              {action.status !== 'multisig' && (
+                <ExternalLink
+                  href={`https://rinkeby.etherscan.io/tx/${
+                    /*
+                     * @NOTE This is just here because otherwise prettier
+                     * goes crazy and suggest a wrong fix
+                     */
+                    action.hash || 0
+                  }`}
+                  text={{ id: 'etherscan' }}
+                  className={styles.actionInteraction}
+                />
+              )}
+              <Tooltip
+                placement="top"
+                showArrow
+                content={
+                  <span className={styles.tooltipContentReset}>
                     <FormattedMessage
-                      {...MSG.transactionState}
+                      {...MSG.actionState}
                       values={{
-                        status,
+                        status: action.status,
                         username: (
                           /*
                            * @TODO Add actual username from the multisig address
@@ -156,198 +321,98 @@ class GasStationCard extends Component<Props, State> {
                         ),
                       }}
                     />
-                  }
-                >
-                  {/*
-                   * @NOTE The tooltip content needs to be wrapped inside a block
-                   * element otherwise it won't detect the hover event
-                   */}
-                  <div>
-                    {status === 'multisig' && (
-                      <span className={styles.multisig} />
-                    )}
-                    {status === 'failed' && (
-                      <span className={styles.failed}>!</span>
-                    )}
-                  </div>
-                </Tooltip>
-              </div>
-            )}
-            {!status && haveActions ? (
-              <div className={styles.status}>
-                <span className={styles.counter}>{set.length}</span>
-              </div>
-            ) : null}
-          </div>
-          {canWeExpand ? (
-            <ul className={styles.expanded}>
-              {set.map((action: TransactionType, index) => (
-                <li
-                  /*
-                   * @NOTE Nonces are unique, but our mock data might add duplicates.
-                   * In case you see duplicate key errors in the console, don't panic.
-                   */
-                  key={action.nonce}
-                  disabled={action.dependency}
-                  className={`${
-                    action.status && action.status === 'failed'
-                      ? styles.failedActionItem
-                      : styles.actionItem
-                  } ${actionToCancel === index ? styles.cancelActionItem : ''}`}
-                >
-                  <div className={styles.description}>
-                    <Tooltip
-                      placement="top"
-                      showArrow
-                      content={
-                        <span className={styles.tooltipContentReset}>
-                          <FormattedMessage {...MSG.dependentAction} />
-                        </span>
-                      }
-                      trigger={action.dependency ? 'hover' : 'disabled'}
-                    >
-                      {/*
-                       * @NOTE The tooltip content needs to be wrapped inside a block
-                       * element otherwise it won't detect the hover event
-                       */}
-                      <div>
-                        <FormattedMessage
-                          {...MSG.actionDescriptionSample}
-                          values={{ index: index + 1 }}
-                        />
-                        {action.status &&
-                          action.status === 'failed' && (
-                            <span className={styles.failedActionDescription}>
-                              <FormattedMessage {...MSG.failedAction} />
-                            </span>
-                          )}
-                      </div>
-                    </Tooltip>
-                  </div>
-                  {!action.dependency && (
-                    <div className={styles.status}>
-                      {action.status && (
-                        <Fragment>
-                          {action.status !== 'multisig' && (
-                            <ExternalLink
-                              href={`https://rinkeby.etherscan.io/tx/${
-                                /*
-                                 * @NOTE This is just here because otherwise prettier
-                                 * goes crazy and suggest a wrong fix
-                                 */
-                                action.hash || 0
-                              }`}
-                              text={{ id: 'etherscan' }}
-                              className={styles.actionInteraction}
-                            />
-                          )}
-                          <Tooltip
-                            placement="top"
-                            showArrow
-                            content={
-                              <span className={styles.tooltipContentReset}>
-                                <FormattedMessage
-                                  {...MSG.actionState}
-                                  values={{
-                                    status: action.status,
-                                    username: (
-                                      /*
-                                       * @TODO Add actual username from the multisig address
-                                       */
-                                      <UserMention
-                                        username="user"
-                                        hasLink={false}
-                                      />
-                                    ),
-                                  }}
-                                />
-                              </span>
-                            }
-                          >
-                            {/*
-                             * @NOTE The tooltip content needs to be wrapped inside a block
-                             * element otherwise it won't detect the hover event
-                             */}
-                            <div className={styles.actionStatusTooltipWrapper}>
-                              {action.status === 'succeeded' && (
-                                <span className={styles.completedAction}>
-                                  <Icon
-                                    appearance={{ size: 'tiny' }}
-                                    name="check-mark"
-                                    /*
-                                     * @NOTE We disable the title since we already
-                                     * have a tooltip around it
-                                     */
-                                    title=""
-                                  />
-                                </span>
-                              )}
-                              {action.status === 'pending' && (
-                                <div className={styles.spinner}>
-                                  <SpinnerLoader
-                                    appearance={{
-                                      size: 'small',
-                                      theme: 'primary',
-                                    }}
-                                  />
-                                </div>
-                              )}
-                              {action.status === 'multisig' && (
-                                <span className={styles.multisigAction} />
-                              )}
-                            </div>
-                          </Tooltip>
-                        </Fragment>
-                      )}
-                      {/*
-                       * @NOTE Can't use a `button` here since we're already a descendent of
-                       * a button, and React will go nuts.
-                       * Also, as jsx-a11y points out, it's better to use a `span`/`div`
-                       * instead of an `a`, since that implies an anchor
-                       */}
-                      {!action.status && (
-                        <Fragment>
-                          {actionToCancel === index ? (
-                            <Fragment>
-                              <span
-                                role="button"
-                                tabIndex={0}
-                                className={styles.cancelAction}
-                                onClick={() => this.handleCancel()}
-                                onKeyDown={this.handleCancel}
-                              >
-                                <FormattedMessage {...{ id: 'button.yes' }} />
-                              </span>
-                              <span className={styles.cancelActionsDecision}>
-                                /
-                              </span>
-                              <span
-                                role="button"
-                                tabIndex={0}
-                                className={styles.cancelAction}
-                                onClick={() => this.handleClearCancel()}
-                                onKeyDown={this.handleClearCancel}
-                              >
-                                <FormattedMessage {...{ id: 'button.no' }} />
-                              </span>
-                            </Fragment>
-                          ) : (
-                            <span
-                              role="button"
-                              tabIndex={0}
-                              className={styles.cancelAction}
-                              onClick={() => this.handleCancelClick(index)}
-                              onKeyDown={() => this.handleCancelClick(index)}
-                            >
-                              <FormattedMessage {...{ id: 'button.cancel' }} />
-                            </span>
-                          )}
-                        </Fragment>
-                      )}
+                  </span>
+                }
+              >
+                {/*
+                 * @NOTE The tooltip content needs to be wrapped inside a block
+                 * element otherwise it won't detect the hover event
+                 */}
+                <div className={styles.actionStatusTooltipWrapper}>
+                  {action.status === 'succeeded' && (
+                    <span className={styles.completedAction}>
+                      <Icon
+                        appearance={{ size: 'tiny' }}
+                        name="check-mark"
+                        /*
+                         * @NOTE We disable the title since we already
+                         * have a tooltip around it
+                         */
+                        title=""
+                      />
+                    </span>
+                  )}
+                  {action.status === 'pending' && (
+                    <div className={styles.spinner}>
+                      <SpinnerLoader
+                        appearance={{
+                          size: 'small',
+                          theme: 'primary',
+                        }}
+                      />
                     </div>
                   )}
-                </li>
-              ))}
+                  {action.status === 'multisig' && (
+                    <span className={styles.multisigAction} />
+                  )}
+                </div>
+              </Tooltip>
+            </Fragment>
+          )}
+          {/*
+           * @NOTE Can't use a `button` here since we're already a descendent of
+           * a button, and React will go nuts.
+           * Also, as jsx-a11y points out, it's better to use a `span`/`div`
+           * instead of an `a`, since that implies an anchor
+           */}
+          {!action.status && this.renderCancelInteraction(actionIndex)}
+        </div>
+      );
+    }
+    return null;
+  }
+
+  renderActionItem(action: TransactionType, actionIndex: number) {
+    const { renderActionDescription } = GasStationCard;
+    return (
+      <li
+        /*
+         * @NOTE Nonces are unique, but our mock data might add duplicates.
+         * In case you see duplicate key errors in the console, don't panic.
+         */
+        key={action.nonce}
+        disabled={action.dependency}
+        className={this.getActionItemClasses(action, actionIndex)}
+      >
+        {renderActionDescription(
+          !!action.dependency,
+          action.status,
+          actionIndex,
+        )}
+        {this.renderActionStatus(action, actionIndex)}
+      </li>
+    );
+  }
+
+  render() {
+    const {
+      transaction: { set = [] },
+      expanded = false,
+      onClick,
+    } = this.props;
+    const canWeExpand = expanded && set && set.length;
+    return (
+      <button
+        type="button"
+        className={styles.main}
+        onClick={onClick}
+        disabled={expanded || !onClick}
+      >
+        <Card className={canWeExpand ? styles.cardExpanded : styles.card}>
+          {this.renderSummary()}
+          {canWeExpand ? (
+            <ul className={styles.expanded}>
+              {set.map((action, index) => this.renderActionItem(action, index))}
             </ul>
           ) : null}
         </Card>
