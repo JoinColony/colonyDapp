@@ -72,7 +72,7 @@
   color: var(--danger);
 }
 
-.pending {
+.multisig {
   display: inline-block;
   margin-right: 5px;
   height: 10px;
@@ -160,4 +160,9 @@
     fill: var(--primary);
     stroke: var(--primary);
   }
+}
+
+.multisigAction {
+  composes: multisig;
+  margin-right: 0;
 }
