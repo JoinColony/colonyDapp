@@ -18,6 +18,7 @@ const mockTransactions: Array<TransactionType> = [
     to: '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507',
     amount: createBN(10),
     symbol: 'ETH',
+    transactionFee: createBN(2),
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -27,6 +28,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN(1),
     symbol: 'ETH',
+    transactionFee: createBN(5),
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -36,6 +38,7 @@ const mockTransactions: Array<TransactionType> = [
     to: '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507',
     amount: createBN(300),
     symbol: 'ETH',
+    transactionFee: createBN(50),
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -45,6 +48,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN(52),
     symbol: 'FFLY',
+    transactionFee: createBN(50),
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -54,6 +58,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN(9000),
     symbol: 'FFLY',
+    transactionFee: createBN(100),
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -63,6 +68,7 @@ const mockTransactions: Array<TransactionType> = [
     to: mockUser.walletAddress,
     amount: createBN('0.05'),
     symbol: 'FFLY',
+    transactionFee: createBN(10),
   },
   {
     hash: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
@@ -72,6 +78,7 @@ const mockTransactions: Array<TransactionType> = [
     to: '0x044d83437c464Db2F33b863327ea60444FC587b2',
     amount: createBN(1002),
     symbol: 'FFLY',
+    transactionFee: createBN(10),
   },
 ];
 

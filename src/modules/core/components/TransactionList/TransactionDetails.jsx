@@ -19,6 +19,10 @@ const MSG = defineMessages({
     id: 'admin.TransactionList.TransactionDetails.toText',
     defaultMessage: 'To {recipientString}',
   },
+  feeText: {
+    id: 'admin.TransactionList.TransactionDetails.feeText',
+    defaultMessage: 'Transaction fee for {transaction}',
+  },
 });
 
 /*
@@ -82,7 +86,14 @@ const TaskDetails = ({ title = '', id }: Object) => (
 );
 
 const TransactionDetails = ({
-  transaction: { from = '', to = '', userDetails, colonyDetails, task },
+  transaction: {
+    from = '',
+    to = '',
+    userDetails,
+    colonyDetails,
+    task,
+    transactionFee,
+  },
   showMaskedAddress = true,
   incoming = true,
 }: Props) => (
@@ -155,6 +166,14 @@ const TransactionDetails = ({
           {/*
             * To a user
             */}
+          {transactionFee && (
+            <FormattedMessage
+              {...MSG.feeText}
+              values={{
+                recipientString: transactionFee,
+              }}
+            />
+          )}
           {to && (
             <FormattedMessage
               {...MSG.toText}

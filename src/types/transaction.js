@@ -43,4 +43,5 @@ export type TransactionType = {
     id: number,
     title?: string,
   },
+  transactionFee?: number | string | BigNumber,
 };
