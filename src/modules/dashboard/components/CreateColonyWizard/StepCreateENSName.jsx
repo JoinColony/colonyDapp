@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
+import type { Action } from '~types/index';
 
 import styles from './StepCreateENSName.css';
 
@@ -101,12 +102,16 @@ class StepCreateENSName extends Component<Props> {
   };
 
   render() {
-    const { wizardForm } = this.props;
+    const { wizardForm, wizardValues } = this.props;
     return (
       <ActionForm
         submit={COLONY_CREATE_LABEL}
         error={COLONY_CREATE_LABEL_ERROR}
         success={COLONY_CREATE_LABEL_SUCCESS}
+        setPayload={(action: Action, payload: Object) => ({
+          ...action,
+          payload: { ...wizardValues, ...payload },
+        })}
         validationSchema={validationSchema}
         validate={this.validateDomain}
         {...wizardForm}

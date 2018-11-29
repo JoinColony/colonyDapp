@@ -35,6 +35,12 @@ import {
   TOKEN_INFO_FETCH,
   TOKEN_INFO_FETCH_ERROR,
   TOKEN_INFO_FETCH_SUCCESS,
+  TOKEN_ICON_UPLOAD,
+  TOKEN_ICON_UPLOAD_ERROR,
+  TOKEN_ICON_UPLOAD_SUCCESS,
+  TOKEN_ICON_FETCH,
+  TOKEN_ICON_FETCH_ERROR,
+  TOKEN_ICON_FETCH_SUCCESS,
 } from '../actionTypes';
 
 import {
@@ -174,9 +180,49 @@ function* validateColonyDomain(action: Action): Saga<void> {
   yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS });
 }
 
+/**
+ * Upload a token icon to IPFS.
+ */
+function* uploadTokenIcon(action: Action): Saga<void> {
+  const { data } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    const hash = yield call([ipfsNode, ipfsNode.addString], data);
+
+    yield put({
+      type: TOKEN_ICON_UPLOAD_SUCCESS,
+      payload: { hash },
+    });
+  } catch (error) {
+    yield putError(TOKEN_ICON_UPLOAD_ERROR, error);
+  }
+}
+
+/**
+ * Get the token icon with given IPFS hash.
+ */
+function* getTokenIcon(action: Action): Saga<void> {
+  const { hash } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    const iconData = yield call([ipfsNode, ipfsNode.getString], hash);
+    // TODO: this should be put in the redux store by a reducer
+    yield put({
+      type: TOKEN_ICON_FETCH_SUCCESS,
+      payload: { hash, iconData },
+    });
+  } catch (error) {
+    yield putError(TOKEN_ICON_FETCH_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(TOKEN_CREATE, createTokenSaga);
+  yield takeEvery(TOKEN_ICON_UPLOAD, uploadTokenIcon);
+  yield takeEvery(TOKEN_ICON_FETCH, getTokenIcon);
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.

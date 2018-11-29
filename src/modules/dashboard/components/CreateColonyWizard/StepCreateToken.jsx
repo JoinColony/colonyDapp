@@ -12,7 +12,7 @@ import { ActionForm, FormStatus, Input } from '~core/Fields';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import FileUpload from '~core/FileUpload';
+import { ActionFileUpload } from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
 
 import styles from './StepCreateToken.css';
@@ -21,6 +21,9 @@ import {
   TOKEN_CREATE,
   TOKEN_CREATE_ERROR,
   TOKEN_CREATE_SUCCESS,
+  TOKEN_ICON_UPLOAD,
+  TOKEN_ICON_UPLOAD_ERROR,
+  TOKEN_ICON_UPLOAD_SUCCESS,
 } from '../../actionTypes';
 
 const MSG = defineMessages({
@@ -102,7 +105,16 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
     error={TOKEN_CREATE_ERROR}
     success={TOKEN_CREATE_SUCCESS}
     onSuccess={({ receipt: { contractAddress } }, bag, values) => {
-      nextStep({ ...values, tokenAddress: contractAddress });
+      nextStep({
+        ...values,
+        tokenAddress: contractAddress,
+        tokenIcon:
+          values.tokenIcon &&
+          values.tokenIcon.length &&
+          values.tokenIcon[0].uploaded
+            ? values.tokenIcon[0].uploaded.hash
+            : undefined,
+      });
     }}
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
       setStatus({ error: MSG.errorCreateToken })
@@ -133,12 +145,15 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
             />
           </div>
           <div className={styles.inputFieldWrapper}>
-            <FileUpload
+            <ActionFileUpload
               accept={ACCEPTED_MIME_TYPES}
               maxFileSize={ACCEPTED_MAX_FILE_SIZE}
               name="tokenIcon"
               label={MSG.labelTokenIcon}
               help={MSG.helpTokenIcon}
+              submit={TOKEN_ICON_UPLOAD}
+              success={TOKEN_ICON_UPLOAD_SUCCESS}
+              error={TOKEN_ICON_UPLOAD_ERROR}
             />
           </div>
         </section>
