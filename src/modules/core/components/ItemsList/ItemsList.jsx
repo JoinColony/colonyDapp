@@ -4,7 +4,6 @@ import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import nanoid from 'nanoid';
 
 import type { ConsumableItem } from './ItemsList';
 
@@ -164,7 +163,7 @@ class ItemsList extends Component<Props, State> {
       return null;
     };
     return (
-      <Fragment key={nanoid(id)}>
+      <Fragment key={id}>
         <li
           className={selectedItem === id ? styles.selectedItem : null}
           style={{
