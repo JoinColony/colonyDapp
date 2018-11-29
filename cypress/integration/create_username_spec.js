@@ -5,7 +5,7 @@ describe('Can create a username in dev mode', function() {
   })
   it('TrufflePig button shows a go to colony button which loads dashboard', function() {
     cy.contains('Go to Colony').click()
-    cy.url().should('include', '/dashboard')
+    cy.url({ timeout: 60000 }).should('include', '/dashboard')
   })
   it('The dashboard contains an avatar dropdown where you can enter a username', function() {
     cy.get('[data-test="avatarDropdown"]').click()
