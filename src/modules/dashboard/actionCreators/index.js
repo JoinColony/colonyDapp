@@ -18,8 +18,10 @@ import {
   TASK_WORKER_END_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
-  TASK_MANAGER_RATE_ERROR,
-  TASK_MANAGER_RATE_SUCCESS,
+  TASK_MANAGER_RATE_WORKER_ERROR,
+  TASK_MANAGER_RATE_WORKER_SUCCESS,
+  TASK_WORKER_RATE_MANAGER_ERROR,
+  TASK_WORKER_RATE_MANAGER_SUCCESS,
 } from '../actionTypes';
 
 export const createColony = (
@@ -73,7 +75,7 @@ export const createColonyLabel = (
 export const taskWorkerEnd = (
   identifier: string,
   params: {
-    taskId: string,
+    taskId: number,
     deliverableHash: string,
     secret: string,
   },
@@ -96,7 +98,7 @@ export const taskWorkerEnd = (
 export const taskManagerComplete = (
   identifier: string,
   params: {
-    taskId: string,
+    taskId: number,
   },
   options?: SendOptions,
 ) =>
@@ -114,10 +116,10 @@ export const taskManagerComplete = (
 /**
  * As manager, rate the worker.
  */
-export const taskManagerRate = (
+export const taskManagerRateWorker = (
   identifier: string,
   params: {
-    taskId: string,
+    taskId: number,
     secret: string,
   },
   options?: SendOptions,
@@ -128,7 +130,29 @@ export const taskManagerRate = (
     methodName: 'submitTaskWorkRating',
     identifier,
     lifecycle: {
-      error: TASK_MANAGER_RATE_ERROR,
-      success: TASK_MANAGER_RATE_SUCCESS,
+      error: TASK_MANAGER_RATE_WORKER_ERROR,
+      success: TASK_MANAGER_RATE_WORKER_SUCCESS,
+    },
+  });
+
+/**
+ * As worker, rate the manager.
+ */
+export const taskWorkerRateManager = (
+  identifier: string,
+  params: {
+    taskId: number,
+    secret: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params: { ...params, role: 'MANAGER' },
+    options,
+    methodName: 'submitTaskWorkRating',
+    identifier,
+    lifecycle: {
+      error: TASK_WORKER_RATE_MANAGER_ERROR,
+      success: TASK_WORKER_RATE_MANAGER_SUCCESS,
     },
   });

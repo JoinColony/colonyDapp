@@ -39,6 +39,10 @@ export const putError = (
   return put(action);
 };
 
+/**
+ * Races the `take` of two actions, one success and one error. If success is
+ * first, function returns. If error is first, function throws.
+ */
 export const raceError = (
   successAction: string,
   errorAction: string,

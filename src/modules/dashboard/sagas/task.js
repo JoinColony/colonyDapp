@@ -17,14 +17,18 @@ import {
   TASK_MANAGER_END_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
-  TASK_MANAGER_RATE_ERROR,
-  TASK_MANAGER_RATE_SUCCESS,
+  TASK_MANAGER_RATE_WORKER,
+  TASK_MANAGER_RATE_WORKER_ERROR,
+  TASK_MANAGER_RATE_WORKER_SUCCESS,
+  TASK_WORKER_RATE_MANAGER,
+  TASK_WORKER_RATE_MANAGER_ERROR,
 } from '../actionTypes';
 
 import {
   taskWorkerEnd,
   taskManagerComplete,
-  taskManagerRate,
+  taskManagerRateWorker,
+  taskWorkerRateManager,
 } from '../actionCreators';
 
 function* generateRatingSecret(
@@ -49,6 +53,7 @@ function* generateRatingSecret(
   const { specificationHash } = yield call([getTask, getTask.call], {
     taskId,
   });
+  // TODO; this should be done via gas station once `signMessage` is supported
   const salt = yield call([wallet, wallet.signMessage], {
     message: specificationHash,
   });
@@ -99,8 +104,11 @@ function* taskManagerEndSaga(action: Action): Saga<void> {
     );
 
     // rate worker
-    yield put(taskManagerRate(colonyIdentifier, { taskId, secret }));
-    yield raceError(TASK_MANAGER_RATE_SUCCESS, TASK_MANAGER_RATE_ERROR);
+    yield put(taskManagerRateWorker(colonyIdentifier, { taskId, secret }));
+    yield raceError(
+      TASK_MANAGER_RATE_WORKER_SUCCESS,
+      TASK_MANAGER_RATE_WORKER_ERROR,
+    );
 
     // if we got this far without a throw, success!
     yield put({ type: TASK_MANAGER_END_SUCCESS });
@@ -109,7 +117,45 @@ function* taskManagerEndSaga(action: Action): Saga<void> {
   }
 }
 
+function* taskWorkerRateManagerSaga(action: Action): Saga<void> {
+  const { colonyIdentifier, taskId, rating } = action.payload;
+  try {
+    // generate secret
+    const secret = yield call(
+      generateRatingSecret,
+      colonyIdentifier,
+      taskId,
+      rating,
+    );
+
+    // rate manager
+    yield put(taskWorkerRateManager(colonyIdentifier, { taskId, secret }));
+  } catch (error) {
+    yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error);
+  }
+}
+
+function* taskManagerRateWorkerSaga(action: Action): Saga<void> {
+  const { colonyIdentifier, taskId, rating } = action.payload;
+  try {
+    // generate secret
+    const secret = yield call(
+      generateRatingSecret,
+      colonyIdentifier,
+      taskId,
+      rating,
+    );
+
+    // rate worker
+    yield put(taskManagerRateWorker(colonyIdentifier, { taskId, secret }));
+  } catch (error) {
+    yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error);
+  }
+}
+
 export default function* taskSagas(): any {
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
+  yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
+  yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
 }
