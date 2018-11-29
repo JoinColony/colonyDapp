@@ -80,13 +80,8 @@ const config = {
       },
       {
         test: /\.css$/,
-        include: [
-          path.resolve('node_modules', 'draft-js'),
-        ],
-        use: [
-          'style-loader',
-          'css-loader',
-        ]
+        include: [path.resolve('node_modules', 'draft-js')],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(woff|woff2|png|jpg|gif)$/,
@@ -98,9 +93,9 @@ const config = {
         use: ['@svgr/webpack'],
       },
       /*
-      * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
-      * This loader also runs the images through a svg optimizer. See: https://github.com/svg/svgo#what-it-can-do
-      */
+       * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
+       * This loader also runs the images through a svg optimizer. See: https://github.com/svg/svgo#what-it-can-do
+       */
       {
         test: /\.svg$/,
         include: path.resolve(__dirname, 'src', 'img', 'icons'),
@@ -123,10 +118,12 @@ const config = {
     ],
   },
   plugins: [
-    new Dotenv(),
     // For packages that still rely on babel 6 stuff, e.g. ledger: https://github.com/JoinColony/purser/issues/184
     new webpack.ProvidePlugin({
-      'regeneratorRuntime': '@babel/runtime/regenerator',
+      regeneratorRuntime: '@babel/runtime/regenerator',
+    }),
+    new Dotenv({
+      systemvars: !!process.env.CI,
     }),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
@@ -144,9 +141,11 @@ const config = {
    * See for more details:
    * https://github.com/webpack/webpack-dev-server/issues/66
    */
-  externals:[{
-    xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
-  }],
+  externals: [
+    {
+      xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
+    },
+  ],
 };
 
 module.exports = () => config;
