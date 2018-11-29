@@ -1,10 +1,13 @@
 {
     "mixed": {
-        "equalTo": "${path} must be the same as ${reference}"
+        "equalTo": "${path} must be the same as ${reference}",
+        "lessThanPot": "Not enough funds in the pot"
     },
     "string": {
         "address": "This is not a valid address",
-        "ensAddress": "This is not a valid ENS address",
-        "username": "This is not a valid username"
+        "ensAddress": "This is not a valid ENS address"
+    },
+    "array": {
+        "includes": "The values should include ${searchVal}"
     }
 }
