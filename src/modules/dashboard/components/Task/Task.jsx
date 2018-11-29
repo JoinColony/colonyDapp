@@ -27,9 +27,12 @@ import TaskSkills from '~dashboard/TaskSkills';
 import DialogActionButton from './DialogActionButton.jsx';
 
 import {
-  TASK_SUBMIT_WORK,
-  TASK_SUBMIT_WORK_ERROR,
-  TASK_SUBMIT_WORK_SUCCESS,
+  TASK_WORKER_END,
+  TASK_WORKER_END_ERROR,
+  TASK_WORKER_END_SUCCESS,
+  TASK_MANAGER_END,
+  TASK_MANAGER_END_ERROR,
+  TASK_MANAGER_END_SUCCESS,
 } from '../../actionTypes';
 
 import taskMock from './__datamocks__/mockTask';
@@ -56,6 +59,10 @@ const MSG = defineMessages({
   submitWork: {
     id: 'dashboard.Task.submitWork',
     defaultMessage: 'Submit Work',
+  },
+  rateWorker: {
+    id: 'dashboard.Task.rateWorker',
+    defaultMessage: 'Rate Worker',
   },
 });
 
@@ -185,24 +192,27 @@ class Task extends Component<Props> {
              * @TODO This are temporary buttons to be able to show the rating
              * modals until they will get wired up.
              */}
+                {/* Worker misses deadline and rates manager */}
                 <Button
                   text="Rate Manager"
                   onClick={() =>
                     openDialog('ManagerRatingDialog', {
-                      workSubmitted: false,
+                      submitWork: false,
                     })
                   }
                 />
-                {!task.workSubmitted && (
+                {/* Worker submits work, ends task + rates before deadline */}
+                {
+                  /*! isRatingPeriod && isWorker && !dueDatePassed && */
                   <DialogActionButton
                     dialog="ManagerRatingDialog"
                     options={{
-                      workSubmitted: true,
+                      submitWork: true,
                     }}
                     text={MSG.submitWork}
-                    submit={TASK_SUBMIT_WORK}
-                    success={TASK_SUBMIT_WORK_SUCCESS}
-                    error={TASK_SUBMIT_WORK_ERROR}
+                    submit={TASK_WORKER_END}
+                    success={TASK_WORKER_END_SUCCESS}
+                    error={TASK_WORKER_END_ERROR}
                     setPayload={(action, values) => ({
                       ...action,
                       payload: {
@@ -212,13 +222,30 @@ class Task extends Component<Props> {
                       },
                     })}
                   />
-                )}
-                <Button
-                  text="Rate Worker"
-                  onClick={() =>
-                    openDialog('WorkerRatingDialog', { workSubmitted: false })
-                  }
-                />
+                }
+                {/* Worker misses deadline and manager ends task + rates */}
+                {
+                  /*! isRatingPeriod && isManager && dueDatePassed && */
+                  <DialogActionButton
+                    dialog="WorkerRatingDialog"
+                    options={{
+                      workSubmitted: false,
+                    }}
+                    text={MSG.rateWorker}
+                    submit={TASK_MANAGER_END}
+                    success={TASK_MANAGER_END_SUCCESS}
+                    error={TASK_MANAGER_END_ERROR}
+                    setPayload={(action, values) => ({
+                      ...action,
+                      payload: {
+                        ...values,
+                        colonyIdentifier: task.colonyAddress,
+                        taskId: task.id,
+                      },
+                    })}
+                  />
+                }
+                {/* Worker makes deadline and manager rates worker */}
                 <Button
                   text="Rate Worker (Work Submitted)"
                   onClick={() =>

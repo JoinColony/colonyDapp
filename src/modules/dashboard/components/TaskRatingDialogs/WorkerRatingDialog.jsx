@@ -75,14 +75,13 @@ const validationSchema = yup.object().shape({
   rating: yup.string().required(),
 });
 
-const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
+const WorkerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <Form
       initialValues={{
         rating: '',
       }}
-      /* eslint-disable-next-line no-console */
-      onSubmit={(values: FormValues) => console.log(`[${displayName}]`, values)}
+      onSubmit={close}
       validationSchema={validationSchema}
     >
       {({
@@ -91,7 +90,7 @@ const WorkerRatingDialog = ({ cancel, workSubmitted }: Props) => (
         values: { rating },
       }: FormikProps<FormValues>) => (
         <Fragment>
-          {workSubmitted && (
+          {!workSubmitted && (
             <DialogSection appearance={{ border: 'bottom' }}>
               <section className={styles.workSubmittedSection}>
                 <Heading appearance={{ size: 'medium' }} text={MSG.endTask} />

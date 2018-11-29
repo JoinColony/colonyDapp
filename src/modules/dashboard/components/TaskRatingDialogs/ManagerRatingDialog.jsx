@@ -80,7 +80,7 @@ type Props = {
   /*
    * Based on this display the input to write the work submission description
    */
-  workSubmitted: boolean,
+  submitWork: boolean,
 };
 
 const displayName = 'dashboard.ManagerRatingDialog';
@@ -99,7 +99,7 @@ const validationSchemaExtended = validationSchema.shape({
   workDescription: yup.string().required(MSG.workDescriptionError),
 });
 
-const ManagerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
+const ManagerRatingDialog = ({ close, cancel, submitWork }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <Form
       initialValues={{
@@ -108,7 +108,7 @@ const ManagerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
       }}
       onSubmit={close}
       validationSchema={
-        workSubmitted ? validationSchemaExtended : validationSchema
+        submitWork ? validationSchemaExtended : validationSchema
       }
     >
       {({
@@ -117,7 +117,7 @@ const ManagerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
         values: { rating },
       }: FormikProps<FormValues>) => (
         <Fragment>
-          {workSubmitted && (
+          {submitWork && (
             <DialogSection appearance={{ border: 'bottom' }}>
               <section className={styles.workSubmittedSection}>
                 <Heading

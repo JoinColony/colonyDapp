@@ -14,8 +14,12 @@ import {
   COLONY_CREATE_LABEL_SUCCESS,
   TOKEN_CREATE_ERROR,
   TOKEN_CREATE_SUCCESS,
-  TASK_SUBMIT_WORK_ERROR,
-  TASK_SUBMIT_WORK_SUCCESS,
+  TASK_WORKER_END_ERROR,
+  TASK_WORKER_END_SUCCESS,
+  TASK_MANAGER_COMPLETE_ERROR,
+  TASK_MANAGER_COMPLETE_SUCCESS,
+  TASK_MANAGER_RATE_ERROR,
+  TASK_MANAGER_RATE_SUCCESS,
 } from '../actionTypes';
 
 export const createColony = (
@@ -63,7 +67,10 @@ export const createColonyLabel = (
     },
   });
 
-export const taskSubmitWork = (
+/**
+ * As worker, submit work and rate before due date.
+ */
+export const taskWorkerEnd = (
   identifier: string,
   params: {
     taskId: string,
@@ -78,7 +85,50 @@ export const taskSubmitWork = (
     methodName: 'submitTaskDeliverableAndRating',
     identifier,
     lifecycle: {
-      error: TASK_SUBMIT_WORK_ERROR,
-      success: TASK_SUBMIT_WORK_SUCCESS,
+      error: TASK_WORKER_END_ERROR,
+      success: TASK_WORKER_END_SUCCESS,
+    },
+  });
+
+/**
+ * As manager, end the task if the due date has elapsed.
+ */
+export const taskManagerComplete = (
+  identifier: string,
+  params: {
+    taskId: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'completeTask',
+    identifier,
+    lifecycle: {
+      error: TASK_MANAGER_COMPLETE_ERROR,
+      success: TASK_MANAGER_COMPLETE_SUCCESS,
+    },
+  });
+
+/**
+ * As manager, rate the worker.
+ */
+export const taskManagerRate = (
+  identifier: string,
+  params: {
+    taskId: string,
+    secret: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params: { ...params, role: 'WORKER' },
+    options,
+    methodName: 'submitTaskWorkRating',
+    identifier,
+    lifecycle: {
+      error: TASK_MANAGER_RATE_ERROR,
+      success: TASK_MANAGER_RATE_SUCCESS,
     },
   });
