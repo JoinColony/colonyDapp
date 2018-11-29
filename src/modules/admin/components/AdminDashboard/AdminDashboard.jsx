@@ -71,18 +71,22 @@ type Props = {
 
 const navigationItems: Array<NavigationItem> = [
   {
+    id: 1,
     title: MSG.tabProfile,
     content: <Profile />,
   },
   {
+    id: 2,
     title: MSG.tabTokens,
     content: <Tokens />,
   },
   {
+    id: 3,
     title: MSG.tabTransaction,
     content: <Transactions />,
   },
   {
+    id: 4,
     title: MSG.tabOrganisation,
     content: <Organizations />,
   },
