@@ -20,7 +20,7 @@ import {
   TRANSACTION_EVENT_DATA_RECEIVED,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
-} from '../../actionTypes/index';
+} from '../../actionTypes';
 import {
   transactionEventDataError,
   transactionEventDataReceived,
@@ -29,7 +29,8 @@ import {
   transactionSendError,
   transactionSent,
   transactionUnsuccessfulError,
-} from '../../actionCreators/index';
+} from '../../actionCreators';
+import { oneTransaction } from '../../selectors';
 
 /*
  * Given a promise for sending a transaction, send the transaction and
@@ -197,11 +198,22 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
     while (true) {
       const action = yield take(channel);
 
-      // Put the action to the store as-is
-      yield put(action);
+      // Get the current transaction state from the store
+      const transaction = yield select(oneTransaction, id);
+
+      // Add the transaction to the payload
+      const payload = {
+        ...action.payload,
+        transaction,
+      };
+
+      // Put the action to the store
+      yield put({
+        ...action,
+        payload,
+      });
 
       // Handle lifecycle action types
-      const { payload } = action;
       switch (action.type) {
         case TRANSACTION_ERROR:
           if (errorType) yield put({ type: errorType, payload });

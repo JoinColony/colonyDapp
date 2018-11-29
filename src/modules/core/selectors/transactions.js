@@ -11,8 +11,11 @@ import type { TransactionRecord } from '~types/TransactionRecord';
 type State = { [typeof ns]: { transactions: TransactionsState } };
 
 type TransactionSelector = (tx: TransactionRecord<*, *>) => boolean;
-
 type TransactionsSelector = (state: State) => TransactionsState;
+type OneTransactionSelector = (
+  state: State,
+  id: string,
+) => ?TransactionRecord<*, *>;
 
 /**
  * Individual transaction selectors
@@ -44,6 +47,8 @@ const createdAtDesc = (
  */
 export const allTransactions: TransactionsSelector = state =>
   state[ns].transactions;
+export const oneTransaction: OneTransactionSelector = (state, id) =>
+  state[ns].transactions.get(id);
 export const pendingTransactions: TransactionsSelector = createSelector(
   allTransactions,
   transactions => transactions.filter(isPending).sort(createdAtDesc),
