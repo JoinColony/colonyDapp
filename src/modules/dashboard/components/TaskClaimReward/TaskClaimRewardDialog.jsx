@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import nanoid from 'nanoid';
 
 import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
 
@@ -161,9 +160,12 @@ const TaskClaimRewardDialog = ({
                   suffix={` ${nativeTokenPayout.symbol}`}
                 />
               )}
-              {sortedPayouts.map(({ amount, symbol }, index) => (
+              {sortedPayouts.map(({ amount, symbol }) => (
                 <Numeral
-                  key={nanoid(index)}
+                  /*
+                   * @NOTE Symbol appreance is unique, there can be only one
+                   */
+                  key={symbol}
                   value={amount}
                   suffix={` ${symbol}`}
                 />
@@ -185,9 +187,12 @@ const TaskClaimRewardDialog = ({
                   suffix={` ${nativeTokenPayout.symbol}`}
                 />
               )}
-              {sortedPayouts.map(({ networkFee, symbol }, index) => (
+              {sortedPayouts.map(({ networkFee, symbol }) => (
                 <Numeral
-                  key={nanoid(index)}
+                  /*
+                   * @NOTE Symbol appreance is unique, there can be only one
+                   */
+                  key={symbol}
                   value={networkFee}
                   prefix="- "
                   suffix={` ${symbol}`}
@@ -211,9 +216,12 @@ const TaskClaimRewardDialog = ({
                   suffix={` ${nativeTokenPayout.symbol}`}
                 />
               )}
-              {sortedPayouts.map(({ amount, networkFee, symbol }, index) => (
+              {sortedPayouts.map(({ amount, networkFee, symbol }) => (
                 <Numeral
-                  key={nanoid(index)}
+                  /*
+                   * @NOTE Symbol appreance is unique, there can be only one
+                   */
+                  key={symbol}
                   value={amount - networkFee}
                   suffix={` ${symbol}`}
                 />
