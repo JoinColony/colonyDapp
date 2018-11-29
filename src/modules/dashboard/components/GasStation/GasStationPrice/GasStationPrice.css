@@ -8,8 +8,78 @@
 
 .transactionSpeedContainer {
   composes: contentSection;
+  padding: 10px;
 }
 
 .transactionFeeContainer {
   composes: contentSection;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.transactionFeeMenu {
+  display: flex;
+  align-items: center;
+}
+
+.transactionSpeedMenuButtonContainer {
+  align-self: flex-start;
+}
+
+.transactionSpeedMenuButton {
+  composes: button from '~styles/reset.css';
+
+  & svg {
+    fill: var(--text);
+    stroke: var(--text);
+  }
+}
+
+.stateIsSpeedMenuOpen .transactionSpeedMenuButton,
+.transactionSpeedMenuButton:hover {
+  border-radius: var(--radius-small);
+  background-color: var(--grey-blue-1);
+
+  & svg {
+    fill: var(--sky-blue);
+    stroke: var(--sky-blue);
+  }
+}
+
+.stateIsSpeedMenuOpen .transactionSpeedMenuButton {
+  transform: rotate(180deg);
+}
+
+.transactionFeeActions {
+  display: flex;
+  align-items: center;
+}
+
+.transactionFeeInfo {
+  margin-left: 20px;
+}
+
+.transactionFeeLabel {
+  color: var(--grey-dark);
+}
+
+.transactionDuration {
+  font-size: var(--size-small);
+}
+
+.transactionFeeAmount {
+  margin-right: 20px;
+  text-align: right;
+}
+
+.transactionFeeConfirm {
+  text-align: right;
+  justify-self: flex-end;
+}
+
+.walletPromptContainer {
+  composes: contentSection;
+  padding: 0 10px;
 }
