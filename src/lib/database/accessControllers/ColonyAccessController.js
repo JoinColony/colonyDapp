@@ -40,8 +40,6 @@ class ColonyAccessController extends AbstractAccessController<
       //   'dummy-permission': async (user, context) => true,
       // },
     );
-
-    this._checkWalletAddress();
   }
 
   _extendVerifyContext<Context: Object>(context: Context) {
@@ -63,7 +61,13 @@ class ColonyAccessController extends AbstractAccessController<
       message: signingWalletAddress,
     });
 
-    return `/${this.constructor.type}/${signingWalletAddress}/${signature}`;
+    return `/${
+      this.constructor.type
+    }/colony/${signingWalletAddress}/${signature}`;
+  }
+
+  async setup() {
+    this._checkWalletAddress();
   }
 
   async canAppend(
