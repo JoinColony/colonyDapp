@@ -171,7 +171,9 @@ class GasStation extends Component<Props, State> {
         </div>
         {isTransactionExpanded && (
           <div>
-            <GasStationPrice />
+            <GasStationPrice
+              transaction={transactions[expandedTransactionId]}
+            />
           </div>
         )}
       </div>

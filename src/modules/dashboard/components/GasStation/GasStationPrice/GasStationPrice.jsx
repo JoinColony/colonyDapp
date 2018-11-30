@@ -1,8 +1,11 @@
 /* @flow */
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { fromWei } from 'ethjs-unit';
+import BN from 'bn.js';
 import nanoid from 'nanoid';
 
+import type { TransactionType } from '~types/transaction';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
 import { getMainClasses } from '~utils/css';
@@ -56,7 +59,8 @@ are expensive. We recommend waiting.`,
 });
 
 type Props = {
-  transactionFee: number,
+  isEth: boolean,
+  transaction: TransactionType,
 };
 
 type State = {
@@ -72,6 +76,10 @@ const transactionSpeedOptions: Array<RadioOption> = [
 ];
 
 class GasStationPrice extends Component<Props, State> {
+  static defaultProps = {
+    isEth: false,
+  };
+
   static displayName = 'GasStationPrice';
 
   state = {
@@ -85,14 +93,26 @@ class GasStationPrice extends Component<Props, State> {
 
   componentDidMount() {
     this.mounted = true;
-    const { transactionFee } = this.props;
-    getEthToUsd(transactionFee).then(converted => {
-      if (this.mounted) {
-        this.setState({
-          ethUsd: converted,
-        });
-      }
-    });
+    const {
+      isEth,
+      transaction: { amount },
+    } = this.props;
+
+    // @TODO: get estimated gas cost & use here
+
+    if (isEth) {
+      const amountToConvert =
+        amount instanceof BN ? amount : parseInt(amount, 10);
+      const convertedNum = fromWei(amountToConvert, 'ether');
+
+      getEthToUsd(convertedNum).then(converted => {
+        if (this.mounted) {
+          this.setState({
+            ethUsd: converted,
+          });
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -109,7 +129,10 @@ class GasStationPrice extends Component<Props, State> {
   };
 
   render() {
-    const { transactionFee } = this.props;
+    const {
+      isEth,
+      transaction: { amount, symbol },
+    } = this.props;
     const { ethUsd, isSpeedMenuOpen, speedMenuId } = this.state;
 
     return (
@@ -166,19 +189,26 @@ class GasStationPrice extends Component<Props, State> {
                 </div>
                 <div className={styles.transactionFeeActions}>
                   <div className={styles.transactionFeeAmount}>
-                    <Numeral value={transactionFee} suffix=" ETH" />
-                    <div className={styles.transactionFeeEthUsd}>
-                      {ethUsd ? (
-                        <Numeral
-                          appearance={{ size: 'small', theme: 'grey' }}
-                          prefix="~ "
-                          value={ethUsd}
-                          suffix=" USD"
-                        />
-                      ) : (
-                        <SpinnerLoader />
-                      )}
-                    </div>
+                    {/* @TODO: get estimated gas cost & use here */}
+                    <Numeral
+                      value={amount}
+                      suffix={` ${symbol}`}
+                      unit="ether"
+                    />
+                    {isEth && (
+                      <div className={styles.transactionFeeEthUsd}>
+                        {ethUsd ? (
+                          <Numeral
+                            appearance={{ size: 'small', theme: 'grey' }}
+                            prefix="~ "
+                            value={ethUsd}
+                            suffix=" USD"
+                          />
+                        ) : (
+                          <SpinnerLoader />
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <Button text={{ id: 'button.confirm' }} type="submit" />
