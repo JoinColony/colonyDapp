@@ -19,7 +19,6 @@ import { create, putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
 import { KVStore } from '../../../lib/database/stores';
-// eslint-disable-next-line max-len
 import EthereumWalletAccessController from '../../../lib/database/accessControllers/EthereumWalletAccessController';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';

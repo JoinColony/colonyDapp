@@ -5,7 +5,6 @@ import { call, getContext } from 'redux-saga/effects';
 import { create } from '~utils/saga/effects';
 
 import { DDB as DDBClass } from '../../../../lib/database/index';
-// eslint-disable-next-line max-len
 import PurserIdentityProvider from '../../../../lib/database/PurserIdentityProvider';
 
 export default function* getDDB(): Generator<*, DDBClass, *> {

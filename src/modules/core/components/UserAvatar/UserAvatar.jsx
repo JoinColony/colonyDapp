@@ -11,7 +11,6 @@ import UserAvatarDisplay from './UserAvatarDisplay.jsx';
 
 import { withUser } from '../../../users/composers';
 import { avatarSelector } from '../../../users/selectors';
-// eslint-disable-next-line max-len
 import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionCreators';
 
 type Props = UserAvatarProps & {
