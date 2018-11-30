@@ -5,6 +5,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Card from '~core/Card';
 import Heading from '~core/Heading';
 
+import styles from './GasStationClaimCard.css';
+
 const MSG = defineMessages({
   headingText: {
     id: 'dashboard.GasStationClaimCard.headingText',
@@ -36,8 +38,12 @@ const displayName = 'dashboard.GasStationClaimCard';
  * and the `CardList` grid will add gaps and styles to it
  */
 const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => (
-  /* eslint-disable-next-line no-console */
-  <Card isDismissible onCardDismissed={() => console.log('Dismissed')}>
+  <Card
+    className={styles.main}
+    isDismissible
+    /* eslint-disable-next-line no-console */
+    onCardDismissed={() => console.log('Dismissed')}
+  >
     <Heading
       appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
       text={MSG.headingText}
