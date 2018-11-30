@@ -81,6 +81,7 @@ class GasStation extends Component<Props, State> {
   }
 
   renderExpandedTransaction(transaction: TransactionType) {
+    const { showClaimInfoCard } = this.props;
     return (
       <Fragment>
         <button
@@ -95,19 +96,14 @@ class GasStation extends Component<Props, State> {
           />
           <FormattedMessage {...MSG.returnToSummary} />
         </button>
+        {showClaimInfoCard && <GasStationClaimCard />}
         <GasStationCard transaction={transaction} expanded />
       </Fragment>
     );
   }
 
   render() {
-    const {
-      balance,
-      close,
-      transactions,
-      walletAddress,
-      showClaimInfoCard,
-    } = this.props;
+    const { balance, close, transactions, walletAddress } = this.props;
     const { expandedTransactionId } = this.state;
     return (
       <div
@@ -156,16 +152,11 @@ class GasStation extends Component<Props, State> {
         <div className={styles.transactionsContainer}>
           {transactions && transactions.length > 0 ? (
             <CardList appearance={{ numCols: '1' }}>
-              {expandedTransactionId >= 0 ? (
-                this.renderExpandedTransaction(
-                  transactions[expandedTransactionId],
-                )
-              ) : (
-                <Fragment>
-                  {showClaimInfoCard && <GasStationClaimCard />}
-                  {this.renderTransactionsSummary(transactions)}
-                </Fragment>
-              )}
+              {expandedTransactionId >= 0
+                ? this.renderExpandedTransaction(
+                    transactions[expandedTransactionId],
+                  )
+                : this.renderTransactionsSummary(transactions)}
             </CardList>
           ) : (
             <Heading
