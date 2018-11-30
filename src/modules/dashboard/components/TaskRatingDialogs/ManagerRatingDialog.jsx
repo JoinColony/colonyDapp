@@ -150,7 +150,7 @@ const ManagerRatingDialog = ({ cancel, workSubmitted }: Props) => (
                   <StarRatingRadio
                     /*
                      * @NOTE Value is unique here, you won't have
-                     * two ratings values the be same
+                     * two ratings values be the same
                      */
                     key={value}
                     checked={parseInt(rating, 10) === value}

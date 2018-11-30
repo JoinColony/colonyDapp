@@ -12,7 +12,7 @@ import styles from './VerticalNavigation.css';
 
 export type NavigationItem = {
   /*
-   * Used as a unique key when mapping over the elemetns. Must be set!
+   * Used as a unique key when mapping over the elements. Must be set!
    */
   id: number,
   /*

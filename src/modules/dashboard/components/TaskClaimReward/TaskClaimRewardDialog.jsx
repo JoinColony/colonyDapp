@@ -163,7 +163,7 @@ const TaskClaimRewardDialog = ({
               {sortedPayouts.map(({ amount, symbol }) => (
                 <Numeral
                   /*
-                   * @NOTE Symbol appreance is unique, there can be only one
+                   * @NOTE Symbol appearance is unique, there can be only one
                    */
                   key={symbol}
                   value={amount}
@@ -190,7 +190,7 @@ const TaskClaimRewardDialog = ({
               {sortedPayouts.map(({ networkFee, symbol }) => (
                 <Numeral
                   /*
-                   * @NOTE Symbol appreance is unique, there can be only one
+                   * @NOTE Symbol appearance is unique, there can be only one
                    */
                   key={symbol}
                   value={networkFee}
@@ -219,7 +219,7 @@ const TaskClaimRewardDialog = ({
               {sortedPayouts.map(({ amount, networkFee, symbol }) => (
                 <Numeral
                   /*
-                   * @NOTE Symbol appreance is unique, there can be only one
+                   * @NOTE Symbol appearance is unique, there can be only one
                    */
                   key={symbol}
                   value={amount - networkFee}
