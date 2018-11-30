@@ -61,7 +61,7 @@
 
 .returnToSummary {
   /*
-   * @NOTE We're still inside the CardList grid, so we need to counter the grip-gap
+   * @NOTE We're still inside the CardList grid, so we need to counter the grid-gap
    * in order to reduce the spacing between this button and the expanded card
    */
   margin: -5px 0 -10px;

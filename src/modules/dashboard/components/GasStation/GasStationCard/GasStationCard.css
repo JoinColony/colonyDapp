@@ -204,12 +204,9 @@
    * @NOTE This breaks design consistency
    *
    * This does not a use a state symbol like all the others, it just displays
-   * skewed copy unde the action's name.
+   * skewed copy under the action's name.
    *
    * Because of this, we must *heavily* use negative margins to align text properly.
-   *
-   * This also applies to the font-size since I had to hard code it in. It's smaller
-   * than anything we use in the dApp
    */
   margin: -1px 0 -12px 14px;
   font-size: 10px;

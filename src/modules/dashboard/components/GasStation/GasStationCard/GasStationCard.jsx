@@ -49,7 +49,7 @@ const MSG = defineMessages({
     defaultMessage: 'Failed transaction. Try again.',
   },
   /*
-   * @NOTE Below this line are just temporary message desriptors as the actual
+   * @NOTE Below this line are just temporary message descriptors as the actual
    * name / path combinations for the various actions-transactions
    * should be implemented in #542
    */
@@ -359,12 +359,6 @@ class GasStationCard extends Component<Props, State> {
               </Tooltip>
             </Fragment>
           )}
-          {/*
-           * @NOTE Can't use a `button` here since we're already a descendent of
-           * a button, and React will go nuts.
-           * Also, as jsx-a11y points out, it's better to use a `span`/`div`
-           * instead of an `a`, since that implies an anchor
-           */}
           {!action.status && this.renderCancelInteraction(actionIndex)}
         </div>
       );
