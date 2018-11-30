@@ -1,15 +1,25 @@
 import test from 'ava';
+import * as yup from 'yup';
 import { create as createWallet } from '@colony/purser-software';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
+import { FeedStore } from '../src/lib/database/stores';
 import DDBTestFactory from './utils/DDBTestFactory';
 import '../src/modules/validations';
-import { DDB, SCHEMAS } from '../src/lib/database';
+import { DDB } from '../src/lib/database';
 
 const factory = new DDBTestFactory('feedStore.test');
 
-test.before(async t => {
-  DDB.registerSchema('userActivity', SCHEMAS.UserActivity);
+const feedBlueprint = {
+  getAccessController() {},
+  name: 'activity',
+  schema: yup.object({
+    userAction: yup.string().required(),
+    colonyName: yup.string().required(),
+  }),
+  type: FeedStore,
+};
 
+test.before(async t => {
   const wallet = await createWallet();
 
   const identityProvider = new PurserIdentityProvider(wallet);
@@ -29,7 +39,7 @@ test.after.always(async t => {
 
 test('The all() method returns events in the order added', async t => {
   const { ddb } = t.context;
-  const store = await ddb.createStore('feed', 'userActivity');
+  const store = await ddb.createStore(feedBlueprint);
   const firstActivity = {
     colonyName: 'Zombies',
     userAction: 'joinedColony',
@@ -51,7 +61,7 @@ test('The all() method returns events in the order added', async t => {
 
 test('The all() method can limit to most recent events', async t => {
   const { ddb } = t.context;
-  const store = await ddb.createStore('feed', 'userActivity');
+  const store = await ddb.createStore(feedBlueprint);
   const firstActivity = {
     colonyName: 'Zombies',
     userAction: 'joinedColony',
@@ -76,7 +86,7 @@ test('The all() method can limit to most recent events', async t => {
 test('Can remove events using hash', async t => {
   const { ddb } = t.context;
 
-  const store = await ddb.createStore('feed', 'userActivity');
+  const store = await ddb.createStore(feedBlueprint);
   const firstActivity = {
     colonyName: 'Zombies',
     userAction: 'joinedColony',
@@ -101,7 +111,7 @@ test('Can remove events using hash', async t => {
 test('Can filter events with gt and gte, but not reverse', async t => {
   const { ddb } = t.context;
 
-  const store = await ddb.createStore('feed', 'userActivity');
+  const store = await ddb.createStore(feedBlueprint);
   const firstActivity = {
     colonyName: 'Zombies',
     userAction: 'joinedColony',

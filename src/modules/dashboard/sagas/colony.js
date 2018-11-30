@@ -19,11 +19,10 @@ import type { Action } from '~types/index';
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
-// A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
-// `decimals` entries included.
-import TokenABI from './TokenABI.json';
-
+import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
+
+import { colonyStore } from '../stores';
 
 import {
   COLONY_CREATE,
@@ -48,6 +47,10 @@ import {
   createToken,
   createColonyLabel,
 } from '../actionCreators';
+
+// A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
+// `decimals` entries included.
+import TokenABI from './TokenABI.json';
 
 /**
  * Rather than use e.g. the Etherscan loader and make more/larger requests than
@@ -133,9 +136,9 @@ function* createColonyLabelSaga({
     tokenIcon,
   },
 }: Action): Saga<void> {
-  const ddb = yield getContext('ddb');
+  const ddb: DDB = yield getContext('ddb');
   // TODO: No access controller available yet
-  const store = yield call([ddb, ddb.createStore], 'keyvalue', 'colony');
+  const store = yield call([ddb, ddb.createStore], colonyStore);
   // TODO: we might want to change that later in the colony store. Maybe have a "meta" property?
   yield call([store, store.set], {
     colonyId,

@@ -15,15 +15,16 @@ import {
 
 import type { Action, UserRecord } from '~types/index';
 
-import { create, putError } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
+import { DDB } from '../../../lib/database';
 import { KVStore } from '../../../lib/database/stores';
-import EthereumWalletAccessController from '../../../lib/database/accessControllers/EthereumWalletAccessController';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
+import { userProfileStore } from '../stores';
 
 import {
   USER_PROFILE_FETCH,
@@ -49,22 +50,22 @@ import {
 import { registerUserLabel } from '../actionCreators';
 
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
-  const ddb = yield getContext('ddb');
+  const ddb: DDB = yield getContext('ddb');
 
-  const accessController = yield create(
-    EthereumWalletAccessController,
-    walletAddress,
+  const store = yield call(
+    [ddb, ddb.getStore],
+    userProfileStore,
+    `user.${walletAddress}`,
+    {
+      walletAddress,
+    },
   );
-
-  const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
-    accessController,
-  });
   if (store) {
     yield call([store, store.load]);
     return store;
   }
-  return yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
-    accessController,
+  return yield call([ddb, ddb.createStore], userProfileStore, {
+    walletAddress,
   });
 }
 
@@ -76,16 +77,16 @@ function* updateProfile(action: Action): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
 
-    const ddb = yield getContext('ddb');
+    const ddb: DDB = yield getContext('ddb');
 
-    const accessController = yield create(
-      EthereumWalletAccessController,
-      walletAddress,
+    const store = yield call(
+      [ddb, ddb.getStore],
+      userProfileStore,
+      `user.${walletAddress}`,
+      {
+        walletAddress,
+      },
     );
-
-    const store = yield call([ddb, ddb.getStore], `user.${walletAddress}`, {
-      accessController,
-    });
 
     // if user is not allowed to write to store, this should throw an error
     // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
@@ -112,18 +113,18 @@ function* fetchProfile(action: Action): Saga<void> {
 
   const walletAddress = yield select(walletAddressSelector);
 
-  const ddb = yield getContext('ddb');
+  const ddb: DDB = yield getContext('ddb');
 
   // should throw an error if username is not registered
   try {
-    const accessController = yield create(
-      EthereumWalletAccessController,
-      walletAddress,
+    const store = yield call(
+      [ddb, ddb.getStore],
+      userProfileStore,
+      `user.${username}`,
+      {
+        walletAddress,
+      },
     );
-
-    const store = yield call([ddb, ddb.getStore], `user.${username}`, {
-      accessController,
-    });
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
 
@@ -164,17 +165,12 @@ function* validateUsername(action: Action): Saga<void> {
 function* createUsername(action: Action): Saga<void> {
   const { username } = action.payload;
 
-  const ddb = yield getContext('ddb');
+  const ddb: DDB = yield getContext('ddb');
   const orbitDBPath = yield select(orbitAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
 
-  const accessController = yield create(
-    EthereumWalletAccessController,
+  const store = yield call([ddb, ddb.getStore], userProfileStore, orbitDBPath, {
     walletAddress,
-  );
-
-  const store = yield call([ddb, ddb.getStore], orbitDBPath, {
-    accessController,
   });
 
   yield call([store, store.set], { username, walletAddress });
@@ -207,8 +203,10 @@ function* fetchAvatar(action: Action): Saga<void> {
 
 function* uploadAvatar(action: Action): Saga<void> {
   const { data } = action.payload;
+
   const ipfsNode = yield getContext('ipfsNode');
-  const ddb = yield getContext('ddb');
+  const ddb: DDB = yield getContext('ddb');
+
   const orbitDBPath = yield select(orbitAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
 
@@ -217,13 +215,14 @@ function* uploadAvatar(action: Action): Saga<void> {
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     // if we uploaded okay, put the hash in the user orbit store
-    const accessController = yield create(
-      EthereumWalletAccessController,
-      walletAddress,
+    const store = yield call(
+      [ddb, ddb.getStore],
+      userProfileStore,
+      orbitDBPath,
+      {
+        walletAddress,
+      },
     );
-    const store = yield call([ddb, ddb.getStore], orbitDBPath, {
-      accessController,
-    });
     yield call([store, store.set], 'avatar', hash);
 
     yield put({
@@ -236,18 +235,20 @@ function* uploadAvatar(action: Action): Saga<void> {
 }
 
 function* removeAvatar(): Saga<void> {
-  const ddb = yield getContext('ddb');
+  const ddb: DDB = yield getContext('ddb');
+
   const orbitDBPath = yield select(orbitAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
 
   try {
-    const accessController = yield create(
-      EthereumWalletAccessController,
-      walletAddress,
+    const store = yield call(
+      [ddb, ddb.getStore],
+      userProfileStore,
+      orbitDBPath,
+      {
+        walletAddress,
+      },
     );
-    const store = yield call([ddb, ddb.getStore], orbitDBPath, {
-      accessController,
-    });
 
     yield call([store, store.set], 'avatar', undefined);
     const user = yield call(getAll, store);

@@ -11,9 +11,6 @@ export type { ENSResolverType } from './ENSResolver';
 
 export type IPFSHash = string;
 
-// TODO use yup's `object` type
-export type Schema = Object;
-
 // IPFS store types
 export type StoreType =
   | 'counter'
@@ -25,4 +22,11 @@ export type StoreType =
 export type OrbitDBAddress = {
   root: string,
   path: string,
+};
+
+export type OrbitStoreOpenOpts = {
+  localOnly?: boolean,
+  directory?: string,
+  overwrite?: boolean,
+  replicate?: boolean,
 };

@@ -10,19 +10,17 @@ import type { OrbitDBStore } from '../types/index';
  * and perform certain validations based on the store type.
  */
 class Store {
+  static orbitType: string;
+
   +_orbitStore: OrbitDBStore;
 
   _schema: ObjectSchema;
 
-  _schemaId: string;
+  _name: string;
 
-  constructor(
-    orbitStore: OrbitDBStore,
-    schemaId: string,
-    schema: ObjectSchema,
-  ) {
+  constructor(orbitStore: OrbitDBStore, name: string, schema: ObjectSchema) {
     this._orbitStore = orbitStore;
-    this._schemaId = schemaId;
+    this._name = name;
     this._schema = schema;
   }
 

@@ -12,48 +12,27 @@ import type {
   IdentityProvider,
   OrbitDBAddress,
   OrbitDBStore,
-  StoreType,
 } from './types';
 
+import { Store } from './stores';
+
 import IPFSNode from '../ipfs';
-import { Store, FeedStore, KVStore } from './stores';
 
 const generateId = () => generate(urlDictionary, 21);
 
 // TODO: better typing
 type Resolver = Object;
 
-type AC = AccessController<Identity, IdentityProvider<Identity>>;
-
-type OrbitStoreCreateOpts = {
-  accessController?: AC,
-  directory?: string,
-  write?: string[],
-  overwrite?: boolean,
-  replicate?: boolean,
-};
-
-type OrbitStoreOpenOpts = {
-  localOnly?: boolean,
-  directory?: string,
-  overwrite?: boolean,
-  replicate?: boolean,
+type StoreBlueprint = {
+  name: string,
+  schema: ObjectSchema,
+  getAccessController: (storeProps?: Object) => AccessController<*, *> | void,
+  type: typeof Store,
 };
 
 type StoreIdentifier = string | OrbitDBAddress;
 
 const { isValidAddress, parseAddress } = OrbitDB;
-
-const STORE_CLASSES = {
-  keyvalue: KVStore,
-  // TODO: more to come
-  counter: Store,
-  eventlog: Store,
-  feed: FeedStore,
-  docstore: Store,
-};
-
-const SCHEMAS: Map<string, ObjectSchema> = new Map();
 
 /**
  * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
@@ -66,14 +45,6 @@ class DDB {
   _stores: Map<string, Store>;
 
   _resolvers: Map<string, Resolver>;
-
-  static registerSchema(schemaId: string, schema: ObjectSchema) {
-    SCHEMAS.set(schemaId, schema);
-  }
-
-  static getStoreClass(storeType: StoreType) {
-    return STORE_CLASSES[storeType];
-  }
 
   static async createDatabase<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
@@ -94,42 +65,14 @@ class DDB {
     });
   }
 
-  addResolver(resolverId: string, resolver: Resolver) {
-    this._resolvers.set(resolverId, resolver);
-  }
-
-  async getStore(
-    identifier: StoreIdentifier,
-    options?: OrbitStoreOpenOpts,
-  ): Promise<Store | null> {
-    const address = await this._getStoreAddress(identifier);
-    if (!address) return null;
-    const cachedStore = this._getCachedStore(address);
-    if (cachedStore) return cachedStore;
-    const schemaId = address.path.split('.')[0];
-    if (!SCHEMAS.has(schemaId)) {
-      throw new Error(`Schema ${schemaId} not found in schemas.`);
-    }
-    const orbitStore: OrbitDBStore = await this._orbitNode.open(
-      address,
-      options,
-    );
-    return this._makeStore(orbitStore, schemaId, orbitStore.type);
-  }
-
   _makeStore(
     orbitStore: OrbitDBStore,
-    schemaId: string,
-    storeType: StoreType,
+    { name, schema, type: StoreClass }: StoreBlueprint,
   ): Store {
-    const schema = SCHEMAS.get(schemaId);
     if (!schema) {
-      throw new Error(
-        `Store schema with id ${schemaId} not found. Did you register it?`,
-      );
+      throw new Error(`Schema for store ${name} not found. Did you define it?`);
     }
-    const StoreClass = DDB.getStoreClass(storeType);
-    const store = new StoreClass(orbitStore, schemaId, schema);
+    const store = new StoreClass(orbitStore, name, schema);
     const { root, path } = store.address;
     this._stores.set(`${root}/${path}`, store);
     return store;
@@ -184,26 +127,66 @@ class DDB {
     return identifier;
   }
 
-  async createStore(
-    type: StoreType,
-    schemaId: string,
-    options?: OrbitStoreCreateOpts = {},
-  ) {
-    if (schemaId.includes('.')) {
-      throw new Error('A dot (.) in schemaIds is not allowed');
+  addResolver(resolverId: string, resolver: Resolver) {
+    this._resolvers.set(resolverId, resolver);
+  }
+
+  async createStore(blueprint: StoreBlueprint, storeProps?: Object) {
+    const { getAccessController, name, type: StoreClass } = blueprint;
+    if (name.includes('.')) {
+      throw new Error('A dot (.) in store names is not allowed');
     }
-    const id = `${schemaId}.${generateId()}`;
-    if (!options.accessController) {
+    const id = `${name}.${generateId()}`;
+
+    const accessController = getAccessController(storeProps);
+    if (!accessController) {
       console.warn(
-        `Store with schema ${schemaId} created without an accessController`,
+        `Store with schema ${name} created without an accessController`,
       );
     }
+
     const orbitStore: OrbitDBStore = await this._orbitNode.create(
       id,
-      type,
-      options,
+      StoreClass.orbitType,
+      // We might want to use more options in the future. Just add them here
+      { accessController },
     );
-    return this._makeStore(orbitStore, schemaId, type);
+    return this._makeStore(orbitStore, blueprint);
+  }
+
+  async getStore(
+    blueprint: StoreBlueprint,
+    identifier: StoreIdentifier,
+    storeProps?: Object,
+  ): Promise<Store | null> {
+    const { name: bluePrintName, getAccessController, type } = blueprint;
+
+    const address = await this._getStoreAddress(identifier);
+    if (!address) return null;
+    const cachedStore = this._getCachedStore(address);
+    if (cachedStore) return cachedStore;
+
+    const name = address.path.split('.')[0];
+    if (name !== bluePrintName) {
+      throw new Error(`This is not the correct blueprint for store ${name}`);
+    }
+
+    const accessController = getAccessController(storeProps);
+    if (!accessController) {
+      console.warn(
+        `Store with schema ${name} created without an accessController`,
+      );
+    }
+
+    const orbitStore: OrbitDBStore = await this._orbitNode.open(address, {
+      accessController,
+    });
+    if (orbitStore.type !== type.orbitType) {
+      throw new Error(
+        `${orbitStore.type} is not the correct type for store ${name}`,
+      );
+    }
+    return this._makeStore(orbitStore, blueprint);
   }
 
   async stop() {
