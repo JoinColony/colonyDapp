@@ -70,44 +70,56 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
     return profileStore;
   }
 
-  profileStore = yield call([ddb, ddb.createStore], `user.${walletAddress}`, {
+  profileStore = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
     accessController,
   });
 
-  const activitiesStore = yield getUserActivitiesStore(walletAddress);
-
-  yield call(
-    [profileStore, profileStore.update],
-    'databases',
-    'userActivities',
-    activitiesStore.address.toString(),
-  );
+  try {
+    const databases = yield call([profileStore, profileStore.get], 'databases');
+    const activitiesStore = yield call(
+      getOrCreateUserActivitiesStore,
+      walletAddress,
+      databases ? databases.activities : null,
+    );
+    yield call(
+      [profileStore, profileStore.update],
+      'databases',
+      'userActivities',
+      activitiesStore.address.toString(),
+    );
+  } catch (error) {
+    yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
+  }
 
   return profileStore;
 }
 
 export function* getOrCreateUserActivitiesStore(
   walletAddress: string,
+  activitiesStoreAddress: string | null,
 ): Saga<KVStore> {
   const ddb = yield getContext('ddb');
   const accessController = yield create(
-    EthereumAccessController,
+    EthereumWalletAccessController,
     walletAddress,
   );
-  let activitiesStore;
-  activitiesStore = yield call([ddb, ddb.getStore], 'feed', 'userActivity', {
-    accessController,
-  });
 
-  if (activitiesStore) return activitiesStore;
+  let activitiesStore;
+  if (activitiesStoreAddress) {
+    activitiesStore = yield call([ddb, ddb.getStore], activitiesStoreAddress, {
+      accessController,
+    });
+
+    return activitiesStore;
+  }
 
   activitiesStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
     accessController,
   });
   const joinedEvent = {
-    colonyName: '',
+    colonyName: 'Welcome to Colony',
     userAction: 'joinedColony',
-    createdAt: Date.now(),
+    createdAt: new Date(),
   };
   yield call([activitiesStore, activitiesStore.add], joinedEvent);
 
