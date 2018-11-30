@@ -1,7 +1,8 @@
 /* @flow */
 import React from 'react';
-import BN from 'bn.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
+
+import type { TaskPayout, UserRecord } from '~types/';
 
 import styles from './Assignment.css';
 
@@ -32,22 +33,10 @@ const MSG = defineMessages({
   },
 });
 
-// Until these types are fully specified we can user these
-type Payout = {
-  symbol: string,
-  amount: number | string | BN,
-};
-
-type UserData = {
-  walletAddress: string,
-  username: string,
-  displayName: string,
-};
-
 type Props = {
-  assignee?: UserData,
+  assignee?: UserRecord,
   /** Array of payouts per token that has been set for a task */
-  payouts?: Array<Payout>,
+  payouts?: Array<TaskPayout>,
   /** current user reputation */
   reputation?: number,
   /** The assignment has to be confirmed first and can therefore appear as pending,

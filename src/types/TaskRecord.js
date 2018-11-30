@@ -2,6 +2,9 @@
 
 import type { RecordOf } from 'immutable';
 import type { UserRecord } from './UserRecord';
+import type { AddressOrENSName } from '../lib/ColonyManager/types';
+
+import { TASK_STATE } from '../modules/dashboard/records';
 
 export type TaskPayout = {
   symbol: string,
@@ -29,14 +32,23 @@ export type TaskFeedItemRating = {|
 
 export type TaskFeedItem = TaskFeedItemComment | TaskFeedItemRating;
 
+export type TaskCurrentState = $Keys<typeof TASK_STATE>;
+
 export type TaskProps = {
   id: number,
   title: string,
+  dueDate?: Date,
   reputation: number, // TODO: should be BigNumber
   payouts: Array<TaskPayout>,
+  colonyIdentifier: AddressOrENSName,
   creator: string,
-  assignee: UserRecord,
+  assignee?: UserRecord,
   feedItems: Array<TaskFeedItem>,
+  currentState: TaskCurrentState,
+  workerHasRated: boolean,
+  managerHasRated: boolean,
+  workerPayoutClaimed: boolean,
+  managerPayoutClaimed: boolean,
 };
 
 export type TaskRecord = RecordOf<TaskProps>;
