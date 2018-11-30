@@ -300,7 +300,11 @@ class GasStationCard extends Component<Props, State> {
                      */
                     action.hash || 0
                   }`}
-                  text={{ id: 'etherscan' }}
+                  /*
+                   * @NOTE As it was pointed out, this is a name, not a value
+                   * that needs to be internationalized and translated
+                   */
+                  text="Etherscan"
                   className={styles.actionInteraction}
                 />
               )}
