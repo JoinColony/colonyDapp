@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import type { Element, Node } from 'react';
-import nanoid from 'nanoid';
 import { FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, VerticalTabList, TabPanel } from '~core/Tabs';
@@ -12,6 +11,10 @@ import type { MessageDescriptor } from 'react-intl';
 import styles from './VerticalNavigation.css';
 
 export type NavigationItem = {
+  /*
+   * Used as a unique key when mapping over the elements. Must be set!
+   */
+  id: number,
   /*
    * Name for the tab entry.
    * Can be anything: message descriptor, string, or even an React Element
@@ -86,9 +89,9 @@ class VerticalNavigation extends Component<Props, State> {
             >
               <VerticalTabList className={styles.tabList}>
                 {children}
-                {navigationItems.map(({ title }, index) => (
+                {navigationItems.map(({ title, id }) => (
                   <Tab
-                    key={nanoid(index)}
+                    key={id}
                     className={styles.tab}
                     selectedClassName={styles.tabSelected}
                     disabledClassName={styles.tabDisabled}
@@ -101,8 +104,8 @@ class VerticalNavigation extends Component<Props, State> {
                   </Tab>
                 ))}
               </VerticalTabList>
-              {navigationItems.map(({ content }, index) => (
-                <TabPanel key={nanoid(index)} className={styles.tabPanel}>
+              {navigationItems.map(({ content, id }) => (
+                <TabPanel key={id} className={styles.tabPanel}>
                   <div className={styles.contentWrapper}>{content}</div>
                 </TabPanel>
               ))}

@@ -5,7 +5,6 @@ import type { FormikProps } from 'formik';
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import nanoid from 'nanoid';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
@@ -149,7 +148,11 @@ const ManagerRatingDialog = ({ cancel, workSubmitted }: Props) => (
               <section className={styles.ratingSection}>
                 {[3, 2, 1].map(value => (
                   <StarRatingRadio
-                    key={nanoid(value)}
+                    /*
+                     * @NOTE Value is unique here, you won't have
+                     * two ratings values be the same
+                     */
+                    key={value}
                     checked={parseInt(rating, 10) === value}
                     name="rating"
                     value={value}
