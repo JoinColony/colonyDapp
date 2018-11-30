@@ -17,9 +17,9 @@ import { replace } from 'connected-react-router';
 
 import type { Action } from '~types/index';
 
-import { COLONY_HOME_ROUTE } from '~routes';
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
+import { CURRENT_COLONY_UPDATE } from '../../core/actionTypes';
 
 import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
@@ -228,16 +228,17 @@ function* getTokenIcon(action: Action): Saga<void> {
 /*
  * Redirect to the colony home for the given (newly-registered) label
  */
-function* createColonyLabelSuccessSaga(action: Action): Saga<void> {
-  const {
-    payload: {
-      // FIXME this event data is not available yet (waiting on colonyNetwork#443)
-      // so we will need to create a workaround to get the label from this action.
-      eventData: { address, label }, // eslint-disable-line
-    },
-  } = action;
-  yield put(replace(COLONY_HOME_ROUTE.replace(':colonyLabel', label)));
+function* createColonyLabelSuccessSaga({
+  payload: {
+    params: { colonyName: name },
+  },
+}: Action): Saga<void> {
+  // TODO should this really be here? what about fetching it?
+  yield put(CURRENT_COLONY_UPDATE, { name });
+  yield put(replace(`colony/${name}`));
 }
+
+// TODO should we use COLONY_CREATE_LABEL_ERROR to put CURRENT_COLONY_REMOVE?
 
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE, createColonySaga);

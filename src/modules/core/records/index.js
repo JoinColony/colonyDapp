@@ -1,6 +1,6 @@
 /* @flow */
 
+import Colony from './Colony';
 import Transaction from './Transaction';
 
-// eslint-disable-next-line import/prefer-default-export
-export { Transaction };
+export { Colony, Transaction };

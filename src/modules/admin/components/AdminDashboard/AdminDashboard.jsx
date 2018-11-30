@@ -100,9 +100,9 @@ const AdminDashboard = ({ colonyName, colonyLabel, location }: Props) => (
       <div className={styles.backNavigation}>
         <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
         <NavLink
-          to={COLONY_HOME_ROUTE.replace(':colonyLabel', colonyLabel)}
+          to={`colony/${colonyName}`}
           text={MSG.backButton}
-          textValues={{ colonyName }}
+          textValues={{ colonyLabel }}
         />
       </div>
       <div className={styles.headingWrapper}>
@@ -121,18 +121,18 @@ const AdminDashboard = ({ colonyName, colonyLabel, location }: Props) => (
 );
 
 AdminDashboard.defaultProps = {
-  colonyLabel: 'meta-colony',
-  colonyName: 'The Meta Colony',
+  colonyName: 'meta-colony',
+  colonyLabel: 'The Meta Colony',
 };
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
 // FIXME use selectors
 export default connect(
-  ({ router: { location, props: { colonyLabel } = {} } }, props) => ({
+  ({ router: { location, props: { colonyName } = {} } }, props) => ({
     ...props,
     location,
-    colonyLabel,
+    colonyName,
     // FIXME add colonyName
   }),
   null,

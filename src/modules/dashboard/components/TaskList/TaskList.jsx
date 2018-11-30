@@ -7,16 +7,16 @@ import { Table, TableBody } from '~core/Table';
 import TaskListItem from './TaskListItem.jsx';
 
 type Props = {
-  colonyLabel: string,
+  colonyName: string,
   // TODO: type better as soon as actual structure is known
   tasks: Array<Object>,
 };
 
-const TaskList = ({ colonyLabel, tasks }: Props) => (
+const TaskList = ({ colonyName, tasks }: Props) => (
   <Table scrollable>
     <TableBody>
       {tasks.map(task => (
-        <TaskListItem key={task.id} task={task} colonyLabel={colonyLabel} />
+        <TaskListItem key={task.id} task={task} colonyName={colonyName} />
       ))}
     </TableBody>
   </Table>

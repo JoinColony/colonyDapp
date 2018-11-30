@@ -73,7 +73,7 @@ export const createColonyLabel = (
     identifier,
     lifecycle: {
       error: COLONY_CREATE_LABEL_ERROR,
-      success: COLONY_CREATE_LABEL_SUCCESS,
+      eventDataReceived: COLONY_CREATE_LABEL_SUCCESS,
     },
   });
 

@@ -128,7 +128,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, colonyLabel } = this.props;
+    const { walletAddress, colonyName } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -170,7 +170,7 @@ class ColonyHome extends Component<Props, State> {
             </TabList>
             <TabPanel>
               {tasks && tasks.length ? (
-                <TaskList colonyLabel={colonyLabel} tasks={tasks} />
+                <TaskList colonyName={colonyName} tasks={tasks} />
               ) : (
                 <Fragment>
                   <p className={styles.noTasks}>
