@@ -10,7 +10,7 @@ const mockInbox = [
       walletAddress: '0xF822d689a2e10c1511dcD54dF5Ce43a9d393e75c',
       username: 'Ragny',
     },
-    colonyName: 'The Nords',
+    colonyLabel: 'The Nords',
   },
   {
     id: 1,
@@ -25,7 +25,7 @@ const mockInbox = [
       unit: '$',
       value: 10.3,
     },
-    colonyName: 'Cool Clny',
+    colonyLabel: 'Cool Clny',
     onClickRoute: '/colony/1',
   },
   {
@@ -37,7 +37,7 @@ const mockInbox = [
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
     },
-    colonyName: 'Cool Clny',
+    colonyLabel: 'Cool Clny',
     otherUser: 'Another Person',
   },
   {
@@ -49,7 +49,7 @@ const mockInbox = [
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
     },
-    colonyName: 'Cool Clny',
+    colonyLabel: 'Cool Clny',
     otherUser: 'Another Person',
   },
   {
@@ -61,7 +61,7 @@ const mockInbox = [
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
     },
-    colonyName: 'Cool Clny',
+    colonyLabel: 'Cool Clny',
     otherUser: 'Another Person',
   },
   {
@@ -73,7 +73,7 @@ const mockInbox = [
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
     },
-    colonyName: 'Other Colony',
+    colonyLabel: 'Other Colony',
     domainName: '#Skillz',
     taskName: 'Import Task',
   },
@@ -86,7 +86,7 @@ const mockInbox = [
       walletAddress: '0xbeefdead',
       username: 'Ragnar Lothbrok',
     },
-    colonyName: 'YetAnotherClny',
+    colonyLabel: 'YetAnotherClny',
     taskName: 'Import Task',
   },
 ];
