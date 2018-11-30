@@ -8,14 +8,14 @@ import styles from './Task.css';
 
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
-import Button from '~core/Button';
+import Button, { DialogActionButton } from '~core/Button';
 import Assignment from '~core/Assignment';
 
 /*
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { Action, TaskRecord, UserRecord } from '~types/';
+import type { TaskRecord, UserRecord } from '~types/';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
@@ -25,7 +25,6 @@ import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
-import DialogActionButton from './DialogActionButton.jsx';
 
 import { TASK_STATE } from '../../records';
 
@@ -113,19 +112,15 @@ class Task extends Component<Props> {
     });
   };
 
-  setPayload = (action: Action, values: Object) => {
+  get additionalValues() {
     const {
       task: { colonyIdentifier, id: taskId },
     } = this.props;
     return {
-      ...action,
-      payload: {
-        ...values,
-        colonyIdentifier,
-        taskId,
-      },
+      colonyIdentifier,
+      taskId,
     };
-  };
+  }
 
   get isWorker() {
     const {
@@ -174,7 +169,7 @@ class Task extends Component<Props> {
       userClaimedProfile = false,
     } = this.props;
     const {
-      setPayload,
+      additionalValues,
       isWorker,
       isManager,
       dueDatePassed,
@@ -274,7 +269,7 @@ class Task extends Component<Props> {
                       submit={TASK_WORKER_RATE_MANAGER}
                       success={TASK_WORKER_RATE_MANAGER_SUCCESS}
                       error={TASK_WORKER_RATE_MANAGER_ERROR}
-                      setPayload={setPayload}
+                      additionalValues={additionalValues}
                     />
                   )}
                 {/* Worker submits work, ends task + rates before deadline */}
@@ -290,7 +285,7 @@ class Task extends Component<Props> {
                       submit={TASK_WORKER_END}
                       success={TASK_WORKER_END_SUCCESS}
                       error={TASK_WORKER_END_ERROR}
-                      setPayload={setPayload}
+                      additionalValues={additionalValues}
                     />
                   )}
                 {/* Worker misses deadline and manager ends task + rates */}
@@ -306,7 +301,7 @@ class Task extends Component<Props> {
                       submit={TASK_MANAGER_END}
                       success={TASK_MANAGER_END_SUCCESS}
                       error={TASK_MANAGER_END_ERROR}
-                      setPayload={setPayload}
+                      additionalValues={additionalValues}
                     />
                   )}
                 {/* Worker makes deadline and manager rates worker */}
@@ -321,7 +316,7 @@ class Task extends Component<Props> {
                       submit={TASK_MANAGER_RATE_WORKER}
                       success={TASK_MANAGER_RATE_WORKER_SUCCESS}
                       error={TASK_MANAGER_RATE_WORKER_ERROR}
-                      setPayload={setPayload}
+                      additionalValues={additionalValues}
                     />
                   )}
               </Fragment>
