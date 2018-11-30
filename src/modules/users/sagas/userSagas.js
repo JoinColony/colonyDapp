@@ -75,11 +75,10 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
   });
 
   try {
-    const databases = yield call([profileStore, profileStore.get], 'databases');
     const activitiesStore = yield call(
       getOrCreateUserActivitiesStore,
       walletAddress,
-      databases ? databases.activities : null,
+      profileStore,
     );
     yield call(
       [profileStore, profileStore.update],
@@ -96,7 +95,7 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
 
 export function* getOrCreateUserActivitiesStore(
   walletAddress: string,
-  activitiesStoreAddress: string | null,
+  storeOrAddress: KVStore | string,
 ): Saga<KVStore> {
   const ddb = yield getContext('ddb');
   const accessController = yield create(
@@ -105,24 +104,37 @@ export function* getOrCreateUserActivitiesStore(
   );
 
   let activitiesStore;
-  if (activitiesStoreAddress) {
-    activitiesStore = yield call([ddb, ddb.getStore], activitiesStoreAddress, {
-      accessController,
-    });
 
+  if (!storeOrAddress) {
+    activitiesStore = yield call(
+      [ddb, ddb.createStore],
+      'feed',
+      'userActivity',
+      {
+        accessController,
+      },
+    );
+    const joinedEvent = {
+      colonyName: 'Welcome to Colony',
+      userAction: 'joinedColony',
+      createdAt: new Date(),
+    };
+    yield call([activitiesStore, activitiesStore.add], joinedEvent);
     return activitiesStore;
   }
-
-  activitiesStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
+  if (storeOrAddress === 'string') {
+    activitiesStore = yield call([ddb, ddb.getStore], storeOrAddress, {
+      accessController,
+    });
+    return activitiesStore;
+  }
+  const databases = yield call(
+    [storeOrAddress, storeOrAddress.get],
+    'databases',
+  );
+  activitiesStore = yield call([ddb, ddb.getStore], databases.activity, {
     accessController,
   });
-  const joinedEvent = {
-    colonyName: 'Welcome to Colony',
-    userAction: 'joinedColony',
-    createdAt: new Date(),
-  };
-  yield call([activitiesStore, activitiesStore.add], joinedEvent);
-
   return activitiesStore;
 }
 
@@ -136,6 +148,7 @@ export function* getUserActivities(
   const activitiesStore = yield call(
     getOrCreateUserActivitiesStore,
     walletAddress,
+    null,
   );
   const all = yield call([activitiesStore, activitiesStore.all]);
   return all;
@@ -148,6 +161,7 @@ export function* addUserActivity(action: Action): Saga<void> {
     const activitiesStore = yield call(
       getOrCreateUserActivitiesStore,
       walletAddress,
+      null,
     );
 
     yield call([activitiesStore, activitiesStore.add], activity);
