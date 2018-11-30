@@ -29,7 +29,7 @@ function equalTo(ref, msg) {
 function lessThanPot(availableTokens, msg) {
   return this.test({
     name: 'lessThanPot',
-    message: msg,
+    message: msg || en.mixed.lessThanPot,
     test(value) {
       // $FlowFixMe `yup.ref` not recognised
       const tokenIndex = this.resolve(yup.ref('token'));
@@ -69,7 +69,10 @@ function ensAddress(msg) {
 function includes(searchVal, msg) {
   return this.test({
     name: 'includes',
-    message: msg || en.mixed.required,
+    message: msg || en.array.includes,
+    params: {
+      searchVal,
+    },
     test(value) {
       return value.includes(searchVal);
     },
