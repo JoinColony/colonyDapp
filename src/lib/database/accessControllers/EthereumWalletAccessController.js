@@ -39,7 +39,7 @@ class EthereumWalletAccessController extends AbstractAccessController<
   }
 
   async save() {
-    return `/${this.constructor.type}/${this._walletAddress}`;
+    return `/${this.constructor.type}/account/${this._walletAddress}`;
   }
 
   /* eslint-disable no-unused-vars,class-methods-use-this */

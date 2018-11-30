@@ -29,8 +29,6 @@ export interface AccessController<I: Identity, P: IdentityProvider<I>> {
 
   save(): Promise<string>;
 
-  save(): Promise<string>;
-
   grant(actionId: string, address: string): Promise<boolean>;
 
   revoke(actionId: string, address: string): Promise<boolean>;
