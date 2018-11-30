@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 import getIcon from '../../../../lib/identicon';
 
@@ -31,41 +31,54 @@ export type Props = {
   link?: boolean,
 };
 
-const UserAvatarDisplay = ({
-  avatarURL,
-  className,
-  notSet,
-  size,
-  displayName,
-  username,
-  walletAddress,
-  hasUserInfo = false,
-  link = true,
-}: Props) => {
-  const avatarAndInfo = (
-    <UserInfo
-      displayName={displayName}
-      username={username}
-      walletAddress={walletAddress}
-      trigger={hasUserInfo ? 'hover' : 'disabled'}
-    >
-      <Avatar
-        avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
-        className={className}
-        notSet={notSet}
-        placeholderIcon="circle-person"
-        size={size}
-        title={username || walletAddress}
-      />
-    </UserInfo>
-  );
-  return link && username ? (
-    <NavLink to={`/user/${username.toLowerCase()}`}>{avatarAndInfo}</NavLink>
-  ) : (
-    avatarAndInfo
-  );
-};
+class UserAvatarDisplay extends Component<Props> {
+  static displayName = 'UserAvatarDisplay';
 
-UserAvatarDisplay.displayName = 'UserAvatarDisplay';
+  static defaultProps = {
+    hasUserInfo: false,
+    link: true,
+  };
+
+  renderJoinAvatarAndUserInfo = () => {
+    const {
+      displayName,
+      username,
+      className,
+      walletAddress,
+      hasUserInfo,
+      avatarURL,
+      notSet,
+      size,
+    } = this.props;
+    return (
+      <UserInfo
+        displayName={displayName}
+        username={username}
+        walletAddress={walletAddress}
+        trigger={hasUserInfo ? 'hover' : 'disabled'}
+      >
+        <Avatar
+          avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
+          className={className}
+          notSet={notSet}
+          placeholderIcon="circle-person"
+          size={size}
+          title={username || walletAddress}
+        />
+      </UserInfo>
+    );
+  };
+
+  render() {
+    const { link, username } = this.props;
+    return link && username ? (
+      <NavLink to={`/user/${username.toLowerCase()}`}>
+        {this.renderJoinAvatarAndUserInfo()}
+      </NavLink>
+    ) : (
+      this.renderJoinAvatarAndUserInfo()
+    );
+  }
+}
 
 export default UserAvatarDisplay;
