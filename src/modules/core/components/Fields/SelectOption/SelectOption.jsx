@@ -1,4 +1,4 @@
-// @flow
+/* @flow */
 import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
