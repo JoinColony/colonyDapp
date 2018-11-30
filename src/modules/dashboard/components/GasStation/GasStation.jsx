@@ -106,6 +106,9 @@ class GasStation extends Component<Props, State> {
   render() {
     const { balance, close, transactions, walletAddress } = this.props;
     const { expandedTransactionId } = this.state;
+
+    const isTransactionExpanded = expandedTransactionId >= 0;
+
     return (
       <div
         className={getMainClasses({}, styles, {
@@ -153,7 +156,7 @@ class GasStation extends Component<Props, State> {
         <div className={styles.transactionsContainer}>
           {transactions && transactions.length > 0 ? (
             <CardList appearance={{ numCols: '1' }}>
-              {expandedTransactionId >= 0
+              {isTransactionExpanded
                 ? this.renderExpandedTransaction(
                     transactions[expandedTransactionId],
                   )
@@ -166,9 +169,11 @@ class GasStation extends Component<Props, State> {
             />
           )}
         </div>
-        <div>
-          <GasStationPrice />
-        </div>
+        {isTransactionExpanded && (
+          <div>
+            <GasStationPrice />
+          </div>
+        )}
       </div>
     );
   }
