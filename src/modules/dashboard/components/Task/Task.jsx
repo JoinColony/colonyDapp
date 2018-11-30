@@ -15,6 +15,7 @@ import Assignment from '~core/Assignment';
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
+import type { Action, TaskRecord, UserRecord } from '~types/';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
@@ -25,6 +26,8 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 import DialogActionButton from './DialogActionButton.jsx';
+
+import { TASK_STATE } from '../../records';
 
 import {
   TASK_WORKER_END,
@@ -41,7 +44,6 @@ import {
   TASK_MANAGER_RATE_WORKER_SUCCESS,
 } from '../../actionTypes';
 
-import taskMock from './__datamocks__/mockTask';
 import userMocks from './__datamocks__/mockUsers';
 import tokensMock from '../Wallet/__datamocks__/mockTokens';
 
@@ -78,29 +80,20 @@ const MSG = defineMessages({
 
 type Props = {
   openDialog: OpenDialog,
-  task: Object,
+  task: TaskRecord,
   taskReward: Object,
-  user: Object,
+  user: UserRecord,
   isTaskCreator?: boolean,
   preventEdit?: boolean,
   userClaimedProfile?: boolean,
 };
 
-const setPayload = (colonyIdentifier, taskId) => (action, values) => ({
-  ...action,
-  payload: {
-    ...values,
-    colonyIdentifier,
-    taskId,
-  },
-});
-
 class Task extends Component<Props> {
   displayName = 'dashboard.Task';
 
   openTaskEditDialog = () => {
-    const { openDialog } = this.props;
-    const payouts = taskMock.payouts.map(payout => ({
+    const { openDialog, task } = this.props;
+    const payouts = task.payouts.map(payout => ({
       token:
         // we add 1 because Formik thinks 0 is empty
         tokensMock.indexOf(
@@ -111,14 +104,65 @@ class Task extends Component<Props> {
     }));
 
     openDialog('TaskEditDialog', {
-      assignee: taskMock.assignee,
+      assignee: task.assignee,
       availableTokens: tokensMock,
       maxTokens: 2,
       payouts,
-      reputation: taskMock.reputation,
+      reputation: task.reputation,
       users: userMocks,
     });
   };
+
+  setPayload = (action: Action, values: Object) => {
+    const {
+      task: { colonyIdentifier, id: taskId },
+    } = this.props;
+    return {
+      ...action,
+      payload: {
+        ...values,
+        colonyIdentifier,
+        taskId,
+      },
+    };
+  };
+
+  get isWorker() {
+    const {
+      task: { assignee },
+      user,
+    } = this.props;
+    return (
+      !!assignee &&
+      assignee.walletAddress.toLowerCase() === user.walletAddress.toLowerCase()
+    );
+  }
+
+  get isManager() {
+    const {
+      task: { creator },
+      user,
+    } = this.props;
+    return creator.toLowerCase() === user.walletAddress.toLowerCase();
+  }
+
+  get dueDatePassed() {
+    const {
+      task: { dueDate },
+    } = this.props;
+    return !!dueDate && dueDate < new Date();
+  }
+
+  get canClaimPayout() {
+    const {
+      task: { currentState, workerPayoutClaimed, managerPayoutClaimed },
+    } = this.props;
+    return (
+      currentState === TASK_STATE.FINALIZED &&
+      ((this.isWorker && !workerPayoutClaimed) ||
+        (this.isManager && !managerPayoutClaimed))
+    );
+  }
 
   render() {
     const {
@@ -129,6 +173,13 @@ class Task extends Component<Props> {
       user,
       userClaimedProfile = false,
     } = this.props;
+    const {
+      setPayload,
+      isWorker,
+      isManager,
+      dueDatePassed,
+      canClaimPayout,
+    } = this;
     return (
       <div className={styles.main}>
         <aside className={styles.sidebar}>
@@ -192,7 +243,7 @@ class Task extends Component<Props> {
         </aside>
         <div className={styles.container}>
           <section className={styles.header}>
-            {task && !task.finalized ? (
+            {task && task.currentState !== TASK_STATE.FINALIZED ? (
               <Fragment>
                 <TaskRequestWork
                   isTaskCreator={isTaskCreator}
@@ -211,69 +262,72 @@ class Task extends Component<Props> {
              * modals until they will get wired up.
              */}
                 {/* Worker misses deadline and rates manager */}
-                {
-                  /* isRatingPeriod && isWorker && !workerHasRated && */
-                  <DialogActionButton
-                    dialog="ManagerRatingDialog"
-                    options={{
-                      submitWork: false,
-                    }}
-                    text={MSG.rateManager}
-                    submit={TASK_WORKER_RATE_MANAGER}
-                    success={TASK_WORKER_RATE_MANAGER_SUCCESS}
-                    error={TASK_WORKER_RATE_MANAGER_ERROR}
-                    setPayload={setPayload(task.colonyAddress, task.id)}
-                  />
-                }
+                {task.currentState === TASK_STATE.RATING &&
+                  isWorker &&
+                  !task.workerHasRated && (
+                    <DialogActionButton
+                      dialog="ManagerRatingDialog"
+                      options={{
+                        submitWork: false,
+                      }}
+                      text={MSG.rateManager}
+                      submit={TASK_WORKER_RATE_MANAGER}
+                      success={TASK_WORKER_RATE_MANAGER_SUCCESS}
+                      error={TASK_WORKER_RATE_MANAGER_ERROR}
+                      setPayload={setPayload}
+                    />
+                  )}
                 {/* Worker submits work, ends task + rates before deadline */}
-                {
-                  /* !isRatingPeriod && isWorker && !dueDatePassed && */
-                  <DialogActionButton
-                    dialog="ManagerRatingDialog"
-                    options={{
-                      submitWork: true,
-                    }}
-                    text={MSG.submitWork}
-                    submit={TASK_WORKER_END}
-                    success={TASK_WORKER_END_SUCCESS}
-                    error={TASK_WORKER_END_ERROR}
-                    setPayload={setPayload(task.colonyAddress, task.id)}
-                  />
-                }
+                {task.currentState !== TASK_STATE.RATING &&
+                  isWorker &&
+                  !dueDatePassed && (
+                    <DialogActionButton
+                      dialog="ManagerRatingDialog"
+                      options={{
+                        submitWork: true,
+                      }}
+                      text={MSG.submitWork}
+                      submit={TASK_WORKER_END}
+                      success={TASK_WORKER_END_SUCCESS}
+                      error={TASK_WORKER_END_ERROR}
+                      setPayload={setPayload}
+                    />
+                  )}
                 {/* Worker misses deadline and manager ends task + rates */}
-                {
-                  /* !isRatingPeriod && isManager && dueDatePassed && */
-                  <DialogActionButton
-                    dialog="WorkerRatingDialog"
-                    options={{
-                      workSubmitted: false,
-                    }}
-                    text={MSG.rateWorker}
-                    submit={TASK_MANAGER_END}
-                    success={TASK_MANAGER_END_SUCCESS}
-                    error={TASK_MANAGER_END_ERROR}
-                    setPayload={setPayload(task.colonyAddress, task.id)}
-                  />
-                }
+                {task.currentState !== TASK_STATE.RATING &&
+                  isManager &&
+                  dueDatePassed && (
+                    <DialogActionButton
+                      dialog="WorkerRatingDialog"
+                      options={{
+                        workSubmitted: false,
+                      }}
+                      text={MSG.rateWorker}
+                      submit={TASK_MANAGER_END}
+                      success={TASK_MANAGER_END_SUCCESS}
+                      error={TASK_MANAGER_END_ERROR}
+                      setPayload={setPayload}
+                    />
+                  )}
                 {/* Worker makes deadline and manager rates worker */}
-                {
-                  /* isRatingPeriod && isManager && */
-                  <DialogActionButton
-                    dialog="WorkerRatingDialog"
-                    options={{
-                      workSubmitted: true,
-                    }}
-                    text={MSG.rateWorker}
-                    submit={TASK_MANAGER_RATE_WORKER}
-                    success={TASK_MANAGER_RATE_WORKER_SUCCESS}
-                    error={TASK_MANAGER_RATE_WORKER_ERROR}
-                    setPayload={setPayload(task.colonyAddress, task.id)}
-                  />
-                }
+                {task.currentState === TASK_STATE.RATING &&
+                  isManager && (
+                    <DialogActionButton
+                      dialog="WorkerRatingDialog"
+                      options={{
+                        workSubmitted: true,
+                      }}
+                      text={MSG.rateWorker}
+                      submit={TASK_MANAGER_RATE_WORKER}
+                      success={TASK_MANAGER_RATE_WORKER_SUCCESS}
+                      error={TASK_MANAGER_RATE_WORKER_ERROR}
+                      setPayload={setPayload}
+                    />
+                  )}
               </Fragment>
             ) : (
               <Fragment>
-                {!task.payoutClaimed ? (
+                {canClaimPayout ? (
                   /*
                * @NOTE This is a placeholder until #559 gets merged
                */
@@ -291,7 +345,7 @@ class Task extends Component<Props> {
               <TaskFeed
                 feedItems={task.feedItems}
                 currentUser={user}
-                isRevealEnded={task.finalized}
+                isRevealEnded={task.currentState === TASK_STATE.FINALIZED}
               />
             </section>
             <section className={styles.commentBox}>

@@ -21,7 +21,8 @@ const enhance = compose(
       taskReward: mockTaskReward,
       user,
       isTaskCreator,
-      preventEdit: task && !task.finalized && isTaskCreator,
+      preventEdit:
+        !!task && !task.currentState === 'finalized' && isTaskCreator,
       userClaimedProfile: !!(user && user.username),
     };
   }),

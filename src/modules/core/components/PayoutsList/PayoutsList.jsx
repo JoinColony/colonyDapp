@@ -1,8 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import BN from 'bn.js';
 import cx from 'classnames';
+
+import type { TaskPayout } from '~types/';
 
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
@@ -11,10 +12,7 @@ import styles from './PayoutsList.css';
 
 type Props = {
   /* Payout object containing all the payouts */
-  payouts: Array<{
-    amount: number | string | BN,
-    symbol: string,
-  }>,
+  payouts: Array<TaskPayout>,
   /* Maximum lines to show before switching to popover */
   maxLines?: number,
   /* Native token of the displayed Colony */

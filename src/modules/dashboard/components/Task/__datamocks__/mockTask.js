@@ -1,6 +1,7 @@
 /* @flow */
 /* eslint-disable max-len */
 
+import { Task } from '../../../records';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 
@@ -18,23 +19,17 @@ export const mockTaskReward = {
   reputationEarned: 1045,
 };
 
-export const mockTask = {
+export const mockTask = Task({
   id: 1,
   title: 'Develop Github integration',
-  colonyAddress: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
+  colonyIdentifier: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
   reputation: 19.5,
   payouts: [
     { symbol: 'ETH', amount: 21545, isEth: true },
     { symbol: 'CLNY', amount: 6007, isNative: true },
   ],
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',
-  assignee: {
-    walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
-    username: 'Elena',
-    displayName: 'Elena Dimitrova',
-  },
-  payoutClaimed: false,
-  finalized: false,
+  assignee: userMock,
   feedItems: [
     {
       id: 0,
@@ -114,6 +109,6 @@ more often.`,
       type: 'rating',
     },
   ],
-};
+});
 
 export default mockTask;
