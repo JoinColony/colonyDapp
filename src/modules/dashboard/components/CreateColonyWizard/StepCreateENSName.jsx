@@ -25,7 +25,7 @@ import {
 } from '../../actionTypes';
 
 type FormValues = {
-  colonyLabel: string,
+  colonyName: string,
   colonyId: string,
   colonyAddress: string,
 };
@@ -102,7 +102,10 @@ class StepCreateENSName extends Component<Props> {
   };
 
   render() {
-    const { wizardForm, wizardValues } = this.props;
+    const {
+      formHelpers: { includeWizardValues },
+      wizardForm,
+    } = this.props;
     return (
       <ActionForm
         submit={COLONY_CREATE_LABEL}
@@ -114,10 +117,7 @@ class StepCreateENSName extends Component<Props> {
         })}
         validationSchema={validationSchema}
         validate={this.validateDomain}
-        setPayload={(action, values) => ({
-          ...action,
-          payload: { ...wizardValues, ...values },
-        })}
+        setPayload={includeWizardValues}
         {...wizardForm}
       >
         {({ isValid, isSubmitting }) => (

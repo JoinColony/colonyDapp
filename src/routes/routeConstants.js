@@ -1,7 +1,7 @@
 /* @flow */
 
 export const CONNECT_ROUTE = '/connect';
-export const COLONY_HOME_ROUTE = '/colony/:colonyLabel';
+export const COLONY_HOME_ROUTE = '/colony/:colonyName';
 export const TASK_ROUTE = `${COLONY_HOME_ROUTE}/task/:taskId`;
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_WALLET_ROUTE = '/create-wallet';
