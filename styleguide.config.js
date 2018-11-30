@@ -31,6 +31,7 @@ module.exports = {
         './src/modules/core/components/ColonyAvatar/ColonyAvatar.jsx',
         './src/modules/core/components/UserAvatar/UserAvatarDisplay.jsx',
         './src/modules/core/components/AvatarUploader/AvatarUploader.jsx',
+        './src/modules/core/components/UserAvatar/UserAvatar.jsx',
       ],
     },
     {

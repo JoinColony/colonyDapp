@@ -9,6 +9,8 @@ import { addLocaleData, IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 
+import Users from '../modules/users/records/Users';
+
 import '../styles/main.css';
 
 import messages from '../i18n/en.json';
@@ -21,16 +23,12 @@ type Props = {
 
 const initialState = {
   users: {
-    currentUser: null,
+    currentUser: {},
     wallet: {
       availableAddresses: [],
       isLoading: false,
     },
-    allUsers: {
-      isLoading: false,
-      users: {},
-      avatars: {},
-    },
+    allUsers: Users({}),
   },
 };
 
