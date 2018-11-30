@@ -2,7 +2,6 @@
 
 import * as yup from 'yup';
 
-// eslint-disable-next-line max-len
 import { activityMessages } from '../../modules/dashboard/components/UserActivities';
 
 // eslint-disable-next-line import/prefer-default-export

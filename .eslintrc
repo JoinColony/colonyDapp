@@ -33,23 +33,29 @@
         }
     ],
     "rules": {
-        "jsx-a11y/label-has-for": 0,
-        "flowtype/space-after-type-colon": 0,
-        "flowtype/require-valid-file-annotation": [1, "always"],
-        "import/extensions": [2, {
+        "max-len": ["error", {
+            "ignorePattern": "^import [^,]+ from |^export | implements",
+            "ignoreComments": true
+        }],
+        "jsx-a11y/label-has-for": "off",
+        "flowtype/space-after-type-colon": "off",
+        "flowtype/require-valid-file-annotation": ["error", "always", {
+            "annotationStyle": "block"
+        }],
+        "import/extensions": ["error", {
             "js": "never",
             "jsx": "always",
             "json": "always"
         }],
         "import/no-extraneous-dependencies": [
-            2,
+            "error",
             { "devDependencies": ["**/*.test.js", "./src/__tests__/*.js", "./src/__mocks__/*.js", "./*.js"] }
         ],
-        "react/default-props-match-prop-types": 0,
-        "react/jsx-filename-extension": [1, { "extensions": [".test.js", ".jsx"] }],
-        "react/jsx-wrap-multilines": 0,
-        "react/require-default-props": 0,
-        "react/sort-comp": [2, {
+        "react/default-props-match-prop-types": "off",
+        "react/jsx-filename-extension": ["warn", { "extensions": [".test.js", ".jsx"] }],
+        "react/jsx-wrap-multilines": "off",
+        "react/require-default-props": "off",
+        "react/sort-comp": ["error", {
             "order": [
                 "type-annotations",
                 "static-methods",
@@ -58,7 +64,7 @@
                 "render"
             ]
         }],
-        "react/jsx-one-expression-per-line": 0,
+        "react/jsx-one-expression-per-line": "off",
     },
     "settings": {
         "import/resolver": {

@@ -20,7 +20,6 @@ import {
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
-// eslint-disable-next-line max-len
 import { UserProfile as UserProfileSchema } from '../../../../lib/database/schemas';
 
 import { currentUser } from '../../selectors';
