@@ -78,7 +78,6 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
     const activitiesStore = yield call(
       getOrCreateUserActivitiesStore,
       walletAddress,
-      profileStore,
     );
     yield call(
       [profileStore, profileStore.update],
@@ -95,46 +94,43 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
 
 export function* getOrCreateUserActivitiesStore(
   walletAddress: string,
-  storeOrAddress: KVStore | string,
 ): Saga<KVStore> {
+  let activitiesStore;
+
   const ddb = yield getContext('ddb');
+
   const accessController = yield create(
     EthereumWalletAccessController,
     walletAddress,
   );
 
-  let activitiesStore;
+  const profileStore = yield call(
+    [ddb, ddb.getStore],
+    `user.${walletAddress}`,
+    {
+      accessController,
+    },
+  );
 
-  if (!storeOrAddress) {
-    activitiesStore = yield call(
-      [ddb, ddb.createStore],
-      'feed',
-      'userActivity',
-      {
-        accessController,
-      },
-    );
-    const joinedEvent = {
-      colonyName: 'Welcome to Colony',
-      userAction: 'joinedColony',
-      createdAt: new Date(),
-    };
-    yield call([activitiesStore, activitiesStore.add], joinedEvent);
-    return activitiesStore;
-  }
-  if (storeOrAddress === 'string') {
-    activitiesStore = yield call([ddb, ddb.getStore], storeOrAddress, {
+  if (profileStore) {
+    yield call([profileStore, profileStore.load]);
+    const databases = yield call([profileStore, profileStore.get], 'databases');
+    activitiesStore = yield call([ddb, ddb.getStore], databases.activity, {
       accessController,
     });
     return activitiesStore;
   }
-  const databases = yield call(
-    [storeOrAddress, storeOrAddress.get],
-    'databases',
-  );
-  activitiesStore = yield call([ddb, ddb.getStore], databases.activity, {
+  // if the profileStore is still being created it doesn't exist yet
+  // And we must create the activitiesStore
+  activitiesStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
     accessController,
   });
+  const joinedEvent = {
+    colonyName: 'Welcome to Colony',
+    userAction: 'joinedColony',
+    createdAt: new Date(),
+  };
+  yield call([activitiesStore, activitiesStore.add], joinedEvent);
   return activitiesStore;
 }
 
@@ -148,7 +144,6 @@ export function* getUserActivities(
   const activitiesStore = yield call(
     getOrCreateUserActivitiesStore,
     walletAddress,
-    null,
   );
   const all = yield call([activitiesStore, activitiesStore.all]);
   return all;
@@ -161,7 +156,6 @@ export function* addUserActivity(action: Action): Saga<void> {
     const activitiesStore = yield call(
       getOrCreateUserActivitiesStore,
       walletAddress,
-      null,
     );
 
     yield call([activitiesStore, activitiesStore.add], activity);
