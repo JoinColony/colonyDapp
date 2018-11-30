@@ -95,15 +95,7 @@ class GasStation extends Component<Props, State> {
           />
           <FormattedMessage {...MSG.returnToSummary} />
         </button>
-        <GasStationCard
-          /*
-           * @NOTE Nonces are unique, but our mock data might add duplicates.
-           * In case you see duplicate key errors in the console, don't panic.
-           */
-          key={transaction.nonce}
-          transaction={transaction}
-          expanded
-        />
+        <GasStationCard transaction={transaction} expanded />
       </Fragment>
     );
   }
