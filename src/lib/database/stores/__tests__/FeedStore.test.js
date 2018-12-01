@@ -1,7 +1,12 @@
 import createSandbox from 'jest-sandbox';
+import * as yup from 'yup';
 
 import FeedStore from '../FeedStore';
-import { UserActivity as schema } from '../../schemas';
+
+const schema = yup.object({
+  colonyName: yup.string().required(),
+  userAction: yup.string().required(),
+});
 
 describe('FeedStore', () => {
   const sandbox = createSandbox();
@@ -12,16 +17,16 @@ describe('FeedStore', () => {
 
   const mockOrbitStore = {};
 
-  const schemaId = 'UserActivity';
+  const name = 'UserActivity';
 
   test('It creates a FeedStore', () => {
-    const store = new FeedStore(mockOrbitStore, schemaId, schema);
+    const store = new FeedStore(mockOrbitStore, name, schema);
     expect(store._orbitStore).toBe(mockOrbitStore);
-    expect(store._schemaId).toBe(schemaId);
+    expect(store._name).toBe(name);
     expect(store._schema).toBe(schema);
   });
   test('It validates an activity event against the schema', async () => {
-    const store = new FeedStore(mockOrbitStore, schemaId, schema);
+    const store = new FeedStore(mockOrbitStore, name, schema);
     sandbox.spyOn(store._schema, 'validate');
     const validProps = {
       colonyName: 'Zombies',
@@ -35,33 +40,20 @@ describe('FeedStore', () => {
     );
     // Missing `userAction`
     const invalidProps = { colonyName: 'bar' };
-    try {
-      await store.validate(invalidProps);
-      expect(false).toBe(true); // unreachable
-    } catch (error) {
-      expect(store._schema.validate).toHaveBeenCalledWith(
-        invalidProps,
-        expect.any(Object),
-      );
-      expect(error.toString()).toMatch('userAction is a required field');
-    }
+    expect(store.validate(invalidProps)).rejects.toThrow(/required/);
+    expect(store._schema.validate).toHaveBeenCalledWith(
+      invalidProps,
+      expect.any(Object),
+    );
 
     const wrongUserActionKeyProps = {
       colonyName: 'bar',
       userAction: 'noColony',
     };
-    try {
-      await store.validate(wrongUserActionKeyProps);
-      expect(false).toBe(true); // unreachable
-    } catch (error) {
-      expect(store._schema.validate).toHaveBeenCalledWith(
-        wrongUserActionKeyProps,
-        expect.any(Object),
-      );
-      // Split the error string so if we add more fields we do not need to update the test
-      expect(error.toString().split(':')[1]).toMatch(
-        'userAction must be one of the following values',
-      );
-    }
+    expect(store.validate(wrongUserActionKeyProps)).rejects.toThrow();
+    expect(store._schema.validate).toHaveBeenCalledWith(
+      wrongUserActionKeyProps,
+      expect.any(Object),
+    );
   });
 });

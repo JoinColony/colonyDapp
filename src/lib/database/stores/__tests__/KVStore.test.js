@@ -3,6 +3,11 @@ import * as yup from 'yup';
 
 import KVStore from '../KVStore';
 
+const schema = yup.object({
+  requiredProp: yup.string().required(),
+  optionalProp: yup.string(),
+});
+
 describe('KVStore', () => {
   const sandbox = createSandbox();
 
@@ -22,19 +27,14 @@ describe('KVStore', () => {
     type: 'orbit store type',
   };
 
-  const schemaId = 'test schema id';
-
-  const schema = yup.object({
-    requiredProp: yup.string().required(),
-    optionalProp: yup.string(),
-  });
+  const name = 'test schema id';
 
   test('It creates a KVStore', () => {
     mockOrbitStore.put.mockResolvedValueOnce(null);
 
-    const store = new KVStore(mockOrbitStore, schemaId, schema);
+    const store = new KVStore(mockOrbitStore, name, schema);
     expect(store._orbitStore).toBe(mockOrbitStore);
-    expect(store._schemaId).toBe(schemaId);
+    expect(store._name).toBe(name);
     expect(store._schema).toBe(schema);
     expect(store._orbitStore.put).toHaveBeenCalledWith(
       'createdAt',
@@ -45,7 +45,7 @@ describe('KVStore', () => {
   test('It validates objects against the schema', async () => {
     mockOrbitStore.put.mockResolvedValueOnce(null);
 
-    const store = new KVStore(mockOrbitStore, schemaId, schema);
+    const store = new KVStore(mockOrbitStore, name, schema);
 
     sandbox.spyOn(store._schema, 'validate');
 
@@ -74,7 +74,7 @@ describe('KVStore', () => {
   test('It validates a key/value pair against the schema', async () => {
     mockOrbitStore.put.mockResolvedValueOnce(null);
 
-    const store = new KVStore(mockOrbitStore, schemaId, schema);
+    const store = new KVStore(mockOrbitStore, name, schema);
 
     const key = 'requiredProp';
     const value = 'foo';

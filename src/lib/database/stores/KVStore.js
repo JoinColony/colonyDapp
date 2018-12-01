@@ -10,15 +10,13 @@ import Store from './Store';
  * set and get entire objects and schema validation
  */
 class KVStore extends Store {
+  static orbitType = 'keyvalue';
+
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBKVStore = this._orbitStore;
 
-  constructor(
-    orbitStore: OrbitDBStore,
-    schemaId: string,
-    schema: ObjectSchema,
-  ) {
-    super(orbitStore, schemaId, schema);
+  constructor(orbitStore: OrbitDBStore, name: string, schema: ObjectSchema) {
+    super(orbitStore, name, schema);
     // TODO consider using default values in the schema to set e.g.
     // `createdAt`, `updatedAt` fields on writes.
     this._orbitStore

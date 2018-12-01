@@ -20,7 +20,7 @@ import {
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
-import { UserProfile as UserProfileSchema } from '../../../../lib/database/schemas';
+import { userProfileStore } from '../../stores';
 
 import { currentUser } from '../../selectors';
 
@@ -96,7 +96,7 @@ const UserProfileEdit = ({ user }: Props) => (
         website: user.website,
         location: user.location,
       }}
-      validationSchema={UserProfileSchema}
+      validationSchema={userProfileStore.schema}
     >
       {({ status, isSubmitting }) => (
         <div>

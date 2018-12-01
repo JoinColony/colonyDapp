@@ -1,6 +1,11 @@
 /* @flow */
 
-export type { AccessController, Entry } from './AccessController';
+import type { ObjectSchema } from 'yup';
+
+import { PurserIdentity, PurserIdentityProvider } from '..';
+import type { AccessController, Entry } from './AccessController';
+
+export type { AccessController, Entry };
 export type { Identity, IdentityObject } from './Identity';
 export type { IdentityProvider } from './IdentityProvider';
 export type { KeyPair } from './KeyPair';
@@ -10,9 +15,6 @@ export type { FeedIteratorOptions, OrbitDBFeedStore } from './OrbitDBFeedStore';
 export type { ENSResolverType } from './ENSResolver';
 
 export type IPFSHash = string;
-
-// TODO use yup's `object` type
-export type Schema = Object;
 
 // IPFS store types
 export type StoreType =
@@ -25,4 +27,21 @@ export type StoreType =
 export type OrbitDBAddress = {
   root: string,
   path: string,
+};
+
+export type OrbitStoreOpenOpts = {
+  localOnly?: boolean,
+  directory?: string,
+  overwrite?: boolean,
+  replicate?: boolean,
+};
+
+export type StoreBlueprint = {
+  name: string,
+  schema: ObjectSchema,
+  getAccessController: (
+    storeProps?: Object,
+    // eslint-disable-next-line max-len, prettier/prettier
+  ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>> | void,
+  type: typeof Store,
 };

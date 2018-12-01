@@ -10,6 +10,8 @@ import Store from './Store';
  * Includes function to return all values, and schema validation.
  */
 class FeedStore extends Store {
+  static orbitType = 'feed';
+
   +_orbitStore: OrbitDBFeedStore = this._orbitStore;
 
   async validate(value?: any, options?: ValidateOptions = { strict: true }) {

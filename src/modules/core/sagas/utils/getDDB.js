@@ -9,7 +9,7 @@ import PurserIdentityProvider from '../../../../lib/database/PurserIdentityProvi
 
 export default function* getDDB(): Generator<*, DDBClass, *> {
   const wallet = yield getContext('wallet');
-  const DDB = yield getContext('DDB');
+  const DDB: typeof DDBClass = yield getContext('DDB');
   const ipfsNode = yield getContext('ipfsNode');
 
   if (!wallet || !DDB || !ipfsNode) {
