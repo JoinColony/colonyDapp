@@ -27,6 +27,7 @@ export type StoreType =
 export type OrbitDBAddress = {
   root: string,
   path: string,
+  signature: string,
 };
 
 export type OrbitStoreOpenOpts = {
