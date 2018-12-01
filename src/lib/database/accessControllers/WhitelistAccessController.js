@@ -11,7 +11,7 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
-// @FIXME: Use provider's type
+// @TODO: Use provider's type
 const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
 const WHITELIST = '__WHITELIST';
 const DATA = '__DATA';
@@ -36,7 +36,7 @@ class WhitelistAccessController extends AbstractAccessController<
     whitelist: Map<string, string>,
   ) {
     super();
-    // @FIXME make sure the wallet is unlocked
+    // @TODO make sure the wallet is unlocked
     this._purserWallet = purserWallet;
     // @TODO get the inbox owner from the manifest
     this._inboxOwnerAddress = inboxOwnerAddress;
