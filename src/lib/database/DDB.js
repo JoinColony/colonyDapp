@@ -1,17 +1,15 @@
 /* @flow */
 
-import type { ObjectSchema } from 'yup';
-
 import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
 
 import type {
-  AccessController,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
   OrbitDBStore,
+  StoreBlueprint,
 } from './types';
 
 import { Store } from './stores';
@@ -22,13 +20,6 @@ const generateId = () => generate(urlDictionary, 21);
 
 // TODO: better typing
 type Resolver = Object;
-
-type StoreBlueprint = {
-  name: string,
-  schema: ObjectSchema,
-  getAccessController: (storeProps?: Object) => AccessController<*, *> | void,
-  type: typeof Store,
-};
 
 type StoreIdentifier = string | OrbitDBAddress;
 
