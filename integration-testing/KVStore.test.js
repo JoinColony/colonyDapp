@@ -42,10 +42,11 @@ test.after.always(async t => {
 test('Can edit multiple attributes', async t => {
   const { ddb } = t.context;
   const store = await ddb.createStore(kvBlueprint);
-  await store.set({
+  const profile = {
     username: 'hello',
     bio: 'born in Warsaw',
-  });
+  };
+  await store.set(profile);
   const state = getAll(store);
-  t.is(Object.keys(state).length, 2);
+  t.deepEqual(state, profile);
 });

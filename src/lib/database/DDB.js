@@ -159,7 +159,10 @@ class DDB {
 
     const name = address.path.split('.')[0];
     if (name !== bluePrintName) {
-      throw new Error(`This is not the correct blueprint for store ${name}`);
+      throw new Error(
+        // eslint-disable-next-line max-len
+        `Expected name matching blueprint "${bluePrintName}" for store "${name}"`,
+      );
     }
 
     const accessController = getAccessController(storeProps);
@@ -174,7 +177,7 @@ class DDB {
     });
     if (orbitStore.type !== type.orbitType) {
       throw new Error(
-        `${orbitStore.type} is not the correct type for store ${name}`,
+        `Expected ${type.orbitType} for store ${name}, got ${orbitStore.type}`,
       );
     }
     return this._makeStore(orbitStore, blueprint);

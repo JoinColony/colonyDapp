@@ -2,11 +2,13 @@
 
 import * as yup from 'yup';
 
+import type { StoreBlueprint } from '~types/index';
+
 import { FeedStore } from '../../../lib/database/stores';
 
 import { activityMessages } from '../components/UserActivities';
 
-const userActivityStore = {
+const userActivityStore: StoreBlueprint = {
   // TODO: implement
   getAccessController() {},
   name: 'userActivity',

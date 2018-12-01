@@ -1,5 +1,7 @@
 /* @flow */
 
+export * from '../lib/database/types';
+
 export * from './colony';
 export * from './TaskRecord';
 export * from './token';

@@ -2,9 +2,11 @@
 
 import * as yup from 'yup';
 
+import type { StoreBlueprint } from '~types/index';
+
 import { KVStore } from '../../../lib/database/stores';
 
-const colonyStore = {
+const colonyStore: StoreBlueprint = {
   // TODO: implement
   getAccessController() {},
   name: 'colony',
