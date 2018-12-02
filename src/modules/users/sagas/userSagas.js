@@ -68,7 +68,7 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
   store = yield call([ddb, ddb.createStore], userProfileStore, {
     walletAddress,
   });
-  yield call([store, store.set], { createdAt: new Date().toUTCString() });
+  yield call([store, store.set], { createdAt: new Date() });
 
   return store;
 }
