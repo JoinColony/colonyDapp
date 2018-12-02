@@ -12,7 +12,7 @@ export type PermissionsManifest = {
   [actionId: ActionId]: Permission,
 };
 
-// @FIXME: I know this is a terrible name, we need to refactor to favour composition over inheritance
+// NOTE: I know this is a terrible name, we need to refactor it to favour composition over inheritance at some point
 export default class PermissionManager {
   _permissions: PermissionsManifest;
 

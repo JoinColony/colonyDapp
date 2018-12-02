@@ -3,7 +3,7 @@
 
 import { Wallet } from 'ethers';
 
-import type { AccessController, Entry } from '../types/index';
+import type { AccessController, Entry } from '../types';
 
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
@@ -27,8 +27,11 @@ export default class AbstractAccessController<
     },
   }: Entry) {
     const message = orbitPublicKey + id;
-    const signingWalletAddress = Wallet.verifyMessage(message, signature);
-    return signingWalletAddress === walletAddress;
+    return AbstractAccessController.verifyWalletSignature(
+      walletAddress,
+      message,
+      signature,
+    );
   }
 
   static async _providerDidVerifyEntry(
@@ -38,6 +41,14 @@ export default class AbstractAccessController<
     }: Entry,
   ): Promise<boolean> {
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
+  }
+
+  static verifyWalletSignature(
+    walletAddress: string,
+    message: string,
+    signature: string,
+  ) {
+    return Wallet.verifyMessage(message, signature) === walletAddress;
   }
 
   /**
@@ -51,7 +62,7 @@ export default class AbstractAccessController<
     const {
       identity: { type },
     } = entry;
-    // @FIXME: Add logs here with debug so we have a verbose mode that gives us a clue on what's going on
+    // @TODO: Add logs here with debug so we have a verbose mode that gives us a clue on what's going on
 
     // Is the entry identity type valid?
     const isTypeValid = type === this.constructor.type;
