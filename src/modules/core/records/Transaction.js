@@ -5,7 +5,7 @@ import type { RecordFactory } from 'immutable';
 import { Record, List } from 'immutable';
 import nanoid from 'nanoid';
 
-import type { TransactionProps } from '~types/TransactionRecord';
+import type { TransactionProps } from '~types';
 
 const defaultValues: TransactionProps<*, *> = {
   context: undefined,

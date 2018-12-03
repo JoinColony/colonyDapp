@@ -1,6 +1,7 @@
 /* @flow */
 
 import { compose, withProps } from 'recompose';
+import { List } from 'immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import { sortObjectsBy } from '~utils/arrays';
@@ -21,11 +22,13 @@ const isEthSort = (prev: string, next: string): number => {
 const enhance = compose(
   withDialog(),
   withProps(() => ({
-    tokens: mockTokens.sort(
-      sortObjectsBy(
-        'isNative',
-        { name: 'tokenSymbol', compareFn: isEthSort },
-        'id',
+    tokens: List(
+      mockTokens.sort(
+        sortObjectsBy(
+          'isNative',
+          { name: 'tokenSymbol', compareFn: isEthSort },
+          'id',
+        ),
       ),
     ),
   })),

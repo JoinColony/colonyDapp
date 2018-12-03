@@ -1,6 +1,7 @@
 /* @flow */
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { List } from 'immutable';
 
 import {
   Table,
@@ -9,6 +10,8 @@ import {
   TableHeaderCell,
   TableRow,
 } from '~core/Table';
+
+import type { ActivityFeedItemRecord } from '~types';
 
 import styles from './ActivityFeed.css';
 
@@ -26,7 +29,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  activities: Array<Object>,
+  activities: List<ActivityFeedItemRecord>,
 };
 
 const displayName = 'ActivityFeed';
@@ -44,7 +47,7 @@ const ActivityFeed = ({ activities }: Props) => (
         </TableRow>
       </TableHeader>
       <TableBody>
-        {activities.map(activity => (
+        {activities.toArray().map(activity => (
           <ActivityFeedItem key={activity.id} activity={activity} />
         ))}
       </TableBody>

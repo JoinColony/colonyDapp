@@ -7,18 +7,17 @@ import Link from '../Link';
 
 import styles from './ColonyGridItem.css';
 
+import type { ColonyRecord } from '~types';
+
 type Props = {
-  colony: {
-    colonyAddress: string,
-    displayName: string,
-  },
+  colony: ColonyRecord,
 };
 
-const ColonyGridItem = ({ colony: { colonyAddress, displayName } }: Props) => (
+const ColonyGridItem = ({ colony }: Props) => (
   <div className={styles.main}>
     <Link to="/">
-      <ColonyAvatar colonyAddress={colonyAddress} colonyName={displayName} />
-      <Heading text={displayName} appearance={{ size: 'small' }} />
+      <ColonyAvatar colony={colony} />
+      <Heading text={colony.name} appearance={{ size: 'small' }} />
     </Link>
   </div>
 );

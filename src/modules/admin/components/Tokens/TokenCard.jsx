@@ -1,40 +1,41 @@
 /* @flow */
 
 import React from 'react';
-import { withProps } from 'recompose';
 
-import type { TokenType } from '~types/token';
+import type { TokenRecord } from '~immutable';
 
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 
 import styles from './TokenCard.css';
 
-type InProps = {
-  token: TokenType,
-};
-
-type Props = InProps & {
-  isEth: boolean,
-  isNotPositive: boolean,
+type Props = {
+  token: TokenRecord,
 };
 
 const displayName = 'admin.Tokens.TokenCard';
 
 const TokenCard = ({
-  isEth,
-  isNotPositive,
-  token: { id: tokenId, tokenIcon, tokenName, tokenSymbol, isNative, balance },
+  token: {
+    address,
+    balance,
+    isEth,
+    isNative,
+    isNotPositive,
+    icon,
+    name,
+    symbol,
+  },
 }: Props) => (
-  <Card key={tokenId} className={styles.main}>
+  <Card key={address} className={styles.main}>
     <div className={styles.cardHeading}>
-      {!!tokenIcon && (
+      {!!icon && (
         <div className={styles.iconContainer}>
-          <img src={tokenIcon} alt={tokenName} />
+          <img src={icon} alt={name} />
         </div>
       )}
       <div className={styles.tokenSymbol}>
-        {tokenSymbol}
+        {symbol}
         {isNative && <span>*</span>}
       </div>
     </div>
@@ -53,9 +54,6 @@ const TokenCard = ({
 
 TokenCard.displayName = displayName;
 
-const enhance = withProps(({ token: { balance, tokenSymbol } }: InProps) => ({
-  isEth: !!tokenSymbol && tokenSymbol.toLowerCase() === 'eth',
-  isNotPositive: Number(balance) <= 0,
-}));
-
-export default enhance(TokenCard);
+// FIXME add isNotPositive to TokenClass
+// FIXME ensure we don't have any references to token.id/tokenId
+export default TokenCard;

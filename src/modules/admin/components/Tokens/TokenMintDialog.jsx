@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenType } from '~types/token';
+import type { TokenRecord } from '~types';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
@@ -59,8 +59,8 @@ type FormValues = {
 type Props = {
   cancel: () => void,
   close: () => void,
-  nativeToken: TokenType,
-  onMintNewTokensSubmitted: (tokenSymbol: string, amount: number) => void,
+  nativeToken: TokenRecord,
+  onMintNewTokensSubmitted: (symbol: string, amount: number) => void,
 };
 
 const validationSchema = yup.object().shape({
@@ -83,19 +83,19 @@ class TokenMintDialog extends Component<Props> {
     const {
       close,
       onMintNewTokensSubmitted,
-      nativeToken: { tokenSymbol },
+      nativeToken: { symbol },
     } = this.props;
     // TODO handle form data here
     this.timeoutId = setTimeout(() => {
       close();
-      onMintNewTokensSubmitted(tokenSymbol, mintAmount);
+      onMintNewTokensSubmitted(symbol, mintAmount);
     }, 500);
   };
 
   render() {
     const {
       cancel,
-      nativeToken: { tokenName, tokenSymbol },
+      nativeToken: { name, symbol },
     } = this.props;
     return (
       <Dialog cancel={cancel}>
@@ -140,8 +140,8 @@ class TokenMintDialog extends Component<Props> {
                       name="mintAmount"
                     />
                   </div>
-                  <span className={styles.nativeToken} title={tokenName}>
-                    {tokenSymbol}
+                  <span className={styles.nativeToken} title={name}>
+                    {symbol}
                   </span>
                 </div>
               </DialogSection>

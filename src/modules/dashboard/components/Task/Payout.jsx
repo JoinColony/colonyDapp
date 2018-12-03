@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
@@ -10,6 +11,8 @@ import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
 
 import styles from './Payout.css';
+
+import type { TokenRecord } from '~types';
 
 const MSG = defineMessages({
   notSet: {
@@ -32,7 +35,7 @@ type Props = {
   symbol?: string,
   reputation?: number,
   usdAmount?: string,
-  tokenOptions: Array<Object>,
+  tokenOptions: Array<{ value: number, label: string }>,
   remove: () => void,
 };
 class Payout extends Component<Props, State> {

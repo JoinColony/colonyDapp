@@ -11,7 +11,7 @@ import UserListItem from './UserListItem.jsx';
 
 import styles from './UserList.css';
 
-import type { UserRecord } from '~types/index';
+import type { UserRecord } from '~types';
 
 type Props = {
   /*

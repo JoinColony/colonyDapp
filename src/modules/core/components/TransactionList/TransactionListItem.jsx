@@ -12,7 +12,7 @@ import TransactionDetails from './TransactionDetails.jsx';
 
 import styles from './TransactionListItem.css';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 const MSG = defineMessages({
   buttonClaim: {

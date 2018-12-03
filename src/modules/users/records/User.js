@@ -2,9 +2,9 @@
 
 import type { RecordFactory } from 'immutable';
 
-import { Record } from 'immutable';
+import { Record, List } from 'immutable';
 
-import type { ProfileProps, UserActivity, UserProps } from '~types/index';
+import type { ProfileProps, UserActivity, UserProps } from '~types';
 
 const defaultProfileValues: ProfileProps = {
   walletAddress: '',
@@ -18,9 +18,10 @@ const defaultProfileValues: ProfileProps = {
   profileStore: '',
 };
 
-const defaultActivities: Array<UserActivity> = [];
+const defaultActivities: List<UserActivity> = List();
 
 const defaultValues: UserProps = {
+  // FIXME profile needs to be a Record for this to be immutable
   profile: defaultProfileValues,
   activities: defaultActivities,
 };

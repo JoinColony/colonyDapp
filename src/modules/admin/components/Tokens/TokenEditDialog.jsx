@@ -2,10 +2,11 @@
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
+import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenType } from '~types/token';
+import type { TokenRecord } from '~types';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -48,19 +49,19 @@ type FormValues = {
 type Props = {
   cancel: () => void,
   close: () => void,
-  tokens: Array<TokenType>,
+  tokens: List<TokenRecord>,
   /* We need to be aware of who own the tokens since it changes the UI */
   tokenOwner: 'Colony' | 'User',
 };
 
-const validateNativeTokenSelect = (nativeToken?: TokenType): any => {
+const validateNativeTokenSelect = (nativeToken?: TokenRecord): any => {
   if (nativeToken) {
-    const { tokenSymbol } = nativeToken;
+    const { symbol } = nativeToken;
     return yup.object().shape({
       colonyTokens: yup
         .array()
         .of(yup.string())
-        .includes(tokenSymbol, MSG.errorNativeTokenRequired),
+        .includes(symbol, MSG.errorNativeTokenRequired),
     });
   }
   return null;
@@ -97,7 +98,7 @@ class TokenEditDialog extends Component<Props> {
           initialValues={{
             colonyTokens: tokens
               .filter(token => token.isEnabled || token.isNative)
-              .map(token => token.tokenSymbol),
+              .map(token => token.symbol),
           }}
           onSubmit={this.handleSubmitTokenForm}
           validationSchema={validateNativeTokenSelect(nativeToken)}
@@ -117,34 +118,34 @@ class TokenEditDialog extends Component<Props> {
                 />
                 <InputLabel label={MSG.fieldLabel} />
                 <div className={styles.tokenChoiceContainer}>
-                  {tokens.map(token => (
-                    <Checkbox
-                      className={styles.tokenChoice}
-                      key={token.id}
-                      value={token.tokenSymbol}
-                      name="colonyTokens"
-                      disabled={
-                        tokenOwner === 'Colony'
-                          ? token.isNative
-                          : token.isBlocked
-                      }
-                    >
-                      {!!token.tokenIcon && (
-                        <img
-                          src={token.tokenIcon}
-                          alt={token.tokenName}
-                          className={styles.tokenChoiceIcon}
-                        />
-                      )}
-                      <span className={styles.tokenChoiceSymbol}>
-                        <Heading
-                          text={token.tokenSymbol}
-                          appearance={{ size: 'small', margin: 'none' }}
-                        />
-                        {token.tokenName}
-                      </span>
-                    </Checkbox>
-                  ))}
+                  {tokens.map(
+                    ({ id, symbol, isNative, name, icon, isBlocked }) => (
+                      <Checkbox
+                        className={styles.tokenChoice}
+                        key={id}
+                        value={symbol}
+                        name="colonyTokens"
+                        disabled={
+                          tokenOwner === 'Colony' ? isNative : isBlocked
+                        }
+                      >
+                        {!!icon && (
+                          <img
+                            src={icon}
+                            alt={name}
+                            className={styles.tokenChoiceIcon}
+                          />
+                        )}
+                        <span className={styles.tokenChoiceSymbol}>
+                          <Heading
+                            text={symbol}
+                            appearance={{ size: 'small', margin: 'none' }}
+                          />
+                          {name}
+                        </span>
+                      </Checkbox>
+                    ),
+                  )}
                 </div>
               </DialogSection>
               <DialogSection appearance={{ align: 'right' }}>

@@ -2,9 +2,9 @@
 
 import type { RecordFactory } from 'immutable';
 
-import { Record } from 'immutable';
+import { Record, List } from 'immutable';
 
-import type { TaskProps } from '~types/';
+import type { TaskProps } from '~types';
 
 import { TASK_STATE } from './constants';
 
@@ -13,11 +13,11 @@ const defaultValues: TaskProps = {
   title: '',
   dueDate: undefined,
   reputation: 0,
-  payouts: [],
+  payouts: new List(),
   colonyIdentifier: '',
   creator: '',
   assignee: undefined,
-  feedItems: [],
+  feedItems: new List(),
   currentState: TASK_STATE.ACTIVE,
   workerHasRated: false,
   workerRateFail: false,

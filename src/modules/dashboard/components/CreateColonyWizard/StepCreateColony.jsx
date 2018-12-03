@@ -6,7 +6,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';

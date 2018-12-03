@@ -1,8 +1,10 @@
 /* @flow */
 
+import type { RecordOf } from 'immutable';
+
 export type ActivityAction = 'addedSkillTag' | 'assignedUser' | 'commentedOn';
 
-export type Activity = {
+export type ActivityFeedItemProps = {
   id: number,
   actionType: ActivityAction,
   date: Date,
@@ -11,3 +13,5 @@ export type Activity = {
   organization: string,
   domainTag: string,
 };
+
+export type ActivityFeedItemRecord = RecordOf<ActivityFeedItemProps>;

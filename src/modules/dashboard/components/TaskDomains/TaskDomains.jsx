@@ -9,7 +9,7 @@ import ItemsList from '~core/ItemsList';
 
 import styles from './TaskDomains.css';
 
-import { domainMocks } from './__datamocks__/mockDomains';
+import mockDomains from '../../../../__mocks__/mockDomains';
 
 const MSG = defineMessages({
   title: {
@@ -53,11 +53,12 @@ class TaskDomains extends Component<Props, State> {
   render() {
     const { isTaskCreator } = this.props;
     const { selectedDomainId } = this.state;
+    const list = Array(...mockDomains);
     return (
       <div className={styles.main}>
         {isTaskCreator && (
           <ItemsList
-            list={domainMocks}
+            list={list}
             itemDisplayPrefix="#"
             handleSetItem={this.handleSetDomain}
             name="taskDomains"
