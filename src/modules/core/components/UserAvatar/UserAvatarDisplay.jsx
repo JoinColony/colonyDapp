@@ -9,7 +9,7 @@ import UserInfo from '~core/UserInfo';
 
 export type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL?: ?string,
+  avatar?: ?string,
   /** Is passed through to Avatar */
   className?: string,
   /** Avatars that are not set have a different placeholder */
@@ -29,14 +29,14 @@ export type Props = {
 };
 
 const UserAvatarDisplay = ({
-  displayName,
-  username,
+  avatar,
   className,
-  walletAddress,
+  displayName,
   hasUserInfo,
-  avatarURL,
   notSet,
   size,
+  username,
+  walletAddress,
 }: Props) => (
   <UserInfo
     displayName={displayName}
@@ -45,7 +45,7 @@ const UserAvatarDisplay = ({
     trigger={hasUserInfo ? 'hover' : 'disabled'}
   >
     <Avatar
-      avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
+      avatar={avatar || (!notSet ? getIcon(walletAddress) : null)}
       className={className}
       notSet={notSet}
       placeholderIcon="circle-person"

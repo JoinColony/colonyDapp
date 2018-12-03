@@ -1,10 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenType } from '~types/token';
+import type { TokenRecord } from '~types';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -34,7 +35,7 @@ const MSG = defineMessages({
 
 type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenType>,
+  tokens: List<TokenRecord>,
 };
 
 class Tokens extends Component<Props> {
@@ -84,10 +85,10 @@ class Tokens extends Component<Props> {
   };
 
   render() {
-    const { tokens = [] } = this.props;
+    const { tokens = List() } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
     const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
-    const isUserColonyOwner = true; // TODO determine this value.
+    const isUserColonyFounder = true; // TODO determine this value.
     const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
     return (
       <div className={styles.main}>
@@ -101,7 +102,7 @@ class Tokens extends Component<Props> {
               <Heading appearance={{ size: 'normal' }}>
                 <FormattedMessage
                   {...MSG.nativeTokenText}
-                  values={{ nativeToken: nativeToken.tokenSymbol }}
+                  values={{ nativeToken: nativeToken.symbol }}
                 />
               </Heading>
             )}
@@ -111,15 +112,16 @@ class Tokens extends Component<Props> {
         {isColonyAdmin && (
           <aside className={styles.sidebar}>
             <ul>
-              {isUserColonyOwner && canMintNewTokens && (
-                <li>
-                  <Button
-                    text={MSG.navItemMintNewTokens}
-                    appearance={{ theme: 'blue' }}
-                    onClick={this.handleOpenTokenMintDialog}
-                  />
-                </li>
-              )}
+              {isUserColonyFounder &&
+                canMintNewTokens && (
+                  <li>
+                    <Button
+                      text={MSG.navItemMintNewTokens}
+                      appearance={{ theme: 'blue' }}
+                      onClick={this.handleOpenTokenMintDialog}
+                    />
+                  </li>
+                )}
               <li>
                 <Button
                   text={MSG.navItemEditTokens}

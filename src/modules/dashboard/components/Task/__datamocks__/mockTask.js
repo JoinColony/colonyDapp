@@ -1,7 +1,15 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import { Task } from '../../../records';
+import { List } from 'immutable';
+
+import {
+  Task,
+  TaskFeedItem,
+  TaskFeedItemComment,
+  TaskFeedItemRating,
+  TaskPayout,
+} from '../../../records';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 
@@ -10,12 +18,12 @@ import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
  */
 export const mockTaskReward = {
   workerRating: 3,
-  payoutsEarned: [
-    { symbol: 'DAI', amount: 1001 },
-    { symbol: 'CLNY', amount: 600 },
-    { symbol: 'ETH', amount: 200105 },
-    { symbol: 'COOL', amount: 600 },
-  ],
+  payoutsEarned: List.of(
+    TaskPayout({ symbol: 'DAI', amount: 1001 }),
+    TaskPayout({ symbol: 'CLNY', amount: 600 }),
+    TaskPayout({ symbol: 'ETH', amount: 200105 }),
+    TaskPayout({ symbol: 'COOL', amount: 600 }),
+  ),
   reputationEarned: 1045,
 };
 
@@ -24,101 +32,119 @@ export const mockTask = Task({
   title: 'Develop Github integration',
   colonyIdentifier: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
   reputation: 19.5,
-  payouts: [
-    { symbol: 'ETH', amount: 21545, isEth: true, address: '0x0' },
-    {
-      symbol: 'CLNY',
+  payouts: List.of(
+    TaskPayout({ symbol: 'ETH', amount: 21545, isEth: true, address: '0x0' }),
+    TaskPayout({
+      address: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
       amount: 6007,
       isNative: true,
-      address: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
-    },
-    {
-      symbol: 'COOL',
-      amount: 123,
+      symbol: 'CLNY',
+    }),
+    TaskPayout({
       address: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
-    },
-  ],
+      amount: 123,
+      symbol: 'COOL',
+    }),
+  ),
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',
   assignee: userMock,
-  feedItems: [
-    {
+  feedItems: List.of(
+    TaskFeedItem({
       id: 0,
-      body: 'Comment body goes here...',
-      timestamp: new Date('2018-09-16'),
-      user: usersMock[0],
-      type: 'comment',
-    },
-    {
+      createdAt: new Date('2018-09-16'),
+      comment: TaskFeedItemComment({
+        body: 'Comment body goes here...',
+        user: usersMock.get(0),
+      }),
+    }),
+
+    TaskFeedItem({
       id: 1,
-      body:
-        'This is another comment, this time with a link to https://colony.io!',
-      timestamp: new Date('2018-11-03'),
-      user: usersMock[1],
-      type: 'comment',
-    },
-    {
+      comment: TaskFeedItemComment({
+        body:
+          'This is another comment, this time with a link to https://colony.io!',
+        user: usersMock.get(1),
+      }),
+    }),
+
+    TaskFeedItem({
       id: 2,
-      body: 'YANC',
-      timestamp: new Date('2018-11-03 13:00'),
-      user: usersMock[0],
-      type: 'comment',
-    },
-    {
+      createdAt: new Date('2018-11-03 13:00'),
+      comment: TaskFeedItemComment({
+        body: 'YANC',
+        user: usersMock.get(0),
+      }),
+    }),
+
+    TaskFeedItem({
       id: 3,
-      body: "It's me, @chewie the task creator!",
-      timestamp: new Date('2018-11-03 13:15'),
-      user: userMock,
-      type: 'comment',
-    },
-    {
+      createdAt: new Date('2018-11-03 13:15'),
+      comment: TaskFeedItemComment({
+        body: "It's me, @chewie the task creator!",
+        user: userMock,
+      }),
+    }),
+
+    TaskFeedItem({
       id: 4,
-      body: 'Interesting conversation going on here.',
-      timestamp: new Date('2018-11-03 13:30'),
-      user: usersMock[2],
-      type: 'comment',
-    },
-    {
+      createdAt: new Date('2018-11-03 13:30'),
+      comment: TaskFeedItemComment({
+        body: 'Interesting conversation going on here.',
+        user: usersMock.get(2),
+      }),
+    }),
+
+    TaskFeedItem({
       id: 5,
-      body: '^agree',
-      timestamp: new Date('2018-11-03 14:00'),
-      user: usersMock[3],
-      type: 'comment',
-    },
-    {
+      createdAt: new Date('2018-11-03 14:00'),
+      comment: TaskFeedItemComment({
+        body: '^agree',
+        user: usersMock.get(3),
+      }),
+    }),
+
+    TaskFeedItem({
       id: 6,
-      body: `We should
+      createdAt: new Date('2018-11-06 11:00'),
+      comment: TaskFeedItemComment({
+        body: `We should
 have these
 conversations
 more often.`,
-      timestamp: new Date('2018-11-06 11:00'),
-      user: userMock,
-      type: 'comment',
-    },
-    {
+        user: userMock,
+      }),
+    }),
+
+    TaskFeedItem({
       id: 7,
-      body:
-        'Also I feel like posting another comment just to test how it looks with two consecutive by the same account.',
-      timestamp: new Date('2018-11-06 11:30'),
-      user: userMock,
-      type: 'comment',
-    },
-    {
+      createdAt: new Date('2018-11-06 11:30'),
+      comment: TaskFeedItemComment({
+        body:
+          'Also I feel like posting another comment just to test how it looks with two consecutive by the same account.',
+        user: userMock,
+      }),
+    }),
+
+    TaskFeedItem({
       id: 8,
-      rater: usersMock[0],
-      ratee: usersMock[1],
-      rating: 2,
-      timestamp: new Date('2018-11-08 11:00'),
-      type: 'rating',
-    },
-    {
+      createdAt: new Date('2018-11-08 11:00'),
+      rating: TaskFeedItemRating({
+        rater: usersMock.get(0),
+        ratee: usersMock.get(1),
+        rating: 2,
+      }),
+    }),
+
+    TaskFeedItem({
       id: 9,
-      rater: usersMock[1],
-      ratee: usersMock[0],
-      rating: 3,
-      timestamp: new Date('2018-11-08 11:00'),
-      type: 'rating',
-    },
-  ],
+      createdAt: new Date('2018-11-08 11:00'),
+      rating: TaskFeedItemRating({
+        rater: usersMock.get(1),
+        ratee: usersMock.get(0),
+        rating: 3,
+      }),
+    }),
+  ),
 });
 
 export default mockTask;

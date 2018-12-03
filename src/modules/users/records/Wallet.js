@@ -4,7 +4,7 @@ import type { RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { WalletProps } from '~types/WalletRecord';
+import type { WalletProps } from '~types';
 
 const defaultValues: WalletProps = {
   availableAddresses: [],

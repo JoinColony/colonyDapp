@@ -15,7 +15,7 @@ import Assignment from '~core/Assignment';
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { TaskRecord, UserRecord } from '~types/';
+import type { TaskRecord, UserRecord } from '~types';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
@@ -112,7 +112,7 @@ class Task extends Component<Props> {
       token:
         // we add 1 because Formik thinks 0 is empty
         tokensMock.indexOf(
-          tokensMock.find(token => token.tokenSymbol === payout.symbol),
+          tokensMock.find(token => token.symbol === payout.symbol),
         ) + 1,
       amount: payout.amount,
       id: nanoid(),

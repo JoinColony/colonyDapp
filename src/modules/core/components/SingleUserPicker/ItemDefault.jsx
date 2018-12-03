@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 
-import type { UserRecord } from '~types/index';
+import type { UserRecord } from '~types';
 
 import UserAvatar from '~core/UserAvatar';
 import MaskedAddress from '~core/MaskedAddress';

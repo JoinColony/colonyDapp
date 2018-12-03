@@ -1,8 +1,10 @@
 /* @flow */
 
+import { List } from 'immutable';
+
 import { User } from '../../../../users/records';
 
-const usersMocks = [
+const usersMocks = List.of(
   User({
     profile: {
       activitiesStore: '',
@@ -318,6 +320,6 @@ const usersMocks = [
       displayName: 'Collin Vine',
     },
   }),
-];
+);
 
 export default usersMocks;

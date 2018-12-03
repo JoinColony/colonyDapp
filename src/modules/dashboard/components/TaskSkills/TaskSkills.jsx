@@ -53,11 +53,12 @@ class TaskSkills extends Component<Props, State> {
   render() {
     const { isTaskCreator } = this.props;
     const { selectedSkillId } = this.state;
+    const list = Array(...skillMocks);
     return (
       <div className={styles.main}>
         {isTaskCreator && (
           <ItemsList
-            list={skillMocks}
+            list={list}
             handleSetItem={this.handleSetSkill}
             name="taskSkills"
             connect={false}

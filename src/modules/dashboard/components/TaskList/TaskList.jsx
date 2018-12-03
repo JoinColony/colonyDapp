@@ -1,22 +1,25 @@
 /* @flow */
 
+import type { List } from 'immutable';
+
 import React from 'react';
 
 import { Table, TableBody } from '~core/Table';
 
 import TaskListItem from './TaskListItem.jsx';
 
+import type { ColonyRecord, TaskRecord } from '~types';
+
 type Props = {
-  colonyName: string,
-  // TODO: type better as soon as actual structure is known
-  tasks: Array<Object>,
+  colony: ColonyRecord,
+  tasks: List<TaskRecord>,
 };
 
-const TaskList = ({ colonyName, tasks }: Props) => (
+const TaskList = ({ colony, tasks }: Props) => (
   <Table scrollable>
     <TableBody>
-      {tasks.map(task => (
-        <TaskListItem key={task.id} task={task} colonyName={colonyName} />
+      {tasks.toArray().map(task => (
+        <TaskListItem key={task.id} task={task} colony={colony} />
       ))}
     </TableBody>
   </Table>

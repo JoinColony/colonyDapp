@@ -12,7 +12,7 @@ import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
-import type { UserRecord } from '~types/UserRecord';
+import type { UserRecord } from '~types';
 
 const MSG = defineMessages({
   buttonGetStarted: {
