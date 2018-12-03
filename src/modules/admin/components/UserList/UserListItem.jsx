@@ -10,7 +10,7 @@ import Button from '~core/Button';
 
 import styles from './UserListItem.css';
 
-import type { UserRecord } from '~types';
+import type { UserRecord } from '~immutable';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -23,7 +23,7 @@ const componentDisplayName = 'admin.UserList.UserListItem';
 
 type Props = {
   /*
-   * User data Object, follows the same format as UserPicker
+   * User record
    */
   user: UserRecord,
   /*

@@ -5,11 +5,8 @@ import type { SendOptions } from '@colony/colony-js-client';
 import nanoid from 'nanoid';
 
 import type { CreateTransactionAction, LifecycleActionTypes } from '../types';
-import type { TransactionParams, TransactionEventData } from '~types/index';
-import type {
-  AddressOrENSName,
-  ColonyContext,
-} from '../../../lib/ColonyManager/types';
+import type { AddressOrENSName, ColonyContext } from '~types';
+import type { TransactionParams, TransactionEventData } from '~immutable';
 
 import {
   COLONY_CONTEXT,

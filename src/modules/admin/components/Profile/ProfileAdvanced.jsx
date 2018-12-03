@@ -8,8 +8,7 @@ import Button from '~core/Button';
 
 import styles from './ProfileAdvanced.css';
 
-import type { ColonyRecord } from '~types';
-import type { ColonyType } from '~types/colony';
+import type { ColonyRecord } from '~immutable';
 import type { Given } from '~utils/hoc';
 import type { OpenDialog } from '~core/Dialog/types';
 
@@ -42,10 +41,7 @@ type Props = {
 };
 
 const ProfileAdvanced = ({
-  colony: {
-    meta: { id },
-    version,
-  },
+  colony: { id, version },
   openDialog,
   given,
 }: Props) => (

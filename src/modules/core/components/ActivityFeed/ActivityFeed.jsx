@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '~core/Table';
 
-import type { ActivityFeedItemRecord } from '~types';
+import type { ActivityFeedItemRecord } from '~immutable';
 
 import styles from './ActivityFeed.css';
 
@@ -47,7 +47,7 @@ const ActivityFeed = ({ activities }: Props) => (
         </TableRow>
       </TableHeader>
       <TableBody>
-        {activities.toArray().map(activity => (
+        {activities.map(activity => (
           <ActivityFeedItem key={activity.id} activity={activity} />
         ))}
       </TableBody>

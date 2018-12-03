@@ -5,26 +5,21 @@ import getIcon from '../../../../lib/identicon';
 
 import Avatar from '../Avatar';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
-type Props = {
-  colony: ColonyRecord,
+type Props = {|
+  address: $PropertyType<ColonyRecord, 'address'>,
+  avatar: $PropertyType<ColonyRecord, 'avatar'>,
+  name: $PropertyType<ColonyRecord, 'name'>,
   /** Is passed through to Avatar */
   className?: string,
   /** Avatars that are not set have a different placeholder */
   notSet?: boolean,
   /** Avatar size (default is between `s` and `m`) */
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
-};
+|};
 
-const ColonyAvatar = ({
-  colony: {
-    avatar,
-    meta: { address },
-    name,
-  },
-  ...otherProps
-}: Props) => (
+const ColonyAvatar = ({ avatar, address, name, ...otherProps }: Props) => (
   <Avatar
     avatarURL={avatar || getIcon(address)}
     placeholderIcon="at-sign-circle"

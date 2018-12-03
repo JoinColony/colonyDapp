@@ -29,7 +29,8 @@ const withUser = compose(
     lifecycle({
       componentDidMount() {
         const { username, fetchUserProfile } = this.props;
-        fetchUserProfile(username);
+        // TODO remove this guard; just for the user mocks
+        if (username && username !== 'user') fetchUserProfile(username);
       },
     }),
   ),

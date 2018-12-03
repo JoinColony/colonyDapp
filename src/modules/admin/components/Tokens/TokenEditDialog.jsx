@@ -6,7 +6,7 @@ import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenRecord } from '~types';
+import type { TokenRecord } from '~immutable';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -119,10 +119,10 @@ class TokenEditDialog extends Component<Props> {
                 <InputLabel label={MSG.fieldLabel} />
                 <div className={styles.tokenChoiceContainer}>
                   {tokens.map(
-                    ({ id, symbol, isNative, name, icon, isBlocked }) => (
+                    ({ address, symbol, isNative, name, icon, isBlocked }) => (
                       <Checkbox
                         className={styles.tokenChoice}
-                        key={id}
+                        key={address}
                         value={symbol}
                         name="colonyTokens"
                         disabled={

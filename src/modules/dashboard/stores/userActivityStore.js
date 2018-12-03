@@ -2,7 +2,7 @@
 
 import * as yup from 'yup';
 
-import type { StoreBlueprint } from '~types/index';
+import type { StoreBlueprint } from '~types';
 
 import { FeedStore } from '../../../lib/database/stores';
 

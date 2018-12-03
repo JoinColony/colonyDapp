@@ -1,7 +1,7 @@
 /* @flow */
 
 import { List } from 'immutable';
-import { Domain } from '../modules/dashboard/records';
+import { Domain } from '~immutable';
 
 const mockDomains = List.of(
   Domain({ id: 1, name: 'dApp' }),

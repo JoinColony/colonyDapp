@@ -2,7 +2,7 @@
 import React from 'react';
 import { List } from 'immutable';
 
-import type { TokenRecord } from '~types';
+import type { TokenRecord } from '~immutable';
 
 import CardList from '~core/CardList';
 
@@ -27,9 +27,8 @@ const TokenList = ({ tokens, appearance }: Props) => (
     <CardList appearance={appearance}>
       {tokens
         .filter(token => token.isEnabled)
-        .toArray()
         .map(token => (
-          <TokenCard key={token.id} token={token} />
+          <TokenCard key={token.address} token={token} />
         ))}
     </CardList>
   </div>

@@ -17,11 +17,11 @@ import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { getEthToUsd } from '~utils/external';
 import { bnMultiply } from '~utils/numbers';
+import { Token } from '~immutable';
 
 import Payout from './Payout.jsx';
-import { Token } from '../../../core/records';
 
-import type { UserRecord, TokenRecord, TaskPayoutRecord } from '~types';
+import type { UserRecord, TokenRecord, TaskPayoutRecord } from '~immutable';
 
 import styles from './TaskEditDialog.css';
 

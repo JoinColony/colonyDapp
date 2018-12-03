@@ -15,7 +15,8 @@ import styles from './UserProfile.css';
 
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
-import type { ActionCreator, UserRecord } from '~types';
+import type { ActionCreator } from '~types';
+import type { UserRecord } from '~immutable';
 
 type Props = {
   fetchUserProfile: ActionCreator,
@@ -27,9 +28,7 @@ type Props = {
 class UserProfile extends Component<Props> {
   componentDidMount() {
     const { fetchUserProfile, user, username } = this.props;
-    if (!user) {
-      fetchUserProfile(username);
-    }
+    if (!user && username) fetchUserProfile(username);
   }
 
   render() {

@@ -2,7 +2,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserRecord, TaskFeedItemRatingRecord } from '~types';
+import type { TaskFeedItemRatingRecord } from '~immutable';
 
 import StarRating from '~core/StarRating';
 import UserAvatar from '~core/UserAvatar';
@@ -36,9 +36,8 @@ const TaskFeedRating = ({
       },
     },
     ratee: {
-      profile: {
-        displayName: rateeDisplayName },
-      },
+      profile: { displayName: rateeDisplayName },
+    },
     rating,
   },
 }: Props) => (

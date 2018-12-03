@@ -25,8 +25,8 @@ const mockInbox = [
       unit: '$',
       value: 10.3,
     },
-    colonyName: 'Cool Clny',
-    onClickRoute: '/colony/cool-clny',
+    colonyName: 'Cool Colony',
+    onClickRoute: '/colony/cool-colony',
   },
   {
     id: 2,

@@ -5,7 +5,7 @@ import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenRecord } from '~types';
+import type { TokenRecord } from '~immutable';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -112,16 +112,15 @@ class Tokens extends Component<Props> {
         {isColonyAdmin && (
           <aside className={styles.sidebar}>
             <ul>
-              {isUserColonyFounder &&
-                canMintNewTokens && (
-                  <li>
-                    <Button
-                      text={MSG.navItemMintNewTokens}
-                      appearance={{ theme: 'blue' }}
-                      onClick={this.handleOpenTokenMintDialog}
-                    />
-                  </li>
-                )}
+              {isUserColonyFounder && canMintNewTokens && (
+                <li>
+                  <Button
+                    text={MSG.navItemMintNewTokens}
+                    appearance={{ theme: 'blue' }}
+                    onClick={this.handleOpenTokenMintDialog}
+                  />
+                </li>
+              )}
               <li>
                 <Button
                   text={MSG.navItemEditTokens}

@@ -5,7 +5,7 @@ import type { List } from 'immutable';
 import React from 'react';
 import cx from 'classnames';
 
-import type { TaskPayoutRecord } from '~types';
+import type { TaskPayoutRecord } from '~immutable';
 
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
@@ -25,7 +25,7 @@ const displayName = 'PayoutsList';
 
 const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
   /* TODO: there is probably a better way to sort this. We can do better! */
-  const sortedPayouts = payouts.sort((a, b) => {
+  const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
     if (a.symbol === nativeToken && b.symbol === 'ETH') {
       return -1;
     }
@@ -47,13 +47,13 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
         {firstPayouts.map(payout => (
           <Numeral
             className={cx(styles.payoutNumber, {
-              [styles.native]: payout.symbol === nativeToken,
+              [styles.native]: payout.token.symbol === nativeToken,
             })}
-            key={payout.symbol}
+            key={payout.token.symbol}
             value={payout.amount}
             unit="ether"
             decimals={1}
-            prefix={`${payout.symbol} `}
+            prefix={`${payout.token.symbol} `}
           />
         ))}
       </div>
@@ -64,13 +64,13 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
               {extraPayouts.map(payout => (
                 <Numeral
                   className={cx(styles.payoutNumber, {
-                    [styles.native]: payout.symbol === nativeToken,
+                    [styles.native]: payout.token.symbol === nativeToken,
                   })}
-                  key={payout.symbol}
+                  key={payout.token.symbol}
                   value={payout.amount}
                   unit="ether"
                   decimals={1}
-                  prefix={`${payout.symbol} `}
+                  prefix={`${payout.token.symbol} `}
                 />
               ))}
             </div>

@@ -4,24 +4,21 @@ import type { LocationShape } from 'react-router-dom';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
+import { SpinnerLoader } from '~core/Preloaders';
 import Organizations from '~admin/Organizations';
-import Profile from '~admin/Profile';
 import Profile from '~admin/Profile';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
-import VerticalNavigation from '~pages/VerticalNavigation';
-import { COLONY_HOME_ROUTE } from '~routes';
 import { withFeatureFlags } from '~utils/hoc';
 
-import { currentColony } from '../../../core/selectors';
+import { withColonyFromRoute } from '../../../core/hocs';
 
 import styles from './AdminDashboard.css';
 
@@ -32,13 +29,13 @@ import type {
    */
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
   backButton: {
     id: 'dashboard.Admin.backButton',
-    defaultMessage: 'Go to {colonyName}',
+    defaultMessage: 'Go to {name}',
   },
   colonySettings: {
     id: 'dashboard.Admin.colonySettings',
@@ -98,14 +95,12 @@ const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
 ];
 
 const AdminDashboard = (props: Props) => {
-  const {
-    colony: {
-      meta: { ensName },
-      name,
-    },
-    given,
-    location,
-  } = props;
+  const { colony, given, location } = props;
+
+  // TODO create a better loading state
+  if (!colony) return <SpinnerLoader />;
+
+  const { ensName, name } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
@@ -115,9 +110,13 @@ const AdminDashboard = (props: Props) => {
         }
       >
         <div className={styles.backNavigation}>
-          <Icon name="circle-back" title="back" appearance={{ size: 'medium' }}/>
+          <Icon
+            name="circle-back"
+            title="back"
+            appearance={{ size: 'medium' }}
+          />
           <NavLink
-            to={`colony/${ensName}`}
+            to={`/colony/${ensName}`}
             text={MSG.backButton}
             textValues={{ name }}
           />
@@ -137,7 +136,7 @@ const AdminDashboard = (props: Props) => {
       {/*
        * @TODO Replace with actual selector that checks if the Colony is in recovery mode
        */}
-      {given(mockColonyRecoveryMode) && <RecoveryModeAlert/>}
+      {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
     </div>
   );
 };
@@ -150,10 +149,6 @@ AdminDashboard.defaultProps = {
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
 export default compose(
+  withColonyFromRoute,
   withFeatureFlags(),
-  connect(
-    state => ({
-      colony: currentColony(state),
-    }),
-  ),
 )(AdminDashboard);

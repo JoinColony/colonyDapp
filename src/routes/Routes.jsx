@@ -62,6 +62,13 @@ const Routes = ({ currentUser }) => {
         component={CreateWalletWizard}
       />
       <ConnectedOnlyRoute
+        exact
+        isConnected={isConnected}
+        path={COLONY_HOME_ROUTE}
+        component={ColonyHome}
+        backRoute={DASHBOARD_ROUTE}
+      />
+      <ConnectedOnlyRoute
         isConnected={isConnected}
         path={INBOX_ROUTE}
         component={Inbox}
@@ -81,18 +88,14 @@ const Routes = ({ currentUser }) => {
         appearance={{ theme: 'transparent' }}
       />
       <ConnectedOnlyRoute
+        exact
         isConnected={isConnected}
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
         hasNavigation={false}
       />
       <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={COLONY_HOME_ROUTE}
-        component={ColonyHome}
-        backRoute={DASHBOARD_ROUTE}
-      />
-      <ConnectedOnlyRoute
+        exact
         isConnected={isConnected}
         path={TASK_ROUTE}
         component={Task}

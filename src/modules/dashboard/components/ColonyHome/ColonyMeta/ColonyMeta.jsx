@@ -14,7 +14,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './ColonyMeta.css';
 
-import type { ColonyRecord, UserRecord } from '~types';
+import type { ColonyRecord, UserRecord } from '~immutable';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -53,14 +53,20 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
     address,
     avatar,
     description,
+    ensName,
     guideline,
-    meta: { ensName },
     name,
     website,
   } = colony;
   return (
     <div>
-      <ColonyAvatar className={styles.avatar} colony={colony} size="xl" />
+      <ColonyAvatar
+        address={address}
+        avatar={avatar}
+        name={name}
+        className={styles.avatar}
+        size="xl"
+      />
       <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
         <Fragment>
           <span>{name}</span>

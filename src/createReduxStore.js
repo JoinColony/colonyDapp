@@ -4,9 +4,10 @@ import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 
-import context from '~context/';
+import context from '~context';
 
 import coreReducer from './modules/core/reducers';
+import dashboardReducer from './modules/dashboard/reducers';
 import userReducer from './modules/users/reducers';
 
 import setupSagas from './modules/core/sagas';
@@ -16,6 +17,7 @@ import reduxPromiseListener from './createPromiseListener';
 
 const rootReducer = combineReducers({
   core: coreReducer,
+  dashboard: dashboardReducer,
   users: userReducer,
 });
 

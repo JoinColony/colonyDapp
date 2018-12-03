@@ -2,7 +2,7 @@ import { Map as ImmutableMap, Record } from 'immutable';
 
 import reducer from '../transactions';
 
-import { Transaction } from '../../records';
+import { Transaction } from '~immutable';
 
 import {
   transactionSent,

@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenRecord } from '~types';
+import type { TokenRecord } from '~immutable';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';

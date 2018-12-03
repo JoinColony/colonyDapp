@@ -10,7 +10,7 @@ import Link from '~core/Link';
 
 import styles from './TaskListItem.css';
 
-import type { ColonyRecord, TaskRecord } from '~types';
+import type { TaskRecord } from '~immutable';
 
 const MSG = defineMessages({
   reputation: {
@@ -22,20 +22,18 @@ const MSG = defineMessages({
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {
-  colony: ColonyRecord,
   task: TaskRecord,
 };
 
 const TaskListItem = ({
-  colony: { name },
-  task: { assignee, id, payouts, reputation, title },
+  task: { assignee, id, payouts, reputation, title, colonyENSName },
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
       <Link
         title={title}
         className={styles.taskDetailsTitle}
-        to={`colony/${name}/task/${id}`}
+        to={`/colony/${colonyENSName}/task/${id}`}
         text={title}
       />
       {reputation && (
@@ -54,8 +52,8 @@ const TaskListItem = ({
       {assignee ? (
         <UserAvatar
           size="xs"
-          walletAddress={assignee.walletAddress}
-          username={assignee.username}
+          walletAddress={assignee.profile.walletAddress}
+          username={assignee.profile.username}
         />
       ) : null}
     </TableCell>

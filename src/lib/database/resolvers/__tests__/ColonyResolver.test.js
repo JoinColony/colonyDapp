@@ -9,7 +9,8 @@ describe('Colony Resolver', () => {
 
     expect(colonyResolver instanceof ENSResolver).toBeTruthy();
   });
-  test('Colony resolver not implemented', async () => {
-    expect(colonyResolver.resolve).toThrow();
+  test('Colony resolver implemented', async () => {
+    // TODO this test could be better 🙃
+    expect(colonyResolver.resolve).not.toThrow();
   });
 });

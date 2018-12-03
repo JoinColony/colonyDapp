@@ -2,22 +2,25 @@
 
 import * as yup from 'yup';
 
-import type { StoreBlueprint } from '~types/index';
-
 import { KVStore } from '../../../lib/database/stores';
+
+import type { StoreBlueprint } from '~types';
 
 const colonyStore: StoreBlueprint = {
   // TODO: implement
   getAccessController() {},
   name: 'colony',
   schema: yup.object({
-    colonyId: yup.number(),
-    colonyAddress: yup.string().address(),
-    colonyName: yup.string(),
-    tokenAddress: yup.string().address(),
-    tokenName: yup.string(),
-    tokenSymbol: yup.string(),
-    tokenIcon: yup.string(),
+    id: yup.number(),
+    address: yup.string().address(),
+    ensName: yup.string(),
+    name: yup.string(),
+    token: yup.object({
+      address: yup.string().address(),
+      icon: yup.string(),
+      name: yup.string(),
+      symbol: yup.string(),
+    }),
   }),
   type: KVStore,
 };

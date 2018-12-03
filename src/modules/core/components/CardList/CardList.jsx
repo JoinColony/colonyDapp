@@ -1,5 +1,5 @@
 /* @flow */
-import type { ChildrenArray, Element as ElementType } from 'react';
+import type { Node } from 'react';
 
 import React from 'react';
 
@@ -18,7 +18,7 @@ type Props = {
   /** Appearance object */
   appearance?: Appearance,
   /** Child content to render in the list */
-  children: ChildrenArray<ElementType<*>>,
+  children: Node,
   /** Optional additional className for further styling */
   className?: string,
 };

@@ -1,18 +1,16 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
-import { currentColony } from '../../../core/selectors';
 import ProfileEdit from './ProfileEdit.jsx';
 import ProfileAdvanced from './ProfileAdvanced';
 
 import styles from './Profile.css';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
 type Props = {
   colony: ColonyRecord,

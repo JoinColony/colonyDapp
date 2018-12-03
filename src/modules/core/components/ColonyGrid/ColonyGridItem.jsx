@@ -7,17 +7,20 @@ import Link from '../Link';
 
 import styles from './ColonyGridItem.css';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
 type Props = {
-  colony: ColonyRecord,
+  address: $PropertyType<ColonyRecord, 'address'>,
+  avatar: $PropertyType<ColonyRecord, 'avatar'>,
+  ensName: $PropertyType<ColonyRecord, 'ensName'>,
+  name: $PropertyType<ColonyRecord, 'name'>,
 };
 
-const ColonyGridItem = ({ colony }: Props) => (
+const ColonyGridItem = ({ ensName, address, name, avatar }: Props) => (
   <div className={styles.main}>
-    <Link to="/">
-      <ColonyAvatar colony={colony} />
-      <Heading text={colony.name} appearance={{ size: 'small' }} />
+    <Link to={`/colony/${ensName}`}>
+      <ColonyAvatar avatar={avatar} address={address} name={name} />
+      <Heading text={name} appearance={{ size: 'small' }} />
     </Link>
   </div>
 );
