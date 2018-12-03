@@ -126,6 +126,7 @@ class TaskDate extends Component<Props, State> {
               name="taskDueDate"
               setValue={this.handleSelectDate}
               selectedDate={selectedDate}
+              showArrow={false}
               renderTrigger={({ open, ref }) => (
                 <Button
                   appearance={{ theme: 'blue', size: 'small' }}
