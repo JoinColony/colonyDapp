@@ -61,6 +61,7 @@ class TaskSkills extends Component<Props, State> {
             handleSetItem={this.handleSetSkill}
             name="taskSkills"
             connect={false}
+            showArrow={false}
           >
             <div className={styles.controls}>
               <Heading
