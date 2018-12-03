@@ -29,6 +29,11 @@ const userProfileStore: StoreBlueprint = {
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
+    databases: yup.object({
+      colonies: yup.object(),
+      domains: yup.object(),
+      activity: yup.string(),
+    }),
   }),
   type: KVStore,
 };
