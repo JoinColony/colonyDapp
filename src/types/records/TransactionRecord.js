@@ -1,14 +1,14 @@
 /* @flow */
 
 import type { SendOptions } from '@colony/colony-js-client';
-import type BigNumber from 'bn.js';
+import type BigNumber from 'bn.js/lib/bn';
 import type { RecordOf, List } from 'immutable';
 
-import type { LifecycleActionTypes } from '../modules/core/types';
+import type { LifecycleActionTypes } from '../../modules/core/types';
 import type {
   AddressOrENSName,
   ColonyContext,
-} from '../lib/ColonyManager/types';
+} from '../../lib/ColonyManager/types';
 
 export type TransactionError = {
   type: 'send' | 'receipt' | 'eventData' | 'unsuccessful',
