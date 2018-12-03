@@ -15,3 +15,10 @@ export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
   createElement(Consumer, null, value =>
     createElement(Component, { ...value, ...props }),
   );
+
+/**
+ * @method withFeatureFlags
+ */
+export const withFeatureFlags = (
+  Component: ComponentType<{ [string]: any }>,
+) => (props: Object) => createElement(Component, { ...props });
