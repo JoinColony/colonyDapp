@@ -1,4 +1,4 @@
-// @flow
+/* @flow */
 
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
