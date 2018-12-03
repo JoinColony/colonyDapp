@@ -41,7 +41,7 @@ const ColonyGrid = ({ colonies = List(), loading }: Props) => (
       </div>
     ) : (
       <div className={styles.colonyGrid}>
-        {colonies.map(colony => (
+        {colonies.toArray().map(colony => (
           <div className={styles.colonyGridItem} key={colony.meta.address}>
             <ColonyGridItem colony={colony} />
           </div>

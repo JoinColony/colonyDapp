@@ -112,16 +112,15 @@ class Tokens extends Component<Props> {
         {isColonyAdmin && (
           <aside className={styles.sidebar}>
             <ul>
-              {isUserColonyFounder &&
-                canMintNewTokens && (
-                  <li>
-                    <Button
-                      text={MSG.navItemMintNewTokens}
-                      appearance={{ theme: 'blue' }}
-                      onClick={this.handleOpenTokenMintDialog}
-                    />
-                  </li>
-                )}
+              {isUserColonyFounder && canMintNewTokens && (
+                <li>
+                  <Button
+                    text={MSG.navItemMintNewTokens}
+                    appearance={{ theme: 'blue' }}
+                    onClick={this.handleOpenTokenMintDialog}
+                  />
+                </li>
+              )}
               <li>
                 <Button
                   text={MSG.navItemEditTokens}

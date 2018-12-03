@@ -4,7 +4,7 @@ import type { RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
-import { User } from '../../users/records';
+import User from './User';
 
 import type { TaskFeedItemRatingProps } from '~types';
 

@@ -6,16 +6,11 @@ import { setContext, call, all, put, fork } from 'redux-saga/effects';
 
 import { create, putError } from '~utils/saga/effects';
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupTransactionsSagas from './transactions';
-import {
-  getUser,
-  getUserStore,
-  getWallet,
-  setupUserSagas,
-} from '../../users/sagas';
+import { getUserStore, getWallet, setupUserSagas } from '../../users/sagas';
 import {
   CURRENT_USER_CREATE,
   WALLET_CREATE_ERROR,
@@ -24,6 +19,7 @@ import {
 import { getDDB, getColonyManager } from './utils';
 
 import * as resolvers from '../../../lib/database/resolvers';
+import { getAll } from '../../../lib/database/commands';
 
 function* setupContextSagas(): any {
   yield all([
@@ -54,10 +50,17 @@ export default function* setupUserContext(action: Action): Saga<void> {
     );
     yield call([ddb, ddb.addResolver], 'user', userResolver);
 
+    // Add colony ENS resolver
+    const colonyResolver = yield create(
+      resolvers.ColonyResolver,
+      colonyManager.networkClient,
+    );
+    yield call([ddb, ddb.addResolver], 'colony', colonyResolver);
+
     yield setContext({ ddb, colonyManager });
 
     const userStore = yield call(getUserStore, wallet.address);
-    const user = yield call(getUser, userStore);
+    const userData = yield call(getAll, userStore);
 
     // TODO: the user could potentially alter their username on the DDB w/o changing it on the DDB
 
@@ -70,7 +73,7 @@ export default function* setupUserContext(action: Action): Saga<void> {
     yield put({
       type: CURRENT_USER_CREATE,
       payload: {
-        user,
+        ...userData,
         walletAddress: wallet.address,
         // Address is an orbit address object
         orbitStore: userStore.address.toString(),

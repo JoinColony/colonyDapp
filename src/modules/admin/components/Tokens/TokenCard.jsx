@@ -4,7 +4,7 @@ import React, { Component, Fragment } from 'react';
 
 import { getEthToUsd } from '~utils/external';
 
-// import { Token } from '../../../core/records';
+// import { Token } from '~immutable';
 import type { TokenRecord } from '~types';
 
 import Card from '~core/Card';

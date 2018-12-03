@@ -14,7 +14,7 @@ import {
   TOKEN_INFO_FETCH,
   TOKEN_INFO_FETCH_SUCCESS,
   TOKEN_INFO_FETCH_ERROR,
-} from '../../actionTypes/colony';
+} from '../../actionTypes';
 import promiseListener from '../../../../createPromiseListener';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';

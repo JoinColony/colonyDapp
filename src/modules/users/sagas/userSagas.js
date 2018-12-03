@@ -13,7 +13,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, UserRecord } from '~types/index';
+import type { Action } from '~types';
 
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
@@ -71,10 +71,6 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
   yield call([store, store.set], { createdAt: new Date() });
 
   return store;
-}
-
-export function* getUser(store: KVStore): Saga<UserRecord> {
-  return yield call(getAll, store);
 }
 
 function* updateProfile(action: Action): Saga<void> {

@@ -1,25 +1,22 @@
 /* @flow */
 
+import type { LocationShape } from 'react-router-dom';
+
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { connect } from 'react-redux';
-
-import type { LocationShape } from 'react-router-dom';
 
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
-
-import type { ColonyRecord } from '~types';
-
-import { currentColony } from '../../../core/selectors';
-
 import VerticalNavigation from '~pages/VerticalNavigation';
-
 import Profile from '~admin/Profile';
 import Organizations from '~admin/Organizations';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
+
+import type { ColonyRecord, ENSName } from '~types';
+
+import { withColony } from '../../../core/hocs';
 
 import styles from './AdminDashboard.css';
 
@@ -59,6 +56,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  ensName: ENSName,
   colony: ColonyRecord,
   /*
    * The flow type for this exists
@@ -92,10 +90,8 @@ const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
 
 const AdminDashboard = (props: Props) => {
   const {
-    colony: {
-      meta: { ensName },
-      name,
-    },
+    colony: { name },
+    ensName,
     location,
   } = props;
   return (
@@ -136,9 +132,4 @@ const AdminDashboard = (props: Props) => {
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
-export default connect(
-  state => ({
-    colony: currentColony(state),
-  }),
-  null,
-)(AdminDashboard);
+export default withColony(AdminDashboard);

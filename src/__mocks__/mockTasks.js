@@ -3,8 +3,7 @@
 import BigNumber from 'bn.js';
 import { List } from 'immutable';
 
-import { Task, TaskPayout } from '../../../records';
-import { User } from '../../../../users/records';
+import { Task, TaskPayout, User } from '~immutable';
 
 const createBN = val =>
   new BigNumber(val).mul(new BigNumber(10).pow(new BigNumber(17)));
@@ -12,6 +11,7 @@ const createBN = val =>
 const mockTasks = List.of(
   Task({
     id: 1,
+    colonyENSName: 'cool-colony',
     title: 'Develop Github integration',
     reputation: 19.5,
     payouts: List.of(
@@ -28,6 +28,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 2,
+    colonyENSName: 'cool-colony',
     title: 'Write docs for JS library',
     reputation: 35,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(7) })),
@@ -39,6 +40,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 3,
+    colonyENSName: 'cool-colony',
     title: 'Conduct user interviews on lo-fi prototypes',
     reputation: 5,
     payouts: List.of(
@@ -53,6 +55,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 4,
+    colonyENSName: 'cool-colony',
     title: 'Create ux prototype of an Ethereum wallet',
     reputation: 8,
     payouts: List.of(
@@ -67,6 +70,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 5,
+    colonyENSName: 'cool-colony',
     title: 'Translate Colony whitepaper',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'CLNY', amount: createBN(100) })),
@@ -78,6 +82,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 6,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -89,6 +94,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 7,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -100,6 +106,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 8,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -111,6 +118,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 9,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -122,6 +130,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 10,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -133,6 +142,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 11,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -144,6 +154,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 12,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -155,6 +166,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 13,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -166,6 +178,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 14,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),
@@ -177,6 +190,7 @@ const mockTasks = List.of(
   }),
   Task({
     id: 15,
+    colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
     payouts: List.of(TaskPayout({ symbol: 'ETH', amount: createBN(100) })),

@@ -27,9 +27,7 @@ type Props = {
 class UserProfile extends Component<Props> {
   componentDidMount() {
     const { fetchUserProfile, user, username } = this.props;
-    if (!user) {
-      fetchUserProfile(username);
-    }
+    if (!user && username) fetchUserProfile(username);
   }
 
   render() {

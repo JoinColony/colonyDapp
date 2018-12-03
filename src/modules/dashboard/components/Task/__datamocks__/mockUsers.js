@@ -2,7 +2,7 @@
 
 import { List } from 'immutable';
 
-import { User } from '../../../../users/records';
+import { User } from '~immutable';
 
 const usersMocks = List.of(
   User({

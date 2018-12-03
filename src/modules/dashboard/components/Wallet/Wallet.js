@@ -6,7 +6,7 @@ import withDialog from '~core/Dialog/withDialog';
 
 import Wallet from './Wallet.jsx';
 
-import mockTokens from './__datamocks__/mockTokens';
+import mockTokens from '../../../../__mocks__/mockTokens';
 
 const enhance = compose(
   withDialog(),

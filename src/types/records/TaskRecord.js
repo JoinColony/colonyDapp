@@ -2,11 +2,10 @@
 
 import type { RecordOf, List } from 'immutable';
 import type { UserRecord } from './UserRecord';
-import type { AddressOrENSName } from '../../lib/ColonyManager/types';
 
-import { TASK_STATE } from '../../modules/dashboard/records/index';
+import { TASK_STATE } from '~immutable';
 
-import type { TaskFeedItemRecord, TaskPayoutRecord } from '~types';
+import type { ENSName, TaskFeedItemRecord, TaskPayoutRecord } from '~types';
 
 export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 
@@ -16,7 +15,7 @@ export type TaskProps = {
   dueDate?: Date,
   reputation: number, // TODO: should be BigNumber
   payouts: List<TaskPayoutRecord>,
-  colonyIdentifier: AddressOrENSName,
+  colonyENSName: ENSName,
   creator: string,
   assignee?: UserRecord,
   feedItems: List<TaskFeedItemRecord>,

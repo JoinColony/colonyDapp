@@ -12,11 +12,11 @@ import {
   TRANSACTION_SENT,
 } from '../actionTypes';
 
-import { Transaction } from '../records';
+import { Transaction } from '~immutable';
 
 import type { TransactionsState } from '../types';
 
-import type { TransactionId } from '~types/TransactionRecord';
+import type { TransactionId } from '~types';
 
 type Action = {
   type: string,

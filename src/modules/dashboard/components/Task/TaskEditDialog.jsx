@@ -19,7 +19,7 @@ import { getEthToUsd } from '~utils/external';
 import { bnMultiply } from '~utils/numbers';
 
 import Payout from './Payout.jsx';
-import { Token } from '../../../core/records';
+import { Token } from '~immutable';
 
 import type { UserRecord, TokenRecord, TaskPayoutRecord } from '~types';
 

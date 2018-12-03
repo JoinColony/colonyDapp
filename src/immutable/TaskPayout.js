@@ -7,9 +7,9 @@ import { Record } from 'immutable';
 import type { TaskPayoutProps } from '~types';
 
 const defaultValues: TaskPayoutProps = {
+  // TODO consider using just amount and token (TokenRecord) properties?
   symbol: '',
   amount: 0,
-  // TODO we probably don't need these props, but they are used elsewhere
   isEth: undefined,
   isNative: undefined,
 };

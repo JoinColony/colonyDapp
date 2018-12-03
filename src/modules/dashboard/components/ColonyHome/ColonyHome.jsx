@@ -3,6 +3,7 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -12,7 +13,7 @@ import Heading from '~core/Heading';
 import TaskList from '~dashboard/TaskList';
 
 import { walletAddressSelector } from '../../../users/selectors/users';
-import { currentColony } from '../../../core/selectors';
+import { withColony } from '../../../core/hocs';
 
 import ColonyMeta from './ColonyMeta';
 
@@ -20,7 +21,7 @@ import styles from './ColonyHome.css';
 
 import mockColonyAdmins from './__datamocks__/mockColonyAdmins';
 import mockColonyFounders from './__datamocks__/mockColonyFounders';
-import mockTasks from './__datamocks__/mockTasks';
+import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
 import mockDomains from '../../../../__mocks__/mockDomains';
 
@@ -75,7 +76,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
-  colony: ColonyRecord,
+  colony: ?ColonyRecord,
   walletAddress: string,
 };
 
@@ -151,15 +152,17 @@ class ColonyHome extends Component<Props, State> {
     return (
       <div className={styles.main}>
         <aside className={styles.colonyInfo}>
-          <ColonyMeta
-            colony={colony}
-            founders={mockColonyFounders}
-            admins={mockColonyAdmins}
-            /*
-             * This needs real logic to determine if the user is an admin
-             */
-            isAdmin={!!walletAddress}
-          />
+          {colony ? (
+            <ColonyMeta
+              colony={colony}
+              founders={mockColonyFounders}
+              admins={mockColonyAdmins}
+              /*
+               * This needs real logic to determine if the user is an admin
+               */
+              isAdmin={!!walletAddress}
+            />
+          ) : null}
         </aside>
         <main className={styles.content}>
           <Tabs>
@@ -169,7 +172,7 @@ class ColonyHome extends Component<Props, State> {
               </Tab>
             </TabList>
             <TabPanel>
-              {tasks && tasks.size ? (
+              {colony && tasks && tasks.size ? (
                 <TaskList colony={colony} tasks={tasks} />
               ) : (
                 <Fragment>
@@ -213,13 +216,15 @@ class ColonyHome extends Component<Props, State> {
               </li>
             ))}
           </ul>
-        </aside>s
+        </aside>
       </div>
     );
   }
 }
 
-export default connect(state => ({
-  colony: currentColony(state),
-  walletAddress: walletAddressSelector(state),
-}))(ColonyHome);
+export default compose(
+  withColony,
+  connect(state => ({
+    walletAddress: walletAddressSelector(state),
+  })),
+)(ColonyHome);

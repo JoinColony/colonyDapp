@@ -32,6 +32,7 @@ module.name_mapper='^\~utils\/?\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^\~styles\/?\(.*\)$' -> '<PROJECT_ROOT>/src/styles/shared/\1'
 module.name_mapper='^\~types\/?\(.*\)$' -> '<PROJECT_ROOT>/src/types/\1'
 module.name_mapper='^\~routes' -> '<PROJECT_ROOT>/src/routes'
+module.name_mapper='^\~immutable' -> '<PROJECT_ROOT>/src/immutable'
 module.name_mapper='\~\([a-zA-Z0-9\-\_]+\)\/\(.*\)' -> '<PROJECT_ROOT>/src/modules/\1/components/\2'
 
 [strict]

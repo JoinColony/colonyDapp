@@ -4,18 +4,11 @@ import { connect } from 'react-redux';
 
 import Dashboard from './Dashboard.jsx';
 
-import currentUser from '~users/AvatarDropdown/__datamocks__/mockUser';
-
-import { currentColony } from '../../../core/selectors';
+import { currentUser } from '../../../users/selectors';
 
 const enhance = connect(
   state => ({
-    currentColony: currentColony(state),
-    /*
-     * @TODO add real logic here, as currently we hard code it for display purpouses
-     */
-    currentUser,
-    userClaimedProfile: false,
+    currentUser: currentUser(state),
   }),
   null,
 );

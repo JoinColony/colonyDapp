@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import { User } from '../../../../users/records';
+import { User } from '~immutable';
 
 const MockUser = User({
   walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989b',

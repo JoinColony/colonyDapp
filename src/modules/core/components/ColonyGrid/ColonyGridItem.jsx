@@ -15,7 +15,7 @@ type Props = {
 
 const ColonyGridItem = ({ colony }: Props) => (
   <div className={styles.main}>
-    <Link to="/">
+    <Link to={`/colony/${colony.meta.ensName}`}>
       <ColonyAvatar colony={colony} />
       <Heading text={colony.name} appearance={{ size: 'small' }} />
     </Link>

@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { put, takeEvery, call, getContext } from 'redux-saga/effects';
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
@@ -28,12 +28,12 @@ import {
 } from '../actionTypes';
 
 import {
-  taskWorkerEnd,
   taskManagerComplete,
   taskManagerRateWorker,
+  taskManagerRevealRating,
+  taskWorkerEnd,
   taskWorkerRateManager,
   taskWorkerRevealRating,
-  taskManagerRevealRating,
 } from '../actionCreators';
 
 function* generateRatingSalt(colonyIdentifier: string, taskId: number) {

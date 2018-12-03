@@ -7,9 +7,9 @@ import {
   USER_UPLOAD_AVATAR_SUCCESS,
 } from '../actionTypes';
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
-import { User } from '../records';
+import { User } from '~immutable';
 
 type State = User | null;
 
@@ -17,16 +17,11 @@ const INITIAL_STATE = null;
 
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
-    case CURRENT_USER_CREATE: {
-      const { walletAddress, user, orbitStore } = action.payload;
-      return User({ ...user, walletAddress, orbitStore });
-    }
-    case USER_PROFILE_UPDATE_SUCCESS: {
-      if (state) {
-        return state.merge(action.payload);
-      }
-      return state;
-    }
+    case CURRENT_USER_CREATE:
+      return User(action.payload);
+    case USER_PROFILE_UPDATE_SUCCESS:
+      return state ? state.merge(action.payload) : state;
+
     case USERNAME_CREATE_SUCCESS: {
       // TODO: This might change (maybe transaction: { params: { username }})
       // Or eventData (as soon as it is available)

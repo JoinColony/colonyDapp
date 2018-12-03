@@ -52,9 +52,9 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
   const {
     description,
     guideline,
+    meta: { ensName },
     name,
     website,
-    meta: { ensName },
   } = colony;
   return (
     <div>

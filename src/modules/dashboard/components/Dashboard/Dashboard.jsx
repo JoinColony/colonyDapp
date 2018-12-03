@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyRecord, UserRecord } from '~types';
+import type { UserRecord } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -11,9 +11,10 @@ import ExternalLink from '~core/ExternalLink';
 
 import styles from './Dashboard.css';
 
+import TabMyColonies from './TabMyColonies.jsx';
 import TabMyTasks from './TabMyTasks.jsx';
 
-import mockTasks from './__datamocks__/mockTasks';
+import mockTasks from '../../../../__mocks__/mockTasks';
 
 const MSG = defineMessages({
   tabMyTasks: {
@@ -22,7 +23,7 @@ const MSG = defineMessages({
   },
   tabMyColonies: {
     id: 'dashboard.Dashboard.tabMyColonies',
-    defaultMessage: 'My Colonies (coming soon)',
+    defaultMessage: 'My Colonies',
   },
   labelFilter: {
     id: 'dashboard.Dashboard.labelFilter',
@@ -63,7 +64,6 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  currentColony: ColonyRecord,
   currentUser: UserRecord,
   userClaimedProfile: boolean,
 };
@@ -99,11 +99,8 @@ class Dashboard extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const {
-      currentColony,
-      currentUser,
-      userClaimedProfile = false,
-    } = this.props;
+    const { currentUser } = this.props;
+    const userClaimedProfile = !!(currentUser && currentUser.username);
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -125,13 +122,12 @@ class Dashboard extends Component<Props, State> {
               <Tab>
                 <FormattedMessage {...MSG.tabMyTasks} />
               </Tab>
-              <Tab disabled>
+              <Tab>
                 <FormattedMessage {...MSG.tabMyColonies} />
               </Tab>
             </TabList>
             <TabPanel>
               <TabMyTasks
-                colony={currentColony}
                 tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,
@@ -141,7 +137,7 @@ class Dashboard extends Component<Props, State> {
               />
             </TabPanel>
             <TabPanel>
-              <h2>This should not be visible</h2>
+              <TabMyColonies />
             </TabPanel>
           </Tabs>
         </main>

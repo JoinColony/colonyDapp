@@ -3,7 +3,7 @@
 import { createSelector } from 'reselect';
 
 // TODO should not need /index here
-import type { UserRecord as User, Users, UsersRecord } from '~types/index';
+import type { UserRecord as User, Users, UsersRecord } from '~types';
 
 import ns from '../namespace';
 

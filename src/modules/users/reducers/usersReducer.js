@@ -7,9 +7,9 @@ import {
   USER_AVATAR_FETCH_SUCCESS,
 } from '../actionTypes';
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
-import { User, Users } from '../records';
+import { User, Users } from '~immutable';
 
 const INITIAL_STATE = Users({});
 

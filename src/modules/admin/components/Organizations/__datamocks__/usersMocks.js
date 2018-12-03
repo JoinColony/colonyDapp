@@ -1,6 +1,6 @@
 /* @flow */
 
-import { User } from '../../../../users/records';
+import { User } from '~immutable';
 
 const usersMocks = [
   User({

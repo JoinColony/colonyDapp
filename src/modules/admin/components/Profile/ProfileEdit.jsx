@@ -163,9 +163,9 @@ const ProfileEdit = ({ colony }: Props) => {
           placeholder={
             <ColonyAvatar
               /*
-                 * @NOTE Unlike other components this does not override the main class
-                 * But appends the current one to that
-                 */
+               * @NOTE Unlike other components this does not override the main class
+               * But appends the current one to that
+               */
               className={styles.avatar}
               colony={colony}
               size="xl"

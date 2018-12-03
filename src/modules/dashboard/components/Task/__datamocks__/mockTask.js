@@ -9,7 +9,7 @@ import {
   TaskFeedItemComment,
   TaskFeedItemRating,
   TaskPayout,
-} from '../../../records';
+} from '~immutable';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 
@@ -30,7 +30,7 @@ export const mockTaskReward = {
 export const mockTask = Task({
   id: 1,
   title: 'Develop Github integration',
-  colonyIdentifier: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
+  colonyENSName: 'cool-colony',
   reputation: 19.5,
   payouts: List.of(
     TaskPayout({ symbol: 'ETH', amount: 21545, isEth: true }),

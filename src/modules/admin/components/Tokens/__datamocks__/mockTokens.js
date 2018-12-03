@@ -4,7 +4,7 @@
 
 import { List } from 'immutable';
 
-import { Token } from '../../../../core/records';
+import { Token } from '~immutable';
 import type { TokenRecord } from '~types';
 
 const mockTokens: List<TokenRecord> = List.of(

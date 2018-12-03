@@ -26,7 +26,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
-import { TASK_STATE } from '../../records';
+import { TASK_STATE } from '~immutable';
 
 import {
   TASK_WORKER_END,
@@ -50,7 +50,7 @@ import {
 } from '../../actionTypes';
 
 import userMocks from './__datamocks__/mockUsers';
-import tokensMock from '../Wallet/__datamocks__/mockTokens';
+import tokensMock from '../../../../__mocks__/mockTokens';
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -124,11 +124,11 @@ class Task extends Component<Props> {
 
   setValues = (dialogValues?: Object = {}) => {
     const {
-      task: { colonyIdentifier, id: taskId },
+      task: { colonyENSName, id: taskId },
     } = this.props;
     return {
       ...dialogValues,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
     };
   };

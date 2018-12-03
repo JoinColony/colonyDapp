@@ -1,12 +1,10 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
-import { currentColony } from '../../../core/selectors';
 import ProfileEdit from './ProfileEdit.jsx';
 import ProfileAdvanced from './ProfileAdvanced.jsx';
 

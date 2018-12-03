@@ -14,7 +14,7 @@ const defaultValues: TaskProps = {
   dueDate: undefined,
   reputation: 0,
   payouts: new List(),
-  colonyIdentifier: '',
+  colonyENSName: '',
   creator: '',
   assignee: undefined,
   feedItems: new List(),
