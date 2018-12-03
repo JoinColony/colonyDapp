@@ -50,7 +50,8 @@ export const raceError = (
 ) => {
   function* raceErrorGenerator(): Saga<void> {
     const result = yield race([take(successAction), take(errorAction)]);
-    if (result.type === error) throw error || new Error(result.error);
+    if (result.type === errorAction) throw error || new Error(result.payload);
+    return result;
   }
   return call(raceErrorGenerator);
 };
