@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 
@@ -8,7 +8,7 @@ import styles from './Task.css';
 
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
-import Button, { DialogActionButton } from '~core/Button';
+import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import Assignment from '~core/Assignment';
 
 /*
@@ -41,6 +41,12 @@ import {
   TASK_MANAGER_RATE_WORKER,
   TASK_MANAGER_RATE_WORKER_ERROR,
   TASK_MANAGER_RATE_WORKER_SUCCESS,
+  TASK_MANAGER_REVEAL_WORKER_RATING,
+  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+  TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+  TASK_WORKER_REVEAL_MANAGER_RATING,
+  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+  TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
 } from '../../actionTypes';
 
 import userMocks from './__datamocks__/mockUsers';
@@ -74,6 +80,10 @@ const MSG = defineMessages({
   rateManager: {
     id: 'dashboard.Task.rateManager',
     defaultMessage: 'Rate Manager',
+  },
+  revealRating: {
+    id: 'dashboard.Task.revealRating',
+    defaultMessage: 'Reveal Rating',
   },
 });
 
@@ -112,15 +122,16 @@ class Task extends Component<Props> {
     });
   };
 
-  get additionalValues() {
+  setValues = (dialogValues?: Object = {}) => {
     const {
       task: { colonyIdentifier, id: taskId },
     } = this.props;
     return {
+      ...dialogValues,
       colonyIdentifier,
       taskId,
     };
-  }
+  };
 
   get isWorker() {
     const {
@@ -169,7 +180,7 @@ class Task extends Component<Props> {
       userClaimedProfile = false,
     } = this.props;
     const {
-      additionalValues,
+      setValues,
       isWorker,
       isManager,
       dueDatePassed,
@@ -238,100 +249,101 @@ class Task extends Component<Props> {
         </aside>
         <div className={styles.container}>
           <section className={styles.header}>
-            {task && task.currentState !== TASK_STATE.FINALIZED ? (
-              <Fragment>
-                <TaskRequestWork
-                  isTaskCreator={isTaskCreator}
-                  claimedProfile={userClaimedProfile}
+            <TaskRequestWork
+              isTaskCreator={isTaskCreator}
+              claimedProfile={userClaimedProfile}
+            />
+            {/* Worker misses deadline and rates manager */}
+            {task.currentState === TASK_STATE.RATING &&
+              isWorker &&
+              !task.workerHasRated && (
+                <DialogActionButton
+                  dialog="ManagerRatingDialog"
+                  options={{
+                    submitWork: false,
+                  }}
+                  text={MSG.rateManager}
+                  submit={TASK_WORKER_RATE_MANAGER}
+                  success={TASK_WORKER_RATE_MANAGER_SUCCESS}
+                  error={TASK_WORKER_RATE_MANAGER_ERROR}
+                  setValues={setValues}
                 />
-                {/*
-                 * @TODO This should only be shown, if we're a worker, and the task
-                 * has a reward and was finalized (due date passed or work was submitted and rated)
-                 */}
-                <TaskClaimReward
-                  taskReward={taskReward}
-                  taskTitle={task.title}
+              )}
+            {/* Worker submits work, ends task + rates before deadline */}
+            {task.currentState !== TASK_STATE.RATING &&
+              isWorker &&
+              !dueDatePassed && (
+                <DialogActionButton
+                  dialog="ManagerRatingDialog"
+                  options={{
+                    submitWork: true,
+                  }}
+                  text={MSG.submitWork}
+                  submit={TASK_WORKER_END}
+                  success={TASK_WORKER_END_SUCCESS}
+                  error={TASK_WORKER_END_ERROR}
+                  setValues={setValues}
                 />
-                {/*
-                 * @TODO This are temporary buttons to be able to show the rating
-                 * modals until they will get wired up.
-                 */}
-                {/* Worker misses deadline and rates manager */}
-                {task.currentState === TASK_STATE.RATING &&
-                  isWorker &&
-                  !task.workerHasRated && (
-                    <DialogActionButton
-                      dialog="ManagerRatingDialog"
-                      options={{
-                        submitWork: false,
-                      }}
-                      text={MSG.rateManager}
-                      submit={TASK_WORKER_RATE_MANAGER}
-                      success={TASK_WORKER_RATE_MANAGER_SUCCESS}
-                      error={TASK_WORKER_RATE_MANAGER_ERROR}
-                      additionalValues={additionalValues}
-                    />
-                  )}
-                {/* Worker submits work, ends task + rates before deadline */}
-                {task.currentState !== TASK_STATE.RATING &&
-                  isWorker &&
-                  !dueDatePassed && (
-                    <DialogActionButton
-                      dialog="ManagerRatingDialog"
-                      options={{
-                        submitWork: true,
-                      }}
-                      text={MSG.submitWork}
-                      submit={TASK_WORKER_END}
-                      success={TASK_WORKER_END_SUCCESS}
-                      error={TASK_WORKER_END_ERROR}
-                      additionalValues={additionalValues}
-                    />
-                  )}
-                {/* Worker misses deadline and manager ends task + rates */}
-                {task.currentState !== TASK_STATE.RATING &&
-                  isManager &&
-                  dueDatePassed && (
-                    <DialogActionButton
-                      dialog="WorkerRatingDialog"
-                      options={{
-                        workSubmitted: false,
-                      }}
-                      text={MSG.rateWorker}
-                      submit={TASK_MANAGER_END}
-                      success={TASK_MANAGER_END_SUCCESS}
-                      error={TASK_MANAGER_END_ERROR}
-                      additionalValues={additionalValues}
-                    />
-                  )}
-                {/* Worker makes deadline and manager rates worker */}
-                {task.currentState === TASK_STATE.RATING && isManager && (
-                  <DialogActionButton
-                    dialog="WorkerRatingDialog"
-                    options={{
-                      workSubmitted: true,
-                    }}
-                    text={MSG.rateWorker}
-                    submit={TASK_MANAGER_RATE_WORKER}
-                    success={TASK_MANAGER_RATE_WORKER_SUCCESS}
-                    error={TASK_MANAGER_RATE_WORKER_ERROR}
-                    additionalValues={additionalValues}
-                  />
-                )}
-              </Fragment>
-            ) : (
-              <Fragment>
-                {canClaimPayout ? (
-                  /*
-                   * @NOTE This is a placeholder until #559 gets merged
-                   */
-                  <Button text="Claim Rewards" />
-                ) : (
-                  <p className={styles.completedDescription}>
-                    <FormattedMessage {...MSG.completed} />
-                  </p>
-                )}
-              </Fragment>
+              )}
+            {/* Worker misses deadline and manager ends task + rates */}
+            {task.currentState !== TASK_STATE.RATING &&
+              isManager &&
+              dueDatePassed && (
+                <DialogActionButton
+                  dialog="WorkerRatingDialog"
+                  options={{
+                    workSubmitted: false,
+                  }}
+                  text={MSG.rateWorker}
+                  submit={TASK_MANAGER_END}
+                  success={TASK_MANAGER_END_SUCCESS}
+                  error={TASK_MANAGER_END_ERROR}
+                  setValues={setValues}
+                />
+              )}
+            {/* Worker makes deadline and manager rates worker */}
+            {task.currentState === TASK_STATE.RATING && isManager && (
+              <DialogActionButton
+                dialog="WorkerRatingDialog"
+                options={{
+                  workSubmitted: true,
+                }}
+                text={MSG.rateWorker}
+                submit={TASK_MANAGER_RATE_WORKER}
+                success={TASK_MANAGER_RATE_WORKER_SUCCESS}
+                error={TASK_MANAGER_RATE_WORKER_ERROR}
+                setValues={setValues}
+              />
+            )}
+            {/* Manager reveal rating of worker */}
+            {task.currentState === TASK_STATE.REVEAL && isManager && (
+              <ActionButton
+                text={MSG.revealRating}
+                submit={TASK_MANAGER_REVEAL_WORKER_RATING}
+                success={TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
+                error={TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
+                setValues={setValues}
+              />
+            )}
+            {/* Worker reveal rating of manager */}
+            {task.currentState === TASK_STATE.REVEAL && isWorker && (
+              <ActionButton
+                text={MSG.revealRating}
+                submit={TASK_WORKER_REVEAL_MANAGER_RATING}
+                success={TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
+                error={TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
+                setValues={setValues}
+              />
+            )}
+            {/* Task is finalized and payouts can be claimed */}
+            {canClaimPayout && (
+              <TaskClaimReward taskReward={taskReward} taskTitle={task.title} />
+            )}
+            {/* Task is finalized and no payouts can be claimed */}
+            {task.currentState === TASK_STATE.FINALIZED && !canClaimPayout && (
+              <p className={styles.completedDescription}>
+                <FormattedMessage {...MSG.completed} />
+              </p>
             )}
           </section>
           <div className={styles.activityContainer}>

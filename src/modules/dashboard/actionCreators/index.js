@@ -22,6 +22,10 @@ import {
   TASK_MANAGER_RATE_WORKER_SUCCESS,
   TASK_WORKER_RATE_MANAGER_ERROR,
   TASK_WORKER_RATE_MANAGER_SUCCESS,
+  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+  TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
+  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+  TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
 } from '../actionTypes';
 
 export const createColony = (
@@ -154,5 +158,51 @@ export const taskWorkerRateManager = (
     lifecycle: {
       error: TASK_WORKER_RATE_MANAGER_ERROR,
       success: TASK_WORKER_RATE_MANAGER_SUCCESS,
+    },
+  });
+
+/**
+ * As worker, reveal manager rating.
+ */
+export const taskWorkerRevealRating = (
+  identifier: string,
+  params: {
+    taskId: number,
+    rating: number,
+    salt: number,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params: { ...params, role: 'MANAGER' },
+    options,
+    methodName: 'revealTaskWorkRating',
+    identifier,
+    lifecycle: {
+      error: TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+      success: TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
+    },
+  });
+
+/**
+ * As manager, reveal worker rating.
+ */
+export const taskManagerRevealRating = (
+  identifier: string,
+  params: {
+    taskId: number,
+    rating: number,
+    salt: number,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params: { ...params, role: 'WORKER' },
+    options,
+    methodName: 'revealTaskWorkRating',
+    identifier,
+    lifecycle: {
+      error: TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+      success: TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
     },
   });
