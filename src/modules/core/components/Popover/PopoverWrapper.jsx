@@ -4,7 +4,7 @@ import type { Node } from 'react';
 import type { PopperArrowProps } from 'react-popper';
 import React from 'react';
 
-import { getMainClasses } from '~utils/css';
+import { getMainClasses, getPopoverArrowClasses } from '~utils/css';
 
 // eslint-disable-next-line import/no-cycle
 import type { Appearance as PopoverAppearance, Placement } from './Popover.jsx';
@@ -57,7 +57,7 @@ const PopoverWrapper = ({
   >
     {children}
     <span
-      className={styles.arrow}
+      className={getPopoverArrowClasses(appearance, placement, styles)}
       ref={arrowProps.ref}
       style={arrowProps.style}
     />
