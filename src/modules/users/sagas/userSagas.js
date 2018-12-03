@@ -82,7 +82,7 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
     yield call(
       [profileStore, profileStore.update],
       'databases',
-      'userActivities',
+      'activity',
       activitiesStore.address.toString(),
     );
   } catch (error) {
