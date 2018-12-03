@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { all, put, takeEvery, call, getContext } from 'redux-saga/effects';
 
-import type { Action } from '~types/index';
+import type { Action, ENSName } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
@@ -30,20 +30,20 @@ import {
 } from '../actionTypes';
 
 import {
-  taskWorkerEnd,
+  taskFinalize,
   taskManagerComplete,
   taskManagerRateWorker,
-  taskWorkerRateManager,
-  taskWorkerRevealRating,
   taskManagerRevealRating,
   taskWorkerClaimReward,
-  taskFinalize,
+  taskWorkerEnd,
+  taskWorkerRateManager,
+  taskWorkerRevealRating,
 } from '../actionCreators';
 
-function* generateRatingSalt(colonyIdentifier: string, taskId: number) {
+function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield getContext('wallet');
   const { specificationHash } = yield callCaller({
-    colonyIdentifier,
+    colonyENSName,
     methodName: 'getTask',
     params: { taskId },
   });
@@ -55,24 +55,24 @@ function* generateRatingSalt(colonyIdentifier: string, taskId: number) {
 }
 
 function* generateRatingSecret(
-  colonyIdentifier: string,
+  colonyENSName: ENSName,
   salt: string,
   rating: number,
 ) {
   return yield callCaller({
-    colonyIdentifier,
+    colonyENSName,
     methodName: 'generateSecret',
     params: { salt, rating },
   });
 }
 
 function* generateRatingSaltAndSecret(
-  colonyIdentifier: string,
+  colonyENSName: ENSName,
   taskId: number,
   rating: number,
 ) {
-  const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
-  return yield call(generateRatingSecret, colonyIdentifier, salt, rating);
+  const salt = yield call(generateRatingSalt, colonyENSName, taskId);
+  return yield call(generateRatingSecret, colonyENSName, salt, rating);
 }
 
 /**
@@ -80,13 +80,13 @@ function* generateRatingSaltAndSecret(
  * used to generate it. If none match the published secret, throw.
  */
 function* guessRating(
-  colonyIdentifier: string,
+  colonyENSName: ENSName,
   taskId: string,
   role: string,
   salt: string,
 ) {
   const publishedSecret = yield callCaller({
-    colonyIdentifier,
+    colonyENSName,
     methodName: 'getTaskWorkRatingSecret',
     params: { taskId, role },
   });
@@ -96,7 +96,7 @@ function* guessRating(
   while (!correctRating && ratingGuess <= 3) {
     currentSecret = yield call(
       generateRatingSecret,
-      colonyIdentifier,
+      colonyENSName,
       salt,
       ratingGuess,
     );
@@ -109,7 +109,7 @@ function* guessRating(
 
 function* taskWorkerEndSaga(action: Action): Saga<void> {
   const {
-    payload: { colonyIdentifier, taskId, workDescription, rating },
+    payload: { colonyENSName, taskId, workDescription, rating },
   } = action;
   const ipfsNode = yield getContext('ipfsNode');
   try {
@@ -119,12 +119,12 @@ function* taskWorkerEndSaga(action: Action): Saga<void> {
     );
     const secret = yield call(
       generateRatingSaltAndSecret,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
       rating,
     );
     yield put(
-      taskWorkerEnd(colonyIdentifier, { taskId, deliverableHash, secret }),
+      taskWorkerEnd(colonyENSName, { taskId, deliverableHash, secret }),
     );
   } catch (error) {
     yield putError(TASK_WORKER_END_ERROR, error);
@@ -132,22 +132,22 @@ function* taskWorkerEndSaga(action: Action): Saga<void> {
 }
 
 function* taskManagerEndSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId, rating } = action.payload;
+  const { colonyENSName, taskId, rating } = action.payload;
   try {
     // complete task past due date
-    yield put(taskManagerComplete(colonyIdentifier, { taskId }));
+    yield put(taskManagerComplete(colonyENSName, { taskId }));
     yield raceError(TASK_MANAGER_COMPLETE_SUCCESS, TASK_MANAGER_COMPLETE_ERROR);
 
     // generate secret
     const secret = yield call(
       generateRatingSaltAndSecret,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
       rating,
     );
 
     // rate worker
-    yield put(taskManagerRateWorker(colonyIdentifier, { taskId, secret }));
+    yield put(taskManagerRateWorker(colonyENSName, { taskId, secret }));
     yield raceError(
       TASK_MANAGER_RATE_WORKER_SUCCESS,
       TASK_MANAGER_RATE_WORKER_ERROR,
@@ -161,54 +161,54 @@ function* taskManagerEndSaga(action: Action): Saga<void> {
 }
 
 function* taskWorkerRateManagerSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId, rating } = action.payload;
+  const { colonyENSName, taskId, rating } = action.payload;
   try {
     // generate secret
     const secret = yield call(
       generateRatingSaltAndSecret,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
       rating,
     );
 
     // rate manager
-    yield put(taskWorkerRateManager(colonyIdentifier, { taskId, secret }));
+    yield put(taskWorkerRateManager(colonyENSName, { taskId, secret }));
   } catch (error) {
     yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error);
   }
 }
 
 function* taskManagerRateWorkerSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId, rating } = action.payload;
+  const { colonyENSName, taskId, rating } = action.payload;
   try {
     // generate secret
     const secret = yield call(
       generateRatingSaltAndSecret,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
       rating,
     );
 
     // rate worker
-    yield put(taskManagerRateWorker(colonyIdentifier, { taskId, secret }));
+    yield put(taskManagerRateWorker(colonyENSName, { taskId, secret }));
   } catch (error) {
     yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error);
   }
 }
 
 function* taskWorkerRevealRatingSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId } = action.payload;
+  const { colonyENSName, taskId } = action.payload;
   try {
-    const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
+    const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
       guessRating,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
       'WORKER', // submitted by worker
       salt,
     );
     yield put(
-      taskWorkerRevealRating(colonyIdentifier, {
+      taskWorkerRevealRating(colonyENSName, {
         taskId,
         rating,
         salt,
@@ -220,18 +220,18 @@ function* taskWorkerRevealRatingSaga(action: Action): Saga<void> {
 }
 
 function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId } = action.payload;
+  const { colonyENSName, taskId } = action.payload;
   try {
-    const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
+    const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
       guessRating,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
       'MANAGER', // submitted by manager
       salt,
     );
     yield put(
-      taskManagerRevealRating(colonyIdentifier, {
+      taskManagerRevealRating(colonyENSName, {
         taskId,
         rating,
         salt,
@@ -243,11 +243,11 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
 }
 
 function* taskWorkerClaimRewardSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId, tokenAddresses } = action.payload;
+  const { colonyENSName, taskId, tokenAddresses } = action.payload;
   yield all(
     tokenAddresses.map(token =>
       put(
-        taskWorkerClaimReward(colonyIdentifier, {
+        taskWorkerClaimReward(colonyENSName, {
           taskId,
           token,
         }),
@@ -257,9 +257,9 @@ function* taskWorkerClaimRewardSaga(action: Action): Saga<void> {
 }
 
 function* taskFinalizeSaga(action: Action): Saga<void> {
-  const { taskId, colonyIdentifier } = action.payload;
+  const { taskId, colonyENSName } = action.payload;
 
-  yield put(taskFinalize(colonyIdentifier, { taskId }));
+  yield put(taskFinalize(colonyENSName, { taskId }));
 }
 
 export default function* taskSagas(): any {

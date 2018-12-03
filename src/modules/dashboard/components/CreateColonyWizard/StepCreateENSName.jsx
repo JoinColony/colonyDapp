@@ -5,7 +5,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
-import type { Action } from '~types';
 
 import styles from './StepCreateENSName.css';
 

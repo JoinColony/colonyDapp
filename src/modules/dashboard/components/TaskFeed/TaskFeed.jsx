@@ -4,7 +4,7 @@ import type { List } from 'immutable';
 
 import React, { Component } from 'react';
 
-import type { UserRecord, TaskFeedItemRecord } from '~types';
+import type { UserRecord, TaskFeedItemRecord } from '~immutable';
 
 import Comment from './TaskFeedComment.jsx';
 import Rating from './TaskFeedRating.jsx';

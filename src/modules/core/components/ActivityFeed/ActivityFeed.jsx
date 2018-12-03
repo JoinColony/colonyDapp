@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '~core/Table';
 
-import type { ActivityFeedItemRecord } from '~types';
+import type { ActivityFeedItemRecord } from '~immutable';
 
 import styles from './ActivityFeed.css';
 

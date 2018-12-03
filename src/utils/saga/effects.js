@@ -1,10 +1,11 @@
 /* @flow */
 
+import type { Saga } from 'redux-saga';
 import type { MessageDescriptor } from 'react-intl';
 
 import { call, put, race, take, getContext } from 'redux-saga/effects';
 
-import type { Saga } from 'redux-saga';
+import type { ENSName } from '~types';
 
 import { isDev, log } from '~utils/debug';
 
@@ -63,23 +64,23 @@ export const raceError = (
 
 /**
  * Gets the caller from the colonyManager and calls it with the given
- * parameters. If no colonyIdentifier, network context is assumed.
+ * parameters. If no colonyENSName, network context is assumed.
  */
 export const callCaller = ({
   params = {},
-  colonyIdentifier,
+  colonyENSName,
   methodName,
 }: {
   params?: Object,
-  colonyIdentifier?: string,
+  colonyENSName?: ENSName,
   methodName: string,
 }) => {
   function* callCallerGenerator(): Saga<Object> {
     const colonyManager = yield getContext('colonyManager');
     const caller = yield call(colonyManager, colonyManager.getMethod, [
-      colonyIdentifier ? COLONY_CONTEXT : NETWORK_CONTEXT,
+      colonyENSName ? COLONY_CONTEXT : NETWORK_CONTEXT,
       methodName,
-      colonyIdentifier,
+      colonyENSName,
     ]);
     return yield call([caller, caller.call], params);
   }

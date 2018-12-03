@@ -5,6 +5,8 @@ import type { ObjectSchema } from 'yup';
 import { PurserIdentity, PurserIdentityProvider } from '..';
 import type { AccessController, Entry } from './AccessController';
 
+import { Store } from '../stores';
+
 export type { AccessController, Entry };
 export type { Identity, IdentityObject } from './Identity';
 export type { IdentityProvider } from './IdentityProvider';

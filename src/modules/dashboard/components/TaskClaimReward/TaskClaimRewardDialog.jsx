@@ -140,7 +140,7 @@ const TaskClaimRewardDialog = ({
         </section>
       )}
     </DialogSection>
-    {rating > 1 && payouts.length ? (
+    {rating > 1 && payouts.size ? (
       <DialogSection>
         <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
         <section className={styles.rewards}>

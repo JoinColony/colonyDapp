@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyRecord, UserRecord } from '~types';
+import type { UserRecord } from '~immutable';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -13,7 +13,7 @@ import styles from './Dashboard.css';
 
 import TabMyTasks from './TabMyTasks.jsx';
 
-import mockTasks from './__datamocks__/mockTasks';
+import mockTasks from '../../../../__mocks__/mockTasks';
 
 const MSG = defineMessages({
   tabMyTasks: {
@@ -63,9 +63,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  currentColony: ColonyRecord,
   currentUser: UserRecord,
-  userClaimedProfile: boolean,
 };
 
 type State = {
@@ -99,11 +97,7 @@ class Dashboard extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const {
-      currentColony,
-      currentUser,
-      userClaimedProfile = false,
-    } = this.props;
+    const { currentUser } = this.props;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -131,13 +125,12 @@ class Dashboard extends Component<Props, State> {
             </TabList>
             <TabPanel>
               <TabMyTasks
-                colony={currentColony}
                 tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,
                   walletAddress: currentUser.profile.walletAddress,
                 }}
-                userClaimedProfile={userClaimedProfile}
+                userClaimedProfile={currentUser.didClaimProfile}
               />
             </TabPanel>
             <TabPanel>

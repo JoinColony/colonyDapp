@@ -2,7 +2,7 @@
 
 import { List } from 'immutable';
 
-import { Skill } from '../../../records';
+import { Skill } from '~immutable';
 
 const skillMocks = List.of(
   Skill({

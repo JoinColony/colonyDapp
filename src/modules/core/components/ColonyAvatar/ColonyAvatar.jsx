@@ -5,7 +5,7 @@ import getIcon from '../../../../lib/identicon';
 
 import Avatar from '../Avatar';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
 type Props = {
   colony: ColonyRecord,
@@ -18,11 +18,7 @@ type Props = {
 };
 
 const ColonyAvatar = ({
-  colony: {
-    avatar,
-    meta: { address },
-    name,
-  },
+  colony: { avatar, address, name },
   ...otherProps
 }: Props) => (
   <Avatar

@@ -5,7 +5,7 @@ import type { List } from 'immutable';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskPayoutRecord, UserRecord } from '~types';
+import type { TaskPayoutRecord, UserRecord } from '~immutable';
 
 import styles from './Assignment.css';
 
@@ -58,7 +58,7 @@ const Assignment = ({
   nativeToken,
 }: Props) => {
   const fundingWithNativeToken =
-    payouts && payouts.find(payout => payout.symbol === nativeToken);
+    payouts && payouts.find(payout => payout.token.symbol === nativeToken);
 
   return (
     <div>

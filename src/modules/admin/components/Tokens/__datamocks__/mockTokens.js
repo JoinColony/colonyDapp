@@ -4,13 +4,13 @@
 
 import { List } from 'immutable';
 
-import { Token } from '../../../../core/records';
-import type { TokenRecord } from '~types';
+import { Token } from '~immutable';
+
+import type { TokenRecord } from '~immutable';
 
 const mockTokens: List<TokenRecord> = List.of(
   Token({
-    address: '0x0',
-    id: 4,
+    address: '0xa74476443119A942dE498590Fe1f2454d7D4aC0d',
     name: 'Golem Network Token',
     symbol: 'GNT',
     balance: 5.55,
@@ -21,7 +21,6 @@ const mockTokens: List<TokenRecord> = List.of(
   }),
   Token({
     address: '0x0',
-    id: 1,
     name: 'Ether',
     symbol: 'ETH',
     balance: 0.6123154,
@@ -31,8 +30,7 @@ const mockTokens: List<TokenRecord> = List.of(
     isNative: false,
   }),
   Token({
-    address: '0x0',
-    id: 5,
+    address: '0x744d70fdbe2ba4cf95131626614a1763df805b9e',
     name: 'Status',
     symbol: 'SNT',
     balance: 2.1415,
@@ -42,10 +40,9 @@ const mockTokens: List<TokenRecord> = List.of(
     isNative: false,
   }),
   Token({
-    address: '0x0',
-    id: 3,
+    address: '0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6',
     name: '0x Protocol',
-    symbol: '0x',
+    symbol: 'ZRX',
     balance: 0.1254,
     icon:
       'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iYyIgeDE9IjUwJSIgeDI9IjUwJSIgeTE9IjAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIuNSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1vcGFjaXR5PSIuNSIvPjwvbGluZWFyR3JhZGllbnQ+PGNpcmNsZSBpZD0iYiIgY3g9IjE2IiBjeT0iMTUiIHI9IjE1Ii8+PGZpbHRlciBpZD0iYSIgd2lkdGg9IjExMS43JSIgaGVpZ2h0PSIxMTEuNyUiIHg9Ii01LjglIiB5PSItNC4yJSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94Ij48ZmVPZmZzZXQgZHk9Ii41IiBpbj0iU291cmNlQWxwaGEiIHJlc3VsdD0ic2hhZG93T2Zmc2V0T3V0ZXIxIi8+PGZlR2F1c3NpYW5CbHVyIGluPSJzaGFkb3dPZmZzZXRPdXRlcjEiIHJlc3VsdD0ic2hhZG93Qmx1ck91dGVyMSIgc3RkRGV2aWF0aW9uPSIuNSIvPjxmZUNvbXBvc2l0ZSBpbj0ic2hhZG93Qmx1ck91dGVyMSIgaW4yPSJTb3VyY2VBbHBoYSIgb3BlcmF0b3I9Im91dCIgcmVzdWx0PSJzaGFkb3dCbHVyT3V0ZXIxIi8+PGZlQ29sb3JNYXRyaXggaW49InNoYWRvd0JsdXJPdXRlcjEiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4xOTk0NzM1MDUgMCIvPjwvZmlsdGVyPjxwYXRoIGlkPSJlIiBkPSJNMTUuNDk2IDI2Yy0uMjctLjAyOC0uNTQtLjA1My0uODEtLjA4NWExMC44OCAxMC44OCAwIDAgMS00LjEyMi0xLjM2NGMtLjAxOS0uMDEtLjAzNi0uMDI1LS4wNzMtLjA1IDIuMjA2LTEuNjUgNC40MDItMy4yOSA2LjYxLTQuOTRsLjY2NS42NDdjLjM3LjM2Mi43NDIuNzIgMS4xMDUgMS4wODcuMDkuMDkuMTU1LjA4OS4yNi4wMzVhNy4xNDkgNy4xNDkgMCAwIDAgMi43MjgtMi4zOWwuMTA3LS4xNThjLjAzMS4wMzYuMDYuMDY1LjA4NC4wOTcuNzY3IDEuMDIyIDEuNTMzIDIuMDQ0IDIuMzAzIDMuMDYzLjA2Ny4wODguMDU5LjE0LS4wMTIuMjItMS43ODMgMi4wMjYtMy45OTkgMy4yNzQtNi42NyAzLjcwMS0uMzM2LjA1NC0uNjc3LjA3NC0xLjAxNi4xMTEtLjA0NS4wMDUtLjA5LjAxNy0uMTM0LjAyNmgtMS4wMjV6bS45Ny0yMmMuMTg2LjAxOS4zNzMuMDM5LjU2LjA1NiAxLjU3Ni4xNSAzLjA1LjYxNyA0LjQyMyAxLjQuMDIuMDEyLjAzNy4wMjYuMDcuMDVsLTYuNzE4IDQuODE5Yy0uMDg5LS4wODQtLjE3NS0uMTY0LS4yNi0uMjQ3LS40NzItLjQ2LS45NDYtLjkxOS0xLjQxNS0xLjM4My0uMDc1LS4wNzQtLjEzMi0uMDgyLS4yMjYtLjAzNWE3LjE0NyA3LjE0NyAwIDAgMC0yLjc3IDIuNDI0bC0uMS4xNS0yLjQ2OC0zLjI4OGMuMjQ5LS4yNjQuNDc5LS41MjcuNzI4LS43NyAxLjYyMy0xLjU4MyAzLjU1LTIuNTkgNS43ODMtMi45OTUuNDMtLjA3OC44NjktLjEwNCAxLjMwNC0uMTU1LjA0OS0uMDA1LjA5OC0uMDE3LjE0Ni0uMDI2aC45NDJ6TTYuNDU4IDkuNTM0bDQuOTk1IDYuNTQ4LTEuMDA4IDEuMDM0Yy0uMjUxLjI1Ny0uNS41MTctLjc1Ni43Ny0uMDcyLjA3Mi0uMDc1LjEyNy0uMDMxLjIxNWE3LjEzNCA3LjEzNCAwIDAgMCAyLjQyMyAyLjc3Yy4wMzUuMDIyLjA3LjA0NS4xMDMuMDcuMDA2LjAwNC4wMDkuMDE0LjAyNy4wNDhMOC45NSAyMy40MzVDNyAyMS43NTYgNS43MzUgMTkuNjg3IDUuMjI3IDE3LjE3OGMtLjU0NC0yLjY4Ni0uMTAzLTUuMjI0IDEuMjMyLTcuNjQ0em0xNC4xNzUgNC4zN2wuOTE4LS45NTNjLjI1Ni0uMjY2LjUwOC0uNTM1Ljc3LS43OTQuMDgyLS4wODEuMDgxLS4xNDIuMDMzLS4yMzhhNy4xMzcgNy4xMzcgMCAwIDAtMi40NS0yLjc5OGMtLjAzNy0uMDI1LS4wNzMtLjA1Mi0uMTM2LS4wOTdsMy4yNzktMi40NmMxLjg1NyAxLjU5IDMuMDkgMy41NSAzLjY1NiA1LjkxNS43MDcgMi45NTIuMDc3IDUuODcyLTEuMTQ3IDcuOTI4bC00LjkyMy02LjUwM3oiLz48ZmlsdGVyIGlkPSJkIiB3aWR0aD0iMTE1LjklIiBoZWlnaHQ9IjExNS45JSIgeD0iLTglIiB5PSItNS43JSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94Ij48ZmVPZmZzZXQgZHk9Ii41IiBpbj0iU291cmNlQWxwaGEiIHJlc3VsdD0ic2hhZG93T2Zmc2V0T3V0ZXIxIi8+PGZlR2F1c3NpYW5CbHVyIGluPSJzaGFkb3dPZmZzZXRPdXRlcjEiIHJlc3VsdD0ic2hhZG93Qmx1ck91dGVyMSIgc3RkRGV2aWF0aW9uPSIuNSIvPjxmZUNvbG9yTWF0cml4IGluPSJzaGFkb3dCbHVyT3V0ZXIxIiB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMjA0MjU3MjQ2IDAiLz48L2ZpbHRlcj48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48ZyBmaWxsLXJ1bGU9Im5vbnplcm8iPjx1c2UgZmlsbD0iIzAwMCIgZmlsdGVyPSJ1cmwoI2EpIiB4bGluazpocmVmPSIjYiIvPjx1c2UgZmlsbD0iIzMwMkMyQyIgZmlsbC1ydWxlPSJldmVub2RkIiB4bGluazpocmVmPSIjYiIvPjx1c2UgZmlsbD0idXJsKCNjKSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6c29mdC1saWdodCIgeGxpbms6aHJlZj0iI2IiLz48Y2lyY2xlIGN4PSIxNiIgY3k9IjE1IiByPSIxNC41IiBzdHJva2U9IiMwMDAiIHN0cm9rZS1vcGFjaXR5PSIuMDk3Ii8+PC9nPjx1c2UgZmlsbD0iIzAwMCIgZmlsdGVyPSJ1cmwoI2QpIiB4bGluazpocmVmPSIjZSIvPjx1c2UgZmlsbD0iI0ZGRiIgeGxpbms6aHJlZj0iI2UiLz48L2c+PC9zdmc+',
@@ -53,8 +50,7 @@ const mockTokens: List<TokenRecord> = List.of(
     isNative: false,
   }),
   Token({
-    address: '0x0',
-    id: 2,
+    address: '0x06441deaf11d60d77e5e42d4f644c64ca05c2fce',
     name: 'Colony',
     symbol: 'CLNY',
     balance: 22.154,

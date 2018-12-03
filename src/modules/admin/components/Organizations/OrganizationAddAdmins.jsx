@@ -11,7 +11,7 @@ import Button from '~core/Button';
 import styles from './OrganizationAddAdmins.css';
 
 import type { FormikProps } from 'formik';
-import type { UserRecord } from '~types';
+import type { UserRecord } from '~immutable';
 
 const MSG = defineMessages({
   labelAddAdmins: {
@@ -29,8 +29,11 @@ const MSG = defineMessages({
 });
 
 const filter = (data, filterValue) =>
-  data.filter(user =>
-    user.username.toLowerCase().includes(filterValue.toLowerCase()),
+  data.filter(
+    user =>
+      user &&
+      filterValue &&
+      user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
   );
 const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 

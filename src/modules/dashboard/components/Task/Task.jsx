@@ -15,7 +15,7 @@ import Assignment from '~core/Assignment';
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { TaskRecord, UserRecord } from '~types';
+import type { TaskRecord, UserRecord } from '~immutable';
 
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
@@ -26,7 +26,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
-import { TASK_STATE } from '../../records';
+import { TASK_STATE } from '~immutable';
 
 import {
   TASK_WORKER_END,
@@ -53,7 +53,7 @@ import {
 } from '../../actionTypes';
 
 import userMocks from './__datamocks__/mockUsers';
-import tokensMock from '../Wallet/__datamocks__/mockTokens';
+import tokensMock from '../../../../__mocks__/mockTokens';
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -100,7 +100,6 @@ type Props = {
   user: UserRecord,
   isTaskCreator?: boolean,
   preventEdit?: boolean,
-  userClaimedProfile?: boolean,
 };
 
 class Task extends Component<Props> {
@@ -112,7 +111,7 @@ class Task extends Component<Props> {
       token:
         // we add 1 because Formik thinks 0 is empty
         tokensMock.indexOf(
-          tokensMock.find(token => token.symbol === payout.symbol),
+          tokensMock.find(token => token.symbol === payout.token.symbol),
         ) + 1,
       amount: payout.amount,
       id: nanoid(),
@@ -130,11 +129,11 @@ class Task extends Component<Props> {
 
   setValues = (dialogValues?: Object = {}) => {
     const {
-      task: { colonyIdentifier, id: taskId },
+      task: { colonyENSName, id: taskId },
     } = this.props;
     return {
       ...dialogValues,
-      colonyIdentifier,
+      colonyENSName,
       taskId,
     };
   };
@@ -192,7 +191,6 @@ class Task extends Component<Props> {
       preventEdit = true,
       task,
       user,
-      userClaimedProfile = false,
     } = this.props;
     const {
       setValues,
@@ -277,7 +275,7 @@ class Task extends Component<Props> {
             )}
             <TaskRequestWork
               isTaskCreator={isTaskCreator}
-              claimedProfile={userClaimedProfile}
+              claimedProfile={user.didClaimProfile}
             />
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
@@ -380,9 +378,8 @@ class Task extends Component<Props> {
             </section>
             <section className={styles.commentBox}>
               <TaskComments
-                claimedProfile={userClaimedProfile}
-                // $FlowFixMe
-                walletAddress={userMocks[0].walletAddress}
+                claimedProfile={user.didClaimProfile}
+                walletAddress={user.profile.walletAddress}
               />
             </section>
           </div>

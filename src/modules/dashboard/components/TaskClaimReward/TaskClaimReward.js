@@ -4,7 +4,7 @@ import { compose, withProps } from 'recompose';
 
 import { sortObjectsBy } from '~utils/arrays';
 
-import type { TaskRecord, TaskPayout } from '~types/';
+import type { TaskRecord } from '~immutable';
 
 import TaskClaimReward from './TaskClaimReward.jsx';
 
@@ -12,19 +12,12 @@ export type Props = {
   task: TaskRecord,
 };
 
-const isNative = (payout: TaskPayout): boolean => !!payout.isNative;
-
 const isEth = (prev: boolean, next: boolean): number => {
   if (prev || next) {
     return prev ? -1 : 1;
   }
   return 0;
 };
-
-const networkFee = (payout: TaskPayout): TaskPayout => ({
-  ...payout,
-  networkFee: payout.amount * 0.01,
-});
 
 // Mirrors contract `getReputation`
 const getReputation = (
@@ -45,7 +38,7 @@ const enhance = compose(
     ({
       task: {
         id: taskId,
-        colonyIdentifier,
+        colonyENSName,
         payouts,
         workerHasRated,
         workerRateFail,
@@ -56,7 +49,7 @@ const enhance = compose(
       },
     }: Props) => ({
       taskId,
-      colonyIdentifier,
+      colonyENSName,
       rating,
       reputation: getReputation(reputation, rating, workerRateFail),
       payouts,
@@ -65,22 +58,18 @@ const enhance = compose(
       lateReveal: !!workerHasRated && workerRateFail,
       sortedPayouts: payouts
         /*
-         * Calculate the network fee
-         */
-        .map(networkFee)
-        /*
          * Take out the native token
          */
-        .filter(payout => !isNative(payout))
+        .filter(payout => !payout.token.isNative)
         /*
          * Sort ETH to the top
          */
-        .sort(sortObjectsBy({ name: 'isEth', compareFn: isEth }, 'symbol')),
+        .sort(sortObjectsBy({ name: 'isEth', compareFn: isEth }, 'token')),
       nativeTokenPayout: payouts
         /*
          * See if we have a native token
          */
-        .find(isNative),
+        .find(payout => payout.token.isNative),
     }),
   ),
 );

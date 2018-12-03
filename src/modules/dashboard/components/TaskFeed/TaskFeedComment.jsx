@@ -13,11 +13,10 @@ import TextDecorator from '../../../../lib/TextDecorator';
 
 import styles from './TaskFeedComment.css';
 
-import type { TaskFeedItemCommentRecord } from '~types';
+import type { TaskFeedItemCommentRecord } from '~immutable';
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
-// TODO use record props
 type Props = {
   comment: TaskFeedItemCommentRecord,
   createdAt: Date,
@@ -27,7 +26,9 @@ type Props = {
 const TaskFeedComment = ({
   comment: {
     body,
-    user: { avatar, username, displayName: fullName, walletAddress },
+    user: {
+      profile: { avatar, username, displayName: fullName, walletAddress },
+    },
   },
   createdAt,
   currentUser,

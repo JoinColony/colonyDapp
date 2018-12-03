@@ -8,18 +8,17 @@ import { Table, TableBody } from '~core/Table';
 
 import TaskListItem from './TaskListItem.jsx';
 
-import type { ColonyRecord, TaskRecord } from '~types';
+import type { TaskRecord } from '~immutable';
 
 type Props = {
-  colony: ColonyRecord,
   tasks: List<TaskRecord>,
 };
 
-const TaskList = ({ colony, tasks }: Props) => (
+const TaskList = ({ tasks }: Props) => (
   <Table scrollable>
     <TableBody>
       {tasks.toArray().map(task => (
-        <TaskListItem key={task.id} task={task} colony={colony} />
+        <TaskListItem key={task.id} task={task} />
       ))}
     </TableBody>
   </Table>

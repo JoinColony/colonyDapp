@@ -15,7 +15,7 @@ import styles from './TabMyTasks.css';
 
 import mockColonies from '../../../../__mocks__/mockColonies';
 
-import type { ColonyRecord, TaskRecord } from '~types';
+import type { TaskRecord } from '~immutable';
 
 const MSG = defineMessages({
   emptyText: {
@@ -26,31 +26,23 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
-  colony: ColonyRecord,
   /** Tasks for MyTasks table */
   tasks: List<TaskRecord>,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
 };
 
-const TabMyTasks = ({
-  colony,
-  initialTask,
-  tasks,
-  userClaimedProfile,
-}: Props) => {
+const TabMyTasks = ({ initialTask, tasks, userClaimedProfile }: Props) => {
   if (!userClaimedProfile) {
     return (
       <Fragment>
         <InitialTask task={initialTask} />
-        {tasks && tasks.size ? (
-          <TaskList colony={colony} tasks={tasks} />
-        ) : null}
+        {tasks && tasks.size ? <TaskList tasks={tasks} /> : null}
       </Fragment>
     );
   }
   return tasks && tasks.size ? (
-    <TaskList colony={colony} tasks={tasks} />
+    <TaskList tasks={tasks} />
   ) : (
     <Fragment>
       <p className={styles.emptyText}>

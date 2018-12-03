@@ -26,7 +26,7 @@ const enhance = compose(
       mockTokens.sort(
         sortObjectsBy(
           'isNative',
-          { name: 'tokenSymbol', compareFn: isEthSort },
+          { name: 'symbol', compareFn: isEthSort },
           'id',
         ),
       ),

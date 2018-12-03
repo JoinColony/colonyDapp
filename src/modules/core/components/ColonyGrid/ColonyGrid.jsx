@@ -12,7 +12,7 @@ import ColonyGridItem from './ColonyGridItem.jsx';
 
 import styles from './ColonyGrid.css';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -41,8 +41,8 @@ const ColonyGrid = ({ colonies = List(), loading }: Props) => (
       </div>
     ) : (
       <div className={styles.colonyGrid}>
-        {colonies.map(colony => (
-          <div className={styles.colonyGridItem} key={colony.meta.address}>
+        {colonies.toArray().map(colony => (
+          <div className={styles.colonyGridItem} key={colony.address}>
             <ColonyGridItem colony={colony} />
           </div>
         ))}

@@ -9,9 +9,16 @@ import {
   TaskFeedItemComment,
   TaskFeedItemRating,
   TaskPayout,
-} from '../../../records';
+} from '~immutable';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
+
+import {
+  CLNYToken,
+  COOLToken,
+  DAIToken,
+  ETHToken,
+} from '../../../../../__mocks__/mockTokens';
 
 /*
  * This should only be available, once the task is finalized
@@ -19,10 +26,10 @@ import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 export const mockTaskReward = {
   workerRating: 3,
   payoutsEarned: List.of(
-    TaskPayout({ symbol: 'DAI', amount: 1001 }),
-    TaskPayout({ symbol: 'CLNY', amount: 600 }),
-    TaskPayout({ symbol: 'ETH', amount: 200105 }),
-    TaskPayout({ symbol: 'COOL', amount: 600 }),
+    TaskPayout({ token: DAIToken, amount: 1001 }),
+    TaskPayout({ token: CLNYToken, amount: 600 }),
+    TaskPayout({ token: ETHToken, amount: 200105 }),
+    TaskPayout({ token: COOLToken, amount: 600 }),
   ),
   reputationEarned: 1045,
 };
@@ -30,20 +37,17 @@ export const mockTaskReward = {
 export const mockTask = Task({
   id: 1,
   title: 'Develop Github integration',
-  colonyIdentifier: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
+  colonyENSName: 'cool-colony',
   reputation: 19.5,
   payouts: List.of(
-    TaskPayout({ symbol: 'ETH', amount: 21545, isEth: true, address: '0x0' }),
+    TaskPayout({ token: ETHToken, amount: 21545, isEth: true, address: '0x0' }),
     TaskPayout({
-      address: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
       amount: 6007,
-      isNative: true,
-      symbol: 'CLNY',
+      token: CLNYToken,
     }),
     TaskPayout({
-      address: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
       amount: 123,
-      symbol: 'COOL',
+      token: COOLToken,
     }),
   ),
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',

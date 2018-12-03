@@ -1,0 +1,7 @@
+/* @flow */
+
+import ns from '../namespace';
+
+export const COLONY_DOMAIN_VALIDATE = `${ns}/COLONY_DOMAIN_VALIDATE`;
+export const COLONY_DOMAIN_VALIDATE_SUCCESS = `${ns}/COLONY_DOMAIN_VALIDATE_SUCCESS`;
+export const COLONY_DOMAIN_VALIDATE_ERROR = `${ns}/COLONY_DOMAIN_VALIDATE_ERROR`;

@@ -7,7 +7,7 @@ import Link from '../Link';
 
 import styles from './ColonyGridItem.css';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
 type Props = {
   colony: ColonyRecord,
@@ -15,7 +15,7 @@ type Props = {
 
 const ColonyGridItem = ({ colony }: Props) => (
   <div className={styles.main}>
-    <Link to="/">
+    <Link to={`/colony/${colony.ensName}`}>
       <ColonyAvatar colony={colony} />
       <Heading text={colony.name} appearance={{ size: 'small' }} />
     </Link>

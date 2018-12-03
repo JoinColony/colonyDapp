@@ -12,7 +12,8 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, UserRecord } from '~types/index';
+import type { Action, Address } from '~types';
+import type { UserProfileProps } from '~immutable';
 
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
@@ -21,9 +22,9 @@ import { DDB } from '../../../lib/database';
 import { FeedStore, KVStore } from '../../../lib/database/stores';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
+import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 import { userActivitiesStore, userProfileStore } from '../stores';
-import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 
 import {
   USER_PROFILE_FETCH,
@@ -54,7 +55,7 @@ import {
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
-export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
+export function* getOrCreateUserStore(walletAddress: Address): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
 
   let profileStore;
@@ -135,7 +136,7 @@ export function* getOrCreateUserActivitiesStore(
   return activitiesStore;
 }
 
-export function* getUser(store: KVStore): Saga<UserRecord> {
+export function* getUserProfileData(store: KVStore): Saga<UserProfileProps> {
   return yield call(getAll, store);
 }
 

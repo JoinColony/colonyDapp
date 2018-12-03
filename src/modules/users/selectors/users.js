@@ -2,27 +2,27 @@
 
 import { createSelector } from 'reselect';
 
-// TODO should not need /index here
-import type { UserRecord as User, Users, UsersRecord } from '~types/index';
-
 import ns from '../namespace';
+
+import type { UserRecord, UsersRecord } from '~immutable';
+import type { Address } from '~types';
 
 type RootState = {
   users: {
     allUsers: UsersRecord,
-    currentUser: User,
+    currentUser: UserRecord,
   },
 };
 
 type AllUsersStateSelector = (state: RootState) => UsersRecord;
-type CurrentUserSelector = (state: RootState) => User;
-type UsersSelector = (allUsersState: UsersRecord) => Users;
+type CurrentUserSelector = (state: RootState) => UserRecord;
+type UsersSelector = (allUsersState: UsersRecord) => UsersRecord;
 type AvatarsSelector = (allUsersState: UsersRecord) => *;
 type LoadingSelector = (users: UsersRecord) => boolean;
-type UserProfileSelector = (state: RootState, props: Object) => User;
+type UserProfileSelector = (state: RootState, props: Object) => UserRecord;
 type UserAvatarSelector = (state: RootState, props: Object) => string;
 type OrbitAddressSelector = (state: RootState) => string;
-type WalletAddressSelector = (state: RootState) => string;
+type WalletAddressSelector = (state: RootState) => Address;
 type UsernameSelector = (state: RootState) => string;
 type UserNameFromRouter = (state: RootState, props: Object) => string;
 type UserNameFromProps = (state: RootState, props: Object) => string;

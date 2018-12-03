@@ -7145,7 +7145,7 @@ immutable@^3.8.1:
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
   integrity sha1-wkOZUUVbs5kT2vKBN28VMOEErfM=
 
-immutable@^4.0.0-rc.10:
+immutable@^4.0.0-rc.12:
   version "4.0.0-rc.12"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.0.0-rc.12.tgz#ca59a7e4c19ae8d9bf74a97bdf0f6e2f2a5d0217"
   integrity sha512-0M2XxkZLx/mi3t8NVwIm1g8nHoEmM9p9UBl/G9k4+hm0kBgOVdMV/B3CY5dQ8qG8qc80NN4gDV4HQv6FTJ5q7A==
@@ -7526,7 +7526,7 @@ ipfs-http-response@~0.2.0:
   version "4.2.0"
   resolved "https://codeload.github.com/orbitdb/ipfs-log/tar.gz/febec397361594913fa6aad35f29de85cc526e28"
   dependencies:
-    orbit-db-identity-provider "^0.0.3"
+    orbit-db-identity-provider "^0.0.2"
     p-map "^1.1.1"
     p-whilst "^1.0.0"
 

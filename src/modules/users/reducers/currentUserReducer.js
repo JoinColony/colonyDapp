@@ -5,23 +5,25 @@ import {
   USER_ACTIVITIES_FETCH_SUCCESS,
   USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_SUCCESS,
-  USERNAME_CREATE_SUCCESS,
   USER_UPLOAD_AVATAR_SUCCESS,
+  USERNAME_CREATE_SUCCESS,
 } from '../actionTypes';
 
-import type { Action } from '~types/index';
+import { User, UserProfile } from '~immutable';
 
-import { User } from '../records';
+import type { UserRecord } from '~immutable';
 
-type State = User | null;
+import type { Action } from '~types';
+
+type State = UserRecord | null;
 
 const INITIAL_STATE = null;
 
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
-      const { walletAddress, user } = action.payload;
-      return User({ profile: { ...user, walletAddress } });
+      const { profileData, walletAddress } = action.payload;
+      return User({ profile: UserProfile({ ...profileData, walletAddress }) });
     }
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
@@ -34,9 +36,8 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
         ? state.set('activities', activities)
         : state;
     }
-    case USER_PROFILE_UPDATE_SUCCESS: {
+    case USER_PROFILE_UPDATE_SUCCESS:
       return state ? state.merge(action.payload) : state;
-    }
     case USERNAME_CREATE_SUCCESS: {
       // TODO: This might change (maybe transaction: { params: { username }})
       // Or eventData (as soon as it is available)

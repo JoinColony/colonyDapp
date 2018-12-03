@@ -2,7 +2,7 @@
 
 import { List } from 'immutable';
 
-import { ActivityFeedItem } from '../../../records';
+import { ActivityFeedItem } from '~immutable';
 
 const mockActivities = List.of(
   ActivityFeedItem({

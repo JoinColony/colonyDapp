@@ -10,10 +10,11 @@ import { FieldSet, Input, InputLabel, Textarea } from '~core/Fields';
 import Button from '~core/Button';
 import AvatarUploader from '~core/AvatarUploader';
 import ColonyAvatar from '~core/ColonyAvatar';
+import { getENSDomainString } from '~utils/ens';
 
 import styles from './ProfileEdit.css';
 
-import type { ColonyRecord } from '~types';
+import type { ColonyRecord } from '~immutable';
 
 const MSG = defineMessages({
   labelAddress: {
@@ -59,7 +60,7 @@ const componentDisplayName: string = 'admin.Profile.ProfileEdit';
 /*
  * @TODO Replace with ACTUAL upload & remove methods
  */
-const placeholderUpload = async (): Promise<string> =>
+const placeholderUpload = async () =>
   `[${componentDisplayName}] Uploaded Image`;
 
 const placeholderRemove = async () => {
@@ -74,8 +75,9 @@ const ProfileEdit = ({ colony }: Props) => {
   const {
     description,
     guideline,
-    meta: { address, ensName },
-    name: displayName,
+    address,
+    ensName,
+    name: colonyDisplayName,
     website,
   } = colony;
   return (
@@ -85,7 +87,7 @@ const ProfileEdit = ({ colony }: Props) => {
           // eslint-disable-next-line no-console
           onSubmit={console.log}
           initialValues={{
-            colonyDisplayName: displayName,
+            colonyDisplayName,
             aboutColony: description,
             colonyWebsite: website,
             colonyGuidelines: guideline,
@@ -107,7 +109,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     size: 'medium',
                     weight: 'thin',
                   }}
-                  text={`${ensName.toLowerCase()}.colony.joincolony.eth`}
+                  text={getENSDomainString(ensName, 'colony')}
                 />
               </FieldSet>
               <div className={styles.divider} />
@@ -163,9 +165,9 @@ const ProfileEdit = ({ colony }: Props) => {
           placeholder={
             <ColonyAvatar
               /*
-                 * @NOTE Unlike other components this does not override the main class
-                 * But appends the current one to that
-                 */
+               * @NOTE Unlike other components this does not override the main class
+               * But appends the current one to that
+               */
               className={styles.avatar}
               colony={colony}
               size="xl"

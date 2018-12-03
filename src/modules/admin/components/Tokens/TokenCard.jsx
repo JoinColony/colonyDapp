@@ -54,6 +54,4 @@ const TokenCard = ({
 
 TokenCard.displayName = displayName;
 
-// FIXME add isNotPositive to TokenClass
-// FIXME ensure we don't have any references to token.id/tokenId
 export default TokenCard;

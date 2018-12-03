@@ -6,13 +6,14 @@ import { setContext, call, all, put, fork } from 'redux-saga/effects';
 
 import { create, putError } from '~utils/saga/effects';
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
+import type { UserProfileProps } from '~immutable';
 
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupTransactionsSagas from './transactions';
 import {
-  getUser,
   getOrCreateUserStore,
+  getUserProfileData,
   getWallet,
   setupUserSagas,
 } from '../../users/sagas';
@@ -54,10 +55,20 @@ export default function* setupUserContext(action: Action): Saga<void> {
     );
     yield call([ddb, ddb.addResolver], 'user', userResolver);
 
+    // Add colony ENS resolver
+    const colonyResolver = yield create(
+      resolvers.ColonyResolver,
+      colonyManager.networkClient,
+    );
+    yield call([ddb, ddb.addResolver], 'colony', colonyResolver);
+
     yield setContext({ ddb, colonyManager });
 
     const userStore = yield call(getOrCreateUserStore, wallet.address);
-    const user = yield call(getUser, userStore);
+    const profileData: UserProfileProps = yield call(
+      getUserProfileData,
+      userStore,
+    );
 
     // TODO: the user could potentially alter their username on the DDB w/o changing it on the DDB
 
@@ -70,7 +81,7 @@ export default function* setupUserContext(action: Action): Saga<void> {
     yield put({
       type: CURRENT_USER_CREATE,
       payload: {
-        user,
+        profileData,
         walletAddress: wallet.address,
       },
     });

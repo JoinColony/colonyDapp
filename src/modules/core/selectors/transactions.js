@@ -6,7 +6,7 @@ import ns from '../namespace';
 
 import type { TransactionsState } from '../types';
 
-import type { TransactionRecord } from '~types/TransactionRecord';
+import type { TransactionRecord } from '~immutable';
 
 type State = { [typeof ns]: { transactions: TransactionsState } };
 
