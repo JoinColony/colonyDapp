@@ -1,8 +1,5 @@
 /* @flow */
 
-import { DDB, SCHEMAS } from '../lib/database';
-
-DDB.registerSchema('userProfile', SCHEMAS.UserProfile);
-DDB.registerSchema('userActivity', SCHEMAS.UserActivity);
+import { DDB } from '../lib/database';
 
 export default DDB;

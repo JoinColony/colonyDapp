@@ -19,12 +19,12 @@ import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
 import { DDB } from '../../../lib/database';
-import { KVStore } from '../../../lib/database/stores';
+import { FeedStore, KVStore } from '../../../lib/database/stores';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { NOT_FOUND_ROUTE } from '../../../routes';
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
-import { userProfileStore } from '../stores';
+import { userActivitiesStore, userProfileStore } from '../stores';
 
 import {
   USER_PROFILE_FETCH,
@@ -70,8 +70,8 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
     return profileStore;
   }
 
-  profileStore = yield call([ddb, ddb.createStore], 'keyvalue', 'userProfile', {
-    accessController,
+  profileStore = yield call([ddb, ddb.createStore], userProfileStore, {
+    walletAddress,
   });
 
   try {
@@ -94,37 +94,39 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
 
 export function* getOrCreateUserActivitiesStore(
   walletAddress: string,
-): Saga<KVStore> {
+): Saga<FeedStore> {
   let activitiesStore;
 
   const ddb = yield getContext('ddb');
 
-  const accessController = yield create(
-    EthereumWalletAccessController,
-    walletAddress,
-  );
-
   const profileStore = yield call(
     [ddb, ddb.getStore],
+    userProfileStore,
     `user.${walletAddress}`,
     {
-      accessController,
+      walletAddress,
     },
   );
 
   if (profileStore) {
     yield call([profileStore, profileStore.load]);
     const databases = yield call([profileStore, profileStore.get], 'databases');
-    activitiesStore = yield call([ddb, ddb.getStore], databases.activity, {
-      accessController,
-    });
+    activitiesStore = yield call(
+      [ddb, ddb.getStore],
+      userActivitiesStore,
+      databases.activity,
+      {
+        walletAddress,
+      },
+    );
     return activitiesStore;
   }
   // if the profileStore is still being created it doesn't exist yet
   // And we must create the activitiesStore
-  activitiesStore = yield call([ddb, ddb.createStore], 'feed', 'userActivity', {
-    accessController,
+  activitiesStore = yield call([ddb, ddb.createStore], userActivitiesStore, {
+    walletAddress,
   });
+
   const joinedEvent = {
     colonyName: 'Welcome to Colony',
     userAction: 'joinedColony',
