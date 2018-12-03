@@ -34,12 +34,12 @@ const assignee = {
 };
 
 const reputation =  19.5;
-const payouts = [
+const payouts = new List(
     { symbol: 'COOL', amount: 600 },
     { symbol: 'ETH', amount: 200105 },
     { symbol: 'DAI', amount: 1001 },
     { symbol: 'CLNY', amount: 600 },
-];
+);
 
 <Assignment assignee={assignee} payouts={payouts} reputation={reputation} />
 ```

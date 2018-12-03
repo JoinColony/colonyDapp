@@ -4,7 +4,7 @@ import type { RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { UserProps } from '~types/UserRecord';
+import type { UserProps } from '~types';
 
 const defaultValues: UserProps = {
   walletAddress: '',

@@ -2,7 +2,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserRecord } from '~types/UserRecord';
+import type { UserRecord, TaskFeedItemRatingRecord } from '~types';
 
 import StarRating from '~core/StarRating';
 import UserAvatar from '~core/UserAvatar';
@@ -20,22 +20,22 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  rater: UserRecord,
-  ratee: UserRecord,
-  rating: number,
+  rating: TaskFeedItemRatingRecord,
 };
 
 const displayName = 'dashboard.TaskFeed.TaskFeedRating';
 
 const TaskFeedRating = ({
-  rater: {
-    avatar: raterAvatar,
-    displayName: raterDisplayName,
-    username: raterUserName,
-    walletAddress: raterWalletAddress,
+  rating: {
+    rater: {
+      avatar: raterAvatar,
+      displayName: raterDisplayName,
+      username: raterUserName,
+      walletAddress: raterWalletAddress,
+    },
+    ratee: { displayName: rateeDisplayName },
+    rating,
   },
-  ratee: { displayName: rateeDisplayName },
-  rating,
 }: Props) => (
   <div className={styles.main}>
     <div className={styles.ratingPart}>

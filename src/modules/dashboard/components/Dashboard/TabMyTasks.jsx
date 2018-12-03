@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { List } from 'immutable';
+
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -11,7 +13,9 @@ import InitialTask from './InitialTask.jsx';
 
 import styles from './TabMyTasks.css';
 
-import mockColonies from './__datamocks__/mockColonies';
+import mockColonies from '../../../../__mocks__/mockColonies';
+
+import type { ColonyRecord, TaskRecord } from '~types';
 
 const MSG = defineMessages({
   emptyText: {
@@ -22,16 +26,15 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
-  colonyName: string,
-  // TODO: Type better when data structure is known
+  colony: ColonyRecord,
   /** Tasks for MyTasks table */
-  tasks: Array<Object>,
+  tasks: List<TaskRecord>,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
 };
 
 const TabMyTasks = ({
-  colonyName,
+  colony,
   initialTask,
   tasks,
   userClaimedProfile,
@@ -40,16 +43,15 @@ const TabMyTasks = ({
     return (
       <Fragment>
         <InitialTask task={initialTask} />
-        {tasks && tasks.length ? (
-          <TaskList colonyName={colonyName} tasks={tasks} />
+        {tasks && tasks.size ? (
+          <TaskList colony={colony} tasks={tasks} />
         ) : null}
       </Fragment>
     );
   }
-  if (tasks && tasks.length) {
-    return <TaskList colonyName={colonyName} tasks={tasks} />;
-  }
-  return (
+  return tasks && tasks.size ? (
+    <TaskList colony={colony} tasks={tasks} />
+  ) : (
     <Fragment>
       <p className={styles.emptyText}>
         <FormattedMessage {...MSG.emptyText} />

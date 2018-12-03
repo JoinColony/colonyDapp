@@ -1,8 +1,10 @@
 /* @flow */
 
+import { List } from 'immutable';
+
 import { User } from '../../../../users/records';
 
-const usersMocks = [
+const usersMocks = List.of(
   User({
     walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
     username: 'Chris',
@@ -178,6 +180,6 @@ const usersMocks = [
     username: 'Collin',
     displayName: 'Collin Vine',
   }),
-];
+);
 
 export default usersMocks;

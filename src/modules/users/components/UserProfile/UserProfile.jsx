@@ -9,13 +9,13 @@ import ProfileTemplate from '~pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
 
 import mockActivities from './__datamocks__/mockActivities';
-import mockColonies from './__datamocks__/mockColonies';
+import mockColonies from '../../../../__mocks__/mockColonies';
 
 import styles from './UserProfile.css';
 
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
-import type { ActionCreator, UserRecord } from '~types/index';
+import type { ActionCreator, UserRecord } from '~types';
 
 type Props = {
   fetchUserProfile: ActionCreator,

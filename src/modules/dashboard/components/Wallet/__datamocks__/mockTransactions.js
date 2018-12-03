@@ -2,7 +2,7 @@
 
 import BigNumber from 'bn.js';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 import mockUser from './mockUser';
 

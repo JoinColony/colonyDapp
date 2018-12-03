@@ -18,7 +18,7 @@ import Button from '../Button';
 import { withOmniPicker } from '../OmniPicker';
 import UserAvatar from '../UserAvatar';
 
-import type { UserRecord } from '~types/index';
+import type { UserRecord } from '~types';
 
 const MSG = defineMessages({
   selectMember: {

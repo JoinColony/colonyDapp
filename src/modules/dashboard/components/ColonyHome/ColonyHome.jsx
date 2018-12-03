@@ -12,19 +12,19 @@ import Heading from '~core/Heading';
 import TaskList from '~dashboard/TaskList';
 
 import { walletAddressSelector } from '../../../users/selectors/users';
+import { currentColony } from '../../../core/selectors';
 
 import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
 
-import {
-  mockColony,
-  mockColonyOwners,
-  mockColonyAdmins,
-} from './__datamocks__/mockColony';
+import mockColonyAdmins from './__datamocks__/mockColonyAdmins';
+import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from './__datamocks__/mockTasks';
-import mockColonies from './__datamocks__/mockColonies';
-import mockDomains from './__datamocks__/mockDomains';
+import mockColonies from '../../../../__mocks__/mockColonies';
+import mockDomains from '../../../../__mocks__/mockDomains';
+
+import type { ColonyRecord } from '~types';
 
 const MSG = defineMessages({
   tabContribute: {
@@ -75,7 +75,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
-  colonyLabel: string,
+  colony: ColonyRecord,
   walletAddress: string,
 };
 
@@ -128,7 +128,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, colonyName } = this.props;
+    const { walletAddress, colony } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -152,8 +152,8 @@ class ColonyHome extends Component<Props, State> {
       <div className={styles.main}>
         <aside className={styles.colonyInfo}>
           <ColonyMeta
-            colony={mockColony}
-            owners={mockColonyOwners}
+            colony={colony}
+            founders={mockColonyFounders}
             admins={mockColonyAdmins}
             /*
              * This needs real logic to determine if the user is an admin
@@ -169,8 +169,8 @@ class ColonyHome extends Component<Props, State> {
               </Tab>
             </TabList>
             <TabPanel>
-              {tasks && tasks.length ? (
-                <TaskList colonyName={colonyName} tasks={tasks} />
+              {tasks && tasks.size ? (
+                <TaskList colony={colony} tasks={tasks} />
               ) : (
                 <Fragment>
                   <p className={styles.noTasks}>
@@ -195,34 +195,31 @@ class ColonyHome extends Component<Props, State> {
               text={MSG.sidebarDomainsTitle}
             />
             <li>
-              <button
-                type="button"
+              <Button
                 className={this.getActiveDomainFilterClass()}
                 onClick={() => this.setDomainFilter()}
               >
                 <FormattedMessage {...MSG.allDomains} />
-              </button>
+              </Button>
             </li>
             {domains.map(({ id, name }) => (
               <li key={`domain_${id}`}>
-                <button
-                  type="button"
+                <Button
                   className={this.getActiveDomainFilterClass(id)}
                   onClick={() => this.setDomainFilter(id)}
                 >
                   {name}
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
-        </aside>
+        </aside>s
       </div>
     );
   }
 }
 
-export default connect((state: Object) => ({
-  // FIXME use selector
-  colonyLabel: 'Example Colony Home',
+export default connect(state => ({
+  colony: currentColony(state),
   walletAddress: walletAddressSelector(state),
 }))(ColonyHome);

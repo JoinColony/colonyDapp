@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserRecord } from '~types/index';
+import type { ColonyRecord, UserRecord } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -63,9 +63,9 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  colonyName: string,
+  currentColony: ColonyRecord,
   currentUser: UserRecord,
-  userClaimedProfile?: boolean,
+  userClaimedProfile: boolean,
 };
 
 type State = {
@@ -99,7 +99,11 @@ class Dashboard extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { colonyName, currentUser, userClaimedProfile = false } = this.props;
+    const {
+      currentColony,
+      currentUser,
+      userClaimedProfile = false,
+    } = this.props;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -127,7 +131,7 @@ class Dashboard extends Component<Props, State> {
             </TabList>
             <TabPanel>
               <TabMyTasks
-                colonyName={colonyName}
+                colony={currentColony}
                 tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,

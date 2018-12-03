@@ -3,7 +3,7 @@
 import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 import Heading from '~core/Heading';
 import Card from '~core/Card';

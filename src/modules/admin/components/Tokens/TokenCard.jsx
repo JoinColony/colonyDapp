@@ -1,11 +1,11 @@
 /* @flow */
 
 import React, { Component, Fragment } from 'react';
-import { withProps } from 'recompose';
 
 import { getEthToUsd } from '~utils/external';
 
-import type { TokenType } from '~types/token';
+// import { Token } from '../../../core/records';
+import type { TokenRecord } from '~types';
 
 import Card from '~core/Card';
 import Numeral from '~core/Numeral';
@@ -13,12 +13,8 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './TokenCard.css';
 
-type InProps = {
-  token: TokenType,
-};
-
-type Props = InProps & {
-  isEth: boolean,
+type Props = {
+  token: TokenRecord,
 };
 
 type State = {
@@ -35,8 +31,7 @@ class TokenCard extends Component<Props, State> {
   componentDidMount() {
     this.mounted = true;
     const {
-      isEth,
-      token: { balance },
+      token: { isEth, balance },
     } = this.props;
     if (isEth) {
       getEthToUsd(balance).then(converted => {
@@ -53,33 +48,25 @@ class TokenCard extends Component<Props, State> {
     this.mounted = false;
   }
 
-  isNotPositive = number => Number(number) <= 0;
+  isNotPositive = (n: number) => Number(n) <= 0;
 
   mounted = false;
 
   render() {
     const {
-      isEth,
-      token: {
-        id: tokenId,
-        tokenIcon,
-        tokenName,
-        tokenSymbol,
-        isNative,
-        balance,
-      },
+      token: { balance, icon, id: tokenId, isEth, isNative, name, symbol },
     } = this.props;
     const { ethUsd } = this.state;
     return (
       <Card key={tokenId} className={styles.main}>
         <div className={styles.cardHeading}>
-          {!!tokenIcon && (
+          {!!icon && (
             <div className={styles.iconContainer}>
-              <img src={tokenIcon} alt={tokenName} />
+              <img src={icon} alt={name} />
             </div>
           )}
-          <div className={styles.tokenSymbol}>
-            {tokenSymbol}
+          <div className={styles.symbol}>
+            {symbol}
             {isNative && <span>*</span>}
           </div>
         </div>
@@ -114,8 +101,4 @@ class TokenCard extends Component<Props, State> {
   }
 }
 
-const enhance = withProps(({ token: { tokenSymbol } }: InProps) => ({
-  isEth: !!tokenSymbol && tokenSymbol.toLowerCase() === 'eth',
-}));
-
-export default enhance(TokenCard);
+export default TokenCard;

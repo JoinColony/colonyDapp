@@ -10,7 +10,9 @@ import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 
-import { COLONY_HOME_ROUTE } from '~routes';
+import type { ColonyRecord } from '~types';
+
+import { currentColony } from '../../../core/selectors';
 
 import VerticalNavigation from '~pages/VerticalNavigation';
 
@@ -57,8 +59,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  colonyLabel: string,
-  colonyName: string,
+  colony: ColonyRecord,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -66,11 +67,11 @@ type Props = {
   location?: ?LocationShape,
 };
 
-const navigationItems: Array<NavigationItem> = [
+const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
   {
     id: 1,
     title: MSG.tabProfile,
-    content: <Profile />,
+    content: <Profile colony={colony} />,
   },
   {
     id: 2,
@@ -89,51 +90,55 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const AdminDashboard = ({ colonyName, colonyLabel, location }: Props) => (
-  <div className={styles.main}>
-    <VerticalNavigation
-      navigationItems={navigationItems}
-      initialTab={
-        location && location.state && location.state.initialTab ? 1 : 0
-      }
-    >
-      <div className={styles.backNavigation}>
-        <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
-        <NavLink
-          to={`colony/${colonyName}`}
-          text={MSG.backButton}
-          textValues={{ colonyLabel }}
-        />
-      </div>
-      <div className={styles.headingWrapper}>
-        <Heading
-          appearance={{
-            size: 'normal',
-            weight: 'medium',
-            margin: 'small',
-            theme: 'dark',
-          }}
-          text={MSG.colonySettings}
-        />
-      </div>
-    </VerticalNavigation>
-  </div>
-);
-
-AdminDashboard.defaultProps = {
-  colonyName: 'meta-colony',
-  colonyLabel: 'The Meta Colony',
+const AdminDashboard = (props: Props) => {
+  const {
+    colony: {
+      meta: { ensName },
+      name,
+    },
+    location,
+  } = props;
+  return (
+    <div className={styles.main}>
+      <VerticalNavigation
+        navigationItems={navigationItems(props)}
+        initialTab={
+          location && location.state && location.state.initialTab ? 1 : 0
+        }
+      >
+        <div className={styles.backNavigation}>
+          <Icon
+            name="circle-back"
+            title="back"
+            appearance={{ size: 'medium' }}
+          />
+          <NavLink
+            to={`colony/${ensName}`}
+            text={MSG.backButton}
+            textValues={{ name }}
+          />
+        </div>
+        <div className={styles.headingWrapper}>
+          <Heading
+            appearance={{
+              size: 'normal',
+              weight: 'medium',
+              margin: 'small',
+              theme: 'dark',
+            }}
+            text={MSG.colonySettings}
+          />
+        </div>
+      </VerticalNavigation>
+    </div>
+  );
 };
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
-// FIXME use selectors
 export default connect(
-  ({ router: { location, props: { colonyName } = {} } }, props) => ({
-    ...props,
-    location,
-    colonyName,
-    // FIXME add colonyName
+  state => ({
+    colony: currentColony(state),
   }),
   null,
 )(AdminDashboard);

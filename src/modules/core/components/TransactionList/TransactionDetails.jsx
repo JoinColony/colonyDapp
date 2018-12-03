@@ -8,7 +8,7 @@ import Link from '~core/Link';
 
 import styles from './TransactionDetails.css';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 const MSG = defineMessages({
   fromText: {

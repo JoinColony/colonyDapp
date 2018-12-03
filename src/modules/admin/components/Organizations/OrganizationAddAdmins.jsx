@@ -11,7 +11,7 @@ import Button from '~core/Button';
 import styles from './OrganizationAddAdmins.css';
 
 import type { FormikProps } from 'formik';
-import type { UserRecord } from '~types/index';
+import type { UserRecord } from '~types';
 
 const MSG = defineMessages({
   labelAddAdmins: {

@@ -5,13 +5,10 @@ import getIcon from '../../../../lib/identicon';
 
 import Avatar from '../Avatar';
 
+import type { ColonyRecord } from '~types';
+
 type Props = {
-  /** Used for identicon in case of a missing avatarURL */
-  colonyAddress: string,
-  /** Used for the html title */
-  colonyName: string,
-  /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL?: string,
+  colony: ColonyRecord,
   /** Is passed through to Avatar */
   className?: string,
   /** Avatars that are not set have a different placeholder */
@@ -21,15 +18,17 @@ type Props = {
 };
 
 const ColonyAvatar = ({
-  avatarURL,
-  colonyAddress,
-  colonyName,
+  colony: {
+    avatar,
+    meta: { address },
+    name,
+  },
   ...otherProps
 }: Props) => (
   <Avatar
-    avatarURL={avatarURL || getIcon(colonyAddress)}
+    avatarURL={avatar || getIcon(address)}
     placeholderIcon="at-sign-circle"
-    title={colonyName}
+    title={name}
     {...otherProps}
   />
 );

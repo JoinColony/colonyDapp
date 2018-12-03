@@ -3,6 +3,7 @@
 export * from '../lib/database/types';
 export * from '../lib/ColonyManager/types';
 
+export * from './records/ActivityFeedItemRecord';
 export * from './records/ColonyMetaRecord';
 export * from './records/ColonyRecord';
 export * from './records/DomainRecord';

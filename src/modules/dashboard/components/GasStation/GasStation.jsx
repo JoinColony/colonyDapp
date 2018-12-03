@@ -4,7 +4,7 @@ import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { InProps } from './GasStation';
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 import { WALLET_ROUTE } from '~routes';
 

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
 import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
-import type { UserRecord } from '~types/UserRecord';
+import type { UserRecord } from '~types';
 
 import UserAvatarDisplay from './UserAvatarDisplay.jsx';
 
@@ -27,7 +27,7 @@ class UserAvatar extends Component<Props> {
 
   render() {
     const { avatarData } = this.props;
-    return <UserAvatarDisplay {...this.props} avatarURL={avatarData} />;
+    return <UserAvatarDisplay {...this.props} avatar={avatarData} />;
   }
 }
 

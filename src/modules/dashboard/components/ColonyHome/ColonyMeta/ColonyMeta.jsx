@@ -1,11 +1,10 @@
 /* @flow */
 
 import React, { Fragment } from 'react';
+import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
-
-import { ADMIN_DASHBOARD_ROUTE } from '~routes';
 
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
@@ -15,8 +14,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './ColonyMeta.css';
 
-import type { ColonyType } from '~types/colony';
-import type { UserRecord } from '~types/UserRecord';
+import type { ColonyRecord, UserRecord } from '~types';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -27,9 +25,9 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.guidelineLabel',
     defaultMessage: 'Contribute Guidelines',
   },
-  owenersLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.owenersLabel',
-    defaultMessage: 'Colony Owners',
+  foundersLabel: {
+    id: 'dashboard.ColonyHome.ColonyMeta.foundersLabel',
+    defaultMessage: 'Colony Founders',
   },
   adminsLabel: {
     id: 'dashboard.ColonyHome.ColonyMeta.adminsLabel',
@@ -44,123 +42,95 @@ const MSG = defineMessages({
 const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
 
 type Props = {
-  colony: ColonyType,
-  owners: Array<UserRecord>,
-  admins: Array<UserRecord>,
+  colony: ColonyRecord,
+  founders: List<UserRecord>,
+  admins: List<UserRecord>,
   isAdmin: boolean,
 };
 
-const ColonyMeta = ({
-  colony: { avatar, name, address, description, website, guideline },
-  owners,
-  admins,
-  isAdmin,
-}: Props) => (
-  <div>
-    <ColonyAvatar
-      className={styles.avatar}
-      avatarURL={avatar}
-      colonyAddress={address}
-      colonyName={name}
-      size="xl"
-    />
-    <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
-      <Fragment>
-        <span>{name}</span>
-        {isAdmin && (
-          <Link className={styles.editColony} to={ADMIN_DASHBOARD_ROUTE}>
-            <Icon name="settings" title={MSG.editColonyTitle} />
-          </Link>
-        )}
-      </Fragment>
-    </Heading>
-    {description && (
-      <section className={styles.description}>
-        <p>{description}</p>
-      </section>
-    )}
-    {website && (
-      <section className={styles.dynamicSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.websiteLabel}
-        />
-        <a href={website} rel="noopener noreferrer" target="_blank">
-          {stripProtocol(website)}
-        </a>
-      </section>
-    )}
-    {guideline && (
-      <section className={styles.dynamicSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.guidelineLabel}
-        />
-        <a href={guideline} rel="noopener noreferrer" target="_blank">
-          {stripProtocol(guideline)}
-        </a>
-      </section>
-    )}
-    {owners.length && (
-      <section className={styles.dynamicSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.owenersLabel}
-        />
-        {owners.map(
-          (
-            {
-              avatar: ownerAvatar,
-              walletAddress: ownerWalletAddress,
-              displayName: ownerDisplayName,
-              username: ownerUsername,
-            }: UserRecord,
-            index: number,
-          ) => (
+const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
+  const {
+    description,
+    guideline,
+    name,
+    website,
+    meta: { ensName },
+  } = colony;
+  return (
+    <div>
+      <ColonyAvatar className={styles.avatar} colony={colony} size="xl" />
+      <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
+        <Fragment>
+          <span>{name}</span>
+          {isAdmin && (
+            <Link className={styles.editColony} to={`/colony/${ensName}/admin`}>
+              <Icon name="settings" title={MSG.editColonyTitle} />
+            </Link>
+          )}
+        </Fragment>
+      </Heading>
+      {description && (
+        <section className={styles.description}>
+          <p>{description}</p>
+        </section>
+      )}
+      {website && (
+        <section className={styles.dynamicSection}>
+          <Heading
+            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+            text={MSG.websiteLabel}
+          />
+          <a href={website} rel="noopener noreferrer" target="_blank">
+            {stripProtocol(website)}
+          </a>
+        </section>
+      )}
+      {guideline && (
+        <section className={styles.dynamicSection}>
+          <Heading
+            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+            text={MSG.guidelineLabel}
+          />
+          <a href={guideline} rel="noopener noreferrer" target="_blank">
+            {stripProtocol(guideline)}
+          </a>
+        </section>
+      )}
+      {founders.size && (
+        <section className={styles.dynamicSection}>
+          <Heading
+            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+            text={MSG.foundersLabel}
+          />
+          {founders.map((founder, index) => (
             <UserAvatar
-              key={`owner_${index + 1}`}
+              key={`founder_${index + 1}`}
               className={styles.userAvatar}
-              avatarURL={ownerAvatar}
-              walletAddress={ownerWalletAddress}
-              displayName={ownerDisplayName}
-              username={ownerUsername}
               hasUserInfo
+              {...founder}
             />
-          ),
-        )}
-      </section>
-    )}
-    {admins.length && (
-      <section className={styles.dynamicSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.adminsLabel}
-        />
-        {admins.map(
-          (
-            {
-              avatar: adminAvatar,
-              walletAddress: adminWalletAddress,
-              displayName: adminDisplayName,
-              username: adminUsername,
-            }: UserRecord,
-            index: number,
-          ) => (
+          ))}
+        </section>
+      )}
+      {admins.size && (
+        <section className={styles.dynamicSection}>
+          <Heading
+            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+            text={MSG.adminsLabel}
+          />
+          {admins.map((admin, index) => (
             <UserAvatar
               key={`admin_${index + 1}`}
               className={styles.userAvatar}
-              avatarURL={adminAvatar}
-              walletAddress={adminWalletAddress}
-              displayName={adminDisplayName}
-              username={adminUsername}
               hasUserInfo
+              {...admin}
             />
-          ),
-        )}
-      </section>
-    )}
-  </div>
-);
+          ))}
+        </section>
+      )}
+    </div>
+  );
+};
 
 ColonyMeta.displayName = displayName;
 

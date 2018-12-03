@@ -10,7 +10,7 @@ import NavLink from '../NavLink';
 
 export type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL?: ?string,
+  avatar?: ?string,
   /** Is passed through to Avatar */
   className?: string,
   /** Avatars that are not set have a different placeholder */
@@ -46,7 +46,7 @@ class UserAvatarDisplay extends Component<Props> {
       className,
       walletAddress,
       hasUserInfo,
-      avatarURL,
+      avatar,
       notSet,
       size,
     } = this.props;
@@ -58,7 +58,7 @@ class UserAvatarDisplay extends Component<Props> {
         trigger={hasUserInfo ? 'hover' : 'disabled'}
       >
         <Avatar
-          avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
+          avatarURL={avatar || (!notSet ? getIcon(walletAddress) : null)}
           className={className}
           notSet={notSet}
           placeholderIcon="circle-person"

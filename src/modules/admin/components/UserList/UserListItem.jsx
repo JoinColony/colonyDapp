@@ -10,7 +10,7 @@ import Button from '~core/Button';
 
 import styles from './UserListItem.css';
 
-import type { UserRecord } from '~types/UserRecord';
+import type { UserRecord } from '~types';
 
 const MSG = defineMessages({
   buttonRemove: {

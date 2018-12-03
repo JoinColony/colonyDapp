@@ -11,7 +11,6 @@ const MockUser = User({
     'During his life Chewbacca has been many things: Wookiee warrior, ace smuggler and rebel hero. After adventures on Vandor and Kessel, he became Han’s co-pilot.',
   displayName: 'Chewbacca',
   username: 'chewie',
-  // role: 'admin', // FIXME this prop isn't supported by the record type
   location: 'Kashyyyk',
   website: 'https://github.com/chewie',
 });

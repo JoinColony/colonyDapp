@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 
-import type { UserRecord } from '~types/index';
+import type { UserRecord } from '~types';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';

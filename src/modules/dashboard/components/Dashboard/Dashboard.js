@@ -1,22 +1,23 @@
 /* @flow */
 
-import { compose, withProps } from 'recompose';
+import { connect } from 'react-redux';
 
 import Dashboard from './Dashboard.jsx';
 
-import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
+import currentUser from '~users/AvatarDropdown/__datamocks__/mockUser';
 
-const enhance = compose(
-  withProps(() => {
-    const user = userMock;
-    return {
-      currentUser: user,
-      /*
-       * @TODO Add real logic here, as currently we hard code it for display purpouses
-       */
-      userClaimedProfile: false,
-    };
+import { currentColony } from '../../../core/selectors';
+
+const enhance = connect(
+  state => ({
+    currentColony: currentColony(state),
+    /*
+     * @TODO add real logic here, as currently we hard code it for display purpouses
+     */
+    currentUser,
+    userClaimedProfile: false,
   }),
+  null,
 );
 
 export default enhance(Dashboard);

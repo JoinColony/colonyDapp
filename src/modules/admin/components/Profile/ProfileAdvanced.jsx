@@ -8,7 +8,7 @@ import Button from '~core/Button';
 
 import styles from './ProfileAdvanced.css';
 
-import type { ColonyType } from '~types/colony';
+import type { ColonyRecord } from '~types';
 
 const MSG = defineMessages({
   labelVersion: {
@@ -32,10 +32,15 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {
-  colony: ColonyType,
+  colony: ColonyRecord,
 };
 
-const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
+const ProfileAdvanced = ({
+  colony: {
+    meta: { id },
+    version,
+  },
+}: Props) => (
   <div className={styles.main}>
     <section className={styles.section}>
       <div className={styles.withInlineButton}>
