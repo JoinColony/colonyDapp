@@ -52,7 +52,7 @@ const TaskListItem = ({
     <TableCell className={styles.userAvatar}>
       <UserAvatar
         size="xs"
-        walletAddress={assignee.profile.walletAddress}
+        walletAddress={assignee.walletAddress}
         username={assignee.username}
       />
     </TableCell>
