@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import { replace } from 'connected-react-router';
 import { delay } from 'redux-saga';
 
 import {
@@ -22,7 +21,6 @@ import { DDB } from '../../../lib/database';
 import { FeedStore, KVStore } from '../../../lib/database/stores';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
-import { NOT_FOUND_ROUTE } from '../../../routes';
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 import { userActivitiesStore, userProfileStore } from '../stores';
 
@@ -230,8 +228,6 @@ function* fetchProfile(action: Action): Saga<void> {
       payload: { user },
     });
   } catch (error) {
-    yield put(replace(NOT_FOUND_ROUTE));
-    // TODO normalize error object handling
     yield putError(USER_PROFILE_FETCH_ERROR, error);
   }
 }
@@ -363,12 +359,12 @@ function* removeAvatar(): Saga<void> {
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
-  yield takeLatest(USER_PROFILE_FETCH, fetchProfile);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
 
   // each of these should be handled
+  yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
   yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
 }

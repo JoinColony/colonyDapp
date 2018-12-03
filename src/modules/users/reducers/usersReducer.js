@@ -10,7 +10,7 @@ import {
 
 import type { Action } from '~types/index';
 
-import { Users } from '../records';
+import { User, Users } from '../records';
 
 const INITIAL_STATE = Users({});
 
@@ -23,10 +23,12 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
     case USER_PROFILE_FETCH_SUCCESS: {
       const { walletAddress, user } = action.payload;
       return state
-        .setIn(['users', walletAddress, 'profile'], { walletAddress, ...user })
+        .setIn(
+          ['users', walletAddress],
+          User({ profile: { walletAddress, ...user } }),
+        )
         .merge({
           isLoading: false,
-          isError: false,
         });
     }
 
