@@ -62,7 +62,7 @@ export const avatarSelector: UserAvatarSelector = createSelector(
 );
 export const orbitAddressSelector: OrbitAddressSelector = createSelector(
   currentUser,
-  state => state.profile.orbitStore,
+  state => state.profileStore,
 );
 export const walletAddressSelector: WalletAddressSelector = createSelector(
   currentUser,

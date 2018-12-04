@@ -8,7 +8,6 @@ import type { ProfileProps, UserActivity, UserProps } from '~types/index';
 
 const defaultProfileValues: ProfileProps = {
   walletAddress: '',
-  orbitStore: '',
   databases: {},
   username: undefined,
   avatar: undefined,
@@ -23,6 +22,10 @@ const defaultActivities: Array<UserActivity> = [];
 const defaultValues: UserProps = {
   profile: defaultProfileValues,
   activities: defaultActivities,
+  profileStore: '',
+  activitiesStore: '',
+  colonyStores: {},
+  domainStores: {},
 };
 
 // TODO: Ideally, we should be able to validate the required properties

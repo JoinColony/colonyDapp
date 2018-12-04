@@ -25,15 +25,13 @@ const userProfileStore: StoreBlueprint = {
     avatar: yup.string(),
     walletAddress: yup.string().address(),
     // TODO: yup validation for orbit address
-    orbitAddress: yup.string(),
+    profileStore: yup.string(),
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
-    databases: yup.object({
-      colonies: yup.object(),
-      domains: yup.object(),
-      activity: yup.string(),
-    }),
+    colonyStores: yup.object(),
+    domainStores: yup.object(),
+    activitiesStore: yup.string(),
   }),
   type: KVStore,
 };
