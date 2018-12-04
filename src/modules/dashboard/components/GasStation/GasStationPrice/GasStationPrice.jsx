@@ -16,6 +16,7 @@ import { Form, RadioGroup } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
+import Duration from '~core/Duration';
 
 import styles from './GasStationPrice.css';
 
@@ -60,7 +61,10 @@ are expensive. We recommend waiting.`,
 
 type Props = {
   isEth: boolean,
+  isNetworkCongested: boolean,
   transaction: TransactionType,
+  txGasCostsEth: Object,
+  walletNeedsAction: 'metamask' | 'hardware',
 };
 
 type State = {
@@ -78,6 +82,7 @@ const transactionSpeedOptions: Array<RadioOption> = [
 class GasStationPrice extends Component<Props, State> {
   static defaultProps = {
     isEth: false,
+    isNetworkCongested: false,
   };
 
   static displayName = 'GasStationPrice';
@@ -98,8 +103,11 @@ class GasStationPrice extends Component<Props, State> {
       transaction: { amount },
     } = this.props;
 
-    // @TODO: get estimated gas cost & use here
-
+    /*
+     * @TODO: get estimated gas cost & use here
+     * Using balance for now as mock data.
+     *
+     */
     if (isEth) {
       const amountToConvert =
         amount instanceof BN ? amount : parseInt(amount, 10);
@@ -131,7 +139,10 @@ class GasStationPrice extends Component<Props, State> {
   render() {
     const {
       isEth,
-      transaction: { amount, symbol },
+      isNetworkCongested,
+      transaction: { status },
+      txGasCostsEth,
+      walletNeedsAction,
     } = this.props;
     const { ethUsd, isSpeedMenuOpen, speedMenuId } = this.state;
 
@@ -144,7 +155,7 @@ class GasStationPrice extends Component<Props, State> {
           /* eslint-disable-next-line no-console */
           onSubmit={console.log}
         >
-          {({ values: { transactionSpeed } }) => (
+          {({ isSubmitting, values: { transactionSpeed } }) => (
             <Fragment>
               <div
                 aria-hidden={!isSpeedMenuOpen}
@@ -184,16 +195,20 @@ class GasStationPrice extends Component<Props, State> {
                     <div className={styles.transactionFeeLabel}>
                       <FormattedMessage {...MSG.transactionFeeLabel} />
                     </div>
-                    <div className={styles.transactionDuration}>2h 24min</div>
+                    <div className={styles.transactionDuration}>
+                      <Duration
+                        value={txGasCostsEth[`${transactionSpeed}Wait`]}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className={styles.transactionFeeActions}>
                   <div className={styles.transactionFeeAmount}>
                     {/* @TODO: get estimated gas cost & use here */}
                     <Numeral
-                      value={amount}
-                      suffix={` ${symbol}`}
-                      unit="ether"
+                      decimals={18}
+                      value={txGasCostsEth[transactionSpeed]}
+                      suffix=" ETH"
                     />
                     {isEth && (
                       <div className={styles.transactionFeeEthUsd}>
@@ -211,21 +226,32 @@ class GasStationPrice extends Component<Props, State> {
                     )}
                   </div>
                   <div>
-                    <Button text={{ id: 'button.confirm' }} type="submit" />
+                    <Button
+                      disabled={!status}
+                      loading={isSubmitting}
+                      text={{ id: 'button.confirm' }}
+                      type="submit"
+                    />
                   </div>
                 </div>
               </div>
             </Fragment>
           )}
         </Form>
-        <div className={styles.walletPromptContainer}>
-          <Alert
-            text={MSG.walletPromptText}
-            textValues={{
-              walletType: 'metamask',
-            }}
-          />
-        </div>
+        {(isNetworkCongested || walletNeedsAction) && (
+          <div className={styles.walletPromptContainer}>
+            {isNetworkCongested ? (
+              <Alert text={MSG.networkCongestedWarning} />
+            ) : (
+              <Alert
+                text={MSG.walletPromptText}
+                textValues={{
+                  walletType: walletNeedsAction,
+                }}
+              />
+            )}
+          </div>
+        )}
       </div>
     );
   }
