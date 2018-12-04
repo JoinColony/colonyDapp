@@ -43,6 +43,8 @@ type Props = {
   placeholder?: string,
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */
   renderTrigger?: PopoverTrigger,
+  /** Wheather or not to show the Popover's arrow */
+  showArrow?: boolean,
   /** Callback to call when a date is picked. Only needed when using `connect={false}` */
   setValue: (val: ?Date) => void,
   /** @ignore Will be injected by `asField` */
@@ -184,6 +186,7 @@ class DatePicker extends Component<Props, State> {
       children,
       preventClose,
       selectedDate: manuallySelectedDate,
+      showArrow = true,
     } = this.props;
     const { currentDate } = this.state;
     const selectedDay = manuallySelectedDate || currentDate || $value;
@@ -194,6 +197,7 @@ class DatePicker extends Component<Props, State> {
           placement="bottom"
           retainRefFocus
           onClose={this.handlePopoverClose}
+          showArrow={showArrow}
           content={({ close }) => (
             <div>
               <DayPicker

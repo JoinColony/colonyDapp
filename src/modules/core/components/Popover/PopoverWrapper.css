@@ -46,44 +46,57 @@
   left: calc(0px - arrowSize - arrowBorder * 2) !important;
 }
 
-.placementTop .arrow {
+/*
+ * @NOTE On arrow positioning classes
+ *
+ * The arrow classes need to be distinct from the wrapping popover (and can't inherit
+ * styles this way), otherwise Popover nested inside popovers won't work.
+ *
+ * Because of this the placement location needs to be encoded in the class's name.
+ */
+
+.topArrow {
+  composes: arrow;
   top: auto;
   bottom: calc((-2 * arrowSize) - arrowBorder);
   border-top-color: backgroundColor;
 }
 
-.placementTop .arrow::before {
+.topArrow::before {
   bottom: calc(-1 * (arrowSize - arrowBorder));
   left: calc(-1 * arrowSize);
 }
 
-.placementRight .arrow {
+.rightArrow {
+  composes: arrow;
   left: calc(-2 * (arrowSize + arrowBorder));
   border-right-color: backgroundColor;
 }
 
-.placementRight .arrow::before {
+.rightArrow::before {
   top: calc(-1 * arrowSize);
   left: calc(-1 * (arrowSize - arrowBorder));
 }
 
-.placementBottom .arrow {
+.bottomArrow {
+  composes: arrow;
   top: calc(-2 * (arrowSize + arrowBorder));
   border-bottom-color: backgroundColor;
 }
 
-.placementBottom .arrow::before {
+.bottomArrow::before {
   top: calc(-1 * (arrowSize - arrowBorder));
   left: calc(-1 * arrowSize);
 }
 
-.placementLeft .arrow {
+.leftArrow {
+  composes: arrow;
   right: calc(-2 * (arrowSize + arrowBorder));
   left: auto;
   border-left-color: backgroundColor;
 }
 
-.placementLeft .arrow::before {
+.leftArrow::before {
   top: calc(-1 * arrowSize);
   right: calc(-1 * (arrowSize - arrowBorder));
 }
@@ -94,17 +107,26 @@
   color: var(--colony-white);
 }
 
-.themeDark.placementTop .arrow { border-top-color: transparent; }
-.themeDark.placementTop .arrow::before { border-top-color: themeDarkBackgroundColor; }
+/*
+ *  @NOTE On theme-ing arrows
+ *
+ *  The arrow classes need to be distinct from the wrapping popover (and can't inherit
+ * styles this way), otherwise Popover nested inside popovers won't work.
+ *
+ * Because of this the theme name needs to be encoded in the class's name.
+ */
 
-.themeDark.placementRight .arrow { border-right-color: transparent; }
-.themeDark.placementRight .arrow::before { border-right-color: themeDarkBackgroundColor; }
+.themeDarkTopArrow { border-top-color: transparent; }
+.themeDarkTopArrow::before { border-top-color: themeDarkBackgroundColor; }
 
-.themeDark.placementBottom .arrow { border-bottom-color: transparent; }
-.themeDark.placementBottom .arrow::before { border-bottom-color: themeDarkBackgroundColor; }
+.themeDarkRightArrow { border-right-color: transparent; }
+.themeDarkRightArrow::before { border-right-color: themeDarkBackgroundColor; }
 
-.themeDark.placementLeft .arrow { border-left-color: transparent; }
-.themeDark.placementLeft .arrow::before { border-left-color: themeDarkBackgroundColor; }
+.themeDarkBottomArrow { border-bottom-color: transparent; }
+.themeDarkBottomArrow::before { border-bottom-color: themeDarkBackgroundColor; }
+
+.themeDarkLeftArrow { border-left-color: transparent; }
+.themeDarkLeftArrow::before { border-left-color: themeDarkBackgroundColor; }
 
 .themeGrey {
   composes: main;
@@ -112,20 +134,24 @@
   box-shadow: 0 0 20px -2px var(--grey-5);
 }
 
-.themeGrey.placementTop .arrow { border-top-color: transparent; }
-.themeGrey.placementTop .arrow::before { border-top-color: themeGreyBackgroundColor; }
+.themeGreyTopArrow { border-top-color: transparent; }
+.themeGreyTopArrow::before { border-top-color: themeGreyBackgroundColor; }
 
-.themeGrey.placementRight .arrow { border-right-color: transparent; }
-.themeGrey.placementRight .arrow::before { border-right-color: themeGreyBackgroundColor; }
+.themeGreyRightArrow { border-right-color: transparent; }
+.themeGreyRightArrow::before { border-right-color: themeGreyBackgroundColor; }
 
-.themeGrey.placementBottom .arrow { border-bottom-color: transparent; }
-.themeGrey.placementBottom .arrow::before { border-bottom-color: themeGreyBackgroundColor; }
+.themeGreyBottomArrow { border-bottom-color: transparent; }
+.themeGreyBottomArrow::before { border-bottom-color: themeGreyBackgroundColor; }
 
-.themeGrey.placementLeft .arrow { border-left-color: transparent; }
-.themeGrey.placementLeft .arrow::before { border-left-color: themeGreyBackgroundColor; }
+.themeGreyLeftArrow { border-left-color: transparent; }
+.themeGreyLeftArrow::before { border-left-color: themeGreyBackgroundColor; }
 
 /* State */
 
 .stateHideArrow .arrow {
   display: none;
+}
+
+.stateShowArrow .arrow {
+  display: block;
 }

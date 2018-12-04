@@ -27,6 +27,8 @@ type Props = {
   name: string,
   /** The already nested list, generated from list by the wrapper */
   collapsedList: Array<ConsumableItem>,
+  /** Wheather or not to show the Popover's arrow */
+  showArrow?: boolean,
   /** The intial list of items to display (before collapsing it) */
   list: Array<ConsumableItem>,
   /** Children to render and to use as a trigger for the Popover */
@@ -189,6 +191,7 @@ class ItemsList extends Component<Props, State> {
     const {
       state: { setItem: setItemId, listTouched },
       props: {
+        showArrow = true,
         list = [],
         collapsedList = [],
         children,
@@ -208,6 +211,7 @@ class ItemsList extends Component<Props, State> {
           trigger="click"
           placement="bottom"
           onClose={this.handleCleanup}
+          showArrow={showArrow}
           content={({ close }) => (
             <div className={styles.itemsWrapper}>
               <ul className={styles.itemList}>

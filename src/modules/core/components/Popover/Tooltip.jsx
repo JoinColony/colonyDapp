@@ -24,6 +24,8 @@ type Props = {
   placement?: Placement,
   /** Whether there should be an arrow on the tooltip */
   showArrow: boolean,
+  /** Set the open state from outside */
+  isOpen?: boolean,
 };
 
 const renderContent = content => (
@@ -39,6 +41,7 @@ const Tooltip = ({
   placement = 'top',
   showArrow,
   trigger,
+  isOpen,
 }: Props) => (
   <Popover
     appearance={{ theme: 'dark' }}
@@ -47,6 +50,7 @@ const Tooltip = ({
     content={renderContent(content)}
     placement={placement}
     showArrow={showArrow}
+    isOpen={isOpen}
   >
     {children}
   </Popover>

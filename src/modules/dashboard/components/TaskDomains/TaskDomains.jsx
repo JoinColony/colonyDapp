@@ -62,6 +62,7 @@ class TaskDomains extends Component<Props, State> {
             handleSetItem={this.handleSetDomain}
             name="taskDomains"
             connect={false}
+            showArrow={false}
           >
             <div className={styles.controls}>
               <Heading
