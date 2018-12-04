@@ -227,7 +227,7 @@ class GasStationPrice extends Component<Props, State> {
                   </div>
                   <div>
                     <Button
-                      disabled={!status}
+                      disabled={!status || !!walletNeedsAction}
                       loading={isSubmitting}
                       text={{ id: 'button.confirm' }}
                       type="submit"
