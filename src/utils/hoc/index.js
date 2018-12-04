@@ -8,6 +8,8 @@ type ConsumerType<T> = ComponentType<{
   children: (value: T) => ?Node,
 }>;
 
+type Selector<T> = (reduxState: Object, props: Object) => T;
+
 // eslint-disable-next-line import/prefer-default-export
 export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
   Component: ComponentType<{ [string]: any }>,
