@@ -13,7 +13,6 @@ type StoreProps = {
 };
 
 const userActivitiesStore: StoreBlueprint = {
-  // TODO: I don't want to assign a default value here. Ideas on how to fix flow, anyone?
   getAccessController({ walletAddress }: StoreProps = {}) {
     return new EthereumWalletAccessController(walletAddress);
   },
@@ -23,7 +22,7 @@ const userActivitiesStore: StoreBlueprint = {
       .string()
       .oneOf(Object.keys(activityMessages))
       .required(),
-    colonyName: yup.string().required(),
+    colonyName: yup.string(),
     domainName: yup.string(),
     createdAt: yup.date().default(() => new Date()),
   }),

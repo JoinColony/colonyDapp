@@ -129,7 +129,7 @@ export function* getOrCreateUserActivitiesStore(
   });
 
   const joinedEvent = {
-    colonyName: 'Welcome to Colony',
+    colonyName: '',
     userAction: 'joinedColony',
     createdAt: new Date(),
   };
