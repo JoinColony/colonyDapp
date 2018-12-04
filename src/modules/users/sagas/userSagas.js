@@ -52,7 +52,7 @@ import { registerUserLabel } from '../actionCreators';
 export function* getUserStore(walletAddress: string): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
 
-  const store = yield call(
+  let store = yield call(
     [ddb, ddb.getStore],
     userProfileStore,
     `user.${walletAddress}`,
@@ -64,9 +64,13 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
     yield call([store, store.load]);
     return store;
   }
-  return yield call([ddb, ddb.createStore], userProfileStore, {
+
+  store = yield call([ddb, ddb.createStore], userProfileStore, {
     walletAddress,
   });
+  yield call([store, store.set], { createdAt: new Date() });
+
+  return store;
 }
 
 export function* getUser(store: KVStore): Saga<UserRecord> {

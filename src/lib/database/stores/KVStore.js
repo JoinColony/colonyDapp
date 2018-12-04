@@ -1,8 +1,8 @@
 /* @flow */
 
-import type { ObjectSchema, ValidateOptions } from 'yup';
+import type { ValidateOptions } from 'yup';
 
-import type { OrbitDBKVStore, OrbitDBStore } from '../types/index';
+import type { OrbitDBKVStore } from '../types/index';
 import Store from './Store';
 
 /**
@@ -14,19 +14,6 @@ class KVStore extends Store {
 
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBKVStore = this._orbitStore;
-
-  constructor(orbitStore: OrbitDBStore, name: string, schema: ObjectSchema) {
-    super(orbitStore, name, schema);
-    // TODO consider using default values in the schema to set e.g.
-    // `createdAt`, `updatedAt` fields on writes.
-    this._orbitStore
-      .put('createdAt', new Date().toUTCString())
-      .catch(error =>
-        console.error(
-          `KVStore createdAt date could not be set: ${error.message}`,
-        ),
-      );
-  }
 
   async validate(
     keyOrObject: string | {},

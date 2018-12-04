@@ -19,6 +19,7 @@ const userProfileStore: StoreBlueprint = {
   name: 'userProfile',
   schema: yup.object({
     displayName: yup.string(),
+    createdAt: yup.date(),
     bio: yup.string(),
     // TODO: IPFS hash add yup validation for IPFS hash
     avatar: yup.string(),

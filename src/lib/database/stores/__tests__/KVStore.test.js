@@ -36,10 +36,6 @@ describe('KVStore', () => {
     expect(store._orbitStore).toBe(mockOrbitStore);
     expect(store._name).toBe(name);
     expect(store._schema).toBe(schema);
-    expect(store._orbitStore.put).toHaveBeenCalledWith(
-      'createdAt',
-      expect.any(String),
-    );
   });
 
   test('It validates objects against the schema', async () => {
