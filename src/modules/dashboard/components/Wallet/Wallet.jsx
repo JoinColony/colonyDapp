@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import EthereumQRPlugin from 'ethereum-qr-code';
 
 import type { DialogType } from '~core/Dialog';
 import type { TokenRecord } from '~immutable';
@@ -12,6 +11,7 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import QRCode from '~core/QRCode';
 
 import WalletTransactions from '../WalletTransactions';
 import TokenList from '~admin/Tokens/TokenList.jsx';
@@ -54,25 +54,6 @@ type Props = {
 };
 
 class Wallet extends Component<Props> {
-  componentDidMount() {
-    const { qrCode } = this.props;
-
-    if (qrCode) {
-      const qr = new EthereumQRPlugin();
-
-      qr.toCanvas(
-        {
-          to: mockUser.walletAddress,
-        },
-        {
-          size: 50,
-          selector: '#qr-code',
-          options: { margin: 0 },
-        },
-      );
-    }
-  }
-
   handleEditToken = () => {
     const { openDialog, tokens } = this.props;
     const tokenDialog = openDialog('TokenEditDialog', {
@@ -97,7 +78,9 @@ class Wallet extends Component<Props> {
       <div className={styles.layoutMain}>
         <main className={styles.content}>
           <div className={styles.walletDetails}>
-            {qrCode && <div className={styles.qr} id="qr-code" />}
+            {qrCode && (
+              <QRCode walletAddress={mockUser.walletAddress} version={10} />
+            )}
             <div className={styles.address}>
               <Heading
                 text={MSG.titleWallet}
