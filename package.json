@@ -192,7 +192,6 @@
     },
     "resolutions": {
         "babel-core": "7.0.0-bridge.0",
-        "ipfs": "0.32.2",
         "orbit-db": "JoinColony/orbit-db#develop",
         "orbit-db-kvstore": "JoinColony/orbit-db-kvstore#develop",
         "orbit-db-store": "orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2",
