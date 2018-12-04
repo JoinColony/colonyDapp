@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import type { MessageDescriptor } from 'react-intl';
-
 import withDialog from '~core/Dialog/withDialog';
 
 import type { OpenDialog } from '~core/Dialog/types';
@@ -13,35 +11,35 @@ import ActionButton from './ActionButton.jsx';
 type Props = {
   openDialog: OpenDialog,
   dialog: string,
-  options: Object,
+  dialogProps: Object,
   submit: string,
   success: string,
   error: string,
-  text: MessageDescriptor | string,
-  setValues?: (dialogValues: Object) => Object | Promise<Object>,
+  values?: Object | ((dialogValues: Object) => Object | Promise<Object>),
 };
 
 const DialogActionButton = ({
-  text,
   submit,
   success,
   error,
-  setValues: setValuesProp,
+  values: valuesProp = {},
   openDialog,
   dialog,
-  options,
+  dialogProps,
+  ...props
 }: Props) => {
-  const setValues = async () => {
-    const values = await openDialog(dialog, options).afterClosed();
-    return setValuesProp ? setValuesProp(values) : values;
+  const values = async () => {
+    const dialogValues = await openDialog(dialog, dialogProps).afterClosed();
+    if (typeof valuesProp === 'function') return valuesProp(dialogValues);
+    return { ...dialogValues, ...valuesProp };
   };
   return (
     <ActionButton
-      text={text}
       submit={submit}
       success={success}
       error={error}
-      setValues={setValues}
+      values={values}
+      {...props}
     />
   );
 };

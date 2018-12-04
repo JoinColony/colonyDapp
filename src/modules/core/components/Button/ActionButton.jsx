@@ -2,8 +2,6 @@
 
 import React, { Component } from 'react';
 
-import type { MessageDescriptor } from 'react-intl';
-
 import Button from '~core/Button';
 
 import promiseListener from '../../../../createPromiseListener';
@@ -14,8 +12,7 @@ type Props = {
   submit: string,
   success: string,
   error: string,
-  text: MessageDescriptor | string,
-  setValues?: () => Object | Promise<Object>,
+  values?: Object | (() => Object | Promise<Object>),
 };
 
 type State = {
@@ -43,10 +40,11 @@ class ActionButton extends Component<Props, State> {
     this.asyncFunc.unsubscribe();
   }
 
-  onClick = async () => {
+  handleClick = async () => {
     try {
-      const { setValues } = this.props;
-      const values = setValues ? await setValues() : {};
+      const { values: valuesProp = {} } = this.props;
+      const values =
+        typeof valuesProp === 'function' ? await valuesProp() : valuesProp;
       this.setState({ loading: true });
       await this.asyncFunc.asyncFunction(values);
       this.setState({ loading: false });
@@ -58,9 +56,9 @@ class ActionButton extends Component<Props, State> {
   };
 
   render() {
-    const { text } = this.props;
+    const { submit, success, error, values, ...props } = this.props;
     const { loading } = this.state;
-    return <Button text={text} onClick={this.onClick} loading={loading} />;
+    return <Button onClick={this.handleClick} loading={loading} {...props} />;
   }
 }
 

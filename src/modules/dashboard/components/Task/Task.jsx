@@ -266,7 +266,7 @@ class Task extends Component<Props> {
                   submit={TASK_WORKER_RATE_MANAGER}
                   success={TASK_WORKER_RATE_MANAGER_SUCCESS}
                   error={TASK_WORKER_RATE_MANAGER_ERROR}
-                  setValues={setValues}
+                  values={setValues}
                 />
               )}
             {/* Worker submits work, ends task + rates before deadline */}
@@ -282,7 +282,7 @@ class Task extends Component<Props> {
                   submit={TASK_WORKER_END}
                   success={TASK_WORKER_END_SUCCESS}
                   error={TASK_WORKER_END_ERROR}
-                  setValues={setValues}
+                  values={setValues}
                 />
               )}
             {/* Worker misses deadline and manager ends task + rates */}
@@ -298,7 +298,7 @@ class Task extends Component<Props> {
                   submit={TASK_MANAGER_END}
                   success={TASK_MANAGER_END_SUCCESS}
                   error={TASK_MANAGER_END_ERROR}
-                  setValues={setValues}
+                  values={setValues}
                 />
               )}
             {/* Worker makes deadline and manager rates worker */}
@@ -312,7 +312,7 @@ class Task extends Component<Props> {
                 submit={TASK_MANAGER_RATE_WORKER}
                 success={TASK_MANAGER_RATE_WORKER_SUCCESS}
                 error={TASK_MANAGER_RATE_WORKER_ERROR}
-                setValues={setValues}
+                values={setValues}
               />
             )}
             {/* Manager reveal rating of worker */}
@@ -322,7 +322,7 @@ class Task extends Component<Props> {
                 submit={TASK_MANAGER_REVEAL_WORKER_RATING}
                 success={TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
                 error={TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
-                setValues={setValues}
+                values={setValues}
               />
             )}
             {/* Worker reveal rating of manager */}
@@ -332,7 +332,7 @@ class Task extends Component<Props> {
                 submit={TASK_WORKER_REVEAL_MANAGER_RATING}
                 success={TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
                 error={TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
-                setValues={setValues}
+                values={setValues}
               />
             )}
             {/* Task is finalized and payouts can be claimed */}

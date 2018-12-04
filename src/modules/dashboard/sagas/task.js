@@ -6,8 +6,7 @@ import { put, takeEvery, call, getContext } from 'redux-saga/effects';
 
 import type { Action } from '~types/index';
 
-import { putError, raceError } from '~utils/saga/effects';
-import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
+import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import {
   TASK_WORKER_END,
@@ -38,18 +37,13 @@ import {
 } from '../actionCreators';
 
 function* generateRatingSalt(colonyIdentifier: string, taskId: number) {
-  const colonyManager = yield getContext('colonyManager');
   const wallet = yield getContext('wallet');
-  const getTask = yield call(
-    [colonyManager, colonyManager.getMethod],
-    COLONY_CONTEXT,
-    'getTask',
+  const { specificationHash } = yield callCaller({
     colonyIdentifier,
-  );
-  const { specificationHash } = yield call([getTask, getTask.call], {
-    taskId,
+    methodName: 'getTask',
+    params: { taskId },
   });
-  // TODO; this should be done via gas station once `signMessage` is supported
+  // TODO: this should be done via gas station once `signMessage` is supported
   const salt = yield call([wallet, wallet.signMessage], {
     message: specificationHash,
   });
@@ -61,18 +55,11 @@ function* generateRatingSecret(
   salt: string,
   rating: number,
 ) {
-  const colonyManager = yield getContext('colonyManager');
-  const generateSecret = yield call(
-    [colonyManager, colonyManager.getMethod],
-    COLONY_CONTEXT,
-    'generateSecret',
+  return yield callCaller({
     colonyIdentifier,
-  );
-  const secret = yield call([generateSecret, generateSecret.call], {
-    salt,
-    rating,
+    methodName: 'generateSecret',
+    params: { salt, rating },
   });
-  return secret;
 }
 
 function* generateRatingSaltAndSecret(
@@ -81,32 +68,24 @@ function* generateRatingSaltAndSecret(
   rating: number,
 ) {
   const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
-  const secret = yield call(
-    generateRatingSecret,
-    colonyIdentifier,
-    salt,
-    rating,
-  );
-  return secret;
+  return yield call(generateRatingSecret, colonyIdentifier, salt, rating);
 }
 
+/**
+ * Given the salt for a published rating secret, determine the rating which was
+ * used to generate it. If none match the published secret, throw.
+ */
 function* guessRating(
   colonyIdentifier: string,
   taskId: string,
   role: string,
   salt: string,
 ) {
-  const colonyManager = yield getContext('colonyManager');
-  const getTaskWorkRatingSecret = yield call(
-    [colonyManager, colonyManager.getMethod],
-    COLONY_CONTEXT,
-    'getTaskWorkRatingSecret',
+  const publishedSecret = yield callCaller({
     colonyIdentifier,
-  );
-  const publishedSecret = yield call(
-    [getTaskWorkRatingSecret, getTaskWorkRatingSecret.call],
-    { taskId, role },
-  );
+    methodName: 'getTaskWorkRatingSecret',
+    params: { taskId, role },
+  });
   let correctRating;
   let ratingGuess = 1;
   let currentSecret;
