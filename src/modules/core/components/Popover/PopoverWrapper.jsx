@@ -4,10 +4,11 @@ import type { Node } from 'react';
 import type { PopperArrowProps } from 'react-popper';
 import React from 'react';
 
-import { getMainClasses, getPopoverArrowClasses } from '~utils/css';
-
 // eslint-disable-next-line import/no-cycle
 import type { Appearance as PopoverAppearance, Placement } from './Popover.jsx';
+
+import { getMainClasses } from '~utils/css';
+import getPopoverArrowClasses from './getPopoverArrowClasses';
 
 import styles from './PopoverWrapper.css';
 
