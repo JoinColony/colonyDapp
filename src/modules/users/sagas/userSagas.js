@@ -83,7 +83,7 @@ export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
     yield call(
       [profileStore, profileStore.update],
       'databases',
-      'activity',
+      'activitiesStore',
       activitiesStore.address.toString(),
     );
   } catch (error) {
@@ -111,11 +111,14 @@ export function* getOrCreateUserActivitiesStore(
 
   if (profileStore) {
     yield call([profileStore, profileStore.load]);
-    const databases = yield call([profileStore, profileStore.get], 'databases');
+    const activitiesStoreAddress = yield call(
+      [profileStore, profileStore.get],
+      'activitiesStore',
+    );
     activitiesStore = yield call(
       [ddb, ddb.getStore],
       userActivitiesStore,
-      databases.activity,
+      activitiesStoreAddress,
       {
         walletAddress,
       },
@@ -198,7 +201,7 @@ function* updateProfile(action: Action): Saga<void> {
     // if user is not allowed to write to store, this should throw an error
     // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
     const {
-      orbitStore,
+      profileStore,
       walletAddress: removedWalletAddress,
       username,
       ...update

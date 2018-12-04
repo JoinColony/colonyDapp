@@ -29,7 +29,7 @@ const defaultValues: UserProps = {
 };
 
 // TODO: Ideally, we should be able to validate the required properties
-// (`walletAddress`, `orbitStore`) before creating a record, rather than using
+// (`walletAddress`, `profileStore`) before creating a record, rather than using
 // empty strings.
 const User: RecordFactory<UserProps> = Record(defaultValues);
 

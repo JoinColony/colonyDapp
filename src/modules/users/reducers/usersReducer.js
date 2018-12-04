@@ -21,12 +21,9 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
       return state.set('isLoading', true);
 
     case USER_PROFILE_FETCH_SUCCESS: {
-      const { walletAddress, user } = action.payload;
+      const { user } = action.payload;
       return state
-        .setIn(
-          ['users', walletAddress],
-          User({ profile: { walletAddress, ...user } }),
-        )
+        .setIn(['users', user.walletAddress], User({ profile: { ...user } }))
         .merge({
           isLoading: false,
         });
@@ -42,7 +39,10 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
 
     case USER_ACTIVITIES_FETCH_SUCCESS: {
       const { activities, walletAddress } = action.payload;
-      return state.setIn(['users', walletAddress, 'activities'], activities);
+      return state.setIn(
+        ['users', walletAddress, 'activitiesStore'],
+        activities,
+      );
     }
     default:
       return state;

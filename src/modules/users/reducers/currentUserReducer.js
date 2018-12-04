@@ -19,8 +19,8 @@ const INITIAL_STATE = null;
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
-      const { walletAddress, user, orbitStore } = action.payload;
-      return User({ profile: { ...user, walletAddress, orbitStore } });
+      const { walletAddress, profileStore, user } = action.payload;
+      return User({ profileStore, profile: { ...user, walletAddress } });
     }
 
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
