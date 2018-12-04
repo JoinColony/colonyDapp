@@ -8,7 +8,6 @@ import ns from '../namespace';
 
 export const USER_ACTIVITIES_FETCH = `${ns}/USER_ACTIVITIES_FETCH`;
 export const USER_ACTIVITIES_FETCH_ERROR = `${ns}/USER_ACTIVITIES_FETCH_ERROR`;
-// eslint-disable-next-line max-len
 export const USER_ACTIVITIES_FETCH_SUCCESS = `${ns}/USER_ACTIVITIES_FETCH_SUCCESS`;
 
 export const USER_PROFILE_FETCH = `${ns}/USER_PROFILE_FETCH`;
