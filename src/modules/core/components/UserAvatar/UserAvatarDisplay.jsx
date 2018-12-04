@@ -1,11 +1,12 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 import getIcon from '../../../../lib/identicon';
 
 import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
+import NavLink from '../NavLink';
 
 export type Props = {
   /** Avatar image URL (can be a base64 encoded string) */
@@ -26,35 +27,58 @@ export type Props = {
   walletAddress: string,
   /* Whether to show or not show the UserInfo tooltip over the avatar */
   hasUserInfo?: boolean,
+  /** Allow exceptions where you don't link to the user profile */
+  link?: boolean,
 };
 
-const UserAvatarDisplay = ({
-  avatarURL,
-  className,
-  notSet,
-  size,
-  displayName,
-  username,
-  walletAddress,
-  hasUserInfo = false,
-}: Props) => (
-  <UserInfo
-    displayName={displayName}
-    username={username}
-    walletAddress={walletAddress}
-    trigger={hasUserInfo ? 'hover' : 'disabled'}
-  >
-    <Avatar
-      avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
-      className={className}
-      notSet={notSet}
-      placeholderIcon="circle-person"
-      size={size}
-      title={username || walletAddress}
-    />
-  </UserInfo>
-);
+class UserAvatarDisplay extends Component<Props> {
+  static displayName = 'UserAvatarDisplay';
 
-UserAvatarDisplay.displayName = 'UserAvatarDisplay';
+  static defaultProps = {
+    hasUserInfo: false,
+    link: true,
+  };
+
+  renderJoinAvatarAndUserInfo = () => {
+    const {
+      displayName,
+      username,
+      className,
+      walletAddress,
+      hasUserInfo,
+      avatarURL,
+      notSet,
+      size,
+    } = this.props;
+    return (
+      <UserInfo
+        displayName={displayName}
+        username={username}
+        walletAddress={walletAddress}
+        trigger={hasUserInfo ? 'hover' : 'disabled'}
+      >
+        <Avatar
+          avatarURL={avatarURL || (!notSet ? getIcon(walletAddress) : null)}
+          className={className}
+          notSet={notSet}
+          placeholderIcon="circle-person"
+          size={size}
+          title={username || walletAddress}
+        />
+      </UserInfo>
+    );
+  };
+
+  render() {
+    const { link, username } = this.props;
+    return link && username ? (
+      <NavLink to={`/user/${username.toLowerCase()}`}>
+        {this.renderJoinAvatarAndUserInfo()}
+      </NavLink>
+    ) : (
+      this.renderJoinAvatarAndUserInfo()
+    );
+  }
+}
 
 export default UserAvatarDisplay;
