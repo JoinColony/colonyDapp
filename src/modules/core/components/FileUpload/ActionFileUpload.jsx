@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import promiseListener from '../../../../createPromiseListener';
 import FileUpload from './FileUpload.jsx';
 
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
 type Props = {
   submit: string,
   success: string,
@@ -12,7 +14,7 @@ type Props = {
 };
 
 class ActionFileUpload extends Component<Props> {
-  upload: () => void;
+  upload: AsyncFunction<void, void>;
 
   constructor(props: Props) {
     super(props);

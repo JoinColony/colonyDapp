@@ -8,6 +8,8 @@ import Button from '~core/Button';
 
 import promiseListener from '../../../../createPromiseListener';
 
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
 type Props = {
   submit: string,
   success: string,
@@ -21,7 +23,7 @@ type State = {
 };
 
 class ActionButton extends Component<Props, State> {
-  asyncFunc: (values: Object) => void;
+  asyncFunc: AsyncFunction<Object, void>;
 
   constructor(props: Props) {
     super(props);

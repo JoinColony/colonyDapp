@@ -17,6 +17,8 @@ import {
 } from '../../actionTypes/colony';
 import promiseListener from '../../../../createPromiseListener';
 
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
 const MSG = defineMessages({
   inputLabel: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.label',
@@ -72,7 +74,7 @@ const getStatusText = (tokenData, isLoading) => {
 };
 
 class TokenSelector extends Component<Props, State> {
-  getToken: (values: { tokenAddress: string }) => Promise<any>;
+  getToken: AsyncFunction<{ tokenAddress: string }, any>;
 
   static displayName = 'dashboard.CreateColonyWizard.TokenSelector';
 

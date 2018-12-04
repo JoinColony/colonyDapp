@@ -10,6 +10,8 @@ import UserAvatar from '~core/UserAvatar';
 
 import promiseListener from '../../../../createPromiseListener';
 
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
 import {
   USER_UPLOAD_AVATAR,
   USER_UPLOAD_AVATAR_SUCCESS,
@@ -34,9 +36,9 @@ type Props = {
 };
 
 class UserAvatarUploader extends Component<Props> {
-  remove: () => Promise<empty>;
+  remove: AsyncFunction<void, empty>;
 
-  upload: (file: FileReaderFile) => Promise<empty>;
+  upload: AsyncFunction<FileReaderFile, empty>;
 
   static displayName = 'users.UserProfileEdit.UserAvatarUploader';
 
