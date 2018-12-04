@@ -23,4 +23,7 @@ export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
  */
 export const withFeatureFlags = (
   Component: ComponentType<{ [string]: any }>,
-) => (props: Object) => createElement(Component, { ...props });
+) => (props: Object) => {
+  const given = (cond: Selector<boolean>) => cond;
+  return createElement(Component, { ...props, given });
+};
