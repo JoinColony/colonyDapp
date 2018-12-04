@@ -123,6 +123,10 @@ const config = {
   },
   plugins: [
     new Dotenv(),
+    // For packages that still rely on babel 6 stuff, e.g. ledger: https://github.com/JoinColony/purser/issues/184
+    new webpack.ProvidePlugin({
+      'regeneratorRuntime': '@babel/runtime/regenerator',
+    }),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
     }),

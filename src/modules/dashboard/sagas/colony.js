@@ -78,6 +78,7 @@ async function getTokenClientInfo(contractAddress: string) {
     wallet: { provider },
   });
 
+  // $FlowFixMe colonyJS issue, will be fixed in the next release (1.8.2?)
   const client = new ColonyNetworkClient.TokenClient({
     adapter,
     query: { contractAddress },

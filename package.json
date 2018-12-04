@@ -158,10 +158,10 @@
         "lodash": "4.17.11",
         "lru-cache": "^4.1.3",
         "nanoid": "^1.0.7",
-        "orbit-db": "https://github.com/thiagodelgado111/orbit-db#feature/verifiable-address",
-        "orbit-db-keystore": "https://github.com/orbitdb/orbit-db-keystore#fix/verification",
-        "orbit-db-kvstore": "https://github.com/thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log",
-        "orbit-db-store": "https://github.com/orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2",
+        "orbit-db": "^0.19.9",
+        "orbit-db-keystore": "^0.1.0",
+        "orbit-db-kvstore": "^1.4.0",
+        "orbit-db-store": "^2.5.3",
         "prop-types": "^15.6.2",
         "react": "^16.4.1",
         "react-beautiful-dnd": "^9.0.0",
@@ -193,11 +193,10 @@
     "resolutions": {
         "babel-core": "7.0.0-bridge.0",
         "ipfs": "0.32.2",
-        "orbit-db": "https://github.com/thiagodelgado111/orbit-db#feature/verifiable-address",
-        "orbit-db-kvstore": "https://github.com/thiagodelgado111/orbit-db-kvstore#maintenance/new-ipfs-log",
-        "orbit-db-store": "https://github.com/orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2",
-        "orbit-db-keystore": "https://github.com/orbitdb/orbit-db-keystore#fix/verification",
-        "ipld-bitcoin": "https://github.com/ipld/js-ipld-bitcoin.git"
+        "orbit-db": "JoinColony/orbit-db#develop",
+        "orbit-db-kvstore": "JoinColony/orbit-db-kvstore#develop",
+        "orbit-db-store": "orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2",
+        "orbit-db-keystore": "orbitdb/orbit-db-keystore#fix/verification"
     },
     "greenkeeper": {
         "ignore": [
