@@ -37,36 +37,36 @@ const enhance: HOC<*, PartialProps> = compose(
   withProps(
     ({ list = [], itemDisplayPrefix, itemDisplaySuffix }: PartialProps) => {
       /*
-      * @NOTE The parent must be always be declared (have a lower id) than the child
-      * While normal logic would imply this, you might run into issues, so take care.
-      *
-      * As for what this list does, is to take an array of `ConsumableItem` object
-      * and create a structure of nested ones.
-      *
-      * Eg:
-      * [
-      *   { id: 1 },
-      *   { id: 2, parent: 1 },
-      *   { id: 3, parent: 2 }
-      * ]
-      *
-      * Is going to be transformed into:
-      * [
-      *   {
-      *     id: 1,
-      *     children: [
-      *       {
-      *         id: 2,
-      *         children: [
-      *           {
-      *             id: 3,
-      *           },
-      *         ],
-      *       },
-      *     ],
-      *   },
-      * ]
-      */
+       * @NOTE The parent must be always be declared (have a lower id) than the child
+       * While normal logic would imply this, you might run into issues, so take care.
+       *
+       * As for what this list does, is to take an array of `ConsumableItem` object
+       * and create a structure of nested ones.
+       *
+       * Eg:
+       * [
+       *   { id: 1 },
+       *   { id: 2, parent: 1 },
+       *   { id: 3, parent: 2 }
+       * ]
+       *
+       * Is going to be transformed into:
+       * [
+       *   {
+       *     id: 1,
+       *     children: [
+       *       {
+       *         id: 2,
+       *         children: [
+       *           {
+       *             id: 3,
+       *           },
+       *         ],
+       *       },
+       *     ],
+       *   },
+       * ]
+       */
       let collapsedList: Array<Object> = list
         .slice()
         .sort(sortObjectsBy('name'));

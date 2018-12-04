@@ -63,21 +63,16 @@ const UserListItem = ({
       <UserAvatar size="xs" walletAddress={walletAddress} username={username} />
     </TableCell>
     <TableCell className={styles.userDetails}>
-      {showDisplayName &&
-        displayName && (
-          <span className={styles.displayName} title={displayName}>
-            {displayName}
-          </span>
-        )}
-      {showUsername &&
-        username && (
-          <span
-            className={styles.username}
-            title={`@${username.toLowerCase()}`}
-          >
-            {`@${username.toLowerCase()}`}
-          </span>
-        )}
+      {showDisplayName && displayName && (
+        <span className={styles.displayName} title={displayName}>
+          {displayName}
+        </span>
+      )}
+      {showUsername && username && (
+        <span className={styles.username} title={`@${username.toLowerCase()}`}>
+          {`@${username.toLowerCase()}`}
+        </span>
+      )}
       <span className={styles.address}>
         {showMaskedAddress ? (
           <MaskedAddress address={walletAddress} />

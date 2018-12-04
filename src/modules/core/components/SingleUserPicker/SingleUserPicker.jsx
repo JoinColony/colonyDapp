@@ -126,15 +126,14 @@ class SingleUserPicker extends Component<Props, State> {
       <div className={styles.omniContainer}>
         <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
           <div className={styles.inputContainer}>
-            {!elementOnly &&
-              label && (
-                <InputLabel
-                  inputId={inputProps.id}
-                  label={label}
-                  help={help}
-                  appearance={labelAppearance}
-                />
-              )}
+            {!elementOnly && label && (
+              <InputLabel
+                inputId={inputProps.id}
+                label={label}
+                help={help}
+                appearance={labelAppearance}
+              />
+            )}
             {$value ? (
               <div className={styles.avatarContainer}>
                 <UserAvatar
@@ -191,14 +190,13 @@ class SingleUserPicker extends Component<Props, State> {
             </div>
           </div>
         </OmniPickerWrapper>
-        {$value &&
-          isResettable && (
-            <Button
-              onClick={this.resetSelection}
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={{ id: 'button.remove' }}
-            />
-          )}
+        {$value && isResettable && (
+          <Button
+            onClick={this.resetSelection}
+            appearance={{ theme: 'blue', size: 'small' }}
+            text={{ id: 'button.remove' }}
+          />
+        )}
       </div>
     );
   }

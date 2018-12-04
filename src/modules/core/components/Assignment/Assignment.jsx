@@ -97,15 +97,14 @@ const Assignment = ({
           )}
         </div>
         <div className={styles.fundingContainer}>
-          {reputation &&
-            fundingWithNativeToken && (
-              <span className={styles.reputation}>
-                <FormattedMessage
-                  {...MSG.reputation}
-                  values={{ reputation: reputation.toString() }}
-                />
-              </span>
-            )}
+          {reputation && fundingWithNativeToken && (
+            <span className={styles.reputation}>
+              <FormattedMessage
+                {...MSG.reputation}
+                values={{ reputation: reputation.toString() }}
+              />
+            </span>
+          )}
           {payouts ? (
             <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
           ) : (

@@ -60,12 +60,11 @@ const ItemDefault = ({
       )}
       {username && <UserMention username={username} hasLink={false} />}
       {showAddress && <span className={styles.address}>{walletAddress}</span>}
-      {!showAddress &&
-        showMaskedAddress && (
-          <span className={styles.address}>
-            <MaskedAddress address={walletAddress} />
-          </span>
-        )}
+      {!showAddress && showMaskedAddress && (
+        <span className={styles.address}>
+          <MaskedAddress address={walletAddress} />
+        </span>
+      )}
     </span>
   </span>
 );

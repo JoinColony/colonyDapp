@@ -60,8 +60,8 @@ const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
       <p className={styles.advancedNumeric}>{id}</p>
     </section>
     {/* I have no idea how the recovery mode should work, so for now,
-      * I'm assuming we just need a button for it
-      */}
+     * I'm assuming we just need a button for it
+     */}
     <Button
       appearance={{ theme: 'blue' }}
       text={MSG.buttonRecovery}
