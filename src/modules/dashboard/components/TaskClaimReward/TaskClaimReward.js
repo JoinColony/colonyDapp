@@ -2,53 +2,72 @@
 
 import { compose, withProps } from 'recompose';
 
-import withDialog from '~core/Dialog/withDialog';
 import { sortObjectsBy } from '~utils/arrays';
+
+import type { TaskRecord, TaskPayout } from '~types/';
 
 import TaskClaimReward from './TaskClaimReward.jsx';
 
 export type Props = {
-  /*
-   * We're not putting a custom defined type on this since it all likeliness it
-   * will change
-   */
-  taskReward: Object,
-  taskTitle: string,
+  task: TaskRecord,
 };
 
-/*
- * This should most likely come from the redux state, so we can compare against
- * the tasks's payouts
- */
-const MOCK_NATIVE_TOKEN_SYMBOL: string = 'CLNY';
+const isNative = (payout: TaskPayout): boolean => !!payout.isNative;
 
-const isNative = ({ symbol }: Object): boolean =>
-  symbol === MOCK_NATIVE_TOKEN_SYMBOL;
-
-const isEth = (prev: string, next: string): number => {
-  const prevVal = prev.toLowerCase();
-  const nextVal = next.toLowerCase();
-  if (prevVal === 'eth' || nextVal === 'eth') {
-    return prevVal === 'eth' ? -1 : 1;
+const isEth = (prev: boolean, next: boolean): number => {
+  if (prev || next) {
+    return prev ? -1 : 1;
   }
   return 0;
 };
 
-const networkFee = ({ amount, symbol }) => ({
-  amount,
-  symbol,
-  networkFee: amount * 0.01,
+const networkFee = (payout: TaskPayout): TaskPayout => ({
+  ...payout,
+  networkFee: payout.amount * 0.01,
 });
 
+// TODO: in the future use contract `getReputation`
+const getReputation = (
+  reputation: number,
+  rating: number,
+  rateFail: boolean,
+) => {
+  const ratingMultipliers = [-2, 2, 3];
+  const ratingDivisor = 2;
+  return (
+    (reputation * ratingMultipliers[rating - 1] - (rateFail ? reputation : 0)) /
+    ratingDivisor
+  );
+};
+
 const enhance = compose(
-  withDialog(),
-  withProps(({ taskReward: { payoutsEarned = [] } = {} }: Props) => {
-    /*
-     * Calculate the network fee
-     */
-    const payoutsWithFee = payoutsEarned.map(networkFee);
-    return {
-      sortedPayouts: payoutsWithFee
+  withProps(
+    ({
+      task: {
+        id: taskId,
+        colonyIdentifier,
+        payouts,
+        workerHasRated,
+        workerRateFail,
+        // TODO: rating should not have a default
+        workerRating: rating = 2,
+        reputation,
+        title,
+      },
+    }: Props) => ({
+      taskId,
+      colonyIdentifier,
+      rating,
+      reputation: getReputation(reputation, rating, workerRateFail),
+      payouts,
+      title,
+      lateRating: !workerHasRated,
+      lateReveal: !!workerHasRated && workerRateFail,
+      sortedPayouts: payouts
+        /*
+         * Calculate the network fee
+         */
+        .map(networkFee)
         /*
          * Take out the native token
          */
@@ -56,14 +75,14 @@ const enhance = compose(
         /*
          * Sort ETH to the top
          */
-        .sort(sortObjectsBy({ name: 'symbol', compareFn: isEth }, 'symbol')),
-      nativeTokenPayout: payoutsWithFee
+        .sort(sortObjectsBy({ name: 'isEth', compareFn: isEth }, 'symbol')),
+      nativeTokenPayout: payouts
         /*
          * See if we have a native token
          */
         .find(isNative),
-    };
-  }),
+    }),
+  ),
 );
 
 export default enhance(TaskClaimReward);

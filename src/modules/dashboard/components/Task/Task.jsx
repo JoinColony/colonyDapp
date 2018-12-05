@@ -90,7 +90,6 @@ const MSG = defineMessages({
 type Props = {
   openDialog: OpenDialog,
   task: TaskRecord,
-  taskReward: Object,
   user: UserRecord,
   isTaskCreator?: boolean,
   preventEdit?: boolean,
@@ -175,7 +174,6 @@ class Task extends Component<Props> {
       isTaskCreator = false,
       preventEdit = true,
       task,
-      taskReward,
       user,
       userClaimedProfile = false,
     } = this.props;
@@ -336,9 +334,7 @@ class Task extends Component<Props> {
               />
             )}
             {/* Task is finalized and payouts can be claimed */}
-            {canClaimPayout && (
-              <TaskClaimReward taskReward={taskReward} taskTitle={task.title} />
-            )}
+            {canClaimPayout && <TaskClaimReward task={task} />}
             {/* Task is finalized and no payouts can be claimed */}
             {task.currentState === TASK_STATE.FINALIZED && !canClaimPayout && (
               <p className={styles.completedDescription}>
