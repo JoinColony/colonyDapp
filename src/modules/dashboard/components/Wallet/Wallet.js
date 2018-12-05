@@ -12,7 +12,6 @@ const enhance = compose(
   withDialog(),
   withProps(() => ({
     tokens: mockTokens,
-    qrCode: true,
   })),
 );
 

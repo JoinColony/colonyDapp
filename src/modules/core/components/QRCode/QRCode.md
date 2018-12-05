@@ -1,11 +1,11 @@
 
 ### QRCode
 
-The QR Code can either be forced into a certain width with the width property,
-if it's not defined it will automatically adjust to a size that easily scannable.
+The QR Code width can be set with the width property and takes in a address property, that
+could be a token contract address, colony contract address or a wallet address.
 
 ### QRCode with set width
 
 ```jsx
-<QRCode walletAddress="0x1afb213afa8729fa7908154b90e256f1be70987a" width={50} />
+<QRCode address="0x1afb213afa8729fa7908154b90e256f1be70987a" width={50} />
 ```

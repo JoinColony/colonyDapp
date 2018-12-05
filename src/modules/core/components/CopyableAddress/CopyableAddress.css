@@ -1,5 +1,4 @@
 .main {
-  /* add main styles here */
   display: flex;
 }
 
@@ -8,7 +7,7 @@
 }
 
 .themeBig {
-  display: flex;
+  composes: main;
   font-size: var(--size-medium-l);
   letter-spacing: 1px;
 }

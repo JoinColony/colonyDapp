@@ -48,9 +48,7 @@ const displayName = 'dashboard.Wallet';
 
 type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenType>,
-  /**  Add QR code to Ethereum address */
-  qrCode: boolean,
+  tokens: List<TokenRecord>,
 };
 
 class Wallet extends Component<Props> {
@@ -73,21 +71,19 @@ class Wallet extends Component<Props> {
   };
 
   render() {
-    const { tokens, qrCode } = this.props;
+    const { tokens } = this.props;
     return (
       <div className={styles.layoutMain}>
         <main className={styles.content}>
           <div className={styles.walletDetails}>
-            {qrCode && (
-              <QRCode walletAddress={mockUser.walletAddress} width={55} />
-            )}
+            <QRCode address={mockUser.profile.walletAddress} width={55} />
             <div className={styles.address}>
               <Heading
                 text={MSG.titleWallet}
                 appearance={{ size: 'medium', margin: 'small' }}
               />
               <CopyableAddress appearance={{ theme: 'big' }} full>
-                {mockUser.walletAddress}
+                {mockUser.profile.walletAddress}
               </CopyableAddress>
             </div>
           </div>

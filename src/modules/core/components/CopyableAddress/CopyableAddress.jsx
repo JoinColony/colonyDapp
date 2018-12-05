@@ -82,6 +82,7 @@ class CopyableAddress extends Component<Props, State> {
     if (full && !(addressElements instanceof Error)) {
       return (
         <div>
+          <span className={styles.boldAddress}>{addressElements.header}</span>
           <span className={styles.boldAddress}>{addressElements.start}</span>
           <span className={styles.address}>{addressElements.middle}</span>
           <span className={styles.boldAddress}>{addressElements.end}</span>
