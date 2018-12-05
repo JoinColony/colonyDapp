@@ -11,19 +11,19 @@ type InProps = {
   transaction: TransactionType,
 };
 
-const statusCanBeSigned = (status?: string): boolean =>
-  !status || status === 'failed';
-
-const dependencyIsBlocker = (
+const isDependencyBlockingTx = (
   set: Array<TransactionType>,
   dependency: string,
 ): boolean =>
-  !!set.find(({ hash, status }: TransactionType) => {
+  !set.find(({ hash, status }: TransactionType) => {
     if (hash === dependency) {
       return status && status !== 'succeeded';
     }
     return false;
   });
+
+const statusCanBeSigned = (status?: string): boolean =>
+  !status || status === 'failed';
 
 const enhance: HOC<*, InProps> = compose(
   withProps(() => ({
@@ -32,7 +32,7 @@ const enhance: HOC<*, InProps> = compose(
      */
     walletNeedsAction: 'hardware',
   })),
-  withProps(({ transaction: { set, status, symbol }, walletNeedsAction }) => {
+  withProps(({ transaction: { set, status }, walletNeedsAction }) => {
     /*
      * A tx can only be signed if it meets the following criteria:
      *
@@ -47,7 +47,7 @@ const enhance: HOC<*, InProps> = compose(
      * 3. If the tx doesn't have a set, the tx must have
      *   no value for `status` or `status` === `failed`
      */
-    const requiresSignature =
+    const canSignTransaction =
       !walletNeedsAction &&
       (set && set.length > 0
         ? !!set.find(
@@ -56,7 +56,7 @@ const enhance: HOC<*, InProps> = compose(
                 if (!setItemDependency) {
                   return true;
                 }
-                return !dependencyIsBlocker(set, setItemDependency);
+                return isDependencyBlockingTx(set, setItemDependency);
               }
               return false;
             },
@@ -71,10 +71,9 @@ const enhance: HOC<*, InProps> = compose(
         suggested: 0.2,
         suggestedWait: 8640,
       },
-      isEth: symbol.toLowerCase() === 'eth',
       isNetworkCongested: false,
       walletNeedsAction,
-      requiresSignature,
+      canSignTransaction,
     };
   }),
 );
