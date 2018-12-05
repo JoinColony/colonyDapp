@@ -40,7 +40,10 @@ export const withFeatureFlags = (
      * @NOTE I have mixed feelings about getting the state like this
      */
     const reduxState = store.getState();
-    const potentialSelectorValue = potentialSelector(reduxState, props);
+    let potentialSelectorValue = potentialSelector;
+    if (potentialSelector && typeof potentialSelector === 'function') {
+      potentialSelectorValue = potentialSelector(reduxState, props);
+    }
     if (dependantSelector && typeof dependantSelector === 'function') {
       return dependantSelector(potentialSelectorValue, reduxState, props);
     }
