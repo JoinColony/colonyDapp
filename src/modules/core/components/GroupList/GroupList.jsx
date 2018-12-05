@@ -10,6 +10,7 @@ import Heading from '../Heading';
 import styles from './GroupList.css';
 
 type GroupListItem = {
+  id: string,
   /** Text in the first row of the second column */
   title?: MessageDescriptor | string,
   /** Values for html title (react-intl interpolation) */
@@ -34,8 +35,8 @@ const displayName = 'GroupList';
 const GroupList = ({ items }: Props) => (
   <div className={styles.container}>
     {items.map(
-      ({ title, titleValues, subtitleElement, icon, extra, imageUrl }) => (
-        <div key={icon || imageUrl} className={styles.listMain}>
+      ({ id, title, titleValues, subtitleElement, icon, extra, imageUrl }) => (
+        <div key={id} className={styles.listMain}>
           <div className={styles.rowIcon}>
             {icon && <Icon name={icon} title={icon || imageUrl} />}
             {imageUrl && <img src={imageUrl} alt="logo" />}

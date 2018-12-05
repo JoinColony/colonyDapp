@@ -354,6 +354,7 @@ class Task extends Component<Props> {
             <section className={styles.commentBox}>
               <TaskComments
                 claimedProfile={userClaimedProfile}
+                // $FlowFixMe
                 walletAddress={userMocks[0].walletAddress}
               />
             </section>

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -78,12 +78,14 @@ class ClaimProfileDialog extends Component<Props> {
     const { walletAddress, cancel, close } = this.props;
     const listItems = [
       {
+        id: 'Item.deposit',
         title: MSG.depositEther,
         subtitleElement: <MaskedAddress address={walletAddress} />,
         icon: 'wallet',
         extra: <CopyableAddress hideAddress>{walletAddress}</CopyableAddress>,
       },
       {
+        id: 'Item.buyEther',
         title: MSG.buyEther,
         subtitleElement: (
           <Heading
@@ -114,10 +116,9 @@ class ClaimProfileDialog extends Component<Props> {
           />
         </DialogSection>
         <DialogSection appearance={{ border: 'bottom' }}>
-          <Heading
-            appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subTitle}
-          />
+          <div className={styles.sectionBody}>
+            <FormattedMessage {...MSG.subTitle} />
+          </div>
         </DialogSection>
         <DialogSection>
           <div className={styles.titleAndButton}>
@@ -136,10 +137,7 @@ class ClaimProfileDialog extends Component<Props> {
             />
           </div>
           <div className={styles.subTitle}>
-            <Heading
-              appearance={{ size: 'normal', weight: 'thin' }}
-              text={MSG.stepText}
-            />
+            <FormattedMessage {...MSG.stepText} />
           </div>
         </DialogSection>
         <GroupList items={listItems} />

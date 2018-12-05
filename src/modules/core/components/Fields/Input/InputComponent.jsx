@@ -21,8 +21,6 @@ export type Appearance = {
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
 type Props = {
-  /** Allow passing through string as placeholder */
-  placeholder?: string | MessageDescriptor,
   /** Values for html title (react-intl interpolation) */
   placeholderValues?: MessageValues,
   /** Appearance object */
@@ -31,6 +29,8 @@ type Props = {
   formattingOptions?: CleaveOptions,
   /** Input field name (form variable) */
   name: string,
+  /** @ignore Will be injected by `asField` */
+  placeholder?: string | MessageDescriptor,
   /** @ignore Will be injected by `asField` */
   isSubmitting?: boolean,
   /** @ignore injected by `react-intl` */
@@ -65,14 +65,8 @@ class InputComponent extends Component<Props> {
       innerRef,
       isSubmitting,
       placeholder,
-      placeholderValues,
-      intl: { formatMessage },
       ...props
     } = this.props;
-    const placeholderText =
-      typeof placeholder == 'string'
-        ? placeholder
-        : placeholder && formatMessage(placeholder, placeholderValues);
 
     if (formattingOptions) {
       return (
@@ -89,7 +83,6 @@ class InputComponent extends Component<Props> {
       <input
         className={getMainClasses(appearance, styles)}
         ref={innerRef}
-        placeholder={placeholderText}
         {...props}
       />
     );

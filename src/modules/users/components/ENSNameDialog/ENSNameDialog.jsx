@@ -6,6 +6,8 @@ import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import styles from './ENSNameDialog.css';
+
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Button from '~core/Button';
@@ -55,7 +57,7 @@ type FormValues = {
 type Props = {
   cancel: () => void,
   close: () => void,
-} & FormikProps<FormValues>;
+};
 
 const validationSchema = yup.object({
   // TODO: Validate ENS name further by checking blacklist, check also if unique
@@ -74,7 +76,7 @@ const ENSNameDialog = ({ cancel, close }: Props) => (
       validationSchema={validationSchema}
       onSuccess={close}
     >
-      {isValid => (
+      {({ isValid }: FormikProps<FormValues>) => (
         <Fragment>
           <DialogSection>
             <Heading
@@ -83,10 +85,7 @@ const ENSNameDialog = ({ cancel, close }: Props) => (
             />
           </DialogSection>
           <DialogSection>
-            <Heading
-              appearance={{ size: 'normal', weight: 'thin' }}
-              text={MSG.stepText}
-            >
+            <div className={styles.sectionBody}>
               <FormattedMessage
                 {...MSG.stepText}
                 values={{
@@ -102,7 +101,7 @@ const ENSNameDialog = ({ cancel, close }: Props) => (
                   ),
                 }}
               />
-            </Heading>
+            </div>
           </DialogSection>
           <DialogSection>
             <Input
