@@ -118,12 +118,11 @@ class GasStationCard extends Component<Props, State> {
               {...MSG.actionDescriptionSample}
               values={{ index: actionIndex + 1 }}
             />
-            {status &&
-              status === 'failed' && (
-                <span className={styles.failedActionDescription}>
-                  <FormattedMessage {...MSG.failedAction} />
-                </span>
-              )}
+            {status && status === 'failed' && (
+              <span className={styles.failedActionDescription}>
+                <FormattedMessage {...MSG.failedAction} />
+              </span>
+            )}
           </div>
         </Tooltip>
       </div>

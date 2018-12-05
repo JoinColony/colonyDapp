@@ -128,35 +128,34 @@ class StepSelectToken extends Component<Props, State> {
                 }
                 tokenData={tokenData}
               />
-              {values.tokenAddress &&
-                tokenData === null && (
-                  <Fragment>
-                    <div className={styles.tokenDetails}>
-                      <Input name="tokenName" label={MSG.tokenName} />
-                    </div>
-                    <div className={styles.tokenDetails}>
-                      <Input
-                        name="tokenSymbol"
-                        label={MSG.tokenSymbol}
-                        hint={
-                          <Heading
-                            appearance={{ size: 'small', weight: 'thin' }}
-                            text={MSG.symbolHint}
-                          />
-                        }
-                      />
-                    </div>
-                    <div className={styles.tokenDetails}>
-                      <FileUpload
-                        accept={['svg', 'png']}
-                        label={MSG.fileUploadTitle}
-                        name="iconUpload"
-                        status={MSG.fileUploadHint}
-                        maxFilesLimit={1}
-                      />
-                    </div>
-                  </Fragment>
-                )}
+              {values.tokenAddress && tokenData === null && (
+                <Fragment>
+                  <div className={styles.tokenDetails}>
+                    <Input name="tokenName" label={MSG.tokenName} />
+                  </div>
+                  <div className={styles.tokenDetails}>
+                    <Input
+                      name="tokenSymbol"
+                      label={MSG.tokenSymbol}
+                      hint={
+                        <Heading
+                          appearance={{ size: 'small', weight: 'thin' }}
+                          text={MSG.symbolHint}
+                        />
+                      }
+                    />
+                  </div>
+                  <div className={styles.tokenDetails}>
+                    <FileUpload
+                      accept={['svg', 'png']}
+                      label={MSG.fileUploadTitle}
+                      name="iconUpload"
+                      status={MSG.fileUploadHint}
+                      maxFilesLimit={1}
+                    />
+                  </div>
+                </Fragment>
+              )}
               <div className={styles.buttons}>
                 <Button
                   appearance={{ theme: 'secondary' }}

@@ -213,5 +213,4 @@ const messages = defineMessages({
       'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
   },
 });
-
 export default messages;

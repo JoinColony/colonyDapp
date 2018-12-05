@@ -52,10 +52,10 @@ const Organizations = () => (
         <OrganizationAddAdmins availableAdmins={usersMocks} />
         <div className={styles.userListWrapper}>
           {/*
-            * UserList follows the design principles from TaskList in dashboard,
-            * but if it turns out we're going to use this in multiple places,
-            * we should consider moving it to core
-            */}
+           * UserList follows the design principles from TaskList in dashboard,
+           * but if it turns out we're going to use this in multiple places,
+           * we should consider moving it to core
+           */}
           {usersMocks && usersMocks.length ? (
             <UserList
               users={usersMocks}

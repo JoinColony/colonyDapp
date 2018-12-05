@@ -40,19 +40,9 @@ describe('FeedStore', () => {
     );
     // Missing `userAction`
     const invalidProps = { colonyName: 'bar' };
-    expect(store.validate(invalidProps)).rejects.toThrow(/required/);
+    await expect(store.validate(invalidProps)).rejects.toThrow(/required/);
     expect(store._schema.validate).toHaveBeenCalledWith(
       invalidProps,
-      expect.any(Object),
-    );
-
-    const wrongUserActionKeyProps = {
-      colonyName: 'bar',
-      userAction: 'noColony',
-    };
-    expect(store.validate(wrongUserActionKeyProps)).rejects.toThrow();
-    expect(store._schema.validate).toHaveBeenCalledWith(
-      wrongUserActionKeyProps,
       expect.any(Object),
     );
   });

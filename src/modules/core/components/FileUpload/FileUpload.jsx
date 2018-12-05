@@ -191,16 +191,15 @@ class FileUpload extends Component<Props> {
 
     return (
       <div className={classNames.main} id={id}>
-        {!elementOnly &&
-          label && (
-            <InputLabel
-              label={label}
-              help={help}
-              labelValues={labelValues}
-              helpValues={helpValues}
-              extra={extra}
-            />
-          )}
+        {!elementOnly && label && (
+          <InputLabel
+            label={label}
+            help={help}
+            labelValues={labelValues}
+            helpValues={helpValues}
+            extra={extra}
+          />
+        )}
         <Dropzone
           accept={accept}
           aria-invalid={hasError}
@@ -216,22 +215,21 @@ class FileUpload extends Component<Props> {
           {childProps => (
             <Fragment>
               {maxFileLimitNotMet && renderPlaceholder}
-              {files &&
-                files.length > 0 && (
-                  <div className={classNames.filesContainer}>
-                    {files.map(({ file }, idx) => (
-                      <FileUploaderItem
-                        accept={accept}
-                        key={`${file.name}-${file.size}`}
-                        idx={idx}
-                        name={`${name}.${idx}`}
-                        remove={remove}
-                        reset={resetForm}
-                        upload={upload}
-                      />
-                    ))}
-                  </div>
-                )}
+              {files && files.length > 0 && (
+                <div className={classNames.filesContainer}>
+                  {files.map(({ file }, idx) => (
+                    <FileUploaderItem
+                      accept={accept}
+                      key={`${file.name}-${file.size}`}
+                      idx={idx}
+                      name={`${name}.${idx}`}
+                      remove={remove}
+                      reset={resetForm}
+                      upload={upload}
+                    />
+                  ))}
+                </div>
+              )}
               {this.renderExtraChildren(childProps)}
             </Fragment>
           )}

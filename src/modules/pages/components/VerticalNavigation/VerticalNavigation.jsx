@@ -80,37 +80,36 @@ class VerticalNavigation extends Component<Props, State> {
     const { tabIndex } = this.state;
     return (
       <div className={styles.main}>
-        {navigationItems &&
-          navigationItems.length && (
-            <Tabs
-              className={styles.tabs}
-              selectedIndex={tabIndex}
-              onSelect={newIndex => this.setTabIndex(newIndex)}
-            >
-              <VerticalTabList className={styles.tabList}>
-                {children}
-                {navigationItems.map(({ title, id }) => (
-                  <Tab
-                    key={id}
-                    className={styles.tab}
-                    selectedClassName={styles.tabSelected}
-                    disabledClassName={styles.tabDisabled}
-                  >
-                    {title instanceof Object && title.id ? (
-                      <FormattedMessage {...title} />
-                    ) : (
-                      title
-                    )}
-                  </Tab>
-                ))}
-              </VerticalTabList>
-              {navigationItems.map(({ content, id }) => (
-                <TabPanel key={id} className={styles.tabPanel}>
-                  <div className={styles.contentWrapper}>{content}</div>
-                </TabPanel>
+        {navigationItems && navigationItems.length && (
+          <Tabs
+            className={styles.tabs}
+            selectedIndex={tabIndex}
+            onSelect={newIndex => this.setTabIndex(newIndex)}
+          >
+            <VerticalTabList className={styles.tabList}>
+              {children}
+              {navigationItems.map(({ title, id }) => (
+                <Tab
+                  key={id}
+                  className={styles.tab}
+                  selectedClassName={styles.tabSelected}
+                  disabledClassName={styles.tabDisabled}
+                >
+                  {title instanceof Object && title.id ? (
+                    <FormattedMessage {...title} />
+                  ) : (
+                    title
+                  )}
+                </Tab>
               ))}
-            </Tabs>
-          )}
+            </VerticalTabList>
+            {navigationItems.map(({ content, id }) => (
+              <TabPanel key={id} className={styles.tabPanel}>
+                <div className={styles.contentWrapper}>{content}</div>
+              </TabPanel>
+            ))}
+          </Tabs>
+        )}
       </div>
     );
   }

@@ -101,54 +101,52 @@ const TaskClaimRewardDialog = ({
           <StarRating rating={rating} />
         </div>
       </section>
-      {nativeTokenPayout &&
-        nativeTokenPayout.symbol && (
-          <section className={styles.earnedReputation}>
-            <p className={styles.starRatingDescription}>
-              <FormattedMessage {...MSG.yourReputation} />
-              {rating === 3 && (
-                <span className={styles.earnedReputationDetails}>
-                  <FormattedMessage
-                    {...MSG.reputationDetails}
-                    values={{ rating }}
-                  />
-                </span>
-              )}
-              {rating === 1 && (
-                <p className={styles.earnedReputationPenalty}>
-                  <FormattedMessage
-                    {...MSG.reputationDetails}
-                    values={{ rating }}
-                  />
-                </p>
-              )}
-              {rating !== 3 &&
-                rating !== 1 && (
-                  <p className={styles.earnedReputationPenalty}>
-                    <FormattedMessage
-                      {...MSG.reputationPenalty}
-                      values={{ ratedOnTime: true }}
-                    />
-                  </p>
-                )}
-            </p>
-            <div className={styles.reputationValue}>
-              <Numeral
-                value={reputation}
-                prefix={rating === 1 ? '- ' : ''}
-                suffix=" REP"
-              />
-            </div>
-          </section>
-        )}
+      {nativeTokenPayout && nativeTokenPayout.symbol && (
+        <section className={styles.earnedReputation}>
+          <p className={styles.starRatingDescription}>
+            <FormattedMessage {...MSG.yourReputation} />
+            {rating === 3 && (
+              <span className={styles.earnedReputationDetails}>
+                <FormattedMessage
+                  {...MSG.reputationDetails}
+                  values={{ rating }}
+                />
+              </span>
+            )}
+            {rating === 1 && (
+              <p className={styles.earnedReputationPenalty}>
+                <FormattedMessage
+                  {...MSG.reputationDetails}
+                  values={{ rating }}
+                />
+              </p>
+            )}
+            {rating !== 3 && rating !== 1 && (
+              <p className={styles.earnedReputationPenalty}>
+                <FormattedMessage
+                  {...MSG.reputationPenalty}
+                  values={{ ratedOnTime: true }}
+                />
+              </p>
+            )}
+          </p>
+          <div className={styles.reputationValue}>
+            <Numeral
+              value={reputation}
+              prefix={rating === 1 ? '- ' : ''}
+              suffix=" REP"
+            />
+          </div>
+        </section>
+      )}
     </DialogSection>
     {(rating === 2 || rating === 3) && payoutsEarned.length ? (
       <DialogSection>
         <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
         <section className={styles.rewards}>
           {/*
-            * Rewards
-            */}
+           * Rewards
+           */}
           <div className={styles.rewardItem}>
             <p className={styles.rewardItemDescription}>
               <FormattedMessage {...MSG.yourReward} />
@@ -173,8 +171,8 @@ const TaskClaimRewardDialog = ({
             </span>
           </div>
           {/*
-            * Network Fee
-            */}
+           * Network Fee
+           */}
           <div className={styles.rewardItem}>
             <p className={styles.rewardItemDescription}>
               <FormattedMessage {...MSG.networkFee} />
@@ -201,8 +199,8 @@ const TaskClaimRewardDialog = ({
             </span>
           </div>
           {/*
-            * Totals
-            */}
+           * Totals
+           */}
           <div className={styles.total}>
             <p className={styles.rewardItemDescription}>
               <FormattedMessage {...MSG.total} />

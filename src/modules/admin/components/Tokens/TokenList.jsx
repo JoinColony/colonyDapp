@@ -24,9 +24,11 @@ type Props = {
 const TokenList = ({ tokens, appearance }: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
-      {tokens.filter(token => token.isEnabled).map(token => (
-        <TokenCard key={token.id} token={token} />
-      ))}
+      {tokens
+        .filter(token => token.isEnabled)
+        .map(token => (
+          <TokenCard key={token.id} token={token} />
+        ))}
     </CardList>
   </div>
 );

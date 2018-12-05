@@ -108,16 +108,15 @@ const TransactionListItem = ({
         />
       </TableCell>
       <TableCell className={styles.transactionAmountActions}>
-        {!linkToEtherscan &&
-          onClaim && (
-            <div className={styles.buttonWrapper}>
-              <Button
-                text={MSG.buttonClaim}
-                onClick={() => onClaim(transaction)}
-                className={styles.customButton}
-              />
-            </div>
-          )}
+        {!linkToEtherscan && onClaim && (
+          <div className={styles.buttonWrapper}>
+            <Button
+              text={MSG.buttonClaim}
+              onClick={() => onClaim(transaction)}
+              className={styles.customButton}
+            />
+          </div>
+        )}
         {linkToEtherscan && (
           <div className={styles.etherscanButtonWrapper}>
             <ExternalLink

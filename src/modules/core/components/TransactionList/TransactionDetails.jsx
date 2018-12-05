@@ -74,10 +74,9 @@ const ColonyDetails = ({ name = '', address = '' }: Object) => (
 
 const TaskDetails = ({ title = '', id }: Object) => (
   <span>
-    {title &&
-      id && (
-        <Link text={title} to={`/task/${id}`} className={styles.taskLink} />
-      )}
+    {title && id && (
+      <Link text={title} to={`/task/${id}`} className={styles.taskLink} />
+    )}
   </span>
 );
 
@@ -88,14 +87,14 @@ const TransactionDetails = ({
 }: Props) => (
   <div className={styles.main}>
     {/*
-      * Incoming transaction
-      */}
+     * Incoming transaction
+     */}
     {incoming && (
       <div>
         <p className={styles.primaryText}>
           {/*
-            * From a user
-            */}
+           * From a user
+           */}
           {from && (
             <FormattedMessage
               {...MSG.fromText}
@@ -116,19 +115,18 @@ const TransactionDetails = ({
             />
           )}
           {/*
-            * From a task
-            */}
-          {task &&
-            task.id && (
-              <FormattedMessage
-                {...MSG.fromText}
-                values={{ senderString: <TaskDetails {...task} /> }}
-              />
-            )}
+           * From a task
+           */}
+          {task && task.id && (
+            <FormattedMessage
+              {...MSG.fromText}
+              values={{ senderString: <TaskDetails {...task} /> }}
+            />
+          )}
         </p>
         {/*
-          * To the colony
-          */}
+         * To the colony
+         */}
         <p className={styles.secondaryText}>
           <FormattedMessage
             {...MSG.toText}
@@ -147,14 +145,14 @@ const TransactionDetails = ({
       </div>
     )}
     {/*
-      * Outgoing transaction
-      */}
+     * Outgoing transaction
+     */}
     {!incoming && (
       <div>
         <p className={styles.primaryText}>
           {/*
-            * To a user
-            */}
+           * To a user
+           */}
           {to && (
             <FormattedMessage
               {...MSG.toText}
@@ -171,20 +169,18 @@ const TransactionDetails = ({
             />
           )}
           {/*
-            * To a task
-            */}
-          {!to &&
-            task &&
-            task.id && (
-              <FormattedMessage
-                {...MSG.toText}
-                values={{ recipientString: <TaskDetails {...task} /> }}
-              />
-            )}
+           * To a task
+           */}
+          {!to && task && task.id && (
+            <FormattedMessage
+              {...MSG.toText}
+              values={{ recipientString: <TaskDetails {...task} /> }}
+            />
+          )}
         </p>
         {/*
-          * From the colony
-          */}
+         * From the colony
+         */}
         <p className={styles.secondaryText}>
           {from && (
             <FormattedMessage
@@ -206,16 +202,14 @@ const TransactionDetails = ({
             />
           )}
           {/*
-            * From a task
-            */}
-          {!from &&
-            task &&
-            task.id && (
-              <FormattedMessage
-                {...MSG.fromText}
-                values={{ senderString: <TaskDetails {...task} /> }}
-              />
-            )}
+           * From a task
+           */}
+          {!from && task && task.id && (
+            <FormattedMessage
+              {...MSG.fromText}
+              values={{ senderString: <TaskDetails {...task} /> }}
+            />
+          )}
         </p>
       </div>
     )}

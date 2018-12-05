@@ -116,10 +116,9 @@ const Radio = ({
           {...props}
         />
         <span className={styles.radio} style={radioStyle}>
-          {!!appearance &&
-            appearance.theme === 'fakeCheckbox' && (
-              <span className={styles.checkmark} />
-            )}
+          {!!appearance && appearance.theme === 'fakeCheckbox' && (
+            <span className={styles.checkmark} />
+          )}
         </span>
         {!elementOnly && !!label ? (
           <span className={styles.labelContainer}>

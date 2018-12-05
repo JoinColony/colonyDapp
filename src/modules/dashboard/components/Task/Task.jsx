@@ -197,14 +197,14 @@ class Task extends Component<Props> {
               onSubmit={console.log}
             >
               {/*
-                * TODO: replace this with TaskAssignment component in colonyDapp#445
-                *
-                * This should also add in a `readOnly` prop for the `SingleUserPicker`
-                * to prevent opening when the task has been finalized.
-                *
-                * See:
-                * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
-                */}
+               * TODO: replace this with TaskAssignment component in colonyDapp#445
+               *
+               * This should also add in a `readOnly` prop for the `SingleUserPicker`
+               * to prevent opening when the task has been finalized.
+               *
+               * See:
+               * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
+               */}
               <Assignment
                 assignee={task.assignee}
                 reputation={task.reputation}
@@ -245,17 +245,17 @@ class Task extends Component<Props> {
                   claimedProfile={userClaimedProfile}
                 />
                 {/*
-              * @TODO This should only be shown, if we're a worker, and the task
-              * has a reward and was finalized (due date passed or work was submitted and rated)
-              */}
+                 * @TODO This should only be shown, if we're a worker, and the task
+                 * has a reward and was finalized (due date passed or work was submitted and rated)
+                 */}
                 <TaskClaimReward
                   taskReward={taskReward}
                   taskTitle={task.title}
                 />
                 {/*
-             * @TODO This are temporary buttons to be able to show the rating
-             * modals until they will get wired up.
-             */}
+                 * @TODO This are temporary buttons to be able to show the rating
+                 * modals until they will get wired up.
+                 */}
                 {/* Worker misses deadline and rates manager */}
                 {task.currentState === TASK_STATE.RATING &&
                   isWorker &&
@@ -305,27 +305,26 @@ class Task extends Component<Props> {
                     />
                   )}
                 {/* Worker makes deadline and manager rates worker */}
-                {task.currentState === TASK_STATE.RATING &&
-                  isManager && (
-                    <DialogActionButton
-                      dialog="WorkerRatingDialog"
-                      options={{
-                        workSubmitted: true,
-                      }}
-                      text={MSG.rateWorker}
-                      submit={TASK_MANAGER_RATE_WORKER}
-                      success={TASK_MANAGER_RATE_WORKER_SUCCESS}
-                      error={TASK_MANAGER_RATE_WORKER_ERROR}
-                      additionalValues={additionalValues}
-                    />
-                  )}
+                {task.currentState === TASK_STATE.RATING && isManager && (
+                  <DialogActionButton
+                    dialog="WorkerRatingDialog"
+                    options={{
+                      workSubmitted: true,
+                    }}
+                    text={MSG.rateWorker}
+                    submit={TASK_MANAGER_RATE_WORKER}
+                    success={TASK_MANAGER_RATE_WORKER_SUCCESS}
+                    error={TASK_MANAGER_RATE_WORKER_ERROR}
+                    additionalValues={additionalValues}
+                  />
+                )}
               </Fragment>
             ) : (
               <Fragment>
                 {canClaimPayout ? (
                   /*
-               * @NOTE This is a placeholder until #559 gets merged
-               */
+                   * @NOTE This is a placeholder until #559 gets merged
+                   */
                   <Button text="Claim Rewards" />
                 ) : (
                   <p className={styles.completedDescription}>

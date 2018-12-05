@@ -320,21 +320,20 @@ class Select extends Component<Props, State> {
             </span>
           </div>
         </button>
-        {isOpen &&
-          options.length && (
-            <SelectListBox
-              checkedOption={checkedOption}
-              selectedOption={selectedOption}
-              listboxId={listboxId}
-              options={options}
-              onSelect={this.selectOption}
-              onClick={this.checkOption}
-              formatIntl={formatIntl}
-              appearance={appearance}
-              ariaLabelledby={ariaLabelledby}
-              name={name}
-            />
-          )}
+        {isOpen && options.length && (
+          <SelectListBox
+            checkedOption={checkedOption}
+            selectedOption={selectedOption}
+            listboxId={listboxId}
+            options={options}
+            onSelect={this.selectOption}
+            onClick={this.checkOption}
+            formatIntl={formatIntl}
+            appearance={appearance}
+            ariaLabelledby={ariaLabelledby}
+            name={name}
+          />
+        )}
       </div>
     );
   }
