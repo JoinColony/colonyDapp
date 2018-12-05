@@ -26,28 +26,26 @@ const statusCanBeSigned = (status?: string): boolean =>
   !status || status === 'failed';
 
 const enhance: HOC<*, InProps> = compose(
-  withProps(() => ({
+  withProps(({ transaction: { set, status } }) => {
     /*
      * @TODO: Actually determine if a tx requires any action with the wallet.
      */
-    walletNeedsAction: 'hardware',
-  })),
-  withProps(({ transaction: { set, status }, walletNeedsAction }) => {
+    const walletNeedsAction: 'hardware' | 'metamask' | void = undefined;
     /*
      * A tx can only be signed if it meets the following criteria:
      *
      * 1. `walletNeedsAction` must not have a value.
      *
-     * 2. If it has a `set`, the `set` must contain a tx that either:
+     * 2. If tx has a `set`, the `set` must contain a tx that either:
      *     a) does not have a `status`
-     *     b) `status` === `failed` 
+     *     b) `status` === `failed`
      *   If a tx in the set satisfies either a or b and has a `dependency`,
      *   the tx in the set with `hex` === `dependency` must have `status` === `succeeded`
      *
      * 3. If the tx doesn't have a set, the tx must have
      *   no value for `status` or `status` === `failed`
      */
-    const canSignTransaction =
+    const canSignTransaction: boolean =
       !walletNeedsAction &&
       (set && set.length > 0
         ? !!set.find(
@@ -63,6 +61,9 @@ const enhance: HOC<*, InProps> = compose(
           )
         : statusCanBeSigned(status));
     return {
+      /*
+       * @TODO: actually look these up instead of have set values
+       */
       txGasCostsEth: {
         cheaper: 0.1,
         cheaperWait: 12000,
