@@ -109,7 +109,7 @@
 }
 
 .stateIsSpeedMenuOpen .transactionSpeedMenuButton,
-.transactionSpeedMenuButton:hover {
+.transactionSpeedMenuButton[disabled="false"]:hover {
   border-radius: var(--radius-small);
   background-color: var(--grey-blue-1);
 
@@ -117,4 +117,8 @@
     fill: var(--colony-blue);
     stroke: var(--colony-blue);
   }
+}
+
+.transactionSpeedMenuButton[disabled] {
+  cursor: not-allowed;
 }

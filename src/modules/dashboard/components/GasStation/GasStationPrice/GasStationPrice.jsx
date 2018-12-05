@@ -32,11 +32,11 @@ are expensive. We recommend waiting.`,
   },
   transactionFeeLabel: {
     id: 'dashboard.GasStationPrice.transactionFeeLabel',
-    defaultMessage: 'Transaction fee',
+    defaultMessage: 'Transaction Fee',
   },
   transactionSpeedLabel: {
     id: 'dashboard.GasStationPrice.transactionSpeedLabel',
-    defaultMessage: 'Transaction speed',
+    defaultMessage: 'Transaction Speed',
   },
   transactionSpeedTypeSuggested: {
     id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeSuggested',
@@ -60,6 +60,7 @@ are expensive. We recommend waiting.`,
 });
 
 type Props = {
+  requiresSignature: boolean,
   isEth: boolean,
   isNetworkCongested: boolean,
   transaction: TransactionType,
@@ -138,9 +139,9 @@ class GasStationPrice extends Component<Props, State> {
 
   render() {
     const {
+      requiresSignature,
       isEth,
       isNetworkCongested,
-      transaction: { status },
       txGasCostsEth,
       walletNeedsAction,
     } = this.props;
@@ -181,6 +182,7 @@ class GasStationPrice extends Component<Props, State> {
                       aria-controls={speedMenuId}
                       aria-expanded={isSpeedMenuOpen}
                       className={styles.transactionSpeedMenuButton}
+                      disabled={!requiresSignature}
                       onClick={this.toggleSpeedMenu}
                       type="button"
                     >
@@ -227,9 +229,13 @@ class GasStationPrice extends Component<Props, State> {
                   </div>
                   <div>
                     <Button
-                      disabled={!status || !!walletNeedsAction}
+                      disabled={!requiresSignature}
                       loading={isSubmitting}
-                      text={{ id: 'button.confirm' }}
+                      text={{
+                        id: !requiresSignature
+                          ? 'button.loading'
+                          : 'button.confirm',
+                      }}
                       type="submit"
                     />
                   </div>
