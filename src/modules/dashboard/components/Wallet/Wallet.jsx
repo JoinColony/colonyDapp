@@ -79,7 +79,7 @@ class Wallet extends Component<Props> {
         <main className={styles.content}>
           <div className={styles.walletDetails}>
             {qrCode && (
-              <QRCode walletAddress={mockUser.walletAddress} version={10} />
+              <QRCode walletAddress={mockUser.walletAddress} width={55} />
             )}
             <div className={styles.address}>
               <Heading
