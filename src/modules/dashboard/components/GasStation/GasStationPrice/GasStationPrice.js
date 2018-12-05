@@ -28,7 +28,13 @@ const statusCanBeSigned = (status?: string): boolean =>
 const enhance: HOC<*, InProps> = compose(
   withProps(({ transaction: { set, status } }) => {
     /*
+     * @TODO: Actually determine if network is congested
+     */
+    const isNetworkCongested: boolean = false;
+    /*
      * @TODO: Actually determine if a tx requires any action with the wallet.
+     * Also, union type here isn't necessary, just being used during mocking
+     * to remind that `undefined` is possible
      */
     const walletNeedsAction: 'hardware' | 'metamask' | void = undefined;
     /*
@@ -72,7 +78,7 @@ const enhance: HOC<*, InProps> = compose(
         suggested: 0.2,
         suggestedWait: 8640,
       },
-      isNetworkCongested: false,
+      isNetworkCongested,
       walletNeedsAction,
       canSignTransaction,
     };

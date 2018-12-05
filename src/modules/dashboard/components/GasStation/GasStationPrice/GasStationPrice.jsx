@@ -61,7 +61,7 @@ type Props = {
   isNetworkCongested: boolean,
   transaction: TransactionType,
   txGasCostsEth: Object,
-  walletNeedsAction: 'metamask' | 'hardware',
+  walletNeedsAction?: 'metamask' | 'hardware',
 };
 
 type State = {
@@ -200,15 +200,15 @@ class GasStationPrice extends Component<Props, State> {
         </Form>
         {(isNetworkCongested || walletNeedsAction) && (
           <div className={styles.walletPromptContainer}>
-            {isNetworkCongested ? (
-              <Alert text={MSG.networkCongestedWarning} />
-            ) : (
+            {walletNeedsAction ? (
               <Alert
                 text={MSG.walletPromptText}
                 textValues={{
                   walletType: walletNeedsAction,
                 }}
               />
+            ) : (
+              <Alert text={MSG.networkCongestedWarning} />
             )}
           </div>
         )}
