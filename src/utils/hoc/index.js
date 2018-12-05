@@ -29,7 +29,7 @@ export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
 /**
  * @method withFeatureFlags
  */
-export const withFeatureFlags = (
+export const withFeatureFlags = () => (
   Component: ComponentType<{ [string]: any }>,
 ) => (props: Object) => {
   const given = (
