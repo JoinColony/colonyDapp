@@ -1,7 +1,7 @@
 /* @flow */
 import type { HOC } from 'recompose';
 
-import { compose, withProps } from 'recompose';
+import { compose, mapProps } from 'recompose';
 
 import type { TransactionType } from '~types/transaction';
 
@@ -26,7 +26,7 @@ const statusCanBeSigned = (status?: string): boolean =>
   !status || status === 'failed';
 
 const enhance: HOC<*, InProps> = compose(
-  withProps(({ transaction: { set, status } }) => {
+  mapProps(({ transaction: { set, status }, transaction }) => {
     /*
      * @TODO: Actually determine if network is congested
      */
@@ -51,21 +51,20 @@ const enhance: HOC<*, InProps> = compose(
      * 3. If the tx doesn't have a set, the tx must have
      *   no value for `status` or `status` === `failed`
      */
+    const transactionToSign =
+      set &&
+      set.find(({ dependency: setItemDependency, status: setItemStatus }) => {
+        if (statusCanBeSigned(setItemStatus)) {
+          if (!setItemDependency) {
+            return true;
+          }
+          return isDependencyBlockingTx(set, setItemDependency);
+        }
+        return false;
+      });
     const canSignTransaction: boolean =
       !walletNeedsAction &&
-      (set && set.length > 0
-        ? !!set.find(
-            ({ dependency: setItemDependency, status: setItemStatus }) => {
-              if (statusCanBeSigned(setItemStatus)) {
-                if (!setItemDependency) {
-                  return true;
-                }
-                return isDependencyBlockingTx(set, setItemDependency);
-              }
-              return false;
-            },
-          )
-        : statusCanBeSigned(status));
+      (set && set.length > 0 ? !!transactionToSign : statusCanBeSigned(status));
     return {
       /*
        * @TODO: actually look these up instead of have set values
@@ -81,6 +80,7 @@ const enhance: HOC<*, InProps> = compose(
       isNetworkCongested,
       walletNeedsAction,
       canSignTransaction,
+      transaction: transactionToSign || transaction,
     };
   }),
 );

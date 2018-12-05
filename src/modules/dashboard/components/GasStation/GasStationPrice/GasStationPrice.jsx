@@ -1,7 +1,10 @@
 /* @flow */
+import type { FormikProps } from 'formik';
+
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
+import * as yup from 'yup';
 
 import type { TransactionType } from '~types/transaction';
 import type { RadioOption } from '~core/Fields/RadioGroup';
@@ -10,7 +13,7 @@ import { getMainClasses } from '~utils/css';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
-import { Form, RadioGroup } from '~core/Fields';
+import { ActionForm, RadioGroup } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
@@ -69,11 +72,24 @@ type State = {
   speedMenuId: string,
 };
 
+type FormValues = {
+  transactionHash?: string,
+  transactionSpeed: string,
+};
+
 const transactionSpeedOptions: Array<RadioOption> = [
   { value: 'suggested', label: MSG.transactionSpeedTypeSuggested },
   { value: 'cheaper', label: MSG.transactionSpeedTypeCheaper },
   { value: 'faster', label: MSG.transactionSpeedTypeFaster },
 ];
+
+const validationSchema = yup.object().shape({
+  transactionHash: yup.string(),
+  transactionSpeed: yup
+    .string()
+    .required()
+    .oneOf(transactionSpeedOptions.map(speed => speed.value)),
+});
 
 class GasStationPrice extends Component<Props, State> {
   static defaultProps = {
@@ -101,21 +117,33 @@ class GasStationPrice extends Component<Props, State> {
     const {
       canSignTransaction,
       isNetworkCongested,
+      transaction: { hash },
       txGasCostsEth,
       walletNeedsAction,
     } = this.props;
     const { isSpeedMenuOpen, speedMenuId } = this.state;
-
+    const initialFormValues: FormValues = {
+      transactionHash: hash,
+      transactionSpeed: transactionSpeedOptions[0].value,
+    };
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
-        <Form
-          initialValues={{
-            transactionSpeed: transactionSpeedOptions[0].value,
-          }}
-          /* eslint-disable-next-line no-console */
-          onSubmit={console.log}
+        <ActionForm
+          // @TODO: use actual actions here
+          submit="TRANSACTION_SIGNATURE_CREATE"
+          success="TRANSACTION_SIGNATURE_SUCCESS"
+          error="TRANSACTION_SIGNATURE_ERROR"
+          validationSchema={validationSchema}
+          isInitialValid={!!initialFormValues.transactionSpeed}
+          // eslint-disable-next-line no-console
+          onSuccess={console.log}
+          initialValues={initialFormValues}
         >
-          {({ isSubmitting, values: { transactionSpeed } }) => {
+          {({
+            isSubmitting,
+            isValid,
+            values: { transactionSpeed },
+          }: FormikProps<FormValues>) => {
             const transactionFee = txGasCostsEth[transactionSpeed];
             return (
               <Fragment>
@@ -166,23 +194,25 @@ class GasStationPrice extends Component<Props, State> {
                     </div>
                   </div>
                   <div className={styles.transactionFeeActions}>
-                    <div className={styles.transactionFeeAmount}>
-                      {/* @TODO: get estimated gas cost & use here */}
-                      <Numeral
-                        decimals={18}
-                        value={transactionFee}
-                        suffix=" ETH"
-                      />
-                      <div className={styles.transactionFeeEthUsd}>
-                        <EthUsd
-                          appearance={{ size: 'small', theme: 'grey' }}
+                    {transactionFee && (
+                      <div className={styles.transactionFeeAmount}>
+                        {/* @TODO: get estimated gas cost & use here */}
+                        <Numeral
+                          decimals={18}
                           value={transactionFee}
+                          suffix=" ETH"
                         />
+                        <div className={styles.transactionFeeEthUsd}>
+                          <EthUsd
+                            appearance={{ size: 'small', theme: 'grey' }}
+                            value={transactionFee}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div>
                       <Button
-                        disabled={!canSignTransaction}
+                        disabled={!canSignTransaction || !isValid}
                         loading={isSubmitting}
                         text={{
                           id: !canSignTransaction
@@ -197,7 +227,7 @@ class GasStationPrice extends Component<Props, State> {
               </Fragment>
             );
           }}
-        </Form>
+        </ActionForm>
         {(isNetworkCongested || walletNeedsAction) && (
           <div className={styles.walletPromptContainer}>
             {walletNeedsAction ? (
