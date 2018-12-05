@@ -15,6 +15,10 @@ const defaultProfileValues: ProfileProps = {
   bio: undefined,
   website: undefined,
   location: undefined,
+  activitiesStore: '',
+  profileStore: '',
+  colonyStores: {},
+  domainStores: {},
 };
 
 const defaultActivities: Array<UserActivity> = [];
@@ -22,10 +26,6 @@ const defaultActivities: Array<UserActivity> = [];
 const defaultValues: UserProps = {
   profile: defaultProfileValues,
   activities: defaultActivities,
-  profileStore: '',
-  activitiesStore: '',
-  colonyStores: {},
-  domainStores: {},
 };
 
 // TODO: Ideally, we should be able to validate the required properties

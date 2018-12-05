@@ -11,15 +11,15 @@ export type ProfileProps = {
   bio?: string,
   website?: string,
   location?: string,
+  colonyStores: Object,
+  domainStores: Object,
+  activitiesStore: string,
+  profileStore: string,
 };
 
 export type UserProps = {
   activities: Array<UserActivity>,
   profile: ProfileProps,
-  profileStore: string,
-  colonyStores: Object,
-  domainStores: Object,
-  activitiesStore: string,
 };
 
 export type UserRecord = RecordOf<UserProps>;

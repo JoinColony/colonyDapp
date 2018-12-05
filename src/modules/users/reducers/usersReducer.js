@@ -39,10 +39,7 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
 
     case USER_ACTIVITIES_FETCH_SUCCESS: {
       const { activities, walletAddress } = action.payload;
-      return state.setIn(
-        ['users', walletAddress, 'activitiesStore'],
-        activities,
-      );
+      return state.setIn(['users', walletAddress, 'activities'], activities);
     }
     default:
       return state;

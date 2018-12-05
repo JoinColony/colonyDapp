@@ -72,8 +72,6 @@ export default function* setupUserContext(action: Action): Saga<void> {
       payload: {
         user,
         walletAddress: wallet.address,
-        // Address is an orbit address object
-        profileStore: userStore.address.toString(),
       },
     });
   } catch (err) {

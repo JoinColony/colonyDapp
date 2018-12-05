@@ -22,7 +22,6 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
       const { walletAddress, profileStore, user } = action.payload;
       return User({ profileStore, profile: { ...user, walletAddress } });
     }
-
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
       return state ? state.set('activities', activities) : state;
