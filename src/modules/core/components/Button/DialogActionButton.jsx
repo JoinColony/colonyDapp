@@ -1,71 +1,47 @@
 /* @flow */
 
-import React, { Component } from 'react';
-
-import type { MessageDescriptor } from 'react-intl';
+import React from 'react';
 
 import withDialog from '~core/Dialog/withDialog';
-import Button from '~core/Button';
 
 import type { OpenDialog } from '~core/Dialog/types';
 
-import promiseListener from '../../../../createPromiseListener';
+import ActionButton from './ActionButton.jsx';
 
 type Props = {
   openDialog: OpenDialog,
   dialog: string,
-  options: Object,
+  dialogProps: Object,
   submit: string,
   success: string,
   error: string,
-  text: MessageDescriptor | string,
-  additionalValues?: Object,
+  values?: Object | ((dialogValues: Object) => Object | Promise<Object>),
 };
 
-type State = {
-  loading: boolean,
+const DialogActionButton = ({
+  submit,
+  success,
+  error,
+  values: valuesProp = {},
+  openDialog,
+  dialog,
+  dialogProps,
+  ...props
+}: Props) => {
+  const values = async () => {
+    const dialogValues = await openDialog(dialog, dialogProps).afterClosed();
+    if (typeof valuesProp === 'function') return valuesProp(dialogValues);
+    return { ...dialogValues, ...valuesProp };
+  };
+  return (
+    <ActionButton
+      submit={submit}
+      success={success}
+      error={error}
+      values={values}
+      {...props}
+    />
+  );
 };
-
-class DialogActionButton extends Component<Props, State> {
-  asyncFunc: (values: Object) => void;
-
-  constructor(props: Props) {
-    super(props);
-    const { submit, success, error } = props;
-    this.asyncFunc = promiseListener.createAsyncFunction({
-      start: submit,
-      resolve: success,
-      reject: error,
-    });
-  }
-
-  state = {
-    loading: false,
-  };
-
-  componentWillUnmount() {
-    this.asyncFunc.unsubscribe();
-  }
-
-  onClick = async () => {
-    try {
-      const { openDialog, dialog, options, additionalValues = {} } = this.props;
-      const values = await openDialog(dialog, options).afterClosed();
-      this.setState({ loading: true });
-      await this.asyncFunc.asyncFunction({ ...values, ...additionalValues });
-      this.setState({ loading: false });
-    } catch (error) {
-      console.error(error);
-      this.setState({ loading: false });
-      // TODO: display error somewhere
-    }
-  };
-
-  render() {
-    const { text } = this.props;
-    const { loading } = this.state;
-    return <Button text={text} onClick={this.onClick} loading={loading} />;
-  }
-}
 
 export default withDialog()(DialogActionButton);

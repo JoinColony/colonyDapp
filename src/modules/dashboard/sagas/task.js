@@ -6,8 +6,7 @@ import { put, takeEvery, call, getContext } from 'redux-saga/effects';
 
 import type { Action } from '~types/index';
 
-import { putError, raceError } from '~utils/saga/effects';
-import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
+import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import {
   TASK_WORKER_END,
@@ -22,6 +21,10 @@ import {
   TASK_MANAGER_RATE_WORKER_SUCCESS,
   TASK_WORKER_RATE_MANAGER,
   TASK_WORKER_RATE_MANAGER_ERROR,
+  TASK_WORKER_REVEAL_MANAGER_RATING,
+  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+  TASK_MANAGER_REVEAL_WORKER_RATING,
+  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
 } from '../actionTypes';
 
 import {
@@ -29,39 +32,75 @@ import {
   taskManagerComplete,
   taskManagerRateWorker,
   taskWorkerRateManager,
+  taskWorkerRevealRating,
+  taskManagerRevealRating,
 } from '../actionCreators';
 
-function* generateRatingSecret(
-  colonyIdentifier: string,
-  taskId: string,
-  rating: string,
-) {
-  const colonyManager = yield getContext('colonyManager');
+function* generateRatingSalt(colonyIdentifier: string, taskId: number) {
   const wallet = yield getContext('wallet');
-  const getTask = yield call(
-    [colonyManager, colonyManager.getMethod],
-    COLONY_CONTEXT,
-    'getTask',
+  const { specificationHash } = yield callCaller({
     colonyIdentifier,
-  );
-  const generateSecret = yield call(
-    [colonyManager, colonyManager.getMethod],
-    COLONY_CONTEXT,
-    'generateSecret',
-    colonyIdentifier,
-  );
-  const { specificationHash } = yield call([getTask, getTask.call], {
-    taskId,
+    methodName: 'getTask',
+    params: { taskId },
   });
-  // TODO; this should be done via gas station once `signMessage` is supported
+  // TODO: this should be done via gas station once `signMessage` is supported
   const salt = yield call([wallet, wallet.signMessage], {
     message: specificationHash,
   });
-  const secret = yield call([generateSecret, generateSecret.call], {
-    salt,
-    rating,
+  return salt;
+}
+
+function* generateRatingSecret(
+  colonyIdentifier: string,
+  salt: string,
+  rating: number,
+) {
+  return yield callCaller({
+    colonyIdentifier,
+    methodName: 'generateSecret',
+    params: { salt, rating },
   });
-  return secret;
+}
+
+function* generateRatingSaltAndSecret(
+  colonyIdentifier: string,
+  taskId: number,
+  rating: number,
+) {
+  const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
+  return yield call(generateRatingSecret, colonyIdentifier, salt, rating);
+}
+
+/**
+ * Given the salt for a published rating secret, determine the rating which was
+ * used to generate it. If none match the published secret, throw.
+ */
+function* guessRating(
+  colonyIdentifier: string,
+  taskId: string,
+  role: string,
+  salt: string,
+) {
+  const publishedSecret = yield callCaller({
+    colonyIdentifier,
+    methodName: 'getTaskWorkRatingSecret',
+    params: { taskId, role },
+  });
+  let correctRating;
+  let ratingGuess = 1;
+  let currentSecret;
+  while (!correctRating && ratingGuess <= 3) {
+    currentSecret = yield call(
+      generateRatingSecret,
+      colonyIdentifier,
+      salt,
+      ratingGuess,
+    );
+    if (currentSecret === publishedSecret) correctRating = ratingGuess;
+    ratingGuess += 1;
+  }
+  if (!correctRating) throw new Error('Rating is not from this account');
+  return correctRating;
 }
 
 function* taskWorkerEndSaga(action: Action): Saga<void> {
@@ -75,7 +114,7 @@ function* taskWorkerEndSaga(action: Action): Saga<void> {
       workDescription,
     );
     const secret = yield call(
-      generateRatingSecret,
+      generateRatingSaltAndSecret,
       colonyIdentifier,
       taskId,
       rating,
@@ -97,7 +136,7 @@ function* taskManagerEndSaga(action: Action): Saga<void> {
 
     // generate secret
     const secret = yield call(
-      generateRatingSecret,
+      generateRatingSaltAndSecret,
       colonyIdentifier,
       taskId,
       rating,
@@ -122,7 +161,7 @@ function* taskWorkerRateManagerSaga(action: Action): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
-      generateRatingSecret,
+      generateRatingSaltAndSecret,
       colonyIdentifier,
       taskId,
       rating,
@@ -140,7 +179,7 @@ function* taskManagerRateWorkerSaga(action: Action): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
-      generateRatingSecret,
+      generateRatingSaltAndSecret,
       colonyIdentifier,
       taskId,
       rating,
@@ -153,9 +192,63 @@ function* taskManagerRateWorkerSaga(action: Action): Saga<void> {
   }
 }
 
+function* taskWorkerRevealRatingSaga(action: Action): Saga<void> {
+  const { colonyIdentifier, taskId } = action.payload;
+  try {
+    const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
+    const rating = yield call(
+      guessRating,
+      colonyIdentifier,
+      taskId,
+      'WORKER', // submitted by worker
+      salt,
+    );
+    yield put(
+      taskWorkerRevealRating(colonyIdentifier, {
+        taskId,
+        rating,
+        salt,
+      }),
+    );
+  } catch (error) {
+    yield putError(TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error);
+  }
+}
+
+function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
+  const { colonyIdentifier, taskId } = action.payload;
+  try {
+    const salt = yield call(generateRatingSalt, colonyIdentifier, taskId);
+    const rating = yield call(
+      guessRating,
+      colonyIdentifier,
+      taskId,
+      'MANAGER', // submitted by manager
+      salt,
+    );
+    yield put(
+      taskManagerRevealRating(colonyIdentifier, {
+        taskId,
+        rating,
+        salt,
+      }),
+    );
+  } catch (error) {
+    yield putError(TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error);
+  }
+}
+
 export default function* taskSagas(): any {
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
   yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
+  yield takeEvery(
+    TASK_WORKER_REVEAL_MANAGER_RATING,
+    taskWorkerRevealRatingSaga,
+  );
+  yield takeEvery(
+    TASK_MANAGER_REVEAL_WORKER_RATING,
+    taskManagerRevealRatingSaga,
+  );
 }
