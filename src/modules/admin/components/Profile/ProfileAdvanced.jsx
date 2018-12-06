@@ -3,8 +3,11 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { OpenDialog } from '~core/Dialog/types';
+
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import withDialog from '~core/Dialog/withDialog';
 
 import styles from './ProfileAdvanced.css';
 
@@ -33,9 +36,10 @@ const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {
   colony: ColonyType,
+  openDialog: OpenDialog,
 };
 
-const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
+const ProfileAdvanced = ({ colony: { version, id }, openDialog }: Props) => (
   <div className={styles.main}>
     <section className={styles.section}>
       <div className={styles.withInlineButton}>
@@ -66,11 +70,11 @@ const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
       appearance={{ theme: 'blue' }}
       text={MSG.buttonRecovery}
       // eslint-disable-next-line no-console
-      onClick={() => console.log(`[${displayName}] Entering recovery mode`)}
+      onClick={() => openDialog('RecoveryModeDialog')}
     />
   </div>
 );
 
 ProfileAdvanced.displayName = displayName;
 
-export default ProfileAdvanced;
+export default withDialog()(ProfileAdvanced);
