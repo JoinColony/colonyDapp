@@ -8,7 +8,7 @@ import type { TaskPayoutType, UserType } from '~immutable';
 import styles from './Assignment.css';
 
 import Icon from '~core/Icon';
-import UserAvatar from '~core/UserAvatar';
+import { UserAvatarDisplay } from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
 
 const MSG = defineMessages({
@@ -63,7 +63,7 @@ const Assignment = ({
       <div className={styles.displayContainer}>
         {assignee ? (
           <div className={styles.avatarContainer}>
-            <UserAvatar
+            <UserAvatarDisplay
               className={styles.recipientAvatar}
               address={assignee.profile.walletAddress}
               username={

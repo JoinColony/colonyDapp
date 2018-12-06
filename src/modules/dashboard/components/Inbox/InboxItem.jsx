@@ -5,17 +5,16 @@ import { FormattedMessage } from 'react-intl';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatar from '~core/UserAvatar';
+import { UserAvatarDisplay } from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
+import { DialogActionButton } from '~core/Button';
 import Link from '~core/Link';
-import withDialog from '~core/Dialog/withDialog';
 
 import type { Node } from 'react';
 import styles from './InboxItem.css';
 import MSG from './messages';
 
 import type { InboxElement, EventType } from './types';
-import type { DialogType } from '~core/Dialog';
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
@@ -24,9 +23,6 @@ type Props = {|
   markAsRead: (id: number) => void,
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 |};
-
-
-
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (
@@ -50,14 +46,32 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-const ConditionalLink = ({ to, children }: { to?: string, children: Node }) =>
-  to ? (
-    <Link to={to} className={styles.fullWidthLink}>
-      <div className={styles.inboxDetails}>{children}</div>
-    </Link>
-  ) : (
-    <div className={styles.inboxDetails}>{children}</div>
-  );
+// Some inbox items link somewhere, others open a modal so it's important to differentiate here
+const ConditionalWrapper = ({
+  to,
+  children,
+  event,
+}: {
+  to?: string,
+  children: Node,
+  event: string,
+}) => {
+  if (event === 'actionWorkerInviteReceived') {
+    return (
+      <DialogActionButton dialog="TaskInviteDialog">
+        {children}
+      </DialogActionButton>
+    );
+  }
+  if (to) {
+    return (
+      <Link to={to} className={styles.fullWidthLink}>
+        <div className={styles.inboxDetails}>{children}</div>
+      </Link>
+    );
+  }
+  return <div className={styles.inboxDetails}>{children}</div>;
+};
 
 const InboxItem = ({
   item: {
@@ -76,7 +90,6 @@ const InboxItem = ({
     onClickRoute,
   },
   markAsRead,
-  openDialog,
 }: Props) => (
   <TableRow
     className={styles.inboxRow}
@@ -84,17 +97,14 @@ const InboxItem = ({
       if (unread) {
         markAsRead(id);
       }
-      if (event === 'actionWorkerInviteReceived') {
-        openDialog('TaskInviteDialog', { assignee: user });
-      }
     }}
   >
     <TableCell className={styles.inboxRowCell}>
       {/* TODO: check if event is the following actionWorkerInviteReceived */}
-      <ConditionalLink to={onClickRoute}>
+      <ConditionalWrapper to={onClickRoute} event={event}>
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
-          <UserAvatar
+          <UserAvatarDisplay
             size="xxs"
             address={user.walletAddress}
             username={user.username}
@@ -154,11 +164,11 @@ const InboxItem = ({
             <TimeRelative value={createdAt} />
           </span>
         </span>
-      </ConditionalLink>
+      </ConditionalWrapper>
     </TableCell>
   </TableRow>
 );
 
 InboxItem.displayName = displayName;
 
-export default withDialog()(InboxItem);
+export default InboxItem;
