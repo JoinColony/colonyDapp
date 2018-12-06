@@ -72,8 +72,9 @@ class EthUsd extends Component<Props, State> {
 
   convertEthToUsd = () => {
     const { value } = this.props;
+    const valueToConvert = typeof value === 'string' ? Number(value) : value;
     this.mounted = true;
-    getEthToUsd(value).then(valueUsd => {
+    getEthToUsd(valueToConvert).then(valueUsd => {
       if (this.mounted) {
         this.setState({
           valueUsd,
