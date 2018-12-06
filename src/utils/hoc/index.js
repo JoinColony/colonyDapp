@@ -3,8 +3,7 @@
 import type { ComponentType, Node } from 'react';
 
 import { createElement } from 'react';
-
-import store from '../../createReduxStore';
+import { connect } from 'react-redux';
 
 type ConsumerType<T> = ComponentType<{
   children: (value: T) => ?Node,
@@ -32,22 +31,22 @@ export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
 export const withFeatureFlags = () => (
   Component: ComponentType<{ [string]: any }>,
 ) => (props: Object) => {
-  const given = (
-    potentialSelector: Selector<any> | any,
-    dependantSelector: DependantSelector,
-  ) => {
-    /*
-     * @NOTE I have mixed feelings about getting the state like this
-     */
-    const reduxState = store.getState();
-    let potentialSelectorValue = potentialSelector;
-    if (potentialSelector && typeof potentialSelector === 'function') {
-      potentialSelectorValue = potentialSelector(reduxState, props);
-    }
-    if (dependantSelector && typeof dependantSelector === 'function') {
-      return dependantSelector(potentialSelectorValue, reduxState, props);
-    }
-    return potentialSelectorValue;
-  };
-  return createElement(Component, { ...props, given });
+  const ConnectedComponent = connect(
+    (reduxState: Object) => ({
+      given: (
+        potentialSelector: Selector<any> | any,
+        dependantSelector: DependantSelector,
+      ) => {
+        let potentialSelectorValue = potentialSelector;
+        if (potentialSelector && typeof potentialSelector === 'function') {
+          potentialSelectorValue = potentialSelector(reduxState, props);
+        }
+        if (dependantSelector && typeof dependantSelector === 'function') {
+          return dependantSelector(potentialSelectorValue, reduxState, props);
+        }
+        return potentialSelectorValue;
+      },
+    }),
+  )(Component);
+  return createElement(ConnectedComponent, { ...props });
 };
