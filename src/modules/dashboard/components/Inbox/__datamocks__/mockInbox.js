@@ -3,7 +3,7 @@
 const mockInbox = [
   {
     id: 0,
-    event: 'notificationUserClaimedProfile',
+    event: 'actionWorkerInviteReceived',
     createdAt: new Date(2018, 10, 1),
     unread: true,
     user: {
