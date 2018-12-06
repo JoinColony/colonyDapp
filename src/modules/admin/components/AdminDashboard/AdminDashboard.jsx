@@ -1,9 +1,11 @@
 /* @flow */
 
+import type { LocationShape } from 'react-router-dom';
+
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { LocationShape } from 'react-router-dom';
+import type { Given } from '~utils/hoc';
 
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
@@ -17,6 +19,9 @@ import Profile from '~admin/Profile';
 import Organizations from '~admin/Organizations';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
+import RecoveryModeAlert from '~admin/RecoveryModeAlert';
+
+import { withFeatureFlags } from '~utils/hoc';
 
 import styles from './AdminDashboard.css';
 
@@ -55,6 +60,8 @@ const MSG = defineMessages({
   },
 });
 
+const mockColonyRecoveryMode = true;
+
 type Props = {
   /*
    * This will most likely come from the redux state
@@ -67,6 +74,7 @@ type Props = {
    * This location object  will allow opening a tab on initial render
    */
   location?: ?LocationShape,
+  given: Given,
 };
 
 const navigationItems: Array<NavigationItem> = [
@@ -92,7 +100,7 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const AdminDashboard = ({ colonyName, location }: Props) => (
+const AdminDashboard = ({ colonyName, location, given }: Props) => (
   <div className={styles.main}>
     <VerticalNavigation
       navigationItems={navigationItems}
@@ -120,6 +128,10 @@ const AdminDashboard = ({ colonyName, location }: Props) => (
         />
       </div>
     </VerticalNavigation>
+    {/*
+     * @TODO Replace with actual selector that checks if the Colony is in recovery mode
+     */}
+    {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
   </div>
 );
 
@@ -129,4 +141,4 @@ AdminDashboard.defaultProps = {
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
-export default AdminDashboard;
+export default withFeatureFlags()(AdminDashboard);
