@@ -31,22 +31,20 @@ export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
 export const withFeatureFlags = () => (
   Component: ComponentType<{ [string]: any }>,
 ) => (props: Object) => {
-  const ConnectedComponent = connect(
-    (reduxState: Object) => ({
-      given: (
-        potentialSelector: Selector<any> | any,
-        dependantSelector: DependantSelector,
-      ) => {
-        let potentialSelectorValue = potentialSelector;
-        if (potentialSelector && typeof potentialSelector === 'function') {
-          potentialSelectorValue = potentialSelector(reduxState, props);
-        }
-        if (dependantSelector && typeof dependantSelector === 'function') {
-          return dependantSelector(potentialSelectorValue, reduxState, props);
-        }
-        return potentialSelectorValue;
-      },
-    }),
-  )(Component);
+  const ConnectedComponent = connect((reduxState: Object) => ({
+    given: (
+      potentialSelector: Selector<any> | any,
+      dependantSelector: DependantSelector,
+    ) => {
+      let potentialSelectorValue = potentialSelector;
+      if (potentialSelector && typeof potentialSelector === 'function') {
+        potentialSelectorValue = potentialSelector(reduxState, props);
+      }
+      if (dependantSelector && typeof dependantSelector === 'function') {
+        return dependantSelector(potentialSelectorValue, reduxState, props);
+      }
+      return potentialSelectorValue;
+    },
+  }))(Component);
   return createElement(ConnectedComponent, { ...props });
 };
