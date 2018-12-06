@@ -1,5 +1,6 @@
 /* @flow */
 import type { IntlShape } from 'react-intl';
+import BN from 'bn.js';
 
 import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
@@ -30,7 +31,7 @@ type Props = {
   /** Should the suffix be visible? */
   showSuffix: boolean,
   /** Value in ether to convert to USD */
-  value: number,
+  value: number | string | BN,
   /** @ignore injected by `injectIntl` */
   intl: IntlShape,
 };
