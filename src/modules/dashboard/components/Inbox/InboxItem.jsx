@@ -8,19 +8,25 @@ import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
 import Link from '~core/Link';
+import withDialog from '~core/Dialog/withDialog';
 
 import type { Node } from 'react';
 import styles from './InboxItem.css';
 import MSG from './messages';
 
 import type { InboxElement, EventType } from './types';
+import type { DialogType } from '~core/Dialog';
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
 type Props = {|
   item: InboxElement,
   markAsRead: (id: number) => void,
+  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 |};
+
+
+
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (
@@ -70,12 +76,21 @@ const InboxItem = ({
     onClickRoute,
   },
   markAsRead,
+  openDialog,
 }: Props) => (
   <TableRow
     className={styles.inboxRow}
-    onClick={() => unread && markAsRead(id)}
+    onClick={() => {
+      if (unread) {
+        markAsRead(id);
+      }
+      if (event === 'actionWorkerInviteReceived') {
+        openDialog('TaskInviteDialog', { assignee: user });
+      }
+    }}
   >
     <TableCell className={styles.inboxRowCell}>
+      {/* TODO: check if event is the following actionWorkerInviteReceived */}
       <ConditionalLink to={onClickRoute}>
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
@@ -146,4 +161,4 @@ const InboxItem = ({
 
 InboxItem.displayName = displayName;
 
-export default InboxItem;
+export default withDialog()(InboxItem);
