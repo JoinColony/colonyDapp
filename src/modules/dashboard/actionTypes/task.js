@@ -3,6 +3,11 @@
 
 import ns from '../namespace';
 
+export const TASK_CREATE = `${ns}/TASK_CREATE`;
+export const TASK_CREATE_ERROR = `${ns}/TASK_CREATE_ERROR`;
+export const TASK_CREATE_SUCCESS = `${ns}/TASK_CREATE_SUCCESS`;
+export const TASK_CREATE_TRANSACTION_SENT = `${ns}/TASK_CREATE_TRANSACTION_SENT`;
+
 export const TASK_WORKER_END = `${ns}/TASK_WORKER_END`;
 export const TASK_WORKER_END_ERROR = `${ns}/TASK_WORKER_END_ERROR`;
 export const TASK_WORKER_END_SUCCESS = `${ns}/TASK_WORKER_END_SUCCESS`;

@@ -7,6 +7,9 @@ import { createColonyTransaction } from '../../core/actionCreators';
 import {
   TASK_FINALIZE_ERROR,
   TASK_FINALIZE_SUCCESS,
+  TASK_CREATE_ERROR,
+  TASK_CREATE_SUCCESS,
+  TASK_CREATE_TRANSACTION_SENT,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_RATE_WORKER_ERROR,
@@ -22,6 +25,28 @@ import {
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
 } from '../actionTypes';
+
+export const taskCreate = (
+  identifier: string,
+  params: {
+    specificationHash: string,
+    domainId: number,
+    skillId: number,
+    dueDate: Date,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'createTask',
+    identifier,
+    lifecycle: {
+      error: TASK_CREATE_ERROR,
+      success: TASK_CREATE_SUCCESS,
+      sent: TASK_CREATE_TRANSACTION_SENT,
+    },
+  });
 
 /**
  * As worker, submit work and rate before due date.
