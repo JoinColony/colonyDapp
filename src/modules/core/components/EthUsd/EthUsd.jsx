@@ -23,6 +23,12 @@ type Appearance = {
 type Props = {
   /** Appearance object for numeral */
   appearance?: Appearance,
+  /** Number of decimals to show */
+  decimals: number,
+  /** Should the prefix be visible? */
+  showPrefix: boolean,
+  /** Should the suffix be visible? */
+  showSuffix: boolean,
   /** Value in ether to convert to USD */
   value: number,
   /** @ignore injected by `injectIntl` */
@@ -35,6 +41,12 @@ type State = {
 
 class EthUsd extends Component<Props, State> {
   static displayName = 'EthUsd';
+
+  static defaultProps = {
+    decimals: 2,
+    showPrefix: true,
+    showSuffix: true,
+  };
 
   state = {
     valueUsd: null,
@@ -73,17 +85,20 @@ class EthUsd extends Component<Props, State> {
     const { valueUsd } = this.state;
     const {
       appearance,
+      decimals,
       intl: { formatMessage },
+      showPrefix,
+      showSuffix,
       value,
       ...rest
     } = this.props;
-    const suffix = formatMessage(MSG.usdAbbreviation);
+    const suffixText = formatMessage(MSG.usdAbbreviation);
     return valueUsd ? (
       <Numeral
         appearance={appearance}
-        decimals={2}
-        prefix="~ "
-        suffix={` ${suffix}`}
+        decimals={decimals}
+        prefix={showPrefix ? '~ ' : ''}
+        suffix={showSuffix ? ` ${suffixText}` : ''}
         value={valueUsd}
         {...rest}
       />
