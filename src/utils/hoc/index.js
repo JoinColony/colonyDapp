@@ -17,6 +17,11 @@ type DependantSelector = (
   props: Object,
 ) => boolean;
 
+export type Given = (
+  potentialSelector: Selector<any> | any,
+  dependantSelector?: DependantSelector,
+) => any | boolean;
+
 // eslint-disable-next-line import/prefer-default-export
 export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
   Component: ComponentType<{ [string]: any }>,
@@ -34,7 +39,7 @@ export const withFeatureFlags = () => (
   const ConnectedComponent = connect((reduxState: Object) => ({
     given: (
       potentialSelector: Selector<any> | any,
-      dependantSelector: DependantSelector,
+      dependantSelector?: DependantSelector,
     ) => {
       let potentialSelectorValue = potentialSelector;
       if (potentialSelector && typeof potentialSelector === 'function') {
