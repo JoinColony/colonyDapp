@@ -138,7 +138,7 @@ jobs:
           path: reports
   e2e-testing:
     docker:
-      - image: joincolony/colony-circle-cypress-docker-image
+      - image: joincolony/circleci-cypress
     environment:
       LOADER: trufflepig
       NETWORK: local
