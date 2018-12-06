@@ -241,10 +241,9 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
 }
 
 function* taskWorkerClaimRewardSaga(action: Action): Saga<void> {
-  const { colonyIdentifier, taskId } = action.payload;
-  const tokens = ['0x0']; // TODO: array of token addresses
+  const { colonyIdentifier, taskId, tokenAddresses } = action.payload;
   yield all(
-    tokens.map(token =>
+    tokenAddresses.map(token =>
       put(
         taskWorkerClaimReward(colonyIdentifier, {
           taskId,

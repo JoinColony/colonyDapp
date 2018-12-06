@@ -26,7 +26,7 @@ const networkFee = (payout: TaskPayout): TaskPayout => ({
   networkFee: payout.amount * 0.01,
 });
 
-// TODO: in the future use contract `getReputation`
+// Mirrors contract `getReputation`
 const getReputation = (
   reputation: number,
   rating: number,
@@ -49,8 +49,8 @@ const enhance = compose(
         payouts,
         workerHasRated,
         workerRateFail,
-        // TODO: rating should not have a default
-        workerRating: rating = 2,
+        // This will always be set, default to appease the type gods
+        workerRating: rating = 0,
         reputation,
         title,
       },

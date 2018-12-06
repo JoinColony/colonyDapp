@@ -63,7 +63,11 @@ const TaskClaimReward = ({
     submit={TASK_WORKER_CLAIM_REWARD}
     success={TASK_WORKER_CLAIM_REWARD_SUCCESS}
     error={TASK_WORKER_CLAIM_REWARD_ERROR}
-    values={{ taskId, colonyIdentifier }}
+    values={{
+      taskId,
+      colonyIdentifier,
+      tokenAddresses: payouts.map(payout => payout.address),
+    }}
   />
 );
 

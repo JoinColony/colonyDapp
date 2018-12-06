@@ -11,6 +11,7 @@ export type TaskPayout = {
   amount: number, // TODO: should be BigNumber
   isNative?: boolean,
   isEth?: boolean,
+  address: string,
 };
 
 export type TaskFeedItemTypes = 'comment' | 'rating'; // TODO: other item types
