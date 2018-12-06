@@ -9,6 +9,10 @@ import type { Action } from '~types';
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import {
+  TASK_CREATE,
+  TASK_CREATE_ERROR,
+  TASK_CREATE_SUCCESS,
+  TASK_CREATE_TRANSACTION_SENT,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
   TASK_MANAGER_END,
@@ -28,6 +32,7 @@ import {
 } from '../actionTypes';
 
 import {
+  taskCreate,
   taskManagerComplete,
   taskManagerRateWorker,
   taskManagerRevealRating,
@@ -101,6 +106,37 @@ function* guessRating(
   }
   if (!correctRating) throw new Error('Rating is not from this account');
   return correctRating;
+}
+
+function* taskCreateSaga(action: Action): Saga<void> {
+  // eslint-disable-next-line no-unused-vars
+  const { colonyIdentifier, orbitDBPath } = action.payload;
+
+  try {
+    // TODO: actually fetch from DDB
+    const taskFromDDB = {
+      specificationHash: 'Qm...',
+      domainId: 1,
+      skillId: 1,
+      dueDate: new Date('2019-01-01'),
+    };
+
+    yield put(taskCreate(colonyIdentifier, taskFromDDB));
+
+    const {
+      payload: { hash: txHash },
+    } = yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
+    // eslint-disable-next-line no-console
+    console.log(txHash); // TODO: put txHash in DDB
+
+    const {
+      payload: { taskId },
+    } = yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
+    // eslint-disable-next-line no-console
+    console.log(taskId); // TODO: put taskId in DDB
+  } catch (error) {
+    yield putError(TASK_CREATE_ERROR, error);
+  }
 }
 
 function* taskWorkerEndSaga(action: Action): Saga<void> {
@@ -239,6 +275,7 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
 }
 
 export default function* taskSagas(): any {
+  yield takeEvery(TASK_CREATE, taskCreateSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
