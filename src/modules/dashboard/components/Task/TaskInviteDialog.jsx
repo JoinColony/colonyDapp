@@ -77,12 +77,20 @@ class TaskInviteDialog extends Component<Props, State> {
   state = {};
 
   componentDidMount() {
-    getEthToUsd(1).then(rate =>
-      this.setState({
-        ethUsdConversion: new BigNumber(rate),
-      }),
-    );
+    this.mounted = true;
+
+    getEthToUsd(1).then(rate => {
+      if (this.mounted) {
+        this.setState({ ethUsdConversion: new BigNumber(rate) });
+      }
+    });
   }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  mounted = false;
 
   render() {
     const { cancel, reputation, payouts, assignee } = this.props;
@@ -114,25 +122,29 @@ class TaskInviteDialog extends Component<Props, State> {
                         text={MSG.titleFunding}
                       />
                     </div>
-                    {payouts &&
-                      payouts.map((payout, index) => {
-                        const { amount, token: tokenIndex } = payout;
-                        const token = tokensMock[tokenIndex - 1] || {};
-                        return (
-                          <Payout
-                            key={payout.id}
-                            name={`payouts.${index}`}
-                            amount={amount}
-                            symbol={token.tokenSymbol}
-                            reputation={token.isNative ? reputation : undefined}
-                            usdAmount={
-                              token.isEth && ethUsdConversion
-                                ? bnMultiply(ethUsdConversion, amount)
-                                : undefined
-                            }
-                          />
-                        );
-                      })}
+                    <div>
+                      {payouts &&
+                        payouts.map((payout, index) => {
+                          const { amount, token: tokenIndex } = payout;
+                          const token = tokensMock[tokenIndex - 1] || {};
+                          return (
+                            <Payout
+                              key={payout.id}
+                              name={`payouts.${index}`}
+                              amount={amount}
+                              symbol={token.tokenSymbol}
+                              reputation={
+                                token.isNative ? reputation : undefined
+                              }
+                              usdAmount={
+                                token.isEth && ethUsdConversion
+                                  ? bnMultiply(ethUsdConversion, amount)
+                                  : undefined
+                              }
+                            />
+                          );
+                        })}
+                    </div>
                   </div>
                 </DialogSection>
               </DialogBox>
