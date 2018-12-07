@@ -23,6 +23,7 @@ import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
 import { userActivitiesStore, userProfileStore } from '../stores';
+import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 
 import {
   USER_PROFILE_FETCH,
@@ -129,12 +130,8 @@ export function* getOrCreateUserActivitiesStore(
     walletAddress,
   });
 
-  const joinedEvent = {
-    colonyName: '',
-    userAction: 'joinedColony',
-    createdAt: new Date(),
-  };
-  yield call([activitiesStore, activitiesStore.add], joinedEvent);
+  yield call([activitiesStore, activitiesStore.add], joinedColonyEvent());
+
   return activitiesStore;
 }
 
