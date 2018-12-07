@@ -11,8 +11,6 @@ export type ProfileProps = {
   bio?: string,
   website?: string,
   location?: string,
-  colonyStores: Object,
-  domainStores: Object,
   activitiesStore: string,
   profileStore: string,
 };

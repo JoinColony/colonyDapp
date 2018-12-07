@@ -28,8 +28,6 @@ const userProfileStore: StoreBlueprint = {
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
-    colonyStores: yup.object(),
-    domainStores: yup.object(),
     profileStore: yup.string(),
     activitiesStore: yup.string(),
   }),

@@ -8,7 +8,6 @@ import type { ProfileProps, UserActivity, UserProps } from '~types/index';
 
 const defaultProfileValues: ProfileProps = {
   walletAddress: '',
-  databases: {},
   username: undefined,
   avatar: undefined,
   displayName: undefined,
@@ -17,8 +16,6 @@ const defaultProfileValues: ProfileProps = {
   location: undefined,
   activitiesStore: '',
   profileStore: '',
-  colonyStores: {},
-  domainStores: {},
 };
 
 const defaultActivities: Array<UserActivity> = [];
