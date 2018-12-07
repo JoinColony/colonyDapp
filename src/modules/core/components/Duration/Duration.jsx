@@ -11,6 +11,10 @@ const MSG = defineMessages({
       {hours, plural, =0 {} other {{hours}h}}
       {minutes, plural, =0 {} other {{minutes}min}}`,
   },
+  lessThanMinute: {
+    id: 'Duration.lessThanMinute',
+    defaultMessage: '<1m',
+  },
 });
 
 type Props = {
@@ -28,7 +32,7 @@ const Duration = ({ intl: { formatMessage }, value, ...rest }: Props) => {
   seconds -= days * 3600 * 24;
   const hours = Math.floor(seconds / 3600);
   seconds -= hours * 3600;
-  const minutes = Math.floor(seconds / 60);
+  const minutes = Math.ceil(seconds / 60);
   seconds -= minutes * 60;
 
   const timePhrase = formatMessage(MSG.timePhrase, {
@@ -37,7 +41,11 @@ const Duration = ({ intl: { formatMessage }, value, ...rest }: Props) => {
     minutes,
   });
 
-  return <span {...rest}>{timePhrase}</span>;
+  const lessThanMinute = formatMessage(MSG.lessThanMinute);
+
+  const durationText = days || hours || minutes ? timePhrase : lessThanMinute;
+
+  return <span {...rest}>{durationText}</span>;
 };
 
 Duration.displayName = displayName;

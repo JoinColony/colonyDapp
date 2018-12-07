@@ -95,7 +95,7 @@ class EthUsd extends Component<Props, State> {
       ...rest
     } = this.props;
     const suffixText = formatMessage(MSG.usdAbbreviation);
-    return valueUsd ? (
+    return valueUsd || valueUsd === 0 ? (
       <Numeral
         appearance={appearance}
         decimals={decimals}

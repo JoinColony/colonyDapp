@@ -7,9 +7,11 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { TransactionType } from '~types/transaction';
+import type { EstimatedGasCost } from '~utils/external';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
 import { getMainClasses } from '~utils/css';
+import { getEstimatedGasCost } from '~utils/external';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -17,6 +19,7 @@ import { ActionForm, RadioGroup } from '~core/Fields';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './GasStationPrice.css';
 
@@ -63,11 +66,11 @@ type Props = {
   canSignTransaction: boolean,
   isNetworkCongested: boolean,
   transaction: TransactionType,
-  txGasCostsEth: Object,
   walletNeedsAction?: 'metamask' | 'hardware',
 };
 
 type State = {
+  estimatedGasCost: EstimatedGasCost | null,
   isSpeedMenuOpen: boolean,
   speedMenuId: string,
 };
@@ -99,12 +102,30 @@ class GasStationPrice extends Component<Props, State> {
   static displayName = 'GasStationPrice';
 
   state = {
+    estimatedGasCost: null,
     isSpeedMenuOpen: false,
     /*
      * `speedMenuId` is used for the tx speed menu's id attribute for aria-* purposes.
      */
     speedMenuId: nanoid(),
   };
+
+  componentDidMount() {
+    this.mounted = true;
+    getEstimatedGasCost().then(estimatedGasCost => {
+      if (this.mounted) {
+        this.setState({
+          estimatedGasCost,
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  mounted: boolean = false;
 
   toggleSpeedMenu = () => {
     const { isSpeedMenuOpen } = this.state;
@@ -118,10 +139,9 @@ class GasStationPrice extends Component<Props, State> {
       canSignTransaction,
       isNetworkCongested,
       transaction: { hash },
-      txGasCostsEth,
       walletNeedsAction,
     } = this.props;
-    const { isSpeedMenuOpen, speedMenuId } = this.state;
+    const { estimatedGasCost, isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
       transactionHash: hash,
       transactionSpeed: transactionSpeedOptions[0].value,
@@ -144,7 +164,8 @@ class GasStationPrice extends Component<Props, State> {
             isValid,
             values: { transactionSpeed },
           }: FormikProps<FormValues>) => {
-            const transactionFee = txGasCostsEth[transactionSpeed];
+            const transactionFee =
+              estimatedGasCost && estimatedGasCost[transactionSpeed];
             return (
               <Fragment>
                 <div
@@ -187,9 +208,13 @@ class GasStationPrice extends Component<Props, State> {
                         <FormattedMessage {...MSG.transactionFeeLabel} />
                       </div>
                       <div className={styles.transactionDuration}>
-                        <Duration
-                          value={txGasCostsEth[`${transactionSpeed}Wait`]}
-                        />
+                        {estimatedGasCost ? (
+                          <Duration
+                            value={estimatedGasCost[`${transactionSpeed}Wait`]}
+                          />
+                        ) : (
+                          <SpinnerLoader />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -201,11 +226,14 @@ class GasStationPrice extends Component<Props, State> {
                           decimals={18}
                           value={transactionFee}
                           suffix=" ETH"
+                          unit="gwei"
                         />
                         <div className={styles.transactionFeeEthUsd}>
                           <EthUsd
                             appearance={{ size: 'small', theme: 'grey' }}
+                            digits={3}
                             value={transactionFee}
+                            unit="gwei"
                           />
                         </div>
                       </div>
