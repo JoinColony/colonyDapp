@@ -34,12 +34,6 @@ class KVStore extends Store {
     return this._setObject(validated);
   }
 
-  async update(key: string, nestedKey: string, value: any) {
-    const validated = await this.validate(key, { [nestedKey]: value });
-    const existing = this._orbitStore.get(key) || {};
-    return this.set({ ...existing, ...validated });
-  }
-
   async append(key: string, value?: any) {
     const validated = await this.validate(key, [value]);
     const existing = this._orbitStore.get(key) || [];
