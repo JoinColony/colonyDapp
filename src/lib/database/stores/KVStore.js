@@ -64,6 +64,20 @@ class KVStore extends Store {
       return promise.then(next);
     }, Promise.resolve(true));
   }
+
+  /*
+    Wait for the store to be fully replicated.
+    NOTE: The current usage of this KVStore is for a specific set of keys
+    (rather than an unlimited number of keys); if this restriction is removed,
+    then this should be moved to another function.
+   */
+  async load() {
+    const replicatedPromise = new Promise(resolve => {
+      this._orbitStore.events.once('replicated', resolve);
+    });
+    await super.load();
+    return replicatedPromise;
+  }
 }
 
 export default KVStore;

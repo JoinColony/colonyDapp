@@ -25,6 +25,9 @@ describe('KVStore', () => {
     load: sandbox.fn(),
     put: sandbox.fn(),
     type: 'orbit store type',
+    events: {
+      once: sandbox.fn(),
+    },
   };
 
   const name = 'test schema id';
@@ -95,6 +98,36 @@ describe('KVStore', () => {
       );
       expect(error.toString()).toMatch('this is a required field');
     }
+  });
+
+  test('It waits for replication when loading', async () => {
+    const store = new KVStore(mockOrbitStore, name, schema);
+
+    sandbox.spyOn(store._orbitStore, 'load');
+
+    // Mock the event emitter
+    const listeners = {};
+    sandbox
+      .spyOn(store._orbitStore.events, 'once')
+      .mockImplementation((eventName, handler) => {
+        listeners[eventName] = handler;
+      });
+
+    const loadPromise = store.load();
+
+    expect(loadPromise).toBeInstanceOf(Promise);
+    expect(listeners.replicated).toEqual(expect.any(Function));
+
+    listeners.replicated(); // Emit the event manually
+
+    await loadPromise;
+
+    expect(store._orbitStore.load).toHaveBeenCalledTimes(1);
+    expect(store._orbitStore.events.once).toHaveBeenCalledTimes(1);
+    expect(store._orbitStore.events.once).toHaveBeenCalledWith(
+      'replicated',
+      expect.any(Function),
+    );
   });
 
   // TODO test: all(), get(), append(), set(), _setObject()

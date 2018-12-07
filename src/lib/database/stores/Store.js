@@ -28,7 +28,7 @@ class Store {
     return this._orbitStore.address;
   }
 
-  load() {
+  async load() {
     return this._orbitStore.load();
   }
 }
