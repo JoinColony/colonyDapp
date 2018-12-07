@@ -1,6 +1,8 @@
 /* @flow */
 import BN from 'bn.js';
 
+const DEFAULT_GAS_LIMIT = new BN(21001);
+
 type EstimatedGasCostAPIResponse = {
   average: number,
   avgWait: number,
@@ -27,10 +29,11 @@ export type EstimatedGasCost = {
 /*
  * Get estimated gas costs in Gwei
  */
-export const getEstimatedGasCost = (): Promise<EstimatedGasCost | void> => {
+export const getEstimatedGasCost = (
+  gasLimit: BN = DEFAULT_GAS_LIMIT,
+): Promise<EstimatedGasCost | void> => {
   const ESTIMATED_GAS_COST_KEY = 'estimatedGasCost';
   const ESTIMATED_GAS_COST_TIMESTAMP_KEY = 'estimatedGasCostTimestamp';
-  const GAS_USED = 21001; // Just to be safe
 
   const estimatedGasCostEndpoint =
     'https://ethgasstation.info/json/ethgasAPI.json';
@@ -78,9 +81,9 @@ export const getEstimatedGasCost = (): Promise<EstimatedGasCost | void> => {
          * For some reason, this API returns gas cost in units
          * 10 Gwei. So we need to divide by 10 to get to 1 Gwei
          */
-        const suggested = new BN(GAS_USED * (suggested10Gwei / 10));
-        const cheaper = new BN(GAS_USED * (cheaper10Gwei / 10));
-        const faster = new BN(GAS_USED * (faster10Gwei / 10));
+        const suggested = new BN(suggested10Gwei / 10).mul(gasLimit);
+        const cheaper = new BN(cheaper10Gwei / 10).mul(gasLimit);
+        const faster = new BN(faster10Gwei / 10).mul(gasLimit);
         const cheaperWait = Math.ceil(safeLowWait * 60);
         const fasterWait = Math.ceil(fastWait * 60);
         const suggestedWait = Math.ceil(avgWait * 60);
