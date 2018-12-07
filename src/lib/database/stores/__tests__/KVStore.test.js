@@ -103,7 +103,9 @@ describe('KVStore', () => {
   test('It waits for replication when loading', async () => {
     const store = new KVStore(mockOrbitStore, name, schema);
 
-    sandbox.spyOn(store._orbitStore, 'load');
+    sandbox
+      .spyOn(store._orbitStore, 'load')
+      .mockImplementation(async () => null);
 
     // Mock the event emitter
     const listeners = {};
@@ -128,6 +130,22 @@ describe('KVStore', () => {
       'replicated',
       expect.any(Function),
     );
+  });
+
+  test('It times out when waiting for replication takes too long', async () => {
+    jest.useFakeTimers();
+
+    const store = new KVStore(mockOrbitStore, name, schema);
+    sandbox
+      .spyOn(store._orbitStore, 'load')
+      .mockImplementation(async () => null);
+
+    const loadPromise = store.load();
+    jest.runAllTimers();
+
+    expect(loadPromise).rejects.toThrow('Timeout while waiting on replication');
+
+    jest.useRealTimers();
   });
 
   // TODO test: all(), get(), append(), set(), _setObject()

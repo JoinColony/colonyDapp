@@ -75,8 +75,21 @@ class KVStore extends Store {
     const replicatedPromise = new Promise(resolve => {
       this._orbitStore.events.once('replicated', resolve);
     });
+
     await super.load();
-    return replicatedPromise;
+
+    return Promise.race([
+      replicatedPromise,
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error(
+              `Timeout while waiting on replication for store "${this._name}"`,
+            ),
+          );
+        }, 15 * 1000); // 15 seconds
+      }),
+    ]);
   }
 }
 
