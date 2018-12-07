@@ -2,6 +2,7 @@
 
 import {
   CURRENT_USER_CREATE,
+  USER_ACTIVITIES_FETCH_SUCCESS,
   USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_SUCCESS,
   USERNAME_CREATE_SUCCESS,
@@ -25,6 +26,13 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
       return state ? state.set('activities', activities) : state;
+    }
+    case USER_ACTIVITIES_FETCH_SUCCESS: {
+      const { activities, walletAddress } = action.payload;
+      return state &&
+        state.getIn(['profile', 'walletAddress']) === walletAddress
+        ? state.set('activities', activities)
+        : state;
     }
     case USER_PROFILE_UPDATE_SUCCESS: {
       return state ? state.merge(action.payload) : state;
