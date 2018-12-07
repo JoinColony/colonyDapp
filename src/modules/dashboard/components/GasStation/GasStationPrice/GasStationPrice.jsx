@@ -112,6 +112,12 @@ class GasStationPrice extends Component<Props, State> {
 
   componentDidMount() {
     this.mounted = true;
+    /*
+     * @NOTE: I assume this will be replaced by
+     * the `suggestMethodTransactionGas` saga once
+     * the transaction list is wired. Using this for
+     * simple method for now
+     */
     getEstimatedGasCost().then(estimatedGasCost => {
       if (this.mounted) {
         this.setState({
@@ -231,7 +237,7 @@ class GasStationPrice extends Component<Props, State> {
                         <div className={styles.transactionFeeEthUsd}>
                           <EthUsd
                             appearance={{ size: 'small', theme: 'grey' }}
-                            digits={3}
+                            decimals={3}
                             value={transactionFee}
                             unit="gwei"
                           />
