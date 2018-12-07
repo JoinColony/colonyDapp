@@ -28,7 +28,10 @@ class Store {
     return this._orbitStore.address;
   }
 
-  async load() {
+  /*
+    NOTE: `load` is an async function, so this function returns a promise.
+   */
+  load() {
     return this._orbitStore.load();
   }
 }
