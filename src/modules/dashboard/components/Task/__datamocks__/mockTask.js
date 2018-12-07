@@ -25,8 +25,18 @@ export const mockTask = Task({
   colonyIdentifier: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
   reputation: 19.5,
   payouts: [
-    { symbol: 'ETH', amount: 21545, isEth: true },
-    { symbol: 'CLNY', amount: 6007, isNative: true },
+    { symbol: 'ETH', amount: 21545, isEth: true, address: '0x0' },
+    {
+      symbol: 'CLNY',
+      amount: 6007,
+      isNative: true,
+      address: '0xdd90e005D1Cebb6621B673d3116b5E2CF6f1B902',
+    },
+    {
+      symbol: 'COOL',
+      amount: 123,
+      address: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
+    },
   ],
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',
   assignee: userMock,

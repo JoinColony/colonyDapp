@@ -3,10 +3,15 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { DialogType } from '~core/Dialog';
-import type { Props as WrapperProps } from './TaskClaimReward';
+import { DialogActionButton } from '~core/Button';
 
-import Button from '~core/Button';
+import type { TaskPayout } from '~types/';
+
+import {
+  TASK_WORKER_CLAIM_REWARD,
+  TASK_WORKER_CLAIM_REWARD_ERROR,
+  TASK_WORKER_CLAIM_REWARD_SUCCESS,
+} from '../../actionTypes';
 
 const MSG = defineMessages({
   claimRewards: {
@@ -15,35 +20,54 @@ const MSG = defineMessages({
   },
 });
 
-export type Props = WrapperProps & {
-  /*
-   * We're not putting a custom defined type on this since it all likeliness it
-   * will change
-   */
+export type Props = {
+  taskId: number,
+  colonyIdentifier: string,
+  rating: number,
+  reputation: number,
+  payouts: Array<TaskPayout>,
+  title: string,
+  lateRating: boolean,
+  lateReveal: boolean,
   sortedPayouts: Array<Object>,
   nativeTokenPayout: Object | void,
-  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
 const displayName = 'dashboard.TaskClaimReward';
 
 const TaskClaimReward = ({
-  openDialog,
-  taskReward,
-  taskTitle,
+  taskId,
+  colonyIdentifier,
+  rating,
+  reputation,
+  payouts,
+  title,
+  lateRating,
+  lateReveal,
   sortedPayouts,
   nativeTokenPayout,
 }: Props) => (
-  <Button
+  <DialogActionButton
     text={MSG.claimRewards}
-    onClick={() =>
-      openDialog('TaskClaimRewardDialog', {
-        taskReward,
-        taskTitle,
-        sortedPayouts,
-        nativeTokenPayout,
-      })
-    }
+    dialog="TaskClaimRewardDialog"
+    dialogProps={{
+      rating,
+      reputation,
+      payouts,
+      title,
+      lateRating,
+      lateReveal,
+      sortedPayouts,
+      nativeTokenPayout,
+    }}
+    submit={TASK_WORKER_CLAIM_REWARD}
+    success={TASK_WORKER_CLAIM_REWARD_SUCCESS}
+    error={TASK_WORKER_CLAIM_REWARD_ERROR}
+    values={{
+      taskId,
+      colonyIdentifier,
+      tokenAddresses: payouts.map(payout => payout.address),
+    }}
   />
 );
 

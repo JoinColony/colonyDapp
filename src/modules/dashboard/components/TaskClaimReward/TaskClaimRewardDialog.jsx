@@ -32,7 +32,7 @@ const MSG = defineMessages({
   },
   reputationPenalty: {
     id: 'dashboard.TaskClaimRewardDialog.reputationPenalty',
-    defaultMessage: `You were penalized for not {ratedOnTime, select,
+    defaultMessage: `You were penalized for not {lateRating, select,
       true {rating}
       other {revealing}
     } on time.`,
@@ -81,18 +81,18 @@ const displayName = 'dashboard.TaskClaimRewardDialog';
 const TaskClaimRewardDialog = ({
   cancel,
   close,
-  taskReward: {
-    workerRating: rating,
-    reputationEarned: reputation,
-    payoutsEarned,
-  },
-  taskTitle,
+  rating,
+  reputation,
+  payouts,
+  title,
+  lateRating,
+  lateReveal,
   sortedPayouts,
   nativeTokenPayout,
 }: Props) => (
   <Dialog cancel={cancel} className={styles.main}>
     <DialogSection appearance={{ border: 'bottom' }}>
-      <Heading appearance={{ size: 'medium' }} text={taskTitle} />
+      <Heading appearance={{ size: 'medium' }} text={title} />
       <section className={styles.starRating}>
         <p className={styles.starRatingDescription}>
           <FormattedMessage {...MSG.yourRating} />
@@ -101,7 +101,7 @@ const TaskClaimRewardDialog = ({
           <StarRating rating={rating} />
         </div>
       </section>
-      {nativeTokenPayout && nativeTokenPayout.symbol && (
+      {nativeTokenPayout && (
         <section className={styles.earnedReputation}>
           <p className={styles.starRatingDescription}>
             <FormattedMessage {...MSG.yourReputation} />
@@ -121,11 +121,11 @@ const TaskClaimRewardDialog = ({
                 />
               </p>
             )}
-            {rating !== 3 && rating !== 1 && (
+            {(lateRating || lateReveal) && (
               <p className={styles.earnedReputationPenalty}>
                 <FormattedMessage
                   {...MSG.reputationPenalty}
-                  values={{ ratedOnTime: true }}
+                  values={{ lateRating }}
                 />
               </p>
             )}
@@ -140,7 +140,7 @@ const TaskClaimRewardDialog = ({
         </section>
       )}
     </DialogSection>
-    {(rating === 2 || rating === 3) && payoutsEarned.length ? (
+    {rating > 1 && payouts.length ? (
       <DialogSection>
         <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
         <section className={styles.rewards}>
@@ -228,8 +228,7 @@ const TaskClaimRewardDialog = ({
           </div>
         </section>
       </DialogSection>
-    ) : null}
-    {rating === 1 && (
+    ) : (
       <DialogSection>
         <Heading appearance={{ size: 'medium' }} text={MSG.noRewardsTitle} />
         <FormattedMessage
@@ -247,17 +246,13 @@ const TaskClaimRewardDialog = ({
     <DialogSection appearance={{ align: 'right' }}>
       <Button
         appearance={{ theme: 'secondary', size: 'large' }}
-        onClick={cancel}
         text={{ id: 'button.cancel' }}
+        onClick={() => cancel()}
       />
       <Button
         appearance={{ theme: 'primary', size: 'large' }}
         text={{ id: 'button.continue' }}
-        onClick={() => {
-          /* eslint-disable-next-line no-console */
-          console.log(`[${displayName}]`, 'Claimed that sweet, sweet reward!');
-          return close();
-        }}
+        onClick={() => close()}
       />
     </DialogSection>
   </Dialog>

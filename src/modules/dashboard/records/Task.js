@@ -20,9 +20,12 @@ const defaultValues: TaskProps = {
   feedItems: [],
   currentState: TASK_STATE.ACTIVE,
   workerHasRated: false,
-  managerHasRated: false,
+  workerRateFail: false,
+  evaluatorHasRated: false,
+  evaluatorRateFail: false,
   workerPayoutClaimed: false,
   managerPayoutClaimed: false,
+  evaluatorPayoutClaimed: false,
 };
 
 // TODO: validate required props, rather than above defaults

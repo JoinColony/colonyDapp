@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { put, takeEvery, call, getContext } from 'redux-saga/effects';
+import { all, put, takeEvery, call, getContext } from 'redux-saga/effects';
 
 import type { Action } from '~types/index';
 
@@ -25,6 +25,7 @@ import {
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   TASK_MANAGER_REVEAL_WORKER_RATING,
   TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+  TASK_WORKER_CLAIM_REWARD,
 } from '../actionTypes';
 
 import {
@@ -34,6 +35,7 @@ import {
   taskWorkerRateManager,
   taskWorkerRevealRating,
   taskManagerRevealRating,
+  taskWorkerClaimReward,
 } from '../actionCreators';
 
 function* generateRatingSalt(colonyIdentifier: string, taskId: number) {
@@ -238,6 +240,20 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
   }
 }
 
+function* taskWorkerClaimRewardSaga(action: Action): Saga<void> {
+  const { colonyIdentifier, taskId, tokenAddresses } = action.payload;
+  yield all(
+    tokenAddresses.map(token =>
+      put(
+        taskWorkerClaimReward(colonyIdentifier, {
+          taskId,
+          token,
+        }),
+      ),
+    ),
+  );
+}
+
 export default function* taskSagas(): any {
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
@@ -251,4 +267,5 @@ export default function* taskSagas(): any {
     TASK_MANAGER_REVEAL_WORKER_RATING,
     taskManagerRevealRatingSaga,
   );
+  yield takeEvery(TASK_WORKER_CLAIM_REWARD, taskWorkerClaimRewardSaga);
 }

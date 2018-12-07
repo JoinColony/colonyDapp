@@ -26,6 +26,8 @@ import {
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
   TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
   TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+  TASK_WORKER_CLAIM_REWARD_ERROR,
+  TASK_WORKER_CLAIM_REWARD_SUCCESS,
 } from '../actionTypes';
 
 export const createColony = (
@@ -204,5 +206,24 @@ export const taskManagerRevealRating = (
     lifecycle: {
       error: TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
       success: TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+    },
+  });
+
+export const taskWorkerClaimReward = (
+  identifier: string,
+  params: {
+    taskId: number,
+    token: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params: { ...params, role: 'WORKER' },
+    options,
+    methodName: 'claimPayout',
+    identifier,
+    lifecycle: {
+      error: TASK_WORKER_CLAIM_REWARD_ERROR,
+      success: TASK_WORKER_CLAIM_REWARD_SUCCESS,
     },
   });
