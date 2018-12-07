@@ -1,6 +1,6 @@
 import { END } from 'redux-saga';
 
-import { transactionChannel } from '../sendMethodTransaction';
+import transactionChannel from '../transactionChannel';
 
 import {
   TRANSACTION_ERROR,
