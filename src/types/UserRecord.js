@@ -1,9 +1,9 @@
 /* @flow */
 
 import type { RecordOf } from 'immutable';
+import type { UserActivity } from './UserActivity';
 
-export type UserProps = {
-  orbitStore: string,
+export type ProfileProps = {
   walletAddress: string,
   username?: string,
   avatar?: string,
@@ -11,6 +11,13 @@ export type UserProps = {
   bio?: string,
   website?: string,
   location?: string,
+  activitiesStore: string,
+  profileStore: string,
+};
+
+export type UserProps = {
+  activities: Array<UserActivity>,
+  profile: ProfileProps,
 };
 
 export type UserRecord = RecordOf<UserProps>;

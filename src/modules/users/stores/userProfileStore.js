@@ -25,10 +25,11 @@ const userProfileStore: StoreBlueprint = {
     avatar: yup.string(),
     walletAddress: yup.string().address(),
     // TODO: yup validation for orbit address
-    orbitAddress: yup.string(),
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
+    profileStore: yup.string(),
+    activitiesStore: yup.string(),
   }),
   type: KVStore,
 };

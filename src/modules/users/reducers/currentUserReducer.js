@@ -2,6 +2,8 @@
 
 import {
   CURRENT_USER_CREATE,
+  USER_ACTIVITIES_FETCH_SUCCESS,
+  USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_SUCCESS,
   USERNAME_CREATE_SUCCESS,
   USER_UPLOAD_AVATAR_SUCCESS,
@@ -18,14 +20,22 @@ const INITIAL_STATE = null;
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
-      const { walletAddress, user, orbitStore } = action.payload;
-      return User({ ...user, walletAddress, orbitStore });
+      const { walletAddress, user } = action.payload;
+      return User({ profile: { ...user, walletAddress } });
+    }
+    case USER_ACTIVITIES_UPDATE_SUCCESS: {
+      const { activities } = action.payload;
+      return state ? state.set('activities', activities) : state;
+    }
+    case USER_ACTIVITIES_FETCH_SUCCESS: {
+      const { activities, walletAddress } = action.payload;
+      return state &&
+        state.getIn(['profile', 'walletAddress']) === walletAddress
+        ? state.set('activities', activities)
+        : state;
     }
     case USER_PROFILE_UPDATE_SUCCESS: {
-      if (state) {
-        return state.merge(action.payload);
-      }
-      return state;
+      return state ? state.merge(action.payload) : state;
     }
     case USERNAME_CREATE_SUCCESS: {
       // TODO: This might change (maybe transaction: { params: { username }})
@@ -33,11 +43,11 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
       const {
         params: { username },
       } = action.payload;
-      return state ? state.set('username', username) : state;
+      return state ? state.setIn(['profile', 'username'], username) : state;
     }
     case USER_UPLOAD_AVATAR_SUCCESS: {
       const { hash } = action.payload;
-      return state ? state.set('avatar', hash) : state;
+      return state ? state.setIn(['profile', 'avatar'], hash) : state;
     }
     default:
       return state;

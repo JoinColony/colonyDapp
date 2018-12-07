@@ -77,7 +77,7 @@ const UserList = ({
                * This is just so we can have duplicate data inside datamocks
                * Might as well remove it when the *real* data comes in
                */
-              key={`${user.walletAddress}${currentIndex + 1}`}
+              key={`${user.profile.walletAddress}${currentIndex + 1}`}
               user={user}
               showDisplayName={showDisplayName}
               showUsername={showUsername}

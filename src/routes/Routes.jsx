@@ -41,7 +41,7 @@ import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 // `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
 // eslint-disable-next-line react/prop-types
 const Routes = ({ currentUser }) => {
-  const isConnected = !!(currentUser && currentUser.walletAddress);
+  const isConnected = !!(currentUser && currentUser.profile.walletAddress);
   return (
     <Switch>
       <Route

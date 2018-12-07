@@ -139,7 +139,8 @@ class Task extends Component<Props> {
     } = this.props;
     return (
       !!assignee &&
-      assignee.walletAddress.toLowerCase() === user.walletAddress.toLowerCase()
+      assignee.profile.walletAddress.toLowerCase() ===
+        user.profile.walletAddress.toLowerCase()
     );
   }
 
@@ -148,7 +149,7 @@ class Task extends Component<Props> {
       task: { creator },
       user,
     } = this.props;
-    return creator.toLowerCase() === user.walletAddress.toLowerCase();
+    return creator.toLowerCase() === user.profile.walletAddress.toLowerCase();
   }
 
   get dueDatePassed() {

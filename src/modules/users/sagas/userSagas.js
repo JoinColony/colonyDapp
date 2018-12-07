@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-
 import { delay } from 'redux-saga';
 
 import {
@@ -19,17 +18,23 @@ import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
 import { DDB } from '../../../lib/database';
-import { KVStore } from '../../../lib/database/stores';
+import { FeedStore, KVStore } from '../../../lib/database/stores';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
-
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
-import { userProfileStore } from '../stores';
+import { userActivitiesStore, userProfileStore } from '../stores';
+import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 
 import {
   USER_PROFILE_FETCH,
   USER_PROFILE_FETCH_SUCCESS,
   USER_PROFILE_FETCH_ERROR,
+  USER_ACTIVITIES_FETCH,
+  USER_ACTIVITIES_FETCH_SUCCESS,
+  USER_ACTIVITIES_FETCH_ERROR,
+  USER_ACTIVITIES_UPDATE,
+  USER_ACTIVITIES_UPDATE_SUCCESS,
+  USER_ACTIVITIES_UPDATE_ERROR,
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
@@ -49,10 +54,11 @@ import {
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
-export function* getUserStore(walletAddress: string): Saga<KVStore> {
+export function* getOrCreateUserStore(walletAddress: string): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
 
-  let store = yield call(
+  let profileStore;
+  profileStore = yield call(
     [ddb, ddb.getStore],
     userProfileStore,
     `user.${walletAddress}`,
@@ -60,21 +66,116 @@ export function* getUserStore(walletAddress: string): Saga<KVStore> {
       walletAddress,
     },
   );
-  if (store) {
-    yield call([store, store.load]);
-    return store;
+
+  if (profileStore) {
+    yield call([profileStore, profileStore.load]);
+    return profileStore;
   }
 
-  store = yield call([ddb, ddb.createStore], userProfileStore, {
+  profileStore = yield call([ddb, ddb.createStore], userProfileStore, {
     walletAddress,
   });
-  yield call([store, store.set], { createdAt: new Date() });
 
-  return store;
+  try {
+    const activitiesStore = yield call(
+      getOrCreateUserActivitiesStore,
+      walletAddress,
+    );
+    yield call([profileStore, profileStore.set], {
+      activitiesStore: activitiesStore.address.toString(),
+      profileStore: profileStore.address.toString(),
+    });
+  } catch (error) {
+    yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
+  }
+
+  return profileStore;
+}
+
+export function* getOrCreateUserActivitiesStore(
+  walletAddress: string,
+): Saga<FeedStore> {
+  let activitiesStore;
+
+  const ddb = yield getContext('ddb');
+
+  const profileStore = yield call(
+    [ddb, ddb.getStore],
+    userProfileStore,
+    `user.${walletAddress}`,
+    {
+      walletAddress,
+    },
+  );
+
+  if (profileStore) {
+    yield call([profileStore, profileStore.load]);
+    const activitiesStoreAddress = yield call(
+      [profileStore, profileStore.get],
+      'activitiesStore',
+    );
+    activitiesStore = yield call(
+      [ddb, ddb.getStore],
+      userActivitiesStore,
+      activitiesStoreAddress,
+      {
+        walletAddress,
+      },
+    );
+    return activitiesStore;
+  }
+  // if the profileStore is still being created it doesn't exist yet
+  // And we must create the activitiesStore
+  activitiesStore = yield call([ddb, ddb.createStore], userActivitiesStore, {
+    walletAddress,
+  });
+
+  yield call([activitiesStore, activitiesStore.add], joinedColonyEvent());
+
+  return activitiesStore;
 }
 
 export function* getUser(store: KVStore): Saga<UserRecord> {
   return yield call(getAll, store);
+}
+
+export function* fetchUserActivities(action: Action): Saga<void> {
+  const { walletAddress } = action.payload;
+
+  try {
+    const activitiesStore = yield call(
+      getOrCreateUserActivitiesStore,
+      walletAddress,
+    );
+    const activities = yield call([activitiesStore, activitiesStore.all]);
+    yield put({
+      type: USER_ACTIVITIES_FETCH_SUCCESS,
+      payload: { activities, walletAddress },
+    });
+  } catch (error) {
+    yield putError(USER_ACTIVITIES_FETCH_ERROR, error);
+  }
+}
+
+export function* addUserActivity(action: Action): Saga<void> {
+  const { walletAddress, activity } = action.payload;
+
+  try {
+    const activitiesStore = yield call(
+      getOrCreateUserActivitiesStore,
+      walletAddress,
+    );
+
+    yield call([activitiesStore, activitiesStore.add], activity);
+    const activities = yield call([activitiesStore, activitiesStore.all]);
+
+    yield put({
+      type: USER_ACTIVITIES_UPDATE_SUCCESS,
+      payload: { activities, walletAddress },
+    });
+  } catch (error) {
+    yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
+  }
 }
 
 function* updateProfile(action: Action): Saga<void> {
@@ -95,14 +196,13 @@ function* updateProfile(action: Action): Saga<void> {
     // if user is not allowed to write to store, this should throw an error
     // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
     const {
-      orbitStore,
+      profileStore,
       walletAddress: removedWalletAddress,
       username,
       ...update
     } = action.payload;
     yield call([store, store.set], update);
     const user = yield call(getAll, store);
-
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
       payload: user,
@@ -131,7 +231,6 @@ function* fetchProfile(action: Action): Saga<void> {
     );
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
-
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
       payload: { user },
@@ -267,12 +366,12 @@ function* removeAvatar(): Saga<void> {
 
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
+  yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
   yield takeLatest(USERNAME_VALIDATE, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
-
-  // each of these should be handled
+  yield takeEvery(USER_ACTIVITIES_FETCH, fetchUserActivities);
   yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
   yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
 }

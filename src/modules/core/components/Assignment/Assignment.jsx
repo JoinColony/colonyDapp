@@ -64,9 +64,11 @@ const Assignment = ({
           <div className={styles.avatarContainer}>
             <UserAvatar
               className={styles.recipientAvatar}
-              userId={assignee.walletAddress}
-              walletAddress={assignee.walletAddress}
-              username={assignee.username || assignee.walletAddress}
+              userId={assignee.profile.walletAddress}
+              walletAddress={assignee.profile.walletAddress}
+              username={
+                assignee.profile.username || assignee.profile.walletAddress
+              }
               size="xs"
             />
           </div>
@@ -83,7 +85,7 @@ const Assignment = ({
               role="button"
               className={pending ? styles.pending : styles.assigneeName}
             >
-              {assignee.displayName}
+              {assignee.profile.displayName}
               {pending && (
                 <span className={styles.pendingLabel}>
                   <FormattedMessage {...MSG.pendingAssignment} />

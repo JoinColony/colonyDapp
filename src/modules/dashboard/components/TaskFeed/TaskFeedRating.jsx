@@ -29,12 +29,16 @@ const displayName = 'dashboard.TaskFeed.TaskFeedRating';
 
 const TaskFeedRating = ({
   rater: {
-    avatar: raterAvatar,
-    displayName: raterDisplayName,
-    username: raterUserName,
-    walletAddress: raterWalletAddress,
+    profile: {
+      avatar: raterAvatar,
+      displayName: raterDisplayName,
+      username: raterUserName,
+      walletAddress: raterWalletAddress,
+    },
   },
-  ratee: { displayName: rateeDisplayName },
+  ratee: {
+    profile: { displayName: rateeDisplayName },
+  },
   rating,
 }: Props) => (
   <div className={styles.main}>

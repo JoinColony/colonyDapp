@@ -57,18 +57,18 @@ export const userSelector: UserProfileSelector = createSelector(
 );
 export const avatarSelector: UserAvatarSelector = createSelector(
   avatarsSelector,
-  (state, props) => (props.user ? props.user.avatar : undefined),
+  (state, props) => (props.user ? props.user.profile.avatar : undefined),
   (avatars, hash) => avatars.get(hash),
 );
 export const orbitAddressSelector: OrbitAddressSelector = createSelector(
   currentUser,
-  state => state.orbitStore,
+  state => state.profile.profileStore,
 );
 export const walletAddressSelector: WalletAddressSelector = createSelector(
   currentUser,
-  state => state.walletAddress,
+  state => state.profile.walletAddress,
 );
 export const usernameSelector: UsernameSelector = createSelector(
   currentUser,
-  state => state.username,
+  state => state.profile.username,
 );

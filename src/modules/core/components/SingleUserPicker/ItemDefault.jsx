@@ -32,7 +32,9 @@ type Props = {
 
 const ItemDefault = ({
   currentUserId,
-  itemData: { walletAddress, displayName, username },
+  itemData: {
+    profile: { walletAddress, displayName, username },
+  },
   showAddress,
   showMaskedAddress,
 }: Props) => (

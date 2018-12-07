@@ -19,9 +19,9 @@ const enhance: HOC<*, InProps> = compose(
      * @TODO: handle the logic for `showClaimInfoCard`
      * i.e. User has claimed profile, but not signed any transactions yet
      */
-    showClaimInfoCard: !!mockUser.username,
+    showClaimInfoCard: !!mockUser.profile.username,
     transactions: mockTransactions,
-    walletAddress: mockUser.walletAddress,
+    walletAddress: mockUser.profile.walletAddress,
   })),
 );
 

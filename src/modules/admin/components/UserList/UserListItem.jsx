@@ -51,7 +51,9 @@ type Props = {
 };
 
 const UserListItem = ({
-  user: { walletAddress, username = '', displayName = '' },
+  user: {
+    profile: { walletAddress, username = '', displayName = '' },
+  },
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,

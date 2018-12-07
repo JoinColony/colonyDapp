@@ -22,7 +22,8 @@ type Props = UserAvatarProps & {
 class UserAvatar extends Component<Props> {
   componentDidMount() {
     const { avatarData, user, fetchUserAvatar } = this.props;
-    if (user && user.avatar && !avatarData) fetchUserAvatar(user.avatar);
+    if (user && user.profile.avatar && !avatarData)
+      fetchUserAvatar(user.profile.avatar);
   }
 
   render() {

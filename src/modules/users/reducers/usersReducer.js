@@ -1,6 +1,7 @@
 /* @flow */
 
 import {
+  USER_ACTIVITIES_FETCH_SUCCESS,
   USER_PROFILE_FETCH,
   USER_PROFILE_FETCH_ERROR,
   USER_PROFILE_FETCH_SUCCESS,
@@ -21,9 +22,11 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
 
     case USER_PROFILE_FETCH_SUCCESS: {
       const { user } = action.payload;
-      return state.setIn(['users', user.username], User(user)).merge({
-        isLoading: false,
-      });
+      return state
+        .setIn(['users', user.walletAddress], User({ profile: { ...user } }))
+        .merge({
+          isLoading: false,
+        });
     }
 
     case USER_PROFILE_FETCH_ERROR:
@@ -34,6 +37,10 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
       return state.setIn(['avatars', hash], avatarData);
     }
 
+    case USER_ACTIVITIES_FETCH_SUCCESS: {
+      const { activities, walletAddress } = action.payload;
+      return state.setIn(['users', walletAddress, 'activities'], activities);
+    }
     default:
       return state;
   }

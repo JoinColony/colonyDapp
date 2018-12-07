@@ -18,7 +18,8 @@ type Props = {
 };
 
 const isSameUser = (a: UserRecord, b: UserRecord) =>
-  a.walletAddress.toLowerCase() === b.walletAddress.toLowerCase();
+  a.profile.walletAddress.toLowerCase() ===
+  b.profile.walletAddress.toLowerCase();
 
 class TaskFeed extends Component<Props> {
   bottomEl: *;

@@ -12,7 +12,7 @@ import setupDashboardSagas from '../../dashboard/sagas';
 import setupTransactionsSagas from './transactions';
 import {
   getUser,
-  getUserStore,
+  getOrCreateUserStore,
   getWallet,
   setupUserSagas,
 } from '../../users/sagas';
@@ -56,7 +56,7 @@ export default function* setupUserContext(action: Action): Saga<void> {
 
     yield setContext({ ddb, colonyManager });
 
-    const userStore = yield call(getUserStore, wallet.address);
+    const userStore = yield call(getOrCreateUserStore, wallet.address);
     const user = yield call(getUser, userStore);
 
     // TODO: the user could potentially alter their username on the DDB w/o changing it on the DDB
@@ -72,8 +72,6 @@ export default function* setupUserContext(action: Action): Saga<void> {
       payload: {
         user,
         walletAddress: wallet.address,
-        // Address is an orbit address object
-        orbitStore: userStore.address.toString(),
       },
     });
   } catch (err) {

@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserRecord } from '~types/UserRecord';
-
 import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,
@@ -13,6 +11,8 @@ import DropdownMenu, {
 import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
+
+import type { UserRecord } from '~types/UserRecord';
 
 const MSG = defineMessages({
   buttonGetStarted: {
@@ -59,7 +59,9 @@ class AvatarDropdownPopover extends Component<Props> {
 
   renderUserSection = () => {
     const {
-      user: { username },
+      user: {
+        profile: { username },
+      },
     } = this.props;
     return (
       <DropdownMenuSection separator>
@@ -90,7 +92,9 @@ class AvatarDropdownPopover extends Component<Props> {
 
   renderColonySection = () => {
     const {
-      user: { username },
+      user: {
+        profile: { username },
+      },
     } = this.props;
     if (username) {
       return (

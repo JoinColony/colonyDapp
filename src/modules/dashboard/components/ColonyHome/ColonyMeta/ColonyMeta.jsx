@@ -110,10 +110,12 @@ const ColonyMeta = ({
         {owners.map(
           (
             {
-              avatar: ownerAvatar,
-              walletAddress: ownerWalletAddress,
-              displayName: ownerDisplayName,
-              username: ownerUsername,
+              profile: {
+                avatar: ownerAvatar,
+                walletAddress: ownerWalletAddress,
+                displayName: ownerDisplayName,
+                username: ownerUsername,
+              },
             }: UserRecord,
             index: number,
           ) => (
@@ -139,10 +141,12 @@ const ColonyMeta = ({
         {admins.map(
           (
             {
-              avatar: adminAvatar,
-              walletAddress: adminWalletAddress,
-              displayName: adminDisplayName,
-              username: adminUsername,
+              profile: {
+                avatar: adminAvatar,
+                walletAddress: adminWalletAddress,
+                displayName: adminDisplayName,
+                username: adminUsername,
+              },
             }: UserRecord,
             index: number,
           ) => (

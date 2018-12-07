@@ -40,8 +40,7 @@ const messages = defineMessages({
   },
   joinedColony: {
     id: 'dashboard.UserActivity.joinedColony',
-    defaultMessage: 'Joined Colony ',
+    defaultMessage: 'Joined Colony',
   },
 });
-
 export default messages;

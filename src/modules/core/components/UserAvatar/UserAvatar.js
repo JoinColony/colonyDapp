@@ -7,7 +7,6 @@ import UserAvatar from './UserAvatar.jsx';
 
 import { withUser } from '../../../users/composers';
 import { avatarSelector } from '../../../users/selectors';
-// eslint-disable-next-line max-len
 import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionCreators';
 
 export default compose(

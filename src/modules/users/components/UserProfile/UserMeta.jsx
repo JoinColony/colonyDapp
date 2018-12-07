@@ -16,7 +16,9 @@ type Props = {
 };
 
 const UserMeta = ({
-  user: { username, displayName, bio, website, location, walletAddress },
+  user: {
+    profile: { username, displayName, bio, website, location, walletAddress },
+  },
 }: Props) => (
   <div className={styles.main}>
     <UserAvatar

@@ -129,7 +129,7 @@ class Dashboard extends Component<Props, State> {
                 tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,
-                  walletAddress: currentUser.walletAddress,
+                  walletAddress: currentUser.profile.walletAddress,
                 }}
                 userClaimedProfile={userClaimedProfile}
               />
