@@ -66,17 +66,6 @@ const enhance: HOC<*, InProps> = compose(
       !walletNeedsAction &&
       (set && set.length > 0 ? !!transactionToSign : statusCanBeSigned(status));
     return {
-      /*
-       * @TODO: actually look these up instead of have set values
-       */
-      txGasCostsEth: {
-        cheaper: 0.1,
-        cheaperWait: 12000,
-        faster: 0.05,
-        fasterWait: 2300,
-        suggested: 0.2,
-        suggestedWait: 8640,
-      },
       isNetworkCongested,
       walletNeedsAction,
       canSignTransaction,
