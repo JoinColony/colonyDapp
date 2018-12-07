@@ -23,7 +23,7 @@ const usersReducer = (state: Users = INITIAL_STATE, action: Action) => {
     case USER_PROFILE_FETCH_SUCCESS: {
       const { user } = action.payload;
       return state
-        .setIn(['users', user.walletAddress], User({ profile: { ...user } }))
+        .setIn(['users', user.username], User({ profile: { ...user } }))
         .merge({
           isLoading: false,
         });
