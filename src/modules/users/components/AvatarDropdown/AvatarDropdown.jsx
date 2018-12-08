@@ -32,6 +32,7 @@ const AvatarDropdown = ({ user }: Props) => (
         username={user.profile.username}
         avatarURL={user.profile.avatar}
         walletAddress={user.profile.walletAddress}
+        link={false}
       />
     </button>
   </Popover>

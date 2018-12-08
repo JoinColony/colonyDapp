@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
+import NavLink from '../NavLink';
 import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
 import type { UserRecord } from '~types/UserRecord';
 
@@ -16,6 +17,7 @@ import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionC
 type Props = UserAvatarProps & {
   user?: UserRecord,
   avatarData?: string,
+  link?: boolean,
   fetchUserAvatar: (hash: string) => void,
 };
 
@@ -27,8 +29,14 @@ class UserAvatar extends Component<Props> {
   }
 
   render() {
-    const { avatarData } = this.props;
-    return <UserAvatarDisplay {...this.props} avatarURL={avatarData} />;
+    const { avatarData, link, username } = this.props;
+    return link && username ? (
+      <NavLink to={`/user/${username.toLowerCase()}`}>
+        <UserAvatarDisplay {...this.props} avatarURL={avatarData} />
+      </NavLink>
+    ) : (
+      <UserAvatarDisplay {...this.props} avatarURL={avatarData} />
+    );
   }
 }
 
