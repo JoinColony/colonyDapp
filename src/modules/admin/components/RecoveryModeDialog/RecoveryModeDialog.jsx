@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ConfirmDialog } from '~core/Dialog';
@@ -24,39 +24,25 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'admin.RecoveryModeDialog';
+
 type Props = {
   cancel: () => void,
   close: () => void,
 };
 
-class RecoveryModeDialog extends Component<Props> {
-  static displayName = 'admin.RecoveryModeDialog';
+const RecoveryModeDialog = ({ cancel, close }: Props) => (
+  <ConfirmDialog
+    appearance={{ theme: 'danger' }}
+    cancel={cancel}
+    close={close}
+    heading={MSG.title}
+    confirmButtonText={MSG.recoveryModeButton}
+  >
+    <FormattedMessage {...MSG.description} />
+  </ConfirmDialog>
+);
 
-  handleEnterRecovery = () => {
-    const { close } = this.props;
-    /*
-     * @TODO Actually set the colony in recovery mode
-     */
-    close();
-  };
-
-  render() {
-    const {
-      props: { cancel },
-      handleEnterRecovery,
-    } = this;
-    return (
-      <ConfirmDialog
-        appearance={{ theme: 'danger' }}
-        cancel={cancel}
-        close={handleEnterRecovery}
-        heading={MSG.title}
-        confirmButtonText={MSG.recoveryModeButton}
-      >
-        <FormattedMessage {...MSG.description} />
-      </ConfirmDialog>
-    );
-  }
-}
+RecoveryModeDialog.displayName = displayName;
 
 export default RecoveryModeDialog;
