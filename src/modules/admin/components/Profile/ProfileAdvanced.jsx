@@ -3,12 +3,16 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { OpenDialog } from '~core/Dialog/types';
+import type { ColonyType } from '~types/colony';
+import type { Given } from '~utils/hoc';
+
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
 import styles from './ProfileAdvanced.css';
 
-import type { ColonyType } from '~types/colony';
+const mockColonyRecoveryMode = false;
 
 const MSG = defineMessages({
   labelVersion: {
@@ -33,9 +37,15 @@ const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {
   colony: ColonyType,
+  openDialog: OpenDialog,
+  given: Given,
 };
 
-const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
+const ProfileAdvanced = ({
+  colony: { version, id },
+  openDialog,
+  given,
+}: Props) => (
   <div className={styles.main}>
     <section className={styles.section}>
       <div className={styles.withInlineButton}>
@@ -65,8 +75,21 @@ const ProfileAdvanced = ({ colony: { version, id } }: Props) => (
     <Button
       appearance={{ theme: 'blue' }}
       text={MSG.buttonRecovery}
-      // eslint-disable-next-line no-console
-      onClick={() => console.log(`[${displayName}] Entering recovery mode`)}
+      onClick={() =>
+        openDialog('RecoveryModeDialog')
+          .afterClosed()
+          /*
+           * @TODO Wire up setting the Colony into Recovery Mode
+           */
+          .then(() =>
+            /* eslint-disable-next-line no-console */
+            console.log(`[${displayName}] Colony set to Recovery Mode!`),
+          )
+      }
+      /*
+       * @NOTE If we're already in Recovery mode, this button should be disabled
+       */
+      disabled={given(mockColonyRecoveryMode)}
     />
   </div>
 );

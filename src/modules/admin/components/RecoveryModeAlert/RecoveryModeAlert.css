@@ -1,0 +1,10 @@
+.main {
+  padding: 15px 0;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: var(--danger);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: white;
+}

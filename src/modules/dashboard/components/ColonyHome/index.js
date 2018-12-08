@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './ColonyHome.jsx';
+export { default } from './ColonyHome';

@@ -31,9 +31,15 @@ const MSG = defineMessages({
   },
 });
 
+type Appearance = {
+  theme?: 'primary' | 'danger',
+};
+
 type Props = {
   cancel: () => void,
   close: (val: any) => void,
+  /** Appearance object */
+  appearance?: Appearance,
   heading?: string | MessageDescriptor,
   children?: Node,
   cancelButtonText?: string | MessageDescriptor,
@@ -51,6 +57,7 @@ const ConfirmDialog = ({
   cancelButtonText = MSG.defaultCancelButton,
   // $FlowFixMe
   confirmButtonText = MSG.defaultConfirmButton,
+  appearance,
 }: Props) => (
   <Dialog cancel={cancel}>
     <DialogSection appearance={{ border: 'bottom' }}>
@@ -66,7 +73,10 @@ const ConfirmDialog = ({
         text={cancelButtonText}
       />
       <Button
-        appearance={{ theme: 'primary', size: 'large' }}
+        appearance={{
+          theme: (appearance && appearance.theme) || 'primary',
+          size: 'large',
+        }}
         onClick={close}
         text={confirmButtonText}
       />

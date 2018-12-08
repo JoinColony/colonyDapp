@@ -2,7 +2,8 @@
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { connect } from 'react-redux';
+
+import type { Given } from '~utils/hoc';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -10,8 +11,7 @@ import ColonyGrid from '~core/ColonyGrid';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import TaskList from '~dashboard/TaskList';
-
-import { walletAddressSelector } from '../../../users/selectors/users';
+import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 
 import ColonyMeta from './ColonyMeta';
 
@@ -25,6 +25,8 @@ import {
 import mockTasks from './__datamocks__/mockTasks';
 import mockColonies from './__datamocks__/mockColonies';
 import mockDomains from './__datamocks__/mockDomains';
+
+const mockColonyRecoveryMode = true;
 
 const MSG = defineMessages({
   tabContribute: {
@@ -76,6 +78,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 
 type Props = {
   walletAddress: string,
+  given: Given,
 };
 
 type State = {
@@ -92,6 +95,10 @@ const filterOptions = [
 
 class ColonyHome extends Component<Props, State> {
   static displayName = 'dashboard.ColonyHome';
+
+  static defaultProps = {
+    inRecovery: false,
+  };
 
   state = {
     filterOption: 'all',
@@ -127,7 +134,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress } = this.props;
+    const { walletAddress, given } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -187,6 +194,7 @@ class ColonyHome extends Component<Props, State> {
             text={MSG.newTaskButton}
             appearance={{ theme: 'primary', size: 'large' }}
             onClick={() => 'unset'}
+            disabled={given(mockColonyRecoveryMode)}
           />
           <ul className={styles.domainsFilters}>
             <Heading
@@ -215,11 +223,10 @@ class ColonyHome extends Component<Props, State> {
             ))}
           </ul>
         </aside>
+        {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
       </div>
     );
   }
 }
 
-export default connect((state: Object) => ({
-  walletAddress: walletAddressSelector(state),
-}))(ColonyHome);
+export default ColonyHome;
