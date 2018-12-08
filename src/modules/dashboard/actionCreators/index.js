@@ -59,16 +59,18 @@ export const createToken = (
   });
 
 export const createColonyLabel = (
+  identifier: string,
   params: {
     colonyName: string,
     orbitDBPath: string,
   },
   options?: SendOptions,
 ) =>
-  createNetworkTransaction({
+  createColonyTransaction({
     params,
     options,
     methodName: 'registerColonyLabel',
+    identifier,
     lifecycle: {
       error: COLONY_CREATE_LABEL_ERROR,
       success: COLONY_CREATE_LABEL_SUCCESS,
