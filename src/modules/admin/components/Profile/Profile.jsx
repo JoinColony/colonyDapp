@@ -6,7 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import ProfileEdit from './ProfileEdit.jsx';
-import ProfileAdvanced from './ProfileAdvanced.jsx';
+import ProfileAdvanced from './ProfileAdvanced';
 
 import styles from './Profile.css';
 
