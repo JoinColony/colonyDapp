@@ -18,11 +18,11 @@ type EstimatedGasCostAPIResponse = {
 };
 
 export type EstimatedGasCost = {
-  cheaper: BN,
+  cheaper: string,
   cheaperWait: number,
-  faster: BN,
+  faster: string,
   fasterWait: number,
-  suggested: BN,
+  suggested: string,
   suggestedWait: number,
 };
 
@@ -52,11 +52,11 @@ export const getEstimatedGasCost = (
     if (!isCacheExpired) {
       const parsedGasCosts = JSON.parse(cachedGasCost);
       const { cheaper, faster, suggested } = parsedGasCosts;
-      const bnFormattedCosts = {
+      const bnFormattedCosts: EstimatedGasCost = {
         ...parsedGasCosts,
-        cheaper: new BN(cheaper),
-        faster: new BN(faster),
-        suggested: new BN(suggested),
+        cheaper: new BN(cheaper).toString(),
+        faster: new BN(faster).toString(),
+        suggested: new BN(suggested).toString(),
       };
       return Promise.resolve(bnFormattedCosts);
     }
@@ -78,17 +78,17 @@ export const getEstimatedGasCost = (
         safeLowWait,
       }: EstimatedGasCostAPIResponse) => {
         /*
-         * For some reason, this API returns gas cost in units
-         * 10 Gwei. So we need to divide by 10 to get to 1 Gwei
+         * This API returns gas cost in units of 10 Gwei.
+         * So we need to divide by 10 to get to 1 Gwei
          */
-        const suggested = new BN(suggested10Gwei / 10).mul(gasLimit);
-        const cheaper = new BN(cheaper10Gwei / 10).mul(gasLimit);
-        const faster = new BN(faster10Gwei / 10).mul(gasLimit);
+        const suggested = new BN(suggested10Gwei / 10).mul(gasLimit).toString();
+        const cheaper = new BN(cheaper10Gwei / 10).mul(gasLimit).toString();
+        const faster = new BN(faster10Gwei / 10).mul(gasLimit).toString();
         const cheaperWait = Math.ceil(safeLowWait * 60);
         const fasterWait = Math.ceil(fastWait * 60);
         const suggestedWait = Math.ceil(avgWait * 60);
 
-        const estimatedCosts = {
+        const estimatedCosts: EstimatedGasCost = {
           cheaper,
           cheaperWait,
           faster,

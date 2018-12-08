@@ -227,7 +227,6 @@ class GasStationPrice extends Component<Props, State> {
                   <div className={styles.transactionFeeActions}>
                     {transactionFee && (
                       <div className={styles.transactionFeeAmount}>
-                        {/* @TODO: get estimated gas cost & use here */}
                         <Numeral
                           decimals={18}
                           value={transactionFee}
