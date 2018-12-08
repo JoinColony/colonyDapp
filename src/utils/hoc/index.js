@@ -22,7 +22,6 @@ export type Given = (
   dependantSelector?: DependantSelector,
 ) => any | boolean;
 
-// eslint-disable-next-line import/prefer-default-export
 export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
   Component: ComponentType<{ [string]: any }>,
 ) => (props: Object) =>
