@@ -9,6 +9,7 @@ const mockInbox = [
     user: {
       walletAddress: '0xF822d689a2e10c1511dcD54dF5Ce43a9d393e75c',
       username: 'Ragny',
+      displayName: 'Ragny',
     },
     colonyName: 'The Nords',
   },

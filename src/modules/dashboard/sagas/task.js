@@ -24,6 +24,7 @@ import {
   submitManagerRatingAsWorkerTx,
   submitTaskDeliverableAndRatingTx,
   submitWorkerRatingAsManagerTx,
+  taskWorkerAssignTx,
   taskCreateBatch,
   taskMoveFundsBatch,
   taskSetWorkerPayoutBatch,
@@ -60,6 +61,7 @@ import {
   TASK_UPDATE,
   TASK_UPDATE_ERROR,
   TASK_UPDATE_SUCCESS,
+  TASK_WORKER_ASSIGN,
   TASK_WORKER_CLAIM_REWARD,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
@@ -581,12 +583,22 @@ function* taskFinalizeSaga({
   );
 }
 
+function* taskWorkerAssignSaga({
+  payload: { colonyENSName, taskId, user },
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
+  yield put(
+    taskWorkerAssignTx({ identifier: colonyENSName, params: { taskId, user }, meta }),
+  );
+}
+
 export default function* tasksSagas(): any {
   yield takeEvery(TASK_CREATE, taskCreateSaga);
   yield takeEvery(TASK_MODIFY_WORKER_PAYOUT, taskModifyWorkerPayoutSaga);
   yield takeEvery(TASK_FETCH, taskFetchSaga);
   yield takeEvery(TASK_FETCH_ALL, taskFetchAllSaga);
   yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
+  yield takeEvery(TASK_WORKER_ASSIGN, taskWorkerAssignSaga);
   yield takeEvery(TASK_MANAGER_END, completeTaskSaga);
   yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
   yield takeEvery(TASK_REMOVE, taskRemoveSaga);

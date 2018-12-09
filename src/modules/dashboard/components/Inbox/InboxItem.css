@@ -74,3 +74,19 @@
 .fullWidthLink {
   width: 100%;
 }
+
+.noStyleButton {
+  padding: none;
+  padding: var(--pad-none);
+  height: auto;
+  width: 100%;
+  border-color: none;
+  border-color: transparent;
+  background-color: none;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.noStyleButton:focus {
+  outline: none;
+}

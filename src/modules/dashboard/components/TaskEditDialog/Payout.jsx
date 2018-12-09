@@ -34,11 +34,13 @@ type Props = {|
   reputation?: number,
   isEth?: boolean,
   tokenOptions: Array<{ value: number, label: string }>,
+  editPayout: boolean,
   remove: () => void,
 |};
 
 class Payout extends Component<Props, State> {
   static displayName = 'dashboard.TaskEditDialog.Payout';
+  static defaultProps = { editPayout: true };
 
   state = { editing: false };
 
@@ -57,6 +59,7 @@ class Payout extends Component<Props, State> {
       tokenOptions,
       isEth = false,
       remove,
+      editPayout,
     } = this.props;
     const { editing } = this.state;
 
@@ -124,11 +127,15 @@ class Payout extends Component<Props, State> {
             ) : (
               <FormattedMessage {...MSG.notSet} />
             )}
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={{ id: 'button.modify' }}
-              onClick={this.toggleEdit}
-            />
+            <div>
+              {editPayout && (
+                <Button
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  text={{ id: 'button.modify' }}
+                  onClick={this.toggleEdit}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

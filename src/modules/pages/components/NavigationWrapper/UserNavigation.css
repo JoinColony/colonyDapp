@@ -31,6 +31,9 @@
     margin-left: 3px;
     height: 8px;
     width: 8px;
+    position: absolute;
+    top: 25px;
+    right: 97px;
     border-radius: 50%;
     background-color: var(--danger);
     content: '';

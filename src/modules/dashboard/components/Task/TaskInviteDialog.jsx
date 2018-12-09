@@ -21,6 +21,12 @@ import styles from './TaskInviteDialog.css';
 
 import tokensMock from '../Wallet/__datamocks__/mockTokens';
 
+import {
+  TASK_WORKER_ASSIGN,
+  TASK_WORKER_ASSIGN_SUCCESS,
+  TASK_WORKER_ASSIGN_ERROR,
+} from '../../actionTypes';
+
 const MSG = defineMessages({
   titleAssignment: {
     id: 'dashboard.Task.taskInviteDialog.titleAssignment',
@@ -30,34 +36,6 @@ const MSG = defineMessages({
     id: 'dashboard.Task.taskInviteDialog.titleFunding',
     defaultMessage: 'Funding',
   },
-  add: {
-    id: 'dashboard.Task.taskInviteDialog.add',
-    defaultMessage: 'Add +',
-  },
-  notSet: {
-    id: 'dashboard.Task.taskInviteDialog.notSet',
-    defaultMessage: 'Not set',
-  },
-  search: {
-    id: 'dashboard.Task.taskInviteDialog.search',
-    defaultMessage: 'Search...',
-  },
-  selectAssignee: {
-    id: 'dashboard.Task.taskInviteDialog.selectAssignee',
-    defaultMessage: 'Select Assignee',
-  },
-  insufficientFundsError: {
-    id: 'dashboard.Task.taskInviteDialog.insufficientFundsError',
-    defaultMessage: "You don't have enough funds",
-  },
-  tokenRequiredError: {
-    id: 'dashboard.Task.taskInviteDialog.tokenRequiredError',
-    defaultMessage: 'Token required',
-  },
-  amountRequiredError: {
-    id: 'dashboard.Task.taskInviteDialog.amountRequiredError',
-    defaultMessage: 'Amount required',
-  },
 });
 
 type State = {
@@ -65,6 +43,7 @@ type State = {
 };
 
 type Props = {
+  taskId: number,
   assignee?: UserRecord,
   payouts?: Array<Object>,
   reputation?: BigNumber,
@@ -90,6 +69,17 @@ class TaskInviteDialog extends Component<Props, State> {
     this.mounted = false;
   }
 
+  setPayload = (action: Object, { assignee }: Object) => {
+    const { taskId } = this.props;
+    return {
+      ...action,
+      payload: {
+        user: assignee.profile.walletAddress,
+        taskId,
+      },
+    };
+  };
+
   mounted = false;
 
   render() {
@@ -98,12 +88,13 @@ class TaskInviteDialog extends Component<Props, State> {
     return (
       <FullscreenDialog cancel={cancel}>
         <ActionForm
-          submit="TASK_ACCEPT_INVITE"
-          success="TASK_ACCEPT_INVITE_SUCCESS"
-          error="TASK_ACCEPT_INVITE_ERROR"
-          initialValues={{ assignee }}
+          initialValues={{ payouts: payouts || [], assignee }}
+          submit={TASK_WORKER_ASSIGN}
+          success={TASK_WORKER_ASSIGN_SUCCESS}
+          error={TASK_WORKER_ASSIGN_ERROR}
+          setPayLoad={this.setPayload}
         >
-          {({ status, dirty, isSubmitting, errors }) => (
+          {({ status, isSubmitting }) => (
             <Fragment>
               <FormStatus status={status} />
               <DialogBox>
@@ -112,7 +103,14 @@ class TaskInviteDialog extends Component<Props, State> {
                     appearance={{ size: 'medium' }}
                     text={MSG.titleAssignment}
                   />
-                  <Assignment assignee={assignee} pending />
+                  <Assignment
+                    assignee={assignee}
+                    reputation={reputation}
+                    payouts={payouts}
+                    nativeToken="CLNY"
+                    showFunding={false}
+                    pending
+                  />
                 </DialogSection>
                 <DialogSection>
                   <div className={styles.taskEditContainer}>
@@ -129,13 +127,14 @@ class TaskInviteDialog extends Component<Props, State> {
                           const token = tokensMock[tokenIndex - 1] || {};
                           return (
                             <Payout
-                              key={payout.id}
+                              key={token.tokenSymbol}
                               name={`payouts.${index}`}
                               amount={amount}
                               symbol={token.tokenSymbol}
                               reputation={
                                 token.isNative ? reputation : undefined
                               }
+                              editPayout={false}
                               usdAmount={
                                 token.isEth && ethUsdConversion
                                   ? bnMultiply(ethUsdConversion, amount)
@@ -152,14 +151,13 @@ class TaskInviteDialog extends Component<Props, State> {
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
                   onClick={cancel}
-                  text={{ id: 'button.cancel' }}
+                  text={{ id: 'button.decline' }}
                   disabled={isSubmitting}
                 />
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
-                  text={{ id: 'button.confirm' }}
+                  text={{ id: 'button.accept' }}
                   type="submit"
-                  disabled={!dirty || !!Object.keys(errors).length}
                   loading={isSubmitting}
                 />
               </div>
