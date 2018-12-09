@@ -7,7 +7,8 @@ import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import { UserAvatarDisplay } from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
-import { DialogActionButton } from '~core/Button';
+import Button from '~core/Button';
+import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 
 import type { Node } from 'react';
@@ -15,6 +16,9 @@ import styles from './InboxItem.css';
 import MSG from './messages';
 
 import type { InboxElement, EventType } from './types';
+
+// eslint-disable-next-line import/no-named-as-default
+import mockTask from '../Task/__datamocks__/mockTask';
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
@@ -46,21 +50,42 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
+// TODO: get some taskdetails once inbox elements are wired up
+const getTaskDetails = () => mockTask;
+
 // Some inbox items link somewhere, others open a modal so it's important to differentiate here
 const ConditionalWrapper = ({
   to,
   children,
   event,
+  user,
 }: {
   to?: string,
   children: Node,
   event: string,
+  user?: {},
 }) => {
   if (event === 'actionWorkerInviteReceived') {
+    // TODO: Get task details based on task id,
+    // which would ideally be contained in the inbox item's data
+    // do this when wiring the the inbox
+    const details = getTaskDetails();
     return (
-      <DialogActionButton dialog="TaskInviteDialog">
-        {children}
-      </DialogActionButton>
+      <DialogLink
+        to="TaskInviteDialog"
+        props={{
+          assignee: { profile: user },
+          taskId: details.id,
+          reputation: details.reputation,
+          payouts: details.payouts,
+        }}
+      >
+        {({ open }) => (
+          <Button className={styles.noStyleButton} onClick={open}>
+            <div className={styles.inboxDetails}>{children}</div>
+          </Button>
+        )}
+      </DialogLink>
     );
   }
   if (to) {
@@ -101,7 +126,7 @@ const InboxItem = ({
   >
     <TableCell className={styles.inboxRowCell}>
       {/* TODO: check if event is the following actionWorkerInviteReceived */}
-      <ConditionalWrapper to={onClickRoute} event={event}>
+      <ConditionalWrapper to={onClickRoute} event={event} user={user}>
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
           <UserAvatarDisplay

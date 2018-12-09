@@ -8,7 +8,7 @@ import type { TaskPayoutType, UserType } from '~immutable';
 import styles from './Assignment.css';
 
 import Icon from '~core/Icon';
-import { UserAvatarDisplay } from '~core/UserAvatar';
+import UserAvatar from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
 
 const MSG = defineMessages({
@@ -46,6 +46,7 @@ type Props = {|
   pending?: boolean,
   /** We need to be aware of the native token to adjust the UI */
   nativeToken: string,
+  showFunding?: boolean,
 |};
 
 const Assignment = ({
@@ -54,6 +55,7 @@ const Assignment = ({
   reputation,
   pending,
   nativeToken,
+  showFunding,
 }: Props) => {
   const fundingWithNativeToken =
     payouts && payouts.find(payout => payout.token.symbol === nativeToken);
@@ -63,7 +65,7 @@ const Assignment = ({
       <div className={styles.displayContainer}>
         {assignee ? (
           <div className={styles.avatarContainer}>
-            <UserAvatarDisplay
+            <UserAvatar
               className={styles.recipientAvatar}
               address={assignee.profile.walletAddress}
               username={
@@ -98,9 +100,9 @@ const Assignment = ({
             </div>
           )}
         </div>
-        <div className={styles.fundingContainer}>
-          {reputation &&
-            fundingWithNativeToken && (
+        {showFunding && (
+          <div className={styles.fundingContainer}>
+            {reputation && fundingWithNativeToken && (
               <span className={styles.reputation}>
                 <FormattedMessage
                   {...MSG.reputation}
@@ -108,15 +110,18 @@ const Assignment = ({
                 />
               </span>
             )}
-          {payouts ? (
-            <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
-          ) : (
-            <FormattedMessage {...MSG.fundingNotSet} />
-          )}
-        </div>
+            {payouts ? (
+              <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
+            ) : (
+              <FormattedMessage {...MSG.fundingNotSet} />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+Assignment.defaultProps = { showFunding: true };
 
 export default Assignment;
