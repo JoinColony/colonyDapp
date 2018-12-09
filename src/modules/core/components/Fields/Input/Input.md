@@ -196,6 +196,18 @@ Uses the background color of its background (same for text). This should also wo
 />
 ```
 
+### Input that displays extension
+
+```js
+<Input
+  name="ENSname"
+  appearance={{ theme: 'fat' }}
+  label="Tell me your name"
+  extensionString=".joincolony.eth"
+  connect={false}
+/>
+```
+
 ### Formatting using [Cleave.js](https://nosir.github.io/cleave.js/)
 
 ```js

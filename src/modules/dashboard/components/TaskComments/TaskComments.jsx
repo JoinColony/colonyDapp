@@ -49,6 +49,7 @@ type Props = {
    */
   claimedProfile: boolean,
   openDialog: OpenDialog,
+  walletAddress: string,
 } & FormikProps<FormValues>;
 
 const displayName = 'dashboard.TaskComments';
@@ -57,7 +58,7 @@ const validationSchema = yup.object().shape({
   comment: yup.string().required(),
 });
 
-const TaskComments = ({ claimedProfile, openDialog }: Props) => {
+const TaskComments = ({ claimedProfile, openDialog, walletAddress }: Props) => {
   const handleKeyboardSubmit = (
     capturedEvent: SyntheticKeyboardEvent<*>,
     callback: (e: SyntheticEvent<any>) => any,
@@ -81,7 +82,16 @@ const TaskComments = ({ claimedProfile, openDialog }: Props) => {
     if (!claimedProfile) {
       return openDialog('UnfinishedProfileDialog')
         .afterClosed()
-        .then(() => openDialog('CreateUsernameDialog'));
+        .then(() =>
+          openDialog('ClaimProfileDialog', { walletAddress })
+            .afterClosed()
+            .then(() => openDialog('ENSNameDialog'))
+            .catch(err => {
+              // eslint-disable-next-line no-console
+              console.log(err);
+            }),
+        );
+      // TODO: Open Gasstation after the last modal
     }
     return false;
   };

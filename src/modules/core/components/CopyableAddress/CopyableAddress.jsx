@@ -20,6 +20,13 @@ const MSG = defineMessages({
       false {Copy}
     }`,
   },
+  buttonCopyLong: {
+    id: 'CopyableAddress.buttonCopyLong',
+    defaultMessage: `{copiedAddress, select,
+      true {Copied Wallet Address}
+      false {Copy Wallet Address}
+    }`,
+  },
 });
 
 type Appearance = {
@@ -31,8 +38,10 @@ type Props = {
   appearance?: Appearance,
   /** Address to display */
   children: string,
-  /** Indicates that the full addrres should be shown instead of an abbreviated one */
+  /** Indicates that the full address should be shown instead of an abbreviated one */
   full?: boolean,
+  /** In some occasions we want to show the button to copy only */
+  hideAddress?: boolean,
 };
 
 type State = {
@@ -41,6 +50,10 @@ type State = {
 
 class CopyableAddress extends Component<Props, State> {
   timeout: TimeoutID;
+
+  static defaultProps = {
+    hideAddress: false,
+  };
 
   state = {
     copiedAddress: false,
@@ -71,21 +84,19 @@ class CopyableAddress extends Component<Props, State> {
   };
 
   render() {
-    const { appearance } = this.props;
+    const { appearance, hideAddress } = this.props;
     const { copiedAddress } = this.state;
 
     return (
       <div className={getMainClasses(appearance, styles)}>
-        {this.getAddress()}
-        <span className={styles.copyButton}>
-          <Button
-            appearance={{ size: 'small', theme: 'blue' }}
-            disabled={copiedAddress}
-            onClick={this.handleCopyAddress}
-            text={{ ...MSG.buttonCopy }}
-            textValues={{ copiedAddress }}
-          />
-        </span>
+        {!hideAddress && this.getAddress()}
+        <Button
+          appearance={{ size: 'small', theme: 'blue' }}
+          disabled={copiedAddress}
+          onClick={this.handleCopyAddress}
+          text={hideAddress ? { ...MSG.buttonCopyLong } : { ...MSG.buttonCopy }}
+          textValues={{ copiedAddress }}
+        />
       </div>
     );
   }

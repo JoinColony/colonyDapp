@@ -31,6 +31,8 @@ type Props = {
   connect?: boolean,
   /** Just render the `<input>` element without label */
   elementOnly?: boolean,
+  /** Add extension of input to the right of it, i.e. for ENS name */
+  extensionString?: string | MessageDescriptor,
   /** Extra node to render on the top right in the label */
   extra?: Node,
   /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */
@@ -75,6 +77,7 @@ type Props = {
 const Input = ({
   appearance,
   elementOnly,
+  extensionString,
   formattingOptions,
   formatIntl,
   help,
@@ -119,7 +122,12 @@ const Input = ({
         help={help}
         extra={extra}
       />
-      <InputComponent {...inputProps} />
+      <div className={styles.extensionContainer}>
+        <InputComponent {...inputProps} />
+        {extensionString && (
+          <div className={styles.extension}>{formatIntl(extensionString)}</div>
+        )}
+      </div>
       <InputStatus appearance={appearance} status={status} error={$error} />
     </div>
   );

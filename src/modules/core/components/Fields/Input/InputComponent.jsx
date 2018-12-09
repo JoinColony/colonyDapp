@@ -1,7 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import type { MessageDescriptor, IntlShape, MessageValues } from 'react-intl';
 import Cleave from 'cleave.js/react';
+import { injectIntl } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
@@ -19,6 +21,8 @@ export type Appearance = {
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
 type Props = {
+  /** Values for html title (react-intl interpolation) */
+  placeholderValues?: MessageValues,
   /** Appearance object */
   appearance?: Appearance,
   /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */
@@ -26,7 +30,11 @@ type Props = {
   /** Input field name (form variable) */
   name: string,
   /** @ignore Will be injected by `asField` */
+  placeholder?: string | MessageDescriptor,
+  /** @ignore Will be injected by `asField` */
   isSubmitting?: boolean,
+  /** @ignore injected by `react-intl` */
+  intl: IntlShape,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLInputElement) => void,
   /** @ignore Standard input field property */
@@ -56,8 +64,10 @@ class InputComponent extends Component<Props> {
       formattingOptions,
       innerRef,
       isSubmitting,
+      placeholder,
       ...props
     } = this.props;
+
     if (formattingOptions) {
       return (
         <Cleave
@@ -79,4 +89,4 @@ class InputComponent extends Component<Props> {
   }
 }
 
-export default InputComponent;
+export default injectIntl(InputComponent);

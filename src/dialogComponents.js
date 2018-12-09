@@ -15,14 +15,17 @@ import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
 import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import TaskEditDialog from '~dashboard/Task/TaskEditDialog.jsx';
 import CreateUsernameDialog from '~users/CreateUsernameDialog';
+import ClaimProfileDialog from '~users/ClaimProfileDialog';
+import ENSNameDialog from '~users/ENSNameDialog';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
 import UnfinishedProfileDialog from '~users/UnfinishedProfileDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 
 const dialogComponents: Object = {
-  // Hint: Once we have the gas station we just have to add it here
   ActivityBarExample,
+  ClaimProfileDialog,
   CreateUsernameDialog,
+  ENSNameDialog,
   TokenEditDialog,
   TokenMintDialog,
   TaskRequestWorkDialog,

@@ -70,7 +70,7 @@ const Organizations = () => (
           ) : (
             <Fragment>
               <Heading
-                appearance={{ size: 'small', wight: 'bold', margin: 'small' }}
+                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
                 text={MSG.labelAdminList}
               />
               <p className={styles.noCurrentAdmins}>

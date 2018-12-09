@@ -28,12 +28,14 @@ type Props = {
    */
   claimedProfile: boolean,
   openDialog: OpenDialog,
+  walletAddress: string,
 };
 
 const TaskRequestWork = ({
   isTaskCreator,
-  claimedProfile,
+  claimedProfile = false,
   openDialog,
+  walletAddress,
 }: Props) => (
   <Button
     text={MSG.requestWork}
@@ -42,9 +44,18 @@ const TaskRequestWork = ({
       if (!claimedProfile) {
         return openDialog('UnfinishedProfileDialog')
           .afterClosed()
-          .then(() => openDialog('CreateUsernameDialog'));
+          .then(() =>
+            openDialog('ClaimProfileDialog', { walletAddress })
+              .afterClosed()
+              .then(() => openDialog('ENSNameDialog'))
+              .catch(err => {
+                // eslint-disable-next-line no-console
+                console.log(err);
+              }),
+          );
+        // TODO: Open Gasstation after the last modal
       }
-      return openDialog('TaskRequestWorkDialog');
+      return false;
     }}
   />
 );

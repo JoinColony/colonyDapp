@@ -1,0 +1,30 @@
+.listMain {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 12px 0;
+  height: 64px;
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--grey-blue-0);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+
+  &:last-of-type {
+    border-bottom: 1px solid var(--grey-blue-0);
+  }
+}
+
+.rowContent {
+  flex: 1;
+}
+
+.rowIcon {
+  margin: 0 10px;
+  max-height: 36px;
+  width: 36px;
+}
+
+.container {
+  padding: 0px 30px;
+}
