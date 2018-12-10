@@ -150,7 +150,7 @@ function* createColonyLabelSaga({
     tokenSymbol,
     tokenIcon,
   });
-  const action = createColonyLabel({
+  const action = createColonyLabel(colonyAddress, {
     colonyName: ensName,
     orbitDBPath: store.address.toString(),
   });

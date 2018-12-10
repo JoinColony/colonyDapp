@@ -74,8 +74,13 @@ export default class ColonyManager {
     methodName: string,
     identifier?: AddressOrENSName,
   ): Promise<M> {
-    return context === NETWORK_CONTEXT
-      ? this.getNetworkMethod(methodName)
-      : this.getColonyMethod(methodName, identifier);
+    const method =
+      context === NETWORK_CONTEXT
+        ? this.getNetworkMethod(methodName)
+        : this.getColonyMethod(methodName, identifier);
+    if (!method) {
+      throw new Error(`Method ${method} not found on ${context}`);
+    }
+    return method;
   }
 }

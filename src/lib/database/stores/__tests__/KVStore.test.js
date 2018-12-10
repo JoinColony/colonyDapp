@@ -118,16 +118,16 @@ describe('KVStore', () => {
     const loadPromise = store.load();
 
     expect(loadPromise).toBeInstanceOf(Promise);
-    expect(listeners.replicated).toEqual(expect.any(Function));
+    expect(listeners.ready).toEqual(expect.any(Function));
 
-    listeners.replicated(); // Emit the event manually
+    listeners.ready(); // Emit the event manually
 
     await loadPromise;
 
     expect(store._orbitStore.load).toHaveBeenCalledTimes(1);
     expect(store._orbitStore.events.once).toHaveBeenCalledTimes(1);
     expect(store._orbitStore.events.once).toHaveBeenCalledWith(
-      'replicated',
+      'ready',
       expect.any(Function),
     );
   });

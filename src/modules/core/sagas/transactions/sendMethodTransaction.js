@@ -3,7 +3,6 @@
 import type { Saga } from 'redux-saga';
 import type { ContractResponse } from '@colony/colony-js-client';
 
-import { END, eventChannel } from 'redux-saga';
 import { call, put, select, take } from 'redux-saga/effects';
 
 import type {
@@ -16,8 +15,6 @@ import { putError } from '~utils/saga/effects';
 
 import type { Sender, SendTransactionAction } from '../../types';
 
-import { getMethod } from '../utils';
-
 import {
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -25,101 +22,15 @@ import {
   TRANSACTION_SENT,
 } from '../../actionTypes';
 import {
-  transactionEventDataError,
   transactionEventDataReceived,
-  transactionReceiptError,
   transactionReceiptReceived,
-  transactionSendError,
   transactionSent,
-  transactionUnsuccessfulError,
 } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
 
-/*
- * Given a promise for sending a transaction, send the transaction and
- * emit actions with the transaction status.
- */
-export const transactionChannel = <
-  P: TransactionParams,
-  E: TransactionEventData,
->(
-  txPromise: Promise<ContractResponse<E>>,
-  tx: TransactionRecord<P, E>,
-) =>
-  eventChannel(emit => {
-    const { id, params } = tx;
-    txPromise
-      .then(
-        ({
-          eventDataPromise,
-          meta: {
-            receiptPromise,
-            transaction: { hash },
-          },
-        }) => {
-          emit(transactionSent(id, { hash, params }));
+import { getMethod } from '../utils';
 
-          // XXX these promises will be present in the contract response, but
-          // we need to check for them, because we're using the
-          // `waitForMining: false` option when creating the promise.
-          if (receiptPromise)
-            receiptPromise
-              .then(receipt => {
-                emit(transactionReceiptReceived(id, { params, receipt }));
-                if (receipt.status === 1) {
-                  // If the receipt received and the transaction was successful,
-                  // wait for event data.
-                  if (eventDataPromise) {
-                    eventDataPromise
-                      .then(eventData => {
-                        emit(
-                          transactionEventDataReceived(id, {
-                            eventData,
-                            params,
-                          }),
-                        );
-                        emit(END);
-                      })
-                      .catch(eventDataError => {
-                        emit(
-                          transactionEventDataError(id, {
-                            message: eventDataError.message,
-                            params,
-                          }),
-                        );
-                        emit(END);
-                      });
-                  }
-                } else {
-                  // If the receipt was received but the tx wasn't successful,
-                  // emit an error event and stop the channel.
-                  emit(
-                    transactionUnsuccessfulError(id, {
-                      // TODO use revert reason strings (once supported)
-                      message: 'The transaction was unsuccessful',
-                      params,
-                    }),
-                  );
-                  emit(END);
-                }
-              })
-              .catch(receiptError => {
-                emit(
-                  transactionReceiptError(id, {
-                    message: receiptError.message,
-                    params,
-                  }),
-                );
-                emit(END);
-              });
-        },
-      )
-      .catch(sendError => {
-        emit(transactionSendError(id, { message: sendError.message, params }));
-        emit(END);
-      });
-    return () => {};
-  });
+import transactionChannel from './transactionChannel';
 
 /*
  * Given a transaction ID, get the matching record (if it exists and has not been sent)

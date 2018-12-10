@@ -41,8 +41,9 @@ then
     # Build network
     log "Building '${NETWORK}' submodule"
     cd "${LIB_PATH}/${NETWORK}"
-    git submodule update --init
+    # git submodule update --init
     yarn
+    yarn run provision:token:contracts
     cd ${ROOT_PATH}
 fi
 

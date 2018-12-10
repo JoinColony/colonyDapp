@@ -72,8 +72,8 @@ class KVStore extends Store {
     then this should be moved to another function.
    */
   async load() {
-    const replicatedPromise = new Promise(resolve => {
-      this._orbitStore.events.once('replicated', resolve);
+    const readyPromise = new Promise(resolve => {
+      this._orbitStore.events.once('ready', resolve);
     });
     const timeoutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -87,7 +87,7 @@ class KVStore extends Store {
 
     await super.load();
 
-    return Promise.race([replicatedPromise, timeoutPromise]);
+    return Promise.race([readyPromise, timeoutPromise]);
   }
 }
 
