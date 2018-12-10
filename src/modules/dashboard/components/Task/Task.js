@@ -2,15 +2,12 @@
 
 import { compose, withProps } from 'recompose';
 
-import withDialog from '~core/Dialog/withDialog';
-
 import Task from './Task.jsx';
 
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import { mockTask, mockTaskReward } from './__datamocks__/mockTask';
 
 const enhance = compose(
-  withDialog(),
   withProps(() => {
     const task = mockTask;
     const user = userMock;

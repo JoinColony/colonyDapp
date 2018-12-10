@@ -12,6 +12,9 @@ import {
   TASK_CREATE,
   TASK_CREATE_ERROR,
   TASK_CREATE_SUCCESS,
+  TASK_EDIT,
+  TASK_EDIT_ERROR,
+  TASK_EDIT_SUCCESS,
   TASK_CREATE_TRANSACTION_SENT,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
@@ -136,6 +139,63 @@ function* taskCreateSaga(action: Action): Saga<void> {
     console.log(taskId); // TODO: put taskId in DDB
   } catch (error) {
     yield putError(TASK_CREATE_ERROR, error);
+  }
+}
+
+function* taskEditSaga(action: Action): Saga<void> {
+  const {
+    colonyIdentifier,
+    orbitDBPath,
+    taskId,
+    assignee,
+    payouts,
+  } = action.payload;
+
+  try {
+    // eslint-disable-next-line no-unused-vars
+    let ddb;
+    if (orbitDBPath) {
+      // if exists in ddb, fetch it
+      // TODO: fetch from ddb
+    } else {
+      // otherwise create it
+      // TODO: create in ddb
+    }
+
+    if (taskId) {
+      // if exists on chain
+
+      if (assignee) {
+        // update assignee on chain (with multisig)
+        // TODO: send tx
+      }
+
+      if (payouts) {
+        // update payouts on chain (with multisig)
+        // TODO: send tx
+      }
+    } else {
+      // if not on chain yet
+
+      if (assignee) {
+        // create on chain
+        yield put({
+          type: TASK_CREATE,
+          payload: { colonyIdentifier, orbitDBPath },
+        });
+        yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
+        // TODO: reload ddb
+      }
+
+      if (payouts) {
+        // update draft payouts in ddb
+        // TODO: update ddb
+      }
+    }
+
+    yield put({ type: TASK_EDIT_SUCCESS });
+  } catch (error) {
+    yield putError(TASK_EDIT_ERROR, error);
   }
 }
 
@@ -276,6 +336,7 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
 
 export default function* taskSagas(): any {
   yield takeEvery(TASK_CREATE, taskCreateSaga);
+  yield takeEvery(TASK_EDIT, taskEditSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);

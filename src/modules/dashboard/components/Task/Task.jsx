@@ -8,13 +8,9 @@ import styles from './Task.css';
 
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
-import Button, { ActionButton, DialogActionButton } from '~core/Button';
+import { ActionButton, DialogActionButton } from '~core/Button';
 import Assignment from '~core/Assignment';
 
-/*
- * @TODO Temporary, please remove when wiring in the rating modals
- */
-import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskRecord, UserRecord } from '~types';
 
 import TaskDate from '~dashboard/TaskDate';
@@ -29,6 +25,9 @@ import TaskSkills from '~dashboard/TaskSkills';
 import { TASK_STATE } from '~immutable';
 
 import {
+  TASK_EDIT,
+  TASK_EDIT_ERROR,
+  TASK_EDIT_SUCCESS,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
   TASK_WORKER_END_SUCCESS,
@@ -88,7 +87,6 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  openDialog: OpenDialog,
   task: TaskRecord,
   taskReward: Object,
   user: UserRecord,
@@ -100,28 +98,6 @@ type Props = {
 class Task extends Component<Props> {
   displayName = 'dashboard.Task';
 
-  openTaskEditDialog = () => {
-    const { openDialog, task } = this.props;
-    const payouts = task.payouts.map(payout => ({
-      token:
-        // we add 1 because Formik thinks 0 is empty
-        tokensMock.indexOf(
-          tokensMock.find(token => token.symbol === payout.symbol),
-        ) + 1,
-      amount: payout.amount,
-      id: nanoid(),
-    }));
-
-    openDialog('TaskEditDialog', {
-      assignee: task.assignee,
-      availableTokens: tokensMock,
-      maxTokens: 2,
-      payouts,
-      reputation: task.reputation,
-      users: userMocks,
-    });
-  };
-
   setValues = (dialogValues?: Object = {}) => {
     const {
       task: { colonyENSName, id: taskId },
@@ -132,6 +108,28 @@ class Task extends Component<Props> {
       taskId,
     };
   };
+
+  get taskEditDialogProps() {
+    const { task } = this.props;
+    const payouts = task.payouts.map(payout => ({
+      token:
+        // we add 1 because Formik thinks 0 is empty
+        tokensMock.indexOf(
+          tokensMock.find(token => token.symbol === payout.symbol),
+        ) + 1,
+      amount: payout.amount,
+      id: nanoid(),
+    }));
+
+    return {
+      assignee: task.assignee,
+      availableTokens: tokensMock,
+      maxTokens: 2,
+      payouts,
+      reputation: task.reputation,
+      users: userMocks,
+    };
+  }
 
   get isWorker() {
     const {
@@ -196,10 +194,15 @@ class Task extends Component<Props> {
                 text={MSG.assignmentFunding}
               />
               {preventEdit && (
-                <Button
+                <DialogActionButton
                   appearance={{ theme: 'blue' }}
                   text={MSG.details}
-                  onClick={this.openTaskEditDialog}
+                  dialog="TaskEditDialog"
+                  dialogProps={this.taskEditDialogProps}
+                  submit={TASK_EDIT}
+                  success={TASK_EDIT_SUCCESS}
+                  errror={TASK_EDIT_ERROR}
+                  values={setValues}
                 />
               )}
             </header>
