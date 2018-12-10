@@ -1,4 +1,4 @@
-describe('Can create a username in dev mode', () => {
+describe('Can create a username and colony in dev mode', () => {
   it('The /connect page contains a TrufflePig button', () => {
     cy.visit('/connect');
     cy.contains('TrufflePig').click();
@@ -30,5 +30,7 @@ describe('Can create a username in dev mode', () => {
     cy.contains('Create Colony', { timeout: 20000 }).click();
     cy.get('[name="ensName"]', { timeout: 20000 }).type('Piglet');
     cy.contains('Done').click();
+    // After the colony label is registered, the spinner stops and the Done text reappears
+    cy.contains('Done', { timeout: 20000 });
   });
 });
