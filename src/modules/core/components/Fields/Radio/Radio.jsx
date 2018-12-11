@@ -13,9 +13,9 @@ import asField from '../asField';
 
 import styles from './Radio.css';
 
-type Appearance = {
+export type Appearance = {
   direction?: 'horizontal' | 'vertical',
-  theme?: 'fakeCheckbox' | 'colorPicker',
+  theme?: 'buttonGroup' | 'fakeCheckbox' | 'colorPicker',
 };
 
 type Props = {
@@ -91,51 +91,48 @@ const Radio = ({
   isSubmitting,
   connect,
   ...props
-}: Props) => {
-  const stateClass = checked ? styles.isChecked : styles.isUnchecked;
-  const childContentClass = children ? styles.radioWithCustomChildren : '';
-  return (
-    <label
-      className={`${getMainClasses(
-        appearance,
-        styles,
-      )} ${stateClass} ${childContentClass}`}
-      htmlFor={elementOnly ? inputId : null}
-    >
-      <Fragment>
-        <input
-          className={styles.delegate}
-          value={$value}
-          name={name}
-          type="radio"
-          id={inputId}
-          disabled={disabled}
-          aria-checked={checked}
-          aria-disabled={disabled}
-          aria-invalid={!!$error}
-          {...props}
-        />
-        <span className={styles.radio} style={radioStyle}>
-          {!!appearance && appearance.theme === 'fakeCheckbox' && (
-            <span className={styles.checkmark} />
-          )}
-        </span>
-        {!elementOnly && !!label ? (
-          <span className={styles.labelContainer}>
-            <InputLabel
-              appearance={{ direction: 'horizontal' }}
-              label={label}
-              help={help}
-              inputId={inputId}
-            />
-          </span>
-        ) : (
-          label || children
+}: Props) => (
+  <label
+    className={getMainClasses(appearance, styles, {
+      customChildren: !!children,
+      isChecked: checked,
+      isDisabled: !!disabled,
+    })}
+    htmlFor={elementOnly ? inputId : null}
+  >
+    <Fragment>
+      <input
+        className={styles.delegate}
+        value={$value}
+        name={name}
+        type="radio"
+        id={inputId}
+        disabled={disabled}
+        aria-checked={checked}
+        aria-disabled={disabled}
+        aria-invalid={!!$error}
+        {...props}
+      />
+      <span className={styles.radio} style={radioStyle}>
+        {!!appearance && appearance.theme === 'fakeCheckbox' && (
+          <span className={styles.checkmark} />
         )}
-      </Fragment>
-    </label>
-  );
-};
+      </span>
+      {!elementOnly && !!label ? (
+        <span className={styles.labelContainer}>
+          <InputLabel
+            appearance={{ direction: 'horizontal' }}
+            label={label}
+            help={help}
+            inputId={inputId}
+          />
+        </span>
+      ) : (
+        label || children
+      )}
+    </Fragment>
+  </label>
+);
 
 Radio.displayName = displayName;
 

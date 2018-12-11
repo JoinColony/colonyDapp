@@ -14,11 +14,6 @@
 
 .labelContainer {
   display: inline-block;
-  margin-top: 3px;
-}
-
-.radioWithCustomChildren .radio {
-  top: 0;
 }
 
 .radio {
@@ -49,7 +44,7 @@
   box-shadow: 0 0 3px 1px var(--primary);
 }
 
-.main.isChecked .radio {
+.main.stateIsChecked .radio {
   border-color: var(--primary);
 
   &::after {
@@ -57,7 +52,7 @@
   }
 }
 
-.themeColorPicker.isChecked .radio {
+.themeColorPicker.stateIsChecked .radio {
   border-color: var(--primary);
 }
 
@@ -93,7 +88,7 @@
 }
 
 /*
- * We copied over the checkmerk styles here, as we can't compose in children
+ * We copied over the checkmark styles here, as we can't compose in children
  * This is something we might want to solve using some sort of mixins eventually
  */
 .themeFakeCheckbox .checkmark {
@@ -105,7 +100,7 @@
   transform: rotate(45deg);
 }
 
-.themeFakeCheckbox.isChecked .checkmark::before {
+.themeFakeCheckbox.stateIsChecked .checkmark::before {
   height: 80%;
   width: 2px;
   position: absolute;
@@ -115,7 +110,7 @@
   content: '';
 }
 
-.themeFakeCheckbox.isChecked .checkmark::after {
+.themeFakeCheckbox.stateIsChecked .checkmark::after {
   height: 2px;
   width: 40%;
   position: absolute;
@@ -124,6 +119,46 @@
   background-color: var(--primary);
   content: '';
 }
+
+.themeButtonGroup {
+  display: inline-block;
+  padding: 6px 15px 0px 15px;
+  border: 1px solid var(--grey-blue-1);
+  background-color: var(--colony-white);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.themeButtonGroup:first-of-type {
+  border-top-left-radius: var(--radius-small);
+  border-bottom-left-radius: var(--radius-small);
+}
+
+.themeButtonGroup + .themeButtonGroup:last-of-type {
+  border-top-right-radius: var(--radius-small);
+  border-bottom-right-radius: var(--radius-small);
+}
+
+.themeButtonGroup.stateIsChecked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--colony-white);
+}
+
+.themeButtonGroup + .themeButtonGroup {
+  border-left: none;
+}
+
+.themeButtonGroup .radio {
+  display: none;
+}
+
+.themeButtonGroup .labelContainer label {
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Direction */
 
 .directionHorizontal {
   display: inline-block;
@@ -140,5 +175,16 @@
 
   & .radio {
     margin-right: 10px;
+  }
+}
+
+/* State */
+
+.stateIsDisabled {
+  color: var(--grey-5);
+  cursor: not-allowed;
+
+  & .labelContainer label {
+    cursor: not-allowed;
   }
 }

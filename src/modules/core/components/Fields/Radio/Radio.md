@@ -8,52 +8,63 @@ const radioChoices = ['foo', 'bar', 'baz'];
   render={
     ({ handleSubmit, values }) => (
       <form onSubmit={handleSubmit}>
+        <Heading appearance={{ size: 'medium' }} text="Standard Radio" />
+        {radioChoices.map(radioChoice => (
+          <Radio
+            checked={values.radioInput === radioChoice}
+            key={radioChoice}
+            label={radioChoice}
+            name="radioInput"
+            value={radioChoice}
+          />
+        ))}
+        <div style={{marginTop: '20px'}} />
+        <Heading appearance={{ size: 'medium' }} text="Disabled Radio" />
         <Radio
-          checked={values.radioInput === 'basicRadio'}
-          name="radioInput"
-          label="Basic radio"
-          value="basicRadio"
-        />
-        <Radio
-          checked={values.radioInput === 'disabledRadio'}
-          name="radioInput"
-          label="Disabled radio"
-          value="disabledRadio"
+          checked={values.radioInputDisabled === 'radioInputDisabled'}
           disabled
+          label="Disabled radio"
+          name="radioInputDisabled"
+          value="disabledRadio"
         />
         <div style={{marginTop: '20px'}} />
-        <Radio
-          checked={values.radioInput === 'horizontal 1'}
-          appearance={{ direction: 'horizontal' }}
-          name="radioInput"
-          label="Horizontal 1"
-          value="horizontal 1"
-        />
-        <Radio
-          checked={values.radioInput === 'horizontal 2'}
-          appearance={{ direction: 'horizontal' }}
-          name="radioInput"
-          label="Horizontal 2"
-          value="horizontal 2"
-        />
+        <Heading appearance={{ size: 'medium' }} text="Horizontal Radio" />
+        {radioChoices.map(radioChoice => (
+          <Radio
+            appearance={{ direction: 'horizontal' }}
+            checked={values.radioHorizontal === radioChoice}
+            key={radioChoice}
+            label={radioChoice}
+            name="radioHorizontal"
+            value={radioChoice}
+          />
+        ))}
         <div style={{marginTop: '20px'}} />
-        <Radio
-          checked={values.radioFakeCheckbox === 'fakeCheckbox1'}
-          appearance={{ theme: 'fakeCheckbox' }}
-          name="radioFakeCheckbox"
-          label="fakeCheckbox theme"
-          value="fakeCheckbox1"
-          help="This is actually a radio!"
-        />
-        <Radio
-          checked={values.radioFakeCheckbox === 'fakeCheckbox2'}
-          appearance={{ theme: 'fakeCheckbox' }}
-          name="radioFakeCheckbox"
-          label="Another fakeCheckbox theme"
-          value="fakeCheckbox2"
-          help="This is a radio too!"
-        />
+        <Heading appearance={{ size: 'medium' }} text="Fake Checkbox Radio" />
+        {radioChoices.map(radioChoice => (
+          <Radio
+            appearance={{ theme: 'fakeCheckbox' }}
+            checked={values.radioFakeCheckbox === radioChoice}
+            key={radioChoice}
+            label={radioChoice}
+            name="radioFakeCheckbox"
+            value={radioChoice}
+          />
+        ))}
         <div style={{marginTop: '20px'}} />
+        <Heading appearance={{ size: 'medium' }} text="Button Group Radio" />
+        {radioChoices.map(radioChoice => (
+          <Radio
+            appearance={{ theme: 'buttonGroup' }}
+            checked={values.radioButtonGroup === radioChoice}
+            key={radioChoice}
+            label={radioChoice}
+            name="radioButtonGroup"
+            value={radioChoice}
+          />
+        ))}
+        <div style={{marginTop: '20px'}} />
+        <Heading appearance={{ size: 'medium' }} text="Color Picker Radio" />
         <Radio
           checked={values.radioColorPicker === 'colorPicker'}
           appearance={{ theme: 'colorPicker' }}

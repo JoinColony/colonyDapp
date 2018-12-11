@@ -45,7 +45,7 @@ const Numeral = ({
   ...props
 }: Props) => {
   let convertedNum;
-  if (value instanceof BN) {
+  if (BN.isBN(value)) {
     convertedNum = unit ? fromWei(value, unit) : value.toString();
   } else {
     convertedNum = unit ? fromWei(parseInt(value, 10), unit) : value;
