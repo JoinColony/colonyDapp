@@ -1,15 +1,12 @@
 /* @flow */
 
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import { withProps } from 'recompose';
-
-import { getEthToUsd } from '~utils/external';
 
 import type { TokenType } from '~types/token';
 
 import Card from '~core/Card';
-import Numeral from '~core/Numeral';
-import { SpinnerLoader } from '~core/Preloaders';
+import EthUsd from '~core/EthUsd';
 
 import styles from './TokenCard.css';
 
@@ -19,103 +16,46 @@ type InProps = {
 
 type Props = InProps & {
   isEth: boolean,
-};
-
-type State = {
-  ethUsd: number | null,
+  isNotPositive: boolean,
 };
 
 const displayName = 'admin.Tokens.TokenCard';
 
-class TokenCard extends Component<Props, State> {
-  static displayName = displayName;
-
-  state = { ethUsd: null };
-
-  componentDidMount() {
-    this.mounted = true;
-    const {
-      isEth,
-      token: { balance },
-    } = this.props;
-    if (isEth) {
-      getEthToUsd(balance).then(converted => {
-        if (this.mounted) {
-          this.setState({
-            ethUsd: converted,
-          });
-        }
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  isNotPositive = number => Number(number) <= 0;
-
-  mounted = false;
-
-  render() {
-    const {
-      isEth,
-      token: {
-        id: tokenId,
-        tokenIcon,
-        tokenName,
-        tokenSymbol,
-        isNative,
-        balance,
-      },
-    } = this.props;
-    const { ethUsd } = this.state;
-    return (
-      <Card key={tokenId} className={styles.main}>
-        <div className={styles.cardHeading}>
-          {!!tokenIcon && (
-            <div className={styles.iconContainer}>
-              <img src={tokenIcon} alt={tokenName} />
-            </div>
-          )}
-          <div className={styles.tokenSymbol}>
-            {tokenSymbol}
-            {isNative && <span>*</span>}
-          </div>
+const TokenCard = ({
+  isEth,
+  isNotPositive,
+  token: { id: tokenId, tokenIcon, tokenName, tokenSymbol, isNative, balance },
+}: Props) => (
+  <Card key={tokenId} className={styles.main}>
+    <div className={styles.cardHeading}>
+      {!!tokenIcon && (
+        <div className={styles.iconContainer}>
+          <img src={tokenIcon} alt={tokenName} />
         </div>
-        <div
-          className={
-            this.isNotPositive(balance)
-              ? styles.balanceNotPositive
-              : styles.balanceContent
-          }
-        >
-          {balance.toFixed(2)}
-        </div>
-        <div className={styles.cardFooter}>
-          {isEth && (
-            <Fragment>
-              {ethUsd === 0 || ethUsd ? (
-                <Numeral
-                  value={ethUsd}
-                  prefix="~ "
-                  suffix=" USD"
-                  integerSeparator="."
-                  decimals={2}
-                />
-              ) : (
-                <SpinnerLoader />
-              )}
-            </Fragment>
-          )}
-        </div>
-      </Card>
-    );
-  }
-}
+      )}
+      <div className={styles.tokenSymbol}>
+        {tokenSymbol}
+        {isNative && <span>*</span>}
+      </div>
+    </div>
+    <div
+      className={
+        isNotPositive ? styles.balanceNotPositive : styles.balanceContent
+      }
+    >
+      {balance.toFixed(2)}
+    </div>
+    <div className={styles.cardFooter}>
+      {isEth && <EthUsd value={balance} decimals={3} />}
+    </div>
+  </Card>
+);
 
-const enhance = withProps(({ token: { tokenSymbol } }: InProps) => ({
+TokenCard.displayName = displayName;
+
+const enhance = withProps(({ token: { balance, tokenSymbol } }: InProps) => ({
   isEth: !!tokenSymbol && tokenSymbol.toLowerCase() === 'eth',
+  isNotPositive: Number(balance) <= 0,
 }));
 
 export default enhance(TokenCard);
