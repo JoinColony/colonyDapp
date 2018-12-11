@@ -15,8 +15,6 @@ import {
   TASK_EDIT,
   TASK_EDIT_ERROR,
   TASK_EDIT_SUCCESS,
-  TASK_UPDATE,
-  TASK_UPDATE_ERROR,
   TASK_CREATE_TRANSACTION_SENT,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
@@ -141,19 +139,6 @@ function* taskCreateSaga(action: Action): Saga<void> {
     console.log(taskId); // TODO: put taskId in DDB
   } catch (error) {
     yield putError(TASK_CREATE_ERROR, error);
-  }
-}
-
-function* taskUpdateSaga(action: Action): Saga<void> {
-  // eslint-disable-next-line no-unused-vars
-  const { taskTitle, taskDescription } = action.payload;
-
-  try {
-    /*
-     * @TODO Add action creator
-     */
-  } catch (error) {
-    yield putError(TASK_UPDATE_ERROR, error);
   }
 }
 
@@ -352,7 +337,6 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
 export default function* taskSagas(): any {
   yield takeEvery(TASK_CREATE, taskCreateSaga);
   yield takeEvery(TASK_EDIT, taskEditSaga);
-  yield takeEvery(TASK_UPDATE, taskUpdateSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);

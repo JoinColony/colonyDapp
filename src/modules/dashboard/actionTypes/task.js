@@ -12,11 +12,6 @@ export const TASK_EDIT = `${ns}/TASK_EDIT`;
 export const TASK_EDIT_ERROR = `${ns}/TASK_EDIT_ERROR`;
 export const TASK_EDIT_SUCCESS = `${ns}/TASK_EDIT_SUCCESS`;
 
-export const TASK_UPDATE = `${ns}/TASK_UPDATE`;
-export const TASK_UPDATE_ERROR = `${ns}/TASK_UPDATE_ERROR`;
-export const TASK_UPDATE_SUCCESS = `${ns}/TASK_UPDATE_SUCCESS`;
-export const TASK_UPDATE_TRANSACTION_SENT = `${ns}/TASK_UPDATE_TRANSACTION_SENT`;
-
 export const TASK_WORKER_END = `${ns}/TASK_WORKER_END`;
 export const TASK_WORKER_END_ERROR = `${ns}/TASK_WORKER_END_ERROR`;
 export const TASK_WORKER_END_SUCCESS = `${ns}/TASK_WORKER_END_SUCCESS`;
