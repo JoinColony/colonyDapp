@@ -47,6 +47,9 @@ import {
   TASK_WORKER_REVEAL_MANAGER_RATING,
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
+  TASK_FINALIZE,
+  TASK_FINALIZE_ERROR,
+  TASK_FINALIZE_SUCCESS,
 } from '../../actionTypes';
 
 import userMocks from './__datamocks__/mockUsers';
@@ -84,6 +87,10 @@ const MSG = defineMessages({
   revealRating: {
     id: 'dashboard.Task.revealRating',
     defaultMessage: 'Reveal Rating',
+  },
+  finalizeTask: {
+    id: 'dashboard.Task.finalizeTask',
+    defaultMessage: 'Finalize Task',
   },
 });
 
@@ -170,6 +177,15 @@ class Task extends Component<Props> {
     );
   }
 
+  get canBeFinalized() {
+    const {
+      task: { currentState, managerRating, workerRating },
+    } = this.props;
+    return (
+      currentState === TASK_STATE.REVEAL && !!managerRating && !!workerRating
+    );
+  }
+
   render() {
     const {
       isTaskCreator = false,
@@ -184,6 +200,7 @@ class Task extends Component<Props> {
       isManager,
       dueDatePassed,
       canClaimPayout,
+      canBeFinalized,
     } = this;
     return (
       <div className={styles.main}>
@@ -248,6 +265,16 @@ class Task extends Component<Props> {
         </aside>
         <div className={styles.container}>
           <section className={styles.header}>
+            {/* Work has been submitted and rating have been given  */}
+            {canBeFinalized && (
+              <ActionButton
+                text={MSG.finalizeTask}
+                submit={TASK_FINALIZE}
+                success={TASK_FINALIZE_SUCCESS}
+                error={TASK_FINALIZE_ERROR}
+                setValues={setValues}
+              />
+            )}
             <TaskRequestWork
               isTaskCreator={isTaskCreator}
               claimedProfile={userClaimedProfile}

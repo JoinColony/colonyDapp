@@ -28,6 +28,8 @@ import {
   TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
   TASK_WORKER_CLAIM_REWARD_ERROR,
   TASK_WORKER_CLAIM_REWARD_SUCCESS,
+  TASK_FINALIZE_ERROR,
+  TASK_FINALIZE_SUCCESS,
 } from '../actionTypes';
 
 export const createColony = (
@@ -227,5 +229,26 @@ export const taskWorkerClaimReward = (
     lifecycle: {
       error: TASK_WORKER_CLAIM_REWARD_ERROR,
       success: TASK_WORKER_CLAIM_REWARD_SUCCESS,
+    },
+  });
+
+/**
+ * As anyone, finalize task.
+ */
+export const taskFinalize = (
+  identifier: string,
+  params: {
+    taskId: number,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params: { ...params },
+    options,
+    methodName: 'finalizeTask',
+    identifier,
+    lifecycle: {
+      error: TASK_FINALIZE_ERROR,
+      success: TASK_FINALIZE_SUCCESS,
     },
   });
