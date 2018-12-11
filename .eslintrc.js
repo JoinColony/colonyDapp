@@ -71,6 +71,7 @@ module.exports = {
           './src/__tests__/*.js',
           './src/__mocks__/*.js',
           './*.js',
+          './cypress/**/*.js',
         ],
       },
     ],
