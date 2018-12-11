@@ -12,7 +12,7 @@ import type { WizardProps } from '~core/Wizard';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
-import { ActionForm } from '~core/Fields';
+import { ActionForm, Select } from '~core/Fields';
 import styles from './StepTrufflePig.css';
 
 import {
@@ -50,6 +50,10 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepTrufflePig.button.retry',
     defaultMessage: 'Try Again',
   },
+  accountIndex: {
+    id: 'users.ConnectWalletWizard.StepTrufflePig.select.accountIndex',
+    defaultMessage: 'Account index',
+  },
 });
 
 type FormValues = {};
@@ -59,7 +63,19 @@ type Props = WizardProps<FormValues>;
 type State = {
   isLoading: boolean,
   isValid: boolean,
+  accountIndex: number,
 };
+
+// TODO provide some means in Trufflepig to get information for these accounts
+// (at the moment we are assuming that 10 addresses are available).
+// Waiting on PR: colonyJS#319
+const accountIndexOptions = Array.from({ length: 9 }).map((_, value) => ({
+  value,
+  label: {
+    id: `${MSG.accountIndex.id}.${value}`,
+    defaultMessage: `${value}`,
+  },
+}));
 
 class StepTrufflePig extends Component<Props, State> {
   timerHandle: TimeoutID;
@@ -69,6 +85,7 @@ class StepTrufflePig extends Component<Props, State> {
   state = {
     isLoading: false,
     isValid: false,
+    accountIndex: 0,
   };
 
   componentDidMount() {
@@ -82,10 +99,11 @@ class StepTrufflePig extends Component<Props, State> {
   }
 
   connectTrufflePig = async () => {
+    const { accountIndex } = this.state;
     let trufflepigError = null;
     try {
       const loader = new TrufflepigLoader();
-      await loader.getAccount(0);
+      await loader.getAccount(accountIndex);
     } catch (error) {
       trufflepigError = error;
     }
@@ -97,11 +115,20 @@ class StepTrufflePig extends Component<Props, State> {
 
   handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     evt.preventDefault();
+    this.reconnectTrufflePig();
+  };
+
+  reconnectTrufflePig = () => {
     this.setState({ isLoading: true });
     // add a short timeout to show the loading spinner so the user knows there's something processing
     this.timerHandle = setTimeout(async () => {
       await this.connectTrufflePig();
     }, 500);
+  };
+
+  setAccountIndex = (_: string, accountIndex: number) => {
+    this.setState({ accountIndex });
+    this.reconnectTrufflePig();
   };
 
   render() {
@@ -110,7 +137,7 @@ class StepTrufflePig extends Component<Props, State> {
       wizardForm,
       formHelpers: { includeWizardValues },
     } = this.props;
-    const { isLoading, isValid } = this.state;
+    const { isLoading, isValid, accountIndex } = this.state;
     return (
       <ActionForm
         submit={WALLET_CREATE}
@@ -122,7 +149,12 @@ class StepTrufflePig extends Component<Props, State> {
         ) => {
           setStatus({ error: MSG.errorOpenTrufflepig });
         }}
-        setPayload={includeWizardValues}
+        setPayload={(...args: *) => {
+          const action = includeWizardValues(...args);
+          const { accountIndex: index } = this.state;
+          action.payload.accountIndex = index;
+          return action;
+        }}
         {...wizardForm}
       >
         {({ status, isSubmitting, values }) => (
@@ -143,7 +175,14 @@ class StepTrufflePig extends Component<Props, State> {
                   />
                   <Heading
                     text={MSG.subHeading}
-                    appearance={{ size: 'medium', margin: 'none' }}
+                    appearance={{ size: 'medium' }}
+                  />
+                  <Select
+                    $value={accountIndex}
+                    form={{ setFieldValue: this.setAccountIndex }}
+                    label={MSG.accountIndex}
+                    name="accountIndex"
+                    options={accountIndexOptions}
                   />
                 </Fragment>
               ) : (
