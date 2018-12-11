@@ -10,7 +10,7 @@ import { FeedStore, KVStore } from '../../../lib/database/stores';
 import { domainStore, taskDraftStore } from '../stores';
 import { TASKDRAFT_FETCH, DOMAIN_FETCH } from '../actionTypes';
 
-function* fetchOrCreateDomainStore(action: Action): Saga<KVStore> {
+export function* fetchOrCreateDomainStore(action: Action): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
   const { domainIdentifier } = action.payload;
   let store;
