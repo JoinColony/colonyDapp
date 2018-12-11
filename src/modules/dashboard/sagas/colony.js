@@ -24,6 +24,7 @@ import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
 
 import { colonyStore } from '../stores';
+import { fetchOrCreateDomainStore } from './domains';
 
 import {
   COLONY_CREATE,
@@ -76,6 +77,7 @@ function* createColonyLabelSaga({
   // Create a colony store and save the colony to that store.
   // TODO: No access controller available yet
   const store = yield call([ddb, ddb.createStore], colonyStore);
+  const rootDomainStore = yield call(fetchOrCreateDomainStore);
 
   const colonyStoreData = {
     address: colonyAddress,
@@ -88,6 +90,7 @@ function* createColonyLabelSaga({
       name: tokenName,
       symbol: tokenSymbol,
     },
+    rootDomain: rootDomainStore.address().toString(),
   };
 
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
