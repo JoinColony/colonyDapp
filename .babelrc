@@ -5,11 +5,7 @@
       "plugins": [
          "@babel/plugin-proposal-class-properties",
          "@babel/plugin-syntax-dynamic-import",
-         "@babel/plugin-transform-runtime",
-         ["react-intl", {
-           "messagesDir": "./dist/i18n",
-           "enforceDescriptions": false
-          }]
+         "@babel/plugin-transform-runtime"
         ],
       },
     "development": {
