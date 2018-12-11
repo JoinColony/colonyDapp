@@ -1,5 +1,6 @@
 /* @flow */
 import BN from 'bn.js';
+import { fromWei, toWei } from 'ethjs-unit';
 
 const DEFAULT_GAS_LIMIT = new BN(21001);
 
@@ -124,13 +125,21 @@ type EthUsdResponse = {
 
 const convertBalanceToUsd = (
   ethUsdConversionRate: number,
-  balance: number,
-): number => balance * ethUsdConversionRate || 0;
+  balance: BN,
+): string => {
+  const { div: divResult, mod: modResult } = toWei(
+    ethUsdConversionRate,
+    'ether',
+  ).divmod(toWei(1, 'ether'));
+  const wholeBalance = Number(fromWei(balance.mul(divResult), 'ether')) || 0;
+  const modBalance = Number(fromWei(balance.mul(modResult), 'ether')) || 0;
+  return (wholeBalance + modBalance / 10 ** 18 || wholeBalance).toString();
+};
 
 /*
   Request dollar conversion value from etherScan
 */
-export const getEthToUsd = (ethValue: number): Promise<number | void> => {
+export const getEthToUsd = (ethValue: BN): Promise<string | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
 

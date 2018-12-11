@@ -1,9 +1,10 @@
 /* @flow */
 import type { IntlShape } from 'react-intl';
-import BN from 'bn.js';
 
 import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
+import { toWei } from 'ethjs-unit';
+import BN from 'bn.js';
 
 import { getEthToUsd } from '~utils/external';
 import Numeral from '~core/Numeral';
@@ -30,6 +31,8 @@ type Props = {
   showPrefix: boolean,
   /** Should the suffix be visible? */
   showSuffix: boolean,
+  /** Ether unit the number is notated in (e.g. 'ether' = 10^18 wei) */
+  unit?: string,
   /** Value in ether to convert to USD */
   value: number | string | BN,
   /** @ignore injected by `injectIntl` */
@@ -37,7 +40,7 @@ type Props = {
 };
 
 type State = {
-  valueUsd: number | null,
+  valueUsd: string | null,
 };
 
 class EthUsd extends Component<Props, State> {
@@ -47,6 +50,7 @@ class EthUsd extends Component<Props, State> {
     decimals: 2,
     showPrefix: true,
     showSuffix: true,
+    unit: 'ether',
   };
 
   state = {
@@ -71,8 +75,14 @@ class EthUsd extends Component<Props, State> {
   mounted: boolean = false;
 
   convertEthToUsd = () => {
-    const { value } = this.props;
-    const valueToConvert = typeof value === 'string' ? Number(value) : value;
+    const { unit, value } = this.props;
+    let valueToConvert;
+    if (BN.isBN(value)) {
+      valueToConvert = value;
+    } else {
+      const fixedNum = typeof value === 'number' ? value.toFixed(18) : value;
+      valueToConvert = toWei(fixedNum, unit);
+    }
     this.mounted = true;
     getEthToUsd(valueToConvert).then(valueUsd => {
       if (this.mounted) {
@@ -91,6 +101,7 @@ class EthUsd extends Component<Props, State> {
       intl: { formatMessage },
       showPrefix,
       showSuffix,
+      unit,
       value,
       ...rest
     } = this.props;
