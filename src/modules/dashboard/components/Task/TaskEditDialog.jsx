@@ -1,24 +1,27 @@
 /* @flow */
 
 import React, { Component, Fragment } from 'react';
+import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 import BigNumber from 'bn.js';
 import * as yup from 'yup';
 import nanoid from 'nanoid';
+import { FieldArray } from 'formik';
 
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
-import { FieldArray } from 'formik';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
-import Payout from './Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { getEthToUsd } from '~utils/external';
 import { bnMultiply } from '~utils/numbers';
+import { Token } from '~immutable';
 
-import type { UserRecord, TokenType } from '~types/';
+import Payout from './Payout.jsx';
+
+import type { UserRecord, TokenRecord, TaskPayoutRecord } from '~immutable';
 
 import styles from './TaskEditDialog.css';
 
@@ -67,11 +70,11 @@ type State = {
 
 type Props = {
   assignee?: UserRecord,
-  availableTokens: Array<TokenType>,
+  availableTokens: List<TokenRecord>,
   maxTokens?: BigNumber,
-  payouts?: Array<Object>,
+  payouts?: List<TaskPayoutRecord>,
   reputation?: BigNumber,
-  users: Array<UserRecord>,
+  users: List<UserRecord>,
   cancel: () => void,
 };
 
@@ -112,7 +115,7 @@ class TaskEditDialog extends Component<Props, State> {
         assignee,
         payouts: payouts.map(({ token, amount }) => ({
           amount,
-          token: availableTokens[token - 1],
+          token: availableTokens.get(token - 1),
         })),
       },
     };
@@ -143,10 +146,12 @@ class TaskEditDialog extends Component<Props, State> {
         )
         .max(maxTokens), // only ETH and CLNY for MVP
     });
-    const tokenOptions = availableTokens.map(({ tokenSymbol }, i) => ({
-      value: i + 1,
-      label: tokenSymbol,
-    }));
+    const tokenOptions = availableTokens
+      .map(({ symbol }, i) => ({
+        value: i + 1,
+        label: symbol,
+      }))
+      .toArray();
 
     return (
       <FullscreenDialog cancel={cancel}>
@@ -200,13 +205,14 @@ class TaskEditDialog extends Component<Props, State> {
                         {values.payouts &&
                           values.payouts.map((payout, index) => {
                             const { amount, token: tokenIndex } = payout;
-                            const token = availableTokens[tokenIndex - 1] || {};
+                            const token =
+                              availableTokens.get(tokenIndex - 1) || Token();
                             return (
                               <Payout
                                 key={payout.id}
                                 name={`payouts.${index}`}
                                 amount={amount}
-                                symbol={token.tokenSymbol}
+                                symbol={token.symbol}
                                 reputation={
                                   token.isNative ? reputation : undefined
                                 }

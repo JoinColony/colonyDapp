@@ -9,6 +9,7 @@
         "^\\~routes(.*)$": "<rootDir>/routes$1",
         "^\\~utils(.*)$": "<rootDir>/utils$1",
         "^\\~types(.*)$": "<rootDir>/types$1",
+        "^\\~immutable(.*)$": "<rootDir>/immutable$1",
         "\\~([a-zA-Z0-9-_]+)\\/(.*)": "<rootDir>/modules/$1/components/$2",
         "^testutils$": "<rootDir>/__tests__/utils.js"
     },

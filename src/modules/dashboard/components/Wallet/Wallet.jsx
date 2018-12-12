@@ -1,10 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenType } from '~types/token';
+import type { TokenRecord } from '~immutable';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
@@ -46,7 +47,7 @@ const displayName = 'dashboard.Wallet';
 
 type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenType>,
+  tokens: List<TokenRecord>,
 };
 
 class Wallet extends Component<Props> {

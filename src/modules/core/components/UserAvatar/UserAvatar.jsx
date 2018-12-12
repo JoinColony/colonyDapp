@@ -5,14 +5,13 @@ import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
 import NavLink from '../NavLink';
-import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
-import type { UserRecord } from '~types/UserRecord';
-
 import UserAvatarDisplay from './UserAvatarDisplay.jsx';
-
 import { withUser } from '../../../users/composers';
 import { avatarSelector } from '../../../users/selectors';
 import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionCreators';
+
+import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
+import type { UserRecord } from '~immutable';
 
 type Props = UserAvatarProps & {
   user?: UserRecord,
@@ -32,10 +31,10 @@ class UserAvatar extends Component<Props> {
     const { avatarData, link, username } = this.props;
     return link && username ? (
       <NavLink to={`/user/${username.toLowerCase()}`}>
-        <UserAvatarDisplay {...this.props} avatarURL={avatarData} />
+        <UserAvatarDisplay {...this.props} avatar={avatarData} />
       </NavLink>
     ) : (
-      <UserAvatarDisplay {...this.props} avatarURL={avatarData} />
+      <UserAvatarDisplay {...this.props} avatar={avatarData} />
     );
   }
 }

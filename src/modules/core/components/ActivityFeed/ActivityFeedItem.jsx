@@ -8,7 +8,7 @@ import Link from '~core/Link';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 
-import type { Activity, ActivityAction } from './types';
+import type { ActivityFeedItemRecord, ActivityAction } from '~immutable';
 
 import styles from './ActivityFeedItem.css';
 
@@ -32,7 +32,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  activity: Activity,
+  activity: ActivityFeedItemRecord,
 };
 
 const getEventActionKey = (actionType: ActivityAction) =>

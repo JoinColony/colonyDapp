@@ -32,7 +32,7 @@ type Props = {
   symbol?: string,
   reputation?: number,
   usdAmount?: string,
-  tokenOptions: Array<Object>,
+  tokenOptions: Array<{ value: number, label: string }>,
   remove: () => void,
 };
 class Payout extends Component<Props, State> {

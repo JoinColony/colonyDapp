@@ -8,7 +8,7 @@ import Heading from '~core/Heading';
 import TransactionListItem from './TransactionListItem.jsx';
 
 import type { MessageDescriptor } from 'react-intl';
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 type Props = {
   /*

@@ -4,24 +4,21 @@ import type { LocationShape } from 'react-router-dom';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { compose } from 'recompose';
 
-import type { Given } from '~utils/hoc';
-
-import NavLink from '~core/NavLink';
-import Icon from '~core/Icon';
 import Heading from '~core/Heading';
-
-import { COLONY_HOME_ROUTE } from '~routes';
-
-import VerticalNavigation from '~pages/VerticalNavigation';
-
-import Profile from '~admin/Profile';
+import Icon from '~core/Icon';
+import NavLink from '~core/NavLink';
+import { SpinnerLoader } from '~core/Preloaders';
 import Organizations from '~admin/Organizations';
+import Profile from '~admin/Profile';
+import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
-import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-
+import VerticalNavigation from '~pages/VerticalNavigation';
 import { withFeatureFlags } from '~utils/hoc';
+
+import { withColonyFromRoute } from '../../../core/hocs';
 
 import styles from './AdminDashboard.css';
 
@@ -32,11 +29,13 @@ import type {
    */
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
+import type { ColonyRecord } from '~immutable';
+import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
   backButton: {
     id: 'dashboard.Admin.backButton',
-    defaultMessage: 'Go to {colonyName}',
+    defaultMessage: 'Go to {name}',
   },
   colonySettings: {
     id: 'dashboard.Admin.colonySettings',
@@ -63,12 +62,7 @@ const MSG = defineMessages({
 const mockColonyRecoveryMode = true;
 
 type Props = {
-  /*
-   * This will most likely come from the redux state
-   * The most obvious way to achieve this is to enhance this component with
-   * a connect call
-   */
-  colonyName?: string,
+  colony: ColonyRecord,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -77,11 +71,11 @@ type Props = {
   given: Given,
 };
 
-const navigationItems: Array<NavigationItem> = [
+const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
   {
     id: 1,
     title: MSG.tabProfile,
-    content: <Profile />,
+    content: <Profile colony={colony} />,
   },
   {
     id: 2,
@@ -100,45 +94,61 @@ const navigationItems: Array<NavigationItem> = [
   },
 ];
 
-const AdminDashboard = ({ colonyName, location, given }: Props) => (
-  <div className={styles.main}>
-    <VerticalNavigation
-      navigationItems={navigationItems}
-      initialTab={
-        location && location.state && location.state.initialTab ? 1 : 0
-      }
-    >
-      <div className={styles.backNavigation}>
-        <Icon name="circle-back" title="back" appearance={{ size: 'medium' }} />
-        <NavLink
-          to={COLONY_HOME_ROUTE}
-          text={MSG.backButton}
-          textValues={{ colonyName }}
-        />
-      </div>
-      <div className={styles.headingWrapper}>
-        <Heading
-          appearance={{
-            size: 'normal',
-            weight: 'medium',
-            margin: 'small',
-            theme: 'dark',
-          }}
-          text={MSG.colonySettings}
-        />
-      </div>
-    </VerticalNavigation>
-    {/*
-     * @TODO Replace with actual selector that checks if the Colony is in recovery mode
-     */}
-    {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
-  </div>
-);
+const AdminDashboard = (props: Props) => {
+  const { colony, given, location } = props;
+
+  // TODO create a better loading state
+  if (!colony) return <SpinnerLoader />;
+
+  const { ensName, name } = colony;
+  return (
+    <div className={styles.main}>
+      <VerticalNavigation
+        navigationItems={navigationItems(props)}
+        initialTab={
+          location && location.state && location.state.initialTab ? 1 : 0
+        }
+      >
+        <div className={styles.backNavigation}>
+          <Icon
+            name="circle-back"
+            title="back"
+            appearance={{ size: 'medium' }}
+          />
+          <NavLink
+            to={`/colony/${ensName}`}
+            text={MSG.backButton}
+            textValues={{ name }}
+          />
+        </div>
+        <div className={styles.headingWrapper}>
+          <Heading
+            appearance={{
+              size: 'normal',
+              weight: 'medium',
+              margin: 'small',
+              theme: 'dark',
+            }}
+            text={MSG.colonySettings}
+          />
+        </div>
+      </VerticalNavigation>
+      {/*
+       * @TODO Replace with actual selector that checks if the Colony is in recovery mode
+       */}
+      {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
+    </div>
+  );
+};
 
 AdminDashboard.defaultProps = {
-  colonyName: 'The Meta Colony',
+  colonyName: 'meta-colony',
+  colonyLabel: 'The Meta Colony',
 };
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
-export default withFeatureFlags()(AdminDashboard);
+export default compose(
+  withColonyFromRoute,
+  withFeatureFlags(),
+)(AdminDashboard);

@@ -3,8 +3,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { USER_ROUTE } from '~routes';
-
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
@@ -38,7 +36,7 @@ const displayName = 'users.UserProfileEdit.Sidebar';
 
 const Sidebar = ({ walletAddress, username }: Props) => (
   <div>
-    <Link className={styles.backLink} to={USER_ROUTE}>
+    <Link className={styles.backLink} to={`/user/${username}`}>
       <Icon
         appearance={{ size: 'medium' }}
         name="circle-back"

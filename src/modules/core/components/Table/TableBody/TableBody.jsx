@@ -1,10 +1,10 @@
 /* @flow */
-import type { ChildrenArray, Element as ElementType } from 'react';
+import type { Node } from 'react';
 
 import React from 'react';
 
 type Props = {
-  children: ChildrenArray<ElementType<*>>,
+  children: Node,
 };
 
 const displayName = 'TableBody';

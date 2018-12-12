@@ -33,6 +33,8 @@ type PartialProps = {
   title?: MessageDescriptor | string,
 };
 
+// TODO consider making this handle immutable Lists in order
+// to make passing data from the store more seamless
 const enhance: HOC<*, PartialProps> = compose(
   withProps(
     ({ list = [], itemDisplayPrefix, itemDisplaySuffix }: PartialProps) => {

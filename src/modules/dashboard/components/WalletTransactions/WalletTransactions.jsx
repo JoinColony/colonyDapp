@@ -7,7 +7,7 @@ import TransactionList from '~core/TransactionList';
 
 import styles from './WalletTransactions.css';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 const MSG = defineMessages({
   transactionsEmptyTitle: {

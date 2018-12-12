@@ -3,16 +3,14 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { OpenDialog } from '~core/Dialog/types';
-import type { ColonyType } from '~types/colony';
-import type { Given } from '~utils/hoc';
-
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
 import styles from './ProfileAdvanced.css';
 
-const mockColonyRecoveryMode = false;
+import type { ColonyRecord } from '~immutable';
+import type { Given } from '~utils/hoc';
+import type { OpenDialog } from '~core/Dialog/types';
 
 const MSG = defineMessages({
   labelVersion: {
@@ -33,16 +31,17 @@ const MSG = defineMessages({
   },
 });
 
+const mockColonyRecoveryMode = false;
 const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {
-  colony: ColonyType,
+  colony: ColonyRecord,
   openDialog: OpenDialog,
   given: Given,
 };
 
 const ProfileAdvanced = ({
-  colony: { version, id },
+  colony: { id, version },
   openDialog,
   given,
 }: Props) => (

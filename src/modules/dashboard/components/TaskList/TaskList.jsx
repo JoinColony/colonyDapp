@@ -1,14 +1,17 @@
 /* @flow */
 
+import type { List } from 'immutable';
+
 import React from 'react';
 
 import { Table, TableBody } from '~core/Table';
 
 import TaskListItem from './TaskListItem.jsx';
 
+import type { TaskRecord } from '~immutable';
+
 type Props = {
-  // TODO: type better as soon as actual structure is known
-  tasks: Array<Object>,
+  tasks: List<TaskRecord>,
 };
 
 const TaskList = ({ tasks }: Props) => (

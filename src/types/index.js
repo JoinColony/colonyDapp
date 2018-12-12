@@ -1,17 +1,9 @@
 /* @flow */
 
+export * from '../lib/ColonyManager/types';
 export * from '../lib/database/types';
-
-export * from './colony';
-export * from './TaskRecord';
-export * from './token';
 export * from './transaction';
-export * from './TransactionRecord';
 export * from './TransactionReceipt';
-export * from './UserActivity';
-export * from './UserRecord';
-export * from './UsersRecord';
-export * from './WalletRecord';
 
 // TODO consider making this accept generics so that we can better test
 // reducers: https://github.com/facebook/flow/issues/4737

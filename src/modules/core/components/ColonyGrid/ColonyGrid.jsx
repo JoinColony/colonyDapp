@@ -1,5 +1,7 @@
 /* @flow */
 
+import { List } from 'immutable';
+
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -10,6 +12,8 @@ import ColonyGridItem from './ColonyGridItem.jsx';
 
 import styles from './ColonyGrid.css';
 
+import type { ColonyRecord } from '~immutable';
+
 const MSG = defineMessages({
   title: {
     id: 'ColonyGrid.title',
@@ -18,18 +22,15 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  /** Array of colonies to display */
-  colonies: Array<{
-    displayName: string,
-    colonyAddress: string,
-  }>,
+  /** List of colonies to display */
+  colonies: List<ColonyRecord>,
   /** Indicates that the data is loading */
   loading?: boolean,
 };
 
 const displayName = 'ColonyGrid';
 
-const ColonyGrid = ({ colonies = [], loading }: Props) => (
+const ColonyGrid = ({ colonies = List(), loading }: Props) => (
   <div className={styles.main}>
     <div className={styles.sectionTitle}>
       <Heading text={MSG.title} appearance={{ size: 'medium' }} />
@@ -40,9 +41,14 @@ const ColonyGrid = ({ colonies = [], loading }: Props) => (
       </div>
     ) : (
       <div className={styles.colonyGrid}>
-        {colonies.map(colony => (
-          <div className={styles.colonyGridItem} key={colony.colonyAddress}>
-            <ColonyGridItem colony={colony} />
+        {colonies.map(({ ensName, address, name, avatar }) => (
+          <div className={styles.colonyGridItem} key={address}>
+            <ColonyGridItem
+              address={address}
+              avatar={avatar}
+              ensName={ensName}
+              name={name}
+            />
           </div>
         ))}
       </div>

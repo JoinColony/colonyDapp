@@ -9,7 +9,7 @@ import type {
   TransactionRecord,
   TransactionParams,
   TransactionEventData,
-} from '~types/index';
+} from '~immutable';
 
 import { putError } from '~utils/saga/effects';
 

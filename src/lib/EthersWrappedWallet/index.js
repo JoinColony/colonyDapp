@@ -8,7 +8,7 @@ import EthereumTx from 'ethereumjs-tx';
 import { utils } from 'ethers';
 
 import type { TransactionOptions, TransactionRequest } from './types';
-import type { TransactionReceipt } from '~types/index';
+import type { TransactionReceipt } from '~types';
 
 export default class EthersWrappedWallet {
   wallet: GenericWallet;

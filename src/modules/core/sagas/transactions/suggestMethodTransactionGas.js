@@ -5,7 +5,7 @@ import BigNumber from 'bn.js';
 
 import { call, put } from 'redux-saga/effects';
 
-import type { TransactionParams } from '~types/index';
+import type { TransactionParams } from '~immutable';
 import type { CreateTransactionAction } from '../../types';
 
 import { transactionGasSuggested } from '../../actionCreators/index';

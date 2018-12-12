@@ -1,8 +1,8 @@
 /* @flow */
 
-import { Wallet } from '../records';
+import { Wallet } from '~immutable';
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
 import {
   WALLET_FETCH_ACCOUNTS,

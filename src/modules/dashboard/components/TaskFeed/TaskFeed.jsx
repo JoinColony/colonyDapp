@@ -1,8 +1,10 @@
 /* @flow */
 
+import type { List } from 'immutable';
+
 import React, { Component } from 'react';
 
-import type { UserRecord, TaskFeedItem } from '~types/index';
+import type { UserRecord, TaskFeedItemRecord } from '~immutable';
 
 import Comment from './TaskFeedComment.jsx';
 import Rating from './TaskFeedRating.jsx';
@@ -13,7 +15,7 @@ const displayName = 'dashboard.TaskFeed';
 
 type Props = {
   currentUser: UserRecord,
-  feedItems: Array<TaskFeedItem>,
+  feedItems: List<TaskFeedItemRecord>,
   isRevealEnded: boolean,
 };
 
@@ -37,61 +39,21 @@ class TaskFeed extends Component<Props> {
       <div className={styles.main}>
         <div className={styles.items}>
           <div>
-            {feedItems.map((feedItem: TaskFeedItem) => {
-              const { id } = feedItem;
-              /*
-               * Feed Comment
-               *
-               * Check properties on `feedItem` for flow exact object type
-               * Note: can't pull this out into an `isComment` function, as
-               * flow isn't clever enough to validate the property checking
-               * there.
-               */
-              if (
-                feedItem.type === 'comment' &&
-                feedItem.user &&
-                feedItem.body &&
-                feedItem.timestamp
-              ) {
-                const { user, body, timestamp } = feedItem;
+            {feedItems.map(({ id, createdAt, comment, rating }) => {
+              if (comment)
                 return (
                   <Comment
                     key={id}
-                    user={user}
-                    body={body}
-                    timestamp={timestamp}
-                    currentUser={isSameUser(user, currentUser)}
+                    comment={comment}
+                    createdAt={createdAt}
+                    currentUser={isSameUser(comment.user, currentUser)}
                   />
                 );
-              }
-              /*
-               * Feed Rating
-               *
-               * Check properties on `feedItem` for flow exact object type
-               * Note: can't pull this out into an `isRating` function, as
-               * flow isn't clever enough to validate the property checking
-               * there.
-               */
-              if (
-                feedItem.type === 'rating' &&
-                feedItem.rater &&
-                feedItem.ratee &&
-                feedItem.rating &&
-                feedItem.timestamp &&
-                // also check that the reveal period is over
-                isRevealEnded
-              ) {
-                const { ratee, rater, rating } = feedItem;
-                return (
-                  <Rating
-                    key={id}
-                    rater={rater}
-                    ratee={ratee}
-                    rating={rating}
-                  />
-                );
-              }
-              return null;
+
+              // For ratings, check that the reveal period is over
+              return rating && isRevealEnded ? (
+                <Rating key={id} rating={rating} />
+              ) : null;
             })}
             <div
               ref={el => {

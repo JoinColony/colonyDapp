@@ -778,7 +778,7 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@colony/colony-js-adapter-ethers@^1.7.0":
+"@colony/colony-js-adapter-ethers@^1.8.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.8.1.tgz#8fadc6c49dcd3757a43d0ba6d3e8b1eb1d67788d"
   integrity sha512-f7lcVdinY2gJf89IsvsZ4gztOcV/Se1lvdatfHtvPQ4JEV1MT8E80N7RGJpVg5lrP7s/UL0XmjQyZPy5pqFUhg==
@@ -797,7 +797,7 @@
     "@colony/colony-js-contract-loader" "^1.8.1"
     bn.js "^4.11.6"
 
-"@colony/colony-js-client@^1.7.5":
+"@colony/colony-js-client@^1.8.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.8.1.tgz#0221369b543ecdd141556e811fbee5b4cf78cd99"
   integrity sha512-OTXu9qm72Z44b9O/deuDUZqEcSgP2i5GqkBkWdevLJxiBQdUeXaNw0NmnmGlsEVCGXvoI0YBwxbiE2fDy5Dcxg==
@@ -828,7 +828,7 @@
     lodash.isplainobject "^4.0.6"
     web3-utils "^1.0.0-beta.34"
 
-"@colony/colony-js-contract-loader-http@^1.6.2":
+"@colony/colony-js-contract-loader-http@^1.8.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-http/-/colony-js-contract-loader-http-1.8.1.tgz#9ab035a5db76c5f3a7c558b4ec2a22ad162d5075"
   integrity sha512-XT41Y+dp9m52jeSD2EA1/odHuvzf4KEBUuJejrPOt+vPKVum/M+bXoDx+SsRDADzx1tstOJ69oALAdqh3WLWRg==
@@ -7145,7 +7145,7 @@ immutable@^3.8.1:
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
   integrity sha1-wkOZUUVbs5kT2vKBN28VMOEErfM=
 
-immutable@^4.0.0-rc.10:
+immutable@^4.0.0-rc.12:
   version "4.0.0-rc.12"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.0.0-rc.12.tgz#ca59a7e4c19ae8d9bf74a97bdf0f6e2f2a5d0217"
   integrity sha512-0M2XxkZLx/mi3t8NVwIm1g8nHoEmM9p9UBl/G9k4+hm0kBgOVdMV/B3CY5dQ8qG8qc80NN4gDV4HQv6FTJ5q7A==
@@ -7526,7 +7526,7 @@ ipfs-http-response@~0.2.0:
   version "4.2.0"
   resolved "https://codeload.github.com/orbitdb/ipfs-log/tar.gz/febec397361594913fa6aad35f29de85cc526e28"
   dependencies:
-    orbit-db-identity-provider "^0.0.3"
+    orbit-db-identity-provider "^0.0.2"
     p-map "^1.1.1"
     p-whilst "^1.0.0"
 
@@ -11821,7 +11821,12 @@ orbit-db-feedstore@~1.4.0:
   dependencies:
     orbit-db-eventstore "~1.4.0"
 
-orbit-db-identity-provider@^0.0.3, "orbit-db-identity-provider@github:orbitdb/orbit-db-identity-provider":
+orbit-db-identity-provider@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.0.2.tgz#f2e05ac05b2154667ab341e1da8402cea5d056f7"
+  integrity sha512-xE69h4FBIBU4im3KoirRxblHQyDeZesMKw12QqUtRYiIHVT7vhI4hx1QmsUDlZerBz8Pv4IJN4wVMijqCpc7xQ==
+
+"orbit-db-identity-provider@github:orbitdb/orbit-db-identity-provider":
   version "0.0.3"
   resolved "https://codeload.github.com/orbitdb/orbit-db-identity-provider/tar.gz/db4bb11ddad8a2cea347782a011bec050827dcef"
 

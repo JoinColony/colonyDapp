@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Action } from '~types/index';
+import type { Action } from '~types';
 
 export type WizardProps<FormValues> = {
   step: number,

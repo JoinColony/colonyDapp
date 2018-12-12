@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Popover from '~core/Popover';
 import UserAvatar from '~core/UserAvatar';
 
-import type { UserRecord } from '~types/UserRecord';
+import type { UserRecord } from '~immutable';
 
 import { currentUser as currentUserSelector } from '../../selectors';
 

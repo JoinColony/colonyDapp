@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { List } from 'immutable';
 
 import { DialogActionButton } from '~core/Button';
 
-import type { TaskPayout } from '~types/';
+import type { TaskPayoutRecord } from '~immutable';
 
 import {
   TASK_WORKER_CLAIM_REWARD,
@@ -22,14 +23,14 @@ const MSG = defineMessages({
 
 export type Props = {
   taskId: number,
-  colonyIdentifier: string,
+  colonyENSName: string,
   rating: number,
   reputation: number,
-  payouts: Array<TaskPayout>,
+  payouts: List<TaskPayoutRecord>,
   title: string,
   lateRating: boolean,
   lateReveal: boolean,
-  sortedPayouts: Array<Object>,
+  sortedPayouts: List<Object>,
   nativeTokenPayout: Object | void,
 };
 
@@ -37,7 +38,7 @@ const displayName = 'dashboard.TaskClaimReward';
 
 const TaskClaimReward = ({
   taskId,
-  colonyIdentifier,
+  colonyENSName,
   rating,
   reputation,
   payouts,
@@ -65,8 +66,8 @@ const TaskClaimReward = ({
     error={TASK_WORKER_CLAIM_REWARD_ERROR}
     values={{
       taskId,
-      colonyIdentifier,
-      tokenAddresses: payouts.map(payout => payout.address),
+      colonyENSName,
+      tokenAddresses: payouts.map(payout => payout.token.address),
     }}
   />
 );

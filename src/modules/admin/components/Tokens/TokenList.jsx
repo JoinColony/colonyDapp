@@ -1,7 +1,8 @@
 /* @flow */
 import React from 'react';
+import { List } from 'immutable';
 
-import type { TokenType } from '~types/token';
+import type { TokenRecord } from '~immutable';
 
 import CardList from '~core/CardList';
 
@@ -18,7 +19,7 @@ type Appearance = {
 
 type Props = {
   appearance?: Appearance,
-  tokens: Array<TokenType>,
+  tokens: List<TokenRecord>,
 };
 
 const TokenList = ({ tokens, appearance }: Props) => (
@@ -27,7 +28,7 @@ const TokenList = ({ tokens, appearance }: Props) => (
       {tokens
         .filter(token => token.isEnabled)
         .map(token => (
-          <TokenCard key={token.id} token={token} />
+          <TokenCard key={token.address} token={token} />
         ))}
     </CardList>
   </div>

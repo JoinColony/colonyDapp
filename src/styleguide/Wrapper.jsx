@@ -9,7 +9,7 @@ import { addLocaleData, IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 
-import Users from '../modules/users/records/Users';
+import { Users } from '~immutable';
 
 import '../styles/main.css';
 

@@ -10,7 +10,7 @@ import Link from '~core/Link';
 
 import styles from './TaskListItem.css';
 
-import { TASK_ROUTE } from '~routes';
+import type { TaskRecord } from '~immutable';
 
 const MSG = defineMessages({
   reputation: {
@@ -22,19 +22,18 @@ const MSG = defineMessages({
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {
-  // TODO: type better as soon as actual structure is known
-  task: Object,
+  task: TaskRecord,
 };
 
 const TaskListItem = ({
-  task: { assignee, payouts, reputation, title },
+  task: { assignee, id, payouts, reputation, title, colonyENSName },
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
       <Link
         title={title}
         className={styles.taskDetailsTitle}
-        to={TASK_ROUTE}
+        to={`/colony/${colonyENSName}/task/${id}`}
         text={title}
       />
       {reputation && (
@@ -50,11 +49,13 @@ const TaskListItem = ({
       <PayoutsList payouts={payouts} nativeToken="CLNY" />
     </TableCell>
     <TableCell className={styles.userAvatar}>
-      <UserAvatar
-        size="xs"
-        walletAddress={assignee.walletAddress}
-        username={assignee.username}
-      />
+      {assignee ? (
+        <UserAvatar
+          size="xs"
+          walletAddress={assignee.profile.walletAddress}
+          username={assignee.profile.username}
+        />
+      ) : null}
     </TableCell>
   </TableRow>
 );

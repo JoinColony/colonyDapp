@@ -13,19 +13,24 @@ import TextDecorator from '../../../../lib/TextDecorator';
 
 import styles from './TaskFeedComment.css';
 
+import type { TaskFeedItemCommentRecord } from '~immutable';
+
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
 type Props = {
-  user: Object,
-  body: string,
-  timestamp: Date,
+  comment: TaskFeedItemCommentRecord,
+  createdAt: Date,
   currentUser: boolean,
 };
 
 const TaskFeedComment = ({
-  user: { avatar, username, displayName: fullName, walletAddress },
-  body,
-  timestamp,
+  comment: {
+    body,
+    user: {
+      profile: { avatar, username, displayName: fullName, walletAddress },
+    },
+  },
+  createdAt,
   currentUser,
 }: Props) => {
   const { Decorate } = new TextDecorator({
@@ -69,7 +74,7 @@ const TaskFeedComment = ({
           <Decorate tagName={PreserveLinebreaks}>{body}</Decorate>
         </div>
         <div className={styles.commentTimestamp}>
-          <TimeRelative value={timestamp} />
+          <TimeRelative value={createdAt} />
         </div>
       </div>
     </div>

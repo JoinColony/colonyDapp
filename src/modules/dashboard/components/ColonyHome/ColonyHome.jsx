@@ -3,8 +3,6 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { Given } from '~utils/hoc';
-
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
@@ -14,17 +12,18 @@ import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 
 import ColonyMeta from './ColonyMeta';
+import { withColonyFromRoute } from '../../../core/hocs';
 
 import styles from './ColonyHome.css';
 
-import {
-  mockColony,
-  mockColonyOwners,
-  mockColonyAdmins,
-} from './__datamocks__/mockColony';
-import mockTasks from './__datamocks__/mockTasks';
-import mockColonies from './__datamocks__/mockColonies';
-import mockDomains from './__datamocks__/mockDomains';
+import mockColonyAdmins from './__datamocks__/mockColonyAdmins';
+import mockColonyFounders from './__datamocks__/mockColonyFounders';
+import mockTasks from '../../../../__mocks__/mockTasks';
+import mockColonies from '../../../../__mocks__/mockColonies';
+import mockDomains from '../../../../__mocks__/mockDomains';
+
+import type { ColonyRecord } from '~immutable';
+import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
 
@@ -77,6 +76,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
+  colony: ?ColonyRecord,
   walletAddress: string,
   given: Given,
 };
@@ -134,7 +134,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, given } = this.props;
+    const { walletAddress, given, colony } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -157,15 +157,17 @@ class ColonyHome extends Component<Props, State> {
     return (
       <div className={styles.main}>
         <aside className={styles.colonyInfo}>
-          <ColonyMeta
-            colony={mockColony}
-            owners={mockColonyOwners}
-            admins={mockColonyAdmins}
-            /*
-             * This needs real logic to determine if the user is an admin
-             */
-            isAdmin={!!walletAddress}
-          />
+          {colony ? (
+            <ColonyMeta
+              colony={colony}
+              founders={mockColonyFounders}
+              admins={mockColonyAdmins}
+              /*
+               * TODO This needs real logic to determine if the user is an admin
+               */
+              isAdmin={!!walletAddress}
+            />
+          ) : null}
         </aside>
         <main className={styles.content}>
           <Tabs>
@@ -175,8 +177,9 @@ class ColonyHome extends Component<Props, State> {
               </Tab>
             </TabList>
             <TabPanel>
-              {tasks && tasks.length ? (
-                <TaskList tasks={tasks} />
+              {/* TODO add a loading indicator */}
+              {colony && tasks && tasks.size ? (
+                <TaskList colony={colony} tasks={tasks} />
               ) : (
                 <Fragment>
                   <p className={styles.noTasks}>
@@ -202,23 +205,21 @@ class ColonyHome extends Component<Props, State> {
               text={MSG.sidebarDomainsTitle}
             />
             <li>
-              <button
-                type="button"
+              <Button
                 className={this.getActiveDomainFilterClass()}
                 onClick={() => this.setDomainFilter()}
               >
                 <FormattedMessage {...MSG.allDomains} />
-              </button>
+              </Button>
             </li>
             {domains.map(({ id, name }) => (
               <li key={`domain_${id}`}>
-                <button
-                  type="button"
+                <Button
                   className={this.getActiveDomainFilterClass(id)}
                   onClick={() => this.setDomainFilter(id)}
                 >
                   {name}
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
@@ -229,4 +230,4 @@ class ColonyHome extends Component<Props, State> {
   }
 }
 
-export default ColonyHome;
+export default withColonyFromRoute(ColonyHome);

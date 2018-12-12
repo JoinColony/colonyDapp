@@ -8,7 +8,7 @@ import type {
   TransactionRecord,
   TransactionParams,
   TransactionEventData,
-} from '~types/index';
+} from '~immutable';
 
 import { isDev } from '~utils/debug';
 

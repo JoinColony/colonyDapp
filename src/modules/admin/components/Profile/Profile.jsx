@@ -10,7 +10,11 @@ import ProfileAdvanced from './ProfileAdvanced';
 
 import styles from './Profile.css';
 
-import { mockColony } from '~dashboard/ColonyHome/__datamocks__/mockColony';
+import type { ColonyRecord } from '~immutable';
+
+type Props = {
+  colony: ColonyRecord,
+};
 
 const MSG = defineMessages({
   tabProfile: {
@@ -25,7 +29,7 @@ const MSG = defineMessages({
 
 const displayName: string = 'admin.Profile';
 
-const Profile = () => (
+const Profile = ({ colony }: Props) => (
   <div className={styles.main}>
     <Tabs>
       <TabList>
@@ -40,10 +44,10 @@ const Profile = () => (
         className={styles.overwrittenTabPanel}
         selectedClassName={styles.overwrittenSelectedTabPanel}
       >
-        <ProfileEdit colony={mockColony} />
+        <ProfileEdit colony={colony} />
       </TabPanel>
       <TabPanel>
-        <ProfileAdvanced colony={mockColony} />
+        <ProfileAdvanced colony={colony} />
       </TabPanel>
     </Tabs>
   </div>

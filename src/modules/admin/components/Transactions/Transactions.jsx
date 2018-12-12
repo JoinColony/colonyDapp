@@ -19,7 +19,7 @@ import {
   mockedTasksList,
 } from './__datamocks__/transactionMocks';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionType } from '~types';
 
 const MSG = defineMessages({
   transactionsTitle: {

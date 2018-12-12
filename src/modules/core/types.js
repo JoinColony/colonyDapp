@@ -5,17 +5,16 @@ import type BigNumber from 'bn.js';
 import type { Map as ImmutableMap } from 'immutable';
 
 import type {
+  AddressOrENSName,
+  ColonyContext,
+  TransactionReceipt,
+} from '~types';
+import type {
   TransactionEventData,
   TransactionId,
   TransactionParams,
   TransactionRecord,
-} from '~types/TransactionRecord';
-import type { TransactionReceipt } from '~types/index';
-
-import type {
-  AddressOrENSName,
-  ColonyContext,
-} from '../../lib/ColonyManager/types';
+} from '~immutable';
 
 export type Sender<P: TransactionParams, E: TransactionEventData> = {
   client: {
