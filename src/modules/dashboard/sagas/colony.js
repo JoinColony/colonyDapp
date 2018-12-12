@@ -90,7 +90,7 @@ function* createColonyLabelSaga({
       name: tokenName,
       symbol: tokenSymbol,
     },
-    rootDomain: rootDomainStore.address().toString(),
+    rootDomain: rootDomainStore.address.toString(),
   };
 
   // Dispatch and action to set the current colony in the app state (simulating fetching it)

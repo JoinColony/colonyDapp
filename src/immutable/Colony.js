@@ -20,6 +20,7 @@ export type ColonyProps = {
   token: TokenRecord,
   version?: number,
   website?: string,
+  rootDomain?: string,
 };
 
 export type ColonyRecord = RecordOf<ColonyProps>;
@@ -35,6 +36,7 @@ const defaultValues: ColonyProps = {
   token: Token(),
   version: undefined,
   website: undefined,
+  rootDomain: undefined,
 };
 
 const Colony: RecordFactory<ColonyProps> = Record(defaultValues);
