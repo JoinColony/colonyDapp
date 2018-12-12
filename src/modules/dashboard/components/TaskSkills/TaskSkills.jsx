@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import promiseListener from '../../../../createPromiseListener';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -10,6 +11,14 @@ import ItemsList from '~core/ItemsList';
 import styles from './TaskSkills.css';
 
 import skillMocks from './__datamocks__/mockSkills';
+
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
+/* import {
+  TASK_MANAGER_SET_SKILL,
+  TASK_MANAGER_SET_SKILL_ERROR,
+  TASK_MANAGER_SET_SKILL_SUCCESS,
+} from '../../actionTypes'; */
 
 const MSG = defineMessages({
   title: {
@@ -34,21 +43,33 @@ type State = {
 };
 
 class TaskSkills extends Component<Props, State> {
+  asyncFunc: AsyncFunction<Object, void>;
+
   static displayName = 'dashboard.TaskSkills';
+
+  constructor(props: Props) {
+    super(props);
+
+    this.asyncFunc = promiseListener.createAsyncFunction({
+      start: 'TASK_MANAGER_SET_SKILL',
+      resolve: 'TASK_MANAGER_SET_SKILL_SUCCESS',
+      reject: 'TASK_MANAGER_SET_SKILL_ERROR',
+    });
+  }
 
   state = {
     selectedSkillId: undefined,
   };
 
-  handleSetSkill = (skillValue: Object) => {
-    this.setState({ selectedSkillId: skillValue.id });
-    /*
-     * @TODO This should call (most likely) an action creator, or otherwise,
-     * do something the domain value
-     */
-    /* eslint-disable-next-line no-console */
-    return console.log(TaskSkills.displayName, skillValue);
-  };
+  componentWillUnmount() {
+    this.asyncFunc.unsubscribe();
+  }
+
+  handleSetSkill(skillValue: Object) {
+    this.asyncFunc
+      .asyncFunction(skillValue)
+      .then(this.setState({ selectedSkillId: skillValue.id }));
+  }
 
   render() {
     const { isTaskCreator } = this.props;
