@@ -3,7 +3,6 @@
 import type { Saga } from 'redux-saga';
 import { call, getContext, takeEvery } from 'redux-saga/effects';
 
-import type { Action } from '~types';
 import { DDB } from '../../../lib/database';
 import { FeedStore, KVStore } from '../../../lib/database/stores';
 
@@ -34,20 +33,30 @@ export function* fetchOrCreateDomainStore({
     yield call([store, store.load]);
   } else {
     store = yield call([ddb, ddb.createStore], domainStore);
+    const taskStore = yield call(fetchOrCreateDraftStore, {});
+    yield call([store, store.set], {
+      tasksDatabase: taskStore.address.toString(),
+    });
   }
   return store;
 }
 
-export function* fetchOrCreateDraftStore(action: Action): Saga<FeedStore> {
+export function* fetchOrCreateDraftStore({
+  colonyAddress,
+  domainAddress,
+  draftStoreAddress,
+}: {
+  domainAddress?: string,
+  colonyAddress?: string,
+  draftStoreAddress?: string,
+}): Saga<FeedStore> {
   const ddb: DDB = yield getContext('ddb');
-  const { colonyAddress, domainAddress, draftStoreAddress } = action.payload;
   let store;
 
   if (draftStoreAddress) {
     store = yield call([ddb, ddb.getStore], draftStore, draftStoreAddress);
-    yield call([store, store.load]);
   } else if (domainAddress) {
-    const domain = yield call(fetchOrCreateDomainStore, domainAddress);
+    const domain = yield call(fetchOrCreateDomainStore, { domainAddress });
     const draftAddress = yield call([domain, domain.get], 'tasksDatabase');
     store = yield call([ddb, ddb.getStore], draftStore, draftAddress);
   } else if (colonyAddress) {
