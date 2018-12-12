@@ -8,7 +8,7 @@ import styles from './Task.css';
 
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
-import { ActionButton, DialogActionButton } from '~core/Button';
+import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import Assignment from '~core/Assignment';
 
 /*
@@ -29,9 +29,6 @@ import TaskSkills from '~dashboard/TaskSkills';
 import { TASK_STATE } from '~immutable';
 
 import {
-  TASK_EDIT,
-  TASK_EDIT_ERROR,
-  TASK_EDIT_SUCCESS,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
   TASK_WORKER_END_SUCCESS,
@@ -98,6 +95,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
+  openDialog: OpenDialog,
   task: TaskRecord,
   user: UserRecord,
   isTaskCreator?: boolean,
@@ -106,6 +104,28 @@ type Props = {
 
 class Task extends Component<Props> {
   displayName = 'dashboard.Task';
+
+  openTaskEditDialog = () => {
+    const { openDialog, task } = this.props;
+    const payouts = task.payouts.map(payout => ({
+      token:
+        // we add 1 because Formik thinks 0 is empty
+        tokensMock.indexOf(
+          tokensMock.find(token => token.symbol === payout.token.symbol),
+        ) + 1,
+      amount: payout.amount,
+      id: nanoid(),
+    }));
+
+    openDialog('TaskEditDialog', {
+      assignee: task.assignee,
+      availableTokens: tokensMock,
+      maxTokens: 2,
+      payouts,
+      reputation: task.reputation,
+      users: userMocks,
+    });
+  };
 
   setValues = (dialogValues?: Object = {}) => {
     const {
@@ -117,28 +137,6 @@ class Task extends Component<Props> {
       taskId,
     };
   };
-
-  get taskEditDialogProps() {
-    const { task } = this.props;
-    const payouts = task.payouts.map(payout => ({
-      token:
-        // we add 1 because Formik thinks 0 is empty
-        tokensMock.indexOf(
-          tokensMock.find(token => token.symbol === payout.token.symbol),
-        ) + 1,
-      amount: payout.amount,
-      id: nanoid(),
-    }));
-
-    return {
-      assignee: task.assignee,
-      availableTokens: tokensMock,
-      maxTokens: 2,
-      payouts,
-      reputation: task.reputation,
-      users: userMocks,
-    };
-  }
 
   get isWorker() {
     const {
@@ -212,15 +210,10 @@ class Task extends Component<Props> {
                 text={MSG.assignmentFunding}
               />
               {preventEdit && (
-                <DialogActionButton
+                <Button
                   appearance={{ theme: 'blue' }}
                   text={MSG.details}
-                  dialog="TaskEditDialog"
-                  dialogProps={this.taskEditDialogProps}
-                  submit={TASK_EDIT}
-                  success={TASK_EDIT_SUCCESS}
-                  errror={TASK_EDIT_ERROR}
-                  values={setValues}
+                  onClick={this.openTaskEditDialog}
                 />
               )}
             </header>
