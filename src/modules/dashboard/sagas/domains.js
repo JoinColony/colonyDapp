@@ -7,16 +7,30 @@ import type { Action } from '~types';
 import { DDB } from '../../../lib/database';
 import { FeedStore, KVStore } from '../../../lib/database/stores';
 
-import { domainStore, taskDraftStore } from '../stores';
-import { TASKDRAFT_FETCH, DOMAIN_FETCH } from '../actionTypes';
+import { colonyStore, domainStore, taskDraftStore } from '../stores';
+import { DRAFT_FETCH, DOMAIN_FETCH } from '../actionTypes';
 
-export function* fetchOrCreateDomainStore(action: Action): Saga<KVStore> {
+/*
+ * Fetches from colony identifier, domain identifier, or creates new domain
+ */
+
+export function* fetchOrCreateDomainStore({
+  domainAddress,
+  colonyAddress,
+}: {
+  domainAddress?: string,
+  colonyAddress?: string,
+}): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
-  const { domainIdentifier } = action.payload;
   let store;
 
-  if (domainIdentifier) {
-    store = yield call([ddb, ddb.getStore], domainStore, domainIdentifier);
+  if (domainAddress) {
+    store = yield call([ddb, ddb.getStore], domainStore, domainAddress);
+    yield call([store, store.load]);
+  } else if (colonyAddress) {
+    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
+    const domain = yield call([colony, colony.get], 'rootDomain');
+    store = yield call([ddb, ddb.getStore], domainStore, domain);
     yield call([store, store.load]);
   } else {
     store = yield call([ddb, ddb.createStore], domainStore);
@@ -24,9 +38,9 @@ export function* fetchOrCreateDomainStore(action: Action): Saga<KVStore> {
   return store;
 }
 
-function* fetchOrCreateTaskDraftStore(action: Action): Saga<FeedStore> {
+export function* fetchOrCreateDraftStore(action: Action): Saga<FeedStore> {
   const ddb: DDB = yield getContext('ddb');
-  const { taskDraftStoreIdentifier } = action.payload;
+  const { domainIdentifier, taskDraftStoreIdentifier } = action.payload;
   let store;
 
   if (taskDraftStoreIdentifier) {
@@ -36,6 +50,10 @@ function* fetchOrCreateTaskDraftStore(action: Action): Saga<FeedStore> {
       taskDraftStoreIdentifier,
     );
     yield call([store, store.load]);
+  } else if (domainIdentifier) {
+    const domain = yield call(fetchOrCreateDomainStore, domainIdentifier);
+    const draftStoreAddress = yield call([domain, domain.get], 'tasksDatabase');
+    store = yield call([ddb, ddb.getStore], taskDraftStore, draftStoreAddress);
   } else {
     store = yield call([ddb, ddb.createStore], taskDraftStore);
   }
@@ -44,5 +62,5 @@ function* fetchOrCreateTaskDraftStore(action: Action): Saga<FeedStore> {
 
 export default function* domainSagas(): any {
   yield takeEvery(DOMAIN_FETCH, fetchOrCreateDomainStore);
-  yield takeEvery(TASKDRAFT_FETCH, fetchOrCreateTaskDraftStore);
+  yield takeEvery(DRAFT_FETCH, fetchOrCreateDraftStore);
 }
