@@ -254,7 +254,8 @@ class Task extends Component<Props> {
               <TaskDomains isTaskCreator={preventEdit} />
             </div>
             <div className={styles.editor}>
-              <TaskSkills isTaskCreator={preventEdit} />
+              {/* isTaskCreator={preventEdit} */}
+              <TaskSkills isTaskCreator />
             </div>
             <div className={styles.editor}>
               <TaskDate isTaskCreator={preventEdit} />
@@ -326,47 +327,51 @@ class Task extends Component<Props> {
                 />
               )}
             {/* Worker makes deadline and manager rates worker */}
-            {task.currentState === TASK_STATE.RATING && isManager && (
-              <DialogActionButton
-                dialog="WorkerRatingDialog"
-                options={{
-                  workSubmitted: true,
-                }}
-                text={MSG.rateWorker}
-                submit={TASK_MANAGER_RATE_WORKER}
-                success={TASK_MANAGER_RATE_WORKER_SUCCESS}
-                error={TASK_MANAGER_RATE_WORKER_ERROR}
-                values={setValues}
-              />
-            )}
+            {task.currentState === TASK_STATE.RATING &&
+              isManager && (
+                <DialogActionButton
+                  dialog="WorkerRatingDialog"
+                  options={{
+                    workSubmitted: true,
+                  }}
+                  text={MSG.rateWorker}
+                  submit={TASK_MANAGER_RATE_WORKER}
+                  success={TASK_MANAGER_RATE_WORKER_SUCCESS}
+                  error={TASK_MANAGER_RATE_WORKER_ERROR}
+                  values={setValues}
+                />
+              )}
             {/* Manager reveal rating of worker */}
-            {task.currentState === TASK_STATE.REVEAL && isManager && (
-              <ActionButton
-                text={MSG.revealRating}
-                submit={TASK_MANAGER_REVEAL_WORKER_RATING}
-                success={TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
-                error={TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
-                values={setValues}
-              />
-            )}
+            {task.currentState === TASK_STATE.REVEAL &&
+              isManager && (
+                <ActionButton
+                  text={MSG.revealRating}
+                  submit={TASK_MANAGER_REVEAL_WORKER_RATING}
+                  success={TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
+                  error={TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
+                  values={setValues}
+                />
+              )}
             {/* Worker reveal rating of manager */}
-            {task.currentState === TASK_STATE.REVEAL && isWorker && (
-              <ActionButton
-                text={MSG.revealRating}
-                submit={TASK_WORKER_REVEAL_MANAGER_RATING}
-                success={TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
-                error={TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
-                values={setValues}
-              />
-            )}
+            {task.currentState === TASK_STATE.REVEAL &&
+              isWorker && (
+                <ActionButton
+                  text={MSG.revealRating}
+                  submit={TASK_WORKER_REVEAL_MANAGER_RATING}
+                  success={TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
+                  error={TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
+                  values={setValues}
+                />
+              )}
             {/* Task is finalized and payouts can be claimed */}
             {canClaimPayout && <TaskClaimReward task={task} />}
             {/* Task is finalized and no payouts can be claimed */}
-            {task.currentState === TASK_STATE.FINALIZED && !canClaimPayout && (
-              <p className={styles.completedDescription}>
-                <FormattedMessage {...MSG.completed} />
-              </p>
-            )}
+            {task.currentState === TASK_STATE.FINALIZED &&
+              !canClaimPayout && (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
           </section>
           <div className={styles.activityContainer}>
             <section className={styles.activity}>
