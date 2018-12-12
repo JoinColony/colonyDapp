@@ -77,7 +77,7 @@ function* createColonyLabelSaga({
   // Create a colony store and save the colony to that store.
   // TODO: No access controller available yet
   const store = yield call([ddb, ddb.createStore], colonyStore);
-  const rootDomainStore = yield call(fetchOrCreateDomainStore);
+  const rootDomainStore = yield call(fetchOrCreateDomainStore, {});
 
   const colonyStoreData = {
     address: colonyAddress,
