@@ -1,6 +1,7 @@
 .wrapper {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
+  overflow-y: auto;
   background: var(--gradient-default);
   grid-template-columns: 100%;
   grid-template-rows: 70px auto;
