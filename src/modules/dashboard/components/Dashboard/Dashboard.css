@@ -1,7 +1,7 @@
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 15%;
+  padding: 60px 15%;
   overflow: auto;
   grid-template-columns: auto 180px;
   grid-template-rows: 100%;
