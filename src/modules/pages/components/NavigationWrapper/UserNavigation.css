@@ -12,8 +12,7 @@
 .navigationItem {
   flex-grow: 0;
   margin-right: 12px;
-  height: 34px;
-  width: 34px;
+  padding: 0 10px 5px 10px;
   border-radius: var(--radius-tiny);
   text-align: center;
   cursor: pointer;
