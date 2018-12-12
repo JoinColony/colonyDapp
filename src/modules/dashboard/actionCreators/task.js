@@ -5,8 +5,8 @@ import type { SendOptions } from '@colony/colony-js-client';
 import { createColonyTransaction } from '../../core/actionCreators';
 
 import {
-  TASK_FINALIZE_ERROR,
-  TASK_FINALIZE_SUCCESS,
+  TASK_SET_SKILL_ERROR,
+  TASK_SET_SKILL_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_RATE_WORKER_ERROR,
@@ -21,7 +21,31 @@ import {
   TASK_WORKER_RATE_MANAGER_SUCCESS,
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
+  TASK_FINALIZE_ERROR,
+  TASK_FINALIZE_SUCCESS,
 } from '../actionTypes';
+
+/**
+ * As anyone, I want to be able to set a skill
+ */
+export const taskSetSkill = (
+  identifier: string,
+  params: {
+    taskId: number,
+    skillId: number,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'setTaskSkill',
+    identifier,
+    lifecycle: {
+      error: TASK_SET_SKILL_ERROR,
+      success: TASK_SET_SKILL_SUCCESS,
+    },
+  });
 
 /**
  * As worker, submit work and rate before due date.

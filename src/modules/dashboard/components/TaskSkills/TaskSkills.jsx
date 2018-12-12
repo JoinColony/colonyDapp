@@ -14,11 +14,11 @@ import taskSkills from './taskSkillsTree';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 
-/* import {
-  TASK_MANAGER_SET_SKILL,
-  TASK_MANAGER_SET_SKILL_ERROR,
-  TASK_MANAGER_SET_SKILL_SUCCESS,
-} from '../../actionTypes'; */
+import {
+  TASK_SET_SKILL,
+  TASK_SET_SKILL_ERROR,
+  TASK_SET_SKILL_SUCCESS,
+} from '../../actionTypes';
 
 const MSG = defineMessages({
   title: {
@@ -51,9 +51,9 @@ class TaskSkills extends Component<Props, State> {
     super(props);
 
     this.asyncFunc = promiseListener.createAsyncFunction({
-      start: 'TASK_MANAGER_SET_SKILL',
-      resolve: 'TASK_MANAGER_SET_SKILL_SUCCESS',
-      reject: 'TASK_MANAGER_SET_SKILL_ERROR',
+      start: TASK_SET_SKILL,
+      resolve: TASK_SET_SKILL_SUCCESS,
+      reject: TASK_SET_SKILL_ERROR,
     });
   }
 
