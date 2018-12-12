@@ -8,6 +8,11 @@ export const TASK_CREATE_ERROR = `${ns}/TASK_CREATE_ERROR`;
 export const TASK_CREATE_SUCCESS = `${ns}/TASK_CREATE_SUCCESS`;
 export const TASK_CREATE_TRANSACTION_SENT = `${ns}/TASK_CREATE_TRANSACTION_SENT`;
 
+export const DRAFT_CREATE = `${ns}/DRAFT_CREATE`;
+export const DRAFT_CREATE_ERROR = `${ns}/DRAFT_CREATE_ERROR`;
+export const DRAFT_CREATE_SUCCESS = `${ns}/DRAFT_CREATE_SUCCESS`;
+export const DRAFT_FETCH = `${ns}/DRAFT_FETCH`;
+
 export const TASK_EDIT = `${ns}/TASK_EDIT`;
 export const TASK_EDIT_ERROR = `${ns}/TASK_EDIT_ERROR`;
 export const TASK_EDIT_SUCCESS = `${ns}/TASK_EDIT_SUCCESS`;
