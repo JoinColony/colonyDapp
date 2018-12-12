@@ -1,9 +1,9 @@
 /* @flow */
 
 import type { RecordOf, List } from 'immutable';
-import type { UserRecord } from './UserRecord';
-
-import type { ENSName, TaskFeedItemRecord } from '~types';
+import type { ENSName } from '~types';
+import type { UserRecord } from './User';
+import type { TaskFeedItemRecord } from './TaskFeedItem';
 
 export type draftProps = {
   id?: number,
