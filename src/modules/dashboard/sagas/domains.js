@@ -7,7 +7,7 @@ import type { Action } from '~types';
 import { DDB } from '../../../lib/database';
 import { FeedStore, KVStore } from '../../../lib/database/stores';
 
-import { colonyStore, domainStore, taskDraftStore } from '../stores';
+import { colonyStore, domainStore, draftStore } from '../stores';
 import { DRAFT_FETCH, DOMAIN_FETCH } from '../actionTypes';
 
 /*
@@ -40,23 +40,36 @@ export function* fetchOrCreateDomainStore({
 
 export function* fetchOrCreateDraftStore(action: Action): Saga<FeedStore> {
   const ddb: DDB = yield getContext('ddb');
-  const { domainIdentifier, taskDraftStoreIdentifier } = action.payload;
+  const { colonyAddress, domainAddress, draftStoreAddress } = action.payload;
   let store;
 
-  if (taskDraftStoreIdentifier) {
-    store = yield call(
-      [ddb, ddb.getStore],
-      taskDraftStore,
-      taskDraftStoreIdentifier,
-    );
+  if (draftStoreAddress) {
+    store = yield call([ddb, ddb.getStore], draftStore, draftStoreAddress);
     yield call([store, store.load]);
-  } else if (domainIdentifier) {
-    const domain = yield call(fetchOrCreateDomainStore, domainIdentifier);
-    const draftStoreAddress = yield call([domain, domain.get], 'tasksDatabase');
-    store = yield call([ddb, ddb.getStore], taskDraftStore, draftStoreAddress);
+  } else if (domainAddress) {
+    const domain = yield call(fetchOrCreateDomainStore, domainAddress);
+    const draftAddress = yield call([domain, domain.get], 'tasksDatabase');
+    store = yield call([ddb, ddb.getStore], draftStore, draftAddress);
+  } else if (colonyAddress) {
+    // we presume the root domain is desired
+    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
+    yield call([colony, colony.load]);
+    const rootDomainAddress = yield call([colony, colony.get], 'rootDomain');
+    const rootDomain = yield call(
+      [ddb, ddb.getStore],
+      domainStore,
+      rootDomainAddress,
+    );
+    yield call([rootDomain, rootDomain.load]);
+    const draftsAddress = yield call(
+      [rootDomain, rootDomain.get],
+      'tasksDatabase',
+    );
+    store = yield call([ddb, ddb.getStore], draftStore, draftsAddress);
   } else {
-    store = yield call([ddb, ddb.createStore], taskDraftStore);
+    store = yield call([ddb, ddb.createStore], draftStore);
   }
+  yield call([store, store.load]);
   return store;
 }
 
