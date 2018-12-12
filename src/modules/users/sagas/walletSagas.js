@@ -74,9 +74,13 @@ function* openKeystoreWallet(action: Object): Saga<void> {
   });
 }
 
-function* openTrufflepigWallet(): Saga<void> {
+function* openTrufflepigWallet({
+  payload: { accountIndex },
+}: {
+  payload: { accountIndex: number },
+}): Saga<void> {
   const loader = yield create(TrufflepigLoader);
-  const { privateKey } = yield call([loader, loader.getAccount], 0);
+  const { privateKey } = yield call([loader, loader.getAccount], accountIndex);
   return yield call(softwareWallet.open, {
     privateKey,
   });
