@@ -1,16 +1,29 @@
 /* @flow */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import { Formik } from 'formik';
+// import { Formik } from 'formik';
 
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
-import { FieldSet, Input, InputLabel, Textarea } from '~core/Fields';
+import {
+  FieldSet,
+  Input,
+  InputLabel,
+  Textarea,
+  ActionForm,
+  FormStatus,
+} from '~core/Fields';
 import Button from '~core/Button';
 import AvatarUploader from '~core/AvatarUploader';
 import ColonyAvatar from '~core/ColonyAvatar';
 import { getENSDomainString } from '~utils/ens';
+
+import {
+  COLONY_PROFILE_UPDATE,
+  COLONY_PROFILE_UPDATE_ERROR,
+  COLONY_PROFILE_UPDATE_SUCCESS,
+} from '../../actionTypes';
 
 import styles from './ProfileEdit.css';
 
@@ -84,18 +97,24 @@ const ProfileEdit = ({ colony }: Props) => {
   return (
     <div className={styles.main}>
       <main className={styles.content}>
-        <Formik
-          // eslint-disable-next-line no-console
-          onSubmit={console.log}
+        <ActionForm
+          submit={COLONY_PROFILE_UPDATE}
+          success={COLONY_PROFILE_UPDATE_ERROR}
+          error={COLONY_PROFILE_UPDATE_SUCCESS}
           initialValues={{
             colonyDisplayName,
             aboutColony: description,
             colonyWebsite: website,
             colonyGuidelines: guideline,
           }}
+          /*
+           * @TODO Add form validation
+           * If this makes to the review, raise hell!
+           */
+          // validationSchema={userProfileStore.schema}
         >
-          {({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
+          {({ status, isSubmitting }) => (
+            <Fragment>
               <FieldSet className={styles.section}>
                 <InputLabel label={MSG.labelAddress} />
                 <CopyableAddress appearance={{ theme: 'big' }} full>
@@ -153,11 +172,13 @@ const ProfileEdit = ({ colony }: Props) => {
                   style={{ width: styles.wideButton }}
                   text={{ id: 'button.save' }}
                   type="submit"
+                  loading={isSubmitting}
                 />
               </FieldSet>
-            </form>
+              <FormStatus status={status} />
+            </Fragment>
           )}
-        </Formik>
+        </ActionForm>
       </main>
       <aside className={styles.sidebar}>
         <AvatarUploader
