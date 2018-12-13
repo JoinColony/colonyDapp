@@ -21,6 +21,7 @@
 
 .content {
   composes: flexContainerColumn flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  padding-bottom: 20px;
 }
 
 .section .logo-loader svg {
