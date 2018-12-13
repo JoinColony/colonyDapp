@@ -19,7 +19,10 @@ describe('Can create a username and colony in dev mode', () => {
     cy.contains('Confirm').click();
   });
   it('The avatar dropdown and colony creation wizard create a colony', () => {
-    cy.get('[data-test="avatarDropdown"]', { timeout: 20000 }).click();
+    // Wait for the dialog to disappear
+    cy.get('[data-test="avatarDropdown"]', { timeout: 20000 }).click({
+      timeout: 20000,
+    });
     cy.get('[href="/create-colony"]').click();
     cy.get('[name="colonyName"]').type('littlePiggieHouse');
     cy.contains('Next').click();
@@ -30,7 +33,6 @@ describe('Can create a username and colony in dev mode', () => {
     cy.contains('Create Colony', { timeout: 20000 }).click();
     cy.get('[name="ensName"]', { timeout: 20000 }).type('Piglet');
     cy.contains('Done').click();
-    // After the colony label is registered, the spinner stops and the Done text reappears
-    cy.contains('Done', { timeout: 20000 });
+    cy.url({ timeout: 60000 }).should('include', '/colony/Piglet');
   });
 });
