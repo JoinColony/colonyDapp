@@ -162,6 +162,7 @@
         "history": "^4.7.2",
         "immutable": "^4.0.0-rc.12",
         "ipfs": "^0.33.1",
+        "ipfs-pubsub-peer-monitor": "^0.0.8",
         "linkify-it": "^2.0.3",
         "lodash": "4.17.11",
         "lru-cache": "^4.1.3",

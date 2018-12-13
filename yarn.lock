@@ -7904,7 +7904,7 @@ ipfs-pubsub-1on1@~0.0.4:
   dependencies:
     safe-buffer "~5.1.1"
 
-ipfs-pubsub-peer-monitor@~0.0.5:
+ipfs-pubsub-peer-monitor@^0.0.8, ipfs-pubsub-peer-monitor@~0.0.5:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/ipfs-pubsub-peer-monitor/-/ipfs-pubsub-peer-monitor-0.0.8.tgz#8972676247e6a7d1901e27dcfe11cbd0aecaa1c6"
   integrity sha512-/6YJZn3dBbDUxopetJhgU65uAhOiz77CCTTZqEt4zk6s+r2t5+sYLIqO+1vX6IN3Bx2Hpf8iBdyt8JCkuq/zwg==
