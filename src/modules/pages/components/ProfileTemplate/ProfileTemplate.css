@@ -5,6 +5,9 @@
   display: flex;
   flex-direction: row;
   height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
 }
 
 .sidebar {
@@ -29,7 +32,7 @@
 }
 
 .mainContent {
-  padding: 20px paddingHorizontal;
+  padding: 80px paddingHorizontal;
   height: 100%;
   max-width: 930px;
 }
@@ -42,8 +45,4 @@
 .themeAlt .sidebar {
   border-right: 2px solid var(--grey-blue-0);
   background: none;
-}
-
-.themeAlt .mainContent {
-  padding: 80px paddingHorizontal;
 }

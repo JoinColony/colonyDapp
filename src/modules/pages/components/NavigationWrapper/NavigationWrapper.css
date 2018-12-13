@@ -11,6 +11,7 @@
   display: flex;
   align-content: stretch;
   padding: 0 20px;
+  z-index: 1;
   border: 1px solid transparent;
   grid-column: 1;
   grid-row: 1;
