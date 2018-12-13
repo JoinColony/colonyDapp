@@ -2,7 +2,7 @@
     "name": "colony-dapp",
     "private": true,
     "engines": {
-        "node": "10.12"
+        "node": ">=10.11.0 <12.0.0"
     },
     "version": "1.0.0",
     "description": "",
@@ -13,8 +13,8 @@
         "build": "webpack-cli --config webpack.config.js",
         "flow": "flow check",
         "flow:ci": "scripts/flow_ci.sh",
-        "lint": "eslint --fix 'src/**/*.{js,jsx}' 'integration-testing/**/*.js'",
-        "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}' 'integration-testing/**/*.js'",
+        "lint": "eslint --fix 'src/**/*.{js,jsx}' 'integration-testing/**/*.js' 'cypress/**/*.js'",
+        "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}' 'integration-testing/**/*.js' 'cypress/**/*.js'",
         "scaffold": "plop",
         "stylelint": "stylelint --fix \"src/**/*.css\"",
         "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
@@ -30,7 +30,9 @@
         "deploy:styleguide": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git",
         "trufflepig": "scripts/start_trufflepig.js",
         "ganache": "scripts/start_ganache.js",
-        "deploy:contracts": "scripts/deploy_contracts.js"
+        "deploy:contracts": "scripts/deploy_contracts.js",
+        "test:e2e": "rimraf .dappPids.json && scripts/start_all.js & wait-on .dappPids.json && cypress run; scripts/stop_all.js",
+        "test:e2e:ci": "scripts/start_all.js & wait-on .dappPids.json && cypress run --browser chrome"
     },
     "repository": {
         "type": "git",
@@ -61,6 +63,7 @@
         "babel-jest": "^23.6.0",
         "babel-loader": "^8.0.2",
         "babel-plugin-react-intl": "^3.0.0",
+        "babel-plugin-react-remove-properties": "^0.2.5",
         "bs58": "^4.0.1",
         "caniuse-lite": "^1.0.30000860",
         "chalk": "^2.4.0",
@@ -79,6 +82,7 @@
         "eslint-import-resolver-jest": "^2.1.1",
         "eslint-import-resolver-webpack": "^0.10.1",
         "eslint-plugin-ava": "^5.1.1",
+        "eslint-plugin-cypress": "^2.1.2",
         "eslint-plugin-flowtype": "^3.1.1",
         "eslint-plugin-import": "^2.14.0",
         "eslint-plugin-jest": "^22.1.2",
@@ -119,8 +123,10 @@
         "svgo-loader": "^2.1.0",
         "svgr": "^1.10.0",
         "tap-xunit": "^2.3.0",
+        "tree-kill": "^1.2.1",
         "trufflepig": "^1.1.1",
         "url-loader": "^1.0.1",
+        "wait-on": "^3.2.0",
         "webpack": "4.22.0",
         "webpack-cli": "^3.1.0",
         "webpack-dev-server": "^3.1.8"
@@ -143,6 +149,7 @@
         "connected-react-router": "^4.4.1",
         "copy-to-clipboard": "^3.0.8",
         "core-js": "^2.5.7",
+        "cypress": "^3.1.2",
         "draft-js": "^0.10.5",
         "elliptic": "^6.4.1",
         "es6-promisify": "^6.0.0",

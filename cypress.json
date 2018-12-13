@@ -1,0 +1,10 @@
+{
+    "baseUrl": "http://localhost:8080",
+    "screenshotsFolder": "reports/cypress/screenshots",
+    "videosFolder": "reports/cypress/videos",
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": "reports/cypress/cypress-results-[hash].xml",
+        "toConsole": false
+    }
+}

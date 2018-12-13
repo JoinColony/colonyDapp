@@ -1,0 +1,16 @@
+{
+    "plugins": [
+        "cypress"
+    ],
+    "extends": [
+        "plugin:cypress/recommended"
+    ],
+    "env": {
+        "cypress/globals": true
+    },
+    "rules": {
+      "flowtype/require-valid-file-annotation": "off",
+      "max-len": "off",
+      "func-names": "off"
+    }
+}

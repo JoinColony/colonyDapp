@@ -75,6 +75,7 @@ const StepCreatePhrase = ({ nextStep, wizardForm }: Props) => (
           appearance={{ theme: 'primary' }}
           type="submit"
           text={MSG.confirmButton}
+          data-test="confirmStoredPhraseButton"
         />
       </div>
     </Form>

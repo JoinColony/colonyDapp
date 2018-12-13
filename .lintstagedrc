@@ -4,12 +4,16 @@
       "eslint --fix",
       "git add"
     ],
-    "src/**/*.css": [
-      "stylelint --fix",
-      "git add"
-    ],
     "integration-testing/**/*.js": [
       "eslint --fix",
+      "git add"
+    ],
+    "cypress/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "src/**/*.css": [
+      "stylelint --fix",
       "git add"
     ]
   },

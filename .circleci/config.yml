@@ -67,9 +67,6 @@ jobs:
           - node-modules-{{ checksum "package.json" }}
           - node-modules-
       - run:
-          name: "Set up global packages"
-          command: yarn global add lerna
-      - run:
           name: "Installing modules"
           command: |
             yarn install
@@ -103,7 +100,7 @@ jobs:
       - run:
           name: "Building library"
           command: yarn build
-  integration-testing-build:
+  integration-testing:
     docker:
       - image: circleci/node:10.12
       - image: redis:4.0
@@ -115,9 +112,6 @@ jobs:
           - node-modules-{{ checksum "package.json" }}
           - node-modules-
       - run:
-          name: "Set up global packages"
-          command: yarn global add lerna
-      - run:
           name: "Installing modules"
           command: |
             yarn install
@@ -127,6 +121,9 @@ jobs:
             - node_modules
           key: node-modules-{{ checksum "package.json" }}
       - run:
+          name: "Linting Javascript"
+          command: yarn lint:ci
+      - run:
           name: "Start pinningService Integration mode"
           command: "yarn test:integration:ci:start-pinning"
           background: true
@@ -135,6 +132,46 @@ jobs:
           command: |
             mkdir -p reports/ava
             yarn test:integration:ci
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports
+  e2e-testing:
+    docker:
+      - image: joincolony/circleci-cypress
+    environment:
+      LOADER: trufflepig
+      NETWORK: local
+      DISPLAY: :1.0
+    working_directory: ~/colonyDapp
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - node-modules-{{ checksum "package.json" }}
+          - node-modules-
+      - run:
+          name: "Installing modules"
+          command: |
+            node --version
+            yarn install
+            yarn provision --skip-pinning-service-build
+      - save_cache:
+          paths:
+            - node_modules
+          key: node-modules-{{ checksum "package.json" }}
+      - setup_remote_docker
+      - run:
+          name: "Linting Javascript"
+          command: yarn lint:ci
+      - run:
+          name: "Running E2E Tests"
+          command: |
+            printf "password\npassword\n\n" | vncpasswd
+            vncserver -geometry 1280x1024 -depth 24
+            metacity &
+            docker pull ethereum/solc:0.4.23
+            yarn test:e2e:ci
       - store_test_results:
           path: reports
       - store_artifacts:
@@ -190,7 +227,8 @@ workflows:
   commit:
     jobs:
       - build-with-lockfile
-      - integration-testing-build
+      - integration-testing
+      - e2e-testing
       - build-styleguide:
           requires:
             - build-with-lockfile
@@ -209,4 +247,5 @@ workflows:
               only: master
     jobs:
       - nightly-build
-      - integration-testing-build
+      - integration-testing
+      - e2e-testing

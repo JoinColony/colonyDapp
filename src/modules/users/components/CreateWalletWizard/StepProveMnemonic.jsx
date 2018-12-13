@@ -151,6 +151,7 @@ const StepProveMnemonic = ({
                 type="submit"
                 loading={isSubmitting}
                 style={{ width: styles.wideButton }}
+                data-test="proveBackupPhraseButton"
               />
             </div>
           </Fragment>

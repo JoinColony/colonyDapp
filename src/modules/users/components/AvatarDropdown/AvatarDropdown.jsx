@@ -27,7 +27,11 @@ const AvatarDropdown = ({ user }: Props) => (
     )}
     trigger="click"
   >
-    <button className={styles.avatarButton} type="button">
+    <button
+      className={styles.avatarButton}
+      type="button"
+      data-test="avatarDropdown"
+    >
       <UserAvatar
         username={user.profile.username}
         avatarURL={user.profile.avatar}
