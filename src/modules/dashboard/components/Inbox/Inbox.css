@@ -1,14 +1,13 @@
-
-.inboxContainer {
-  flex-grow: 1;
-  height: 525px;
-  max-width: 940px;
-  box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
-}
-
 .contentContainer {
   display: flex;
   flex-direction: column;
+}
+
+.inboxContainer {
+  flex: 0 1 auto;
+  height: 525px;
+  max-width: 940px;
+  box-shadow: 0 3px 0 0 var(--temp-grey-blue-4);
 }
 
 .inboxHeading {
