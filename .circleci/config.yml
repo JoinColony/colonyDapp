@@ -142,6 +142,7 @@ jobs:
     environment:
       LOADER: trufflepig
       NETWORK: local
+      DISPLAY: :1.0
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -166,6 +167,9 @@ jobs:
       - run:
           name: "Running E2E Tests"
           command: |
+            printf "password\npassword\n\n" | vncpasswd
+            vncserver -geometry 1280x1024 -depth 24
+            metacity &
             docker pull ethereum/solc:0.4.23
             yarn test:e2e:ci
       - store_test_results:

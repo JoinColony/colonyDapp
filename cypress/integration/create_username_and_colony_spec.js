@@ -29,8 +29,8 @@ describe('Can create a username and colony in dev mode', () => {
     cy.contains('Create a new token').click();
     cy.get('[name="tokenName"]').type('PigsAreNotBacon');
     cy.get('[name="tokenSymbol"]').type('PIG');
-    cy.contains('Create Token', { timeout: 20000 }).click();
-    cy.contains('Create Colony', { timeout: 20000 }).click();
+    cy.contains('Create Token').click();
+    cy.contains('Create Colony', { timeout: 120000 }).click();
     cy.get('[name="ensName"]', { timeout: 20000 }).type('Piglet');
     cy.contains('Done').click();
     cy.url({ timeout: 60000 }).should('include', '/colony/Piglet');
