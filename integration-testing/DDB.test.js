@@ -14,7 +14,8 @@ test.before(async t => {
   const ipfsNode = await factory.node('ddb1');
   const wallet = await createWallet();
   const identityProvider = new PurserIdentityProvider(wallet);
-  const ddb = await DDB.createDatabase(ipfsNode, identityProvider);
+  const ddb = new DDB(ipfsNode, identityProvider);
+  await ddb.init();
   t.context = {
     ddb,
     ipfsNode,

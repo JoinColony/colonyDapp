@@ -39,6 +39,12 @@ export type OrbitStoreOpenOpts = {
   replicate?: boolean,
 };
 
+export type PinnerAction = {
+  type: string,
+  to?: OrbitDBAddress,
+  payload: Object,
+};
+
 export type StoreBlueprint = {
   name: string,
   schema: ObjectSchema,

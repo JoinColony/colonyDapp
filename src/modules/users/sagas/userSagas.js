@@ -77,6 +77,7 @@ export function* getOrCreateUserStore(walletAddress: Address): Saga<KVStore> {
   );
 
   if (profileStore) {
+    // TODO: handle return value of load
     yield call([profileStore, profileStore.load]);
     return profileStore;
   }

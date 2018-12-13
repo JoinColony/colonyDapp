@@ -4,6 +4,8 @@ import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
 
+import type { Action } from '~types';
+
 import type {
   Identity,
   IdentityProvider,
@@ -11,10 +13,13 @@ import type {
   OrbitDBStore,
   StoreBlueprint,
 } from './types';
+import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
+import PinnerConnector from './PinnerConnector';
 
-import IPFSNode from '../ipfs';
+const PINNING_ROOM = process.env.PINNING_ROOM || 'COLONY_PINNING_ROOM';
+const { PINNER_ID } = process.env;
 
 const generateId = () => generate(urlDictionary, 21);
 
@@ -31,29 +36,30 @@ const { isValidAddress, parseAddress } = OrbitDB;
  * means to add resolvers for resolving store addresses
  */
 class DDB {
+  _identityProvider: IdentityProvider<Identity>;
+
+  _ipfsNode: IPFSNode;
+
   _orbitNode: OrbitDB;
 
   _stores: Map<string, Store>;
 
   _resolvers: Map<string, Resolver>;
 
-  static async createDatabase<I: Identity, P: IdentityProvider<I>>(
+  _pinner: PinnerConnector;
+
+  _outstandingPubsubMessages: Array<Action>;
+
+  _pinnerPeer: string;
+
+  constructor<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
     identityProvider: P,
-  ): Promise<DDB> {
-    const identity = await identityProvider.createIdentity();
-    await ipfsNode.ready;
-    return new DDB(ipfsNode, identity);
-  }
-
-  constructor(ipfsNode: IPFSNode, identity: Identity) {
+  ) {
+    this._ipfsNode = ipfsNode;
     this._stores = new Map();
     this._resolvers = new Map();
-    this._orbitNode = new OrbitDB(ipfsNode.getIPFS(), identity, {
-      // TODO: is there a case where this could not be the default?
-      // TODO should this be a constant, or configurable? and `colonyOrbitDB`?
-      path: 'colonyOrbitdb',
-    });
+    this._identityProvider = identityProvider;
   }
 
   _makeStore(
@@ -63,7 +69,7 @@ class DDB {
     if (!schema) {
       throw new Error(`Schema for store ${name} not found. Did you define it?`);
     }
-    const store = new StoreClass(orbitStore, name, schema);
+    const store = new StoreClass(orbitStore, name, schema, this._pinner);
     const { root, path } = store.address;
     this._stores.set(`${root}/${path}`, store);
     return store;
@@ -185,6 +191,21 @@ class DDB {
     return this._makeStore(orbitStore, blueprint);
   }
 
+  async init() {
+    const identity = await this._identityProvider.createIdentity();
+    await this._ipfsNode.ready;
+    const ipfs = this._ipfsNode.getIPFS();
+
+    this._orbitNode = new OrbitDB(ipfs, identity, {
+      // TODO: is there a case where this could not be the default?
+      // TODO should this be a constant, or configurable? and `colonyOrbitDB`?
+      path: 'colonyOrbitdb',
+    });
+
+    this._pinner = new PinnerConnector(ipfs, PINNING_ROOM, PINNER_ID);
+    await this._pinner.init();
+  }
+
   async stop() {
     // Doing some checks for good measure
     /* eslint-disable no-underscore-dangle */
@@ -194,6 +215,7 @@ class DDB {
       await this._orbitNode._ipfs.start();
     }
     await this._orbitNode.stop();
+    await this._pinner.disconnect();
     return this._orbitNode._ipfs.stop();
     /* eslint-enable no-underscore-dangle */
   }

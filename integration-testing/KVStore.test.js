@@ -25,17 +25,17 @@ test.before(async t => {
   const wallet = await createWallet();
 
   const identityProvider = new PurserIdentityProvider(wallet);
-  const ipfs = await factory.node('kvStore');
-  const ddb = await DDB.createDatabase(ipfs, identityProvider);
+  const ipfsNode = await factory.node('kvStore');
+  const ddb = new DDB(ipfsNode, identityProvider);
   t.context = {
     ddb,
-    ipfs,
+    ipfsNode,
     wallet,
   };
 });
 
 test.after.always(async t => {
-  await t.context.ipfs.stop();
+  await t.context.ipfsNode.stop();
   await t.context.ddb.stop();
 });
 

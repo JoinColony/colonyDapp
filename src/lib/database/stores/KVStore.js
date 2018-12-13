@@ -2,7 +2,9 @@
 
 import type { ValidateOptions } from 'yup';
 
-import type { OrbitDBKVStore } from '../types/index';
+import { promiseSeries } from '~utils/async';
+
+import type { OrbitDBKVStore } from '../types';
 import Store from './Store';
 
 /**
@@ -31,6 +33,7 @@ class KVStore extends Store {
 
   async set(keyOrObject: string | {}, value?: any) {
     const validated = await this.validate(keyOrObject, value);
+    this.pin();
     return this._setObject(validated);
   }
 
@@ -58,36 +61,11 @@ class KVStore extends Store {
   }
 
   async _setObject(obj: {}) {
-    // Creating a promise chain to sequentially work through the entries
-    return Object.entries(obj).reduce((promise, [key, value]) => {
-      const next = () => this._orbitStore.put(key, value);
-      return promise.then(next);
-    }, Promise.resolve(true));
-  }
-
-  /*
-    Wait for the store to be fully replicated.
-    NOTE: The current usage of this KVStore is for a specific set of keys
-    (rather than an unlimited number of keys); if this restriction is removed,
-    then this should be moved to another function.
-   */
-  async load() {
-    const readyPromise = new Promise(resolve => {
-      this._orbitStore.events.once('ready', resolve);
-    });
-    const timeoutPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject(
-          new Error(
-            `Timeout while waiting on replication for store "${this._name}"`,
-          ),
-        );
-      }, 15 * 1000); // 15 seconds
-    });
-
-    await super.load();
-
-    return Promise.race([readyPromise, timeoutPromise]);
+    return promiseSeries(
+      Object.entries(obj).map(([key, value]) =>
+        this._orbitStore.put(key, value),
+      ),
+    );
   }
 }
 

@@ -16,6 +16,7 @@ module.exports = {
       plugins: ['jest'],
       rules: {
         'flowtype/require-valid-file-annotation': 'off',
+        'max-len': 'off',
         'no-underscore-dangle': 'off',
         ...require('./.eslintrc.jest.js'),
       },

@@ -14,7 +14,15 @@ class IPFSNode {
     ipfs: {
       repo: 'colonyIpfs',
       config: {
-        Bootstrap: [],
+        Bootstrap: [
+          // TODO: this is still hardcoded to the local pinner
+          /* eslint-disable max-len */
+          '/ip4/0.0.0.0/tcp/4001/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+          '/ip4/127.0.0.1/tcp/4001/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+          '/ip4/127.0.0.1/tcp/4003/ws/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+          '/ip4/0.0.0.0/tcp/4003/ws/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+          /* eslint-enable max-len */
+        ],
         Addresses: {
           Gateway: '',
           Swarm: [
