@@ -1,6 +1,9 @@
 .modal {
+  height: 100%;
+  max-height: max-content;
   position: relative;
   z-index: var(--z-index-dialog);
+  overflow-y: auto;
   outline: none;
 }
 
@@ -13,9 +16,7 @@
 .dialogOuterActions {
   display: flex;
   justify-content: flex-end;
-  margin-top: -35px;
-  position: absolute;
-  right: 0;
+  margin-bottom: 5px;
 }
 
 .closeIconButton {
