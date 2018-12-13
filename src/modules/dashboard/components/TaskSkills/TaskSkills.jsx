@@ -36,6 +36,7 @@ const MSG = defineMessages({
 
 type Props = {
   isTaskCreator?: boolean,
+  taskId: number,
 };
 
 type State = {
@@ -65,11 +66,18 @@ class TaskSkills extends Component<Props, State> {
     this.asyncFunc.unsubscribe();
   }
 
-  handleSetSkill(skillValue: Object) {
-    this.asyncFunc
-      .asyncFunction(skillValue)
-      .then(this.setState({ selectedSkillId: skillValue.id }));
-  }
+  handleSetSkill = async (skillValue: Object) => {
+    const { taskId } = this.props;
+    try {
+      await this.asyncFunc.asyncFunction({
+        skillId: skillValue.id,
+        taskId,
+      });
+      this.setState({ selectedSkillId: skillValue.id });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   render() {
     const { isTaskCreator } = this.props;
