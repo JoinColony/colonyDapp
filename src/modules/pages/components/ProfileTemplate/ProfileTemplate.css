@@ -29,6 +29,7 @@
   margin-left: sidebarWidth;
   width: 100%;
   overflow: auto;
+  background-color: var(--colony-white);
 }
 
 .mainContent {
@@ -40,9 +41,13 @@
 .themeAlt {
   composes: main;
   background: var(--gradient-default);
-}
 
-.themeAlt .sidebar {
-  border-right: 2px solid var(--grey-blue-0);
-  background: none;
+  & .sidebar {
+    border-right: 2px solid var(--grey-blue-0);
+    background: none;
+  }
+
+  & .mainContainer {
+    background-color: transparent;
+  }
 }
