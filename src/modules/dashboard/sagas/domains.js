@@ -1,13 +1,23 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import { call, getContext, takeEvery } from 'redux-saga/effects';
+import { call, getContext, put, takeEvery } from 'redux-saga/effects';
+
+import type { Action } from '~types';
 
 import { DDB } from '../../../lib/database';
 import { FeedStore, KVStore } from '../../../lib/database/stores';
 
+import { putError } from '~utils/saga/effects';
 import { colonyStore, domainStore, draftStore } from '../stores';
-import { DRAFT_FETCH, DOMAIN_FETCH } from '../actionTypes';
+import {
+  DRAFT_FETCH,
+  DOMAIN_FETCH,
+  DOMAIN_FETCH_ERROR,
+  DOMAIN_FETCH_SUCCESS,
+} from '../actionTypes';
+
+import { getAll } from '../../../lib/database/commands';
 
 /*
  * Fetches from colony identifier, domain identifier, or creates new domain
@@ -38,7 +48,21 @@ export function* fetchOrCreateDomainStore({
       tasksDatabase: taskStore.address.toString(),
     });
   }
+  yield call([store, store.load]);
   return store;
+}
+
+function* fetchDomainSaga({ payload: { domainAddress } }: Action): Saga<void> {
+  try {
+    const store = yield call(fetchOrCreateDomainStore, { domainAddress });
+    const domainStoreData = yield call(getAll, store);
+    yield put({
+      type: DOMAIN_FETCH_SUCCESS,
+      payload: { domainStoreData },
+    });
+  } catch (error) {
+    yield putError(DOMAIN_FETCH_ERROR, error);
+  }
 }
 
 export function* fetchOrCreateDraftStore({
@@ -83,6 +107,6 @@ export function* fetchOrCreateDraftStore({
 }
 
 export default function* domainSagas(): any {
-  yield takeEvery(DOMAIN_FETCH, fetchOrCreateDomainStore);
+  yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
   yield takeEvery(DRAFT_FETCH, fetchOrCreateDraftStore);
 }
