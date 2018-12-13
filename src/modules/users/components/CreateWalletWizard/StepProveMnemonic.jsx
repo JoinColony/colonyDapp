@@ -126,7 +126,7 @@ const StepProveMnemonic = ({
                 />
               </div>
             </section>
-            <div className={styles.inputFields} data-test="hello">
+            <div className={styles.inputFields}>
               {chosenProofWords.map((wordIndex, arrayIndex) => (
                 <Fragment key={`proofWordKey_${wordIndex}`}>
                   <Input
