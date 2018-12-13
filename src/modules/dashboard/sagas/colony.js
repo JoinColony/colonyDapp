@@ -48,6 +48,7 @@ import {
   COLONY_AVATAR_REMOVE,
   COLONY_AVATAR_REMOVE_SUCCESS,
   COLONY_AVATAR_REMOVE_ERROR,
+  DOMAIN_FETCH,
 } from '../actionTypes';
 
 import { createColony, createColonyLabel } from '../actionCreators';
@@ -97,6 +98,11 @@ function* createColonyLabelSaga({
   yield put({
     type: COLONY_FETCH_SUCCESS,
     payload: { key: ensName, props: colonyStoreData },
+  });
+
+  yield put({
+    type: DOMAIN_FETCH,
+    payload: { domainAddress: colonyStoreData.rootDomain },
   });
 
   yield call([store, store.set], colonyStoreData);
@@ -195,6 +201,10 @@ function* fetchColonySaga({ payload: { key } }: Action): Saga<void> {
     yield put({
       type: COLONY_FETCH_SUCCESS,
       payload: { key, props },
+    });
+    yield put({
+      type: DOMAIN_FETCH,
+      payload: { domainAddress: colonyStoreData.rootDomain },
     });
   } catch (error) {
     yield putError(COLONY_FETCH_ERROR, error, { key });
