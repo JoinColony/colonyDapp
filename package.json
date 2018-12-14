@@ -8,7 +8,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "webpack-dev-server --config webpack.config.js",
+        "dev": "webpack-dev-server --https --port 9090 --config webpack.config.js",
         "provision": "scripts/provision_submodules.sh",
         "build": "webpack-cli --config webpack.config.js",
         "flow": "flow check",

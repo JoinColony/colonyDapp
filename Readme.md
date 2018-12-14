@@ -55,7 +55,7 @@ console.log(MY_API_URL); // https://my-api-url.example.com/api
 yarn dev
 ```
 
-Webpack dev server will be available under http://localhost:8080
+Webpack dev server will be available under http://localhost:9090
 
 ## Building the bundle locally
 
