@@ -16,12 +16,15 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case DOMAIN_FETCH_SUCCESS: {
       const {
-        domainStoreData: { name, id, tasksDatabase, ...domainStoreData },
+        domainStoreData: { name, tasksDatabase },
+        id,
       } = action.payload;
       return state.set(
-        name,
+        id,
         Domain({
-          ...domainStoreData,
+          tasksDatabase,
+          name,
+          id,
         }),
       );
     }
