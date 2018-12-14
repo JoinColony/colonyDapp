@@ -1,7 +1,8 @@
 /* @flow */
 
-import type { RecordOf, List } from 'immutable';
+import type { RecordFactory, RecordOf, List } from 'immutable';
 import type { ENSName } from '~types';
+import { Record } from 'immutable';
 import type { UserRecord } from './User';
 import type { TaskFeedItemRecord } from './TaskFeedItem';
 
@@ -14,9 +15,17 @@ export type draftProps = {
   domainName?: string,
   creator: string,
   assignee?: UserRecord,
-  feedItems: List<TaskFeedItemRecord>,
+  feedItems?: List<TaskFeedItemRecord>,
+};
+
+const defaultValues: draftProps = {
+  title: '',
+  colonyENSName: '',
+  creator: '',
 };
 
 export type DraftRecord = RecordOf<draftProps>;
 
-export default DraftRecord;
+const Draft: RecordFactory<draftProps> = Record(defaultValues);
+
+export default Draft;

@@ -17,7 +17,7 @@ const draftStore: StoreBlueprint = {
     specHash: yup.string(),
     dueDate: yup.date(),
     domainName: yup.string(),
-    colonyName: yup.string(),
+    colonyName: yup.string().required(),
     assignee: yup.string(),
   }),
   type: DocStore,
