@@ -15,8 +15,6 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import AvatarUploader from '~core/AvatarUploader';
-import ColonyAvatar from '~core/ColonyAvatar';
 import { getENSDomainString } from '~utils/ens';
 
 import {
@@ -24,6 +22,8 @@ import {
   COLONY_PROFILE_UPDATE_ERROR,
   COLONY_PROFILE_UPDATE_SUCCESS,
 } from '../../../dashboard/actionTypes';
+
+import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 
 import styles from './ProfileEdit.css';
 
@@ -55,30 +55,12 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileEdit.labelGuidelines',
     defaultMessage: 'Contribution Guidelines',
   },
-  labelProfilePicture: {
-    id: 'admin.Profile.ProfileEdit.labelProfilePicture',
-    defaultMessage: 'Colony Profile Picture',
-  },
-  labelUploader: {
-    id: 'admin.Profile.ProfileEdit.labelUploader',
-    defaultMessage: 'at least 250px by 250px, up to 1MB',
-  },
 });
 
 /*
  * This is due to `displayName` already being declared in the Component's scope
  */
 const componentDisplayName: string = 'admin.Profile.ProfileEdit';
-
-/*
- * @TODO Replace with ACTUAL upload & remove methods
- */
-const placeholderUpload = async () =>
-  `[${componentDisplayName}] Uploaded Image`;
-
-const placeholderRemove = async () => {
-  // Implement me
-};
 
 type Props = {
   colony: ColonyRecord,
@@ -182,25 +164,7 @@ const ProfileEdit = ({ colony }: Props) => {
         </ActionForm>
       </main>
       <aside className={styles.sidebar}>
-        <AvatarUploader
-          label={MSG.labelProfilePicture}
-          help={MSG.labelUploader}
-          placeholder={
-            <ColonyAvatar
-              address={address}
-              avatar={avatar}
-              name={name}
-              /*
-               * @NOTE Unlike other components this does not override the main class
-               * But appends the current one to that
-               */
-              className={styles.avatar}
-              size="xl"
-            />
-          }
-          upload={placeholderUpload}
-          remove={placeholderRemove}
-        />
+        <ColonyAvatarUploader name={name} avatar={avatar} address={address} />
       </aside>
     </div>
   );
