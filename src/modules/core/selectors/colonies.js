@@ -12,7 +12,7 @@ type RootState = {
 
 type ColonyAvatarSelector = (state: RootState, props: Object) => string;
 
-export const currentColonyAvatarSelector: ColonyAvatarSelector = createSelector(
+export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(
   state => state.dashboard.colonies,
   (state, props) => props.ensName,
   (colonies, ensName) => {
@@ -21,4 +21,14 @@ export const currentColonyAvatarSelector: ColonyAvatarSelector = createSelector(
   },
 );
 
-export default currentColonyAvatarSelector;
+export const currentColonyAvatarDataSelector: ColonyAvatarSelector = createSelector(
+  currentColonyAvatarHashSelector,
+  state => state.dashboard.colonies,
+  (hash, colonies) => {
+    const coloniesAvatars = colonies.get('avatars');
+    if (coloniesAvatars && coloniesAvatars.size) {
+      return coloniesAvatars.get(hash);
+    }
+    return undefined;
+  },
+);
