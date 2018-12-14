@@ -31,6 +31,8 @@ const colonyStore: StoreBlueprint = {
     description: yup.string(),
     website: yup.string().url(),
     guideline: yup.string().url(),
+    // TODO: IPFS hash add yup validation for IPFS hash
+    avatar: yup.string(),
     token: yup.object({
       address: yup.string().address(),
       icon: yup.string(),
