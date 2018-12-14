@@ -24,11 +24,13 @@ import { fetchOrCreateDraftStore } from './draft';
  */
 
 export function* fetchOrCreateDomainStore({
-  domainAddress,
   colonyAddress,
+  domainAddress,
+  domainName,
 }: {
-  domainAddress?: string,
   colonyAddress?: string,
+  domainAddress?: string,
+  domainName?: string,
 }): Saga<KVStore> {
   const ddb: DDB = yield getContext('ddb');
   let store;
@@ -38,9 +40,8 @@ export function* fetchOrCreateDomainStore({
     yield call([store, store.load]);
   } else if (colonyAddress) {
     const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
-    const domain = yield call([colony, colony.get], 'rootDomain');
-    store = yield call([ddb, ddb.getStore], domainStore, domain);
-    yield call([store, store.load]);
+    const domains = yield call([colony, colony.get], 'domains');
+    store = yield call([ddb, ddb.getStore], domainStore, domains[domainName]);
   } else {
     store = yield call([ddb, ddb.createStore], domainStore);
     const taskStore = yield call(fetchOrCreateDraftStore, {});
