@@ -1,32 +1,9 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const http = require('http');
+const waitOn = require('wait-on');
 const { spawn } = require('child_process');
 const { NETWORK_ROOT } = require('./paths');
-
-const waitUntilPortIsOpen = (port, maxTries = 5) => {
-  let tries = 0;
-  return new Promise((resolve, reject) => {
-    const nextTry = () => {
-      http
-        .get(`http://127.0.0.1:${port}`, () => resolve(true))
-        .on('error', () => {
-          tries += 1;
-          if (tries === maxTries) {
-            reject(
-              new Error(
-                `Could not connect to ganache server after ${tries} tries`,
-              ),
-            );
-            return;
-          }
-          setTimeout(nextTry, 2000);
-        });
-    };
-    nextTry();
-  });
-};
 
 let stdio;
 
@@ -35,7 +12,7 @@ const startGanache = async () => {
     stdio,
     cwd: NETWORK_ROOT,
   });
-  await waitUntilPortIsOpen(8545);
+  await waitOn({ resources: ['tcp:8545'] });
   return process;
 }
 

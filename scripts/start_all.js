@@ -2,6 +2,7 @@
 
 const { spawn } = require('child_process');
 const path = require('path');
+const waitOn = require('wait-on');
 const fs = require('fs');
 
 const startGanache = require('./start_ganache');
@@ -52,6 +53,17 @@ const webpackPromise = () =>
     });
   });
 
+const wssProxyPromise = async () => {
+  const wssProxyProcess = spawn(
+    path.resolve(__dirname, './start_wss_proxy.js'),
+    {
+      stdio: 'pipe',
+    },
+  );
+  await waitOn({ resources: ['tcp:4003'] });
+  return wssProxyProcess;
+}
+
 const startAll = async () => {
   try {
     console.info('Starting ganache...');
@@ -63,6 +75,9 @@ const startAll = async () => {
     console.info('Starting trufflepig...');
     const trufflepigProcess = await trufflePigPromise();
 
+    console.info('Starting websocket proxy...');
+    const wssProxyProcess = await wssProxyPromise();
+
     console.info('Starting webpack...');
     const webpackProcess = await webpackPromise();
 
@@ -70,6 +85,7 @@ const startAll = async () => {
       ganache: ganacheProcess.pid,
       trufflepig: trufflepigProcess.pid,
       webpack: webpackProcess.pid,
+      wssProxy: wssProxyProcess.pid,
     };
 
     fs.writeFileSync(PID_FILE, JSON.stringify(pids));
