@@ -224,11 +224,14 @@ jobs:
 
 workflows:
   version: 2
+  manual:
+    jobs:
+      - e2e-testing:
+          type: approval
   commit:
     jobs:
       - build-with-lockfile
       - integration-testing
-      - e2e-testing
       - build-styleguide:
           requires:
             - build-with-lockfile
