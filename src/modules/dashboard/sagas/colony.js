@@ -35,6 +35,9 @@ import {
   COLONY_FETCH_SUCCESS,
   COLONY_FETCH_ERROR,
   COLONY_FETCH,
+  COLONY_PROFILE_UPDATE,
+  COLONY_PROFILE_UPDATE_SUCCESS,
+  COLONY_PROFILE_UPDATE_ERROR,
 } from '../actionTypes';
 
 import { createColony, createColonyLabel } from '../actionCreators';
@@ -143,6 +146,37 @@ function* fetchColonyStore(ensName: ENSName) {
   return store;
 }
 
+function* updateColonySaga(action: Action): Saga<void> {
+  try {
+    const {
+      payload: { ensName, ...colonyUpdateValues },
+    } = action;
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+
+    /*
+     * Set the new values in the store
+     */
+    yield call([store, store.set], colonyUpdateValues);
+    /*
+     * Fetch the newly set colony profile (from the store)
+     */
+    const colonyProfile = yield call(getAll, store);
+
+    /*
+     * Store the new profile in the redux store so we can show it
+     */
+    yield put({
+      type: COLONY_PROFILE_UPDATE_SUCCESS,
+      payload: { [ensName]: colonyProfile },
+    });
+  } catch (error) {
+    yield putError(COLONY_PROFILE_UPDATE_ERROR, error);
+  }
+}
+
 function* fetchColonySaga({ payload: { ensName } }: Action): Saga<void> {
   try {
     const store = yield call(fetchColonyStore, ensName);
@@ -160,6 +194,7 @@ function* fetchColonySaga({ payload: { ensName } }: Action): Saga<void> {
 
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH, fetchColonySaga);
+  yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
