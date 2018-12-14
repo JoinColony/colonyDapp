@@ -3,7 +3,7 @@
 import { all } from 'redux-saga/effects';
 
 import colonySagas from './colony';
-import domainSagas from './domains';
+import domainSagas from './domain';
 import tokenSagas from './token';
 import taskSagas from './task';
 
