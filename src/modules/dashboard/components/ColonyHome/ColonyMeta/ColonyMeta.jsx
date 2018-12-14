@@ -64,6 +64,7 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
         address={address}
         avatar={avatar}
         name={name}
+        ensName={ensName}
         className={styles.avatar}
         size="xl"
       />
