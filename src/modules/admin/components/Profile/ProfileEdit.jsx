@@ -164,7 +164,12 @@ const ProfileEdit = ({ colony }: Props) => {
         </ActionForm>
       </main>
       <aside className={styles.sidebar}>
-        <ColonyAvatarUploader name={name} avatar={avatar} address={address} />
+        <ColonyAvatarUploader
+          name={name}
+          avatar={avatar}
+          address={address}
+          ensName={ensName}
+        />
       </aside>
     </div>
   );

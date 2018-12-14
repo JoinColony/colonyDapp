@@ -42,6 +42,7 @@ type Props = {
   name: $PropertyType<ColonyRecord, 'name'>,
   /** Avatar hash */
   avatar: $PropertyType<ColonyRecord, 'avatar'>,
+  ensName: $PropertyType<ColonyRecord, 'ensName'>,
 };
 
 class ColonyAvatarUploader extends Component<Props> {
@@ -71,7 +72,7 @@ class ColonyAvatarUploader extends Component<Props> {
   }
 
   render() {
-    const { address, name, avatar } = this.props;
+    const { address, name, avatar, ensName } = this.props;
     return (
       <AvatarUploader
         label={MSG.labelProfilePicture}
@@ -89,7 +90,9 @@ class ColonyAvatarUploader extends Component<Props> {
             className={styles.main}
           />
         }
-        upload={this.upload.asyncFunction}
+        upload={avatarData =>
+          this.upload.asyncFunction({ ...avatarData, ensName })
+        }
         remove={this.remove.asyncFunction}
       />
     );
