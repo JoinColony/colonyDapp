@@ -17,28 +17,26 @@ class IPFSNode {
         Bootstrap: [
           // TODO: this is still hardcoded to the local pinner
           /* eslint-disable max-len */
-          '/ip4/0.0.0.0/tcp/4001/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
           '/ip4/127.0.0.1/tcp/4001/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
-          '/ip4/127.0.0.1/tcp/4003/ws/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
-          '/ip4/0.0.0.0/tcp/4003/ws/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+          '/ip4/127.0.0.1/tcp/4004/wss/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
           /* eslint-enable max-len */
         ],
         Addresses: {
           Gateway: '',
           Swarm: [
             '/ip4/0.0.0.0/tcp/4002',
-            '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
+            // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
           ],
         },
       },
       EXPERIMENTAL: {
         pubsub: true,
       },
-      Discovery: {
-        webRTCStar: {
-          enabled: true,
-        },
-      },
+      // Discovery: {
+      //   webRTCStar: {
+      //     enabled: true,
+      //   },
+      // },
     },
     timeout: TIMEOUT,
   };

@@ -8,7 +8,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "webpack-dev-server --https --port 9090 --config webpack.config.js",
+        "dev": "webpack-dev-server --https --key ./ssl/localhost+2-key.pem --cert ./ssl/localhost+2.pem --port 9090 --config webpack.config.js",
         "provision": "scripts/provision_submodules.sh",
         "build": "webpack-cli --config webpack.config.js",
         "flow": "flow check",
@@ -94,6 +94,7 @@
         "flow-bin": "^0.84.0",
         "gh-pages": "^2.0.0",
         "html-webpack-plugin": "^3.2.0",
+        "http-proxy": "^1.17.0",
         "husky": "^1.2.0",
         "jest": "^23.3.0",
         "jest-enzyme": "^7.0.0",
