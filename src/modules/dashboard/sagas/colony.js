@@ -24,7 +24,7 @@ import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
 
 import { colonyStore } from '../stores';
-import { fetchOrCreateDomainStore } from './domains';
+import { fetchOrCreateDomainStore } from './domain';
 
 import {
   COLONY_CREATE,

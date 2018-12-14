@@ -6,18 +6,18 @@ import { call, getContext, put, takeEvery } from 'redux-saga/effects';
 import type { Action } from '~types';
 
 import { DDB } from '../../../lib/database';
-import { FeedStore, KVStore } from '../../../lib/database/stores';
+import { KVStore } from '../../../lib/database/stores';
 
 import { putError } from '~utils/saga/effects';
-import { colonyStore, domainStore, draftStore } from '../stores';
+import { colonyStore, domainStore } from '../stores';
 import {
-  DRAFT_FETCH,
   DOMAIN_FETCH,
   DOMAIN_FETCH_ERROR,
   DOMAIN_FETCH_SUCCESS,
 } from '../actionTypes';
 
 import { getAll } from '../../../lib/database/commands';
+import { fetchOrCreateDraftStore } from './draft';
 
 /*
  * Fetches from colony identifier, domain identifier, or creates new domain
@@ -58,55 +58,13 @@ function* fetchDomainSaga({ payload: { domainAddress } }: Action): Saga<void> {
     const domainStoreData = yield call(getAll, store);
     yield put({
       type: DOMAIN_FETCH_SUCCESS,
-      payload: { domainStoreData },
+      payload: { domainStoreData, id: store.address.toString() },
     });
   } catch (error) {
     yield putError(DOMAIN_FETCH_ERROR, error);
   }
 }
 
-export function* fetchOrCreateDraftStore({
-  colonyAddress,
-  domainAddress,
-  draftStoreAddress,
-}: {
-  domainAddress?: string,
-  colonyAddress?: string,
-  draftStoreAddress?: string,
-}): Saga<FeedStore> {
-  const ddb: DDB = yield getContext('ddb');
-  let store;
-
-  if (draftStoreAddress) {
-    store = yield call([ddb, ddb.getStore], draftStore, draftStoreAddress);
-  } else if (domainAddress) {
-    const domain = yield call(fetchOrCreateDomainStore, { domainAddress });
-    const draftAddress = yield call([domain, domain.get], 'tasksDatabase');
-    store = yield call([ddb, ddb.getStore], draftStore, draftAddress);
-  } else if (colonyAddress) {
-    // we presume the root domain is desired
-    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
-    yield call([colony, colony.load]);
-    const rootDomainAddress = yield call([colony, colony.get], 'rootDomain');
-    const rootDomain = yield call(
-      [ddb, ddb.getStore],
-      domainStore,
-      rootDomainAddress,
-    );
-    yield call([rootDomain, rootDomain.load]);
-    const draftsAddress = yield call(
-      [rootDomain, rootDomain.get],
-      'tasksDatabase',
-    );
-    store = yield call([ddb, ddb.getStore], draftStore, draftsAddress);
-  } else {
-    store = yield call([ddb, ddb.createStore], draftStore);
-  }
-  yield call([store, store.load]);
-  return store;
-}
-
 export default function* domainSagas(): any {
   yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
-  yield takeEvery(DRAFT_FETCH, fetchOrCreateDraftStore);
 }
