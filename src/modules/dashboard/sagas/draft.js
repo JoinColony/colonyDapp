@@ -89,14 +89,18 @@ export function* fetchDraftsSaga(action: Action): Saga<void> {
 }
 
 export function* editDraftSaga(action: Action): Saga<void> {
-  const { taskHash, draftStoreAddress } = action.payload;
+  const {
+    task: { _id: id },
+    task,
+    draftStoreAddress,
+  } = action.payload;
   try {
     const store = yield call(fetchOrCreateDraftStore, {
       draftStoreAddress,
     });
-    const task = yield call([store, store.get], taskHash);
-    // TODO do something here
-    yield put({ type: DRAFT_EDIT_SUCCESS, payload: { task } });
+    yield call([store, store.update], id, task);
+    const updated = yield call([store, store.get], id);
+    yield put({ type: DRAFT_EDIT_SUCCESS, payload: { updated } });
   } catch (error) {
     yield putError(DRAFT_EDIT_ERROR, error);
   }
