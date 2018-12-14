@@ -8,7 +8,20 @@ import type { StoreBlueprint } from '~types';
 
 const colonyStore: StoreBlueprint = {
   // TODO: implement
-  getAccessController() {},
+  /* $FlowFixMe */
+  getAccessController() {
+    return {
+      canAppend() {
+        return Promise.resolve(true);
+      },
+      grant() {},
+      revoke() {},
+      save() {},
+      setup() {
+        return Promise.resolve(true);
+      },
+    };
+  },
   name: 'colony',
   schema: yup.object({
     id: yup.number(),
