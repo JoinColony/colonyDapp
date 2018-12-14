@@ -50,7 +50,7 @@ const UserAvatarDisplay = ({
     trigger={hasUserInfo ? 'hover' : 'disabled'}
   >
     <Avatar
-      avatarUrl={avatar || (!notSet ? getIcon(walletAddress) : null)}
+      avatarURL={avatar || (!notSet ? getIcon(walletAddress) : null)}
       className={className}
       notSet={notSet}
       placeholderIcon="circle-person"
