@@ -41,6 +41,9 @@ import {
   COLONY_AVATAR_UPLOAD,
   COLONY_AVATAR_UPLOAD_SUCCESS,
   COLONY_AVATAR_UPLOAD_ERROR,
+  COLONY_AVATAR_FETCH,
+  COLONY_AVATAR_FETCH_SUCCESS,
+  COLONY_AVATAR_FETCH_ERROR,
 } from '../actionTypes';
 
 import { createColony, createColonyLabel } from '../actionCreators';
@@ -225,12 +228,34 @@ function* uploadColonyAvatar(action: Action): Saga<void> {
   }
 }
 
+function* fetchColonyAvatar(action: Action): Saga<void> {
+  const { hash } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    /*
+     * Get the base64 avatar image from ipfs
+     */
+    const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
+    /*
+     * Put the base64 value in the redux state so we can show it
+     */
+    yield put({
+      type: COLONY_AVATAR_FETCH_SUCCESS,
+      payload: { hash, avatarData },
+    });
+  } catch (error) {
+    yield putError(COLONY_AVATAR_FETCH_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH, fetchColonySaga);
   yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
+  yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
