@@ -2,9 +2,11 @@
 
 import type { OrbitDBStore } from './OrbitDBStore';
 
+export type QueryFunction = ({}) => any;
+
 export interface OrbitDBDocStore extends OrbitDBStore {
-  put(value: any): Promise<string>;
+  put(key: string, value: any): Promise<string>;
   del(key: string): Promise<string>;
   get(key: string): Array<Object>;
-  query(mapper: Function): Array<Object>;
+  query(mapper: QueryFunction): Array<Object>;
 }
