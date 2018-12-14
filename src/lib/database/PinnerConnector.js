@@ -49,6 +49,7 @@ class PinnerConnector extends EventEmitter {
     this._room = room;
     this._pinnerId = pinnerId;
     this.online = false;
+    this._outstandingPubsubMessages = [];
     this._handlePinnerMessageBound = this._handlePinnerMessage.bind(this);
   }
 
