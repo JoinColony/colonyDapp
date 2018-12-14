@@ -44,6 +44,9 @@ import {
   COLONY_AVATAR_FETCH,
   COLONY_AVATAR_FETCH_SUCCESS,
   COLONY_AVATAR_FETCH_ERROR,
+  COLONY_AVATAR_REMOVE,
+  COLONY_AVATAR_REMOVE_SUCCESS,
+  COLONY_AVATAR_REMOVE_ERROR,
 } from '../actionTypes';
 
 import { createColony, createColonyLabel } from '../actionCreators';
@@ -249,6 +252,33 @@ function* fetchColonyAvatar(action: Action): Saga<void> {
   }
 }
 
+function* removeColonyAvatar(action: Action): Saga<void> {
+  try {
+    const {
+      payload: { ensName },
+    } = action;
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+
+    /*
+     * Set avatar to undefined
+     */
+    yield call([store, store.set], 'avatar', undefined);
+
+    /*
+     * Also set the avatar in the state to undefined (via a reducer)
+     */
+    yield put({
+      type: COLONY_AVATAR_REMOVE_SUCCESS,
+      payload: { ensName },
+    });
+  } catch (error) {
+    yield putError(COLONY_AVATAR_REMOVE_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH, fetchColonySaga);
   yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
@@ -260,4 +290,5 @@ export default function* colonySagas(): any {
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
   yield takeLatest(COLONY_AVATAR_UPLOAD, uploadColonyAvatar);
+  yield takeLatest(COLONY_AVATAR_REMOVE, removeColonyAvatar);
 }

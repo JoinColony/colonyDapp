@@ -46,7 +46,7 @@ type Props = {
 };
 
 class ColonyAvatarUploader extends Component<Props> {
-  remove: AsyncFunction<void, empty>;
+  remove: AsyncFunction<Object, empty>;
 
   upload: AsyncFunction<FileReaderFile, empty>;
 
@@ -94,7 +94,7 @@ class ColonyAvatarUploader extends Component<Props> {
         upload={avatarData =>
           this.upload.asyncFunction({ ...avatarData, ensName })
         }
-        remove={this.remove.asyncFunction}
+        remove={() => this.remove.asyncFunction({ ensName })}
       />
     );
   }
