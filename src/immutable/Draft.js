@@ -18,3 +18,5 @@ export type draftProps = {
 };
 
 export type DraftRecord = RecordOf<draftProps>;
+
+export default DraftRecord;
