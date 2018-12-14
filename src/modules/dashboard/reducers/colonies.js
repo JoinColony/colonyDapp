@@ -2,7 +2,10 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { COLONY_FETCH_SUCCESS } from '../actionTypes';
+import {
+  COLONY_FETCH_SUCCESS,
+  COLONY_PROFILE_UPDATE_SUCCESS,
+} from '../actionTypes';
 
 import { Colony, Token } from '~immutable';
 
@@ -29,6 +32,8 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
         }),
       );
     }
+    case COLONY_PROFILE_UPDATE_SUCCESS:
+      return state ? state.merge(action.payload) : state;
     default:
       return state;
   }

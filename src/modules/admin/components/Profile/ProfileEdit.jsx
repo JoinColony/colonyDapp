@@ -23,7 +23,7 @@ import {
   COLONY_PROFILE_UPDATE,
   COLONY_PROFILE_UPDATE_ERROR,
   COLONY_PROFILE_UPDATE_SUCCESS,
-} from '../../actionTypes';
+} from '../../../dashboard/actionTypes';
 
 import styles from './ProfileEdit.css';
 
@@ -91,7 +91,7 @@ const ProfileEdit = ({ colony }: Props) => {
     guideline,
     address,
     ensName,
-    name: colonyDisplayName,
+    name,
     website,
   } = colony;
   return (
@@ -99,13 +99,14 @@ const ProfileEdit = ({ colony }: Props) => {
       <main className={styles.content}>
         <ActionForm
           submit={COLONY_PROFILE_UPDATE}
-          success={COLONY_PROFILE_UPDATE_ERROR}
-          error={COLONY_PROFILE_UPDATE_SUCCESS}
+          success={COLONY_PROFILE_UPDATE_SUCCESS}
+          error={COLONY_PROFILE_UPDATE_ERROR}
           initialValues={{
-            colonyDisplayName,
-            aboutColony: description,
-            colonyWebsite: website,
-            colonyGuidelines: guideline,
+            ensName,
+            name,
+            description,
+            website,
+            guideline,
           }}
           /*
            * @TODO Add form validation
@@ -137,7 +138,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelDisplayName}
-                  name="colonyDisplayName"
+                  name="name"
                   maxLength={50}
                 />
               </FieldSet>
@@ -146,7 +147,7 @@ const ProfileEdit = ({ colony }: Props) => {
                   appearance={{ theme: 'fat', resizable: 'vertical' }}
                   style={{ minHeight: styles.textareaHeight }}
                   label={MSG.labelAbout}
-                  name="aboutColony"
+                  name="description"
                   maxLength={160}
                 />
               </FieldSet>
@@ -154,7 +155,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelWebsite}
-                  name="colonyWebsite"
+                  name="website"
                   maxLength={100}
                 />
               </FieldSet>
@@ -162,7 +163,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelGuidelines}
-                  name="colonyGuidelines"
+                  name="guideline"
                   maxLength={100}
                 />
               </FieldSet>
@@ -188,7 +189,7 @@ const ProfileEdit = ({ colony }: Props) => {
             <ColonyAvatar
               address={address}
               avatar={avatar}
-              name={colonyDisplayName}
+              name={name}
               /*
                * @NOTE Unlike other components this does not override the main class
                * But appends the current one to that

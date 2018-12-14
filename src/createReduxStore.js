@@ -9,7 +9,6 @@ import context from '~context';
 import coreReducer from './modules/core/reducers';
 import dashboardReducer from './modules/dashboard/reducers';
 import userReducer from './modules/users/reducers';
-import adminReducer from './modules/admin/reducers';
 
 import setupSagas from './modules/core/sagas';
 import history from './history';
@@ -20,7 +19,6 @@ const rootReducer = combineReducers({
   core: coreReducer,
   dashboard: dashboardReducer,
   users: userReducer,
-  admin: adminReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware({ context });
