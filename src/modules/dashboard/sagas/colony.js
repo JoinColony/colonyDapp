@@ -38,6 +38,9 @@ import {
   COLONY_PROFILE_UPDATE,
   COLONY_PROFILE_UPDATE_SUCCESS,
   COLONY_PROFILE_UPDATE_ERROR,
+  COLONY_AVATAR_UPLOAD,
+  COLONY_AVATAR_UPLOAD_SUCCESS,
+  COLONY_AVATAR_UPLOAD_ERROR,
 } from '../actionTypes';
 
 import { createColony, createColonyLabel } from '../actionCreators';
@@ -192,6 +195,36 @@ function* fetchColonySaga({ payload: { ensName } }: Action): Saga<void> {
   }
 }
 
+function* uploadColonyAvatar(action: Action): Saga<void> {
+  const { data, ensName } = action.payload;
+
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    // first attempt upload to IPFS
+    const hash = yield call([ipfsNode, ipfsNode.addString], data);
+
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+    /*
+     * Set the avatar's hash in the store
+     */
+    yield call([store, store.set], 'avatar', hash);
+
+    /*
+     * Store the new avatar hash value in the redux store so we can show it
+     */
+    yield put({
+      type: COLONY_AVATAR_UPLOAD_SUCCESS,
+      payload: { hash, ensName },
+    });
+  } catch (error) {
+    yield putError(COLONY_AVATAR_UPLOAD_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH, fetchColonySaga);
   yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
@@ -201,4 +234,5 @@ export default function* colonySagas(): any {
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
+  yield takeLatest(COLONY_AVATAR_UPLOAD, uploadColonyAvatar);
 }
