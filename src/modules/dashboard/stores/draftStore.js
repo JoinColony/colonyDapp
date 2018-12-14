@@ -2,7 +2,7 @@
 
 import * as yup from 'yup';
 
-import { FeedStore } from '../../../lib/database/stores';
+import { DocStore } from '../../../lib/database/stores';
 
 import type { StoreBlueprint } from '~types';
 
@@ -12,15 +12,15 @@ const draftStore: StoreBlueprint = {
   name: 'draft',
   schema: yup.object({
     id: yup.number(),
-    title: yup.string(),
+    title: yup.string().required(),
+    creator: yup.string().required(),
     specHash: yup.string(),
     dueDate: yup.date(),
     domainName: yup.string(),
     colonyName: yup.string(),
-    creator: yup.string(),
     assignee: yup.string(),
   }),
-  type: FeedStore,
+  type: DocStore,
 };
 
 export default draftStore;
