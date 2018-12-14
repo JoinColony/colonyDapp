@@ -16,6 +16,8 @@ type Props = UserAvatarProps & {
 };
 
 class UserAvatar extends Component<Props> {
+  static displayName = 'UserAvatar';
+
   componentDidMount() {
     const { avatarData, user, fetchUserAvatar } = this.props;
     if (user && user.profile.avatar && !avatarData)

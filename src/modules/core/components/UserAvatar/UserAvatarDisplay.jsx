@@ -28,6 +28,11 @@ export type Props = {
   hasUserInfo?: boolean,
 };
 
+/*
+ * `displayName` is a prop name, so we'll use `componentDisplayName` here
+ */
+const componentDisplayName = 'UserAvatarDisplay';
+
 const UserAvatarDisplay = ({
   avatar,
   className,
@@ -45,7 +50,7 @@ const UserAvatarDisplay = ({
     trigger={hasUserInfo ? 'hover' : 'disabled'}
   >
     <Avatar
-      avatar={avatar || (!notSet ? getIcon(walletAddress) : null)}
+      avatarUrl={avatar || (!notSet ? getIcon(walletAddress) : null)}
       className={className}
       notSet={notSet}
       placeholderIcon="circle-person"
@@ -54,5 +59,7 @@ const UserAvatarDisplay = ({
     />
   </UserInfo>
 );
+
+UserAvatarDisplay.displayName = componentDisplayName;
 
 export default UserAvatarDisplay;

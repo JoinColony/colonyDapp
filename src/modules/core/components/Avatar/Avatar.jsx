@@ -21,6 +21,8 @@ type Props = {
   title: string,
 };
 
+const displayName = 'Avatar';
+
 const Avatar = ({
   avatarURL,
   className,
@@ -51,6 +53,6 @@ const Avatar = ({
   );
 };
 
-Avatar.displayName = 'Avatar';
+Avatar.displayName = displayName;
 
 export default Avatar;
