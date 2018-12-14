@@ -28,6 +28,9 @@ const colonyStore: StoreBlueprint = {
     address: yup.string().address(),
     ensName: yup.string(),
     name: yup.string(),
+    description: yup.string(),
+    website: yup.string().url(),
+    guideline: yup.string().url(),
     token: yup.object({
       address: yup.string().address(),
       icon: yup.string(),
