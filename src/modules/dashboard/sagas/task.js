@@ -9,7 +9,6 @@ import type { Action, ENSName } from '~types';
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import {
-  DRAFT_CREATE_SUCCESS,
   TASK_CREATE,
   TASK_CREATE_ERROR,
   TASK_CREATE_SUCCESS,
@@ -48,8 +47,6 @@ import {
   taskWorkerRateManager,
   taskWorkerRevealRating,
 } from '../actionCreators';
-
-import { fetchOrCreateDraftStore } from './domains';
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield getContext('wallet');
@@ -116,24 +113,6 @@ function* guessRating(
   }
   if (!correctRating) throw new Error('Rating is not from this account');
   return correctRating;
-}
-
-export function* createDraftSaga(action: Action): Saga<void> {
-  const { domainIdentifier, task } = action.payload;
-  const draftStore = yield call(fetchOrCreateDraftStore, domainIdentifier);
-  yield call([draftStore, draftStore.add], task);
-  const addedDraft = yield call([draftStore, draftStore.get], {
-    limit: 1,
-  });
-  yield put({ type: DRAFT_CREATE_SUCCESS, payload: addedDraft });
-}
-
-// TODO return type Draft
-export function* fetchDraftSaga(action: Action): Saga<void> {
-  const { taskHash, domainIdentifier } = action.payload;
-  const draftStore = yield call(fetchOrCreateDraftStore, domainIdentifier);
-  const draft = yield call([draftStore, draftStore.get], taskHash);
-  return draft;
 }
 
 function* taskCreateSaga(action: Action): Saga<void> {
