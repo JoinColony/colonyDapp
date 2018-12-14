@@ -7,6 +7,7 @@ import {
   COLONY_PROFILE_UPDATE_SUCCESS,
   COLONY_AVATAR_UPLOAD_SUCCESS,
   COLONY_AVATAR_FETCH_SUCCESS,
+  COLONY_AVATAR_REMOVE_SUCCESS,
 } from '../actionTypes';
 
 import { Colony, Token } from '~immutable';
@@ -43,6 +44,10 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
     case COLONY_AVATAR_FETCH_SUCCESS: {
       const { hash, avatarData } = action.payload;
       return state.setIn(['avatars', hash], avatarData);
+    }
+    case COLONY_AVATAR_REMOVE_SUCCESS: {
+      const { ensName } = action.payload;
+      return state ? state.setIn([ensName, 'avatar'], undefined) : state;
     }
     default:
       return state;
