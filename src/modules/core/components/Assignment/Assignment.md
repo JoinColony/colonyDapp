@@ -4,20 +4,17 @@ This example component deals with the display of a currently selected assignee f
 
 ### No Assignment or Funding set
 ```js
-const Assignment = require('./Assignment.jsx').default;
-
-
 <Assignment/>
 ```
 
 ### Pending Assignee
 ```js
-const Assignment = require('./Assignment.jsx').default;
-
 const Assignee = {
+  profile: {
     walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
     username: 'Elena',
     displayName: 'Elena Dimitrova',
+  }
 };
 <Assignment assignee={Assignee} pending/>
 ```
@@ -25,21 +22,24 @@ const Assignee = {
 
 ### Assignee with Funding set
 ```js
-const Assignment = require('./Assignment.jsx').default;
-
+const { List } = require('immutable');
+const BN = require('bn.js');
+const { TaskPayout } = require('~immutable');
 const assignee = {
+  profile: {
     walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
     username: 'Elena',
     displayName: 'Elena Dimitrova',
+  }
 };
 
 const reputation =  19.5;
-const payouts = new List(
-    { symbol: 'COOL', amount: 600 },
-    { symbol: 'ETH', amount: 200105 },
-    { symbol: 'DAI', amount: 1001 },
-    { symbol: 'CLNY', amount: 600 },
+const payouts = List.of(
+  TaskPayout({ token: { symbol: 'COOL' }, amount: new BN(60000) }),
+  TaskPayout({ token: { symbol: 'ETH' }, amount: new BN(200105) }),
+  TaskPayout({ token: { symbol: 'DAI' }, amount: new BN(1001) }),
+  TaskPayout({ token: { symbol: 'CLNY' }, amount: new BN(60000) }),
 );
 
-<Assignment assignee={assignee} payouts={payouts} reputation={reputation} />
+<Assignment nativeToken="CLNY" assignee={assignee} payouts={payouts} reputation={reputation} />
 ```
