@@ -23,7 +23,7 @@ export type IPFSNodeOptions = {
     EXPERIMENTAL: {
       pubsub: boolean,
     },
-    Discovery: {
+    Discovery?: {
       webRTCStar: {
         enabled: boolean,
       },

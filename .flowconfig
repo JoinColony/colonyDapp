@@ -3,7 +3,7 @@
 .*/__tests__/.*
 .*/utils/test/.*
 .*/src/lib/colonyNetwork/.*
-.*/src/lib/pinningService/.*
+.*/src/lib/pinion/.*
 # We need to remove these as soon as they fixed flow support
 .*/node_modules/findup/.*?\.json
 .*/node_modules/oboe/.*?\.json

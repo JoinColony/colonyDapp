@@ -19,7 +19,7 @@ done
 LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
-PINNING="pinningService"
+PINNING="pinion"
 
 ROOT_PATH=$(pwd)
 

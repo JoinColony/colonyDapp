@@ -5,8 +5,6 @@ import { timePrefix } from './tools';
 import createIPFSNode from './createIPFSNode';
 import createOrbitNode from './createOrbitNode';
 
-import makePinner from './pinner.mock';
-
 const ROOT_REPO = '/tmp/tests/';
 
 /**
@@ -62,20 +60,6 @@ export default class DDBTestFactory {
 
   name(suffix) {
     return `${this._prefix}_${suffix}`;
-  }
-
-  async pinner(pinner = null) {
-    if (this._pinner) {
-      throw new Error('trying to create 2 pinners, not handled');
-    }
-
-    if (pinner) {
-      this._pinner = pinner;
-    } else {
-      this._pinner = await makePinner(`${this._prefix}_pinner`);
-    }
-
-    return this._pinner;
   }
 
   async node(name) {

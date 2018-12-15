@@ -103,7 +103,6 @@ jobs:
   integration-testing:
     docker:
       - image: circleci/node:10.12
-      - image: redis:4.0
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -124,7 +123,7 @@ jobs:
           name: "Linting Javascript"
           command: yarn lint:ci
       - run:
-          name: "Start pinningService Integration mode"
+          name: "Start pinning service integration mode"
           command: "yarn test:integration:ci:start-pinning"
           background: true
       - run:
