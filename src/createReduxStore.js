@@ -6,6 +6,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 import context from '~context';
 
+import adminReducer from './modules/admin/reducers';
 import coreReducer from './modules/core/reducers';
 import dashboardReducer from './modules/dashboard/reducers';
 import userReducer from './modules/users/reducers';
@@ -16,6 +17,7 @@ import history from './history';
 import reduxPromiseListener from './createPromiseListener';
 
 const rootReducer = combineReducers({
+  admin: adminReducer,
   core: coreReducer,
   dashboard: dashboardReducer,
   users: userReducer,

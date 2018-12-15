@@ -89,7 +89,7 @@ const navigationItems = (colony: ColonyRecord): Array<NavigationItem> => [
   {
     id: 3,
     title: MSG.tabTransaction,
-    content: <Transactions />,
+    content: <Transactions colony={colony} />,
   },
   {
     id: 4,
