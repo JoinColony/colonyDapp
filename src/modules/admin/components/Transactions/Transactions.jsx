@@ -20,6 +20,7 @@ import {
 } from './__datamocks__/transactionMocks';
 
 import type { TransactionType } from '~types';
+import type { ColonyRecord, ColonyTransactionRecord } from '~immutable';
 
 const MSG = defineMessages({
   transactionsTitle: {
@@ -38,11 +39,11 @@ const MSG = defineMessages({
 
 const displayName = 'admin.Transactions';
 
-/*
- * @NOTE Mock values.
- * These we most likely come from the redux store.
- */
-const colonyAddress: string = '0x344FD3EaDF01E9BF077f4a3208439A3A4A428507';
+type Props = {
+  colony: ColonyRecord,
+  transactions: Array<ColonyTransactionRecord>,
+};
+
 /*
  * @NOTE Mock data augmentation
  * Augment the original transaction list with user's display and username
@@ -74,7 +75,10 @@ const handleClaim = (transaction: TransactionType) => {
   // Implement me
 };
 
-const Transactions = () => (
+const Transactions = ({
+  colony: { address: colonyAddress },
+  transactions, // eslint-disable-line no-unused-vars
+}: Props) => (
   <div className={styles.main}>
     <div className={styles.titleContainer}>
       <Heading
