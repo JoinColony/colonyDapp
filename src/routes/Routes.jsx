@@ -117,7 +117,6 @@ const Routes = ({ currentUser }) => {
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
         appearance={{ theme: 'transparent' }}
-        hasBackLink={false}
       />
     </Switch>
   );

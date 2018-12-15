@@ -1,24 +1,12 @@
 /* @flow */
 
-import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { Fragment } from 'react';
+import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
-import Link from '~core/Link';
 import UserAvatarUploader from './UserAvatarUploader.jsx';
 
-import styles from './Sidebar.css';
-
 const MSG = defineMessages({
-  iconBack: {
-    id: 'users.UserProfileEdit.Sidebar.iconBack',
-    defaultMessage: 'Back to profile',
-  },
-  backLink: {
-    id: 'users.UserProfileEdit.Sidebar.backLink',
-    defaultMessage: 'Back',
-  },
   heading: {
     id: 'users.UserProfileEdit.Sidebar.heading',
     defaultMessage: 'Profile Picture',
@@ -35,23 +23,13 @@ type Props = {
 const displayName = 'users.UserProfileEdit.Sidebar';
 
 const Sidebar = ({ walletAddress, username }: Props) => (
-  <div>
-    <Link className={styles.backLink} to={`/user/${username}`}>
-      <Icon
-        appearance={{ size: 'medium' }}
-        name="circle-back"
-        title={MSG.iconBack}
-      />
-      <span className={styles.backLinkText}>
-        <FormattedMessage {...MSG.backLink} />
-      </span>
-    </Link>
+  <Fragment>
     <Heading
       appearance={{ theme: 'dark', size: 'medium' }}
       text={MSG.heading}
     />
     <UserAvatarUploader walletAddress={walletAddress} username={username} />
-  </div>
+  </Fragment>
 );
 
 Sidebar.displayName = displayName;
