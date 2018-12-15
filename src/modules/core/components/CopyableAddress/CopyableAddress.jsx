@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
+import { splitAddress } from '~utils/strings';
 
 import { getMainClasses } from '~utils/css';
 
@@ -77,8 +78,16 @@ class CopyableAddress extends Component<Props, State> {
 
   getAddress = () => {
     const { children: address, full } = this.props;
-    if (full) {
-      return address;
+    const addressElements = splitAddress(address);
+    if (full && !(addressElements instanceof Error)) {
+      return (
+        <div>
+          <span className={styles.boldAddress}>{addressElements.header}</span>
+          <span className={styles.boldAddress}>{addressElements.start}</span>
+          <span className={styles.address}>{addressElements.middle}</span>
+          <span className={styles.boldAddress}>{addressElements.end}</span>
+        </div>
+      );
     }
     return <MaskedAddress address={address} />;
   };
@@ -89,14 +98,18 @@ class CopyableAddress extends Component<Props, State> {
 
     return (
       <div className={getMainClasses(appearance, styles)}>
-        {!hideAddress && this.getAddress()}
-        <Button
-          appearance={{ size: 'small', theme: 'blue' }}
-          disabled={copiedAddress}
-          onClick={this.handleCopyAddress}
-          text={hideAddress ? { ...MSG.buttonCopyLong } : { ...MSG.buttonCopy }}
-          textValues={{ copiedAddress }}
-        />
+        <div className={styles.addressContainer}>
+          {!hideAddress && this.getAddress()}
+        </div>
+        <span className={styles.copyButton}>
+          <Button
+            appearance={{ size: 'small', theme: 'blue' }}
+            disabled={copiedAddress}
+            onClick={this.handleCopyAddress}
+            text={{ ...MSG.buttonCopy }}
+            textValues={{ copiedAddress }}
+          />
+        </span>
       </div>
     );
   }

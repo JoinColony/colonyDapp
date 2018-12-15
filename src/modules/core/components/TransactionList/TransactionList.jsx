@@ -24,7 +24,7 @@ type Props = {
    */
   currentAddress: string,
   /*
-   * The user's address will always be shown, this just controlls if it's
+   * The user's address will always be shown, this just controls if it's
    * shown in full, or masked.
    * Gets passed down to `UserListItem`
    */

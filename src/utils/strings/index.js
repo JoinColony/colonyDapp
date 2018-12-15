@@ -78,31 +78,40 @@ export const stripProtocol = (urlString: string) =>
     urlString.replace(HTTPS_PROTOCOL, '')) ||
   urlString;
 
+export type AddressElements = {
+  header: string,
+  start: string,
+  middle: string,
+  end: string,
+};
+
 /**
- * Mask an BIP32 address and only show it's start and end 4bit sections,
+ * Split an BIP32 address to highlight start and end sections,
  * hidden by a configurable string mask
  *
  * @NOTE We also validate the address here. If it's not correct this will throw, but we catch it and
  * just return the error message in that case
  *
- * @method maskAddress
+ * @method splitAddress
  *
  * @param {string} address The address to mask (must be valid!)
- * @param {string} mask The string mask to apply
  *
- * @return {string} The masked address
+ * @return {array} The split address in an array of strings
  */
-export const maskAddress = (
-  address: string,
-  mask: string = '...',
-): string | Error => {
+export const splitAddress = (address: string): AddressElements | Error => {
   try {
     addressValidator(address);
     const HEX_HEADER: string = '0x';
     const rawAddress: string = addressNormalizer(address, false);
     const addressStart: string = rawAddress.slice(0, 4);
+    const addressMiddle: string = rawAddress.slice(4, -4);
     const addressEnd: string = rawAddress.slice(-4);
-    return `${HEX_HEADER}${addressStart}${mask}${addressEnd}`;
+    return {
+      header: HEX_HEADER,
+      start: `${addressStart}`,
+      middle: `${addressMiddle}`,
+      end: addressEnd,
+    };
   } catch (caughtError) {
     return caughtError;
   }

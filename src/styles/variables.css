@@ -80,6 +80,7 @@
    */
   --family-primary: "Avenir Next", sans-serif;
   --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
+  --family-techie: "IBM Plex Mono", sans-serif;
   --text: color-mod(var(--grey-dark) alpha(70%));
   --text-dark: var(--colony-black);
   --text-invert: var(--colony-white);

@@ -11,6 +11,7 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import QRCode from '~core/QRCode';
 
 import WalletTransactions from '../WalletTransactions';
 import TokenList from '~admin/Tokens/TokenList.jsx';
@@ -75,13 +76,16 @@ class Wallet extends Component<Props> {
       <div className={styles.layoutMain}>
         <main className={styles.content}>
           <div className={styles.walletDetails}>
-            <Heading
-              text={MSG.titleWallet}
-              appearance={{ size: 'medium', margin: 'small' }}
-            />
-            <CopyableAddress appearance={{ theme: 'big' }} full>
-              {mockUser.profile.walletAddress}
-            </CopyableAddress>
+            <QRCode address={mockUser.profile.walletAddress} width={55} />
+            <div className={styles.address}>
+              <Heading
+                text={MSG.titleWallet}
+                appearance={{ size: 'medium', margin: 'small' }}
+              />
+              <CopyableAddress appearance={{ theme: 'big' }} full>
+                {mockUser.profile.walletAddress}
+              </CopyableAddress>
+            </div>
           </div>
           <Tabs>
             <TabList>

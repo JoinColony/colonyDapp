@@ -3,7 +3,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { maskAddress } from '~utils/strings';
+import { splitAddress } from '~utils/strings';
+
+import type { AddressElements } from '~utils/strings';
+
+import styles from './MaskedAddress.css';
 
 const MSG = defineMessages({
   wrongAddressFormat: {
@@ -18,17 +22,21 @@ type Props = {
    */
   address: string,
   /*
-   * String patter to use when masking the address
+   * String pattern to use when masking the address
    */
   mask?: string,
 };
 
-const MaskedAddress = ({ address, mask }: Props) => {
-  const maskedAddress: string | Error = maskAddress(address, mask);
-  if (maskedAddress instanceof Error) {
+const MaskedAddress = ({ address, mask = '...' }: Props) => {
+  const cutAddress: AddressElements | Error = splitAddress(address);
+  if (cutAddress instanceof Error) {
     return <FormattedMessage {...MSG.wrongAddressFormat} />;
   }
-  return <span>{maskedAddress}</span>;
+  return (
+    <span className={styles.address}>
+      {`${cutAddress.header}${cutAddress.start}${mask}${cutAddress.end}`}
+    </span>
+  );
 };
 
 export default MaskedAddress;
