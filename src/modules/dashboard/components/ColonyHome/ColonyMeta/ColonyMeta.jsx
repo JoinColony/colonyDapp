@@ -15,6 +15,7 @@ import UserAvatar from '~core/UserAvatar';
 import styles from './ColonyMeta.css';
 
 import type { ColonyRecord, UserRecord } from '~immutable';
+import type { DataRecord } from '~utils/reducers';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -42,7 +43,7 @@ const MSG = defineMessages({
 const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
 
 type Props = {
-  colony: ColonyRecord,
+  colony: DataRecord<ColonyRecord>,
   founders: List<UserRecord>,
   admins: List<UserRecord>,
   isAdmin: boolean,
@@ -50,13 +51,7 @@ type Props = {
 
 const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
   const {
-    address,
-    avatar,
-    description,
-    ensName,
-    guideline,
-    name,
-    website,
+    data: { address, avatar, description, ensName, guideline, name, website },
   } = colony;
   return (
     <div>

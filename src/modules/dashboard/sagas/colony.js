@@ -91,7 +91,10 @@ function* createColonyLabelSaga({
   };
 
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
-  yield put({ type: COLONY_FETCH_SUCCESS, payload: { colonyStoreData } });
+  yield put({
+    type: COLONY_FETCH_SUCCESS,
+    payload: { key: ensName, data: colonyStoreData },
+  });
 
   yield call([store, store.set], colonyStoreData);
 

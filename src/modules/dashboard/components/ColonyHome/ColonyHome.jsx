@@ -23,6 +23,7 @@ import mockColonies from '../../../../__mocks__/mockColonies';
 import mockDomains from '../../../../__mocks__/mockDomains';
 
 import type { ColonyRecord } from '~immutable';
+import type { DataRecord } from '~utils/reducers';
 import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
@@ -76,7 +77,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {
-  colony: ?ColonyRecord,
+  colony: DataRecord<ColonyRecord>,
   walletAddress: string,
   given: Given,
 };
@@ -157,7 +158,7 @@ class ColonyHome extends Component<Props, State> {
     return (
       <div className={styles.main}>
         <aside className={styles.colonyInfo}>
-          {colony ? (
+          {colony.fetching ? null : (
             <ColonyMeta
               colony={colony}
               founders={mockColonyFounders}
@@ -167,7 +168,7 @@ class ColonyHome extends Component<Props, State> {
                */
               isAdmin={!!walletAddress}
             />
-          ) : null}
+          )}
         </aside>
         <main className={styles.content}>
           <Tabs>
@@ -177,9 +178,8 @@ class ColonyHome extends Component<Props, State> {
               </Tab>
             </TabList>
             <TabPanel>
-              {/* TODO add a loading indicator */}
-              {colony && tasks && tasks.size ? (
-                <TaskList colony={colony} tasks={tasks} />
+              {tasks && tasks.size ? (
+                <TaskList tasks={tasks} />
               ) : (
                 <Fragment>
                   <p className={styles.noTasks}>

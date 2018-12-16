@@ -30,6 +30,7 @@ import type {
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
 import type { ColonyRecord } from '~immutable';
+import type { DataRecord } from '~utils/reducers';
 import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
@@ -62,7 +63,7 @@ const MSG = defineMessages({
 const mockColonyRecoveryMode = true;
 
 type Props = {
-  colony: ColonyRecord,
+  colony: DataRecord<ColonyRecord>,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -97,10 +98,11 @@ const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
 const AdminDashboard = (props: Props) => {
   const { colony, given, location } = props;
 
-  // TODO create a better loading state
-  if (!colony) return <SpinnerLoader />;
+  if (colony.fetching) return <SpinnerLoader />;
 
-  const { ensName, name } = colony;
+  const {
+    data: { ensName, name },
+  } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
