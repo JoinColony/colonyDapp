@@ -2,7 +2,8 @@
 
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-// import { Formik } from 'formik';
+
+import type { ColonyRecord } from '~immutable';
 
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
@@ -17,6 +18,8 @@ import {
 import Button from '~core/Button';
 import { getENSDomainString } from '~utils/ens';
 
+import { colonyStore } from '../../../dashboard/stores';
+
 import {
   COLONY_PROFILE_UPDATE,
   COLONY_PROFILE_UPDATE_ERROR,
@@ -26,8 +29,6 @@ import {
 import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 
 import styles from './ProfileEdit.css';
-
-import type { ColonyRecord } from '~immutable';
 
 const MSG = defineMessages({
   labelAddress: {
@@ -90,11 +91,7 @@ const ProfileEdit = ({ colony }: Props) => {
             website,
             guideline,
           }}
-          /*
-           * @TODO Add form validation
-           * If this makes to the review, raise hell!
-           */
-          // validationSchema={userProfileStore.schema}
+          validationSchema={colonyStore.schema}
         >
           {({ status, isSubmitting }) => (
             <Fragment>
