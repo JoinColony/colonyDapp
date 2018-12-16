@@ -3,55 +3,44 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
+  COLONY_FETCH,
+  COLONY_FETCH_ERROR,
   COLONY_FETCH_SUCCESS,
-  COLONY_PROFILE_UPDATE_SUCCESS,
-  COLONY_AVATAR_UPLOAD_SUCCESS,
-  COLONY_AVATAR_FETCH_SUCCESS,
-  COLONY_AVATAR_REMOVE_SUCCESS,
 } from '../actionTypes';
 
 import { Colony, Token } from '~immutable';
+import { withDataReducer } from '~utils/reducers';
 
-import type { Action, ENSName } from '~types';
+import type { ColonyRecord } from '~immutable';
+import type { ENSName } from '~types';
 
-// TODO consider adding loading/error state, perhaps with a generalised
-// higher order reducer (so we can use this pattern elsewhere).
-type State = ImmutableMap<ENSName, Colony>;
+// eslint-disable-next-line no-unused-vars
+const coloniesReducer = (state = new ImmutableMap(), action) => state;
 
-const INITIAL_STATE: State = new ImmutableMap();
+const enhance = withDataReducer<ENSName, ColonyRecord>(
+  {
+    error: COLONY_FETCH_ERROR,
+    fetch: COLONY_FETCH,
+    success: new Map([
+      [
+        COLONY_FETCH_SUCCESS,
+        (
+          state,
+          {
+            payload: {
+              data: { token, ensName, ...data },
+            },
+          },
+        ) =>
+          Colony({
+            ensName,
+            token: Token(token),
+            ...data,
+          }),
+      ],
+    ]),
+  },
+  Colony,
+);
 
-const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
-  switch (action.type) {
-    case COLONY_FETCH_SUCCESS: {
-      const {
-        colonyStoreData: { ensName, token, ...colonyStoreData },
-      } = action.payload;
-      return state.set(
-        ensName,
-        Colony({
-          ensName,
-          token: Token(token),
-          ...colonyStoreData,
-        }),
-      );
-    }
-    case COLONY_PROFILE_UPDATE_SUCCESS:
-      return state ? state.merge(action.payload) : state;
-    case COLONY_AVATAR_UPLOAD_SUCCESS: {
-      const { hash, ensName } = action.payload;
-      return state ? state.setIn([ensName, 'avatar'], hash) : state;
-    }
-    case COLONY_AVATAR_FETCH_SUCCESS: {
-      const { hash, avatarData } = action.payload;
-      return state.setIn(['avatars', hash], avatarData);
-    }
-    case COLONY_AVATAR_REMOVE_SUCCESS: {
-      const { ensName } = action.payload;
-      return state ? state.setIn([ensName, 'avatar'], undefined) : state;
-    }
-    default:
-      return state;
-  }
-};
-
-export default coloniesReducer;
+export default enhance(coloniesReducer);
