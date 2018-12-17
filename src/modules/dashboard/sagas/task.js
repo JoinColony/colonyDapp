@@ -2,11 +2,16 @@
 
 import type { Saga } from 'redux-saga';
 
-import { all, put, takeEvery, call, getContext } from 'redux-saga/effects';
+import { all, call, getContext, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action, ENSName } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
+
+import { DDB } from '../../../lib/database';
+import { DocStore } from '../../../lib/database/stores';
+
+import { colonyStore, domainStore, draftStore, taskStore } from '../stores';
 
 import {
   TASK_CREATE,
@@ -47,6 +52,45 @@ import {
   taskWorkerRateManager,
   taskWorkerRevealRating,
 } from '../actionCreators';
+
+export function* fetchOrCreateTaskStore({
+  colonyAddress,
+  taskStoreAddress,
+  domainName,
+  draft,
+}: {
+  colonyAddress?: string,
+  taskStoreAddress?: string,
+  domainName?: string,
+  draft?: boolean,
+}): Saga<DocStore> {
+  const ddb: DDB = yield getContext('ddb');
+  let store;
+  const blueprint = draft ? draftStore : taskStore;
+  if (taskStoreAddress) {
+    store = yield call([ddb, ddb.getStore], blueprint, taskStoreAddress);
+  } else if (colonyAddress) {
+    // get the colony
+    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
+    yield call([colony, colony.load]);
+    // get the correct domain
+    const domains = yield call([colony, colony.get], 'domains');
+    const targetDomain = domainName || 'rootDomain';
+    const domain = yield call(
+      [ddb, ddb.getStore],
+      domainStore,
+      domains[targetDomain],
+    );
+    yield call([domain, domain.load]);
+    // get the tasks database, stored under 'tasksDatabase' even if drafts
+    const tasksAddress = yield call([domain, domain.get], 'tasksDatabase');
+    store = yield call([ddb, ddb.getStore], blueprint, tasksAddress);
+  } else {
+    store = yield call([ddb, ddb.createStore], blueprint);
+  }
+  yield call([store, store.load]);
+  return store;
+}
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield getContext('wallet');

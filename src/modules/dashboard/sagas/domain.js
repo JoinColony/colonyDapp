@@ -17,7 +17,7 @@ import {
 } from '../actionTypes';
 
 import { getAll } from '../../../lib/database/commands';
-import { fetchOrCreateDraftStore } from './draft';
+import { fetchOrCreateTaskStore } from './task';
 
 /*
  * Fetches from colony identifier, domain identifier, or creates new domain
@@ -44,7 +44,7 @@ export function* fetchOrCreateDomainStore({
     store = yield call([ddb, ddb.getStore], domainStore, domains[domainName]);
   } else {
     store = yield call([ddb, ddb.createStore], domainStore);
-    const taskStore = yield call(fetchOrCreateDraftStore, {});
+    const taskStore = yield call(fetchOrCreateTaskStore, {});
     yield call([store, store.set], {
       tasksDatabase: taskStore.address.toString(),
     });
