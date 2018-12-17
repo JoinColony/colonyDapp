@@ -21,6 +21,7 @@ import {
 } from '../actionTypes';
 
 import { getAll } from '../../../lib/database/commands';
+import { DocStore } from '../../../lib/database/stores';
 import { fetchOrCreateTaskStore } from './task';
 
 export function* createDraftSaga(action: Action): Saga<void> {
@@ -48,6 +49,21 @@ export function* fetchDraftsSaga(action: Action): Saga<void> {
   } catch (error) {
     yield putError(DRAFTS_FETCH_ERROR, error);
   }
+}
+
+export function* fetchDraft({
+  draftStoreAddress,
+  taskId,
+}: {
+  draftStoreAddress?: string,
+  taskId: string,
+}): Generator<*, *, DocStore> {
+  const store = yield call(fetchOrCreateTaskStore, {
+    draftStoreAddress,
+    draft: true,
+  });
+  const task = yield call([store, store.get], taskId);
+  return task;
 }
 
 export function* editDraftSaga(action: Action): Saga<void> {
