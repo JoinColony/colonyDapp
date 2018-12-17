@@ -16,7 +16,7 @@ export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelec
   state => state.dashboard.colonies,
   (state, props) => props.ensName,
   (colonies, ensName) => {
-    const currentColony = colonies.get(ensName) || {};
+    const currentColony = colonies.get(ensName, {});
     return currentColony.avatar || undefined;
   },
 );
