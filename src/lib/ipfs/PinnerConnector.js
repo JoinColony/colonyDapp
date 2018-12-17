@@ -19,6 +19,7 @@ const PIN_ACTIONS = {
   PIN_STORE: 'PIN_STORE',
   LOAD_STORE: 'LOAD_STORE',
   HAVE_HEADS: 'HAVE_HEADS',
+  PIN_HASH: 'PIN_HASH',
 };
 
 class PinnerConnector extends EventEmitter {
@@ -83,19 +84,19 @@ class PinnerConnector extends EventEmitter {
 
   _flushPinnerMessages() {
     this._outstandingPubsubMessages.forEach(message => {
-      this._pubsubPublish(message);
+      this._publishAction(message);
     });
     this._outstandingPubsubMessages = [];
   }
 
-  _pubsubPublish(message: PinnerAction) {
+  _publishAction(action: PinnerAction) {
     if (this.online) {
       this._ipfs.pubsub.publish(
         this._room,
-        Buffer.from(JSON.stringify(message)),
+        Buffer.from(JSON.stringify(action)),
       );
     } else {
-      this._outstandingPubsubMessages.push(message);
+      this._outstandingPubsubMessages.push(action);
     }
   }
 
@@ -123,7 +124,7 @@ class PinnerConnector extends EventEmitter {
 
   async requestPinnedStore(address: string) {
     const getHeads = new Promise(resolve => {
-      this._pubsubPublish({
+      this._publishAction({
         type: PIN_ACTIONS.LOAD_STORE,
         payload: { address },
       });
@@ -143,9 +144,16 @@ class PinnerConnector extends EventEmitter {
   }
 
   pinStore(address: string) {
-    this._pubsubPublish({
+    this._publishAction({
       type: PIN_ACTIONS.PIN_STORE,
       payload: { address },
+    });
+  }
+
+  pinHash(ipfsHash: string) {
+    this._publishAction({
+      type: PIN_ACTIONS.PIN_HASH,
+      payload: { ipfsHash },
     });
   }
 }

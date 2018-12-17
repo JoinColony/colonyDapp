@@ -2,4 +2,7 @@
 
 import IPFSNode from '../lib/ipfs';
 
-export default new IPFSNode();
+const ipfsNode = new IPFSNode();
+ipfsNode.connectPinner();
+
+export default ipfsNode;

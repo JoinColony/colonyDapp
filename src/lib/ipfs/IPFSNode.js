@@ -1,11 +1,14 @@
 /* @flow */
 
 import IPFS from 'ipfs';
-import { promisify } from 'es6-promisify';
 
 import { sleep } from '../../utils/time';
 
 import type { IPFSNodeOptions, B58String, IPFSPeer } from './types';
+import PinnerConnector from './PinnerConnector';
+
+const PINNING_ROOM = process.env.PINNING_ROOM || 'COLONY_PINNING_ROOM';
+const { PINNER_ID } = process.env;
 
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
@@ -49,6 +52,8 @@ class IPFSNode {
 
   _ipfs: IPFS;
 
+  pinner: PinnerConnector;
+
   ready: Promise<boolean>;
 
   constructor(
@@ -74,6 +79,12 @@ class IPFSNode {
         reject(err);
       });
     });
+  }
+
+  async connectPinner() {
+    await this.ready;
+    this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM, PINNER_ID);
+    await this.pinner.init();
   }
 
   /**
@@ -141,7 +152,7 @@ class IPFSNode {
    */
   async getString(hash: string): Promise<string> {
     await this.ready;
-    const result = await this._ipfs.files.cat(hash);
+    const result = await this._ipfs.cat(hash);
     if (!result) throw new Error('No such file');
     return result.toString();
   }
@@ -152,18 +163,20 @@ class IPFSNode {
    */
   async addString(data: string): Promise<string> {
     await this.ready;
-    const results = await this._ipfs.files.add(
-      this._ipfs.types.Buffer.from(data),
-    );
-    if (!results.length) throw new Error('Failed to upload to IPFS');
-    return results[0].path;
+    const [result] = await this._ipfs.add(this._ipfs.types.Buffer.from(data));
+    if (!result) throw new Error('Failed to upload to IPFS');
+    if (this.pinner) {
+      this.pinner.pinHash(result.hash);
+    }
+    return result.path;
   }
 
   /**
    * Promise that returns the given node ID
    */
-  getNodeID(): Promise<B58String> {
-    return promisify(this._ipfs.id.bind(this._ipfs))().then(node => node.id);
+  async getNodeID(): Promise<B58String> {
+    const { id } = await this._ipfs.id();
+    return id;
   }
 
   /** Start the connection to IPFS (if not connected already) */
@@ -172,7 +185,10 @@ class IPFSNode {
   }
 
   /** Stop the connection to IPFS */
-  stop(): Promise<void> {
+  async stop(): Promise<void> {
+    if (this.pinner) {
+      await this.pinner.disconnect();
+    }
     return this._ipfs.stop();
   }
 }

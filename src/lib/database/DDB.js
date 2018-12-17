@@ -16,10 +16,6 @@ import type {
 import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
-import PinnerConnector from './PinnerConnector';
-
-const PINNING_ROOM = process.env.PINNING_ROOM || 'COLONY_PINNING_ROOM';
-const { PINNER_ID } = process.env;
 
 const generateId = () => generate(urlDictionary, 21);
 
@@ -46,8 +42,6 @@ class DDB {
 
   _resolvers: Map<string, Resolver>;
 
-  _pinner: PinnerConnector;
-
   _outstandingPubsubMessages: Array<Action>;
 
   _pinnerPeer: string;
@@ -56,6 +50,10 @@ class DDB {
     ipfsNode: IPFSNode,
     identityProvider: P,
   ) {
+    if (!ipfsNode.pinner) {
+      throw new Error('No pinner connected - but we need it!');
+    }
+
     this._ipfsNode = ipfsNode;
     this._stores = new Map();
     this._resolvers = new Map();
@@ -69,7 +67,12 @@ class DDB {
     if (!schema) {
       throw new Error(`Schema for store ${name} not found. Did you define it?`);
     }
-    const store = new StoreClass(orbitStore, name, schema, this._pinner);
+    const store = new StoreClass(
+      orbitStore,
+      name,
+      schema,
+      this._ipfsNode.pinner,
+    );
     const { root, path } = store.address;
     this._stores.set(`${root}/${path}`, store);
     return store;
@@ -201,9 +204,6 @@ class DDB {
       // TODO should this be a constant, or configurable? and `colonyOrbitDB`?
       path: 'colonyOrbitdb',
     });
-
-    this._pinner = new PinnerConnector(ipfs, PINNING_ROOM, PINNER_ID);
-    await this._pinner.init();
   }
 
   async stop() {
@@ -215,7 +215,6 @@ class DDB {
       await this._orbitNode._ipfs.start();
     }
     await this._orbitNode.stop();
-    await this._pinner.disconnect();
     return this._orbitNode._ipfs.stop();
     /* eslint-enable no-underscore-dangle */
   }

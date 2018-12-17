@@ -8,7 +8,7 @@ import { raceAgainstTimeout } from '~utils/async';
 
 import type { OrbitDBStore } from '../types';
 
-import PinnerConnector from '../PinnerConnector';
+import PinnerConnector from '../../ipfs/PinnerConnector';
 
 /**
  * A parent class for a wrapper around an orbit store that can hold its schema
