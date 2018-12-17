@@ -48,4 +48,5 @@ declare module 'yup' {
   declare export function required(any): Function;
   declare export function string(any): Function;
   declare export function date(any): DateSchema;
+  declare export function boolean(any): Schema;
 }
