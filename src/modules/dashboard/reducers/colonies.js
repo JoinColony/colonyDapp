@@ -2,7 +2,13 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { COLONY_FETCH_SUCCESS } from '../actionTypes';
+import {
+  COLONY_FETCH_SUCCESS,
+  COLONY_PROFILE_UPDATE_SUCCESS,
+  COLONY_AVATAR_UPLOAD_SUCCESS,
+  COLONY_AVATAR_FETCH_SUCCESS,
+  COLONY_AVATAR_REMOVE_SUCCESS,
+} from '../actionTypes';
 
 import { Colony, Token } from '~immutable';
 
@@ -28,6 +34,20 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
           ...colonyStoreData,
         }),
       );
+    }
+    case COLONY_PROFILE_UPDATE_SUCCESS:
+      return state ? state.merge(action.payload) : state;
+    case COLONY_AVATAR_UPLOAD_SUCCESS: {
+      const { hash, ensName } = action.payload;
+      return state ? state.setIn([ensName, 'avatar'], hash) : state;
+    }
+    case COLONY_AVATAR_FETCH_SUCCESS: {
+      const { hash, avatarData } = action.payload;
+      return state.setIn(['avatars', hash], avatarData);
+    }
+    case COLONY_AVATAR_REMOVE_SUCCESS: {
+      const { ensName } = action.payload;
+      return state ? state.setIn([ensName, 'avatar'], undefined) : state;
     }
     default:
       return state;

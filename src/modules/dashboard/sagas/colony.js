@@ -35,6 +35,18 @@ import {
   COLONY_FETCH_SUCCESS,
   COLONY_FETCH_ERROR,
   COLONY_FETCH,
+  COLONY_PROFILE_UPDATE,
+  COLONY_PROFILE_UPDATE_SUCCESS,
+  COLONY_PROFILE_UPDATE_ERROR,
+  COLONY_AVATAR_UPLOAD,
+  COLONY_AVATAR_UPLOAD_SUCCESS,
+  COLONY_AVATAR_UPLOAD_ERROR,
+  COLONY_AVATAR_FETCH,
+  COLONY_AVATAR_FETCH_SUCCESS,
+  COLONY_AVATAR_FETCH_ERROR,
+  COLONY_AVATAR_REMOVE,
+  COLONY_AVATAR_REMOVE_SUCCESS,
+  COLONY_AVATAR_REMOVE_ERROR,
 } from '../actionTypes';
 
 import { createColony, createColonyLabel } from '../actionCreators';
@@ -143,6 +155,37 @@ function* fetchColonyStore(ensName: ENSName) {
   return store;
 }
 
+function* updateColonySaga(action: Action): Saga<void> {
+  try {
+    const {
+      payload: { ensName, ...colonyUpdateValues },
+    } = action;
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+
+    /*
+     * Set the new values in the store
+     */
+    yield call([store, store.set], colonyUpdateValues);
+    /*
+     * Fetch the newly set colony profile (from the store)
+     */
+    const colonyProfile = yield call(getAll, store);
+
+    /*
+     * Store the new profile in the redux store so we can show it
+     */
+    yield put({
+      type: COLONY_PROFILE_UPDATE_SUCCESS,
+      payload: { [ensName]: colonyProfile },
+    });
+  } catch (error) {
+    yield putError(COLONY_PROFILE_UPDATE_ERROR, error);
+  }
+}
+
 function* fetchColonySaga({ payload: { ensName } }: Action): Saga<void> {
   try {
     const store = yield call(fetchColonyStore, ensName);
@@ -158,12 +201,94 @@ function* fetchColonySaga({ payload: { ensName } }: Action): Saga<void> {
   }
 }
 
+function* uploadColonyAvatar(action: Action): Saga<void> {
+  const { data, ensName } = action.payload;
+
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    // first attempt upload to IPFS
+    const hash = yield call([ipfsNode, ipfsNode.addString], data);
+
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+    /*
+     * Set the avatar's hash in the store
+     */
+    yield call([store, store.set], 'avatar', hash);
+
+    /*
+     * Store the new avatar hash value in the redux store so we can show it
+     */
+    yield put({
+      type: COLONY_AVATAR_UPLOAD_SUCCESS,
+      payload: { hash, ensName },
+    });
+  } catch (error) {
+    yield putError(COLONY_AVATAR_UPLOAD_ERROR, error);
+  }
+}
+
+function* fetchColonyAvatar(action: Action): Saga<void> {
+  const { hash } = action.payload;
+  const ipfsNode = yield getContext('ipfsNode');
+
+  try {
+    /*
+     * Get the base64 avatar image from ipfs
+     */
+    const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
+    /*
+     * Put the base64 value in the redux state so we can show it
+     */
+    yield put({
+      type: COLONY_AVATAR_FETCH_SUCCESS,
+      payload: { hash, avatarData },
+    });
+  } catch (error) {
+    yield putError(COLONY_AVATAR_FETCH_ERROR, error);
+  }
+}
+
+function* removeColonyAvatar(action: Action): Saga<void> {
+  try {
+    const {
+      payload: { ensName },
+    } = action;
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+
+    /*
+     * Set avatar to undefined
+     */
+    yield call([store, store.set], 'avatar', undefined);
+
+    /*
+     * Also set the avatar in the state to undefined (via a reducer)
+     */
+    yield put({
+      type: COLONY_AVATAR_REMOVE_SUCCESS,
+      payload: { ensName },
+    });
+  } catch (error) {
+    yield putError(COLONY_AVATAR_REMOVE_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH, fetchColonySaga);
+  yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
+  yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
+  yield takeLatest(COLONY_AVATAR_UPLOAD, uploadColonyAvatar);
+  yield takeLatest(COLONY_AVATAR_REMOVE, removeColonyAvatar);
 }

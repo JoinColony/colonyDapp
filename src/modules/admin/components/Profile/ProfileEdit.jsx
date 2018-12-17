@@ -1,20 +1,34 @@
 /* @flow */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import { Formik } from 'formik';
+
+import type { ColonyRecord } from '~immutable';
 
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
-import { FieldSet, Input, InputLabel, Textarea } from '~core/Fields';
+import {
+  FieldSet,
+  Input,
+  InputLabel,
+  Textarea,
+  ActionForm,
+  FormStatus,
+} from '~core/Fields';
 import Button from '~core/Button';
-import AvatarUploader from '~core/AvatarUploader';
-import ColonyAvatar from '~core/ColonyAvatar';
 import { getENSDomainString } from '~utils/ens';
 
-import styles from './ProfileEdit.css';
+import { colonyStore } from '../../../dashboard/stores';
 
-import type { ColonyRecord } from '~immutable';
+import {
+  COLONY_PROFILE_UPDATE,
+  COLONY_PROFILE_UPDATE_ERROR,
+  COLONY_PROFILE_UPDATE_SUCCESS,
+} from '../../../dashboard/actionTypes';
+
+import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
+
+import styles from './ProfileEdit.css';
 
 const MSG = defineMessages({
   labelAddress: {
@@ -42,30 +56,12 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileEdit.labelGuidelines',
     defaultMessage: 'Contribution Guidelines',
   },
-  labelProfilePicture: {
-    id: 'admin.Profile.ProfileEdit.labelProfilePicture',
-    defaultMessage: 'Colony Profile Picture',
-  },
-  labelUploader: {
-    id: 'admin.Profile.ProfileEdit.labelUploader',
-    defaultMessage: 'at least 250px by 250px, up to 1MB',
-  },
 });
 
 /*
  * This is due to `displayName` already being declared in the Component's scope
  */
 const componentDisplayName: string = 'admin.Profile.ProfileEdit';
-
-/*
- * @TODO Replace with ACTUAL upload & remove methods
- */
-const placeholderUpload = async () =>
-  `[${componentDisplayName}] Uploaded Image`;
-
-const placeholderRemove = async () => {
-  // Implement me
-};
 
 type Props = {
   colony: ColonyRecord,
@@ -78,24 +74,27 @@ const ProfileEdit = ({ colony }: Props) => {
     guideline,
     address,
     ensName,
-    name: colonyDisplayName,
+    name,
     website,
   } = colony;
   return (
     <div className={styles.main}>
       <main className={styles.content}>
-        <Formik
-          // eslint-disable-next-line no-console
-          onSubmit={console.log}
+        <ActionForm
+          submit={COLONY_PROFILE_UPDATE}
+          success={COLONY_PROFILE_UPDATE_SUCCESS}
+          error={COLONY_PROFILE_UPDATE_ERROR}
           initialValues={{
-            colonyDisplayName,
-            aboutColony: description,
-            colonyWebsite: website,
-            colonyGuidelines: guideline,
+            ensName,
+            name,
+            description,
+            website,
+            guideline,
           }}
+          validationSchema={colonyStore.schema}
         >
-          {({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
+          {({ status, isSubmitting }) => (
+            <Fragment>
               <FieldSet className={styles.section}>
                 <InputLabel label={MSG.labelAddress} />
                 <CopyableAddress appearance={{ theme: 'big' }} full>
@@ -118,7 +117,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelDisplayName}
-                  name="colonyDisplayName"
+                  name="name"
                   maxLength={50}
                 />
               </FieldSet>
@@ -127,7 +126,7 @@ const ProfileEdit = ({ colony }: Props) => {
                   appearance={{ theme: 'fat', resizable: 'vertical' }}
                   style={{ minHeight: styles.textareaHeight }}
                   label={MSG.labelAbout}
-                  name="aboutColony"
+                  name="description"
                   maxLength={160}
                 />
               </FieldSet>
@@ -135,7 +134,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelWebsite}
-                  name="colonyWebsite"
+                  name="website"
                   maxLength={100}
                 />
               </FieldSet>
@@ -143,7 +142,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelGuidelines}
-                  name="colonyGuidelines"
+                  name="guideline"
                   maxLength={100}
                 />
               </FieldSet>
@@ -153,31 +152,20 @@ const ProfileEdit = ({ colony }: Props) => {
                   style={{ width: styles.wideButton }}
                   text={{ id: 'button.save' }}
                   type="submit"
+                  loading={isSubmitting}
                 />
               </FieldSet>
-            </form>
+              <FormStatus status={status} />
+            </Fragment>
           )}
-        </Formik>
+        </ActionForm>
       </main>
       <aside className={styles.sidebar}>
-        <AvatarUploader
-          label={MSG.labelProfilePicture}
-          help={MSG.labelUploader}
-          placeholder={
-            <ColonyAvatar
-              address={address}
-              avatar={avatar}
-              name={colonyDisplayName}
-              /*
-               * @NOTE Unlike other components this does not override the main class
-               * But appends the current one to that
-               */
-              className={styles.avatar}
-              size="xl"
-            />
-          }
-          upload={placeholderUpload}
-          remove={placeholderRemove}
+        <ColonyAvatarUploader
+          name={name}
+          avatar={avatar}
+          address={address}
+          ensName={ensName}
         />
       </aside>
     </div>
