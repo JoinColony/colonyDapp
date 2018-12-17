@@ -1,17 +1,22 @@
 /* @flow */
 
-import React from 'react';
-import { Formik } from 'formik';
+import React, { Fragment } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
+import type { UserRecord } from '~immutable';
+
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
+import { ActionForm, FormStatus } from '~core/Fields';
+
+import {
+  COLONY_ADMIN_ADD,
+  COLONY_ADMIN_ADD_SUCCESS,
+  COLONY_ADMIN_ADD_ERROR,
+} from '../../../dashboard/actionTypes';
 
 import styles from './OrganizationAddAdmins.css';
-
-import type { FormikProps } from 'formik';
-import type { UserRecord } from '~immutable';
 
 const MSG = defineMessages({
   labelAddAdmins: {
@@ -40,7 +45,7 @@ const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
 
 const validationSchema = yup.object({
-  newAdminUser: yup
+  newAdmin: yup
     .object()
     .shape({
       id: yup.string(),
@@ -50,31 +55,32 @@ const validationSchema = yup.object({
     .required(),
 });
 
-type FormValues = {
-  newAdminUser: UserRecord,
-};
-
 type Props = {
   availableAdmins: Array<UserRecord>,
 };
 
 const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
   <div className={styles.main}>
-    <Formik onSubmit={() => {}} validationSchema={validationSchema}>
-      {({ handleSubmit, isValid }: FormikProps<FormValues>) => (
-        <form onSubmit={handleSubmit}>
+    <ActionForm
+      submit={COLONY_ADMIN_ADD}
+      success={COLONY_ADMIN_ADD_SUCCESS}
+      error={COLONY_ADMIN_ADD_ERROR}
+      validationSchema={validationSchema}
+    >
+      {({ status, isSubmitting, isValid }) => (
+        <Fragment>
           <div className={styles.pickerWrapper}>
             <SingleUserPicker
-              name="newAdminUser"
+              name="newAdmin"
               label={MSG.labelAddAdmins}
               placeholder={MSG.placeholderAddAdmins}
               itemComponent={ItemWithAddress}
               /*
+               * @TODO Remove it when the *real* data comes in
+               *
                * This is temporary since we doubled data in the list.
                * This prevents React from going haywire since multiple keys
                * will have the same value.
-               *
-               * Remove it when the *real* data comes in
                */
               data={availableAdmins.slice(0, 5)}
               filter={filter}
@@ -86,10 +92,12 @@ const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
             text={MSG.buttonAddAdmin}
             type="submit"
             disabled={!isValid}
+            loading={isSubmitting}
           />
-        </form>
+          <FormStatus status={status} />
+        </Fragment>
       )}
-    </Formik>
+    </ActionForm>
   </div>
 );
 
