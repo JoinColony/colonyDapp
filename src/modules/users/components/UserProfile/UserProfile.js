@@ -6,14 +6,9 @@ import UserProfile from './UserProfile.jsx';
 
 import { fetchUserProfile } from '../../actionCreators';
 
-import {
-  isLoadingSelector,
-  usernameFromRouter,
-  routerUserSelector,
-} from '../../selectors';
+import { usernameFromRouter, routerUserSelector } from '../../selectors';
 
 const mapStateToProps = (state, props) => ({
-  isLoading: isLoadingSelector(state),
   username: usernameFromRouter(state, props),
   user: routerUserSelector(state, props),
 });
