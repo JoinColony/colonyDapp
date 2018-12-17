@@ -38,7 +38,7 @@ export function* createDraftSaga(action: Action): Saga<void> {
   }
 }
 
-export function* fetchDraftsSaga(action: Action): Saga<void> {
+export function* fetchAllDraftsSaga(action: Action): Saga<void> {
   const { draftStoreAddress } = action.payload;
   try {
     const store = yield call(fetchOrCreateTaskStore, {
@@ -85,12 +85,13 @@ export function* editDraftSaga(action: Action): Saga<void> {
 }
 
 export function* deleteDraftSaga(action: Action): Saga<void> {
-  const { taskHash, draftStoreAddress } = action.payload;
+  const { taskId, taskStoreAddress } = action.payload;
   try {
     const store = yield call(fetchOrCreateTaskStore, {
-      draftStoreAddress,
+      taskStoreAddress,
+      draft: true,
     });
-    const deletedHash = yield call([store, store.remove], taskHash);
+    const deletedHash = yield call([store, store.remove], taskId);
     yield put({ type: DRAFT_DELETE_SUCCESS, payload: { deletedHash } });
   } catch (error) {
     yield putError(DRAFT_DELETE_ERROR, error);
@@ -101,5 +102,5 @@ export default function* draftSagas(): any {
   yield takeEvery(DRAFT_CREATE, createDraftSaga);
   yield takeEvery(DRAFT_DELETE, deleteDraftSaga);
   yield takeEvery(DRAFT_EDIT, editDraftSaga);
-  yield takeEvery(DRAFTS_FETCH, fetchDraftsSaga);
+  yield takeEvery(DRAFTS_FETCH, fetchAllDraftsSaga);
 }
