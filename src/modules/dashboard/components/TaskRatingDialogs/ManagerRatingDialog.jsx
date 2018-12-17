@@ -100,7 +100,7 @@ const validationSchemaExtended = validationSchema.shape({
 });
 
 const ManagerRatingDialog = ({ close, cancel, submitWork }: Props) => (
-  <Dialog cancel={cancel} className={styles.main}>
+  <Dialog cancel={cancel}>
     <Form
       initialValues={{
         rating: '',

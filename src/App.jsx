@@ -25,13 +25,13 @@ const App = ({ store, history }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
     <ReduxProvider store={store}>
       <PopoverProvider>
-        <DialogProvider dialogComponents={dialogComponents}>
-          <ConnectedRouter history={history}>
+        <ConnectedRouter history={history}>
+          <DialogProvider dialogComponents={dialogComponents}>
             <div className={layout.stretch}>
               <Routes />
             </div>
-          </ConnectedRouter>
-        </DialogProvider>
+          </DialogProvider>
+        </ConnectedRouter>
       </PopoverProvider>
     </ReduxProvider>
   </IntlProvider>

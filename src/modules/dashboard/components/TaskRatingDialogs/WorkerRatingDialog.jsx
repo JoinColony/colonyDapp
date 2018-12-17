@@ -76,7 +76,7 @@ const validationSchema = yup.object().shape({
 });
 
 const WorkerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
-  <Dialog cancel={cancel} className={styles.main}>
+  <Dialog cancel={cancel}>
     <Form
       initialValues={{
         rating: '',

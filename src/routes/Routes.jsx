@@ -110,11 +110,13 @@ const Routes = ({ currentUser }) => {
         isConnected={isConnected}
         path={USER_ROUTE}
         component={UserProfile}
+        appearance={{ theme: 'transparent' }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
+        appearance={{ theme: 'transparent' }}
       />
     </Switch>
   );

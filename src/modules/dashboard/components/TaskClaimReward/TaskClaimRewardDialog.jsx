@@ -90,7 +90,7 @@ const TaskClaimRewardDialog = ({
   sortedPayouts,
   nativeTokenPayout,
 }: Props) => (
-  <Dialog cancel={cancel} className={styles.main}>
+  <Dialog cancel={cancel}>
     <DialogSection appearance={{ border: 'bottom' }}>
       <Heading appearance={{ size: 'medium' }} text={title} />
       <section className={styles.starRating}>

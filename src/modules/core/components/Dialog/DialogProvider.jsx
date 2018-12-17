@@ -1,15 +1,17 @@
 /* @flow */
 
 import type { Node } from 'react';
+import type { ContextRouter } from 'react-router-dom';
 
 import React, { Component, Fragment } from 'react';
+import { withRouter } from 'react-router-dom';
 import nanoid from 'nanoid';
 
 import type { DialogComponent, DialogType } from './types';
 
 const { Provider, Consumer: ContextConsumer } = React.createContext({});
 
-type Props = {
+type Props = ContextRouter & {
   children: Node,
   dialogComponents: { [string]: DialogComponent },
 };
@@ -27,6 +29,34 @@ class DialogProvider extends Component<Props, State> {
 
   state = {
     openDialogs: [],
+  };
+
+  componentDidUpdate({ location: prevLocation }: Props) {
+    const { location } = this.props;
+    const { openDialogs } = this.state;
+    if (openDialogs.length > 0 && location !== prevLocation) {
+      /*
+       * Since this provider is at the App level, we only want
+       * to reset state if there are openDialogs, otherwise we'll
+       * be calling `setState` on each route change, which is
+       * quite unnecessary.
+       */
+      this.resetOpenDialogs();
+    }
+  }
+
+  closeDialog = (key: string) => {
+    const { openDialogs } = this.state;
+    const idx = openDialogs.findIndex(dialog => dialog.key === key);
+    if (idx < 0) {
+      return;
+    }
+    this.setState({
+      openDialogs: [
+        ...openDialogs.slice(0, idx),
+        ...openDialogs.slice(idx + 1, openDialogs.length),
+      ],
+    });
   };
 
   pushDialog = (
@@ -71,17 +101,9 @@ class DialogProvider extends Component<Props, State> {
     return dialog;
   };
 
-  closeDialog = (key: string) => {
-    const { openDialogs } = this.state;
-    const idx = openDialogs.findIndex(dialog => dialog.key === key);
-    if (idx < 0) {
-      return;
-    }
+  resetOpenDialogs = () => {
     this.setState({
-      openDialogs: [
-        ...openDialogs.slice(0, idx),
-        ...openDialogs.slice(idx + 1, openDialogs.length),
-      ],
+      openDialogs: [],
     });
   };
 
@@ -99,6 +121,6 @@ class DialogProvider extends Component<Props, State> {
   }
 }
 
-export default DialogProvider;
+export default withRouter(DialogProvider);
 
 export const Consumer = ContextConsumer;

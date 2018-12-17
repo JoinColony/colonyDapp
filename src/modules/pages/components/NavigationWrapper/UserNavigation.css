@@ -12,8 +12,7 @@
 .navigationItem {
   flex-grow: 0;
   margin-right: 12px;
-  height: 34px;
-  width: 34px;
+  padding: 0 10px 5px 10px;
   border-radius: var(--radius-tiny);
   text-align: center;
   cursor: pointer;
@@ -27,11 +26,11 @@
   composes: navigationItem;
 
   &::after {
+    display: inline-block;
+    margin-bottom: 1px;
+    margin-left: 3px;
     height: 8px;
     width: 8px;
-    position: absolute;
-    top: 32px;
-    right: 86px;
     border-radius: 50%;
     background-color: var(--danger);
     content: '';

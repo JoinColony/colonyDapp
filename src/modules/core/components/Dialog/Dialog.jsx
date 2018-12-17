@@ -27,6 +27,8 @@ type Props = {
   isDismissable?: boolean,
 };
 
+const displayName = 'Dialog';
+
 const Dialog = ({
   children,
   cancel,
@@ -58,5 +60,7 @@ const Dialog = ({
     <div className={styles.main}>{children}</div>
   </Modal>
 );
+
+Dialog.displayName = displayName;
 
 export default Dialog;
