@@ -77,16 +77,18 @@ class Store extends EventEmitter {
         this.address.toString(),
       );
       if (count) {
-        await this._waitForReplication(count);
+        return this._waitForReplication(count);
         // We're replicated and done
-        return true;
       }
       // Pinner doesn't have any heads either. Maybe it's a newly created store?
-      return false;
+      throw new Error('Could not load store heads from anywhere');
     }
-
-    // We have *some* heads and just assume it's going to be ok. We can start replicating later
-    return true;
+    // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
+    // but don't have to wait for any count. We'll replicate whenever it's convenient
+    // TODO: This could be dangerous in case of an unfinished replication. We have to account for that
+    // Quick fix could be to just also wait for the full replication, which might be a performance hit
+    this._pinner.requestPinnedStore(this.address.toString());
+    return Promise.resolve(true);
   }
 
   pin() {
