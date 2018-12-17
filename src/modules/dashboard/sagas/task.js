@@ -6,7 +6,7 @@ import { all, call, getContext, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action, ENSName } from '~types';
 
-import { putError, raceError, callCaller } from '~utils/saga/effects';
+import { callCaller, putError, raceError } from '~utils/saga/effects';
 
 import { DDB } from '../../../lib/database';
 import { DocStore } from '../../../lib/database/stores';
@@ -14,6 +14,7 @@ import { DocStore } from '../../../lib/database/stores';
 import { colonyStore, domainStore, draftStore, taskStore } from '../stores';
 
 import {
+  DRAFT_DELETE,
   TASK_CREATE,
   TASK_CREATE_ERROR,
   TASK_CREATE_SUCCESS,
@@ -52,6 +53,8 @@ import {
   taskWorkerRateManager,
   taskWorkerRevealRating,
 } from '../actionCreators';
+
+import { fetchDraft } from './draft';
 
 export function* fetchOrCreateTaskStore({
   colonyAddress,
@@ -161,18 +164,25 @@ function* guessRating(
 
 function* taskCreateSaga(action: Action): Saga<void> {
   // eslint-disable-next-line no-unused-vars
-  const { colonyIdentifier, orbitDBPath } = action.payload;
+  const { colonyAddress, domainAddress, task } = action.payload;
 
   try {
-    // TODO: actually fetch from DDB
-    const taskFromDDB = {
-      specificationHash: 'Qm...',
-      domainId: 1,
-      skillId: 1,
-      dueDate: new Date('2019-01-01'),
-    };
+    // fetch task from drafts
+    const draft = yield call(fetchDraft, { taskId: task.id });
+    // remove task from drafts
+    yield put({
+      type: DRAFT_DELETE,
+      payload: { colonyAddress, taskId: task.id },
+    });
 
-    yield put(taskCreate(colonyIdentifier, taskFromDDB));
+    // put task into destination domain
+    const domain = yield call(fetchOrCreateTaskStore, { domainAddress });
+    yield call([domain, domain.add], draft);
+    const taskFromDDB = yield call([domain, domain.get], {
+      limit: 1,
+    });
+
+    yield put(taskCreate(colonyAddress, taskFromDDB));
 
     const {
       payload: { hash: txHash },
