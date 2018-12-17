@@ -24,7 +24,11 @@ import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 import { orbitAddressSelector, walletAddressSelector } from '../selectors';
-import { userActivitiesStore, userProfileStore } from '../stores';
+import {
+  userActivitiesStore,
+  userInboxStore,
+  userProfileStore,
+} from '../stores';
 
 import {
   USER_PROFILE_FETCH,
@@ -77,18 +81,23 @@ export function* getOrCreateUserStore(walletAddress: Address): Saga<KVStore> {
     walletAddress,
   });
 
-  try {
-    const activitiesStore = yield call(
-      getOrCreateUserActivitiesStore,
+  const activitiesStore = yield call(
+    [ddb, ddb.createStore],
+    userActivitiesStore,
+    {
       walletAddress,
-    );
-    yield call([profileStore, profileStore.set], {
-      activitiesStore: activitiesStore.address.toString(),
-      profileStore: profileStore.address.toString(),
-    });
-  } catch (error) {
-    yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
-  }
+    },
+  );
+  // @TODO: Should we merge those stores into a single event store and their content with contract events using selectors?
+  yield call([activitiesStore, activitiesStore.add], joinedColonyEvent());
+
+  const inboxStore = yield call([ddb, ddb.createStore], userInboxStore);
+  yield call([profileStore, profileStore.set], {
+    activitiesStore: activitiesStore.address.toString(),
+    inboxStore: inboxStore.address.toString(),
+    // @TODO: Remove profile store from the schema
+    profileStore: profileStore.address.toString(),
+  });
 
   return profileStore;
 }

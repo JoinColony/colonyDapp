@@ -30,6 +30,7 @@ const userProfileStore: StoreBlueprint = {
     location: yup.string(),
     profileStore: yup.string(),
     activitiesStore: yup.string(),
+    inboxStore: yup.string(),
   }),
   type: KVStore,
 };
