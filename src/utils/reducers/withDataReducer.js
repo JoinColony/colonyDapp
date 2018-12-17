@@ -1,82 +1,77 @@
 /* @flow */
 
-import type { Map as ImmutableMap, RecordOf, RecordFactory } from 'immutable';
+import type { Map as ImmutableMap } from 'immutable';
 
-import { Record } from 'immutable';
-
-import type { Action } from '~types';
-
-// TODO improve type specificity
-export type DataProps<D: *> = {
-  fetching: number,
-  data: D,
-  error: string, // TBD how useful this is
-};
-
-export type DataAction<K: any, D: Object> = {
+export type DataAction<K: any> = {
   type: string,
   payload: {
     key: K,
-    data: $Shape<D>,
+    props: any,
   } & Object,
 };
 
-export type DataRecord<D: *> = RecordOf<DataProps<D>>;
+export type DataRecordMap<K: *, R: *> = ImmutableMap<K, R>;
 
-export type DataRecordMap<K: *, D: *> = ImmutableMap<K, DataRecord<D>>;
+export type DataReducer<K: any, R: *> = (
+  state: DataRecordMap<K, R>,
+  action: DataAction<K>,
+) => DataRecordMap<K, R>;
 
-export type DataReducer<K: any, D: *> = (
-  state: DataRecordMap<K, D>,
-  action: Action | DataAction<K, D>,
-) => DataRecordMap<K, D>;
-
-export type RecordReducer<K: any, D: *> = (
-  state: DataRecordMap<K, D>,
-  action: DataAction<K, D>,
-) => D;
-
-const defaultValues = {
-  data: undefined,
-  fetching: 0,
-  error: undefined,
+const handleFetch = (state, action, record) => {
+  const {
+    payload: { key },
+  } = action;
+  return state.update(key, record(), currentRecord =>
+    currentRecord.set('isFetching', true),
+  );
 };
 
-/*
- * The `Data` record is designed to be used in `withDataReducer`-wrapped
- * reducers as the value of the Map.
- *
- * The `data` property of the `Data` record will contain a record of
- * the given `record` argument (i.e. the actual data we care about),
- * and the other properties indicate the fetching state.
- */
-export const Data: RecordFactory<DataProps<*>> = Record(defaultValues);
+const handleSuccess = (state, action, successReducer) => {
+  const {
+    payload: { key },
+  } = action;
+  return successReducer(state, action).mergeIn([key], {
+    error: undefined,
+    isFetching: false,
+  });
+};
+
+const handleError = (state, { payload: { key, error } }) =>
+  // Ignore the error if the key doesn't exist already
+  state.has(key) ? state.mergeIn([key], { error, isFetching: false }) : state;
 
 /*
  * Higher-order reducer to create a map of records with information about
- * the data loading state of each record: whether it is fetching, any
- * fetching error, and the data currently loaded.
+ * the props loading state of each record: whether it is isFetching, any
+ * isFetching error, and the props currently loaded.
  *
  * ----------------------------------
  * Parameters (higher order function)
  * ----------------------------------
- * {dataActionMap} FIXME update this
- * {record} A record factory function used for the `data` property,
- * i.e. the actual data we are storing with this reducer.
+ * {fetch} A single action type (or a `Set` of multiple types) that will
+ * be handled as a generic fetch action.
+ *
+ * {fetch} A single action type (or a `Set` of multiple types) that will
+ * be handled as a generic error action.
+ *
+ * {success} A map of action types to 'success reducers' (a regular
+ * state => action reducer, which is run as the first step when this
+ * action is reduced).
+ *
+ * {record} The record factory function for the state (e.g. `Colony`).
  *
  * ---------------------------
  * Parameters (inner function)
  * ---------------------------
- * {reducer} The reducer we are applying the data actions to.
- * @NOTE: FIXME update this. The DataActions will _not_ be handled by this reducer,
- * but any other actions will.
+ * {wrappedReducer} The reducer we are wrapping.
  *
  * --------
  * Generics
  * --------
- * {K} Key of the map, e.g. `string` for IDs
- * {D} The data record type, e.g. `RecordOf<Props>`
+ * {K} Key of the map, e.g. `ENSName`
+ * {R} The record type, e.g. `ColonyRecord`
  */
-const withDataReducer = <K: any, D: *>(
+const withDataReducer = <K: any, R: *>(
   {
     fetch,
     error,
@@ -84,55 +79,33 @@ const withDataReducer = <K: any, D: *>(
   }: {
     fetch: Set<string> | string,
     error: Set<string> | string,
-    success: Map<string, ?RecordReducer<K, D>> | string,
+    success: Map<string, ?DataReducer<K, R>>,
   },
-  record: RecordFactory<*>,
-) => (wrappedReducer: DataReducer<K, D>): DataReducer<K, D> => {
-  // Create groups of data actions from the given spec
+  record: any => R,
+) => (wrappedReducer: DataReducer<K, R>): DataReducer<K, R> => {
+  // Create groups of props actions from the given spec.
   const fetchActions = typeof fetch === 'string' ? new Set([fetch]) : fetch;
   const errorActions = typeof error === 'string' ? new Set([error]) : error;
-  const successActions =
-    typeof success === 'string' ? new Map([[success, undefined]]) : success;
 
-  // Return a wrapped reducer
+  // Return a wrapped reducer.
   return (state, action) => {
-    const { type, payload } = action;
-    let newState = state;
+    let nextState = state;
 
-    if (fetchActions.has(type)) {
-      const { key } = payload;
-      newState = state.has(key)
-        ? state.updateIn([key, 'fetching'], 0, fetching => fetching + 1)
-        : state.set(key, Data({ fetching: 1, data: record() }));
-    } else if (successActions.has(type)) {
-      const recordReducer = successActions.get(type);
-      const { key, data } = payload;
+    // If the action matches a fetch/success/error type, set the next state.
+    if (fetchActions.has(action.type)) {
+      nextState = handleFetch(state, action, record);
+    } else if (success.has(action.type)) {
+      const reducer = success.get(action.type);
+      // "Should not happen ;)" but here for flow
+      if (!reducer) throw new Error(`Reducer not defined for ${action.type}`);
 
-      newState = state.update(
-        key,
-        Data({ data: record(data) }),
-        ({ fetching, data: currentData }) =>
-          Data({
-            error: undefined,
-            fetching: fetching > 0 ? fetching - 1 : fetching,
-            data:
-              typeof recordReducer === 'function'
-                ? recordReducer(state, action)
-                : currentData.mergeDeep(data),
-          }),
-      );
-    } else if (errorActions.has(type)) {
-      const { key, error: errorMessage } = action.payload;
-      newState = state.has(key)
-        ? state
-            .setIn([key, 'error'], errorMessage)
-            .updateIn([key, 'fetching'], fetching =>
-              fetching > 0 ? fetching - 1 : fetching,
-            )
-        : state; // Ignore error if the key doesn't exist already
+      nextState = handleSuccess(state, action, reducer);
+    } else if (errorActions.has(action.type)) {
+      nextState = handleError(state, action);
     }
 
-    return wrappedReducer(newState, action);
+    // Pass the next state to the wrapped reducer.
+    return wrappedReducer(nextState, action);
   };
 };
 

@@ -3,6 +3,7 @@
 import React from 'react';
 
 import type { UserRecord } from '~immutable';
+import type { DataRecord } from '~utils/reducers';
 
 import CopyableAddress from '../../../core/components/CopyableAddress';
 import Heading from '../../../core/components/Heading';
@@ -12,12 +13,14 @@ import UserAvatar from '~core/UserAvatar';
 import styles from './UserMeta.css';
 
 type Props = {
-  user: UserRecord,
+  user: DataRecord<UserRecord>,
 };
 
 const UserMeta = ({
   user: {
-    profile: { username, displayName, bio, website, location, walletAddress },
+    data: {
+      profile: { username, displayName, bio, website, location, walletAddress },
+    },
   },
 }: Props) => (
   <div className={styles.main}>

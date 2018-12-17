@@ -17,12 +17,12 @@ import UserProfileSpinner from './UserProfileSpinner.jsx';
 
 import type { ActionCreator } from '~types';
 import type { UserRecord } from '~immutable';
+import type { DataRecord } from '~utils/reducers';
 
 type Props = {
   fetchUserProfile: ActionCreator,
-  user: UserRecord,
+  user: DataRecord<UserRecord>,
   username: string,
-  isLoading: boolean,
 };
 
 class UserProfile extends Component<Props> {
@@ -32,8 +32,8 @@ class UserProfile extends Component<Props> {
   }
 
   render() {
-    const { isLoading, user } = this.props;
-    return isLoading || !user ? (
+    const { user } = this.props;
+    return user.fetching ? (
       <UserProfileSpinner />
     ) : (
       <ProfileTemplate asideContent={<UserMeta user={user} />}>
