@@ -2,15 +2,11 @@
 
 import _ from 'lodash';
 
-type ActionId = string;
-
-type PermissionVerifyFunction = (user: string, context: *) => Promise<boolean>;
-
-type Permission = PermissionVerifyFunction | { inherits: ActionId };
-
-export type PermissionsManifest = {
-  [actionId: ActionId]: Permission,
-};
+import type {
+  ActionId,
+  Permission,
+  PermissionsManifest,
+} from './permissions/types';
 
 // NOTE: I know this is a terrible name, we need to refactor it to favour composition over inheritance at some point
 export default class PermissionManager {

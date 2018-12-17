@@ -2,12 +2,13 @@
 /* eslint-disable no-underscore-dangle */
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
+import type { PermissionsManifest } from './permissions/types';
 import AbstractAccessController from './AbstractAccessController';
+
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 import PermissionManager from './PermissionManager';
 import type { Entry } from '../types/index';
-import type { PermissionsManifest } from './PermissionManager';
 
 const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
 
