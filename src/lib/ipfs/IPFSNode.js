@@ -188,7 +188,9 @@ class IPFSNode {
    */
   async addString(data: string): Promise<string> {
     await this.ready;
-    const [result] = await this._ipfs.add(this._ipfs.types.Buffer.from(data));
+    const [result] = await this._ipfs.files.add(
+      this._ipfs.types.Buffer.from(data),
+    );
     if (!result) throw new Error('Failed to upload to IPFS');
     if (this.pinner) {
       this.pinner.pinHash(result.hash);
