@@ -9,10 +9,9 @@ import type { ENSName } from '~types';
 
 import type { DomainRecord } from './Domain';
 import type { TasksRecord } from './Tasks';
-import type { DraftRecord } from './Draft';
+import type { DraftsRecord } from './Drafts';
 
 type DomainId = number;
-type DraftId = string;
 
 export type DomainsProps = {
   domains: ImmutableMap<
@@ -22,7 +21,7 @@ export type DomainsProps = {
       {
         domain: DomainRecord,
         tasks: TasksRecord,
-        drafts: ImmutableMap<DraftId, DraftRecord>,
+        drafts: DraftsRecord,
       },
     >,
   >,
