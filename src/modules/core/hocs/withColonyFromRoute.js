@@ -3,7 +3,7 @@
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
-import { singleColony } from '../../dashboard/selectors';
+import { singleColonySelector } from '../../dashboard/selectors';
 import { fetchColony } from '../../dashboard/actionCreators';
 import fetchMissingColony from './fetchMissingColony';
 
@@ -15,7 +15,7 @@ const withColonyFromRoute = compose(
       state: *,
       { params: { ensName } = {} }: { params: { ensName: ENSName } },
     ) => ({
-      colony: singleColony(state, ensName),
+      colony: singleColonySelector(state, ensName),
       ensName,
     }),
     {

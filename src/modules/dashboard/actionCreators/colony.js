@@ -51,9 +51,9 @@ export const createColonyLabel = (
     },
   });
 
-export const fetchColony = (ensName: ENSName) => ({
+export const fetchColony = (key: ENSName) => ({
   type: COLONY_FETCH,
-  payload: { ensName },
+  payload: { key },
 });
 
 export const fetchColonyAvatar = (hash: string) => ({

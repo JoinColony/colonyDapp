@@ -249,7 +249,7 @@ function* fetchProfile(action: Action): Saga<void> {
     const user = yield call(getAll, store);
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
-      payload: { user },
+      payload: { key: username, props: user },
     });
   } catch (error) {
     yield putError(USER_PROFILE_FETCH_ERROR, error);

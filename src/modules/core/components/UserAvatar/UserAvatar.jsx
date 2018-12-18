@@ -20,7 +20,7 @@ class UserAvatar extends Component<Props> {
 
   componentDidMount() {
     const { avatarData, user, fetchUserAvatar } = this.props;
-    if (user && user.profile.avatar && !avatarData)
+    if (user && user.isReady && user.profile.avatar && !avatarData)
       fetchUserAvatar(user.profile.avatar);
   }
 

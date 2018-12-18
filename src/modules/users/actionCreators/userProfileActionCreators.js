@@ -26,10 +26,10 @@ export const registerUserLabel = (
 
 export const fetchUserProfile = (username: string) => ({
   type: USER_PROFILE_FETCH,
-  payload: { username },
+  payload: { username, key: username },
 });
 
 export const fetchUserAvatar = (hash: string) => ({
   type: USER_AVATAR_FETCH,
-  payload: { hash },
+  payload: { hash, key: hash },
 });

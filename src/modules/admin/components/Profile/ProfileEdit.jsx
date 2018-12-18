@@ -30,9 +30,6 @@ import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 
 import styles from './ProfileEdit.css';
 
-import type { ColonyRecord } from '~immutable';
-import type { DataRecord } from '~utils/reducers';
-
 const MSG = defineMessages({
   labelAddress: {
     id: 'admin.Profile.ProfileEdit.labelAddress',
@@ -67,20 +64,18 @@ const MSG = defineMessages({
 const componentDisplayName: string = 'admin.Profile.ProfileEdit';
 
 type Props = {
-  colony: DataRecord<ColonyRecord>,
+  colony: ColonyRecord,
 };
 
 const ProfileEdit = ({ colony }: Props) => {
   const {
-    data: {
-      avatar,
-      description,
-      guideline,
-      address,
-      ensName,
-      name,
-      website,
-    },
+    avatar,
+    description,
+    guideline,
+    address,
+    ensName,
+    name,
+    website,
   } = colony;
   return (
     <div className={styles.main}>
