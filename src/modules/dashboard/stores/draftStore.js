@@ -11,7 +11,7 @@ const draftStore: StoreBlueprint = {
   getAccessController() {},
   name: 'draft',
   schema: yup.object({
-    id: yup.number(),
+    id: yup.string(),
     title: yup.string().required(),
     creator: yup.string().required(),
     specHash: yup.string(),
