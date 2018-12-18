@@ -2,6 +2,7 @@
 
 export { default as ActivityFeedItem } from './ActivityFeedItem';
 export { default as Colony } from './Colony';
+export { default as makeDataClass } from './makeDataClass';
 export { default as Domain } from './Domain';
 export { default as Skill } from './Skill';
 export { default as Task } from './Task';
