@@ -78,9 +78,11 @@ type Props = {
   cancel: () => void,
 };
 
-const filter = (data, filterValue) =>
-  data.filter(user =>
-    user.username.toLowerCase().startsWith(filterValue.toLowerCase()),
+const filter = (data: List<UserRecord>, filterValue) =>
+  data.filter(
+    user =>
+      user.profile.username &&
+      user.profile.username.toLowerCase().startsWith(filterValue.toLowerCase()),
   );
 
 const canAddTokens = (values, maxTokens) =>
