@@ -4,7 +4,7 @@ import type { ObjectSchema } from 'yup';
 
 import EventEmitter from 'events';
 
-import { raceAgainstTimeout } from '~utils/async';
+import { raceAgainstTimeout } from '../../../utils/async';
 
 import type { OrbitDBStore } from '../types';
 

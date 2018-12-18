@@ -4,8 +4,8 @@ import EventEmitter from 'events';
 import PeerMonitor from 'ipfs-pubsub-peer-monitor';
 import IPFS from 'ipfs';
 
-import { log } from '~utils/debug';
-import { raceAgainstTimeout } from '~utils/async';
+import { log } from '../../utils/debug';
+import { raceAgainstTimeout } from '../../utils/async';
 
 import type { PinnerAction } from './types';
 

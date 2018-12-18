@@ -2,7 +2,7 @@
 
 import type { ValidateOptions } from 'yup';
 
-import { promiseSeries } from '~utils/async';
+import { promiseSeries } from '../../../utils/async';
 
 import type { OrbitDBKVStore } from '../types';
 import Store from './Store';
