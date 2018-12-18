@@ -9,6 +9,7 @@ import Link from '~core/Link';
 import styles from './TransactionDetails.css';
 
 import type { TransactionType } from '~types';
+import type { ColonyRecord, TaskRecord, UserRecord } from '~immutable';
 
 const MSG = defineMessages({
   fromText: {
@@ -31,6 +32,9 @@ type Props = {
    * User data Object, follows the same format as UserPicker
    */
   transaction: TransactionType,
+  colony?: ColonyRecord,
+  task?: TaskRecord,
+  user?: UserRecord,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -81,7 +85,10 @@ const TaskDetails = ({ title = '', id }: Object) => (
 );
 
 const TransactionDetails = ({
-  transaction: { from = '', to = '', userDetails, colonyDetails, task },
+  transaction: { from = '', to = '' },
+  colony,
+  task,
+  user,
   showMaskedAddress = true,
   incoming = true,
 }: Props) => (
@@ -101,7 +108,7 @@ const TransactionDetails = ({
               values={{
                 senderString: (
                   <UserDetails
-                    {...userDetails}
+                    {...(user ? user.profile : {})}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -133,7 +140,7 @@ const TransactionDetails = ({
             values={{
               recipientString: (
                 <ColonyDetails
-                  {...colonyDetails}
+                  {...colony}
                   address={
                     showMaskedAddress ? <MaskedAddress address={to} /> : to
                   }
@@ -159,7 +166,7 @@ const TransactionDetails = ({
               values={{
                 recipientString: (
                   <UserDetails
-                    {...userDetails}
+                    {...(user ? user.profile : {})}
                     address={
                       showMaskedAddress ? <MaskedAddress address={to} /> : to
                     }
@@ -188,7 +195,7 @@ const TransactionDetails = ({
               values={{
                 senderString: (
                   <ColonyDetails
-                    {...colonyDetails}
+                    {...colony}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />

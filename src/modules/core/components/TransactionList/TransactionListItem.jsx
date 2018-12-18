@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
+import { compose, mapProps } from 'recompose';
 
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
@@ -10,9 +11,17 @@ import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
 import TransactionDetails from './TransactionDetails.jsx';
 
+import { withColony, withTask, withToken, withUser } from '../../hocs';
+
 import styles from './TransactionListItem.css';
 
 import type { TransactionType } from '~types';
+import type {
+  ColonyRecord,
+  TaskRecord,
+  TokenRecord,
+  UserRecord,
+} from '~immutable';
 
 const MSG = defineMessages({
   buttonClaim: {
@@ -40,6 +49,10 @@ type Props = {
    * User data Object, follows the same format as UserPicker
    */
   transaction: TransactionType,
+  colony?: ColonyRecord,
+  task?: TaskRecord,
+  token?: TokenRecord,
+  user?: UserRecord,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -69,12 +82,16 @@ type Props = {
 
 const TransactionListItem = ({
   transaction,
+  colony,
+  task,
+  token,
+  user,
   showMaskedAddress = true,
   incoming = true,
   onClaim,
   linkToEtherscan,
 }: Props) => {
-  const { date, amount, symbol } = transaction;
+  const { date, amount } = transaction;
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.transactionDate}>
@@ -103,6 +120,10 @@ const TransactionListItem = ({
       <TableCell className={styles.transactionDetails}>
         <TransactionDetails
           transaction={transaction}
+          colony={colony}
+          task={task}
+          token={token}
+          user={user}
           showMaskedAddress={showMaskedAddress}
           incoming={incoming}
         />
@@ -130,7 +151,7 @@ const TransactionListItem = ({
           value={amount}
           unit="ether"
           decimals={1}
-          suffix={` ${symbol}`}
+          suffix={` ${token ? token.symbol : '???'}`}
         />
       </TableCell>
     </TableRow>
@@ -139,4 +160,16 @@ const TransactionListItem = ({
 
 TransactionListItem.displayName = displayName;
 
-export default TransactionListItem;
+export default compose(
+  mapProps(props => ({
+    ...props,
+    ensName: props.transaction.colonyENSName,
+    taskId: props.transaction.taskId,
+    tokenAddress: props.transaction.tokenAddress,
+    userAddress: props.transaction.userAddress,
+  })),
+  withColony,
+  withTask,
+  withToken,
+  withUser,
+)(TransactionListItem);

@@ -9,18 +9,8 @@ import TransactionList from '~core/TransactionList';
 
 import styles from './Transactions.css';
 
-/*
- * Mock transaction data
- */
-import {
-  mockTransactions,
-  mockedColoniesAddressBook,
-  mockedUsersAddressBook,
-  mockedTasksList,
-} from './__datamocks__/transactionMocks';
-
 import type { TransactionType } from '~types';
-import type { ColonyRecord, ColonyTransactionRecord } from '~immutable';
+import type { ColonyRecord } from '~immutable';
 
 const MSG = defineMessages({
   transactionsTitle: {
@@ -41,39 +31,13 @@ const displayName = 'admin.Transactions';
 
 type Props = {
   colony: ColonyRecord,
-  transactions: Array<ColonyTransactionRecord>,
+  transactions: Array<TransactionType>,
 };
 
 /*
- * @NOTE Mock data augmentation
- * Augment the original transaction list with user's display and username
- * Augment the original transaction list with the tasks details
- *
- * This should be done somewhere in a `reselect` maybe?
- */
-const augmentedTransactions: Array<TransactionType> = mockTransactions.map(
-  (transaction: TransactionType): TransactionType => {
-    const { to, from, nonce } = transaction;
-    return Object.assign({}, transaction, {
-      userDetails: mockedUsersAddressBook[to] || mockedUsersAddressBook[from],
-      colonyDetails:
-        mockedColoniesAddressBook[to] || mockedColoniesAddressBook[from],
-      task: mockedTasksList[nonce],
-    });
-  },
-);
-const augmentedPendingTransactions = augmentedTransactions.slice(0, 4);
-/*
- * @NOTE Mock methods
- * These are also mocks basically, since the actual ones might change
- */
-/*
  * Method to call when claiming the pot
  */
-// eslint-disable-next-line no-unused-vars
-const handleClaim = (transaction: TransactionType) => {
-  // Implement me
-};
+// const handleClaim = (transaction: TransactionType) => console.log(transaction);
 
 const Transactions = ({
   colony: { address: colonyAddress },
@@ -87,7 +51,7 @@ const Transactions = ({
       />
     </div>
     <div className={styles.transactionsWrapper}>
-      {augmentedPendingTransactions && augmentedPendingTransactions.length ? (
+      {/* {augmentedPendingTransactions && augmentedPendingTransactions.length ? (
         <div className={styles.pendingTransactionsWrapper}>
           <TransactionList
             label={MSG.pendingTransactionsTitle}
@@ -97,12 +61,12 @@ const Transactions = ({
             linkToEtherscan={false}
           />
         </div>
-      ) : null}
+      ) : null} */}
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
           label={MSG.transactionHistoryTitle}
           currentAddress={colonyAddress}
-          transactions={augmentedTransactions}
+          transactions={transactions}
           linkToEtherscan
         />
       </div>
