@@ -6,6 +6,7 @@ import {
   USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_UPLOAD_AVATAR_SUCCESS,
+  USER_REMOVE_AVATAR_SUCCESS,
   USERNAME_CREATE_SUCCESS,
 } from '../actionTypes';
 
@@ -49,6 +50,9 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     case USER_UPLOAD_AVATAR_SUCCESS: {
       const { hash } = action.payload;
       return state ? state.setIn(['profile', 'avatar'], hash) : state;
+    }
+    case USER_REMOVE_AVATAR_SUCCESS: {
+      return state ? state.setIn(['profile', 'avatar'], undefined) : state;
     }
     default:
       return state;

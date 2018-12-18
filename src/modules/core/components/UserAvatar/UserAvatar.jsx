@@ -1,14 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
 
 import NavLink from '../NavLink';
 import UserAvatarDisplay from './UserAvatarDisplay.jsx';
-import { withUser } from '../../../users/composers';
-import { avatarSelector } from '../../../users/selectors';
-import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionCreators';
 
 import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
 import type { UserRecord } from '~immutable';
@@ -21,6 +16,8 @@ type Props = UserAvatarProps & {
 };
 
 class UserAvatar extends Component<Props> {
+  static displayName = 'UserAvatar';
+
   componentDidMount() {
     const { avatarData, user, fetchUserAvatar } = this.props;
     if (user && user.profile.avatar && !avatarData)
@@ -39,12 +36,4 @@ class UserAvatar extends Component<Props> {
   }
 }
 
-export default compose(
-  withUser,
-  connect(
-    (state, props) => ({
-      avatarData: avatarSelector(state, props),
-    }),
-    { fetchUserAvatar: fetchUserAvatarAction },
-  ),
-)(UserAvatar);
+export default UserAvatar;

@@ -21,7 +21,7 @@ const withUser = compose(
     const { currentUser, username, user } = props;
     return {
       ...props,
-      user: currentUser.username === username ? currentUser : user,
+      user: currentUser.profile.username === username ? currentUser : user,
     };
   }),
   branch(
