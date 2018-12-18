@@ -1,6 +1,7 @@
 .main {
   display: none;
   padding: 20px 0 0;
+  height: 100%;
 }
 
 .selected {
