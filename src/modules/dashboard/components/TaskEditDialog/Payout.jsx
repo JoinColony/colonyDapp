@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+import EthUsd from '~core/EthUsd';
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
@@ -31,7 +32,7 @@ type Props = {
   amount?: string,
   symbol?: string,
   reputation?: number,
-  usdAmount?: string,
+  isEth?: boolean,
   tokenOptions: Array<{ value: number, label: string }>,
   remove: () => void,
 };
@@ -51,7 +52,7 @@ class Payout extends Component<Props, State> {
       reputation,
       name,
       tokenOptions,
-      usdAmount,
+      isEth = false,
       remove,
     } = this.props;
     const { editing } = this.state;
@@ -108,13 +109,11 @@ class Payout extends Component<Props, State> {
                     />
                   </div>
                 )}
-                {usdAmount && (
+                {isEth && (
                   <div className={styles.conversion}>
-                    <Numeral
+                    <EthUsd
                       appearance={{ theme: 'grey', size: 'small' }}
-                      value={usdAmount}
-                      prefix="~ "
-                      suffix=" USD"
+                      value={amount}
                     />
                   </div>
                 )}
