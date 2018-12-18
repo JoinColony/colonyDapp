@@ -102,6 +102,34 @@ export function* getOrCreateUserStore(walletAddress: Address): Saga<KVStore> {
   return profileStore;
 }
 
+/**
+ * Open inbox store from the inbox store address located on user profile data
+ * @param  {[string]}    inboxStoreAddress User inbox store address
+ */
+export function* getInboxStore(inboxStoreAddress: string): Saga<FeedStore> {
+  const ddb: DDB = yield getContext('ddb');
+  return yield call([ddb, ddb.getStore], userInboxStore, inboxStoreAddress);
+}
+
+/**
+ * Open user activities store from the address located on user profile data
+ * @param  {[string]}    activitiesStoreAddress User activities store address
+ */
+export function* getUserActivitiesStore(
+  activitiesStoreAddress: string,
+): Saga<FeedStore> {
+  const ddb: DDB = yield getContext('ddb');
+  const walletAddress = yield select(walletAddressSelector);
+  return yield call(
+    [ddb, ddb.getStore],
+    userActivitiesStore,
+    activitiesStoreAddress,
+    {
+      walletAddress,
+    },
+  );
+}
+
 export function* getOrCreateUserActivitiesStore(
   walletAddress: string,
 ): Saga<FeedStore> {
