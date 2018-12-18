@@ -65,6 +65,12 @@ export default function loadModule(
     'is-task-manager': isTaskManager,
     'is-task-evaluator': isTaskEvaluator,
     'is-task-worker': isTaskWorker,
+    'is-assigned-to-task': (user, context) =>
+      isAny(
+        isTaskWorker(user, context),
+        isTaskManager(user, context),
+        isTaskEvaluator(user, context),
+      ),
     'is-task-manager-or-evaluator': (user, context) =>
       isAny(isTaskManager(user, context), isTaskEvaluator(user, context)),
     'is-task-manager-or-worker': (user, context) =>
