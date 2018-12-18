@@ -1,13 +1,8 @@
 .main {
-  margin-top: 30px;
   height: 100%;
-  position: relative;
 }
 
 .listWrapper {
-  padding-bottom: 10%;
+  margin-top: 10px;
   height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 30px;
 }

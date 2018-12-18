@@ -2,10 +2,17 @@
   height: 100%;
 }
 
-.userListWrapper {
-  margin-top: 40px;
+.sectionWrapper {
+  height: 100%;
+  position: relative;
+}
+
+.list {
   padding-right: 20%;
-  height: calc(100% - 40px);
+  width: 100%;
+  position: absolute;
+  top: 80px;
+  bottom: 80px;
 }
 
 .domainListWrapper {
