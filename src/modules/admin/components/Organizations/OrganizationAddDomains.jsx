@@ -1,17 +1,19 @@
 /* @flow */
-import type { FormikProps } from 'formik';
 
 import React from 'react';
-import { Form } from '~core/Fields';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
-import Input from '~core/Fields/Input';
+import { ActionForm, FormStatus, Input } from '~core/Fields';
+
+import {
+  COLONY_DOMAIN_ADD,
+  COLONY_DOMAIN_ADD_SUCCESS,
+  COLONY_DOMAIN_ADD_ERROR,
+} from '../../../dashboard/actionTypes';
 
 import styles from './OrganizationAddDomains.css';
-
-import type { UserRecord } from '~immutable';
 
 const MSG = defineMessages({
   labelAddDomain: {
@@ -34,19 +36,16 @@ const validationSchema = yup.object({
   domain: yup.string().required(),
 });
 
-type FormValues = {
-  domainName: UserRecord,
-};
-
 const OrganizationAddDomains = () => (
   <div className={styles.main}>
-    <Form
-      // eslint-disable-next-line no-console
-      onSubmit={console.log}
+    <ActionForm
+      submit={COLONY_DOMAIN_ADD}
+      success={COLONY_DOMAIN_ADD_SUCCESS}
+      error={COLONY_DOMAIN_ADD_ERROR}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit, isValid }: FormikProps<FormValues>) => (
-        <div onSubmit={handleSubmit} className={styles.inputWrapper}>
+      {({ status, isSubmitting, isValid }) => (
+        <div className={styles.inputWrapper}>
           <div className={styles.domainInput}>
             <Input name="domain" label={MSG.labelAddDomain} />
           </div>
@@ -57,11 +56,13 @@ const OrganizationAddDomains = () => (
               text={MSG.buttonAddDomain}
               type="submit"
               disabled={!isValid}
+              loading={isSubmitting}
             />
           </div>
+          <FormStatus status={status} />
         </div>
       )}
-    </Form>
+    </ActionForm>
   </div>
 );
 
