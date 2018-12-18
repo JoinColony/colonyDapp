@@ -104,7 +104,10 @@ function* createColonyLabelSaga({
 
   yield put({
     type: DOMAIN_FETCH,
-    payload: { domainAddress: colonyStoreData.domains.rootDomain },
+    payload: {
+      colonyENSName: ensName,
+      domainAddress: colonyStoreData.domains.rootDomain,
+    },
   });
 
   yield call([store, store.set], colonyStoreData);

@@ -8,16 +8,14 @@ export type DomainProps = {
   id: number,
   name: string,
   tasksDatabase: string,
-  tasks: {}, // TODO use ImmutableMap
 };
 
 export type DomainRecord = RecordOf<DomainProps>;
 
-const defaultValues: $Shape<DomainProps> = {
+const defaultValues: DomainProps = {
   id: undefined,
   name: undefined,
   tasksDatabase: undefined,
-  tasks: {}, // TODO use ImmutableMap
 };
 
 const Domain: RecordFactory<DomainProps> = Record(defaultValues);

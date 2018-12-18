@@ -2,11 +2,10 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { DOMAIN_FETCH_SUCCESS } from '../actionTypes';
-
 import { Domain } from '~immutable';
 
 import type { Action } from '~types';
+import { DOMAIN_FETCH_SUCCESS } from '../actionTypes';
 
 type State = ImmutableMap<string, Domain>;
 
@@ -18,9 +17,10 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
       const {
         domainStoreData: { name, tasksDatabase },
         id,
+        colonyENSName,
       } = action.payload;
-      return state.set(
-        id,
+      return state.setIn(
+        [colonyENSName, id, 'domain'],
         Domain({
           tasksDatabase,
           name,

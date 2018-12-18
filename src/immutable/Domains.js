@@ -20,8 +20,7 @@ export type DomainsProps = {
       DomainId,
       {
         domain: DomainRecord,
-        tasks: TasksRecord,
-        drafts: DraftsRecord,
+        tasks: TasksRecord | DraftsRecord,
       },
     >,
   >,
