@@ -65,6 +65,7 @@ class InputComponent extends Component<Props> {
       innerRef,
       isSubmitting,
       placeholder,
+      intl,
       ...props
     } = this.props;
 
