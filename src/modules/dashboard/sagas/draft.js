@@ -1,6 +1,8 @@
 /* @flow */
 import type { Saga } from 'redux-saga';
 import { call, put, takeEvery } from 'redux-saga/effects';
+import generate from 'nanoid/generate';
+import urlDictionary from 'nanoid/url';
 
 import type { Action } from '~types';
 
@@ -24,14 +26,18 @@ import { getAll } from '../../../lib/database/commands';
 import { DocStore } from '../../../lib/database/stores';
 import { fetchOrCreateTaskStore } from './task';
 
+const generateId = () => generate(urlDictionary, 21);
+
 export function* createDraftSaga(action: Action): Saga<void> {
   const { domainAddress, task } = action.payload;
   try {
-    const store = yield call(fetchOrCreateTaskStore, { domainAddress });
-    yield call([store, store.add], task);
-    const draft = yield call([store, store.get], {
-      limit: 1,
+    const store = yield call(fetchOrCreateTaskStore, {
+      domainAddress,
+      draft: true,
     });
+    const id = task.id ? task.id : generateId();
+    yield call([store, store.add], { ...task, id });
+    const draft = yield call([store, store.get], id);
     yield put({ type: DRAFT_CREATE_SUCCESS, payload: { draft } });
   } catch (error) {
     yield putError(DRAFT_CREATE_ERROR, error);
