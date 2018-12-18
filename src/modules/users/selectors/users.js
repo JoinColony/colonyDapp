@@ -60,9 +60,17 @@ export const avatarSelector: UserAvatarSelector = createSelector(
   (state, props) => (props.user ? props.user.profile.avatar : undefined),
   (avatars, hash) => avatars.get(hash),
 );
-export const orbitAddressSelector: OrbitAddressSelector = createSelector(
+export const userProfileStoreAddressSelector: OrbitAddressSelector = createSelector(
   currentUser,
   state => state.profile.profileStore,
+);
+export const userInboxStoreAddressSelector: OrbitAddressSelector = createSelector(
+  currentUser,
+  state => state.profile.inboxStore,
+);
+export const userActivitiesStoreAddressSelector: OrbitAddressSelector = createSelector(
+  currentUser,
+  state => state.profile.activitiesStore,
 );
 export const walletAddressSelector: WalletAddressSelector = createSelector(
   currentUser,
