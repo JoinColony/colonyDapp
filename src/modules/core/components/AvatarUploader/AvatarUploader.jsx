@@ -75,7 +75,7 @@ class AvatarUploader extends Component<Props> {
     } = this.props;
     // Formik is used for state and error handling through FileUpload, nothing else
     return (
-      <Formik onSubmit={() => null}>
+      <Formik onSubmit={() => null} initialValues={{ avatarUploader: [] }}>
         <form>
           <FileUpload
             dropzoneRef={this.registerDropzone}
