@@ -12,6 +12,10 @@ export const TASK_EDIT = `${ns}/TASK_EDIT`;
 export const TASK_EDIT_ERROR = `${ns}/TASK_EDIT_ERROR`;
 export const TASK_EDIT_SUCCESS = `${ns}/TASK_EDIT_SUCCESS`;
 
+export const TASK_FETCH = `${ns}/TASK_FETCH`;
+export const TASK_FETCH_SUCCESS = `${ns}/TASK_FETCH_SUCCESS`;
+export const TASK_FETCH_ERROR = `${ns}/TASK_FETCH_ERROR`;
+
 export const TASK_WORKER_END = `${ns}/TASK_WORKER_END`;
 export const TASK_WORKER_END_ERROR = `${ns}/TASK_WORKER_END_ERROR`;
 export const TASK_WORKER_END_SUCCESS = `${ns}/TASK_WORKER_END_SUCCESS`;
