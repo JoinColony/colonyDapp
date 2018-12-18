@@ -285,7 +285,7 @@ class Task extends Component<Props> {
               !task.workerHasRated && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
-                  options={{
+                  dialogProps={{
                     submitWork: false,
                   }}
                   text={MSG.rateManager}
@@ -301,7 +301,7 @@ class Task extends Component<Props> {
               !dueDatePassed && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
-                  options={{
+                  dialogProps={{
                     submitWork: true,
                   }}
                   text={MSG.submitWork}
