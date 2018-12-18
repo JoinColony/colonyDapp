@@ -104,32 +104,38 @@ const Organizations = () => (
         </div>
       </TabPanel>
       <TabPanel>
-        <OrganizationAddDomains availableAdmins={domainMocks} />
-        <div className={styles.domainListWrapper}>
-          {/*
-           * DomainList follows the design principles from TaskList in dashboard,
-           * but if it turns out we're going to use this in multiple places,
-           * we should consider moving it to core
-           */}
-          {domainMocks && domainMocks.length ? (
-            <DomainList
-              domains={domainMocks}
-              label={MSG.labelAdminList}
-              viewOnly={false}
-              // eslint-disable-next-line no-console
-              onRemove={console.log}
-            />
-          ) : (
-            <Fragment>
-              <Heading
-                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-                text={MSG.labelAdminList}
+        <div className={styles.sectionWrapper}>
+          <OrganizationAddDomains availableAdmins={domainMocks} />
+          <section className={styles.list}>
+            {/*
+             * DomainList follows the design principles from TaskList in dashboard,
+             * but if it turns out we're going to use this in multiple places,
+             * we should consider moving it to core
+             */}
+            {domainMocks && domainMocks.length ? (
+              <DomainList
+                domains={domainMocks}
+                label={MSG.labelAdminList}
+                viewOnly={false}
+                // eslint-disable-next-line no-console
+                onRemove={console.log}
               />
-              <p className={styles.noCurrent}>
-                <FormattedMessage {...MSG.noCurrentDomains} />
-              </p>
-            </Fragment>
-          )}
+            ) : (
+              <Fragment>
+                <Heading
+                  appearance={{
+                    size: 'small',
+                    weight: 'bold',
+                    margin: 'small',
+                  }}
+                  text={MSG.labelAdminList}
+                />
+                <p className={styles.noCurrent}>
+                  <FormattedMessage {...MSG.noCurrentDomains} />
+                </p>
+              </Fragment>
+            )}
+          </section>
         </div>
       </TabPanel>
     </Tabs>
