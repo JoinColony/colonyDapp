@@ -39,7 +39,7 @@ const TaskRequestWork = ({
 }: Props) => (
   <Button
     text={MSG.requestWork}
-    disabled={isTaskCreator}
+    disabled={!isTaskCreator}
     onClick={() => {
       if (!claimedProfile) {
         return openDialog('UnfinishedProfileDialog')
