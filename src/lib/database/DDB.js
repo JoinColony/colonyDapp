@@ -129,7 +129,8 @@ class DDB {
     }
     const id = `${name}.${generateId()}`;
 
-    const accessController = getAccessController(storeProps);
+    const accessController =
+      getAccessController && getAccessController(storeProps);
     if (!accessController) {
       console.warn(
         `Store with schema ${name} created without an accessController`,
@@ -165,7 +166,8 @@ class DDB {
       );
     }
 
-    const accessController = getAccessController(storeProps);
+    const accessController =
+      getAccessController && getAccessController(storeProps);
     if (!accessController) {
       console.warn(
         `Store with schema ${name} created without an accessController`,
