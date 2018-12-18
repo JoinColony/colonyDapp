@@ -4,7 +4,7 @@ import EventEmitter from 'events';
 import PeerMonitor from 'ipfs-pubsub-peer-monitor';
 import IPFS from 'ipfs';
 
-import { log } from '../../utils/debug';
+import { isDev, log } from '../../utils/debug';
 import { raceAgainstTimeout } from '../../utils/async';
 
 import type { PinnerAction } from './types';
@@ -155,6 +155,16 @@ class PinnerConnector extends EventEmitter {
       type: PIN_ACTIONS.PIN_HASH,
       payload: { ipfsHash },
     });
+    if (!isDev) {
+      // Just in case we use infura as well to pin stuff
+      try {
+        fetch(
+          `https://ipfs.infura.io:5001/api/v0/pin/add?arg=/ipfs/${ipfsHash}`,
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }
 }
 
