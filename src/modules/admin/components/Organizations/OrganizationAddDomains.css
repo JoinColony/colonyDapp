@@ -1,0 +1,21 @@
+@import 'variables.css';
+
+@value wideButton: 160px;
+
+.main {
+  margin-top: 30px;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.submitButton {
+  margin-left: 10px;
+}
+
+.domainInput {
+  flex-grow: 0.5;
+}

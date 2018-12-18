@@ -21,7 +21,7 @@ type Appearance = {
     | 'ghost'
     | 'underlinedBold'
     | 'blue',
-  size?: 'small' | 'large',
+  size?: 'small' | 'medium' | 'large',
 };
 
 type Props = {
