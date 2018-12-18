@@ -97,7 +97,7 @@ const MSG = defineMessages({
 type Props = {
   openDialog: OpenDialog,
   task: TaskRecord,
-  user: UserRecord,
+  currentUser: UserRecord,
   isTaskCreator?: boolean,
   preventEdit?: boolean,
 };
@@ -141,21 +141,23 @@ class Task extends Component<Props> {
   get isWorker() {
     const {
       task: { assignee },
-      user,
+      currentUser,
     } = this.props;
     return (
       !!assignee &&
       assignee.profile.walletAddress.toLowerCase() ===
-        user.profile.walletAddress.toLowerCase()
+        currentUser.profile.walletAddress.toLowerCase()
     );
   }
 
   get isManager() {
     const {
       task: { creator },
-      user,
+      currentUser,
     } = this.props;
-    return creator.toLowerCase() === user.profile.walletAddress.toLowerCase();
+    return (
+      creator.toLowerCase() === currentUser.profile.walletAddress.toLowerCase()
+    );
   }
 
   get dueDatePassed() {
@@ -190,7 +192,7 @@ class Task extends Component<Props> {
       isTaskCreator = false,
       preventEdit = true,
       task,
-      user,
+      currentUser,
     } = this.props;
     const {
       setValues,
@@ -275,7 +277,7 @@ class Task extends Component<Props> {
             )}
             <TaskRequestWork
               isTaskCreator={isTaskCreator}
-              claimedProfile={user.didClaimProfile}
+              claimedProfile={currentUser.didClaimProfile}
             />
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
@@ -372,14 +374,14 @@ class Task extends Component<Props> {
             <section className={styles.activity}>
               <TaskFeed
                 feedItems={task.feedItems}
-                currentUser={user}
+                currentUser={currentUser}
                 isRevealEnded={task.currentState === TASK_STATE.FINALIZED}
               />
             </section>
             <section className={styles.commentBox}>
               <TaskComments
-                claimedProfile={user.didClaimProfile}
-                walletAddress={user.profile.walletAddress}
+                claimedProfile={currentUser.didClaimProfile}
+                walletAddress={currentUser.profile.walletAddress}
               />
             </section>
           </div>
