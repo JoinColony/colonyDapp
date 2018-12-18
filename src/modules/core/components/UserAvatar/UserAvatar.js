@@ -1,7 +1,7 @@
 /* @flow */
 
 import { connect } from 'react-redux';
-import { compose, lifecycle } from 'recompose';
+import compose from 'recompose/compose';
 
 import UserAvatar from './UserAvatar.jsx';
 
@@ -17,16 +17,4 @@ export default compose(
     }),
     { fetchUserAvatar: fetchUserAvatarAction },
   ),
-  lifecycle({
-    componentDidMount() {
-      const { avatarData, user, fetchUserAvatar } = this.props;
-      if (
-        user &&
-        user.fetching === 0 &&
-        user.data.profile.avatar &&
-        !avatarData
-      )
-        fetchUserAvatar(user.data.profile.avatar);
-    },
-  }),
 )(UserAvatar);

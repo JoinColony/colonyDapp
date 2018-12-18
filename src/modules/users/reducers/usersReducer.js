@@ -6,6 +6,6 @@ import userAvatarsReducer from './userAvatarsReducer';
 import userProfilesReducer from './userProfilesReducer';
 
 export default combineReducers({
-  profiles: userProfilesReducer,
+  users: userProfilesReducer,
   avatars: userAvatarsReducer,
 });

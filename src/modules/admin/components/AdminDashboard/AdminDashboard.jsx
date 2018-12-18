@@ -9,7 +9,7 @@ import { compose } from 'recompose';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-import { SpinnerLoader } from '~core/Preloaders';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import Organizations from '~admin/Organizations';
 import Profile from '~admin/Profile';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
@@ -30,10 +30,13 @@ import type {
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
 import type { ColonyRecord } from '~immutable';
-import type { DataRecord } from '~utils/reducers';
 import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
+  loadingText: {
+    id: 'dashboard.Admin.loadingText',
+    defaultMessage: 'Loading Colony',
+  },
   backButton: {
     id: 'dashboard.Admin.backButton',
     defaultMessage: 'Go to {name}',
@@ -63,7 +66,7 @@ const MSG = defineMessages({
 const mockColonyRecoveryMode = true;
 
 type Props = {
-  colony: DataRecord<ColonyRecord>,
+  colony: ColonyRecord,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -98,11 +101,9 @@ const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
 const AdminDashboard = (props: Props) => {
   const { colony, given, location } = props;
 
-  if (colony.fetching) return <SpinnerLoader />;
+  if (!colony.isReady) return <LoadingTemplate loadingText={MSG.loadingText} />;
 
-  const {
-    data: { ensName, name },
-  } = colony;
+  const { ensName, name } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation

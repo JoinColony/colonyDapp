@@ -17,11 +17,10 @@ import UserProfileSpinner from './UserProfileSpinner.jsx';
 
 import type { ActionCreator } from '~types';
 import type { UserRecord } from '~immutable';
-import type { DataRecord } from '~utils/reducers';
 
 type Props = {
   fetchUserProfile: ActionCreator,
-  user: DataRecord<UserRecord>,
+  user: ?UserRecord,
   username: string,
 };
 
@@ -33,9 +32,7 @@ class UserProfile extends Component<Props> {
 
   render() {
     const { user } = this.props;
-    return user.fetching ? (
-      <UserProfileSpinner />
-    ) : (
+    return user && user.isReady ? (
       <ProfileTemplate asideContent={<UserMeta user={user} />}>
         <section className={styles.sectionContainer}>
           <ColonyGrid colonies={mockColonies} />
@@ -44,6 +41,8 @@ class UserProfile extends Component<Props> {
           <ActivityFeed activities={mockActivities} />
         </section>
       </ProfileTemplate>
+    ) : (
+      <UserProfileSpinner />
     );
   }
 }

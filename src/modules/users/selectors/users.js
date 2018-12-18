@@ -3,12 +3,9 @@
 import { createSelector } from 'reselect';
 
 import ns from '../namespace';
-import { Data } from '~utils/reducers';
-import { User } from '~immutable';
 
 import type { UserRecord, UsersRecord } from '~immutable';
 import type { Address } from '~types';
-import type { DataRecord } from '~utils/reducers';
 
 type RootState = {
   users: {
@@ -21,10 +18,7 @@ type AllUsersStateSelector = (state: RootState) => UsersRecord;
 type CurrentUserSelector = (state: RootState) => UserRecord;
 type UsersSelector = (allUsersState: UsersRecord) => UsersRecord;
 type AvatarsSelector = (allUsersState: UsersRecord) => *;
-type UserProfileSelector = (
-  state: RootState,
-  props: Object,
-) => DataRecord<UserRecord>;
+type UserProfileSelector = (state: RootState, props: Object) => UserRecord;
 type UserAvatarSelector = (state: RootState, props: Object) => string;
 type OrbitAddressSelector = (state: RootState) => string;
 type WalletAddressSelector = (state: RootState) => Address;
@@ -49,12 +43,12 @@ export const usernameFromProps: UserNameFromProps = (state, props) =>
 export const routerUserSelector: UserProfileSelector = createSelector(
   allUsersSelector,
   usernameFromRouter,
-  (users, username) => users.get(username, Data({ fetching: 1, data: User() })),
+  (users, username) => users.get(username),
 );
 export const userSelector: UserProfileSelector = createSelector(
   allUsersSelector,
   usernameFromProps,
-  (users, username) => users.get(username, Data({ fetching: 1, data: User() })),
+  (users, username) => users.get(username),
 );
 export const avatarSelector: UserAvatarSelector = createSelector(
   avatarsSelector,

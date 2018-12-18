@@ -2,10 +2,10 @@
 
 import { combineReducers } from 'redux';
 
-import coloniesReducer from './colonies';
+import allColonies from './allColonies';
 
-const coreReducer = combineReducers({
-  colonies: coloniesReducer,
+const dashboardReducer = combineReducers({
+  allColonies,
 });
 
-export default coreReducer;
+export default dashboardReducer;

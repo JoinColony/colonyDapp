@@ -11,10 +11,9 @@ import ProfileAdvanced from './ProfileAdvanced';
 import styles from './Profile.css';
 
 import type { ColonyRecord } from '~immutable';
-import type { DataRecord } from '~utils/reducers';
 
 type Props = {
-  colony: DataRecord<ColonyRecord>,
+  colony: ColonyRecord,
 };
 
 const MSG = defineMessages({
@@ -48,10 +47,7 @@ const Profile = ({ colony }: Props) => (
         <ProfileEdit colony={colony} />
       </TabPanel>
       <TabPanel>
-        <ProfileAdvanced
-          colonyId={colony.data.id}
-          colonyVersion={colony.data.version}
-        />
+        <ProfileAdvanced colonyId={colony.id} colonyVersion={colony.version} />
       </TabPanel>
     </Tabs>
   </div>
