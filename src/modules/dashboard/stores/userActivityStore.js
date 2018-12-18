@@ -8,9 +8,8 @@ import { FeedStore } from '../../../lib/database/stores';
 
 import { activityMessages } from '../components/UserActivities';
 
+// @TODO: This shouldn't be duplicated
 const userActivityStore: StoreBlueprint = {
-  // TODO: implement
-  getAccessController() {},
   name: 'userActivity',
   schema: yup.object({
     userAction: yup

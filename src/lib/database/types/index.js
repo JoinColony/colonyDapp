@@ -42,9 +42,8 @@ export type OrbitStoreOpenOpts = {
 export type StoreBlueprint = {
   name: string,
   schema: ObjectSchema,
-  getAccessController: (
+  getAccessController?: (
     storeProps?: Object,
-    // eslint-disable-next-line max-len, prettier/prettier
-  ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>> | void,
+  ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,
   type: typeof Store,
 };
