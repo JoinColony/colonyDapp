@@ -109,7 +109,7 @@ const startAll = async () => {
 };
 
 process.on('SIGINT', () => {
-  spawn('./stop_all.js');
+  spawn(path.resolve(__dirname, 'stop_all.js'));
 });
 
 startAll();

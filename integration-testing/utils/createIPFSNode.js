@@ -1,19 +1,20 @@
-import merge from 'deepmerge';
-
+import { promisify } from 'util';
+import { create as createIPFS } from 'ipfsd-ctl';
 import IPFSNode from '../../src/lib/ipfs';
 
-const arrayMerge = (target, source) => source;
-
-const createIPFSNode = async ipfsOptions => {
-  const options = merge(
-    IPFSNode.DEFAULT_OPTIONS,
-    {
-      ipfs: ipfsOptions,
-    },
-    { arrayMerge },
-  );
-  const node = new IPFSNode(options);
+const createIPFSNode = async ipfsConfig => {
+  const client = createIPFS({ type: 'js' });
+  const ipfsd = await promisify(client.spawn.bind(client))({
+    config: ipfsConfig,
+    start: false,
+  });
+  await promisify(ipfsd.start.bind(ipfsd))(['--enable-pubsub-experiment']);
+  const ipfs = ipfsd.api;
+  // Fix for IPFS API
+  ipfs.isOnline = () => true;
+  const node = new IPFSNode(ipfs);
   await node.ready;
+  await node.connectPinner();
   return node;
 };
 

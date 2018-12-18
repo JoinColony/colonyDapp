@@ -4,8 +4,6 @@ import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
 
-import type { Action } from '~types';
-
 import type {
   Identity,
   IdentityProvider,
@@ -41,10 +39,6 @@ class DDB {
   _stores: Map<string, Store>;
 
   _resolvers: Map<string, Resolver>;
-
-  _outstandingPubsubMessages: Array<Action>;
-
-  _pinnerPeer: string;
 
   constructor<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
@@ -206,17 +200,8 @@ class DDB {
     });
   }
 
-  async stop() {
-    // Doing some checks for good measure
-    /* eslint-disable no-underscore-dangle */
-    if (!this._orbitNode._ipfs.isOnline()) {
-      // If we stop the orbitNode and ipfs is not connected, it will throw
-      // (the infamous libp2p hasn't started yet error), so we start it again
-      await this._orbitNode._ipfs.start();
-    }
-    await this._orbitNode.stop();
-    return this._orbitNode._ipfs.stop();
-    /* eslint-enable no-underscore-dangle */
+  stop() {
+    return this._orbitNode.stop();
   }
 }
 

@@ -3,11 +3,10 @@ import * as yup from 'yup';
 import { create as createWallet } from '@colony/purser-software';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 import { FeedStore } from '../src/lib/database/stores';
-import DDBTestFactory from './utils/DDBTestFactory';
 import '../src/modules/validations';
 import { DDB } from '../src/lib/database';
 
-const factory = new DDBTestFactory('feedStore.test');
+import createIPFSNode from './utils/createIPFSNode';
 
 const feedBlueprint = {
   getAccessController() {},
@@ -21,10 +20,11 @@ const feedBlueprint = {
 
 test.before(async t => {
   const wallet = await createWallet();
+  const ipfsNode = await createIPFSNode();
 
   const identityProvider = new PurserIdentityProvider(wallet);
-  const ipfsNode = await factory.node('feedStore');
   const ddb = new DDB(ipfsNode, identityProvider);
+  await ddb.init();
   t.context = {
     ddb,
     ipfsNode,
@@ -33,7 +33,6 @@ test.before(async t => {
 });
 
 test.after.always(async t => {
-  await t.context.ipfsNode.stop();
   await t.context.ddb.stop();
 });
 

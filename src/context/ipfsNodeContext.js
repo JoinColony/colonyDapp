@@ -1,8 +1,12 @@
 /* @flow */
 
+import IPFS from 'ipfs';
 import IPFSNode from '../lib/ipfs';
 
-const ipfsNode = new IPFSNode();
+const config = IPFSNode.getIpfsConfig();
+const ipfs = new IPFS(config);
+
+const ipfsNode = new IPFSNode(ipfs);
 ipfsNode.connectPinner();
 
 export default ipfsNode;

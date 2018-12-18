@@ -123,10 +123,6 @@ jobs:
           name: "Linting Javascript"
           command: yarn lint:ci
       - run:
-          name: "Start pinning service integration mode"
-          command: "yarn test:integration:ci:start-pinning"
-          background: true
-      - run:
           name: "Running Integration Tests"
           command: |
             mkdir -p reports/ava

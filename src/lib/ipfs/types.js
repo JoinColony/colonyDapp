@@ -12,17 +12,12 @@ export type IPFSPeer = {
 
 export type B58String = string;
 
-export type IPFSNodeOptions = {
-  ipfs: {
-    repo: string,
-    config: {
-      Bootstrap: string[],
-      Addresses: {
-        Swarm: string[],
-      },
-    },
-    EXPERIMENTAL: {
-      pubsub: boolean,
+export type IPFSOptions = {
+  repo: string,
+  config: {
+    Bootstrap: string[],
+    Addresses: {
+      Swarm: string[],
     },
     Discovery?: {
       webRTCStar: {
@@ -30,6 +25,12 @@ export type IPFSNodeOptions = {
       },
     },
   },
+  EXPERIMENTAL: {
+    pubsub: boolean,
+  },
+};
+
+export type IPFSNodeOptions = {
   timeout: number,
 };
 
