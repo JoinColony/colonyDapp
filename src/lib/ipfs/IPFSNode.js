@@ -3,6 +3,7 @@
 import IPFS from 'ipfs';
 
 import { sleep } from '../../utils/time';
+import { isDev } from '../../utils/debug';
 
 import type { IPFSNodeOptions, B58String, IPFSPeer } from './types';
 import PinnerConnector from './PinnerConnector';
@@ -12,34 +13,58 @@ const { PINNER_ID } = process.env;
 
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
+const DEV_CONFIG = {
+  Bootstrap: [
+    // This is the connection to the dev ipfs daemon
+    /* eslint-disable max-len */
+    '/ip4/127.0.0.1/tcp/4001/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+    '/ip4/127.0.0.1/tcp/4004/wss/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
+    /* eslint-enable max-len */
+  ],
+  Addresses: {
+    Gateway: '',
+    Swarm: [],
+  },
+};
+
+const PROD_CONFIG = {
+  Bootstrap: [
+    /* eslint-disable max-len */
+    // TODO: Add our pinning service node here
+    '/dns4/ams-1.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmSoLer265NRgSp2LA3dPaeykiS1J6DifTC88f5uVQKNAd',
+    '/dns4/lon-1.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmSoLMeWqB7YGVLJN3pNLQpmmEk35v6wYtsMGLzSr5QBU3',
+    '/dns4/sfo-3.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmSoLPppuBtQSGwKDZT2M73ULpjvfd3aZ6ha4oFGL1KrGM',
+    '/dns4/sgp-1.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmSoLSafTMBsPKadTEgaXctDQVcqN88CNLHXMkTNwMKPnu',
+    '/dns4/nyc-1.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmSoLueR4xBeUbY9WZ9xGUUxunbKWcrNFTDAadQJmocnWm',
+    '/dns4/nyc-2.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmSoLV4Bbm51jM9C4gDYZQ9Cy3U6aXMJDAbzgu2fzaDs64',
+    '/dns4/node0.preload.ipfs.io/tcp/443/wss/ipfs/QmZMxNdpMkewiVZLMRxaNxUeZpDUb34pWjZ1kZvsd16Zic',
+    '/dns4/node1.preload.ipfs.io/tcp/443/wss/ipfs/Qmbut9Ywz9YEDrz8ySBSgWyJk41Uvm2QJPhwDJzJyGFsD6',
+    /* eslint-enable max-len */
+  ],
+  Addresses: {
+    Swarm: [
+      // TODO: use our own star server
+      // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
+    ],
+  },
+};
+
 class IPFSNode {
   static DEFAULT_OPTIONS = {
     ipfs: {
       repo: 'colonyIpfs',
       config: {
-        Bootstrap: [
-          // TODO: this is still hardcoded to the local pinner
-          /* eslint-disable max-len */
-          '/ip4/127.0.0.1/tcp/4001/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
-          '/ip4/127.0.0.1/tcp/4004/wss/ipfs/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6',
-          /* eslint-enable max-len */
-        ],
-        Addresses: {
-          Gateway: '',
-          Swarm: [
-            '/ip4/0.0.0.0/tcp/4002',
-            // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
-          ],
-        },
+        Bootstrap: isDev ? DEV_CONFIG.Bootstrap : PROD_CONFIG.Bootstrap,
+        Addresses: isDev ? DEV_CONFIG.Addresses : PROD_CONFIG.Addresses,
       },
       EXPERIMENTAL: {
         pubsub: true,
       },
-      // Discovery: {
-      //   webRTCStar: {
-      //     enabled: true,
-      //   },
-      // },
+      Discovery: {
+        webRTCStar: {
+          enabled: true,
+        },
+      },
     },
     timeout: TIMEOUT,
   };

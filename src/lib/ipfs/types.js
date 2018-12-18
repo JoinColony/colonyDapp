@@ -18,7 +18,6 @@ export type IPFSNodeOptions = {
     config: {
       Bootstrap: string[],
       Addresses: {
-        Gateway: string,
         Swarm: string[],
       },
     },
