@@ -52,7 +52,7 @@ jobs:
           path: reports
       - run:
           name: "Building library"
-          command: yarn build
+          command: yarn webpack:build
       - run:
           name: "Uploading updated lockfile"
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
@@ -219,7 +219,7 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
       - run: git config user.email "github@colony.io"
       - run: git config user.name "Colony Superuser"
-      - run: yarn deploy:styleguide
+      - run: yarn styleguide:deploy
 
 workflows:
   version: 2

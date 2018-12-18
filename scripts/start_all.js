@@ -4,6 +4,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 const waitOn = require('wait-on');
 const fs = require('fs');
+const args = require('minimist')(process.argv);
 
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
@@ -32,6 +33,10 @@ const trufflePigPromise = () =>
     trufflepigProcess.stdout.on('data', chunk => {
       if (chunk.includes('Serving contracts')) resolve(trufflepigProcess);
     });
+    if (args.foreground) {
+      trufflepigProcess.stdout.pipe(process.stdout);
+      trufflepigProcess.stderr.pipe(process.stderr);
+    }
     trufflepigProcess.on('error', e => {
       trufflepigProcess.kill();
       reject(e);
@@ -40,13 +45,17 @@ const trufflePigPromise = () =>
 
 const webpackPromise = () =>
   new Promise((resolve, reject) => {
-    const webpackProcess = spawn('yarn', ['run', 'dev'], {
+    const webpackProcess = spawn('yarn', ['run', 'webpack'], {
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
     });
     webpackProcess.stdout.on('data', chunk => {
       if (chunk.includes('Compiled successfully')) resolve(webpackProcess);
     });
+    if (args.foreground) {
+      webpackProcess.stdout.pipe(process.stdout);
+      webpackProcess.stderr.pipe(process.stderr);
+    }
     webpackProcess.on('error', e => {
       webpackProcess.kill();
       reject(e);
@@ -75,8 +84,9 @@ const startAll = async () => {
     console.info('Starting trufflepig...');
     const trufflepigProcess = await trufflePigPromise();
 
-    console.info('Starting websocket proxy...');
-    const wssProxyProcess = await wssProxyPromise();
+    // This is temporarily disabled until we actually *really* need it
+    // console.info('Starting websocket proxy...');
+    // const wssProxyProcess = await wssProxyPromise();
 
     console.info('Starting webpack...');
     const webpackProcess = await webpackPromise();
@@ -85,7 +95,7 @@ const startAll = async () => {
       ganache: ganacheProcess.pid,
       trufflepig: trufflepigProcess.pid,
       webpack: webpackProcess.pid,
-      wssProxy: wssProxyProcess.pid,
+      // wssProxy: wssProxyProcess.pid,
     };
 
     fs.writeFileSync(PID_FILE, JSON.stringify(pids));
@@ -97,5 +107,9 @@ const startAll = async () => {
 
   console.info('Stack started successfully.');
 };
+
+process.on('SIGINT', () => {
+  spawn('./stop_all.js');
+});
 
 startAll();
