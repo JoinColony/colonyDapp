@@ -53,13 +53,15 @@ export function* fetchOrCreateDomainStore({
   return store;
 }
 
-function* fetchDomainSaga({ payload: { domainAddress } }: Action): Saga<void> {
+function* fetchDomainSaga({
+  payload: { domainAddress, colonyENSName },
+}: Action): Saga<void> {
   try {
     const store = yield call(fetchOrCreateDomainStore, { domainAddress });
     const domainStoreData = yield call(getAll, store);
     yield put({
       type: DOMAIN_FETCH_SUCCESS,
-      payload: { domainStoreData, id: store.address.toString() },
+      payload: { colonyENSName, domainStoreData, id: store.address.toString() },
     });
   } catch (error) {
     yield putError(DOMAIN_FETCH_ERROR, error);
