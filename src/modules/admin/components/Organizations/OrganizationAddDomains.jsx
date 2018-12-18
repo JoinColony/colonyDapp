@@ -31,12 +31,7 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations.OrganizationAddDomains';
 
 const validationSchema = yup.object({
-  domain: yup
-    .object()
-    .shape({
-      domainName: yup.string(),
-    })
-    .required(),
+  domain: yup.string().required(),
 });
 
 type FormValues = {
@@ -46,9 +41,6 @@ type FormValues = {
 const OrganizationAddDomains = () => (
   <div className={styles.main}>
     <Form
-      initialValues={{
-        domainName: '',
-      }}
       // eslint-disable-next-line no-console
       onSubmit={console.log}
       validationSchema={validationSchema}
@@ -56,11 +48,7 @@ const OrganizationAddDomains = () => (
       {({ handleSubmit, isValid }: FormikProps<FormValues>) => (
         <div onSubmit={handleSubmit} className={styles.inputWrapper}>
           <div className={styles.domainInput}>
-            <Input
-              name="domainName"
-              label={MSG.labelAddDomain}
-              connect={false}
-            />
+            <Input name="domain" label={MSG.labelAddDomain} />
           </div>
           <div className={styles.submitButton}>
             <Button
