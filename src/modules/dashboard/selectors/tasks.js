@@ -1,29 +1,23 @@
 /* @flow */
 
+import { createSelector } from 'reselect';
+
 import type { Map as ImmutableMap } from 'immutable';
 
 import type { DomainRecord } from '~immutable';
 
-import ns from '../namespace';
-
 import { allDomains, singleDomain } from './domains';
 
-type RootState = {
-  [typeof ns]: {
-    domains: ImmutableMap<string, DomainRecord>,
-  },
-};
+export const allTasksSelector = createSelector(
+  allDomains,
+  domains =>
+    domains.reduce((acc, domain) => ({ ...acc, ...domain.get('tasks') }), {}),
+);
 
-export const allTasks = (state: RootState) =>
-  allDomains(state).reduce(
-    (acc, domain) => ({ ...acc, ...domain.get('tasks') }),
-    {},
-  );
+export const taskByIdSelector = createSelector(
+  allTasksSelector,
+  (tasks, taskId) => tasks.filter(task => task.id === taskId),
+);
 
-export const taskById = (state: RootState, taskId: string) =>
-  allTasks.filter(task => task.id === taskId);
-
-export const tasksStoreAddressSelector = (
-  state: RootState,
-  domainName: string,
-) => singleDomain(state, domainName).get('tasksDatabase');
+export const tasksStoreAddressSelector = (singleDomain,
+(domain: ImmutableMap<string, DomainRecord>) => domain.get('tasksDatabase'));

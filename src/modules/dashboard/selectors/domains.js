@@ -1,5 +1,7 @@
 /* @flow */
 
+import { createSelector } from 'reselect';
+
 import type { Map as ImmutableMap } from 'immutable';
 
 import ns from '../namespace';
@@ -14,5 +16,7 @@ type RootState = {
 
 export const allDomains = (state: RootState) => state[ns].domains;
 
-export const singleDomain = (state: RootState, name: string) =>
-  allDomains(state).get(name);
+export const singleDomain = createSelector(
+  allDomains,
+  (domains, name) => domains.get(name),
+);
