@@ -1,27 +1,34 @@
 /* @flow */
 
 import type { RecordFactory, RecordOf } from 'immutable';
+import type BigNumber from 'bn.js';
 
 import { Record } from 'immutable';
 
 import type { Address } from '~types';
 
 export type ColonyTransactionProps = {
-  type: 'incoming' | 'outgoing',
+  amount: BigNumber,
+  date: Date,
   from?: Address,
-  to?: Address,
-  token?: Address,
+  incoming: boolean,
   taskId?: number,
+  to?: Address,
+  token: Address,
+  transactionHash?: string,
 };
 
 export type ColonyTransactionRecord = RecordOf<ColonyTransactionProps>;
 
 const defaultValues: ColonyTransactionProps = {
-  type: 'incoming',
+  amount: 0,
+  date: new Date(),
   from: undefined,
-  to: undefined,
-  token: undefined,
+  incoming: false,
   taskId: undefined,
+  to: undefined,
+  token: '0x0000000000000000000000000000000000000000',
+  transactionHash: undefined,
 };
 
 const ColonyTransaction: RecordFactory<ColonyTransactionProps> = Record(

@@ -5,6 +5,7 @@ import type { Saga } from 'redux-saga';
 import { call, getContext, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~types';
+import type { ColonyTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
 
@@ -39,12 +40,17 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
     const logs = yield call([colonyClient, colonyClient.getLogs], filter);
     const events = yield call([colonyClient, colonyClient.parseLogs], logs);
 
-    const transactions = [];
+    const transactions: Array<ColonyTransactionProps> = [];
     for (let i = 0; i < events.length; i += 1) {
       const { eventName } = events[i];
+      const { transactionHash, blockHash } = logs[i];
+      const { timestamp } = yield call(
+        [provider, provider.getBlock],
+        blockHash,
+      );
       if (eventName === 'ColonyFundsClaimed') {
         const { payoutRemainder: amount, token } = events[i];
-        const { transactionHash, to } = logs[i];
+        const { address: to } = logs[i];
         const { from } = yield call(
           [provider, provider.getTransaction],
           transactionHash,
@@ -54,20 +60,24 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
           from,
           to,
           token,
-          type: 'incoming',
+          incoming: true,
+          date: new Date(timestamp),
+          transactionHash,
         });
       } else if (eventName === 'ColonyFundsMovedBetweenFundingPots') {
-        const { amount, fromPot, token, toPot } = events[i];
-        const [, taskId] = yield call(
-          [colonyClient.contract, colonyClient.contract.pots],
-          fromPot === 0 ? toPot : fromPot,
-        );
-        transactions.push({
-          amount,
-          taskId,
-          token,
-          type: fromPot === 0 ? 'outgoing' : 'incoming',
-        });
+        // const { amount, fromPot, token, toPot } = events[i];
+        // const [, taskId] = yield call(
+        //   [colonyClient.contract, colonyClient.contract.pots],
+        //   fromPot === 1 ? toPot : fromPot,
+        // );
+        // transactions.push({
+        //   amount,
+        //   taskId,
+        //   token,
+        //   incoming: fromPot !== 1,
+        //   date: new Date(timestamp),
+        //   transactionHash,
+        // });
       } else if (eventName === 'TaskPayoutClaimed') {
         const { taskId, role, amount, token } = events[i];
         const { address: to } = yield callCaller({
@@ -80,7 +90,9 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
           taskId,
           to,
           token,
-          type: 'outgoing',
+          incoming: false,
+          date: new Date(timestamp),
+          transactionHash,
         });
       }
     }
