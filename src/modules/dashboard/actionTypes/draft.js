@@ -14,6 +14,8 @@ export const DRAFT_EDIT = `${ns}/DRAFT_EDIT`;
 export const DRAFT_EDIT_ERROR = `${ns}/DRAFT_EDIT_ERROR`;
 export const DRAFT_EDIT_SUCCESS = `${ns}/DRAFT_EDIT_SUCCESS`;
 
+export const DRAFT_FETCH_SUCCESS = `${ns}/DRAFT_FETCH_SUCCESS`;
+
 export const DRAFTS_FETCH = `${ns}/DRAFTS_FETCH`;
 export const DRAFTS_FETCH_SUCCESS = `${ns}/DRAFTS_FETCH_SUCCESS`;
 export const DRAFTS_FETCH_ERROR = `${ns}/DRAFTS_FETCH_ERROR`;

@@ -17,8 +17,8 @@ import {
   DRAFT_EDIT,
   DRAFT_EDIT_SUCCESS,
   DRAFT_EDIT_ERROR,
+  DRAFT_FETCH_SUCCESS,
   DRAFTS_FETCH,
-  DRAFTS_FETCH_SUCCESS,
   DRAFTS_FETCH_ERROR,
 } from '../actionTypes';
 
@@ -51,7 +51,9 @@ export function* fetchAllDraftsSaga(action: Action): Saga<void> {
       draftStoreAddress,
     });
     const drafts = yield call(getAll, store);
-    yield put({ type: DRAFTS_FETCH_SUCCESS, payload: { drafts } });
+    yield drafts.map(draft =>
+      put({ type: DRAFT_FETCH_SUCCESS, payload: { draft } }),
+    );
   } catch (error) {
     yield putError(DRAFTS_FETCH_ERROR, error);
   }
