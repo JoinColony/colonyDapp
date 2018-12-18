@@ -7,7 +7,7 @@ import type { UserRecord } from './User';
 import type { TaskFeedItemRecord } from './TaskFeedItem';
 
 export type draftProps = {
-  id?: number,
+  id?: string,
   specHash?: string,
   title: string,
   dueDate?: Date,
