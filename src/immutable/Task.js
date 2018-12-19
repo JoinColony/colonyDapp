@@ -41,27 +41,27 @@ export type TaskProps = {
 
 export type TaskRecord = RecordOf<TaskProps>;
 
-const defaultValues: TaskProps = {
+const defaultValues: $Shape<TaskProps> = {
   assignee: undefined,
-  colonyENSName: '',
-  creator: '',
-  currentState: TASK_STATE.ACTIVE,
+  colonyENSName: undefined,
+  creator: undefined,
+  currentState: undefined,
   dueDate: undefined,
-  evaluatorHasRated: false,
-  evaluatorPayoutClaimed: false,
-  evaluatorRateFail: false,
+  evaluatorHasRated: undefined,
+  evaluatorPayoutClaimed: undefined,
+  evaluatorRateFail: undefined,
   feedItems: new List(),
-  id: 0,
-  managerHasRated: false,
-  managerPayoutClaimed: false,
-  managerRateFail: false,
+  id: undefined,
+  managerHasRated: undefined,
+  managerPayoutClaimed: undefined,
+  managerRateFail: undefined,
   managerRating: undefined,
   payouts: new List(),
-  reputation: 0,
-  title: '',
-  workerHasRated: false,
-  workerPayoutClaimed: false,
-  workerRateFail: false,
+  reputation: undefined,
+  title: undefined,
+  workerHasRated: undefined,
+  workerPayoutClaimed: undefined,
+  workerRateFail: undefined,
   workerRating: undefined,
 };
 

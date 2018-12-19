@@ -15,15 +15,15 @@ export type TokenProps = {
   symbol: string,
 };
 
-const defaultValues: TokenProps = {
-  address: '',
-  balance: 0,
-  icon: '',
-  isBlocked: false,
-  isEnabled: false,
-  isNative: false,
-  name: '',
-  symbol: '',
+const defaultValues: $Shape<TokenProps> = {
+  address: undefined,
+  balance: undefined,
+  icon: undefined,
+  isBlocked: undefined,
+  isEnabled: undefined,
+  isNative: undefined,
+  name: undefined,
+  symbol: undefined,
 };
 
 class TokenClass extends Record(defaultValues)<TokenProps> {

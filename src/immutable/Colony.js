@@ -19,14 +19,14 @@ export type ColonyProps = {|
   website?: string,
 |};
 
-const defaultValues: ColonyProps = {
-  address: '',
+const defaultValues: $Shape<ColonyProps> = {
+  address: undefined,
   avatar: undefined,
   description: undefined,
-  ensName: '',
+  ensName: undefined,
   guideline: undefined,
   id: undefined,
-  name: '',
+  name: undefined,
   token: Token(),
   version: undefined,
   website: undefined,
