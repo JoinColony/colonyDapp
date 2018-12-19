@@ -163,7 +163,6 @@ function* guessRating(
 }
 
 function* taskCreateSaga(action: Action): Saga<void> {
-  // eslint-disable-next-line no-unused-vars
   const { colonyAddress, domainAddress, task } = action.payload;
 
   try {
@@ -182,8 +181,8 @@ function* taskCreateSaga(action: Action): Saga<void> {
       limit: 1,
     });
 
+    // put task on chain
     yield put(taskCreate(colonyAddress, taskFromDDB));
-
     const {
       payload: { hash: txHash },
     } = yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);

@@ -38,7 +38,7 @@ export function* fetchOrCreateDomainStore({
   if (domainAddress) {
     store = yield call([ddb, ddb.getStore], domainStore, domainAddress);
     yield call([store, store.load]);
-  } else if (colonyAddress) {
+  } else if (colonyAddress && domainName) {
     const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
     const domains = yield call([colony, colony.get], 'domains');
     store = yield call([ddb, ddb.getStore], domainStore, domains[domainName]);
