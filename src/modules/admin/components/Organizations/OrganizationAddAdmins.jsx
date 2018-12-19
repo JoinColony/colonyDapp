@@ -57,15 +57,20 @@ const validationSchema = yup.object({
 
 type Props = {
   availableAdmins: Array<UserRecord>,
+  ensName: string,
 };
 
-const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
+const OrganizationAddAdmins = ({ availableAdmins, ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
       submit={COLONY_ADMIN_ADD}
       success={COLONY_ADMIN_ADD_SUCCESS}
       error={COLONY_ADMIN_ADD_ERROR}
       validationSchema={validationSchema}
+      initialValues={{
+        newAdmin: '',
+        ensName,
+      }}
     >
       {({ status, isSubmitting, isValid }) => (
         <Fragment>
@@ -82,7 +87,7 @@ const OrganizationAddAdmins = ({ availableAdmins }: Props) => (
                * This prevents React from going haywire since multiple keys
                * will have the same value.
                */
-              data={availableAdmins.slice(0, 5)}
+              data={availableAdmins}
               filter={filter}
             />
           </div>

@@ -3,6 +3,8 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { ColonyRecord } from '~immutable';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import UserList from '../UserList';
@@ -54,7 +56,11 @@ const MSG = defineMessages({
 
 const displayName: string = 'admin.Organizations';
 
-const Organizations = () => (
+type Props = {
+  colony: ColonyRecord,
+};
+
+const Organizations = ({ colony: { ensName } }: Props) => (
   <div className={styles.main}>
     <Tabs>
       <TabList>
@@ -67,7 +73,10 @@ const Organizations = () => (
       </TabList>
       <TabPanel>
         <div className={styles.sectionWrapper}>
-          <OrganizationAddAdmins availableAdmins={usersMocks} />
+          <OrganizationAddAdmins
+            availableAdmins={usersMocks}
+            ensName={ensName}
+          />
           <section className={styles.list}>
             {/*
              * UserList follows the design principles from TaskList in dashboard,
@@ -105,7 +114,10 @@ const Organizations = () => (
       </TabPanel>
       <TabPanel>
         <div className={styles.sectionWrapper}>
-          <OrganizationAddDomains availableAdmins={domainMocks} />
+          <OrganizationAddDomains
+            availableAdmins={domainMocks}
+            ensName={ensName}
+          />
           <section className={styles.list}>
             {/*
              * DomainList follows the design principles from TaskList in dashboard,
