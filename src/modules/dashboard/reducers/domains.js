@@ -11,7 +11,6 @@ import {
   DRAFT_CREATE_SUCCESS,
   DRAFT_DELETE_SUCCESS,
   DRAFT_FETCH_SUCCESS,
-  TASK_CREATE_SUCCESS,
   TASK_DELETE_SUCCESS,
   TASK_FETCH_SUCCESS,
 } from '../actionTypes';
@@ -52,8 +51,7 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
       } = action.payload;
       return state.setIn([ensName, domainId, 'tasks', id], Draft(draft));
     }
-    case TASK_FETCH_SUCCESS:
-    case TASK_CREATE_SUCCESS: {
+    case TASK_FETCH_SUCCESS: {
       const {
         ensName,
         domainId,
