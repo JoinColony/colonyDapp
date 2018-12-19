@@ -8,9 +8,9 @@ export type TokenProps = {
   address: Address,
   balance: number,
   icon: string,
-  isBlocked?: ?boolean,
-  isEnabled?: ?boolean,
-  isNative?: ?boolean,
+  isBlocked?: boolean,
+  isEnabled?: boolean,
+  isNative?: boolean,
   name: string,
   symbol: string,
 };
@@ -38,9 +38,9 @@ class TokenClass extends Record(defaultValues)<TokenProps> {
   address: Address;
   balance: number;
   icon: string;
-  isBlocked: ?boolean;
-  isEnabled: ?boolean;
-  isNative: ?boolean;
+  isBlocked: boolean;
+  isEnabled: boolean;
+  isNative: boolean;
   name: string;
   symbol: string;
   */
