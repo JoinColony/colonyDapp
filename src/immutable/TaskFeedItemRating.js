@@ -16,10 +16,10 @@ export type TaskFeedItemRatingProps = {|
 
 export type TaskFeedItemRatingRecord = RecordOf<TaskFeedItemRatingProps>;
 
-const defaultValues: TaskFeedItemRatingProps = {
+const defaultValues: $Shape<TaskFeedItemRatingProps> = {
   ratee: User(),
   rater: User(),
-  rating: 0,
+  rating: undefined,
 };
 
 const TaskFeedItemRating: RecordFactory<TaskFeedItemRatingProps> = Record(

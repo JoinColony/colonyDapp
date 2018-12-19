@@ -20,14 +20,14 @@ export type UserActivityProps = {
 
 export type UserActivityRecord = RecordOf<UserActivityProps>;
 
-const defaultValues: UserActivityProps = {
+const defaultValues: $Shape<UserActivityProps> = {
   assignedUser: undefined,
   colonyName: undefined, // TODO should this be ensName?
-  createdAt: new Date(),
+  createdAt: undefined,
   domainName: undefined,
   numberOfStars: undefined,
   taskName: undefined,
-  userAction: '',
+  userAction: undefined,
 };
 
 const UserActivity: RecordFactory<UserActivityProps> = Record(defaultValues);

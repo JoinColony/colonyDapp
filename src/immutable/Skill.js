@@ -12,9 +12,9 @@ export type SkillProps = {
 
 export type SkillRecord = RecordOf<SkillProps>;
 
-const defaultValues: SkillProps = {
-  id: 0,
-  name: '',
+const defaultValues: $Shape<SkillProps> = {
+  id: undefined,
+  name: undefined,
   parent: undefined,
 };
 

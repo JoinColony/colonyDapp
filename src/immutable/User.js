@@ -15,7 +15,7 @@ export type UserProps = {
 
 const defaultActivities: List<UserActivityRecord> = List();
 
-const defaultValues: UserProps = {
+const defaultValues: $Shape<UserProps> = {
   profile: UserProfile(),
   activities: defaultActivities,
 };
@@ -30,10 +30,6 @@ class UserClass extends makeDataClass<UserProps>(defaultValues) {
 
   get didClaimProfile() {
     return !!this.profile.username;
-  }
-
-  get isReady() {
-    return !!this.profile.walletAddress;
   }
 }
 
