@@ -47,9 +47,16 @@ import {
   COLONY_AVATAR_REMOVE,
   COLONY_AVATAR_REMOVE_SUCCESS,
   COLONY_AVATAR_REMOVE_ERROR,
+  COLONY_ADMIN_ADD,
+  COLONY_ADMIN_ADD_SUCCESS,
+  COLONY_ADMIN_ADD_ERROR,
 } from '../actionTypes';
 
-import { createColony, createColonyLabel } from '../actionCreators';
+import {
+  createColony,
+  createColonyLabel,
+  addColonyAdmin as addColonyAdminAction,
+} from '../actionCreators';
 import { getAll } from '../../../lib/database/commands';
 
 /*
@@ -276,6 +283,49 @@ function* removeColonyAvatar(action: Action): Saga<void> {
   }
 }
 
+function* addColonyAdmin({
+  payload: { newAdmin, ensName },
+}: Action): Saga<void> {
+  try {
+    const { walletAddress: newAdminWalletAddress, username } = newAdmin.profile;
+    /*
+     * Get the colony store
+     */
+    const store = yield call(fetchColonyStore, ensName);
+    const colonyAddress = store.get('address');
+    const colonyAdmins = store.get('admins') || {};
+    /*
+     * Dispatch the action to the admin in th redux store
+     */
+    yield put({
+      type: COLONY_ADMIN_ADD_SUCCESS,
+      payload: {
+        ensName,
+        adminData: {
+          ...colonyAdmins,
+          [username]: newAdminWalletAddress,
+        },
+      },
+    });
+    /*
+     * Set the new value on the colony's store
+     */
+    yield call([store, store.set], 'admins', {
+      ...colonyAdmins,
+      [username]: newAdminWalletAddress,
+    });
+    /*
+     * Displatch the action to set the admin on the contract level (transaction)
+     */
+    const action = yield call(addColonyAdminAction, colonyAddress, {
+      user: newAdminWalletAddress,
+    });
+    yield put(action);
+  } catch (error) {
+    yield putError(COLONY_ADMIN_ADD_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH, fetchColonySaga);
   yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
@@ -283,6 +333,7 @@ export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
   yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
+  yield takeEvery(COLONY_ADMIN_ADD, addColonyAdmin);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
