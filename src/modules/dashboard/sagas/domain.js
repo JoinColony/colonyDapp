@@ -42,14 +42,15 @@ export function* fetchOrCreateDomainStore({
     const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
     const domains = yield call([colony, colony.get], 'domains');
     store = yield call([ddb, ddb.getStore], domainStore, domains[domainName]);
+    yield call([store, store.load]);
   } else {
     store = yield call([ddb, ddb.createStore], domainStore);
-    const taskStore = yield call(fetchOrCreateTaskStore, {});
+    const draft = domainName === 'rootDomain';
+    const taskStore = yield call(fetchOrCreateTaskStore, { draft });
     yield call([store, store.set], {
       tasksDatabase: taskStore.address.toString(),
     });
   }
-  yield call([store, store.load]);
   return store;
 }
 

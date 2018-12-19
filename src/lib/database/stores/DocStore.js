@@ -52,25 +52,6 @@ class DocStore extends Store {
   all() {
     return this.get(e => e);
   }
-
-  async load() {
-    const readyPromise = new Promise(resolve => {
-      this._orbitStore.events.once('ready', resolve);
-    });
-    const timeoutPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject(
-          new Error(
-            `Timeout while waiting on replication for store "${this._name}"`,
-          ),
-        );
-      }, 15 * 1000); // 15 seconds
-    });
-
-    await super.load();
-
-    return Promise.race([readyPromise, timeoutPromise]);
-  }
 }
 
 export default DocStore;
