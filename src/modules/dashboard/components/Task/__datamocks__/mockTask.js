@@ -2,6 +2,7 @@
 /* eslint-disable max-len */
 
 import { List } from 'immutable';
+import BN from 'bn.js';
 
 import {
   Task,
@@ -26,10 +27,10 @@ import {
 export const mockTaskReward = {
   workerRating: 3,
   payoutsEarned: List.of(
-    TaskPayout({ token: DAIToken, amount: 1001 }),
-    TaskPayout({ token: CLNYToken, amount: 600 }),
-    TaskPayout({ token: ETHToken, amount: 200105 }),
-    TaskPayout({ token: COOLToken, amount: 600 }),
+    TaskPayout({ token: DAIToken, amount: new BN(1001) }),
+    TaskPayout({ token: CLNYToken, amount: new BN(600) }),
+    TaskPayout({ token: ETHToken, amount: new BN(200105) }),
+    TaskPayout({ token: COOLToken, amount: new BN(600) }),
   ),
   reputationEarned: 1045,
 };
@@ -40,13 +41,18 @@ export const mockTask = Task({
   colonyENSName: 'cool-colony',
   reputation: 19.5,
   payouts: List.of(
-    TaskPayout({ token: ETHToken, amount: 21545, isEth: true, address: '0x0' }),
     TaskPayout({
-      amount: 6007,
+      token: ETHToken,
+      amount: new BN(21545),
+      isEth: true,
+      address: '0x0',
+    }),
+    TaskPayout({
+      amount: new BN(6007),
       token: CLNYToken,
     }),
     TaskPayout({
-      amount: 123,
+      amount: new BN(123),
       token: COOLToken,
     }),
   ),
