@@ -1,3 +1,8 @@
+.main {
+  height: 100%;
+  max-height: max-content;
+}
+
 .modal {
   display: flex;
   justify-content: center;
@@ -10,6 +15,7 @@
   bottom: 0;
   left: 0;
   z-index: var(--z-index-dialog);
+  overflow-y: auto;
   background-color: white;
   outline: none;
 }
