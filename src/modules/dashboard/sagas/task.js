@@ -2,7 +2,14 @@
 
 import type { Saga } from 'redux-saga';
 
-import { all, call, getContext, put, takeEvery } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  getContext,
+  put,
+  select,
+  takeEvery,
+} from 'redux-saga/effects';
 
 import type { Action, ENSName } from '~types';
 
@@ -12,12 +19,14 @@ import { DDB } from '../../../lib/database';
 import { DocStore } from '../../../lib/database/stores';
 
 import { colonyStore, domainStore, draftStore, taskStore } from '../stores';
+import { tasksStoreAddressSelector } from '../selectors';
 
 import {
   DRAFT_DELETE,
   TASK_CREATE,
   TASK_CREATE_ERROR,
   TASK_CREATE_SUCCESS,
+  TASK_FETCH_SUCCESS,
   TASK_EDIT,
   TASK_EDIT_ERROR,
   TASK_EDIT_SUCCESS,
@@ -54,7 +63,7 @@ import {
   taskWorkerRevealRating,
 } from '../actionCreators';
 
-import { fetchDraft } from './draft';
+import { fetchOrCreateDomainStore } from './domain';
 
 export function* fetchOrCreateTaskStore({
   colonyAddress,
@@ -164,37 +173,50 @@ function* guessRating(
 }
 
 function* createTaskSaga(action: Action): Saga<void> {
-  const { colonyAddress, domainAddress, task } = action.payload;
+  const { colonyENSName, domainName, task } = action.payload;
 
   try {
-    // fetch task from drafts
-    const draft = yield call(fetchDraft, { taskId: task.id });
     // remove task from drafts
+    const rootDomain = yield call(fetchOrCreateDomainStore, {
+      colonyAddress: colonyENSName,
+      domainName: 'rootDomain',
+    });
+    const taskStoreAddress = yield select(
+      tasksStoreAddressSelector,
+      rootDomain.address.toString(),
+    );
     yield put({
       type: DRAFT_DELETE,
-      payload: { colonyAddress, taskId: task.id },
-    });
-
-    // put task into destination domain
-    const domain = yield call(fetchOrCreateTaskStore, { domainAddress });
-    yield call([domain, domain.add], draft);
-    const taskFromDDB = yield call([domain, domain.get], {
-      limit: 1,
+      payload: {
+        colonyENSName,
+        domainAddress: rootDomain.address.toString(),
+        taskStoreAddress,
+        taskId: task.id,
+      },
     });
 
     // put task on chain
-    yield put(taskCreate(colonyAddress, taskFromDDB));
-    const {
-      payload: { hash: txHash },
-    } = yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
-    // eslint-disable-next-line no-console
-    console.log(txHash); // TODO: put txHash in DDB
+    yield put(taskCreate(colonyENSName, task));
+    yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
+
+    // put task into destination domain taskStore
+    const domain = yield call(fetchOrCreateTaskStore, { domainName });
+    yield call([domain, domain.add], task);
+    const taskFromDDB = yield call([domain, domain.get], task.id);
 
     const {
       payload: { taskId },
     } = yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
-    // eslint-disable-next-line no-console
-    console.log(taskId); // TODO: put taskId in DDB
+
+    // put task into state
+    yield put({
+      type: TASK_FETCH_SUCCESS,
+      payload: {
+        ensName: colonyENSName,
+        domainId: domain.address.toString(),
+        task: { id: taskId, ...taskFromDDB },
+      },
+    });
   } catch (error) {
     yield putError(TASK_CREATE_ERROR, error);
   }

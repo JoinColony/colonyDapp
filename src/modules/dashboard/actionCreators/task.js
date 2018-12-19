@@ -2,6 +2,8 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
+import type { AddressOrENSName } from '~types';
+
 import { createColonyTransaction } from '../../core/actionCreators';
 
 import {
@@ -27,7 +29,7 @@ import {
 } from '../actionTypes';
 
 export const taskCreate = (
-  identifier: string,
+  identifier: AddressOrENSName,
   params: {
     specificationHash: string,
     domainId: number,
