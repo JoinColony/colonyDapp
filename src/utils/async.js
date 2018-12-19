@@ -12,9 +12,11 @@ export const raceAgainstTimeout = async (
   const timeoutPromise = new Promise((resolve, reject) => {
     timeout = setTimeout(() => reject(err), ms);
   });
-  const res = await Promise.race([timeoutPromise, promise]);
-  clearTimeout(timeout);
-  return res;
+  try {
+    return Promise.race([timeoutPromise, promise]);
+  } finally {
+    clearTimeout(timeout);
+  }
 };
 
 // Creating a promise chain to sequentially work through the entries
