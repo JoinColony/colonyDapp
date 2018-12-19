@@ -90,7 +90,7 @@ const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
   {
     id: 4,
     title: MSG.tabOrganisation,
-    content: <Organizations />,
+    content: <Organizations colony={colony} />,
   },
 ];
 
