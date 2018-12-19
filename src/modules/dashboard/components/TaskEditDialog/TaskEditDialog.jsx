@@ -153,7 +153,7 @@ const TaskEditDialog = ({
                 <FieldArray
                   name="payouts"
                   render={arrayHelpers => (
-                    <div className={styles.taskEditContainer}>
+                    <Fragment>
                       <div className={styles.editor}>
                         <Heading
                           appearance={{ size: 'medium' }}
@@ -189,7 +189,7 @@ const TaskEditDialog = ({
                             />
                           );
                         })}
-                    </div>
+                    </Fragment>
                   )}
                 />
               </DialogSection>
