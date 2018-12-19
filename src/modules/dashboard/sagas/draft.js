@@ -93,14 +93,22 @@ export function* editDraftSaga(action: Action): Saga<void> {
 }
 
 export function* deleteDraftSaga(action: Action): Saga<void> {
-  const { taskId, taskStoreAddress } = action.payload;
+  const {
+    taskId,
+    taskStoreAddress,
+    colonyENSName,
+    domainAddress,
+  } = action.payload;
   try {
     const store = yield call(fetchOrCreateTaskStore, {
       taskStoreAddress,
       draft: true,
     });
-    const deletedHash = yield call([store, store.remove], taskId);
-    yield put({ type: DRAFT_DELETE_SUCCESS, payload: { deletedHash } });
+    yield call([store, store.remove], taskId);
+    yield put({
+      type: DRAFT_DELETE_SUCCESS,
+      payload: { taskId, ensName: colonyENSName, domainId: domainAddress },
+    });
   } catch (error) {
     yield putError(DRAFT_DELETE_ERROR, error);
   }
