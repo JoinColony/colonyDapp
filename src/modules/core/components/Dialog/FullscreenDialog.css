@@ -24,6 +24,7 @@
   padding: 0;
   border: 0;
   background: 0;
+  cursor: pointer;
 }
 
 .closeIconButton svg {
