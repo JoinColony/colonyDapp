@@ -2,19 +2,42 @@
 
 ## Prerequisites
 (for versions see package.json -> engines)
+* A running docker daemon
 * Node.js
 * Yarn
+* [mkcert](https://github.com/FiloSottile/mkcert) (for self-signed SSL certificates)
 
 ## Installation
 
 Clone this repository :)
 
-### Setup docker for the integration tests
+### Setup docker
 
-We use redis as a backend to the pinning service. For simplicity we run it through [docker](https://www.docker.com/) during integration tests.
+We use docker for:
+
+- Compiling the Solidity smart contracts
+- Running an IPFS node for the pinning service
 
 - You need to install docker on your machine, see the [documentation](https://docs.docker.com/install/#supported-platforms) for installation instructions.
 - We also assume docker is accessible as a non-root user, remember to complete the [post-install instructions](https://docs.docker.com/install/linux/linux-postinstall/) on linux.
+
+### Setup self-signed certificates for HTTPS
+
+Various new browser technologies require the dev environment to be run via https. For that we need self-signed certificates for the domain you run the dApp in dev mode (most likely `localhost` or `127.0.0.1`). We also can't just use "untrusted" self-signed certificates as IPFS won't run using those via secure websockets.
+
+So we're using the great [mkcert](https://github.com/FiloSottile/mkcert) tool:
+
+1) Install mkcert using the instructions in their [readme](https://github.com/FiloSottile/mkcert#installation) (mind the note regarding Firefox!)
+2) Install the root CA certificate: `mkcert -install`
+
+Move on to the `provision` step. The needed certificates and corresponding keys will be generated automatically.
+
+If you don't want to do a full provision you can also execute the following command (from the root repo directory):
+```
+mkdir -p ssl && cd ssl && mkcert localhost 127.0.0.1 ::1
+```
+
+This will create the certificate files needed.
 
 ### Provision dependent libraries
 
@@ -23,7 +46,7 @@ This project depends on external libraries, so after cloning, they need to be pr
 yarn provision
 ```
 
-Under the hood, this will initialize the `submodule`s, install their packages, and build them.
+Under the hood, this will initialize the `submodule`s, install their packages, and build them. Furthermore this will create the SSL certificate needed to run the dev server
 
 ### Install packages
 
@@ -55,13 +78,22 @@ console.log(MY_API_URL); // https://my-api-url.example.com/api
 yarn dev
 ```
 
-Webpack dev server will be available under http://localhost:8080
+This will run the _whole stack_ which starts `ganache`, deploys the contracts, starts `trufflepig` and `webpack`. The webpack dev server will be available under `https://localhost:9090` (mind the `s` after `http`!)
+
+You can run these individually using the following commands:
+
+```
+yarn ganache
+yarn contracts:deploy
+yarn trufflepig
+yarn webpack
+```
 
 ## Building the bundle locally
 
 If you want to build the bundle locally for inspection, you can do it via:
 ```bash
-yarn build
+yarn webpack:build
 ````
 
 _Note: It's a straight-up dev build. Just bundled, no code optimizations whatsoever._

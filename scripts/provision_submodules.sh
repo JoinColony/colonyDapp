@@ -19,7 +19,7 @@ done
 LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
-PINNING="pinningService"
+PINNING="pinion"
 
 ROOT_PATH=$(pwd)
 
@@ -31,6 +31,13 @@ log() {
   BOLD=`tput bold`
   echo "${GREEN}${BOLD}$1${NC}"
 }
+
+log "Generating ssl certificate"
+if [ ! -f ssl/localhost+2.pem ]; then
+  cd ssl && mkcert localhost 127.0.0.1 ::1
+else
+  echo "Certificate already exists"
+fi
 
 # Update / re-pull submodules
 log "Initialize submodule libs"

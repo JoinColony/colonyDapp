@@ -52,7 +52,7 @@ jobs:
           path: reports
       - run:
           name: "Building library"
-          command: yarn build
+          command: yarn webpack:build
       - run:
           name: "Uploading updated lockfile"
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
@@ -103,7 +103,6 @@ jobs:
   integration-testing:
     docker:
       - image: circleci/node:10.12
-      - image: redis:4.0
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -123,10 +122,6 @@ jobs:
       - run:
           name: "Linting Javascript"
           command: yarn lint:ci
-      - run:
-          name: "Start pinningService Integration mode"
-          command: "yarn test:integration:ci:start-pinning"
-          background: true
       - run:
           name: "Running Integration Tests"
           command: |
@@ -188,7 +183,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run: yarn install
-      - run: yarn build:styleguide
+      - run: yarn styleguide:build
       - persist_to_workspace:
           root: .
           paths:
@@ -220,7 +215,7 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
       - run: git config user.email "github@colony.io"
       - run: git config user.name "Colony Superuser"
-      - run: yarn deploy:styleguide
+      - run: yarn styleguide:deploy
 
 workflows:
   version: 2

@@ -6,6 +6,9 @@ import type { StoreType } from './index';
 import type { Identity } from './Identity';
 
 export interface OrbitDBStore {
+  _oplog: {
+    _length: number,
+  };
   address: { root: string, path: string };
   key: any;
   type: StoreType;

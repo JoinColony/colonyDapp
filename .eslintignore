@@ -6,4 +6,4 @@ plopfile.js
 postcss.config.js
 webpack.config.*
 src/lib/colonyNetwork
-src/lib/pinningService
+src/lib/pinion

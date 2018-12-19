@@ -35,6 +35,7 @@ import {
 } from '../stores';
 
 import {
+  CURRENT_USER_CREATE_ERROR,
   USER_PROFILE_FETCH,
   USER_PROFILE_FETCH_SUCCESS,
   USER_PROFILE_FETCH_ERROR,
@@ -77,7 +78,15 @@ export function* getOrCreateUserStore(walletAddress: Address): Saga<KVStore> {
   );
 
   if (profileStore) {
-    yield call([profileStore, profileStore.load]);
+    // TODO: handle return value of load
+    try {
+      yield call([profileStore, profileStore.load]);
+    } catch (e) {
+      return yield putError(
+        CURRENT_USER_CREATE_ERROR,
+        new Error('Could not load user store'),
+      );
+    }
     return profileStore;
   }
 

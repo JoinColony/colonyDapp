@@ -11,3 +11,4 @@ ganache-accounts.json
 /dist
 /styleguide
 .dappPids.json
+/ssl/*.pem

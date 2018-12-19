@@ -3,13 +3,12 @@ import * as yup from 'yup';
 import { create as createWallet } from '@colony/purser-software';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 import { KVStore } from '../src/lib/database/stores';
-import DDBTestFactory from './utils/DDBTestFactory';
 import '../src/modules/validations';
 import { DDB } from '../src/lib/database';
 
-import { getAll } from '../src/lib/database/commands';
+import createIPFSNode from './utils/createIPFSNode';
 
-const factory = new DDBTestFactory('kvstore.test');
+import { getAll } from '../src/lib/database/commands';
 
 const kvBlueprint = {
   getAccessController() {},
@@ -25,17 +24,18 @@ test.before(async t => {
   const wallet = await createWallet();
 
   const identityProvider = new PurserIdentityProvider(wallet);
-  const ipfs = await factory.node('kvStore');
-  const ddb = await DDB.createDatabase(ipfs, identityProvider);
+  const ipfsNode = await createIPFSNode();
+  const ddb = new DDB(ipfsNode, identityProvider);
+  await ddb.init();
   t.context = {
     ddb,
-    ipfs,
+    ipfsNode,
     wallet,
   };
 });
 
 test.after.always(async t => {
-  await t.context.ipfs.stop();
+  await t.context.ipfsNode.stop();
   await t.context.ddb.stop();
 });
 

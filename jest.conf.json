@@ -15,8 +15,7 @@
     },
     "setupFiles": [
         "<rootDir>/__tests__/setup.js",
-        "<rootDir>/__tests__/shims.js",
-        "<rootDir>/__tests__/patch-node-crypto.js"
+        "<rootDir>/__tests__/shims.js"
     ],
     "setupTestFrameworkScriptFile": "jest-enzyme",
     "collectCoverageFrom" : ["**/*.{js,jsx}"],
@@ -29,12 +28,12 @@
     "testPathIgnorePatterns": [
         "node_modules",
         "src/lib/colonyNetwork",
-        "src/lib/pinningService"
+        "src/lib/pinion"
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
         "src/data",
         "src/lib/colonyNetwork",
-        "src/lib/pinningService"
+        "src/lib/pinion"
     ]
 }

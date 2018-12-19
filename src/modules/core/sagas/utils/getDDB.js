@@ -17,7 +17,8 @@ export default function* getDDB(): Generator<*, DDBClass, *> {
   }
 
   const identityProvider = yield create(PurserIdentityProvider, wallet);
-  const ddb = yield call(DDB.createDatabase, ipfsNode, identityProvider);
+  const ddb: DDB = yield create(DDB, ipfsNode, identityProvider);
+  yield call([ddb, ddb.init]);
 
   return ddb;
 }

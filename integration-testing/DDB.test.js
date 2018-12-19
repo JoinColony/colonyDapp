@@ -2,19 +2,19 @@ import test from 'ava';
 import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
 
-import DDBTestFactory from './utils/DDBTestFactory';
 import '../src/modules/validations';
 import { DDB } from '../src/lib/database';
 import PurserIdentity from '../src/lib/database/PurserIdentity';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 
-const factory = new DDBTestFactory('ddb.test');
+import createIPFSNode from './utils/createIPFSNode';
 
 test.before(async t => {
-  const ipfsNode = await factory.node('ddb1');
+  const ipfsNode = await createIPFSNode();
   const wallet = await createWallet();
   const identityProvider = new PurserIdentityProvider(wallet);
-  const ddb = await DDB.createDatabase(ipfsNode, identityProvider);
+  const ddb = new DDB(ipfsNode, identityProvider);
+  await ddb.init();
   t.context = {
     ddb,
     ipfsNode,
