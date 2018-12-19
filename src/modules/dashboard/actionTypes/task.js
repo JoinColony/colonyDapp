@@ -8,6 +8,10 @@ export const TASK_CREATE_ERROR = `${ns}/TASK_CREATE_ERROR`;
 export const TASK_CREATE_SUCCESS = `${ns}/TASK_CREATE_SUCCESS`;
 export const TASK_CREATE_TRANSACTION_SENT = `${ns}/TASK_CREATE_TRANSACTION_SENT`;
 
+export const TASK_DELETE = `${ns}/TASK_DELETE`;
+export const TASK_DELETE_ERROR = `${ns}/TASK_DELETE_ERROR`;
+export const TASK_DELETE_SUCCESS = `${ns}/TASK_DELETE_SUCCESS`;
+
 export const TASK_EDIT = `${ns}/TASK_EDIT`;
 export const TASK_EDIT_ERROR = `${ns}/TASK_EDIT_ERROR`;
 export const TASK_EDIT_SUCCESS = `${ns}/TASK_EDIT_SUCCESS`;
