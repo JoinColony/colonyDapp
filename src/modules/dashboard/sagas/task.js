@@ -72,6 +72,7 @@ export function* fetchOrCreateTaskStore({
   const blueprint = draft ? draftStore : taskStore;
   if (taskStoreAddress) {
     store = yield call([ddb, ddb.getStore], blueprint, taskStoreAddress);
+    yield call([store, store.load]);
   } else if (colonyAddress) {
     // get the colony
     const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
@@ -88,10 +89,10 @@ export function* fetchOrCreateTaskStore({
     // get the tasks database, stored under 'tasksDatabase' even if drafts
     const tasksAddress = yield call([domain, domain.get], 'tasksDatabase');
     store = yield call([ddb, ddb.getStore], blueprint, tasksAddress);
+    yield call([store, store.load]);
   } else {
     store = yield call([ddb, ddb.createStore], blueprint);
   }
-  yield call([store, store.load]);
   return store;
 }
 
@@ -162,7 +163,7 @@ function* guessRating(
   return correctRating;
 }
 
-function* taskCreateSaga(action: Action): Saga<void> {
+function* createTaskSaga(action: Action): Saga<void> {
   const { colonyAddress, domainAddress, task } = action.payload;
 
   try {
@@ -199,7 +200,7 @@ function* taskCreateSaga(action: Action): Saga<void> {
   }
 }
 
-function* taskEditSaga(action: Action): Saga<void> {
+function* editTaskSaga(action: Action): Saga<void> {
   const {
     colonyIdentifier,
     orbitDBPath,
@@ -405,15 +406,15 @@ function* taskWorkerClaimRewardSaga(action: Action): Saga<void> {
   );
 }
 
-function* taskFinalizeSaga(action: Action): Saga<void> {
+function* finalizeTaskSaga(action: Action): Saga<void> {
   const { taskId, colonyENSName } = action.payload;
 
   yield put(taskFinalize(colonyENSName, { taskId }));
 }
 
 export default function* taskSagas(): any {
-  yield takeEvery(TASK_CREATE, taskCreateSaga);
-  yield takeEvery(TASK_EDIT, taskEditSaga);
+  yield takeEvery(TASK_CREATE, createTaskSaga);
+  yield takeEvery(TASK_EDIT, editTaskSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
@@ -427,5 +428,5 @@ export default function* taskSagas(): any {
     taskManagerRevealRatingSaga,
   );
   yield takeEvery(TASK_WORKER_CLAIM_REWARD, taskWorkerClaimRewardSaga);
-  yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
+  yield takeEvery(TASK_FINALIZE, finalizeTaskSaga);
 }
