@@ -34,7 +34,7 @@ log() {
 
 log "Generating ssl certificate"
 if [ ! -f ssl/localhost+2.pem ]; then
-  cd ssl && mkcert localhost 127.0.0.1 ::1
+  cd ssl && mkcert localhost 127.0.0.1 ::1 && cd ${ROOT_PATH}
 else
   echo "Certificate already exists"
 fi
