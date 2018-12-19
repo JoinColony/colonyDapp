@@ -1,15 +1,15 @@
 /* @flow */
 
-import type { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMap, List } from 'immutable';
 
 import ns from '../namespace';
 
 import type { ENSName } from '~types';
-import type { ColonyTransactionRecord } from '~immutable';
+import type { ContractTransactionRecord } from '~immutable';
 
 type RootState = {
   [typeof ns]: {
-    transactions: ImmutableMap<ENSName, Array<ColonyTransactionRecord>>,
+    transactions: ImmutableMap<ENSName, List<ContractTransactionRecord>>,
   },
 };
 

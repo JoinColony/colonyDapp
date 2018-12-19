@@ -2,13 +2,15 @@
 
 import React from 'react';
 
+import type { List } from 'immutable';
+
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
 import TransactionListItem from './TransactionListItem.jsx';
 
 import type { MessageDescriptor } from 'react-intl';
-import type { TransactionType } from '~types';
+import type { ContractTransactionRecord } from '~immutable';
 
 type Props = {
   /*
@@ -18,7 +20,7 @@ type Props = {
   /*
    *
    */
-  transactions: Array<TransactionType>,
+  transactions: List<ContractTransactionRecord>,
   /*
    * The user's address will always be shown, this just controls if it's
    * shown in full, or masked.
@@ -29,7 +31,7 @@ type Props = {
    * Method to call when clicking the 'Claim' button
    * Only by setting this method, will the actual button show up
    */
-  onClaim?: TransactionType => any,
+  onClaim?: ContractTransactionRecord => any,
   /*
    * If to show the button to link to etherscan (or not)
    *
@@ -49,7 +51,7 @@ const TransactionList = ({
   linkToEtherscan = true,
 }: Props) => (
   <div>
-    {transactions && transactions.length ? (
+    {transactions && transactions.size ? (
       <div>
         {label && (
           <Heading
@@ -59,9 +61,9 @@ const TransactionList = ({
         )}
         <Table scrollable>
           <TableBody>
-            {transactions.map((transaction: TransactionType) => (
+            {transactions.map(transaction => (
               <TransactionListItem
-                key={transaction.nonce}
+                key={transaction.id}
                 transaction={transaction}
                 showMaskedAddress={showMaskedAddress}
                 incoming={transaction.incoming}

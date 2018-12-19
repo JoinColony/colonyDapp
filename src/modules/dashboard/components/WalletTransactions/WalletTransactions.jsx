@@ -3,11 +3,13 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { List } from 'immutable';
+
 import TransactionList from '~core/TransactionList';
 
 import styles from './WalletTransactions.css';
 
-import type { TransactionType } from '~types';
+import type { ContractTransactionRecord } from '~immutable';
 
 const MSG = defineMessages({
   transactionsEmptyTitle: {
@@ -25,13 +27,13 @@ const MSG = defineMessages({
 const displayName = 'dashboard.WalletTransactions';
 
 type Props = {
-  transactions: Array<TransactionType>,
+  transactions: List<ContractTransactionRecord>,
   userAddress: string,
 };
 
 const WalletTransactions = ({ transactions, userAddress }: Props) => (
   <div className={styles.main}>
-    {transactions.length ? (
+    {transactions.size ? (
       <TransactionList
         currentAddress={userAddress}
         transactions={transactions}

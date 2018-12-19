@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
-import { compose, mapProps } from 'recompose';
+import { compose, withProps } from 'recompose';
 
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
@@ -15,9 +15,9 @@ import { withColony, withTask, withToken, withUser } from '../../hocs';
 
 import styles from './TransactionListItem.css';
 
-import type { TransactionType } from '~types';
 import type {
   ColonyRecord,
+  ContractTransactionRecord,
   TaskRecord,
   TokenRecord,
   UserRecord,
@@ -48,7 +48,7 @@ type Props = {
   /*
    * User data Object, follows the same format as UserPicker
    */
-  transaction: TransactionType,
+  transaction: ContractTransactionRecord,
   colony?: ColonyRecord,
   task?: TaskRecord,
   token?: TokenRecord,
@@ -70,7 +70,7 @@ type Props = {
    * Method to call when clicking the 'Claim' button
    * Only by setting this method, will the actual button show up
    */
-  onClaim?: TransactionType => any,
+  onClaim?: ContractTransactionRecord => any,
   /*
    * If to show the button to link to etherscan (or not)
    *
@@ -161,12 +161,11 @@ const TransactionListItem = ({
 TransactionListItem.displayName = displayName;
 
 export default compose(
-  mapProps(props => ({
-    ...props,
-    ensName: props.transaction.colonyENSName,
-    taskId: props.transaction.taskId,
-    tokenAddress: props.transaction.tokenAddress,
-    userAddress: props.transaction.userAddress,
+  withProps(({ transaction: { colonyENSName, taskId, token, from, to } }) => ({
+    ensName: colonyENSName,
+    taskId,
+    tokenAddress: token,
+    userAddress: from || to,
   })),
   withColony,
   withTask,

@@ -5,7 +5,7 @@ import type { Saga } from 'redux-saga';
 import { call, getContext, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~types';
-import type { ColonyTransactionProps } from '~immutable';
+import type { ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
 
@@ -16,13 +16,13 @@ import {
 } from '../actionTypes';
 
 function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
-  const { ensName } = action.payload;
+  const { ensName: colonyENSName } = action.payload;
   const colonyManager = yield getContext('colonyManager');
 
   try {
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      ensName,
+      colonyENSName,
     );
     const { provider } = colonyClient.adapter;
 
@@ -40,7 +40,7 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
     const logs = yield call([colonyClient, colonyClient.getLogs], filter);
     const events = yield call([colonyClient, colonyClient.parseLogs], logs);
 
-    const transactions: Array<ColonyTransactionProps> = [];
+    const transactions: Array<ContractTransactionProps> = [];
     for (let i = 0; i < events.length; i += 1) {
       const { eventName } = events[i];
       const { transactionHash, blockHash } = logs[i];
@@ -48,58 +48,64 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
         [provider, provider.getBlock],
         blockHash,
       );
+      const date = new Date(timestamp);
       if (eventName === 'ColonyFundsClaimed') {
         const { payoutRemainder: amount, token } = events[i];
-        const { address: to } = logs[i];
         const { from } = yield call(
           [provider, provider.getTransaction],
           transactionHash,
         );
         transactions.push({
           amount,
+          colonyENSName,
+          date,
           from,
-          to,
-          token,
+          id: transactionHash,
           incoming: true,
-          date: new Date(timestamp),
-          transactionHash,
+          token,
+          hash: transactionHash,
         });
       } else if (eventName === 'ColonyFundsMovedBetweenFundingPots') {
-        // const { amount, fromPot, token, toPot } = events[i];
+        const { amount, fromPot, token } = events[i];
+        // TODO: replace this once able to get taskId from potId
+        const taskId = 1;
         // const [, taskId] = yield call(
         //   [colonyClient.contract, colonyClient.contract.pots],
-        //   fromPot === 1 ? toPot : fromPot,
+        //   events[i].fromPot === 1 ? events[i].toPot : events[i].fromPot,
         // );
-        // transactions.push({
-        //   amount,
-        //   taskId,
-        //   token,
-        //   incoming: fromPot !== 1,
-        //   date: new Date(timestamp),
-        //   transactionHash,
-        // });
+        transactions.push({
+          amount,
+          colonyENSName,
+          date,
+          id: transactionHash,
+          incoming: fromPot !== 1,
+          taskId,
+          token,
+          hash: transactionHash,
+        });
       } else if (eventName === 'TaskPayoutClaimed') {
         const { taskId, role, amount, token } = events[i];
         const { address: to } = yield callCaller({
-          colonyENSName: ensName,
+          colonyENSName,
           methodName: 'getTaskRole',
           params: { taskId, role },
         });
         transactions.push({
           amount,
+          date,
+          id: transactionHash,
+          incoming: false,
           taskId,
           to,
           token,
-          incoming: false,
-          date: new Date(timestamp),
-          transactionHash,
+          hash: transactionHash,
         });
       }
     }
 
     yield put({
       type: COLONY_FETCH_TRANSACTIONS_SUCCESS,
-      payload: { transactions, ensName },
+      payload: { transactions, ensName: colonyENSName },
     });
   } catch (error) {
     yield putError(COLONY_FETCH_TRANSACTIONS_ERROR, error);
