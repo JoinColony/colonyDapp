@@ -3,6 +3,7 @@
 export { default as ActivityFeedItem } from './ActivityFeedItem';
 export { default as Colony } from './Colony';
 export { default as Domain } from './Domain';
+export { default as Domains } from './Domains';
 export { default as Draft } from './Draft';
 export { default as Skill } from './Skill';
 export { default as Task } from './Task';
@@ -22,6 +23,7 @@ export * from './constants';
 export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './Domain';
+export * from './Domains';
 export * from './Draft';
 export * from './Skill';
 export * from './Task';
