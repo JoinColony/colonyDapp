@@ -19,7 +19,7 @@
         "scaffold": "plop",
         "styleguide": "styleguidist server",
         "styleguide:build": "styleguidist build",
-        "styleguide:depoly": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git",
+        "styleguide:deploy": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git",
         "stylelint": "stylelint --fix \"src/**/*.css\"",
         "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
         "test": "jest --config=jest.conf.json",
