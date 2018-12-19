@@ -3,14 +3,15 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { List } from 'immutable';
+
 import Heading from '~core/Heading';
 
 import TransactionList from '~core/TransactionList';
 
 import styles from './Transactions.css';
 
-import type { TransactionType } from '~types';
-import type { ColonyRecord } from '~immutable';
+import type { ColonyRecord, ContractTransactionRecord } from '~immutable';
 
 const MSG = defineMessages({
   transactionsTitle: {
@@ -31,7 +32,7 @@ const displayName = 'admin.Transactions';
 
 type Props = {
   colony: ColonyRecord,
-  transactions: Array<TransactionType>,
+  transactions: List<ContractTransactionRecord>,
 };
 
 /*
@@ -41,7 +42,7 @@ type Props = {
 
 const Transactions = ({
   colony: { address: colonyAddress },
-  transactions, // eslint-disable-line no-unused-vars
+  transactions,
 }: Props) => (
   <div className={styles.main}>
     <div className={styles.titleContainer}>
@@ -64,7 +65,7 @@ const Transactions = ({
       ) : null} */}
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
-          label={MSG.transactionHistoryTitle}
+          // label={MSG.transactionHistoryTitle}
           currentAddress={colonyAddress}
           transactions={transactions}
           linkToEtherscan

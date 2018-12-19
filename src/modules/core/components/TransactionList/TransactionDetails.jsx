@@ -8,8 +8,12 @@ import Link from '~core/Link';
 
 import styles from './TransactionDetails.css';
 
-import type { TransactionType } from '~types';
-import type { ColonyRecord, TaskRecord, UserRecord } from '~immutable';
+import type {
+  ColonyRecord,
+  ContractTransactionRecord,
+  TaskRecord,
+  UserRecord,
+} from '~immutable';
 
 const MSG = defineMessages({
   fromText: {
@@ -31,7 +35,7 @@ type Props = {
   /*
    * User data Object, follows the same format as UserPicker
    */
-  transaction: TransactionType,
+  transaction: ContractTransactionRecord,
   colony?: ColonyRecord,
   task?: TaskRecord,
   user?: UserRecord,

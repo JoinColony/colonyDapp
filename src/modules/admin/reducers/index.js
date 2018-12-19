@@ -4,8 +4,8 @@ import { combineReducers } from 'redux';
 
 import transactionsReducer from './transactions';
 
-const coreReducer = combineReducers({
+const adminReducer = combineReducers({
   transactions: transactionsReducer,
 });
 
-export default coreReducer;
+export default adminReducer;

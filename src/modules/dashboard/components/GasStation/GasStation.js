@@ -5,7 +5,7 @@ import { compose, withProps } from 'recompose';
 
 import GasStation from './GasStation.jsx';
 
-import mockTransactions from '~dashboard/Wallet/__datamocks__/mockTransactions';
+import mockTransactions from './__datamocks__/mockTransactions';
 import mockUser from '~dashboard/Wallet/__datamocks__/mockUser';
 
 export type InProps = {
