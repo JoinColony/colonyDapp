@@ -8,7 +8,25 @@ import type { StoreBlueprint } from '~types';
 
 const domainStore: StoreBlueprint = {
   // TODO: implement
-  getAccessController() {},
+  getAccessController() {
+    return {
+      canAppend() {
+        return Promise.resolve(true);
+      },
+      grant() {
+        return Promise.resolve(true);
+      },
+      revoke() {
+        return Promise.resolve(true);
+      },
+      save() {
+        return Promise.resolve('true');
+      },
+      setup() {
+        return Promise.resolve();
+      },
+    };
+  },
   name: 'domain',
   schema: yup.object({
     meta: yup.object({

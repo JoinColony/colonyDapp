@@ -3,11 +3,10 @@ import * as yup from 'yup';
 import { create as createWallet } from '@colony/purser-software';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 import { DocStore } from '../src/lib/database/stores';
-import DDBTestFactory from './utils/DDBTestFactory';
 import '../src/modules/validations';
 import { DDB } from '../src/lib/database';
 
-const factory = new DDBTestFactory('docStore.test');
+import createIPFSNode from './utils/createIPFSNode';
 
 const docBlueprint = {
   getAccessController() {},
@@ -28,8 +27,9 @@ test.before(async t => {
   const wallet = await createWallet();
 
   const identityProvider = new PurserIdentityProvider(wallet);
-  const ipfs = await factory.node('docStore');
-  const ddb = await DDB.createDatabase(ipfs, identityProvider);
+  const ipfs = await createIPFSNode();
+  const ddb = new DDB(ipfs, identityProvider);
+  await ddb.init();
   t.context = {
     ddb,
     ipfs,
