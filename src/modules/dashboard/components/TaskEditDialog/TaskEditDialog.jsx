@@ -130,7 +130,7 @@ const TaskEditDialog = ({
         validationSchema={validateFunding}
         setPayload={setPayload}
       >
-        {({ status, values, dirty, isSubmitting, errors }) => (
+        {({ status, values, dirty, isSubmitting, isValid }) => (
           <Fragment>
             <FormStatus status={status} />
             <DialogBox>
@@ -205,7 +205,7 @@ const TaskEditDialog = ({
                 appearance={{ theme: 'primary', size: 'large' }}
                 text={{ id: 'button.confirm' }}
                 type="submit"
-                disabled={!dirty || !!Object.keys(errors).length}
+                disabled={!dirty || !isValid}
                 loading={isSubmitting}
               />
             </div>
