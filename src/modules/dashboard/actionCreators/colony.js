@@ -16,6 +16,7 @@ import {
   COLONY_CREATE_LABEL_SUCCESS,
   COLONY_FETCH,
   COLONY_AVATAR_FETCH,
+  COLONY_ADMIN_ADD_ERROR,
 } from '../actionTypes';
 
 export const createColony = (
@@ -60,3 +61,20 @@ export const fetchColonyAvatar = (hash: string) => ({
   type: COLONY_AVATAR_FETCH,
   payload: { hash },
 });
+
+export const addColonyAdmin = (
+  identifier: AddressOrENSName,
+  params: {
+    user: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'setAdminRole',
+    identifier,
+    lifecycle: {
+      error: COLONY_ADMIN_ADD_ERROR,
+    },
+  });
