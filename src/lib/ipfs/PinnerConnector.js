@@ -30,7 +30,7 @@ class PinnerConnector extends EventEmitter {
   _outstandingPubsubMessages: Array<PinnerAction>;
 
   // Can be an array in the future
-  _pinnerId: ?string;
+  _pinnerId: string;
 
   _room: string;
 
@@ -40,7 +40,7 @@ class PinnerConnector extends EventEmitter {
 
   _handlePinnerMessageBound: (message: PubsubMessage) => void;
 
-  constructor(ipfs: IPFS, room: string, pinnerId: ?string) {
+  constructor(ipfs: IPFS, room: string, pinnerId: string) {
     super();
     this._ipfs = ipfs;
     if (!this._ipfs.pubsub) {
@@ -60,16 +60,16 @@ class PinnerConnector extends EventEmitter {
     let pinnerAction: PinnerAction;
     try {
       pinnerAction = JSON.parse(message.data);
+      this.emit('action', pinnerAction);
     } catch (e) {
       log(new Error(`Could not parse pinner message: ${message.data}`));
     }
-    this.emit('action', pinnerAction);
   }
 
   _handleNewPeer(peer: string) {
     // If no pinner id was given, everyone can be the pinner! Definitely not recommended.
     // TODO: In the future, we can maintain multiple ids here
-    if (!this._pinnerId || peer === this._pinnerId) {
+    if (peer === this._pinnerId) {
       this.online = true;
       this._flushPinnerMessages();
     }
@@ -123,16 +123,14 @@ class PinnerConnector extends EventEmitter {
   }
 
   async requestPinnedStore(address: string) {
+    let listener;
     const getHeads = new Promise(resolve => {
       this._publishAction({
         type: PIN_ACTIONS.LOAD_STORE,
         payload: { address },
       });
-      const listener = ({ type, to, payload }) => {
-        if (type === PIN_ACTIONS.HAVE_HEADS && to === address) {
-          resolve(payload);
-          this.removeListener('action', listener);
-        }
+      listener = ({ type, to, payload }) => {
+        if (type === PIN_ACTIONS.HAVE_HEADS && to === address) resolve(payload);
       };
       this.on('action', listener);
     });
@@ -140,6 +138,7 @@ class PinnerConnector extends EventEmitter {
       getHeads,
       10000,
       new Error('Pinner did not react in time'),
+      () => this.removeListener('action', listener),
     );
   }
 

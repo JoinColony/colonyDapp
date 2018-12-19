@@ -12,7 +12,9 @@ import type { B58String, IPFSNodeOptions, IPFSPeer } from './types';
 import PinnerConnector from './PinnerConnector';
 
 const PINNING_ROOM = process.env.PINNING_ROOM || 'COLONY_PINNING_ROOM';
-const { PINNER_ID } = process.env;
+// The latter is the pinner id of our dev pinner
+const PINNER_ID =
+  process.env.PINNER_ID || 'QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6';
 
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
@@ -53,6 +55,11 @@ class IPFSNode {
 
   async connectPinner() {
     await this.ready;
+    if (!PINNER_ID) {
+      throw new Error(
+        'No pinner id specified in environment variables. But we need one.',
+      );
+    }
     this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM, PINNER_ID);
     await this.pinner.init();
   }
