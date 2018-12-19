@@ -2,8 +2,6 @@
 
 import type { ObjectSchema } from 'yup';
 
-import EventEmitter from 'events';
-
 import { raceAgainstTimeout } from '../../../utils/async';
 
 import type { OrbitDBStore } from '../types';
@@ -14,7 +12,7 @@ import PinnerConnector from '../../ipfs/PinnerConnector';
  * A parent class for a wrapper around an orbit store that can hold its schema
  * and perform certain validations based on the store type.
  */
-class Store extends EventEmitter {
+class Store {
   static orbitType: string;
 
   +_orbitStore: OrbitDBStore;
@@ -31,7 +29,6 @@ class Store extends EventEmitter {
     schema: ObjectSchema,
     pinner: PinnerConnector,
   ) {
-    super();
     this._orbitStore = orbitStore;
     this._name = name;
     this._pinner = pinner;
