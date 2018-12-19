@@ -33,6 +33,7 @@ const defaultValues: $Shape<ColonyProps> = {
   token: Token(),
   version: undefined,
   website: undefined,
+  admins: {},
 };
 
 const Colony: RecordFactory<ColonyProps> = Record(defaultValues);
