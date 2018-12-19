@@ -9,6 +9,7 @@ import type { Action } from '~types';
 import {
   DOMAIN_FETCH_SUCCESS,
   DRAFT_CREATE_SUCCESS,
+  DRAFT_DELETE_SUCCESS,
   DRAFT_FETCH_SUCCESS,
   TASK_CREATE_SUCCESS,
   TASK_DELETE_SUCCESS,
@@ -36,13 +37,10 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
         }),
       );
     }
+    case DRAFT_DELETE_SUCCESS:
     case TASK_DELETE_SUCCESS: {
-      const {
-        ensName,
-        domainId,
-        draft: { id },
-      } = action.payload;
-      return state.removeIn([ensName, domainId, 'tasks', id]);
+      const { ensName, domainId, taskId } = action.payload;
+      return state.removeIn([ensName, domainId, 'tasks', taskId]);
     }
     case DRAFT_FETCH_SUCCESS:
     case DRAFT_CREATE_SUCCESS: {
