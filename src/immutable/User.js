@@ -1,9 +1,8 @@
 /* @flow */
 
-import { List } from 'immutable';
+import { List, Record } from 'immutable';
 
 import UserProfile from './UserProfile';
-import makeDataClass from './makeDataClass';
 
 import type { UserActivityRecord } from './UserActivity';
 import type { UserProfileRecord } from './UserProfile';
@@ -20,7 +19,7 @@ const defaultValues: $Shape<UserProps> = {
   activities: defaultActivities,
 };
 
-class UserClass extends makeDataClass<UserProps>(defaultValues) {
+class UserClass extends Record<UserProps>(defaultValues) {
   /* eslint-disable */
   /*::
   activities: List<UserActivityRecord>;

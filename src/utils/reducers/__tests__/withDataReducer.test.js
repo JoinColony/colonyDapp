@@ -1,8 +1,5 @@
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Record } from 'immutable';
 import createSandbox from 'jest-sandbox';
-
-// eslint-disable-next-line
-import { makeDataClass } from '../../../immutable';
 
 import withDataReducer from '../withDataReducer';
 
@@ -21,15 +18,14 @@ describe('reducers - withDataReducer', () => {
     };
 
     // Create a record factory
-    class MyRecordClass extends makeDataClass(defaultValues) {}
-    const MyRecord = props => new MyRecordClass(props);
+    const MyRecord = Record(defaultValues);
 
     // Create a reducer we can wrap
     const myReducer = sandbox.fn((state, action) => {
       switch (action.type) {
         case 'MY_OTHER_ACTION': {
           const { key, c } = action.payload;
-          return state.setIn([key, 'c'], c);
+          return state.setIn([key, 'record', 'c'], c);
         }
         default:
           return state;
@@ -44,7 +40,7 @@ describe('reducers - withDataReducer', () => {
 
     // The `withDataReducer` spec
     const successReducer = sandbox.fn((state, { payload: { key, props } }) =>
-      state.set(key, MyRecord(props)),
+      state.setIn([key, 'record'], MyRecord(props)),
     );
     const spec = {
       fetch: MY_FETCH_ACTION,
@@ -63,7 +59,7 @@ describe('reducers - withDataReducer', () => {
 
     const errorAction = {
       type: MY_FETCH_ERROR_ACTION,
-      payload: { key: 'myKey', error: 'fetch error' },
+      payload: { meta: { key: 'myKey' }, error: { id: 'fetch error' } },
     };
 
     const successAction = {
@@ -81,9 +77,7 @@ describe('reducers - withDataReducer', () => {
       const fetchState = myWrappedReducer(initialState, fetchAction);
       expect(fetchState.has('myKey')).toBe(true);
       expect(fetchState.get('myKey').toJS()).toEqual({
-        a: 0,
-        b: 0,
-        c: undefined,
+        record: undefined,
         error: undefined,
         isFetching: true,
       });
@@ -94,9 +88,11 @@ describe('reducers - withDataReducer', () => {
       const successState = myWrappedReducer(fetchState, successAction);
       expect(successState.has('myKey')).toBe(true);
       expect(successState.get('myKey').toJS()).toEqual({
-        a: 1,
-        b: 1,
-        c: undefined,
+        record: {
+          a: 1,
+          b: 1,
+          c: undefined,
+        },
         error: undefined,
         isFetching: false,
       });
@@ -108,9 +104,11 @@ describe('reducers - withDataReducer', () => {
       const otherState = myWrappedReducer(successState, otherAction);
       expect(otherState.has('myKey')).toBe(true);
       expect(otherState.get('myKey').toJS()).toEqual({
-        a: 1,
-        b: 1,
-        c: 1,
+        record: {
+          a: 1,
+          b: 1,
+          c: 1,
+        },
         error: undefined,
         isFetching: false,
       });
@@ -124,9 +122,7 @@ describe('reducers - withDataReducer', () => {
       const fetchState = myWrappedReducer(initialState, fetchAction);
       expect(fetchState.has('myKey')).toBe(true);
       expect(fetchState.get('myKey').toJS()).toEqual({
-        a: 0,
-        b: 0,
-        c: undefined,
+        record: undefined,
         error: undefined,
         isFetching: true,
       });
@@ -137,9 +133,7 @@ describe('reducers - withDataReducer', () => {
       const errorState = myWrappedReducer(fetchState, errorAction);
       expect(errorState.has('myKey')).toBe(true);
       expect(errorState.get('myKey').toJS()).toEqual({
-        a: 0,
-        b: 0,
-        c: undefined,
+        record: undefined,
         error: 'fetch error',
         isFetching: false,
       });
@@ -158,9 +152,7 @@ describe('reducers - withDataReducer', () => {
 
       const errorState = myWrappedReducer(fetchState, errorAction);
       expect(errorState.get('myKey').toJS()).toEqual({
-        a: 0,
-        b: 0,
-        c: undefined,
+        record: undefined,
         error: 'fetch error',
         isFetching: false,
       });
@@ -170,9 +162,11 @@ describe('reducers - withDataReducer', () => {
 
       const successState = myWrappedReducer(errorState, successAction);
       expect(successState.get('myKey').toJS()).toEqual({
-        a: 1,
-        b: 1,
-        c: undefined,
+        record: {
+          a: 1,
+          b: 1,
+          c: undefined,
+        },
         error: undefined, // removed
         isFetching: false,
       });
@@ -187,9 +181,7 @@ describe('reducers - withDataReducer', () => {
       const fetchOneState = myWrappedReducer(initialState, fetchAction);
       expect(fetchOneState.has('myKey')).toBe(true);
       expect(fetchOneState.get('myKey').toJS()).toEqual({
-        a: 0,
-        b: 0,
-        c: undefined,
+        record: undefined,
         error: undefined,
         isFetching: true,
       });
@@ -200,9 +192,7 @@ describe('reducers - withDataReducer', () => {
       const fetchTwoState = myWrappedReducer(fetchOneState, fetchAction);
       expect(fetchTwoState.has('myKey')).toBe(true);
       expect(fetchTwoState.get('myKey').toJS()).toEqual({
-        a: 0,
-        b: 0,
-        c: undefined,
+        record: undefined,
         error: undefined,
         isFetching: true,
       });
@@ -216,9 +206,11 @@ describe('reducers - withDataReducer', () => {
       };
       const successOneState = myWrappedReducer(fetchTwoState, successOneAction);
       expect(successOneState.get('myKey').toJS()).toEqual({
-        a: 20,
-        b: 0,
-        c: undefined,
+        record: {
+          a: 20,
+          b: 0,
+          c: undefined,
+        },
         error: undefined,
         isFetching: false,
       });
@@ -239,9 +231,11 @@ describe('reducers - withDataReducer', () => {
         successTwoAction,
       );
       expect(successTwoState.get('myKey').toJS()).toEqual({
-        a: 0, // should have been set to default, because the success reducer does not merge
-        b: 2000,
-        c: undefined,
+        record: {
+          a: 0, // should have been set to default, because the success reducer does not merge
+          b: 2000,
+          c: undefined,
+        },
         error: undefined,
         isFetching: false,
       });
@@ -263,9 +257,11 @@ describe('reducers - withDataReducer', () => {
         successThreeAction,
       );
       expect(successThreeState.get('myKey').toJS()).toEqual({
-        a: 5000,
-        b: 0, // should have been set to default, because the success reducer does not merge
-        c: undefined,
+        record: {
+          a: 5000,
+          b: 0, // should have been set to default, because the success reducer does not merge
+          c: undefined,
+        },
         error: undefined,
         isFetching: false,
       });

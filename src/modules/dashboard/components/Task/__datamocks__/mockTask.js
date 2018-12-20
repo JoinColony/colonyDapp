@@ -64,6 +64,7 @@ export const mockTask = Task({
 
     TaskFeedItem({
       id: 1,
+      createdAt: new Date('2018-09-16'),
       comment: TaskFeedItemComment({
         body:
           'This is another comment, this time with a link to https://colony.io!',
