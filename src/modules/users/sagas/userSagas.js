@@ -252,7 +252,7 @@ function* fetchProfile(action: Action): Saga<void> {
       payload: { key: username, props: user },
     });
   } catch (error) {
-    yield putError(USER_PROFILE_FETCH_ERROR, error);
+    yield putError(USER_PROFILE_FETCH_ERROR, error, { key: username });
   }
 }
 

@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
+
+import { Data } from '../../immutable';
+
+import type { DataMap } from '../../immutable';
 
 export type DataAction<K: any> = {
   type: string,
@@ -10,20 +14,19 @@ export type DataAction<K: any> = {
   } & Object,
 };
 
-export type DataRecordMap<K: *, R: *> = ImmutableMap<K, R>;
-
 export type DataReducer<K: any, R: *> = (
-  state: DataRecordMap<K, R>,
+  state: DataMap<K, R>,
   action: DataAction<K>,
-) => DataRecordMap<K, R>;
+) => DataMap<K, R>;
 
-const handleFetch = (state, action, record) => {
+const handleFetch = (state, action) => {
   const {
     payload: { key },
   } = action;
-  return state.update(key, record(), currentRecord =>
-    currentRecord.set('isFetching', true),
-  );
+  const props = { isFetching: true };
+  return state.has(key)
+    ? state.mergeIn([key], props)
+    : state.set(key, Data(props));
 };
 
 const handleSuccess = (state, action, successReducer) => {
@@ -36,9 +39,20 @@ const handleSuccess = (state, action, successReducer) => {
   });
 };
 
-const handleError = (state, { payload: { key, error } }) =>
-  // Ignore the error if the key doesn't exist already
-  state.has(key) ? state.mergeIn([key], { error, isFetching: false }) : state;
+const handleError = (
+  state,
+  {
+    payload: {
+      error: { id: error },
+      meta: { key },
+    },
+  },
+) => {
+  const props = { isFetching: false, error };
+  return state.has(key)
+    ? state.mergeIn([key], props)
+    : state.set(key, Data(props));
+};
 
 /*
  * Higher-order reducer to create a map of records with information about
@@ -58,8 +72,6 @@ const handleError = (state, { payload: { key, error } }) =>
  * state => action reducer, which is run as the first step when this
  * action is reduced).
  *
- * {record} The record factory function for the state (e.g. `Colony`).
- *
  * ---------------------------
  * Parameters (inner function)
  * ---------------------------
@@ -71,29 +83,26 @@ const handleError = (state, { payload: { key, error } }) =>
  * {K} Key of the map, e.g. `ENSName`
  * {R} The record type, e.g. `ColonyRecord`
  */
-const withDataReducer = <K: any, R: *>(
-  {
-    fetch,
-    error,
-    success,
-  }: {
-    fetch: Set<string> | string,
-    error: Set<string> | string,
-    success: Map<string, ?DataReducer<K, R>>,
-  },
-  record: any => R,
-) => (wrappedReducer: DataReducer<K, R>): DataReducer<K, R> => {
+const withDataReducer = <K: any, R: *>({
+  fetch,
+  error,
+  success,
+}: {
+  fetch: Set<string> | string,
+  error: Set<string> | string, // TODO handle timeout separately?
+  success: Map<string, ?DataReducer<K, R>>,
+}) => (wrappedReducer: DataReducer<K, R>): DataReducer<K, R> => {
   // Create groups of props actions from the given spec.
   const fetchActions = typeof fetch === 'string' ? new Set([fetch]) : fetch;
   const errorActions = typeof error === 'string' ? new Set([error]) : error;
 
   // Return a wrapped reducer.
-  return (state, action) => {
+  return (state = new ImmutableMap(), action) => {
     let nextState = state;
 
     // If the action matches a fetch/success/error type, set the next state.
     if (fetchActions.has(action.type)) {
-      nextState = handleFetch(state, action, record);
+      nextState = handleFetch(state, action);
     } else if (success.has(action.type)) {
       const reducer = success.get(action.type);
       // "Should not happen ;)" but here for flow

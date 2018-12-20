@@ -3,20 +3,18 @@
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
-import { singleColonySelector } from '../../dashboard/selectors';
+import {
+  routerColonySelector,
+  ensNameFromRouter,
+} from '../../dashboard/selectors';
 import { fetchColony } from '../../dashboard/actionCreators';
 import fetchMissingColony from './fetchMissingColony';
 
-import type { ENSName } from '~types';
-
 const withColonyFromRoute = compose(
   connect(
-    (
-      state: *,
-      { params: { ensName } = {} }: { params: { ensName: ENSName } },
-    ) => ({
-      colony: singleColonySelector(state, ensName),
-      ensName,
+    (state, props) => ({
+      colony: routerColonySelector(state, props),
+      ensName: ensNameFromRouter(state, props),
     }),
     {
       fetchColony,

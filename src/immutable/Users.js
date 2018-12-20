@@ -5,11 +5,11 @@ import type { RecordFactory, RecordOf } from 'immutable';
 import { Map as ImmutableMap, Record } from 'immutable';
 
 import type { UserRecord } from './User';
-import type { DataRecordMap } from '~utils/reducers';
+import type { DataMap } from './DataMap';
 
 export type UsersProps = {
   avatars: ImmutableMap<string, string>, // username => avatarHash
-  users: DataRecordMap<string, UserRecord>, // username => UserRecord
+  users: DataMap<string, UserRecord>, // username => DataRecord<UserRecord>
 };
 
 export type UsersRecord = RecordOf<UsersProps>;

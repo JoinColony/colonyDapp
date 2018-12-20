@@ -2,17 +2,16 @@
 
 import { branch, lifecycle } from 'recompose';
 
+const shouldFetchColony = ({ colony, ensName }) =>
+  ensName &&
+  (!colony || (!colony.record && !(colony.isFetching || colony.error)));
+
 const fetchMissingColony = branch(
-  ({ colony }) => !(colony && colony.isReady),
+  shouldFetchColony,
   lifecycle({
     componentDidMount() {
-      const {
-        colony,
-        ensName,
-        fetchColony: fetchColonyActionCreator,
-      } = this.props;
-      if (ensName && (!colony || !colony.isFetching))
-        fetchColonyActionCreator(ensName);
+      const { ensName, fetchColony } = this.props;
+      if (shouldFetchColony(this.props)) fetchColony(ensName);
     },
   }),
 );

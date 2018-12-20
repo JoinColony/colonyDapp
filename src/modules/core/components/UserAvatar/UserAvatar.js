@@ -5,7 +5,7 @@ import compose from 'recompose/compose';
 
 import UserAvatar from './UserAvatar.jsx';
 
-import { withUser } from '../../../users/composers';
+import { withUser } from '../../../users/hocs';
 import { avatarSelector } from '../../../users/selectors';
 import { fetchUserAvatar as fetchUserAvatarAction } from '../../../users/actionCreators';
 

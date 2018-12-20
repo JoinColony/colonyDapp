@@ -194,7 +194,7 @@ function* fetchColonySaga({ payload: { key } }: Action): Saga<void> {
       payload: { key, props },
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_ERROR, error);
+    yield putError(COLONY_FETCH_ERROR, error, { key });
   }
 }
 

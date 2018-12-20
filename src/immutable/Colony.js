@@ -1,7 +1,10 @@
 /* @flow */
 
+import type { RecordFactory, RecordOf } from 'immutable';
+
+import { Record } from 'immutable';
+
 import Token from './Token';
-import makeDataClass from './makeDataClass';
 
 import type { Address, ENSName } from '~types';
 import type { TokenRecord } from './index';
@@ -32,29 +35,8 @@ const defaultValues: $Shape<ColonyProps> = {
   website: undefined,
 };
 
-class ColonyClass extends makeDataClass<ColonyProps>(defaultValues) {
-  /* eslint-disable */
-  /*::
-  address: Address;
-  avatar: string;
-  description: string;
-  ensName: ENSName;
-  guideline: string;
-  id: number;
-  name: string;
-  token: TokenRecord;
-  version: number;
-  website: string;
-  */
-  /* eslint-enable */
+const Colony: RecordFactory<ColonyProps> = Record(defaultValues);
 
-  get isReady() {
-    return !!(this.address && this.ensName && this.name && this.token);
-  }
-}
-
-export type ColonyRecord = ColonyClass;
-
-const Colony = (props?: ColonyProps) => new ColonyClass(props);
+export type ColonyRecord = RecordOf<ColonyProps>;
 
 export default Colony;

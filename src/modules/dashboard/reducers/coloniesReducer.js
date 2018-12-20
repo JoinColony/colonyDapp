@@ -11,59 +11,57 @@ import {
   COLONY_PROFILE_UPDATE_SUCCESS,
 } from '../actionTypes';
 
-import { Colony, Token } from '~immutable';
+import { Colony, Data, Token } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyRecord, DataMap } from '~immutable';
 import type { Action, ENSName } from '~types';
 
 const coloniesReducer = (
-  state: ImmutableMap<ENSName, ColonyRecord> = new ImmutableMap(),
+  state: DataMap<ENSName, ColonyRecord> = new ImmutableMap(),
   action: Action,
 ) => {
   switch (action.type) {
     case COLONY_PROFILE_UPDATE_SUCCESS: {
       const { ensName, colonyUpdateValues } = action.payload;
-      return state.mergeIn([ensName], colonyUpdateValues);
+      return state.mergeIn([ensName, 'record'], colonyUpdateValues);
     }
     case COLONY_AVATAR_UPLOAD_SUCCESS: {
       const { hash, ensName } = action.payload;
-      return state.setIn([ensName, 'avatar'], hash);
+      return state.setIn([ensName, 'record', 'avatar'], hash);
     }
     case COLONY_AVATAR_REMOVE_SUCCESS: {
       const { ensName } = action.payload;
-      return state.setIn([ensName, 'avatar'], undefined);
+      return state.setIn([ensName, 'record', 'avatar'], undefined);
     }
     default:
       return state;
   }
 };
 
-export default withDataReducer<ENSName, ColonyRecord>(
-  {
-    error: COLONY_FETCH_ERROR,
-    fetch: COLONY_FETCH,
-    success: new Map([
-      [
-        COLONY_FETCH_SUCCESS,
-        (
-          state,
-          {
-            payload: {
-              props: { token, ensName, ...props },
-            },
+export default withDataReducer<ENSName, ColonyRecord>({
+  error: COLONY_FETCH_ERROR,
+  fetch: COLONY_FETCH,
+  success: new Map([
+    [
+      COLONY_FETCH_SUCCESS,
+      (
+        state,
+        {
+          payload: {
+            props: { token, ensName, ...props },
           },
-        ) =>
-          state.set(
-            ensName,
-            Colony({
-              ensName,
-              token: Token(token),
-              ...props,
-            }),
-          ),
-      ],
-    ]),
-  },
-  Colony,
-)(coloniesReducer);
+        },
+      ) => {
+        const record = Colony({
+          ensName,
+          token: Token(token),
+          ...props,
+        });
+        return state.get(ensName)
+          ? state.setIn([ensName, 'record'], record)
+          : state.set(ensName, Data({ record }));
+      },
+    ],
+  ]),
+})(coloniesReducer);

@@ -1,9 +1,10 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 
 import ColonyGrid from '~core/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
+import { withUserFromRoute } from '../../hocs';
 
 import ProfileTemplate from '~pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
@@ -15,35 +16,24 @@ import styles from './UserProfile.css';
 
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
-import type { ActionCreator } from '~types';
-import type { UserRecord } from '~immutable';
+import type { DataRecord, UserRecord } from '~immutable';
 
 type Props = {
-  fetchUserProfile: ActionCreator,
-  user: ?UserRecord,
-  username: string,
+  user: ?DataRecord<UserRecord>,
 };
 
-class UserProfile extends Component<Props> {
-  componentDidMount() {
-    const { fetchUserProfile, user, username } = this.props;
-    if (!user && username) fetchUserProfile(username);
-  }
+const UserProfile = ({ user }: Props) =>
+  user && user.record ? (
+    <ProfileTemplate asideContent={<UserMeta user={user.record} />}>
+      <section className={styles.sectionContainer}>
+        <ColonyGrid colonies={mockColonies} />
+      </section>
+      <section className={styles.sectionContainer}>
+        <ActivityFeed activities={mockActivities} />
+      </section>
+    </ProfileTemplate>
+  ) : (
+    <UserProfileSpinner />
+  );
 
-  render() {
-    const { user } = this.props;
-    return user && user.isReady ? (
-      <ProfileTemplate asideContent={<UserMeta user={user} />}>
-        <section className={styles.sectionContainer}>
-          <ColonyGrid colonies={mockColonies} />
-        </section>
-        <section className={styles.sectionContainer}>
-          <ActivityFeed activities={mockActivities} />
-        </section>
-      </ProfileTemplate>
-    ) : (
-      <UserProfileSpinner />
-    );
-  }
-}
-export default UserProfile;
+export default withUserFromRoute(UserProfile);
