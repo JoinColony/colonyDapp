@@ -10,6 +10,8 @@ type Props = {
   task: TaskRecord,
 };
 
+const displayName = 'dashboard.TaskAssignment';
+
 const TaskAssignment = ({
   nativeToken,
   task: { assignee, reputation, payouts },
@@ -21,5 +23,7 @@ const TaskAssignment = ({
     nativeToken={nativeToken}
   />
 );
+
+TaskAssignment.displayName = displayName;
 
 export default TaskAssignment;

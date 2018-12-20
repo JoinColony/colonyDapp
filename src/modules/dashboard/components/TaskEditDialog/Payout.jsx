@@ -37,6 +37,8 @@ type Props = {
   remove: () => void,
 };
 class Payout extends Component<Props, State> {
+  static displayName = 'dashboard.TaskEditDialog.Payout';
+
   state = { editing: false };
 
   toggleEdit = () => {

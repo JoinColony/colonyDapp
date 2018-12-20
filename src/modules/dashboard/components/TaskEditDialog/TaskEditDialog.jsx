@@ -85,7 +85,7 @@ const filter = (data: List<UserRecord>, filterValue) =>
 const canAddTokens = (values, maxTokens) =>
   !maxTokens || (values.payouts && values.payouts.length < maxTokens);
 
-const displayName = 'dashboard.task.TaskEditDialog';
+const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
   cancel,
