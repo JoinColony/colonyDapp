@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Fragment } from 'react';
 import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
@@ -126,7 +125,11 @@ const TaskEditDialog = ({
         submit="CREATE_COOL_THING"
         success="COOL_THING_CREATED"
         error="COOL_THING_CREATE_ERROR"
-        initialValues={{ payouts: payouts || [], assignee }}
+        initialValues={{
+          payouts:
+            payouts && List.isList(payouts) ? payouts.toArray() : payouts || [],
+          assignee: assignee || null,
+        }}
         validationSchema={validateFunding}
         setPayload={setPayload}
       >
