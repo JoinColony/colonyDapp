@@ -12,17 +12,15 @@ import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 
 import ColonyMeta from './ColonyMeta';
-import { withColonyFromRoute } from '../../../core/hocs';
 
 import styles from './ColonyHome.css';
 
-import mockColonyAdmins from './__datamocks__/mockColonyAdmins';
 import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
 import mockDomains from '../../../../__mocks__/mockDomains';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyRecord, UserRecord } from '~immutable';
 import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
@@ -79,6 +77,7 @@ type Props = {
   colony: ?ColonyRecord,
   walletAddress: string,
   given: Given,
+  colonyAdmins: Array<UserRecord>,
 };
 
 type State = {
@@ -134,7 +133,7 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, given, colony } = this.props;
+    const { walletAddress, given, colony, colonyAdmins } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -161,7 +160,7 @@ class ColonyHome extends Component<Props, State> {
             <ColonyMeta
               colony={colony}
               founders={mockColonyFounders}
-              admins={mockColonyAdmins}
+              admins={colonyAdmins}
               /*
                * TODO This needs real logic to determine if the user is an admin
                */
@@ -230,4 +229,4 @@ class ColonyHome extends Component<Props, State> {
   }
 }
 
-export default withColonyFromRoute(ColonyHome);
+export default ColonyHome;

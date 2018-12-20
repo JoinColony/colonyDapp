@@ -44,7 +44,7 @@ const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
 type Props = {
   colony: ColonyRecord,
   founders: List<UserRecord>,
-  admins: List<UserRecord>,
+  admins: Array<UserRecord>,
   isAdmin: boolean,
 };
 
@@ -121,7 +121,7 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
           ))}
         </section>
       )}
-      {admins.size && (
+      {admins && admins.length ? (
         <section className={styles.dynamicSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
@@ -136,7 +136,7 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
             />
           ))}
         </section>
-      )}
+      ) : null}
     </div>
   );
 };
