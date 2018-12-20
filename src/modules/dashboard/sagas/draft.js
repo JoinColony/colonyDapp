@@ -1,6 +1,6 @@
 /* @flow */
 import type { Saga } from 'redux-saga';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
 
@@ -51,8 +51,10 @@ export function* fetchAllDraftsSaga(action: Action): Saga<void> {
       draftStoreAddress,
     });
     const drafts = yield call(getAll, store);
-    yield drafts.map(draft =>
-      put({ type: DRAFT_FETCH_SUCCESS, payload: { draft } }),
+    yield all(
+      drafts.map(draft =>
+        put({ type: DRAFT_FETCH_SUCCESS, payload: { draft } }),
+      ),
     );
   } catch (error) {
     yield putError(DRAFTS_FETCH_ERROR, error);
