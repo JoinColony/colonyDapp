@@ -3,7 +3,7 @@
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
-import { getColonyAdmins } from '../../selectors';
+import { getColonyAdmins } from '../../../dashboard/selectors';
 
 import Organizations from './Organizations.jsx';
 
