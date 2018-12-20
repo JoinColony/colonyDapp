@@ -11,13 +11,13 @@ import UserListItem from './UserListItem.jsx';
 
 import styles from './UserList.css';
 
-import type { UserRecord } from '~immutable';
+import type { ColonyAdminRecord } from '~immutable';
 
 type Props = {
   /*
    * Array of user data, follows the same format as UserPicker
    */
-  users: Array<UserRecord>,
+  users: Array<ColonyAdminRecord>,
   /*
    * Whether to show the fullname
    * Gets passed down to `UserListItem`
@@ -47,7 +47,7 @@ type Props = {
    * Method to call when removing the user
    * Gets passed down to `UserListItem`
    */
-  onRemove: UserRecord => any,
+  onRemove: ColonyAdminRecord => any,
 };
 
 const displayName: string = 'admin.UserList';
@@ -77,7 +77,7 @@ const UserList = ({
                * This is just so we can have duplicate data inside datamocks
                * Might as well remove it when the *real* data comes in
                */
-              key={`${user.profile.walletAddress}${currentIndex + 1}`}
+              key={`${user.walletAddress}${currentIndex + 1}`}
               user={user}
               showDisplayName={showDisplayName}
               showUsername={showUsername}

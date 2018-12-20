@@ -10,7 +10,7 @@ import Button from '~core/Button';
 
 import styles from './UserListItem.css';
 
-import type { UserRecord } from '~immutable';
+import type { ColonyAdminRecord } from '~immutable';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -25,7 +25,7 @@ type Props = {
   /*
    * User record
    */
-  user: UserRecord,
+  user: ColonyAdminRecord,
   /*
    * Whether to show the fullname
    */
@@ -47,13 +47,11 @@ type Props = {
    * Method to call when clicking the remove button
    * Gets passed down to `UserListItem`
    */
-  onRemove: UserRecord => any,
+  onRemove: ColonyAdminRecord => any,
 };
 
 const UserListItem = ({
-  user: {
-    profile: { walletAddress, username = '', displayName = '' },
-  },
+  user: { walletAddress, username = '', displayName = '' },
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
