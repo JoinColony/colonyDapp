@@ -20,6 +20,9 @@ import {
   TASK_MANAGER_END_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
+  TASK_ASSIGN_WORKER,
+  TASK_ASSIGN_WORKER_ERROR,
+  TASK_ASSIGN_WORKER_SUCCESS,
   TASK_MANAGER_RATE_WORKER,
   TASK_MANAGER_RATE_WORKER_ERROR,
   TASK_MANAGER_RATE_WORKER_SUCCESS,
@@ -142,6 +145,20 @@ function* taskSetDueDateSaga(action: Action): Saga<void> {
       meta,
     }),
   );
+}
+
+function* taskAssignWorkerSaga({
+  payload: { assignee, payouts, taskId },
+  meta,
+}: Action): Saga<void> {
+  try {
+    // eslint-disable-next-line no-console
+    console.log(assignee, payouts, taskId);
+
+    yield put({ type: TASK_ASSIGN_WORKER_SUCCESS });
+  } catch (error) {
+    yield putError(TASK_ASSIGN_WORKER_ERROR, error);
+  }
 }
 
 function* taskWorkerEndSaga({
@@ -362,6 +379,7 @@ export default function* taskSagas(): any {
   yield takeEvery(TASK_SET_SKILL, taskSetSkillSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
+  yield takeEvery(TASK_ASSIGN_WORKER, taskAssignWorkerSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
   yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
   yield takeEvery(

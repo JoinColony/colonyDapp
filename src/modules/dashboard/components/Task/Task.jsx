@@ -15,6 +15,7 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
  */
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskRecord, UserRecord } from '~immutable';
+import type { Props as TaskEditDialogProps } from '~dashboard/TaskEditDialog/TaskEditDialog.jsx';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskDate from '~dashboard/TaskDate';
@@ -117,14 +118,16 @@ class Task extends Component<Props> {
       id: nanoid(),
     }));
 
-    openDialog('TaskEditDialog', {
+    const dialogProps: TaskEditDialogProps = {
       assignee: task.assignee,
       availableTokens: tokensMock,
       maxTokens: 2,
       payouts,
       reputation: task.reputation,
       users: userMocks,
-    });
+    };
+
+    openDialog('TaskEditDialog', dialogProps);
   };
 
   setValues = (dialogValues?: Object = {}) => {

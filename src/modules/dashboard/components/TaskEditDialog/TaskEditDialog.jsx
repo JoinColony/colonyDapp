@@ -6,6 +6,8 @@ import BigNumber from 'bn.js';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
+import type { DialogType } from '~core/Dialog/types';
+
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
@@ -17,7 +19,7 @@ import { Token } from '~immutable';
 
 import Payout from './Payout.jsx';
 
-import type { UserRecord, TokenRecord, TaskPayoutRecord } from '~immutable';
+import type { UserRecord, TokenRecord } from '~immutable';
 
 import styles from './TaskEditDialog.css';
 
@@ -60,20 +62,28 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+export type Props = {
   assignee?: UserRecord,
   availableTokens: List<TokenRecord>,
   maxTokens?: BigNumber,
-  payouts?: List<TaskPayoutRecord>,
+  // @TODO: use `TaskPayoutRecord` for `payouts`
+  payouts?: List<{
+    token: number,
+    amount: BigNumber,
+    id: string,
+  }>,
   reputation?: BigNumber,
   users: List<UserRecord>,
-  cancel: () => void,
-  addTokenFunding: (
-    values: { payouts?: Array<any> },
-    helpers: () => void,
-  ) => void,
-  setPayload: (action: Object, payload: Object) => Object,
 };
+
+type InProps = Props &
+  DialogType & {
+    addTokenFunding: (
+      values: { payouts?: Array<any> },
+      helpers: () => void,
+    ) => void,
+    setPayload: (action: Object, payload: Object) => Object,
+  };
 
 const filter = (data: List<UserRecord>, filterValue) =>
   data.filter(
@@ -97,7 +107,7 @@ const TaskEditDialog = ({
   users,
   addTokenFunding,
   setPayload,
-}: Props) => {
+}: InProps) => {
   const validateFunding = yup.object().shape({
     payouts: yup
       .array()
