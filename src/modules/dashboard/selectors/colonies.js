@@ -35,7 +35,6 @@ type ColonyAdminsSelector = (
   props: Object,
 ) => Array<ColonyAdminRecord>;
 
-
 export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
   props.match.params.ensName;
 
@@ -78,7 +77,8 @@ export const getCurrentColony: CurrentColonySelector = createSelector(
 
 export const getColonyAdminStore: ColonyAdminStpreSelector = createSelector(
   singleColonySelector,
-  currentColony => currentColony.get('admins', {}),
+  currentColony =>
+    currentColony && currentColony.get ? currentColony.get('admins', {}) : {},
 );
 
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(
