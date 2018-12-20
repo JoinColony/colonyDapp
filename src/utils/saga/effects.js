@@ -50,8 +50,8 @@ export const putError = (
  * first, function returns. If error is first, function throws.
  */
 export const raceError = (
-  successAction: string,
-  errorAction: string,
+  successAction: string | (any => any),
+  errorAction: string | (any => any),
   error?: Error,
 ) => {
   function* raceErrorGenerator(): Saga<void> {
