@@ -178,11 +178,23 @@ function* createTaskSaga(action: Action): Saga<void> {
   try {
     // put task on chain
     yield put(taskCreate(colonyENSName, task));
+    // yield raceError(
+    //   ({ type, payload: { id } }) =>
+    //     type === TASK_CREATE_TRANSACTION_SENT && id === task.id,
+    //   ({ type, payload: { id } }) =>
+    //     type === TASK_CREATE_ERROR && id === task.id,
+    // );
+
     yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
 
     const {
       payload: { taskId },
-    } = yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
+    } = yield raceError(
+      ({ type, payload: { taskId: id } }) =>
+        type === TASK_CREATE_SUCCESS && id === task.id,
+      ({ type, payload: { taskId: id } }) =>
+        type === TASK_CREATE_ERROR && id === task.id,
+    );
 
     // remove task from drafts
     const rootDomain = yield call(fetchOrCreateDomainStore, {
