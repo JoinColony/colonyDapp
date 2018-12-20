@@ -50,3 +50,16 @@ test('Can edit multiple attributes', async t => {
   const state = getAll(store);
   t.deepEqual(state, profile);
 });
+
+test('Can delete an entity', async t => {
+  const { ddb } = t.context;
+  const store = await ddb.createStore(kvBlueprint);
+  const profile = {
+    username: 'hello',
+    bio: 'born in Warsaw',
+  };
+  await store.set(profile);
+  await store.delete('username');
+  const state = getAll(store);
+  t.deepEqual(state, { bio: 'born in Warsaw' });
+});

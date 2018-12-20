@@ -46,6 +46,10 @@ class KVStore extends Store {
     return this._orbitStore.get(key);
   }
 
+  async delete(key: string) {
+    return this._orbitStore.del(key);
+  }
+
   all() {
     return Object.keys(this._schema.fields).reduce((data, key) => {
       const value = this._orbitStore.get(key);
