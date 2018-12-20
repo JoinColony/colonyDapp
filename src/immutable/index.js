@@ -2,6 +2,7 @@
 
 export { default as ActivityFeedItem } from './ActivityFeedItem';
 export { default as Colony } from './Colony';
+export { default as ColonyAdmin } from './ColonyAdmin';
 export { default as Data } from './Data';
 export { default as Domain } from './Domain';
 export { default as Skill } from './Skill';
@@ -21,6 +22,7 @@ export { default as Wallet } from './Wallet';
 export * from './constants';
 export * from './ActivityFeedItem';
 export * from './Colony';
+export * from './ColonyAdmin';
 export * from './Data';
 export * from './DataMap';
 export * from './Domain';
