@@ -64,6 +64,7 @@ type Props = WizardProps<FormValues>;
 const displayName = 'users.ConnectWalletWizard.StepMnemonic';
 
 const StepMnemonic = ({
+  nextStep,
   previousStep,
   formHelpers: { includeWizardValues },
   wizardForm,
@@ -75,6 +76,7 @@ const StepMnemonic = ({
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
       setStatus({ error: MSG.errorOpenMnemonic });
     }}
+    onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
     setPayload={includeWizardValues}
     {...wizardForm}

@@ -204,6 +204,7 @@ class StepHardware extends Component<Props> {
 
   render() {
     const {
+      nextStep,
       availableAddresses,
       previousStep,
       wizardForm,
@@ -217,6 +218,7 @@ class StepHardware extends Component<Props> {
         onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
           setStatus({ error: MSG.errorPickAddress })
         }
+        onSuccess={values => nextStep({ ...values })}
         validationSchema={validationSchema}
         setPayload={includeWizardValues}
         {...wizardForm}
