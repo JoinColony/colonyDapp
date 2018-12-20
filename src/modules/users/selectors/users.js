@@ -4,44 +4,39 @@ import { createSelector } from 'reselect';
 
 import ns from '../namespace';
 
-import type { UserRecord, UsersRecord, DataRecord } from '~immutable';
-import type { RootState, Address } from '~types';
+import type { RootState } from '~types';
 
-type AllUsersStateSelector = (state: RootState) => UsersRecord;
-type CurrentUserSelector = (state: RootState) => UserRecord;
-type UsersSelector = (allUsersState: UsersRecord) => UsersRecord;
-type AvatarsSelector = (allUsersState: UsersRecord) => *;
-type UserProfileSelector = (
-  state: RootState,
-  props: Object,
-) => ?DataRecord<UserRecord>;
-type UserAvatarSelector = (state: RootState, props: Object) => string;
-type OrbitAddressSelector = (state: RootState) => string;
-type WalletAddressSelector = (state: RootState) => Address;
-type UsernameSelector = (state: RootState) => string;
-type UserNameFromRouter = (state: RootState, props: Object) => string;
-type UserNameFromProps = (state: RootState, props: Object) => string;
-
-export const allUsers: AllUsersStateSelector = state => state[ns].allUsers;
-export const currentUser: CurrentUserSelector = state => state[ns].currentUser;
-export const allUsersSelector: UsersSelector = createSelector(
+export const allUsers = (state: RootState) => state[ns].allUsers;
+export const currentUser = (state: RootState) => state[ns].currentUser;
+export const allUsersSelector = createSelector(
   allUsers,
   state => state.users,
 );
-export const avatarsSelector: AvatarsSelector = createSelector(
+export const usernamesSelector = createSelector(
+  allUsers,
+  state => state.usernames,
+);
+export const avatarsSelector = createSelector(
   allUsers,
   state => state.avatars,
 );
-export const usernameFromRouter: UserNameFromRouter = (state, props) =>
+export const usernameFromRouter = (state: any, props: Object) =>
   props.match.params.username;
-export const usernameFromProps: UserNameFromProps = (state, props) =>
-  props.username;
-export const routerUserSelector: UserProfileSelector = createSelector(
+export const usernameFromProps = (state: any, props: Object) =>
+  (props.username: string);
+export const userAddressFromProps = (state: any, props: Object) =>
+  props.userAddress;
+export const usernameFromAddressProp = createSelector(
+  usernamesSelector,
+  userAddressFromProps,
+  (usernames, userAddress) => usernames.get(userAddress),
+);
+export const routerUserSelector = createSelector(
   allUsersSelector,
   usernameFromRouter,
   (users, username) => users.get(username),
 );
-export const userSelector: UserProfileSelector = createSelector(
+export const userSelector = createSelector(
   allUsersSelector,
   usernameFromProps,
   (users, username) => users.get(username),
@@ -50,28 +45,34 @@ export const currentUserAddressSelector = createSelector(
   currentUser,
   user => user.profile.walletAddress,
 );
-export const avatarSelector: UserAvatarSelector = createSelector(
+export const userFromAddressSelector = createSelector(
+  allUsersSelector,
+  usernameFromAddressProp,
+  (users, username) => users.get(username),
+);
+export const avatarSelector = createSelector(
   avatarsSelector,
   (state, { user }) => user && user.getIn(['record', 'profile', 'avatar']),
   (avatars, hash) => avatars.get(hash),
 );
-export const userProfileStoreAddressSelector: OrbitAddressSelector = createSelector(
+export const userProfileStoreAddressSelector = createSelector(
   currentUser,
   state => state.profile.profileStore,
 );
-export const userInboxStoreAddressSelector: OrbitAddressSelector = createSelector(
-  currentUser,
-  state => state.profile.inboxStore,
-);
-export const userActivitiesStoreAddressSelector: OrbitAddressSelector = createSelector(
+// TODO: add back once inboxStore is available
+// export const userInboxStoreAddressSelector = createSelector(
+//   currentUser,
+//   state => state.profile.inboxStore,
+// );
+export const userActivitiesStoreAddressSelector = createSelector(
   currentUser,
   state => state.profile.activitiesStore,
 );
-export const walletAddressSelector: WalletAddressSelector = createSelector(
+export const walletAddressSelector = createSelector(
   currentUser,
   state => state.profile.walletAddress,
 );
-export const usernameSelector: UsernameSelector = createSelector(
+export const usernameSelector = createSelector(
   currentUser,
   state => state.profile.username,
 );

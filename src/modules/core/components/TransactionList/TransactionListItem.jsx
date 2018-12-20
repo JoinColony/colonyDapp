@@ -11,7 +11,8 @@ import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
 import TransactionDetails from './TransactionDetails.jsx';
 
-import { withColony, withTask, withToken, withUser } from '../../hocs';
+import { withColony, withTask, withToken } from '../../hocs';
+import { withUser } from '../../../users/hocs';
 
 import styles from './TransactionListItem.css';
 
