@@ -3,7 +3,7 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyRecord, ColonyAdminRecord } from '~immutable';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
@@ -58,9 +58,10 @@ const displayName: string = 'admin.Organizations';
 
 type Props = {
   colony: ColonyRecord,
+  colonyAdmins: Array<ColonyAdminRecord>,
 };
 
-const Organizations = ({ colony: { ensName } }: Props) => (
+const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
   <div className={styles.main}>
     <Tabs>
       <TabList>
@@ -83,9 +84,9 @@ const Organizations = ({ colony: { ensName } }: Props) => (
              * but if it turns out we're going to use this in multiple places,
              * we should consider moving it to core
              */}
-            {usersMocks && usersMocks.length ? (
+            {colonyAdmins && colonyAdmins.length ? (
               <UserList
-                users={usersMocks}
+                users={colonyAdmins}
                 label={MSG.labelAdminList}
                 showDisplayName
                 showUsername
