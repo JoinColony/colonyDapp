@@ -40,7 +40,8 @@ export const getCurrentColony: CurrentColonySelector = createSelector(
 
 export const getColonyAdminStore: ColonyAdminStpreSelector = createSelector(
   getCurrentColony,
-  currentColony => currentColony.get('admins', {}),
+  currentColony =>
+    currentColony && currentColony.get ? currentColony.get('admins', {}) : {},
 );
 
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(
