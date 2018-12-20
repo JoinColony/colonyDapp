@@ -290,13 +290,13 @@ function* addColonyAdmin({
   payload: { newAdmin, ensName },
 }: Action): Saga<void> {
   try {
-    const { walletAddress: newAdminWalletAddress, username } = newAdmin.profile;
+    const { walletAddress, username } = newAdmin.profile;
     /*
      * Get the colony store
      */
     const store = yield call(fetchColonyStore, ensName);
     const colonyAddress = store.get('address');
-    const colonyAdmins = store.get('admins') || {};
+    const colonyAdmins = store.get('admins');
     /*
      * Dispatch the action to the admin in th redux store
      */
@@ -304,10 +304,7 @@ function* addColonyAdmin({
       type: COLONY_ADMIN_ADD_SUCCESS,
       payload: {
         ensName,
-        adminData: {
-          ...colonyAdmins,
-          [username]: newAdminWalletAddress,
-        },
+        adminData: newAdmin.profile,
       },
     });
     /*
@@ -315,13 +312,13 @@ function* addColonyAdmin({
      */
     yield call([store, store.set], 'admins', {
       ...colonyAdmins,
-      [username]: newAdminWalletAddress,
+      [username]: newAdmin.profile,
     });
     /*
      * Displatch the action to set the admin on the contract level (transaction)
      */
     const action = yield call(addColonyAdminAction, colonyAddress, {
-      user: newAdminWalletAddress,
+      user: walletAddress,
     });
     yield put(action);
   } catch (error) {

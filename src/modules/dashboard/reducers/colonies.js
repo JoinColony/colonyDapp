@@ -52,14 +52,9 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
     }
     case COLONY_ADMIN_ADD_SUCCESS: {
       const { ensName, adminData } = action.payload;
-      /*
-       * @NOTE Flow complains about a wrong tuple type here, but it's being
-       * used in the same way as everywhere else (see above)
-       * I have a feeling that error is throwing me off track, and something
-       * else is at play here.
-       */
-      /* $FlowFixMe */
-      return state ? state.setIn([ensName, 'admins'], adminData) : state;
+      return state
+        ? state.setIn([ensName, 'admins', adminData.username], adminData)
+        : state;
     }
     default:
       return state;
