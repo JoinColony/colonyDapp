@@ -68,7 +68,10 @@ export default class EthersWrappedWallet {
    * our BN format.
    */
   async estimateGas(tx: TransactionRequest): Promise<BigNumber> {
-    const estimate = await this.provider.estimateGas(tx);
+    // We need to properly send `from`, so that `msg.sender` will have the correct value when estimating
+    const from = await this.getAddress();
+    const transformedTx = { ...tx, from };
+    const estimate = await this.provider.estimateGas(transformedTx);
     return new BigNumber(estimate.toString());
   }
 
