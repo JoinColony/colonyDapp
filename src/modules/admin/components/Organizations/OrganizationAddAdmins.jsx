@@ -56,11 +56,11 @@ const validationSchema = yup.object({
 });
 
 type Props = {
-  availableAdmins: Array<UserRecord>,
+  availableUsers: Array<UserRecord>,
   ensName: string,
 };
 
-const OrganizationAddAdmins = ({ availableAdmins, ensName }: Props) => (
+const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
       submit={COLONY_ADMIN_ADD}
@@ -80,14 +80,7 @@ const OrganizationAddAdmins = ({ availableAdmins, ensName }: Props) => (
               label={MSG.labelAddAdmins}
               placeholder={MSG.placeholderAddAdmins}
               itemComponent={ItemWithAddress}
-              /*
-               * @TODO Remove it when the *real* data comes in
-               *
-               * This is temporary since we doubled data in the list.
-               * This prevents React from going haywire since multiple keys
-               * will have the same value.
-               */
-              data={availableAdmins}
+              data={availableUsers}
               filter={filter}
             />
           </div>
