@@ -103,7 +103,7 @@ type Props = {
 };
 
 class Task extends Component<Props> {
-  displayName = 'dashboard.Task';
+  static displayName = 'dashboard.Task';
 
   openTaskEditDialog = () => {
     const { openDialog, task } = this.props;
