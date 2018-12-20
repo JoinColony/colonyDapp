@@ -75,7 +75,12 @@ const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
       <TabPanel>
         <div className={styles.sectionWrapper}>
           <OrganizationAddAdmins
-            availableAdmins={usersMocks}
+            /*
+             * @TODO Add *real* user data
+             * Once we have a way to _discover_ users that interacted with the current colony,
+             * and which can be made admins
+             */
+            availableUsers={usersMocks}
             ensName={ensName}
           />
           <section className={styles.list}>
