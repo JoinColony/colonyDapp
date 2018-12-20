@@ -1,6 +1,6 @@
 /* @flow */
 import type { Saga } from 'redux-saga';
-import { all, call, put, takeEvery } from 'redux-saga/effects';
+import { all, call, getContext, put, takeEvery } from 'redux-saga/effects';
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
 
@@ -22,16 +22,56 @@ import {
   DRAFTS_FETCH_ERROR,
 } from '../actionTypes';
 
+import { DDB } from '../../../lib/database';
 import { getAll } from '../../../lib/database/commands';
 import { DocStore } from '../../../lib/database/stores';
-import { fetchOrCreateTaskStore } from './task';
+import { colonyStore, domainStore, draftStore } from '../stores';
 
 const generateId = () => generate(urlDictionary, 21);
+
+export function* fetchDraftStore({
+  colonyAddress = '',
+  draftStoreAddress,
+}: {
+  colonyAddress?: string,
+  draftStoreAddress?: string,
+}): Saga<DocStore> {
+  let store;
+  const ddb: DDB = yield getContext('ddb');
+  if (draftStoreAddress) {
+    store = yield call([ddb, ddb.getStore], draftStore, draftStoreAddress);
+  } else {
+    if (!colonyAddress.length)
+      throw new Error('Provide an address to retrieve the draft store');
+    // get the colony
+    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
+    yield call([colony, colony.load]);
+    // get the correct domain
+    const domains = yield call([colony, colony.get], 'domains');
+    const domain = yield call(
+      [ddb, ddb.getStore],
+      domainStore,
+      domains.rootDomain,
+    );
+    yield call([domain, domain.load]);
+    // get the tasks database, stored under 'tasksDatabase' even if drafts
+    const draftsAddress = yield call([domain, domain.get], 'tasksDatabase');
+    store = yield call([ddb, ddb.getStore], draftStore, draftsAddress);
+  }
+  yield call([store, store.load]);
+  return store;
+}
+
+export function* createDraftStore(): Saga<DocStore> {
+  const ddb: DDB = yield getContext('ddb');
+  const store = yield call([ddb, ddb.createStore], draftStore);
+  return store;
+}
 
 export function* createDraftSaga(action: Action): Saga<void> {
   const { domainAddress, task } = action.payload;
   try {
-    const store = yield call(fetchOrCreateTaskStore, {
+    const store = yield call(fetchDraftStore, {
       domainAddress,
       draft: true,
     });
@@ -47,7 +87,7 @@ export function* createDraftSaga(action: Action): Saga<void> {
 export function* fetchAllDraftsSaga(action: Action): Saga<void> {
   const { draftStoreAddress } = action.payload;
   try {
-    const store = yield call(fetchOrCreateTaskStore, {
+    const store = yield call(fetchDraftStore, {
       draftStoreAddress,
     });
     const drafts = yield call(getAll, store);
@@ -68,7 +108,7 @@ export function* fetchDraft({
   draftStoreAddress?: string,
   taskId: string,
 }): Generator<*, *, DocStore> {
-  const store = yield call(fetchOrCreateTaskStore, {
+  const store = yield call(fetchDraftStore, {
     draftStoreAddress,
     draft: true,
   });
@@ -83,7 +123,7 @@ export function* editDraftSaga(action: Action): Saga<void> {
     draftStoreAddress,
   } = action.payload;
   try {
-    const store = yield call(fetchOrCreateTaskStore, {
+    const store = yield call(fetchDraftStore, {
       draftStoreAddress,
     });
     yield call([store, store.update], id, task);
@@ -102,7 +142,7 @@ export function* deleteDraftSaga(action: Action): Saga<void> {
     domainAddress,
   } = action.payload;
   try {
-    const store = yield call(fetchOrCreateTaskStore, {
+    const store = yield call(fetchDraftStore, {
       taskStoreAddress,
       draft: true,
     });
