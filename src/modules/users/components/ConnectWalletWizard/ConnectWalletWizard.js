@@ -16,8 +16,9 @@ import StepMetaMask from './StepMetaMask';
 import StepMnemonic from './StepMnemonic';
 import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
+import StepUserName from './StepUserName';
 
-const stepArray = [StepStart];
+const stepArray = [StepStart, StepMetaMask, StepUserName];
 
 type StepValues = {
   method: WalletMethod,
@@ -52,13 +53,16 @@ const stepFunction = (step: number, { method }: StepValues) => {
         break;
     }
   }
+  if (step === 2) {
+    return StepUserName;
+  }
   return stepArray[step];
 };
 
 const ConnectWalletContainer = compose(
   withWizard({
     steps: stepFunction,
-    stepCount: 2,
+    stepCount: 3,
   }),
 )(ConnectWalletWizard);
 

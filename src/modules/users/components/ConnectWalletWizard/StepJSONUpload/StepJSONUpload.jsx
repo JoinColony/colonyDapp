@@ -106,7 +106,12 @@ const readKeystoreFromFileData = (file: FileReaderFile) => {
   return keystore;
 };
 
-const StepJSONUpload = ({ previousStep, wizardForm, wizardValues }: Props) => (
+const StepJSONUpload = ({
+  nextStep,
+  previousStep,
+  wizardForm,
+  wizardValues,
+}: Props) => (
   <ActionForm
     submit={WALLET_CREATE}
     success={CURRENT_USER_CREATE}
@@ -114,6 +119,7 @@ const StepJSONUpload = ({ previousStep, wizardForm, wizardValues }: Props) => (
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
       setStatus({ error: MSG.errorUnlockWallet });
     }}
+    onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
     setPayload={(action, values) =>
       transformPayload(action, { ...values, ...wizardValues })
