@@ -176,6 +176,14 @@ function* createTaskSaga(action: Action): Saga<void> {
   const { colonyENSName, domainName, task } = action.payload;
 
   try {
+    // put task on chain
+    yield put(taskCreate(colonyENSName, task));
+    yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
+
+    const {
+      payload: { taskId },
+    } = yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
+
     // remove task from drafts
     const rootDomain = yield call(fetchOrCreateDomainStore, {
       colonyAddress: colonyENSName,
@@ -195,18 +203,10 @@ function* createTaskSaga(action: Action): Saga<void> {
       },
     });
 
-    // put task on chain
-    yield put(taskCreate(colonyENSName, task));
-    yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
-
     // put task into destination domain taskStore
     const domain = yield call(fetchOrCreateTaskStore, { domainName });
     yield call([domain, domain.add], task);
     const taskFromDDB = yield call([domain, domain.get], task.id);
-
-    const {
-      payload: { taskId },
-    } = yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
 
     // put task into state
     yield put({
