@@ -2,6 +2,7 @@
 
 import type { ComponentType } from 'react';
 import type { MessageDescriptor } from 'react-intl';
+import type { List as ListType } from 'immutable';
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -73,7 +74,7 @@ type Props = {
       | SyntheticKeyboardEvent<HTMLElement>,
   ) => void,
   /** @ignore Will be injected by `withOmniPicker` */
-  filteredData: Array<Data>,
+  filteredData: ListType<Data>,
   /** @ignore Will be injected by `withOmniPicker` */
   id: string,
   /** @ignore Will be injected by `withOmniPicker` */

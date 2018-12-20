@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { ComponentType } from 'react';
+import type { List as ListType } from 'immutable';
 
 import { createElement, Component } from 'react';
 
@@ -22,8 +23,8 @@ type ExternalOmniPickerProps = {
 
 type Props = {
   data: any | (any => any),
-  filter: (data: any, filterStr: string) => Array<Data>,
-  getItem: (data: Array<Data>, selectedIdx: number) => Data,
+  filter: (data: any, filterStr: string) => ListType<Data>,
+  getItem: (data: ListType<Data>, selectedIdx: number) => Data,
 };
 
 type State = {
@@ -42,8 +43,8 @@ const getClass = WrappedComponent => {
     omniPicker: ?OmniPicker;
 
     static defaultProps = {
-      getItem: (filteredData: Array<Data>, selectedIdx: number) =>
-        filteredData[selectedIdx],
+      getItem: (filteredData: ListType<Data>, selectedIdx: number) =>
+        filteredData.get(selectedIdx),
     };
 
     constructor(props: Props) {

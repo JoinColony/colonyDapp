@@ -1,15 +1,52 @@
-```
+```jsx
+const { List } = require('immutable');
 const { Formik } = require('formik');
 
+const { User, UserProfile } = require('~immutable');
 const { ItemDefault } = require('.')
 
-const data = [
-  { id: 1, profile: { walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2', username: 'Chris', displayName: 'Christian Maniewski'} },
-  { id: 2, profile: { walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d', username: 'Elena', displayName: 'Elena Dimitrova'} },
-  { id: 3, profile: { walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212', username: 'Thiago', displayName: 'Thiago Delgado'} },
-  { id: 4, profile: { walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A', username: 'Alex', displayName: 'Alex Rea'} },
-  { id: 5, profile: { walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A', username: 'Collin', displayName: 'Collin Vine'} },
-];
+const data = List.of(
+  User({
+    id: 1,
+    profile: UserProfile({
+      walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
+      username: 'Chris',
+      displayName: 'Christian Maniewski'
+    })
+  }),
+  User({
+    id: 2,
+    profile: UserProfile({
+      walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
+      username: 'Elena',
+      displayName: 'Elena Dimitrova'
+    })
+  }),
+  User({
+    id: 3,
+    profile: UserProfile({
+      walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
+      username: 'Thiago',
+      displayName: 'Thiago Delgado'
+    })
+  }),
+  User({
+    id: 4,
+    profile: UserProfile({
+      walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
+      username: 'Alex',
+      displayName: 'Alex Rea'
+    })
+  }),
+  User({
+    id: 5,
+    profile: UserProfile({
+      walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
+      username: 'Collin',
+      displayName: 'Collin Vine'
+    })
+  }),
+);
 
 const filter = (data, filterValue) => data.filter(user => user.profile.username.toLowerCase().startsWith(filterValue.toLowerCase()));
 

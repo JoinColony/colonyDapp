@@ -1,8 +1,10 @@
 /* @flow */
 
 import type { ComponentType } from 'react';
+import type { List as ListType } from 'immutable';
 
 import React from 'react';
+import { List } from 'immutable';
 
 import styles from './OmniPickerContent.css';
 
@@ -11,7 +13,7 @@ import type { Choose, ItemComponentType, Select } from './types';
 import OmniPickerItem from './OmniPickerItem.jsx';
 
 type Props = {
-  filteredData?: Array<{ id: string }>,
+  filteredData?: ListType<{ id: string }>,
   id: string,
   itemComponent: ItemComponentType,
   emptyComponent: ComponentType<{}>,
@@ -25,7 +27,7 @@ type Props = {
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 const OmniPickerContent = ({
   onChoose,
-  filteredData = [],
+  filteredData = List(),
   id,
   itemComponent,
   emptyComponent: EmptyComponent,
@@ -35,7 +37,7 @@ const OmniPickerContent = ({
 }: Props) => (
   <div className={styles.main}>
     <ul onClick={onChoose} role="listbox" id={`omnipicker-${id}-listbox`}>
-      {filteredData.length ? (
+      {filteredData.size ? (
         filteredData.map((itemData, idx) => (
           <OmniPickerItem
             key={itemData.id}
