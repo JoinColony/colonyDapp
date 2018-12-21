@@ -1,13 +1,10 @@
 /* @flow */
 
-import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
 import type { ValidateOptions } from 'yup';
+import generateId from '../../../utils/id';
 
 import type { OrbitDBDocStore, QueryFunction } from '../types/index';
 import Store from './Store';
-
-const generateId = () => generate(urlDictionary, 21);
 
 /**
  * The wrapper Store class for orbit's document stores.

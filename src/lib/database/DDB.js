@@ -1,7 +1,8 @@
 /* @flow */
 
 import OrbitDB from 'orbit-db';
-import generate from 'nanoid/generate';
+
+import generateId from '../../utils/id';
 
 import type {
   ENSResolverType,
@@ -14,9 +15,6 @@ import type {
 import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
-
-const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-const generateId = () => generate(base58, 21);
 
 type StoreIdentifier = string | OrbitDBAddress;
 

@@ -1,8 +1,7 @@
 /* @flow */
 import type { Saga } from 'redux-saga';
 import { all, call, getContext, put, takeEvery } from 'redux-saga/effects';
-import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
+import generateId from '~utils/id';
 
 import type { Action } from '~types';
 
@@ -26,8 +25,6 @@ import { DDB } from '../../../lib/database';
 import { getAll } from '../../../lib/database/commands';
 import { DocStore } from '../../../lib/database/stores';
 import { colonyStore, domainStore, draftStore } from '../stores';
-
-const generateId = () => generate(urlDictionary, 21);
 
 export function* fetchDraftStore({
   colonyAddress = '',
