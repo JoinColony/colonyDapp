@@ -1,8 +1,9 @@
 /* @flow */
 
-import type { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMapType } from 'immutable';
 
 import { createSelector } from 'reselect';
+import { Map as ImmutableMap } from 'immutable';
 
 import type { ENSName } from '~types';
 import type { ColonyRecord, ColonyAdminRecord } from '~immutable';
@@ -11,16 +12,16 @@ import ns from '../namespace';
 
 type RootState = {
   [typeof ns]: {
-    colonies: ImmutableMap<ENSName, ColonyRecord>,
+    colonies: ImmutableMapType<ENSName, ColonyRecord>,
   },
 };
 
 type CurrentColonySelector = (state: RootState, props: Object) => ColonyRecord;
 
-type ColonyAdminStpreSelector = (
+type ColonyAdminStoreSelector = (
   state: RootState,
   props: Object,
-) => Map<string, ColonyAdminRecord>;
+) => ImmutableMapType<string, ColonyAdminRecord>;
 
 type ColonyAdminsSelector = (
   state: RootState,
@@ -35,17 +36,15 @@ export const singleColony = (state: RootState, ensName: ENSName) =>
 export const getCurrentColony: CurrentColonySelector = createSelector(
   allColonies,
   (state, props) => (props.colony ? props.colony.ensName : undefined),
-  (colonies, ensName) => colonies.get(ensName, {}),
+  (colonies, ensName) => colonies.get(ensName, ImmutableMap()),
 );
 
-export const getColonyAdminStore: ColonyAdminStpreSelector = createSelector(
+export const getColonyAdminStore: ColonyAdminStoreSelector = createSelector(
   getCurrentColony,
-  currentColony =>
-    currentColony && currentColony.get ? currentColony.get('admins', {}) : {},
+  currentColony => currentColony.get('admins', ImmutableMap()),
 );
 
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(
   getColonyAdminStore,
-  colonyAdmins =>
-    Object.keys(colonyAdmins).map(username => colonyAdmins[username]),
+  colonyAdmins => colonyAdmins.toList().toArray(),
 );

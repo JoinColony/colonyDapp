@@ -25,13 +25,14 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case COLONY_FETCH_SUCCESS: {
       const {
-        colonyStoreData: { ensName, token, ...colonyStoreData },
+        colonyStoreData: { ensName, token, admins, ...colonyStoreData },
       } = action.payload;
       return state.set(
         ensName,
         Colony({
           ensName,
           token: Token(token),
+          admins: ImmutableMap(admins),
           ...colonyStoreData,
         }),
       );
@@ -53,7 +54,10 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
     case COLONY_ADMIN_ADD_SUCCESS: {
       const { ensName, adminData } = action.payload;
       return state
-        ? state.setIn([ensName, 'admins', adminData.username], adminData)
+        ? state.setIn(
+            [ensName, 'admins', adminData.username],
+            adminData.toObject(),
+          )
         : state;
     }
     default:
