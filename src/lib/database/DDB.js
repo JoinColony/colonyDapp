@@ -2,7 +2,6 @@
 
 import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
 
 import type {
   Identity,
@@ -15,7 +14,8 @@ import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
 
-const generateId = () => generate(urlDictionary, 21);
+const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const generateId = () => generate(base58, 21);
 
 // TODO: better typing
 type Resolver = Object;
