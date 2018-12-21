@@ -18,7 +18,7 @@ import { callCaller, putError, raceError } from '~utils/saga/effects';
 import { DDB } from '../../../lib/database';
 import { DocStore } from '../../../lib/database/stores';
 
-import { colonyStore, domainStore, draftStore, taskStore } from '../stores';
+import { colonyStore, domainStore, taskStore } from '../stores';
 import { tasksStoreAddressSelector } from '../selectors';
 
 import {
@@ -65,43 +65,44 @@ import {
 
 import { fetchOrCreateDomainStore } from './domain';
 
-export function* fetchOrCreateTaskStore({
-  colonyAddress,
+export function* createTaskStore(): Saga<DocStore> {
+  const ddb: DDB = yield getContext('ddb');
+  const store = yield call([ddb, ddb.createStore], taskStore);
+  return store;
+}
+
+export function* fetchTaskStore({
+  colonyAddress = '',
   taskStoreAddress,
   domainName,
-  draft,
 }: {
   colonyAddress?: string,
   taskStoreAddress?: string,
   domainName?: string,
-  draft?: boolean,
 }): Saga<DocStore> {
   const ddb: DDB = yield getContext('ddb');
   let store;
-  const blueprint = draft ? draftStore : taskStore;
   if (taskStoreAddress) {
-    store = yield call([ddb, ddb.getStore], blueprint, taskStoreAddress);
-    yield call([store, store.load]);
-  } else if (colonyAddress) {
+    store = yield call([ddb, ddb.getStore], taskStore, taskStoreAddress);
+  } else {
+    if (!colonyAddress.length)
+      throw new Error('Provide an address to retrieve the task store');
     // get the colony
     const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
     yield call([colony, colony.load]);
     // get the correct domain
     const domains = yield call([colony, colony.get], 'domains');
-    const targetDomain = domainName || 'rootDomain';
     const domain = yield call(
       [ddb, ddb.getStore],
       domainStore,
-      domains[targetDomain],
+      domains[domainName],
     );
     yield call([domain, domain.load]);
-    // get the tasks database, stored under 'tasksDatabase' even if drafts
+    // get the tasks database
     const tasksAddress = yield call([domain, domain.get], 'tasksDatabase');
-    store = yield call([ddb, ddb.getStore], blueprint, tasksAddress);
-    yield call([store, store.load]);
-  } else {
-    store = yield call([ddb, ddb.createStore], blueprint);
+    store = yield call([ddb, ddb.getStore], taskStore, tasksAddress);
   }
+  yield call([store, store.load]);
   return store;
 }
 
@@ -178,24 +179,20 @@ function* createTaskSaga(action: Action): Saga<void> {
   try {
     // put task on chain
     yield put(taskCreate(colonyENSName, task));
-    // yield raceError(
-    //   ({ type, payload: { id } }) =>
-    //     type === TASK_CREATE_TRANSACTION_SENT && id === task.id,
-    //   ({ type, payload: { id } }) =>
-    //     type === TASK_CREATE_ERROR && id === task.id,
-    // );
+    yield raceError(
+      ({ type, payload: { id } }) =>
+        type === TASK_CREATE_TRANSACTION_SENT && id === task.id,
+      ({ type, payload: { id } }) =>
+        type === TASK_CREATE_ERROR && id === task.id,
+    );
 
     yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
-
-    const {
-      payload: { taskId },
-    } = yield raceError(
+    const newTask = yield raceError(
       ({ type, payload: { taskId: id } }) =>
         type === TASK_CREATE_SUCCESS && id === task.id,
       ({ type, payload: { taskId: id } }) =>
         type === TASK_CREATE_ERROR && id === task.id,
     );
-
     // remove task from drafts
     const rootDomain = yield call(fetchOrCreateDomainStore, {
       colonyAddress: colonyENSName,
@@ -216,17 +213,17 @@ function* createTaskSaga(action: Action): Saga<void> {
     });
 
     // put task into destination domain taskStore
-    const domain = yield call(fetchOrCreateTaskStore, { domainName });
-    yield call([domain, domain.add], task);
-    const taskFromDDB = yield call([domain, domain.get], task.id);
+    const tasks = yield call(fetchTaskStore, { domainName });
+    yield call([tasks, tasks.add], task);
+    const taskFromDDB = yield call([tasks, tasks.get], task.id);
 
     // put task into state
     yield put({
       type: TASK_FETCH_SUCCESS,
       payload: {
         ensName: colonyENSName,
-        domainId: domain.address.toString(),
-        task: { id: taskId, ...taskFromDDB },
+        tasksId: tasks.address.toString(),
+        task: { id: newTask.payload.taskId, ...taskFromDDB },
       },
     });
   } catch (error) {
