@@ -3,6 +3,7 @@
 import type { Map as ImmutableMap } from 'immutable';
 
 import { createSelector } from 'reselect';
+import { Map as ImmutableMap } from 'immutable';
 
 import type { ENSName } from '~types';
 import type { ColonyRecord, ColonyAdminRecord, DataMap, DataRecord } from '~immutable';
@@ -25,10 +26,10 @@ type ColonySelector = (
 ) => ?DataRecord<ColonyRecord>;
 type ENSNameFromRouter = (state: RootState, props: Object) => ENSName;
 
-type ColonyAdminStpreSelector = (
+type ColonyAdminStoreSelector = (
   state: RootState,
   props: Object,
-) => Map<string, ColonyAdminRecord>;
+) => ImmutableMapType<string, ColonyAdminRecord>;
 
 type ColonyAdminsSelector = (
   state: RootState,
@@ -72,17 +73,15 @@ export const currentColonyAvatarDataSelector: ColonyAvatarSelector = createSelec
 export const getCurrentColony: CurrentColonySelector = createSelector(
   allColoniesSelector,
   (state, props) => (props.colony ? props.colony.ensName : undefined),
-  (colonies, ensName) => colonies.get(ensName, {}),
+  (colonies, ensName) => colonies.get(ensName, ImmutableMap()),
 );
 
 export const getColonyAdminStore: ColonyAdminStpreSelector = createSelector(
   singleColonySelector,
-  currentColony =>
-    currentColony && currentColony.get ? currentColony.get('admins', {}) : {},
+  currentColony => currentColony.get('admins', ImmutableMap()),
 );
 
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(
   getColonyAdminStore,
-  colonyAdmins =>
-    Object.keys(colonyAdmins).map(username => colonyAdmins[username]),
+  colonyAdmins => colonyAdmins.toList().toArray(),
 );
