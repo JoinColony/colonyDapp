@@ -57,6 +57,8 @@ type Props = {
   removeSuccess: string,
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
   removeError: string,
+  /* Colony ENS Name to use when removing the user */
+  ensName: string,
 };
 
 const displayName: string = 'admin.UserList';
@@ -94,6 +96,7 @@ class UserList extends Component<Props> {
       showMaskedAddress,
       viewOnly = true,
       label,
+      ensName,
     } = this.props;
     return (
       <div className={styles.main}>
@@ -118,7 +121,9 @@ class UserList extends Component<Props> {
                   showUsername={showUsername}
                   showMaskedAddress={showMaskedAddress}
                   viewOnly={viewOnly}
-                  onRemove={() => this.remove.asyncFunction({ admin: user })}
+                  onRemove={() =>
+                    this.remove.asyncFunction({ admin: user, ensName })
+                  }
                 />
               ))}
             </TableBody>

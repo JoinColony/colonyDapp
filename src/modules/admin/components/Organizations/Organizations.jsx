@@ -99,6 +99,7 @@ const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
               <UserList
                 users={colonyAdmins}
                 label={MSG.labelAdminList}
+                ensName={ensName}
                 showDisplayName
                 showUsername
                 showMaskedAddress
