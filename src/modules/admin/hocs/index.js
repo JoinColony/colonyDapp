@@ -1,4 +1,6 @@
 /* @flow */
 
-// eslint-disable-next-line import/prefer-default-export
 export { default as withColonyTransactions } from './withColonyTransactions';
+export {
+  default as withColonyUnclaimedTransactions,
+} from './withColonyUnclaimedTransactions';

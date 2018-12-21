@@ -1,7 +1,15 @@
 /* @flow */
 
-import { withColonyTransactions } from '../../hocs';
+import { compose } from 'recompose';
+
+import {
+  withColonyTransactions,
+  withColonyUnclaimedTransactions,
+} from '../../hocs';
 
 import Transactions from './Transactions.jsx';
 
-export default withColonyTransactions(Transactions);
+export default compose(
+  withColonyTransactions,
+  withColonyUnclaimedTransactions,
+)(Transactions);
