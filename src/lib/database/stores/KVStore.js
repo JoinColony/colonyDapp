@@ -1,8 +1,7 @@
 /* @flow */
 
 import type { ValidateOptions } from 'yup';
-
-import { promiseSeries } from '../../../utils/async';
+import promiseSeries from 'p-series';
 
 import type { OrbitDBKVStore } from '../types';
 import Store from './Store';
@@ -62,7 +61,7 @@ class KVStore extends Store {
 
   async _setObject(obj: {}) {
     return promiseSeries(
-      Object.entries(obj).map(([key, value]) =>
+      Object.entries(obj).map(([key, value]) => () =>
         this._orbitStore.put(key, value),
       ),
     );

@@ -94,7 +94,7 @@ class Store {
     // TODO: This could be dangerous in case of an unfinished replication. We have to account for that
     // Quick fix could be to just also wait for the full replication, which might be a performance hit
     this._pinner.requestPinnedStore(this.address.toString());
-    return Promise.resolve(true);
+    return heads;
   }
 
   pin() {

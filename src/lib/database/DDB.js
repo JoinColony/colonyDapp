@@ -189,6 +189,7 @@ class DDB {
       );
     }
     const store = this._makeStore(orbitStore, blueprint);
+
     await store.load();
     return store;
   }

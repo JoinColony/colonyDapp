@@ -1,5 +1,6 @@
 /* @flow */
 
+/* eslint-disable-next-line import/prefer-default-export */
 export const raceAgainstTimeout = async (
   /** Promise you want to race against */
   promise: Promise<any>,
@@ -22,11 +23,3 @@ export const raceAgainstTimeout = async (
     clearTimeout(timeout);
   }
 };
-
-// Creating a promise chain to sequentially work through the entries
-// Warning: Doesn't pass on resolved values to the next promise
-export const promiseSeries = (promises: Array<Promise<any>>) =>
-  promises.reduce(
-    (lastPromise, currentPromise) => lastPromise.then(() => currentPromise),
-    Promise.resolve(true),
-  );
