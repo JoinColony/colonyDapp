@@ -13,6 +13,9 @@ import {
   COLONY_FETCH_TRANSACTIONS_ERROR,
   COLONY_FETCH_TRANSACTIONS_SUCCESS,
   COLONY_FETCH_TRANSACTIONS,
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR,
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
 } from '../actionTypes';
 
 function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
@@ -112,6 +115,103 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
   }
 }
 
+function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
+  const { ensName: colonyENSName } = action.payload;
+  const colonyManager = yield getContext('colonyManager');
+
+  try {
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyENSName,
+    );
+    const { provider } = colonyClient.adapter;
+
+    const currentBlock = yield call([provider, provider.getBlockNumber]);
+    const blocksBack = 400000;
+    const fromBlock =
+      currentBlock - blocksBack < 0 ? 0 : currentBlock - blocksBack;
+    const toBlock = 'latest';
+
+    // Get logs + events for token Transfer to this Colony
+    const transferLogs = yield call(
+      [colonyClient.token, colonyClient.token.getLogs],
+      {
+        fromBlock,
+        toBlock,
+        eventNames: ['Transfer'],
+        // [eventNames, from, to]
+        topics: [
+          [],
+          [],
+          `0x000000000000000000000000${colonyClient.contract.address.slice(2)}`,
+        ],
+      },
+    );
+    const transferEvents = yield call(
+      [colonyClient.token, colonyClient.token.parseLogs],
+      transferLogs,
+    );
+
+    // Get logs + events for token claims by this Colony
+    const claimLogs = yield call([colonyClient, colonyClient.getLogs], {
+      address: colonyClient.contract.address,
+      fromBlock,
+      toBlock,
+      eventNames: ['ColonyFundsClaimed'],
+    });
+    const claimEvents = yield call(
+      [colonyClient, colonyClient.parseLogs],
+      claimLogs,
+    );
+
+    const transactions: Array<ContractTransactionProps> = [];
+    for (let i = 0; i < transferEvents.length; i += 1) {
+      const { from, tokens: amount } = transferEvents[i];
+      const {
+        blockHash,
+        blockNumber,
+        to: token,
+        transactionHash: hash,
+      } = transferLogs[i];
+      const { timestamp } = yield call(
+        [provider, provider.getBlock],
+        blockHash,
+      );
+      const date = new Date(timestamp);
+
+      // Only add to the list if we haven't claimed since it happened
+      if (
+        !claimEvents.find(
+          (event, j) =>
+            event.token === token && claimLogs[j].blockNumber < blockNumber,
+        )
+      ) {
+        transactions.push({
+          amount,
+          colonyENSName,
+          date,
+          from,
+          hash,
+          id: hash,
+          incoming: true,
+          token,
+        });
+      }
+    }
+
+    yield put({
+      type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
+      payload: { transactions, ensName: colonyENSName },
+    });
+  } catch (error) {
+    yield putError(COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH_TRANSACTIONS, fetchColonyTransactionsSaga);
+  yield takeEvery(
+    COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+    fetchColonyUnclaimedTransactionsSaga,
+  );
 }

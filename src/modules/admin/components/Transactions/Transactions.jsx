@@ -33,16 +33,19 @@ const displayName = 'admin.Transactions';
 type Props = {
   colony: ColonyRecord,
   transactions: List<ContractTransactionRecord>,
+  unclaimedTransactions: List<ContractTransactionRecord>,
 };
 
 /*
  * Method to call when claiming the pot
  */
-// const handleClaim = (transaction: TransactionType) => console.log(transaction);
+const handleClaim = (transaction: ContractTransactionRecord) =>
+  console.log(transaction); // eslint-disable-line no-console
 
 const Transactions = ({
   colony: { address: colonyAddress },
   transactions,
+  unclaimedTransactions,
 }: Props) => (
   <div className={styles.main}>
     <div className={styles.titleContainer}>
@@ -52,20 +55,20 @@ const Transactions = ({
       />
     </div>
     <div className={styles.transactionsWrapper}>
-      {/* {augmentedPendingTransactions && augmentedPendingTransactions.length ? (
+      {unclaimedTransactions && unclaimedTransactions.size ? (
         <div className={styles.pendingTransactionsWrapper}>
           <TransactionList
             label={MSG.pendingTransactionsTitle}
             currentAddress={colonyAddress}
-            transactions={augmentedPendingTransactions}
+            transactions={unclaimedTransactions}
             onClaim={handleClaim}
             linkToEtherscan={false}
           />
         </div>
-      ) : null} */}
+      ) : null}
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
-          // label={MSG.transactionHistoryTitle}
+          label={MSG.transactionHistoryTitle}
           currentAddress={colonyAddress}
           transactions={transactions}
           linkToEtherscan

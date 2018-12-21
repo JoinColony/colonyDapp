@@ -7,12 +7,19 @@ import ns from '../namespace';
 import type { ENSName } from '~types';
 import type { ContractTransactionRecord } from '~immutable';
 
+type TransactionsMap = ImmutableMap<ENSName, List<ContractTransactionRecord>>;
+
 type RootState = {
   [typeof ns]: {
-    transactions: ImmutableMap<ENSName, List<ContractTransactionRecord>>,
+    transactions: TransactionsMap,
+    unclaimedTransactions: TransactionsMap,
   },
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export const colonyTransactions = (state: RootState, ensName: ENSName) =>
   state[ns].transactions.get(ensName);
+
+export const colonyUnclaimedTransactions = (
+  state: RootState,
+  ensName: ENSName,
+) => state[ns].unclaimedTransactions.get(ensName);

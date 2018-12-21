@@ -22,7 +22,7 @@ export default compose(
           transactions,
           fetchColonyTransactions: fetchColonyTransactionsActionCreator,
         } = this.props;
-        if (!(transactions && transactions.length) && ensName)
+        if (!(transactions && transactions.size) && ensName)
           fetchColonyTransactionsActionCreator(ensName);
       },
     }),
