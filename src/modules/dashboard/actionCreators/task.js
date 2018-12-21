@@ -10,6 +10,8 @@ import {
   TASK_SET_DATE_SUCCESS,
   TASK_SET_SKILL_ERROR,
   TASK_SET_SKILL_SUCCESS,
+  TASK_ASSIGN_WORKER_ERROR,
+  TASK_ASSIGN_WORKER_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_RATE_WORKER_ERROR,
@@ -55,6 +57,21 @@ export const taskSetDate = createTxActionCreator<{
   lifecycle: {
     error: TASK_SET_DATE_ERROR,
     success: TASK_SET_DATE_SUCCESS,
+  },
+});
+
+/**
+ * As Manager, assign (proposed) worker
+ */
+export const taskAssignWorker = createTxActionCreator<{
+  taskId: number,
+  user: string,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'setTaskWorkerRole',
+  lifecycle: {
+    error: TASK_ASSIGN_WORKER_ERROR,
+    success: TASK_ASSIGN_WORKER_SUCCESS,
   },
 });
 

@@ -22,7 +22,6 @@ import {
   TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_ASSIGN_WORKER,
   TASK_ASSIGN_WORKER_ERROR,
-  TASK_ASSIGN_WORKER_SUCCESS,
   TASK_MANAGER_RATE_WORKER,
   TASK_MANAGER_RATE_WORKER_ERROR,
   TASK_MANAGER_RATE_WORKER_SUCCESS,
@@ -39,6 +38,7 @@ import {
 import {
   taskSetDate,
   taskSetSkill,
+  taskAssignWorker,
   taskFinalize,
   taskManagerComplete,
   taskManagerRateWorker,
@@ -148,14 +148,32 @@ function* taskSetDueDateSaga(action: Action): Saga<void> {
 }
 
 function* taskAssignWorkerSaga({
-  payload: { assignee, payouts, taskId },
+  payload: { colonyENSName, assignee, payouts, taskId },
   meta,
 }: Action): Saga<void> {
   try {
     // eslint-disable-next-line no-console
-    console.log(assignee, payouts, taskId);
+    console.log(payouts);
 
-    yield put({ type: TASK_ASSIGN_WORKER_SUCCESS });
+    /**
+     * @TODO set payouts
+     */
+
+    /**
+     * Assign the worker
+     *
+     * @TODO handle mutlisig
+     */
+    const {
+      profile: { walletAddress: user },
+    } = assignee;
+    yield put(
+      taskAssignWorker({
+        identifier: colonyENSName,
+        params: { taskId, user },
+        meta,
+      }),
+    );
   } catch (error) {
     yield putError(TASK_ASSIGN_WORKER_ERROR, error);
   }
