@@ -9,6 +9,7 @@ import {
   COLONY_AVATAR_FETCH_SUCCESS,
   COLONY_AVATAR_REMOVE_SUCCESS,
   COLONY_ADMIN_ADD_SUCCESS,
+  COLONY_ADMIN_REMOVE_SUCCESS,
 } from '../actionTypes';
 
 import { Colony, Token } from '~immutable';
@@ -59,6 +60,10 @@ const coloniesReducer = (state: State = INITIAL_STATE, action: Action) => {
             adminData.toObject(),
           )
         : state;
+    }
+    case COLONY_ADMIN_REMOVE_SUCCESS: {
+      const { ensName, username } = action.payload;
+      return state ? state.deleteIn([ensName, 'admins', username]) : state;
     }
     default:
       return state;
