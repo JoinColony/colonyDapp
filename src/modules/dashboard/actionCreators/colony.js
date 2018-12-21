@@ -78,3 +78,20 @@ export const addColonyAdmin = (
       error: COLONY_ADMIN_ADD_ERROR,
     },
   });
+
+export const removeColonyAdmin = (
+  identifier: AddressOrENSName,
+  params: {
+    user: string,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'removeAdminRole',
+    identifier,
+    lifecycle: {
+      error: COLONY_ADMIN_ADD_ERROR,
+    },
+  });
