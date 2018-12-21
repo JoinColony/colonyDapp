@@ -4,6 +4,7 @@ import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
 
 import type {
+  ENSResolverType,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
@@ -16,9 +17,6 @@ import { Store } from './stores';
 
 const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 const generateId = () => generate(base58, 21);
-
-// TODO: better typing
-type Resolver = Object;
 
 type StoreIdentifier = string | OrbitDBAddress;
 
@@ -38,7 +36,7 @@ class DDB {
 
   _stores: Map<string, Store>;
 
-  _resolvers: Map<string, Resolver>;
+  _resolvers: Map<string, ENSResolverType>;
 
   constructor<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
@@ -121,7 +119,7 @@ class DDB {
     return identifier;
   }
 
-  addResolver(resolverId: string, resolver: Resolver) {
+  addResolver(resolverId: string, resolver: ENSResolverType) {
     this._resolvers.set(resolverId, resolver);
   }
 
