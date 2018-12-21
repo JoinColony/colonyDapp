@@ -59,14 +59,23 @@ class Store {
     );
   }
 
-  async load() {
-    // Let's see whether we have local heads already
+  async ready() {
     const headCountPromise = new Promise(resolve =>
       this._orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
     );
     const loadPromise = this._orbitStore.load();
 
-    const [heads] = await Promise.all([headCountPromise, loadPromise]);
+    const [heads] = await raceAgainstTimeout(
+      Promise.all([headCountPromise, loadPromise]),
+      10000,
+      new Error('Could not get store heads in time'),
+    );
+    return heads;
+  }
+
+  async load() {
+    // Let's see whether we have local heads already
+    const heads = await this.ready();
 
     if (!heads || !heads.length) {
       // We don't have local heads. Let's ask the pinner

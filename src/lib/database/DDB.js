@@ -146,7 +146,10 @@ class DDB {
       // We might want to use more options in the future. Just add them here
       { accessController },
     );
-    return this._makeStore(orbitStore, blueprint);
+
+    const store = this._makeStore(orbitStore, blueprint);
+    await store.ready();
+    return store;
   }
 
   async getStore(
@@ -185,7 +188,9 @@ class DDB {
         `Expected ${type.orbitType} for store ${name}, got ${orbitStore.type}`,
       );
     }
-    return this._makeStore(orbitStore, blueprint);
+    const store = this._makeStore(orbitStore, blueprint);
+    await store.load();
+    return store;
   }
 
   async init() {
