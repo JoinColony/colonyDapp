@@ -12,6 +12,12 @@ import DomainList from '../DomainList';
 import OrganizationAddAdmins from './OrganizationAddAdmins.jsx';
 import OrganizationAddDomains from './OrganizationAddDomains.jsx';
 
+import {
+  COLONY_ADMIN_REMOVE,
+  COLONY_ADMIN_REMOVE_SUCCESS,
+  COLONY_ADMIN_REMOVE_ERROR,
+} from '../../../dashboard/actionTypes';
+
 import styles from './Organizations.css';
 
 import usersMocks from './__datamocks__/usersMocks';
@@ -97,8 +103,9 @@ const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
                 showUsername
                 showMaskedAddress
                 viewOnly={false}
-                // eslint-disable-next-line no-console
-                onRemove={console.log}
+                remove={COLONY_ADMIN_REMOVE}
+                removeSuccess={COLONY_ADMIN_REMOVE_SUCCESS}
+                removeError={COLONY_ADMIN_REMOVE_ERROR}
               />
             ) : (
               <Fragment>
