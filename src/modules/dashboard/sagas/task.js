@@ -225,57 +225,30 @@ function* createTaskSaga(action: Action): Saga<void> {
   }
 }
 
+// function* fetchTaskSaga(action: Action): Saga<void> {}
+
 function* editTaskSaga(action: Action): Saga<void> {
-  const {
-    colonyIdentifier,
-    orbitDBPath,
-    taskId,
-    assignee,
-    payouts,
-  } = action.payload;
+  const { orbitDBPath, taskId, assignee, payouts } = action.payload;
 
   try {
     // eslint-disable-next-line no-unused-vars
     let ddb;
     if (orbitDBPath) {
-      // if exists in ddb, fetch it
-      // TODO: fetch from ddb
-    } else {
-      // otherwise create it
-      // TODO: create in ddb
+      const store = yield call(fetchTaskStore, {
+        orbitDBPath,
+      });
+      yield call([store, store.update], taskId, 'he');
     }
 
-    if (taskId) {
-      // if exists on chain
-
-      if (assignee) {
-        // update assignee on chain (with multisig)
-        // TODO: send tx
-      }
-
-      if (payouts) {
-        // update payouts on chain (with multisig)
-        // TODO: send tx
-      }
-    } else {
-      // if not on chain yet
-
-      if (assignee) {
-        // create on chain
-        yield put({
-          type: TASK_CREATE,
-          payload: { colonyIdentifier, orbitDBPath },
-        });
-        yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
-        // TODO: reload ddb
-      }
-
-      if (payouts) {
-        // update draft payouts in ddb
-        // TODO: update ddb
-      }
+    if (assignee) {
+      // update assignee on chain (with multisig)
+      // TODO: send tx
     }
 
+    if (payouts) {
+      // update payouts on chain (with multisig)
+      // TODO: send tx
+    }
     yield put({ type: TASK_EDIT_SUCCESS });
   } catch (error) {
     yield putError(TASK_EDIT_ERROR, error);
