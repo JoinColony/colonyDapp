@@ -14,12 +14,12 @@ import {
 import type { Action, ENSName } from '~types';
 
 import { callCaller, putError, raceError } from '~utils/saga/effects';
-
+import { getENSDomainString } from '~utils/ens';
 import { DDB } from '../../../lib/database';
 import { DocStore } from '../../../lib/database/stores';
 
 import { colonyStore, domainStore, taskStore } from '../stores';
-import { tasksStoreAddressSelector } from '../selectors';
+import { domainAddressSelector, tasksAddressSelector } from '../selectors';
 
 import {
   DRAFT_DELETE,
@@ -27,6 +27,7 @@ import {
   TASK_CREATE_ERROR,
   TASK_CREATE_SUCCESS,
   TASK_FETCH_SUCCESS,
+  TASK_FETCH_ERROR,
   TASK_EDIT,
   TASK_EDIT_ERROR,
   TASK_EDIT_SUCCESS,
@@ -63,8 +64,6 @@ import {
   taskWorkerRevealRating,
 } from '../actionCreators';
 
-import { fetchOrCreateDomainStore } from './domain';
-
 export function* createTaskStore(): Saga<DocStore> {
   const ddb: DDB = yield getContext('ddb');
   const store = yield call([ddb, ddb.createStore], taskStore);
@@ -95,7 +94,7 @@ export function* fetchTaskStore({
     const domain = yield call(
       [ddb, ddb.getStore],
       domainStore,
-      domains[domainName],
+      domains[domainName || 'rootDomain'],
     );
     yield call([domain, domain.load]);
     // get the tasks database
@@ -173,47 +172,42 @@ function* guessRating(
   return correctRating;
 }
 
-function* createTaskSaga(action: Action): Saga<void> {
-  const { colonyENSName, domainName, task } = action.payload;
-
+function* sendTaskToChain(colonyAddress, task) {
   try {
-    // put task on chain
-    yield put(taskCreate(colonyENSName, task));
-    yield raceError(
-      ({ type, payload: { id } }) =>
-        type === TASK_CREATE_TRANSACTION_SENT && id === task.id,
-      ({ type, payload: { id } }) =>
-        type === TASK_CREATE_ERROR && id === task.id,
+    yield put(taskCreate(colonyAddress, task));
+    yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
+    yield raceError(TASK_CREATE_SUCCESS, TASK_CREATE_ERROR);
+  } catch (error) {
+    yield putError(TASK_CREATE_ERROR, error);
+  }
+}
+
+function* createTaskSaga(action: Action): Saga<void> {
+  const { colonyAddress, colonyENSName, domainName, task } = action.payload;
+  yield call(sendTaskToChain, colonyAddress, task);
+  try {
+    const domainAddress = yield select(
+      domainAddressSelector(colonyENSName, 'rootDomain'),
+    );
+    const draftStoreAddress = yield select(
+      tasksAddressSelector(colonyENSName, 'rootDomain'),
     );
 
-    yield raceError(TASK_CREATE_TRANSACTION_SENT, TASK_CREATE_ERROR);
-    const newTask = yield raceError(
-      ({ type, payload: { taskId: id } }) =>
-        type === TASK_CREATE_SUCCESS && id === task.id,
-      ({ type, payload: { taskId: id } }) =>
-        type === TASK_CREATE_ERROR && id === task.id,
-    );
-    // remove task from drafts
-    const rootDomain = yield call(fetchOrCreateDomainStore, {
-      colonyAddress: colonyENSName,
-      domainName: 'rootDomain',
-    });
-    const taskStoreAddress = yield select(
-      tasksStoreAddressSelector,
-      rootDomain.address.toString(),
-    );
     yield put({
       type: DRAFT_DELETE,
       payload: {
-        colonyENSName,
-        domainAddress: rootDomain.address.toString(),
-        taskStoreAddress,
+        colonyENSName: getENSDomainString(colonyENSName),
+        domainAddress,
+        draftStoreAddress,
         taskId: task.id,
       },
     });
 
     // put task into destination domain taskStore
-    const tasks = yield call(fetchTaskStore, { domainName });
+    const taskStoreAddress = yield select(
+      tasksAddressSelector(colonyENSName, domainName),
+    );
+    const tasks = yield call(fetchTaskStore, { taskStoreAddress });
     yield call([tasks, tasks.add], task);
     const taskFromDDB = yield call([tasks, tasks.get], task.id);
 
@@ -223,11 +217,11 @@ function* createTaskSaga(action: Action): Saga<void> {
       payload: {
         ensName: colonyENSName,
         tasksId: tasks.address.toString(),
-        task: { id: newTask.payload.taskId, ...taskFromDDB },
+        task: taskFromDDB,
       },
     });
   } catch (error) {
-    yield putError(TASK_CREATE_ERROR, error);
+    yield putError(TASK_FETCH_ERROR, error);
   }
 }
 
