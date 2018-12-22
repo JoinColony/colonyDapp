@@ -55,7 +55,8 @@ export function* fetchDraftStore({
     const draftsAddress = yield call([domain, domain.get], 'tasksDatabase');
     store = yield call([ddb, ddb.getStore], draftStore, draftsAddress);
   }
-  yield call([store, store.load]);
+  // TODO figure out why this blocks from returning
+  // yield call([store, store.load]);
   return store;
 }
 
@@ -66,16 +67,19 @@ export function* createDraftStore(): Saga<DocStore> {
 }
 
 export function* createDraftSaga(action: Action): Saga<void> {
-  const { domainAddress, task } = action.payload;
+  const { colonyENSName, draftStoreAddress, task } = action.payload;
   try {
     const store = yield call(fetchDraftStore, {
-      domainAddress,
-      draft: true,
+      colonyENSName,
+      draftStoreAddress,
     });
     const id = task.id ? task.id : generateId();
     yield call([store, store.add], { ...task, id });
     const draft = yield call([store, store.get], id);
-    yield put({ type: DRAFT_CREATE_SUCCESS, payload: { draft } });
+    yield put({
+      type: DRAFT_CREATE_SUCCESS,
+      payload: { colonyENSName, domainName: 'rootDomain', draft },
+    });
   } catch (error) {
     yield putError(DRAFT_CREATE_ERROR, error);
   }
@@ -134,14 +138,13 @@ export function* editDraftSaga(action: Action): Saga<void> {
 export function* deleteDraftSaga(action: Action): Saga<void> {
   const {
     taskId,
-    taskStoreAddress,
+    draftStoreAddress,
     colonyENSName,
     domainAddress,
   } = action.payload;
   try {
     const store = yield call(fetchDraftStore, {
-      taskStoreAddress,
-      draft: true,
+      draftStoreAddress,
     });
     yield call([store, store.remove], taskId);
     yield put({
