@@ -3,7 +3,10 @@
 import { connect } from 'react-redux';
 import { compose, lifecycle, branch } from 'recompose';
 
-import { fetchColonyUnclaimedTransactions } from '../actionCreators';
+import {
+  fetchColonyUnclaimedTransactions,
+  claimColonyToken,
+} from '../actionCreators';
 import { colonyUnclaimedTransactions } from '../selectors';
 
 export default compose(
@@ -11,7 +14,7 @@ export default compose(
     (state, { colony: { ensName } }) => ({
       unclaimedTransactions: colonyUnclaimedTransactions(state, ensName),
     }),
-    { fetchColonyUnclaimedTransactions },
+    { fetchColonyUnclaimedTransactions, claimColonyToken },
   ),
   branch(
     props => !props.transactions,
