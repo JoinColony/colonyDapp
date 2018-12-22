@@ -47,11 +47,12 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
     case DRAFT_CREATE_SUCCESS: {
       const {
         colonyENSName,
+        domainName,
         draft: { id },
         draft,
       } = action.payload;
       return state.setIn(
-        [colonyENSName, 'rootDomain', 'tasks', id],
+        [colonyENSName, domainName, 'tasks', id],
         Draft(draft),
       );
     }
