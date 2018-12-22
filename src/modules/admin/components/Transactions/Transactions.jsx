@@ -6,8 +6,9 @@ import { defineMessages } from 'react-intl';
 import type { List } from 'immutable';
 
 import Heading from '~core/Heading';
-
 import TransactionList from '~core/TransactionList';
+
+import type { Address, ENSName } from '~types';
 
 import styles from './Transactions.css';
 
@@ -34,18 +35,14 @@ type Props = {
   colony: ColonyRecord,
   transactions: List<ContractTransactionRecord>,
   unclaimedTransactions: List<ContractTransactionRecord>,
+  claimColonyToken: (colonyENSName: ENSName, tokenAddress: Address) => any,
 };
 
-/*
- * Method to call when claiming the pot
- */
-const handleClaim = (transaction: ContractTransactionRecord) =>
-  console.log(transaction); // eslint-disable-line no-console
-
 const Transactions = ({
-  colony: { address: colonyAddress },
+  colony: { address: colonyAddress, ensName: colonyENSName },
   transactions,
   unclaimedTransactions,
+  claimColonyToken,
 }: Props) => (
   <div className={styles.main}>
     <div className={styles.titleContainer}>
@@ -61,7 +58,9 @@ const Transactions = ({
             label={MSG.pendingTransactionsTitle}
             currentAddress={colonyAddress}
             transactions={unclaimedTransactions}
-            onClaim={handleClaim}
+            onClaim={transaction =>
+              claimColonyToken(colonyENSName, transaction.token)
+            }
             linkToEtherscan={false}
           />
         </div>

@@ -2,13 +2,19 @@
 
 import type { Saga } from 'redux-saga';
 
+import BigNumber from 'bn.js';
 import { call, getContext, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~types';
 import type { ContractTransactionProps } from '~immutable';
 
-import { putError, callCaller } from '~utils/saga/effects';
+import { putError, callCaller, raceError } from '~utils/saga/effects';
 
+import {
+  fetchColonyTransactions,
+  fetchColonyUnclaimedTransactions,
+  claimColonyTokenTransaction,
+} from '../actionCreators';
 import {
   COLONY_FETCH_TRANSACTIONS_ERROR,
   COLONY_FETCH_TRANSACTIONS_SUCCESS,
@@ -16,6 +22,9 @@ import {
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR,
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+  COLONY_CLAIM_TOKEN_ERROR,
+  COLONY_CLAIM_TOKEN_SUCCESS,
+  COLONY_CLAIM_TOKEN,
 } from '../actionTypes';
 
 function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
@@ -58,16 +67,19 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
           [provider, provider.getTransaction],
           transactionHash,
         );
-        transactions.push({
-          amount,
-          colonyENSName,
-          date,
-          from,
-          id: transactionHash,
-          incoming: true,
-          token,
-          hash: transactionHash,
-        });
+        // don't show claims of zero
+        if (amount.gt(new BigNumber(0))) {
+          transactions.push({
+            amount,
+            colonyENSName,
+            date,
+            from,
+            id: transactionHash,
+            incoming: true,
+            token,
+            hash: transactionHash,
+          });
+        }
       } else if (eventName === 'ColonyFundsMovedBetweenFundingPots') {
         const { amount, fromPot, token } = events[i];
         // TODO: replace this once able to get taskId from potId
@@ -142,8 +154,12 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
         // [eventNames, from, to]
         topics: [
           [],
-          [],
-          `0x000000000000000000000000${colonyClient.contract.address.slice(2)}`,
+          undefined,
+          [
+            `0x000000000000000000000000${colonyClient.contract.address
+              .slice(2)
+              .toLowerCase()}`,
+          ],
         ],
       },
     );
@@ -168,9 +184,9 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
     for (let i = 0; i < transferEvents.length; i += 1) {
       const { from, tokens: amount } = transferEvents[i];
       const {
+        address: token,
         blockHash,
         blockNumber,
-        to: token,
         transactionHash: hash,
       } = transferLogs[i];
       const { timestamp } = yield call(
@@ -183,7 +199,8 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
       if (
         !claimEvents.find(
           (event, j) =>
-            event.token === token && claimLogs[j].blockNumber < blockNumber,
+            event.token.toLowerCase() === token.toLowerCase() &&
+            claimLogs[j].blockNumber > blockNumber,
         )
       ) {
         transactions.push({
@@ -208,10 +225,27 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
   }
 }
 
+/**
+ * Claim tokens, then reload unclaimed transactions list.
+ */
+function* claimColonyToken(action: Action): Saga<void> {
+  const { ensName, tokenAddress: token } = action.payload;
+
+  try {
+    yield put(claimColonyTokenTransaction(ensName, { token }));
+    yield raceError(COLONY_CLAIM_TOKEN_SUCCESS, COLONY_CLAIM_TOKEN_ERROR);
+    yield put(fetchColonyTransactions(ensName));
+    yield put(fetchColonyUnclaimedTransactions(ensName));
+  } catch (error) {
+    yield putError(COLONY_CLAIM_TOKEN_ERROR, error);
+  }
+}
+
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_FETCH_TRANSACTIONS, fetchColonyTransactionsSaga);
   yield takeEvery(
     COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
     fetchColonyUnclaimedTransactionsSaga,
   );
+  yield takeEvery(COLONY_CLAIM_TOKEN, claimColonyToken);
 }
