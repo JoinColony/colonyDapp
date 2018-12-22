@@ -11,6 +11,9 @@ import { KVStore } from '../../../lib/database/stores';
 import { putError } from '~utils/saga/effects';
 import { colonyStore, domainStore } from '../stores';
 import {
+  DOMAIN_CREATE,
+  DOMAIN_CREATE_ERROR,
+  DOMAIN_CREATE_SUCCESS,
   DOMAIN_FETCH,
   DOMAIN_FETCH_ERROR,
   DOMAIN_FETCH_SUCCESS,
@@ -57,6 +60,21 @@ export function* fetchOrCreateDomainStore({
   return store;
 }
 
+function* createDomainSaga({
+  payload: { colonyENSName, domainName },
+}: Action): Saga<void> {
+  try {
+    const store = yield call(fetchOrCreateDomainStore, { domainName });
+    const domainStoreData = yield call(getAll, store);
+    yield put({
+      type: DOMAIN_CREATE_SUCCESS,
+      payload: { colonyENSName, domainStoreData, id: store.address.toString() },
+    });
+  } catch (error) {
+    yield putError(DOMAIN_CREATE_ERROR, error);
+  }
+}
+
 function* fetchDomainSaga({
   payload: { domainAddress, colonyENSName },
 }: Action): Saga<void> {
@@ -73,5 +91,6 @@ function* fetchDomainSaga({
 }
 
 export default function* domainSagas(): any {
+  yield takeEvery(DOMAIN_CREATE, createDomainSaga);
   yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
 }
