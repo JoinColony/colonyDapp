@@ -7,6 +7,7 @@ import { Domain, Domains, Draft, Task } from '~immutable';
 import type { Action } from '~types';
 
 import {
+  DOMAIN_CREATE_SUCCESS,
   DOMAIN_FETCH_SUCCESS,
   DRAFT_CREATE_SUCCESS,
   DRAFT_DELETE_SUCCESS,
@@ -21,6 +22,7 @@ const INITIAL_STATE: State = new ImmutableMap();
 
 const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
+    case DOMAIN_CREATE_SUCCESS:
     case DOMAIN_FETCH_SUCCESS: {
       const {
         domainStoreData: { name, tasksDatabase },
@@ -28,7 +30,7 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
         colonyENSName,
       } = action.payload;
       return state.setIn(
-        [colonyENSName, id, 'domain'],
+        [colonyENSName, name, 'domain'],
         Domain({
           tasksDatabase,
           name,
@@ -44,12 +46,14 @@ const domainsReducer = (state: State = INITIAL_STATE, action: Action) => {
     case DRAFT_FETCH_SUCCESS:
     case DRAFT_CREATE_SUCCESS: {
       const {
-        ensName,
-        domainId,
+        colonyENSName,
         draft: { id },
         draft,
       } = action.payload;
-      return state.setIn([ensName, domainId, 'tasks', id], Draft(draft));
+      return state.setIn(
+        [colonyENSName, 'rootDomain', 'tasks', id],
+        Draft(draft),
+      );
     }
     case TASK_FETCH_SUCCESS: {
       const {
