@@ -28,11 +28,11 @@ import { createDraftStore } from './draft';
  */
 
 export function* fetchOrCreateDomainStore({
-  colonyAddress,
+  colonyENSName,
   domainAddress,
   domainName,
 }: {
-  colonyAddress?: string,
+  colonyENSName?: string,
   domainAddress?: string,
   domainName?: string,
 }): Saga<KVStore> {
@@ -42,12 +42,14 @@ export function* fetchOrCreateDomainStore({
   if (domainAddress) {
     store = yield call([ddb, ddb.getStore], domainStore, domainAddress);
     yield call([store, store.load]);
-  } else if (colonyAddress && domainName) {
-    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyAddress);
+  } else if (colonyENSName && domainName) {
+    const colony = yield call([ddb, ddb.getStore], colonyStore, colonyENSName);
     const domains = yield call([colony, colony.get], 'domains');
     store = yield call([ddb, ddb.getStore], domainStore, domains[domainName]);
     yield call([store, store.load]);
   } else {
+    if (!domainName)
+      throw new Error('Please supply a name when creating a domain');
     store = yield call([ddb, ddb.createStore], domainStore);
     const draft = domainName === 'rootDomain';
     const taskStore = draft
@@ -55,6 +57,7 @@ export function* fetchOrCreateDomainStore({
       : yield call(createTaskStore);
     yield call([store, store.set], {
       tasksDatabase: taskStore.address.toString(),
+      name: domainName,
     });
   }
   return store;
