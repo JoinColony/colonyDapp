@@ -4,12 +4,10 @@ import ENSResolver from './ENSResolver';
 
 import type { ENSName } from '~types';
 
-import type { OrbitDBAddress } from '../types';
-
 class ColonyResolver extends ENSResolver {
   static suffix = 'colony';
 
-  async resolve(ensName: ENSName): Promise<OrbitDBAddress> {
+  async resolve(ensName: ENSName): Promise<string> {
     const domain = this.getDomain(ensName);
     const nameHash = this.constructor.ensHash(domain);
 

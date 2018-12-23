@@ -2,11 +2,6 @@
 
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
-export type OrbitDBAddress = {
-  root: string,
-  path: string,
-};
-
 export interface ENSResolverType {
   type: string;
 
@@ -18,5 +13,5 @@ export interface ENSResolverType {
 
   getENSAddressForENSName(name: string): Promise<string>;
 
-  resolve(identifier: string): Promise<OrbitDBAddress>;
+  resolve(identifier: string): Promise<string>;
 }

@@ -2,9 +2,9 @@
 
 import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
 
 import type {
+  ENSResolverType,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
@@ -15,10 +15,8 @@ import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
 
-const generateId = () => generate(urlDictionary, 21);
-
-// TODO: better typing
-type Resolver = Object;
+const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const generateId = () => generate(base58, 21);
 
 type StoreIdentifier = string | OrbitDBAddress;
 
@@ -38,7 +36,7 @@ class DDB {
 
   _stores: Map<string, Store>;
 
-  _resolvers: Map<string, Resolver>;
+  _resolvers: Map<string, ENSResolverType>;
 
   constructor<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
@@ -121,7 +119,7 @@ class DDB {
     return identifier;
   }
 
-  addResolver(resolverId: string, resolver: Resolver) {
+  addResolver(resolverId: string, resolver: ENSResolverType) {
     this._resolvers.set(resolverId, resolver);
   }
 
@@ -146,7 +144,10 @@ class DDB {
       // We might want to use more options in the future. Just add them here
       { accessController },
     );
-    return this._makeStore(orbitStore, blueprint);
+
+    const store = this._makeStore(orbitStore, blueprint);
+    await store.ready();
+    return store;
   }
 
   async getStore(
@@ -185,7 +186,10 @@ class DDB {
         `Expected ${type.orbitType} for store ${name}, got ${orbitStore.type}`,
       );
     }
-    return this._makeStore(orbitStore, blueprint);
+    const store = this._makeStore(orbitStore, blueprint);
+
+    await store.load();
+    return store;
   }
 
   async init() {

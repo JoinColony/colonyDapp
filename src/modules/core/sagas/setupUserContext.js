@@ -65,6 +65,7 @@ export default function* setupUserContext(action: Action): Saga<void> {
     yield setContext({ ddb, colonyManager });
 
     const userStore = yield call(getOrCreateUserStore, wallet.address);
+
     const profileData: UserProfileProps = yield call(
       getUserProfileData,
       userStore,
