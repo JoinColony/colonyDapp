@@ -20,6 +20,7 @@ type State = UserRecord | null;
 
 const INITIAL_STATE = null;
 
+// TODO consider using `withDataReducer` here
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
