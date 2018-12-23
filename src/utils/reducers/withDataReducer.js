@@ -29,14 +29,13 @@ const handleFetch = (state, action) => {
     : state.set(key, Data(props));
 };
 
-const handleSuccess = (state, action, successReducer) => {
+const handleSuccess = (state, action) => {
   const {
     payload: { key },
   } = action;
-  return successReducer(state, action).mergeIn([key], {
-    error: undefined,
-    isFetching: false,
-  });
+  return state
+    .setIn([key, 'error'], undefined)
+    .setIn([key, 'isFetching'], false);
 };
 
 const handleError = (
@@ -62,15 +61,10 @@ const handleError = (
  * ----------------------------------
  * Parameters (higher order function)
  * ----------------------------------
- * {fetch} A single action type (or a `Set` of multiple types) that will
- * be handled as a generic fetch action.
- *
- * {fetch} A single action type (or a `Set` of multiple types) that will
- * be handled as a generic error action.
- *
- * {success} A map of action types to 'success reducers' (a regular
- * state => action reducer, which is run as the first step when this
- * action is reduced).
+ * {actionTypes} A single action type (or a `Set` of multiple types) that will
+ * be handled as generic fetch action(s). This action type assumes that there
+ * will be an error action type with the suffix `_ERROR` and a success action
+ * type with the suffix `_SUCCESS` (e.g. `COLONY_FETCH_SUCCESS`).
  *
  * ---------------------------
  * Parameters (inner function)
@@ -83,38 +77,30 @@ const handleError = (
  * {K} Key of the map, e.g. `ENSName`
  * {R} The record type, e.g. `ColonyRecord`
  */
-const withDataReducer = <K: any, R: *>({
-  fetch,
-  error,
-  success,
-}: {
-  fetch: Set<string> | string,
-  error: Set<string> | string, // TODO handle timeout separately?
-  success: Map<string, ?DataReducer<K, R>>,
-}) => (wrappedReducer: DataReducer<K, R>): DataReducer<K, R> => {
-  // Create groups of props actions from the given spec.
-  const fetchActions = typeof fetch === 'string' ? new Set([fetch]) : fetch;
-  const errorActions = typeof error === 'string' ? new Set([error]) : error;
+const withDataReducer = <K: any, R: *>(actionTypes: string | Set<string>) => (
+  wrappedReducer: DataReducer<K, R>,
+): DataReducer<K, R> => {
+  // Set up fetch/success/error types according to the usual pattern
+  const fetchTypes =
+    typeof actionTypes === 'string' ? new Set([actionTypes]) : actionTypes;
+  const successTypes = new Set(
+    [...fetchTypes.values()].map(type => `${type}_SUCCESS`),
+  );
+  const errorTypes = new Set(
+    [...fetchTypes.values()].map(type => `${type}_ERROR`),
+  );
 
   // Return a wrapped reducer.
   return (state = new ImmutableMap(), action) => {
-    let nextState = state;
+    // Pass the state to the wrapped reducer as the first step.
+    const nextState = wrappedReducer(state, action);
 
-    // If the action matches a fetch/success/error type, set the next state.
-    if (fetchActions.has(action.type)) {
-      nextState = handleFetch(state, action);
-    } else if (success.has(action.type)) {
-      const reducer = success.get(action.type);
-      // "Should not happen ;)" but here for flow
-      if (!reducer) throw new Error(`Reducer not defined for ${action.type}`);
+    // If the action matches a fetch/success/error type, set the next state again.
+    if (fetchTypes.has(action.type)) return handleFetch(nextState, action);
+    if (successTypes.has(action.type)) return handleSuccess(nextState, action);
+    if (errorTypes.has(action.type)) return handleError(nextState, action);
 
-      nextState = handleSuccess(state, action, reducer);
-    } else if (errorActions.has(action.type)) {
-      nextState = handleError(state, action);
-    }
-
-    // Pass the next state to the wrapped reducer.
-    return wrappedReducer(nextState, action);
+    return nextState;
   };
 };
 

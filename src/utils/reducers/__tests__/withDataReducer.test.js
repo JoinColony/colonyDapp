@@ -20,50 +20,49 @@ describe('reducers - withDataReducer', () => {
     // Create a record factory
     const MyRecord = Record(defaultValues);
 
+    // The reducer actions
+    const MY_FETCH = 'MY_FETCH';
+    const MY_FETCH_ERROR = 'MY_FETCH_ERROR';
+    const MY_FETCH_SUCCESS = 'MY_FETCH_SUCCESS';
+    const MY_OTHER_ACTION = 'MY_OTHER_ACTION';
+
+    const successReducerAction = sandbox.fn(
+      (state, { payload: { key, props } }) =>
+        state.setIn([key, 'record'], MyRecord(props)),
+    );
+
+    const otherReducerAction = sandbox.fn((state, { payload: { key, c } }) =>
+      state.setIn([key, 'record', 'c'], c),
+    );
+
     // Create a reducer we can wrap
     const myReducer = sandbox.fn((state, action) => {
       switch (action.type) {
-        case 'MY_OTHER_ACTION': {
-          const { key, c } = action.payload;
-          return state.setIn([key, 'record', 'c'], c);
-        }
+        case MY_FETCH_SUCCESS:
+          return successReducerAction(state, action);
+        case MY_OTHER_ACTION:
+          return otherReducerAction(state, action);
         default:
           return state;
       }
     });
 
-    // The reducer actions
-    const MY_FETCH_ACTION = 'MY_FETCH_ACTION';
-    const MY_FETCH_ERROR_ACTION = 'MY_FETCH_ERROR_ACTION';
-    const MY_FETCH_SUCCESS_ACTION = 'MY_FETCH_SUCCESS_ACTION';
-    const MY_OTHER_ACTION = 'MY_OTHER_ACTION';
-
-    // The `withDataReducer` spec
-    const successReducer = sandbox.fn((state, { payload: { key, props } }) =>
-      state.setIn([key, 'record'], MyRecord(props)),
-    );
-    const spec = {
-      fetch: MY_FETCH_ACTION,
-      error: MY_FETCH_ERROR_ACTION,
-      success: new Map([[MY_FETCH_SUCCESS_ACTION, successReducer]]),
-    };
-
-    const myWrappedReducer = withDataReducer(spec, MyRecord)(myReducer);
+    const myWrappedReducer = withDataReducer(MY_FETCH)(myReducer);
 
     const initialState = new ImmutableMap();
 
     const fetchAction = {
-      type: MY_FETCH_ACTION,
+      type: MY_FETCH,
       payload: { key: 'myKey' },
     };
 
     const errorAction = {
-      type: MY_FETCH_ERROR_ACTION,
+      type: MY_FETCH_ERROR,
       payload: { meta: { key: 'myKey' }, error: { id: 'fetch error' } },
     };
 
     const successAction = {
-      type: MY_FETCH_SUCCESS_ACTION,
+      type: MY_FETCH_SUCCESS,
       payload: { key: 'myKey', props: { a: 1, b: 1 } },
     };
 
@@ -81,8 +80,8 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: true,
       });
-      expect(myReducer).toHaveBeenCalledWith(fetchState, fetchAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
 
       const successState = myWrappedReducer(fetchState, successAction);
@@ -96,10 +95,13 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: false,
       });
-      expect(myReducer).toHaveBeenCalledWith(successState, successAction);
-      expect(successReducer).toHaveBeenCalledWith(fetchState, successAction);
+      expect(successReducerAction).toHaveBeenCalledWith(
+        fetchState,
+        successAction,
+      );
+      expect(myReducer).toHaveBeenCalledWith(fetchState, successAction);
       myReducer.mockClear();
-      successReducer.mockClear();
+      successReducerAction.mockClear();
 
       const otherState = myWrappedReducer(successState, otherAction);
       expect(otherState.has('myKey')).toBe(true);
@@ -113,7 +115,7 @@ describe('reducers - withDataReducer', () => {
         isFetching: false,
       });
       expect(myReducer).toHaveBeenCalledWith(successState, otherAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
     }
 
@@ -126,8 +128,8 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: true,
       });
-      expect(myReducer).toHaveBeenCalledWith(fetchState, fetchAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
 
       const errorState = myWrappedReducer(fetchState, errorAction);
@@ -137,8 +139,8 @@ describe('reducers - withDataReducer', () => {
         error: 'fetch error',
         isFetching: false,
       });
-      expect(myReducer).toHaveBeenCalledWith(errorState, errorAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(fetchState, errorAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
     }
 
@@ -146,8 +148,8 @@ describe('reducers - withDataReducer', () => {
     {
       const fetchState = myWrappedReducer(initialState, fetchAction);
       expect(fetchState.has('myKey')).toBe(true);
-      expect(myReducer).toHaveBeenCalledWith(fetchState, fetchAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
 
       const errorState = myWrappedReducer(fetchState, errorAction);
@@ -156,8 +158,8 @@ describe('reducers - withDataReducer', () => {
         error: 'fetch error',
         isFetching: false,
       });
-      expect(myReducer).toHaveBeenCalledWith(errorState, errorAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(fetchState, errorAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
 
       const successState = myWrappedReducer(errorState, successAction);
@@ -170,10 +172,13 @@ describe('reducers - withDataReducer', () => {
         error: undefined, // removed
         isFetching: false,
       });
-      expect(myReducer).toHaveBeenCalledWith(successState, successAction);
-      expect(successReducer).toHaveBeenCalledWith(errorState, successAction);
+      expect(myReducer).toHaveBeenCalledWith(errorState, successAction);
+      expect(successReducerAction).toHaveBeenCalledWith(
+        errorState,
+        successAction,
+      );
       myReducer.mockClear();
-      successReducer.mockClear();
+      successReducerAction.mockClear();
     }
 
     // Actions: Multiple fetch/success
@@ -185,8 +190,8 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: true,
       });
-      expect(myReducer).toHaveBeenCalledWith(fetchOneState, fetchAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
 
       const fetchTwoState = myWrappedReducer(fetchOneState, fetchAction);
@@ -196,12 +201,12 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: true,
       });
-      expect(myReducer).toHaveBeenCalledWith(fetchTwoState, fetchAction);
-      expect(successReducer).not.toHaveBeenCalled();
+      expect(myReducer).toHaveBeenCalledWith(fetchOneState, fetchAction);
+      expect(successReducerAction).not.toHaveBeenCalled();
       myReducer.mockClear();
 
       const successOneAction = {
-        type: MY_FETCH_SUCCESS_ACTION,
+        type: MY_FETCH_SUCCESS,
         payload: { key: 'myKey', props: { a: 20 } },
       };
       const successOneState = myWrappedReducer(fetchTwoState, successOneAction);
@@ -214,16 +219,16 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: false,
       });
-      expect(myReducer).toHaveBeenCalledWith(successOneState, successOneAction);
-      expect(successReducer).toHaveBeenCalledWith(
+      expect(myReducer).toHaveBeenCalledWith(fetchTwoState, successOneAction);
+      expect(successReducerAction).toHaveBeenCalledWith(
         fetchTwoState,
         successOneAction,
       );
       myReducer.mockClear();
-      successReducer.mockClear();
+      successReducerAction.mockClear();
 
       const successTwoAction = {
-        type: MY_FETCH_SUCCESS_ACTION,
+        type: MY_FETCH_SUCCESS,
         payload: { key: 'myKey', props: { b: 2000 } },
       };
       const successTwoState = myWrappedReducer(
@@ -239,17 +244,17 @@ describe('reducers - withDataReducer', () => {
         error: undefined,
         isFetching: false,
       });
-      expect(myReducer).toHaveBeenCalledWith(successTwoState, successTwoAction);
-      expect(successReducer).toHaveBeenCalledWith(
+      expect(myReducer).toHaveBeenCalledWith(successOneState, successTwoAction);
+      expect(successReducerAction).toHaveBeenCalledWith(
         successOneState,
         successTwoAction,
       );
       myReducer.mockClear();
-      successReducer.mockClear();
+      successReducerAction.mockClear();
 
       // An unexpected success action
       const successThreeAction = {
-        type: MY_FETCH_SUCCESS_ACTION,
+        type: MY_FETCH_SUCCESS,
         payload: { key: 'myKey', props: { a: 5000 } },
       };
       const successThreeState = myWrappedReducer(
@@ -266,15 +271,15 @@ describe('reducers - withDataReducer', () => {
         isFetching: false,
       });
       expect(myReducer).toHaveBeenCalledWith(
-        successThreeState,
+        successTwoState,
         successThreeAction,
       );
-      expect(successReducer).toHaveBeenCalledWith(
+      expect(successReducerAction).toHaveBeenCalledWith(
         successTwoState,
         successThreeAction,
       );
       myReducer.mockClear();
-      successReducer.mockClear();
+      successReducerAction.mockClear();
     }
   });
 });
