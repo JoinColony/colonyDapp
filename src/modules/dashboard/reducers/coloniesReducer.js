@@ -6,7 +6,6 @@ import {
   COLONY_AVATAR_REMOVE_SUCCESS,
   COLONY_AVATAR_UPLOAD_SUCCESS,
   COLONY_FETCH,
-  COLONY_FETCH_ERROR,
   COLONY_FETCH_SUCCESS,
   COLONY_PROFILE_UPDATE_SUCCESS,
 } from '../actionTypes';
@@ -22,6 +21,19 @@ const coloniesReducer = (
   action: Action,
 ) => {
   switch (action.type) {
+    case COLONY_FETCH_SUCCESS: {
+      const {
+        props: { token, ensName, ...props },
+      } = action.payload;
+      const record = Colony({
+        ensName,
+        token: Token(token),
+        ...props,
+      });
+      return state.get(ensName)
+        ? state.setIn([ensName, 'record'], record)
+        : state.set(ensName, Data({ record }));
+    }
     case COLONY_PROFILE_UPDATE_SUCCESS: {
       const { ensName, colonyUpdateValues } = action.payload;
       return state.mergeIn([ensName, 'record'], colonyUpdateValues);
@@ -39,29 +51,6 @@ const coloniesReducer = (
   }
 };
 
-export default withDataReducer<ENSName, ColonyRecord>({
-  error: COLONY_FETCH_ERROR,
-  fetch: COLONY_FETCH,
-  success: new Map([
-    [
-      COLONY_FETCH_SUCCESS,
-      (
-        state,
-        {
-          payload: {
-            props: { token, ensName, ...props },
-          },
-        },
-      ) => {
-        const record = Colony({
-          ensName,
-          token: Token(token),
-          ...props,
-        });
-        return state.get(ensName)
-          ? state.setIn([ensName, 'record'], record)
-          : state.set(ensName, Data({ record }));
-      },
-    ],
-  ]),
-})(coloniesReducer);
+export default withDataReducer<ENSName, ColonyRecord>(COLONY_FETCH)(
+  coloniesReducer,
+);
