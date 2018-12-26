@@ -9,7 +9,7 @@ import Token from './Token';
 import type { Address, ENSName } from '~types';
 import type { TokenRecord } from './index';
 
-export type ColonyProps = {
+export type ColonyProps = {|
   address: Address,
   avatar?: string,
   description?: string,
@@ -17,26 +17,26 @@ export type ColonyProps = {
   guideline?: string,
   id?: number,
   name: string,
-  token: TokenRecord,
+  token?: TokenRecord,
   version?: number,
   website?: string,
-};
+|};
 
-export type ColonyRecord = RecordOf<ColonyProps>;
-
-const defaultValues: ColonyProps = {
-  address: '',
+const defaultValues: $Shape<ColonyProps> = {
+  address: undefined,
   avatar: undefined,
   description: undefined,
-  ensName: '',
+  ensName: undefined,
   guideline: undefined,
   id: undefined,
-  name: '',
+  name: undefined,
   token: Token(),
   version: undefined,
   website: undefined,
 };
 
 const Colony: RecordFactory<ColonyProps> = Record(defaultValues);
+
+export type ColonyRecord = RecordOf<ColonyProps>;
 
 export default Colony;

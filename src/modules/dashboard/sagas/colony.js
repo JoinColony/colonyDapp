@@ -91,7 +91,10 @@ function* createColonyLabelSaga({
   };
 
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
-  yield put({ type: COLONY_FETCH_SUCCESS, payload: { colonyStoreData } });
+  yield put({
+    type: COLONY_FETCH_SUCCESS,
+    payload: { key: ensName, props: colonyStoreData },
+  });
 
   yield call([store, store.set], colonyStoreData);
 
@@ -169,35 +172,29 @@ function* updateColonySaga(action: Action): Saga<void> {
      * Set the new values in the store
      */
     yield call([store, store.set], colonyUpdateValues);
-    /*
-     * Fetch the newly set colony profile (from the store)
-     */
-    const colonyProfile = yield call(getAll, store);
 
     /*
-     * Store the new profile in the redux store so we can show it
+     * Update the colony in the redux store to show the updated values
      */
     yield put({
       type: COLONY_PROFILE_UPDATE_SUCCESS,
-      payload: { [ensName]: colonyProfile },
+      payload: { ensName, colonyUpdateValues },
     });
   } catch (error) {
     yield putError(COLONY_PROFILE_UPDATE_ERROR, error);
   }
 }
 
-function* fetchColonySaga({ payload: { ensName } }: Action): Saga<void> {
+function* fetchColonySaga({ payload: { key } }: Action): Saga<void> {
   try {
-    const store = yield call(fetchColonyStore, ensName);
-
-    const colonyStoreData = yield call(getAll, store);
-
+    const store = yield call(fetchColonyStore, key);
+    const props = yield call(getAll, store);
     yield put({
       type: COLONY_FETCH_SUCCESS,
-      payload: { colonyStoreData },
+      payload: { key, props },
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_ERROR, error);
+    yield putError(COLONY_FETCH_ERROR, error, { key });
   }
 }
 

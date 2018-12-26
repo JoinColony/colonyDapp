@@ -35,13 +35,15 @@ const mockColonyRecoveryMode = false;
 const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {
-  colony: ColonyRecord,
-  openDialog: OpenDialog,
+  colonyId: $PropertyType<ColonyRecord, 'id'>,
+  colonyVersion: $PropertyType<ColonyRecord, 'version'>,
   given: Given,
+  openDialog: OpenDialog,
 };
 
 const ProfileAdvanced = ({
-  colony: { id, version },
+  colonyId,
+  colonyVersion,
   openDialog,
   given,
 }: Props) => (
@@ -52,7 +54,7 @@ const ProfileAdvanced = ({
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.labelVersion}
         />
-        <p className={styles.advancedNumeric}>{version}</p>
+        <p className={styles.advancedNumeric}>{colonyVersion}</p>
       </div>
       <Button
         appearance={{ theme: 'primary', size: 'large' }}
@@ -66,7 +68,7 @@ const ProfileAdvanced = ({
         appearance={{ size: 'small', margin: 'none' }}
         text={MSG.labelId}
       />
-      <p className={styles.advancedNumeric}>{id}</p>
+      <p className={styles.advancedNumeric}>{colonyId}</p>
     </section>
     {/* I have no idea how the recovery mode should work, so for now,
      * I'm assuming we just need a button for it

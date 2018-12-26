@@ -13,8 +13,8 @@ export type TaskPayoutProps = {
 
 const NETWORK_FEE = 0.01;
 
-const defaultValues: TaskPayoutProps = {
-  amount: 0,
+const defaultValues: $Shape<TaskPayoutProps> = {
+  amount: undefined,
   token: Token(),
 };
 

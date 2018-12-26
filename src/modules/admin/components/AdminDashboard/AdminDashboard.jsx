@@ -9,7 +9,7 @@ import { compose } from 'recompose';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-import { SpinnerLoader } from '~core/Preloaders';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import Organizations from '~admin/Organizations';
 import Profile from '~admin/Profile';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
@@ -29,10 +29,14 @@ import type {
    */
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
-import type { ColonyRecord } from '~immutable';
+import type { ColonyRecord, DataRecord } from '~immutable';
 import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
+  loadingText: {
+    id: 'dashboard.Admin.loadingText',
+    defaultMessage: 'Loading Colony',
+  },
   backButton: {
     id: 'dashboard.Admin.backButton',
     defaultMessage: 'Go to {name}',
@@ -62,7 +66,7 @@ const MSG = defineMessages({
 const mockColonyRecoveryMode = true;
 
 type Props = {
-  colony: ColonyRecord,
+  colony: ?DataRecord<ColonyRecord>,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
@@ -71,7 +75,7 @@ type Props = {
   given: Given,
 };
 
-const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
+const navigationItems = (colony: ColonyRecord): Array<NavigationItem> => [
   {
     id: 1,
     title: MSG.tabProfile,
@@ -97,14 +101,14 @@ const navigationItems = ({ colony }: Props): Array<NavigationItem> => [
 const AdminDashboard = (props: Props) => {
   const { colony, given, location } = props;
 
-  // TODO create a better loading state
-  if (!colony) return <SpinnerLoader />;
+  if (!colony || !colony.record)
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
 
-  const { ensName, name } = colony;
+  const { ensName, name } = colony.record;
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(props)}
+        navigationItems={navigationItems(colony.record)}
         initialTab={
           location && location.state && location.state.initialTab ? 1 : 0
         }

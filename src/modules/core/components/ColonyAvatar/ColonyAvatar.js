@@ -8,7 +8,7 @@ import ColonyAvatar from './ColonyAvatar.jsx';
 import {
   currentColonyAvatarHashSelector,
   currentColonyAvatarDataSelector,
-} from '../../selectors';
+} from '../../../dashboard/selectors';
 import { fetchColonyAvatar as fetchColonyAvatarAction } from '../../../dashboard/actionCreators';
 
 export default compose(

@@ -15,8 +15,8 @@ export type TaskFeedItemCommentProps = {
 
 export type TaskFeedItemCommentRecord = RecordOf<TaskFeedItemCommentProps>;
 
-const defaultValues: TaskFeedItemCommentProps = {
-  body: '',
+const defaultValues: $Shape<TaskFeedItemCommentProps> = {
+  body: undefined,
   user: User(),
 };
 

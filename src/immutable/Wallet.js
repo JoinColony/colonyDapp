@@ -14,10 +14,10 @@ export type WalletProps = {
 
 export type WalletRecord = RecordOf<WalletProps>;
 
-const defaultValues: WalletProps = {
+const defaultValues: $Shape<WalletProps> = {
   availableAddresses: [],
   currentAddress: undefined,
-  isLoading: false,
+  isLoading: undefined,
 };
 
 const Wallet: RecordFactory<WalletProps> = Record(defaultValues);

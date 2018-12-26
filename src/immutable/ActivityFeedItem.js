@@ -4,11 +4,7 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-export type ActivityAction =
-  | 'addedSkillTag'
-  | 'assignedUser'
-  | 'commentedOn'
-  | ''; // XXX this empty string is only used for setting a default
+export type ActivityAction = 'addedSkillTag' | 'assignedUser' | 'commentedOn';
 
 export type ActivityFeedItemProps = {
   id: number,
@@ -22,14 +18,14 @@ export type ActivityFeedItemProps = {
 
 export type ActivityFeedItemRecord = RecordOf<ActivityFeedItemProps>;
 
-const defaultValues: ActivityFeedItemProps = {
-  id: 0,
-  actionType: '',
-  date: new Date(),
+const defaultValues: $Shape<ActivityFeedItemProps> = {
+  id: undefined,
+  actionType: undefined,
+  date: undefined,
   user: undefined,
-  task: '',
-  organization: '',
-  domainTag: '',
+  task: undefined,
+  organization: undefined,
+  domainTag: undefined,
 };
 
 const ActivityFeedItem: RecordFactory<ActivityFeedItemProps> = Record(

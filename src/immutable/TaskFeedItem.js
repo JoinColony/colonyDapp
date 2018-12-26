@@ -16,10 +16,10 @@ export type TaskFeedItemProps = {
 
 export type TaskFeedItemRecord = RecordOf<TaskFeedItemProps>;
 
-const defaultValues: TaskFeedItemProps = {
+const defaultValues: $Shape<TaskFeedItemProps> = {
   comment: undefined,
-  createdAt: new Date(),
-  id: 0,
+  createdAt: undefined,
+  id: undefined,
   rating: undefined,
 };
 

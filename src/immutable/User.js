@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Record, List } from 'immutable';
+import { List, Record } from 'immutable';
 
 import UserProfile from './UserProfile';
 
@@ -14,12 +14,12 @@ export type UserProps = {
 
 const defaultActivities: List<UserActivityRecord> = List();
 
-const defaultValues: UserProps = {
+const defaultValues: $Shape<UserProps> = {
   profile: UserProfile(),
   activities: defaultActivities,
 };
 
-class UserClass extends Record(defaultValues)<UserProps> {
+class UserClass extends Record<UserProps>(defaultValues) {
   /* eslint-disable */
   /*::
   activities: List<UserActivityRecord>;
@@ -34,9 +34,6 @@ class UserClass extends Record(defaultValues)<UserProps> {
 
 export type UserRecord = UserClass;
 
-const User = (props?: {
-  activities?: List<UserActivityRecord>,
-  profile?: UserProfileRecord,
-}) => new UserClass(props);
+const User = (props?: $Shape<UserProps>) => new UserClass(props);
 
 export default User;

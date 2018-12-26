@@ -44,16 +44,16 @@ export type TransactionRecord<
   E: TransactionEventData,
 > = RecordOf<TransactionProps<P, E>>;
 
-const defaultValues: TransactionProps<*, *> = {
+const defaultValues: $Shape<TransactionProps<*, *>> = {
   context: undefined,
-  createdAt: new Date(),
+  createdAt: undefined,
   errors: new List(),
   eventData: undefined,
   hash: undefined,
   id: nanoid(),
   identifier: undefined,
   lifecycle: {},
-  methodName: '',
+  methodName: undefined,
   options: {},
   params: {},
   receiptReceived: undefined,

@@ -2,18 +2,59 @@
 
 import type { Map as ImmutableMap } from 'immutable';
 
-import ns from '../namespace';
+import { createSelector } from 'reselect';
 
 import type { ENSName } from '~types';
-import type { ColonyRecord } from '~immutable';
+import type { ColonyRecord, DataMap, DataRecord } from '~immutable';
+
+import ns from '../namespace';
 
 type RootState = {
   [typeof ns]: {
-    colonies: ImmutableMap<ENSName, ColonyRecord>,
+    allColonies: {
+      colonies: DataMap<ENSName, ColonyRecord>,
+      avatars: ImmutableMap<string, string>,
+    },
   },
 };
 
-export const allColonies = (state: RootState) => state[ns].colonies;
+type ColonyAvatarSelector = (state: RootState, props: Object) => string;
+type ColonySelector = (
+  state: RootState,
+  ensName: ENSName,
+) => ?DataRecord<ColonyRecord>;
+type ENSNameFromRouter = (state: RootState, props: Object) => ENSName;
 
-export const singleColony = (state: RootState, ensName: ENSName) =>
-  allColonies(state).get(ensName);
+export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
+  props.match.params.ensName;
+
+export const allColoniesSelector = (state: RootState) => state[ns].allColonies;
+
+export const coloniesSelector = (state: RootState) =>
+  allColoniesSelector(state).colonies;
+
+export const colonyAvatarsSelector = (state: RootState) =>
+  allColoniesSelector(state).avatars;
+
+export const routerColonySelector: ColonySelector = createSelector(
+  coloniesSelector,
+  ensNameFromRouter,
+  (colonies, ensName) => colonies.get(ensName),
+);
+
+export const singleColonySelector: ColonySelector = (
+  state: RootState,
+  ensName: ENSName,
+) => coloniesSelector(state).get(ensName);
+
+export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(
+  coloniesSelector,
+  (state, props) => props.ensName,
+  (colonies, ensName) => colonies.getIn([ensName, 'record', 'avatar']),
+);
+
+export const currentColonyAvatarDataSelector: ColonyAvatarSelector = createSelector(
+  currentColonyAvatarHashSelector,
+  colonyAvatarsSelector,
+  (hash, avatars) => avatars.get(hash),
+);

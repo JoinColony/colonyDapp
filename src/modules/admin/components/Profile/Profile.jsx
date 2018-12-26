@@ -47,7 +47,7 @@ const Profile = ({ colony }: Props) => (
         <ProfileEdit colony={colony} />
       </TabPanel>
       <TabPanel>
-        <ProfileAdvanced colony={colony} />
+        <ProfileAdvanced colonyId={colony.id} colonyVersion={colony.version} />
       </TabPanel>
     </Tabs>
   </div>
