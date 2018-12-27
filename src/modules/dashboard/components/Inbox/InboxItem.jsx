@@ -125,7 +125,6 @@ const InboxItem = ({
     }}
   >
     <TableCell className={styles.inboxRowCell}>
-      {/* TODO: check if event is the following actionWorkerInviteReceived */}
       <ConditionalWrapper to={onClickRoute} event={event} user={user}>
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
