@@ -10,16 +10,17 @@ import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
+import { List } from 'immutable';
 import Payout from './Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { getEthToUsd } from '~utils/external';
 import { bnMultiply } from '~utils/numbers';
 
-import type { UserRecord } from '~types/';
+import type { UserRecord } from '~immutable';
 
 import styles from './TaskInviteDialog.css';
 
-import tokensMock from '../Wallet/__datamocks__/mockTokens';
+import tokensMock from '../../../../__mocks__/mockTokens';
 
 import {
   TASK_WORKER_ASSIGN,
@@ -45,7 +46,7 @@ type State = {
 type Props = {
   taskId: number,
   assignee?: UserRecord,
-  payouts?: Array<Object>,
+  payouts?: List<Object>,
   reputation?: BigNumber,
   cancel: () => void,
 };
@@ -123,14 +124,14 @@ class TaskInviteDialog extends Component<Props, State> {
                     <div>
                       {payouts &&
                         payouts.map((payout, index) => {
-                          const { amount, token: tokenIndex } = payout;
-                          const token = tokensMock[tokenIndex - 1] || {};
+                          const { amount } = payout;
+                          const token = tokensMock.get(index - 1) || {};
                           return (
                             <Payout
-                              key={token.tokenSymbol}
+                              key={token.symbol}
                               name={`payouts.${index}`}
                               amount={amount}
-                              symbol={token.tokenSymbol}
+                              symbol={token.symbol}
                               reputation={
                                 token.isNative ? reputation : undefined
                               }

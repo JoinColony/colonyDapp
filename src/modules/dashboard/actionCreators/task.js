@@ -18,6 +18,8 @@ import {
   TASK_SET_DATE_SUCCESS,
   TASK_SET_SKILL_ERROR,
   TASK_SET_SKILL_SUCCESS,
+  TASK_WORKER_ASSIGN_ERROR,
+  TASK_WORKER_ASSIGN_SUCCESS,
   TASK_WORKER_CLAIM_REWARD_ERROR,
   TASK_WORKER_CLAIM_REWARD_SUCCESS,
   TASK_WORKER_END_ERROR,
@@ -264,5 +266,22 @@ export const claimPayoutAsWorkerTx = createTxActionCreator<{
   lifecycle: {
     error: TASK_WORKER_CLAIM_REWARD_ERROR,
     success: TASK_WORKER_CLAIM_REWARD_SUCCESS,
+  },
+});
+
+/**
+ * After being invited to work on a task
+ * a worker can accept and will then be assigned
+ */
+export const taskWorkerAssignTx = createTxActionCreator<{
+  taskId: number,
+  user: string,
+  role: 'WORKER',
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'setTaskWorkerRole',
+  lifecycle: {
+    error: TASK_WORKER_ASSIGN_ERROR,
+    success: TASK_WORKER_ASSIGN_SUCCESS,
   },
 });
