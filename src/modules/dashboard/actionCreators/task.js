@@ -26,7 +26,7 @@ import {
 } from '../actionTypes';
 
 /**
- * As anyone, I want to be able to set a skill
+ * As worker or manager, I want to be able to set a skill
  */
 export const taskSetSkill = (
   identifier: string,

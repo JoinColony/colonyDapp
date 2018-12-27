@@ -20,6 +20,8 @@ import {
   TASK_SET_SKILL_SUCCESS,
 } from '../../actionTypes';
 
+import type { TaskRecord } from '~immutable';
+
 const MSG = defineMessages({
   title: {
     id: 'dashboard.TaskSkills.title',
@@ -36,14 +38,12 @@ const MSG = defineMessages({
 
 type Props = {
   isTaskCreator?: boolean,
-  taskId: number,
+  // After the skillId is set with the TaskDomains component it should be passed
+  // through form the redux store and is property of the TaskRecord
+  task: TaskRecord,
 };
 
-type State = {
-  selectedSkillId: number | void,
-};
-
-class TaskSkills extends Component<Props, State> {
+class TaskSkills extends Component<Props> {
   asyncFunc: AsyncFunction<Object, void>;
 
   static displayName = 'dashboard.TaskSkills';
@@ -58,30 +58,33 @@ class TaskSkills extends Component<Props, State> {
     });
   }
 
-  state = {
-    selectedSkillId: undefined,
-  };
-
   componentWillUnmount() {
     this.asyncFunc.unsubscribe();
   }
 
   handleSetSkill = async (skillValue: Object) => {
-    const { taskId } = this.props;
+    const {
+      task: { id, colonyENSName, domainId },
+    } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
         skillId: skillValue.id,
-        taskId,
+        domainId,
+        // taskId of currently selected task
+        id,
+        ensName: colonyENSName,
       });
-      this.setState({ selectedSkillId: skillValue.id });
     } catch (error) {
+      // TODO: handle this error properly / display it in some way
       console.error(error);
     }
   };
 
   render() {
-    const { isTaskCreator } = this.props;
-    const { selectedSkillId } = this.state;
+    const {
+      isTaskCreator,
+      task: { skillId },
+    } = this.props;
     const list = Array(...taskSkills);
     return (
       <div className={styles.main}>
@@ -101,7 +104,7 @@ class TaskSkills extends Component<Props, State> {
               <Button
                 appearance={{ theme: 'blue', size: 'small' }}
                 text={MSG.selectSkill}
-                textValues={{ skillSelected: selectedSkillId }}
+                textValues={{ skillSelected: skillId }}
               />
             </div>
           </ItemsList>

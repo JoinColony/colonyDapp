@@ -254,7 +254,7 @@ class Task extends Component<Props> {
               <TaskDomains isTaskCreator={preventEdit} />
             </div>
             <div className={styles.editor}>
-              <TaskSkills isTaskCreator={preventEdit} taskId={task.id} />
+              <TaskSkills isTaskCreator={preventEdit} task={task} />
             </div>
             <div className={styles.editor}>
               <TaskDate isTaskCreator={preventEdit} />
