@@ -9,7 +9,7 @@ import TransactionList from '~core/TransactionList';
 
 import styles from './WalletTransactions.css';
 
-import type { ContractTransactionRecord } from '~immutable';
+import type { ContractTransactionRecord, DataRecord } from '~immutable';
 
 const MSG = defineMessages({
   transactionsEmptyTitle: {
@@ -27,13 +27,13 @@ const MSG = defineMessages({
 const displayName = 'dashboard.WalletTransactions';
 
 type Props = {
-  transactions: List<ContractTransactionRecord>,
+  transactions: ?DataRecord<List<ContractTransactionRecord>>,
   userAddress: string,
 };
 
 const WalletTransactions = ({ transactions, userAddress }: Props) => (
   <div className={styles.main}>
-    {transactions.size ? (
+    {transactions && transactions.size ? (
       <TransactionList
         currentAddress={userAddress}
         transactions={transactions}
