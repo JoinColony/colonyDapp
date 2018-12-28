@@ -268,6 +268,7 @@ class Popover extends Component<Props, State> {
       showArrow,
     } = this.props;
     const { isOpen } = this.state;
+    const content = this.renderContent();
     return (
       <Manager>
         <Reference innerRef={this.registerRefNode}>
@@ -290,7 +291,7 @@ class Popover extends Component<Props, State> {
                 onFocus={this.handleWrapperFocus}
                 retainRefFocus={retainRefFocus}
               >
-                {this.renderContent()}
+                {content}
               </PopoverWrapper>
             )}
           </Popper>
