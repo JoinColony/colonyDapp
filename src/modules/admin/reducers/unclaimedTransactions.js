@@ -2,13 +2,18 @@
 
 import { Map as ImmutableMap, List } from 'immutable';
 
-import { COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS } from '../actionTypes';
+import {
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
+} from '../actionTypes';
 
-import { ContractTransaction } from '~immutable';
+import { ContractTransaction, Data } from '~immutable';
+import { withDataReducer } from '~utils/reducers';
 
 import type { Action, ENSName } from '~types';
+import type { DataMap } from '~immutable';
 
-type State = ImmutableMap<ENSName, List<ContractTransaction>>;
+type State = DataMap<ENSName, List<ContractTransaction>>;
 
 const INITIAL_STATE: State = new ImmutableMap();
 
@@ -18,15 +23,17 @@ const colonyUnclaimedTransactionsReducer = (
 ) => {
   switch (action.type) {
     case COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: {
-      const { transactions, ensName } = action.payload;
-      return state.set(
-        ensName,
-        List(transactions.map(tx => ContractTransaction(tx))),
-      );
+      const { transactions, key } = action.payload;
+      const record = List(transactions.map(tx => ContractTransaction(tx)));
+      return state.get(key)
+        ? state.setIn([key, 'record'], record)
+        : state.set(key, Data({ record }));
     }
     default:
       return state;
   }
 };
 
-export default colonyUnclaimedTransactionsReducer;
+export default withDataReducer<string, List<ContractTransaction>>(
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+)(colonyUnclaimedTransactionsReducer);

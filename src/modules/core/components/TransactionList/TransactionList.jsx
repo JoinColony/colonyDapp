@@ -3,14 +3,23 @@
 import React from 'react';
 
 import type { List } from 'immutable';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import TransactionListItem from './TransactionListItem.jsx';
 
 import type { MessageDescriptor } from 'react-intl';
-import type { ContractTransactionRecord } from '~immutable';
+import type { ContractTransactionRecord, DataRecord } from '~immutable';
+
+const MSG = defineMessages({
+  noTransactions: {
+    id: 'admin.TransactionList.noTransactions',
+    defaultMessage: 'No transactions',
+  },
+});
 
 type Props = {
   /*
@@ -20,7 +29,7 @@ type Props = {
   /*
    *
    */
-  transactions: List<ContractTransactionRecord>,
+  transactions: ?DataRecord<List<ContractTransactionRecord>>,
   /*
    * The user's address will always be shown, this just controls if it's
    * shown in full, or masked.
@@ -51,30 +60,34 @@ const TransactionList = ({
   linkToEtherscan = true,
 }: Props) => (
   <div>
-    {transactions && transactions.size ? (
-      <div>
-        {label && (
-          <Heading
-            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-            text={label}
-          />
-        )}
-        <Table scrollable>
-          <TableBody>
-            {transactions.map(transaction => (
-              <TransactionListItem
-                key={transaction.id}
-                transaction={transaction}
-                showMaskedAddress={showMaskedAddress}
-                incoming={transaction.incoming}
-                onClaim={onClaim}
-                linkToEtherscan={linkToEtherscan}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    ) : null}
+    {label && (
+      <Heading
+        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+        text={label}
+      />
+    )}
+    {transactions && transactions.record && !!transactions.record.size && (
+      <Table scrollable>
+        <TableBody>
+          {transactions.record.map(transaction => (
+            <TransactionListItem
+              key={transaction.id}
+              transaction={transaction}
+              showMaskedAddress={showMaskedAddress}
+              incoming={transaction.incoming}
+              onClaim={onClaim}
+              linkToEtherscan={linkToEtherscan}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    )}
+    {transactions && transactions.record && transactions.record.size === 0 && (
+      <p>
+        <FormattedMessage {...MSG.noTransactions} />
+      </p>
+    )}
+    {transactions && transactions.isFetching && <SpinnerLoader />}
   </div>
 );
 

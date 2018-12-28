@@ -12,7 +12,11 @@ import type { Address, ENSName } from '~types';
 
 import styles from './Transactions.css';
 
-import type { ColonyRecord, ContractTransactionRecord } from '~immutable';
+import type {
+  ColonyRecord,
+  ContractTransactionRecord,
+  DataRecord,
+} from '~immutable';
 
 const MSG = defineMessages({
   transactionsTitle: {
@@ -33,8 +37,8 @@ const displayName = 'admin.Transactions';
 
 type Props = {
   colony: ColonyRecord,
-  transactions: List<ContractTransactionRecord>,
-  unclaimedTransactions: List<ContractTransactionRecord>,
+  transactions: ?DataRecord<List<ContractTransactionRecord>>,
+  unclaimedTransactions: ?DataRecord<List<ContractTransactionRecord>>,
   claimColonyToken: (colonyENSName: ENSName, tokenAddress: Address) => any,
 };
 
@@ -52,19 +56,17 @@ const Transactions = ({
       />
     </div>
     <div className={styles.transactionsWrapper}>
-      {unclaimedTransactions && unclaimedTransactions.size ? (
-        <div className={styles.pendingTransactionsWrapper}>
-          <TransactionList
-            label={MSG.pendingTransactionsTitle}
-            currentAddress={colonyAddress}
-            transactions={unclaimedTransactions}
-            onClaim={transaction =>
-              claimColonyToken(colonyENSName, transaction.token)
-            }
-            linkToEtherscan={false}
-          />
-        </div>
-      ) : null}
+      <div className={styles.pendingTransactionsWrapper}>
+        <TransactionList
+          label={MSG.pendingTransactionsTitle}
+          currentAddress={colonyAddress}
+          transactions={unclaimedTransactions}
+          onClaim={transaction =>
+            claimColonyToken(colonyENSName, transaction.token)
+          }
+          linkToEtherscan={false}
+        />
+      </div>
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
           label={MSG.transactionHistoryTitle}

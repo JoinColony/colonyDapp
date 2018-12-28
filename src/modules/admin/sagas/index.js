@@ -28,7 +28,7 @@ import {
 } from '../actionTypes';
 
 function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
-  const { ensName: colonyENSName } = action.payload;
+  const { key: colonyENSName } = action.payload;
   const colonyManager = yield getContext('colonyManager');
 
   try {
@@ -120,7 +120,7 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
 
     yield put({
       type: COLONY_FETCH_TRANSACTIONS_SUCCESS,
-      payload: { transactions, ensName: colonyENSName },
+      payload: { transactions, key: colonyENSName },
     });
   } catch (error) {
     yield putError(COLONY_FETCH_TRANSACTIONS_ERROR, error);
@@ -128,7 +128,7 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
 }
 
 function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
-  const { ensName: colonyENSName } = action.payload;
+  const { key: colonyENSName } = action.payload;
   const colonyManager = yield getContext('colonyManager');
 
   try {
@@ -218,7 +218,7 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
 
     yield put({
       type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
-      payload: { transactions, ensName: colonyENSName },
+      payload: { transactions, key: colonyENSName },
     });
   } catch (error) {
     yield putError(COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR, error);
