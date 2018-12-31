@@ -6,9 +6,13 @@ import { Task } from '~immutable';
 
 const withTask = compose(
   branch(
-    props => props.taskId && props.colonyENSName,
+    props => props.taskId && props.ensName,
     withProps({
-      task: Task(),
+      task: Task({
+        id: 1,
+        title: 'Test from withTask',
+        colonyENSName: 'cool-colony',
+      }),
     }),
   ),
 );
