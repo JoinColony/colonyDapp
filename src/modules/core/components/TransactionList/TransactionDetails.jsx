@@ -11,6 +11,7 @@ import styles from './TransactionDetails.css';
 import type {
   ColonyRecord,
   ContractTransactionRecord,
+  DataRecord,
   TaskRecord,
   UserRecord,
 } from '~immutable';
@@ -36,7 +37,7 @@ type Props = {
    * User data Object, follows the same format as UserPicker
    */
   transaction: ContractTransactionRecord,
-  colony?: ColonyRecord,
+  colony?: DataRecord<ColonyRecord>,
   task?: TaskRecord,
   user?: UserRecord,
   /*
@@ -73,17 +74,23 @@ const UserDetails = ({
   </span>
 );
 
-const ColonyDetails = ({ name = '', address = '' }: Object) => (
+const ColonyDetails = ({ colony }: { colony: ColonyRecord }) => (
   <span>
-    {name && <span>{`${name} `}</span>}
-    {!name && address && <span>{address}</span>}
+    {colony.get('name') && <span>{`${colony.get('name')} `}</span>}
+    {!colony.get('name') && colony.get('address') && (
+      <span>{colony.get('address')}</span>
+    )}
   </span>
 );
 
-const TaskDetails = ({ title = '', id }: Object) => (
+const TaskDetails = ({ task }: { task: TaskRecord }) => (
   <span>
-    {title && id && (
-      <Link text={title} to={`/task/${id}`} className={styles.taskLink} />
+    {task.get('title') && task.get('id') && (
+      <Link
+        text={task.get('title')}
+        to={`/colony/${task.get('colonyENSName')}/task/${task.get('id')}`}
+        className={styles.taskLink}
+      />
     )}
   </span>
 );
@@ -131,7 +138,7 @@ const TransactionDetails = ({
           {task && task.id && (
             <FormattedMessage
               {...MSG.fromText}
-              values={{ senderString: <TaskDetails {...task} /> }}
+              values={{ senderString: <TaskDetails task={task} /> }}
             />
           )}
         </p>
@@ -139,19 +146,25 @@ const TransactionDetails = ({
          * To the colony
          */}
         <p className={styles.secondaryText}>
-          <FormattedMessage
-            {...MSG.toText}
-            values={{
-              recipientString: (
-                <ColonyDetails
-                  {...colony}
-                  address={
-                    showMaskedAddress ? <MaskedAddress address={to} /> : to
-                  }
-                />
-              ),
-            }}
-          />
+          {colony && colony.record && (
+            <FormattedMessage
+              {...MSG.toText}
+              values={{
+                recipientString: (
+                  <ColonyDetails
+                    colony={colony.record}
+                    address={
+                      showMaskedAddress ? (
+                        <MaskedAddress address={colony.record.get('address')} />
+                      ) : (
+                        colony.record.get('address')
+                      )
+                    }
+                  />
+                ),
+              }}
+            />
+          )}
         </p>
       </div>
     )}
@@ -185,7 +198,7 @@ const TransactionDetails = ({
           {!to && task && task.id && (
             <FormattedMessage
               {...MSG.toText}
-              values={{ recipientString: <TaskDetails {...task} /> }}
+              values={{ recipientString: <TaskDetails task={task} /> }}
             />
           )}
         </p>
@@ -193,13 +206,13 @@ const TransactionDetails = ({
          * From the colony
          */}
         <p className={styles.secondaryText}>
-          {from && (
+          {colony && colony.record && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
                 senderString: (
                   <ColonyDetails
-                    {...colony}
+                    colony={colony.record}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -210,15 +223,6 @@ const TransactionDetails = ({
                   />
                 ),
               }}
-            />
-          )}
-          {/*
-           * From a task
-           */}
-          {!from && task && task.id && (
-            <FormattedMessage
-              {...MSG.fromText}
-              values={{ senderString: <TaskDetails {...task} /> }}
             />
           )}
         </p>

@@ -19,6 +19,7 @@ import styles from './TransactionListItem.css';
 import type {
   ColonyRecord,
   ContractTransactionRecord,
+  DataRecord,
   TaskRecord,
   TokenRecord,
   UserRecord,
@@ -50,7 +51,7 @@ type Props = {
    * User data Object, follows the same format as UserPicker
    */
   transaction: ContractTransactionRecord,
-  colony?: ColonyRecord,
+  colony?: DataRecord<ColonyRecord>,
   task?: TaskRecord,
   token?: TokenRecord,
   user?: UserRecord,
