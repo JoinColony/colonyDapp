@@ -53,6 +53,10 @@ export const userSelector: UserProfileSelector = createSelector(
   usernameFromProps,
   (users, username) => users.get(username),
 );
+export const currentUserAddressSelector = createSelector(
+  currentUser,
+  user => user.profile.walletAddress,
+);
 export const avatarSelector: UserAvatarSelector = createSelector(
   avatarsSelector,
   (state, { user }) => user && user.getIn(['record', 'profile', 'avatar']),

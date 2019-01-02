@@ -6,6 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
 import type { TokenRecord } from '~immutable';
+import type { Address } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
@@ -18,7 +19,6 @@ import TokenList from '~admin/Tokens/TokenList.jsx';
 
 import styles from './Wallet.css';
 
-import mockUser from './__datamocks__/mockUser';
 import mockTransactions from './__datamocks__/mockTransactions';
 
 const MSG = defineMessages({
@@ -49,6 +49,7 @@ const displayName = 'dashboard.Wallet';
 type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
   tokens: List<TokenRecord>,
+  walletAddress: Address,
 };
 
 class Wallet extends Component<Props> {
@@ -71,19 +72,19 @@ class Wallet extends Component<Props> {
   };
 
   render() {
-    const { tokens } = this.props;
+    const { tokens, walletAddress } = this.props;
     return (
       <div className={styles.layoutMain}>
         <main className={styles.content}>
           <div className={styles.walletDetails}>
-            <QRCode address={mockUser.profile.walletAddress} width={55} />
+            <QRCode address={walletAddress} width={55} />
             <div className={styles.address}>
               <Heading
                 text={MSG.titleWallet}
                 appearance={{ size: 'medium', margin: 'small' }}
               />
               <CopyableAddress appearance={{ theme: 'big' }} full>
-                {mockUser.profile.walletAddress}
+                {walletAddress}
               </CopyableAddress>
             </div>
           </div>
@@ -102,7 +103,7 @@ class Wallet extends Component<Props> {
             <TabPanel>
               <WalletTransactions
                 transactions={mockTransactions}
-                userAddress={mockUser.profile.walletAddress}
+                userAddress={walletAddress}
               />
             </TabPanel>
           </Tabs>
