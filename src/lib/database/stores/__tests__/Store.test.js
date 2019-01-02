@@ -1,17 +1,11 @@
 import createSandbox from 'jest-sandbox';
-import * as yup from 'yup';
 
 import createMockOrbitStore from './mockOrbitStore';
 import KVStore from '../KVStore';
 
-const schema = yup.object({
-  requiredProp: yup.string().required(),
-  optionalProp: yup.string(),
-});
+const name = 'storeId';
 
-const name = 'storeSchemaId';
-
-describe('KVStore', () => {
+describe('Store (KVStore)', () => {
   const sandbox = createSandbox();
 
   const mockOrbitStore = createMockOrbitStore(sandbox);
@@ -25,7 +19,7 @@ describe('KVStore', () => {
   });
 
   test('It waits for replication when loading', async () => {
-    const store = new KVStore(mockOrbitStore, name, schema, mockPinner);
+    const store = new KVStore(mockOrbitStore, name, mockPinner);
 
     sandbox
       .spyOn(store._orbitStore, 'load')

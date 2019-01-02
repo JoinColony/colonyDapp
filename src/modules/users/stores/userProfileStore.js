@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 import type { StoreBlueprint } from '~types';
 
-import { KVStore } from '../../../lib/database/stores';
+import { ValidatedKVStore } from '../../../lib/database/stores';
 import { EthereumWalletAccessController } from '../../../lib/database/accessControllers';
 
 type StoreProps = {
@@ -32,7 +32,7 @@ const userProfileStore: StoreBlueprint = {
     activitiesStore: yup.string(),
     inboxStore: yup.string(),
   }),
-  type: KVStore,
+  type: ValidatedKVStore,
 };
 
 export default userProfileStore;

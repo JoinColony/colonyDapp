@@ -1,9 +1,15 @@
 /* @flow */
 
-import type { ValidateOptions } from 'yup';
+import type { ValidateOptions, ObjectSchema } from 'yup';
 
-import type { FeedIteratorOptions, OrbitDBFeedStore } from '../types/index';
+import PinnerConnector from '../../ipfs/PinnerConnector';
 import Store from './Store';
+
+import type {
+  FeedIteratorOptions,
+  OrbitDBFeedStore,
+  OrbitDBStore,
+} from '../types';
 
 /**
  * The wrapper Store class for orbit's feed stores.
@@ -12,7 +18,20 @@ import Store from './Store';
 class FeedStore extends Store {
   static orbitType = 'feed';
 
+  // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBFeedStore = this._orbitStore;
+
+  _schema: ObjectSchema;
+
+  constructor(
+    orbitStore: OrbitDBStore,
+    name: string,
+    pinner: PinnerConnector,
+    schema: ObjectSchema,
+  ) {
+    super(orbitStore, name, pinner);
+    this._schema = schema;
+  }
 
   async validate(value?: any, options?: ValidateOptions = { strict: true }) {
     return this._schema.validate(value, options);
