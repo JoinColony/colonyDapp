@@ -2,8 +2,8 @@
 
 import type { Saga } from 'redux-saga';
 
-import { providers } from 'ethers';
 import ColonyNetworkClient from '@colony/colony-js-client';
+import TokenClient from '@colony/colony-js-client/lib/TokenClient';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { delay } from 'redux-saga';
 import {
@@ -53,17 +53,18 @@ const tokenABILoader = {
  * token ABI loader and get the token info. The promise will be rejected if
  * the functions do not exist on the contract.
  */
-async function getTokenClientInfo(contractAddress: string) {
-  const provider = new providers.EtherscanProvider();
+async function getTokenClientInfo(
+  contractAddress: string,
+  networkClient: ColonyNetworkClient,
+) {
   const adapter = new EthersAdapter({
     // $FlowFixMe The `ContractLoader` type is currently not exported
     loader: tokenABILoader,
-    provider,
-    // $FlowFixMe This minimal provider doesn't have all Provider features
-    wallet: { provider },
+    provider: networkClient.adapter.provider,
+    wallet: networkClient.adapter.wallet,
   });
 
-  const client = new ColonyNetworkClient.ColonyClient.TokenClient({
+  const client = new TokenClient({
     adapter,
     query: { contractAddress },
   });
@@ -85,7 +86,8 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
   let info;
   try {
     // Attempt to get the token info from a new `TokenClient` instance.
-    info = yield call(getTokenClientInfo, tokenAddress);
+    const { networkClient } = yield getContext('colonyManager');
+    info = yield call(getTokenClientInfo, tokenAddress, networkClient);
   } catch (error) {
     yield putError(TOKEN_INFO_FETCH_ERROR, error);
     return;

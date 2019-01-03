@@ -85,7 +85,6 @@ export const validationSchema = yup.object({
   tokenName: yup.string(),
 });
 
-// TODO in #453 - show inputs for minimal ERC20 contracts
 class StepSelectToken extends Component<Props, State> {
   static displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
 
