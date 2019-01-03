@@ -53,7 +53,12 @@ type Props = {
   /** Passes through the change event from the input field */
   onChange?: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
   /** Passes through the blur event from the input field */
-  onBlur?: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+  onBlur?: (
+    evt:
+      | MouseEvent
+      | SyntheticInputEvent<HTMLInputElement>
+      | SyntheticKeyboardEvent<HTMLElement>,
+  ) => void,
   /** Is called when a data entry was picked */
   onPick?: (itemData: Data) => void,
   /** Title for the dropdown header */
@@ -61,7 +66,12 @@ type Props = {
   /** @ignore Will be injected by `withOmniPicker` */
   choose: Choose,
   /** @ignore Will be injected by `withOmniPicker` */
-  close?: () => void,
+  close?: (
+    evt:
+      | MouseEvent
+      | SyntheticInputEvent<HTMLInputElement>
+      | SyntheticKeyboardEvent<HTMLElement>,
+  ) => void,
   /** @ignore Will be injected by `withOmniPicker` */
   filteredData: Array<Data>,
   /** @ignore Will be injected by `withOmniPicker` */
@@ -147,7 +157,12 @@ class OmniPicker extends Component<Props> {
     }
   };
 
-  handleBlur = (evt: SyntheticInputEvent<HTMLInputElement>) => {
+  handleBlur = (
+    evt:
+      | MouseEvent
+      | SyntheticInputEvent<HTMLInputElement>
+      | SyntheticKeyboardEvent<HTMLElement>,
+  ) => {
     const { onBlur } = this.props;
     if (typeof onBlur == 'function') {
       onBlur(evt);
@@ -170,7 +185,7 @@ class OmniPicker extends Component<Props> {
       (evt.target instanceof Node && inputRef && inputRef.contains(evt.target))
     )
       return;
-    if (typeof close == 'function') close();
+    if (typeof close == 'function') close(evt);
   };
 
   registerElement = (node: ?HTMLElement) => {
