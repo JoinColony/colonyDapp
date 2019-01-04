@@ -56,14 +56,11 @@ class DDB {
     orbitStore: OrbitDBStore,
     { name, schema, type: StoreClass }: StoreBlueprint,
   ): Store {
-    if (!schema) {
-      throw new Error(`Schema for store ${name} not found. Did you define it?`);
-    }
     const store = new StoreClass(
       orbitStore,
       name,
-      schema,
       this._ipfsNode.pinner,
+      schema,
     );
     const { root, path } = store.address;
     this._stores.set(`${root}/${path}`, store);

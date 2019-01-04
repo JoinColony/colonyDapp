@@ -11,6 +11,10 @@ const schema = yup.object({
 describe('FeedStore', () => {
   const sandbox = createSandbox();
 
+  const mockPinner = {
+    requestPinnedStore: sandbox.fn(() => ({ count: 5 })),
+  };
+
   beforeEach(() => {
     sandbox.clear();
   });
@@ -20,13 +24,13 @@ describe('FeedStore', () => {
   const name = 'UserActivity';
 
   test('It creates a FeedStore', () => {
-    const store = new FeedStore(mockOrbitStore, name, schema);
+    const store = new FeedStore(mockOrbitStore, name, mockPinner, schema);
     expect(store._orbitStore).toBe(mockOrbitStore);
     expect(store._name).toBe(name);
     expect(store._schema).toBe(schema);
   });
   test('It validates an activity event against the schema', async () => {
-    const store = new FeedStore(mockOrbitStore, name, schema);
+    const store = new FeedStore(mockOrbitStore, name, mockPinner, schema);
     sandbox.spyOn(store._schema, 'validate');
     const validProps = {
       colonyName: 'Zombies',

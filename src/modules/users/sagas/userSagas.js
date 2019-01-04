@@ -19,7 +19,7 @@ import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
 import { DDB } from '../../../lib/database';
-import { FeedStore, KVStore } from '../../../lib/database/stores';
+import { FeedStore, ValidatedKVStore } from '../../../lib/database/stores';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
@@ -64,7 +64,9 @@ import {
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
-export function* getOrCreateUserStore(walletAddress: Address): Saga<KVStore> {
+export function* getOrCreateUserStore(
+  walletAddress: Address,
+): Saga<ValidatedKVStore> {
   const ddb: DDB = yield getContext('ddb');
 
   try {
@@ -134,7 +136,9 @@ export function* getUserActivitiesStore(
   );
 }
 
-export function* getUserProfileData(store: KVStore): Saga<UserProfileProps> {
+export function* getUserProfileData(
+  store: ValidatedKVStore,
+): Saga<UserProfileProps> {
   return yield call(getAll, store);
 }
 

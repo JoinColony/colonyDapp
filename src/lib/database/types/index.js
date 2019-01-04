@@ -41,7 +41,7 @@ export type OrbitStoreOpenOpts = {
 
 export type StoreBlueprint = {
   name: string,
-  schema: ObjectSchema,
+  schema?: ObjectSchema,
   getAccessController?: (
     storeProps?: Object,
   ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,

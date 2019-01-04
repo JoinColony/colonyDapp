@@ -2,7 +2,7 @@
 
 import * as yup from 'yup';
 
-import { KVStore } from '../../../lib/database/stores';
+import { ValidatedKVStore } from '../../../lib/database/stores';
 
 import type { StoreBlueprint } from '~types';
 
@@ -40,7 +40,7 @@ const colonyStore: StoreBlueprint = {
       symbol: yup.string(),
     }),
   }),
-  type: KVStore,
+  type: ValidatedKVStore,
 };
 
 export default colonyStore;

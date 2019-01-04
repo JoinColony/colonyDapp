@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { ObjectSchema } from 'yup';
-
 import { raceAgainstTimeout } from '../../../utils/async';
 
 import type { OrbitDBStore } from '../types';
@@ -9,8 +7,8 @@ import type { OrbitDBStore } from '../types';
 import PinnerConnector from '../../ipfs/PinnerConnector';
 
 /**
- * A parent class for a wrapper around an orbit store that can hold its schema
- * and perform certain validations based on the store type.
+ * A parent class for a wrapper around an orbit store that can load
+ * data in the store and pin the store.
  */
 class Store {
   static orbitType: string;
@@ -19,20 +17,17 @@ class Store {
 
   _name: string;
 
-  _schema: ObjectSchema;
-
   _pinner: PinnerConnector;
 
   constructor(
     orbitStore: OrbitDBStore,
     name: string,
-    schema: ObjectSchema,
     pinner: PinnerConnector,
+    ...args: * // eslint-disable-line no-unused-vars
   ) {
     this._orbitStore = orbitStore;
     this._name = name;
     this._pinner = pinner;
-    this._schema = schema;
   }
 
   get address() {
