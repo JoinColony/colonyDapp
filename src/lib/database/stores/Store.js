@@ -1,5 +1,8 @@
 /* @flow */
 
+import generate from 'nanoid/generate';
+import urlDictionary from 'nanoid/url';
+
 import { raceAgainstTimeout } from '../../../utils/async';
 
 import type { OrbitDBStore } from '../types';
@@ -12,6 +15,10 @@ import PinnerConnector from '../../ipfs/PinnerConnector';
  */
 class Store {
   static orbitType: string;
+
+  static generateId() {
+    return generate(urlDictionary, 21);
+  }
 
   +_orbitStore: OrbitDBStore;
 
