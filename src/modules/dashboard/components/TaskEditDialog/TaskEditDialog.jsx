@@ -120,7 +120,17 @@ const TaskEditDialog = ({
     .toArray();
 
   return (
-    <FullscreenDialog cancel={cancel}>
+    <FullscreenDialog
+      cancel={cancel}
+      /*
+       * Setting `isDismissable` to `false` because we don't want a user to be able to
+       * close this Dialog after they've submitted the form (while it's processing the data).
+       *
+       * We can't wrap the Dialog within the form (to use `isSubmitting`), because `react-modal`
+       * uses Portals, thus the form wouldn't be able to be submitted.
+       */
+      isDismissable={false}
+    >
       <ActionForm
         submit="CREATE_COOL_THING"
         success="COOL_THING_CREATED"
