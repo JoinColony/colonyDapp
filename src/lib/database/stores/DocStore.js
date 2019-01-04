@@ -2,9 +2,6 @@
 
 import type { ObjectSchema, ValidateOptions } from 'yup';
 
-import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
-
 import PinnerConnector from '../../ipfs/PinnerConnector';
 import Store from './Store';
 
@@ -13,8 +10,6 @@ import type {
   OrbitDBStore,
   QueryFunction,
 } from '../types/index';
-
-const generateId = () => generate(urlDictionary, 21);
 
 /**
  * The wrapper Store class for orbit's document stores.
@@ -50,7 +45,7 @@ class DocStore extends Store {
   }
 
   async insertOne(value: { id?: string }) {
-    const id = value.id || generateId();
+    const id = value.id || this.constructor.generateId();
     return this.upsertOne(id, value);
   }
 
