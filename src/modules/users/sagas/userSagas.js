@@ -13,7 +13,7 @@ import {
 } from 'redux-saga/effects';
 
 import type { Action, Address } from '~types';
-import type { UserProfileProps } from '~immutable';
+import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
@@ -24,6 +24,7 @@ import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 import {
+  currentUserAddressSelector,
   userActivitiesStoreAddressSelector,
   userProfileStoreAddressSelector,
   walletAddressSelector,
@@ -61,6 +62,9 @@ import {
   USER_REMOVE_AVATAR,
   USER_REMOVE_AVATAR_SUCCESS,
   USER_REMOVE_AVATAR_ERROR,
+  USER_FETCH_TOKEN_TRANSFERS,
+  USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+  USER_FETCH_TOKEN_TRANSFERS_ERROR,
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
@@ -383,6 +387,96 @@ function* removeAvatar(): Saga<void> {
   }
 }
 
+function* fetchTokenTransfers(): Saga<void> {
+  const colonyManager = yield getContext('colonyManager');
+  const userAddress = yield select(currentUserAddressSelector);
+
+  try {
+    // Any ColonyClient will do, so we'll use MetaColony
+    const { address: metaColonyAddress } = yield call([
+      colonyManager.networkClient.getMetaColonyAddress,
+      colonyManager.networkClient.getMetaColonyAddress.call,
+    ]);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      metaColonyAddress,
+    );
+    const { provider } = colonyClient.adapter;
+
+    const currentBlock = yield call([provider, provider.getBlockNumber]);
+    const blocksBack = 400000;
+    const fromBlock =
+      currentBlock - blocksBack < 0 ? 0 : currentBlock - blocksBack;
+    const toBlock = 'latest';
+    const addressTopic = `0x000000000000000000000000${userAddress
+      .slice(2)
+      .toLowerCase()}`;
+
+    // Get logs + events for token Transfer to/from current user
+    // TODO: how to combine these getLogs calls/filters
+    const toTransferLogs = yield call(
+      [colonyClient.token, colonyClient.token.getLogs],
+      {
+        fromBlock,
+        toBlock,
+        eventNames: ['Transfer'],
+        // [eventNames, from, to]
+        topics: [[], addressTopic],
+      },
+    );
+    const fromTransferLogs = yield call(
+      [colonyClient.token, colonyClient.token.getLogs],
+      {
+        fromBlock,
+        toBlock,
+        eventNames: ['Transfer'],
+        // [eventNames, from, to]
+        topics: [[], undefined, addressTopic],
+      },
+    );
+
+    // Combine and sort by blockNumber, parse events
+    const transferLogs = [...toTransferLogs, ...fromTransferLogs].sort(
+      (a, b) => a.blockNumber - b.blockNumber,
+    );
+    const transferEvents = yield call(
+      [colonyClient.token, colonyClient.token.parseLogs],
+      transferLogs,
+    );
+
+    const transactions: Array<ContractTransactionProps> = [];
+    for (let i = 0; i < transferEvents.length; i += 1) {
+      const { to, from, tokens: amount } = transferEvents[i];
+      const { address: token, blockHash, transactionHash: hash } = transferLogs[
+        i
+      ];
+      const { timestamp } = yield call(
+        [provider, provider.getBlock],
+        blockHash,
+      );
+      const date = new Date(timestamp);
+
+      transactions.push({
+        amount,
+        date,
+        from,
+        hash,
+        id: hash,
+        incoming: to.toLowerCase() === userAddress.toLowerCase(),
+        to,
+        token,
+      });
+    }
+
+    yield put({
+      type: USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+      payload: { transactions },
+    });
+  } catch (error) {
+    yield putError(USER_FETCH_TOKEN_TRANSFERS_ERROR, error);
+  }
+}
+
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
@@ -393,4 +487,5 @@ export function* setupUserSagas(): any {
   yield takeEvery(USER_ACTIVITIES_FETCH, fetchUserActivities);
   yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
   yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
+  yield takeEvery(USER_FETCH_TOKEN_TRANSFERS, fetchTokenTransfers);
 }

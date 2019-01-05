@@ -8,6 +8,7 @@ import {
   USER_AVATAR_FETCH,
   USERNAME_CREATE_ERROR,
   USERNAME_CREATE_SUCCESS,
+  USER_FETCH_TOKEN_TRANSFERS,
 } from '../actionTypes';
 
 export const registerUserLabel = (
@@ -32,4 +33,8 @@ export const fetchUserProfile = (username: string) => ({
 export const fetchUserAvatar = (hash: string) => ({
   type: USER_AVATAR_FETCH,
   payload: { hash, key: hash },
+});
+
+export const fetchUserTransactions = () => ({
+  type: USER_FETCH_TOKEN_TRANSFERS,
 });

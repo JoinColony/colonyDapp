@@ -33,24 +33,23 @@ type Props = {
 
 const WalletTransactions = ({ transactions, userAddress }: Props) => (
   <div className={styles.main}>
-    {transactions && transactions.size ? (
-      <TransactionList
-        currentAddress={userAddress}
-        transactions={transactions}
-        linkToEtherscan
-      />
-    ) : (
-      <div className={styles.transactionsEmpty}>
-        <div className={styles.transactionsEmptyContent}>
-          <div className={styles.transactionsEmptyTitle}>
-            <FormattedMessage {...MSG.transactionsEmptyTitle} />
-          </div>
-          <div>
-            <FormattedMessage {...MSG.transactionsEmptyBody} />
+    <TransactionList
+      currentAddress={userAddress}
+      transactions={transactions}
+      linkToEtherscan
+      emptyState={
+        <div className={styles.transactionsEmpty}>
+          <div className={styles.transactionsEmptyContent}>
+            <div className={styles.transactionsEmptyTitle}>
+              <FormattedMessage {...MSG.transactionsEmptyTitle} />
+            </div>
+            <div>
+              <FormattedMessage {...MSG.transactionsEmptyBody} />
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      }
+    />
   </div>
 );
 

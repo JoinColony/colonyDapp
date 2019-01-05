@@ -6,7 +6,12 @@ import { compose, withProps } from 'recompose';
 import withDialog from '~core/Dialog/withDialog';
 
 import Wallet from './Wallet.jsx';
-import { currentUserAddressSelector } from '../../../users/selectors';
+
+import { fetchUserTransactions } from '../../../users/actionCreators';
+import {
+  currentUserAddressSelector,
+  currentUserTransactions,
+} from '../../../users/selectors';
 
 import mockTokens from '../../../../__mocks__/mockTokens';
 
@@ -15,9 +20,15 @@ const enhance = compose(
   withProps(() => ({
     tokens: mockTokens,
   })),
-  connect(state => ({
-    walletAddress: currentUserAddressSelector(state),
-  })),
+  connect(
+    state => ({
+      walletAddress: currentUserAddressSelector(state),
+      transactions: currentUserTransactions(state),
+    }),
+    {
+      fetchUserTransactions,
+    },
+  ),
 );
 
 export default enhance(Wallet);
