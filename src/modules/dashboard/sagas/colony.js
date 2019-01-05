@@ -14,6 +14,7 @@ import {
 import { replace, push } from 'connected-react-router';
 
 import type { Action, ENSName } from '~types';
+import type { DocStore } from '../../../lib/database/stores';
 
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString, getENSDomainString } from '~utils/ens';
@@ -23,7 +24,7 @@ import { walletAddressSelector } from '../../users/selectors';
 import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
 
-import { colonyStore } from '../stores';
+import { colonyStore, domainsIndexStore } from '../stores';
 
 import {
   COLONY_CREATE,
@@ -70,6 +71,18 @@ function* createColonySaga({ payload: params }: *): Saga<void> {
   yield put(createColony(params));
 }
 
+/*
+ * Create a domains index store for a colony
+ */
+function* createDomainsIndexStore(colonyENSName: ENSName): Saga<DocStore> {
+  const ddb: DDB = yield getContext('ddb');
+
+  // TODO: No access controller available yet
+  return yield call([ddb, ddb.createStore], domainsIndexStore, {
+    colonyENSName,
+  });
+}
+
 function* createColonyLabelSaga({
   payload: {
     colonyId,
@@ -83,6 +96,9 @@ function* createColonyLabelSaga({
   },
 }: Action): Saga<void> {
   const ddb: DDB = yield getContext('ddb');
+
+  // Create the domains index store for this colony
+  const domainsIndex = yield call(createDomainsIndexStore, ensName);
 
   // Create a colony store and save the colony to that store.
   // TODO: No access controller available yet
@@ -98,6 +114,9 @@ function* createColonyLabelSaga({
       icon: tokenIcon,
       name: tokenName,
       symbol: tokenSymbol,
+    },
+    databases: {
+      domainsIndex: domainsIndex.address.toString(),
     },
   };
 
