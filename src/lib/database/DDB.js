@@ -14,6 +14,7 @@ import type {
 import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
+import { setMeta } from './commands';
 
 const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 const generateId = () => generate(base58, 21);
@@ -144,6 +145,10 @@ class DDB {
 
     const store = this._makeStore(orbitStore, blueprint);
     await store.ready();
+
+    // If supported, set the `meta` values on the store.
+    if (storeProps && storeProps.meta) await setMeta(store, storeProps.meta);
+
     return store;
   }
 

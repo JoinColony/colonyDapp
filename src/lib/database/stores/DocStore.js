@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ObjectSchema, ValidateOptions } from 'yup';
+import type { ObjectSchema, ValidateOptions, Schema } from 'yup';
 
 import PinnerConnector from '../../ipfs/PinnerConnector';
 import Store from './Store';
@@ -17,10 +17,14 @@ import type {
 class DocStore extends Store {
   static orbitType = 'docstore';
 
+  static metaId = 'meta';
+
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBDocStore = this._orbitStore;
 
-  _schema: ObjectSchema;
+  _docSchema: Schema;
+
+  _metaSchema: Schema;
 
   constructor(
     orbitStore: OrbitDBStore,
@@ -29,18 +33,20 @@ class DocStore extends Store {
     schema: ObjectSchema,
   ) {
     super(orbitStore, name, pinner);
-    this._schema = schema;
+
+    const { doc, meta } = schema.fields;
+    this._docSchema = doc;
+    this._metaSchema = meta;
   }
 
   async validate(value: {}, options?: ValidateOptions = { strict: true }) {
-    return this._schema.validate(value, options);
+    return this._docSchema.validate(value, options);
   }
 
   async upsertOne(id: string, value: {}) {
     const existing = this.getOne(id) || {};
     const merged = { ...existing, ...value, _id: id };
     const validated = await this.validate(merged);
-    // TODO consider guarding against unnecessary updates by comparing values?
     return this._orbitStore.put(validated);
   }
 
@@ -60,6 +66,14 @@ class DocStore extends Store {
     return this._orbitStore.del(id);
   }
 
+  async setMeta(meta: {}) {
+    // Guard against overwriting
+    if (this.getMeta()) return Promise.resolve();
+
+    const validated = this._metaSchema.validate(meta, { strict: true });
+    return this.upsertOne(this.constructor.metaId, validated);
+  }
+
   getOne(keyOrFunction: string | QueryFunction) {
     return typeof keyOrFunction === 'string'
       ? this._orbitStore.get(keyOrFunction)[0]
@@ -72,6 +86,10 @@ class DocStore extends Store {
 
   getAll() {
     return this.getMany(e => e);
+  }
+
+  getMeta() {
+    return this.getOne(this.constructor.metaId);
   }
 }
 

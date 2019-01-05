@@ -12,13 +12,18 @@ const docBlueprint = {
   getAccessController() {},
   name: 'drafts',
   schema: yup.object({
-    id: yup.string(),
-    title: yup.string().required(),
-    specHash: yup.string(),
-    dueDate: yup.date(),
-    domainName: yup.string(),
-    creator: yup.string().required(),
-    assignee: yup.string(),
+    doc: yup.object({
+      id: yup.string(),
+      title: yup.string().required(),
+      specHash: yup.string(),
+      dueDate: yup.date(),
+      domainName: yup.string(),
+      creator: yup.string().required(),
+      assignee: yup.string(),
+    }),
+    meta: yup.object({
+      colonyENSName: yup.string(),
+    }),
   }),
   type: DocStore,
 };
