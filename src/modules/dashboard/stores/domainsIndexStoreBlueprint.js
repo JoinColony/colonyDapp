@@ -7,10 +7,10 @@ import { colonyMeta } from './meta';
 
 import type { StoreBlueprint } from '~types';
 
-const domainsIndexStore: StoreBlueprint = {
+const domainsIndexStoreBlueprint: StoreBlueprint = {
   // TODO: implement
   // eslint-disable-next-line no-unused-vars
-  getAccessController(storeProps: Object) {
+  getAccessController(storeProps?: *) {
     return {
       async canAppend() {
         return true;
@@ -22,10 +22,10 @@ const domainsIndexStore: StoreBlueprint = {
         return true;
       },
       async save() {
-        return true;
+        return '';
       },
       async setup() {
-        return true;
+        return undefined;
       },
     };
   },
@@ -42,4 +42,4 @@ const domainsIndexStore: StoreBlueprint = {
   type: DocStore,
 };
 
-export default domainsIndexStore;
+export default domainsIndexStoreBlueprint;

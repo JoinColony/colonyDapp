@@ -18,7 +18,7 @@ import {
 import Button from '~core/Button';
 import { getENSDomainString } from '~utils/ens';
 
-import { colonyStore } from '../../../dashboard/stores';
+import { colonyStoreBlueprint } from '../../../dashboard/stores';
 
 import {
   COLONY_PROFILE_UPDATE,
@@ -91,7 +91,7 @@ const ProfileEdit = ({ colony }: Props) => {
             website,
             guideline,
           }}
-          validationSchema={colonyStore.schema}
+          validationSchema={colonyStoreBlueprint.schema}
         >
           {({ status, isSubmitting }) => (
             <Fragment>

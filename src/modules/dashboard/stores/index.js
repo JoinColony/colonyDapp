@@ -1,6 +1,10 @@
 /* @flow */
 
 export * from './meta';
-export { default as colonyStore } from './colonyStore';
-export { default as domainsIndexStore } from './domainsIndexStore';
-export { default as userActivityStore } from './userActivityStore';
+export { default as colonyStoreBlueprint } from './colonyStoreBlueprint';
+export {
+  default as domainsIndexStoreBlueprint,
+} from './domainsIndexStoreBlueprint';
+export {
+  default as userActivityStoreBlueprint,
+} from './userActivityStoreBlueprint';

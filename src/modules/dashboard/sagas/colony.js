@@ -24,7 +24,7 @@ import { walletAddressSelector } from '../../users/selectors';
 import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
 
-import { colonyStore, domainsIndexStore } from '../stores';
+import { colonyStoreBlueprint, domainsIndexStoreBlueprint } from '../stores';
 
 import {
   COLONY_CREATE,
@@ -78,7 +78,7 @@ function* createDomainsIndexStore(colonyENSName: ENSName): Saga<DocStore> {
   const ddb: DDB = yield getContext('ddb');
 
   // TODO: No access controller available yet
-  return yield call([ddb, ddb.createStore], domainsIndexStore, {
+  return yield call([ddb, ddb.createStore], domainsIndexStoreBlueprint, {
     colonyENSName,
   });
 }
@@ -102,7 +102,7 @@ function* createColonyLabelSaga({
 
   // Create a colony store and save the colony to that store.
   // TODO: No access controller available yet
-  const store = yield call([ddb, ddb.createStore], colonyStore);
+  const store = yield call([ddb, ddb.createStore], colonyStoreBlueprint);
 
   const colonyStoreData = {
     address: colonyAddress,
@@ -172,14 +172,19 @@ function* createColonyLabelSuccessSaga({
   yield put(replace(`colony/${colonyName}`));
 }
 
-function* fetchColonyStore(ensName: ENSName) {
+export function* fetchColonyStore(ensName: ENSName) {
   const ddb: DDB = yield getContext('ddb');
   const walletAddress = yield select(walletAddressSelector);
 
   const domainString = yield call(getENSDomainString, 'colony', ensName);
-  const store = yield call([ddb, ddb.getStore], colonyStore, domainString, {
-    walletAddress,
-  });
+  const store = yield call(
+    [ddb, ddb.getStore],
+    colonyStoreBlueprint,
+    domainString,
+    {
+      walletAddress,
+    },
+  );
 
   if (!store) throw new Error(`Unable to load store for "${domainString}"`);
 
