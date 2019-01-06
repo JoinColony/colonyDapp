@@ -4,16 +4,15 @@ import { createSelector } from 'reselect';
 
 import ns from '../namespace';
 
-import type { TransactionsState } from '../types';
-
+import type { RootState } from '~types';
 import type { TransactionRecord } from '~immutable';
 
-type State = { [typeof ns]: { transactions: TransactionsState } };
+import type { TransactionsState } from '../types';
 
 type TransactionSelector = (tx: TransactionRecord<*, *>) => boolean;
-type TransactionsSelector = (state: State) => TransactionsState;
+type TransactionsSelector = (state: RootState) => TransactionsState;
 type OneTransactionSelector = (
-  state: State,
+  state: RootState,
   id: string,
 ) => ?TransactionRecord<*, *>;
 

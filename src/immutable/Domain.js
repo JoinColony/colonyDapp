@@ -11,6 +11,8 @@ export type DomainProps = {
 
 export type DomainRecord = RecordOf<DomainProps>;
 
+export type DomainId = $PropertyType<DomainRecord, 'id'>;
+
 const defaultValues: $Shape<DomainProps> = {
   id: undefined,
   name: undefined,

@@ -5,14 +5,7 @@ import { createSelector } from 'reselect';
 import ns from '../namespace';
 
 import type { UserRecord, UsersRecord, DataRecord } from '~immutable';
-import type { Address } from '~types';
-
-type RootState = {
-  users: {
-    allUsers: UsersRecord,
-    currentUser: UserRecord,
-  },
-};
+import type { RootState, Address } from '~types';
 
 type AllUsersStateSelector = (state: RootState) => UsersRecord;
 type CurrentUserSelector = (state: RootState) => UserRecord;
