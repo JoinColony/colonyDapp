@@ -63,6 +63,11 @@ export const singleColonySelector: ColonySelector = (
   ensName: ENSName,
 ) => coloniesSelector(state).get(ensName);
 
+export const domainsIndexSelector = createSelector(
+  singleColonySelector,
+  colony => colony.getIn(['databases', 'domainsIndex']),
+);
+
 export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,
