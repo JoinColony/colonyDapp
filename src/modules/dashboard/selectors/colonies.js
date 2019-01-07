@@ -1,12 +1,17 @@
 /* @flow */
 
-import type { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMapType } from 'immutable';
 
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
 import type { ENSName } from '~types';
-import type { ColonyRecord, ColonyAdminRecord, DataMap, DataRecord } from '~immutable';
+import type {
+  ColonyRecord,
+  ColonyAdminRecord,
+  DataMap,
+  DataRecord,
+} from '~immutable';
 
 import ns from '../namespace';
 
@@ -70,13 +75,13 @@ export const currentColonyAvatarDataSelector: ColonyAvatarSelector = createSelec
   (hash, avatars) => avatars.get(hash),
 );
 
-export const getCurrentColony: CurrentColonySelector = createSelector(
+export const getCurrentColony: ColonySelector = createSelector(
   allColoniesSelector,
   (state, props) => (props.colony ? props.colony.ensName : undefined),
   (colonies, ensName) => colonies.get(ensName, ImmutableMap()),
 );
 
-export const getColonyAdminStore: ColonyAdminStpreSelector = createSelector(
+export const getColonyAdminStore: ColonyAdminStoreSelector = createSelector(
   singleColonySelector,
   currentColony => currentColony.get('admins', ImmutableMap()),
 );

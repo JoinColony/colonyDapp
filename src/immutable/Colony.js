@@ -21,7 +21,7 @@ export type ColonyProps = {|
   version?: number,
   website?: string,
   admins?: Map<string, ColonyAdminRecord>,
-};
+|};
 
 const defaultAadmins: Map<string, ColonyAdminRecord> = Map();
 
