@@ -10,3 +10,5 @@ export * from './RootState';
 // reducers: https://github.com/facebook/flow/issues/4737
 export type Action = { type: string, payload: any };
 export type ActionCreator = (...args: Array<any>) => Action;
+
+export type TakeFilter = (action: Action) => boolean;
