@@ -9,7 +9,7 @@ import ItemsList from '~core/ItemsList';
 
 import styles from './TaskSkills.css';
 
-import skillMocks from './__datamocks__/mockSkills';
+import taskSkills from './taskSkillsTree';
 
 const MSG = defineMessages({
   title: {
@@ -53,7 +53,7 @@ class TaskSkills extends Component<Props, State> {
   render() {
     const { isTaskCreator } = this.props;
     const { selectedSkillId } = this.state;
-    const list = Array(...skillMocks);
+    const list = Array(...taskSkills);
     return (
       <div className={styles.main}>
         {isTaskCreator && (
