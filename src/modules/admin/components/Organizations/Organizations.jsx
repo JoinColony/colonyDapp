@@ -3,12 +3,20 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { ColonyRecord, ColonyAdminRecord } from '~immutable';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import UserList from '../UserList';
 import DomainList from '../DomainList';
 import OrganizationAddAdmins from './OrganizationAddAdmins.jsx';
 import OrganizationAddDomains from './OrganizationAddDomains.jsx';
+
+import {
+  COLONY_ADMIN_REMOVE,
+  COLONY_ADMIN_REMOVE_SUCCESS,
+  COLONY_ADMIN_REMOVE_ERROR,
+} from '../../../dashboard/actionTypes';
 
 import styles from './Organizations.css';
 
@@ -54,7 +62,12 @@ const MSG = defineMessages({
 
 const displayName: string = 'admin.Organizations';
 
-const Organizations = () => (
+type Props = {
+  colony: ColonyRecord,
+  colonyAdmins: Array<ColonyAdminRecord>,
+};
+
+const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
   <div className={styles.main}>
     <Tabs>
       <TabList>
@@ -66,64 +79,89 @@ const Organizations = () => (
         </Tab>
       </TabList>
       <TabPanel>
-        <OrganizationAddAdmins availableAdmins={usersMocks} />
-        <div className={styles.userListWrapper}>
-          {/*
-           * UserList follows the design principles from TaskList in dashboard,
-           * but if it turns out we're going to use this in multiple places,
-           * we should consider moving it to core
-           */}
-          {usersMocks && usersMocks.length ? (
-            <UserList
-              users={usersMocks}
-              label={MSG.labelAdminList}
-              showDisplayName
-              showUsername
-              showMaskedAddress
-              viewOnly={false}
-              // eslint-disable-next-line no-console
-              onRemove={console.log}
-            />
-          ) : (
-            <Fragment>
-              <Heading
-                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-                text={MSG.labelAdminList}
+        <div className={styles.sectionWrapper}>
+          <OrganizationAddAdmins
+            /*
+             * @TODO Add *real* user data
+             * Once we have a way to _discover_ users that interacted with the current colony,
+             * and which can be made admins
+             */
+            availableUsers={usersMocks}
+            ensName={ensName}
+          />
+          <section className={styles.list}>
+            {/*
+             * UserList follows the design principles from TaskList in dashboard,
+             * but if it turns out we're going to use this in multiple places,
+             * we should consider moving it to core
+             */}
+            {colonyAdmins && colonyAdmins.length ? (
+              <UserList
+                users={colonyAdmins}
+                label={MSG.labelAdminList}
+                ensName={ensName}
+                showDisplayName
+                showUsername
+                showMaskedAddress
+                viewOnly={false}
+                remove={COLONY_ADMIN_REMOVE}
+                removeSuccess={COLONY_ADMIN_REMOVE_SUCCESS}
+                removeError={COLONY_ADMIN_REMOVE_ERROR}
               />
-              <p className={styles.noCurrent}>
-                <FormattedMessage {...MSG.noCurrentAdmins} />
-              </p>
-            </Fragment>
-          )}
+            ) : (
+              <Fragment>
+                <Heading
+                  appearance={{
+                    size: 'small',
+                    weight: 'bold',
+                    margin: 'small',
+                  }}
+                  text={MSG.labelAdminList}
+                />
+                <p className={styles.noCurrent}>
+                  <FormattedMessage {...MSG.noCurrentAdmins} />
+                </p>
+              </Fragment>
+            )}
+          </section>
         </div>
       </TabPanel>
       <TabPanel>
-        <OrganizationAddDomains availableAdmins={domainMocks} />
-        <div className={styles.domainListWrapper}>
-          {/*
-           * DomainList follows the design principles from TaskList in dashboard,
-           * but if it turns out we're going to use this in multiple places,
-           * we should consider moving it to core
-           */}
-          {domainMocks && domainMocks.length ? (
-            <DomainList
-              domains={domainMocks}
-              label={MSG.labelAdminList}
-              viewOnly={false}
-              // eslint-disable-next-line no-console
-              onRemove={console.log}
-            />
-          ) : (
-            <Fragment>
-              <Heading
-                appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-                text={MSG.labelAdminList}
+        <div className={styles.sectionWrapper}>
+          <OrganizationAddDomains
+            availableAdmins={domainMocks}
+            ensName={ensName}
+          />
+          <section className={styles.list}>
+            {/*
+             * DomainList follows the design principles from TaskList in dashboard,
+             * but if it turns out we're going to use this in multiple places,
+             * we should consider moving it to core
+             */}
+            {domainMocks && domainMocks.length ? (
+              <DomainList
+                domains={domainMocks}
+                label={MSG.labelAdminList}
+                viewOnly={false}
+                // eslint-disable-next-line no-console
+                onRemove={console.log}
               />
-              <p className={styles.noCurrent}>
-                <FormattedMessage {...MSG.noCurrentDomains} />
-              </p>
-            </Fragment>
-          )}
+            ) : (
+              <Fragment>
+                <Heading
+                  appearance={{
+                    size: 'small',
+                    weight: 'bold',
+                    margin: 'small',
+                  }}
+                  text={MSG.labelAdminList}
+                />
+                <p className={styles.noCurrent}>
+                  <FormattedMessage {...MSG.noCurrentDomains} />
+                </p>
+              </Fragment>
+            )}
+          </section>
         </div>
       </TabPanel>
     </Tabs>

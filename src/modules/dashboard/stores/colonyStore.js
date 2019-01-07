@@ -39,6 +39,7 @@ const colonyStore: StoreBlueprint = {
       name: yup.string(),
       symbol: yup.string(),
     }),
+    admins: yup.object(),
   }),
   type: ValidatedKVStore,
 };

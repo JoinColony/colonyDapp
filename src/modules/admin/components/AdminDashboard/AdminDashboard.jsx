@@ -94,7 +94,7 @@ const navigationItems = (colony: ColonyRecord): Array<NavigationItem> => [
   {
     id: 4,
     title: MSG.tabOrganisation,
-    content: <Organizations />,
+    content: <Organizations colony={colony} />,
   },
 ];
 

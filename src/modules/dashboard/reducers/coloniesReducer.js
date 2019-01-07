@@ -8,6 +8,8 @@ import {
   COLONY_FETCH,
   COLONY_FETCH_SUCCESS,
   COLONY_PROFILE_UPDATE_SUCCESS,
+  COLONY_ADMIN_ADD_SUCCESS,
+  COLONY_ADMIN_REMOVE_SUCCESS,
 } from '../actionTypes';
 
 import { Colony, Data, Token } from '~immutable';
@@ -23,11 +25,12 @@ const coloniesReducer = (
   switch (action.type) {
     case COLONY_FETCH_SUCCESS: {
       const {
-        props: { token, ensName, ...props },
+        props: { token, ensName, admins, ...props },
       } = action.payload;
       const record = Colony({
         ensName,
         token: Token(token),
+        admins: ImmutableMap(admins),
         ...props,
       });
       return state.get(ensName)
@@ -45,6 +48,21 @@ const coloniesReducer = (
     case COLONY_AVATAR_REMOVE_SUCCESS: {
       const { ensName } = action.payload;
       return state.setIn([ensName, 'record', 'avatar'], undefined);
+    }
+    case COLONY_ADMIN_ADD_SUCCESS: {
+      const { ensName, adminData } = action.payload;
+      return state
+        ? state.setIn(
+            [ensName, 'record', 'admins', adminData.username],
+            adminData.toObject(),
+          )
+        : state;
+    }
+    case COLONY_ADMIN_REMOVE_SUCCESS: {
+      const { ensName, username } = action.payload;
+      return state
+        ? state.deleteIn([ensName, 'record', 'admins', username])
+        : state;
     }
     default:
       return state;

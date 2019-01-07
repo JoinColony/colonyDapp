@@ -2,12 +2,12 @@
 
 import type { RecordFactory, RecordOf } from 'immutable';
 
-import { Record } from 'immutable';
+import { Record, Map } from 'immutable';
 
 import Token from './Token';
 
 import type { Address, ENSName } from '~types';
-import type { TokenRecord } from './index';
+import type { TokenRecord, ColonyAdminRecord } from './index';
 
 export type ColonyProps = {|
   address: Address,
@@ -20,7 +20,10 @@ export type ColonyProps = {|
   token?: TokenRecord,
   version?: number,
   website?: string,
+  admins?: Map<string, ColonyAdminRecord>,
 |};
+
+const defaultAdmins: Map<string, ColonyAdminRecord> = Map();
 
 const defaultValues: $Shape<ColonyProps> = {
   address: undefined,
@@ -33,6 +36,7 @@ const defaultValues: $Shape<ColonyProps> = {
   token: Token(),
   version: undefined,
   website: undefined,
+  admins: defaultAdmins,
 };
 
 const Colony: RecordFactory<ColonyProps> = Record(defaultValues);

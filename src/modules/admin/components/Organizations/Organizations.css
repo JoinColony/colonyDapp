@@ -2,15 +2,17 @@
   height: 100%;
 }
 
-.userListWrapper {
-  margin-top: 40px;
-  padding-right: 20%;
-  height: calc(100% - 40px);
+.sectionWrapper {
+  height: 100%;
+  position: relative;
 }
 
-.domainListWrapper {
-  margin-top: 40px;
+.list {
   padding-right: 20%;
+  width: 100%;
+  position: absolute;
+  top: 80px;
+  bottom: 80px;
 }
 
 .noCurrent {
