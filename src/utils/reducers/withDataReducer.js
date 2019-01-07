@@ -2,84 +2,105 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
+import type { Action } from '~types';
+
 import { Data } from '../../immutable';
 
-import type { DataMap } from '../../immutable';
+type KeyPath = [*, *];
 
-export type DataAction<K: any> = {
+export type DataAction = {
   type: string,
   payload: {
-    key: K,
+    keyPath: KeyPath,
     props: any,
   } & Object,
 };
 
-export type DataReducer<K: any, R: *> = (
-  state: DataMap<K, R>,
-  action: DataAction<K>,
-) => DataMap<K, R>;
+export type DataReducer<K: *, V: *> = (
+  state: ImmutableMap<K, V>,
+  action: DataAction,
+) => ImmutableMap<K, V>;
 
-const handleFetch = (state, action) => {
-  const {
-    payload: { key },
-  } = action;
-  const props = { isFetching: true };
-  return state.has(key)
-    ? state.mergeIn([key], props)
-    : state.set(key, Data(props));
+const getNextState = <K: *, V: *>(
+  state: ImmutableMap<K, V>,
+  keyPath: KeyPath,
+  props: *,
+) => {
+  const data = Data(props);
+
+  if (keyPath.length === 2)
+    return state.has(keyPath[0])
+      ? state.mergeDeepIn(keyPath, props)
+      : state.set(keyPath[0], ImmutableMap([[keyPath[1], data]]));
+
+  return state.has(keyPath[0])
+    ? state.mergeDeepIn(keyPath, props)
+    : state.set(keyPath[0], data);
 };
 
-const handleSuccess = (state, action) => {
+const handleFetch = <K: *, V: *>(
+  state: ImmutableMap<K, V>,
+  action: DataAction,
+) => {
   const {
-    payload: { key },
+    payload: { keyPath },
   } = action;
-  return state
-    .setIn([key, 'error'], undefined)
-    .setIn([key, 'isFetching'], false);
+  return getNextState<K, V>(state, keyPath, { isFetching: true });
 };
 
-const handleError = (
-  state,
+const handleSuccess = <K: *, V: *>(
+  state: ImmutableMap<K, V>,
+  action: DataAction,
+) => {
+  const {
+    payload: { keyPath },
+  } = action;
+  return getNextState<K, V>(state, keyPath, {
+    error: undefined,
+    isFetching: false,
+  });
+};
+
+const handleError = <K: *, V: *>(
+  state: ImmutableMap<K, V>,
   {
     payload: {
       error: { id: error },
-      meta: { key },
+      meta: { keyPath },
     },
-  },
-) => {
-  const props = { isFetching: false, error };
-  return state.has(key)
-    ? state.mergeIn([key], props)
-    : state.set(key, Data(props));
-};
+  }: DataAction,
+) => getNextState<K, V>(state, keyPath, { isFetching: false, error });
 
 /*
+ * =============================================================================
  * Higher-order reducer to create a map of records with information about
  * the props loading state of each record: whether it is isFetching, any
  * isFetching error, and the props currently loaded.
  *
- * ----------------------------------
+ * -----------------------------------------------------------------------------
  * Parameters (higher order function)
- * ----------------------------------
+ * -----------------------------------------------------------------------------
  * {actionTypes} A single action type (or a `Set` of multiple types) that will
  * be handled as generic fetch action(s). This action type assumes that there
  * will be an error action type with the suffix `_ERROR` and a success action
  * type with the suffix `_SUCCESS` (e.g. `COLONY_FETCH_SUCCESS`).
  *
- * ---------------------------
+ * -----------------------------------------------------------------------------
  * Parameters (inner function)
- * ---------------------------
+ * -----------------------------------------------------------------------------
  * {wrappedReducer} The reducer we are wrapping.
  *
- * --------
+ * -----------------------------------------------------------------------------
  * Generics
- * --------
+ * -----------------------------------------------------------------------------
  * {K} Key of the map, e.g. `ENSName`
- * {R} The record type, e.g. `ColonyRecord`
+ *
+ * {V} The value set in the map (top-level), e.g. `DataRecord<ColonyRecord>` or
+ * `ImmutableMap<DomainId, DataRecord<Domain>>`
  */
-const withDataReducer = <K: any, R: *>(actionTypes: string | Set<string>) => (
-  wrappedReducer: DataReducer<K, R>,
-): DataReducer<K, R> => {
+const withDataReducer = <K: *, V: *>(actionTypes: string | Set<string>) => (
+  wrappedReducer: DataReducer<K, V>,
+) => {
   // Set up fetch/success/error types according to the usual pattern
   const fetchTypes =
     typeof actionTypes === 'string' ? new Set([actionTypes]) : actionTypes;
@@ -91,14 +112,15 @@ const withDataReducer = <K: any, R: *>(actionTypes: string | Set<string>) => (
   );
 
   // Return a wrapped reducer.
-  return (state = new ImmutableMap(), action) => {
+  return (state: ImmutableMap<K, V> = new ImmutableMap(), action: Action) => {
     // Pass the state to the wrapped reducer as the first step.
     const nextState = wrappedReducer(state, action);
 
     // If the action matches a fetch/success/error type, set the next state again.
-    if (fetchTypes.has(action.type)) return handleFetch(nextState, action);
-    if (successTypes.has(action.type)) return handleSuccess(nextState, action);
-    if (errorTypes.has(action.type)) return handleError(nextState, action);
+    const { type } = action;
+    if (fetchTypes.has(type)) return handleFetch<K, V>(nextState, action);
+    if (successTypes.has(type)) return handleSuccess<K, V>(nextState, action);
+    if (errorTypes.has(type)) return handleError<K, V>(nextState, action);
 
     return nextState;
   };

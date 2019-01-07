@@ -26,7 +26,7 @@ export const registerUserLabel = (
 
 export const fetchUserProfile = (username: string) => ({
   type: USER_PROFILE_FETCH,
-  payload: { username, key: username },
+  payload: { keyPath: [username] },
 });
 
 export const fetchUserAvatar = (hash: string) => ({

@@ -14,7 +14,7 @@ import {
 import { replace, push } from 'connected-react-router';
 
 import type { Action, ENSName } from '~types';
-import type { DocStore } from '../../../lib/database/stores';
+import type { DocStore, ValidatedKVStore } from '../../../lib/database/stores';
 
 import { putError } from '~utils/saga/effects';
 import { getHashedENSDomainString, getENSDomainString } from '~utils/ens';
@@ -123,7 +123,7 @@ function* createColonyLabelSaga({
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
   yield put({
     type: COLONY_FETCH_SUCCESS,
-    payload: { key: ensName, props: colonyStoreData },
+    payload: { keyPath: [ensName], props: colonyStoreData },
   });
 
   yield call([store, store.set], colonyStoreData);
@@ -172,7 +172,7 @@ function* createColonyLabelSuccessSaga({
   yield put(replace(`colony/${colonyName}`));
 }
 
-export function* fetchColonyStore(ensName: ENSName) {
+export function* fetchColonyStore(ensName: ENSName): Saga<ValidatedKVStore> {
   const ddb: DDB = yield getContext('ddb');
   const walletAddress = yield select(walletAddressSelector);
 
@@ -220,16 +220,21 @@ function* updateColonySaga(action: Action): Saga<void> {
   }
 }
 
-function* fetchColonySaga({ payload: { key } }: Action): Saga<void> {
+function* fetchColonySaga({
+  payload: {
+    keyPath: [ensName],
+    keyPath,
+  },
+}: Action): Saga<void> {
   try {
-    const store = yield call(fetchColonyStore, key);
+    const store = yield call(fetchColonyStore, ensName);
     const props = yield call(getAll, store);
     yield put({
       type: COLONY_FETCH_SUCCESS,
-      payload: { key, props },
+      payload: { keyPath, props },
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_ERROR, error, { key });
+    yield putError(COLONY_FETCH_ERROR, error, { keyPath });
   }
 }
 
