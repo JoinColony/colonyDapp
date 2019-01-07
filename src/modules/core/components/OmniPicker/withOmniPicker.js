@@ -89,39 +89,31 @@ const getClass = WrappedComponent => {
       );
     };
 
-    close = () => {
-      this.setState(
-        {
-          isOpen: false,
-        },
-        () => {
-          if (this.omniPicker) {
-            this.omniPicker.handleClose();
-          }
-          if (this.inputNode) {
-            this.inputNode.blur();
-          }
-        },
-      );
+    close = (
+      evt:
+        | MouseEvent
+        | SyntheticInputEvent<HTMLInputElement>
+        | SyntheticKeyboardEvent<HTMLElement>,
+    ) => {
+      this.blur(evt);
+      if (this.omniPicker) {
+        this.omniPicker.handleClose();
+      }
+      this.setState({
+        isOpen: false,
+      });
     };
 
     reset = () => {
-      this.setState(
-        {
-          isOpen: false,
-          filterValue: '',
-          selected: -1,
-          keyUsed: false,
-        },
-        () => {
-          if (this.omniPicker) {
-            this.omniPicker.handleReset();
-          }
-          if (this.inputNode) {
-            this.inputNode.blur();
-          }
-        },
-      );
+      if (this.omniPicker) {
+        this.omniPicker.handleReset();
+      }
+      this.setState({
+        isOpen: false,
+        filterValue: '',
+        selected: -1,
+        keyUsed: false,
+      });
     };
 
     setFilterValue = (value: string) => {
@@ -132,13 +124,6 @@ const getClass = WrappedComponent => {
       if (this.omniPicker) {
         this.omniPicker.handleKeyUp(evt);
       }
-      const { key } = evt;
-      const { isOpen } = this.state;
-      if (key === ESC && isOpen) {
-        evt.preventDefault();
-        evt.stopPropagation();
-        this.reset();
-      }
     };
 
     keyDown = (evt: SyntheticKeyboardEvent<HTMLElement>) => {
@@ -148,7 +133,8 @@ const getClass = WrappedComponent => {
       const { key } = evt;
       const { isOpen } = this.state;
       if (key === TAB) {
-        this.close();
+        evt.preventDefault();
+        this.close(evt);
         return;
       }
       if (key === UP && isOpen) {
@@ -164,6 +150,12 @@ const getClass = WrappedComponent => {
       if (key === ENTER && isOpen) {
         evt.preventDefault();
         this.choose();
+      }
+      if (key === ESC && isOpen) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.blur(evt);
+        this.reset();
       }
     };
 
@@ -182,7 +174,12 @@ const getClass = WrappedComponent => {
       }
     };
 
-    blur = (evt: SyntheticInputEvent<HTMLInputElement>) => {
+    blur = (
+      evt:
+        | MouseEvent
+        | SyntheticInputEvent<HTMLInputElement>
+        | SyntheticKeyboardEvent<HTMLElement>,
+    ) => {
       if (this.omniPicker) {
         this.omniPicker.handleBlur(evt);
       }
