@@ -49,7 +49,7 @@ export const singleColonySelector: ColonySelector = (
 
 export const domainsIndexSelector = createSelector(
   singleColonySelector,
-  colony => colony.getIn(['databases', 'domainsIndex']),
+  colony => colony.getIn(['record', 'databases', 'domainsIndex']),
 );
 
 export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(

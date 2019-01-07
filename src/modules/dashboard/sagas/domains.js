@@ -15,17 +15,24 @@ import type { Action, AddressOrENSName, ENSName } from '~types';
 
 import { putError } from '~utils/saga/effects';
 
-import { walletAddressSelector } from '../../users/selectors';
-import { domainsIndexSelector } from '../selectors';
-import { set } from '../../../lib/database/commands';
+import { set, get, getAll } from '../../../lib/database/commands';
 
+import { domainsIndexSelector } from '../selectors';
 import { domainsIndexStoreBlueprint } from '../stores';
 import {
   DOMAIN_CREATE,
   DOMAIN_CREATE_ERROR,
   DOMAIN_CREATE_SUCCESS,
+  DOMAIN_FETCH,
+  DOMAIN_FETCH_ERROR,
+  DOMAIN_FETCH_SUCCESS,
 } from '../actionTypes';
 import { createDomain } from '../actionCreators';
+import {
+  ensureColonyIsInState,
+  createDomainsIndexStore,
+  getDomainsIndexStore,
+} from './shared';
 
 /*
  * Given a colony identifier and a parent domain ID (1 == root),
@@ -47,41 +54,50 @@ function* createDomainTransaction(
 }
 
 /*
- * Given a colony ENS name, fetch the domains index store (via
- * the colony state).
+ * Given a colony ENS name, get or create the domains index store
+ * (via the colony state).
  */
-function* fetchDomainsIndexStore(colonyENSName: ENSName) {
+function* getOrCreateDomainsIndexStore(colonyENSName: ENSName) {
   const ddb = yield getContext('ddb');
-
-  const walletAddress = yield select(walletAddressSelector);
+  let store;
 
   /*
    * Select the `domainsIndex` database address for the given colony ENS name.
-   * If that colony doesn't exist in the state, this will fail.
    */
   const domainsIndex = yield select(domainsIndexSelector, colonyENSName);
 
   /*
-   * Return the domains index store.
+   * Get the store if the `domainsIndex` address was found.
    */
-  return yield call(
-    [ddb, ddb.getStore],
-    domainsIndexStoreBlueprint,
-    domainsIndex,
-    {
-      walletAddress,
-    },
-  );
+  if (domainsIndex) {
+    // TODO no access controller is available yet
+    store = yield call(
+      [ddb, ddb.getStore],
+      domainsIndexStoreBlueprint,
+      domainsIndex,
+    );
+    // If `domainsIndex` is set, but the store wasn't found there, we can
+    // only exit with an error.
+    if (!store) throw new Error('Domains index store not found');
+  } else {
+    /*
+     * If `domainsIndex` wasn't set on the colony, create the store.
+     */
+    store = yield call(createDomainsIndexStore, colonyENSName);
+  }
+
+  yield call([store, store.load]);
+
+  return store;
 }
 
 /*
  * Given a colony ENS name and a newly-created domain ID on that colony,
- * create a tasks index store for that domain ID.
+ * get or create the tasks index store for that domain ID.
  */
-// TODO make idempotent
 // eslint-disable-next-line no-unused-vars
-function* createTasksIndexStore(colonyENSName: ENSName, domainId: number) {
-  // TODO actually create a store
+function* getOrCreateTasksIndexStore(colonyENSName: ENSName, domainId: number) {
+  // TODO actually get or create a store (when the store is defined)
   return yield {
     address: {
       toString() {
@@ -91,33 +107,39 @@ function* createTasksIndexStore(colonyENSName: ENSName, domainId: number) {
   };
 }
 
-// TODO make idempotent
 function* addDomainToIndex(
   colonyENSName: ENSName,
   domainId: number,
   domainName: string,
-) {
+): Saga<void> {
   /*
-   * Create a `TasksIndexDatabase` store for the domain.
+   * Get or create the `TasksIndexDatabase` store for the given colony/domain.
    */
   const tasksIndexStore = yield call(
-    createTasksIndexStore,
+    getOrCreateTasksIndexStore,
     colonyENSName,
     domainId,
   );
 
   /*
-   * Get the domains index store.
+   * Get the domains index store for the given colony.
    */
-  const domainsIndexStore = yield call(fetchDomainsIndexStore, colonyENSName);
+  const domainsIndexStore = yield call(getDomainsIndexStore, colonyENSName);
 
   /*
-   * Set the new domain on the domains index store.
+   * Get the domain from the loaded domains index store.
    */
-  yield call(set, domainsIndexStore, domainId, {
-    domainName,
-    tasksIndex: tasksIndexStore.address.toString(),
-  });
+  yield call([domainsIndexStore, domainsIndexStore.load]);
+  const domain = yield call(get, domainsIndexStore, domainId.toString());
+
+  /*
+   * If not yet set, set the new domain on the domains index store.
+   */
+  if (!domain)
+    yield call(set, domainsIndexStore, domainId.toString(), {
+      domainName,
+      tasksIndex: tasksIndexStore.address.toString(),
+    });
 }
 
 function* createDomainSaga({
@@ -125,7 +147,13 @@ function* createDomainSaga({
 }: Action): Saga<void> {
   try {
     /*
+     * Ensure the colony is in the state.
+     */
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    /*
      * Create the domain on the colony with a transaction.
+     * TODO idempotency could be improved here by looking for a pending transaction.
      */
     const action = yield call(
       createDomainTransaction,
@@ -151,31 +179,56 @@ function* createDomainSaga({
     /*
      * We're done here.
      */
+    const props = { domainId, domainName };
     yield put({
       type: DOMAIN_CREATE_SUCCESS,
-      payload: { colonyENSName, domainId },
+      payload: { keyPath: [colonyENSName, domainId], props },
     });
   } catch (error) {
     yield putError(DOMAIN_CREATE_ERROR, error);
   }
 }
 
-// function* fetchDomainSaga({
-//   payload: { domainAddress, colonyENSName },
-// }: Action): Saga<void> {
-//   try {
-//     const store = yield call(fetchOrCreateDomainStore, { domainAddress });
-//     const domainStoreData = yield call(getAll, store);
-//     yield put({
-//       type: DOMAIN_FETCH_SUCCESS,
-//       payload: { colonyENSName, domainStoreData, id: store.address.toString() },
-//     });
-//   } catch (error) {
-//     yield putError(DOMAIN_FETCH_ERROR, error);
-//   }
-// }
+/*
+ * Fetch the domain for the given colony ENS name and domain ID.
+ */
+function* fetchDomainSaga({
+  payload: {
+    keyPath: [colonyENSName],
+    keyPath,
+  },
+}: Action): Saga<void> {
+  try {
+    /*
+     * Ensure the colony is in the state.
+     */
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    // TODO call `getDomain` on the colony to ensure it exists?
+
+    /*
+     * Get or create the domains index store for this colony.
+     */
+    const store = yield call(getOrCreateDomainsIndexStore, colonyENSName);
+
+    /*
+     * Get the domain props from the loaded store.
+     */
+    const props = yield call(getAll, store);
+
+    /*
+     * Put the success action.
+     */
+    yield put({
+      type: DOMAIN_FETCH_SUCCESS,
+      payload: { keyPath, props },
+    });
+  } catch (error) {
+    yield putError(DOMAIN_FETCH_ERROR, error, { keyPath });
+  }
+}
 
 export default function* domainSagas(): any {
   yield takeEvery(DOMAIN_CREATE, createDomainSaga);
-  // yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
+  yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
 }
