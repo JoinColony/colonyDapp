@@ -23,7 +23,7 @@ export type ColonyProps = {|
   admins?: Map<string, ColonyAdminRecord>,
 |};
 
-const defaultAadmins: Map<string, ColonyAdminRecord> = Map();
+const defaultAdmins: Map<string, ColonyAdminRecord> = Map();
 
 const defaultValues: $Shape<ColonyProps> = {
   address: undefined,
@@ -36,7 +36,7 @@ const defaultValues: $Shape<ColonyProps> = {
   token: Token(),
   version: undefined,
   website: undefined,
-  admins: defaultAadmins,
+  admins: defaultAdmins,
 };
 
 const Colony: RecordFactory<ColonyProps> = Record(defaultValues);

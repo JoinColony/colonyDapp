@@ -316,7 +316,7 @@ function* addColonyAdmin({
       [username]: newAdmin.profile,
     });
     /*
-     * Displatch the action to set the admin on the contract level (transaction)
+     * Dispatch the action to set the admin on the contract level (transaction)
      */
     const action = yield call(addColonyAdminAction, colonyAddress, {
       user: walletAddress,
@@ -354,7 +354,7 @@ function* removeColonyAdmin({
     delete colonyAdmins[username];
     yield call([store, store.set], 'admins', colonyAdmins);
     /*
-     * Displatch the action to set the admin on the contract level (transaction)
+     * Dispatch the action to set the admin on the contract level (transaction)
      */
     const action = yield call(removeColonyAdminAction, colonyAddress, {
       user: walletAddress,
