@@ -10,6 +10,7 @@ export const DOMAIN_CREATE = `${ns}/DOMAIN_CREATE`;
 export const DOMAIN_CREATE_ERROR = `${ns}/DOMAIN_CREATE_ERROR`;
 export const DOMAIN_CREATE_SUCCESS = `${ns}/DOMAIN_CREATE_SUCCESS`;
 
+// TODO implement these
 export const DOMAIN_CREATE_LABEL = `${ns}/DOMAIN_CREATE_LABEL`;
 export const DOMAIN_CREATE_LABEL_ERROR = `${ns}/DOMAIN_CREATE_LABEL_ERROR`;
 export const DOMAIN_CREATE_LABEL_SUCCESS = `${ns}/DOMAIN_CREATE_LABEL_SUCCESS`;
@@ -18,6 +19,7 @@ export const DOMAIN_FETCH = `${ns}/DOMAIN_FETCH`;
 export const DOMAIN_FETCH_ERROR = `${ns}/DOMAIN_FETCH_ERROR`;
 export const DOMAIN_FETCH_SUCCESS = `${ns}/DOMAIN_FETCH_SUCCESS`;
 
+// TODO implement these
 export const ROOT_DOMAIN_FETCH = `${ns}/DOMAIN_FETCH`;
 export const ROOT_DOMAIN_FETCH_ERROR = `${ns}/DOMAIN_FETCH_ERROR`;
 export const ROOT_DOMAIN_FETCH_SUCCESS = `${ns}/DOMAIN_FETCH_SUCCESS`;

@@ -2,11 +2,15 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
-import type { AddressOrENSName } from '~types';
+import type { AddressOrENSName, ENSName } from '~types';
 
 import { createColonyTransaction } from '../../core/actionCreators';
 
-import { DOMAIN_CREATE_ERROR, DOMAIN_CREATE_SUCCESS } from '../actionTypes';
+import {
+  DOMAIN_CREATE_ERROR,
+  DOMAIN_CREATE_SUCCESS,
+  DOMAIN_FETCH,
+} from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export
 export const createDomain = (
@@ -24,3 +28,10 @@ export const createDomain = (
       eventDataReceived: DOMAIN_CREATE_SUCCESS,
     },
   });
+
+export const fetchDomain = (colonyENSName: ENSName, domainId: number) => ({
+  type: DOMAIN_FETCH,
+  payload: {
+    keyPath: [colonyENSName, domainId],
+  },
+});
