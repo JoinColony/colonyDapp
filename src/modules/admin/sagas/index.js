@@ -2,13 +2,12 @@
 
 import type { Saga } from 'redux-saga';
 
-import BigNumber from 'bn.js';
-import { call, getContext, put, takeEvery } from 'redux-saga/effects';
+import { call, getContext, put, takeEvery, all } from 'redux-saga/effects';
 
 import type { Action } from '~types';
 import type { ContractTransactionProps } from '~immutable';
 
-import { putError, callCaller, raceError } from '~utils/saga/effects';
+import { putError, raceError } from '~utils/saga/effects';
 
 import {
   fetchColonyTransactions,
@@ -27,6 +26,14 @@ import {
   COLONY_CLAIM_TOKEN,
 } from '../actionTypes';
 
+import {
+  parseColonyFundsClaimedEvent,
+  parseColonyFundsMovedBetweenFundingPotsEvent,
+  parseTaskPayoutClaimedEvent,
+  parseUnclaimedTransferEvent,
+  getLogsAndEvents,
+} from './utils';
+
 function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
   const { key: colonyENSName } = action.payload;
   const colonyManager = yield getContext('colonyManager');
@@ -36,87 +43,38 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
       [colonyManager, colonyManager.getColonyClient],
       colonyENSName,
     );
-    const { provider } = colonyClient.adapter;
 
-    const filter = {
+    const partialFilter = {
       address: colonyClient.contract.address,
-      fromBlock: 0, // TODO: set this properly
-      toBlock: 'latest',
       eventNames: [
         'ColonyFundsClaimed',
         'ColonyFundsMovedBetweenFundingPots',
         'TaskPayoutClaimed',
       ],
     };
+    const { logs, events } = yield call(
+      getLogsAndEvents,
+      partialFilter,
+      colonyClient,
+    );
 
-    const logs = yield call([colonyClient, colonyClient.getLogs], filter);
-    const events = yield call([colonyClient, colonyClient.parseLogs], logs);
+    const parsers = {
+      ColonyFundsClaimed: parseColonyFundsClaimedEvent,
+      // eslint-disable-next-line max-len
+      ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
+      TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
+    };
 
-    const transactions: Array<ContractTransactionProps> = [];
-    for (let i = 0; i < events.length; i += 1) {
-      const { eventName } = events[i];
-      const { transactionHash, blockHash } = logs[i];
-      const { timestamp } = yield call(
-        [provider, provider.getBlock],
-        blockHash,
-      );
-      const date = new Date(timestamp);
-      if (eventName === 'ColonyFundsClaimed') {
-        const { payoutRemainder: amount, token } = events[i];
-        const { from } = yield call(
-          [provider, provider.getTransaction],
-          transactionHash,
-        );
-        // don't show claims of zero
-        if (amount.gt(new BigNumber(0))) {
-          transactions.push({
-            amount,
-            colonyENSName,
-            date,
-            from,
-            id: transactionHash,
-            incoming: true,
-            token,
-            hash: transactionHash,
-          });
-        }
-      } else if (eventName === 'ColonyFundsMovedBetweenFundingPots') {
-        const { amount, fromPot, token } = events[i];
-        // TODO: replace this once able to get taskId from potId
-        const taskId = 1;
-        // const [, taskId] = yield call(
-        //   [colonyClient.contract, colonyClient.contract.pots],
-        //   events[i].fromPot === 1 ? events[i].toPot : events[i].fromPot,
-        // );
-        transactions.push({
-          amount,
+    const transactions: Array<ContractTransactionProps> = (yield all(
+      events.map((event, i) =>
+        parsers[event.eventName]({
+          event,
+          log: logs[i],
+          colonyClient,
           colonyENSName,
-          date,
-          id: transactionHash,
-          incoming: fromPot !== 1,
-          taskId,
-          token,
-          hash: transactionHash,
-        });
-      } else if (eventName === 'TaskPayoutClaimed') {
-        const { taskId, role, amount, token } = events[i];
-        const { address: to } = yield callCaller({
-          colonyENSName,
-          methodName: 'getTaskRole',
-          params: { taskId, role },
-        });
-        transactions.push({
-          amount,
-          date,
-          id: transactionHash,
-          incoming: false,
-          taskId,
-          to,
-          token,
-          hash: transactionHash,
-        });
-      }
-    }
+        }),
+      ),
+    )).filter(tx => !!tx);
 
     yield put({
       type: COLONY_FETCH_TRANSACTIONS_SUCCESS,
@@ -136,85 +94,50 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
       [colonyManager, colonyManager.getColonyClient],
       colonyENSName,
     );
-    const { provider } = colonyClient.adapter;
-
-    const currentBlock = yield call([provider, provider.getBlockNumber]);
-    const blocksBack = 400000;
-    const fromBlock =
-      currentBlock - blocksBack < 0 ? 0 : currentBlock - blocksBack;
-    const toBlock = 'latest';
 
     // Get logs + events for token Transfer to this Colony
-    const transferLogs = yield call(
-      [colonyClient.token, colonyClient.token.getLogs],
-      {
-        fromBlock,
-        toBlock,
-        eventNames: ['Transfer'],
-        // [eventNames, from, to]
-        topics: [
-          [],
-          undefined,
-          [
-            `0x000000000000000000000000${colonyClient.contract.address
-              .slice(2)
-              .toLowerCase()}`,
-          ],
+    const transferPartialFilter = {
+      eventNames: ['Transfer'],
+      // [eventNames, from, to]
+      topics: [
+        [],
+        undefined,
+        [
+          `0x000000000000000000000000${colonyClient.contract.address
+            .slice(2)
+            .toLowerCase()}`,
         ],
-      },
-    );
-    const transferEvents = yield call(
-      [colonyClient.token, colonyClient.token.parseLogs],
-      transferLogs,
+      ],
+    };
+    const { logs: transferLogs, events: transferEvents } = yield call(
+      getLogsAndEvents,
+      transferPartialFilter,
+      colonyClient.token,
     );
 
     // Get logs + events for token claims by this Colony
-    const claimLogs = yield call([colonyClient, colonyClient.getLogs], {
+    const claimPartialFilter = {
       address: colonyClient.contract.address,
-      fromBlock,
-      toBlock,
       eventNames: ['ColonyFundsClaimed'],
-    });
-    const claimEvents = yield call(
-      [colonyClient, colonyClient.parseLogs],
-      claimLogs,
+    };
+    const { logs: claimLogs, events: claimEvents } = yield call(
+      getLogsAndEvents,
+      claimPartialFilter,
+      colonyClient,
     );
 
-    const transactions: Array<ContractTransactionProps> = [];
-    for (let i = 0; i < transferEvents.length; i += 1) {
-      const { from, tokens: amount } = transferEvents[i];
-      const {
-        address: token,
-        blockHash,
-        blockNumber,
-        transactionHash: hash,
-      } = transferLogs[i];
-      const { timestamp } = yield call(
-        [provider, provider.getBlock],
-        blockHash,
-      );
-      const date = new Date(timestamp);
-
-      // Only add to the list if we haven't claimed since it happened
-      if (
-        !claimEvents.find(
-          (event, j) =>
-            event.token.toLowerCase() === token.toLowerCase() &&
-            claimLogs[j].blockNumber > blockNumber,
-        )
-      ) {
-        transactions.push({
-          amount,
+    const transactions: Array<ContractTransactionProps> = (yield all(
+      transferEvents.map((transferEvent, i) =>
+        call(parseUnclaimedTransferEvent, {
+          transferEvent,
+          transferLog: transferLogs[i],
+          claimEvents,
+          claimLogs,
+          colonyClient,
           colonyENSName,
-          date,
-          from,
-          hash,
-          id: hash,
-          incoming: true,
-          token,
-        });
-      }
-    }
+        }),
+      ),
+    )).filter(tx => !!tx);
 
     yield put({
       type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,

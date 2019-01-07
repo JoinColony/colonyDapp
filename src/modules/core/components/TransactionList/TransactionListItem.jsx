@@ -153,6 +153,7 @@ const TransactionListItem = ({
           value={amount}
           unit="ether"
           decimals={1}
+          // TODO: what should we show when we don't recognise the token?
           suffix={` ${token ? token.symbol : '???'}`}
         />
       </TableCell>
