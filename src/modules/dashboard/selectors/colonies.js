@@ -33,12 +33,12 @@ type ENSNameFromRouter = (state: RootState, props: Object) => ENSName;
 
 type ColonyAdminStoreSelector = (
   state: RootState,
-  props: Object,
+  ensName: ENSName,
 ) => ImmutableMapType<string, ColonyAdminRecord>;
 
 type ColonyAdminsSelector = (
   state: RootState,
-  props: Object,
+  ensName: ENSName,
 ) => Array<ColonyAdminRecord>;
 
 export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
@@ -83,10 +83,11 @@ export const getCurrentColony: ColonySelector = createSelector(
 
 export const getColonyAdminStore: ColonyAdminStoreSelector = createSelector(
   singleColonySelector,
-  currentColony => currentColony.get('admins', ImmutableMap()),
+  currentColony =>
+    currentColony && currentColony.getIn(['record', 'admins'], ImmutableMap()),
 );
 
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(
   getColonyAdminStore,
-  colonyAdmins => colonyAdmins.toList().toArray(),
+  colonyAdmins => (colonyAdmins && colonyAdmins.toList().toArray()) || [],
 );
