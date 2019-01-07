@@ -8,8 +8,8 @@ import { getColonyAdmins } from '../../../dashboard/selectors';
 import Organizations from './Organizations.jsx';
 
 const enhance = compose(
-  connect((state, props) => ({
-    colonyAdmins: getColonyAdmins(state, props),
+  connect((state: Object, { colony: { ensName } }) => ({
+    colonyAdmins: getColonyAdmins(state, ensName),
   })),
 );
 
