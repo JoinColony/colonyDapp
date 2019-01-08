@@ -5,6 +5,7 @@ import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 
 import withWizard from '~core/Wizard/withWizard';
+import withDialog from '~core/Dialog/withDialog';
 
 import type { WalletMethod } from '../../types';
 
@@ -16,9 +17,9 @@ import StepMetaMask from './StepMetaMask';
 import StepMnemonic from './StepMnemonic';
 import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
-import StepUserName from './StepUserName';
+import StepDisplayName from './StepDisplayName';
 
-const stepArray = [StepStart, StepMetaMask, StepUserName];
+const stepArray = [StepStart, StepMetaMask, StepDisplayName];
 
 type StepValues = {
   method: WalletMethod,
@@ -54,7 +55,7 @@ const stepFunction = (step: number, { method }: StepValues) => {
     }
   }
   if (step === 2) {
-    return StepUserName;
+    return withDialog()(StepDisplayName);
   }
   return stepArray[step];
 };

@@ -18,13 +18,13 @@ import { ActionForm, FormStatus } from '~core/Fields';
 import promiseListener from '../../../../createPromiseListener';
 
 import {
-  COLONY_CREATE_LABEL,
-  COLONY_CREATE_LABEL_ERROR,
-  COLONY_CREATE_LABEL_SUCCESS,
-  COLONY_DOMAIN_VALIDATE,
-  COLONY_DOMAIN_VALIDATE_SUCCESS,
-  COLONY_DOMAIN_VALIDATE_ERROR,
-} from '../../../dashboard/actionTypes';
+  USERNAME_CREATE,
+  USERNAME_CREATE_ERROR,
+  USERNAME_CREATE_SUCCESS,
+  USERNAME_VALIDATE,
+  USERNAME_VALIDATE_SUCCESS,
+  USERNAME_VALIDATE_ERROR,
+} from '../../actionTypes';
 
 const MSG = defineMessages({
   iWillDoItLater: {
@@ -77,7 +77,7 @@ type Props = {
 type State = {};
 
 const validationSchema = yup.object({
-  ENSname: yup
+  username: yup
     .string()
     .required()
     .ensAddress(),
@@ -91,9 +91,9 @@ class ENSNameDialog extends Component<Props, State> {
   }
 
   checkDomainTaken = promiseListener.createAsyncFunction({
-    start: COLONY_DOMAIN_VALIDATE,
-    resolve: COLONY_DOMAIN_VALIDATE_SUCCESS,
-    reject: COLONY_DOMAIN_VALIDATE_ERROR,
+    start: USERNAME_VALIDATE,
+    resolve: USERNAME_VALIDATE_SUCCESS,
+    reject: USERNAME_VALIDATE_ERROR,
   });
 
   validateDomain = async (values: FormValues) => {
@@ -101,7 +101,7 @@ class ENSNameDialog extends Component<Props, State> {
       await this.checkDomainTaken.asyncFunction(values);
     } catch (e) {
       const error = {
-        ensName: MSG.errorDomainTaken,
+        username: MSG.errorDomainTaken,
       };
       throw error;
     }
@@ -112,9 +112,9 @@ class ENSNameDialog extends Component<Props, State> {
     return (
       <Dialog cancel={cancel}>
         <ActionForm
-          submit={COLONY_CREATE_LABEL}
-          success={COLONY_CREATE_LABEL_SUCCESS}
-          error={COLONY_CREATE_LABEL_ERROR}
+          submit={USERNAME_CREATE}
+          success={USERNAME_CREATE_SUCCESS}
+          error={USERNAME_CREATE_ERROR}
           validationSchema={validationSchema}
           validate={this.validateDomain}
           onSuccess={close}
@@ -148,7 +148,7 @@ class ENSNameDialog extends Component<Props, State> {
               </DialogSection>
               <DialogSection>
                 <Input
-                  name="ENSname"
+                  name="username"
                   label={MSG.inputLabel}
                   appearance={{ theme: 'fat' }}
                   extensionString=".joincolony.eth"
