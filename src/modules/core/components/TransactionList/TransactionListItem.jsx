@@ -79,7 +79,7 @@ const TransactionListItem = ({
     <TableRow className={styles.main}>
       <TableCell className={styles.transactionDate}>
         <div className={styles.dateDay}>
-          <FormattedDate value={date} day="numeric" className="hello" />
+          <FormattedDate value={date} day="numeric" />
         </div>
         <div className={styles.dateMonth}>
           <FormattedDate value={date} month="short" />
