@@ -11,8 +11,8 @@ import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
 import TransactionDetails from './TransactionDetails.jsx';
 
-import { withColony, withTask, withToken } from '../../hocs';
-import { withUser } from '../../../users/hocs';
+import { withColony, withTask, withToken, withColonyENSName } from '../../hocs';
+import { withUser, withUsername } from '../../../users/hocs';
 
 import styles from './TransactionListItem.css';
 
@@ -54,7 +54,7 @@ type Props = {
   colony?: DataRecord<ColonyRecord>,
   task?: TaskRecord,
   token?: TokenRecord,
-  user?: UserRecord,
+  user?: DataRecord<UserRecord>,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -169,14 +169,21 @@ TransactionListItem.displayName = displayName;
  * Soon-to-be-arriving React Hooks could offer a nicer solution here.
  */
 export default compose(
-  withProps(({ transaction: { colonyENSName, taskId, token, from, to } }) => ({
-    ensName: colonyENSName,
-    taskId,
-    tokenAddress: token,
-    userAddress: from || to,
-  })),
+  withProps(
+    ({
+      transaction: { colonyENSName, taskId, token, from, to, incoming },
+    }) => ({
+      ensName: colonyENSName,
+      taskId,
+      tokenAddress: token,
+      userAddress: incoming ? from : to,
+      colonyAddress: incoming ? from : to,
+    }),
+  ),
+  withColonyENSName,
   withColony,
   withTask,
   withToken,
+  withUsername,
   withUser,
 )(TransactionListItem);

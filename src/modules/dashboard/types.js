@@ -3,7 +3,7 @@
 
 import type { Map as ImmutableMapType } from 'immutable';
 
-import type { ENSName } from '~types';
+import type { Address, ENSName } from '~types';
 import type {
   ColonyRecord,
   DataRecord,
@@ -20,6 +20,7 @@ export type ColonyAvatarsMap = ImmutableMapType<string, string>;
 export type AllColoniesState = {
   colonies: ColoniesMap,
   avatars: ColonyAvatarsMap,
+  ensNames: ImmutableMapType<Address, ENSName>,
 };
 
 export type DomainsMap = ImmutableMapType<DomainId, DataRecord<DomainRecord>>;

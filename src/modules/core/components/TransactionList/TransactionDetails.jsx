@@ -39,7 +39,7 @@ type Props = {
   transaction: ContractTransactionRecord,
   colony?: DataRecord<ColonyRecord>,
   task?: TaskRecord,
-  user?: UserRecord,
+  user?: DataRecord<UserRecord>,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -63,8 +63,7 @@ type Props = {
  */
 
 const UserDetails = ({
-  displayName: userDisplayName = '',
-  username = '',
+  user: { displayName: userDisplayName = '', username = '' } = {},
   address = '',
 }: Object) => (
   <span>
@@ -111,13 +110,13 @@ const TransactionDetails = ({
           {/*
            * From a user
            */}
-          {from && (
+          {from && !(to && colony && colony.record) && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
                 senderString: (
                   <UserDetails
-                    {...(user ? user.profile : {})}
+                    user={user && user.record && user.record.profile}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -133,10 +132,32 @@ const TransactionDetails = ({
           {/*
            * From a task
            */}
-          {task && task.id && (
+          {!from && task && task.id && (
             <FormattedMessage
               {...MSG.fromText}
               values={{ senderString: <TaskDetails task={task} /> }}
+            />
+          )}
+          {/*
+           * From a Colony
+           */}
+          {to && colony && colony.record && (
+            <FormattedMessage
+              {...MSG.fromText}
+              values={{
+                senderString: (
+                  <ColonyDetails
+                    colony={colony.record}
+                    address={
+                      showMaskedAddress ? (
+                        <MaskedAddress address={colony.record.address} />
+                      ) : (
+                        colony.record.address
+                      )
+                    }
+                  />
+                ),
+              }}
             />
           )}
         </p>
@@ -144,7 +165,7 @@ const TransactionDetails = ({
          * To the colony
          */}
         <p className={styles.secondaryText}>
-          {colony && colony.record && (
+          {!to && colony && colony.record && (
             <FormattedMessage
               {...MSG.toText}
               values={{
@@ -175,13 +196,13 @@ const TransactionDetails = ({
           {/*
            * To a user
            */}
-          {to && (
+          {to && !(from && colony && colony.record) && (
             <FormattedMessage
               {...MSG.toText}
               values={{
                 recipientString: (
                   <UserDetails
-                    {...(user ? user.profile : {})}
+                    user={user && user.record && user.record.profile}
                     address={
                       showMaskedAddress ? <MaskedAddress address={to} /> : to
                     }
@@ -199,12 +220,34 @@ const TransactionDetails = ({
               values={{ recipientString: <TaskDetails task={task} /> }}
             />
           )}
+          {/*
+           * To a Colony
+           */}
+          {from && colony && colony.record && (
+            <FormattedMessage
+              {...MSG.toText}
+              values={{
+                recipientString: (
+                  <ColonyDetails
+                    colony={colony.record}
+                    address={
+                      showMaskedAddress ? (
+                        <MaskedAddress address={from} />
+                      ) : (
+                        from
+                      )
+                    }
+                  />
+                ),
+              }}
+            />
+          )}
         </p>
         {/*
          * From the colony
          */}
         <p className={styles.secondaryText}>
-          {colony && colony.record && (
+          {!from && colony && colony.record && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
