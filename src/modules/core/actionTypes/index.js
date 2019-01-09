@@ -1,4 +1,4 @@
 /* @flow */
 
 export * from './transactions';
-export * from '/gasStation'
+export * from './gasStation';
