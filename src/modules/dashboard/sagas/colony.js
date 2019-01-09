@@ -11,7 +11,7 @@ import {
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
+import { replace, push } from 'connected-react-router';
 
 import type { Action, ENSName } from '~types';
 
@@ -322,6 +322,14 @@ function* addColonyAdmin({
       user: walletAddress,
     });
     yield put(action);
+    /*
+     * Redirect the user back to the admins tab
+     */
+    yield put(
+      push({
+        state: { initialTab: 3 },
+      }),
+    );
   } catch (error) {
     yield putError(COLONY_ADMIN_ADD_ERROR, error);
   }
@@ -360,6 +368,14 @@ function* removeColonyAdmin({
       user: walletAddress,
     });
     yield put(action);
+    /*
+     * Redirect the user back to the admins tab
+     */
+    yield put(
+      push({
+        state: { initialTab: 3 },
+      }),
+    );
   } catch (error) {
     yield putError(COLONY_ADMIN_REMOVE_ERROR, error);
   }
