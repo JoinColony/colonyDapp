@@ -55,10 +55,8 @@ type Props = {
   initialTab?: number,
 };
 
-const displayName = 'pages.VerticalNavigation';
-
 class VerticalNavigation extends Component<Props, State> {
-  static displayName = 'DialogProvider';
+  static displayName = 'pages.VerticalNavigation';
 
   static defaultProps = { initialTab: 0 };
 
@@ -119,7 +117,5 @@ class VerticalNavigation extends Component<Props, State> {
     );
   }
 }
-
-VerticalNavigation.displayName = displayName;
 
 export default withRouter(VerticalNavigation);
