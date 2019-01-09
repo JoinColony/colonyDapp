@@ -25,10 +25,17 @@ class UserAvatar extends Component<Props> {
   }
 
   render() {
-    const { avatarData, link, username, user } = this.props;
+    const { avatarData, link, username, user, ...rest } = this.props;
 
     if (!user || !user.record)
-      return <UserAvatarDisplay username={username} walletAddress="" notSet />;
+      return (
+        <UserAvatarDisplay
+          username={username}
+          walletAddress=""
+          notSet
+          {...rest}
+        />
+      );
 
     const { displayName, walletAddress } = user.record.profile;
     return link && username ? (
@@ -37,6 +44,7 @@ class UserAvatar extends Component<Props> {
           avatar={avatarData}
           displayName={displayName}
           walletAddress={walletAddress}
+          {...rest}
         />
       </NavLink>
     ) : (
@@ -44,6 +52,7 @@ class UserAvatar extends Component<Props> {
         avatar={avatarData}
         displayName={displayName}
         walletAddress={walletAddress}
+        {...rest}
       />
     );
   }
