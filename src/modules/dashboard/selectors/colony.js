@@ -20,6 +20,9 @@ export const coloniesSelector = (state: RootState) =>
 export const colonyAvatarsSelector = (state: RootState) =>
   allColoniesSelector(state).avatars;
 
+export const colonyENSNamesSelector = (state: RootState) =>
+  allColoniesSelector(state).ensNames;
+
 export const routerColonySelector = createSelector(
   coloniesSelector,
   ensNameFromRouter,
@@ -63,4 +66,10 @@ export const getColonyAdminStore = createSelector(
 export const getColonyAdmins = createSelector(
   getColonyAdminStore,
   colonyAdmins => (colonyAdmins && colonyAdmins.toList().toArray()) || [],
+);
+
+export const colonyENSNameSelector = createSelector(
+  colonyENSNamesSelector,
+  (state, props) => props.colonyAddress,
+  (ensNames, colonyAddress) => ensNames.get(colonyAddress),
 );

@@ -15,7 +15,7 @@ import {
 import type { Action, Address } from '~types';
 import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
-import { putError } from '~utils/saga/effects';
+import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
 import { DDB } from '../../../lib/database';
@@ -49,6 +49,9 @@ import {
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
+  USERNAME_FETCH,
+  USERNAME_FETCH_SUCCESS,
+  USERNAME_FETCH_ERROR,
   USERNAME_VALIDATE,
   USERNAME_VALIDATE_SUCCESS,
   USERNAME_VALIDATE_ERROR,
@@ -227,13 +230,41 @@ function* updateProfile(action: Action): Saga<void> {
   }
 }
 
+function* fetchUsername(action: Action): Saga<void> {
+  const { userAddress } = action.payload;
+
+  try {
+    const { domain } = yield callCaller({
+      methodName: 'lookupRegisteredENSDomain',
+      params: { ensAddress: userAddress },
+    });
+    if (!domain)
+      throw new Error(`No username found for address "${userAddress}"`);
+    const [username, type] = domain.split('.');
+    if (type !== 'user')
+      throw new Error(`Address "${userAddress}" is not a user`);
+
+    yield put({
+      type: USERNAME_FETCH_SUCCESS,
+      payload: { key: userAddress, username },
+    });
+  } catch (error) {
+    yield putError(USERNAME_FETCH_ERROR, error, { key: userAddress });
+  }
+}
+
 function* fetchProfile({
   payload: {
     keyPath: [username],
     keyPath,
   },
 }: Action): Saga<void> {
-  const walletAddress = yield select(walletAddressSelector);
+  // TODO: do we want to cache these in redux?
+  const nameHash = yield call(getHashedENSDomainString, username, 'user');
+  const { ensAddress: walletAddress } = yield callCaller({
+    methodName: 'getAddressForENSHash',
+    params: { nameHash },
+  });
 
   const ddb: DDB = yield getContext('ddb');
 
@@ -485,6 +516,7 @@ export function* setupUserSagas(): any {
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
   yield takeEvery(USER_ACTIVITIES_FETCH, fetchUserActivities);
+  yield takeEvery(USERNAME_FETCH, fetchUsername);
   yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
   yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
   yield takeEvery(USER_FETCH_TOKEN_TRANSFERS, fetchTokenTransfers);

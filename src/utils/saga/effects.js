@@ -78,11 +78,13 @@ export const callCaller = ({
 }) => {
   function* callCallerGenerator(): Saga<Object> {
     const colonyManager = yield getContext('colonyManager');
-    const caller = yield call(colonyManager, colonyManager.getMethod, [
+    const caller = yield call(
+      // $FlowFixMe why are you unhappy with this valid syntax?!
+      [colonyManager, colonyManager.getMethod],
       colonyENSName ? COLONY_CONTEXT : NETWORK_CONTEXT,
       methodName,
       colonyENSName,
-    ]);
+    );
     return yield call([caller, caller.call], params);
   }
   return call(callCallerGenerator);

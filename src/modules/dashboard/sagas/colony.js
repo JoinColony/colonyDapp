@@ -14,7 +14,7 @@ import { replace, push } from 'connected-react-router';
 
 import type { Action, ENSName } from '~types';
 
-import { putError } from '~utils/saga/effects';
+import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
 
 import { getNetworkMethod } from '../../core/sagas/utils';
@@ -55,6 +55,9 @@ import {
   COLONY_ADMIN_REMOVE,
   COLONY_ADMIN_REMOVE_SUCCESS,
   COLONY_ADMIN_REMOVE_ERROR,
+  COLONY_ENS_NAME_FETCH,
+  COLONY_ENS_NAME_FETCH_SUCCESS,
+  COLONY_ENS_NAME_FETCH_ERROR,
 } from '../actionTypes';
 
 import {
@@ -245,6 +248,31 @@ function* fetchColonySaga({
   }
 }
 
+function* fetchColonyENSName({
+  payload: { colonyAddress },
+}: Action): Saga<void> {
+  try {
+    const { domain } = yield callCaller({
+      methodName: 'lookupRegisteredENSDomain',
+      params: { ensAddress: colonyAddress },
+    });
+    if (!domain)
+      throw new Error(
+        `No Colony ENS name found for address "${colonyAddress}"`,
+      );
+    const [ensName, type] = domain.split('.');
+    if (type !== 'colony')
+      throw new Error(`Address "${colonyAddress}" is not a Colony`);
+
+    yield put({
+      type: COLONY_ENS_NAME_FETCH_SUCCESS,
+      payload: { key: colonyAddress, ensName },
+    });
+  } catch (error) {
+    yield putError(COLONY_ENS_NAME_FETCH_ERROR, error, { key: colonyAddress });
+  }
+}
+
 function* uploadColonyAvatar(action: Action): Saga<void> {
   const { data, ensName } = action.payload;
 
@@ -432,6 +460,7 @@ export default function* colonySagas(): any {
   yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
   yield takeEvery(COLONY_ADMIN_ADD, addColonyAdmin);
   yield takeEvery(COLONY_ADMIN_REMOVE, removeColonyAdmin);
+  yield takeEvery(COLONY_ENS_NAME_FETCH, fetchColonyENSName);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);

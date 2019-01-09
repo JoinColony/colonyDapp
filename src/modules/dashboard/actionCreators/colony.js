@@ -17,6 +17,7 @@ import {
   COLONY_FETCH,
   COLONY_AVATAR_FETCH,
   COLONY_ADMIN_ADD_ERROR,
+  COLONY_ENS_NAME_FETCH,
 } from '../actionTypes';
 
 export const createColony = (
@@ -95,3 +96,8 @@ export const removeColonyAdmin = (
       error: COLONY_ADMIN_ADD_ERROR,
     },
   });
+
+export const fetchColonyENSName = (colonyAddress: string) => ({
+  type: COLONY_ENS_NAME_FETCH,
+  payload: { colonyAddress },
+});
