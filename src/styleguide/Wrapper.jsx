@@ -8,6 +8,7 @@ import { createStore } from 'redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
+import { Map as ImmutableMap } from 'immutable';
 
 import { Users } from '~immutable';
 
@@ -22,6 +23,12 @@ type Props = {
 };
 
 const initialState = {
+  dashboard: {
+    allColonies: {
+      avatars: new ImmutableMap(),
+      colonies: new ImmutableMap(),
+    },
+  },
   users: {
     currentUser: {},
     wallet: {

@@ -1,6 +1,8 @@
 ### Simple colony grid
 
 ```js
+const { Colony } = require('~immutable');
+
 const colonies = [
   Colony({ name: 'Twitch.tv', meta: { address : '0x123456789' } }),
   Colony({ name: 'Zirtual', meta: { address : '0x987654321' } }),
