@@ -1,11 +1,8 @@
 /* @flow */
 
-import type { LocationShape } from 'react-router-dom';
-
 import React, { Component } from 'react';
 import type { Element, Node } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router-dom';
 
 import { Tab, Tabs, VerticalTabList, TabPanel } from '~core/Tabs';
 
@@ -31,11 +28,6 @@ export type NavigationItem = {
 
 type State = {
   tabIndex: number,
-  /*
-   * We have to check for initial render to open specific tabs only
-   * then when required
-   */
-  initialRender: boolean,
 };
 
 type Props = {
@@ -60,7 +52,9 @@ class VerticalNavigation extends Component<Props, State> {
 
   static defaultProps = { initialTab: 0 };
 
-  state = { tabIndex: 0, initialRender: true };
+  state = {
+    tabIndex: 0,
+  };
 
   componentWillMount() {
     /**
@@ -68,10 +62,9 @@ class VerticalNavigation extends Component<Props, State> {
      * handle tab setting like normal
      */
     const { initialTab } = this.props;
-    const { initialRender } = this.state;
-    if (initialTab !== 0 && initialRender) {
-      this.setState({ tabIndex: initialTab, initialRender: false });
-    }
+    this.setState({
+      tabIndex: initialTab,
+    });
   }
 
   setTabIndex = (tabIndex: number) => {
@@ -118,4 +111,4 @@ class VerticalNavigation extends Component<Props, State> {
   }
 }
 
-export default withRouter(VerticalNavigation);
+export default VerticalNavigation;
