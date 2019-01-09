@@ -28,11 +28,6 @@ export type NavigationItem = {
 
 type State = {
   tabIndex: number,
-  /*
-   * We have to check for initial render to open specific tabs only
-   * then when required
-   */
-  initialRender: boolean,
 };
 
 type Props = {
@@ -52,12 +47,14 @@ type Props = {
   initialTab?: number,
 };
 
-const displayName = 'pages.VerticalNavigation';
-
 class VerticalNavigation extends Component<Props, State> {
+  static displayName = 'pages.VerticalNavigation';
+
   static defaultProps = { initialTab: 0 };
 
-  state = { tabIndex: 0, initialRender: true };
+  state = {
+    tabIndex: 0,
+  };
 
   componentWillMount() {
     /**
@@ -65,10 +62,9 @@ class VerticalNavigation extends Component<Props, State> {
      * handle tab setting like normal
      */
     const { initialTab } = this.props;
-    const { initialRender } = this.state;
-    if (initialTab !== 0 && initialRender) {
-      this.setState({ tabIndex: initialTab, initialRender: false });
-    }
+    this.setState({
+      tabIndex: initialTab,
+    });
   }
 
   setTabIndex = (tabIndex: number) => {
@@ -114,7 +110,5 @@ class VerticalNavigation extends Component<Props, State> {
     );
   }
 }
-
-VerticalNavigation.displayName = displayName;
 
 export default VerticalNavigation;

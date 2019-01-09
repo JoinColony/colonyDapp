@@ -110,7 +110,9 @@ const AdminDashboard = (props: Props) => {
       <VerticalNavigation
         navigationItems={navigationItems(colony.record)}
         initialTab={
-          location && location.state && location.state.initialTab ? 1 : 0
+          location && location.state && location.state.initialTab
+            ? location.state.initialTab
+            : 0
         }
       >
         <div className={styles.backNavigation}>
