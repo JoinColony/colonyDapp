@@ -24,6 +24,7 @@ type ColonyAdminsSelector = (
   state: RootState,
   ensName: ENSName,
 ) => Array<ColonyAdminRecord>;
+type ColonyENSNamesSelector = (state: RootState) => Array<ENSName>;
 
 export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
   props.match.params.ensName;
@@ -50,6 +51,11 @@ export const singleColonySelector: ColonySelector = (
 export const domainsIndexSelector = createSelector(
   singleColonySelector,
   colony => colony.getIn(['record', 'databases', 'domainsIndex']),
+);
+
+export const draftsIndexSelector = createSelector(
+  singleColonySelector,
+  colony => colony.getIn(['record', 'databases', 'draftsIndex']),
 );
 
 export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(
@@ -79,4 +85,9 @@ export const getColonyAdminStore: ColonyAdminStoreSelector = createSelector(
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(
   getColonyAdminStore,
   colonyAdmins => (colonyAdmins && colonyAdmins.toList().toArray()) || [],
+);
+
+export const allColonyENSNames: ColonyENSNamesSelector = createSelector(
+  coloniesSelector,
+  colonies => colonies.keySeq().toArray(),
 );
