@@ -1,6 +1,9 @@
 /* @flow */
 
-import { NETWORK_CONTEXT } from '../../../../lib/ColonyManager/constants';
+import {
+  COLONY_CONTEXT,
+  NETWORK_CONTEXT,
+} from '../../../../lib/ColonyManager/constants';
 
 import getColonyManager from './getColonyManager';
 import getDDB from './getDDB';
@@ -9,6 +12,7 @@ import getMethod from './getMethod';
 import getNetworkClient from './getNetworkClient';
 
 const getNetworkMethod = getMethod.bind(null, NETWORK_CONTEXT);
+const getColonyMethod = getMethod.bind(null, COLONY_CONTEXT);
 
 export {
   getColonyManager,
@@ -17,4 +21,5 @@ export {
   getMethod,
   getNetworkClient,
   getNetworkMethod,
+  getColonyMethod,
 };
