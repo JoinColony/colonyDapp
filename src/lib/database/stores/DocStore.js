@@ -45,9 +45,9 @@ class DocStore extends Store {
 
   async upsertOne(id: string, value: {}) {
     const existing = this.getOne(id) || {};
-    const merged = { ...existing, ...value, _id: id };
+    const merged = { ...existing, ...value };
     const validated = await this.validate(merged);
-    return this._orbitStore.put(validated);
+    return this._orbitStore.put({ _id: id, ...validated });
   }
 
   async insertOne(value: { id?: string }) {
