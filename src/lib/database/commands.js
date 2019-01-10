@@ -37,3 +37,12 @@ export const setMeta = async (store: Store | DocStore, meta: Object) =>
 
 export const getMeta = (store: Store | DocStore) =>
   typeof store.getMeta === 'function' ? store.getMeta() : null;
+
+export const remove = async (
+  store: Store | DocStore | KVStore | ValidatedKVStore | FeedStore,
+  key: string,
+) => {
+  if (typeof store.remove === 'function') return store.remove(key);
+  if (typeof store.removeOne === 'function') return store.removeOne(key);
+  return null;
+};
