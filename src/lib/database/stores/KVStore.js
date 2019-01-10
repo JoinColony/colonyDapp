@@ -34,6 +34,10 @@ class KVStore extends Store {
     return this._orbitStore.get(key);
   }
 
+  all() {
+    return this._orbitStore.all();
+  }
+
   async _setObject(obj: {}) {
     return promiseSeries(
       Object.entries(obj).map(([key, value]) => () =>
