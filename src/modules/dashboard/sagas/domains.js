@@ -46,9 +46,8 @@ function* createDomainTransaction(
   identifier: AddressOrENSName,
   parentDomainId: number = 1,
 ) {
-  // TODO fix colonyJS; this should be `parentDomainId`
   const action = yield call(createDomain, identifier, {
-    parentSkillId: parentDomainId,
+    parentDomainId,
   });
   yield put(action);
 
