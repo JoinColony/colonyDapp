@@ -102,6 +102,12 @@ class Store {
   pin() {
     this._pinner.pinStore(this.address.toString());
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  async unpin() {
+    // TODO use the pinner to stop pinning this store (once it's supported).
+    return null;
+  }
 }
 
 export default Store;
