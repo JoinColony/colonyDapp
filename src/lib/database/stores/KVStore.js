@@ -22,6 +22,11 @@ class KVStore extends Store {
       : this._setObject(keyOrObject);
   }
 
+  async remove(key: string) {
+    // OrbitKVStore doesn't support removing keys, so we have to set it to null.
+    return this.set(key, null);
+  }
+
   async append(key: string, value?: any) {
     const existing = this._orbitStore.get(key) || [];
     return this._orbitStore.put(key, existing.concat(value));
