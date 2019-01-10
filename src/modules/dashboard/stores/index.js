@@ -6,5 +6,9 @@ export {
   default as domainsIndexStoreBlueprint,
 } from './domainsIndexStoreBlueprint';
 export {
+  default as draftsIndexStoreBlueprint,
+} from './draftsIndexStoreBlueprint';
+export { default as draftStoreBlueprint } from './draftStoreBlueprint';
+export {
   default as userActivityStoreBlueprint,
 } from './userActivityStoreBlueprint';
