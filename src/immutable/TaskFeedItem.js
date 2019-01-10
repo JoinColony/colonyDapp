@@ -16,6 +16,8 @@ export type TaskFeedItemProps = {
 
 export type TaskFeedItemRecord = RecordOf<TaskFeedItemProps>;
 
+export type TaskFeedItemId = $PropertyType<TaskFeedItemRecord, 'id'>;
+
 const defaultValues: $Shape<TaskFeedItemProps> = {
   comment: undefined,
   createdAt: undefined,
