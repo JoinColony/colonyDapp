@@ -38,6 +38,12 @@ export const domainsIndexSelector = createSelector(
     colony ? colony.getIn(['record', 'databases', 'domainsIndex']) : undefined,
 );
 
+export const draftsIndexSelector = createSelector(
+  singleColonySelector,
+  colony =>
+    colony ? colony.getIn(['record', 'databases', 'draftsIndex']) : null,
+);
+
 export const currentColonyAvatarHashSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,
@@ -66,6 +72,11 @@ export const getColonyAdminStore = createSelector(
 export const getColonyAdmins = createSelector(
   getColonyAdminStore,
   colonyAdmins => (colonyAdmins && colonyAdmins.toList().toArray()) || [],
+);
+
+export const allColonyENSNames = createSelector(
+  coloniesSelector,
+  colonies => colonies.keySeq().toArray(),
 );
 
 export const colonyENSNameSelector = createSelector(
