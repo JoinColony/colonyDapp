@@ -1,4 +1,4 @@
-@value containerMarginLeft: 30px;
+@value containerMarginLeft: 20px;
 
 .main {
   padding: 20px 0;
@@ -22,7 +22,7 @@
 
 .colonyGridItem {
   margin: 0 containerMarginLeft;
-  max-width: 68px;
+  width: 68px;
 }
 
 .loader {
