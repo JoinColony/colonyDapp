@@ -7,15 +7,16 @@ import type { AddressOrENSName, ENSName } from '~types';
 import { createColonyTransaction } from '../../core/actionCreators';
 
 import {
-  DOMAIN_CREATE_ERROR,
-  DOMAIN_CREATE_SUCCESS,
+  DOMAIN_CREATE_TX,
+  DOMAIN_CREATE_TX_ERROR,
+  DOMAIN_CREATE_TX_SUCCESS,
   DOMAIN_FETCH,
 } from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export
 export const createDomain = (
   identifier: AddressOrENSName,
-  params: { parentDomainId: number },
+  params: { parentSkillId: number },
   options?: SendOptions,
 ) =>
   createColonyTransaction({
@@ -24,8 +25,9 @@ export const createDomain = (
     options,
     methodName: 'addDomain',
     lifecycle: {
-      error: DOMAIN_CREATE_ERROR,
-      eventDataReceived: DOMAIN_CREATE_SUCCESS,
+      created: DOMAIN_CREATE_TX,
+      error: DOMAIN_CREATE_TX_ERROR,
+      eventDataReceived: DOMAIN_CREATE_TX_SUCCESS,
     },
   });
 

@@ -16,6 +16,7 @@ import type { Action, AddressOrENSName, ENSName } from '~types';
 import { putError } from '~utils/saga/effects';
 
 import { set, get, getAll } from '../../../lib/database/commands';
+import { getColonyMethod } from '../../core/sagas/utils';
 
 import { domainsIndexSelector } from '../selectors';
 import { domainsIndexStoreBlueprint } from '../stores';
@@ -23,6 +24,8 @@ import {
   DOMAIN_CREATE,
   DOMAIN_CREATE_ERROR,
   DOMAIN_CREATE_SUCCESS,
+  DOMAIN_CREATE_TX_ERROR,
+  DOMAIN_CREATE_TX_SUCCESS,
   DOMAIN_FETCH,
   DOMAIN_FETCH_ERROR,
   DOMAIN_FETCH_SUCCESS,
@@ -43,13 +46,16 @@ function* createDomainTransaction(
   identifier: AddressOrENSName,
   parentDomainId: number = 1,
 ) {
-  yield put(createDomain(identifier, { parentDomainId }));
+  // TODO fix colonyJS; this should be `parentDomainId`
+  const action = yield call(createDomain, identifier, {
+    parentSkillId: parentDomainId,
+  });
+  yield put(action);
 
   return yield take(
     ({ type, payload }) =>
-      [DOMAIN_CREATE_ERROR, DOMAIN_CREATE_SUCCESS].includes(type) &&
-      payload.params.parentDomainId === parentDomainId &&
-      payload.identifier === identifier,
+      [DOMAIN_CREATE_TX_ERROR, DOMAIN_CREATE_TX_SUCCESS].includes(type) &&
+      payload.id === action.payload.id,
   );
 }
 
@@ -64,29 +70,34 @@ function* getOrCreateDomainsIndexStore(colonyENSName: ENSName) {
   /*
    * Select the `domainsIndex` database address for the given colony ENS name.
    */
-  const domainsIndex = yield select(domainsIndexSelector, colonyENSName);
+  const domainsIndexAddress = yield select(domainsIndexSelector, colonyENSName);
 
   /*
    * Get the store if the `domainsIndex` address was found.
    */
-  if (domainsIndex) {
+  if (domainsIndexAddress) {
     // TODO no access controller is available yet
     store = yield call(
       [ddb, ddb.getStore],
       domainsIndexStoreBlueprint,
-      domainsIndex,
+      domainsIndexAddress,
     );
-    // If `domainsIndex` is set, but the store wasn't found there, we can
-    // only exit with an error.
-    if (!store) throw new Error('Domains index store not found');
+    if (store) {
+      /*
+       * Load the store if it was found (it may have been cached).
+       */
+      yield call([store, store.load]);
+    } else {
+      // If `domainsIndex` is set, but the store wasn't found there, we can
+      // only exit with an error.
+      throw new Error('Domains index store not found');
+    }
   } else {
     /*
      * If `domainsIndex` wasn't set on the colony, create the store.
      */
     store = yield call(createDomainsIndexStore, colonyENSName);
   }
-
-  yield call([store, store.load]);
 
   return store;
 }
@@ -177,7 +188,7 @@ function* createDomainSaga({
     yield call(addDomainToIndex, colonyENSName, domainId, domainName);
 
     /*
-     * We're done here.
+     * Dispatch a success action with the newly-added domain.
      */
     const props = { domainId, domainName };
     yield put({
@@ -189,12 +200,29 @@ function* createDomainSaga({
   }
 }
 
+function* checkDomainExists(
+  colonyENSName: ENSName,
+  domainId: number,
+): Saga<void> {
+  const getDomainCount = yield call(
+    getColonyMethod,
+    'getDomainCount',
+    colonyENSName,
+  );
+  const { count } = yield call(getDomainCount);
+
+  if (domainId > count)
+    throw new Error(
+      `Domain ID "${domainId}" does not exist on colony "${colonyENSName}"`,
+    );
+}
+
 /*
  * Fetch the domain for the given colony ENS name and domain ID.
  */
 function* fetchDomainSaga({
   payload: {
-    keyPath: [colonyENSName],
+    keyPath: [colonyENSName, domainId],
     keyPath,
   },
 }: Action): Saga<void> {
@@ -204,7 +232,10 @@ function* fetchDomainSaga({
      */
     yield call(ensureColonyIsInState, colonyENSName);
 
-    // TODO call `getDomain` on the colony to ensure it exists?
+    /*
+     * Check that the domain exists on the colony.
+     */
+    yield call(checkDomainExists, colonyENSName, domainId);
 
     /*
      * Get or create the domains index store for this colony.
@@ -217,7 +248,7 @@ function* fetchDomainSaga({
     const props = yield call(getAll, store);
 
     /*
-     * Put the success action.
+     * Dispatch the success action.
      */
     yield put({
       type: DOMAIN_FETCH_SUCCESS,

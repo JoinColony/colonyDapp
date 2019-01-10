@@ -9,23 +9,17 @@ import type { StoreBlueprint } from '~types';
 
 const domainsIndexStoreBlueprint: StoreBlueprint = {
   // TODO: implement
-  // eslint-disable-next-line no-unused-vars
-  getAccessController(storeProps?: *) {
+  // $FlowFixMe
+  getAccessController() {
     return {
       async canAppend() {
         return true;
       },
-      async grant() {
-        return true;
-      },
-      async revoke() {
-        return true;
-      },
-      async save() {
-        return '';
-      },
+      grant() {},
+      revoke() {},
+      save() {},
       async setup() {
-        return undefined;
+        return true;
       },
     };
   },

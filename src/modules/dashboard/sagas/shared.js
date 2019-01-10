@@ -74,12 +74,12 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
   /*
    * Get the `domainsIndex` address for the given colony from the store.
    */
-  const domainsIndex = yield select(domainsIndexSelector, colonyENSName);
+  const domainsIndexAddress = yield select(domainsIndexSelector, colonyENSName);
 
   /*
    * If the `domainsIndex` address wasn't found, exit.
    */
-  if (!domainsIndex) return null;
+  if (!domainsIndexAddress) return null;
 
   /*
    * Get the store for the `domainsIndex` address.
@@ -89,7 +89,7 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
   return yield call(
     [ddb, ddb.getStore],
     domainsIndexStoreBlueprint,
-    domainsIndex,
+    domainsIndexAddress,
   );
 }
 
