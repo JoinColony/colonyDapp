@@ -9,6 +9,8 @@ import type {
   DataRecord,
   DomainId,
   DomainRecord,
+  DraftId,
+  DraftRecord,
 } from '~immutable';
 
 import ns from './namespace';
@@ -26,11 +28,15 @@ export type DomainsMap = ImmutableMapType<DomainId, DataRecord<DomainRecord>>;
 
 export type AllDomainsState = ImmutableMapType<ENSName, DomainsMap>;
 
+export type DraftsMap = ImmutableMapType<DraftId, DataRecord<DraftRecord>>;
+
+export type AllDraftsState = ImmutableMapType<ENSName, DraftsMap>;
+
 export type DashboardState = {|
   [typeof ns]: {|
     allColonies: AllColoniesState,
     allDomains: AllDomainsState,
-    // TODO: allDrafts
+    allDrafts: AllDraftsState,
     // TODO: allTasks
   |},
 |};
