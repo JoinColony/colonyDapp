@@ -16,7 +16,7 @@ import {
 // eslint-disable-next-line import/prefer-default-export
 export const createDomain = (
   identifier: AddressOrENSName,
-  params: { parentSkillId: number },
+  params: { parentDomainId: number },
   options?: SendOptions,
 ) =>
   createColonyTransaction({
