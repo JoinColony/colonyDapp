@@ -25,6 +25,7 @@ import {
   ensureColonyIsInState,
   fetchColonyStore,
   getOrCreateDomainsIndexStore,
+  getOrCreateDraftsIndexStore,
 } from './shared';
 
 import {
@@ -125,11 +126,13 @@ function* createColonyLabelSaga({
   });
 
   /*
-   * Get or create the domains index store for this colony.
+   * Get and/or create the index stores for this colony.
    */
   const domainsIndex = yield call(getOrCreateDomainsIndexStore, ensName);
+  const draftsIndex = yield call(getOrCreateDraftsIndexStore, ensName);
   const databases = {
     domainsIndex: domainsIndex.address.toString(),
+    draftsIndex: draftsIndex.address.toString(),
   };
 
   /*
