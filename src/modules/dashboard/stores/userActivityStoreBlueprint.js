@@ -9,7 +9,7 @@ import { FeedStore } from '../../../lib/database/stores';
 import { activityMessages } from '../components/UserActivities';
 
 // @TODO: This shouldn't be duplicated
-const userActivityStore: StoreBlueprint = {
+const userActivityStoreBlueprint: StoreBlueprint = {
   name: 'userActivity',
   schema: yup.object({
     userAction: yup
@@ -23,4 +23,4 @@ const userActivityStore: StoreBlueprint = {
   type: FeedStore,
 };
 
-export default userActivityStore;
+export default userActivityStoreBlueprint;

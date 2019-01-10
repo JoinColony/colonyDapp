@@ -15,11 +15,11 @@ import {
 import { Colony, Data, Token } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { ColonyRecord, DataMap } from '~immutable';
+import type { ColonyRecord, DataRecord } from '~immutable';
 import type { Action, ENSName } from '~types';
 
 const coloniesReducer = (
-  state: DataMap<ENSName, ColonyRecord> = new ImmutableMap(),
+  state: ImmutableMap<ENSName, DataRecord<ColonyRecord>> = new ImmutableMap(),
   action: Action,
 ) => {
   switch (action.type) {
@@ -28,9 +28,9 @@ const coloniesReducer = (
         props: { token, ensName, admins, ...props },
       } = action.payload;
       const record = Colony({
-        ensName,
         token: Token(token),
         admins: ImmutableMap(admins),
+        ensName,
         ...props,
       });
       return state.get(ensName)

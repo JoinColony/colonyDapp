@@ -7,7 +7,6 @@ import {
   call,
   getContext,
   put,
-  select,
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
@@ -16,14 +15,17 @@ import { replace, push } from 'connected-react-router';
 import type { Action, ENSName } from '~types';
 
 import { putError } from '~utils/saga/effects';
-import { getHashedENSDomainString, getENSDomainString } from '~utils/ens';
+import { getHashedENSDomainString } from '~utils/ens';
 
-import { walletAddressSelector } from '../../users/selectors';
-
-import { DDB } from '../../../lib/database';
 import { getNetworkMethod } from '../../core/sagas/utils';
+import { getAll } from '../../../lib/database/commands';
 
-import { colonyStore } from '../stores';
+import { colonyStoreBlueprint } from '../stores';
+import {
+  ensureColonyIsInState,
+  fetchColonyStore,
+  getOrCreateDomainsIndexStore,
+} from './shared';
 
 import {
   COLONY_CREATE,
@@ -56,12 +58,30 @@ import {
 } from '../actionTypes';
 
 import {
+  addColonyAdmin as addColonyAdminAction,
   createColony,
   createColonyLabel,
-  addColonyAdmin as addColonyAdminAction,
   removeColonyAdmin as removeColonyAdminAction,
 } from '../actionCreators';
-import { getAll } from '../../../lib/database/commands';
+
+function* getOrCreateColonyStore(colonyENSName: ENSName) {
+  /*
+   * Get and load the store, if it exists.
+   */
+  let store = yield call(fetchColonyStore, colonyENSName);
+  if (store) yield call([store, store.load]);
+
+  /*
+   * Create the store if it doesn't already exist.
+   */
+  // TODO: No access controller available yet
+  if (!store) {
+    const ddb = yield getContext('ddb');
+    store = yield call([ddb, ddb.createStore], colonyStoreBlueprint);
+  }
+
+  return store;
+}
 
 /*
  * Simply forward on the form params to create a transaction.
@@ -82,12 +102,6 @@ function* createColonyLabelSaga({
     tokenIcon,
   },
 }: Action): Saga<void> {
-  const ddb: DDB = yield getContext('ddb');
-
-  // Create a colony store and save the colony to that store.
-  // TODO: No access controller available yet
-  const store = yield call([ddb, ddb.createStore], colonyStore);
-
   const colonyStoreData = {
     address: colonyAddress,
     ensName,
@@ -104,12 +118,45 @@ function* createColonyLabelSaga({
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
   yield put({
     type: COLONY_FETCH_SUCCESS,
-    payload: { key: ensName, props: colonyStoreData },
+    payload: { keyPath: [ensName], props: colonyStoreData },
   });
 
-  yield call([store, store.set], colonyStoreData);
+  /*
+   * Get or create the domains index store for this colony.
+   */
+  const domainsIndex = yield call(getOrCreateDomainsIndexStore, ensName);
+  const databases = {
+    domainsIndex: domainsIndex.address.toString(),
+  };
 
-  // Dispatch an action to create the given ENS name for the colony.
+  /*
+   * Get or create a colony store and save the colony to that store.
+   */
+  const store = yield call(getOrCreateColonyStore, ensName);
+
+  /*
+   * Update the colony in the app state with the `domainsIndex` address.
+   */
+  const props = {
+    ...colonyStoreData,
+    databases,
+  };
+  yield put({
+    type: COLONY_FETCH_SUCCESS,
+    payload: {
+      keyPath: [ensName],
+      props,
+    },
+  });
+
+  /*
+   * Save the colony props to the colony store.
+   */
+  yield call([store, store.set], props);
+
+  /*
+   * Dispatch an action to create the given ENS name for the colony.
+   */
   const action = yield call(createColonyLabel, colonyAddress, {
     colonyName: ensName,
     orbitDBPath: store.address.toString(),
@@ -153,22 +200,6 @@ function* createColonyLabelSuccessSaga({
   yield put(replace(`colony/${colonyName}`));
 }
 
-function* fetchColonyStore(ensName: ENSName) {
-  const ddb: DDB = yield getContext('ddb');
-  const walletAddress = yield select(walletAddressSelector);
-
-  const domainString = yield call(getENSDomainString, 'colony', ensName);
-  const store = yield call([ddb, ddb.getStore], colonyStore, domainString, {
-    walletAddress,
-  });
-
-  if (!store) throw new Error(`Unable to load store for "${domainString}"`);
-
-  yield call([store, store.load]);
-
-  return store;
-}
-
 function* updateColonySaga(action: Action): Saga<void> {
   try {
     const {
@@ -196,16 +227,21 @@ function* updateColonySaga(action: Action): Saga<void> {
   }
 }
 
-function* fetchColonySaga({ payload: { key } }: Action): Saga<void> {
+function* fetchColonySaga({
+  payload: {
+    keyPath: [ensName],
+    keyPath,
+  },
+}: Action): Saga<void> {
   try {
-    const store = yield call(fetchColonyStore, key);
+    const store = yield call(getOrCreateColonyStore, ensName);
     const props = yield call(getAll, store);
     yield put({
       type: COLONY_FETCH_SUCCESS,
-      payload: { key, props },
+      payload: { keyPath, props },
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_ERROR, error, { key });
+    yield putError(COLONY_FETCH_ERROR, error, { keyPath });
   }
 }
 
@@ -340,6 +376,12 @@ function* removeColonyAdmin({
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = admin;
+
+    /*
+     * Ensure the colony is in the state.
+     */
+    yield call(ensureColonyIsInState, ensName);
+
     /*
      * Get the colony store
      */

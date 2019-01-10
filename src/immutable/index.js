@@ -24,7 +24,6 @@ export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './ColonyAdmin';
 export * from './Data';
-export * from './DataMap';
 export * from './Domain';
 export * from './Skill';
 export * from './Task';

@@ -20,21 +20,24 @@ const userProfilesReducer = (
 ) => {
   switch (action.type) {
     case USER_PROFILE_FETCH_SUCCESS: {
-      const { key, props } = action.payload;
+      const { keyPath, props } = action.payload;
       const profile = UserProfile(props);
-      return state.getIn([key, 'record'])
-        ? state.setIn([key, 'record', 'profile'], profile)
-        : state.setIn([key, 'record'], User({ profile }));
+      return state.getIn([...keyPath, 'record'])
+        ? state.setIn([...keyPath, 'record', 'profile'], profile)
+        : state.setIn([...keyPath, 'record'], User({ profile }));
     }
 
     case USER_ACTIVITIES_FETCH_SUCCESS: {
-      const { key, props } = action.payload;
+      const { keyPath, props } = action.payload;
       const activity = UserActivity(props);
-      return state.getIn([key, 'record'])
-        ? state.updateIn([key, 'record', 'activities'], activities =>
+      return state.getIn([...keyPath, 'record'])
+        ? state.updateIn([...keyPath, 'record', 'activities'], activities =>
             activities.insert(activity),
           )
-        : state.setIn([key, 'record'], User({ activities: List([activity]) }));
+        : state.setIn(
+            [...keyPath, 'record'],
+            User({ activities: List([activity]) }),
+          );
     }
 
     default:

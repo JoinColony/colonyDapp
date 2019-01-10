@@ -1,4 +1,10 @@
 /* @flow */
 
-// eslint-disable-next-line import/prefer-default-export
-export { default as colonyStore } from './colonyStore';
+export * from './meta';
+export { default as colonyStoreBlueprint } from './colonyStoreBlueprint';
+export {
+  default as domainsIndexStoreBlueprint,
+} from './domainsIndexStoreBlueprint';
+export {
+  default as userActivityStoreBlueprint,
+} from './userActivityStoreBlueprint';

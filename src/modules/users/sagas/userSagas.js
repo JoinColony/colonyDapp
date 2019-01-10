@@ -223,9 +223,12 @@ function* updateProfile(action: Action): Saga<void> {
   }
 }
 
-function* fetchProfile(action: Action): Saga<void> {
-  const { username } = action.payload;
-
+function* fetchProfile({
+  payload: {
+    keyPath: [username],
+    keyPath,
+  },
+}: Action): Saga<void> {
   const walletAddress = yield select(walletAddressSelector);
 
   const ddb: DDB = yield getContext('ddb');
@@ -244,10 +247,10 @@ function* fetchProfile(action: Action): Saga<void> {
     const user = yield call(getAll, store);
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
-      payload: { key: username, props: user },
+      payload: { keyPath, props: user },
     });
   } catch (error) {
-    yield putError(USER_PROFILE_FETCH_ERROR, error, { key: username });
+    yield putError(USER_PROFILE_FETCH_ERROR, error, { keyPath });
   }
 }
 

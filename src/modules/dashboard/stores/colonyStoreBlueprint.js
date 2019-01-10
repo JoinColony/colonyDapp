@@ -6,7 +6,7 @@ import { ValidatedKVStore } from '../../../lib/database/stores';
 
 import type { StoreBlueprint } from '~types';
 
-const colonyStore: StoreBlueprint = {
+const colonyStoreBlueprint: StoreBlueprint = {
   // TODO: implement
   /* $FlowFixMe */
   getAccessController() {
@@ -40,8 +40,11 @@ const colonyStore: StoreBlueprint = {
       symbol: yup.string(),
     }),
     admins: yup.object(),
+    databases: yup.object({
+      domainsIndex: yup.string(),
+    }),
   }),
   type: ValidatedKVStore,
 };
 
-export default colonyStore;
+export default colonyStoreBlueprint;

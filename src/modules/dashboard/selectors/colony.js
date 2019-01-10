@@ -5,24 +5,10 @@ import type { Map as ImmutableMapType } from 'immutable';
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { ENSName } from '~types';
-import type {
-  ColonyRecord,
-  ColonyAdminRecord,
-  DataMap,
-  DataRecord,
-} from '~immutable';
+import type { ENSName, RootState } from '~types';
+import type { ColonyRecord, ColonyAdminRecord, DataRecord } from '~immutable';
 
 import ns from '../namespace';
-
-type RootState = {
-  [typeof ns]: {
-    allColonies: {
-      colonies: DataMap<ENSName, ColonyRecord>,
-      avatars: ImmutableMap<string, string>,
-    },
-  },
-};
 
 type ColonyAvatarSelector = (state: RootState, props: Object) => string;
 type ColonySelector = (
@@ -30,12 +16,10 @@ type ColonySelector = (
   ensName: ENSName,
 ) => ?DataRecord<ColonyRecord>;
 type ENSNameFromRouter = (state: RootState, props: Object) => ENSName;
-
 type ColonyAdminStoreSelector = (
   state: RootState,
   ensName: ENSName,
 ) => ImmutableMapType<string, ColonyAdminRecord>;
-
 type ColonyAdminsSelector = (
   state: RootState,
   ensName: ENSName,
@@ -62,6 +46,11 @@ export const singleColonySelector: ColonySelector = (
   state: RootState,
   ensName: ENSName,
 ) => coloniesSelector(state).get(ensName);
+
+export const domainsIndexSelector = createSelector(
+  singleColonySelector,
+  colony => colony.getIn(['record', 'databases', 'domainsIndex']),
+);
 
 export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(
   coloniesSelector,

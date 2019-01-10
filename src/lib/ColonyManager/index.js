@@ -23,6 +23,7 @@ export default class ColonyManager {
 
   constructor(networkClient: ColonyNetworkClient) {
     this.clients = new Map();
+    this.ensCache = new Map();
     this.networkClient = networkClient;
   }
 
@@ -31,7 +32,7 @@ export default class ColonyManager {
 
     // Get the address and update the ENS cache
     const { ensAddress } = await this.networkClient.getAddressForENSHash.call({
-      nameHash: getHashedENSDomainString(identifier, 'user'),
+      nameHash: getHashedENSDomainString(identifier, 'colony'),
     });
     this.ensCache.set(identifier, ensAddress);
     return ensAddress;

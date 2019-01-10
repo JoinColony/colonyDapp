@@ -12,6 +12,9 @@ import type { TokenRecord, ColonyAdminRecord } from './index';
 export type ColonyProps = {|
   address: Address,
   avatar?: string,
+  databases: {
+    domainsIndex: ?string,
+  },
   description?: string,
   ensName: ENSName,
   guideline?: string,
@@ -28,6 +31,9 @@ const defaultAdmins: Map<string, ColonyAdminRecord> = Map();
 const defaultValues: $Shape<ColonyProps> = {
   address: undefined,
   avatar: undefined,
+  databases: {
+    domainsIndex: undefined,
+  },
   description: undefined,
   ensName: undefined,
   guideline: undefined,

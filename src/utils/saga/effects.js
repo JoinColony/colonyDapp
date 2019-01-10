@@ -5,7 +5,7 @@ import type { MessageDescriptor } from 'react-intl';
 
 import { call, put, race, take, getContext } from 'redux-saga/effects';
 
-import type { ENSName } from '~types';
+import type { ENSName, TakeFilter } from '~types';
 
 import { isDev, log } from '~utils/debug';
 
@@ -51,8 +51,8 @@ export const putError = (
  * first, function returns. If error is first, function throws.
  */
 export const raceError = (
-  successAction: string,
-  errorAction: string,
+  successAction: string | TakeFilter,
+  errorAction: string | TakeFilter,
   error?: Error,
 ) => {
   function* raceErrorGenerator(): Saga<void> {

@@ -1,3 +1,4 @@
 /* @flow */
 
-export * from './colonies';
+export * from './colony';
+export * from './domains';
