@@ -1,26 +1,35 @@
 /* @flow */
 
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type { WalletObjectType } from '@colony/purser-core/flowtypes';
+
 import * as yup from 'yup';
 
 import { ValidatedKVStore } from '../../../lib/database/stores';
+import { ColonyAccessController } from '../../../lib/database/accessControllers';
 
-import type { StoreBlueprint } from '~types';
+import colonyManifest from '../../../lib/database/accessControllers/permissions/colony';
+import commonManifest from '../../../lib/database/accessControllers/permissions/common';
+
+import type { StoreBlueprint, Address } from '~types';
 
 const colonyStoreBlueprint: StoreBlueprint = {
-  // TODO: implement
-  /* $FlowFixMe */
-  getAccessController() {
-    return {
-      canAppend() {
-        return Promise.resolve(true);
-      },
-      grant() {},
-      revoke() {},
-      save() {},
-      setup() {
-        return Promise.resolve(true);
-      },
-    };
+  getAccessController({
+    colonyAddress,
+    colonyClient,
+    wallet,
+  }: {
+    colonyAddress: Address,
+    wallet: WalletObjectType,
+    colonyClient: ColonyClientType,
+  }) {
+    const colony = colonyManifest();
+    const common = commonManifest(colonyClient);
+    return new ColonyAccessController(
+      colonyAddress,
+      wallet,
+      Object.assign({}, common, colony),
+    );
   },
   name: 'colony',
   schema: yup.object({

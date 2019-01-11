@@ -5,7 +5,7 @@ import type { Map as ImmutableMapType } from 'immutable';
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { ENSName, RootState } from '~types';
+import type { Address, ENSName, RootState } from '~types';
 import type { ColonyRecord, ColonyAdminRecord, DataRecord } from '~immutable';
 
 import ns from '../namespace';
@@ -24,6 +24,7 @@ type ColonyAdminsSelector = (
   state: RootState,
   ensName: ENSName,
 ) => Array<ColonyAdminRecord>;
+type ColonyAddressSelector = (state: RootState, ensName: ENSName) => ?Address;
 
 export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
   props.match.params.ensName;
@@ -52,6 +53,11 @@ export const domainsIndexSelector = createSelector(
   colony => colony.getIn(['record', 'databases', 'domainsIndex']),
 );
 
+export const colonyAddressSelector: ColonyAddressSelector = createSelector(
+  singleColonySelector,
+  colony => colony && colony.getIn(['record', 'address']),
+);
+
 export const currentColonyAvatarHashSelector: ColonyAvatarSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,
@@ -72,8 +78,7 @@ export const getCurrentColony: ColonySelector = createSelector(
 
 export const getColonyAdminStore: ColonyAdminStoreSelector = createSelector(
   singleColonySelector,
-  currentColony =>
-    currentColony && currentColony.getIn(['record', 'admins'], ImmutableMap()),
+  colony => colony && colony.getIn(['record', 'admins'], ImmutableMap()),
 );
 
 export const getColonyAdmins: ColonyAdminsSelector = createSelector(

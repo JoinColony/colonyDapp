@@ -1,20 +1,58 @@
 /* @flow */
+
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import type { Saga } from 'redux-saga';
 
 import { call, getContext, select, put } from 'redux-saga/effects';
 
-import type { ENSName } from '~types';
+import type { Address, ENSName } from '~types';
 import type { DocStore, ValidatedKVStore } from '../../../lib/database/stores';
 
 import { getENSDomainString } from '~utils/ens';
 import { raceError } from '~utils/saga/effects';
 
 import { DDB } from '../../../lib/database';
-import { walletAddressSelector } from '../../users/selectors';
 import { colonyStoreBlueprint, domainsIndexStoreBlueprint } from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
-import { domainsIndexSelector, singleColonySelector } from '../selectors';
+import {
+  colonyAddressSelector,
+  domainsIndexSelector,
+  singleColonySelector,
+} from '../selectors';
+
+export function* getColonyAccessControllerProps(
+  colonyENSName: ENSName,
+): Saga<{|
+  colonyAddress: Address,
+  colonyClient: ColonyClientType,
+  wallet: WalletObjectType,
+|}> {
+  /*
+   * Get the address for the given colony.
+   */
+  const colonyAddress = yield select(colonyAddressSelector, colonyENSName);
+
+  /*
+   * Get the current wallet.
+   */
+  const wallet = yield getContext('wallet');
+
+  /*
+   * Get the colony client for this colony.
+   */
+  const colonyManager = yield getContext('colonyManager');
+  const colonyClient = yield call(
+    [colonyManager, colonyManager.getColonyClient],
+    colonyAddress,
+  );
+
+  /*
+   * Return the required props for `ColonyAccessController`.
+   */
+  return { colonyAddress, wallet, colonyClient };
+}
 
 /*
  * Given a colony ENS name, fetch the colony store (if it exists).
@@ -23,7 +61,6 @@ export function* fetchColonyStore(
   colonyENSName: ENSName,
 ): Saga<?ValidatedKVStore> {
   const ddb: DDB = yield getContext('ddb');
-  const walletAddress = yield select(walletAddressSelector);
 
   /*
    * Get the ENS domain string for the given colony ENS name
@@ -31,11 +68,19 @@ export function* fetchColonyStore(
   const domainString = yield call(getENSDomainString, 'colony', colonyENSName);
 
   /*
+   * Get the props for the store (for now, just for the access controller).
+   */
+  const storeProps = yield call(getColonyAccessControllerProps, colonyENSName);
+
+  /*
    * Get the colony store, if it exists.
    */
-  return yield call([ddb, ddb.getStore], colonyStoreBlueprint, domainString, {
-    walletAddress,
-  });
+  return yield call(
+    [ddb, ddb.getStore],
+    colonyStoreBlueprint,
+    domainString,
+    storeProps,
+  );
 }
 
 /*
@@ -82,14 +127,19 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
   if (!domainsIndexAddress) return null;
 
   /*
+   * Get the store props (for now, just those for the access controller).
+   */
+  const storeProps = yield call(getColonyAccessControllerProps, colonyENSName);
+
+  /*
    * Get the store for the `domainsIndex` address.
    */
   const ddb = yield getContext('ddb');
-  // TODO: No access controller available yet
   return yield call(
     [ddb, ddb.getStore],
     domainsIndexStoreBlueprint,
     domainsIndexAddress,
+    storeProps,
   );
 }
 
@@ -99,12 +149,20 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
 export function* createDomainsIndexStore(
   colonyENSName: ENSName,
 ): Saga<DocStore> {
-  const ddb: DDB = yield getContext('ddb');
+  /*
+   * Get the store props (for now, just those for the access controller).
+   */
+  const storeProps = yield call(getColonyAccessControllerProps, colonyENSName);
 
-  // TODO: No access controller available yet
-  return yield call([ddb, ddb.createStore], domainsIndexStoreBlueprint, {
-    colonyENSName,
-  });
+  /*
+   * Create the domains index store.
+   */
+  const ddb: DDB = yield getContext('ddb');
+  return yield call(
+    [ddb, ddb.createStore],
+    domainsIndexStoreBlueprint,
+    storeProps,
+  );
 }
 
 /*

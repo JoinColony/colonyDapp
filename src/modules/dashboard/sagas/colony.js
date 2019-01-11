@@ -25,6 +25,7 @@ import {
   ensureColonyIsInState,
   fetchColonyStore,
   getOrCreateDomainsIndexStore,
+  getColonyAccessControllerProps,
 } from './shared';
 
 import {
@@ -74,10 +75,24 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
   /*
    * Create the store if it doesn't already exist.
    */
-  // TODO: No access controller available yet
   if (!store) {
+    /*
+     * Get the props for the store (for now, just for the access controller).
+     */
+    const storeProps = yield call(
+      getColonyAccessControllerProps,
+      colonyENSName,
+    );
+
+    /*
+     * Create the colony store.
+     */
     const ddb = yield getContext('ddb');
-    store = yield call([ddb, ddb.createStore], colonyStoreBlueprint);
+    store = yield call(
+      [ddb, ddb.createStore],
+      colonyStoreBlueprint,
+      storeProps,
+    );
   }
 
   return store;
