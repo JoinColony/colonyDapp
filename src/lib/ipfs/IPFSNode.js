@@ -122,7 +122,7 @@ class IPFSNode {
   /** Return a file from IPFS as text */
   async getString(hash: string): Promise<string> {
     await this.ready;
-    const result = await this._ipfs.cat(hash);
+    const result = await this._ipfs.files.cat(hash);
     if (!result) throw new Error('No such file');
     return result.toString();
   }
