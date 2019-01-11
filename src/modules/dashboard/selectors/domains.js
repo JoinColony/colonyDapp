@@ -27,3 +27,7 @@ export const singleDomainTaskIdsSelector = createSelector(
   singleDomainSelector,
   domain => domain.get('taskIds'),
 );
+export const getColonyDomains = createSelector(
+  colonyDomainsSelector,
+  colonyDomains => (colonyDomains && colonyDomains.toList().toArray()) || [],
+);
