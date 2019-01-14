@@ -1,7 +1,9 @@
 /* @flow */
+import type { ContextRouter } from 'react-router-dom';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { withRouter } from 'react-router-dom';
 import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
@@ -47,11 +49,15 @@ type FormValues = {
   colonyName: string,
 };
 
-type Props = WizardProps<FormValues>;
+type Props = WizardProps<FormValues> & ContextRouter;
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
-const StepColonyName = ({ nextStep, wizardForm }: Props) => (
+const StepColonyName = ({
+  nextStep,
+  wizardForm,
+  history: { goBack },
+}: Props) => (
   <Form onSubmit={nextStep} validationSchema={validationSchema} {...wizardForm}>
     {({ isValid }) => (
       <section className={styles.main}>
@@ -71,6 +77,7 @@ const StepColonyName = ({ nextStep, wizardForm }: Props) => (
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
                 text={MSG.cancel}
+                onClick={goBack}
               />
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
@@ -88,4 +95,4 @@ const StepColonyName = ({ nextStep, wizardForm }: Props) => (
 
 StepColonyName.displayName = displayName;
 
-export default StepColonyName;
+export default withRouter(StepColonyName);
