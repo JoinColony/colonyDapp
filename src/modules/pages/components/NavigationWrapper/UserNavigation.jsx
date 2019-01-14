@@ -9,7 +9,7 @@ import { INBOX_ROUTE, DASHBOARD_ROUTE } from '~routes';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
 import { PopoverProvider, RegisteredPopover } from '~core/Popover';
-import GasStation from '~dashboard/GasStation';
+import GasStation from './GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 
 import styles from './UserNavigation.css';
