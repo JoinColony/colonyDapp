@@ -2,9 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { takeEvery, select, put } from 'redux-saga/effects';
-
-import type { SendTransactionAction } from '../../types';
+import { takeEvery, put } from 'redux-saga/effects';
 
 import sendMethodTransaction from './sendMethodTransaction';
 import suggestMethodTransactionGas from './suggestMethodTransactionGas';
@@ -13,33 +11,16 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_GAS_SUGGESTED,
 } from '../../actionTypes';
+import { USERNAME_CREATE_PENDING } from '../../../users/actionTypes';
 
-// TODO replace me with the real gas station/wallet!
-function* jimmysDiscountGas({
-  payload: { id },
-}: SendTransactionAction): Saga<void> {
-  const {
-    context,
-    methodName,
-    suggestedGasLimit,
-    suggestedGasPrice,
-  } = yield select(state => state.core.transactions.get(id));
-//   if (
-//     process.env.SKIP_GAS_STATION_CONFIRM === 'true' ||
-//     // eslint-disable-next-line no-alert
-//     window.confirm(
-//       `Welcome to Jimmy’s Discount Gas
-// ------------------------------------
-// Send ${context}/${methodName} transaction?
-// Gas limit: ${
-//         suggestedGasLimit ? suggestedGasLimit.toNumber() : 'not set'
-//       }, gas price: ${
-//         suggestedGasPrice ? suggestedGasPrice.toNumber() : 'not set'
-//       }`,
-//     )
-//   )
-  // yield put({ type: METHOD_TRANSACTION_SENT, payload: { id } });
-  yield put({ type: 'USERNAME_CREATE_PENDING' });
+/*
+ * @TODO Make nicer
+ *
+ * Call the username create pending action type in order to close the claim
+ * username modal, so that we can control the Gas Station
+ */
+function* jimmysDiscountGas(): Saga<void> {
+  yield put({ type: USERNAME_CREATE_PENDING });
 }
 
 export default function* transactionsSagas(): any {

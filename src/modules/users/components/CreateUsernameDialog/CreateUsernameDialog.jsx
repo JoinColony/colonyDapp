@@ -14,7 +14,7 @@ import promiseListener from '../../../../createPromiseListener';
 
 import {
   USERNAME_CREATE,
-  USERNAME_CREATE_SUCCESS,
+  USERNAME_CREATE_PENDING,
   USERNAME_CREATE_ERROR,
   USERNAME_VALIDATE,
   USERNAME_VALIDATE_SUCCESS,
@@ -77,7 +77,7 @@ class CreateUsernameDialog extends Component<Props> {
       <Dialog cancel={cancel}>
         <ActionForm
           submit={USERNAME_CREATE}
-          success={USERNAME_CREATE_SUCCESS}
+          success={USERNAME_CREATE_PENDING}
           error={USERNAME_CREATE_ERROR}
           validationSchema={validationSchema}
           validate={this.validateUsername}
