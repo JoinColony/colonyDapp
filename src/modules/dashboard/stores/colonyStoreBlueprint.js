@@ -7,21 +7,7 @@ import { ValidatedKVStore } from '../../../lib/database/stores';
 import type { StoreBlueprint } from '~types';
 
 const colonyStoreBlueprint: StoreBlueprint = {
-  // TODO: implement
-  /* $FlowFixMe */
-  getAccessController() {
-    return {
-      canAppend() {
-        return Promise.resolve(true);
-      },
-      grant() {},
-      revoke() {},
-      save() {},
-      setup() {
-        return Promise.resolve(true);
-      },
-    };
-  },
+  // TODO: add access controller
   name: 'colony',
   schema: yup.object({
     id: yup.number(),

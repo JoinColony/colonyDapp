@@ -87,7 +87,7 @@ class WhitelistAccessController extends AbstractAccessController<
     return false;
   }
 
-  async save() {
+  async save(): Promise<string> {
     return `/${this.constructor.type}/inbox/${this._purserWallet.address}`;
   }
 

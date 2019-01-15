@@ -8,21 +8,7 @@ import { colonyMeta } from './meta';
 import type { StoreBlueprint } from '~types';
 
 const domainsIndexStoreBlueprint: StoreBlueprint = {
-  // TODO: implement
-  // $FlowFixMe
-  getAccessController() {
-    return {
-      async canAppend() {
-        return true;
-      },
-      grant() {},
-      revoke() {},
-      save() {},
-      async setup() {
-        return true;
-      },
-    };
-  },
+  // TODO: add access controller
   name: 'domainsIndex',
   schema: yup.object({
     meta: colonyMeta,
