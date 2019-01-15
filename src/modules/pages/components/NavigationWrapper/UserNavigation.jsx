@@ -3,8 +3,11 @@
 import React, { Component } from 'react';
 
 import { defineMessages } from 'react-intl';
+import { connect } from 'react-redux';
 
 import { INBOX_ROUTE, DASHBOARD_ROUTE } from '~routes';
+
+import { allTransactionsCount } from '../../../core/selectors/transactions';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
@@ -41,21 +44,43 @@ const MSG = defineMessages({
 
 type Props = {
   events?: Array<{ handled: boolean }>,
+  transactionCount: number,
 };
 
 type State = {
-  transactionCount: number,
+  isGasStationOpen: boolean,
 };
 
 class UserNavigation extends Component<Props, State> {
   static displayName = 'pages.NavigationWrapper.UserNavigation';
 
-  static state = {
+  static defaultProps = {
     transactionCount: 0,
   };
 
+  state = {
+    isGasStationOpen: false,
+  };
+
+  componentDidUpdate(prevProps) {
+    const { transactionCount: currentTransactionCount = 0 } = prevProps;
+    const { transactionCount: newTransactionCount = 0 } = this.props;
+    if (newTransactionCount > currentTransactionCount) {
+      /*
+       * @NOTE We're not causing either an infinite loop,
+       * neither copying prop values into state.
+       * Eslint's rules a bit draconical here.
+       *
+       * See: https://reactjs.org/docs/react-component.html#componentdidupdate
+       */
+      /* eslint-disable-next-line react/no-did-update-set-state */
+      this.setState({ isGasStationOpen: true });
+    }
+  }
+
   render() {
     const { events = mockEvents } = this.props;
+    const { isGasStationOpen } = this.state;
     const unhandled = events && !events.find(event => !event.handled);
 
     return (
@@ -74,6 +99,7 @@ class UserNavigation extends Component<Props, State> {
             name="GasStationPopover"
             placement="bottom"
             showArrow={false}
+            isOpen={isGasStationOpen}
           >
             {({ isOpen, toggle, ref }) => (
               <button
@@ -108,4 +134,6 @@ class UserNavigation extends Component<Props, State> {
   }
 }
 
-export default UserNavigation;
+export default connect(state => ({
+  transactionCount: allTransactionsCount(state),
+}))(UserNavigation);
