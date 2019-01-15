@@ -1,13 +1,14 @@
 /* @flow */
 
-import type { List } from 'immutable';
+import type { List, Map as ImmutableMapType } from 'immutable';
 
 import ns from '../namespace';
 
 import type { ENSName } from '~types';
-import type { ContractTransactionRecord, DataMap } from '~immutable';
+import type { ContractTransactionRecord, Data } from '~immutable';
 
-type TransactionsMap = DataMap<ENSName, List<ContractTransactionRecord>>;
+type ContractTransactionListData = Data<List<ContractTransactionRecord>>;
+type TransactionsMap = ImmutableMapType<ENSName, ContractTransactionListData>;
 
 type RootState = {
   [typeof ns]: {

@@ -22,7 +22,7 @@ export type ContractTransactionProps = {
 
 export type ContractTransactionRecord = RecordOf<ContractTransactionProps>;
 
-const defaultValues: ContractTransactionProps = {
+const defaultValues: $Shape<ContractTransactionProps> = {
   amount: new BigNumber(),
   colonyENSName: undefined,
   date: new Date(),

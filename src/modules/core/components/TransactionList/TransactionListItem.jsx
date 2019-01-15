@@ -163,6 +163,11 @@ const TransactionListItem = ({
 
 TransactionListItem.displayName = displayName;
 
+/*
+ * TODO: in the future, come up with a better way of providing this data to the
+ * component. Many recompose wrappers is potentially bad for performance.
+ * Soon-to-be-arriving React Hooks could offer a nicer solution here.
+ */
 export default compose(
   withProps(({ transaction: { colonyENSName, taskId, token, from, to } }) => ({
     ensName: colonyENSName,

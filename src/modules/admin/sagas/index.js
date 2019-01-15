@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { call, getContext, put, takeEvery, all } from 'redux-saga/effects';
 
-import type { Action } from '~types';
+import type { Action, Address, ENSName } from '~types';
 import type { ContractTransactionProps } from '~immutable';
 
 import { putError, raceError } from '~utils/saga/effects';
@@ -32,11 +32,22 @@ import {
   parseTaskPayoutClaimedEvent,
   parseUnclaimedTransferEvent,
   getLogsAndEvents,
+  getFilterFormattedAddress,
 } from './utils';
 
-function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
-  const { key: colonyENSName } = action.payload;
+function* fetchColonyTransactionsSaga({
+  payload: {
+    keyPath: [colonyENSName],
+  },
+}: Action): Saga<void> {
   const colonyManager = yield getContext('colonyManager');
+
+  const parsers = {
+    ColonyFundsClaimed: parseColonyFundsClaimedEvent,
+    // eslint-disable-next-line max-len
+    ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
+    TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
+  };
 
   try {
     const colonyClient = yield call(
@@ -51,19 +62,13 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
         'ColonyFundsMovedBetweenFundingPots',
         'TaskPayoutClaimed',
       ],
+      blocksBack: 400000,
     };
     const { logs, events } = yield call(
       getLogsAndEvents,
       partialFilter,
       colonyClient,
     );
-
-    const parsers = {
-      ColonyFundsClaimed: parseColonyFundsClaimedEvent,
-      // eslint-disable-next-line max-len
-      ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
-      TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
-    };
 
     const transactions: Array<ContractTransactionProps> = (yield all(
       events.map((event, i) =>
@@ -74,19 +79,22 @@ function* fetchColonyTransactionsSaga(action: Action): Saga<void> {
           colonyENSName,
         }),
       ),
-    )).filter(tx => !!tx);
+    )).filter(Boolean);
 
     yield put({
       type: COLONY_FETCH_TRANSACTIONS_SUCCESS,
-      payload: { transactions, key: colonyENSName },
+      payload: { transactions, keyPath: [colonyENSName] },
     });
   } catch (error) {
     yield putError(COLONY_FETCH_TRANSACTIONS_ERROR, error);
   }
 }
 
-function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
-  const { key: colonyENSName } = action.payload;
+function* fetchColonyUnclaimedTransactionsSaga({
+  payload: {
+    keyPath: [colonyENSName],
+  },
+}: Action): Saga<void> {
   const colonyManager = yield getContext('colonyManager');
 
   try {
@@ -102,12 +110,9 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
       topics: [
         [],
         undefined,
-        [
-          `0x000000000000000000000000${colonyClient.contract.address
-            .slice(2)
-            .toLowerCase()}`,
-        ],
+        [getFilterFormattedAddress(colonyClient.contract.address)],
       ],
+      blocksBack: 400000,
     };
     const { logs: transferLogs, events: transferEvents } = yield call(
       getLogsAndEvents,
@@ -119,6 +124,7 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
     const claimPartialFilter = {
       address: colonyClient.contract.address,
       eventNames: ['ColonyFundsClaimed'],
+      blocksBack: 400000,
     };
     const { logs: claimLogs, events: claimEvents } = yield call(
       getLogsAndEvents,
@@ -137,26 +143,39 @@ function* fetchColonyUnclaimedTransactionsSaga(action: Action): Saga<void> {
           colonyENSName,
         }),
       ),
-    )).filter(tx => !!tx);
+    )).filter(Boolean);
 
     yield put({
       type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
-      payload: { transactions, key: colonyENSName },
+      payload: { transactions, keyPath: [colonyENSName] },
     });
   } catch (error) {
     yield putError(COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR, error);
   }
 }
 
+const filterClaimSuccess = (token: Address, colonyENSName: ENSName) => ({
+  payload,
+  type,
+}: Action) =>
+  type === COLONY_CLAIM_TOKEN_SUCCESS &&
+  payload.params &&
+  payload.params.token.toLowerCase() === token.toLowerCase() &&
+  payload.transaction &&
+  payload.transaction.identifier === colonyENSName;
+
 /**
  * Claim tokens, then reload unclaimed transactions list.
  */
-function* claimColonyToken(action: Action): Saga<void> {
-  const { ensName, tokenAddress: token } = action.payload;
-
+function* claimColonyToken({
+  payload: { ensName, tokenAddress: token },
+}: Action): Saga<void> {
   try {
     yield put(claimColonyTokenTransaction(ensName, { token }));
-    yield raceError(COLONY_CLAIM_TOKEN_SUCCESS, COLONY_CLAIM_TOKEN_ERROR);
+    yield raceError(
+      filterClaimSuccess(token, ensName),
+      COLONY_CLAIM_TOKEN_ERROR,
+    );
     yield put(fetchColonyTransactions(ensName));
     yield put(fetchColonyUnclaimedTransactions(ensName));
   } catch (error) {

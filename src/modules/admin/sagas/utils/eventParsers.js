@@ -2,8 +2,13 @@
 
 import BigNumber from 'bn.js';
 
-import type { ColonyClient } from '@colony/colony-js-client';
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type { ContractTransactionProps } from '~immutable';
 
+/**
+ * Given an event log and ColonyClient, get the timestamp of the block from
+ * which it was emitted and return as a JS Date.
+ */
 export const getLogDate = async ({
   log: { blockHash },
   colonyClient: {
@@ -11,12 +16,17 @@ export const getLogDate = async ({
   },
 }: {
   log: Object,
-  colonyClient: ColonyClient,
+  colonyClient: ColonyClientType,
 }) => {
   const { timestamp } = await provider.getBlock(blockHash);
   return new Date(timestamp);
 };
 
+/**
+ * Given a ColonyJS-parsed ColonyFundsClaimedEvent, log from which it was
+ * parsed, ColonyClient and colonyENSName, return a ContractTransactionProps
+ * object, or null if the claim amount was zero.
+ */
 export const parseColonyFundsClaimedEvent = async ({
   event,
   log,
@@ -28,9 +38,9 @@ export const parseColonyFundsClaimedEvent = async ({
 }: {
   event: Object,
   log: Object,
-  colonyClient: ColonyClient,
+  colonyClient: ColonyClientType,
   colonyENSName: string,
-}) => {
+}): Promise<?ContractTransactionProps> => {
   const { payoutRemainder: amount, token } = event;
   const { transactionHash } = log;
   const date = await getLogDate({ log, colonyClient });
@@ -51,6 +61,11 @@ export const parseColonyFundsClaimedEvent = async ({
     : null;
 };
 
+/**
+ * Given a ColonyJS-parsed ColonyFundsMovedBetweenFundingPotsEvent, log from
+ * which it was parsed, ColonyClient and colonyENSName, return a
+ * ContractTransactionProps object.
+ */
 export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   event,
   log,
@@ -59,9 +74,9 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
 }: {
   event: Object,
   log: Object,
-  colonyClient: ColonyClient,
+  colonyClient: ColonyClientType,
   colonyENSName: string,
-}) => {
+}): Promise<ContractTransactionProps> => {
   const { amount, fromPot, token } = event;
   const { transactionHash } = log;
   const date = await getLogDate({ log, colonyClient });
@@ -85,6 +100,10 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   };
 };
 
+/**
+ * Given a ColonyJS-parsed TaskPayoutClaimedEvent, log from which it was
+ * parsed, and ColonyClient, return a ContractTransactionProps object.
+ */
 export const parseTaskPayoutClaimedEvent = async ({
   event,
   log,
@@ -92,8 +111,8 @@ export const parseTaskPayoutClaimedEvent = async ({
 }: {
   event: Object,
   log: Object,
-  colonyClient: ColonyClient,
-}) => {
+  colonyClient: ColonyClientType,
+}): Promise<ContractTransactionProps> => {
   const { taskId, role, amount, token } = event;
   const { transactionHash } = log;
   const date = await getLogDate({ log, colonyClient });
@@ -111,6 +130,12 @@ export const parseTaskPayoutClaimedEvent = async ({
   };
 };
 
+/**
+ * Given a ColonyJS-parsed TransferEvent, log from which it was parsed, Array
+ * of Colony token claim events and associated logs from which they were
+ * passed, ColonyClient, and colonyENSName, return a ContractTransactionProps
+ * object or null if that token has been claimed since the Transfer.
+ */
 export const parseUnclaimedTransferEvent = async ({
   transferEvent,
   transferLog,
@@ -123,9 +148,9 @@ export const parseUnclaimedTransferEvent = async ({
   transferLog: Object,
   claimEvents: Array<Object>,
   claimLogs: Array<Object>,
-  colonyClient: ColonyClient,
+  colonyClient: ColonyClientType,
   colonyENSName: string,
-}) => {
+}): Promise<?ContractTransactionProps> => {
   const { from, tokens: amount } = transferEvent;
   const { address: token, blockNumber, transactionHash: hash } = transferLog;
   const date = await getLogDate({ log: transferLog, colonyClient });
