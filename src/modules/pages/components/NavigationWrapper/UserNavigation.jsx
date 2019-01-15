@@ -78,6 +78,10 @@ class UserNavigation extends Component<Props, State> {
     }
   }
 
+  closeGasStation() {
+    return this.setState({ isGasStationOpen: false });
+  }
+
   render() {
     const { events = mockEvents } = this.props;
     const { isGasStationOpen } = this.state;
@@ -100,6 +104,7 @@ class UserNavigation extends Component<Props, State> {
             placement="bottom"
             showArrow={false}
             isOpen={isGasStationOpen}
+            onClose={() => this.closeGasStation()}
           >
             {({ isOpen, toggle, ref }) => (
               <button
