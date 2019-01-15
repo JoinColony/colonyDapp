@@ -24,21 +24,22 @@ function* jimmysDiscountGas({
     suggestedGasLimit,
     suggestedGasPrice,
   } = yield select(state => state.core.transactions.get(id));
-  if (
-    process.env.SKIP_GAS_STATION_CONFIRM === 'true' ||
-    // eslint-disable-next-line no-alert
-    window.confirm(
-      `Welcome to Jimmy’s Discount Gas
-------------------------------------
-Send ${context}/${methodName} transaction?
-Gas limit: ${
-        suggestedGasLimit ? suggestedGasLimit.toNumber() : 'not set'
-      }, gas price: ${
-        suggestedGasPrice ? suggestedGasPrice.toNumber() : 'not set'
-      }`,
-    )
-  )
-    yield put({ type: METHOD_TRANSACTION_SENT, meta: { id } });
+//   if (
+//     process.env.SKIP_GAS_STATION_CONFIRM === 'true' ||
+//     // eslint-disable-next-line no-alert
+//     window.confirm(
+//       `Welcome to Jimmy’s Discount Gas
+// ------------------------------------
+// Send ${context}/${methodName} transaction?
+// Gas limit: ${
+//         suggestedGasLimit ? suggestedGasLimit.toNumber() : 'not set'
+//       }, gas price: ${
+//         suggestedGasPrice ? suggestedGasPrice.toNumber() : 'not set'
+//       }`,
+//     )
+//   )
+  // yield put({ type: METHOD_TRANSACTION_SENT, meta: { id } });
+  yield put({ type: 'USERNAME_CREATE_PENDING' });
 }
 
 export default function* transactionsSagas(): any {
