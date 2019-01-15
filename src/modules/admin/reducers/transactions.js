@@ -10,10 +10,10 @@ import {
 import { ContractTransaction, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { Action } from '~types';
-import type { DataMap } from '~immutable';
+import type { Action, ENSName } from '~types';
+import type { DataRecord } from '~immutable';
 
-type State = DataMap<string, List<ContractTransaction>>;
+type State = ImmutableMap<ENSName, DataRecord<List<ContractTransaction>>>;
 
 const INITIAL_STATE: State = new ImmutableMap();
 
@@ -23,17 +23,20 @@ const colonyTransactionsReducer = (
 ) => {
   switch (action.type) {
     case COLONY_FETCH_TRANSACTIONS_SUCCESS: {
-      const { transactions, key } = action.payload;
+      const {
+        transactions,
+        keyPath: [colonyENSName],
+      } = action.payload;
       const record = List(transactions.map(tx => ContractTransaction(tx)));
-      return state.get(key)
-        ? state.setIn([key, 'record'], record)
-        : state.set(key, Data({ record }));
+      return state.get(colonyENSName)
+        ? state.setIn([colonyENSName, 'record'], record)
+        : state.set(colonyENSName, Data({ record }));
     }
     default:
       return state;
   }
 };
 
-export default withDataReducer<string, List<ContractTransaction>>(
+export default withDataReducer<ENSName, List<ContractTransaction>>(
   COLONY_FETCH_TRANSACTIONS,
 )(colonyTransactionsReducer);

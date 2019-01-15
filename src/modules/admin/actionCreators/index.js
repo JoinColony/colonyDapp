@@ -14,14 +14,14 @@ import {
 
 import { createColonyTransaction } from '../../core/actionCreators';
 
-export const fetchColonyTransactions = (key: ENSName) => ({
+export const fetchColonyTransactions = (colonyENSName: ENSName) => ({
   type: COLONY_FETCH_TRANSACTIONS,
-  payload: { key },
+  payload: { keyPath: [colonyENSName] },
 });
 
-export const fetchColonyUnclaimedTransactions = (key: ENSName) => ({
+export const fetchColonyUnclaimedTransactions = (colonyENSName: ENSName) => ({
   type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-  payload: { key },
+  payload: { keyPath: [colonyENSName] },
 });
 
 export const claimColonyToken = (ensName: ENSName, tokenAddress: Address) => ({
