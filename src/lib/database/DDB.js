@@ -42,7 +42,7 @@ class DDB {
 
   static getAccessController(
     { getAccessController, name }: StoreBlueprint,
-    storeProps: Object,
+    storeProps?: Object,
   ) {
     const accessController = getAccessController
       ? getAccessController(storeProps)
@@ -89,7 +89,7 @@ class DDB {
       : null;
   }
 
-  _resolveStoreAddress(identifier: string) {
+  async _resolveStoreAddress(identifier: string) {
     const [resolverKey, id] = identifier.split('.');
     if (!resolverKey || !id) {
       throw new Error('Identifier is not in a valid form');
@@ -214,7 +214,7 @@ class DDB {
     });
   }
 
-  stop() {
+  async stop() {
     return this._orbitNode.stop();
   }
 }
