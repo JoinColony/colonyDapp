@@ -12,12 +12,12 @@ const domainsIndexStoreBlueprint: StoreBlueprint = {
   name: 'domainsIndex',
   schema: yup.object({
     meta: colonyMeta,
-    doc: {
+    doc: yup.object({
       name: yup.string(),
       databases: yup.object({
         tasksIndex: yup.string(),
       }),
-    },
+    }),
   }),
   type: DocStore,
 };
