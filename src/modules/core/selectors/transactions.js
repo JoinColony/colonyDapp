@@ -15,6 +15,7 @@ type OneTransactionSelector = (
   state: RootState,
   id: string,
 ) => ?TransactionRecord<*, *>;
+type TransactionCountSelector = (state: State) => number;
 
 /**
  * Individual transaction selectors
@@ -62,4 +63,9 @@ export const outgoingTransactions: TransactionsSelector = createSelector(
 export const confirmedTransactions: TransactionsSelector = createSelector(
   allTransactions,
   transactions => transactions.filter(isConfirmed).sort(createdAtDesc),
+);
+
+export const allTransactionsCount: TransactionCountSelector = createSelector(
+  allTransactions,
+  transactions => transactions.size,
 );
