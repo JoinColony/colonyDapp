@@ -10,6 +10,12 @@ import type { TransactionType } from '~types/transaction';
 import type { EstimatedGasCost } from '~utils/external';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
+import {
+  METHOD_TRANSACTION_SENT,
+  TRANSACTION_SENT,
+  TRANSACTION_ERROR,
+} from '../../../../core/actionTypes';
+
 import { getMainClasses } from '~utils/css';
 import { getEstimatedGasCost } from '~utils/external';
 import Alert from '~core/Alert';
@@ -57,7 +63,7 @@ are expensive. We recommend waiting.`,
     id: 'dashboard.GasStationPrice.walletPromptText',
     defaultMessage: `Finish the transaction on {walletType, select,
       metamask {Metamask}
-      hardware {your hardware wallet}  
+      hardware {your hardware wallet}
     }.`,
   },
 });
@@ -76,7 +82,7 @@ type State = {
 };
 
 type FormValues = {
-  transactionHash?: string,
+  id: string,
   transactionSpeed: string,
 };
 
@@ -87,7 +93,7 @@ const transactionSpeedOptions: Array<RadioOption> = [
 ];
 
 const validationSchema = yup.object().shape({
-  transactionHash: yup.string(),
+  transactionId: yup.string(),
   transactionSpeed: yup
     .string()
     .required()
@@ -144,25 +150,22 @@ class GasStationPrice extends Component<Props, State> {
     const {
       canSignTransaction,
       isNetworkCongested,
-      transaction: { hash },
+      transaction: { id },
       walletNeedsAction,
     } = this.props;
     const { estimatedGasCost, isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
-      transactionHash: hash,
+      id,
       transactionSpeed: transactionSpeedOptions[0].value,
     };
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
         <ActionForm
-          // @TODO: use actual actions here
-          submit="TRANSACTION_SIGNATURE_CREATE"
-          success="TRANSACTION_SIGNATURE_SUCCESS"
-          error="TRANSACTION_SIGNATURE_ERROR"
+          submit={METHOD_TRANSACTION_SENT}
+          success={TRANSACTION_SENT}
+          error={TRANSACTION_ERROR}
           validationSchema={validationSchema}
           isInitialValid={!!initialFormValues.transactionSpeed}
-          // eslint-disable-next-line no-console
-          onSuccess={console.log}
           initialValues={initialFormValues}
         >
           {({
