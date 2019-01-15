@@ -69,11 +69,7 @@ class GasStation extends Component<Props, State> {
     return transactions.map(
       (transaction: TransactionType, transactionIndex: number) => (
         <GasStationCard
-          /*
-           * @NOTE Nonces are unique, but our mock data might add duplicates.
-           * In case you see duplicate key errors in the console, don't panic.
-           */
-          key={transaction.nonce}
+          key={transaction.id}
           transaction={transaction}
           onClick={() => this.handleExpandTransaction(transactionIndex)}
         />
