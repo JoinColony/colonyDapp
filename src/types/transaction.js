@@ -13,8 +13,9 @@ export type TransactionType = {
    */
   id: string,
   createdAt: Date,
+  methodName: string,
   /*
-   * @TODO Below types might need to be changed
+   * @TODO Below this lines, types might need to be changed
    * They were added during UI development and might not reflect
    * the current transaction format that we store in the redux store
    */
