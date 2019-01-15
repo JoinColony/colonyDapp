@@ -48,19 +48,25 @@ const MSG = defineMessages({
     id: 'dashboard.GasStation.GasStationCard.failedAction',
     defaultMessage: 'Failed transaction. Try again.',
   },
+  transactionTitle: {
+    id: 'dashboard.GasStation.GasStationCard.transactionTitle',
+    defaultMessage: `{methodName, select,
+      registerUserLabel {Claim your profile}
+      other {Generic Transaction}
+    }`,
+  },
+  transactionDescription: {
+    id: 'dashboard.GasStation.GasStationCard.transactionDescription',
+    defaultMessage: `{methodName, select,
+      registerUserLabel {Sign this transaction to claim your ENS username}
+      other {Generic Transaction}
+    }`,
+  },
   /*
    * @NOTE Below this line are just temporary message descriptors as the actual
    * name / path combinations for the various actions-transactions
    * should be implemented in #542
    */
-  transactionTitleSample: {
-    id: 'dashboard.GasStation.GasStationCard.transactionTitleSample',
-    defaultMessage: 'Create Task',
-  },
-  transactionDescriptionSample: {
-    id: 'dashboard.GasStation.GasStationCard.transactionDescriptionSample',
-    defaultMessage: 'The Meta Colony / #Javascript / Github Integration',
-  },
   actionDescriptionSample: {
     id: 'dashboard.GasStation.GasStationCard.actionDescriptionSample',
     defaultMessage: `{index}. Create Task`,
@@ -174,18 +180,24 @@ class GasStationCard extends Component<Props, State> {
 
   renderSummary() {
     const {
-      transaction: { status, dependents = [] },
+      transaction: { status, dependents = [], methodName },
     } = this.props;
     return (
       <div className={styles.summary}>
         <div className={styles.description}>
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitleSample}
+            text={MSG.transactionTitle}
+            textValues={{ methodName }}
           />
           <Link
             className={styles.transactionLink}
-            text={MSG.transactionDescriptionSample}
+            text={MSG.transactionDescription}
+            textValues={{ methodName }}
+            /*
+             * @TODO Either change this by removing the link, or point
+             * it in a relevant direction
+             */
             to={DASHBOARD_ROUTE}
             /*
              * @NOTE If this is an expanded card, and has an onclick handler,
