@@ -9,6 +9,7 @@ import type { Action, ENSName } from '~types';
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import {
+  TASK_SET_SKILL,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
   TASK_MANAGER_END,
@@ -30,6 +31,7 @@ import {
 } from '../actionTypes';
 
 import {
+  taskSetSkill,
   taskFinalize,
   taskManagerComplete,
   taskManagerRateWorker,
@@ -105,6 +107,14 @@ function* guessRating(
   }
   if (!correctRating) throw new Error('Rating is not from this account');
   return correctRating;
+}
+
+function* taskSetSkillSaga(action: Action): Saga<void> {
+  const {
+    payload: { taskId, skillId, colonyENSName },
+  } = action;
+
+  yield put(taskSetSkill(colonyENSName, { taskId, skillId }));
 }
 
 function* taskWorkerEndSaga(action: Action): Saga<void> {
@@ -263,6 +273,7 @@ function* taskFinalizeSaga(action: Action): Saga<void> {
 }
 
 export default function* taskSagas(): any {
+  yield takeEvery(TASK_SET_SKILL, taskSetSkillSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);

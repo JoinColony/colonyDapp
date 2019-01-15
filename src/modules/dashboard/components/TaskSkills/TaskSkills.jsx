@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import promiseListener from '../../../../createPromiseListener';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -10,6 +11,16 @@ import ItemsList from '~core/ItemsList';
 import styles from './TaskSkills.css';
 
 import taskSkills from './taskSkillsTree';
+
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
+import {
+  TASK_SET_SKILL,
+  TASK_SET_SKILL_ERROR,
+  TASK_SET_SKILL_SUCCESS,
+} from '../../actionTypes';
+
+import type { TaskRecord } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -27,32 +38,53 @@ const MSG = defineMessages({
 
 type Props = {
   isTaskCreator?: boolean,
+  // After the skillId is set with the TaskDomains component it should be passed
+  // through form the redux store and is property of the TaskRecord
+  task: TaskRecord,
 };
 
-type State = {
-  selectedSkillId: number | void,
-};
+class TaskSkills extends Component<Props> {
+  asyncFunc: AsyncFunction<Object, void>;
 
-class TaskSkills extends Component<Props, State> {
   static displayName = 'dashboard.TaskSkills';
 
-  state = {
-    selectedSkillId: undefined,
-  };
+  constructor(props: Props) {
+    super(props);
 
-  handleSetSkill = (skillValue: Object) => {
-    this.setState({ selectedSkillId: skillValue.id });
-    /*
-     * @TODO This should call (most likely) an action creator, or otherwise,
-     * do something the domain value
-     */
-    /* eslint-disable-next-line no-console */
-    return console.log(TaskSkills.displayName, skillValue);
+    this.asyncFunc = promiseListener.createAsyncFunction({
+      start: TASK_SET_SKILL,
+      resolve: TASK_SET_SKILL_SUCCESS,
+      reject: TASK_SET_SKILL_ERROR,
+    });
+  }
+
+  componentWillUnmount() {
+    this.asyncFunc.unsubscribe();
+  }
+
+  handleSetSkill = async (skillValue: Object) => {
+    const {
+      task: { id, colonyENSName, domainId },
+    } = this.props;
+    try {
+      await this.asyncFunc.asyncFunction({
+        skillId: skillValue.id,
+        domainId,
+        // taskId of currently selected task
+        id,
+        ensName: colonyENSName,
+      });
+    } catch (error) {
+      // TODO: handle this error properly / display it in some way
+      console.error(error);
+    }
   };
 
   render() {
-    const { isTaskCreator } = this.props;
-    const { selectedSkillId } = this.state;
+    const {
+      isTaskCreator,
+      task: { skillId },
+    } = this.props;
     const list = Array(...taskSkills);
     return (
       <div className={styles.main}>
@@ -72,7 +104,7 @@ class TaskSkills extends Component<Props, State> {
               <Button
                 appearance={{ theme: 'blue', size: 'small' }}
                 text={MSG.selectSkill}
-                textValues={{ skillSelected: selectedSkillId }}
+                textValues={{ skillSelected: skillId }}
               />
             </div>
           </ItemsList>

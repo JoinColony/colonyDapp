@@ -20,6 +20,7 @@ export type TaskProps = {
   colonyENSName: ENSName,
   creator: string,
   currentState: TaskCurrentState,
+  domainId: number,
   dueDate?: Date,
   evaluatorHasRated: boolean, // secret was submitted
   evaluatorPayoutClaimed: boolean,
@@ -32,6 +33,7 @@ export type TaskProps = {
   managerRating?: TaskRating,
   payouts: List<TaskPayoutRecord>,
   reputation: number, // TODO: should be BigNumber
+  skillId: number,
   title: string,
   workerHasRated: boolean, // secret was submitted
   workerPayoutClaimed: boolean,
@@ -46,6 +48,7 @@ const defaultValues: $Shape<TaskProps> = {
   colonyENSName: undefined,
   creator: undefined,
   currentState: undefined,
+  domainId: undefined,
   dueDate: undefined,
   evaluatorHasRated: undefined,
   evaluatorPayoutClaimed: undefined,
@@ -58,6 +61,7 @@ const defaultValues: $Shape<TaskProps> = {
   managerRating: undefined,
   payouts: new List(),
   reputation: undefined,
+  skillId: undefined,
   title: undefined,
   workerHasRated: undefined,
   workerPayoutClaimed: undefined,
