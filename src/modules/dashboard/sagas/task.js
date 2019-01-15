@@ -9,6 +9,7 @@ import type { Action, ENSName } from '~types';
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import {
+  TASK_SET_DATE,
   TASK_SET_SKILL,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
@@ -31,6 +32,7 @@ import {
 } from '../actionTypes';
 
 import {
+  taskSetDate,
   taskSetSkill,
   taskFinalize,
   taskManagerComplete,
@@ -115,6 +117,14 @@ function* taskSetSkillSaga(action: Action): Saga<void> {
   } = action;
 
   yield put(taskSetSkill(colonyENSName, { taskId, skillId }));
+}
+
+function* taskSetDueDateSaga(action: Action): Saga<void> {
+  const {
+    payload: { taskId, dueDate, colonyENSName },
+  } = action;
+
+  yield put(taskSetDate(colonyENSName, { taskId, dueDate }));
 }
 
 function* taskWorkerEndSaga(action: Action): Saga<void> {
@@ -273,6 +283,7 @@ function* taskFinalizeSaga(action: Action): Saga<void> {
 }
 
 export default function* taskSagas(): any {
+  yield takeEvery(TASK_SET_DATE, taskSetDueDateSaga);
   yield takeEvery(TASK_SET_SKILL, taskSetSkillSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);

@@ -3,6 +3,10 @@
 
 import ns from '../namespace';
 
+export const TASK_SET_DATE = `${ns}/TASK_SET_DATE`;
+export const TASK_SET_DATE_ERROR = `${ns}/TASK_SET_DATE_ERROR`;
+export const TASK_SET_DATE_SUCCESS = `${ns}/TASK_SET_DATE_SUCCESS`;
+
 export const TASK_SET_SKILL = `${ns}/TASK_SET_SKILL`;
 export const TASK_SET_SKILL_ERROR = `${ns}/TASK_SET_SKILL_ERROR`;
 export const TASK_SET_SKILL_SUCCESS = `${ns}/TASK_SET_SKILL_SUCCESS`;
