@@ -24,12 +24,9 @@ const enhance = compose(
     componentDidMount() {
       const {
         colony: { ensName: colonyENSName },
-        colonyDomains,
         fetchColonyDomains,
       } = this.props;
-      if (!!colonyDomains && !colonyDomains.length) {
-        fetchColonyDomains(colonyENSName);
-      }
+      fetchColonyDomains(colonyENSName);
     },
   }),
 );
