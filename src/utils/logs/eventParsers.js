@@ -173,3 +173,35 @@ export const parseUnclaimedTransferEvent = async ({
         token,
       };
 };
+
+/**
+ * Given a ColonyJS-parsed TransferEvent for a user, the log from which it was
+ * parsed, ColonyClient, and userAddress, return a ContractTransactionProps
+ * object for the token transfer.
+ */
+export const parseUserTransferEvent = async ({
+  event,
+  log,
+  colonyClient,
+  userAddress,
+}: {
+  event: Object,
+  log: Object,
+  colonyClient: ColonyClientType,
+  userAddress: string,
+}): Promise<?ContractTransactionProps> => {
+  const { to, from, tokens: amount } = event;
+  const { address: token, transactionHash: hash } = log;
+  const date = await getLogDate({ log, colonyClient });
+
+  return {
+    amount,
+    date,
+    from,
+    hash,
+    id: hash,
+    incoming: to.toLowerCase() === userAddress.toLowerCase(),
+    to,
+    token,
+  };
+};
