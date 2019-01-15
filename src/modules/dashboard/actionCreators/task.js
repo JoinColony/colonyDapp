@@ -6,6 +6,8 @@ import {
 } from '../../core/actionCreators';
 
 import {
+  TASK_SET_DATE_ERROR,
+  TASK_SET_DATE_SUCCESS,
   TASK_SET_SKILL_ERROR,
   TASK_SET_SKILL_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
@@ -40,6 +42,28 @@ export const taskSetSkill = createTxActionCreator<{
     success: TASK_SET_SKILL_SUCCESS,
   },
 });
+
+/**
+ * As worker or manager, I want to be able to set a date
+ */
+export const taskSetDate = (
+  identifier: string,
+  params: {
+    taskId: number,
+    dueDate: Date,
+  },
+  options?: SendOptions,
+) =>
+  createColonyTransaction({
+    params,
+    options,
+    methodName: 'setTaskDueDate',
+    identifier,
+    lifecycle: {
+      error: TASK_SET_DATE_ERROR,
+      success: TASK_SET_DATE_SUCCESS,
+    },
+  });
 
 /**
  * As worker, submit work and rate before due date.
