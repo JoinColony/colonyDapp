@@ -15,13 +15,7 @@ export const getFilterBlocks = async (
   return currentBlock - blocksBack < 0 ? 0 : currentBlock - blocksBack;
 };
 
-/**
- * Takes an Ethers logs filter (with additional `blocksBack`, used to set the
- * filter's `fromBlock` relative to the current block), as well as a
- * ColonyClient. Returns an object containing both the logs and ColonyJS-parsed
- * events for a given filter and ColonyClient.
- */
-export const getLogsAndEvents = async (
+export const getFilterFromPartial = async (
   {
     blocksBack,
     ...partialFilter
@@ -29,12 +23,24 @@ export const getLogsAndEvents = async (
     blocksBack: number,
   },
   colonyClient: ColonyClient,
+) => ({
+  fromBlock: await getFilterBlocks(blocksBack, colonyClient),
+  toBlock: 'latest',
+  ...partialFilter,
+});
+
+/**
+ * Takes an Ethers logs filter (with additional `blocksBack`, used to set the
+ * filter's `fromBlock` relative to the current block), as well as a
+ * ColonyClient. Returns an object containing both the logs and ColonyJS-parsed
+ * events for a given filter and ColonyClient.
+ */
+export const getLogsAndEvents = async (
+  partialFilter: *,
+  colonyClient: ColonyClient,
 ) => {
-  const logs = await colonyClient.getLogs({
-    fromBlock: await getFilterBlocks(blocksBack, colonyClient),
-    toBlock: 'latest',
-    ...partialFilter,
-  });
+  const filter = await getFilterFromPartial(partialFilter, colonyClient);
+  const logs = await colonyClient.getLogs(filter);
   const events = await colonyClient.parseLogs(logs);
   return { logs, events };
 };

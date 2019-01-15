@@ -4,6 +4,7 @@ import type { Saga } from 'redux-saga';
 import { delay } from 'redux-saga';
 
 import {
+  all,
   call,
   put,
   select,
@@ -17,6 +18,11 @@ import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/ens';
+import {
+  getFilterFromPartial,
+  getFilterFormattedAddress,
+  parseUserTransferEvent,
+} from '~utils/logs';
 
 import { DDB } from '../../../lib/database';
 import { FeedStore, ValidatedKVStore } from '../../../lib/database/stores';
@@ -418,6 +424,10 @@ function* removeAvatar(): Saga<void> {
   }
 }
 
+/**
+ * Fetch the ERC-20 Token transfers to/from the current user, and parse to
+ * ContractTransactionProps objects.
+ */
 function* fetchTokenTransfers(): Saga<void> {
   const colonyManager = yield getContext('colonyManager');
   const userAddress = yield select(currentUserAddressSelector);
@@ -432,37 +442,29 @@ function* fetchTokenTransfers(): Saga<void> {
       [colonyManager, colonyManager.getColonyClient],
       metaColonyAddress,
     );
-    const { provider } = colonyClient.adapter;
 
-    const currentBlock = yield call([provider, provider.getBlockNumber]);
-    const blocksBack = 400000;
-    const fromBlock =
-      currentBlock - blocksBack < 0 ? 0 : currentBlock - blocksBack;
-    const toBlock = 'latest';
-    const addressTopic = `0x000000000000000000000000${userAddress
-      .slice(2)
-      .toLowerCase()}`;
+    // Will contain to/from block and event name topics
+    const baseLog = yield call(
+      getFilterFromPartial,
+      { eventNames: ['Transfer'], blocksBack: 400000 },
+      colonyClient,
+    );
 
     // Get logs + events for token Transfer to/from current user
-    // TODO: how to combine these getLogs calls/filters
     const toTransferLogs = yield call(
       [colonyClient.token, colonyClient.token.getLogs],
       {
-        fromBlock,
-        toBlock,
-        eventNames: ['Transfer'],
+        ...baseLog,
         // [eventNames, from, to]
-        topics: [[], addressTopic],
+        topics: [[], getFilterFormattedAddress(userAddress)],
       },
     );
     const fromTransferLogs = yield call(
       [colonyClient.token, colonyClient.token.getLogs],
       {
-        fromBlock,
-        toBlock,
-        eventNames: ['Transfer'],
+        ...baseLog,
         // [eventNames, from, to]
-        topics: [[], undefined, addressTopic],
+        topics: [[], undefined, getFilterFormattedAddress(userAddress)],
       },
     );
 
@@ -475,29 +477,16 @@ function* fetchTokenTransfers(): Saga<void> {
       transferLogs,
     );
 
-    const transactions: Array<ContractTransactionProps> = [];
-    for (let i = 0; i < transferEvents.length; i += 1) {
-      const { to, from, tokens: amount } = transferEvents[i];
-      const { address: token, blockHash, transactionHash: hash } = transferLogs[
-        i
-      ];
-      const { timestamp } = yield call(
-        [provider, provider.getBlock],
-        blockHash,
-      );
-      const date = new Date(timestamp);
-
-      transactions.push({
-        amount,
-        date,
-        from,
-        hash,
-        id: hash,
-        incoming: to.toLowerCase() === userAddress.toLowerCase(),
-        to,
-        token,
-      });
-    }
+    const transactions: Array<ContractTransactionProps> = yield all(
+      transferEvents.map((event, i) =>
+        call(parseUserTransferEvent, {
+          event,
+          log: transferLogs[i],
+          colonyClient,
+          userAddress,
+        }),
+      ),
+    );
 
     yield put({
       type: USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
