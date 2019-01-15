@@ -43,6 +43,12 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-medium);
 
+  /*
+   * @TODO Remove this when we actually have a way to
+   * redirect the user to the task
+   */
+  pointer-events: none;
+
   &:hover {
     border-bottom: 1px solid var(--sky-blue);
     color: var(--sky-blue);

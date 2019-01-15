@@ -5,6 +5,7 @@ import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 
 import { allTransactions } from '../../../core/selectors';
+import { currentUserAddressSelector } from '../../selectors';
 
 import GasStation from './GasStation.jsx';
 
@@ -19,6 +20,7 @@ const enhance: HOC<*, InProps> = compose(
     transactions: allTransactions(state)
       .toList()
       .toArray(),
+    walletAddress: currentUserAddressSelector(state),
   })),
   withProps(() => ({
     balance: 0.25,
@@ -27,7 +29,6 @@ const enhance: HOC<*, InProps> = compose(
      * i.e. User has claimed profile, but not signed any transactions yet
      */
     showClaimInfoCard: !!mockUser.profile.username,
-    walletAddress: mockUser.profile.walletAddress,
   })),
 );
 
