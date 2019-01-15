@@ -19,7 +19,18 @@ const allDomainsReducer = (
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
-    case DOMAIN_CREATE_SUCCESS:
+    case DOMAIN_CREATE_SUCCESS: {
+      const {
+        keyPath: [ensName, domainId],
+        props: { domainId: id, domainName: name },
+      } = action.payload;
+      return state
+        ? state.setIn(
+            [ensName, domainId],
+            Data({ record: Domain({ id, name }) }),
+          )
+        : state;
+    }
     case DOMAIN_FETCH_SUCCESS: {
       const {
         meta: {
