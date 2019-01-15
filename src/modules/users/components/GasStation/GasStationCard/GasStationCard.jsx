@@ -174,7 +174,7 @@ class GasStationCard extends Component<Props, State> {
 
   renderSummary() {
     const {
-      transaction: { status, set = [] },
+      transaction: { status, dependents = [] },
     } = this.props;
     return (
       <div className={styles.summary}>
@@ -228,9 +228,9 @@ class GasStationCard extends Component<Props, State> {
             </Tooltip>
           </div>
         )}
-        {!status && set && set.length ? (
+        {!status && dependents && dependents.length ? (
           <div className={styles.status}>
-            <span className={styles.counter}>{set.length}</span>
+            <span className={styles.counter}>{dependents.length}</span>
           </div>
         ) : null}
       </div>
@@ -377,7 +377,7 @@ class GasStationCard extends Component<Props, State> {
          * @NOTE Nonces are unique, but our mock data might add duplicates.
          * In case you see duplicate key errors in the console, don't panic.
          */
-        key={action.nonce}
+        key={action.id}
         disabled={action.dependency}
         className={this.getActionItemClasses(action, actionIndex)}
       >
@@ -393,11 +393,11 @@ class GasStationCard extends Component<Props, State> {
 
   render() {
     const {
-      transaction: { set = [] },
+      transaction: { dependents = [] },
       expanded = false,
       onClick,
     } = this.props;
-    const canWeExpand = expanded && set && set.length;
+    const canWeExpand = expanded && dependents && dependents.length;
     return (
       <button
         type="button"
@@ -409,7 +409,9 @@ class GasStationCard extends Component<Props, State> {
           {this.renderSummary()}
           {canWeExpand ? (
             <ul className={styles.expanded}>
-              {set.map((action, index) => this.renderActionItem(action, index))}
+              {dependents.map((action, index) =>
+                this.renderActionItem(action, index),
+              )}
             </ul>
           ) : null}
         </Card>

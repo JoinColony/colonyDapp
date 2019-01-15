@@ -26,7 +26,7 @@ const statusCanBeSigned = (status?: string): boolean =>
   !status || status === 'failed';
 
 const enhance: HOC<*, InProps> = compose(
-  mapProps(({ transaction: { set, status }, transaction }) => {
+  mapProps(({ transaction: { dependents = [], status }, transaction }) => {
     /*
      * @TODO: Actually determine if network is congested
      */
@@ -52,19 +52,23 @@ const enhance: HOC<*, InProps> = compose(
      *   no value for `status` or `status` === `failed`
      */
     const transactionToSign =
-      set &&
-      set.find(({ dependency: setItemDependency, status: setItemStatus }) => {
-        if (statusCanBeSigned(setItemStatus)) {
-          if (!setItemDependency) {
-            return true;
+      dependents &&
+      dependents.find(
+        ({ dependency: setItemDependency, status: setItemStatus }) => {
+          if (statusCanBeSigned(setItemStatus)) {
+            if (!setItemDependency) {
+              return true;
+            }
+            return isDependencyBlockingTx(dependents, setItemDependency);
           }
-          return isDependencyBlockingTx(set, setItemDependency);
-        }
-        return false;
-      });
+          return false;
+        },
+      );
     const canSignTransaction: boolean =
       !walletNeedsAction &&
-      (set && set.length > 0 ? !!transactionToSign : statusCanBeSigned(status));
+      (dependents && dependents.length > 0
+        ? !!transactionToSign
+        : statusCanBeSigned(status));
     return {
       isNetworkCongested,
       walletNeedsAction,
