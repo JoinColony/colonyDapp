@@ -23,7 +23,7 @@ const isDependencyBlockingTx = (
   });
 
 const statusCanBeSigned = (status?: string): boolean =>
-  !status || status === 'failed';
+  !status || status === 'failed' || status === 'created';
 
 const enhance: HOC<*, InProps> = compose(
   mapProps(({ transaction: { dependents = [], status }, transaction }) => {

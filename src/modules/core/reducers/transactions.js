@@ -68,11 +68,14 @@ const transactionsReducer = (
     }
     case TRANSACTION_SENT: {
       const { id, hash } = payload;
-      return state.setIn([id, 'hash'], hash);
+      return state.mergeIn([id], { hash, status: 'pending' });
     }
     case TRANSACTION_RECEIPT_RECEIVED: {
       const { id } = payload;
-      return state.setIn([id, 'receiptReceived'], true);
+      return state.mergeIn([id], {
+        receiptReceived: true,
+        status: 'succeeded',
+      });
     }
     case TRANSACTION_EVENT_DATA_RECEIVED: {
       const { eventData, id } = payload;
@@ -80,7 +83,10 @@ const transactionsReducer = (
     }
     case TRANSACTION_ERROR: {
       const { error, id } = payload;
-      return state.updateIn([id, 'errors'], errors => errors.push(error));
+      const errorState = state.updateIn([id, 'errors'], errors =>
+        errors.push(error),
+      );
+      return errorState.setIn([id, 'status'], 'failed');
     }
     default:
       return state;
