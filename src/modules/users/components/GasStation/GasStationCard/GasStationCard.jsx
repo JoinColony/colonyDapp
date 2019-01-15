@@ -232,6 +232,32 @@ class GasStationCard extends Component<Props, State> {
                * element otherwise it won't detect the hover event
                */}
               <div>
+                {status === 'created' && (
+                  <span className={styles.counter}>1</span>
+                )}
+                {status === 'succeeded' && (
+                  <span className={styles.completedAction}>
+                    <Icon
+                      appearance={{ size: 'tiny' }}
+                      name="check-mark"
+                      /*
+                       * @NOTE We disable the title since we already
+                       * have a tooltip around it
+                       */
+                      title=""
+                    />
+                  </span>
+                )}
+                {status === 'pending' && (
+                  <div className={styles.spinner}>
+                    <SpinnerLoader
+                      appearance={{
+                        size: 'small',
+                        theme: 'primary',
+                      }}
+                    />
+                  </div>
+                )}
                 {status === 'multisig' && <span className={styles.multisig} />}
                 {status === 'failed' && (
                   <span className={styles.failed}>!</span>
