@@ -3,6 +3,7 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
+  COLONY_DOMAINS_FETCH_SUCCESS,
   DOMAIN_FETCH,
   DOMAIN_FETCH_SUCCESS,
   DOMAIN_CREATE_SUCCESS,
@@ -19,6 +20,13 @@ const allDomainsReducer = (
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
+    case COLONY_DOMAINS_FETCH_SUCCESS: {
+      const { payload } = action;
+      // TODO implement
+      // eslint-disable-next-line no-console
+      console.log('COLONY_DOMAINS_FETCH_SUCCESS', payload);
+      return state;
+    }
     case DOMAIN_CREATE_SUCCESS: {
       const {
         keyPath: [ensName, domainId],
