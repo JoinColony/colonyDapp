@@ -57,10 +57,7 @@ const MSG = defineMessages({
   },
   transactionDescription: {
     id: 'dashboard.GasStation.GasStationCard.transactionDescription',
-    defaultMessage: `{methodName, select,
-      registerUserLabel {Sign this transaction to claim your ENS username}
-      other {Generic Transaction}
-    }`,
+    defaultMessage: `DEBUG: context: {context} methodName: {methodName}`,
   },
   /*
    * @NOTE Below this line are just temporary message descriptors as the actual
@@ -180,7 +177,7 @@ class GasStationCard extends Component<Props, State> {
 
   renderSummary() {
     const {
-      transaction: { status, dependents = [], methodName },
+      transaction: { status, dependents = [], methodName, context },
     } = this.props;
     return (
       <div className={styles.summary}>
@@ -193,7 +190,7 @@ class GasStationCard extends Component<Props, State> {
           <Link
             className={styles.transactionLink}
             text={MSG.transactionDescription}
-            textValues={{ methodName }}
+            textValues={{ methodName, context }}
             /*
              * @TODO Either change this by removing the link, or point
              * it in a relevant direction
