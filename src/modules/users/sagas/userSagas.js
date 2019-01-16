@@ -48,9 +48,9 @@ import {
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
-  USERNAME_VALIDATE,
-  USERNAME_VALIDATE_SUCCESS,
-  USERNAME_VALIDATE_ERROR,
+  USERNAME_CHECK_AVAILABILITY,
+  USERNAME_CHECK_AVAILABILITY_SUCCESS,
+  USERNAME_CHECK_AVAILABILITY_ERROR,
   USERNAME_CREATE,
   USER_AVATAR_FETCH,
   USER_AVATAR_FETCH_SUCCESS,
@@ -271,12 +271,12 @@ function* validateUsername(action: Action): Saga<void> {
 
   if (ensAddress) {
     yield putError(
-      USERNAME_VALIDATE_ERROR,
+      USERNAME_CHECK_AVAILABILITY_ERROR,
       new Error('ENS address already exists'),
     );
     return;
   }
-  yield put({ type: USERNAME_VALIDATE_SUCCESS });
+  yield put({ type: USERNAME_CHECK_AVAILABILITY_SUCCESS });
 }
 
 function* createUsername(action: Action): Saga<void> {
@@ -386,7 +386,7 @@ function* removeAvatar(): Saga<void> {
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
-  yield takeLatest(USERNAME_VALIDATE, validateUsername);
+  yield takeLatest(USERNAME_CHECK_AVAILABILITY, validateUsername);
   yield takeLatest(USERNAME_CREATE, createUsername);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
