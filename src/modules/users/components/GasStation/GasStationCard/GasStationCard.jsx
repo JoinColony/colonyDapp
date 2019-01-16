@@ -28,6 +28,7 @@ const MSG = defineMessages({
     defaultMessage: `{status, select,
       multisig {Waiting on {username} to sign}
       failed {Failed transaction. Try again}
+      succeeded {Transaction succeeded}
       other {Generic transaction}
     }`,
   },

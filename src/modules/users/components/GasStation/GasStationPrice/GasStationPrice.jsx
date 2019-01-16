@@ -74,6 +74,7 @@ type Props = {
   transaction: TransactionType,
   walletNeedsAction?: 'metamask' | 'hardware',
   transactionGasManualSet: (id: string, gasPrice: number) => { type: string },
+  furtherActionPossible: boolean,
 };
 
 type State = {
@@ -121,10 +122,11 @@ class GasStationPrice extends Component<Props, State> {
     const {
       transaction: { id },
       transactionGasManualSet,
+      furtherActionPossible,
     } = this.props;
     this.mounted = true;
     getEstimatedGasCost().then(estimatedGasCost => {
-      if (this.mounted) {
+      if (this.mounted && furtherActionPossible) {
         this.setState({ estimatedGasCost }, () => {
           if (estimatedGasCost) {
             return transactionGasManualSet(
@@ -158,12 +160,16 @@ class GasStationPrice extends Component<Props, State> {
       transaction: { id },
       walletNeedsAction,
       transactionGasManualSet,
+      furtherActionPossible,
     } = this.props;
     const { estimatedGasCost, isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
       id,
       transactionSpeed: transactionSpeedOptions[0].value,
     };
+    if (!furtherActionPossible) {
+      return null;
+    }
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
         <ActionForm
