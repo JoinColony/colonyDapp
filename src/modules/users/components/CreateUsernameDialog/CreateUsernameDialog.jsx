@@ -14,12 +14,14 @@ import promiseListener from '../../../../createPromiseListener';
 
 import {
   USERNAME_CREATE,
-  USERNAME_CREATE_PENDING,
-  USERNAME_CREATE_ERROR,
   USERNAME_CHECK_AVAILABILITY,
   USERNAME_CHECK_AVAILABILITY_SUCCESS,
   USERNAME_CHECK_AVAILABILITY_ERROR,
 } from '../../actionTypes';
+import {
+  TRANSACTION_READY,
+  TRANSACTION_ERROR,
+} from '../../../core/actionTypes';
 
 const MSG = defineMessages({
   usernameLabel: {
@@ -77,8 +79,8 @@ class CreateUsernameDialog extends Component<Props> {
       <Dialog cancel={cancel}>
         <ActionForm
           submit={USERNAME_CREATE}
-          success={USERNAME_CREATE_PENDING}
-          error={USERNAME_CREATE_ERROR}
+          success={TRANSACTION_READY}
+          error={TRANSACTION_ERROR}
           validationSchema={validationSchema}
           validate={this.validateUsername}
           onSuccess={close}
