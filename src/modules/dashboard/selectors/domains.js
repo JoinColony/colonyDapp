@@ -1,5 +1,4 @@
 /* @flow */
-
 import { createSelector } from 'reselect';
 
 import { Map as ImmutableMap } from 'immutable';
