@@ -9,10 +9,14 @@ import type { AddressOrENSName, ColonyContext } from '~types';
 import type { TransactionParams, TransactionEventData } from '~immutable';
 
 import {
+  COLONY_CONTEXT,
+  NETWORK_CONTEXT,
+} from '../../../lib/ColonyManager/constants';
+
+import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_GAS_SET,
   TRANSACTION_GAS_SUGGESTED,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
@@ -62,6 +66,39 @@ export const createTxActionCreator = <P: TransactionParams>({
   },
   meta: { id: meta.id || nanoid() },
 });
+
+export const createNetworkTransaction = <P: TransactionParams>({
+  methodName,
+  params,
+  ...payload
+}: {
+  methodName: string,
+  params: P,
+}): CreateTransactionAction<P> =>
+  createTransaction<P>({
+    context: NETWORK_CONTEXT,
+    methodName,
+    params,
+    ...payload,
+  });
+
+export const createColonyTransaction = <P: TransactionParams>({
+  identifier,
+  methodName,
+  params,
+  ...payload
+}: {
+  identifier: AddressOrENSName,
+  methodName: string,
+  params: P,
+}): CreateTransactionAction<P> =>
+  createTransaction({
+    context: COLONY_CONTEXT,
+    identifier,
+    methodName,
+    params,
+    ...payload,
+  });
 
 export const transactionSendError = <P: TransactionParams>(
   id: string,
@@ -145,19 +182,6 @@ export const transactionGasSuggested = (
   payload: {
     suggestedGasLimit,
     suggestedGasPrice,
-  },
-  meta: { id },
-});
-
-export const transactionGasSet = (
-  id: string,
-  gasLimit: number,
-  gasPrice: number,
-) => ({
-  type: TRANSACTION_GAS_SET,
-  payload: {
-    gasLimit,
-    gasPrice,
   },
   meta: { id },
 });
