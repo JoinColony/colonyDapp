@@ -17,7 +17,6 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_GAS_SET,
   TRANSACTION_GAS_SUGGESTED,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
@@ -162,18 +161,5 @@ export const transactionGasSuggested = (
     id,
     suggestedGasLimit,
     suggestedGasPrice,
-  },
-});
-
-export const transactionGasSet = (
-  id: string,
-  gasLimit: number,
-  gasPrice: number,
-) => ({
-  type: TRANSACTION_GAS_SET,
-  payload: {
-    id,
-    gasLimit,
-    gasPrice,
   },
 });
