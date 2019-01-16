@@ -15,7 +15,7 @@ type OneTransactionSelector = (
   state: RootState,
   id: string,
 ) => ?TransactionRecord<*, *>;
-type TransactionCountSelector = (state: State) => number;
+type TransactionCountSelector = (state: RootState) => number;
 
 /**
  * Individual transaction selectors
