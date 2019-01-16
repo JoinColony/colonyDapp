@@ -8,6 +8,7 @@ import {
   TRANSACTION_EVENT_DATA_RECEIVED,
   TRANSACTION_GAS_SET,
   TRANSACTION_GAS_SUGGESTED,
+  TRANSACTION_GAS_MANUAL,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
 } from '../actionTypes';
@@ -65,6 +66,17 @@ const transactionsReducer = (
     case TRANSACTION_GAS_SET: {
       const { id, gasLimit, gasPrice } = payload;
       return state.mergeIn([id, 'options'], { gasLimit, gasPrice });
+    }
+    case TRANSACTION_GAS_MANUAL: {
+      const { id, suggestedGasLimit, suggestedGasPrice } = payload;
+      const manualGasValues: Object = {};
+      if (suggestedGasLimit) {
+        manualGasValues.suggestedGasLimit = suggestedGasLimit;
+      }
+      if (suggestedGasPrice) {
+        manualGasValues.suggestedGasPrice = suggestedGasPrice;
+      }
+      return state.mergeIn([id], manualGasValues);
     }
     case TRANSACTION_SENT: {
       const { id, hash } = payload;
