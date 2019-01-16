@@ -2,6 +2,9 @@
 ### Activity Feed
 
 ```jsx
+const { List } = require('immutable');
+const { ActivityFeedItem } = require('~immutable');
+
 const activityItems = List.of(
   ActivityFeedItem({
     id: 1,
