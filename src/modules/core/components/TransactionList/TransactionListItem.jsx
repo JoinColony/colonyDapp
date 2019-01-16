@@ -74,15 +74,15 @@ const TransactionListItem = ({
   onClaim,
   linkToEtherscan,
 }: Props) => {
-  const { date, amount, symbol } = transaction;
+  const { createdAt, amount, symbol } = transaction;
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.transactionDate}>
         <div className={styles.dateDay}>
-          <FormattedDate value={date} day="numeric" />
+          <FormattedDate value={createdAt} day="numeric" />
         </div>
         <div className={styles.dateMonth}>
-          <FormattedDate value={date} month="short" />
+          <FormattedDate value={createdAt} month="short" />
         </div>
       </TableCell>
       <TableCell className={styles.transactionStatus}>
