@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { DomainRecord } from '~immutable';
+
 import { TableRow, TableCell } from '~core/Table';
 import Button from '~core/Button';
 
@@ -21,33 +23,32 @@ const MSG = defineMessages({
 
 const displayName = 'admin.DomainList.DomainListItem';
 
-type DomainData = {
-  domainName: string,
-  contributions?: number,
-};
-
 type Props = {
+  contributions?: number,
   /*
    * User data Object, follows the same format as UserPicker
    */
-  domain: DomainData,
+  domain: DomainRecord,
   viewOnly: boolean,
   /*
    * Method to call when clicking the remove button
    * Gets passed down to `DomainListItem`
    */
-  onRemove: DomainData => any,
+  onRemove: DomainRecord => any,
 };
 
 const DomainListItem = ({
-  domain: { domainName = '', contributions },
+  domain: {
+    record: { name },
+  },
+  contributions,
   viewOnly = true,
   onRemove,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
-      <span className={styles.domainName} title={domainName}>
-        #{domainName}
+      <span className={styles.domainName} title={name}>
+        #{name}
       </span>
       {contributions && (
         <span className={styles.contributions}>
