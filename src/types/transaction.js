@@ -14,6 +14,7 @@ export type TransactionType = {
   id: string,
   createdAt: Date,
   methodName?: string,
+  context?: string,
   /*
    * @TODO Below this lines, types might need to be changed
    * They were added during UI development and might not reflect
