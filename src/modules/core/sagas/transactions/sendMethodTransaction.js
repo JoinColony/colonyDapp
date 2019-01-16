@@ -50,14 +50,15 @@ function* getUnsentTransaction<P: TransactionParams, E: TransactionEventData>(
  * Given a method and a transaction record, create a promise for sending the
  * transaction with the method.
  */
-const getMethodTransactionPromise = <
+async function getMethodTransactionPromise<
   P: TransactionParams,
   E: TransactionEventData,
 >(
   method: Sender<P, E>,
   tx: TransactionRecord<P, E>,
-) => {
+): Promise<ContractResponse<E>> {
   const {
+    multisig,
     options: {
       gasLimit,
       gasPrice,
@@ -68,7 +69,11 @@ const getMethodTransactionPromise = <
     suggestedGasLimit,
     suggestedGasPrice,
   } = tx;
-  return method.send(
+  const sendMethod =
+    method.restoreOperation && multisig
+      ? await method.restoreOperation(multisig)
+      : method;
+  return sendMethod.send(
     params,
     Object.assign(
       {
@@ -79,7 +84,7 @@ const getMethodTransactionPromise = <
       { waitForMining: false },
     ),
   );
-};
+}
 
 /*
  * Given a transaction record and a promise for sending a transaction, start a

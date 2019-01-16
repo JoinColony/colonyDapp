@@ -3,13 +3,13 @@
 import type { Saga } from 'redux-saga';
 import BigNumber from 'bn.js';
 
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 
 import type { TransactionParams } from '~immutable';
 import type { CreateTransactionAction } from '../../types';
 
 import { transactionGasSuggested } from '../../actionCreators/index';
-
+import { oneTransaction } from '../../selectors';
 import { getMethod, getGasPrice } from '../utils';
 
 /*
@@ -20,9 +20,12 @@ import { getMethod, getGasPrice } from '../utils';
 const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
 export default function* suggestMethodTransactionGas<P: TransactionParams>({
-  payload: { context, methodName, identifier, params },
   meta: { id },
 }: CreateTransactionAction<P>): Saga<void> {
+  const { methodName, context, identifier, params } = yield select(
+    oneTransaction,
+    id,
+  );
   // Get the given method.
   const method = yield call(getMethod, context, methodName, identifier);
 

@@ -42,6 +42,9 @@ export type Sender<P: TransactionParams, E: TransactionEventData> = {
   },
   send(params: P, options: SendOptions): Promise<ContractResponse<E>>,
   estimate(params: P): Promise<BigNumber>,
+  restoreOperation?: (
+    operationJSON: Object,
+  ) => Promise<(options: SendOptions) => Promise<ContractResponse<E>>>,
 };
 
 export type LifecycleActionTypes = {
@@ -71,8 +74,18 @@ export type SendTransactionAction = {
   meta: { id: string },
 };
 
+export type MultisigTransactionAction = {
+  meta: { id: string },
+};
+
 export type TransactionResponse<E: TransactionEventData> = {
   receipt?: TransactionReceipt,
   eventData?: E,
   error?: Error,
+};
+
+export type MultisigOperationJSON = {
+  nonce: number,
+  payload: Object, // MultisigOperationPayload
+  signers: Object, // Signers
 };

@@ -25,10 +25,11 @@ export default class EthersWrappedWallet {
   }
 
   async signMessage(message: any): Promise<string> {
-    const messageString = utils.isArrayish(message)
-      ? utils.toUtf8String(message)
-      : message;
-    return this.wallet.signMessage({ message: messageString });
+    const payload =
+      typeof message === 'string' && !message.match(/^(0x)?[A-Fa-f0-9]+$/)
+        ? { message }
+        : { messageData: message };
+    return this.wallet.signMessage(payload);
   }
 
   /**

@@ -25,6 +25,10 @@ const isPending: TransactionSelector = ({ hash }) => !hash;
 // ensure that a minimum threshold is met.
 const isConfirmed: TransactionSelector = tx =>
   !!(tx.receiptReceived && Object.hasOwnProperty.call(tx, 'eventData'));
+const isMultisig: TransactionSelector = tx => !!tx.multisig;
+const isPendingMultisig: TransactionSelector = tx =>
+  !!tx.multisig &&
+  !(tx.multisig.missingSignees && tx.multisig.missingSignees.length);
 
 /**
  * Transactions sorting functions.
@@ -62,4 +66,12 @@ export const outgoingTransactions: TransactionsSelector = createSelector(
 export const confirmedTransactions: TransactionsSelector = createSelector(
   allTransactions,
   transactions => transactions.filter(isConfirmed).sort(createdAtDesc),
+);
+export const multisigTransactions = createSelector(
+  allTransactions,
+  transactions => transactions.filter(isMultisig).sort(createdAtDesc),
+);
+export const pendingMultisigTransactions = createSelector(
+  allTransactions,
+  transactions => transactions.filter(isPendingMultisig).sort(createdAtDesc),
 );
