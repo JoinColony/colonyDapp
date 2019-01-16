@@ -5,8 +5,11 @@ import type { SendOptions } from '@colony/colony-js-client';
 import type { AddressOrENSName, ENSName } from '~types';
 
 import {
-  createNetworkTransaction,
+  // createNetworkTransaction,
   createColonyTransaction,
+  createTxActionCreator,
+  // COLONY_CONTEXT,
+  NETWORK_CONTEXT,
 } from '../../core/actionCreators';
 
 import {
@@ -19,19 +22,16 @@ import {
   COLONY_ADMIN_ADD_ERROR,
 } from '../actionTypes';
 
-export const createColony = (
-  params: { tokenAddress: string },
-  options?: SendOptions,
-) =>
-  createNetworkTransaction({
-    params,
-    options,
-    methodName: 'createColony',
-    lifecycle: {
-      error: COLONY_CREATE_ERROR,
-      success: COLONY_CREATE_SUCCESS,
-    },
-  });
+export const createColony = createTxActionCreator<{
+  tokenAddress: string,
+}>({
+  context: NETWORK_CONTEXT,
+  methodName: 'createColony',
+  lifecycle: {
+    error: COLONY_CREATE_ERROR,
+    success: COLONY_CREATE_SUCCESS,
+  },
+});
 
 export const createColonyLabel = (
   identifier: AddressOrENSName,

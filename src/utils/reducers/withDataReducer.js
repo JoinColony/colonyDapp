@@ -14,6 +14,8 @@ export type DataAction = {
     keyPath: KeyPath,
     props: any,
   } & Object,
+  error?: boolean,
+  meta?: any,
 };
 
 export type DataReducer<K: *, V: *> = (
