@@ -21,21 +21,29 @@ const allDomainsReducer = (
 ) => {
   switch (action.type) {
     case COLONY_DOMAINS_FETCH_SUCCESS: {
-      const { payload } = action;
-      // TODO implement
-      // eslint-disable-next-line no-console
-      console.log('COLONY_DOMAINS_FETCH_SUCCESS', payload);
-      return state;
+      const {
+        keyPath,
+        props: { domains },
+      } = action.payload;
+      let newState = state;
+      domains.forEach(({ _id, ...domain }) => {
+        const id = parseInt(_id, 10);
+        newState = newState.setIn(
+          [...keyPath, id],
+          Data({ record: Domain({ id, ...domain }) }),
+        );
+      });
+      return newState;
     }
     case DOMAIN_CREATE_SUCCESS: {
       const {
         keyPath: [ensName, domainId],
-        props: { domainId: id, domainName: name },
+        props,
       } = action.payload;
       return state
         ? state.setIn(
             [ensName, domainId],
-            Data({ record: Domain({ id, name }) }),
+            Data({ record: Domain({ ...props }) }),
           )
         : state;
     }
@@ -48,7 +56,7 @@ const allDomainsReducer = (
         payload,
       } = action;
       const data = Data<DomainRecord>({
-        record: Domain({ domainId, ...payload }),
+        record: Domain({ id: domainId, ...payload }),
       });
 
       return state.get(ensName)
