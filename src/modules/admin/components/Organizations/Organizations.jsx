@@ -3,7 +3,7 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyRecord, ColonyAdminRecord } from '~immutable';
+import type { ColonyRecord, ColonyAdminRecord, DomainRecord } from '~immutable';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
@@ -64,7 +64,7 @@ const displayName: string = 'admin.Organizations';
 type Props = {
   colony: ColonyRecord,
   colonyAdmins: Array<ColonyAdminRecord>,
-  colonyDomains: Array<Object>, // TODO use DomainRecord type
+  colonyDomains: Array<DomainRecord>,
 };
 
 const Organizations = ({
