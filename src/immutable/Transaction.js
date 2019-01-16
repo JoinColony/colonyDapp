@@ -9,7 +9,7 @@ import nanoid from 'nanoid';
 
 import type { LifecycleActionTypes } from '../modules/core/types';
 
-import type { AddressOrENSName, ColonyContext } from '~types';
+import type { Address, AddressOrENSName, ColonyContext } from '~types';
 
 export type TransactionError = {
   type: 'send' | 'receipt' | 'eventData' | 'unsuccessful',
@@ -22,6 +22,14 @@ export type TransactionParams = Object;
 
 export type TransactionEventData = Object;
 
+export type TransactionMultisig = {
+  missingSignees?: Array<Address>,
+  nonce?: number,
+  payload?: Object,
+  requiredSignees?: Array<Address>,
+  signers?: Array<Object>,
+};
+
 export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   context?: ColonyContext,
   createdAt: Date,
@@ -32,6 +40,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   identifier?: AddressOrENSName,
   lifecycle: LifecycleActionTypes,
   methodName: string,
+  multisig?: TransactionMultisig, // Indicates tx is multisig if set
   options: SendOptions,
   params: P,
   receiptReceived?: boolean,
@@ -55,6 +64,7 @@ const defaultValues: $Shape<TransactionProps<*, *>> = {
   identifier: undefined,
   lifecycle: {},
   methodName: undefined,
+  multisig: undefined,
   options: {},
   params: {},
   receiptReceived: undefined,

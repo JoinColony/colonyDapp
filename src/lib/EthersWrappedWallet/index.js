@@ -6,6 +6,7 @@ import { hexSequenceNormalizer } from '@colony/purser-core/normalizers';
 import BigNumber from 'bn.js';
 import EthereumTx from 'ethereumjs-tx';
 import { utils } from 'ethers';
+import { isHex } from 'web3-utils';
 
 import type { TransactionOptions, TransactionRequest } from './types';
 import type { TransactionReceipt } from '~types';
@@ -25,10 +26,11 @@ export default class EthersWrappedWallet {
   }
 
   async signMessage(message: any): Promise<string> {
-    const messageString = utils.isArrayish(message)
-      ? utils.toUtf8String(message)
-      : message;
-    return this.wallet.signMessage({ message: messageString });
+    const payload =
+      typeof message === 'string' && !isHex(message)
+        ? { message }
+        : { messageData: message };
+    return this.wallet.signMessage(payload);
   }
 
   /**

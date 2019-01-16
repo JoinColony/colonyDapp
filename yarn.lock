@@ -878,57 +878,57 @@
   resolved "https://registry.yarnpkg.com/@colony/eslint-config-colony/-/eslint-config-colony-7.0.0.tgz#3371c84f86cd8024b5df57f44f344c50b692e7d0"
   integrity sha512-6lYncfvTQlIjOPP8QYRlxF/SxlRPimqm4pzbAGvfZ9dchQMciNGifKmVJr1rZNDV2aVmp8HZ2rZ65AQl1VMvEQ==
 
-"@colony/purser-core@2.0.0", "@colony/purser-core@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@colony/purser-core/-/purser-core-2.0.0.tgz#4953bfb1d1ae17d54d33e62d4e8be9030b5dfc44"
-  integrity sha512-uc3Dw/ciGCmHSxEg0sYaa1kQTvQKiliIjrSObpzOAhxyyLY+p/uhqXwlu00uuf7oUiFT35neW0osRosj+6XL3g==
+"@colony/purser-core@2.1.0", "@colony/purser-core@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@colony/purser-core/-/purser-core-2.1.0.tgz#d991b6542c450be2453dedb3bc9f44129176d921"
+  integrity sha512-DowZeOlV+q6/Ag4EjwyH/Q8BH5+1Wj9f+pN2tVPDRDEswiImKCnp4ofpWOuh3xyemBwFj2NqMSRF3u+JyBLZsw==
   dependencies:
     "@babel/runtime" "^7.1.2"
     bn.js "^4.11.8"
     ethereumjs-util "^6.0.0"
-    ethers "^4.0.0"
+    ethers "^4.0.12"
     hdkey "^1.1.0"
 
-"@colony/purser-ledger@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@colony/purser-ledger/-/purser-ledger-1.1.2.tgz#a7dcf5cda946196c13100f0030daafc57671fec1"
-  integrity sha512-4w8Eae8cmRPwYGSRGv6KTsjAjScbCHMETIUUKUXGCRUDi6wAcOTNPAC/qSK6JgNfE3rYlxVhSfBO4bUrOl1RUg==
+"@colony/purser-ledger@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@colony/purser-ledger/-/purser-ledger-1.2.2.tgz#e65fccd833b25b6a515730108b4dbd85629e5ba6"
+  integrity sha512-TlFWf+93G9wbD/kJ5ITFfIeGV24QpBiFSq1N5bC4TlU8oHFzycXIrC5sacn3BeuiVJiIzfwpus0F9DVrbWReaA==
   dependencies:
     "@babel/runtime" "^7.1.2"
-    "@colony/purser-core" "2.0.0"
+    "@colony/purser-core" "2.1.0"
     "@ledgerhq/hw-app-eth" "^4.19.0"
     "@ledgerhq/hw-transport-u2f" "^4.20.0"
     ethereumjs-tx "^1.3.6"
 
-"@colony/purser-metamask@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-2.0.0.tgz#605f4cd4ad22946a0ab4b85467371e90e022bdb7"
-  integrity sha512-vrpMM4kE4MUhG5X6QAqLy9ys5XVpOt8ER1JjdlffOcSx3COvUI9/2h7pNpS3z2UrmH4/uM9HMMG6HC2SkpJAnA==
+"@colony/purser-metamask@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-2.1.0.tgz#83dc5c1547c54d3df5123b1eaefd99a331ff557e"
+  integrity sha512-ovyn3iWOYWLTc0iL1+x5sjDNfc4njN42m32v4h97qQ9m4A8HJau9qBoxclOqKqV3b2lotoovzfZzyh7AGBXWwA==
   dependencies:
     "@babel/runtime" "^7.1.2"
-    "@colony/purser-core" "2.0.0"
+    "@colony/purser-core" "2.1.0"
     bn.js "^4.11.8"
     ethereumjs-tx "^1.3.6"
     lodash.isequal "^4.5.0"
     web3 "^1.0.0-beta.36"
 
-"@colony/purser-software@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.1.4.tgz#92a0c2c7a8c58a61cc5f3386b90d3f3ba59ceb42"
-  integrity sha512-JPUgziJ/ROrMfdH97egCz/smpanNBMG+02WJqHEZizYv9OQxzbj63f4vmDOPypz2K/TltJNiDlOn/RJb3Uk3fg==
+"@colony/purser-software@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@colony/purser-software/-/purser-software-1.2.4.tgz#2e4138a9449631d955bc8dabdd7afb7bd1c3e8b1"
+  integrity sha512-05GtNdallX+hi5HqYG1CnDwL7LjILhS8aQDMY6uAuv7aSPgILyzbX2jnB2t1UVcYVRJTTx8qAsgJh9F/zj1h1Q==
   dependencies:
     "@babel/runtime" "^7.1.2"
-    "@colony/purser-core" "2.0.0"
+    "@colony/purser-core" "2.1.0"
     ethereumjs-util "^6.0.0"
-    ethers "^4.0.0"
+    ethers "^4.0.12"
 
-"@colony/purser-trezor@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@colony/purser-trezor/-/purser-trezor-1.1.2.tgz#512f1828963d3267ec3fb58554018c6744cd0e5b"
-  integrity sha512-XIbYgV+be9P9nsZw5fRIJhxfRpYA4qly0BvVrZOTV+E+k4gAGsIWkj4eVRPsmWunySacrnbm8znKXtUxZtsauQ==
+"@colony/purser-trezor@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@colony/purser-trezor/-/purser-trezor-1.2.2.tgz#9b0511dc6ef47260cca9d0253fd17a5406e2c117"
+  integrity sha512-RMN84nlSnuJJnWCwr4LuJ+eCoy1k1YunYuJgrNCYaKApvsrDQkcdQU7AykET2AuTH/VCseO1UugzUwAvCKFlGw==
   dependencies:
     "@babel/runtime" "^7.1.2"
-    "@colony/purser-core" "2.0.0"
+    "@colony/purser-core" "2.1.0"
     bip32-path "^0.4.2"
     ethereumjs-tx "^1.3.6"
 
@@ -5600,10 +5600,10 @@ ethers@^3.0.27:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@^4.0.0:
-  version "4.0.15"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.15.tgz#784df851271ec4f7cea46ce3b44e2274f122ff6c"
-  integrity sha512-GO+GVMI0EfS6CJmxJXSUNTyiN8q+QIRTACzEtRMqnUDQrTzTHfIx2VYD7mgPDTjSsu/JLzGdit0hY3ERcE2fHQ==
+ethers@^4.0.12:
+  version "4.0.21"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.21.tgz#b3d88fa5f5832383de515769841fe6ad8545a71a"
+  integrity sha512-wKW0tG15n91qtnt6e1YUXOeRRiHc03U6qenmLQbjiPLX9KVhNnBKe1kFpRtiiuPp0dyHsWWmtML9pz44pmAO1g==
   dependencies:
     "@types/node" "^10.3.2"
     aes-js "3.0.0"

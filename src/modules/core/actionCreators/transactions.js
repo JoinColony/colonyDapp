@@ -5,11 +5,24 @@ import type { SendOptions } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
-import type { CreateTransactionAction, LifecycleActionTypes } from '../types';
+import type {
+  CreateTransactionAction,
+  LifecycleActionTypes,
+  MultisigOperationJSON,
+} from '../types';
 import type { AddressOrENSName, ColonyContext } from '~types';
-import type { TransactionParams, TransactionEventData } from '~immutable';
+import type {
+  TransactionEventData,
+  TransactionMultisig,
+  TransactionParams,
+} from '~immutable';
 
 import {
+  MULTISIG_TRANSACTION_CREATED,
+  MULTISIG_TRANSACTION_REFRESHED,
+  MULTISIG_TRANSACTION_REJECT,
+  MULTISIG_TRANSACTION_SIGN,
+  MULTISIG_TRANSACTION_SIGNED,
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -17,17 +30,20 @@ import {
   TRANSACTION_GAS_MANUAL,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
+  TRANSACTION_SUGGEST_GAS,
 } from '../actionTypes';
 
 type TxFactoryOptions = {
   context: ColonyContext,
   lifecycle?: LifecycleActionTypes,
   methodName: string,
+  multisig?: boolean,
 };
 
 type TxActionCreatorOptions<P: TransactionParams> = {
   identifier?: AddressOrENSName,
   meta: any,
+  multisig?: MultisigOperationJSON,
   params: P,
   options?: SendOptions,
 };
@@ -52,23 +68,98 @@ export const createTxActionCreator = <P: TransactionParams>({
   context,
   lifecycle = {},
   methodName,
+  multisig: isMultisig = false,
 }: TxFactoryOptions): TxActionCreator<P> => ({
   identifier,
   meta,
+  multisig: multisigJSON,
   options,
   params,
 }: TxActionCreatorOptions<P>): CreateTransactionAction<P> => ({
-  type: TRANSACTION_CREATED,
+  type: isMultisig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
   payload: {
     context,
     createdAt: new Date(),
     identifier,
     lifecycle,
     methodName,
+    multisig: isMultisig ? multisigJSON || {} : undefined,
     options,
     params,
   },
   meta: { id: meta.id || nanoid() },
+});
+
+export const multisigTransactionRefreshError = (
+  id: string,
+  payload: { message: string },
+  overrideActionType?: string,
+) => ({
+  type: overrideActionType || TRANSACTION_ERROR,
+  payload: { error: { type: 'multisigRefresh', ...payload } },
+  meta: { id },
+});
+
+export const multisigTransactionNonceError = (
+  id: string,
+  payload: { message: string },
+  overrideActionType?: string,
+) => ({
+  type: overrideActionType || TRANSACTION_ERROR,
+  payload: { error: { type: 'multisigNonce', ...payload } },
+  meta: { id },
+});
+
+export const multisigTransactionSignError = (
+  id: string,
+  payload: { message: string },
+  overrideActionType?: string,
+) => ({
+  type: overrideActionType || TRANSACTION_ERROR,
+  payload: { error: { type: 'multisigSign', ...payload } },
+  meta: { id },
+});
+
+export const multisigTransactionRejectError = (
+  id: string,
+  payload: { message: string },
+  overrideActionType?: string,
+) => ({
+  type: overrideActionType || TRANSACTION_ERROR,
+  payload: { error: { type: 'multisigReject', ...payload } },
+  meta: { id },
+});
+
+export const multisigTransactionRefreshed = (
+  id: string,
+  multisig: TransactionMultisig,
+) => ({
+  type: MULTISIG_TRANSACTION_REFRESHED,
+  payload: { multisig },
+  meta: {
+    id,
+  },
+});
+
+export const multisigTransactionSign = (id: string) => ({
+  type: MULTISIG_TRANSACTION_SIGN,
+  meta: {
+    id,
+  },
+});
+
+export const multisigTransactionSigned = (id: string) => ({
+  type: MULTISIG_TRANSACTION_SIGNED,
+  meta: {
+    id,
+  },
+});
+
+export const multisigTransactionReject = (id: string) => ({
+  type: MULTISIG_TRANSACTION_REJECT,
+  meta: {
+    id,
+  },
 });
 
 export const transactionSendError = <P: TransactionParams>(
@@ -142,6 +233,13 @@ export const transactionEventDataReceived = <
   type: overrideActionType || TRANSACTION_EVENT_DATA_RECEIVED,
   payload,
   meta: { id },
+});
+
+export const transactionSuggestGas = (id: string) => ({
+  type: TRANSACTION_SUGGEST_GAS,
+  payload: {
+    id,
+  },
 });
 
 export const transactionGasSuggested = (

@@ -3,6 +3,8 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
+  MULTISIG_TRANSACTION_CREATED,
+  MULTISIG_TRANSACTION_REFRESHED,
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -25,13 +27,15 @@ const transactionsReducer = (
   { type, payload, meta }: UniqueAction,
 ): TransactionsState => {
   switch (type) {
-    case TRANSACTION_CREATED: {
+    case TRANSACTION_CREATED:
+    case MULTISIG_TRANSACTION_CREATED: {
       const {
         context,
         createdAt,
         identifier,
         lifecycle,
         methodName,
+        multisig,
         options,
         params,
       } = payload;
@@ -44,10 +48,18 @@ const transactionsReducer = (
           identifier,
           lifecycle,
           methodName,
+          multisig,
           options,
           params,
         }),
       );
+    }
+    case MULTISIG_TRANSACTION_REFRESHED: {
+      const { id } = meta;
+      const { multisig } = payload;
+      return state.mergeIn([id], {
+        multisig,
+      });
     }
     case TRANSACTION_GAS_SUGGESTED: {
       const { id } = meta;
