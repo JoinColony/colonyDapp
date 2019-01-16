@@ -201,7 +201,7 @@ function* createDomainSaga({
     /*
      * Dispatch a success action with the newly-added domain.
      */
-    const payload = { domainId, domainName };
+    const payload = { id: domainId, name: domainName };
     yield put({
       type: DOMAIN_CREATE_SUCCESS,
       meta: {
@@ -292,14 +292,19 @@ function* fetchColonyDomainsSaga({
     /*
      * Get the domains from the loaded store.
      */
-    const colonyDomains = yield call([store, store.getAll]);
+    const domains = yield call([store, store.getAll]);
 
     /*
      * Dispatch the success action.
      */
     yield put({
       type: COLONY_DOMAINS_FETCH_SUCCESS,
-      payload: colonyDomains,
+      payload: {
+        keyPath: [colonyENSName],
+        props: {
+          domains,
+        },
+      },
     });
   } catch (error) {
     yield putError(COLONY_DOMAINS_FETCH_ERROR, error);
