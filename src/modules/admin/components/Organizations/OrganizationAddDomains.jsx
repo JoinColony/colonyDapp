@@ -4,16 +4,26 @@ import React from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
+import type { Action, ENSName } from '~types';
+
 import Button from '~core/Button';
 import { ActionForm, FormStatus, Input } from '~core/Fields';
 
 import {
-  COLONY_DOMAIN_ADD,
-  COLONY_DOMAIN_ADD_SUCCESS,
-  COLONY_DOMAIN_ADD_ERROR,
+  DOMAIN_CREATE,
+  DOMAIN_CREATE_SUCCESS,
+  DOMAIN_CREATE_ERROR,
 } from '../../../dashboard/actionTypes';
 
 import styles from './OrganizationAddDomains.css';
+
+type Props = {
+  ensName: ENSName,
+};
+
+type FormValues = {
+  domainName: string,
+};
 
 const MSG = defineMessages({
   labelAddDomain: {
@@ -33,21 +43,34 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations.OrganizationAddDomains';
 
 const validationSchema = yup.object({
-  domain: yup.string().required(),
+  domainName: yup.string().required(),
 });
 
-const OrganizationAddDomains = () => (
+const OrganizationAddDomains = ({ ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
-      submit={COLONY_DOMAIN_ADD}
-      success={COLONY_DOMAIN_ADD_SUCCESS}
-      error={COLONY_DOMAIN_ADD_ERROR}
+      setPayload={(action: Action, { domainName }: FormValues) => ({
+        ...action,
+        payload: {
+          domainName,
+          colonyENSName: ensName,
+        },
+      })}
+      submit={DOMAIN_CREATE}
+      success={DOMAIN_CREATE_SUCCESS}
+      error={DOMAIN_CREATE_ERROR}
+      onSuccess={(_, { resetForm }) => {
+        resetForm();
+      }}
+      initialValues={{
+        domainName: '',
+      }}
       validationSchema={validationSchema}
     >
       {({ status, isSubmitting, isValid }) => (
         <div className={styles.inputWrapper}>
           <div className={styles.domainInput}>
-            <Input name="domain" label={MSG.labelAddDomain} />
+            <Input name="domainName" label={MSG.labelAddDomain} />
           </div>
           <div className={styles.submitButton}>
             <Button
