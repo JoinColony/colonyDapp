@@ -133,7 +133,6 @@ class StepTrufflePig extends Component<Props, State> {
 
   render() {
     const {
-      nextStep,
       previousStep,
       wizardForm,
       formHelpers: { includeWizardValues },
@@ -206,8 +205,6 @@ class StepTrufflePig extends Component<Props, State> {
                   text={MSG.buttonAdvance}
                   appearance={{ theme: 'primary', size: 'large' }}
                   type="submit"
-                  // TODO: the nextStep should be called onSucces once wizard is working again
-                  onClick={() => nextStep(values)}
                   loading={isLoading || isSubmitting}
                 />
               ) : (

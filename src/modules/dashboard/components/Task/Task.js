@@ -1,8 +1,7 @@
 /* @flow */
 
 import { compose, withProps } from 'recompose';
-import { connect } from 'react-redux';
-import { currentUser } from '../../../users/selectors';
+import { withCurrentUser } from '../../../users/hocs';
 
 import withDialog from '~core/Dialog/withDialog';
 
@@ -12,12 +11,7 @@ import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 import { mockTask } from './__datamocks__/mockTask';
 
 const enhance = compose(
-  connect(
-    state => ({
-      currentUser: currentUser(state),
-    }),
-    null,
-  ),
+  withCurrentUser,
   withDialog(),
   withProps(() => {
     const task = mockTask;
