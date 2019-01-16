@@ -2,6 +2,7 @@
 
 import type { SendOptions } from '@colony/colony-js-client';
 
+import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
 import type { CreateTransactionAction, LifecycleActionTypes } from '../types';
@@ -18,6 +19,7 @@ import {
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
   TRANSACTION_GAS_SUGGESTED,
+  TRANSACTION_GAS_MANUAL,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
 } from '../actionTypes';
@@ -38,6 +40,13 @@ type TxActionCreatorOptions<P: TransactionParams> = {
 type TxActionCreator<P: TransactionParams> = (
   TxActionCreatorOptions<P>,
 ) => CreateTransactionAction<P>;
+
+/*
+ * @area: including a bit of buffer on the gas sent can be a good thing.
+ * Your tx might be applied against a different state from when you
+ * estimateGas'd it, which might cause it to still work, but use a bit more gas
+ */
+const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
 export {
   COLONY_CONTEXT,
@@ -185,3 +194,24 @@ export const transactionGasSuggested = (
   },
   meta: { id },
 });
+
+export const transactionGasManualSet = (
+  id: string,
+  gasPrice: number,
+  gasLimit: number,
+): TransactionParams => {
+  const manualGasAction: Object = {
+    type: TRANSACTION_GAS_MANUAL,
+    payload: {},
+    meta: { id },
+  };
+  if (gasPrice) {
+    manualGasAction.payload.suggestedGasPrice = new BigNumber(gasPrice);
+  }
+  if (gasLimit) {
+    manualGasAction.payload.suggestedGasLimit = new BigNumber(
+      parseInt(gasLimit * SAFE_GAS_LIMIT_MULTIPLIER, 10),
+    );
+  }
+  return manualGasAction;
+};
