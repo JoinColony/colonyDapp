@@ -4,6 +4,7 @@ import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
 
 import { raceAgainstTimeout } from '../../../utils/async';
+import { log } from '../../../utils/debug';
 
 import type { OrbitDBStore } from '../types';
 
@@ -79,7 +80,13 @@ class Store {
     // Let's see whether we have local heads already
     const heads = await this.ready();
 
-    if (!heads || !heads.length) {
+    // TODO consider throwing an error when we are relying fully on the pinner.
+    if (!this._pinner.online) {
+      log(new Error('Unable to load store; pinner is offline'));
+      return heads;
+    }
+
+    if (!(heads && heads.length)) {
       // We don't have local heads. Let's ask the pinner
       const { count } = await this._pinner.requestPinnedStore(
         this.address.toString(),
@@ -95,12 +102,12 @@ class Store {
     // but don't have to wait for any count. We'll replicate whenever it's convenient
     // TODO: This could be dangerous in case of an unfinished replication. We have to account for that
     // Quick fix could be to just also wait for the full replication, which might be a performance hit
-    this._pinner.requestPinnedStore(this.address.toString());
+    this._pinner.requestPinnedStore(this.address.toString()).catch(log);
     return heads;
   }
 
-  pin() {
-    this._pinner.pinStore(this.address.toString());
+  async pin() {
+    return this._pinner.pinStore(this.address.toString());
   }
 }
 

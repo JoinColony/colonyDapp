@@ -15,6 +15,7 @@ import IPFSNode from '../ipfs';
 
 import { Store } from './stores';
 import { setMeta } from './commands';
+import { PermissiveAccessController } from './accessControllers';
 
 const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 const generateId = () => generate(base58, 21);
@@ -38,6 +39,19 @@ class DDB {
   _stores: Map<string, Store>;
 
   _resolvers: Map<string, ENSResolverType>;
+
+  static getAccessController(
+    { getAccessController, name }: StoreBlueprint,
+    storeProps?: Object,
+  ) {
+    const accessController = getAccessController
+      ? getAccessController(storeProps)
+      : new PermissiveAccessController();
+
+    if (!getAccessController)
+      console.warn(`Using permissive access controller for store "${name}"`);
+    return accessController;
+  }
 
   constructor<I: Identity, P: IdentityProvider<I>>(
     ipfsNode: IPFSNode,
@@ -75,7 +89,7 @@ class DDB {
       : null;
   }
 
-  _resolveStoreAddress(identifier: string) {
+  async _resolveStoreAddress(identifier: string) {
     const [resolverKey, id] = identifier.split('.');
     if (!resolverKey || !id) {
       throw new Error('Identifier is not in a valid form');
@@ -122,19 +136,16 @@ class DDB {
   }
 
   async createStore(blueprint: StoreBlueprint, storeProps?: Object) {
-    const { getAccessController, name, type: StoreClass } = blueprint;
+    const { name, type: StoreClass } = blueprint;
     if (name.includes('.')) {
       throw new Error('A dot (.) in store names is not allowed');
     }
     const id = `${name}.${generateId()}`;
 
-    const accessController =
-      getAccessController && getAccessController(storeProps);
-    if (!accessController) {
-      console.warn(
-        `Store with schema ${name} created without an accessController`,
-      );
-    }
+    const accessController = this.constructor.getAccessController(
+      blueprint,
+      storeProps,
+    );
 
     const orbitStore: OrbitDBStore = await this._orbitNode.create(
       id,
@@ -157,7 +168,7 @@ class DDB {
     identifier: StoreIdentifier,
     storeProps?: Object,
   ): Promise<Store | null> {
-    const { name: bluePrintName, getAccessController, type } = blueprint;
+    const { name: bluePrintName, type } = blueprint;
 
     const address = await this._getStoreAddress(identifier);
     if (!address) return null;
@@ -172,13 +183,10 @@ class DDB {
       );
     }
 
-    const accessController =
-      getAccessController && getAccessController(storeProps);
-    if (!accessController) {
-      console.warn(
-        `Store with schema ${name} created without an accessController`,
-      );
-    }
+    const accessController = this.constructor.getAccessController(
+      blueprint,
+      storeProps,
+    );
 
     const orbitStore: OrbitDBStore = await this._orbitNode.open(address, {
       accessController,
@@ -206,7 +214,7 @@ class DDB {
     });
   }
 
-  stop() {
+  async stop() {
     return this._orbitNode.stop();
   }
 }

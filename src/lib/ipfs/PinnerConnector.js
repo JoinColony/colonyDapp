@@ -66,12 +66,12 @@ class PinnerConnector extends EventEmitter {
     }
   }
 
-  _handleNewPeer(peer: string) {
+  async _handleNewPeer(peer: string) {
     // If no pinner id was given, everyone can be the pinner! Definitely not recommended.
     // TODO: In the future, we can maintain multiple ids here
     if (peer === this._pinnerId) {
       this.online = true;
-      this._flushPinnerMessages();
+      await this._flushPinnerMessages();
     }
   }
 
@@ -82,16 +82,18 @@ class PinnerConnector extends EventEmitter {
     }
   }
 
-  _flushPinnerMessages() {
-    this._outstandingPubsubMessages.forEach(message => {
-      this._publishAction(message);
-    });
+  async _flushPinnerMessages() {
+    await Promise.all(
+      this._outstandingPubsubMessages.map(message =>
+        this._publishAction(message),
+      ),
+    );
     this._outstandingPubsubMessages = [];
   }
 
-  _publishAction(action: PinnerAction) {
+  async _publishAction(action: PinnerAction) {
     if (this.online) {
-      this._ipfs.pubsub.publish(
+      await this._ipfs.pubsub.publish(
         this._room,
         Buffer.from(JSON.stringify(action)),
       );
@@ -101,6 +103,8 @@ class PinnerConnector extends EventEmitter {
   }
 
   async init() {
+    if (this._id) throw new Error('Unable to re-initialize PinnerConnector');
+
     const { id } = await this._ipfs.id();
     this._id = id;
     await this._ipfs.pubsub.subscribe(
@@ -125,39 +129,39 @@ class PinnerConnector extends EventEmitter {
   async requestPinnedStore(address: string) {
     let listener;
     const getHeads = new Promise(resolve => {
-      this._publishAction({
-        type: PIN_ACTIONS.LOAD_STORE,
-        payload: { address },
-      });
       listener = ({ type, to, payload }) => {
         if (type === PIN_ACTIONS.HAVE_HEADS && to === address) resolve(payload);
       };
       this.on('action', listener);
     });
+    const publishActionPromise = this._publishAction({
+      type: PIN_ACTIONS.LOAD_STORE,
+      payload: { address },
+    });
     return raceAgainstTimeout(
-      getHeads,
+      Promise.all([getHeads, publishActionPromise]),
       10000,
       new Error('Pinner did not react in time'),
       () => this.removeListener('action', listener),
     );
   }
 
-  pinStore(address: string) {
-    this._publishAction({
+  async pinStore(address: string) {
+    return this._publishAction({
       type: PIN_ACTIONS.PIN_STORE,
       payload: { address },
     });
   }
 
-  pinHash(ipfsHash: string) {
-    this._publishAction({
+  async pinHash(ipfsHash: string) {
+    await this._publishAction({
       type: PIN_ACTIONS.PIN_HASH,
       payload: { ipfsHash },
     });
     if (!isDev) {
       // Just in case we use infura as well to pin stuff
       try {
-        fetch(
+        await fetch(
           `https://ipfs.infura.io:5001/api/v0/pin/add?arg=/ipfs/${ipfsHash}`,
         );
       } catch (e) {

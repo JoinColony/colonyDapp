@@ -2,7 +2,10 @@
 
 import promiseSeries from 'p-series';
 
+import { log } from '../../../utils/debug';
+
 import type { OrbitDBKVStore } from '../types';
+
 import Store from './Store';
 
 /**
@@ -16,7 +19,7 @@ class KVStore extends Store {
   +_orbitStore: OrbitDBKVStore = this._orbitStore;
 
   async set(keyOrObject: string | {}, value?: any) {
-    this.pin(); // XXX this promise is ignored
+    this.pin().catch(log);
     return typeof keyOrObject === 'string'
       ? this._orbitStore.put(keyOrObject, value)
       : this._setObject(keyOrObject);
