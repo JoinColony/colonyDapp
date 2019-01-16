@@ -71,6 +71,7 @@ export type SendTransactionAction = {
   payload: {
     id: string,
   },
+  meta: any,
 };
 
 export type TransactionResponse<E: TransactionEventData> = {

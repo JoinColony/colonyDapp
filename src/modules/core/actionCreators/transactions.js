@@ -23,6 +23,56 @@ import {
   TRANSACTION_SENT,
 } from '../actionTypes';
 
+type TxFactoryOptions = {
+  context: ColonyContext,
+  lifecycle?: LifecycleActionTypes,
+  methodName: string,
+};
+
+type TxActionCreatorOptions<P: TransactionParams> = {
+  identifier?: AddressOrENSName,
+  meta: any,
+  params: P,
+  options?: SendOptions,
+};
+
+type TxActionCreator<P: TransactionParams> = (
+  TxActionCreatorOptions<P>,
+) => CreateTransactionAction<P>;
+
+export {
+  COLONY_CONTEXT,
+  NETWORK_CONTEXT,
+} from '../../../lib/ColonyManager/constants';
+
+export const createTxActionCreator = <P: TransactionParams>({
+  context,
+  lifecycle = {},
+  methodName,
+}: TxFactoryOptions): TxActionCreator<P> => ({
+  identifier,
+  meta,
+  options,
+  params,
+  // TODO: this won't be necessary anymore soon as we will always supply an external id
+  ...payload
+}: TxActionCreatorOptions<P>): CreateTransactionAction<P> => ({
+  type: TRANSACTION_CREATED,
+  payload: {
+    context,
+    createdAt: new Date(),
+    id: nanoid(),
+    identifier,
+    lifecycle,
+    methodName,
+    options,
+    params,
+    // TODO: this won't be necessary anymore soon as we will always supply an external id
+    ...payload,
+  },
+  meta,
+});
+
 export const createTransaction = <P: TransactionParams>({
   context,
   identifier,

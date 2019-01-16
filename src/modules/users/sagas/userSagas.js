@@ -177,8 +177,8 @@ export function* fetchUserActivities(action: Action): Saga<void> {
   }
 }
 
-export function* addUserActivity(action: Action): Saga<void> {
-  const { activity, walletAddress } = action.payload;
+export function* addUserActivity({ payload }: Action): Saga<void> {
+  const { activity, walletAddress } = payload;
   const activitiesStoreAddress = yield select(
     userActivitiesStoreAddressSelector,
   );

@@ -90,8 +90,13 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
 /*
  * Simply forward on the form params to create a transaction.
  */
-function* createColonySaga({ payload: params }: *): Saga<void> {
-  yield put(createColony(params));
+function* createColonySaga({ payload: params, meta }: Action): Saga<void> {
+  yield put(
+    createColony({
+      meta,
+      params,
+    }),
+  );
 }
 
 function* createColonyLabelSaga({
