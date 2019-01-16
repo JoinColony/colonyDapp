@@ -118,17 +118,21 @@ class GasStationPrice extends Component<Props, State> {
   };
 
   componentDidMount() {
+    const {
+      transaction: { id },
+      transactionGasManualSet,
+    } = this.props;
     this.mounted = true;
-    /*
-     * @NOTE: I assume this will be replaced by
-     * the `suggestMethodTransactionGas` saga once
-     * the transaction list is wired. Using this for
-     * simple method for now
-     */
     getEstimatedGasCost().then(estimatedGasCost => {
       if (this.mounted) {
-        this.setState({
-          estimatedGasCost,
+        this.setState({ estimatedGasCost }, () => {
+          if (estimatedGasCost) {
+            return transactionGasManualSet(
+              id,
+              parseInt(estimatedGasCost.suggested, 10),
+            );
+          }
+          return null;
         });
       }
     });
