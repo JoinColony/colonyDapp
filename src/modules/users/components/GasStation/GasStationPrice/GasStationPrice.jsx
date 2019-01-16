@@ -73,6 +73,7 @@ type Props = {
   isNetworkCongested: boolean,
   transaction: TransactionType,
   walletNeedsAction?: 'metamask' | 'hardware',
+  transactionGasManualSet: (id: string, gasPrice: number) => { type: string },
 };
 
 type State = {
@@ -152,6 +153,7 @@ class GasStationPrice extends Component<Props, State> {
       isNetworkCongested,
       transaction: { id },
       walletNeedsAction,
+      transactionGasManualSet,
     } = this.props;
     const { estimatedGasCost, isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
@@ -194,8 +196,12 @@ class GasStationPrice extends Component<Props, State> {
                         ...option,
                         onClick: () => {
                           if (estimatedGasCost) {
-                            console.log(estimatedGasCost[option.value]);
+                            return transactionGasManualSet(
+                              id,
+                              estimatedGasCost[option.value],
+                            );
                           }
+                          return null;
                         },
                       }))}
                     />
