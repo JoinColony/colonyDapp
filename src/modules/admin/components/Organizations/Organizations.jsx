@@ -143,7 +143,6 @@ const Organizations = ({
               <DomainList
                 domains={colonyDomains}
                 label={MSG.labelAdminList}
-                viewOnly={false}
                 // eslint-disable-next-line no-console
                 onRemove={console.log}
               />
