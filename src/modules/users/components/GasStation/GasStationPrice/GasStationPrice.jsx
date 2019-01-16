@@ -190,7 +190,14 @@ class GasStationPrice extends Component<Props, State> {
                       appearance={{ theme: 'buttonGroup' }}
                       currentlyCheckedValue={transactionSpeed}
                       name="transactionSpeed"
-                      options={transactionSpeedOptions}
+                      options={transactionSpeedOptions.map(option => ({
+                        ...option,
+                        onClick: () => {
+                          if (estimatedGasCost) {
+                            console.log(estimatedGasCost[option.value]);
+                          }
+                        },
+                      }))}
                     />
                   </div>
                 </div>
