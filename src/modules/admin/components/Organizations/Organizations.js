@@ -1,6 +1,6 @@
 /* @flow */
 
-import { compose, lifecycle } from 'recompose';
+import { compose, lifecycle, withProps } from 'recompose';
 import { connect } from 'react-redux';
 
 import { fetchColonyDomains as fetchColonyDomainsAction } from '../../../dashboard/actionCreators';
@@ -29,6 +29,22 @@ const enhance = compose(
       fetchColonyDomains(colonyENSName);
     },
   }),
+  withProps(({ colonyDomains }) => ({
+    /*
+     * Sort colony domains alphabetically.
+     */
+    colonyDomains: colonyDomains.sort((prevDomain, nextDomain) => {
+      const prevName = prevDomain.getIn(['record', 'name']).toLowerCase();
+      const nextName = nextDomain.getIn(['record', 'name']).toLowerCase();
+      if (prevName < nextName) {
+        return -1;
+      }
+      if (prevName > nextName) {
+        return 1;
+      }
+      return 0;
+    }),
+  })),
 );
 
 export default enhance(Organizations);
