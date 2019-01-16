@@ -86,6 +86,7 @@ const enhance: HOC<*, InProps> = compose(
         canSignTransaction,
         transaction: transactionToSign || transaction,
         transactionGasManualSet,
+        furtherActionPossible: status !== 'succeeded' && status !== 'failed',
       };
     },
   ),
