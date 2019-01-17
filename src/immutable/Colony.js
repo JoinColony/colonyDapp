@@ -14,6 +14,7 @@ export type ColonyProps = {|
   avatar?: string,
   databases: {
     domainsIndex: ?string,
+    draftsIndex: ?string,
   },
   description?: string,
   ensName: ENSName,
@@ -33,6 +34,7 @@ const defaultValues: $Shape<ColonyProps> = {
   avatar: undefined,
   databases: {
     domainsIndex: undefined,
+    draftsIndex: undefined,
   },
   description: undefined,
   ensName: undefined,

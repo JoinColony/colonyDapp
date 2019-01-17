@@ -4,17 +4,29 @@ import type { Saga } from 'redux-saga';
 import { call, getContext, select, put } from 'redux-saga/effects';
 
 import type { ENSName } from '~types';
-import type { DocStore, ValidatedKVStore } from '../../../lib/database/stores';
+import type {
+  DocStore,
+  ValidatedKVStore,
+  KVStore,
+} from '../../../lib/database/stores';
 
 import { getENSDomainString } from '~utils/web3/ens';
 import { raceError } from '~utils/saga/effects';
 
 import { DDB } from '../../../lib/database';
 import { walletAddressSelector } from '../../users/selectors';
-import { colonyStoreBlueprint, domainsIndexStoreBlueprint } from '../stores';
+import {
+  colonyStoreBlueprint,
+  domainsIndexStoreBlueprint,
+  draftsIndexStoreBlueprint,
+} from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
-import { domainsIndexSelector, singleColonySelector } from '../selectors';
+import {
+  domainsIndexSelector,
+  singleColonySelector,
+  draftsIndexSelector,
+} from '../selectors';
 
 /*
  * Given a colony ENS name, fetch the colony store (if it exists).
@@ -124,6 +136,67 @@ export function* getOrCreateDomainsIndexStore(
    * a reference to the colony store.
    */
   if (!store) store = yield call(createDomainsIndexStore, colonyENSName);
+
+  return store;
+}
+
+/*
+ * Get the drafts index store for a given colony (if the store exists).
+ */
+export function* getDraftsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
+  /*
+   * Get the `draftsIndex` address for the given colony from the store.
+   */
+  const draftsIndex = yield select(draftsIndexSelector, colonyENSName);
+
+  /*
+   * If the `draftsIndex` address wasn't found, exit.
+   */
+  if (!draftsIndex) return null;
+
+  /*
+   * Get the store for the `draftsIndex` address.
+   */
+  // TODO no access controller available yet
+  const ddb = yield getContext('ddb');
+  return yield call(
+    [ddb, ddb.getStore],
+    draftsIndexStoreBlueprint,
+    draftsIndex,
+  );
+}
+
+/*
+ * Create a drafts index store for a colony.
+ */
+export function* createDraftsIndexStore(
+  colonyENSName: ENSName,
+): Saga<DocStore> {
+  const ddb: DDB = yield getContext('ddb');
+
+  // TODO: No access controller available yet
+  return yield call([ddb, ddb.createStore], draftsIndexStoreBlueprint, {
+    colonyENSName,
+  });
+}
+
+/*
+ * Get or create a drafts index store for a colony.
+ */
+export function* getOrCreateDraftsIndexStore(
+  colonyENSName: ENSName,
+): Saga<KVStore> {
+  /*
+   * Get and load the store, if it exists.
+   */
+  let store: KVStore | null = yield call(getDraftsIndexStore, colonyENSName);
+  if (store) yield call([store, store.load]);
+
+  /*
+   * Create the store if it doesn't already exist. Note: this does not add
+   * a reference to the colony store.
+   */
+  if (!store) store = yield call(createDraftsIndexStore, colonyENSName);
 
   return store;
 }
