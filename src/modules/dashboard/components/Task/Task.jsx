@@ -9,7 +9,6 @@ import styles from './Task.css';
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
-import Assignment from '~core/Assignment';
 
 /*
  * @TODO Temporary, please remove when wiring in the rating modals
@@ -17,6 +16,7 @@ import Assignment from '~core/Assignment';
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskRecord, UserRecord } from '~immutable';
 
+import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
 import TaskDomains from '~dashboard/TaskDomains';
@@ -103,7 +103,7 @@ type Props = {
 };
 
 class Task extends Component<Props> {
-  displayName = 'dashboard.Task';
+  static displayName = 'dashboard.Task';
 
   openTaskEditDialog = () => {
     const { openDialog, task } = this.props;
@@ -232,12 +232,7 @@ class Task extends Component<Props> {
                * See:
                * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
                */}
-              <Assignment
-                assignee={task.assignee}
-                reputation={task.reputation}
-                payouts={task.payouts}
-                nativeToken="CLNY"
-              />
+              <TaskAssignment task={task} nativeToken="CLNY" />
             </Form>
           </section>
           <section className={styles.section}>
@@ -285,7 +280,7 @@ class Task extends Component<Props> {
               !task.workerHasRated && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
-                  options={{
+                  dialogProps={{
                     submitWork: false,
                   }}
                   text={MSG.rateManager}
@@ -301,7 +296,7 @@ class Task extends Component<Props> {
               !dueDatePassed && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
-                  options={{
+                  dialogProps={{
                     submitWork: true,
                   }}
                   text={MSG.submitWork}

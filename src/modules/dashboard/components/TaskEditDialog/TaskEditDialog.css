@@ -1,7 +1,3 @@
-.taskEditContainer {
-  max-height: 250px;
-}
-
 .buttonContainer {
   display: flex;
   justify-content: flex-end;

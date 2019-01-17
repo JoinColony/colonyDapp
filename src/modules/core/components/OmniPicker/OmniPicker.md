@@ -5,6 +5,8 @@ The OmniPicker allows you to create your own picker ("Combobox") with filters an
 Here's a super simple implementation of an OmniPicker:
 
 ```jsx
+const { List } = require('immutable');
+
 const { withOmniPicker } = require('.');
 
 const Item = ({ itemData: { username, name }, selected }) => (
@@ -47,13 +49,13 @@ class SimpleUserPicker extends React.Component {
   }
 }
 
-const data = [
+const data = List.of(
   { id: 1, username: 'Chris', name: 'Christian Maniewski'},
   { id: 2, username: 'Elena', name: 'Elena Dimitrova'},
   { id: 3, username: 'Thiago', name: 'Thiago Delgado'},
   { id: 4, username: 'Alex', name: 'Alex Rea'},
   { id: 5, username: 'Collin', name: 'Collin Vine'},
-];
+);
 
 const filter = (data, filterValue) => data.filter(user => user.username.toLowerCase().startsWith(filterValue.toLowerCase()));
 

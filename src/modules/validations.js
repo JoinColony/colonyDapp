@@ -1,8 +1,11 @@
 /* @flow */
 
 import * as yup from 'yup';
+import { List } from 'immutable';
 import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
+
+import type { TokenRecord } from '~immutable';
 
 import { bnLessThan } from '../utils/numbers';
 
@@ -26,7 +29,7 @@ function equalTo(ref, msg) {
 
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
-function lessThanPot(availableTokens, msg) {
+function lessThanPot(availableTokens: List<TokenRecord>, msg) {
   return this.test({
     name: 'lessThanPot',
     message: msg || en.mixed.lessThanPot,
@@ -34,7 +37,8 @@ function lessThanPot(availableTokens, msg) {
       // $FlowFixMe `yup.ref` not recognised
       const tokenIndex = this.resolve(yup.ref('token'));
       if (!tokenIndex) return true;
-      const { balance } = availableTokens[tokenIndex - 1];
+      const { balance } =
+        availableTokens.get(parseInt(tokenIndex, 10) - 1) || {};
       return balance === undefined || bnLessThan(value, balance);
     },
   });
