@@ -45,17 +45,20 @@ import {
 function* createDomainTransaction(
   identifier: AddressOrENSName,
   parentDomainId: number = 1,
+  meta,
 ) {
   // TODO fix colonyJS; this should be `parentDomainId`
-  const action = yield call(createDomain, identifier, {
-    parentSkillId: parentDomainId,
+  const action = createDomain({
+    identifier,
+    params: { parentSkillId: parentDomainId },
+    meta,
   });
   yield put(action);
 
   return yield take(
-    ({ type, payload }) =>
+    ({ type, meta: actionMeta }) =>
       [DOMAIN_CREATE_TX_ERROR, DOMAIN_CREATE_TX_SUCCESS].includes(type) &&
-      payload.id === action.payload.id,
+      actionMeta.id === action.meta.id,
   );
 }
 
@@ -155,6 +158,7 @@ function* addDomainToIndex(
 
 function* createDomainSaga({
   payload: { colonyENSName, domainName, parentDomainId = 1 },
+  meta,
 }: Action): Saga<void> {
   try {
     /*
@@ -170,6 +174,7 @@ function* createDomainSaga({
       createDomainTransaction,
       colonyENSName,
       parentDomainId,
+      meta,
     );
 
     /*
@@ -194,6 +199,7 @@ function* createDomainSaga({
     yield put({
       type: DOMAIN_CREATE_SUCCESS,
       payload: { keyPath: [colonyENSName, domainId], props },
+      meta,
     });
   } catch (error) {
     yield putError(DOMAIN_CREATE_ERROR, error);

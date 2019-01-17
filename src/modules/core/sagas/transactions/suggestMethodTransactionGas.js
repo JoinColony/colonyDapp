@@ -20,7 +20,8 @@ import { getMethod, getGasPrice } from '../utils';
 const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
 export default function* suggestMethodTransactionGas<P: TransactionParams>({
-  payload: { context, methodName, identifier, id, params },
+  payload: { context, methodName, identifier, params },
+  meta: { id },
 }: CreateTransactionAction<P>): Saga<void> {
   // Get the given method.
   const method = yield call(getMethod, context, methodName, identifier);

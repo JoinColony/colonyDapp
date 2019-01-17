@@ -16,7 +16,7 @@ import {
 
 // TODO replace me with the real gas station/wallet!
 function* jimmysDiscountGas({
-  payload: { id },
+  meta: { id },
 }: SendTransactionAction): Saga<void> {
   const {
     context,
@@ -38,7 +38,7 @@ Gas limit: ${
       }`,
     )
   )
-    yield put({ type: METHOD_TRANSACTION_SENT, payload: { id } });
+    yield put({ type: METHOD_TRANSACTION_SENT, meta: { id } });
 }
 
 export default function* transactionsSagas(): any {

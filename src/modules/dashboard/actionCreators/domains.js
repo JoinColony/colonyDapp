@@ -1,10 +1,11 @@
 /* @flow */
 
-import type { SendOptions } from '@colony/colony-js-client';
+import type { ENSName } from '~types';
 
-import type { AddressOrENSName, ENSName } from '~types';
-
-import { createColonyTransaction } from '../../core/actionCreators';
+import {
+  createTxActionCreator,
+  COLONY_CONTEXT,
+} from '../../core/actionCreators';
 
 import {
   DOMAIN_CREATE_TX,
@@ -13,23 +14,17 @@ import {
   DOMAIN_FETCH,
 } from '../actionTypes';
 
-// eslint-disable-next-line import/prefer-default-export
-export const createDomain = (
-  identifier: AddressOrENSName,
-  params: { parentSkillId: number },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    identifier,
-    params,
-    options,
-    methodName: 'addDomain',
-    lifecycle: {
-      created: DOMAIN_CREATE_TX,
-      error: DOMAIN_CREATE_TX_ERROR,
-      eventDataReceived: DOMAIN_CREATE_TX_SUCCESS,
-    },
-  });
+export const createDomain = createTxActionCreator<{
+  parentSkillId: number,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'addDomain',
+  lifecycle: {
+    created: DOMAIN_CREATE_TX,
+    error: DOMAIN_CREATE_TX_ERROR,
+    eventDataReceived: DOMAIN_CREATE_TX_SUCCESS,
+  },
+});
 
 export const fetchDomain = (colonyENSName: ENSName, domainId: number) => ({
   type: DOMAIN_FETCH,

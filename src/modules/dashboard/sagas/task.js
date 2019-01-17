@@ -109,18 +109,23 @@ function* guessRating(
   return correctRating;
 }
 
-function* taskSetSkillSaga(action: Action): Saga<void> {
-  const {
-    payload: { taskId, skillId, colonyENSName },
-  } = action;
-
-  yield put(taskSetSkill(colonyENSName, { taskId, skillId }));
+function* taskSetSkillSaga({
+  payload: { taskId, skillId, colonyENSName },
+  meta,
+}: Action): Saga<void> {
+  yield put(
+    taskSetSkill({
+      identifier: colonyENSName,
+      params: { taskId, skillId },
+      meta,
+    }),
+  );
 }
 
-function* taskWorkerEndSaga(action: Action): Saga<void> {
-  const {
-    payload: { colonyENSName, taskId, workDescription, rating },
-  } = action;
+function* taskWorkerEndSaga({
+  payload: { colonyENSName, taskId, workDescription, rating },
+  meta,
+}: Action): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
   try {
     const deliverableHash = yield call(
@@ -134,18 +139,30 @@ function* taskWorkerEndSaga(action: Action): Saga<void> {
       rating,
     );
     yield put(
-      taskWorkerEnd(colonyENSName, { taskId, deliverableHash, secret }),
+      taskWorkerEnd({
+        identifier: colonyENSName,
+        params: { taskId, deliverableHash, secret },
+        meta,
+      }),
     );
   } catch (error) {
     yield putError(TASK_WORKER_END_ERROR, error);
   }
 }
 
-function* taskManagerEndSaga(action: Action): Saga<void> {
-  const { colonyENSName, taskId, rating } = action.payload;
+function* taskManagerEndSaga({
+  payload: { colonyENSName, taskId, rating },
+  meta,
+}: Action): Saga<void> {
   try {
     // complete task past due date
-    yield put(taskManagerComplete(colonyENSName, { taskId }));
+    yield put(
+      taskManagerComplete({
+        identifier: colonyENSName,
+        params: { taskId },
+        meta,
+      }),
+    );
     yield raceError(TASK_MANAGER_COMPLETE_SUCCESS, TASK_MANAGER_COMPLETE_ERROR);
 
     // generate secret
@@ -157,7 +174,13 @@ function* taskManagerEndSaga(action: Action): Saga<void> {
     );
 
     // rate worker
-    yield put(taskManagerRateWorker(colonyENSName, { taskId, secret }));
+    yield put(
+      taskManagerRateWorker({
+        identifier: colonyENSName,
+        params: { taskId, secret, role: 'WORKER' },
+        meta,
+      }),
+    );
     yield raceError(
       TASK_MANAGER_RATE_WORKER_SUCCESS,
       TASK_MANAGER_RATE_WORKER_ERROR,
@@ -170,8 +193,10 @@ function* taskManagerEndSaga(action: Action): Saga<void> {
   }
 }
 
-function* taskWorkerRateManagerSaga(action: Action): Saga<void> {
-  const { colonyENSName, taskId, rating } = action.payload;
+function* taskWorkerRateManagerSaga({
+  payload: { colonyENSName, taskId, rating },
+  meta,
+}: Action): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -182,14 +207,22 @@ function* taskWorkerRateManagerSaga(action: Action): Saga<void> {
     );
 
     // rate manager
-    yield put(taskWorkerRateManager(colonyENSName, { taskId, secret }));
+    yield put(
+      taskWorkerRateManager({
+        identifier: colonyENSName,
+        params: { taskId, secret, role: 'MANAGER' },
+        meta,
+      }),
+    );
   } catch (error) {
     yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error);
   }
 }
 
-function* taskManagerRateWorkerSaga(action: Action): Saga<void> {
-  const { colonyENSName, taskId, rating } = action.payload;
+function* taskManagerRateWorkerSaga({
+  payload: { colonyENSName, taskId, rating },
+  meta,
+}: Action): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -200,14 +233,22 @@ function* taskManagerRateWorkerSaga(action: Action): Saga<void> {
     );
 
     // rate worker
-    yield put(taskManagerRateWorker(colonyENSName, { taskId, secret }));
+    yield put(
+      taskManagerRateWorker({
+        identifier: colonyENSName,
+        params: { taskId, secret, role: 'WORKER' },
+        meta,
+      }),
+    );
   } catch (error) {
     yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error);
   }
 }
 
-function* taskWorkerRevealRatingSaga(action: Action): Saga<void> {
-  const { colonyENSName, taskId } = action.payload;
+function* taskWorkerRevealRatingSaga({
+  payload: { colonyENSName, taskId },
+  meta,
+}: Action): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -218,10 +259,15 @@ function* taskWorkerRevealRatingSaga(action: Action): Saga<void> {
       salt,
     );
     yield put(
-      taskWorkerRevealRating(colonyENSName, {
-        taskId,
-        rating,
-        salt,
+      taskWorkerRevealRating({
+        identifier: colonyENSName,
+        params: {
+          taskId,
+          rating,
+          salt,
+          role: 'MANAGER',
+        },
+        meta,
       }),
     );
   } catch (error) {
@@ -229,8 +275,10 @@ function* taskWorkerRevealRatingSaga(action: Action): Saga<void> {
   }
 }
 
-function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
-  const { colonyENSName, taskId } = action.payload;
+function* taskManagerRevealRatingSaga({
+  payload: { colonyENSName, taskId },
+  meta,
+}: Action): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -241,10 +289,15 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
       salt,
     );
     yield put(
-      taskManagerRevealRating(colonyENSName, {
-        taskId,
-        rating,
-        salt,
+      taskManagerRevealRating({
+        identifier: colonyENSName,
+        params: {
+          taskId,
+          rating,
+          salt,
+          role: 'WORKER',
+        },
+        meta,
       }),
     );
   } catch (error) {
@@ -252,24 +305,34 @@ function* taskManagerRevealRatingSaga(action: Action): Saga<void> {
   }
 }
 
-function* taskWorkerClaimRewardSaga(action: Action): Saga<void> {
-  const { colonyENSName, taskId, tokenAddresses } = action.payload;
+function* taskWorkerClaimRewardSaga({
+  payload: { colonyENSName, taskId, tokenAddresses },
+  meta,
+}: Action): Saga<void> {
   yield all(
     tokenAddresses.map(token =>
       put(
-        taskWorkerClaimReward(colonyENSName, {
-          taskId,
-          token,
+        taskWorkerClaimReward({
+          identifier: colonyENSName,
+          params: {
+            taskId,
+            token,
+            role: 'WORKER',
+          },
+          meta,
         }),
       ),
     ),
   );
 }
 
-function* taskFinalizeSaga(action: Action): Saga<void> {
-  const { taskId, colonyENSName } = action.payload;
-
-  yield put(taskFinalize(colonyENSName, { taskId }));
+function* taskFinalizeSaga({
+  payload: { taskId, colonyENSName },
+  meta,
+}: Action): Saga<void> {
+  yield put(
+    taskFinalize({ identifier: colonyENSName, params: { taskId }, meta }),
+  );
 }
 
 export default function* taskSagas(): any {

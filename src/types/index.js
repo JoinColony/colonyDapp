@@ -14,6 +14,16 @@ export type Action = {
   meta?: any,
   error?: boolean,
 };
+
+export type UniqueAction = {
+  type: string,
+  payload: any,
+  meta: { id: string },
+  error?: boolean,
+};
+
+// export type UniqueAction = Action & { meta: { id: string } };
+
 export type ActionCreator = (...args: Array<any>) => Action;
 
 export type TakeFilter = (action: Action) => boolean;

@@ -279,9 +279,7 @@ function* validateUsername(action: Action): Saga<void> {
   yield put({ type: USERNAME_VALIDATE_SUCCESS });
 }
 
-function* createUsername(action: Action): Saga<void> {
-  const { username } = action.payload;
-
+function* createUsername({ payload: { username }, meta }: Action): Saga<void> {
   const ddb: DDB = yield getContext('ddb');
   const userProfileStoreAddress = yield select(userProfileStoreAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
@@ -298,13 +296,14 @@ function* createUsername(action: Action): Saga<void> {
   yield call([store, store.set], { username, walletAddress });
 
   yield put(
-    registerUserLabel(
-      { username, orbitDBPath: userProfileStoreAddress },
+    registerUserLabel({
+      params: { username, orbitDBPath: userProfileStoreAddress },
       // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
-      {
+      options: {
         gasLimit: 500000,
       },
-    ),
+      meta,
+    }),
   );
 }
 
