@@ -57,21 +57,18 @@ export type CreateTransactionAction<P: TransactionParams> = {
   type: string,
   payload: {
     context: ColonyContext,
-    id: string,
     identifier?: AddressOrENSName,
     lifecycle: LifecycleActionTypes,
     methodName: string,
     options?: SendOptions,
     params: P,
   },
+  meta: { id: string },
 };
 
 export type SendTransactionAction = {
   type: string,
-  payload: {
-    id: string,
-  },
-  meta: any,
+  meta: { id: string },
 };
 
 export type TransactionResponse<E: TransactionEventData> = {

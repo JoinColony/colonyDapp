@@ -1,8 +1,10 @@
 /* @flow */
 
-import type { SendOptions } from '@colony/colony-js-client';
+import {
+  createTxActionCreator,
+  NETWORK_CONTEXT,
+} from '../../core/actionCreators';
 
-import { createNetworkTransaction } from '../../core/actionCreators';
 import {
   USER_PROFILE_FETCH,
   USER_AVATAR_FETCH,
@@ -12,19 +14,17 @@ import {
   USERNAME_FETCH,
 } from '../actionTypes';
 
-export const registerUserLabel = (
-  params: { username: string, orbitDBPath: string },
-  options?: SendOptions,
-) =>
-  createNetworkTransaction({
-    params,
-    options,
-    methodName: 'registerUserLabel',
-    lifecycle: {
-      error: USERNAME_CREATE_ERROR,
-      sent: USERNAME_CREATE_SUCCESS,
-    },
-  });
+export const registerUserLabel = createTxActionCreator<{
+  username: string,
+  orbitDBPath: string,
+}>({
+  context: NETWORK_CONTEXT,
+  methodName: 'registerUserLabel',
+  lifecycle: {
+    error: USERNAME_CREATE_ERROR,
+    sent: USERNAME_CREATE_SUCCESS,
+  },
+});
 
 export const fetchUsername = (userAddress: string) => ({
   type: USERNAME_FETCH,
