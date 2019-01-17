@@ -16,7 +16,7 @@ import {
   parseUnclaimedTransferEvent,
   getLogsAndEvents,
   getFilterFormattedAddress,
-} from '~utils/logs';
+} from '~utils/web3/eventLogs';
 
 import {
   fetchColonyTransactions,

@@ -17,12 +17,12 @@ import type { Action, Address } from '~types';
 import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
-import { getHashedENSDomainString } from '~utils/ens';
+import { getHashedENSDomainString } from '~utils/web3/ens';
 import {
   getFilterFromPartial,
   getFilterFormattedAddress,
   parseUserTransferEvent,
-} from '~utils/logs';
+} from '~utils/web3/eventLogs';
 
 import { DDB } from '../../../lib/database';
 import { FeedStore, ValidatedKVStore } from '../../../lib/database/stores';

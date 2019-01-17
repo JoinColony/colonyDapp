@@ -15,7 +15,7 @@ import { replace, push } from 'connected-react-router';
 import type { Action, ENSName } from '~types';
 
 import { putError, callCaller } from '~utils/saga/effects';
-import { getHashedENSDomainString } from '~utils/ens';
+import { getHashedENSDomainString } from '~utils/web3/ens';
 
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { getAll } from '../../../lib/database/commands';

@@ -6,7 +6,7 @@ import { call, getContext, select, put } from 'redux-saga/effects';
 import type { ENSName } from '~types';
 import type { DocStore, ValidatedKVStore } from '../../../lib/database/stores';
 
-import { getENSDomainString } from '~utils/ens';
+import { getENSDomainString } from '~utils/web3/ens';
 import { raceError } from '~utils/saga/effects';
 
 import { DDB } from '../../../lib/database';

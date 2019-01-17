@@ -3,7 +3,7 @@
 import ColonyNetworkClient from '@colony/colony-js-client';
 import { isAddress } from 'web3-utils';
 
-import { getHashedENSDomainString } from '~utils/ens';
+import { getHashedENSDomainString } from '~utils/web3/ens';
 
 import type {
   Address,

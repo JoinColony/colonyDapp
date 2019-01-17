@@ -16,7 +16,7 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { getENSDomainString } from '~utils/ens';
+import { getENSDomainString } from '~utils/web3/ens';
 
 import { colonyStoreBlueprint } from '../../../dashboard/stores';
 
