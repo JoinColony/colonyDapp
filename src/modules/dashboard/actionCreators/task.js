@@ -1,8 +1,9 @@
 /* @flow */
 
-import type { SendOptions } from '@colony/colony-js-client';
-
-import { createColonyTransaction } from '../../core/actionCreators';
+import {
+  createTxActionCreator,
+  COLONY_CONTEXT,
+} from '../../core/actionCreators';
 
 import {
   TASK_SET_SKILL_ERROR,
@@ -28,195 +29,140 @@ import {
 /**
  * As worker or manager, I want to be able to set a skill
  */
-export const taskSetSkill = (
-  identifier: string,
-  params: {
-    taskId: number,
-    skillId: number,
+export const taskSetSkill = createTxActionCreator<{
+  taskId: number,
+  skillId: number,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'setTaskSkill',
+  lifecycle: {
+    error: TASK_SET_SKILL_ERROR,
+    success: TASK_SET_SKILL_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params,
-    options,
-    methodName: 'setTaskSkill',
-    identifier,
-    lifecycle: {
-      error: TASK_SET_SKILL_ERROR,
-      success: TASK_SET_SKILL_SUCCESS,
-    },
-  });
+});
 
 /**
  * As worker, submit work and rate before due date.
  */
-export const taskWorkerEnd = (
-  identifier: string,
-  params: {
-    taskId: number,
-    deliverableHash: string,
-    secret: string,
+export const taskWorkerEnd = createTxActionCreator<{
+  taskId: number,
+  deliverableHash: string,
+  secret: string,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'submitTaskDeliverableAndRating',
+  lifecycle: {
+    error: TASK_WORKER_END_ERROR,
+    success: TASK_WORKER_END_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params,
-    options,
-    methodName: 'submitTaskDeliverableAndRating',
-    identifier,
-    lifecycle: {
-      error: TASK_WORKER_END_ERROR,
-      success: TASK_WORKER_END_SUCCESS,
-    },
-  });
+});
 
 /**
  * As manager, end the task if the due date has elapsed.
  */
-export const taskManagerComplete = (
-  identifier: string,
-  params: {
-    taskId: number,
+export const taskManagerComplete = createTxActionCreator<{
+  taskId: number,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'completeTask',
+  lifecycle: {
+    error: TASK_MANAGER_COMPLETE_ERROR,
+    success: TASK_MANAGER_COMPLETE_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params,
-    options,
-    methodName: 'completeTask',
-    identifier,
-    lifecycle: {
-      error: TASK_MANAGER_COMPLETE_ERROR,
-      success: TASK_MANAGER_COMPLETE_SUCCESS,
-    },
-  });
+});
 
 /**
  * As manager, rate the worker.
  */
-export const taskManagerRateWorker = (
-  identifier: string,
-  params: {
-    taskId: number,
-    secret: string,
+export const taskManagerRateWorker = createTxActionCreator<{
+  taskId: number,
+  secret: string,
+  role: 'WORKER',
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'submitTaskWorkRating',
+  lifecycle: {
+    error: TASK_MANAGER_RATE_WORKER_ERROR,
+    success: TASK_MANAGER_RATE_WORKER_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params: { ...params, role: 'WORKER' },
-    options,
-    methodName: 'submitTaskWorkRating',
-    identifier,
-    lifecycle: {
-      error: TASK_MANAGER_RATE_WORKER_ERROR,
-      success: TASK_MANAGER_RATE_WORKER_SUCCESS,
-    },
-  });
+});
 
 /**
  * As worker, rate the manager.
  */
-export const taskWorkerRateManager = (
-  identifier: string,
-  params: {
-    taskId: number,
-    secret: string,
+export const taskWorkerRateManager = createTxActionCreator<{
+  taskId: number,
+  secret: string,
+  role: 'MANAGER',
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'submitTaskWorkRating',
+  lifecycle: {
+    error: TASK_WORKER_RATE_MANAGER_ERROR,
+    success: TASK_WORKER_RATE_MANAGER_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params: { ...params, role: 'MANAGER' },
-    options,
-    methodName: 'submitTaskWorkRating',
-    identifier,
-    lifecycle: {
-      error: TASK_WORKER_RATE_MANAGER_ERROR,
-      success: TASK_WORKER_RATE_MANAGER_SUCCESS,
-    },
-  });
+});
 
 /**
  * As worker, reveal manager rating.
  */
-export const taskWorkerRevealRating = (
-  identifier: string,
-  params: {
-    taskId: number,
-    rating: number,
-    salt: number,
+export const taskWorkerRevealRating = createTxActionCreator<{
+  taskId: number,
+  rating: number,
+  salt: number,
+  role: 'MANAGER',
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'revealTaskWorkRating',
+  lifecycle: {
+    error: TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+    success: TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params: { ...params, role: 'MANAGER' },
-    options,
-    methodName: 'revealTaskWorkRating',
-    identifier,
-    lifecycle: {
-      error: TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-      success: TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-    },
-  });
+});
 
 /**
  * As manager, reveal worker rating.
  */
-export const taskManagerRevealRating = (
-  identifier: string,
-  params: {
-    taskId: number,
-    rating: number,
-    salt: number,
+export const taskManagerRevealRating = createTxActionCreator<{
+  taskId: number,
+  rating: number,
+  salt: number,
+  role: 'WORKER',
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'revealTaskWorkRating',
+  lifecycle: {
+    error: TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+    success: TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params: { ...params, role: 'WORKER' },
-    options,
-    methodName: 'revealTaskWorkRating',
-    identifier,
-    lifecycle: {
-      error: TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-      success: TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
-    },
-  });
+});
 
-export const taskWorkerClaimReward = (
-  identifier: string,
-  params: {
-    taskId: number,
-    token: string,
+/**
+ * As the worker, claim payout
+ */
+export const taskWorkerClaimReward = createTxActionCreator<{
+  taskId: number,
+  token: string,
+  role: 'WORKER',
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'claimPayout',
+  lifecycle: {
+    error: TASK_WORKER_CLAIM_REWARD_ERROR,
+    success: TASK_WORKER_CLAIM_REWARD_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params: { ...params, role: 'WORKER' },
-    options,
-    methodName: 'claimPayout',
-    identifier,
-    lifecycle: {
-      error: TASK_WORKER_CLAIM_REWARD_ERROR,
-      success: TASK_WORKER_CLAIM_REWARD_SUCCESS,
-    },
-  });
+});
 
 /**
  * As anyone, finalize task.
  */
-export const taskFinalize = (
-  identifier: string,
-  params: {
-    taskId: number,
+export const taskFinalize = createTxActionCreator<{
+  taskId: number,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'finalizeTask',
+  lifecycle: {
+    error: TASK_FINALIZE_ERROR,
+    success: TASK_FINALIZE_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params: { ...params },
-    options,
-    methodName: 'finalizeTask',
-    identifier,
-    lifecycle: {
-      error: TASK_FINALIZE_ERROR,
-      success: TASK_FINALIZE_SUCCESS,
-    },
-  });
+});

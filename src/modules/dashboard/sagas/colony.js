@@ -62,10 +62,10 @@ import {
 } from '../actionTypes';
 
 import {
-  addColonyAdmin as addColonyAdminAction,
+  addColonyAdmin,
+  removeColonyAdmin,
   createColony,
   createColonyLabel,
-  removeColonyAdmin as removeColonyAdminAction,
 } from '../actionCreators';
 
 function* getOrCreateColonyStore(colonyENSName: ENSName) {
@@ -90,8 +90,13 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
 /*
  * Simply forward on the form params to create a transaction.
  */
-function* createColonySaga({ payload: params }: *): Saga<void> {
-  yield put(createColony(params));
+function* createColonySaga({ payload: params, meta }: Action): Saga<void> {
+  yield put(
+    createColony({
+      meta,
+      params,
+    }),
+  );
 }
 
 function* createColonyLabelSaga({
@@ -105,6 +110,7 @@ function* createColonyLabelSaga({
     tokenSymbol,
     tokenIcon,
   },
+  meta,
 }: Action): Saga<void> {
   const colonyStoreData = {
     address: colonyAddress,
@@ -163,11 +169,16 @@ function* createColonyLabelSaga({
   /*
    * Dispatch an action to create the given ENS name for the colony.
    */
-  const action = yield call(createColonyLabel, colonyAddress, {
-    colonyName: ensName,
-    orbitDBPath: store.address.toString(),
-  });
-  yield put(action);
+  yield put(
+    createColonyLabel({
+      identifier: colonyAddress,
+      params: {
+        colonyName: ensName,
+        orbitDBPath: store.address.toString(),
+      },
+      meta,
+    }),
+  );
 }
 
 function* validateColonyDomain(action: Action): Saga<void> {
@@ -354,8 +365,9 @@ function* removeColonyAvatar(action: Action): Saga<void> {
   }
 }
 
-function* addColonyAdmin({
+function* addColonyAdminSaga({
   payload: { newAdmin, ensName },
+  meta,
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = newAdmin.profile;
@@ -385,10 +397,13 @@ function* addColonyAdmin({
     /*
      * Dispatch the action to set the admin on the contract level (transaction)
      */
-    const action = yield call(addColonyAdminAction, colonyAddress, {
-      user: walletAddress,
-    });
-    yield put(action);
+    yield put(
+      addColonyAdmin({
+        identifier: colonyAddress,
+        params: { user: walletAddress },
+        meta,
+      }),
+    );
     /*
      * Redirect the user back to the admins tab
      */
@@ -402,8 +417,9 @@ function* addColonyAdmin({
   }
 }
 
-function* removeColonyAdmin({
+function* removeColonyAdminSaga({
   payload: { admin, ensName },
+  meta,
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = admin;
@@ -437,10 +453,15 @@ function* removeColonyAdmin({
     /*
      * Dispatch the action to set the admin on the contract level (transaction)
      */
-    const action = yield call(removeColonyAdminAction, colonyAddress, {
-      user: walletAddress,
-    });
-    yield put(action);
+    yield put(
+      removeColonyAdmin({
+        identifier: colonyAddress,
+        params: {
+          user: walletAddress,
+        },
+        meta,
+      }),
+    );
     /*
      * Redirect the user back to the admins tab
      */
@@ -461,9 +482,9 @@ export default function* colonySagas(): any {
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
   yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
-  yield takeEvery(COLONY_ADMIN_ADD, addColonyAdmin);
-  yield takeEvery(COLONY_ADMIN_REMOVE, removeColonyAdmin);
   yield takeEvery(COLONY_ENS_NAME_FETCH, fetchColonyENSName);
+  yield takeEvery(COLONY_ADMIN_ADD, addColonyAdminSaga);
+  yield takeEvery(COLONY_ADMIN_REMOVE, removeColonyAdminSaga);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);

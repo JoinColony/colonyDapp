@@ -6,7 +6,7 @@ import { Transaction } from '~immutable';
 
 import {
   transactionSent,
-  createTransaction,
+  createTxActionCreator,
   transactionEventDataError,
   transactionEventDataReceived,
   transactionReceiptError,
@@ -46,14 +46,19 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   // Actions
-  const createdTx = createTransaction({
-    id,
+
+  const createdTx = createTxActionCreator({
     context,
-    methodName,
-    params,
     lifecycle,
+    methodName,
+  })({
+    meta: { id },
     options,
+    params,
+    // TODO: this won't be necessary anymore soon as we will always supply an external id
+    id, // This is custom to the tests (overwrites the generated id)
   });
+
   const sentTx = transactionSent(id, { hash });
   const receiptReceived = transactionReceiptReceived(id, { hash });
   const eventDataReceived = transactionEventDataReceived(id, { eventData });

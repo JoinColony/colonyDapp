@@ -100,8 +100,9 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
  */
 function* createTokenSaga({
   payload: { tokenName: name, tokenSymbol: symbol },
+  meta,
 }: *): Saga<void> {
-  yield put(createToken({ name, symbol }));
+  yield put(createToken({ params: { name, symbol }, meta }));
 }
 
 /**

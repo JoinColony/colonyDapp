@@ -169,9 +169,16 @@ const filterClaimSuccess = (token: Address, colonyENSName: ENSName) => ({
  */
 function* claimColonyToken({
   payload: { ensName, tokenAddress: token },
+  meta,
 }: Action): Saga<void> {
   try {
-    yield put(claimColonyTokenTransaction(ensName, { token }));
+    yield put(
+      claimColonyTokenTransaction({
+        identifier: ensName,
+        params: { token },
+        meta,
+      }),
+    );
     yield raceError(
       filterClaimSuccess(token, ensName),
       COLONY_CLAIM_TOKEN_ERROR,

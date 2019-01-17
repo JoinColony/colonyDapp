@@ -9,11 +9,6 @@ import type { AddressOrENSName, ColonyContext } from '~types';
 import type { TransactionParams, TransactionEventData } from '~immutable';
 
 import {
-  COLONY_CONTEXT,
-  NETWORK_CONTEXT,
-} from '../../../lib/ColonyManager/constants';
-
-import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -23,68 +18,50 @@ import {
   TRANSACTION_SENT,
 } from '../actionTypes';
 
-export const createTransaction = <P: TransactionParams>({
-  context,
-  identifier,
-  lifecycle = {},
-  methodName,
-  options,
-  params,
-  ...payload
-}: {
+type TxFactoryOptions = {
   context: ColonyContext,
-  identifier?: AddressOrENSName,
   lifecycle?: LifecycleActionTypes,
   methodName: string,
-  options?: SendOptions,
+};
+
+type TxActionCreatorOptions<P: TransactionParams> = {
+  identifier?: AddressOrENSName,
+  meta: any,
   params: P,
-}): CreateTransactionAction<P> => ({
+  options?: SendOptions,
+};
+
+type TxActionCreator<P: TransactionParams> = (
+  TxActionCreatorOptions<P>,
+) => CreateTransactionAction<P>;
+
+export {
+  COLONY_CONTEXT,
+  NETWORK_CONTEXT,
+} from '../../../lib/ColonyManager/constants';
+
+export const createTxActionCreator = <P: TransactionParams>({
+  context,
+  lifecycle = {},
+  methodName,
+}: TxFactoryOptions): TxActionCreator<P> => ({
+  identifier,
+  meta,
+  options,
+  params,
+}: TxActionCreatorOptions<P>): CreateTransactionAction<P> => ({
   type: TRANSACTION_CREATED,
   payload: {
     context,
     createdAt: new Date(),
-    id: nanoid(),
     identifier,
     lifecycle,
     methodName,
     options,
     params,
-    ...payload,
   },
+  meta: { id: meta.id || nanoid() },
 });
-
-export const createNetworkTransaction = <P: TransactionParams>({
-  methodName,
-  params,
-  ...payload
-}: {
-  methodName: string,
-  params: P,
-}): CreateTransactionAction<P> =>
-  createTransaction<P>({
-    context: NETWORK_CONTEXT,
-    methodName,
-    params,
-    ...payload,
-  });
-
-export const createColonyTransaction = <P: TransactionParams>({
-  identifier,
-  methodName,
-  params,
-  ...payload
-}: {
-  identifier: AddressOrENSName,
-  methodName: string,
-  params: P,
-}): CreateTransactionAction<P> =>
-  createTransaction({
-    context: COLONY_CONTEXT,
-    identifier,
-    methodName,
-    params,
-    ...payload,
-  });
 
 export const transactionSendError = <P: TransactionParams>(
   id: string,
@@ -92,7 +69,8 @@ export const transactionSendError = <P: TransactionParams>(
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'send', ...payload } },
+  payload: { error: { type: 'send', ...payload } },
+  meta: { id },
 });
 
 export const transactionUnsuccessfulError = <P: TransactionParams>(
@@ -101,7 +79,8 @@ export const transactionUnsuccessfulError = <P: TransactionParams>(
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'unsuccessful', ...payload } },
+  payload: { error: { type: 'unsuccessful', ...payload } },
+  meta: { id },
 });
 
 export const transactionEventDataError = <P: TransactionParams>(
@@ -110,7 +89,8 @@ export const transactionEventDataError = <P: TransactionParams>(
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'eventData', ...payload } },
+  payload: { error: { type: 'eventData', ...payload } },
+  meta: { id },
 });
 
 export const transactionReceiptError = <P: TransactionParams>(
@@ -119,7 +99,8 @@ export const transactionReceiptError = <P: TransactionParams>(
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_ERROR,
-  payload: { id, error: { type: 'receipt', ...payload } },
+  payload: { error: { type: 'receipt', ...payload } },
+  meta: { id },
 });
 
 export const transactionReceiptReceived = <P: TransactionParams>(
@@ -128,7 +109,8 @@ export const transactionReceiptReceived = <P: TransactionParams>(
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_RECEIPT_RECEIVED,
-  payload: { id, ...payload },
+  payload,
+  meta: { id },
 });
 
 export const transactionSent = <P: TransactionParams>(
@@ -137,7 +119,8 @@ export const transactionSent = <P: TransactionParams>(
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_SENT,
-  payload: { id, ...payload },
+  payload,
+  meta: { id },
 });
 
 export const transactionEventDataReceived = <
@@ -149,7 +132,8 @@ export const transactionEventDataReceived = <
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_EVENT_DATA_RECEIVED,
-  payload: { id, ...payload },
+  payload,
+  meta: { id },
 });
 
 export const transactionGasSuggested = (
@@ -159,10 +143,10 @@ export const transactionGasSuggested = (
 ) => ({
   type: TRANSACTION_GAS_SUGGESTED,
   payload: {
-    id,
     suggestedGasLimit,
     suggestedGasPrice,
   },
+  meta: { id },
 });
 
 export const transactionGasSet = (
@@ -172,8 +156,8 @@ export const transactionGasSet = (
 ) => ({
   type: TRANSACTION_GAS_SET,
   payload: {
-    id,
     gasLimit,
     gasPrice,
   },
+  meta: { id },
 });

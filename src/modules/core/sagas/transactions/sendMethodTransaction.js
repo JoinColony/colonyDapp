@@ -130,7 +130,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
       // Handle lifecycle action types
       switch (action.type) {
         case TRANSACTION_ERROR:
-          if (errorType) yield put({ type: errorType, payload });
+          if (errorType) yield put({ type: errorType, payload, meta: { id } });
           break;
 
         case TRANSACTION_SENT:
@@ -156,7 +156,11 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
       }
 
       if (successType && receipt && eventData && !putSuccess) {
-        yield put({ type: successType, payload: { receipt, eventData } });
+        yield put({
+          type: successType,
+          payload: { receipt, eventData },
+          meta: { id },
+        });
         putSuccess = true;
       }
     }
@@ -173,7 +177,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 export default function* sendMethodTransaction<
   P: TransactionParams,
   E: TransactionEventData,
->({ payload: { id } }: SendTransactionAction): Saga<void> {
+>({ meta: { id } }: SendTransactionAction): Saga<void> {
   let tx;
 
   try {
