@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
+import { compose, withProps } from 'recompose';
 
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
@@ -10,9 +11,19 @@ import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
 import TransactionDetails from './TransactionDetails.jsx';
 
+import { withColony, withTask, withToken } from '../../hocs';
+import { withUser } from '../../../users/hocs';
+
 import styles from './TransactionListItem.css';
 
-import type { TransactionType } from '~types';
+import type {
+  ColonyRecord,
+  ContractTransactionRecord,
+  DataRecord,
+  TaskRecord,
+  TokenRecord,
+  UserRecord,
+} from '~immutable';
 
 const MSG = defineMessages({
   buttonClaim: {
@@ -39,7 +50,11 @@ type Props = {
   /*
    * User data Object, follows the same format as UserPicker
    */
-  transaction: TransactionType,
+  transaction: ContractTransactionRecord,
+  colony?: DataRecord<ColonyRecord>,
+  task?: TaskRecord,
+  token?: TokenRecord,
+  user?: UserRecord,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -57,7 +72,7 @@ type Props = {
    * Method to call when clicking the 'Claim' button
    * Only by setting this method, will the actual button show up
    */
-  onClaim?: TransactionType => any,
+  onClaim?: ContractTransactionRecord => any,
   /*
    * If to show the button to link to etherscan (or not)
    *
@@ -69,12 +84,16 @@ type Props = {
 
 const TransactionListItem = ({
   transaction,
+  colony,
+  task,
+  token,
+  user,
   showMaskedAddress = true,
   incoming = true,
   onClaim,
   linkToEtherscan,
 }: Props) => {
-  const { date, amount, symbol } = transaction;
+  const { date, amount } = transaction;
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.transactionDate}>
@@ -103,6 +122,10 @@ const TransactionListItem = ({
       <TableCell className={styles.transactionDetails}>
         <TransactionDetails
           transaction={transaction}
+          colony={colony}
+          task={task}
+          token={token}
+          user={user}
           showMaskedAddress={showMaskedAddress}
           incoming={incoming}
         />
@@ -130,7 +153,8 @@ const TransactionListItem = ({
           value={amount}
           unit="ether"
           decimals={1}
-          suffix={` ${symbol}`}
+          // TODO: what should we show when we don't recognise the token?
+          suffix={` ${token ? token.symbol : '???'}`}
         />
       </TableCell>
     </TableRow>
@@ -139,4 +163,20 @@ const TransactionListItem = ({
 
 TransactionListItem.displayName = displayName;
 
-export default TransactionListItem;
+/*
+ * TODO: in the future, come up with a better way of providing this data to the
+ * component. Many recompose wrappers is potentially bad for performance.
+ * Soon-to-be-arriving React Hooks could offer a nicer solution here.
+ */
+export default compose(
+  withProps(({ transaction: { colonyENSName, taskId, token, from, to } }) => ({
+    ensName: colonyENSName,
+    taskId,
+    tokenAddress: token,
+    userAddress: from || to,
+  })),
+  withColony,
+  withTask,
+  withToken,
+  withUser,
+)(TransactionListItem);

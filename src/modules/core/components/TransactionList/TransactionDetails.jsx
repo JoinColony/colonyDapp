@@ -8,7 +8,13 @@ import Link from '~core/Link';
 
 import styles from './TransactionDetails.css';
 
-import type { TransactionType } from '~types';
+import type {
+  ColonyRecord,
+  ContractTransactionRecord,
+  DataRecord,
+  TaskRecord,
+  UserRecord,
+} from '~immutable';
 
 const MSG = defineMessages({
   fromText: {
@@ -30,7 +36,10 @@ type Props = {
   /*
    * User data Object, follows the same format as UserPicker
    */
-  transaction: TransactionType,
+  transaction: ContractTransactionRecord,
+  colony?: DataRecord<ColonyRecord>,
+  task?: TaskRecord,
+  user?: UserRecord,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -65,23 +74,30 @@ const UserDetails = ({
   </span>
 );
 
-const ColonyDetails = ({ name = '', address = '' }: Object) => (
+const ColonyDetails = ({ colony }: { colony: ColonyRecord }) => (
   <span>
-    {name && <span>{`${name} `}</span>}
-    {!name && address && <span>{address}</span>}
+    {colony.name && <span>{`${colony.name} `}</span>}
+    {!colony.name && colony.address && <span>{colony.address}</span>}
   </span>
 );
 
-const TaskDetails = ({ title = '', id }: Object) => (
+const TaskDetails = ({ task }: { task: TaskRecord }) => (
   <span>
-    {title && id && (
-      <Link text={title} to={`/task/${id}`} className={styles.taskLink} />
+    {task.title && task.id && (
+      <Link
+        text={task.title}
+        to={`/colony/${task.colonyENSName}/task/${task.id}`}
+        className={styles.taskLink}
+      />
     )}
   </span>
 );
 
 const TransactionDetails = ({
-  transaction: { from = '', to = '', userDetails, colonyDetails, task },
+  transaction: { from = '', to = '' },
+  colony,
+  task,
+  user,
   showMaskedAddress = true,
   incoming = true,
 }: Props) => (
@@ -101,7 +117,7 @@ const TransactionDetails = ({
               values={{
                 senderString: (
                   <UserDetails
-                    {...userDetails}
+                    {...(user ? user.profile : {})}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -120,7 +136,7 @@ const TransactionDetails = ({
           {task && task.id && (
             <FormattedMessage
               {...MSG.fromText}
-              values={{ senderString: <TaskDetails {...task} /> }}
+              values={{ senderString: <TaskDetails task={task} /> }}
             />
           )}
         </p>
@@ -128,19 +144,25 @@ const TransactionDetails = ({
          * To the colony
          */}
         <p className={styles.secondaryText}>
-          <FormattedMessage
-            {...MSG.toText}
-            values={{
-              recipientString: (
-                <ColonyDetails
-                  {...colonyDetails}
-                  address={
-                    showMaskedAddress ? <MaskedAddress address={to} /> : to
-                  }
-                />
-              ),
-            }}
-          />
+          {colony && colony.record && (
+            <FormattedMessage
+              {...MSG.toText}
+              values={{
+                recipientString: (
+                  <ColonyDetails
+                    colony={colony.record}
+                    address={
+                      showMaskedAddress ? (
+                        <MaskedAddress address={colony.record.address} />
+                      ) : (
+                        colony.record.address
+                      )
+                    }
+                  />
+                ),
+              }}
+            />
+          )}
         </p>
       </div>
     )}
@@ -159,7 +181,7 @@ const TransactionDetails = ({
               values={{
                 recipientString: (
                   <UserDetails
-                    {...userDetails}
+                    {...(user ? user.profile : {})}
                     address={
                       showMaskedAddress ? <MaskedAddress address={to} /> : to
                     }
@@ -174,7 +196,7 @@ const TransactionDetails = ({
           {!to && task && task.id && (
             <FormattedMessage
               {...MSG.toText}
-              values={{ recipientString: <TaskDetails {...task} /> }}
+              values={{ recipientString: <TaskDetails task={task} /> }}
             />
           )}
         </p>
@@ -182,13 +204,13 @@ const TransactionDetails = ({
          * From the colony
          */}
         <p className={styles.secondaryText}>
-          {from && (
+          {colony && colony.record && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
                 senderString: (
                   <ColonyDetails
-                    {...colonyDetails}
+                    colony={colony.record}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -199,15 +221,6 @@ const TransactionDetails = ({
                   />
                 ),
               }}
-            />
-          )}
-          {/*
-           * From a task
-           */}
-          {!from && task && task.id && (
-            <FormattedMessage
-              {...MSG.fromText}
-              values={{ senderString: <TaskDetails {...task} /> }}
             />
           )}
         </p>

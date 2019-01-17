@@ -9,6 +9,7 @@ import type { DataRecord } from './Data';
 
 export type UsersProps = {
   avatars: ImmutableMap<string, string>, // username => avatarHash
+  usernames: ImmutableMap<string, string>, // address => username
   users: ImmutableMap<string, DataRecord<UserRecord>>, // username => DataRecord<UserRecord>
 };
 
@@ -16,6 +17,7 @@ export type UsersRecord = RecordOf<UsersProps>;
 
 const defaultValues: UsersProps = {
   avatars: new ImmutableMap(),
+  usernames: new ImmutableMap(),
   users: new ImmutableMap(),
 };
 

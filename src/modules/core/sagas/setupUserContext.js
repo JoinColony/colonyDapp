@@ -9,6 +9,7 @@ import { create, putError } from '~utils/saga/effects';
 import type { Action } from '~types';
 import type { UserProfileProps } from '~immutable';
 
+import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupTransactionsSagas from './transactions';
 import {
@@ -28,6 +29,7 @@ import * as resolvers from '../../../lib/database/resolvers';
 
 function* setupContextSagas(): any {
   yield all([
+    setupAdminSagas(),
     setupDashboardSagas(),
     setupUserSagas(),
     setupTransactionsSagas(),

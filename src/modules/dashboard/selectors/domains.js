@@ -2,47 +2,25 @@
 
 import { createSelector } from 'reselect';
 
-import type { RootState, ENSName } from '~types';
-import type { DomainRecord, DataRecord, DomainId } from '~immutable';
-
-import type { AllDomainsState, DomainsMap } from '../types';
+import type { RootState } from '~types';
 
 import ns from '../namespace';
 
 /*
- * Domains selector types
- */
-type AllDomainsSelector = (state: RootState) => AllDomainsState;
-type ColonyDomainsSelector = (
-  state: RootState,
-  props: { colonyENSName: ENSName },
-) => DomainsMap;
-type SingleDomainSelector = (
-  state: RootState,
-  props: { colonyENSName: ENSName },
-) => ?DataRecord<DomainRecord>;
-type SingleDomainTaskIdsSelector = (
-  state: RootState,
-  props: { colonyENSName: ENSName, domainId: DomainId },
-) => $PropertyType<DomainRecord, 'taskIds'>;
-
-/*
  * Domains selectors
  */
-export const allDomainsSelector: AllDomainsSelector = createSelector(
-  (state: RootState) => state[ns].allDomains,
-);
-export const colonyDomainsSelector: ColonyDomainsSelector = createSelector(
+export const allDomainsSelector = (state: RootState) => state[ns].allDomains;
+export const colonyDomainsSelector = createSelector(
   allDomainsSelector,
   (state, props) => props.colonyENSName,
   (allDomains, colonyENSName) => allDomains.get(colonyENSName),
 );
-export const singleDomainSelector: SingleDomainSelector = createSelector(
+export const singleDomainSelector = createSelector(
   colonyDomainsSelector,
   (state, props) => props.domainId,
   (domains, domainId) => domains.get(domainId),
 );
-export const singleDomainTaskIdsSelector: SingleDomainTaskIdsSelector = createSelector(
+export const singleDomainTaskIdsSelector = createSelector(
   singleDomainSelector,
   domain => domain.get('taskIds'),
 );

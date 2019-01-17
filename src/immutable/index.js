@@ -3,6 +3,7 @@
 export { default as ActivityFeedItem } from './ActivityFeedItem';
 export { default as Colony } from './Colony';
 export { default as ColonyAdmin } from './ColonyAdmin';
+export { default as ContractTransaction } from './ContractTransaction';
 export { default as Data } from './Data';
 export { default as Domain } from './Domain';
 export { default as Skill } from './Skill';
@@ -19,10 +20,11 @@ export { default as UserProfile } from './UserProfile';
 export { default as Users } from './Users';
 export { default as Wallet } from './Wallet';
 
-export * from './constants';
 export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './ColonyAdmin';
+export * from './constants';
+export * from './ContractTransaction';
 export * from './Data';
 export * from './Domain';
 export * from './Skill';
