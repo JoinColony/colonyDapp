@@ -38,7 +38,19 @@ const InitialTask = ({
             <button
               className={styles.taskDetailsTitle}
               type="button"
-              onClick={() => openDialog('CreateUsernameDialog')}
+              onClick={() =>
+                openDialog('UnfinishedProfileDialog')
+                  .afterClosed()
+                  .then(() =>
+                    openDialog('ClaimProfileDialog', { walletAddress })
+                      .afterClosed()
+                      .then(() => openDialog('ENSNameDialog'))
+                      .catch(err => {
+                        // eslint-disable-next-line no-console
+                        console.log(err);
+                      }),
+                  )
+              }
             >
               <FormattedMessage {...title} values={titleValues} />
             </button>
