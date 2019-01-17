@@ -16,9 +16,9 @@ import {
   USERNAME_CREATE,
   USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
-  USERNAME_VALIDATE,
-  USERNAME_VALIDATE_SUCCESS,
-  USERNAME_VALIDATE_ERROR,
+  USERNAME_CHECK_AVAILABILITY,
+  USERNAME_CHECK_AVAILABILITY_SUCCESS,
+  USERNAME_CHECK_AVAILABILITY_ERROR,
 } from '../../actionTypes';
 
 const MSG = defineMessages({
@@ -54,9 +54,9 @@ class CreateUsernameDialog extends Component<Props> {
   }
 
   checkUsernameTaken = promiseListener.createAsyncFunction({
-    start: USERNAME_VALIDATE,
-    resolve: USERNAME_VALIDATE_SUCCESS,
-    reject: USERNAME_VALIDATE_ERROR,
+    start: USERNAME_CHECK_AVAILABILITY,
+    resolve: USERNAME_CHECK_AVAILABILITY_SUCCESS,
+    reject: USERNAME_CHECK_AVAILABILITY_ERROR,
   });
 
   validateUsername = async (values: FormValues) => {

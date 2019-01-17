@@ -3,12 +3,14 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { OpenDialog } from '~core/Dialog/types';
+import withDialog from '~core/Dialog/withDialog';
+
 import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
 } from '~core/DropdownMenu';
-import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
@@ -52,10 +54,32 @@ const MSG = defineMessages({
 type Props = {
   closePopover: () => void,
   user: UserRecord,
+  openDialog: OpenDialog,
 };
 
 class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
+
+  handleSetup = () => {
+    const {
+      openDialog,
+      user: {
+        profile: { walletAddress },
+      },
+    } = this.props;
+
+    return openDialog('UnfinishedProfileDialog')
+      .afterClosed()
+      .then(() =>
+        openDialog('ClaimProfileDialog', { walletAddress })
+          .afterClosed()
+          .then(() => openDialog('ENSNameDialog'))
+          .catch(err => {
+            // eslint-disable-next-line no-console
+            console.log(err);
+          }),
+      );
+  };
 
   renderUserSection = () => {
     const {
@@ -67,13 +91,9 @@ class AvatarDropdownPopover extends Component<Props> {
       <DropdownMenuSection separator>
         {!username && (
           <DropdownMenuItem>
-            <DialogLink to="CreateUsernameDialog">
-              {({ open }) => (
-                <button type="button" onClick={open}>
-                  <FormattedMessage {...MSG.buttonGetStarted} />
-                </button>
-              )}
-            </DialogLink>
+            <button type="button" onClick={this.handleSetup}>
+              <FormattedMessage {...MSG.buttonGetStarted} />
+            </button>
           </DropdownMenuItem>
         )}
         {username && (
@@ -149,4 +169,4 @@ class AvatarDropdownPopover extends Component<Props> {
   }
 }
 
-export default AvatarDropdownPopover;
+export default withDialog()(AvatarDropdownPopover);

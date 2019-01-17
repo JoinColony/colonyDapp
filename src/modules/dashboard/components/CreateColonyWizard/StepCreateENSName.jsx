@@ -63,7 +63,7 @@ const MSG = defineMessages({
     defaultMessage: 'Done',
   },
   errorDomainTaken: {
-    id: 'users.CreateUsernameDialog.errorDomainTaken',
+    id: 'dashboard.CreateColonyWizard.StepCreateENSName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
 });

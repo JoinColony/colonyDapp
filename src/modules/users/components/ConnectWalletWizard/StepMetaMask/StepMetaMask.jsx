@@ -116,6 +116,7 @@ class MetaMask extends Component<Props, State> {
 
   render() {
     const {
+      nextStep,
       previousStep,
       wizardForm,
       formHelpers: { includeWizardValues },
@@ -129,6 +130,7 @@ class MetaMask extends Component<Props, State> {
         onError={(_: string, { setStatus }: FormikBag<Object, FormValues>) => {
           setStatus({ error: MSG.errorOpenMetamask });
         }}
+        onSuccess={values => nextStep({ ...values })}
         setPayload={includeWizardValues}
         {...wizardForm}
       >

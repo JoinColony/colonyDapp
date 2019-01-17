@@ -2,7 +2,7 @@
 
 import type { FormikProps } from 'formik';
 
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -13,7 +13,18 @@ import Input from '~core/Fields/Input';
 import Button from '~core/Button';
 
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm } from '~core/Fields';
+import { ActionForm, FormStatus } from '~core/Fields';
+
+import promiseListener from '../../../../createPromiseListener';
+
+import {
+  USERNAME_CREATE,
+  USERNAME_CREATE_ERROR,
+  USERNAME_CREATE_SUCCESS,
+  USERNAME_CHECK_AVAILABILITY,
+  USERNAME_CHECK_AVAILABILITY_SUCCESS,
+  USERNAME_CHECK_AVAILABILITY_ERROR,
+} from '../../actionTypes';
 
 const MSG = defineMessages({
   iWillDoItLater: {
@@ -48,6 +59,10 @@ const MSG = defineMessages({
     id: 'users.ENSNameDialog.helpENSName',
     defaultMessage: 'Only use letters, numbers, and dashes',
   },
+  errorDomainTaken: {
+    id: 'users.ENSNameDialog.errorDomainTaken',
+    defaultMessage: 'This colony domain name is already taken',
+  },
 });
 
 type FormValues = {
@@ -59,78 +74,108 @@ type Props = {
   close: () => void,
 };
 
+type State = {};
+
 const validationSchema = yup.object({
-  // TODO: Validate ENS name further by checking blacklist, check also if unique
-  // and if there's incorrect characters etc.
-  ENSname: yup.string().required(),
+  username: yup
+    .string()
+    .required()
+    .ensAddress(),
 });
 
-const displayName = 'users.ENSNameDialog';
+class ENSNameDialog extends Component<Props, State> {
+  static displayName = 'users.ENSNameDialog';
 
-const ENSNameDialog = ({ cancel, close }: Props) => (
-  <Dialog cancel={cancel}>
-    <ActionForm
-      submit="ENS_NAME_CREATE"
-      success="ENS_NAME_CREATE_SUCCESS"
-      error="ENS_NAME_CREATE_ERROR"
-      validationSchema={validationSchema}
-      onSuccess={close}
-    >
-      {({ isValid }: FormikProps<FormValues>) => (
-        <Fragment>
-          <DialogSection>
-            <Heading
-              appearance={{ size: 'medium', margin: 'none' }}
-              text={MSG.stepTitle}
-            />
-          </DialogSection>
-          <DialogSection>
-            <div className={styles.sectionBody}>
-              <FormattedMessage
-                {...MSG.stepText}
-                values={{
-                  url: (
-                    <b>
-                      <FormattedMessage {...MSG.url} />
-                    </b>
-                  ),
-                  mention: (
-                    <b>
-                      <FormattedMessage {...MSG.mention} />
-                    </b>
-                  ),
-                }}
-              />
-            </div>
-          </DialogSection>
-          <DialogSection>
-            <Input
-              name="ENSname"
-              label={MSG.inputLabel}
-              appearance={{ theme: 'fat' }}
-              extensionString=".joincolony.eth"
-              extra={<FormattedMessage {...MSG.helpENSName} />}
-            />
-          </DialogSection>
-          <DialogSection appearance={{ align: 'right' }}>
-            <Button
-              appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={cancel}
-              text={MSG.iWillDoItLater}
-            />
-            <Button
-              appearance={{ theme: 'primary', size: 'large' }}
-              onClick={close}
-              text={{ id: 'button.confirm' }}
-              disabled={!isValid}
-            />
-          </DialogSection>
-        </Fragment>
-      )}
-    </ActionForm>
-  </Dialog>
-);
+  componentWillUnmount() {
+    this.checkDomainTaken.unsubscribe();
+  }
 
-ENSNameDialog.displayName = displayName;
+  checkDomainTaken = promiseListener.createAsyncFunction({
+    start: USERNAME_CHECK_AVAILABILITY,
+    resolve: USERNAME_CHECK_AVAILABILITY_SUCCESS,
+    reject: USERNAME_CHECK_AVAILABILITY_ERROR,
+  });
+
+  validateDomain = async (values: FormValues) => {
+    try {
+      await this.checkDomainTaken.asyncFunction(values);
+    } catch (e) {
+      const error = {
+        username: MSG.errorDomainTaken,
+      };
+      throw error;
+    }
+  };
+
+  render() {
+    const { cancel, close } = this.props;
+    return (
+      <Dialog cancel={cancel}>
+        <ActionForm
+          submit={USERNAME_CREATE}
+          success={USERNAME_CREATE_SUCCESS}
+          error={USERNAME_CREATE_ERROR}
+          validationSchema={validationSchema}
+          validate={this.validateDomain}
+          onSuccess={close}
+        >
+          {({ isValid, isSubmitting, status }: FormikProps<FormValues>) => (
+            <Fragment>
+              <DialogSection>
+                <Heading
+                  appearance={{ size: 'medium', margin: 'none' }}
+                  text={MSG.stepTitle}
+                />
+              </DialogSection>
+              <DialogSection>
+                <div className={styles.sectionBody}>
+                  <FormattedMessage
+                    {...MSG.stepText}
+                    values={{
+                      url: (
+                        <b>
+                          <FormattedMessage {...MSG.url} />
+                        </b>
+                      ),
+                      mention: (
+                        <b>
+                          <FormattedMessage {...MSG.mention} />
+                        </b>
+                      ),
+                    }}
+                  />
+                </div>
+              </DialogSection>
+              <DialogSection>
+                <Input
+                  name="username"
+                  label={MSG.inputLabel}
+                  appearance={{ theme: 'fat' }}
+                  extensionString=".joincolony.eth"
+                  extra={<FormattedMessage {...MSG.helpENSName} />}
+                />
+              </DialogSection>
+              <DialogSection appearance={{ align: 'right' }}>
+                <Button
+                  appearance={{ theme: 'secondary', size: 'large' }}
+                  onClick={cancel}
+                  text={MSG.iWillDoItLater}
+                />
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  text={{ id: 'button.confirm' }}
+                  disabled={!isValid}
+                  type="submit"
+                  loading={isSubmitting}
+                />
+              </DialogSection>
+              <FormStatus status={status} />
+            </Fragment>
+          )}
+        </ActionForm>
+      </Dialog>
+    );
+  }
+}
 
 export default ENSNameDialog;
