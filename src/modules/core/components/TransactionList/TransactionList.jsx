@@ -11,6 +11,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import TransactionListItem from './TransactionListItem.jsx';
 
+import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 import type { ContractTransactionRecord, DataRecord } from '~immutable';
 
@@ -48,6 +49,7 @@ type Props = {
    * the *Claim* button won't show up anymore
    */
   linkToEtherscan?: boolean,
+  emptyState?: Node,
 };
 
 const displayName: string = 'admin.TransactionList';
@@ -58,6 +60,7 @@ const TransactionList = ({
   showMaskedAddress,
   onClaim,
   linkToEtherscan = true,
+  emptyState,
 }: Props) => (
   <div>
     {label && (
@@ -82,11 +85,14 @@ const TransactionList = ({
         </TableBody>
       </Table>
     )}
-    {transactions && transactions.record && transactions.record.size === 0 && (
-      <p>
-        <FormattedMessage {...MSG.noTransactions} />
-      </p>
-    )}
+    {transactions &&
+      transactions.record &&
+      !transactions.record.size &&
+      (emptyState || (
+        <p>
+          <FormattedMessage {...MSG.noTransactions} />
+        </p>
+      ))}
     {transactions && transactions.isFetching && <SpinnerLoader />}
   </div>
 );

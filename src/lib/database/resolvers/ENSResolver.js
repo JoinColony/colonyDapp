@@ -6,7 +6,7 @@ import { isAddress } from 'web3-utils';
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
 // TODO use `~utils/ens` as the import path when `ava` can resolve it
-import { getENSDomainString } from '../../../utils/ens';
+import { getENSDomainString } from '../../../utils/web3/ens';
 
 class ENSResolver {
   _networkClient: ColonyNetworkClient;

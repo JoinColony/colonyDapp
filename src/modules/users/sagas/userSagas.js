@@ -4,6 +4,7 @@ import type { Saga } from 'redux-saga';
 import { delay } from 'redux-saga';
 
 import {
+  all,
   call,
   put,
   select,
@@ -13,10 +14,15 @@ import {
 } from 'redux-saga/effects';
 
 import type { Action, Address } from '~types';
-import type { UserProfileProps } from '~immutable';
+import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
-import { putError } from '~utils/saga/effects';
-import { getHashedENSDomainString } from '~utils/ens';
+import { putError, callCaller } from '~utils/saga/effects';
+import { getHashedENSDomainString } from '~utils/web3/ens';
+import {
+  getFilterFromPartial,
+  getFilterFormattedAddress,
+  parseUserTransferEvent,
+} from '~utils/web3/eventLogs';
 
 import { DDB } from '../../../lib/database';
 import { FeedStore, ValidatedKVStore } from '../../../lib/database/stores';
@@ -24,6 +30,7 @@ import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 import {
+  currentUserAddressSelector,
   userActivitiesStoreAddressSelector,
   userProfileStoreAddressSelector,
   walletAddressSelector,
@@ -48,6 +55,9 @@ import {
   USER_PROFILE_UPDATE,
   USER_PROFILE_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_ERROR,
+  USERNAME_FETCH,
+  USERNAME_FETCH_SUCCESS,
+  USERNAME_FETCH_ERROR,
   USERNAME_VALIDATE,
   USERNAME_VALIDATE_SUCCESS,
   USERNAME_VALIDATE_ERROR,
@@ -61,6 +71,9 @@ import {
   USER_REMOVE_AVATAR,
   USER_REMOVE_AVATAR_SUCCESS,
   USER_REMOVE_AVATAR_ERROR,
+  USER_FETCH_TOKEN_TRANSFERS,
+  USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+  USER_FETCH_TOKEN_TRANSFERS_ERROR,
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
@@ -223,13 +236,41 @@ function* updateProfile(action: Action): Saga<void> {
   }
 }
 
+function* fetchUsername(action: Action): Saga<void> {
+  const { userAddress } = action.payload;
+
+  try {
+    const { domain } = yield callCaller({
+      methodName: 'lookupRegisteredENSDomain',
+      params: { ensAddress: userAddress },
+    });
+    if (!domain)
+      throw new Error(`No username found for address "${userAddress}"`);
+    const [username, type] = domain.split('.');
+    if (type !== 'user')
+      throw new Error(`Address "${userAddress}" is not a user`);
+
+    yield put({
+      type: USERNAME_FETCH_SUCCESS,
+      payload: { key: userAddress, username },
+    });
+  } catch (error) {
+    yield putError(USERNAME_FETCH_ERROR, error, { key: userAddress });
+  }
+}
+
 function* fetchProfile({
   payload: {
     keyPath: [username],
     keyPath,
   },
 }: Action): Saga<void> {
-  const walletAddress = yield select(walletAddressSelector);
+  // TODO: do we want to cache these in redux?
+  const nameHash = yield call(getHashedENSDomainString, username, 'user');
+  const { ensAddress: walletAddress } = yield callCaller({
+    methodName: 'getAddressForENSHash',
+    params: { nameHash },
+  });
 
   const ddb: DDB = yield getContext('ddb');
 
@@ -383,6 +424,79 @@ function* removeAvatar(): Saga<void> {
   }
 }
 
+/**
+ * Fetch the ERC-20 Token transfers to/from the current user, and parse to
+ * ContractTransactionProps objects.
+ */
+function* fetchTokenTransfers(): Saga<void> {
+  const colonyManager = yield getContext('colonyManager');
+  const userAddress = yield select(currentUserAddressSelector);
+
+  try {
+    // Any ColonyClient will do, so we'll use MetaColony
+    const { address: metaColonyAddress } = yield call([
+      colonyManager.networkClient.getMetaColonyAddress,
+      colonyManager.networkClient.getMetaColonyAddress.call,
+    ]);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      metaColonyAddress,
+    );
+
+    // Will contain to/from block and event name topics
+    const baseLog = yield call(
+      getFilterFromPartial,
+      { eventNames: ['Transfer'], blocksBack: 400000 },
+      colonyClient,
+    );
+
+    // Get logs + events for token Transfer to/from current user
+    const toTransferLogs = yield call(
+      [colonyClient.token, colonyClient.token.getLogs],
+      {
+        ...baseLog,
+        // [eventNames, from, to]
+        topics: [[], getFilterFormattedAddress(userAddress)],
+      },
+    );
+    const fromTransferLogs = yield call(
+      [colonyClient.token, colonyClient.token.getLogs],
+      {
+        ...baseLog,
+        // [eventNames, from, to]
+        topics: [[], undefined, getFilterFormattedAddress(userAddress)],
+      },
+    );
+
+    // Combine and sort by blockNumber, parse events
+    const transferLogs = [...toTransferLogs, ...fromTransferLogs].sort(
+      (a, b) => a.blockNumber - b.blockNumber,
+    );
+    const transferEvents = yield call(
+      [colonyClient.token, colonyClient.token.parseLogs],
+      transferLogs,
+    );
+
+    const transactions: Array<ContractTransactionProps> = yield all(
+      transferEvents.map((event, i) =>
+        call(parseUserTransferEvent, {
+          event,
+          log: transferLogs[i],
+          colonyClient,
+          userAddress,
+        }),
+      ),
+    );
+
+    yield put({
+      type: USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+      payload: { transactions },
+    });
+  } catch (error) {
+    yield putError(USER_FETCH_TOKEN_TRANSFERS_ERROR, error);
+  }
+}
+
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
@@ -391,6 +505,8 @@ export function* setupUserSagas(): any {
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
   yield takeEvery(USER_ACTIVITIES_FETCH, fetchUserActivities);
+  yield takeEvery(USERNAME_FETCH, fetchUsername);
   yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
   yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
+  yield takeEvery(USER_FETCH_TOKEN_TRANSFERS, fetchTokenTransfers);
 }

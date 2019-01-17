@@ -8,6 +8,8 @@ import type { RootState } from '~types';
 
 export const allUsers = (state: RootState) => state[ns].allUsers;
 export const currentUser = (state: RootState) => state[ns].currentUser;
+export const currentUserTransactions = (state: RootState) =>
+  state[ns].currentUserTransactions;
 export const allUsersSelector = createSelector(
   allUsers,
   state => state.users,

@@ -5,7 +5,11 @@ import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenRecord } from '~immutable';
+import type {
+  TokenRecord,
+  DataRecord,
+  ContractTransactionRecord,
+} from '~immutable';
 import type { Address } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -18,8 +22,6 @@ import WalletTransactions from '../WalletTransactions';
 import TokenList from '~admin/Tokens/TokenList.jsx';
 
 import styles from './Wallet.css';
-
-import mockTransactions from './__datamocks__/mockTransactions';
 
 const MSG = defineMessages({
   tabTokens: {
@@ -44,15 +46,22 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.Wallet';
-
 type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
   tokens: List<TokenRecord>,
   walletAddress: Address,
+  transactions: ?DataRecord<List<ContractTransactionRecord>>,
+  fetchUserTransactions: () => any,
 };
 
 class Wallet extends Component<Props> {
+  displayName = 'dashboard.Wallet';
+
+  componentDidMount() {
+    const { transactions, fetchUserTransactions } = this.props;
+    if (!transactions || !transactions.size) fetchUserTransactions();
+  }
+
   handleEditToken = () => {
     const { openDialog, tokens } = this.props;
     const tokenDialog = openDialog('TokenEditDialog', {
@@ -72,7 +81,7 @@ class Wallet extends Component<Props> {
   };
 
   render() {
-    const { tokens, walletAddress } = this.props;
+    const { tokens, walletAddress, transactions } = this.props;
     return (
       <div className={styles.layoutMain}>
         <main className={styles.content}>
@@ -102,7 +111,7 @@ class Wallet extends Component<Props> {
             </TabPanel>
             <TabPanel>
               <WalletTransactions
-                transactions={mockTransactions}
+                transactions={transactions}
                 userAddress={walletAddress}
               />
             </TabPanel>
@@ -122,7 +131,5 @@ class Wallet extends Component<Props> {
     );
   }
 }
-
-Wallet.displayName = displayName;
 
 export default Wallet;

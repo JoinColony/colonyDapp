@@ -8,6 +8,8 @@ import {
   USER_AVATAR_FETCH,
   USERNAME_CREATE_ERROR,
   USERNAME_CREATE_SUCCESS,
+  USER_FETCH_TOKEN_TRANSFERS,
+  USERNAME_FETCH,
 } from '../actionTypes';
 
 export const registerUserLabel = (
@@ -24,6 +26,11 @@ export const registerUserLabel = (
     },
   });
 
+export const fetchUsername = (userAddress: string) => ({
+  type: USERNAME_FETCH,
+  payload: { userAddress },
+});
+
 export const fetchUserProfile = (username: string) => ({
   type: USER_PROFILE_FETCH,
   payload: { keyPath: [username] },
@@ -32,4 +39,8 @@ export const fetchUserProfile = (username: string) => ({
 export const fetchUserAvatar = (hash: string) => ({
   type: USER_AVATAR_FETCH,
   payload: { hash, key: hash },
+});
+
+export const fetchUserTransactions = () => ({
+  type: USER_FETCH_TOKEN_TRANSFERS,
 });

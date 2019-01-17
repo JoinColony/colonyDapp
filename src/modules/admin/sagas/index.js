@@ -10,6 +10,15 @@ import type { ContractTransactionProps } from '~immutable';
 import { putError, raceError } from '~utils/saga/effects';
 
 import {
+  parseColonyFundsClaimedEvent,
+  parseColonyFundsMovedBetweenFundingPotsEvent,
+  parseTaskPayoutClaimedEvent,
+  parseUnclaimedTransferEvent,
+  getLogsAndEvents,
+  getFilterFormattedAddress,
+} from '~utils/web3/eventLogs';
+
+import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
   claimColonyTokenTransaction,
@@ -25,15 +34,6 @@ import {
   COLONY_CLAIM_TOKEN_SUCCESS,
   COLONY_CLAIM_TOKEN,
 } from '../actionTypes';
-
-import {
-  parseColonyFundsClaimedEvent,
-  parseColonyFundsMovedBetweenFundingPotsEvent,
-  parseTaskPayoutClaimedEvent,
-  parseUnclaimedTransferEvent,
-  getLogsAndEvents,
-  getFilterFormattedAddress,
-} from './utils';
 
 function* fetchColonyTransactionsSaga({
   payload: {
