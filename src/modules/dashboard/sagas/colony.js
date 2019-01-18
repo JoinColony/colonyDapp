@@ -17,6 +17,8 @@ import type { Action, ENSName } from '~types';
 import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
 
+import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
+
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { getAll } from '../../../lib/database/commands';
 
@@ -267,6 +269,7 @@ function* fetchColonyENSName({
 }: Action): Saga<void> {
   try {
     const { domain } = yield callCaller({
+      context: NETWORK_CONTEXT,
       methodName: 'lookupRegisteredENSDomain',
       params: { ensAddress: colonyAddress },
     });

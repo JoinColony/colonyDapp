@@ -9,11 +9,6 @@ import type { ENSName, TakeFilter } from '~types';
 
 import { isDev, log } from '~utils/debug';
 
-import {
-  COLONY_CONTEXT,
-  NETWORK_CONTEXT,
-} from '../../lib/ColonyManager/constants';
-
 /*
  * Effect to create a new class instance of Class (use instead of "new Class")
  */
@@ -68,22 +63,23 @@ export const raceError = (
  * parameters. If no colonyENSName, network context is assumed.
  */
 export const callCaller = ({
-  params = {},
-  colonyENSName,
+  context,
+  identifier,
   methodName,
+  params = {},
 }: {
-  params?: Object,
-  colonyENSName?: ENSName,
+  context: 'colony' | 'network',
+  identifier?: ENSName,
   methodName: string,
+  params?: Object,
 }) => {
   function* callCallerGenerator(): Saga<Object> {
     const colonyManager = yield getContext('colonyManager');
     const caller = yield call(
-      // $FlowFixMe why are you unhappy with this valid syntax?!
       [colonyManager, colonyManager.getMethod],
-      colonyENSName ? COLONY_CONTEXT : NETWORK_CONTEXT,
+      context,
       methodName,
-      colonyENSName,
+      identifier,
     );
     return yield call([caller, caller.call], params);
   }
