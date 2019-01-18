@@ -13,7 +13,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, Address } from '~types';
+import type { Action, Address, UniqueAction } from '~types';
 import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
@@ -203,7 +203,16 @@ export function* addUserActivity({ payload }: Action): Saga<void> {
   }
 }
 
-function* updateProfile(action: Action): Saga<void> {
+function* updateProfile({
+  payload: {
+    profileStore,
+    walletAddress: removedWalletAddress,
+    username,
+    // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
+    ...update
+  },
+  meta,
+}: UniqueAction): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
 
@@ -219,21 +228,15 @@ function* updateProfile(action: Action): Saga<void> {
     );
 
     // if user is not allowed to write to store, this should throw an error
-    // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
-    const {
-      profileStore,
-      walletAddress: removedWalletAddress,
-      username,
-      ...update
-    } = action.payload;
     yield call([store, store.set], update);
     const user = yield call(getAll, store);
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
       payload: user,
+      meta,
     });
   } catch (error) {
-    yield putError(USER_PROFILE_UPDATE_ERROR, error);
+    yield putError(USER_PROFILE_UPDATE_ERROR, error, meta);
   }
 }
 
@@ -298,8 +301,10 @@ function* fetchProfile({
   }
 }
 
-function* validateUsername(action: Action): Saga<void> {
-  const { username } = action.payload;
+function* validateUsername({
+  payload: { username },
+  meta,
+}: UniqueAction): Saga<void> {
   yield call(delay, 300);
 
   const nameHash = yield call(getHashedENSDomainString, username, 'user');
@@ -317,13 +322,17 @@ function* validateUsername(action: Action): Saga<void> {
     yield putError(
       USERNAME_CHECK_AVAILABILITY_ERROR,
       new Error('ENS address already exists'),
+      meta,
     );
     return;
   }
-  yield put({ type: USERNAME_CHECK_AVAILABILITY_SUCCESS });
+  yield put({ type: USERNAME_CHECK_AVAILABILITY_SUCCESS, meta });
 }
 
-function* createUsername({ payload: { username }, meta }: Action): Saga<void> {
+function* createUsername({
+  payload: { username },
+  meta,
+}: UniqueAction): Saga<void> {
   const ddb: DDB = yield getContext('ddb');
   const userProfileStoreAddress = yield select(userProfileStoreAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
@@ -366,9 +375,7 @@ function* fetchAvatar(action: Action): Saga<void> {
   }
 }
 
-function* uploadAvatar(action: Action): Saga<void> {
-  const { data } = action.payload;
-
+function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
   const ddb: DDB = yield getContext('ddb');
 
@@ -393,13 +400,14 @@ function* uploadAvatar(action: Action): Saga<void> {
     yield put({
       type: USER_UPLOAD_AVATAR_SUCCESS,
       payload: { hash },
+      meta,
     });
   } catch (error) {
-    yield putError(USER_UPLOAD_AVATAR_ERROR, error);
+    yield putError(USER_UPLOAD_AVATAR_ERROR, error, meta);
   }
 }
 
-function* removeAvatar(): Saga<void> {
+function* removeAvatar({ meta }: UniqueAction): Saga<void> {
   const ddb: DDB = yield getContext('ddb');
 
   const userProfileStoreAddress = yield select(userProfileStoreAddressSelector);
@@ -420,9 +428,10 @@ function* removeAvatar(): Saga<void> {
     yield put({
       type: USER_REMOVE_AVATAR_SUCCESS,
       payload: { user },
+      meta,
     });
   } catch (error) {
-    yield putError(USER_REMOVE_AVATAR_ERROR, error);
+    yield putError(USER_REMOVE_AVATAR_ERROR, error, meta);
   }
 }
 

@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { all, put, takeEvery, call, getContext } from 'redux-saga/effects';
 
-import type { Action, ENSName } from '~types';
+import type { ENSName, UniqueAction } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
@@ -117,7 +117,7 @@ function* guessRating(
 function* taskSetSkillSaga({
   payload: { taskId, skillId, colonyENSName },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   yield put(
     taskSetSkill({
       identifier: colonyENSName,
@@ -130,7 +130,7 @@ function* taskSetSkillSaga({
 function* taskWorkerEndSaga({
   payload: { colonyENSName, taskId, workDescription, rating },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
   try {
     const deliverableHash = yield call(
@@ -151,14 +151,14 @@ function* taskWorkerEndSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_END_ERROR, error);
+    yield putError(TASK_WORKER_END_ERROR, error, meta);
   }
 }
 
 function* taskManagerEndSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     // complete task past due date
     yield put(
@@ -192,16 +192,16 @@ function* taskManagerEndSaga({
     );
 
     // if we got this far without a throw, success!
-    yield put({ type: TASK_MANAGER_END_SUCCESS });
+    yield put({ type: TASK_MANAGER_END_SUCCESS, meta });
   } catch (error) {
-    yield putError(TASK_MANAGER_END_ERROR, error);
+    yield putError(TASK_MANAGER_END_ERROR, error, meta);
   }
 }
 
 function* taskWorkerRateManagerSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -220,14 +220,14 @@ function* taskWorkerRateManagerSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error);
+    yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error, meta);
   }
 }
 
 function* taskManagerRateWorkerSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -246,14 +246,14 @@ function* taskManagerRateWorkerSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error);
+    yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error, meta);
   }
 }
 
 function* taskWorkerRevealRatingSaga({
   payload: { colonyENSName, taskId },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -276,14 +276,14 @@ function* taskWorkerRevealRatingSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error);
+    yield putError(TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error, meta);
   }
 }
 
 function* taskManagerRevealRatingSaga({
   payload: { colonyENSName, taskId },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -306,14 +306,14 @@ function* taskManagerRevealRatingSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error);
+    yield putError(TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error, meta);
   }
 }
 
 function* taskWorkerClaimRewardSaga({
   payload: { colonyENSName, taskId, tokenAddresses },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   yield all(
     tokenAddresses.map(token =>
       put(
@@ -334,7 +334,7 @@ function* taskWorkerClaimRewardSaga({
 function* taskFinalizeSaga({
   payload: { taskId, colonyENSName },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   yield put(
     taskFinalize({ identifier: colonyENSName, params: { taskId }, meta }),
   );

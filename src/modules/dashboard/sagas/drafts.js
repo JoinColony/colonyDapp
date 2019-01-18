@@ -11,7 +11,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, ENSName } from '~types';
+import type { Action, ENSName, UniqueAction } from '~types';
 import type { DraftId } from '~immutable';
 import type { ValidatedKVStore, Store } from '../../../lib/database/stores';
 
@@ -155,7 +155,8 @@ function* createDraftSaga({
     props: { id },
     props,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueAction): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -206,9 +207,10 @@ function* createDraftSaga({
         keyPath: [colonyENSName, id],
       },
       props: getDraftPropsForActionPayload(props, draftStore, feedItemsStore),
+      meta,
     });
   } catch (error) {
-    yield putError(DRAFT_CREATE_ERROR, error);
+    yield putError(DRAFT_CREATE_ERROR, error, meta);
   }
 }
 
@@ -307,7 +309,8 @@ function* updateDraftSaga({
     keyPath,
     props,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueAction): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -330,9 +333,10 @@ function* updateDraftSaga({
         keyPath,
         props: getDraftPropsForActionPayload(props, draftStore),
       },
+      meta,
     });
   } catch (error) {
-    yield putError(DRAFT_UPDATE_ERROR, error, { keyPath });
+    yield putError(DRAFT_UPDATE_ERROR, error, { keyPath, id: meta.id });
   }
 }
 
@@ -346,7 +350,8 @@ function* removeDraftSaga({
     keyPath: [colonyENSName, draftId],
     keyPath,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueAction): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -367,9 +372,9 @@ function* removeDraftSaga({
     /*
      * Dispatch the success action.
      */
-    yield put({ type: DRAFT_REMOVE_SUCCESS, payload: { keyPath } });
+    yield put({ type: DRAFT_REMOVE_SUCCESS, payload: { keyPath }, meta });
   } catch (error) {
-    yield putError(DRAFT_REMOVE_ERROR, error, { keyPath });
+    yield putError(DRAFT_REMOVE_ERROR, error, { keyPath, id: meta.id });
   }
 }
 

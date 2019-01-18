@@ -11,7 +11,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, AddressOrENSName, ENSName } from '~types';
+import type { Action, AddressOrENSName, ENSName, UniqueAction } from '~types';
 
 import { putError } from '~utils/saga/effects';
 
@@ -159,7 +159,7 @@ function* addDomainToIndex(
 function* createDomainSaga({
   payload: { colonyENSName, domainName, parentDomainId = 1 },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -202,7 +202,7 @@ function* createDomainSaga({
       meta,
     });
   } catch (error) {
-    yield putError(DOMAIN_CREATE_ERROR, error);
+    yield putError(DOMAIN_CREATE_ERROR, error, meta);
   }
 }
 

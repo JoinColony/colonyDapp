@@ -12,7 +12,7 @@ import {
 } from 'redux-saga/effects';
 import { replace, push } from 'connected-react-router';
 
-import type { Action, ENSName } from '~types';
+import type { Action, ENSName, UniqueAction } from '~types';
 
 import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
@@ -92,7 +92,10 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
 /*
  * Simply forward on the form params to create a transaction.
  */
-function* createColonySaga({ payload: params, meta }: Action): Saga<void> {
+function* createColonySaga({
+  payload: params,
+  meta,
+}: UniqueAction): Saga<void> {
   yield put(
     createColony({
       meta,
@@ -113,7 +116,7 @@ function* createColonyLabelSaga({
     tokenIcon,
   },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   const colonyStoreData = {
     address: colonyAddress,
     ensName,
@@ -183,8 +186,10 @@ function* createColonyLabelSaga({
   );
 }
 
-function* validateColonyDomain(action: Action): Saga<void> {
-  const { ensName } = action.payload;
+function* validateColonyDomain({
+  payload: { ensName },
+  meta,
+}: UniqueAction): Saga<void> {
   yield call(delay, 300);
 
   const nameHash = yield call(getHashedENSDomainString, ensName, 'colony');
@@ -202,15 +207,17 @@ function* validateColonyDomain(action: Action): Saga<void> {
     yield putError(
       COLONY_DOMAIN_VALIDATE_ERROR,
       new Error('ENS address already exists'),
+      meta,
     );
     return;
   }
-  yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS });
+  yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS, meta });
 }
 
 /*
  * Redirect to the colony home for the given (newly-registered) label
  */
+// TODO: we have cases where we do something like that with the raceError effect (custom take)
 function* createColonyLabelSuccessSaga({
   payload: {
     params: { colonyName },
@@ -219,11 +226,11 @@ function* createColonyLabelSuccessSaga({
   yield put(replace(`colony/${colonyName}`));
 }
 
-function* updateColonySaga(action: Action): Saga<void> {
+function* updateColonySaga({
+  payload: { ensName, ...colonyUpdateValues },
+  meta,
+}: UniqueAction): Saga<void> {
   try {
-    const {
-      payload: { ensName, ...colonyUpdateValues },
-    } = action;
     /*
      * Get the colony store
      */
@@ -240,9 +247,10 @@ function* updateColonySaga(action: Action): Saga<void> {
     yield put({
       type: COLONY_PROFILE_UPDATE_SUCCESS,
       payload: { ensName, colonyUpdateValues },
+      meta,
     });
   } catch (error) {
-    yield putError(COLONY_PROFILE_UPDATE_ERROR, error);
+    yield putError(COLONY_PROFILE_UPDATE_ERROR, error, meta);
   }
 }
 
@@ -290,9 +298,10 @@ function* fetchColonyENSName({
   }
 }
 
-function* uploadColonyAvatar(action: Action): Saga<void> {
-  const { data, ensName } = action.payload;
-
+function* uploadColonyAvatar({
+  payload: { data, ensName },
+  meta,
+}: UniqueAction): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
 
   try {
@@ -314,9 +323,10 @@ function* uploadColonyAvatar(action: Action): Saga<void> {
     yield put({
       type: COLONY_AVATAR_UPLOAD_SUCCESS,
       payload: { hash, ensName },
+      meta,
     });
   } catch (error) {
-    yield putError(COLONY_AVATAR_UPLOAD_ERROR, error);
+    yield putError(COLONY_AVATAR_UPLOAD_ERROR, error, meta);
   }
 }
 
@@ -341,11 +351,11 @@ function* fetchColonyAvatar(action: Action): Saga<void> {
   }
 }
 
-function* removeColonyAvatar(action: Action): Saga<void> {
+function* removeColonyAvatar({
+  payload: { ensName },
+  meta,
+}: UniqueAction): Saga<void> {
   try {
-    const {
-      payload: { ensName },
-    } = action;
     /*
      * Get the colony store
      */
@@ -362,16 +372,17 @@ function* removeColonyAvatar(action: Action): Saga<void> {
     yield put({
       type: COLONY_AVATAR_REMOVE_SUCCESS,
       payload: { ensName },
+      meta,
     });
   } catch (error) {
-    yield putError(COLONY_AVATAR_REMOVE_ERROR, error);
+    yield putError(COLONY_AVATAR_REMOVE_ERROR, error, meta);
   }
 }
 
 function* addColonyAdminSaga({
   payload: { newAdmin, ensName },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     const { walletAddress, username } = newAdmin.profile;
     /*
@@ -416,14 +427,14 @@ function* addColonyAdminSaga({
       }),
     );
   } catch (error) {
-    yield putError(COLONY_ADMIN_ADD_ERROR, error);
+    yield putError(COLONY_ADMIN_ADD_ERROR, error, meta);
   }
 }
 
 function* removeColonyAdminSaga({
   payload: { admin, ensName },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     const { walletAddress, username } = admin;
 
@@ -441,12 +452,15 @@ function* removeColonyAdminSaga({
     /*
      * Dispatch the action to the admin in th redux store
      */
+    // TODO: This is optimistic but when there's an issue it will NOT be undone.
+    // So if there's an error, the admin will still be reported as removed
     yield put({
       type: COLONY_ADMIN_REMOVE_SUCCESS,
       payload: {
         ensName,
         username,
       },
+      meta,
     });
     /*
      * Remove the colony admin and set the new value on the colony's store
@@ -474,7 +488,7 @@ function* removeColonyAdminSaga({
       }),
     );
   } catch (error) {
-    yield putError(COLONY_ADMIN_REMOVE_ERROR, error);
+    yield putError(COLONY_ADMIN_REMOVE_ERROR, error, meta);
   }
 }
 

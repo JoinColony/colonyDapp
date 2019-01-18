@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { call, getContext, put, takeEvery, all } from 'redux-saga/effects';
 
-import type { Action, Address, ENSName } from '~types';
+import type { Action, Address, ENSName, UniqueAction } from '~types';
 import type { ContractTransactionProps } from '~immutable';
 
 import { putError, raceError } from '~utils/saga/effects';
@@ -170,7 +170,7 @@ const filterClaimSuccess = (token: Address, colonyENSName: ENSName) => ({
 function* claimColonyToken({
   payload: { ensName, tokenAddress: token },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   try {
     yield put(
       claimColonyTokenTransaction({
@@ -186,7 +186,7 @@ function* claimColonyToken({
     yield put(fetchColonyTransactions(ensName));
     yield put(fetchColonyUnclaimedTransactions(ensName));
   } catch (error) {
-    yield putError(COLONY_CLAIM_TOKEN_ERROR, error);
+    yield putError(COLONY_CLAIM_TOKEN_ERROR, error, meta);
   }
 }
 

@@ -14,7 +14,7 @@ import {
   takeLatest,
 } from 'redux-saga/effects';
 
-import type { Action } from '~types';
+import type { Action, UniqueAction } from '~types';
 
 import { putError } from '~utils/saga/effects';
 
@@ -77,7 +77,7 @@ async function getTokenClientInfo(
 /**
  * Get the token info for a given `tokenAddress`.
  */
-function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
+function* getTokenInfo({ payload: { tokenAddress } }: Action): Saga<void> {
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
 
@@ -101,15 +101,17 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
 function* createTokenSaga({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
-}: *): Saga<void> {
+}: UniqueAction): Saga<void> {
   yield put(createToken({ params: { name, symbol }, meta }));
 }
 
 /**
  * Upload a token icon to IPFS.
  */
-function* uploadTokenIcon(action: Action): Saga<void> {
-  const { data } = action.payload;
+function* uploadTokenIcon({
+  payload: { data },
+  meta,
+}: UniqueAction): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
 
   try {
@@ -118,9 +120,10 @@ function* uploadTokenIcon(action: Action): Saga<void> {
     yield put({
       type: TOKEN_ICON_UPLOAD_SUCCESS,
       payload: { hash },
+      meta,
     });
   } catch (error) {
-    yield putError(TOKEN_ICON_UPLOAD_ERROR, error);
+    yield putError(TOKEN_ICON_UPLOAD_ERROR, error, meta);
   }
 }
 
