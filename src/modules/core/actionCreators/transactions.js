@@ -10,11 +10,6 @@ import type { AddressOrENSName, ColonyContext } from '~types';
 import type { TransactionParams, TransactionEventData } from '~immutable';
 
 import {
-  COLONY_CONTEXT,
-  NETWORK_CONTEXT,
-} from '../../../lib/ColonyManager/constants';
-
-import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
@@ -75,39 +70,6 @@ export const createTxActionCreator = <P: TransactionParams>({
   },
   meta: { id: meta.id || nanoid() },
 });
-
-export const createNetworkTransaction = <P: TransactionParams>({
-  methodName,
-  params,
-  ...payload
-}: {
-  methodName: string,
-  params: P,
-}): CreateTransactionAction<P> =>
-  createTransaction<P>({
-    context: NETWORK_CONTEXT,
-    methodName,
-    params,
-    ...payload,
-  });
-
-export const createColonyTransaction = <P: TransactionParams>({
-  identifier,
-  methodName,
-  params,
-  ...payload
-}: {
-  identifier: AddressOrENSName,
-  methodName: string,
-  params: P,
-}): CreateTransactionAction<P> =>
-  createTransaction({
-    context: COLONY_CONTEXT,
-    identifier,
-    methodName,
-    params,
-    ...payload,
-  });
 
 export const transactionSendError = <P: TransactionParams>(
   id: string,
