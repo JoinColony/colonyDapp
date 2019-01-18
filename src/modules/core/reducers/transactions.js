@@ -6,7 +6,6 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_GAS_SET,
   TRANSACTION_GAS_SUGGESTED,
   TRANSACTION_GAS_MANUAL,
   TRANSACTION_RECEIPT_RECEIVED,
@@ -57,11 +56,6 @@ const transactionsReducer = (
         suggestedGasLimit,
         suggestedGasPrice,
       });
-    }
-    case TRANSACTION_GAS_SET: {
-      const { id } = meta;
-      const { gasLimit, gasPrice } = payload;
-      return state.mergeIn([id, 'options'], { gasLimit, gasPrice });
     }
     case TRANSACTION_GAS_MANUAL: {
       const { id, suggestedGasLimit, suggestedGasPrice } = payload;
