@@ -44,7 +44,7 @@ type Props = {
 
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
-export const UserNavigation = ({ events = mockEvents }: Props) => {
+const UserNavigation = ({ events = mockEvents }: Props) => {
   const unhandled = events && !events.find(event => !event.handled);
   return (
     <nav className={styles.main}>

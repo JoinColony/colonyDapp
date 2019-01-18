@@ -29,7 +29,7 @@ class GasStationPopover extends Component<Props, State> {
     isGasStationOpen: false,
   };
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     const { transactionCount: currentTransactionCount = 0 } = prevProps;
     const { transactionCount: newTransactionCount = 0 } = this.props;
     if (newTransactionCount > currentTransactionCount) {
