@@ -9,12 +9,12 @@ import styles from './GasStationClaimCard.css';
 
 const MSG = defineMessages({
   headingText: {
-    id: 'dashboard.GasStationClaimCard.headingText',
+    id: 'users.GasStationPopover.GasStationClaimCard.headingText',
     defaultMessage:
       'Step {numberOfSteps}/{numberOfSteps}: Sign your first transaction',
   },
   bodyText: {
-    id: 'dashboard.GasStationClaimCard.bodyText',
+    id: 'users.GasStationPopover.GasStationClaimCard.bodyText',
     defaultMessage: `This is your wallet. You’ll use it to sign transactions
 and pay transaction fees to the Ethereum blockchain. Click confirm below to
 sign your first transaction and finish setting up your account.`,
@@ -29,7 +29,7 @@ type Props = {
   numberOfSteps?: number,
 };
 
-const displayName = 'dashboard.GasStationClaimCard';
+const displayName = 'users.GasStationPopover.GasStationClaimCard';
 
 /*
  * @NOTE Don't wrap this component in any extra elements, just return the `Card`

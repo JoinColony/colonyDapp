@@ -9,14 +9,22 @@ import BigNumber from 'bn.js';
 
 export type TransactionType = {
   /*
+   * Will these transactions have nonce(s) ?
+   */
+  id: string,
+  createdAt: Date,
+  methodName?: string,
+  context?: string,
+  /*
+   * @TODO Below this lines, types might need to be changed
+   * They were added during UI development and might not reflect
+   * the current transaction format that we store in the redux store
+   */
+  nonce?: string,
+  /*
    * Optional, since if the transaction has not been sent yet, it won't have a hash
    */
   hash?: string,
-  /*
-   * Will these transactions have nonce(s) ?
-   */
-  nonce: number,
-  date: Date,
   /*
    * these are optional, since in case of transactions, there's no sender or
    * receiver address
@@ -51,7 +59,7 @@ export type TransactionType = {
    * @TODO The logic, for the related transactions will be added in as part of #542
    * We're just using this prop as helper to display them
    */
-  set?: Array<TransactionType>,
+  dependents?: Array<TransactionType>,
   /*
    * @NOTE Used to determine if this particular action depends on a prior one being
    * executed first.

@@ -6,9 +6,16 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
 
+import type { Action } from '~types';
 import type { TransactionType } from '~types/transaction';
 import type { EstimatedGasCost } from '~utils/external';
 import type { RadioOption } from '~core/Fields/RadioGroup';
+
+import {
+  METHOD_TRANSACTION_SENT,
+  TRANSACTION_SENT,
+  TRANSACTION_ERROR,
+} from '../../../../core/actionTypes';
 
 import { getMainClasses } from '~utils/css';
 import { getEstimatedGasCost } from '~utils/external';
@@ -25,39 +32,39 @@ import styles from './GasStationPrice.css';
 
 const MSG = defineMessages({
   networkCongestedWarning: {
-    id: 'dashboard.GasStationPrice.networkCongestedWarning',
+    id: 'users.GasStationPopover.GasStationPrice.networkCongestedWarning',
     defaultMessage: `The network is congested and transactions
 are expensive. We recommend waiting.`,
   },
   openTransactionSpeedMenuTitle: {
-    id: 'dashboard.GasStationPrice.openTransactionSpeedMenuTitle',
+    id: 'users.GasStationPopover.GasStationPrice.openTransactionSpeedMenuTitle',
     defaultMessage: 'Change Transaction Speed',
   },
   transactionFeeLabel: {
-    id: 'dashboard.GasStationPrice.transactionFeeLabel',
+    id: 'users.GasStationPopover.GasStationPrice.transactionFeeLabel',
     defaultMessage: 'Transaction Fee',
   },
   transactionSpeedLabel: {
-    id: 'dashboard.GasStationPrice.transactionSpeedLabel',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedLabel',
     defaultMessage: 'Transaction Speed',
   },
   transactionSpeedTypeSuggested: {
-    id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeSuggested',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeSuggested',
     defaultMessage: 'Suggested',
   },
   transactionSpeedTypeCheaper: {
-    id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeCheaper',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeCheaper',
     defaultMessage: 'Cheaper',
   },
   transactionSpeedTypeFaster: {
-    id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeFaster',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeFaster',
     defaultMessage: 'Faster',
   },
   walletPromptText: {
-    id: 'dashboard.GasStationPrice.walletPromptText',
+    id: 'users.GasStationPopover.GasStationPrice.walletPromptText',
     defaultMessage: `Finish the transaction on {walletType, select,
       metamask {Metamask}
-      hardware {your hardware wallet}  
+      hardware {your hardware wallet}
     }.`,
   },
 });
@@ -67,6 +74,8 @@ type Props = {
   isNetworkCongested: boolean,
   transaction: TransactionType,
   walletNeedsAction?: 'metamask' | 'hardware',
+  transactionGasManualSet: (id: string, gasPrice: number) => { type: string },
+  furtherActionPossible: boolean,
 };
 
 type State = {
@@ -76,7 +85,7 @@ type State = {
 };
 
 type FormValues = {
-  transactionHash?: string,
+  id: string,
   transactionSpeed: string,
 };
 
@@ -87,7 +96,7 @@ const transactionSpeedOptions: Array<RadioOption> = [
 ];
 
 const validationSchema = yup.object().shape({
-  transactionHash: yup.string(),
+  transactionId: yup.string(),
   transactionSpeed: yup
     .string()
     .required()
@@ -99,7 +108,7 @@ class GasStationPrice extends Component<Props, State> {
     isNetworkCongested: false,
   };
 
-  static displayName = 'GasStationPrice';
+  static displayName = 'users.GasStationPopover.GasStationPrice';
 
   state = {
     estimatedGasCost: null,
@@ -111,17 +120,22 @@ class GasStationPrice extends Component<Props, State> {
   };
 
   componentDidMount() {
+    const {
+      transaction: { id },
+      transactionGasManualSet,
+      furtherActionPossible,
+    } = this.props;
     this.mounted = true;
-    /*
-     * @NOTE: I assume this will be replaced by
-     * the `suggestMethodTransactionGas` saga once
-     * the transaction list is wired. Using this for
-     * simple method for now
-     */
     getEstimatedGasCost().then(estimatedGasCost => {
-      if (this.mounted) {
-        this.setState({
-          estimatedGasCost,
+      if (this.mounted && furtherActionPossible) {
+        this.setState({ estimatedGasCost }, () => {
+          if (estimatedGasCost) {
+            return transactionGasManualSet(
+              id,
+              parseInt(estimatedGasCost.suggested, 10),
+            );
+          }
+          return null;
         });
       }
     });
@@ -144,26 +158,32 @@ class GasStationPrice extends Component<Props, State> {
     const {
       canSignTransaction,
       isNetworkCongested,
-      transaction: { hash },
+      transaction: { id },
       walletNeedsAction,
+      transactionGasManualSet,
+      furtherActionPossible,
     } = this.props;
     const { estimatedGasCost, isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
-      transactionHash: hash,
+      id,
       transactionSpeed: transactionSpeedOptions[0].value,
     };
+    if (!furtherActionPossible) {
+      return null;
+    }
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
         <ActionForm
-          // @TODO: use actual actions here
-          submit="TRANSACTION_SIGNATURE_CREATE"
-          success="TRANSACTION_SIGNATURE_SUCCESS"
-          error="TRANSACTION_SIGNATURE_ERROR"
+          submit={METHOD_TRANSACTION_SENT}
+          success={TRANSACTION_SENT}
+          error={TRANSACTION_ERROR}
           validationSchema={validationSchema}
           isInitialValid={!!initialFormValues.transactionSpeed}
-          // eslint-disable-next-line no-console
-          onSuccess={console.log}
           initialValues={initialFormValues}
+          setPayload={(action: Action) => ({
+            ...action,
+            meta: { id },
+          })}
         >
           {({
             isSubmitting,
@@ -187,7 +207,18 @@ class GasStationPrice extends Component<Props, State> {
                       appearance={{ theme: 'buttonGroup' }}
                       currentlyCheckedValue={transactionSpeed}
                       name="transactionSpeed"
-                      options={transactionSpeedOptions}
+                      options={transactionSpeedOptions.map(option => ({
+                        ...option,
+                        onClick: () => {
+                          if (estimatedGasCost) {
+                            return transactionGasManualSet(
+                              id,
+                              estimatedGasCost[option.value],
+                            );
+                          }
+                          return null;
+                        },
+                      }))}
                     />
                   </div>
                 </div>

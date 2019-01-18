@@ -3,6 +3,7 @@
 import React, { Fragment } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
+import { List } from 'immutable';
 
 import type { UserRecord } from '~immutable';
 
@@ -56,7 +57,7 @@ const validationSchema = yup.object({
 });
 
 type Props = {
-  availableUsers: Array<UserRecord>,
+  availableUsers: List<UserRecord>,
   ensName: string,
 };
 

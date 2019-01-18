@@ -101,6 +101,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: undefined,
+              /*
+               * Initial status is set to `created`
+               */
+              status: 'created',
             });
           },
         ],
@@ -129,6 +133,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: undefined,
+              /*
+               * During sending the transaction is set to 'pending'
+               */
+              status: 'pending',
             });
           },
         ],
@@ -157,6 +165,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: true, // should have been set
+              /*
+               * If it went through successfully, it's set to `succeeded`
+               */
+              status: 'succeeded',
             });
           },
         ],
@@ -185,6 +197,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: true,
+              /*
+               * If it went through successfully, it's set to `succeeded`
+               */
+              status: 'succeeded',
             });
           },
         ],
@@ -222,6 +238,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: undefined,
+              /*
+               * If it failed, it's set to `failed`... obviously
+               */
+              status: 'failed',
             });
           },
         ],
@@ -260,6 +280,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: undefined,
+              /*
+               * If it failed, it's set to `failed`... obviously
+               */
+              status: 'failed',
             });
           },
         ],
@@ -299,6 +323,10 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receiptReceived: true,
+              /*
+               * If it failed, it's set to `failed`... obviously
+               */
+              status: 'failed',
             });
           },
         ],

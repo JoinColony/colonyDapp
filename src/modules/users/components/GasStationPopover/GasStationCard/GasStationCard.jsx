@@ -24,15 +24,16 @@ import styles from './GasStationCard.css';
 
 const MSG = defineMessages({
   transactionState: {
-    id: 'dashboard.GasStation.GasStationCard.transactionState',
+    id: 'users.GasStationPopover.GasStationCard.transactionState',
     defaultMessage: `{status, select,
       multisig {Waiting on {username} to sign}
       failed {Failed transaction. Try again}
+      succeeded {Transaction succeeded}
       other {Generic transaction}
     }`,
   },
   actionState: {
-    id: 'dashboard.GasStation.GasStationCard.actionState',
+    id: 'users.GasStationPopover.GasStationCard.actionState',
     defaultMessage: `{status, select,
       multisig {Waiting on {username} to sign}
       pending {Pending transaction}
@@ -41,28 +42,31 @@ const MSG = defineMessages({
     }`,
   },
   dependentAction: {
-    id: 'dashboard.GasStation.GasStationCard.dependentAction',
+    id: 'users.GasStationPopover.GasStationCard.dependentAction',
     defaultMessage: 'Dependent transaction',
   },
   failedAction: {
-    id: 'dashboard.GasStation.GasStationCard.failedAction',
+    id: 'users.GasStationPopover.GasStationCard.failedAction',
     defaultMessage: 'Failed transaction. Try again.',
+  },
+  transactionTitle: {
+    id: 'users.GasStationPopover.GasStationCard.transactionTitle',
+    defaultMessage: `{methodName, select,
+      registerUserLabel {Claim your profile}
+      other {Generic Transaction}
+    }`,
+  },
+  transactionDescription: {
+    id: 'users.GasStationPopover.GasStationCard.transactionDescription',
+    defaultMessage: `DEBUG: context: {context} methodName: {methodName}`,
   },
   /*
    * @NOTE Below this line are just temporary message descriptors as the actual
    * name / path combinations for the various actions-transactions
    * should be implemented in #542
    */
-  transactionTitleSample: {
-    id: 'dashboard.GasStation.GasStationCard.transactionTitleSample',
-    defaultMessage: 'Create Task',
-  },
-  transactionDescriptionSample: {
-    id: 'dashboard.GasStation.GasStationCard.transactionDescriptionSample',
-    defaultMessage: 'The Meta Colony / #Javascript / Github Integration',
-  },
   actionDescriptionSample: {
-    id: 'dashboard.GasStation.GasStationCard.actionDescriptionSample',
+    id: 'users.GasStationPopover.GasStationCard.actionDescriptionSample',
     defaultMessage: `{index}. Create Task`,
   },
 });
@@ -83,7 +87,7 @@ type State = {
 };
 
 class GasStationCard extends Component<Props, State> {
-  static displayName = 'dashboard.GasStation.GasStationCard';
+  static displayName = 'users.GasStationPopover.GasStationCard';
 
   /*
    * @NOTE This needs to be static since we don't use any props from the
@@ -174,18 +178,24 @@ class GasStationCard extends Component<Props, State> {
 
   renderSummary() {
     const {
-      transaction: { status, set = [] },
+      transaction: { status, dependents = [], methodName, context },
     } = this.props;
     return (
       <div className={styles.summary}>
         <div className={styles.description}>
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitleSample}
+            text={MSG.transactionTitle}
+            textValues={{ methodName }}
           />
           <Link
             className={styles.transactionLink}
-            text={MSG.transactionDescriptionSample}
+            text={MSG.transactionDescription}
+            textValues={{ methodName, context }}
+            /*
+             * @TODO Either change this by removing the link, or point
+             * it in a relevant direction
+             */
             to={DASHBOARD_ROUTE}
             /*
              * @NOTE If this is an expanded card, and has an onclick handler,
@@ -220,6 +230,32 @@ class GasStationCard extends Component<Props, State> {
                * element otherwise it won't detect the hover event
                */}
               <div>
+                {status === 'created' && (
+                  <span className={styles.counter}>1</span>
+                )}
+                {status === 'succeeded' && (
+                  <span className={styles.completedAction}>
+                    <Icon
+                      appearance={{ size: 'tiny' }}
+                      name="check-mark"
+                      /*
+                       * @NOTE We disable the title since we already
+                       * have a tooltip around it
+                       */
+                      title=""
+                    />
+                  </span>
+                )}
+                {status === 'pending' && (
+                  <div className={styles.spinner}>
+                    <SpinnerLoader
+                      appearance={{
+                        size: 'small',
+                        theme: 'primary',
+                      }}
+                    />
+                  </div>
+                )}
                 {status === 'multisig' && <span className={styles.multisig} />}
                 {status === 'failed' && (
                   <span className={styles.failed}>!</span>
@@ -228,9 +264,9 @@ class GasStationCard extends Component<Props, State> {
             </Tooltip>
           </div>
         )}
-        {!status && set && set.length ? (
+        {!status && dependents && dependents.length ? (
           <div className={styles.status}>
-            <span className={styles.counter}>{set.length}</span>
+            <span className={styles.counter}>{dependents.length}</span>
           </div>
         ) : null}
       </div>
@@ -377,7 +413,7 @@ class GasStationCard extends Component<Props, State> {
          * @NOTE Nonces are unique, but our mock data might add duplicates.
          * In case you see duplicate key errors in the console, don't panic.
          */
-        key={action.nonce}
+        key={action.id}
         disabled={action.dependency}
         className={this.getActionItemClasses(action, actionIndex)}
       >
@@ -393,11 +429,11 @@ class GasStationCard extends Component<Props, State> {
 
   render() {
     const {
-      transaction: { set = [] },
+      transaction: { dependents = [] },
       expanded = false,
       onClick,
     } = this.props;
-    const canWeExpand = expanded && set && set.length;
+    const canWeExpand = expanded && dependents && dependents.length;
     return (
       <button
         type="button"
@@ -409,7 +445,9 @@ class GasStationCard extends Component<Props, State> {
           {this.renderSummary()}
           {canWeExpand ? (
             <ul className={styles.expanded}>
-              {set.map((action, index) => this.renderActionItem(action, index))}
+              {dependents.map((action, index) =>
+                this.renderActionItem(action, index),
+              )}
             </ul>
           ) : null}
         </Card>

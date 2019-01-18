@@ -3,7 +3,7 @@
 import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { InProps } from './GasStation';
+import type { InProps } from './GasStationContent';
 import type { TransactionType } from '~types';
 
 import { WALLET_ROUTE } from '~routes';
@@ -16,23 +16,23 @@ import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import CardList from '~core/CardList';
 
-import GasStationCard from './GasStationCard';
-import GasStationClaimCard from './GasStationClaimCard';
-import GasStationPrice from './GasStationPrice';
+import GasStationCard from '../GasStationCard';
+import GasStationClaimCard from '../GasStationClaimCard';
+import GasStationPrice from '../GasStationPrice';
 
-import styles from './GasStation.css';
+import styles from './GasStationContent.css';
 
 const MSG = defineMessages({
   transactionsEmptyStateText: {
-    id: 'dashboard.GasStation.transactionsEmptyStateText',
+    id: 'users.GasStationPopover.GasStationContent.transactionsEmptyStateText',
     defaultMessage: 'You have no pending actions.',
   },
   goToWalletLinkTitle: {
-    id: 'dashboard.GasStation.goToWalletLinkTitle',
+    id: 'users.GasStationPopover.GasStationContent.goToWalletLinkTitle',
     defaultMessage: 'Go to Wallet',
   },
   returnToSummary: {
-    id: 'dashboard.GasStation.returnToSummary',
+    id: 'users.GasStationPopover.GasStationContent.returnToSummary',
     defaultMessage: 'See all pending actions',
   },
 });
@@ -48,8 +48,8 @@ type State = {
   expandedTransactionId: number,
 };
 
-class GasStation extends Component<Props, State> {
-  static displayName = 'dashboard.GasStation';
+class GasStationContent extends Component<Props, State> {
+  static displayName = 'users.GasStationPopover.GasStationContent';
 
   state = {
     expandedTransactionId: -1,
@@ -69,11 +69,7 @@ class GasStation extends Component<Props, State> {
     return transactions.map(
       (transaction: TransactionType, transactionIndex: number) => (
         <GasStationCard
-          /*
-           * @NOTE Nonces are unique, but our mock data might add duplicates.
-           * In case you see duplicate key errors in the console, don't panic.
-           */
-          key={transaction.nonce}
+          key={transaction.id}
           transaction={transaction}
           onClick={() => this.handleExpandTransaction(transactionIndex)}
         />
@@ -181,4 +177,4 @@ class GasStation extends Component<Props, State> {
   }
 }
 
-export default GasStation;
+export default GasStationContent;

@@ -6,8 +6,8 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_GAS_SET,
   TRANSACTION_GAS_SUGGESTED,
+  TRANSACTION_GAS_MANUAL,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
 } from '../actionTypes';
@@ -57,19 +57,29 @@ const transactionsReducer = (
         suggestedGasPrice,
       });
     }
-    case TRANSACTION_GAS_SET: {
+    case TRANSACTION_GAS_MANUAL: {
       const { id } = meta;
-      const { gasLimit, gasPrice } = payload;
-      return state.mergeIn([id, 'options'], { gasLimit, gasPrice });
+      const { gasPrice, gasLimit } = payload.options;
+      const manualGasOptions: Object = {};
+      if (gasLimit) {
+        manualGasOptions.gasLimit = gasLimit;
+      }
+      if (gasPrice) {
+        manualGasOptions.gasPrice = gasPrice;
+      }
+      return state.mergeIn([id, 'options'], manualGasOptions);
     }
     case TRANSACTION_SENT: {
       const { id } = meta;
       const { hash } = payload;
-      return state.setIn([id, 'hash'], hash);
+      return state.mergeIn([id], { hash, status: 'pending' });
     }
     case TRANSACTION_RECEIPT_RECEIVED: {
       const { id } = meta;
-      return state.setIn([id, 'receiptReceived'], true);
+      return state.mergeIn([id], {
+        receiptReceived: true,
+        status: 'succeeded',
+      });
     }
     case TRANSACTION_EVENT_DATA_RECEIVED: {
       const { id } = meta;
@@ -79,7 +89,9 @@ const transactionsReducer = (
     case TRANSACTION_ERROR: {
       const { id } = meta;
       const { error } = payload;
-      return state.updateIn([id, 'errors'], errors => errors.push(error));
+      return state
+        .updateIn([id, 'errors'], errors => errors.push(error))
+        .setIn([id, 'status'], 'failed');
     }
     default:
       return state;

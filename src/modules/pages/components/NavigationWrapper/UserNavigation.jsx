@@ -8,8 +8,7 @@ import { INBOX_ROUTE, DASHBOARD_ROUTE } from '~routes';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-import { PopoverProvider, RegisteredPopover } from '~core/Popover';
-import GasStation from '~dashboard/GasStation';
+import GasStationPopover from '~users/GasStationPopover';
 import AvatarDropdown from '~users/AvatarDropdown';
 
 import styles from './UserNavigation.css';
@@ -39,11 +38,11 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'pages.NavigationWrapper.UserNavigation';
-
 type Props = {
   events?: Array<{ handled: boolean }>,
 };
+
+const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = ({ events = mockEvents }: Props) => {
   const unhandled = events && !events.find(event => !event.handled);
@@ -56,32 +55,24 @@ const UserNavigation = ({ events = mockEvents }: Props) => {
       >
         <Icon name="home" title={MSG.dashboardTitle} />
       </NavLink>
-      <PopoverProvider>
-        <RegisteredPopover
-          appearance={{ theme: 'grey' }}
-          content={({ close }) => <GasStation close={close} />}
-          name="GasStationPopover"
-          placement="bottom"
-          showArrow={false}
-        >
-          {({ isOpen, toggle, ref }) => (
-            <button
-              type="button"
-              className={styles.navigationItemButton}
-              ref={ref}
-              onClick={toggle}
+      <GasStationPopover>
+        {({ isOpen, toggle, ref }) => (
+          <button
+            type="button"
+            className={styles.navigationItemButton}
+            ref={ref}
+            onClick={toggle}
+          >
+            <div
+              className={`${styles.navigationItem} ${
+                isOpen ? styles.navigationItemActive : ''
+              }`}
             >
-              <div
-                className={`${styles.navigationItem} ${
-                  isOpen ? styles.navigationItemActive : ''
-                }`}
-              >
-                <Icon name="wallet" title={MSG.walletTitle} />
-              </div>
-            </button>
-          )}
-        </RegisteredPopover>
-      </PopoverProvider>
+              <Icon name="wallet" title={MSG.walletTitle} />
+            </div>
+          </button>
+        )}
+      </GasStationPopover>
       <NavLink
         to={INBOX_ROUTE}
         className={`${

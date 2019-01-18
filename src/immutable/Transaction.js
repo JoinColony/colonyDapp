@@ -37,6 +37,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   receiptReceived?: boolean,
   suggestedGasLimit?: BigNumber,
   suggestedGasPrice?: BigNumber,
+  status: 'created' | 'pending' | 'failed' | 'succeeded',
 };
 
 export type TransactionRecord<
@@ -59,6 +60,7 @@ const defaultValues: $Shape<TransactionProps<*, *>> = {
   receiptReceived: undefined,
   suggestedGasLimit: undefined,
   suggestedGasPrice: undefined,
+  status: 'created',
 };
 
 const Transaction: RecordFactory<TransactionProps<*, *>> = Record(

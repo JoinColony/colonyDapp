@@ -2,10 +2,12 @@
 import type { HOC } from 'recompose';
 
 import { compose, withProps } from 'recompose';
+import { connect } from 'react-redux';
 
-import GasStation from './GasStation.jsx';
+import { currentUserAddressSelector } from '../../../selectors';
 
-import mockTransactions from './__datamocks__/mockTransactions';
+import GasStationContent from './GasStationContent.jsx';
+
 import mockUser from '~dashboard/Wallet/__datamocks__/mockUser';
 
 export type InProps = {
@@ -13,6 +15,9 @@ export type InProps = {
 };
 
 const enhance: HOC<*, InProps> = compose(
+  connect((state: Object) => ({
+    walletAddress: currentUserAddressSelector(state),
+  })),
   withProps(() => ({
     balance: 0.25,
     /*
@@ -20,9 +25,7 @@ const enhance: HOC<*, InProps> = compose(
      * i.e. User has claimed profile, but not signed any transactions yet
      */
     showClaimInfoCard: !!mockUser.profile.username,
-    transactions: mockTransactions,
-    walletAddress: mockUser.profile.walletAddress,
   })),
 );
 
-export default enhance(GasStation);
+export default enhance(GasStationContent);
