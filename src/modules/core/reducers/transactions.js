@@ -58,7 +58,8 @@ const transactionsReducer = (
       });
     }
     case TRANSACTION_GAS_MANUAL: {
-      const { id, suggestedGasLimit, suggestedGasPrice } = payload;
+      const { id } = meta;
+      const { suggestedGasLimit, suggestedGasPrice } = payload;
       const manualGasValues: Object = {};
       if (suggestedGasLimit) {
         manualGasValues.suggestedGasLimit = suggestedGasLimit;
