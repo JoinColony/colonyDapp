@@ -89,10 +89,9 @@ const transactionsReducer = (
     case TRANSACTION_ERROR: {
       const { id } = meta;
       const { error } = payload;
-      const errorState = state.updateIn([id, 'errors'], errors =>
-        errors.push(error),
-      );
-      return errorState.setIn([id, 'status'], 'failed');
+      return state
+        .updateIn([id, 'errors'], errors => errors.push(error))
+        .setIn([id, 'status'], 'failed');
     }
     default:
       return state;
