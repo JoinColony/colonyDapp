@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import type { PopoverTrigger } from '~core/Popover';
 
-import { PopoverProvider, RegisteredPopover } from '~core/Popover';
+import Popover from '~core/Popover';
 import GasStationContent from './GasStationContent';
 
 type Props = {
@@ -53,21 +53,19 @@ class GasStationPopover extends Component<Props, State> {
     const { children, transactions } = this.props;
 
     return (
-      <PopoverProvider>
-        <RegisteredPopover
-          appearance={{ theme: 'grey' }}
-          content={({ close }) => (
-            <GasStationContent transactions={transactions} close={close} />
-          )}
-          name="GasStationPopover"
-          placement="bottom"
-          showArrow={false}
-          isOpen={isGasStationOpen}
-          onClose={() => this.closeGasStation()}
-        >
-          {children}
-        </RegisteredPopover>
-      </PopoverProvider>
+      <Popover
+        appearance={{ theme: 'grey' }}
+        content={({ close }) => (
+          <GasStationContent transactions={transactions} close={close} />
+        )}
+        name="GasStationPopover"
+        placement="bottom"
+        showArrow={false}
+        isOpen={isGasStationOpen}
+        onClose={() => this.closeGasStation()}
+      >
+        {children}
+      </Popover>
     );
   }
 }
