@@ -8,6 +8,8 @@ import type { Action, ENSName } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
+import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
+
 import {
   TASK_SET_SKILL,
   TASK_WORKER_END,
@@ -45,7 +47,8 @@ import {
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield getContext('wallet');
   const { specificationHash } = yield callCaller({
-    colonyENSName,
+    context: COLONY_CONTEXT,
+    identifier: colonyENSName,
     methodName: 'getTask',
     params: { taskId },
   });
@@ -62,7 +65,8 @@ function* generateRatingSecret(
   rating: number,
 ) {
   return yield callCaller({
-    colonyENSName,
+    context: COLONY_CONTEXT,
+    identifier: colonyENSName,
     methodName: 'generateSecret',
     params: { salt, rating },
   });
@@ -88,7 +92,8 @@ function* guessRating(
   salt: string,
 ) {
   const publishedSecret = yield callCaller({
-    colonyENSName,
+    context: COLONY_CONTEXT,
+    identifier: colonyENSName,
     methodName: 'getTaskWorkRatingSecret',
     params: { taskId, role },
   });

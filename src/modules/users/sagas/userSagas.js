@@ -26,6 +26,7 @@ import {
 
 import { DDB } from '../../../lib/database';
 import { FeedStore, ValidatedKVStore } from '../../../lib/database/stores';
+import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
@@ -241,6 +242,7 @@ function* fetchUsername(action: Action): Saga<void> {
 
   try {
     const { domain } = yield callCaller({
+      context: NETWORK_CONTEXT,
       methodName: 'lookupRegisteredENSDomain',
       params: { ensAddress: userAddress },
     });
@@ -268,6 +270,7 @@ function* fetchProfile({
   // TODO: do we want to cache these in redux?
   const nameHash = yield call(getHashedENSDomainString, username, 'user');
   const { ensAddress: walletAddress } = yield callCaller({
+    context: NETWORK_CONTEXT,
     methodName: 'getAddressForENSHash',
     params: { nameHash },
   });
