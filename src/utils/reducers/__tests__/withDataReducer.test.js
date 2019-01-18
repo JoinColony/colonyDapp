@@ -27,12 +27,12 @@ describe('reducers - withDataReducer', () => {
     const MY_OTHER_ACTION = 'MY_OTHER_ACTION';
 
     const successReducerAction = sandbox.fn(
-      (state, { payload: { keyPath, props } }) =>
-        state.setIn([...keyPath, 'record'], MyRecord(props)),
+      (state, { meta: { keyPath }, payload }) =>
+        state.setIn([...keyPath, 'record'], MyRecord(payload)),
     );
 
     const otherReducerAction = sandbox.fn(
-      (state, { payload: { keyPath, c } }) =>
+      (state, { meta: { keyPath }, payload: { c } }) =>
         state.setIn([...keyPath, 'record', 'c'], c),
     );
 
@@ -54,22 +54,28 @@ describe('reducers - withDataReducer', () => {
 
     const fetchAction = {
       type: MY_FETCH,
-      payload: { keyPath: ['myKey'] },
+      meta: { keyPath: ['myKey'] },
     };
 
     const errorAction = {
       type: MY_FETCH_ERROR,
-      payload: { meta: { keyPath: ['myKey'] }, error: { id: 'fetch error' } },
+      error: true,
+      meta: { keyPath: ['myKey'] },
+      payload: {
+        error: { id: 'fetch error' },
+      },
     };
 
     const successAction = {
       type: MY_FETCH_SUCCESS,
-      payload: { keyPath: ['myKey'], props: { a: 1, b: 1 } },
+      meta: { keyPath: ['myKey'] },
+      payload: { a: 1, b: 1 },
     };
 
     const otherAction = {
       type: MY_OTHER_ACTION,
-      payload: { keyPath: ['myKey'], c: 1 },
+      meta: { keyPath: ['myKey'] },
+      payload: { c: 1 },
     };
 
     // Actions: fetch, success and other
@@ -208,7 +214,8 @@ describe('reducers - withDataReducer', () => {
 
       const successOneAction = {
         type: MY_FETCH_SUCCESS,
-        payload: { keyPath: ['myKey'], props: { a: 20 } },
+        meta: { keyPath: ['myKey'] },
+        payload: { a: 20 },
       };
       const successOneState = myWrappedReducer(fetchTwoState, successOneAction);
       expect(successOneState.get('myKey').toJS()).toEqual({
@@ -230,7 +237,8 @@ describe('reducers - withDataReducer', () => {
 
       const successTwoAction = {
         type: MY_FETCH_SUCCESS,
-        payload: { keyPath: ['myKey'], props: { b: 2000 } },
+        meta: { keyPath: ['myKey'] },
+        payload: { b: 2000 },
       };
       const successTwoState = myWrappedReducer(
         successOneState,
@@ -256,7 +264,8 @@ describe('reducers - withDataReducer', () => {
       // An unexpected success action
       const successThreeAction = {
         type: MY_FETCH_SUCCESS,
-        payload: { keyPath: ['myKey'], props: { a: 5000 } },
+        meta: { keyPath: ['myKey'] },
+        payload: { a: 5000 },
       };
       const successThreeState = myWrappedReducer(
         successTwoState,

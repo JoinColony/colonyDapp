@@ -6,6 +6,8 @@ export * from './transaction';
 export * from './TransactionReceipt';
 export * from './RootState';
 
+export type KeyPath = [*, *];
+
 // TODO consider making this accept generics so that we can better test
 // reducers: https://github.com/facebook/flow/issues/4737
 export type Action = {
@@ -18,7 +20,19 @@ export type Action = {
 export type UniqueAction = {
   type: string,
   payload: any,
-  meta: { id: string },
+  meta: {
+    id: string,
+  },
+  error?: boolean,
+};
+
+export type UniqueActionWithKeyPath = {
+  type: string,
+  payload: any,
+  meta: {
+    id: string,
+    keyPath: KeyPath,
+  },
   error?: boolean,
 };
 
