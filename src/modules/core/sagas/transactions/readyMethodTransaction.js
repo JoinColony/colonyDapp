@@ -13,10 +13,10 @@ import type { CreateTransactionAction } from '../../types';
 
 import { METHOD_TRANSACTION_SENT, TRANSACTION_READY } from '../../actionTypes';
 
-export default function* suggestMethodTransactionGas<
+export default function* readyMethodTransaction<
   P: TransactionParams,
   E: TransactionEventData,
->({ payload: { id } }: CreateTransactionAction<P>): Saga<void> {
+>({ meta: { id } }: CreateTransactionAction<P>): Saga<void> {
   const { methodName }: TransactionRecord<P, E> = yield select(state =>
     state.core.transactions.get(id),
   );
@@ -34,7 +34,7 @@ export default function* suggestMethodTransactionGas<
     methodName === 'registerColonyLabel' ||
     methodName === 'createColony'
   ) {
-    yield put({ type: METHOD_TRANSACTION_SENT, payload: { id } });
+    yield put({ type: METHOD_TRANSACTION_SENT, meta: { id } });
   } else {
     /*
      * Dispatch a transaction ready action
@@ -44,6 +44,6 @@ export default function* suggestMethodTransactionGas<
      *
      * This will be hooked into the `success` prop of the `ActionForm`
      */
-    yield put({ type: TRANSACTION_READY, payload: { id } });
+    yield put({ type: TRANSACTION_READY, meta: { id } });
   }
 }
