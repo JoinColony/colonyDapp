@@ -162,18 +162,18 @@ export const transactionGasManualSet = (
   gasPrice: number,
   gasLimit: number,
 ): TransactionParams => {
+  const manualGasOptions: Object = {};
   const manualGasAction: Object = {
     type: TRANSACTION_GAS_MANUAL,
-    payload: {},
     meta: { id },
   };
   if (gasPrice) {
-    manualGasAction.payload.suggestedGasPrice = new BigNumber(gasPrice);
+    manualGasOptions.gasPrice = new BigNumber(gasPrice);
   }
   if (gasLimit) {
-    manualGasAction.payload.suggestedGasLimit = new BigNumber(
+    manualGasOptions.gasLimit = new BigNumber(
       parseInt(gasLimit * SAFE_GAS_LIMIT_MULTIPLIER, 10),
     );
   }
-  return manualGasAction;
+  return { ...manualGasAction, payload: { options: manualGasOptions } };
 };

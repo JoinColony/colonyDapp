@@ -59,15 +59,15 @@ const transactionsReducer = (
     }
     case TRANSACTION_GAS_MANUAL: {
       const { id } = meta;
-      const { suggestedGasLimit, suggestedGasPrice } = payload;
-      const manualGasValues: Object = {};
-      if (suggestedGasLimit) {
-        manualGasValues.suggestedGasLimit = suggestedGasLimit;
+      const { gasPrice, gasLimit } = payload.options;
+      const manualGasOptions: Object = {};
+      if (gasLimit) {
+        manualGasOptions.gasLimit = gasLimit;
       }
-      if (suggestedGasPrice) {
-        manualGasValues.suggestedGasPrice = suggestedGasPrice;
+      if (gasPrice) {
+        manualGasOptions.gasPrice = gasPrice;
       }
-      return state.mergeIn([id], manualGasValues);
+      return state.mergeIn([id, 'options'], manualGasOptions);
     }
     case TRANSACTION_SENT: {
       const { id } = meta;
