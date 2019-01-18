@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
+import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
 
@@ -69,8 +70,9 @@ const UserListItem = ({
         </span>
       )}
       {showUsername && username && (
-        <span className={styles.username} title={`@${username.toLowerCase()}`}>
-          {`@${username.toLowerCase()}`}
+        <span className={styles.username}>
+          &nbsp;
+          <UserMention hasLink={false} username={username} />
         </span>
       )}
       <span className={styles.address}>
