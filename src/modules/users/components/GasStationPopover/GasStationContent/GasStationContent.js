@@ -4,7 +4,6 @@ import type { HOC } from 'recompose';
 import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 
-import { allTransactions } from '../../../../core/selectors';
 import { currentUserAddressSelector } from '../../../selectors';
 
 import GasStationContent from './GasStationContent.jsx';
@@ -17,9 +16,6 @@ export type InProps = {
 
 const enhance: HOC<*, InProps> = compose(
   connect((state: Object) => ({
-    transactions: allTransactions(state)
-      .toList()
-      .toArray(),
     walletAddress: currentUserAddressSelector(state),
   })),
   withProps(() => ({

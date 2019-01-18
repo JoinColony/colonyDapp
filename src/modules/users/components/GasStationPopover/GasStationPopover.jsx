@@ -3,12 +3,13 @@
 import React, { Component } from 'react';
 
 import type { PopoverTrigger } from '~core/Popover';
+import type { TransactionType } from '~types';
 
 import Popover from '~core/Popover';
 import GasStationContent from './GasStationContent';
 
 type Props = {
-  transactions: Array<*>,
+  transactions: Array<TransactionType>,
   transactionCount: number,
   children: React$Element<*> | PopoverTrigger,
 };
