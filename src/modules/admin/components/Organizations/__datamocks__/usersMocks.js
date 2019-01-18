@@ -3,7 +3,7 @@
 import { List } from 'immutable';
 import { User, UserProfile } from '~immutable';
 
-const usersMocks = new List([
+const usersMocks = List([
   User({
     profile: UserProfile({
       activitiesStore: '',

@@ -86,7 +86,13 @@ const enhance: HOC<*, InProps> = compose(
         canSignTransaction,
         transaction: transactionToSign || transaction,
         transactionGasManualSet,
-        furtherActionPossible: status !== 'succeeded' && status !== 'failed',
+        /*
+         * If the TX is `created` (it's ready to be signed) then show the manual gas
+         * controls and confirm button.
+         * In every other cases (pending, failed, succeeded), those controls are
+         * useles (for a user, as there's not more to be done), so we hide them
+         */
+        furtherActionPossible: status === 'created',
       };
     },
   ),
