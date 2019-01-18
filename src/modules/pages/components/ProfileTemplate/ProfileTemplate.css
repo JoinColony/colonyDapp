@@ -9,7 +9,6 @@
 .sidebar {
   padding: 80px paddingHorizontal;
   height: 100vh;
-  background: var(--gradient-default);
 }
 
 .header {
