@@ -1,5 +1,5 @@
-@value paddingHorizontal: 90px;
-@value sidebarWidth: 420px;
+@value paddingHorizontal: 60px;
+@value sidebarWidth: 340px;
 
 .main {
   display: flex;
@@ -7,8 +7,12 @@
 }
 
 .sidebar {
-  padding: 80px paddingHorizontal;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 80px 0;
   height: 100vh;
+  width: sidebarWidth;
 }
 
 .header {
