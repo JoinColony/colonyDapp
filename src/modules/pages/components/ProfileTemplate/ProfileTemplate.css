@@ -4,18 +4,11 @@
 .main {
   display: flex;
   flex-direction: row;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
 }
 
 .sidebar {
   padding: 80px paddingHorizontal;
-  height: 100%;
-  width: sidebarWidth;
-  position: fixed;
-  overflow: auto;
+  height: 100vh;
   background: var(--gradient-default);
 }
 
@@ -26,9 +19,7 @@
 }
 
 .mainContainer {
-  margin-left: sidebarWidth;
   width: 100%;
-  overflow: auto;
   background-color: var(--colony-white);
 }
 
@@ -43,11 +34,11 @@
   background: var(--gradient-default);
 
   & .sidebar {
-    border-right: 2px solid var(--grey-blue-0);
     background: none;
   }
 
   & .mainContainer {
+    border-left: 2px solid var(--grey-blue-0);
     background-color: transparent;
   }
 }
