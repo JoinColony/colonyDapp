@@ -3,7 +3,7 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 10% 80px 10% 80px;
+  padding: 60px 80px;
   overflow: auto;
   background: var(--gradient-default);
   grid-template-columns: minmax(200px, 260px) minmax(360px, auto) minmax(120px, 200px);
