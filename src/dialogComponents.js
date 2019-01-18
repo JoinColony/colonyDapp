@@ -14,7 +14,6 @@ import {
 import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
 import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import TaskEditDialog from '~dashboard/TaskEditDialog';
-import CreateUsernameDialog from '~users/CreateUsernameDialog';
 import ClaimProfileDialog from '~users/ClaimProfileDialog';
 import ENSNameDialog from '~users/ENSNameDialog';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
@@ -24,7 +23,6 @@ import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 const dialogComponents: Object = {
   ActivityBarExample,
   ClaimProfileDialog,
-  CreateUsernameDialog,
   ENSNameDialog,
   TokenEditDialog,
   TokenMintDialog,
