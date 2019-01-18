@@ -6,6 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
 
+import type { Action } from '~types';
 import type { TransactionType } from '~types/transaction';
 import type { EstimatedGasCost } from '~utils/external';
 import type { RadioOption } from '~core/Fields/RadioGroup';
@@ -179,6 +180,10 @@ class GasStationPrice extends Component<Props, State> {
           validationSchema={validationSchema}
           isInitialValid={!!initialFormValues.transactionSpeed}
           initialValues={initialFormValues}
+          setPayload={(action: Action) => ({
+            ...action,
+            meta: { id },
+          })}
         >
           {({
             isSubmitting,
