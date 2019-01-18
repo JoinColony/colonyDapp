@@ -3,7 +3,7 @@
 import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { InProps } from './GasStation';
+import type { InProps } from './GasStationContent';
 import type { TransactionType } from '~types';
 
 import { WALLET_ROUTE } from '~routes';
@@ -16,23 +16,23 @@ import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import CardList from '~core/CardList';
 
-import GasStationCard from './GasStationCard';
-import GasStationClaimCard from './GasStationClaimCard';
-import GasStationPrice from './GasStationPrice';
+import GasStationCard from '../GasStationCard';
+import GasStationClaimCard from '../GasStationClaimCard';
+import GasStationPrice from '../GasStationPrice';
 
-import styles from './GasStation.css';
+import styles from './GasStationContent.css';
 
 const MSG = defineMessages({
   transactionsEmptyStateText: {
-    id: 'dashboard.GasStation.transactionsEmptyStateText',
+    id: 'dashboard.GasStation.GasStationContent.transactionsEmptyStateText',
     defaultMessage: 'You have no pending actions.',
   },
   goToWalletLinkTitle: {
-    id: 'dashboard.GasStation.goToWalletLinkTitle',
+    id: 'dashboard.GasStation.GasStationContent.goToWalletLinkTitle',
     defaultMessage: 'Go to Wallet',
   },
   returnToSummary: {
-    id: 'dashboard.GasStation.returnToSummary',
+    id: 'dashboard.GasStation.GasStationContent.returnToSummary',
     defaultMessage: 'See all pending actions',
   },
 });
@@ -48,8 +48,8 @@ type State = {
   expandedTransactionId: number,
 };
 
-class GasStation extends Component<Props, State> {
-  static displayName = 'dashboard.GasStation';
+class GasStationContent extends Component<Props, State> {
+  static displayName = 'dashboard.GasStation.GasStationContent';
 
   state = {
     expandedTransactionId: -1,
@@ -177,4 +177,4 @@ class GasStation extends Component<Props, State> {
   }
 }
 
-export default GasStation;
+export default GasStationContent;

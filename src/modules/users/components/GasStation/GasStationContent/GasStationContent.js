@@ -4,10 +4,10 @@ import type { HOC } from 'recompose';
 import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 
-import { allTransactions } from '../../../core/selectors';
-import { currentUserAddressSelector } from '../../selectors';
+import { allTransactions } from '../../../../core/selectors';
+import { currentUserAddressSelector } from '../../../selectors';
 
-import GasStation from './GasStation.jsx';
+import GasStationContent from './GasStationContent.jsx';
 
 import mockUser from '~dashboard/Wallet/__datamocks__/mockUser';
 
@@ -32,4 +32,4 @@ const enhance: HOC<*, InProps> = compose(
   })),
 );
 
-export default enhance(GasStation);
+export default enhance(GasStationContent);
