@@ -20,6 +20,8 @@ const PIN_ACTIONS = {
   LOAD_STORE: 'LOAD_STORE',
   HAVE_HEADS: 'HAVE_HEADS',
   PIN_HASH: 'PIN_HASH',
+  REPLICATED: 'REPLICATED',
+  ACK: 'ACK',
 };
 
 class PinnerConnector extends EventEmitter {
@@ -102,6 +104,32 @@ class PinnerConnector extends EventEmitter {
     }
   }
 
+  _tryUntil(
+    fn: Function,
+    condFn: (...args: any[]) => boolean,
+    onTimeout: Function,
+    tries: number = 5,
+  ) {
+    let retries = 0;
+    let timeout;
+    const retry = () => {
+      fn();
+      timeout = setTimeout(() => {
+        if (retries === tries) {
+          onTimeout();
+          clearTimeout(timeout);
+          return;
+        }
+        retry();
+        retries += 1;
+      }, 10 * 1000);
+    };
+    retry();
+    this.on('action', (action: PinnerAction) => {
+      if (condFn(action)) clearTimeout(timeout);
+    });
+  }
+
   async init() {
     if (this._id) throw new Error('Unable to re-initialize PinnerConnector');
 
@@ -130,7 +158,10 @@ class PinnerConnector extends EventEmitter {
     let listener;
     const getHeads = new Promise(resolve => {
       listener = ({ type, to, payload }) => {
-        if (type === PIN_ACTIONS.HAVE_HEADS && to === address) resolve(payload);
+        if (type === PIN_ACTIONS.HAVE_HEADS && to === address) {
+          resolve(payload);
+          this.removeListener('action', listener);
+        }
       };
       this.on('action', listener);
     });
@@ -146,18 +177,33 @@ class PinnerConnector extends EventEmitter {
     );
   }
 
-  async pinStore(address: string) {
-    return this._publishAction({
-      type: PIN_ACTIONS.PIN_STORE,
-      payload: { address },
-    });
+  pinStore(address: string) {
+    const pin = () =>
+      this._publishAction({
+        type: PIN_ACTIONS.PIN_STORE,
+        payload: { address },
+      });
+    const condFn = ({ type, to }) =>
+      type === PIN_ACTIONS.REPLICATED && to === address;
+    const onTimeout = () =>
+      console.warn(`Could not pin store with address ${address}`);
+
+    this._tryUntil(pin, condFn, onTimeout, 5);
   }
 
   async pinHash(ipfsHash: string) {
-    await this._publishAction({
-      type: PIN_ACTIONS.PIN_HASH,
-      payload: { ipfsHash },
-    });
+    const pin = () =>
+      this._publishAction({
+        type: PIN_ACTIONS.PIN_HASH,
+        payload: { ipfsHash },
+      });
+    const condFn = ({ type, payload: { ipfsHash: pinnedHash } }) =>
+      type === PIN_ACTIONS.ACK && ipfsHash === pinnedHash;
+    const onTimeout = () =>
+      console.warn(`Could not pin ipfsHash ${ipfsHash} on pinner`);
+
+    this._tryUntil(pin, condFn, onTimeout, 5);
+
     if (!isDev) {
       // Just in case we use infura as well to pin stuff
       try {
