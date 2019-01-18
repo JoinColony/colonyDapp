@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import type { MessageDescriptor } from 'react-intl';
 
 import { call, put, race, take, getContext } from 'redux-saga/effects';
 
@@ -18,19 +17,14 @@ export const create = (Class: Function, ...args: any[]) =>
 /*
  * Effect to put a consistent error action
  */
-export const putError = (
-  type: string,
-  error: Error,
-  meta?: Object = {},
-  msg?: MessageDescriptor | string,
-) => {
+export const putError = (type: string, error: Error, meta?: Object = {}) => {
   const action = {
     type,
-    error: true,
-    meta,
     payload: {
-      error: msg || { id: `sagaError.${type}` },
+      error,
     },
+    meta,
+    error: true,
   };
   if (isDev) {
     log(error);

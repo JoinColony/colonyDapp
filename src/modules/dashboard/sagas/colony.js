@@ -12,7 +12,12 @@ import {
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
-import type { Action, ENSName, UniqueActionWithKeyPath } from '~types';
+import type {
+  Action,
+  ENSName,
+  UniqueAction,
+  UniqueActionWithKeyPath,
+} from '~types';
 
 import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
@@ -80,7 +85,10 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
 /*
  * Simply forward on the form params to create a transaction.
  */
-function* createColonySaga({ payload: params, meta }: Action): Saga<void> {
+function* createColonySaga({
+  payload: params,
+  meta,
+}: UniqueAction): Saga<void> {
   yield put(
     createColony({
       meta,
@@ -105,7 +113,7 @@ function* createColonyLabelSaga({
     tokenIcon,
   },
   meta,
-}: Action): Saga<void> {
+}: UniqueAction): Saga<void> {
   const colonyStoreData = {
     address: colonyAddress,
     ensName,
@@ -175,8 +183,10 @@ function* createColonyLabelSaga({
   );
 }
 
-function* validateColonyDomain(action: Action): Saga<void> {
-  const { ensName } = action.payload;
+function* validateColonyDomain({
+  payload: { ensName },
+  meta,
+}: UniqueAction): Saga<void> {
   yield delay(300);
 
   const nameHash = yield call(getHashedENSDomainString, ensName, 'colony');
@@ -194,15 +204,17 @@ function* validateColonyDomain(action: Action): Saga<void> {
     yield putError(
       COLONY_DOMAIN_VALIDATE_ERROR,
       new Error('ENS address already exists'),
+      meta,
     );
     return;
   }
-  yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS });
+  yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS, meta });
 }
 
 /*
  * Redirect to the colony home for the given (newly-registered) label
  */
+// TODO: we have cases where we do something like that with the raceError effect (custom take)
 function* createColonyLabelSuccessSaga({
   payload: {
     params: { colonyName },
