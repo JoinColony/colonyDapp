@@ -32,36 +32,36 @@ import styles from './GasStationPrice.css';
 
 const MSG = defineMessages({
   networkCongestedWarning: {
-    id: 'dashboard.GasStationPrice.networkCongestedWarning',
+    id: 'users.GasStationPopover.GasStationPrice.networkCongestedWarning',
     defaultMessage: `The network is congested and transactions
 are expensive. We recommend waiting.`,
   },
   openTransactionSpeedMenuTitle: {
-    id: 'dashboard.GasStationPrice.openTransactionSpeedMenuTitle',
+    id: 'users.GasStationPopover.GasStationPrice.openTransactionSpeedMenuTitle',
     defaultMessage: 'Change Transaction Speed',
   },
   transactionFeeLabel: {
-    id: 'dashboard.GasStationPrice.transactionFeeLabel',
+    id: 'users.GasStationPopover.GasStationPrice.transactionFeeLabel',
     defaultMessage: 'Transaction Fee',
   },
   transactionSpeedLabel: {
-    id: 'dashboard.GasStationPrice.transactionSpeedLabel',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedLabel',
     defaultMessage: 'Transaction Speed',
   },
   transactionSpeedTypeSuggested: {
-    id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeSuggested',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeSuggested',
     defaultMessage: 'Suggested',
   },
   transactionSpeedTypeCheaper: {
-    id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeCheaper',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeCheaper',
     defaultMessage: 'Cheaper',
   },
   transactionSpeedTypeFaster: {
-    id: 'dashboard.GasStation.GasStationPrice.transactionSpeedTypeFaster',
+    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeFaster',
     defaultMessage: 'Faster',
   },
   walletPromptText: {
-    id: 'dashboard.GasStationPrice.walletPromptText',
+    id: 'users.GasStationPopover.GasStationPrice.walletPromptText',
     defaultMessage: `Finish the transaction on {walletType, select,
       metamask {Metamask}
       hardware {your hardware wallet}
@@ -108,7 +108,7 @@ class GasStationPrice extends Component<Props, State> {
     isNetworkCongested: false,
   };
 
-  static displayName = 'GasStationPrice';
+  static displayName = 'users.GasStationPopover.GasStationPrice';
 
   state = {
     estimatedGasCost: null,

@@ -24,7 +24,7 @@ import styles from './GasStationCard.css';
 
 const MSG = defineMessages({
   transactionState: {
-    id: 'dashboard.GasStation.GasStationCard.transactionState',
+    id: 'users.GasStationPopover.GasStationCard.transactionState',
     defaultMessage: `{status, select,
       multisig {Waiting on {username} to sign}
       failed {Failed transaction. Try again}
@@ -33,7 +33,7 @@ const MSG = defineMessages({
     }`,
   },
   actionState: {
-    id: 'dashboard.GasStation.GasStationCard.actionState',
+    id: 'users.GasStationPopover.GasStationCard.actionState',
     defaultMessage: `{status, select,
       multisig {Waiting on {username} to sign}
       pending {Pending transaction}
@@ -42,22 +42,22 @@ const MSG = defineMessages({
     }`,
   },
   dependentAction: {
-    id: 'dashboard.GasStation.GasStationCard.dependentAction',
+    id: 'users.GasStationPopover.GasStationCard.dependentAction',
     defaultMessage: 'Dependent transaction',
   },
   failedAction: {
-    id: 'dashboard.GasStation.GasStationCard.failedAction',
+    id: 'users.GasStationPopover.GasStationCard.failedAction',
     defaultMessage: 'Failed transaction. Try again.',
   },
   transactionTitle: {
-    id: 'dashboard.GasStation.GasStationCard.transactionTitle',
+    id: 'users.GasStationPopover.GasStationCard.transactionTitle',
     defaultMessage: `{methodName, select,
       registerUserLabel {Claim your profile}
       other {Generic Transaction}
     }`,
   },
   transactionDescription: {
-    id: 'dashboard.GasStation.GasStationCard.transactionDescription',
+    id: 'users.GasStationPopover.GasStationCard.transactionDescription',
     defaultMessage: `DEBUG: context: {context} methodName: {methodName}`,
   },
   /*
@@ -66,7 +66,7 @@ const MSG = defineMessages({
    * should be implemented in #542
    */
   actionDescriptionSample: {
-    id: 'dashboard.GasStation.GasStationCard.actionDescriptionSample',
+    id: 'users.GasStationPopover.GasStationCard.actionDescriptionSample',
     defaultMessage: `{index}. Create Task`,
   },
 });
@@ -87,7 +87,7 @@ type State = {
 };
 
 class GasStationCard extends Component<Props, State> {
-  static displayName = 'dashboard.GasStation.GasStationCard';
+  static displayName = 'users.GasStationPopover.GasStationCard';
 
   /*
    * @NOTE This needs to be static since we don't use any props from the

@@ -24,15 +24,15 @@ import styles from './GasStationContent.css';
 
 const MSG = defineMessages({
   transactionsEmptyStateText: {
-    id: 'dashboard.GasStation.GasStationContent.transactionsEmptyStateText',
+    id: 'users.GasStationPopover.GasStationContent.transactionsEmptyStateText',
     defaultMessage: 'You have no pending actions.',
   },
   goToWalletLinkTitle: {
-    id: 'dashboard.GasStation.GasStationContent.goToWalletLinkTitle',
+    id: 'users.GasStationPopover.GasStationContent.goToWalletLinkTitle',
     defaultMessage: 'Go to Wallet',
   },
   returnToSummary: {
-    id: 'dashboard.GasStation.GasStationContent.returnToSummary',
+    id: 'users.GasStationPopover.GasStationContent.returnToSummary',
     defaultMessage: 'See all pending actions',
   },
 });
@@ -49,7 +49,7 @@ type State = {
 };
 
 class GasStationContent extends Component<Props, State> {
-  static displayName = 'dashboard.GasStation.GasStationContent';
+  static displayName = 'users.GasStationPopover.GasStationContent';
 
   state = {
     expandedTransactionId: -1,
