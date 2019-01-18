@@ -1,10 +1,12 @@
+@value navHeight: 70px;
+
 .wrapper {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
   overflow-y: auto;
   background: var(--gradient-default);
   grid-template-columns: 100%;
-  grid-template-rows: 70px auto;
+  grid-template-rows: navHeight auto;
 }
 
 .navigation {
@@ -51,4 +53,8 @@
 .themeTransparent .navigation {
   border-color: transparent;
   background-color: transparent;
+}
+
+.themeTransparent .content {
+  margin-top: calc(-1 * navHeight);
 }
