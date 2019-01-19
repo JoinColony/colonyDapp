@@ -8,6 +8,7 @@ import { push } from 'connected-react-router';
 import type { Action } from '~types';
 
 import { putError } from '~utils/saga/effects';
+
 import { ensureColonyIsInState, fetchColonyStore } from './shared';
 
 import {
@@ -20,12 +21,13 @@ import {
 } from '../actionTypes';
 
 import {
-  addColonyAdminTransaction as addColonyAdminAction,
-  removeColonyAdminTransaction as removeColonyAdminAction,
+  addColonyAdmin as addColonyAdminAction,
+  removeColonyAdmin as removeColonyAdminAction,
 } from '../actionCreators';
 
 function* addColonyAdmin({
   payload: { newAdmin, ensName },
+  meta,
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = newAdmin.profile;
@@ -55,10 +57,13 @@ function* addColonyAdmin({
     /*
      * Dispatch the action to set the admin on the contract level (transaction)
      */
-    const action = yield call(addColonyAdminAction, colonyAddress, {
-      user: walletAddress,
-    });
-    yield put(action);
+    yield put(
+      addColonyAdminAction({
+        identifier: colonyAddress,
+        params: { user: walletAddress },
+        meta,
+      }),
+    );
     /*
      * Redirect the user back to the admins tab
      */
@@ -74,6 +79,7 @@ function* addColonyAdmin({
 
 function* removeColonyAdmin({
   payload: { admin, ensName },
+  meta,
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = admin;
@@ -107,10 +113,15 @@ function* removeColonyAdmin({
     /*
      * Dispatch the action to set the admin on the contract level (transaction)
      */
-    const action = yield call(removeColonyAdminAction, colonyAddress, {
-      user: walletAddress,
-    });
-    yield put(action);
+    yield put(
+      removeColonyAdminAction({
+        identifier: colonyAddress,
+        params: {
+          user: walletAddress,
+        },
+        meta,
+      }),
+    );
     /*
      * Redirect the user back to the admins tab
      */
