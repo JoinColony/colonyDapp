@@ -63,17 +63,6 @@ export const getCurrentColony = createSelector(
     ensName ? colonies.get(ensName, ImmutableMap()) : ImmutableMap(),
 );
 
-export const getColonyAdminStore = createSelector(
-  singleColonySelector,
-  currentColony =>
-    currentColony && currentColony.getIn(['record', 'admins'], ImmutableMap()),
-);
-
-export const getColonyAdmins = createSelector(
-  getColonyAdminStore,
-  colonyAdmins => (colonyAdmins && colonyAdmins.toList().toArray()) || [],
-);
-
 export const allColonyENSNames = createSelector(
   coloniesSelector,
   colonies => colonies.keySeq().toArray(),
