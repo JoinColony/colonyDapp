@@ -61,6 +61,9 @@ function* addColonyAdmin({
       addColonyAdminAction({
         identifier: colonyAddress,
         params: { user: walletAddress },
+        options: {
+          gasLimit: 500000,
+        },
         meta,
       }),
     );
@@ -83,7 +86,6 @@ function* removeColonyAdmin({
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = admin;
-
     /*
      * Ensure the colony is in the state.
      */
@@ -118,6 +120,9 @@ function* removeColonyAdmin({
         identifier: colonyAddress,
         params: {
           user: walletAddress,
+        },
+        options: {
+          gasLimit: 500000,
         },
         meta,
       }),
