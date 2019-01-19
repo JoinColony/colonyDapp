@@ -15,7 +15,6 @@ import {
   COLONY_CREATE_LABEL_SUCCESS,
   COLONY_FETCH,
   COLONY_AVATAR_FETCH,
-  COLONY_ADMIN_ADD_ERROR,
   COLONY_ENS_NAME_FETCH,
 } from '../actionTypes';
 
@@ -39,26 +38,6 @@ export const createColonyLabel = createTxActionCreator<{
   lifecycle: {
     error: COLONY_CREATE_LABEL_ERROR,
     eventDataReceived: COLONY_CREATE_LABEL_SUCCESS,
-  },
-});
-
-export const addColonyAdmin = createTxActionCreator<{
-  user: string,
-}>({
-  context: COLONY_CONTEXT,
-  methodName: 'setAdminRole',
-  lifecycle: {
-    error: COLONY_ADMIN_ADD_ERROR,
-  },
-});
-
-export const removeColonyAdmin = createTxActionCreator<{
-  user: string,
-}>({
-  context: COLONY_CONTEXT,
-  methodName: 'removeAdminRole',
-  lifecycle: {
-    error: COLONY_ADMIN_ADD_ERROR,
   },
 });
 
