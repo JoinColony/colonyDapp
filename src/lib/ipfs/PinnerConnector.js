@@ -73,7 +73,7 @@ class PinnerConnector extends EventEmitter {
     // TODO: In the future, we can maintain multiple ids here
     if (peer === this._pinnerId) {
       this.online = true;
-      await this._flushPinnerMessages();
+      this._flushPinnerMessages();
     }
   }
 
@@ -84,21 +84,19 @@ class PinnerConnector extends EventEmitter {
     }
   }
 
-  async _flushPinnerMessages() {
-    await Promise.all(
-      this._outstandingPubsubMessages.map(message =>
-        this._publishAction(message),
-      ),
+  _flushPinnerMessages() {
+    this._outstandingPubsubMessages.forEach(message =>
+      this._publishAction(message),
     );
     this._outstandingPubsubMessages = [];
   }
 
-  async _publishAction(action: PinnerAction) {
+  _publishAction(action: PinnerAction) {
     if (this.online) {
-      await this._ipfs.pubsub.publish(
-        this._room,
-        Buffer.from(JSON.stringify(action)),
-      );
+      this._ipfs.pubsub
+        .publish(this._room, Buffer.from(JSON.stringify(action)))
+        // pubsub.publish returns a promise, so when calling it synchronously, we have to handle errors here
+        .catch(console.warn);
     } else {
       this._outstandingPubsubMessages.push(action);
     }
