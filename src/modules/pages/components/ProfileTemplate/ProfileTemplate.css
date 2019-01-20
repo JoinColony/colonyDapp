@@ -1,22 +1,18 @@
-@value paddingHorizontal: 90px;
-@value sidebarWidth: 420px;
+@value paddingHorizontal: 60px;
+@value sidebarWidth: 340px;
 
 .main {
   display: flex;
   flex-direction: row;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
 }
 
 .sidebar {
-  padding: 80px paddingHorizontal;
-  height: 100%;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 80px 0;
+  height: 100vh;
   width: sidebarWidth;
-  position: fixed;
-  overflow: auto;
-  background: var(--gradient-default);
 }
 
 .header {
@@ -26,9 +22,7 @@
 }
 
 .mainContainer {
-  margin-left: sidebarWidth;
   width: 100%;
-  overflow: auto;
   background-color: var(--colony-white);
 }
 
@@ -43,11 +37,11 @@
   background: var(--gradient-default);
 
   & .sidebar {
-    border-right: 2px solid var(--grey-blue-0);
     background: none;
   }
 
   & .mainContainer {
+    border-left: 2px solid var(--grey-blue-0);
     background-color: transparent;
   }
 }

@@ -4,13 +4,8 @@
 }
 
 .backNavigation {
-  margin: 20px 0 0 20px;
+  margin: 11px 0 0 21px;
   font-weight: var(--weight-medium);
-}
-
-.backNavigation i {
-  margin-right: 10px;
-  vertical-align: middle;
 }
 
 .headingWrapper {

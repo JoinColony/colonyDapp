@@ -7,8 +7,6 @@ import { defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
-import NavLink from '~core/NavLink';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Organizations from '~admin/Organizations';
 import Profile from '~admin/Profile';
@@ -16,6 +14,7 @@ import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
+import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { withFeatureFlags } from '~utils/hoc';
 
 import { withColonyFromRoute } from '../../../core/hocs';
@@ -121,15 +120,10 @@ const AdminDashboard = (props: Props) => {
         }
       >
         <div className={styles.backNavigation}>
-          <Icon
-            name="circle-back"
-            title="back"
-            appearance={{ size: 'medium' }}
-          />
-          <NavLink
-            to={`/colony/${ensName}`}
-            text={MSG.backButton}
-            textValues={{ name }}
+          <HistoryNavigation
+            backRoute={`/colony/${ensName}`}
+            backText={MSG.backButton}
+            backTextValues={{ name }}
           />
         </div>
         <div className={styles.headingWrapper}>

@@ -92,7 +92,8 @@ const Routes = ({ currentUser }) => {
         isConnected={isConnected}
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
-        hasNavigation={false}
+        appearance={{ theme: 'transparent' }}
+        hasBackLink={false}
       />
       <ConnectedOnlyRoute
         exact

@@ -5,13 +5,13 @@
 .tabs {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  grid-template-columns: minmax(240px, 340px) auto;
+  grid-template-columns: 260px auto;
   grid-template-rows: auto;
 }
 
 .tabList {
   height: 100%;
-  border-right: 1px solid var(--temp-grey-5);
+  z-index: 1; /* required to allow links to be clickable in case of transparent navigation */
   grid-column: 1;
   grid-row: 1;
 }
@@ -36,6 +36,8 @@
 
 .tabPanel {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  padding-top: 20px;
+  border-left: 1px solid var(--temp-grey-5);
   grid-column: 2;
   grid-row: 1;
 }
