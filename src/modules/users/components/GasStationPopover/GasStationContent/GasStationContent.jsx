@@ -40,7 +40,6 @@ const MSG = defineMessages({
 
 type Props = InProps & {
   balance: number,
-  showClaimInfoCard: boolean,
   transactions: Array<TransactionType>,
   currentUser: UserRecord,
 };
@@ -79,7 +78,11 @@ class GasStationContent extends Component<Props, State> {
   }
 
   renderExpandedTransaction(transaction: TransactionType) {
-    const { showClaimInfoCard } = this.props;
+    const {
+      currentUser: {
+        profile: { username },
+      },
+    } = this.props;
     return (
       <Fragment>
         <button
@@ -94,7 +97,7 @@ class GasStationContent extends Component<Props, State> {
           />
           <FormattedMessage {...MSG.returnToSummary} />
         </button>
-        {showClaimInfoCard && <GasStationClaimCard />}
+        {!username && <GasStationClaimCard />}
         <GasStationCard transaction={transaction} expanded />
       </Fragment>
     );
