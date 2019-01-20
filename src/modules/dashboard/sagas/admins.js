@@ -72,7 +72,7 @@ function* addColonyAdmin({
      */
     yield takeEvery(
       TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForAddColonyAdminTx({ meta: { id: signedTxId } }: Action) {
+      function* waitForSuccessfulTx({ meta: { id: signedTxId } }: Action) {
         if (signedTxId === meta.id) {
           /*
            * Dispatch the action to the admin in th redux store
@@ -117,21 +117,6 @@ function* removeColonyAdmin({
     const colonyAddress = store.get('address');
     const colonyAdmins = store.get('admins');
     /*
-     * Dispatch the action to the admin in th redux store
-     */
-    yield put({
-      type: COLONY_ADMIN_REMOVE_SUCCESS,
-      payload: {
-        ensName,
-        username,
-      },
-    });
-    /*
-     * Remove the colony admin and set the new value on the colony's store
-     */
-    delete colonyAdmins[username];
-    yield call([store, store.set], 'admins', colonyAdmins);
-    /*
      * Dispatch the action to set the admin on the contract level (transaction)
      */
     yield put(
@@ -153,6 +138,39 @@ function* removeColonyAdmin({
       push({
         state: { initialTab: 3 },
       }),
+    );
+    /*
+     * Wait for the transaction to be signed
+     * Only update the DDB and Redux stores once the transaction has been signed.
+     *
+     * We know this, because we listen for the `TRANSACTION_EVENT_DATA_RECEIVED`
+     * which we receive once the transaction has been sucessfully signed.
+     * Once that action is triggerred we inspect it and check it against the
+     * id of our original transaction.
+     * If they match, then we can be sure the transaction has been signed, so we
+     * can safely update the stores.
+     */
+    yield takeEvery(
+      TRANSACTION_EVENT_DATA_RECEIVED,
+      function* waitForSuccessfulTx({ meta: { id: signedTxId } }: Action) {
+        if (signedTxId === meta.id) {
+          /*
+           * Dispatch the action to the admin in th redux store
+           */
+          yield put({
+            type: COLONY_ADMIN_REMOVE_SUCCESS,
+            payload: {
+              ensName,
+              username,
+            },
+          });
+          /*
+           * Remove the colony admin and set the new value on the colony's store
+           */
+          delete colonyAdmins[username];
+          yield call([store, store.set], 'admins', colonyAdmins);
+        }
+      },
     );
   } catch (error) {
     yield putError(COLONY_ADMIN_REMOVE_ERROR, error);
