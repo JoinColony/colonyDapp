@@ -44,8 +44,9 @@ class DDB {
     { getAccessController, name }: StoreBlueprint,
     storeProps?: Object,
   ) {
+    // @TODO: Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
     const accessController = getAccessController
-      ? getAccessController(storeProps)
+      ? getAccessController(storeProps || {})
       : new PermissiveAccessController();
 
     if (!getAccessController)
@@ -151,7 +152,7 @@ class DDB {
       id,
       StoreClass.orbitType,
       // We might want to use more options in the future. Just add them here
-      { accessController },
+      { accessController, overwrite: false },
     );
 
     const store = this._makeStore(orbitStore, blueprint);
@@ -200,6 +201,21 @@ class DDB {
 
     await store.load();
     return store;
+  }
+
+  // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e
+  async storeExists(identifier: StoreIdentifier): Promise<boolean> {
+    const address = await this._getStoreAddress(identifier);
+    // @TODO This should actually throw an error
+    if (!address) return false;
+    // eslint-disable-next-line no-underscore-dangle
+    const cache = await this._orbitNode._loadCache(
+      this._orbitNode.directory,
+      address,
+    );
+    if (!cache) return false;
+    const data = await cache.get(`${address.toString()}/_manifest`);
+    return data !== undefined && data !== null;
   }
 
   async init() {
