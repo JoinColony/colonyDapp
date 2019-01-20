@@ -28,7 +28,7 @@ import {
 
 function* addColonyAdmin({
   payload: { newAdmin, ensName },
-  meta,
+  meta = {},
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = newAdmin.profile;
@@ -72,7 +72,7 @@ function* addColonyAdmin({
      */
     yield takeEvery(
       TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForSuccessfulTx({ meta: { id: signedTxId } }: Action) {
+      function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
         if (signedTxId === meta.id) {
           /*
            * Dispatch the action to the admin in th redux store
@@ -101,7 +101,7 @@ function* addColonyAdmin({
 
 function* removeColonyAdmin({
   payload: { admin, ensName },
-  meta,
+  meta = {},
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = admin;
@@ -152,7 +152,7 @@ function* removeColonyAdmin({
      */
     yield takeEvery(
       TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForSuccessfulTx({ meta: { id: signedTxId } }: Action) {
+      function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
         if (signedTxId === meta.id) {
           /*
            * Dispatch the action to the admin in th redux store
