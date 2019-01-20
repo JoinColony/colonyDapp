@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { InProps } from './GasStationContent';
 import type { TransactionType } from '~types';
+import type { UserRecord } from '~immutable';
 
 import { WALLET_ROUTE } from '~routes';
 
@@ -41,7 +42,7 @@ type Props = InProps & {
   balance: number,
   showClaimInfoCard: boolean,
   transactions: Array<TransactionType>,
-  walletAddress: string,
+  currentUser: UserRecord,
 };
 
 type State = {
@@ -100,7 +101,14 @@ class GasStationContent extends Component<Props, State> {
   }
 
   render() {
-    const { balance, close, transactions, walletAddress } = this.props;
+    const {
+      balance,
+      close,
+      transactions,
+      currentUser: {
+        profile: { walletAddress },
+      },
+    } = this.props;
     const { expandedTransactionId } = this.state;
 
     const isTransactionExpanded = expandedTransactionId >= 0;

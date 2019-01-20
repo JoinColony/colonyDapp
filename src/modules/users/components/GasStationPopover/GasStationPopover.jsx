@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import type { PopoverTrigger } from '~core/Popover';
 import type { TransactionType } from '~types';
+import type { UserRecord } from '~immutable';
 
 import Popover from '~core/Popover';
 import GasStationContent from './GasStationContent';
@@ -12,6 +13,7 @@ type Props = {
   transactions: Array<TransactionType>,
   transactionCount: number,
   children: React$Element<*> | PopoverTrigger,
+  currentUser: UserRecord,
 };
 
 type State = {
@@ -51,13 +53,17 @@ class GasStationPopover extends Component<Props, State> {
 
   render() {
     const { isGasStationOpen } = this.state;
-    const { children, transactions } = this.props;
+    const { children, transactions, currentUser } = this.props;
 
     return (
       <Popover
         appearance={{ theme: 'grey' }}
         content={({ close }) => (
-          <GasStationContent transactions={transactions} close={close} />
+          <GasStationContent
+            transactions={transactions}
+            close={close}
+            currentUser={currentUser}
+          />
         )}
         name="GasStationPopover"
         placement="bottom"
