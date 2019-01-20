@@ -8,8 +8,6 @@ import { call, put } from 'redux-saga/effects';
 import type { TransactionParams } from '~immutable';
 import type { CreateTransactionAction } from '../../types';
 
-import { TRANSACTION_READY } from '../../actionTypes';
-
 import { transactionGasSuggested } from '../../actionCreators/index';
 
 import { getMethod, getGasPrice } from '../utils';
@@ -45,13 +43,4 @@ export default function* suggestMethodTransactionGas<P: TransactionParams>({
       new BigNumber(suggestedGasPrice.toNumber()),
     ),
   );
-  /*
-   * Dispatch a transaction ready action
-   *
-   * This action's role is to inform the `ActionForm` in the various components
-   * that the trnsaction is ready to sign, so that it can act upon it. Eg: close the current modal
-   *
-   * This will be hooked into the `success` prop of the `ActionForm`
-   */
-  yield put({ type: TRANSACTION_READY });
 }
