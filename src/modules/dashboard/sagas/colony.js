@@ -2,9 +2,9 @@
 
 import type { Saga } from 'redux-saga';
 
-import { delay } from 'redux-saga';
 import {
   call,
+  delay,
   getContext,
   put,
   takeEvery,
@@ -185,7 +185,7 @@ function* createColonyLabelSaga({
 
 function* validateColonyDomain(action: Action): Saga<void> {
   const { ensName } = action.payload;
-  yield call(delay, 300);
+  yield delay(300);
 
   const nameHash = yield call(getHashedENSDomainString, ensName, 'colony');
 
