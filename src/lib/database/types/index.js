@@ -48,7 +48,7 @@ export type StoreBlueprint = {
   name: string,
   schema?: ObjectSchema,
   getAccessController?: (
-    storeProps?: Object,
+    storeProps: Object,
   ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,
   type: typeof Store,
 };
