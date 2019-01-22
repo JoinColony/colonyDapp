@@ -6,6 +6,7 @@ import { call, getContext, select, put } from 'redux-saga/effects';
 import type { ENSName } from '~types';
 import type {
   DocStore,
+  FeedStore,
   ValidatedKVStore,
   KVStore,
 } from '../../../lib/database/stores';
@@ -19,6 +20,7 @@ import {
   colonyStoreBlueprint,
   domainsIndexStoreBlueprint,
   draftsIndexStoreBlueprint,
+  taskCommentsBlueprint,
 } from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
@@ -199,4 +201,15 @@ export function* getOrCreateDraftsIndexStore(
   if (!store) store = yield call(createDraftsIndexStore, colonyENSName);
 
   return store;
+}
+
+/*
+ * Create a domains index store for a colony.
+ */
+export function* createCommentsStore(taskId: string): Saga<FeedStore> {
+  const ddb: DDB = yield getContext('ddb');
+
+  return yield call([ddb, ddb.createStore], taskCommentsBlueprint, {
+    taskId,
+  });
 }
