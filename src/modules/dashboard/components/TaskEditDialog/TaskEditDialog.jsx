@@ -82,6 +82,7 @@ const TaskEditDialog = ({
   addTokenFunding,
   availableTokens,
   cancel,
+  close,
   maxTokens,
   payouts,
   reputation,
@@ -133,6 +134,7 @@ const TaskEditDialog = ({
         }}
         validationSchema={validateFunding}
         setPayload={setPayload}
+        onSuccess={close}
       >
         {({ status, values, dirty, isSubmitting, isValid }) => (
           <Fragment>
