@@ -46,24 +46,17 @@ export const taskSetSkill = createTxActionCreator<{
 /**
  * As worker or manager, I want to be able to set a date
  */
-export const taskSetDate = (
-  identifier: string,
-  params: {
-    taskId: number,
-    dueDate: Date,
+export const taskSetDate = createTxActionCreator<{
+  taskId: number,
+  dueDate: Date,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'setTaskDueDate',
+  lifecycle: {
+    error: TASK_SET_DATE_ERROR,
+    success: TASK_SET_DATE_SUCCESS,
   },
-  options?: SendOptions,
-) =>
-  createColonyTransaction({
-    params,
-    options,
-    methodName: 'setTaskDueDate',
-    identifier,
-    lifecycle: {
-      error: TASK_SET_DATE_ERROR,
-      success: TASK_SET_DATE_SUCCESS,
-    },
-  });
+});
 
 /**
  * As worker, submit work and rate before due date.

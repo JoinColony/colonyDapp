@@ -132,9 +132,16 @@ function* taskSetSkillSaga({
 function* taskSetDueDateSaga(action: Action): Saga<void> {
   const {
     payload: { taskId, dueDate, colonyENSName },
+    meta,
   } = action;
 
-  yield put(taskSetDate(colonyENSName, { taskId, dueDate }));
+  yield put(
+    taskSetDate({
+      identifier: colonyENSName,
+      params: { taskId, dueDate },
+      meta,
+    }),
+  );
 }
 
 function* taskWorkerEndSaga({
