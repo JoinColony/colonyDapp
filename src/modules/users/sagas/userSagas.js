@@ -1,11 +1,11 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import { delay } from 'redux-saga';
 
 import {
   all,
   call,
+  delay,
   put,
   select,
   getContext,
@@ -300,7 +300,7 @@ function* fetchProfile({
 
 function* validateUsername(action: Action): Saga<void> {
   const { username } = action.payload;
-  yield call(delay, 300);
+  yield delay(300);
 
   const nameHash = yield call(getHashedENSDomainString, username, 'user');
 

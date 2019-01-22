@@ -5,9 +5,9 @@ import type { Saga } from 'redux-saga';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import TokenClient from '@colony/colony-js-client/lib/TokenClient';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
-import { delay } from 'redux-saga';
 import {
   call,
+  delay,
   getContext,
   put,
   takeEvery,
@@ -81,7 +81,7 @@ function* getTokenInfo({ payload: { tokenAddress } }): Saga<void> {
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
 
-  yield call(delay, 1000);
+  yield delay(1000);
 
   let info;
   try {
