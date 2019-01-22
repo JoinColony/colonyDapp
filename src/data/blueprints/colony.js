@@ -1,14 +1,29 @@
 /* @flow */
 
-// import * as yup from 'yup';
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import { EventStore } from '../../lib/database/stores';
+import { ColonyAccessController } from '../../lib/database/accessControllers';
+import loadPermissionManifest from '../../lib/database/accessControllers/permissions';
 
-import type { StoreBlueprint } from '~types';
+import type { Address, StoreBlueprint } from '~types';
 
 const colonyStoreBlueprint: StoreBlueprint = {
-  // TODO: add access controller
+  getAccessController({
+    colonyAddress,
+    colonyClient,
+    wallet,
+  }: {
+    colonyAddress: Address,
+    wallet: WalletObjectType,
+    colonyClient: ColonyClientType,
+  }) {
+    const manifest = loadPermissionManifest(colonyClient);
+    return new ColonyAccessController(colonyAddress, wallet, manifest);
+  },
   name: 'colony',
+  type: EventStore,
   // schema: yup.object({
   //   id: yup.number(),
   //   address: yup.string().address(),
@@ -30,7 +45,6 @@ const colonyStoreBlueprint: StoreBlueprint = {
   //     domainsIndex: yup.string(),
   //   }),
   // }),
-  type: EventStore,
 };
 
 export default colonyStoreBlueprint;
