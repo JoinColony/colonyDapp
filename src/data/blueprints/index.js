@@ -2,6 +2,7 @@
 
 export * from './meta';
 export { default as colony } from './colony';
+export { default as comments } from './comments';
 export { default as task } from './task';
 export { default as userActivities } from './userActivities';
 export { default as userInbox } from './userInbox';
