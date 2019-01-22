@@ -38,7 +38,7 @@ const MSG = defineMessages({
 
 type Props = {
   isTaskCreator?: boolean,
-  // After the skillId is set with the TaskDomains component it should be passed
+  // After the skillId is set with the TaskSkills component it should be passed
   // through form the redux store and is property of the TaskRecord
   task: TaskRecord,
 };

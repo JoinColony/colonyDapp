@@ -40,6 +40,7 @@ export const mockTask = Task({
   title: 'Develop Github integration',
   colonyENSName: 'cool-colony',
   reputation: 19.5,
+  dueDate: new Date('2019-01-17'),
   payouts: List.of(
     TaskPayout({
       token: ETHToken,
