@@ -6,11 +6,11 @@ import { FeedStore } from '../../../lib/database/stores';
 
 import type { StoreBlueprint } from '~types';
 
-const taskCommentsBlueprint: StoreBlueprint = {
+const commentsBlueprint: StoreBlueprint = {
   /*
    * @TODO Need access controller
    */
-  name: 'taskComments',
+  name: 'comments',
   schema: yup.object({
     id: yup.number(),
     creator: yup.string(),
@@ -20,4 +20,4 @@ const taskCommentsBlueprint: StoreBlueprint = {
   type: FeedStore,
 };
 
-export default taskCommentsBlueprint;
+export default commentsBlueprint;

@@ -12,4 +12,4 @@ export { default as draftStoreBlueprint } from './draftStoreBlueprint';
 export {
   default as userActivityStoreBlueprint,
 } from './userActivityStoreBlueprint';
-export { default as taskCommentsBlueprint } from './taskCommentsBlueprint';
+export { default as commentsBlueprint } from './commentsBlueprint';
