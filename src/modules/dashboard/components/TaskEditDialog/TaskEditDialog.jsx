@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
 import type { DialogType } from '~core/Dialog/types';
+import type { UserRecord, TokenRecord } from '~immutable';
 
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -17,9 +18,13 @@ import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { Token } from '~immutable';
 
-import Payout from './Payout.jsx';
+import {
+  TASK_ASSIGN_WORKER,
+  TASK_ASSIGN_WORKER_ERROR,
+  TASK_ASSIGN_WORKER_SUCCESS,
+} from '../../actionTypes';
 
-import type { UserRecord, TokenRecord } from '~immutable';
+import Payout from './Payout.jsx';
 
 import styles from './TaskEditDialog.css';
 
@@ -142,9 +147,9 @@ const TaskEditDialog = ({
       isDismissable={false}
     >
       <ActionForm
-        submit="CREATE_COOL_THING"
-        success="COOL_THING_CREATED"
-        error="COOL_THING_CREATE_ERROR"
+        submit={TASK_ASSIGN_WORKER}
+        success={TASK_ASSIGN_WORKER_SUCCESS}
+        error={TASK_ASSIGN_WORKER_ERROR}
         initialValues={{
           payouts:
             payouts && List.isList(payouts) ? payouts.toArray() : payouts || [],
