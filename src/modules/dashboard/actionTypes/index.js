@@ -5,3 +5,4 @@ export * from './domains';
 export * from './drafts';
 export * from './task';
 export * from './token';
+export * from './admins';
