@@ -52,14 +52,6 @@ function* addColonyAdmin({
       }),
     );
     /*
-     * Redirect the user back to the admins tab
-     */
-    yield put(
-      push({
-        state: { initialTab: 3 },
-      }),
-    );
-    /*
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
      *
@@ -91,6 +83,14 @@ function* addColonyAdmin({
             ...colonyAdmins,
             [username]: newAdmin.profile,
           });
+          /*
+           * Redirect the user back to the admins tab
+           */
+          yield put(
+            push({
+              state: { initialTab: 3 },
+            }),
+          );
         }
       },
     );
@@ -132,14 +132,6 @@ function* removeColonyAdmin({
       }),
     );
     /*
-     * Redirect the user back to the admins tab
-     */
-    yield put(
-      push({
-        state: { initialTab: 3 },
-      }),
-    );
-    /*
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
      *
@@ -169,6 +161,14 @@ function* removeColonyAdmin({
            */
           delete colonyAdmins[username];
           yield call([store, store.set], 'admins', colonyAdmins);
+          /*
+           * Redirect the user back to the admins tab
+           */
+          yield put(
+            push({
+              state: { initialTab: 3 },
+            }),
+          );
         }
       },
     );
