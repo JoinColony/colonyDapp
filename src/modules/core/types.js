@@ -64,7 +64,6 @@ export type Sender<P: TransactionParams, E: TransactionEventData> = {
 export type LifecycleActionTypes = {
   created?: string,
   error?: string,
-  eventDataReceived?: string,
   receiptReceived?: string,
   sent?: string,
   success?: string,
