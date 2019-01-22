@@ -1,5 +1,4 @@
 /* @flow */
-/* eslint-disable max-len */
 
 import ns from '../namespace';
 
