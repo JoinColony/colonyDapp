@@ -1,5 +1,6 @@
 const createMockOrbitStore = sandbox => ({
   _addOperation: sandbox.fn(),
+  add: sandbox.fn(),
   address: 'orbit store address',
   close: sandbox.fn(),
   drop: sandbox.fn(),

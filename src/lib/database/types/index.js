@@ -15,6 +15,10 @@ export type { OrbitDBStore } from './OrbitDBStore';
 export type { OrbitDBKVStore } from './OrbitDBKVStore';
 export type { OrbitDBDocStore, QueryFunction } from './OrbitDBDocStore';
 export type { FeedIteratorOptions, OrbitDBFeedStore } from './OrbitDBFeedStore';
+export type {
+  EventIteratorOptions,
+  OrbitDBEventStore,
+} from './OrbitDBEventStore';
 export type { ENSResolverType } from './ENSResolver';
 
 export type IPFSHash = string;
