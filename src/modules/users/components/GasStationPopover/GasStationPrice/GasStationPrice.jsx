@@ -2,14 +2,16 @@
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
+import BigNumber from 'bn.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { Action } from '~types';
 import type { TransactionType } from '~types/transaction';
-import type { EstimatedGasCost } from '~utils/external';
 import type { RadioOption } from '~core/Fields/RadioGroup';
+
+import type { GasPrices } from '../../../../core/types';
 
 import {
   METHOD_TRANSACTION_SENT,
@@ -18,7 +20,6 @@ import {
 } from '../../../../core/actionTypes';
 
 import { getMainClasses } from '~utils/css';
-import { getEstimatedGasCost } from '~utils/external';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -74,12 +75,12 @@ type Props = {
   isNetworkCongested: boolean,
   transaction: TransactionType,
   walletNeedsAction?: 'metamask' | 'hardware',
-  transactionGasManualSet: (id: string, gasPrice: number) => { type: string },
-  furtherActionPossible: boolean,
+  estimateGas: (id: string) => void,
+  updateGas: (id: string, { gasPrice: BigNumber }) => void,
+  gasPrices: GasPrices,
 };
 
 type State = {
-  estimatedGasCost: EstimatedGasCost | null,
   isSpeedMenuOpen: boolean,
   speedMenuId: string,
 };
@@ -111,7 +112,6 @@ class GasStationPrice extends Component<Props, State> {
   static displayName = 'users.GasStationPopover.GasStationPrice';
 
   state = {
-    estimatedGasCost: null,
     isSpeedMenuOpen: false,
     /*
      * `speedMenuId` is used for the tx speed menu's id attribute for aria-* purposes.
@@ -121,31 +121,11 @@ class GasStationPrice extends Component<Props, State> {
 
   componentDidMount() {
     const {
+      estimateGas,
       transaction: { id },
-      transactionGasManualSet,
-      furtherActionPossible,
     } = this.props;
-    this.mounted = true;
-    getEstimatedGasCost().then(estimatedGasCost => {
-      if (this.mounted && furtherActionPossible) {
-        this.setState({ estimatedGasCost }, () => {
-          if (estimatedGasCost) {
-            return transactionGasManualSet(
-              id,
-              parseInt(estimatedGasCost.suggested, 10),
-            );
-          }
-          return null;
-        });
-      }
-    });
+    estimateGas(id);
   }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  mounted: boolean = false;
 
   toggleSpeedMenu = () => {
     const { isSpeedMenuOpen } = this.state;
@@ -158,19 +138,16 @@ class GasStationPrice extends Component<Props, State> {
     const {
       canSignTransaction,
       isNetworkCongested,
-      transaction: { id },
+      gasPrices,
+      updateGas,
+      transaction: { id, gasLimit },
       walletNeedsAction,
-      transactionGasManualSet,
-      furtherActionPossible,
     } = this.props;
-    const { estimatedGasCost, isSpeedMenuOpen, speedMenuId } = this.state;
+    const { isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
       id,
       transactionSpeed: transactionSpeedOptions[0].value,
     };
-    if (!furtherActionPossible) {
-      return null;
-    }
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
         <ActionForm
@@ -190,8 +167,9 @@ class GasStationPrice extends Component<Props, State> {
             isValid,
             values: { transactionSpeed },
           }: FormikProps<FormValues>) => {
-            const transactionFee =
-              estimatedGasCost && estimatedGasCost[transactionSpeed];
+            const currentGasPrice = gasPrices[transactionSpeed];
+            const gasCost =
+              currentGasPrice && gasLimit && currentGasPrice.mul(gasLimit);
             return (
               <Fragment>
                 <div
@@ -210,13 +188,8 @@ class GasStationPrice extends Component<Props, State> {
                       options={transactionSpeedOptions.map(option => ({
                         ...option,
                         onClick: () => {
-                          if (estimatedGasCost) {
-                            return transactionGasManualSet(
-                              id,
-                              estimatedGasCost[option.value],
-                            );
-                          }
-                          return null;
+                          // TODO: this isn't really nice, maybe we can factor this out
+                          updateGas(id, { gasPrice: currentGasPrice });
                         },
                       }))}
                     />
@@ -245,9 +218,9 @@ class GasStationPrice extends Component<Props, State> {
                         <FormattedMessage {...MSG.transactionFeeLabel} />
                       </div>
                       <div className={styles.transactionDuration}>
-                        {estimatedGasCost ? (
+                        {Object.keys(gasPrices).length ? (
                           <Duration
-                            value={estimatedGasCost[`${transactionSpeed}Wait`]}
+                            value={gasPrices[`${transactionSpeed}Wait`]}
                           />
                         ) : (
                           <SpinnerLoader />
@@ -256,20 +229,20 @@ class GasStationPrice extends Component<Props, State> {
                     </div>
                   </div>
                   <div className={styles.transactionFeeActions}>
-                    {transactionFee && (
+                    {gasCost && (
                       <div className={styles.transactionFeeAmount}>
                         <Numeral
                           decimals={18}
-                          value={transactionFee}
+                          value={gasCost}
                           suffix=" ETH"
-                          unit="gwei"
+                          unit="ether"
                         />
                         <div className={styles.transactionFeeEthUsd}>
                           <EthUsd
                             appearance={{ size: 'small', theme: 'grey' }}
                             decimals={3}
-                            value={transactionFee}
-                            unit="gwei"
+                            value={gasCost}
+                            unit="ether"
                           />
                         </div>
                       </div>

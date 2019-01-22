@@ -60,19 +60,19 @@ async function getMethodTransactionPromise<
   const {
     multisig,
     options: {
-      gasLimit,
-      gasPrice,
+      gasLimit: gasLimitOverride,
+      gasPrice: gasPriceOverride,
       // $FlowFixMe (some options here are still required, like `value`).
       ...restOptions
     },
     params,
-    suggestedGasLimit,
-    suggestedGasPrice,
+    gasLimit,
+    gasPrice,
   } = tx;
   const sendOptions = Object.assign(
     {
-      gasLimit: gasLimit || suggestedGasLimit,
-      gasPrice: gasPrice || suggestedGasPrice,
+      gasLimit: gasLimitOverride || gasLimit,
+      gasPrice: gasPriceOverride || gasPrice,
     },
     restOptions,
     { waitForMining: false },
@@ -178,7 +178,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
  * Given a contract method and an action to send a transaction, execute a task
  * to send the transaction, and return the transaction response.
  */
-export default function* sendMethodTransaction<
+export default function* onTransactionSent<
   P: TransactionParams,
   E: TransactionEventData,
 >({ meta: { id } }: SendTransactionAction): Saga<void> {

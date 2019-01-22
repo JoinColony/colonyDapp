@@ -13,7 +13,6 @@ import {
   multisigTransactionRejectError,
   multisigTransactionSigned,
   multisigTransactionSignError,
-  transactionSuggestGas,
 } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
 import { getMethod } from '../utils';
@@ -61,9 +60,6 @@ export function* refreshMultisigTransaction({
           message: 'Multisig nonce changed',
         }),
       );
-
-    // if it's ready to be sent, start that process with suggest gas
-    if (missingSignees.length === 0) yield put(transactionSuggestGas(id));
   } catch (error) {
     yield put(multisigTransactionRefreshError(id, { message: error.message }));
   }

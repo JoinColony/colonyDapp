@@ -7,10 +7,13 @@ import ns from '../namespace';
 import type { RootState } from '~types';
 import type { TransactionRecord } from '~immutable';
 
-import type { TransactionsState } from '../types';
+import type { GasPrices, TransactionsState } from '../types';
 
 type TransactionSelector = (tx: TransactionRecord<*, *>) => boolean;
-type TransactionsSelector = (state: RootState) => TransactionsState;
+type GasPricesSelector = (state: RootState) => GasPrices;
+type TransactionsSelector = (
+  state: RootState,
+) => $PropertyType<TransactionsState, 'list'>;
 type OneTransactionSelector = (
   state: RootState,
   id: string,
@@ -49,9 +52,9 @@ const createdAtDesc = (
  * )(PendingTxsComponent);
  */
 export const allTransactions: TransactionsSelector = state =>
-  state[ns].transactions;
+  state[ns].transactions.list;
 export const oneTransaction: OneTransactionSelector = (state, id) =>
-  state[ns].transactions.get(id);
+  state[ns].transactions.list.get(id);
 export const pendingTransactions: TransactionsSelector = createSelector(
   allTransactions,
   transactions => transactions.filter(isPending).sort(createdAtDesc),
@@ -75,3 +78,5 @@ export const pendingMultisigTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isPendingMultisig).sort(createdAtDesc),
 );
+export const gasPrices: GasPricesSelector = state =>
+  state[ns].transactions.gasPrices;

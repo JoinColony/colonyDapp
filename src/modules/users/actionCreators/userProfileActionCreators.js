@@ -9,6 +9,7 @@ import {
   USER_PROFILE_FETCH,
   USER_AVATAR_FETCH,
   USERNAME_CREATE_ERROR,
+  USERNAME_CREATE_TX_CREATED,
   USERNAME_CREATE_SUCCESS,
   USER_FETCH_TOKEN_TRANSFERS,
   USERNAME_FETCH,
@@ -21,8 +22,9 @@ export const registerUserLabel = createTxActionCreator<{
   context: NETWORK_CONTEXT,
   methodName: 'registerUserLabel',
   lifecycle: {
+    created: USERNAME_CREATE_TX_CREATED,
+    success: USERNAME_CREATE_SUCCESS,
     error: USERNAME_CREATE_ERROR,
-    sent: USERNAME_CREATE_SUCCESS,
   },
 });
 
