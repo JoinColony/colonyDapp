@@ -149,11 +149,12 @@ function* taskSetDueDateSaga(action: Action): Saga<void> {
 
 function* taskAssignWorkerSaga({
   payload: { colonyENSName, assignee, payouts, taskId },
+  payload,
   meta,
 }: Action): Saga<void> {
   try {
     // eslint-disable-next-line no-console
-    console.log(payouts);
+    console.log(payload, payouts);
 
     /**
      * @TODO set payouts

@@ -15,7 +15,7 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
  */
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskRecord, UserRecord } from '~immutable';
-import type { Props as TaskEditDialogProps } from '~dashboard/TaskEditDialog/TaskEditDialog.jsx';
+import type { InProps as TaskEditDialogProps } from '~dashboard/TaskEditDialog/types';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskDate from '~dashboard/TaskDate';

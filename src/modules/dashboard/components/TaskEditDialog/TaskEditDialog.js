@@ -2,7 +2,8 @@
 import { compose, withHandlers } from 'recompose';
 import nanoid from 'nanoid';
 
-import type { Props } from './TaskEditDialog.jsx';
+import type { Action } from '~types';
+import type { FormValues, InProps } from './types';
 
 import TaskEditDialog from './TaskEditDialog.jsx';
 
@@ -11,7 +12,7 @@ const canAddTokens = (values, maxTokens) =>
 
 const enhance = compose(
   withHandlers({
-    addTokenFunding: ({ maxTokens }: Props) => (
+    addTokenFunding: ({ maxTokens }: InProps) => (
       values: { payouts?: Array<any> },
       helpers: () => void,
     ) => {
@@ -23,7 +24,7 @@ const enhance = compose(
     setPayload: ({
       availableTokens,
       task: { colonyENSName, id: taskId },
-    }: Props) => (action: Object, { assignee, payouts }: Object) => ({
+    }: InProps) => (action: Action, { assignee, payouts }: FormValues) => ({
       ...action,
       payload: {
         assignee,

@@ -2,12 +2,11 @@
 import React, { Fragment } from 'react';
 import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
-import BigNumber from 'bn.js';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
-import type { DialogType } from '~core/Dialog/types';
-import type { TaskRecord, TokenRecord, UserRecord } from '~immutable';
+import type { UserRecord } from '~immutable';
+import type { OutProps } from './types';
 
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -67,29 +66,6 @@ const MSG = defineMessages({
   },
 });
 
-export type Props = {
-  availableTokens: List<TokenRecord>,
-  maxTokens?: BigNumber,
-  // @TODO: use `TaskPayoutRecord` for `payouts`
-  payouts?: List<{
-    token: number,
-    amount: BigNumber,
-    id: string,
-  }>,
-  reputation?: BigNumber,
-  users: List<UserRecord>,
-  task: TaskRecord,
-};
-
-type InProps = Props &
-  DialogType & {
-    addTokenFunding: (
-      values: { payouts?: Array<any> },
-      helpers: () => void,
-    ) => void,
-    setPayload: (action: Object, payload: Object) => Object,
-  };
-
 const filter = (data: List<UserRecord>, filterValue) =>
   data.filter(
     user =>
@@ -112,7 +88,7 @@ const TaskEditDialog = ({
   setPayload,
   task: { assignee },
   users,
-}: InProps) => {
+}: OutProps) => {
   const validateFunding = yup.object().shape({
     payouts: yup
       .array()
