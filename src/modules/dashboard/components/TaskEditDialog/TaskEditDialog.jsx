@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
 import type { DialogType } from '~core/Dialog/types';
-import type { UserRecord, TokenRecord } from '~immutable';
+import type { TaskRecord, TokenRecord, UserRecord } from '~immutable';
 
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -68,7 +68,6 @@ const MSG = defineMessages({
 });
 
 export type Props = {
-  assignee?: UserRecord,
   availableTokens: List<TokenRecord>,
   maxTokens?: BigNumber,
   // @TODO: use `TaskPayoutRecord` for `payouts`
@@ -79,6 +78,7 @@ export type Props = {
   }>,
   reputation?: BigNumber,
   users: List<UserRecord>,
+  task: TaskRecord,
 };
 
 type InProps = Props &
@@ -103,15 +103,15 @@ const canAddTokens = (values, maxTokens) =>
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
-  cancel,
-  reputation,
-  payouts,
-  assignee,
-  maxTokens,
-  availableTokens,
-  users,
   addTokenFunding,
+  availableTokens,
+  cancel,
+  maxTokens,
+  payouts,
+  reputation,
   setPayload,
+  task: { assignee },
+  users,
 }: InProps) => {
   const validateFunding = yup.object().shape({
     payouts: yup

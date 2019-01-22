@@ -119,11 +119,11 @@ class Task extends Component<Props> {
     }));
 
     const dialogProps: TaskEditDialogProps = {
-      assignee: task.assignee,
       availableTokens: tokensMock,
       maxTokens: 2,
       payouts,
       reputation: task.reputation,
+      task,
       users: userMocks,
     };
 
