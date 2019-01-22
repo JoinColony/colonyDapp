@@ -22,6 +22,8 @@ import type {
 import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
+
+// @TODO This would go into queries
 import { getHashedENSDomainString } from '~utils/web3/ens';
 import {
   getFilterFromPartial,
@@ -30,7 +32,13 @@ import {
 } from '~utils/web3/eventLogs';
 
 import { DDB } from '../../../lib/database';
-import { FeedStore, ValidatedKVStore } from '../../../lib/database/stores';
+import {
+  getUserProfileStoreIdentifier,
+  getUserProfileStore,
+  getUserActivityStore,
+  createUserProfileStore,
+} from '../../../data/stores';
+import { ValidatedKVStore } from '../../../lib/database/stores';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getAll } from '../../../lib/database/commands';
 import { getNetworkMethod } from '../../core/sagas/utils';
@@ -38,14 +46,8 @@ import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 import {
   currentUserAddressSelector,
   userActivitiesStoreAddressSelector,
-  userProfileStoreAddressSelector,
   walletAddressSelector,
 } from '../selectors';
-import {
-  userActivitiesStore,
-  userInboxStore,
-  userProfileStore,
-} from '../stores';
 
 import {
   CURRENT_USER_CREATE_ERROR,
@@ -89,70 +91,24 @@ export function* getOrCreateUserStore(
   const ddb: DDB = yield getContext('ddb');
 
   try {
-    const profileStore = yield call(
-      [ddb, ddb.getStore],
-      userProfileStore,
-      `user.${walletAddress}`,
-      {
-        walletAddress,
-      },
+    // @TODO We have two try-catches here because this isn't suppose to go together!
+    const userProfileStoreExists = yield call(
+      [ddb, ddb.storeExists],
+      getUserProfileStoreIdentifier(walletAddress),
     );
-    if (profileStore) return profileStore;
+    // @TODO: This should be moved to a command that creates the profile and logs the event
+    if (userProfileStoreExists) {
+      return yield call(getUserProfileStore(ddb), walletAddress);
+    }
+    const { profileStore, activityStore } = yield call(
+      createUserProfileStore(ddb),
+      walletAddress,
+    );
+    yield call([activityStore, activityStore.add], joinedColonyEvent());
+    return profileStore;
   } catch (e) {
     return yield putError(CURRENT_USER_CREATE_ERROR, e);
   }
-
-  const profileStore = yield call([ddb, ddb.createStore], userProfileStore, {
-    walletAddress,
-  });
-
-  const activitiesStore = yield call(
-    [ddb, ddb.createStore],
-    userActivitiesStore,
-    {
-      walletAddress,
-    },
-  );
-  // @TODO: Should we merge those stores into a single event store and their content with contract events using selectors?
-  yield call([activitiesStore, activitiesStore.add], joinedColonyEvent());
-
-  const inboxStore = yield call([ddb, ddb.createStore], userInboxStore);
-  yield call([profileStore, profileStore.set], {
-    activitiesStore: activitiesStore.address.toString(),
-    inboxStore: inboxStore.address.toString(),
-    // @TODO: Remove profile store from the schema
-    profileStore: profileStore.address.toString(),
-  });
-
-  return profileStore;
-}
-
-/**
- * Open inbox store from the inbox store address located on user profile data
- * @param  {[string]}    inboxStoreAddress User inbox store address
- */
-export function* getInboxStore(inboxStoreAddress: string): Saga<FeedStore> {
-  const ddb: DDB = yield getContext('ddb');
-  return yield call([ddb, ddb.getStore], userInboxStore, inboxStoreAddress);
-}
-
-/**
- * Open user activities store from the address located on user profile data
- * @param  {[string]}    activitiesStoreAddress User activities store address
- */
-export function* getUserActivitiesStore(
-  activitiesStoreAddress: string,
-  walletAddress: string,
-): Saga<FeedStore> {
-  const ddb: DDB = yield getContext('ddb');
-  return yield call(
-    [ddb, ddb.getStore],
-    userActivitiesStore,
-    activitiesStoreAddress,
-    {
-      walletAddress,
-    },
-  );
 }
 
 export function* getUserProfileData(
@@ -168,8 +124,9 @@ export function* fetchUserActivities(action: Action): Saga<void> {
   );
 
   try {
+    const ddb: DDB = yield getContext('ddb');
     const activitiesStore = yield call(
-      getUserActivitiesStore,
+      getUserActivityStore(ddb),
       activitiesStoreAddress,
       walletAddress,
     );
@@ -190,8 +147,9 @@ export function* addUserActivity({ payload }: Action): Saga<void> {
   );
 
   try {
+    const ddb: DDB = yield getContext('ddb');
     const activitiesStore = yield call(
-      getUserActivitiesStore,
+      getUserActivityStore(ddb),
       activitiesStoreAddress,
       walletAddress,
     );
@@ -219,22 +177,9 @@ function* updateProfile({
   meta,
 }: UniqueAction): Saga<void> {
   try {
-    const walletAddress = yield select(walletAddressSelector);
-
-    const ddb: DDB = yield getContext('ddb');
-
-    const store = yield call(
-      [ddb, ddb.getStore],
-      userProfileStore,
-      `user.${walletAddress}`,
-      {
-        walletAddress,
-      },
-    );
-
     // if user is not allowed to write to store, this should throw an error
-    yield call([store, store.set], update);
-    const user = yield call(getAll, store);
+    yield call([profileStore, profileStore.set], update);
+    const user = yield call(getAll, profileStore);
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
       payload: user,
@@ -287,14 +232,7 @@ function* fetchProfile({
 
   // should throw an error if username is not registered
   try {
-    const store = yield call(
-      [ddb, ddb.getStore],
-      userProfileStore,
-      `user.${username}`,
-      {
-        walletAddress,
-      },
-    );
+    const store = yield call(getUserProfileStore(ddb), walletAddress, username);
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
     yield put({
@@ -340,23 +278,18 @@ function* createUsername({
   meta,
 }: UniqueAction): Saga<void> {
   const ddb: DDB = yield getContext('ddb');
-  const userProfileStoreAddress = yield select(userProfileStoreAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
-
-  const store = yield call(
-    [ddb, ddb.getStore],
-    userProfileStore,
-    userProfileStoreAddress,
-    {
-      walletAddress,
-    },
+  const { profileStore, activityStore } = yield call(
+    createUserProfileStore(ddb),
+    walletAddress,
   );
-
-  yield call([store, store.set], { username, walletAddress });
+  yield call([profileStore, profileStore.set], { username, walletAddress });
+  yield call([activityStore, activityStore.add], joinedColonyEvent());
 
   yield put(
     registerUserLabel({
-      params: { username, orbitDBPath: userProfileStoreAddress },
+      // @TODO: Replace with a method that just gets the store address given the manifest
+      params: { username, orbitDBPath: profileStore.address.toString() },
       // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
       options: {
         gasLimit: 500000,
@@ -385,7 +318,6 @@ function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
   const ddb: DDB = yield getContext('ddb');
 
-  const userProfileStoreAddress = yield select(userProfileStoreAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
 
   try {
@@ -393,14 +325,7 @@ function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     // if we uploaded okay, put the hash in the user orbit store
-    const store = yield call(
-      [ddb, ddb.getStore],
-      userProfileStore,
-      userProfileStoreAddress,
-      {
-        walletAddress,
-      },
-    );
+    const store = yield call(getUserProfileStore(ddb), walletAddress);
     yield call([store, store.set], 'avatar', hash);
 
     yield put({
@@ -415,20 +340,10 @@ function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
 
 function* removeAvatar({ meta }: UniqueAction): Saga<void> {
   const ddb: DDB = yield getContext('ddb');
-
-  const userProfileStoreAddress = yield select(userProfileStoreAddressSelector);
   const walletAddress = yield select(walletAddressSelector);
 
   try {
-    const store = yield call(
-      [ddb, ddb.getStore],
-      userProfileStore,
-      userProfileStoreAddress,
-      {
-        walletAddress,
-      },
-    );
-
+    const store = yield call(getUserProfileStore(ddb), walletAddress);
     yield call([store, store.set], 'avatar', undefined);
     const user = yield call(getAll, store);
     yield put({
@@ -441,6 +356,7 @@ function* removeAvatar({ meta }: UniqueAction): Saga<void> {
   }
 }
 
+// @TODO This would go into a query object
 /**
  * Fetch the ERC-20 Token transfers to/from the current user, and parse to
  * ContractTransactionProps objects.
