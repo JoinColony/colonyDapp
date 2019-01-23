@@ -5,7 +5,11 @@ import type { SendOptions } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
-import type { AddressOrENSName, ColonyContext } from '~types';
+import type {
+  AddressOrENSName,
+  ColonyContext,
+  TransactionReceipt,
+} from '~types';
 import type {
   TransactionMultisig,
   TransactionParams,
@@ -199,7 +203,7 @@ export const transactionReceiptError = <P: TransactionParams>(
 
 export const transactionReceiptReceived = <P: TransactionParams>(
   id: string,
-  payload: { receipt: Object, params: P },
+  payload: { receipt: TransactionReceipt, params: P },
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_RECEIPT_RECEIVED,

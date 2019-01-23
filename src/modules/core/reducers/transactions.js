@@ -85,15 +85,15 @@ const transactionsReducer = (
     }
     case TRANSACTION_RECEIPT_RECEIVED: {
       const { id } = meta;
+      const { receipt } = payload;
       return state.mergeIn(['list', id], {
-        receiptReceived: true,
-        status: 'succeeded',
+        receipt,
       });
     }
     case TRANSACTION_EVENT_DATA_RECEIVED: {
       const { id } = meta;
       const { eventData } = payload;
-      return state.setIn(['list', id, 'eventData'], eventData);
+      return state.mergeIn(['list', id], { eventData, status: 'succeeded' });
     }
     case TRANSACTION_ERROR: {
       const { id } = meta;

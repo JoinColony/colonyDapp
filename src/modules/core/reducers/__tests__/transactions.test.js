@@ -63,7 +63,7 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   const sentTx = transactionSent(id, { hash });
-  const receiptReceived = transactionReceiptReceived(id, { hash });
+  const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   const eventDataReceived = transactionEventDataReceived(id, { eventData });
   const sendError = transactionSendError(id, { message: 'send error' });
   const receiptError = transactionReceiptError(id, {
@@ -103,7 +103,7 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: undefined,
+              receipt: undefined,
               /*
                * Initial status is set to `created`
                */
@@ -135,7 +135,7 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: undefined,
+              receipt: undefined,
               /*
                * During sending the transaction is set to 'pending'
                */
@@ -167,11 +167,11 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: true, // should have been set
+              receipt: expect.any(Object), // should have been set
               /*
                * If it went through successfully, it's set to `succeeded`
                */
-              status: 'succeeded',
+              status: 'pending',
             });
           },
         ],
@@ -199,7 +199,7 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: true,
+              receipt: expect.any(Object),
               /*
                * If it went through successfully, it's set to `succeeded`
                */
@@ -240,7 +240,7 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: undefined,
+              receipt: undefined,
               /*
                * If it failed, it's set to `failed`... obviously
                */
@@ -282,7 +282,7 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: undefined,
+              receipt: undefined,
               /*
                * If it failed, it's set to `failed`... obviously
                */
@@ -325,7 +325,7 @@ describe(`core: reducers (transactions)`, () => {
               methodName,
               options,
               params,
-              receiptReceived: true,
+              receipt: expect.any(Object),
               /*
                * If it failed, it's set to `failed`... obviously
                */

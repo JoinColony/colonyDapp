@@ -27,7 +27,7 @@ const isPending: TransactionSelector = ({ hash }) => !hash;
 // TODO for `isConfirmed`, ideally we should count the confirmations and
 // ensure that a minimum threshold is met.
 const isConfirmed: TransactionSelector = tx =>
-  !!(tx.receiptReceived && Object.hasOwnProperty.call(tx, 'eventData'));
+  !!(tx.receipt && Object.hasOwnProperty.call(tx, 'eventData'));
 const isMultisig: TransactionSelector = tx => !!tx.multisig;
 const isPendingMultisig: TransactionSelector = tx =>
   !!tx.multisig &&
