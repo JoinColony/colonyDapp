@@ -7919,7 +7919,7 @@ ipfs-http-response@~0.2.0:
   version "4.2.0"
   resolved "https://codeload.github.com/orbitdb/ipfs-log/tar.gz/2bdbe7a99d86570e0e05d28045da0379d2b9a879"
   dependencies:
-    orbit-db-identity-provider "^0.0.2"
+    orbit-db-identity-provider "^0.0.3"
     p-map "^1.1.1"
     p-whilst "^1.0.0"
 
@@ -12386,7 +12386,7 @@ orbit-db-feedstore@~1.4.0:
   dependencies:
     orbit-db-eventstore "~1.4.0"
 
-orbit-db-identity-provider@0.0.2, "orbit-db-identity-provider@github:orbitdb/orbit-db-identity-provider":
+orbit-db-identity-provider@0.0.2, orbit-db-identity-provider@^0.0.2, "orbit-db-identity-provider@github:orbitdb/orbit-db-identity-provider":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.0.2.tgz#f2e05ac05b2154667ab341e1da8402cea5d056f7"
   integrity sha512-xE69h4FBIBU4im3KoirRxblHQyDeZesMKw12QqUtRYiIHVT7vhI4hx1QmsUDlZerBz8Pv4IJN4wVMijqCpc7xQ==
