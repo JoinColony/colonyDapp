@@ -35,7 +35,7 @@ export const fetchUsername = (userAddress: string) => ({
 
 export const fetchUserProfile = (username: string) => ({
   type: USER_PROFILE_FETCH,
-  payload: { keyPath: [username] },
+  meta: { keyPath: [username] },
 });
 
 export const fetchUserAvatar = (hash: string) => ({

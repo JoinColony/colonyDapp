@@ -11,7 +11,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, ENSName } from '~types';
+import type { ENSName, UniqueActionWithKeyPath } from '~types';
 import type { DraftId } from '~immutable';
 import type { ValidatedKVStore, Store } from '../../../lib/database/stores';
 
@@ -43,19 +43,19 @@ import {
   getOrCreateDraftsIndexStore,
 } from './shared';
 
-const getDraftPropsForActionPayload = (
-  props: Object,
+const addStoreAddressesToDraftPayload = (
+  payload: Object,
   draftStore: ValidatedKVStore,
   feedItemsStore?: Store, // TODO set store type when the store is defined
 ) => ({
   databases: {
     draftStore: draftStore.address.toString(),
     feedItemsStore:
-      props.feedItems ||
+      payload.feedItems ||
       (feedItemsStore && feedItemsStore.address.toString()) ||
       undefined,
   },
-  ...props,
+  ...payload,
 });
 
 /*
@@ -150,12 +150,13 @@ function* getOrCreateDraftStore(
 }
 
 function* createDraftSaga({
-  payload: {
-    colonyENSName,
-    props: { id },
-    props,
+  meta: {
+    keyPath: [colonyENSName],
   },
-}: Action): Saga<void> {
+  meta,
+  payload: { id },
+  payload,
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -188,7 +189,7 @@ function* createDraftSaga({
      */
     yield call(set, draftStore, {
       feedItems: feedItemsStore.address.toString(),
-      ...props,
+      ...payload,
     });
 
     /*
@@ -202,13 +203,18 @@ function* createDraftSaga({
      */
     yield put({
       type: DRAFT_CREATE_SUCCESS,
-      payload: {
+      meta: {
+        ...meta,
         keyPath: [colonyENSName, id],
       },
-      props: getDraftPropsForActionPayload(props, draftStore, feedItemsStore),
+      payload: addStoreAddressesToDraftPayload(
+        payload,
+        draftStore,
+        feedItemsStore,
+      ),
     });
   } catch (error) {
-    yield putError(DRAFT_CREATE_ERROR, error);
+    yield putError(DRAFT_CREATE_ERROR, error, meta);
   }
 }
 
@@ -218,12 +224,12 @@ function* createDraftSaga({
  * the payload, which allows some steps to be skipped.
  */
 function* fetchDraftSaga({
-  payload: {
+  meta: {
     keyPath: [colonyENSName, draftId],
     keyPath,
-    draftStoreAddress,
   },
-}: Action): Saga<void> {
+  payload: { draftStoreAddress },
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -238,7 +244,7 @@ function* fetchDraftSaga({
     /*
      * Get all the values from the draft store.
      */
-    const props = yield call(getAll, draftStore);
+    const draftStoreData = yield call(getAll, draftStore);
 
     /*
      * Dispatch the success action.
@@ -247,7 +253,7 @@ function* fetchDraftSaga({
       type: DRAFT_FETCH_SUCCESS,
       payload: {
         keyPath,
-        props: getDraftPropsForActionPayload(props, draftStore),
+        props: addStoreAddressesToDraftPayload(draftStoreData, draftStore),
       },
     });
   } catch (error) {
@@ -302,12 +308,12 @@ function* fetchAllDraftsSaga(): Saga<void> {
  * and update it.
  */
 function* updateDraftSaga({
-  payload: {
+  meta: {
     keyPath: [colonyENSName, draftId],
-    keyPath,
-    props,
   },
-}: Action): Saga<void> {
+  meta,
+  payload,
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -319,20 +325,18 @@ function* updateDraftSaga({
     /*
      * Set all of the given props on the draft store.
      */
-    yield call(set, draftStore, props);
+    yield call(set, draftStore, payload);
 
     /*
      * Dispatch the success action.
      */
     yield put({
       type: DRAFT_UPDATE_SUCCESS,
-      payload: {
-        keyPath,
-        props: getDraftPropsForActionPayload(props, draftStore),
-      },
+      meta,
+      payload: addStoreAddressesToDraftPayload(payload, draftStore),
     });
   } catch (error) {
-    yield putError(DRAFT_UPDATE_ERROR, error, { keyPath });
+    yield putError(DRAFT_UPDATE_ERROR, error, meta);
   }
 }
 
@@ -342,11 +346,11 @@ function* updateDraftSaga({
  * simply unpinned.
  */
 function* removeDraftSaga({
-  payload: {
+  meta: {
     keyPath: [colonyENSName, draftId],
-    keyPath,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -367,9 +371,9 @@ function* removeDraftSaga({
     /*
      * Dispatch the success action.
      */
-    yield put({ type: DRAFT_REMOVE_SUCCESS, payload: { keyPath } });
+    yield put({ type: DRAFT_REMOVE_SUCCESS, meta });
   } catch (error) {
-    yield putError(DRAFT_REMOVE_ERROR, error, { keyPath });
+    yield putError(DRAFT_REMOVE_ERROR, error, meta);
   }
 }
 

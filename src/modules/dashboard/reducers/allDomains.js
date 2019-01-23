@@ -11,23 +11,25 @@ import {
 import { Domain, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { Action, ENSName } from '~types';
+import type { UniqueActionWithKeyPath, ENSName } from '~types';
 
 import type { AllDomainsState, DomainsMap } from '../types';
 
 const allDomainsReducer = (
   state: AllDomainsState = new ImmutableMap(),
-  action: Action,
+  action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
     case DOMAIN_CREATE_SUCCESS:
     case DOMAIN_FETCH_SUCCESS: {
       const {
-        keyPath: [ensName, domainId],
-        keyPath,
-        props,
-      } = action.payload;
-      const data = Data({ record: Domain({ domainId, ...props }) });
+        meta: {
+          keyPath: [ensName, domainId],
+          keyPath,
+        },
+        payload,
+      } = action;
+      const data = Data({ record: Domain({ domainId, ...payload }) });
 
       return state.get(ensName)
         ? state.mergeDeepIn(keyPath, data)

@@ -11,7 +11,11 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, AddressOrENSName, ENSName } from '~types';
+import type {
+  AddressOrENSName,
+  ENSName,
+  UniqueActionWithKeyPath,
+} from '~types';
 
 import { putError } from '~utils/saga/effects';
 
@@ -157,9 +161,12 @@ function* addDomainToIndex(
 }
 
 function* createDomainSaga({
-  payload: { colonyENSName, domainName, parentDomainId = 1 },
+  payload: { domainName, parentDomainId = 1 },
+  meta: {
+    keyPath: [colonyENSName],
+  },
   meta,
-}: Action): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -195,14 +202,17 @@ function* createDomainSaga({
     /*
      * Dispatch a success action with the newly-added domain.
      */
-    const props = { domainId, domainName };
+    const payload = { domainId, domainName };
     yield put({
       type: DOMAIN_CREATE_SUCCESS,
-      payload: { keyPath: [colonyENSName, domainId], props },
-      meta,
+      meta: {
+        ...meta,
+        keyPath: [colonyENSName, domainId],
+      },
+      payload,
     });
   } catch (error) {
-    yield putError(DOMAIN_CREATE_ERROR, error);
+    yield putError(DOMAIN_CREATE_ERROR, error, meta);
   }
 }
 
@@ -227,11 +237,11 @@ function* checkDomainExists(
  * Fetch the domain for the given colony ENS name and domain ID.
  */
 function* fetchDomainSaga({
-  payload: {
+  meta: {
     keyPath: [colonyENSName, domainId],
-    keyPath,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -251,17 +261,18 @@ function* fetchDomainSaga({
     /*
      * Get the domain props from the loaded store.
      */
-    const props = yield call(getAll, store);
+    const payload = yield call(getAll, store);
 
     /*
      * Dispatch the success action.
      */
     yield put({
       type: DOMAIN_FETCH_SUCCESS,
-      payload: { keyPath, props },
+      meta,
+      payload,
     });
   } catch (error) {
-    yield putError(DOMAIN_FETCH_ERROR, error, { keyPath });
+    yield putError(DOMAIN_FETCH_ERROR, error, meta);
   }
 }
 

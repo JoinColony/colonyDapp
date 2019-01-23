@@ -13,7 +13,7 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action, Address } from '~types';
+import type { Action, Address, UniqueActionWithKeyPath } from '~types';
 import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
@@ -44,37 +44,37 @@ import {
 
 import {
   CURRENT_USER_CREATE_ERROR,
-  USER_PROFILE_FETCH,
-  USER_PROFILE_FETCH_SUCCESS,
-  USER_PROFILE_FETCH_ERROR,
   USER_ACTIVITIES_FETCH,
-  USER_ACTIVITIES_FETCH_SUCCESS,
   USER_ACTIVITIES_FETCH_ERROR,
+  USER_ACTIVITIES_FETCH_SUCCESS,
   USER_ACTIVITIES_UPDATE,
-  USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_ACTIVITIES_UPDATE_ERROR,
-  USER_PROFILE_UPDATE,
-  USER_PROFILE_UPDATE_SUCCESS,
-  USER_PROFILE_UPDATE_ERROR,
-  USERNAME_FETCH,
-  USERNAME_FETCH_SUCCESS,
-  USERNAME_FETCH_ERROR,
-  USERNAME_CHECK_AVAILABILITY,
-  USERNAME_CHECK_AVAILABILITY_SUCCESS,
-  USERNAME_CHECK_AVAILABILITY_ERROR,
-  USERNAME_CREATE,
+  USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_AVATAR_FETCH,
-  USER_AVATAR_FETCH_SUCCESS,
   USER_AVATAR_FETCH_ERROR,
-  USER_UPLOAD_AVATAR,
-  USER_UPLOAD_AVATAR_SUCCESS,
-  USER_UPLOAD_AVATAR_ERROR,
-  USER_REMOVE_AVATAR,
-  USER_REMOVE_AVATAR_SUCCESS,
-  USER_REMOVE_AVATAR_ERROR,
+  USER_AVATAR_FETCH_SUCCESS,
   USER_FETCH_TOKEN_TRANSFERS,
-  USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
   USER_FETCH_TOKEN_TRANSFERS_ERROR,
+  USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+  USER_PROFILE_FETCH,
+  USER_PROFILE_FETCH_ERROR,
+  USER_PROFILE_FETCH_SUCCESS,
+  USER_PROFILE_UPDATE,
+  USER_PROFILE_UPDATE_ERROR,
+  USER_PROFILE_UPDATE_SUCCESS,
+  USER_REMOVE_AVATAR,
+  USER_REMOVE_AVATAR_ERROR,
+  USER_REMOVE_AVATAR_SUCCESS,
+  USER_UPLOAD_AVATAR,
+  USER_UPLOAD_AVATAR_ERROR,
+  USER_UPLOAD_AVATAR_SUCCESS,
+  USERNAME_CHECK_AVAILABILITY,
+  USERNAME_CHECK_AVAILABILITY_ERROR,
+  USERNAME_CHECK_AVAILABILITY_SUCCESS,
+  USERNAME_CREATE,
+  USERNAME_FETCH,
+  USERNAME_FETCH_ERROR,
+  USERNAME_FETCH_SUCCESS,
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
@@ -168,7 +168,7 @@ export function* fetchUserActivities(action: Action): Saga<void> {
       activitiesStoreAddress,
       walletAddress,
     );
-    const activities = yield call([activitiesStore, activitiesStore.all]);
+    const activities = yield call(getAll, activitiesStore);
     yield put({
       type: USER_ACTIVITIES_FETCH_SUCCESS,
       payload: { activities, walletAddress },
@@ -262,11 +262,11 @@ function* fetchUsername(action: Action): Saga<void> {
 }
 
 function* fetchProfile({
-  payload: {
+  meta: {
     keyPath: [username],
-    keyPath,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
   // TODO: do we want to cache these in redux?
   const nameHash = yield call(getHashedENSDomainString, username, 'user');
   const { ensAddress: walletAddress } = yield callCaller({
@@ -291,10 +291,11 @@ function* fetchProfile({
     const user = yield call(getAll, store);
     yield put({
       type: USER_PROFILE_FETCH_SUCCESS,
-      payload: { keyPath, props: user },
+      meta,
+      payload: user,
     });
   } catch (error) {
-    yield putError(USER_PROFILE_FETCH_ERROR, error, { keyPath });
+    yield putError(USER_PROFILE_FETCH_ERROR, error, meta);
   }
 }
 

@@ -84,6 +84,14 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={COLONY_PROFILE_UPDATE}
           success={COLONY_PROFILE_UPDATE_SUCCESS}
           error={COLONY_PROFILE_UPDATE_ERROR}
+          setPayload={({ meta, ...action }: *, payload: *) => ({
+            ...action,
+            payload,
+            meta: {
+              ...meta,
+              keyPath: [ensName],
+            },
+          })}
           initialValues={{
             ensName,
             name,

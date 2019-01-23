@@ -21,8 +21,11 @@ const usernamesReducer = (
     }
 
     case USER_PROFILE_FETCH_SUCCESS: {
-      const { props } = action.payload;
-      return state.set(props.walletAddress, props.username);
+      const {
+        payload: { walletAddress },
+        meta: { keyPath: [username] } = {},
+      } = action;
+      return state.set(walletAddress, username);
     }
 
     default:

@@ -17,12 +17,12 @@ import {
 
 export const fetchColonyTransactions = (colonyENSName: ENSName) => ({
   type: COLONY_FETCH_TRANSACTIONS,
-  payload: { keyPath: [colonyENSName] },
+  meta: { keyPath: [colonyENSName] },
 });
 
 export const fetchColonyUnclaimedTransactions = (colonyENSName: ENSName) => ({
   type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-  payload: { keyPath: [colonyENSName] },
+  meta: { keyPath: [colonyENSName] },
 });
 
 export const claimColonyToken = (ensName: ENSName, tokenAddress: Address) => ({
