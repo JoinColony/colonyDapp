@@ -81,9 +81,10 @@ class UserList extends Component<Props> {
       start: remove,
       resolve: removeSuccess,
       reject: removeError,
-      setPayload({ meta, ...action }) {
+      setPayload({ meta, ...action }: *, payload: *) {
         return {
           ...action,
+          payload,
           meta: {
             ...meta,
             keyPath: [ensName],
