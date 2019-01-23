@@ -1,4 +1,7 @@
 /* @flow */
+import type { Address } from '~types';
+
+import BN from 'bn.js';
 
 import {
   createTxActionCreator,
@@ -8,6 +11,8 @@ import {
 import {
   TASK_SET_DATE_ERROR,
   TASK_SET_DATE_SUCCESS,
+  TASK_SET_WORKER_PAYOUTS_ERROR,
+  TASK_SET_WORKER_PAYOUTS_SUCCESS,
   TASK_SET_SKILL_ERROR,
   TASK_SET_SKILL_SUCCESS,
   TASK_ASSIGN_WORKER_ERROR,
@@ -57,6 +62,22 @@ export const taskSetDate = createTxActionCreator<{
   lifecycle: {
     error: TASK_SET_DATE_ERROR,
     success: TASK_SET_DATE_SUCCESS,
+  },
+});
+
+/**
+ * As manager, set task worker payouts
+ */
+export const taskSetWorkerPayout = createTxActionCreator<{
+  taskId: number,
+  token: Address,
+  amount: BN,
+}>({
+  context: COLONY_CONTEXT,
+  methodName: 'setTaskWorkerPayout',
+  lifecycle: {
+    error: TASK_SET_WORKER_PAYOUTS_ERROR,
+    success: TASK_SET_WORKER_PAYOUTS_SUCCESS,
   },
 });
 
