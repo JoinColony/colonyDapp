@@ -27,7 +27,7 @@ const sortDomainsByName = (prevDomain, nextDomain) => {
  */
 export const colonyDomainsSelector = createSelector(
   allDomainsSelector,
-  (state, props) => props.colonyENSName,
+  (state, colonyENSName) => colonyENSName,
   (allDomains, colonyENSName) => allDomains.get(colonyENSName),
 );
 
