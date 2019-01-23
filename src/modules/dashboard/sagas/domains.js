@@ -276,7 +276,10 @@ function* fetchDomainSaga({
 }
 
 function* fetchColonyDomainsSaga({
-  payload: { colonyENSName },
+  payload: {
+    keyPath: [colonyENSName],
+    keyPath,
+  },
 }: Action): Saga<void> {
   try {
     /*
@@ -300,7 +303,7 @@ function* fetchColonyDomainsSaga({
     yield put({
       type: COLONY_DOMAINS_FETCH_SUCCESS,
       payload: {
-        keyPath: [colonyENSName],
+        keyPath,
         props: {
           domains,
         },
