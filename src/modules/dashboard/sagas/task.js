@@ -13,6 +13,8 @@ import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
 import {
   TASK_SET_DATE,
   TASK_SET_SKILL,
+  TASK_SET_WORKER_PAYOUTS,
+  TASK_SET_WORKER_PAYOUTS_ERROR,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
   TASK_MANAGER_END,
@@ -38,6 +40,7 @@ import {
 import {
   taskSetDate,
   taskSetSkill,
+  taskSetWorkerPayout,
   taskAssignWorker,
   taskFinalize,
   taskManagerComplete,
@@ -147,18 +150,38 @@ function* taskSetDueDateSaga(action: Action): Saga<void> {
   );
 }
 
-function* taskAssignWorkerSaga({
-  payload: { colonyENSName, assignee, payouts, taskId },
-  payload,
+function* taskSetWorkerPayoutsSaga({
+  payload: { colonyENSName, payouts, taskId },
   meta,
 }: Action): Saga<void> {
   try {
-    // eslint-disable-next-line no-console
-    console.log(payload, payouts);
+    yield all(
+      payouts.map(({ amount, token: { address } }) =>
+        call(taskSetWorkerPayout, {
+          identifier: colonyENSName,
+          params: { taskId, token: address, amount },
+          meta,
+        }),
+      ),
+    );
+  } catch (error) {
+    yield putError(TASK_SET_WORKER_PAYOUTS_ERROR, error);
+  }
+}
 
+function* taskAssignWorkerSaga({
+  payload: { colonyENSName, assignee, payouts, taskId },
+  meta,
+}: Action): Saga<void> {
+  try {
     /**
-     * @TODO set payouts
+     * @TODO only set payouts if not yet set
      */
+    yield put({
+      type: TASK_SET_WORKER_PAYOUTS,
+      meta,
+      payload: { colonyENSName, payouts, taskId },
+    });
 
     /**
      * Assign the worker
@@ -395,6 +418,7 @@ function* taskFinalizeSaga({
 
 export default function* taskSagas(): any {
   yield takeEvery(TASK_SET_DATE, taskSetDueDateSaga);
+  yield takeEvery(TASK_SET_WORKER_PAYOUTS, taskSetWorkerPayoutsSaga);
   yield takeEvery(TASK_SET_SKILL, taskSetSkillSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
   yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
