@@ -45,6 +45,7 @@ const transactionsReducer = (
         multisig,
         options,
         params,
+        status,
       } = payload;
       return state.setIn(
         ['list', meta.id],
@@ -58,6 +59,7 @@ const transactionsReducer = (
           multisig,
           options,
           params,
+          status,
         }),
       );
     }

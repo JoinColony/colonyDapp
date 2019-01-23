@@ -74,6 +74,7 @@ export const createTxActionCreator = <P: TransactionParams>({
   multisig: multisigJSON,
   options,
   params,
+  status,
 }: TxActionCreatorOptions<P>): CreateTransactionAction<P> => ({
   type: isMultisig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
   payload: {
@@ -85,6 +86,7 @@ export const createTxActionCreator = <P: TransactionParams>({
     multisig: isMultisig ? multisigJSON || {} : undefined,
     options,
     params,
+    status,
   },
   meta: { id: meta.id || nanoid() },
 });

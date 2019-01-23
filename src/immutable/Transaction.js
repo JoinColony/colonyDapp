@@ -51,7 +51,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   options: SendOptions,
   params: P,
   receipt?: TransactionReceipt,
-  status: 'created' | 'pending' | 'failed' | 'succeeded',
+  status: 'created' | 'ready' | 'pending' | 'failed' | 'succeeded',
 };
 
 export type TransactionRecord<
@@ -75,7 +75,7 @@ const defaultValues: $Shape<TransactionProps<*, *>> = {
   options: {},
   params: {},
   receipt: undefined,
-  status: 'created',
+  status: 'ready',
 };
 
 const Transaction: RecordFactory<TransactionProps<*, *>> = Record(

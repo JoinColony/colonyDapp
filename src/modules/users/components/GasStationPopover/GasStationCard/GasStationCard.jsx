@@ -230,9 +230,10 @@ class GasStationCard extends Component<Props, State> {
                * element otherwise it won't detect the hover event
                */}
               <div>
-                {status === 'created' && (
-                  <span className={styles.counter}>1</span>
-                )}
+                {status === 'created' ||
+                  (status === 'ready' && (
+                    <span className={styles.counter}>1</span>
+                  ))}
                 {status === 'succeeded' && (
                   <span className={styles.completedAction}>
                     <Icon
