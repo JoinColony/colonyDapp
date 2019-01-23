@@ -54,8 +54,9 @@ class ColonyAvatarUploader extends Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    const setPayload = ({ meta, ...action }) => ({
+    const setPayload = ({ meta, ...action }: *, payload: *) => ({
       ...action,
+      payload,
       meta: {
         ...meta,
         keyPath: [props.ensName],
