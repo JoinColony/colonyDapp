@@ -37,7 +37,7 @@ export const createColonyLabel = createTxActionCreator<{
   methodName: 'registerColonyLabel',
   lifecycle: {
     error: COLONY_CREATE_LABEL_ERROR,
-    eventDataReceived: COLONY_CREATE_LABEL_SUCCESS,
+    success: COLONY_CREATE_LABEL_SUCCESS,
   },
 });
 

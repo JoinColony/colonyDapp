@@ -38,9 +38,7 @@ import transactionChannel from './transactionChannel';
 function* getUnsentTransaction<P: TransactionParams, E: TransactionEventData>(
   id: string,
 ): Generator<*, TransactionRecord<P, E>, *> {
-  const tx: TransactionRecord<P, E> = yield select(state =>
-    state.core.transactions.get(id),
-  );
+  const tx: TransactionRecord<P, E> = yield select(oneTransaction, id);
   if (!tx) throw new Error('Transaction not found');
   if (tx.hash) throw new Error('Transaction has already been sent');
   return tx;
@@ -60,19 +58,19 @@ async function getMethodTransactionPromise<
   const {
     multisig,
     options: {
-      gasLimit,
-      gasPrice,
+      gasLimit: gasLimitOverride,
+      gasPrice: gasPriceOverride,
       // $FlowFixMe (some options here are still required, like `value`).
       ...restOptions
     },
     params,
-    suggestedGasLimit,
-    suggestedGasPrice,
+    gasLimit,
+    gasPrice,
   } = tx;
   const sendOptions = Object.assign(
     {
-      gasLimit: gasLimit || suggestedGasLimit,
-      gasPrice: gasPrice || suggestedGasPrice,
+      gasLimit: gasLimitOverride || gasLimit,
+      gasPrice: gasPriceOverride || gasPrice,
     },
     restOptions,
     { waitForMining: false },
@@ -91,38 +89,27 @@ async function getMethodTransactionPromise<
  */
 function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
   txPromise: Promise<ContractResponse<E>>,
-  tx: TransactionRecord<P, E>,
-): Generator<*, *, *> {
-  let receipt;
-  let eventData: E;
+  id: string,
+): Saga<void> {
+  const transaction: TransactionRecord<P, E> = yield select(oneTransaction, id);
 
   const {
-    id,
-    lifecycle: {
-      error: errorType,
-      eventDataReceived,
-      receiptReceived,
-      sent,
-      success: successType,
-    },
-  } = tx;
+    lifecycle: { error: errorType, receiptReceived, sent, success },
+  } = transaction;
 
   // Create an event channel to send the transaction.
-  const channel = yield call(transactionChannel, txPromise, tx);
+  const channel = yield call(transactionChannel, txPromise, transaction);
 
   try {
-    let putSuccess = false;
     // Take all actions the channel emits and dispatch them.
     while (true) {
       const action = yield take(channel);
 
-      // Get the current transaction state from the store
-      const transaction = yield select(oneTransaction, id);
-
-      // Add the transaction to the payload
+      // Add the transaction to the payload (we need to get the most recent version of it)
+      const tx: TransactionRecord<P, E> = yield select(oneTransaction, id);
       const payload = {
         ...action.payload,
-        transaction,
+        transaction: tx,
       };
 
       // Put the action to the store
@@ -142,30 +129,17 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
           break;
 
         case TRANSACTION_RECEIPT_RECEIVED:
-          ({ receipt } = payload);
           if (receiptReceived)
             yield put(transactionReceiptReceived(id, payload, receiptReceived));
           break;
 
         case TRANSACTION_EVENT_DATA_RECEIVED:
-          ({ eventData } = payload);
-          if (eventDataReceived)
-            yield put(
-              transactionEventDataReceived(id, payload, eventDataReceived),
-            );
+          if (success)
+            yield put(transactionEventDataReceived(id, payload, success));
           break;
 
         default:
           break;
-      }
-
-      if (successType && receipt && eventData && !putSuccess) {
-        yield put({
-          type: successType,
-          payload: { receipt, eventData },
-          meta: { id },
-        });
-        putSuccess = true;
       }
     }
   } finally {
@@ -178,7 +152,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
  * Given a contract method and an action to send a transaction, execute a task
  * to send the transaction, and return the transaction response.
  */
-export default function* sendMethodTransaction<
+export default function* onTransactionSent<
   P: TransactionParams,
   E: TransactionEventData,
 >({ meta: { id } }: SendTransactionAction): Saga<void> {
@@ -202,7 +176,7 @@ export default function* sendMethodTransaction<
     const txPromise = getMethodTransactionPromise<P, E>(method, tx);
 
     // Send the transaction.
-    yield call(sendTransaction, txPromise, tx);
+    yield call(sendTransaction, txPromise, id);
   } catch (caughtError) {
     // Unexpected errors `put` the given error action...
     const { lifecycle: { error: errorType } = {} } = tx || {};

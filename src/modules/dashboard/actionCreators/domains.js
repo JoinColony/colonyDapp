@@ -22,7 +22,7 @@ export const createDomain = createTxActionCreator<{
   lifecycle: {
     created: DOMAIN_CREATE_TX,
     error: DOMAIN_CREATE_TX_ERROR,
-    eventDataReceived: DOMAIN_CREATE_TX_SUCCESS,
+    success: DOMAIN_CREATE_TX_SUCCESS,
   },
 });
 

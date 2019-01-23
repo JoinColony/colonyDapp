@@ -3,7 +3,7 @@
 
 import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js';
-import type { Map as ImmutableMapType } from 'immutable';
+import type { Map as ImmutableMapType, RecordOf } from 'immutable';
 
 import type {
   AddressOrENSName,
@@ -19,10 +19,24 @@ import type {
 
 import ns from './namespace';
 
-export type TransactionsState = ImmutableMapType<
-  TransactionId,
-  TransactionRecord<*, *>,
->;
+// Gas prices in wei
+export type GasPrices = {
+  cheaper?: BigNumber,
+  cheaperWait?: number,
+  faster?: BigNumber,
+  fasterWait?: number,
+  suggested?: BigNumber,
+  suggestedWait?: number,
+  network?: BigNumber,
+  timestamp?: number,
+};
+
+export type TransactionsStateProps = {
+  list: ImmutableMapType<TransactionId, TransactionRecord<*, *>>,
+  gasPrices: GasPrices,
+};
+
+export type TransactionsState = RecordOf<TransactionsStateProps>;
 
 export type CoreState = {|
   [typeof ns]: {|
@@ -50,7 +64,6 @@ export type Sender<P: TransactionParams, E: TransactionEventData> = {
 export type LifecycleActionTypes = {
   created?: string,
   error?: string,
-  eventDataReceived?: string,
   receiptReceived?: string,
   sent?: string,
   success?: string,

@@ -15,6 +15,8 @@ export type TransactionType = {
   createdAt: Date,
   methodName?: string,
   context?: string,
+  gasPrice?: BigNumber,
+  gasLimit?: BigNumber,
   /*
    * @TODO Below this lines, types might need to be changed
    * They were added during UI development and might not reflect

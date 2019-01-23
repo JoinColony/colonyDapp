@@ -6,16 +6,22 @@ import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
 import type {
+  AddressOrENSName,
+  ColonyContext,
+  TransactionReceipt,
+} from '~types';
+import type {
+  TransactionMultisig,
+  TransactionParams,
+  TransactionEventData,
+} from '~immutable';
+
+import type {
   CreateTransactionAction,
+  GasPrices,
   LifecycleActionTypes,
   MultisigOperationJSON,
 } from '../types';
-import type { AddressOrENSName, ColonyContext } from '~types';
-import type {
-  TransactionEventData,
-  TransactionMultisig,
-  TransactionParams,
-} from '~immutable';
 
 import {
   MULTISIG_TRANSACTION_CREATED,
@@ -26,11 +32,11 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_GAS_SUGGESTED,
-  TRANSACTION_GAS_MANUAL,
+  TRANSACTION_ESTIMATE_GAS,
+  TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
-  TRANSACTION_SUGGEST_GAS,
+  GAS_PRICES_UPDATE,
 } from '../actionTypes';
 
 type TxFactoryOptions = {
@@ -51,13 +57,6 @@ type TxActionCreatorOptions<P: TransactionParams> = {
 type TxActionCreator<P: TransactionParams> = (
   TxActionCreatorOptions<P>,
 ) => CreateTransactionAction<P>;
-
-/*
- * @area: including a bit of buffer on the gas sent can be a good thing.
- * Your tx might be applied against a different state from when you
- * estimateGas'd it, which might cause it to still work, but use a bit more gas
- */
-const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
 export {
   COLONY_CONTEXT,
@@ -204,7 +203,7 @@ export const transactionReceiptError = <P: TransactionParams>(
 
 export const transactionReceiptReceived = <P: TransactionParams>(
   id: string,
-  payload: { receipt: Object, params: P },
+  payload: { receipt: TransactionReceipt, params: P },
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || TRANSACTION_RECEIPT_RECEIVED,
@@ -235,43 +234,21 @@ export const transactionEventDataReceived = <
   meta: { id },
 });
 
-export const transactionSuggestGas = (id: string) => ({
-  type: TRANSACTION_SUGGEST_GAS,
-  payload: {
-    id,
-  },
-});
-
-export const transactionGasSuggested = (
-  id: string,
-  suggestedGasLimit: number,
-  suggestedGasPrice: number,
-) => ({
-  type: TRANSACTION_GAS_SUGGESTED,
-  payload: {
-    suggestedGasLimit,
-    suggestedGasPrice,
-  },
+export const transactionEstimateGas = (id: string) => ({
+  type: TRANSACTION_ESTIMATE_GAS,
   meta: { id },
 });
 
-export const transactionGasManualSet = (
+export const transactionUpdateGas = (
   id: string,
-  gasPrice: number,
-  gasLimit: number,
-): TransactionParams => {
-  const manualGasOptions: Object = {};
-  const manualGasAction: Object = {
-    type: TRANSACTION_GAS_MANUAL,
-    meta: { id },
-  };
-  if (gasPrice) {
-    manualGasOptions.gasPrice = new BigNumber(gasPrice);
-  }
-  if (gasLimit) {
-    manualGasOptions.gasLimit = new BigNumber(
-      parseInt(gasLimit * SAFE_GAS_LIMIT_MULTIPLIER, 10),
-    );
-  }
-  return { ...manualGasAction, payload: { options: manualGasOptions } };
-};
+  data: { gasLimit: BigNumber, gasPrice: BigNumber },
+) => ({
+  type: TRANSACTION_GAS_UPDATE,
+  payload: data,
+  meta: { id },
+});
+
+export const updateGasPrices = (gasPrices: GasPrices) => ({
+  type: GAS_PRICES_UPDATE,
+  payload: gasPrices,
+});

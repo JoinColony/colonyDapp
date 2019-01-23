@@ -45,22 +45,26 @@ type Props = InProps & {
 };
 
 type State = {
-  expandedTransactionId: number,
+  expandedTransactionIdx: number,
 };
+
+// TODO: This probably has to be improved later on
+const txNotDone = (transaction: TransactionType) =>
+  transaction.status !== 'succeeded' && transaction.status !== 'failed';
 
 class GasStationContent extends Component<Props, State> {
   static displayName = 'users.GasStationPopover.GasStationContent';
 
   state = {
-    expandedTransactionId: -1,
+    expandedTransactionIdx: -1,
   };
 
   clearExpandedTrasaction() {
-    return this.setState({ expandedTransactionId: -1 });
+    return this.setState({ expandedTransactionIdx: -1 });
   }
 
   handleExpandTransaction(transactionIndex: number) {
-    return this.setState({ expandedTransactionId: transactionIndex });
+    return this.setState({ expandedTransactionIdx: transactionIndex });
   }
 
   renderTransactionsSummary(
@@ -112,9 +116,9 @@ class GasStationContent extends Component<Props, State> {
         profile: { walletAddress },
       },
     } = this.props;
-    const { expandedTransactionId } = this.state;
+    const { expandedTransactionIdx } = this.state;
 
-    const isTransactionExpanded = expandedTransactionId >= 0;
+    const expandedTx = transactions && transactions[expandedTransactionIdx];
 
     return (
       <div
@@ -163,10 +167,8 @@ class GasStationContent extends Component<Props, State> {
         <div className={styles.transactionsContainer}>
           {transactions && transactions.length > 0 ? (
             <CardList appearance={{ numCols: '1' }}>
-              {isTransactionExpanded
-                ? this.renderExpandedTransaction(
-                    transactions[expandedTransactionId],
-                  )
+              {expandedTx
+                ? this.renderExpandedTransaction(expandedTx)
                 : this.renderTransactionsSummary(transactions)}
             </CardList>
           ) : (
@@ -176,11 +178,9 @@ class GasStationContent extends Component<Props, State> {
             />
           )}
         </div>
-        {isTransactionExpanded && (
+        {expandedTx && txNotDone(expandedTx) && (
           <div>
-            <GasStationPrice
-              transaction={transactions[expandedTransactionId]}
-            />
+            <GasStationPrice transaction={expandedTx} />
           </div>
         )}
       </div>

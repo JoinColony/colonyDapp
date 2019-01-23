@@ -9,7 +9,12 @@ import nanoid from 'nanoid';
 
 import type { LifecycleActionTypes } from '../modules/core/types';
 
-import type { Address, AddressOrENSName, ColonyContext } from '~types';
+import type {
+  Address,
+  AddressOrENSName,
+  ColonyContext,
+  TransactionReceipt,
+} from '~types';
 
 export type TransactionError = {
   type: 'send' | 'receipt' | 'eventData' | 'unsuccessful',
@@ -35,6 +40,8 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   createdAt: Date,
   errors: List<TransactionError>,
   eventData?: E,
+  gasLimit?: BigNumber,
+  gasPrice?: BigNumber,
   hash?: string,
   id: TransactionId,
   identifier?: AddressOrENSName,
@@ -43,9 +50,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   multisig?: TransactionMultisig, // Indicates tx is multisig if set
   options: SendOptions,
   params: P,
-  receiptReceived?: boolean,
-  suggestedGasLimit?: BigNumber,
-  suggestedGasPrice?: BigNumber,
+  receipt?: TransactionReceipt,
   status: 'created' | 'pending' | 'failed' | 'succeeded',
 };
 
@@ -57,6 +62,8 @@ export type TransactionRecord<
 const defaultValues: $Shape<TransactionProps<*, *>> = {
   context: undefined,
   createdAt: undefined,
+  gasLimit: undefined,
+  gasPrice: undefined,
   errors: new List(),
   eventData: undefined,
   hash: undefined,
@@ -67,9 +74,7 @@ const defaultValues: $Shape<TransactionProps<*, *>> = {
   multisig: undefined,
   options: {},
   params: {},
-  receiptReceived: undefined,
-  suggestedGasLimit: undefined,
-  suggestedGasPrice: undefined,
+  receipt: undefined,
   status: 'created',
 };
 

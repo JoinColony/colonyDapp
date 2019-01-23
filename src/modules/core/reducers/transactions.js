@@ -1,6 +1,14 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import type { RecordOf, RecordFactory } from 'immutable';
+
+import { Map as ImmutableMap, Record } from 'immutable';
+
+import type { UniqueAction } from '~types';
+
+import type { TransactionsStateProps } from '../types';
+
+import { Transaction } from '~immutable';
 
 import {
   MULTISIG_TRANSACTION_CREATED,
@@ -8,24 +16,23 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_GAS_SUGGESTED,
-  TRANSACTION_GAS_MANUAL,
+  TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
+  GAS_PRICES_UPDATE,
 } from '../actionTypes';
 
-import { Transaction } from '~immutable';
+export const TransactionsState: RecordFactory<TransactionsStateProps> = Record({
+  list: ImmutableMap(),
+  gasPrices: {},
+});
 
-import type { UniqueAction } from '~types';
-
-import type { TransactionsState } from '../types';
-
-const INITIAL_STATE = new ImmutableMap();
+const INITIAL_STATE = TransactionsState();
 
 const transactionsReducer = (
-  state: TransactionsState = INITIAL_STATE,
+  state: RecordOf<TransactionsStateProps> = INITIAL_STATE,
   { type, payload, meta }: UniqueAction,
-): TransactionsState => {
+): RecordOf<TransactionsStateProps> => {
   switch (type) {
     case TRANSACTION_CREATED:
     case MULTISIG_TRANSACTION_CREATED: {
@@ -39,8 +46,8 @@ const transactionsReducer = (
         options,
         params,
       } = payload;
-      return state.set(
-        meta.id,
+      return state.setIn(
+        ['list', meta.id],
         Transaction({
           context,
           createdAt,
@@ -57,53 +64,47 @@ const transactionsReducer = (
     case MULTISIG_TRANSACTION_REFRESHED: {
       const { id } = meta;
       const { multisig } = payload;
-      return state.mergeIn([id], {
+      return state.mergeIn(['list', id], {
         multisig,
       });
     }
-    case TRANSACTION_GAS_SUGGESTED: {
+    case TRANSACTION_GAS_UPDATE: {
       const { id } = meta;
-      const { suggestedGasLimit, suggestedGasPrice } = payload;
-      return state.mergeIn([id], {
-        suggestedGasLimit,
-        suggestedGasPrice,
-      });
-    }
-    case TRANSACTION_GAS_MANUAL: {
-      const { id } = meta;
-      const { gasPrice, gasLimit } = payload.options;
-      const manualGasOptions: Object = {};
-      if (gasLimit) {
-        manualGasOptions.gasLimit = gasLimit;
+      // $FlowFixMe flow doesn't like chaining of functions???
+      const newState = state.mergeIn(['list', id], payload);
+      const tx = state.list.get(id);
+      if (tx && (!tx.gasLimit || !tx.gasPrice)) {
+        return newState.setIn(['list', id, 'status'], 'ready');
       }
-      if (gasPrice) {
-        manualGasOptions.gasPrice = gasPrice;
-      }
-      return state.mergeIn([id, 'options'], manualGasOptions);
+      return newState;
     }
     case TRANSACTION_SENT: {
       const { id } = meta;
       const { hash } = payload;
-      return state.mergeIn([id], { hash, status: 'pending' });
+      return state.mergeIn(['list', id], { hash, status: 'pending' });
     }
     case TRANSACTION_RECEIPT_RECEIVED: {
       const { id } = meta;
-      return state.mergeIn([id], {
-        receiptReceived: true,
-        status: 'succeeded',
+      const { receipt } = payload;
+      return state.mergeIn(['list', id], {
+        receipt,
       });
     }
     case TRANSACTION_EVENT_DATA_RECEIVED: {
       const { id } = meta;
       const { eventData } = payload;
-      return state.setIn([id, 'eventData'], eventData);
+      return state.mergeIn(['list', id], { eventData, status: 'succeeded' });
     }
     case TRANSACTION_ERROR: {
       const { id } = meta;
       const { error } = payload;
       return state
-        .updateIn([id, 'errors'], errors => errors.push(error))
-        .setIn([id, 'status'], 'failed');
+        .updateIn(['list', id, 'errors'], errors => errors.push(error))
+        .setIn(['list', id, 'status'], 'failed');
+    }
+    case GAS_PRICES_UPDATE: {
+      const gasPrices = payload;
+      return state.set('gasPrices', gasPrices);
     }
     default:
       return state;

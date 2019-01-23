@@ -104,7 +104,15 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
     submit={TOKEN_CREATE}
     error={TOKEN_CREATE_ERROR}
     success={TOKEN_CREATE_SUCCESS}
-    onSuccess={({ receipt: { contractAddress } }, bag, values) => {
+    onSuccess={(
+      {
+        transaction: {
+          receipt: { contractAddress },
+        },
+      },
+      bag,
+      values,
+    ) => {
       nextStep({
         ...values,
         tokenAddress: contractAddress,

@@ -41,8 +41,6 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     case USER_PROFILE_UPDATE_SUCCESS:
       return state ? state.merge(action.payload) : state;
     case USERNAME_CREATE_SUCCESS: {
-      // TODO: This might change (maybe transaction: { params: { username }})
-      // Or eventData (as soon as it is available)
       const {
         params: { username },
       } = action.payload;
