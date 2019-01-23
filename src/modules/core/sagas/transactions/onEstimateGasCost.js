@@ -9,7 +9,6 @@ import type { TransactionParams } from '~immutable';
 import type { CreateTransactionAction } from '../../types';
 
 import { oneTransaction } from '../../selectors';
-import { METHOD_TRANSACTION_SENT } from '../../actionTypes';
 import { transactionUpdateGas } from '../../actionCreators';
 import { getMethod, getGasPrices } from '../utils';
 
@@ -47,29 +46,4 @@ export default function* onEstimateGasCost<P: TransactionParams>({
       gasPrice: suggested || network,
     }),
   );
-
-  /*
-   * @TODO This is temporary, remove once the new Create Colony Workflow is implemented
-   *
-   * Until then, this will automatically sign create colony related transactions.
-   *
-   * For the rest we follow the "normal" gas staion flow, by putting the transaction
-   * in the ready state and waiting for the user to confirm it
-   */
-  if (
-    process.env.SKIP_GAS_STATION_CONFIRM === 'true' ||
-    /*
-     * @TODO This is temporary, remove once the new Create Colony Workflow is implemented
-     *
-     * Until then, this will automatically sign create colony related transactions.
-     *
-     * For the rest we follow the "normal" gas staion flow, by putting the transaction
-     * in the ready state and waiting for the user to confirm it
-     */
-    methodName === 'createToken' ||
-    methodName === 'registerColonyLabel' ||
-    methodName === 'createColony'
-  ) {
-    yield put({ type: METHOD_TRANSACTION_SENT, meta: { id } });
-  }
 }

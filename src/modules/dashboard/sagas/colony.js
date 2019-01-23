@@ -85,6 +85,10 @@ function* createColonySaga({ payload: params, meta }: Action): Saga<void> {
     createColony({
       meta,
       params,
+      // TODO: this has to be removed once the new onboarding is properly wired to the gasStation
+      options: {
+        gasLimit: 5000000,
+      },
     }),
   );
 }
@@ -167,6 +171,10 @@ function* createColonyLabelSaga({
         orbitDBPath: store.address.toString(),
       },
       meta,
+      // TODO: this has to be removed once the new onboarding is properly wired to the gasStation
+      options: {
+        gasLimit: 500000,
+      },
     }),
   );
 }

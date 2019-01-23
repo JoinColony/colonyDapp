@@ -105,10 +105,11 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
     while (true) {
       const action = yield take(channel);
 
-      // Add the transaction to the payload
+      // Add the transaction to the payload (we need to get the most recent version of it)
+      const tx: TransactionRecord<P, E> = yield select(oneTransaction, id);
       const payload = {
         ...action.payload,
-        transaction,
+        transaction: tx,
       };
 
       // Put the action to the store
