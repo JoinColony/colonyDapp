@@ -10,6 +10,21 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 export const allDomainsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_DOMAINS], ImmutableMap());
 
+const sortDomainsByName = (prevDomain, nextDomain) => {
+  const prevName = prevDomain.getIn(['record', 'name']).toLowerCase();
+  const nextName = nextDomain.getIn(['record', 'name']).toLowerCase();
+  if (prevName < nextName) {
+    return -1;
+  }
+  if (prevName > nextName) {
+    return 1;
+  }
+  return 0;
+};
+
+/*
+ * Domains selectors
+ */
 export const colonyDomainsSelector = createSelector(
   allDomainsSelector,
   (state, props) => props.colonyENSName,
@@ -28,5 +43,11 @@ export const singleDomainTaskIdsSelector = createSelector(
 );
 export const getColonyDomains = createSelector(
   colonyDomainsSelector,
-  colonyDomains => (colonyDomains && colonyDomains.toList().toArray()) || [],
+  colonyDomains =>
+    (colonyDomains &&
+      colonyDomains
+        .toList()
+        .toArray()
+        .sort(sortDomainsByName)) ||
+    [],
 );
