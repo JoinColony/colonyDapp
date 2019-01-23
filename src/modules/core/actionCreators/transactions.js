@@ -1,15 +1,9 @@
 /* @flow */
 
-import type { SendOptions } from '@colony/colony-js-client';
-
 import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
-import type {
-  AddressOrENSName,
-  ColonyContext,
-  TransactionReceipt,
-} from '~types';
+import type { ColonyContext, TransactionReceipt } from '~types';
 import type {
   TransactionMultisig,
   TransactionParams,
@@ -20,7 +14,8 @@ import type {
   CreateTransactionAction,
   GasPrices,
   LifecycleActionTypes,
-  MultisigOperationJSON,
+  TxActionCreator,
+  TxActionCreatorOptions,
 } from '../types';
 
 import {
@@ -45,18 +40,6 @@ type TxFactoryOptions = {
   methodName: string,
   multisig?: boolean,
 };
-
-type TxActionCreatorOptions<P: TransactionParams> = {
-  identifier?: AddressOrENSName,
-  meta: any,
-  multisig?: MultisigOperationJSON,
-  params: P,
-  options?: SendOptions,
-};
-
-type TxActionCreator<P: TransactionParams> = (
-  TxActionCreatorOptions<P>,
-) => CreateTransactionAction<P>;
 
 export {
   COLONY_CONTEXT,
