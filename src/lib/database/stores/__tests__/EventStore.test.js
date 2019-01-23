@@ -27,12 +27,12 @@ describe('EventStore', () => {
 
   test('It can append an event to the log', async () => {
     const store = new EventStore(mockOrbitStore, name, mockPinner);
-    sandbox.spyOn(store, 'add');
+    sandbox.spyOn(store, 'append');
     const eventPayload = {
       colonyName: 'Zombies',
       user: 'jimmy',
     };
-    await store.add(eventPayload);
-    expect(store.add).toHaveBeenCalledWith(eventPayload);
+    await store.append(eventPayload);
+    expect(store.append).toHaveBeenCalledWith(eventPayload);
   });
 });
