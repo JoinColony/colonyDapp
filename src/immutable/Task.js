@@ -26,14 +26,15 @@ export type TaskProps = {
   evaluatorPayoutClaimed: boolean,
   evaluatorRateFail: boolean, // if they didn't rate or reveal
   feedItems: List<TaskFeedItemRecord>,
-  id: number,
+  draftId: string, // Draft ID, when the task is a little babby
   managerHasRated: boolean, // secret was submitted
   managerPayoutClaimed: boolean,
-  managerRateFail: boolean, // // if they didn't rate or reveal
+  managerRateFail: boolean, // if they didn't rate or reveal
   managerRating?: TaskRating,
   payouts: List<TaskPayoutRecord>,
   reputation: number, // TODO: should be BigNumber
   skillId: number,
+  taskId: number, // On-chain ID, when the task is all grown up :'-)
   title: string,
   workerHasRated: boolean, // secret was submitted
   workerPayoutClaimed: boolean,
@@ -42,6 +43,9 @@ export type TaskProps = {
 };
 
 export type TaskRecord = RecordOf<TaskProps>;
+
+export type TaskDraftId = $PropertyType<TaskRecord, 'draftId'>;
+export type TaskId = $PropertyType<TaskRecord, 'taskId'>;
 
 const defaultValues: $Shape<TaskProps> = {
   assignee: undefined,
@@ -54,7 +58,7 @@ const defaultValues: $Shape<TaskProps> = {
   evaluatorPayoutClaimed: undefined,
   evaluatorRateFail: undefined,
   feedItems: new List(),
-  id: undefined,
+  draftId: undefined,
   managerHasRated: undefined,
   managerPayoutClaimed: undefined,
   managerRateFail: undefined,
@@ -62,6 +66,7 @@ const defaultValues: $Shape<TaskProps> = {
   payouts: new List(),
   reputation: undefined,
   skillId: undefined,
+  taskId: undefined,
   title: undefined,
   workerHasRated: undefined,
   workerPayoutClaimed: undefined,
@@ -69,7 +74,6 @@ const defaultValues: $Shape<TaskProps> = {
   workerRating: undefined,
 };
 
-// TODO: validate required props, rather than above defaults
 const Task: RecordFactory<TaskProps> = Record(defaultValues);
 
 export default Task;

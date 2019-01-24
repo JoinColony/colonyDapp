@@ -8,7 +8,6 @@ import type {
   DocStore,
   FeedStore,
   ValidatedKVStore,
-  KVStore,
 } from '../../../lib/database/stores';
 
 import { getENSDomainString } from '~utils/web3/ens';
@@ -19,16 +18,12 @@ import { walletAddressSelector } from '../../users/selectors';
 import {
   colonyStoreBlueprint,
   domainsIndexStoreBlueprint,
-  draftsIndexStoreBlueprint,
+  tasksIndexStoreBlueprint,
   commentsBlueprint,
 } from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
-import {
-  domainsIndexSelector,
-  singleColonySelector,
-  draftsIndexSelector,
-} from '../selectors';
+import { domainsIndexSelector, singleColonySelector } from '../selectors';
 
 /*
  * Given a colony ENS name, fetch the colony store (if it exists).
@@ -143,64 +138,15 @@ export function* getOrCreateDomainsIndexStore(
 }
 
 /*
- * Get the drafts index store for a given colony (if the store exists).
+ * Create a tasks index store for a colony.
  */
-export function* getDraftsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
-  /*
-   * Get the `draftsIndex` address for the given colony from the store.
-   */
-  const draftsIndex = yield select(draftsIndexSelector, colonyENSName);
-
-  /*
-   * If the `draftsIndex` address wasn't found, exit.
-   */
-  if (!draftsIndex) return null;
-
-  /*
-   * Get the store for the `draftsIndex` address.
-   */
-  // TODO no access controller available yet
-  const ddb = yield getContext('ddb');
-  return yield call(
-    [ddb, ddb.getStore],
-    draftsIndexStoreBlueprint,
-    draftsIndex,
-  );
-}
-
-/*
- * Create a drafts index store for a colony.
- */
-export function* createDraftsIndexStore(
-  colonyENSName: ENSName,
-): Saga<DocStore> {
+export function* createTasksIndexStore(colonyENSName: ENSName): Saga<DocStore> {
   const ddb: DDB = yield getContext('ddb');
 
   // TODO: No access controller available yet
-  return yield call([ddb, ddb.createStore], draftsIndexStoreBlueprint, {
+  return yield call([ddb, ddb.createStore], tasksIndexStoreBlueprint, {
     colonyENSName,
   });
-}
-
-/*
- * Get or create a drafts index store for a colony.
- */
-export function* getOrCreateDraftsIndexStore(
-  colonyENSName: ENSName,
-): Saga<KVStore> {
-  /*
-   * Get and load the store, if it exists.
-   */
-  let store: KVStore | null = yield call(getDraftsIndexStore, colonyENSName);
-  if (store) yield call([store, store.load]);
-
-  /*
-   * Create the store if it doesn't already exist. Note: this does not add
-   * a reference to the colony store.
-   */
-  if (!store) store = yield call(createDraftsIndexStore, colonyENSName);
-
-  return store;
 }
 
 /*
@@ -216,12 +162,14 @@ export function* createCommentsStore(taskId: string): Saga<FeedStore> {
 
 /*
  * Get the comments store for a given task (if the store exists).
+ * TODO replace this function after https://github.com/JoinColony/colonyDapp/pull/815
  */
+// eslint-disable-next-line no-unused-vars
 export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
   /*
    * Get the comments store address from Redux
    */
-  const commentsStoreAddress = yield select(draftsIndexSelector, taskId);
+  const commentsStoreAddress = null;
 
   /*
    * If the comments store doesn't exist, return null

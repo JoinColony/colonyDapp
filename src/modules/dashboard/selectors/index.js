@@ -1,7 +1,7 @@
 /* @flow */
 
-export * from './colony';
 export * from './admins';
-export * from './domains';
-export * from './drafts';
+export * from './colony';
 export * from './comments';
+export * from './domains';
+export * from './tasks';

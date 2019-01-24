@@ -28,11 +28,7 @@ import { getNetworkMethod } from '../../core/sagas/utils';
 import { set, getAll } from '../../../lib/database/commands';
 
 import { colonyStoreBlueprint } from '../stores';
-import {
-  fetchColonyStore,
-  getOrCreateDomainsIndexStore,
-  getOrCreateDraftsIndexStore,
-} from './shared';
+import { fetchColonyStore, getOrCreateDomainsIndexStore } from './shared';
 
 import {
   COLONY_AVATAR_FETCH,
@@ -139,10 +135,8 @@ function* createColonyLabelSaga({
    * Get and/or create the index stores for this colony.
    */
   const domainsIndex = yield call(getOrCreateDomainsIndexStore, ensName);
-  const draftsIndex = yield call(getOrCreateDraftsIndexStore, ensName);
   const databases = {
     domainsIndex: domainsIndex.address.toString(),
-    draftsIndex: draftsIndex.address.toString(),
   };
 
   /*
