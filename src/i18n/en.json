@@ -29,7 +29,7 @@
     "label.password": "Password",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
-    "transaction.debug.description": "DEBUG: {debug}",
+    "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
     "transaction.network.createTask.description": "Create Task",
     "transaction.network.moveFundsBetweenPots.description": "Move Funds",
     "transaction.network.setTaskWorkerRole.description": "Assign Worker",
@@ -41,7 +41,7 @@
     "transaction.network.setTaskDueDatedescription": "Modify Due Date",
     "transaction.network.submitTaskDeliverable.description": "Submit Work",
     "transaction.network.endTask.description": "End Task",
-    "transaction.network.submitTaskDeliverableAndRating..description": "Rate Manager",
+    "transaction.network.submitTaskDeliverableAndRating.description": "Rate Manager",
     "transaction.network.submitTaskWorkRating.description": "Rate Worker",
     "transaction.network.revealTaskWorkRating.description": "Reveal Rating",
     "transaction.network.finalizeTask.description": "Finalize Task",
@@ -88,7 +88,7 @@
     "transaction.colony.enterRecoveryMode.title": "Enter Recovery Mode",
     "transaction.colony.mintTokens.title": "Mint New Tokens",
     "transaction.colony.claimColonyFunds.title": "Claim Pending Transactions",
-    "transaction.colony.setAdminRole.title": "Add Admin {username}",
-    "transaction.colony.removeAdminRole.title": "Remove Admin {username}",
-    "transaction.colony.addDomain.title": "Create Domain {domain}"
+    "transaction.colony.setAdminRole.title": "Add Admin",
+    "transaction.colony.removeAdminRole.title": "Remove Admin",
+    "transaction.colony.addDomain.title": "Create Domain"
   }
