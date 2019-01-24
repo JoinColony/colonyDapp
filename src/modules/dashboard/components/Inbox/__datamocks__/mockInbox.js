@@ -80,7 +80,7 @@ const mockInbox = [
   },
   {
     id: 6,
-    event: 'actionWorkerTaskFinalized',
+    event: 'actionWorkerInviteReceived',
     createdAt: new Date(2018, 9, 16),
     unread: true,
     user: {

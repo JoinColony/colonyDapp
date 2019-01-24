@@ -11,7 +11,7 @@ import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import { List } from 'immutable';
-import Payout from './Payout.jsx';
+import Payout from '~dashboard/TaskEditDialog/Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { getEthToUsd } from '~utils/external';
 import { bnMultiply } from '~utils/numbers';
