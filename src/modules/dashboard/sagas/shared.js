@@ -18,15 +18,14 @@ import { walletAddressSelector } from '../../users/selectors';
 import {
   colonyStoreBlueprint,
   domainsIndexStoreBlueprint,
-  draftsIndexStoreBlueprint,
+  tasksIndexStoreBlueprint,
 } from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
-import {
-  domainsIndexSelector,
-  singleColonySelector,
-  draftsIndexSelector,
-} from '../selectors';
+import { domainsIndexSelector, singleColonySelector } from '../selectors';
+
+// TODO
+const tasksIndexSelector = () => null;
 
 /*
  * Given a colony ENS name, fetch the colony store (if it exists).
@@ -141,62 +140,56 @@ export function* getOrCreateDomainsIndexStore(
 }
 
 /*
- * Get the drafts index store for a given colony (if the store exists).
+ * Get the tasks index store for a given colony (if the store exists).
  */
-export function* getDraftsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
+export function* getTasksIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
   /*
-   * Get the `draftsIndex` address for the given colony from the store.
+   * Get the `tasksIndex` address for the given colony from the store.
    */
-  const draftsIndex = yield select(draftsIndexSelector, colonyENSName);
+  const tasksIndex = yield select(tasksIndexSelector, colonyENSName);
 
   /*
-   * If the `draftsIndex` address wasn't found, exit.
+   * If the `tasksIndex` address wasn't found, exit.
    */
-  if (!draftsIndex) return null;
+  if (!tasksIndex) return null;
 
   /*
-   * Get the store for the `draftsIndex` address.
+   * Get the store for the `tasksIndex` address.
    */
   // TODO no access controller available yet
   const ddb = yield getContext('ddb');
-  return yield call(
-    [ddb, ddb.getStore],
-    draftsIndexStoreBlueprint,
-    draftsIndex,
-  );
+  return yield call([ddb, ddb.getStore], tasksIndexStoreBlueprint, tasksIndex);
 }
 
 /*
- * Create a drafts index store for a colony.
+ * Create a tasks index store for a colony.
  */
-export function* createDraftsIndexStore(
-  colonyENSName: ENSName,
-): Saga<DocStore> {
+export function* createTasksIndexStore(colonyENSName: ENSName): Saga<DocStore> {
   const ddb: DDB = yield getContext('ddb');
 
   // TODO: No access controller available yet
-  return yield call([ddb, ddb.createStore], draftsIndexStoreBlueprint, {
+  return yield call([ddb, ddb.createStore], tasksIndexStoreBlueprint, {
     colonyENSName,
   });
 }
 
 /*
- * Get or create a drafts index store for a colony.
+ * Get or create a tasks index store for a colony.
  */
-export function* getOrCreateDraftsIndexStore(
+export function* getOrCreateTasksIndexStore(
   colonyENSName: ENSName,
 ): Saga<KVStore> {
   /*
    * Get and load the store, if it exists.
    */
-  let store: KVStore | null = yield call(getDraftsIndexStore, colonyENSName);
+  let store: KVStore | null = yield call(getTasksIndexStore, colonyENSName);
   if (store) yield call([store, store.load]);
 
   /*
    * Create the store if it doesn't already exist. Note: this does not add
    * a reference to the colony store.
    */
-  if (!store) store = yield call(createDraftsIndexStore, colonyENSName);
+  if (!store) store = yield call(createTasksIndexStore, colonyENSName);
 
   return store;
 }

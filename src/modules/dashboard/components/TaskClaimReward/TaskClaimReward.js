@@ -37,7 +37,7 @@ const enhance = compose(
   withProps(
     ({
       task: {
-        id: taskId,
+        taskId,
         colonyENSName,
         payouts,
         workerHasRated,

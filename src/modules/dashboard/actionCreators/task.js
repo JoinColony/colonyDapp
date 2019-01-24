@@ -6,16 +6,18 @@ import {
 } from '../../core/actionCreators';
 
 import {
-  TASK_SET_DATE_ERROR,
-  TASK_SET_DATE_SUCCESS,
-  TASK_SET_SKILL_ERROR,
-  TASK_SET_SKILL_SUCCESS,
+  TASK_FINALIZE_ERROR,
+  TASK_FINALIZE_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_RATE_WORKER_ERROR,
   TASK_MANAGER_RATE_WORKER_SUCCESS,
   TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
   TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+  TASK_SET_DATE_ERROR,
+  TASK_SET_DATE_SUCCESS,
+  TASK_SET_SKILL_ERROR,
+  TASK_SET_SKILL_SUCCESS,
   TASK_WORKER_CLAIM_REWARD_ERROR,
   TASK_WORKER_CLAIM_REWARD_SUCCESS,
   TASK_WORKER_END_ERROR,
@@ -24,14 +26,12 @@ import {
   TASK_WORKER_RATE_MANAGER_SUCCESS,
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-  TASK_FINALIZE_ERROR,
-  TASK_FINALIZE_SUCCESS,
 } from '../actionTypes';
 
 /**
  * As worker or manager, I want to be able to set a skill
  */
-export const taskSetSkill = createTxActionCreator<{
+export const setTaskSkillTx = createTxActionCreator<{
   taskId: number,
   skillId: number,
 }>({
@@ -46,7 +46,7 @@ export const taskSetSkill = createTxActionCreator<{
 /**
  * As worker or manager, I want to be able to set a date
  */
-export const taskSetDate = createTxActionCreator<{
+export const setTaskDueDateTx = createTxActionCreator<{
   taskId: number,
   dueDate: Date,
 }>({
@@ -61,7 +61,7 @@ export const taskSetDate = createTxActionCreator<{
 /**
  * As worker, submit work and rate before due date.
  */
-export const taskWorkerEnd = createTxActionCreator<{
+export const submitTaskDeliverableAndRatingTx = createTxActionCreator<{
   taskId: number,
   deliverableHash: string,
   secret: string,
@@ -77,7 +77,7 @@ export const taskWorkerEnd = createTxActionCreator<{
 /**
  * As manager, end the task if the due date has elapsed.
  */
-export const taskManagerComplete = createTxActionCreator<{
+export const completeTaskTx = createTxActionCreator<{
   taskId: number,
 }>({
   context: COLONY_CONTEXT,
@@ -91,7 +91,7 @@ export const taskManagerComplete = createTxActionCreator<{
 /**
  * As manager, rate the worker.
  */
-export const taskManagerRateWorker = createTxActionCreator<{
+export const submitWorkerRatingAsManagerTx = createTxActionCreator<{
   taskId: number,
   secret: string,
   role: 'WORKER',
@@ -107,7 +107,7 @@ export const taskManagerRateWorker = createTxActionCreator<{
 /**
  * As worker, rate the manager.
  */
-export const taskWorkerRateManager = createTxActionCreator<{
+export const submitManagerRatingAsWorkerTx = createTxActionCreator<{
   taskId: number,
   secret: string,
   role: 'MANAGER',
@@ -123,7 +123,7 @@ export const taskWorkerRateManager = createTxActionCreator<{
 /**
  * As worker, reveal manager rating.
  */
-export const taskWorkerRevealRating = createTxActionCreator<{
+export const revealTaskRatingAsWorkerTx = createTxActionCreator<{
   taskId: number,
   rating: number,
   salt: number,
@@ -140,7 +140,7 @@ export const taskWorkerRevealRating = createTxActionCreator<{
 /**
  * As manager, reveal worker rating.
  */
-export const taskManagerRevealRating = createTxActionCreator<{
+export const revealTaskRatingAsManagerTx = createTxActionCreator<{
   taskId: number,
   rating: number,
   salt: number,
@@ -157,7 +157,7 @@ export const taskManagerRevealRating = createTxActionCreator<{
 /**
  * As the worker, claim payout
  */
-export const taskWorkerClaimReward = createTxActionCreator<{
+export const claimPayoutAsWorkerTx = createTxActionCreator<{
   taskId: number,
   token: string,
   role: 'WORKER',
@@ -173,7 +173,7 @@ export const taskWorkerClaimReward = createTxActionCreator<{
 /**
  * As anyone, finalize task.
  */
-export const taskFinalize = createTxActionCreator<{
+export const finalizeTaskTx = createTxActionCreator<{
   taskId: number,
 }>({
   context: COLONY_CONTEXT,

@@ -10,6 +10,7 @@ import type { ENSName } from '~types';
 import type { TaskFeedItemRecord } from './TaskFeedItem';
 import type { TaskPayoutRecord } from './TaskPayout';
 import type { UserRecord } from './User';
+import type { DomainId } from './Domain';
 
 export type TaskRating = 1 | 2 | 3;
 
@@ -20,13 +21,13 @@ export type TaskProps = {
   colonyENSName: ENSName,
   creator: string,
   currentState: TaskCurrentState,
-  domainId: number,
+  domainId: DomainId,
   dueDate?: Date,
   evaluatorHasRated: boolean, // secret was submitted
   evaluatorPayoutClaimed: boolean,
   evaluatorRateFail: boolean, // if they didn't rate or reveal
   feedItems: List<TaskFeedItemRecord>,
-  id: number,
+  id: string, // Generated id string // TODO consider different naming
   managerHasRated: boolean, // secret was submitted
   managerPayoutClaimed: boolean,
   managerRateFail: boolean, // // if they didn't rate or reveal
@@ -34,6 +35,7 @@ export type TaskProps = {
   payouts: List<TaskPayoutRecord>,
   reputation: number, // TODO: should be BigNumber
   skillId: number,
+  taskId: number, // Task ID on-chain // TODO consider different naming
   title: string,
   workerHasRated: boolean, // secret was submitted
   workerPayoutClaimed: boolean,
@@ -42,6 +44,9 @@ export type TaskProps = {
 };
 
 export type TaskRecord = RecordOf<TaskProps>;
+
+// TODO consider different naming
+export type TaskId = $PropertyType<TaskRecord, 'id'>;
 
 const defaultValues: $Shape<TaskProps> = {
   assignee: undefined,
@@ -62,6 +67,7 @@ const defaultValues: $Shape<TaskProps> = {
   payouts: new List(),
   reputation: undefined,
   skillId: undefined,
+  taskId: undefined,
   title: undefined,
   workerHasRated: undefined,
   workerPayoutClaimed: undefined,

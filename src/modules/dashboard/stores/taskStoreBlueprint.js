@@ -7,9 +7,9 @@ import { colonyMeta } from './meta';
 
 import type { StoreBlueprint } from '~types';
 
-const draftStoreBlueprint: StoreBlueprint = {
+const taskStoreBlueprint: StoreBlueprint = {
   // TODO add access controller
-  name: 'draft',
+  name: 'task',
   schema: yup.object({
     meta: colonyMeta,
     assignee: yup.string(),
@@ -24,4 +24,4 @@ const draftStoreBlueprint: StoreBlueprint = {
   type: ValidatedKVStore,
 };
 
-export default draftStoreBlueprint;
+export default taskStoreBlueprint;
