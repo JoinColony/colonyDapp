@@ -155,7 +155,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 export default function* onTransactionSent<
   P: TransactionParams,
   E: TransactionEventData,
->({ meta: { id } }: SendTransactionAction): Saga<void> {
+>({ meta: { id }, meta }: SendTransactionAction): Saga<void> {
   let tx;
 
   try {
@@ -181,10 +181,10 @@ export default function* onTransactionSent<
     // Unexpected errors `put` the given error action...
     const { lifecycle: { error: errorType } = {} } = tx || {};
     if (errorType) {
-      yield putError(errorType, caughtError);
+      yield putError(errorType, caughtError, meta);
     } else {
       // We still dispatch this error as a general TRANASACTION_ERROR
-      yield putError(TRANSACTION_ERROR, caughtError);
+      yield putError(TRANSACTION_ERROR, caughtError, meta);
     }
   }
 }

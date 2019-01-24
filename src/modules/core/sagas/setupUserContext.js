@@ -6,7 +6,7 @@ import { setContext, call, all, put, fork } from 'redux-saga/effects';
 
 import { create, putError } from '~utils/saga/effects';
 
-import type { Action } from '~types';
+import type { UniqueAction } from '~types';
 import type { UserProfileProps } from '~immutable';
 
 import setupAdminSagas from '../../admin/sagas';
@@ -41,7 +41,8 @@ function* setupContextSagas(): any {
  * context that depends on it (the wallet itself, the DDB, the ColonyManager),
  * and then any other context that depends on that.
  */
-export default function* setupUserContext(action: Action): Saga<void> {
+export default function* setupUserContext(action: UniqueAction): Saga<void> {
+  const { meta } = action;
   try {
     const wallet = yield call(getWallet, action);
     yield setContext({ wallet });
@@ -87,8 +88,9 @@ export default function* setupUserContext(action: Action): Saga<void> {
         profileData,
         walletAddress: wallet.address,
       },
+      meta,
     });
   } catch (err) {
-    yield putError(WALLET_CREATE_ERROR, err);
+    yield putError(WALLET_CREATE_ERROR, err, meta);
   }
 }
