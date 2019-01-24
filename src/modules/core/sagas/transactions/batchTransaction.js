@@ -2,33 +2,73 @@
 
 import type { Saga } from 'redux-saga';
 
-import { put } from 'redux-saga/effects';
+import { call, put, select, take } from 'redux-saga/effects';
 
+import type { TransactionRecord } from '~immutable';
 import type { UniqueAction } from '~types';
 
-import type { TxActionCreator, TxActionCreatorOptions } from '../../types';
+import type { TxActionCreator } from '../../types';
+
+import { transactionAddProperties } from '../../actionCreators';
+import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../actionTypes';
+import { oneTransaction } from '../../selectors';
 
 type TransactionInstruction<P> = {
   actionCreator: TxActionCreator<P>,
-  // TODO: type better
-  transferParams?: Function,
-  transferIdentifier?: Function,
+  transferParams?: (TransactionRecord<*, *>[]) => Object | void,
+  transferIdentifier?: (TransactionRecord<*, *>[]) => string | void,
 };
 
 type BatchFactoryOptions = {
   meta: { key: string },
-  // TODO: type properly!
   transactions: Array<TransactionInstruction<*>>,
 };
 
-const createBatchTxActionCreator = (txOptions: BatchFactoryOptions) =>
-  // TODO: how to type variable amounts of generics?
+const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
+  function* waitForNext(
+    txId: string,
+    idx: number = 0,
+    transactions: TransactionRecord<*, *>[] = [],
+  ) {
+    const batchedTxId = `${txId}-${idx}`;
+    const { transferParams, transferIdentifier } = txOptions.transactions[idx];
+
+    if (transactions.length && (transferParams || transferIdentifier)) {
+      const payload = {};
+      if (transferParams) {
+        payload.params = transferParams(transactions);
+      }
+      if (transferIdentifier) {
+        payload.identifier = transferIdentifier(transactions);
+      }
+      // This will make the transaction `ready`, so that the user can sign it
+      yield put(transactionAddProperties(batchedTxId, payload));
+    }
+
+    // Wait until success for this transaction is reported
+    yield take(
+      (txAction: UniqueAction) =>
+        txAction.meta &&
+        txAction.meta.id === batchedTxId &&
+        txAction.type === TRANSACTION_EVENT_DATA_RECEIVED,
+    );
+
+    // TODO: Error handling, retry, timeout?
+    // We don't have any means to retry transactions, yet, so error handling has to come later
+
+    // If there are more transactions, continue
+    if (idx < txOptions.transactions.length - 1) {
+      const transaction = yield select(oneTransaction, batchedTxId);
+      transactions.push(transaction);
+      yield call(waitForNext, txId, idx + 1, transactions);
+    }
+  }
+
   function* batchSaga(
     action: UniqueAction,
-    // TODO: type better
-    actionCreatorOptions: TxActionCreatorOptions<*>,
+    // chris: There might be a way to type this better but for me it seems close to impossible
+    actionCreatorOptions: $ReadOnlyArray<{ options: Object, params: Object }>,
   ): Saga<void> {
-    // TODO: check size of txOptions and actionCreatorOptions? flow?
     const { meta } = action;
     for (let i = 0; i < txOptions.transactions.length; i += 1) {
       const {
@@ -36,16 +76,17 @@ const createBatchTxActionCreator = (txOptions: BatchFactoryOptions) =>
         transferParams,
         transferIdentifier,
       } = txOptions.transactions[i];
-      yield put(
-        actionCreator({
-          meta: { ...meta, id: `${meta.id}-${i}` },
-          status: transferParams || transferIdentifier ? 'created' : 'ready',
-          ...actionCreatorOptions[i],
-        }),
-      );
+      const actionCreatorOpts = {
+        meta: { ...meta, id: `${meta.id}-${i}` },
+        status: transferParams || transferIdentifier ? 'created' : 'ready',
+        ...actionCreatorOptions[i],
+      };
+      yield put(actionCreator(actionCreatorOpts));
     }
-    // TODO: to complete actions
-    // yield put(addTransactionProperties(id, { params, identifier }));
-  };
+    yield call(waitForNext, meta.id);
+  }
 
-export default createBatchTxActionCreator;
+  return batchSaga;
+};
+
+export default createBatchTxRunner;

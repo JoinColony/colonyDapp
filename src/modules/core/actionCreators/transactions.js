@@ -27,6 +27,7 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_ADD_PROPERTIES,
   TRANSACTION_ESTIMATE_GAS,
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
@@ -217,6 +218,15 @@ export const transactionEventDataReceived = <
   type: overrideActionType || TRANSACTION_EVENT_DATA_RECEIVED,
   payload,
   meta: { id },
+});
+
+export const transactionAddProperties = (
+  id: string,
+  payload: { identifier?: string, params?: Object },
+) => ({
+  type: TRANSACTION_ADD_PROPERTIES,
+  meta: { id },
+  payload,
 });
 
 export const transactionEstimateGas = (id: string) => ({
