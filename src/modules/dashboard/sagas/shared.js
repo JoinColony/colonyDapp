@@ -204,7 +204,7 @@ export function* getOrCreateDraftsIndexStore(
 }
 
 /*
- * Create a domains index store for a colony.
+ * Create the comments store for a given task.
  */
 export function* createCommentsStore(taskId: string): Saga<FeedStore> {
   const ddb: DDB = yield getContext('ddb');
@@ -212,4 +212,32 @@ export function* createCommentsStore(taskId: string): Saga<FeedStore> {
   return yield call([ddb, ddb.createStore], commentsBlueprint, {
     taskId,
   });
+}
+
+/*
+ * Get the comments store for a given task (if the store exists).
+ */
+export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
+  /*
+   * Get the comments store address from Redux
+   */
+  const commentsStoreAddress = yield select(draftsIndexSelector, taskId);
+
+  /*
+   * If the comments store doesn't exist, return null
+   */
+  if (!commentsStoreAddress) {
+    return null;
+  };
+
+  /*
+   * Get the comments store, fro the returned address
+   */
+  // TODO no access controller available yet
+  const ddb = yield getContext('ddb');
+  return yield call(
+    [ddb, ddb.getStore],
+    commentsBlueprint,
+    commentsStoreAddress,
+  );
 }
