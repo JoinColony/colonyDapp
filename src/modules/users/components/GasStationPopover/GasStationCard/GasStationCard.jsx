@@ -47,7 +47,7 @@ const MSG = defineMessages({
   },
   failedAction: {
     id: 'users.GasStationPopover.GasStationCard.failedAction',
-    defaultMessage: 'Failed transaction. Try again.',
+    defaultMessage: `Failed transaction. Try again. Debug: {debug}`,
   },
   transactionTitle: {
     id: 'users.GasStationPopover.GasStationCard.transactionTitle',
@@ -58,7 +58,8 @@ const MSG = defineMessages({
   },
   transactionDescription: {
     id: 'users.GasStationPopover.GasStationCard.transactionDescription',
-    defaultMessage: `DEBUG: context: {context} methodName: {methodName}`,
+    defaultMessage: `DEBUG: context: {context} methodName: {methodName}
+      {debug}`,
   },
   /*
    * @NOTE Below this line are just temporary message descriptors as the actual
@@ -88,6 +89,14 @@ type State = {
 
 class GasStationCard extends Component<Props, State> {
   static displayName = 'users.GasStationPopover.GasStationCard';
+
+  /*
+   *We wont need this anymore after colonyDapp#770 since the TransactionRecord
+   *comes with default values
+   */
+  static defaultProps = {
+    transaction: { params: { domain: '', username: '' } },
+  };
 
   /*
    * @NOTE This needs to be static since we don't use any props from the
@@ -124,7 +133,10 @@ class GasStationCard extends Component<Props, State> {
             />
             {status && status === 'failed' && (
               <span className={styles.failedActionDescription}>
-                <FormattedMessage {...MSG.failedAction} />
+                <FormattedMessage
+                  {...MSG.failedAction}
+                  values={{ debug: process.env.DEBUG }}
+                />
               </span>
             )}
           </div>
@@ -178,20 +190,29 @@ class GasStationCard extends Component<Props, State> {
 
   renderSummary() {
     const {
-      transaction: { status, dependents = [], methodName, context },
+      transaction: {
+        status,
+        dependents = [],
+        methodName,
+        context,
+        params: { domain, username },
+      },
     } = this.props;
     return (
       <div className={styles.summary}>
         <div className={styles.description}>
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitle}
-            textValues={{ methodName }}
-          />
+          >
+            {context && methodName && (
+              <FormattedMessage
+                id={`transaction.${context}.${methodName}.title`}
+                values={{ context, methodName, domain, username }}
+              />
+            )}
+          </Heading>
           <Link
             className={styles.transactionLink}
-            text={MSG.transactionDescription}
-            textValues={{ methodName, context }}
             /*
              * @TODO Either change this by removing the link, or point
              * it in a relevant direction
@@ -203,7 +224,18 @@ class GasStationCard extends Component<Props, State> {
              * another place, so there's no reason to change the state prior to that
              */
             onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
-          />
+          >
+            {context && methodName && (
+              <FormattedMessage
+                id={
+                  process.env.DEBUG
+                    ? `transaction.debug.description`
+                    : `transaction.${context}.${methodName}.description`
+                }
+                values={{ context, methodName, debug: process.env.DEBUG }}
+              />
+            )}
+          </Link>
         </div>
         {status && (
           <div className={styles.status}>

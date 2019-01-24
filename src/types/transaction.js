@@ -54,6 +54,11 @@ export type TransactionType = {
     title?: string,
   },
   /*
+   * @TODO https://github.com/JoinColony/colonyDapp/issues/770 will remove TransactionType and only keep
+   * TransactionRecord
+   */
+  params: { domain: string, username: string },
+  /*
    * @TODO This should most likely come from a separate call to etherscan
    */
   status?: 'pending' | 'failed' | 'succeeded' | 'multisig',
