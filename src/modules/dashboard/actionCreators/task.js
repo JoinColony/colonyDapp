@@ -278,6 +278,7 @@ export const taskWorkerAssignTx = createTxActionCreator<{
   user: string,
   role: 'WORKER',
 }>({
+  multisig: true,
   context: COLONY_CONTEXT,
   methodName: 'setTaskWorkerRole',
   lifecycle: {

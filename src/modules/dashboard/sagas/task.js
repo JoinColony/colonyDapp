@@ -72,6 +72,7 @@ import {
 } from '../actionTypes';
 import { ensureColonyIsInState } from './shared';
 
+<<<<<<< HEAD
 const createTaskBatch = createBatchTxRunner({
   meta: { key: 'transaction.batch.createTask' },
   transactions: [
@@ -271,6 +272,21 @@ function* taskRemoveSaga({
     yield putError(TASK_REMOVE_ERROR, error, meta);
   }
 }
+=======
+import {
+  taskSetDate,
+  taskSetSkill,
+  taskManagerComplete,
+  taskManagerRateWorker,
+  taskManagerRevealRating,
+  taskWorkerClaimReward,
+  taskWorkerEnd,
+  taskWorkerRateManager,
+  taskWorkerRevealRating,
+  taskFinalize,
+  taskWorkerAssign,
+} from '../actionCreators';
+>>>>>>> Apply multisig and add new actioncreator
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield* getContext(CONTEXT.WALLET);
