@@ -220,6 +220,8 @@ export function* createCommentsStore(taskId: string): Saga<FeedStore> {
 export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
   /*
    * Get the comments store address from Redux
+   *
+   * @TODO Add proper selector
    */
   const commentsStoreAddress = yield select(draftsIndexSelector, taskId);
 
@@ -228,7 +230,7 @@ export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
    */
   if (!commentsStoreAddress) {
     return null;
-  };
+  }
 
   /*
    * Get the comments store, fro the returned address
@@ -240,4 +242,28 @@ export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
     commentsBlueprint,
     commentsStoreAddress,
   );
+}
+
+/*
+ * Get or create a comments tore
+ */
+export function* getOrCreateCommentsStore(taskId: string): Saga<FeedStore> {
+  /*
+   * Get and load the store, if it exists.
+   */
+  let commentsStoreAddress: FeedStore | null = yield call(
+    getCommentsStore,
+    taskId,
+  );
+  if (commentsStoreAddress) {
+    yield call([commentsStoreAddress, commentsStoreAddress.load]);
+  }
+  /*
+   * Create the store if it doesn't already exist.
+   */
+  if (!commentsStoreAddress) {
+    commentsStoreAddress = yield call(createCommentsStore, taskId);
+  }
+
+  return commentsStoreAddress;
 }
