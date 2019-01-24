@@ -9,6 +9,7 @@ import Heading from '~core/Heading';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 import type { ColonyAdminRecord } from '~immutable';
+import { mergePayload } from '~utils/actions';
 
 import promiseListener from '../../../../createPromiseListener';
 import UserListItem from './UserListItem.jsx';
@@ -76,11 +77,14 @@ class UserList extends Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    const { remove, removeSuccess, removeError } = this.props;
+    const { remove, removeSuccess, removeError, ensName } = this.props;
     this.remove = promiseListener.createAsyncFunction({
       start: remove,
       resolve: removeSuccess,
       reject: removeError,
+      setPayload(action: *, payload: *) {
+        return mergePayload(action, { payload, meta: { keyPath: [ensName] } });
+      },
     });
   }
 
@@ -96,7 +100,6 @@ class UserList extends Component<Props> {
       showMaskedAddress,
       viewOnly = true,
       label,
-      ensName,
     } = this.props;
     return (
       <div className={styles.main}>
@@ -121,9 +124,7 @@ class UserList extends Component<Props> {
                   showUsername={showUsername}
                   showMaskedAddress={showMaskedAddress}
                   viewOnly={viewOnly}
-                  onRemove={() =>
-                    this.remove.asyncFunction({ admin: user, ensName })
-                  }
+                  onRemove={() => this.remove.asyncFunction({ admin: user })}
                 />
               ))}
             </TableBody>

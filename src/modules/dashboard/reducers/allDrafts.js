@@ -13,24 +13,26 @@ import {
 import { Draft, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { ENSName } from '~types';
+import type { ENSName, UniqueActionWithKeyPath } from '~types';
 
 import type { AllDraftsState, DraftsMap } from '../types';
 
 const allDraftsReducer = (
   state: AllDraftsState = new ImmutableMap(),
-  action: { type: string, payload: { keyPath: [*, *], props: {} } },
+  action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
     case DRAFT_CREATE_SUCCESS:
     case DRAFT_UPDATE_SUCCESS:
     case DRAFT_FETCH_SUCCESS: {
       const {
-        keyPath: [ensName, domainId],
-        keyPath,
-        props,
-      } = action.payload;
-      const data = Data({ record: Draft({ domainId, ...props }) });
+        meta: {
+          keyPath: [ensName, domainId],
+          keyPath,
+        },
+        payload,
+      } = action;
+      const data = Data({ record: Draft({ domainId, ...payload }) });
 
       return state.get(ensName)
         ? state.mergeDeepIn(keyPath, data)
@@ -38,7 +40,7 @@ const allDraftsReducer = (
     }
 
     case DRAFT_REMOVE_SUCCESS: {
-      const { keyPath } = action.payload;
+      const { keyPath } = action.meta;
       return state.deleteIn(keyPath);
     }
     default:

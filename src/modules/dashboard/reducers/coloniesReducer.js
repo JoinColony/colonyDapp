@@ -16,17 +16,17 @@ import { Colony, Data, Token } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { ColonyRecord, DataRecord } from '~immutable';
-import type { Action, ENSName } from '~types';
+import type { UniqueActionWithKeyPath, ENSName } from '~types';
 
 const coloniesReducer = (
   state: ImmutableMap<ENSName, DataRecord<ColonyRecord>> = new ImmutableMap(),
-  action: Action,
+  action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
     case COLONY_FETCH_SUCCESS: {
       const {
-        props: { token, ensName, admins, ...props },
-      } = action.payload;
+        payload: { token, ensName, admins, ...props },
+      } = action;
       const record = Colony({
         token: Token(token),
         admins: ImmutableMap(admins),
@@ -38,30 +38,44 @@ const coloniesReducer = (
         : state.set(ensName, Data({ record }));
     }
     case COLONY_PROFILE_UPDATE_SUCCESS: {
-      const { ensName, colonyUpdateValues } = action.payload;
-      return state.mergeIn([ensName, 'record'], colonyUpdateValues);
+      const {
+        meta: { keyPath },
+        payload,
+      } = action;
+      return state.mergeIn([...keyPath, 'record'], payload);
     }
     case COLONY_AVATAR_UPLOAD_SUCCESS: {
-      const { hash, ensName } = action.payload;
-      return state.setIn([ensName, 'record', 'avatar'], hash);
+      const {
+        meta: { keyPath },
+        payload: hash,
+      } = action;
+      return state.setIn([...keyPath, 'record', 'avatar'], hash);
     }
     case COLONY_AVATAR_REMOVE_SUCCESS: {
-      const { ensName } = action.payload;
-      return state.setIn([ensName, 'record', 'avatar'], undefined);
+      const {
+        meta: { keyPath },
+      } = action;
+      return state.setIn([...keyPath, 'record', 'avatar'], undefined);
     }
     case COLONY_ADMIN_ADD_SUCCESS: {
-      const { ensName, adminData } = action.payload;
+      const {
+        meta: { keyPath },
+        payload: adminData,
+      } = action;
       return state
         ? state.setIn(
-            [ensName, 'record', 'admins', adminData.username],
+            [...keyPath, 'record', 'admins', adminData.username],
             adminData.toObject(),
           )
         : state;
     }
     case COLONY_ADMIN_REMOVE_SUCCESS: {
-      const { ensName, username } = action.payload;
+      const {
+        meta: { keyPath },
+        payload: username,
+      } = action;
       return state
-        ? state.deleteIn([ensName, 'record', 'admins', username])
+        ? state.deleteIn([...keyPath, 'record', 'admins', username])
         : state;
     }
     default:

@@ -28,7 +28,7 @@ export const createDomain = createTxActionCreator<{
 
 export const fetchDomain = (colonyENSName: ENSName, domainId: number) => ({
   type: DOMAIN_FETCH,
-  payload: {
+  meta: {
     keyPath: [colonyENSName, domainId],
   },
 });

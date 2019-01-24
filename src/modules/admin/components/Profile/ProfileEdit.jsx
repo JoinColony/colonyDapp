@@ -17,6 +17,7 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import { getENSDomainString } from '~utils/web3/ens';
+import { mergePayload } from '~utils/actions';
 
 import { colonyStoreBlueprint } from '../../../dashboard/stores';
 
@@ -84,6 +85,9 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={COLONY_PROFILE_UPDATE}
           success={COLONY_PROFILE_UPDATE_SUCCESS}
           error={COLONY_PROFILE_UPDATE_ERROR}
+          setPayload={(action: *, payload: *) =>
+            mergePayload(action, { payload, meta: { keyPath: [ensName] } })
+          }
           initialValues={{
             ensName,
             name,

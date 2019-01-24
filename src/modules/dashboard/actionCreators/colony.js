@@ -43,15 +43,15 @@ export const createColonyLabel = createTxActionCreator<{
 
 export const fetchColony = (ensName: ENSName) => ({
   type: COLONY_FETCH,
-  payload: { keyPath: [ensName] },
+  meta: { keyPath: [ensName] },
 });
 
 export const fetchColonyAvatar = (hash: string) => ({
   type: COLONY_AVATAR_FETCH,
-  payload: { hash },
+  meta: { keyPath: [hash] },
 });
 
 export const fetchColonyENSName = (colonyAddress: string) => ({
   type: COLONY_ENS_NAME_FETCH,
-  payload: { colonyAddress },
+  meta: { keyPath: [colonyAddress] },
 });

@@ -26,16 +26,19 @@ export const putError = (
 ) => {
   const action = {
     type,
+    error: true,
+    meta,
     payload: {
       error: msg || { id: `sagaError.${type}` },
-      meta,
     },
   };
   if (isDev) {
     log(error);
-    Object.assign(action.payload.meta, {
-      message: error.message,
-      stack: error.stack,
+    Object.assign(action.meta, {
+      error: {
+        message: error.message,
+        stack: error.stack,
+      },
     });
   }
   return put(action);

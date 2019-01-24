@@ -2,60 +2,48 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import type { Action } from '~types';
+import type { UniqueActionWithKeyPath, KeyPath } from '~types';
 
 import { Data } from '../../immutable';
 
-type KeyPath = [*, *];
-
-export type DataAction = {
-  type: string,
-  payload: {
-    keyPath: KeyPath,
-    props: any,
-  } & Object,
-  error?: boolean,
-  meta?: any,
-};
-
 export type DataReducer<K: *, V: *> = (
   state: ImmutableMap<K, V>,
-  action: DataAction,
+  action: UniqueActionWithKeyPath,
 ) => ImmutableMap<K, V>;
 
 const getNextState = <K: *, V: *>(
   state: ImmutableMap<K, V>,
   keyPath: KeyPath,
-  props: *,
+  payload: *,
 ) => {
-  const data = Data(props);
+  const data = Data(payload);
 
   if (keyPath.length === 2)
     return state.has(keyPath[0])
-      ? state.mergeDeepIn(keyPath, props)
+      ? state.mergeDeepIn(keyPath, payload)
       : state.set(keyPath[0], ImmutableMap([[keyPath[1], data]]));
 
   return state.has(keyPath[0])
-    ? state.mergeDeepIn(keyPath, props)
+    ? state.mergeDeepIn(keyPath, payload)
     : state.set(keyPath[0], data);
 };
 
 const handleFetch = <K: *, V: *>(
   state: ImmutableMap<K, V>,
-  action: DataAction,
+  action: UniqueActionWithKeyPath,
 ) => {
   const {
-    payload: { keyPath },
+    meta: { keyPath },
   } = action;
   return getNextState<K, V>(state, keyPath, { isFetching: true });
 };
 
 const handleSuccess = <K: *, V: *>(
   state: ImmutableMap<K, V>,
-  action: DataAction,
+  action: UniqueActionWithKeyPath,
 ) => {
   const {
-    payload: { keyPath },
+    meta: { keyPath },
   } = action;
   return getNextState<K, V>(state, keyPath, {
     error: undefined,
@@ -66,18 +54,18 @@ const handleSuccess = <K: *, V: *>(
 const handleError = <K: *, V: *>(
   state: ImmutableMap<K, V>,
   {
+    meta: { keyPath },
     payload: {
       error: { id: error },
-      meta: { keyPath },
     },
-  }: DataAction,
+  }: UniqueActionWithKeyPath,
 ) => getNextState<K, V>(state, keyPath, { isFetching: false, error });
 
 /*
  * =============================================================================
  * Higher-order reducer to create a map of records with information about
- * the props loading state of each record: whether it is isFetching, any
- * isFetching error, and the props currently loaded.
+ * the loading state of each record: whether it is isFetching, any
+ * isFetching error, and the data currently loaded.
  *
  * -----------------------------------------------------------------------------
  * Parameters (higher order function)
@@ -114,7 +102,10 @@ const withDataReducer = <K: *, V: *>(actionTypes: string | Set<string>) => (
   );
 
   // Return a wrapped reducer.
-  return (state: ImmutableMap<K, V> = new ImmutableMap(), action: Action) => {
+  return (
+    state: ImmutableMap<K, V> = new ImmutableMap(),
+    action: UniqueActionWithKeyPath,
+  ) => {
     // Pass the state to the wrapped reducer as the first step.
     const nextState = wrappedReducer(state, action);
 
