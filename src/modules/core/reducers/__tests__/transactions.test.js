@@ -105,9 +105,9 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: undefined,
               /*
-               * Initial status is set to `created`
+               * Initial status is set to `ready`
                */
-              status: 'created',
+              status: 'ready',
             });
           },
         ],

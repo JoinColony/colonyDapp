@@ -1,15 +1,9 @@
 /* @flow */
 
-import type { SendOptions } from '@colony/colony-js-client';
-
 import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
-import type {
-  AddressOrENSName,
-  ColonyContext,
-  TransactionReceipt,
-} from '~types';
+import type { ColonyContext, TransactionReceipt } from '~types';
 import type {
   TransactionMultisig,
   TransactionParams,
@@ -20,7 +14,8 @@ import type {
   CreateTransactionAction,
   GasPrices,
   LifecycleActionTypes,
-  MultisigOperationJSON,
+  TxActionCreator,
+  TxActionCreatorOptions,
 } from '../types';
 
 import {
@@ -32,6 +27,7 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_ADD_PROPERTIES,
   TRANSACTION_ESTIMATE_GAS,
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
@@ -45,18 +41,6 @@ type TxFactoryOptions = {
   methodName: string,
   multisig?: boolean,
 };
-
-type TxActionCreatorOptions<P: TransactionParams> = {
-  identifier?: AddressOrENSName,
-  meta: any,
-  multisig?: MultisigOperationJSON,
-  params: P,
-  options?: SendOptions,
-};
-
-type TxActionCreator<P: TransactionParams> = (
-  TxActionCreatorOptions<P>,
-) => CreateTransactionAction<P>;
 
 export {
   COLONY_CONTEXT,
@@ -74,6 +58,7 @@ export const createTxActionCreator = <P: TransactionParams>({
   multisig: multisigJSON,
   options,
   params,
+  status,
 }: TxActionCreatorOptions<P>): CreateTransactionAction<P> => ({
   type: isMultisig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
   payload: {
@@ -85,6 +70,7 @@ export const createTxActionCreator = <P: TransactionParams>({
     multisig: isMultisig ? multisigJSON || {} : undefined,
     options,
     params,
+    status,
   },
   meta: { id: meta.id || nanoid() },
 });
@@ -232,6 +218,15 @@ export const transactionEventDataReceived = <
   type: overrideActionType || TRANSACTION_EVENT_DATA_RECEIVED,
   payload,
   meta: { id },
+});
+
+export const transactionAddProperties = (
+  id: string,
+  payload: { identifier?: string, params?: Object },
+) => ({
+  type: TRANSACTION_ADD_PROPERTIES,
+  meta: { id },
+  payload,
 });
 
 export const transactionEstimateGas = (id: string) => ({

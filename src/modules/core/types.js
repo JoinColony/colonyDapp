@@ -102,3 +102,16 @@ export type MultisigOperationJSON = {
   payload: Object, // MultisigOperationPayload
   signers: Object, // Signers
 };
+
+export type TxActionCreatorOptions<P: TransactionParams> = {
+  identifier?: AddressOrENSName,
+  meta: any,
+  multisig?: MultisigOperationJSON,
+  params: P,
+  options?: SendOptions,
+  status?: 'created' | 'ready',
+};
+
+export type TxActionCreator<P: TransactionParams> = (
+  TxActionCreatorOptions<P>,
+) => CreateTransactionAction<P>;

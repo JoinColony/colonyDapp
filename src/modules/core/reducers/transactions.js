@@ -18,6 +18,7 @@ import {
   TRANSACTION_EVENT_DATA_RECEIVED,
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
+  TRANSACTION_ADD_PROPERTIES,
   TRANSACTION_SENT,
   GAS_PRICES_UPDATE,
 } from '../actionTypes';
@@ -45,6 +46,7 @@ const transactionsReducer = (
         multisig,
         options,
         params,
+        status,
       } = payload;
       return state.setIn(
         ['list', meta.id],
@@ -58,8 +60,15 @@ const transactionsReducer = (
           multisig,
           options,
           params,
+          status,
         }),
       );
+    }
+    case TRANSACTION_ADD_PROPERTIES: {
+      const { id } = meta;
+      return state
+        .mergeIn(['list', id], payload)
+        .setIn(['list', id, 'status'], 'ready');
     }
     case MULTISIG_TRANSACTION_REFRESHED: {
       const { id } = meta;
@@ -70,13 +79,8 @@ const transactionsReducer = (
     }
     case TRANSACTION_GAS_UPDATE: {
       const { id } = meta;
-      // $FlowFixMe flow doesn't like chaining of functions???
-      const newState = state.mergeIn(['list', id], payload);
-      const tx = state.list.get(id);
-      if (tx && (!tx.gasLimit || !tx.gasPrice)) {
-        return newState.setIn(['list', id, 'status'], 'ready');
-      }
-      return newState;
+      return state.mergeIn(['list', id], payload);
+      // TODO: do we want an 'estimated' state for TX?
     }
     case TRANSACTION_SENT: {
       const { id } = meta;
