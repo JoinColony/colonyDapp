@@ -23,6 +23,7 @@ import {
 } from '../../../dashboard/actionTypes';
 
 import styles from './ColonyAvatarUploader.css';
+import { mergePayload } from '~utils/actions';
 
 const MSG = defineMessages({
   labelProfilePicture: {
@@ -54,14 +55,8 @@ class ColonyAvatarUploader extends Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    const setPayload = ({ meta, ...action }: *, payload: *) => ({
-      ...action,
-      payload,
-      meta: {
-        ...meta,
-        keyPath: [props.ensName],
-      },
-    });
+    const setPayload = (action: *, payload: *) =>
+      mergePayload(action, { payload, meta: { keyPath: [props.ensName] } });
     this.remove = promiseListener.createAsyncFunction({
       start: COLONY_AVATAR_REMOVE,
       resolve: COLONY_AVATAR_REMOVE_SUCCESS,

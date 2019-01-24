@@ -9,6 +9,7 @@ import Heading from '~core/Heading';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 import type { ColonyAdminRecord } from '~immutable';
+import { mergePayload } from '~utils/actions';
 
 import promiseListener from '../../../../createPromiseListener';
 import UserListItem from './UserListItem.jsx';
@@ -81,15 +82,8 @@ class UserList extends Component<Props> {
       start: remove,
       resolve: removeSuccess,
       reject: removeError,
-      setPayload({ meta, ...action }: *, payload: *) {
-        return {
-          ...action,
-          payload,
-          meta: {
-            ...meta,
-            keyPath: [ensName],
-          },
-        };
+      setPayload(action: *, payload: *) {
+        return mergePayload(action, { payload, meta: { keyPath: [ensName] } });
       },
     });
   }
