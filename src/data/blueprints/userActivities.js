@@ -1,20 +1,14 @@
 /* @flow */
 
+import type { StoreBlueprint } from '~types';
+
 import * as yup from 'yup';
 
-import type { StoreBlueprint } from '~types/index';
-
 import { FeedStore } from '../../lib/database/stores';
-import { EthereumWalletAccessController } from '../../lib/database/accessControllers';
-
-type StoreProps = {
-  walletAddress: string,
-};
+import { getEthereumWalletStoreAccessController } from '../accessControllers';
 
 const userActivitiesStore: StoreBlueprint = {
-  getAccessController({ walletAddress }: StoreProps = {}) {
-    return new EthereumWalletAccessController(walletAddress);
-  },
+  getAccessController: getEthereumWalletStoreAccessController,
   name: 'userActivities',
   schema: yup.object({
     userAction: yup.string().required(),

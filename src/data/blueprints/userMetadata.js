@@ -2,16 +2,10 @@
 
 import type { StoreBlueprint } from '~types/index';
 import { EventStore } from '../../lib/database/stores';
-import { EthereumWalletAccessController } from '../../lib/database/accessControllers';
-
-type StoreProps = {
-  walletAddress: string,
-};
+import { getEthereumWalletStoreAccessController } from '../accessControllers';
 
 const userMetadataStore: StoreBlueprint = {
-  getAccessController({ walletAddress }: StoreProps = {}) {
-    return new EthereumWalletAccessController(walletAddress);
-  },
+  getAccessController: getEthereumWalletStoreAccessController,
   name: 'userMetadata',
   type: EventStore,
 };
