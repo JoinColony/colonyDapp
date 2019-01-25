@@ -1,17 +1,24 @@
 /* @flow */
 
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 
-import allColonies from './allColonies';
-import allTasks from './allTasks';
-import allDomains from './allDomains';
-import allDrafts from './allDrafts';
+import allColoniesReducer from './allColonies';
+import allDomainsReducer from './allDomains';
+import allDraftsReducer from './allDrafts';
+import allTasksReducer from './allTasks';
+
+import {
+  DASHBOARD_ALL_COLONIES,
+  DASHBOARD_ALL_DOMAINS,
+  DASHBOARD_ALL_DRAFTS,
+  DASHBOARD_ALL_TASKS,
+} from '../constants';
 
 const dashboardReducer = combineReducers({
-  allColonies,
-  allTasks,
-  allDomains,
-  allDrafts,
+  [DASHBOARD_ALL_COLONIES]: allColoniesReducer,
+  [DASHBOARD_ALL_DOMAINS]: allDomainsReducer,
+  [DASHBOARD_ALL_DRAFTS]: allDraftsReducer,
+  [DASHBOARD_ALL_TASKS]: allTasksReducer,
 });
 
 export default dashboardReducer;

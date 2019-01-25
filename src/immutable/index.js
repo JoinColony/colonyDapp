@@ -2,7 +2,6 @@
 
 export { default as ActivityFeedItem } from './ActivityFeedItem';
 export { default as Colony } from './Colony';
-export { default as ColonyAdmin } from './ColonyAdmin';
 export { default as ContractTransaction } from './ContractTransaction';
 export { default as Data } from './Data';
 export { default as Domain } from './Domain';
@@ -18,7 +17,6 @@ export { default as Transaction } from './Transaction';
 export { default as User } from './User';
 export { default as UserActivity } from './UserActivity';
 export { default as UserProfile } from './UserProfile';
-export { default as Users } from './Users';
 export { default as Wallet } from './Wallet';
 
 export * from './ActivityFeedItem';
@@ -30,6 +28,7 @@ export * from './Data';
 export * from './Domain';
 export * from './Draft';
 export * from './Skill';
+export * from './state';
 export * from './Task';
 export * from './TaskFeedItem';
 export * from './TaskFeedItemComment';
@@ -40,5 +39,4 @@ export * from './Transaction';
 export * from './User';
 export * from './UserActivity';
 export * from './UserProfile';
-export * from './Users';
 export * from './Wallet';

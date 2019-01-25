@@ -5,34 +5,34 @@ import nanoid from 'nanoid';
 
 import type { ColonyContext, TransactionReceipt } from '~types';
 import type {
+  GasPricesProps,
+  TransactionEventData,
   TransactionMultisig,
   TransactionParams,
-  TransactionEventData,
 } from '~immutable';
 
 import type {
   CreateTransactionAction,
-  GasPrices,
   LifecycleActionTypes,
   TxActionCreator,
   TxActionCreatorOptions,
 } from '../types';
 
 import {
+  GAS_PRICES_UPDATE,
   MULTISIG_TRANSACTION_CREATED,
   MULTISIG_TRANSACTION_REFRESHED,
   MULTISIG_TRANSACTION_REJECT,
   MULTISIG_TRANSACTION_SIGN,
   MULTISIG_TRANSACTION_SIGNED,
+  TRANSACTION_ADD_PROPERTIES,
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
-  TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_ADD_PROPERTIES,
   TRANSACTION_ESTIMATE_GAS,
+  TRANSACTION_EVENT_DATA_RECEIVED,
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
-  GAS_PRICES_UPDATE,
 } from '../actionTypes';
 
 type TxFactoryOptions = {
@@ -243,7 +243,7 @@ export const transactionUpdateGas = (
   meta: { id },
 });
 
-export const updateGasPrices = (gasPrices: GasPrices) => ({
+export const updateGasPrices = (gasPrices: GasPricesProps) => ({
   type: GAS_PRICES_UPDATE,
   payload: gasPrices,
 });

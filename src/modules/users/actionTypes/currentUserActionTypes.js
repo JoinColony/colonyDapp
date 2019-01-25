@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { USERS_NAMESPACE as ns } from '../constants';
 
 /*
  * Current User Action Types

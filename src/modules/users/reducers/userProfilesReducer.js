@@ -5,7 +5,7 @@ import { List, Map as ImmutableMap } from 'immutable';
 import { withDataReducer } from '~utils/reducers';
 import { User, UserProfile, UserActivity } from '~immutable';
 
-import type { UserRecord, UsersProps } from '~immutable';
+import type { UserRecord, UsersMap } from '~immutable';
 import type { UniqueActionWithKeyPath } from '~types';
 
 import {
@@ -16,7 +16,7 @@ import {
 } from '../actionTypes';
 
 const userProfilesReducer = (
-  state: $PropertyType<UsersProps, 'users'> = new ImmutableMap(),
+  state: UsersMap = new ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {

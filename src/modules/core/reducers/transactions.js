@@ -1,15 +1,13 @@
 /* @flow */
 
-import type { RecordOf, RecordFactory } from 'immutable';
+import { fromJS } from 'immutable';
 
-import { Map as ImmutableMap, Record } from 'immutable';
+import { Transaction, CoreTransactions } from '~immutable';
 
 import type { UniqueAction } from '~types';
+import type { CoreTransactionsRecord } from '~immutable';
 
-import type { TransactionsStateProps } from '../types';
-
-import { Transaction } from '~immutable';
-
+import { CORE_GAS_PRICES, CORE_TRANSACTIONS_LIST } from '../constants';
 import {
   MULTISIG_TRANSACTION_CREATED,
   MULTISIG_TRANSACTION_REFRESHED,
@@ -23,20 +21,14 @@ import {
   GAS_PRICES_UPDATE,
 } from '../actionTypes';
 
-export const TransactionsState: RecordFactory<TransactionsStateProps> = Record({
-  list: ImmutableMap(),
-  gasPrices: {},
-});
-
-const INITIAL_STATE = TransactionsState();
-
-const transactionsReducer = (
-  state: RecordOf<TransactionsStateProps> = INITIAL_STATE,
+const coreTransactionsReducer = (
+  state: CoreTransactionsRecord = CoreTransactions(),
   { type, payload, meta }: UniqueAction,
-): RecordOf<TransactionsStateProps> => {
+) => {
   switch (type) {
     case TRANSACTION_CREATED:
     case MULTISIG_TRANSACTION_CREATED: {
+      const { id } = meta;
       const {
         context,
         createdAt,
@@ -49,11 +41,11 @@ const transactionsReducer = (
         status,
       } = payload;
       return state.setIn(
-        ['list', meta.id],
+        [CORE_TRANSACTIONS_LIST, id],
         Transaction({
           context,
           createdAt,
-          id: meta.id,
+          id,
           identifier,
           lifecycle,
           methodName,
@@ -66,53 +58,67 @@ const transactionsReducer = (
     }
     case TRANSACTION_ADD_PROPERTIES: {
       const { id } = meta;
-      return state
-        .mergeIn(['list', id], payload)
-        .setIn(['list', id, 'status'], 'ready');
+      return state.mergeIn(
+        [CORE_TRANSACTIONS_LIST, id],
+        fromJS({ ...payload, status: 'ready' }),
+      );
     }
     case MULTISIG_TRANSACTION_REFRESHED: {
       const { id } = meta;
-      const { multisig } = payload;
-      return state.mergeIn(['list', id], {
-        multisig,
-      });
+      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], fromJS(payload));
     }
     case TRANSACTION_GAS_UPDATE: {
       const { id } = meta;
-      return state.mergeIn(['list', id], payload);
+      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], fromJS(payload));
       // TODO: do we want an 'estimated' state for TX?
     }
     case TRANSACTION_SENT: {
       const { id } = meta;
       const { hash } = payload;
-      return state.mergeIn(['list', id], { hash, status: 'pending' });
+      return state.mergeIn(
+        [CORE_TRANSACTIONS_LIST, id],
+        fromJS({
+          hash,
+          status: 'pending',
+        }),
+      );
     }
     case TRANSACTION_RECEIPT_RECEIVED: {
       const { id } = meta;
       const { receipt } = payload;
-      return state.mergeIn(['list', id], {
-        receipt,
-      });
+      return state.mergeIn(
+        [CORE_TRANSACTIONS_LIST, id],
+        fromJS({
+          receipt,
+        }),
+      );
     }
     case TRANSACTION_EVENT_DATA_RECEIVED: {
       const { id } = meta;
       const { eventData } = payload;
-      return state.mergeIn(['list', id], { eventData, status: 'succeeded' });
+      return state.mergeIn(
+        [CORE_TRANSACTIONS_LIST, id],
+        fromJS({
+          eventData,
+          status: 'succeeded',
+        }),
+      );
     }
     case TRANSACTION_ERROR: {
       const { id } = meta;
       const { error } = payload;
+      // $FlowFixMe
       return state
-        .updateIn(['list', id, 'errors'], errors => errors.push(error))
-        .setIn(['list', id, 'status'], 'failed');
+        .updateIn([CORE_TRANSACTIONS_LIST, id, 'errors'], errors =>
+          errors.push(error),
+        )
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'failed');
     }
-    case GAS_PRICES_UPDATE: {
-      const gasPrices = payload;
-      return state.set('gasPrices', gasPrices);
-    }
+    case GAS_PRICES_UPDATE:
+      return state.mergeIn([CORE_GAS_PRICES], fromJS(payload));
     default:
       return state;
   }
 };
 
-export default transactionsReducer;
+export default coreTransactionsReducer;

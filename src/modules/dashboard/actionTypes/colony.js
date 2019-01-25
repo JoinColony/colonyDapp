@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 export const COLONY_FETCH = `${ns}/COLONY_FETCH`;
 export const COLONY_FETCH_SUCCESS = `${ns}/COLONY_FETCH_SUCCESS`;

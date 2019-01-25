@@ -10,7 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 import { Map as ImmutableMap } from 'immutable';
 
-import { User, UserProfile, Users } from '~immutable';
+import { User, UserProfile } from '~immutable';
 
 import '../styles/main.css';
 
@@ -39,7 +39,7 @@ const initialState = {
       availableAddresses: [],
       isLoading: false,
     },
-    allUsers: Users({}),
+    allUsers: {},
   },
 };
 

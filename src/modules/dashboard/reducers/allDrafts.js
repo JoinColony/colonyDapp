@@ -14,11 +14,10 @@ import { Draft, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { ENSName, UniqueActionWithKeyPath } from '~types';
-
-import type { AllDraftsState, DraftsMap } from '../types';
+import type { AllDraftsMap, DraftsMap } from '~immutable';
 
 const allDraftsReducer = (
-  state: AllDraftsState = new ImmutableMap(),
+  state: AllDraftsMap = new ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
