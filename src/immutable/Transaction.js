@@ -35,7 +35,7 @@ export type TransactionMultisig = {
   signers?: Array<Object>,
 };
 
-export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
+export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {|
   context?: ColonyContext,
   createdAt: Date,
   // TODO: this is just for the sake of moving the types over. This will be changed in another PR
@@ -61,7 +61,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   params: P,
   receipt?: TransactionReceipt,
   status: 'created' | 'ready' | 'pending' | 'failed' | 'succeeded',
-};
+|};
 
 export type TransactionRecord<
   P: TransactionParams,
@@ -88,6 +88,7 @@ const defaultValues: $Shape<TransactionProps<*, *>> = {
   status: 'ready',
 };
 
+// $FlowFixMe
 const Transaction: RecordFactory<TransactionProps<*, *>> = Record(
   defaultValues,
 );

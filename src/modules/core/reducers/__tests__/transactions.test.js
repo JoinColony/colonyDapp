@@ -1,8 +1,8 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import reducer, { TransactionsState } from '../transactions';
+import { CoreTransactions, Transaction } from '~immutable';
 
-import { Transaction } from '~immutable';
+import reducer from '../transactions';
 
 import {
   transactionSent,
@@ -39,7 +39,7 @@ describe(`core: reducers (transactions)`, () => {
   const context = 'network';
   const methodName = 'createColony';
 
-  const initialState = TransactionsState({
+  const initialState = CoreTransactions({
     list: new ImmutableMap({
       [existingTxId]: Transaction({
         createdAt: new Date(2018, 0, 1),

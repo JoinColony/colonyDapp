@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 export const TASK_SET_DATE = `${ns}/TASK_SET_DATE`;
 export const TASK_SET_DATE_ERROR = `${ns}/TASK_SET_DATE_ERROR`;

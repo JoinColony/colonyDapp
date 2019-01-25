@@ -1,6 +1,6 @@
 /* @flow */
 
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 
 import userAvatarsReducer from './userAvatarsReducer';
 import usernamesReducer from './usernamesReducer';

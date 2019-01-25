@@ -10,15 +10,11 @@ import {
 
 import { ContractTransaction, Data } from '~immutable';
 
-import type { DataRecord } from '~immutable';
+import type { CurrentUserTransactions } from '~immutable';
 import type { Action } from '~types';
 
-type State = DataRecord<*>;
-
-const INITIAL_STATE: State = Data();
-
 const currentUserTransactionsReducer = (
-  state: State = INITIAL_STATE,
+  state: CurrentUserTransactions = Data(),
   action: Action,
 ) => {
   switch (action.type) {
@@ -27,12 +23,12 @@ const currentUserTransactionsReducer = (
     }
     case USER_FETCH_TOKEN_TRANSFERS_ERROR: {
       const { error } = action.payload;
-      return state.set('error', error).set('isFetching', false);
+      return state.merge({ error, isFetching: false });
     }
     case USER_FETCH_TOKEN_TRANSFERS_SUCCESS: {
       const { transactions } = action.payload;
       const record = List(transactions.map(tx => ContractTransaction(tx)));
-      return state.set('record', record).set('isFetching', false);
+      return state.merge({ record, isFetching: false });
     }
     default:
       return state;

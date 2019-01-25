@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 export const COLONY_ADMIN_ADD = `${ns}/COLONY_ADMIN_ADD`;
 export const COLONY_ADMIN_ADD_SUCCESS = `${ns}/COLONY_ADMIN_ADD_SUCCESS`;

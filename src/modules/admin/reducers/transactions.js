@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { List as ListType } from 'immutable';
+
 import { Map as ImmutableMap, List } from 'immutable';
 
 import {
@@ -11,14 +13,13 @@ import { ContractTransaction, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { UniqueActionWithKeyPath, ENSName } from '~types';
-import type { DataRecord } from '~immutable';
+import type {
+  AdminTransactionsState,
+  ContractTransactionRecord,
+} from '~immutable';
 
-type State = ImmutableMap<ENSName, DataRecord<List<ContractTransaction>>>;
-
-const INITIAL_STATE: State = new ImmutableMap();
-
-const colonyTransactionsReducer = (
-  state: State = INITIAL_STATE,
+const adminTransactionsReducer = (
+  state: AdminTransactionsState = new ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -29,16 +30,18 @@ const colonyTransactionsReducer = (
           keyPath: [colonyENSName],
         },
       } = action;
-      const record = List(transactions.map(tx => ContractTransaction(tx)));
-      return state.get(colonyENSName)
-        ? state.setIn([colonyENSName, 'record'], record)
-        : state.set(colonyENSName, Data({ record }));
+      return state.mergeIn(
+        [colonyENSName],
+        Data({
+          record: List(transactions.map(tx => ContractTransaction(tx))),
+        }),
+      );
     }
     default:
       return state;
   }
 };
 
-export default withDataReducer<ENSName, List<ContractTransaction>>(
+export default withDataReducer<ENSName, ListType<ContractTransactionRecord>>(
   COLONY_FETCH_TRANSACTIONS,
-)(colonyTransactionsReducer);
+)(adminTransactionsReducer);

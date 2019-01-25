@@ -16,12 +16,12 @@ export type ColonyAdminProps = {
 
 export type ColonyAdminRecord = RecordOf<ColonyAdminProps>;
 
-const defaultProps: ColonyAdminProps = {
+const defaultProps: $Shape<ColonyAdminProps> = {
   avatar: undefined,
-  displayName: '',
-  profileStore: '',
-  username: '',
-  walletAddress: '',
+  displayName: undefined,
+  profileStore: undefined,
+  username: undefined,
+  walletAddress: undefined,
 };
 
 const ColonyAdmin: RecordFactory<ColonyAdminProps> = Record(defaultProps);

@@ -1,22 +1,19 @@
 /* @flow */
 
 import { createSelector } from 'reselect';
+
 import { Map as ImmutableMap } from 'immutable';
 
-import type { RootState } from '~types';
+import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DRAFTS } from '../constants';
+import type { RootStateRecord } from '~immutable';
 
-import ns from '../namespace';
-
-/*
- * Drafts selectors
- */
-export const allDraftsSelector = (state: RootState) => state[ns].allDrafts;
+export const allDraftsSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_DRAFTS], ImmutableMap());
 
 export const colonyDraftsSelector = createSelector(
   allDraftsSelector,
   (state, props) => props.colonyENSName,
-  (allDrafts, colonyENSName) =>
-    allDrafts.get(colonyENSName, new ImmutableMap()),
+  (allDrafts, colonyENSName) => allDrafts.get(colonyENSName, ImmutableMap()),
 );
 
 export const singleDraftSelector = createSelector(

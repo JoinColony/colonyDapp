@@ -12,11 +12,10 @@ import { Domain, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { UniqueActionWithKeyPath, ENSName } from '~types';
-
-import type { AllDomainsState, DomainsMap } from '../types';
+import type { AllDomainsMap, DomainsMap } from '~immutable';
 
 const allDomainsReducer = (
-  state: AllDomainsState = new ImmutableMap(),
+  state: AllDomainsMap = new ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {

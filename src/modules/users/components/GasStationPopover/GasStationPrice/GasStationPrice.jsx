@@ -11,7 +11,7 @@ import type { Action } from '~types';
 import type { TransactionRecord } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
-import type { GasPrices } from '../../../../core/types';
+import type { GasPricesProps } from '~immutable';
 
 import {
   METHOD_TRANSACTION_SENT,
@@ -77,7 +77,7 @@ type Props = {
   walletNeedsAction?: 'metamask' | 'hardware',
   estimateGas: (id: string) => void,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,
-  gasPrices: GasPrices,
+  gasPrices: GasPricesProps,
 };
 
 type State = {

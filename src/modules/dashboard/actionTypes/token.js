@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 export const TOKEN_CREATE = `${ns}/TOKEN_CREATE`;
 export const TOKEN_CREATE_ERROR = `${ns}/TOKEN_CREATE_ERROR`;

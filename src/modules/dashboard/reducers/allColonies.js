@@ -1,13 +1,19 @@
 /* @flow */
 
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 
 import coloniesReducer from './coloniesReducer';
 import colonyAvatarsReducer from './colonyAvatarsReducer';
 import colonyENSNamesReducer from './colonyENSNamesReducer';
 
+import {
+  DASHBOARD_AVATARS,
+  DASHBOARD_COLONIES,
+  DASHBOARD_ENS_NAMES,
+} from '../constants';
+
 export default combineReducers({
-  avatars: colonyAvatarsReducer,
-  colonies: coloniesReducer,
-  ensNames: colonyENSNamesReducer,
+  [DASHBOARD_AVATARS]: colonyAvatarsReducer,
+  [DASHBOARD_COLONIES]: coloniesReducer,
+  [DASHBOARD_ENS_NAMES]: colonyENSNamesReducer,
 });

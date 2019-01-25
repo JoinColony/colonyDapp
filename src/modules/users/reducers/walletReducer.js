@@ -3,6 +3,7 @@
 import { Wallet } from '~immutable';
 
 import type { Action } from '~types';
+import type { WalletRecord } from '~immutable';
 
 import {
   WALLET_FETCH_ACCOUNTS,
@@ -10,10 +11,8 @@ import {
   WALLET_FETCH_ACCOUNTS_SUCCESS,
 } from '../actionTypes';
 
-const INITIAL_STATE = Wallet({});
-
 const walletReducer = (
-  state: Wallet = INITIAL_STATE,
+  state: WalletRecord = Wallet(),
   action: Action,
 ): Wallet => {
   switch (action.type) {

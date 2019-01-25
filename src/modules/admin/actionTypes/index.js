@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { ADMIN_NAMESPACE as ns } from '../constants';
 
 export const COLONY_FETCH_TRANSACTIONS = `${ns}/COLONY_FETCH_TRANSACTIONS`;
 export const COLONY_FETCH_TRANSACTIONS_SUCCESS = `${ns}/COLONY_FETCH_TRANSACTIONS_SUCCESS`;
