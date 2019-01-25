@@ -13,7 +13,11 @@ import {
 
 import type { ENSName, UniqueActionWithKeyPath } from '~types';
 import type { DraftId } from '~immutable';
-import type { ValidatedKVStore, Store } from '../../../lib/database/stores';
+import type {
+  ValidatedKVStore,
+  Store,
+  FeedStore,
+} from '../../../lib/database/stores';
 
 import { putError } from '~utils/saga/effects';
 
@@ -53,6 +57,10 @@ const addStoreAddressesToDraftPayload = (
     feedItemsStore:
       payload.feedItems ||
       (feedItemsStore && feedItemsStore.address.toString()) ||
+      undefined,
+    commentsStore:
+      payload.comments ||
+      (commentsStore && commentsStore.address.toString()) ||
       undefined,
   },
   ...payload,
@@ -183,12 +191,18 @@ function* createDraftSaga({
     );
 
     /*
+     * Get or create the comments store for this draft.
+     */
+    const commentsStore = yield call(getOrCreateCommentsStore, id);
+
+    /*
      * Set the draft props to the draft store.
      * TODO: ideally guard against re-writing the same values (if this saga
      * failed part-way through before)
      */
     yield call(set, draftStore, {
       feedItems: feedItemsStore.address.toString(),
+      comments: commentsStore.address.toString(),
       ...payload,
     });
 
@@ -211,6 +225,7 @@ function* createDraftSaga({
         payload,
         draftStore,
         feedItemsStore,
+        commentsStore,
       ),
     });
   } catch (error) {
