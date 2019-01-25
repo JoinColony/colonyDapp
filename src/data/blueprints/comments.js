@@ -1,12 +1,13 @@
 /* @flow */
 
-import * as yup from 'yup';
-
 import type { StoreBlueprint } from '~types/index';
 
+import * as yup from 'yup';
 import { FeedStore } from '../../lib/database/stores';
+import { getPermissiveStoreAccessController } from '../accessControllers';
 
 const commentsStore: StoreBlueprint = {
+  getAccessController: getPermissiveStoreAccessController,
   name: 'comments',
   schema: yup.object({
     signature: yup.string().required(),
