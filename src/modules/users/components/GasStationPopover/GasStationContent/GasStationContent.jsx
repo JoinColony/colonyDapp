@@ -4,8 +4,7 @@ import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { InProps } from './GasStationContent';
-import type { TransactionType } from '~types';
-import type { UserRecord } from '~immutable';
+import type { TransactionRecord, UserRecord } from '~immutable';
 
 import { WALLET_ROUTE } from '~routes';
 
@@ -40,7 +39,7 @@ const MSG = defineMessages({
 
 type Props = InProps & {
   balance: number,
-  transactions: Array<TransactionType>,
+  transactions: Array<TransactionRecord<*, *>>,
   currentUser: UserRecord,
 };
 
@@ -49,7 +48,7 @@ type State = {
 };
 
 // TODO: This probably has to be improved later on
-const txNotDone = (transaction: TransactionType) =>
+const txNotDone = (transaction: TransactionRecord<*, *>) =>
   transaction.status !== 'succeeded' && transaction.status !== 'failed';
 
 class GasStationContent extends Component<Props, State> {
@@ -68,10 +67,10 @@ class GasStationContent extends Component<Props, State> {
   }
 
   renderTransactionsSummary(
-    transactions: Array<TransactionType>,
+    transactions: Array<TransactionRecord<*, *>>,
   ): Array<React$Element<*>> {
     return transactions.map(
-      (transaction: TransactionType, transactionIndex: number) => (
+      (transaction: TransactionRecord<*, *>, transactionIndex: number) => (
         <GasStationCard
           key={transaction.id}
           transaction={transaction}
@@ -81,7 +80,7 @@ class GasStationContent extends Component<Props, State> {
     );
   }
 
-  renderExpandedTransaction(transaction: TransactionType) {
+  renderExpandedTransaction(transaction: TransactionRecord<*, *>) {
     const {
       currentUser: {
         profile: { username },

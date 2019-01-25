@@ -8,7 +8,7 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { Action } from '~types';
-import type { TransactionType } from '~types/transaction';
+import type { TransactionRecord } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
 import type { GasPrices } from '../../../../core/types';
@@ -73,7 +73,7 @@ are expensive. We recommend waiting.`,
 type Props = {
   canSignTransaction: boolean,
   isNetworkCongested: boolean,
-  transaction: TransactionType,
+  transaction: TransactionRecord<*, *>,
   walletNeedsAction?: 'metamask' | 'hardware',
   estimateGas: (id: string) => void,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,

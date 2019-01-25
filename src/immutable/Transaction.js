@@ -38,6 +38,10 @@ export type TransactionMultisig = {
 export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   context?: ColonyContext,
   createdAt: Date,
+  // TODO: this is just for the sake of moving the types over. This will be changed in another PR
+  dependents?: Array<*>,
+  dependency?: string,
+  // TODO: end temp props
   errors: List<TransactionError>,
   eventData?: E,
   gasLimit?: BigNumber,

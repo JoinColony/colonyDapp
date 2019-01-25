@@ -4,7 +4,7 @@ import type { HOC } from 'recompose';
 import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 
-import type { TransactionType } from '~types/transaction';
+import type { TransactionRecord } from '~immutable';
 
 import {
   transactionEstimateGas,
@@ -14,14 +14,14 @@ import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
 import GasStationPrice from './GasStationPrice.jsx';
 
 type InProps = {
-  transaction: TransactionType,
+  transaction: TransactionRecord<*, *>,
 };
 
 const isDependencyBlockingTx = (
-  set: Array<TransactionType>,
+  set: Array<TransactionRecord<*, *>>,
   dependency: string,
 ): boolean =>
-  !set.find(({ hash, status }: TransactionType) => {
+  !set.find(({ hash, status }: TransactionRecord<*, *>) => {
     if (hash === dependency) {
       return status && status !== 'succeeded';
     }
