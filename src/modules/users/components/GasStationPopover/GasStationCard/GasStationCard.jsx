@@ -47,7 +47,7 @@ const MSG = defineMessages({
   },
   failedAction: {
     id: 'users.GasStationPopover.GasStationCard.failedAction',
-    defaultMessage: 'Failed transaction. Try again.',
+    defaultMessage: `Failed transaction. Try again.`,
   },
   transactionTitle: {
     id: 'users.GasStationPopover.GasStationCard.transactionTitle',
@@ -55,10 +55,6 @@ const MSG = defineMessages({
       registerUserLabel {Claim your profile}
       other {Generic Transaction}
     }`,
-  },
-  transactionDescription: {
-    id: 'users.GasStationPopover.GasStationCard.transactionDescription',
-    defaultMessage: `DEBUG: context: {context} methodName: {methodName}`,
   },
   /*
    * @NOTE Below this line are just temporary message descriptors as the actual
@@ -188,13 +184,16 @@ class GasStationCard extends Component<Props, State> {
         <div className={styles.description}>
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitle}
-            textValues={{ methodName }}
-          />
+          >
+            {context && methodName && (
+              <FormattedMessage
+                id={`transaction.${context}.${methodName}.title`}
+                values={{ context, methodName }}
+              />
+            )}
+          </Heading>
           <Link
             className={styles.transactionLink}
-            text={MSG.transactionDescription}
-            textValues={{ methodName, context }}
             /*
              * @TODO Either change this by removing the link, or point
              * it in a relevant direction
@@ -206,7 +205,18 @@ class GasStationCard extends Component<Props, State> {
              * another place, so there's no reason to change the state prior to that
              */
             onClick={(event: SyntheticEvent<>) => event.stopPropagation()}
-          />
+          >
+            {context && methodName && (
+              <FormattedMessage
+                id={
+                  process.env.DEBUG
+                    ? `transaction.debug.description`
+                    : `transaction.${context}.${methodName}.description`
+                }
+                values={{ context, methodName }}
+              />
+            )}
+          </Link>
         </div>
         {status && (
           <div className={styles.status}>
