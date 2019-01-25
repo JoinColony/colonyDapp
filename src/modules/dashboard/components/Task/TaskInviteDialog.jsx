@@ -3,6 +3,9 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import BigNumber from 'bn.js';
+import { compose } from 'recompose';
+
+import { withTask } from '../../../core/hocs';
 
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
@@ -10,13 +13,13 @@ import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
-import { List } from 'immutable';
 import Payout from '~dashboard/TaskEditDialog/Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { getEthToUsd } from '~utils/external';
 import { bnMultiply } from '~utils/numbers';
 
-import type { UserRecord } from '~immutable';
+import type { TaskRecord } from '~immutable';
+import type { MultisigOperationJSON } from '../../../core/types';
 
 import styles from './TaskInviteDialog.css';
 
@@ -44,10 +47,8 @@ type State = {
 };
 
 type Props = {
-  taskId: number,
-  assignee?: UserRecord,
-  payouts?: List<Object>,
-  reputation?: BigNumber,
+  multisigJSON: MultisigOperationJSON,
+  task: TaskRecord,
   cancel: () => void,
 };
 
@@ -71,12 +72,13 @@ class TaskInviteDialog extends Component<Props, State> {
   }
 
   setPayload = (action: Object, { assignee }: Object) => {
-    const { taskId } = this.props;
+    const { task, multisigJSON } = this.props;
     return {
       ...action,
       payload: {
         user: assignee.profile.walletAddress,
-        taskId,
+        taskId: task.id,
+        multisigJSON,
       },
     };
   };
@@ -84,7 +86,10 @@ class TaskInviteDialog extends Component<Props, State> {
   mounted = false;
 
   render() {
-    const { cancel, reputation, payouts, assignee } = this.props;
+    const {
+      cancel,
+      task: { reputation, payouts, assignee },
+    } = this.props;
     const { ethUsdConversion } = this.state;
     return (
       <FullscreenDialog cancel={cancel}>
@@ -170,4 +175,4 @@ class TaskInviteDialog extends Component<Props, State> {
   }
 }
 
-export default TaskInviteDialog;
+export default compose(withTask)(TaskInviteDialog);

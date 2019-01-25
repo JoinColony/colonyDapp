@@ -77,7 +77,7 @@
 
 .noStyleButton {
   padding: none;
-  padding: var(--pad-none);
+  padding: 0;
   height: auto;
   width: 100%;
   border-color: none;
