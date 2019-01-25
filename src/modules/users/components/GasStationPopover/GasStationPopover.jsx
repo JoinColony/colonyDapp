@@ -3,14 +3,13 @@
 import React, { Component } from 'react';
 
 import type { PopoverTrigger } from '~core/Popover';
-import type { TransactionType } from '~types';
-import type { UserRecord } from '~immutable';
+import type { TransactionRecord, UserRecord } from '~immutable';
 
 import Popover from '~core/Popover';
 import GasStationContent from './GasStationContent';
 
 type Props = {
-  transactions: Array<TransactionType>,
+  transactions: Array<TransactionRecord<*, *>>,
   transactionCount: number,
   children: React$Element<*> | PopoverTrigger,
   currentUser: UserRecord,

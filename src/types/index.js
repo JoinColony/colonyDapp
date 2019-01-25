@@ -2,7 +2,6 @@
 
 export * from '../lib/ColonyManager/types';
 export * from '../lib/database/types';
-export * from './transaction';
 export * from './TransactionReceipt';
 export * from './RootState';
 

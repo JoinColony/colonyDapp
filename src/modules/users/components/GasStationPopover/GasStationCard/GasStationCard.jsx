@@ -3,7 +3,7 @@
 import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TransactionType } from '~types';
+import type { TransactionRecord } from '~immutable';
 
 import Heading from '~core/Heading';
 import Card from '~core/Card';
@@ -72,7 +72,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  transaction: TransactionType,
+  transaction: TransactionRecord<*, *>,
   /*
    * @NOTE When the card is in the expanded mode, it's intent is to be rendered
    * as a single element, and not part of a list.
@@ -154,7 +154,10 @@ class GasStationCard extends Component<Props, State> {
     return this.setState({ actionToCancel: actionIndexToCancel });
   }
 
-  getActionItemClasses(action: TransactionType, actionIndex: number) {
+  getActionItemClasses(
+    transaction: TransactionRecord<*, *>,
+    actionIndex: number,
+  ) {
     const { actionToCancel } = this.state;
     /*
      * Default class
@@ -163,7 +166,7 @@ class GasStationCard extends Component<Props, State> {
     /*
      * If the action is failed, switch the default class
      */
-    if (action.status && action.status === 'failed') {
+    if (transaction.status === 'failed') {
       className = styles.failedActionItem;
     }
     /*
@@ -321,20 +324,23 @@ class GasStationCard extends Component<Props, State> {
     );
   }
 
-  renderActionStatus(action: TransactionType, actionIndex: number) {
-    if (!action.dependency) {
+  renderActionStatus(
+    transaction: TransactionRecord<*, *>,
+    actionIndex: number,
+  ) {
+    if (!transaction.dependency) {
       return (
         <div className={styles.status}>
-          {action.status && (
+          {transaction.status && (
             <Fragment>
-              {action.status !== 'multisig' && (
+              {!transaction.multisig && (
                 <ExternalLink
                   href={`https://rinkeby.etherscan.io/tx/${
                     /*
                      * @NOTE This is just here because otherwise prettier
                      * goes crazy and suggest a wrong fix
                      */
-                    action.hash || 0
+                    transaction.hash || 0
                   }`}
                   /*
                    * @NOTE As it was pointed out, this is a name, not a value
@@ -352,7 +358,7 @@ class GasStationCard extends Component<Props, State> {
                     <FormattedMessage
                       {...MSG.actionState}
                       values={{
-                        status: action.status,
+                        status: transaction.status,
                         username: (
                           /*
                            * @TODO Add actual username from the multisig address
@@ -369,7 +375,7 @@ class GasStationCard extends Component<Props, State> {
                  * element otherwise it won't detect the hover event
                  */}
                 <div className={styles.actionStatusTooltipWrapper}>
-                  {action.status === 'succeeded' && (
+                  {transaction.status === 'succeeded' && (
                     <span className={styles.completedAction}>
                       <Icon
                         appearance={{ size: 'tiny' }}
@@ -382,7 +388,7 @@ class GasStationCard extends Component<Props, State> {
                       />
                     </span>
                   )}
-                  {action.status === 'pending' && (
+                  {transaction.status === 'pending' && (
                     <div className={styles.spinner}>
                       <SpinnerLoader
                         appearance={{
@@ -392,21 +398,21 @@ class GasStationCard extends Component<Props, State> {
                       />
                     </div>
                   )}
-                  {action.status === 'multisig' && (
+                  {transaction.multisig && (
                     <span className={styles.multisigAction} />
                   )}
                 </div>
               </Tooltip>
             </Fragment>
           )}
-          {!action.status && this.renderCancelInteraction(actionIndex)}
+          {!transaction.status && this.renderCancelInteraction(actionIndex)}
         </div>
       );
     }
     return null;
   }
 
-  renderActionItem(action: TransactionType, actionIndex: number) {
+  renderActionItem(transaction: TransactionRecord<*, *>, actionIndex: number) {
     const { renderActionDescription } = GasStationCard;
     return (
       <li
@@ -414,16 +420,16 @@ class GasStationCard extends Component<Props, State> {
          * @NOTE Nonces are unique, but our mock data might add duplicates.
          * In case you see duplicate key errors in the console, don't panic.
          */
-        key={action.id}
-        disabled={action.dependency}
-        className={this.getActionItemClasses(action, actionIndex)}
+        key={transaction.id}
+        disabled={transaction.dependency}
+        className={this.getActionItemClasses(transaction, actionIndex)}
       >
         {renderActionDescription(
-          !!action.dependency,
-          action.status,
+          !!transaction.dependency,
+          transaction.status,
           actionIndex,
         )}
-        {this.renderActionStatus(action, actionIndex)}
+        {this.renderActionStatus(transaction, actionIndex)}
       </li>
     );
   }
