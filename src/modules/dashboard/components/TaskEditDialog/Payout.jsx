@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import BigNumber from 'bn.js';
 
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -29,7 +30,7 @@ type State = {
 
 type Props = {|
   name: string,
-  amount?: string,
+  amount?: number | BigNumber,
   symbol?: string,
   reputation?: number,
   isEth?: boolean,

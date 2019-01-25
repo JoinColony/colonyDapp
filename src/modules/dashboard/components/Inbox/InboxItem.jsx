@@ -50,8 +50,7 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-// TODO: get some taskdetails once inbox elements are wired up
-const getTaskDetails = () => mockTask;
+const getTaskId = () => mockTask;
 
 // Some inbox items link somewhere, others open a modal so it's important to differentiate here
 const ConditionalWrapper = ({
@@ -66,18 +65,14 @@ const ConditionalWrapper = ({
   user?: {},
 }) => {
   if (event === 'actionWorkerInviteReceived') {
-    // TODO: Get task details based on task id,
-    // which would ideally be contained in the inbox item's data
-    // do this when wiring the the inbox
-    const details = getTaskDetails();
+    const details = getTaskId();
     return (
       <DialogLink
         to="TaskInviteDialog"
         props={{
           assignee: { profile: user },
           taskId: details.id,
-          reputation: details.reputation,
-          payouts: details.payouts,
+          ensName: details.colonyENSName,
         }}
       >
         {({ open }) => (

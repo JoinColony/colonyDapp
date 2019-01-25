@@ -3,6 +3,7 @@
 import type { RecordOf, RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
+import BigNumber from 'bn.js';
 
 import TokenRecord from './Token';
 

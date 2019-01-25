@@ -17,6 +17,7 @@ import {
   claimPayoutAsWorkerTx,
   completeTaskTx,
   finalizeTaskTx,
+  taskWorkerAssignTx,
   revealTaskRatingAsManagerTx,
   revealTaskRatingAsWorkerTx,
   setTaskDueDateTx,
@@ -24,7 +25,6 @@ import {
   submitManagerRatingAsWorkerTx,
   submitTaskDeliverableAndRatingTx,
   submitWorkerRatingAsManagerTx,
-  taskWorkerAssignTx,
   taskCreateBatch,
   taskMoveFundsBatch,
   taskSetWorkerPayoutBatch,
@@ -61,7 +61,6 @@ import {
   TASK_UPDATE,
   TASK_UPDATE_ERROR,
   TASK_UPDATE_SUCCESS,
-  TASK_WORKER_ASSIGN,
   TASK_WORKER_CLAIM_REWARD,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
@@ -72,7 +71,6 @@ import {
 } from '../actionTypes';
 import { ensureColonyIsInState } from './shared';
 
-<<<<<<< HEAD
 const createTaskBatch = createBatchTxRunner({
   meta: { key: 'transaction.batch.createTask' },
   transactions: [
@@ -272,21 +270,6 @@ function* taskRemoveSaga({
     yield putError(TASK_REMOVE_ERROR, error, meta);
   }
 }
-=======
-import {
-  taskSetDate,
-  taskSetSkill,
-  taskManagerComplete,
-  taskManagerRateWorker,
-  taskManagerRevealRating,
-  taskWorkerClaimReward,
-  taskWorkerEnd,
-  taskWorkerRateManager,
-  taskWorkerRevealRating,
-  taskFinalize,
-  taskWorkerAssign,
-} from '../actionCreators';
->>>>>>> Apply multisig and add new actioncreator
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield* getContext(CONTEXT.WALLET);
@@ -600,11 +583,15 @@ function* taskFinalizeSaga({
 }
 
 function* taskWorkerAssignSaga({
-  payload: { colonyENSName, taskId, user },
+  payload: { taskId, colonyENSName, user },
   meta,
 }: UniqueActionWithKeyPath): Saga<void> {
   yield put(
-    taskWorkerAssignTx({ identifier: colonyENSName, params: { taskId, user }, meta }),
+    taskWorkerAssignTx({
+      identifier: colonyENSName,
+      params: { taskId, user },
+      meta,
+    }),
   );
 }
 
@@ -614,7 +601,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(TASK_FETCH, taskFetchSaga);
   yield takeEvery(TASK_FETCH_ALL, taskFetchAllSaga);
   yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
-  yield takeEvery(TASK_WORKER_ASSIGN, taskWorkerAssignSaga);
+  yield takeEvery(TASK_FINALIZE, taskWorkerAssignSaga);
   yield takeEvery(TASK_MANAGER_END, completeTaskSaga);
   yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
   yield takeEvery(TASK_REMOVE, taskRemoveSaga);
