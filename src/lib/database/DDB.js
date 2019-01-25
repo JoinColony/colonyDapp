@@ -143,16 +143,10 @@ class DDB {
     }
     const id = `${name}.${generateId()}`;
 
-    const accessController =
-      this.constructor.getAccessController &&
-      storeProps &&
-      this.constructor.getAccessController(blueprint, storeProps);
-    if (!accessController) {
-      console.warn(
-        `Store with schema ${name} created without an accessController`,
-      );
-    }
-
+    const accessController = this.constructor.getAccessController(
+      blueprint,
+      storeProps,
+    );
     const orbitStore: OrbitDBStore = await this._orbitNode.create(
       id,
       StoreClass.orbitType,
@@ -189,16 +183,10 @@ class DDB {
       );
     }
 
-    const accessController =
-      this.constructor.getAccessController &&
-      storeProps &&
-      this.constructor.getAccessController(blueprint, storeProps);
-    if (!accessController) {
-      console.warn(
-        `Store with schema ${name} created without an accessController`,
-      );
-    }
-
+    const accessController = this.constructor.getAccessController(
+      blueprint,
+      storeProps,
+    );
     const orbitStore: OrbitDBStore = await this._orbitNode.open(address, {
       accessController,
     });
