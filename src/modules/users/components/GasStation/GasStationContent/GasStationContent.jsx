@@ -22,7 +22,7 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  close: () => void,
+  close?: () => void,
   transactions: Array<TransactionRecord<*, *>>,
 };
 

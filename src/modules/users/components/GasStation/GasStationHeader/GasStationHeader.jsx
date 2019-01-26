@@ -22,7 +22,7 @@ const MSG = defineMessages({
 
 type Props = {
   balance: number,
-  close: () => void,
+  close?: () => void,
   walletAddress: string,
 };
 
@@ -52,13 +52,15 @@ const GasStationHeader = ({ balance, close, walletAddress }: Props) => (
           />
         </div>
       </Link>
-      <button className={styles.closeButton} onClick={close} type="button">
-        <Icon
-          appearance={{ size: 'normal' }}
-          name="close"
-          title={{ id: 'button.close' }}
-        />
-      </button>
+      {close && (
+        <button className={styles.closeButton} onClick={close} type="button">
+          <Icon
+            appearance={{ size: 'normal' }}
+            name="close"
+            title={{ id: 'button.close' }}
+          />
+        </button>
+      )}
     </div>
   </div>
 );
