@@ -1,6 +1,7 @@
 /* @flow */
 
-import _ from 'lodash';
+import isPlainObject from 'lodash/isPlainObject';
+import isString from 'lodash/isString';
 
 import type {
   ActionId,
@@ -21,8 +22,8 @@ export default class PermissionManager {
 
   static inheritsFromAnotherPermission(permission: Permission) {
     return (
-      _.isPlainObject(permission) &&
-      _.isString(permission.inherits) &&
+      isPlainObject(permission) &&
+      isString(permission.inherits) &&
       permission.inherits
     );
   }
