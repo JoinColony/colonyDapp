@@ -4,13 +4,13 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { TaskFeedItemCommentRecord } from './TaskFeedItemComment';
 import type { TaskFeedItemRatingRecord } from './TaskFeedItemRating';
+import type { TaskCommentRecord } from './TaskComment';
 
 export type TaskFeedItemProps = {
   id: number,
   createdAt: Date,
-  comment?: TaskFeedItemCommentRecord,
+  comment?: TaskCommentRecord,
   rating?: TaskFeedItemRatingRecord,
 };
 
