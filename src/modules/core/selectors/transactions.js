@@ -1,6 +1,7 @@
 /* @flow */
 
 import { createSelector } from 'reselect';
+import getObjectFromPath from 'lodash/get';
 
 import ns from '../namespace';
 
@@ -18,6 +19,21 @@ type OneTransactionSelector = (
   state: RootState,
   id: string,
 ) => ?TransactionRecord<*, *>;
+
+/**
+ * Helpers
+ */
+const transactionGroup = (tx: TransactionRecord<*, *>) => {
+  if (!tx.group || typeof tx.group.id == 'string') return tx.group;
+  const id = tx.group.id.reduce(
+    (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,
+    tx.group.key,
+  );
+  return {
+    ...tx.group,
+    id,
+  };
+};
 
 /**
  * Individual transaction selectors
@@ -41,6 +57,9 @@ const createdAtDesc = (
   { createdAt: createdAtB }: TransactionRecord<*, *>,
 ) => createdAtB - createdAtA;
 
+const transformTransaction = (tx: TransactionRecord<*, *>) =>
+  tx.set('group', transactionGroup(tx));
+
 /**
  * `reselect`-powered transactions selectors.
  *
@@ -51,10 +70,22 @@ const createdAtDesc = (
  *   null,
  * )(PendingTxsComponent);
  */
-export const allTransactions: TransactionsSelector = state =>
-  state[ns].transactions.list;
-export const oneTransaction: OneTransactionSelector = (state, id) =>
+export const rawTransaction: OneTransactionSelector = (state, id) =>
   state[ns].transactions.list.get(id);
+
+export const oneTransaction: OneTransactionSelector = createSelector(
+  rawTransaction,
+  tx => tx && transformTransaction(tx),
+);
+
+export const rawAllTransactions: TransactionsSelector = state =>
+  state[ns].transactions.list;
+
+export const allTransactions: TransactionsSelector = createSelector(
+  rawAllTransactions,
+  transactions => transactions.map(transformTransaction),
+);
+
 export const pendingTransactions: TransactionsSelector = createSelector(
   allTransactions,
   transactions => transactions.filter(isPending).sort(createdAtDesc),
