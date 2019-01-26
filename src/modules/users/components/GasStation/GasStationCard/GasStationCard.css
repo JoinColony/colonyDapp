@@ -1,0 +1,222 @@
+.card {
+  padding: 0;
+}
+
+.button {
+  display: block;
+  margin: 0;
+  padding: 15px 0;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+
+  &[disabled] {
+    cursor: default;
+  }
+}
+
+.cardExpanded {
+  padding: 0;
+  border-bottom-left-radius: var(--radius-normal);
+  border-bottom-right-radius: var(--radius-normal);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.description {
+  flex: 1 1 auto;
+}
+
+.status {
+  flex: 0 1 auto;
+  cursor: default;
+}
+
+.transactionLink {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-medium);
+
+  /*
+   * @TODO Remove this when we actually have a way to
+   * redirect the user to the task
+   */
+  pointer-events: none;
+
+  &:hover {
+    border-bottom: 1px solid var(--sky-blue);
+    color: var(--sky-blue);
+  }
+}
+
+.counter {
+  display: inline-block;
+  padding-top: 3px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--pink);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
+}
+
+.failed {
+  display: inline-block;
+  width: 20px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: var(--danger);
+}
+
+.multisig {
+  display: inline-block;
+  margin-right: 5px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
+
+.expanded {
+  margin-top: 15px;
+}
+
+/*
+ * @NOTE Use this if the tooltip content you're about to show resides under a
+ * class that changes the font size and weight
+ * Eg: under the `.expanded` list items
+ */
+.tooltipContentReset {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+}
+
+.actionItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  height: 40px;
+  border-left: 3px solid var(--temp-grey-5);
+  border-top: 1px solid var(--grey-blue-1);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
+
+  &:hover {
+    border-left-color: var(--colony-blue);
+    background-color: var(--temp-grey-blue-6);
+  }
+
+  &:hover .cancelAction {
+    display: inline;
+  }
+
+  &[disabled] {
+    color: var(--grey-text);
+    cursor: default;
+
+    &:hover {
+      background-color: var(--temp-grey-blue-1);
+    }
+  }
+}
+
+.actionInteraction {
+  border-bottom: 1px solid transparent;
+  color: var(--sky-blue);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--sky-blue);
+    color: var(--sky-blue);
+  }
+}
+
+.cancelAction {
+  composes: actionInteraction;
+  display: none;
+}
+
+.cancelActionsDecision {
+  margin: 0 10px;
+}
+
+.actionStatusTooltipWrapper {
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.spinner {
+  display: inline-block;
+
+  /*
+   * @NOTE We're using negative margins to better align the spinner with the link
+   */
+  margin-bottom: -3px;
+}
+
+.completedAction {
+  & svg {
+    fill: var(--primary);
+    stroke: var(--primary);
+  }
+}
+
+.multisigAction {
+  composes: multisig;
+  margin-right: 0;
+}
+
+.failedActionItem {
+  composes: actionItem;
+  border-left-color: var(--danger);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: color-mod(var(--danger) alpha(90%));
+    background-color: color-mod(var(--danger) alpha(15%));
+  }
+}
+
+.cancelActionItem {
+  composes: actionItem;
+  border-left-color: var(--colony-blue);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: var(--colony-blue);
+    background-color: color-mod(var(--danger) alpha(20%));
+  }
+
+  & .cancelAction {
+    display: inline;
+  }
+}
+
+.failedActionDescription {
+  display: block;
+
+  /*
+   * @NOTE This breaks design consistency
+   *
+   * This does not a use a state symbol like all the others, it just displays
+   * skewed copy under the action's name.
+   *
+   * Because of this, we must *heavily* use negative margins to align text properly.
+   */
+  margin: -1px 0 -12px 14px;
+  font-size: var(--size-unreadable);
+  font-weight: var(--weight-medium);
+  color: var(--danger);
+}

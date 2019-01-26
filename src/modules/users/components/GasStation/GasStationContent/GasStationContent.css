@@ -5,7 +5,7 @@
 }
 
 .transactionsContainer {
-  padding: 15px 10px;
+  padding: 10px;
   min-height: 70px;
   max-height: 456px;
   overflow-y: auto;
@@ -16,20 +16,4 @@
 .stateIsEmpty .transactionsContainer {
   display: flex;
   align-items: center;
-}
-
-.returnToSummary {
-  /*
-   * @NOTE We're still inside the CardList grid, so we need to counter the grid-gap
-   * in order to reduce the spacing between this button and the expanded card
-   */
-  margin: -5px 0 -10px;
-  padding: 0;
-  border: none;
-  background-color: transparent;
-  font-size: var(--size-small);
-  font-weight: var(--weight-medium);
-  text-align: left;
-  color: var(--text);
-  cursor: pointer;
 }
