@@ -8,10 +8,8 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { Action } from '~types';
-import type { TransactionRecord } from '~immutable';
+import type { GasPricesProps, TransactionRecord } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
-
-import type { GasPrices } from '../../../../core/types';
 
 import {
   METHOD_TRANSACTION_SENT,
@@ -77,7 +75,7 @@ type Props = {
   walletNeedsAction?: 'metamask' | 'hardware',
   estimateGas: (id: string) => void,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,
-  gasPrices: GasPrices,
+  gasPrices: GasPricesProps,
 };
 
 type State = {

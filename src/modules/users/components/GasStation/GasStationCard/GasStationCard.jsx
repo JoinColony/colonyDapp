@@ -176,16 +176,31 @@ class GasStationCard extends Component<Props, State> {
 
   renderSummary() {
     const {
-      transaction: { status, dependents = [], methodName },
+      transaction: { status, dependents = [], methodName, context },
     } = this.props;
     return (
       <div className={styles.summary}>
         <div className={styles.description}>
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={MSG.transactionTitle}
-            textValues={{ methodName }}
-          />
+          >
+            {context && methodName && (
+              <FormattedMessage
+                id={`transaction.${context}.${methodName}.title`}
+                values={{ context, methodName }}
+              />
+            )}
+          </Heading>
+          {context && methodName && (
+            <FormattedMessage
+              id={
+                process.env.DEBUG
+                  ? `transaction.debug.description`
+                  : `transaction.${context}.${methodName}.description`
+              }
+              values={{ context, methodName }}
+            />
+          )}
         </div>
         {status && (
           <div className={styles.status}>

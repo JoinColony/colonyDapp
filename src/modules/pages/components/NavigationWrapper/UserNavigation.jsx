@@ -8,7 +8,7 @@ import { INBOX_ROUTE, DASHBOARD_ROUTE } from '~routes';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-import GasStationPopover from '~users/GasStationPopover';
+import GasStation from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 
 import styles from './UserNavigation.css';
@@ -55,7 +55,7 @@ const UserNavigation = ({ events = mockEvents }: Props) => {
       >
         <Icon name="home" title={MSG.dashboardTitle} />
       </NavLink>
-      <GasStationPopover>
+      <GasStation>
         {({ isOpen, toggle, ref }) => (
           <button
             type="button"
@@ -72,7 +72,7 @@ const UserNavigation = ({ events = mockEvents }: Props) => {
             </div>
           </button>
         )}
-      </GasStationPopover>
+      </GasStation>
       <NavLink
         to={INBOX_ROUTE}
         className={`${
