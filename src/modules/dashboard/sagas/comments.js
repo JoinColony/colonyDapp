@@ -109,11 +109,13 @@ function* listAllComments({
       commentsStoreAddress,
     );
 
+    /* eslint-disable-next-line no-console */
     console.log(
       'Comments DDB Store Values',
       yield call([commentsStore, commentsStore.all]),
     );
 
+    /* eslint-disable-next-line no-console */
     console.log(
       'Comments Redux Store Values',
       yield select(state => state[ns].allComments.get(taskId)),
