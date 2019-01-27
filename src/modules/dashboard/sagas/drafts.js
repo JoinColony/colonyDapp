@@ -45,12 +45,14 @@ import {
   ensureColonyIsInState,
   getDraftsIndexStore,
   getOrCreateDraftsIndexStore,
+  getOrCreateCommentsStore,
 } from './shared';
 
 const addStoreAddressesToDraftPayload = (
   payload: Object,
   draftStore: ValidatedKVStore,
   feedItemsStore?: Store, // TODO set store type when the store is defined
+  commentsStore?: FeedStore,
 ) => ({
   databases: {
     draftStore: draftStore.address.toString(),
