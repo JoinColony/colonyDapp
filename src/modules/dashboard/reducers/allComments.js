@@ -2,6 +2,8 @@
 
 import { Map as ImmutableMap, List } from 'immutable';
 
+import type { UniqueActionWithKeyPath } from '~types';
+
 import { TASK_COMMENT_ADD_SUCCESS } from '../actionTypes';
 
 /*
@@ -11,7 +13,13 @@ import { TASK_COMMENT_ADD_SUCCESS } from '../actionTypes';
  * This are just to test the store/redux functionality prior to the wiring PR
  */
 
-const allCommentsReducer = (state = new ImmutableMap(), action) => {
+const allCommentsReducer = (
+  /*
+   * @TODO Add proper store for the `allComments` Map
+   */
+  state: Object = new ImmutableMap(),
+  action: UniqueActionWithKeyPath,
+) => {
   switch (action.type) {
     case TASK_COMMENT_ADD_SUCCESS: {
       const {
