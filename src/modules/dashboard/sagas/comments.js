@@ -17,6 +17,9 @@ import {
   TASK_COMMENT_ADD,
   TASK_COMMENT_ADD_SUCCESS,
   TASK_COMMENT_ADD_ERROR,
+  TASK_COMMENTS_GET,
+  TASK_COMMENTS_GET_ERROR,
+  TASK_COMMENTS_GET_SUCCESS,
 } from '../actionTypes';
 
 /*
@@ -86,6 +89,45 @@ function* addNewComment({
   }
 }
 
+function* listAllComments({
+  payload: { taskId = '8354de0f8e' } = {},
+}: Action = {}): Saga<void> {
+  let commentsStore;
+  try {
+    const commentsStoreAddress = yield select(state =>
+      state[ns].allComments.get('storeAddress'),
+    );
+
+    if (!commentsStoreAddress) {
+      return null;
+    }
+
+    const ddb = yield getContext('ddb');
+    commentsStore = yield call(
+      [ddb, ddb.getStore],
+      commentsBlueprint,
+      commentsStoreAddress,
+    );
+
+    console.log(
+      'Comments DDB Store Values',
+      yield call([commentsStore, commentsStore.all]),
+    );
+
+    console.log(
+      'Comments Redux Store Values',
+      yield select(state => state[ns].allComments.get(taskId)),
+    );
+
+    return yield put({
+      type: TASK_COMMENTS_GET_SUCCESS,
+    });
+  } catch (error) {
+    return yield putError(TASK_COMMENTS_GET_ERROR, error);
+  }
+}
+
 export default function* commentsSagas(): any {
   yield takeEvery(TASK_COMMENT_ADD, addNewComment);
+  yield takeEvery(TASK_COMMENTS_GET, listAllComments);
 }
