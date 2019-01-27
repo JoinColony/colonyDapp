@@ -79,6 +79,7 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
       const actionCreatorOpts = {
         meta: { ...meta, id: `${meta.id}-${i}` },
         status: transferParams || transferIdentifier ? 'created' : 'ready',
+        groupId: meta.id,
         ...actionCreatorOptions[i],
       };
       yield put(actionCreator(actionCreatorOpts));

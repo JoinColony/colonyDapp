@@ -105,6 +105,7 @@ export type MultisigOperationJSON = {
 
 export type TxActionCreatorOptions<P: TransactionParams> = {
   identifier?: AddressOrENSName,
+  groupId?: string,
   meta: any,
   multisig?: MultisigOperationJSON,
   params: P,
