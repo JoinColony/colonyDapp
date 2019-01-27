@@ -220,8 +220,6 @@ export function* createCommentsStore(taskId: string): Saga<FeedStore> {
 export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
   /*
    * Get the comments store address from Redux
-   *
-   * @TODO Add proper selector
    */
   const commentsStoreAddress = yield select(draftsIndexSelector, taskId);
 
