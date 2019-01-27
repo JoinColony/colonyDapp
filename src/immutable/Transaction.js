@@ -70,7 +70,7 @@ export type TransactionRecord<
 
 const defaultValues: $Shape<TransactionProps<*, *>> = {
   context: undefined,
-  createdAt: undefined,
+  createdAt: new Date(),
   errors: new List(),
   eventData: undefined,
   gasLimit: undefined,
