@@ -4,7 +4,7 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { TaskCommentContentRecord } from './TaskCommentMeta';
+import type { TaskCommentContentRecord } from './TaskCommentContent';
 
 export type TaskCommentProps = {
   signature: string,

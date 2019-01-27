@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import type { TaskCommentRecord } from '~immutable';
+
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserAvatar from '~core/UserAvatar';
@@ -13,22 +15,19 @@ import TextDecorator from '../../../../lib/TextDecorator';
 
 import styles from './TaskFeedComment.css';
 
-import type { TaskFeedItemCommentRecord } from '~immutable';
+import mockUser from '../Wallet/__datamocks__/mockUser';
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
 type Props = {
-  comment: TaskFeedItemCommentRecord,
+  comment: TaskCommentRecord,
   createdAt: Date,
   currentUser: boolean,
 };
 
 const TaskFeedComment = ({
   comment: {
-    body,
-    user: {
-      profile: { avatar, username, displayName: fullName, walletAddress },
-    },
+    content: { author: commentAuthorWalletAddress, body },
   },
   createdAt,
   currentUser,
@@ -40,6 +39,10 @@ const TaskFeedComment = ({
       <UserMention username={text.slice(1)} to={`/user/${text.slice(1)}`} />
     ),
   });
+  /*
+   * @TODO The comment author (wallet address) <-> user profile relationship
+   * has to come from a reducer, since it's not available in the comments store
+   */
   return (
     <div
       className={`${styles.comment} ${
@@ -49,11 +52,11 @@ const TaskFeedComment = ({
       {!currentUser && (
         <div className={styles.commentAvatar}>
           <UserAvatar
-            avatarURL={avatar}
-            displayName={fullName}
+            avatarURL={mockUser.profile.avatar}
+            displayName={mockUser.profile.displayName}
             hasUserInfo
-            username={username}
-            walletAddress={walletAddress}
+            username={mockUser.profile.username}
+            walletAddress={commentAuthorWalletAddress}
             size="s"
           />
         </div>
@@ -62,11 +65,11 @@ const TaskFeedComment = ({
         {!currentUser && (
           <div className={styles.commentUsername}>
             <UserInfo
-              displayName={fullName}
-              username={username}
-              walletAddress={walletAddress}
+              displayName={mockUser.profile.displayName}
+              username={mockUser.profile.username}
+              walletAddress={commentAuthorWalletAddress}
             >
-              <span>{fullName}</span>
+              <span>{mockUser.profile.displayName}</span>
             </UserInfo>
           </div>
         )}
