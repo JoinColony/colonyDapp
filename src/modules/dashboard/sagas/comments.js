@@ -34,13 +34,13 @@ function* addNewComment({
       timestamp: new Date(),
       body: "Hey! I'm a new comment. Hooray!",
     },
-  },
-  meta: { id = '21' },
-}: Action): Saga<void> {
+  } = {},
+  meta: { id = '21' } = {},
+}: Action = {}): Saga<void> {
   let commentsStore;
   try {
-    const commentsStoreAddress = yield select(
-      state => state[ns].allComments.storeAddress,
+    const commentsStoreAddress = yield select(state =>
+      state[ns].allComments.get('storeAddress'),
     );
 
     if (commentsStoreAddress) {
