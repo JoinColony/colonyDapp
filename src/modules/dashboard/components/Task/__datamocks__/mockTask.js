@@ -4,13 +4,7 @@
 import { List } from 'immutable';
 import BN from 'bn.js';
 
-import {
-  Task,
-  TaskFeedItem,
-  TaskFeedItemComment,
-  TaskFeedItemRating,
-  TaskPayout,
-} from '~immutable';
+import { Task, TaskFeedItem, TaskFeedItemRating, TaskPayout } from '~immutable';
 import usersMock from './mockUsers';
 import userMock from '~users/AvatarDropdown/__datamocks__/mockUser';
 
@@ -60,83 +54,6 @@ export const mockTask = Task({
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',
   assignee: userMock,
   feedItems: List.of(
-    TaskFeedItem({
-      id: 0,
-      createdAt: new Date('2018-09-16'),
-      comment: TaskFeedItemComment({
-        body: 'Comment body goes here...',
-        user: usersMock.get(0),
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 1,
-      createdAt: new Date('2018-09-16'),
-      comment: TaskFeedItemComment({
-        body:
-          'This is another comment, this time with a link to https://colony.io!',
-        user: usersMock.get(1),
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 2,
-      createdAt: new Date('2018-11-03 13:00'),
-      comment: TaskFeedItemComment({
-        body: 'YANC',
-        user: usersMock.get(0),
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 3,
-      createdAt: new Date('2018-11-03 13:15'),
-      comment: TaskFeedItemComment({
-        body: "It's me, @chewie the task creator!",
-        user: userMock,
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 4,
-      createdAt: new Date('2018-11-03 13:30'),
-      comment: TaskFeedItemComment({
-        body: 'Interesting conversation going on here.',
-        user: usersMock.get(2),
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 5,
-      createdAt: new Date('2018-11-03 14:00'),
-      comment: TaskFeedItemComment({
-        body: '^agree',
-        user: usersMock.get(3),
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 6,
-      createdAt: new Date('2018-11-06 11:00'),
-      comment: TaskFeedItemComment({
-        body: `We should
-have these
-conversations
-more often.`,
-        user: userMock,
-      }),
-    }),
-
-    TaskFeedItem({
-      id: 7,
-      createdAt: new Date('2018-11-06 11:30'),
-      comment: TaskFeedItemComment({
-        body:
-          'Also I feel like posting another comment just to test how it looks with two consecutive by the same account.',
-        user: userMock,
-      }),
-    }),
-
     TaskFeedItem({
       id: 8,
       createdAt: new Date('2018-11-08 11:00'),
