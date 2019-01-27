@@ -40,7 +40,7 @@ function* addNewComment({
   } = {},
   meta: { id = '21' } = {},
 }: Action = {}): Saga<void> {
-  let commentsStore;
+  let commentsStore: Object = {};
   try {
     const commentsStoreAddress = yield select(state =>
       state[ns].allComments.get('storeAddress'),
@@ -91,7 +91,7 @@ function* addNewComment({
 
 function* listAllComments({
   payload: { taskId = '8354de0f8e' } = {},
-}: Action = {}): Saga<void> {
+}: Action = {}): Saga<null> {
   let commentsStore;
   try {
     const commentsStoreAddress = yield select(state =>
