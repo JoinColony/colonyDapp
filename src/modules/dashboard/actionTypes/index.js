@@ -6,3 +6,4 @@ export * from './drafts';
 export * from './task';
 export * from './token';
 export * from './admins';
+export * from './comments';
