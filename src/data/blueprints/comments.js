@@ -20,14 +20,9 @@ const commentsStore: StoreBlueprint = {
       timestamp: yup.date().default(() => Date.now()),
       body: yup.string().required(),
       metadata: yup.object({
-        attachments: yup.array().of(
-          yup.object({
-            ipfsHash: yup.string().required(),
-            filename: yup.string().required(),
-            type: yup.string().required(),
-            size: yup.number().min(1),
-          }),
-        ),
+        /*
+         * @TODO When the time is right, add attachments
+         */
         mentions: yup.array().of(yup.string().required()),
       }),
     }),
