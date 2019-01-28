@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Map as ImmutableMap, List, OrderedMap } from 'immutable';
+import { Map as ImmutableMap, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
 import getObjectFromPath from 'lodash/get';
 

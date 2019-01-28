@@ -8,10 +8,9 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { Action } from '~types';
-import type { TransactionRecord } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
-import type { GasPricesProps } from '~immutable';
+import type { TransactionRecord, GasPricesProps } from '~immutable';
 
 import {
   METHOD_TRANSACTION_SENT,

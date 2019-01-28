@@ -2,7 +2,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { Transaction } from '~immutable';
 
-import ns from '../../namespace';
+import { CORE_NAMESPACE as ns } from '../../constants';
 
 import {
   oneTransaction,

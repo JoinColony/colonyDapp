@@ -60,13 +60,16 @@ export const draftsIndexSelector = createSelector(
 export const currentColonyAvatarHashSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,
-  (colonies, ensName) => colonies.getIn([ensName, 'record', 'avatar']),
+  (colonies, ensName) =>
+    ensName ? colonies.getIn([ensName, 'record', 'avatar']) : null,
 );
 
 export const currentColonyAvatarDataSelector = createSelector(
   currentColonyAvatarHashSelector,
   (state, hash) =>
-    state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS, hash]),
+    state && hash
+      ? state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS, hash])
+      : null,
 );
 
 export const allColonyENSNames = createSelector(
