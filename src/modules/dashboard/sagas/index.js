@@ -8,6 +8,7 @@ import domainsSagas from './domains';
 import draftsSagas from './drafts';
 import tokenSagas from './token';
 import taskSagas from './task';
+import commentsSagas from './comments';
 
 export default function* dashboardSagas(): any {
   yield all([
@@ -17,5 +18,6 @@ export default function* dashboardSagas(): any {
     draftsSagas(),
     taskSagas(),
     tokenSagas(),
+    commentsSagas(),
   ]);
 }

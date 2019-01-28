@@ -11,6 +11,8 @@ import Rating from './TaskFeedRating.jsx';
 
 import styles from './TaskFeed.css';
 
+import mockUser from '../Wallet/__datamocks__/mockUser';
+
 const displayName = 'dashboard.TaskFeed';
 
 type Props = {
@@ -46,7 +48,10 @@ class TaskFeed extends Component<Props> {
                     key={id}
                     comment={comment}
                     createdAt={createdAt}
-                    currentUser={isSameUser(comment.user, currentUser)}
+                    /*
+                     * @TODO The author wallet <-> profile raltionship will have to come from a reducer
+                     */
+                    currentUser={isSameUser(mockUser, currentUser)}
                   />
                 );
 

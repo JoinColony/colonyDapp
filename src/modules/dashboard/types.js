@@ -33,11 +33,14 @@ export type DraftsMap = ImmutableMapType<DraftId, DataRecord<DraftRecord>>;
 
 export type AllDraftsState = ImmutableMapType<ENSName, DraftsMap>;
 
+export type AllCommentsState = ImmutableMapType<DraftId, DraftsMap>;
+
 export type DashboardState = {|
   [typeof ns]: {|
     allColonies: AllColoniesState,
     allDomains: AllDomainsState,
     allDrafts: AllDraftsState,
+    allComments: AllCommentsState,
     // TODO: allTasks
   |},
 |};

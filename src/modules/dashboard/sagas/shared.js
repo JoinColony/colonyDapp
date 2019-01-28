@@ -6,6 +6,7 @@ import { call, getContext, select, put } from 'redux-saga/effects';
 import type { ENSName } from '~types';
 import type {
   DocStore,
+  FeedStore,
   ValidatedKVStore,
   KVStore,
 } from '../../../lib/database/stores';
@@ -19,6 +20,7 @@ import {
   colonyStoreBlueprint,
   domainsIndexStoreBlueprint,
   draftsIndexStoreBlueprint,
+  commentsBlueprint,
 } from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
@@ -199,4 +201,67 @@ export function* getOrCreateDraftsIndexStore(
   if (!store) store = yield call(createDraftsIndexStore, colonyENSName);
 
   return store;
+}
+
+/*
+ * Create the comments store for a given task.
+ */
+export function* createCommentsStore(taskId: string): Saga<FeedStore> {
+  const ddb: DDB = yield getContext('ddb');
+
+  return yield call([ddb, ddb.createStore], commentsBlueprint, {
+    taskId,
+  });
+}
+
+/*
+ * Get the comments store for a given task (if the store exists).
+ */
+export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
+  /*
+   * Get the comments store address from Redux
+   */
+  const commentsStoreAddress = yield select(draftsIndexSelector, taskId);
+
+  /*
+   * If the comments store doesn't exist, return null
+   */
+  if (!commentsStoreAddress) {
+    return null;
+  }
+
+  /*
+   * Get the comments store, fro the returned address
+   */
+  // TODO no access controller available yet
+  const ddb = yield getContext('ddb');
+  return yield call(
+    [ddb, ddb.getStore],
+    commentsBlueprint,
+    commentsStoreAddress,
+  );
+}
+
+/*
+ * Get or create a comments tore
+ */
+export function* getOrCreateCommentsStore(taskId: string): Saga<FeedStore> {
+  /*
+   * Get and load the store, if it exists.
+   */
+  let commentsStoreAddress: FeedStore | null = yield call(
+    getCommentsStore,
+    taskId,
+  );
+  if (commentsStoreAddress) {
+    yield call([commentsStoreAddress, commentsStoreAddress.load]);
+  }
+  /*
+   * Create the store if it doesn't already exist.
+   */
+  if (!commentsStoreAddress) {
+    commentsStoreAddress = yield call(createCommentsStore, taskId);
+  }
+
+  return commentsStoreAddress;
 }
