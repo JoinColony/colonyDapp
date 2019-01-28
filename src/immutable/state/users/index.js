@@ -1,7 +1,11 @@
 /* @flow */
 /* eslint-disable flowtype/generic-spacing */
 
-import type { List as ListType, RecordOf } from 'immutable';
+import type {
+  Collection as CollectionType,
+  List as ListType,
+  RecordOf,
+} from 'immutable';
 
 import type { AllUsersRecord } from './AllUsers';
 import type { ContractTransactionRecord } from '../../ContractTransaction';
@@ -28,5 +32,4 @@ export type UsersStateProps = {|
  * NOTE: we do not need to define an actual Record factory (only the types),
  * because `combineReducers` from `redux-immutable` creates the Record.
  */
-// $FlowFixMe
-export type UsersStateRecord = RecordOf<UsersStateProps>;
+export type UsersStateRecord = CollectionType<*, *> & RecordOf<UsersStateProps>;

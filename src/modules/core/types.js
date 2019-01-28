@@ -23,7 +23,14 @@ export type Sender<P: TransactionParams, E: TransactionEventData> = {
   },
   send(params: P, options: SendOptions): Promise<ContractResponse<E>>,
   estimate(params: P): Promise<BigNumber>,
-  restoreOperation?: (
+  restoreOperation: void,
+};
+
+export type MultisigSender<
+  P: TransactionParams,
+  E: TransactionEventData,
+> = Sender<P, E> & {
+  restoreOperation: (
     operationJSON: string,
   ) => Promise<(options: SendOptions) => Promise<ContractResponse<E>>>,
 };

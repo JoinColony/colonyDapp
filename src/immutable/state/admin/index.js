@@ -2,6 +2,7 @@
 /* eslint-disable flowtype/generic-spacing */
 
 import type {
+  Collection as CollectionType,
   List as ListType,
   Map as ImmutableMapType,
   RecordOf,
@@ -29,5 +30,4 @@ export type AdminStateProps = {|
  * NOTE: we do not need to define an actual Record factory (only the types),
  * because `combineReducers` from `redux-immutable` creates the Record.
  */
-// $FlowFixMe
-export type AdminStateRecord = RecordOf<AdminStateProps>;
+export type AdminStateRecord = CollectionType<*, *> & RecordOf<AdminStateProps>;

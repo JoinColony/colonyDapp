@@ -39,7 +39,6 @@ export default function* getNetworkClient(): Generator<
   const adapter = yield create(EthersAdapter, {
     loader,
     provider,
-    // $FlowFixMe colonyJS IWallet types are wrong!
     wallet: yield create(EthersWrappedWallet, wallet, provider),
   });
 

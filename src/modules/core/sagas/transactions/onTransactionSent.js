@@ -13,7 +13,11 @@ import type {
 
 import { putError } from '~utils/saga/effects';
 
-import type { Sender, SendTransactionAction } from '../../types';
+import type {
+  MultisigSender,
+  Sender,
+  SendTransactionAction,
+} from '../../types';
 
 import {
   TRANSACTION_ERROR,
@@ -52,7 +56,7 @@ async function getMethodTransactionPromise<
   P: TransactionParams,
   E: TransactionEventData,
 >(
-  method: Sender<P, E>,
+  method: Sender<P, E> | MultisigSender<P, E>,
   tx: TransactionRecord<P, E>,
 ): Promise<ContractResponse<E>> {
   const {
@@ -76,7 +80,6 @@ async function getMethodTransactionPromise<
     { waitForMining: false },
   );
   if (method.restoreOperation && multisig) {
-    // $FlowFixMe why do you not recognise this as being checked for existence?
     const op = await method.restoreOperation(JSON.stringify(multisig));
     return op.send(sendOptions);
   }

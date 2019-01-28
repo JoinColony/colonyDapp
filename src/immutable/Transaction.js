@@ -88,7 +88,6 @@ const defaultValues: $Shape<TransactionProps<*, *>> = {
   status: 'ready',
 };
 
-// $FlowFixMe
 const Transaction: RecordFactory<TransactionProps<*, *>> = Record(
   defaultValues,
 );

@@ -39,7 +39,6 @@ const sortItems = items =>
     .map(item => ({ ...item, type: item.event.split(/[A-Z]/)[0] }))
     // move unread `action` events to front
     .sort((a, b) => {
-      // $FlowFixMe doesn't recognise that b.type will now be set
       if (a.unread && a.type === 'action' && (b.type !== 'action' || !b.unread))
         return -1;
       if (b.unread && b.type === 'action' && (a.type !== 'action' || !a.unread))

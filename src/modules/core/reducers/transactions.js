@@ -107,7 +107,6 @@ const coreTransactionsReducer = (
     case TRANSACTION_ERROR: {
       const { id } = meta;
       const { error } = payload;
-      // $FlowFixMe
       return state
         .updateIn([CORE_TRANSACTIONS_LIST, id, 'errors'], errors =>
           errors.push(error),

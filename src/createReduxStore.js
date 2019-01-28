@@ -22,7 +22,6 @@ const store = createStore(
   composeEnhancer(
     applyMiddleware(
       routerMiddleware(history),
-      // $FlowFixMe flow-typed errors
       sagaMiddleware,
       reduxPromiseListener.middleware,
     ),

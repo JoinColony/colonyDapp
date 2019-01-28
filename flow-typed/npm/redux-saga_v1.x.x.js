@@ -246,7 +246,7 @@ declare module "redux-saga" {
           ): Task<R>
         },
         setContext: (props: $Shape<C>) => void
-      };
+      } & ((api: MiddlewareAPI<*, *, *>) => (next: *) => *);
 
   declare export type Emit<T> = (input: T) => void;
 

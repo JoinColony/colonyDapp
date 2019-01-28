@@ -17,8 +17,7 @@ export const USERNAME_SCHEMA = {
         if (tail[0] === USER_PREFIX) {
           return false;
         }
-        // $FlowFixMe
-        return tail.match(usernameRegex)[0].length;
+        return (tail.match(usernameRegex) || [])[0].length;
       }
       return 0;
     },

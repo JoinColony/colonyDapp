@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { RecordOf } from 'immutable';
+import type { RecordOf, Collection as CollectionType } from 'immutable';
 
 import type { CoreTransactionsRecord } from './CoreTransactions';
 
@@ -18,5 +18,4 @@ export type CoreStateProps = {|
  * NOTE: we do not need to define an actual Record factory (only the types),
  * because `combineReducers` from `redux-immutable` creates the Record.
  */
-// $FlowFixMe
-export type CoreStateRecord = RecordOf<CoreStateProps>;
+export type CoreStateRecord = CollectionType<*, *> & RecordOf<CoreStateProps>;

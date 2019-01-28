@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { Map as ImmutableMapType, RecordOf } from 'immutable';
+import type {
+  Collection as CollectionType,
+  Map as ImmutableMapType,
+  RecordOf,
+} from 'immutable';
 
 import type { ENSName } from '~types';
 import type { AllColoniesRecord } from './AllColonies';
@@ -29,5 +33,5 @@ export type DashboardStateProps = {|
  * NOTE: we do not need to define an actual Record factory (only the types),
  * because `combineReducers` from `redux-immutable` creates the Record.
  */
-// $FlowFixMe
-export type DashboardStateRecord = RecordOf<DashboardStateProps>;
+export type DashboardStateRecord = CollectionType<*, *> &
+  RecordOf<DashboardStateProps>;
