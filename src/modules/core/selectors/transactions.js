@@ -25,7 +25,7 @@ type GroupedTransactionsSelector = (
 ) => OrderedMap<string, List<TransactionRecord<*, *>>>;
 
 /**
- * Helpers
+ * Helpers for transaction transformations
  */
 const transactionGroup = (tx: TransactionRecord<*, *>) => {
   if (!tx.group || typeof tx.group.id == 'string') return tx.group;
@@ -97,7 +97,7 @@ export const groupedTransactions: GroupedTransactionsSelector = createSelector(
       // Create groups of transations which have 'em
       .groupBy(tx => tx.group && tx.group.id)
       // Convert groups to lists and sort by no in group
-      .map(txGroup => txGroup.toList().sortBy(tx => tx.group && tx.group.no))
+      .map(txGroup => txGroup.toList().sortBy(tx => tx.group && tx.group.index))
       // Convert to ordered map
       .toOrderedMap()
       // Merge the ungrouped transactions into the ordered map. It's important that all iterators here have the same type (OrderedMap)

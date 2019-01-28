@@ -49,7 +49,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {
   group?: {
     key: string,
     id: string | string[],
-    no: number,
+    index: number,
   },
   hash?: string,
   id: TransactionId,

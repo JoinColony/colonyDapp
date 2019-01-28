@@ -18,7 +18,7 @@ describe('Transaction selectors', () => {
     group: {
       key: 'taskLifecycle',
       id: ['identifier', 'params.taskId'],
-      no: 1,
+      index: 1,
     },
   };
   const tx2 = {
@@ -28,7 +28,7 @@ describe('Transaction selectors', () => {
     group: {
       key: 'taskLifecycle',
       id: ['identifier', 'params.taskId'],
-      no: 1,
+      index: 1,
     },
   };
   const tx3 = {
@@ -38,7 +38,7 @@ describe('Transaction selectors', () => {
     group: {
       key: 'taskLifecycle',
       id: ['identifier', 'params.taskId'],
-      no: 0,
+      index: 0,
     },
   };
   const tx4 = {
@@ -54,7 +54,7 @@ describe('Transaction selectors', () => {
     expect(outTx.toJS().group).toEqual({
       key: 'taskLifecycle',
       id: 'taskLifecycle-coolony-5',
-      no: 1,
+      index: 1,
     });
   });
 
@@ -70,12 +70,12 @@ describe('Transaction selectors', () => {
     expect(outTx.toJS().tx1.group).toEqual({
       key: 'taskLifecycle',
       id: 'taskLifecycle-coolony-5',
-      no: 1,
+      index: 1,
     });
     expect(outTx.toJS().tx2.group).toEqual({
       key: 'taskLifecycle',
       id: 'taskLifecycle-othercolony-1',
-      no: 1,
+      index: 1,
     });
   });
 
@@ -98,12 +98,12 @@ describe('Transaction selectors', () => {
     expect(result[1][0].group).toEqual({
       key: 'taskLifecycle',
       id: 'taskLifecycle-othercolony-1',
-      no: 0,
+      index: 0,
     });
     expect(result[1][1].group).toEqual({
       key: 'taskLifecycle',
       id: 'taskLifecycle-othercolony-1',
-      no: 1,
+      index: 1,
     });
   });
 });
