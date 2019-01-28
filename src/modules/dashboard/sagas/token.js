@@ -102,7 +102,17 @@ function* createTokenSaga({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
 }: UniqueAction): Saga<void> {
-  yield put(createToken({ params: { name, symbol }, meta }));
+  yield put(
+    createToken({
+      params: { name, symbol },
+      options: {
+        // TODO: this has to be removed once the new onboarding is
+        // properly wired to the gas station
+        gasLimit: 5000000,
+      },
+      meta,
+    }),
+  );
 }
 
 /**
