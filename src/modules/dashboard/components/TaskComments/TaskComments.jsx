@@ -5,6 +5,7 @@ import type { FormikProps } from 'formik';
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
+import promiseListener from '../../../../createPromiseListener';
 
 import type { OpenDialog } from '~core/Dialog/types';
 
@@ -15,6 +16,12 @@ import Button from '~core/Button';
 import { ENTER } from './keyTypes';
 
 import styles from './TaskComments.css';
+
+import {
+  TASK_COMMENT_ADD,
+  TASK_COMMENT_ADD_SUCCESS,
+  TASK_COMMENT_ADD_ERROR,
+} from '../../actionTypes';
 
 const MSG = defineMessages({
   placeholderWinNix: {
@@ -50,6 +57,7 @@ type Props = {
   claimedProfile: boolean,
   openDialog: OpenDialog,
   walletAddress: string,
+  taskId: number,
 } & FormikProps<FormValues>;
 
 const displayName = 'dashboard.TaskComments';
@@ -58,7 +66,18 @@ const validationSchema = yup.object().shape({
   comment: yup.string().required(),
 });
 
-const TaskComments = ({ claimedProfile, openDialog, walletAddress }: Props) => {
+const TaskComments = ({
+  claimedProfile,
+  openDialog,
+  walletAddress,
+  taskId,
+}: Props) => {
+  const addComment = promiseListener.createAsyncFunction({
+    start: TASK_COMMENT_ADD,
+    resolve: TASK_COMMENT_ADD_SUCCESS,
+    reject: TASK_COMMENT_ADD_ERROR,
+  });
+
   const handleKeyboardSubmit = (
     capturedEvent: SyntheticKeyboardEvent<*>,
     callback: (e: SyntheticEvent<any>) => any,
@@ -74,9 +93,21 @@ const TaskComments = ({ claimedProfile, openDialog, walletAddress }: Props) => {
     return false;
   };
 
-  const handleCommentSubmit = ({ comment }: FormValues) =>
-    /* eslint-disable-next-line no-console */
-    console.log(`[${displayName}]`, comment);
+  const handleCommentSubmit = ({ comment }: FormValues, actions) => {
+    addComment
+      .asyncFunction({
+        commentData: {
+          body: comment,
+          timestamp: new Date(),
+          author: walletAddress,
+        },
+        taskId,
+      })
+      .then(() => {
+        actions.setSubmitting(false);
+        actions.resetForm({});
+      });
+  };
 
   const handleUnclaimedProfile = () => {
     if (!claimedProfile) {
@@ -91,7 +122,6 @@ const TaskComments = ({ claimedProfile, openDialog, walletAddress }: Props) => {
               console.log(err);
             }),
         );
-      // TODO: Open Gasstation after the last modal
     }
     return false;
   };
@@ -123,6 +153,7 @@ const TaskComments = ({ claimedProfile, openDialog, walletAddress }: Props) => {
           isValid,
           status,
           handleSubmit,
+          values,
         }: FormikProps<FormValues>) => (
           <Fragment>
             <TextareaAutoresize
@@ -138,6 +169,7 @@ const TaskComments = ({ claimedProfile, openDialog, walletAddress }: Props) => {
               minRows={3}
               maxRows={8}
               onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
+              value={values.comment || ''}
               disabled={!claimedProfile || isSubmitting}
             />
             <FormStatus status={status} />

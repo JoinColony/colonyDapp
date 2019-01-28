@@ -375,6 +375,7 @@ class Task extends Component<Props> {
             </section>
             <section className={styles.commentBox}>
               <TaskComments
+                taskId={task.id}
                 claimedProfile={currentUser.didClaimProfile}
                 walletAddress={currentUser.profile.walletAddress}
               />
