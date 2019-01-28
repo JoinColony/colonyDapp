@@ -1,4 +1,4 @@
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { Transaction } from '~immutable';
 
@@ -47,9 +47,9 @@ describe('Transaction selectors', () => {
     identifier: 'othercolony',
   };
   test('oneTransaction selector', () => {
-    const state = {
+    const state = fromJS({
       [ns]: { transactions: { list: ImmutableMap({ tx1: Transaction(tx1) }) } },
-    };
+    });
     const outTx = oneTransaction(state, 'tx1');
     expect(outTx.toJS().group).toEqual({
       key: 'taskLifecycle',
@@ -59,13 +59,13 @@ describe('Transaction selectors', () => {
   });
 
   test('allTransactions selector', () => {
-    const state = {
+    const state = fromJS({
       [ns]: {
         transactions: {
           list: ImmutableMap({ tx1: Transaction(tx1), tx2: Transaction(tx2) }),
         },
       },
-    };
+    });
     const outTx = allTransactions(state);
     expect(outTx.toJS().tx1.group).toEqual({
       key: 'taskLifecycle',
@@ -80,7 +80,7 @@ describe('Transaction selectors', () => {
   });
 
   test('groupedTransactions selector', () => {
-    const state = {
+    const state = fromJS({
       [ns]: {
         transactions: {
           list: ImmutableMap({
@@ -91,7 +91,7 @@ describe('Transaction selectors', () => {
           }),
         },
       },
-    };
+    });
     const grouped = groupedTransactions(state);
     const result = grouped.toList().toJS();
     expect(result[0][0].createdAt).toEqual(0);
