@@ -21,6 +21,7 @@ import {
   domainsIndexStoreBlueprint,
   draftsIndexStoreBlueprint,
   commentsBlueprint,
+  feedsBlueprint,
 } from '../stores';
 import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
@@ -268,4 +269,15 @@ export function* getOrCreateCommentsStore(taskId: string): Saga<FeedStore> {
   }
 
   return commentsStoreAddress;
+}
+
+/*
+ * Create the comments store for a given task.
+ */
+export function* createFeedsStore(taskId: string): Saga<FeedStore> {
+  const ddb: DDB = yield getContext('ddb');
+
+  return yield call([ddb, ddb.createStore], feedsBlueprint, {
+    taskId,
+  });
 }

@@ -13,3 +13,4 @@ export {
   default as userActivityStoreBlueprint,
 } from './userActivityStoreBlueprint';
 export { default as commentsBlueprint } from './commentsBlueprint';
+export { default as feedsBlueprint } from './feedsBlueprint';
