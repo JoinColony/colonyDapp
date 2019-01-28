@@ -37,6 +37,10 @@ import {
 
 type TxFactoryOptions = {
   context: ColonyContext,
+  group?: {
+    key: string,
+    no: number,
+  },
   lifecycle?: LifecycleActionTypes,
   methodName: string,
   multisig?: boolean,
@@ -49,31 +53,41 @@ export {
 
 export const createTxActionCreator = <P: TransactionParams>({
   context,
+  group,
   lifecycle = {},
   methodName,
   multisig: isMultisig = false,
 }: TxFactoryOptions): TxActionCreator<P> => ({
+  groupId,
   identifier,
   meta,
   multisig: multisigJSON,
   options,
   params,
   status,
-}: TxActionCreatorOptions<P>): CreateTransactionAction<P> => ({
-  type: isMultisig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
-  payload: {
-    context,
-    createdAt: new Date(),
-    identifier,
-    lifecycle,
-    methodName,
-    multisig: isMultisig ? multisigJSON || {} : undefined,
-    options,
-    params,
-    status,
-  },
-  meta: { id: meta.id || nanoid() },
-});
+}: TxActionCreatorOptions<P>): CreateTransactionAction<P> => {
+  if (groupId && !group) {
+    throw new Error(
+      `No group found for batch transaction ${context}.${methodName}`,
+    );
+  }
+  return {
+    type: isMultisig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
+    payload: {
+      context,
+      createdAt: new Date(),
+      group: group ? { ...group, id: groupId } : undefined,
+      identifier,
+      lifecycle,
+      methodName,
+      multisig: isMultisig ? multisigJSON || {} : undefined,
+      options,
+      params,
+      status,
+    },
+    meta: { id: meta.id || nanoid() },
+  };
+};
 
 export const multisigTransactionRefreshError = (
   id: string,
