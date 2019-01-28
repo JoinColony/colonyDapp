@@ -28,6 +28,7 @@ import {
   domainsIndexSelector,
   singleColonySelector,
   draftsIndexSelector,
+  commentsStoreAddressSelector,
 } from '../selectors';
 
 /*
@@ -221,7 +222,10 @@ export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
   /*
    * Get the comments store address from Redux
    */
-  const commentsStoreAddress = yield select(draftsIndexSelector, taskId);
+  const commentsStoreAddress = yield select(
+    commentsStoreAddressSelector,
+    taskId,
+  );
 
   /*
    * If the comments store doesn't exist, return null
