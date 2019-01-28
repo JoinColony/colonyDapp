@@ -5,3 +5,4 @@ export * from './admins';
 export * from './domains';
 export * from './drafts';
 export * from './comments';
+export * from './feeds';
