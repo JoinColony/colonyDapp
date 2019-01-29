@@ -8,9 +8,9 @@ import { createStore } from 'redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Record } from 'immutable';
 
-import { User, UserProfile } from '~immutable';
+import { CoreTransactions, User, UserProfile, Wallet } from '~immutable';
 
 import '../styles/main.css';
 
@@ -22,11 +22,30 @@ type Props = {
   children: Node,
 };
 
-const initialState = {
+const MockState = Record({
+  admin: undefined,
+  core: undefined,
+  dashboard: undefined,
+  users: undefined,
+});
+
+const initialState = MockState({
+  admin: {
+    transactions: new ImmutableMap(),
+    unclaimedTransactions: new ImmutableMap(),
+  },
+  core: {
+    transactions: CoreTransactions(),
+  },
   dashboard: {
+    allComments: new ImmutableMap(),
+    allDomains: new ImmutableMap(),
+    allDrafts: new ImmutableMap(),
+    allTasks: new ImmutableMap(),
     allColonies: {
       avatars: new ImmutableMap(),
       colonies: new ImmutableMap(),
+      ensNames: new ImmutableMap(),
     },
   },
   users: {
@@ -35,13 +54,13 @@ const initialState = {
         username: 'piglet',
       }),
     }),
-    wallet: {
+    wallet: Wallet({
       availableAddresses: [],
       isLoading: false,
-    },
-    allUsers: {},
+    }),
+    allUsers: new ImmutableMap(),
   },
-};
+});
 
 const configureStore = () => {
   const reducer = (state = initialState) => state;
