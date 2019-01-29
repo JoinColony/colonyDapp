@@ -18,8 +18,6 @@ import {
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
-import { createCommentStoreCreatedEvent } from './events';
-
 export const getColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
@@ -85,11 +83,9 @@ export const createTaskStore = (
   ddb: DDB,
   wallet: WalletObjectType,
 ) => async ({
-  taskId,
   colonyAddress,
   colonyENSName,
 }: {
-  taskId: string,
   colonyAddress: Address,
   colonyENSName: ENSName,
 }): Promise<*> => {
@@ -102,22 +98,7 @@ export const createTaskStore = (
     },
   });
 
-  const commentsStore = await ddb.createStore(commentsStoreBlueprint, {
-    taskId,
-  });
-
-  if (!(taskStore && taskStore.init && typeof taskStore.init === 'function'))
-    throw new Error('Invalid store type');
-
-  // @TODO: Make sure we can use types properly with DDB
-  // $FlowFixMe: This is going to be an EventStore
-  await taskStore.init(
-    createCommentStoreCreatedEvent({
-      commentsStoreAddress: commentsStore.address.toString(),
-      taskId,
-    }),
-  );
-  await Promise.all([taskStore.load(), commentsStore.load()]);
+  const commentsStore = await ddb.createStore(commentsStoreBlueprint);
 
   return { taskStore, commentsStore };
 };

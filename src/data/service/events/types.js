@@ -17,7 +17,7 @@ export type EventCreator<I: Object, O: Object> = (args: I) => Event<O>;
 
 export type CommentStoreCreatedEventArgs = {
   commentsStoreAddress: string,
-  taskId: string,
+  draftId: string,
 };
 
 export type CommentStoreCreatedEventPayload = EventPayload &
@@ -25,14 +25,14 @@ export type CommentStoreCreatedEventPayload = EventPayload &
 
 export type DueDateSetEventArgs = {
   dueDate: number,
-  taskId: string,
+  draftId: string,
 };
 
 export type DueDateSetEventPayload = EventPayload & DueDateSetEventArgs;
 
 export type SkillSetEventArgs = {
   skillId: string,
-  taskId: string,
+  draftId: string,
 };
 
 export type SkillSetEventPayload = EventPayload & SkillSetEventArgs;
@@ -49,7 +49,6 @@ export type DraftCreatedEventArgs = {
 export type DraftCreatedEventPayload = EventPayload & DraftCreatedEventArgs;
 
 export type DraftUpdatedEventArgs = {
-  domainId: number,
   meta: string,
   specificationHash: string,
   title: string,
@@ -66,7 +65,7 @@ export type DomainCreatedEventPayload = EventPayload & DomainCreatedEventArgs;
 
 export type TaskStoreCreatedEventArgs = {
   taskStoreAddress: string,
-  taskId: string,
+  draftId: string,
   domainId: string,
 };
 
@@ -74,7 +73,7 @@ export type TaskStoreCreatedEventPayload = EventPayload &
   TaskStoreCreatedEventArgs;
 
 export type ColonyAvatarUploadedEventArgs = {
-  colonyId: string,
+  ipfsHash: string,
   avatar: string,
 };
 
@@ -82,7 +81,7 @@ export type ColonyAvatarUploadedEventPayload = EventPayload &
   ColonyAvatarUploadedEventArgs;
 
 export type ColonyAvatarRemovedEventArgs = {
-  colonyId: string,
+  ipfsHash: string,
 };
 
 export type ColonyAvatarRemovedEventPayload = EventPayload &

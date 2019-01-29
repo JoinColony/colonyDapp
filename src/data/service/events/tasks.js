@@ -15,7 +15,7 @@ import type {
 } from './types';
 
 import { decoratePayload } from './utils';
-import { TASK_EVENT_TYPES } from '../constants';
+import { TASK_EVENT_TYPES } from '../../constants';
 
 const {
   COMMENT_STORE_CREATED,
@@ -29,20 +29,20 @@ const {
 export const createCommentStoreCreatedEvent: EventCreator<
   CommentStoreCreatedEventArgs,
   CommentStoreCreatedEventPayload,
-> = ({ commentsStoreAddress, taskId }) => ({
+> = ({ commentsStoreAddress, draftId }) => ({
   type: COMMENT_STORE_CREATED,
   payload: decoratePayload<CommentStoreCreatedEventPayload>({
     commentsStoreAddress,
-    taskId,
+    draftId,
   }),
 });
 
 export const createDueDateSetEvent: EventCreator<
   DueDateSetEventArgs,
   DueDateSetEventPayload,
-> = ({ dueDate, taskId }) => ({
+> = ({ dueDate, draftId }) => ({
   type: DUE_DATE_SET,
-  payload: decoratePayload<DueDateSetEventPayload>({ dueDate, taskId }),
+  payload: decoratePayload<DueDateSetEventPayload>({ dueDate, draftId }),
 });
 
 export const createDraftCreatedEvent: EventCreator<
@@ -63,10 +63,9 @@ export const createDraftCreatedEvent: EventCreator<
 export const createDraftUpdatedEvent: EventCreator<
   DraftUpdatedEventArgs,
   DraftUpdatedEventPayload,
-> = ({ domainId, meta, specificationHash, title }) => ({
+> = ({ meta, specificationHash, title }) => ({
   type: DRAFT_UPDATED,
   payload: decoratePayload<DraftUpdatedEventPayload>({
-    domainId,
     meta,
     specificationHash,
     title,
@@ -76,7 +75,7 @@ export const createDraftUpdatedEvent: EventCreator<
 export const createSkillSetSetEvent: EventCreator<
   SkillSetEventArgs,
   SkillSetEventPayload,
-> = ({ skillId, taskId }) => ({
+> = ({ skillId, draftId }) => ({
   type: SKILL_SET,
-  payload: decoratePayload<SkillSetEventPayload>({ skillId, taskId }),
+  payload: decoratePayload<SkillSetEventPayload>({ skillId, draftId }),
 });

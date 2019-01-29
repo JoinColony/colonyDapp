@@ -19,7 +19,7 @@ import type {
 } from './types';
 
 import { decoratePayload } from './utils';
-import { COLONY_EVENT_TYPES } from '../constants';
+import { COLONY_EVENT_TYPES } from '../../constants';
 
 const {
   AVATAR_REMOVED,
@@ -44,30 +44,31 @@ export const createDomainCreatedEvent: EventCreator<
 export const createTaskStoreCreatedEvent: EventCreator<
   TaskStoreCreatedEventArgs,
   TaskStoreCreatedEventPayload,
-> = ({ taskStoreAddress, taskId }) => ({
+> = ({ domainId, taskStoreAddress, draftId }) => ({
   type: TASK_STORE_CREATED,
   payload: decoratePayload<TaskStoreCreatedEventPayload>({
+    domainId,
     taskStoreAddress,
-    taskId,
+    draftId,
   }),
 });
 
 export const createColonyAvatarRemovedEvent: EventCreator<
   ColonyAvatarRemovedEventArgs,
   ColonyAvatarRemovedEventPayload,
-> = ({ colonyId }) => ({
+> = ({ ipfsHash }) => ({
   type: AVATAR_REMOVED,
-  payload: decoratePayload<ColonyAvatarRemovedEventPayload>({ colonyId }),
+  payload: decoratePayload<ColonyAvatarRemovedEventPayload>({ ipfsHash }),
 });
 
 export const createColonyAvatarUploadedEvent: EventCreator<
   ColonyAvatarUploadedEventArgs,
   ColonyAvatarUploadedEventPayload,
-> = ({ colonyId, avatar }) => ({
+> = ({ ipfsHash, avatar }) => ({
   type: AVATAR_UPLOADED,
   payload: decoratePayload<ColonyAvatarUploadedEventPayload>({
-    colonyId,
     avatar,
+    ipfsHash,
   }),
 });
 
