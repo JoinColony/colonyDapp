@@ -31,8 +31,8 @@ const transactionGroup = (tx: TransactionRecord<*, *>) => {
 /*
  * Individual transaction selectors
  */
-const isOutgoing = ({ hash }) => !!hash;
-const isPending = ({ hash }) => !hash;
+const isOutgoing = ({ hash }: { hash?: string }) => !!hash;
+const isPending = ({ hash }: { hash?: string }) => !hash;
 // TODO for `isConfirmed`, ideally we should count the confirmations and
 // ensure that a minimum threshold is met.
 const isConfirmed = tx =>

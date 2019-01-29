@@ -51,6 +51,7 @@ const userProfilesReducer = (
   }
 };
 
-export default withDataReducer<string, UserRecord>(
+export default withDataReducer<UsersMap, UserRecord>(
   new Set([USER_PROFILE_FETCH, USER_ACTIVITIES_FETCH]),
+  new ImmutableMap(),
 )(userProfilesReducer);

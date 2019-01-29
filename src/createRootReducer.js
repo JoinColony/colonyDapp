@@ -5,8 +5,6 @@ import { connectRouter } from 'connected-react-router';
 
 import { RootState } from '~immutable';
 
-import type { RootStateRecord } from '~immutable';
-
 import adminReducer from './modules/admin/reducers';
 import coreReducer from './modules/core/reducers';
 import dashboardReducer from './modules/dashboard/reducers';
@@ -16,7 +14,7 @@ import { CORE_NAMESPACE } from './modules/core/constants';
 import { DASHBOARD_NAMESPACE } from './modules/dashboard/constants';
 import { USERS_NAMESPACE } from './modules/users/constants';
 
-const createRootReducer = (history: *): RootStateRecord =>
+const createRootReducer = (history: *) =>
   combineReducers(
     {
       [ADMIN_NAMESPACE]: adminReducer,

@@ -13,8 +13,8 @@ import {
 import { Draft, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { ENSName, UniqueActionWithKeyPath } from '~types';
-import type { AllDraftsMap, DraftsMap } from '~immutable';
+import type { UniqueActionWithKeyPath } from '~types';
+import type { AllDraftsMap, DraftRecord } from '~immutable';
 
 const allDraftsReducer = (
   state: AllDraftsMap = new ImmutableMap(),
@@ -31,7 +31,9 @@ const allDraftsReducer = (
         },
         payload,
       } = action;
-      const data = Data({ record: Draft({ domainId, ...payload }) });
+      const data = Data<DraftRecord>({
+        record: Draft({ domainId, ...payload }),
+      });
 
       return state.get(ensName)
         ? state.mergeDeepIn(keyPath, data)
@@ -47,6 +49,7 @@ const allDraftsReducer = (
   }
 };
 
-export default withDataReducer<ENSName, DraftsMap>(DRAFT_FETCH)(
-  allDraftsReducer,
-);
+export default withDataReducer<AllDraftsMap, DraftRecord>(
+  DRAFT_FETCH,
+  new ImmutableMap(),
+)(allDraftsReducer);

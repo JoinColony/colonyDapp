@@ -48,7 +48,9 @@ describe('reducers - withDataReducer', () => {
       }
     });
 
-    const myWrappedReducer = withDataReducer(MY_FETCH)(myReducer);
+    const myWrappedReducer = withDataReducer(MY_FETCH, new ImmutableMap())(
+      myReducer,
+    );
 
     const initialState = new ImmutableMap();
 

@@ -12,7 +12,7 @@ import {
 import { ContractTransaction, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { ENSName, UniqueActionWithKeyPath } from '~types';
+import type { UniqueActionWithKeyPath } from '~types';
 import type {
   AdminUnclaimedTransactionsState,
   ContractTransactionRecord,
@@ -32,7 +32,7 @@ const colonyUnclaimedTransactionsReducer = (
       } = action;
       return state.mergeIn(
         [colonyENSName],
-        Data({
+        Data<ListType<ContractTransactionRecord>>({
           record: List(transactions.map(tx => ContractTransaction(tx))),
         }),
       );
@@ -42,6 +42,9 @@ const colonyUnclaimedTransactionsReducer = (
   }
 };
 
-export default withDataReducer<ENSName, ListType<ContractTransactionRecord>>(
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-)(colonyUnclaimedTransactionsReducer);
+export default withDataReducer<
+  AdminUnclaimedTransactionsState,
+  ContractTransactionRecord,
+>(COLONY_FETCH_UNCLAIMED_TRANSACTIONS, new ImmutableMap())(
+  colonyUnclaimedTransactionsReducer,
+);

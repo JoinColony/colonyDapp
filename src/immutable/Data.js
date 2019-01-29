@@ -20,7 +20,7 @@ const defaultValues: $Shape<DataProps<*>> = {
 
 const DataRecordFactory: RecordFactory<DataProps<*>> = Record(defaultValues);
 
-const Data = <R: any>(props?: $Shape<DataProps<*>>): DataRecord<R> =>
+const Data = <R: any>(props?: $Shape<DataProps<R>>): DataRecord<R> =>
   DataRecordFactory(props);
 
 export default Data;

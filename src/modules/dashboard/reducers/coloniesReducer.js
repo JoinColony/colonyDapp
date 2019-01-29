@@ -16,7 +16,7 @@ import { Colony, Data, Token } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { AllColoniesMap, ColonyRecord } from '~immutable';
-import type { UniqueActionWithKeyPath, ENSName } from '~types';
+import type { UniqueActionWithKeyPath } from '~types';
 
 const coloniesReducer = (
   state: AllColoniesMap = new ImmutableMap(),
@@ -35,7 +35,7 @@ const coloniesReducer = (
       });
       return state.get(ensName)
         ? state.setIn([ensName, 'record'], record)
-        : state.set(ensName, Data({ record }));
+        : state.set(ensName, Data<ColonyRecord>({ record }));
     }
     case COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
@@ -85,6 +85,7 @@ const coloniesReducer = (
   }
 };
 
-export default withDataReducer<ENSName, ColonyRecord>(COLONY_FETCH)(
-  coloniesReducer,
-);
+export default withDataReducer<AllColoniesMap, ColonyRecord>(
+  COLONY_FETCH,
+  new ImmutableMap(),
+)(coloniesReducer);

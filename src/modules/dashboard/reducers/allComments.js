@@ -3,11 +3,14 @@
 import { Map as ImmutableMap, List } from 'immutable';
 
 import type { UniqueActionWithKeyPath } from '~types';
+import type { AllCommentsMap } from '~immutable';
+
+import { TaskComment } from '~immutable';
 
 import { TASK_COMMENT_ADD_SUCCESS } from '../actionTypes';
 
 /*
- * @NOTE Reducers are explamples only
+ * @NOTE Reducers are examples only
  *
  * Don't follow these, write your own!
  * This are just to test the store/redux functionality prior to the wiring PR
@@ -17,7 +20,7 @@ const allCommentsReducer = (
   /*
    * @TODO Add proper store for the `allComments` Map
    */
-  state: Object = new ImmutableMap(),
+  state: AllCommentsMap = new ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -26,10 +29,11 @@ const allCommentsReducer = (
         payload: { taskId, commentData, storeAddress },
         meta: { id },
       } = action;
-      const currentComments = state.get(taskId) || List([]);
-      return state
-        .setIn(['storeAddress'], storeAddress)
-        .set(taskId, List(currentComments.push({ ...commentData, id })));
+      const comment = TaskComment({ ...commentData, id });
+      return (state.has(taskId)
+        ? state.updateIn([taskId], list => list.push(comment))
+        : state.set(taskId, List.of(comment))
+      ).merge({ storeAddress });
     }
     default:
       return state;

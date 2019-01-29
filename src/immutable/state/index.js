@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { RecordFactory, RecordOf } from 'immutable';
+import type {
+  RecordFactory,
+  RecordOf,
+  Collection as CollectionType,
+} from 'immutable';
 import type { RouterState } from 'connected-react-router';
 
 import { Record } from 'immutable';
@@ -38,6 +42,10 @@ const defaultValues: $Shape<RootStateProps> = {
 
 export const RootState: RecordFactory<RootStateProps> = Record(defaultValues);
 
-export type RootStateRecord = RecordOf<RootStateProps>;
+export type RootStateRecord = CollectionType<
+  $Keys<RootStateProps>,
+  $Values<RootStateProps>,
+> &
+  RecordOf<RootStateProps>;
 
 export default RootState;

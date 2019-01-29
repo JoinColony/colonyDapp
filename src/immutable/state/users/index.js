@@ -1,5 +1,4 @@
 /* @flow */
-/* eslint-disable flowtype/generic-spacing */
 
 import type {
   Collection as CollectionType,

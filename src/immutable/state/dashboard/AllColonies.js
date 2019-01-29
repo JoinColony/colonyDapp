@@ -1,5 +1,4 @@
 /* @flow */
-/* eslint-disable flowtype/generic-spacing */
 
 import type { Map as ImmutableMapType, RecordOf } from 'immutable';
 

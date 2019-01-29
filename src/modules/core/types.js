@@ -1,5 +1,4 @@
 /* @flow */
-/* eslint-disable flowtype/generic-spacing */
 
 import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js';

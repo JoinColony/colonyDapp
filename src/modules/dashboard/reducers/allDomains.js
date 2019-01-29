@@ -11,8 +11,8 @@ import {
 import { Domain, Data } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { UniqueActionWithKeyPath, ENSName } from '~types';
-import type { AllDomainsMap, DomainsMap } from '~immutable';
+import type { UniqueActionWithKeyPath } from '~types';
+import type { AllDomainsMap, DomainRecord } from '~immutable';
 
 const allDomainsReducer = (
   state: AllDomainsMap = new ImmutableMap(),
@@ -28,17 +28,20 @@ const allDomainsReducer = (
         },
         payload,
       } = action;
-      const data = Data({ record: Domain({ domainId, ...payload }) });
+      const data = Data<DomainRecord>({
+        record: Domain({ domainId, ...payload }),
+      });
 
       return state.get(ensName)
         ? state.mergeDeepIn(keyPath, data)
-        : state.set(ensName, ImmutableMap([[domainId, data]]));
+        : state.setIn(ensName, ImmutableMap([[domainId, data]]));
     }
     default:
       return state;
   }
 };
 
-export default withDataReducer<ENSName, DomainsMap>(DOMAIN_FETCH)(
-  allDomainsReducer,
-);
+export default withDataReducer<AllDomainsMap, DomainRecord>(
+  DOMAIN_FETCH,
+  new ImmutableMap(),
+)(allDomainsReducer);
