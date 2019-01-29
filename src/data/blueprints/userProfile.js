@@ -1,21 +1,13 @@
 /* @flow */
 
-import * as yup from 'yup';
-
 import type { StoreBlueprint } from '~types';
 
-import { ValidatedKVStore } from '../../../lib/database/stores';
-import { EthereumWalletAccessController } from '../../../lib/database/accessControllers';
-
-type StoreProps = {
-  walletAddress: string,
-};
+import * as yup from 'yup';
+import { ValidatedKVStore } from '../../lib/database/stores';
+import { getEthereumWalletStoreAccessController } from '../accessControllers';
 
 const userProfileStore: StoreBlueprint = {
-  // TODO: I don't want to assign a default value here. Ideas on how to fix flow, anyone?
-  getAccessController({ walletAddress }: StoreProps = {}) {
-    return new EthereumWalletAccessController(walletAddress);
-  },
+  getAccessController: getEthereumWalletStoreAccessController,
   name: 'userProfile',
   schema: yup.object({
     displayName: yup.string(),
@@ -28,9 +20,9 @@ const userProfileStore: StoreBlueprint = {
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
-    profileStore: yup.string(),
-    activitiesStore: yup.string(),
-    inboxStore: yup.string(),
+    metadataStoreAddress: yup.string(),
+    activitiesStoreAddress: yup.string(),
+    inboxStoreAddress: yup.string(),
   }),
   type: ValidatedKVStore,
 };

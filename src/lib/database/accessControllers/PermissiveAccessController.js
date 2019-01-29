@@ -1,17 +1,15 @@
 /* @flow */
-/* eslint-disable class-methods-use-this */
+/* eslint-disable class-methods-use-this, no-empty-function */
 
 export default class PermissiveAccessController {
-  async setup() {
-    return null;
-  }
+  async setup() {}
 
   async grant() {
-    return null;
+    return true;
   }
 
   async revoke() {
-    return null;
+    return true;
   }
 
   async save() {

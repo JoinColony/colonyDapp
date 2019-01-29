@@ -1,12 +1,13 @@
 /* @flow */
 
-import * as yup from 'yup';
-
 import type { StoreBlueprint } from '~types/index';
 
-import { FeedStore } from '../../../lib/database/stores';
+import * as yup from 'yup';
+import { FeedStore } from '../../lib/database/stores';
+import { getPermissiveStoreAccessController } from '../accessControllers';
 
 const userInboxStore: StoreBlueprint = {
+  getAccessController: getPermissiveStoreAccessController,
   name: 'userInbox',
   schema: yup.object({
     userAction: yup

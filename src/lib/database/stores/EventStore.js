@@ -13,7 +13,17 @@ class EventStore extends Store {
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBEventStore = this._orbitStore;
 
-  async add(value: {}) {
+  // @TODO We need to check how flow can help here
+  /*
+   @NOTE: for initialization purposes. The convention we're creating is that
+   from within "infrastructure" layer we can only initialize. "service" layer
+   can really append and fetch data
+   */
+  async init(value: {}) {
+    return this.append(value);
+  }
+
+  async append(value: {}) {
     return this._orbitStore.add(value);
   }
 

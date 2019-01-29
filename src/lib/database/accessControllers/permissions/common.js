@@ -1,61 +1,56 @@
 /* @flow */
 
-import ColonyNetworkClient from '@colony/colony-js-client';
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+
+import {
+  ADMIN_ROLE,
+  AUTHORITY_ROLES,
+  EVALUATOR_ROLE,
+  FOUNDER_ROLE,
+  MANAGER_ROLE,
+  ROLES,
+  WORKER_ROLE,
+} from '@colony/colony-js-client';
+
 import type { PermissionsManifest } from './types';
 
-const ROLES = Object.freeze({
-  COLONY: Object.freeze({
-    FOUNDER: 0,
-    ADMIN: 1,
-  }),
-  TASK: Object.freeze({
-    MANAGER: 0,
-    EVALUATOR: 1,
-    WORKER: 2,
-  }),
-});
-
-type COLONY_ROLES = $Values<$PropertyType<typeof ROLES, 'COLONY'>>;
-type TASK_ROLES = $Values<$PropertyType<typeof ROLES, 'TASK'>>;
+type AuthorityRole = $Keys<typeof AUTHORITY_ROLES>;
+type Role = $Keys<typeof ROLES>;
 
 const isAny = (...promises): Promise<boolean> =>
   Promise.all(promises).then(values => values.some(value => !!value));
 
 const makeUserHasRoleFn = (
-  colonyClient: ColonyNetworkClient.ColonyClient,
-  colonyRole: COLONY_ROLES,
-) => (user: string): Promise<boolean> =>
-  colonyClient.hasUserRole.call({ user, role: colonyRole });
+  colonyClient: ColonyClientType,
+  role: AuthorityRole,
+) => async (user: string): Promise<boolean> => {
+  const { hasRole } = await colonyClient.hasUserRole.call({ user, role });
+  return hasRole;
+};
 
 const makeUserTaskAssignedRoleFn = (
-  colonyClient: ColonyNetworkClient.ColonyClient,
-  taskRole: TASK_ROLES,
-) => (user: string, { taskId }: { taskId: string }): Promise<boolean> =>
-  colonyClient.getTaskRole
-    .call({
-      taskId,
-      role: taskRole,
-    })
-    .then(({ address }) => address === user);
+  colonyClient: ColonyClientType,
+  role: Role,
+) => async (user: string, { taskId }: { taskId: number }) => {
+  const { address } = await colonyClient.getTaskRole.call({
+    taskId,
+    role,
+  });
+  return address === user;
+};
 
 export default function loadModule(
-  colonyClient: ColonyNetworkClient.ColonyClient,
+  colonyClient: ColonyClientType,
 ): PermissionsManifest {
-  const isColonyAdmin = makeUserHasRoleFn(colonyClient, ROLES.COLONY.ADMIN);
-  const isColonyFounder = makeUserHasRoleFn(colonyClient, ROLES.COLONY.FOUNDER);
+  const isColonyAdmin = makeUserHasRoleFn(colonyClient, ADMIN_ROLE);
+  const isColonyFounder = makeUserHasRoleFn(colonyClient, FOUNDER_ROLE);
 
-  const isTaskManager = makeUserTaskAssignedRoleFn(
-    colonyClient,
-    ROLES.TASK.MANAGER,
-  );
+  const isTaskManager = makeUserTaskAssignedRoleFn(colonyClient, MANAGER_ROLE);
   const isTaskEvaluator = makeUserTaskAssignedRoleFn(
     colonyClient,
-    ROLES.TASK.EVALUATOR,
+    EVALUATOR_ROLE,
   );
-  const isTaskWorker = makeUserTaskAssignedRoleFn(
-    colonyClient,
-    ROLES.TASK.WORKER,
-  );
+  const isTaskWorker = makeUserTaskAssignedRoleFn(colonyClient, WORKER_ROLE);
 
   return {
     'is-colony-admin': isColonyAdmin,
