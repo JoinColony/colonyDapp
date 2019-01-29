@@ -52,6 +52,18 @@ function* addColonyAdmin({
       }),
     );
     /*
+     * Dispatch the action to the admin in th redux store
+     *
+     * @NOTE Add the new admin in a peding state
+     */
+    yield put({
+      type: COLONY_ADMIN_ADD_SUCCESS,
+      payload: {
+        ensName,
+        adminData: newAdmin.profile,
+      },
+    });
+    /*
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
      *
@@ -66,16 +78,6 @@ function* addColonyAdmin({
       TRANSACTION_EVENT_DATA_RECEIVED,
       function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
         if (signedTxId === meta.id) {
-          /*
-           * Dispatch the action to the admin in th redux store
-           */
-          yield put({
-            type: COLONY_ADMIN_ADD_SUCCESS,
-            payload: {
-              ensName,
-              adminData: newAdmin.profile,
-            },
-          });
           /*
            * Set the new value on the colony's store
            */
