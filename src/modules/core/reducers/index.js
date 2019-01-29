@@ -1,11 +1,12 @@
 /* @flow */
 
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 
-import transactionsReducer from './transactions';
+import coreTransactionsReducer from './transactions';
+import { CORE_TRANSACTIONS } from '../constants';
 
 const coreReducer = combineReducers({
-  transactions: transactionsReducer,
+  [CORE_TRANSACTIONS]: coreTransactionsReducer,
 });
 
 export default coreReducer;

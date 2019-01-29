@@ -1,5 +1,7 @@
 /* @flow */
 
+import { fromJS } from 'immutable';
+
 import {
   CURRENT_USER_CREATE,
   USER_ACTIVITIES_FETCH_SUCCESS,
@@ -29,17 +31,17 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     }
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
-      return state ? state.set('activities', activities) : state;
+      return state ? state.set('activities', fromJS(activities)) : state;
     }
     case USER_ACTIVITIES_FETCH_SUCCESS: {
       const { activities, walletAddress } = action.payload;
       return state &&
         state.getIn(['profile', 'walletAddress']) === walletAddress
-        ? state.set('activities', activities)
+        ? state.set('activities', fromJS(activities))
         : state;
     }
     case USER_PROFILE_UPDATE_SUCCESS:
-      return state ? state.merge(action.payload) : state;
+      return state ? state.merge(fromJS(action.payload)) : state;
     case USERNAME_CREATE_SUCCESS: {
       const {
         params: { username },

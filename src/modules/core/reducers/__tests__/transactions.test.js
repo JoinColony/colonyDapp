@@ -1,8 +1,8 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import reducer, { TransactionsState } from '../transactions';
+import { CoreTransactions, Transaction } from '~immutable';
 
-import { Transaction } from '~immutable';
+import reducer from '../transactions';
 
 import {
   transactionSent,
@@ -26,7 +26,7 @@ describe(`core: reducers (transactions)`, () => {
     const newState = reducer(undefined, {
       type: 'NOT_SUPPORTED_BY_THIS_REDUCER',
     });
-    expect(newState.list).toEqual(new ImmutableMap());
+    expect(newState.list).toEqual(ImmutableMap());
   });
 
   const eventData = { myEventParam: 123 };
@@ -39,8 +39,8 @@ describe(`core: reducers (transactions)`, () => {
   const context = 'network';
   const methodName = 'createColony';
 
-  const initialState = TransactionsState({
-    list: new ImmutableMap({
+  const initialState = CoreTransactions({
+    list: ImmutableMap({
       [existingTxId]: Transaction({
         createdAt: new Date(2018, 0, 1),
       }),

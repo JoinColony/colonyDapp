@@ -5,10 +5,10 @@ import { Map as ImmutableMap } from 'immutable';
 import { USER_AVATAR_FETCH_SUCCESS } from '../actionTypes';
 
 import type { Action } from '~types';
-import type { UsersProps } from '~immutable';
+import type { UserAvatarsMap } from '~immutable';
 
 const userAvatarsReducer = (
-  state: $PropertyType<UsersProps, 'avatars'> = new ImmutableMap(),
+  state: UserAvatarsMap = ImmutableMap(),
   action: Action,
 ) => {
   switch (action.type) {

@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 export const TASK_COMMENT_ADD = `${ns}/TASK_COMMENT_ADD`;
 export const TASK_COMMENT_ADD_SUCCESS = `${ns}/TASK_COMMENT_ADD_SUCCESS`;

@@ -1,30 +1,19 @@
 /* @flow */
 
-import { List, OrderedMap } from 'immutable';
-
+import { Map as ImmutableMap, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
 import getObjectFromPath from 'lodash/get';
 
-import ns from '../namespace';
+import {
+  CORE_NAMESPACE as ns,
+  CORE_TRANSACTIONS,
+  CORE_GAS_PRICES,
+  CORE_TRANSACTIONS_LIST,
+} from '../constants';
 
-import type { RootState } from '~types';
-import type { TransactionRecord } from '~immutable';
+import type { RootStateRecord, TransactionRecord } from '~immutable';
 
-import type { GasPrices, TransactionsState } from '../types';
-
-type TransactionMap = $PropertyType<TransactionsState, 'list'>;
-type TransactionSelector = (tx: TransactionRecord<*, *>) => boolean;
-type GasPricesSelector = (state: RootState) => GasPrices;
-type TransactionsSelector = (state: RootState) => TransactionMap;
-type OneTransactionSelector = (
-  state: RootState,
-  id: string,
-) => ?TransactionRecord<*, *>;
-type GroupedTransactionsSelector = (
-  state: RootState,
-) => OrderedMap<string, List<TransactionRecord<*, *>>>;
-
-/**
+/*
  * Helpers for transaction transformations
  */
 const transactionGroup = (tx: TransactionRecord<*, *>) => {
@@ -39,21 +28,21 @@ const transactionGroup = (tx: TransactionRecord<*, *>) => {
   };
 };
 
-/**
+/*
  * Individual transaction selectors
  */
-const isOutgoing: TransactionSelector = ({ hash }) => !!hash;
-const isPending: TransactionSelector = ({ hash }) => !hash;
+const isOutgoing = ({ hash }: { hash?: string }) => !!hash;
+const isPending = ({ hash }: { hash?: string }) => !hash;
 // TODO for `isConfirmed`, ideally we should count the confirmations and
 // ensure that a minimum threshold is met.
-const isConfirmed: TransactionSelector = tx =>
+const isConfirmed = tx =>
   !!(tx.receipt && Object.hasOwnProperty.call(tx, 'eventData'));
-const isMultisig: TransactionSelector = tx => !!tx.multisig;
-const isPendingMultisig: TransactionSelector = tx =>
+const isMultisig = tx => !!tx.multisig;
+const isPendingMultisig = tx =>
   !!tx.multisig &&
   !(tx.multisig.missingSignees && tx.multisig.missingSignees.length);
 
-/**
+/*
  * Transactions sorting functions.
  */
 const createdAtDesc = (
@@ -64,33 +53,26 @@ const createdAtDesc = (
 const transformTransaction = (tx: TransactionRecord<*, *>) =>
   tx.set('group', transactionGroup(tx));
 
-/**
- * `reselect`-powered transactions selectors.
- *
- * These can be used directly in `connect`'s `mapStateToProps`:
- *
- * connect(
- *   state => ({ pending: pendingTransactions(state) }),
- *   null,
- * )(PendingTxsComponent);
+/*
+ * Transactions selectors.
  */
-export const rawTransaction: OneTransactionSelector = (state, id) =>
-  state[ns].transactions.list.get(id);
+export const rawTransaction = (state: RootStateRecord, id: string) =>
+  state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST, id]);
 
-export const oneTransaction: OneTransactionSelector = createSelector(
+export const rawAllTransactions = (state: RootStateRecord) =>
+  state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST], ImmutableMap());
+
+export const oneTransaction = createSelector(
   rawTransaction,
   tx => tx && transformTransaction(tx),
 );
 
-export const rawAllTransactions: TransactionsSelector = state =>
-  state[ns].transactions.list;
-
-export const allTransactions: TransactionsSelector = createSelector(
+export const allTransactions = createSelector(
   rawAllTransactions,
   transactions => transactions.map(transformTransaction),
 );
 
-export const groupedTransactions: GroupedTransactionsSelector = createSelector(
+export const groupedTransactions = createSelector(
   allTransactions,
   transactions =>
     transactions
@@ -112,28 +94,36 @@ export const groupedTransactions: GroupedTransactionsSelector = createSelector(
       .sortBy(group => group.first().createdAt),
 );
 
-export const pendingTransactions: TransactionsSelector = createSelector(
+export const pendingTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isPending).sort(createdAtDesc),
 );
-export const outgoingTransactions: TransactionsSelector = createSelector(
+
+export const outgoingTransactions = createSelector(
   allTransactions,
   transactions =>
     transactions
       .filter(tx => isOutgoing(tx) && !isConfirmed(tx))
       .sort(createdAtDesc),
 );
-export const confirmedTransactions: TransactionsSelector = createSelector(
+
+export const confirmedTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isConfirmed).sort(createdAtDesc),
 );
+
 export const multisigTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isMultisig).sort(createdAtDesc),
 );
+
 export const pendingMultisigTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isPendingMultisig).sort(createdAtDesc),
 );
-export const gasPrices: GasPricesSelector = state =>
-  state[ns].transactions.gasPrices;
+
+/*
+ * Other selectors.
+ */
+export const gasPrices = (state: RootStateRecord) =>
+  state.getIn([ns, CORE_TRANSACTIONS, CORE_GAS_PRICES]);

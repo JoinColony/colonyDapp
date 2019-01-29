@@ -1,4 +1,6 @@
-// @flow
+/* @flow */
+/* eslint-disable max-len */
+
 const path = require('path');
 
 module.exports = {

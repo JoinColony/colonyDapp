@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Saga } from 'redux-saga';
+
 import { call, getContext } from 'redux-saga/effects';
 import { providers } from 'ethers';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
@@ -13,12 +15,7 @@ import EthersWrappedWallet from '../../../../lib/EthersWrappedWallet/index';
 /*
  * Return an initialized ColonyNetworkClient instance.
  */
-// eslint-disable-next-line flowtype/generic-spacing
-export default function* getNetworkClient(): Generator<
-  *,
-  ColonyNetworkClient,
-  *,
-> {
+export default function* getNetworkClient(): Saga<ColonyNetworkClient> {
   const network = process.env.NETWORK || 'rinkeby';
   const provider =
     network === 'local'
@@ -39,7 +36,6 @@ export default function* getNetworkClient(): Generator<
   const adapter = yield create(EthersAdapter, {
     loader,
     provider,
-    // $FlowFixMe colonyJS IWallet types are wrong!
     wallet: yield create(EthersWrappedWallet, wallet, provider),
   });
 

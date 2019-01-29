@@ -2,7 +2,7 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import type { UsersProps } from '~immutable';
+import type { UsernamesMap } from '~immutable';
 import type { Action } from '~types';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from '../actionTypes';
 
 const usernamesReducer = (
-  state: $PropertyType<UsersProps, 'usernames'> = new ImmutableMap(),
+  state: UsernamesMap = ImmutableMap(),
   action: Action,
 ) => {
   switch (action.type) {

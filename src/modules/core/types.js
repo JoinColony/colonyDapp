@@ -1,48 +1,14 @@
 /* @flow */
-/* eslint-disable flowtype/generic-spacing */
 
 import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js';
-import type { Map as ImmutableMapType, RecordOf } from 'immutable';
 
 import type {
   AddressOrENSName,
   ColonyContext,
   TransactionReceipt,
 } from '~types';
-import type {
-  TransactionEventData,
-  TransactionId,
-  TransactionParams,
-  TransactionRecord,
-} from '~immutable';
-
-import ns from './namespace';
-
-// Gas prices in wei
-export type GasPrices = {
-  cheaper?: BigNumber,
-  cheaperWait?: number,
-  faster?: BigNumber,
-  fasterWait?: number,
-  suggested?: BigNumber,
-  suggestedWait?: number,
-  network?: BigNumber,
-  timestamp?: number,
-};
-
-export type TransactionsStateProps = {
-  list: ImmutableMapType<TransactionId, TransactionRecord<*, *>>,
-  gasPrices: GasPrices,
-};
-
-export type TransactionsState = RecordOf<TransactionsStateProps>;
-
-export type CoreState = {|
-  [typeof ns]: {|
-    transactions: TransactionsState,
-  |},
-|};
+import type { TransactionEventData, TransactionParams } from '~immutable';
 
 export type Sender<P: TransactionParams, E: TransactionEventData> = {
   client: {
@@ -56,7 +22,14 @@ export type Sender<P: TransactionParams, E: TransactionEventData> = {
   },
   send(params: P, options: SendOptions): Promise<ContractResponse<E>>,
   estimate(params: P): Promise<BigNumber>,
-  restoreOperation?: (
+  restoreOperation: void,
+};
+
+export type MultisigSender<
+  P: TransactionParams,
+  E: TransactionEventData,
+> = Sender<P, E> & {
+  restoreOperation: (
     operationJSON: string,
   ) => Promise<(options: SendOptions) => Promise<ContractResponse<E>>>,
 };

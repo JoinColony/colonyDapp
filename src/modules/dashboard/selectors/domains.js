@@ -2,24 +2,27 @@
 
 import { createSelector } from 'reselect';
 
-import type { RootState } from '~types';
+import { Map as ImmutableMap } from 'immutable';
 
-import ns from '../namespace';
+import type { RootStateRecord } from '~immutable';
 
-/*
- * Domains selectors
- */
-export const allDomainsSelector = (state: RootState) => state[ns].allDomains;
+import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
+
+export const allDomainsSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_DOMAINS], ImmutableMap());
+
 export const colonyDomainsSelector = createSelector(
   allDomainsSelector,
   (state, props) => props.colonyENSName,
   (allDomains, colonyENSName) => allDomains.get(colonyENSName),
 );
+
 export const singleDomainSelector = createSelector(
   colonyDomainsSelector,
   (state, props) => props.domainId,
   (domains, domainId) => domains.get(domainId),
 );
+
 export const singleDomainTaskIdsSelector = createSelector(
   singleDomainSelector,
   domain => domain.get('taskIds'),

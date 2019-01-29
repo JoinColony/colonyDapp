@@ -12,6 +12,7 @@ type Props = {|
   avatarHash: $PropertyType<ColonyRecord, 'avatar'>,
   /** Base64 image */
   avatarData: string,
+  ensName: $PropertyType<ColonyRecord, 'ensName'>,
   name: $PropertyType<ColonyRecord, 'name'>,
   /** Is passed through to Avatar */
   className?: string,

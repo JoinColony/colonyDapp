@@ -16,6 +16,6 @@ export const createToken = createTxActionCreator<{
   methodName: 'createToken',
   lifecycle: {
     error: TOKEN_CREATE_ERROR,
-    success: TOKEN_CREATE_SUCCESS,
+    receiptReceived: TOKEN_CREATE_SUCCESS,
   },
 });

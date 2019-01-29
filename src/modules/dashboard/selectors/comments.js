@@ -3,21 +3,25 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { RootState } from '~types';
+import type { RootStateRecord } from '~immutable';
 
 import { singleDraftSelector } from './drafts';
 
-import ns from '../namespace';
+import {
+  DASHBOARD_ALL_COMMENTS,
+  DASHBOARD_NAMESPACE as ns,
+} from '../constants';
 
 /*
  * Drafts selectors
  */
-export const allCommentsSelector = (state: RootState) => state[ns].allComments;
+export const allCommentsSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_COMMENTS], ImmutableMap());
 
 export const draftsCommentsSelector = createSelector(
   allCommentsSelector,
   (state, props) => props.draftId,
-  (allComments, draftId) => allComments.get(draftId, new ImmutableMap()),
+  (allComments, draftId) => allComments.get(draftId, ImmutableMap()),
 );
 
 export const commentsStoreAddressSelector = createSelector(

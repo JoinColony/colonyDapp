@@ -51,7 +51,6 @@ const ConfirmDialog = ({
   close,
   // $FlowFixMe https://github.com/facebook/flow/issues/183#issuecomment-267274206
   heading = MSG.defaultHeading,
-  // $FlowFixMe
   children,
   // $FlowFixMe
   cancelButtonText = MSG.defaultCancelButton,

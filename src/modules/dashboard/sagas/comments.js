@@ -11,7 +11,7 @@ import { putError } from '~utils/saga/effects';
 import { createCommentsStore } from './shared';
 import { commentsBlueprint } from '../stores';
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 import {
   TASK_COMMENT_ADD,
@@ -23,7 +23,7 @@ import {
 } from '../actionTypes';
 
 /*
- * @NOTE Sagas are explamples only
+ * @NOTE Sagas are examples only
  *
  * So show basic add / get interfactions of task comments, but they all use mock data.
  * Please replace with actual sagas when the time comes.

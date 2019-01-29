@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {
   COLONY_AVATAR_REMOVE_SUCCESS,
@@ -15,11 +15,11 @@ import {
 import { Colony, Data, Token } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { ColonyRecord, DataRecord } from '~immutable';
-import type { UniqueActionWithKeyPath, ENSName } from '~types';
+import type { AllColoniesMap, ColonyRecord } from '~immutable';
+import type { UniqueActionWithKeyPath } from '~types';
 
 const coloniesReducer = (
-  state: ImmutableMap<ENSName, DataRecord<ColonyRecord>> = new ImmutableMap(),
+  state: AllColoniesMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -35,14 +35,16 @@ const coloniesReducer = (
       });
       return state.get(ensName)
         ? state.setIn([ensName, 'record'], record)
-        : state.set(ensName, Data({ record }));
+        : state.set(ensName, Data<ColonyRecord>({ record }));
     }
     case COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
         meta: { keyPath },
         payload,
       } = action;
-      return state.mergeIn([...keyPath, 'record'], payload);
+      // fromJS is `mixed`, so we have to cast `any`
+      const props: any = fromJS(payload);
+      return state.mergeDeepIn([...keyPath, 'record'], props);
     }
     case COLONY_AVATAR_UPLOAD_SUCCESS: {
       const {
@@ -83,6 +85,7 @@ const coloniesReducer = (
   }
 };
 
-export default withDataReducer<ENSName, ColonyRecord>(COLONY_FETCH)(
-  coloniesReducer,
-);
+export default withDataReducer<AllColoniesMap, ColonyRecord>(
+  COLONY_FETCH,
+  ImmutableMap(),
+)(coloniesReducer);

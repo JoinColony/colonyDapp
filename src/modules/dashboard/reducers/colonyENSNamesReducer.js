@@ -5,9 +5,10 @@ import { Map as ImmutableMap } from 'immutable';
 import { COLONY_ENS_NAME_FETCH_SUCCESS } from '../actionTypes';
 
 import type { UniqueActionWithKeyPath } from '~types';
+import type { AllColonyENSNamesMap } from '~immutable';
 
 const colonyENSNamesReducer = (
-  state: ImmutableMap<string, string> = new ImmutableMap(),
+  state: AllColonyENSNamesMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {

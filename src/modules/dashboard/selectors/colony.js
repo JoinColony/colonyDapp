@@ -3,25 +3,36 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { ENSName, RootState } from '~types';
+import type { ENSName } from '~types';
+import type { RootStateRecord } from '~immutable/state';
 
-import ns from '../namespace';
+import {
+  DASHBOARD_ALL_COLONIES,
+  DASHBOARD_AVATARS,
+  DASHBOARD_COLONIES,
+  DASHBOARD_ENS_NAMES,
+  DASHBOARD_NAMESPACE as ns,
+} from '../constants';
 
-type ENSNameFromRouter = (state: RootState, props: Object) => ENSName;
+type ENSNameFromRouter = (state: RootStateRecord, props: Object) => ENSName;
 
 export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
   props.match.params.ensName;
 
-export const allColoniesSelector = (state: RootState) => state[ns].allColonies;
+export const allColoniesSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_COLONIES], ImmutableMap());
 
-export const coloniesSelector = (state: RootState) =>
-  allColoniesSelector(state).colonies;
+export const coloniesSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES], ImmutableMap());
 
-export const colonyAvatarsSelector = (state: RootState) =>
-  allColoniesSelector(state).avatars;
+export const colonyAvatarsSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS], ImmutableMap());
 
-export const colonyENSNamesSelector = (state: RootState) =>
-  allColoniesSelector(state).ensNames;
+export const colonyENSNamesSelector = (state: RootStateRecord) =>
+  state.getIn(
+    [ns, DASHBOARD_ALL_COLONIES, DASHBOARD_ENS_NAMES],
+    ImmutableMap(),
+  );
 
 export const routerColonySelector = createSelector(
   coloniesSelector,
@@ -29,8 +40,10 @@ export const routerColonySelector = createSelector(
   (colonies, ensName) => colonies.get(ensName),
 );
 
-export const singleColonySelector = (state: RootState, ensName: ENSName) =>
-  coloniesSelector(state).get(ensName);
+export const singleColonySelector = (
+  state: RootStateRecord,
+  ensName: ENSName,
+) => state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, ensName]);
 
 export const domainsIndexSelector = createSelector(
   singleColonySelector,
@@ -47,25 +60,21 @@ export const draftsIndexSelector = createSelector(
 export const currentColonyAvatarHashSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,
-  (colonies, ensName) => colonies.getIn([ensName, 'record', 'avatar']),
+  (colonies, ensName) =>
+    ensName ? colonies.getIn([ensName, 'record', 'avatar']) : null,
 );
 
 export const currentColonyAvatarDataSelector = createSelector(
   currentColonyAvatarHashSelector,
-  colonyAvatarsSelector,
-  (hash, avatars) => avatars.get(hash),
-);
-
-export const getCurrentColony = createSelector(
-  allColoniesSelector,
-  (state, props) => (props.colony ? props.colony.ensName : undefined),
-  ({ colonies }, ensName) =>
-    ensName ? colonies.get(ensName, ImmutableMap()) : ImmutableMap(),
+  (state, hash) =>
+    state && hash
+      ? state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS, hash])
+      : null,
 );
 
 export const allColonyENSNames = createSelector(
   coloniesSelector,
-  colonies => colonies.keySeq().toArray(),
+  colonies => colonies.keySeq().toArray(), // TODO don't use a selector for this
 );
 
 export const colonyENSNameSelector = createSelector(

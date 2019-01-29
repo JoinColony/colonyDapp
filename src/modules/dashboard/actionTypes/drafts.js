@@ -1,6 +1,6 @@
 /* @flow */
 
-import ns from '../namespace';
+import { DASHBOARD_NAMESPACE as ns } from '../constants';
 
 export const DRAFT_CREATE = `${ns}/DRAFT_CREATE`;
 export const DRAFT_CREATE_ERROR = `${ns}/DRAFT_CREATE_ERROR`;

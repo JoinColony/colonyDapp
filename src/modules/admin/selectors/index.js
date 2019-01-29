@@ -1,26 +1,18 @@
 /* @flow */
 
-import type { List, Map as ImmutableMapType } from 'immutable';
-
-import ns from '../namespace';
-
 import type { ENSName } from '~types';
-import type { ContractTransactionRecord, Data } from '~immutable';
+import type { RootStateRecord } from '~immutable';
 
-type ContractTransactionListData = Data<List<ContractTransactionRecord>>;
-type TransactionsMap = ImmutableMapType<ENSName, ContractTransactionListData>;
+import {
+  ADMIN_NAMESPACE as ns,
+  ADMIN_TRANSACTIONS,
+  ADMIN_UNCLAIMED_TRANSACTIONS,
+} from '../constants';
 
-type RootState = {
-  [typeof ns]: {
-    transactions: TransactionsMap,
-    unclaimedTransactions: TransactionsMap,
-  },
-};
-
-export const colonyTransactions = (state: RootState, ensName: ENSName) =>
-  state[ns].transactions.get(ensName);
+export const colonyTransactions = (state: RootStateRecord, ensName: ENSName) =>
+  state.getIn([ns, ADMIN_TRANSACTIONS, ensName]);
 
 export const colonyUnclaimedTransactions = (
-  state: RootState,
+  state: RootStateRecord,
   ensName: ENSName,
-) => state[ns].unclaimedTransactions.get(ensName);
+) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, ensName]);

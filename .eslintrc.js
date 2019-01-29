@@ -48,6 +48,7 @@ module.exports = {
       },
     ],
     'jsx-a11y/label-has-for': 'off',
+    'flowtype/generic-spacing': 'off',
     'flowtype/space-after-type-colon': 'off',
     'flowtype/require-valid-file-annotation': [
       'error',

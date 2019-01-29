@@ -1,22 +1,24 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMapType } from 'immutable';
+
+import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import type { UniqueActionWithKeyPath, KeyPath } from '~types';
 
 import { Data } from '../../immutable';
 
-export type DataReducer<K: *, V: *> = (
-  state: ImmutableMap<K, V>,
+export type DataReducer<S: ImmutableMapType<*, *>> = (
+  state: S,
   action: UniqueActionWithKeyPath,
-) => ImmutableMap<K, V>;
+) => S;
 
-const getNextState = <K: *, V: *>(
-  state: ImmutableMap<K, V>,
+const getNextState = <S: ImmutableMapType<*, *>, V: *>(
+  state: S,
   keyPath: KeyPath,
   payload: *,
 ) => {
-  const data = Data(payload);
+  const data = Data<V>(fromJS(payload));
 
   if (keyPath.length === 2)
     return state.has(keyPath[0])
@@ -28,38 +30,38 @@ const getNextState = <K: *, V: *>(
     : state.set(keyPath[0], data);
 };
 
-const handleFetch = <K: *, V: *>(
-  state: ImmutableMap<K, V>,
+const handleFetch = <S: ImmutableMapType<*, *>, V: *>(
+  state: S,
   action: UniqueActionWithKeyPath,
 ) => {
   const {
     meta: { keyPath },
   } = action;
-  return getNextState<K, V>(state, keyPath, { isFetching: true });
+  return getNextState<S, V>(state, keyPath, { isFetching: true });
 };
 
-const handleSuccess = <K: *, V: *>(
-  state: ImmutableMap<K, V>,
+const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
+  state: S,
   action: UniqueActionWithKeyPath,
 ) => {
   const {
     meta: { keyPath },
   } = action;
-  return getNextState<K, V>(state, keyPath, {
+  return getNextState<S, V>(state, keyPath, {
     error: undefined,
     isFetching: false,
   });
 };
 
-const handleError = <K: *, V: *>(
-  state: ImmutableMap<K, V>,
+const handleError = <S: ImmutableMapType<*, *>, V: *>(
+  state: S,
   {
     meta: { keyPath },
     payload: {
       error: { id: error },
     },
   }: UniqueActionWithKeyPath,
-) => getNextState<K, V>(state, keyPath, { isFetching: false, error });
+) => getNextState<S, V>(state, keyPath, { isFetching: false, error });
 
 /*
  * =============================================================================
@@ -83,14 +85,14 @@ const handleError = <K: *, V: *>(
  * -----------------------------------------------------------------------------
  * Generics
  * -----------------------------------------------------------------------------
- * {K} Key of the map, e.g. `ENSName`
+ * {S} The state this reducer handles, e.g. `ImmutableMapType<ENSName, DataRecord<ColonyRecord>>`
  *
- * {V} The value set in the map (top-level), e.g. `DataRecord<ColonyRecord>` or
- * `ImmutableMap<DomainId, DataRecord<Domain>>`
+ * {V} The value wrapped in the data record, e.g. `ColonyRecord` or `ListType<TransationRecord>`
  */
-const withDataReducer = <K: *, V: *>(actionTypes: string | Set<string>) => (
-  wrappedReducer: DataReducer<K, V>,
-) => {
+const withDataReducer = <S: ImmutableMapType<*, *>, V: *>(
+  actionTypes: string | Set<string>,
+  initialState: S,
+) => (wrappedReducer: DataReducer<S>) => {
   // Set up fetch/success/error types according to the usual pattern
   const fetchTypes =
     typeof actionTypes === 'string' ? new Set([actionTypes]) : actionTypes;
@@ -102,18 +104,15 @@ const withDataReducer = <K: *, V: *>(actionTypes: string | Set<string>) => (
   );
 
   // Return a wrapped reducer.
-  return (
-    state: ImmutableMap<K, V> = new ImmutableMap(),
-    action: UniqueActionWithKeyPath,
-  ) => {
+  return (state: S = initialState, action: UniqueActionWithKeyPath) => {
     // Pass the state to the wrapped reducer as the first step.
     const nextState = wrappedReducer(state, action);
 
     // If the action matches a fetch/success/error type, set the next state again.
     const { type } = action;
-    if (fetchTypes.has(type)) return handleFetch<K, V>(nextState, action);
-    if (successTypes.has(type)) return handleSuccess<K, V>(nextState, action);
-    if (errorTypes.has(type)) return handleError<K, V>(nextState, action);
+    if (fetchTypes.has(type)) return handleFetch<S, V>(nextState, action);
+    if (successTypes.has(type)) return handleSuccess<S, V>(nextState, action);
+    if (errorTypes.has(type)) return handleError<S, V>(nextState, action);
 
     return nextState;
   };
