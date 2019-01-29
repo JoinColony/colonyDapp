@@ -16,7 +16,7 @@ import {
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
-import { createCommentStoreCreatedEvent } from './events/tasks';
+import { createCommentStoreCreatedEvent } from './events';
 
 export const getColonyStore = (ddb: DDB) => async (
   walletAddress: string,
