@@ -16,12 +16,12 @@ import {
  * Drafts selectors
  */
 export const allCommentsSelector = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_COMMENTS], new ImmutableMap());
+  state.getIn([ns, DASHBOARD_ALL_COMMENTS], ImmutableMap());
 
 export const draftsCommentsSelector = createSelector(
   allCommentsSelector,
   (state, props) => props.draftId,
-  (allComments, draftId) => allComments.get(draftId, new ImmutableMap()),
+  (allComments, draftId) => allComments.get(draftId, ImmutableMap()),
 );
 
 export const commentsStoreAddressSelector = createSelector(

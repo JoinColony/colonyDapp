@@ -19,7 +19,7 @@ import type { AllColoniesMap, ColonyRecord } from '~immutable';
 import type { UniqueActionWithKeyPath } from '~types';
 
 const coloniesReducer = (
-  state: AllColoniesMap = new ImmutableMap(),
+  state: AllColoniesMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -87,5 +87,5 @@ const coloniesReducer = (
 
 export default withDataReducer<AllColoniesMap, ColonyRecord>(
   COLONY_FETCH,
-  new ImmutableMap(),
+  ImmutableMap(),
 )(coloniesReducer);

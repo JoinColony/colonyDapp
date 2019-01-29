@@ -8,7 +8,7 @@ import type { UniqueActionWithKeyPath } from '~types';
 import type { AllColonyENSNamesMap } from '~immutable';
 
 const colonyENSNamesReducer = (
-  state: AllColonyENSNamesMap = new ImmutableMap(),
+  state: AllColonyENSNamesMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {

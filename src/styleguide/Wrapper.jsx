@@ -31,21 +31,21 @@ const MockState = Record({
 
 const initialState = MockState({
   admin: {
-    transactions: new ImmutableMap(),
-    unclaimedTransactions: new ImmutableMap(),
+    transactions: ImmutableMap(),
+    unclaimedTransactions: ImmutableMap(),
   },
   core: {
     transactions: CoreTransactions(),
   },
   dashboard: {
-    allComments: new ImmutableMap(),
-    allDomains: new ImmutableMap(),
-    allDrafts: new ImmutableMap(),
-    allTasks: new ImmutableMap(),
+    allComments: ImmutableMap(),
+    allDomains: ImmutableMap(),
+    allDrafts: ImmutableMap(),
+    allTasks: ImmutableMap(),
     allColonies: {
-      avatars: new ImmutableMap(),
-      colonies: new ImmutableMap(),
-      ensNames: new ImmutableMap(),
+      avatars: ImmutableMap(),
+      colonies: ImmutableMap(),
+      ensNames: ImmutableMap(),
     },
   },
   users: {
@@ -58,7 +58,7 @@ const initialState = MockState({
       availableAddresses: [],
       isLoading: false,
     }),
-    allUsers: new ImmutableMap(),
+    allUsers: ImmutableMap(),
   },
 });
 

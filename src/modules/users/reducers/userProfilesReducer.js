@@ -16,7 +16,7 @@ import {
 } from '../actionTypes';
 
 const userProfilesReducer = (
-  state: UsersMap = new ImmutableMap(),
+  state: UsersMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -53,5 +53,5 @@ const userProfilesReducer = (
 
 export default withDataReducer<UsersMap, UserRecord>(
   new Set([USER_PROFILE_FETCH, USER_ACTIVITIES_FETCH]),
-  new ImmutableMap(),
+  ImmutableMap(),
 )(userProfilesReducer);

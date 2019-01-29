@@ -20,7 +20,7 @@ const allCommentsReducer = (
   /*
    * @TODO Add proper store for the `allComments` Map
    */
-  state: AllCommentsMap = new ImmutableMap(),
+  state: AllCommentsMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {

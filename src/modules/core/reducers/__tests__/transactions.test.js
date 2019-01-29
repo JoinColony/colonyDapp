@@ -26,7 +26,7 @@ describe(`core: reducers (transactions)`, () => {
     const newState = reducer(undefined, {
       type: 'NOT_SUPPORTED_BY_THIS_REDUCER',
     });
-    expect(newState.list).toEqual(new ImmutableMap());
+    expect(newState.list).toEqual(ImmutableMap());
   });
 
   const eventData = { myEventParam: 123 };
@@ -40,7 +40,7 @@ describe(`core: reducers (transactions)`, () => {
   const methodName = 'createColony';
 
   const initialState = CoreTransactions({
-    list: new ImmutableMap({
+    list: ImmutableMap({
       [existingTxId]: Transaction({
         createdAt: new Date(2018, 0, 1),
       }),

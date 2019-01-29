@@ -7,10 +7,7 @@ import { TASK_SET_SKILL_SUCCESS, TASK_SET_DATE_SUCCESS } from '../actionTypes';
 import type { Action } from '~types';
 import type { AllTasksMap } from '~immutable';
 
-const tasksReducer = (
-  state: AllTasksMap = new ImmutableMap(),
-  action: Action,
-) => {
+const tasksReducer = (state: AllTasksMap = ImmutableMap(), action: Action) => {
   switch (action.type) {
     // TODO: call these optimistically in the future: meaning not only on success but when starting the action
     case TASK_SET_SKILL_SUCCESS: {

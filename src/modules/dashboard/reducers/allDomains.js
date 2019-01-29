@@ -15,7 +15,7 @@ import type { UniqueActionWithKeyPath } from '~types';
 import type { AllDomainsMap, DomainRecord } from '~immutable';
 
 const allDomainsReducer = (
-  state: AllDomainsMap = new ImmutableMap(),
+  state: AllDomainsMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -43,5 +43,5 @@ const allDomainsReducer = (
 
 export default withDataReducer<AllDomainsMap, DomainRecord>(
   DOMAIN_FETCH,
-  new ImmutableMap(),
+  ImmutableMap(),
 )(allDomainsReducer);

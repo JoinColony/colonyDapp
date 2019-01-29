@@ -8,7 +8,7 @@ import type { Action } from '~types';
 import type { UserAvatarsMap } from '~immutable';
 
 const userAvatarsReducer = (
-  state: UserAvatarsMap = new ImmutableMap(),
+  state: UserAvatarsMap = ImmutableMap(),
   action: Action,
 ) => {
   switch (action.type) {

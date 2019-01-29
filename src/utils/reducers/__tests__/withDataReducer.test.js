@@ -48,11 +48,11 @@ describe('reducers - withDataReducer', () => {
       }
     });
 
-    const myWrappedReducer = withDataReducer(MY_FETCH, new ImmutableMap())(
+    const myWrappedReducer = withDataReducer(MY_FETCH, ImmutableMap())(
       myReducer,
     );
 
-    const initialState = new ImmutableMap();
+    const initialState = ImmutableMap();
 
     const fetchAction = {
       type: MY_FETCH,

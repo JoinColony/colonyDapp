@@ -11,7 +11,7 @@ import {
 } from '../actionTypes';
 
 const usernamesReducer = (
-  state: UsernamesMap = new ImmutableMap(),
+  state: UsernamesMap = ImmutableMap(),
   action: Action,
 ) => {
   switch (action.type) {

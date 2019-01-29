@@ -17,7 +17,7 @@ import type { UniqueActionWithKeyPath } from '~types';
 import type { AllDraftsMap, DraftRecord } from '~immutable';
 
 const allDraftsReducer = (
-  state: AllDraftsMap = new ImmutableMap(),
+  state: AllDraftsMap = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
@@ -51,5 +51,5 @@ const allDraftsReducer = (
 
 export default withDataReducer<AllDraftsMap, DraftRecord>(
   DRAFT_FETCH,
-  new ImmutableMap(),
+  ImmutableMap(),
 )(allDraftsReducer);

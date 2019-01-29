@@ -19,7 +19,7 @@ import type {
 } from '~immutable';
 
 const colonyUnclaimedTransactionsReducer = (
-  state: AdminUnclaimedTransactionsState = new ImmutableMap(),
+  state: AdminUnclaimedTransactionsState = ImmutableMap(),
   action: UniqueActionWithKeyPath,
 ): AdminUnclaimedTransactionsState => {
   switch (action.type) {
@@ -45,6 +45,6 @@ const colonyUnclaimedTransactionsReducer = (
 export default withDataReducer<
   AdminUnclaimedTransactionsState,
   ContractTransactionRecord,
->(COLONY_FETCH_UNCLAIMED_TRANSACTIONS, new ImmutableMap())(
+>(COLONY_FETCH_UNCLAIMED_TRANSACTIONS, ImmutableMap())(
   colonyUnclaimedTransactionsReducer,
 );
