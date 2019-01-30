@@ -35,6 +35,7 @@ import { DDB } from '../../../lib/database';
 import {
   getUserProfileStoreIdentifier,
   getUserProfileStore,
+  getUserProfileStoreByUsername,
   getUserActivityStore,
   createUserProfileStore,
 } from '../../../data/stores';
@@ -232,7 +233,11 @@ function* fetchProfile({
 
   // should throw an error if username is not registered
   try {
-    const store = yield call(getUserProfileStore(ddb), walletAddress, username);
+    const store = yield call(
+      getUserProfileStoreByUsername(ddb),
+      walletAddress,
+      username,
+    );
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
     yield put({
