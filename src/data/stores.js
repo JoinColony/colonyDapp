@@ -98,7 +98,7 @@ export const getUserProfileStore = (ddb: DDB) => async (
 
 export const getUserProfileStoreByUsername = (ddb: DDB) => async (
   walletAddress: string,
-  username?: string,
+  username: string,
 ): Promise<*> =>
   ddb.getStore(
     userProfileStoreBlueprint,
