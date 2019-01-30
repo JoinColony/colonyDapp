@@ -22,9 +22,9 @@ const allDomainsReducer = (
   switch (action.type) {
     case COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
-        keyPath,
-        props: { domains },
-      } = action.payload;
+        meta: { keyPath },
+        payload: domains,
+      } = action;
       let newState = state;
       domains.forEach(({ _id, ...domain }) => {
         const id = parseInt(_id, 10);

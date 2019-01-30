@@ -36,7 +36,7 @@ export const fetchDomain = (colonyENSName: ENSName, domainId: number) => ({
 
 export const fetchColonyDomains = (colonyENSName: ENSName) => ({
   type: COLONY_DOMAINS_FETCH,
-  payload: {
+  meta: {
     keyPath: [colonyENSName],
   },
 });
