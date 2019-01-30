@@ -1,6 +1,8 @@
 /* @flow */
 
-import type { ENSName } from '~types';
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type { WalletObjectType } from '@colony/purser-core/flowtypes';
+import type { Address, ENSName } from '~types';
 
 import { getENSDomainString } from '~utils/web3/ens';
 import { DDB } from '../lib/database';
@@ -18,28 +20,53 @@ import {
 
 import { createCommentStoreCreatedEvent } from './events';
 
-export const getColonyStore = (ddb: DDB) => async (
-  walletAddress: string,
+export const getColonyStore = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({
+  colonyAddress,
+  colonyENSName,
+}: {
+  colonyAddress: string,
   colonyENSName: ENSName,
-): Promise<*> => {
+}): Promise<*> => {
   const colonyStoreAddress = await getENSDomainString('colony', colonyENSName);
   return ddb.getStore(colonyStoreBlueprint, colonyStoreAddress, {
-    walletAddress,
+    wallet,
+    colonyAddress,
+    colonyClient,
   });
 };
 
-export const createColonyStore = (ddb: DDB) => async (
-  walletAddress: string,
-): Promise<*> =>
+export const createColonyStore = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({ colonyAddress }: { colonyAddress: Address }): Promise<*> =>
   ddb.createStore(colonyStoreBlueprint, {
-    walletAddress,
+    wallet,
+    colonyAddress,
+    colonyClient,
   });
 
-export const getTaskStore = (ddb: DDB) => async (
+export const getTaskStore = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({
+  colonyAddress,
+  taskStoreAddress,
+  colonyENSName,
+}: {
+  colonyAddress: Address,
   taskStoreAddress: string,
   colonyENSName: ENSName,
-): Promise<*> =>
+}): Promise<*> =>
   ddb.getStore(taskStoreBlueprint, taskStoreAddress, {
+    wallet,
+    colonyAddress,
+    colonyClient,
     meta: {
       colonyENSName,
     },
@@ -53,11 +80,23 @@ export const getCommentsStore = (ddb: DDB) => async (
     taskId,
   });
 
-export const createTaskStore = (ddb: DDB) => async (
+export const createTaskStore = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({
+  taskId,
+  colonyAddress,
+  colonyENSName,
+}: {
   taskId: string,
+  colonyAddress: Address,
   colonyENSName: ENSName,
-): Promise<*> => {
+}): Promise<*> => {
   const taskStore = await ddb.createStore(taskStoreBlueprint, {
+    wallet,
+    colonyAddress,
+    colonyClient,
     meta: {
       colonyENSName,
     },
