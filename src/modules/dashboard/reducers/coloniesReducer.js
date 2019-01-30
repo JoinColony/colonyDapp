@@ -67,7 +67,10 @@ const coloniesReducer = (
       return state
         ? state.setIn(
             [...keyPath, 'record', 'admins', adminData.username],
-            adminData.toObject(),
+            {
+              ...adminData.toObject(),
+              state: 'pending',
+            },
           )
         : state;
     }
