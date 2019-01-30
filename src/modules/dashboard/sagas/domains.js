@@ -58,6 +58,9 @@ function* createDomainTransaction(
   const action = createDomain({
     identifier,
     params: { parentDomainId },
+    options: {
+      gasLimit: 500000,
+    },
     meta,
   });
   yield put(action);

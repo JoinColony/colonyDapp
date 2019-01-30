@@ -53,7 +53,9 @@ const OrganizationAddDomains = ({ ensName }: Props) => (
         ...action,
         payload: {
           domainName,
-          colonyENSName: ensName,
+        },
+        meta: {
+          keyPath: [ensName],
         },
       })}
       submit={DOMAIN_CREATE}
