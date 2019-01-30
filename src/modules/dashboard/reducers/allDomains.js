@@ -37,13 +37,15 @@ const allDomainsReducer = (
     }
     case DOMAIN_CREATE_SUCCESS: {
       const {
-        keyPath: [ensName, domainId],
-        props,
-      } = action.payload;
+        meta: {
+          keyPath: [ensName, domainId],
+        },
+        payload,
+      } = action;
       return state
         ? state.setIn(
             [ensName, domainId],
-            Data({ record: Domain({ ...props }) }),
+            Data<DomainRecord>({ record: Domain({ ...payload }) }),
           )
         : state;
     }
