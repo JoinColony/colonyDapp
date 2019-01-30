@@ -3,13 +3,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { List } from 'immutable';
-
 import TransactionList from '~core/TransactionList';
 
 import styles from './WalletTransactions.css';
 
-import type { ContractTransactionRecord, DataRecord } from '~immutable';
+import type { ContractTransactionType, DataType } from '~immutable';
 
 const MSG = defineMessages({
   transactionsEmptyTitle: {
@@ -26,15 +24,14 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.WalletTransactions';
 
-type Props = {
-  transactions: ?DataRecord<List<ContractTransactionRecord>>,
+type Props = {|
+  transactions: ?DataType<Array<ContractTransactionType>>,
   userAddress: string,
-};
+|};
 
-const WalletTransactions = ({ transactions, userAddress }: Props) => (
+const WalletTransactions = ({ transactions }: Props) => (
   <div className={styles.main}>
     <TransactionList
-      currentAddress={userAddress}
       transactions={transactions}
       linkToEtherscan
       emptyState={

@@ -27,7 +27,7 @@ type State = {
   editing: boolean,
 };
 
-type Props = {
+type Props = {|
   name: string,
   amount?: string,
   symbol?: string,
@@ -35,7 +35,8 @@ type Props = {
   isEth?: boolean,
   tokenOptions: Array<{ value: number, label: string }>,
   remove: () => void,
-};
+|};
+
 class Payout extends Component<Props, State> {
   static displayName = 'dashboard.TaskEditDialog.Payout';
 

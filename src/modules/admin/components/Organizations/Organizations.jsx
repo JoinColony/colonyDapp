@@ -2,12 +2,8 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type {
-  ColonyRecord,
-  ColonyAdminRecord,
-  DataRecord,
-  DomainRecord,
-} from '~immutable';
+import type { ColonyAdminType, DataType, DomainType } from '~immutable';
+import type { ENSName } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
@@ -65,17 +61,13 @@ const MSG = defineMessages({
 
 const displayName: string = 'admin.Organizations';
 
-type Props = {
-  colony: ColonyRecord,
-  colonyAdmins: Array<ColonyAdminRecord>,
-  colonyDomains: Array<DataRecord<DomainRecord>>,
-};
+type Props = {|
+  ensName: ENSName,
+  colonyAdmins: Array<ColonyAdminType>,
+  colonyDomains: Array<DataType<DomainType>>,
+|};
 
-const Organizations = ({
-  colony: { ensName },
-  colonyAdmins,
-  colonyDomains,
-}: Props) => (
+const Organizations = ({ ensName, colonyAdmins, colonyDomains }: Props) => (
   <div className={styles.main}>
     <Tabs>
       <TabList>

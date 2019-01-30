@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Array of allowed file types */
   accept?: string[],
   /** Function used to perform the acutal upload action of the file */
@@ -37,7 +37,7 @@ type Props = {
   $error?: string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
-};
+|};
 
 class AvatarUploadItem extends Component<Props> {
   readFiles: (files: Array<Object>) => Promise<Array<Object>>;

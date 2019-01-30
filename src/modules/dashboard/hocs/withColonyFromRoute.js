@@ -1,13 +1,10 @@
 /* @flow */
 
 import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import compose from 'recompose/compose';
 
-import {
-  routerColonySelector,
-  ensNameFromRouter,
-} from '../../dashboard/selectors';
-import { fetchColony } from '../../dashboard/actionCreators';
+import { routerColonySelector, ensNameFromRouter } from '../selectors';
+import { fetchColony } from '../actionCreators';
 import fetchMissingColony from './fetchMissingColony';
 
 const withColonyFromRoute = compose(

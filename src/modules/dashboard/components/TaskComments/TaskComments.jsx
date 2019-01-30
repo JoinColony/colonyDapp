@@ -8,8 +8,9 @@ import * as yup from 'yup';
 import promiseListener from '../../../../createPromiseListener';
 
 import type { OpenDialog } from '~core/Dialog/types';
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
+import { userDidClaimProfile } from '~immutable/utils';
 import withDialog from '~core/Dialog/withDialog';
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
@@ -51,8 +52,9 @@ type FormValues = {
   comment: string,
 };
 
+// Can't seal this object because of withConsumerFactory
 type Props = {
-  currentUser: UserRecord,
+  currentUser: UserType,
   openDialog: OpenDialog,
   draftId: string,
 } & FormikProps<FormValues>;
@@ -66,9 +68,9 @@ const validationSchema = yup.object().shape({
 const TaskComments = ({
   openDialog,
   currentUser: {
-    didClaimProfile = false,
     profile: { balance, walletAddress },
   },
+  currentUser,
   draftId,
 }: Props) => {
   const addComment = promiseListener.createAsyncFunction({
@@ -76,6 +78,7 @@ const TaskComments = ({
     resolve: TASK_COMMENT_ADD_SUCCESS,
     reject: TASK_COMMENT_ADD_ERROR,
   });
+  const didClaimProfile = userDidClaimProfile(currentUser);
 
   const handleKeyboardSubmit = (
     capturedEvent: SyntheticKeyboardEvent<*>,

@@ -4,26 +4,34 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import User from './User';
+import UserRecord from './User';
 
-import type { UserRecord } from './User';
+import type { UserType, UserRecordType } from './User';
 
-export type TaskFeedItemRatingProps = {|
-  ratee: UserRecord,
-  rater: UserRecord,
+type TaskFeedItemRatingRecordProps = {|
+  ratee: UserRecordType,
+  rater: UserRecordType,
   rating: number,
 |};
 
-export type TaskFeedItemRatingRecord = RecordOf<TaskFeedItemRatingProps>;
+export type TaskFeedItemRatingType = $ReadOnly<{|
+  ratee: UserType,
+  rater: UserType,
+  rating: number,
+|}>;
 
-const defaultValues: $Shape<TaskFeedItemRatingProps> = {
-  ratee: User(),
-  rater: User(),
+export type TaskFeedItemRatingRecordType = RecordOf<TaskFeedItemRatingRecordProps>;
+
+const defaultValues: $Shape<TaskFeedItemRatingRecordProps> = {
+  ratee: UserRecord(),
+  rater: UserRecord(),
   rating: undefined,
 };
 
-const TaskFeedItemRating: RecordFactory<TaskFeedItemRatingProps> = Record(
+// eslint-shame-enable
+// eslint-disable-next-line max-len
+const TaskFeedItemRatingRecord: RecordFactory<TaskFeedItemRatingRecordProps> = Record(
   defaultValues,
 );
 
-export default TaskFeedItemRating;
+export default TaskFeedItemRatingRecord;

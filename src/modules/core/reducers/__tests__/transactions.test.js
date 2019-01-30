@@ -1,6 +1,6 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import { CoreTransactions, Transaction } from '~immutable';
+import { CoreTransactions, TransactionRecord } from '~immutable';
 
 import reducer from '../transactions';
 
@@ -41,7 +41,7 @@ describe(`core: reducers (transactions)`, () => {
 
   const initialState = CoreTransactions({
     list: ImmutableMap({
-      [existingTxId]: Transaction({
+      [existingTxId]: TransactionRecord({
         createdAt: new Date(2018, 0, 1),
       }),
     }),

@@ -4,9 +4,9 @@ import { fromJS } from 'immutable';
 import getObjectFromPath from 'lodash/get';
 
 import type { UniqueAction } from '~types';
-import type { CoreTransactionsRecord, TransactionRecord } from '~immutable';
+import type { CoreTransactionsRecord, TransactionRecordType } from '~immutable';
 
-import { Transaction, CoreTransactions } from '~immutable';
+import { TransactionRecord, CoreTransactions } from '~immutable';
 
 import { CORE_GAS_PRICES, CORE_TRANSACTIONS_LIST } from '../constants';
 import {
@@ -26,7 +26,7 @@ import {
 /*
  * Helpers for transaction transformations
  */
-const transactionGroup = (tx: TransactionRecord<*, *>) => {
+const transactionGroup = (tx: TransactionRecordType<*, *>) => {
   if (!tx.group || typeof tx.group.id == 'string') return tx.group;
   const id = tx.group.id.reduce(
     (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,
@@ -58,7 +58,7 @@ const coreTransactionsReducer = (
         status,
       } = payload;
 
-      const tx = Transaction({
+      const tx = TransactionRecord({
         context,
         createdAt,
         id,

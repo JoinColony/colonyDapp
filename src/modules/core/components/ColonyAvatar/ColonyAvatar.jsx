@@ -1,48 +1,42 @@
 /* @flow */
-import React, { Component } from 'react';
+
+import React from 'react';
 
 import getIcon from '../../../../lib/identicon';
 
 import Avatar from '../Avatar';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyType } from '~immutable';
 
 type Props = {|
-  address: $PropertyType<ColonyRecord, 'address'>,
-  avatarHash: $PropertyType<ColonyRecord, 'avatar'>,
+  address: $PropertyType<ColonyType, 'address'>,
   /** Base64 image */
   avatarData: string,
-  ensName: $PropertyType<ColonyRecord, 'ensName'>,
-  name: $PropertyType<ColonyRecord, 'name'>,
+  name: $PropertyType<ColonyType, 'name'>,
   /** Is passed through to Avatar */
   className?: string,
   /** Avatars that are not set have a different placeholder */
   notSet?: boolean,
   /** Avatar size (default is between `s` and `m`) */
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
-  /** Action creator */
-  fetchColonyAvatar: (hash: string) => void,
 |};
 
-class ColonyAvatar extends Component<Props> {
-  componentDidMount() {
-    const { avatarHash, avatarData, fetchColonyAvatar } = this.props;
-    if (avatarHash && !avatarData) {
-      fetchColonyAvatar(avatarHash);
-    }
-  }
-
-  render() {
-    const { address, name, avatarData, ...otherProps } = this.props;
-    return (
-      <Avatar
-        avatarURL={avatarData || getIcon(address)}
-        placeholderIcon="at-sign-circle"
-        title={name}
-        {...otherProps}
-      />
-    );
-  }
-}
+const ColonyAvatar = ({
+  address,
+  name,
+  avatarData,
+  size,
+  notSet,
+  className,
+}: Props) => (
+  <Avatar
+    avatarURL={avatarData || getIcon(address)}
+    className={className}
+    notSet={notSet}
+    placeholderIcon="at-sign-circle"
+    size={size}
+    title={name}
+  />
+);
 
 export default ColonyAvatar;

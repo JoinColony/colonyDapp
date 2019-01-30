@@ -17,7 +17,7 @@ type Appearance = {
   theme?: 'main' | 'transparent',
 };
 
-type Props = {
+type Props = {|
   /*
    * If disabled, the navigation bar won't render the back link
    */
@@ -57,7 +57,7 @@ type Props = {
    * this should always have a value
    */
   children: Element<*>,
-};
+|};
 
 const NavigationWrapper = ({
   hasBackLink = true,

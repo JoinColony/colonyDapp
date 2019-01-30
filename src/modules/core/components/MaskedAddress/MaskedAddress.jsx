@@ -16,7 +16,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /*
    * The address to be masked by the helper util
    */
@@ -25,7 +25,7 @@ type Props = {
    * String pattern to use when masking the address
    */
   mask?: string,
-};
+|};
 
 const MaskedAddress = ({ address, mask = '...' }: Props) => {
   const cutAddress: AddressElements | Error = splitAddress(address);

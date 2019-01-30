@@ -14,10 +14,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   step: number,
   stepCount: number,
-};
+|};
 
 // Disclaimer: this might not necessarily be a core component,
 // so if we see that we're using it just once or it's too specific, we can act accordingly

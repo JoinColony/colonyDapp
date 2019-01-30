@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import type { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Table, TableBody } from '~core/Table';
@@ -13,7 +12,7 @@ import TransactionListItem from './TransactionListItem.jsx';
 
 import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
-import type { ContractTransactionRecord, DataRecord } from '~immutable';
+import type { ContractTransactionType, DataType } from '~immutable';
 
 const MSG = defineMessages({
   noTransactions: {
@@ -22,7 +21,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /*
    * Title to show before the list
    */
@@ -30,7 +29,7 @@ type Props = {
   /*
    *
    */
-  transactions: ?DataRecord<List<ContractTransactionRecord>>,
+  transactions: ?DataType<Array<ContractTransactionType>>,
   /*
    * The user's address will always be shown, this just controls if it's
    * shown in full, or masked.
@@ -41,7 +40,7 @@ type Props = {
    * Method to call when clicking the 'Claim' button
    * Only by setting this method, will the actual button show up
    */
-  onClaim?: ContractTransactionRecord => any,
+  onClaim?: ContractTransactionType => any,
   /*
    * If to show the button to link to etherscan (or not)
    *
@@ -50,7 +49,7 @@ type Props = {
    */
   linkToEtherscan?: boolean,
   emptyState?: Node,
-};
+|};
 
 const displayName: string = 'admin.TransactionList';
 
@@ -69,7 +68,7 @@ const TransactionList = ({
         text={label}
       />
     )}
-    {transactions && transactions.record && !!transactions.record.size && (
+    {transactions && transactions.record && !!transactions.record.length && (
       <Table scrollable>
         <TableBody>
           {transactions.record.map(transaction => (
@@ -87,7 +86,7 @@ const TransactionList = ({
     )}
     {transactions &&
       transactions.record &&
-      !transactions.record.size &&
+      !transactions.record.length &&
       (emptyState || (
         <p>
           <FormattedMessage {...MSG.noTransactions} />

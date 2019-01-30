@@ -4,7 +4,7 @@ import { Map as ImmutableMap, List } from 'immutable';
 
 import type { UniqueActionWithKeyPath } from '~types';
 
-import { TaskComment } from '~immutable';
+import { TaskCommentRecord } from '~immutable';
 
 import { TASK_COMMENT_ADD_SUCCESS } from '../actionTypes';
 
@@ -18,7 +18,7 @@ const allCommentsReducer = (
         payload: { draftId, commentData, signature },
         meta: { id },
       } = action;
-      const comment = TaskComment({
+      const comment = TaskCommentRecord({
         content: { ...commentData, id },
         signature,
       });

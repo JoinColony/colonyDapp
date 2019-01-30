@@ -7,7 +7,7 @@ import { Record } from 'immutable';
 
 import type { Address } from '~types';
 
-export type ContractTransactionProps = {|
+type Shared = {|
   amount: BigNumber,
   colonyENSName?: string,
   date: Date,
@@ -20,9 +20,11 @@ export type ContractTransactionProps = {|
   token: Address, // 0x0 is ether
 |};
 
-export type ContractTransactionRecord = RecordOf<ContractTransactionProps>;
+export type ContractTransactionType = $ReadOnly<Shared>;
 
-const defaultValues: $Shape<ContractTransactionProps> = {
+export type ContractTransactionRecordType = RecordOf<Shared>;
+
+const defaultValues: $Shape<Shared> = {
   amount: undefined,
   colonyENSName: undefined,
   date: undefined,
@@ -35,8 +37,6 @@ const defaultValues: $Shape<ContractTransactionProps> = {
   token: undefined,
 };
 
-const ContractTransaction: RecordFactory<ContractTransactionProps> = Record(
-  defaultValues,
-);
+const ContractTransactionRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default ContractTransaction;
+export default ContractTransactionRecord;

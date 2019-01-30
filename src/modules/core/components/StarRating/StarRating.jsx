@@ -20,12 +20,12 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Highest possible rating. Must be greater than the value passed to the `rating` prop */
   highestPossible?: number,
   /** Number of stars awarded (out of `highestPossible`) */
   rating: number,
-};
+|};
 
 const displayName = 'StarRating';
 

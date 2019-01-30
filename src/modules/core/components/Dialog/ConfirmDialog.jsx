@@ -31,11 +31,11 @@ const MSG = defineMessages({
   },
 });
 
-type Appearance = {
+type Appearance = {|
   theme?: 'primary' | 'danger',
-};
+|};
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: (val: any) => void,
   /** Appearance object */
@@ -44,7 +44,7 @@ type Props = {
   children?: Node,
   cancelButtonText?: string | MessageDescriptor,
   confirmButtonText?: string | MessageDescriptor,
-};
+|};
 
 const ConfirmDialog = ({
   cancel,

@@ -7,7 +7,7 @@ import Icon from '~core/Icon';
 
 import styles from './Card.css';
 
-type Props = {
+type Props = {|
   /** Card child content to render */
   children: Node,
   /** Optional additional class name for further styling */
@@ -16,11 +16,11 @@ type Props = {
   isDismissible?: boolean,
   /** Callback function called on card dismiss. (Only if `isDismissible` is set to `true`) */
   onCardDismissed?: () => void,
-};
+|};
 
-type State = {
+type State = {|
   isOpen: boolean,
-};
+|};
 
 class Card extends Component<Props, State> {
   static defaultProps = {

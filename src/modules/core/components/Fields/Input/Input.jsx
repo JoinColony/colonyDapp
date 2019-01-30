@@ -24,7 +24,7 @@ type Appearance = {
   size?: 'small',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -72,7 +72,7 @@ type Props = {
   setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
-};
+|};
 
 const Input = ({
   appearance,

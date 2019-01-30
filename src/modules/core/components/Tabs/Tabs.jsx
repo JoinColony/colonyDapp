@@ -5,6 +5,7 @@ import { Tabs as ReactTabs } from 'react-tabs';
 
 import styles from './Tabs.css';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** If set to true the tabs will be focused on initial render */
   defaultFocus?: boolean,

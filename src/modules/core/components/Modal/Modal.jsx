@@ -5,12 +5,13 @@ import ReactModal from 'react-modal';
 
 import styles from './Modal.css';
 
-type ModalStyles = {
+type ModalStyles = {|
   base: string,
   afterOpen: string,
   beforeClose: string,
-};
+|};
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** className for the content elemenent */
   className?: string | ModalStyles,

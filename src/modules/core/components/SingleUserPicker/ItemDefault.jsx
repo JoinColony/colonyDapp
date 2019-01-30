@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 import UserAvatar from '~core/UserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
@@ -19,16 +19,16 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   currentUserId?: string,
-  itemData: UserRecord,
+  itemData: UserType,
   selected?: boolean,
   showAddress?: boolean,
   /*
    * Same as showAddress, just display a masked (shortened) address instead
    */
   showMaskedAddress?: boolean,
-};
+|};
 
 const ItemDefault = ({
   currentUserId,

@@ -1,39 +1,31 @@
 /* @flow */
 
+import type { RecordFactory, RecordOf } from 'immutable';
+
 import { List, Record } from 'immutable';
 
-import UserProfile from './UserProfile';
+import UserProfileRecord from './UserProfile';
 
-import type { UserActivityRecord } from './UserActivity';
-import type { UserProfileRecord } from './UserProfile';
+import type { UserActivityRecordType, UserActivityType } from './UserActivity';
+import type { UserProfileType, UserProfileRecordType } from './UserProfile';
 
-export type UserProps = {
-  activities: List<UserActivityRecord>,
-  profile: UserProfileRecord,
+type UserRecordProps = {|
+  activities: List<UserActivityRecordType>,
+  profile: UserProfileRecordType,
+|};
+
+export type UserType = $ReadOnly<{|
+  activities: Array<UserActivityType>,
+  profile: UserProfileType,
+|}>;
+
+export type UserRecordType = RecordOf<UserRecordProps>;
+
+const defaultValues: $Shape<UserRecordProps> = {
+  profile: UserProfileRecord(),
+  activities: List<UserActivityRecordType>(),
 };
 
-const defaultActivities: List<UserActivityRecord> = List();
+const UserRecord: RecordFactory<UserRecordProps> = Record(defaultValues);
 
-const defaultValues: $Shape<UserProps> = {
-  profile: UserProfile(),
-  activities: defaultActivities,
-};
-
-class UserClass extends Record<UserProps>(defaultValues) {
-  /* eslint-disable */
-  /*::
-  activities: List<UserActivityRecord>;
-  profile: UserProfileRecord;
-  */
-  /* eslint-enable */
-
-  get didClaimProfile() {
-    return !!this.profile.username;
-  }
-}
-
-export type UserRecord = UserClass;
-
-const User = (props?: $Shape<UserProps>) => new UserClass(props);
-
-export default User;
+export default UserRecord;

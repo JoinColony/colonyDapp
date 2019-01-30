@@ -1,7 +1,5 @@
 /* @flow */
 
-import { List } from 'immutable';
-
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -12,7 +10,7 @@ import ColonyGridItem from './ColonyGridItem.jsx';
 
 import styles from './ColonyGrid.css';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyType } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -21,16 +19,16 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** List of colonies to display */
-  colonies: List<ColonyRecord>,
+  colonies: Array<ColonyType>,
   /** Indicates that the data is loading */
   loading?: boolean,
-};
+|};
 
 const displayName = 'ColonyGrid';
 
-const ColonyGrid = ({ colonies = List(), loading }: Props) => (
+const ColonyGrid = ({ colonies = [], loading }: Props) => (
   <div className={styles.main}>
     <div className={styles.sectionTitle}>
       <Heading text={MSG.title} appearance={{ size: 'medium' }} />

@@ -16,11 +16,11 @@ import styles from './UserProfile.css';
 
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
-import type { DataRecord, UserRecord } from '~immutable';
+import type { DataType, UserType } from '~immutable';
 
-type Props = {
-  user: ?DataRecord<UserRecord>,
-};
+type Props = {|
+  user: ?DataType<UserType>,
+|};
 
 const UserProfile = ({ user }: Props) =>
   user && user.record ? (

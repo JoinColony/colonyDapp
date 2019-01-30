@@ -9,18 +9,24 @@ import type {
 
 import type { ENSName } from '~types';
 import type { AllColoniesRecord } from './AllColonies';
-import type { DataRecord } from '../../Data';
-import type { DomainId, DomainRecord } from '../../Domain';
-import type { TaskCommentRecord } from '../../TaskComment';
-import type { TaskDraftId, TaskRecord } from '../../Task';
+import type { DataRecordType } from '../../Data';
+import type { DomainId, DomainRecordType } from '../../Domain';
+import type { TaskCommentRecordType } from '../../TaskComment';
+import type { TaskDraftId, TaskRecordType } from '../../Task';
 
 export * from './AllColonies';
 
-export type DomainsMap = ImmutableMapType<DomainId, DataRecord<DomainRecord>>;
-export type AllDomainsMap = ImmutableMapType<ENSName, DataRecord<DomainsMap>>;
-export type TasksMap = ImmutableMapType<string, TaskRecord>;
+export type DomainsMap = ImmutableMapType<
+  DomainId,
+  DataRecordType<DomainRecordType>,
+>;
+export type AllDomainsMap = ImmutableMapType<
+  ENSName,
+  DataRecordType<DomainsMap>,
+>;
+export type TasksMap = ImmutableMapType<string, TaskRecordType>;
 export type AllTasksMap = ImmutableMapType<ENSName, TasksMap>;
-export type CommentsList = ListType<TaskCommentRecord>;
+export type CommentsList = ListType<TaskCommentRecordType>;
 export type AllCommentsMap = ImmutableMapType<TaskDraftId, CommentsList>;
 
 export type DashboardStateProps = {|

@@ -13,6 +13,10 @@ import Numeral from '~core/Numeral';
 import StarRating from '~core/StarRating';
 
 import styles from './TaskClaimRewardDialog.css';
+import {
+  getTaskPayoutNetworkFee,
+  getTaskPayoutAmountMinusNetworkFee,
+} from '~immutable/utils';
 
 const MSG = defineMessages({
   yourRating: {
@@ -71,10 +75,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
-} & TaskClaimRewardProps;
+|} & TaskClaimRewardProps;
 
 const displayName = 'dashboard.TaskClaimRewardDialog';
 
@@ -140,7 +144,7 @@ const TaskClaimRewardDialog = ({
         </section>
       )}
     </DialogSection>
-    {rating > 1 && payouts.size ? (
+    {rating > 1 && payouts.length ? (
       <DialogSection>
         <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
         <section className={styles.rewards}>
@@ -158,7 +162,7 @@ const TaskClaimRewardDialog = ({
                   suffix={` ${nativeTokenPayout.symbol}`}
                 />
               )}
-              {sortedPayouts.map(({ amount, symbol }) => (
+              {sortedPayouts.map(({ amount, token: { symbol } }) => (
                 <Numeral
                   /*
                    * @NOTE Symbol appearance is unique, there can be only one
@@ -185,15 +189,15 @@ const TaskClaimRewardDialog = ({
                   suffix={` ${nativeTokenPayout.symbol}`}
                 />
               )}
-              {sortedPayouts.map(({ networkFee, symbol }) => (
+              {sortedPayouts.map(payout => (
                 <Numeral
                   /*
                    * @NOTE Symbol appearance is unique, there can be only one
                    */
-                  key={symbol}
-                  value={networkFee}
+                  key={payout.token.symbol}
+                  value={getTaskPayoutNetworkFee(payout)}
                   prefix="- "
-                  suffix={` ${symbol}`}
+                  suffix={` ${payout.token.symbol}`}
                 />
               ))}
             </span>
@@ -208,20 +212,18 @@ const TaskClaimRewardDialog = ({
             <span className={styles.rewardItemValue}>
               {nativeTokenPayout && (
                 <Numeral
-                  value={
-                    nativeTokenPayout.amount - nativeTokenPayout.networkFee
-                  }
-                  suffix={` ${nativeTokenPayout.symbol}`}
+                  value={getTaskPayoutAmountMinusNetworkFee(nativeTokenPayout)}
+                  suffix={` ${nativeTokenPayout.token.symbol}`}
                 />
               )}
-              {sortedPayouts.map(({ amount, networkFee, symbol }) => (
+              {sortedPayouts.map(payout => (
                 <Numeral
                   /*
                    * @NOTE Symbol appearance is unique, there can be only one
                    */
-                  key={symbol}
-                  value={amount - networkFee}
-                  suffix={` ${symbol}`}
+                  key={payout.token.symbol}
+                  value={getTaskPayoutAmountMinusNetworkFee(payout)}
+                  suffix={` ${payout.token.symbol}`}
                 />
               ))}
             </span>

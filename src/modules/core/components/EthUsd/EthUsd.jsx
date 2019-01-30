@@ -22,7 +22,7 @@ type Appearance = {
   size: 'medium' | 'large' | 'small',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object for numeral */
   appearance?: Appearance,
   /** Number of decimals to show */
@@ -37,7 +37,7 @@ type Props = {
   value: number | string | BN,
   /** @ignore injected by `injectIntl` */
   intl: IntlShape,
-};
+|};
 
 type State = {
   valueUsd: number | null,

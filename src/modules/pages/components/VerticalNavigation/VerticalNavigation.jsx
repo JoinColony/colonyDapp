@@ -30,7 +30,7 @@ type State = {
   tabIndex: number,
 };
 
-type Props = {
+type Props = {|
   /*
    * Array of `NavigationItem` object to render into vertical tab format
    * Without this nothing will render
@@ -45,7 +45,7 @@ type Props = {
    * Index of tab that should be open initially
    */
   initialTab?: number,
-};
+|};
 
 class VerticalNavigation extends Component<Props, State> {
   static displayName = 'pages.VerticalNavigation';

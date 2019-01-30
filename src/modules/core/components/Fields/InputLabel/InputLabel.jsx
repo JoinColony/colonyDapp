@@ -20,6 +20,7 @@ type Appearance = {
   +size?: 'small',
 };
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** Appearance object */
   appearance?: Appearance,

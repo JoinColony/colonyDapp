@@ -29,7 +29,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Only render the Uploader, no label */
   elementOnly?: boolean,
   /** Label to use */
@@ -42,7 +42,7 @@ type Props = {
   remove: () => Promise<void>,
   /** Function to handle the actual uploading of the file */
   upload: (fileData: FileReaderFile) => Promise<string>,
-};
+|};
 
 class AvatarUploader extends Component<Props> {
   dropzoneRef: ?Dropzone;

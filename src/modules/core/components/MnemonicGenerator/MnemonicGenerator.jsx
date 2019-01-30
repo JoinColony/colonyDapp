@@ -31,7 +31,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
   /** Whether the field is disabled (no input possible) */
@@ -67,11 +67,11 @@ type Props = {
   setValue: (val: any) => void,
   /** @ignore Standard input field property */
   onBlur: Function,
-};
+|};
 
-type State = {
+type State = {|
   copied: boolean,
-};
+|};
 
 class MnemonicGenerator extends Component<Props, State> {
   timeout: TimeoutID;

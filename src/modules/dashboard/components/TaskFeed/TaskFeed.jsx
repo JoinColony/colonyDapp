@@ -1,10 +1,8 @@
 /* @flow */
 
-import type { List } from 'immutable';
-
 import React, { Component } from 'react';
 
-import type { UserRecord, TaskFeedItemRecord } from '~immutable';
+import type { UserType, TaskFeedItemType } from '~immutable';
 
 import Comment from './TaskFeedComment.jsx';
 import Rating from './TaskFeedRating.jsx';
@@ -15,13 +13,13 @@ import mockUser from '../Wallet/__datamocks__/mockUser';
 
 const displayName = 'dashboard.TaskFeed';
 
-type Props = {
-  currentUser: UserRecord,
-  feedItems: List<TaskFeedItemRecord>,
+type Props = {|
+  currentUser: UserType,
+  feedItems: Array<TaskFeedItemType>,
   isRevealEnded: boolean,
-};
+|};
 
-const isSameUser = (a: UserRecord, b: UserRecord) =>
+const isSameUser = (a: UserType, b: UserType) =>
   a.profile.walletAddress.toLowerCase() ===
   b.profile.walletAddress.toLowerCase();
 

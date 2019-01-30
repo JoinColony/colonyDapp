@@ -3,14 +3,6 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type {
-  ColonyRecord,
-  DataRecord,
-  UserRecord,
-  DomainRecord,
-} from '~immutable';
-import type { Given } from '~utils/hoc';
-
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
@@ -26,6 +18,9 @@ import styles from './ColonyHome.css';
 import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
+
+import type { ColonyType, DataType, DomainType, UserType } from '~immutable';
+import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
 
@@ -77,18 +72,18 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
   },
 });
 
-type Props = {
-  colony: ?DataRecord<ColonyRecord>,
+type Props = {|
+  colony: ?DataType<ColonyType>,
   walletAddress: string,
   given: Given,
-  colonyAdmins: Array<UserRecord>,
-  colonyDomains: Array<DataRecord<DomainRecord>>,
-};
+  colonyAdmins: Array<UserType>,
+  colonyDomains: Array<DataType<DomainType>>,
+|};
 
-type State = {
+type State = {|
   filterOption: 'all' | 'created' | 'assigned' | 'completed',
   filteredDomainId: number,
-};
+|};
 
 const filterOptions = [
   { label: MSG.filterOptionAll, value: 'all' },
@@ -140,11 +135,11 @@ class ColonyHome extends Component<Props, State> {
   render() {
     const { filterOption } = this.state;
     const {
-      walletAddress,
-      given,
       colony,
       colonyAdmins,
       colonyDomains,
+      given,
+      walletAddress,
     } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
@@ -187,7 +182,7 @@ class ColonyHome extends Component<Props, State> {
               </Tab>
             </TabList>
             <TabPanel>
-              {tasks && tasks.size ? (
+              {tasks && tasks.length ? (
                 <TaskList tasks={tasks} />
               ) : (
                 <Fragment>
@@ -221,12 +216,10 @@ class ColonyHome extends Component<Props, State> {
                 <FormattedMessage {...MSG.allDomains} />
               </Button>
             </li>
-            {colonyDomains.map((domain: DataRecord<DomainRecord>) => {
+            {colonyDomains.map(domain => {
               /*
-               * @NOTE Need to check for the existance of the `.record` prop value
-               * Otherwise Flow goes crazy, since the type of `DataRecord` is set
-               * to optional
-               * See: `Data` inside `~immutable`
+               * @NOTE Need to check for the existence of the `record` property
+               * since the domain might not be loaded yet.
                */
               if (domain.record) {
                 const { name, id } = domain.record;

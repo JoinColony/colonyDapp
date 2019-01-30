@@ -4,18 +4,22 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record, List } from 'immutable';
 
-export type TaskCommentMetaProps = {
+type TaskCommentMetaRecordProps = {|
   mentions: List<string>,
-};
+|};
 
-export type TaskCommentMetaRecord = RecordOf<TaskCommentMetaProps>;
+export type TaskCommentMetaType = $ReadOnly<{|
+  mentions: Array<string>,
+|}>;
 
-const defaultValues: $Shape<TaskCommentMetaProps> = {
+export type TaskCommentMetaRecordType = RecordOf<TaskCommentMetaRecordProps>;
+
+const defaultValues: $Shape<TaskCommentMetaRecordProps> = {
   mentions: List(),
 };
 
-const TaskCommentMeta: RecordFactory<TaskCommentMetaProps> = Record(
+const TaskCommentMetaRecord: RecordFactory<TaskCommentMetaRecordProps> = Record(
   defaultValues,
 );
 
-export default TaskCommentMeta;
+export default TaskCommentMetaRecord;

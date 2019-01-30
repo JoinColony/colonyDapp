@@ -18,10 +18,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   onPreviousClick: () => void,
   onNextClick: () => void,
-};
+|};
 
 const NavbarElement = ({ onPreviousClick, onNextClick }: Props) => (
   <div className={styles.main}>
@@ -30,14 +30,22 @@ const NavbarElement = ({ onPreviousClick, onNextClick }: Props) => (
       type="button"
       onClick={() => onPreviousClick()}
     >
-      <Icon name="caret-left" size="small" title={MSG.nextMonth} />
+      <Icon
+        name="caret-left"
+        appearance={{ size: 'small' }}
+        title={MSG.nextMonth}
+      />
     </button>
     <button
       className={styles.navButton}
       type="button"
       onClick={() => onNextClick()}
     >
-      <Icon name="caret-right" size="s" title={MSG.prevMonth} />
+      <Icon
+        name="caret-right"
+        appearance={{ size: 'small' }}
+        title={MSG.prevMonth}
+      />
     </button>
   </div>
 );

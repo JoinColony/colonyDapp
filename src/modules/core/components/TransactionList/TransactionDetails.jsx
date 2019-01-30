@@ -9,11 +9,11 @@ import Link from '~core/Link';
 import styles from './TransactionDetails.css';
 
 import type {
-  ColonyRecord,
-  ContractTransactionRecord,
-  DataRecord,
-  TaskRecord,
-  UserRecord,
+  ColonyType,
+  ContractTransactionType,
+  DataType,
+  TaskType,
+  UserType,
 } from '~immutable';
 
 const MSG = defineMessages({
@@ -32,14 +32,14 @@ const MSG = defineMessages({
  */
 const displayName = 'admin.TransactionList.TransactionDetails';
 
-type Props = {
+type Props = {|
   /*
    * User data Object, follows the same format as UserPicker
    */
-  transaction: ContractTransactionRecord,
-  colony?: DataRecord<ColonyRecord>,
-  task?: TaskRecord,
-  user?: DataRecord<UserRecord>,
+  transaction: ContractTransactionType,
+  colony?: DataType<ColonyType>,
+  task?: TaskType,
+  user?: DataType<UserType>,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -53,7 +53,7 @@ type Props = {
    * addresses with the current colony's one
    */
   incoming?: boolean,
-};
+|};
 
 /*
  * @NOTE I'm in doubt weather to export these three formatting components to
@@ -73,14 +73,14 @@ const UserDetails = ({
   </span>
 );
 
-const ColonyDetails = ({ colony }: { colony: ColonyRecord }) => (
+const ColonyDetails = ({ colony }: { colony: ColonyType }) => (
   <span>
     {colony.name && <span>{`${colony.name} `}</span>}
     {!colony.name && colony.address && <span>{colony.address}</span>}
   </span>
 );
 
-const TaskDetails = ({ task }: { task: TaskRecord }) => (
+const TaskDetails = ({ task }: { task: TaskType }) => (
   <span>
     {task.title && (
       <Link

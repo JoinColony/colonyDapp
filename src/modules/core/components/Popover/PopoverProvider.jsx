@@ -7,9 +7,9 @@ import { Set as ImmutableSet } from 'immutable';
 
 const { Provider, Consumer: ContextConsumer } = React.createContext({});
 
-type Props = {
+type Props = {|
   children: Node,
-};
+|};
 
 type State = {
   registeredPopovers: ImmutableSet<string>,

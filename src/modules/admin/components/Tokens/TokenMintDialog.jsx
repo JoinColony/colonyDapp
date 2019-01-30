@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenRecord } from '~immutable';
+import type { TokenType } from '~immutable';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
@@ -56,12 +56,12 @@ type FormValues = {
   mintAmount: number,
 };
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
-  nativeToken: TokenRecord,
+  nativeToken: TokenType,
   onMintNewTokensSubmitted: (symbol: string, amount: number) => void,
-};
+|};
 
 const validationSchema = yup.object().shape({
   mintAmount: yup

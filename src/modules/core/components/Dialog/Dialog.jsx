@@ -18,6 +18,7 @@ const MSG = defineMessages({
   },
 });
 
+// Can't seal this object because of `withConsumerFactory`
 type Props = {
   /** Dialog needs the cancel function from your Dialog component */
   cancel: () => void,

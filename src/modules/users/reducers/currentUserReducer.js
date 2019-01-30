@@ -1,25 +1,25 @@
 /* @flow */
 
-import { fromJS } from 'immutable';
+import { fromJS, List } from 'immutable';
 
 import {
   CURRENT_USER_CREATE,
+  CURRENT_USER_GET_BALANCE_SUCCESS,
   USER_ACTIVITIES_FETCH_SUCCESS,
   USER_ACTIVITIES_UPDATE_SUCCESS,
   USER_PROFILE_UPDATE_SUCCESS,
-  USER_UPLOAD_AVATAR_SUCCESS,
   USER_REMOVE_AVATAR_SUCCESS,
+  USER_UPLOAD_AVATAR_SUCCESS,
   USERNAME_CREATE_SUCCESS,
-  CURRENT_USER_GET_BALANCE_SUCCESS,
 } from '../actionTypes';
 
-import { User, UserProfile } from '~immutable';
+import { UserRecord, UserProfileRecord } from '~immutable';
 
-import type { UserRecord } from '~immutable';
+import type { UserRecordType } from '~immutable';
 
 import type { Action } from '~types';
 
-type State = UserRecord | null;
+type State = UserRecordType | null;
 
 const INITIAL_STATE = null;
 
@@ -28,19 +28,20 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
       const { profileData, walletAddress, balance } = action.payload;
-      return User({
-        profile: UserProfile({ ...profileData, walletAddress, balance }),
+      return UserRecord({
+        profile: UserProfileRecord({ ...profileData, walletAddress, balance }),
       });
     }
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
-      const { activities } = action.payload;
-      return state ? state.set('activities', fromJS(activities)) : state;
+      return state
+        ? state.set('activities', List.of(action.payload.activities))
+        : state;
     }
     case USER_ACTIVITIES_FETCH_SUCCESS: {
       const { activities, walletAddress } = action.payload;
       return state &&
         state.getIn(['profile', 'walletAddress']) === walletAddress
-        ? state.set('activities', fromJS(activities))
+        ? state.set('activities', List.of(activities))
         : state;
     }
     case USER_PROFILE_UPDATE_SUCCESS: {

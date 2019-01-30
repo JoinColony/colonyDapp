@@ -10,11 +10,11 @@ import ProfileAdvanced from './ProfileAdvanced';
 
 import styles from './Profile.css';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyType } from '~immutable';
 
-type Props = {
-  colony: ColonyRecord,
-};
+type Props = {|
+  colony: ColonyType,
+|};
 
 const MSG = defineMessages({
   tabProfile: {

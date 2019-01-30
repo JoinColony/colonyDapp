@@ -14,7 +14,7 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { TaskRecord, UserRecord } from '~immutable';
+import type { TaskType, UserType } from '~immutable';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskDate from '~dashboard/TaskDate';
@@ -26,7 +26,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
-import { TASK_STATE, UserProfile } from '~immutable';
+import { TASK_STATE } from '~immutable';
 
 import {
   TASK_WORKER_END,
@@ -94,13 +94,13 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   openDialog: OpenDialog,
-  task: TaskRecord,
-  currentUser: UserRecord,
+  task: TaskType,
+  currentUser: UserType,
   isTaskCreator?: boolean,
   preventEdit: boolean,
-};
+|};
 
 class Task extends Component<Props> {
   static displayName = 'dashboard.Task';
@@ -108,7 +108,7 @@ class Task extends Component<Props> {
   static defaultProps = {
     isTaskCreator: false,
     preventEdit: true,
-    currentUser: UserProfile(),
+    currentUser: {},
   };
 
   openTaskEditDialog = () => {

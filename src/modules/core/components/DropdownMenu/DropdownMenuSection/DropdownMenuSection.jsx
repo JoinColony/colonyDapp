@@ -5,10 +5,10 @@ import React from 'react';
 
 import styles from './DropdownMenuSection.css';
 
-type Props = {
+type Props = {|
   children: Node,
   separator?: boolean,
-};
+|};
 
 const displayName = 'DropdownMenuSection';
 

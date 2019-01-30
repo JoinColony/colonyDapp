@@ -3,18 +3,18 @@
 import BigNumber from 'bn.js';
 import { List } from 'immutable';
 
-import { ContractTransaction, Data } from '~immutable';
+import { ContractTransactionRecord, DataRecord } from '~immutable';
 
-import type { DataRecord } from '~immutable';
+import type { DataRecordType } from '~immutable';
 
 import mockUser from './mockUser';
 
 const createBN = val =>
   new BigNumber(val).mul(new BigNumber(10).pow(new BigNumber(17)));
 
-const mockTransactions: DataRecord<*> = Data({
+const mockTransactions: DataRecordType<*> = DataRecord({
   record: List([
-    ContractTransaction({
+    ContractTransactionRecord({
       amount: createBN(12),
       colonyENSName: 'cool-colony',
       date: new Date(),

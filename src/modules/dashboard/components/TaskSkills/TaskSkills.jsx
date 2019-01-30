@@ -20,7 +20,7 @@ import {
   TASK_SET_SKILL_SUCCESS,
 } from '../../actionTypes';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -36,12 +36,12 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   isTaskCreator?: boolean,
   // After the skillId is set with the TaskSkills component it should be passed
-  // through form the redux store and is property of the TaskRecord
-  task: TaskRecord,
-};
+  // through form the redux store and is property of TaskType
+  task: TaskType,
+|};
 
 class TaskSkills extends Component<Props> {
   asyncFunc: AsyncFunction<Object, void>;

@@ -34,6 +34,7 @@ export const getColonyDomains = createSelector(
   colonyDomains =>
     (colonyDomains &&
       colonyDomains
+        .filter(domain => domain.has('record')) // ensure they are loaded
         .sortBy(domain => domain.getIn(['record', 'name']).toLowerCase())
         .toList()) ||
     List(),

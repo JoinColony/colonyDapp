@@ -40,18 +40,18 @@ type ChildProps = {
   isDragReject: boolean,
 };
 
-type Props = {
+type Props = {|
   /** Allow specific types of files. See https://github.com/okonet/attr-accept for more information. Keep in mind that mime type determination is not reliable across platforms. CSV files, for example, are reported as text/plain under macOS but as application/vnd.ms-excel under Windows. In some cases there might not be a mime type set at all. See: https://github.com/react-dropzone/react-dropzone/issues/276 */
   accept?: Array<string>,
   children?: Node | (ChildProps => Node),
   /** Custom classNames for different elements of the component */
-  classNames: {
+  classNames: {|
     main: string,
     dropzone: string,
     dropzoneActive: string,
     dropzoneReject: string,
     filesContainer: string,
-  },
+  |},
   /** Disable the file selection dialog box opening when clicking anywhere in the dropzone */
   disableClick?: boolean,
   /** Get a reference to dropzone, if needed */
@@ -90,7 +90,7 @@ type Props = {
   push: (file: UploadFile) => void,
   /** @ignore injected by `asFieldArray` */
   remove: (idx: number) => void,
-};
+|};
 
 const Placeholder = () => (
   <div className={styles.placeholderText}>

@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { call, put, select, take } from 'redux-saga/effects';
 
-import type { TransactionRecord } from '~immutable';
+import type { TransactionRecordType } from '~immutable';
 import type { UniqueAction } from '~types';
 
 import type { TxActionCreator } from '../../types';
@@ -13,7 +13,7 @@ import { transactionAddProperties } from '../../actionCreators';
 import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../actionTypes';
 import { oneTransaction } from '../../selectors';
 
-type ArrayOfTransactions = TransactionRecord<*, *>[];
+type ArrayOfTransactions = TransactionRecordType<*, *>[];
 
 type TransactionInstruction<P> = {
   actionCreator: TxActionCreator<P>,

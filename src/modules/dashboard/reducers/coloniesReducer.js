@@ -14,10 +14,10 @@ import {
   COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
 } from '../actionTypes';
 
-import { Colony, Data, Token } from '~immutable';
+import { ColonyRecord, DataRecord, TokenRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
-import type { AllColoniesMap, ColonyRecord } from '~immutable';
+import type { AllColoniesMap, ColonyRecordType } from '~immutable';
 import type { UniqueActionWithKeyPath } from '~types';
 
 const coloniesReducer = (
@@ -29,15 +29,15 @@ const coloniesReducer = (
       const {
         payload: { token, ensName, admins, ...props },
       } = action;
-      const record = Colony({
-        token: Token(token),
+      const record = ColonyRecord({
+        token: TokenRecord(token),
         admins: ImmutableMap(admins),
         ensName,
         ...props,
       });
       return state.get(ensName)
         ? state.setIn([ensName, 'record'], record)
-        : state.set(ensName, Data<ColonyRecord>({ record }));
+        : state.set(ensName, DataRecord<ColonyRecordType>({ record }));
     }
     case COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
@@ -96,7 +96,7 @@ const coloniesReducer = (
   }
 };
 
-export default withDataReducer<AllColoniesMap, ColonyRecord>(
+export default withDataReducer<AllColoniesMap, ColonyRecordType>(
   COLONY_FETCH,
   ImmutableMap(),
 )(coloniesReducer);

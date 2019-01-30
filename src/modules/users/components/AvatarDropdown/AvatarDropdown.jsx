@@ -1,12 +1,14 @@
 /* @flow */
 
 import React from 'react';
+import compose from 'recompose/compose';
 import { connect } from 'react-redux';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import Popover from '~core/Popover';
 import UserAvatar from '~core/UserAvatar';
 
-import type { UserRecord } from '~immutable';
+import type { RootStateRecord, UserType } from '~immutable';
 
 import { currentUser as currentUserSelector } from '../../selectors';
 
@@ -14,9 +16,9 @@ import styles from './AvatarDropdown.css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover.jsx';
 
-type Props = {
-  user: UserRecord,
-};
+type Props = {|
+  user: UserType,
+|};
 
 const displayName = 'users.AvatarDropdown';
 
@@ -43,6 +45,9 @@ const AvatarDropdown = ({ user }: Props) => (
 
 AvatarDropdown.displayName = displayName;
 
-export default connect(state => ({
-  user: currentUserSelector(state),
-}))(AvatarDropdown);
+export default compose(
+  connect((state: RootStateRecord) => ({
+    user: currentUserSelector(state),
+  })),
+  withImmutablePropsToJS,
+)(AvatarDropdown);

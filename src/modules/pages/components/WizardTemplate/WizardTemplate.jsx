@@ -8,11 +8,11 @@ import Logo from '../../../../img/logo.svg';
 import { StepBar } from '~core/ProgressBar';
 import styles from './WizardTemplate.css';
 
-type Props = {
+type Props = {|
   children: Node,
   step?: number,
   stepCount?: number,
-};
+|};
 
 const displayName = 'pages.WizardTemplate';
 

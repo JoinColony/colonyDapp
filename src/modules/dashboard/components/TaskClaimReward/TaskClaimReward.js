@@ -4,13 +4,13 @@ import { compose, withProps } from 'recompose';
 
 import { sortObjectsBy } from '~utils/arrays';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 
 import TaskClaimReward from './TaskClaimReward.jsx';
 
-export type Props = {
-  task: TaskRecord,
-};
+export type Props = {|
+  task: TaskType,
+|};
 
 const isEth = (prev: boolean, next: boolean): number => {
   if (prev || next) {

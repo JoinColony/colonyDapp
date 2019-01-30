@@ -1,11 +1,9 @@
 /* @flow */
 
-import type { List } from 'immutable';
-
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskPayoutRecord, UserRecord } from '~immutable';
+import type { TaskPayoutType, UserType } from '~immutable';
 
 import styles from './Assignment.css';
 
@@ -36,10 +34,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  assignee?: UserRecord,
+type Props = {|
+  assignee?: UserType,
   /** List of payouts per token that has been set for a task */
-  payouts?: List<TaskPayoutRecord>,
+  payouts?: Array<TaskPayoutType>,
   /** current user reputation */
   reputation?: number,
   /** The assignment has to be confirmed first and can therefore appear as pending,
@@ -48,7 +46,7 @@ type Props = {
   pending?: boolean,
   /** We need to be aware of the native token to adjust the UI */
   nativeToken: string,
-};
+|};
 
 const Assignment = ({
   assignee,

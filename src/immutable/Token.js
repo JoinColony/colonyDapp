@@ -1,11 +1,13 @@
 /* @flow */
 
+import type { RecordOf, RecordFactory } from 'immutable';
+
 import { Record } from 'immutable';
 import BigNumber from 'bn.js';
 
 import type { Address } from '~types';
 
-export type TokenProps = {
+type Shared = {|
   address: Address,
   balance: BigNumber,
   icon: string,
@@ -14,9 +16,13 @@ export type TokenProps = {
   isNative?: boolean,
   name: string,
   symbol: string,
-};
+|};
 
-const defaultValues: $Shape<TokenProps> = {
+export type TokenType = $ReadOnly<Shared>;
+
+export type TokenRecordType = RecordOf<Shared>;
+
+const defaultValues: $Shape<Shared> = {
   address: undefined,
   balance: undefined,
   icon: undefined,
@@ -27,41 +33,6 @@ const defaultValues: $Shape<TokenProps> = {
   symbol: undefined,
 };
 
-class TokenClass extends Record(defaultValues)<TokenProps> {
-  // XXX This section repeats the flow types of `TokenProps` as properties
-  // of the class, without interfering with the property accessors.
-  // This is necessary because the `Record` flow type doesn't quite do
-  // the trick when we extend it, and would otherwise complain about
-  // missing properties.
-  //
-  /* eslint-disable */
-  /*::
-  address: Address;
-  balance: BigNumber;
-  icon: string;
-  isBlocked: boolean;
-  isEnabled: boolean;
-  isNative: boolean;
-  name: string;
-  symbol: string;
-  */
-  /* eslint-enable */
+const TokenRecord: RecordFactory<Shared> = Record(defaultValues);
 
-  get isPositive() {
-    return this.balance >= 0;
-  }
-
-  get isNotPositive() {
-    return this.balance <= 0;
-  }
-
-  get isEth() {
-    return this.address === '0x0';
-  }
-}
-
-export type TokenRecord = TokenClass;
-
-const Token = (props?: TokenProps) => new TokenClass(props);
-
-export default Token;
+export default TokenRecord;

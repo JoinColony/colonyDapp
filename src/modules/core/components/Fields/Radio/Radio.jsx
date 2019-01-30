@@ -18,7 +18,7 @@ export type Appearance = {
   theme?: 'buttonGroup' | 'fakeCheckbox' | 'colorPicker',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** If the input is checked */
@@ -64,7 +64,7 @@ type Props = {
   setError: (val: any) => void,
   /** @ignore Standard input field property */
   onChange: Function,
-};
+|};
 
 const displayName = 'Radio';
 

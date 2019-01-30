@@ -1,35 +1,33 @@
 /* @flow */
 
-import type { RecordFactory, RecordOf } from 'immutable';
+import type { RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
 export type ActivityAction = 'addedSkillTag' | 'assignedUser' | 'commentedOn';
 
-export type ActivityFeedItemProps = {
-  id: number,
+type Shared = {|
   actionType: ActivityAction,
   date: Date,
-  user?: string,
-  task: string,
-  organization: string,
   domainTag: string,
-};
+  id: number,
+  organization: string,
+  task: string,
+  user?: string,
+|};
 
-export type ActivityFeedItemRecord = RecordOf<ActivityFeedItemProps>;
+export type ActivityFeedItemType = $ReadOnly<Shared>;
 
-const defaultValues: $Shape<ActivityFeedItemProps> = {
-  id: undefined,
+const defaultValues: $Shape<Shared> = {
   actionType: undefined,
   date: undefined,
-  user: undefined,
-  task: undefined,
-  organization: undefined,
   domainTag: undefined,
+  id: undefined,
+  organization: undefined,
+  task: undefined,
+  user: undefined,
 };
 
-const ActivityFeedItem: RecordFactory<ActivityFeedItemProps> = Record(
-  defaultValues,
-);
+const ActivityFeedItemRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default ActivityFeedItem;
+export default ActivityFeedItemRecord;

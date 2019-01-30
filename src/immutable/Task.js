@@ -7,31 +7,28 @@ import { Record, List } from 'immutable';
 import { TASK_STATE } from './constants';
 
 import type { ENSName } from '~types';
-import type { TaskFeedItemRecord } from './TaskFeedItem';
-import type { TaskPayoutRecord } from './TaskPayout';
-import type { UserRecord } from './User';
+import type { TaskFeedItemRecordType, TaskFeedItemType } from './TaskFeedItem';
+import type { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
+import type { UserType, UserRecordType } from './User';
 
 export type TaskRating = 1 | 2 | 3;
 
 export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 
-export type TaskProps = {
-  assignee?: UserRecord,
+type Shared = {|
   colonyENSName: ENSName,
   creator: string,
   currentState: TaskCurrentState,
   domainId: number,
+  draftId: string, // Draft ID, when the task is a little babby
   dueDate?: Date,
   evaluatorHasRated: boolean, // secret was submitted
   evaluatorPayoutClaimed: boolean,
   evaluatorRateFail: boolean, // if they didn't rate or reveal
-  feedItems: List<TaskFeedItemRecord>,
-  draftId: string, // Draft ID, when the task is a little babby
   managerHasRated: boolean, // secret was submitted
   managerPayoutClaimed: boolean,
   managerRateFail: boolean, // if they didn't rate or reveal
   managerRating?: TaskRating,
-  payouts: List<TaskPayoutRecord>,
   reputation: number, // TODO: should be BigNumber
   skillId: number,
   taskId: number, // On-chain ID, when the task is all grown up :'-)
@@ -40,14 +37,28 @@ export type TaskProps = {
   workerPayoutClaimed: boolean,
   workerRateFail: boolean, // if they didn't rate or reveal
   workerRating?: TaskRating,
-};
+|};
 
-export type TaskRecord = RecordOf<TaskProps>;
+export type TaskType = $ReadOnly<{|
+  ...Shared,
+  assignee?: UserType,
+  feedItems: Array<TaskFeedItemType>,
+  payouts: Array<TaskPayoutType>,
+|}>;
 
-export type TaskDraftId = $PropertyType<TaskRecord, 'draftId'>;
-export type TaskId = $PropertyType<TaskRecord, 'taskId'>;
+type TaskRecordProps = {|
+  ...Shared,
+  assignee?: UserRecordType,
+  feedItems: List<TaskFeedItemRecordType>,
+  payouts: List<TaskPayoutRecordType>,
+|};
 
-const defaultValues: $Shape<TaskProps> = {
+export type TaskRecordType = RecordOf<TaskRecordProps>;
+
+export type TaskDraftId = $PropertyType<TaskRecordType, 'draftId'>;
+export type TaskId = $PropertyType<TaskRecordType, 'taskId'>;
+
+const defaultValues: $Shape<TaskRecordProps> = {
   assignee: undefined,
   colonyENSName: undefined,
   creator: undefined,
@@ -74,6 +85,6 @@ const defaultValues: $Shape<TaskProps> = {
   workerRating: undefined,
 };
 
-const Task: RecordFactory<TaskProps> = Record(defaultValues);
+const TaskRecord: RecordFactory<TaskRecordProps> = Record(defaultValues);
 
-export default Task;
+export default TaskRecord;

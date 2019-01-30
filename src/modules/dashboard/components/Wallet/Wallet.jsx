@@ -1,15 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type {
-  TokenRecord,
-  DataRecord,
-  ContractTransactionRecord,
-} from '~immutable';
+import type { ContractTransactionType, DataType, TokenType } from '~immutable';
 import type { Address } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -46,20 +41,21 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: List<TokenRecord>,
+  tokens: Array<TokenType>,
   walletAddress: Address,
-  transactions: ?DataRecord<List<ContractTransactionRecord>>,
+  transactions: ?DataType<Array<ContractTransactionType>>,
   fetchUserTransactions: () => any,
-};
+|};
 
 class Wallet extends Component<Props> {
   displayName = 'dashboard.Wallet';
 
   componentDidMount() {
     const { transactions, fetchUserTransactions } = this.props;
-    if (!transactions || !transactions.size) fetchUserTransactions();
+    if (!(transactions && transactions.record && transactions.record.length))
+      fetchUserTransactions();
   }
 
   handleEditToken = () => {

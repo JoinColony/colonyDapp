@@ -2,23 +2,22 @@
 
 import React, { Component } from 'react';
 
-import type { PopoverTrigger } from '~core/Popover';
-
 import Popover from '~core/Popover';
 
+import type { PopoverTrigger } from '~core/Popover';
 import type { TransactionGroup } from './transactionGroup';
-import { transactionCount } from './transactionGroup';
 
+import { transactionCount } from './transactionGroup';
 import GasStationContent from './GasStationContent';
 
-type Props = {
+type Props = {|
   transactionGroups: Array<TransactionGroup>,
   children: React$Element<*> | PopoverTrigger,
-};
+|};
 
-type State = {
+type State = {|
   isGasStationOpen: boolean,
-};
+|};
 
 class GasStationPopover extends Component<Props, State> {
   static displayName = 'users.GasStation.GasStationPopover';

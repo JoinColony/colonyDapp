@@ -1,6 +1,5 @@
 /* @flow */
 import React, { Fragment } from 'react';
-import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 import BigNumber from 'bn.js';
 import * as yup from 'yup';
@@ -13,11 +12,11 @@ import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
-import { Token } from '~immutable';
 
 import Payout from './Payout.jsx';
+import { tokenIsETH } from '../../../../immutable/utils';
 
-import type { UserRecord, TokenRecord, TaskPayoutRecord } from '~immutable';
+import type { UserType, TokenType, TaskPayoutType } from '~immutable';
 
 import styles from './TaskEditDialog.css';
 
@@ -60,22 +59,22 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  assignee?: UserRecord,
-  availableTokens: List<TokenRecord>,
+type Props = {|
+  assignee?: UserType,
+  availableTokens: Array<TokenType>,
   maxTokens?: BigNumber,
-  payouts?: List<TaskPayoutRecord>,
+  payouts?: Array<TaskPayoutType>,
   reputation?: BigNumber,
-  users: List<UserRecord>,
+  users: Array<UserType>,
   cancel: () => void,
   addTokenFunding: (
     values: { payouts?: Array<any> },
     helpers: () => void,
   ) => void,
   setPayload: (action: Object, payload: Object) => Object,
-};
+|};
 
-const filter = (data: List<UserRecord>, filterValue) =>
+const filter = (data: Array<UserType>, filterValue) =>
   data.filter(
     user =>
       user.profile.username &&
@@ -112,12 +111,10 @@ const TaskEditDialog = ({
       )
       .max(maxTokens),
   });
-  const tokenOptions = availableTokens
-    .map(({ symbol }, i) => ({
-      value: i + 1,
-      label: symbol,
-    }))
-    .toArray();
+  const tokenOptions = availableTokens.map(({ symbol }, i) => ({
+    value: i + 1,
+    label: symbol,
+  }));
 
   return (
     <FullscreenDialog
@@ -136,8 +133,7 @@ const TaskEditDialog = ({
         success="COOL_THING_CREATED"
         error="COOL_THING_CREATE_ERROR"
         initialValues={{
-          payouts:
-            payouts && List.isList(payouts) ? payouts.toArray() : payouts || [],
+          payouts: payouts || [],
           assignee: assignee || null,
         }}
         validationSchema={validateFunding}
@@ -185,8 +181,7 @@ const TaskEditDialog = ({
                       {values.payouts &&
                         values.payouts.map((payout, index) => {
                           const { amount, token: tokenIndex } = payout;
-                          const token =
-                            availableTokens.get(tokenIndex - 1) || Token();
+                          const token = availableTokens[tokenIndex - 1] || {};
                           return (
                             <Payout
                               key={payout.id}
@@ -196,7 +191,7 @@ const TaskEditDialog = ({
                               reputation={
                                 token.isNative ? reputation : undefined
                               }
-                              isEth={token.isEth}
+                              isEth={tokenIsETH(token)}
                               tokenOptions={tokenOptions}
                               remove={() => arrayHelpers.remove(index)}
                             />

@@ -18,7 +18,7 @@ type Appearance = {
   direction: 'vertical' | 'horizontal',
 };
 
-type Props = {
+type Props = {|
   appearance?: Appearance,
   /** Additional className for customizing styles */
   className?: string,
@@ -48,11 +48,11 @@ type Props = {
   push: (value: string) => void,
   /** @ignore injected by `asFieldArray` */
   remove: (value: string) => void,
-};
+|};
 
-type State = {
+type State = {|
   inputId: string,
-};
+|};
 
 class Checkbox extends Component<Props, State> {
   static displayName = 'Checkbox';

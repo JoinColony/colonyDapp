@@ -9,15 +9,15 @@ import styles from './AddressItem.css';
 import Radio from '~core/Fields/Radio';
 import SpinnerLoader from '~core/Preloaders/SpinnerLoader.jsx';
 
-type Props = {
+type Props = {|
   address: string,
   checked: boolean,
   searchTerm: string,
-};
+|};
 
-type State = {
+type State = {|
   isLoading: boolean,
-};
+|};
 
 class AddressItem extends Component<Props, State> {
   timerHandle: TimeoutID; // for mocking balance lookup, so can clearTimeout in `componentWillUnmount`

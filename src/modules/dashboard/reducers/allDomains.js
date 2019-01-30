@@ -9,11 +9,11 @@ import {
   DOMAIN_CREATE_SUCCESS,
 } from '../actionTypes';
 
-import { Domain, Data } from '~immutable';
+import { DomainRecord, DataRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { UniqueActionWithKeyPath } from '~types';
-import type { AllDomainsMap, DomainRecord } from '~immutable';
+import type { AllDomainsMap, DomainRecordType } from '~immutable';
 
 const allDomainsReducer = (
   state: AllDomainsMap = ImmutableMap(),
@@ -22,55 +22,46 @@ const allDomainsReducer = (
   switch (action.type) {
     case COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
-        meta: { keyPath },
+        meta: {
+          keyPath: [ensName],
+        },
         payload: domains,
       } = action;
-      let newState = state;
-      domains.forEach(({ _id, ...domain }) => {
-        const id = parseInt(_id, 10);
-        newState = newState.setIn(
-          [...keyPath, id],
-          Data({ record: Domain({ id, ...domain }) }),
-        );
+      return state.withMutations(mutable => {
+        domains.forEach(({ _id, ...domain }) => {
+          const id = parseInt(_id, 10);
+          mutable.mergeIn(
+            [ensName, id],
+            DataRecord<DomainRecordType>({
+              record: DomainRecord({ id, ...domain }),
+            }),
+          );
+        });
+        return mutable;
       });
-      return newState;
     }
-    case DOMAIN_CREATE_SUCCESS: {
-      const {
-        meta: {
-          keyPath: [ensName, domainId],
-        },
-        payload,
-      } = action;
-      return state
-        ? state.setIn(
-            [ensName, domainId],
-            Data<DomainRecord>({ record: Domain({ ...payload }) }),
-          )
-        : state;
-    }
+    case DOMAIN_CREATE_SUCCESS:
     case DOMAIN_FETCH_SUCCESS: {
       const {
         meta: {
-          keyPath: [ensName, domainId],
+          keyPath: [ensName],
           keyPath,
         },
         payload,
       } = action;
-      const data = Data<DomainRecord>({
-        record: Domain({ id: domainId, ...payload }),
+      const data = DataRecord<DomainRecordType>({
+        record: DomainRecord(payload),
       });
-
-      return state.get(ensName)
+      return state.has(ensName)
         ? state.mergeDeepIn(keyPath, data)
-        : state.setIn(ensName, ImmutableMap([[domainId, data]]));
+        : state.set(ensName, ImmutableMap([[ensName, data]]));
     }
     default:
       return state;
   }
 };
 
-export default withDataReducer<AllDomainsMap, DomainRecord>(
+export default withDataReducer<AllDomainsMap, DomainRecordType>(
   DOMAIN_FETCH,
   ImmutableMap(),
 )(allDomainsReducer);

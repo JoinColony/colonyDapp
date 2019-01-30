@@ -11,11 +11,11 @@ type Appearance = {
   theme: 'alt',
 };
 
-type Props = {
+type Props = {|
   appearance?: Appearance,
   children: Node,
   asideContent: Node,
-};
+|};
 
 const displayName = 'pages.ProfileTemplate';
 

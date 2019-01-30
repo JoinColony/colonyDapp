@@ -17,12 +17,12 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** @ignore injected by `injectIntl` */
   intl: IntlShape,
   /** Number of seconds for the duration. */
   value: number,
-};
+|};
 
 const displayName = 'Duration';
 

@@ -6,7 +6,7 @@ import Icon from '../Icon';
 
 import styles from './Avatar.css';
 
-type Props = {
+type Props = {|
   /** Avatar image URL (can be a base64 encoded string) */
   avatarURL?: ?string,
   /** Extra className */
@@ -19,7 +19,7 @@ type Props = {
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
   /** Title for a11y */
   title: string,
-};
+|};
 
 const displayName = 'Avatar';
 

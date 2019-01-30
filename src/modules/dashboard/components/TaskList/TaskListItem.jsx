@@ -10,7 +10,7 @@ import Link from '~core/Link';
 
 import styles from './TaskListItem.css';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 
 const MSG = defineMessages({
   reputation: {
@@ -21,9 +21,9 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 
-type Props = {
-  task: TaskRecord,
-};
+type Props = {|
+  task: TaskType,
+|};
 
 const TaskListItem = ({
   task: { assignee, draftId, payouts, reputation, title, colonyENSName },

@@ -4,7 +4,6 @@ import type { LocationShape } from 'react-router-dom';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { compose } from 'recompose';
 
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -15,9 +14,6 @@ import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { withFeatureFlags } from '~utils/hoc';
-
-import { withColonyFromRoute } from '../../../core/hocs';
 
 import styles from './AdminDashboard.css';
 
@@ -28,7 +24,7 @@ import type {
    */
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
-import type { ColonyRecord, DataRecord } from '~immutable';
+import type { ColonyType, DataType } from '~immutable';
 import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
@@ -64,17 +60,17 @@ const MSG = defineMessages({
 
 const mockColonyRecoveryMode = true;
 
-type Props = {
-  colony: ?DataRecord<ColonyRecord>,
+type Props = {|
+  colony: ?DataType<ColonyType>,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
    */
   location?: ?LocationShape,
   given: Given,
-};
+|};
 
-const navigationItems = (colony: ColonyRecord): Array<NavigationItem> => [
+const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   {
     id: 1,
     title: MSG.tabProfile,
@@ -88,23 +84,16 @@ const navigationItems = (colony: ColonyRecord): Array<NavigationItem> => [
   {
     id: 3,
     title: MSG.tabTransaction,
-    content: (
-      <Transactions
-        colonyAddress={colony.address}
-        colonyENSName={colony.ensName}
-      />
-    ),
+    content: <Transactions ensName={colony.ensName} />,
   },
   {
     id: 4,
     title: MSG.tabOrganisation,
-    content: <Organizations colony={colony} />,
+    content: <Organizations ensName={colony.ensName} />,
   },
 ];
 
-const AdminDashboard = (props: Props) => {
-  const { colony, given, location } = props;
-
+const AdminDashboard = ({ colony, given, location }: Props) => {
   if (!colony || !colony.record)
     return <LoadingTemplate loadingText={MSG.loadingText} />;
 
@@ -153,7 +142,4 @@ AdminDashboard.defaultProps = {
 
 AdminDashboard.displayName = 'admin.AdminDashboard';
 
-export default compose(
-  withColonyFromRoute,
-  withFeatureFlags(),
-)(AdminDashboard);
+export default AdminDashboard;

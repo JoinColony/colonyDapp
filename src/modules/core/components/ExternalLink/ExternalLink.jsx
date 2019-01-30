@@ -7,7 +7,7 @@ import { injectIntl } from 'react-intl';
 
 import styles from './ExternalLink.css';
 
-type Props = {
+type Props = {|
   /** The page it should link to */
   href: string,
   /** A string or a `messageDescriptor` that make up the link's text */
@@ -21,7 +21,7 @@ type Props = {
    * Don't abuse it!
    */
   className?: string,
-};
+|};
 
 const ExternalLink = ({
   href,

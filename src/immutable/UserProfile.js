@@ -6,7 +6,7 @@ import { Record } from 'immutable';
 
 import type { Address, ENSName } from '../types';
 
-export type UserProfileProps = {
+type Shared = {|
   activitiesStore: string,
   avatar?: string,
   balance?: string,
@@ -17,11 +17,13 @@ export type UserProfileProps = {
   username?: ENSName,
   walletAddress: Address,
   website?: string,
-};
+|};
 
-export type UserProfileRecord = RecordOf<UserProfileProps>;
+export type UserProfileType = $ReadOnly<Shared>;
 
-const defaultProps: $Shape<UserProfileProps> = {
+export type UserProfileRecordType = RecordOf<Shared>;
+
+const defaultProps: $Shape<Shared> = {
   activitiesStore: undefined,
   avatar: undefined,
   balance: undefined,
@@ -34,6 +36,6 @@ const defaultProps: $Shape<UserProfileProps> = {
   website: undefined,
 };
 
-const UserProfile: RecordFactory<UserProfileProps> = Record(defaultProps);
+const UserProfileRecord: RecordFactory<Shared> = Record(defaultProps);
 
-export default UserProfile;
+export default UserProfileRecord;

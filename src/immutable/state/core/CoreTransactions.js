@@ -8,7 +8,7 @@ import type {
 
 import { Record, Map as ImmutableMap } from 'immutable';
 
-import type { TransactionRecord, TransactionId } from '~immutable';
+import type { TransactionRecordType, TransactionId } from '~immutable';
 import type { GasPricesRecord } from './GasPrices';
 
 import {
@@ -20,7 +20,7 @@ import GasPrices from './GasPrices';
 
 export type TransactionsList = ImmutableMapType<
   TransactionId,
-  TransactionRecord<*, *>,
+  TransactionRecordType<*, *>,
 >;
 
 export type CoreTransactionsProps = {|

@@ -1,7 +1,6 @@
 /* @flow */
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { List } from 'immutable';
 
 import {
   Table,
@@ -11,7 +10,7 @@ import {
   TableRow,
 } from '~core/Table';
 
-import type { ActivityFeedItemRecord } from '~immutable';
+import type { ActivityFeedItemType } from '~immutable';
 
 import styles from './ActivityFeed.css';
 
@@ -28,9 +27,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  activities: List<ActivityFeedItemRecord>,
-};
+type Props = {|
+  activities: Array<ActivityFeedItemType>,
+|};
 
 const displayName = 'ActivityFeed';
 

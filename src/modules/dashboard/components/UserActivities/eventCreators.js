@@ -1,18 +1,18 @@
 /* @flow */
 
-import type { UserActivityProps } from '~immutable';
+import type { UserActivityType } from '~immutable';
 
 export const joinedColonyEvent = (
   colonyName: string = '',
   domainName: string = '',
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   createdAt: new Date(),
   userAction: 'joinedColony',
 });
 
-export const createdColonyEvent = (colonyName: string): UserActivityProps => ({
+export const createdColonyEvent = (colonyName: string): UserActivityType => ({
   colonyName,
   createdAt: new Date(),
   userAction: 'createdColony',
@@ -23,7 +23,7 @@ export const acceptedTaskEvent = (
   domainName: string,
   acceptedUser: string,
   taskName: string,
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   acceptedUser,
@@ -37,7 +37,7 @@ export const assignedTaskEvent = (
   domainName: string,
   assignedUser: string,
   taskName: string,
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   assignedUser,
@@ -50,7 +50,7 @@ export const receivedWorkerRatingEvent = (
   colonyName: string,
   domainName: string,
   numberOfStars: number,
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   numberOfStars,
@@ -62,7 +62,7 @@ export const receivedAdminRatingEvent = (
   colonyName: string,
   domainName: string,
   numberOfStars: number,
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   numberOfStars,
@@ -74,7 +74,7 @@ export const taskCommentEvent = (
   colonyName: string,
   domainName: string,
   taskName: string,
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   taskName,
@@ -86,7 +86,7 @@ export const fileUploadEvent = (
   colonyName: string,
   domainName: string,
   taskName: string,
-): UserActivityProps => ({
+): UserActivityType => ({
   colonyName,
   domainName,
   taskName,

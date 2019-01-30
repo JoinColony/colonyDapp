@@ -7,14 +7,14 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './CenteredTemplate.css';
 
-type Appearance = {
+type Appearance = {|
   theme: 'alt',
-};
+|};
 
-type Props = {
+type Props = {|
   appearance?: Appearance,
   children: Node,
-};
+|};
 
 const displayName = 'pages.CenteredTemplate';
 

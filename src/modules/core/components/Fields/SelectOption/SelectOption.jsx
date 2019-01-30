@@ -13,7 +13,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   checked: boolean,
   id: string,
   idx: number,
@@ -29,7 +29,7 @@ type Props = {
     text: string | MessageDescriptor,
     textValues?: MessageValues,
   ) => string,
-};
+|};
 
 class SelectOption extends Component<Props> {
   static displayName = 'SelectOption';

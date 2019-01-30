@@ -7,24 +7,24 @@ import type {
 } from 'immutable';
 
 import type { AllUsersRecord } from './AllUsers';
-import type { ContractTransactionRecord } from '../../ContractTransaction';
-import type { DataRecord } from '../../Data';
-import type { UserRecord } from '../../User';
-import type { WalletRecord } from '../../Wallet';
+import type { ContractTransactionRecordType } from '../../ContractTransaction';
+import type { DataRecordType } from '../../Data';
+import type { UserRecordType } from '../../User';
+import type { WalletRecordType } from '../../Wallet';
 
 export * from './AllUsers';
 
-export type CurrentUserTransactions = DataRecord<
-  ListType<ContractTransactionRecord>,
+export type CurrentUserTransactions = DataRecordType<
+  ListType<ContractTransactionRecordType>,
 >;
 
-export type CurrentUser = UserRecord;
+export type CurrentUser = UserRecordType;
 
 export type UsersStateProps = {|
   allUsers: AllUsersRecord,
   currentUser: CurrentUser,
   currentUserTransactions: CurrentUserTransactions,
-  wallet: WalletRecord,
+  wallet: WalletRecordType,
 |};
 
 /*

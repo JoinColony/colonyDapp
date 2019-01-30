@@ -69,19 +69,19 @@ const MSG = defineMessages({
   },
 });
 
-type FormValues = {
+type FormValues = {|
   rating: number,
   workDescription: string,
-};
+|};
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
   /*
    * Based on this display the input to write the work submission description
    */
   submitWork: boolean,
-};
+|};
 
 const displayName = 'dashboard.ManagerRatingDialog';
 

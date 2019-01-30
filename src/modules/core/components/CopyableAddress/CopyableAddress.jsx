@@ -30,11 +30,11 @@ const MSG = defineMessages({
   },
 });
 
-type Appearance = {
+type Appearance = {|
   theme: 'big',
-};
+|};
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Address to display */
@@ -43,11 +43,11 @@ type Props = {
   full?: boolean,
   /** In some occasions we want to show the button to copy only */
   hideAddress?: boolean,
-};
+|};
 
-type State = {
+type State = {|
   copiedAddress: boolean,
-};
+|};
 
 class CopyableAddress extends Component<Props, State> {
   timeout: TimeoutID;

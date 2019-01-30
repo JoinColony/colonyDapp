@@ -201,6 +201,7 @@
         "sugar-core": "^2.0.4",
         "sugar-date": "^2.0.4",
         "web3-utils": "^1.0.0-beta.27",
+        "with-immutable-props-to-js": "^1.1.0",
         "yup": "^0.26.6"
     },
     "resolutions": {

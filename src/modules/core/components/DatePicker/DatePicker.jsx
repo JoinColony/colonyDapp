@@ -20,7 +20,7 @@ import type { PopoverTrigger } from '../Popover';
 import CaptionElement from './CaptionElement.jsx';
 import NavbarElement from './NavbarElement.jsx';
 
-type Props = {
+type Props = {|
   /** Appearance object, will be passed down to `Input`, see [InputComponent](#inputcomponent) */
   appearance?: InputComponentAppearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -77,12 +77,12 @@ type Props = {
    * This implies you handle the state on you're own.
    */
   selectedDate?: ?Date,
-};
+|};
 
-type State = {
+type State = {|
   inputValue: string,
   currentDate: ?Date,
-};
+|};
 
 const getShortDate = (date: Date) => formatDate(date, '{date} {Mon} {year}');
 

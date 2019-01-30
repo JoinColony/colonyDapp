@@ -3,9 +3,9 @@
 import React, { Fragment } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
-import { List } from 'immutable';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
+import type { ENSName } from '~types';
 
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -56,10 +56,10 @@ const validationSchema = yup.object({
     .required(),
 });
 
-type Props = {
-  availableUsers: List<UserRecord>,
-  ensName: string,
-};
+type Props = {|
+  availableUsers: Array<UserType>,
+  ensName: ENSName,
+|};
 
 const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
   <div className={styles.main}>

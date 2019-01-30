@@ -2,14 +2,19 @@
 
 import type { RecordFactory, RecordOf } from 'immutable';
 
-import { Record, Map } from 'immutable';
+import { Record, Map as ImmutableMap } from 'immutable';
 
-import Token from './Token';
+import TokenRecord from './Token';
 
 import type { Address, ENSName } from '~types';
-import type { TokenRecord, ColonyAdminRecord } from './index';
+import type {
+  TokenRecordType,
+  TokenType,
+  ColonyAdminRecordType,
+  ColonyAdminType,
+} from './index';
 
-export type ColonyProps = {|
+type Shared = {|
   address: Address,
   avatar?: string,
   databases: {
@@ -21,15 +26,23 @@ export type ColonyProps = {|
   guideline?: string,
   id?: number,
   name: string,
-  token?: TokenRecord,
   version?: number,
   website?: string,
-  admins?: Map<string, ColonyAdminRecord>,
 |};
 
-const defaultAdmins: Map<string, ColonyAdminRecord> = Map();
+export type ColonyType = $ReadOnly<{|
+  ...Shared,
+  token?: TokenType,
+  admins?: { [string]: ColonyAdminType },
+|}>;
 
-const defaultValues: $Shape<ColonyProps> = {
+type ColonyRecordProps = {|
+  ...Shared,
+  token?: TokenRecordType,
+  admins?: ImmutableMap<string, ColonyAdminRecordType>,
+|};
+
+const defaultValues: $Shape<ColonyRecordProps> = {
   address: undefined,
   avatar: undefined,
   databases: {
@@ -41,14 +54,14 @@ const defaultValues: $Shape<ColonyProps> = {
   guideline: undefined,
   id: undefined,
   name: undefined,
-  token: Token(),
+  token: TokenRecord(),
   version: undefined,
   website: undefined,
-  admins: defaultAdmins,
+  admins: ImmutableMap<string, ColonyAdminRecordType>(),
 };
 
-const Colony: RecordFactory<ColonyProps> = Record(defaultValues);
+const ColonyRecord: RecordFactory<ColonyRecordProps> = Record(defaultValues);
 
-export type ColonyRecord = RecordOf<ColonyProps>;
+export type ColonyRecordType = RecordOf<ColonyRecordProps>;
 
-export default Colony;
+export default ColonyRecord;

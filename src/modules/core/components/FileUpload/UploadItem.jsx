@@ -30,7 +30,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Array of allowed file types */
   accept?: string[],
   /** Index of file in list of files to be uploaded */
@@ -47,7 +47,7 @@ type Props = {
   $error?: string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
-};
+|};
 
 class UploadItem extends Component<Props> {
   _readFiles: (files: Array<Object>) => Promise<Array<Object>>;

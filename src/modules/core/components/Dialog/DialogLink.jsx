@@ -8,6 +8,7 @@ import type { OpenDialog } from './types';
 
 import withDialog from './withDialog';
 
+// Can't seal this object because of `withConsumerFactory`
 type Props = {
   /** Render prop for element opening the dialog. In 99,9% this will be a button! */
   children: ({ open: OpenDialog }) => Node,

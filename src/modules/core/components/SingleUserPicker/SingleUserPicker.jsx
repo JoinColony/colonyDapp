@@ -4,7 +4,7 @@ import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
-import { compose } from 'recompose';
+import compose from 'recompose/compose';
 
 import styles from './SingleUserPicker.css';
 
@@ -18,7 +18,7 @@ import Button from '../Button';
 import { withOmniPicker } from '../OmniPicker';
 import UserAvatar from '../UserAvatar';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 const MSG = defineMessages({
   selectMember: {
@@ -39,7 +39,7 @@ type Appearance = {
   direction?: 'horizontal',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -67,15 +67,15 @@ type Props = {
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value?: UserRecord,
+  $value?: UserType,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
-} & OmniPickerProps;
+|} & OmniPickerProps;
 
 type State = {
-  selectedUser: ?UserRecord,
+  selectedUser: ?UserType,
 };
 
 class SingleUserPicker extends Component<Props, State> {
@@ -87,7 +87,7 @@ class SingleUserPicker extends Component<Props, State> {
     openOmniPicker();
   };
 
-  handlePick = (user: UserRecord) => {
+  handlePick = (user: UserType) => {
     const { setValue } = this.props;
     setValue(user);
   };

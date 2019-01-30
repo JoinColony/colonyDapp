@@ -8,17 +8,17 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './DialogSection.css';
 
-type Appearance = {
+type Appearance = {|
   align?: 'right',
   border?: 'top' | 'bottom' | 'none',
-};
+|};
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Children to render in this section */
   children?: Node,
-};
+|};
 
 const DialogSection = ({ appearance, children }: Props) => (
   <section className={getMainClasses(appearance, styles)}>{children}</section>

@@ -9,13 +9,13 @@ import {
   COLONY_FETCH_TRANSACTIONS_SUCCESS,
 } from '../actionTypes';
 
-import { ContractTransaction, Data } from '~immutable';
+import { ContractTransactionRecord, DataRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { UniqueActionWithKeyPath } from '~types';
 import type {
   AdminTransactionsState,
-  ContractTransactionRecord,
+  ContractTransactionRecordType,
 } from '~immutable';
 
 const adminTransactionsReducer = (
@@ -32,8 +32,8 @@ const adminTransactionsReducer = (
       } = action;
       return state.mergeIn(
         [colonyENSName],
-        Data<ListType<ContractTransactionRecord>>({
-          record: List(transactions.map(tx => ContractTransaction(tx))),
+        DataRecord<ListType<ContractTransactionRecordType>>({
+          record: List(transactions.map(tx => ContractTransactionRecord(tx))),
         }),
       );
     }
@@ -44,5 +44,5 @@ const adminTransactionsReducer = (
 
 export default withDataReducer<
   AdminTransactionsState,
-  ContractTransactionRecord,
+  ContractTransactionRecordType,
 >(COLONY_FETCH_TRANSACTIONS, ImmutableMap())(adminTransactionsReducer);

@@ -1,23 +1,24 @@
 /* @flow */
 
-export { default as ActivityFeedItem } from './ActivityFeedItem';
-export { default as Colony } from './Colony';
-export { default as ContractTransaction } from './ContractTransaction';
-export { default as Data } from './Data';
-export { default as Domain } from './Domain';
-export { default as Skill } from './Skill';
-export { default as Task } from './Task';
-export { default as TaskComment } from './TaskComment';
-export { default as TaskFeedItem } from './TaskFeedItem';
-export { default as TaskFeedItemRating } from './TaskFeedItemRating';
-export { default as TaskPayout } from './TaskPayout';
-export { default as Token } from './Token';
-export { default as Transaction } from './Transaction';
-export { default as User } from './User';
-export { default as UserActivity } from './UserActivity';
-export { default as UserProfile } from './UserProfile';
-export { default as Wallet } from './Wallet';
+export { default as ActivityFeedItemRecord } from './ActivityFeedItem';
+export { default as ColonyRecord } from './Colony';
+export { default as ContractTransactionRecord } from './ContractTransaction';
+export { default as DataRecord } from './Data';
+export { default as DomainRecord } from './Domain';
+export { default as SkillRecord } from './Skill';
+export { default as TaskRecord } from './Task';
+export { default as TaskCommentRecord } from './TaskComment';
+export { default as TaskFeedItemRecord } from './TaskFeedItem';
+export { default as TaskFeedItemRatingRecord } from './TaskFeedItemRating';
+export { default as TaskPayoutRecord } from './TaskPayout';
+export { default as TokenRecord } from './Token';
+export { default as TransactionRecord } from './Transaction';
+export { default as UserRecord } from './User';
+export { default as UserActivityRecord } from './UserActivity';
+export { default as UserProfileRecord } from './UserProfile';
+export { default as WalletRecord } from './Wallet';
 
+export * from './utils';
 export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './ColonyAdmin';

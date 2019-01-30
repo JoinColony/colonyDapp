@@ -3,14 +3,14 @@
 import React, { Component } from 'react';
 import type { ElementType } from 'react';
 
-type Props = {
+type Props = {|
   loaderFn: () => Promise<Object>,
   preloader?: Object,
-};
+|};
 
-type State = {
+type State = {|
   loadedComponent: ElementType | null,
-};
+|};
 
 /**
  * A wrapper component that helps lazy loads components. (Via webpack's dynamic import()).

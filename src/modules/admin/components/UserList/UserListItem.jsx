@@ -14,7 +14,7 @@ import { Tooltip } from '~core/Popover';
 
 import styles from './UserListItem.css';
 
-import type { ColonyAdminRecord } from '~immutable';
+import type { ColonyAdminType } from '~immutable';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -29,11 +29,11 @@ const MSG = defineMessages({
 
 const componentDisplayName = 'admin.UserList.UserListItem';
 
-type Props = {
+type Props = {|
   /*
    * User record
    */
-  user: ColonyAdminRecord,
+  user: ColonyAdminType,
   /*
    * Whether to show the fullname
    */
@@ -55,10 +55,10 @@ type Props = {
    * Method to call when clicking the remove button
    * Gets passed down to `UserListItem`
    */
-  onRemove: ColonyAdminRecord => any,
+  onRemove: ColonyAdminType => any,
   /** @ignore Injected by `injectIntl` */
   intl: IntlShape,
-};
+|};
 
 const UserListItem = ({
   user: { walletAddress, username = '', displayName = '', state = 'pending' },

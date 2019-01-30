@@ -3,6 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
 import { compose, withProps } from 'recompose';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
@@ -11,18 +12,23 @@ import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
 import TransactionDetails from './TransactionDetails.jsx';
 
-import { withColony, withTask, withToken, withColonyENSName } from '../../hocs';
+import {
+  withColony,
+  withTask,
+  withToken,
+  withColonyENSName,
+} from '../../../dashboard/hocs';
 import { withUser, withUsername } from '../../../users/hocs';
 
 import styles from './TransactionListItem.css';
 
 import type {
-  ColonyRecord,
-  ContractTransactionRecord,
-  DataRecord,
-  TaskRecord,
-  TokenRecord,
-  UserRecord,
+  ColonyType,
+  ContractTransactionType,
+  DataType,
+  TaskType,
+  TokenType,
+  UserType,
 } from '~immutable';
 
 const MSG = defineMessages({
@@ -46,15 +52,15 @@ const MSG = defineMessages({
 
 const displayName = 'admin.TransactionList.TransactionListItem';
 
-type Props = {
+type Props = {|
   /*
    * User data Object, follows the same format as UserPicker
    */
-  transaction: ContractTransactionRecord,
-  colony?: DataRecord<ColonyRecord>,
-  task?: TaskRecord,
-  token?: TokenRecord,
-  user?: DataRecord<UserRecord>,
+  transaction: ContractTransactionType,
+  colony?: DataType<ColonyType>,
+  task?: TaskType,
+  token?: TokenType,
+  user?: DataType<UserType>,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -72,7 +78,7 @@ type Props = {
    * Method to call when clicking the 'Claim' button
    * Only by setting this method, will the actual button show up
    */
-  onClaim?: ContractTransactionRecord => any,
+  onClaim?: ContractTransactionType => any,
   /*
    * If to show the button to link to etherscan (or not)
    *
@@ -80,7 +86,7 @@ type Props = {
    * the *Claim* button won't show up anymore
    */
   linkToEtherscan: boolean,
-};
+|};
 
 const TransactionListItem = ({
   transaction,
@@ -124,7 +130,6 @@ const TransactionListItem = ({
           transaction={transaction}
           colony={colony}
           task={task}
-          token={token}
           user={user}
           showMaskedAddress={showMaskedAddress}
           incoming={incoming}
@@ -186,4 +191,5 @@ export default compose(
   withToken,
   withUsername,
   withUser,
+  withImmutablePropsToJS,
 )(TransactionListItem);

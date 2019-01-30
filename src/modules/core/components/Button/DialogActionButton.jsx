@@ -8,6 +8,7 @@ import type { OpenDialog } from '~core/Dialog/types';
 
 import ActionButton from './ActionButton.jsx';
 
+// Can't seal this object because of `withConsumerFactory`
 type Props = {
   openDialog: OpenDialog,
   dialog: string,

@@ -19,7 +19,7 @@ import styles from './MultiLineEdit.css';
 
 type Appearance = {};
 
-type Props = {
+type Props = {|
   /** Should the return key create a new line */
   allowReturns?: boolean,
   /** Appearance object */
@@ -68,7 +68,7 @@ type Props = {
   readOnly?: boolean,
   /** Should spell checking be enabled */
   spellCheck?: boolean,
-};
+|};
 
 const HANDLED = 'handled';
 const NOT_HANDLED = 'not-handled';

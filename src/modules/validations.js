@@ -5,7 +5,7 @@ import { List } from 'immutable';
 import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
-import type { TokenRecord } from '~immutable';
+import type { TokenRecordType } from '~immutable';
 
 import { bnLessThan } from '../utils/numbers';
 
@@ -29,7 +29,7 @@ function equalTo(ref, msg) {
 
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
-function lessThanPot(availableTokens: List<TokenRecord>, msg) {
+function lessThanPot(availableTokens: List<TokenRecordType>, msg) {
   return this.test({
     name: 'lessThanPot',
     message: msg || en.mixed.lessThanPot,
@@ -60,7 +60,7 @@ function domainName(msg) {
     name: 'domainName',
     message: msg || en.string.domainName,
     test(value) {
-      return !value.includes('#');
+      return value && !value.includes('#');
     },
   });
 }

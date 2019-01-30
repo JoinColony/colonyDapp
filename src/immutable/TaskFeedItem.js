@@ -4,27 +4,42 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { TaskFeedItemRatingRecord } from './TaskFeedItemRating';
-import type { TaskCommentRecord } from './TaskComment';
+import type {
+  TaskFeedItemRatingRecordType,
+  TaskFeedItemRatingType,
+} from './TaskFeedItemRating';
+import type { TaskCommentRecordType, TaskCommentType } from './TaskComment';
 
-export type TaskFeedItemProps = {
+type Shared = {|
   id: number,
   createdAt: Date,
-  comment?: TaskCommentRecord,
-  rating?: TaskFeedItemRatingRecord,
-};
+|};
 
-export type TaskFeedItemRecord = RecordOf<TaskFeedItemProps>;
+type TaskFeedItemRecordProps = {|
+  ...Shared,
+  comment?: TaskCommentRecordType,
+  rating?: TaskFeedItemRatingRecordType,
+|};
 
-export type TaskFeedItemId = $PropertyType<TaskFeedItemRecord, 'id'>;
+export type TaskFeedItemType = $ReadOnly<{|
+  ...Shared,
+  comment?: TaskCommentType,
+  rating?: TaskFeedItemRatingType,
+|}>;
 
-const defaultValues: $Shape<TaskFeedItemProps> = {
+export type TaskFeedItemRecordType = RecordOf<TaskFeedItemRecordProps>;
+
+export type TaskFeedItemId = $PropertyType<TaskFeedItemRecordType, 'id'>;
+
+const defaultValues: $Shape<TaskFeedItemRecordProps> = {
   comment: undefined,
   createdAt: undefined,
   id: undefined,
   rating: undefined,
 };
 
-const TaskFeedItem: RecordFactory<TaskFeedItemProps> = Record(defaultValues);
+const TaskFeedItemRecord: RecordFactory<TaskFeedItemRecordProps> = Record(
+  defaultValues,
+);
 
-export default TaskFeedItem;
+export default TaskFeedItemRecord;

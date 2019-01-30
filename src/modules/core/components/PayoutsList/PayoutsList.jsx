@@ -1,25 +1,23 @@
 /* @flow */
 
-import type { List } from 'immutable';
-
 import React from 'react';
 import cx from 'classnames';
 
-import type { TaskPayoutRecord } from '~immutable';
+import type { TaskPayoutType } from '~immutable';
 
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
 
 import styles from './PayoutsList.css';
 
-type Props = {
+type Props = {|
   /* Payouts list containing all the payouts */
-  payouts: List<TaskPayoutRecord>,
+  payouts: Array<TaskPayoutType>,
   /* Maximum lines to show before switching to popover */
   maxLines?: number,
   /* Native token of the displayed Colony */
   nativeToken: string,
-};
+|};
 
 const displayName = 'PayoutsList';
 
@@ -57,7 +55,7 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
           />
         ))}
       </div>
-      {extraPayouts && extraPayouts.size ? (
+      {extraPayouts && extraPayouts.length ? (
         <Tooltip
           content={
             <div className={styles.popoverContent}>
@@ -77,7 +75,7 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
           }
         >
           <span className={styles.payoutPopover}>
-            +{extraPayouts.size} more
+            +{extraPayouts.length} more
           </span>
         </Tooltip>
       ) : null}

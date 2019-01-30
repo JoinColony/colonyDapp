@@ -1,6 +1,6 @@
 /* @flow */
 
-import { compose } from 'recompose';
+import compose from 'recompose/compose';
 
 import { withFeatureFlags } from '~utils/hoc';
 import withDialog from '~core/Dialog/withDialog';

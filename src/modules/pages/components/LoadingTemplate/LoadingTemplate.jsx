@@ -17,10 +17,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   children?: Node,
   loadingText?: string | MessageDescriptor,
-};
+|};
 
 const LoadingTemplate = ({ children, loadingText }: Props) => (
   <div className={styles.main}>

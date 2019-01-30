@@ -4,20 +4,22 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-export type DomainProps = {
+type Shared = {|
   id: number,
   name: string,
-};
+|};
 
-export type DomainRecord = RecordOf<DomainProps>;
+export type DomainType = $ReadOnly<Shared>;
 
-export type DomainId = $PropertyType<DomainRecord, 'id'>;
+export type DomainRecordType = RecordOf<Shared>;
 
-const defaultValues: $Shape<DomainProps> = {
+export type DomainId = $PropertyType<DomainRecordType, 'id'>;
+
+const defaultValues: $Shape<Shared> = {
   id: undefined,
   name: undefined,
 };
 
-const Domain: RecordFactory<DomainProps> = Record(defaultValues);
+const DomainRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default Domain;
+export default DomainRecord;

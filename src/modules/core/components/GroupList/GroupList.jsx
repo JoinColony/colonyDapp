@@ -9,7 +9,7 @@ import Heading from '../Heading';
 
 import styles from './GroupList.css';
 
-type GroupListItem = {
+type GroupListItem = {|
   id: string,
   /** Text in the first row of the second column */
   title?: MessageDescriptor | string,
@@ -24,11 +24,11 @@ type GroupListItem = {
   /** This can be whatever other component since we
    * sometimes require a button but other times s link */
   extra?: Node,
-};
+|};
 
-type Props = {
+type Props = {|
   items: Array<GroupListItem>,
-};
+|};
 
 const displayName = 'GroupList';
 

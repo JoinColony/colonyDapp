@@ -9,7 +9,7 @@ import { create, putError } from '~utils/saga/effects';
 import { CONTEXT } from '~context';
 
 import type { UniqueAction } from '~types';
-import type { UserProfileProps } from '~immutable';
+import type { UserProfileType } from '~immutable';
 
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
@@ -75,7 +75,7 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
 
     const userStore = yield call(getOrCreateUserStore, wallet.address);
 
-    const profileData: UserProfileProps = yield call(
+    const profileData: UserProfileType = yield call(
       getUserProfileData,
       userStore,
     );

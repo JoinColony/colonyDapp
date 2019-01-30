@@ -13,7 +13,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /*
    * Message to render when an error happens
    * (can be a string or a message descriptor)
@@ -27,7 +27,7 @@ type Props = {
    * Children to render if everything goes according to plan
    */
   children: Node | string,
-};
+|};
 
 type State = {
   hasError: boolean,

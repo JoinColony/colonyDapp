@@ -6,7 +6,7 @@ import { put, select } from 'redux-saga/effects';
 
 import type {
   TransactionParams,
-  TransactionRecord,
+  TransactionRecordType,
   TransactionEventData,
 } from '~immutable';
 
@@ -20,7 +20,10 @@ export default function* onTransactionCreated<
   P: TransactionParams,
   E: TransactionEventData,
 >({ meta: { id } }: CreateTransactionAction<P>): Saga<void> {
-  const transaction: TransactionRecord<P, E> = yield select(oneTransaction, id);
+  const transaction: TransactionRecordType<P, E> = yield select(
+    oneTransaction,
+    id,
+  );
   const {
     lifecycle: { created },
     methodName,

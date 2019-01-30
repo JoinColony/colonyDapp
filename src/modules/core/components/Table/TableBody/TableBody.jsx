@@ -3,6 +3,7 @@ import type { Node } from 'react';
 
 import React from 'react';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   children: Node,
 };

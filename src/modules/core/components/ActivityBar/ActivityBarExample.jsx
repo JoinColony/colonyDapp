@@ -6,14 +6,14 @@ import styles from './ActivityBar.css';
 
 import Button from '../Button';
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: (val: any) => void,
-};
+|};
 
-type State = {
+type State = {|
   isDismissable: boolean,
-};
+|};
 
 class ActivityBarExample extends Component<Props, State> {
   state = {

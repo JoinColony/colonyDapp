@@ -4,8 +4,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { OpenDialog } from '~core/Dialog/types';
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
+import { userDidClaimProfile } from '~immutable/utils';
 import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
@@ -19,32 +20,31 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.TaskRequestWork';
 
+// Can't seal this object because of withConsumerFactory
 type Props = {
   /*
    * @TODO Interaction for this button if the user is the task creator
    */
   isTaskCreator: boolean,
   openDialog: OpenDialog,
-  currentUser: UserRecord,
+  currentUser: UserType,
 };
 
 const TaskRequestWork = ({
   isTaskCreator,
   openDialog,
   currentUser: {
-    didClaimProfile = false,
     profile: { balance },
   },
+  currentUser,
 }: Props) => (
   <Button
     text={MSG.requestWork}
     disabled={!isTaskCreator}
-    onClick={() => {
-      if (!didClaimProfile) {
-        return unfinishedProfileOpener(openDialog, balance);
-      }
-      return false;
-    }}
+    onClick={() =>
+      userDidClaimProfile(currentUser) ||
+      unfinishedProfileOpener(openDialog, balance)
+    }
   />
 );
 

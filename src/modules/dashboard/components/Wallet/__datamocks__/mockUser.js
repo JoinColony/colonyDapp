@@ -1,10 +1,9 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import { User, UserProfile } from '~immutable';
-
-const MockUser = User({
-  profile: UserProfile({
+const MockUser = {
+  activities: [],
+  profile: {
     activitiesStore: '',
     profileStore: '',
     walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989b',
@@ -16,7 +15,7 @@ const MockUser = User({
     username: 'chewie',
     location: 'Kashyyyk',
     website: 'https://github.com/chewie',
-  }),
-});
+  },
+};
 
 export default MockUser;

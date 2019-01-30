@@ -10,6 +10,7 @@ import { NavLink as NavLinkComponent } from 'react-router-dom';
 
 import styles from './NavLink.css';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** className to add to the existing classNames when `to` matches the current route (react-router's "activeClassName") */
   activeClassName?: string,

@@ -3,7 +3,7 @@
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyType } from '~immutable';
 
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
@@ -64,9 +64,9 @@ const MSG = defineMessages({
  */
 const componentDisplayName: string = 'admin.Profile.ProfileEdit';
 
-type Props = {
-  colony: ColonyRecord,
-};
+type Props = {|
+  colony: ColonyType,
+|};
 
 const ProfileEdit = ({ colony }: Props) => {
   const {

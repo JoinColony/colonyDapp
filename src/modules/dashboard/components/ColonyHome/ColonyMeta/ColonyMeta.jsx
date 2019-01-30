@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { Fragment } from 'react';
-import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
@@ -14,7 +13,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './ColonyMeta.css';
 
-import type { ColonyRecord, UserRecord } from '~immutable';
+import type { ColonyType, UserType } from '~immutable';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -41,12 +40,12 @@ const MSG = defineMessages({
 
 const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
 
-type Props = {
-  colony: ColonyRecord,
-  founders: List<UserRecord>,
-  admins: Array<UserRecord>,
+type Props = {|
+  colony: ColonyType,
+  founders: Array<UserType>,
+  admins: Array<UserType>,
   isAdmin: boolean,
-};
+|};
 
 const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
   const {
@@ -110,7 +109,7 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
           </a>
         </section>
       )}
-      {founders.size && (
+      {founders.length && (
         <section className={styles.dynamicSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}

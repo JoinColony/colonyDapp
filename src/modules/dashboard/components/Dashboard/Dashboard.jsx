@@ -3,11 +3,13 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
+
+import { userDidClaimProfile } from '~immutable/utils';
 
 import styles from './Dashboard.css';
 
@@ -62,13 +64,13 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  currentUser: UserRecord,
-};
+type Props = {|
+  currentUser: UserType,
+|};
 
-type State = {
+type State = {|
   filterOption: 'all' | 'created' | 'assigned' | 'completed',
-};
+|};
 
 const filterOptions = [
   { label: MSG.filterOptionAll, value: 'all' },
@@ -130,7 +132,7 @@ class Dashboard extends Component<Props, State> {
                   title: MSG.initialTaskTitle,
                   walletAddress: currentUser.profile.walletAddress,
                 }}
-                userClaimedProfile={currentUser.didClaimProfile}
+                userClaimedProfile={userDidClaimProfile(currentUser)}
               />
             </TabPanel>
             <TabPanel>

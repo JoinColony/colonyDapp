@@ -12,11 +12,11 @@ import {
   TASK_UPDATE_SUCCESS,
 } from '../actionTypes';
 
-import { Task, Data } from '~immutable';
+import { TaskRecord, DataRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
 
 import type { UniqueActionWithKeyPath } from '~types';
-import type { AllTasksMap, TaskRecord } from '~immutable';
+import type { AllTasksMap, TaskRecordType } from '~immutable';
 
 const allTasksReducer = (
   state: AllTasksMap = new ImmutableMap(),
@@ -32,7 +32,7 @@ const allTasksReducer = (
         },
         payload,
       } = action;
-      const data = Data({ record: Task(payload) });
+      const data = DataRecord({ record: TaskRecord(payload) });
 
       return state.get(ensName)
         ? state.mergeDeepIn(keyPath, data)
@@ -58,7 +58,7 @@ const allTasksReducer = (
   }
 };
 
-export default withDataReducer<AllTasksMap, TaskRecord>(
+export default withDataReducer<AllTasksMap, TaskRecordType>(
   TASK_FETCH,
   new ImmutableMap(),
 )(allTasksReducer);

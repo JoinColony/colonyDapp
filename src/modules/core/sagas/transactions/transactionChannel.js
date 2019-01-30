@@ -5,7 +5,7 @@ import type { ContractResponse } from '@colony/colony-js-client';
 import { END, eventChannel } from 'redux-saga';
 
 import type {
-  TransactionRecord,
+  TransactionRecordType,
   TransactionParams,
   TransactionEventData,
 } from '~immutable';
@@ -102,7 +102,7 @@ const channelStart = async (tx, txPromise, emit) => {
  */
 const transactionChannel = <P: TransactionParams, E: TransactionEventData>(
   txPromise: Promise<ContractResponse<E>>,
-  tx: TransactionRecord<P, E>,
+  tx: TransactionRecordType<P, E>,
 ) =>
   eventChannel(emit => {
     channelStart(tx, txPromise, emit);
