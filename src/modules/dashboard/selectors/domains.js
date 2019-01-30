@@ -1,7 +1,7 @@
 /* @flow */
 import { createSelector } from 'reselect';
 
-import { Map as ImmutableMap } from 'immutable';
+import { List, Map as ImmutableMap } from 'immutable';
 
 import type { RootStateRecord } from '~immutable';
 
@@ -9,18 +9,6 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 
 export const allDomainsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_DOMAINS], ImmutableMap());
-
-const sortDomainsByName = (prevDomain, nextDomain) => {
-  const prevName = prevDomain.getIn(['record', 'name']).toLowerCase();
-  const nextName = nextDomain.getIn(['record', 'name']).toLowerCase();
-  if (prevName < nextName) {
-    return -1;
-  }
-  if (prevName > nextName) {
-    return 1;
-  }
-  return 0;
-};
 
 /*
  * Domains selectors
@@ -46,8 +34,7 @@ export const getColonyDomains = createSelector(
   colonyDomains =>
     (colonyDomains &&
       colonyDomains
-        .toList()
-        .toArray()
-        .sort(sortDomainsByName)) ||
-    [],
+        .sortBy(domain => domain.getIn(['record', 'name']).toLowerCase())
+        .toList()) ||
+    List(),
 );

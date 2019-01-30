@@ -16,7 +16,7 @@ const enhance = compose(
   connect(
     (state: Object, { colony: { ensName } }) => ({
       colonyAdmins: getColonyAdmins(state, ensName),
-      colonyDomains: getColonyDomains(state, ensName),
+      colonyDomains: getColonyDomains(state, ensName).toArray(),
     }),
     { fetchColonyDomains: fetchColonyDomainsAction },
   ),
