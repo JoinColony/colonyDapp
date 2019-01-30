@@ -30,8 +30,6 @@ td.userRemove {
 
 .username {
   margin-right: nameMargin;
-  font-weight: var(--weight-medium);
-  color: var(--pink);
 }
 
 .address {

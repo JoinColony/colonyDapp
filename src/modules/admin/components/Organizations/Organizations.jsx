@@ -1,9 +1,13 @@
 /* @flow */
-
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyRecord, ColonyAdminRecord } from '~immutable';
+import type {
+  ColonyRecord,
+  ColonyAdminRecord,
+  DataRecord,
+  DomainRecord,
+} from '~immutable';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
@@ -21,7 +25,6 @@ import {
 import styles from './Organizations.css';
 
 import usersMocks from './__datamocks__/usersMocks';
-import domainMocks from './__datamocks__/domainMocks';
 
 const MSG = defineMessages({
   tabContributors: {
@@ -65,9 +68,14 @@ const displayName: string = 'admin.Organizations';
 type Props = {
   colony: ColonyRecord,
   colonyAdmins: Array<ColonyAdminRecord>,
+  colonyDomains: Array<DataRecord<DomainRecord>>,
 };
 
-const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
+const Organizations = ({
+  colony: { ensName },
+  colonyAdmins,
+  colonyDomains,
+}: Props) => (
   <div className={styles.main}>
     <Tabs>
       <TabList>
@@ -128,21 +136,17 @@ const Organizations = ({ colony: { ensName }, colonyAdmins }: Props) => (
       </TabPanel>
       <TabPanel>
         <div className={styles.sectionWrapper}>
-          <OrganizationAddDomains
-            availableAdmins={domainMocks}
-            ensName={ensName}
-          />
+          <OrganizationAddDomains ensName={ensName} />
           <section className={styles.list}>
             {/*
              * DomainList follows the design principles from TaskList in dashboard,
              * but if it turns out we're going to use this in multiple places,
              * we should consider moving it to core
              */}
-            {domainMocks && domainMocks.length ? (
+            {colonyDomains && colonyDomains.length ? (
               <DomainList
-                domains={domainMocks}
+                domains={colonyDomains}
                 label={MSG.labelAdminList}
-                viewOnly={false}
                 // eslint-disable-next-line no-console
                 onRemove={console.log}
               />

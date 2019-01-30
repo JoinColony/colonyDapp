@@ -25,6 +25,9 @@ import { getColonyMethod } from '../../core/sagas/utils';
 import { domainsIndexSelector } from '../selectors';
 import { domainsIndexStoreBlueprint } from '../stores';
 import {
+  COLONY_DOMAINS_FETCH,
+  COLONY_DOMAINS_FETCH_ERROR,
+  COLONY_DOMAINS_FETCH_SUCCESS,
   DOMAIN_CREATE,
   DOMAIN_CREATE_ERROR,
   DOMAIN_CREATE_SUCCESS,
@@ -55,6 +58,9 @@ function* createDomainTransaction(
   const action = createDomain({
     identifier,
     params: { parentDomainId },
+    options: {
+      gasLimit: 500000,
+    },
     meta,
   });
   yield put(action);
@@ -138,7 +144,6 @@ function* addDomainToIndex(
     colonyENSName,
     domainId,
   );
-
   /*
    * Get the domains index store for the given colony.
    */
@@ -147,15 +152,13 @@ function* addDomainToIndex(
   /*
    * Get the domain from the loaded domains index store.
    */
-  yield call([domainsIndexStore, domainsIndexStore.load]);
   const domain = yield call(get, domainsIndexStore, domainId.toString());
-
   /*
    * If not yet set, set the new domain on the domains index store.
    */
   if (!domain)
     yield call(set, domainsIndexStore, domainId.toString(), {
-      domainName,
+      name: domainName,
       tasksIndex: tasksIndexStore.address.toString(),
     });
 }
@@ -198,11 +201,10 @@ function* createDomainSaga({
      * Add an entry to `domainsIndex` on the colony store.
      */
     yield call(addDomainToIndex, colonyENSName, domainId, domainName);
-
     /*
      * Dispatch a success action with the newly-added domain.
      */
-    const payload = { domainId, domainName };
+    const payload = { id: domainId, name: domainName };
     yield put({
       type: DOMAIN_CREATE_SUCCESS,
       meta: {
@@ -276,7 +278,43 @@ function* fetchDomainSaga({
   }
 }
 
+function* fetchColonyDomainsSaga({
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
+  try {
+    /*
+     * Ensure the colony is in the state.
+     */
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    /*
+     * Get or create the domains index store for this colony.
+     */
+    const store = yield call(getOrCreateDomainsIndexStore, colonyENSName);
+
+    /*
+     * Get the domains from the loaded store.
+     */
+    const payload = yield call([store, store.getAll]);
+
+    /*
+     * Dispatch the success action.
+     */
+    yield put({
+      type: COLONY_DOMAINS_FETCH_SUCCESS,
+      meta,
+      payload,
+    });
+  } catch (error) {
+    yield putError(COLONY_DOMAINS_FETCH_ERROR, error);
+  }
+}
+
 export default function* domainSagas(): any {
+  yield takeEvery(COLONY_DOMAINS_FETCH, fetchColonyDomainsSaga);
   yield takeEvery(DOMAIN_CREATE, createDomainSaga);
   yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
 }

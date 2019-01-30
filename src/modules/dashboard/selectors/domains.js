@@ -1,8 +1,7 @@
 /* @flow */
-
 import { createSelector } from 'reselect';
 
-import { Map as ImmutableMap } from 'immutable';
+import { List, Map as ImmutableMap } from 'immutable';
 
 import type { RootStateRecord } from '~immutable';
 
@@ -11,9 +10,12 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 export const allDomainsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_DOMAINS], ImmutableMap());
 
+/*
+ * Domains selectors
+ */
 export const colonyDomainsSelector = createSelector(
   allDomainsSelector,
-  (state, props) => props.colonyENSName,
+  (state, colonyENSName) => colonyENSName,
   (allDomains, colonyENSName) => allDomains.get(colonyENSName),
 );
 
@@ -26,4 +28,13 @@ export const singleDomainSelector = createSelector(
 export const singleDomainTaskIdsSelector = createSelector(
   singleDomainSelector,
   domain => domain.get('taskIds'),
+);
+export const getColonyDomains = createSelector(
+  colonyDomainsSelector,
+  colonyDomains =>
+    (colonyDomains &&
+      colonyDomains
+        .sortBy(domain => domain.getIn(['record', 'name']).toLowerCase())
+        .toList()) ||
+    List(),
 );

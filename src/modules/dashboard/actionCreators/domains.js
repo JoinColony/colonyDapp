@@ -8,6 +8,7 @@ import {
 } from '../../core/actionCreators';
 
 import {
+  COLONY_DOMAINS_FETCH,
   DOMAIN_CREATE_TX,
   DOMAIN_CREATE_TX_ERROR,
   DOMAIN_CREATE_TX_SUCCESS,
@@ -30,5 +31,12 @@ export const fetchDomain = (colonyENSName: ENSName, domainId: number) => ({
   type: DOMAIN_FETCH,
   meta: {
     keyPath: [colonyENSName, domainId],
+  },
+});
+
+export const fetchColonyDomains = (colonyENSName: ENSName) => ({
+  type: COLONY_DOMAINS_FETCH,
+  meta: {
+    keyPath: [colonyENSName],
   },
 });

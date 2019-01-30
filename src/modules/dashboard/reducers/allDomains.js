@@ -3,6 +3,7 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
+  COLONY_DOMAINS_FETCH_SUCCESS,
   DOMAIN_FETCH,
   DOMAIN_FETCH_SUCCESS,
   DOMAIN_CREATE_SUCCESS,
@@ -19,7 +20,35 @@ const allDomainsReducer = (
   action: UniqueActionWithKeyPath,
 ) => {
   switch (action.type) {
-    case DOMAIN_CREATE_SUCCESS:
+    case COLONY_DOMAINS_FETCH_SUCCESS: {
+      const {
+        meta: { keyPath },
+        payload: domains,
+      } = action;
+      let newState = state;
+      domains.forEach(({ _id, ...domain }) => {
+        const id = parseInt(_id, 10);
+        newState = newState.setIn(
+          [...keyPath, id],
+          Data({ record: Domain({ id, ...domain }) }),
+        );
+      });
+      return newState;
+    }
+    case DOMAIN_CREATE_SUCCESS: {
+      const {
+        meta: {
+          keyPath: [ensName, domainId],
+        },
+        payload,
+      } = action;
+      return state
+        ? state.setIn(
+            [ensName, domainId],
+            Data<DomainRecord>({ record: Domain({ ...payload }) }),
+          )
+        : state;
+    }
     case DOMAIN_FETCH_SUCCESS: {
       const {
         meta: {
@@ -29,7 +58,7 @@ const allDomainsReducer = (
         payload,
       } = action;
       const data = Data<DomainRecord>({
-        record: Domain({ domainId, ...payload }),
+        record: Domain({ id: domainId, ...payload }),
       });
 
       return state.get(ensName)
