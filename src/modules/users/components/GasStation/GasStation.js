@@ -1,6 +1,11 @@
 /* @flow */
 
-import GasStationContent from './GasStationContent';
-import withTransactions from './withTransactions';
+import { connect } from 'react-redux';
 
-export default withTransactions(GasStationContent);
+import GasStationContent from './GasStationContent';
+
+import { groupedTransactions } from '../../../core/selectors';
+
+export default connect((state: Object) => ({
+  transactionGroups: groupedTransactions(state).toJS(),
+}))(GasStationContent);

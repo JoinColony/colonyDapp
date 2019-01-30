@@ -2,27 +2,30 @@
 
 import React from 'react';
 
-import type { TransactionRecord } from '~immutable';
-
 import CardList from '~core/CardList';
 
-import GasStationCard from '../GasStationCard';
+import TransactionCard from '../TransactionCard';
+
+import type { TransactionGroup } from '../transactionGroup';
+import { getGroupId } from '../transactionGroup';
 
 type Props = {
-  transactions: Array<TransactionRecord<*, *>>,
-  onClickTx: (idx: number) => void,
+  transactionGroups: Array<TransactionGroup>,
+  onClickGroup: (idx: number) => void,
 };
 
-const TransactionList = ({ onClickTx, transactions }: Props) => (
+const TransactionList = ({ onClickGroup, transactionGroups }: Props) => (
   <CardList appearance={{ numCols: '1' }}>
-    {transactions.map((transaction: TransactionRecord<*, *>, idx: number) => (
-      <GasStationCard
-        key={transaction.id}
-        transaction={transaction}
-        onClick={onClickTx}
-        idx={idx}
-      />
-    ))}
+    {transactionGroups.map(
+      (transactionGroup: TransactionGroup, idx: number) => (
+        <TransactionCard
+          key={getGroupId(transactionGroup)}
+          transactionGroup={transactionGroup}
+          onClick={onClickGroup}
+          idx={idx}
+        />
+      ),
+    )}
   </CardList>
 );
 

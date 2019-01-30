@@ -3,13 +3,16 @@
 import React, { Component } from 'react';
 
 import type { PopoverTrigger } from '~core/Popover';
-import type { TransactionRecord } from '~immutable';
 
 import Popover from '~core/Popover';
+
+import type { TransactionGroup } from './transactionGroup';
+import { transactionCount } from './transactionGroup';
+
 import GasStationContent from './GasStationContent';
 
 type Props = {
-  transactions: Array<TransactionRecord<*, *>>,
+  transactionGroups: Array<TransactionGroup>,
   children: React$Element<*> | PopoverTrigger,
 };
 
@@ -18,22 +21,18 @@ type State = {
 };
 
 class GasStationPopover extends Component<Props, State> {
-  static displayName = 'users.GasStationPopover';
-
-  static defaultProps = {
-    transactionCount: 0,
-  };
+  static displayName = 'users.GasStation.GasStationPopover';
 
   state = {
     isGasStationOpen: false,
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { transactions: prevTransactions } = prevProps;
-    const { transactions: currentTransactions } = this.props;
+    const { transactionGroups: prevTransactionGroups } = prevProps;
+    const { transactionGroups: currentTransactionGroups } = this.props;
     if (
-      (prevTransactions && prevTransactions.length) <
-      (currentTransactions && currentTransactions.length)
+      transactionCount(prevTransactionGroups) <
+      transactionCount(currentTransactionGroups)
     ) {
       /*
        * @NOTE We're not causing either an infinite loop,
@@ -53,13 +52,15 @@ class GasStationPopover extends Component<Props, State> {
 
   render() {
     const { isGasStationOpen } = this.state;
-    const { children, transactions } = this.props;
-
+    const { children, transactionGroups } = this.props;
     return (
       <Popover
         appearance={{ theme: 'grey' }}
         content={({ close }) => (
-          <GasStationContent transactions={transactions} close={close} />
+          <GasStationContent
+            transactionGroups={transactionGroups}
+            close={close}
+          />
         )}
         placement="bottom"
         showArrow={false}

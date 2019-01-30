@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { TransactionRecord } from '~immutable';
-
 import Heading from '~core/Heading';
 import { getMainClasses } from '~utils/css';
+
+import type { TransactionGroup } from '../transactionGroup';
 
 import GasStationHeader from '../GasStationHeader';
 import TransactionDetails from '../TransactionDetails';
@@ -16,53 +16,55 @@ import styles from './GasStationContent.css';
 
 const MSG = defineMessages({
   transactionsEmptyStateText: {
-    id: 'users.GasStationPopover.GasStationContent.transactionsEmptyStateText',
+    id: 'users.GasStation.GasStationContent.transactionsEmptyStateText',
     defaultMessage: 'You have no pending actions.',
   },
 });
 
 type Props = {
   close?: () => void,
-  transactions: Array<TransactionRecord<*, *>>,
+  transactionGroups: Array<TransactionGroup>,
 };
 
 type State = {
-  txDetailsIdx: number,
+  selectedGroupIdx: number,
 };
 
 class GasStationContent extends Component<Props, State> {
+  static displayName = 'users.GasStation.GasStationContent';
+
   state = {
-    txDetailsIdx: -1,
+    selectedGroupIdx: -1,
   };
 
-  showList = () => {
-    this.setState({ txDetailsIdx: -1 });
+  unselectTransactionGroup = () => {
+    this.setState({ selectedGroupIdx: -1 });
   };
 
-  showTransaction = (idx: number) => {
-    this.setState({ txDetailsIdx: idx });
+  selectTransactionGroup = (idx: number) => {
+    this.setState({ selectedGroupIdx: idx });
   };
 
   renderTransactions() {
-    const { txDetailsIdx } = this.state;
-    const { transactions } = this.props;
-    const detailsTransaction = transactions[txDetailsIdx];
-    return detailsTransaction ? (
+    const { selectedGroupIdx } = this.state;
+    const { transactionGroups } = this.props;
+    const detailsTransactionGroup = transactionGroups[selectedGroupIdx];
+    return detailsTransactionGroup ? (
       <TransactionDetails
-        transaction={detailsTransaction}
-        onClose={this.showList}
+        transactionGroup={detailsTransactionGroup}
+        onClose={this.unselectTransactionGroup}
       />
     ) : (
       <TransactionList
-        transactions={transactions}
-        onClickTx={this.showTransaction}
+        transactionGroups={transactionGroups}
+        onClickGroup={this.selectTransactionGroup}
       />
     );
   }
 
   render() {
-    const { close, transactions } = this.props;
-    const isEmpty = !transactions || !transactions.length;
+    const { close, transactionGroups } = this.props;
+    const isEmpty = !transactionGroups || !transactionGroups.length;
     return (
       <div className={getMainClasses({}, styles, { isEmpty })}>
         <GasStationHeader close={close} />

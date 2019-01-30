@@ -15,7 +15,7 @@ import styles from './GasStationHeader.css';
 
 const MSG = defineMessages({
   goToWalletLinkTitle: {
-    id: 'users.GasStationPopover.GasStationContent.goToWalletLinkTitle',
+    id: 'users.GasStation.GasStationHeader.goToWalletLinkTitle',
     defaultMessage: 'Go to Wallet',
   },
 });
@@ -25,6 +25,8 @@ type Props = {
   close?: () => void,
   walletAddress: string,
 };
+
+const displayName = 'users.GasStation.GasStationHeader';
 
 const GasStationHeader = ({ balance, close, walletAddress }: Props) => (
   <div className={styles.main}>
@@ -64,5 +66,7 @@ const GasStationHeader = ({ balance, close, walletAddress }: Props) => (
     </div>
   </div>
 );
+
+GasStationHeader.displayName = displayName;
 
 export default GasStationHeader;

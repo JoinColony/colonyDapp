@@ -1,8 +1,8 @@
 /* @flow */
 
-import { Map as ImmutableMap, OrderedMap } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
+
 import { createSelector } from 'reselect';
-import getObjectFromPath from 'lodash/get';
 
 import {
   CORE_NAMESPACE as ns,
@@ -12,21 +12,6 @@ import {
 } from '../constants';
 
 import type { RootStateRecord, TransactionRecord } from '~immutable';
-
-/*
- * Helpers for transaction transformations
- */
-const transactionGroup = (tx: TransactionRecord<*, *>) => {
-  if (!tx.group || typeof tx.group.id == 'string') return tx.group;
-  const id = tx.group.id.reduce(
-    (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,
-    tx.group.key,
-  );
-  return {
-    ...tx.group,
-    id,
-  };
-};
 
 /*
  * Individual transaction selectors
@@ -50,27 +35,14 @@ const createdAtDesc = (
   { createdAt: createdAtB }: TransactionRecord<*, *>,
 ) => createdAtB - createdAtA;
 
-const transformTransaction = (tx: TransactionRecord<*, *>) =>
-  tx.set('group', transactionGroup(tx));
-
 /*
  * Transactions selectors.
  */
-export const rawTransaction = (state: RootStateRecord, id: string) =>
+export const oneTransaction = (state: RootStateRecord, id: string) =>
   state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST, id]);
 
-export const rawAllTransactions = (state: RootStateRecord) =>
+export const allTransactions = (state: RootStateRecord) =>
   state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST], ImmutableMap());
-
-export const oneTransaction = createSelector(
-  rawTransaction,
-  tx => tx && transformTransaction(tx),
-);
-
-export const allTransactions = createSelector(
-  rawAllTransactions,
-  transactions => transactions.map(transformTransaction),
-);
 
 export const groupedTransactions = createSelector(
   allTransactions,
@@ -80,16 +52,15 @@ export const groupedTransactions = createSelector(
       .groupBy(tx => tx.group && tx.group.id)
       // Convert groups to lists and sort by no in group
       .map(txGroup => txGroup.toList().sortBy(tx => tx.group && tx.group.index))
-      // Convert to ordered map
-      .toOrderedMap()
       // Merge the ungrouped transactions into the ordered map. It's important that all iterators here have the same type (OrderedMap)
       // For proper typing we create single value arrays for all of the single transactions
       // We're using key.toString() here to not confuse flow. The output of allTransactions always has a string id in group
       .flatMap((value, key) =>
         !key
-          ? value.groupBy(tx => tx.id).toOrderedMap()
-          : OrderedMap({ [key.toString()]: value }),
+          ? value.groupBy(tx => tx.id)
+          : ImmutableMap({ [key.toString()]: value }),
       )
+      .toList()
       // Finally sort by the createdAt field in the first transaction of the group
       .sortBy(group => group.first().createdAt),
 );

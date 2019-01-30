@@ -1,0 +1,97 @@
+.main {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px 12px 20px;
+  height: 40px;
+  border-left: 3px solid var(--temp-grey-5);
+  border-top: 1px solid var(--grey-blue-1);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
+
+  &:hover .cancelButton {
+    display: inline;
+  }
+}
+
+.main.stateSelected {
+  border-left-color: var(--colony-blue);
+  background-color: var(--temp-grey-blue-6);
+}
+
+.main.stateSucceeded {
+  color: var(--grey-text);
+}
+
+.button {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  color: var(--sky-blue);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--sky-blue);
+    color: var(--sky-blue);
+  }
+
+  &[disabled] {
+    cursor: default;
+  }
+}
+
+.description {
+  flex: 1 1 auto;
+}
+
+.cancelButton {
+  composes: button;
+  display: none;
+}
+
+.confirmationButton {
+  composes: button;
+  display: inline;
+}
+
+.cancelDecision {
+  margin: 0 10px;
+}
+
+.stateSelected.stateFailed,
+.stateSelected.stateIsShowingCancelConfirmation,
+.stateFailed,
+.stateIsShowingCancelConfirmation {
+  border-left-color: var(--danger);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: color-mod(var(--danger) alpha(90%));
+    background-color: color-mod(var(--danger) alpha(15%));
+  }
+}
+
+.failedDescription {
+  display: block;
+
+  /*
+   * @NOTE This breaks design consistency
+   *
+   * This does not a use a state symbol like all the others, it just displays
+   * skewed copy under the action's name.
+   *
+   * Because of this, we must *heavily* use negative margins to align text properly.
+   */
+  margin: -1px 0 -12px 14px;
+  font-size: var(--size-unreadable);
+  font-weight: var(--weight-medium);
+  color: var(--danger);
+}
+
+.tooltipContentReset {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+}

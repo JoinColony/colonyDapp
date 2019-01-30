@@ -1,0 +1,56 @@
+.main {
+  flex: 0 1 auto;
+  cursor: default;
+}
+
+.counter {
+  display: inline-block;
+  padding-top: 3px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--pink);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
+}
+
+.completed {
+  & svg {
+    fill: var(--primary);
+    stroke: var(--primary);
+  }
+}
+
+.spinner {
+  display: inline-block;
+
+  /*
+   * @NOTE We're using negative margins to better align the spinner with the link
+   */
+  margin-bottom: -3px;
+}
+
+.multisig {
+  display: inline-block;
+  margin-right: 5px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}
+
+.failed {
+  display: inline-block;
+  width: 20px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  color: var(--danger);
+}
+
+.interaction {
+  composes: interaction from './GroupedTransactionCard.css';
+}

@@ -33,6 +33,7 @@ import {
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
+  TRANSACTION_CANCEL,
 } from '../actionTypes';
 
 type TxFactoryOptions = {
@@ -254,6 +255,11 @@ export const transactionUpdateGas = (
 ) => ({
   type: TRANSACTION_GAS_UPDATE,
   payload: data,
+  meta: { id },
+});
+
+export const transactionCancel = (id: string) => ({
+  type: TRANSACTION_CANCEL,
   meta: { id },
 });
 
