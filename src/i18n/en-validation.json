@@ -5,6 +5,7 @@
     },
     "string": {
         "address": "This is not a valid address",
+        "domainName": "This is not a valid domain name",
         "ensAddress": "This is not a valid ENS address"
     },
     "array": {

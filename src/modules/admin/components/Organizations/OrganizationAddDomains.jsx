@@ -43,7 +43,10 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations.OrganizationAddDomains';
 
 const validationSchema = yup.object({
-  domainName: yup.string().required(),
+  domainName: yup
+    .string()
+    .domainName()
+    .required(),
 });
 
 const OrganizationAddDomains = ({ ensName }: Props) => (
