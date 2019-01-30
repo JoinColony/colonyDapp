@@ -276,11 +276,11 @@ function* fetchDomainSaga({
 }
 
 function* fetchColonyDomainsSaga({
-  payload: {
+  meta: {
     keyPath: [colonyENSName],
-    keyPath,
   },
-}: Action): Saga<void> {
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -295,19 +295,15 @@ function* fetchColonyDomainsSaga({
     /*
      * Get the domains from the loaded store.
      */
-    const domains = yield call([store, store.getAll]);
+    const payload = yield call([store, store.getAll]);
 
     /*
      * Dispatch the success action.
      */
     yield put({
       type: COLONY_DOMAINS_FETCH_SUCCESS,
-      payload: {
-        keyPath,
-        props: {
-          domains,
-        },
-      },
+      meta,
+      payload,
     });
   } catch (error) {
     yield putError(COLONY_DOMAINS_FETCH_ERROR, error);
