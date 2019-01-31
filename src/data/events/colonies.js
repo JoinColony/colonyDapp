@@ -1,22 +1,7 @@
 /* @flow */
 
-import type {
-  EventCreator,
-  ColonyAvatarUploadedEventArgs,
-  ColonyAvatarUploadedEventPayload,
-  ColonyAvatarRemovedEventArgs,
-  ColonyAvatarRemovedEventPayload,
-  DomainCreatedEventArgs,
-  DomainCreatedEventPayload,
-  ColonyProfileCreatedEventArgs,
-  ColonyProfileCreatedEventPayload,
-  ColonyProfileUpdatedEventArgs,
-  ColonyProfileUpdatedEventPayload,
-  TaskStoreCreatedEventArgs,
-  TaskStoreCreatedEventPayload,
-  TokenInfoAddedEventArgs,
-  TokenInfoAddedEventPayload,
-} from './types';
+import type { Address } from '~types';
+import type { Event, EventCreator, EventPayload } from './types';
 
 import { decoratePayload } from './utils';
 import { COLONY_EVENT_TYPES } from '../constants';
@@ -31,10 +16,92 @@ const {
   TOKEN_INFO_ADDED,
 } = COLONY_EVENT_TYPES;
 
-// @TODO add payload validation here like we had in beta events
+type DomainCreatedEventArgs = {|
+  domainId: number,
+  colonyENSName: string,
+|};
+type DomainCreatedEventPayload = EventPayload & DomainCreatedEventArgs;
+type DomainCreatedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  DomainCreatedEventPayload,
+>;
+
+type TaskStoreCreatedEventArgs = {|
+  taskStoreAddress: string,
+  draftId: string,
+  domainId: number,
+|};
+type TaskStoreCreatedEventPayload = EventPayload & TaskStoreCreatedEventArgs;
+type TaskStoreCreatedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  TaskStoreCreatedEventPayload,
+>;
+
+type ColonyAvatarUploadedEventArgs = {|
+  ipfsHash: string,
+  avatar: string,
+|};
+type ColonyAvatarUploadedEventPayload = EventPayload &
+  ColonyAvatarUploadedEventArgs;
+type ColonyAvatarUploadedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  ColonyAvatarUploadedEventPayload,
+>;
+
+type ColonyAvatarRemovedEventArgs = {|
+  ipfsHash: string,
+|};
+type ColonyAvatarRemovedEventPayload = EventPayload &
+  ColonyAvatarRemovedEventArgs;
+type ColonyAvatarRemovedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  ColonyAvatarRemovedEventPayload,
+>;
+
+type TokenInfoAddedEventArgs = {|
+  address: Address,
+  icon: string,
+  name: string,
+  symbol: string,
+|};
+type TokenInfoAddedEventPayload = EventPayload & TokenInfoAddedEventArgs;
+type TokenInfoAddedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  TokenInfoAddedEventPayload,
+>;
+
+type ColonyProfileCreatedEventArgs = {|
+  address: Address,
+  ensName: string,
+  name: string,
+  description: string,
+  website: string,
+  guideline: string,
+|};
+type ColonyProfileCreatedEventPayload = EventPayload &
+  ColonyProfileCreatedEventArgs;
+type ColonyProfileCreatedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  ColonyProfileCreatedEventPayload,
+>;
+
+type ColonyProfileUpdatedEventArgs = {|
+  name: string,
+  description: string,
+  website: string,
+  guideline: string,
+|};
+type ColonyProfileUpdatedEventPayload = EventPayload &
+  ColonyProfileUpdatedEventArgs;
+
+type ColonyProfileUpdatedEvent = Event<
+  $Keys<typeof COLONY_EVENT_TYPES>,
+  ColonyProfileUpdatedEventPayload,
+>;
+
 export const createDomainCreatedEvent: EventCreator<
   DomainCreatedEventArgs,
-  DomainCreatedEventPayload,
+  DomainCreatedEvent,
 > = ({ domainId }) => ({
   type: DOMAIN_CREATED,
   payload: decoratePayload<DomainCreatedEventPayload>({
@@ -43,49 +110,41 @@ export const createDomainCreatedEvent: EventCreator<
 });
 export const createTaskStoreCreatedEvent: EventCreator<
   TaskStoreCreatedEventArgs,
-  TaskStoreCreatedEventPayload,
-> = ({ taskStoreAddress, taskId }) => ({
+  TaskStoreCreatedEvent,
+> = ({ domainId, taskStoreAddress, draftId }) => ({
   type: TASK_STORE_CREATED,
   payload: decoratePayload<TaskStoreCreatedEventPayload>({
+    domainId,
     taskStoreAddress,
-    taskId,
+    draftId,
   }),
 });
 
 export const createColonyAvatarRemovedEvent: EventCreator<
   ColonyAvatarRemovedEventArgs,
-  ColonyAvatarRemovedEventPayload,
-> = ({ colonyId }) => ({
+  ColonyAvatarRemovedEvent,
+> = ({ ipfsHash }) => ({
   type: AVATAR_REMOVED,
-  payload: decoratePayload<ColonyAvatarRemovedEventPayload>({ colonyId }),
+  payload: decoratePayload<ColonyAvatarRemovedEventPayload>({ ipfsHash }),
 });
 
 export const createColonyAvatarUploadedEvent: EventCreator<
   ColonyAvatarUploadedEventArgs,
-  ColonyAvatarUploadedEventPayload,
-> = ({ colonyId, avatar }) => ({
+  ColonyAvatarUploadedEvent,
+> = ({ ipfsHash, avatar }) => ({
   type: AVATAR_UPLOADED,
   payload: decoratePayload<ColonyAvatarUploadedEventPayload>({
-    colonyId,
     avatar,
+    ipfsHash,
   }),
 });
 
 export const createColonyProfileCreatedEvent: EventCreator<
   ColonyProfileCreatedEventArgs,
-  ColonyProfileCreatedEventPayload,
-> = ({
-  colonyId,
-  address,
-  ensName,
-  name,
-  description,
-  website,
-  guideline,
-}) => ({
+  ColonyProfileCreatedEvent,
+> = ({ address, ensName, name, description, website, guideline }) => ({
   type: PROFILE_CREATED,
   payload: decoratePayload<ColonyProfileCreatedEventPayload>({
-    colonyId,
     address,
     ensName,
     name,
@@ -97,7 +156,7 @@ export const createColonyProfileCreatedEvent: EventCreator<
 
 export const createColonyProfileUpdatedEvent: EventCreator<
   ColonyProfileUpdatedEventArgs,
-  ColonyProfileUpdatedEventPayload,
+  ColonyProfileUpdatedEvent,
 > = ({ description, website, guideline }) => ({
   type: PROFILE_UPDATED,
   payload: decoratePayload<ColonyProfileUpdatedEventPayload>({
@@ -109,7 +168,7 @@ export const createColonyProfileUpdatedEvent: EventCreator<
 
 export const createTokenInfoAddedEvent: EventCreator<
   TokenInfoAddedEventArgs,
-  TokenInfoAddedEventPayload,
+  TokenInfoAddedEvent,
 > = ({ address, icon, name, symbol }) => ({
   type: TOKEN_INFO_ADDED,
   payload: decoratePayload<TokenInfoAddedEventPayload>({

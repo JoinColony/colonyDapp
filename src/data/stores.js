@@ -74,22 +74,16 @@ export const getTaskStore = (
 
 export const getCommentsStore = (ddb: DDB) => async (
   commentsStoreAddress: string,
-  taskId: string,
-): Promise<*> =>
-  ddb.getStore(commentsStoreBlueprint, commentsStoreAddress, {
-    taskId,
-  });
+): Promise<*> => ddb.getStore(commentsStoreBlueprint, commentsStoreAddress);
 
 export const createTaskStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
   wallet: WalletObjectType,
 ) => async ({
-  taskId,
   colonyAddress,
   colonyENSName,
 }: {
-  taskId: string,
   colonyAddress: Address,
   colonyENSName: ENSName,
 }): Promise<*> => {
@@ -102,9 +96,7 @@ export const createTaskStore = (
     },
   });
 
-  const commentsStore = await ddb.createStore(commentsStoreBlueprint, {
-    taskId,
-  });
+  const commentsStore = await ddb.createStore(commentsStoreBlueprint);
 
   if (!(taskStore && taskStore.init && typeof taskStore.init === 'function'))
     throw new Error('Invalid store type');
@@ -114,7 +106,6 @@ export const createTaskStore = (
   await taskStore.init(
     createCommentStoreCreatedEvent({
       commentsStoreAddress: commentsStore.address.toString(),
-      taskId,
     }),
   );
   await Promise.all([taskStore.load(), commentsStore.load()]);

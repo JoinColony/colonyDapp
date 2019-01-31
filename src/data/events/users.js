@@ -1,21 +1,28 @@
 /* @flow */
 /* eslint-disable import/prefer-default-export */
 
-import type {
-  EventCreator,
-  NotificationsReadUntilEventArgs,
-  NotificationsReadUntilEventPayload,
-} from './types';
+import type { Event, EventCreator, EventPayload } from './types';
 
 import { decoratePayload } from './utils';
 import { USER_EVENT_TYPES } from '../constants';
 
 const { READ_UNTIL } = USER_EVENT_TYPES;
 
+type NotificationsReadUntilEventArgs = {|
+  watermark: string,
+  exceptFor?: string[],
+|};
+type NotificationsReadUntilEventPayload = EventPayload &
+  NotificationsReadUntilEventArgs;
+type NotificationsReadUntilEvent = Event<
+  $Keys<typeof USER_EVENT_TYPES>,
+  NotificationsReadUntilEventPayload,
+>;
+
 // @TODO add payload validation here like we had in beta events
 export const createNotificationsReadEvent: EventCreator<
   NotificationsReadUntilEventArgs,
-  NotificationsReadUntilEventPayload,
+  NotificationsReadUntilEvent,
 > = ({ watermark, exceptFor }) => ({
   type: READ_UNTIL,
   payload: decoratePayload<NotificationsReadUntilEventPayload>({
