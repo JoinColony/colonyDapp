@@ -34,6 +34,7 @@ function* addColonyAdmin({
 }: Action): Saga<void> {
   try {
     const { walletAddress, username } = newAdmin.profile;
+    const keyPath = [ensName, 'record', 'admins', username];
     /*
      * Get the colony store
      */
@@ -63,9 +64,7 @@ function* addColonyAdmin({
       payload: {
         adminData: newAdmin.profile,
       },
-      meta: {
-        keyPath: [ensName],
-      },
+      meta: { keyPath },
     });
     /*
      * Redirect the user back to the admins tab
@@ -107,14 +106,7 @@ function* addColonyAdmin({
              */
             yield put({
               type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-              meta: {
-                keyPath: [
-                  ensName,
-                  'record',
-                  'admins',
-                  newAdmin.profile.username,
-                ],
-              },
+              meta: { keyPath },
             });
             /*
              * Redirect the user back to the admins tab
