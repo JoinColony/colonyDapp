@@ -18,7 +18,6 @@ import styles from './ColonyHome.css';
 import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
-import mockDomains from '../../../../__mocks__/mockDomains';
 
 import type { ColonyRecord, DataRecord, UserRecord } from '~immutable';
 import type { Given } from '~utils/hoc';
@@ -133,13 +132,12 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, given, colony, colonyAdmins } = this.props;
+    const { walletAddress, given, colony, colonyAdmins, domains = [] } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
     const tasks = mockTasks;
     const colonies = mockColonies;
-    const domains = mockDomains;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
