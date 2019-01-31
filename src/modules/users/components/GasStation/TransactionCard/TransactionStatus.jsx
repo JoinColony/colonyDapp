@@ -49,15 +49,19 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
     )}
     <Tooltip
       placement="top"
+      /* Because it's in an overflow window */
+      popperProps={{ positionFixed: true }}
       showArrow
       content={
-        <FormattedMessage
-          {...MSG.transactionState}
-          values={{
-            status,
-            groupCount: groupCount || 1,
-          }}
-        />
+        <span className={styles.tooltip}>
+          <FormattedMessage
+            {...MSG.transactionState}
+            values={{
+              status,
+              groupCount: groupCount || 1,
+            }}
+          />
+        </span>
       }
     >
       {/*
