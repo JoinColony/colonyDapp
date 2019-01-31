@@ -104,6 +104,13 @@ class ENSNameDialog extends Component<Props, State> {
   });
 
   validateDomain = async (values: FormValues) => {
+    // 1. Validate with schema
+    await validationSchema.validate(values).catch(err =>
+      // eslint-disable-next-line no-console
+      console.log(err),
+    );
+
+    // 2. Validate with saga
     try {
       await this.checkDomainTaken.asyncFunction(values);
     } catch (e) {
@@ -123,7 +130,6 @@ class ENSNameDialog extends Component<Props, State> {
           submit={USERNAME_CREATE}
           success={USERNAME_CREATE_TX_CREATED}
           error={USERNAME_CREATE_ERROR}
-          validationSchema={validationSchema}
           validate={this.validateDomain}
           onSuccess={close}
         >
