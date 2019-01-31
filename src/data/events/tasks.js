@@ -11,6 +11,9 @@ const {
   DRAFT_UPDATED,
   DUE_DATE_SET,
   SKILL_SET,
+  WORK_INVITE_SENT,
+  WORK_REQUEST_CREATED,
+  COMMENT_POSTED,
 } = TASK_EVENT_TYPES;
 
 type CommentStoreCreatedEventArgs = {|
@@ -54,6 +57,45 @@ type DraftUpdatedEventArgs = {|
 type DraftUpdatedEventPayload = EventPayload & DraftUpdatedEventArgs;
 type DraftUpdatedEvent = Event<typeof DRAFT_UPDATED, DraftUpdatedEventPayload>;
 
+type WorkInviteSentEventArgs = {|
+  creator: string,
+  worker: string,
+|};
+type WorkInviteSentEventPayload = EventPayload & WorkInviteSentEventArgs;
+type WorkInviteSentEvent = Event<
+  typeof WORK_INVITE_SENT,
+  WorkInviteSentEventPayload,
+>;
+
+type WorkRequestCreatedEventArgs = {|
+  worker: string,
+|};
+type WorkRequestCreatedEventPayload = EventPayload &
+  WorkRequestCreatedEventArgs;
+type WorkRequestCreatedEvent = Event<
+  typeof WORK_REQUEST_CREATED,
+  WorkRequestCreatedEventPayload,
+>;
+
+type CommentPostedEventArgs = {|
+  comment: {|
+    signature: string,
+    content: {|
+      id: string,
+      body: string,
+      timestamp: number,
+      metadata?: {|
+        mentions: string[],
+      |},
+    |},
+  |},
+|};
+type CommentPostedEventPayload = EventPayload & CommentPostedEventArgs;
+type CommentPostedEvent = Event<
+  typeof COMMENT_POSTED,
+  CommentPostedEventPayload,
+>;
+
 // @TODO add payload validation here like we had in beta events
 export const createCommentStoreCreatedEvent: EventCreator<
   CommentStoreCreatedEventArgs,
@@ -65,7 +107,7 @@ export const createCommentStoreCreatedEvent: EventCreator<
   }),
 });
 
-export const createDueDateSetEvent: EventCreator<
+export const createTaskDueDateSetEvent: EventCreator<
   DueDateSetEventArgs,
   DueDateSetEvent,
 > = ({ dueDate }) => ({
@@ -100,10 +142,34 @@ export const createDraftUpdatedEvent: EventCreator<
   }),
 });
 
-export const createSkillSetSetEvent: EventCreator<
+export const createTaskSkillSetEvent: EventCreator<
   SkillSetEventArgs,
   SkillSetEvent,
 > = ({ skillId }) => ({
   type: SKILL_SET,
   payload: decoratePayload<SkillSetEventPayload>({ skillId }),
+});
+
+export const createWorkInviteSentEvent: EventCreator<
+  WorkInviteSentEventArgs,
+  WorkInviteSentEvent,
+> = ({ worker, creator }) => ({
+  type: WORK_INVITE_SENT,
+  payload: decoratePayload<WorkInviteSentEventPayload>({ worker, creator }),
+});
+
+export const createWorkRequestCreatedEvent: EventCreator<
+  WorkRequestCreatedEventArgs,
+  WorkRequestCreatedEvent,
+> = ({ worker }) => ({
+  type: WORK_REQUEST_CREATED,
+  payload: decoratePayload<WorkRequestCreatedEventPayload>({ worker }),
+});
+
+export const createCommentPostedEvent: EventCreator<
+  CommentPostedEventArgs,
+  CommentPostedEvent,
+> = ({ comment }) => ({
+  type: COMMENT_POSTED,
+  payload: decoratePayload<CommentPostedEventPayload>({ comment }),
 });
