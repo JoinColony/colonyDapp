@@ -9,6 +9,7 @@ import {
   COLONY_FETCH_SUCCESS,
   COLONY_PROFILE_UPDATE_SUCCESS,
   COLONY_ADMIN_ADD_SUCCESS,
+  COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
   COLONY_ADMIN_REMOVE_SUCCESS,
 } from '../actionTypes';
 
@@ -79,6 +80,12 @@ const coloniesReducer = (
       return state
         ? state.deleteIn([...keyPath, 'record', 'admins', username])
         : state;
+    }
+    case COLONY_ADMIN_ADD_CONFIRM_SUCCESS: {
+      const {
+        meta: { keyPath },
+      } = action;
+      return state ? state.setIn([...keyPath, 'state'], 'confirmed') : state;
     }
     default:
       return state;

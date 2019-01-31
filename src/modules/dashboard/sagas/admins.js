@@ -15,6 +15,7 @@ import {
   COLONY_ADMIN_ADD,
   COLONY_ADMIN_ADD_SUCCESS,
   COLONY_ADMIN_ADD_ERROR,
+  COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
   COLONY_ADMIN_REMOVE,
   COLONY_ADMIN_REMOVE_SUCCESS,
   COLONY_ADMIN_REMOVE_ERROR,
@@ -94,6 +95,16 @@ function* addColonyAdmin({
           yield call([store, store.set], 'admins', {
             ...colonyAdmins,
             [username]: newAdmin.profile,
+          });
+          /*
+           * Dispatch the action to the admin in th redux store to confirm
+           * the newly added admin and change the state
+           */
+          yield put({
+            type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
+            meta: {
+              keyPath: [ensName, 'record', 'admins', newAdmin.profile.username],
+            },
           });
           /*
            * Redirect the user back to the admins tab
