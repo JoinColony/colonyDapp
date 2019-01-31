@@ -15,7 +15,8 @@ export const getGroupKey = (txGroup: TransactionGroup) =>
     : `${txGroup[0].context}.${txGroup[0].methodName}`;
 
 // Get the index of the first transaction in a group that is ready to sign
-export const getActiveTransaction = (txGroup: TransactionGroup) => {
+export const getActiveTransactionIdx = (txGroup: TransactionGroup) => {
+  // Select the pending selection so that the user can't sign the next one
   const pendingTransactionIdx = txGroup.findIndex(
     tx => tx.status === 'pending',
   );

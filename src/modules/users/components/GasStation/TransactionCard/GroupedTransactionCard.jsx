@@ -101,6 +101,9 @@ class GroupedTransactionCard extends Component<Props, State> {
     const ready = status === 'ready';
     const failed = status === 'failed';
     const succeeded = status === 'succeeded';
+    // Only transactions that can be signed can also be cancelled
+    const canBeSigned = selected && ready;
+    // A prior transaction was selected
     const hasDependency = ready && !selected;
     return (
       <li
@@ -135,7 +138,7 @@ class GroupedTransactionCard extends Component<Props, State> {
             </div>
           </Tooltip>
         </div>
-        {selected ? (
+        {canBeSigned ? (
           this.renderCancel()
         ) : (
           // TODO-multisig: pass proper multisig prop here
