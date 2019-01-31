@@ -7,6 +7,7 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 import type { UniqueActionWithKeyPath, KeyPath } from '~types';
 
 import { Data } from '../../immutable';
+import type { DataRecord } from '../../immutable';
 
 export type DataReducer<S: ImmutableMapType<*, *>> = (
   state: S,
@@ -16,17 +17,18 @@ export type DataReducer<S: ImmutableMapType<*, *>> = (
 const getNextState = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
   keyPath: KeyPath,
-  payload: *,
+  payload: $Shape<DataRecord<V>>,
 ) => {
-  const data = Data<V>(fromJS(payload));
+  const immutablePayload: typeof payload = fromJS(payload);
+  const data = Data<V>(immutablePayload);
 
   if (keyPath.length === 2)
     return state.has(keyPath[0])
-      ? state.mergeDeepIn(keyPath, payload)
+      ? state.mergeDeepIn(keyPath, immutablePayload)
       : state.set(keyPath[0], ImmutableMap([[keyPath[1], data]]));
 
   return state.has(keyPath[0])
-    ? state.mergeDeepIn(keyPath, payload)
+    ? state.mergeDeepIn(keyPath, immutablePayload)
     : state.set(keyPath[0], data);
 };
 
@@ -55,13 +57,12 @@ const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleError = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  {
-    meta: { keyPath },
-    payload: {
-      error: { id: error },
-    },
-  }: UniqueActionWithKeyPath,
-) => getNextState<S, V>(state, keyPath, { isFetching: false, error });
+  { meta: { keyPath }, payload: { error } }: UniqueActionWithKeyPath,
+) =>
+  getNextState<S, V>(state, keyPath, {
+    isFetching: false,
+    error: error.message || error.toString(),
+  });
 
 /*
  * =============================================================================

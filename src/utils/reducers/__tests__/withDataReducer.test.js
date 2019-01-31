@@ -64,7 +64,7 @@ describe('reducers - withDataReducer', () => {
       error: true,
       meta: { keyPath: ['myKey'] },
       payload: {
-        error: { id: 'fetch error' },
+        error: { message: 'fetch error' },
       },
     };
 
