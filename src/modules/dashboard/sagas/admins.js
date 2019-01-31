@@ -20,6 +20,8 @@ import {
   COLONY_ADMIN_REMOVE,
   COLONY_ADMIN_REMOVE_SUCCESS,
   COLONY_ADMIN_REMOVE_ERROR,
+  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
+  COLONY_ADMIN_REMOVE_CONFIRM_ERROR,
 } from '../actionTypes';
 import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../core/actionTypes';
 
@@ -128,11 +130,14 @@ function* addColonyAdmin({
 }
 
 function* removeColonyAdmin({
-  payload: { admin, ensName },
-  meta = {},
+  payload: { admin },
+  meta: { keyPath: metaKeyPath },
+  meta,
 }: Action): Saga<void> {
   try {
+    const ensName = metaKeyPath[0];
     const { walletAddress, username } = admin;
+    const keyPath = [ensName, 'record', 'admins', username];
     /*
      * Ensure the colony is in the state.
      */
@@ -160,6 +165,23 @@ function* removeColonyAdmin({
       }),
     );
     /*
+     * Dispatch the action to the admin in th redux store
+     *
+     * @NOTE Don't actually remove the admin, just set the state to pending
+     */
+    yield put({
+      type: COLONY_ADMIN_REMOVE_SUCCESS,
+      meta: { keyPath },
+    });
+    /*
+     * Redirect the user back to the admins tab
+     */
+    yield put(
+      push({
+        state: { initialTab: 3 },
+      }),
+    );
+    /*
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
      *
@@ -173,30 +195,32 @@ function* removeColonyAdmin({
     yield takeEvery(
       TRANSACTION_EVENT_DATA_RECEIVED,
       function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
-        if (signedTxId === meta.id) {
-          /*
-           * Dispatch the action to the admin in th redux store
-           */
-          yield put({
-            type: COLONY_ADMIN_REMOVE_SUCCESS,
-            payload: {
-              ensName,
-              username,
-            },
-          });
-          /*
-           * Remove the colony admin and set the new value on the colony's store
-           */
-          delete colonyAdmins[username];
-          yield call([store, store.set], 'admins', colonyAdmins);
-          /*
-           * Redirect the user back to the admins tab
-           */
-          yield put(
-            push({
-              state: { initialTab: 3 },
-            }),
-          );
+        try {
+          if (signedTxId === meta.id) {
+            /*
+             * Remove the colony admin and set the new value on the colony's store
+             */
+            delete colonyAdmins[username];
+            yield call([store, store.set], 'admins', colonyAdmins);
+            /*
+             * Dispatch the action to the admin in th redux store to actually
+             * remove the entry (the one that's in the pending state)
+             */
+            yield put({
+              type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
+              meta: { keyPath },
+            });
+            /*
+             * Redirect the user back to the admins tab
+             */
+            yield put(
+              push({
+                state: { initialTab: 3 },
+              }),
+            );
+          }
+        } catch (error) {
+          yield putError(COLONY_ADMIN_REMOVE_CONFIRM_ERROR, error);
         }
       },
     );

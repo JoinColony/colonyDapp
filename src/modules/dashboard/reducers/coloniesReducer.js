@@ -11,6 +11,7 @@ import {
   COLONY_ADMIN_ADD_SUCCESS,
   COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
   COLONY_ADMIN_REMOVE_SUCCESS,
+  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
 } from '../actionTypes';
 
 import { Colony, Data, Token } from '~immutable';
@@ -81,11 +82,14 @@ const coloniesReducer = (
     case COLONY_ADMIN_REMOVE_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: username,
       } = action;
-      return state
-        ? state.deleteIn([...keyPath, 'record', 'admins', username])
-        : state;
+      return state ? state.setIn([...keyPath, 'state'], 'pending') : state;
+    }
+    case COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: {
+      const {
+        meta: { keyPath },
+      } = action;
+      return state ? state.deleteIn(keyPath) : state;
     }
     default:
       return state;
