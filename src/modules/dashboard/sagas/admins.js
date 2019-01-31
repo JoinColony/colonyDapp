@@ -131,7 +131,7 @@ function* addColonyAdmin({
 
 function* removeColonyAdmin({
   payload: { admin },
-  meta: { keyPath: metaKeyPath },
+  meta: { keyPath: metaKeyPath } = {},
   meta,
 }: Action): Saga<void> {
   try {
@@ -196,7 +196,7 @@ function* removeColonyAdmin({
       TRANSACTION_EVENT_DATA_RECEIVED,
       function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
         try {
-          if (signedTxId === meta.id) {
+          if (meta && signedTxId === meta.id) {
             /*
              * Remove the colony admin and set the new value on the colony's store
              */
