@@ -53,6 +53,8 @@ export type Props = {
   openDelay?: number,
   /** Popover placement */
   placement?: Placement,
+  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  popperProps?: Object,
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean,
   /** Whether there should be an arrow on the popover */
@@ -264,6 +266,7 @@ class Popover extends Component<Props, State> {
     const {
       appearance,
       placement: origPlacement,
+      popperProps,
       retainRefFocus,
       showArrow,
     } = this.props;
@@ -275,7 +278,11 @@ class Popover extends Component<Props, State> {
           {this.renderReference()}
         </Reference>
         {isOpen && (
-          <Popper innerRef={this.registerContentNode} placement={origPlacement}>
+          <Popper
+            innerRef={this.registerContentNode}
+            placement={origPlacement}
+            {...popperProps}
+          >
             {({ ref, style, placement, arrowProps }) => (
               // $FlowFixMe see above renderContent
               <PopoverWrapper

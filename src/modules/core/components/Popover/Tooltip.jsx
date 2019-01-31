@@ -22,6 +22,8 @@ type Props = {
   trigger: 'hover' | 'click' | 'disabled',
   /** The tooltips' placement */
   placement?: Placement,
+  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  popperProps?: Object,
   /** Whether there should be an arrow on the tooltip */
   showArrow: boolean,
   /** Set the open state from outside */
@@ -39,6 +41,7 @@ const Tooltip = ({
   children,
   content,
   placement = 'top',
+  popperProps,
   showArrow,
   trigger,
   isOpen,
@@ -49,6 +52,7 @@ const Tooltip = ({
     openDelay={200}
     content={renderContent(content)}
     placement={placement}
+    popperProps={popperProps}
     showArrow={showArrow}
     isOpen={isOpen}
   >
