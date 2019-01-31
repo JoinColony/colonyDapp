@@ -1,0 +1,30 @@
+.main {
+  padding: 0;
+}
+
+.button {
+  display: block;
+  margin: 0;
+  padding: 15px 0;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+
+  &[disabled] {
+    cursor: default;
+  }
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.description {
+  flex: 1 1 auto;
+}

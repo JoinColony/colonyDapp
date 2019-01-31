@@ -1,0 +1,15 @@
+.main {
+  padding: 0;
+  border-bottom-left-radius: var(--radius-normal);
+  border-bottom-right-radius: var(--radius-normal);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+}
+
+.description {
+  flex: 1 1 auto;
+}

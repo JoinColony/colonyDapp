@@ -8,9 +8,8 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { Action } from '~types';
+import type { GasPricesProps, TransactionRecord } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
-
-import type { TransactionRecord, GasPricesProps } from '~immutable';
 
 import {
   METHOD_TRANSACTION_SENT,
@@ -32,36 +31,36 @@ import styles from './GasStationPrice.css';
 
 const MSG = defineMessages({
   networkCongestedWarning: {
-    id: 'users.GasStationPopover.GasStationPrice.networkCongestedWarning',
+    id: 'users.GasStation.GasStationPrice.networkCongestedWarning',
     defaultMessage: `The network is congested and transactions
 are expensive. We recommend waiting.`,
   },
   openTransactionSpeedMenuTitle: {
-    id: 'users.GasStationPopover.GasStationPrice.openTransactionSpeedMenuTitle',
+    id: 'users.GasStation.GasStationPrice.openTransactionSpeedMenuTitle',
     defaultMessage: 'Change Transaction Speed',
   },
   transactionFeeLabel: {
-    id: 'users.GasStationPopover.GasStationPrice.transactionFeeLabel',
+    id: 'users.GasStation.GasStationPrice.transactionFeeLabel',
     defaultMessage: 'Transaction Fee',
   },
   transactionSpeedLabel: {
-    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedLabel',
+    id: 'users.GasStation.GasStationPrice.transactionSpeedLabel',
     defaultMessage: 'Transaction Speed',
   },
   transactionSpeedTypeSuggested: {
-    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeSuggested',
+    id: 'users.GasStation.GasStationPrice.transactionSpeedTypeSuggested',
     defaultMessage: 'Suggested',
   },
   transactionSpeedTypeCheaper: {
-    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeCheaper',
+    id: 'users.GasStation.GasStationPrice.transactionSpeedTypeCheaper',
     defaultMessage: 'Cheaper',
   },
   transactionSpeedTypeFaster: {
-    id: 'users.GasStationPopover.GasStationPrice.transactionSpeedTypeFaster',
+    id: 'users.GasStation.GasStationPrice.transactionSpeedTypeFaster',
     defaultMessage: 'Faster',
   },
   walletPromptText: {
-    id: 'users.GasStationPopover.GasStationPrice.walletPromptText',
+    id: 'users.GasStation.GasStationPrice.walletPromptText',
     defaultMessage: `Finish the transaction on {walletType, select,
       metamask {Metamask}
       hardware {your hardware wallet}
@@ -70,13 +69,12 @@ are expensive. We recommend waiting.`,
 });
 
 type Props = {
-  canSignTransaction: boolean,
+  estimateGas: (id: string) => void,
+  gasPrices: GasPricesProps,
   isNetworkCongested: boolean,
   transaction: TransactionRecord<*, *>,
-  walletNeedsAction?: 'metamask' | 'hardware',
-  estimateGas: (id: string) => void,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,
-  gasPrices: GasPricesProps,
+  walletNeedsAction?: 'metamask' | 'hardware',
 };
 
 type State = {
@@ -108,7 +106,7 @@ class GasStationPrice extends Component<Props, State> {
     isNetworkCongested: false,
   };
 
-  static displayName = 'users.GasStationPopover.GasStationPrice';
+  static displayName = 'users.GasStation.GasStationPrice';
 
   state = {
     isSpeedMenuOpen: false,
@@ -135,7 +133,6 @@ class GasStationPrice extends Component<Props, State> {
 
   render() {
     const {
-      canSignTransaction,
       isNetworkCongested,
       gasPrices,
       updateGas,
@@ -186,10 +183,8 @@ class GasStationPrice extends Component<Props, State> {
                       name="transactionSpeed"
                       options={transactionSpeedOptions.map(option => ({
                         ...option,
-                        onClick: () => {
-                          // TODO: this isn't really nice, maybe we can factor this out
-                          updateGas(id, { gasPrice: currentGasPrice });
-                        },
+                        onClick: () =>
+                          updateGas(id, { gasPrice: currentGasPrice }),
                       }))}
                     />
                   </div>
@@ -201,7 +196,6 @@ class GasStationPrice extends Component<Props, State> {
                         aria-controls={speedMenuId}
                         aria-expanded={isSpeedMenuOpen}
                         className={styles.transactionSpeedMenuButton}
-                        disabled={!canSignTransaction}
                         onClick={this.toggleSpeedMenu}
                         type="button"
                       >
@@ -248,8 +242,8 @@ class GasStationPrice extends Component<Props, State> {
                     )}
                     <div>
                       <Button
-                        disabled={!canSignTransaction || !isValid}
-                        loading={isSubmitting || !canSignTransaction}
+                        disabled={!isValid}
+                        loading={isSubmitting}
                         text={{ id: 'button.confirm' }}
                         type="submit"
                       />

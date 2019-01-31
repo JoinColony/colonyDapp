@@ -1,11 +1,12 @@
 /* @flow */
 
 import { fromJS } from 'immutable';
-
-import { Transaction, CoreTransactions } from '~immutable';
+import getObjectFromPath from 'lodash/get';
 
 import type { UniqueAction } from '~types';
-import type { CoreTransactionsRecord } from '~immutable';
+import type { CoreTransactionsRecord, TransactionRecord } from '~immutable';
+
+import { Transaction, CoreTransactions } from '~immutable';
 
 import { CORE_GAS_PRICES, CORE_TRANSACTIONS_LIST } from '../constants';
 import {
@@ -18,8 +19,24 @@ import {
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_ADD_PROPERTIES,
   TRANSACTION_SENT,
+  TRANSACTION_CANCEL,
   GAS_PRICES_UPDATE,
 } from '../actionTypes';
+
+/*
+ * Helpers for transaction transformations
+ */
+const transactionGroup = (tx: TransactionRecord<*, *>) => {
+  if (!tx.group || typeof tx.group.id == 'string') return tx.group;
+  const id = tx.group.id.reduce(
+    (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,
+    tx.group.key,
+  );
+  return {
+    ...tx.group,
+    id,
+  };
+};
 
 const coreTransactionsReducer = (
   state: CoreTransactionsRecord = CoreTransactions(),
@@ -40,20 +57,23 @@ const coreTransactionsReducer = (
         params,
         status,
       } = payload;
+
+      const tx = Transaction({
+        context,
+        createdAt,
+        id,
+        identifier,
+        lifecycle,
+        methodName,
+        multisig,
+        options,
+        params,
+        status,
+      });
+
       return state.setIn(
         [CORE_TRANSACTIONS_LIST, id],
-        Transaction({
-          context,
-          createdAt,
-          id,
-          identifier,
-          lifecycle,
-          methodName,
-          multisig,
-          options,
-          params,
-          status,
-        }),
+        tx.set('group', transactionGroup(tx)),
       );
     }
     case TRANSACTION_ADD_PROPERTIES: {
@@ -112,6 +132,25 @@ const coreTransactionsReducer = (
           errors.push(error),
         )
         .setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'failed');
+    }
+    case TRANSACTION_CANCEL: {
+      const { id } = meta;
+      const tx = state.list.get(id);
+      if (!tx) return state;
+      if (tx.group) {
+        return state.update(CORE_TRANSACTIONS_LIST, list =>
+          list.filter(filterTx => {
+            // Keep all transactions with no group
+            if (!filterTx.group) return true;
+            // Keep all transactions with a different groupId
+            if (!filterTx.group.id !== tx.group.id) return true;
+            // Keep all transactions with the same groupId but a lower index
+            if (filterTx.group.index < tx.group.index) return true;
+            return false;
+          }),
+        );
+      }
+      return state.deleteIn([CORE_TRANSACTIONS_LIST, id]);
     }
     case GAS_PRICES_UPDATE:
       return state.mergeIn([CORE_GAS_PRICES], fromJS(payload));

@@ -1,0 +1,19 @@
+
+.main {
+  width: 450px;
+  text-align: left;
+}
+
+.transactionsContainer {
+  padding: 10px;
+  min-height: 70px;
+  max-height: 456px;
+  overflow-y: auto;
+}
+
+/* State */
+
+.stateIsEmpty .transactionsContainer {
+  display: flex;
+  align-items: center;
+}

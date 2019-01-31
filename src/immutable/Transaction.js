@@ -36,12 +36,8 @@ export type TransactionMultisig = {
 };
 
 export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {|
-  context?: ColonyContext,
+  context: ColonyContext,
   createdAt: Date,
-  // TODO: this is just for the sake of moving the types over. This will be changed in another PR
-  dependents?: Array<*>,
-  dependency?: string,
-  // TODO: end temp props
   errors: List<TransactionError>,
   eventData?: E,
   gasLimit?: BigNumber,
@@ -60,7 +56,7 @@ export type TransactionProps<P: TransactionParams, E: TransactionEventData> = {|
   options: SendOptions,
   params: P,
   receipt?: TransactionReceipt,
-  status: 'created' | 'ready' | 'pending' | 'failed' | 'succeeded',
+  status: 'created' | 'ready' | 'pending' | 'failed' | 'multisig' | 'succeeded',
 |};
 
 export type TransactionRecord<

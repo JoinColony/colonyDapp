@@ -6,13 +6,9 @@ import { connect } from 'react-redux';
 
 import { currentUserAddressSelector } from '../../../selectors';
 
-import GasStationContent from './GasStationContent.jsx';
+import GasStationHeader from './GasStationHeader.jsx';
 
-export type InProps = {
-  close: () => void,
-};
-
-const enhance: HOC<*, InProps> = compose(
+const enhance: HOC<*, {}> = compose(
   connect((state: Object) => ({
     walletAddress: currentUserAddressSelector(state),
   })),
@@ -21,4 +17,4 @@ const enhance: HOC<*, InProps> = compose(
   })),
 );
 
-export default enhance(GasStationContent);
+export default enhance(GasStationHeader);

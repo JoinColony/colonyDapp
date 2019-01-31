@@ -1,0 +1,35 @@
+.main {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-bottom: 2px solid var(--grey-blue-1);
+}
+
+.walletDetails {
+  align-self: center;
+}
+
+.walletHeading {
+  display: inline-block;
+}
+
+.walletAddress {
+  display: inline-block;
+  padding-left: 8px;
+}
+
+.actionsContainer {
+  display: flex;
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+.goToWalletIcon {
+  /* Negative margin to align with close icon - this icon is wide and has a lot of vertical padding */
+  margin-top: -5px;
+}
+
+.closeButton {
+  composes: button from '~styles/reset.css';
+  margin-left: 5px;
+}

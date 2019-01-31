@@ -3,16 +3,17 @@
 import React, { Component } from 'react';
 
 import type { PopoverTrigger } from '~core/Popover';
-import type { TransactionRecord, UserRecord } from '~immutable';
 
 import Popover from '~core/Popover';
+
+import type { TransactionGroup } from './transactionGroup';
+import { transactionCount } from './transactionGroup';
+
 import GasStationContent from './GasStationContent';
 
 type Props = {
-  transactions: Array<TransactionRecord<*, *>>,
-  transactionCount: number,
+  transactionGroups: Array<TransactionGroup>,
   children: React$Element<*> | PopoverTrigger,
-  currentUser: UserRecord,
 };
 
 type State = {
@@ -20,20 +21,19 @@ type State = {
 };
 
 class GasStationPopover extends Component<Props, State> {
-  static displayName = 'users.GasStationPopover';
-
-  static defaultProps = {
-    transactionCount: 0,
-  };
+  static displayName = 'users.GasStation.GasStationPopover';
 
   state = {
     isGasStationOpen: false,
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { transactionCount: currentTransactionCount = 0 } = prevProps;
-    const { transactionCount: newTransactionCount = 0 } = this.props;
-    if (newTransactionCount > currentTransactionCount) {
+    const { transactionGroups: prevTransactionGroups } = prevProps;
+    const { transactionGroups: currentTransactionGroups } = this.props;
+    if (
+      transactionCount(prevTransactionGroups) <
+      transactionCount(currentTransactionGroups)
+    ) {
       /*
        * @NOTE We're not causing either an infinite loop,
        * neither copying prop values into state.
@@ -52,19 +52,16 @@ class GasStationPopover extends Component<Props, State> {
 
   render() {
     const { isGasStationOpen } = this.state;
-    const { children, transactions, currentUser } = this.props;
-
+    const { children, transactionGroups } = this.props;
     return (
       <Popover
         appearance={{ theme: 'grey' }}
         content={({ close }) => (
           <GasStationContent
-            transactions={transactions}
+            transactionGroups={transactionGroups}
             close={close}
-            currentUser={currentUser}
           />
         )}
-        name="GasStationPopover"
         placement="bottom"
         showArrow={false}
         isOpen={isGasStationOpen}
