@@ -4,11 +4,7 @@ import { Transaction } from '~immutable';
 
 import { CORE_NAMESPACE as ns } from '../../constants';
 
-import {
-  oneTransaction,
-  allTransactions,
-  groupedTransactions,
-} from '../transactions';
+import { groupedTransactions } from '../transactions';
 
 describe('Transaction selectors', () => {
   const tx1 = {
@@ -27,7 +23,7 @@ describe('Transaction selectors', () => {
     identifier: 'othercolony',
     group: {
       key: 'taskLifecycle',
-      id: ['identifier', 'params.taskId'],
+      id: 'taskLifecycle-1',
       index: 1,
     },
   };
@@ -37,7 +33,7 @@ describe('Transaction selectors', () => {
     identifier: 'othercolony',
     group: {
       key: 'taskLifecycle',
-      id: ['identifier', 'params.taskId'],
+      id: 'taskLifecycle-1',
       index: 0,
     },
   };
@@ -46,38 +42,6 @@ describe('Transaction selectors', () => {
     params: { taskId: 1 },
     identifier: 'othercolony',
   };
-  test('oneTransaction selector', () => {
-    const state = fromJS({
-      [ns]: { transactions: { list: ImmutableMap({ tx1: Transaction(tx1) }) } },
-    });
-    const outTx = oneTransaction(state, 'tx1');
-    expect(outTx.toJS().group).toEqual({
-      key: 'taskLifecycle',
-      id: 'taskLifecycle-coolony-5',
-      index: 1,
-    });
-  });
-
-  test('allTransactions selector', () => {
-    const state = fromJS({
-      [ns]: {
-        transactions: {
-          list: ImmutableMap({ tx1: Transaction(tx1), tx2: Transaction(tx2) }),
-        },
-      },
-    });
-    const outTx = allTransactions(state);
-    expect(outTx.toJS().tx1.group).toEqual({
-      key: 'taskLifecycle',
-      id: 'taskLifecycle-coolony-5',
-      index: 1,
-    });
-    expect(outTx.toJS().tx2.group).toEqual({
-      key: 'taskLifecycle',
-      id: 'taskLifecycle-othercolony-1',
-      index: 1,
-    });
-  });
 
   test('groupedTransactions selector', () => {
     const state = fromJS({
@@ -97,12 +61,12 @@ describe('Transaction selectors', () => {
     expect(result[0][0].createdAt).toEqual(0);
     expect(result[1][0].group).toEqual({
       key: 'taskLifecycle',
-      id: 'taskLifecycle-othercolony-1',
+      id: 'taskLifecycle-1',
       index: 0,
     });
     expect(result[1][1].group).toEqual({
       key: 'taskLifecycle',
-      id: 'taskLifecycle-othercolony-1',
+      id: 'taskLifecycle-1',
       index: 1,
     });
   });
