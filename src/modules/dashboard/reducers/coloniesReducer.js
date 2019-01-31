@@ -62,16 +62,13 @@ const coloniesReducer = (
     case COLONY_ADMIN_ADD_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: adminData,
+        payload: { adminData },
       } = action;
       return state
-        ? state.setIn(
-            [...keyPath, 'record', 'admins', adminData.username],
-            {
-              ...adminData.toObject(),
-              state: 'pending',
-            },
-          )
+        ? state.setIn([...keyPath, 'record', 'admins', adminData.username], {
+            ...adminData.toObject(),
+            state: 'pending',
+          })
         : state;
     }
     case COLONY_ADMIN_REMOVE_SUCCESS: {

@@ -59,10 +59,20 @@ function* addColonyAdmin({
     yield put({
       type: COLONY_ADMIN_ADD_SUCCESS,
       payload: {
-        ensName,
         adminData: newAdmin.profile,
       },
+      meta: {
+        keyPath: [ensName],
+      },
     });
+    /*
+     * Redirect the user back to the admins tab
+     */
+    yield put(
+      push({
+        state: { initialTab: 3 },
+      }),
+    );
     /*
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
