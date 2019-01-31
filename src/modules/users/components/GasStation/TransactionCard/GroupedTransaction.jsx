@@ -20,7 +20,7 @@ type Props = {
   selectedTransactionIdx: number,
 };
 
-const displayName = 'users.GasStation.GroupedTransaction.jsx';
+const displayName = 'users.GasStation.GroupedTransaction';
 
 const GroupedTransaction = ({
   selectedTransactionIdx,

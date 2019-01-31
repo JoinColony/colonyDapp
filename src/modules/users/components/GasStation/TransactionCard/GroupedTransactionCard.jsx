@@ -119,7 +119,7 @@ class GroupedTransactionCard extends Component<Props, State> {
             placement="top"
             showArrow
             content={
-              <span className={styles.tooltipContentReset}>
+              <span className={styles.tooltipDependency}>
                 <FormattedMessage {...MSG.hasDepedentTx} />
               </span>
             }
