@@ -19,7 +19,12 @@ import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
 
-import type { ColonyRecord, DataRecord, UserRecord } from '~immutable';
+import type {
+  ColonyRecord,
+  DataRecord,
+  UserRecord,
+  DomainRecord,
+} from '~immutable';
 import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
@@ -77,6 +82,7 @@ type Props = {
   walletAddress: string,
   given: Given,
   colonyAdmins: Array<UserRecord>,
+  colonyDomains: Array<DataRecord<DomainRecord>>,
 };
 
 type State = {
@@ -132,7 +138,13 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, given, colony, colonyAdmins, domains = [] } = this.props;
+    const {
+      walletAddress,
+      given,
+      colony,
+      colonyAdmins,
+      colonyDomains = [],
+    } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
@@ -208,16 +220,20 @@ class ColonyHome extends Component<Props, State> {
                 <FormattedMessage {...MSG.allDomains} />
               </Button>
             </li>
-            {domains.map(({ id, name }) => (
-              <li key={`domain_${id}`}>
-                <Button
-                  className={this.getActiveDomainFilterClass(id)}
-                  onClick={() => this.setDomainFilter(id)}
-                >
-                  {name}
-                </Button>
-              </li>
-            ))}
+            {colonyDomains.map((domain: DomainRecord) => {
+              const name = domain.getIn(['record', 'name']);
+              const id = domain.getIn(['record', 'id']);
+              return (
+                <li key={`domain_${id}`}>
+                  <Button
+                    className={this.getActiveDomainFilterClass(id)}
+                    onClick={() => this.setDomainFilter(id)}
+                  >
+                    #{name}
+                  </Button>
+                </li>
+              );
+            })}
           </ul>
         </aside>
         {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}

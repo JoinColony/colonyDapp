@@ -8,7 +8,7 @@ import type { ENSName } from '~types';
 import { withFeatureFlags } from '~utils/hoc';
 import { withColonyFromRoute } from '../../../core/hocs';
 
-import { getColonyAdmins } from '../../selectors';
+import { getColonyAdmins, getColonyDomains } from '../../selectors';
 import { walletAddressSelector } from '../../../users/selectors/users';
 
 import ColonyHome from './ColonyHome.jsx';
@@ -18,6 +18,7 @@ const enhance = compose(
   connect((state: Object, { ensName }: { ensName: ENSName }) => ({
     walletAddress: walletAddressSelector(state),
     colonyAdmins: getColonyAdmins(state, ensName),
+    colonyDomains: getColonyDomains(state, ensName).toArray(),
   })),
   withFeatureFlags(),
 );
