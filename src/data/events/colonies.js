@@ -22,7 +22,7 @@ type DomainCreatedEventArgs = {|
 |};
 type DomainCreatedEventPayload = EventPayload & DomainCreatedEventArgs;
 type DomainCreatedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof DOMAIN_CREATED,
   DomainCreatedEventPayload,
 >;
 
@@ -33,7 +33,7 @@ type TaskStoreCreatedEventArgs = {|
 |};
 type TaskStoreCreatedEventPayload = EventPayload & TaskStoreCreatedEventArgs;
 type TaskStoreCreatedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof TASK_STORE_CREATED,
   TaskStoreCreatedEventPayload,
 >;
 
@@ -44,7 +44,7 @@ type ColonyAvatarUploadedEventArgs = {|
 type ColonyAvatarUploadedEventPayload = EventPayload &
   ColonyAvatarUploadedEventArgs;
 type ColonyAvatarUploadedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof AVATAR_UPLOADED,
   ColonyAvatarUploadedEventPayload,
 >;
 
@@ -54,7 +54,7 @@ type ColonyAvatarRemovedEventArgs = {|
 type ColonyAvatarRemovedEventPayload = EventPayload &
   ColonyAvatarRemovedEventArgs;
 type ColonyAvatarRemovedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof AVATAR_REMOVED,
   ColonyAvatarRemovedEventPayload,
 >;
 
@@ -66,7 +66,7 @@ type TokenInfoAddedEventArgs = {|
 |};
 type TokenInfoAddedEventPayload = EventPayload & TokenInfoAddedEventArgs;
 type TokenInfoAddedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof TOKEN_INFO_ADDED,
   TokenInfoAddedEventPayload,
 >;
 
@@ -81,7 +81,7 @@ type ColonyProfileCreatedEventArgs = {|
 type ColonyProfileCreatedEventPayload = EventPayload &
   ColonyProfileCreatedEventArgs;
 type ColonyProfileCreatedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof PROFILE_CREATED,
   ColonyProfileCreatedEventPayload,
 >;
 
@@ -95,7 +95,7 @@ type ColonyProfileUpdatedEventPayload = EventPayload &
   ColonyProfileUpdatedEventArgs;
 
 type ColonyProfileUpdatedEvent = Event<
-  $Keys<typeof COLONY_EVENT_TYPES>,
+  typeof PROFILE_UPDATED,
   ColonyProfileUpdatedEventPayload,
 >;
 

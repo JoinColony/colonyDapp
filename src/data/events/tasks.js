@@ -19,7 +19,7 @@ type CommentStoreCreatedEventArgs = {|
 type CommentStoreCreatedEventPayload = EventPayload &
   CommentStoreCreatedEventArgs;
 type CommentStoreCreatedEvent = Event<
-  $Keys<typeof TASK_EVENT_TYPES>,
+  typeof COMMENT_STORE_CREATED,
   CommentStoreCreatedEventPayload,
 >;
 
@@ -27,19 +27,13 @@ type DueDateSetEventArgs = {|
   dueDate: number,
 |};
 type DueDateSetEventPayload = EventPayload & DueDateSetEventArgs;
-type DueDateSetEvent = Event<
-  $Keys<typeof TASK_EVENT_TYPES>,
-  DueDateSetEventPayload,
->;
+type DueDateSetEvent = Event<typeof DUE_DATE_SET, DueDateSetEventPayload>;
 
 type SkillSetEventArgs = {|
   skillId: string,
 |};
 type SkillSetEventPayload = EventPayload & SkillSetEventArgs;
-type SkillSetEvent = Event<
-  $Keys<typeof TASK_EVENT_TYPES>,
-  SkillSetEventPayload,
->;
+type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 
 type DraftCreatedEventArgs = {|
   draftId: string,
@@ -50,10 +44,7 @@ type DraftCreatedEventArgs = {|
   title: string,
 |};
 type DraftCreatedEventPayload = EventPayload & DraftCreatedEventArgs;
-type DraftCreatedEvent = Event<
-  $Keys<typeof TASK_EVENT_TYPES>,
-  DraftCreatedEventPayload,
->;
+type DraftCreatedEvent = Event<typeof DRAFT_CREATED, DraftCreatedEventPayload>;
 
 type DraftUpdatedEventArgs = {|
   meta: string,
@@ -61,10 +52,7 @@ type DraftUpdatedEventArgs = {|
   title: string,
 |};
 type DraftUpdatedEventPayload = EventPayload & DraftUpdatedEventArgs;
-type DraftUpdatedEvent = Event<
-  $Keys<typeof TASK_EVENT_TYPES>,
-  DraftUpdatedEventPayload,
->;
+type DraftUpdatedEvent = Event<typeof DRAFT_UPDATED, DraftUpdatedEventPayload>;
 
 // @TODO add payload validation here like we had in beta events
 export const createCommentStoreCreatedEvent: EventCreator<

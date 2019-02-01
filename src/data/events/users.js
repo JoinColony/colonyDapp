@@ -15,7 +15,7 @@ type NotificationsReadUntilEventArgs = {|
 type NotificationsReadUntilEventPayload = EventPayload &
   NotificationsReadUntilEventArgs;
 type NotificationsReadUntilEvent = Event<
-  $Keys<typeof USER_EVENT_TYPES>,
+  typeof READ_UNTIL,
   NotificationsReadUntilEventPayload,
 >;
 
