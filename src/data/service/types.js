@@ -41,3 +41,16 @@ export type DDBCommandContext<M: *> = {|
   ddb: DDB,
   metadata: M,
 |};
+
+export type EventPayload = {|
+  id: string,
+  timestamp: number,
+  version: number,
+|};
+
+export type Event<T: string, P: EventPayload> = {|
+  type: T,
+  payload: P,
+|};
+
+export type EventCreator<I: Object, O: Event<*, *>> = (args: I) => O;

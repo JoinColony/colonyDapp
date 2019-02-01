@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Event, EventCreator, EventPayload } from './types';
+import type { Event, EventCreator, EventPayload } from '../types';
 
 import { decoratePayload } from './utils';
 import { TASK_EVENT_TYPES } from '../../constants';
@@ -16,29 +16,32 @@ const {
   COMMENT_POSTED,
 } = TASK_EVENT_TYPES;
 
-type CommentStoreCreatedEventArgs = {|
+export type CommentStoreCreatedEventArgs = {|
   commentsStoreAddress: string,
 |};
-type CommentStoreCreatedEventPayload = EventPayload &
+export type CommentStoreCreatedEventPayload = EventPayload &
   CommentStoreCreatedEventArgs;
-type CommentStoreCreatedEvent = Event<
+export type CommentStoreCreatedEvent = Event<
   typeof COMMENT_STORE_CREATED,
   CommentStoreCreatedEventPayload,
 >;
 
-type DueDateSetEventArgs = {|
+export type DueDateSetEventArgs = {|
   dueDate: number,
 |};
-type DueDateSetEventPayload = EventPayload & DueDateSetEventArgs;
-type DueDateSetEvent = Event<typeof DUE_DATE_SET, DueDateSetEventPayload>;
+export type DueDateSetEventPayload = EventPayload & DueDateSetEventArgs;
+export type DueDateSetEvent = Event<
+  typeof DUE_DATE_SET,
+  DueDateSetEventPayload,
+>;
 
-type SkillSetEventArgs = {|
+export type SkillSetEventArgs = {|
   skillId: string,
 |};
-type SkillSetEventPayload = EventPayload & SkillSetEventArgs;
-type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
+export type SkillSetEventPayload = EventPayload & SkillSetEventArgs;
+export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 
-type DraftCreatedEventArgs = {|
+export type DraftCreatedEventArgs = {|
   draftId: string,
   creator: string,
   domainId: number,
@@ -46,38 +49,44 @@ type DraftCreatedEventArgs = {|
   specificationHash: string,
   title: string,
 |};
-type DraftCreatedEventPayload = EventPayload & DraftCreatedEventArgs;
-type DraftCreatedEvent = Event<typeof DRAFT_CREATED, DraftCreatedEventPayload>;
+export type DraftCreatedEventPayload = EventPayload & DraftCreatedEventArgs;
+export type DraftCreatedEvent = Event<
+  typeof DRAFT_CREATED,
+  DraftCreatedEventPayload,
+>;
 
-type DraftUpdatedEventArgs = {|
+export type DraftUpdatedEventArgs = {|
   meta: string,
   specificationHash: string,
   title: string,
 |};
-type DraftUpdatedEventPayload = EventPayload & DraftUpdatedEventArgs;
-type DraftUpdatedEvent = Event<typeof DRAFT_UPDATED, DraftUpdatedEventPayload>;
+export type DraftUpdatedEventPayload = EventPayload & DraftUpdatedEventArgs;
+export type DraftUpdatedEvent = Event<
+  typeof DRAFT_UPDATED,
+  DraftUpdatedEventPayload,
+>;
 
-type WorkInviteSentEventArgs = {|
+export type WorkInviteSentEventArgs = {|
   creator: string,
   worker: string,
 |};
-type WorkInviteSentEventPayload = EventPayload & WorkInviteSentEventArgs;
-type WorkInviteSentEvent = Event<
+export type WorkInviteSentEventPayload = EventPayload & WorkInviteSentEventArgs;
+export type WorkInviteSentEvent = Event<
   typeof WORK_INVITE_SENT,
   WorkInviteSentEventPayload,
 >;
 
-type WorkRequestCreatedEventArgs = {|
+export type WorkRequestCreatedEventArgs = {|
   worker: string,
 |};
-type WorkRequestCreatedEventPayload = EventPayload &
+export type WorkRequestCreatedEventPayload = EventPayload &
   WorkRequestCreatedEventArgs;
-type WorkRequestCreatedEvent = Event<
+export type WorkRequestCreatedEvent = Event<
   typeof WORK_REQUEST_CREATED,
   WorkRequestCreatedEventPayload,
 >;
 
-type CommentPostedEventArgs = {|
+export type CommentPostedEventArgs = {|
   comment: {|
     signature: string,
     content: {|
@@ -90,8 +99,8 @@ type CommentPostedEventArgs = {|
     |},
   |},
 |};
-type CommentPostedEventPayload = EventPayload & CommentPostedEventArgs;
-type CommentPostedEvent = Event<
+export type CommentPostedEventPayload = EventPayload & CommentPostedEventArgs;
+export type CommentPostedEvent = Event<
   typeof COMMENT_POSTED,
   CommentPostedEventPayload,
 >;
