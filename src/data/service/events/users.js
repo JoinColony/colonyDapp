@@ -4,7 +4,7 @@
 import type { Event, EventCreator, EventPayload } from './types';
 
 import { decoratePayload } from './utils';
-import { USER_EVENT_TYPES } from '../constants';
+import { USER_EVENT_TYPES } from '../../constants';
 
 const { READ_UNTIL } = USER_EVENT_TYPES;
 

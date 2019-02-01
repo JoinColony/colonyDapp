@@ -3,7 +3,7 @@
 import type { Event, EventCreator, EventPayload } from './types';
 
 import { decoratePayload } from './utils';
-import { TASK_EVENT_TYPES } from '../constants';
+import { TASK_EVENT_TYPES } from '../../constants';
 
 const {
   COMMENT_STORE_CREATED,
