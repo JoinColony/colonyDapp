@@ -23,6 +23,25 @@ class EventStore extends Store {
     return this.append(value);
   }
 
+  async query(filter: * = {}) {
+    return this._orbitStore
+      .iterator(filter)
+      .collect()
+      .reduce(
+        (events, event) => [
+          ...events,
+          ...((event &&
+            event.next &&
+            event.next.length &&
+            event.next.map(hash => this._orbitStore.get(hash))) ||
+            []),
+          event,
+        ],
+        [],
+      )
+      .map(event => event.payload.value);
+  }
+
   async append(value: {}) {
     return this._orbitStore.add(value);
   }
