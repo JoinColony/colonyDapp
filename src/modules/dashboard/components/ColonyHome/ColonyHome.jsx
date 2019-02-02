@@ -3,6 +3,14 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type {
+  ColonyRecord,
+  DataRecord,
+  UserRecord,
+  DomainRecord,
+} from '~immutable';
+import type { Given } from '~utils/hoc';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
@@ -18,14 +26,6 @@ import styles from './ColonyHome.css';
 import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
-
-import type {
-  ColonyRecord,
-  DataRecord,
-  UserRecord,
-  DomainRecord,
-} from '~immutable';
-import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
 
@@ -102,12 +102,26 @@ class ColonyHome extends Component<Props, State> {
 
   static defaultProps = {
     inRecovery: false,
+    colonyDomains: [],
   };
 
   state = {
     filterOption: 'all',
     filteredDomainId: 0,
   };
+
+  componentDidMount() {
+    const { colony, fetchColonyDomains } = this.props;
+    if (colony && colony.getIn(['record', 'ensName'])) {
+      fetchColonyDomains(colony.getIn(['record', 'ensName']));
+    }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    console.log(nextProps);
+    console.log(this.props);
+    return false;
+  }
 
   /*
    * @NOTE Also change this when working on the Dashboard tasks
@@ -143,7 +157,7 @@ class ColonyHome extends Component<Props, State> {
       given,
       colony,
       colonyAdmins,
-      colonyDomains = [],
+      colonyDomains,
     } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
