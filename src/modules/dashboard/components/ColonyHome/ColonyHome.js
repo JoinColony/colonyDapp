@@ -1,6 +1,6 @@
 /* @flow */
 
-import { compose } from 'recompose';
+import { compose, lifecycle } from 'recompose';
 import { connect } from 'react-redux';
 
 import type { ENSName } from '~types';
@@ -16,6 +16,7 @@ import ColonyHome from './ColonyHome.jsx';
 
 const enhance = compose(
   withColonyFromRoute,
+  withFeatureFlags(),
   connect(
     (state: Object, { ensName }: { ensName: ENSName }) => ({
       walletAddress: walletAddressSelector(state),
@@ -24,7 +25,14 @@ const enhance = compose(
     }),
     { fetchColonyDomains: fetchColonyDomainsAction },
   ),
-  withFeatureFlags(),
+  lifecycle({
+    componentDidMount() {
+      const { ensName, colony, fetchColonyDomains } = this.props;
+      if (colony) {
+        fetchColonyDomains(ensName);
+      }
+    },
+  }),
 );
 
 export default enhance(ColonyHome);

@@ -110,19 +110,6 @@ class ColonyHome extends Component<Props, State> {
     filteredDomainId: 0,
   };
 
-  componentDidMount() {
-    const { colony, fetchColonyDomains } = this.props;
-    if (colony && colony.getIn(['record', 'ensName'])) {
-      fetchColonyDomains(colony.getIn(['record', 'ensName']));
-    }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    console.log(nextProps);
-    console.log(this.props);
-    return false;
-  }
-
   /*
    * @NOTE Also change this when working on the Dashboard tasks
    *
