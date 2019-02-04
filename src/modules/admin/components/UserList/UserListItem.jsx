@@ -1,13 +1,16 @@
 /* @flow */
 
+import type { IntlShape } from 'react-intl';
+
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
+import { Tooltip } from '~core/Popover';
 
 import styles from './UserListItem.css';
 
@@ -17,6 +20,10 @@ const MSG = defineMessages({
   buttonRemove: {
     id: 'admin.UserList.UserListItem.buttonRemove',
     defaultMessage: 'Remove',
+  },
+  pending: {
+    id: 'admin.UserList.UserListItem.pending',
+    defaultMessage: 'Transaction pending',
   },
 });
 
@@ -49,15 +56,18 @@ type Props = {
    * Gets passed down to `UserListItem`
    */
   onRemove: ColonyAdminRecord => any,
+  /** @ignore Injected by `injectIntl` */
+  intl: IntlShape,
 };
 
 const UserListItem = ({
-  user: { walletAddress, username = '', displayName = '' },
+  user: { walletAddress, username = '', displayName = '', state = 'pending' },
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
   onRemove,
+  intl: { formatMessage },
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.userAvatar}>
@@ -84,7 +94,7 @@ const UserListItem = ({
       </span>
     </TableCell>
     <TableCell className={styles.userRemove}>
-      {!viewOnly && (
+      {!viewOnly && state === 'confirmed' && (
         <Button
           className={styles.customRemoveButton}
           appearance={{ theme: 'primary' }}
@@ -92,10 +102,30 @@ const UserListItem = ({
           onClick={onRemove}
         />
       )}
+      {state === 'pending' && (
+        <div className={styles.pendingDotWrapper}>
+          <Tooltip
+            placement="top"
+            showArrow
+            content={
+              <span className={styles.tooltipContentReset}>
+                <FormattedMessage {...MSG.pending} />
+              </span>
+            }
+          >
+            <div className={styles.pendingDotClickArea}>
+              <span
+                className={styles.pendingDot}
+                aria-label={formatMessage(MSG.pending)}
+              />
+            </div>
+          </Tooltip>
+        </div>
+      )}
     </TableCell>
   </TableRow>
 );
 
 UserListItem.displayName = componentDisplayName;
 
-export default UserListItem;
+export default injectIntl(UserListItem);

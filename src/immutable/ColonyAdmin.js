@@ -12,6 +12,7 @@ export type ColonyAdminProps = {
   profileStore: string,
   username: ENSName,
   walletAddress: Address,
+  state: 'pending' | 'confirmed',
 };
 
 export type ColonyAdminRecord = RecordOf<ColonyAdminProps>;
@@ -22,6 +23,7 @@ const defaultProps: $Shape<ColonyAdminProps> = {
   profileStore: undefined,
   username: undefined,
   walletAddress: undefined,
+  state: 'pending',
 };
 
 const ColonyAdmin: RecordFactory<ColonyAdminProps> = Record(defaultProps);
