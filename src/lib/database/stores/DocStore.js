@@ -30,10 +30,10 @@ class DocStore extends Store {
     orbitStore: OrbitDBStore,
     name: string,
     pinner: PinnerConnector,
-    schema: ObjectSchema,
+    schema?: ObjectSchema,
   ) {
+    if (!schema) throw new Error('A schema is required for DocStores');
     super(orbitStore, name, pinner);
-
     const { doc, meta } = schema.fields;
     this._docSchema = doc;
     this._metaSchema = meta;

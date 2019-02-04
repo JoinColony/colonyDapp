@@ -27,8 +27,9 @@ class FeedStore extends Store {
     orbitStore: OrbitDBStore,
     name: string,
     pinner: PinnerConnector,
-    schema: ObjectSchema,
+    schema?: ObjectSchema,
   ) {
+    if (!schema) throw new Error('A schema is required for FeedStores');
     super(orbitStore, name, pinner);
     this._schema = schema;
   }

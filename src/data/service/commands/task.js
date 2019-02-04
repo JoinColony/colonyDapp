@@ -35,13 +35,13 @@ type TaskCommand<I: *> = Command<
   CommandContext<{|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
-    taskStoreAddress: OrbitDBAddress,
+    taskStoreAddress: string | OrbitDBAddress,
   |}>,
   I,
 >;
 type CommentCommand<I: *> = Command<
   DDBCommandContext<{|
-    commentStoreAddress: OrbitDBAddress,
+    commentStoreAddress: string | OrbitDBAddress,
   |}>,
   I,
 >;

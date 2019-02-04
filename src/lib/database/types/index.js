@@ -5,8 +5,6 @@ import type { ObjectSchema } from 'yup';
 import { PurserIdentity, PurserIdentityProvider } from '..';
 import type { AccessController, Entry } from './AccessController';
 
-import { Store } from '../stores';
-
 export type { AccessController, Entry };
 export type { Identity, IdentityObject } from './Identity';
 export type { IdentityProvider } from './IdentityProvider';
@@ -31,7 +29,7 @@ export type StoreType =
   | 'docstore'
   | 'keyvalue';
 
-export type OrbitDBAddress = {
+export type OrbitDBAddress = Object & {
   root: string,
   path: string,
   signature: string,
@@ -44,11 +42,12 @@ export type OrbitStoreOpenOpts = {
   replicate?: boolean,
 };
 
-export type StoreBlueprint = {
+export type StoreBlueprint = {|
   name: string,
   schema?: ObjectSchema,
+  meta?: Object,
   getAccessController?: (
     storeProps: Object,
   ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,
-  type: typeof Store,
-};
+  type: *,
+|};
