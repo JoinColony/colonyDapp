@@ -129,12 +129,12 @@ class Task extends Component<Props> {
 
   setValues = (dialogValues?: Object = {}) => {
     const {
-      task: { colonyENSName, id: taskId },
+      task: { colonyENSName, draftId },
     } = this.props;
     return {
       ...dialogValues,
       colonyENSName,
-      taskId,
+      draftId,
     };
   };
 
@@ -375,7 +375,7 @@ class Task extends Component<Props> {
             </section>
             <section className={styles.commentBox}>
               <TaskComments
-                taskId={task.id}
+                draftId={task.draftId}
                 claimedProfile={currentUser.didClaimProfile}
                 walletAddress={currentUser.profile.walletAddress}
               />

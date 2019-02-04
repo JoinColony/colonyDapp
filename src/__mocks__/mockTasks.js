@@ -12,7 +12,7 @@ const createBN = val =>
 
 const mockTasks = List.of(
   Task({
-    id: '1',
+    draftId: '1',
     colonyENSName: 'cool-colony',
     title: 'Develop Github integration',
     reputation: 19.5,
@@ -31,7 +31,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '2',
+    draftId: '2',
     colonyENSName: 'cool-colony',
     title: 'Write docs for JS library',
     reputation: 35,
@@ -45,7 +45,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '3',
+    draftId: '3',
     colonyENSName: 'cool-colony',
     title: 'Conduct user interviews on lo-fi prototypes',
     reputation: 5,
@@ -62,7 +62,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '4',
+    draftId: '4',
     colonyENSName: 'cool-colony',
     title: 'Create ux prototype of an Ethereum wallet',
     reputation: 8,
@@ -79,7 +79,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '5',
+    draftId: '5',
     colonyENSName: 'cool-colony',
     title: 'Translate Colony whitepaper',
     reputation: 1,
@@ -93,7 +93,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '6',
+    draftId: '6',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -107,7 +107,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '7',
+    draftId: '7',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -121,7 +121,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '8',
+    draftId: '8',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -135,7 +135,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '9',
+    draftId: '9',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -149,7 +149,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '10',
+    draftId: '10',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -163,7 +163,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '11',
+    draftId: '11',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -177,7 +177,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '12',
+    draftId: '12',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -191,7 +191,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '13',
+    draftId: '13',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -205,7 +205,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '14',
+    draftId: '14',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,
@@ -219,7 +219,7 @@ const mockTasks = List.of(
     }),
   }),
   Task({
-    id: '15',
+    draftId: '15',
     colonyENSName: 'cool-colony',
     title: '5 week open developer project',
     reputation: 1,

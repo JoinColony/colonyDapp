@@ -18,7 +18,7 @@ const TaskList = ({ tasks }: Props) => (
   <Table scrollable>
     <TableBody>
       {tasks.map(task => (
-        <TaskListItem key={task.id} task={task} />
+        <TaskListItem key={task.draftId} task={task} />
       ))}
     </TableBody>
   </Table>

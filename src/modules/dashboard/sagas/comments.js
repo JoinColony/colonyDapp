@@ -17,7 +17,7 @@ import {
 } from '../actionTypes';
 
 function* addNewComment({
-  payload: { taskId, commentData } = {},
+  payload: { draftId, commentData } = {},
   meta: { id } = {},
 }: Action = {}): Saga<void> {
   try {
@@ -28,7 +28,7 @@ function* addNewComment({
     const commentSignature = yield call([wallet, wallet.signMessage], {
       message: JSON.stringify(commentData),
     });
-    const commentsStore = yield call(createCommentsStore, taskId);
+    const commentsStore = yield call(createCommentsStore, draftId);
 
     /*
      * @NOTE Put the comment in the DDB Feed Store
@@ -47,7 +47,7 @@ function* addNewComment({
     yield put({
       type: TASK_COMMENT_ADD_SUCCESS,
       payload: {
-        taskId,
+        draftId,
         commentData,
         signature: commentSignature,
       },

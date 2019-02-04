@@ -82,10 +82,10 @@ const ColonyDetails = ({ colony }: { colony: ColonyRecord }) => (
 
 const TaskDetails = ({ task }: { task: TaskRecord }) => (
   <span>
-    {task.title && task.id && (
+    {task.title && (
       <Link
         text={task.title}
-        to={`/colony/${task.colonyENSName}/task/${task.id}`}
+        to={`/colony/${task.colonyENSName}/task/${task.draftId}`}
         className={styles.taskLink}
       />
     )}
@@ -132,7 +132,7 @@ const TransactionDetails = ({
           {/*
            * From a task
            */}
-          {!from && task && task.id && (
+          {!from && task && (
             <FormattedMessage
               {...MSG.fromText}
               values={{ senderString: <TaskDetails task={task} /> }}
@@ -214,7 +214,7 @@ const TransactionDetails = ({
           {/*
            * To a task
            */}
-          {!to && task && task.id && (
+          {!to && task && (
             <FormattedMessage
               {...MSG.toText}
               values={{ recipientString: <TaskDetails task={task} /> }}

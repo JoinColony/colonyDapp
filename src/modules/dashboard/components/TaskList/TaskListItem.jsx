@@ -26,14 +26,14 @@ type Props = {
 };
 
 const TaskListItem = ({
-  task: { assignee, id, payouts, reputation, title, colonyENSName },
+  task: { assignee, draftId, payouts, reputation, title, colonyENSName },
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
       <Link
         title={title}
         className={styles.taskDetailsTitle}
-        to={`/colony/${colonyENSName}/task/${id}`}
+        to={`/colony/${colonyENSName}/task/${draftId}`}
         text={title}
       />
       {reputation && (

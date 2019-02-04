@@ -64,14 +64,14 @@ class TaskSkills extends Component<Props> {
 
   handleSetSkill = async (skillValue: Object) => {
     const {
-      task: { id, colonyENSName, domainId },
+      task: { draftId, colonyENSName, domainId },
     } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
         skillId: skillValue.id,
         domainId,
         // taskId of currently selected task
-        id,
+        draftId,
         ensName: colonyENSName,
       });
     } catch (error) {
