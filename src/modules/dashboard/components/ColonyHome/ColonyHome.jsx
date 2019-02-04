@@ -8,7 +8,6 @@ import type {
   DataRecord,
   UserRecord,
   DomainRecord,
-  DomainId,
 } from '~immutable';
 import type { Given } from '~utils/hoc';
 
