@@ -8,6 +8,7 @@ import type {
   DataRecord,
   UserRecord,
   DomainRecord,
+  DomainId,
 } from '~immutable';
 import type { Given } from '~utils/hoc';
 
@@ -221,19 +222,27 @@ class ColonyHome extends Component<Props, State> {
                 <FormattedMessage {...MSG.allDomains} />
               </Button>
             </li>
-            {colonyDomains.map((domain: DomainRecord) => {
-              const name = domain.getIn(['record', 'name']);
-              const id = domain.getIn(['record', 'id']);
-              return (
-                <li key={`domain_${id}`}>
-                  <Button
-                    className={this.getActiveDomainFilterClass(id)}
-                    onClick={() => this.setDomainFilter(id)}
-                  >
-                    #{name}
-                  </Button>
-                </li>
-              );
+            {colonyDomains.map((domain: DataRecord<DomainRecord>) => {
+              /*
+               * @NOTE Need to check for the existance of the `.record` prop value
+               * Otherwise Flow goes crazy, since the type of `DataRecord` is set
+               * to optional
+               * See: `Data` inside `~immutable`
+               */
+              if (domain.record) {
+                const { name, id } = domain.record;
+                return (
+                  <li key={`domain_${id}`}>
+                    <Button
+                      className={this.getActiveDomainFilterClass(id)}
+                      onClick={() => this.setDomainFilter(id)}
+                    >
+                      #{name}
+                    </Button>
+                  </li>
+                );
+              }
+              return null;
             })}
           </ul>
         </aside>
