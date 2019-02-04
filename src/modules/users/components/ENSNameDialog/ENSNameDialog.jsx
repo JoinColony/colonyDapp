@@ -37,7 +37,7 @@ const MSG = defineMessages({
   },
   stepTitle: {
     id: 'users.ENSNameDialog.stepTitle',
-    defaultMessage: 'Step 2/3: Choose your .joincolony.eth username',
+    defaultMessage: 'Step 2/3: Choose your .user.joincolony.eth username',
   },
   stepText: {
     id: 'users.ENSNameDialog.stepText',
@@ -151,7 +151,7 @@ class ENSNameDialog extends Component<Props, State> {
                   name="username"
                   label={MSG.inputLabel}
                   appearance={{ theme: 'fat' }}
-                  extensionString=".joincolony.eth"
+                  extensionString=".user.joincolony.eth"
                   extra={<FormattedMessage {...MSG.helpENSName} />}
                 />
               </DialogSection>
