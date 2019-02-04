@@ -21,14 +21,20 @@ function* addNewComment({
   meta: { id } = {},
 }: Action = {}): Saga<void> {
   try {
+    /*
+     * @TODO Wire message signing to the Gas Station, once it's available
+     */
+    const wallet = yield getContext('wallet');
+    const commentSignature = yield call([wallet, wallet.signMessage], {
+      message: JSON.stringify(commentData),
+    });
     const commentsStore = yield call(createCommentsStore, taskId);
 
+    /*
+     * @NOTE Put the comment in the DDB Feed Store
+     */
     yield call([commentsStore, commentsStore.add], {
-      /*
-       * @NOTE This needs to be the signature (via the user's wallet)
-       * of the serialised `commentData` (eg: toJson)
-       */
-      signature: 'mock-signature',
+      signature: commentSignature,
       content: {
         id,
         ...commentData,
@@ -36,13 +42,8 @@ function* addNewComment({
     });
 
     /*
-     * TODO: Wire message signing to the Gas Station, once it's available
+     * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
      */
-    const wallet = yield getContext('wallet');
-    const commentSignature = yield call([wallet, wallet.signMessage], {
-      message: JSON.stringify(commentData),
-    });
-
     yield put({
       type: TASK_COMMENT_ADD_SUCCESS,
       payload: {
