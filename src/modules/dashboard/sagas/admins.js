@@ -57,7 +57,7 @@ function* addColonyAdmin({
       }),
     );
     /*
-     * Dispatch the action to the admin in th redux store
+     * Dispatch the action to the admin in the Redux store
      *
      * @NOTE Add the new admin in a peding state
      */
@@ -103,7 +103,7 @@ function* addColonyAdmin({
               },
             });
             /*
-             * Dispatch the action to the admin in th redux store to confirm
+             * Dispatch the action to the admin in the Redux store to confirm
              * the newly added admin and change the state
              */
             yield put({
@@ -165,7 +165,7 @@ function* removeColonyAdmin({
       }),
     );
     /*
-     * Dispatch the action to the admin in th redux store
+     * Dispatch the action to the admin in the Redux store
      *
      * @NOTE Don't actually remove the admin, just set the state to pending
      */
@@ -203,7 +203,7 @@ function* removeColonyAdmin({
             delete colonyAdmins[username];
             yield call([store, store.set], 'admins', colonyAdmins);
             /*
-             * Dispatch the action to the admin in th redux store to actually
+             * Dispatch the action to the admin in the Redux store to actually
              * remove the entry (the one that's in the pending state)
              */
             yield put({
