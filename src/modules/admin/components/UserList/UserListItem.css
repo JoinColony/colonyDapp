@@ -43,10 +43,15 @@ td.userRemove {
   width: 100%;
 }
 
-.pendingDotClickArea {
+.pendingDotWrapper {
   padding: 10px 0;
   width: 100%;
-  text-align: center;
+  text-align: right;
+}
+
+.pendingDotClickArea {
+  display: inline-block;
+  padding: 0 10px;
 }
 
 .pendingDot {

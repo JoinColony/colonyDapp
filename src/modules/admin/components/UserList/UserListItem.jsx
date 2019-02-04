@@ -103,22 +103,24 @@ const UserListItem = ({
         />
       )}
       {state === 'pending' && (
-        <Tooltip
-          placement="top"
-          showArrow
-          content={
-            <span className={styles.tooltipContentReset}>
-              <FormattedMessage {...MSG.pending} />
-            </span>
-          }
-        >
-          <div className={styles.pendingDotClickArea}>
-            <span
-              className={styles.pendingDot}
-              aria-label={formatMessage(MSG.pending)}
-            />
-          </div>
-        </Tooltip>
+        <div className={styles.pendingDotWrapper}>
+          <Tooltip
+            placement="top"
+            showArrow
+            content={
+              <span className={styles.tooltipContentReset}>
+                <FormattedMessage {...MSG.pending} />
+              </span>
+            }
+          >
+            <div className={styles.pendingDotClickArea}>
+              <span
+                className={styles.pendingDot}
+                aria-label={formatMessage(MSG.pending)}
+              />
+            </div>
+          </Tooltip>
+        </div>
       )}
     </TableCell>
   </TableRow>
