@@ -13,7 +13,7 @@ import type {
 } from './types';
 import IPFSNode from '../ipfs';
 
-import { Store } from './stores';
+// import { Store } from './stores';
 import { setMeta } from './commands';
 import { PermissiveAccessController } from './accessControllers';
 
@@ -36,7 +36,7 @@ class DDB {
 
   _orbitNode: OrbitDB;
 
-  _stores: Map<string, Store>;
+  _stores: Map<string, *>;
 
   _resolvers: Map<string, ENSResolverType>;
 
@@ -69,9 +69,9 @@ class DDB {
   }
 
   _makeStore(
-    orbitStore: OrbitDBStore,
+    orbitStore: *,
     { name, schema, type: StoreClass }: StoreBlueprint,
-  ): Store {
+  ) {
     const store = new StoreClass(
       orbitStore,
       name,
@@ -136,7 +136,10 @@ class DDB {
     this._resolvers.set(resolverId, resolver);
   }
 
-  async createStore(blueprint: StoreBlueprint, storeProps?: Object) {
+  async createStore<T: *>(
+    blueprint: StoreBlueprint,
+    storeProps?: Object,
+  ): Promise<T> {
     const { name, type: StoreClass } = blueprint;
     if (name.includes('.')) {
       throw new Error('A dot (.) in store names is not allowed');
@@ -154,7 +157,7 @@ class DDB {
       { accessController, overwrite: false },
     );
 
-    const store = this._makeStore(orbitStore, blueprint);
+    const store: T = this._makeStore(orbitStore, blueprint);
     await store.ready();
 
     // If supported, set the `meta` values on the store.
@@ -163,16 +166,22 @@ class DDB {
     return store;
   }
 
-  async getStore(
+  async getStore<T: *>(
     blueprint: StoreBlueprint,
     identifier: StoreIdentifier,
     storeProps?: Object,
-  ): Promise<Store | null> {
+  ): Promise<T> {
     const { name: bluePrintName, type } = blueprint;
 
     const address = await this._getStoreAddress(identifier);
-    if (!address) return null;
-    const cachedStore = this._getCachedStore(address);
+    if (!address)
+      throw new Error(
+        `Address not found for store with identifier ${
+          typeof identifier === 'string' ? identifier : identifier.toJSON()
+        }`,
+      );
+
+    const cachedStore: ?T = this._getCachedStore(address);
     if (cachedStore) return cachedStore;
 
     const name = address.path.split('.')[0];
@@ -195,7 +204,7 @@ class DDB {
         `Expected ${type.orbitType} for store ${name}, got ${orbitStore.type}`,
       );
     }
-    const store = this._makeStore(orbitStore, blueprint);
+    const store: T = this._makeStore(orbitStore, blueprint);
 
     await store.load();
     return store;

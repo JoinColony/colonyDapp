@@ -18,8 +18,9 @@ class ValidatedKVStore extends KVStore {
     orbitStore: OrbitDBKVStore,
     name: string,
     pinner: PinnerConnector,
-    schema: ObjectSchema,
+    schema?: ObjectSchema,
   ) {
+    if (!schema) throw new Error('A schema is required for ValidatedKVStores');
     super(orbitStore, name, pinner);
     this._schema = schema;
   }

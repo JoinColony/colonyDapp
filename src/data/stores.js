@@ -2,10 +2,15 @@
 
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-import type { Address, ENSName } from '~types';
+import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { DDB } from '../lib/database';
+import type {
+  EventStore,
+  FeedStore,
+  ValidatedKVStore,
+} from '../lib/database/stores';
 
 import { getENSDomainString } from '~utils/web3/ens';
-import { DDB } from '../lib/database';
 import { set } from '../lib/database/commands';
 
 import {
@@ -18,8 +23,6 @@ import {
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
-import { createCommentStoreCreatedEvent } from './events';
-
 export const getColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
@@ -30,9 +33,9 @@ export const getColonyStore = (
 }: {
   colonyAddress: string,
   colonyENSName: ENSName,
-}): Promise<*> => {
+}) => {
   const colonyStoreAddress = await getENSDomainString('colony', colonyENSName);
-  return ddb.getStore(colonyStoreBlueprint, colonyStoreAddress, {
+  return ddb.getStore<EventStore>(colonyStoreBlueprint, colonyStoreAddress, {
     wallet,
     colonyAddress,
     colonyClient,
@@ -43,8 +46,8 @@ export const createColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
   wallet: WalletObjectType,
-) => async ({ colonyAddress }: { colonyAddress: Address }): Promise<*> =>
-  ddb.createStore(colonyStoreBlueprint, {
+) => async ({ colonyAddress }: { colonyAddress: Address }) =>
+  ddb.createStore<EventStore>(colonyStoreBlueprint, {
     wallet,
     colonyAddress,
     colonyClient,
@@ -60,10 +63,10 @@ export const getTaskStore = (
   colonyENSName,
 }: {
   colonyAddress: Address,
-  taskStoreAddress: string,
+  taskStoreAddress: string | OrbitDBAddress,
   colonyENSName: ENSName,
-}): Promise<*> =>
-  ddb.getStore(taskStoreBlueprint, taskStoreAddress, {
+}) =>
+  ddb.getStore<EventStore>(taskStoreBlueprint, taskStoreAddress, {
     wallet,
     colonyAddress,
     colonyClient,
@@ -72,9 +75,11 @@ export const getTaskStore = (
     },
   });
 
-export const getCommentsStore = (ddb: DDB) => async (
-  commentsStoreAddress: string,
-): Promise<*> => ddb.getStore(commentsStoreBlueprint, commentsStoreAddress);
+export const getCommentsStore = (ddb: DDB) => async ({
+  commentStoreAddress,
+}: {
+  commentStoreAddress: string | OrbitDBAddress,
+}) => ddb.getStore<FeedStore>(commentsStoreBlueprint, commentStoreAddress);
 
 export const createTaskStore = (
   colonyClient: ColonyClientType,
@@ -86,30 +91,18 @@ export const createTaskStore = (
 }: {
   colonyAddress: Address,
   colonyENSName: ENSName,
-}): Promise<*> => {
-  const taskStore = await ddb.createStore(taskStoreBlueprint, {
-    wallet,
-    colonyAddress,
-    colonyClient,
-    meta: {
-      colonyENSName,
-    },
-  });
-
-  const commentsStore = await ddb.createStore(commentsStoreBlueprint);
-
-  if (!(taskStore && taskStore.init && typeof taskStore.init === 'function'))
-    throw new Error('Invalid store type');
-
-  // @TODO: Make sure we can use types properly with DDB
-  // $FlowFixMe: This is going to be an EventStore
-  await taskStore.init(
-    createCommentStoreCreatedEvent({
-      commentsStoreAddress: commentsStore.address.toString(),
+}) => {
+  const [taskStore, commentsStore] = await Promise.all([
+    ddb.createStore<EventStore>(taskStoreBlueprint, {
+      wallet,
+      colonyAddress,
+      colonyClient,
+      meta: {
+        colonyENSName,
+      },
     }),
-  );
-  await Promise.all([taskStore.load(), commentsStore.load()]);
-
+    ddb.createStore<FeedStore>(commentsStoreBlueprint),
+  ]);
   return { taskStore, commentsStore };
 };
 
@@ -117,8 +110,8 @@ export const getUserProfileStoreIdentifier = (id: string) => `user.${id}`;
 export const getUserProfileStore = (ddb: DDB) => async (
   walletAddress: string,
   username?: string,
-): Promise<*> =>
-  ddb.getStore(
+) =>
+  ddb.getStore<ValidatedKVStore>(
     userProfileStoreBlueprint,
     getUserProfileStoreIdentifier(username || walletAddress),
     {
@@ -129,8 +122,8 @@ export const getUserProfileStore = (ddb: DDB) => async (
 export const getUserProfileStoreByUsername = (ddb: DDB) => async (
   walletAddress: string,
   username: string,
-): Promise<*> =>
-  ddb.getStore(
+) =>
+  ddb.getStore<ValidatedKVStore>(
     userProfileStoreBlueprint,
     getUserProfileStoreIdentifier(username),
     {
@@ -139,44 +132,59 @@ export const getUserProfileStoreByUsername = (ddb: DDB) => async (
   );
 
 export const getUserInboxStore = (ddb: DDB) => async (
-  inboxStoreAddress: string,
+  inboxStoreAddress: string | string | OrbitDBAddress,
   walletAddress: string,
-): Promise<*> =>
-  ddb.getStore(userInboxStoreBlueprint, inboxStoreAddress, {
+) =>
+  ddb.getStore<FeedStore>(userInboxStoreBlueprint, inboxStoreAddress, {
     walletAddress,
   });
 
 export const getUserActivityStore = (ddb: DDB) => async (
-  userActivityStoreAddress: string,
+  userActivityStoreAddress: string | OrbitDBAddress,
   walletAddress: string,
-): Promise<*> =>
-  ddb.getStore(userActivitiesStoreBlueprint, userActivityStoreAddress, {
-    walletAddress,
-  });
+) =>
+  ddb.getStore<FeedStore>(
+    userActivitiesStoreBlueprint,
+    userActivityStoreAddress,
+    {
+      walletAddress,
+    },
+  );
 
 export const getUserMetadataStore = (ddb: DDB) => async (
-  userMetadataStoreAddress: string,
+  userMetadataStoreAddress: string | OrbitDBAddress,
   walletAddress: string,
-): Promise<*> =>
-  ddb.getStore(userMetadataStoreBlueprint, userMetadataStoreAddress, {
-    walletAddress,
-  });
+) =>
+  ddb.getStore<EventStore>(
+    userMetadataStoreBlueprint,
+    userMetadataStoreAddress,
+    {
+      walletAddress,
+    },
+  );
 
 export const createUserProfileStore = (ddb: DDB) => async (
   walletAddress: string,
-): Promise<*> => {
-  const profileStore = await ddb.createStore(userProfileStoreBlueprint, {
-    walletAddress,
-  });
-  const activityStore = await ddb.createStore(userActivitiesStoreBlueprint, {
-    walletAddress,
-  });
-  const inboxStore = await ddb.createStore(userInboxStoreBlueprint, {
-    walletAddress,
-  });
-  const metadataStore = await ddb.createStore(userMetadataStoreBlueprint, {
-    walletAddress,
-  });
+) => {
+  const [
+    profileStore,
+    activityStore,
+    inboxStore,
+    metadataStore,
+  ] = await Promise.all([
+    ddb.createStore<ValidatedKVStore>(userProfileStoreBlueprint, {
+      walletAddress,
+    }),
+    ddb.createStore<FeedStore>(userActivitiesStoreBlueprint, {
+      walletAddress,
+    }),
+    ddb.createStore<FeedStore>(userInboxStoreBlueprint, {
+      walletAddress,
+    }),
+    ddb.createStore<EventStore>(userMetadataStoreBlueprint, {
+      walletAddress,
+    }),
+  ]);
 
   await set(profileStore, {
     activitiesStoreAddress: activityStore.address.toString(),
@@ -185,5 +193,5 @@ export const createUserProfileStore = (ddb: DDB) => async (
   });
   await profileStore.load();
 
-  return { profileStore, activityStore, inboxStore };
+  return { profileStore, activityStore, inboxStore, metadataStore };
 };

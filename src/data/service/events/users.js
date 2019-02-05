@@ -1,20 +1,20 @@
 /* @flow */
 /* eslint-disable import/prefer-default-export */
 
-import type { Event, EventCreator, EventPayload } from './types';
+import type { Event, EventCreator, EventPayload } from '../types';
 
 import { decoratePayload } from './utils';
-import { USER_EVENT_TYPES } from '../constants';
+import { USER_EVENT_TYPES } from '../../constants';
 
 const { READ_UNTIL } = USER_EVENT_TYPES;
 
-type NotificationsReadUntilEventArgs = {|
+export type NotificationsReadUntilEventArgs = {|
   watermark: string,
   exceptFor?: string[],
 |};
-type NotificationsReadUntilEventPayload = EventPayload &
+export type NotificationsReadUntilEventPayload = EventPayload &
   NotificationsReadUntilEventArgs;
-type NotificationsReadUntilEvent = Event<
+export type NotificationsReadUntilEvent = Event<
   typeof READ_UNTIL,
   NotificationsReadUntilEventPayload,
 >;

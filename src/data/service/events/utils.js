@@ -1,7 +1,7 @@
 /* @flow */
 
 import nanoid from 'nanoid';
-import type { EventPayload } from './types';
+import type { EventPayload } from '../types';
 
 const VERSION = Number(process.env.VERSION) || 0;
 

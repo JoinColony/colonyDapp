@@ -19,7 +19,7 @@ export const getEthereumWalletStoreAccessController = ({
   walletAddress,
 }: {
   walletAddress: Address,
-} = {}): EthereumWalletAccessController => {
+} = {}) => {
   if (!walletAddress)
     throw new Error(
       // eslint-disable-next-line max-len
@@ -36,7 +36,7 @@ export const getAttributesBasedStoreAccessController = ({
   colonyAddress: Address,
   wallet: WalletObjectType,
   colonyClient: ColonyClientType,
-} = {}): ColonyAccessController => {
+} = {}) => {
   if (!colonyAddress)
     throw new Error(
       // eslint-disable-next-line max-len
