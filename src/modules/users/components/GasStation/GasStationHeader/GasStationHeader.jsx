@@ -41,7 +41,7 @@ const GasStationHeader = ({ balance, close, walletAddress }: Props) => (
         <CopyableAddress>{walletAddress}</CopyableAddress>
       </div>
       <div>
-        <Numeral value={balance} suffix="ETH" />
+        <Numeral value={balance} suffix=" ETH" />
       </div>
     </div>
     <div className={styles.actionsContainer}>
