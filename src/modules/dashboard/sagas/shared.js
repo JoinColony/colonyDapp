@@ -31,6 +31,7 @@ import { domainsIndexSelector, singleColonySelector } from '../selectors';
 export function* fetchColonyStore(
   colonyENSName: ENSName,
 ): Saga<?ValidatedKVStore> {
+  let store;
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
 
@@ -42,9 +43,19 @@ export function* fetchColonyStore(
   /*
    * Get the colony store, if it exists.
    */
-  return yield call([ddb, ddb.getStore], colonyStoreBlueprint, domainString, {
-    walletAddress,
-  });
+  const colonyStoreExists = yield call([ddb, ddb.storeExists], domainString);
+  if (colonyStoreExists) {
+    store = yield call(
+      [ddb, ddb.getStore],
+      colonyStoreBlueprint,
+      domainString,
+      {
+        walletAddress,
+      },
+    );
+  }
+
+  return store;
 }
 
 /*
@@ -80,6 +91,7 @@ export function* ensureColonyIsInState(colonyENSName: ENSName): Saga<*> {
  * Get the domains index store for a given colony (if the store exists).
  */
 export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
+  let store;
   /*
    * Get the `domainsIndex` address for the given colony from the store.
    */
@@ -94,12 +106,20 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
    * Get the store for the `domainsIndex` address.
    */
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  // TODO: No access controller available yet
-  return yield call(
-    [ddb, ddb.getStore],
-    domainsIndexStoreBlueprint,
+
+  const domainsIndexStoreExists = yield call(
+    [ddb, ddb.storeExists],
     domainsIndexAddress,
   );
+  if (domainsIndexStoreExists) {
+    // TODO: No access controller available yet
+    store = yield call(
+      [ddb, ddb.getStore],
+      domainsIndexStoreBlueprint,
+      domainsIndexAddress,
+    );
+  }
+  return store;
 }
 
 /*
@@ -166,6 +186,7 @@ export function* createCommentsStore(taskId: string): Saga<FeedStore> {
  */
 // eslint-disable-next-line no-unused-vars
 export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
+  let store;
   /*
    * Get the comments store address from Redux
    */
@@ -179,15 +200,23 @@ export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
   }
 
   /*
-   * Get the comments store, fro the returned address
+   * Get the comments store for the returned address
    */
-  // TODO no access controller available yet
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  return yield call(
-    [ddb, ddb.getStore],
-    commentsBlueprint,
+
+  const commentsStoreExists = yield call(
+    [ddb, ddb.storeExists],
     commentsStoreAddress,
   );
+  if (commentsStoreExists) {
+    // TODO no access controller available yet
+    store = yield call(
+      [ddb, ddb.getStore],
+      commentsBlueprint,
+      commentsStoreAddress,
+    );
+  }
+  return store;
 }
 
 /*

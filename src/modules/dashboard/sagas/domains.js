@@ -83,12 +83,18 @@ function* getOrCreateDomainsIndexStore(colonyENSName: ENSName) {
    * Get the store if the `domainsIndex` address was found.
    */
   if (domainsIndexAddress) {
-    // TODO no access controller is available yet
-    store = yield call(
-      [ddb, ddb.getStore],
-      domainsIndexStoreBlueprint,
+    const domainsIndexStoreExists = yield call(
+      [ddb, ddb.storeExists],
       domainsIndexAddress,
     );
+    if (domainsIndexStoreExists) {
+      // TODO: No access controller available yet
+      store = yield call(
+        [ddb, ddb.getStore],
+        domainsIndexStoreBlueprint,
+        domainsIndexAddress,
+      );
+    }
     if (store) {
       /*
        * Load the store if it was found (it may have been cached).

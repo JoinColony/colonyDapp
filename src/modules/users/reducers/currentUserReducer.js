@@ -40,8 +40,17 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
         ? state.set('activities', fromJS(activities))
         : state;
     }
-    case USER_PROFILE_UPDATE_SUCCESS:
-      return state ? state.merge(fromJS(action.payload)) : state;
+    case USER_PROFILE_UPDATE_SUCCESS: {
+      const {
+        activitiesStoreAddress,
+        inboxStoreAddress,
+        metadataStoreAddress,
+        username,
+        walletAddress,
+        ...profile
+      } = action.payload;
+      return state ? state.mergeDeepIn(['profile'], fromJS(profile)) : state;
+    }
     case USERNAME_CREATE_SUCCESS: {
       const {
         params: { username },
