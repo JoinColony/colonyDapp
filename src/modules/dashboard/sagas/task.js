@@ -2,49 +2,209 @@
 
 import type { Saga } from 'redux-saga';
 
-import { all, put, takeEvery, call, getContext } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  getContext,
+  put,
+  select,
+  takeEvery,
+} from 'redux-saga/effects';
 
-import type { ENSName, UniqueAction } from '~types';
+import type { ENSName, UniqueActionWithKeyPath } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 
 import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
-
 import {
-  TASK_SET_DATE,
-  TASK_SET_SKILL,
-  TASK_WORKER_END,
-  TASK_WORKER_END_ERROR,
+  claimPayoutAsWorkerTx,
+  completeTaskTx,
+  finalizeTaskTx,
+  revealTaskRatingAsManagerTx,
+  revealTaskRatingAsWorkerTx,
+  setTaskDueDateTx,
+  setTaskSkillTx,
+  submitManagerRatingAsWorkerTx,
+  submitTaskDeliverableAndRatingTx,
+  submitWorkerRatingAsManagerTx,
+} from '../actionCreators';
+import { allColonyENSNames } from '../selectors';
+import {
+  TASK_CREATE,
+  TASK_CREATE_ERROR,
+  TASK_CREATE_SUCCESS,
+  TASK_FETCH,
+  TASK_FETCH_ALL,
+  TASK_FETCH_ERROR,
+  TASK_FETCH_SUCCESS,
+  TASK_FINALIZE,
+  TASK_MANAGER_COMPLETE_ERROR,
+  TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_END,
   TASK_MANAGER_END_ERROR,
   TASK_MANAGER_END_SUCCESS,
-  TASK_MANAGER_COMPLETE_ERROR,
-  TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_RATE_WORKER,
   TASK_MANAGER_RATE_WORKER_ERROR,
   TASK_MANAGER_RATE_WORKER_SUCCESS,
+  TASK_MANAGER_REVEAL_WORKER_RATING,
+  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+  TASK_REMOVE,
+  TASK_REMOVE_ERROR,
+  TASK_REMOVE_SUCCESS,
+  TASK_SET_DATE,
+  TASK_SET_SKILL,
+  TASK_UPDATE,
+  TASK_UPDATE_ERROR,
+  TASK_UPDATE_SUCCESS,
+  TASK_WORKER_CLAIM_REWARD,
+  TASK_WORKER_END,
+  TASK_WORKER_END_ERROR,
   TASK_WORKER_RATE_MANAGER,
   TASK_WORKER_RATE_MANAGER_ERROR,
   TASK_WORKER_REVEAL_MANAGER_RATING,
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-  TASK_MANAGER_REVEAL_WORKER_RATING,
-  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-  TASK_WORKER_CLAIM_REWARD,
-  TASK_FINALIZE,
 } from '../actionTypes';
+import { ensureColonyIsInState } from './shared';
 
-import {
-  taskSetDate,
-  taskSetSkill,
-  taskFinalize,
-  taskManagerComplete,
-  taskManagerRateWorker,
-  taskManagerRevealRating,
-  taskWorkerClaimReward,
-  taskWorkerEnd,
-  taskWorkerRateManager,
-  taskWorkerRevealRating,
-} from '../actionCreators';
+function* taskCreateSaga({
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+  payload: { id },
+  payload,
+}: UniqueActionWithKeyPath): Saga<void> {
+  try {
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    // TODO create stores and add events after https://github.com/JoinColony/colonyDapp/pull/815
+    /*
+     * Dispatch the success action.
+     */
+    yield put({
+      type: TASK_CREATE_SUCCESS,
+      meta: {
+        ...meta,
+        keyPath: [colonyENSName, id],
+      },
+      payload,
+    });
+  } catch (error) {
+    yield putError(TASK_CREATE_ERROR, error, meta);
+  }
+}
+
+/*
+ * Given a colony ENS name a task ID, fetch the task from its store.
+ * Optionally, the `taskStoreAddress` property can be included in
+ * the payload, which allows some steps to be skipped.
+ */
+function* taskFetchSaga({
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+  payload,
+}: UniqueActionWithKeyPath): Saga<void> {
+  try {
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    // TODO get the task store and fetch it, after https://github.com/JoinColony/colonyDapp/pull/815
+
+    /*
+     * Dispatch the success action.
+     */
+    yield put({
+      type: TASK_FETCH_SUCCESS,
+      payload,
+      meta,
+    });
+  } catch (error) {
+    yield putError(TASK_FETCH_ERROR, error, meta);
+  }
+}
+
+/*
+ * Given a colony ENS name, dispatch actions to fetch all tasks
+ * for that colony.
+ */
+// eslint-disable-next-line no-unused-vars
+function* fetchAllTasksForColony(colonyENSName: ENSName): Saga<void> {
+  /*
+   * TODO after https://github.com/JoinColony/colonyDapp/pull/815
+   * 1. Get the colony store
+   * 2. Get the task IDs/stores from the store
+   * 3. With each task store, fetch the task
+   * 3. Dispatch a success action for each (or all?) fetched tasks
+   */
+}
+
+/*
+ * Given all colonies in the current state, fetch all tasks for all
+ * colonies (in parallel).
+ */
+function* taskFetchAllSaga(): Saga<void> {
+  const colonyENSNames = yield select(allColonyENSNames);
+  yield all(
+    colonyENSNames.map(colonyENSName =>
+      call(fetchAllTasksForColony, colonyENSName),
+    ),
+  );
+}
+
+/*
+ * Given a colony ENS name, a task ID and task props, get the task store
+ * and update it.
+ */
+function* taskUpdateSaga({
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+  payload,
+}: UniqueActionWithKeyPath): Saga<void> {
+  try {
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    // TODO add update event after https://github.com/JoinColony/colonyDapp/pull/815
+
+    /*
+     * Dispatch the success action.
+     */
+    yield put({
+      type: TASK_UPDATE_SUCCESS,
+      meta,
+      payload,
+    });
+  } catch (error) {
+    yield putError(TASK_UPDATE_ERROR, error, meta);
+  }
+}
+
+/*
+ * Given a colony ENS name and task ID, remove the task by unsetting
+ * the corresponding key in the tasks index store. The task store is
+ * simply unpinned.
+ */
+function* taskRemoveSaga({
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
+  try {
+    yield call(ensureColonyIsInState, colonyENSName);
+
+    // TODO add event after https://github.com/JoinColony/colonyDapp/pull/815
+
+    /*
+     * Dispatch the success action.
+     */
+    yield put({ type: TASK_REMOVE_SUCCESS, meta });
+  } catch (error) {
+    yield putError(TASK_REMOVE_ERROR, error, meta);
+  }
+}
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield getContext('wallet');
@@ -55,10 +215,9 @@ function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
     params: { taskId },
   });
   // TODO: this should be done via gas station once `signMessage` is supported
-  const salt = yield call([wallet, wallet.signMessage], {
+  return yield call([wallet, wallet.signMessage], {
     message: specificationHash,
   });
-  return salt;
 }
 
 function* generateRatingSecret(
@@ -83,7 +242,7 @@ function* generateRatingSaltAndSecret(
   return yield call(generateRatingSecret, colonyENSName, salt, rating);
 }
 
-/**
+/*
  * Given the salt for a published rating secret, determine the rating which was
  * used to generate it. If none match the published secret, throw.
  */
@@ -119,9 +278,9 @@ function* guessRating(
 function* taskSetSkillSaga({
   payload: { taskId, skillId, colonyENSName },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   yield put(
-    taskSetSkill({
+    setTaskSkillTx({
       identifier: colonyENSName,
       params: { taskId, skillId },
       meta,
@@ -129,14 +288,15 @@ function* taskSetSkillSaga({
   );
 }
 
-function* taskSetDueDateSaga(action: UniqueAction): Saga<void> {
-  const {
-    payload: { taskId, dueDate, colonyENSName },
-    meta,
-  } = action;
-
+function* taskSetDueDateSaga({
+  payload: { dueDate, taskId },
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+}: UniqueActionWithKeyPath): Saga<void> {
   yield put(
-    taskSetDate({
+    setTaskDueDateTx({
       identifier: colonyENSName,
       params: { taskId, dueDate },
       meta,
@@ -147,7 +307,7 @@ function* taskSetDueDateSaga(action: UniqueAction): Saga<void> {
 function* taskWorkerEndSaga({
   payload: { colonyENSName, taskId, workDescription, rating },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   const ipfsNode = yield getContext('ipfsNode');
   try {
     const deliverableHash = yield call(
@@ -161,25 +321,25 @@ function* taskWorkerEndSaga({
       rating,
     );
     yield put(
-      taskWorkerEnd({
+      submitTaskDeliverableAndRatingTx({
         identifier: colonyENSName,
         params: { taskId, deliverableHash, secret },
         meta,
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_END_ERROR, error, meta);
+    yield putError(TASK_WORKER_END_ERROR, error);
   }
 }
 
-function* taskManagerEndSaga({
+function* completeTaskSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     // complete task past due date
     yield put(
-      taskManagerComplete({
+      completeTaskTx({
         identifier: colonyENSName,
         params: { taskId },
         meta,
@@ -197,7 +357,7 @@ function* taskManagerEndSaga({
 
     // rate worker
     yield put(
-      taskManagerRateWorker({
+      submitWorkerRatingAsManagerTx({
         identifier: colonyENSName,
         params: { taskId, secret, role: 'WORKER' },
         meta,
@@ -209,16 +369,16 @@ function* taskManagerEndSaga({
     );
 
     // if we got this far without a throw, success!
-    yield put({ type: TASK_MANAGER_END_SUCCESS, meta });
+    yield put({ type: TASK_MANAGER_END_SUCCESS });
   } catch (error) {
-    yield putError(TASK_MANAGER_END_ERROR, error, meta);
+    yield putError(TASK_MANAGER_END_ERROR, error);
   }
 }
 
 function* taskWorkerRateManagerSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -230,21 +390,21 @@ function* taskWorkerRateManagerSaga({
 
     // rate manager
     yield put(
-      taskWorkerRateManager({
+      submitManagerRatingAsWorkerTx({
         identifier: colonyENSName,
         params: { taskId, secret, role: 'MANAGER' },
         meta,
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error, meta);
+    yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error);
   }
 }
 
 function* taskManagerRateWorkerSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -256,21 +416,21 @@ function* taskManagerRateWorkerSaga({
 
     // rate worker
     yield put(
-      taskManagerRateWorker({
+      submitWorkerRatingAsManagerTx({
         identifier: colonyENSName,
         params: { taskId, secret, role: 'WORKER' },
         meta,
       }),
     );
   } catch (error) {
-    yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error, meta);
+    yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error);
   }
 }
 
-function* taskWorkerRevealRatingSaga({
+function* taskWorkerRevealManagerRatingSaga({
   payload: { colonyENSName, taskId },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -281,7 +441,7 @@ function* taskWorkerRevealRatingSaga({
       salt,
     );
     yield put(
-      taskWorkerRevealRating({
+      revealTaskRatingAsWorkerTx({
         identifier: colonyENSName,
         params: {
           taskId,
@@ -293,14 +453,14 @@ function* taskWorkerRevealRatingSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error, meta);
+    yield putError(TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error);
   }
 }
 
-function* taskManagerRevealRatingSaga({
+function* taskManagerRevealWorkerRatingSaga({
   payload: { colonyENSName, taskId },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -311,7 +471,7 @@ function* taskManagerRevealRatingSaga({
       salt,
     );
     yield put(
-      taskManagerRevealRating({
+      revealTaskRatingAsManagerTx({
         identifier: colonyENSName,
         params: {
           taskId,
@@ -323,18 +483,18 @@ function* taskManagerRevealRatingSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error, meta);
+    yield putError(TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error);
   }
 }
 
 function* taskWorkerClaimRewardSaga({
   payload: { colonyENSName, taskId, tokenAddresses },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   yield all(
     tokenAddresses.map(token =>
       put(
-        taskWorkerClaimReward({
+        claimPayoutAsWorkerTx({
           identifier: colonyENSName,
           params: {
             taskId,
@@ -351,27 +511,32 @@ function* taskWorkerClaimRewardSaga({
 function* taskFinalizeSaga({
   payload: { taskId, colonyENSName },
   meta,
-}: UniqueAction): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
   yield put(
-    taskFinalize({ identifier: colonyENSName, params: { taskId }, meta }),
+    finalizeTaskTx({ identifier: colonyENSName, params: { taskId }, meta }),
   );
 }
 
-export default function* taskSagas(): any {
+export default function* tasksSagas(): any {
+  yield takeEvery(TASK_CREATE, taskCreateSaga);
+  yield takeEvery(TASK_FETCH, taskFetchSaga);
+  yield takeEvery(TASK_FETCH_ALL, taskFetchAllSaga);
+  yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
+  yield takeEvery(TASK_MANAGER_END, completeTaskSaga);
+  yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
+  yield takeEvery(TASK_REMOVE, taskRemoveSaga);
   yield takeEvery(TASK_SET_DATE, taskSetDueDateSaga);
   yield takeEvery(TASK_SET_SKILL, taskSetSkillSaga);
+  yield takeEvery(TASK_UPDATE, taskUpdateSaga);
   yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
-  yield takeEvery(TASK_MANAGER_END, taskManagerEndSaga);
   yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
-  yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
   yield takeEvery(
     TASK_WORKER_REVEAL_MANAGER_RATING,
-    taskWorkerRevealRatingSaga,
+    taskWorkerRevealManagerRatingSaga,
   );
   yield takeEvery(
     TASK_MANAGER_REVEAL_WORKER_RATING,
-    taskManagerRevealRatingSaga,
+    taskManagerRevealWorkerRatingSaga,
   );
   yield takeEvery(TASK_WORKER_CLAIM_REWARD, taskWorkerClaimRewardSaga);
-  yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
 }

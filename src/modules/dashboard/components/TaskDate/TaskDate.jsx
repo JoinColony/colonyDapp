@@ -86,7 +86,7 @@ class TaskDate extends Component<Props, State> {
     const { selectedDate } = this.state;
 
     const {
-      task: { id, colonyENSName, domainId },
+      task: { draftId, colonyENSName, domainId },
     } = this.props;
 
     this.setState(
@@ -101,8 +101,8 @@ class TaskDate extends Component<Props, State> {
       await this.setTaskDate.asyncFunction({
         dueDate: selectedDate,
         domainId,
-        // taskId of currently selected task
-        id,
+        // draftId of currently selected task
+        draftId,
         ensName: colonyENSName,
       });
     } catch (error) {

@@ -57,7 +57,7 @@ type Props = {
   claimedProfile: boolean,
   openDialog: OpenDialog,
   walletAddress: string,
-  taskId: number,
+  draftId: string,
 } & FormikProps<FormValues>;
 
 const displayName = 'dashboard.TaskComments';
@@ -70,7 +70,7 @@ const TaskComments = ({
   claimedProfile,
   openDialog,
   walletAddress,
-  taskId,
+  draftId,
 }: Props) => {
   const addComment = promiseListener.createAsyncFunction({
     start: TASK_COMMENT_ADD,
@@ -101,7 +101,7 @@ const TaskComments = ({
           timestamp: new Date(),
           author: walletAddress,
         },
-        taskId,
+        draftId,
       })
       .then(() => {
         actions.setSubmitting(false);

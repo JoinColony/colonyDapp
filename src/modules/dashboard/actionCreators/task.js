@@ -6,16 +6,18 @@ import {
 } from '../../core/actionCreators';
 
 import {
-  TASK_SET_DATE_ERROR,
-  TASK_SET_DATE_SUCCESS,
-  TASK_SET_SKILL_ERROR,
-  TASK_SET_SKILL_SUCCESS,
+  TASK_FINALIZE_ERROR,
+  TASK_FINALIZE_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
   TASK_MANAGER_COMPLETE_SUCCESS,
   TASK_MANAGER_RATE_WORKER_ERROR,
   TASK_MANAGER_RATE_WORKER_SUCCESS,
   TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
   TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+  TASK_SET_DATE_ERROR,
+  TASK_SET_DATE_SUCCESS,
+  TASK_SET_SKILL_ERROR,
+  TASK_SET_SKILL_SUCCESS,
   TASK_WORKER_CLAIM_REWARD_ERROR,
   TASK_WORKER_CLAIM_REWARD_SUCCESS,
   TASK_WORKER_END_ERROR,
@@ -24,15 +26,15 @@ import {
   TASK_WORKER_RATE_MANAGER_SUCCESS,
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-  TASK_FINALIZE_ERROR,
-  TASK_FINALIZE_SUCCESS,
 } from '../actionTypes';
+
+import type { TaskId } from '~immutable';
 
 /**
  * As worker or manager, I want to be able to set a skill
  */
-export const taskSetSkill = createTxActionCreator<{
-  taskId: number,
+export const setTaskSkillTx = createTxActionCreator<{
+  taskId: TaskId,
   skillId: number,
 }>({
   context: COLONY_CONTEXT,
@@ -46,8 +48,8 @@ export const taskSetSkill = createTxActionCreator<{
 /**
  * As worker or manager, I want to be able to set a date
  */
-export const taskSetDate = createTxActionCreator<{
-  taskId: number,
+export const setTaskDueDateTx = createTxActionCreator<{
+  taskId: TaskId,
   dueDate: Date,
 }>({
   context: COLONY_CONTEXT,
@@ -61,8 +63,8 @@ export const taskSetDate = createTxActionCreator<{
 /**
  * As worker, submit work and rate before due date.
  */
-export const taskWorkerEnd = createTxActionCreator<{
-  taskId: number,
+export const submitTaskDeliverableAndRatingTx = createTxActionCreator<{
+  taskId: TaskId,
   deliverableHash: string,
   secret: string,
 }>({
@@ -77,8 +79,8 @@ export const taskWorkerEnd = createTxActionCreator<{
 /**
  * As manager, end the task if the due date has elapsed.
  */
-export const taskManagerComplete = createTxActionCreator<{
-  taskId: number,
+export const completeTaskTx = createTxActionCreator<{
+  taskId: TaskId,
 }>({
   context: COLONY_CONTEXT,
   methodName: 'completeTask',
@@ -91,8 +93,8 @@ export const taskManagerComplete = createTxActionCreator<{
 /**
  * As manager, rate the worker.
  */
-export const taskManagerRateWorker = createTxActionCreator<{
-  taskId: number,
+export const submitWorkerRatingAsManagerTx = createTxActionCreator<{
+  taskId: TaskId,
   secret: string,
   role: 'WORKER',
 }>({
@@ -107,8 +109,8 @@ export const taskManagerRateWorker = createTxActionCreator<{
 /**
  * As worker, rate the manager.
  */
-export const taskWorkerRateManager = createTxActionCreator<{
-  taskId: number,
+export const submitManagerRatingAsWorkerTx = createTxActionCreator<{
+  taskId: TaskId,
   secret: string,
   role: 'MANAGER',
 }>({
@@ -123,8 +125,8 @@ export const taskWorkerRateManager = createTxActionCreator<{
 /**
  * As worker, reveal manager rating.
  */
-export const taskWorkerRevealRating = createTxActionCreator<{
-  taskId: number,
+export const revealTaskRatingAsWorkerTx = createTxActionCreator<{
+  taskId: TaskId,
   rating: number,
   salt: number,
   role: 'MANAGER',
@@ -140,8 +142,8 @@ export const taskWorkerRevealRating = createTxActionCreator<{
 /**
  * As manager, reveal worker rating.
  */
-export const taskManagerRevealRating = createTxActionCreator<{
-  taskId: number,
+export const revealTaskRatingAsManagerTx = createTxActionCreator<{
+  taskId: TaskId,
   rating: number,
   salt: number,
   role: 'WORKER',
@@ -157,8 +159,8 @@ export const taskManagerRevealRating = createTxActionCreator<{
 /**
  * As the worker, claim payout
  */
-export const taskWorkerClaimReward = createTxActionCreator<{
-  taskId: number,
+export const claimPayoutAsWorkerTx = createTxActionCreator<{
+  taskId: TaskId,
   token: string,
   role: 'WORKER',
 }>({
@@ -173,8 +175,8 @@ export const taskWorkerClaimReward = createTxActionCreator<{
 /**
  * As anyone, finalize task.
  */
-export const taskFinalize = createTxActionCreator<{
-  taskId: number,
+export const finalizeTaskTx = createTxActionCreator<{
+  taskId: TaskId,
 }>({
   context: COLONY_CONTEXT,
   methodName: 'finalizeTask',

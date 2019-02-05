@@ -5,27 +5,19 @@ import { Map as ImmutableMap } from 'immutable';
 
 import type { RootStateRecord } from '~immutable';
 
-import { singleDraftSelector } from './drafts';
-
 import {
   DASHBOARD_ALL_COMMENTS,
   DASHBOARD_NAMESPACE as ns,
 } from '../constants';
 
 /*
- * Drafts selectors
+ * Tasks selectors
  */
 export const allCommentsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_COMMENTS], ImmutableMap());
 
-export const draftsCommentsSelector = createSelector(
+export const tasksCommentsSelector = createSelector(
   allCommentsSelector,
-  (state, props) => props.draftId,
-  (allComments, draftId) => allComments.get(draftId, ImmutableMap()),
-);
-
-export const commentsStoreAddressSelector = createSelector(
-  singleDraftSelector,
-  draft =>
-    draft ? draft.getIn(['record', 'databases', 'commentsStore']) : null,
+  (state, props) => props.id,
+  (allComments, id) => allComments.get(id, ImmutableMap()),
 );

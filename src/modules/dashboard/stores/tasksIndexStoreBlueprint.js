@@ -5,11 +5,11 @@ import { colonyMeta } from './meta';
 
 import type { StoreBlueprint } from '~types';
 
-const draftsIndexStoreBlueprint: StoreBlueprint = {
+const tasksIndexStoreBlueprint: StoreBlueprint = {
   // TODO add access controller
   meta: colonyMeta,
-  name: 'draftsIndex',
+  name: 'tasksIndex',
   type: KVStore,
 };
 
-export default draftsIndexStoreBlueprint;
+export default tasksIndexStoreBlueprint;

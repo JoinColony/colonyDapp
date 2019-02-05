@@ -30,7 +30,7 @@ export const mockTaskReward = {
 };
 
 export const mockTask = Task({
-  id: 1,
+  draftId: '1',
   title: 'Develop Github integration',
   colonyENSName: 'cool-colony',
   reputation: 19.5,

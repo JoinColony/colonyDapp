@@ -9,7 +9,7 @@ const withTask = compose(
     props => props.taskId && props.ensName,
     withProps({
       task: Task({
-        id: 1,
+        draftId: '1',
         title: 'Test from withTask',
         colonyENSName: 'cool-colony',
       }),
