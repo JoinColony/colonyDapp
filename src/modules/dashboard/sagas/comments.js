@@ -2,11 +2,12 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery, getContext } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~types';
 
 import { putError } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import { createCommentsStore } from './shared';
 
@@ -24,7 +25,7 @@ function* addNewComment({
     /*
      * @TODO Wire message signing to the Gas Station, once it's available
      */
-    const wallet = yield getContext('wallet');
+    const wallet = yield* getContext(CONTEXT.WALLET);
     const commentSignature = yield call([wallet, wallet.signMessage], {
       message: JSON.stringify(commentData),
     });

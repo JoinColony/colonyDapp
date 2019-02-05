@@ -2,14 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import {
-  call,
-  delay,
-  getContext,
-  put,
-  takeEvery,
-  takeLatest,
-} from 'redux-saga/effects';
+import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
 import type {
@@ -21,6 +14,7 @@ import type {
 
 import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
+import { CONTEXT, getContext } from '~context';
 
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
@@ -71,7 +65,7 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
    */
   // TODO: No access controller available yet
   if (!store) {
-    const ddb = yield getContext('ddb');
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     store = yield call([ddb, ddb.createStore], colonyStoreBlueprint);
   }
 
@@ -306,7 +300,7 @@ function* uploadColonyAvatar({
 }: UniqueActionWithKeyPath): Saga<void> {
   try {
     // first attempt upload to IPFS
-    const ipfsNode = yield getContext('ipfsNode');
+    const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     /*
@@ -342,7 +336,7 @@ function* fetchColonyAvatar({
     /*
      * Get the base64 avatar image from ipfs
      */
-    const ipfsNode = yield getContext('ipfsNode');
+    const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
     /*
      * Put the base64 value in the redux state so we can show it

@@ -8,7 +8,6 @@ import {
   delay,
   put,
   select,
-  getContext,
   takeLatest,
   takeEvery,
 } from 'redux-saga/effects';
@@ -22,6 +21,7 @@ import type {
 import type { UserProfileProps, ContractTransactionProps } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 // @TODO This would go into queries
 import { getHashedENSDomainString } from '~utils/web3/ens';
@@ -31,7 +31,6 @@ import {
   parseUserTransferEvent,
 } from '~utils/web3/eventLogs';
 
-import { DDB } from '../../../lib/database';
 import {
   getUserProfileStoreIdentifier,
   getUserProfileStore,
@@ -89,7 +88,7 @@ import { registerUserLabel } from '../actionCreators';
 export function* getOrCreateUserStore(
   walletAddress: Address,
 ): Saga<ValidatedKVStore> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   try {
     // @TODO We have two try-catches here because this isn't suppose to go together!
@@ -125,7 +124,7 @@ export function* fetchUserActivities(action: Action): Saga<void> {
   );
 
   try {
-    const ddb: DDB = yield getContext('ddb');
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const activitiesStore = yield call(
       getUserActivityStore(ddb),
       activitiesStoreAddress,
@@ -148,7 +147,7 @@ export function* addUserActivity({ payload }: Action): Saga<void> {
   );
 
   try {
-    const ddb: DDB = yield getContext('ddb');
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const activitiesStore = yield call(
       getUserActivityStore(ddb),
       activitiesStoreAddress,
@@ -229,7 +228,7 @@ function* fetchProfile({
     params: { nameHash },
   });
 
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   // should throw an error if username is not registered
   try {
@@ -282,7 +281,7 @@ function* createUsername({
   payload: { username },
   meta,
 }: UniqueAction): Saga<void> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
   const { profileStore, activityStore } = yield call(
     createUserProfileStore(ddb),
@@ -306,7 +305,7 @@ function* createUsername({
 
 function* fetchAvatar(action: Action): Saga<void> {
   const { hash } = action.payload;
-  const ipfsNode = yield getContext('ipfsNode');
+  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   try {
     const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
@@ -320,8 +319,8 @@ function* fetchAvatar(action: Action): Saga<void> {
 }
 
 function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
-  const ipfsNode = yield getContext('ipfsNode');
-  const ddb: DDB = yield getContext('ddb');
+  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   const walletAddress = yield select(walletAddressSelector);
 
@@ -344,7 +343,7 @@ function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
 }
 
 function* removeAvatar({ meta }: UniqueAction): Saga<void> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
 
   try {
@@ -367,7 +366,7 @@ function* removeAvatar({ meta }: UniqueAction): Saga<void> {
  * ContractTransactionProps objects.
  */
 function* fetchTokenTransfers(): Saga<void> {
-  const colonyManager = yield getContext('colonyManager');
+  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
   const userAddress = yield select(currentUserAddressSelector);
 
   try {

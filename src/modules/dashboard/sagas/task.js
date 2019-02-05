@@ -2,18 +2,12 @@
 
 import type { Saga } from 'redux-saga';
 
-import {
-  all,
-  call,
-  getContext,
-  put,
-  select,
-  takeEvery,
-} from 'redux-saga/effects';
+import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 
 import type { ENSName, UniqueActionWithKeyPath } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
 import {
@@ -207,7 +201,7 @@ function* taskRemoveSaga({
 }
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
-  const wallet = yield getContext('wallet');
+  const wallet = yield* getContext(CONTEXT.WALLET);
   const { specificationHash } = yield callCaller({
     context: COLONY_CONTEXT,
     identifier: colonyENSName,
@@ -308,7 +302,7 @@ function* taskWorkerEndSaga({
   payload: { colonyENSName, taskId, workDescription, rating },
   meta,
 }: UniqueActionWithKeyPath): Saga<void> {
-  const ipfsNode = yield getContext('ipfsNode');
+  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
   try {
     const deliverableHash = yield call(
       [ipfsNode, ipfsNode.addString],

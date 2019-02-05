@@ -1,7 +1,7 @@
 /* @flow */
 import type { Saga } from 'redux-saga';
 
-import { call, getContext, select, put } from 'redux-saga/effects';
+import { call, select, put } from 'redux-saga/effects';
 
 import type { ENSName } from '~types';
 import type {
@@ -12,8 +12,8 @@ import type {
 
 import { getENSDomainString } from '~utils/web3/ens';
 import { raceError } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
-import { DDB } from '../../../lib/database';
 import { walletAddressSelector } from '../../users/selectors';
 import {
   colonyStoreBlueprint,
@@ -31,7 +31,7 @@ import { domainsIndexSelector, singleColonySelector } from '../selectors';
 export function* fetchColonyStore(
   colonyENSName: ENSName,
 ): Saga<?ValidatedKVStore> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
 
   /*
@@ -93,7 +93,7 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
   /*
    * Get the store for the `domainsIndex` address.
    */
-  const ddb = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   // TODO: No access controller available yet
   return yield call(
     [ddb, ddb.getStore],
@@ -108,7 +108,7 @@ export function* getDomainsIndexStore(colonyENSName: ENSName): Saga<?DocStore> {
 export function* createDomainsIndexStore(
   colonyENSName: ENSName,
 ): Saga<DocStore> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   // TODO: No access controller available yet
   return yield call([ddb, ddb.createStore], domainsIndexStoreBlueprint, {
@@ -141,7 +141,7 @@ export function* getOrCreateDomainsIndexStore(
  * Create a tasks index store for a colony.
  */
 export function* createTasksIndexStore(colonyENSName: ENSName): Saga<DocStore> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   // TODO: No access controller available yet
   return yield call([ddb, ddb.createStore], tasksIndexStoreBlueprint, {
@@ -153,7 +153,7 @@ export function* createTasksIndexStore(colonyENSName: ENSName): Saga<DocStore> {
  * Create the comments store for a given task.
  */
 export function* createCommentsStore(taskId: string): Saga<FeedStore> {
-  const ddb: DDB = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   return yield call([ddb, ddb.createStore], commentsBlueprint, {
     taskId,
@@ -182,7 +182,7 @@ export function* getCommentsStore(taskId: string): Saga<?FeedStore> {
    * Get the comments store, fro the returned address
    */
   // TODO no access controller available yet
-  const ddb = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   return yield call(
     [ddb, ddb.getStore],
     commentsBlueprint,

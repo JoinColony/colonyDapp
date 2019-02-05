@@ -7,6 +7,7 @@ import { call, put, race, take, getContext } from 'redux-saga/effects';
 import type { ENSName, TakeFilter } from '~types';
 
 import { isDev, log } from '~utils/debug';
+import { CONTEXT } from '~context';
 
 /*
  * Effect to create a new class instance of Class (use instead of "new Class")
@@ -71,7 +72,7 @@ export const callCaller = ({
   params?: Object,
 }) => {
   function* callCallerGenerator(): Saga<Object> {
-    const colonyManager = yield getContext('colonyManager');
+    const colonyManager = yield getContext(CONTEXT.COLONY_MANAGER);
     const caller = yield call(
       [colonyManager, colonyManager.getMethod],
       context,
