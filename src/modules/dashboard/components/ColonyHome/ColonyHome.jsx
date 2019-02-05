@@ -3,6 +3,14 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type {
+  ColonyRecord,
+  DataRecord,
+  UserRecord,
+  DomainRecord,
+} from '~immutable';
+import type { Given } from '~utils/hoc';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
@@ -18,10 +26,6 @@ import styles from './ColonyHome.css';
 import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
-import mockDomains from '../../../../__mocks__/mockDomains';
-
-import type { ColonyRecord, DataRecord, UserRecord } from '~immutable';
-import type { Given } from '~utils/hoc';
 
 const mockColonyRecoveryMode = true;
 
@@ -78,6 +82,7 @@ type Props = {
   walletAddress: string,
   given: Given,
   colonyAdmins: Array<UserRecord>,
+  colonyDomains: Array<DataRecord<DomainRecord>>,
 };
 
 type State = {
@@ -97,6 +102,7 @@ class ColonyHome extends Component<Props, State> {
 
   static defaultProps = {
     inRecovery: false,
+    colonyDomains: [],
   };
 
   state = {
@@ -133,13 +139,18 @@ class ColonyHome extends Component<Props, State> {
 
   render() {
     const { filterOption } = this.state;
-    const { walletAddress, given, colony, colonyAdmins } = this.props;
+    const {
+      walletAddress,
+      given,
+      colony,
+      colonyAdmins,
+      colonyDomains,
+    } = this.props;
     /*
      * Tasks and colonies will most likely end up being passed in via props
      */
     const tasks = mockTasks;
     const colonies = mockColonies;
-    const domains = mockDomains;
     const filterSelect = (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -210,16 +221,28 @@ class ColonyHome extends Component<Props, State> {
                 <FormattedMessage {...MSG.allDomains} />
               </Button>
             </li>
-            {domains.map(({ id, name }) => (
-              <li key={`domain_${id}`}>
-                <Button
-                  className={this.getActiveDomainFilterClass(id)}
-                  onClick={() => this.setDomainFilter(id)}
-                >
-                  {name}
-                </Button>
-              </li>
-            ))}
+            {colonyDomains.map((domain: DataRecord<DomainRecord>) => {
+              /*
+               * @NOTE Need to check for the existance of the `.record` prop value
+               * Otherwise Flow goes crazy, since the type of `DataRecord` is set
+               * to optional
+               * See: `Data` inside `~immutable`
+               */
+              if (domain.record) {
+                const { name, id } = domain.record;
+                return (
+                  <li key={`domain_${id}`}>
+                    <Button
+                      className={this.getActiveDomainFilterClass(id)}
+                      onClick={() => this.setDomainFilter(id)}
+                    >
+                      #{name}
+                    </Button>
+                  </li>
+                );
+              }
+              return null;
+            })}
           </ul>
         </aside>
         {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
