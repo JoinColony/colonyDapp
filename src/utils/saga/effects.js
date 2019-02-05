@@ -5,6 +5,7 @@ import type { Saga } from 'redux-saga';
 import { call, put, race, take, getContext } from 'redux-saga/effects';
 
 import type { ENSName, TakeFilter } from '~types';
+import type { Command, Query } from '../../data/types';
 
 import { isDev, log } from '~utils/debug';
 import { CONTEXT } from '~context';
@@ -83,3 +84,31 @@ export const callCaller = ({
   }
   return call(callCallerGenerator);
 };
+
+export function executeQuery<C: *, Q: Query, I: *>(
+  context: C,
+  query: Q<I>,
+  args: I,
+): Saga<Object> {
+  const { execute } = query(context);
+  return call(execute, args);
+}
+
+export function executeCommand<C: *, CO: Command, I: *>(
+  context: C,
+  command: CO<I>,
+  args: I,
+): Saga<Object> {
+  const { execute } = command(context);
+  return call(execute, args);
+}
+
+export function* validateAndExecuteCommand<C: *, CO: Command, I: *>(
+  context: C,
+  command: CO<I>,
+  args: I,
+): Saga<Object> {
+  const { execute, validate } = command(context);
+  const sanitizedArgs = validate ? yield call(validate, args) : args;
+  return call(execute, sanitizedArgs);
+}
