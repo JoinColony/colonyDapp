@@ -3,7 +3,6 @@
 import type { Saga } from 'redux-saga';
 
 import { call } from 'redux-saga/effects';
-import { providers } from 'ethers';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import ColonyNetworkClient from '@colony/colony-js-client';
@@ -13,15 +12,13 @@ import { create } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import EthersWrappedWallet from '../../../../lib/EthersWrappedWallet/index';
 
+import { defaultNetwork, getJsonRPCProvider } from './getJsonRPCProvider';
+
 /*
  * Return an initialized ColonyNetworkClient instance.
  */
 export default function* getNetworkClient(): Saga<ColonyNetworkClient> {
-  const network = process.env.NETWORK || 'rinkeby';
-  const provider =
-    network === 'local'
-      ? yield create(providers.JsonRpcProvider)
-      : yield call(providers.getDefaultProvider, network);
+  const provider = yield call(getJsonRPCProvider, defaultNetwork);
   const wallet = yield* getContext(CONTEXT.WALLET);
 
   let loader;
@@ -30,7 +27,7 @@ export default function* getNetworkClient(): Saga<ColonyNetworkClient> {
       loader = yield create(TrufflepigLoader);
       break;
     default:
-      loader = yield create(NetworkLoader, { network });
+      loader = yield create(NetworkLoader, { network: defaultNetwork });
       break;
   }
 
