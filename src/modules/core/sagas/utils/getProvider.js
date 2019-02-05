@@ -9,9 +9,7 @@ import { create } from '~utils/saga/effects';
 
 export const defaultNetwork = process.env.NETWORK || 'rinkeby';
 
-export function* getJsonRPCProvider(
-  network: string = defaultNetwork,
-): Saga<any> {
+export function* getProvider(network: string = defaultNetwork): Saga<any> {
   if (network === 'local') {
     return yield create(providers.JsonRpcProvider);
   }

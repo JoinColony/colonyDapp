@@ -12,13 +12,13 @@ import { create } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import EthersWrappedWallet from '../../../../lib/EthersWrappedWallet/index';
 
-import { defaultNetwork, getJsonRPCProvider } from './getJsonRPCProvider';
+import { defaultNetwork, getProvider } from './getProvider';
 
 /*
  * Return an initialized ColonyNetworkClient instance.
  */
 export default function* getNetworkClient(): Saga<ColonyNetworkClient> {
-  const provider = yield call(getJsonRPCProvider, defaultNetwork);
+  const provider = yield call(getProvider, defaultNetwork);
   const wallet = yield* getContext(CONTEXT.WALLET);
 
   let loader;
