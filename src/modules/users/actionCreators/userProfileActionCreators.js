@@ -13,6 +13,7 @@ import {
   USERNAME_CREATE_SUCCESS,
   USER_FETCH_TOKEN_TRANSFERS,
   USERNAME_FETCH,
+  CURRENT_USER_GET_BALANCE,
 } from '../actionTypes';
 
 export const registerUserLabel = createTxActionCreator<{
@@ -45,4 +46,8 @@ export const fetchUserAvatar = (hash: string) => ({
 
 export const fetchUserTransactions = () => ({
   type: USER_FETCH_TOKEN_TRANSFERS,
+});
+
+export const getCurrentUserBalance = () => ({
+  type: CURRENT_USER_GET_BALANCE,
 });
