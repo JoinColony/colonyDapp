@@ -81,9 +81,9 @@ export type ColonyProfileCreatedEventArgs = {|
   address: Address,
   ensName: string,
   name: string,
-  description: string,
-  website: string,
-  guideline: string,
+  description?: string,
+  website?: string,
+  guideline?: string,
 |};
 export type ColonyProfileCreatedEventPayload = ColonyProfileCreatedEventArgs;
 export type ColonyProfileCreatedEvent = Event<
@@ -91,12 +91,12 @@ export type ColonyProfileCreatedEvent = Event<
   ColonyProfileCreatedEventPayload,
 >;
 
-export type ColonyProfileUpdatedEventArgs = {|
+export type ColonyProfileUpdatedEventArgs = $Shape<{|
   name: string,
   description: string,
   website: string,
   guideline: string,
-|};
+|}>;
 export type ColonyProfileUpdatedEventPayload = ColonyProfileUpdatedEventArgs;
 export type ColonyProfileUpdatedEvent = Event<
   typeof PROFILE_UPDATED,

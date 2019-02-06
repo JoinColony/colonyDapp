@@ -30,6 +30,7 @@ import {
   removeColonyAdmin as removeColonyAdminAction,
 } from '../actionCreators';
 
+// @TODO: This shouldn't use DDB, we should use contract events for fetching the data and the txs to add/remove admins
 function* addColonyAdmin({
   payload: { newAdmin, ensName },
   meta = {},
