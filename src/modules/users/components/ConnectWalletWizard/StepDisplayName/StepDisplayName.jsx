@@ -6,7 +6,10 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 import type { OpenDialog } from '~core/Dialog/types';
+import type { UserRecord } from '~immutable';
+
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import { withCurrentUser } from '../../../hocs';
 
 import {
   USER_PROFILE_UPDATE,
@@ -66,6 +69,7 @@ type FormValues = {
 
 type Props = WizardProps<FormValues> & {
   openDialog: OpenDialog,
+  currentUser: UserRecord,
 };
 
 type State = {};
@@ -74,8 +78,13 @@ const displayName = 'users.ConnectWalletWizard.StepDisplayName';
 
 class StepDisplayName extends Component<Props, State> {
   progressWithDialog = () => {
-    const { openDialog } = this.props;
-    return unfinishedProfileOpener(openDialog);
+    const {
+      openDialog,
+      currentUser: {
+        profile: { balance },
+      },
+    } = this.props;
+    return unfinishedProfileOpener(openDialog, balance);
   };
 
   render() {
@@ -126,4 +135,4 @@ class StepDisplayName extends Component<Props, State> {
 
 StepDisplayName.displayName = displayName;
 
-export default StepDisplayName;
+export default withCurrentUser(StepDisplayName);

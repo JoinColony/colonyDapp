@@ -192,7 +192,7 @@ class Task extends Component<Props> {
       isTaskCreator = false,
       preventEdit = true,
       task,
-      currentUser,
+      currentUser = {},
     } = this.props;
     const {
       setValues,
@@ -272,7 +272,7 @@ class Task extends Component<Props> {
             )}
             <TaskRequestWork
               isTaskCreator={isTaskCreator}
-              claimedProfile={currentUser.didClaimProfile}
+              currentUser={currentUser}
             />
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
@@ -376,7 +376,7 @@ class Task extends Component<Props> {
             <section className={styles.commentBox}>
               <TaskComments
                 draftId={task.draftId}
-                claimedProfile={currentUser.didClaimProfile}
+                currentUser={currentUser}
               />
             </section>
           </div>

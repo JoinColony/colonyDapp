@@ -62,8 +62,13 @@ class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
   handleSetup = () => {
-    const { openDialog } = this.props;
-    return unfinishedProfileOpener(openDialog);
+    const {
+      openDialog,
+      user: {
+        profile: { balance },
+      },
+    } = this.props;
+    return unfinishedProfileOpener(openDialog, balance);
   };
 
   renderUserSection = () => {
