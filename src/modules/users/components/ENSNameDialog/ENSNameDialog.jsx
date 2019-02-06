@@ -5,6 +5,8 @@ import type { FormikProps } from 'formik';
 import React, { Fragment, Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { connect } from 'react-redux';
+import BigNumber from 'bn.js';
 
 import styles from './ENSNameDialog.css';
 
@@ -16,6 +18,7 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, FormStatus } from '~core/Fields';
 
 import promiseListener from '../../../../createPromiseListener';
+import { currentUserBalanceSelector } from '../../selectors';
 
 import {
   USERNAME_CREATE,
@@ -37,7 +40,10 @@ const MSG = defineMessages({
   },
   stepTitle: {
     id: 'users.ENSNameDialog.stepTitle',
-    defaultMessage: 'Step 2/3: Choose your .user.joincolony.eth username',
+    defaultMessage: `Step {hasBalance, select,
+      true {1/2}
+      false {2/3}
+    }: Choose your .user.joincolony.eth username`,
   },
   stepText: {
     id: 'users.ENSNameDialog.stepText',
@@ -72,6 +78,7 @@ type FormValues = {
 type Props = {
   cancel: () => void,
   close: () => void,
+  balance: string,
 };
 
 type State = {};
@@ -108,7 +115,8 @@ class ENSNameDialog extends Component<Props, State> {
   };
 
   render() {
-    const { cancel, close } = this.props;
+    const { cancel, close, balance = '0' } = this.props;
+    const bigNumberBalance = new BigNumber(balance);
     return (
       <Dialog cancel={cancel}>
         <ActionForm
@@ -125,6 +133,9 @@ class ENSNameDialog extends Component<Props, State> {
                 <Heading
                   appearance={{ size: 'medium', margin: 'none' }}
                   text={MSG.stepTitle}
+                  textValues={{
+                    hasBalance: bigNumberBalance.gt(new BigNumber(0)),
+                  }}
                 />
               </DialogSection>
               <DialogSection>
@@ -178,4 +189,6 @@ class ENSNameDialog extends Component<Props, State> {
   }
 }
 
-export default ENSNameDialog;
+export default connect(state => ({
+  balance: currentUserBalanceSelector(state),
+}))(ENSNameDialog);
