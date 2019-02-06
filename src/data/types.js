@@ -28,16 +28,12 @@ export type DDBContext<M: *> = {|
   metadata: M,
 |};
 
-export type ContractContext<M: *> = DDBContext<M> & {|
+export type ContractContext<M: *> = {|
+  ddb: DDB,
+  metadata: M,
   colonyClient: ColonyClientType,
   wallet: WalletObjectType,
 |};
-
-export type ContractCommand<M: *, I: *> = Command<ContractContext<M>, I>;
-export type DDBCommand<M: *, I: *> = Command<DDBContext<M>, I>;
-
-export type ContractQuery<M: *, I: *, R: *> = Query<ContractContext<M>, I, R>;
-export type DDBQuery<M: *, I: *, R: *> = Query<DDBContext<M>, I, R>;
 
 export type EventPayload = {|
   id: string,

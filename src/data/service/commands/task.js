@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { Command, CommandContext, DDBCommandContext } from '../types';
+import type { Command, DDBContext, ContractContext } from '../../types';
 
 import {
   createTaskStore,
@@ -9,7 +9,7 @@ import {
   getCommentsStore,
   getTaskStore,
 } from '../../stores';
-import { validate } from '../utils';
+import { validate } from '../../utils';
 import {
   createCommentStoreCreatedEvent,
   createTaskStoreCreatedEvent,
@@ -31,20 +31,17 @@ import {
   PostCommentCommandArgsSchema,
 } from './schemas';
 
-type TaskCommand<I: *> = Command<
-  CommandContext<{|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-    taskStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
->;
-type CommentCommand<I: *> = Command<
-  DDBCommandContext<{|
-    commentStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
->;
+export type TaskContext = ContractContext<{|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+  taskStoreAddress: string | OrbitDBAddress,
+|}>;
+export type CommentContext = DDBContext<{|
+  commentStoreAddress: string | OrbitDBAddress,
+|}>;
+export type TaskCommand<I: *> = Command<TaskContext, I>;
+export type CommentCommand<I: *> = Command<CommentContext, I>;
+
 type CreateTaskDraftCommandArgs = {|
   meta: string,
   creator: string,

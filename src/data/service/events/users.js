@@ -1,9 +1,9 @@
 /* @flow */
 /* eslint-disable import/prefer-default-export */
 
-import type { Event, EventCreator, EventPayload } from '../types';
+import type { Event, EventCreator, EventPayload } from '../../types';
 
-import { decoratePayload } from './utils';
+import { decoratePayload } from '../../utils';
 import { USER_EVENT_TYPES } from '../../constants';
 
 const { READ_UNTIL } = USER_EVENT_TYPES;

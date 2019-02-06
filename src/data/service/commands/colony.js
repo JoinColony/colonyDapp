@@ -3,10 +3,10 @@
 import pSeries from 'p-series';
 
 import type { Address, ENSName } from '~types';
-import type { Command, CommandContext } from '../types';
+import type { Command, ContractContext } from '../../types';
 
 import { getColonyStore, createColonyStore } from '../../stores';
-import { validate } from '../utils';
+import { validate } from '../../utils';
 import {
   createColonyAvatarRemovedEvent,
   createColonyAvatarUploadedEvent,
@@ -24,13 +24,11 @@ import {
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
-type ColonyCommand<I: *> = Command<
-  CommandContext<{|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-  |}>,
-  I,
->;
+export type ColonyContext = ContractContext<{|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+|}>;
+export type ColonyCommand<I: *> = Command<ColonyContext, I>;
 
 type CreateColonyCommandArgs = {|
   address: Address,

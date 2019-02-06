@@ -92,3 +92,23 @@ export const PostCommentCommandArgsSchema = yup.object({
 export const SendWorkInviteCommandArgsSchema = yup.object({
   worker: yup.string(),
 });
+
+export const CreateUserProfileCommandArgsSchema = yup.object({
+  displayName: yup.string(),
+  bio: yup.string(),
+  avatar: yup.string(),
+  website: yup.string(),
+  location: yup.string(),
+});
+
+export const UpdateUserProfileCommandArgsSchema = yup.object({
+  displayName: yup.string(),
+  bio: yup.string(),
+  avatar: yup.string(),
+  website: yup.string(),
+  location: yup.string(),
+});
+
+export const SetUserAvatarCommandArgsSchema = yup.object({
+  avatar: yup.string().required(),
+});
