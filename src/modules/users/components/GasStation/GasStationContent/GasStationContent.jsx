@@ -24,7 +24,7 @@ const MSG = defineMessages({
 type Props = {
   close?: () => void,
   transactionGroups: Array<TransactionGroup>,
-  getCurrentUserBalance?: () => void,
+  getCurrentUserBalance: () => void,
 };
 
 type State = {

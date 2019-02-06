@@ -35,7 +35,6 @@ const AvatarDropdown = ({ user }: Props) => (
       <UserAvatar
         username={user.profile.username}
         avatarURL={user.profile.avatar}
-        walletAddress={user.profile.walletAddress}
         link={false}
       />
     </button>

@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -66,7 +65,6 @@ type FormValues = {
 
 type Props = WizardProps<FormValues> & {
   openDialog: OpenDialog,
-  user: { walletAddress: string },
 };
 
 type State = {};
@@ -75,13 +73,11 @@ const displayName = 'users.ConnectWalletWizard.StepDisplayName';
 
 class StepDisplayName extends Component<Props, State> {
   progressWithDialog = () => {
-    const { openDialog, user } = this.props;
+    const { openDialog } = this.props;
     return openDialog('UnfinishedProfileDialog')
       .afterClosed()
       .then(() =>
-        openDialog('ClaimProfileDialog', {
-          walletAddress: user ? user.walletAddress : '',
-        })
+        openDialog('ClaimProfileDialog')
           .afterClosed()
           .then(() => openDialog('ENSNameDialog'))
           .catch(err => {
@@ -139,8 +135,4 @@ class StepDisplayName extends Component<Props, State> {
 
 StepDisplayName.displayName = displayName;
 
-const enhance = connect(({ user }) => ({
-  user,
-}));
-
-export default enhance(StepDisplayName);
+export default StepDisplayName;

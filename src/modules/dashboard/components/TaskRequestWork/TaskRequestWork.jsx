@@ -28,14 +28,12 @@ type Props = {
    */
   claimedProfile: boolean,
   openDialog: OpenDialog,
-  walletAddress: string,
 };
 
 const TaskRequestWork = ({
   isTaskCreator,
   claimedProfile = false,
   openDialog,
-  walletAddress,
 }: Props) => (
   <Button
     text={MSG.requestWork}
@@ -45,7 +43,7 @@ const TaskRequestWork = ({
         return openDialog('UnfinishedProfileDialog')
           .afterClosed()
           .then(() =>
-            openDialog('ClaimProfileDialog', { walletAddress })
+            openDialog('ClaimProfileDialog')
               .afterClosed()
               .then(() => openDialog('ENSNameDialog'))
               .catch(err => {

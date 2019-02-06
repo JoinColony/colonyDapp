@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { connect } from 'react-redux';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -10,6 +11,8 @@ import CopyableAddress from '~core/CopyableAddress';
 import MaskedAddress from '~core/MaskedAddress';
 import GroupList from '~core/GroupList';
 import Dialog, { DialogSection } from '~core/Dialog';
+
+import { currentUserAddressSelector } from '../../selectors';
 
 import styles from './ClaimProfileDialog.css';
 
@@ -158,4 +161,6 @@ class ClaimProfileDialog extends Component<Props> {
   }
 }
 
-export default ClaimProfileDialog;
+export default connect(state => ({
+  walletAddress: currentUserAddressSelector(state),
+}))(ClaimProfileDialog);

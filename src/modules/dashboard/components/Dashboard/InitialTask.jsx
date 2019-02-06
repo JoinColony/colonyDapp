@@ -42,7 +42,7 @@ const InitialTask = ({
                 openDialog('UnfinishedProfileDialog')
                   .afterClosed()
                   .then(() =>
-                    openDialog('ClaimProfileDialog', { walletAddress })
+                    openDialog('ClaimProfileDialog')
                       .afterClosed()
                       .then(() => openDialog('ENSNameDialog'))
                       .catch(err => {

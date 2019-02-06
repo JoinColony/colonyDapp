@@ -56,7 +56,6 @@ type Props = {
    */
   claimedProfile: boolean,
   openDialog: OpenDialog,
-  walletAddress: string,
   draftId: string,
 } & FormikProps<FormValues>;
 
@@ -69,7 +68,6 @@ const validationSchema = yup.object().shape({
 const TaskComments = ({
   claimedProfile,
   openDialog,
-  walletAddress,
   draftId,
 }: Props) => {
   const addComment = promiseListener.createAsyncFunction({
@@ -114,7 +112,7 @@ const TaskComments = ({
       return openDialog('UnfinishedProfileDialog')
         .afterClosed()
         .then(() =>
-          openDialog('ClaimProfileDialog', { walletAddress })
+          openDialog('ClaimProfileDialog')
             .afterClosed()
             .then(() => openDialog('ENSNameDialog'))
             .catch(err => {

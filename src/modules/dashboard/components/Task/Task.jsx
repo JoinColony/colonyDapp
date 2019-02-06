@@ -377,7 +377,6 @@ class Task extends Component<Props> {
               <TaskComments
                 draftId={task.draftId}
                 claimedProfile={currentUser.didClaimProfile}
-                walletAddress={currentUser.profile.walletAddress}
               />
             </section>
           </div>
