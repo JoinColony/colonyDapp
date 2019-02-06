@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { Query, QueryContext, Event } from '../types';
+import type { Query, DDBContext, ContractContext, Event } from '../../types';
 import type {
   DomainCreatedEventPayload,
   CommentPostedEventPayload,
@@ -38,32 +38,26 @@ const {
 
 // const { READ_UNTIL } = USER_EVENT_TYPES;
 
-type ColonyQuery<I: *, R: *> = Query<
-  QueryContext<{|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-  |}>,
-  I,
-  R,
->;
-
-type TaskQuery<I: *, R: *> = Query<
-  QueryContext<{|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-    taskStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
-  R,
->;
-
-type CommentQuery<I: *, R: *> = Query<
-  QueryContext<{|
-    commentStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
-  R,
->;
+export type ColonyQueryContext = ContractContext<{|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+|}>;
+export type TaskQueryContext = ContractContext<{|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+  taskStoreAddress: string | OrbitDBAddress,
+|}>;
+export type CommentQueryContext = DDBContext<{|
+  commentStoreAddress: string | OrbitDBAddress,
+|}>;
+export type UserQueryContext = DDBContext<{|
+  walletAddress: string,
+  username?: string,
+|}>;
+export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
+export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
+export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
+export type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
 
 // @TODO Add typing for query results
 export const getColony: ColonyQuery<*, *> = ({

@@ -3,10 +3,11 @@
 import pSeries from 'p-series';
 
 import type { Address, ENSName } from '~types';
-import type { Command, CommandContext } from '../types';
+import type { Command, ContractContext } from '../../types';
+import type { EventStore } from '../../../lib/database/stores';
 
 import { getColonyStore, createColonyStore } from '../../stores';
-import { validate } from '../utils';
+import { validate } from '../../utils';
 import {
   createColonyAvatarRemovedEvent,
   createColonyAvatarUploadedEvent,
@@ -17,22 +18,20 @@ import {
 } from '../events';
 
 import {
-  CreateColonyCommandArgsSchema,
+  CreateColonyProfileCommandArgsSchema,
   CreateDomainCommandArgsSchema,
   RemoveColonyAvatarCommandArgsSchema,
-  UploadColonyAvatarCommandArgsSchema,
+  SetColonyAvatarCommandArgsSchema,
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
-type ColonyCommand<I: *> = Command<
-  CommandContext<{|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-  |}>,
-  I,
->;
+export type ColonyContext = ContractContext<{|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+|}>;
+export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
 
-type CreateColonyCommandArgs = {|
+type CreateColonyProfileCommandArgs = {|
   address: Address,
   colonyId: string,
   ensName: string,
@@ -49,15 +48,13 @@ type CreateColonyCommandArgs = {|
 |};
 
 type UpdateColonyProfileCommandArgs = {|
-  address: Address,
   name: string,
-  ensName: string,
   description: string,
   guideline: string,
   website: string,
 |};
 
-type UploadColonyAvatarCommandArgs = {|
+type SetColonyAvatarCommandArgs = {|
   address: Address,
   ensName: string,
   avatar: string,
@@ -76,14 +73,17 @@ type CreateDomainCommandArgs = {|
   domainId: number,
 |};
 
-export const createColony: ColonyCommand<CreateColonyCommandArgs> = ({
+export const createColonyProfile: ColonyCommand<
+  CreateColonyProfileCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
   metadata: { colonyAddress, colonyENSName },
 }) => ({
   async validate(args) {
-    return validate(CreateColonyCommandArgsSchema)(args);
+    return validate(CreateColonyProfileCommandArgsSchema)(args);
   },
   async execute(args) {
     const { name, description, guideline, website, token } = args;
@@ -112,7 +112,10 @@ export const createColony: ColonyCommand<CreateColonyCommandArgs> = ({
   },
 });
 
-export const createDomain: ColonyCommand<CreateDomainCommandArgs> = ({
+export const createDomain: ColonyCommand<
+  CreateDomainCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -139,7 +142,10 @@ export const createDomain: ColonyCommand<CreateDomainCommandArgs> = ({
   },
 });
 
-export const updateColonyProfile: ColonyCommand<UpdateColonyProfileCommandArgs> = ({
+export const updateColonyProfile: ColonyCommand<
+  UpdateColonyProfileCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -168,14 +174,17 @@ export const updateColonyProfile: ColonyCommand<UpdateColonyProfileCommandArgs> 
   },
 });
 
-export const uploadColonyAvatar: ColonyCommand<UploadColonyAvatarCommandArgs> = ({
+export const setColonyAvatar: ColonyCommand<
+  SetColonyAvatarCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
   metadata: { colonyAddress, colonyENSName },
 }) => ({
   async validate(args) {
-    return validate(UploadColonyAvatarCommandArgsSchema)(args);
+    return validate(SetColonyAvatarCommandArgsSchema)(args);
   },
   async execute(args) {
     const { ipfsHash, avatar } = args;
@@ -192,7 +201,10 @@ export const uploadColonyAvatar: ColonyCommand<UploadColonyAvatarCommandArgs> = 
   },
 });
 
-export const removeColonyAvatar: ColonyCommand<RemoveColonyAvatarCommandArgs> = ({
+export const removeColonyAvatar: ColonyCommand<
+  RemoveColonyAvatarCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
