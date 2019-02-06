@@ -168,7 +168,6 @@ export function* addUserActivity({ payload }: Action): Saga<void> {
 
 function* updateProfile({
   payload: {
-    profileStore,
     walletAddress: removedWalletAddress,
     username,
     // TODO: We want to disallow the easy update of certain fields here. There might be a better way to do this
@@ -177,9 +176,11 @@ function* updateProfile({
   meta,
 }: UniqueAction): Saga<void> {
   try {
+    const walletAddress = yield select(walletAddressSelector);
+    const userStore = yield call(getOrCreateUserStore, walletAddress);
     // if user is not allowed to write to store, this should throw an error
-    yield call([profileStore, profileStore.set], update);
-    const user = yield call(getAll, profileStore);
+    yield call([userStore, userStore.set], update);
+    const user = yield call(getAll, userStore);
     yield put({
       type: USER_PROFILE_UPDATE_SUCCESS,
       payload: user,

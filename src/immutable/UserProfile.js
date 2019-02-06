@@ -20,9 +20,6 @@ export type UserProfileProps = {
 
 export type UserProfileRecord = RecordOf<UserProfileProps>;
 
-// TODO: Ideally, we should be able to validate the required properties
-// (`walletAddress`, `profileStore`) before creating a record, rather than using
-// empty strings.
 const defaultProps: $Shape<UserProfileProps> = {
   activitiesStore: undefined,
   avatar: undefined,
