@@ -83,30 +83,30 @@ export function* callCaller({
   return yield call([caller, caller.call], params);
 }
 
-export function executeQuery<C: *, Q: Query, I: *>(
+export function executeQuery<C: *, I: *, R: *>(
   context: C,
-  query: Q<I>,
+  query: Query<C, I, R>,
   args: I,
-): Saga<Object> {
+): Saga<R> {
   const { execute } = query(context);
   return call(execute, args);
 }
 
-export function executeCommand<C: *, CO: Command, I: *>(
+export function executeCommand<C: *, I: *, R: *>(
   context: C,
-  command: CO<I>,
+  command: Command<C, I, R>,
   args: I,
-): Saga<Object> {
+): Saga<R> {
   const { execute } = command(context);
   return call(execute, args);
 }
 
-export function* validateAndExecuteCommand<C: *, CO: Command, I: *>(
+export function* validateAndExecuteCommand<C: *, I: *, R: *>(
   context: C,
-  command: CO<I>,
+  command: Command<C, I, R>,
   args: I,
-): Saga<Object> {
+): Saga<R> {
   const { execute, validate } = command(context);
-  const sanitizedArgs = validate ? yield call(validate, args) : args;
+  const sanitizedArgs = validate ? yield* call(validate, args) : args;
   return call(execute, sanitizedArgs);
 }

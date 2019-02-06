@@ -1,9 +1,9 @@
 /* @flow */
 
 import type { Address } from '~types';
-import type { Event, EventCreator, EventPayload } from '../types';
+import type { Event, EventCreator, EventPayload } from '../../types';
 
-import { decoratePayload } from './utils';
+import { decoratePayload } from '../../utils';
 import { COLONY_EVENT_TYPES } from '../../constants';
 
 const {

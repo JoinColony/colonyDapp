@@ -1,7 +1,8 @@
 /* @flow */
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { Command, CommandContext, DDBCommandContext } from '../types';
+import type { Command, DDBContext, ContractContext } from '../../types';
+import type { FeedStore, EventStore } from '../../../lib/database/stores';
 
 import {
   createTaskStore,
@@ -9,7 +10,7 @@ import {
   getCommentsStore,
   getTaskStore,
 } from '../../stores';
-import { validate } from '../utils';
+import { validate } from '../../utils';
 import {
   createCommentStoreCreatedEvent,
   createTaskStoreCreatedEvent,
@@ -31,20 +32,17 @@ import {
   PostCommentCommandArgsSchema,
 } from './schemas';
 
-type TaskCommand<I: *> = Command<
-  CommandContext<{|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-    taskStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
->;
-type CommentCommand<I: *> = Command<
-  DDBCommandContext<{|
-    commentStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
->;
+export type TaskContext = ContractContext<{|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+  taskStoreAddress: string | OrbitDBAddress,
+|}>;
+export type CommentContext = DDBContext<{|
+  commentStoreAddress: string | OrbitDBAddress,
+|}>;
+export type TaskCommand<I: *, R: *> = Command<TaskContext, I, R>;
+export type CommentCommand<I: *, R: *> = Command<CommentContext, I, R>;
+
 type CreateTaskDraftCommandArgs = {|
   meta: string,
   creator: string,
@@ -52,6 +50,12 @@ type CreateTaskDraftCommandArgs = {|
   draftId: string,
   specificationHash: string,
   title: string,
+|};
+
+type CreateTaskDraftCommandReturn = {|
+  commentsStore: FeedStore,
+  taskStore: EventStore,
+  colonyStore: EventStore,
 |};
 
 type UpdateTaskDraftCommandArgs = {|
@@ -86,7 +90,10 @@ type PostCommentCommandArgs = {|
   |},
 |};
 
-export const createTask: TaskCommand<CreateTaskDraftCommandArgs> = ({
+export const createTask: TaskCommand<
+  CreateTaskDraftCommandArgs,
+  CreateTaskDraftCommandReturn,
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -145,7 +152,10 @@ export const createTask: TaskCommand<CreateTaskDraftCommandArgs> = ({
   },
 });
 
-export const updateTaskDraft: TaskCommand<UpdateTaskDraftCommandArgs> = ({
+export const updateTaskDraft: TaskCommand<
+  UpdateTaskDraftCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -174,7 +184,10 @@ export const updateTaskDraft: TaskCommand<UpdateTaskDraftCommandArgs> = ({
   },
 });
 
-export const setTaskDueDate: TaskCommand<SetTaskDueDateCommandArgs> = ({
+export const setTaskDueDate: TaskCommand<
+  SetTaskDueDateCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -201,7 +214,7 @@ export const setTaskDueDate: TaskCommand<SetTaskDueDateCommandArgs> = ({
   },
 });
 
-export const setTaskSkill: TaskCommand<SetTaskSkillCommandArgs> = ({
+export const setTaskSkill: TaskCommand<SetTaskSkillCommandArgs, EventStore> = ({
   ddb,
   colonyClient,
   wallet,
@@ -228,7 +241,7 @@ export const setTaskSkill: TaskCommand<SetTaskSkillCommandArgs> = ({
   },
 });
 
-export const createWorkRequest: TaskCommand<*> = ({
+export const createWorkRequest: TaskCommand<*, EventStore> = ({
   ddb,
   colonyClient,
   wallet,
@@ -251,7 +264,10 @@ export const createWorkRequest: TaskCommand<*> = ({
   },
 });
 
-export const sendWorkInvite: TaskCommand<SendWorkInviteCommandArgs> = ({
+export const sendWorkInvite: TaskCommand<
+  SendWorkInviteCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -279,7 +295,7 @@ export const sendWorkInvite: TaskCommand<SendWorkInviteCommandArgs> = ({
   },
 });
 
-export const postComment: CommentCommand<PostCommentCommandArgs> = ({
+export const postComment: CommentCommand<PostCommentCommandArgs, FeedStore> = ({
   ddb,
   metadata: { commentStoreAddress },
 }) => ({
