@@ -5,6 +5,7 @@ import type { Saga } from 'redux-saga';
 import { setContext, call, all, put, fork } from 'redux-saga/effects';
 
 import { create, putError } from '~utils/saga/effects';
+import { CONTEXT } from '~context';
 
 import type { UniqueAction } from '~types';
 import type { UserProfileProps } from '~immutable';
@@ -45,7 +46,7 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
   const { meta } = action;
   try {
     const wallet = yield call(getWallet, action);
-    yield setContext({ wallet });
+    yield setContext({ [CONTEXT.WALLET]: wallet });
     const [ddb, colonyManager] = yield all([
       call(getDDB),
       call(getColonyManager),
@@ -65,7 +66,10 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
     );
     yield call([ddb, ddb.addResolver], 'colony', colonyResolver);
 
-    yield setContext({ ddb, colonyManager });
+    yield setContext({
+      [CONTEXT.COLONY_MANAGER]: colonyManager,
+      [CONTEXT.DDB_INSTANCE]: ddb,
+    });
 
     const userStore = yield call(getOrCreateUserStore, wallet.address);
 

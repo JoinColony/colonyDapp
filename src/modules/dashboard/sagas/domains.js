@@ -2,14 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import {
-  call,
-  getContext,
-  put,
-  select,
-  take,
-  takeEvery,
-} from 'redux-saga/effects';
+import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 
 import type {
   AddressOrENSName,
@@ -18,6 +11,7 @@ import type {
 } from '~types';
 
 import { putError } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import { set, get, getAll } from '../../../lib/database/commands';
 import { getColonyMethod } from '../../core/sagas/utils';
@@ -77,7 +71,7 @@ function* createDomainTransaction(
  * (via the colony state).
  */
 function* getOrCreateDomainsIndexStore(colonyENSName: ENSName) {
-  const ddb = yield getContext('ddb');
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   let store;
 
   /*

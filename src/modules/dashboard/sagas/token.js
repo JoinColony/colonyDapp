@@ -5,18 +5,12 @@ import type { Saga } from 'redux-saga';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import TokenClient from '@colony/colony-js-client/lib/TokenClient';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
-import {
-  call,
-  delay,
-  getContext,
-  put,
-  takeEvery,
-  takeLatest,
-} from 'redux-saga/effects';
+import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import type { Action, UniqueAction } from '~types';
 
 import { putError } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import {
   TOKEN_CREATE,
@@ -86,7 +80,7 @@ function* getTokenInfo({ payload: { tokenAddress } }: Action): Saga<void> {
   let info;
   try {
     // Attempt to get the token info from a new `TokenClient` instance.
-    const { networkClient } = yield getContext('colonyManager');
+    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     info = yield call(getTokenClientInfo, tokenAddress, networkClient);
   } catch (error) {
     yield putError(TOKEN_INFO_FETCH_ERROR, error);
@@ -122,7 +116,7 @@ function* uploadTokenIcon({
   payload: { data },
   meta,
 }: UniqueAction): Saga<void> {
-  const ipfsNode = yield getContext('ipfsNode');
+  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   try {
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
@@ -142,7 +136,7 @@ function* uploadTokenIcon({
  */
 function* getTokenIcon(action: Action): Saga<void> {
   const { hash } = action.payload;
-  const ipfsNode = yield getContext('ipfsNode');
+  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   try {
     const iconData = yield call([ipfsNode, ipfsNode.getString], hash);

@@ -1,16 +1,19 @@
 /* @flow */
 
-import { call, getContext } from 'redux-saga/effects';
+import type { Saga } from 'redux-saga';
+
+import { call } from 'redux-saga/effects';
 
 import { create } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import { DDB as DDBClass } from '../../../../lib/database/index';
 import PurserIdentityProvider from '../../../../lib/database/PurserIdentityProvider';
 
-export default function* getDDB(): Generator<*, DDBClass, *> {
-  const wallet = yield getContext('wallet');
-  const DDB: typeof DDBClass = yield getContext('DDB');
-  const ipfsNode = yield getContext('ipfsNode');
+export default function* getDDB(): Saga<DDBClass> {
+  const wallet = yield* getContext(CONTEXT.WALLET);
+  const DDB = yield* getContext(CONTEXT.DDB_CLASS);
+  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   if (!wallet || !DDB || !ipfsNode) {
     throw new Error('Required context for ddb instantiation not found');

@@ -3,10 +3,11 @@
 import type { Saga } from 'redux-saga';
 import BigNumber from 'bn.js';
 
-import { call, getContext, put, select } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 
 import type { GasPricesProps } from '~immutable';
 
+import { CONTEXT, getContext } from '~context';
 import { gasPrices as gasPricesSelector } from '../../selectors';
 import { updateGasPrices } from '../../actionCreators';
 
@@ -28,7 +29,7 @@ const ETH_GAS_STATION_ENDPOINT =
   'https://ethgasstation.info/json/ethgasAPI.json';
 
 export default function* getGasPrices(): Saga<GasPricesProps> {
-  const colonyManager = yield getContext('colonyManager');
+  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
 
   const cachedPrices = yield select(gasPricesSelector);
 

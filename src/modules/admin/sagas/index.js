@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, getContext, put, takeEvery, all } from 'redux-saga/effects';
+import { call, put, takeEvery, all } from 'redux-saga/effects';
 
 import type {
   Action,
@@ -14,6 +14,7 @@ import type {
 import type { ContractTransactionProps } from '~immutable';
 
 import { putError, raceError } from '~utils/saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import {
   parseColonyFundsClaimedEvent,
@@ -55,7 +56,7 @@ function* fetchColonyTransactionsSaga({
   meta,
 }: UniqueActionWithKeyPath): Saga<void> {
   try {
-    const colonyManager = yield getContext('colonyManager');
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
 
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
@@ -105,7 +106,7 @@ function* fetchColonyUnclaimedTransactionsSaga({
   meta,
 }: UniqueActionWithKeyPath): Saga<void> {
   try {
-    const colonyManager = yield getContext('colonyManager');
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
       colonyENSName,
