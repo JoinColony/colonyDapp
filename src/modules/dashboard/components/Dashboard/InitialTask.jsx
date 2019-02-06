@@ -10,6 +10,7 @@ import type { OpenDialog } from '~core/Dialog/types';
 import withDialog from '~core/Dialog/withDialog';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
 import styles from './InitialTask.css';
 
@@ -38,19 +39,7 @@ const InitialTask = ({
             <button
               className={styles.taskDetailsTitle}
               type="button"
-              onClick={() =>
-                openDialog('UnfinishedProfileDialog')
-                  .afterClosed()
-                  .then(() =>
-                    openDialog('ClaimProfileDialog')
-                      .afterClosed()
-                      .then(() => openDialog('ENSNameDialog'))
-                      .catch(err => {
-                        // eslint-disable-next-line no-console
-                        console.log(err);
-                      }),
-                  )
-              }
+              onClick={() => unfinishedProfileOpener(openDialog)}
             >
               <FormattedMessage {...title} values={titleValues} />
             </button>

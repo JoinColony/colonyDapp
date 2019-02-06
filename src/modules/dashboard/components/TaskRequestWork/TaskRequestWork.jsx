@@ -7,6 +7,7 @@ import type { OpenDialog } from '~core/Dialog/types';
 
 import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
 const MSG = defineMessages({
   requestWork: {
@@ -40,18 +41,7 @@ const TaskRequestWork = ({
     disabled={!isTaskCreator}
     onClick={() => {
       if (!claimedProfile) {
-        return openDialog('UnfinishedProfileDialog')
-          .afterClosed()
-          .then(() =>
-            openDialog('ClaimProfileDialog')
-              .afterClosed()
-              .then(() => openDialog('ENSNameDialog'))
-              .catch(err => {
-                // eslint-disable-next-line no-console
-                console.log(err);
-              }),
-          );
-        // TODO: Open Gasstation after the last modal
+        return unfinishedProfileOpener(openDialog);
       }
       return false;
     }}

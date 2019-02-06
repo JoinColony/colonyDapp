@@ -109,17 +109,7 @@ const TaskComments = ({
 
   const handleUnclaimedProfile = () => {
     if (!claimedProfile) {
-      return openDialog('UnfinishedProfileDialog')
-        .afterClosed()
-        .then(() =>
-          openDialog('ClaimProfileDialog')
-            .afterClosed()
-            .then(() => openDialog('ENSNameDialog'))
-            .catch(err => {
-              // eslint-disable-next-line no-console
-              console.log(err);
-            }),
-        );
+      return unfinishedProfileOpener(openDialog);
     }
     return false;
   };

@@ -6,6 +6,7 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 import type { OpenDialog } from '~core/Dialog/types';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
 import {
   USER_PROFILE_UPDATE,
@@ -74,17 +75,7 @@ const displayName = 'users.ConnectWalletWizard.StepDisplayName';
 class StepDisplayName extends Component<Props, State> {
   progressWithDialog = () => {
     const { openDialog } = this.props;
-    return openDialog('UnfinishedProfileDialog')
-      .afterClosed()
-      .then(() =>
-        openDialog('ClaimProfileDialog')
-          .afterClosed()
-          .then(() => openDialog('ENSNameDialog'))
-          .catch(err => {
-            // eslint-disable-next-line no-console
-            console.log(err);
-          }),
-      );
+    return unfinishedProfileOpener(openDialog);
   };
 
   render() {
