@@ -26,7 +26,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
-import { TASK_STATE } from '~immutable';
+import { TASK_STATE, UserProfile } from '~immutable';
 
 import {
   TASK_WORKER_END,
@@ -99,11 +99,17 @@ type Props = {
   task: TaskRecord,
   currentUser: UserRecord,
   isTaskCreator?: boolean,
-  preventEdit?: boolean,
+  preventEdit: boolean,
 };
 
 class Task extends Component<Props> {
   static displayName = 'dashboard.Task';
+
+  static defaultProps = {
+    isTaskCreator: false,
+    preventEdit: true,
+    currentUser: UserProfile(),
+  };
 
   openTaskEditDialog = () => {
     const { openDialog, task } = this.props;
@@ -188,12 +194,7 @@ class Task extends Component<Props> {
   }
 
   render() {
-    const {
-      isTaskCreator = false,
-      preventEdit = true,
-      task,
-      currentUser = {},
-    } = this.props;
+    const { isTaskCreator, preventEdit, task, currentUser } = this.props;
     const {
       setValues,
       isWorker,

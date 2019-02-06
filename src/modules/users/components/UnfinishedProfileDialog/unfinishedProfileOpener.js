@@ -14,7 +14,7 @@ import BigNumber from 'bn.js';
  */
 const unfinishedProfileOpener = (
   openDialogFn: OpenDialog,
-  balance: string = '0',
+  balance: number = 0,
 ) => {
   const bigNumberBalance = new BigNumber(balance);
   /*
