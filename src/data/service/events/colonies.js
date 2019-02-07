@@ -18,7 +18,7 @@ const {
 
 export type DomainCreatedEventArgs = {|
   domainId: number,
-  colonyENSName: string,
+  name: string,
 |};
 export type DomainCreatedEventPayload = EventPayload & DomainCreatedEventArgs;
 export type DomainCreatedEvent = Event<
@@ -103,10 +103,11 @@ export type ColonyProfileUpdatedEvent = Event<
 export const createDomainCreatedEvent: EventCreator<
   DomainCreatedEventArgs,
   DomainCreatedEvent,
-> = ({ domainId }) => ({
+> = ({ domainId, name }) => ({
   type: DOMAIN_CREATED,
   payload: decoratePayload<DomainCreatedEventPayload>({
     domainId,
+    name,
   }),
 });
 export const createTaskStoreCreatedEvent: EventCreator<
