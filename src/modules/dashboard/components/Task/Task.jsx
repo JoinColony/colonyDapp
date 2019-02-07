@@ -375,10 +375,7 @@ class Task extends Component<Props> {
               />
             </section>
             <section className={styles.commentBox}>
-              <TaskComments
-                draftId={task.draftId}
-                currentUser={currentUser}
-              />
+              <TaskComments draftId={task.draftId} currentUser={currentUser} />
             </section>
           </div>
         </div>

@@ -67,7 +67,7 @@ const TaskComments = ({
   openDialog,
   currentUser: {
     didClaimProfile = false,
-    profile: { balance },
+    profile: { balance, walletAddress },
   },
   draftId,
 }: Props) => {
