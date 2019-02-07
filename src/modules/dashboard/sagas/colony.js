@@ -81,6 +81,14 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
   return store;
 }
 
+function* createColonyStoreNew(transactions) {
+  const [, { eventData }] = transactions;
+  const colonyAddress = eventData && eventData.colonyAddress;
+  // TODO Do the store creation here, return actual store address
+  const tempStoreAddress = yield colonyAddress;
+  return tempStoreAddress;
+}
+
 const createColonyBatch = createBatchTxRunner({
   meta: { key: 'transaction.batch.createColony' },
   transactions: [
@@ -97,6 +105,8 @@ const createColonyBatch = createBatchTxRunner({
     },
     {
       actionCreator: createColonyLabel,
+      before: createColonyStoreNew,
+      transferParams: (transactions, orbitDBPath) => ({ orbitDBPath }),
       // We need the colony identifier from the second transaciton output
       transferIdentifier: ([
         ,
@@ -109,8 +119,7 @@ const createColonyBatch = createBatchTxRunner({
 
 // TODO: Rename, complete and wire up after new onboarding is in place
 function* createColonySagaNew(action: UniqueAction): Saga<void> {
-  // Step 1: Create colony orbit-db database store, save the address -> orbitDBPath
-  const orbitDBPath = 'temp';
+  // Step 1: Do whatever needs to be done before starting the batch tx
 
   const {
     meta,
@@ -123,7 +132,7 @@ function* createColonySagaNew(action: UniqueAction): Saga<void> {
       { params: { name: tokenName, symbol: tokenSymbol } },
       null,
       {
-        params: { colonyName, orbitDBPath },
+        params: { colonyName },
       },
     ]);
     // Step 3: Do something with the transaction data (maybe add it to the orbit-db store)

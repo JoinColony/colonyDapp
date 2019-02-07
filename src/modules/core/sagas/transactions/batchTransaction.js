@@ -17,8 +17,12 @@ type ArrayOfTransactions = TransactionRecord<*, *>[];
 
 type TransactionInstruction<P> = {
   actionCreator: TxActionCreator<P>,
-  transferParams?: ArrayOfTransactions => Object | void,
-  transferIdentifier?: ArrayOfTransactions => string | void,
+  before?: ArrayOfTransactions => any,
+  transferParams?: (ArrayOfTransactions, beforeResult?: any) => Object | void,
+  transferIdentifier?: (
+    ArrayOfTransactions,
+    beforeResult?: any,
+  ) => string | void,
 };
 
 type BatchFactoryOptions = {
@@ -33,15 +37,23 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
     transactions: ArrayOfTransactions = [],
   ): Saga<ArrayOfTransactions> {
     const batchedTxId = `${txId}-${idx}`;
-    const { transferParams, transferIdentifier } = txOptions.transactions[idx];
+    const {
+      before,
+      transferParams,
+      transferIdentifier,
+    } = txOptions.transactions[idx];
 
     if (transactions.length && (transferParams || transferIdentifier)) {
       const payload = {};
+      let result;
+      if (typeof before === 'function') {
+        result = yield call(before, transactions);
+      }
       if (transferParams) {
-        payload.params = transferParams(transactions);
+        payload.params = transferParams(transactions, result);
       }
       if (transferIdentifier) {
-        payload.identifier = transferIdentifier(transactions);
+        payload.identifier = transferIdentifier(transactions, result);
       }
       // This will make the transaction `ready`, so that the user can sign it
       yield put(transactionAddProperties(batchedTxId, payload));
