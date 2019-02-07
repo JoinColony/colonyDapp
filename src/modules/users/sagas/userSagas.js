@@ -151,8 +151,11 @@ function* updateProfile({
     const walletAddress = yield select(walletAddressSelector);
     const userStore = yield call(getOrCreateUserStore, walletAddress);
     // if user is not allowed to write to store, this should throw an error
-    yield call([userStore, userStore.set], update);
-    const user = yield call(getAll, userStore);
+    // if user is not allowed to write to store, this should throw an error
+    yield* executeCommand(context, updateUserProfile, update);
+    const profile = yield* executeQuery(context, getUserProfile);
+    // yield call([userStore, userStore.set], update);
+    // const user = yield call(getAll, userStore);
     yield put<Action<typeof ACTIONS.USER_PROFILE_UPDATE_SUCCESS>>({
       type: ACTIONS.USER_PROFILE_UPDATE_SUCCESS,
       payload: user,
@@ -262,7 +265,14 @@ function* createUsername({
     txChannel = yield call(getTxChannel, meta.id);
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const walletAddress = yield select(walletAddressSelector);
-    const { profileStore, activityStore } = yield call(
+    const context = {
+      ddb,
+      metadata: {
+        walletAddress,
+        username,
+      },
+    };
+    const { profileStore } = yield call(
       createUserProfileStore(ddb),
       { walletAddress },
     );
@@ -290,8 +300,9 @@ function* createUsername({
     // Wait until the transaction was successful, write to store
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield call([profileStore, profileStore.set], { username, walletAddress });
-    yield call([activityStore, activityStore.add], joinedColonyEvent());
+    // todo execute command
+    //yield call([profileStore, profileStore.set], { username, walletAddress });
+    //yield call([activityStore, activityStore.add], joinedColonyEvent());
   } catch (error) {
     // TODO: We could show a toaster message here. Also: revert stuff?!?!?
     yield putError(ACTIONS.USERNAME_CREATE_ERROR, error, meta);
@@ -303,10 +314,10 @@ function* createUsername({
 function* fetchAvatar(
   action: Action<typeof ACTIONS.USER_AVATAR_FETCH>,
 ): Saga<void> {
-  const { hash } = action.payload;
-  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
-
   try {
+    const { hash } = action.payload;
+    const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
+
     const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
     yield put<Action<typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_FETCH_SUCCESS,
@@ -325,14 +336,21 @@ function* uploadAvatar({
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   const walletAddress = yield select(walletAddressSelector);
+  const context = {
+    ddb,
+    metadata: {
+      walletAddress,
+    },
+  };
 
   try {
     // first attempt upload to IPFS
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     // if we uploaded okay, put the hash in the user orbit store
-    const store = yield call(getUserProfileStore(ddb), { walletAddress });
-    yield call([store, store.set], 'avatar', hash);
+    yield* executeCommand(context, setUserAvatar, {
+      avatar: hash,
+    });
 
     yield put<Action<typeof ACTIONS.USER_UPLOAD_AVATAR_SUCCESS>>({
       type: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
@@ -347,13 +365,19 @@ function* uploadAvatar({
 function* removeAvatar({
   meta,
 }: Action<typeof ACTIONS.USER_REMOVE_AVATAR>): Saga<void> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const walletAddress = yield select(walletAddressSelector);
-
   try {
-    const store = yield call(getUserProfileStore(ddb), { walletAddress });
-    yield call([store, store.set], 'avatar', undefined);
-    const user = yield call(getAll, store);
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+    const walletAddress = yield select(walletAddressSelector);
+
+    const context = {
+      ddb,
+      metadata: {
+        walletAddress,
+      },
+    };
+
+    yield* executeCommand(context, removeUserAvatar);
+    const user = yield* executeQuery(context, getUserProfile);
     yield put<Action<typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS>>({
       type: ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
       payload: { user },
