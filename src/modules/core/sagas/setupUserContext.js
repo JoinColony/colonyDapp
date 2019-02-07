@@ -47,6 +47,7 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
   const { meta } = action;
   try {
     const wallet = yield call(getWallet, action);
+    const provider = yield call(getProvider, defaultNetwork);
     yield setContext({ [CONTEXT.WALLET]: wallet });
     const [ddb, colonyManager] = yield all([
       call(getDDB),
