@@ -4,12 +4,15 @@ import type { Saga } from 'redux-saga';
 
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 
-import type { ENSName, UniqueActionWithKeyPath } from '~types';
+import type { ENSName, UniqueAction, UniqueActionWithKeyPath } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 
 import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
+
+import { createBatchTxRunner } from '../../core/sagas/transactions';
+
 import {
   claimPayoutAsWorkerTx,
   completeTaskTx,
@@ -21,12 +24,15 @@ import {
   submitManagerRatingAsWorkerTx,
   submitTaskDeliverableAndRatingTx,
   submitWorkerRatingAsManagerTx,
+  taskCreateBatch,
+  taskMoveFundsBatch,
+  taskSetWorkerPayoutBatch,
+  taskSetWorkerRoleBatch,
 } from '../actionCreators';
 import { allColonyENSNames } from '../selectors';
 import {
   TASK_CREATE,
   TASK_CREATE_ERROR,
-  TASK_CREATE_SUCCESS,
   TASK_FETCH,
   TASK_FETCH_ALL,
   TASK_FETCH_ERROR,
@@ -60,29 +66,55 @@ import {
 } from '../actionTypes';
 import { ensureColonyIsInState } from './shared';
 
-function* taskCreateSaga({
-  meta: {
-    keyPath: [colonyENSName],
-  },
-  meta,
-  payload: { id },
-  payload,
-}: UniqueActionWithKeyPath): Saga<void> {
-  try {
-    yield call(ensureColonyIsInState, colonyENSName);
+const createTaskBatch = createBatchTxRunner({
+  meta: { key: 'transaction.batch.createTask' },
+  transactions: [
+    {
+      // will dispatch TASK_CREATE_SUCCESS on `created`
+      actionCreator: taskCreateBatch,
+    },
+    {
+      actionCreator: taskMoveFundsBatch,
+      transferParams: ([{ eventData }]) => ({
+        toPot: eventData && eventData.potId,
+      }),
+    },
+    {
+      actionCreator: taskSetWorkerPayoutBatch,
+      transferParams: ([{ eventData }]) => ({
+        taskId: eventData && eventData.taskId,
+      }),
+    },
+    {
+      actionCreator: taskSetWorkerRoleBatch,
+      transferParams: ([{ eventData }]) => ({
+        taskId: eventData && eventData.taskId,
+      }),
+    },
+  ],
+});
 
-    // TODO create stores and add events after https://github.com/JoinColony/colonyDapp/pull/815
-    /*
-     * Dispatch the success action.
-     */
-    yield put({
-      type: TASK_CREATE_SUCCESS,
-      meta: {
-        ...meta,
-        keyPath: [colonyENSName, id],
-      },
-      payload,
-    });
+function* taskCreateSaga(action: UniqueAction): Saga<void> {
+  const {
+    meta,
+    payload: {
+      specificationHash,
+      domainId,
+      skillId,
+      dueDate,
+      fromPot,
+      amount,
+      token,
+      user,
+    },
+  } = action;
+  try {
+    yield call(createTaskBatch, action, [
+      { params: { specificationHash, domainId, skillId, dueDate } },
+      { params: { fromPot, amount, token } },
+      { params: { token, amount } },
+      { params: { user } },
+    ]);
   } catch (error) {
     yield putError(TASK_CREATE_ERROR, error, meta);
   }
