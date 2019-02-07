@@ -67,7 +67,7 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
   function* batchSaga(
     action: UniqueAction,
     // chris: There might be a way to type this better but for me it seems close to impossible
-    actionCreatorOptions: $ReadOnlyArray<{ options: Object, params: Object }>,
+    actionCreatorOptions: $ReadOnlyArray<{ options?: Object, params: Object }>,
   ): Saga<void> {
     const { meta } = action;
     for (let i = 0; i < txOptions.transactions.length; i += 1) {
