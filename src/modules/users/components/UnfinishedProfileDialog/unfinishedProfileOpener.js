@@ -14,7 +14,7 @@ import BigNumber from 'bn.js';
  */
 const unfinishedProfileOpener = (
   openDialogFn: OpenDialog,
-  balance: number = 0,
+  balance: string = '0',
 ) => {
   const bigNumberBalance = new BigNumber(balance);
   /*
@@ -37,7 +37,7 @@ const unfinishedProfileOpener = (
     /*
      * If we have some ETH in the wallet, skip the funding step
      */
-    if (bigNumberBalance.gt(new BigNumber(0))) {
+    if (bigNumberBalance.gt(new BigNumber('0'))) {
       return unfinishedProfileClosed.then(claimUsernameDialog);
     }
     return unfinishedProfileClosed.then(fundWalletDialog);

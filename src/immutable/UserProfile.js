@@ -9,7 +9,7 @@ import type { Address, ENSName } from '../types';
 export type UserProfileProps = {
   activitiesStore: string,
   avatar?: string,
-  balance?: number,
+  balance?: string,
   bio?: string,
   displayName?: string,
   location?: string,
