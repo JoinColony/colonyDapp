@@ -3,9 +3,9 @@
 import type { Address, ENSName, OrbitDBAddress } from '~types';
 import type { Query, DDBContext, ContractContext, Event } from '../../types';
 import type {
-  DomainCreatedEventPayload,
-  CommentPostedEventPayload,
-  TaskStoreCreatedEventPayload,
+  DomainCreatedEvent,
+  CommentPostedEvent,
+  TaskStoreCreatedEvent,
 } from '../events';
 
 import { getColonyStore, getCommentsStore, getTaskStore } from '../../stores';
@@ -127,6 +127,46 @@ export const getColony: ColonyQuery<*, *> = ({
   },
 });
 
+export const getColonyAvatar: ColonyQuery<*, *> = ({
+  ddb,
+  colonyClient,
+  wallet,
+  metadata: { colonyAddress, colonyENSName },
+}) => ({
+  async execute() {
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
+      colonyAddress,
+      colonyENSName,
+    });
+    return colonyStore
+      .all()
+      .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
+      .reduce(
+        (
+          colony,
+          { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
+        ) => {
+          switch (type) {
+            case AVATAR_UPLOADED: {
+              const { ipfsHash, avatar } = payload;
+              return {
+                ipfsHash,
+                avatar,
+              };
+            }
+            case AVATAR_REMOVED: {
+              return null;
+            }
+
+            default:
+              return colony;
+          }
+        },
+        null,
+      );
+  },
+});
+
 // @NOTE: This is a separate query so we can, later on, cache the query result
 export const getColonyTasks: ColonyQuery<*, *> = ({
   ddb,
@@ -146,13 +186,13 @@ export const getColonyTasks: ColonyQuery<*, *> = ({
         (
           domainTasks,
           {
-            payload: { domainId, draftId },
-          }: Event<typeof TASK_STORE_CREATED, TaskStoreCreatedEventPayload>,
+            payload: { domainId, draftId, taskStoreAddress },
+          }: TaskStoreCreatedEvent,
         ) =>
           Object.assign({}, domainTasks, {
-            [domainId]: Array.from(
-              new Set([...domainTasks[domainId], draftId]),
-            ),
+            [domainId]: Object.assign({}, domainTasks[domainId], {
+              [draftId]: taskStoreAddress,
+            }),
           }),
         {},
       );
@@ -174,13 +214,11 @@ export const getColonyDomains: ColonyQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => eventType === DOMAIN_CREATED)
       .reduce(
-        (
-          domains,
-          {
-            payload: { domainId },
-          }: Event<typeof DOMAIN_CREATED, DomainCreatedEventPayload>,
-        ) => Array.from(new Set([...domains, domainId])),
-        [],
+        (domains, { payload: { domainId, name } }: DomainCreatedEvent) =>
+          Object.assign({}, domains, {
+            [domainId]: { domainId, name },
+          }),
+        {},
       );
   },
 });
@@ -280,12 +318,10 @@ export const getTaskComments: CommentQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => eventType === COMMENT_POSTED)
       .reduce(
-        (
-          comments,
-          {
-            payload: { comment },
-          }: Event<typeof COMMENT_POSTED, CommentPostedEventPayload>,
-        ) => [...comments, comment],
+        (comments, { payload: { comment } }: CommentPostedEvent) => [
+          ...comments,
+          comment,
+        ],
         [],
       );
   },
