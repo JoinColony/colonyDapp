@@ -6,8 +6,6 @@ import {
 } from '../../core/actionCreators';
 
 import {
-  TASK_CREATE_ERROR,
-  TASK_CREATE_SUCCESS,
   TASK_FINALIZE_ERROR,
   TASK_FINALIZE_SUCCESS,
   TASK_MANAGER_COMPLETE_ERROR,
@@ -35,10 +33,6 @@ import type { TaskId } from '~immutable';
 export const taskCreateBatch = createTxActionCreator({
   context: COLONY_CONTEXT,
   methodName: 'createTask',
-  lifecycle: {
-    created: TASK_CREATE_SUCCESS,
-    error: TASK_CREATE_ERROR,
-  },
 });
 
 export const taskMoveFundsBatch = createTxActionCreator({

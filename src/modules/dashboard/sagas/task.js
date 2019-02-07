@@ -33,6 +33,10 @@ import { allColonyENSNames } from '../selectors';
 import {
   TASK_CREATE,
   TASK_CREATE_ERROR,
+  TASK_CREATE_SUCCESS,
+  TASK_MODIFY_WORKER_PAYOUT,
+  TASK_MODIFY_WORKER_PAYOUT_ERROR,
+  TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
   TASK_FETCH,
   TASK_FETCH_ALL,
   TASK_FETCH_ERROR,
@@ -70,7 +74,6 @@ const createTaskBatch = createBatchTxRunner({
   meta: { key: 'transaction.batch.createTask' },
   transactions: [
     {
-      // will dispatch TASK_CREATE_SUCCESS on `created`
       actionCreator: taskCreateBatch,
     },
     {
@@ -109,6 +112,10 @@ function* taskCreateSaga(action: UniqueAction): Saga<void> {
     },
   } = action;
   try {
+    yield put({
+      type: TASK_CREATE_SUCCESS,
+      meta,
+    });
     yield call(createTaskBatch, action, [
       { params: { specificationHash, domainId, skillId, dueDate } },
       { params: { fromPot, amount, token } },
@@ -117,6 +124,37 @@ function* taskCreateSaga(action: UniqueAction): Saga<void> {
     ]);
   } catch (error) {
     yield putError(TASK_CREATE_ERROR, error, meta);
+  }
+}
+
+const modifyWorkerPayoutBatch = createBatchTxRunner({
+  meta: { key: 'transaction.batch.modifyWorkerPayout' },
+  transactions: [
+    {
+      actionCreator: taskMoveFundsBatch,
+    },
+    {
+      actionCreator: taskSetWorkerPayoutBatch,
+    },
+  ],
+});
+
+function* taskModifyWorkerPayoutSaga(action: UniqueAction): Saga<void> {
+  const {
+    meta,
+    payload: { taskId, fromPot, toPot, amount, token },
+  } = action;
+  try {
+    yield put({
+      type: TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
+      meta,
+    });
+    yield call(modifyWorkerPayoutBatch, action, [
+      { params: { fromPot, toPot, amount, token } },
+      { params: { taskId, token, amount } },
+    ]);
+  } catch (error) {
+    yield putError(TASK_MODIFY_WORKER_PAYOUT_ERROR, error, meta);
   }
 }
 
@@ -545,6 +583,7 @@ function* taskFinalizeSaga({
 
 export default function* tasksSagas(): any {
   yield takeEvery(TASK_CREATE, taskCreateSaga);
+  yield takeEvery(TASK_MODIFY_WORKER_PAYOUT, taskModifyWorkerPayoutSaga);
   yield takeEvery(TASK_FETCH, taskFetchSaga);
   yield takeEvery(TASK_FETCH_ALL, taskFetchAllSaga);
   yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
