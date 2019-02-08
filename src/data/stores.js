@@ -23,6 +23,7 @@ import {
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
+// @TODO: Use an object instead of sequential arguments
 export const getColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
