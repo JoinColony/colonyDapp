@@ -335,7 +335,7 @@ export const getTaskComments: CommentQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => eventType === COMMENT_POSTED)
       .reduce(
-        (comments, { payload: { comment } }: CommentPostedEvent) => [
+        (comments, { payload: comment }: CommentPostedEvent) => [
           ...comments,
           comment,
         ],

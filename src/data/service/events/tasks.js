@@ -95,15 +95,13 @@ export type WorkRequestCreatedEvent = Event<
 >;
 
 export type CommentPostedEventArgs = {|
-  comment: {|
-    signature: string,
-    content: {|
-      id: string,
-      body: string,
-      timestamp: number,
-      metadata?: {|
-        mentions: string[],
-      |},
+  signature: string,
+  content: {|
+    id: string,
+    body: string,
+    timestamp: number,
+    metadata?: {|
+      mentions: string[],
     |},
   |},
 |};
