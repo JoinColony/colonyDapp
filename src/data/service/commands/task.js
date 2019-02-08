@@ -90,15 +90,13 @@ type SendWorkInviteCommandArgs = {|
 |};
 
 type PostCommentCommandArgs = {|
-  comment: {|
-    signature: string,
-    content: {|
-      id: string,
-      body: string,
-      timestamp: number,
-      metadata?: {|
-        mentions: string[],
-      |},
+  signature: string,
+  content: {|
+    id: string,
+    body: string,
+    timestamp: number,
+    metadata?: {|
+      mentions: string[],
     |},
   |},
 |};
@@ -253,15 +251,9 @@ export const postComment: CommentCommand<PostCommentCommandArgs, FeedStore> = ({
   metadata,
 }) => ({
   schema: PostCommentCommandArgsSchema,
-  async execute({ comment }) {
+  async execute(args) {
     const commentStore = await getCommentsStore(ddb)(metadata);
-
-    await commentStore.add(
-      createCommentPostedEvent({
-        comment,
-      }),
-    );
-
+    await commentStore.add(createCommentPostedEvent(args));
     return commentStore;
   },
 });
