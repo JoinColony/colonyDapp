@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { OrbitDBAddress } from '~types';
-import type { Command, DDBContext } from '../../types';
+import type { Command, Context, IPFSContext, DDBContext } from '../../types';
 import type {
   EventStore,
   FeedStore,
@@ -14,7 +14,6 @@ import {
   getUserMetadataStore,
 } from '../../stores';
 
-import { validate } from '../../utils';
 import { createNotificationsReadEvent } from '../events';
 
 import {
@@ -24,14 +23,26 @@ import {
   MarkNotificationsAsReadCommandArgsSchema,
 } from './schemas';
 
-export type UserCommandContext = DDBContext<{|
+type UserCommandMetadata = {|
   walletAddress: string,
   username?: string,
-|}>;
-export type UserMetadataCommandContext = DDBContext<{|
-  walletAddress: string,
-  userMetadataStoreAddress: string | OrbitDBAddress,
-|}>;
+|};
+
+export type UserCommandContext = Context<UserCommandMetadata, DDBContext>;
+
+export type UserAvatarCommandContext = Context<
+  UserCommandMetadata,
+  DDBContext & IPFSContext,
+>;
+
+export type UserMetadataCommandContext = Context<
+  {|
+    walletAddress: string,
+    userMetadataStoreAddress: string | OrbitDBAddress,
+  |},
+  DDBContext,
+>;
+
 export type UserCommand<I: *, R: *> = Command<UserCommandContext, I, R>;
 export type UserMetadataCommand<I: *, R: *> = Command<
   UserMetadataCommandContext,
@@ -76,32 +87,23 @@ export type MarkNotificationsAsReadCommandArgs = {|
 export const createUserProfile: UserCommand<
   CreateUserProfileCommandArgs,
   CreateUserProfileCommandReturn,
-> = ({ ddb, metadata: { walletAddress, username } }) => ({
-  async validate(args) {
-    return validate(CreateUserProfileCommandArgsSchema)(args);
-  },
+> = ({ ddb, metadata }) => ({
+  schema: CreateUserProfileCommandArgsSchema,
   async execute(args) {
-    const { displayName, bio, avatar, website, location } = args;
     const {
       profileStore,
       inboxStore,
       metadataStore,
-    } = await createUserProfileStore(ddb)({
-      walletAddress,
-      username,
-    });
+    } = await createUserProfileStore(ddb)(metadata);
 
+    const { walletAddress, username } = metadata;
     await profileStore.set({
       createdAt: Date.now(),
       walletAddress,
       username,
       inboxStoreAddress: inboxStore.address.toString(),
       metadataStoreAddress: metadataStore.address.toString(),
-      displayName,
-      bio,
-      avatar,
-      website,
-      location,
+      ...args,
     });
     await profileStore.load();
 
@@ -112,26 +114,12 @@ export const createUserProfile: UserCommand<
 export const updateUserProfile: UserCommand<
   UpdateUserProfileCommandArgs,
   ValidatedKVStore,
-> = ({ ddb, metadata: { walletAddress, username } }) => ({
-  async validate(args) {
-    return validate(UpdateUserProfileCommandArgsSchema)(args);
-  },
+> = ({ ddb, metadata }) => ({
+  schema: UpdateUserProfileCommandArgsSchema,
   async execute(args) {
-    const { displayName, bio, avatar, website, location } = args;
-    const profileStore = await getUserProfileStore(ddb)({
-      walletAddress,
-      username,
-    });
-
-    await profileStore.set({
-      displayName,
-      bio,
-      avatar,
-      website,
-      location,
-    });
+    const profileStore = await getUserProfileStore(ddb)(metadata);
+    await profileStore.set(args);
     await profileStore.load();
-
     return profileStore;
   },
 });
@@ -139,37 +127,24 @@ export const updateUserProfile: UserCommand<
 export const setUserAvatar: UserCommand<
   SetUserAvatarCommandArgs,
   ValidatedKVStore,
-> = ({ ddb, metadata: { walletAddress, username } }) => ({
-  async validate(args) {
-    return validate(SetUserAvatarCommandArgsSchema)(args);
-  },
+> = ({ ddb, metadata }) => ({
+  schema: SetUserAvatarCommandArgsSchema,
   async execute(args) {
-    const { avatar } = args;
-    const profileStore = await getUserProfileStore(ddb)({
-      walletAddress,
-      username,
-    });
-
-    await profileStore.set({ avatar });
+    const profileStore = await getUserProfileStore(ddb)(metadata);
+    await profileStore.set(args);
     await profileStore.load();
-
     return profileStore;
   },
 });
 
-export const removeUserAvatar: UserCommand<*, ValidatedKVStore> = ({
+export const removeUserAvatar: UserCommand<void, ValidatedKVStore> = ({
   ddb,
-  metadata: { walletAddress, username },
+  metadata,
 }) => ({
   async execute() {
-    const profileStore = await getUserProfileStore(ddb)({
-      walletAddress,
-      username,
-    });
-
+    const profileStore = await getUserProfileStore(ddb)(metadata);
     await profileStore.set({ avatar: null });
     await profileStore.load();
-
     return profileStore;
   },
 });
@@ -177,24 +152,11 @@ export const removeUserAvatar: UserCommand<*, ValidatedKVStore> = ({
 export const markNotificationsAsRead: UserMetadataCommand<
   MarkNotificationsAsReadCommandArgs,
   EventStore,
-> = ({ ddb, metadata: { walletAddress, userMetadataStoreAddress } }) => ({
-  async validate(args) {
-    return validate(MarkNotificationsAsReadCommandArgsSchema)(args);
-  },
+> = ({ ddb, metadata }) => ({
+  schema: MarkNotificationsAsReadCommandArgsSchema,
   async execute(args) {
-    const { readUntil, exceptFor } = args;
-    const userMetadataStore = await getUserMetadataStore(ddb)({
-      walletAddress,
-      userMetadataStoreAddress,
-    });
-
-    await userMetadataStore.append(
-      createNotificationsReadEvent({
-        readUntil,
-        exceptFor,
-      }),
-    );
-
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createNotificationsReadEvent(args));
     return userMetadataStore;
   },
 });

@@ -3,11 +3,16 @@
 import pSeries from 'p-series';
 
 import type { Address, ENSName } from '~types';
-import type { Command, ContractContext } from '../../types';
+import type {
+  ColonyClientContext,
+  Command,
+  Context,
+  DDBContext,
+  WalletContext,
+} from '../../types';
 import type { EventStore } from '../../../lib/database/stores';
 
 import { getColonyStore, createColonyStore } from '../../stores';
-import { validate } from '../../utils';
 import {
   createColonyAvatarRemovedEvent,
   createColonyAvatarUploadedEvent,
@@ -25,10 +30,14 @@ import {
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
-export type ColonyContext = ContractContext<{|
-  colonyENSName: string | ENSName,
-  colonyAddress: Address,
-|}>;
+export type ColonyContext = Context<
+  {|
+    colonyENSName: string | ENSName,
+    colonyAddress: Address,
+  |},
+  ColonyClientContext & WalletContext & DDBContext,
+>;
+
 export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
 
 type CreateColonyProfileCommandArgs = {|
@@ -55,21 +64,16 @@ type UpdateColonyProfileCommandArgs = {|
 |};
 
 type SetColonyAvatarCommandArgs = {|
-  address: Address,
-  ensName: string,
   avatar: string,
   ipfsHash: string,
 |};
 
 type RemoveColonyAvatarCommandArgs = {|
-  address: Address,
-  ensName: string,
   ipfsHash: string,
 |};
 
 type CreateDomainCommandArgs = {|
-  address: Address,
-  ensName: string,
+  name: string,
   domainId: number,
 |};
 
@@ -81,12 +85,10 @@ export const createColonyProfile: ColonyCommand<
   colonyClient,
   wallet,
   metadata: { colonyAddress, colonyENSName },
+  metadata,
 }) => ({
-  async validate(args) {
-    return validate(CreateColonyProfileCommandArgsSchema)(args);
-  },
-  async execute(args) {
-    const { name, description, guideline, website, token } = args;
+  schema: CreateColonyProfileCommandArgsSchema,
+  async execute({ name, description, guideline, website, token }) {
     const profileCreatedEvent = createColonyProfileCreatedEvent({
       address: colonyAddress,
       ensName: colonyENSName,
@@ -97,9 +99,9 @@ export const createColonyProfile: ColonyCommand<
     });
     const tokenInfoAddedEvent = createTokenInfoAddedEvent(token);
 
-    const colonyStore = await createColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-    });
+    const colonyStore = await createColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
     await colonyStore.load();
 
     await pSeries(
@@ -115,29 +117,13 @@ export const createColonyProfile: ColonyCommand<
 export const createDomain: ColonyCommand<
   CreateDomainCommandArgs,
   EventStore,
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(CreateDomainCommandArgsSchema)(args);
-  },
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: CreateDomainCommandArgsSchema,
   async execute(args) {
-    const { domainId } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(
-      createDomainCreatedEvent({
-        domainId,
-        colonyENSName,
-      }),
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
     );
-
+    await colonyStore.append(createDomainCreatedEvent(args));
     return colonyStore;
   },
 });
@@ -145,31 +131,13 @@ export const createDomain: ColonyCommand<
 export const updateColonyProfile: ColonyCommand<
   UpdateColonyProfileCommandArgs,
   EventStore,
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(UpdateColonyProfileCommandArgsSchema)(args);
-  },
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: UpdateColonyProfileCommandArgsSchema,
   async execute(args) {
-    const { name, description, guideline, website } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(
-      createColonyProfileUpdatedEvent({
-        name,
-        description,
-        guideline,
-        website,
-      }),
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
     );
-
+    await colonyStore.append(createColonyProfileUpdatedEvent(args));
     return colonyStore;
   },
 });
@@ -177,26 +145,13 @@ export const updateColonyProfile: ColonyCommand<
 export const setColonyAvatar: ColonyCommand<
   SetColonyAvatarCommandArgs,
   EventStore,
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(SetColonyAvatarCommandArgsSchema)(args);
-  },
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: SetColonyAvatarCommandArgsSchema,
   async execute(args) {
-    const { ipfsHash, avatar } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(
-      createColonyAvatarUploadedEvent({ ipfsHash, avatar }),
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
     );
-
+    await colonyStore.append(createColonyAvatarUploadedEvent(args));
     return colonyStore;
   },
 });
@@ -204,23 +159,13 @@ export const setColonyAvatar: ColonyCommand<
 export const removeColonyAvatar: ColonyCommand<
   RemoveColonyAvatarCommandArgs,
   EventStore,
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(RemoveColonyAvatarCommandArgsSchema)(args);
-  },
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: RemoveColonyAvatarCommandArgsSchema,
   async execute(args) {
-    const { ipfsHash } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(createColonyAvatarRemovedEvent({ ipfsHash }));
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
+    await colonyStore.append(createColonyAvatarRemovedEvent(args));
     return colonyStore;
   },
 });

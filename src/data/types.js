@@ -1,8 +1,13 @@
 /* @flow */
 
-import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type {
+  ColonyClient as ColonyClientType,
+  ColonyNetworkClient as NetworkClientType,
+} from '@colony/colony-js-client';
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-import type { DDB } from '../lib/database';
+import type { Schema as SchemaType } from 'yup';
+import type { DDB as DDBType } from '../lib/database';
+import type IPFSNodeType from '../lib/ipfs';
 
 /*
  * The specification for a store command.
@@ -16,34 +21,39 @@ export type Command<C: *, I: *, R: *> = C => {|
    * (this usually performs a write of some kind).
    */
   execute: (args: I) => Promise<R>,
-  validate?: (args: I) => Promise<I>,
+  schema?: SchemaType,
 |};
 
 export type Query<C: *, I: *, R: *> = C => {|
   execute: (args: I) => Promise<R>,
 |};
 
-export type DDBContext<M: *> = {|
-  ddb: DDB,
-  metadata: M,
-|};
+/*
+ * M: metadata object
+ * R: rest object (e.g. `DDBContext & IPFSContext`)
+ */
+export type Context<M: *, R: *> = {| metadata: M, ...R |};
 
-export type ContractContext<M: *> = {|
-  ddb: DDB,
-  metadata: M,
-  colonyClient: ColonyClientType,
-  wallet: WalletObjectType,
-|};
+export type DDBContext = {| ddb: DDBType |};
 
-export type EventPayload = {|
+export type IPFSContext = {| ipfsNode: IPFSNodeType |};
+
+export type ColonyClientContext = {| colonyClient: ColonyClientType |};
+
+export type NetworkClientContext = {| networkClient: NetworkClientType |};
+
+export type WalletContext = {| wallet: WalletObjectType |};
+
+export type EventPayload<I: *> = {|
   id: string,
   timestamp: number,
   version: number,
+  ...I,
 |};
 
-export type Event<T: string, P: EventPayload> = {|
+export type Event<T: string, I: *> = {|
   type: T,
-  payload: P,
+  payload: EventPayload<I>,
 |};
 
 export type EventCreator<I: Object, O: Event<*, *>> = (args: I) => O;

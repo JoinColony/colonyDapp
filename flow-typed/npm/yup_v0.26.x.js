@@ -17,9 +17,12 @@ declare module 'yup' {
 
   declare export type Validate = (value: any, options?: ValidateOptions) => Promise<any>;
 
+  declare export type ValidateSync = (value: any, options?: ValidateOptions) => any;
+
   declare export interface Schema {
     isValid: IsValid;
     validate: Validate;
+    validateSync: ValidateSync;
     shape(props?: Object): *;
   }
 
