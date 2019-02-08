@@ -10,6 +10,7 @@ import {
   USER_UPLOAD_AVATAR_SUCCESS,
   USER_REMOVE_AVATAR_SUCCESS,
   USERNAME_CREATE_SUCCESS,
+  CURRENT_USER_GET_BALANCE_SUCCESS,
 } from '../actionTypes';
 
 import { User, UserProfile } from '~immutable';
@@ -26,8 +27,10 @@ const INITIAL_STATE = null;
 const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
   switch (action.type) {
     case CURRENT_USER_CREATE: {
-      const { profileData, walletAddress } = action.payload;
-      return User({ profile: UserProfile({ ...profileData, walletAddress }) });
+      const { profileData, walletAddress, balance } = action.payload;
+      return User({
+        profile: UserProfile({ ...profileData, walletAddress, balance }),
+      });
     }
     case USER_ACTIVITIES_UPDATE_SUCCESS: {
       const { activities } = action.payload;
@@ -63,6 +66,10 @@ const currentUserReducer = (state: State = INITIAL_STATE, action: Action) => {
     }
     case USER_REMOVE_AVATAR_SUCCESS: {
       return state ? state.setIn(['profile', 'avatar'], undefined) : state;
+    }
+    case CURRENT_USER_GET_BALANCE_SUCCESS: {
+      const { balance } = action.payload;
+      return state ? state.setIn(['profile', 'balance'], balance) : state;
     }
     default:
       return state;

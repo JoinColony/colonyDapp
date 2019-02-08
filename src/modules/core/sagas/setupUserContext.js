@@ -3,6 +3,7 @@
 import type { Saga } from 'redux-saga';
 
 import { setContext, call, all, put, fork } from 'redux-saga/effects';
+import { formatEther } from 'ethers/utils';
 
 import { create, putError } from '~utils/saga/effects';
 import { CONTEXT } from '~context';
@@ -24,7 +25,7 @@ import {
   WALLET_CREATE_ERROR,
 } from '../../users/actionTypes';
 
-import { getDDB, getColonyManager } from './utils';
+import { getDDB, getColonyManager, defaultNetwork, getProvider } from './utils';
 
 import * as resolvers from '../../../lib/database/resolvers';
 
@@ -46,6 +47,7 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
   const { meta } = action;
   try {
     const wallet = yield call(getWallet, action);
+    const provider = yield call(getProvider, defaultNetwork);
     yield setContext({ [CONTEXT.WALLET]: wallet });
     const [ddb, colonyManager] = yield all([
       call(getDDB),
@@ -78,6 +80,14 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
       userStore,
     );
 
+    /*
+     * @NOTE Wallet balance is returned as a BigNumber instance, in WEI
+     */
+    const walletBalance = yield call(
+      [provider, provider.getBalance],
+      wallet.address,
+    );
+
     // TODO: the user could potentially alter their username on the DDB w/o changing it on the DDB
 
     // This needs to happen first because CURRENT_USER_CREATE causes a redirect
@@ -91,6 +101,7 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
       payload: {
         profileData,
         walletAddress: wallet.address,
+        balance: formatEther(walletBalance),
       },
       meta,
     });

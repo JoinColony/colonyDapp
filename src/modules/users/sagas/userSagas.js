@@ -11,6 +11,7 @@ import {
   takeLatest,
   takeEvery,
 } from 'redux-saga/effects';
+import { formatEther } from 'ethers/utils';
 
 import type {
   Action,
@@ -41,7 +42,11 @@ import {
 import { ValidatedKVStore } from '../../../lib/database/stores';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getAll } from '../../../lib/database/commands';
-import { getNetworkMethod } from '../../core/sagas/utils';
+import {
+  getNetworkMethod,
+  getProvider,
+  defaultNetwork,
+} from '../../core/sagas/utils';
 import { joinedColonyEvent } from '../../dashboard/components/UserActivities';
 import {
   currentUserAddressSelector,
@@ -82,6 +87,9 @@ import {
   USERNAME_FETCH,
   USERNAME_FETCH_ERROR,
   USERNAME_FETCH_SUCCESS,
+  CURRENT_USER_GET_BALANCE,
+  CURRENT_USER_GET_BALANCE_SUCCESS,
+  CURRENT_USER_GET_BALANCE_ERROR,
 } from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
 
@@ -435,6 +443,29 @@ function* fetchTokenTransfers(): Saga<void> {
   }
 }
 
+function* updateWalletBalance(): Saga<void> {
+  const currentUserAddress = yield select(currentUserAddressSelector);
+
+  try {
+    const provider = yield call(getProvider, defaultNetwork);
+    /*
+     * @NOTE Wallet balance is returned as a BigNumber instance, in WEI
+     */
+    const walletBalance = yield call(
+      [provider, provider.getBalance],
+      currentUserAddress,
+    );
+    yield put({
+      type: CURRENT_USER_GET_BALANCE_SUCCESS,
+      payload: {
+        balance: formatEther(walletBalance),
+      },
+    });
+  } catch (error) {
+    yield putError(CURRENT_USER_GET_BALANCE_ERROR, error);
+  }
+}
+
 export function* setupUserSagas(): any {
   yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
   yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
@@ -442,6 +473,7 @@ export function* setupUserSagas(): any {
   yield takeLatest(USERNAME_CREATE, createUsername);
   yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
   yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
+  yield takeLatest(CURRENT_USER_GET_BALANCE, updateWalletBalance);
   yield takeEvery(USER_ACTIVITIES_FETCH, fetchUserActivities);
   yield takeEvery(USERNAME_FETCH, fetchUsername);
   yield takeEvery(USER_PROFILE_FETCH, fetchProfile);

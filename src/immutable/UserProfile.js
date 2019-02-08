@@ -9,6 +9,7 @@ import type { Address, ENSName } from '../types';
 export type UserProfileProps = {
   activitiesStore: string,
   avatar?: string,
+  balance?: string,
   bio?: string,
   displayName?: string,
   location?: string,
@@ -23,6 +24,7 @@ export type UserProfileRecord = RecordOf<UserProfileProps>;
 const defaultProps: $Shape<UserProfileProps> = {
   activitiesStore: undefined,
   avatar: undefined,
+  balance: undefined,
   bio: undefined,
   displayName: undefined,
   location: undefined,

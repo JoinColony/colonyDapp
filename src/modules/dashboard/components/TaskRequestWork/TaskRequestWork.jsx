@@ -4,9 +4,11 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { OpenDialog } from '~core/Dialog/types';
+import type { UserRecord } from '~immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
 const MSG = defineMessages({
   requestWork: {
@@ -22,38 +24,24 @@ type Props = {
    * @TODO Interaction for this button if the user is the task creator
    */
   isTaskCreator: boolean,
-  /*
-   * If the user hasn't yet claimed the profile show the call to action dialog,
-   * and prevent normal functionality of requesting to work on the task
-   */
-  claimedProfile: boolean,
   openDialog: OpenDialog,
-  walletAddress: string,
+  currentUser: UserRecord,
 };
 
 const TaskRequestWork = ({
   isTaskCreator,
-  claimedProfile = false,
   openDialog,
-  walletAddress,
+  currentUser: {
+    didClaimProfile = false,
+    profile: { balance },
+  },
 }: Props) => (
   <Button
     text={MSG.requestWork}
     disabled={!isTaskCreator}
     onClick={() => {
-      if (!claimedProfile) {
-        return openDialog('UnfinishedProfileDialog')
-          .afterClosed()
-          .then(() =>
-            openDialog('ClaimProfileDialog', { walletAddress })
-              .afterClosed()
-              .then(() => openDialog('ENSNameDialog'))
-              .catch(err => {
-                // eslint-disable-next-line no-console
-                console.log(err);
-              }),
-          );
-        // TODO: Open Gasstation after the last modal
+      if (!didClaimProfile) {
+        return unfinishedProfileOpener(openDialog, balance);
       }
       return false;
     }}

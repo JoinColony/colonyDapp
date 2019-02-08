@@ -66,6 +66,11 @@ export const currentUserAddressSelector = createSelector(
   user => (user ? user.profile.walletAddress : null),
 );
 
+export const currentUserBalanceSelector = createSelector(
+  currentUser,
+  user => (user ? user.profile.balance : 0),
+);
+
 export const userFromAddressSelector = createSelector(
   allUsersSelector,
   usernameFromAddressProp,

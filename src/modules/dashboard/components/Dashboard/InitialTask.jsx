@@ -4,12 +4,16 @@ import type { MessageDescriptor, FormattedMessageValues } from 'react-intl';
 
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
 import type { OpenDialog } from '~core/Dialog/types';
+import type { UserRecord } from '~immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import { withCurrentUser } from '../../../users/hocs';
 
 import styles from './InitialTask.css';
 
@@ -22,6 +26,7 @@ export type InitialTaskType = {
 type Props = {
   task: InitialTaskType,
   openDialog: OpenDialog,
+  currentUser: UserRecord,
 };
 
 const displayName = 'dashboard.Dashboard.InitialTask';
@@ -29,6 +34,9 @@ const displayName = 'dashboard.Dashboard.InitialTask';
 const InitialTask = ({
   task: { title, titleValues, walletAddress },
   openDialog,
+  currentUser: {
+    profile: { balance },
+  },
 }: Props) => (
   <div className={styles.main}>
     <Table>
@@ -38,19 +46,7 @@ const InitialTask = ({
             <button
               className={styles.taskDetailsTitle}
               type="button"
-              onClick={() =>
-                openDialog('UnfinishedProfileDialog')
-                  .afterClosed()
-                  .then(() =>
-                    openDialog('ClaimProfileDialog', { walletAddress })
-                      .afterClosed()
-                      .then(() => openDialog('ENSNameDialog'))
-                      .catch(err => {
-                        // eslint-disable-next-line no-console
-                        console.log(err);
-                      }),
-                  )
-              }
+              onClick={() => unfinishedProfileOpener(openDialog, balance)}
             >
               <FormattedMessage {...title} values={titleValues} />
             </button>
@@ -66,4 +62,9 @@ const InitialTask = ({
 
 InitialTask.displayName = displayName;
 
-export default withDialog()(InitialTask);
+const enhance = compose(
+  withCurrentUser,
+  withDialog(),
+);
+
+export default enhance(InitialTask);

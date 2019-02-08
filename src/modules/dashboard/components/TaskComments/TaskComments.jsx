@@ -8,10 +8,12 @@ import * as yup from 'yup';
 import promiseListener from '../../../../createPromiseListener';
 
 import type { OpenDialog } from '~core/Dialog/types';
+import type { UserRecord } from '~immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
 import { ENTER } from './keyTypes';
 
@@ -50,13 +52,8 @@ type FormValues = {
 };
 
 type Props = {
-  /*
-   * If the user hasn't yet claimed the profile show the call to action dialog,
-   * and prevent normal functionality of requesting to work on the task
-   */
-  claimedProfile: boolean,
+  currentUser: UserRecord,
   openDialog: OpenDialog,
-  walletAddress: string,
   draftId: string,
 } & FormikProps<FormValues>;
 
@@ -67,9 +64,11 @@ const validationSchema = yup.object().shape({
 });
 
 const TaskComments = ({
-  claimedProfile,
   openDialog,
-  walletAddress,
+  currentUser: {
+    didClaimProfile = false,
+    profile: { balance, walletAddress },
+  },
   draftId,
 }: Props) => {
   const addComment = promiseListener.createAsyncFunction({
@@ -110,18 +109,8 @@ const TaskComments = ({
   };
 
   const handleUnclaimedProfile = () => {
-    if (!claimedProfile) {
-      return openDialog('UnfinishedProfileDialog')
-        .afterClosed()
-        .then(() =>
-          openDialog('ClaimProfileDialog', { walletAddress })
-            .afterClosed()
-            .then(() => openDialog('ENSNameDialog'))
-            .catch(err => {
-              // eslint-disable-next-line no-console
-              console.log(err);
-            }),
-        );
+    if (!didClaimProfile) {
+      return unfinishedProfileOpener(openDialog, balance);
     }
     return false;
   };
@@ -170,13 +159,13 @@ const TaskComments = ({
               maxRows={8}
               onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
               value={values.comment || ''}
-              disabled={!claimedProfile || isSubmitting}
+              disabled={!didClaimProfile || isSubmitting}
             />
             <FormStatus status={status} />
             <div className={styles.commentControls}>
               <Button
                 loading={isSubmitting}
-                disabled={!claimedProfile || !isValid}
+                disabled={!didClaimProfile || !isValid}
                 text={MSG.button}
                 type="submit"
                 style={{ width: styles.wideButton }}

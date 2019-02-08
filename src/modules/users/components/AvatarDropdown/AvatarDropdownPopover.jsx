@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { OpenDialog } from '~core/Dialog/types';
 import withDialog from '~core/Dialog/withDialog';
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
 import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
 import DropdownMenu, {
@@ -64,21 +65,10 @@ class AvatarDropdownPopover extends Component<Props> {
     const {
       openDialog,
       user: {
-        profile: { walletAddress },
+        profile: { balance },
       },
     } = this.props;
-
-    return openDialog('UnfinishedProfileDialog')
-      .afterClosed()
-      .then(() =>
-        openDialog('ClaimProfileDialog', { walletAddress })
-          .afterClosed()
-          .then(() => openDialog('ENSNameDialog'))
-          .catch(err => {
-            // eslint-disable-next-line no-console
-            console.log(err);
-          }),
-      );
+    return unfinishedProfileOpener(openDialog, balance);
   };
 
   renderUserSection = () => {

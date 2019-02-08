@@ -1,12 +1,15 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 import type { OpenDialog } from '~core/Dialog/types';
+import type { UserRecord } from '~immutable';
+
+import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import { withCurrentUser } from '../../../hocs';
 
 import {
   USER_PROFILE_UPDATE,
@@ -66,7 +69,7 @@ type FormValues = {
 
 type Props = WizardProps<FormValues> & {
   openDialog: OpenDialog,
-  user: { walletAddress: string },
+  currentUser: UserRecord,
 };
 
 type State = {};
@@ -75,20 +78,13 @@ const displayName = 'users.ConnectWalletWizard.StepDisplayName';
 
 class StepDisplayName extends Component<Props, State> {
   progressWithDialog = () => {
-    const { openDialog, user } = this.props;
-    return openDialog('UnfinishedProfileDialog')
-      .afterClosed()
-      .then(() =>
-        openDialog('ClaimProfileDialog', {
-          walletAddress: user ? user.walletAddress : '',
-        })
-          .afterClosed()
-          .then(() => openDialog('ENSNameDialog'))
-          .catch(err => {
-            // eslint-disable-next-line no-console
-            console.log(err);
-          }),
-      );
+    const {
+      openDialog,
+      currentUser: {
+        profile: { balance },
+      },
+    } = this.props;
+    return unfinishedProfileOpener(openDialog, balance);
   };
 
   render() {
@@ -139,8 +135,4 @@ class StepDisplayName extends Component<Props, State> {
 
 StepDisplayName.displayName = displayName;
 
-const enhance = connect(({ user }) => ({
-  user,
-}));
-
-export default enhance(StepDisplayName);
+export default withCurrentUser(StepDisplayName);

@@ -1,9 +1,13 @@
 /* @flow */
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { connect } from 'react-redux';
+import BigNumber from 'bn.js';
 
 import Card from '~core/Card';
 import Heading from '~core/Heading';
+
+import { currentUserBalanceSelector } from '../../../selectors';
 
 import styles from './GasStationClaimCard.css';
 
@@ -27,6 +31,7 @@ sign your first transaction and finish setting up your account.`,
  */
 type Props = {
   numberOfSteps?: number,
+  balance: string,
 };
 
 const displayName = 'users.GasStation.GasStationClaimCard';
@@ -37,24 +42,31 @@ const displayName = 'users.GasStation.GasStationClaimCard';
  * Otherwise, when dismissed, it will still render the wrapper (without any content)
  * and the `CardList` grid will add gaps and styles to it
  */
-const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => (
-  <Card
-    className={styles.main}
-    isDismissible
-    /* eslint-disable-next-line no-console */
-    onCardDismissed={() => console.log('Dismissed')}
-  >
-    <Heading
-      appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
-      text={MSG.headingText}
-      textValues={{
-        numberOfSteps,
-      }}
-    />
-    <FormattedMessage {...MSG.bodyText} />
-  </Card>
-);
+const GasStationClaimCard = ({ numberOfSteps = 3, balance }: Props) => {
+  const bigNumberBalance = new BigNumber(balance);
+  return (
+    <Card
+      className={styles.main}
+      isDismissible
+      /* eslint-disable-next-line no-console */
+      onCardDismissed={() => console.log('Dismissed')}
+    >
+      <Heading
+        appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+        text={MSG.headingText}
+        textValues={{
+          numberOfSteps: bigNumberBalance.gt(new BigNumber(0))
+            ? 2
+            : numberOfSteps,
+        }}
+      />
+      <FormattedMessage {...MSG.bodyText} />
+    </Card>
+  );
+};
 
 GasStationClaimCard.displayName = displayName;
 
-export default GasStationClaimCard;
+export default connect(state => ({
+  balance: currentUserBalanceSelector(state),
+}))(GasStationClaimCard);
