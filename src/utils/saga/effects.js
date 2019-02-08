@@ -58,11 +58,7 @@ export const raceError = (
   return call(raceErrorGenerator);
 };
 
-/**
- * Gets the caller from the colonyManager and calls it with the given
- * parameters. If no colonyENSName, network context is assumed.
- */
-export function* callCaller({
+function* callCallerSaga({
   context,
   identifier,
   methodName,
@@ -73,8 +69,8 @@ export function* callCaller({
   methodName: string,
   params?: Object,
 }): Saga<*> {
+  // TODO typing could be better here, params and return value :-(
   const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-  // TODO typing could be better here
   const caller = yield call(
     [colonyManager, colonyManager.getMethod],
     context,
@@ -83,6 +79,17 @@ export function* callCaller({
   );
   return yield call([caller, caller.call], params);
 }
+
+/*
+ * Gets the caller from the colonyManager and calls it with the given
+ * parameters. If no colonyENSName, network context is assumed.
+ */
+export const callCaller = (args: {
+  context: 'colony' | 'network',
+  identifier?: ENSName,
+  methodName: string,
+  params?: Object,
+}) => call(callCallerSaga, args);
 
 export function executeQuery<C: *, I: *, R: *>(
   context: C,
