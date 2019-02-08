@@ -1,12 +1,13 @@
 /* @flow */
 
 import { Record } from 'immutable';
+import BigNumber from 'bn.js';
 
 import type { Address } from '~types';
 
 export type TokenProps = {
   address: Address,
-  balance: number,
+  balance: BigNumber,
   icon: string,
   isBlocked?: boolean,
   isEnabled?: boolean,
@@ -36,7 +37,7 @@ class TokenClass extends Record(defaultValues)<TokenProps> {
   /* eslint-disable */
   /*::
   address: Address;
-  balance: number;
+  balance: BigNumber;
   icon: string;
   isBlocked: boolean;
   isEnabled: boolean;
