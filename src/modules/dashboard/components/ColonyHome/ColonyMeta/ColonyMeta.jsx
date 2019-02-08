@@ -68,16 +68,21 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
         className={styles.avatar}
         size="xl"
       />
-      <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
-        <Fragment>
-          <span>{name}</span>
-          {isAdmin && (
-            <Link className={styles.editColony} to={`/colony/${ensName}/admin`}>
-              <Icon name="settings" title={MSG.editColonyTitle} />
-            </Link>
-          )}
-        </Fragment>
-      </Heading>
+      <section className={styles.headingWrapper}>
+        <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
+          <Fragment>
+            <span>{name}</span>
+            {isAdmin && (
+              <Link
+                className={styles.editColony}
+                to={`/colony/${ensName}/admin`}
+              >
+                <Icon name="settings" title={MSG.editColonyTitle} />
+              </Link>
+            )}
+          </Fragment>
+        </Heading>
+      </section>
       {description && (
         <section className={styles.description}>
           <p>{description}</p>
