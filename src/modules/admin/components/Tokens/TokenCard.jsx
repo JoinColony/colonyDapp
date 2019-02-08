@@ -44,7 +44,7 @@ const TokenCard = ({
         isNotPositive ? styles.balanceNotPositive : styles.balanceContent
       }
     >
-      {balance.toFixed(2)}
+      {balance.toNumber().toFixed(2)}
     </div>
     <div className={styles.cardFooter}>
       {isEth && <EthUsd value={balance} decimals={3} />}
