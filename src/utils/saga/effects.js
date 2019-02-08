@@ -7,6 +7,7 @@ import { call, put, race, take } from 'redux-saga/effects';
 import type { ENSName, TakeFilter } from '~types';
 import type { Command, Query } from '../../data/types';
 
+import { validateSync } from '~utils/yup';
 import { isDev, log } from '~utils/debug';
 import { getContext, CONTEXT } from '~context';
 
@@ -101,12 +102,12 @@ export function executeCommand<C: *, I: *, R: *>(
   return call(execute, args);
 }
 
-export function* validateAndExecuteCommand<C: *, I: *, R: *>(
+export function validateAndExecuteCommand<C: *, I: *, R: *>(
   context: C,
   command: Command<C, I, R>,
   args: I,
 ): Saga<R> {
-  const { execute, validate } = command(context);
-  const sanitizedArgs = validate ? yield* call(validate, args) : args;
-  return call(execute, sanitizedArgs);
+  const { execute, schema } = command(context);
+  const maybeSanitizedArgs = schema ? validateSync(schema)(args) : args;
+  return call(execute, maybeSanitizedArgs);
 }

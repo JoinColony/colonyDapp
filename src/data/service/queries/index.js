@@ -1,7 +1,14 @@
 /* @flow */
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { Query, DDBContext, ContractContext, Event } from '../../types';
+import type {
+  ColonyClientContext,
+  Context,
+  DDBContext,
+  Event,
+  Query,
+  WalletContext,
+} from '../../types';
 import type {
   DomainCreatedEvent,
   CommentPostedEvent,
@@ -38,22 +45,38 @@ const {
 
 // const { READ_UNTIL } = USER_EVENT_TYPES;
 
-export type ColonyQueryContext = ContractContext<{|
-  colonyENSName: string | ENSName,
-  colonyAddress: Address,
-|}>;
-export type TaskQueryContext = ContractContext<{|
-  colonyENSName: string | ENSName,
-  colonyAddress: Address,
-  taskStoreAddress: string | OrbitDBAddress,
-|}>;
-export type CommentQueryContext = DDBContext<{|
-  commentStoreAddress: string | OrbitDBAddress,
-|}>;
-export type UserQueryContext = DDBContext<{|
-  walletAddress: string,
-  username?: string,
-|}>;
+export type ColonyQueryContext = Context<
+  {|
+    colonyENSName: string | ENSName,
+    colonyAddress: Address,
+  |},
+  ColonyClientContext & DDBContext & WalletContext,
+>;
+
+export type TaskQueryContext = Context<
+  {|
+    colonyENSName: string | ENSName,
+    colonyAddress: Address,
+    taskStoreAddress: string | OrbitDBAddress,
+  |},
+  ColonyClientContext & DDBContext & WalletContext,
+>;
+
+export type CommentQueryContext = Context<
+  {|
+    commentStoreAddress: string | OrbitDBAddress,
+  |},
+  DDBContext,
+>;
+
+export type UserQueryContext = Context<
+  {|
+    walletAddress: string,
+    username?: string,
+  |},
+  DDBContext,
+>;
+
 export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
 export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
 export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
