@@ -13,10 +13,16 @@ import { transactionAddProperties } from '../../actionCreators';
 import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../actionTypes';
 import { oneTransaction } from '../../selectors';
 
+type ArrayOfTransactions = TransactionRecord<*, *>[];
+
 type TransactionInstruction<P> = {
   actionCreator: TxActionCreator<P>,
-  transferParams?: (TransactionRecord<*, *>[]) => Object | void,
-  transferIdentifier?: (TransactionRecord<*, *>[]) => string | void,
+  before?: ArrayOfTransactions => any,
+  transferParams?: (ArrayOfTransactions, beforeResult?: any) => Object | void,
+  transferIdentifier?: (
+    ArrayOfTransactions,
+    beforeResult?: any,
+  ) => string | void,
 };
 
 type BatchFactoryOptions = {
@@ -28,18 +34,26 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
   function* waitForNext(
     txId: string,
     idx: number = 0,
-    transactions: TransactionRecord<*, *>[] = [],
-  ) {
+    transactions: ArrayOfTransactions = [],
+  ): Saga<ArrayOfTransactions> {
     const batchedTxId = `${txId}-${idx}`;
-    const { transferParams, transferIdentifier } = txOptions.transactions[idx];
+    const {
+      before,
+      transferParams,
+      transferIdentifier,
+    } = txOptions.transactions[idx];
 
     if (transactions.length && (transferParams || transferIdentifier)) {
       const payload = {};
+      let result;
+      if (typeof before === 'function') {
+        result = yield call(before, transactions);
+      }
       if (transferParams) {
-        payload.params = transferParams(transactions);
+        payload.params = transferParams(transactions, result);
       }
       if (transferIdentifier) {
-        payload.identifier = transferIdentifier(transactions);
+        payload.identifier = transferIdentifier(transactions, result);
       }
       // This will make the transaction `ready`, so that the user can sign it
       yield put(transactionAddProperties(batchedTxId, payload));
@@ -62,13 +76,17 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
       transactions.push(transaction);
       yield call(waitForNext, txId, idx + 1, transactions);
     }
+    return transactions;
   }
 
   function* batchSaga(
     action: UniqueAction,
     // chris: There might be a way to type this better but for me it seems close to impossible
-    actionCreatorOptions: $ReadOnlyArray<{ options: Object, params: Object }>,
-  ): Saga<void> {
+    actionCreatorOptions: $ReadOnlyArray<?{
+      options?: Object,
+      params: Object,
+    }>,
+  ): Saga<ArrayOfTransactions> {
     const { meta } = action;
     for (let i = 0; i < txOptions.transactions.length; i += 1) {
       const {
@@ -84,7 +102,7 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
       };
       yield put(actionCreator(actionCreatorOpts));
     }
-    yield call(waitForNext, meta.id);
+    return yield call(waitForNext, meta.id);
   }
 
   return batchSaga;

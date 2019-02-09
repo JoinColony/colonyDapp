@@ -40,7 +40,8 @@ type TxFactoryOptions = {
   context: ColonyContext,
   group?: {
     key: string,
-    no: number,
+    id: string | string[],
+    index: number,
   },
   lifecycle?: LifecycleActionTypes,
   methodName: string,

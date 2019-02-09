@@ -21,8 +21,9 @@ import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { set, getAll } from '../../../lib/database/commands';
 
+import { createBatchTxRunner } from '../../core/sagas/transactions';
+
 import { colonyStoreBlueprint } from '../stores';
-import { fetchColonyStore, getOrCreateDomainsIndexStore } from './shared';
 
 import {
   COLONY_AVATAR_FETCH,
@@ -35,6 +36,8 @@ import {
   COLONY_AVATAR_UPLOAD_ERROR,
   COLONY_AVATAR_UPLOAD_SUCCESS,
   COLONY_CREATE,
+  COLONY_CREATE_ERROR,
+  COLONY_CREATE_SUCCESS,
   COLONY_CREATE_LABEL,
   COLONY_CREATE_LABEL_SUCCESS,
   COLONY_DOMAIN_VALIDATE,
@@ -51,7 +54,13 @@ import {
   COLONY_PROFILE_UPDATE_SUCCESS,
 } from '../actionTypes';
 
-import { createColony, createColonyLabel } from '../actionCreators';
+import {
+  createColony,
+  createColonyLabel,
+  createToken,
+} from '../actionCreators';
+
+import { fetchColonyStore, getOrCreateDomainsIndexStore } from './shared';
 
 function* getOrCreateColonyStore(colonyENSName: ENSName) {
   /*
@@ -70,6 +79,74 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
   }
 
   return store;
+}
+
+function* createColonyStoreNew(transactions) {
+  const [, { eventData }] = transactions;
+  const colonyAddress = eventData && eventData.colonyAddress;
+  // TODO Do the store creation here, return actual store address
+  const tempStoreAddress = yield colonyAddress;
+  return tempStoreAddress;
+}
+
+const createColonyBatch = createBatchTxRunner({
+  meta: { key: 'transaction.batch.createColony' },
+  transactions: [
+    {
+      actionCreator: createToken,
+    },
+    {
+      actionCreator: createColony,
+      // We get all previous transactions as an array
+      // Return value will be merged as params into the next tx
+      transferParams: ([{ receipt }]) => ({
+        tokenAddress: receipt && receipt.contractAddress,
+      }),
+    },
+    {
+      actionCreator: createColonyLabel,
+      before: createColonyStoreNew,
+      transferParams: (transactions, orbitDBPath) => ({ orbitDBPath }),
+      // We need the colony identifier from the second transaciton output
+      transferIdentifier: ([
+        ,
+        // , ignores the first tx
+        { eventData },
+      ]) => eventData && eventData.colonyAddress,
+    },
+  ],
+});
+
+// TODO: Rename, complete and wire up after new onboarding is in place
+function* createColonySagaNew(action: UniqueAction): Saga<void> {
+  // Step 1: Do whatever needs to be done before starting the batch tx
+
+  const {
+    meta,
+    payload: { tokenName, tokenSymbol, colonyName },
+  } = action;
+  try {
+    // Step 2: Run colony creation batch
+    // Once done, we get all succeeded transactions in a handy array
+    const transactions = yield call(createColonyBatch, action, [
+      { params: { name: tokenName, symbol: tokenSymbol } },
+      null,
+      {
+        params: { colonyName },
+      },
+    ]);
+    // Step 3: Do something with the transaction data (maybe add it to the orbit-db store)
+    // TODO: Do store stuff here
+    console.info(transactions);
+
+    // Step 4: report success for the colony creation wizard
+    yield put({
+      type: COLONY_CREATE_SUCCESS,
+      meta,
+    });
+  } catch (error) {
+    yield putError(COLONY_CREATE_ERROR, error, meta);
+  }
 }
 
 /*
@@ -382,6 +459,8 @@ function* removeColonyAvatar({
 
 export default function* colonySagas(): any {
   yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
+  // TODO: rename properly once the new onboarding is done
+  yield takeEvery('COLONY_CREATE_NEW', createColonySagaNew);
   yield takeEvery(COLONY_CREATE, createColonySaga);
   yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
   yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
