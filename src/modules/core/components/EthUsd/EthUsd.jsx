@@ -40,7 +40,7 @@ type Props = {
 };
 
 type State = {
-  valueUsd: string | null,
+  valueUsd: number | null,
 };
 
 class EthUsd extends Component<Props, State> {

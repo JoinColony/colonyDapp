@@ -27,7 +27,7 @@ const enhance: HOC<*, InProps> = compose(
       updateGas: transactionUpdateGas,
     },
   ),
-  withProps(() => {
+  withProps(({ gasPrices }) => {
     /*
      * @TODO: Actually determine if a tx requires any action with the wallet.
      * Also, union type here isn't necessary, just being used during mocking
@@ -38,7 +38,12 @@ const enhance: HOC<*, InProps> = compose(
     // @TODO: Actually determine whether the network is congested
     const isNetworkCongested = false;
 
-    return { walletNeedsAction, isNetworkCongested };
+    return {
+      // TODO: Use immutable helper?
+      gasPrices: gasPrices.toJS(),
+      walletNeedsAction,
+      isNetworkCongested,
+    };
   }),
 );
 
