@@ -5,12 +5,18 @@
   box-shadow: 0 0 20px var(--temp-grey-blue-2);
 }
 
+.headingWrapper {
+  overflow-wrap: break-word;
+}
+
 .description {
   margin-top: 15px;
+  overflow-wrap: break-word;
 }
 
 .dynamicSection {
   margin-top: 25px;
+  overflow-wrap: break-word;
 }
 
 .editColony {
