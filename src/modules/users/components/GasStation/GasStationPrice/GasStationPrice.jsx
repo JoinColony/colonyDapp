@@ -37,7 +37,10 @@ are expensive. We recommend waiting.`,
   },
   openTransactionSpeedMenuTitle: {
     id: 'users.GasStation.GasStationPrice.openTransactionSpeedMenuTitle',
-    defaultMessage: 'Change Transaction Speed',
+    defaultMessage: `{disabled, select,
+      true {No speed options available}
+      false {Open speed menu}
+    }`,
   },
   transactionFeeLabel: {
     id: 'users.GasStation.GasStationPrice.transactionFeeLabel',
@@ -164,8 +167,9 @@ class GasStationPrice extends Component<Props, State> {
             values: { transactionSpeed },
           }: FormikProps<FormValues>) => {
             const currentGasPrice = gasPrices[transactionSpeed];
-            const gasCost =
+            const transactionFee =
               currentGasPrice && gasLimit && currentGasPrice.mul(gasLimit);
+            const waitTime = gasPrices[`${transactionSpeed}Wait`];
             return (
               <Fragment>
                 <div
@@ -193,16 +197,18 @@ class GasStationPrice extends Component<Props, State> {
                   <div className={styles.transactionFeeMenu}>
                     <div className={styles.transactionSpeedMenuButtonContainer}>
                       <button
+                        type="button"
                         aria-controls={speedMenuId}
                         aria-expanded={isSpeedMenuOpen}
                         className={styles.transactionSpeedMenuButton}
                         onClick={this.toggleSpeedMenu}
-                        type="button"
+                        disabled={!waitTime}
                       >
                         <Icon
                           appearance={{ size: 'medium' }}
                           name="caret-down-small"
                           title={MSG.openTransactionSpeedMenuTitle}
+                          titleValues={{ disabled: !waitTime }}
                         />
                       </button>
                     </div>
@@ -211,35 +217,33 @@ class GasStationPrice extends Component<Props, State> {
                         <FormattedMessage {...MSG.transactionFeeLabel} />
                       </div>
                       <div className={styles.transactionDuration}>
-                        {Object.keys(gasPrices).length ? (
-                          <Duration
-                            value={gasPrices[`${transactionSpeed}Wait`]}
-                          />
-                        ) : (
-                          <SpinnerLoader />
-                        )}
+                        {waitTime && <Duration value={waitTime} />}
                       </div>
                     </div>
                   </div>
                   <div className={styles.transactionFeeActions}>
-                    {gasCost && (
-                      <div className={styles.transactionFeeAmount}>
-                        <Numeral
-                          decimals={18}
-                          value={gasCost}
-                          suffix=" ETH"
-                          unit="ether"
-                        />
-                        <div className={styles.transactionFeeEthUsd}>
-                          <EthUsd
-                            appearance={{ size: 'small', theme: 'grey' }}
-                            decimals={3}
-                            value={gasCost}
+                    <div className={styles.transactionFeeAmount}>
+                      {transactionFee ? (
+                        <Fragment>
+                          <Numeral
+                            decimals={6}
+                            value={transactionFee}
+                            suffix=" ETH"
                             unit="ether"
                           />
-                        </div>
-                      </div>
-                    )}
+                          <div className={styles.transactionFeeEthUsd}>
+                            <EthUsd
+                              appearance={{ size: 'small', theme: 'grey' }}
+                              decimals={3}
+                              value={transactionFee}
+                              unit="ether"
+                            />
+                          </div>
+                        </Fragment>
+                      ) : (
+                        <SpinnerLoader />
+                      )}
+                    </div>
                     <div>
                       <Button
                         disabled={!isValid}

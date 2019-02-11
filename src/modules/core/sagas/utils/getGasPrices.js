@@ -41,14 +41,18 @@ export default function* getGasPrices(): Saga<GasPricesProps> {
     colonyManager.networkClient.adapter.provider,
     colonyManager.networkClient.adapter.provider.getGasPrice,
   ]);
+  let gasPrices;
 
   try {
     const response = yield call(fetch, ETH_GAS_STATION_ENDPOINT);
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
     const data: EthGasStationAPIResponse = yield response.json();
 
     const pointOneGwei = new BigNumber(10 ** 8);
 
-    const gasPrices = {
+    gasPrices = {
       timestamp: Date.now(),
       // TODO: Handling the weird ethers BN implementation. Remove when web3
       network: new BigNumber(networkGasPrice.toString()),
@@ -62,10 +66,15 @@ export default function* getGasPrices(): Saga<GasPricesProps> {
     };
 
     yield put(updateGasPrices(gasPrices));
-
-    return gasPrices;
   } catch (e) {
     console.warn(`Could not get ETH gas prices: ${e.message}`);
-    return { suggested: networkGasPrice, timestamp: Date.now() };
+    gasPrices = {
+      // Do not cache this
+      timestamp: -Infinity,
+      // TODO: Handling the weird ethers BN implementation. Remove when web3
+      suggested: new BigNumber(networkGasPrice.toString()),
+    };
+    yield put(updateGasPrices(gasPrices));
   }
+  return gasPrices;
 }

@@ -1,6 +1,6 @@
 /* @flow */
 import BN from 'bn.js';
-import { fromWei, toWei } from 'ethjs-unit';
+import { fromWei } from 'ethjs-unit';
 
 type EthUsdResponse = {
   status: string,
@@ -13,24 +13,11 @@ type EthUsdResponse = {
   },
 };
 
-const convertBalanceToUsd = (
-  ethUsdConversionRate: number,
-  balance: BN,
-): string => {
-  const { div: divResult, mod: modResult } = toWei(
-    ethUsdConversionRate,
-    'ether',
-  ).divmod(toWei(1, 'ether'));
-  const wholeBalance = Number(fromWei(balance.mul(divResult), 'ether')) || 0;
-  const modBalance = Number(fromWei(balance.mul(modResult), 'ether')) || 0;
-  return (wholeBalance + modBalance / 10 ** 18 || wholeBalance).toString();
-};
-
 /*
   Request dollar conversion value from etherScan
 */
 // eslint-disable-next-line import/prefer-default-export
-export const getEthToUsd = (ethValue: BN): Promise<string | void> => {
+export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
 
@@ -47,10 +34,10 @@ export const getEthToUsd = (ethValue: BN): Promise<string | void> => {
       Cache exchange rate for one day
     */
     const olderThanOneDay =
-      currentTimestamp - Number(cachedEthUsdTimestamp) > 86400000;
+      currentTimestamp - parseInt(cachedEthUsdTimestamp, 10) > 86400000;
     if (!olderThanOneDay) {
       return Promise.resolve(
-        convertBalanceToUsd(Number(cachedEthUsd), ethValue),
+        fromWei(ethValue, 'ether') * parseFloat(cachedEthUsd),
       );
     }
   }
@@ -73,7 +60,7 @@ export const getEthToUsd = (ethValue: BN): Promise<string | void> => {
 
       localStorage.setItem(ETH_USD_KEY, ethUsd);
       localStorage.setItem(ETH_USD_TIMESTAMP_KEY, currentTimestamp.toString());
-      return convertBalanceToUsd(Number(ethUsd), ethValue);
+      return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
     })
     .catch(console.warn);
 };
