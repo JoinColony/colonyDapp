@@ -1,7 +1,6 @@
 .back {
   display: block;
-  align-items: center;
-  margin: 0;
+  margin: 4px 0 0 0;
 
   /*
    * @NOTE Increase the click-able area
