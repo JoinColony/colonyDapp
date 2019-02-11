@@ -106,11 +106,11 @@ export function* getOrCreateUserStore(
     );
     // @TODO: This should be moved to a command that creates the profile and logs the event
     if (userProfileStoreExists) {
-      return yield call(getUserProfileStore(ddb), walletAddress);
+      return yield call(getUserProfileStore(ddb), { walletAddress });
     }
     const { profileStore, activityStore } = yield call(
       createUserProfileStore(ddb),
-      walletAddress,
+      { walletAddress },
     );
     yield call([activityStore, activityStore.add], joinedColonyEvent());
     return profileStore;
@@ -127,17 +127,16 @@ export function* getUserProfileData(
 
 export function* fetchUserActivities(action: Action): Saga<void> {
   const { walletAddress } = action.payload;
-  const activitiesStoreAddress = yield select(
+  const userActivityStoreAddress = yield select(
     userActivitiesStoreAddressSelector,
   );
 
   try {
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-    const activitiesStore = yield call(
-      getUserActivityStore(ddb),
-      activitiesStoreAddress,
+    const activitiesStore = yield call(getUserActivityStore(ddb), {
+      userActivityStoreAddress,
       walletAddress,
-    );
+    });
     const activities = yield call(getAll, activitiesStore);
     yield put({
       type: USER_ACTIVITIES_FETCH_SUCCESS,
@@ -150,17 +149,16 @@ export function* fetchUserActivities(action: Action): Saga<void> {
 
 export function* addUserActivity({ payload }: Action): Saga<void> {
   const { activity, walletAddress } = payload;
-  const activitiesStoreAddress = yield select(
+  const userActivityStoreAddress = yield select(
     userActivitiesStoreAddressSelector,
   );
 
   try {
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-    const activitiesStore = yield call(
-      getUserActivityStore(ddb),
-      activitiesStoreAddress,
+    const activitiesStore = yield call(getUserActivityStore(ddb), {
+      userActivityStoreAddress,
       walletAddress,
-    );
+    });
 
     yield call([activitiesStore, activitiesStore.add], activity);
     const activities = yield call([activitiesStore, activitiesStore.all]);
@@ -241,11 +239,10 @@ function* fetchProfile({
 
   // should throw an error if username is not registered
   try {
-    const store = yield call(
-      getUserProfileStoreByUsername(ddb),
+    const store = yield call(getUserProfileStoreByUsername(ddb), {
       walletAddress,
       username,
-    );
+    });
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
     yield put({
@@ -294,7 +291,7 @@ function* createUsername({
   const walletAddress = yield select(walletAddressSelector);
   const { profileStore, activityStore } = yield call(
     createUserProfileStore(ddb),
-    walletAddress,
+    { walletAddress },
   );
   yield call([profileStore, profileStore.set], { username, walletAddress });
   yield call([activityStore, activityStore.add], joinedColonyEvent());
@@ -338,7 +335,7 @@ function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     // if we uploaded okay, put the hash in the user orbit store
-    const store = yield call(getUserProfileStore(ddb), walletAddress);
+    const store = yield call(getUserProfileStore(ddb), { walletAddress });
     yield call([store, store.set], 'avatar', hash);
 
     yield put({
@@ -356,7 +353,7 @@ function* removeAvatar({ meta }: UniqueAction): Saga<void> {
   const walletAddress = yield select(walletAddressSelector);
 
   try {
-    const store = yield call(getUserProfileStore(ddb), walletAddress);
+    const store = yield call(getUserProfileStore(ddb), { walletAddress });
     yield call([store, store.set], 'avatar', undefined);
     const user = yield call(getAll, store);
     yield put({
