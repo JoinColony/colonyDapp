@@ -69,6 +69,10 @@ const MSG = defineMessages({
     id: 'users.ENSNameDialog.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
+  errorIllegalCharacters: {
+    id: 'users.ENSNameDialog.errorIllegalCharacters',
+    defaultMessage: 'This colony domain name includes illegal characters',
+  },
 });
 
 type FormValues = {
@@ -105,19 +109,21 @@ class ENSNameDialog extends Component<Props, State> {
 
   validateDomain = async (values: FormValues) => {
     // 1. Validate with schema
-    await validationSchema.validate(values).catch(err =>
-      // eslint-disable-next-line no-console
-      console.log(err),
-    );
-
-    // 2. Validate with saga
-    try {
-      await this.checkDomainTaken.asyncFunction(values);
-    } catch (e) {
+    if (!validationSchema.isValidSync(values)) {
       const error = {
-        username: MSG.errorDomainTaken,
+        username: MSG.errorIllegalCharacters,
       };
       throw error;
+    } else {
+      // 2. Validate with saga
+      try {
+        await this.checkDomainTaken.asyncFunction(values);
+      } catch (e) {
+        const error = {
+          username: MSG.errorDomainTaken,
+        };
+        throw error;
+      }
     }
   };
 

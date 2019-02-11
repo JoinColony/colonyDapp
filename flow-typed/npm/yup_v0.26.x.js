@@ -19,6 +19,7 @@ declare module 'yup' {
 
   declare export interface Schema {
     isValid: IsValid;
+    isValidSync: IsValid;
     validate: Validate;
     shape(props?: Object): *;
   }
