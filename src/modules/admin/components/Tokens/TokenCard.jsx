@@ -6,6 +6,7 @@ import type { TokenRecord } from '~immutable';
 
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
+import Numeral from '~core/Numeral';
 
 import styles from './TokenCard.css';
 
@@ -44,7 +45,7 @@ const TokenCard = ({
         isNotPositive ? styles.balanceNotPositive : styles.balanceContent
       }
     >
-      {balance.toNumber().toFixed(2)}
+      <Numeral value={balance} decimals={2} integerSeparator="" unit="ether" />
     </div>
     <div className={styles.cardFooter}>
       {isEth && <EthUsd value={balance} decimals={3} />}
