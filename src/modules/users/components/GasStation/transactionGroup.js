@@ -1,8 +1,8 @@
 /* @flow */
 
-import type { TransactionRecord } from '~immutable';
+import type { TransactionType } from '~immutable';
 
-export type TransactionGroup = Array<TransactionRecord<*, *>>;
+export type TransactionGroup = Array<TransactionType<*, *>>;
 
 // get the group id (mostly used as a unique identifier for the group)
 export const getGroupId = (txGroup: TransactionGroup) =>

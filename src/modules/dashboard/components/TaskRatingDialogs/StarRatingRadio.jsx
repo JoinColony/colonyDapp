@@ -15,7 +15,7 @@ import StarRating from '~core/StarRating';
 
 import styles from './StarRatingRadio.css';
 
-type Props = {
+type Props = {|
   name: string,
   /*
    * @NOTE the value, will also control the way the stars are highlighted
@@ -28,7 +28,7 @@ type Props = {
   titleValues?: MessageValues,
   description: MessageDescriptor,
   descriptionValues?: FormattedMessageValues,
-};
+|};
 
 const displayName = 'dashboard.TaskRatingDialogs.StarRatingRadio';
 

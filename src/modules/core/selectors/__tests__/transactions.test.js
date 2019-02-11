@@ -1,6 +1,6 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { Transaction } from '~immutable';
+import { TransactionRecord } from '~immutable';
 
 import { CORE_NAMESPACE as ns } from '../../constants';
 
@@ -48,10 +48,10 @@ describe('Transaction selectors', () => {
       [ns]: {
         transactions: {
           list: ImmutableMap({
-            tx1: Transaction(tx1),
-            tx2: Transaction(tx2),
-            tx3: Transaction(tx3),
-            tx4: Transaction(tx4),
+            tx1: TransactionRecord(tx1),
+            tx2: TransactionRecord(tx2),
+            tx3: TransactionRecord(tx3),
+            tx4: TransactionRecord(tx4),
           }),
         },
       },

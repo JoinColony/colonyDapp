@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import QRCodeGenerator from 'qrcode';
 
-type Props = {
+type Props = {|
   address: string,
   width?: number,
-};
+|};
 
 class QRCode extends Component<Props> {
   static displayName = 'QRCode';

@@ -20,6 +20,7 @@ export type Appearance = {
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** Values for html title (react-intl interpolation) */
   placeholderValues?: MessageValues,

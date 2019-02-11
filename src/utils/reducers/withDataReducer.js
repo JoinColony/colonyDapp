@@ -6,8 +6,8 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import type { UniqueActionWithKeyPath, KeyPath } from '~types';
 
-import { Data } from '../../immutable';
-import type { DataRecord } from '../../immutable';
+import { DataRecord } from '../../immutable';
+import type { DataRecordType } from '../../immutable';
 
 export type DataReducer<S: ImmutableMapType<*, *>> = (
   state: S,
@@ -17,10 +17,10 @@ export type DataReducer<S: ImmutableMapType<*, *>> = (
 const getNextState = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
   keyPath: KeyPath,
-  payload: $Shape<DataRecord<V>>,
+  payload: $Shape<DataRecordType<V>>,
 ) => {
   const immutablePayload: typeof payload = fromJS(payload);
-  const data = Data<V>(immutablePayload);
+  const data = DataRecord<V>(immutablePayload);
 
   if (keyPath.length === 2)
     return state.has(keyPath[0])

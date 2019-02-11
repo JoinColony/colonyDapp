@@ -1,10 +1,10 @@
 /* @flow */
 
 import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import compose from 'recompose/compose';
 
-import { singleColonySelector } from '../../dashboard/selectors';
-import { fetchColony } from '../../dashboard/actionCreators';
+import { singleColonySelector } from '../selectors';
+import { fetchColony } from '../actionCreators';
 import fetchMissingColony from './fetchMissingColony';
 
 import type { ENSName } from '~types';

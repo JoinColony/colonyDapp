@@ -1,9 +1,9 @@
 /* @flow */
 
-import { Wallet } from '~immutable';
+import type { WalletRecordType } from '~immutable';
 
 import type { Action } from '~types';
-import type { WalletRecord } from '~immutable';
+import { WalletRecord } from '~immutable';
 
 import {
   WALLET_FETCH_ACCOUNTS,
@@ -12,9 +12,9 @@ import {
 } from '../actionTypes';
 
 const walletReducer = (
-  state: WalletRecord = Wallet(),
+  state: WalletRecordType = WalletRecord(),
   action: Action,
-): Wallet => {
+): WalletRecord => {
   switch (action.type) {
     case WALLET_FETCH_ACCOUNTS:
       return state.set('isLoading', true);

@@ -11,7 +11,7 @@ import {
   CORE_TRANSACTIONS_LIST,
 } from '../constants';
 
-import type { RootStateRecord, TransactionRecord } from '~immutable';
+import type { RootStateRecord, TransactionRecordType } from '~immutable';
 
 /*
  * Individual transaction selectors
@@ -31,8 +31,8 @@ const isPendingMultisig = tx =>
  * Transactions sorting functions.
  */
 const createdAtDesc = (
-  { createdAt: createdAtA }: TransactionRecord<*, *>,
-  { createdAt: createdAtB }: TransactionRecord<*, *>,
+  { createdAt: createdAtA }: TransactionRecordType<*, *>,
+  { createdAt: createdAtB }: TransactionRecordType<*, *>,
 ) => createdAtB - createdAtA;
 
 /*

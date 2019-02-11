@@ -1,14 +1,14 @@
 /* @flow */
 import React from 'react';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 
 import Assignment from '~core/Assignment';
 
-type Props = {
+type Props = {|
   nativeToken: string,
-  task: TaskRecord,
-};
+  task: TaskType,
+|};
 
 const displayName = 'dashboard.TaskAssignment';
 

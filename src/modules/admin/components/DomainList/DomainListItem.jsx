@@ -2,7 +2,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { DataRecord, DomainRecord } from '~immutable';
+import type { DataType, DomainType } from '~immutable';
 
 import { TableRow, TableCell } from '~core/Table';
 import Button from '~core/Button';
@@ -22,55 +22,49 @@ const MSG = defineMessages({
 
 const displayName = 'admin.DomainList.DomainListItem';
 
-type Props = {
+type Props = {|
   contributions?: number,
   /*
    * User data Object, follows the same format as UserPicker
    */
-  domain: DataRecord<DomainRecord>,
+  domain: DataType<DomainType>,
   viewOnly: boolean,
   /*
    * Method to call when clicking the remove button
    * Gets passed down to `DomainListItem`
    */
-  onRemove: (DataRecord<DomainRecord>) => any,
-};
+  onRemove: (DataType<DomainType>) => any,
+|};
 
 const DomainListItem = ({
-  domain,
+  domain: { record },
   contributions,
   viewOnly = true,
   onRemove,
-}: Props) => {
-  const name = domain.getIn(['record', 'name']);
-  return (
-    <TableRow className={styles.main}>
-      <TableCell className={styles.domainDetails}>
-        <span className={styles.domainName} title={name}>
-          #{name}
+}: Props) => (
+  <TableRow className={styles.main}>
+    <TableCell className={styles.domainDetails}>
+      <span className={styles.domainName} title={record && record.name}>
+        #{record && record.name}
+      </span>
+      {contributions && (
+        <span className={styles.contributions}>
+          <FormattedMessage values={{ contributions }} {...MSG.contributions} />
         </span>
-        {contributions && (
-          <span className={styles.contributions}>
-            <FormattedMessage
-              values={{ contributions }}
-              {...MSG.contributions}
-            />
-          </span>
-        )}
-      </TableCell>
-      <TableCell className={styles.userRemove}>
-        {!viewOnly && (
-          <Button
-            className={styles.customRemoveButton}
-            appearance={{ theme: 'primary' }}
-            text={MSG.buttonRemove}
-            onClick={onRemove}
-          />
-        )}
-      </TableCell>
-    </TableRow>
-  );
-};
+      )}
+    </TableCell>
+    <TableCell className={styles.userRemove}>
+      {!viewOnly && (
+        <Button
+          className={styles.customRemoveButton}
+          appearance={{ theme: 'primary' }}
+          text={MSG.buttonRemove}
+          onClick={onRemove}
+        />
+      )}
+    </TableCell>
+  </TableRow>
+);
 
 DomainListItem.displayName = displayName;
 

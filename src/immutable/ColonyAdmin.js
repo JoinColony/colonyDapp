@@ -6,26 +6,28 @@ import { Record } from 'immutable';
 
 import type { Address, ENSName } from '../types';
 
-export type ColonyAdminProps = {
+type Shared = {|
   avatar?: string,
   displayName: string,
   profileStore: string,
+  state: 'pending' | 'confirmed',
   username: ENSName,
   walletAddress: Address,
-  state: 'pending' | 'confirmed',
-};
+|};
 
-export type ColonyAdminRecord = RecordOf<ColonyAdminProps>;
+export type ColonyAdminType = $ReadOnly<Shared>;
 
-const defaultProps: $Shape<ColonyAdminProps> = {
+export type ColonyAdminRecordType = RecordOf<Shared>;
+
+const defaultProps: $Shape<Shared> = {
   avatar: undefined,
   displayName: undefined,
   profileStore: undefined,
+  state: 'pending',
   username: undefined,
   walletAddress: undefined,
-  state: 'pending',
 };
 
-const ColonyAdmin: RecordFactory<ColonyAdminProps> = Record(defaultProps);
+const ColonyAdminRecord: RecordFactory<Shared> = Record(defaultProps);
 
-export default ColonyAdmin;
+export default ColonyAdminRecord;

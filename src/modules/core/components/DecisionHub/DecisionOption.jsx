@@ -21,22 +21,22 @@ const MSG = defineMessages({
   },
 });
 
-type Appearance = {
+type Appearance = {|
   theme?: 'alt',
-};
+|};
 
-type Props = {
+type Props = {|
   appearance?: Appearance,
-  option: {
+  option: {|
     value: string,
     title: MessageDescriptor | string,
     subtitle: MessageDescriptor | string,
     icon?: string,
-  },
+  |},
   link?: string,
   /** @ignore Will be injected by `asField` */
   setValue: (val: string) => void,
-};
+|};
 
 const displayName = 'DecisionOption';
 

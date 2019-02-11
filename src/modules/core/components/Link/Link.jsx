@@ -7,6 +7,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link as LinkComponent } from 'react-router-dom';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** Link children to render inside link */
   children?: Node,

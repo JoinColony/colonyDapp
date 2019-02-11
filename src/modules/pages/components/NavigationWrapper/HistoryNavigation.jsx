@@ -3,7 +3,7 @@ import type { IntlShape, MessageDescriptor, MessageValues } from 'react-intl';
 import type { IBrowserHistory } from 'history';
 
 import React from 'react';
-import { compose } from 'recompose';
+import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
 import { defineMessages, injectIntl } from 'react-intl';
 
@@ -21,7 +21,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /*
    * If set, the the back link will redirect back to a specific route
    */
@@ -42,7 +42,7 @@ type Props = {
    * Internationalization library object, injected by `react-intl`
    */
   intl: IntlShape,
-};
+|};
 
 const HistoryNavigation = ({
   history,

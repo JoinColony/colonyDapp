@@ -2,31 +2,28 @@
 
 import React from 'react';
 
-import type { TokenRecord } from '~immutable';
+import type { TokenType } from '~immutable';
 
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 
+import {
+  tokenIsETH,
+  tokenBalanceIsNotPositive,
+} from '../../../../immutable/utils';
+
 import styles from './TokenCard.css';
 
-type Props = {
-  token: TokenRecord,
-};
+type Props = {|
+  token: TokenType,
+|};
 
 const displayName = 'admin.Tokens.TokenCard';
 
 const TokenCard = ({
-  token: {
-    address,
-    balance,
-    isEth,
-    isNative,
-    isNotPositive,
-    icon,
-    name,
-    symbol,
-  },
+  token: { address, balance, isNative, icon, name, symbol },
+  token,
 }: Props) => (
   <Card key={address} className={styles.main}>
     <div className={styles.cardHeading}>
@@ -42,13 +39,15 @@ const TokenCard = ({
     </div>
     <div
       className={
-        isNotPositive ? styles.balanceNotPositive : styles.balanceContent
+        tokenBalanceIsNotPositive(token)
+          ? styles.balanceNotPositive
+          : styles.balanceContent
       }
     >
       <Numeral value={balance} decimals={2} integerSeparator="" unit="ether" />
     </div>
     <div className={styles.cardFooter}>
-      {isEth && <EthUsd value={balance} decimals={3} />}
+      {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
     </div>
   </Card>
 );

@@ -27,7 +27,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Available `option`s for the select */
   options: Array<{
     label: MessageDescriptor | string,
@@ -79,7 +79,7 @@ type Props = {
   setError: (val: any) => void,
   /** @ignore Standard input field property */
   onChange: (val: any) => void,
-};
+|};
 
 type State = {
   isOpen: boolean,

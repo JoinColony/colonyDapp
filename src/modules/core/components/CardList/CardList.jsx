@@ -14,14 +14,14 @@ type Appearance = {
   numCols: ValidCols,
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Child content to render in the list */
   children: Node,
   /** Optional additional className for further styling */
   className?: string,
-};
+|};
 
 const displayName = 'CardList';
 

@@ -3,7 +3,7 @@
 import BigNumber from 'bn.js';
 
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
-import type { ContractTransactionProps } from '~immutable';
+import type { ContractTransactionType } from '~immutable';
 
 /**
  * Given an event log and ColonyClient, get the timestamp of the block from
@@ -24,7 +24,7 @@ export const getLogDate = async ({
 
 /**
  * Given a ColonyJS-parsed ColonyFundsClaimedEvent, log from which it was
- * parsed, ColonyClient and colonyENSName, return a ContractTransactionProps
+ * parsed, ColonyClient and colonyENSName, return a ContractTransactionType
  * object, or null if the claim amount was zero.
  */
 export const parseColonyFundsClaimedEvent = async ({
@@ -40,7 +40,7 @@ export const parseColonyFundsClaimedEvent = async ({
   log: Object,
   colonyClient: ColonyClientType,
   colonyENSName: string,
-}): Promise<?ContractTransactionProps> => {
+}): Promise<?ContractTransactionType> => {
   const { payoutRemainder: amount, token } = event;
   const { transactionHash } = log;
   const date = await getLogDate({ log, colonyClient });
@@ -64,7 +64,7 @@ export const parseColonyFundsClaimedEvent = async ({
 /**
  * Given a ColonyJS-parsed ColonyFundsMovedBetweenFundingPotsEvent, log from
  * which it was parsed, ColonyClient and colonyENSName, return a
- * ContractTransactionProps object.
+ * ContractTransactionType object.
  */
 export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   event,
@@ -76,7 +76,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   log: Object,
   colonyClient: ColonyClientType,
   colonyENSName: string,
-}): Promise<ContractTransactionProps> => {
+}): Promise<ContractTransactionType> => {
   const { amount, fromPot, token } = event;
   const { transactionHash } = log;
   const date = await getLogDate({ log, colonyClient });
@@ -102,7 +102,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
 
 /**
  * Given a ColonyJS-parsed TaskPayoutClaimedEvent, log from which it was
- * parsed, and ColonyClient, return a ContractTransactionProps object.
+ * parsed, and ColonyClient, return a ContractTransactionType object.
  */
 export const parseTaskPayoutClaimedEvent = async ({
   event,
@@ -112,7 +112,7 @@ export const parseTaskPayoutClaimedEvent = async ({
   event: Object,
   log: Object,
   colonyClient: ColonyClientType,
-}): Promise<ContractTransactionProps> => {
+}): Promise<ContractTransactionType> => {
   const { taskId, role, amount, token } = event;
   const { transactionHash } = log;
   const date = await getLogDate({ log, colonyClient });
@@ -133,7 +133,7 @@ export const parseTaskPayoutClaimedEvent = async ({
 /**
  * Given a ColonyJS-parsed TransferEvent, log from which it was parsed, Array
  * of Colony token claim events and associated logs from which they were
- * passed, ColonyClient, and colonyENSName, return a ContractTransactionProps
+ * passed, ColonyClient, and colonyENSName, return a ContractTransactionType
  * object or null if that token has been claimed since the Transfer.
  */
 export const parseUnclaimedTransferEvent = async ({
@@ -150,7 +150,7 @@ export const parseUnclaimedTransferEvent = async ({
   claimLogs: Array<Object>,
   colonyClient: ColonyClientType,
   colonyENSName: string,
-}): Promise<?ContractTransactionProps> => {
+}): Promise<?ContractTransactionType> => {
   const { from, tokens: amount } = transferEvent;
   const { address: token, blockNumber, transactionHash: hash } = transferLog;
   const date = await getLogDate({ log: transferLog, colonyClient });
@@ -176,7 +176,7 @@ export const parseUnclaimedTransferEvent = async ({
 
 /**
  * Given a ColonyJS-parsed TransferEvent for a user, the log from which it was
- * parsed, ColonyClient, and userAddress, return a ContractTransactionProps
+ * parsed, ColonyClient, and userAddress, return a ContractTransactionType
  * object for the token transfer.
  */
 export const parseUserTransferEvent = async ({
@@ -189,7 +189,7 @@ export const parseUserTransferEvent = async ({
   log: Object,
   colonyClient: ColonyClientType,
   userAddress: string,
-}): Promise<?ContractTransactionProps> => {
+}): Promise<?ContractTransactionType> => {
   const { to, from, tokens: amount } = event;
   const { address: token, transactionHash: hash } = log;
   const date = await getLogDate({ log, colonyClient });

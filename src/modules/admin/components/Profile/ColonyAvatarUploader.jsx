@@ -11,7 +11,7 @@ import ColonyAvatar from '~core/ColonyAvatar';
 import promiseListener from '../../../../createPromiseListener';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
-import type { ColonyRecord } from '~immutable';
+import type { ColonyType } from '~immutable';
 
 import {
   COLONY_AVATAR_UPLOAD,
@@ -36,15 +36,15 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Address of the current colony for identicon fallback */
-  address: $PropertyType<ColonyRecord, 'address'>,
+  address: $PropertyType<ColonyType, 'address'>,
   /** For UserAvatar title */
-  name: $PropertyType<ColonyRecord, 'name'>,
+  name: $PropertyType<ColonyType, 'name'>,
   /** Avatar hash */
-  avatar: $PropertyType<ColonyRecord, 'avatar'>,
-  ensName: $PropertyType<ColonyRecord, 'ensName'>,
-};
+  avatar: $PropertyType<ColonyType, 'avatar'>,
+  ensName: $PropertyType<ColonyType, 'ensName'>,
+|};
 
 class ColonyAvatarUploader extends Component<Props> {
   remove: AsyncFunction<Object, empty>;

@@ -27,10 +27,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
-};
+|};
 
 class UnfinishedProfileDialog extends Component<Props> {
   static displayName = 'users.UnfinishedProfileDialog';

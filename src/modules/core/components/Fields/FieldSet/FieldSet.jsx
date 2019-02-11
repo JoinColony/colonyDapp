@@ -15,14 +15,14 @@ type Appearance = {
   align: 'right',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Children to render */
   children: Node,
   /** Optional className */
   className?: string,
-};
+|};
 
 const FieldSet = ({ appearance, children, className }: Props) => (
   <fieldset className={cx(getMainClasses(appearance, styles), className)}>

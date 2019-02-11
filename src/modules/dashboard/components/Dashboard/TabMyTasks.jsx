@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { List } from 'immutable';
-
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -15,7 +13,7 @@ import styles from './TabMyTasks.css';
 
 import mockColonies from '../../../../__mocks__/mockColonies';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 
 const MSG = defineMessages({
   emptyText: {
@@ -25,23 +23,23 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
   },
 });
 
-type Props = {
+type Props = {|
   /** Tasks for MyTasks table */
-  tasks: List<TaskRecord>,
+  tasks: Array<TaskType>,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
-};
+|};
 
 const TabMyTasks = ({ initialTask, tasks, userClaimedProfile }: Props) => {
   if (!userClaimedProfile) {
     return (
       <Fragment>
         <InitialTask task={initialTask} />
-        {tasks && tasks.size ? <TaskList tasks={tasks} /> : null}
+        {tasks && tasks.length ? <TaskList tasks={tasks} /> : null}
       </Fragment>
     );
   }
-  return tasks && tasks.size ? (
+  return tasks && tasks.length ? (
     <TaskList tasks={tasks} />
   ) : (
     <Fragment>

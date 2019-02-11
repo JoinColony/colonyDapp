@@ -19,7 +19,7 @@ import {
   TASK_SET_DATE_SUCCESS,
 } from '../../actionTypes';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -35,10 +35,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   isTaskCreator?: boolean,
-  task: TaskRecord,
-};
+  task: TaskType,
+|};
 
 type State = {
   /*

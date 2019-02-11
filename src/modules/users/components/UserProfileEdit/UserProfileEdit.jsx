@@ -3,8 +3,10 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
+import compose from 'recompose/compose';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
@@ -65,9 +67,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  user: UserRecord,
-};
+type Props = {|
+  user: UserType,
+|};
 
 const displayName = 'users.UserProfileEdit';
 
@@ -78,7 +80,6 @@ const UserProfileEdit = ({ user }: Props) => (
       <Sidebar
         walletAddress={user.profile.walletAddress}
         username={user.profile.username || user.profile.walletAddress}
-        avatarURL={user.profile.avatar}
       />
     }
   >
@@ -134,8 +135,9 @@ const UserProfileEdit = ({ user }: Props) => (
 
 UserProfileEdit.displayName = displayName;
 
-const mapStateToProps = state => ({
-  user: currentUser(state),
-});
-
-export default connect(mapStateToProps)(UserProfileEdit);
+export default compose(
+  connect(state => ({
+    user: currentUser(state),
+  })),
+  withImmutablePropsToJS,
+)(UserProfileEdit);

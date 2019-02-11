@@ -10,7 +10,12 @@ import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import { CoreTransactions, User, UserProfile, Wallet } from '~immutable';
+import {
+  CoreTransactions,
+  UserRecord,
+  UserProfileRecord,
+  WalletRecord,
+} from '~immutable';
 
 import '../styles/main.css';
 
@@ -49,12 +54,12 @@ const initialState = MockState({
     },
   },
   users: {
-    currentUser: User({
-      profile: UserProfile({
+    currentUser: UserRecord({
+      profile: UserProfileRecord({
         username: 'piglet',
       }),
     }),
-    wallet: Wallet({
+    wallet: WalletRecord({
       availableAddresses: [],
       isLoading: false,
     }),

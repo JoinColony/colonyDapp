@@ -38,9 +38,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   events?: Array<{ handled: boolean }>,
-};
+|};
 
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 

@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TransactionRecord } from '~immutable';
+import type { TransactionType } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
 import ExternalLink from '~core/ExternalLink';
@@ -31,9 +31,9 @@ const MSG = defineMessages({
 type Props = {
   groupCount?: number,
   hash?: string,
-  status: $PropertyType<TransactionRecord<*, *>, 'status'>,
+  status: $PropertyType<TransactionType<*, *>, 'status'>,
   // TODO-multisig See below
-  // multisig: $PropertyType<TransactionRecord<*, *>, 'multisig'>,
+  // multisig: $PropertyType<TransactionType<*, *>, 'multisig'>,
 };
 
 const displayName = 'users.GasStation.TransactionStatus';

@@ -8,7 +8,7 @@ import Link from '~core/Link';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 
-import type { ActivityFeedItemRecord, ActivityAction } from '~immutable';
+import type { ActivityFeedItemType, ActivityAction } from '~immutable';
 
 import styles from './ActivityFeedItem.css';
 
@@ -31,9 +31,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
-  activity: ActivityFeedItemRecord,
-};
+type Props = {|
+  activity: ActivityFeedItemType,
+|};
 
 const getEventActionKey = (actionType: ActivityAction) =>
   camelcase(`action-${actionType}`);

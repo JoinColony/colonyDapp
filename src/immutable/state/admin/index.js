@@ -8,16 +8,16 @@ import type {
 } from 'immutable';
 
 import type { ENSName } from '~types';
-import type { ContractTransactionRecord, DataRecord } from '~immutable';
+import type { ContractTransactionRecordType, DataRecordType } from '~immutable';
 
 export type AdminTransactionsState = ImmutableMapType<
   ENSName,
-  DataRecord<ListType<ContractTransactionRecord>>,
+  DataRecordType<ListType<ContractTransactionRecordType>>,
 >;
 
 export type AdminUnclaimedTransactionsState = ImmutableMapType<
   ENSName,
-  DataRecord<ListType<ContractTransactionRecord>>,
+  DataRecordType<ListType<ContractTransactionRecordType>>,
 >;
 
 export type AdminStateProps = {|

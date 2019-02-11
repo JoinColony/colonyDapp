@@ -60,14 +60,14 @@ type FormValues = {
   rating: number,
 };
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
   /*
    * Based on this display the input to write the work submission description
    */
   workSubmitted: boolean,
-};
+|};
 
 const displayName = 'dashboard.WorkerRatingDialog';
 

@@ -6,14 +6,15 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './DropdownMenu.css';
 
-type Appearance = {
+type Appearance = {|
   theme?: 'dark',
-};
+|};
 
-type Props = {
+type Props = {|
   children: Node,
   appearance?: Appearance,
-};
+  onClick?: Function,
+|};
 
 const displayName = 'DropdownMenu';
 

@@ -13,12 +13,13 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Address of the current user for identicon fallback */
   walletAddress: string,
   /** For UserAvatar title */
   username: string,
-};
+  avatarURL?: string, // eslint-disable-line react/no-unused-prop-types
+|};
 
 const displayName = 'users.UserProfileEdit.Sidebar';
 

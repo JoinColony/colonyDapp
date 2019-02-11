@@ -5,6 +5,7 @@ import { Tab as ReactTab } from 'react-tabs';
 
 import styles from './Tab.css';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** Disable this tab which will make it not do anything when clicked. */
   disabled?: boolean,

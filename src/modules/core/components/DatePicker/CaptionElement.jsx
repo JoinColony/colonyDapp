@@ -5,9 +5,9 @@ import formatDate from 'sugar-date/date/format';
 
 import styles from './CaptionElement.css';
 
-type Props = {
+type Props = {|
   date: Date,
-};
+|};
 
 const CaptionElement = ({ date }: Props) => (
   <div className={styles.main}>

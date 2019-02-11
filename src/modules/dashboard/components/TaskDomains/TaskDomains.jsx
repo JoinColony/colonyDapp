@@ -25,9 +25,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   isTaskCreator?: boolean,
-};
+|};
 
 type State = {
   selectedDomainId: number | void,

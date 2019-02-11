@@ -8,7 +8,7 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 
 import type { Action } from '~types';
-import type { GasPricesProps, TransactionRecord } from '~immutable';
+import type { GasPricesProps, TransactionType } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
 import {
@@ -71,24 +71,24 @@ are expensive. We recommend waiting.`,
   },
 });
 
-type Props = {
+type Props = {|
   estimateGas: (id: string) => void,
   gasPrices: GasPricesProps,
   isNetworkCongested: boolean,
-  transaction: TransactionRecord<*, *>,
+  transaction: TransactionType<*, *>,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,
   walletNeedsAction?: 'metamask' | 'hardware',
-};
+|};
 
-type State = {
+type State = {|
   isSpeedMenuOpen: boolean,
   speedMenuId: string,
-};
+|};
 
-type FormValues = {
+type FormValues = {|
   id: string,
   transactionSpeed: string,
-};
+|};
 
 const transactionSpeedOptions: Array<RadioOption> = [
   { value: 'suggested', label: MSG.transactionSpeedTypeSuggested },

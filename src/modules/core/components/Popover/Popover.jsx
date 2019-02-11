@@ -32,6 +32,7 @@ export type PopoverTrigger = ({
   toggle: () => void,
 }) => ReactNode;
 
+// Left intentionally unsealed (passing props)
 export type Props = {
   appearance?: Appearance,
   /** Child element to trigger the popover */

@@ -5,17 +5,29 @@ import type { RecordFactory, RecordOf } from 'immutable';
 import { Record } from 'immutable';
 
 import type { Address } from '../types';
-import type { TaskCommentMetaRecord } from './TaskCommentMeta';
+import type {
+  TaskCommentMetaRecordType,
+  TaskCommentMetaType,
+} from './TaskCommentMeta';
 
-export type TaskCommentContentProps = {
+type Shared = {|
   id: string,
   author: Address,
   timestamp: Date,
   body: string,
-  metadata?: TaskCommentMetaRecord,
-};
+|};
 
-export type TaskCommentContentRecord = RecordOf<TaskCommentContentProps>;
+type TaskCommentContentProps = {|
+  ...Shared,
+  metadata?: TaskCommentMetaRecordType,
+|};
+
+export type TaskCommentContentType = $ReadOnly<{|
+  ...Shared,
+  metadata?: TaskCommentMetaType,
+|}>;
+
+export type TaskCommentContentRecordType = RecordOf<TaskCommentContentProps>;
 
 const defaultValues: $Shape<TaskCommentContentProps> = {
   id: undefined,
@@ -24,8 +36,8 @@ const defaultValues: $Shape<TaskCommentContentProps> = {
   body: undefined,
 };
 
-const TaskCommentContent: RecordFactory<TaskCommentContentProps> = Record(
+const TaskCommentContentRecord: RecordFactory<TaskCommentContentProps> = Record(
   defaultValues,
 );
 
-export default TaskCommentContent;
+export default TaskCommentContentRecord;

@@ -7,6 +7,7 @@ import FileUpload from './FileUpload.jsx';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 
+// TODO if this object is sealed, there are unspecified props being used
 type Props = {
   submit: string,
   success: string,

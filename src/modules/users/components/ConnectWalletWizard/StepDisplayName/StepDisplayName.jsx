@@ -1,12 +1,14 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import compose from 'recompose/compose';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import type { WizardProps } from '~core/Wizard';
 import type { OpenDialog } from '~core/Dialog/types';
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { withCurrentUser } from '../../../hocs';
@@ -69,7 +71,7 @@ type FormValues = {
 
 type Props = WizardProps<FormValues> & {
   openDialog: OpenDialog,
-  currentUser: UserRecord,
+  currentUser: UserType,
 };
 
 type State = {};
@@ -135,4 +137,7 @@ class StepDisplayName extends Component<Props, State> {
 
 StepDisplayName.displayName = displayName;
 
-export default withCurrentUser(StepDisplayName);
+export default compose(
+  withCurrentUser,
+  withImmutablePropsToJS,
+)(StepDisplayName);

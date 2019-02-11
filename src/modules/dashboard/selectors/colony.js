@@ -57,15 +57,15 @@ export const draftsIndexSelector = createSelector(
     colony ? colony.getIn(['record', 'databases', 'draftsIndex']) : null,
 );
 
-export const currentColonyAvatarHashSelector = createSelector(
+export const colonyAvatarHashSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,
   (colonies, ensName) =>
     ensName ? colonies.getIn([ensName, 'record', 'avatar']) : null,
 );
 
-export const currentColonyAvatarDataSelector = createSelector(
-  currentColonyAvatarHashSelector,
+export const colonyAvatarDataSelector = createSelector(
+  colonyAvatarHashSelector,
   (state, hash) =>
     state && hash
       ? state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS, hash])

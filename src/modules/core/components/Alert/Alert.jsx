@@ -14,7 +14,7 @@ type Appearance = {
   theme?: 'primary' | 'info' | 'danger',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** `children` to render (only works if `text` is not set) */
@@ -29,18 +29,18 @@ type Props = {
   isDismissible?: boolean,
   /** Callback after alert is dismissed (only if `isDismissible` is `true`) */
   onAlertDismissed?: () => void,
-};
+|};
 
-type State = {
+type State = {|
   isOpen: boolean,
-};
+|};
 
 class Alert extends Component<Props, State> {
   static defaultProps = {
     appearance: {
       theme: 'danger',
     },
-    isDismissable: false,
+    isDismissible: false,
   };
 
   static displayName = 'Alert';

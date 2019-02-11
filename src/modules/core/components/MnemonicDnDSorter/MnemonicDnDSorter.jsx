@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Mnemonic passphrase of space-separated words */
   passphrase: string,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -63,12 +63,12 @@ type Props = {
   setValue: (val: any) => void,
   /** @ignore Standard input field property */
   onBlur: Function,
-};
+|};
 
-type State = {
+type State = {|
   selected: Array<Droppable>,
   items: Array<Droppable>,
-};
+|};
 
 class MnemonicDnDSorter extends Component<Props, State> {
   /**

@@ -1,11 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenRecord } from '~immutable';
+import type { TokenType } from '~immutable';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -33,10 +32,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: List<TokenRecord>,
-};
+  tokens: Array<TokenType>,
+|};
 
 class Tokens extends Component<Props> {
   timeoutId: TimeoutID;
@@ -85,7 +84,7 @@ class Tokens extends Component<Props> {
   };
 
   render() {
-    const { tokens = List() } = this.props;
+    const { tokens = [] } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
     const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
     const isUserColonyFounder = true; // TODO determine this value.

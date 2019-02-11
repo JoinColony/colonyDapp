@@ -13,7 +13,7 @@ import styles from './Tooltip.css';
 
 type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 
-type Props = {
+type Props = {|
   /** Child element to trigger the popover */
   children: React$Element<*> | (({ ref: ReactRef }) => Node),
   /** The tooltips' content */
@@ -28,7 +28,7 @@ type Props = {
   showArrow: boolean,
   /** Set the open state from outside */
   isOpen?: boolean,
-};
+|};
 
 const renderContent = content => (
   <div className={styles.container}>

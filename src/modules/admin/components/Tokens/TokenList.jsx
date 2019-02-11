@@ -1,8 +1,7 @@
 /* @flow */
 import React from 'react';
-import { List } from 'immutable';
 
-import type { TokenRecord } from '~immutable';
+import type { TokenType } from '~immutable';
 
 import CardList from '~core/CardList';
 
@@ -17,10 +16,10 @@ type Appearance = {
   numCols: ValidCols,
 };
 
-type Props = {
+type Props = {|
   appearance?: Appearance,
-  tokens: List<TokenRecord>,
-};
+  tokens: Array<TokenType>,
+|};
 
 const TokenList = ({ tokens, appearance }: Props) => (
   <div className={styles.tokenCardContainer}>

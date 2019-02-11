@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { TaskCommentRecord } from '~immutable';
+import type { TaskCommentType } from '~immutable';
 
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
@@ -19,11 +19,11 @@ import mockUser from '../Wallet/__datamocks__/mockUser';
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
-type Props = {
-  comment: TaskCommentRecord,
+type Props = {|
+  comment: TaskCommentType,
   createdAt: Date,
   currentUser: boolean,
-};
+|};
 
 const TaskFeedComment = ({
   comment: {

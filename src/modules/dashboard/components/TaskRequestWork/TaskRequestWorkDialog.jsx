@@ -18,10 +18,10 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
-};
+|};
 
 class TaskRequestWorkDialog extends Component<Props> {
   static displayName = 'dashboard.TaskRequestWork.TaskRequestWorkDialog';

@@ -2,11 +2,10 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { List } from 'immutable';
 
 import { DialogActionButton } from '~core/Button';
 
-import type { TaskPayoutRecord } from '~immutable';
+import type { TaskPayoutType } from '~immutable';
 
 import {
   TASK_WORKER_CLAIM_REWARD,
@@ -21,16 +20,17 @@ const MSG = defineMessages({
   },
 });
 
+// Can't seal this object because of HOC
 export type Props = {
   taskId: number,
   colonyENSName: string,
   rating: number,
   reputation: number,
-  payouts: List<TaskPayoutRecord>,
+  payouts: Array<TaskPayoutType>,
   title: string,
   lateRating: boolean,
   lateReveal: boolean,
-  sortedPayouts: List<Object>,
+  sortedPayouts: Array<TaskPayoutType>,
   nativeTokenPayout: Object | void,
 };
 

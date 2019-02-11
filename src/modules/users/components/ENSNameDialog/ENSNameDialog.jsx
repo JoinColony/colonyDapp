@@ -75,11 +75,11 @@ type FormValues = {
   ENSname: string,
 };
 
-type Props = {
+type Props = {|
+  balance: string,
   cancel: () => void,
   close: () => void,
-  balance: string,
-};
+|};
 
 type State = {};
 

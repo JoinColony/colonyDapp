@@ -5,9 +5,10 @@ import type { MessageDescriptor, FormattedMessageValues } from 'react-intl';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import type { OpenDialog } from '~core/Dialog/types';
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
@@ -23,10 +24,11 @@ export type InitialTaskType = {
   walletAddress: string,
 };
 
+// Can't seal this object because of withConsumerFactory
 type Props = {
-  task: InitialTaskType,
+  currentUser: UserType,
   openDialog: OpenDialog,
-  currentUser: UserRecord,
+  task: InitialTaskType,
 };
 
 const displayName = 'dashboard.Dashboard.InitialTask';
@@ -65,6 +67,7 @@ InitialTask.displayName = displayName;
 const enhance = compose(
   withCurrentUser,
   withDialog(),
+  withImmutablePropsToJS,
 );
 
 export default enhance(InitialTask);

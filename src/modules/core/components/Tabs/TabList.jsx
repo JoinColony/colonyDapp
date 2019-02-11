@@ -7,6 +7,7 @@ import { TabList as ReactTabList } from 'react-tabs';
 
 import styles from './TabList.css';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** Node to render into the right of the TabList */
   extra?: Node,

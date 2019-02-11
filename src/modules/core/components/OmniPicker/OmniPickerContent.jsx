@@ -12,6 +12,7 @@ import type { Choose, ItemComponentType, Select } from './types';
 
 import OmniPickerItem from './OmniPickerItem.jsx';
 
+// TODO sealing this object shows `className` being used
 type Props = {
   filteredData?: ListType<{ id: string }>,
   id: string,

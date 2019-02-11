@@ -12399,7 +12399,7 @@ orbit-db-feedstore@~1.4.0:
   dependencies:
     orbit-db-eventstore "~1.4.0"
 
-orbit-db-identity-provider@0.0.2, orbit-db-identity-provider@^0.0.3, "orbit-db-identity-provider@github:orbitdb/orbit-db-identity-provider":
+orbit-db-identity-provider@0.0.2, orbit-db-identity-provider@^0.0.2, "orbit-db-identity-provider@github:orbitdb/orbit-db-identity-provider":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.0.2.tgz#f2e05ac05b2154667ab341e1da8402cea5d056f7"
   integrity sha512-xE69h4FBIBU4im3KoirRxblHQyDeZesMKw12QqUtRYiIHVT7vhI4hx1QmsUDlZerBz8Pv4IJN4wVMijqCpc7xQ==
@@ -18430,6 +18430,13 @@ window-or-global@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/window-or-global/-/window-or-global-1.0.1.tgz#dbe45ba2a291aabc56d62cf66c45b7fa322946de"
   integrity sha1-2+RboqKRqrxW1iz2bEW3+jIpRt4=
+
+with-immutable-props-to-js@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/with-immutable-props-to-js/-/with-immutable-props-to-js-1.1.0.tgz#af6fa9c3e205040524375ab880c35e4f64fd68c9"
+  integrity sha512-LuL0x/ZpidC4uYROmyUm5oERQGsSfvhAT7+s/IKH3NVqeBEOFR+d7LB2PDsKJxou9dCCr06h5krvnnIiORRx5Q==
+  dependencies:
+    hoist-non-react-statics "^3.2.1"
 
 wordwrap@~0.0.2:
   version "0.0.3"

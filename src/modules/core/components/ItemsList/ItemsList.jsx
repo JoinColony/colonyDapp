@@ -20,7 +20,7 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
   /** Input field name (form variable) */
@@ -56,9 +56,9 @@ type Props = {
   setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
-};
+|};
 
-type State = {
+type State = {|
   /*
    * This values determines if any item in the (newly opened) list was selected
    */
@@ -71,7 +71,7 @@ type State = {
    * Item that is actually set on the task
    */
   setItem: number | void,
-};
+|};
 
 class ItemsList extends Component<Props, State> {
   static displayName = 'ItemsList';

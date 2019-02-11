@@ -28,12 +28,12 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   /** Address of the current user for identicon fallback */
   walletAddress: string,
   /** For UserAvatar title */
   username: string,
-};
+|};
 
 class UserAvatarUploader extends Component<Props> {
   remove: AsyncFunction<void, empty>;

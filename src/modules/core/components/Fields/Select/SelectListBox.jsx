@@ -13,7 +13,7 @@ import type { Appearance } from './types';
 
 const displayName = 'SelectListBox';
 
-type Props = {
+type Props = {|
   appearance: Appearance,
   checkedOption: number,
   listboxId: string,
@@ -31,7 +31,7 @@ type Props = {
     text: string | MessageDescriptor,
     textValues?: MessageValues,
   ) => string,
-};
+|};
 
 const getOptionId = (name, idx) =>
   idx >= 0 ? `${name}-listbox-entry-${idx}` : '';

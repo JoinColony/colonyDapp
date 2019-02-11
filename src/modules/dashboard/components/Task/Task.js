@@ -1,6 +1,7 @@
 /* @flow */
 
 import { compose, withProps } from 'recompose';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 import { withCurrentUser } from '../../../users/hocs';
 
 import withDialog from '~core/Dialog/withDialog';
@@ -27,6 +28,7 @@ const enhance = compose(
         !!task && !task.currentState === 'finalized' && isTaskCreator,
     };
   }),
+  withImmutablePropsToJS,
 );
 
 export default enhance(Task);

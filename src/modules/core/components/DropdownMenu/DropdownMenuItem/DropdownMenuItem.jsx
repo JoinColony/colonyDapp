@@ -5,9 +5,9 @@ import React from 'react';
 
 import styles from './DropdownMenuItem.css';
 
-type Props = {
+type Props = {|
   children: Node,
-};
+|};
 
 const displayName = 'DropdownMenuItem';
 

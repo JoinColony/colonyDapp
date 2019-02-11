@@ -5,9 +5,9 @@ import React from 'react';
 
 import styles from './DropdownMenuHeader.css';
 
-type Props = {
+type Props = {|
   children: Node,
-};
+|};
 
 const displayName = 'DropdownMenuHeader';
 

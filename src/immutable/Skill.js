@@ -4,20 +4,22 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-export type SkillProps = {
+type Shared = {|
   id: number,
   name: string,
   parent?: number,
-};
+|};
 
-export type SkillRecord = RecordOf<SkillProps>;
+export type SkillType = $ReadOnly<Shared>;
 
-const defaultValues: $Shape<SkillProps> = {
+export type SkillRecordType = RecordOf<Shared>;
+
+const defaultValues: $Shape<Shared> = {
   id: undefined,
   name: undefined,
   parent: undefined,
 };
 
-const Skill: RecordFactory<SkillProps> = Record(defaultValues);
+const SkillRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default Skill;
+export default SkillRecord;

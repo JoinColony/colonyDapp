@@ -3,7 +3,7 @@
 import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TransactionRecord } from '~immutable';
+import type { TransactionType } from '~immutable';
 import type { UniqueAction } from '~types';
 
 import { getMainClasses } from '~utils/css';
@@ -25,16 +25,16 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   cancelTransaction: (id: string) => UniqueAction,
   idx: number,
   selected: boolean,
-  transaction: TransactionRecord<*, *>,
-};
+  transaction: TransactionType<*, *>,
+|};
 
-type State = {
+type State = {|
   isShowingCancelConfirmation: boolean,
-};
+|};
 
 class GroupedTransactionCard extends Component<Props, State> {
   static displayName = 'users.GasStation.GroupedTransactionCard';
@@ -128,7 +128,9 @@ class GroupedTransactionCard extends Component<Props, State> {
             <div>
               {`${idx + 1}. `}
               <FormattedMessage
-                id={`transaction.${context}.${methodName}.title`}
+                id={`transaction.${
+                  context ? `${context}.` : ''
+                }${methodName}.title`}
               />
               {failed && (
                 <span className={styles.failedDescription}>

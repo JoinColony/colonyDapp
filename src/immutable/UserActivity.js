@@ -8,20 +8,24 @@ import { activityMessages } from '../modules/dashboard/components/UserActivities
 
 export type ActivityEvent = $Keys<typeof activityMessages>;
 
-export type UserActivityProps = {
+type Shared = {|
   assignedUser?: string,
+  acceptedUser?: string,
   colonyName?: string, // TODO should this be ensName?
   createdAt: Date,
   domainName?: string,
   numberOfStars?: number,
   taskName?: string,
   userAction: ActivityEvent | '',
-};
+|};
 
-export type UserActivityRecord = RecordOf<UserActivityProps>;
+export type UserActivityType = $ReadOnly<Shared>;
 
-const defaultValues: $Shape<UserActivityProps> = {
+export type UserActivityRecordType = RecordOf<Shared>;
+
+const defaultValues: $Shape<Shared> = {
   assignedUser: undefined,
+  acceptedUser: undefined,
   colonyName: undefined, // TODO should this be ensName?
   createdAt: undefined,
   domainName: undefined,
@@ -30,6 +34,6 @@ const defaultValues: $Shape<UserActivityProps> = {
   userAction: undefined,
 };
 
-const UserActivity: RecordFactory<UserActivityProps> = Record(defaultValues);
+const UserActivityRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default UserActivity;
+export default UserActivityRecord;

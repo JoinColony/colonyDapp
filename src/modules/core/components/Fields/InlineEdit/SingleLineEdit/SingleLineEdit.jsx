@@ -14,7 +14,7 @@ import styles from './SingleLineEdit.css';
 
 type Appearance = {};
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -68,7 +68,7 @@ type Props = {
   setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
-};
+|};
 
 type State = {
   isEditing: boolean,

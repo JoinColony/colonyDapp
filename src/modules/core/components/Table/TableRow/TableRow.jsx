@@ -3,6 +3,7 @@ import type { ChildrenArray, Element as ElementType } from 'react';
 
 import React from 'react';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   children: ChildrenArray<ElementType<*>>,
 };

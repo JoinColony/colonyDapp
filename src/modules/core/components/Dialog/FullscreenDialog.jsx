@@ -5,14 +5,15 @@ import Icon from '~core/Icon';
 import styles from './FullscreenDialog.css';
 import Modal from '../Modal';
 
-type Props = {
+type Props = {|
   /** Dialog needs the cancel function from your Dialog component */
   cancel: () => void,
   /** Children to render in this Dialog */
   children: Node,
   /** Determines if the Dialog can be dismissed */
   isDismissable?: boolean,
-};
+|};
+
 const FullscreenDialog = ({
   children,
   cancel,

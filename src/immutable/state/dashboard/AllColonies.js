@@ -3,11 +3,11 @@
 import type { Map as ImmutableMapType, RecordOf } from 'immutable';
 
 import type { Address, ENSName } from '~types';
-import type { ColonyRecord, DataRecord } from '~immutable';
+import type { ColonyRecordType, DataRecordType } from '~immutable';
 
 export type AllColoniesMap = ImmutableMapType<
   ENSName,
-  DataRecord<ColonyRecord>,
+  DataRecordType<ColonyRecordType>,
 >;
 
 export type AllColonyAvatarsMap = ImmutableMapType<string, string>;

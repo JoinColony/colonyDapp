@@ -1,6 +1,6 @@
 /* @flow */
 
-import { compose } from 'recompose';
+import compose from 'recompose/compose';
 
 import { withWizard } from '../../../core/components/Wizard';
 import CreateColony from './CreateColonyWizard.jsx';

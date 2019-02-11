@@ -24,7 +24,7 @@ type Appearance = {
   size?: 'small',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
@@ -72,7 +72,7 @@ type Props = {
   setError: (val: any) => void,
   /** @ignore Standard textarea field property */
   onChange: Function,
-};
+|};
 
 class Textarea extends Component<Props> {
   static displayName = 'Textarea';

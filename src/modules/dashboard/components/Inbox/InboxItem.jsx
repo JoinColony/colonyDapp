@@ -17,10 +17,10 @@ import type { InboxElement, EventType } from './types';
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
-type Props = {
+type Props = {|
   item: InboxElement,
   markAsRead: (id: number) => void,
-};
+|};
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (

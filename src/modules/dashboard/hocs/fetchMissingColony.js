@@ -2,9 +2,10 @@
 
 import { branch, lifecycle } from 'recompose';
 
+import { shouldFetchData } from '~immutable/utils';
+
 const shouldFetchColony = ({ colony, ensName }) =>
-  ensName &&
-  (!colony || (!colony.record && !(colony.isFetching || colony.error)));
+  !!(ensName && shouldFetchData(colony));
 
 const fetchMissingColony = branch(
   shouldFetchColony,

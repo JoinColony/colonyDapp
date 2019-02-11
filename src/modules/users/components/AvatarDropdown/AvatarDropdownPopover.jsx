@@ -15,7 +15,7 @@ import DropdownMenu, {
 import Link from '~core/Link';
 import NavLink from '~core/NavLink';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 const MSG = defineMessages({
   buttonGetStarted: {
@@ -52,9 +52,11 @@ const MSG = defineMessages({
   },
 });
 
+// TODO this can't be made exact because of withConsumerFactory
+// (inexact Object). Maybe try a generic for props there?
 type Props = {
   closePopover: () => void,
-  user: UserRecord,
+  user: UserType,
   openDialog: OpenDialog,
 };
 

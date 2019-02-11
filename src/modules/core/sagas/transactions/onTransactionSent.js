@@ -6,7 +6,7 @@ import type { ContractResponse } from '@colony/colony-js-client';
 import { call, put, select, take } from 'redux-saga/effects';
 
 import type {
-  TransactionRecord,
+  TransactionRecordType,
   TransactionParams,
   TransactionEventData,
 } from '~immutable';
@@ -41,8 +41,8 @@ import transactionChannel from './transactionChannel';
  */
 function* getUnsentTransaction<P: TransactionParams, E: TransactionEventData>(
   id: string,
-): Generator<*, TransactionRecord<P, E>, *> {
-  const tx: TransactionRecord<P, E> = yield select(oneTransaction, id);
+): Generator<*, TransactionRecordType<P, E>, *> {
+  const tx: TransactionRecordType<P, E> = yield select(oneTransaction, id);
   if (!tx) throw new Error('Transaction not found');
   if (tx.hash) throw new Error('Transaction has already been sent');
   return tx;
@@ -57,7 +57,7 @@ async function getMethodTransactionPromise<
   E: TransactionEventData,
 >(
   method: Sender<P, E> | MultisigSender<P, E>,
-  tx: TransactionRecord<P, E>,
+  tx: TransactionRecordType<P, E>,
 ): Promise<ContractResponse<E>> {
   const {
     multisig,
@@ -94,7 +94,10 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
   txPromise: Promise<ContractResponse<E>>,
   id: string,
 ): Saga<void> {
-  const transaction: TransactionRecord<P, E> = yield select(oneTransaction, id);
+  const transaction: TransactionRecordType<P, E> = yield select(
+    oneTransaction,
+    id,
+  );
 
   const {
     lifecycle: { error: errorType, receiptReceived, sent, success },
@@ -109,7 +112,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
       const action = yield take(channel);
 
       // Add the transaction to the payload (we need to get the most recent version of it)
-      const tx: TransactionRecord<P, E> = yield select(oneTransaction, id);
+      const tx: TransactionRecordType<P, E> = yield select(oneTransaction, id);
       const payload = {
         ...action.payload,
         transaction: tx,

@@ -19,7 +19,7 @@ import type {
   UniqueAction,
   UniqueActionWithKeyPath,
 } from '~types';
-import type { UserProfileProps, ContractTransactionProps } from '~immutable';
+import type { UserProfileType, ContractTransactionType } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
@@ -121,7 +121,7 @@ export function* getOrCreateUserStore(
 
 export function* getUserProfileData(
   store: ValidatedKVStore,
-): Saga<UserProfileProps> {
+): Saga<UserProfileType> {
   return yield call(getAll, store);
 }
 
@@ -372,7 +372,7 @@ function* removeAvatar({ meta }: UniqueAction): Saga<void> {
 // @TODO This would go into a query object
 /**
  * Fetch the ERC-20 Token transfers to/from the current user, and parse to
- * ContractTransactionProps objects.
+ * ContractTransactionType objects.
  */
 function* fetchTokenTransfers(): Saga<void> {
   const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
@@ -423,7 +423,7 @@ function* fetchTokenTransfers(): Saga<void> {
       transferLogs,
     );
 
-    const transactions: Array<ContractTransactionProps> = yield all(
+    const transactions: Array<ContractTransactionType> = yield all(
       transferEvents.map((event, i) =>
         call(parseUserTransferEvent, {
           event,

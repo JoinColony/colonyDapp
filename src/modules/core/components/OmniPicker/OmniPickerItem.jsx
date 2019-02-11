@@ -5,14 +5,14 @@ import scrollIntoView from 'scroll-into-view-if-needed';
 
 import type { ItemComponentType } from './types';
 
-type Props = {
+type Props = {|
   keyUsed?: boolean,
   idx: number,
   selected: boolean,
   itemData: { id: string },
   onSelect: (idx: number) => void,
   itemComponent: ItemComponentType,
-};
+|};
 
 class OmniPickerItem extends Component<Props> {
   static displayName = 'OmniPicker.OmniPickerItem';

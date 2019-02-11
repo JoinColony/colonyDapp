@@ -16,9 +16,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   isTaskCreator: boolean,
-};
+|};
 
 const TaskDescription = ({ isTaskCreator }: Props) => (
   <Fragment>

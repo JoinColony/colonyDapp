@@ -1,10 +1,11 @@
 /* @flow */
 import type { HOC } from 'recompose';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 
-import type { TransactionRecord } from '~immutable';
+import type { TransactionType } from '~immutable';
 
 import {
   transactionEstimateGas,
@@ -13,9 +14,9 @@ import {
 import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
 import GasStationPrice from './GasStationPrice.jsx';
 
-type InProps = {
-  transaction: TransactionRecord<*, *>,
-};
+type InProps = {|
+  transaction: TransactionType<*, *>,
+|};
 
 const enhance: HOC<*, InProps> = compose(
   connect(
@@ -45,6 +46,7 @@ const enhance: HOC<*, InProps> = compose(
       isNetworkCongested,
     };
   }),
+  withImmutablePropsToJS,
 );
 
 export default enhance(GasStationPrice);

@@ -2,10 +2,10 @@
 import React from 'react';
 import { FormattedRelative } from 'react-intl';
 
-type Props = {
+type Props = {|
   /** Datetime to calculate relative/difference from. */
   value: Date,
-};
+|};
 
 const displayName = 'TimeRelative';
 

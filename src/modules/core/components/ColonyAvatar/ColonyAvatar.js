@@ -1,22 +1,13 @@
 /* @flow */
 
-import { connect } from 'react-redux';
 import compose from 'recompose/compose';
+import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import ColonyAvatar from './ColonyAvatar.jsx';
 
-import {
-  currentColonyAvatarHashSelector,
-  currentColonyAvatarDataSelector,
-} from '../../../dashboard/selectors';
-import { fetchColonyAvatar as fetchColonyAvatarAction } from '../../../dashboard/actionCreators';
+import { withColonyAvatar } from '../../../dashboard/hocs';
 
 export default compose(
-  connect(
-    (state, props) => ({
-      avatarHash: currentColonyAvatarHashSelector(state, props),
-      avatarData: currentColonyAvatarDataSelector(state, props),
-    }),
-    { fetchColonyAvatar: fetchColonyAvatarAction },
-  ),
+  withColonyAvatar,
+  withImmutablePropsToJS,
 )(ColonyAvatar);

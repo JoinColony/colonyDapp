@@ -11,7 +11,7 @@ import type {
   UniqueAction,
   UniqueActionWithKeyPath,
 } from '~types';
-import type { ContractTransactionProps } from '~immutable';
+import type { ContractTransactionType } from '~immutable';
 
 import { putError, raceError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
@@ -78,7 +78,7 @@ function* fetchColonyTransactionsSaga({
       colonyClient,
     );
 
-    const transactions: Array<ContractTransactionProps> = (yield all(
+    const transactions: Array<ContractTransactionType> = (yield all(
       events.map((event, i) =>
         EVENT_PARSERS[event.eventName]({
           event,
@@ -141,7 +141,7 @@ function* fetchColonyUnclaimedTransactionsSaga({
       colonyClient,
     );
 
-    const transactions: Array<ContractTransactionProps> = (yield all(
+    const transactions: Array<ContractTransactionType> = (yield all(
       transferEvents.map((transferEvent, i) =>
         call(parseUnclaimedTransferEvent, {
           transferEvent,

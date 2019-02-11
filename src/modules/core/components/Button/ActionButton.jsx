@@ -8,6 +8,7 @@ import promiseListener from '../../../../createPromiseListener';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 
+// TODO if this object is sealed, there are unspecified props being used
 type Props = {
   submit: string,
   success: string,
@@ -15,9 +16,9 @@ type Props = {
   values?: Object | (() => Object | Promise<Object>),
 };
 
-type State = {
+type State = {|
   loading: boolean,
-};
+|};
 
 class ActionButton extends Component<Props, State> {
   asyncFunc: AsyncFunction<Object, void>;

@@ -11,7 +11,7 @@ import Icon from '../Icon';
 import styles from './ActivityBar.css';
 import modalStyles from '../Modal/Modal.css';
 
-type Props = {
+type Props = {|
   /** close prop from concrete ActivityBar component */
   close?: Close,
   /** Needs a cancel prop from concrete ActivityBar component */
@@ -24,7 +24,7 @@ type Props = {
   shouldCloseOnEsc?: boolean,
   /** passed through to Modal, but will be prevented if isDimissable is falsy */
   shouldCloseOnOverlayClick?: boolean,
-};
+|};
 
 const ActivityBar = ({
   children,

@@ -9,13 +9,13 @@ import styles from './FormStatus.css';
 
 const displayName = 'FormStatus';
 
-type Props = {
+type Props = {|
   /** Formik custom status object */
-  status?: {
+  status?: {|
     info?: string | MessageDescriptor,
     error?: string | MessageDescriptor,
-  },
-};
+  |},
+|};
 
 const FormStatus = ({ status: { info, error } = {} }: Props) => {
   if (!info && !error) return null;

@@ -10,7 +10,7 @@ import styles from './UserInfo.css';
 
 const componentDisplayName: string = 'UserInfo';
 
-type Props = {
+type Props = {|
   /** Children elemnts or components to wrap the tooltip around */
   children: React$Element<*>,
   /** The user's name (aka Display Name) */
@@ -21,7 +21,7 @@ type Props = {
   walletAddress?: string,
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled',
-};
+|};
 
 const UserInfo = ({
   displayName,

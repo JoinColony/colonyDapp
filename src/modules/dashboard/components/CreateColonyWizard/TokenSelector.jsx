@@ -51,15 +51,15 @@ type TokenData = {
   symbol: string,
 };
 
-type Props = {
+type Props = {|
   tokenAddress: string,
   onTokenSelect: (TokenData | null | void) => any,
   tokenData: ?TokenData,
-};
+|};
 
-type State = {
+type State = {|
   isLoading: boolean,
-};
+|};
 
 const getStatusText = (tokenData, isLoading) => {
   if (isLoading) {

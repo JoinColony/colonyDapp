@@ -8,7 +8,7 @@ import Button from '~core/Button';
 
 import styles from './ProfileAdvanced.css';
 
-import type { ColonyRecord } from '~immutable';
+import type { ColonyType } from '~immutable';
 import type { Given } from '~utils/hoc';
 import type { OpenDialog } from '~core/Dialog/types';
 
@@ -34,12 +34,12 @@ const MSG = defineMessages({
 const mockColonyRecoveryMode = false;
 const displayName: string = 'admin.Profile.ProfileAdvanced';
 
-type Props = {
-  colonyId: $PropertyType<ColonyRecord, 'id'>,
-  colonyVersion: $PropertyType<ColonyRecord, 'version'>,
+type Props = {|
+  colonyId: $PropertyType<ColonyType, 'id'>,
+  colonyVersion: $PropertyType<ColonyType, 'version'>,
   given: Given,
   openDialog: OpenDialog,
-};
+|};
 
 const ProfileAdvanced = ({
   colonyId,

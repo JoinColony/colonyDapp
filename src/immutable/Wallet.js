@@ -6,13 +6,15 @@ import { Record } from 'immutable';
 
 import type { Address } from '~types';
 
-export type WalletProps = {
+export type WalletProps = {|
   availableAddresses?: Address[], // TODO use List?
   currentAddress?: Address,
   isLoading: boolean,
-};
+|};
 
-export type WalletRecord = RecordOf<WalletProps>;
+export type WalletPropsJS = $ReadOnly<WalletProps>;
+
+export type WalletRecordType = RecordOf<WalletProps>;
 
 const defaultValues: $Shape<WalletProps> = {
   availableAddresses: [],
@@ -20,6 +22,6 @@ const defaultValues: $Shape<WalletProps> = {
   isLoading: undefined,
 };
 
-const Wallet: RecordFactory<WalletProps> = Record(defaultValues);
+const WalletRecord: RecordFactory<WalletProps> = Record(defaultValues);
 
-export default Wallet;
+export default WalletRecord;

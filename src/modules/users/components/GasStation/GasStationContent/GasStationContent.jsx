@@ -21,15 +21,15 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   close?: () => void,
-  transactionGroups: Array<TransactionGroup>,
   getCurrentUserBalance: () => void,
-};
+  transactionGroups: Array<TransactionGroup>,
+|};
 
-type State = {
+type State = {|
   selectedGroupIdx: number,
-};
+|};
 
 class GasStationContent extends Component<Props, State> {
   static displayName = 'users.GasStation.GasStationContent';

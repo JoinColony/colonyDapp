@@ -30,6 +30,7 @@ type Appearance = {
   position: 'top' | 'bottom',
 };
 
+// TODO sealing this object shows `getItem` being used
 type Props = {
   /** Appearance object */
   appearance: Appearance,

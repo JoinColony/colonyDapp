@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { UserRecord } from '~immutable';
+import type { UserType } from '~immutable';
 
 import CopyableAddress from '../../../core/components/CopyableAddress';
 import Heading from '../../../core/components/Heading';
@@ -11,9 +11,9 @@ import UserAvatar from '~core/UserAvatar';
 
 import styles from './UserMeta.css';
 
-type Props = {
-  user: UserRecord,
-};
+type Props = {|
+  user: UserType,
+|};
 
 const UserMeta = ({
   user: {

@@ -64,11 +64,12 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
   walletAddress: string,
-};
+|};
+
 class ClaimProfileDialog extends Component<Props> {
   static displayName = 'users.ClaimProfileDialog';
 

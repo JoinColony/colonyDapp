@@ -3,9 +3,9 @@
 import { List, Map as ImmutableMap } from 'immutable';
 
 import { withDataReducer } from '~utils/reducers';
-import { User, UserProfile, UserActivity } from '~immutable';
+import { UserRecord, UserProfileRecord, UserActivityRecord } from '~immutable';
 
-import type { UserRecord, UsersMap } from '~immutable';
+import type { UserRecordType, UsersMap } from '~immutable';
 import type { UniqueActionWithKeyPath } from '~types';
 
 import {
@@ -25,11 +25,11 @@ const userProfilesReducer = (
         meta: { keyPath },
         payload,
       } = action;
-      const profile = UserProfile(payload);
+      const profile = UserProfileRecord(payload);
       const recordPath = [...keyPath, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
-        : state.setIn(recordPath, User({ profile }));
+        : state.setIn(recordPath, UserRecord({ profile }));
     }
 
     case USER_ACTIVITIES_FETCH_SUCCESS: {
@@ -37,13 +37,13 @@ const userProfilesReducer = (
         meta: { keyPath },
         payload,
       } = action;
-      const activity = UserActivity(payload);
+      const activity = UserActivityRecord(payload);
       const recordPath = [...keyPath, 'record'];
       return state.getIn(recordPath)
         ? state.updateIn([...recordPath, 'activities'], activities =>
             activities.insert(activity),
           )
-        : state.setIn(recordPath, User({ activities: List([activity]) }));
+        : state.setIn(recordPath, UserRecord({ activities: List([activity]) }));
     }
 
     default:
@@ -51,7 +51,7 @@ const userProfilesReducer = (
   }
 };
 
-export default withDataReducer<UsersMap, UserRecord>(
+export default withDataReducer<UsersMap, UserRecordType>(
   new Set([USER_PROFILE_FETCH, USER_ACTIVITIES_FETCH]),
   ImmutableMap(),
 )(userProfilesReducer);

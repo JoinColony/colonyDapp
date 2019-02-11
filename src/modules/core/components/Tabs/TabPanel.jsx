@@ -5,6 +5,7 @@ import { TabPanel as ReactTabPanel } from 'react-tabs';
 
 import styles from './TabPanel.css';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   /** If set to true the tab will also be rendered if inactive. */
   forceRender?: boolean,

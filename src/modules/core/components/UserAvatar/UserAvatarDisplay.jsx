@@ -7,7 +7,7 @@ import getIcon from '../../../../lib/identicon';
 import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
 
-export type Props = {
+export type Props = {|
   /** Avatar image URL (can be a base64 encoded string) */
   avatar?: ?string,
   /** Is passed through to Avatar */
@@ -26,7 +26,7 @@ export type Props = {
   walletAddress: string,
   /* Whether to show or not show the UserInfo tooltip over the avatar */
   hasUserInfo?: boolean,
-};
+|};
 
 /*
  * `displayName` is a prop name, so we'll use `componentDisplayName` here

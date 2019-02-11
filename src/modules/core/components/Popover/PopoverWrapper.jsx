@@ -20,7 +20,7 @@ type ArrowProps = PopperArrowProps & {
   showArrow: boolean,
 };
 
-type Props = {
+type Props = {|
   appearance?: Appearance,
   arrowProps: ArrowProps,
   children: Node,
@@ -30,7 +30,7 @@ type Props = {
   retainRefFocus?: boolean,
   placement: string,
   style: any,
-};
+|};
 
 const PopoverWrapper = ({
   appearance,

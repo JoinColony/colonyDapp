@@ -10,6 +10,7 @@ import Input from '../Fields/Input';
 
 import { ESC, TAB } from './keyTypes';
 
+// Left intentionally unsealed (passing props)
 type Props = {
   appearance?: InputComponentAppearance,
   close: (data?: any, modifiers?: { cancelled?: boolean }) => void,

@@ -1,10 +1,10 @@
 /* @flow */
 /* eslint-disable max-len */
 
-import { User, UserProfile } from '~immutable';
+import { UserRecord, UserProfileRecord } from '~immutable';
 
-const MockUser = User({
-  profile: UserProfile({
+const MockUser = UserRecord({
+  profile: UserProfileRecord({
     activitiesStore: '',
     profileStore: '',
     walletAddress: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',

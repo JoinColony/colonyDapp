@@ -8,17 +8,17 @@ import DecisionOption from './DecisionOption.jsx';
 
 const displayName = 'DecisionHub';
 
-type Option = {
+type Option = {|
   value: string,
   title: MessageDescriptor | string,
   subtitle: MessageDescriptor | string,
   icon?: string,
-};
+|};
 
-type Props = {
+type Props = {|
   options: Array<Option>,
   name: string,
-};
+|};
 
 const DecisionHub = ({ options, name }: Props) => (
   <div>

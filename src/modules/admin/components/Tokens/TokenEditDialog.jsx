@@ -2,11 +2,10 @@
 import type { FormikProps } from 'formik';
 
 import React, { Component, Fragment } from 'react';
-import { List } from 'immutable';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenRecord } from '~immutable';
+import type { TokenType } from '~immutable';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -46,15 +45,15 @@ type FormValues = {
   colonyTokens: Array<string>,
 };
 
-type Props = {
+type Props = {|
   cancel: () => void,
   close: () => void,
-  tokens: List<TokenRecord>,
+  tokens: Array<TokenType>,
   /* We need to be aware of who own the tokens since it changes the UI */
   tokenOwner: 'Colony' | 'User',
-};
+|};
 
-const validateNativeTokenSelect = (nativeToken?: TokenRecord): any => {
+const validateNativeTokenSelect = (nativeToken?: TokenType): any => {
   if (nativeToken) {
     const { symbol } = nativeToken;
     return yup.object().shape({

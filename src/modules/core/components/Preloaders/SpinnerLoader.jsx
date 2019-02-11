@@ -14,7 +14,7 @@ type Appearance = {
   theme?: 'primary',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Text to display while loading */
@@ -23,7 +23,7 @@ type Props = {
   textValues?: MessageValues,
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
-};
+|};
 
 const SpinnerLoader = ({
   appearance = { size: 'small' },

@@ -14,7 +14,7 @@ type Appearance = {
   size: 'medium' | 'large' | 'small',
 };
 
-type Props = {
+type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Optional custom className, will overwrite appearance */
@@ -31,7 +31,7 @@ type Props = {
   value: number | string | BN,
   /** Separator for thousands (e.g. ',') */
   integerSeparator?: string,
-};
+|};
 
 const Numeral = ({
   appearance,

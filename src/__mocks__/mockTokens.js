@@ -5,11 +5,11 @@
 import BN from 'bn.js';
 import { List } from 'immutable';
 
-import { Token } from '~immutable';
+import { TokenRecord } from '~immutable';
 
-import type { TokenRecord } from '~immutable';
+import type { TokenRecordType } from '~immutable';
 
-export const ETHToken = Token({
+export const ETHToken = TokenRecord({
   address: '0x0',
   name: 'Ether',
   symbol: 'ETH',
@@ -21,7 +21,7 @@ export const ETHToken = Token({
   isBlocked: true,
 });
 
-export const COOLToken = Token({
+export const COOLToken = TokenRecord({
   address: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
   name: 'CoolToken',
   symbol: 'COOL',
@@ -33,7 +33,7 @@ export const COOLToken = Token({
   isBlocked: true,
 });
 
-export const DAIToken = Token({
+export const DAIToken = TokenRecord({
   address: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
   name: 'DAI',
   symbol: 'DAI',
@@ -45,7 +45,7 @@ export const DAIToken = Token({
   isBlocked: true,
 });
 
-export const CLNYToken = Token({
+export const CLNYToken = TokenRecord({
   address: '0x06441deaf11d60d77e5e42d4f644c64ca05c2fce',
   name: 'Colony',
   symbol: 'CLNY',
@@ -57,6 +57,6 @@ export const CLNYToken = Token({
   isBlocked: false,
 });
 
-const mockTokens: List<TokenRecord> = List.of(ETHToken, CLNYToken);
+const mockTokens: List<TokenRecordType> = List.of(ETHToken, CLNYToken);
 
 export default mockTokens;

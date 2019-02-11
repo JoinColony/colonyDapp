@@ -2,11 +2,11 @@
 
 import { List } from 'immutable';
 
-import { User, UserProfile } from '~immutable';
+import { UserRecord, UserProfileRecord } from '~immutable';
 
 const usersMocks = List.of(
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -14,8 +14,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -23,8 +23,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -32,8 +32,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -41,8 +41,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
@@ -50,8 +50,8 @@ const usersMocks = List.of(
       displayName: 'Collin Vine',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -59,8 +59,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -68,8 +68,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -77,8 +77,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -86,8 +86,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
@@ -95,8 +95,8 @@ const usersMocks = List.of(
       displayName: 'Collin Vine',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -104,8 +104,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -113,8 +113,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -122,8 +122,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -131,8 +131,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
@@ -140,8 +140,8 @@ const usersMocks = List.of(
       displayName: 'Collin Vine',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -149,8 +149,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -158,8 +158,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -167,8 +167,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -176,8 +176,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
@@ -185,8 +185,8 @@ const usersMocks = List.of(
       displayName: 'Collin Vine',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -194,8 +194,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -203,8 +203,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -212,8 +212,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -221,8 +221,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
@@ -230,8 +230,8 @@ const usersMocks = List.of(
       displayName: 'Collin Vine',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -239,8 +239,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -248,8 +248,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -257,8 +257,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -266,8 +266,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',
@@ -275,8 +275,8 @@ const usersMocks = List.of(
       displayName: 'Collin Vine',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xae57767918BB7c53aa26dd89f12913f5233d08D2',
@@ -284,8 +284,8 @@ const usersMocks = List.of(
       displayName: 'Christian Maniewski',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x2C1d87E67b8D90d8A617adD3D1165f4B34C3838d',
@@ -293,8 +293,8 @@ const usersMocks = List.of(
       displayName: 'Elena Dimitrova',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x1A2D59Be2B7d7D66C5e56E6F8463C58d3d762212',
@@ -302,8 +302,8 @@ const usersMocks = List.of(
       displayName: 'Thiago Delgado',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0x650e7CdF785ae9B83b2f806151C6C7A0df38034A',
@@ -311,8 +311,8 @@ const usersMocks = List.of(
       displayName: 'Alex Rea',
     }),
   }),
-  User({
-    profile: UserProfile({
+  UserRecord({
+    profile: UserProfileRecord({
       activitiesStore: '',
       profileStore: '',
       walletAddress: '0xF3d1052710d69707184F78bAee1FA523F41AFc4A',

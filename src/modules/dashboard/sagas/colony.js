@@ -326,6 +326,7 @@ function* fetchColonySaga({
   meta,
 }: UniqueActionWithKeyPath): Saga<void> {
   try {
+    // TODO error if the colony does not exist!
     const store = yield call(getOrCreateColonyStore, ensName);
     const payload = yield call(getAll, store);
     yield put({

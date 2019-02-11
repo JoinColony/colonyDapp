@@ -8,7 +8,7 @@ import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
-import type { ColonyAdminRecord } from '~immutable';
+import type { ColonyAdminType } from '~immutable';
 import { mergePayload } from '~utils/actions';
 
 import promiseListener from '../../../../createPromiseListener';
@@ -22,11 +22,11 @@ import {
 
 import styles from './UserList.css';
 
-type Props = {
+type Props = {|
   /*
    * Array of user data, follows the same format as UserPicker
    */
-  users: Array<ColonyAdminRecord>,
+  users: Array<ColonyAdminType>,
   /*
    * Whether to show the fullname
    * Gets passed down to `UserListItem`
@@ -60,7 +60,7 @@ type Props = {
   removeError: string,
   /* Colony ENS Name to use when removing the user */
   ensName: string,
-};
+|};
 
 const displayName: string = 'admin.UserList';
 
