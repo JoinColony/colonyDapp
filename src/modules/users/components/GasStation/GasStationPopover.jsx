@@ -1,10 +1,14 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe (not possible until we upgrade flow to 0.87)
+import React, { useEffect, useMemo, useState } from 'react';
+
+import type { PopoverTrigger } from '~core/Popover';
 
 import Popover from '~core/Popover';
 
-import type { PopoverTrigger } from '~core/Popover';
+import { usePrevious } from '~utils/hooks';
+
 import type { TransactionGroup } from './transactionGroup';
 
 import { transactionCount } from './transactionGroup';
@@ -15,61 +19,40 @@ type Props = {|
   children: React$Element<*> | PopoverTrigger,
 |};
 
-type State = {|
-  isGasStationOpen: boolean,
-|};
+const GasStationPopover = ({ children, transactionGroups }: Props) => {
+  const [isOpen, setOpen] = useState(false);
+  const txCount = useMemo(() => transactionCount(transactionGroups), [
+    transactionGroups,
+  ]);
+  const prevTxCount = usePrevious(txCount);
+  useEffect(
+    () => {
+      if (prevTxCount != null && txCount > prevTxCount) {
+        setOpen(true);
+      }
+    },
+    [txCount, prevTxCount],
+  );
 
-class GasStationPopover extends Component<Props, State> {
-  static displayName = 'users.GasStation.GasStationPopover';
+  return (
+    <Popover
+      appearance={{ theme: 'grey' }}
+      content={({ close }) => (
+        <GasStationContent
+          transactionGroups={transactionGroups}
+          close={close}
+        />
+      )}
+      placement="bottom"
+      showArrow={false}
+      isOpen={isOpen}
+      onClose={() => setOpen(false)}
+    >
+      {children}
+    </Popover>
+  );
+};
 
-  state = {
-    isGasStationOpen: false,
-  };
-
-  componentDidUpdate(prevProps: Props) {
-    const { transactionGroups: prevTransactionGroups } = prevProps;
-    const { transactionGroups: currentTransactionGroups } = this.props;
-    if (
-      transactionCount(prevTransactionGroups) <
-      transactionCount(currentTransactionGroups)
-    ) {
-      /*
-       * @NOTE We're not causing either an infinite loop,
-       * neither copying prop values into state.
-       * Eslint's rules a bit draconical here.
-       *
-       * See: https://reactjs.org/docs/react-component.html#componentdidupdate
-       */
-      /* eslint-disable-next-line react/no-did-update-set-state */
-      this.setState({ isGasStationOpen: true });
-    }
-  }
-
-  closeGasStation() {
-    return this.setState({ isGasStationOpen: false });
-  }
-
-  render() {
-    const { isGasStationOpen } = this.state;
-    const { children, transactionGroups } = this.props;
-    return (
-      <Popover
-        appearance={{ theme: 'grey' }}
-        content={({ close }) => (
-          <GasStationContent
-            transactionGroups={transactionGroups}
-            close={close}
-          />
-        )}
-        placement="bottom"
-        showArrow={false}
-        isOpen={isGasStationOpen}
-        onClose={() => this.closeGasStation()}
-      >
-        {children}
-      </Popover>
-    );
-  }
-}
+GasStationPopover.displayName = 'users.GasStation.GasStationPopover';
 
 export default GasStationPopover;
