@@ -16,10 +16,24 @@ class QRCode extends Component<Props> {
     const canvas = document.getElementById('qr-code');
 
     if (canvas) {
-      QRCodeGenerator.toCanvas(canvas, address, { margin: 0, width }, err => {
-        /* eslint-disable-next-line no-console */
-        console.log(err);
-      });
+      QRCodeGenerator.toCanvas(
+        canvas,
+        address,
+        { margin: 0, width },
+        (error: Error) => {
+          /*
+           * @NOTE This is normal callback to be called upon finishing generating
+           * the QR Code's image pattern, not an Error callback (even though it
+           * only receives one argument, and that's an Error objet instance)
+           *
+           * See: https://www.npmjs.com/package/qrcode#cb
+           */
+          if (error) {
+            /* eslint-disable-next-line no-console */
+            console.log(error);
+          }
+        },
+      );
     }
   }
 
