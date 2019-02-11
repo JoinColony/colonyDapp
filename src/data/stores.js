@@ -23,7 +23,6 @@ import {
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
-// @TODO: Use an object instead of sequential arguments
 export const getColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
@@ -108,10 +107,13 @@ export const createTaskStore = (
 };
 
 export const getUserProfileStoreIdentifier = (id: string) => `user.${id}`;
-export const getUserProfileStore = (ddb: DDB) => async (
+export const getUserProfileStore = (ddb: DDB) => async ({
+  walletAddress,
+  username,
+}: {
   walletAddress: string,
   username?: string,
-) =>
+}) =>
   ddb.getStore<ValidatedKVStore>(
     userProfileStoreBlueprint,
     getUserProfileStoreIdentifier(username || walletAddress),
@@ -120,10 +122,13 @@ export const getUserProfileStore = (ddb: DDB) => async (
     },
   );
 
-export const getUserProfileStoreByUsername = (ddb: DDB) => async (
+export const getUserProfileStoreByUsername = (ddb: DDB) => async ({
+  walletAddress,
+  username,
+}: {
   walletAddress: string,
   username: string,
-) =>
+}) =>
   ddb.getStore<ValidatedKVStore>(
     userProfileStoreBlueprint,
     getUserProfileStoreIdentifier(username),
@@ -132,18 +137,24 @@ export const getUserProfileStoreByUsername = (ddb: DDB) => async (
     },
   );
 
-export const getUserInboxStore = (ddb: DDB) => async (
+export const getUserInboxStore = (ddb: DDB) => async ({
+  inboxStoreAddress,
+  walletAddress,
+}: {
   inboxStoreAddress: string | string | OrbitDBAddress,
   walletAddress: string,
-) =>
+}) =>
   ddb.getStore<FeedStore>(userInboxStoreBlueprint, inboxStoreAddress, {
     walletAddress,
   });
 
-export const getUserActivityStore = (ddb: DDB) => async (
+export const getUserActivityStore = (ddb: DDB) => async ({
+  userActivityStoreAddress,
+  walletAddress,
+}: {
   userActivityStoreAddress: string | OrbitDBAddress,
   walletAddress: string,
-) =>
+}) =>
   ddb.getStore<FeedStore>(
     userActivitiesStoreBlueprint,
     userActivityStoreAddress,
@@ -152,10 +163,13 @@ export const getUserActivityStore = (ddb: DDB) => async (
     },
   );
 
-export const getUserMetadataStore = (ddb: DDB) => async (
+export const getUserMetadataStore = (ddb: DDB) => async ({
+  userMetadataStoreAddress,
+  walletAddress,
+}: {
   userMetadataStoreAddress: string | OrbitDBAddress,
   walletAddress: string,
-) =>
+}) =>
   ddb.getStore<EventStore>(
     userMetadataStoreBlueprint,
     userMetadataStoreAddress,
@@ -164,9 +178,11 @@ export const getUserMetadataStore = (ddb: DDB) => async (
     },
   );
 
-export const createUserProfileStore = (ddb: DDB) => async (
+export const createUserProfileStore = (ddb: DDB) => async ({
+  walletAddress,
+}: {
   walletAddress: string,
-) => {
+}) => {
   const [
     profileStore,
     activityStore,
