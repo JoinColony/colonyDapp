@@ -18,14 +18,9 @@ import {
 import Button from '~core/Button';
 import { getENSDomainString } from '~utils/web3/ens';
 import { mergePayload } from '~utils/actions';
+import { ACTIONS } from '~redux';
 
 import { colonyStoreBlueprint } from '../../../dashboard/stores';
-
-import {
-  COLONY_PROFILE_UPDATE,
-  COLONY_PROFILE_UPDATE_ERROR,
-  COLONY_PROFILE_UPDATE_SUCCESS,
-} from '../../../dashboard/actionTypes';
 
 import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 
@@ -82,9 +77,9 @@ const ProfileEdit = ({ colony }: Props) => {
     <div className={styles.main}>
       <main className={styles.content}>
         <ActionForm
-          submit={COLONY_PROFILE_UPDATE}
-          success={COLONY_PROFILE_UPDATE_SUCCESS}
-          error={COLONY_PROFILE_UPDATE_ERROR}
+          submit={ACTIONS.COLONY_PROFILE_UPDATE}
+          success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
+          error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
           setPayload={(action: *, payload: *) =>
             mergePayload(action, { payload, meta: { keyPath: [ensName] } })
           }

@@ -4,23 +4,18 @@ import type { Saga } from 'redux-saga';
 
 import { call, put, takeEvery } from 'redux-saga/effects';
 
-import type { Action } from '~types';
+import type { ActionsType } from '~redux';
 
 import { putError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import { createCommentsStore } from './shared';
-
-import {
-  TASK_COMMENT_ADD,
-  TASK_COMMENT_ADD_SUCCESS,
-  TASK_COMMENT_ADD_ERROR,
-} from '../actionTypes';
 
 function* addNewComment({
   payload: { draftId, commentData } = {},
   meta: { id } = {},
-}: Action = {}): Saga<void> {
+}: $PropertyType<ActionsType, 'TASK_COMMENT_ADD'>): Saga<void> {
   try {
     /*
      * @TODO Wire message signing to the Gas Station, once it's available
@@ -46,7 +41,7 @@ function* addNewComment({
      * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
      */
     yield put({
-      type: TASK_COMMENT_ADD_SUCCESS,
+      type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
       payload: {
         draftId,
         commentData,
@@ -55,10 +50,10 @@ function* addNewComment({
       meta: { id },
     });
   } catch (error) {
-    yield putError(TASK_COMMENT_ADD_ERROR, error);
+    yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error);
   }
 }
 
 export default function* commentsSagas(): any {
-  yield takeEvery(TASK_COMMENT_ADD, addNewComment);
+  yield takeEvery(ACTIONS.TASK_COMMENT_ADD, addNewComment);
 }

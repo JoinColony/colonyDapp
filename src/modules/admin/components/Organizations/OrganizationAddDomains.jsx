@@ -4,16 +4,11 @@ import React from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
-import type { Action, ENSName } from '~types';
+import type { ActionType, ENSName } from '~types';
 
 import Button from '~core/Button';
 import { ActionForm, FormStatus, Input } from '~core/Fields';
-
-import {
-  DOMAIN_CREATE,
-  DOMAIN_CREATE_SUCCESS,
-  DOMAIN_CREATE_ERROR,
-} from '../../../dashboard/actionTypes';
+import { ACTIONS } from '~redux';
 
 import styles from './OrganizationAddDomains.css';
 
@@ -52,7 +47,10 @@ const validationSchema = yup.object({
 const OrganizationAddDomains = ({ ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
-      setPayload={(action: Action, { domainName }: FormValues) => ({
+      setPayload={(
+        action: ActionType<*, *, *>,
+        { domainName }: FormValues,
+      ) => ({
         ...action,
         payload: {
           domainName,
@@ -61,9 +59,9 @@ const OrganizationAddDomains = ({ ensName }: Props) => (
           keyPath: [ensName],
         },
       })}
-      submit={DOMAIN_CREATE}
-      success={DOMAIN_CREATE_SUCCESS}
-      error={DOMAIN_CREATE_ERROR}
+      submit={ACTIONS.DOMAIN_CREATE}
+      success={ACTIONS.DOMAIN_CREATE_SUCCESS}
+      error={ACTIONS.DOMAIN_CREATE_ERROR}
       onSuccess={(_, { resetForm }) => {
         resetForm();
       }}

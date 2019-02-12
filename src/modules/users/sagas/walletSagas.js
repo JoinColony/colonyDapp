@@ -10,12 +10,10 @@ import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
+import type { ActionsType } from '~redux';
+
 import { create, putError } from '~utils/saga/effects';
-import {
-  WALLET_FETCH_ACCOUNTS,
-  WALLET_FETCH_ACCOUNTS_ERROR,
-  WALLET_FETCH_ACCOUNTS_SUCCESS,
-} from '../actionTypes';
+import { ACTIONS } from '~redux';
 
 // TODO: type better
 type WalletInstance = Object;
@@ -25,7 +23,9 @@ const hardwareWallets = {
   trezor: trezorWallet,
 };
 
-function* fetchAccounts(action: Object): Saga<void> {
+function* fetchAccounts(
+  action: $PropertyType<ActionsType, 'WALLET_FETCH_ACCOUNTS'>,
+): Saga<void> {
   const { walletType } = action.payload;
 
   try {
@@ -34,15 +34,17 @@ function* fetchAccounts(action: Object): Saga<void> {
       addressCount: 100,
     });
     yield put({
-      type: WALLET_FETCH_ACCOUNTS_SUCCESS,
+      type: ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
       payload: { allAddresses: wallet.otherAddresses },
     });
   } catch (err) {
-    yield putError(WALLET_FETCH_ACCOUNTS_ERROR, err);
+    yield putError(ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR, err);
   }
 }
 
-function* openMnemonicWallet(action: Object): Saga<void> {
+function* openMnemonicWallet(
+  action: $PropertyType<ActionsType, 'WALLET_CREATE'>,
+): Saga<void> {
   const { connectwalletmnemonic } = action.payload;
   return yield call(softwareWallet.open, {
     mnemonic: connectwalletmnemonic,
@@ -53,7 +55,9 @@ function* openMetamaskWallet(): Saga<void> {
   return yield call(metamaskWallet.open);
 }
 
-function* openHardwareWallet(action: Object): Saga<void> {
+function* openHardwareWallet(
+  action: $PropertyType<ActionsType, 'WALLET_CREATE'>,
+): Saga<void> {
   const { hardwareWalletChoice, method } = action.payload;
   const wallet = yield call(hardwareWallets[method].open, {
     // TODO: is 100 addresses really what we want?
@@ -66,7 +70,9 @@ function* openHardwareWallet(action: Object): Saga<void> {
   return wallet;
 }
 
-function* openKeystoreWallet(action: Object): Saga<void> {
+function* openKeystoreWallet(
+  action: $PropertyType<ActionsType, 'WALLET_CREATE'>,
+): Saga<void> {
   const { keystore, password } = action.payload;
   return yield call(softwareWallet.open, {
     keystore,
@@ -76,9 +82,7 @@ function* openKeystoreWallet(action: Object): Saga<void> {
 
 function* openTrufflepigWallet({
   payload: { accountIndex },
-}: {
-  payload: { accountIndex: number },
-}): Saga<void> {
+}: $PropertyType<ActionsType, 'WALLET_CREATE'>): Saga<void> {
   const loader = yield create(TrufflepigLoader);
   const { privateKey } = yield call([loader, loader.getAccount], accountIndex);
   return yield call(softwareWallet.open, {
@@ -86,14 +90,18 @@ function* openTrufflepigWallet({
   });
 }
 
-function* createWallet(action: Object): Saga<void> {
+function* createWallet(
+  action: $PropertyType<ActionsType, 'WALLET_CREATE'>,
+): Saga<void> {
   const { mnemonic } = action.payload;
   return yield call(softwareWallet.open, {
     mnemonic,
   });
 }
 
-export function* getWallet(action: Object): Saga<WalletInstance> {
+export function* getWallet(
+  action: $PropertyType<ActionsType, 'WALLET_CREATE'>,
+): Saga<WalletInstance> {
   const { method } = action.payload;
   switch (method) {
     case 'create':
@@ -118,5 +126,5 @@ export function* getWallet(action: Object): Saga<WalletInstance> {
 }
 
 export function* setupWalletSagas(): any {
-  yield takeLatest(WALLET_FETCH_ACCOUNTS, fetchAccounts);
+  yield takeLatest(ACTIONS.WALLET_FETCH_ACCOUNTS, fetchAccounts);
 }

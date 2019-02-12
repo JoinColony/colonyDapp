@@ -13,6 +13,7 @@ import type {
 import { getENSDomainString } from '~utils/web3/ens';
 import { raceError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import { walletAddressSelector } from '../../users/selectors';
 import {
@@ -21,7 +22,6 @@ import {
   tasksIndexStoreBlueprint,
   commentsBlueprint,
 } from '../stores';
-import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
 import { domainsIndexSelector, singleColonySelector } from '../selectors';
 
@@ -80,9 +80,9 @@ export function* ensureColonyIsInState(colonyENSName: ENSName): Saga<*> {
    */
   yield raceError(
     ({ type, payload: { keyPath } }) =>
-      type === COLONY_FETCH_SUCCESS && keyPath[0] === colonyENSName,
+      type === ACTIONS.COLONY_FETCH_SUCCESS && keyPath[0] === colonyENSName,
     ({ type, payload: { keyPath } }) =>
-      type === COLONY_FETCH_ERROR && keyPath[0] === colonyENSName,
+      type === ACTIONS.COLONY_FETCH_ERROR && keyPath[0] === colonyENSName,
     new Error(`Colony "${colonyENSName}" could not be found`),
   );
 }

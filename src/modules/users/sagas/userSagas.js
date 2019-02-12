@@ -13,12 +13,7 @@ import {
 } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 
-import type {
-  Action,
-  Address,
-  UniqueAction,
-  UniqueActionWithKeyPath,
-} from '~types';
+import type { Address } from '~types';
 import type { UserProfileType, ContractTransactionType } from '~immutable';
 
 import { putError, callCaller } from '~utils/saga/effects';
@@ -31,6 +26,7 @@ import {
   getFilterFormattedAddress,
   parseUserTransferEvent,
 } from '~utils/web3/eventLogs';
+import { ACTIONS } from '~redux';
 
 import {
   getUserProfileStoreIdentifier,
@@ -54,44 +50,8 @@ import {
   walletAddressSelector,
 } from '../selectors';
 
-import {
-  CURRENT_USER_CREATE_ERROR,
-  USER_ACTIVITIES_FETCH,
-  USER_ACTIVITIES_FETCH_ERROR,
-  USER_ACTIVITIES_FETCH_SUCCESS,
-  USER_ACTIVITIES_UPDATE,
-  USER_ACTIVITIES_UPDATE_ERROR,
-  USER_ACTIVITIES_UPDATE_SUCCESS,
-  USER_AVATAR_FETCH,
-  USER_AVATAR_FETCH_ERROR,
-  USER_AVATAR_FETCH_SUCCESS,
-  USER_FETCH_TOKEN_TRANSFERS,
-  USER_FETCH_TOKEN_TRANSFERS_ERROR,
-  USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
-  USER_PROFILE_FETCH,
-  USER_PROFILE_FETCH_ERROR,
-  USER_PROFILE_FETCH_SUCCESS,
-  USER_PROFILE_UPDATE,
-  USER_PROFILE_UPDATE_ERROR,
-  USER_PROFILE_UPDATE_SUCCESS,
-  USER_REMOVE_AVATAR,
-  USER_REMOVE_AVATAR_ERROR,
-  USER_REMOVE_AVATAR_SUCCESS,
-  USER_UPLOAD_AVATAR,
-  USER_UPLOAD_AVATAR_ERROR,
-  USER_UPLOAD_AVATAR_SUCCESS,
-  USERNAME_CHECK_AVAILABILITY,
-  USERNAME_CHECK_AVAILABILITY_ERROR,
-  USERNAME_CHECK_AVAILABILITY_SUCCESS,
-  USERNAME_CREATE,
-  USERNAME_FETCH,
-  USERNAME_FETCH_ERROR,
-  USERNAME_FETCH_SUCCESS,
-  CURRENT_USER_GET_BALANCE,
-  CURRENT_USER_GET_BALANCE_SUCCESS,
-  CURRENT_USER_GET_BALANCE_ERROR,
-} from '../actionTypes';
 import { registerUserLabel } from '../actionCreators';
+import type { ActionsType } from '~redux';
 
 export function* getOrCreateUserStore(
   walletAddress: Address,
@@ -115,7 +75,7 @@ export function* getOrCreateUserStore(
     yield call([activityStore, activityStore.add], joinedColonyEvent());
     return profileStore;
   } catch (e) {
-    return yield putError(CURRENT_USER_CREATE_ERROR, e);
+    return yield putError(ACTIONS.CURRENT_USER_CREATE_ERROR, e);
   }
 }
 
@@ -125,8 +85,9 @@ export function* getUserProfileData(
   return yield call(getAll, store);
 }
 
-export function* fetchUserActivities(action: Action): Saga<void> {
-  const { walletAddress } = action.payload;
+export function* fetchUserActivities({
+  payload: { walletAddress },
+}: $PropertyType<ActionsType, 'USER_ACTIVITIES_FETCH'>): Saga<void> {
   const activitiesStoreAddress = yield select(
     userActivitiesStoreAddressSelector,
   );
@@ -140,15 +101,17 @@ export function* fetchUserActivities(action: Action): Saga<void> {
     );
     const activities = yield call(getAll, activitiesStore);
     yield put({
-      type: USER_ACTIVITIES_FETCH_SUCCESS,
+      type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
       payload: { activities, walletAddress },
     });
   } catch (error) {
-    yield putError(USER_ACTIVITIES_FETCH_ERROR, error);
+    yield putError(ACTIONS.USER_ACTIVITIES_FETCH_ERROR, error);
   }
 }
 
-export function* addUserActivity({ payload }: Action): Saga<void> {
+export function* addUserActivity({
+  payload,
+}: $PropertyType<ActionsType, 'USER_ACTIVITIES_UPDATE'>): Saga<void> {
   const { activity, walletAddress } = payload;
   const activitiesStoreAddress = yield select(
     userActivitiesStoreAddressSelector,
@@ -166,11 +129,11 @@ export function* addUserActivity({ payload }: Action): Saga<void> {
     const activities = yield call([activitiesStore, activitiesStore.all]);
 
     yield put({
-      type: USER_ACTIVITIES_UPDATE_SUCCESS,
+      type: ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS,
       payload: { activities, walletAddress },
     });
   } catch (error) {
-    yield putError(USER_ACTIVITIES_UPDATE_ERROR, error);
+    yield putError(ACTIONS.USER_ACTIVITIES_UPDATE_ERROR, error);
   }
 }
 
@@ -182,7 +145,7 @@ function* updateProfile({
     ...update
   },
   meta,
-}: UniqueAction): Saga<void> {
+}: $PropertyType<ActionsType, 'USER_PROFILE_UPDATE'>): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const userStore = yield call(getOrCreateUserStore, walletAddress);
@@ -190,16 +153,18 @@ function* updateProfile({
     yield call([userStore, userStore.set], update);
     const user = yield call(getAll, userStore);
     yield put({
-      type: USER_PROFILE_UPDATE_SUCCESS,
+      type: ACTIONS.USER_PROFILE_UPDATE_SUCCESS,
       payload: user,
       meta,
     });
   } catch (error) {
-    yield putError(USER_PROFILE_UPDATE_ERROR, error, meta);
+    yield putError(ACTIONS.USER_PROFILE_UPDATE_ERROR, error, meta);
   }
 }
 
-function* fetchUsername(action: Action): Saga<void> {
+function* fetchUsername(
+  action: $PropertyType<ActionsType, 'USERNAME_FETCH'>,
+): Saga<void> {
   const { userAddress } = action.payload;
 
   try {
@@ -215,11 +180,11 @@ function* fetchUsername(action: Action): Saga<void> {
       throw new Error(`Address "${userAddress}" is not a user`);
 
     yield put({
-      type: USERNAME_FETCH_SUCCESS,
+      type: ACTIONS.USERNAME_FETCH_SUCCESS,
       payload: { key: userAddress, username },
     });
   } catch (error) {
-    yield putError(USERNAME_FETCH_ERROR, error, { key: userAddress });
+    yield putError(ACTIONS.USERNAME_FETCH_ERROR, error, { key: userAddress });
   }
 }
 
@@ -228,7 +193,7 @@ function* fetchProfile({
     keyPath: [username],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: $PropertyType<ActionsType, 'USER_PROFILE_FETCH'>): Saga<void> {
   // TODO: do we want to cache these in redux?
   const nameHash = yield call(getHashedENSDomainString, username, 'user');
   const { ensAddress: walletAddress } = yield callCaller({
@@ -249,19 +214,19 @@ function* fetchProfile({
     if (!store) throw new Error(`Unable to load store for user "${username}"`);
     const user = yield call(getAll, store);
     yield put({
-      type: USER_PROFILE_FETCH_SUCCESS,
+      type: ACTIONS.USER_PROFILE_FETCH_SUCCESS,
       meta,
       payload: user,
     });
   } catch (error) {
-    yield putError(USER_PROFILE_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.USER_PROFILE_FETCH_ERROR, error, meta);
   }
 }
 
 function* validateUsername({
   payload: { username },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: $PropertyType<ActionsType, 'USERNAME_CHECK_AVAILABILITY'>): Saga<void> {
   yield delay(300);
 
   const nameHash = yield call(getHashedENSDomainString, username, 'user');
@@ -277,19 +242,19 @@ function* validateUsername({
 
   if (ensAddress) {
     yield putError(
-      USERNAME_CHECK_AVAILABILITY_ERROR,
+      ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
       new Error('ENS address already exists'),
       meta,
     );
     return;
   }
-  yield put({ type: USERNAME_CHECK_AVAILABILITY_SUCCESS, meta });
+  yield put({ type: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS, meta });
 }
 
 function* createUsername({
   payload: { username },
   meta,
-}: UniqueAction): Saga<void> {
+}: $PropertyType<ActionsType, 'USERNAME_CREATE'>): Saga<void> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
   const { profileStore, activityStore } = yield call(
@@ -312,22 +277,27 @@ function* createUsername({
   );
 }
 
-function* fetchAvatar(action: Action): Saga<void> {
+function* fetchAvatar(
+  action: $PropertyType<ActionsType, 'USER_AVATAR_FETCH'>,
+): Saga<void> {
   const { hash } = action.payload;
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   try {
     const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
     yield put({
-      type: USER_AVATAR_FETCH_SUCCESS,
+      type: ACTIONS.USER_AVATAR_FETCH_SUCCESS,
       payload: { hash, avatarData },
     });
   } catch (error) {
-    yield putError(USER_AVATAR_FETCH_ERROR, error);
+    yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error);
   }
 }
 
-function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
+function* uploadAvatar({
+  payload: { data },
+  meta,
+}: $PropertyType<ActionsType, 'USER_UPLOAD_AVATAR'>): Saga<void> {
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
@@ -342,16 +312,18 @@ function* uploadAvatar({ payload: { data }, meta }: UniqueAction): Saga<void> {
     yield call([store, store.set], 'avatar', hash);
 
     yield put({
-      type: USER_UPLOAD_AVATAR_SUCCESS,
+      type: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
       payload: { hash },
       meta,
     });
   } catch (error) {
-    yield putError(USER_UPLOAD_AVATAR_ERROR, error, meta);
+    yield putError(ACTIONS.USER_UPLOAD_AVATAR_ERROR, error, meta);
   }
 }
 
-function* removeAvatar({ meta }: UniqueAction): Saga<void> {
+function* removeAvatar({
+  meta,
+}: $PropertyType<ActionsType, 'USER_REMOVE_AVATAR'>): Saga<void> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
 
@@ -360,12 +332,12 @@ function* removeAvatar({ meta }: UniqueAction): Saga<void> {
     yield call([store, store.set], 'avatar', undefined);
     const user = yield call(getAll, store);
     yield put({
-      type: USER_REMOVE_AVATAR_SUCCESS,
+      type: ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
       payload: { user },
       meta,
     });
   } catch (error) {
-    yield putError(USER_REMOVE_AVATAR_ERROR, error, meta);
+    yield putError(ACTIONS.USER_REMOVE_AVATAR_ERROR, error, meta);
   }
 }
 
@@ -435,11 +407,11 @@ function* fetchTokenTransfers(): Saga<void> {
     );
 
     yield put({
-      type: USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+      type: ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
       payload: { transactions },
     });
   } catch (error) {
-    yield putError(USER_FETCH_TOKEN_TRANSFERS_ERROR, error);
+    yield putError(ACTIONS.USER_FETCH_TOKEN_TRANSFERS_ERROR, error);
   }
 }
 
@@ -456,27 +428,27 @@ function* updateWalletBalance(): Saga<void> {
       currentUserAddress,
     );
     yield put({
-      type: CURRENT_USER_GET_BALANCE_SUCCESS,
+      type: ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS,
       payload: {
         balance: formatEther(walletBalance),
       },
     });
   } catch (error) {
-    yield putError(CURRENT_USER_GET_BALANCE_ERROR, error);
+    yield putError(ACTIONS.CURRENT_USER_GET_BALANCE_ERROR, error);
   }
 }
 
 export function* setupUserSagas(): any {
-  yield takeLatest(USER_PROFILE_UPDATE, updateProfile);
-  yield takeLatest(USER_ACTIVITIES_UPDATE, addUserActivity);
-  yield takeLatest(USERNAME_CHECK_AVAILABILITY, validateUsername);
-  yield takeLatest(USERNAME_CREATE, createUsername);
-  yield takeLatest(USER_UPLOAD_AVATAR, uploadAvatar);
-  yield takeLatest(USER_REMOVE_AVATAR, removeAvatar);
-  yield takeLatest(CURRENT_USER_GET_BALANCE, updateWalletBalance);
-  yield takeEvery(USER_ACTIVITIES_FETCH, fetchUserActivities);
-  yield takeEvery(USERNAME_FETCH, fetchUsername);
-  yield takeEvery(USER_PROFILE_FETCH, fetchProfile);
-  yield takeEvery(USER_AVATAR_FETCH, fetchAvatar);
-  yield takeEvery(USER_FETCH_TOKEN_TRANSFERS, fetchTokenTransfers);
+  yield takeEvery(ACTIONS.USER_ACTIVITIES_FETCH, fetchUserActivities);
+  yield takeEvery(ACTIONS.USER_AVATAR_FETCH, fetchAvatar);
+  yield takeEvery(ACTIONS.USER_FETCH_TOKEN_TRANSFERS, fetchTokenTransfers);
+  yield takeEvery(ACTIONS.USER_PROFILE_FETCH, fetchProfile);
+  yield takeEvery(ACTIONS.USERNAME_FETCH, fetchUsername);
+  yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, updateWalletBalance);
+  yield takeLatest(ACTIONS.USER_ACTIVITIES_UPDATE, addUserActivity);
+  yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, updateProfile);
+  yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, removeAvatar);
+  yield takeLatest(ACTIONS.USER_UPLOAD_AVATAR, uploadAvatar);
+  yield takeLatest(ACTIONS.USERNAME_CHECK_AVAILABILITY, validateUsername);
+  yield takeLatest(ACTIONS.USERNAME_CREATE, createUsername);
 }

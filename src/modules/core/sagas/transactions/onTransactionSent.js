@@ -10,21 +10,13 @@ import type {
   TransactionParams,
   TransactionEventData,
 } from '~immutable';
+import type { ActionsType } from '~redux';
 
 import { putError } from '~utils/saga/effects';
+import { ACTIONS } from '~redux';
 
-import type {
-  MultisigSender,
-  Sender,
-  SendTransactionAction,
-} from '../../types';
+import type { MultisigSender, Sender } from '../../types';
 
-import {
-  TRANSACTION_ERROR,
-  TRANSACTION_EVENT_DATA_RECEIVED,
-  TRANSACTION_RECEIPT_RECEIVED,
-  TRANSACTION_SENT,
-} from '../../actionTypes';
 import {
   transactionEventDataReceived,
   transactionReceiptReceived,
@@ -126,20 +118,20 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 
       // Handle lifecycle action types
       switch (action.type) {
-        case TRANSACTION_ERROR:
+        case ACTIONS.TRANSACTION_ERROR:
           if (errorType) yield put({ type: errorType, payload, meta: { id } });
           break;
 
-        case TRANSACTION_SENT:
+        case ACTIONS.TRANSACTION_SENT:
           if (sent) yield put(transactionSent(id, payload, sent));
           break;
 
-        case TRANSACTION_RECEIPT_RECEIVED:
+        case ACTIONS.TRANSACTION_RECEIPT_RECEIVED:
           if (receiptReceived)
             yield put(transactionReceiptReceived(id, payload, receiptReceived));
           break;
 
-        case TRANSACTION_EVENT_DATA_RECEIVED:
+        case ACTIONS.TRANSACTION_EVENT_DATA_RECEIVED:
           if (success)
             yield put(transactionEventDataReceived(id, payload, success));
           break;
@@ -161,7 +153,10 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 export default function* onTransactionSent<
   P: TransactionParams,
   E: TransactionEventData,
->({ meta: { id }, meta }: SendTransactionAction): Saga<void> {
+>({
+  meta: { id },
+  meta,
+}: $PropertyType<ActionsType, 'TRANSACTION_SENT'>): Saga<void> {
   let tx;
 
   try {
@@ -190,7 +185,7 @@ export default function* onTransactionSent<
       yield putError(errorType, caughtError, meta);
     } else {
       // We still dispatch this error as a general TRANASACTION_ERROR
-      yield putError(TRANSACTION_ERROR, caughtError, meta);
+      yield putError(ACTIONS.TRANSACTION_ERROR, caughtError, meta);
     }
   }
 }

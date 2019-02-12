@@ -5,38 +5,39 @@ import type { Saga } from 'redux-saga';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
-import type { Action } from '~types';
+import type { ActionType } from '~types';
 
 import { putError } from '~utils/saga/effects';
 
 import { ensureColonyIsInState, fetchColonyStore } from './shared';
 
-import {
-  COLONY_ADMIN_ADD,
-  COLONY_ADMIN_ADD_SUCCESS,
-  COLONY_ADMIN_ADD_ERROR,
-  COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-  COLONY_ADMIN_ADD_CONFIRM_ERROR,
-  COLONY_ADMIN_REMOVE,
-  COLONY_ADMIN_REMOVE_SUCCESS,
-  COLONY_ADMIN_REMOVE_ERROR,
-  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-  COLONY_ADMIN_REMOVE_CONFIRM_ERROR,
-} from '../actionTypes';
-import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../core/actionTypes';
+import { ACTIONS } from '~redux';
 
 import {
   addColonyAdmin as addColonyAdminAction,
   removeColonyAdmin as removeColonyAdminAction,
 } from '../actionCreators';
+import type { ActionsType } from '~redux';
+
+const {
+  COLONY_ADMIN_ADD,
+  COLONY_ADMIN_ADD_CONFIRM_ERROR,
+  COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
+  COLONY_ADMIN_ADD_ERROR,
+  COLONY_ADMIN_ADD_SUCCESS,
+  COLONY_ADMIN_REMOVE,
+  COLONY_ADMIN_REMOVE_CONFIRM_ERROR,
+  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
+  COLONY_ADMIN_REMOVE_ERROR,
+  COLONY_ADMIN_REMOVE_SUCCESS,
+} = ACTIONS;
 
 function* addColonyAdmin({
   payload: { newAdmin, ensName },
-  meta = {},
-}: Action): Saga<void> {
+  meta,
+}: $PropertyType<ActionsType, 'COLONY_ADMIN_ADD'>): Saga<void> {
   try {
     const { walletAddress, username } = newAdmin.profile;
-    const keyPath = [ensName, 'record', 'admins', username];
     /*
      * Get the colony store
      */
@@ -65,8 +66,9 @@ function* addColonyAdmin({
       type: COLONY_ADMIN_ADD_SUCCESS,
       payload: {
         adminData: newAdmin.profile,
+        username,
       },
-      meta: { keyPath },
+      meta,
     });
     /*
      * Redirect the user back to the admins tab
@@ -87,9 +89,12 @@ function* addColonyAdmin({
      * If they match, then we can be sure the transaction has been signed, so we
      * can safely update the stores.
      */
+    // TODO consider using `take` with a match function, or another saga if possible
     yield takeEvery(
-      TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
+      ACTIONS.TRANSACTION_EVENT_DATA_RECEIVED,
+      function* waitForSuccessfulTx({
+        meta: { id: signedTxId } = {},
+      }: ActionType<*, *, *>) {
         try {
           if (signedTxId === meta.id) {
             /*
@@ -108,7 +113,7 @@ function* addColonyAdmin({
              */
             yield put({
               type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-              meta: { keyPath },
+              meta,
             });
             /*
              * Redirect the user back to the admins tab
@@ -125,19 +130,19 @@ function* addColonyAdmin({
       },
     );
   } catch (error) {
-    yield putError(COLONY_ADMIN_ADD_ERROR, error);
+    yield putError(COLONY_ADMIN_ADD_ERROR, error, meta);
   }
 }
 
 function* removeColonyAdmin({
   payload: { admin },
-  meta: { keyPath: metaKeyPath } = {},
+  meta: {
+    keyPath: [ensName],
+  },
   meta,
-}: Action): Saga<void> {
+}: $PropertyType<ActionsType, 'COLONY_ADMIN_REMOVE'>): Saga<void> {
   try {
-    const ensName = metaKeyPath[0];
     const { walletAddress, username } = admin;
-    const keyPath = [ensName, 'record', 'admins', username];
     /*
      * Ensure the colony is in the state.
      */
@@ -171,7 +176,8 @@ function* removeColonyAdmin({
      */
     yield put({
       type: COLONY_ADMIN_REMOVE_SUCCESS,
-      meta: { keyPath },
+      meta,
+      payload: { username },
     });
     /*
      * Redirect the user back to the admins tab
@@ -192,9 +198,12 @@ function* removeColonyAdmin({
      * If they match, then we can be sure the transaction has been signed, so we
      * can safely update the stores.
      */
+    // TODO consider using `take` with a match function, or another saga if possible
     yield takeEvery(
-      TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
+      ACTIONS.TRANSACTION_EVENT_DATA_RECEIVED,
+      function* waitForSuccessfulTx({
+        meta: { id: signedTxId } = {},
+      }: ActionType<*, *, *>) {
         try {
           if (meta && signedTxId === meta.id) {
             /*
@@ -208,7 +217,8 @@ function* removeColonyAdmin({
              */
             yield put({
               type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-              meta: { keyPath },
+              meta,
+              payload: { username },
             });
             /*
              * Redirect the user back to the admins tab

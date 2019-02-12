@@ -11,17 +11,9 @@ import styles from './StepCreateENSName.css';
 import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
-
-import {
-  COLONY_CREATE_LABEL,
-  COLONY_CREATE_LABEL_ERROR,
-  COLONY_CREATE_LABEL_SUCCESS,
-  COLONY_DOMAIN_VALIDATE,
-  COLONY_DOMAIN_VALIDATE_SUCCESS,
-  COLONY_DOMAIN_VALIDATE_ERROR,
-} from '../../actionTypes';
 
 type FormValues = {
   colonyName: string,
@@ -83,9 +75,9 @@ class StepCreateENSName extends Component<Props> {
   }
 
   checkDomainTaken = promiseListener.createAsyncFunction({
-    start: COLONY_DOMAIN_VALIDATE,
-    resolve: COLONY_DOMAIN_VALIDATE_SUCCESS,
-    reject: COLONY_DOMAIN_VALIDATE_ERROR,
+    start: ACTIONS.COLONY_DOMAIN_VALIDATE,
+    resolve: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
+    reject: ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
   });
 
   validateDomain = async (values: FormValues) => {
@@ -107,9 +99,9 @@ class StepCreateENSName extends Component<Props> {
     } = this.props;
     return (
       <ActionForm
-        submit={COLONY_CREATE_LABEL}
-        error={COLONY_CREATE_LABEL_ERROR}
-        success={COLONY_CREATE_LABEL_SUCCESS}
+        submit={ACTIONS.COLONY_CREATE_LABEL}
+        error={ACTIONS.COLONY_CREATE_LABEL_ERROR}
+        success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
         validationSchema={validationSchema}
         validate={this.validateDomain}
         setPayload={includeWizardValues}

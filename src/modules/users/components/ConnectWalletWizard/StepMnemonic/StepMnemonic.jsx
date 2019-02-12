@@ -8,15 +8,10 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 
-import {
-  WALLET_CREATE,
-  CURRENT_USER_CREATE,
-  WALLET_CREATE_ERROR,
-} from '../../../actionTypes';
-
 import { ActionForm, Textarea, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import { ACTIONS } from '~redux';
 import styles from './StepMnemonic.css';
 
 const MSG = defineMessages({
@@ -70,9 +65,9 @@ const StepMnemonic = ({
   wizardForm,
 }: Props) => (
   <ActionForm
-    submit={WALLET_CREATE}
-    success={CURRENT_USER_CREATE}
-    error={WALLET_CREATE_ERROR}
+    submit={ACTIONS.WALLET_CREATE}
+    success={ACTIONS.CURRENT_USER_CREATE}
+    error={ACTIONS.WALLET_CREATE_ERROR}
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
       setStatus({ error: MSG.errorOpenMnemonic });
     }}

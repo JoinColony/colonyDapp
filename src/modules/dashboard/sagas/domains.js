@@ -4,39 +4,24 @@ import type { Saga } from 'redux-saga';
 
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 
-import type {
-  AddressOrENSName,
-  ENSName,
-  UniqueActionWithKeyPath,
-} from '~types';
+import type { AddressOrENSName, ENSName } from '~types';
 
 import { putError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import { set, get, getAll } from '../../../lib/database/commands';
 import { getColonyMethod } from '../../core/sagas/utils';
 
 import { domainsIndexSelector } from '../selectors';
 import { domainsIndexStoreBlueprint } from '../stores';
-import {
-  COLONY_DOMAINS_FETCH,
-  COLONY_DOMAINS_FETCH_ERROR,
-  COLONY_DOMAINS_FETCH_SUCCESS,
-  DOMAIN_CREATE,
-  DOMAIN_CREATE_ERROR,
-  DOMAIN_CREATE_SUCCESS,
-  DOMAIN_CREATE_TX_ERROR,
-  DOMAIN_CREATE_TX_SUCCESS,
-  DOMAIN_FETCH,
-  DOMAIN_FETCH_ERROR,
-  DOMAIN_FETCH_SUCCESS,
-} from '../actionTypes';
 import { createDomain } from '../actionCreators';
 import {
   ensureColonyIsInState,
   createDomainsIndexStore,
   getDomainsIndexStore,
 } from './shared';
+import type { ActionsType } from '~redux';
 
 /*
  * Given a colony identifier and a parent domain ID (1 == root),
@@ -61,8 +46,10 @@ function* createDomainTransaction(
 
   return yield take(
     ({ type, meta: actionMeta }) =>
-      [DOMAIN_CREATE_TX_ERROR, DOMAIN_CREATE_TX_SUCCESS].includes(type) &&
-      actionMeta.id === action.meta.id,
+      [
+        ACTIONS.DOMAIN_CREATE_TX_ERROR,
+        ACTIONS.DOMAIN_CREATE_TX_SUCCESS,
+      ].includes(type) && actionMeta.id === action.meta.id,
   );
 }
 
@@ -169,7 +156,7 @@ function* createDomainSaga({
     keyPath: [colonyENSName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: $PropertyType<ActionsType, 'DOMAIN_CREATE'>): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -190,7 +177,7 @@ function* createDomainSaga({
     /*
      * If an error has already been `put`, simply exit.
      */
-    if (action.type === DOMAIN_CREATE_ERROR) return;
+    if (action.type === ACTIONS.DOMAIN_CREATE_ERROR) return;
 
     /*
      * Get the new domain ID from the successful transaction.
@@ -206,7 +193,7 @@ function* createDomainSaga({
      */
     const payload = { id: domainId, name: domainName };
     yield put({
-      type: DOMAIN_CREATE_SUCCESS,
+      type: ACTIONS.DOMAIN_CREATE_SUCCESS,
       meta: {
         ...meta,
         keyPath: [colonyENSName, domainId],
@@ -214,7 +201,7 @@ function* createDomainSaga({
       payload,
     });
   } catch (error) {
-    yield putError(DOMAIN_CREATE_ERROR, error, meta);
+    yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   }
 }
 
@@ -243,7 +230,7 @@ function* fetchDomainSaga({
     keyPath: [colonyENSName, domainId],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: $PropertyType<ActionsType, 'DOMAIN_FETCH'>): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -269,12 +256,12 @@ function* fetchDomainSaga({
      * Dispatch the success action.
      */
     yield put({
-      type: DOMAIN_FETCH_SUCCESS,
+      type: ACTIONS.DOMAIN_FETCH_SUCCESS,
       meta,
       payload,
     });
   } catch (error) {
-    yield putError(DOMAIN_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.DOMAIN_FETCH_ERROR, error, meta);
   }
 }
 
@@ -283,7 +270,7 @@ function* fetchColonyDomainsSaga({
     keyPath: [colonyENSName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: $PropertyType<ActionsType, 'COLONY_DOMAINS_FETCH'>): Saga<void> {
   try {
     /*
      * Ensure the colony is in the state.
@@ -304,17 +291,17 @@ function* fetchColonyDomainsSaga({
      * Dispatch the success action.
      */
     yield put({
-      type: COLONY_DOMAINS_FETCH_SUCCESS,
+      type: ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
       payload,
     });
   } catch (error) {
-    yield putError(COLONY_DOMAINS_FETCH_ERROR, error);
+    yield putError(ACTIONS.COLONY_DOMAINS_FETCH_ERROR, error, meta);
   }
 }
 
 export default function* domainSagas(): any {
-  yield takeEvery(COLONY_DOMAINS_FETCH, fetchColonyDomainsSaga);
-  yield takeEvery(DOMAIN_CREATE, createDomainSaga);
-  yield takeEvery(DOMAIN_FETCH, fetchDomainSaga);
+  yield takeEvery(ACTIONS.COLONY_DOMAINS_FETCH, fetchColonyDomainsSaga);
+  yield takeEvery(ACTIONS.DOMAIN_CREATE, createDomainSaga);
+  yield takeEvery(ACTIONS.DOMAIN_FETCH, fetchDomainSaga);
 }

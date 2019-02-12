@@ -7,20 +7,12 @@ import type { FileReaderFile } from '~core/FileUpload';
 
 import AvatarUploader from '~core/AvatarUploader';
 import ColonyAvatar from '~core/ColonyAvatar';
+import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 import type { ColonyType } from '~immutable';
-
-import {
-  COLONY_AVATAR_UPLOAD,
-  COLONY_AVATAR_UPLOAD_SUCCESS,
-  COLONY_AVATAR_UPLOAD_ERROR,
-  COLONY_AVATAR_REMOVE,
-  COLONY_AVATAR_REMOVE_SUCCESS,
-  COLONY_AVATAR_REMOVE_ERROR,
-} from '../../../dashboard/actionTypes';
 
 import styles from './ColonyAvatarUploader.css';
 import { mergePayload } from '~utils/actions';
@@ -58,15 +50,15 @@ class ColonyAvatarUploader extends Component<Props> {
     const setPayload = (action: *, payload: *) =>
       mergePayload(action, { payload, meta: { keyPath: [props.ensName] } });
     this.remove = promiseListener.createAsyncFunction({
-      start: COLONY_AVATAR_REMOVE,
-      resolve: COLONY_AVATAR_REMOVE_SUCCESS,
-      reject: COLONY_AVATAR_REMOVE_ERROR,
+      start: ACTIONS.COLONY_AVATAR_REMOVE,
+      resolve: ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS,
+      reject: ACTIONS.COLONY_AVATAR_REMOVE_ERROR,
       setPayload,
     });
     this.upload = promiseListener.createAsyncFunction({
-      start: COLONY_AVATAR_UPLOAD,
-      resolve: COLONY_AVATAR_UPLOAD_SUCCESS,
-      reject: COLONY_AVATAR_UPLOAD_ERROR,
+      start: ACTIONS.COLONY_AVATAR_UPLOAD,
+      resolve: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
+      reject: ACTIONS.COLONY_AVATAR_UPLOAD_ERROR,
       setPayload,
     });
   }

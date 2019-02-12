@@ -7,19 +7,11 @@ import type { FileReaderFile } from '~core/FileUpload';
 
 import AvatarUploader from '~core/AvatarUploader';
 import UserAvatar from '~core/UserAvatar';
+import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
-
-import {
-  USER_UPLOAD_AVATAR,
-  USER_UPLOAD_AVATAR_SUCCESS,
-  USER_UPLOAD_AVATAR_ERROR,
-  USER_REMOVE_AVATAR,
-  USER_REMOVE_AVATAR_SUCCESS,
-  USER_REMOVE_AVATAR_ERROR,
-} from '../../actionTypes';
 
 const MSG = defineMessages({
   uploaderLabel: {
@@ -45,14 +37,14 @@ class UserAvatarUploader extends Component<Props> {
   constructor(props: Props) {
     super(props);
     this.remove = promiseListener.createAsyncFunction({
-      start: USER_REMOVE_AVATAR,
-      resolve: USER_REMOVE_AVATAR_SUCCESS,
-      reject: USER_REMOVE_AVATAR_ERROR,
+      start: ACTIONS.USER_REMOVE_AVATAR,
+      resolve: ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
+      reject: ACTIONS.USER_REMOVE_AVATAR_ERROR,
     });
     this.upload = promiseListener.createAsyncFunction({
-      start: USER_UPLOAD_AVATAR,
-      resolve: USER_UPLOAD_AVATAR_SUCCESS,
-      reject: USER_UPLOAD_AVATAR_ERROR,
+      start: ACTIONS.USER_UPLOAD_AVATAR,
+      resolve: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
+      reject: ACTIONS.USER_UPLOAD_AVATAR_ERROR,
     });
   }
 

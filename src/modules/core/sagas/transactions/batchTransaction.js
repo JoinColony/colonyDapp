@@ -5,12 +5,13 @@ import type { Saga } from 'redux-saga';
 import { call, put, select, take } from 'redux-saga/effects';
 
 import type { TransactionRecordType } from '~immutable';
-import type { UniqueAction } from '~types';
+import type { ActionType } from '~types';
 
 import type { TxActionCreator } from '../../types';
 
+import { ACTIONS } from '~redux';
+
 import { transactionAddProperties } from '../../actionCreators';
-import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../actionTypes';
 import { oneTransaction } from '../../selectors';
 
 type ArrayOfTransactions = TransactionRecordType<*, *>[];
@@ -61,10 +62,10 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
 
     // Wait until success for this transaction is reported
     yield take(
-      (txAction: UniqueAction) =>
+      (txAction: ActionType<*, *, *>) =>
         txAction.meta &&
         txAction.meta.id === batchedTxId &&
-        txAction.type === TRANSACTION_EVENT_DATA_RECEIVED,
+        txAction.type === ACTIONS.TRANSACTION_EVENT_DATA_RECEIVED,
     );
 
     // TODO: Error handling, retry, timeout?
@@ -80,7 +81,7 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
   }
 
   function* batchSaga(
-    action: UniqueAction,
+    action: ActionType<*, *, *>,
     // chris: There might be a way to type this better but for me it seems close to impossible
     actionCreatorOptions: $ReadOnlyArray<?{
       options?: Object,

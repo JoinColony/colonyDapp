@@ -5,9 +5,7 @@ import type { Saga } from 'redux-saga';
 import BigNumber from 'bn.js';
 import { call, put, select } from 'redux-saga/effects';
 
-import type { TransactionParams } from '~immutable';
-
-import type { CreateTransactionAction } from '../../types';
+import type { ActionsType } from '~redux/types/actions';
 
 import { oneTransaction } from '../../selectors';
 import { transactionUpdateGas } from '../../actionCreators';
@@ -20,9 +18,9 @@ import { getMethod, getGasPrices } from '../utils';
  */
 const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
-export default function* onEstimateGasCost<P: TransactionParams>({
+export default function* onEstimateGasCost({
   meta: { id },
-}: CreateTransactionAction<P>): Saga<void> {
+}: $PropertyType<ActionsType, 'TRANSACTION_ESTIMATE_GAS'>): Saga<void> {
   // Get the given transaction
   const { context, methodName, identifier, params } = yield select(
     oneTransaction,

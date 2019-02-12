@@ -7,17 +7,12 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
 
-import type { Action } from '~types';
+import type { ActionType } from '~types';
 import type { GasPricesProps, TransactionType } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
-import {
-  METHOD_TRANSACTION_SENT,
-  TRANSACTION_SENT,
-  TRANSACTION_ERROR,
-} from '../../../../core/actionTypes';
-
 import { getMainClasses } from '~utils/css';
+import { ACTIONS } from '~redux';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -150,13 +145,13 @@ class GasStationPrice extends Component<Props, State> {
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
         <ActionForm
-          submit={METHOD_TRANSACTION_SENT}
-          success={TRANSACTION_SENT}
-          error={TRANSACTION_ERROR}
+          submit={ACTIONS.METHOD_TRANSACTION_SENT}
+          success={ACTIONS.TRANSACTION_SENT}
+          error={ACTIONS.TRANSACTION_ERROR}
           validationSchema={validationSchema}
           isInitialValid={!!initialFormValues.transactionSpeed}
           initialValues={initialFormValues}
-          setPayload={(action: Action) => ({
+          setPayload={(action: ActionType<*, *, *>) => ({
             ...action,
             meta: { id },
           })}

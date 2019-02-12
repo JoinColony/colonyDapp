@@ -4,7 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { call, put, select } from 'redux-saga/effects';
 
-import type { MultisigTransactionAction } from '../../types';
+import type { ActionsType } from '~redux/types/actions';
 
 import {
   multisigTransactionNonceError,
@@ -19,7 +19,7 @@ import { getMethod } from '../utils';
 
 export function* refreshMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: $PropertyType<ActionsType, 'MULTISIG_TRANSACTION_REFRESHED'>): Saga<void> {
   try {
     // fetch the method, check it's multisig
     const { methodName, context, identifier, multisig, params } = yield select(
@@ -67,7 +67,7 @@ export function* refreshMultisigTransaction({
 
 export function* signMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: $PropertyType<ActionsType, 'MULTISIG_TRANSACTION_SIGN'>): Saga<void> {
   try {
     // fetch from store
     const { methodName, context, identifier, multisig } = yield select(
@@ -115,7 +115,7 @@ export function* signMultisigTransaction({
 
 export function* rejectMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: $PropertyType<ActionsType, 'MULTISIG_TRANSACTION_REJECT'>): Saga<void> {
   try {
     // TODO: tell the other signees we reject
   } catch (error) {
@@ -125,7 +125,7 @@ export function* rejectMultisigTransaction({
 
 export function* signedMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: $PropertyType<ActionsType, 'MULTISIG_TRANSACTION_SIGNED'>): Saga<void> {
   try {
     // TODO: if there's any remaining required signees, distribute to them
   } catch (error) {

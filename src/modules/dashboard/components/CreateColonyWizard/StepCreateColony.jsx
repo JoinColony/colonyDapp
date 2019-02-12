@@ -6,21 +6,16 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
-import type { Action } from '~types';
+import type { ActionType } from '~types';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
+import { ACTIONS } from '~redux';
 
 import styles from './StepCreateColony.css';
 
 import CardRow from './CreateColonyCardRow.jsx';
-
-import {
-  COLONY_CREATE,
-  COLONY_CREATE_ERROR,
-  COLONY_CREATE_SUCCESS,
-} from '../../actionTypes';
 
 type FormValues = {
   tokenAddress: string,
@@ -83,10 +78,10 @@ const options = [
 
 const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <ActionForm
-    submit={COLONY_CREATE}
-    error={COLONY_CREATE_ERROR}
-    success={COLONY_CREATE_SUCCESS}
-    setPayload={(action: Action) => ({
+    submit={ACTIONS.COLONY_CREATE}
+    error={ACTIONS.COLONY_CREATE_ERROR}
+    success={ACTIONS.COLONY_CREATE_SUCCESS}
+    setPayload={(action: ActionType<*, *, *>) => ({
       ...action,
       payload: { tokenAddress: wizardValues.tokenAddress },
     })}

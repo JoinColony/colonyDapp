@@ -4,7 +4,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TransactionType } from '~immutable';
-import type { UniqueAction } from '~types';
+import type { ActionType } from '~types';
 
 import { getMainClasses } from '~utils/css';
 
@@ -26,7 +26,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  cancelTransaction: (id: string) => UniqueAction,
+  cancelTransaction: (id: string) => ActionType<*, *, *>,
   idx: number,
   selected: boolean,
   transaction: TransactionType<*, *>,

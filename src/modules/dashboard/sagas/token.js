@@ -7,29 +7,16 @@ import TokenClient from '@colony/colony-js-client/lib/TokenClient';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
-import type { Action, UniqueAction } from '~types';
-
 import { putError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
-
-import {
-  TOKEN_CREATE,
-  TOKEN_INFO_FETCH,
-  TOKEN_INFO_FETCH_ERROR,
-  TOKEN_INFO_FETCH_SUCCESS,
-  TOKEN_ICON_UPLOAD,
-  TOKEN_ICON_UPLOAD_ERROR,
-  TOKEN_ICON_UPLOAD_SUCCESS,
-  TOKEN_ICON_FETCH,
-  TOKEN_ICON_FETCH_ERROR,
-  TOKEN_ICON_FETCH_SUCCESS,
-} from '../actionTypes/token';
+import { ACTIONS } from '~redux';
 
 import { createToken } from '../actionCreators';
 
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
+import type { ActionsType } from '~redux';
 
 /**
  * Rather than use e.g. the Etherscan loader and make more/larger requests than
@@ -71,7 +58,9 @@ async function getTokenClientInfo(
 /**
  * Get the token info for a given `tokenAddress`.
  */
-function* getTokenInfo({ payload: { tokenAddress } }: Action): Saga<void> {
+function* getTokenInfo({
+  payload: { tokenAddress },
+}: $PropertyType<ActionsType, 'TOKEN_INFO_FETCH'>): Saga<void> {
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
 
@@ -83,10 +72,10 @@ function* getTokenInfo({ payload: { tokenAddress } }: Action): Saga<void> {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     info = yield call(getTokenClientInfo, tokenAddress, networkClient);
   } catch (error) {
-    yield putError(TOKEN_INFO_FETCH_ERROR, error);
+    yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error);
     return;
   }
-  yield put({ type: TOKEN_INFO_FETCH_SUCCESS, payload: info });
+  yield put({ type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS, payload: info });
 }
 
 /*
@@ -95,7 +84,7 @@ function* getTokenInfo({ payload: { tokenAddress } }: Action): Saga<void> {
 function* createTokenSaga({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
-}: UniqueAction): Saga<void> {
+}: $PropertyType<ActionsType, 'TOKEN_CREATE'>): Saga<void> {
   yield put(
     createToken({
       params: { name, symbol },
@@ -115,46 +104,47 @@ function* createTokenSaga({
 function* uploadTokenIcon({
   payload: { data },
   meta,
-}: UniqueAction): Saga<void> {
+}: $PropertyType<ActionsType, 'TOKEN_ICON_UPLOAD'>): Saga<void> {
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   try {
     const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     yield put({
-      type: TOKEN_ICON_UPLOAD_SUCCESS,
+      type: ACTIONS.TOKEN_ICON_UPLOAD_SUCCESS,
       payload: { hash },
       meta,
     });
   } catch (error) {
-    yield putError(TOKEN_ICON_UPLOAD_ERROR, error, meta);
+    yield putError(ACTIONS.TOKEN_ICON_UPLOAD_ERROR, error, meta);
   }
 }
 
 /**
  * Get the token icon with given IPFS hash.
  */
-function* getTokenIcon(action: Action): Saga<void> {
-  const { hash } = action.payload;
+function* getTokenIcon({
+  payload: { hash },
+}: $PropertyType<ActionsType, 'TOKEN_ICON_FETCH'>): Saga<void> {
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
   try {
     const iconData = yield call([ipfsNode, ipfsNode.getString], hash);
     // TODO: this should be put in the redux store by a reducer
     yield put({
-      type: TOKEN_ICON_FETCH_SUCCESS,
+      type: ACTIONS.TOKEN_ICON_FETCH_SUCCESS,
       payload: { hash, iconData },
     });
   } catch (error) {
-    yield putError(TOKEN_ICON_FETCH_ERROR, error);
+    yield putError(ACTIONS.TOKEN_ICON_FETCH_ERROR, error);
   }
 }
 
 export default function* tokenSagas(): any {
-  yield takeEvery(TOKEN_CREATE, createTokenSaga);
-  yield takeEvery(TOKEN_ICON_UPLOAD, uploadTokenIcon);
-  yield takeEvery(TOKEN_ICON_FETCH, getTokenIcon);
+  yield takeEvery(ACTIONS.TOKEN_CREATE, createTokenSaga);
+  yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, uploadTokenIcon);
+  yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, getTokenIcon);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
-  yield takeLatest(TOKEN_INFO_FETCH, getTokenInfo);
+  yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, getTokenInfo);
 }

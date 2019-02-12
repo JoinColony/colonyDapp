@@ -2,18 +2,12 @@
 
 import type { ENSName } from '~types';
 
+import { ACTIONS } from '~redux';
+
 import {
   createTxActionCreator,
   COLONY_CONTEXT,
 } from '../../core/actionCreators';
-
-import {
-  COLONY_DOMAINS_FETCH,
-  DOMAIN_CREATE_TX,
-  DOMAIN_CREATE_TX_ERROR,
-  DOMAIN_CREATE_TX_SUCCESS,
-  DOMAIN_FETCH,
-} from '../actionTypes';
 
 export const createDomain = createTxActionCreator<{
   parentDomainId: number,
@@ -21,21 +15,21 @@ export const createDomain = createTxActionCreator<{
   context: COLONY_CONTEXT,
   methodName: 'addDomain',
   lifecycle: {
-    created: DOMAIN_CREATE_TX,
-    error: DOMAIN_CREATE_TX_ERROR,
-    success: DOMAIN_CREATE_TX_SUCCESS,
+    created: ACTIONS.DOMAIN_CREATE_TX,
+    error: ACTIONS.DOMAIN_CREATE_TX_ERROR,
+    success: ACTIONS.DOMAIN_CREATE_TX_SUCCESS,
   },
 });
 
 export const fetchDomain = (colonyENSName: ENSName, domainId: number) => ({
-  type: DOMAIN_FETCH,
+  type: ACTIONS.DOMAIN_FETCH,
   meta: {
     keyPath: [colonyENSName, domainId],
   },
 });
 
 export const fetchColonyDomains = (colonyENSName: ENSName) => ({
-  type: COLONY_DOMAINS_FETCH,
+  type: ACTIONS.COLONY_DOMAINS_FETCH,
   meta: {
     keyPath: [colonyENSName],
   },

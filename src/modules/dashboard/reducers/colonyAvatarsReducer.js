@@ -2,17 +2,17 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { COLONY_AVATAR_FETCH_SUCCESS } from '../actionTypes';
+import { ACTIONS } from '~redux';
 
-import type { Action } from '~types';
 import type { AllColonyAvatarsMap } from '~immutable';
+import type { ReducerType } from '~redux';
 
-const colonyAvatarsReducer = (
-  state: AllColonyAvatarsMap = ImmutableMap(),
-  action: Action,
-) => {
+const colonyAvatarsReducer: ReducerType<
+  AllColonyAvatarsMap,
+  {| COLONY_AVATAR_FETCH_SUCCESS: * |},
+> = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case COLONY_AVATAR_FETCH_SUCCESS: {
+    case ACTIONS.COLONY_AVATAR_FETCH_SUCCESS: {
       const { hash, avatarData } = action.payload;
       return state.set(hash, avatarData);
     }
