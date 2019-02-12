@@ -14,11 +14,14 @@ type Props = {|
   hasLink?: boolean,
 |};
 
-const UserMention = ({ username, to, hasLink }: Props) =>
+const UserMention = ({ username, to, hasLink, ...props }: Props) =>
   hasLink ? (
-    <Link to={to} text={`@${username}`} className={styles.mention} />
+    <Link to={to} text={`@${username}`} className={styles.mention} {...props} />
   ) : (
-    <span className={styles.mention}> {`@${username}`} </span>
+    <span className={styles.mention} {...props}>
+      {' '}
+      {`@${username}`}
+    </span>
   );
 
 UserMention.defaultProps = {
