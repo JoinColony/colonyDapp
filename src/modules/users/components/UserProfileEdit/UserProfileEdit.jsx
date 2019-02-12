@@ -106,6 +106,8 @@ const UserProfileEdit = ({ user }: Props) => (
             <InputLabel label={MSG.labelUsername} />
             <UserMention
               username={user.profile.username || user.profile.walletAddress}
+              hasLink={false}
+              data-test="userProfileUsername"
             />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>

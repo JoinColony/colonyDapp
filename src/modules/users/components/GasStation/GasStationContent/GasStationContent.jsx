@@ -72,7 +72,10 @@ class GasStationContent extends Component<Props, State> {
     const { close, transactionGroups } = this.props;
     const isEmpty = !transactionGroups || !transactionGroups.length;
     return (
-      <div className={getMainClasses({}, styles, { isEmpty })}>
+      <div
+        className={getMainClasses({}, styles, { isEmpty })}
+        data-test="gasStation"
+      >
         <GasStationHeader close={close} />
         <div className={styles.transactionsContainer}>
           {isEmpty ? (

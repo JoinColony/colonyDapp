@@ -168,6 +168,7 @@ class ENSNameDialog extends Component<Props, State> {
                   appearance={{ theme: 'fat' }}
                   extensionString=".user.joincolony.eth"
                   extra={<FormattedMessage {...MSG.helpENSName} />}
+                  data-test="claimUsernameInput"
                 />
               </DialogSection>
               <DialogSection appearance={{ align: 'right' }}>
@@ -182,6 +183,7 @@ class ENSNameDialog extends Component<Props, State> {
                   disabled={!isValid}
                   type="submit"
                   loading={isSubmitting}
+                  data-test="claimUsernameConfirm"
                 />
               </DialogSection>
               <FormStatus status={status} />
