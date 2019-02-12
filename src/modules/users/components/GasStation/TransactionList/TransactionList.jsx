@@ -15,7 +15,10 @@ type Props = {
 };
 
 const TransactionList = ({ onClickGroup, transactionGroups }: Props) => (
-  <CardList appearance={{ numCols: '1' }}>
+  <CardList
+    appearance={{ numCols: '1' }}
+    data-test="gasStationTransactionsList"
+  >
     {transactionGroups.map(
       (transactionGroup: TransactionGroup, idx: number) => (
         <TransactionCard

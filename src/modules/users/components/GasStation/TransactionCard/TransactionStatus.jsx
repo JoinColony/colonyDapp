@@ -73,7 +73,10 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
           <span className={styles.counter}>{groupCount}</span>
         )}
         {status === 'succeeded' && (
-          <span className={styles.completed}>
+          <span
+            className={styles.completed}
+            data-test="gasStationTransactionSucceeded"
+          >
             <Icon
               appearance={{ size: 'tiny' }}
               name="check-mark"
@@ -86,7 +89,10 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
           </span>
         )}
         {status === 'pending' && (
-          <div className={styles.spinner}>
+          <div
+            className={styles.spinner}
+            data-test="gasStationTransactionPending"
+          >
             <SpinnerLoader
               appearance={{
                 size: 'small',
