@@ -221,8 +221,11 @@ workflows:
   version: 2
   manual:
     jobs:
-      - e2e-testing:
+      - e2e-approval:
           type: approval
+      - e2e-testing:
+          requires:
+            - e2e-approval
   commit:
     jobs:
       - build-with-lockfile
