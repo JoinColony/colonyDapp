@@ -7,9 +7,10 @@ import { formatEther } from 'ethers/utils';
 
 import { create, putError } from '~utils/saga/effects';
 import { CONTEXT } from '~context';
+import { ACTIONS } from '~redux';
 
-import type { UniqueAction } from '~types';
 import type { UserProfileType } from '~immutable';
+import type { Action } from '~redux';
 
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
@@ -20,10 +21,6 @@ import {
   getWallet,
   setupUserSagas,
 } from '../../users/sagas';
-import {
-  CURRENT_USER_CREATE,
-  WALLET_CREATE_ERROR,
-} from '../../users/actionTypes';
 
 import { getDDB, getColonyManager, defaultNetwork, getProvider } from './utils';
 
@@ -43,7 +40,9 @@ function* setupContextSagas(): any {
  * context that depends on it (the wallet itself, the DDB, the ColonyManager),
  * and then any other context that depends on that.
  */
-export default function* setupUserContext(action: UniqueAction): Saga<void> {
+export default function* setupUserContext(
+  action: Action<typeof ACTIONS.WALLET_CREATE>,
+): Saga<void> {
   const { meta } = action;
   try {
     const wallet = yield call(getWallet, action);
@@ -96,8 +95,8 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
     // but we then do not wait for a return value (which will never come).
     yield fork(setupContextSagas);
 
-    yield put({
-      type: CURRENT_USER_CREATE,
+    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
+      type: ACTIONS.CURRENT_USER_CREATE,
       payload: {
         profileData,
         walletAddress: wallet.address,
@@ -106,6 +105,6 @@ export default function* setupUserContext(action: UniqueAction): Saga<void> {
       meta,
     });
   } catch (err) {
-    yield putError(WALLET_CREATE_ERROR, err, meta);
+    yield putError(ACTIONS.WALLET_CREATE_ERROR, err, meta);
   }
 }

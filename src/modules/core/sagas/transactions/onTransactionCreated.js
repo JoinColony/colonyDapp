@@ -9,16 +9,18 @@ import type {
   TransactionRecordType,
   TransactionEventData,
 } from '~immutable';
-
-import { TRANSACTION_SEND } from '../../actionTypes';
+import type { Action } from '~redux';
 
 import type { CreateTransactionAction } from '../../types';
+
+import { ACTIONS } from '~redux';
 
 import { oneTransaction } from '../../selectors';
 
 export default function* onTransactionCreated<
   P: TransactionParams,
   E: TransactionEventData,
+  // TODO replace this type with Action<typeof ACTIONS.TRANSACTION_CREATED>
 >({ meta: { id } }: CreateTransactionAction<P>): Saga<void> {
   const transaction: TransactionRecordType<P, E> = yield select(
     oneTransaction,
@@ -58,6 +60,10 @@ export default function* onTransactionCreated<
     methodName === 'registerColonyLabel' ||
     methodName === 'createColony'
   ) {
-    yield put({ type: TRANSACTION_SEND, meta: { id } });
+    yield put<Action<typeof ACTIONS.TRANSACTION_SEND>>({
+      type: ACTIONS.TRANSACTION_SEND,
+      meta: { id },
+      payload: {},
+    });
   }
 }

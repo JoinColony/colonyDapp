@@ -4,14 +4,15 @@ import type { Map as ImmutableMapType } from 'immutable';
 
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import type { UniqueActionWithKeyPath, KeyPath } from '~types';
+import type { KeyPath } from '~types';
+import type { ActionType } from '~redux';
 
 import { DataRecord } from '../../immutable';
 import type { DataRecordType } from '../../immutable';
 
 export type DataReducer<S: ImmutableMapType<*, *>> = (
   state: S,
-  action: UniqueActionWithKeyPath,
+  action: ActionType<*, *, *>,
 ) => S;
 
 const getNextState = <S: ImmutableMapType<*, *>, V: *>(
@@ -34,7 +35,7 @@ const getNextState = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleFetch = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  action: UniqueActionWithKeyPath,
+  action: ActionType<*, *, *>,
 ) => {
   const {
     meta: { keyPath },
@@ -44,7 +45,7 @@ const handleFetch = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  action: UniqueActionWithKeyPath,
+  action: ActionType<*, *, *>,
 ) => {
   const {
     meta: { keyPath },
@@ -57,7 +58,7 @@ const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleError = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  { meta: { keyPath }, payload: { error } }: UniqueActionWithKeyPath,
+  { meta: { keyPath }, payload: { error } }: ActionType<*, *, *>,
 ) =>
   getNextState<S, V>(state, keyPath, {
     isFetching: false,
@@ -105,7 +106,7 @@ const withDataReducer = <S: ImmutableMapType<*, *>, V: *>(
   );
 
   // Return a wrapped reducer.
-  return (state: S = initialState, action: UniqueActionWithKeyPath) => {
+  return (state: S = initialState, action: ActionType<*, *, *>) => {
     // Pass the state to the wrapped reducer as the first step.
     const nextState = wrappedReducer(state, action);
 

@@ -2,21 +2,13 @@
 
 import type { ENSName } from '~types';
 
+import { ACTIONS } from '~redux';
+
 import {
   createTxActionCreator,
   COLONY_CONTEXT,
   NETWORK_CONTEXT,
 } from '../../core/actionCreators';
-
-import {
-  COLONY_CREATE_ERROR,
-  COLONY_CREATE_SUCCESS,
-  COLONY_CREATE_LABEL_ERROR,
-  COLONY_CREATE_LABEL_SUCCESS,
-  COLONY_FETCH,
-  COLONY_AVATAR_FETCH,
-  COLONY_ENS_NAME_FETCH,
-} from '../actionTypes';
 
 export const createColony = createTxActionCreator<{
   tokenAddress: string,
@@ -24,8 +16,8 @@ export const createColony = createTxActionCreator<{
   context: NETWORK_CONTEXT,
   methodName: 'createColony',
   lifecycle: {
-    error: COLONY_CREATE_ERROR,
-    success: COLONY_CREATE_SUCCESS,
+    error: ACTIONS.COLONY_CREATE_ERROR,
+    success: ACTIONS.COLONY_CREATE_SUCCESS,
   },
 });
 
@@ -36,22 +28,25 @@ export const createColonyLabel = createTxActionCreator<{
   context: COLONY_CONTEXT,
   methodName: 'registerColonyLabel',
   lifecycle: {
-    error: COLONY_CREATE_LABEL_ERROR,
-    success: COLONY_CREATE_LABEL_SUCCESS,
+    error: ACTIONS.COLONY_CREATE_LABEL_ERROR,
+    success: ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
   },
 });
 
 export const fetchColony = (ensName: ENSName) => ({
-  type: COLONY_FETCH,
+  type: ACTIONS.COLONY_FETCH,
   meta: { keyPath: [ensName] },
+  payload: {},
 });
 
 export const fetchColonyAvatar = (hash: string) => ({
-  type: COLONY_AVATAR_FETCH,
+  type: ACTIONS.COLONY_AVATAR_FETCH,
   meta: { keyPath: [hash] },
+  payload: {},
 });
 
 export const fetchColonyENSName = (colonyAddress: string) => ({
-  type: COLONY_ENS_NAME_FETCH,
+  type: ACTIONS.COLONY_ENS_NAME_FETCH,
   meta: { keyPath: [colonyAddress] },
+  payload: {},
 });

@@ -9,6 +9,7 @@ import styles from './Task.css';
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
+import { ACTIONS } from '~redux';
 
 /*
  * @TODO Temporary, please remove when wiring in the rating modals
@@ -27,30 +28,6 @@ import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
 import { TASK_STATE } from '~immutable';
-
-import {
-  TASK_WORKER_END,
-  TASK_WORKER_END_ERROR,
-  TASK_WORKER_END_SUCCESS,
-  TASK_MANAGER_END,
-  TASK_MANAGER_END_ERROR,
-  TASK_MANAGER_END_SUCCESS,
-  TASK_WORKER_RATE_MANAGER,
-  TASK_WORKER_RATE_MANAGER_ERROR,
-  TASK_WORKER_RATE_MANAGER_SUCCESS,
-  TASK_MANAGER_RATE_WORKER,
-  TASK_MANAGER_RATE_WORKER_ERROR,
-  TASK_MANAGER_RATE_WORKER_SUCCESS,
-  TASK_MANAGER_REVEAL_WORKER_RATING,
-  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-  TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
-  TASK_WORKER_REVEAL_MANAGER_RATING,
-  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-  TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-  TASK_FINALIZE,
-  TASK_FINALIZE_ERROR,
-  TASK_FINALIZE_SUCCESS,
-} from '../../actionTypes';
 
 import userMocks from './__datamocks__/mockUsers';
 import tokensMock from '../../../../__mocks__/mockTokens';
@@ -265,9 +242,9 @@ class Task extends Component<Props> {
             {canBeFinalized && (
               <ActionButton
                 text={MSG.finalizeTask}
-                submit={TASK_FINALIZE}
-                success={TASK_FINALIZE_SUCCESS}
-                error={TASK_FINALIZE_ERROR}
+                submit={ACTIONS.TASK_FINALIZE}
+                success={ACTIONS.TASK_FINALIZE_SUCCESS}
+                error={ACTIONS.TASK_FINALIZE_ERROR}
                 setValues={setValues}
               />
             )}
@@ -285,9 +262,9 @@ class Task extends Component<Props> {
                     submitWork: false,
                   }}
                   text={MSG.rateManager}
-                  submit={TASK_WORKER_RATE_MANAGER}
-                  success={TASK_WORKER_RATE_MANAGER_SUCCESS}
-                  error={TASK_WORKER_RATE_MANAGER_ERROR}
+                  submit={ACTIONS.TASK_WORKER_RATE_MANAGER}
+                  success={ACTIONS.TASK_WORKER_RATE_MANAGER_SUCCESS}
+                  error={ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR}
                   values={setValues}
                 />
               )}
@@ -301,9 +278,9 @@ class Task extends Component<Props> {
                     submitWork: true,
                   }}
                   text={MSG.submitWork}
-                  submit={TASK_WORKER_END}
-                  success={TASK_WORKER_END_SUCCESS}
-                  error={TASK_WORKER_END_ERROR}
+                  submit={ACTIONS.TASK_WORKER_END}
+                  success={ACTIONS.TASK_WORKER_END_SUCCESS}
+                  error={ACTIONS.TASK_WORKER_END_ERROR}
                   values={setValues}
                 />
               )}
@@ -317,9 +294,9 @@ class Task extends Component<Props> {
                     workSubmitted: false,
                   }}
                   text={MSG.rateWorker}
-                  submit={TASK_MANAGER_END}
-                  success={TASK_MANAGER_END_SUCCESS}
-                  error={TASK_MANAGER_END_ERROR}
+                  submit={ACTIONS.TASK_MANAGER_END}
+                  success={ACTIONS.TASK_MANAGER_END_SUCCESS}
+                  error={ACTIONS.TASK_MANAGER_END_ERROR}
                   values={setValues}
                 />
               )}
@@ -331,9 +308,9 @@ class Task extends Component<Props> {
                   workSubmitted: true,
                 }}
                 text={MSG.rateWorker}
-                submit={TASK_MANAGER_RATE_WORKER}
-                success={TASK_MANAGER_RATE_WORKER_SUCCESS}
-                error={TASK_MANAGER_RATE_WORKER_ERROR}
+                submit={ACTIONS.TASK_MANAGER_RATE_WORKER}
+                success={ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS}
+                error={ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR}
                 values={setValues}
               />
             )}
@@ -341,9 +318,9 @@ class Task extends Component<Props> {
             {task.currentState === TASK_STATE.REVEAL && isManager && (
               <ActionButton
                 text={MSG.revealRating}
-                submit={TASK_MANAGER_REVEAL_WORKER_RATING}
-                success={TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
-                error={TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
+                submit={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING}
+                success={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
+                error={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
                 values={setValues}
               />
             )}
@@ -351,9 +328,9 @@ class Task extends Component<Props> {
             {task.currentState === TASK_STATE.REVEAL && isWorker && (
               <ActionButton
                 text={MSG.revealRating}
-                submit={TASK_WORKER_REVEAL_MANAGER_RATING}
-                success={TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
-                error={TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
+                submit={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING}
+                success={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
+                error={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
                 values={setValues}
               />
             )}

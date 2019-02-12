@@ -13,16 +13,11 @@ import type { UserType } from '~immutable';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { withCurrentUser } from '../../../hocs';
 
-import {
-  USER_PROFILE_UPDATE,
-  USER_PROFILE_UPDATE_SUCCESS,
-  USER_PROFILE_UPDATE_ERROR,
-} from '../../../actionTypes';
-
 import { ActionForm, Input, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepDisplayName.css';
+import { ACTIONS } from '~redux';
 
 const MSG = defineMessages({
   heading: {
@@ -93,9 +88,9 @@ class StepDisplayName extends Component<Props, State> {
     const { wizardForm, previousStep } = this.props;
     return (
       <ActionForm
-        submit={USER_PROFILE_UPDATE}
-        error={USER_PROFILE_UPDATE_ERROR}
-        success={USER_PROFILE_UPDATE_SUCCESS}
+        submit={ACTIONS.USER_PROFILE_UPDATE}
+        error={ACTIONS.USER_PROFILE_UPDATE_ERROR}
+        success={ACTIONS.USER_PROFILE_UPDATE_SUCCESS}
         onSuccess={() => {}}
         validationSchema={validationSchema}
         {...wizardForm}

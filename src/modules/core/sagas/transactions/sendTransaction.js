@@ -19,6 +19,8 @@ import { oneTransaction } from '../../selectors';
 import { getMethod } from '../utils';
 
 import transactionChannel from './transactionChannel';
+import type { Action } from '~redux/types/actions';
+import { ACTIONS } from '~redux';
 
 /*
  * Given a method and a transaction record, create a promise for sending the
@@ -85,7 +87,9 @@ export default function* sendTransaction(id: string): Saga<void> {
       });
     }
   } catch (error) {
-    yield put(transactionError(id, error));
+    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      transactionError(id, error),
+    );
   } finally {
     channel.close();
   }

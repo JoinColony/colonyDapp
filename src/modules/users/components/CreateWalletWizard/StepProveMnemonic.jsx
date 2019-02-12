@@ -11,12 +11,7 @@ import type { WizardProps } from '~core/Wizard';
 import { ActionForm, FormStatus, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-
-import {
-  WALLET_CREATE,
-  CURRENT_USER_CREATE,
-  WALLET_CREATE_ERROR,
-} from '../../actionTypes';
+import { ACTIONS } from '~redux';
 
 const MSG = defineMessages({
   heading: {
@@ -79,9 +74,9 @@ const StepProveMnemonic = ({
   return (
     <main className={styles.main}>
       <ActionForm
-        submit={WALLET_CREATE}
-        success={CURRENT_USER_CREATE}
-        error={WALLET_CREATE_ERROR}
+        submit={ACTIONS.WALLET_CREATE}
+        success={ACTIONS.CURRENT_USER_CREATE}
+        error={ACTIONS.WALLET_CREATE_ERROR}
         setPayload={(action: *) => ({
           ...action,
           payload: { method: 'create', mnemonic },

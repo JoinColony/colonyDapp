@@ -4,7 +4,8 @@ import type { Channel, Saga } from 'redux-saga';
 
 import { call, put, race, take } from 'redux-saga/effects';
 
-import type { ENSName, TakeFilter } from '~types';
+import type { ENSName } from '~types';
+import type { ErrorActionType, TakeFilter } from '~redux';
 import type { Command, Query } from '../../data/types';
 
 import { validateSync } from '~utils/yup';
@@ -38,7 +39,7 @@ export const create = (Class: Function, ...args: any[]) =>
  * Effect to put a consistent error action
  */
 export const putError = (type: string, error: Error, meta?: Object = {}) => {
-  const action = {
+  const action: ErrorActionType<typeof type, typeof meta> = {
     type,
     meta,
     error: true,

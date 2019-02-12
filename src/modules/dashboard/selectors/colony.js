@@ -51,12 +51,6 @@ export const domainsIndexSelector = createSelector(
     colony ? colony.getIn(['record', 'databases', 'domainsIndex']) : undefined,
 );
 
-export const draftsIndexSelector = createSelector(
-  singleColonySelector,
-  colony =>
-    colony ? colony.getIn(['record', 'databases', 'draftsIndex']) : null,
-);
-
 export const colonyAvatarHashSelector = createSelector(
   coloniesSelector,
   (state, props) => props.ensName,

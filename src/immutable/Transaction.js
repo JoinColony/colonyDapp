@@ -16,10 +16,18 @@ import type {
   TransactionReceipt,
 } from '~types';
 
-export type TransactionError = {
-  type: 'send' | 'receipt' | 'eventData' | 'unsuccessful',
+export type TransactionError = {|
+  type:
+    | 'eventData'
+    | 'multisigNonce'
+    | 'multisigRefresh'
+    | 'multisigReject'
+    | 'multisigSign'
+    | 'receipt'
+    | 'send'
+    | 'unsuccessful',
   message: string,
-};
+|};
 
 export type TransactionId = string;
 

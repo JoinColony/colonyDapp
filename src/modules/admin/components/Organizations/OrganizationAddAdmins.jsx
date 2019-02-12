@@ -10,12 +10,7 @@ import type { ENSName } from '~types';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
-
-import {
-  COLONY_ADMIN_ADD,
-  COLONY_ADMIN_ADD_SUCCESS,
-  COLONY_ADMIN_ADD_ERROR,
-} from '../../../dashboard/actionTypes';
+import { ACTIONS } from '~redux';
 
 import styles from './OrganizationAddAdmins.css';
 
@@ -64,9 +59,9 @@ type Props = {|
 const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
-      submit={COLONY_ADMIN_ADD}
-      success={COLONY_ADMIN_ADD_SUCCESS}
-      error={COLONY_ADMIN_ADD_ERROR}
+      submit={ACTIONS.COLONY_ADMIN_ADD}
+      success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
+      error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
       validationSchema={validationSchema}
       initialValues={{
         newAdmin: '',

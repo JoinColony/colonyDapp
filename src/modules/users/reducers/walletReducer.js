@@ -2,25 +2,24 @@
 
 import type { WalletRecordType } from '~immutable';
 
-import type { Action } from '~types';
+import type { ReducerType } from '~redux';
+
 import { WalletRecord } from '~immutable';
+import { ACTIONS } from '~redux';
 
-import {
-  WALLET_FETCH_ACCOUNTS,
-  WALLET_FETCH_ACCOUNTS_ERROR,
-  WALLET_FETCH_ACCOUNTS_SUCCESS,
-} from '../actionTypes';
-
-const walletReducer = (
-  state: WalletRecordType = WalletRecord(),
-  action: Action,
-): WalletRecord => {
+const walletReducer: ReducerType<
+  WalletRecordType,
+  {|
+    WALLET_FETCH_ACCOUNTS: *,
+    WALLET_FETCH_ACCOUNTS_SUCCESS: *,
+  |},
+> = (state = WalletRecord(), action) => {
   switch (action.type) {
-    case WALLET_FETCH_ACCOUNTS:
+    case ACTIONS.WALLET_FETCH_ACCOUNTS:
       return state.set('isLoading', true);
-    case WALLET_FETCH_ACCOUNTS_ERROR:
+    case ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR:
       return state.set('isLoading', false);
-    case WALLET_FETCH_ACCOUNTS_SUCCESS: {
+    case ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS: {
       const { allAddresses } = action.payload;
       return state.merge({
         availableAddresses: allAddresses,

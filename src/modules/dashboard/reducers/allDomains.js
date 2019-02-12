@@ -2,25 +2,23 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import {
-  COLONY_DOMAINS_FETCH_SUCCESS,
-  DOMAIN_FETCH,
-  DOMAIN_FETCH_SUCCESS,
-  DOMAIN_CREATE_SUCCESS,
-} from '../actionTypes';
-
 import { DomainRecord, DataRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
+import { ACTIONS } from '~redux';
 
-import type { UniqueActionWithKeyPath } from '~types';
 import type { AllDomainsMap, DomainRecordType } from '~immutable';
+import type { ReducerType } from '~redux';
 
-const allDomainsReducer = (
-  state: AllDomainsMap = ImmutableMap(),
-  action: UniqueActionWithKeyPath,
-) => {
+const allDomainsReducer: ReducerType<
+  AllDomainsMap,
+  {|
+    COLONY_DOMAINS_FETCH_SUCCESS: *,
+    DOMAIN_CREATE_SUCCESS: *,
+    DOMAIN_FETCH_SUCCESS: *,
+  |},
+> = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case COLONY_DOMAINS_FETCH_SUCCESS: {
+    case ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
         meta: {
           keyPath: [ensName],
@@ -40,8 +38,8 @@ const allDomainsReducer = (
         return mutable;
       });
     }
-    case DOMAIN_CREATE_SUCCESS:
-    case DOMAIN_FETCH_SUCCESS: {
+    case ACTIONS.DOMAIN_CREATE_SUCCESS:
+    case ACTIONS.DOMAIN_FETCH_SUCCESS: {
       const {
         meta: {
           keyPath: [ensName],
@@ -54,7 +52,8 @@ const allDomainsReducer = (
       });
       return state.has(ensName)
         ? state.mergeDeepIn(keyPath, data)
-        : state.set(ensName, ImmutableMap([[ensName, data]]));
+        : // $FlowFixMe some bullshit
+          state.set(ensName, ImmutableMap({ [ensName]: data }));
     }
     default:
       return state;
@@ -62,6 +61,6 @@ const allDomainsReducer = (
 };
 
 export default withDataReducer<AllDomainsMap, DomainRecordType>(
-  DOMAIN_FETCH,
+  ACTIONS.DOMAIN_FETCH,
   ImmutableMap(),
 )(allDomainsReducer);

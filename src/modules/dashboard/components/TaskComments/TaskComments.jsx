@@ -15,16 +15,11 @@ import withDialog from '~core/Dialog/withDialog';
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import { ACTIONS } from '~redux';
 
 import { ENTER } from './keyTypes';
 
 import styles from './TaskComments.css';
-
-import {
-  TASK_COMMENT_ADD,
-  TASK_COMMENT_ADD_SUCCESS,
-  TASK_COMMENT_ADD_ERROR,
-} from '../../actionTypes';
 
 const MSG = defineMessages({
   placeholderWinNix: {
@@ -74,9 +69,9 @@ const TaskComments = ({
   draftId,
 }: Props) => {
   const addComment = promiseListener.createAsyncFunction({
-    start: TASK_COMMENT_ADD,
-    resolve: TASK_COMMENT_ADD_SUCCESS,
-    reject: TASK_COMMENT_ADD_ERROR,
+    start: ACTIONS.TASK_COMMENT_ADD,
+    resolve: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
+    reject: ACTIONS.TASK_COMMENT_ADD_ERROR,
   });
   const didClaimProfile = userDidClaimProfile(currentUser);
 

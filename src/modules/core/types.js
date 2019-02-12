@@ -42,6 +42,7 @@ export type LifecycleActionTypes = {
   success?: string,
 };
 
+// TODO replace with real action types
 export type CreateTransactionAction<P: TransactionParams> = {
   type: string,
   payload: {
@@ -52,15 +53,6 @@ export type CreateTransactionAction<P: TransactionParams> = {
     options?: SendOptions,
     params: P,
   },
-  meta: { id: string },
-};
-
-export type SendTransactionAction = {
-  type: string,
-  meta: { id: string },
-};
-
-export type MultisigTransactionAction = {
   meta: { id: string },
 };
 

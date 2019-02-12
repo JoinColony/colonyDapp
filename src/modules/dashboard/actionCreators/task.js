@@ -1,32 +1,11 @@
 /* @flow */
 
+import { ACTIONS } from '~redux';
+
 import {
   createTxActionCreator,
   COLONY_CONTEXT,
 } from '../../core/actionCreators';
-
-import {
-  TASK_FINALIZE_ERROR,
-  TASK_FINALIZE_SUCCESS,
-  TASK_MANAGER_COMPLETE_ERROR,
-  TASK_MANAGER_COMPLETE_SUCCESS,
-  TASK_MANAGER_RATE_WORKER_ERROR,
-  TASK_MANAGER_RATE_WORKER_SUCCESS,
-  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-  TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
-  TASK_SET_DATE_ERROR,
-  TASK_SET_DATE_SUCCESS,
-  TASK_SET_SKILL_ERROR,
-  TASK_SET_SKILL_SUCCESS,
-  TASK_WORKER_CLAIM_REWARD_ERROR,
-  TASK_WORKER_CLAIM_REWARD_SUCCESS,
-  TASK_WORKER_END_ERROR,
-  TASK_WORKER_END_SUCCESS,
-  TASK_WORKER_RATE_MANAGER_ERROR,
-  TASK_WORKER_RATE_MANAGER_SUCCESS,
-  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-  TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-} from '../actionTypes';
 
 import type { TaskId } from '~immutable';
 
@@ -63,8 +42,8 @@ export const setTaskSkillTx = createTxActionCreator<{
   context: COLONY_CONTEXT,
   methodName: 'setTaskSkill',
   lifecycle: {
-    error: TASK_SET_SKILL_ERROR,
-    success: TASK_SET_SKILL_SUCCESS,
+    error: ACTIONS.TASK_SET_SKILL_ERROR,
+    success: ACTIONS.TASK_SET_SKILL_SUCCESS,
   },
 });
 
@@ -78,8 +57,8 @@ export const setTaskDueDateTx = createTxActionCreator<{
   context: COLONY_CONTEXT,
   methodName: 'setTaskDueDate',
   lifecycle: {
-    error: TASK_SET_DATE_ERROR,
-    success: TASK_SET_DATE_SUCCESS,
+    error: ACTIONS.TASK_SET_DATE_ERROR,
+    success: ACTIONS.TASK_SET_DATE_SUCCESS,
   },
 });
 
@@ -117,8 +96,8 @@ export const submitTaskDeliverableAndRatingTx = createTxActionCreator<{
   },
   methodName: 'submitTaskDeliverableAndRating',
   lifecycle: {
-    error: TASK_WORKER_END_ERROR,
-    success: TASK_WORKER_END_SUCCESS,
+    error: ACTIONS.TASK_WORKER_END_ERROR,
+    success: ACTIONS.TASK_WORKER_END_SUCCESS,
   },
 });
 
@@ -136,8 +115,8 @@ export const completeTaskTx = createTxActionCreator<{
     index: 1,
   },
   lifecycle: {
-    error: TASK_MANAGER_COMPLETE_ERROR,
-    success: TASK_MANAGER_COMPLETE_SUCCESS,
+    error: ACTIONS.TASK_MANAGER_COMPLETE_ERROR,
+    success: ACTIONS.TASK_MANAGER_COMPLETE_SUCCESS,
   },
 });
 
@@ -157,8 +136,8 @@ export const submitWorkerRatingAsManagerTx = createTxActionCreator<{
   },
   methodName: 'submitTaskWorkRating',
   lifecycle: {
-    error: TASK_MANAGER_RATE_WORKER_ERROR,
-    success: TASK_MANAGER_RATE_WORKER_SUCCESS,
+    error: ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR,
+    success: ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS,
   },
 });
 
@@ -178,8 +157,8 @@ export const submitManagerRatingAsWorkerTx = createTxActionCreator<{
   },
   methodName: 'submitTaskWorkRating',
   lifecycle: {
-    error: TASK_WORKER_RATE_MANAGER_ERROR,
-    success: TASK_WORKER_RATE_MANAGER_SUCCESS,
+    error: ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR,
+    success: ACTIONS.TASK_WORKER_RATE_MANAGER_SUCCESS,
   },
 });
 
@@ -200,8 +179,8 @@ export const revealTaskRatingAsWorkerTx = createTxActionCreator<{
   },
   methodName: 'revealTaskWorkRating',
   lifecycle: {
-    error: TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-    success: TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
+    error: ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+    success: ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
   },
 });
 
@@ -222,8 +201,8 @@ export const revealTaskRatingAsManagerTx = createTxActionCreator<{
   },
   methodName: 'revealTaskWorkRating',
   lifecycle: {
-    error: TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-    success: TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+    error: ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+    success: ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
   },
 });
 
@@ -241,8 +220,8 @@ export const finalizeTaskTx = createTxActionCreator<{
   },
   methodName: 'finalizeTask',
   lifecycle: {
-    error: TASK_FINALIZE_ERROR,
-    success: TASK_FINALIZE_SUCCESS,
+    error: ACTIONS.TASK_FINALIZE_ERROR,
+    success: ACTIONS.TASK_FINALIZE_SUCCESS,
   },
 });
 
@@ -262,7 +241,7 @@ export const claimPayoutAsWorkerTx = createTxActionCreator<{
   },
   methodName: 'claimPayout',
   lifecycle: {
-    error: TASK_WORKER_CLAIM_REWARD_ERROR,
-    success: TASK_WORKER_CLAIM_REWARD_SUCCESS,
+    error: ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR,
+    success: ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS,
   },
 });

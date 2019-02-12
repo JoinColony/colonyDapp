@@ -10,15 +10,10 @@ import Heading from '~core/Heading';
 import type { AsyncFunction } from '../../../../createPromiseListener';
 import type { ColonyAdminType } from '~immutable';
 import { mergePayload } from '~utils/actions';
+import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
 import UserListItem from './UserListItem.jsx';
-
-import {
-  COLONY_ADMIN_REMOVE,
-  COLONY_ADMIN_REMOVE_SUCCESS,
-  COLONY_ADMIN_REMOVE_ERROR,
-} from '../../../dashboard/actionTypes';
 
 import styles from './UserList.css';
 
@@ -70,9 +65,9 @@ class UserList extends Component<Props> {
   static displayName = 'admin.UserList';
 
   static defaultProps = {
-    remove: COLONY_ADMIN_REMOVE,
-    removeSuccess: COLONY_ADMIN_REMOVE_SUCCESS,
-    removeError: COLONY_ADMIN_REMOVE_ERROR,
+    remove: ACTIONS.COLONY_ADMIN_REMOVE,
+    removeSuccess: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
+    removeError: ACTIONS.COLONY_ADMIN_REMOVE_ERROR,
   };
 
   constructor(props: Props) {

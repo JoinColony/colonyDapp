@@ -17,18 +17,17 @@ import nanoid from 'nanoid';
 
 import { currentUserAddressSelector } from '../../../users/selectors';
 
-import {
-  MULTISIG_TRANSACTION_CREATED,
-  TRANSACTION_CREATED,
-  TRANSACTION_ESTIMATE_GAS,
-  TRANSACTION_SEND,
-} from '../../actionTypes';
+import type { TransactionMultisig } from '~immutable';
+import type { Action } from '~redux';
+import type { ColonyContext } from '~types';
+
+import { ACTIONS } from '~redux';
 
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
 
 type TxConfig<P> = {|
-  context: string,
+  context: ColonyContext,
   identifier?: string,
   methodName: string,
   group?: {|
@@ -36,7 +35,7 @@ type TxConfig<P> = {|
     id: string | string[],
     index: number,
   |},
-  multisig?: boolean | {},
+  multisig?: boolean | TransactionMultisig,
   params?: P,
   options?: SendOptions,
 |};
@@ -54,7 +53,9 @@ const createTxAction = <P>(
     options,
   }: TxConfig<P>,
 ) => ({
-  type: multisigConfig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
+  type: multisigConfig
+    ? ACTIONS.MULTISIG_TRANSACTION_CREATED
+    : ACTIONS.TRANSACTION_CREATED,
   payload: {
     context,
     createdAt: new Date(),
@@ -87,16 +88,17 @@ export function* createTransaction(
   }
 
   // Put transaction into store
-  yield put(createTxAction(id, address, config));
+  const txAction = createTxAction(id, address, config);
+  yield put<Action<typeof txAction.type>>(txAction);
 
   // Take the action where the user estimates the gas cost
   const task = yield takeEvery(
-    action => filterAction(action, id, TRANSACTION_ESTIMATE_GAS),
+    action => filterAction(action, id, ACTIONS.TRANSACTION_ESTIMATE_GAS),
     estimateGasCost,
   );
 
   //  Take the action where the user sends off the transaction
-  yield take(action => filterAction(action, id, TRANSACTION_SEND));
+  yield take(action => filterAction(action, id, ACTIONS.TRANSACTION_SEND));
 
   yield call(sendTransaction, id);
 

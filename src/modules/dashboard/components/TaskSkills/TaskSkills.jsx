@@ -7,18 +7,13 @@ import promiseListener from '../../../../createPromiseListener';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
+import { ACTIONS } from '~redux';
 
 import styles from './TaskSkills.css';
 
 import taskSkills from './taskSkillsTree';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
-
-import {
-  TASK_SET_SKILL,
-  TASK_SET_SKILL_ERROR,
-  TASK_SET_SKILL_SUCCESS,
-} from '../../actionTypes';
 
 import type { TaskType } from '~immutable';
 
@@ -52,9 +47,9 @@ class TaskSkills extends Component<Props> {
     super(props);
 
     this.asyncFunc = promiseListener.createAsyncFunction({
-      start: TASK_SET_SKILL,
-      resolve: TASK_SET_SKILL_SUCCESS,
-      reject: TASK_SET_SKILL_ERROR,
+      start: ACTIONS.TASK_SET_SKILL,
+      resolve: ACTIONS.TASK_SET_SKILL_SUCCESS,
+      reject: ACTIONS.TASK_SET_SKILL_ERROR,
     });
   }
 

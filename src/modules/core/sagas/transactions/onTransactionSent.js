@@ -11,23 +11,16 @@ import type {
   TransactionEventData,
 } from '~immutable';
 
+import type { Action } from '~redux';
+
 import { putError } from '~utils/saga/effects';
+import { ACTIONS } from '~redux';
 
-import type {
-  MultisigSender,
-  Sender,
-  SendTransactionAction,
-} from '../../types';
+import type { MultisigSender, Sender } from '../../types';
 
 import {
-  TRANSACTION_ERROR,
-  TRANSACTION_SUCCEEDED,
-  TRANSACTION_RECEIPT_RECEIVED,
-  TRANSACTION_SENT,
-} from '../../actionTypes';
-import {
-  transactionEventDataReceived,
   transactionError,
+  transactionEventDataReceived,
   transactionReceiptReceived,
   transactionSent,
 } from '../../actionCreators';
@@ -127,16 +120,16 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 
       // Handle lifecycle action types
       switch (action.type) {
-        case TRANSACTION_SENT:
+        case ACTIONS.TRANSACTION_SENT:
           if (sent) yield put(transactionSent(id, payload, sent));
           break;
 
-        case TRANSACTION_RECEIPT_RECEIVED:
+        case ACTIONS.TRANSACTION_RECEIPT_RECEIVED:
           if (receiptReceived)
             yield put(transactionReceiptReceived(id, payload, receiptReceived));
           break;
 
-        case TRANSACTION_SUCCEEDED:
+        case ACTIONS.TRANSACTION_SUCCEEDED:
           if (success)
             yield put(transactionEventDataReceived(id, payload, success));
           break;
@@ -160,7 +153,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 export default function* onTransactionSent<
   P: TransactionParams,
   E: TransactionEventData,
->({ meta: { id }, meta }: SendTransactionAction): Saga<void> {
+>({ meta: { id }, meta }: Action<typeof ACTIONS.TRANSACTION_SENT>): Saga<void> {
   let tx;
 
   try {
@@ -189,7 +182,7 @@ export default function* onTransactionSent<
       yield putError(errorType, caughtError, meta);
     } else {
       // We still dispatch this error as a general TRANASACTION_ERROR
-      yield putError(TRANSACTION_ERROR, caughtError, meta);
+      yield putError(ACTIONS.TRANSACTION_ERROR, caughtError, meta);
     }
   }
 }

@@ -6,36 +6,7 @@ export * from './TransactionReceipt';
 
 export type KeyPath = [*, *];
 
-// TODO consider making this accept generics so that we can better test
-// reducers: https://github.com/facebook/flow/issues/4737
-export type Action = {
-  type: string,
-  payload: any,
-  meta?: any,
-  error?: boolean,
-};
+export type WithKeyPathDepth1 = {| keyPath: [*] |};
+export type WithKeyPathDepth2 = {| keyPath: [*, *] |};
 
-export type UniqueAction = {
-  type: string,
-  payload: any,
-  meta: {
-    id: string,
-  },
-  error?: boolean,
-};
-
-export type UniqueActionWithKeyPath = {
-  type: string,
-  payload: any,
-  meta: {
-    id: string,
-    keyPath: KeyPath,
-  },
-  error?: boolean,
-};
-
-// export type UniqueAction = Action & { meta: { id: string } };
-
-export type ActionCreator = (...args: Array<any>) => Action;
-
-export type TakeFilter = (action: Action) => boolean;
+export * from './Pick';

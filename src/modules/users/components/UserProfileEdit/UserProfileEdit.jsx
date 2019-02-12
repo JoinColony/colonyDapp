@@ -21,16 +21,11 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
+import { ACTIONS } from '~redux';
 
 import { userProfile as userProfileStoreBlueprint } from '../../../../data/blueprints';
 
 import { currentUser } from '../../selectors';
-
-import {
-  USER_PROFILE_UPDATE,
-  USER_PROFILE_UPDATE_SUCCESS,
-  USER_PROFILE_UPDATE_ERROR,
-} from '../../actionTypes';
 
 import styles from './UserProfileEdit.css';
 
@@ -88,9 +83,9 @@ const UserProfileEdit = ({ user }: Props) => (
       text={MSG.heading}
     />
     <ActionForm
-      submit={USER_PROFILE_UPDATE}
-      success={USER_PROFILE_UPDATE_SUCCESS}
-      error={USER_PROFILE_UPDATE_ERROR}
+      submit={ACTIONS.USER_PROFILE_UPDATE}
+      success={ACTIONS.USER_PROFILE_UPDATE_SUCCESS}
+      error={ACTIONS.USER_PROFILE_UPDATE_ERROR}
       initialValues={{
         displayName: user.profile.displayName,
         bio: user.profile.bio,
