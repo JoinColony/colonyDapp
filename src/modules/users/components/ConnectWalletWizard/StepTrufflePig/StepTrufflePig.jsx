@@ -183,6 +183,7 @@ class StepTrufflePig extends Component<Props, State> {
                     label={MSG.accountIndex}
                     name="accountIndex"
                     options={accountIndexOptions}
+                    data-test="trufflepigAccountSelector"
                   />
                 </Fragment>
               ) : (
