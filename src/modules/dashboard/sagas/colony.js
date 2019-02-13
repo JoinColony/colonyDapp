@@ -374,7 +374,7 @@ function* uploadColonyAvatar({
     keyPath: [ensName],
   },
   meta,
-  payload: data,
+  payload: { data },
 }: UniqueActionWithKeyPath): Saga<void> {
   try {
     // first attempt upload to IPFS
@@ -422,7 +422,7 @@ function* fetchColonyAvatar({
     yield put({
       type: COLONY_AVATAR_FETCH_SUCCESS,
       meta,
-      payload: avatarData,
+      payload: { hash, avatarData },
     });
   } catch (error) {
     yield putError(COLONY_AVATAR_FETCH_ERROR, error, meta);
