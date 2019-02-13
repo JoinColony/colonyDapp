@@ -157,6 +157,11 @@ jobs:
           key: node-modules-{{ checksum "package.json" }}
       - setup_remote_docker
       - run:
+          name: "Create Local `.env` file"
+          command: |
+            echo "LOADER=trufflepig
+            NETWORK=local" >> .env
+      - run:
           name: "Running E2E Tests"
           command: |
             docker pull ethereum/solc:0.4.23
