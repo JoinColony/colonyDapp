@@ -157,14 +157,8 @@ jobs:
           key: node-modules-{{ checksum "package.json" }}
       - setup_remote_docker
       - run:
-          name: "Linting Javascript"
-          command: yarn lint:ci
-      - run:
           name: "Running E2E Tests"
           command: |
-            printf "password\npassword\n\n" | vncpasswd
-            vncserver -geometry 1280x1024 -depth 24
-            metacity &
             docker pull ethereum/solc:0.4.23
             yarn test:e2e:ci
       - store_test_results:
