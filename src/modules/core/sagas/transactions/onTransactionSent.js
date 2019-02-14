@@ -21,12 +21,13 @@ import type {
 
 import {
   TRANSACTION_ERROR,
-  TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_SUCCEEDED,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
 } from '../../actionTypes';
 import {
   transactionEventDataReceived,
+  transactionError,
   transactionReceiptReceived,
   transactionSent,
 } from '../../actionCreators';
@@ -100,7 +101,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
   );
 
   const {
-    lifecycle: { error: errorType, receiptReceived, sent, success },
+    lifecycle: { receiptReceived, sent, success },
   } = transaction;
 
   // Create an event channel to send the transaction.
@@ -126,10 +127,6 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
 
       // Handle lifecycle action types
       switch (action.type) {
-        case TRANSACTION_ERROR:
-          if (errorType) yield put({ type: errorType, payload, meta: { id } });
-          break;
-
         case TRANSACTION_SENT:
           if (sent) yield put(transactionSent(id, payload, sent));
           break;
@@ -139,7 +136,7 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
             yield put(transactionReceiptReceived(id, payload, receiptReceived));
           break;
 
-        case TRANSACTION_EVENT_DATA_RECEIVED:
+        case TRANSACTION_SUCCEEDED:
           if (success)
             yield put(transactionEventDataReceived(id, payload, success));
           break;
@@ -148,6 +145,8 @@ function* sendTransaction<P: TransactionParams, E: TransactionEventData>(
           break;
       }
     }
+  } catch (err) {
+    yield put(transactionError(id, err));
   } finally {
     // Close the event channel when we receive an `END` event.
     channel.close();

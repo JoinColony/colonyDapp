@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Saga } from 'redux-saga';
+import type { Channel, Saga } from 'redux-saga';
 
 import { call, put, race, take } from 'redux-saga/effects';
 
@@ -10,6 +10,27 @@ import type { Command, Query } from '../../data/types';
 import { validateSync } from '~utils/yup';
 import { isDev, log } from '~utils/debug';
 import { getContext, CONTEXT } from '~context';
+
+/*
+ * Effect to take a specific action from a channel
+ */
+export const takeFrom = (channel: Channel<*>, type: string) =>
+  call(function* takeFromSaga() {
+    let done = false;
+    while (!done) {
+      const action = yield take(channel);
+      // Take out errors that were previously handled and throw them again for better control flow
+      if (action.error) {
+        done = true;
+        throw action.payload;
+      }
+      if (action.type === type) {
+        done = true;
+        return action;
+      }
+    }
+    return null;
+  });
 
 /*
  * Effect to create a new class instance of Class (use instead of "new Class")

@@ -20,7 +20,7 @@ import { getMethod, getGasPrices } from '../utils';
  */
 const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
-export default function* onEstimateGasCost<P: TransactionParams>({
+export default function* estimateGasCost<P: TransactionParams>({
   meta: { id },
 }: CreateTransactionAction<P>): Saga<void> {
   // Get the given transaction

@@ -6,12 +6,10 @@ import reducer from '../transactions';
 
 import {
   transactionSent,
+  transactionError,
   createTxActionCreator,
-  transactionEventDataError,
   transactionEventDataReceived,
-  transactionReceiptError,
   transactionReceiptReceived,
-  transactionSendError,
 } from '../../actionCreators';
 
 const testActions = (actions, initialState) =>
@@ -65,13 +63,10 @@ describe(`core: reducers (transactions)`, () => {
   const sentTx = transactionSent(id, { hash });
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   const eventDataReceived = transactionEventDataReceived(id, { eventData });
-  const sendError = transactionSendError(id, { message: 'send error' });
-  const receiptError = transactionReceiptError(id, {
-    message: 'receipt error',
-  });
-  const eventDataError = transactionEventDataError(id, {
-    message: 'event data error',
-  });
+
+  const sendError = transactionError(id, new Error('send error'));
+  const receiptError = transactionError(id, new Error('receipt error'));
+  const eventDataError = transactionError(id, new Error('event data error'));
 
   test('Sends successfully', () => {
     testActions(
@@ -232,7 +227,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [{ type: 'send', message: 'send error' }],
+              errors: [new Error('send error')],
               eventData: undefined,
               hash: undefined,
               id,
@@ -274,7 +269,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [{ type: 'receipt', message: 'receipt error' }],
+              errors: [new Error('receipt error')],
               eventData: undefined,
               hash,
               id,
@@ -317,7 +312,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [{ type: 'eventData', message: 'event data error' }],
+              errors: [new Error('event data error')],
               eventData: undefined,
               hash,
               id,

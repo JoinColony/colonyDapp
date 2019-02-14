@@ -10,7 +10,7 @@ import type { UniqueAction } from '~types';
 import type { TxActionCreator } from '../../types';
 
 import { transactionAddProperties } from '../../actionCreators';
-import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../actionTypes';
+import { TRANSACTION_SUCCEEDED } from '../../actionTypes';
 import { oneTransaction } from '../../selectors';
 
 type ArrayOfTransactions = TransactionRecordType<*, *>[];
@@ -64,7 +64,7 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
       (txAction: UniqueAction) =>
         txAction.meta &&
         txAction.meta.id === batchedTxId &&
-        txAction.type === TRANSACTION_EVENT_DATA_RECEIVED,
+        txAction.type === TRANSACTION_SUCCEEDED,
     );
 
     // TODO: Error handling, retry, timeout?

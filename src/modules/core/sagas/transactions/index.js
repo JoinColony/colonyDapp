@@ -9,20 +9,21 @@ import {
   signMultisigTransaction,
 } from './multisigTransaction';
 import {
-  METHOD_TRANSACTION_SENT,
   MULTISIG_TRANSACTION_CREATED,
   MULTISIG_TRANSACTION_REJECT,
   MULTISIG_TRANSACTION_SIGN,
   MULTISIG_TRANSACTION_SIGNED,
   TRANSACTION_CREATED,
   TRANSACTION_ESTIMATE_GAS,
+  TRANSACTION_SEND,
 } from '../../actionTypes';
 
 import onTransactionCreated from './onTransactionCreated';
-import onEstimateGasCost from './onEstimateGasCost';
+import estimateGasCost from './estimateGasCost';
 import onTransactionSent from './onTransactionSent';
 
 export { default as createBatchTxRunner } from './batchTransaction';
+export * from './createTransaction';
 
 export default function* transactionsSagas(): any {
   /*
@@ -34,13 +35,13 @@ export default function* transactionsSagas(): any {
    * 2. TRANSACTION_ESTIMATE_GAS
    * After a user clicks on a transaction in the gas station, the gas limit and gas price are estimated
    */
-  yield takeEvery(TRANSACTION_ESTIMATE_GAS, onEstimateGasCost);
+  yield takeEvery(TRANSACTION_ESTIMATE_GAS, estimateGasCost);
   /*
-   * 3. METHOD_TRANSACTION_SENT
+   * 3. TRANSACTION_SEND
    * is responsible for sending transactions which have been created with
    * a specific method, for a specific client.
    */
-  yield takeEvery(METHOD_TRANSACTION_SENT, onTransactionSent);
+  yield takeEvery(TRANSACTION_SEND, onTransactionSent);
 
   /* Multisig */
   yield takeEvery(MULTISIG_TRANSACTION_CREATED, refreshMultisigTransaction);
