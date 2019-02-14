@@ -6,6 +6,7 @@ import {
   all,
   call,
   delay,
+  fork,
   put,
   select,
   takeLatest,
@@ -21,7 +22,7 @@ import type {
 } from '~types';
 import type { UserProfileType, ContractTransactionType } from '~immutable';
 
-import { putError, callCaller } from '~utils/saga/effects';
+import { putError, callCaller, takeFrom } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 
 // @TODO This would go into queries
@@ -42,6 +43,11 @@ import {
 import { ValidatedKVStore } from '../../../lib/database/stores';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getAll } from '../../../lib/database/commands';
+import {
+  TRANSACTION_CREATED,
+  TRANSACTION_SUCCEEDED,
+} from '../../core/actionTypes';
+import { createTransaction, getTxChannel } from '../../core/sagas';
 import {
   getNetworkMethod,
   getProvider,
@@ -84,6 +90,8 @@ import {
   USERNAME_CHECK_AVAILABILITY_ERROR,
   USERNAME_CHECK_AVAILABILITY_SUCCESS,
   USERNAME_CREATE,
+  USERNAME_CREATE_ERROR,
+  USERNAME_CREATE_SUCCESS,
   USERNAME_FETCH,
   USERNAME_FETCH_ERROR,
   USERNAME_FETCH_SUCCESS,
@@ -91,7 +99,6 @@ import {
   CURRENT_USER_GET_BALANCE_SUCCESS,
   CURRENT_USER_GET_BALANCE_ERROR,
 } from '../actionTypes';
-import { registerUserLabel } from '../actionCreators';
 
 export function* getOrCreateUserStore(
   walletAddress: Address,
@@ -287,26 +294,52 @@ function* createUsername({
   payload: { username },
   meta,
 }: UniqueAction): Saga<void> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const walletAddress = yield select(walletAddressSelector);
-  const { profileStore, activityStore } = yield call(
-    createUserProfileStore(ddb),
-    { walletAddress },
-  );
-  yield call([profileStore, profileStore.set], { username, walletAddress });
-  yield call([activityStore, activityStore.add], joinedColonyEvent());
+  const txChannel = yield call(getTxChannel, meta.id);
 
-  yield put(
-    registerUserLabel({
+  try {
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+    const walletAddress = yield select(walletAddressSelector);
+    const { profileStore, activityStore } = yield call(
+      createUserProfileStore(ddb),
+      { walletAddress },
+    );
+
+    yield fork(createTransaction, meta.id, {
+      context: NETWORK_CONTEXT,
+      methodName: 'registerUserLabel',
       // @TODO: Replace with a method that just gets the store address given the manifest
       params: { username, orbitDBPath: profileStore.address.toString() },
-      // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
       options: {
+        // TODO: this stems from the new (longer) orbitDB store addresses. I think we should try to shorten those to save on gas
         gasLimit: 500000,
       },
+    });
+
+    // Wait until we get the TRANSACTION_CREATED action
+    const { payload } = yield takeFrom(txChannel, TRANSACTION_CREATED);
+
+    yield put({
+      type: USERNAME_CREATE_SUCCESS,
+      payload,
       meta,
-    }),
-  );
+    });
+
+    // Wait until the transaction was successful, write to store
+    yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+
+    yield call([profileStore, profileStore.set], { username, walletAddress });
+    yield call([activityStore, activityStore.add], joinedColonyEvent());
+  } catch (err) {
+    // TODO: We could show a toaster message here. Also: revert stuff?!?!?
+    yield put({
+      type: USERNAME_CREATE_ERROR,
+      error: true,
+      payload: err,
+      meta,
+    });
+  } finally {
+    txChannel.close();
+  }
 }
 
 function* fetchAvatar(action: Action): Saga<void> {
