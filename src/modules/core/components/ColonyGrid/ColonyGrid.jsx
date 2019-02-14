@@ -2,6 +2,9 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { compose } from 'recompose';
+
+import { withColonies } from '../../../dashboard/hocs';
 
 import Heading from '../Heading';
 import { SpinnerLoader } from '../Preloaders';
@@ -56,4 +59,4 @@ const ColonyGrid = ({ colonies = [], loading }: Props) => (
 
 ColonyGrid.displayName = displayName;
 
-export default ColonyGrid;
+export default compose(withColonies)(ColonyGrid);
