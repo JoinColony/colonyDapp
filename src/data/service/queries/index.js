@@ -16,11 +16,7 @@ import type {
 } from '../events';
 
 import { getColonyStore, getCommentsStore, getTaskStore } from '../../stores';
-import {
-  COLONY_EVENT_TYPES,
-  TASK_EVENT_TYPES,
-  // USER_EVENT_TYPES,
-} from '../../constants';
+import { COLONY_EVENT_TYPES, TASK_EVENT_TYPES } from '../../constants';
 
 const {
   AVATAR_REMOVED,
@@ -42,8 +38,6 @@ const {
   WORK_REQUEST_CREATED,
   COMMENT_POSTED,
 } = TASK_EVENT_TYPES;
-
-// const { READ_UNTIL } = USER_EVENT_TYPES;
 
 export type ColonyQueryContext = Context<
   {|
