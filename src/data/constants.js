@@ -1,6 +1,6 @@
 /* @flow */
 
-export const VERSION = Number(process.env.VERSION) || 0;
+export const VERSION = Number(process.env.VERSION) || 1;
 
 export const TASK_EVENT_TYPES = Object.freeze({
   COMMENT_STORE_CREATED: 'COMMENT_STORE_CREATED',
