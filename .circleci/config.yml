@@ -147,10 +147,10 @@ jobs:
           - node-modules-
       - run:
           name: "Installing modules"
-          command: |
-            node --version
-            yarn install
-            yarn provision
+          command: yarn install
+      - run:
+          name: "Provision submodules"
+          command: yarn provision
       - save_cache:
           paths:
             - node_modules
