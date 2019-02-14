@@ -133,7 +133,7 @@ jobs:
           path: reports
   e2e-testing:
     docker:
-      - image: joincolony/circleci-cypress
+      - image: circleci/node:10.12
     environment:
       LOADER: trufflepig
       NETWORK: local
@@ -150,17 +150,12 @@ jobs:
           command: |
             node --version
             yarn install
-            yarn provision --skip-pinning-service-build
+            yarn provision
       - save_cache:
           paths:
             - node_modules
           key: node-modules-{{ checksum "package.json" }}
       - setup_remote_docker
-      - run:
-          name: "Create Local `.env` file"
-          command: |
-            echo "LOADER=trufflepig
-            NETWORK=local" >> .env
       - run:
           name: "Running E2E Tests"
           command: |
