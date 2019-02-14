@@ -157,6 +157,9 @@ jobs:
           key: node-modules-{{ checksum "package.json" }}
       - setup_remote_docker
       - run:
+          name: "Pull solc docker image"
+          command: docker pull ethereum/solc:0.4.23
+      - run:
           name: "Running E2E Tests"
           command: |
             docker pull ethereum/solc:0.4.23
