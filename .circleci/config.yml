@@ -150,17 +150,15 @@ jobs:
           command: |
             node --version
             yarn install
-            yarn provision --skip-pinning-service-build
+            yarn provision
       - save_cache:
           paths:
             - node_modules
           key: node-modules-{{ checksum "package.json" }}
       - setup_remote_docker
       - run:
-          name: "Create Local `.env` file"
-          command: |
-            echo "LOADER=trufflepig
-            NETWORK=local" >> .env
+          name: "Pull solc docker image"
+          command: docker pull ethereum/solc:0.4.23
       - run:
           name: "Running E2E Tests"
           command: |
