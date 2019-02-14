@@ -134,6 +134,7 @@ jobs:
   e2e-testing:
     docker:
       - image: joincolony/circleci-cypress
+    parallelism: 2
     environment:
       LOADER: trufflepig
       NETWORK: local
