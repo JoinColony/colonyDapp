@@ -10,7 +10,7 @@ import Adapter from 'enzyme-adapter-react-16';
  * Eg: `ProfileCreate` who is relying on `StepSelectToken` which
  * uses a custom validator internally
  */
-import '../modules/validations';
+import '../redux/validations';
 
 Enzyme.configure({ adapter: new Adapter() });
 

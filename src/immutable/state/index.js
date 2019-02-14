@@ -14,10 +14,12 @@ import type { CoreStateRecord } from './core';
 import type { DashboardStateRecord } from './dashboard';
 import type { UsersStateRecord } from './users';
 
-import { ADMIN_NAMESPACE } from '../../modules/admin/constants';
-import { CORE_NAMESPACE } from '../../modules/core/constants';
-import { DASHBOARD_NAMESPACE } from '../../modules/dashboard/constants';
-import { USERS_NAMESPACE } from '../../modules/users/constants';
+import {
+  ADMIN_NAMESPACE,
+  CORE_NAMESPACE,
+  DASHBOARD_NAMESPACE,
+  USERS_NAMESPACE,
+} from '~redux/misc_constants';
 
 export * from './admin';
 export * from './core';

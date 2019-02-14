@@ -7,12 +7,11 @@ import type BigNumber from 'bn.js/lib/bn';
 import { Record, List } from 'immutable';
 import nanoid from 'nanoid';
 
-import type { LifecycleActionTypes } from '../modules/core/types';
-
 import type {
   Address,
   AddressOrENSName,
   ColonyContext,
+  LifecycleActionTypes,
   TransactionReceipt,
 } from '~types';
 

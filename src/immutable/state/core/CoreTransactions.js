@@ -11,10 +11,7 @@ import { Record, Map as ImmutableMap } from 'immutable';
 import type { TransactionRecordType, TransactionId } from '~immutable';
 import type { GasPricesRecord } from './GasPrices';
 
-import {
-  CORE_TRANSACTIONS_LIST,
-  CORE_GAS_PRICES,
-} from '../../../modules/core/constants';
+import { CORE_TRANSACTIONS_LIST, CORE_GAS_PRICES } from '~redux/misc_constants';
 
 import GasPrices from './GasPrices';
 

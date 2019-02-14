@@ -4,7 +4,7 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import { activityMessages } from '../modules/dashboard/components/UserActivities';
+import { activityMessages } from '../components/UserActivities';
 
 export type ActivityEvent = $Keys<typeof activityMessages>;
 

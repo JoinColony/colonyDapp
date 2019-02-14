@@ -2,7 +2,7 @@ import test from 'ava';
 import { create as createWallet } from '@colony/purser-software';
 import OrbitDB from 'orbit-db';
 
-import '../src/modules/validations';
+import '../src/redux/validations';
 import { DDB } from '../src/lib/database';
 import PurserIdentity from '../src/lib/database/PurserIdentity';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';

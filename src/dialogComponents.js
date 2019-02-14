@@ -6,19 +6,19 @@
  * This is because this list has a potential of getting very long.
  */
 
-import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
+import ActivityBarExample from '~components/core/ActivityBar/ActivityBarExample.jsx';
 import {
   ManagerRatingDialog,
   WorkerRatingDialog,
-} from '~dashboard/TaskRatingDialogs';
-import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
-import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
-import TaskEditDialog from '~dashboard/TaskEditDialog';
-import ClaimProfileDialog from '~users/ClaimProfileDialog';
-import ENSNameDialog from '~users/ENSNameDialog';
-import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
-import UnfinishedProfileDialog from '~users/UnfinishedProfileDialog';
-import RecoveryModeDialog from '~admin/RecoveryModeDialog';
+} from '~components/TaskRatingDialogs';
+import { TokenEditDialog, TokenMintDialog } from '~components/Tokens';
+import TaskRequestWorkDialog from '~components/TaskRequestWork/TaskRequestWorkDialog.jsx';
+import TaskEditDialog from '~components/TaskEditDialog';
+import ClaimProfileDialog from '~components/ClaimProfileDialog';
+import ENSNameDialog from '~components/ENSNameDialog';
+import { TaskClaimRewardDialog } from '~components/TaskClaimReward';
+import UnfinishedProfileDialog from '~components/UnfinishedProfileDialog';
+import RecoveryModeDialog from '~components/RecoveryModeDialog';
 
 const dialogComponents: Object = {
   ActivityBarExample,

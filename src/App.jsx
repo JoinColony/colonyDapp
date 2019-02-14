@@ -10,8 +10,8 @@ import messages from './i18n/en.json';
 import Routes from './routes';
 import layout from '~styles/layout.css';
 
-import { DialogProvider } from '~core/Dialog';
-import { PopoverProvider } from '~core/Popover';
+import { DialogProvider } from '~components/core/Dialog';
+import { PopoverProvider } from '~components/core/Popover';
 import dialogComponents from './dialogComponents';
 
 addLocaleData(en);

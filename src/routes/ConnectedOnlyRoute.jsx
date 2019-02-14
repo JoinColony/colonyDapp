@@ -5,7 +5,7 @@ import { Route, Redirect } from 'react-router-dom';
 
 import { CONNECT_ROUTE } from './routeConstants';
 
-import NavigationWrapper from '~pages/NavigationWrapper';
+import NavigationWrapper from '~components/pages/NavigationWrapper';
 
 import type { RouteProps } from './types';
 

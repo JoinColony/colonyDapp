@@ -5,27 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
-const utils = require('./scripts/utils');
-
-/*
- * Wrapper method to generate aliases for all the dapp's modules
- *
- * @NOTE It's declared here instead of `utils` so you can *get* it's purpouse
- * at a glance when reading the webpack config
- */
-const generateModulesAliases = () => {
-  let modulesAliases = {};
-  const foundDappModules = utils.getDappModules();
-  foundDappModules.map(dappModule => {
-    modulesAliases = Object.assign(
-      {},
-      modulesAliases,
-      utils.generateWebpackAlias(dappModule),
-    );
-  });
-  return modulesAliases;
-};
-
 const config = {
   entry: './src/index.js',
   mode: 'development',
@@ -39,15 +18,15 @@ const config = {
     alias: Object.assign(
       {},
       {
+        '~components': path.resolve(__dirname, 'src/components/'),
         '~context': path.resolve(__dirname, 'src/context'),
+        '~immutable': path.resolve(__dirname, 'src/immutable/'),
         '~redux': path.resolve(__dirname, 'src/redux'),
         '~routes': path.resolve(__dirname, 'src/routes'),
-        '~utils': path.resolve(__dirname, 'src/utils/'),
         '~styles': path.resolve(__dirname, 'src/styles/shared'),
         '~types': path.resolve(__dirname, 'src/types/'),
-        '~immutable': path.resolve(__dirname, 'src/immutable/'),
+        '~utils': path.resolve(__dirname, 'src/utils/'),
       },
-      generateModulesAliases(),
     ),
   },
   module: {
@@ -62,7 +41,7 @@ const config = {
       {
         test: /\.css$/,
         include: [
-          path.resolve(__dirname, 'src', 'modules'),
+          path.resolve(__dirname, 'src', 'components'),
           path.resolve(__dirname, 'src', 'styles'),
         ],
         use: [

@@ -6,7 +6,7 @@ import { routerMiddleware } from 'connected-react-router';
 
 import context from '~context';
 
-import setupSagas from './modules/core/sagas';
+import setupSagas from '~redux/sagas/rootSaga';
 import history from './history';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';

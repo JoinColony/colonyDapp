@@ -4,21 +4,21 @@ import React from 'react';
 import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import CreateColonyWizard from '~dashboard/CreateColonyWizard';
-import ColonyHome from '~dashboard/ColonyHome';
-import Task from '~dashboard/Task';
-import Dashboard from '~dashboard/Dashboard';
-import Inbox from '~dashboard/Inbox';
-import Wallet from '~dashboard/Wallet';
+import CreateColonyWizard from '~components/CreateColonyWizard';
+import ColonyHome from '~components/ColonyHome';
+import Task from '~components/Task';
+import Dashboard from '~components/Dashboard';
+import Inbox from '~components/Inbox';
+import Wallet from '~components/Wallet';
 
-import ConnectWalletWizard from '~users/ConnectWalletWizard';
-import CreateWalletWizard from '~users/CreateWalletWizard';
-import UserProfile from '~users/UserProfile';
-import UserProfileEdit from '~users/UserProfileEdit';
+import ConnectWalletWizard from '~components/ConnectWalletWizard';
+import CreateWalletWizard from '~components/CreateWalletWizard';
+import UserProfile from '~components/UserProfile';
+import UserProfileEdit from '~components/UserProfileEdit';
 
-import AdminDashboard from '~admin/AdminDashboard';
+import AdminDashboard from '~components/AdminDashboard';
 
-import { currentUser as currentUserSelector } from '../modules/users/selectors';
+import { currentUser as currentUserSelector } from '~redux/selectors';
 
 import {
   CONNECT_ROUTE,

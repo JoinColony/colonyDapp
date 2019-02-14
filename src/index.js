@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import ReactModal from 'react-modal';
 
 import './styles/main.css';
-import './modules/validations';
+import './redux/validations';
 
 import App from './App.jsx';
 import store from './createReduxStore';

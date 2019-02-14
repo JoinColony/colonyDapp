@@ -1,0 +1,42 @@
+@value padding: 15px;
+
+.descriptionText {
+  margin-top: 30px;
+}
+
+.contentWrapper {
+  margin-top: 10px;
+}
+
+.workSubmittedSection {
+  margin-top: 10px;
+}
+
+.workDescription {
+  /*
+   * @NOTE This is the same trick as above to extend the border beyond the wrapper's padding
+   */
+  margin: 30px -30px 0 -30px;
+  padding: 30px 30px 0;
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.customCancelButton {
+  composes: sizeLarge from "~components/core/Button/Button.css";
+  composes: themeSecondary from "~components/core/Button/Button.css";
+
+  /*
+   * @NOTE Important declaration to counteract the globally set form .field styles
+   * (coming from styles/shared/fields.css) and that apply to all form elements, including
+   * these two buttons.
+   *
+   * Although in all fainrness they shouldn't, since those styles were designed for row
+   * alignment of elements, not them being stacked side by side.
+   */
+  margin-bottom: 0px !important;
+}
+
+.ratingSection {
+  margin-top: 20px;
+  border-top: 1px solid var(--temp-grey-0);
+}

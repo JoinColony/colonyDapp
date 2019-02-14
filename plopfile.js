@@ -4,11 +4,8 @@ const prompts = {
     name: 'module',
     message: 'which module?',
     choices: [
-      { name: 'admin', value: 'admin' },
-      { name: 'accounts', value: 'accounts' },
-      { name: 'boardView', value: 'boardView' },
+      { name: 'no module', value: null },
       { name: 'core', value: 'core' },
-      { name: 'dashboard', value: 'dashboard' },
       { name: 'pages', value: 'pages' },
     ],
   },
@@ -33,30 +30,33 @@ const prompts = {
   },
 };
 
+const getComponentPath = (module, componentName) =>
+  `src/components/${module ? `${module}/` : ''}${componentName}/${componentName}`;
+
 const actions = {
   component: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/${componentName}.jsx`,
+    path: `${getComponentPath(module, componentName)}.jsx`,
     templateFile: 'plop-templates/componentJsx.hbs',
   }),
   componentIndex: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/index.js`,
+    path: `${getComponentPath(module, componentName)}/index.js`,
     templateFile: 'plop-templates/componentIndex.hbs',
   }),
   componentContainer: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/${componentName}.js`,
+    path: `${getComponentPath(module, componentName)}/${componentName}.js`,
     templateFile: 'plop-templates/componentContainer.hbs',
   }),
   componentStyles: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/${componentName}.css`,
+    path: `${getComponentPath(module, componentName)}/${componentName}.css`,
     templateFile: 'plop-templates/componentStyles.hbs',
   }),
   componentTest: (module, componentName, subComponentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/__tests__/${subComponentName}.test.js`,
+    path: `${getComponentPath(module, componentName)}/__tests__/${subComponentName}.test.js`,
     templateFile: 'plop-templates/componentTests.hbs',
   }),
 };
