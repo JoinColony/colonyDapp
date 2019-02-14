@@ -1,19 +1,22 @@
 /* @flow */
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { Query, QueryContext, Event } from '../types';
 import type {
-  DomainCreatedEventPayload,
-  CommentPostedEventPayload,
-  TaskStoreCreatedEventPayload,
+  ColonyClientContext,
+  Context,
+  DDBContext,
+  Event,
+  Query,
+  WalletContext,
+} from '../../types';
+import type {
+  DomainCreatedEvent,
+  CommentPostedEvent,
+  TaskStoreCreatedEvent,
 } from '../events';
 
 import { getColonyStore, getCommentsStore, getTaskStore } from '../../stores';
-import {
-  COLONY_EVENT_TYPES,
-  TASK_EVENT_TYPES,
-  // USER_EVENT_TYPES,
-} from '../../constants';
+import { COLONY_EVENT_TYPES, TASK_EVENT_TYPES } from '../../constants';
 
 const {
   AVATAR_REMOVED,
@@ -36,34 +39,42 @@ const {
   COMMENT_POSTED,
 } = TASK_EVENT_TYPES;
 
-// const { READ_UNTIL } = USER_EVENT_TYPES;
-
-type ColonyQuery<I: *, R: *> = Query<
-  QueryContext<{|
+export type ColonyQueryContext = Context<
+  {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
-  |}>,
-  I,
-  R,
+  |},
+  ColonyClientContext & DDBContext & WalletContext,
 >;
 
-type TaskQuery<I: *, R: *> = Query<
-  QueryContext<{|
+export type TaskQueryContext = Context<
+  {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
     taskStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
-  R,
+  |},
+  ColonyClientContext & DDBContext & WalletContext,
 >;
 
-type CommentQuery<I: *, R: *> = Query<
-  QueryContext<{|
+export type CommentQueryContext = Context<
+  {|
     commentStoreAddress: string | OrbitDBAddress,
-  |}>,
-  I,
-  R,
+  |},
+  DDBContext,
 >;
+
+export type UserQueryContext = Context<
+  {|
+    walletAddress: string,
+    username?: string,
+  |},
+  DDBContext,
+>;
+
+export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
+export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
+export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
+export type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
 
 // @TODO Add typing for query results
 export const getColony: ColonyQuery<*, *> = ({
@@ -133,6 +144,46 @@ export const getColony: ColonyQuery<*, *> = ({
   },
 });
 
+export const getColonyAvatar: ColonyQuery<*, *> = ({
+  ddb,
+  colonyClient,
+  wallet,
+  metadata: { colonyAddress, colonyENSName },
+}) => ({
+  async execute() {
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
+      colonyAddress,
+      colonyENSName,
+    });
+    return colonyStore
+      .all()
+      .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
+      .reduce(
+        (
+          colony,
+          { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
+        ) => {
+          switch (type) {
+            case AVATAR_UPLOADED: {
+              const { ipfsHash, avatar } = payload;
+              return {
+                ipfsHash,
+                avatar,
+              };
+            }
+            case AVATAR_REMOVED: {
+              return null;
+            }
+
+            default:
+              return colony;
+          }
+        },
+        null,
+      );
+  },
+});
+
 // @NOTE: This is a separate query so we can, later on, cache the query result
 export const getColonyTasks: ColonyQuery<*, *> = ({
   ddb,
@@ -152,13 +203,13 @@ export const getColonyTasks: ColonyQuery<*, *> = ({
         (
           domainTasks,
           {
-            payload: { domainId, draftId },
-          }: Event<typeof TASK_STORE_CREATED, TaskStoreCreatedEventPayload>,
+            payload: { domainId, draftId, taskStoreAddress },
+          }: TaskStoreCreatedEvent,
         ) =>
           Object.assign({}, domainTasks, {
-            [domainId]: Array.from(
-              new Set([...domainTasks[domainId], draftId]),
-            ),
+            [domainId]: Object.assign({}, domainTasks[domainId], {
+              [draftId]: taskStoreAddress,
+            }),
           }),
         {},
       );
@@ -180,13 +231,11 @@ export const getColonyDomains: ColonyQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => eventType === DOMAIN_CREATED)
       .reduce(
-        (
-          domains,
-          {
-            payload: { domainId },
-          }: Event<typeof DOMAIN_CREATED, DomainCreatedEventPayload>,
-        ) => Array.from(new Set([...domains, domainId])),
-        [],
+        (domains, { payload: { domainId, name } }: DomainCreatedEvent) =>
+          Object.assign({}, domains, {
+            [domainId]: { domainId, name },
+          }),
+        {},
       );
   },
 });
@@ -286,12 +335,10 @@ export const getTaskComments: CommentQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => eventType === COMMENT_POSTED)
       .reduce(
-        (
-          comments,
-          {
-            payload: { comment },
-          }: Event<typeof COMMENT_POSTED, CommentPostedEventPayload>,
-        ) => [...comments, comment],
+        (comments, { payload: { comment } }: CommentPostedEvent) => [
+          ...comments,
+          comment,
+        ],
         [],
       );
   },

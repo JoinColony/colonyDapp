@@ -2,7 +2,7 @@
 
 import * as yup from 'yup';
 
-export const CreateColonyCommandArgsSchema = yup.object({
+export const CreateColonyProfileCommandArgsSchema = yup.object({
   address: yup
     .string()
     .address()
@@ -31,7 +31,7 @@ export const CreateDomainCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
 });
 
-export const UploadColonyAvatarCommandArgsSchema = yup.object({
+export const SetColonyAvatarCommandArgsSchema = yup.object({
   avatar: yup.string().required(),
   ipfsHash: yup.string().required(),
 });
@@ -64,8 +64,8 @@ export const UpdateTaskDraftCommandArgsSchema = yup.object({
 });
 
 export const MarkNotificationsAsReadCommandArgsSchema = yup.object({
-  watermark: yup.string().required(),
-  exceptFor: yup.array.of(yup.string.required()),
+  readUntil: yup.string().required(),
+  exceptFor: yup.array().of(yup.string().required()),
 });
 
 export const PostCommentCommandArgsSchema = yup.object({
@@ -91,4 +91,23 @@ export const PostCommentCommandArgsSchema = yup.object({
 
 export const SendWorkInviteCommandArgsSchema = yup.object({
   worker: yup.string(),
+});
+
+export const CreateUserProfileCommandArgsSchema = yup.object({
+  displayName: yup.string(),
+  bio: yup.string(),
+  avatar: yup.string(),
+  website: yup.string(),
+  location: yup.string(),
+});
+
+export const UpdateUserProfileCommandArgsSchema = yup.object({
+  bio: yup.string(),
+  displayName: yup.string(),
+  location: yup.string(),
+  website: yup.string(),
+});
+
+export const SetUserAvatarCommandArgsSchema = yup.object({
+  data: yup.string().required(),
 });

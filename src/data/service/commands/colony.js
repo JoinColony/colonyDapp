@@ -3,10 +3,16 @@
 import pSeries from 'p-series';
 
 import type { Address, ENSName } from '~types';
-import type { Command, CommandContext } from '../types';
+import type {
+  ColonyClientContext,
+  Command,
+  Context,
+  DDBContext,
+  WalletContext,
+} from '../../types';
+import type { EventStore } from '../../../lib/database/stores';
 
 import { getColonyStore, createColonyStore } from '../../stores';
-import { validate } from '../utils';
 import {
   createColonyAvatarRemovedEvent,
   createColonyAvatarUploadedEvent,
@@ -17,22 +23,24 @@ import {
 } from '../events';
 
 import {
-  CreateColonyCommandArgsSchema,
+  CreateColonyProfileCommandArgsSchema,
   CreateDomainCommandArgsSchema,
   RemoveColonyAvatarCommandArgsSchema,
-  UploadColonyAvatarCommandArgsSchema,
+  SetColonyAvatarCommandArgsSchema,
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
-type ColonyCommand<I: *> = Command<
-  CommandContext<{|
+export type ColonyContext = Context<
+  {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
-  |}>,
-  I,
+  |},
+  ColonyClientContext & WalletContext & DDBContext,
 >;
 
-type CreateColonyCommandArgs = {|
+export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
+
+type CreateColonyProfileCommandArgs = {|
   address: Address,
   colonyId: string,
   ensName: string,
@@ -49,44 +57,38 @@ type CreateColonyCommandArgs = {|
 |};
 
 type UpdateColonyProfileCommandArgs = {|
-  address: Address,
   name: string,
-  ensName: string,
   description: string,
   guideline: string,
   website: string,
 |};
 
-type UploadColonyAvatarCommandArgs = {|
-  address: Address,
-  ensName: string,
+type SetColonyAvatarCommandArgs = {|
   avatar: string,
   ipfsHash: string,
 |};
 
 type RemoveColonyAvatarCommandArgs = {|
-  address: Address,
-  ensName: string,
   ipfsHash: string,
 |};
 
 type CreateDomainCommandArgs = {|
-  address: Address,
-  ensName: string,
+  name: string,
   domainId: number,
 |};
 
-export const createColony: ColonyCommand<CreateColonyCommandArgs> = ({
+export const createColonyProfile: ColonyCommand<
+  CreateColonyProfileCommandArgs,
+  EventStore,
+> = ({
   ddb,
   colonyClient,
   wallet,
   metadata: { colonyAddress, colonyENSName },
+  metadata,
 }) => ({
-  async validate(args) {
-    return validate(CreateColonyCommandArgsSchema)(args);
-  },
-  async execute(args) {
-    const { name, description, guideline, website, token } = args;
+  schema: CreateColonyProfileCommandArgsSchema,
+  async execute({ name, description, guideline, website, token }) {
     const profileCreatedEvent = createColonyProfileCreatedEvent({
       address: colonyAddress,
       ensName: colonyENSName,
@@ -97,9 +99,9 @@ export const createColony: ColonyCommand<CreateColonyCommandArgs> = ({
     });
     const tokenInfoAddedEvent = createTokenInfoAddedEvent(token);
 
-    const colonyStore = await createColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-    });
+    const colonyStore = await createColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
     await colonyStore.load();
 
     await pSeries(
@@ -112,103 +114,58 @@ export const createColony: ColonyCommand<CreateColonyCommandArgs> = ({
   },
 });
 
-export const createDomain: ColonyCommand<CreateDomainCommandArgs> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(CreateDomainCommandArgsSchema)(args);
-  },
+export const createDomain: ColonyCommand<
+  CreateDomainCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: CreateDomainCommandArgsSchema,
   async execute(args) {
-    const { domainId } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(
-      createDomainCreatedEvent({
-        domainId,
-        colonyENSName,
-      }),
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
     );
-
+    await colonyStore.append(createDomainCreatedEvent(args));
     return colonyStore;
   },
 });
 
-export const updateColonyProfile: ColonyCommand<UpdateColonyProfileCommandArgs> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(UpdateColonyProfileCommandArgsSchema)(args);
-  },
+export const updateColonyProfile: ColonyCommand<
+  UpdateColonyProfileCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: UpdateColonyProfileCommandArgsSchema,
   async execute(args) {
-    const { name, description, guideline, website } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(
-      createColonyProfileUpdatedEvent({
-        name,
-        description,
-        guideline,
-        website,
-      }),
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
     );
-
+    await colonyStore.append(createColonyProfileUpdatedEvent(args));
     return colonyStore;
   },
 });
 
-export const uploadColonyAvatar: ColonyCommand<UploadColonyAvatarCommandArgs> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(UploadColonyAvatarCommandArgsSchema)(args);
-  },
+export const setColonyAvatar: ColonyCommand<
+  SetColonyAvatarCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: SetColonyAvatarCommandArgsSchema,
   async execute(args) {
-    const { ipfsHash, avatar } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(
-      createColonyAvatarUploadedEvent({ ipfsHash, avatar }),
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
     );
-
+    await colonyStore.append(createColonyAvatarUploadedEvent(args));
     return colonyStore;
   },
 });
 
-export const removeColonyAvatar: ColonyCommand<RemoveColonyAvatarCommandArgs> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async validate(args) {
-    return validate(RemoveColonyAvatarCommandArgsSchema)(args);
-  },
+export const removeColonyAvatar: ColonyCommand<
+  RemoveColonyAvatarCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: RemoveColonyAvatarCommandArgsSchema,
   async execute(args) {
-    const { ipfsHash } = args;
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-
-    await colonyStore.append(createColonyAvatarRemovedEvent({ ipfsHash }));
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
+    await colonyStore.append(createColonyAvatarRemovedEvent(args));
     return colonyStore;
   },
 });

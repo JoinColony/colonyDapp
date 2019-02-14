@@ -1,10 +1,19 @@
 /* @flow */
 
 import type { Address } from '~types';
-import type { Event, EventCreator, EventPayload } from '../types';
+import type { Event } from '../../types';
 
-import { decoratePayload } from './utils';
+import { createEventCreator } from '../../utils';
 import { COLONY_EVENT_TYPES } from '../../constants';
+import {
+  CreateColonyAvatarRemovedEventSchema,
+  CreateColonyAvatarUploadedEventSchema,
+  CreateColonyProfileCreatedEventSchema,
+  CreateColonyProfileUpdatedEventSchema,
+  CreateDomainCreatedEventSchema,
+  CreateTaskStoreCreatedEventSchema,
+  CreateTokenInfoAddedEventSchema,
+} from './schemas';
 
 const {
   AVATAR_REMOVED,
@@ -18,9 +27,9 @@ const {
 
 export type DomainCreatedEventArgs = {|
   domainId: number,
-  colonyENSName: string,
+  name: string,
 |};
-export type DomainCreatedEventPayload = EventPayload & DomainCreatedEventArgs;
+export type DomainCreatedEventPayload = DomainCreatedEventArgs;
 export type DomainCreatedEvent = Event<
   typeof DOMAIN_CREATED,
   DomainCreatedEventPayload,
@@ -31,8 +40,7 @@ export type TaskStoreCreatedEventArgs = {|
   draftId: string,
   domainId: number,
 |};
-export type TaskStoreCreatedEventPayload = EventPayload &
-  TaskStoreCreatedEventArgs;
+export type TaskStoreCreatedEventPayload = TaskStoreCreatedEventArgs;
 export type TaskStoreCreatedEvent = Event<
   typeof TASK_STORE_CREATED,
   TaskStoreCreatedEventPayload,
@@ -42,8 +50,7 @@ export type ColonyAvatarUploadedEventArgs = {|
   ipfsHash: string,
   avatar: string,
 |};
-export type ColonyAvatarUploadedEventPayload = EventPayload &
-  ColonyAvatarUploadedEventArgs;
+export type ColonyAvatarUploadedEventPayload = ColonyAvatarUploadedEventArgs;
 export type ColonyAvatarUploadedEvent = Event<
   typeof AVATAR_UPLOADED,
   ColonyAvatarUploadedEventPayload,
@@ -52,8 +59,7 @@ export type ColonyAvatarUploadedEvent = Event<
 export type ColonyAvatarRemovedEventArgs = {|
   ipfsHash: string,
 |};
-export type ColonyAvatarRemovedEventPayload = EventPayload &
-  ColonyAvatarRemovedEventArgs;
+export type ColonyAvatarRemovedEventPayload = ColonyAvatarRemovedEventArgs;
 export type ColonyAvatarRemovedEvent = Event<
   typeof AVATAR_REMOVED,
   ColonyAvatarRemovedEventPayload,
@@ -65,7 +71,7 @@ export type TokenInfoAddedEventArgs = {|
   name: string,
   symbol: string,
 |};
-export type TokenInfoAddedEventPayload = EventPayload & TokenInfoAddedEventArgs;
+export type TokenInfoAddedEventPayload = TokenInfoAddedEventArgs;
 export type TokenInfoAddedEvent = Event<
   typeof TOKEN_INFO_ADDED,
   TokenInfoAddedEventPayload,
@@ -79,8 +85,7 @@ export type ColonyProfileCreatedEventArgs = {|
   website: string,
   guideline: string,
 |};
-export type ColonyProfileCreatedEventPayload = EventPayload &
-  ColonyProfileCreatedEventArgs;
+export type ColonyProfileCreatedEventPayload = ColonyProfileCreatedEventArgs;
 export type ColonyProfileCreatedEvent = Event<
   typeof PROFILE_CREATED,
   ColonyProfileCreatedEventPayload,
@@ -92,90 +97,50 @@ export type ColonyProfileUpdatedEventArgs = {|
   website: string,
   guideline: string,
 |};
-export type ColonyProfileUpdatedEventPayload = EventPayload &
-  ColonyProfileUpdatedEventArgs;
-
+export type ColonyProfileUpdatedEventPayload = ColonyProfileUpdatedEventArgs;
 export type ColonyProfileUpdatedEvent = Event<
   typeof PROFILE_UPDATED,
   ColonyProfileUpdatedEventPayload,
 >;
 
-export const createDomainCreatedEvent: EventCreator<
+export const createDomainCreatedEvent = createEventCreator<
+  typeof DOMAIN_CREATED,
   DomainCreatedEventArgs,
   DomainCreatedEvent,
-> = ({ domainId }) => ({
-  type: DOMAIN_CREATED,
-  payload: decoratePayload<DomainCreatedEventPayload>({
-    domainId,
-  }),
-});
-export const createTaskStoreCreatedEvent: EventCreator<
+>(DOMAIN_CREATED, CreateDomainCreatedEventSchema);
+
+export const createTaskStoreCreatedEvent = createEventCreator<
+  typeof TASK_STORE_CREATED,
   TaskStoreCreatedEventArgs,
   TaskStoreCreatedEvent,
-> = ({ domainId, taskStoreAddress, draftId }) => ({
-  type: TASK_STORE_CREATED,
-  payload: decoratePayload<TaskStoreCreatedEventPayload>({
-    domainId,
-    taskStoreAddress,
-    draftId,
-  }),
-});
+>(TASK_STORE_CREATED, CreateTaskStoreCreatedEventSchema);
 
-export const createColonyAvatarRemovedEvent: EventCreator<
+export const createColonyAvatarRemovedEvent = createEventCreator<
+  typeof AVATAR_REMOVED,
   ColonyAvatarRemovedEventArgs,
   ColonyAvatarRemovedEvent,
-> = ({ ipfsHash }) => ({
-  type: AVATAR_REMOVED,
-  payload: decoratePayload<ColonyAvatarRemovedEventPayload>({ ipfsHash }),
-});
+>(AVATAR_REMOVED, CreateColonyAvatarRemovedEventSchema);
 
-export const createColonyAvatarUploadedEvent: EventCreator<
+export const createColonyAvatarUploadedEvent = createEventCreator<
+  typeof AVATAR_UPLOADED,
   ColonyAvatarUploadedEventArgs,
   ColonyAvatarUploadedEvent,
-> = ({ ipfsHash, avatar }) => ({
-  type: AVATAR_UPLOADED,
-  payload: decoratePayload<ColonyAvatarUploadedEventPayload>({
-    avatar,
-    ipfsHash,
-  }),
-});
+>(AVATAR_UPLOADED, CreateColonyAvatarUploadedEventSchema);
 
-export const createColonyProfileCreatedEvent: EventCreator<
+export const createColonyProfileCreatedEvent = createEventCreator<
+  typeof PROFILE_CREATED,
   ColonyProfileCreatedEventArgs,
   ColonyProfileCreatedEvent,
-> = ({ address, ensName, name, description, website, guideline }) => ({
-  type: PROFILE_CREATED,
-  payload: decoratePayload<ColonyProfileCreatedEventPayload>({
-    address,
-    ensName,
-    name,
-    description,
-    website,
-    guideline,
-  }),
-});
+>(PROFILE_CREATED, CreateColonyProfileCreatedEventSchema);
 
-export const createColonyProfileUpdatedEvent: EventCreator<
+export const createColonyProfileUpdatedEvent = createEventCreator<
+  typeof PROFILE_UPDATED,
   ColonyProfileUpdatedEventArgs,
   ColonyProfileUpdatedEvent,
-> = ({ description, website, guideline }) => ({
-  type: PROFILE_UPDATED,
-  payload: decoratePayload<ColonyProfileUpdatedEventPayload>({
-    description,
-    website,
-    guideline,
-  }),
-});
+>(PROFILE_UPDATED, CreateColonyProfileUpdatedEventSchema);
 
-export const createTokenInfoAddedEvent: EventCreator<
+export const createTokenInfoAddedEvent = createEventCreator<
+  typeof TOKEN_INFO_ADDED,
   TokenInfoAddedEventArgs,
   TokenInfoAddedEvent,
-> = ({ address, icon, name, symbol }) => ({
-  type: TOKEN_INFO_ADDED,
-  payload: decoratePayload<TokenInfoAddedEventPayload>({
-    address,
-    icon,
-    name,
-    symbol,
-  }),
-});
+>(TOKEN_INFO_ADDED, CreateTokenInfoAddedEventSchema);

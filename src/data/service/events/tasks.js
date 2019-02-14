@@ -1,9 +1,19 @@
 /* @flow */
 
-import type { Event, EventCreator, EventPayload } from '../types';
+import type { Event } from '../../types';
 
-import { decoratePayload } from './utils';
+import { createEventCreator } from '../../utils';
 import { TASK_EVENT_TYPES } from '../../constants';
+import {
+  CreateCommentPostedEventSchema,
+  CreateCommentStoreCreatedEventSchema,
+  CreateDraftCreatedEventSchema,
+  CreateDraftUpdatedEventSchema,
+  CreateDueDateSetEventSchema,
+  CreateSkillSetEventSchema,
+  CreateWorkInviteSentEventSchema,
+  CreateWorkRequestCreatedEventSchema,
+} from './schemas';
 
 const {
   COMMENT_STORE_CREATED,
@@ -19,8 +29,7 @@ const {
 export type CommentStoreCreatedEventArgs = {|
   commentsStoreAddress: string,
 |};
-export type CommentStoreCreatedEventPayload = EventPayload &
-  CommentStoreCreatedEventArgs;
+export type CommentStoreCreatedEventPayload = CommentStoreCreatedEventArgs;
 export type CommentStoreCreatedEvent = Event<
   typeof COMMENT_STORE_CREATED,
   CommentStoreCreatedEventPayload,
@@ -29,7 +38,7 @@ export type CommentStoreCreatedEvent = Event<
 export type DueDateSetEventArgs = {|
   dueDate: number,
 |};
-export type DueDateSetEventPayload = EventPayload & DueDateSetEventArgs;
+export type DueDateSetEventPayload = DueDateSetEventArgs;
 export type DueDateSetEvent = Event<
   typeof DUE_DATE_SET,
   DueDateSetEventPayload,
@@ -38,18 +47,18 @@ export type DueDateSetEvent = Event<
 export type SkillSetEventArgs = {|
   skillId: string,
 |};
-export type SkillSetEventPayload = EventPayload & SkillSetEventArgs;
+export type SkillSetEventPayload = SkillSetEventArgs;
 export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 
 export type DraftCreatedEventArgs = {|
-  draftId: string,
   creator: string,
   domainId: number,
+  draftId: string,
   meta: string,
   specificationHash: string,
   title: string,
 |};
-export type DraftCreatedEventPayload = EventPayload & DraftCreatedEventArgs;
+export type DraftCreatedEventPayload = DraftCreatedEventArgs;
 export type DraftCreatedEvent = Event<
   typeof DRAFT_CREATED,
   DraftCreatedEventPayload,
@@ -60,7 +69,7 @@ export type DraftUpdatedEventArgs = {|
   specificationHash: string,
   title: string,
 |};
-export type DraftUpdatedEventPayload = EventPayload & DraftUpdatedEventArgs;
+export type DraftUpdatedEventPayload = DraftUpdatedEventArgs;
 export type DraftUpdatedEvent = Event<
   typeof DRAFT_UPDATED,
   DraftUpdatedEventPayload,
@@ -70,7 +79,7 @@ export type WorkInviteSentEventArgs = {|
   creator: string,
   worker: string,
 |};
-export type WorkInviteSentEventPayload = EventPayload & WorkInviteSentEventArgs;
+export type WorkInviteSentEventPayload = WorkInviteSentEventArgs;
 export type WorkInviteSentEvent = Event<
   typeof WORK_INVITE_SENT,
   WorkInviteSentEventPayload,
@@ -79,8 +88,7 @@ export type WorkInviteSentEvent = Event<
 export type WorkRequestCreatedEventArgs = {|
   worker: string,
 |};
-export type WorkRequestCreatedEventPayload = EventPayload &
-  WorkRequestCreatedEventArgs;
+export type WorkRequestCreatedEventPayload = WorkRequestCreatedEventArgs;
 export type WorkRequestCreatedEvent = Event<
   typeof WORK_REQUEST_CREATED,
   WorkRequestCreatedEventPayload,
@@ -99,86 +107,56 @@ export type CommentPostedEventArgs = {|
     |},
   |},
 |};
-export type CommentPostedEventPayload = EventPayload & CommentPostedEventArgs;
+export type CommentPostedEventPayload = CommentPostedEventArgs;
 export type CommentPostedEvent = Event<
   typeof COMMENT_POSTED,
   CommentPostedEventPayload,
 >;
 
-// @TODO add payload validation here like we had in beta events
-export const createCommentStoreCreatedEvent: EventCreator<
+export const createCommentStoreCreatedEvent = createEventCreator<
+  typeof COMMENT_STORE_CREATED,
   CommentStoreCreatedEventArgs,
   CommentStoreCreatedEvent,
-> = ({ commentsStoreAddress }) => ({
-  type: COMMENT_STORE_CREATED,
-  payload: decoratePayload<CommentStoreCreatedEventPayload>({
-    commentsStoreAddress,
-  }),
-});
+>(COMMENT_STORE_CREATED, CreateCommentStoreCreatedEventSchema);
 
-export const createTaskDueDateSetEvent: EventCreator<
+export const createTaskDueDateSetEvent = createEventCreator<
+  typeof DUE_DATE_SET,
   DueDateSetEventArgs,
   DueDateSetEvent,
-> = ({ dueDate }) => ({
-  type: DUE_DATE_SET,
-  payload: decoratePayload<DueDateSetEventPayload>({ dueDate }),
-});
+>(DUE_DATE_SET, CreateDueDateSetEventSchema);
 
-export const createDraftCreatedEvent: EventCreator<
+export const createDraftCreatedEvent = createEventCreator<
+  typeof DRAFT_CREATED,
   DraftCreatedEventArgs,
   DraftCreatedEvent,
-> = ({ draftId, creator, domainId, meta, specificationHash, title }) => ({
-  type: DRAFT_CREATED,
-  payload: decoratePayload<DraftCreatedEventPayload>({
-    draftId,
-    creator,
-    domainId,
-    meta,
-    specificationHash,
-    title,
-  }),
-});
+>(DRAFT_CREATED, CreateDraftCreatedEventSchema);
 
-export const createDraftUpdatedEvent: EventCreator<
+export const createDraftUpdatedEvent = createEventCreator<
+  typeof DRAFT_UPDATED,
   DraftUpdatedEventArgs,
   DraftUpdatedEvent,
-> = ({ meta, specificationHash, title }) => ({
-  type: DRAFT_UPDATED,
-  payload: decoratePayload<DraftUpdatedEventPayload>({
-    meta,
-    specificationHash,
-    title,
-  }),
-});
+>(DRAFT_UPDATED, CreateDraftUpdatedEventSchema);
 
-export const createTaskSkillSetEvent: EventCreator<
+export const createTaskSkillSetEvent = createEventCreator<
+  typeof SKILL_SET,
   SkillSetEventArgs,
   SkillSetEvent,
-> = ({ skillId }) => ({
-  type: SKILL_SET,
-  payload: decoratePayload<SkillSetEventPayload>({ skillId }),
-});
+>(SKILL_SET, CreateSkillSetEventSchema);
 
-export const createWorkInviteSentEvent: EventCreator<
+export const createWorkInviteSentEvent = createEventCreator<
+  typeof WORK_INVITE_SENT,
   WorkInviteSentEventArgs,
   WorkInviteSentEvent,
-> = ({ worker, creator }) => ({
-  type: WORK_INVITE_SENT,
-  payload: decoratePayload<WorkInviteSentEventPayload>({ worker, creator }),
-});
+>(WORK_INVITE_SENT, CreateWorkInviteSentEventSchema);
 
-export const createWorkRequestCreatedEvent: EventCreator<
+export const createWorkRequestCreatedEvent = createEventCreator<
+  typeof WORK_REQUEST_CREATED,
   WorkRequestCreatedEventArgs,
   WorkRequestCreatedEvent,
-> = ({ worker }) => ({
-  type: WORK_REQUEST_CREATED,
-  payload: decoratePayload<WorkRequestCreatedEventPayload>({ worker }),
-});
+>(WORK_REQUEST_CREATED, CreateWorkRequestCreatedEventSchema);
 
-export const createCommentPostedEvent: EventCreator<
+export const createCommentPostedEvent = createEventCreator<
+  typeof COMMENT_POSTED,
   CommentPostedEventArgs,
   CommentPostedEvent,
-> = ({ comment }) => ({
-  type: COMMENT_POSTED,
-  payload: decoratePayload<CommentPostedEventPayload>({ comment }),
-});
+>(COMMENT_POSTED, CreateCommentPostedEventSchema);
