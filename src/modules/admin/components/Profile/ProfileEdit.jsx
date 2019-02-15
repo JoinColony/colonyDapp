@@ -20,7 +20,7 @@ import { getENSDomainString } from '~utils/web3/ens';
 import { mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
-import { colonyStoreBlueprint } from '../../../dashboard/stores';
+import { colony as colonyStoreBlueprint } from '../../../../data/blueprints';
 
 import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 
