@@ -62,6 +62,7 @@ import {
   TASK_UPDATE_ERROR,
   TASK_UPDATE_SUCCESS,
   TASK_WORKER_CLAIM_REWARD,
+  TASK_WORKER_ASSIGN,
   TASK_WORKER_END,
   TASK_WORKER_END_ERROR,
   TASK_WORKER_RATE_MANAGER,
@@ -589,7 +590,7 @@ function* taskWorkerAssignSaga({
   yield put(
     taskWorkerAssignTx({
       identifier: colonyENSName,
-      params: { taskId, user },
+      params: { taskId, user, role: 'WORKER' },
       meta,
     }),
   );
@@ -601,7 +602,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(TASK_FETCH, taskFetchSaga);
   yield takeEvery(TASK_FETCH_ALL, taskFetchAllSaga);
   yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
-  yield takeEvery(TASK_FINALIZE, taskWorkerAssignSaga);
+  yield takeEvery(TASK_WORKER_ASSIGN, taskWorkerAssignSaga);
   yield takeEvery(TASK_MANAGER_END, completeTaskSaga);
   yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
   yield takeEvery(TASK_REMOVE, taskRemoveSaga);

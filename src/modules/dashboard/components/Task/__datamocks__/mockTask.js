@@ -28,6 +28,7 @@ export const mockTaskReward = {
 };
 
 export const mockTask = {
+  id: 1,
   assignee: userMock,
   colonyENSName: 'cool-colony',
   creator: '0x230da0f9u4qtj09ajg240qutgadjf0ajtaj',

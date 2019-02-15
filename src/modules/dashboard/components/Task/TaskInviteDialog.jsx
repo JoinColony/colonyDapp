@@ -2,10 +2,9 @@
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import BigNumber from 'bn.js';
 import { compose } from 'recompose';
 
-import { withTask } from '../../../core/hocs';
+import { withTask } from '../../hocs';
 
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
@@ -15,10 +14,8 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import Payout from '~dashboard/TaskEditDialog/Payout.jsx';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
-import { getEthToUsd } from '~utils/external';
-import { bnMultiply } from '~utils/numbers';
 
-import type { TaskRecord } from '~immutable';
+import type { TaskType } from '~immutable';
 import type { MultisigOperationJSON } from '../../../core/types';
 
 import styles from './TaskInviteDialog.css';
@@ -42,42 +39,25 @@ const MSG = defineMessages({
   },
 });
 
-type State = {
-  ethUsdConversion?: BigNumber,
-};
-
 type Props = {
   multisigJSON: MultisigOperationJSON,
-  task: TaskRecord,
+  task: TaskType,
   cancel: () => void,
 };
 
-class TaskInviteDialog extends Component<Props, State> {
+class TaskInviteDialog extends Component<Props> {
   static displayName = 'dashboard.task.taskInviteDialog';
 
-  state = {};
-
-  componentDidMount() {
-    this.mounted = true;
-
-    getEthToUsd(1).then(rate => {
-      if (this.mounted) {
-        this.setState({ ethUsdConversion: new BigNumber(rate) });
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
   setPayload = (action: Object, { assignee }: Object) => {
-    const { task, multisigJSON } = this.props;
+    const {
+      task: { taskId },
+      multisigJSON,
+    } = this.props;
     return {
       ...action,
       payload: {
         user: assignee.profile.walletAddress,
-        taskId: task.id,
+        taskId,
         multisigJSON,
       },
     };
@@ -90,7 +70,6 @@ class TaskInviteDialog extends Component<Props, State> {
       cancel,
       task: { reputation, payouts, assignee },
     } = this.props;
-    const { ethUsdConversion } = this.state;
     return (
       <FullscreenDialog cancel={cancel}>
         <ActionForm
@@ -141,11 +120,6 @@ class TaskInviteDialog extends Component<Props, State> {
                                 token.isNative ? reputation : undefined
                               }
                               editPayout={false}
-                              usdAmount={
-                                token.isEth && ethUsdConversion
-                                  ? bnMultiply(ethUsdConversion, amount)
-                                  : undefined
-                              }
                             />
                           );
                         })}

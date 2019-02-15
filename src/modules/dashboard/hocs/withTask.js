@@ -2,10 +2,8 @@
 
 import { compose, branch, withProps } from 'recompose';
 
-import { TaskRecord } from '~immutable';
-
 // eslint-disable-next-line import/no-named-as-default
-import mockTask from '../../dashboard/components/Task/__datamocks__/mockTask';
+import mockTask from '../components/Task/__datamocks__/mockTask';
 
 const withTask = compose(
   // $FlowFixMe Let's fix this when we wire it properly
