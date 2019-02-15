@@ -2,12 +2,12 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
-import type { Action } from '~types';
+import type { UniqueAction, UniqueActionWithKeyPath } from '~types';
 
-import { putError } from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
 
 import { ensureColonyIsInState, fetchColonyStore } from './shared';
 
@@ -16,27 +16,29 @@ import {
   COLONY_ADMIN_ADD_SUCCESS,
   COLONY_ADMIN_ADD_ERROR,
   COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-  COLONY_ADMIN_ADD_CONFIRM_ERROR,
   COLONY_ADMIN_REMOVE,
   COLONY_ADMIN_REMOVE_SUCCESS,
   COLONY_ADMIN_REMOVE_ERROR,
   COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-  COLONY_ADMIN_REMOVE_CONFIRM_ERROR,
 } from '../actionTypes';
-import { TRANSACTION_SUCCEEDED } from '../../core/actionTypes';
 
 import {
-  addColonyAdmin as addColonyAdminAction,
-  removeColonyAdmin as removeColonyAdminAction,
-} from '../actionCreators';
+  TRANSACTION_CREATED,
+  TRANSACTION_SUCCEEDED,
+} from '../../core/actionTypes';
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { COLONY_CONTEXT } from '../../core/constants';
 
 function* addColonyAdmin({
   payload: { newAdmin, ensName },
-  meta = {},
-}: Action): Saga<void> {
+  meta,
+}: UniqueAction): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
     const { walletAddress, username } = newAdmin.profile;
     const keyPath = [ensName, 'record', 'admins', username];
+
     /*
      * Get the colony store
      */
@@ -44,22 +46,25 @@ function* addColonyAdmin({
     const colonyAddress = store.get('address');
     const colonyAdmins = store.get('admins');
     /*
-     * Dispatch the action to set the admin on the contract level (transaction)
+     * Set the admin on the contract level (transaction)
      */
-    yield put(
-      addColonyAdminAction({
-        identifier: colonyAddress,
-        params: { user: walletAddress },
-        options: {
-          gasLimit: 500000,
-        },
-        meta,
-      }),
-    );
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'setAdminRole',
+      identifier: colonyAddress,
+      params: { user: walletAddress },
+      options: {
+        gasLimit: 500000,
+      },
+    });
+
+    yield takeFrom(txChannel, TRANSACTION_CREATED);
+
     /*
      * Dispatch the action to the admin in the Redux store
      *
-     * @NOTE Add the new admin in a peding state
+     * @NOTE Add the new admin in a pending state
+     * TODO: If anything here goes wrong we want to revert this I guess!
      */
     yield put({
       type: COLONY_ADMIN_ADD_SUCCESS,
@@ -68,6 +73,7 @@ function* addColonyAdmin({
       },
       meta: { keyPath },
     });
+
     /*
      * Redirect the user back to the admins tab
      */
@@ -76,65 +82,36 @@ function* addColonyAdmin({
         state: { initialTab: 3 },
       }),
     );
-    /*
-     * Wait for the transaction to be signed
-     * Only update the DDB and Redux stores once the transaction has been signed.
-     *
-     * We know this, because we listen for the `TRANSACTION_SUCCEEDED`
-     * which we receive once the transaction has been sucessfully signed.
-     * Once that action is triggerred we inspect it and check it against the
-     * id of our original transaction.
-     * If they match, then we can be sure the transaction has been signed, so we
-     * can safely update the stores.
-     */
-    yield takeEvery(TRANSACTION_SUCCEEDED, function* waitForSuccessfulTx({
-      meta: { id: signedTxId } = {},
-    }: Action) {
-      try {
-        if (signedTxId === meta.id) {
-          /*
-           * Set the new value on the colony's store
-           */
-          yield call([store, store.set], 'admins', {
-            ...colonyAdmins,
-            [username]: {
-              ...newAdmin.profile.toJS(),
-              state: 'confirmed',
-            },
-          });
-          /*
-           * Dispatch the action to the admin in the Redux store to confirm
-           * the newly added admin and change the state
-           */
-          yield put({
-            type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-            meta: { keyPath },
-          });
-          /*
-           * Redirect the user back to the admins tab
-           */
-          yield put(
-            push({
-              state: { initialTab: 3 },
-            }),
-          );
-        }
-      } catch (error) {
-        yield putError(COLONY_ADMIN_ADD_CONFIRM_ERROR, error);
-      }
+
+    yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+
+    yield call([store, store.set], 'admins', {
+      ...colonyAdmins,
+      [username]: {
+        ...newAdmin.profile.toJS(),
+        state: 'confirmed',
+      },
+    });
+
+    yield put({
+      type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
+      meta: { keyPath },
     });
   } catch (error) {
     yield putError(COLONY_ADMIN_ADD_ERROR, error);
+  } finally {
+    txChannel.close();
   }
 }
 
 function* removeColonyAdmin({
   payload: { admin },
-  meta: { keyPath: metaKeyPath } = {},
   meta,
-}: Action): Saga<void> {
+}: UniqueActionWithKeyPath): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
-    const ensName = metaKeyPath[0];
+    const ensName = meta.keyPath[0];
     const { walletAddress, username } = admin;
     const keyPath = [ensName, 'record', 'admins', username];
     /*
@@ -148,21 +125,21 @@ function* removeColonyAdmin({
     const store = yield call(fetchColonyStore, ensName);
     const colonyAddress = store.get('address');
     const colonyAdmins = store.get('admins');
+
     /*
-     * Dispatch the action to set the admin on the contract level (transaction)
+     * Remove the admin on the contract level (transaction)
      */
-    yield put(
-      removeColonyAdminAction({
-        identifier: colonyAddress,
-        params: {
-          user: walletAddress,
-        },
-        options: {
-          gasLimit: 500000,
-        },
-        meta,
-      }),
-    );
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'removeAdminRole',
+      identifier: colonyAddress,
+      params: {
+        user: walletAddress,
+      },
+      options: {
+        gasLimit: 500000,
+      },
+    });
     /*
      * Dispatch the action to the admin in the Redux store
      *
@@ -180,47 +157,15 @@ function* removeColonyAdmin({
         state: { initialTab: 3 },
       }),
     );
-    /*
-     * Wait for the transaction to be signed
-     * Only update the DDB and Redux stores once the transaction has been signed.
-     *
-     * We know this, because we listen for the `TRANSACTION_SUCCEEDED`
-     * which we receive once the transaction has been sucessfully signed.
-     * Once that action is triggerred we inspect it and check it against the
-     * id of our original transaction.
-     * If they match, then we can be sure the transaction has been signed, so we
-     * can safely update the stores.
-     */
-    yield takeEvery(TRANSACTION_SUCCEEDED, function* waitForSuccessfulTx({
-      meta: { id: signedTxId } = {},
-    }: Action) {
-      try {
-        if (meta && signedTxId === meta.id) {
-          /*
-           * Remove the colony admin and set the new value on the colony's store
-           */
-          delete colonyAdmins[username];
-          yield call([store, store.set], 'admins', colonyAdmins);
-          /*
-           * Dispatch the action to the admin in the Redux store to actually
-           * remove the entry (the one that's in the pending state)
-           */
-          yield put({
-            type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-            meta: { keyPath },
-          });
-          /*
-           * Redirect the user back to the admins tab
-           */
-          yield put(
-            push({
-              state: { initialTab: 3 },
-            }),
-          );
-        }
-      } catch (error) {
-        yield putError(COLONY_ADMIN_REMOVE_CONFIRM_ERROR, error);
-      }
+
+    yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+
+    delete colonyAdmins[username];
+    yield call([store, store.set], 'admins', colonyAdmins);
+
+    yield put({
+      type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
+      meta: { keyPath },
     });
   } catch (error) {
     yield putError(COLONY_ADMIN_REMOVE_ERROR, error);
