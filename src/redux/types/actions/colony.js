@@ -19,7 +19,7 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| newAdmin: Object, ensName: string |},
+    {| colonyAddress: string, newAdmin: Object, ensName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_CONFIRM_ERROR: ErrorActionType<
@@ -42,7 +42,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| admin: Object, username: string |},
+    {| colonyAddress: string, admin: Object, username: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_CONFIRM_ERROR: ErrorActionType<
