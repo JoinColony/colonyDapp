@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, select, takeEvery } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
 import type { Action } from '~redux';
@@ -10,32 +10,27 @@ import type { Action } from '~redux';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { ensureColonyIsInState, fetchColonyStore } from './shared';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
+import { routerColonySelector } from '../selectors/colony';
+
 function* colonyAdminAdd({
-  payload: { newAdmin, ensName },
+  payload: { newAdmin },
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const { walletAddress, username } = newAdmin.profile;
-
-    /*
-     * Get the colony store
-     */
-    const store = yield call(fetchColonyStore, ensName);
-    const colonyAddress = store.get('address');
-    const colonyAdmins = store.get('admins');
-
+    const colony = yield select(routerColonySelector);
+    const { address } = colony;
     /*
      * Set the admin on the contract level (transaction)
      */
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'setAdminRole',
-      identifier: colonyAddress,
+      identifier: address,
       params: { user: walletAddress },
     });
 
@@ -67,14 +62,6 @@ function* colonyAdminAdd({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield call([store, store.set], 'admins', {
-      ...colonyAdmins,
-      [username]: {
-        ...newAdmin.profile.toJS(),
-        state: 'confirmed',
-      },
-    });
-
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
       meta,
@@ -89,27 +76,14 @@ function* colonyAdminAdd({
 
 function* colonyAdminRemove({
   payload: { admin },
-  meta: {
-    keyPath: [ensName],
-  },
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_REMOVE>): Saga<void> {
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
-
+    const colony = yield select(routerColonySelector);
+    const { address } = colony;
     const { walletAddress, username } = admin;
-    /*
-     * Ensure the colony is in the state.
-     */
-    yield call(ensureColonyIsInState, ensName);
-
-    /*
-     * Get the colony store
-     */
-    const store = yield call(fetchColonyStore, ensName);
-    const colonyAddress = store.get('address');
-    const colonyAdmins = store.get('admins');
 
     /*
      * Remove the admin on the contract level (transaction)
@@ -117,7 +91,7 @@ function* colonyAdminRemove({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'removeAdminRole',
-      identifier: colonyAddress,
+      identifier: address,
       params: {
         user: walletAddress,
       },
@@ -146,9 +120,6 @@ function* colonyAdminRemove({
     );
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    delete colonyAdmins[username];
-    yield call([store, store.set], 'admins', colonyAdmins);
 
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
