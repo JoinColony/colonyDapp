@@ -12,7 +12,7 @@ import type { GasPricesProps, TransactionType } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
 import {
-  METHOD_TRANSACTION_SENT,
+  TRANSACTION_SEND,
   TRANSACTION_SENT,
   TRANSACTION_ERROR,
 } from '../../../../core/actionTypes';
@@ -150,7 +150,7 @@ class GasStationPrice extends Component<Props, State> {
     return (
       <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
         <ActionForm
-          submit={METHOD_TRANSACTION_SENT}
+          submit={TRANSACTION_SEND}
           success={TRANSACTION_SENT}
           error={TRANSACTION_ERROR}
           validationSchema={validationSchema}

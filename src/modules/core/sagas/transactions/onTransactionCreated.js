@@ -10,7 +10,7 @@ import type {
   TransactionEventData,
 } from '~immutable';
 
-import { METHOD_TRANSACTION_SENT } from '../../actionTypes';
+import { TRANSACTION_SEND } from '../../actionTypes';
 
 import type { CreateTransactionAction } from '../../types';
 
@@ -58,6 +58,6 @@ export default function* onTransactionCreated<
     methodName === 'registerColonyLabel' ||
     methodName === 'createColony'
   ) {
-    yield put({ type: METHOD_TRANSACTION_SENT, meta: { id } });
+    yield put({ type: TRANSACTION_SEND, meta: { id } });
   }
 }

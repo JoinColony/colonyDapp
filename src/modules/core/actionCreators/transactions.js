@@ -29,7 +29,7 @@ import {
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
   TRANSACTION_ESTIMATE_GAS,
-  TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_SUCCEEDED,
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_SENT,
@@ -163,43 +163,10 @@ export const multisigTransactionReject = (id: string) => ({
   },
 });
 
-export const transactionSendError = <P: TransactionParams>(
-  id: string,
-  payload: { message: string, params: P },
-  overrideActionType?: string,
-) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'send', ...payload } },
-  meta: { id },
-});
-
-export const transactionUnsuccessfulError = <P: TransactionParams>(
-  id: string,
-  payload: { message: string, params: P },
-  overrideActionType?: string,
-) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'unsuccessful', ...payload } },
-  meta: { id },
-});
-
-export const transactionEventDataError = <P: TransactionParams>(
-  id: string,
-  payload: { message: string, params: P },
-  overrideActionType?: string,
-) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'eventData', ...payload } },
-  meta: { id },
-});
-
-export const transactionReceiptError = <P: TransactionParams>(
-  id: string,
-  payload: { message: string, params: P },
-  overrideActionType?: string,
-) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'receipt', ...payload } },
+export const transactionError = (id: string, error: Error) => ({
+  type: TRANSACTION_ERROR,
+  payload: error,
+  error: true,
   meta: { id },
 });
 
@@ -231,7 +198,7 @@ export const transactionEventDataReceived = <
   payload: { eventData: E, params: P },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_EVENT_DATA_RECEIVED,
+  type: overrideActionType || TRANSACTION_SUCCEEDED,
   payload,
   meta: { id },
 });

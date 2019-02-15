@@ -23,7 +23,7 @@ import {
   COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
   COLONY_ADMIN_REMOVE_CONFIRM_ERROR,
 } from '../actionTypes';
-import { TRANSACTION_EVENT_DATA_RECEIVED } from '../../core/actionTypes';
+import { TRANSACTION_SUCCEEDED } from '../../core/actionTypes';
 
 import {
   addColonyAdmin as addColonyAdminAction,
@@ -80,50 +80,49 @@ function* addColonyAdmin({
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
      *
-     * We know this, because we listen for the `TRANSACTION_EVENT_DATA_RECEIVED`
+     * We know this, because we listen for the `TRANSACTION_SUCCEEDED`
      * which we receive once the transaction has been sucessfully signed.
      * Once that action is triggerred we inspect it and check it against the
      * id of our original transaction.
      * If they match, then we can be sure the transaction has been signed, so we
      * can safely update the stores.
      */
-    yield takeEvery(
-      TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
-        try {
-          if (signedTxId === meta.id) {
-            /*
-             * Set the new value on the colony's store
-             */
-            yield call([store, store.set], 'admins', {
-              ...colonyAdmins,
-              [username]: {
-                ...newAdmin.profile.toJS(),
-                state: 'confirmed',
-              },
-            });
-            /*
-             * Dispatch the action to the admin in the Redux store to confirm
-             * the newly added admin and change the state
-             */
-            yield put({
-              type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-              meta: { keyPath },
-            });
-            /*
-             * Redirect the user back to the admins tab
-             */
-            yield put(
-              push({
-                state: { initialTab: 3 },
-              }),
-            );
-          }
-        } catch (error) {
-          yield putError(COLONY_ADMIN_ADD_CONFIRM_ERROR, error);
+    yield takeEvery(TRANSACTION_SUCCEEDED, function* waitForSuccessfulTx({
+      meta: { id: signedTxId } = {},
+    }: Action) {
+      try {
+        if (signedTxId === meta.id) {
+          /*
+           * Set the new value on the colony's store
+           */
+          yield call([store, store.set], 'admins', {
+            ...colonyAdmins,
+            [username]: {
+              ...newAdmin.profile.toJS(),
+              state: 'confirmed',
+            },
+          });
+          /*
+           * Dispatch the action to the admin in the Redux store to confirm
+           * the newly added admin and change the state
+           */
+          yield put({
+            type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
+            meta: { keyPath },
+          });
+          /*
+           * Redirect the user back to the admins tab
+           */
+          yield put(
+            push({
+              state: { initialTab: 3 },
+            }),
+          );
         }
-      },
-    );
+      } catch (error) {
+        yield putError(COLONY_ADMIN_ADD_CONFIRM_ERROR, error);
+      }
+    });
   } catch (error) {
     yield putError(COLONY_ADMIN_ADD_ERROR, error);
   }
@@ -185,45 +184,44 @@ function* removeColonyAdmin({
      * Wait for the transaction to be signed
      * Only update the DDB and Redux stores once the transaction has been signed.
      *
-     * We know this, because we listen for the `TRANSACTION_EVENT_DATA_RECEIVED`
+     * We know this, because we listen for the `TRANSACTION_SUCCEEDED`
      * which we receive once the transaction has been sucessfully signed.
      * Once that action is triggerred we inspect it and check it against the
      * id of our original transaction.
      * If they match, then we can be sure the transaction has been signed, so we
      * can safely update the stores.
      */
-    yield takeEvery(
-      TRANSACTION_EVENT_DATA_RECEIVED,
-      function* waitForSuccessfulTx({ meta: { id: signedTxId } = {} }: Action) {
-        try {
-          if (meta && signedTxId === meta.id) {
-            /*
-             * Remove the colony admin and set the new value on the colony's store
-             */
-            delete colonyAdmins[username];
-            yield call([store, store.set], 'admins', colonyAdmins);
-            /*
-             * Dispatch the action to the admin in the Redux store to actually
-             * remove the entry (the one that's in the pending state)
-             */
-            yield put({
-              type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-              meta: { keyPath },
-            });
-            /*
-             * Redirect the user back to the admins tab
-             */
-            yield put(
-              push({
-                state: { initialTab: 3 },
-              }),
-            );
-          }
-        } catch (error) {
-          yield putError(COLONY_ADMIN_REMOVE_CONFIRM_ERROR, error);
+    yield takeEvery(TRANSACTION_SUCCEEDED, function* waitForSuccessfulTx({
+      meta: { id: signedTxId } = {},
+    }: Action) {
+      try {
+        if (meta && signedTxId === meta.id) {
+          /*
+           * Remove the colony admin and set the new value on the colony's store
+           */
+          delete colonyAdmins[username];
+          yield call([store, store.set], 'admins', colonyAdmins);
+          /*
+           * Dispatch the action to the admin in the Redux store to actually
+           * remove the entry (the one that's in the pending state)
+           */
+          yield put({
+            type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
+            meta: { keyPath },
+          });
+          /*
+           * Redirect the user back to the admins tab
+           */
+          yield put(
+            push({
+              state: { initialTab: 3 },
+            }),
+          );
         }
-      },
-    );
+      } catch (error) {
+        yield putError(COLONY_ADMIN_REMOVE_CONFIRM_ERROR, error);
+      }
+    });
   } catch (error) {
     yield putError(COLONY_ADMIN_REMOVE_ERROR, error);
   }

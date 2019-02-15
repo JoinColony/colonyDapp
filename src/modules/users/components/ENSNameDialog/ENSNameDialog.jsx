@@ -22,7 +22,7 @@ import { currentUserBalanceSelector } from '../../selectors';
 
 import {
   USERNAME_CREATE,
-  USERNAME_CREATE_TX_CREATED,
+  USERNAME_CREATE_SUCCESS,
   USERNAME_CREATE_ERROR,
   USERNAME_CHECK_AVAILABILITY,
   USERNAME_CHECK_AVAILABILITY_SUCCESS,
@@ -134,7 +134,7 @@ class ENSNameDialog extends Component<Props, State> {
       <Dialog cancel={cancel}>
         <ActionForm
           submit={USERNAME_CREATE}
-          success={USERNAME_CREATE_TX_CREATED}
+          success={USERNAME_CREATE_SUCCESS}
           error={USERNAME_CREATE_ERROR}
           validate={this.validateDomain}
           onSuccess={close}

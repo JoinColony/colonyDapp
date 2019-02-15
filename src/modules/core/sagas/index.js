@@ -17,3 +17,5 @@ export default function* rootSaga(): any {
   // Everything else that does not require a wallet
   yield all([setupWalletSagas()]);
 }
+
+export * from './transactions';

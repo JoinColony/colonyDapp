@@ -14,7 +14,7 @@ import {
   MULTISIG_TRANSACTION_REFRESHED,
   TRANSACTION_CREATED,
   TRANSACTION_ERROR,
-  TRANSACTION_EVENT_DATA_RECEIVED,
+  TRANSACTION_SUCCEEDED,
   TRANSACTION_GAS_UPDATE,
   TRANSACTION_RECEIPT_RECEIVED,
   TRANSACTION_ADD_PROPERTIES,
@@ -113,7 +113,7 @@ const coreTransactionsReducer = (
         }),
       );
     }
-    case TRANSACTION_EVENT_DATA_RECEIVED: {
+    case TRANSACTION_SUCCEEDED: {
       const { id } = meta;
       const { eventData } = payload;
       return state.mergeIn(
@@ -126,7 +126,7 @@ const coreTransactionsReducer = (
     }
     case TRANSACTION_ERROR: {
       const { id } = meta;
-      const { error } = payload;
+      const error = payload;
       return state
         .updateIn([CORE_TRANSACTIONS_LIST, id, 'errors'], errors =>
           errors.push(error),
