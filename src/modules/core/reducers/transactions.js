@@ -49,6 +49,7 @@ const coreTransactionsReducer = (
       const {
         context,
         createdAt,
+        from,
         identifier,
         lifecycle,
         methodName,
@@ -61,6 +62,7 @@ const coreTransactionsReducer = (
       const tx = TransactionRecord({
         context,
         createdAt,
+        from,
         id,
         identifier,
         lifecycle,
