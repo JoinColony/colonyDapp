@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 export const CreateDomainCreatedEventSchema = yup.object({
   domainId: yup.number().required(),
-  colonyENSName: yup.string().required(),
+  name: yup.string().required(),
 });
 
 export const CreateTaskStoreCreatedEventSchema = yup.object({
