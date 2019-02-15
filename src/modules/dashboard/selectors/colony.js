@@ -25,6 +25,9 @@ export const allColoniesSelector = (state: RootStateRecord) =>
 export const coloniesSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES], ImmutableMap());
 
+export const coloniesListSelector = (state: RootStateRecord) =>
+  coloniesSelector(state).toList();
+
 export const colonyAvatarsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS], ImmutableMap());
 

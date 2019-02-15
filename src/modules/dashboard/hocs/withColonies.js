@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import type { RootStateRecord } from '~immutable';
 
-import { coloniesSelector } from '../selectors';
+import { coloniesListSelector } from '../selectors';
 
 const withColonies = connect((state: RootStateRecord) => ({
-  colonies: coloniesSelector(state),
+  colonies: coloniesListSelector(state),
 }));
 
 export default withColonies;
