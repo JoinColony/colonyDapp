@@ -161,10 +161,10 @@ jobs:
           name: "Pull solc docker image"
           command: docker pull ethereum/solc:0.4.23
       - run:
-          name: "Running E2E Tests"
+          name: "[TEST] Independent Ganache"
           command: |
-            docker pull ethereum/solc:0.4.23
-            yarn test:e2e:ci
+            yarn add --dev ganache-cli
+            node_modules/.bin/ganache-cli --acctKeys="./ganache-accounts.json" >/dev/null 2>&1
       - store_test_results:
           path: reports
       - store_artifacts:
