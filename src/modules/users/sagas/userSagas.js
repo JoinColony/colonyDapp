@@ -41,13 +41,13 @@ import {
   createUserProfileStore,
 } from '../../../data/stores';
 import { ValidatedKVStore } from '../../../lib/database/stores';
-import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getAll } from '../../../lib/database/commands';
 import {
   TRANSACTION_CREATED,
   TRANSACTION_SUCCEEDED,
 } from '../../core/actionTypes';
 import { createTransaction, getTxChannel } from '../../core/sagas';
+import { NETWORK_CONTEXT } from '../../core/constants';
 import {
   getNetworkMethod,
   getProvider,
