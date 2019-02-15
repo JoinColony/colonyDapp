@@ -16,20 +16,16 @@ import { getContext, CONTEXT } from '~context';
  */
 export const takeFrom = (channel: Channel<*>, type: string) =>
   call(function* takeFromSaga() {
-    let done = false;
-    while (!done) {
+    while (true) {
       const action = yield take(channel);
       // Take out errors that were previously handled and throw them again for better control flow
       if (action.error) {
-        done = true;
         throw action.payload;
       }
       if (action.type === type) {
-        done = true;
         return action;
       }
     }
-    return null;
   });
 
 /*
