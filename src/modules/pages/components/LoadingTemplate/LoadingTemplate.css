@@ -6,12 +6,6 @@
   background: var(--gradient-default);
 }
 
-.header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 20px;
-}
-
 .mainContent {
   margin-top: 160px;
   padding-bottom: var(--pad-large);
