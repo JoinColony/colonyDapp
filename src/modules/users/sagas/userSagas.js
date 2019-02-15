@@ -331,12 +331,7 @@ function* createUsername({
     yield call([activityStore, activityStore.add], joinedColonyEvent());
   } catch (err) {
     // TODO: We could show a toaster message here. Also: revert stuff?!?!?
-    yield put({
-      type: USERNAME_CREATE_ERROR,
-      error: true,
-      payload: err,
-      meta,
-    });
+    yield putError(USERNAME_CREATE_ERROR, err, meta);
   } finally {
     txChannel.close();
   }
