@@ -300,6 +300,25 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS,
     void, // TODO define the payload
   >,
+  TASK_WORKER_ASSIGN: UniqueActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN,
+    {|
+      taskId: number, // TODO should be draftId
+      colonyENSName: string,
+      workDescription: *,
+      rating: number,
+    |},
+    WithKeyPathDepth2,
+  >,
+  TASK_WORKER_ASSIGN_ERROR: ErrorActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
+    WithKeyPathDepth2,
+  >,
+  TASK_WORKER_ASSIGN_SUCCESS: UniqueActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
+    void,
+    WithKeyPathDepth2,
+  >,
   TASK_WORKER_END: TaskActionType<
     typeof ACTIONS.TASK_WORKER_END,
     void, // TODO define the payload

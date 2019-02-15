@@ -25,7 +25,6 @@ const displayName = 'dashboard.Inbox.InboxItem';
 type Props = {|
   item: InboxElement,
   markAsRead: (id: number) => void,
-  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 |};
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
@@ -71,8 +70,10 @@ const ConditionalWrapper = ({
         to="TaskInviteDialog"
         props={{
           assignee: { profile: user },
-          taskId: details.id,
-          ensName: details.colonyENSName,
+          task: details,
+          /*       ensName: details.colonyENSName,
+          payouts: details.payouts,
+          reputation: details.reputation */
         }}
       >
         {({ open }) => (

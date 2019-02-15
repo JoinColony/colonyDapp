@@ -14,3 +14,16 @@ export const fetchTaskComments = (
     keyPath: [colonyENSName, commentsStoreAddress],
   },
 });
+
+// eslint-disable-next-line import/prefer-default-export
+export const setTaskWorker = (
+  colonyENSName: ENSName,
+  commentsStoreAddress: string,
+  // TODO: put proper immutable type
+  assignee: string,
+) => ({
+  type: ACTIONS.TASK_WORKER_ASSIGN,
+  meta: {
+    keyPath: [colonyENSName, assignee],
+  },
+});
