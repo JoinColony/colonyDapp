@@ -15,6 +15,8 @@ import type {
   TaskStoreCreatedEvent,
 } from '../events';
 
+import { getFilterFromPartial } from '~utils/web3/eventLogs';
+
 import { getColonyStore, getCommentsStore, getTaskStore } from '../../stores';
 import { COLONY_EVENT_TYPES, TASK_EVENT_TYPES } from '../../constants';
 
@@ -71,10 +73,74 @@ export type UserQueryContext = Context<
   DDBContext,
 >;
 
+export type ColonyContractEventQuery<I: *, R: *> = Query<
+  ColonyClientContext,
+  I,
+  R,
+>;
 export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
 export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
 export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
 export type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
+
+export const getColonyAdmins: ColonyContractEventQuery<*, *> = ({
+  colonyClient,
+}) => ({
+  async execute() {
+    const COLONY_ADMIN_SET_EVENT = 'ColonyAdminRoleSet';
+    const COLONY_ADMIN_REMOVED_EVENT = 'ColonyAdminRoleRemoved';
+    const eventNames = [COLONY_ADMIN_SET_EVENT, COLONY_ADMIN_REMOVED_EVENT];
+    // Will contain to/from block and event name topics
+    const baseLog = await getFilterFromPartial(
+      { eventNames, blocksBack: 400000 },
+      colonyClient,
+    );
+
+    // Get logs + events for role assignment
+    const removedAdminLogs = await colonyClient.contract.getLogs({
+      ...baseLog,
+      // [eventNames, from, to]
+      topics: [[COLONY_ADMIN_REMOVED_EVENT]],
+    });
+    const setAdminLogs = await colonyClient.contract.getLogs({
+      ...baseLog,
+      // [eventNames, from, to]
+      topics: [[COLONY_ADMIN_SET_EVENT]],
+    });
+
+    const removedAdmins = Array.from(
+      new Set(...(removedAdminLogs.map(({ user }) => user) || [])),
+    );
+    return setAdminLogs.filter(({ user }) => !removedAdmins.includes(user));
+  },
+});
+
+export const getColonyFounder: ColonyContractEventQuery<*, *> = ({
+  colonyClient,
+}) => ({
+  async execute() {
+    const COLONY_FOUNDER_ROLE_SET = 'ColonyFounderRoleSet';
+    const eventNames = [COLONY_FOUNDER_ROLE_SET];
+    // Will contain to/from block and event name topics
+    const baseLog = await getFilterFromPartial(
+      { eventNames, blocksBack: 400000 },
+      colonyClient,
+    );
+
+    // Get logs + events for founder role assignment
+    const founderChangedLogs = await colonyClient.contract.getLogs({
+      ...baseLog,
+      // [eventNames, from, to]
+      topics: [[COLONY_FOUNDER_ROLE_SET]],
+    });
+
+    const [head] = founderChangedLogs
+      .sort((a, b) => a.blockNumber - b.blockNumber)
+      .reverse();
+
+    return head && head.newFounder;
+  },
+});
 
 // @TODO Add typing for query results
 export const getColony: ColonyQuery<*, *> = ({
@@ -88,6 +154,12 @@ export const getColony: ColonyQuery<*, *> = ({
       colonyAddress,
       colonyENSName,
     });
+
+    const getAdminsQuery = getColonyAdmins({ colonyClient });
+    const getFounderQuery = getColonyFounder({ colonyClient });
+    const admins = await getAdminsQuery.execute();
+    const founder = await getFounderQuery.execute();
+
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
@@ -139,7 +211,7 @@ export const getColony: ColonyQuery<*, *> = ({
               return colony;
           }
         },
-        { avatar: null, profile: {}, token: {} },
+        { admins, founder, avatar: null, profile: {}, token: {} },
       );
   },
 });
