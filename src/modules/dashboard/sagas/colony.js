@@ -9,21 +9,34 @@ import {
   put,
   takeEvery,
   takeLatest,
+  select,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
 import type { Action } from '~redux';
-import type { ENSName } from '~types';
 
-import { callCaller, putError, takeFrom } from '~utils/saga/effects';
+import {
+  callCaller,
+  putError,
+  takeFrom,
+  executeCommand,
+  executeQuery,
+} from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
+import {
+  createColonyProfile,
+  updateColonyProfile,
+  setColonyAvatar,
+  removeColonyAvatar,
+} from '../../../data/service/commands';
+
+import { getColony } from '../../../data/service/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
 import { getNetworkMethod } from '../../core/sagas/utils';
-import { set, getAll } from '../../../lib/database/commands';
 
 import {
   transactionAddParams,
@@ -33,28 +46,33 @@ import {
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { colonyAvatarHashSelector } from '../selectors';
 
-import { colonyStoreBlueprint } from '../stores';
-
-import { fetchColonyStore, getOrCreateDomainsIndexStore } from './shared';
-
-function* getOrCreateColonyStore(colonyENSName: ENSName) {
-  /*
-   * Get and load the store, if it exists.
-   */
-  let store = yield call(fetchColonyStore, colonyENSName);
-  if (store) yield call([store, store.load]);
-
-  /*
-   * Create the store if it doesn't already exist.
-   */
-  // TODO: No access controller available yet
-  if (!store) {
-    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-    store = yield call([ddb, ddb.createStore], colonyStoreBlueprint);
-  }
-
-  return store;
+function* getColonyContext(
+  colonyENSName: ?string,
+  colonyAddress: ?string,
+): Saga<Object> {
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+  const wallet = yield* getContext(CONTEXT.WALLET);
+  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+  if (!colonyManager)
+    throw new Error('Cannot get colony context. Invalid manager instance');
+  const identifier = colonyENSName || colonyAddress;
+  if (!identifier)
+    throw new Error('Cannot get colony context. Invalid identifier');
+  const colonyClient = yield call(
+    [colonyManager, colonyManager.getColonyClient],
+    identifier,
+  );
+  return {
+    ddb,
+    colonyClient,
+    wallet,
+    metadata: {
+      colonyENSName: identifier,
+      colonyAddress: colonyClient.contract.address,
+    },
+  };
 }
 
 // TODO: Rename, complete and wire up after new onboarding is in place
@@ -175,6 +193,10 @@ function* colonyCreate({
       context: NETWORK_CONTEXT,
       methodName: 'createColony',
       params: { tokenAddress },
+      options: {
+        // TODO: An attempt to make colony creation work smoothly but it still timeout sometimes
+        gasLimit: 6721975,
+      },
     });
 
     // TODO: These are just temporary for now until we have the new onboarding workflow
@@ -209,7 +231,6 @@ function* colonyCreate({
 
 function* colonyCreateLabel({
   payload: {
-    colonyId,
     colonyAddress,
     colonyName,
     ensName,
@@ -220,60 +241,44 @@ function* colonyCreateLabel({
   },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
-  const colonyStoreData = {
+  // @NOTE: We wanna use the address, we haven't anything mapped to the ENS name yet. Used on metadata
+  const context = yield* getColonyContext(null, colonyAddress);
+  const args = {
     address: colonyAddress,
-    databases: {
-      domainsIndex: undefined,
-    },
     ensName,
-    id: colonyId,
     name: colonyName,
     token: {
       address: tokenAddress,
-      balance: undefined,
       icon: tokenIcon,
       name: tokenName,
       symbol: tokenSymbol,
     },
   };
 
+  // @TODO: Should we actually dispatch and action to fetch it from the store?
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
   const fetchSuccessAction = {
     type: ACTIONS.COLONY_FETCH_SUCCESS,
     meta: { keyPath: [ensName] },
-    payload: colonyStoreData,
+    payload: {
+      address: colonyAddress,
+      ensName,
+      name: colonyName,
+      token: {
+        address: tokenAddress,
+        balance: 0,
+        icon: tokenIcon,
+        name: tokenName,
+        symbol: tokenSymbol,
+      },
+    },
   };
   yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>(fetchSuccessAction);
-
-  /*
-   * Get and/or create the index stores for this colony.
-   */
-  const domainsIndex = yield call(getOrCreateDomainsIndexStore, ensName);
-  const databases = {
-    domainsIndex: domainsIndex.address.toString(),
-  };
-
   /*
    * Get or create a colony store and save the colony to that store.
    */
-  const store = yield call(getOrCreateColonyStore, ensName);
-
-  /*
-   * Update the colony in the app state with the `domainsIndex` address.
-   */
-  const completeColonyStoreData = {
-    ...colonyStoreData,
-    databases,
-  };
-  yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
-    ...fetchSuccessAction,
-    payload: completeColonyStoreData,
-  });
-
-  /*
-   * Save the colony props to the colony store.
-   */
-  yield call(set, store, completeColonyStoreData);
+  const store = yield* executeCommand(context, createColonyProfile, args);
+  yield put(fetchSuccessAction);
 
   const txChannel = yield call(getTxChannel, meta.id);
 
@@ -357,26 +362,35 @@ function* colonyProfileUpdate({
     keyPath: [ensName],
   },
   meta,
-  payload: colonyUpdateValues,
+  payload,
 }: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
   try {
-    /*
-     * Get the colony store
-     */
-    const store = yield call(fetchColonyStore, ensName);
-
-    /*
-     * Set the new values in the store
-     */
-    yield call(set, store, colonyUpdateValues);
-
+    const context = yield* getColonyContext(ensName);
+    const {
+      metadata: { colonyAddress },
+    } = context;
+    const { name, description, guideline, website } = payload;
+    const args = {
+      name,
+      description,
+      guideline,
+      website,
+    };
+    yield* executeCommand(context, updateColonyProfile, args);
     /*
      * Update the colony in the redux store to show the updated values
      */
     yield put<Action<typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS>>({
       type: ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
       meta,
-      payload: colonyUpdateValues,
+      payload: {
+        ensName,
+        address: colonyAddress,
+        name,
+        description,
+        guideline,
+        website,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_PROFILE_UPDATE_ERROR, error, meta);
@@ -391,8 +405,8 @@ function* colonyFetch({
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
     // TODO error if the colony does not exist!
-    const store = yield call(getOrCreateColonyStore, ensName);
-    const payload = yield call(getAll, store);
+    const context = yield* getColonyContext(ensName);
+    const payload = yield* executeQuery(context, getColony);
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
       meta,
@@ -443,17 +457,17 @@ function* colonyAvatarUpload({
   try {
     // first attempt upload to IPFS
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
-    const hash = yield call([ipfsNode, ipfsNode.addString], data);
+    const context = yield* getColonyContext(ensName);
 
-    /*
-     * Get the colony store
-     */
-    const store = yield call(fetchColonyStore, ensName);
+    const hash = yield call([ipfsNode, ipfsNode.addString], data);
 
     /*
      * Set the avatar's hash in the store
      */
-    yield call(set, store, 'avatar', hash);
+    yield* executeCommand(context, setColonyAvatar, {
+      avatar: data,
+      ipfsHash: hash,
+    });
 
     /*
      * Store the new avatar hash value in the redux store so we can show it
@@ -475,11 +489,9 @@ function* colonyAvatarFetch({
   },
 }: Action<typeof ACTIONS.COLONY_AVATAR_FETCH>): Saga<void> {
   try {
-    /*
-     * Get the base64 avatar image from ipfs
-     */
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
+
     /*
      * Put the base64 value in the redux state so we can show it
      */
@@ -500,15 +512,12 @@ function* colonyAvatarRemove({
   },
 }: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
   try {
+    const context = yield* getColonyContext(ensName);
+    const ipfsHash = yield select(colonyAvatarHashSelector, { ensName });
     /*
-     * Get the colony store
+     * Remove colony avatar
      */
-    const store = yield call(fetchColonyStore, ensName);
-
-    /*
-     * Set avatar to undefined
-     */
-    yield call(set, store, 'avatar', undefined);
+    yield* executeCommand(context, removeColonyAvatar, { ipfsHash });
 
     /*
      * Also set the avatar in the state to undefined (via a reducer)
