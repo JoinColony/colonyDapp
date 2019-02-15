@@ -42,12 +42,11 @@ export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
 
 type CreateColonyProfileCommandArgs = {|
   address: Address,
-  colonyId: string,
   ensName: string,
   name: string,
-  description: string,
-  guideline: string,
-  website: string,
+  description?: string,
+  guideline?: string,
+  website?: string,
   token: {|
     address: Address,
     name: string,
@@ -57,10 +56,10 @@ type CreateColonyProfileCommandArgs = {|
 |};
 
 type UpdateColonyProfileCommandArgs = {|
-  name: string,
-  description: string,
-  guideline: string,
-  website: string,
+  name?: string,
+  description?: string,
+  guideline?: string,
+  website?: string,
 |};
 
 type SetColonyAvatarCommandArgs = {|
@@ -98,7 +97,6 @@ export const createColonyProfile: ColonyCommand<
       website,
     });
     const tokenInfoAddedEvent = createTokenInfoAddedEvent(token);
-
     const colonyStore = await createColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
