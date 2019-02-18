@@ -114,7 +114,7 @@ function* createColonySagaNew(
     yield put<Action<typeof ACTIONS.COLONY_CREATE_SUCCESS>>({
       type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
-      payload: {},
+      payload: undefined,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
@@ -173,7 +173,7 @@ function* createColonyLabelSaga({
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
   const fetchSuccessAction = {
     type: ACTIONS.COLONY_FETCH_SUCCESS,
-    meta: { ...meta, keyPath: [ensName] },
+    meta: { keyPath: [ensName] },
     payload: colonyStoreData,
   };
   yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>(fetchSuccessAction);
@@ -255,7 +255,7 @@ function* validateColonyDomain({
   yield put<Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS>>({
     type: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
     meta,
-    payload: {},
+    payload: undefined,
   });
 }
 
@@ -435,7 +435,7 @@ function* removeColonyAvatar({
     yield put<Action<typeof ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS>>({
       type: ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS,
       meta,
-      payload: {},
+      payload: undefined,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_AVATAR_REMOVE_ERROR, error, meta);

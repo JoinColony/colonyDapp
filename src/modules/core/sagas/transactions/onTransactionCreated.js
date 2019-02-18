@@ -63,7 +63,6 @@ export default function* onTransactionCreated<
     yield put<Action<typeof ACTIONS.TRANSACTION_SEND>>({
       type: ACTIONS.TRANSACTION_SEND,
       meta: { id },
-      payload: {},
     });
   }
 }

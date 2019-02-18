@@ -128,31 +128,22 @@ export const multisigTransactionRefreshed = (
 ) => ({
   type: ACTIONS.MULTISIG_TRANSACTION_REFRESHED,
   payload: { multisig },
-  meta: {
-    id,
-  },
+  meta: { id },
 });
 
 export const multisigTransactionSign = (id: string) => ({
   type: ACTIONS.MULTISIG_TRANSACTION_SIGN,
-  meta: {
-    id,
-  },
+  meta: { id },
 });
 
 export const multisigTransactionSigned = (id: string) => ({
   type: ACTIONS.MULTISIG_TRANSACTION_SIGNED,
-  payload: {},
-  meta: {
-    id,
-  },
+  meta: { id },
 });
 
 export const multisigTransactionReject = (id: string) => ({
   type: ACTIONS.MULTISIG_TRANSACTION_REJECT,
-  meta: {
-    id,
-  },
+  meta: { id },
 });
 
 export const transactionError = (id: string, error: TransactionError) => ({
@@ -164,7 +155,7 @@ export const transactionError = (id: string, error: TransactionError) => ({
 
 export const transactionReceiptReceived = <P: TransactionParams>(
   id: string,
-  payload: { receipt: TransactionReceipt, params: P },
+  payload: {| receipt: TransactionReceipt, params: P |},
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
@@ -174,7 +165,7 @@ export const transactionReceiptReceived = <P: TransactionParams>(
 
 export const transactionSent = <P: TransactionParams>(
   id: string,
-  payload: { hash: string, params: P },
+  payload: {| hash: string, params: P |},
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || ACTIONS.TRANSACTION_SENT,
@@ -187,7 +178,7 @@ export const transactionEventDataReceived = <
   E: TransactionEventData,
 >(
   id: string,
-  payload: { eventData: E, params: P },
+  payload: {| eventData: E, params: P |},
   overrideActionType?: string,
 ) => ({
   type: overrideActionType || ACTIONS.TRANSACTION_SUCCEEDED,

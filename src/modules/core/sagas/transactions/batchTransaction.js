@@ -5,7 +5,7 @@ import type { Saga } from 'redux-saga';
 import { call, put, select, take } from 'redux-saga/effects';
 
 import type { TransactionRecordType } from '~immutable';
-import type { Action, ActionType, UniqueActionType } from '~redux';
+import type { Action, ActionTypeWithMeta, UniqueActionType } from '~redux';
 
 import type { TxActionCreator } from '../../types';
 
@@ -64,7 +64,7 @@ const createBatchTxRunner = (txOptions: BatchFactoryOptions) => {
 
     // Wait until success for this transaction is reported
     yield take(
-      (txAction: ActionType<*, *, *>) =>
+      (txAction: ActionTypeWithMeta<*, { id: string }>) =>
         txAction.meta &&
         txAction.meta.id === batchedTxId &&
         txAction.type === ACTIONS.TRANSACTION_SUCCEEDED,

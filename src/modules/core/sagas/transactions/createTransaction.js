@@ -66,6 +66,7 @@ const createTxAction = <P>(
     multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
     options,
     params,
+    status: 'created',
   },
   meta: { id: id || nanoid() },
 });

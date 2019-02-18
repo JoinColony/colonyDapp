@@ -16,8 +16,8 @@ const allTasksReducer: ReducerType<
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH_SUCCESS: *,
     TASK_REMOVE_SUCCESS: *,
-    TASK_SET_DATE_SUCCESS: *,
-    TASK_SET_SKILL_SUCCESS: *,
+    // TASK_SET_DATE_SUCCESS: *,
+    // TASK_SET_SKILL_SUCCESS: *,
     TASK_UPDATE_SUCCESS: *,
   |},
 > = (state = new ImmutableMap(), action) => {
@@ -38,10 +38,11 @@ const allTasksReducer: ReducerType<
         : state.set(ensName, ImmutableMap({ [id]: data }));
     }
 
-    // Simple updates (where the payload can be set on the record directly)
-    case ACTIONS.TASK_UPDATE_SUCCESS:
-    case ACTIONS.TASK_SET_SKILL_SUCCESS:
-    case ACTIONS.TASK_SET_DATE_SUCCESS: {
+    // TODO handle these cases
+    // case ACTIONS.TASK_SET_SKILL_SUCCESS:
+    // case ACTIONS.TASK_SET_DATE_SUCCESS:
+    case ACTIONS.TASK_UPDATE_SUCCESS: {
+      // Simple update (where the payload can be set on the record directly)
       const {
         meta: { keyPath },
         payload,

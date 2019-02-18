@@ -81,7 +81,7 @@ function* taskCreateSaga(
     yield put<Action<typeof ACTIONS.TASK_CREATE_SUCCESS>>({
       type: ACTIONS.TASK_CREATE_SUCCESS,
       meta,
-      payload: {},
+      payload: undefined,
     });
     yield call(createTaskBatch, action, [
       { params: { specificationHash, domainId, skillId, dueDate } },
@@ -117,7 +117,7 @@ function* taskModifyWorkerPayoutSaga(
     yield put<Action<typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS>>({
       type: ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
       meta,
-      payload: {},
+      payload: undefined,
     });
     yield call(modifyWorkerPayoutBatch, action, [
       { params: { fromPot, toPot, amount, token } },
@@ -237,7 +237,7 @@ function* taskRemoveSaga({
     yield put<Action<typeof ACTIONS.TASK_REMOVE_SUCCESS>>({
       type: ACTIONS.TASK_REMOVE_SUCCESS,
       meta,
-      payload: {},
+      payload: undefined,
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_REMOVE_ERROR, error, meta);
