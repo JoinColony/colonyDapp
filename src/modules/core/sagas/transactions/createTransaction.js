@@ -9,10 +9,13 @@ import {
   call,
   cancel,
   put,
+  select,
   take,
   takeEvery,
 } from 'redux-saga/effects';
 import nanoid from 'nanoid';
+
+import { currentUserAddressSelector } from '../../../users/selectors';
 
 import {
   MULTISIG_TRANSACTION_CREATED,
@@ -40,6 +43,7 @@ type TxConfig<P> = {|
 
 const createTxAction = <P>(
   id,
+  from,
   {
     context,
     identifier,
@@ -54,6 +58,7 @@ const createTxAction = <P>(
   payload: {
     context,
     createdAt: new Date(),
+    from,
     group,
     identifier,
     methodName,
@@ -73,10 +78,16 @@ export function* createTransaction(
   id: string,
   config: TxConfig<*>,
 ): Saga<void> {
-  // TODO: get wallet address here for `from` field
+  const address = yield select(currentUserAddressSelector);
+
+  if (!address) {
+    throw new Error(
+      'Could not create transaction. No current user address available',
+    );
+  }
 
   // Put transaction into store
-  yield put(createTxAction(id, config));
+  yield put(createTxAction(id, address, config));
 
   // Take the action where the user estimates the gas cost
   const task = yield takeEvery(

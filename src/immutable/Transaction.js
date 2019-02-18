@@ -39,6 +39,7 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   context: ColonyContext,
   createdAt: Date,
   eventData?: E,
+  from: string,
   gasLimit?: BigNumber,
   gasPrice?: BigNumber,
   group?: {
@@ -81,6 +82,7 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   createdAt: new Date(),
   errors: new List(),
   eventData: undefined,
+  from: undefined,
   gasLimit: undefined,
   gasPrice: undefined,
   group: undefined,
