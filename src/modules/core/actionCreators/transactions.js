@@ -195,13 +195,21 @@ export const transactionEventDataReceived = <
   meta: { id },
 });
 
-export const transactionAddProperties = (
-  id: string,
-  payload: {| identifier?: string, params?: Object |},
-) => ({
-  type: ACTIONS.TRANSACTION_ADD_PROPERTIES,
+export const transactionAddIdentifier = (id: string, payload: string) => ({
+  type: ACTIONS.TRANSACTION_ADD_IDENTIFIER,
   meta: { id },
   payload,
+});
+
+export const transactionAddParams = (id: string, payload: Object) => ({
+  type: ACTIONS.TRANSACTION_ADD_PARAMS,
+  meta: { id },
+  payload,
+});
+
+export const transactionReady = (id: string) => ({
+  type: ACTIONS.TRANSACTION_READY,
+  meta: { id },
 });
 
 export const transactionEstimateGas = (id: string) => ({

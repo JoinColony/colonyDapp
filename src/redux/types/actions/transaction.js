@@ -6,10 +6,20 @@ import type { TransactionError, TransactionType } from '~immutable';
 import { ACTIONS } from '../../index';
 
 export type TransactionActionTypes = {|
-  TRANSACTION_ADD_PROPERTIES: UniqueActionType<
-    typeof ACTIONS.TRANSACTION_ADD_PROPERTIES,
-    $Shape<TransactionType<*, *>>,
-    *,
+  TRANSACTION_ADD_IDENTIFIER: UniqueActionType<
+    typeof ACTIONS.TRANSACTION_ADD_IDENTIFIER,
+    {| identifier: string |},
+    void,
+  >,
+  TRANSACTION_ADD_PARAMS: UniqueActionType<
+    typeof ACTIONS.TRANSACTION_ADD_PARAMS,
+    {| params: Object |},
+    void,
+  >,
+  TRANSACTION_READY: UniqueActionType<
+    typeof ACTIONS.TRANSACTION_READY,
+    void,
+    void,
   >,
   TRANSACTION_CANCEL: UniqueActionType<
     typeof ACTIONS.TRANSACTION_CANCEL,

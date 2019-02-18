@@ -32,7 +32,6 @@ const coreTransactionsReducer: ReducerType<
     GAS_PRICES_UPDATE: *,
     MULTISIG_TRANSACTION_CREATED: *,
     MULTISIG_TRANSACTION_REFRESHED: *,
-    TRANSACTION_ADD_PROPERTIES: *,
     TRANSACTION_CANCEL: *,
     TRANSACTION_CREATED: *,
     TRANSACTION_ERROR: *,
@@ -40,6 +39,9 @@ const coreTransactionsReducer: ReducerType<
     TRANSACTION_GAS_UPDATE: *,
     TRANSACTION_RECEIPT_RECEIVED: *,
     TRANSACTION_SENT: *,
+    TRANSACTION_ADD_IDENTIFIER: *,
+    TRANSACTION_ADD_PARAMS: *,
+    TRANSACTION_READY: *,
   |},
 > = (state = CoreTransactions(), action) => {
   switch (action.type) {
@@ -80,19 +82,38 @@ const coreTransactionsReducer: ReducerType<
         tx.set('group', transactionGroup(tx)),
       );
     }
-    case ACTIONS.TRANSACTION_ADD_PROPERTIES: {
-      const { id } = action.meta;
-      return state.mergeIn(
-        [CORE_TRANSACTIONS_LIST, id],
-        fromJS({ ...action.payload, status: 'ready' }),
-      );
-    }
     case ACTIONS.MULTISIG_TRANSACTION_REFRESHED: {
       const {
         meta: { id },
         payload,
       } = action;
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], fromJS(payload));
+    }
+    case ACTIONS.TRANSACTION_ADD_IDENTIFIER: {
+      const {
+        meta: { id },
+        payload: { identifier },
+      } = action;
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'identifier'],
+        identifier,
+      );
+    }
+    case ACTIONS.TRANSACTION_ADD_PARAMS: {
+      const {
+        meta: { id },
+        payload: { params },
+      } = action;
+      return state.mergeIn(
+        [CORE_TRANSACTIONS_LIST, id, 'params'],
+        fromJS(params),
+      );
+    }
+    case ACTIONS.TRANSACTION_READY: {
+      const {
+        meta: { id },
+      } = action;
+      return state.setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'ready');
     }
     case ACTIONS.TRANSACTION_GAS_UPDATE: {
       const {

@@ -37,6 +37,7 @@ type TxConfig<P> = {|
   |},
   multisig?: boolean | TransactionMultisig,
   params?: P,
+  ready?: boolean,
   options?: SendOptions,
 |};
 
@@ -50,6 +51,7 @@ const createTxAction = <P>(
     group,
     multisig: multisigConfig,
     params,
+    ready,
     options,
   }: TxConfig<P>,
 ) => ({
@@ -66,6 +68,7 @@ const createTxAction = <P>(
     multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
     options,
     params,
+    status: ready === false ? 'created' : 'ready',
   },
   meta: { id: id || nanoid() },
 });

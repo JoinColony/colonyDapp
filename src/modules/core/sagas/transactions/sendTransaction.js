@@ -63,6 +63,10 @@ async function getMethodTransactionPromise<
 export default function* sendTransaction(id: string): Saga<void> {
   const transaction = yield select(oneTransaction, id);
 
+  if (transaction.status !== 'ready') {
+    throw new Error('Transaction is not ready to send.');
+  }
+
   const { methodName, context, identifier } = transaction;
   const method = yield call(getMethod, context, methodName, identifier);
 
