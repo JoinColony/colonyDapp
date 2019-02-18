@@ -12,8 +12,6 @@ import { ACTIONS } from '~redux';
 
 import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
 
-import { createBatchTxRunner } from '../../core/sagas/transactions';
-
 import {
   claimPayoutAsWorkerTx,
   completeTaskTx,
@@ -25,108 +23,10 @@ import {
   submitManagerRatingAsWorkerTx,
   submitTaskDeliverableAndRatingTx,
   submitWorkerRatingAsManagerTx,
-  taskCreateBatch,
-  taskMoveFundsBatch,
-  taskSetWorkerPayoutBatch,
-  taskSetWorkerRoleBatch,
 } from '../actionCreators';
 import { allColonyENSNames } from '../selectors';
 import { ensureColonyIsInState } from './shared';
 import type { ActionsType, Action } from '~redux';
-
-const createTaskBatch = createBatchTxRunner({
-  meta: { key: 'transaction.batch.createTask' },
-  transactions: [
-    {
-      actionCreator: taskCreateBatch,
-    },
-    {
-      actionCreator: taskMoveFundsBatch,
-      transferParams: ([{ eventData }]) => ({
-        toPot: eventData && eventData.potId,
-      }),
-    },
-    {
-      actionCreator: taskSetWorkerPayoutBatch,
-      transferParams: ([{ eventData }]) => ({
-        taskId: eventData && eventData.taskId,
-      }),
-    },
-    {
-      actionCreator: taskSetWorkerRoleBatch,
-      transferParams: ([{ eventData }]) => ({
-        taskId: eventData && eventData.taskId,
-      }),
-    },
-  ],
-});
-
-function* taskCreateSaga(
-  action: Action<typeof ACTIONS.TASK_CREATE>,
-): Saga<void> {
-  const {
-    meta,
-    payload: {
-      specificationHash,
-      domainId,
-      skillId,
-      dueDate,
-      fromPot,
-      amount,
-      token,
-      user,
-    },
-  } = action;
-  try {
-    yield put<Action<typeof ACTIONS.TASK_CREATE_SUCCESS>>({
-      type: ACTIONS.TASK_CREATE_SUCCESS,
-      meta,
-      payload: {},
-    });
-    yield call(createTaskBatch, action, [
-      { params: { specificationHash, domainId, skillId, dueDate } },
-      { params: { fromPot, amount, token } },
-      { params: { token, amount } },
-      { params: { user } },
-    ]);
-  } catch (error) {
-    yield putError(ACTIONS.TASK_CREATE_ERROR, error, meta);
-  }
-}
-
-const modifyWorkerPayoutBatch = createBatchTxRunner({
-  meta: { key: 'transaction.batch.modifyWorkerPayout' },
-  transactions: [
-    {
-      actionCreator: taskMoveFundsBatch,
-    },
-    {
-      actionCreator: taskSetWorkerPayoutBatch,
-    },
-  ],
-});
-
-function* taskModifyWorkerPayoutSaga(
-  action: Action<typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT>,
-): Saga<void> {
-  const {
-    meta,
-    payload: { taskId, fromPot, toPot, amount, token },
-  } = action;
-  try {
-    yield put<Action<typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS>>({
-      type: ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
-      meta,
-      payload: {},
-    });
-    yield call(modifyWorkerPayoutBatch, action, [
-      { params: { fromPot, toPot, amount, token } },
-      { params: { taskId, token, amount } },
-    ]);
-  } catch (error) {
-    yield putError(ACTIONS.TASK_MODIFY_WORKER_PAYOUT_ERROR, error, meta);
-  }
-}
 
 /*
  * Given a colony ENS name a task ID, fetch the task from its store.
@@ -562,11 +462,6 @@ function* taskFinalizeSaga({
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(ACTIONS.TASK_CREATE, taskCreateSaga);
-  yield takeEvery(
-    ACTIONS.TASK_MODIFY_WORKER_PAYOUT,
-    taskModifyWorkerPayoutSaga,
-  );
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetchSaga);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAllSaga);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalizeSaga);

@@ -14,7 +14,6 @@ import onTransactionCreated from './onTransactionCreated';
 import estimateGasCost from './estimateGasCost';
 import onTransactionSent from './onTransactionSent';
 
-export { default as createBatchTxRunner } from './batchTransaction';
 export * from './createTransaction';
 
 export default function* transactionsSagas(): any {

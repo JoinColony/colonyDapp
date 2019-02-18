@@ -9,29 +9,6 @@ import {
 
 import type { TaskId } from '~immutable';
 
-export const taskCreateBatch = createTxActionCreator({
-  context: COLONY_CONTEXT,
-  methodName: 'createTask',
-});
-
-export const taskMoveFundsBatch = createTxActionCreator({
-  context: COLONY_CONTEXT,
-  methodName: 'moveFundsBetweenPots',
-});
-
-export const taskSetWorkerPayoutBatch = createTxActionCreator({
-  context: COLONY_CONTEXT,
-  methodName: 'setTaskWorkerPayout',
-  // We just need the signature of the manager in this case
-  multisig: true,
-});
-
-export const taskSetWorkerRoleBatch = createTxActionCreator({
-  context: COLONY_CONTEXT,
-  methodName: 'setTaskWorkerRole',
-  multisig: true,
-});
-
 /**
  * As worker or manager, I want to be able to set a skill
  */
