@@ -38,9 +38,6 @@ function* addColonyAdmin({
       methodName: 'setAdminRole',
       identifier: colonyAddress,
       params: { user: walletAddress },
-      options: {
-        gasLimit: 500000,
-      },
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
