@@ -74,8 +74,7 @@ export function* ensureColonyIsInState(colonyENSName: ENSName): Saga<*> {
   /*
    * Dispatch an action to fetch the given colony.
    */
-  const fetchAction = fetchColony(colonyENSName);
-  yield put<Action<typeof fetchAction.type>>(fetchAction);
+  yield put<Action<typeof ACTIONS.COLONY_FETCH>>(fetchColony(colonyENSName));
 
   /*
    * Wait for the successful fetch result (the colony should now be in state).

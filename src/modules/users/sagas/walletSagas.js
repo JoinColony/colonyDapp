@@ -36,7 +36,6 @@ function* fetchAccounts(
     yield put<Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS>>({
       type: ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
       payload: { allAddresses: wallet.otherAddresses },
-      meta: {},
     });
   } catch (err) {
     yield putError(ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR, err);

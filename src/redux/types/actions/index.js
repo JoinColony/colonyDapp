@@ -20,26 +20,55 @@ import type { UsernameActionTypes } from './username';
 import type { WalletActionTypes } from './wallet';
 
 /*
- * Sealed object type that represents an action.
+ * Type that represents an action (bare minimum).
  *
  * T: the action type, e.g. `COLONY_CREATE`
+ */
+export type ActionType<T> = {|
+  type: T,
+|};
+
+/*
+ * Type that represents an action with a `payload` property.
+ *
  * P: the action payload, e.g. `{| tokenAddress: string |}`
  * M: any additional `meta` properties, e.g. `keyPath: [*]`
  */
-export type ActionType<T, P, M> = {|
-  type: T,
-  payload: P,
+export type ActionTypeWithPayload<T, P> = {| ...ActionType<T>, payload: P |};
+
+/*
+ * Type that represents an action with a `meta` property.
+ *
+ * M: any additional `meta` properties, e.g. `keyPath: [*]`
+ */
+export type ActionTypeWithMeta<T, M> = {| ...ActionType<T>, meta: M |};
+
+/*
+ * Type that represents an action with `payload` and `meta` properties.
+ *
+ * P: the action payload, e.g. `{| tokenAddress: string |}`
+ * M: any additional `meta` properties, e.g. `keyPath: [*]`
+ */
+export type ActionTypeWithPayloadAndMeta<T, P, M> = {|
+  ...ActionType<T>,
   meta: M,
+  payload: P,
 |};
 
-export type UniqueActionType<T, P, M> = ActionType<
+/*
+ * Type that represents a unique action (e.g. from `ActionForm`).
+ */
+export type UniqueActionType<T, P, M> = ActionTypeWithPayloadAndMeta<
   T,
   P,
   {| ...M, id: string |},
 >;
 
+/*
+ * Type that represents an error action.
+ */
 export type ErrorActionType<T, M> = {|
-  ...ActionType<T, Error, M>,
+  ...ActionTypeWithPayloadAndMeta<T, Error, M>,
   error: true,
 |};
 
@@ -71,7 +100,7 @@ export type Action<T: ActionTypeString> = $ElementType<ActionsType, T>;
 
 export type ActionCreator<T> = (...args: *) => Action<T>;
 
-export type TakeFilter = (action: ActionType<*, *, *>) => boolean;
+export type TakeFilter = (action: *) => boolean;
 
 /* eslint-disable */
 /*::

@@ -1,34 +1,48 @@
 /* @flow */
 
-import type { UniqueActionType } from '~redux';
-import type { TransactionType } from '~immutable';
+import type { ActionTypeWithMeta, ActionTypeWithPayloadAndMeta } from '~redux';
+import type { TransactionMultisig, TransactionType } from '~immutable';
+import type { $Pick } from '~types';
 
 import { ACTIONS } from '../../index';
 
+type WithId = {| id: string |};
+
 export type MultisigActionTypes = {|
-  MULTISIG_TRANSACTION_CREATED: UniqueActionType<
+  MULTISIG_TRANSACTION_CREATED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.MULTISIG_TRANSACTION_CREATED,
-    $Shape<TransactionType<*, *>>,
-    *,
+    $Pick<
+      TransactionType<*, *>,
+      {
+        context: *,
+        createdAt: *,
+        from: *,
+        group: *,
+        identifier: *,
+        methodName: *,
+        multisig: *,
+        options?: *,
+        params: *,
+        status: *,
+      },
+    >,
+    WithId,
   >,
-  MULTISIG_TRANSACTION_REFRESHED: UniqueActionType<
+  MULTISIG_TRANSACTION_REFRESHED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.MULTISIG_TRANSACTION_REFRESHED,
-    $Shape<TransactionType<*, *>>,
-    *,
+    {| multisig: TransactionMultisig |},
+    WithId,
   >,
-  MULTISIG_TRANSACTION_REJECT: UniqueActionType<
+  MULTISIG_TRANSACTION_REJECT: ActionTypeWithMeta<
     typeof ACTIONS.MULTISIG_TRANSACTION_REJECT,
-    *,
-    *,
+    WithId,
   >,
-  MULTISIG_TRANSACTION_SIGN: UniqueActionType<
+  MULTISIG_TRANSACTION_SIGN: ActionTypeWithMeta<
     typeof ACTIONS.MULTISIG_TRANSACTION_SIGN,
-    *,
-    *,
+    WithId,
   >,
-  MULTISIG_TRANSACTION_SIGNED: UniqueActionType<
+  MULTISIG_TRANSACTION_SIGNED: ActionTypeWithMeta<
     typeof ACTIONS.MULTISIG_TRANSACTION_SIGNED,
-    *,
-    *,
+    WithId,
   >,
 |};

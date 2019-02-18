@@ -181,7 +181,6 @@ function* fetchUsername({
     yield put<Action<typeof ACTIONS.USERNAME_FETCH_SUCCESS>>({
       type: ACTIONS.USERNAME_FETCH_SUCCESS,
       payload: { key: userAddress, username },
-      meta: {},
     });
   } catch (error) {
     yield putError(ACTIONS.USERNAME_FETCH_ERROR, error, { key: userAddress });
@@ -250,7 +249,7 @@ function* validateUsername({
   yield put<Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS>>({
     type: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
     meta,
-    payload: {},
+    payload: undefined,
   });
 }
 
@@ -312,7 +311,6 @@ function* fetchAvatar(
     yield put<Action<typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_FETCH_SUCCESS,
       payload: { hash, avatarData },
-      meta: {},
     });
   } catch (error) {
     yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error);
@@ -434,7 +432,6 @@ function* fetchTokenTransfers(): Saga<void> {
     yield put<Action<typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS>>({
       type: ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
       payload: { transactions },
-      meta: {},
     });
   } catch (error) {
     yield putError(ACTIONS.USER_FETCH_TOKEN_TRANSFERS_ERROR, error);
@@ -458,7 +455,6 @@ function* updateWalletBalance(): Saga<void> {
       payload: {
         balance: formatEther(walletBalance),
       },
-      meta: {},
     });
   } catch (error) {
     yield putError(ACTIONS.CURRENT_USER_GET_BALANCE_ERROR, error);

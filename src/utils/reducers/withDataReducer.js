@@ -5,15 +5,12 @@ import type { Map as ImmutableMapType } from 'immutable';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import type { KeyPath } from '~types';
-import type { ActionType } from '~redux';
 
 import { DataRecord } from '../../immutable';
 import type { DataRecordType } from '../../immutable';
+import type { ActionTypeString } from '~redux/types/actions';
 
-export type DataReducer<S: ImmutableMapType<*, *>> = (
-  state: S,
-  action: ActionType<*, *, *>,
-) => S;
+export type DataReducer<S: ImmutableMapType<*, *>> = (state: S, action: *) => S;
 
 const getNextState = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
@@ -33,10 +30,7 @@ const getNextState = <S: ImmutableMapType<*, *>, V: *>(
     : state.set(keyPath[0], data);
 };
 
-const handleFetch = <S: ImmutableMapType<*, *>, V: *>(
-  state: S,
-  action: ActionType<*, *, *>,
-) => {
+const handleFetch = <S: ImmutableMapType<*, *>, V: *>(state: S, action: *) => {
   const {
     meta: { keyPath },
   } = action;
@@ -45,7 +39,7 @@ const handleFetch = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  action: ActionType<*, *, *>,
+  action: *,
 ) => {
   const {
     meta: { keyPath },
@@ -58,7 +52,7 @@ const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleError = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  { meta: { keyPath }, payload: { error } }: ActionType<*, *, *>,
+  { meta: { keyPath }, payload: error }: *,
 ) =>
   getNextState<S, V>(state, keyPath, {
     isFetching: false,
@@ -92,7 +86,7 @@ const handleError = <S: ImmutableMapType<*, *>, V: *>(
  * {V} The value wrapped in the data record, e.g. `ColonyRecord` or `ListType<TransationRecord>`
  */
 const withDataReducer = <S: ImmutableMapType<*, *>, V: *>(
-  actionTypes: string | Set<string>,
+  actionTypes: ActionTypeString | Set<ActionTypeString>,
   initialState: S,
 ) => (wrappedReducer: DataReducer<S>) => {
   // Set up fetch/success/error types according to the usual pattern
@@ -106,7 +100,7 @@ const withDataReducer = <S: ImmutableMapType<*, *>, V: *>(
   );
 
   // Return a wrapped reducer.
-  return (state: S = initialState, action: ActionType<*, *, *>) => {
+  return (state: S = initialState, action: *) => {
     // Pass the state to the wrapped reducer as the first step.
     const nextState = wrappedReducer(state, action);
 

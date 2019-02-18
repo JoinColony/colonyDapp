@@ -172,7 +172,6 @@ function* tokenIconFetch({
     yield put<Action<typeof ACTIONS.TOKEN_ICON_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_ICON_FETCH_SUCCESS,
       payload: { hash, iconData },
-      meta: {},
     });
   } catch (error) {
     yield putError(ACTIONS.TOKEN_ICON_FETCH_ERROR, error);

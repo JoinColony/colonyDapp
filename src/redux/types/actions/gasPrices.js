@@ -1,10 +1,13 @@
 /* @flow */
 
-import type { ActionType } from '~redux';
+import type { ActionTypeWithPayload } from '~redux';
+import type { GasPricesProps } from '~immutable';
 
 import { ACTIONS } from '../../index';
 
 export type GasPricesActionTypes = {|
-  // TODO type this
-  GAS_PRICES_UPDATE: ActionType<typeof ACTIONS.GAS_PRICES_UPDATE, any, *>,
+  GAS_PRICES_UPDATE: ActionTypeWithPayload<
+    typeof ACTIONS.GAS_PRICES_UPDATE,
+    GasPricesProps,
+  >,
 |};
