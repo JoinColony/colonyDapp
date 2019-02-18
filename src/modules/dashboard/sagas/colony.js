@@ -2,13 +2,20 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  delay,
+  fork,
+  put,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
-import type { ENSName } from '~types';
 import type { Action } from '~redux';
+import type { ENSName } from '~types';
 
-import { putError, callCaller } from '~utils/saga/effects';
+import { callCaller, putError, takeFrom } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
@@ -18,15 +25,16 @@ import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getNetworkMethod } from '../../core/sagas/utils';
 import { set, getAll } from '../../../lib/database/commands';
 
-import { createBatchTxRunner } from '../../core/sagas/transactions';
+import {
+  transactionAddParams,
+  transactionAddIdentifier,
+  transactionReady,
+} from '../../core/actionCreators';
+
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { COLONY_CONTEXT } from '../../core/constants';
 
 import { colonyStoreBlueprint } from '../stores';
-
-import {
-  createColony,
-  createColonyLabel,
-  createToken,
-} from '../actionCreators';
 
 import { fetchColonyStore, getOrCreateDomainsIndexStore } from './shared';
 
@@ -49,98 +57,157 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
   return store;
 }
 
-function* createColonyStoreNew(transactions) {
-  const [, { eventData }] = transactions;
-  const colonyAddress = eventData && eventData.colonyAddress;
-  // TODO Do the store creation here, return actual store address
-  const tempStoreAddress = yield colonyAddress;
-  return tempStoreAddress;
-}
+// TODO: Rename, complete and wire up after new onboarding is in place
+function* createColonyNew({
+  meta,
+  payload,
+}: // $FlowFixMe (not an actual action)
+Action<'COLONY_CREATE_NEW'>): Saga<void> {
+  const key = 'transaction.batch.createColony';
+  const createTokenId = `${meta.id}-createToken`;
+  const createColonyId = `${meta.id}-createColony`;
+  const createLabelId = `${meta.id}-createLabel`;
+  const createTokenChannel = yield call(getTxChannel, createTokenId);
+  const createColonyChannel = yield call(getTxChannel, createColonyId);
+  const createLabelChannel = yield call(getTxChannel, createLabelId);
 
-const createColonyBatch = createBatchTxRunner({
-  meta: { key: 'transaction.batch.createColony' },
-  transactions: [
-    {
-      actionCreator: createToken,
-    },
-    {
-      actionCreator: createColony,
-      // We get all previous transactions as an array
-      // Return value will be merged as params into the next tx
-      transferParams: ([{ receipt }]) => ({
+  try {
+    const { tokenName, tokenSymbol, colonyName } = payload;
+
+    yield fork(createTransaction, createTokenId, {
+      context: NETWORK_CONTEXT,
+      methodName: 'createToken',
+      params: { name: tokenName, symbol: tokenSymbol },
+      group: {
+        key,
+        id: meta.id,
+        index: 0,
+      },
+    });
+
+    yield fork(createTransaction, createColonyId, {
+      context: NETWORK_CONTEXT,
+      methodName: 'createColony',
+      ready: false,
+      group: {
+        key,
+        id: meta.id,
+        index: 1,
+      },
+    });
+
+    yield fork(createTransaction, createLabelId, {
+      context: COLONY_CONTEXT,
+      methodName: 'registerColonyLabel',
+      params: { colonyName },
+      ready: false,
+      group: {
+        key,
+        id: meta.id,
+        index: 2,
+      },
+    });
+
+    yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_CREATED);
+
+    const {
+      payload: {
+        transaction: { receipt },
+      },
+    } = yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(
+      transactionAddParams(createColonyId, {
         tokenAddress: receipt && receipt.contractAddress,
       }),
-    },
-    {
-      actionCreator: createColonyLabel,
-      before: createColonyStoreNew,
-      transferParams: (transactions, orbitDBPath) => ({ orbitDBPath }),
-      // We need the colony identifier from the second transaciton output
-      transferIdentifier: ([
-        ,
-        // , ignores the first tx
-        { eventData },
-      ]) => eventData && eventData.colonyAddress,
-    },
-  ],
-});
+    );
 
-// TODO: Rename, complete and wire up after new onboarding is in place
-function* createColonySagaNew(
-  // $FlowFixMe this action type isn't defined yet
-  action: Action<'COLONY_CREATE_NEW'>,
-): Saga<void> {
-  // Step 1: Do whatever needs to be done before starting the batch tx
+    yield put(transactionReady(createColonyId));
 
-  const {
-    meta,
-    payload: { tokenName, tokenSymbol, colonyName },
-  } = action;
-  try {
-    // Step 2: Run colony creation batch
-    // Once done, we get all succeeded transactions in a handy array
-    const transactions = yield call(createColonyBatch, action, [
-      { params: { name: tokenName, symbol: tokenSymbol } },
-      null,
-      {
-        params: { colonyName },
+    const {
+      payload: {
+        transaction: { eventData },
       },
-    ]);
-    // Step 3: Do something with the transaction data (maybe add it to the orbit-db store)
-    // TODO: Do store stuff here
-    console.info(transactions);
+    } = yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    // Step 4: report success for the colony creation wizard
-    yield put<Action<typeof ACTIONS.COLONY_CREATE_SUCCESS>>({
+    yield put(
+      transactionAddParams(createLabelId, {
+        // TODO: get orbit db path from somewhere
+        orbitDBPath: 'temp',
+      }),
+    );
+
+    yield put(
+      transactionAddIdentifier(
+        createLabelId,
+        eventData && eventData.colonyAddress,
+      ),
+    );
+
+    yield put(transactionReady(createLabelId));
+
+    yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put({
       type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
       payload: {},
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
+  } finally {
+    createTokenChannel.close();
+    createColonyChannel.close();
+    createLabelChannel.close();
   }
 }
 
-/*
- * Simply forward on the form params to create a transaction.
- */
-function* createColonySaga({
-  payload: params,
+function* createColony({
+  payload: { tokenAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
-  yield put(
-    createColony({
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: NETWORK_CONTEXT,
+      methodName: 'createColony',
+      params: { tokenAddress },
+    });
+
+    // TODO: These are just temporary for now until we have the new onboarding workflow
+    // Normally these are done by the user
+    yield put({
+      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
       meta,
-      params,
-      // TODO: this has to be removed once the new onboarding is properly wired to the gasStation
-      options: {
-        gasLimit: 5000000,
-      },
-    }),
-  );
+    });
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
+    yield put({
+      type: ACTIONS.TRANSACTION_SEND,
+      meta,
+    });
+    // TODO temp end
+
+    const { payload } = yield takeFrom(
+      txChannel,
+      ACTIONS.TRANSACTION_SUCCEEDED,
+    );
+
+    yield put({
+      type: ACTIONS.COLONY_CREATE_SUCCESS,
+      meta,
+      payload,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_CREATE_ERROR, error);
+  } finally {
+    txChannel.close();
+  }
 }
 
-function* createColonyLabelSaga({
+function* createColonyLabel({
   payload: {
     colonyId,
     colonyAddress,
@@ -208,23 +275,49 @@ function* createColonyLabelSaga({
    */
   yield call(set, store, completeColonyStoreData);
 
-  /*
-   * Dispatch an action to create the given ENS name for the colony.
-   */
-  yield put(
-    createColonyLabel({
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: NETWORK_CONTEXT,
+      methodName: 'registerColonyLabel',
       identifier: colonyAddress,
       params: {
         colonyName: ensName,
         orbitDBPath: store.address.toString(),
       },
+    });
+
+    // TODO: These are just temporary for now until we have the new onboarding workflow
+    // Normally these are done by the user
+    yield put({
+      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
       meta,
-      // TODO: this has to be removed once the new onboarding is properly wired to the gasStation
-      options: {
-        gasLimit: 500000,
-      },
-    }),
-  );
+    });
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
+    yield put({
+      type: ACTIONS.TRANSACTION_SEND,
+      meta,
+    });
+    // TODO temp end
+
+    const { payload } = yield takeFrom(
+      txChannel,
+      ACTIONS.TRANSACTION_SUCCEEDED,
+    );
+
+    yield put({
+      type: ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
+      meta,
+      payload,
+    });
+
+    yield put(replace(`colony/${ensName}`));
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_CREATE_LABEL_ERROR, error);
+  } finally {
+    txChannel.close();
+  }
 }
 
 function* validateColonyDomain({
@@ -257,18 +350,6 @@ function* validateColonyDomain({
     meta,
     payload: {},
   });
-}
-
-/*
- * Redirect to the colony home for the given (newly-registered) label
- */
-// TODO: we have cases where we do something like that with the raceError effect (custom take)
-function* createColonyLabelSuccessSaga({
-  payload: {
-    params: { colonyName },
-  },
-}: Action<typeof ACTIONS.COLONY_CREATE_LABEL_SUCCESS>): Saga<void> {
-  yield put(replace(`colony/${colonyName}`));
 }
 
 function* updateColonySaga({
@@ -445,17 +526,12 @@ function* removeColonyAvatar({
 export default function* colonySagas(): any {
   yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, fetchColonyAvatar);
   // TODO: rename properly once the new onboarding is done
-  yield takeEvery('COLONY_CREATE_NEW', createColonySagaNew);
-  yield takeEvery(ACTIONS.COLONY_CREATE, createColonySaga);
-  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, createColonyLabelSaga);
-  yield takeEvery(
-    ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
-    createColonyLabelSuccessSaga,
-  );
+  yield takeEvery('COLONY_CREATE_NEW', createColonyNew);
+  yield takeEvery(ACTIONS.COLONY_CREATE, createColony);
+  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, createColonyLabel);
   yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, fetchColonyENSName);
   yield takeEvery(ACTIONS.COLONY_FETCH, fetchColonySaga);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, updateColonySaga);
-
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.
