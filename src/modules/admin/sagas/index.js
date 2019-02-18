@@ -2,18 +2,12 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeEvery, all } from 'redux-saga/effects';
+import { call, fork, put, takeEvery, all } from 'redux-saga/effects';
 
-import type {
-  Action,
-  Address,
-  ENSName,
-  UniqueAction,
-  UniqueActionWithKeyPath,
-} from '~types';
+import type { UniqueAction, UniqueActionWithKeyPath } from '~types';
 import type { ContractTransactionType } from '~immutable';
 
-import { putError, raceError } from '~utils/saga/effects';
+import { takeFrom, putError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 
 import {
@@ -25,10 +19,13 @@ import {
   getFilterFormattedAddress,
 } from '~utils/web3/eventLogs';
 
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { TRANSACTION_SUCCEEDED } from '../../core/actionTypes';
+import { COLONY_CONTEXT } from '../../core/constants';
+
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
-  claimColonyTokenTransaction,
 } from '../actionCreators';
 import {
   COLONY_FETCH_TRANSACTIONS_ERROR,
@@ -164,16 +161,6 @@ function* fetchColonyUnclaimedTransactionsSaga({
   }
 }
 
-const filterClaimSuccess = (token: Address, colonyENSName: ENSName) => ({
-  payload,
-  type,
-}: Action) =>
-  type === COLONY_CLAIM_TOKEN_SUCCESS &&
-  payload.params &&
-  payload.params.token.toLowerCase() === token.toLowerCase() &&
-  payload.transaction &&
-  payload.transaction.identifier === colonyENSName;
-
 /**
  * Claim tokens, then reload unclaimed transactions list.
  */
@@ -181,22 +168,29 @@ function* claimColonyToken({
   payload: { ensName, tokenAddress: token },
   meta,
 }: UniqueAction): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
-    yield put(
-      claimColonyTokenTransaction({
-        identifier: ensName,
-        params: { token },
-        meta,
-      }),
-    );
-    yield raceError(
-      filterClaimSuccess(token, ensName),
-      COLONY_CLAIM_TOKEN_ERROR,
-    );
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'claimColonyFunds',
+      identifier: ensName,
+      params: { token },
+    });
+
+    const { payload } = yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+
+    yield put({
+      type: COLONY_CLAIM_TOKEN_SUCCESS,
+      payload,
+      meta,
+    });
     yield put(fetchColonyTransactions(ensName));
     yield put(fetchColonyUnclaimedTransactions(ensName));
   } catch (error) {
     yield putError(COLONY_CLAIM_TOKEN_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
 }
 

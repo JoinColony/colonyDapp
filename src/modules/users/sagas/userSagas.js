@@ -41,13 +41,13 @@ import {
   createUserProfileStore,
 } from '../../../data/stores';
 import { ValidatedKVStore } from '../../../lib/database/stores';
-import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { getAll } from '../../../lib/database/commands';
 import {
   TRANSACTION_CREATED,
   TRANSACTION_SUCCEEDED,
 } from '../../core/actionTypes';
 import { createTransaction, getTxChannel } from '../../core/sagas';
+import { NETWORK_CONTEXT } from '../../core/constants';
 import {
   getNetworkMethod,
   getProvider,
@@ -331,12 +331,7 @@ function* createUsername({
     yield call([activityStore, activityStore.add], joinedColonyEvent());
   } catch (err) {
     // TODO: We could show a toaster message here. Also: revert stuff?!?!?
-    yield put({
-      type: USERNAME_CREATE_ERROR,
-      error: true,
-      payload: err,
-      meta,
-    });
+    yield putError(USERNAME_CREATE_ERROR, err, meta);
   } finally {
     txChannel.close();
   }

@@ -40,11 +40,9 @@ export const create = (Class: Function, ...args: any[]) =>
 export const putError = (type: string, error: Error, meta?: Object = {}) => {
   const action = {
     type,
-    payload: {
-      error,
-    },
     meta,
     error: true,
+    payload: error,
   };
   if (isDev) {
     log(error);
