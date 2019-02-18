@@ -129,8 +129,11 @@ const TaskEditDialog = ({
       isDismissable={false}
     >
       <ActionForm
+        /* $FlowFixMe */
         submit="CREATE_COOL_THING"
+        /* $FlowFixMe */
         success="COOL_THING_CREATED"
+        /* $FlowFixMe */
         error="COOL_THING_CREATE_ERROR"
         initialValues={{
           payouts: payouts || [],

@@ -8,23 +8,17 @@ import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
 
-import { SpinnerLoader } from '~core/Preloaders';
-
 import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
 
 import AddressItem from './AddressItem.jsx';
 
-import {
-  WALLET_CREATE,
-  CURRENT_USER_CREATE,
-  WALLET_CREATE_ERROR,
-} from '../../../actionTypes';
-
+import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import { ActionForm, Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepHardware.css';
+import { ACTIONS } from '~redux';
 
 const MSG = defineMessages({
   heading: {
@@ -212,9 +206,9 @@ class StepHardware extends Component<Props> {
     } = this.props;
     return (
       <ActionForm
-        submit={WALLET_CREATE}
-        success={CURRENT_USER_CREATE}
-        error={WALLET_CREATE_ERROR}
+        submit={ACTIONS.WALLET_CREATE}
+        success={ACTIONS.CURRENT_USER_CREATE}
+        error={ACTIONS.WALLET_CREATE_ERROR}
         onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
           setStatus({ error: MSG.errorPickAddress })
         }

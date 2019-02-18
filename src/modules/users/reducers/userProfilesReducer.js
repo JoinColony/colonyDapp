@@ -4,23 +4,20 @@ import { List, Map as ImmutableMap } from 'immutable';
 
 import { withDataReducer } from '~utils/reducers';
 import { UserRecord, UserProfileRecord, UserActivityRecord } from '~immutable';
+import { ACTIONS } from '~redux';
 
 import type { UserRecordType, UsersMap } from '~immutable';
-import type { UniqueActionWithKeyPath } from '~types';
+import type { ReducerType } from '~redux';
 
-import {
-  USER_ACTIVITIES_FETCH,
-  USER_ACTIVITIES_FETCH_SUCCESS,
-  USER_PROFILE_FETCH,
-  USER_PROFILE_FETCH_SUCCESS,
-} from '../actionTypes';
-
-const userProfilesReducer = (
-  state: UsersMap = ImmutableMap(),
-  action: UniqueActionWithKeyPath,
-) => {
+const userProfilesReducer: ReducerType<
+  UsersMap,
+  {|
+    USER_ACTIVITIES_FETCH_SUCCESS: *,
+    USER_PROFILE_FETCH_SUCCESS: *,
+  |},
+> = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case USER_PROFILE_FETCH_SUCCESS: {
+    case ACTIONS.USER_PROFILE_FETCH_SUCCESS: {
       const {
         meta: { keyPath },
         payload,
@@ -32,18 +29,20 @@ const userProfilesReducer = (
         : state.setIn(recordPath, UserRecord({ profile }));
     }
 
-    case USER_ACTIVITIES_FETCH_SUCCESS: {
+    case ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS: {
       const {
         meta: { keyPath },
-        payload,
+        payload: { activities },
       } = action;
-      const activity = UserActivityRecord(payload);
       const recordPath = [...keyPath, 'record'];
-      return state.getIn(recordPath)
-        ? state.updateIn([...recordPath, 'activities'], activities =>
-            activities.insert(activity),
+      return state.hasIn(recordPath)
+        ? state.setIn(
+            [...recordPath, 'activities'],
+            List.of(
+              ...activities.map(activity => UserActivityRecord(activity)),
+            ),
           )
-        : state.setIn(recordPath, UserRecord({ activities: List([activity]) }));
+        : state;
     }
 
     default:
@@ -52,6 +51,6 @@ const userProfilesReducer = (
 };
 
 export default withDataReducer<UsersMap, UserRecordType>(
-  new Set([USER_PROFILE_FETCH, USER_ACTIVITIES_FETCH]),
+  new Set([ACTIONS.USER_PROFILE_FETCH, ACTIONS.USER_ACTIVITIES_FETCH]),
   ImmutableMap(),
 )(userProfilesReducer);

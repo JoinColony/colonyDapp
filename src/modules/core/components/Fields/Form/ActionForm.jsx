@@ -2,6 +2,8 @@
 
 import type { FormikConfig, FormikBag } from 'formik';
 
+import type { ActionTypeString, UniqueActionType } from '~redux';
+
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import MakeAsyncFunction from 'react-redux-promise-listener';
@@ -32,11 +34,11 @@ type OnError = (
 
 type Props = ActionFormikConfig & {
   /** Redux action to dispatch on submit (e.g. CREATE_XXX) */
-  submit: string,
+  submit: ActionTypeString,
   /** Redux action listener for successful action (e.g. CREATE_XXX_SUCCESS) */
-  success: string,
+  success: ActionTypeString,
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
-  error: string,
+  error: ActionTypeString,
   /** Function to call after successful action was dispatched */
   onSuccess?: (
     result: any,
@@ -46,7 +48,10 @@ type Props = ActionFormikConfig & {
   /** Function to call after error action was dispatched */
   onError?: OnError,
   /** A function to set the payload (the parameter passed to the async function). Defaults to (action, payload) => ({ ...action, payload }) */
-  setPayload?: (action: Object, payload: any) => Object,
+  setPayload?: (
+    action: Object | UniqueActionType<*, *, *>,
+    payload: any,
+  ) => UniqueActionType<*, *, Object>,
 };
 
 const defaultOnErrror: OnError = (err, { setStatus }) =>

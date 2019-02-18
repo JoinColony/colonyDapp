@@ -7,14 +7,10 @@ import { isAddress } from 'web3-utils';
 import { Input } from '~core/Fields';
 import Button from '~core/Button';
 import { log } from '~utils/debug';
+import { ACTIONS } from '~redux';
 
 import styles from './StepSelectToken.css';
 
-import {
-  TOKEN_INFO_FETCH,
-  TOKEN_INFO_FETCH_SUCCESS,
-  TOKEN_INFO_FETCH_ERROR,
-} from '../../actionTypes';
 import promiseListener from '../../../../createPromiseListener';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
@@ -82,9 +78,9 @@ class TokenSelector extends Component<Props, State> {
     super(props);
     this.state = { isLoading: false };
     this.getToken = promiseListener.createAsyncFunction({
-      start: TOKEN_INFO_FETCH,
-      resolve: TOKEN_INFO_FETCH_SUCCESS,
-      reject: TOKEN_INFO_FETCH_ERROR,
+      start: ACTIONS.TOKEN_INFO_FETCH,
+      resolve: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
+      reject: ACTIONS.TOKEN_INFO_FETCH_ERROR,
     });
   }
 

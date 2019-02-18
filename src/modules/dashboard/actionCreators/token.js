@@ -1,11 +1,11 @@
 /* @flow */
 
+import { ACTIONS } from '~redux';
+
 import {
   createTxActionCreator,
   NETWORK_CONTEXT,
 } from '../../core/actionCreators';
-
-import { TOKEN_CREATE_ERROR, TOKEN_CREATE_SUCCESS } from '../actionTypes';
 
 // eslint-disable-next-line import/prefer-default-export
 export const createToken = createTxActionCreator<{
@@ -15,7 +15,7 @@ export const createToken = createTxActionCreator<{
   context: NETWORK_CONTEXT,
   methodName: 'createToken',
   lifecycle: {
-    error: TOKEN_CREATE_ERROR,
-    receiptReceived: TOKEN_CREATE_SUCCESS,
+    error: ACTIONS.TOKEN_CREATE_ERROR,
+    receiptReceived: ACTIONS.TOKEN_CREATE_SUCCESS,
   },
 });

@@ -9,22 +9,13 @@ import * as yup from 'yup';
 import type { WizardProps } from '~core/Wizard';
 
 import { ActionForm, FormStatus, Input } from '~core/Fields';
-
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ActionFileUpload } from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
+import { ACTIONS } from '~redux';
 
 import styles from './StepCreateToken.css';
-
-import {
-  TOKEN_CREATE,
-  TOKEN_CREATE_ERROR,
-  TOKEN_CREATE_SUCCESS,
-  TOKEN_ICON_UPLOAD,
-  TOKEN_ICON_UPLOAD_ERROR,
-  TOKEN_ICON_UPLOAD_SUCCESS,
-} from '../../actionTypes';
 
 const MSG = defineMessages({
   heading: {
@@ -101,9 +92,9 @@ type Props = WizardProps<FormValues>;
 
 const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
   <ActionForm
-    submit={TOKEN_CREATE}
-    error={TOKEN_CREATE_ERROR}
-    success={TOKEN_CREATE_SUCCESS}
+    submit={ACTIONS.TOKEN_CREATE}
+    error={ACTIONS.TOKEN_CREATE_ERROR}
+    success={ACTIONS.TOKEN_CREATE_SUCCESS}
     onSuccess={(
       { receipt: { contractAddress: tokenAddress } },
       bag,
@@ -155,9 +146,9 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
               name="tokenIcon"
               label={MSG.labelTokenIcon}
               help={MSG.helpTokenIcon}
-              submit={TOKEN_ICON_UPLOAD}
-              success={TOKEN_ICON_UPLOAD_SUCCESS}
-              error={TOKEN_ICON_UPLOAD_ERROR}
+              submit={ACTIONS.TOKEN_ICON_UPLOAD}
+              success={ACTIONS.TOKEN_ICON_UPLOAD_SUCCESS}
+              error={ACTIONS.TOKEN_ICON_UPLOAD_ERROR}
             />
           </div>
         </section>

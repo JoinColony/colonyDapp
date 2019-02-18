@@ -13,13 +13,8 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { ActionForm } from '~core/Fields';
+import { ACTIONS } from '~redux';
 import styles from './StepMetaMask.css';
-
-import {
-  WALLET_CREATE,
-  CURRENT_USER_CREATE,
-  WALLET_CREATE_ERROR,
-} from '../../../actionTypes';
 
 const MSG = defineMessages({
   heading: {
@@ -124,9 +119,9 @@ class MetaMask extends Component<Props, State> {
     const { isLoading, isValid } = this.state;
     return (
       <ActionForm
-        submit={WALLET_CREATE}
-        success={CURRENT_USER_CREATE}
-        error={WALLET_CREATE_ERROR}
+        submit={ACTIONS.WALLET_CREATE}
+        success={ACTIONS.CURRENT_USER_CREATE}
+        error={ACTIONS.WALLET_CREATE_ERROR}
         onError={(_: string, { setStatus }: FormikBag<Object, FormValues>) => {
           setStatus({ error: MSG.errorOpenMetamask });
         }}

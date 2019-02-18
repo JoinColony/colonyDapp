@@ -4,6 +4,7 @@ import type { Saga } from 'redux-saga';
 import { call, select, put } from 'redux-saga/effects';
 
 import type { ENSName } from '~types';
+import type { Action } from '~redux';
 import type {
   DocStore,
   FeedStore,
@@ -13,6 +14,7 @@ import type {
 import { getENSDomainString } from '~utils/web3/ens';
 import { raceError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import { walletAddressSelector } from '../../users/selectors';
 import {
@@ -21,7 +23,6 @@ import {
   tasksIndexStoreBlueprint,
   commentsBlueprint,
 } from '../stores';
-import { COLONY_FETCH_ERROR, COLONY_FETCH_SUCCESS } from '../actionTypes';
 import { fetchColony } from '../actionCreators';
 import { domainsIndexSelector, singleColonySelector } from '../selectors';
 
@@ -73,16 +74,17 @@ export function* ensureColonyIsInState(colonyENSName: ENSName): Saga<*> {
   /*
    * Dispatch an action to fetch the given colony.
    */
-  yield put(fetchColony(colonyENSName));
+  const fetchAction = fetchColony(colonyENSName);
+  yield put<Action<typeof fetchAction.type>>(fetchAction);
 
   /*
    * Wait for the successful fetch result (the colony should now be in state).
    */
   yield raceError(
     ({ type, payload: { keyPath } }) =>
-      type === COLONY_FETCH_SUCCESS && keyPath[0] === colonyENSName,
+      type === ACTIONS.COLONY_FETCH_SUCCESS && keyPath[0] === colonyENSName,
     ({ type, payload: { keyPath } }) =>
-      type === COLONY_FETCH_ERROR && keyPath[0] === colonyENSName,
+      type === ACTIONS.COLONY_FETCH_ERROR && keyPath[0] === colonyENSName,
     new Error(`Colony "${colonyENSName}" could not be found`),
   );
 }

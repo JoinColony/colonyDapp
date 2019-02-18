@@ -4,26 +4,22 @@ import type { List as ListType } from 'immutable';
 
 import { Map as ImmutableMap, List } from 'immutable';
 
-import {
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
-} from '../actionTypes';
-
 import { ContractTransactionRecord, DataRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
+import { ACTIONS } from '~redux';
 
-import type { UniqueActionWithKeyPath } from '~types';
 import type {
   AdminUnclaimedTransactionsState,
   ContractTransactionRecordType,
 } from '~immutable';
+import type { ReducerType } from '~redux';
 
-const colonyUnclaimedTransactionsReducer = (
-  state: AdminUnclaimedTransactionsState = ImmutableMap(),
-  action: UniqueActionWithKeyPath,
-): AdminUnclaimedTransactionsState => {
+const colonyUnclaimedTransactionsReducer: ReducerType<
+  AdminUnclaimedTransactionsState,
+  {| COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: * |},
+> = (state = ImmutableMap(), action): AdminUnclaimedTransactionsState => {
   switch (action.type) {
-    case COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: {
+    case ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: {
       const {
         meta: {
           keyPath: [colonyENSName],
@@ -45,6 +41,6 @@ const colonyUnclaimedTransactionsReducer = (
 export default withDataReducer<
   AdminUnclaimedTransactionsState,
   ContractTransactionRecordType,
->(COLONY_FETCH_UNCLAIMED_TRANSACTIONS, ImmutableMap())(
+>(ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS, ImmutableMap())(
   colonyUnclaimedTransactionsReducer,
 );

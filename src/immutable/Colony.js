@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { RecordFactory, RecordOf } from 'immutable';
+import type {
+  RecordFactory,
+  RecordOf,
+  Map as ImmutableMapType,
+} from 'immutable';
 
 import { Record, Map as ImmutableMap } from 'immutable';
 
@@ -19,7 +23,6 @@ type Shared = {|
   avatar?: string,
   databases: {
     domainsIndex: ?string,
-    draftsIndex: ?string,
   },
   description?: string,
   ensName: ENSName,
@@ -33,13 +36,13 @@ type Shared = {|
 export type ColonyType = $ReadOnly<{|
   ...Shared,
   token?: TokenType,
-  admins?: { [string]: ColonyAdminType },
+  admins?: { [username: string]: ColonyAdminType },
 |}>;
 
 type ColonyRecordProps = {|
   ...Shared,
   token?: TokenRecordType,
-  admins?: ImmutableMap<string, ColonyAdminRecordType>,
+  admins?: ImmutableMapType<string, ColonyAdminRecordType>,
 |};
 
 const defaultValues: $Shape<ColonyRecordProps> = {
@@ -47,7 +50,6 @@ const defaultValues: $Shape<ColonyRecordProps> = {
   avatar: undefined,
   databases: {
     domainsIndex: undefined,
-    draftsIndex: undefined,
   },
   description: undefined,
   ensName: undefined,
@@ -57,7 +59,7 @@ const defaultValues: $Shape<ColonyRecordProps> = {
   token: TokenRecord(),
   version: undefined,
   website: undefined,
-  admins: ImmutableMap<string, ColonyAdminRecordType>(),
+  admins: ImmutableMap(),
 };
 
 const ColonyRecord: RecordFactory<ColonyRecordProps> = Record(defaultValues);

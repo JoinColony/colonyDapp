@@ -4,7 +4,9 @@ import type { Saga } from 'redux-saga';
 
 import { call, put, select } from 'redux-saga/effects';
 
-import type { MultisigTransactionAction } from '../../types';
+import { ACTIONS } from '~redux';
+
+import type { Action } from '~redux';
 
 import {
   multisigTransactionNonceError,
@@ -19,7 +21,7 @@ import { getMethod } from '../utils';
 
 export function* refreshMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: Action<typeof ACTIONS.MULTISIG_TRANSACTION_REFRESHED>): Saga<void> {
   try {
     // fetch the method, check it's multisig
     const { methodName, context, identifier, multisig, params } = yield select(
@@ -43,7 +45,7 @@ export function* refreshMultisigTransaction({
       missingSignees,
       requiredSignees,
     } = multisigOperation;
-    yield put(
+    yield put<Action<typeof ACTIONS.MULTISIG_TRANSACTION_REFRESHED>>(
       multisigTransactionRefreshed(id, {
         nonce,
         payload,
@@ -55,19 +57,21 @@ export function* refreshMultisigTransaction({
 
     // if the nonce was invalidated, the tx has been reset
     if (multisig && multisig.nonce !== nonce)
-      yield put(
+      yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
         multisigTransactionNonceError(id, {
           message: 'Multisig nonce changed',
         }),
       );
   } catch (error) {
-    yield put(multisigTransactionRefreshError(id, { message: error.message }));
+    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      multisigTransactionRefreshError(id, { message: error.message }),
+    );
   }
 }
 
 export function* signMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGN>): Saga<void> {
   try {
     // fetch from store
     const { methodName, context, identifier, multisig } = yield select(
@@ -96,7 +100,7 @@ export function* signMultisigTransaction({
       missingSignees,
       requiredSignees,
     } = multisigOperation;
-    yield put(
+    yield put<Action<typeof ACTIONS.MULTISIG_TRANSACTION_REFRESHED>>(
       multisigTransactionRefreshed(id, {
         nonce,
         payload,
@@ -107,28 +111,36 @@ export function* signMultisigTransaction({
     );
 
     // dispatch multisig signed action
-    yield put(multisigTransactionSigned(id));
+    yield put<Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGNED>>(
+      multisigTransactionSigned(id),
+    );
   } catch (error) {
-    yield put(multisigTransactionSignError(id, { message: error.message }));
+    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      multisigTransactionSignError(id, { message: error.message }),
+    );
   }
 }
 
 export function* rejectMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: Action<typeof ACTIONS.MULTISIG_TRANSACTION_REJECT>): Saga<void> {
   try {
     // TODO: tell the other signees we reject
   } catch (error) {
-    yield put(multisigTransactionRejectError(id, { message: error.message }));
+    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      multisigTransactionRejectError(id, { message: error.message }),
+    );
   }
 }
 
 export function* signedMultisigTransaction({
   meta: { id },
-}: MultisigTransactionAction): Saga<void> {
+}: Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGNED>): Saga<void> {
   try {
     // TODO: if there's any remaining required signees, distribute to them
   } catch (error) {
-    yield put(multisigTransactionSignError(id, { message: error.message }));
+    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      multisigTransactionSignError(id, { message: error.message }),
+    );
   }
 }

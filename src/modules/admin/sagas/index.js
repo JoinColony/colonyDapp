@@ -4,8 +4,8 @@ import type { Saga } from 'redux-saga';
 
 import { call, fork, put, takeEvery, all } from 'redux-saga/effects';
 
-import type { UniqueAction, UniqueActionWithKeyPath } from '~types';
 import type { ContractTransactionType } from '~immutable';
+import type { Action } from '~redux';
 
 import { takeFrom, putError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
@@ -20,24 +20,13 @@ import {
 } from '~utils/web3/eventLogs';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { TRANSACTION_SUCCEEDED } from '../../core/actionTypes';
 import { COLONY_CONTEXT } from '../../core/constants';
 
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
-import {
-  COLONY_FETCH_TRANSACTIONS_ERROR,
-  COLONY_FETCH_TRANSACTIONS_SUCCESS,
-  COLONY_FETCH_TRANSACTIONS,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-  COLONY_CLAIM_TOKEN_ERROR,
-  COLONY_CLAIM_TOKEN_SUCCESS,
-  COLONY_CLAIM_TOKEN,
-} from '../actionTypes';
+import { ACTIONS } from '~redux';
 
 const EVENT_PARSERS = {
   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
@@ -51,7 +40,7 @@ function* fetchColonyTransactionsSaga({
     keyPath: [colonyENSName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
 
@@ -86,13 +75,13 @@ function* fetchColonyTransactionsSaga({
       ),
     )).filter(Boolean);
 
-    yield put({
-      type: COLONY_FETCH_TRANSACTIONS_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS>>({
+      type: ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
       meta,
       payload: transactions,
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_TRANSACTIONS_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_FETCH_TRANSACTIONS_ERROR, error, meta);
   }
 }
 
@@ -101,7 +90,7 @@ function* fetchColonyUnclaimedTransactionsSaga({
     keyPath: [colonyENSName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
@@ -151,13 +140,19 @@ function* fetchColonyUnclaimedTransactionsSaga({
       ),
     )).filter(Boolean);
 
-    yield put({
-      type: COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
+    yield put<
+      Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS>,
+    >({
+      type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
       meta,
       payload: transactions,
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR, error, meta);
+    yield putError(
+      ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR,
+      error,
+      meta,
+    );
   }
 }
 
@@ -167,10 +162,10 @@ function* fetchColonyUnclaimedTransactionsSaga({
 function* claimColonyToken({
   payload: { ensName, tokenAddress: token },
   meta,
-}: UniqueAction): Saga<void> {
-  const txChannel = yield call(getTxChannel, meta.id);
-
+}: Action<typeof ACTIONS.COLONY_CLAIM_TOKEN>): Saga<void> {
+  let txChannel;
   try {
+    txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'claimColonyFunds',
@@ -178,27 +173,37 @@ function* claimColonyToken({
       params: { token },
     });
 
-    const { payload } = yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+    const { payload } = yield takeFrom(
+      txChannel,
+      ACTIONS.TRANSACTION_SUCCEEDED,
+    );
 
-    yield put({
-      type: COLONY_CLAIM_TOKEN_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS>>({
+      type: ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS,
       payload,
       meta,
     });
-    yield put(fetchColonyTransactions(ensName));
-    yield put(fetchColonyUnclaimedTransactions(ensName));
+    yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>>(
+      fetchColonyTransactions(ensName),
+    );
+    yield put<Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>>(
+      fetchColonyUnclaimedTransactions(ensName),
+    );
   } catch (error) {
-    yield putError(COLONY_CLAIM_TOKEN_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_CLAIM_TOKEN_ERROR, error, meta);
   } finally {
-    txChannel.close();
+    if (txChannel) txChannel.close();
   }
 }
 
 export default function* adminSagas(): any {
-  yield takeEvery(COLONY_FETCH_TRANSACTIONS, fetchColonyTransactionsSaga);
   yield takeEvery(
-    COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+    ACTIONS.COLONY_FETCH_TRANSACTIONS,
+    fetchColonyTransactionsSaga,
+  );
+  yield takeEvery(
+    ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
     fetchColonyUnclaimedTransactionsSaga,
   );
-  yield takeEvery(COLONY_CLAIM_TOKEN, claimColonyToken);
+  yield takeEvery(ACTIONS.COLONY_CLAIM_TOKEN, claimColonyToken);
 }

@@ -7,16 +7,12 @@ import type { ENSName } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
+import { ACTIONS } from '~redux';
+
 import UserList from '../UserList';
 import DomainList from '../DomainList';
 import OrganizationAddAdmins from './OrganizationAddAdmins.jsx';
 import OrganizationAddDomains from './OrganizationAddDomains.jsx';
-
-import {
-  COLONY_ADMIN_REMOVE,
-  COLONY_ADMIN_REMOVE_SUCCESS,
-  COLONY_ADMIN_REMOVE_ERROR,
-} from '../../../dashboard/actionTypes';
 
 import styles from './Organizations.css';
 
@@ -104,9 +100,9 @@ const Organizations = ({ ensName, colonyAdmins, colonyDomains }: Props) => (
                 showUsername
                 showMaskedAddress
                 viewOnly={false}
-                remove={COLONY_ADMIN_REMOVE}
-                removeSuccess={COLONY_ADMIN_REMOVE_SUCCESS}
-                removeError={COLONY_ADMIN_REMOVE_ERROR}
+                remove={ACTIONS.COLONY_ADMIN_REMOVE}
+                removeSuccess={ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS}
+                removeError={ACTIONS.COLONY_ADMIN_REMOVE_ERROR}
               />
             ) : (
               <Fragment>

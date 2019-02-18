@@ -13,13 +13,8 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { ActionForm, Select } from '~core/Fields';
+import { ACTIONS } from '~redux';
 import styles from './StepTrufflePig.css';
-
-import {
-  WALLET_CREATE,
-  CURRENT_USER_CREATE,
-  WALLET_CREATE_ERROR,
-} from '../../../actionTypes';
 
 const MSG = defineMessages({
   heading: {
@@ -140,9 +135,9 @@ class StepTrufflePig extends Component<Props, State> {
     const { isLoading, isValid, accountIndex } = this.state;
     return (
       <ActionForm
-        submit={WALLET_CREATE}
-        success={CURRENT_USER_CREATE}
-        error={WALLET_CREATE_ERROR}
+        submit={ACTIONS.WALLET_CREATE}
+        success={ACTIONS.CURRENT_USER_CREATE}
+        error={ACTIONS.WALLET_CREATE_ERROR}
         onError={(
           errorMessage: string,
           { setStatus }: FormikBag<Object, FormValues>,
@@ -152,6 +147,7 @@ class StepTrufflePig extends Component<Props, State> {
         setPayload={(...args: *) => {
           const action = includeWizardValues(...args);
           const { accountIndex: index } = this.state;
+          action.payload = action.payload || {};
           action.payload.accountIndex = index;
           return action;
         }}

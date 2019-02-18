@@ -4,10 +4,11 @@ import type { Saga } from 'redux-saga';
 
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 
-import type { ENSName, UniqueAction, UniqueActionWithKeyPath } from '~types';
+import type { ENSName } from '~types';
 
 import { putError, raceError, callCaller } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
 
@@ -30,45 +31,8 @@ import {
   taskSetWorkerRoleBatch,
 } from '../actionCreators';
 import { allColonyENSNames } from '../selectors';
-import {
-  TASK_CREATE,
-  TASK_CREATE_ERROR,
-  TASK_CREATE_SUCCESS,
-  TASK_MODIFY_WORKER_PAYOUT,
-  TASK_MODIFY_WORKER_PAYOUT_ERROR,
-  TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
-  TASK_FETCH,
-  TASK_FETCH_ALL,
-  TASK_FETCH_ERROR,
-  TASK_FETCH_SUCCESS,
-  TASK_FINALIZE,
-  TASK_MANAGER_COMPLETE_ERROR,
-  TASK_MANAGER_COMPLETE_SUCCESS,
-  TASK_MANAGER_END,
-  TASK_MANAGER_END_ERROR,
-  TASK_MANAGER_END_SUCCESS,
-  TASK_MANAGER_RATE_WORKER,
-  TASK_MANAGER_RATE_WORKER_ERROR,
-  TASK_MANAGER_RATE_WORKER_SUCCESS,
-  TASK_MANAGER_REVEAL_WORKER_RATING,
-  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-  TASK_REMOVE,
-  TASK_REMOVE_ERROR,
-  TASK_REMOVE_SUCCESS,
-  TASK_SET_DATE,
-  TASK_SET_SKILL,
-  TASK_UPDATE,
-  TASK_UPDATE_ERROR,
-  TASK_UPDATE_SUCCESS,
-  TASK_WORKER_CLAIM_REWARD,
-  TASK_WORKER_END,
-  TASK_WORKER_END_ERROR,
-  TASK_WORKER_RATE_MANAGER,
-  TASK_WORKER_RATE_MANAGER_ERROR,
-  TASK_WORKER_REVEAL_MANAGER_RATING,
-  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-} from '../actionTypes';
 import { ensureColonyIsInState } from './shared';
+import type { ActionsType, Action } from '~redux';
 
 const createTaskBatch = createBatchTxRunner({
   meta: { key: 'transaction.batch.createTask' },
@@ -97,7 +61,9 @@ const createTaskBatch = createBatchTxRunner({
   ],
 });
 
-function* taskCreateSaga(action: UniqueAction): Saga<void> {
+function* taskCreateSaga(
+  action: Action<typeof ACTIONS.TASK_CREATE>,
+): Saga<void> {
   const {
     meta,
     payload: {
@@ -112,9 +78,10 @@ function* taskCreateSaga(action: UniqueAction): Saga<void> {
     },
   } = action;
   try {
-    yield put({
-      type: TASK_CREATE_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_CREATE_SUCCESS>>({
+      type: ACTIONS.TASK_CREATE_SUCCESS,
       meta,
+      payload: {},
     });
     yield call(createTaskBatch, action, [
       { params: { specificationHash, domainId, skillId, dueDate } },
@@ -123,7 +90,7 @@ function* taskCreateSaga(action: UniqueAction): Saga<void> {
       { params: { user } },
     ]);
   } catch (error) {
-    yield putError(TASK_CREATE_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_CREATE_ERROR, error, meta);
   }
 }
 
@@ -139,22 +106,25 @@ const modifyWorkerPayoutBatch = createBatchTxRunner({
   ],
 });
 
-function* taskModifyWorkerPayoutSaga(action: UniqueAction): Saga<void> {
+function* taskModifyWorkerPayoutSaga(
+  action: Action<typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT>,
+): Saga<void> {
   const {
     meta,
     payload: { taskId, fromPot, toPot, amount, token },
   } = action;
   try {
-    yield put({
-      type: TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS>>({
+      type: ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
       meta,
+      payload: {},
     });
     yield call(modifyWorkerPayoutBatch, action, [
       { params: { fromPot, toPot, amount, token } },
       { params: { taskId, token, amount } },
     ]);
   } catch (error) {
-    yield putError(TASK_MODIFY_WORKER_PAYOUT_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_MODIFY_WORKER_PAYOUT_ERROR, error, meta);
   }
 }
 
@@ -169,7 +139,7 @@ function* taskFetchSaga({
   },
   meta,
   payload,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -178,13 +148,13 @@ function* taskFetchSaga({
     /*
      * Dispatch the success action.
      */
-    yield put({
-      type: TASK_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_FETCH_SUCCESS>>({
+      type: ACTIONS.TASK_FETCH_SUCCESS,
       payload,
       meta,
     });
   } catch (error) {
-    yield putError(TASK_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_FETCH_ERROR, error, meta);
   }
 }
 
@@ -226,7 +196,7 @@ function* taskUpdateSaga({
   },
   meta,
   payload,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_UPDATE>): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -235,13 +205,13 @@ function* taskUpdateSaga({
     /*
      * Dispatch the success action.
      */
-    yield put({
-      type: TASK_UPDATE_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_UPDATE_SUCCESS>>({
+      type: ACTIONS.TASK_UPDATE_SUCCESS,
       meta,
       payload,
     });
   } catch (error) {
-    yield putError(TASK_UPDATE_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_UPDATE_ERROR, error, meta);
   }
 }
 
@@ -255,7 +225,7 @@ function* taskRemoveSaga({
     keyPath: [colonyENSName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_REMOVE>): Saga<void> {
   try {
     yield call(ensureColonyIsInState, colonyENSName);
 
@@ -264,9 +234,13 @@ function* taskRemoveSaga({
     /*
      * Dispatch the success action.
      */
-    yield put({ type: TASK_REMOVE_SUCCESS, meta });
+    yield put<Action<typeof ACTIONS.TASK_REMOVE_SUCCESS>>({
+      type: ACTIONS.TASK_REMOVE_SUCCESS,
+      meta,
+      payload: {},
+    });
   } catch (error) {
-    yield putError(TASK_REMOVE_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_REMOVE_ERROR, error, meta);
   }
 }
 
@@ -312,7 +286,7 @@ function* generateRatingSaltAndSecret(
  */
 function* guessRating(
   colonyENSName: ENSName,
-  taskId: string,
+  taskId: number,
   role: string,
   salt: string,
 ) {
@@ -342,7 +316,7 @@ function* guessRating(
 function* taskSetSkillSaga({
   payload: { taskId, skillId, colonyENSName },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<void> {
   yield put(
     setTaskSkillTx({
       identifier: colonyENSName,
@@ -358,7 +332,7 @@ function* taskSetDueDateSaga({
     keyPath: [colonyENSName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_DATE>): Saga<void> {
   yield put(
     setTaskDueDateTx({
       identifier: colonyENSName,
@@ -371,7 +345,7 @@ function* taskSetDueDateSaga({
 function* taskWorkerEndSaga({
   payload: { colonyENSName, taskId, workDescription, rating },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_END>): Saga<void> {
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
   try {
     const deliverableHash = yield call(
@@ -392,14 +366,14 @@ function* taskWorkerEndSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_END_ERROR, error);
+    yield putError(ACTIONS.TASK_WORKER_END_ERROR, error);
   }
 }
 
 function* completeTaskSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_MANAGER_END>): Saga<void> {
   try {
     // complete task past due date
     yield put(
@@ -409,7 +383,10 @@ function* completeTaskSaga({
         meta,
       }),
     );
-    yield raceError(TASK_MANAGER_COMPLETE_SUCCESS, TASK_MANAGER_COMPLETE_ERROR);
+    yield raceError(
+      ACTIONS.TASK_MANAGER_COMPLETE_SUCCESS,
+      ACTIONS.TASK_MANAGER_COMPLETE_ERROR,
+    );
 
     // generate secret
     const secret = yield call(
@@ -428,21 +405,21 @@ function* completeTaskSaga({
       }),
     );
     yield raceError(
-      TASK_MANAGER_RATE_WORKER_SUCCESS,
-      TASK_MANAGER_RATE_WORKER_ERROR,
+      ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS,
+      ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR,
     );
 
     // if we got this far without a throw, success!
-    yield put({ type: TASK_MANAGER_END_SUCCESS });
+    yield put({ type: ACTIONS.TASK_MANAGER_END_SUCCESS });
   } catch (error) {
-    yield putError(TASK_MANAGER_END_ERROR, error);
+    yield putError(ACTIONS.TASK_MANAGER_END_ERROR, error);
   }
 }
 
 function* taskWorkerRateManagerSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_RATE_MANAGER>): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -461,14 +438,14 @@ function* taskWorkerRateManagerSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_RATE_MANAGER_ERROR, error);
+    yield putError(ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR, error);
   }
 }
 
 function* taskManagerRateWorkerSaga({
   payload: { colonyENSName, taskId, rating },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_MANAGER_RATE_WORKER>): Saga<void> {
   try {
     // generate secret
     const secret = yield call(
@@ -487,14 +464,14 @@ function* taskManagerRateWorkerSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_MANAGER_RATE_WORKER_ERROR, error);
+    yield putError(ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR, error);
   }
 }
 
 function* taskWorkerRevealManagerRatingSaga({
   payload: { colonyENSName, taskId },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING>): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -517,14 +494,17 @@ function* taskWorkerRevealManagerRatingSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error);
+    yield putError(ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error);
   }
 }
 
 function* taskManagerRevealWorkerRatingSaga({
   payload: { colonyENSName, taskId },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: $PropertyType<
+  ActionsType,
+  'TASK_MANAGER_REVEAL_WORKER_RATING',
+>): Saga<void> {
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -547,14 +527,14 @@ function* taskManagerRevealWorkerRatingSaga({
       }),
     );
   } catch (error) {
-    yield putError(TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error);
+    yield putError(ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error);
   }
 }
 
 function* taskWorkerClaimRewardSaga({
   payload: { colonyENSName, taskId, tokenAddresses },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_CLAIM_REWARD>): Saga<void> {
   yield all(
     tokenAddresses.map(token =>
       put(
@@ -575,33 +555,36 @@ function* taskWorkerClaimRewardSaga({
 function* taskFinalizeSaga({
   payload: { taskId, colonyENSName },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   yield put(
     finalizeTaskTx({ identifier: colonyENSName, params: { taskId }, meta }),
   );
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(TASK_CREATE, taskCreateSaga);
-  yield takeEvery(TASK_MODIFY_WORKER_PAYOUT, taskModifyWorkerPayoutSaga);
-  yield takeEvery(TASK_FETCH, taskFetchSaga);
-  yield takeEvery(TASK_FETCH_ALL, taskFetchAllSaga);
-  yield takeEvery(TASK_FINALIZE, taskFinalizeSaga);
-  yield takeEvery(TASK_MANAGER_END, completeTaskSaga);
-  yield takeEvery(TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
-  yield takeEvery(TASK_REMOVE, taskRemoveSaga);
-  yield takeEvery(TASK_SET_DATE, taskSetDueDateSaga);
-  yield takeEvery(TASK_SET_SKILL, taskSetSkillSaga);
-  yield takeEvery(TASK_UPDATE, taskUpdateSaga);
-  yield takeEvery(TASK_WORKER_END, taskWorkerEndSaga);
-  yield takeEvery(TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
+  yield takeEvery(ACTIONS.TASK_CREATE, taskCreateSaga);
   yield takeEvery(
-    TASK_WORKER_REVEAL_MANAGER_RATING,
+    ACTIONS.TASK_MODIFY_WORKER_PAYOUT,
+    taskModifyWorkerPayoutSaga,
+  );
+  yield takeEvery(ACTIONS.TASK_FETCH, taskFetchSaga);
+  yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAllSaga);
+  yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalizeSaga);
+  yield takeEvery(ACTIONS.TASK_MANAGER_END, completeTaskSaga);
+  yield takeEvery(ACTIONS.TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
+  yield takeEvery(ACTIONS.TASK_REMOVE, taskRemoveSaga);
+  yield takeEvery(ACTIONS.TASK_SET_DATE, taskSetDueDateSaga);
+  yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkillSaga);
+  yield takeEvery(ACTIONS.TASK_UPDATE, taskUpdateSaga);
+  yield takeEvery(ACTIONS.TASK_WORKER_END, taskWorkerEndSaga);
+  yield takeEvery(ACTIONS.TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
+  yield takeEvery(
+    ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING,
     taskWorkerRevealManagerRatingSaga,
   );
   yield takeEvery(
-    TASK_MANAGER_REVEAL_WORKER_RATING,
+    ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING,
     taskManagerRevealWorkerRatingSaga,
   );
-  yield takeEvery(TASK_WORKER_CLAIM_REWARD, taskWorkerClaimRewardSaga);
+  yield takeEvery(ACTIONS.TASK_WORKER_CLAIM_REWARD, taskWorkerClaimRewardSaga);
 }

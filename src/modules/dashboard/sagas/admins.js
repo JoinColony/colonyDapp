@@ -5,39 +5,23 @@ import type { Saga } from 'redux-saga';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
-import type { UniqueAction, UniqueActionWithKeyPath } from '~types';
+import type { Action } from '~redux';
 
 import { putError, takeFrom } from '~utils/saga/effects';
+import { ACTIONS } from '~redux';
 
 import { ensureColonyIsInState, fetchColonyStore } from './shared';
-
-import {
-  COLONY_ADMIN_ADD,
-  COLONY_ADMIN_ADD_SUCCESS,
-  COLONY_ADMIN_ADD_ERROR,
-  COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-  COLONY_ADMIN_REMOVE,
-  COLONY_ADMIN_REMOVE_SUCCESS,
-  COLONY_ADMIN_REMOVE_ERROR,
-  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-} from '../actionTypes';
-
-import {
-  TRANSACTION_CREATED,
-  TRANSACTION_SUCCEEDED,
-} from '../../core/actionTypes';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
 function* addColonyAdmin({
   payload: { newAdmin, ensName },
   meta,
-}: UniqueAction): Saga<void> {
-  const txChannel = yield call(getTxChannel, meta.id);
-
+}: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
+  let txChannel;
   try {
+    txChannel = yield call(getTxChannel, meta.id);
     const { walletAddress, username } = newAdmin.profile;
-    const keyPath = [ensName, 'record', 'admins', username];
 
     /*
      * Get the colony store
@@ -45,6 +29,7 @@ function* addColonyAdmin({
     const store = yield call(fetchColonyStore, ensName);
     const colonyAddress = store.get('address');
     const colonyAdmins = store.get('admins');
+
     /*
      * Set the admin on the contract level (transaction)
      */
@@ -58,7 +43,7 @@ function* addColonyAdmin({
       },
     });
 
-    yield takeFrom(txChannel, TRANSACTION_CREATED);
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
 
     /*
      * Dispatch the action to the admin in the Redux store
@@ -66,12 +51,13 @@ function* addColonyAdmin({
      * @NOTE Add the new admin in a pending state
      * TODO: If anything here goes wrong we want to revert this I guess!
      */
-    yield put({
-      type: COLONY_ADMIN_ADD_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_SUCCESS>>({
+      type: ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
       payload: {
         adminData: newAdmin.profile,
+        username,
       },
-      meta: { keyPath },
+      meta,
     });
 
     /*
@@ -83,7 +69,7 @@ function* addColonyAdmin({
       }),
     );
 
-    yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     yield call([store, store.set], 'admins', {
       ...colonyAdmins,
@@ -93,27 +79,30 @@ function* addColonyAdmin({
       },
     });
 
-    yield put({
-      type: COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-      meta: { keyPath },
+    yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS>>({
+      type: ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
+      meta,
+      payload: { username },
     });
   } catch (error) {
-    yield putError(COLONY_ADMIN_ADD_ERROR, error);
+    yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
   } finally {
-    txChannel.close();
+    if (txChannel) txChannel.close();
   }
 }
 
 function* removeColonyAdmin({
   payload: { admin },
+  meta: {
+    keyPath: [ensName],
+  },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
-  const txChannel = yield call(getTxChannel, meta.id);
-
+}: Action<typeof ACTIONS.COLONY_ADMIN_REMOVE>): Saga<void> {
+  let txChannel;
   try {
-    const ensName = meta.keyPath[0];
+    txChannel = yield call(getTxChannel, meta.id);
+
     const { walletAddress, username } = admin;
-    const keyPath = [ensName, 'record', 'admins', username];
     /*
      * Ensure the colony is in the state.
      */
@@ -140,14 +129,16 @@ function* removeColonyAdmin({
         gasLimit: 500000,
       },
     });
+
     /*
      * Dispatch the action to the admin in the Redux store
      *
      * @NOTE Don't actually remove the admin, just set the state to pending
      */
-    yield put({
-      type: COLONY_ADMIN_REMOVE_SUCCESS,
-      meta: { keyPath },
+    yield put<Action<typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS>>({
+      type: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
+      meta,
+      payload: { username },
     });
     /*
      * Redirect the user back to the admins tab
@@ -158,21 +149,24 @@ function* removeColonyAdmin({
       }),
     );
 
-    yield takeFrom(txChannel, TRANSACTION_SUCCEEDED);
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     delete colonyAdmins[username];
     yield call([store, store.set], 'admins', colonyAdmins);
 
-    yield put({
-      type: COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-      meta: { keyPath },
+    yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS>>({
+      type: ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
+      meta,
+      payload: { username },
     });
   } catch (error) {
-    yield putError(COLONY_ADMIN_REMOVE_ERROR, error);
+    yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
+  } finally {
+    if (txChannel) txChannel.close();
   }
 }
 
 export default function* adminsSagas(): any {
-  yield takeEvery(COLONY_ADMIN_ADD, addColonyAdmin);
-  yield takeEvery(COLONY_ADMIN_REMOVE, removeColonyAdmin);
+  yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, addColonyAdmin);
+  yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, removeColonyAdmin);
 }

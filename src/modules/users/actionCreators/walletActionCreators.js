@@ -1,11 +1,11 @@
 /* @flow */
 
-import { WALLET_FETCH_ACCOUNTS } from '../actionTypes';
+import { ACTIONS } from '~redux';
 
 type WalletType = 'ledger' | 'trezor';
 
 // eslint-disable-next-line import/prefer-default-export
 export const fetchAccounts = (walletType: WalletType) => ({
-  type: WALLET_FETCH_ACCOUNTS,
+  type: ACTIONS.WALLET_FETCH_ACCOUNTS,
   payload: { walletType },
 });

@@ -2,36 +2,41 @@
 
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import {
-  COLONY_AVATAR_REMOVE_SUCCESS,
-  COLONY_AVATAR_UPLOAD_SUCCESS,
-  COLONY_FETCH,
-  COLONY_FETCH_SUCCESS,
-  COLONY_PROFILE_UPDATE_SUCCESS,
-  COLONY_ADMIN_ADD_SUCCESS,
-  COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-  COLONY_ADMIN_REMOVE_SUCCESS,
-  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-} from '../actionTypes';
-
 import { ColonyRecord, DataRecord, TokenRecord } from '~immutable';
 import { withDataReducer } from '~utils/reducers';
+import { ACTIONS } from '~redux';
 
 import type { AllColoniesMap, ColonyRecordType } from '~immutable';
-import type { UniqueActionWithKeyPath } from '~types';
+import type { ReducerType } from '~redux';
+import ColonyAdminRecord from '~immutable/ColonyAdmin';
 
-const coloniesReducer = (
-  state: AllColoniesMap = ImmutableMap(),
-  action: UniqueActionWithKeyPath,
-) => {
+const coloniesReducer: ReducerType<
+  AllColoniesMap,
+  {|
+    COLONY_ADMIN_ADD_CONFIRM_SUCCESS: *,
+    COLONY_ADMIN_ADD_SUCCESS: *,
+    COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: *,
+    COLONY_ADMIN_REMOVE_SUCCESS: *,
+    COLONY_AVATAR_REMOVE_SUCCESS: *,
+    COLONY_AVATAR_UPLOAD_SUCCESS: *,
+    COLONY_FETCH: *,
+    COLONY_FETCH_SUCCESS: *,
+    COLONY_PROFILE_UPDATE_SUCCESS: *,
+  |},
+> = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case COLONY_FETCH_SUCCESS: {
+    case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
-        payload: { token, ensName, admins, ...props },
+        payload: { token, ensName, admins = {}, ...props },
       } = action;
       const record = ColonyRecord({
         token: TokenRecord(token),
-        admins: ImmutableMap(admins),
+        admins: ImmutableMap(
+          Object.entries(admins).map(([username, user]) => [
+            username,
+            ColonyAdminRecord(user),
+          ]),
+        ),
         ensName,
         ...props,
       });
@@ -39,7 +44,7 @@ const coloniesReducer = (
         ? state.setIn([ensName, 'record'], record)
         : state.set(ensName, DataRecord<ColonyRecordType>({ record }));
     }
-    case COLONY_PROFILE_UPDATE_SUCCESS: {
+    case ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
         meta: { keyPath },
         payload,
@@ -48,48 +53,58 @@ const coloniesReducer = (
       const props: any = fromJS(payload);
       return state.mergeDeepIn([...keyPath, 'record'], props);
     }
-    case COLONY_AVATAR_UPLOAD_SUCCESS: {
+    case ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS: {
       const {
         meta: { keyPath },
         payload: hash,
       } = action;
+      // $FlowFixMe issue with keyPath
       return state.setIn([...keyPath, 'record', 'avatar'], hash);
     }
-    case COLONY_AVATAR_REMOVE_SUCCESS: {
+    case ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS: {
       const {
         meta: { keyPath },
       } = action;
       return state.setIn([...keyPath, 'record', 'avatar'], undefined);
     }
-    case COLONY_ADMIN_ADD_SUCCESS: {
+    case ACTIONS.COLONY_ADMIN_ADD_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: { adminData },
+        payload: { adminData, username },
       } = action;
-      return state
-        ? state.setIn(keyPath, {
-            ...adminData.toObject(),
-            state: 'pending',
-          })
-        : state;
+      return state.setIn([...keyPath, 'record', 'admins', username], {
+        ...adminData.toJS(),
+        state: 'pending',
+      });
     }
-    case COLONY_ADMIN_ADD_CONFIRM_SUCCESS: {
+    case ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS: {
       const {
         meta: { keyPath },
+        payload: { username },
       } = action;
-      return state ? state.setIn([...keyPath, 'state'], 'confirmed') : state;
+      return state.setIn(
+        // $FlowFixMe
+        [...keyPath, 'record', 'admins', username, 'state'],
+        'confirmed',
+      );
     }
-    case COLONY_ADMIN_REMOVE_SUCCESS: {
+    case ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS: {
       const {
         meta: { keyPath },
+        payload: { username },
       } = action;
-      return state ? state.setIn([...keyPath, 'state'], 'pending') : state;
+      return state.setIn(
+        // $FlowFixMe // issue with updating the admins map by value
+        [...keyPath, 'record', 'admins', username, 'status'],
+        'pending',
+      );
     }
-    case COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: {
+    case ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: {
       const {
         meta: { keyPath },
+        payload: { username },
       } = action;
-      return state ? state.deleteIn(keyPath) : state;
+      return state.deleteIn([...keyPath, 'record', 'admins', username]);
     }
     default:
       return state;
@@ -97,6 +112,6 @@ const coloniesReducer = (
 };
 
 export default withDataReducer<AllColoniesMap, ColonyRecordType>(
-  COLONY_FETCH,
+  ACTIONS.COLONY_FETCH,
   ImmutableMap(),
 )(coloniesReducer);

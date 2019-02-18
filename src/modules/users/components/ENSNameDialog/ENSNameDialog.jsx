@@ -16,18 +16,10 @@ import Button from '~core/Button';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, FormStatus } from '~core/Fields';
+import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
 import { currentUserBalanceSelector } from '../../selectors';
-
-import {
-  USERNAME_CREATE,
-  USERNAME_CREATE_SUCCESS,
-  USERNAME_CREATE_ERROR,
-  USERNAME_CHECK_AVAILABILITY,
-  USERNAME_CHECK_AVAILABILITY_SUCCESS,
-  USERNAME_CHECK_AVAILABILITY_ERROR,
-} from '../../actionTypes';
 
 const MSG = defineMessages({
   iWillDoItLater: {
@@ -102,9 +94,9 @@ class ENSNameDialog extends Component<Props, State> {
   }
 
   checkDomainTaken = promiseListener.createAsyncFunction({
-    start: USERNAME_CHECK_AVAILABILITY,
-    resolve: USERNAME_CHECK_AVAILABILITY_SUCCESS,
-    reject: USERNAME_CHECK_AVAILABILITY_ERROR,
+    start: ACTIONS.USERNAME_CHECK_AVAILABILITY,
+    resolve: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
+    reject: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
   });
 
   validateDomain = async (values: FormValues) => {
@@ -133,9 +125,9 @@ class ENSNameDialog extends Component<Props, State> {
     return (
       <Dialog cancel={cancel}>
         <ActionForm
-          submit={USERNAME_CREATE}
-          success={USERNAME_CREATE_SUCCESS}
-          error={USERNAME_CREATE_ERROR}
+          submit={ACTIONS.USERNAME_CREATE}
+          success={ACTIONS.USERNAME_CREATE_SUCCESS}
+          error={ACTIONS.USERNAME_CREATE_ERROR}
           validate={this.validateDomain}
           onSuccess={close}
         >

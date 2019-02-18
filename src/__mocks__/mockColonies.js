@@ -3,7 +3,6 @@
 const genericColonyProps = {
   databases: {
     domainsIndex: '',
-    draftsIndex: '',
   },
 };
 

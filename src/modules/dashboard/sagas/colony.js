@@ -5,16 +5,13 @@ import type { Saga } from 'redux-saga';
 import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 
-import type {
-  Action,
-  ENSName,
-  UniqueAction,
-  UniqueActionWithKeyPath,
-} from '~types';
+import type { ENSName } from '~types';
+import type { Action } from '~redux';
 
 import { putError, callCaller } from '~utils/saga/effects';
 import { getHashedENSDomainString } from '~utils/web3/ens';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
@@ -24,35 +21,6 @@ import { set, getAll } from '../../../lib/database/commands';
 import { createBatchTxRunner } from '../../core/sagas/transactions';
 
 import { colonyStoreBlueprint } from '../stores';
-
-import {
-  COLONY_AVATAR_FETCH,
-  COLONY_AVATAR_FETCH_ERROR,
-  COLONY_AVATAR_FETCH_SUCCESS,
-  COLONY_AVATAR_REMOVE,
-  COLONY_AVATAR_REMOVE_ERROR,
-  COLONY_AVATAR_REMOVE_SUCCESS,
-  COLONY_AVATAR_UPLOAD,
-  COLONY_AVATAR_UPLOAD_ERROR,
-  COLONY_AVATAR_UPLOAD_SUCCESS,
-  COLONY_CREATE,
-  COLONY_CREATE_ERROR,
-  COLONY_CREATE_SUCCESS,
-  COLONY_CREATE_LABEL,
-  COLONY_CREATE_LABEL_SUCCESS,
-  COLONY_DOMAIN_VALIDATE,
-  COLONY_DOMAIN_VALIDATE_ERROR,
-  COLONY_DOMAIN_VALIDATE_SUCCESS,
-  COLONY_ENS_NAME_FETCH,
-  COLONY_ENS_NAME_FETCH_ERROR,
-  COLONY_ENS_NAME_FETCH_SUCCESS,
-  COLONY_FETCH,
-  COLONY_FETCH_ERROR,
-  COLONY_FETCH_SUCCESS,
-  COLONY_PROFILE_UPDATE,
-  COLONY_PROFILE_UPDATE_ERROR,
-  COLONY_PROFILE_UPDATE_SUCCESS,
-} from '../actionTypes';
 
 import {
   createColony,
@@ -118,7 +86,10 @@ const createColonyBatch = createBatchTxRunner({
 });
 
 // TODO: Rename, complete and wire up after new onboarding is in place
-function* createColonySagaNew(action: UniqueAction): Saga<void> {
+function* createColonySagaNew(
+  // $FlowFixMe this action type isn't defined yet
+  action: Action<'COLONY_CREATE_NEW'>,
+): Saga<void> {
   // Step 1: Do whatever needs to be done before starting the batch tx
 
   const {
@@ -140,12 +111,13 @@ function* createColonySagaNew(action: UniqueAction): Saga<void> {
     console.info(transactions);
 
     // Step 4: report success for the colony creation wizard
-    yield put({
-      type: COLONY_CREATE_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_CREATE_SUCCESS>>({
+      type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
+      payload: {},
     });
   } catch (error) {
-    yield putError(COLONY_CREATE_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   }
 }
 
@@ -155,7 +127,7 @@ function* createColonySagaNew(action: UniqueAction): Saga<void> {
 function* createColonySaga({
   payload: params,
   meta,
-}: UniqueAction): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
   yield put(
     createColony({
       meta,
@@ -180,14 +152,18 @@ function* createColonyLabelSaga({
     tokenIcon,
   },
   meta,
-}: UniqueAction): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
   const colonyStoreData = {
     address: colonyAddress,
+    databases: {
+      domainsIndex: undefined,
+    },
     ensName,
     id: colonyId,
     name: colonyName,
     token: {
       address: tokenAddress,
+      balance: undefined,
       icon: tokenIcon,
       name: tokenName,
       symbol: tokenSymbol,
@@ -196,11 +172,11 @@ function* createColonyLabelSaga({
 
   // Dispatch and action to set the current colony in the app state (simulating fetching it)
   const fetchSuccessAction = {
-    type: COLONY_FETCH_SUCCESS,
+    type: ACTIONS.COLONY_FETCH_SUCCESS,
     meta: { ...meta, keyPath: [ensName] },
     payload: colonyStoreData,
   };
-  yield put(fetchSuccessAction);
+  yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>(fetchSuccessAction);
 
   /*
    * Get and/or create the index stores for this colony.
@@ -222,7 +198,10 @@ function* createColonyLabelSaga({
     ...colonyStoreData,
     databases,
   };
-  yield put({ ...fetchSuccessAction, payload: completeColonyStoreData });
+  yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
+    ...fetchSuccessAction,
+    payload: completeColonyStoreData,
+  });
 
   /*
    * Save the colony props to the colony store.
@@ -251,7 +230,7 @@ function* createColonyLabelSaga({
 function* validateColonyDomain({
   payload: { ensName },
   meta,
-}: UniqueAction): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE>): Saga<void> {
   yield delay(300);
 
   const nameHash = yield call(getHashedENSDomainString, ensName, 'colony');
@@ -267,13 +246,17 @@ function* validateColonyDomain({
 
   if (ensAddress) {
     yield putError(
-      COLONY_DOMAIN_VALIDATE_ERROR,
+      ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
       new Error('ENS address already exists'),
       meta,
     );
     return;
   }
-  yield put({ type: COLONY_DOMAIN_VALIDATE_SUCCESS, meta });
+  yield put<Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS>>({
+    type: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
+    meta,
+    payload: {},
+  });
 }
 
 /*
@@ -284,7 +267,7 @@ function* createColonyLabelSuccessSaga({
   payload: {
     params: { colonyName },
   },
-}: Action): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_CREATE_LABEL_SUCCESS>): Saga<void> {
   yield put(replace(`colony/${colonyName}`));
 }
 
@@ -294,7 +277,7 @@ function* updateColonySaga({
   },
   meta,
   payload: colonyUpdateValues,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
   try {
     /*
      * Get the colony store
@@ -309,13 +292,13 @@ function* updateColonySaga({
     /*
      * Update the colony in the redux store to show the updated values
      */
-    yield put({
-      type: COLONY_PROFILE_UPDATE_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS>>({
+      type: ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
       meta,
       payload: colonyUpdateValues,
     });
   } catch (error) {
-    yield putError(COLONY_PROFILE_UPDATE_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_PROFILE_UPDATE_ERROR, error, meta);
   }
 }
 
@@ -324,18 +307,18 @@ function* fetchColonySaga({
     keyPath: [ensName],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
     // TODO error if the colony does not exist!
     const store = yield call(getOrCreateColonyStore, ensName);
     const payload = yield call(getAll, store);
-    yield put({
-      type: COLONY_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_FETCH_SUCCESS,
       meta,
       payload,
     });
   } catch (error) {
-    yield putError(COLONY_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
   }
 }
 
@@ -344,7 +327,7 @@ function* fetchColonyENSName({
     keyPath: [colonyAddress],
   },
   meta,
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH>): Saga<void> {
   try {
     const { domain } = yield callCaller({
       context: NETWORK_CONTEXT,
@@ -359,13 +342,13 @@ function* fetchColonyENSName({
     if (type !== 'colony')
       throw new Error(`Address "${colonyAddress}" is not a Colony`);
 
-    yield put({
-      type: COLONY_ENS_NAME_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS,
       meta,
       payload: ensName,
     });
   } catch (error) {
-    yield putError(COLONY_ENS_NAME_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_ENS_NAME_FETCH_ERROR, error, meta);
   }
 }
 
@@ -375,7 +358,7 @@ function* uploadColonyAvatar({
   },
   meta,
   payload: { data },
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<void> {
   try {
     // first attempt upload to IPFS
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
@@ -394,13 +377,13 @@ function* uploadColonyAvatar({
     /*
      * Store the new avatar hash value in the redux store so we can show it
      */
-    yield put({
-      type: COLONY_AVATAR_UPLOAD_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS>>({
+      type: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
       meta,
       payload: hash,
     });
   } catch (error) {
-    yield putError(COLONY_AVATAR_UPLOAD_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
   }
 }
 
@@ -409,7 +392,7 @@ function* fetchColonyAvatar({
   meta: {
     keyPath: [hash],
   },
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_AVATAR_FETCH>): Saga<void> {
   try {
     /*
      * Get the base64 avatar image from ipfs
@@ -419,13 +402,13 @@ function* fetchColonyAvatar({
     /*
      * Put the base64 value in the redux state so we can show it
      */
-    yield put({
-      type: COLONY_AVATAR_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
       meta,
       payload: { hash, avatarData },
     });
   } catch (error) {
-    yield putError(COLONY_AVATAR_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_AVATAR_FETCH_ERROR, error, meta);
   }
 }
 
@@ -434,7 +417,7 @@ function* removeColonyAvatar({
   meta: {
     keyPath: [ensName],
   },
-}: UniqueActionWithKeyPath): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
   try {
     /*
      * Get the colony store
@@ -449,31 +432,35 @@ function* removeColonyAvatar({
     /*
      * Also set the avatar in the state to undefined (via a reducer)
      */
-    yield put({
-      type: COLONY_AVATAR_REMOVE_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS>>({
+      type: ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS,
       meta,
+      payload: {},
     });
   } catch (error) {
-    yield putError(COLONY_AVATAR_REMOVE_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_AVATAR_REMOVE_ERROR, error, meta);
   }
 }
 
 export default function* colonySagas(): any {
-  yield takeEvery(COLONY_AVATAR_FETCH, fetchColonyAvatar);
+  yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, fetchColonyAvatar);
   // TODO: rename properly once the new onboarding is done
   yield takeEvery('COLONY_CREATE_NEW', createColonySagaNew);
-  yield takeEvery(COLONY_CREATE, createColonySaga);
-  yield takeEvery(COLONY_CREATE_LABEL, createColonyLabelSaga);
-  yield takeEvery(COLONY_CREATE_LABEL_SUCCESS, createColonyLabelSuccessSaga);
-  yield takeEvery(COLONY_ENS_NAME_FETCH, fetchColonyENSName);
-  yield takeEvery(COLONY_FETCH, fetchColonySaga);
-  yield takeEvery(COLONY_PROFILE_UPDATE, updateColonySaga);
+  yield takeEvery(ACTIONS.COLONY_CREATE, createColonySaga);
+  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, createColonyLabelSaga);
+  yield takeEvery(
+    ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
+    createColonyLabelSuccessSaga,
+  );
+  yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, fetchColonyENSName);
+  yield takeEvery(ACTIONS.COLONY_FETCH, fetchColonySaga);
+  yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, updateColonySaga);
 
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.
    */
-  yield takeLatest(COLONY_AVATAR_REMOVE, removeColonyAvatar);
-  yield takeLatest(COLONY_AVATAR_UPLOAD, uploadColonyAvatar);
-  yield takeLatest(COLONY_DOMAIN_VALIDATE, validateColonyDomain);
+  yield takeLatest(ACTIONS.COLONY_AVATAR_REMOVE, removeColonyAvatar);
+  yield takeLatest(ACTIONS.COLONY_AVATAR_UPLOAD, uploadColonyAvatar);
+  yield takeLatest(ACTIONS.COLONY_DOMAIN_VALIDATE, validateColonyDomain);
 }

@@ -2,18 +2,20 @@
 
 import { Map as ImmutableMap, List } from 'immutable';
 
-import type { UniqueActionWithKeyPath } from '~types';
+import type { ReducerType } from '~redux';
+import type { AllCommentsMap } from '~immutable';
 
 import { TaskCommentRecord } from '~immutable';
+import { ACTIONS } from '~redux';
 
-import { TASK_COMMENT_ADD_SUCCESS } from '../actionTypes';
-
-const allCommentsReducer = (
-  state: Object = new ImmutableMap(),
-  action: UniqueActionWithKeyPath,
-) => {
+const allCommentsReducer: ReducerType<
+  AllCommentsMap,
+  {|
+    TASK_COMMENT_ADD_SUCCESS: *,
+  |},
+> = (state = new ImmutableMap(), action) => {
   switch (action.type) {
-    case TASK_COMMENT_ADD_SUCCESS: {
+    case ACTIONS.TASK_COMMENT_ADD_SUCCESS: {
       const {
         payload: { draftId, commentData, signature },
         meta: { id },

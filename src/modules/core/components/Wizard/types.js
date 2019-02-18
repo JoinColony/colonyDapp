@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Action } from '~types';
+import type { UniqueActionType } from '~redux';
 
 export type WizardProps<FormValues> = {
   step: number,
@@ -13,6 +13,9 @@ export type WizardProps<FormValues> = {
     isInitialValid: Object => boolean,
   },
   formHelpers: {
-    includeWizardValues: (action: Action, currentValues: Object) => Action,
+    includeWizardValues: (
+      action: UniqueActionType<*, *, *>,
+      currentValues: Object,
+    ) => UniqueActionType<*, *, *>,
   },
 };

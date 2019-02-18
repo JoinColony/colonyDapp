@@ -4,14 +4,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { DialogActionButton } from '~core/Button';
+import { ACTIONS } from '~redux';
 
 import type { TaskPayoutType } from '~immutable';
-
-import {
-  TASK_WORKER_CLAIM_REWARD,
-  TASK_WORKER_CLAIM_REWARD_ERROR,
-  TASK_WORKER_CLAIM_REWARD_SUCCESS,
-} from '../../actionTypes';
 
 const MSG = defineMessages({
   claimRewards: {
@@ -61,9 +56,9 @@ const TaskClaimReward = ({
       sortedPayouts,
       nativeTokenPayout,
     }}
-    submit={TASK_WORKER_CLAIM_REWARD}
-    success={TASK_WORKER_CLAIM_REWARD_SUCCESS}
-    error={TASK_WORKER_CLAIM_REWARD_ERROR}
+    submit={ACTIONS.TASK_WORKER_CLAIM_REWARD}
+    success={ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS}
+    error={ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR}
     values={{
       taskId,
       colonyENSName,

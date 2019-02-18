@@ -6,6 +6,7 @@ import nanoid from 'nanoid';
 import type { ColonyContext, TransactionReceipt } from '~types';
 import type {
   GasPricesProps,
+  TransactionError,
   TransactionEventData,
   TransactionMultisig,
   TransactionParams,
@@ -18,23 +19,7 @@ import type {
   TxActionCreatorOptions,
 } from '../types';
 
-import {
-  GAS_PRICES_UPDATE,
-  MULTISIG_TRANSACTION_CREATED,
-  MULTISIG_TRANSACTION_REFRESHED,
-  MULTISIG_TRANSACTION_REJECT,
-  MULTISIG_TRANSACTION_SIGN,
-  MULTISIG_TRANSACTION_SIGNED,
-  TRANSACTION_ADD_PROPERTIES,
-  TRANSACTION_CREATED,
-  TRANSACTION_ERROR,
-  TRANSACTION_ESTIMATE_GAS,
-  TRANSACTION_SUCCEEDED,
-  TRANSACTION_GAS_UPDATE,
-  TRANSACTION_RECEIPT_RECEIVED,
-  TRANSACTION_SENT,
-  TRANSACTION_CANCEL,
-} from '../actionTypes';
+import { ACTIONS } from '~redux';
 
 type TxFactoryOptions = {
   context: ColonyContext,
@@ -74,7 +59,9 @@ export const createTxActionCreator = <P: TransactionParams>({
     );
   }
   return {
-    type: isMultisig ? MULTISIG_TRANSACTION_CREATED : TRANSACTION_CREATED,
+    type: isMultisig
+      ? ACTIONS.MULTISIG_TRANSACTION_CREATED
+      : ACTIONS.TRANSACTION_CREATED,
     payload: {
       context,
       createdAt: new Date(),
@@ -96,9 +83,10 @@ export const multisigTransactionRefreshError = (
   payload: { message: string },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'multisigRefresh', ...payload } },
+  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  payload: { type: 'multisigRefresh', ...payload },
   meta: { id },
+  error: true,
 });
 
 export const multisigTransactionNonceError = (
@@ -106,9 +94,10 @@ export const multisigTransactionNonceError = (
   payload: { message: string },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'multisigNonce', ...payload } },
+  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  payload: { type: 'multisigNonce', ...payload },
   meta: { id },
+  error: true,
 });
 
 export const multisigTransactionSignError = (
@@ -116,9 +105,10 @@ export const multisigTransactionSignError = (
   payload: { message: string },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'multisigSign', ...payload } },
+  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  payload: { type: 'multisigSign', ...payload },
   meta: { id },
+  error: true,
 });
 
 export const multisigTransactionRejectError = (
@@ -126,16 +116,17 @@ export const multisigTransactionRejectError = (
   payload: { message: string },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_ERROR,
-  payload: { error: { type: 'multisigReject', ...payload } },
+  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  payload: { type: 'multisigReject', ...payload },
   meta: { id },
+  error: true,
 });
 
 export const multisigTransactionRefreshed = (
   id: string,
   multisig: TransactionMultisig,
 ) => ({
-  type: MULTISIG_TRANSACTION_REFRESHED,
+  type: ACTIONS.MULTISIG_TRANSACTION_REFRESHED,
   payload: { multisig },
   meta: {
     id,
@@ -143,28 +134,29 @@ export const multisigTransactionRefreshed = (
 });
 
 export const multisigTransactionSign = (id: string) => ({
-  type: MULTISIG_TRANSACTION_SIGN,
+  type: ACTIONS.MULTISIG_TRANSACTION_SIGN,
   meta: {
     id,
   },
 });
 
 export const multisigTransactionSigned = (id: string) => ({
-  type: MULTISIG_TRANSACTION_SIGNED,
+  type: ACTIONS.MULTISIG_TRANSACTION_SIGNED,
+  payload: {},
   meta: {
     id,
   },
 });
 
 export const multisigTransactionReject = (id: string) => ({
-  type: MULTISIG_TRANSACTION_REJECT,
+  type: ACTIONS.MULTISIG_TRANSACTION_REJECT,
   meta: {
     id,
   },
 });
 
-export const transactionError = (id: string, error: Error) => ({
-  type: TRANSACTION_ERROR,
+export const transactionError = (id: string, error: TransactionError) => ({
+  type: ACTIONS.TRANSACTION_ERROR,
   payload: error,
   error: true,
   meta: { id },
@@ -175,7 +167,7 @@ export const transactionReceiptReceived = <P: TransactionParams>(
   payload: { receipt: TransactionReceipt, params: P },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_RECEIPT_RECEIVED,
+  type: overrideActionType || ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
   payload,
   meta: { id },
 });
@@ -185,7 +177,7 @@ export const transactionSent = <P: TransactionParams>(
   payload: { hash: string, params: P },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_SENT,
+  type: overrideActionType || ACTIONS.TRANSACTION_SENT,
   payload,
   meta: { id },
 });
@@ -198,22 +190,22 @@ export const transactionEventDataReceived = <
   payload: { eventData: E, params: P },
   overrideActionType?: string,
 ) => ({
-  type: overrideActionType || TRANSACTION_SUCCEEDED,
+  type: overrideActionType || ACTIONS.TRANSACTION_SUCCEEDED,
   payload,
   meta: { id },
 });
 
 export const transactionAddProperties = (
   id: string,
-  payload: { identifier?: string, params?: Object },
+  payload: {| identifier?: string, params?: Object |},
 ) => ({
-  type: TRANSACTION_ADD_PROPERTIES,
+  type: ACTIONS.TRANSACTION_ADD_PROPERTIES,
   meta: { id },
   payload,
 });
 
 export const transactionEstimateGas = (id: string) => ({
-  type: TRANSACTION_ESTIMATE_GAS,
+  type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
   meta: { id },
 });
 
@@ -221,17 +213,17 @@ export const transactionUpdateGas = (
   id: string,
   data: { gasLimit: BigNumber, gasPrice: BigNumber },
 ) => ({
-  type: TRANSACTION_GAS_UPDATE,
+  type: ACTIONS.TRANSACTION_GAS_UPDATE,
   payload: data,
   meta: { id },
 });
 
 export const transactionCancel = (id: string) => ({
-  type: TRANSACTION_CANCEL,
+  type: ACTIONS.TRANSACTION_CANCEL,
   meta: { id },
 });
 
 export const updateGasPrices = (gasPrices: GasPricesProps) => ({
-  type: GAS_PRICES_UPDATE,
+  type: ACTIONS.GAS_PRICES_UPDATE,
   payload: gasPrices,
 });

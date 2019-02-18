@@ -2,17 +2,17 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { COLONY_ENS_NAME_FETCH_SUCCESS } from '../actionTypes';
+import { ACTIONS } from '~redux';
 
-import type { UniqueActionWithKeyPath } from '~types';
 import type { AllColonyENSNamesMap } from '~immutable';
+import type { ReducerType } from '~redux';
 
-const colonyENSNamesReducer = (
-  state: AllColonyENSNamesMap = ImmutableMap(),
-  action: UniqueActionWithKeyPath,
-) => {
+const colonyENSNamesReducer: ReducerType<
+  AllColonyENSNamesMap,
+  {| COLONY_ENS_NAME_FETCH_SUCCESS: * |},
+> = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case COLONY_ENS_NAME_FETCH_SUCCESS: {
+    case ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS: {
       const {
         meta: {
           keyPath: [colonyAddress],
