@@ -1,7 +1,5 @@
 /* @flow */
 
-import pSeries from 'p-series';
-
 import type { Address, ENSName } from '~types';
 import type {
   ColonyClientContext,
@@ -79,18 +77,21 @@ type CreateDomainCommandArgs = {|
 export const createColonyProfile: ColonyCommand<
   CreateColonyProfileCommandArgs,
   EventStore,
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-  metadata,
-}) => ({
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateColonyProfileCommandArgsSchema,
-  async execute({ name, description, guideline, website, token }) {
+  async execute(args) {
+    const {
+      address,
+      ensName,
+      name,
+      description,
+      guideline,
+      website,
+      token,
+    } = args;
     const profileCreatedEvent = createColonyProfileCreatedEvent({
-      address: colonyAddress,
-      ensName: colonyENSName,
+      address,
+      ensName,
       name,
       description,
       guideline,
@@ -100,14 +101,10 @@ export const createColonyProfile: ColonyCommand<
     const colonyStore = await createColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
+
+    await colonyStore.append(profileCreatedEvent);
+    await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
-
-    await pSeries(
-      [profileCreatedEvent, tokenInfoAddedEvent].map(event =>
-        colonyStore.append(event),
-      ),
-    );
-
     return colonyStore;
   },
 });
@@ -136,6 +133,7 @@ export const updateColonyProfile: ColonyCommand<
       metadata,
     );
     await colonyStore.append(createColonyProfileUpdatedEvent(args));
+    await colonyStore.load();
     return colonyStore;
   },
 });
@@ -150,6 +148,7 @@ export const setColonyAvatar: ColonyCommand<
       metadata,
     );
     await colonyStore.append(createColonyAvatarUploadedEvent(args));
+    await colonyStore.load();
     return colonyStore;
   },
 });
@@ -164,6 +163,7 @@ export const removeColonyAvatar: ColonyCommand<
       metadata,
     );
     await colonyStore.append(createColonyAvatarRemovedEvent(args));
+    await colonyStore.load();
     return colonyStore;
   },
 });
