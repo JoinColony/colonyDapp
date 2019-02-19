@@ -2,28 +2,21 @@
 
 import type { Saga } from 'redux-saga';
 
-import { all, call, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
 
 import type { ENSName } from '~types';
 
-import { putError, raceError, callCaller } from '~utils/saga/effects';
+import { callCaller, putError, takeFrom } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
-import { COLONY_CONTEXT } from '../../../lib/ColonyManager/constants';
-
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { COLONY_CONTEXT } from '../../core/constants';
 import {
-  claimPayoutAsWorkerTx,
-  completeTaskTx,
-  finalizeTaskTx,
-  revealTaskRatingAsManagerTx,
-  revealTaskRatingAsWorkerTx,
-  setTaskDueDateTx,
-  setTaskSkillTx,
-  submitManagerRatingAsWorkerTx,
-  submitTaskDeliverableAndRatingTx,
-  submitWorkerRatingAsManagerTx,
-} from '../actionCreators';
+  transactionAddParams,
+  transactionReady,
+} from '../../core/actionCreators';
+
 import { allColonyENSNames } from '../selectors';
 import { ensureColonyIsInState } from './shared';
 import type { ActionsType, Action } from '~redux';
@@ -33,7 +26,7 @@ import type { ActionsType, Action } from '~redux';
  * Optionally, the `taskStoreAddress` property can be included in
  * the payload, which allows some steps to be skipped.
  */
-function* taskFetchSaga({
+function* taskFetch({
   meta: {
     keyPath: [colonyENSName],
   },
@@ -77,7 +70,7 @@ function* fetchAllTasksForColony(colonyENSName: ENSName): Saga<void> {
  * Given all colonies in the current state, fetch all tasks for all
  * colonies (in parallel).
  */
-function* taskFetchAllSaga(): Saga<void> {
+function* taskFetchAll(): Saga<void> {
   const colonyENSNames = yield select(allColonyENSNames);
   yield all(
     colonyENSNames.map(colonyENSName =>
@@ -90,7 +83,7 @@ function* taskFetchAllSaga(): Saga<void> {
  * Given a colony ENS name, a task ID and task props, get the task store
  * and update it.
  */
-function* taskUpdateSaga({
+function* taskUpdate({
   meta: {
     keyPath: [colonyENSName],
   },
@@ -120,7 +113,7 @@ function* taskUpdateSaga({
  * the corresponding key in the tasks index store. The task store is
  * simply unpinned.
  */
-function* taskRemoveSaga({
+function* taskRemove({
   meta: {
     keyPath: [colonyENSName],
   },
@@ -213,41 +206,122 @@ function* guessRating(
   return correctRating;
 }
 
-function* taskSetSkillSaga({
-  payload: { taskId, skillId, colonyENSName },
-  meta,
-}: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<void> {
-  yield put(
-    setTaskSkillTx({
-      identifier: colonyENSName,
-      params: { taskId, skillId },
-      meta,
-    }),
-  );
-}
-
-function* taskSetDueDateSaga({
-  payload: { dueDate, taskId },
+/**
+ * As worker or manager, I want to be able to set a skill
+ */
+function* taskSetSkill({
+  payload: { taskId, skillId },
   meta: {
     keyPath: [colonyENSName],
   },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_DATE>): Saga<void> {
-  yield put(
-    setTaskDueDateTx({
+}: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'setTaskSkill',
       identifier: colonyENSName,
-      params: { taskId, dueDate },
+      params: { taskId, skillId },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_SET_SKILL_SUCCESS,
+      payload,
       meta,
-    }),
-  );
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+  } catch (error) {
+    yield putError(ACTIONS.TASK_SET_SKILL_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
 }
 
-function* taskWorkerEndSaga({
+/**
+ * As worker or manager, I want to be able to set a date
+ */
+function* taskSetDueDate({
+  payload: { colonyENSName, dueDate, taskId },
+  meta,
+}: Action<typeof ACTIONS.TASK_SET_DATE>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'setTaskDueDate',
+      identifier: colonyENSName,
+      params: { taskId, dueDate },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_SET_DATE_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+  } catch (error) {
+    yield putError(ACTIONS.TASK_SET_DATE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
+/**
+ * As worker, submit work (`completeTask` group)
+ */
+function* submitTaskDeliverable({
+  payload: { colonyENSName, taskId, deliverableHash },
+  meta,
+}: Action<typeof ACTIONS.TASK_SUBMIT_DELIVERABLE>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'submitTaskDeliverable',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 0,
+      },
+      identifier: colonyENSName,
+      params: { taskId, deliverableHash },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+  } catch (error) {
+    yield putError(ACTIONS.TASK_SUBMIT_DELIVERABLE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
+/**
+ * As worker, submit work and rate before due date (`completeTask` group)
+ * Alternative to submitTaskDeliverable
+ */
+function* taskWorkerEnd({
   payload: { colonyENSName, taskId, workDescription, rating },
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_END>): Saga<void> {
-  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
+    const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const deliverableHash = yield call(
       [ipfsNode, ipfsNode.addString],
       workDescription,
@@ -258,35 +332,74 @@ function* taskWorkerEndSaga({
       taskId,
       rating,
     );
-    yield put(
-      submitTaskDeliverableAndRatingTx({
-        identifier: colonyENSName,
-        params: { taskId, deliverableHash, secret },
-        meta,
-      }),
-    );
+
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'submitTaskDeliverableAndRating',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 0,
+      },
+      identifier: colonyENSName,
+      params: { taskId, deliverableHash, secret },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_WORKER_END_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TASK_WORKER_END_ERROR, error);
+    yield putError(ACTIONS.TASK_WORKER_END_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
 }
 
-function* completeTaskSaga({
+/**
+ * As manager, end the task if the due date has elapsed (`completeTask` group)
+ * As manager, rate the worker (`completeTask` group)
+ */
+function* completeTask({
   payload: { colonyENSName, taskId, rating },
   meta,
 }: Action<typeof ACTIONS.TASK_MANAGER_END>): Saga<void> {
+  const completeTaskId = `${meta.id}-completeTask`;
+  const submitRatingId = `${meta.id}-submitRating`;
+  const completeTaskChannel = yield call(getTxChannel, completeTaskId);
+  const submitRatingChannel = yield call(getTxChannel, submitRatingId);
+
   try {
     // complete task past due date
-    yield put(
-      completeTaskTx({
-        identifier: colonyENSName,
-        params: { taskId },
-        meta,
-      }),
-    );
-    yield raceError(
-      ACTIONS.TASK_MANAGER_COMPLETE_SUCCESS,
-      ACTIONS.TASK_MANAGER_COMPLETE_ERROR,
-    );
+    yield fork(createTransaction, completeTaskId, {
+      context: COLONY_CONTEXT,
+      methodName: 'completeTask',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 1,
+      },
+      identifier: colonyENSName,
+      params: { taskId },
+    });
+
+    // rate worker
+    yield fork(createTransaction, submitRatingId, {
+      context: COLONY_CONTEXT,
+      methodName: 'submitTaskWorkRating',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 2,
+      },
+      identifier: colonyENSName,
+      params: { taskId, role: 'WORKER' },
+      ready: false,
+    });
 
     // generate secret
     const secret = yield call(
@@ -296,30 +409,35 @@ function* completeTaskSaga({
       rating,
     );
 
-    // rate worker
-    yield put(
-      submitWorkerRatingAsManagerTx({
-        identifier: colonyENSName,
-        params: { taskId, secret, role: 'WORKER' },
-        meta,
-      }),
-    );
-    yield raceError(
-      ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS,
-      ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR,
-    );
+    yield put(transactionAddParams(submitRatingId, { secret }));
+    yield put(transactionReady(submitRatingId));
 
-    // if we got this far without a throw, success!
-    yield put({ type: ACTIONS.TASK_MANAGER_END_SUCCESS });
+    yield takeFrom(completeTaskChannel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(submitRatingChannel, ACTIONS.TRANSACTION_CREATED);
+
+    // Transactions are created, let the user and the gas station figure out the rest
+    yield put({ type: ACTIONS.TASK_MANAGER_END_SUCCESS, meta });
+
+    // Wait until both transactions are succeeded (to enable error catching)
+    yield takeFrom(completeTaskChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    yield takeFrom(submitRatingChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TASK_MANAGER_END_ERROR, error);
+    yield putError(ACTIONS.TASK_MANAGER_END_ERROR, error, meta);
+  } finally {
+    completeTaskChannel.close();
+    submitRatingChannel.close();
   }
 }
 
-function* taskWorkerRateManagerSaga({
+/**
+ * As worker, rate the manager (`completeTask` group)
+ */
+function* taskWorkerRateManager({
   payload: { colonyENSName, taskId, rating },
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_RATE_MANAGER>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
     // generate secret
     const secret = yield call(
@@ -330,22 +448,39 @@ function* taskWorkerRateManagerSaga({
     );
 
     // rate manager
-    yield put(
-      submitManagerRatingAsWorkerTx({
-        identifier: colonyENSName,
-        params: { taskId, secret, role: 'MANAGER' },
-        meta,
-      }),
-    );
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'submitTaskWorkRating',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 2,
+      },
+      identifier: colonyENSName,
+      params: { taskId, secret, role: 'MANAGER' },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_WORKER_RATE_MANAGER_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR, error);
+    yield putError(ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
 }
 
-function* taskManagerRateWorkerSaga({
+function* taskManagerRateWorker({
   payload: { colonyENSName, taskId, rating },
   meta,
 }: Action<typeof ACTIONS.TASK_MANAGER_RATE_WORKER>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
     // generate secret
     const secret = yield call(
@@ -356,22 +491,42 @@ function* taskManagerRateWorkerSaga({
     );
 
     // rate worker
-    yield put(
-      submitWorkerRatingAsManagerTx({
-        identifier: colonyENSName,
-        params: { taskId, secret, role: 'WORKER' },
-        meta,
-      }),
-    );
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'submitTaskWorkRating',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 2,
+      },
+      identifier: colonyENSName,
+      params: { taskId, secret, role: 'WORKER' },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR, error);
+    yield putError(ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
 }
 
-function* taskWorkerRevealManagerRatingSaga({
+/**
+ * As worker, reveal manager rating (`completeTask` group)
+ */
+function* taskWorkerRevealManagerRating({
   payload: { colonyENSName, taskId },
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -381,30 +536,50 @@ function* taskWorkerRevealManagerRatingSaga({
       'WORKER', // submitted by worker
       salt,
     );
-    yield put(
-      revealTaskRatingAsWorkerTx({
-        identifier: colonyENSName,
-        params: {
-          taskId,
-          rating,
-          salt,
-          role: 'MANAGER',
-        },
-        meta,
-      }),
-    );
+
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'revealTaskWorkRating',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 3,
+      },
+      identifier: colonyENSName,
+      params: { taskId, rating, salt, role: 'MANAGER' },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR, error);
+    yield putError(
+      ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
   }
 }
 
-function* taskManagerRevealWorkerRatingSaga({
+/**
+ * As manager, reveal worker rating (`completeTask` group)
+ */
+function* taskManagerRevealWorkerRating({
   payload: { colonyENSName, taskId },
   meta,
 }: $PropertyType<
   ActionsType,
   'TASK_MANAGER_REVEAL_WORKER_RATING',
 >): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
   try {
     const salt = yield call(generateRatingSalt, colonyENSName, taskId);
     const rating = yield call(
@@ -414,72 +589,142 @@ function* taskManagerRevealWorkerRatingSaga({
       'MANAGER', // submitted by manager
       salt,
     );
-    yield put(
-      revealTaskRatingAsManagerTx({
-        identifier: colonyENSName,
-        params: {
-          taskId,
-          rating,
-          salt,
-          role: 'WORKER',
-        },
-        meta,
-      }),
-    );
+
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'revealTaskWorkRating',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 3,
+      },
+      identifier: colonyENSName,
+      params: { taskId, rating, salt, role: 'WORKER' },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR, error);
+    yield putError(
+      ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
   }
 }
 
-function* taskWorkerClaimRewardSaga({
-  payload: { colonyENSName, taskId, tokenAddresses },
-  meta,
-}: Action<typeof ACTIONS.TASK_WORKER_CLAIM_REWARD>): Saga<void> {
-  yield all(
-    tokenAddresses.map(token =>
-      put(
-        claimPayoutAsWorkerTx({
-          identifier: colonyENSName,
-          params: {
-            taskId,
-            token,
-            role: 'WORKER',
-          },
-          meta,
-        }),
-      ),
-    ),
-  );
-}
-
-function* taskFinalizeSaga({
+/**
+ * As anyone, finalize task (`completeTask` group)
+ */
+function* taskFinalize({
   payload: { taskId, colonyENSName },
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
-  yield put(
-    finalizeTaskTx({ identifier: colonyENSName, params: { taskId }, meta }),
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'finalizeTask',
+      group: {
+        key: 'completeTask',
+        id: ['identifier', 'params.taskId'],
+        index: 4,
+      },
+      identifier: colonyENSName,
+      params: { taskId },
+    });
+
+    const { payload } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield put({
+      type: ACTIONS.TASK_SET_DATE_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+  } catch (error) {
+    yield putError(ACTIONS.TASK_SET_DATE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
+/**
+ * As the worker, claim payout (`completeTask` group)
+ */
+function* taskWorkerClaimReward({
+  payload: { colonyENSName, taskId, tokenAddresses },
+  meta,
+}: Action<typeof ACTIONS.TASK_WORKER_CLAIM_REWARD>): Saga<void> {
+  const txChannels = yield all(
+    tokenAddresses.map(token => call(getTxChannel, `${meta.id}-${token}`)),
   );
+
+  try {
+    yield all(
+      tokenAddresses.map((token, idx) =>
+        fork(createTransaction, `${meta.id}-${token}`, {
+          context: COLONY_CONTEXT,
+          methodName: 'claimPayout',
+          group: {
+            key: 'completeTask',
+            id: ['identifier', 'params.taskId'],
+            index: 5 + idx,
+          },
+          identifier: colonyENSName,
+          params: { taskId, token, role: 'WORKER' },
+        }),
+      ),
+    );
+
+    // Wait for all the transactions to succeed
+    const actions = yield all(
+      tokenAddresses.map((token, idx) =>
+        takeFrom(txChannels[idx], ACTIONS.TRANSACTION_SUCCEEDED),
+      ),
+    );
+
+    yield put({
+      type: ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS,
+      payload: actions,
+      meta,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR, error, meta);
+  } finally {
+    txChannels.forEach(channel => channel.close());
+  }
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(ACTIONS.TASK_FETCH, taskFetchSaga);
-  yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAllSaga);
-  yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalizeSaga);
-  yield takeEvery(ACTIONS.TASK_MANAGER_END, completeTaskSaga);
-  yield takeEvery(ACTIONS.TASK_MANAGER_RATE_WORKER, taskManagerRateWorkerSaga);
-  yield takeEvery(ACTIONS.TASK_REMOVE, taskRemoveSaga);
-  yield takeEvery(ACTIONS.TASK_SET_DATE, taskSetDueDateSaga);
-  yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkillSaga);
-  yield takeEvery(ACTIONS.TASK_UPDATE, taskUpdateSaga);
-  yield takeEvery(ACTIONS.TASK_WORKER_END, taskWorkerEndSaga);
-  yield takeEvery(ACTIONS.TASK_WORKER_RATE_MANAGER, taskWorkerRateManagerSaga);
+  yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
+  yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
+  yield takeEvery(ACTIONS.TASK_MANAGER_END, completeTask);
+  yield takeEvery(ACTIONS.TASK_MANAGER_RATE_WORKER, taskManagerRateWorker);
+  yield takeEvery(ACTIONS.TASK_REMOVE, taskRemove);
+  yield takeEvery(ACTIONS.TASK_SET_DATE, taskSetDueDate);
+  yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
+  yield takeEvery(ACTIONS.TASK_UPDATE, taskUpdate);
+  yield takeEvery(ACTIONS.TASK_SUBMIT_DELIVERABLE, submitTaskDeliverable);
+  yield takeEvery(ACTIONS.TASK_WORKER_END, taskWorkerEnd);
+  yield takeEvery(ACTIONS.TASK_WORKER_RATE_MANAGER, taskWorkerRateManager);
   yield takeEvery(
     ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING,
-    taskWorkerRevealManagerRatingSaga,
+    taskWorkerRevealManagerRating,
   );
   yield takeEvery(
     ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING,
-    taskManagerRevealWorkerRatingSaga,
+    taskManagerRevealWorkerRating,
   );
-  yield takeEvery(ACTIONS.TASK_WORKER_CLAIM_REWARD, taskWorkerClaimRewardSaga);
+  yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
+  yield takeEvery(ACTIONS.TASK_WORKER_CLAIM_REWARD, taskWorkerClaimReward);
 }
