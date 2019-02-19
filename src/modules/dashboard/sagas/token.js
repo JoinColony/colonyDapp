@@ -5,18 +5,27 @@ import type { Saga } from 'redux-saga';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import TokenClient from '@colony/colony-js-client/lib/TokenClient';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
-import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  delay,
+  fork,
+  put,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 
-import { putError } from '~utils/saga/effects';
+import type { Action } from '~redux';
+
+import { putError, takeFrom } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
-import { createToken } from '../actionCreators';
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { NETWORK_CONTEXT } from '../../core/constants';
 
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
-import type { Action } from '~redux';
 
 /**
  * Rather than use e.g. the Etherscan loader and make more/larger requests than
@@ -83,24 +92,35 @@ function* getTokenInfo({
   });
 }
 
-/*
- * Forward on the renamed form params to create a transaction.
- */
-function* createTokenSaga({
+function* createToken({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
 }: Action<typeof ACTIONS.TOKEN_CREATE>): Saga<void> {
-  yield put(
-    createToken({
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: NETWORK_CONTEXT,
+      methodName: 'createToken',
       params: { name, symbol },
-      options: {
-        // TODO: this has to be removed once the new onboarding is
-        // properly wired to the gas station
-        gasLimit: 5000000,
-      },
+    });
+
+    const { payload } = yield takeFrom(
+      txChannel,
+      ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
+    );
+    yield put({
+      type: ACTIONS.TOKEN_CREATE_SUCCESS,
+      payload,
       meta,
-    }),
-  );
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+  } catch (error) {
+    yield putError(ACTIONS.TOKEN_CREATE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
 }
 
 /**
@@ -147,7 +167,7 @@ function* getTokenIcon({
 }
 
 export default function* tokenSagas(): any {
-  yield takeEvery(ACTIONS.TOKEN_CREATE, createTokenSaga);
+  yield takeEvery(ACTIONS.TOKEN_CREATE, createToken);
   yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, uploadTokenIcon);
   yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, getTokenIcon);
   // Note that this is `takeLatest` because it runs on user keyboard input
