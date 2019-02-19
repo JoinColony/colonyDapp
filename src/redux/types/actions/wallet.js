@@ -1,11 +1,15 @@
 /* @flow */
 
-import type { ActionType, ErrorActionType } from '../index';
+import type {
+  ActionTypeWithPayload,
+  ErrorActionType,
+  UniqueActionType,
+} from '../index';
 
 import { ACTIONS } from '../../index';
 
 export type WalletActionTypes = {|
-  WALLET_CREATE: ActionType<
+  WALLET_CREATE: UniqueActionType<
     typeof ACTIONS.WALLET_CREATE,
     {|
       accountIndex?: number,
@@ -16,25 +20,26 @@ export type WalletActionTypes = {|
       mnemonic?: *,
       password?: *,
     |},
-    *,
+    void,
   >,
-  WALLET_CREATE_ERROR: ErrorActionType<typeof ACTIONS.WALLET_CREATE_ERROR, *>,
-  WALLET_FETCH_ACCOUNTS: ActionType<
+  WALLET_CREATE_ERROR: ErrorActionType<
+    typeof ACTIONS.WALLET_CREATE_ERROR,
+    void,
+  >,
+  WALLET_FETCH_ACCOUNTS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_FETCH_ACCOUNTS,
     {|
       walletType: string,
     |},
-    *,
   >,
   WALLET_FETCH_ACCOUNTS_ERROR: ErrorActionType<
     typeof ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR,
-    *,
+    void,
   >,
-  WALLET_FETCH_ACCOUNTS_SUCCESS: ActionType<
+  WALLET_FETCH_ACCOUNTS_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
     {|
       allAddresses: string[],
     |},
-    *,
   >,
 |};

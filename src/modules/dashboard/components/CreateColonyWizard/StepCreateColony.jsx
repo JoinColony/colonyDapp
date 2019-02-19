@@ -6,7 +6,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
-import type { ActionType } from '~redux';
+import type { UniqueActionType } from '~redux';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -81,7 +81,7 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
     submit={ACTIONS.COLONY_CREATE}
     error={ACTIONS.COLONY_CREATE_ERROR}
     success={ACTIONS.COLONY_CREATE_SUCCESS}
-    setPayload={(action: ActionType<*, *, *>) => ({
+    setPayload={(action: UniqueActionType<*, *, *>) => ({
       ...action,
       payload: { tokenAddress: wizardValues.tokenAddress },
     })}

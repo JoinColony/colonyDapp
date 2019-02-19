@@ -1,68 +1,83 @@
 /* @flow */
 
-import type { UniqueActionType, ActionType } from '~redux';
+import type { ActionTypeWithPayloadAndMeta, ActionTypeWithMeta } from '~redux';
 import type { TransactionError, TransactionType } from '~immutable';
+import type { TransactionReceipt, $Pick } from '~types';
 
 import { ACTIONS } from '../../index';
+import BigNumber from 'bn.js';
+
+type WithId = {| id: string |};
 
 export type TransactionActionTypes = {|
-  TRANSACTION_ADD_IDENTIFIER: UniqueActionType<
+  TRANSACTION_ADD_IDENTIFIER: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_ADD_IDENTIFIER,
     {| identifier: string |},
-    void,
+    WithId,
   >,
-  TRANSACTION_ADD_PARAMS: UniqueActionType<
+  TRANSACTION_ADD_PARAMS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_ADD_PARAMS,
     {| params: Object |},
-    void,
+    WithId,
   >,
-  TRANSACTION_READY: UniqueActionType<
+  TRANSACTION_READY: ActionTypeWithMeta<
     typeof ACTIONS.TRANSACTION_READY,
-    void,
-    void,
+    WithId,
   >,
-  TRANSACTION_CANCEL: UniqueActionType<
+  TRANSACTION_CANCEL: ActionTypeWithMeta<
     typeof ACTIONS.TRANSACTION_CANCEL,
-    $Shape<TransactionType<*, *>>,
-    *,
+    WithId,
   >,
-  TRANSACTION_CREATED: UniqueActionType<
+  TRANSACTION_CREATED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_CREATED,
-    $Shape<TransactionType<*, *>>,
-    *,
+    $Pick<
+      TransactionType<*, *>,
+      {
+        context: *,
+        createdAt: *,
+        from: *,
+        group: *,
+        identifier: *,
+        methodName: *,
+        multisig: *,
+        options?: *,
+        params: *,
+        status: *,
+      },
+    >,
+    WithId,
   >,
   TRANSACTION_ERROR: {|
-    ...ActionType<
+    ...ActionTypeWithPayloadAndMeta<
       typeof ACTIONS.TRANSACTION_ERROR,
       TransactionError,
       { id: string },
     >,
     error: true,
   |},
-  TRANSACTION_ESTIMATE_GAS: UniqueActionType<
+  TRANSACTION_ESTIMATE_GAS: ActionTypeWithMeta<
     typeof ACTIONS.TRANSACTION_ESTIMATE_GAS,
-    $Shape<TransactionType<*, *>>,
-    *,
+    WithId,
   >,
-  TRANSACTION_GAS_UPDATE: UniqueActionType<
+  TRANSACTION_GAS_UPDATE: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_GAS_UPDATE,
-    $Shape<TransactionType<*, *>>,
-    *,
+    {| gasLimit: BigNumber, gasPrice: BigNumber |},
+    WithId,
   >,
-  TRANSACTION_RECEIPT_RECEIVED: UniqueActionType<
+  TRANSACTION_RECEIPT_RECEIVED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
-    $Shape<TransactionType<*, *>>,
-    *,
+    {| receipt: TransactionReceipt, params: Object |},
+    WithId,
   >,
-  TRANSACTION_SEND: UniqueActionType<typeof ACTIONS.TRANSACTION_SEND, *, *>,
-  TRANSACTION_SENT: UniqueActionType<
+  TRANSACTION_SEND: ActionTypeWithMeta<typeof ACTIONS.TRANSACTION_SEND, WithId>,
+  TRANSACTION_SENT: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_SENT,
-    $Shape<TransactionType<*, *>>,
-    *,
+    {| hash: string, params: Object |},
+    WithId,
   >,
-  TRANSACTION_SUCCEEDED: UniqueActionType<
+  TRANSACTION_SUCCEEDED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_SUCCEEDED,
-    $Shape<TransactionType<*, *>>,
-    *,
+    {| eventData: Object, params: Object |},
+    WithId,
   >,
 |};

@@ -130,7 +130,7 @@ function* taskRemove({
     yield put<Action<typeof ACTIONS.TASK_REMOVE_SUCCESS>>({
       type: ACTIONS.TASK_REMOVE_SUCCESS,
       meta,
-      payload: {},
+      payload: undefined,
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_REMOVE_ERROR, error, meta);
