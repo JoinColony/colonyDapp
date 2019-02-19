@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { Channel, Saga } from 'redux-saga';
-import type { SendOptions } from '@colony/colony-js-client';
 
 import { buffers } from 'redux-saga';
 import {
@@ -13,65 +12,19 @@ import {
   take,
   takeEvery,
 } from 'redux-saga/effects';
-import nanoid from 'nanoid';
 
-import { currentUserAddressSelector } from '../../../users/selectors';
-
-import type { TransactionMultisig } from '~immutable';
 import type { Action } from '~redux';
-import type { ColonyContext } from '~types';
 
 import { ACTIONS } from '~redux';
 
+import type { TxConfig } from '../../types';
+
+import { currentUserAddressSelector } from '../../../users/selectors';
+
+import { createTxAction } from '../../actionCreators';
+
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
-
-type TxConfig<P> = {|
-  context: ColonyContext,
-  identifier?: string,
-  methodName: string,
-  group?: {|
-    key: string,
-    id: string | string[],
-    index: number,
-  |},
-  multisig?: boolean | TransactionMultisig,
-  params?: P,
-  ready?: boolean,
-  options?: SendOptions,
-|};
-
-const createTxAction = <P>(
-  id,
-  from,
-  {
-    context,
-    identifier,
-    methodName,
-    group,
-    multisig: multisigConfig,
-    params,
-    ready,
-    options,
-  }: TxConfig<P>,
-) => ({
-  type: multisigConfig
-    ? ACTIONS.MULTISIG_TRANSACTION_CREATED
-    : ACTIONS.TRANSACTION_CREATED,
-  payload: {
-    context,
-    createdAt: new Date(),
-    from,
-    group,
-    identifier,
-    methodName,
-    multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
-    options,
-    params,
-    status: ready === false ? 'created' : 'ready',
-  },
-  meta: { id: id || nanoid() },
-});
 
 const filterAction = (action, id, type?: string) =>
   !!action.meta &&

@@ -1,6 +1,7 @@
 /* @flow */
 
 import BigNumber from 'bn.js';
+import nanoid from 'nanoid';
 
 import type { TransactionReceipt } from '~types';
 import type {
@@ -13,10 +14,44 @@ import type {
 
 import { ACTIONS } from '~redux';
 
+import type { TxConfig } from '../types';
+
 export {
   COLONY_CONTEXT,
   NETWORK_CONTEXT,
 } from '../../../lib/ColonyManager/constants';
+
+export const createTxAction = <P>(
+  id?: string,
+  from: string,
+  {
+    context,
+    identifier,
+    methodName,
+    group,
+    multisig: multisigConfig,
+    params,
+    ready,
+    options,
+  }: TxConfig<P>,
+) => ({
+  type: multisigConfig
+    ? ACTIONS.MULTISIG_TRANSACTION_CREATED
+    : ACTIONS.TRANSACTION_CREATED,
+  payload: {
+    context,
+    createdAt: new Date(),
+    from,
+    group,
+    identifier,
+    methodName,
+    multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
+    options,
+    params,
+    status: ready === false ? 'created' : 'ready',
+  },
+  meta: { id: id || nanoid() },
+});
 
 export const multisigTransactionRefreshError = (
   id: string,

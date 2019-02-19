@@ -3,8 +3,12 @@
 import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js';
 
-import type { TransactionReceipt } from '~types';
-import type { TransactionEventData, TransactionParams } from '~immutable';
+import type { ColonyContext, TransactionReceipt } from '~types';
+import type {
+  TransactionEventData,
+  TransactionMultisig,
+  TransactionParams,
+} from '~immutable';
 
 export type Sender<P: TransactionParams, E: TransactionEventData> = {
   client: {
@@ -29,6 +33,21 @@ export type MultisigSender<
     operationJSON: string,
   ) => Promise<(options: SendOptions) => Promise<ContractResponse<E>>>,
 };
+
+export type TxConfig<P> = {|
+  context: ColonyContext,
+  identifier?: string,
+  methodName: string,
+  group?: {|
+    key: string,
+    id: string | string[],
+    index: number,
+  |},
+  multisig?: boolean | TransactionMultisig,
+  params?: P,
+  ready?: boolean,
+  options?: SendOptions,
+|};
 
 export type TransactionResponse<E: TransactionEventData> = {
   receipt?: TransactionReceipt,
