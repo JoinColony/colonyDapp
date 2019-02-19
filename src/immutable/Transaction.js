@@ -7,8 +7,6 @@ import type BigNumber from 'bn.js/lib/bn';
 import { Record, List } from 'immutable';
 import nanoid from 'nanoid';
 
-import type { LifecycleActionTypes } from '../modules/core/types';
-
 import type {
   Address,
   AddressOrENSName,
@@ -58,7 +56,6 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   hash?: string,
   id: TransactionId,
   identifier?: AddressOrENSName,
-  lifecycle: LifecycleActionTypes,
   methodName: string,
   multisig?: TransactionMultisig, // Indicates tx is multisig if set
   options: SendOptions,
@@ -97,7 +94,6 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   hash: undefined,
   id: nanoid(),
   identifier: undefined,
-  lifecycle: {},
   methodName: undefined,
   multisig: undefined,
   options: {},
