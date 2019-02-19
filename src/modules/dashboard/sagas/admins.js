@@ -14,13 +14,12 @@ import { ensureColonyIsInState, fetchColonyStore } from './shared';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
-function* addColonyAdmin({
+function* colonyAdminAdd({
   payload: { newAdmin, ensName },
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
-  let txChannel;
+  const txChannel = yield call(getTxChannel, meta.id);
   try {
-    txChannel = yield call(getTxChannel, meta.id);
     const { walletAddress, username } = newAdmin.profile;
 
     /*
@@ -38,9 +37,6 @@ function* addColonyAdmin({
       methodName: 'setAdminRole',
       identifier: colonyAddress,
       params: { user: walletAddress },
-      options: {
-        gasLimit: 500000,
-      },
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
@@ -91,7 +87,7 @@ function* addColonyAdmin({
   }
 }
 
-function* removeColonyAdmin({
+function* colonyAdminRemove({
   payload: { admin },
   meta: {
     keyPath: [ensName],
@@ -167,6 +163,6 @@ function* removeColonyAdmin({
 }
 
 export default function* adminsSagas(): any {
-  yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, addColonyAdmin);
-  yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, removeColonyAdmin);
+  yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, colonyAdminAdd);
+  yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, colonyAdminRemove);
 }

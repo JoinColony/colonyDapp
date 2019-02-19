@@ -15,7 +15,7 @@ import { postComment } from '../../../data/service/commands';
 // @NOTE: This is here for testing purposes, once we have the task creation, we won't need it anymore
 import { comments as commentStoreBlueprint } from '../../../data/blueprints';
 
-function* addNewComment({
+function* taskCommentAdd({
   payload: { /* commentStoreAddress */ draftId, commentData } = {},
   meta,
   meta: { id },
@@ -69,5 +69,5 @@ function* addNewComment({
 }
 
 export default function* commentsSagas(): any {
-  yield takeEvery(ACTIONS.TASK_COMMENT_ADD, addNewComment);
+  yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
 }

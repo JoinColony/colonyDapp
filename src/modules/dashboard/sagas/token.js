@@ -5,18 +5,27 @@ import type { Saga } from 'redux-saga';
 import ColonyNetworkClient from '@colony/colony-js-client';
 import TokenClient from '@colony/colony-js-client/lib/TokenClient';
 import EthersAdapter from '@colony/colony-js-adapter-ethers';
-import { call, delay, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  delay,
+  fork,
+  put,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 
-import { putError } from '~utils/saga/effects';
+import type { Action } from '~redux';
+
+import { putError, takeFrom } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
-import { createToken } from '../actionCreators';
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { NETWORK_CONTEXT } from '../../core/constants';
 
 // A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
 // `decimals` entries included.
 import TokenABI from './TokenABI.json';
-import type { Action } from '~redux';
 
 /**
  * Rather than use e.g. the Etherscan loader and make more/larger requests than
@@ -58,7 +67,7 @@ async function getTokenClientInfo(
 /**
  * Get the token info for a given `tokenAddress`.
  */
-function* getTokenInfo({
+function* tokenInfoFetch({
   payload: { tokenAddress },
   meta,
 }: Action<typeof ACTIONS.TOKEN_INFO_FETCH>): Saga<void> {
@@ -83,30 +92,54 @@ function* getTokenInfo({
   });
 }
 
-/*
- * Forward on the renamed form params to create a transaction.
- */
-function* createTokenSaga({
+function* tokenCreate({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
 }: Action<typeof ACTIONS.TOKEN_CREATE>): Saga<void> {
-  yield put(
-    createToken({
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: NETWORK_CONTEXT,
+      methodName: 'createToken',
       params: { name, symbol },
-      options: {
-        // TODO: this has to be removed once the new onboarding is
-        // properly wired to the gas station
-        gasLimit: 5000000,
-      },
+    });
+
+    // TODO: These are just temporary for now until we have the new onboarding workflow
+    // Normally these are done by the user
+    yield put({
+      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
       meta,
-    }),
-  );
+    });
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
+    yield put({
+      type: ACTIONS.TRANSACTION_SEND,
+      meta,
+    });
+    // TODO temp end
+
+    const { payload } = yield takeFrom(
+      txChannel,
+      ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
+    );
+    yield put({
+      type: ACTIONS.TOKEN_CREATE_SUCCESS,
+      payload,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+  } catch (error) {
+    yield putError(ACTIONS.TOKEN_CREATE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
 }
 
 /**
  * Upload a token icon to IPFS.
  */
-function* uploadTokenIcon({
+function* tokenIconUpload({
   payload: { data },
   meta,
 }: Action<typeof ACTIONS.TOKEN_ICON_UPLOAD>): Saga<void> {
@@ -128,7 +161,7 @@ function* uploadTokenIcon({
 /**
  * Get the token icon with given IPFS hash.
  */
-function* getTokenIcon({
+function* tokenIconFetch({
   payload: { hash },
 }: Action<typeof ACTIONS.TOKEN_ICON_FETCH>): Saga<void> {
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
@@ -147,10 +180,10 @@ function* getTokenIcon({
 }
 
 export default function* tokenSagas(): any {
-  yield takeEvery(ACTIONS.TOKEN_CREATE, createTokenSaga);
-  yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, uploadTokenIcon);
-  yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, getTokenIcon);
+  yield takeEvery(ACTIONS.TOKEN_CREATE, tokenCreate);
+  yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, tokenIconUpload);
+  yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, tokenIconFetch);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
-  yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, getTokenInfo);
+  yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, tokenInfoFetch);
 }

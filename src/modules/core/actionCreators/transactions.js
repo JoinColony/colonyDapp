@@ -3,7 +3,7 @@
 import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 
-import type { ColonyContext, TransactionReceipt } from '~types';
+import type { TransactionReceipt } from '~types';
 import type {
   GasPricesProps,
   TransactionError,
@@ -12,78 +12,52 @@ import type {
   TransactionParams,
 } from '~immutable';
 
-import type {
-  CreateTransactionAction,
-  LifecycleActionTypes,
-  TxActionCreator,
-  TxActionCreatorOptions,
-} from '../types';
-
 import { ACTIONS } from '~redux';
 
-type TxFactoryOptions = {
-  context: ColonyContext,
-  group?: {
-    key: string,
-    id: string | string[],
-    index: number,
-  },
-  lifecycle?: LifecycleActionTypes,
-  methodName: string,
-  multisig?: boolean,
-};
+import type { TxConfig } from '../types';
 
 export {
   COLONY_CONTEXT,
   NETWORK_CONTEXT,
 } from '../../../lib/ColonyManager/constants';
 
-export const createTxActionCreator = <P: TransactionParams>({
-  context,
-  group,
-  lifecycle = {},
-  methodName,
-  multisig: isMultisig = false,
-}: TxFactoryOptions): TxActionCreator<P> => ({
-  groupId,
-  identifier,
-  meta,
-  multisig: multisigJSON,
-  options,
-  params,
-  status,
-}: TxActionCreatorOptions<P>): CreateTransactionAction<P> => {
-  if (groupId && !group) {
-    throw new Error(
-      `No group found for batch transaction ${context}.${methodName}`,
-    );
-  }
-  return {
-    type: isMultisig
-      ? ACTIONS.MULTISIG_TRANSACTION_CREATED
-      : ACTIONS.TRANSACTION_CREATED,
-    payload: {
-      context,
-      createdAt: new Date(),
-      group: group ? { ...group, id: groupId } : undefined,
-      identifier,
-      lifecycle,
-      methodName,
-      multisig: isMultisig ? multisigJSON || {} : undefined,
-      options,
-      params,
-      status,
-    },
-    meta: { id: meta.id || nanoid() },
-  };
-};
+export const createTxAction = <P>(
+  id?: string,
+  from: string,
+  {
+    context,
+    identifier,
+    methodName,
+    group,
+    multisig: multisigConfig,
+    params,
+    ready,
+    options,
+  }: TxConfig<P>,
+) => ({
+  type: multisigConfig
+    ? ACTIONS.MULTISIG_TRANSACTION_CREATED
+    : ACTIONS.TRANSACTION_CREATED,
+  payload: {
+    context,
+    createdAt: new Date(),
+    from,
+    group,
+    identifier,
+    methodName,
+    multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
+    options,
+    params,
+    status: ready === false ? 'created' : 'ready',
+  },
+  meta: { id: id || nanoid() },
+});
 
 export const multisigTransactionRefreshError = (
   id: string,
   payload: { message: string },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  type: ACTIONS.TRANSACTION_ERROR,
   payload: { type: 'multisigRefresh', ...payload },
   meta: { id },
   error: true,
@@ -92,9 +66,8 @@ export const multisigTransactionRefreshError = (
 export const multisigTransactionNonceError = (
   id: string,
   payload: { message: string },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  type: ACTIONS.TRANSACTION_ERROR,
   payload: { type: 'multisigNonce', ...payload },
   meta: { id },
   error: true,
@@ -103,9 +76,8 @@ export const multisigTransactionNonceError = (
 export const multisigTransactionSignError = (
   id: string,
   payload: { message: string },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  type: ACTIONS.TRANSACTION_ERROR,
   payload: { type: 'multisigSign', ...payload },
   meta: { id },
   error: true,
@@ -114,9 +86,8 @@ export const multisigTransactionSignError = (
 export const multisigTransactionRejectError = (
   id: string,
   payload: { message: string },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_ERROR,
+  type: ACTIONS.TRANSACTION_ERROR,
   payload: { type: 'multisigReject', ...payload },
   meta: { id },
   error: true,
@@ -165,9 +136,8 @@ export const transactionError = (id: string, error: TransactionError) => ({
 export const transactionReceiptReceived = <P: TransactionParams>(
   id: string,
   payload: { receipt: TransactionReceipt, params: P },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
+  type: ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
   payload,
   meta: { id },
 });
@@ -175,9 +145,8 @@ export const transactionReceiptReceived = <P: TransactionParams>(
 export const transactionSent = <P: TransactionParams>(
   id: string,
   payload: { hash: string, params: P },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_SENT,
+  type: ACTIONS.TRANSACTION_SENT,
   payload,
   meta: { id },
 });
@@ -188,20 +157,27 @@ export const transactionEventDataReceived = <
 >(
   id: string,
   payload: { eventData: E, params: P },
-  overrideActionType?: string,
 ) => ({
-  type: overrideActionType || ACTIONS.TRANSACTION_SUCCEEDED,
+  type: ACTIONS.TRANSACTION_SUCCEEDED,
   payload,
   meta: { id },
 });
 
-export const transactionAddProperties = (
-  id: string,
-  payload: {| identifier?: string, params?: Object |},
-) => ({
-  type: ACTIONS.TRANSACTION_ADD_PROPERTIES,
+export const transactionAddIdentifier = (id: string, payload: string) => ({
+  type: ACTIONS.TRANSACTION_ADD_IDENTIFIER,
   meta: { id },
   payload,
+});
+
+export const transactionAddParams = (id: string, payload: Object) => ({
+  type: ACTIONS.TRANSACTION_ADD_PARAMS,
+  meta: { id },
+  payload,
+});
+
+export const transactionReady = (id: string) => ({
+  type: ACTIONS.TRANSACTION_READY,
+  meta: { id },
 });
 
 export const transactionEstimateGas = (id: string) => ({

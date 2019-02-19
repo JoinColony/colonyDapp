@@ -5,9 +5,9 @@ import { CoreTransactions, TransactionRecord } from '~immutable';
 import reducer from '../transactions';
 
 import {
+  createTxAction,
   transactionSent,
   transactionError,
-  createTxActionCreator,
   transactionEventDataReceived,
   transactionReceiptReceived,
 } from '../../actionCreators';
@@ -28,12 +28,12 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   const eventData = { myEventParam: 123 };
+  const from = 'my wallet address';
   const hash = 'my transaction hash';
   const options = { gasPrice: 4 };
   const params = { param1: 123 };
   const id = 'my transaction id';
   const existingTxId = 'my existing tx id';
-  const lifecycle = { created: 'lifecycle action type for created' };
   const context = 'network';
   const methodName = 'createColony';
 
@@ -48,16 +48,11 @@ describe(`core: reducers (transactions)`, () => {
 
   // Actions
 
-  const createdTx = createTxActionCreator({
+  const createdTx = createTxAction(id, from, {
     context,
-    lifecycle,
     methodName,
-  })({
-    meta: { id },
     options,
     params,
-    // TODO: this won't be necessary anymore soon as we will always supply an external id
-    id, // This is custom to the tests (overwrites the generated id)
   });
 
   const sentTx = transactionSent(id, { hash });
@@ -92,9 +87,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [],
               eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash: undefined,
               id,
-              lifecycle,
               methodName,
               options,
               params,
@@ -124,9 +122,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [],
               eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash, // hash should have been set
               id,
-              lifecycle,
               methodName,
               options,
               params,
@@ -156,9 +157,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [],
               eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash,
               id,
-              lifecycle,
               methodName,
               options,
               params,
@@ -188,9 +192,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [],
               eventData, // should have been set
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash,
               id,
-              lifecycle,
               methodName,
               options,
               params,
@@ -229,9 +236,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [new Error('send error')],
               eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash: undefined,
               id,
-              lifecycle,
               methodName,
               options,
               params,
@@ -271,9 +281,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [new Error('receipt error')],
               eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash,
               id,
-              lifecycle,
               methodName,
               options,
               params,
@@ -314,9 +327,12 @@ describe(`core: reducers (transactions)`, () => {
               createdAt: expect.any(Date),
               errors: [new Error('event data error')],
               eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
               hash,
               id,
-              lifecycle,
               methodName,
               options,
               params,

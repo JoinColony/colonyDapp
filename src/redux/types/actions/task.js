@@ -194,8 +194,9 @@ export type TaskActionTypes = {|
   TASK_SET_DATE: UniqueActionType<
     typeof ACTIONS.TASK_SET_DATE,
     {|
-      taskId: number, // TODO should be draftId
+      colonyENSName: string,
       dueDate: Date,
+      taskId: number, // TODO should be draftId
     |},
     WithKeyPathDepth2,
   >,
@@ -213,7 +214,6 @@ export type TaskActionTypes = {|
     {|
       taskId: number, // TODO should be draftId
       skillId: number,
-      colonyENSName: string,
     |},
     WithKeyPathDepth2,
   >,
@@ -223,6 +223,24 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_SKILL_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SET_SKILL_SUCCESS,
+    *,
+    WithKeyPathDepth2,
+  >,
+  TASK_SUBMIT_DELIVERABLE: UniqueActionType<
+    typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
+    {|
+      colonyENSName: string,
+      taskId: number,
+      deliverableHash: string,
+    |},
+    WithKeyPathDepth2,
+  >,
+  TASK_SUBMIT_DELIVERABLE_ERROR: ErrorActionType<
+    typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_ERROR,
+    WithKeyPathDepth2,
+  >,
+  TASK_SUBMIT_DELIVERABLE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
     *,
     WithKeyPathDepth2,
   >,

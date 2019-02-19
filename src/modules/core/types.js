@@ -3,12 +3,12 @@
 import type { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js';
 
+import type { ColonyContext, TransactionReceipt } from '~types';
 import type {
-  AddressOrENSName,
-  ColonyContext,
-  TransactionReceipt,
-} from '~types';
-import type { TransactionEventData, TransactionParams } from '~immutable';
+  TransactionEventData,
+  TransactionMultisig,
+  TransactionParams,
+} from '~immutable';
 
 export type Sender<P: TransactionParams, E: TransactionEventData> = {
   client: {
@@ -34,27 +34,20 @@ export type MultisigSender<
   ) => Promise<(options: SendOptions) => Promise<ContractResponse<E>>>,
 };
 
-export type LifecycleActionTypes = {
-  created?: string,
-  error?: string,
-  receiptReceived?: string,
-  sent?: string,
-  success?: string,
-};
-
-// TODO replace with real action types
-export type CreateTransactionAction<P: TransactionParams> = {
-  type: string,
-  payload: {
-    context: ColonyContext,
-    identifier?: AddressOrENSName,
-    lifecycle: LifecycleActionTypes,
-    methodName: string,
-    options?: SendOptions,
-    params: P,
-  },
-  meta: { id: string },
-};
+export type TxConfig<P> = {|
+  context: ColonyContext,
+  identifier?: string,
+  methodName: string,
+  group?: {|
+    key: string,
+    id: string | string[],
+    index: number,
+  |},
+  multisig?: boolean | TransactionMultisig,
+  params?: P,
+  ready?: boolean,
+  options?: SendOptions,
+|};
 
 export type TransactionResponse<E: TransactionEventData> = {
   receipt?: TransactionReceipt,
@@ -67,17 +60,3 @@ export type MultisigOperationJSON = {
   payload: Object, // MultisigOperationPayload
   signers: Object, // Signers
 };
-
-export type TxActionCreatorOptions<P: TransactionParams> = {
-  identifier?: AddressOrENSName,
-  groupId?: string,
-  meta: any,
-  multisig?: MultisigOperationJSON,
-  params: P,
-  options?: SendOptions,
-  status?: 'created' | 'ready',
-};
-
-export type TxActionCreator<P: TransactionParams> = (
-  TxActionCreatorOptions<P>,
-) => CreateTransactionAction<P>;
