@@ -133,29 +133,43 @@ jobs:
           path: reports
   e2e-testing:
     docker:
-      - image: cypress/browsers:chrome69
+      - image: joincolony/circleci-cypress
     parallelism: 2
     environment:
       LOADER: trufflepig
       NETWORK: local
       DISPLAY: :1.0
+      TERM: xterm
     working_directory: ~/colonyDapp
     steps:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-{{ checksum "package.json" }}
-          - node-modules-
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
       - run:
           name: "Installing modules"
           command: yarn install
       - run:
+          name: "Install Local Certificate Authority"
+          command: |
+            USER=circleci sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+            test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+            test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+            test -r ~/.bash_profile && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.bash_profile
+            echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
+            brew install mkcert
+            mkcert -install
+            cd ~/colonyDapp/ssl
+            mkcert localhost 127.0.0.1 ::1
+      - run:
           name: "Provision submodules"
           command: yarn provision
       - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
-            - node_modules
-          key: node-modules-{{ checksum "package.json" }}
+            - ~/.cache  ## cache both yarn and Cypress!
       - setup_remote_docker
       - run:
           name: "Pull solc docker image"
