@@ -105,6 +105,19 @@ function* createToken({
       params: { name, symbol },
     });
 
+    // TODO: These are just temporary for now until we have the new onboarding workflow
+    // Normally these are done by the user
+    yield put({
+      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
+      meta,
+    });
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
+    yield put({
+      type: ACTIONS.TRANSACTION_SEND,
+      meta,
+    });
+    // TODO temp end
+
     const { payload } = yield takeFrom(
       txChannel,
       ACTIONS.TRANSACTION_RECEIPT_RECEIVED,

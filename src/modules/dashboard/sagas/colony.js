@@ -279,7 +279,7 @@ function* createColonyLabel({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: NETWORK_CONTEXT,
+      context: COLONY_CONTEXT,
       methodName: 'registerColonyLabel',
       identifier: colonyAddress,
       params: {
