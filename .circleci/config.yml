@@ -133,7 +133,7 @@ jobs:
           path: reports
   e2e-testing:
     docker:
-      - image: joincolony/circleci-cypress
+      - image: cypress/browsers:chrome69
     parallelism: 2
     environment:
       LOADER: trufflepig
@@ -149,18 +149,6 @@ jobs:
       - run:
           name: "Installing modules"
           command: yarn install
-      - run:
-          name: "Install Local Certificate Authority"
-          command: |
-            USER=circleci sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-            test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
-            test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-            test -r ~/.bash_profile && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.bash_profile
-            echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
-            brew install mkcert
-            mkcert -install
-            cd ~/colonyDapp/ssl
-            mkcert localhost 127.0.0.1 ::1
       - run:
           name: "Provision submodules"
           command: yarn provision
