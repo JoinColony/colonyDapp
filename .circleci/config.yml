@@ -159,6 +159,8 @@ jobs:
             echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
             brew install mkcert
             mkcert -install
+            cd ~/colonyDapp/ssl
+            mkcert localhost 127.0.0.1 ::1
       - run:
           name: "Provision submodules"
           command: yarn provision
