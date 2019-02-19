@@ -2,56 +2,28 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, select, takeEvery } from 'redux-saga/effects';
 
-import type { AddressOrENSName, ENSName } from '~types';
+import type { ENSName } from '~types';
 
-import { putError } from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
 import { set, get, getAll } from '../../../lib/database/commands';
 import { getColonyMethod } from '../../core/sagas/utils';
 
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { COLONY_CONTEXT } from '../../core/constants';
+
 import { domainsIndexSelector } from '../selectors';
 import { domainsIndexStoreBlueprint } from '../stores';
-import { createDomain } from '../actionCreators';
 import {
   ensureColonyIsInState,
   createDomainsIndexStore,
   getDomainsIndexStore,
 } from './shared';
 import type { Action } from '~redux';
-
-/*
- * Given a colony identifier and a parent domain ID (1 == root),
- * send a transaction to create a domain, and return the error or
- * success action for the transaction.
- */
-function* createDomainTransaction(
-  identifier: AddressOrENSName,
-  parentDomainId: number = 1,
-  meta,
-) {
-  // TODO fix colonyJS; this should be `parentDomainId`
-  const action = createDomain({
-    identifier,
-    params: { parentDomainId },
-    options: {
-      gasLimit: 500000,
-    },
-    meta,
-  });
-  yield put(action);
-
-  return yield take(
-    ({ type, meta: actionMeta }) =>
-      [
-        ACTIONS.DOMAIN_CREATE_TX_ERROR,
-        ACTIONS.DOMAIN_CREATE_TX_SUCCESS,
-      ].includes(type) && actionMeta.id === action.meta.id,
-  );
-}
 
 /*
  * Given a colony ENS name, get or create the domains index store
@@ -150,13 +122,14 @@ function* addDomainToIndex(
     });
 }
 
-function* createDomainSaga({
+function* createDomain({
   payload: { domainName, parentDomainId = 1 },
   meta: {
     keyPath: [colonyENSName],
   },
   meta,
 }: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
      * Ensure the colony is in the state.
@@ -167,22 +140,21 @@ function* createDomainSaga({
      * Create the domain on the colony with a transaction.
      * TODO idempotency could be improved here by looking for a pending transaction.
      */
-    const action = yield call(
-      createDomainTransaction,
-      colonyENSName,
-      parentDomainId,
-      meta,
-    );
-
-    /*
-     * If an error has already been `put`, simply exit.
-     */
-    if (action.type === ACTIONS.DOMAIN_CREATE_ERROR) return;
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'addDomain',
+      identifier: colonyENSName,
+      params: { parentDomainId },
+    });
 
     /*
      * Get the new domain ID from the successful transaction.
      */
-    const { domainId } = action.payload.eventData;
+    const {
+      payload: {
+        eventData: { domainId },
+      },
+    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
      * Add an entry to `domainsIndex` on the colony store.
@@ -201,6 +173,8 @@ function* createDomainSaga({
     });
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
 }
 
@@ -301,6 +275,6 @@ function* fetchColonyDomainsSaga({
 
 export default function* domainSagas(): any {
   yield takeEvery(ACTIONS.COLONY_DOMAINS_FETCH, fetchColonyDomainsSaga);
-  yield takeEvery(ACTIONS.DOMAIN_CREATE, createDomainSaga);
+  yield takeEvery(ACTIONS.DOMAIN_CREATE, createDomain);
   yield takeEvery(ACTIONS.DOMAIN_FETCH, fetchDomainSaga);
 }

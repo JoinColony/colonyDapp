@@ -18,9 +18,8 @@ function* addColonyAdmin({
   payload: { newAdmin, ensName },
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
-  let txChannel;
+  const txChannel = yield call(getTxChannel, meta.id);
   try {
-    txChannel = yield call(getTxChannel, meta.id);
     const { walletAddress, username } = newAdmin.profile;
 
     /*
