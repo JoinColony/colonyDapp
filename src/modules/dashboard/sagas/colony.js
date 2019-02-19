@@ -58,7 +58,7 @@ function* getOrCreateColonyStore(colonyENSName: ENSName) {
 }
 
 // TODO: Rename, complete and wire up after new onboarding is in place
-function* createColonyNew({
+function* colonyCreateNew({
   meta,
   payload,
 }: // $FlowFixMe (not an actual action)
@@ -164,7 +164,7 @@ Action<'COLONY_CREATE_NEW'>): Saga<void> {
   }
 }
 
-function* createColony({
+function* colonyCreate({
   payload: { tokenAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
@@ -207,7 +207,7 @@ function* createColony({
   }
 }
 
-function* createColonyLabel({
+function* colonyCreateLabel({
   payload: {
     colonyId,
     colonyAddress,
@@ -320,7 +320,7 @@ function* createColonyLabel({
   }
 }
 
-function* validateColonyDomain({
+function* colonyDomainValidate({
   payload: { ensName },
   meta,
 }: Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE>): Saga<void> {
@@ -352,7 +352,7 @@ function* validateColonyDomain({
   });
 }
 
-function* updateColonySaga({
+function* colonyProfileUpdate({
   meta: {
     keyPath: [ensName],
   },
@@ -383,7 +383,7 @@ function* updateColonySaga({
   }
 }
 
-function* fetchColonySaga({
+function* colonyFetch({
   meta: {
     keyPath: [ensName],
   },
@@ -403,7 +403,7 @@ function* fetchColonySaga({
   }
 }
 
-function* fetchColonyENSName({
+function* colonyENSNameFetch({
   meta: {
     keyPath: [colonyAddress],
   },
@@ -433,7 +433,7 @@ function* fetchColonyENSName({
   }
 }
 
-function* uploadColonyAvatar({
+function* colonyAvatarUpload({
   meta: {
     keyPath: [ensName],
   },
@@ -468,7 +468,7 @@ function* uploadColonyAvatar({
   }
 }
 
-function* fetchColonyAvatar({
+function* colonyAvatarFetch({
   meta,
   meta: {
     keyPath: [hash],
@@ -493,7 +493,7 @@ function* fetchColonyAvatar({
   }
 }
 
-function* removeColonyAvatar({
+function* colonyAvatarRemove({
   meta,
   meta: {
     keyPath: [ensName],
@@ -524,19 +524,19 @@ function* removeColonyAvatar({
 }
 
 export default function* colonySagas(): any {
-  yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, fetchColonyAvatar);
+  yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, colonyAvatarFetch);
   // TODO: rename properly once the new onboarding is done
-  yield takeEvery('COLONY_CREATE_NEW', createColonyNew);
-  yield takeEvery(ACTIONS.COLONY_CREATE, createColony);
-  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, createColonyLabel);
-  yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, fetchColonyENSName);
-  yield takeEvery(ACTIONS.COLONY_FETCH, fetchColonySaga);
-  yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, updateColonySaga);
+  yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);
+  yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
+  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
+  yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyENSNameFetch);
+  yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
+  yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.
    */
-  yield takeLatest(ACTIONS.COLONY_AVATAR_REMOVE, removeColonyAvatar);
-  yield takeLatest(ACTIONS.COLONY_AVATAR_UPLOAD, uploadColonyAvatar);
-  yield takeLatest(ACTIONS.COLONY_DOMAIN_VALIDATE, validateColonyDomain);
+  yield takeLatest(ACTIONS.COLONY_AVATAR_REMOVE, colonyAvatarRemove);
+  yield takeLatest(ACTIONS.COLONY_AVATAR_UPLOAD, colonyAvatarUpload);
+  yield takeLatest(ACTIONS.COLONY_DOMAIN_VALIDATE, colonyDomainValidate);
 }

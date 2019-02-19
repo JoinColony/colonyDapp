@@ -276,7 +276,7 @@ function* taskSetDueDate({
 /**
  * As worker, submit work (`completeTask` group)
  */
-function* submitTaskDeliverable({
+function* taskSubmitDeliverable({
   payload: { colonyENSName, taskId, deliverableHash },
   meta,
 }: Action<typeof ACTIONS.TASK_SUBMIT_DELIVERABLE>): Saga<void> {
@@ -364,7 +364,7 @@ function* taskWorkerEnd({
  * As manager, end the task if the due date has elapsed (`completeTask` group)
  * As manager, rate the worker (`completeTask` group)
  */
-function* completeTask({
+function* taskManagerEnd({
   payload: { colonyENSName, taskId, rating },
   meta,
 }: Action<typeof ACTIONS.TASK_MANAGER_END>): Saga<void> {
@@ -708,13 +708,13 @@ function* taskWorkerClaimReward({
 export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
-  yield takeEvery(ACTIONS.TASK_MANAGER_END, completeTask);
+  yield takeEvery(ACTIONS.TASK_MANAGER_END, taskManagerEnd);
   yield takeEvery(ACTIONS.TASK_MANAGER_RATE_WORKER, taskManagerRateWorker);
   yield takeEvery(ACTIONS.TASK_REMOVE, taskRemove);
   yield takeEvery(ACTIONS.TASK_SET_DATE, taskSetDueDate);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_UPDATE, taskUpdate);
-  yield takeEvery(ACTIONS.TASK_SUBMIT_DELIVERABLE, submitTaskDeliverable);
+  yield takeEvery(ACTIONS.TASK_SUBMIT_DELIVERABLE, taskSubmitDeliverable);
   yield takeEvery(ACTIONS.TASK_WORKER_END, taskWorkerEnd);
   yield takeEvery(ACTIONS.TASK_WORKER_RATE_MANAGER, taskWorkerRateManager);
   yield takeEvery(

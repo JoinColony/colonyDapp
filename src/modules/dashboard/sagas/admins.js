@@ -14,7 +14,7 @@ import { ensureColonyIsInState, fetchColonyStore } from './shared';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
-function* addColonyAdmin({
+function* colonyAdminAdd({
   payload: { newAdmin, ensName },
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
@@ -87,7 +87,7 @@ function* addColonyAdmin({
   }
 }
 
-function* removeColonyAdmin({
+function* colonyAdminRemove({
   payload: { admin },
   meta: {
     keyPath: [ensName],
@@ -163,6 +163,6 @@ function* removeColonyAdmin({
 }
 
 export default function* adminsSagas(): any {
-  yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, addColonyAdmin);
-  yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, removeColonyAdmin);
+  yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, colonyAdminAdd);
+  yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, colonyAdminRemove);
 }

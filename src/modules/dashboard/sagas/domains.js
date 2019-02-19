@@ -122,7 +122,7 @@ function* addDomainToIndex(
     });
 }
 
-function* createDomain({
+function* domainCreate({
   payload: { domainName, parentDomainId = 1 },
   meta: {
     keyPath: [colonyENSName],
@@ -198,7 +198,7 @@ function* checkDomainExists(
 /*
  * Fetch the domain for the given colony ENS name and domain ID.
  */
-function* fetchDomainSaga({
+function* domainFetch({
   meta: {
     keyPath: [colonyENSName, domainId],
   },
@@ -238,7 +238,7 @@ function* fetchDomainSaga({
   }
 }
 
-function* fetchColonyDomainsSaga({
+function* colonyDomainsFetch({
   meta: {
     keyPath: [colonyENSName],
   },
@@ -274,7 +274,7 @@ function* fetchColonyDomainsSaga({
 }
 
 export default function* domainSagas(): any {
-  yield takeEvery(ACTIONS.COLONY_DOMAINS_FETCH, fetchColonyDomainsSaga);
-  yield takeEvery(ACTIONS.DOMAIN_CREATE, createDomain);
-  yield takeEvery(ACTIONS.DOMAIN_FETCH, fetchDomainSaga);
+  yield takeEvery(ACTIONS.COLONY_DOMAINS_FETCH, colonyDomainsFetch);
+  yield takeEvery(ACTIONS.DOMAIN_CREATE, domainCreate);
+  yield takeEvery(ACTIONS.DOMAIN_FETCH, domainFetch);
 }

@@ -67,7 +67,7 @@ async function getTokenClientInfo(
 /**
  * Get the token info for a given `tokenAddress`.
  */
-function* getTokenInfo({
+function* tokenInfoFetch({
   payload: { tokenAddress },
   meta,
 }: Action<typeof ACTIONS.TOKEN_INFO_FETCH>): Saga<void> {
@@ -92,7 +92,7 @@ function* getTokenInfo({
   });
 }
 
-function* createToken({
+function* tokenCreate({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
 }: Action<typeof ACTIONS.TOKEN_CREATE>): Saga<void> {
@@ -139,7 +139,7 @@ function* createToken({
 /**
  * Upload a token icon to IPFS.
  */
-function* uploadTokenIcon({
+function* tokenIconUpload({
   payload: { data },
   meta,
 }: Action<typeof ACTIONS.TOKEN_ICON_UPLOAD>): Saga<void> {
@@ -161,7 +161,7 @@ function* uploadTokenIcon({
 /**
  * Get the token icon with given IPFS hash.
  */
-function* getTokenIcon({
+function* tokenIconFetch({
   payload: { hash },
 }: Action<typeof ACTIONS.TOKEN_ICON_FETCH>): Saga<void> {
   const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
@@ -180,10 +180,10 @@ function* getTokenIcon({
 }
 
 export default function* tokenSagas(): any {
-  yield takeEvery(ACTIONS.TOKEN_CREATE, createToken);
-  yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, uploadTokenIcon);
-  yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, getTokenIcon);
+  yield takeEvery(ACTIONS.TOKEN_CREATE, tokenCreate);
+  yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, tokenIconUpload);
+  yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, tokenIconFetch);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
-  yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, getTokenInfo);
+  yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, tokenInfoFetch);
 }
