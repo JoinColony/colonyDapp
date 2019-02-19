@@ -1,4 +1,4 @@
-version: 2.0
+version: 2
 
 jobs:
   build-with-lockfile:
@@ -228,7 +228,44 @@ jobs:
       - run: git config user.email "github@colony.io"
       - run: git config user.name "Colony Superuser"
       - run: yarn styleguide:deploy
-
+  e2e-exploration-job:
+    docker:
+      - image: joincolony/circleci-cypress
+    parallelism: 2
+    environment:
+      DISPLAY: :1.0
+      TERM: xterm
+    working_directory: ~/colonyDapp
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ checksum "package.json" }}
+      - run:
+          name: "Installing modules"
+          command: yarn install
+      - run:
+          name: "Install Local Certificate Authority"
+          command: |
+            USER=circleci sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+            test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+            test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+            test -r ~/.bash_profile && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.bash_profile
+            echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
+            brew install mkcert
+            mkcert -install
+            cd ~/colonyDapp/ssl
+            mkcert localhost 127.0.0.1 ::1
+      - run:
+          name: Verify Cypress
+          command: yarn verify
+      - save_cache:
+          key: cache-{{ checksum "package.json" }}
+          paths:
+            - ~/.cache
+      - run:
+          name: Test Cypress E2E
+          command: node scripts/e2e-orchestrator.js
 workflows:
   version: 2
   manual:
@@ -238,6 +275,11 @@ workflows:
       - e2e-testing:
           requires:
             - e2e-approval
+      - e2e-exploration-approval:
+          type: approval
+      - e2e-exploration-job:
+          requires:
+            - e2e-exploration-approval
   commit:
     jobs:
       - build-with-lockfile
