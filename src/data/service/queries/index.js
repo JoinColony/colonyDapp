@@ -156,9 +156,9 @@ export const getColony: ColonyQuery<*, *> = ({
     });
 
     const getAdminsQuery = getColonyAdmins({ colonyClient });
-    const getFounderQuery = getColonyFounder({ colonyClient });
     const admins = await getAdminsQuery.execute();
-    const founder = await getFounderQuery.execute();
+    // const getFounderQuery = getColonyFounder({ colonyClient });
+    // const founder = await getFounderQuery.execute();
 
     return colonyStore
       .all()
@@ -172,46 +172,48 @@ export const getColony: ColonyQuery<*, *> = ({
             case TOKEN_INFO_ADDED: {
               return {
                 ...colony,
-                token: payload,
+                token: Object.assign({}, payload, { balance: 0 }),
               };
             }
             case AVATAR_UPLOADED: {
-              const { ipfsHash, avatar } = payload;
-              return {
-                ...colony,
-                avatar: {
-                  ipfsHash,
-                  avatar,
-                },
-              };
-            }
-            case AVATAR_REMOVED: {
-              const { avatar } = colony;
               const { ipfsHash } = payload;
               return {
                 ...colony,
-                avatar: avatar && avatar.ipfsHash === ipfsHash ? null : avatar,
+                avatar: ipfsHash,
+              };
+            }
+            case AVATAR_REMOVED: {
+              // const { avatar } = colony;
+              // const { ipfsHash } = payload;
+              return {
+                ...colony,
+                avatar: undefined,
               };
             }
             case PROFILE_CREATED: {
-              return {
-                ...colony,
-                profile: payload,
-              };
+              return Object.assign({}, colony, payload);
             }
             case PROFILE_UPDATED: {
-              const { profile } = colony;
-              return {
-                ...colony,
-                profile: Object.assign({}, profile, payload),
-              };
+              return Object.assign({}, colony, payload);
             }
-
             default:
               return colony;
           }
         },
-        { admins, founder, avatar: null, profile: {}, token: {} },
+        // @TODO: Add the right defaults here using a data model or something like that
+        {
+          ensName: colonyENSName,
+          address: colonyAddress,
+          name: '',
+          admins,
+          token: {
+            address: '',
+            balance: 0,
+            icon: '',
+            name: '',
+            symbol: '',
+          },
+        },
       );
   },
 });
@@ -292,23 +294,19 @@ export const getColonyDomains: ColonyQuery<*, *> = ({
   ddb,
   colonyClient,
   wallet,
-  metadata: { colonyAddress, colonyENSName },
+  metadata,
 }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
     return colonyStore
       .all()
       .filter(({ type: eventType }) => eventType === DOMAIN_CREATED)
-      .reduce(
-        (domains, { payload: { domainId, name } }: DomainCreatedEvent) =>
-          Object.assign({}, domains, {
-            [domainId]: { domainId, name },
-          }),
-        {},
-      );
+      .map(({ payload: { domainId, name } }: DomainCreatedEvent) => ({
+        id: domainId,
+        name,
+      }));
   },
 });
 
