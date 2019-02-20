@@ -6,7 +6,8 @@ import { Record, List } from 'immutable';
 
 import { TASK_STATE } from './constants';
 
-import type { ENSName } from '~types';
+import type { ENSName, OrbitDBAddress } from '~types';
+
 import type { TaskFeedItemRecordType, TaskFeedItemType } from './TaskFeedItem';
 import type { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
 import type { UserType, UserRecordType } from './User';
@@ -37,6 +38,7 @@ type Shared = {|
   workerPayoutClaimed: boolean,
   workerRateFail: boolean, // if they didn't rate or reveal
   workerRating?: TaskRating,
+  commentStoreAddress?: string | OrbitDBAddress,
 |};
 
 export type TaskType = $ReadOnly<{|
@@ -83,6 +85,7 @@ const defaultValues: $Shape<TaskRecordProps> = {
   workerPayoutClaimed: undefined,
   workerRateFail: undefined,
   workerRating: undefined,
+  commentStoreAddress: undefined,
 };
 
 const TaskRecord: RecordFactory<TaskRecordProps> = Record(defaultValues);
