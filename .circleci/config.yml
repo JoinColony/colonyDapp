@@ -163,6 +163,10 @@ jobs:
             mkcert -install
             cd ~/colonyDapp/ssl
             mkcert localhost 127.0.0.1 ::1
+      - setup_remote_docker
+      - run:
+          name: "Pull solc docker image"
+          command: docker pull ethereum/solc:0.4.23
       - run:
           name: "Provision submodules"
           command: yarn provision
@@ -170,10 +174,6 @@ jobs:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.cache  ## cache both yarn and Cypress!
-      - setup_remote_docker
-      - run:
-          name: "Pull solc docker image"
-          command: docker pull ethereum/solc:0.4.23
       - run:
           name: "Running E2E Tests"
           command: |
