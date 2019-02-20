@@ -87,7 +87,7 @@ function* tokenInfoFetch({
   }
   yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
     type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-    payload: info,
+    payload: { ...info, tokenAddress },
     meta,
   });
 }
