@@ -67,6 +67,20 @@ export type TaskActionTypes = {|
     void,
     WithKeyPathDepth2,
   >,
+  TASK_FETCH_COMMENTS: UniqueActionType<
+    typeof ACTIONS.TASK_FETCH_COMMENTS,
+    *,
+    WithKeyPathDepth2,
+  >,
+  TASK_FETCH_COMMENTS_ERROR: ErrorActionType<
+    typeof ACTIONS.TASK_FETCH_COMMENTS_ERROR,
+    WithKeyPathDepth2,
+  >,
+  TASK_FETCH_COMMENTS_SUCCESS: UniqueActionType<
+    typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
+    void,
+    WithKeyPathDepth2,
+  >,
   TASK_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.TASK_FETCH_ERROR,
     WithKeyPathDepth2,
