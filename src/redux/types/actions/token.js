@@ -64,7 +64,8 @@ export type TokenActionTypes = {|
     {|
       decimals: number,
       name: string,
-      symbols: string,
+      symbol: string,
+      tokenAddress: string,
     |},
     void,
   >,
