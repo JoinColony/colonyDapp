@@ -11,17 +11,16 @@ const userProfileStore: StoreBlueprint = {
   name: 'userProfile',
   schema: yup.object({
     displayName: yup.string(),
-    createdAt: yup.date(),
+    createdAt: yup.number(),
     bio: yup.string(),
     // TODO: IPFS hash add yup validation for IPFS hash
-    avatar: yup.string(),
+    avatar: yup.string().nullable(),
     walletAddress: yup.string().address(),
     // TODO: yup validation for orbit address
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
     metadataStoreAddress: yup.string(),
-    activitiesStoreAddress: yup.string(),
     inboxStoreAddress: yup.string(),
   }),
   type: ValidatedKVStore,

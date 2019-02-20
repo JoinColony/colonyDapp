@@ -532,7 +532,7 @@ function* colonyAvatarRemove({
   }
 }
 
-export default function* colonySagas(): any {
+export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, colonyAvatarFetch);
   // TODO: rename properly once the new onboarding is done
   yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);

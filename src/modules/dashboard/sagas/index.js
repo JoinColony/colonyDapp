@@ -1,6 +1,8 @@
 /* @flow */
 
-import { all } from 'redux-saga/effects';
+import type { Saga } from 'redux-saga';
+
+import { all, call } from 'redux-saga/effects';
 
 import adminsSagas from './admins';
 import colonySagas from './colony';
@@ -9,13 +11,13 @@ import domainsSagas from './domains';
 import taskSagas from './task';
 import tokenSagas from './token';
 
-export default function* dashboardSagas(): any {
+export default function* setupDashboardSagas(): Saga<void> {
   yield all([
-    adminsSagas(),
-    colonySagas(),
-    commentsSagas(),
-    domainsSagas(),
-    taskSagas(),
-    tokenSagas(),
+    call(adminsSagas),
+    call(colonySagas),
+    call(commentsSagas),
+    call(domainsSagas),
+    call(taskSagas),
+    call(tokenSagas),
   ]);
 }

@@ -178,7 +178,7 @@ function* tokenIconFetch({
   }
 }
 
-export default function* tokenSagas(): any {
+export default function* tokenSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TOKEN_CREATE, tokenCreate);
   yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, tokenIconUpload);
   yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, tokenIconFetch);

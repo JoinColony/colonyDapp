@@ -7,6 +7,7 @@ import type {
   FeedStore,
   ValidatedKVStore,
 } from '../../../lib/database/stores';
+import type { UserProfileStoreValues } from '../../storeValuesTypes';
 
 import {
   createUserProfileStore,
@@ -51,32 +52,24 @@ export type UserMetadataCommand<I: *, R: *> = Command<
 >;
 
 export type CreateUserProfileCommandArgs = {|
-  displayName?: string,
-  bio?: string,
-  // TODO: IPFS hash add yup validation for IPFS hash
-  avatar?: string,
-  website?: string,
-  location?: string,
+  username: string,
 |};
 
 export type CreateUserProfileCommandReturn = {|
   inboxStore: FeedStore,
   metadataStore: EventStore,
-  profileStore: ValidatedKVStore,
+  profileStore: ValidatedKVStore<UserProfileStoreValues>,
 |};
 
 export type UpdateUserProfileCommandArgs = {|
-  displayName?: string,
   bio?: string,
-  // TODO: IPFS hash add yup validation for IPFS hash
-  avatar?: string,
-  website?: string,
+  displayName?: string,
   location?: string,
+  website?: string,
 |};
 
 export type SetUserAvatarCommandArgs = {|
-  // TODO: IPFS hash add yup validation for IPFS hash
-  avatar: string,
+  data: string,
 |};
 
 export type MarkNotificationsAsReadCommandArgs = {|
@@ -113,7 +106,7 @@ export const createUserProfile: UserCommand<
 
 export const updateUserProfile: UserCommand<
   UpdateUserProfileCommandArgs,
-  ValidatedKVStore,
+  ValidatedKVStore<UserProfileStoreValues>,
 > = ({ ddb, metadata }) => ({
   schema: UpdateUserProfileCommandArgsSchema,
   async execute(args) {
@@ -124,23 +117,25 @@ export const updateUserProfile: UserCommand<
   },
 });
 
-export const setUserAvatar: UserCommand<
+export const setUserAvatar: Command<
+  UserAvatarCommandContext,
   SetUserAvatarCommandArgs,
-  ValidatedKVStore,
-> = ({ ddb, metadata }) => ({
+  string,
+> = ({ ddb, ipfsNode, metadata }) => ({
   schema: SetUserAvatarCommandArgsSchema,
-  async execute(args) {
+  async execute({ data }) {
+    const avatar = await ipfsNode.addString(data);
     const profileStore = await getUserProfileStore(ddb)(metadata);
-    await profileStore.set(args);
-    await profileStore.load();
-    return profileStore;
+    await profileStore.set({ avatar });
+    return avatar;
   },
 });
 
-export const removeUserAvatar: UserCommand<void, ValidatedKVStore> = ({
-  ddb,
-  metadata,
-}) => ({
+// TODO unpin the avatar when ipfsNode supports it
+export const removeUserAvatar: UserCommand<
+  void,
+  ValidatedKVStore<UserProfileStoreValues>,
+> = ({ ddb, metadata }) => ({
   async execute() {
     const profileStore = await getUserProfileStore(ddb)(metadata);
     await profileStore.set({ avatar: null });

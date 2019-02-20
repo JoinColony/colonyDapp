@@ -94,11 +94,7 @@ export const SendWorkInviteCommandArgsSchema = yup.object({
 });
 
 export const CreateUserProfileCommandArgsSchema = yup.object({
-  displayName: yup.string(),
-  bio: yup.string(),
-  avatar: yup.string(),
-  website: yup.string(),
-  location: yup.string(),
+  username: yup.string().required(),
 });
 
 export const UpdateUserProfileCommandArgsSchema = yup.object({
@@ -109,5 +105,6 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 });
 
 export const SetUserAvatarCommandArgsSchema = yup.object({
+  // TODO: IPFS hash add yup validation for IPFS hash
   data: yup.string().required(),
 });

@@ -79,24 +79,8 @@ export const userFromAddressSelector = createSelector(
 
 export const avatarSelector = createSelector(
   avatarsSelector,
-  (state, { user }) => user && user.getIn(['record', 'profile', 'avatar']),
-  (avatars, hash) => avatars.get(hash),
-);
-
-export const userProfileStoreAddressSelector = createSelector(
-  currentUser,
-  user => (user ? user.profile.profileStore : null),
-);
-
-// TODO: add back once inboxStore is available
-// export const userInboxStoreAddressSelector = createSelector(
-//   currentUser,
-//   state => state.profile.inboxStore,
-// );
-
-export const userActivitiesStoreAddressSelector = createSelector(
-  currentUser,
-  user => (user ? user.profile.activitiesStore : null),
+  (state, { user }) => user && user.getIn(['record', 'profile', 'username']),
+  (avatars, username) => avatars.get(username),
 );
 
 export const walletAddressSelector = createSelector(

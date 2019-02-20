@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { UserProfileType } from '~immutable';
+
 import type {
   ActionType,
   ActionTypeWithPayload,
@@ -13,9 +15,9 @@ export type CurrentUserActionTypes = {|
   CURRENT_USER_CREATE: UniqueActionType<
     typeof ACTIONS.CURRENT_USER_CREATE,
     {|
-      profileData: Object,
+      balance: string,
+      profileData: $Shape<UserProfileType>,
       walletAddress: string,
-      balance: number,
     |},
     void,
   >,

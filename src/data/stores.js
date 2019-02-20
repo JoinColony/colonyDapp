@@ -2,7 +2,10 @@
 
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
+
 import type { Address, ENSName, OrbitDBAddress } from '~types';
+
+import type { UserProfileStoreValues } from './storeValuesTypes';
 import type { DDB } from '../lib/database';
 import type {
   EventStore,
@@ -11,13 +14,11 @@ import type {
 } from '../lib/database/stores';
 
 import { getENSDomainString } from '~utils/web3/ens';
-import { set } from '../lib/database/commands';
 
 import {
   colony as colonyStoreBlueprint,
   comments as commentsStoreBlueprint,
   task as taskStoreBlueprint,
-  userActivities as userActivitiesStoreBlueprint,
   userInbox as userInboxStoreBlueprint,
   userMetadata as userMetadataStoreBlueprint,
   userProfile as userProfileStoreBlueprint,
@@ -114,7 +115,7 @@ export const getUserProfileStore = (ddb: DDB) => async ({
   walletAddress: string,
   username?: string,
 }) =>
-  ddb.getStore<ValidatedKVStore>(
+  ddb.getStore<ValidatedKVStore<UserProfileStoreValues>>(
     userProfileStoreBlueprint,
     getUserProfileStoreIdentifier(username || walletAddress),
     {
@@ -129,7 +130,7 @@ export const getUserProfileStoreByUsername = (ddb: DDB) => async ({
   walletAddress: string,
   username: string,
 }) =>
-  ddb.getStore<ValidatedKVStore>(
+  ddb.getStore<ValidatedKVStore<UserProfileStoreValues>>(
     userProfileStoreBlueprint,
     getUserProfileStoreIdentifier(username),
     {
@@ -147,21 +148,6 @@ export const getUserInboxStore = (ddb: DDB) => async ({
   ddb.getStore<FeedStore>(userInboxStoreBlueprint, inboxStoreAddress, {
     walletAddress,
   });
-
-export const getUserActivityStore = (ddb: DDB) => async ({
-  userActivityStoreAddress,
-  walletAddress,
-}: {
-  userActivityStoreAddress: string | OrbitDBAddress,
-  walletAddress: string,
-}) =>
-  ddb.getStore<FeedStore>(
-    userActivitiesStoreBlueprint,
-    userActivityStoreAddress,
-    {
-      walletAddress,
-    },
-  );
 
 export const getUserMetadataStore = (ddb: DDB) => async ({
   userMetadataStoreAddress,
@@ -183,18 +169,13 @@ export const createUserProfileStore = (ddb: DDB) => async ({
 }: {
   walletAddress: string,
 }) => {
-  const [
-    profileStore,
-    activityStore,
-    inboxStore,
-    metadataStore,
-  ] = await Promise.all([
-    ddb.createStore<ValidatedKVStore>(userProfileStoreBlueprint, {
-      walletAddress,
-    }),
-    ddb.createStore<FeedStore>(userActivitiesStoreBlueprint, {
-      walletAddress,
-    }),
+  const [profileStore, inboxStore, metadataStore] = await Promise.all([
+    ddb.createStore<ValidatedKVStore<UserProfileStoreValues>>(
+      userProfileStoreBlueprint,
+      {
+        walletAddress,
+      },
+    ),
     ddb.createStore<FeedStore>(userInboxStoreBlueprint, {
       walletAddress,
     }),
@@ -203,12 +184,11 @@ export const createUserProfileStore = (ddb: DDB) => async ({
     }),
   ]);
 
-  await set(profileStore, {
-    activitiesStoreAddress: activityStore.address.toString(),
+  await profileStore.set({
     inboxStoreAddress: inboxStore.address.toString(),
     metadataStoreAddress: metadataStore.address.toString(),
   });
   await profileStore.load();
 
-  return { profileStore, activityStore, inboxStore, metadataStore };
+  return { profileStore, inboxStore, metadataStore };
 };

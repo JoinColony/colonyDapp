@@ -4,7 +4,11 @@ import { branch, lifecycle } from 'recompose';
 
 const shouldFetchUserAvatar = ({ avatarData, user }) =>
   !avatarData &&
-  (user && user.record && user.record.profile && user.record.profile.avatar);
+  (user &&
+    user.record &&
+    user.record.profile &&
+    user.record.profile.username &&
+    user.record.profile.avatar);
 
 const fetchMissingUserAvatar = branch(
   shouldFetchUserAvatar,
@@ -12,7 +16,7 @@ const fetchMissingUserAvatar = branch(
     componentDidMount() {
       const { user, fetchUserAvatar } = this.props;
       if (shouldFetchUserAvatar(this.props))
-        fetchUserAvatar(user.record.profile.avatar);
+        fetchUserAvatar(user.record.profile.username);
     },
   }),
 );

@@ -35,6 +35,7 @@ const EVENT_PARSERS = {
   TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
 };
 
+// TODO use a query for this
 function* fetchColonyTransactionsSaga({
   meta: {
     keyPath: [colonyENSName],
@@ -85,6 +86,7 @@ function* fetchColonyTransactionsSaga({
   }
 }
 
+// TODO use a query for this
 function* fetchColonyUnclaimedTransactionsSaga({
   meta: {
     keyPath: [colonyENSName],
@@ -112,7 +114,7 @@ function* fetchColonyUnclaimedTransactionsSaga({
     const { logs: transferLogs, events: transferEvents } = yield call(
       getLogsAndEvents,
       transferPartialFilter,
-      colonyClient.token,
+      colonyClient.tokenClient,
     );
 
     // Get logs + events for token claims by this Colony
@@ -196,7 +198,7 @@ function* claimColonyToken({
   }
 }
 
-export default function* adminSagas(): any {
+export default function* adminSagas(): Saga<void> {
   yield takeEvery(
     ACTIONS.COLONY_FETCH_TRANSACTIONS,
     fetchColonyTransactionsSaga,
