@@ -1,4 +1,4 @@
-version: 2.0
+version: 2
 
 jobs:
   build-with-lockfile:
@@ -139,13 +139,15 @@ jobs:
       LOADER: trufflepig
       NETWORK: local
       DISPLAY: :1.0
+      TERM: xterm
     working_directory: ~/colonyDapp
     steps:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-{{ checksum "package.json" }}
-          - node-modules-
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
       - run:
           name: "Installing modules"
           command: yarn install
@@ -153,9 +155,9 @@ jobs:
           name: "Provision submodules"
           command: yarn provision
       - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
-            - node_modules
-          key: node-modules-{{ checksum "package.json" }}
+            - ~/.cache  ## cache both yarn and Cypress!
       - setup_remote_docker
       - run:
           name: "Pull solc docker image"
@@ -215,7 +217,6 @@ jobs:
       - run: git config user.email "github@colony.io"
       - run: git config user.name "Colony Superuser"
       - run: yarn styleguide:deploy
-
 workflows:
   version: 2
   manual:
