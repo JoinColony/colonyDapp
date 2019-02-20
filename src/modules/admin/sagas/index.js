@@ -196,7 +196,7 @@ function* claimColonyToken({
   }
 }
 
-export default function* adminSagas(): any {
+export default function* adminSagas(): Saga<void> {
   yield takeEvery(
     ACTIONS.COLONY_FETCH_TRANSACTIONS,
     fetchColonyTransactionsSaga,

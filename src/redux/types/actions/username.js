@@ -36,11 +36,11 @@ export type UsernameActionTypes = {|
   >,
   USERNAME_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE_SUCCESS,
-    {|
+    {
       params: {
         username: string,
       },
-    |},
+    },
     void,
   >,
   USERNAME_FETCH: ActionTypeWithPayload<

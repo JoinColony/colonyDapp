@@ -31,7 +31,7 @@ import { domainsIndexSelector, singleColonySelector } from '../selectors';
  */
 export function* fetchColonyStore(
   colonyENSName: ENSName,
-): Saga<?ValidatedKVStore> {
+): Saga<?ValidatedKVStore<*>> {
   let store;
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);

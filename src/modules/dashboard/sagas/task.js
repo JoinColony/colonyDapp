@@ -705,7 +705,7 @@ function* taskWorkerClaimReward({
   }
 }
 
-export default function* tasksSagas(): any {
+export default function* tasksSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
   yield takeEvery(ACTIONS.TASK_MANAGER_END, taskManagerEnd);

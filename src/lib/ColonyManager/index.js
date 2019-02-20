@@ -17,6 +17,8 @@ import { NETWORK_CONTEXT } from './constants';
 export default class ColonyManager {
   clients: Map<Address, ColonyNetworkClient.ColonyClient>;
 
+  _metaColonyClient: ColonyNetworkClient.ColonyClient;
+
   ensCache: Map<ENSName, Address>;
 
   networkClient: ColonyNetworkClient;
@@ -42,6 +44,12 @@ export default class ColonyManager {
     const client = await this.networkClient.getColonyClientByAddress(address);
     this.clients.set(address, client);
     return client;
+  }
+
+  async getMetaColonyClient() {
+    if (this._metaColonyClient) return this._metaColonyClient;
+    this._metaColonyClient = await this.networkClient.getMetaColonyClient();
+    return this._metaColonyClient;
   }
 
   async getColonyClient(identifier?: AddressOrENSName) {

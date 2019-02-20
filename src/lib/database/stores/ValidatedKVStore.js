@@ -10,8 +10,10 @@ import type { OrbitDBKVStore } from '../types';
 /**
  * The wrapper Store class for orbit's key-value stores. Includes functions to
  * set and get entire objects and schema validation
+ *
+ * T: Type for the keys/values stored
  */
-class ValidatedKVStore extends KVStore {
+class ValidatedKVStore<T: { [key: string]: * }> extends KVStore {
   _schema: ObjectSchema;
 
   constructor(
@@ -26,7 +28,7 @@ class ValidatedKVStore extends KVStore {
   }
 
   async validate(
-    keyOrObject: string | {},
+    keyOrObject: $Keys<T> | $Shape<T>,
     value?: any,
     options?: ValidateOptions = { strict: true },
   ) {
@@ -39,19 +41,19 @@ class ValidatedKVStore extends KVStore {
     return this._schema.validate(keyOrObject, options);
   }
 
-  async set(keyOrObject: string | {}, value?: any) {
+  async set(keyOrObject: $Keys<T> | $Shape<T>, value?: any) {
     const validated = await this.validate(keyOrObject, value);
     return typeof keyOrObject === 'string'
       ? super.set(keyOrObject, validated)
       : super.set(validated);
   }
 
-  async append(key: string, value?: any) {
+  async append(key: string & $Keys<T>, value?: any) {
     const validated = await this.validate(key, [value]);
     return super.append(validated);
   }
 
-  all() {
+  all(): $Shape<T> {
     return Object.keys(this._schema.fields).reduce((data, key) => {
       const value = this._orbitStore.get(key);
       // XXX We could `.cast()` the values from the schema instead of removing
@@ -62,6 +64,10 @@ class ValidatedKVStore extends KVStore {
       }
       return data;
     }, {});
+  }
+
+  get<K: string>(key: K & $Keys<T>): ?$ElementType<T, K> {
+    return super.get(key);
   }
 }
 

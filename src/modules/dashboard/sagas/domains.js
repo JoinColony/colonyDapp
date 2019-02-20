@@ -273,7 +273,7 @@ function* colonyDomainsFetch({
   }
 }
 
-export default function* domainSagas(): any {
+export default function* domainSagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_DOMAINS_FETCH, colonyDomainsFetch);
   yield takeEvery(ACTIONS.DOMAIN_CREATE, domainCreate);
   yield takeEvery(ACTIONS.DOMAIN_FETCH, domainFetch);

@@ -21,7 +21,6 @@ type Props = {
 const withUserAvatar = compose(
   connect(
     (state: RootStateRecord, props: Props) => ({
-      // $FlowFixMe
       avatarData: avatarSelector(state, props),
     }),
     {

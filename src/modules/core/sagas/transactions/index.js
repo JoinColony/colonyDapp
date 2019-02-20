@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Saga } from 'redux-saga';
+
 import { takeEvery } from 'redux-saga/effects';
 
 import { ACTIONS } from '~redux';
@@ -13,7 +15,7 @@ import {
 
 export * from './createTransaction';
 
-export default function* transactionsSagas(): any {
+export default function* transactionsSagas(): Saga<void> {
   /* Multisig */
   yield takeEvery(
     ACTIONS.MULTISIG_TRANSACTION_CREATED,

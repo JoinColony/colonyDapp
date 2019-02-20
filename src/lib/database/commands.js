@@ -14,11 +14,11 @@ import {
 export const get = (store: Store | KVStore, key: string) =>
   typeof store.get === 'function' ? store.get(key) : null;
 
-export const getAll = (store: Store | ValidatedKVStore) =>
+export const getAll = (store: Store | ValidatedKVStore<*>) =>
   typeof store.all === 'function' ? store.all() : null;
 
 export const set = async (
-  store: Store | DocStore | KVStore | ValidatedKVStore | FeedStore,
+  store: Store | DocStore | KVStore | ValidatedKVStore<*> | FeedStore,
   keyOrObject: string | Object,
   value?: any,
 ) => {
@@ -39,7 +39,7 @@ export const getMeta = (store: Store | DocStore) =>
   typeof store.getMeta === 'function' ? store.getMeta() : null;
 
 export const remove = async (
-  store: Store | DocStore | KVStore | ValidatedKVStore | FeedStore,
+  store: Store | DocStore | KVStore | ValidatedKVStore<*> | FeedStore,
   key: string,
 ) => {
   if (typeof store.remove === 'function') return store.remove(key);
