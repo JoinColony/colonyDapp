@@ -14,4 +14,5 @@ export type UserProfileStoreValues = {|
   username: string,
   walletAddress: string,
   website?: string,
+  tokens?: string[],
 |};
