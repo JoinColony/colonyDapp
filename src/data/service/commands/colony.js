@@ -49,7 +49,7 @@ type CreateColonyProfileCommandArgs = {|
     address: Address,
     name: string,
     symbol: string,
-    icon: string,
+    icon?: ?string,
   |},
 |};
 

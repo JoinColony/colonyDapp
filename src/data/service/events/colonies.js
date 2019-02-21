@@ -67,7 +67,7 @@ export type ColonyAvatarRemovedEvent = Event<
 
 export type TokenInfoAddedEventArgs = {|
   address: Address,
-  icon: string,
+  icon?: ?string,
   name: string,
   symbol: string,
 |};
