@@ -57,6 +57,7 @@ const OrganizationAddDomains = ({ ensName }: Props) => (
           domainName,
         },
         meta: {
+          ...action.meta,
           keyPath: [ensName],
         },
       })}

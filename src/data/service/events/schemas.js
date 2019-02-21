@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 export const CreateDomainCreatedEventSchema = yup.object({
   domainId: yup.number().required(),
-  colonyENSName: yup.string().required(),
+  name: yup.string().required(),
 });
 
 export const CreateTaskStoreCreatedEventSchema = yup.object({
@@ -24,25 +24,25 @@ export const CreateColonyAvatarRemovedEventSchema = yup.object({
 
 export const CreateTokenInfoAddedEventSchema = yup.object({
   address: yup.string().required(),
-  icon: yup.string().required(),
+  icon: yup.string(),
   name: yup.string().required(),
-  symbol: yup.string().required(),
+  symbol: yup.string(),
 });
 
 export const CreateColonyProfileCreatedEventSchema = yup.object({
   address: yup.string().required(),
   ensName: yup.string().required(),
   name: yup.string().required(),
-  description: yup.string().required(),
-  website: yup.string().required(),
-  guideline: yup.string().required(),
+  description: yup.string(),
+  website: yup.string().url(),
+  guideline: yup.string().url(),
 });
 
 export const CreateColonyProfileUpdatedEventSchema = yup.object({
-  name: yup.string().required(),
-  description: yup.string().required(),
-  website: yup.string().required(),
-  guideline: yup.string().required(),
+  name: yup.string(),
+  description: yup.string(),
+  website: yup.string().url(),
+  guideline: yup.string().url(),
 });
 
 export const CreateNotificationsReadUntilEventSchema = yup.object({
@@ -66,15 +66,13 @@ export const CreateDraftCreatedEventSchema = yup.object({
   creator: yup.string().required(),
   domainId: yup.number().required(),
   draftId: yup.string().required(),
-  meta: yup.string().required(),
   specificationHash: yup.string().required(),
   title: yup.string().required(),
 });
 
 export const CreateDraftUpdatedEventSchema = yup.object({
-  meta: yup.string().required(),
-  specificationHash: yup.string().required(),
-  title: yup.string().required(),
+  specificationHash: yup.string(),
+  title: yup.string(),
 });
 
 export const CreateWorkInviteSentEventSchema = yup.object({

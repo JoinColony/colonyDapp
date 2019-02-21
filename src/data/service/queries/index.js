@@ -15,6 +15,8 @@ import type {
   TaskStoreCreatedEvent,
 } from '../events';
 
+import { getFilterFromPartial } from '~utils/web3/eventLogs';
+
 import { getColonyStore, getCommentsStore, getTaskStore } from '../../stores';
 import { COLONY_EVENT_TYPES, TASK_EVENT_TYPES } from '../../constants';
 
@@ -71,10 +73,77 @@ export type UserQueryContext = Context<
   DDBContext,
 >;
 
+export type ColonyContractEventQuery<I: *, R: *> = Query<
+  ColonyClientContext,
+  I,
+  R,
+>;
 export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
 export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
 export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
 export type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
+
+export const getColonyAdmins: ColonyContractEventQuery<*, *> = ({
+  colonyClient,
+}) => ({
+  async execute() {
+    const COLONY_ADMIN_SET_EVENT =
+      colonyClient.contract.events.ColonyAdminRoleSet.eventName;
+    const COLONY_ADMIN_REMOVED_EVENT =
+      colonyClient.contract.events.ColonyAdminRoleRemoved.eventName;
+    const eventNames = [COLONY_ADMIN_SET_EVENT, COLONY_ADMIN_REMOVED_EVENT];
+    // Will contain to/from block and event name topics
+    const baseLog = await getFilterFromPartial(
+      { eventNames, blocksBack: 400000 },
+      colonyClient,
+    );
+
+    // Get logs + events for role assignment
+    const removedAdminLogs = await colonyClient.contract.getLogs({
+      ...baseLog,
+      // [eventNames, from, to]
+      topics: [[COLONY_ADMIN_REMOVED_EVENT]],
+    });
+    const setAdminLogs = await colonyClient.contract.getLogs({
+      ...baseLog,
+      // [eventNames, from, to]
+      topics: [[COLONY_ADMIN_SET_EVENT]],
+    });
+
+    const removedAdmins = Array.from(
+      new Set(...(removedAdminLogs.map(({ user }) => user) || [])),
+    );
+    return setAdminLogs.filter(({ user }) => !removedAdmins.includes(user));
+  },
+});
+
+export const getColonyFounder: ColonyContractEventQuery<*, *> = ({
+  colonyClient,
+}) => ({
+  async execute() {
+    const COLONY_FOUNDER_ROLE_SET =
+      colonyClient.contract.events.ColonyFounderRoleSet.eventName;
+    const eventNames = [COLONY_FOUNDER_ROLE_SET];
+    // Will contain to/from block and event name topics
+    const baseLog = await getFilterFromPartial(
+      { eventNames, blocksBack: 400000 },
+      colonyClient,
+    );
+
+    // Get logs + events for founder role assignment
+    const founderChangedLogs = await colonyClient.contract.getLogs({
+      ...baseLog,
+      // [eventNames, from, to]
+      topics: [[COLONY_FOUNDER_ROLE_SET]],
+    });
+
+    const [head] = founderChangedLogs
+      .sort((a, b) => a.blockNumber - b.blockNumber)
+      .reverse();
+
+    return head && head.newFounder;
+  },
+});
 
 // @TODO Add typing for query results
 export const getColony: ColonyQuery<*, *> = ({
@@ -88,6 +157,13 @@ export const getColony: ColonyQuery<*, *> = ({
       colonyAddress,
       colonyENSName,
     });
+
+    const getAdminsQuery = getColonyAdmins({ colonyClient });
+    const admins = await getAdminsQuery.execute();
+    // @TODO: Include `founder` to ColonyType
+    // const getFounderQuery = getColonyFounder({ colonyClient });
+    // const founder = await getFounderQuery.execute();
+
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
@@ -100,17 +176,15 @@ export const getColony: ColonyQuery<*, *> = ({
             case TOKEN_INFO_ADDED: {
               return {
                 ...colony,
-                token: payload,
+                token: Object.assign({}, payload, { balance: 0 }),
               };
             }
             case AVATAR_UPLOADED: {
-              const { ipfsHash, avatar } = payload;
+              // @TODO: Make avatar an object so we have the ipfsHash and data
+              const { ipfsHash } = payload;
               return {
                 ...colony,
-                avatar: {
-                  ipfsHash,
-                  avatar,
-                },
+                avatar: ipfsHash,
               };
             }
             case AVATAR_REMOVED: {
@@ -118,28 +192,34 @@ export const getColony: ColonyQuery<*, *> = ({
               const { ipfsHash } = payload;
               return {
                 ...colony,
-                avatar: avatar && avatar.ipfsHash === ipfsHash ? null : avatar,
+                avatar: avatar && avatar === ipfsHash ? undefined : avatar,
               };
             }
             case PROFILE_CREATED: {
-              return {
-                ...colony,
-                profile: payload,
-              };
+              return Object.assign({}, colony, payload);
             }
             case PROFILE_UPDATED: {
-              const { profile } = colony;
-              return {
-                ...colony,
-                profile: Object.assign({}, profile, payload),
-              };
+              return Object.assign({}, colony, payload);
             }
-
             default:
               return colony;
           }
         },
-        { avatar: null, profile: {}, token: {} },
+        // @TODO: Add the right defaults here using a data model or something like that
+        {
+          ensName: colonyENSName,
+          address: colonyAddress,
+          name: '',
+          avatar: undefined,
+          admins,
+          token: {
+            address: '',
+            balance: 0,
+            icon: '',
+            name: '',
+            symbol: '',
+          },
+        },
       );
   },
 });
@@ -220,23 +300,19 @@ export const getColonyDomains: ColonyQuery<*, *> = ({
   ddb,
   colonyClient,
   wallet,
-  metadata: { colonyAddress, colonyENSName },
+  metadata,
 }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
     return colonyStore
       .all()
       .filter(({ type: eventType }) => eventType === DOMAIN_CREATED)
-      .reduce(
-        (domains, { payload: { domainId, name } }: DomainCreatedEvent) =>
-          Object.assign({}, domains, {
-            [domainId]: { domainId, name },
-          }),
-        {},
-      );
+      .map(({ payload: { domainId, name } }: DomainCreatedEvent) => ({
+        id: domainId,
+        name,
+      }));
   },
 });
 

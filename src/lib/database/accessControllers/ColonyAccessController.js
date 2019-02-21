@@ -43,8 +43,8 @@ class ColonyAccessController extends AbstractAccessController<
     );
   }
 
-  _extendVerifyContext<Context: Object>(context: Context) {
-    return { colonyAddress: this._colonyAddress, ...context };
+  _extendVerifyContext<Context: {}>(context: ?Context) {
+    return Object.assign({}, context, { colonyAddress: this._colonyAddress });
   }
 
   _checkWalletAddress() {
@@ -53,7 +53,7 @@ class ColonyAccessController extends AbstractAccessController<
   }
 
   async save() {
-    const isAllowed = await this.can('create-colony-database', {});
+    const isAllowed = await this.can('is-colony-founder');
     if (!isAllowed)
       throw new Error('Cannot create colony database, user not allowed');
 
@@ -80,14 +80,14 @@ class ColonyAccessController extends AbstractAccessController<
 
     // Is the wallet signature valid?
     const {
-      payload: { value },
+      payload: { value: event },
     } = entry;
-    return this.can(value.__eventType, value);
+    return this.can(event.type, event);
   }
 
-  async can<Context: Object>(
+  async can<Context: {}>(
     actionId: string,
-    context: Context,
+    context: ?Context,
   ): Promise<boolean> {
     return this._manager.can(
       this._purserWallet.address,

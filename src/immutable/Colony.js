@@ -21,9 +21,6 @@ import type {
 type Shared = {|
   address: Address,
   avatar?: string,
-  databases: {
-    domainsIndex: ?string,
-  },
   description?: string,
   ensName: ENSName,
   guideline?: string,
@@ -48,9 +45,6 @@ type ColonyRecordProps = {|
 const defaultValues: $Shape<ColonyRecordProps> = {
   address: undefined,
   avatar: undefined,
-  databases: {
-    domainsIndex: undefined,
-  },
   description: undefined,
   ensName: undefined,
   guideline: undefined,
