@@ -87,8 +87,10 @@ export const getColonyAdmins: ColonyContractEventQuery<*, *> = ({
   colonyClient,
 }) => ({
   async execute() {
-    const COLONY_ADMIN_SET_EVENT = 'ColonyAdminRoleSet';
-    const COLONY_ADMIN_REMOVED_EVENT = 'ColonyAdminRoleRemoved';
+    const COLONY_ADMIN_SET_EVENT =
+      colonyClient.contract.events.ColonyAdminRoleSet.eventName;
+    const COLONY_ADMIN_REMOVED_EVENT =
+      colonyClient.contract.events.ColonyAdminRoleRemoved.eventName;
     const eventNames = [COLONY_ADMIN_SET_EVENT, COLONY_ADMIN_REMOVED_EVENT];
     // Will contain to/from block and event name topics
     const baseLog = await getFilterFromPartial(
@@ -119,7 +121,8 @@ export const getColonyFounder: ColonyContractEventQuery<*, *> = ({
   colonyClient,
 }) => ({
   async execute() {
-    const COLONY_FOUNDER_ROLE_SET = 'ColonyFounderRoleSet';
+    const COLONY_FOUNDER_ROLE_SET =
+      colonyClient.contract.events.ColonyFounderRoleSet.eventName;
     const eventNames = [COLONY_FOUNDER_ROLE_SET];
     // Will contain to/from block and event name topics
     const baseLog = await getFilterFromPartial(
