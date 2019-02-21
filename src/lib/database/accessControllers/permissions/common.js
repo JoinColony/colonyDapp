@@ -8,14 +8,14 @@ import {
   EVALUATOR_ROLE,
   FOUNDER_ROLE,
   MANAGER_ROLE,
-  ROLES,
+  TASK_ROLES,
   WORKER_ROLE,
 } from '@colony/colony-js-client';
 
 import type { PermissionsManifest } from './types';
 
 type AuthorityRole = $Keys<typeof AUTHORITY_ROLES>;
-type Role = $Keys<typeof ROLES>;
+type Role = $Keys<typeof TASK_ROLES>;
 
 const isAny = (...promises): Promise<boolean> =>
   Promise.all(promises).then(values => values.some(value => !!value));
