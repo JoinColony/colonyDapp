@@ -4,14 +4,14 @@ import localforage from 'localforage';
 
 import type { Action } from '~redux';
 
-import { REHYDRATE, REHYDRATED } from './actions';
+import { ACTIONS } from '~redux';
 
 type Next = (Action<*>) => any;
 
 const persistMiddleware = (store: any) => (next: Next) => (
   action: Action<*>,
 ) => {
-  if (action.type === REHYDRATE) {
+  if (action.type === ACTIONS.REHYDRATE) {
     const {
       payload: { key },
     } = action;
@@ -21,7 +21,7 @@ const persistMiddleware = (store: any) => (next: Next) => (
         if (!item) return;
         const parsed = JSON.parse(item);
         store.dispatch({
-          type: REHYDRATED,
+          type: ACTIONS.REHYDRATED,
           payload: parsed,
         });
       })

@@ -3,9 +3,9 @@
 import localforage from 'localforage';
 import debounce from 'lodash/debounce';
 
-import type { Action, ReducerType } from '~redux';
+import type { Action } from '~redux';
 
-import { REHYDRATED } from './actions';
+import { ACTIONS } from '~redux';
 
 type Config = {|
   key: string,
@@ -23,10 +23,10 @@ const persistState = debounce(state => {
 
 const persistReducer = (
   { version, key }: Config,
-  reducer: ReducerType<*, *>,
-) => (state: any, action: Action<*>) => {
+  reducer: (state: *, action: Action<*>) => *,
+) => (state: *, action: Action<*>) => {
   const newState = reducer(state, action);
-  if (!state || newState === state || action.type === REHYDRATED) {
+  if (!state || newState === state || action.type === ACTIONS.REHYDRATED) {
     return newState;
   }
   const wrappedState = {

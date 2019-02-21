@@ -1,9 +1,21 @@
 /* @flow */
 
-export const REHYDRATE = '@@persist/REHYDRATE';
-export const REHYDRATED = '@@persist/REHYDRATED';
+import type { ActionTypeWithPayload, ActionsType } from '~redux/index';
 
-export const rehydrate = (key: string) => ({
-  type: REHYDRATE,
+import { ACTIONS } from '~redux/index';
+
+// eslint-disable-next-line import/prefer-default-export
+export const rehydrate = (
+  key: string,
+): $ElementType<ActionsType, 'REHYDRATE'> => ({
+  type: ACTIONS.REHYDRATE,
   payload: { key },
 });
+
+export type PersistActionTypes = {|
+  REHYDRATE: ActionTypeWithPayload<typeof ACTIONS.REHYDRATE, {| key: string |}>,
+  REHYDRATED: ActionTypeWithPayload<
+    typeof ACTIONS.REHYDRATED,
+    {| key: string, value: any |},
+  >,
+|};
