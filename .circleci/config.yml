@@ -138,35 +138,32 @@ jobs:
     environment:
       LOADER: trufflepig
       NETWORK: local
-      DISPLAY: :1.0
       TERM: xterm
     working_directory: ~/colonyDapp
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-            - v1-deps-{{ .Branch }}
-            - v1-deps
+            - cache-{{ checksum "package.json" }}
       - run:
           name: "Installing modules"
           command: yarn install
-      - run:
-          name: "Provision submodules"
-          command: yarn provision
-      - save_cache:
-          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-            - ~/.cache  ## cache both yarn and Cypress!
       - setup_remote_docker
       - run:
           name: "Pull solc docker image"
           command: docker pull ethereum/solc:0.4.23
       - run:
-          name: "Install Ganache Independently"
-          command: yarn add --dev ganache-cli
+          name: "Provision submodules"
+          command: yarn provision
+      - save_cache:
+          key: cache-{{ checksum "package.json" }}
+          paths:
+            - ~/.cache
       - run:
-          name: "End-to-end Tests"
+          name: "Verify Cypress before starting Tests"
+          command: yarn cypress verify
+      - run:
+          name: "Run End-to-End Tests"
           command: yarn test:e2e:ci
       - store_test_results:
           path: reports
