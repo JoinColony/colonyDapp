@@ -7,7 +7,6 @@ import { createSelector } from 'reselect';
 import {
   CORE_NAMESPACE as ns,
   CORE_TRANSACTIONS,
-  CORE_GAS_PRICES,
   CORE_TRANSACTIONS_LIST,
 } from '../constants';
 
@@ -92,9 +91,3 @@ export const pendingMultisigTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isPendingMultisig).sort(createdAtDesc),
 );
-
-/*
- * Other selectors.
- */
-export const gasPrices = (state: RootStateRecord) =>
-  state.getIn([ns, CORE_TRANSACTIONS, CORE_GAS_PRICES]);

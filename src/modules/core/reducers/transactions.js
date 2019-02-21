@@ -1,15 +1,22 @@
 /* @flow */
 
-import { fromJS } from 'immutable';
+import { fromJS, Map as ImmutableMap } from 'immutable';
 import getObjectFromPath from 'lodash/get';
+import BigNumber from 'bn.js';
 
 import type { CoreTransactionsRecord, TransactionRecordType } from '~immutable';
 
 import { TransactionRecord, CoreTransactions } from '~immutable';
 import { ACTIONS } from '~redux';
+import { persistReducer } from '~redux/persist';
 
-import { CORE_GAS_PRICES, CORE_TRANSACTIONS_LIST } from '../constants';
+import { CORE_TRANSACTIONS_LIST } from '../constants';
 import type { ReducerType } from '~redux';
+
+const persistConfig = {
+  key: 'transactions',
+  version: 1,
+};
 
 /*
  * Helpers for transaction transformations
@@ -32,16 +39,17 @@ const coreTransactionsReducer: ReducerType<
     GAS_PRICES_UPDATE: *,
     MULTISIG_TRANSACTION_CREATED: *,
     MULTISIG_TRANSACTION_REFRESHED: *,
+    REHYDRATED: *,
+    TRANSACTION_ADD_IDENTIFIER: *,
+    TRANSACTION_ADD_PARAMS: *,
     TRANSACTION_CANCEL: *,
     TRANSACTION_CREATED: *,
     TRANSACTION_ERROR: *,
-    TRANSACTION_SUCCEEDED: *,
     TRANSACTION_GAS_UPDATE: *,
+    TRANSACTION_READY: *,
     TRANSACTION_RECEIPT_RECEIVED: *,
     TRANSACTION_SENT: *,
-    TRANSACTION_ADD_IDENTIFIER: *,
-    TRANSACTION_ADD_PARAMS: *,
-    TRANSACTION_READY: *,
+    TRANSACTION_SUCCEEDED: *,
   |},
 > = (state = CoreTransactions(), action) => {
   switch (action.type) {
@@ -191,11 +199,24 @@ const coreTransactionsReducer: ReducerType<
       }
       return state.deleteIn([CORE_TRANSACTIONS_LIST, id]);
     }
-    case ACTIONS.GAS_PRICES_UPDATE:
-      return state.mergeIn([CORE_GAS_PRICES], fromJS(action.payload));
+    case ACTIONS.REHYDRATED: {
+      const { key, value } = action.payload;
+      if (key !== persistConfig.key) {
+        return state;
+      }
+      return CoreTransactions({
+        [CORE_TRANSACTIONS_LIST]: ImmutableMap(
+          value[CORE_TRANSACTIONS_LIST],
+        ).map(tx =>
+          TransactionRecord(tx)
+            .set('gasLimit', new BigNumber(tx.gasLimit))
+            .set('gasPrice', new BigNumber(tx.gasPrice)),
+        ),
+      });
+    }
     default:
       return state;
   }
 };
 
-export default coreTransactionsReducer;
+export default persistReducer(persistConfig, coreTransactionsReducer);

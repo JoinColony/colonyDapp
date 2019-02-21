@@ -5,16 +5,18 @@ import type { Saga } from 'redux-saga';
 import { setContext, call, all, put, fork } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 
+import type { UserProfileType } from '~immutable';
+import type { Action } from '~redux';
+
 import { create, putError } from '~utils/saga/effects';
 import { CONTEXT } from '~context';
 import { ACTIONS } from '~redux';
-
-import type { UserProfileType } from '~immutable';
-import type { Action } from '~redux';
+import { rehydrate } from '~redux/persist';
 
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import setupTransactionsSagas from './transactions';
+
 import {
   getOrCreateUserStore,
   getUserProfileData,
@@ -22,7 +24,13 @@ import {
   setupUserSagas,
 } from '../../users/sagas';
 
-import { getDDB, getColonyManager, defaultNetwork, getProvider } from './utils';
+import {
+  getDDB,
+  getGasPrices,
+  getColonyManager,
+  defaultNetwork,
+  getProvider,
+} from './utils';
 
 import * as resolvers from '../../../lib/database/resolvers';
 
@@ -72,6 +80,8 @@ export default function* setupUserContext(
       [CONTEXT.DDB_INSTANCE]: ddb,
     });
 
+    yield call(getGasPrices);
+
     const userStore = yield call(getOrCreateUserStore, wallet.address);
 
     const profileData: UserProfileType = yield call(
@@ -104,6 +114,8 @@ export default function* setupUserContext(
       },
       meta,
     });
+
+    yield put(rehydrate('transactions'));
   } catch (err) {
     yield putError(ACTIONS.WALLET_CREATE_ERROR, err, meta);
   }

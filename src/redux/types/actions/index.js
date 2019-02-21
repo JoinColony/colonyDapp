@@ -11,6 +11,7 @@ import type { CurrentUserActionTypes } from './currentUser';
 import type { DomainActionTypes } from './domain';
 import type { GasPricesActionTypes } from './gasPrices';
 import type { MultisigActionTypes } from './multisig';
+import type { PersistActionTypes } from '../../persist';
 import type { TaskActionTypes } from './task';
 import type { TokenActionTypes } from './token';
 import type { TransactionActionTypes } from './transaction';
@@ -81,6 +82,7 @@ export type ActionsType = {|
   ...DomainActionTypes,
   ...GasPricesActionTypes,
   ...MultisigActionTypes,
+  ...PersistActionTypes,
   ...TaskActionTypes,
   ...TokenActionTypes,
   ...TransactionActionTypes,
