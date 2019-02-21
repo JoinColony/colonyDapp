@@ -160,6 +160,7 @@ export const getColony: ColonyQuery<*, *> = ({
 
     const getAdminsQuery = getColonyAdmins({ colonyClient });
     const admins = await getAdminsQuery.execute();
+    // @TODO: Include `founder` to ColonyType
     // const getFounderQuery = getColonyFounder({ colonyClient });
     // const founder = await getFounderQuery.execute();
 
@@ -179,6 +180,7 @@ export const getColony: ColonyQuery<*, *> = ({
               };
             }
             case AVATAR_UPLOADED: {
+              // @TODO: Make avatar an object so we have the ipfsHash and data
               const { ipfsHash } = payload;
               return {
                 ...colony,
@@ -186,11 +188,11 @@ export const getColony: ColonyQuery<*, *> = ({
               };
             }
             case AVATAR_REMOVED: {
-              // const { avatar } = colony;
-              // const { ipfsHash } = payload;
+              const { avatar } = colony;
+              const { ipfsHash } = payload;
               return {
                 ...colony,
-                avatar: undefined,
+                avatar: avatar && avatar === ipfsHash ? undefined : avatar,
               };
             }
             case PROFILE_CREATED: {
@@ -208,6 +210,7 @@ export const getColony: ColonyQuery<*, *> = ({
           ensName: colonyENSName,
           address: colonyAddress,
           name: '',
+          avatar: undefined,
           admins,
           token: {
             address: '',
