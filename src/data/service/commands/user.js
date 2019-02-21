@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { OrbitDBAddress } from '~types';
+import type { Address, OrbitDBAddress } from '~types';
 import type { Command, Context, IPFSContext, DDBContext } from '../../types';
 import type {
   EventStore,
@@ -77,6 +77,10 @@ export type MarkNotificationsAsReadCommandArgs = {|
   exceptFor?: string[],
 |};
 
+export type AddTokenInfoCommandArgs = {|
+  address: Address,
+|};
+
 export const createUserProfile: UserCommand<
   CreateUserProfileCommandArgs,
   CreateUserProfileCommandReturn,
@@ -140,6 +144,21 @@ export const removeUserAvatar: UserCommand<
     const profileStore = await getUserProfileStore(ddb)(metadata);
     await profileStore.set({ avatar: null });
     await profileStore.load();
+    return profileStore;
+  },
+});
+
+export const addTokenInfo: UserCommand<
+  AddTokenInfoCommandArgs,
+  ValidatedKVStore<UserProfileStoreValues>,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const { address } = args;
+    const profileStore = await getUserProfileStore(ddb)(metadata);
+    const userTokens = await profileStore.get('tokens');
+    await profileStore.set({
+      tokens: Array.from(new Set([...(userTokens || []), address])),
+    });
     return profileStore;
   },
 });

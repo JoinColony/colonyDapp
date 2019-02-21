@@ -15,8 +15,6 @@ export const CreateColonyProfileCommandArgsSchema = yup.object({
   token: yup.object({
     address: yup.string().address(),
     icon: yup.string(),
-    name: yup.string(),
-    symbol: yup.string(),
   }),
 });
 
