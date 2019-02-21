@@ -250,8 +250,6 @@ function* colonyCreateLabel({
     token: {
       address: tokenAddress,
       icon: tokenIcon,
-      name: tokenName,
-      symbol: tokenSymbol,
     },
   };
 
@@ -264,12 +262,14 @@ function* colonyCreateLabel({
       address: colonyAddress,
       ensName,
       name: colonyName,
-      token: {
-        address: tokenAddress,
-        balance: 0,
-        icon: tokenIcon,
-        name: tokenName,
-        symbol: tokenSymbol,
+      tokens: {
+        [tokenAddress]: {
+          address: tokenAddress,
+          balance: 0,
+          icon: tokenIcon,
+          name: tokenName,
+          symbol: tokenSymbol,
+        },
       },
     },
   };

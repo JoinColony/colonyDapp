@@ -8,8 +8,6 @@ import type {
 
 import { Record, Map as ImmutableMap } from 'immutable';
 
-import TokenRecord from './Token';
-
 import type { Address, ENSName } from '~types';
 import type {
   TokenRecordType,
@@ -32,13 +30,13 @@ type Shared = {|
 
 export type ColonyType = $ReadOnly<{|
   ...Shared,
-  token?: TokenType,
+  tokens?: { [tokenAddress: string]: TokenType },
   admins?: { [username: string]: ColonyAdminType },
 |}>;
 
 type ColonyRecordProps = {|
   ...Shared,
-  token?: TokenRecordType,
+  tokens?: ImmutableMapType<string, TokenRecordType>,
   admins?: ImmutableMapType<string, ColonyAdminRecordType>,
 |};
 
@@ -50,7 +48,7 @@ const defaultValues: $Shape<ColonyRecordProps> = {
   guideline: undefined,
   id: undefined,
   name: undefined,
-  token: TokenRecord(),
+  tokens: ImmutableMap(),
   version: undefined,
   website: undefined,
   admins: ImmutableMap(),
