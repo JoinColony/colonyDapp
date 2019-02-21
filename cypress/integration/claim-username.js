@@ -57,7 +57,14 @@ describe('Claims a username', () => {
     /*
      * Submit your selected username
      */
-    cy.get('button[data-test="claimUsernameConfirm"]').click();
+    cy.get('button[data-test="claimUsernameConfirm"]')
+      .click()
+      /*
+       * Wait a spell, it seems that the spinner on the button prevents
+       * cypress to fetch the Gas Station hook.
+       * This way, we make sure the modal is closed by the time it tries to.
+       */
+      .wait(5000);
   });
 
   it('Sign the transaction', () => {
