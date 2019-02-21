@@ -51,10 +51,8 @@ export type SkillSetEventPayload = SkillSetEventArgs;
 export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 
 export type DraftCreatedEventArgs = {|
-  creator: string,
   domainId: number,
   draftId: string,
-  meta: string,
   specificationHash: string,
   title: string,
 |};
@@ -65,7 +63,6 @@ export type DraftCreatedEvent = Event<
 >;
 
 export type DraftUpdatedEventArgs = {|
-  meta: string,
   specificationHash: string,
   title: string,
 |};
