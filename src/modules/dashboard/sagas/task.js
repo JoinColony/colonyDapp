@@ -16,7 +16,7 @@ import {
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
-import { updateTaskDraft } from '../../../data/service/commands';
+import { updateTask } from '../../../data/service/commands';
 import { getColonyTasks, getTask } from '../../../data/service/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -126,7 +126,7 @@ function* taskUpdate({
 }: Action<typeof ACTIONS.TASK_UPDATE>): Saga<void> {
   try {
     const context = yield* getStoreContext(colonyENSName);
-    yield* executeCommand(context, updateTaskDraft, payload);
+    yield* executeCommand(context, updateTask, payload);
     /*
      * Dispatch the success action.
      */

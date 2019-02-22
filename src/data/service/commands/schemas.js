@@ -46,14 +46,14 @@ export const SetTaskSkillCommandArgsSchema = yup.object({
   skillId: yup.string().required(),
 });
 
-export const CreateTaskDraftCommandArgsSchema = yup.object({
+export const CreateTaskCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
   draftId: yup.string().required(),
   specificationHash: yup.string(),
   title: yup.string(),
 });
 
-export const UpdateTaskDraftCommandArgsSchema = yup.object({
+export const UpdateTaskCommandArgsSchema = yup.object({
   specificationHash: yup.string(),
   title: yup.string(),
 });
