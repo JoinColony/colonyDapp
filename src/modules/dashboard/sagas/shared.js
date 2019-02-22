@@ -21,7 +21,7 @@ import { singleColonySelector } from '../selectors';
  */
 export function* fetchColonyStore(
   colonyENSName: ENSName,
-): Saga<?ValidatedKVStore> {
+): Saga<?ValidatedKVStore<*>> {
   let store;
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const wallet = yield* getContext(CONTEXT.WALLET);

@@ -68,6 +68,6 @@ function* taskCommentAdd({
   }
 }
 
-export default function* commentsSagas(): any {
+export default function* commentsSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
 }

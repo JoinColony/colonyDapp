@@ -5,7 +5,6 @@ import type { ContractTransactionType, UserProfileType } from '~immutable';
 
 import type {
   ActionType,
-  ActionTypeWithMeta,
   ActionTypeWithPayload,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
@@ -17,7 +16,7 @@ import { ACTIONS } from '../../index';
 export type UserActionTypes = {|
   USER_AVATAR_FETCH: ActionTypeWithPayload<
     typeof ACTIONS.USER_AVATAR_FETCH,
-    {| hash: string |},
+    {| username: string |},
   >,
   USER_AVATAR_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_AVATAR_FETCH_ERROR,
@@ -26,8 +25,8 @@ export type UserActionTypes = {|
   USER_AVATAR_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS,
     {|
-      avatarData: string,
-      hash: string,
+      avatar: ?string,
+      username: string,
     |},
   >,
   USER_FETCH_TOKEN_TRANSFERS: ActionType<
@@ -43,8 +42,9 @@ export type UserActionTypes = {|
       transactions: ContractTransactionType[],
     |},
   >,
-  USER_PROFILE_FETCH: ActionTypeWithMeta<
+  USER_PROFILE_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PROFILE_FETCH,
+    {| username: string |},
     WithKeyPathDepth1,
   >,
   USER_PROFILE_FETCH_ERROR: ErrorActionType<
@@ -58,7 +58,12 @@ export type UserActionTypes = {|
   >,
   USER_PROFILE_UPDATE: UniqueActionType<
     typeof ACTIONS.USER_PROFILE_UPDATE,
-    UserProfileType,
+    {|
+      bio?: string,
+      displayName?: string,
+      location?: string,
+      website?: string,
+    |},
     void,
   >,
   USER_PROFILE_UPDATE_ERROR: ErrorActionType<
@@ -81,7 +86,7 @@ export type UserActionTypes = {|
   >,
   USER_REMOVE_AVATAR_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
-    {| user: UserProfileType |}, // TODO this probably shouldn't be here
+    {| username: string |},
     void,
   >,
   USER_UPLOAD_AVATAR: UniqueActionType<

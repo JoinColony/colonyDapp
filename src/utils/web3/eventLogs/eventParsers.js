@@ -189,7 +189,7 @@ export const parseUserTransferEvent = async ({
   log: Object,
   colonyClient: ColonyClientType,
   userAddress: string,
-}): Promise<?ContractTransactionType> => {
+}): Promise<ContractTransactionType> => {
   const { to, from, tokens: amount } = event;
   const { address: token, transactionHash: hash } = log;
   const date = await getLogDate({ log, colonyClient });

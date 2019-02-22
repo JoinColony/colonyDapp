@@ -52,8 +52,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -70,8 +68,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -91,8 +87,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -112,8 +106,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -130,8 +122,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -148,8 +138,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -166,8 +154,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -184,8 +170,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -202,8 +186,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -220,8 +202,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -238,8 +218,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -256,8 +234,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -274,8 +250,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -292,8 +266,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },
@@ -310,8 +282,6 @@ const mockTasks = [
     assignee: {
       activities: [],
       profile: {
-        activitiesStore: '',
-        profileStore: '',
         walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
         username: 'user',
       },

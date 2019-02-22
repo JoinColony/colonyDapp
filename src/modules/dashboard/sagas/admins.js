@@ -133,7 +133,7 @@ function* colonyAdminRemove({
   }
 }
 
-export default function* adminsSagas(): any {
+export default function* adminsSagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, colonyAdminAdd);
   yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, colonyAdminRemove);
 }

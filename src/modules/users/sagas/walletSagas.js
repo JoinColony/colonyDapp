@@ -125,6 +125,6 @@ export function* getWallet(
   }
 }
 
-export function* setupWalletSagas(): any {
+export function* setupWalletSagas(): Saga<void> {
   yield takeLatest(ACTIONS.WALLET_FETCH_ACCOUNTS, fetchAccounts);
 }

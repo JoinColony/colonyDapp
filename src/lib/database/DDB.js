@@ -132,6 +132,7 @@ class DDB {
     return identifier;
   }
 
+  // TODO given that ENSResolverType defines its own type, resolverId seems redundant
   addResolver(resolverId: string, resolver: ENSResolverType) {
     this._resolvers.set(resolverId, resolver);
   }
