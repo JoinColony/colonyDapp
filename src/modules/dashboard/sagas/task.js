@@ -1,14 +1,23 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
+import type { ENSName } from '~types';
+import type { ActionsType, Action } from '~redux';
 
 import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
 
-import type { ENSName } from '~types';
-
-import { callCaller, putError, takeFrom } from '~utils/saga/effects';
+import {
+  callCaller,
+  putError,
+  takeFrom,
+  executeCommand,
+  executeQuery,
+} from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
+
+import { updateTaskDraft } from '../../../data/service/commands';
+import { getColonyTasks, getTask } from '../../../data/service/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
@@ -18,8 +27,31 @@ import {
 } from '../../core/actionCreators';
 
 import { allColonyENSNames } from '../selectors';
-import { ensureColonyIsInState } from './shared';
-import type { ActionsType, Action } from '~redux';
+
+function* getStoreContext(
+  colonyENSName: string,
+  taskStoreAddress: ?string,
+): Saga<Object> {
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+  const wallet = yield* getContext(CONTEXT.WALLET);
+  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+  if (!colonyManager)
+    throw new Error('Cannot get colony context. Invalid manager instance');
+  const colonyClient = yield call(
+    [colonyManager, colonyManager.getColonyClient],
+    colonyENSName,
+  );
+  return {
+    ddb,
+    colonyClient,
+    wallet,
+    metadata: {
+      colonyENSName,
+      colonyAddress: colonyClient.contract.address,
+      taskStoreAddress,
+    },
+  };
+}
 
 /*
  * Given a colony ENS name a task ID, fetch the task from its store.
@@ -31,19 +63,19 @@ function* taskFetch({
     keyPath: [colonyENSName],
   },
   meta,
-  payload,
+  // @FIXME: we could fetch it via draftId as well, if we have a map on state for draftId => store address
+  payload: { taskStoreAddress },
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
-    yield call(ensureColonyIsInState, colonyENSName);
-
-    // TODO get the task store and fetch it, after https://github.com/JoinColony/colonyDapp/pull/815
+    const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
+    const task = yield* executeQuery(context, getTask);
 
     /*
      * Dispatch the success action.
      */
     yield put<Action<typeof ACTIONS.TASK_FETCH_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_SUCCESS,
-      payload,
+      payload: task,
       meta,
     });
   } catch (error) {
@@ -57,6 +89,8 @@ function* taskFetch({
  */
 // eslint-disable-next-line no-unused-vars
 function* fetchAllTasksForColony(colonyENSName: ENSName): Saga<void> {
+  const context = yield* getStoreContext(colonyENSName);
+  yield* executeQuery(context, getColonyTasks);
   /*
    * TODO after https://github.com/JoinColony/colonyDapp/pull/815
    * 1. Get the colony store
@@ -91,10 +125,8 @@ function* taskUpdate({
   payload,
 }: Action<typeof ACTIONS.TASK_UPDATE>): Saga<void> {
   try {
-    yield call(ensureColonyIsInState, colonyENSName);
-
-    // TODO add update event after https://github.com/JoinColony/colonyDapp/pull/815
-
+    const context = yield* getStoreContext(colonyENSName);
+    yield* executeCommand(context, updateTaskDraft, payload);
     /*
      * Dispatch the success action.
      */
@@ -114,13 +146,13 @@ function* taskUpdate({
  * simply unpinned.
  */
 function* taskRemove({
-  meta: {
-    keyPath: [colonyENSName],
-  },
+  // meta: {
+  // keyPath: [colonyENSName],
+  // },
   meta,
 }: Action<typeof ACTIONS.TASK_REMOVE>): Saga<void> {
   try {
-    yield call(ensureColonyIsInState, colonyENSName);
+    // const context = yield* getStoreContext(colonyENSName);
 
     // TODO add event after https://github.com/JoinColony/colonyDapp/pull/815
 
