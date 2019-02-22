@@ -7,8 +7,8 @@ import { TASK_EVENT_TYPES } from '../../constants';
 import {
   CreateCommentPostedEventSchema,
   CreateCommentStoreCreatedEventSchema,
-  CreateDraftCreatedEventSchema,
-  CreateDraftUpdatedEventSchema,
+  CreateTaskCreatedEventSchema,
+  CreateTaskUpdatedEventSchema,
   CreateDueDateSetEventSchema,
   CreateSkillSetEventSchema,
   CreateWorkInviteSentEventSchema,
@@ -17,8 +17,8 @@ import {
 
 const {
   COMMENT_STORE_CREATED,
-  DRAFT_CREATED,
-  DRAFT_UPDATED,
+  TASK_CREATED,
+  TASK_UPDATED,
   DUE_DATE_SET,
   SKILL_SET,
   WORK_INVITE_SENT,
@@ -50,26 +50,26 @@ export type SkillSetEventArgs = {|
 export type SkillSetEventPayload = SkillSetEventArgs;
 export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 
-export type DraftCreatedEventArgs = {|
+export type TaskCreatedEventArgs = {|
   domainId: number,
-  draftId: string,
+  taskId: string,
   specificationHash: string,
   title: string,
 |};
-export type DraftCreatedEventPayload = DraftCreatedEventArgs;
-export type DraftCreatedEvent = Event<
-  typeof DRAFT_CREATED,
-  DraftCreatedEventPayload,
+export type TaskCreatedEventPayload = TaskCreatedEventArgs;
+export type TaskCreatedEvent = Event<
+  typeof TASK_CREATED,
+  TaskCreatedEventPayload,
 >;
 
-export type DraftUpdatedEventArgs = {|
+export type TaskUpdatedEventArgs = {|
   specificationHash: string,
   title: string,
 |};
-export type DraftUpdatedEventPayload = DraftUpdatedEventArgs;
-export type DraftUpdatedEvent = Event<
-  typeof DRAFT_UPDATED,
-  DraftUpdatedEventPayload,
+export type TaskUpdatedEventPayload = TaskUpdatedEventArgs;
+export type TaskUpdatedEvent = Event<
+  typeof TASK_UPDATED,
+  TaskUpdatedEventPayload,
 >;
 
 export type WorkInviteSentEventArgs = {|
@@ -120,17 +120,17 @@ export const createTaskDueDateSetEvent = createEventCreator<
   DueDateSetEvent,
 >(DUE_DATE_SET, CreateDueDateSetEventSchema);
 
-export const createDraftCreatedEvent = createEventCreator<
-  typeof DRAFT_CREATED,
-  DraftCreatedEventArgs,
-  DraftCreatedEvent,
->(DRAFT_CREATED, CreateDraftCreatedEventSchema);
+export const createTaskCreatedEvent = createEventCreator<
+  typeof TASK_CREATED,
+  TaskCreatedEventArgs,
+  TaskCreatedEvent,
+>(TASK_CREATED, CreateTaskCreatedEventSchema);
 
-export const createDraftUpdatedEvent = createEventCreator<
-  typeof DRAFT_UPDATED,
-  DraftUpdatedEventArgs,
-  DraftUpdatedEvent,
->(DRAFT_UPDATED, CreateDraftUpdatedEventSchema);
+export const createTaskUpdatedEvent = createEventCreator<
+  typeof TASK_UPDATED,
+  TaskUpdatedEventArgs,
+  TaskUpdatedEvent,
+>(TASK_UPDATED, CreateTaskUpdatedEventSchema);
 
 export const createTaskSkillSetEvent = createEventCreator<
   typeof SKILL_SET,
