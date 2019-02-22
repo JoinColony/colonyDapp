@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { StoreContext } from 'redux-react-hook';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import { ConnectedRouter } from 'connected-react-router';
@@ -23,17 +24,19 @@ type Props = {
 
 const App = ({ store, history }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
-    <ReduxProvider store={store}>
-      <PopoverProvider>
-        <ConnectedRouter history={history}>
-          <DialogProvider dialogComponents={dialogComponents}>
-            <div className={layout.stretch}>
-              <Routes />
-            </div>
-          </DialogProvider>
-        </ConnectedRouter>
-      </PopoverProvider>
-    </ReduxProvider>
+    <StoreContext.Provider value={store}>
+      <ReduxProvider store={store}>
+        <PopoverProvider>
+          <ConnectedRouter history={history}>
+            <DialogProvider dialogComponents={dialogComponents}>
+              <div className={layout.stretch}>
+                <Routes />
+              </div>
+            </DialogProvider>
+          </ConnectedRouter>
+        </PopoverProvider>
+      </ReduxProvider>
+    </StoreContext.Provider>
   </IntlProvider>
 );
 
