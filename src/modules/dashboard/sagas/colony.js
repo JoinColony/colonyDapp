@@ -475,7 +475,7 @@ function* colonyAvatarUpload({
     yield put<Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS>>({
       type: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
       meta,
-      payload: hash,
+      payload: { hash },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
