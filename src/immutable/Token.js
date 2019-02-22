@@ -10,7 +10,7 @@ import type { Address } from '~types';
 type Shared = {|
   address: Address,
   balance: BigNumber,
-  icon: string,
+  icon?: string,
   isBlocked?: boolean,
   isEnabled?: boolean,
   isNative?: boolean,
