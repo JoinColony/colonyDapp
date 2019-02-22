@@ -1,6 +1,6 @@
 /* @flow */
 
-import ENS from '../lib/ENS';
+import { ENS } from '../lib/ENS';
 
 const ens = new ENS();
 

@@ -8,7 +8,7 @@ import type ColonyNetworkClient from '@colony/colony-js-client';
 
 import ens from '../../../context/ensContext';
 
-// TODO use `~utils/ens` as the import path when `ava` can resolve it
+/* TODO: use `~utils/ens` as the import path when `ava` can resolve it */
 import { getENSDomainString } from '../../../utils/web3/ens';
 
 class ENSResolver {
@@ -35,16 +35,18 @@ class ENSResolver {
       : getENSDomainString(identifier, suffix);
   }
 
-  // Returns a human-readable colony or user name, when given an ensAddress / Ethereum address
-  async lookupDomainNameFromAddress(ensAddress: string): string {
-    const domain = ens.getDomain(ensAddress);
+  /* Returns a human-readable colony or user name, when given an ensAddress / Ethereum address */
+  // eslint-disable-next-line class-methods-use-this
+  async lookupDomainNameFromAddress(ensAddress: string): Promise<any> {
+    const domain = await ens.getDomain(ensAddress, this._networkClient);
     return domain;
   }
 
-  // Returns an Ethereum address, when given the human-readable name
-  async getENSAddressForENSName(name: string): Promise<string> {
-    // Get address from ENS cache
-    const ensAddress = await ens.getAddress(name, this._networkClient);
+  /* Returns an Ethereum address, when given the human-readable name */
+  async getENSAddressForENSName(name: string): Promise<any> {
+    /* Get address from ENS cache */
+    const nameHash = this.constructor.ensHash(name);
+    const ensAddress = await ens.getAddress(nameHash, this._networkClient);
     return ensAddress;
   }
 }

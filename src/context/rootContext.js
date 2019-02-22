@@ -1,6 +1,7 @@
 /* @flow */
 
 import { DDB } from '../lib/database';
+import { ENS } from '../lib/ENS';
 import IPFSNode from '../lib/ipfs';
 
 import ipfsNodeContext from './ipfsNodeContext';
@@ -11,7 +12,7 @@ import { CONTEXT } from './constants';
 export type RootContext = {|
   ipfsNode: IPFSNode,
   DDB: typeof DDB,
-  ens: {},
+  ens: ENS,
 |};
 
 const rootContext: RootContext = {
