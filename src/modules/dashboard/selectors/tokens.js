@@ -2,23 +2,35 @@
 
 import { createSelector } from 'reselect';
 
-import type { RootStateRecord } from '~immutable';
+import type {
+  RootStateRecord,
+  AllTokensRecord,
+  TokenRecordType,
+} from '~immutable';
 
 import { DASHBOARD_ALL_TOKENS, DASHBOARD_NAMESPACE as ns } from '../constants';
 
-/*
- * Tokens selectors
- */
-export const allTokensSelector = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_TOKENS], {});
+export const tokenAddressFromProps = (
+  state: any,
+  { tokenAddress }: Object,
+): string => tokenAddress;
 
-export const tokensSelector = createSelector(
+export const allTokensSelector = (state: RootStateRecord): ?AllTokensRecord =>
+  state.getIn([ns, DASHBOARD_ALL_TOKENS]);
+
+export const tokenSelector = createSelector<
+  RootStateRecord,
+  any,
+  ?TokenRecordType,
+  *,
+  *,
+>(
+  tokenAddressFromProps,
   allTokensSelector,
-  ({ allTokens: tokens, icons }) =>
-    tokens.forEach((value, key) => {
-      const iconLocation = icons.get(key);
-      const tokenRecord = tokens[key];
-      tokenRecord.icon = iconLocation;
-      tokens.set(key, tokens[key]);
-    }),
+  (tokenAddress, allTokens) => {
+    if (!allTokens) return undefined;
+    const token = allTokens.getIn(['tokens', tokenAddress]);
+    const icon = allTokens.getIn(['icons', tokenAddress]);
+    return token ? token.set('icon', icon) : undefined;
+  },
 );
