@@ -47,10 +47,9 @@ if [ "$SKIP_COLONY_NETWORK_BUILD" != true ]
 then
     # Build network
     log "Building '${NETWORK}' submodule"
-    cd "${LIB_PATH}/${NETWORK}"
-    # git submodule update --init
+    cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
     yarn
-    yarn run provision:token:contracts
+    yarn provision:token:contracts
     cd ${ROOT_PATH}
 fi
 
@@ -58,7 +57,7 @@ if [ "$SKIP_PINNING_SERVICE_BUILD" != true ]
 then
     # Build pinning service
     log "Building '${PINNING}' submodule"
-    cd "${LIB_PATH}/${PINNING}"
+    cd "${ROOT_PATH}/${LIB_PATH}/${PINNING}"
     yarn
     cd ${ROOT_PATH}
 fi

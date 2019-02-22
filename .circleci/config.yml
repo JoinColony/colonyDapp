@@ -1,4 +1,4 @@
-version: 2.0
+version: 2
 
 jobs:
   build-with-lockfile:
@@ -134,39 +134,39 @@ jobs:
   e2e-testing:
     docker:
       - image: joincolony/circleci-cypress
+    parallelism: 2
     environment:
       LOADER: trufflepig
       NETWORK: local
-      DISPLAY: :1.0
+      TERM: xterm
+      CYPRESS_VIEWPORT_WIDTH: 1920
+      CYPRESS_VIEWPORT_HEIGHT: 1080
     working_directory: ~/colonyDapp
     steps:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-{{ checksum "package.json" }}
-          - node-modules-
+            - cache-{{ checksum "package.json" }}
       - run:
           name: "Installing modules"
-          command: |
-            node --version
-            yarn install
-            yarn provision --skip-pinning-service-build
-      - save_cache:
-          paths:
-            - node_modules
-          key: node-modules-{{ checksum "package.json" }}
+          command: yarn install
       - setup_remote_docker
       - run:
-          name: "Linting Javascript"
-          command: yarn lint:ci
+          name: "Pull solc docker image"
+          command: docker pull ethereum/solc:0.4.23
       - run:
-          name: "Running E2E Tests"
-          command: |
-            printf "password\npassword\n\n" | vncpasswd
-            vncserver -geometry 1280x1024 -depth 24
-            metacity &
-            docker pull ethereum/solc:0.4.23
-            yarn test:e2e:ci
+          name: "Provision submodules"
+          command: yarn provision
+      - save_cache:
+          key: cache-{{ checksum "package.json" }}
+          paths:
+            - ~/.cache
+      - run:
+          name: "Verify Cypress before starting Tests"
+          command: yarn cypress verify
+      - run:
+          name: "Run End-to-End Tests"
+          command: yarn test:e2e:ci
       - store_test_results:
           path: reports
       - store_artifacts:
@@ -219,14 +219,11 @@ jobs:
 
 workflows:
   version: 2
-  manual:
-    jobs:
-      - e2e-testing:
-          type: approval
   commit:
     jobs:
       - build-with-lockfile
       - integration-testing
+      - e2e-testing
       - build-styleguide:
           requires:
             - build-with-lockfile
