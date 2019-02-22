@@ -9,7 +9,7 @@ export const CreateDomainCreatedEventSchema = yup.object({
 
 export const CreateTaskStoreCreatedEventSchema = yup.object({
   taskStoreAddress: yup.string().required(),
-  draftId: yup.string().required(),
+  taskId: yup.string().required(),
   domainId: yup.number().required(),
 });
 
@@ -61,15 +61,15 @@ export const CreateSkillSetEventSchema = yup.object({
   skillId: yup.string().required(),
 });
 
-export const CreateDraftCreatedEventSchema = yup.object({
+export const CreateTaskCreatedEventSchema = yup.object({
   creator: yup.string().required(),
   domainId: yup.number().required(),
-  draftId: yup.string().required(),
+  taskId: yup.string().required(),
   specificationHash: yup.string().required(),
   title: yup.string().required(),
 });
 
-export const CreateDraftUpdatedEventSchema = yup.object({
+export const CreateTaskUpdatedEventSchema = yup.object({
   specificationHash: yup.string(),
   title: yup.string(),
 });

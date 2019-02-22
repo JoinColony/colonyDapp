@@ -19,8 +19,8 @@ import {
 import {
   createCommentStoreCreatedEvent,
   createTaskStoreCreatedEvent,
-  createDraftCreatedEvent,
-  createDraftUpdatedEvent,
+  createTaskCreatedEvent,
+  createTaskUpdatedEvent,
   createTaskDueDateSetEvent,
   createTaskSkillSetEvent,
   createWorkInviteSentEvent,
@@ -29,8 +29,8 @@ import {
 } from '../events';
 
 import {
-  CreateTaskDraftCommandArgsSchema,
-  UpdateTaskDraftCommandArgsSchema,
+  CreateTaskCommandArgsSchema,
+  UpdateTaskCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
@@ -56,20 +56,20 @@ export type CommentContext = Context<
 export type TaskCommand<I: *, R: *> = Command<TaskContext, I, R>;
 export type CommentCommand<I: *, R: *> = Command<CommentContext, I, R>;
 
-type CreateTaskDraftCommandArgs = {|
+type CreateTaskCommandArgs = {|
   domainId: number,
   draftId: string,
   specificationHash: string,
   title: string,
 |};
 
-type CreateTaskDraftCommandReturn = {|
+type CreateTaskCommandReturn = {|
   commentsStore: FeedStore,
   taskStore: EventStore,
   colonyStore: EventStore,
 |};
 
-type UpdateTaskDraftCommandArgs = {|
+type UpdateTaskCommandArgs = {|
   specificationHash: string,
   title: string,
 |};
@@ -99,10 +99,10 @@ type PostCommentCommandArgs = {|
 |};
 
 export const createTask: TaskCommand<
-  CreateTaskDraftCommandArgs,
-  CreateTaskDraftCommandReturn,
+  CreateTaskCommandArgs,
+  CreateTaskCommandReturn,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
-  schema: CreateTaskDraftCommandArgsSchema,
+  schema: CreateTaskCommandArgsSchema,
   async execute(args) {
     // @TODO: Put their address on state somehow
     const { taskStore, commentsStore } = await createTaskStore(
@@ -117,7 +117,7 @@ export const createTask: TaskCommand<
       }),
     );
 
-    await taskStore.append(createDraftCreatedEvent(args));
+    await taskStore.append(createTaskCreatedEvent(args));
 
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,
@@ -140,14 +140,16 @@ export const createTask: TaskCommand<
   },
 });
 
-export const updateTaskDraft: TaskCommand<
-  UpdateTaskDraftCommandArgs,
-  EventStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
-  schema: UpdateTaskDraftCommandArgsSchema,
+export const updateTask: TaskCommand<UpdateTaskCommandArgs, EventStore> = ({
+  ddb,
+  colonyClient,
+  wallet,
+  metadata,
+}) => ({
+  schema: UpdateTaskCommandArgsSchema,
   async execute(args) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
-    await taskStore.append(createDraftUpdatedEvent(args));
+    await taskStore.append(createTaskUpdatedEvent(args));
     return taskStore;
   },
 });
