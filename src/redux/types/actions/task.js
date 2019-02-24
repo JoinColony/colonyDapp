@@ -3,7 +3,7 @@
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 
 import type { WithKeyPathDepth2 } from '~types';
-import type { TaskType } from '~immutable';
+// import type { TaskType } from '~immutable';
 
 import type { ErrorActionType, UniqueActionType } from '../index';
 
@@ -41,13 +41,11 @@ export type TaskActionTypes = {|
   TASK_CREATE: UniqueActionType<
     typeof ACTIONS.TASK_CREATE,
     {|
-      amount: number,
+      bounty: string,
       domainId: number,
       dueDate: Date,
-      fromPot: number,
       skillId: number,
       specificationHash: string,
-      token: string,
       user: string,
     |},
     WithKeyPathDepth2,
@@ -87,13 +85,13 @@ export type TaskActionTypes = {|
   >,
   TASK_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_FETCH_SUCCESS,
-    void,
+    *,
     WithKeyPathDepth2,
   >,
   TASK_FINALIZE: UniqueActionType<
     typeof ACTIONS.TASK_FINALIZE,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: number,
       colonyENSName: string,
     |},
     WithKeyPathDepth2,
@@ -273,7 +271,7 @@ export type TaskActionTypes = {|
   >,
   TASK_UPDATE: UniqueActionType<
     typeof ACTIONS.TASK_UPDATE,
-    void,
+    *,
     WithKeyPathDepth2,
   >,
   TASK_UPDATE_ERROR: ErrorActionType<
@@ -282,7 +280,7 @@ export type TaskActionTypes = {|
   >,
   TASK_UPDATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_UPDATE_SUCCESS,
-    $Shape<TaskType>,
+    *, // $Shape<TaskType>,
     WithKeyPathDepth2,
   >,
   TASK_WORKER_CLAIM_REWARD: UniqueActionType<

@@ -15,7 +15,11 @@ import { getFilterFromPartial } from '~utils/web3/eventLogs';
 
 import type { ColonyType, DomainType } from '~immutable';
 
-import type { DomainCreatedEvent, TaskStoreCreatedEvent } from '../events';
+import type {
+  DomainCreatedEvent,
+  TaskStoreRegistered,
+  TaskStoreUnregistered,
+} from '../events';
 
 import { getColonyStore } from '../../stores';
 import { COLONY_EVENT_TYPES } from '../../constants';
@@ -26,7 +30,8 @@ const {
   DOMAIN_CREATED,
   PROFILE_UPDATED,
   PROFILE_CREATED,
-  TASK_STORE_CREATED,
+  TASK_STORE_REGISTERED,
+  TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
 } = COLONY_EVENT_TYPES;
 
@@ -265,19 +270,38 @@ export const getColonyTasks: ColonyQuery<
     });
     return colonyStore
       .all()
-      .filter(({ type: eventType }) => eventType === TASK_STORE_CREATED)
+      .filter(
+        ({ type: eventType }) =>
+          eventType === TASK_STORE_REGISTERED ||
+          eventType === TASK_STORE_UNREGISTERED,
+      )
       .reduce(
         (
           domainTasks,
           {
-            payload: { domainId, draftId, taskStoreAddress },
-          }: TaskStoreCreatedEvent,
-        ) =>
-          Object.assign({}, domainTasks, {
-            [domainId]: Object.assign({}, domainTasks[domainId], {
-              [draftId]: taskStoreAddress,
-            }),
-          }),
+            type,
+            payload: { domainId, taskId, taskStoreAddress },
+          }: TaskStoreRegistered | TaskStoreUnregistered,
+        ) => {
+          switch (type) {
+            case TASK_STORE_REGISTERED: {
+              return Object.assign({}, domainTasks, {
+                [domainId]: Object.assign({}, domainTasks[domainId], {
+                  [taskId]: taskStoreAddress,
+                }),
+              });
+            }
+            case TASK_STORE_UNREGISTERED: {
+              const tasks = Object.assign({}, domainTasks);
+              if (tasks && tasks[domainId] && tasks[domainId][taskId]) {
+                delete tasks[domainId][taskId];
+              }
+              return tasks;
+            }
+            default:
+              return domainTasks;
+          }
+        },
         {},
       );
   },
