@@ -11,7 +11,8 @@ import {
   CreateColonyProfileCreatedEventSchema,
   CreateColonyProfileUpdatedEventSchema,
   CreateDomainCreatedEventSchema,
-  CreateTaskStoreCreatedEventSchema,
+  CreateTaskStoreRegisteredEventSchema,
+  CreateTaskStoreUnregisteredEventSchema,
   CreateTokenInfoAddedEventSchema,
 } from './schemas';
 
@@ -21,7 +22,8 @@ const {
   DOMAIN_CREATED,
   PROFILE_UPDATED,
   PROFILE_CREATED,
-  TASK_STORE_CREATED,
+  TASK_STORE_REGISTERED,
+  TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
 } = COLONY_EVENT_TYPES;
 
@@ -35,15 +37,19 @@ export type DomainCreatedEvent = Event<
   DomainCreatedEventPayload,
 >;
 
-export type TaskStoreCreatedEventArgs = {|
+export type TaskStoreRegisteredArgs = {|
   taskStoreAddress: string,
-  draftId: string,
+  taskId: string,
   domainId: number,
 |};
-export type TaskStoreCreatedEventPayload = TaskStoreCreatedEventArgs;
-export type TaskStoreCreatedEvent = Event<
-  typeof TASK_STORE_CREATED,
-  TaskStoreCreatedEventPayload,
+export type TaskStoreRegisteredPayload = TaskStoreRegisteredArgs;
+export type TaskStoreRegistered = Event<
+  typeof TASK_STORE_REGISTERED,
+  TaskStoreRegisteredPayload,
+>;
+export type TaskStoreUnregistered = Event<
+  typeof TASK_STORE_UNREGISTERED,
+  TaskStoreRegisteredPayload,
 >;
 
 export type ColonyAvatarUploadedEventArgs = {|
@@ -108,11 +114,17 @@ export const createDomainCreatedEvent = createEventCreator<
   DomainCreatedEvent,
 >(DOMAIN_CREATED, CreateDomainCreatedEventSchema);
 
-export const createTaskStoreCreatedEvent = createEventCreator<
-  typeof TASK_STORE_CREATED,
-  TaskStoreCreatedEventArgs,
-  TaskStoreCreatedEvent,
->(TASK_STORE_CREATED, CreateTaskStoreCreatedEventSchema);
+export const createTaskStoreRegisteredEvent = createEventCreator<
+  typeof TASK_STORE_REGISTERED,
+  TaskStoreRegisteredArgs,
+  TaskStoreRegistered,
+>(TASK_STORE_REGISTERED, CreateTaskStoreRegisteredEventSchema);
+
+export const createTaskStoreUnregisteredEvent = createEventCreator<
+  typeof TASK_STORE_UNREGISTERED,
+  TaskStoreRegisteredArgs,
+  TaskStoreUnregistered,
+>(TASK_STORE_UNREGISTERED, CreateTaskStoreUnregisteredEventSchema);
 
 export const createColonyAvatarRemovedEvent = createEventCreator<
   typeof AVATAR_REMOVED,
