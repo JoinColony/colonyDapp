@@ -85,7 +85,17 @@ export const PostCommentCommandArgsSchema = yup.object({
 });
 
 export const SendWorkInviteCommandArgsSchema = yup.object({
-  worker: yup.string(),
+  worker: yup
+    .string()
+    .address()
+    .required(),
+});
+
+export const SendWorkRequestCommandArgsSchema = yup.object({
+  worker: yup
+    .string()
+    .address()
+    .required(),
 });
 
 export const CreateUserProfileCommandArgsSchema = yup.object({
@@ -102,4 +112,21 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 export const SetUserAvatarCommandArgsSchema = yup.object({
   // TODO: IPFS hash add yup validation for IPFS hash
   data: yup.string().required(),
+});
+
+export const SetTaskBountyCommandArgsSchema = yup.object({
+  amount: yup.string().required(),
+});
+
+export const CancelTaskCommandArgsSchema = yup.object({
+  taskId: yup.string().required(),
+  domainId: yup.number().required(),
+});
+
+export const FinalizeTaskCommandArgsSchema = yup.object({
+  worker: yup
+    .string()
+    .address()
+    .required(),
+  amountPaid: yup.string().required(),
 });
