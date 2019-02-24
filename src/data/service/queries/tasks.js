@@ -16,12 +16,18 @@ import { TASK_EVENT_TYPES } from '../../constants';
 
 const {
   COMMENT_STORE_CREATED,
-  DRAFT_CREATED,
-  DRAFT_UPDATED,
+  TASK_CREATED,
+  TASK_UPDATED,
   DUE_DATE_SET,
   SKILL_SET,
   WORK_INVITE_SENT,
   WORK_REQUEST_CREATED,
+  WORKER_ASSIGNED,
+  WORKER_UNASSIGNED,
+  BOUNTY_SET,
+  TASK_FINALIZED,
+  TASK_CLOSED,
+  TASK_CANCELLED,
 } = TASK_EVENT_TYPES;
 
 export type TaskQueryContext = Context<
@@ -66,47 +72,113 @@ export const getTask: TaskQuery<*, *> = ({
                 commentsStoreAddress,
               };
             }
-            case DRAFT_CREATED: {
+            case TASK_CREATED: {
+              const {
+                domainId,
+                taskId,
+                specificationHash,
+                title,
+                timestamp,
+              } = payload;
               return {
                 ...task,
-                draft: payload,
+                domainId,
+                taskId,
+                specificationHash,
+                title,
+                timestamp,
               };
             }
-            case DRAFT_UPDATED: {
-              const { draft } = task;
+            case TASK_UPDATED: {
+              const { specificationHash, title } = payload;
               return {
                 ...task,
-                draft: Object.assign({}, draft, payload),
+                specificationHash,
+                title,
+              };
+            }
+            case TASK_FINALIZED: {
+              const {
+                worker: assignee,
+                amountPaid,
+                status,
+                paymentId,
+                token,
+              } = payload;
+              return {
+                ...task,
+                paymentId,
+                paymentToken: token,
+                amountPaid,
+                assignee,
+                status,
+              };
+            }
+            case TASK_CANCELLED: {
+              const { status } = payload;
+              return {
+                ...task,
+                status,
+              };
+            }
+            case TASK_CLOSED: {
+              const { status } = payload;
+              return {
+                ...task,
+                status,
+              };
+            }
+            case BOUNTY_SET: {
+              const { amount } = payload;
+              return {
+                ...task,
+                bounty: amount,
               };
             }
             case DUE_DATE_SET: {
-              const { draft } = task;
-              const { dueDate } = draft || {};
+              const { dueDate } = payload;
               return {
                 ...task,
-                draft: Object.assign({}, draft, { dueDate }),
+                dueDate,
               };
             }
             case SKILL_SET: {
-              const { draft } = task;
-              const { skillId } = draft || {};
+              const { skillId } = payload;
               return {
                 ...task,
-                draft: Object.assign({}, draft, { skillId }),
+                skillId,
               };
             }
             case WORK_INVITE_SENT: {
-              const { invites } = task;
+              const { invites = [] } = task;
               return {
                 ...task,
                 invites: [...invites, payload],
               };
             }
             case WORK_REQUEST_CREATED: {
-              const { requests } = task;
+              const { requests = [] } = task;
               return {
                 ...task,
                 requests: [...requests, payload],
+              };
+            }
+            case WORKER_ASSIGNED: {
+              const { worker: assignee } = payload;
+              return {
+                ...task,
+                assignee,
+              };
+            }
+            case WORKER_UNASSIGNED: {
+              const { assignee: currentAssignee } = task;
+              const { worker: assignee } = payload;
+              return {
+                ...task,
+                assignee:
+                  currentAssignee && currentAssignee === assignee
+                    ? null
+                    : currentAssignee,
               };
             }
 
@@ -114,7 +186,18 @@ export const getTask: TaskQuery<*, *> = ({
               return task;
           }
         },
-        { draft: null, commentsStoreAddress: null, requests: [], invites: [] },
+        {
+          assignee: null,
+          bounty: null,
+          dueDate: null,
+          skillId: null,
+          domainId: null,
+          title: null,
+          specificationHash: null,
+          commentsStoreAddress: null,
+          requests: [],
+          invites: [],
+        },
       );
   },
 });

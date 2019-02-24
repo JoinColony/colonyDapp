@@ -7,7 +7,13 @@ export const CreateDomainCreatedEventSchema = yup.object({
   name: yup.string().required(),
 });
 
-export const CreateTaskStoreCreatedEventSchema = yup.object({
+export const CreateTaskStoreRegisteredEventSchema = yup.object({
+  taskStoreAddress: yup.string().required(),
+  taskId: yup.string().required(),
+  domainId: yup.number().required(),
+});
+
+export const CreateTaskStoreUnregisteredEventSchema = yup.object({
   taskStoreAddress: yup.string().required(),
   taskId: yup.string().required(),
   domainId: yup.number().required(),
@@ -74,13 +80,11 @@ export const CreateTaskUpdatedEventSchema = yup.object({
   title: yup.string(),
 });
 
-export const CreateWorkInviteSentEventSchema = yup.object({
-  creator: yup.string().required(),
-  worker: yup.string().required(),
-});
-
-export const CreateWorkRequestCreatedEventSchema = yup.object({
-  worker: yup.string().required(),
+export const WorkerAssignmentEventSchema = yup.object({
+  worker: yup
+    .string()
+    .address()
+    .required(),
 });
 
 export const CreateCommentPostedEventSchema = yup.object({
@@ -92,6 +96,10 @@ export const CreateCommentPostedEventSchema = yup.object({
         .object()
         .shape({
           id: yup.string().required(),
+          author: yup
+            .string()
+            .address()
+            .required(),
           body: yup.string().required(),
           timestamp: yup.number().required(),
           metadata: yup.object().shape({
@@ -104,4 +112,21 @@ export const CreateCommentPostedEventSchema = yup.object({
         .required(),
     })
     .required(),
+});
+
+export const TaskStatusChangeEventSchema = yup.object({
+  status: yup.string().required(),
+});
+
+export const CreateBountySetEventSchema = yup.object({
+  amount: yup.string().required(),
+});
+
+export const CreateTaskFinalizedEventSchema = yup.object({
+  status: yup.string().required(),
+  worker: yup
+    .string()
+    .address()
+    .required(),
+  amountPaid: yup.string().required(),
 });
