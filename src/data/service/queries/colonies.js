@@ -159,11 +159,17 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
           { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
         ) => {
           switch (type) {
-            case TOKEN_INFO_ADDED:
+            case TOKEN_INFO_ADDED: {
+              // @TODO: We should change this to not return the balance, we have to change the ColonyType or make a mapping from the query result to it
+              const { address } = payload;
+              const { tokens } = colony;
               return {
                 ...colony,
-                token: Object.assign({}, payload, { balance: 0 }),
+                tokens: Object.assign({}, tokens, {
+                  [address]: Object.assign({}, payload, { balance: 0 }),
+                }),
               };
+            }
             case AVATAR_UPLOADED: {
               // @TODO: Make avatar an object so we have the ipfsHash and data
               const { ipfsHash } = payload;
@@ -194,13 +200,7 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
           name: '',
           avatar: undefined,
           admins,
-          token: {
-            address: '',
-            balance: 0,
-            icon: '',
-            name: '',
-            symbol: '',
-          },
+          tokens: {},
         },
       );
   },

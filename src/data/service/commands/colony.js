@@ -38,6 +38,12 @@ export type ColonyContext = Context<
 
 export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
 
+type AddTokenInfoCommandArgs = {|
+  isNative?: ?boolean,
+  address: Address,
+  icon?: ?string,
+|};
+
 type CreateColonyProfileCommandArgs = {|
   address: Address,
   ensName: string,
@@ -45,12 +51,7 @@ type CreateColonyProfileCommandArgs = {|
   description?: string,
   guideline?: string,
   website?: string,
-  token: {|
-    address: Address,
-    name: string,
-    symbol: string,
-    icon?: ?string,
-  |},
+  token: AddTokenInfoCommandArgs,
 |};
 
 type UpdateColonyProfileCommandArgs = {|
@@ -163,6 +164,21 @@ export const removeColonyAvatar: ColonyCommand<
       metadata,
     );
     await colonyStore.append(createColonyAvatarRemovedEvent(args));
+    await colonyStore.load();
+    return colonyStore;
+  },
+});
+
+export const addTokenInfo: ColonyCommand<
+  AddTokenInfoCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  async execute(args) {
+    const tokenInfoAddedEvent = createTokenInfoAddedEvent(args);
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
+    await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
     return colonyStore;
   },

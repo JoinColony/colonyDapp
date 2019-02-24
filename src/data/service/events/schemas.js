@@ -23,10 +23,9 @@ export const CreateColonyAvatarRemovedEventSchema = yup.object({
 });
 
 export const CreateTokenInfoAddedEventSchema = yup.object({
+  isNative: yup.boolean().default(false),
   address: yup.string().required(),
   icon: yup.string(),
-  name: yup.string().required(),
-  symbol: yup.string(),
 });
 
 export const CreateColonyProfileCreatedEventSchema = yup.object({
