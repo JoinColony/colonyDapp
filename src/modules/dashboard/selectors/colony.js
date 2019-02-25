@@ -70,10 +70,8 @@ export const colonyAvatarHashSelector = createSelector(
 
 export const colonyAvatarDataSelector = createSelector(
   colonyAvatarHashSelector,
-  (state, hash) =>
-    state && hash
-      ? state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS, hash])
-      : null,
+  state => state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS]),
+  (hash, state) => (state && hash ? state.get(hash) : null),
 );
 
 export const allColonyENSNames = createSelector(
