@@ -66,12 +66,12 @@ export const getColonyAdmins: ColonyContractEventQuery<
     );
 
     // Get logs + events for role assignment
-    const removedAdminLogs = await colonyClient.contract.getLogs({
+    const removedAdminLogs = await colonyClient.getLogs({
       ...baseLog,
       // [eventNames, from, to]
       topics: [[COLONY_ADMIN_REMOVED_EVENT]],
     });
-    const setAdminLogs = await colonyClient.contract.getLogs({
+    const setAdminLogs = await colonyClient.getLogs({
       ...baseLog,
       // [eventNames, from, to]
       topics: [[COLONY_ADMIN_SET_EVENT]],
@@ -118,7 +118,7 @@ export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
     );
 
     // Get logs + events for founder role assignment
-    const founderChangedLogs = await colonyClient.contract.getLogs({
+    const founderChangedLogs = await colonyClient.getLogs({
       ...baseLog,
       // [eventNames, from, to]
       topics: [[COLONY_FOUNDER_SET_EVENT]],
