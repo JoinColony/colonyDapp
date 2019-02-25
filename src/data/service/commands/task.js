@@ -71,7 +71,7 @@ export type CommentCommand<I: *, R: *> = Command<CommentContext, I, R>;
 type CreateTaskCommandArgs = {|
   domainId: number,
   taskId: string,
-  specificationHash: string,
+  description: string,
   title: string,
 |};
 
@@ -82,7 +82,7 @@ type CreateTaskCommandReturn = {|
 |};
 
 type UpdateTaskCommandArgs = {|
-  specificationHash: string,
+  description: string,
   title: string,
 |};
 
