@@ -61,7 +61,7 @@ export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 export type TaskCreatedEventArgs = {|
   domainId: number,
   taskId: string,
-  specificationHash: string,
+  description: string,
   title: string,
 |};
 export type TaskCreatedEventPayload = TaskCreatedEventArgs;
@@ -71,7 +71,7 @@ export type TaskCreatedEvent = Event<
 >;
 
 export type TaskUpdatedEventArgs = {|
-  specificationHash: string,
+  description: string,
   title: string,
 |};
 export type TaskUpdatedEventPayload = TaskUpdatedEventArgs;

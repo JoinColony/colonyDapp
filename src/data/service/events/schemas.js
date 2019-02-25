@@ -70,12 +70,12 @@ export const CreateSkillSetEventSchema = yup.object({
 export const CreateTaskCreatedEventSchema = yup.object({
   domainId: yup.number().required(),
   taskId: yup.string().required(),
-  specificationHash: yup.string().required(),
+  description: yup.string().required(),
   title: yup.string().required(),
 });
 
 export const CreateTaskUpdatedEventSchema = yup.object({
-  specificationHash: yup.string(),
+  description: yup.string(),
   title: yup.string(),
 });
 
