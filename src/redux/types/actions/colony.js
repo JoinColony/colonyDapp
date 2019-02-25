@@ -102,7 +102,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_AVATAR_UPLOAD_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
-    void,
+    {| hash: string |},
     WithKeyPathDepth1,
   >,
   COLONY_CLAIM_TOKEN: UniqueActionType<
