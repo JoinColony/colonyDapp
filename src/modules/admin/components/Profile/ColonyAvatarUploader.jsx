@@ -80,7 +80,7 @@ class ColonyAvatarUploader extends Component<Props> {
             address={address}
             name={name}
             ensName={ensName}
-            avatar={avatar}
+            hash={avatar}
             /*
              * @NOTE Unlike other components this does not override the main class
              * But appends the current one to that
