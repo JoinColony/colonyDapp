@@ -76,7 +76,7 @@ export const getTask: TaskQuery<*, *> = ({
               const {
                 domainId,
                 taskId,
-                specificationHash,
+                description,
                 title,
                 timestamp: createdAt,
               } = payload;
@@ -84,16 +84,16 @@ export const getTask: TaskQuery<*, *> = ({
                 ...task,
                 domainId,
                 taskId,
-                specificationHash,
+                description,
                 title,
                 createdAt,
               };
             }
             case TASK_UPDATED: {
-              const { specificationHash, title } = payload;
+              const { description, title } = payload;
               return {
                 ...task,
-                specificationHash,
+                description,
                 title,
               };
             }
@@ -195,7 +195,7 @@ export const getTask: TaskQuery<*, *> = ({
           skillId: null,
           domainId: null,
           title: null,
-          specificationHash: null,
+          description: null,
           commentsStoreAddress: null,
           requests: [],
           invites: [],
