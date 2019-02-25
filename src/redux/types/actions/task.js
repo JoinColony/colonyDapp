@@ -45,7 +45,7 @@ export type TaskActionTypes = {|
       domainId: number,
       dueDate: Date,
       skillId: number,
-      specificationHash: string,
+      description: string,
       user: string,
     |},
     WithKeyPathDepth2,

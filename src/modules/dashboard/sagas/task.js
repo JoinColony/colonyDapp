@@ -171,7 +171,7 @@ function* taskRemove({
 
 function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   const wallet = yield* getContext(CONTEXT.WALLET);
-  const { specificationHash } = yield callCaller({
+  const { description } = yield callCaller({
     context: COLONY_CONTEXT,
     identifier: colonyENSName,
     methodName: 'getTask',
@@ -179,7 +179,7 @@ function* generateRatingSalt(colonyENSName: ENSName, taskId: number) {
   });
   // TODO: this should be done via gas station once `signMessage` is supported
   return yield call([wallet, wallet.signMessage], {
-    message: specificationHash,
+    message: description,
   });
 }
 

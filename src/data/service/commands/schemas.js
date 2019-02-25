@@ -49,12 +49,12 @@ export const SetTaskSkillCommandArgsSchema = yup.object({
 export const CreateTaskCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
   draftId: yup.string().required(),
-  specificationHash: yup.string(),
+  description: yup.string(),
   title: yup.string(),
 });
 
 export const UpdateTaskCommandArgsSchema = yup.object({
-  specificationHash: yup.string(),
+  description: yup.string(),
   title: yup.string(),
 });
 
