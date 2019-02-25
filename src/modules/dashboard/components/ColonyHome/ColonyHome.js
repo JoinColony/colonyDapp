@@ -12,7 +12,7 @@ import { withColonyFromRoute } from '../../hocs';
 import { withDomains } from '../../../admin/hocs';
 
 import { getColonyAdmins, getColonyDomains } from '../../selectors';
-import { walletAddressSelector } from '../../../users/selectors/users';
+import { currentUserAddressSelector } from '../../../users/selectors/users';
 
 import ColonyHome from './ColonyHome.jsx';
 
@@ -21,7 +21,7 @@ const enhance = compose(
   withFeatureFlags(),
   withDomains,
   connect((state: RootStateRecord, { ensName }: { ensName: ENSName }) => ({
-    walletAddress: walletAddressSelector(state),
+    walletAddress: currentUserAddressSelector(state),
     colonyAdmins: getColonyAdmins(state, ensName),
     colonyDomains: getColonyDomains(state, ensName),
   })),
