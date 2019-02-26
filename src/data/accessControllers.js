@@ -8,6 +8,7 @@ import {
   PermissiveAccessController,
   EthereumWalletAccessController,
   ColonyAccessController,
+  TaskAccessController,
 } from '../lib/database/accessControllers';
 
 import loadPermissionManifest from '../lib/database/accessControllers/permissions';
@@ -28,7 +29,7 @@ export const getEthereumWalletStoreAccessController = ({
   return new EthereumWalletAccessController(walletAddress);
 };
 
-export const getAttributesBasedStoreAccessController = ({
+export const getColonyStoreAccessController = ({
   colonyAddress,
   colonyClient,
   wallet,
@@ -53,4 +54,31 @@ export const getAttributesBasedStoreAccessController = ({
 
   const manifest = loadPermissionManifest(colonyClient);
   return new ColonyAccessController(colonyAddress, wallet, manifest);
+};
+
+export const getTaskStoreAccessController = ({
+  colonyAddress,
+  colonyClient,
+  wallet,
+}: {
+  colonyAddress: Address,
+  wallet: WalletObjectType,
+  colonyClient: ColonyClientType,
+} = {}) => {
+  if (!colonyAddress)
+    throw new Error(
+      // eslint-disable-next-line max-len
+      `Could not create access controller, invalid colony address: "${colonyAddress}"`,
+    );
+  if (!wallet)
+    throw new Error(
+      'Could not create access controller, a wallet object is required',
+    );
+  if (!colonyClient)
+    throw new Error(
+      'Could not create access controller, colony client is required',
+    );
+
+  const manifest = loadPermissionManifest(colonyClient);
+  return new TaskAccessController(colonyAddress, wallet, manifest);
 };
