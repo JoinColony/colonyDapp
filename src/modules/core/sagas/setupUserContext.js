@@ -14,15 +14,14 @@ import { CONTEXT } from '~context';
 import { ACTIONS } from '~redux';
 import { rehydrate } from '~redux/persist';
 
+import * as resolvers from '../../../lib/database/resolvers';
+import { getUserBalance, getUserProfile } from '../../../data/service/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
-import setupTransactionsSagas from './transactions';
-
 import { getWallet, setupUsersSagas } from '../../users/sagas';
-import { getUserBalance, getUserProfile } from '../../../data/service/queries';
-import * as resolvers from '../../../lib/database/resolvers';
-
+import setupTransactionsSagas from './transactions';
 import { getDDB, getGasPrices, getColonyManager } from './utils';
+import setupOnBeforeUnload from './setupOnBeforeUnload';
 
 function* setupContextDependentSagas(): Saga<void> {
   yield all([
@@ -117,6 +116,8 @@ export default function* setupUserContext(
       },
       meta,
     });
+
+    yield call(setupOnBeforeUnload);
 
     yield put(rehydrate('transactions'));
   } catch (error) {

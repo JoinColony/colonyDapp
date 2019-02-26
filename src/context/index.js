@@ -20,6 +20,4 @@ export function* getContext<C: ContextName>(
   return yield getContextOriginal(contextName);
 }
 
-export type { RootContext };
-
 export default rootContext;

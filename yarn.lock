@@ -17834,11 +17834,6 @@ ursa-optional@~0.9.9:
     bindings "^1.3.0"
     nan "^2.11.1"
 
-use-before-unload@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/use-before-unload/-/use-before-unload-1.0.1.tgz#fab39f068081a464b21959da9885341053060298"
-  integrity sha512-HfISqBwjmSVLpc7jIhbTwh37jVaGaReiagn8bpyA7A0k6zDLxFkTtPZWcXzeVgs/B5sPZxc6h6fDuelvnHor3A==
-
 use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"

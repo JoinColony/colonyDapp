@@ -201,7 +201,6 @@
         "scroll-into-view-if-needed": "^2.2.16",
         "sugar-core": "^2.0.4",
         "sugar-date": "^2.0.4",
-        "use-before-unload": "^1.0.1",
         "web3-utils": "^1.0.0-beta.27",
         "with-immutable-props-to-js": "^1.1.0",
         "yup": "^0.26.6"
