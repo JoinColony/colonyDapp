@@ -1,6 +1,5 @@
 /* @flow */
 
-export * from './meta';
 export { default as colony } from './colony';
 export { default as comments } from './comments';
 export { default as task } from './task';
