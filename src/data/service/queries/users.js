@@ -15,11 +15,7 @@ import type {
 
 import { getUserProfileStore } from '../../stores';
 import { getHashedENSDomainString } from '~utils/web3/ens';
-import {
-  getFilterFromPartial,
-  getFilterFormattedAddress,
-  parseUserTransferEvent,
-} from '~utils/web3/eventLogs';
+import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
 type UserQueryContext = Context<
   {|
@@ -151,51 +147,52 @@ export const getUserBalance: Query<UserBalanceQueryContext, void, string> = ({
 });
 
 export const getUserColonyTransactions: UserColonyTransactionsQuery<void> = ({
-  colonyClient,
+  colonyClient: {
+    tokenClient: {
+      events: { Transfer },
+    },
+    tokenClient,
+  },
   metadata: { walletAddress },
 }) => ({
   async execute() {
-    // Will contain to/from block and event name topics
-    // TODO use a more meaningful value for blocksBack
-    const baseLog = await getFilterFromPartial(
+    const logFilterOptions = {
+      blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+      events: [Transfer],
+    };
+
+    const transferToEventLogs = await getEventLogs(
+      tokenClient,
+      {},
       {
-        eventNames: [colonyClient.events.Transfer.eventName],
-        blocksBack: 400000,
+        ...logFilterOptions,
+        to: walletAddress,
       },
-      colonyClient,
     );
 
-    const filterFormattedAddress = getFilterFormattedAddress(walletAddress);
+    const transferFromEventLogs = await getEventLogs(
+      tokenClient,
+      {},
+      {
+        ...logFilterOptions,
+        from: walletAddress,
+      },
+    );
 
-    // Get logs + events for token Transfer to/from current user
-    const toTransferLogs = await colonyClient.tokenClient.getLogs({
-      ...baseLog,
-      // [eventNames, from, to]
-      topics: [[], filterFormattedAddress],
-    });
-
-    const fromTransferLogs = await colonyClient.tokenClient.getLogs({
-      ...baseLog,
-      // [eventNames, from, to]
-      topics: [[], undefined, filterFormattedAddress],
-    });
-
-    // Combine and sort by blockNumber, parse events
-    const transferLogs = [...toTransferLogs, ...fromTransferLogs].sort(
+    // Combine and sort logs by blockNumber, then parse events from thihs
+    const logs = [...transferToEventLogs, ...transferFromEventLogs].sort(
       // $FlowFixMe colonyJS Log should contain blockNumber
       (a, b) => a.blockNumber - b.blockNumber,
     );
-    const transferEvents = await colonyClient.tokenClient.parseLogs(
-      transferLogs,
-    );
+    const transferEvents = await tokenClient.parseLogs(logs);
 
     return Promise.all(
       transferEvents.map((event, i) =>
         parseUserTransferEvent({
+          tokenClient,
           event,
-          log: transferLogs[i],
-          colonyClient,
-          userAddress: walletAddress,
+          log: logs[i],
+          walletAddress,
         }),
       ),
     );
