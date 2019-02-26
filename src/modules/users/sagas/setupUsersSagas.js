@@ -279,6 +279,9 @@ function* usernameCreate({
       context: NETWORK_CONTEXT,
       methodName: 'registerUserLabel',
       params: { username, orbitDBPath: profileStore.address.toString() },
+      options: {
+        gasLimit: 500000,
+      },
     });
 
     const {
