@@ -6,6 +6,7 @@
  * This is because this list has a potential of getting very long.
  */
 
+import { ConfirmDialog } from '~core/Dialog';
 import ActivityBarExample from '~core/ActivityBar/ActivityBarExample.jsx';
 import {
   ManagerRatingDialog,
@@ -23,6 +24,7 @@ import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 const dialogComponents: Object = {
   ActivityBarExample,
   ClaimProfileDialog,
+  ConfirmDialog,
   ENSNameDialog,
   TokenEditDialog,
   TokenMintDialog,
