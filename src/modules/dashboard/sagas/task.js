@@ -43,7 +43,8 @@ function* taskFetch({
     yield call(ensureColonyIsInState, colonyENSName);
 
     // TODO get the task store and fetch it, after https://github.com/JoinColony/colonyDapp/pull/815
-
+    // TODO: check if taskRecord has commentStoreAdress prop if so fetch them as well with
+    // taskCommentsSaga
     /*
      * Dispatch the success action.
      */
@@ -711,7 +712,7 @@ function* taskWorkerClaimReward({
   }
 }
 
-function* taskCommentSaga({
+function* taskCommentsSaga({
   payload: { commentStoreAddress },
   meta,
 }: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
@@ -736,7 +737,7 @@ function* taskCommentSaga({
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskCommentSaga);
+  yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskCommentsSaga);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
   yield takeEvery(ACTIONS.TASK_MANAGER_END, taskManagerEnd);

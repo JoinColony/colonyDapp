@@ -15,6 +15,7 @@ const allTasksReducer: ReducerType<
   {|
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH_SUCCESS: *,
+    TASK_FETCH_COMMENTS: *,
     TASK_REMOVE_SUCCESS: *,
     // TASK_SET_DATE_SUCCESS: *,
     // TASK_SET_SKILL_SUCCESS: *,
