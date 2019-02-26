@@ -2,40 +2,25 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, fork, put, takeEvery, all } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
-import type { ContractTransactionType } from '~immutable';
 import type { Action } from '~redux';
 
-import { takeFrom, putError } from '~utils/saga/effects';
+import { takeFrom, putError, executeQuery } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
+import { ACTIONS } from '~redux';
 
 import {
-  parseColonyFundsClaimedEvent,
-  parseColonyFundsMovedBetweenFundingPotsEvent,
-  parseTaskPayoutClaimedEvent,
-  parseUnclaimedTransferEvent,
-  getLogsAndEvents,
-  getFilterFormattedAddress,
-} from '~utils/web3/eventLogs';
-
+  getColonyTransactions,
+  getColonyUnclaimedTransactions,
+} from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
-
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
-import { ACTIONS } from '~redux';
 
-const EVENT_PARSERS = {
-  ColonyFundsClaimed: parseColonyFundsClaimedEvent,
-  // eslint-disable-next-line max-len
-  ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
-  TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
-};
-
-// TODO use a query for this
 function* fetchColonyTransactionsSaga({
   meta: {
     keyPath: [colonyENSName],
@@ -50,31 +35,16 @@ function* fetchColonyTransactionsSaga({
       colonyENSName,
     );
 
-    const partialFilter = {
-      address: colonyClient.contract.address,
-      eventNames: [
-        'ColonyFundsClaimed',
-        'ColonyFundsMovedBetweenFundingPots',
-        'TaskPayoutClaimed',
-      ],
-      blocksBack: 400000,
-    };
-    const { logs, events } = yield call(
-      getLogsAndEvents,
-      partialFilter,
-      colonyClient,
-    );
-
-    const transactions: Array<ContractTransactionType> = (yield all(
-      events.map((event, i) =>
-        EVENT_PARSERS[event.eventName]({
-          event,
-          log: logs[i],
-          colonyClient,
+    const transactions = yield* executeQuery(
+      {
+        colonyClient,
+        metadata: {
+          colonyAddress: colonyClient.contract.address,
           colonyENSName,
-        }),
-      ),
-    )).filter(Boolean);
+        },
+      },
+      getColonyTransactions,
+    );
 
     yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
@@ -86,7 +56,6 @@ function* fetchColonyTransactionsSaga({
   }
 }
 
-// TODO use a query for this
 function* fetchColonyUnclaimedTransactionsSaga({
   meta: {
     keyPath: [colonyENSName],
@@ -100,47 +69,13 @@ function* fetchColonyUnclaimedTransactionsSaga({
       colonyENSName,
     );
 
-    // Get logs + events for token Transfer to this Colony
-    const transferPartialFilter = {
-      eventNames: ['Transfer'],
-      // [eventNames, from, to]
-      topics: [
-        [],
-        undefined,
-        [getFilterFormattedAddress(colonyClient.contract.address)],
-      ],
-      blocksBack: 400000,
-    };
-    const { logs: transferLogs, events: transferEvents } = yield call(
-      getLogsAndEvents,
-      transferPartialFilter,
-      colonyClient.tokenClient,
+    const transactions = yield* executeQuery(
+      {
+        colonyClient,
+        metadata: { colonyAddress: colonyClient.address, colonyENSName },
+      },
+      getColonyUnclaimedTransactions,
     );
-
-    // Get logs + events for token claims by this Colony
-    const claimPartialFilter = {
-      address: colonyClient.contract.address,
-      eventNames: ['ColonyFundsClaimed'],
-      blocksBack: 400000,
-    };
-    const { logs: claimLogs, events: claimEvents } = yield call(
-      getLogsAndEvents,
-      claimPartialFilter,
-      colonyClient,
-    );
-
-    const transactions: Array<ContractTransactionType> = (yield all(
-      transferEvents.map((transferEvent, i) =>
-        call(parseUnclaimedTransferEvent, {
-          transferEvent,
-          transferLog: transferLogs[i],
-          claimEvents,
-          claimLogs,
-          colonyClient,
-          colonyENSName,
-        }),
-      ),
-    )).filter(Boolean);
 
     yield put<
       Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS>,
@@ -158,7 +93,7 @@ function* fetchColonyUnclaimedTransactionsSaga({
   }
 }
 
-/**
+/*
  * Claim tokens, then reload unclaimed transactions list.
  */
 function* claimColonyToken({
