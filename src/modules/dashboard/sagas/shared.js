@@ -5,14 +5,13 @@ import { call, select, put } from 'redux-saga/effects';
 
 import type { ENSName } from '~types';
 import type { Action } from '~redux';
-import type { DocStore, ValidatedKVStore } from '../../../lib/database/stores';
+import type { ValidatedKVStore } from '../../../lib/database/stores';
 
 import { raceError } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
 import { getColonyStore } from '../../../data/stores';
-import { tasksIndexStoreBlueprint } from '../stores';
 import { fetchColony } from '../actionCreators';
 import { singleColonySelector } from '../selectors';
 
@@ -68,16 +67,4 @@ export function* ensureColonyIsInState(colonyENSName: ENSName): Saga<*> {
       type === ACTIONS.COLONY_FETCH_ERROR && keyPath[0] === colonyENSName,
     new Error(`Colony "${colonyENSName}" could not be found`),
   );
-}
-
-/*
- * Create a tasks index store for a colony.
- */
-export function* createTasksIndexStore(colonyENSName: ENSName): Saga<DocStore> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-
-  // TODO: No access controller available yet
-  return yield call([ddb, ddb.createStore], tasksIndexStoreBlueprint, {
-    colonyENSName,
-  });
 }
