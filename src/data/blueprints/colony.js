@@ -1,12 +1,12 @@
 /* @flow */
 
 import { EventStore } from '../../lib/database/stores';
-import { getAttributesBasedStoreAccessController } from '../accessControllers';
+import { getColonyStoreAccessController } from '../accessControllers';
 
 import type { StoreBlueprint } from '~types';
 
 const colonyStoreBlueprint: StoreBlueprint = {
-  getAccessController: getAttributesBasedStoreAccessController,
+  getAccessController: getColonyStoreAccessController,
   name: 'colony',
   type: EventStore,
 };

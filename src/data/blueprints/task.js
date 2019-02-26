@@ -1,12 +1,12 @@
 /* @flow */
 
 import { EventStore } from '../../lib/database/stores';
-import { getAttributesBasedStoreAccessController } from '../accessControllers';
+import { getTaskStoreAccessController } from '../accessControllers';
 
 import type { StoreBlueprint } from '~types';
 
 const taskStoreBlueprint: StoreBlueprint = {
-  getAccessController: getAttributesBasedStoreAccessController,
+  getAccessController: getTaskStoreAccessController,
   name: 'task',
   type: EventStore,
 };
