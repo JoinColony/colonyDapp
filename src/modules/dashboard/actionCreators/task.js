@@ -4,7 +4,8 @@ import type { ENSName } from '~types';
 
 import { ACTIONS } from '~redux';
 
-const fetchTaskComments = (
+// eslint-disable-next-line import/prefer-default-export
+export const fetchTaskComments = (
   colonyENSName: ENSName,
   commentStoreAddress: string,
 ) => ({
@@ -13,5 +14,3 @@ const fetchTaskComments = (
     keyPath: [colonyENSName, commentStoreAddress],
   },
 });
-
-export default fetchTaskComments;
