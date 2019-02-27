@@ -17,8 +17,10 @@ import IPFSNode from '../ipfs';
 import { setMeta } from './commands';
 import { PermissiveAccessController } from './accessControllers';
 
-const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-const generateId = () => generate(base58, 21);
+// We'll skip the Q here because every id that contains a `Qm` is not allowed
+const ipfsCompatibleBase57 =
+  '123456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const generateId = () => generate(ipfsCompatibleBase57, 21);
 
 type StoreIdentifier = string | OrbitDBAddress;
 
