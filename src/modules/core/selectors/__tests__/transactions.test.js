@@ -6,9 +6,14 @@ import { CORE_NAMESPACE as ns } from '../../constants';
 
 import { groupedTransactions } from '../transactions';
 
+jest.mock('../../../users/selectors', () => ({
+  currentUserAddressSelector: () => '0xdeadbeef',
+}));
+
 describe('Transaction selectors', () => {
   const tx1 = {
     createdAt: 10,
+    from: '0xdeadbeef',
     params: { taskId: 5 },
     identifier: 'coolony',
     group: {
@@ -19,6 +24,7 @@ describe('Transaction selectors', () => {
   };
   const tx2 = {
     createdAt: 5,
+    from: '0xdeadbeef',
     params: { taskId: 1 },
     identifier: 'othercolony',
     group: {
@@ -29,6 +35,7 @@ describe('Transaction selectors', () => {
   };
   const tx3 = {
     createdAt: 2,
+    from: '0xdeadbeef',
     params: { taskId: 1 },
     identifier: 'othercolony',
     group: {
@@ -39,6 +46,7 @@ describe('Transaction selectors', () => {
   };
   const tx4 = {
     createdAt: 0,
+    from: '0xdeadbeef',
     params: { taskId: 1 },
     identifier: 'othercolony',
   };

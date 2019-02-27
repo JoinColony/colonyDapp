@@ -83,11 +83,6 @@ export const avatarSelector = createSelector(
   (avatars, username) => avatars.get(username),
 );
 
-export const walletAddressSelector = createSelector(
-  currentUser,
-  user => (user ? user.profile.walletAddress : null),
-);
-
 export const usernameSelector = createSelector(
   currentUser,
   user => (user ? user.profile.username : null),

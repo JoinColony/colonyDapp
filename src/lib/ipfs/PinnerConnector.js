@@ -25,9 +25,13 @@ const PIN_ACTIONS = {
 };
 
 class PinnerConnector extends EventEmitter {
+  _handlePinnerMessageBound: (message: PubsubMessage) => void;
+
   _id: string;
 
   _ipfs: IPFS;
+
+  _openConnections: number;
 
   _outstandingPubsubMessages: Array<PinnerAction>;
 
@@ -39,8 +43,6 @@ class PinnerConnector extends EventEmitter {
   _roomMonitor: PeerMonitor;
 
   online: boolean;
-
-  _handlePinnerMessageBound: (message: PubsubMessage) => void;
 
   constructor(ipfs: IPFS, room: string, pinnerId: string) {
     super();
@@ -54,6 +56,11 @@ class PinnerConnector extends EventEmitter {
     this.online = false;
     this._outstandingPubsubMessages = [];
     this._handlePinnerMessageBound = this._handlePinnerMessage.bind(this);
+    this._openConnections = 0;
+  }
+
+  get busy() {
+    return !!this._openConnections || !!this._outstandingPubsubMessages.length;
   }
 
   _handlePinnerMessage(message: PubsubMessage) {
@@ -110,11 +117,13 @@ class PinnerConnector extends EventEmitter {
   ) {
     let retries = 0;
     let timeout;
+    this._openConnections += 1;
     const retry = () => {
       fn();
       timeout = setTimeout(() => {
         if (retries === tries) {
           onTimeout();
+          this._openConnections -= 1;
           clearTimeout(timeout);
           return;
         }
@@ -124,7 +133,10 @@ class PinnerConnector extends EventEmitter {
     };
     retry();
     this.on('action', (action: PinnerAction) => {
-      if (condFn(action)) clearTimeout(timeout);
+      if (condFn(action)) {
+        clearTimeout(timeout);
+        this._openConnections -= 1;
+      }
     });
   }
 

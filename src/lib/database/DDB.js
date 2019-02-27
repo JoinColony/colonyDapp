@@ -68,6 +68,16 @@ class DDB {
     this._identityProvider = identityProvider;
   }
 
+  get busy() {
+    // TODO: An improvement can be made if we limit the stores to the ones that are open (once we actually close stores)
+    // This eslint rule doesn't make much sense in this case
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, store] of this._stores) {
+      if (store.busy) return true;
+    }
+    return false;
+  }
+
   _makeStore(
     orbitStore: *,
     { name, schema, type: StoreClass }: StoreBlueprint,

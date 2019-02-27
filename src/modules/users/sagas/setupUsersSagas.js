@@ -23,7 +23,7 @@ import {
 import { ACTIONS } from '~redux';
 
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
-import { usernameSelector, walletAddressSelector } from '../selectors';
+import { usernameSelector, currentUserAddressSelector } from '../selectors';
 import {
   createUserProfile,
   removeUserAvatar,
@@ -49,7 +49,7 @@ function* userAvatarFetch({
       ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
       metadata: {
         username,
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress: yield select(currentUserAddressSelector),
       },
     };
 
@@ -77,7 +77,7 @@ function* userFetchTokenTransfers(
         colonyManager.getMetaColonyClient,
       ]),
       metadata: {
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress: yield select(currentUserAddressSelector),
       },
     };
     const transactions = yield* executeQuery(
@@ -102,7 +102,7 @@ function* userProfileFetch({
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
         username,
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress: yield select(currentUserAddressSelector),
       },
     };
 
@@ -143,7 +143,7 @@ function* currentUserGetBalance(
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const context = {
       networkClient,
-      metadata: { walletAddress: yield select(walletAddressSelector) },
+      metadata: { walletAddress: yield select(currentUserAddressSelector) },
     };
 
     const balance = yield* executeQuery(context, getUserBalance);
@@ -165,7 +165,7 @@ function* userProfileUpdate({
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress: yield select(currentUserAddressSelector),
       },
     };
 
@@ -191,7 +191,7 @@ function* userRemoveAvatar({
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
         username: yield select(usernameSelector),
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress: yield select(currentUserAddressSelector),
       },
     };
 
@@ -216,7 +216,7 @@ function* userUploadAvatar({
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
       metadata: {
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress: yield select(currentUserAddressSelector),
       },
     };
 
@@ -262,7 +262,7 @@ function* usernameCreate({
   const txChannel = yield call(getTxChannel, meta.id);
 
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const walletAddress = yield select(currentUserAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {

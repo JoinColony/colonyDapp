@@ -6,13 +6,13 @@ import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import { ConnectedRouter } from 'connected-react-router';
 
-import messages from './i18n/en.json';
-import Routes from './routes';
 import layout from '~styles/layout.css';
-
 import { DialogProvider } from '~core/Dialog';
 import { PopoverProvider } from '~core/Popover';
+
 import dialogComponents from './dialogComponents';
+import messages from './i18n/en.json';
+import Routes from './routes';
 
 addLocaleData(en);
 

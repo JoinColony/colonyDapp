@@ -27,6 +27,8 @@ class Store {
 
   _pinner: PinnerConnector;
 
+  busy: boolean;
+
   constructor(
     orbitStore: OrbitDBStore,
     name: string,
@@ -36,6 +38,7 @@ class Store {
     this._orbitStore = orbitStore;
     this._name = name;
     this._pinner = pinner;
+    this.busy = false;
   }
 
   get address() {
@@ -77,33 +80,42 @@ class Store {
   }
 
   async load() {
-    // Let's see whether we have local heads already
-    const heads = await this.ready();
+    this.busy = true;
+    try {
+      // Let's see whether we have local heads already
+      const heads = await this.ready();
 
-    // TODO consider throwing an error when we are relying fully on the pinner.
-    if (!this._pinner.online) {
-      log(new Error('Unable to load store; pinner is offline'));
-      return heads;
-    }
-
-    if (!(heads && heads.length)) {
-      // We don't have local heads. Let's ask the pinner
-      const { count } = await this._pinner.requestPinnedStore(
-        this.address.toString(),
-      );
-      if (count) {
-        return this._waitForReplication(count);
-        // We're replicated and done
+      // TODO consider throwing an error when we are relying fully on the pinner.
+      if (!this._pinner.online) {
+        log(new Error('Unable to load store; pinner is offline'));
+        return heads;
       }
-      // Pinner doesn't have any heads either. Maybe it's a newly created store?
-      throw new Error('Could not load store heads from anywhere');
+
+      if (!(heads && heads.length)) {
+        // We don't have local heads. Let's ask the pinner
+        const { count } = await this._pinner.requestPinnedStore(
+          this.address.toString(),
+        );
+        if (count) {
+          // We're replicated and done
+          await this._waitForReplication(count);
+          return heads;
+        }
+        // Pinner doesn't have any heads either. Maybe it's a newly created store?
+        throw new Error('Could not load store heads from anywhere');
+      }
+      // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
+      // but don't have to wait for any count. We'll replicate whenever it's convenient
+      // TODO: This could be dangerous in case of an unfinished replication. We have to account for that
+      // Quick fix could be to just also wait for the full replication, which might be a performance hit
+      this._pinner.requestPinnedStore(this.address.toString()).catch(log);
+      return heads;
+    } catch (err) {
+      // We just throw the error again. We're just using this to be able to set the busy indicator easily
+      throw err;
+    } finally {
+      this.busy = false;
     }
-    // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
-    // but don't have to wait for any count. We'll replicate whenever it's convenient
-    // TODO: This could be dangerous in case of an unfinished replication. We have to account for that
-    // Quick fix could be to just also wait for the full replication, which might be a performance hit
-    this._pinner.requestPinnedStore(this.address.toString()).catch(log);
-    return heads;
   }
 
   async pin() {

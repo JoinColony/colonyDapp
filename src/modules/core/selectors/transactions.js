@@ -4,23 +4,19 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { createSelector } from 'reselect';
 
+import type { RootStateRecord, TransactionRecordType } from '~immutable';
+
+import { currentUserAddressSelector } from '../../users/selectors';
+
 import {
   CORE_NAMESPACE as ns,
   CORE_TRANSACTIONS,
   CORE_TRANSACTIONS_LIST,
 } from '../constants';
 
-import type { RootStateRecord, TransactionRecordType } from '~immutable';
-
 /*
  * Individual transaction selectors
  */
-const isOutgoing = ({ hash }: { hash?: string }) => !!hash;
-const isPending = ({ hash }: { hash?: string }) => !hash;
-// TODO for `isConfirmed`, ideally we should count the confirmations and
-// ensure that a minimum threshold is met.
-const isConfirmed = tx =>
-  !!(tx.receipt && Object.hasOwnProperty.call(tx, 'eventData'));
 const isMultisig = tx => !!tx.multisig;
 const isPendingMultisig = tx =>
   !!tx.multisig &&
@@ -40,8 +36,16 @@ const createdAtDesc = (
 export const oneTransaction = (state: RootStateRecord, id: string) =>
   state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST, id]);
 
-export const allTransactions = (state: RootStateRecord) =>
-  state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST], ImmutableMap());
+export const allTransactions = createSelector(
+  (state: RootStateRecord) =>
+    state.getIn(
+      [ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST],
+      ImmutableMap(),
+    ),
+  currentUserAddressSelector,
+  (transactions, walletAddress) =>
+    transactions.filter(tx => tx.from === walletAddress),
+);
 
 export const groupedTransactions = createSelector(
   allTransactions,
@@ -66,20 +70,8 @@ export const groupedTransactions = createSelector(
 
 export const pendingTransactions = createSelector(
   allTransactions,
-  transactions => transactions.filter(isPending).sort(createdAtDesc),
-);
-
-export const outgoingTransactions = createSelector(
-  allTransactions,
   transactions =>
-    transactions
-      .filter(tx => isOutgoing(tx) && !isConfirmed(tx))
-      .sort(createdAtDesc),
-);
-
-export const confirmedTransactions = createSelector(
-  allTransactions,
-  transactions => transactions.filter(isConfirmed).sort(createdAtDesc),
+    transactions.filter(tx => tx.status === 'pending').sort(createdAtDesc),
 );
 
 export const multisigTransactions = createSelector(
