@@ -73,7 +73,7 @@ describe('Claims a username', () => {
    * I haven't found a way to clear this reliably yet; maybe
    * we need a setup/teardown routine?
    */
-  it.skip('Sign the transaction', () => {
+  it('Sign the transaction', () => {
     /*
      * Check if the gas station is open
      */
@@ -101,7 +101,7 @@ describe('Claims a username', () => {
       });
   });
 
-  it.skip('Go to the User Profile Settings', () => {
+  it('Go to the User Profile Settings', () => {
     /*
      * Click the Avatar Dropdown
      */
@@ -114,7 +114,7 @@ describe('Claims a username', () => {
       .click();
   });
 
-  it.skip('Verify the Username', () => {
+  it('Verify the Username', () => {
     /*
      * Click the Avatar Dropdown
      */
