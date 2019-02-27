@@ -95,9 +95,6 @@ function* colonyAdminRemove({
       params: {
         user: walletAddress,
       },
-      options: {
-        gasLimit: 500000,
-      },
     });
 
     /*

@@ -54,13 +54,13 @@ class IPFSNode {
   }
 
   async connectPinner() {
-    await this.ready;
     if (!PINNER_ID) {
       throw new Error(
         'No pinner id specified in environment variables. But we need one.',
       );
     }
     this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM, PINNER_ID);
+    await this.ready;
     await this.pinner.init();
   }
 

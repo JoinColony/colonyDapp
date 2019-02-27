@@ -46,7 +46,7 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   createdAt: Date,
   eventData?: E,
   from: string,
-  gasLimit?: BigNumber,
+  gasLimit?: number,
   gasPrice?: BigNumber,
   group?: {
     key: string,
