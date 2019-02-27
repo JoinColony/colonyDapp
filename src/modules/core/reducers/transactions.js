@@ -1,22 +1,15 @@
 /* @flow */
 
-import { fromJS, Map as ImmutableMap } from 'immutable';
+import { fromJS } from 'immutable';
 import getObjectFromPath from 'lodash/get';
-import BigNumber from 'bn.js';
 
 import type { CoreTransactionsRecord, TransactionRecordType } from '~immutable';
 
 import { TransactionRecord, CoreTransactions } from '~immutable';
 import { ACTIONS } from '~redux';
-import { persistReducer } from '~redux/persist';
 
 import { CORE_TRANSACTIONS_LIST } from '../constants';
 import type { ReducerType } from '~redux';
-
-const persistConfig = {
-  key: 'transactions',
-  version: 1,
-};
 
 /*
  * Helpers for transaction transformations
@@ -199,24 +192,9 @@ const coreTransactionsReducer: ReducerType<
       }
       return state.deleteIn([CORE_TRANSACTIONS_LIST, id]);
     }
-    case ACTIONS.REHYDRATED: {
-      const { key, value } = action.payload;
-      if (key !== persistConfig.key) {
-        return state;
-      }
-      return CoreTransactions({
-        [CORE_TRANSACTIONS_LIST]: ImmutableMap(
-          value[CORE_TRANSACTIONS_LIST],
-        ).map(tx =>
-          TransactionRecord(tx)
-            .set('gasLimit', new BigNumber(tx.gasLimit))
-            .set('gasPrice', new BigNumber(tx.gasPrice)),
-        ),
-      });
-    }
     default:
       return state;
   }
 };
 
-export default persistReducer(persistConfig, coreTransactionsReducer);
+export default coreTransactionsReducer;

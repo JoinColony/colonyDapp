@@ -12,7 +12,6 @@ import type { DDB as DDBType } from '../../../lib/database';
 import { create, executeQuery, putError } from '~utils/saga/effects';
 import { CONTEXT } from '~context';
 import { ACTIONS } from '~redux';
-import { rehydrate } from '~redux/persist';
 
 import * as resolvers from '../../../lib/database/resolvers';
 import { getUserBalance, getUserProfile } from '../../../data/service/queries';
@@ -118,8 +117,6 @@ export default function* setupUserContext(
     });
 
     yield call(setupOnBeforeUnload);
-
-    yield put(rehydrate('transactions'));
   } catch (error) {
     yield putError(ACTIONS.WALLET_CREATE_ERROR, error, meta);
   }
