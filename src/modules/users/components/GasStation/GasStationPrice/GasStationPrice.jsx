@@ -162,7 +162,9 @@ class GasStationPrice extends Component<Props, State> {
           }: FormikProps<FormValues>) => {
             const currentGasPrice = gasPrices[transactionSpeed];
             const transactionFee =
-              currentGasPrice && gasLimit && currentGasPrice.mul(gasLimit);
+              currentGasPrice &&
+              gasLimit &&
+              currentGasPrice.mul(new BigNumber(gasLimit));
             const waitTime = gasPrices[`${transactionSpeed}Wait`];
             return (
               <Fragment>

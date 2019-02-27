@@ -193,10 +193,6 @@ function* colonyCreate({
       context: NETWORK_CONTEXT,
       methodName: 'createColony',
       params: { tokenAddress },
-      options: {
-        // TODO: An attempt to make colony creation work smoothly but it still timeout sometimes
-        gasLimit: 6721975,
-      },
     });
 
     // TODO: These are just temporary for now until we have the new onboarding workflow
