@@ -1,18 +1,12 @@
 /* @flow */
 
 import ColonyNetworkClient from '@colony/colony-js-client';
-import { isAddress } from 'web3-utils';
 
-import { getHashedENSDomainString } from '~utils/web3/ens';
-
-import type {
-  Address,
-  AddressOrENSName,
-  ColonyContext,
-  ENSName,
-} from './types';
+import type { Address, AddressOrENSName, ColonyContext } from './types';
 
 import { NETWORK_CONTEXT } from './constants';
+
+import ens from '../../context/ensContext';
 
 export default class ColonyManager {
   clients: Map<Address, ColonyNetworkClient.ColonyClient>;
@@ -25,18 +19,11 @@ export default class ColonyManager {
 
   constructor(networkClient: ColonyNetworkClient) {
     this.clients = new Map();
-    this.ensCache = new Map();
     this.networkClient = networkClient;
   }
 
-  async resolveColonyIdentifier(identifier: AddressOrENSName) {
-    if (isAddress(identifier)) return identifier;
-
-    // Get the address and update the ENS cache
-    const { ensAddress } = await this.networkClient.getAddressForENSHash.call({
-      nameHash: getHashedENSDomainString(identifier, 'colony'),
-    });
-    this.ensCache.set(identifier, ensAddress);
+  async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
+    const ensAddress = await ens.getAddress(identifier, this.networkClient);
     return ensAddress;
   }
 

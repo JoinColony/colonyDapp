@@ -36,7 +36,8 @@ import {
 import { getColony } from '../../../data/service/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
-import { getNetworkMethod } from '../../core/sagas/utils';
+import { getNetworkClient } from '../../core/sagas/utils';
+import { set, getAll } from '../../../lib/database/commands';
 
 import {
   transactionAddParams,
@@ -327,15 +328,14 @@ function* colonyDomainValidate({
 }: Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE>): Saga<void> {
   yield delay(300);
 
-  const nameHash = yield call(getHashedENSDomainString, ensName, 'colony');
+  const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
 
-  const getAddressForENSHash = yield call(
-    getNetworkMethod,
-    'getAddressForENSHash',
-  );
-  const { ensAddress } = yield call(
-    [getAddressForENSHash, getAddressForENSHash.call],
-    { nameHash },
+  const networkClient = yield call(getNetworkClient);
+
+  const ensAddress = yield call(
+    [ensCache, ensCache.getAddress],
+    ensName,
+    networkClient,
   );
 
   if (ensAddress) {
@@ -420,23 +420,25 @@ function* colonyENSNameFetch({
   meta,
 }: Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH>): Saga<void> {
   try {
-    const { domain } = yield callCaller({
-      context: NETWORK_CONTEXT,
-      methodName: 'lookupRegisteredENSDomain',
-      params: { ensAddress: colonyAddress },
-    });
+    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
+
+    const networkClient = yield call(getNetworkClient);
+
+    const domain = yield call(
+      [ensCache, ensCache.getDomain],
+      colonyAddress,
+      networkClient,
+    );
+
     if (!domain)
       throw new Error(
         `No Colony ENS name found for address "${colonyAddress}"`,
       );
-    const [ensName, type] = domain.split('.');
-    if (type !== 'colony')
-      throw new Error(`Address "${colonyAddress}" is not a Colony`);
 
     yield put<Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS,
       meta,
-      payload: ensName,
+      payload: domain,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_ENS_NAME_FETCH_ERROR, error, meta);
