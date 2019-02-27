@@ -48,7 +48,7 @@ export type TaskContext = Context<
 
 export type CommentContext = Context<
   {|
-    commentStoreAddress: string | OrbitDBAddress,
+    commentsStoreAddress: string | OrbitDBAddress,
   |},
   DDBContext,
 >;

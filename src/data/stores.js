@@ -77,10 +77,10 @@ export const getTaskStore = (
   });
 
 export const getCommentsStore = (ddb: DDB) => async ({
-  commentStoreAddress,
+  commentsStoreAddress,
 }: {
-  commentStoreAddress: string | OrbitDBAddress,
-}) => ddb.getStore<FeedStore>(commentsStoreBlueprint, commentStoreAddress);
+  commentsStoreAddress: string | OrbitDBAddress,
+}) => ddb.getStore<FeedStore>(commentsStoreBlueprint, commentsStoreAddress);
 
 export const createTaskStore = (
   colonyClient: ColonyClientType,

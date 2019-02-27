@@ -12,7 +12,7 @@ const { COMMENT_POSTED } = TASK_EVENT_TYPES;
 
 export type CommentQueryContext = Context<
   {|
-    commentStoreAddress: string | OrbitDBAddress,
+    commentsStoreAddress: string | OrbitDBAddress,
   |},
   DDBContext,
 >;
@@ -22,11 +22,11 @@ export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
 // eslint-disable-next-line import/prefer-default-export
 export const getTaskComments: CommentQuery<*, *> = ({
   ddb,
-  metadata: { commentStoreAddress },
+  metadata: { commentsStoreAddress },
 }) => ({
   async execute() {
     const commentsStore = await getCommentsStore(ddb)({
-      commentStoreAddress,
+      commentsStoreAddress,
     });
     return commentsStore
       .all()
