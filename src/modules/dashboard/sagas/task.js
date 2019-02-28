@@ -11,6 +11,7 @@ import {
   callCaller,
   putError,
   takeFrom,
+  executeCommand,
   executeQuery,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
@@ -21,10 +22,10 @@ import {
   transactionAddParams,
   transactionReady,
 } from '../../core/actionCreators';
+import { postComment } from '../../../data/service/commands';
 import { getTaskComments } from '../../../data/service/queries';
 
 import { allColonyENSNames } from '../selectors';
-import { ensureColonyIsInState } from './shared';
 import type { ActionsType, Action } from '~redux';
 
 /*
@@ -33,14 +34,14 @@ import type { ActionsType, Action } from '~redux';
  * the payload, which allows some steps to be skipped.
  */
 function* taskFetch({
-  meta: {
-    keyPath: [colonyENSName],
-  },
+  // meta: {
+  //   keyPath: [colonyENSName],
+  // },
   meta,
   payload,
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
-    yield call(ensureColonyIsInState, colonyENSName);
+    // yield call(ensureColonyIsInState, colonyENSName);
 
     // TODO get the task store and fetch it, after https://github.com/JoinColony/colonyDapp/pull/815
     // TODO: check if taskRecord has commentStoreAdress prop if so fetch them as well with
@@ -91,14 +92,14 @@ function* taskFetchAll(): Saga<void> {
  * and update it.
  */
 function* taskUpdate({
-  meta: {
-    keyPath: [colonyENSName],
-  },
+  // meta: {
+  //   keyPath: [colonyENSName],
+  // },
   meta,
   payload,
 }: Action<typeof ACTIONS.TASK_UPDATE>): Saga<void> {
   try {
-    yield call(ensureColonyIsInState, colonyENSName);
+    // yield call(ensureColonyIsInState, colonyENSName);
 
     // TODO add update event after https://github.com/JoinColony/colonyDapp/pull/815
 
@@ -121,13 +122,13 @@ function* taskUpdate({
  * simply unpinned.
  */
 function* taskRemove({
-  meta: {
-    keyPath: [colonyENSName],
-  },
+  // meta: {
+  //   keyPath: [colonyENSName],
+  // },
   meta,
 }: Action<typeof ACTIONS.TASK_REMOVE>): Saga<void> {
   try {
-    yield call(ensureColonyIsInState, colonyENSName);
+    // yield call(ensureColonyIsInState, colonyENSName);
 
     // TODO add event after https://github.com/JoinColony/colonyDapp/pull/815
 
@@ -736,7 +737,56 @@ function* taskCommentsSaga({
   }
 }
 
+function* taskCommentAdd({
+  payload: { commentsStoreAddress, taskId, commentData },
+  meta,
+  meta: { id },
+}: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
+  try {
+    /*
+     * @TODO Wire message signing to the Gas Station, once it's available
+     */
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+    const wallet = yield* getContext(CONTEXT.WALLET);
+    const commentSignature = yield call([wallet, wallet.signMessage], {
+      message: JSON.stringify(commentData),
+    });
+
+    /*
+     * @NOTE Put the comment in the DDB Feed Store
+     */
+    const context = {
+      ddb,
+      metadata: { commentsStoreAddress },
+    };
+    yield* executeCommand(context, postComment, {
+      signature: commentSignature,
+      content: {
+        id,
+        author: wallet.address,
+        ...commentData,
+      },
+    });
+
+    /*
+     * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
+     */
+    yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
+      type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
+      payload: {
+        taskId,
+        commentData,
+        signature: commentSignature,
+      },
+      meta,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);
+  }
+}
+
 export default function* tasksSagas(): any {
+  yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskCommentsSaga);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
