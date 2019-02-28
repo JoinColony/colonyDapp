@@ -16,7 +16,7 @@ import { postComment } from '../../../data/service/commands';
 import { comments as commentStoreBlueprint } from '../../../data/blueprints';
 
 function* taskCommentAdd({
-  payload: { /* commentStoreAddress */ draftId, commentData } = {},
+  payload: { /* commentsStoreAddress */ draftId, commentData } = {},
   meta,
   meta: { id },
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
@@ -41,7 +41,7 @@ function* taskCommentAdd({
      */
     const context = {
       ddb,
-      metadata: { commentStoreAddress: commentStore.address.toString() },
+      metadata: { commentsStoreAddress: commentStore.address.toString() },
     };
     yield* executeCommand(context, postComment, {
       signature: commentSignature,

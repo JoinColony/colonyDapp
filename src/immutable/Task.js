@@ -38,7 +38,7 @@ type Shared = {|
   workerPayoutClaimed: boolean,
   workerRateFail: boolean, // if they didn't rate or reveal
   workerRating?: TaskRating,
-  commentStoreAddress?: string | OrbitDBAddress,
+  commentsStoreAddress?: string | OrbitDBAddress,
 |};
 
 export type TaskType = $ReadOnly<{|
@@ -85,7 +85,7 @@ const defaultValues: $Shape<TaskRecordProps> = {
   workerPayoutClaimed: undefined,
   workerRateFail: undefined,
   workerRating: undefined,
-  commentStoreAddress: undefined,
+  commentsStoreAddress: undefined,
 };
 
 const TaskRecord: RecordFactory<TaskRecordProps> = Record(defaultValues);

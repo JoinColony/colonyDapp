@@ -713,7 +713,7 @@ function* taskWorkerClaimReward({
 }
 
 function* taskCommentsSaga({
-  payload: { commentStoreAddress },
+  payload: { commentsStoreAddress },
   meta,
 }: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
   /*
@@ -723,7 +723,7 @@ function* taskCommentsSaga({
 
   try {
     const payload = yield* executeQuery(
-      { ddb, metadata: { commentStoreAddress } },
+      { ddb, metadata: { commentsStoreAddress } },
       getTaskComments,
     );
     yield put({
