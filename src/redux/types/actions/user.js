@@ -1,7 +1,11 @@
 /* @flow */
 
 import type { ENSName, WithKeyPathDepth1 } from '~types';
-import type { ContractTransactionType, UserProfileType } from '~immutable';
+import type {
+  ContractTransactionType,
+  TaskReferenceType,
+  UserProfileType,
+} from '~immutable';
 
 import type {
   ActionType,
@@ -27,6 +31,18 @@ export type UserActionTypes = {|
     {|
       avatar: ?string,
       username: string,
+    |},
+  >,
+  USER_TASK_IDS_FETCH: ActionType<typeof ACTIONS.USER_TASK_IDS_FETCH>,
+  USER_TASK_IDS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_TASK_IDS_FETCH_ERROR,
+    void,
+  >,
+  USER_TASK_IDS_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TASK_IDS_FETCH_SUCCESS,
+    {|
+      open: TaskReferenceType[],
+      closed: TaskReferenceType[],
     |},
   >,
   USER_TOKEN_TRANSFERS_FETCH: ActionType<

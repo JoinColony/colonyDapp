@@ -32,12 +32,13 @@ import {
 } from '../../../data/service/commands/user';
 import {
   checkUsernameIsAvailable,
-  getUserBalance,
   getUserAvatar,
+  getUserBalance,
   getUserColonyTransactions,
   getUsername,
-  getUserProfile,
   getUserPermissions,
+  getUserProfile,
+  getUserTaskIds,
 } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -335,12 +336,39 @@ function* userPermissionsFetch({
   }
 }
 
+function* fetchUserTaskIds(
+  // eslint-disable-next-line no-unused-vars
+  action: Action<typeof ACTIONS.USER_TASK_IDS_FETCH>,
+): Saga<void> {
+  try {
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const context = {
+      // Any ColonyClient will do, so we'll use MetaColony
+      colonyClient: yield call([
+        colonyManager,
+        colonyManager.getMetaColonyClient,
+      ]),
+      metadata: {
+        walletAddress: yield select(currentUserAddressSelector),
+      },
+    };
+    const { closed, open } = yield* executeQuery(context, getUserTaskIds);
+    yield put<Action<typeof ACTIONS.USER_TASK_IDS_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_TASK_IDS_FETCH_SUCCESS,
+      payload: { closed, open },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_TASK_IDS_FETCH_ERROR, error);
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userFetchTokenTransfers);
   yield takeEvery(ACTIONS.USER_PROFILE_FETCH, userProfileFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ACTIONS.USERNAME_FETCH, usernameFetch);
+  yield takeEvery(ACTIONS.USER_TASK_IDS_FETCH, fetchUserTaskIds);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
   yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, userRemoveAvatar);
