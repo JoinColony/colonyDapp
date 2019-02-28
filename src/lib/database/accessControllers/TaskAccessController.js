@@ -12,7 +12,7 @@ import type { Entry } from '../types/index';
 
 const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
 
-class ColonyAccessController extends AbstractAccessController<
+class TaskAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
 > {
@@ -47,7 +47,7 @@ class ColonyAccessController extends AbstractAccessController<
   }
 
   async save() {
-    const isAllowed = await this.can('is-colony-founder');
+    const isAllowed = await this.can('is-colony-founder-or-admin');
     if (!isAllowed)
       throw new Error('Cannot create colony database, user not allowed');
 
@@ -91,4 +91,4 @@ class ColonyAccessController extends AbstractAccessController<
   }
 }
 
-export default ColonyAccessController;
+export default TaskAccessController;
