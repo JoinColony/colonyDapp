@@ -64,7 +64,7 @@ describe('Claims a username', () => {
        * cypress to fetch the Gas Station hook.
        * This way, we make sure the modal is closed by the time it tries to.
        */
-      .wait(5000);
+      .wait(2000);
   });
 
   /*
@@ -89,8 +89,13 @@ describe('Claims a username', () => {
      * Confirm the transaction
      */
     cy.get('button[data-test="gasStationConfirmTransaction"]')
+      /*
+       * Wait a bit, to make sure the gas limit has been estimated
+       * We really need to teach cypress to wait for loading elements...
+       */
+      .wait(2000)
       .click()
-      .wait(10000)
+      .wait(5000)
       .then(() => {
         /*
          * Wait until the transaction succeeded
