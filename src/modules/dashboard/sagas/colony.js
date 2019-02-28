@@ -475,7 +475,16 @@ function* colonyAvatarUpload({
     yield put<Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS>>({
       type: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
       meta,
-      payload: hash,
+      payload: { hash },
+    });
+
+    /*
+     * Trigger the Avatar Fetch success action, so that the avatar mapping gets updated
+     */
+    yield put<Action<typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
+      meta,
+      payload: { hash, avatarData: data },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_AVATAR_UPLOAD_ERROR, error, meta);

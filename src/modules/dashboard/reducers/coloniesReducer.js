@@ -61,7 +61,7 @@ const coloniesReducer: ReducerType<
     case ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: hash,
+        payload: { hash },
       } = action;
       // $FlowFixMe issue with keyPath
       return state.setIn([...keyPath, 'record', 'avatar'], hash);
