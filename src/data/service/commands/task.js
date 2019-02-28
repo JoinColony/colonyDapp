@@ -92,6 +92,7 @@ type SetTaskDueDateCommandArgs = {|
 
 type SetTaskBountyCommandArgs = {|
   amount: string,
+  token?: ?string,
 |};
 
 type AssignWorkerCommandArgs = {|
@@ -113,7 +114,11 @@ type FinalizeTaskCommandArgs = {|
 |};
 
 type SetTaskSkillCommandArgs = {|
-  skillId: string,
+  skillId: number,
+|};
+
+type CreateWorkRequestCommandArgs = {|
+  worker: string,
 |};
 
 type SendWorkInviteCommandArgs = {|
@@ -215,17 +220,15 @@ export const setTaskSkill: TaskCommand<SetTaskSkillCommandArgs, EventStore> = ({
   },
 });
 
-export const createWorkRequest: TaskCommand<void, EventStore> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
-  async execute() {
+export const createWorkRequest: TaskCommand<
+  CreateWorkRequestCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  async execute({ worker }) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
     await taskStore.append(
       createWorkRequestCreatedEvent({
-        worker: wallet.address,
+        worker,
       }),
     );
 

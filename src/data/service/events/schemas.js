@@ -119,6 +119,7 @@ export const TaskStatusChangeEventSchema = yup.object({
 
 export const CreateBountySetEventSchema = yup.object({
   amount: yup.string().required(),
+  token: yup.string(),
 });
 
 export const CreateTaskFinalizedEventSchema = yup.object({
