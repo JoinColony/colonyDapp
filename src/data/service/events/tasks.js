@@ -1,29 +1,37 @@
 /* @flow */
 
+import type { Address } from '~types';
 import type { Event } from '../../types';
 
 import { createEventCreator } from '../../utils';
-import { TASK_EVENT_TYPES } from '../../constants';
+import { TASK_EVENT_TYPES, TASK_STATUS } from '../../constants';
 import {
   CreateCommentPostedEventSchema,
   CreateCommentStoreCreatedEventSchema,
-  CreateDraftCreatedEventSchema,
-  CreateDraftUpdatedEventSchema,
+  CreateTaskCreatedEventSchema,
+  CreateTaskUpdatedEventSchema,
   CreateDueDateSetEventSchema,
   CreateSkillSetEventSchema,
-  CreateWorkInviteSentEventSchema,
-  CreateWorkRequestCreatedEventSchema,
+  WorkerAssignmentEventSchema,
+  CreateBountySetEventSchema,
+  CreateTaskFinalizedEventSchema,
 } from './schemas';
 
 const {
   COMMENT_STORE_CREATED,
-  DRAFT_CREATED,
-  DRAFT_UPDATED,
+  TASK_CREATED,
+  TASK_UPDATED,
   DUE_DATE_SET,
   SKILL_SET,
   WORK_INVITE_SENT,
   WORK_REQUEST_CREATED,
   COMMENT_POSTED,
+  TASK_CANCELLED,
+  TASK_CLOSED,
+  TASK_FINALIZED,
+  WORKER_ASSIGNED,
+  WORKER_UNASSIGNED,
+  BOUNTY_SET,
 } = TASK_EVENT_TYPES;
 
 export type CommentStoreCreatedEventArgs = {|
@@ -50,33 +58,29 @@ export type SkillSetEventArgs = {|
 export type SkillSetEventPayload = SkillSetEventArgs;
 export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
 
-export type DraftCreatedEventArgs = {|
-  creator: string,
+export type TaskCreatedEventArgs = {|
   domainId: number,
-  draftId: string,
-  meta: string,
-  specificationHash: string,
+  taskId: string,
+  description: string,
   title: string,
 |};
-export type DraftCreatedEventPayload = DraftCreatedEventArgs;
-export type DraftCreatedEvent = Event<
-  typeof DRAFT_CREATED,
-  DraftCreatedEventPayload,
+export type TaskCreatedEventPayload = TaskCreatedEventArgs;
+export type TaskCreatedEvent = Event<
+  typeof TASK_CREATED,
+  TaskCreatedEventPayload,
 >;
 
-export type DraftUpdatedEventArgs = {|
-  meta: string,
-  specificationHash: string,
+export type TaskUpdatedEventArgs = {|
+  description: string,
   title: string,
 |};
-export type DraftUpdatedEventPayload = DraftUpdatedEventArgs;
-export type DraftUpdatedEvent = Event<
-  typeof DRAFT_UPDATED,
-  DraftUpdatedEventPayload,
+export type TaskUpdatedEventPayload = TaskUpdatedEventArgs;
+export type TaskUpdatedEvent = Event<
+  typeof TASK_UPDATED,
+  TaskUpdatedEventPayload,
 >;
 
 export type WorkInviteSentEventArgs = {|
-  creator: string,
   worker: string,
 |};
 export type WorkInviteSentEventPayload = WorkInviteSentEventArgs;
@@ -98,6 +102,7 @@ export type CommentPostedEventArgs = {|
   signature: string,
   content: {|
     id: string,
+    author: Address,
     body: string,
     timestamp: number,
     metadata?: {|
@@ -111,6 +116,58 @@ export type CommentPostedEvent = Event<
   CommentPostedEventPayload,
 >;
 
+export type TaskCancelledEventArgs = {|
+  status: typeof TASK_STATUS.CANCELLED,
+|};
+export type TaskCancelledEventPayload = TaskCancelledEventArgs;
+export type TaskCancelledEvent = Event<
+  typeof TASK_CANCELLED,
+  TaskCancelledEventPayload,
+>;
+
+export type TaskClosedEventArgs = {|
+  status: typeof TASK_STATUS.CLOSED,
+|};
+export type TaskClosedEventPayload = TaskClosedEventArgs;
+export type TaskClosedEvent = Event<typeof TASK_CLOSED, TaskClosedEventPayload>;
+
+export type TaskFinalizedEventArgs = {|
+  status: typeof TASK_STATUS.FINALIZED,
+  worker: Address,
+  amountPaid: string,
+  token?: Address,
+  paymentId?: number,
+|};
+export type TaskFinalizedEventPayload = TaskFinalizedEventArgs;
+export type TaskFinalizedEvent = Event<
+  typeof TASK_FINALIZED,
+  TaskFinalizedEventPayload,
+>;
+
+export type WorkerAssignedEventArgs = {|
+  worker: Address,
+|};
+export type WorkerAssignedEventPayload = WorkerAssignedEventArgs;
+export type WorkerAssignedEvent = Event<
+  typeof WORKER_ASSIGNED,
+  WorkerAssignedEventPayload,
+>;
+
+export type WorkerUnassignedEventArgs = {|
+  worker: Address,
+|};
+export type WorkerUnassignedEventPayload = WorkerUnassignedEventArgs;
+export type WorkerUnassignedEvent = Event<
+  typeof WORKER_UNASSIGNED,
+  WorkerUnassignedEventPayload,
+>;
+
+export type BountySetEventArgs = {|
+  amount: string,
+|};
+export type BountySetEventPayload = BountySetEventArgs;
+export type BountySetEvent = Event<typeof BOUNTY_SET, BountySetEventPayload>;
+
 export const createCommentStoreCreatedEvent = createEventCreator<
   typeof COMMENT_STORE_CREATED,
   CommentStoreCreatedEventArgs,
@@ -123,17 +180,17 @@ export const createTaskDueDateSetEvent = createEventCreator<
   DueDateSetEvent,
 >(DUE_DATE_SET, CreateDueDateSetEventSchema);
 
-export const createDraftCreatedEvent = createEventCreator<
-  typeof DRAFT_CREATED,
-  DraftCreatedEventArgs,
-  DraftCreatedEvent,
->(DRAFT_CREATED, CreateDraftCreatedEventSchema);
+export const createTaskCreatedEvent = createEventCreator<
+  typeof TASK_CREATED,
+  TaskCreatedEventArgs,
+  TaskCreatedEvent,
+>(TASK_CREATED, CreateTaskCreatedEventSchema);
 
-export const createDraftUpdatedEvent = createEventCreator<
-  typeof DRAFT_UPDATED,
-  DraftUpdatedEventArgs,
-  DraftUpdatedEvent,
->(DRAFT_UPDATED, CreateDraftUpdatedEventSchema);
+export const createTaskUpdatedEvent = createEventCreator<
+  typeof TASK_UPDATED,
+  TaskUpdatedEventArgs,
+  TaskUpdatedEvent,
+>(TASK_UPDATED, CreateTaskUpdatedEventSchema);
 
 export const createTaskSkillSetEvent = createEventCreator<
   typeof SKILL_SET,
@@ -145,16 +202,52 @@ export const createWorkInviteSentEvent = createEventCreator<
   typeof WORK_INVITE_SENT,
   WorkInviteSentEventArgs,
   WorkInviteSentEvent,
->(WORK_INVITE_SENT, CreateWorkInviteSentEventSchema);
+>(WORK_INVITE_SENT, WorkerAssignmentEventSchema);
 
 export const createWorkRequestCreatedEvent = createEventCreator<
   typeof WORK_REQUEST_CREATED,
   WorkRequestCreatedEventArgs,
   WorkRequestCreatedEvent,
->(WORK_REQUEST_CREATED, CreateWorkRequestCreatedEventSchema);
+>(WORK_REQUEST_CREATED, WorkerAssignmentEventSchema);
 
 export const createCommentPostedEvent = createEventCreator<
   typeof COMMENT_POSTED,
   CommentPostedEventArgs,
   CommentPostedEvent,
 >(COMMENT_POSTED, CreateCommentPostedEventSchema);
+
+export const createWorkerAssignedEvent = createEventCreator<
+  typeof WORKER_ASSIGNED,
+  WorkerAssignedEventArgs,
+  WorkerAssignedEvent,
+>(WORKER_ASSIGNED, WorkerAssignmentEventSchema);
+
+export const createWorkerUnassignedEvent = createEventCreator<
+  typeof WORKER_UNASSIGNED,
+  WorkerUnassignedEventArgs,
+  WorkerUnassignedEvent,
+>(WORKER_UNASSIGNED, WorkerAssignmentEventSchema);
+
+export const createTaskBountySetEvent = createEventCreator<
+  typeof BOUNTY_SET,
+  BountySetEventArgs,
+  BountySetEvent,
+>(BOUNTY_SET, CreateBountySetEventSchema);
+
+export const createTaskCancelledEvent = createEventCreator<
+  typeof TASK_CANCELLED,
+  TaskCancelledEventArgs,
+  TaskCancelledEvent,
+>(TASK_CANCELLED);
+
+export const createTaskClosedEvent = createEventCreator<
+  typeof TASK_CLOSED,
+  TaskClosedEventArgs,
+  TaskClosedEvent,
+>(TASK_CLOSED);
+
+export const createTaskFinalizedEvent = createEventCreator<
+  typeof TASK_FINALIZED,
+  TaskFinalizedEventArgs,
+  TaskFinalizedEvent,
+>(TASK_FINALIZED, CreateTaskFinalizedEventSchema);
