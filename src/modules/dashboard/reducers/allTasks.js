@@ -16,7 +16,7 @@ const allTasksReducer: ReducerType<
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH_SUCCESS: *,
     TASK_FETCH_COMMENTS: *,
-    TASK_REMOVE_SUCCESS: *,
+    TASK_CANCEL_SUCCESS: *,
     // TASK_SET_DATE_SUCCESS: *,
     // TASK_SET_SKILL_SUCCESS: *,
     TASK_UPDATE_SUCCESS: *,
@@ -51,7 +51,7 @@ const allTasksReducer: ReducerType<
       return state.mergeDeepIn([...keyPath, 'record'], payload);
     }
 
-    case ACTIONS.TASK_REMOVE_SUCCESS:
+    case ACTIONS.TASK_CANCEL_SUCCESS:
       return state.deleteIn(action.meta.keyPath);
 
     default:

@@ -65,6 +65,9 @@ export type TaskCreatedEventArgs = {|
   taskId: string,
   description: string,
   title: string,
+  bounty: string,
+  skillId: number,
+  dueDate: number,
 |};
 export type TaskCreatedEventPayload = TaskCreatedEventArgs;
 export type TaskCreatedEvent = Event<

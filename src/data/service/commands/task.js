@@ -75,6 +75,9 @@ type CreateTaskCommandArgs = {|
   taskId: string,
   description: string,
   title: string,
+  bounty: string,
+  skillId: number,
+  dueDate: number,
 |};
 
 type CreateTaskCommandReturn = {|
