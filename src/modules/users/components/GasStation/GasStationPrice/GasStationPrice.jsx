@@ -243,7 +243,7 @@ class GasStationPrice extends Component<Props, State> {
                     <div>
                       <Button
                         disabled={!isValid}
-                        loading={isSubmitting}
+                        loading={!transactionFee || isSubmitting}
                         text={{ id: 'button.confirm' }}
                         type="submit"
                         data-test="gasStationConfirmTransaction"
