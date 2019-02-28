@@ -3,11 +3,16 @@
 import type { Saga } from 'redux-saga';
 
 import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import { CONTEXT, getContext } from '~context';
 
 import type { ENSName } from '~types';
 
-import { callCaller, putError, takeFrom } from '~utils/saga/effects';
-import { CONTEXT, getContext } from '~context';
+import {
+  callCaller,
+  putError,
+  takeFrom,
+  executeQuery,
+} from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -16,6 +21,7 @@ import {
   transactionAddParams,
   transactionReady,
 } from '../../core/actionCreators';
+import { getTaskComments } from '../../../data/service/queries';
 
 import { allColonyENSNames } from '../selectors';
 import { ensureColonyIsInState } from './shared';
@@ -37,7 +43,8 @@ function* taskFetch({
     yield call(ensureColonyIsInState, colonyENSName);
 
     // TODO get the task store and fetch it, after https://github.com/JoinColony/colonyDapp/pull/815
-
+    // TODO: check if taskRecord has commentStoreAdress prop if so fetch them as well with
+    // taskCommentsSaga
     /*
      * Dispatch the success action.
      */
@@ -705,7 +712,32 @@ function* taskWorkerClaimReward({
   }
 }
 
-export default function* tasksSagas(): Saga<void> {
+function* taskCommentsSaga({
+  payload: { commentsStoreAddress },
+  meta,
+}: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
+  /*
+   * Get the comments store for the returned address
+   */
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+
+  try {
+    const payload = yield* executeQuery(
+      { ddb, metadata: { commentsStoreAddress } },
+      getTaskComments,
+    );
+    yield put({
+      type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
+      meta,
+      payload,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.TASK_FETCH_COMMENTS_ERROR, error, meta);
+  }
+}
+
+export default function* tasksSagas(): any {
+  yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskCommentsSaga);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
   yield takeEvery(ACTIONS.TASK_MANAGER_END, taskManagerEnd);

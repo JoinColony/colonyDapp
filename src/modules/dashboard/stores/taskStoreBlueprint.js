@@ -16,7 +16,7 @@ const taskStoreBlueprint: StoreBlueprint = {
     creator: yup.string(),
     domainId: yup.number(),
     dueDate: yup.date(),
-    feedItems: yup.string(), // store address
+    feedItems: yup.array(), // store address
     id: yup.string(),
     specificationHash: yup.string(),
     title: yup.string(),
