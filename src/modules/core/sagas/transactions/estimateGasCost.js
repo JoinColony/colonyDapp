@@ -2,7 +2,6 @@
 
 import type { Saga } from 'redux-saga';
 
-import BigNumber from 'bn.js';
 import { call, put, select } from 'redux-saga/effects';
 
 import { ACTIONS } from '~redux';
@@ -35,10 +34,7 @@ export default function* estimateGasCost({
   const estimatedGas = yield call([method, method.estimate], params);
 
   // The suggested gas limit (briefly above the estimated gas cost)
-  // Weird ethers BN conversion
-  const suggestedGasLimit = new BigNumber(estimatedGas.toString())
-    .muln(SAFE_GAS_LIMIT_MULTIPLIER * 10)
-    .divn(10);
+  const suggestedGasLimit = estimatedGas.toNumber() * SAFE_GAS_LIMIT_MULTIPLIER;
 
   const { network, suggested } = yield call(getGasPrices);
 

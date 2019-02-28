@@ -162,7 +162,9 @@ class GasStationPrice extends Component<Props, State> {
           }: FormikProps<FormValues>) => {
             const currentGasPrice = gasPrices[transactionSpeed];
             const transactionFee =
-              currentGasPrice && gasLimit && currentGasPrice.mul(gasLimit);
+              currentGasPrice &&
+              gasLimit &&
+              currentGasPrice.mul(new BigNumber(gasLimit));
             const waitTime = gasPrices[`${transactionSpeed}Wait`];
             return (
               <Fragment>
@@ -241,7 +243,7 @@ class GasStationPrice extends Component<Props, State> {
                     <div>
                       <Button
                         disabled={!isValid}
-                        loading={isSubmitting}
+                        loading={!transactionFee || isSubmitting}
                         text={{ id: 'button.confirm' }}
                         type="submit"
                         data-test="gasStationConfirmTransaction"
