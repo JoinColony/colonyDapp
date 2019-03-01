@@ -67,6 +67,10 @@ export const CreateSkillSetEventSchema = yup.object({
   skillId: yup.string().required(),
 });
 
+export const CreateDomainSetEventSchema = yup.object({
+  domainId: yup.number().required(),
+});
+
 export const CreateTaskCreatedEventSchema = yup.object({
   domainId: yup.number().required(),
   taskId: yup.string().required(),

@@ -14,6 +14,7 @@ import {
   CreateSkillSetEventSchema,
   WorkerAssignmentEventSchema,
   CreateBountySetEventSchema,
+  CreateDomainSetEventSchema,
   CreateTaskFinalizedEventSchema,
 } from './schemas';
 
@@ -32,6 +33,7 @@ const {
   WORKER_ASSIGNED,
   WORKER_UNASSIGNED,
   BOUNTY_SET,
+  DOMAIN_SET,
 } = TASK_EVENT_TYPES;
 
 export type CommentStoreCreatedEventArgs = {|
@@ -168,6 +170,12 @@ export type BountySetEventArgs = {|
 export type BountySetEventPayload = BountySetEventArgs;
 export type BountySetEvent = Event<typeof BOUNTY_SET, BountySetEventPayload>;
 
+export type DomainSetEventArgs = {|
+  domainId: number,
+|};
+export type DomainSetEventPayload = DomainSetEventArgs;
+export type DomainSetEvent = Event<typeof DOMAIN_SET, DomainSetEventPayload>;
+
 export const createCommentStoreCreatedEvent = createEventCreator<
   typeof COMMENT_STORE_CREATED,
   CommentStoreCreatedEventArgs,
@@ -251,3 +259,9 @@ export const createTaskFinalizedEvent = createEventCreator<
   TaskFinalizedEventArgs,
   TaskFinalizedEvent,
 >(TASK_FINALIZED, CreateTaskFinalizedEventSchema);
+
+export const createTaskDomainSetEvent = createEventCreator<
+  typeof DOMAIN_SET,
+  DomainSetEventArgs,
+  DomainSetEvent,
+>(DOMAIN_SET, CreateDomainSetEventSchema);
