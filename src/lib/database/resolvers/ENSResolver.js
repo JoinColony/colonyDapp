@@ -45,8 +45,7 @@ class ENSResolver {
   /* Returns an Ethereum address, when given the human-readable name */
   async getENSAddressForENSName(name: string): Promise<any> {
     /* Get address from ENS cache */
-    const nameHash = this.constructor.ensHash(name);
-    const ensAddress = await ens.getAddress(nameHash, this._networkClient);
+    const ensAddress = await ens.getAddress(name, this._networkClient);
     return ensAddress;
   }
 }

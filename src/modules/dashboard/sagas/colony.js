@@ -16,13 +16,11 @@ import { replace } from 'connected-react-router';
 import type { Action } from '~redux';
 
 import {
-  callCaller,
   putError,
   takeFrom,
   executeCommand,
   executeQuery,
 } from '~utils/saga/effects';
-import { getHashedENSDomainString } from '~utils/web3/ens';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
@@ -37,7 +35,6 @@ import { getColony } from '../../../data/service/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
 import { getNetworkClient } from '../../core/sagas/utils';
-import { set, getAll } from '../../../lib/database/commands';
 
 import {
   transactionAddParams,
