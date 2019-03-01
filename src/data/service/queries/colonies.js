@@ -278,6 +278,8 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
     // const getFounderQuery = getColonyFounder({ colonyClient });
     // const founder = await getFounderQuery.execute();
 
+    const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
+
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
@@ -323,11 +325,12 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
         },
         // @TODO: Add the right defaults here using a data model or something like that
         {
-          ensName: colonyENSName,
           address: colonyAddress,
-          name: '',
-          avatar: undefined,
           admins,
+          avatar: undefined,
+          ensName: colonyENSName,
+          inRecoveryMode,
+          name: '',
           tokens: {},
         },
       );

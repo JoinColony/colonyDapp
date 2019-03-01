@@ -311,7 +311,7 @@ function* colonyCreateLabel({
       payload,
     });
 
-    yield put(replace(`colony/${ensName}`));
+    yield put(replace(`/colony/${ensName}`));
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_LABEL_ERROR, error);
   } finally {
@@ -391,9 +391,7 @@ function* colonyProfileUpdate({
 }
 
 function* colonyFetch({
-  meta: {
-    keyPath: [ensName],
-  },
+  payload: { ensName },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {

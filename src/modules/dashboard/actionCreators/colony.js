@@ -6,6 +6,9 @@ import { ACTIONS } from '~redux';
 
 export const fetchColony = (ensName: ENSName) => ({
   type: ACTIONS.COLONY_FETCH,
+  payload: {
+    ensName,
+  },
   meta: { keyPath: [ensName] },
 });
 

@@ -197,8 +197,9 @@ export type ColonyActionTypes = {|
     string,
     WithKeyPathDepth1,
   >,
-  COLONY_FETCH: ActionTypeWithMeta<
+  COLONY_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH,
+    {| ensName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_ERROR: ErrorActionType<
