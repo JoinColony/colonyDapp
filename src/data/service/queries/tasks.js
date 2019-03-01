@@ -28,6 +28,7 @@ const {
   TASK_FINALIZED,
   TASK_CLOSED,
   TASK_CANCELLED,
+  DOMAIN_SET,
 } = TASK_EVENT_TYPES;
 
 export type TaskQueryContext = ContextWithMetadata<
@@ -142,6 +143,13 @@ export const getTask: TaskQuery<*, *> = ({
               return {
                 ...task,
                 dueDate,
+              };
+            }
+            case DOMAIN_SET: {
+              const { domainId } = payload;
+              return {
+                ...task,
+                domainId,
               };
             }
             case SKILL_SET: {

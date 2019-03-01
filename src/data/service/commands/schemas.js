@@ -118,6 +118,10 @@ export const SetTaskBountyCommandArgsSchema = yup.object({
   amount: yup.string().required(),
 });
 
+export const SetTaskDomainCommandArgsSchema = yup.object({
+  domainId: yup.number().required(),
+});
+
 export const CancelTaskCommandArgsSchema = yup.object({
   taskId: yup.string().required(),
   domainId: yup.number().required(),
