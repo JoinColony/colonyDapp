@@ -34,6 +34,7 @@ export const mockTask = {
   currentState: 'ACTIVE',
   dueDate: new Date('2019-01-17'),
   draftId: '1',
+  taskId: '1',
   reputation: 19.5,
   title: 'Develop Github integration',
   payouts: [

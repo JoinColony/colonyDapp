@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import promiseListener from '../../../../createPromiseListener';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -10,6 +11,10 @@ import ItemsList from '~core/ItemsList';
 import styles from './TaskDomains.css';
 
 import mockDomains from '../../../../__mocks__/mockDomains';
+
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
+import ACTIONS from '~redux/actions';
 
 const MSG = defineMessages({
   title: {
@@ -27,6 +32,8 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator?: boolean,
+  /* we will only have a taskId if we are updating an existing task */
+  taskId: number,
 |};
 
 type State = {
@@ -34,20 +41,38 @@ type State = {
 };
 
 class TaskDomains extends Component<Props, State> {
+  asyncFunc: AsyncFunction<Object, void>;
+
   static displayName = 'dashboard.TaskDomains';
+
+  constructor(props: Props) {
+    super(props);
+    this.asyncFunc = promiseListener.createAsyncFunction({
+      start: ACTIONS.TASK_SET_DOMAIN,
+      resolve: ACTIONS.TASK_SET_DOMAIN_SUCCESS,
+      reject: ACTIONS.TASK_SET_DOMAIN_ERROR,
+    });
+  }
 
   state = {
     selectedDomainId: undefined,
   };
 
-  handleSetDomain = (domainValue: Object) => {
-    this.setState({ selectedDomainId: domainValue.id });
-    /*
-     * @TODO This should call (most likely) an action creator, or otherwise,
-     * do something the domain value
-     */
-    /* eslint-disable-next-line no-console */
-    return console.log(TaskDomains.displayName, domainValue);
+  componentWillUnmount() {
+    this.asyncFunc.unsubscribe();
+  }
+
+  handleSetDomain = async (domainValue: Object) => {
+    const { taskId } = this.props;
+    try {
+      await this.asyncFunc.asyncFunction({
+        domainId: domainValue.id,
+        taskId,
+      });
+      this.setState({ selectedDomainId: domainValue.id });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   render() {

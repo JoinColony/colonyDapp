@@ -226,6 +226,29 @@ export type TaskActionTypes = {|
     {
       eventData: $PropertyType<
         $PropertyType<ColonyClientType, 'events'>,
+        'TaskDomainSet',
+      >,
+    },
+    WithKeyPathDepth2,
+  >,
+  TASK_SET_DOMAIN: UniqueActionType<
+    typeof ACTIONS.TASK_SET_DOMAIN,
+    {|
+      colonyENSName: string,
+      domainId: Date,
+      taskId: number,
+    |},
+    WithKeyPathDepth2,
+  >,
+  TASK_SET_DOMAIN_ERROR: ErrorActionType<
+    typeof ACTIONS.TASK_SET_DOMAIN_ERROR,
+    WithKeyPathDepth2,
+  >,
+  TASK_SET_DOMAIN_SUCCESS: UniqueActionType<
+    typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS,
+    {
+      eventData: $PropertyType<
+        $PropertyType<ColonyClientType, 'events'>,
         'TaskDueDateSet',
       >,
     },
