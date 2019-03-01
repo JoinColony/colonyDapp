@@ -1,49 +1,37 @@
 /* @flow */
 
+import type {
+  ColonyClient as ColonyClientType,
+  TokenClient as TokenClientType,
+} from '@colony/colony-js-client';
+
 import BigNumber from 'bn.js';
 
-import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import type { ContractTransactionType } from '~immutable';
 
-/**
- * Given an event log and ColonyClient, get the timestamp of the block from
- * which it was emitted and return as a JS Date.
- */
-export const getLogDate = async ({
-  log: { blockHash },
-  colonyClient: {
-    adapter: { provider },
-  },
-}: {
-  log: Object,
-  colonyClient: ColonyClientType,
-}) => {
-  const { timestamp } = await provider.getBlock(blockHash);
-  return new Date(timestamp);
-};
+import { getLogDate } from './blocks';
 
-/**
+/*
  * Given a ColonyJS-parsed ColonyFundsClaimedEvent, log from which it was
  * parsed, ColonyClient and colonyENSName, return a ContractTransactionType
  * object, or null if the claim amount was zero.
  */
 export const parseColonyFundsClaimedEvent = async ({
-  event,
-  log,
-  colonyClient,
   colonyClient: {
     adapter: { provider },
   },
+  colonyClient,
   colonyENSName,
+  event: { payoutRemainder: amount, token },
+  log: { transactionHash },
+  log,
 }: {
-  event: Object,
-  log: Object,
   colonyClient: ColonyClientType,
   colonyENSName: string,
+  event: Object,
+  log: Object,
 }): Promise<?ContractTransactionType> => {
-  const { payoutRemainder: amount, token } = event;
-  const { transactionHash } = log;
-  const date = await getLogDate({ log, colonyClient });
+  const date = await getLogDate(colonyClient.adapter.provider, log);
   const { from } = await provider.getTransaction(transactionHash);
 
   // don't show claims of zero
@@ -61,25 +49,24 @@ export const parseColonyFundsClaimedEvent = async ({
     : null;
 };
 
-/**
+/*
  * Given a ColonyJS-parsed ColonyFundsMovedBetweenFundingPotsEvent, log from
  * which it was parsed, ColonyClient and colonyENSName, return a
  * ContractTransactionType object.
  */
 export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
-  event,
-  log,
   colonyClient,
   colonyENSName,
+  event: { amount, fromPot, token },
+  log: { transactionHash },
+  log,
 }: {
-  event: Object,
-  log: Object,
   colonyClient: ColonyClientType,
   colonyENSName: string,
+  event: Object,
+  log: Object,
 }): Promise<ContractTransactionType> => {
-  const { amount, fromPot, token } = event;
-  const { transactionHash } = log;
-  const date = await getLogDate({ log, colonyClient });
+  const date = await getLogDate(colonyClient.adapter.provider, log);
 
   // TODO: replace this once able to get taskId from potId
   const taskId = 1;
@@ -100,66 +87,64 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   };
 };
 
-/**
+/*
  * Given a ColonyJS-parsed TaskPayoutClaimedEvent, log from which it was
  * parsed, and ColonyClient, return a ContractTransactionType object.
  */
 export const parseTaskPayoutClaimedEvent = async ({
-  event,
+  event: { taskId, role, amount, token },
+  log: { transactionHash: hash },
   log,
   colonyClient,
 }: {
+  colonyClient: ColonyClientType,
   event: Object,
   log: Object,
-  colonyClient: ColonyClientType,
 }): Promise<ContractTransactionType> => {
-  const { taskId, role, amount, token } = event;
-  const { transactionHash } = log;
-  const date = await getLogDate({ log, colonyClient });
+  const date = await getLogDate(colonyClient.adapter.provider, log);
 
   const { address: to } = await colonyClient.getTaskRole.call({ taskId, role });
   return {
     amount,
     date,
-    id: transactionHash,
+    hash,
+    id: hash,
     incoming: false,
     taskId,
     to,
     token,
-    hash: transactionHash,
   };
 };
 
-/**
+/*
  * Given a ColonyJS-parsed TransferEvent, log from which it was parsed, Array
  * of Colony token claim events and associated logs from which they were
  * passed, ColonyClient, and colonyENSName, return a ContractTransactionType
  * object or null if that token has been claimed since the Transfer.
  */
 export const parseUnclaimedTransferEvent = async ({
-  transferEvent,
-  transferLog,
   claimEvents,
   claimLogs,
   colonyClient,
   colonyENSName,
+  transferEvent: { from, tokens: amount },
+  transferLog: { address: token, blockNumber, transactionHash: hash },
+  transferLog,
 }: {
-  transferEvent: Object,
-  transferLog: Object,
   claimEvents: Array<Object>,
   claimLogs: Array<Object>,
   colonyClient: ColonyClientType,
   colonyENSName: string,
+  transferEvent: Object,
+  transferLog: Object,
 }): Promise<?ContractTransactionType> => {
-  const { from, tokens: amount } = transferEvent;
-  const { address: token, blockNumber, transactionHash: hash } = transferLog;
-  const date = await getLogDate({ log: transferLog, colonyClient });
+  const date = await getLogDate(colonyClient.adapter.provider, transferLog);
 
   // Only return if we haven't claimed since it happened
   return claimEvents.find(
-    (claimEvent, j) =>
+    (claimEvent, i) =>
       claimEvent.token.toLowerCase() === token.toLowerCase() &&
-      claimLogs[j].blockNumber > blockNumber,
+      claimLogs[i].blockNumber > blockNumber,
   )
     ? null
     : {
@@ -174,25 +159,24 @@ export const parseUnclaimedTransferEvent = async ({
       };
 };
 
-/**
+/*
  * Given a ColonyJS-parsed TransferEvent for a user, the log from which it was
- * parsed, ColonyClient, and userAddress, return a ContractTransactionType
+ * parsed, ColonyClient, and walletAddress, return a ContractTransactionType
  * object for the token transfer.
  */
 export const parseUserTransferEvent = async ({
-  event,
+  tokenClient,
+  event: { to, from, tokens: amount },
+  log: { address: token, transactionHash: hash },
   log,
-  colonyClient,
-  userAddress,
+  walletAddress,
 }: {
+  tokenClient: TokenClientType,
   event: Object,
   log: Object,
-  colonyClient: ColonyClientType,
-  userAddress: string,
+  walletAddress: string,
 }): Promise<ContractTransactionType> => {
-  const { to, from, tokens: amount } = event;
-  const { address: token, transactionHash: hash } = log;
-  const date = await getLogDate({ log, colonyClient });
+  const date = await getLogDate(tokenClient.adapter.provider, log);
 
   return {
     amount,
@@ -200,7 +184,7 @@ export const parseUserTransferEvent = async ({
     from,
     hash,
     id: hash,
-    incoming: to.toLowerCase() === userAddress.toLowerCase(),
+    incoming: to.toLowerCase() === walletAddress.toLowerCase(),
     to,
     token,
   };

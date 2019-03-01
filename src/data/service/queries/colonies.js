@@ -11,9 +11,21 @@ import type {
   WalletContext,
 } from '../../types';
 
-import { getFilterFromPartial } from '~utils/web3/eventLogs';
+import {
+  getEvents,
+  getEventLogs,
+  getLogsAndEvents,
+  parseColonyFundsClaimedEvent,
+  parseColonyFundsMovedBetweenFundingPotsEvent,
+  parseTaskPayoutClaimedEvent,
+  parseUnclaimedTransferEvent,
+} from '~utils/web3/eventLogs';
 
-import type { ColonyType, DomainType } from '~immutable';
+import type {
+  ColonyType,
+  ContractTransactionType,
+  DomainType,
+} from '~immutable';
 
 import type {
   DomainCreatedEvent,
@@ -23,6 +35,7 @@ import type {
 
 import { getColonyStore } from '../../stores';
 import { COLONY_EVENT_TYPES } from '../../constants';
+import { getUserProfile } from './users';
 
 const {
   AVATAR_REMOVED,
@@ -35,11 +48,13 @@ const {
   TOKEN_INFO_ADDED,
 } = COLONY_EVENT_TYPES;
 
+type ColonyMetadata = {|
+  colonyENSName: string | ENSName,
+  colonyAddress: Address,
+|};
+
 export type ColonyQueryContext = Context<
-  {|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-  |},
+  ColonyMetadata,
   ColonyClientContext & DDBContext & WalletContext,
 >;
 
@@ -49,59 +64,177 @@ export type ColonyContractEventQuery<I: *, R: *> = Query<
   R,
 >;
 
+export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
+  Context<ColonyMetadata, ColonyClientContext>,
+  I,
+  R,
+>;
+
+export type ColonyContractAdminEventQuery<I: *, R: *> = Query<
+  {| ...ColonyClientContext, ...DDBContext |},
+  I,
+  R,
+>;
+
 export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
 
-export const getColonyAdmins: ColonyContractEventQuery<
+const getAdminProfiles = async ({ colonyClient, ddb }: *, events: *) => {
+  const uniqueRemovedAdmins = [
+    ...new Set(
+      events
+        .filter(
+          ({ eventName }) =>
+            eventName === colonyClient.events.ColonyAdminRoleRemoved.eventName,
+        )
+        .map(({ user }) => user),
+    ),
+  ];
+  return Promise.all(
+    events
+      // TODO rethink this logic so that we can handle the case of an admin being set,
+      // removed and later set again
+      .filter(
+        ({ eventName, user }) =>
+          eventName === colonyClient.events.ColonyAdminRoleSet.eventName &&
+          !uniqueRemovedAdmins.includes(user),
+      )
+      .map(({ user: walletAddress }) =>
+        getUserProfile({ ddb, metadata: { walletAddress } }).execute(),
+      ),
+  );
+};
+
+const EVENT_PARSERS = {
+  ColonyFundsClaimed: parseColonyFundsClaimedEvent,
+  // eslint-disable-next-line max-len
+  ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
+  TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
+};
+
+export const getColonyTransactions: ColonyContractTransactionsEventQuery<
+  void,
+  ContractTransactionType[],
+> = ({
+  metadata: { colonyENSName },
+  colonyClient: {
+    events: {
+      ColonyFundsClaimed,
+      ColonyFundsMovedBetweenFundingPots,
+      TaskPayoutClaimed,
+    },
+  },
+  colonyClient,
+}) => ({
+  async execute() {
+    const { events, logs } = await getLogsAndEvents(
+      colonyClient,
+      {},
+      {
+        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+        events: [
+          ColonyFundsClaimed,
+          ColonyFundsMovedBetweenFundingPots,
+          TaskPayoutClaimed,
+        ],
+      },
+    );
+    return Promise.all(
+      events
+        .map((event, i) =>
+          EVENT_PARSERS[event.eventName]({
+            event,
+            log: logs[i],
+            colonyClient,
+            colonyENSName,
+          }),
+        )
+        .filter(Boolean),
+    );
+  },
+});
+
+export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuery<
+  void,
+  ContractTransactionType[],
+> = ({
+  metadata: { colonyAddress, colonyENSName },
+  colonyClient: {
+    events: { ColonyFundsClaimed },
+    tokenClient: {
+      events: { Transfer },
+    },
+    tokenClient,
+  },
+  colonyClient,
+}) => ({
+  async execute() {
+    // TODO use a more meaningful value for blocksBack
+    const blocksBack = 400000;
+
+    // Get logs & events for token transfer to this colony
+    const {
+      logs: transferLogs,
+      events: transferEvents,
+    } = await getLogsAndEvents(
+      tokenClient,
+      {},
+      { blocksBack, events: [Transfer], to: colonyAddress },
+    );
+
+    // Get logs & events for token claims by this colony
+    const { logs: claimLogs, events: claimEvents } = await getLogsAndEvents(
+      colonyClient,
+      {},
+      { blocksBack, events: [ColonyFundsClaimed] },
+    );
+
+    const unclaimedTransfers = await Promise.all(
+      transferEvents.map((transferEvent, i) =>
+        parseUnclaimedTransferEvent({
+          claimEvents,
+          claimLogs,
+          colonyClient,
+          colonyENSName,
+          transferEvent,
+          transferLog: transferLogs[i],
+        }),
+      ),
+    );
+
+    return unclaimedTransfers.filter(Boolean);
+  },
+});
+
+export const getColonyAdmins: ColonyContractAdminEventQuery<
   void,
   $PropertyType<ColonyType, 'admins'>,
-> = ({ colonyClient }) => ({
+> = context => ({
   async execute() {
-    const {
-      // $FlowFixMe will be fixed in next colonyJS version
-      ColonyAdminRoleSet: { eventName: COLONY_ADMIN_SET_EVENT },
-      ColonyAdminRoleRemoved: { eventName: COLONY_ADMIN_REMOVED_EVENT },
-    } = colonyClient.events;
-    const eventNames = [COLONY_ADMIN_SET_EVENT, COLONY_ADMIN_REMOVED_EVENT];
-
-    // Will contain to/from block and event name topics
-    const baseLog = await getFilterFromPartial(
-      // TODO use a more meaningful value for blocksBack
-      { eventNames, blocksBack: 400000 },
+    const { colonyClient } = context;
+    const events = await getEvents(
       colonyClient,
+      {},
+      {
+        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+        events: [
+          colonyClient.events.ColonyAdminRoleRemoved,
+          colonyClient.events.ColonyAdminRoleSet,
+        ],
+      },
     );
 
-    // Get logs + events for role assignment
-    const removedAdminLogs = await colonyClient.getLogs({
-      ...baseLog,
-      // [eventNames, from, to]
-      topics: [[COLONY_ADMIN_REMOVED_EVENT]],
-    });
-    const setAdminLogs = await colonyClient.getLogs({
-      ...baseLog,
-      // [eventNames, from, to]
-      topics: [[COLONY_ADMIN_SET_EVENT]],
-    });
+    const adminProfiles = await getAdminProfiles(context, events);
 
-    const removedAdmins = Array.from(
-      new Set(...(removedAdminLogs.map(({ user }) => user) || [])),
+    return adminProfiles.reduce(
+      (admins, admin) => ({
+        ...admins,
+        [admin.username || admin.walletAddress]: {
+          ...admin,
+          state: 'pending', // TODO get admin user state
+        },
+      }),
+      {},
     );
-    return setAdminLogs
-      .map(({ user }) => user)
-      .filter(user => !removedAdmins.includes(user))
-      .reduce(
-        (users, user) => ({
-          ...users,
-          [user]: {
-            // TODO get these values, ideally with another query
-            displayName: '',
-            profileStore: '',
-            state: 'pending',
-            username: '',
-            walletAddress: user,
-          },
-        }),
-        {},
-      );
   },
 });
 
@@ -109,27 +242,17 @@ export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
   colonyClient,
 }) => ({
   async execute() {
-    const {
-      // $FlowFixMe will be fixed in next colonyJS version
-      ColonyAdminRoleSet: { eventName: COLONY_FOUNDER_SET_EVENT },
-    } = colonyClient.events;
-    const eventNames = [COLONY_FOUNDER_SET_EVENT];
-
-    // Will contain to/from block and event name topics
-    const baseLog = await getFilterFromPartial(
-      // TODO use a more meaningful value for blocksBack
-      { eventNames, blocksBack: 400000 },
+    const founderRoleSetLogs = await getEventLogs(
       colonyClient,
+      {},
+      {
+        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+        events: [colonyClient.events.ColonyFounderRoleSet],
+      },
     );
 
-    // Get logs + events for founder role assignment
-    const founderChangedLogs = await colonyClient.getLogs({
-      ...baseLog,
-      // [eventNames, from, to]
-      topics: [[COLONY_FOUNDER_SET_EVENT]],
-    });
-
-    const [head] = founderChangedLogs
+    // TODO colonyJS should support sorting
+    const [head] = founderRoleSetLogs
       .sort((a, b) => a.blockNumber - b.blockNumber)
       .reverse();
 
@@ -149,7 +272,7 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
       colonyENSName,
     });
 
-    const getAdminsQuery = getColonyAdmins({ colonyClient });
+    const getAdminsQuery = getColonyAdmins({ colonyClient, ddb });
     const admins = await getAdminsQuery.execute();
     // @TODO: Include `founder` to ColonyType
     // const getFounderQuery = getColonyFounder({ colonyClient });
