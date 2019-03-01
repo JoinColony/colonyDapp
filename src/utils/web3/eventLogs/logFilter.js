@@ -1,18 +1,23 @@
 /* @flow */
 
-/*
- * Returns a padded hex string of the size expected for a contract event topic,
- * for the given address.
- */
+import { padLeft } from 'web3-utils';
+
 import type { IProvider, LogFilter } from '@colony/colony-js-adapter';
+
 import { getBlockNumberForDelta } from '~utils/web3/eventLogs/blocks';
 
 import type { LogFilterOptions } from './types';
 
-// TODO examine the length of the address
-const padTopicAddress = (address: string) =>
-  `0x000000000000000000000000${address.slice(2).toLowerCase()}`;
+/*
+ * Returns a padded hex string of the size expected for a contract event topic,
+ * for the given address.
+ */
+const padTopicAddress = (address: string) => padLeft(address, 64);
 
+/*
+ * Returns an array of topics for the given ColonyJS events, and from/to
+ * addresses, if given, for ERC20 transfers, or similar events.
+ */
 const getTopics = ({ events = [], from, to }: LogFilterOptions) => [
   events.map(({ interface: { topics } }) => topics),
   // $FlowFixMe the LogFilter type should accept null for this
@@ -21,6 +26,10 @@ const getTopics = ({ events = [], from, to }: LogFilterOptions) => [
   to ? padTopicAddress(to) : null,
 ];
 
+/*
+ * Returns given filter with added `fromBlock` and `toBlock` components
+ * according to how many `blocksBack` from latest.
+ */
 export const restrictLogFilterBlocks = async (
   provider: IProvider,
   { fromBlock, toBlock, ...logFilter }: LogFilter,
@@ -33,6 +42,9 @@ export const restrictLogFilterBlocks = async (
   ...logFilter,
 });
 
+/*
+ * Returns an augmented log filter, according to options.
+ */
 export const getEventLogFilter = async (
   provider: IProvider,
   logFilter: LogFilter,
