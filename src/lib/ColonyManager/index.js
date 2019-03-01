@@ -1,8 +1,14 @@
 /* @flow */
 
 import ColonyNetworkClient from '@colony/colony-js-client';
+import { isAddress } from 'web3-utils';
 
-import type { Address, AddressOrENSName, ColonyContext } from './types';
+import type {
+  ENSName,
+  Address,
+  AddressOrENSName,
+  ColonyContext,
+} from './types';
 
 import { NETWORK_CONTEXT } from './constants';
 
@@ -23,6 +29,8 @@ export default class ColonyManager {
   }
 
   async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
+    if (isAddress(identifier)) return identifier;
+
     const ensAddress = await ens.getAddress(identifier, this.networkClient);
     return ensAddress;
   }

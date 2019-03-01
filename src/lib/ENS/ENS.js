@@ -1,5 +1,7 @@
 /* @flow */
 
+import namehash from 'eth-ens-namehash-ms';
+
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
 import type { Address, ENSName } from './types';
@@ -23,7 +25,7 @@ class ENS {
     /* check if domain in store if so return otherwise get */
     if (!this.cacheMap.has(ensDomain)) {
       const { ensAddress } = await networkClient.getAddressForENSHash.call({
-        nameHash: ensDomain,
+        nameHash: namehash.hash(ensDomain),
       });
 
       this.storeTwoWayCache(ensDomain, ensAddress);
