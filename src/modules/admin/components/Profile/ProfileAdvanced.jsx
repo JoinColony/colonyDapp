@@ -6,11 +6,13 @@ import { defineMessages } from 'react-intl';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
-import styles from './ProfileAdvanced.css';
-
 import type { ColonyType } from '~immutable';
 import type { Given } from '~utils/hoc';
 import type { OpenDialog } from '~core/Dialog/types';
+
+import { isInRecoveryMode } from '../../../dashboard/selectors';
+
+import styles from './ProfileAdvanced.css';
 
 const MSG = defineMessages({
   labelVersion: {
@@ -31,22 +33,15 @@ const MSG = defineMessages({
   },
 });
 
-const mockColonyRecoveryMode = false;
 const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {|
-  colonyId: $PropertyType<ColonyType, 'id'>,
-  colonyVersion: $PropertyType<ColonyType, 'version'>,
+  colony: ColonyType,
   given: Given,
   openDialog: OpenDialog,
 |};
 
-const ProfileAdvanced = ({
-  colonyId,
-  colonyVersion,
-  openDialog,
-  given,
-}: Props) => (
+const ProfileAdvanced = ({ colony, openDialog, given }: Props) => (
   <div className={styles.main}>
     <section className={styles.section}>
       <div className={styles.withInlineButton}>
@@ -54,7 +49,7 @@ const ProfileAdvanced = ({
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.labelVersion}
         />
-        <p className={styles.advancedNumeric}>{colonyVersion}</p>
+        <p className={styles.advancedNumeric}>{colony.version}</p>
       </div>
       <Button
         appearance={{ theme: 'primary', size: 'large' }}
@@ -68,7 +63,7 @@ const ProfileAdvanced = ({
         appearance={{ size: 'small', margin: 'none' }}
         text={MSG.labelId}
       />
-      <p className={styles.advancedNumeric}>{colonyId}</p>
+      <p className={styles.advancedNumeric}>{colony.id}</p>
     </section>
     {/* I have no idea how the recovery mode should work, so for now,
      * I'm assuming we just need a button for it
@@ -87,10 +82,7 @@ const ProfileAdvanced = ({
             console.log(`[${displayName}] Colony set to Recovery Mode!`),
           )
       }
-      /*
-       * @NOTE If we're already in Recovery mode, this button should be disabled
-       */
-      disabled={given(mockColonyRecoveryMode)}
+      disabled={given(colony, isInRecoveryMode)}
     />
   </div>
 );

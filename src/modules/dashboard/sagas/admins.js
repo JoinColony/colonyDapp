@@ -23,7 +23,7 @@ function* colonyAdminAdd({
   try {
     const { walletAddress, username } = newAdmin.profile;
     const colony = yield select(routerColonySelector);
-    const { address } = colony;
+    const { address } = colony.record;
     /*
      * Set the admin on the contract level (transaction)
      */
@@ -82,7 +82,7 @@ function* colonyAdminRemove({
   try {
     txChannel = yield call(getTxChannel, meta.id);
     const colony = yield select(routerColonySelector);
-    const { address } = colony;
+    const { address } = colony.record;
     const { walletAddress, username } = admin;
 
     /*

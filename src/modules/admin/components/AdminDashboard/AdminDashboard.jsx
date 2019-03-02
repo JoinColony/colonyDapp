@@ -15,6 +15,8 @@ import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 
+import { isInRecoveryMode } from '../../../dashboard/selectors';
+
 import styles from './AdminDashboard.css';
 
 import type {
@@ -57,8 +59,6 @@ const MSG = defineMessages({
     defaultMessage: 'Organisation',
   },
 });
-
-const mockColonyRecoveryMode = true;
 
 type Props = {|
   colony: ?DataType<ColonyType>,
@@ -127,10 +127,7 @@ const AdminDashboard = ({ colony, given, location }: Props) => {
           />
         </div>
       </VerticalNavigation>
-      {/*
-       * @TODO Replace with actual selector that checks if the Colony is in recovery mode
-       */}
-      {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
+      {given(colony.record, isInRecoveryMode) && <RecoveryModeAlert />}
     </div>
   );
 };

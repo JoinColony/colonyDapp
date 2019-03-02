@@ -4,7 +4,11 @@ import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
 import type { ENSName } from '~types';
-import type { RootStateRecord } from '~immutable/state';
+import type {
+  RootStateRecord,
+  ColonyRecordType,
+  DataRecordType,
+} from '~immutable';
 
 import {
   DASHBOARD_ALL_COLONIES,
@@ -84,3 +88,9 @@ export const colonyENSNameSelector = createSelector(
   (state, props) => props.colonyAddress,
   (ensNames, colonyAddress) => ensNames.get(colonyAddress),
 );
+
+/*
+ * Checks (use for `given`)
+ */
+export const isInRecoveryMode = (colony: DataRecordType<ColonyRecordType>) =>
+  !!(colony && colony.record && colony.record.inRecoveryMode);

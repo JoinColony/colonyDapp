@@ -12,7 +12,7 @@ type ConsumerType<T> = ComponentType<{
 type Selector<T> = (reduxState: Object, props: Object) => T;
 
 type DependantSelector = (
-  selector: Selector<any> | any,
+  selector: any,
   reduxState: Object,
   props: Object,
 ) => boolean;
@@ -40,10 +40,7 @@ export const withFeatureFlags = () => (
   Component: ComponentType<{ [string]: any }>,
 ) => (props: Object) => {
   const ConnectedComponent = connect((reduxState: Object) => ({
-    given: (
-      potentialSelector: Selector<any> | any,
-      dependantSelector?: DependantSelector,
-    ) => {
+    given: (potentialSelector: any, dependantSelector?: DependantSelector) => {
       let potentialSelectorValue = potentialSelector;
       if (potentialSelector && typeof potentialSelector === 'function') {
         potentialSelectorValue = potentialSelector(reduxState, props);

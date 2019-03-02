@@ -11,6 +11,8 @@ import Heading from '~core/Heading';
 import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 
+import { isInRecoveryMode } from '../../selectors';
+
 import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
@@ -21,8 +23,6 @@ import mockColonies from '../../../../__mocks__/mockColonies';
 
 import type { ColonyType, DataType, DomainType, UserType } from '~immutable';
 import type { Given } from '~utils/hoc';
-
-const mockColonyRecoveryMode = true;
 
 const MSG = defineMessages({
   tabContribute: {
@@ -73,7 +73,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {|
-  colony: ?DataType<ColonyType>,
+  colony: DataType<ColonyType>,
   walletAddress: string,
   given: Given,
   colonyAdmins: Array<UserType>,
@@ -201,7 +201,7 @@ class ColonyHome extends Component<Props, State> {
             text={MSG.newTaskButton}
             appearance={{ theme: 'primary', size: 'large' }}
             onClick={() => 'unset'}
-            disabled={given(mockColonyRecoveryMode)}
+            disabled={given(colony.record, isInRecoveryMode)}
           />
           <ul className={styles.domainsFilters}>
             <Heading
@@ -238,7 +238,7 @@ class ColonyHome extends Component<Props, State> {
             })}
           </ul>
         </aside>
-        {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
+        {given(colony.record, isInRecoveryMode) && <RecoveryModeAlert />}
       </div>
     );
   }
