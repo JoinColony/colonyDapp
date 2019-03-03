@@ -4,12 +4,12 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { ColonyType } from '~immutable';
-import type { OpenDialog } from '~core/Dialog/types';
 
 import { useFeatureFlags } from '~utils/hooks';
+import { ACTIONS } from '~redux';
 
 import Heading from '~core/Heading';
-import Button from '~core/Button';
+import Button, { DialogActionButton } from '~core/Button';
 
 import { isInRecoveryMode } from '../../../dashboard/selectors';
 
@@ -38,10 +38,9 @@ const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {|
   colony: ColonyType,
-  openDialog: OpenDialog,
 |};
 
-const ProfileAdvanced = ({ colony, openDialog }: Props) => {
+const ProfileAdvanced = ({ colony }: Props) => {
   const { given } = useFeatureFlags();
   return (
     <div className={styles.main}>
@@ -67,23 +66,14 @@ const ProfileAdvanced = ({ colony, openDialog }: Props) => {
         />
         <p className={styles.advancedNumeric}>{colony.id}</p>
       </section>
-      {/* I have no idea how the recovery mode should work, so for now,
-       * I'm assuming we just need a button for it
-       */}
-      <Button
+      <DialogActionButton
         appearance={{ theme: 'blue' }}
         text={MSG.buttonRecovery}
-        onClick={() =>
-          openDialog('RecoveryModeDialog')
-            .afterClosed()
-            /*
-             * @TODO Wire up setting the Colony into Recovery Mode
-             */
-            .then(() =>
-              /* eslint-disable-next-line no-console */
-              console.log(`[${displayName}] Colony set to Recovery Mode!`),
-            )
-        }
+        dialog="RecoveryModeDialog"
+        submit={ACTIONS.COLONY_RECOVERY_MODE_ENTER}
+        success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
+        error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
+        values={{ ensName: colony.ensName }}
         disabled={given(colony, isInRecoveryMode)}
       />
     </div>

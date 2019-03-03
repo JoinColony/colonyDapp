@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { log } from '~utils/debug';
 import Button from '~core/Button';
 
 import promiseListener from '../../../../createPromiseListener';
@@ -50,7 +51,7 @@ class ActionButton extends Component<Props, State> {
       await this.asyncFunc.asyncFunction(values);
       this.setState({ loading: false });
     } catch (error) {
-      console.error(error);
+      log(error);
       this.setState({ loading: false });
       // TODO: display error somewhere
     }
