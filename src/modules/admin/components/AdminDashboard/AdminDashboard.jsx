@@ -1,9 +1,12 @@
 /* @flow */
 
-import type { LocationShape } from 'react-router-dom';
+import type { LocationShape, Match } from 'react-router-dom';
 
 import React from 'react';
+import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
+
+import { useDataFetcher } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -15,6 +18,7 @@ import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 
+import { colonyFetcher } from '../../../dashboard/fetchers';
 import { isInRecoveryMode } from '../../../dashboard/selectors';
 
 import styles from './AdminDashboard.css';
@@ -26,7 +30,7 @@ import type {
    */
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
-import type { ColonyType, DataType } from '~immutable';
+import type { ColonyType } from '~immutable';
 import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
@@ -61,12 +65,12 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  colony: ?DataType<ColonyType>,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
    */
-  location?: ?LocationShape,
+  location: LocationShape,
+  match: Match,
   given: Given,
 |};
 
@@ -93,15 +97,32 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   },
 ];
 
-const AdminDashboard = ({ colony, given, location }: Props) => {
-  if (!colony || !colony.record)
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
+const AdminDashboard = ({
+  given,
+  location,
+  match: {
+    params: { ensName },
+  },
+}: Props) => {
+  const { data: colony, isFetching, error } = useDataFetcher(
+    colonyFetcher,
+    [ensName],
+    [ensName],
+  );
 
-  const { ensName, name } = colony.record;
+  if (!ensName || error) {
+    return <Redirect to="/404" />;
+  }
+
+  if (!colony || isFetching) {
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
+
+  const { name } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(colony.record)}
+        navigationItems={navigationItems(colony)}
         initialTab={
           location && location.state && location.state.initialTab
             ? location.state.initialTab
@@ -127,7 +148,7 @@ const AdminDashboard = ({ colony, given, location }: Props) => {
           />
         </div>
       </VerticalNavigation>
-      {given(colony.record, isInRecoveryMode) && <RecoveryModeAlert />}
+      {given(colony, isInRecoveryMode) && <RecoveryModeAlert />}
     </div>
   );
 };
