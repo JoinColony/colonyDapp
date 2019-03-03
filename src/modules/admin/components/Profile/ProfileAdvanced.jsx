@@ -3,12 +3,13 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { ColonyType } from '~immutable';
+import type { OpenDialog } from '~core/Dialog/types';
+
+import { useFeatureFlags } from '~utils/hooks';
+
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-
-import type { ColonyType } from '~immutable';
-import type { Given } from '~utils/hoc';
-import type { OpenDialog } from '~core/Dialog/types';
 
 import { isInRecoveryMode } from '../../../dashboard/selectors';
 
@@ -37,55 +38,57 @@ const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {|
   colony: ColonyType,
-  given: Given,
   openDialog: OpenDialog,
 |};
 
-const ProfileAdvanced = ({ colony, openDialog, given }: Props) => (
-  <div className={styles.main}>
-    <section className={styles.section}>
-      <div className={styles.withInlineButton}>
+const ProfileAdvanced = ({ colony, openDialog }: Props) => {
+  const { given } = useFeatureFlags();
+  return (
+    <div className={styles.main}>
+      <section className={styles.section}>
+        <div className={styles.withInlineButton}>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.labelVersion}
+          />
+          <p className={styles.advancedNumeric}>{colony.version}</p>
+        </div>
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={MSG.buttonUpdate}
+          // eslint-disable-next-line no-console
+          onClick={() => console.log(`[${displayName}] Updating the colony`)}
+        />
+      </section>
+      <section className={styles.section}>
         <Heading
           appearance={{ size: 'small', margin: 'none' }}
-          text={MSG.labelVersion}
+          text={MSG.labelId}
         />
-        <p className={styles.advancedNumeric}>{colony.version}</p>
-      </div>
+        <p className={styles.advancedNumeric}>{colony.id}</p>
+      </section>
+      {/* I have no idea how the recovery mode should work, so for now,
+       * I'm assuming we just need a button for it
+       */}
       <Button
-        appearance={{ theme: 'primary', size: 'large' }}
-        text={MSG.buttonUpdate}
-        // eslint-disable-next-line no-console
-        onClick={() => console.log(`[${displayName}] Updating the colony`)}
+        appearance={{ theme: 'blue' }}
+        text={MSG.buttonRecovery}
+        onClick={() =>
+          openDialog('RecoveryModeDialog')
+            .afterClosed()
+            /*
+             * @TODO Wire up setting the Colony into Recovery Mode
+             */
+            .then(() =>
+              /* eslint-disable-next-line no-console */
+              console.log(`[${displayName}] Colony set to Recovery Mode!`),
+            )
+        }
+        disabled={given(colony, isInRecoveryMode)}
       />
-    </section>
-    <section className={styles.section}>
-      <Heading
-        appearance={{ size: 'small', margin: 'none' }}
-        text={MSG.labelId}
-      />
-      <p className={styles.advancedNumeric}>{colony.id}</p>
-    </section>
-    {/* I have no idea how the recovery mode should work, so for now,
-     * I'm assuming we just need a button for it
-     */}
-    <Button
-      appearance={{ theme: 'blue' }}
-      text={MSG.buttonRecovery}
-      onClick={() =>
-        openDialog('RecoveryModeDialog')
-          .afterClosed()
-          /*
-           * @TODO Wire up setting the Colony into Recovery Mode
-           */
-          .then(() =>
-            /* eslint-disable-next-line no-console */
-            console.log(`[${displayName}] Colony set to Recovery Mode!`),
-          )
-      }
-      disabled={given(colony, isInRecoveryMode)}
-    />
-  </div>
-);
+    </div>
+  );
+};
 
 ProfileAdvanced.displayName = displayName;
 

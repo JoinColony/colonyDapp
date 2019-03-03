@@ -6,7 +6,7 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -31,7 +31,6 @@ import type {
   NavigationItem,
 } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
 import type { ColonyType } from '~immutable';
-import type { Given } from '~utils/hoc';
 
 const MSG = defineMessages({
   loadingText: {
@@ -71,7 +70,6 @@ type Props = {|
    */
   location: LocationShape,
   match: Match,
-  given: Given,
 |};
 
 const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
@@ -98,12 +96,13 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
 ];
 
 const AdminDashboard = ({
-  given,
   location,
   match: {
     params: { ensName },
   },
 }: Props) => {
+  const { given } = useFeatureFlags();
+
   const { data: colony, isFetching, error } = useDataFetcher(
     colonyFetcher,
     [ensName],

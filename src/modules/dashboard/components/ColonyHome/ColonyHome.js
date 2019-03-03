@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import type { ENSName } from '~types';
 import type { RootStateRecord } from '~immutable';
 
-import { withFeatureFlags, withImmutablePropsToJS } from '~utils/hoc';
+import { withImmutablePropsToJS } from '~utils/hoc';
 import { withDomains } from '../../../admin/hocs';
 
 import { getColonyAdmins, getColonyDomains } from '../../selectors';
@@ -15,7 +15,6 @@ import { currentUserAddressSelector } from '../../../users/selectors/users';
 import ColonyHome from './ColonyHome.jsx';
 
 const enhance = compose(
-  withFeatureFlags(),
   withDomains,
   connect((state: RootStateRecord, { ensName }: { ensName: ENSName }) => ({
     walletAddress: currentUserAddressSelector(state),

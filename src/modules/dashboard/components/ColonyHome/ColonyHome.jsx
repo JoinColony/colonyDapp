@@ -8,8 +8,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
 import type { ColonyType, DataType, DomainType, UserType } from '~immutable';
-import type { Given } from '~utils/hoc';
 
+import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ColonyGrid from '~core/ColonyGrid';
@@ -18,7 +18,6 @@ import Heading from '~core/Heading';
 import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useDataFetcher } from '~utils/hooks';
 
 import { colonyFetcher } from '../../fetchers';
 
@@ -89,7 +88,6 @@ type Props = {|
   colonyAdmins: Array<UserType>,
   colonyDomains: Array<DataType<DomainType>>,
   match: Match,
-  given: Given,
   walletAddress: string,
 |};
 
@@ -111,15 +109,14 @@ const ColonyHome = ({
   match: {
     params: { ensName },
   },
-  given,
   walletAddress,
 }: Props) => {
+  const { given } = useFeatureFlags();
   const [filterOption, setFilterOption] = useState('all');
   /*
    * @TODO Replace with actual filtering logic
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
-
   const { data: colony, isFetching, error } = useDataFetcher(
     colonyFetcher,
     [ensName],

@@ -14,6 +14,19 @@ type DataFetcher = {
   fetch: (...fetchArgs: any[]) => Action<*>,
 };
 
+type Selector<T> = (reduxState: Object, extraArgs?: any[]) => T;
+
+type DependantSelector = (
+  selector: any,
+  reduxState: Object,
+  extraArgs?: any[],
+) => boolean;
+
+export type Given = (
+  potentialSelector: Selector<any> | any,
+  dependantSelector?: DependantSelector,
+) => any | boolean;
+
 export const usePrevious = (value: any) => {
   const ref = useRef();
   useEffect(() => {
@@ -51,4 +64,36 @@ export const useDataFetcher = (
     isFetching: isFetchingData(data),
     error: data ? data.error : null,
   };
+};
+
+export const useFeatureFlags = (
+  potentialSelectorArgs?: any[] = [],
+  dependantSelectorArgs?: any[] = [],
+) => {
+  const mapState = useCallback(
+    reduxState => ({
+      given: (
+        potentialSelector: any,
+        dependantSelector?: DependantSelector,
+      ) => {
+        let potentialSelectorValue = potentialSelector;
+        if (potentialSelector && typeof potentialSelector === 'function') {
+          potentialSelectorValue = potentialSelector(
+            reduxState,
+            ...potentialSelectorArgs,
+          );
+        }
+        if (dependantSelector && typeof dependantSelector === 'function') {
+          return dependantSelector(
+            potentialSelectorValue,
+            reduxState,
+            ...dependantSelectorArgs,
+          );
+        }
+        return potentialSelectorValue;
+      },
+    }),
+    [...potentialSelectorArgs, ...dependantSelectorArgs],
+  );
+  return useMappedState(mapState);
 };
