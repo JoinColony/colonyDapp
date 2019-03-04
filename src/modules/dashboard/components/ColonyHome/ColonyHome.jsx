@@ -117,7 +117,7 @@ const ColonyHome = ({
    * @TODO Replace with actual filtering logic
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
-  const { data: colony, isFetching, error } = useDataFetcher(
+  const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
     colonyFetcher,
     [ensName],
     [ensName],

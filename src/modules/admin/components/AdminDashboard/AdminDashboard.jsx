@@ -103,7 +103,7 @@ const AdminDashboard = ({
 }: Props) => {
   const { given } = useFeatureFlags();
 
-  const { data: colony, isFetching, error } = useDataFetcher(
+  const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
     colonyFetcher,
     [ensName],
     [ensName],

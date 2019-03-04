@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Action } from '~redux';
-import type { RootStateRecord } from '~immutable';
+import type { DataRecordType, RootStateRecord } from '~immutable';
 
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
 import { useEffect, useCallback, useRef } from 'react';
@@ -9,10 +9,13 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import { isFetchingData } from '~immutable/utils';
 
-type DataFetcher = {
-  select: (rootState: RootStateRecord, ...selectArgs: any[]) => any,
+type DataFetcher = {|
+  select: (
+    rootState: RootStateRecord,
+    ...selectArgs: any[]
+  ) => ?DataRecordType<*>,
   fetch: (...fetchArgs: any[]) => Action<*>,
-};
+|};
 
 type Selector<T> = (reduxState: Object, extraArgs?: any[]) => T;
 
@@ -35,19 +38,25 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = data => {
+const transformFetchedData = (data: DataRecordType<*>) => {
   if (!data) return null;
-  if (data.record && typeof data.record.toJS == 'function') {
-    return data.record.toJS();
-  }
-  return data.record;
+  return data.record && typeof data.record.toJS == 'function'
+    ? data.record.toJS()
+    : data.record;
 };
 
-export const useDataFetcher = (
+/*
+ * T: JS type of the fetched and transformed data, e.g. ColonyType
+ */
+export const useDataFetcher = <T>(
   fetcher: DataFetcher,
   selectArgs: any[],
   fetchArgs: any[],
-) => {
+): {|
+  data: ?T,
+  isFetching: boolean,
+  error: ?string,
+|} => {
   const dispatch = useDispatch();
   const mapState = useCallback(
     state => ({
