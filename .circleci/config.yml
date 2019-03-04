@@ -99,7 +99,7 @@ jobs:
           path: reports
       - run:
           name: "Building library"
-          command: yarn build
+          command: yarn webpack:build
   integration-testing:
     docker:
       - image: circleci/node:10.12
