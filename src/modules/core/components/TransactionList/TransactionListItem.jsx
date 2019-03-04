@@ -3,8 +3,8 @@
 import React from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
 import { compose, withProps } from 'recompose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
+import { withImmutablePropsToJS } from '~utils/hoc';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';

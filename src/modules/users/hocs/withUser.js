@@ -27,7 +27,7 @@ const withUser = compose(
     return {
       ...props,
       user:
-        currentUser.profile.username === username
+        currentUser.getIn(['profile', 'username']) === username
           ? // use `Data` so this can be treated the same as `user`
             DataRecord({ record: currentUser })
           : user,

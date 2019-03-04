@@ -5,8 +5,8 @@ import type { MessageDescriptor, FormattedMessageValues } from 'react-intl';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
+import { withImmutablePropsToJS } from '~utils/hoc';
 import type { OpenDialog } from '~core/Dialog/types';
 import type { UserType } from '~immutable';
 

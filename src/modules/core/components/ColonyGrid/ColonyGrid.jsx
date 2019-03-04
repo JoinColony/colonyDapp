@@ -3,7 +3,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import { compose } from 'recompose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
+
+import { withImmutablePropsToJS } from '~utils/hoc';
 
 import { withColonies } from '../../../dashboard/hocs';
 

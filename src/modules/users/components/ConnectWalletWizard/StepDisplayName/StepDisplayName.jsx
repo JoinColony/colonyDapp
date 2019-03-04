@@ -4,13 +4,14 @@ import React, { Component } from 'react';
 import compose from 'recompose/compose';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import type { WizardProps } from '~core/Wizard';
 import type { OpenDialog } from '~core/Dialog/types';
 import type { UserType } from '~immutable';
 
+import { withImmutablePropsToJS } from '~utils/hoc';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+
 import { withCurrentUser } from '../../../hocs';
 
 import { ActionForm, Input, FormStatus } from '~core/Fields';

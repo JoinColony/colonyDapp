@@ -1,10 +1,11 @@
 /* @flow */
 
 import { compose, withProps } from 'recompose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
-import { withCurrentUser } from '../../../users/hocs';
 
+import { withImmutablePropsToJS } from '~utils/hoc';
 import withDialog from '~core/Dialog/withDialog';
+
+import { withCurrentUser } from '../../../users/hocs';
 
 import Task from './Task.jsx';
 

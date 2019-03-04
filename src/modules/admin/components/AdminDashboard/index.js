@@ -1,9 +1,8 @@
 /* @flow */
 
 import compose from 'recompose/compose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
-import { withFeatureFlags } from '~utils/hoc';
+import { withFeatureFlags, withImmutablePropsToJS } from '~utils/hoc';
 
 import { withColonyFromRoute } from '../../../dashboard/hocs';
 

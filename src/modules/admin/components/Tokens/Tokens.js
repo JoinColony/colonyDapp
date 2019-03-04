@@ -2,10 +2,10 @@
 
 import { compose, withProps } from 'recompose';
 import { List } from 'immutable';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import withDialog from '~core/Dialog/withDialog';
 import { sortObjectsBy } from '~utils/arrays';
+import { withImmutablePropsToJS } from '~utils/hoc';
 
 import Tokens from './Tokens.jsx';
 

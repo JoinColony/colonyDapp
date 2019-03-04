@@ -2,12 +2,11 @@
 
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import type { ENSName } from '~types';
 import type { RootStateRecord } from '~immutable';
 
-import { withFeatureFlags } from '~utils/hoc';
+import { withFeatureFlags, withImmutablePropsToJS } from '~utils/hoc';
 import { withColonyFromRoute } from '../../hocs';
 import { withDomains } from '../../../admin/hocs';
 

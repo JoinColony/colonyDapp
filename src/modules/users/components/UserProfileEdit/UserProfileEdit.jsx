@@ -4,10 +4,10 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
 import type { UserType } from '~immutable';
 
+import { withImmutablePropsToJS } from '~utils/hoc';
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';

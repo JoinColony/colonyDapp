@@ -9,6 +9,7 @@ import {
   USERS_ALL_USERS,
   USERS_AVATARS,
   USERS_CURRENT_USER,
+  USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TRANSACTIONS,
   USERS_NAMESPACE as ns,
   USERS_USERNAMES,
@@ -22,7 +23,7 @@ export const currentUser = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER]);
 
 export const currentUserTransactions = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_CURRENT_USER_TRANSACTIONS]);
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
 
 export const allUsersSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap());
@@ -61,15 +62,19 @@ export const userSelector = createSelector(
   (users, username) => users.get(username),
 );
 
-export const currentUserAddressSelector = createSelector(
-  currentUser,
-  user => (user ? user.profile.walletAddress : null),
-);
+export const currentUserAddressSelector = (state: RootStateRecord) =>
+  state.getIn([
+    ns,
+    USERS_CURRENT_USER,
+    USERS_CURRENT_USER_PROFILE,
+    'walletAddress',
+  ]);
 
-export const currentUserBalanceSelector = createSelector(
-  currentUser,
-  user => (user ? user.profile.balance : 0),
-);
+export const currentUserBalanceSelector = (state: RootStateRecord) =>
+  state.getIn(
+    [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'balance'],
+    0,
+  );
 
 export const userFromAddressSelector = createSelector(
   allUsersSelector,
@@ -83,7 +88,5 @@ export const avatarSelector = createSelector(
   (avatars, username) => avatars.get(username),
 );
 
-export const usernameSelector = createSelector(
-  currentUser,
-  user => (user ? user.profile.username : null),
-);
+export const usernameSelector = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'username']);

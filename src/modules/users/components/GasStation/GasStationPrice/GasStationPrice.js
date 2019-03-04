@@ -1,6 +1,7 @@
 /* @flow */
 import type { HOC } from 'recompose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
+
+import { withImmutablePropsToJS } from '~utils/hoc';
 
 import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
