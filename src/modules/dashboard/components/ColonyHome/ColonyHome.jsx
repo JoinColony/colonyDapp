@@ -170,7 +170,7 @@ const ColonyHome = ({
           /*
            * TODO This needs real logic to determine if the user is an admin
            */
-          isAdmin={!!walletAddress}
+          canAdminister={!!walletAddress && !given(colony, isInRecoveryMode)}
         />
       </aside>
       <main className={styles.content}>

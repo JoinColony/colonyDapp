@@ -44,10 +44,10 @@ type Props = {|
   colony: ColonyType,
   founders: Array<UserType>,
   admins: Array<UserType>,
-  isAdmin: boolean,
+  canAdminister: boolean,
 |};
 
-const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
+const ColonyMeta = ({ colony, founders, admins, canAdminister }: Props) => {
   const {
     address,
     avatar,
@@ -71,7 +71,7 @@ const ColonyMeta = ({ colony, founders, admins, isAdmin }: Props) => {
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <Fragment>
             <span>{name}</span>
-            {isAdmin && (
+            {canAdminister && (
               <Link
                 className={styles.editColony}
                 to={`/colony/${ensName}/admin`}
