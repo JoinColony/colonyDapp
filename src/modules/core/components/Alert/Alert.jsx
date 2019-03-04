@@ -12,6 +12,7 @@ import styles from './Alert.css';
 
 type Appearance = {
   theme?: 'primary' | 'info' | 'danger',
+  size?: 'small',
 };
 
 type Props = {|

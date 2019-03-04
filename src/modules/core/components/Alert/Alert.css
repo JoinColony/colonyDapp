@@ -36,3 +36,10 @@
   background-color: var(--danger);
   color: var(--colony-white);
 }
+
+/* Theme */
+.sizeSmall {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-medium);
+  line-height: 18px;
+}
