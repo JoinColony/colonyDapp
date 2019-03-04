@@ -9,21 +9,26 @@ import type {
 import type { AllUsersRecord } from './AllUsers';
 import type { ContractTransactionRecordType } from '../../ContractTransaction';
 import type { DataRecordType } from '../../Data';
-import type { UserRecordType } from '../../User';
 import type { WalletRecordType } from '../../Wallet';
+import type { UserActivityRecordType } from '../../UserActivity';
+import type { UserProfileRecordType } from '../../UserProfile';
 
-export * from './AllUsers';
-
-export type CurrentUserTransactions = DataRecordType<
+export type CurrentUserTransactionsType = DataRecordType<
   ListType<ContractTransactionRecordType>,
 >;
 
-export type CurrentUser = UserRecordType;
+export * from './AllUsers';
+
+export type CurrentUser = {|
+  activities: ListType<UserActivityRecordType>,
+  permissions: void, // TODO in #911
+  profile: UserProfileRecordType,
+  transactions: CurrentUserTransactionsType,
+|};
 
 export type UsersStateProps = {|
   allUsers: AllUsersRecord,
   currentUser: CurrentUser,
-  currentUserTransactions: CurrentUserTransactions,
   wallet: WalletRecordType,
 |};
 

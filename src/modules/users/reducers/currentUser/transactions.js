@@ -5,11 +5,11 @@ import { List } from 'immutable';
 import { ContractTransactionRecord, DataRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 
-import type { CurrentUserTransactions } from '~immutable';
+import type { CurrentUserTransactionsType } from '~immutable';
 import type { ReducerType } from '~redux';
 
 const currentUserTransactionsReducer: ReducerType<
-  CurrentUserTransactions,
+  CurrentUserTransactionsType,
   {|
     USER_FETCH_TOKEN_TRANSFERS: *,
     USER_FETCH_TOKEN_TRANSFERS_ERROR: *,
