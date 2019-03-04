@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { InputSelector } from 'reselect';
 import type { Action } from '~redux';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 
@@ -17,16 +18,14 @@ type DataFetcher = {|
   fetch: (...fetchArgs: any[]) => Action<*>,
 |};
 
-type Selector<T> = (reduxState: Object, extraArgs?: any[]) => T;
-
 type DependantSelector = (
-  selector: any,
-  reduxState: Object,
+  selector: InputSelector<RootStateRecord, *, *>,
+  reduxState: RootStateRecord,
   extraArgs?: any[],
 ) => boolean;
 
 export type Given = (
-  potentialSelector: Selector<any> | any,
+  potentialSelector: InputSelector<RootStateRecord, *, *>,
   dependantSelector?: DependantSelector,
 ) => any | boolean;
 
