@@ -22,6 +22,10 @@ export type Given = (
   dependantSelector?: DependantSelector,
 ) => any | boolean;
 
+export {
+  default as withImmutablePropsToJS,
+} from './withImmutablePropsToJS.jsx';
+
 export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
   Component: ComponentType<{ [string]: any }>,
 ) => (props: Object) =>

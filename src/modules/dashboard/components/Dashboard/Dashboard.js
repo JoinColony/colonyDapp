@@ -2,7 +2,8 @@
 
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
+
+import { withImmutablePropsToJS } from '~utils/hoc';
 
 import Dashboard from './Dashboard.jsx';
 

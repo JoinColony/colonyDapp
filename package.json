@@ -162,6 +162,7 @@
         "format-number": "^3.0.0",
         "formik": "^1.0.2",
         "history": "^4.7.2",
+        "hoist-non-react-statics": "^3.3.0",
         "immutable": "^4.0.0-rc.12",
         "ipfs": "^0.33.1",
         "ipfs-pubsub-peer-monitor": "^0.0.8",
@@ -203,7 +204,6 @@
         "sugar-core": "^2.0.4",
         "sugar-date": "^2.0.4",
         "web3-utils": "^1.0.0-beta.27",
-        "with-immutable-props-to-js": "^1.1.0",
         "yup": "^0.26.6"
     },
     "resolutions": {

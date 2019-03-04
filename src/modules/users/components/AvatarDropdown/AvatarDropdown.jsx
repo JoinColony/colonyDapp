@@ -3,8 +3,8 @@
 import React from 'react';
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
 
+import { withImmutablePropsToJS } from '~utils/hoc';
 import Popover from '~core/Popover';
 import UserAvatar from '~core/UserAvatar';
 
