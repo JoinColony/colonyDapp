@@ -53,7 +53,7 @@ export type DueDateSetEvent = Event<
 >;
 
 export type SkillSetEventArgs = {|
-  skillId: string,
+  skillId: number,
 |};
 export type SkillSetEventPayload = SkillSetEventArgs;
 export type SkillSetEvent = Event<typeof SKILL_SET, SkillSetEventPayload>;
@@ -164,6 +164,7 @@ export type WorkerUnassignedEvent = Event<
 
 export type BountySetEventArgs = {|
   amount: string,
+  token?: ?string,
 |};
 export type BountySetEventPayload = BountySetEventArgs;
 export type BountySetEvent = Event<typeof BOUNTY_SET, BountySetEventPayload>;
