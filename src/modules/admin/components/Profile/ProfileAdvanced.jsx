@@ -1,16 +1,18 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyType } from '~immutable';
+import type { ColonyType, UserPermissionsType } from '~immutable';
 
-import { useFeatureFlags } from '~utils/hooks';
+import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 
 import Heading from '~core/Heading';
 import Button, { DialogActionButton } from '~core/Button';
 
+import { colonyPermissionsFetcher } from '../../../users/fetchers';
+import { canEnterRecoveryMode } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/selectors';
 
 import styles from './ProfileAdvanced.css';
@@ -28,9 +30,20 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
     defaultMessage: 'Update',
   },
-  buttonRecovery: {
-    id: 'admin.Profile.ProfileAdvanced.buttonRecovery',
+  buttonRecoveryMode: {
+    id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
+    defaultMessage: 'Turn on recovery Mode',
+  },
+  headingRecoveryMode: {
+    id: 'admin.Profile.ProfileAdvanced.headingRecoveryMode',
     defaultMessage: 'Recovery Mode',
+  },
+  inRecoveryMode: {
+    id: 'admin.Profile.ProfileAdvanced.inRecoveryMode',
+    defaultMessage: `{inRecoveryMode, select,
+      true {Colony is in recovery mode}
+      false {Colony is not in recovery mode}
+    }`,
   },
 });
 
@@ -42,6 +55,16 @@ type Props = {|
 
 const ProfileAdvanced = ({ colony }: Props) => {
   const { given } = useFeatureFlags();
+
+  const {
+    isFetching,
+    data: permissions,
+    error,
+  } = useDataFetcher<UserPermissionsType>(
+    colonyPermissionsFetcher,
+    [colony.ensName],
+    [colony.ensName],
+  );
   return (
     <div className={styles.main}>
       <section className={styles.section}>
@@ -50,7 +73,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.labelVersion}
           />
-          <p className={styles.advancedNumeric}>{colony.version}</p>
+          <p className={styles.bigInfoText}>{colony.version}</p>
         </div>
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
@@ -64,18 +87,37 @@ const ProfileAdvanced = ({ colony }: Props) => {
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.labelId}
         />
-        <p className={styles.advancedNumeric}>{colony.id}</p>
+        <p className={styles.bigInfoText}>{colony.id}</p>
       </section>
-      <DialogActionButton
-        appearance={{ theme: 'blue' }}
-        text={MSG.buttonRecovery}
-        dialog="RecoveryModeDialog"
-        submit={ACTIONS.COLONY_RECOVERY_MODE_ENTER}
-        success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
-        error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
-        values={{ ensName: colony.ensName }}
-        disabled={given(colony, isInRecoveryMode)}
-      />
+      <section className={styles.section}>
+        <div className={styles.withInlineButton}>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.headingRecoveryMode}
+          />
+          <p className={styles.bigInfoText}>
+            <FormattedMessage
+              {...MSG.inRecoveryMode}
+              values={{ inRecoveryMode: colony.inRecoveryMode }}
+            />
+          </p>
+        </div>
+        <DialogActionButton
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={MSG.buttonRecoveryMode}
+          dialog="RecoveryModeDialog"
+          submit={ACTIONS.COLONY_RECOVERY_MODE_ENTER}
+          success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
+          error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
+          values={{ ensName: colony.ensName }}
+          loading={isFetching}
+          disabled={
+            !!error ||
+            given(colony, isInRecoveryMode) ||
+            !given(permissions, canEnterRecoveryMode)
+          }
+        />
+      </section>
     </div>
   );
 };
