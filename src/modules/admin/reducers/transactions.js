@@ -5,7 +5,7 @@ import type { List as ListType } from 'immutable';
 import { Map as ImmutableMap, List } from 'immutable';
 
 import { ContractTransactionRecord, DataRecord } from '~immutable';
-import { withDataReducer } from '~utils/reducers';
+import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
 import type {
@@ -38,7 +38,7 @@ const adminTransactionsReducer: ReducerType<
   }
 };
 
-export default withDataReducer<
+export default withDataRecordMap<
   AdminTransactionsState,
   ContractTransactionRecordType,
 >(ACTIONS.COLONY_FETCH_TRANSACTIONS, ImmutableMap())(adminTransactionsReducer);

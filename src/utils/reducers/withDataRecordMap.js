@@ -9,6 +9,7 @@ import type { KeyPath } from '~types';
 import { DataRecord } from '../../immutable';
 import type { DataRecordType } from '../../immutable';
 import type { ActionTypeString } from '~redux/types/actions';
+import { getActionTypes } from './utils';
 
 export type DataReducer<S: ImmutableMapType<*, *>> = (state: S, action: *) => S;
 
@@ -85,19 +86,11 @@ const handleError = <S: ImmutableMapType<*, *>, V: *>(
  *
  * {V} The value wrapped in the data record, e.g. `ColonyRecord` or `ListType<TransationRecord>`
  */
-const withDataReducer = <S: ImmutableMapType<*, *>, V: *>(
+const withDataRecordMap = <S: ImmutableMapType<*, *>, V: *>(
   actionTypes: ActionTypeString | Set<ActionTypeString>,
-  initialState: S,
+  initialState: S, // TODO see if this can be removed
 ) => (wrappedReducer: DataReducer<S>) => {
-  // Set up fetch/success/error types according to the usual pattern
-  const fetchTypes =
-    typeof actionTypes === 'string' ? new Set([actionTypes]) : actionTypes;
-  const successTypes = new Set(
-    [...fetchTypes.values()].map(type => `${type}_SUCCESS`),
-  );
-  const errorTypes = new Set(
-    [...fetchTypes.values()].map(type => `${type}_ERROR`),
-  );
+  const { fetchTypes, successTypes, errorTypes } = getActionTypes(actionTypes);
 
   // Return a wrapped reducer.
   return (state: S = initialState, action: *) => {
@@ -114,4 +107,4 @@ const withDataReducer = <S: ImmutableMapType<*, *>, V: *>(
   };
 };
 
-export default withDataReducer;
+export default withDataRecordMap;

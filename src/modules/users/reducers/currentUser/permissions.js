@@ -7,7 +7,7 @@ import type {
   UserPermissionsRecordType,
 } from '~immutable';
 import { UserPermissionsRecord, DataRecord } from '~immutable';
-import { withDataReducer } from '~utils/reducers';
+import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
 import type { ReducerType } from '~redux';
@@ -33,7 +33,7 @@ const userPermissionsReducer: ReducerType<
   }
 };
 
-export default withDataReducer<
+export default withDataRecordMap<
   CurrentUserPermissionsType,
   UserPermissionsRecordType,
 >(ACTIONS.USER_PERMISSIONS_FETCH, ImmutableMap())(userPermissionsReducer);

@@ -5,7 +5,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { ACTIONS } from '~redux';
 
 import { TaskRecord, DataRecord } from '~immutable';
-import { withDataReducer } from '~utils/reducers';
+import { withDataRecordMap } from '~utils/reducers';
 
 import type { AllTasksMap, TaskRecordType } from '~immutable';
 import type { ReducerType } from '~redux/types';
@@ -59,7 +59,7 @@ const allTasksReducer: ReducerType<
   }
 };
 
-export default withDataReducer<AllTasksMap, TaskRecordType>(
+export default withDataRecordMap<AllTasksMap, TaskRecordType>(
   ACTIONS.TASK_FETCH,
   new ImmutableMap(),
 )(allTasksReducer);
