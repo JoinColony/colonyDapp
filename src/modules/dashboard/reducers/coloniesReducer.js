@@ -3,7 +3,7 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ColonyRecord, DataRecord, TokenRecord } from '~immutable';
-import { withDataReducer } from '~utils/reducers';
+import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
 import type { AllColoniesMap, ColonyRecordType } from '~immutable';
@@ -116,7 +116,7 @@ const coloniesReducer: ReducerType<
   }
 };
 
-export default withDataReducer<AllColoniesMap, ColonyRecordType>(
+export default withDataRecordMap<AllColoniesMap, ColonyRecordType>(
   ACTIONS.COLONY_FETCH,
   ImmutableMap(),
 )(coloniesReducer);

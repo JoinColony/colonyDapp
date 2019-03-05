@@ -2,7 +2,7 @@
 
 import { List, Map as ImmutableMap } from 'immutable';
 
-import { withDataReducer } from '~utils/reducers';
+import { withDataRecordMap } from '~utils/reducers';
 import { UserRecord, UserProfileRecord, UserActivityRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 
@@ -50,7 +50,7 @@ const userProfilesReducer: ReducerType<
   }
 };
 
-export default withDataReducer<UsersMap, UserRecordType>(
+export default withDataRecordMap<UsersMap, UserRecordType>(
   new Set([ACTIONS.USER_PROFILE_FETCH, ACTIONS.USER_ACTIVITIES_FETCH]),
   ImmutableMap(),
 )(userProfilesReducer);
