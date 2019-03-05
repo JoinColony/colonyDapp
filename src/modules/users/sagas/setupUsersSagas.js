@@ -66,7 +66,7 @@ function* userAvatarFetch({
 
 function* userFetchTokenTransfers(
   // eslint-disable-next-line no-unused-vars
-  action: Action<typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS>,
+  action: Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH>,
 ): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
@@ -84,12 +84,12 @@ function* userFetchTokenTransfers(
       context,
       getUserColonyTransactions,
     );
-    yield put<Action<typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS>>({
-      type: ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+    yield put<Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
       payload: { transactions },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_FETCH_TOKEN_TRANSFERS_ERROR, error);
+    yield putError(ACTIONS.USER_TOKEN_TRANSFERS_FETCH_ERROR, error);
   }
 }
 
@@ -301,7 +301,7 @@ function* usernameCreate({
 
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
-  yield takeEvery(ACTIONS.USER_FETCH_TOKEN_TRANSFERS, userFetchTokenTransfers);
+  yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userFetchTokenTransfers);
   yield takeEvery(ACTIONS.USER_PROFILE_FETCH, userProfileFetch);
   yield takeEvery(ACTIONS.USERNAME_FETCH, usernameFetch);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);

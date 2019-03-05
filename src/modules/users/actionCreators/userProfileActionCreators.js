@@ -27,9 +27,9 @@ export const fetchUserAvatar = (
 });
 
 export const fetchUserTransactions = (): Action<
-  typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS,
+  typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 > => ({
-  type: ACTIONS.USER_FETCH_TOKEN_TRANSFERS,
+  type: ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 });
 
 export const getCurrentUserBalance = (): Action<

@@ -29,15 +29,15 @@ export type UserActionTypes = {|
       username: string,
     |},
   >,
-  USER_FETCH_TOKEN_TRANSFERS: ActionType<
-    typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS,
+  USER_TOKEN_TRANSFERS_FETCH: ActionType<
+    typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
   >,
-  USER_FETCH_TOKEN_TRANSFERS_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS_ERROR,
+  USER_TOKEN_TRANSFERS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_ERROR,
     void,
   >,
-  USER_FETCH_TOKEN_TRANSFERS_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+  USER_TOKEN_TRANSFERS_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
     {|
       transactions: ContractTransactionType[],
     |},
