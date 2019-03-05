@@ -4,10 +4,12 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 
-import type { UserType, TaskType } from '~immutable';
+import type { UserType, TaskType, ColonyType, DataType } from '~immutable';
 
-import { withTask } from '../../hocs';
+import { withTask, withColony } from '../../hocs';
 import { withCurrentUser } from '../../../users/hocs';
+
+import { withImmutablePropsToJS } from '~utils/hoc';
 
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
@@ -38,6 +40,7 @@ const MSG = defineMessages({
 type Props = {
   task: TaskType,
   currentUser: UserType,
+  colony?: DataType<ColonyType>,
   cancel: () => void,
 };
 
@@ -48,12 +51,17 @@ class TaskInviteDialog extends Component<Props> {
     const {
       task: { taskId },
       currentUser,
+      /* This shouldn't throw an error since address is
+      indeed a property of shared */
+      // $FlowFixMe
+      colony: { address },
     } = this.props;
     return {
       ...action,
       payload: {
         user: currentUser,
         taskId,
+        colonyAddress: address,
       },
     };
   };
@@ -70,9 +78,9 @@ class TaskInviteDialog extends Component<Props> {
       <FullscreenDialog cancel={cancel}>
         <ActionForm
           initialValues={{ payouts: payouts || [], assignee: currentUser }}
-          submit={ACTIONS.TASK_WORKER_ASSIGN}
-          success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
-          error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
+          submit={ACTIONS.TASK_ASSIGN}
+          success={ACTIONS.TASK_ASSIGN_SUCCESS}
+          error={ACTIONS.TASK_ASSIGN_ERROR}
           setPayLoad={this.setPayload}
         >
           {({ status, isSubmitting }) => (
@@ -146,6 +154,8 @@ class TaskInviteDialog extends Component<Props> {
 }
 
 export default compose(
+  withColony,
   withTask,
   withCurrentUser,
+  withImmutablePropsToJS,
 )(TaskInviteDialog);

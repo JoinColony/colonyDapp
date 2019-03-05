@@ -105,10 +105,12 @@ type SetTaskPayoutCommandArgs = {|
 
 type AssignWorkerCommandArgs = {|
   worker: Address,
+  taskStoreAddress: string | OrbitDBAddress,
 |};
 
 type UnassignWorkerCommandArgs = {|
   worker: Address,
+  taskStoreAddress: string | OrbitDBAddress,
 |};
 
 type CancelTaskCommandArgs = {|
@@ -308,7 +310,8 @@ export const assignWorker: TaskCommand<AssignWorkerCommandArgs, EventStore> = ({
   wallet,
   metadata,
 }) => ({
-  async execute({ worker }) {
+  async execute({ worker /* taskStoreAddress */ }) {
+    // TODO: use taskStoreAddress in this command to assign worker to a specific task
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
     await taskStore.append(
       createWorkerAssignedEvent({

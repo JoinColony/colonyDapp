@@ -51,7 +51,7 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
 
 const getTaskId = () => mockTask;
 
-// Some inbox items link somewhere, others open a modal so it's important to differentiate here
+/* Some inbox items link somewhere, others open a modal so it's important to differentiate here */
 const ConditionalWrapper = ({
   to,
   children,
@@ -63,6 +63,7 @@ const ConditionalWrapper = ({
   event: string,
   user?: {},
 }) => {
+  // TODO: Make this happen dynamically, we can't create a condition for each inbox event
   if (event === 'actionWorkerInviteReceived') {
     const details = getTaskId();
     return (
@@ -71,9 +72,6 @@ const ConditionalWrapper = ({
         props={{
           assignee: { profile: user },
           task: details,
-          /*       ensName: details.colonyENSName,
-          payouts: details.payouts,
-          reputation: details.reputation */
         }}
       >
         {({ open }) => (
