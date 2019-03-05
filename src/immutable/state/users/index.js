@@ -3,8 +3,11 @@
 import type {
   Collection as CollectionType,
   List as ListType,
+  Map as MapType,
   RecordOf,
 } from 'immutable';
+
+import type { ENSName } from '~types';
 
 import type { AllUsersRecord } from './AllUsers';
 import type { ContractTransactionRecordType } from '../../ContractTransaction';
@@ -12,16 +15,22 @@ import type { DataRecordType } from '../../Data';
 import type { WalletRecordType } from '../../Wallet';
 import type { UserActivityRecordType } from '../../UserActivity';
 import type { UserProfileRecordType } from '../../UserProfile';
+import type { UserPermissionsRecordType } from '../../UserPermissions';
 
 export type CurrentUserTransactionsType = DataRecordType<
   ListType<ContractTransactionRecordType>,
+>;
+
+export type CurrentUserPermissionsType = MapType<
+  ENSName,
+  DataRecordType<MapType<UserPermissionsRecordType>>,
 >;
 
 export * from './AllUsers';
 
 export type CurrentUser = {|
   activities: ListType<UserActivityRecordType>,
-  permissions: void, // TODO in #911
+  permissions: CurrentUserPermissionsType,
   profile: UserProfileRecordType,
   transactions: CurrentUserTransactionsType,
 |};

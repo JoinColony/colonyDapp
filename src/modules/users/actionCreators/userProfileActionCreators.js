@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Action } from '~redux';
+import type { ENSName } from '~types';
 
 import { ACTIONS } from '~redux';
 
@@ -27,13 +28,21 @@ export const fetchUserAvatar = (
 });
 
 export const fetchUserTransactions = (): Action<
-  typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS,
+  typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 > => ({
-  type: ACTIONS.USER_FETCH_TOKEN_TRANSFERS,
+  type: ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 });
 
 export const getCurrentUserBalance = (): Action<
   typeof ACTIONS.CURRENT_USER_GET_BALANCE,
 > => ({
   type: ACTIONS.CURRENT_USER_GET_BALANCE,
+});
+
+export const fetchColonyPermissions = (
+  ensName: ENSName,
+): Action<typeof ACTIONS.USER_PERMISSIONS_FETCH> => ({
+  type: ACTIONS.USER_PERMISSIONS_FETCH,
+  payload: { ensName },
+  meta: { keyPath: [ensName] },
 });

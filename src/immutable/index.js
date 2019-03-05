@@ -15,6 +15,7 @@ export { default as TokenRecord } from './Token';
 export { default as TransactionRecord } from './Transaction';
 export { default as UserRecord } from './User';
 export { default as UserActivityRecord } from './UserActivity';
+export { default as UserPermissionsRecord } from './UserPermissions';
 export { default as UserProfileRecord } from './UserProfile';
 export { default as WalletRecord } from './Wallet';
 
@@ -37,5 +38,6 @@ export * from './Token';
 export * from './Transaction';
 export * from './User';
 export * from './UserActivity';
+export * from './UserPermissions';
 export * from './UserProfile';
 export * from './Wallet';

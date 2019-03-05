@@ -68,7 +68,7 @@ const ConfirmDialog = ({
     <DialogSection appearance={{ align: 'right' }}>
       <Button
         appearance={{ theme: 'secondary', size: 'large' }}
-        onClick={cancel}
+        onClick={() => cancel()}
         text={cancelButtonText}
       />
       <Button
@@ -76,7 +76,7 @@ const ConfirmDialog = ({
           theme: (appearance && appearance.theme) || 'primary',
           size: 'large',
         }}
-        onClick={close}
+        onClick={() => close()}
         text={confirmButtonText}
       />
     </DialogSection>

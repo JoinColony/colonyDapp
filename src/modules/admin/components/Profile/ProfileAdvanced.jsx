@@ -1,16 +1,21 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
+
+import type { ColonyType, UserPermissionsType } from '~immutable';
+
+import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
+import { ACTIONS } from '~redux';
 
 import Heading from '~core/Heading';
-import Button from '~core/Button';
+import Button, { DialogActionButton } from '~core/Button';
+
+import { colonyPermissionsFetcher } from '../../../users/fetchers';
+import { canEnterRecoveryMode } from '../../../users/selectors';
+import { isInRecoveryMode } from '../../../dashboard/selectors';
 
 import styles from './ProfileAdvanced.css';
-
-import type { ColonyType } from '~immutable';
-import type { Given } from '~utils/hoc';
-import type { OpenDialog } from '~core/Dialog/types';
 
 const MSG = defineMessages({
   labelVersion: {
@@ -25,75 +30,97 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
     defaultMessage: 'Update',
   },
-  buttonRecovery: {
-    id: 'admin.Profile.ProfileAdvanced.buttonRecovery',
+  buttonRecoveryMode: {
+    id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
+    defaultMessage: 'Turn on recovery Mode',
+  },
+  headingRecoveryMode: {
+    id: 'admin.Profile.ProfileAdvanced.headingRecoveryMode',
     defaultMessage: 'Recovery Mode',
+  },
+  inRecoveryMode: {
+    id: 'admin.Profile.ProfileAdvanced.inRecoveryMode',
+    defaultMessage: `{inRecoveryMode, select,
+      true {Colony is in recovery mode}
+      false {Colony is not in recovery mode}
+    }`,
   },
 });
 
-const mockColonyRecoveryMode = false;
 const displayName: string = 'admin.Profile.ProfileAdvanced';
 
 type Props = {|
-  colonyId: $PropertyType<ColonyType, 'id'>,
-  colonyVersion: $PropertyType<ColonyType, 'version'>,
-  given: Given,
-  openDialog: OpenDialog,
+  colony: ColonyType,
 |};
 
-const ProfileAdvanced = ({
-  colonyId,
-  colonyVersion,
-  openDialog,
-  given,
-}: Props) => (
-  <div className={styles.main}>
-    <section className={styles.section}>
-      <div className={styles.withInlineButton}>
+const ProfileAdvanced = ({ colony }: Props) => {
+  const { given } = useFeatureFlags();
+
+  const {
+    isFetching,
+    data: permissions,
+    error,
+  } = useDataFetcher<UserPermissionsType>(
+    colonyPermissionsFetcher,
+    [colony.ensName],
+    [colony.ensName],
+  );
+  return (
+    <div className={styles.main}>
+      <section className={styles.section}>
+        <div className={styles.withInlineButton}>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.labelVersion}
+          />
+          <p className={styles.bigInfoText}>{colony.version}</p>
+        </div>
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={MSG.buttonUpdate}
+          // eslint-disable-next-line no-console
+          onClick={() => console.log(`[${displayName}] Updating the colony`)}
+        />
+      </section>
+      <section className={styles.section}>
         <Heading
           appearance={{ size: 'small', margin: 'none' }}
-          text={MSG.labelVersion}
+          text={MSG.labelId}
         />
-        <p className={styles.advancedNumeric}>{colonyVersion}</p>
-      </div>
-      <Button
-        appearance={{ theme: 'primary', size: 'large' }}
-        text={MSG.buttonUpdate}
-        // eslint-disable-next-line no-console
-        onClick={() => console.log(`[${displayName}] Updating the colony`)}
-      />
-    </section>
-    <section className={styles.section}>
-      <Heading
-        appearance={{ size: 'small', margin: 'none' }}
-        text={MSG.labelId}
-      />
-      <p className={styles.advancedNumeric}>{colonyId}</p>
-    </section>
-    {/* I have no idea how the recovery mode should work, so for now,
-     * I'm assuming we just need a button for it
-     */}
-    <Button
-      appearance={{ theme: 'blue' }}
-      text={MSG.buttonRecovery}
-      onClick={() =>
-        openDialog('RecoveryModeDialog')
-          .afterClosed()
-          /*
-           * @TODO Wire up setting the Colony into Recovery Mode
-           */
-          .then(() =>
-            /* eslint-disable-next-line no-console */
-            console.log(`[${displayName}] Colony set to Recovery Mode!`),
-          )
-      }
-      /*
-       * @NOTE If we're already in Recovery mode, this button should be disabled
-       */
-      disabled={given(mockColonyRecoveryMode)}
-    />
-  </div>
-);
+        <p className={styles.bigInfoText}>{colony.id}</p>
+      </section>
+      <section className={styles.section}>
+        <div className={styles.withInlineButton}>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.headingRecoveryMode}
+          />
+          <p className={styles.bigInfoText}>
+            <FormattedMessage
+              {...MSG.inRecoveryMode}
+              values={{ inRecoveryMode: colony.inRecoveryMode }}
+            />
+          </p>
+        </div>
+        <DialogActionButton
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={MSG.buttonRecoveryMode}
+          dialog="RecoveryModeDialog"
+          submit={ACTIONS.COLONY_RECOVERY_MODE_ENTER}
+          success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
+          error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
+          values={{ ensName: colony.ensName }}
+          loading={isFetching}
+          disabled={
+            !!error ||
+            given(colony, isInRecoveryMode) ||
+            !given(permissions, canEnterRecoveryMode)
+          }
+        />
+      </section>
+    </div>
+  );
+};
 
 ProfileAdvanced.displayName = displayName;
 

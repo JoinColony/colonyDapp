@@ -197,8 +197,9 @@ export type ColonyActionTypes = {|
     string,
     WithKeyPathDepth1,
   >,
-  COLONY_FETCH: ActionTypeWithMeta<
+  COLONY_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH,
+    {| ensName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_ERROR: ErrorActionType<
@@ -249,5 +250,28 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
     ColonyType,
     WithKeyPathDepth1,
+  >,
+  COLONY_PROFILE_UPDATE_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_PROFILE_UPDATE_ERROR,
+    void,
+  >,
+  COLONY_PROFILE_UPDATE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
+    ColonyType,
+    WithKeyPathDepth1,
+  >,
+  COLONY_RECOVERY_MODE_ENTER: UniqueActionType<
+    typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER,
+    {| ensName: string |},
+    void,
+  >,
+  COLONY_RECOVERY_MODE_ENTER_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR,
+    void,
+  >,
+  COLONY_RECOVERY_MODE_ENTER_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
+    void,
+    void,
   >,
 |};

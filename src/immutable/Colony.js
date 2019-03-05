@@ -26,6 +26,7 @@ type Shared = {|
   name: string,
   version?: number,
   website?: string,
+  inRecoveryMode?: boolean,
 |};
 
 export type ColonyType = $ReadOnly<{|
@@ -42,16 +43,17 @@ type ColonyRecordProps = {|
 
 const defaultValues: $Shape<ColonyRecordProps> = {
   address: undefined,
+  admins: ImmutableMap(),
   avatar: undefined,
   description: undefined,
   ensName: undefined,
   guideline: undefined,
   id: undefined,
+  inRecoveryMode: false,
   name: undefined,
   tokens: ImmutableMap(),
   version: undefined,
   website: undefined,
-  admins: ImmutableMap(),
 };
 
 const ColonyRecord: RecordFactory<ColonyRecordProps> = Record(defaultValues);

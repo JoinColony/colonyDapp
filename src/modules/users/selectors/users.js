@@ -3,7 +3,8 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { RootStateRecord } from '~immutable';
+import type { RootStateRecord, UserPermissionsType } from '~immutable';
+import type { ENSName } from '~types';
 
 import {
   USERS_ALL_USERS,
@@ -11,6 +12,7 @@ import {
   USERS_CURRENT_USER,
   USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TRANSACTIONS,
+  USERS_CURRENT_USER_PERMISSIONS,
   USERS_NAMESPACE as ns,
   USERS_USERNAMES,
   USERS_USERS,
@@ -90,3 +92,17 @@ export const avatarSelector = createSelector(
 
 export const usernameSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'username']);
+
+export const userColonyPermissionsSelector = (
+  state: RootStateRecord,
+  ensName: ENSName,
+) =>
+  state.getIn([
+    ns,
+    USERS_CURRENT_USER,
+    USERS_CURRENT_USER_PERMISSIONS,
+    ensName,
+  ]);
+
+export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
+  !!(permissions && permissions.canEnterRecoveryMode);

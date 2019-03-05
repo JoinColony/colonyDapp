@@ -7,6 +7,7 @@ export const USERS_AVATARS = 'avatars';
 export const USERS_CURRENT_USER = 'currentUser';
 export const USERS_CURRENT_USER_PROFILE = 'profile';
 export const USERS_CURRENT_USER_TRANSACTIONS = 'transactions';
+export const USERS_CURRENT_USER_PERMISSIONS = 'permissions';
 export const USERS_USERNAMES = 'usernames';
 export const USERS_WALLET = 'wallet';
 

@@ -29,6 +29,9 @@ export const tokenIsETH = ({ address }: TokenType | TokenRecordType) =>
 export const shouldFetchData = (data: ?DataRecordType<*>) =>
   !data || !(data.isFetching || data.error || data.record);
 
+export const isFetchingData = (data: ?DataRecordType<*>) =>
+  !data || data.isFetching;
+
 export const userDidClaimProfile = ({
   profile: { username },
 }: UserType | UserRecordType) => !!username;

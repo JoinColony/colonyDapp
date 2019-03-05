@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { WithKeyPathDepth1 } from '~types';
+import type { ENSName, WithKeyPathDepth1 } from '~types';
 import type { ContractTransactionType, UserProfileType } from '~immutable';
 
 import type {
@@ -29,18 +29,36 @@ export type UserActionTypes = {|
       username: string,
     |},
   >,
-  USER_FETCH_TOKEN_TRANSFERS: ActionType<
-    typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS,
+  USER_TOKEN_TRANSFERS_FETCH: ActionType<
+    typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
   >,
-  USER_FETCH_TOKEN_TRANSFERS_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS_ERROR,
+  USER_TOKEN_TRANSFERS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_ERROR,
     void,
   >,
-  USER_FETCH_TOKEN_TRANSFERS_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.USER_FETCH_TOKEN_TRANSFERS_SUCCESS,
+  USER_TOKEN_TRANSFERS_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
     {|
       transactions: ContractTransactionType[],
     |},
+  >,
+  // In the future we could specify in the payload which permission(s) we would like to fetch
+  USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH,
+    {| ensName: ENSName |},
+    WithKeyPathDepth1,
+  >,
+  USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH,
+    {|
+      ensName: ENSName,
+      permissions: { +canEnterRecoveryMode?: boolean },
+    |},
+    WithKeyPathDepth1,
   >,
   USER_PROFILE_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PROFILE_FETCH,

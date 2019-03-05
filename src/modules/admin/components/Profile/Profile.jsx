@@ -6,7 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import ProfileEdit from './ProfileEdit.jsx';
-import ProfileAdvanced from './ProfileAdvanced';
+import ProfileAdvanced from './ProfileAdvanced.jsx';
 
 import styles from './Profile.css';
 
@@ -47,7 +47,7 @@ const Profile = ({ colony }: Props) => (
         <ProfileEdit colony={colony} />
       </TabPanel>
       <TabPanel>
-        <ProfileAdvanced colonyId={colony.id} colonyVersion={colony.version} />
+        <ProfileAdvanced colony={colony} />
       </TabPanel>
     </Tabs>
   </div>

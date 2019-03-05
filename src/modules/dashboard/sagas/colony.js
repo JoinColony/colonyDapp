@@ -42,6 +42,7 @@ import {
   transactionReady,
 } from '../../core/actionCreators';
 
+import { fetchColony } from '../actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 import { colonyAvatarHashSelector } from '../selectors';
@@ -311,7 +312,7 @@ function* colonyCreateLabel({
       payload,
     });
 
-    yield put(replace(`colony/${ensName}`));
+    yield put(replace(`/colony/${ensName}`));
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_LABEL_ERROR, error);
   } finally {
@@ -391,9 +392,7 @@ function* colonyProfileUpdate({
 }
 
 function* colonyFetch({
-  meta: {
-    keyPath: [ensName],
-  },
+  payload: { ensName },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
@@ -536,6 +535,36 @@ function* colonyAvatarRemove({
   }
 }
 
+function* colonyRecoveryModeEnter({
+  payload: { ensName },
+  meta,
+}: Action<typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER>) {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'enterRecoveryMode',
+      identifier: ensName,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+
+    yield put({
+      type: ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(fetchColony(ensName));
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, colonyAvatarFetch);
   // TODO: rename properly once the new onboarding is done
@@ -545,6 +574,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyENSNameFetch);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
+  yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.

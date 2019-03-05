@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { ContractTransactionType, UserProfileType } from '~immutable';
+import type {
+  ContractTransactionType,
+  UserProfileType,
+  UserPermissionsType,
+} from '~immutable';
 
 import { formatEther } from 'ethers/utils';
 
@@ -33,12 +37,8 @@ type UserAvatarQueryContext = Context<
   DDBContext & IPFSContext,
 >;
 
-type UserBalanceQueryContext = Context<
-  {|
-    walletAddress: string,
-  |},
-  NetworkClientContext,
->;
+type UserBalanceQueryContext = Context<{}, NetworkClientContext>;
+type UserPermissionsQueryContext = Context<{}, ColonyClientContext>;
 
 type UserColonyTransactionsQueryContext = Context<
   {|
@@ -48,7 +48,8 @@ type UserColonyTransactionsQueryContext = Context<
 >;
 
 type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
-type UsernameQueryContext<I: *, R: *> = Query<NetworkClientContext, I, R>;
+type UsernameQuery<I: *, R: *> = Query<NetworkClientContext, I, R>;
+// type UserPermissionsQuery<I: *, R: *> = Query<ColonyClientContext, I, R>;
 
 type UserColonyTransactionsQuery<I: *> = Query<
   UserColonyTransactionsQueryContext,
@@ -95,10 +96,9 @@ export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
   },
 });
 
-export const checkUsernameIsAvailable: UsernameQueryContext<
-  string,
-  boolean,
-> = ({ networkClient }) => ({
+export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
+  networkClient,
+}) => ({
   async execute(username) {
     const nameHash = getHashedENSDomainString(username, 'user');
 
@@ -113,7 +113,7 @@ export const checkUsernameIsAvailable: UsernameQueryContext<
   },
 });
 
-export const getUsername: UsernameQueryContext<string, string> = ({
+export const getUsername: UsernameQuery<string, string> = ({
   networkClient,
 }) => ({
   async execute(ensAddress) {
@@ -133,16 +133,34 @@ export const getUsername: UsernameQueryContext<string, string> = ({
   },
 });
 
-export const getUserBalance: Query<UserBalanceQueryContext, void, string> = ({
+export const getUserBalance: Query<UserBalanceQueryContext, string, string> = ({
   networkClient,
-  metadata: { walletAddress },
 }) => ({
-  async execute() {
+  async execute(walletAddress) {
     const {
       adapter: { provider },
     } = networkClient;
     const balance = await provider.getBalance(walletAddress);
     return formatEther(balance);
+  },
+});
+
+export const getUserPermissions: Query<
+  UserPermissionsQueryContext,
+  string,
+  UserPermissionsType,
+> = ({ colonyClient }) => ({
+  async execute(walletAddress) {
+    // TODO: Wait for new ColonyJS version and replace with the code below
+    const canEnterRecoveryMode = await colonyClient.contract.hasUserRole(
+      walletAddress,
+      2,
+    );
+    // const canEnterRecoveryMode = await colonyClient.hasUserRole.call({
+    //   user: walletAddress,
+    //   role: RECOVERY,
+    // });
+    return { canEnterRecoveryMode };
   },
 });
 

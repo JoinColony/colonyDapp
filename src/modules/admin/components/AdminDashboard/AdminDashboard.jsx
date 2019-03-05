@@ -1,9 +1,12 @@
 /* @flow */
 
-import type { LocationShape } from 'react-router-dom';
+import type { LocationShape, Match } from 'react-router-dom';
 
 import React from 'react';
+import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
+
+import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -15,17 +18,13 @@ import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 
+import { colonyFetcher } from '../../../dashboard/fetchers';
+import { isInRecoveryMode } from '../../../dashboard/selectors';
+
 import styles from './AdminDashboard.css';
 
-import type {
-  /*
-   * Again, the same trick of making prettier not suggest a fix that would
-   * break the eslint rules, by just adding a comment
-   */
-  NavigationItem,
-} from '~pages/VerticalNavigation/VerticalNavigation.jsx';
-import type { ColonyType, DataType } from '~immutable';
-import type { Given } from '~utils/hoc';
+import type { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
+import type { ColonyType } from '~immutable';
 
 const MSG = defineMessages({
   loadingText: {
@@ -58,16 +57,13 @@ const MSG = defineMessages({
   },
 });
 
-const mockColonyRecoveryMode = true;
-
 type Props = {|
-  colony: ?DataType<ColonyType>,
   /*
    * The flow type for this exists
    * This location object  will allow opening a tab on initial render
    */
-  location?: ?LocationShape,
-  given: Given,
+  location: LocationShape,
+  match: Match,
 |};
 
 const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
@@ -93,15 +89,33 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   },
 ];
 
-const AdminDashboard = ({ colony, given, location }: Props) => {
-  if (!colony || !colony.record)
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
+const AdminDashboard = ({
+  location,
+  match: {
+    params: { ensName },
+  },
+}: Props) => {
+  const { given } = useFeatureFlags();
 
-  const { ensName, name } = colony.record;
+  const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    [ensName],
+    [ensName],
+  );
+
+  if (!ensName || error) {
+    return <Redirect to="/404" />;
+  }
+
+  if (!colony || isFetching) {
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
+
+  const { name } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(colony.record)}
+        navigationItems={navigationItems(colony)}
         initialTab={
           location && location.state && location.state.initialTab
             ? location.state.initialTab
@@ -127,10 +141,7 @@ const AdminDashboard = ({ colony, given, location }: Props) => {
           />
         </div>
       </VerticalNavigation>
-      {/*
-       * @TODO Replace with actual selector that checks if the Colony is in recovery mode
-       */}
-      {given(mockColonyRecoveryMode) && <RecoveryModeAlert />}
+      {given(colony, isInRecoveryMode) && <RecoveryModeAlert />}
     </div>
   );
 };
