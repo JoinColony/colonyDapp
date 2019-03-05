@@ -34,9 +34,10 @@ import {
   checkUsernameIsAvailable,
   getUserBalance,
   getUserAvatar,
+  getUserColonyTransactions,
   getUsername,
   getUserProfile,
-  getUserColonyTransactions,
+  getUserPermissions,
 } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -141,12 +142,14 @@ function* currentUserGetBalance(
 ): Saga<void> {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = {
-      networkClient,
-      metadata: { walletAddress: yield select(currentUserAddressSelector) },
-    };
+    const context = { networkClient, metadata: {} };
+    const walletAddress = yield select(currentUserAddressSelector);
 
-    const balance = yield* executeQuery(context, getUserBalance);
+    if (!walletAddress) {
+      throw new Error('Could not get wallet address for current user');
+    }
+
+    const balance = yield* executeQuery(context, getUserBalance, walletAddress);
 
     yield put<Action<typeof ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS>>({
       type: ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS,
@@ -299,10 +302,44 @@ function* usernameCreate({
   }
 }
 
+function* userPermissionsFetch({
+  payload: { ensName },
+  meta,
+}: Action<typeof ACTIONS.USER_PERMISSIONS_FETCH>): Saga<void> {
+  try {
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      ensName,
+    );
+    const walletAddress = yield select(currentUserAddressSelector);
+
+    if (!walletAddress) {
+      throw new Error('Could not get wallet address for current user');
+    }
+
+    const context = { colonyClient, metadata: {} };
+    const permissions = yield* executeQuery(
+      context,
+      getUserPermissions,
+      walletAddress,
+    );
+
+    yield put<Action<typeof ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS,
+      payload: { permissions, ensName },
+      meta,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_PERMISSIONS_FETCH_ERROR, error);
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userFetchTokenTransfers);
   yield takeEvery(ACTIONS.USER_PROFILE_FETCH, userProfileFetch);
+  yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ACTIONS.USERNAME_FETCH, usernameFetch);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);

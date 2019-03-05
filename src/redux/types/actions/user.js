@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { WithKeyPathDepth1 } from '~types';
+import type { ENSName, WithKeyPathDepth1 } from '~types';
 import type { ContractTransactionType, UserProfileType } from '~immutable';
 
 import type {
@@ -41,6 +41,24 @@ export type UserActionTypes = {|
     {|
       transactions: ContractTransactionType[],
     |},
+  >,
+  // In the future we could specify in the payload which permission(s) we would like to fetch
+  USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH,
+    {| ensName: ENSName |},
+    WithKeyPathDepth1,
+  >,
+  USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH,
+    {|
+      ensName: ENSName,
+      permissions: { +canEnterRecoveryMode?: boolean },
+    |},
+    WithKeyPathDepth1,
   >,
   USER_PROFILE_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PROFILE_FETCH,

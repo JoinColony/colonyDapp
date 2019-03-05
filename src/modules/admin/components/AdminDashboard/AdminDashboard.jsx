@@ -23,13 +23,7 @@ import { isInRecoveryMode } from '../../../dashboard/selectors';
 
 import styles from './AdminDashboard.css';
 
-import type {
-  /*
-   * Again, the same trick of making prettier not suggest a fix that would
-   * break the eslint rules, by just adding a comment
-   */
-  NavigationItem,
-} from '~pages/VerticalNavigation/VerticalNavigation.jsx';
+import type { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
 import type { ColonyType } from '~immutable';
 
 const MSG = defineMessages({
