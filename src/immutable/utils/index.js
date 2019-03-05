@@ -30,7 +30,7 @@ export const shouldFetchData = (data: ?DataRecordType<*>) =>
   !data || !(data.isFetching || data.error || data.record);
 
 export const isFetchingData = (data: ?DataRecordType<*>) =>
-  !data || !data.record || data.isFetching;
+  !data || data.isFetching;
 
 export const userDidClaimProfile = ({
   profile: { username },

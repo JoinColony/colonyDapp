@@ -331,7 +331,7 @@ function* userPermissionsFetch({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_PERMISSIONS_FETCH_ERROR, error);
+    yield putError(ACTIONS.USER_PERMISSIONS_FETCH_ERROR, error, meta);
   }
 }
 
