@@ -3,7 +3,7 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import { DomainRecord, DataRecord } from '~immutable';
-import { withDataReducer } from '~utils/reducers';
+import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
 import type { AllDomainsMap, DomainRecordType } from '~immutable';
@@ -60,7 +60,7 @@ const allDomainsReducer: ReducerType<
   }
 };
 
-export default withDataReducer<AllDomainsMap, DomainRecordType>(
+export default withDataRecordMap<AllDomainsMap, DomainRecordType>(
   ACTIONS.DOMAIN_FETCH,
   ImmutableMap(),
 )(allDomainsReducer);

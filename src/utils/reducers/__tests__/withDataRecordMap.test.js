@@ -1,9 +1,9 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 import createSandbox from 'jest-sandbox';
 
-import withDataReducer from '../withDataReducer';
+import withDataRecordMap from '../withDataRecordMap';
 
-describe('reducers - withDataReducer', () => {
+describe('reducers - withDataRecordMap', () => {
   const sandbox = createSandbox();
 
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe('reducers - withDataReducer', () => {
       }
     });
 
-    const myWrappedReducer = withDataReducer(MY_FETCH, ImmutableMap())(
+    const myWrappedReducer = withDataRecordMap(MY_FETCH, ImmutableMap())(
       myReducer,
     );
 

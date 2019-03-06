@@ -2,38 +2,37 @@
 
 import { List } from 'immutable';
 
-import { ContractTransactionRecord, DataRecord } from '~immutable';
-import { ACTIONS } from '~redux';
-
 import type { CurrentUserTransactionsType } from '~immutable';
 import type { ReducerType } from '~redux';
 
+import { ContractTransactionRecord, DataRecord } from '~immutable';
+import { ACTIONS } from '~redux';
+import { withDataRecord } from '~utils/reducers';
+
+type CurrentUserTransactionsActions = {
+  USER_TOKEN_TRANSFERS_FETCH: *,
+  USER_TOKEN_TRANSFERS_FETCH_ERROR: *,
+  USER_TOKEN_TRANSFERS_FETCH_SUCCESS: *,
+};
+
 const currentUserTransactionsReducer: ReducerType<
   CurrentUserTransactionsType,
-  {|
-    USER_TOKEN_TRANSFERS_FETCH: *,
-    USER_TOKEN_TRANSFERS_FETCH_ERROR: *,
-    USER_TOKEN_TRANSFERS_FETCH_SUCCESS: *,
-  |},
+  CurrentUserTransactionsActions,
 > = (state = DataRecord(), action) => {
   switch (action.type) {
-    case ACTIONS.USER_TOKEN_TRANSFERS_FETCH: {
-      return state.set('isFetching', true);
-    }
-    case ACTIONS.USER_TOKEN_TRANSFERS_FETCH_ERROR: {
-      const { message: error } = action.payload;
-      return state.merge({ error, isFetching: false });
-    }
     case ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS: {
       const { transactions } = action.payload;
-      const record = List(
-        transactions.map(tx => ContractTransactionRecord(tx)),
+      return state.set(
+        'record',
+        List(transactions.map(tx => ContractTransactionRecord(tx))),
       );
-      return state.merge({ record, isFetching: false });
     }
     default:
       return state;
   }
 };
 
-export default currentUserTransactionsReducer;
+export default withDataRecord<
+  CurrentUserTransactionsType,
+  CurrentUserTransactionsActions,
+>(ACTIONS.USER_TOKEN_TRANSFERS_FETCH)(currentUserTransactionsReducer);

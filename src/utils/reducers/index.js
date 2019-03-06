@@ -1,4 +1,5 @@
 /* @flow */
 
-export * from './withDataReducer';
-export { default as withDataReducer } from './withDataReducer';
+export * from './withDataRecordMap';
+export { default as withDataRecordMap } from './withDataRecordMap';
+export { default as withDataRecord } from './withDataRecord';
