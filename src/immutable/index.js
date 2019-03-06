@@ -2,6 +2,7 @@
 
 export { default as ActivityFeedItemRecord } from './ActivityFeedItem';
 export { default as ColonyRecord } from './Colony';
+export { default as TokenReferenceRecord } from './TokenReference';
 export { default as ContractTransactionRecord } from './ContractTransaction';
 export { default as DataRecord } from './Data';
 export { default as DomainRecord } from './Domain';
@@ -25,6 +26,7 @@ export * from './utils';
 export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './ColonyAdmin';
+export * from './TokenReference';
 export * from './constants';
 export * from './ContractTransaction';
 export * from './Data';

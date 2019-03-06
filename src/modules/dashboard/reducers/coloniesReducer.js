@@ -1,8 +1,8 @@
 /* @flow */
 
-import { Map as ImmutableMap, fromJS } from 'immutable';
+import { Map as ImmutableMap, fromJS, List } from 'immutable';
 
-import { ColonyRecord, DataRecord, TokenRecord } from '~immutable';
+import { ColonyRecord, DataRecord, TokenReferenceRecord } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
@@ -27,14 +27,11 @@ const coloniesReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
-        payload: { tokens, ensName, admins = {}, ...props },
+        payload: [{ tokens, ensName, admins = {}, ...props }],
       } = action;
       const record = ColonyRecord({
-        tokens: ImmutableMap(
-          Object.entries(tokens).map(([address, token]) => [
-            address,
-            TokenRecord(token),
-          ]),
+        tokens: List(
+          tokens && tokens.map(token => TokenReferenceRecord(token)),
         ),
         admins: ImmutableMap(
           Object.entries(admins).map(([username, user]) => [

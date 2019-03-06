@@ -5,6 +5,7 @@ import type {
   ColonyType,
   ContractTransactionType,
   DomainType,
+  TokenType,
   TransactionType,
 } from '~immutable';
 import type {
@@ -208,7 +209,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_SUCCESS,
-    ColonyType,
+    [ColonyType, Array<TokenType>],
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_TRANSACTIONS: ActionTypeWithMeta<

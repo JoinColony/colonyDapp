@@ -227,15 +227,7 @@ function* colonyCreate({
 }
 
 function* colonyCreateLabel({
-  payload: {
-    colonyAddress,
-    colonyName,
-    ensName,
-    tokenAddress,
-    tokenName,
-    tokenSymbol,
-    tokenIcon,
-  },
+  payload: { colonyAddress, colonyName, ensName, tokenAddress, tokenIcon },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
   // @NOTE: We wanna use the address, we haven't anything mapped to the ENS name yet. Used on metadata
@@ -247,35 +239,38 @@ function* colonyCreateLabel({
     token: {
       address: tokenAddress,
       icon: tokenIcon,
+      isNative: true,
     },
   };
 
-  // @TODO: Should we actually dispatch and action to fetch it from the store?
-  // Dispatch and action to set the current colony in the app state (simulating fetching it)
-  const fetchSuccessAction = {
-    type: ACTIONS.COLONY_FETCH_SUCCESS,
-    meta: { keyPath: [ensName] },
-    payload: {
-      address: colonyAddress,
-      ensName,
-      name: colonyName,
-      tokens: {
-        [tokenAddress]: {
-          address: tokenAddress,
-          balance: 0,
-          icon: tokenIcon,
-          name: tokenName,
-          symbol: tokenSymbol,
-        },
-      },
-    },
-  };
-  yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>(fetchSuccessAction);
   /*
    * Get or create a colony store and save the colony to that store.
    */
   const store = yield* executeCommand(context, createColonyProfile, args);
-  yield put(fetchSuccessAction);
+
+  // // @TODO: Should we actually dispatch and action to fetch it from the store?
+  // // Dispatch and action to set the current colony in the app state (simulating fetching it)
+  // const fetchSuccessAction = {
+  //   type: ACTIONS.COLONY_FETCH_SUCCESS,
+  //   meta: { keyPath: [ensName] },
+  //   payload: {
+  //     address: colonyAddress,
+  //     ensName,
+  //     name: colonyName,
+  //     tokens: {
+  //       [tokenAddress]: {
+  //         address: tokenAddress,
+  //         balance: 0,
+  //         icon: tokenIcon,
+  //         name: tokenName,
+  //         symbol: tokenSymbol,
+  //       },
+  //     },
+  //   },
+  // };
+  // yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>(fetchSuccessAction);
+
+  // TODO: do we need to put this into the store here? Or will the redirect below manage it?
 
   const txChannel = yield call(getTxChannel, meta.id);
 

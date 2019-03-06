@@ -9,10 +9,12 @@ import type { Address } from '~types';
 
 type Shared = {|
   address: Address,
-  balance: BigNumber,
+  // TODO: balance shouldn't be part of this record
+  balance?: BigNumber,
   icon?: string,
   isBlocked?: boolean,
   isEnabled?: boolean,
+  // TODO: should be `nativeFor: ColonyIdentifier`
   isNative?: boolean,
   name: string,
   symbol: string,
