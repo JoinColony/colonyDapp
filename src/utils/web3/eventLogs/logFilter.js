@@ -1,6 +1,6 @@
 /* @flow */
 
-import { padLeft } from 'web3-utils';
+import { padLeft, toHex } from 'web3-utils';
 
 import type { IProvider, LogFilter } from '@colony/colony-js-adapter';
 
@@ -13,6 +13,12 @@ import type { LogFilterOptions } from './types';
  * for the given address.
  */
 const padTopicAddress = (address: string) => padLeft(address, 64);
+
+/**
+ * Returns a padded hex string of the size expected for a contract event topic,
+ * for the given input. Uses Buffer for hex string conversion.
+ */
+export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
 
 /*
  * Returns an array of topics for the given ColonyJS events, and from/to
