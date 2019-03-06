@@ -165,6 +165,10 @@ class GasStationPrice extends Component<Props, State> {
               currentGasPrice &&
               gasLimit &&
               currentGasPrice.mul(new BigNumber(gasLimit));
+            localStorage.setItem(
+              'currentTransactionFee',
+              String(transactionFee),
+            );
             const waitTime = gasPrices[`${transactionSpeed}Wait`];
             return (
               <Fragment>

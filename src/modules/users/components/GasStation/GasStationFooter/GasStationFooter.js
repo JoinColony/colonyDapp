@@ -2,7 +2,7 @@
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import withImmutablePropsToJS from 'with-immutable-props-to-js';
+import { withImmutablePropsToJS } from '~utils/hoc';
 
 import { currentUserBalanceSelector } from '../../../selectors';
 
