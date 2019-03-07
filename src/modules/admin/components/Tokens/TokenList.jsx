@@ -1,7 +1,7 @@
 /* @flow */
 import React from 'react';
 
-import type { TokenType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 
 import CardList from '~core/CardList';
 
@@ -18,17 +18,15 @@ type Appearance = {
 
 type Props = {|
   appearance?: Appearance,
-  tokens: Array<TokenType>,
+  tokens: Array<TokenReferenceType>,
 |};
 
 const TokenList = ({ tokens, appearance }: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
-      {tokens
-        .filter(token => token.isEnabled)
-        .map(token => (
-          <TokenCard key={token.address} token={token} />
-        ))}
+      {tokens.map(token => (
+        <TokenCard key={token.address} token={token} />
+      ))}
     </CardList>
   </div>
 );

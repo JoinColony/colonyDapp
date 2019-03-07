@@ -13,12 +13,13 @@ import {
   currentUserTransactionsSelector,
 } from '../../../users/selectors';
 
-import mockTokens from '../../../../__mocks__/mockTokens';
-
 const enhance = compose(
   withDialog(),
   withProps(() => ({
-    tokens: mockTokens,
+    // TODO: fetch from current user record
+    tokens: [].splice(1, 0, {
+      address: '0x0000000000000000000000000000000000000000',
+    }),
   })),
   connect(
     state => ({

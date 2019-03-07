@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -34,7 +34,7 @@ const MSG = defineMessages({
 
 type Props = {|
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenType>,
+  tokens: Array<TokenReferenceType>,
 |};
 
 class Tokens extends Component<Props> {
@@ -101,7 +101,8 @@ class Tokens extends Component<Props> {
               <Heading appearance={{ size: 'normal' }}>
                 <FormattedMessage
                   {...MSG.nativeTokenText}
-                  values={{ nativeToken: nativeToken.symbol }}
+                  // TODO: fetch native token info and put symbol here
+                  values={{ nativeToken: 'SYMBOL GOES HERE' }}
                 />
               </Heading>
             )}
