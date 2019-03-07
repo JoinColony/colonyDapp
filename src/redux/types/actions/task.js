@@ -12,7 +12,7 @@ import { ACTIONS } from '../../index';
 export type TaskActionTypes = {|
   TASK_COMMENT_ADD: UniqueActionType<
     typeof ACTIONS.TASK_COMMENT_ADD,
-    {| draftId: string, commentData: * |},
+    {| commentsStoreAddress: string, taskId: string, commentData: * |},
     void,
   >,
   TASK_COMMENT_ADD_ERROR: UniqueActionType<
@@ -21,7 +21,7 @@ export type TaskActionTypes = {|
   >,
   TASK_COMMENT_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS,
-    {| draftId: string, commentData: *, signature: string |},
+    {| taskId: string, commentData: *, signature: string |},
     void,
   >,
   TASK_COMMENTS_GET: UniqueActionType<
