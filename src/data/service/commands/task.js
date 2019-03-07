@@ -25,6 +25,7 @@ import {
   createTaskCancelledEvent,
   createTaskClosedEvent,
   createTaskCreatedEvent,
+  createTaskDomainSetEvent,
   createTaskDueDateSetEvent,
   createTaskFinalizedEvent,
   createTaskSkillSetEvent,
@@ -44,6 +45,7 @@ import {
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
   SetTaskBountyCommandArgsSchema,
+  SetTaskDomainCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
   UpdateTaskCommandArgsSchema,
@@ -119,6 +121,10 @@ type SetTaskSkillCommandArgs = {|
 
 type CreateWorkRequestCommandArgs = {|
   worker: string,
+|};
+
+type SetTaskDomainCommandArgs = {|
+  domainId: number,
 |};
 
 type SendWorkInviteCommandArgs = {|
@@ -372,6 +378,18 @@ export const closeTask: TaskCommand<void, EventStore> = ({
       createTaskClosedEvent({ status: TASK_STATUS.CLOSED }),
     );
 
+    return taskStore;
+  },
+});
+
+export const setTaskDomain: TaskCommand<
+  SetTaskDomainCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: SetTaskDomainCommandArgsSchema,
+  async execute(args) {
+    const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
+    await taskStore.append(createTaskDomainSetEvent(args));
     return taskStore;
   },
 });
