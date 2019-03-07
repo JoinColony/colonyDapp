@@ -105,7 +105,7 @@ export default function* setupUserContext(
      */
     const { networkClient } = colonyManager;
     const balance = yield* executeQuery(
-      { networkClient, metadata: {} },
+      { networkClient },
       getUserBalance,
       walletAddress,
     );

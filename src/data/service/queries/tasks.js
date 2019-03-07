@@ -4,7 +4,7 @@ import type { Address, ENSName, OrbitDBAddress } from '~types';
 
 import type {
   ColonyClientContext,
-  Context,
+  ContextWithMetadata,
   DDBContext,
   Event,
   Query,
@@ -30,7 +30,7 @@ const {
   TASK_CANCELLED,
 } = TASK_EVENT_TYPES;
 
-export type TaskQueryContext = Context<
+export type TaskQueryContext = ContextWithMetadata<
   {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,

@@ -2,7 +2,7 @@
 
 import type { OrbitDBAddress } from '~types';
 
-import type { Context, DDBContext, Query } from '../../types';
+import type { ContextWithMetadata, DDBContext, Query } from '../../types';
 import type { CommentPostedEvent } from '../events';
 
 import { getCommentsStore } from '../../stores';
@@ -10,7 +10,7 @@ import { TASK_EVENT_TYPES } from '../../constants';
 
 const { COMMENT_POSTED } = TASK_EVENT_TYPES;
 
-export type CommentQueryContext = Context<
+export type CommentQueryContext = ContextWithMetadata<
   {|
     commentsStoreAddress: string | OrbitDBAddress,
   |},

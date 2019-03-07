@@ -1,7 +1,12 @@
 /* @flow */
 
 import type { Address, OrbitDBAddress } from '~types';
-import type { Command, Context, IPFSContext, DDBContext } from '../../types';
+import type {
+  Command,
+  ContextWithMetadata,
+  IPFSContext,
+  DDBContext,
+} from '../../types';
 import type {
   EventStore,
   FeedStore,
@@ -29,14 +34,17 @@ type UserCommandMetadata = {|
   username?: string,
 |};
 
-export type UserCommandContext = Context<UserCommandMetadata, DDBContext>;
+export type UserCommandContext = ContextWithMetadata<
+  UserCommandMetadata,
+  DDBContext,
+>;
 
-export type UserAvatarCommandContext = Context<
+export type UserAvatarCommandContext = ContextWithMetadata<
   UserCommandMetadata,
   DDBContext & IPFSContext,
 >;
 
-export type UserMetadataCommandContext = Context<
+export type UserMetadataCommandContext = ContextWithMetadata<
   {|
     walletAddress: string,
     userMetadataStoreAddress: string | OrbitDBAddress,

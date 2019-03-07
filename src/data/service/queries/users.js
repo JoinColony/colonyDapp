@@ -17,7 +17,7 @@ import {
 
 import type {
   ColonyClientContext,
-  Context,
+  ContextWithMetadata,
   DDBContext,
   ENSCacheContext,
   IPFSContext,
@@ -27,7 +27,7 @@ import type {
 
 import { getUserProfileStore } from '../../stores';
 
-type UserQueryContext = Context<
+type UserQueryContext = ContextWithMetadata<
   {|
     walletAddress: string,
     username?: string,
@@ -35,7 +35,7 @@ type UserQueryContext = Context<
   DDBContext,
 >;
 
-type UserAvatarQueryContext = Context<
+type UserAvatarQueryContext = ContextWithMetadata<
   {|
     walletAddress: string,
     username?: string,
@@ -43,24 +43,24 @@ type UserAvatarQueryContext = Context<
   DDBContext & IPFSContext,
 >;
 
-type UserBalanceQueryContext = Context<{}, NetworkClientContext>;
-type UserPermissionsQueryContext = Context<{}, ColonyClientContext>;
+type UserBalanceQueryContext = NetworkClientContext;
+type UserPermissionsQueryContext = ColonyClientContext;
 
-type UserColonyTransactionsQueryContext = Context<
+type UserColonyTransactionsQueryContext = ContextWithMetadata<
   {|
     walletAddress: string,
   |},
   ColonyClientContext,
 >;
 
-type UserTransactionIdsQueryContext = Context<
+type UserTransactionIdsQueryContext = ContextWithMetadata<
   {|
     walletAddress: string,
   |},
   ColonyClientContext,
 >;
 
-type UsernameQueryContext = Context<{}, ENSCacheContext & NetworkClientContext>;
+type UsernameQueryContext = {| ...ENSCacheContext, ...NetworkClientContext |};
 
 type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
 type UsernameQuery<I: *, R: *> = Query<UsernameQueryContext, I, R>;

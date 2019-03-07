@@ -126,7 +126,7 @@ function* usernameFetch({
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const context = { ensCache, networkClient, metadata: {} };
+    const context = { ensCache, networkClient };
 
     const username = yield* executeQuery(context, getUsername, userAddress);
     yield put<Action<typeof ACTIONS.USERNAME_FETCH_SUCCESS>>({
@@ -144,7 +144,7 @@ function* currentUserGetBalance(
 ): Saga<void> {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = { networkClient, metadata: {} };
+    const context = { networkClient };
     const walletAddress = yield select(currentUserAddressSelector);
 
     if (!walletAddress) {
@@ -246,7 +246,7 @@ function* usernameCheckAvailability({
 
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const context = { ensCache, networkClient, metadata: {} };
+    const context = { ensCache, networkClient };
 
     // This will throw if the username is not available
     yield* executeQuery(context, checkUsernameIsAvailable, username);
@@ -321,7 +321,7 @@ function* userPermissionsFetch({
       throw new Error('Could not get wallet address for current user');
     }
 
-    const context = { colonyClient, metadata: {} };
+    const context = { colonyClient };
     const permissions = yield* executeQuery(
       context,
       getUserPermissions,
