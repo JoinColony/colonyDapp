@@ -34,15 +34,10 @@ import type { ActionsType, Action } from '~redux';
  * the payload, which allows some steps to be skipped.
  */
 function* taskFetch({
-  // meta: {
-  //   keyPath: [colonyENSName],
-  // },
   meta,
   payload,
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
-    // yield call(ensureColonyIsInState, colonyENSName);
-
     // TODO get the task store and fetch it, after https://github.com/JoinColony/colonyDapp/pull/815
     // TODO: check if taskRecord has commentStoreAdress prop if so fetch them as well with
     // taskCommentsSaga
@@ -92,15 +87,10 @@ function* taskFetchAll(): Saga<void> {
  * and update it.
  */
 function* taskUpdate({
-  // meta: {
-  //   keyPath: [colonyENSName],
-  // },
   meta,
   payload,
 }: Action<typeof ACTIONS.TASK_UPDATE>): Saga<void> {
   try {
-    // yield call(ensureColonyIsInState, colonyENSName);
-
     // TODO add update event after https://github.com/JoinColony/colonyDapp/pull/815
 
     /*
@@ -121,15 +111,8 @@ function* taskUpdate({
  * the corresponding key in the tasks index store. The task store is
  * simply unpinned.
  */
-function* taskRemove({
-  // meta: {
-  //   keyPath: [colonyENSName],
-  // },
-  meta,
-}: Action<typeof ACTIONS.TASK_REMOVE>): Saga<void> {
+function* taskRemove({ meta }: Action<typeof ACTIONS.TASK_REMOVE>): Saga<void> {
   try {
-    // yield call(ensureColonyIsInState, colonyENSName);
-
     // TODO add event after https://github.com/JoinColony/colonyDapp/pull/815
 
     /*
