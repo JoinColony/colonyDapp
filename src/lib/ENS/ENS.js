@@ -1,64 +1,89 @@
 /* @flow */
 
 import namehash from 'eth-ens-namehash-ms';
+import { isAddress } from 'web3-utils';
 
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
 import type { Address, ENSName } from './types';
 
 class ENS {
-  cacheMap: Map<ENSName, Address>;
+  static getFullDomain = (scope: 'user' | 'colony', name: string) =>
+    isAddress(name) ? name : `${name}.${scope}.joincolony.eth`;
 
-  getDomain: Address => string;
+  _domainCache: Map<ENSName, Address>;
 
-  getAddress: (ENSName, ColonyNetworkClient) => Promise<string>;
+  _orbitAddressCache: Map<string, string>;
 
   constructor() {
-    this.cacheMap = new Map();
+    this._domainCache = new Map();
+    this._orbitAddressCache = new Map();
   }
 
   /* Returns an Ethereum address, when given the human-readable name */
-  getAddress = async (
-    ensDomain: string,
-    networkClient: ColonyNetworkClient,
-  ) => {
+  async getAddress(ensDomain: string, networkClient: ColonyNetworkClient) {
     /* check if domain in store if so return otherwise get */
-    if (!this.cacheMap.has(ensDomain)) {
+    if (!this._domainCache.has(ensDomain)) {
       const { ensAddress } = await networkClient.getAddressForENSHash.call({
         nameHash: namehash.hash(ensDomain),
       });
 
-      this.storeTwoWayCache(ensDomain, ensAddress);
+      if (ensAddress) {
+        this._storeTwoWayCache(ensDomain, ensAddress);
+      }
 
       return ensAddress;
     }
 
-    return this.cacheMap.get(ensDomain);
-  };
+    return this._domainCache.get(ensDomain);
+  }
 
-  getDomain = async (
-    ensAddress: Address,
-    networkClient: ColonyNetworkClient,
-  ) => {
+  async getDomain(address: Address, networkClient: ColonyNetworkClient) {
     /* check if adress in store if so return otherwise get */
-    if (!this.cacheMap.has(ensAddress)) {
-      const { ensDomain } = await networkClient.lookupRegisteredENSDomain.call({
-        ensAddress,
+    if (!this._domainCache.has(address)) {
+      const { domain } = await networkClient.lookupRegisteredENSDomain.call({
+        ensAddress: address,
       });
 
-      this.storeTwoWayCache(ensDomain, ensAddress);
+      if (domain) {
+        this._storeTwoWayCache(domain, address);
+      }
 
-      return ensAddress;
+      return domain;
     }
 
     /* get it from cache since it has be resolved before */
-    return this.cacheMap.get(ensAddress);
-  };
+    return this._domainCache.get(address);
+  }
 
-  storeTwoWayCache(ensDomain: ENSName, address: string) {
-    this.cacheMap.set(ensDomain, address);
+  async getOrbitDBAddress(
+    addressOrDomain: string,
+    networkClient: ColonyNetworkClient,
+  ) {
+    let domain;
+    if (isAddress(addressOrDomain)) {
+      domain = await this.getDomain(addressOrDomain, networkClient);
+    } else {
+      domain = addressOrDomain;
+    }
+    if (!domain) return null;
 
-    this.cacheMap.set(address, ensDomain);
+    if (this._orbitAddressCache.has(domain)) {
+      return this._orbitAddressCache.get(domain);
+    }
+    const { orbitDBAddress } = await networkClient.getProfileDBAddress.call({
+      nameHash: namehash.hash(domain),
+    });
+
+    if (orbitDBAddress) {
+      this._orbitAddressCache.set(domain, orbitDBAddress);
+    }
+    return orbitDBAddress;
+  }
+
+  _storeTwoWayCache(ensDomain: ENSName, address: string) {
+    this._domainCache.set(ensDomain, address);
+    this._domainCache.set(address, ensDomain);
   }
 }
 

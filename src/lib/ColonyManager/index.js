@@ -31,7 +31,10 @@ export default class ColonyManager {
   async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
     if (isAddress(identifier)) return identifier;
 
-    const ensAddress = await ens.getAddress(identifier, this.networkClient);
+    const ensAddress = await ens.getAddress(
+      ens.constructor.getFullDomain('colony', identifier),
+      this.networkClient,
+    );
     return ensAddress;
   }
 

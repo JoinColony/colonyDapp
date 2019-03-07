@@ -2,18 +2,26 @@
 
 import type { Saga } from 'redux-saga';
 
-import { setContext, call, all, put, fork } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  getContext,
+  put,
+  setContext,
+} from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
 import type ColonyManagerType from '../../../lib/ColonyManager';
 import type { DDB as DDBType } from '../../../lib/database';
 
-import { create, executeQuery, putError } from '~utils/saga/effects';
 import { CONTEXT } from '~context';
 import { ACTIONS } from '~redux';
+import { executeQuery, putError } from '~utils/saga/effects';
+import { log } from '~utils/debug';
 
-import * as resolvers from '../../../lib/database/resolvers';
+import ENS from '../../../lib/ENS';
 import { getUserBalance, getUserProfile } from '../../../data/service/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
@@ -31,16 +39,16 @@ function* setupContextDependentSagas(): Saga<void> {
   ]);
 }
 
-function* setupDDBResolvers(colonyManager: ColonyManagerType, ddb: DDBType) {
+function* setupDDBResolver(
+  colonyManager: ColonyManagerType,
+  ddb: DDBType,
+  ens: ENS,
+) {
   const { networkClient } = colonyManager;
 
-  // Add username ENS resolver
-  const userResolver = yield create(resolvers.UserResolver, networkClient);
-  yield call([ddb, ddb.addResolver], 'user', userResolver);
-
-  // Add colony ENS resolver
-  const colonyResolver = yield create(resolvers.ColonyResolver, networkClient);
-  yield call([ddb, ddb.addResolver], 'colony', colonyResolver);
+  yield call([ddb, ddb.registerResolver], (identifier: string) =>
+    ens.getOrbitDBAddress(identifier, networkClient),
+  );
 }
 
 /*
@@ -74,7 +82,9 @@ export default function* setupUserContext(
 
     yield call(getGasPrices);
 
-    yield call(setupDDBResolvers, colonyManager, ddb);
+    const ens = yield getContext('ens');
+
+    yield call(setupDDBResolver, colonyManager, ddb, ens);
 
     /*
      * Attempt to get the user profile data.
@@ -86,7 +96,8 @@ export default function* setupUserContext(
         getUserProfile,
       );
     } catch (error) {
-      // Ignore; it's ok if the user profile store doesn't exist yet.
+      // It's on here if the user store doesn't exist (yet)
+      log.warn(error);
     }
 
     /*

@@ -17,7 +17,6 @@ export type {
   EventIteratorOptions,
   OrbitDBEventStore,
 } from './OrbitDBEventStore';
-export type { ENSResolverType } from './ENSResolver';
 
 export type IPFSHash = string;
 
@@ -51,3 +50,5 @@ export type StoreBlueprint = {|
   ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,
   type: *,
 |};
+
+export type ResolverFn = (identifier: string) => Promise<?string>;

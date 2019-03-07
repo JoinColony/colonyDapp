@@ -4,7 +4,7 @@ import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
 
 import type {
-  ENSResolverType,
+  ResolverFn,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
@@ -29,7 +29,7 @@ const { isValidAddress, parseAddress } = OrbitDB;
 /**
  * The DDB class is a wrapper around an OrbitDB instance. It will be used to handle
  * schemas, create new Stores and keep track of the created ones. It also includes
- * means to add resolvers for resolving store addresses
+ * means to add add a resolver for resolving store addresses
  */
 class DDB {
   _identityProvider: IdentityProvider<Identity>;
@@ -40,7 +40,7 @@ class DDB {
 
   _stores: Map<string, *>;
 
-  _resolvers: Map<string, ENSResolverType>;
+  _resolver: ?ResolverFn;
 
   static getAccessController(
     { getAccessController, name }: StoreBlueprint,
@@ -66,7 +66,7 @@ class DDB {
 
     this._ipfsNode = ipfsNode;
     this._stores = new Map();
-    this._resolvers = new Map();
+    this._resolver = null;
     this._identityProvider = identityProvider;
   }
 
@@ -102,24 +102,8 @@ class DDB {
       : null;
   }
 
-  async _resolveStoreAddress(identifier: string) {
-    const [resolverKey, id] = identifier.split('.');
-    if (!resolverKey || !id) {
-      throw new Error('Identifier is not in a valid form');
-    }
-
-    const resolver = this._resolvers.get(resolverKey);
-    if (!resolver) {
-      throw new Error(
-        `Resolver with key ${resolverKey} not found. Did you register it?`,
-      );
-    }
-
-    return resolver.resolve(id);
-  }
-
   async _getStoreAddress(
-    identifier: StoreIdentifier,
+    identifier: ?StoreIdentifier,
   ): Promise<OrbitDBAddress | null> {
     if (!identifier) {
       throw new Error(
@@ -131,8 +115,11 @@ class DDB {
       if (isValidAddress(identifier)) {
         return parseAddress(identifier);
       }
-      // Otherwise it might be a resolver identifier (e.g. 'user.someusername')
-      const addressString = await this._resolveStoreAddress(identifier);
+      // Otherwise it might be something to pass into the resolver
+      const addressString =
+        typeof this._resolver == 'function'
+          ? await this._resolver(identifier)
+          : null;
       if (!addressString) {
         return null;
       }
@@ -144,9 +131,8 @@ class DDB {
     return identifier;
   }
 
-  // TODO given that ENSResolverType defines its own type, resolverId seems redundant
-  addResolver(resolverId: string, resolver: ENSResolverType) {
-    this._resolvers.set(resolverId, resolver);
+  registerResolver(resolverFn: ResolverFn) {
+    this._resolver = resolverFn;
   }
 
   async createStore<T: *>(
@@ -181,16 +167,17 @@ class DDB {
 
   async getStore<T: *>(
     blueprint: StoreBlueprint,
-    identifier: StoreIdentifier,
+    identifier: ?StoreIdentifier,
     storeProps?: Object,
   ): Promise<T> {
     const { name: bluePrintName, type } = blueprint;
-
     const address = await this._getStoreAddress(identifier);
     if (!address)
       throw new Error(
         `Address not found for store with identifier ${
-          typeof identifier === 'string' ? identifier : identifier.toJSON()
+          typeof identifier === 'string'
+            ? identifier
+            : JSON.stringify(identifier)
         }`,
       );
 
