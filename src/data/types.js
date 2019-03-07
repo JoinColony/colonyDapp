@@ -13,52 +13,90 @@ import type IPFSNodeType from '../lib/ipfs';
 import ENS from '../lib/ENS';
 
 /*
- * The specification for a store command.
+ * The specification for a data command.
  *
- * `I`: Object type indicating the arguments the command methods
+ * C: Optional object type indicating the context the command will
+ * be executed with.
+ *
+ * A: Optional object type for the arguments the execute function will
  * will be called with.
+ *
+ * R: Return type for the execute function.
  */
-export type Command<C: *, I: *, R: *> = C => {|
+export type Command<C: ?Object, A: ?Object, R> = C => {|
   /*
    * Script to execute the command for the given argument
    * (this usually performs a write of some kind).
    */
-  execute: (args: I) => Promise<R>,
+  execute: (args: A) => Promise<R>,
   schema?: SchemaType,
 |};
 
-export type Query<C: *, I: *, R: *> = C => {|
-  execute: (args: I) => Promise<R>,
+/*
+ * The specification for a data query.
+ *
+ * C: Optional object type indicating the context the query will
+ * be executed with.
+ *
+ * A: Optional type for the arguments the execute function will
+ * will be called with.
+ *
+ * R: Return type for the execute function.
+ */
+export type Query<C: ?Object, A, R> = C => {|
+  execute: (args: A) => Promise<R>,
 |};
 
 /*
- * M: metadata object
- * R: rest object (e.g. `DDBContext & IPFSContext`)
+ * Type that produces a context object with a `metadata` property
+ * and any other context properties
+ *
+ * M: Object type for the `metadata` property; this is usually data
+ * that is used to get a store, e.g. store address or colony address.
+ *
+ * R: Optional object for the rest of the context (e.g. `DDBContext & IPFSContext`).
  */
-export type Context<M: *, R: *> = {| metadata: M, ...R |};
+export type ContextWithMetadata<M: *, R: *> = {| metadata: M, ...R |};
 
+/*
+ * Individual context object types; these are not metadata, but are rather
+ * things that have some function needed for commands/queries.
+ */
 export type DDBContext = {| ddb: DDBType |};
-
 export type IPFSContext = {| ipfsNode: IPFSNodeType |};
-
 export type ColonyClientContext = {| colonyClient: ColonyClientType |};
-
 export type NetworkClientContext = {| networkClient: NetworkClientType |};
-
 export type WalletContext = {| wallet: WalletObjectType |};
-
 export type ENSCacheContext = {| ensCache: ENS |};
 
-export type EventPayload<I: *> = {|
+/*
+ * Object type representing the payload of an event; this includes
+ * various metadata properties and the actual payload properties.
+ *
+ * P: Object type representing the payload properties (technically optional).
+ */
+export type EventPayload<P: ?Object> = {|
   id: string,
   timestamp: number,
   version: number,
-  ...I,
+  ...P,
 |};
 
-export type Event<T: string, I: *> = {|
+/*
+ * Object type representing an event.
+ *
+ * T: String type for the event type, e.g. `DUE_DATE_SET`.
+ * P: Object type representing the payload properties (technically optional).
+ */
+export type Event<T: string, P: ?Object> = {|
   type: T,
-  payload: EventPayload<I>,
+  payload: EventPayload<P>,
 |};
 
-export type EventCreator<I: Object, O: Event<*, *>> = (args: I) => O;
+/*
+ * Function type representing an event creator.
+ *
+ * A: Object type for the function arguments (technically optional).
+ * E: Event type that will be created.
+ */
+export type EventCreator<A: ?Object, E: Event<*, *>> = (args: A) => E;

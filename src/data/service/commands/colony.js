@@ -4,7 +4,7 @@ import type { Address, ENSName } from '~types';
 import type {
   ColonyClientContext,
   Command,
-  Context,
+  ContextWithMetadata,
   DDBContext,
   WalletContext,
 } from '../../types';
@@ -28,7 +28,7 @@ import {
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
-export type ColonyContext = Context<
+export type ColonyContext = ContextWithMetadata<
   {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,

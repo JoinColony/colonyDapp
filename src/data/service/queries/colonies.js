@@ -4,7 +4,7 @@ import type { Address, ENSName } from '~types';
 
 import type {
   ColonyClientContext,
-  Context,
+  ContextWithMetadata,
   DDBContext,
   Event,
   Query,
@@ -53,7 +53,7 @@ type ColonyMetadata = {|
   colonyAddress: Address,
 |};
 
-export type ColonyQueryContext = Context<
+export type ColonyQueryContext = ContextWithMetadata<
   ColonyMetadata,
   ColonyClientContext & DDBContext & WalletContext,
 >;
@@ -65,7 +65,7 @@ export type ColonyContractEventQuery<I: *, R: *> = Query<
 >;
 
 export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
-  Context<ColonyMetadata, ColonyClientContext>,
+  ContextWithMetadata<ColonyMetadata, ColonyClientContext>,
   I,
   R,
 >;

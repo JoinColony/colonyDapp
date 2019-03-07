@@ -4,7 +4,7 @@ import type { Address, ENSName, OrbitDBAddress } from '~types';
 import type {
   ColonyClientContext,
   Command,
-  Context,
+  ContextWithMetadata,
   DDBContext,
   WalletContext,
 } from '../../types';
@@ -19,37 +19,37 @@ import {
 } from '../../stores';
 
 import {
-  createCommentStoreCreatedEvent,
-  createTaskStoreRegisteredEvent,
-  createTaskStoreUnregisteredEvent,
-  createTaskCreatedEvent,
-  createTaskUpdatedEvent,
-  createTaskDueDateSetEvent,
-  createTaskSkillSetEvent,
-  createWorkInviteSentEvent,
-  createWorkRequestCreatedEvent,
   createCommentPostedEvent,
+  createCommentStoreCreatedEvent,
   createTaskBountySetEvent,
-  createTaskFinalizedEvent,
   createTaskCancelledEvent,
   createTaskClosedEvent,
+  createTaskCreatedEvent,
+  createTaskDueDateSetEvent,
+  createTaskFinalizedEvent,
+  createTaskSkillSetEvent,
+  createTaskStoreRegisteredEvent,
+  createTaskStoreUnregisteredEvent,
+  createTaskUpdatedEvent,
   createWorkerAssignedEvent,
   createWorkerUnassignedEvent,
+  createWorkInviteSentEvent,
+  createWorkRequestCreatedEvent,
 } from '../events';
 
 import {
+  CancelTaskCommandArgsSchema,
   CreateTaskCommandArgsSchema,
-  UpdateTaskCommandArgsSchema,
+  FinalizeTaskCommandArgsSchema,
+  PostCommentCommandArgsSchema,
+  SendWorkInviteCommandArgsSchema,
+  SetTaskBountyCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
-  SendWorkInviteCommandArgsSchema,
-  PostCommentCommandArgsSchema,
-  SetTaskBountyCommandArgsSchema,
-  FinalizeTaskCommandArgsSchema,
-  CancelTaskCommandArgsSchema,
+  UpdateTaskCommandArgsSchema,
 } from './schemas';
 
-export type TaskContext = Context<
+export type TaskContext = ContextWithMetadata<
   {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
@@ -58,7 +58,7 @@ export type TaskContext = Context<
   ColonyClientContext & WalletContext & DDBContext,
 >;
 
-export type CommentContext = Context<
+export type CommentContext = ContextWithMetadata<
   {|
     commentsStoreAddress: string | OrbitDBAddress,
   |},
