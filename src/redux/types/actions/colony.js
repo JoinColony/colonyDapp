@@ -274,4 +274,18 @@ export type ColonyActionTypes = {|
     void,
     void,
   >,
+  COLONY_VERSION_UPGRADE: UniqueActionType<
+    typeof ACTIONS.COLONY_VERSION_UPGRADE,
+    {| ensName: string |},
+    void,
+  >,
+  COLONY_VERSION_UPGRADE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS,
+    void,
+    void,
+  >,
+  COLONY_VERSION_UPGRADE_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_VERSION_UPGRADE_ERROR,
+    void,
+  >,
 |};
