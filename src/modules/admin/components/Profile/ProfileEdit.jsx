@@ -16,11 +16,11 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { getENSDomainString } from '~utils/web3/ens';
 import { mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
 import { colony as colonyStoreBlueprint } from '../../../../data/blueprints';
+import ENS from '../../../../lib/ENS';
 
 import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 
@@ -108,7 +108,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     size: 'medium',
                     weight: 'thin',
                   }}
-                  text={getENSDomainString(ensName, 'colony')}
+                  text={ENS.getFullDomain('colony', ensName)}
                 />
               </FieldSet>
               <div className={styles.divider} />

@@ -6,8 +6,11 @@ import type {
 } from '@colony/colony-js-client';
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import type { Schema as SchemaType } from 'yup';
+
 import type { DDB as DDBType } from '../lib/database';
 import type IPFSNodeType from '../lib/ipfs';
+
+import ENS from '../lib/ENS';
 
 /*
  * The specification for a store command.
@@ -43,6 +46,8 @@ export type ColonyClientContext = {| colonyClient: ColonyClientType |};
 export type NetworkClientContext = {| networkClient: NetworkClientType |};
 
 export type WalletContext = {| wallet: WalletObjectType |};
+
+export type ENSCacheContext = {| ensCache: ENS |};
 
 export type EventPayload<I: *> = {|
   id: string,

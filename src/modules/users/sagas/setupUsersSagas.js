@@ -125,7 +125,8 @@ function* usernameFetch({
 }: Action<typeof ACTIONS.USERNAME_FETCH>): Saga<void> {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = { networkClient };
+    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
+    const context = { ensCache, networkClient, metadata: {} };
 
     const username = yield* executeQuery(context, getUsername, userAddress);
     yield put<Action<typeof ACTIONS.USERNAME_FETCH_SUCCESS>>({
@@ -244,7 +245,8 @@ function* usernameCheckAvailability({
     yield delay(300);
 
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = { networkClient };
+    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
+    const context = { ensCache, networkClient, metadata: {} };
 
     // This will throw if the username is not available
     yield* executeQuery(context, checkUsernameIsAvailable, username);

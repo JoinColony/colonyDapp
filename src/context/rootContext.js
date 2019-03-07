@@ -1,7 +1,7 @@
 /* @flow */
 
 import { DDB } from '../lib/database';
-import { ENS } from '../lib/ENS';
+import ENS from '../lib/ENS';
 import IPFSNode from '../lib/ipfs';
 
 import ipfsNodeContext from './ipfsNodeContext';

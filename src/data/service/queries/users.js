@@ -1,4 +1,5 @@
 /* @flow */
+import { formatEther } from 'ethers/utils';
 
 import type {
   ContractTransactionType,
@@ -7,25 +8,24 @@ import type {
   UserProfileType,
 } from '~immutable';
 
-import { formatEther } from 'ethers/utils';
-
-import type {
-  ColonyClientContext,
-  Context,
-  DDBContext,
-  IPFSContext,
-  NetworkClientContext,
-  Query,
-} from '../../types';
-
-import { getUserProfileStore } from '../../stores';
-import { getHashedENSDomainString } from '~utils/web3/ens';
 import {
   getEventLogs,
   getFilterFormatted,
   getLogsAndEvents,
   parseUserTransferEvent,
 } from '~utils/web3/eventLogs';
+
+import type {
+  ColonyClientContext,
+  Context,
+  DDBContext,
+  ENSCacheContext,
+  IPFSContext,
+  NetworkClientContext,
+  Query,
+} from '../../types';
+
+import { getUserProfileStore } from '../../stores';
 
 type UserQueryContext = Context<
   {|
@@ -60,8 +60,10 @@ type UserTransactionIdsQueryContext = Context<
   ColonyClientContext,
 >;
 
+type UsernameQueryContext = Context<{}, ENSCacheContext & NetworkClientContext>;
+
 type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
-type UsernameQuery<I: *, R: *> = Query<NetworkClientContext, I, R>;
+type UsernameQuery<I: *, R: *> = Query<UsernameQueryContext, I, R>;
 // type UserPermissionsQuery<I: *, R: *> = Query<ColonyClientContext, I, R>;
 
 type UserColonyTransactionsQuery<I: *> = Query<
@@ -111,13 +113,13 @@ export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
 
 export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
   networkClient,
+  ensCache,
 }) => ({
   async execute(username) {
-    const nameHash = getHashedENSDomainString(username, 'user');
-
-    const { ensAddress } = networkClient.getAddressForENSHash.call({
-      nameHash,
-    });
+    const ensAddress = await ensCache.getAddress(
+      ensCache.constructor.getFullDomain('user', username),
+      networkClient,
+    );
 
     if (ensAddress)
       throw new Error(`ENS address for user "${username}" already exists`);
@@ -128,11 +130,10 @@ export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
 
 export const getUsername: UsernameQuery<string, string> = ({
   networkClient,
+  ensCache,
 }) => ({
   async execute(ensAddress) {
-    const { domain } = networkClient.lookupRegisteredENSDomain.call({
-      ensAddress,
-    });
+    const domain = await ensCache.getDomain(ensAddress, networkClient);
 
     if (!domain)
       throw new Error(`No username found for address "${ensAddress}"`);

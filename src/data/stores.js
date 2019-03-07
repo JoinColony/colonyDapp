@@ -13,7 +13,7 @@ import type {
   ValidatedKVStore,
 } from '../lib/database/stores';
 
-import { getENSDomainString } from '~utils/web3/ens';
+import ENS from '../lib/ENS';
 
 import {
   colony as colonyStoreBlueprint,
@@ -34,14 +34,16 @@ export const getColonyStore = (
 }: {
   colonyAddress: string,
   colonyENSName: ENSName,
-}) => {
-  const colonyStoreAddress = await getENSDomainString('colony', colonyENSName);
-  return ddb.getStore<EventStore>(colonyStoreBlueprint, colonyStoreAddress, {
-    wallet,
-    colonyAddress,
-    colonyClient,
-  });
-};
+}) =>
+  ddb.getStore<EventStore>(
+    colonyStoreBlueprint,
+    ENS.getFullDomain('colony', colonyENSName),
+    {
+      wallet,
+      colonyAddress,
+      colonyClient,
+    },
+  );
 
 export const createColonyStore = (
   colonyClient: ColonyClientType,
@@ -107,17 +109,14 @@ export const createTaskStore = (
   return { taskStore, commentsStore };
 };
 
-export const getUserProfileStoreIdentifier = (id: string) => `user.${id}`;
 export const getUserProfileStore = (ddb: DDB) => async ({
   walletAddress,
-  username,
 }: {
   walletAddress: string,
-  username?: string,
 }) =>
   ddb.getStore<ValidatedKVStore<UserProfileStoreValues>>(
     userProfileStoreBlueprint,
-    getUserProfileStoreIdentifier(username || walletAddress),
+    walletAddress,
     {
       walletAddress,
     },
@@ -132,7 +131,7 @@ export const getUserProfileStoreByUsername = (ddb: DDB) => async ({
 }) =>
   ddb.getStore<ValidatedKVStore<UserProfileStoreValues>>(
     userProfileStoreBlueprint,
-    getUserProfileStoreIdentifier(username),
+    ENS.getFullDomain('user', username),
     {
       walletAddress,
     },
