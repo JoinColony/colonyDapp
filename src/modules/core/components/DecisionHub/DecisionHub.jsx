@@ -13,6 +13,7 @@ type Option = {|
   title: MessageDescriptor | string,
   subtitle: MessageDescriptor | string,
   icon?: string,
+  tooltip?: MessageDescriptor | string,
 |};
 
 type Props = {|
