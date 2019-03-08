@@ -20,6 +20,7 @@ import ENSNameDialog from '~users/ENSNameDialog';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
 import UnfinishedProfileDialog from '~users/UnfinishedProfileDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
+import UpgradeContractDialog from '~admin/UpgradeContractDialog';
 
 const dialogComponents: Object = {
   ActivityBarExample,
@@ -35,6 +36,7 @@ const dialogComponents: Object = {
   TaskClaimRewardDialog,
   UnfinishedProfileDialog,
   RecoveryModeDialog,
+  UpgradeContractDialog,
 };
 
 export default dialogComponents;
