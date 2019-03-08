@@ -44,9 +44,9 @@ import {
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
-  SetTaskPayoutCommandArgsSchema,
   SetTaskDomainCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
+  SetTaskPayoutCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
   UpdateTaskCommandArgsSchema,
 } from './schemas';

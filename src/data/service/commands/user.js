@@ -24,9 +24,9 @@ import { createNotificationsReadEvent } from '../events';
 
 import {
   CreateUserProfileCommandArgsSchema,
-  UpdateUserProfileCommandArgsSchema,
-  SetUserAvatarCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
+  SetUserAvatarCommandArgsSchema,
+  UpdateUserProfileCommandArgsSchema,
 } from './schemas';
 
 type UserCommandMetadata = {|
