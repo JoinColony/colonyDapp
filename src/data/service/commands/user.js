@@ -20,7 +20,11 @@ import {
   getUserMetadataStore,
 } from '../../stores';
 
-import { createNotificationsReadEvent } from '../events';
+import {
+  createNotificationsReadEvent,
+  createSubscribeToTaskEvent,
+  createUnsubscribeToTaskEvent,
+} from '../events';
 
 import {
   CreateUserProfileCommandArgsSchema,
@@ -83,6 +87,14 @@ export type SetUserAvatarCommandArgs = {|
 export type MarkNotificationsAsReadCommandArgs = {|
   readUntil: string,
   exceptFor?: string[],
+|};
+
+export type SubscribeToTaskCommandArgs = {|
+  taskId: string,
+|};
+
+export type UnsubscribeToTaskCommandArgs = {|
+  taskId: string,
 |};
 
 export type AddTokenInfoCommandArgs = {|
@@ -179,6 +191,28 @@ export const markNotificationsAsRead: UserMetadataCommand<
   async execute(args) {
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createNotificationsReadEvent(args));
+    return userMetadataStore;
+  },
+});
+
+export const subscribeToTask: UserMetadataCommand<
+  SubscribeToTaskCommandArgs,
+  EventStore,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createSubscribeToTaskEvent(args));
+    return userMetadataStore;
+  },
+});
+
+export const unsubscribeToTask: UserMetadataCommand<
+  UnsubscribeToTaskCommandArgs,
+  EventStore,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createUnsubscribeToTaskEvent(args));
     return userMetadataStore;
   },
 });

@@ -1,6 +1,8 @@
 /* @flow */
 import { formatEther } from 'ethers/utils';
 
+import type { OrbitDBAddress } from '~types';
+
 import type {
   ContractTransactionType,
   TaskReferenceType,
@@ -25,12 +27,29 @@ import type {
   Query,
 } from '../../types';
 
-import { getUserProfileStore } from '../../stores';
+import type {
+  SubscribedToTaskEvent,
+  UnsubscribedFromTaskEvent,
+} from '../events';
+
+import { USER_EVENT_TYPES } from '../../constants';
+
+import { getUserMetadataStore, getUserProfileStore } from '../../stores';
+
+const { SUBSCRIBED_TO_TASK, UNSUBSCRIBED_FROM_TASK } = USER_EVENT_TYPES;
 
 type UserQueryContext = ContextWithMetadata<
   {|
     walletAddress: string,
     username?: string,
+  |},
+  DDBContext,
+>;
+
+type UserMetadataQueryContext = ContextWithMetadata<
+  {|
+    userMetadataStoreAddress: string | OrbitDBAddress,
+    walletAddress: string,
   |},
   DDBContext,
 >;
@@ -63,6 +82,7 @@ type UserTransactionIdsQueryContext = ContextWithMetadata<
 type UsernameQueryContext = {| ...ENSCacheContext, ...NetworkClientContext |};
 
 type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
+type UserMetadataQuery<I: *, R: *> = Query<UserMetadataQueryContext, I, R>;
 type UsernameQuery<I: *, R: *> = Query<UsernameQueryContext, I, R>;
 // type UserPermissionsQuery<I: *, R: *> = Query<ColonyClientContext, I, R>;
 
@@ -328,5 +348,39 @@ export const getUserTaskIds: Query<
       closed: endedTaskIds,
       open: openTaskIds,
     };
+  },
+});
+
+export const getUserTasks: UserMetadataQuery<void, *> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute() {
+    const metadataStore = await getUserMetadataStore(ddb)(metadata);
+    return metadataStore
+      .all()
+      .filter(
+        ({ type }) =>
+          type === SUBSCRIBED_TO_TASK || type === UNSUBSCRIBED_FROM_TASK,
+      )
+      .reduce(
+        (
+          userTasks,
+          {
+            type,
+            payload: { taskId },
+          }: SubscribedToTaskEvent | UnsubscribedFromTaskEvent,
+        ) => {
+          switch (type) {
+            case SUBSCRIBED_TO_TASK:
+              return [...userTasks, taskId];
+            case UNSUBSCRIBED_FROM_TASK:
+              return userTasks.filter(userTaskId => userTaskId !== taskId);
+            default:
+              return userTasks;
+          }
+        },
+        [],
+      );
   },
 });
