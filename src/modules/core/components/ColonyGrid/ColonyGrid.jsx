@@ -14,7 +14,7 @@ import ColonyGridItem from './ColonyGridItem.jsx';
 
 import styles from './ColonyGrid.css';
 
-import type { ColonyType } from '~immutable';
+import type { ColonyType, DataType } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -25,7 +25,7 @@ const MSG = defineMessages({
 
 type Props = {|
   /** List of colonies to display */
-  colonies: Array<ColonyType>,
+  colonies: Array<DataType<ColonyType>>,
 |};
 
 const displayName = 'ColonyGrid';
@@ -36,7 +36,10 @@ const ColonyGrid = ({ colonies = [] }: Props) => (
       <Heading text={MSG.title} appearance={{ size: 'medium' }} />
     </div>
     <div className={styles.colonyGrid}>
-      {colonies.map(({ ensName, address, name, avatar }) => (
+      {/* Once the colonies are persisted, we need to use withDataReducer and useDataFetcher
+        I don't want to deal with this right now
+        $FlowFixMe */}
+      {colonies.map(({ record: { ensName, address, name, avatar } }) => (
         <div className={styles.colonyGridItem} key={address}>
           <ColonyGridItem
             address={address}
