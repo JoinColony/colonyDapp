@@ -4,7 +4,7 @@ import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
 
-import styles from './StepCreateColony.css';
+import styles from './StepConfirmAll.css';
 
 import Heading from '~core/Heading';
 
