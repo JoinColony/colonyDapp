@@ -12,6 +12,7 @@ export { default as getDDB } from './getDDB';
 export { default as getGasPrices } from './getGasPrices';
 export { default as getNetworkClient } from './getNetworkClient';
 export { default as getMethod } from './getMethod';
+export { default as getNetworkVersion } from './getNetworkVersion';
 export { getProvider, defaultNetwork } from './getProvider';
 
 export const getNetworkMethod = getMethod.bind(null, NETWORK_CONTEXT);

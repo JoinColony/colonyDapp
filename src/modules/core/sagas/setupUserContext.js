@@ -27,7 +27,12 @@ import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
-import { getDDB, getGasPrices, getColonyManager } from './utils';
+import {
+  getDDB,
+  getGasPrices,
+  getColonyManager,
+  getNetworkVersion,
+} from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 
 function* setupContextDependentSagas(): Saga<void> {
@@ -81,6 +86,11 @@ export default function* setupUserContext(
     });
 
     yield call(getGasPrices);
+
+    /*
+     * Get latest network contracts version
+     */
+    yield call(getNetworkVersion);
 
     const ens = yield getContext('ens');
 
