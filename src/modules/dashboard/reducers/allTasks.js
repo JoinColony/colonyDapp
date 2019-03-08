@@ -1,10 +1,16 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ACTIONS } from '~redux';
 
-import { TaskRecord, DataRecord } from '~immutable';
+import {
+  TaskRecord,
+  DataRecord,
+  UserRecord,
+  TaskFeedItemRecord,
+  TaskPayoutRecord,
+} from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 
 import type { AllTasksMap, TaskRecordType } from '~immutable';
@@ -16,7 +22,7 @@ const allTasksReducer: ReducerType<
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH_SUCCESS: *,
     TASK_FETCH_COMMENTS: *,
-    TASK_REMOVE_SUCCESS: *,
+    TASK_CANCEL_SUCCESS: *,
     // TASK_SET_DATE_SUCCESS: *,
     // TASK_SET_SKILL_SUCCESS: *,
     TASK_UPDATE_SUCCESS: *,
@@ -30,9 +36,20 @@ const allTasksReducer: ReducerType<
           keyPath: [ensName, id],
           keyPath,
         },
-        payload,
+        payload: { assignee, feedItems = [], payouts = [], ...task },
       } = action;
-      const data = DataRecord({ record: TaskRecord(payload) });
+      const data = DataRecord({
+        // TODO in #939
+        // $FlowFixMe some of these records aren't constructed properly
+        record: TaskRecord({
+          ...(assignee && UserRecord(fromJS(assignee))),
+          feedItems: feedItems.map(feedItem =>
+            TaskFeedItemRecord(fromJS(feedItem)),
+          ),
+          payouts: payouts.map(payout => TaskPayoutRecord(fromJS(payout))),
+          ...task,
+        }),
+      });
 
       return state.get(ensName)
         ? state.mergeDeepIn(keyPath, data)
@@ -51,7 +68,7 @@ const allTasksReducer: ReducerType<
       return state.mergeDeepIn([...keyPath, 'record'], payload);
     }
 
-    case ACTIONS.TASK_REMOVE_SUCCESS:
+    case ACTIONS.TASK_CANCEL_SUCCESS:
       return state.deleteIn(action.meta.keyPath);
 
     default:

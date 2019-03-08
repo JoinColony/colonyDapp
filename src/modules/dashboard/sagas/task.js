@@ -67,6 +67,7 @@ function* taskCreate({
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
     const context = yield* getStoreContext(colonyENSName);
+    // TODO this payload will no doubt change in #938
     const { taskId, domainId, title, description } = payload;
     yield* executeCommand(context, createTask, {
       taskId,
@@ -81,6 +82,7 @@ function* taskCreate({
     /*
      * Dispatch the success action.
      */
+    // $FlowFixMe `payload` is not a `TaskType`, but perhaps it should be
     yield put<Action<typeof ACTIONS.TASK_FETCH_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_SUCCESS,
       payload,
@@ -101,7 +103,7 @@ function* taskFetch({
     keyPath: [colonyENSName],
   },
   meta,
-  // @FIXME: we could fetch it via taskId as well, if we have a map on state for taskId => store address
+  // TODO: we could fetch it via taskId as well, if we have a map on state for taskId => store address. See #959.
   payload: { taskStoreAddress },
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
@@ -111,6 +113,7 @@ function* taskFetch({
     /*
      * Dispatch the success action.
      */
+    // $FlowFixMe `task` is not a `TaskType`, but perhaps it should be
     yield put<Action<typeof ACTIONS.TASK_FETCH_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_SUCCESS,
       payload: task,
@@ -256,7 +259,7 @@ function* taskSetSkill({
   try {
     const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
     yield* executeCommand(context, setTaskSkill, { skillId });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_SET_SKILL_SUCCESS>>({
       type: ACTIONS.TASK_SET_SKILL_SUCCESS,
       payload: {
         taskId,
@@ -282,7 +285,7 @@ function* taskSetPayout({
   try {
     const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
     yield* executeCommand(context, setTaskPayout, { token, amount });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
       type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
       payload: {
         taskId,
@@ -305,7 +308,7 @@ function* taskSetDueDate({
   try {
     const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
     yield* executeCommand(context, setTaskDueDate, { dueDate });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_SET_DATE_SUCCESS>>({
       type: ACTIONS.TASK_SET_DATE_SUCCESS,
       payload: {
         taskId,
@@ -328,7 +331,7 @@ function* taskFinalize({
   try {
     const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
     yield* executeCommand(context, finalizeTask, { amountPaid, worker });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({
       type: ACTIONS.TASK_FINALIZE_SUCCESS,
       payload: {
         taskId,
@@ -349,7 +352,7 @@ function* sendWorkInviteSaga({
   try {
     const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
     yield* executeCommand(context, sendWorkInvite, { worker });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS,
       payload: {
         taskId,
@@ -372,7 +375,7 @@ function* createWorkRequestSaga({
     yield* executeCommand(context, createWorkRequest, {
       worker: wallet.address,
     });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
       payload: {
         taskId,
@@ -394,7 +397,7 @@ function* assignWorkerSaga({
     yield* executeCommand(context, assignWorker, {
       worker,
     });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_ASSIGN_SUCCESS>>({
       type: ACTIONS.TASK_ASSIGN_SUCCESS,
       payload: {
         taskId,
@@ -416,7 +419,7 @@ function* unassignWorkerSaga({
     yield* executeCommand(context, unassignWorker, {
       worker,
     });
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_UNASSIGN_SUCCESS>>({
       type: ACTIONS.TASK_UNASSIGN_SUCCESS,
       payload: {
         taskId,
@@ -443,7 +446,7 @@ function* taskCommentsSaga({
       { ddb, metadata: { commentsStoreAddress } },
       getTaskComments,
     );
-    yield put({
+    yield put<Action<typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
       meta,
       payload,

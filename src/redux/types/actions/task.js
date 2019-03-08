@@ -2,32 +2,37 @@
 
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 
-import type { WithKeyPathDepth2 } from '~types';
-// import type { TaskType } from '~immutable';
+import type { $Pick, WithKeyPathDepth2 } from '~types';
+import type { TaskType } from '~immutable';
 
 import type { ErrorActionType, UniqueActionType } from '../index';
+import type { CommentPostedEvent } from '../../../data/service/events';
 
 import { ACTIONS } from '../../index';
 
 export type TaskActionTypes = {|
   TASK_CANCEL: UniqueActionType<
     typeof ACTIONS.TASK_CANCEL,
-    *, // TODO define type
+    {| taskId: string, domainId: number, taskStoreAddress: string |},
     WithKeyPathDepth2,
   >,
   TASK_CANCEL_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_CANCEL_SUCCESS,
-    *, // TODO define type
+    void,
     WithKeyPathDepth2,
   >,
   TASK_CANCEL_ERROR: ErrorActionType<
     typeof ACTIONS.TASK_CANCEL_ERROR,
     WithKeyPathDepth2,
   >,
-  TASK_CLOSE: UniqueActionType<typeof ACTIONS.TASK_CLOSE, *, WithKeyPathDepth2>,
+  TASK_CLOSE: UniqueActionType<
+    typeof ACTIONS.TASK_CLOSE,
+    {| taskId: string, taskStoreAddress: string |},
+    WithKeyPathDepth2,
+  >,
   TASK_CLOSE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_CLOSE_SUCCESS,
-    *, // TODO define type
+    {| taskId: string |},
     WithKeyPathDepth2,
   >,
   TASK_CLOSE_ERROR: ErrorActionType<
@@ -69,6 +74,7 @@ export type TaskActionTypes = {|
   >,
   TASK_CREATE: UniqueActionType<
     typeof ACTIONS.TASK_CREATE,
+    // TODO this payload will no doubt change in #938
     {|
       colonyENSName: string,
       payout: string,
@@ -86,7 +92,7 @@ export type TaskActionTypes = {|
   >,
   TASK_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_CREATE_SUCCESS,
-    void,
+    TaskType,
     WithKeyPathDepth2,
   >,
   TASK_FETCH: UniqueActionType<typeof ACTIONS.TASK_FETCH, *, WithKeyPathDepth2>,
@@ -98,7 +104,10 @@ export type TaskActionTypes = {|
   >,
   COLONY_FETCH_TASKS_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_FETCH_TASKS_SUCCESS,
-    *, // TODO define type
+    {|
+      colonyENSName: string,
+      colonyTasks: { [domainId: string]: { [draftId: string]: string } },
+    |},
     WithKeyPathDepth2,
   >,
   COLONY_FETCH_TASKS_ERROR: UniqueActionType<
@@ -107,7 +116,7 @@ export type TaskActionTypes = {|
   >,
   TASK_FETCH_COMMENTS: UniqueActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS,
-    *, // TODO define type
+    {| commentsStoreAddress: string |},
     WithKeyPathDepth2,
   >,
   TASK_FETCH_COMMENTS_ERROR: ErrorActionType<
@@ -116,7 +125,7 @@ export type TaskActionTypes = {|
   >,
   TASK_FETCH_COMMENTS_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
-    void,
+    $PropertyType<CommentPostedEvent, 'payload'>[],
     WithKeyPathDepth2,
   >,
   TASK_FETCH_ERROR: ErrorActionType<
@@ -125,17 +134,17 @@ export type TaskActionTypes = {|
   >,
   TASK_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_FETCH_SUCCESS,
-    *,
+    TaskType,
     WithKeyPathDepth2,
   >,
   TASK_FINALIZE: UniqueActionType<
     typeof ACTIONS.TASK_FINALIZE,
     {|
-      taskId: number,
-      taskStoreAddress: string,
-      colonyENSName: string,
-      worker: string,
       amountPaid: string,
+      colonyENSName: string,
+      taskId: string,
+      taskStoreAddress: string,
+      worker: string,
     |},
     WithKeyPathDepth2,
   >,
@@ -145,7 +154,11 @@ export type TaskActionTypes = {|
   >,
   TASK_FINALIZE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_FINALIZE_SUCCESS,
-    void,
+    {|
+      amountPaid: string,
+      taskId: string,
+      worker: string,
+    |},
     WithKeyPathDepth2,
   >,
   TASK_MANAGER_COMPLETE: UniqueActionType<
@@ -165,7 +178,7 @@ export type TaskActionTypes = {|
   TASK_MANAGER_END: UniqueActionType<
     typeof ACTIONS.TASK_MANAGER_END,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: string, // TODO should be draftId
       colonyENSName: string,
       rating: number,
     |},
@@ -183,7 +196,7 @@ export type TaskActionTypes = {|
   TASK_MANAGER_RATE_WORKER: UniqueActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: string, // TODO should be draftId
       colonyENSName: string,
       rating: number,
     |},
@@ -201,7 +214,7 @@ export type TaskActionTypes = {|
   TASK_MANAGER_REVEAL_WORKER_RATING: UniqueActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: string, // TODO should be draftId
       colonyENSName: string,
     |},
     WithKeyPathDepth2,
@@ -218,11 +231,11 @@ export type TaskActionTypes = {|
   TASK_MODIFY_WORKER_PAYOUT: UniqueActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT,
     {|
-      taskId: number, // TODO should be draftId
-      fromPot: number,
-      toPot: number,
       amount: number,
+      fromPot: number,
+      taskId: string, // TODO should be draftId
       token: string,
+      toPot: number,
     |},
     WithKeyPathDepth2,
   >,
@@ -240,7 +253,7 @@ export type TaskActionTypes = {|
     {|
       colonyENSName: string,
       dueDate: Date,
-      taskId: number,
+      taskId: string,
       taskStoreAddress: string,
     |},
     WithKeyPathDepth2,
@@ -251,12 +264,10 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_DATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SET_DATE_SUCCESS,
-    {
-      eventData: $PropertyType<
-        $PropertyType<ColonyClientType, 'events'>,
-        'TaskDomainSet',
-      >,
-    },
+    {|
+      taskId: string,
+      dueDate: Date,
+    |},
     WithKeyPathDepth2,
   >,
   TASK_SET_DOMAIN: UniqueActionType<
@@ -264,7 +275,7 @@ export type TaskActionTypes = {|
     {|
       colonyENSName: string,
       domainId: Date,
-      taskId: number,
+      taskId: string,
     |},
     WithKeyPathDepth2,
   >,
@@ -274,12 +285,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_DOMAIN_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS,
-    {
-      eventData: $PropertyType<
-        $PropertyType<ColonyClientType, 'events'>,
-        'TaskDueDateSet',
-      >,
-    },
+    {||}, // TODO define a type for this when a saga is created
     WithKeyPathDepth2,
   >,
   TASK_SET_SKILL: UniqueActionType<
@@ -298,7 +304,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_SKILL_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SET_SKILL_SUCCESS,
-    *, // TODO define type
+    {| taskId: string, skillId: number |},
     WithKeyPathDepth2,
   >,
   TASK_SET_PAYOUT: UniqueActionType<
@@ -318,7 +324,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_PAYOUT_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-    *, // TODO define type
+    {| taskId: string, amount: string |},
     WithKeyPathDepth2,
   >,
   TASK_ASSIGN: UniqueActionType<
@@ -337,7 +343,7 @@ export type TaskActionTypes = {|
   >,
   TASK_ASSIGN_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_ASSIGN_SUCCESS,
-    *, // TODO define type
+    {| taskId: string, worker: string |},
     WithKeyPathDepth2,
   >,
   TASK_UNASSIGN: UniqueActionType<
@@ -356,7 +362,7 @@ export type TaskActionTypes = {|
   >,
   TASK_UNASSIGN_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_UNASSIGN_SUCCESS,
-    *, // TODO define type
+    {| taskId: string, worker: string |},
     WithKeyPathDepth2,
   >,
   TASK_SEND_WORK_INVITE: UniqueActionType<
@@ -375,7 +381,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SEND_WORK_INVITE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS,
-    *, // TODO define type
+    {| taskId: string, worker: string |},
     WithKeyPathDepth2,
   >,
   TASK_SEND_WORK_REQUEST: UniqueActionType<
@@ -394,14 +400,14 @@ export type TaskActionTypes = {|
   >,
   TASK_SEND_WORK_REQUEST_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
-    *, // TODO define type
+    {| taskId: string, worker: string |},
     WithKeyPathDepth2,
   >,
   TASK_SUBMIT_DELIVERABLE: UniqueActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
     {|
       colonyENSName: string,
-      taskId: number,
+      taskId: string,
       deliverableHash: string,
     |},
     WithKeyPathDepth2,
@@ -412,12 +418,12 @@ export type TaskActionTypes = {|
   >,
   TASK_SUBMIT_DELIVERABLE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
-    *, // TODO define type
+    {||}, // TODO define a type for this when the saga is created
     WithKeyPathDepth2,
   >,
   TASK_UPDATE: UniqueActionType<
     typeof ACTIONS.TASK_UPDATE,
-    *,
+    $Exact<$Pick<TaskType, {| title: *, description: * |}>>,
     WithKeyPathDepth2,
   >,
   TASK_UPDATE_ERROR: ErrorActionType<
@@ -426,13 +432,13 @@ export type TaskActionTypes = {|
   >,
   TASK_UPDATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.TASK_UPDATE_SUCCESS,
-    *, // $Shape<TaskType>,
+    $Exact<$Pick<TaskType, {| title: *, description: * |}>>,
     WithKeyPathDepth2,
   >,
   TASK_WORKER_CLAIM_REWARD: UniqueActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD,
     {|
-      taskId: number,
+      taskId: string,
       colonyENSName: string,
       tokenAddresses: string[],
     |},
@@ -455,7 +461,7 @@ export type TaskActionTypes = {|
   TASK_WORKER_END: UniqueActionType<
     typeof ACTIONS.TASK_WORKER_END,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: string, // TODO should be draftId
       colonyENSName: string,
       workDescription: *,
       rating: number,
@@ -474,7 +480,7 @@ export type TaskActionTypes = {|
   TASK_WORKER_RATE_MANAGER: UniqueActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: string, // TODO should be draftId
       colonyENSName: string,
       rating: number,
     |},
@@ -492,7 +498,7 @@ export type TaskActionTypes = {|
   TASK_WORKER_REVEAL_MANAGER_RATING: UniqueActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING,
     {|
-      taskId: number, // TODO should be draftId
+      taskId: string, // TODO should be draftId
       colonyENSName: string,
     |},
     WithKeyPathDepth2,

@@ -30,13 +30,7 @@ export const getTaskComments: CommentQuery<*, *> = ({
     });
     return commentsStore
       .all()
-      .filter(({ type: eventType }) => eventType === COMMENT_POSTED)
-      .reduce(
-        (comments, { payload: comment }: CommentPostedEvent) => [
-          ...comments,
-          comment,
-        ],
-        [],
-      );
+      .filter(({ type }) => type === COMMENT_POSTED)
+      .map(({ payload }: CommentPostedEvent) => payload);
   },
 });

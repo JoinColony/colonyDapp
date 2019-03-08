@@ -20,6 +20,7 @@ type Shared = {|
   colonyENSName: ENSName,
   creator: string,
   currentState: TaskCurrentState,
+  description: string,
   domainId: number,
   draftId: string, // Draft ID, when the task is a little babby
   dueDate?: Date,
