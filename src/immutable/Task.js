@@ -6,7 +6,7 @@ import { Record, List } from 'immutable';
 
 import { TASK_STATE } from './constants';
 
-import type { TaskFeedItemRecordType, TaskFeedItemType } from './TaskFeedItem';
+import type { $Pick } from '~types';
 import type { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
 import type { TaskUserRecordType, TaskUserType } from './TaskUser';
 
@@ -18,6 +18,7 @@ export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 type Shared = {|
   colonyENSName: string,
   createdAt: Date,
+  creator: string, // Address of the task creator
   currentState: TaskCurrentState,
   description?: string,
   domainId?: number,
@@ -34,7 +35,6 @@ type Shared = {|
 
 export type TaskType = $ReadOnly<{|
   ...Shared,
-  feedItems: Array<TaskFeedItemType>,
   manager?: TaskUserType,
   payouts: Array<TaskPayoutType>,
   worker?: TaskUserType,
@@ -44,13 +44,14 @@ export type TaskType = $ReadOnly<{|
 
 type TaskRecordProps = {|
   ...Shared,
-  feedItems: List<TaskFeedItemRecordType>,
   manager?: TaskUserRecordType,
   payouts: List<TaskPayoutRecordType>,
   worker?: TaskUserRecordType,
   // TODO support full task workflow:
   // evaluator?: TaskUserRecordType,
 |};
+
+export type TaskProps<T> = $Pick<TaskType, $Exact<T>>;
 
 export type TaskRecordType = RecordOf<TaskRecordProps>;
 
@@ -62,12 +63,12 @@ export type TaskDraftId = $PropertyType<TaskRecordType, 'draftId'>;
 const defaultValues: $Shape<TaskRecordProps> = {
   colonyENSName: undefined,
   createdAt: undefined,
+  creator: undefined,
   currentState: undefined,
   description: undefined,
   domainId: undefined,
   draftId: undefined,
   dueDate: undefined,
-  feedItems: List(),
   manager: undefined,
   payouts: List(),
   reputation: undefined,

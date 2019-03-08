@@ -48,7 +48,7 @@ class TaskFeed extends Component<Props> {
                     comment={comment}
                     createdAt={createdAt}
                     /*
-                     * @TODO The author wallet <-> profile raltionship will have to come from a reducer
+                     * TODO The author wallet <-> profile raltionship will have to come from a reducer
                      */
                     currentUser={isSameUser(mockUser, currentUser)}
                   />

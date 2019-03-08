@@ -11,7 +11,7 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
-// @TODO: Use provider's type
+// TODO: Use provider's type
 const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
 const WHITELIST = '__WHITELIST';
 const DATA = '__DATA';
@@ -36,11 +36,11 @@ class WhitelistAccessController extends AbstractAccessController<
     whitelist: Map<string, string>,
   ) {
     super();
-    // @TODO make sure the wallet is unlocked
+    // TODO make sure the wallet is unlocked
     this._purserWallet = purserWallet;
-    // @TODO get the inbox owner from the manifest
+    // TODO get the inbox owner from the manifest
     this._inboxOwnerAddress = inboxOwnerAddress;
-    // @TODO Retrieve the whitelist from the store or a contract
+    // TODO Retrieve the whitelist from the store or a contract
     this._whitelist = whitelist;
   }
 
@@ -50,7 +50,7 @@ class WhitelistAccessController extends AbstractAccessController<
   }
 
   async _canModifyWhitelist(accountAddress: string) {
-    // @TODO: check against store manifest
+    // TODO: check against store manifest
     return accountAddress === this._inboxOwnerAddress;
   }
 
@@ -92,12 +92,12 @@ class WhitelistAccessController extends AbstractAccessController<
   }
 
   async setup({ whitelist }: any) {
-    this._whitelist = whitelist; // @TODO: Load from a contract?
+    this._whitelist = whitelist; // TODO: Load from a contract?
     this._checkWalletAddress();
   }
 
   async addToWhitelist(store: OrbitDBKVStore, accountAddress: string) {
-    // @TODO verify if the current wallet is in fact the inbox owner
+    // TODO verify if the current wallet is in fact the inbox owner
     assert(
       this._purserWallet.address === this._inboxOwnerAddress,
       'Only the inbox owner is allowed to change the whitelist',
@@ -113,7 +113,7 @@ class WhitelistAccessController extends AbstractAccessController<
   }
 
   async removeFromWhitelist(store: OrbitDBKVStore, accountAddress: string) {
-    // @TODO verify if the current wallet is in fact the inbox owner
+    // TODO verify if the current wallet is in fact the inbox owner
     assert(
       this._purserWallet.address === this._inboxOwnerAddress,
       'Only the inbox owner is allowed to change the whitelist',

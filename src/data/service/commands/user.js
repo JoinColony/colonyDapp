@@ -90,11 +90,11 @@ export type MarkNotificationsAsReadCommandArgs = {|
 |};
 
 export type SubscribeToTaskCommandArgs = {|
-  taskId: string,
+  draftId: string,
 |};
 
 export type UnsubscribeToTaskCommandArgs = {|
-  taskId: string,
+  draftId: string,
 |};
 
 export type AddTokenInfoCommandArgs = {|
@@ -168,7 +168,8 @@ export const removeUserAvatar: UserCommand<
   },
 });
 
-export const addTokenInfo: UserCommand<
+// XXX bad name, but without `Metadata` it conflicts with another command
+export const addTokenInfoMetadata: UserCommand<
   AddTokenInfoCommandArgs,
   ValidatedKVStore<UserProfileStoreValues>,
 > = ({ ddb, metadata }) => ({

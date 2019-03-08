@@ -8,10 +8,10 @@ import { ACTIONS } from '~redux';
 import { TASK_STATE } from '~immutable';
 
 /*
- * @TODO Temporary, please remove when wiring in the rating modals
+ * TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { TaskType, UserType } from '~immutable';
+import type { TaskFeedItemType, TaskType, UserType } from '~immutable';
 
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
@@ -76,6 +76,7 @@ type Props = {|
   canTaskPayoutBeClaimed: boolean,
   currentUser: UserType,
   didTaskDueDateElapse: boolean,
+  feedItems: TaskFeedItemType[],
   isTaskCreator?: boolean,
   isTaskManager: boolean,
   isTaskWorker: boolean,
@@ -135,6 +136,7 @@ class Task extends Component<Props> {
         canTaskPayoutBeClaimed,
         currentUser,
         didTaskDueDateElapse,
+        feedItems,
         isTaskCreator,
         isTaskManager,
         isTaskWorker,
@@ -211,7 +213,7 @@ class Task extends Component<Props> {
                 submit={ACTIONS.TASK_FINALIZE}
                 success={ACTIONS.TASK_FINALIZE_SUCCESS}
                 error={ACTIONS.TASK_FINALIZE_ERROR}
-                setValues={setValues}
+                values={setValues}
               />
             )}
             {/* Apply to work/display "submitted" if already done */}
@@ -317,7 +319,7 @@ class Task extends Component<Props> {
           <div className={styles.activityContainer}>
             <section className={styles.activity}>
               <TaskFeed
-                feedItems={task.feedItems}
+                feedItems={feedItems}
                 currentUser={currentUser}
                 isRevealEnded={task.currentState === TASK_STATE.FINALIZED}
               />

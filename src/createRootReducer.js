@@ -5,6 +5,7 @@ import { connectRouter } from 'connected-react-router';
 
 import { RootState } from '~immutable';
 
+// TODO eventually, move all reducers to src/redux/reducers
 import adminReducer from './modules/admin/reducers';
 import coreReducer from './modules/core/reducers';
 import dashboardReducer from './modules/dashboard/reducers';
@@ -14,6 +15,8 @@ import { CORE_NAMESPACE } from './modules/core/constants';
 import { DASHBOARD_NAMESPACE } from './modules/dashboard/constants';
 import { USERS_NAMESPACE } from './modules/users/constants';
 
+import { tasksReducer } from './redux/reducers';
+
 const createRootReducer = (history: *) =>
   combineReducers(
     {
@@ -22,6 +25,7 @@ const createRootReducer = (history: *) =>
       [DASHBOARD_NAMESPACE]: dashboardReducer,
       [USERS_NAMESPACE]: usersReducer,
       router: connectRouter(history),
+      tasks: tasksReducer,
     },
     RootState,
   );

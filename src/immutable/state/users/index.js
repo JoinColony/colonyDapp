@@ -3,7 +3,8 @@
 import type {
   Collection as CollectionType,
   List as ListType,
-  Map as MapType,
+  Map as ImmutableMapType,
+  Set as ImmutableSetType,
   RecordOf,
 } from 'immutable';
 
@@ -11,34 +12,32 @@ import type { ENSName } from '~types';
 
 import type { AllUsersRecord } from './AllUsers';
 import type { ContractTransactionRecordType } from '../../ContractTransaction';
-import type { CurrentUserTasksRecordType } from './CurrentUserTasks';
 import type { DataRecordType } from '../../Data';
 import type { WalletRecordType } from '../../Wallet';
+import type { UserMetadataRecordType } from '../../UserMetadata';
 import type { UserActivityRecordType } from '../../UserActivity';
 import type { UserProfileRecordType } from '../../UserProfile';
 import type { UserPermissionsRecordType } from '../../UserPermissions';
 
-export { default as CurrentUserTasksRecord } from './CurrentUserTasks';
-
 export * from './AllUsers';
-export * from './CurrentUserTasks';
-
-// export type CurrentUserTasksType = DataRecordType<CurrentUserTasksRecordType>;
 
 export type CurrentUserTransactionsType = DataRecordType<
   ListType<ContractTransactionRecordType>,
 >;
 
-export type CurrentUserPermissionsType = MapType<
+export type CurrentUserPermissionsType = ImmutableMapType<
   ENSName,
-  DataRecordType<MapType<UserPermissionsRecordType>>,
+  DataRecordType<ImmutableMapType<UserPermissionsRecordType>>,
 >;
+
+export type CurrentUserTasksType = ImmutableSetType<string>;
 
 export type CurrentUser = {|
   activities: ListType<UserActivityRecordType>,
+  metadata: UserMetadataRecordType,
   permissions: CurrentUserPermissionsType,
   profile: UserProfileRecordType,
-  tasks: DataRecordType<CurrentUserTasksRecordType>,
+  tasks: DataRecordType<CurrentUserTasksType>,
   transactions: CurrentUserTransactionsType,
 |};
 

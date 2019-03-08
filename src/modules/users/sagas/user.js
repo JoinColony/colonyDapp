@@ -39,7 +39,6 @@ import {
   getUsername,
   getUserPermissions,
   getUserProfile,
-  getUserTaskIds,
 } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -301,8 +300,21 @@ function* usernameCreate({
       },
     };
 
-    const { profileStore } = yield* executeCommand(context, createUserProfile, {
-      username,
+    // TODO should these stores be created after the transaction succeeded?
+    const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+      context,
+      createUserProfile,
+      {
+        username,
+      },
+    );
+    yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
+      type: ACTIONS.USER_METADATA_SET,
+      payload: {
+        inboxStoreAddress: inboxStore.address.toString(),
+        metadataStoreAddress: metadataStore.address.toString(),
+        profileStoreAddress: profileStore.address.toString(),
+      },
     });
 
     yield fork(createTransaction, meta.id, {
@@ -362,38 +374,11 @@ function* userPermissionsFetch({
   }
 }
 
-function* userTaskIdsFetch(
-  // eslint-disable-next-line no-unused-vars
-  action: Action<typeof ACTIONS.USER_TASK_IDS_FETCH>,
-): Saga<void> {
-  try {
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = {
-      // Any ColonyClient will do, so we'll use MetaColony
-      colonyClient: yield call([
-        colonyManager,
-        colonyManager.getMetaColonyClient,
-      ]),
-      metadata: {
-        walletAddress: yield select(currentUserAddressSelector),
-      },
-    };
-    const { closed, open } = yield* executeQuery(context, getUserTaskIds);
-    yield put<Action<typeof ACTIONS.USER_TASK_IDS_FETCH_SUCCESS>>({
-      type: ACTIONS.USER_TASK_IDS_FETCH_SUCCESS,
-      payload: { closed, open },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.USER_TASK_IDS_FETCH_ERROR, error);
-  }
-}
-
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_FETCH, userProfileFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
-  yield takeEvery(ACTIONS.USER_TASK_IDS_FETCH, userTaskIdsFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,

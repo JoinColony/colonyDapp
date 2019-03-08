@@ -62,7 +62,7 @@ export default class AbstractAccessController<
     const {
       identity: { type },
     } = entry;
-    // @TODO: Add logs here with debug so we have a verbose mode that gives us a clue on what's going on
+    // TODO: Add logs here with debug so we have a verbose mode that gives us a clue on what's going on
 
     // Is the entry identity type valid?
     const isTypeValid = type === this.constructor.type;

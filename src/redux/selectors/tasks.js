@@ -1,14 +1,17 @@
 /* @flow */
 
+import { Map as ImmutableMap, Set as ImmutableSet, List } from 'immutable';
 import { createSelector } from 'reselect';
-import { Map as ImmutableMap } from 'immutable';
 
 import type { RootStateRecord, TaskDraftId, TaskUserType } from '~immutable';
+
+import { currentUserAddressSelector } from '../../modules/users/selectors';
+import {
+  USERS_CURRENT_USER,
+  USERS_NAMESPACE,
+} from '../../modules/users/constants';
 import { TASK_STATE } from '~immutable/constants';
 import { addressEquals } from '~utils/strings';
-
-import { DASHBOARD_ALL_TASKS, DASHBOARD_NAMESPACE as ns } from '../constants';
-import { currentUserAddressSelector } from '../../users/selectors';
 
 /*
  * Utils
@@ -20,32 +23,76 @@ const didClaimPayout = (taskUser: TaskUserType, address: string) =>
 /*
  * Getters
  */
-const getAllTasks = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_TASKS], ImmutableMap());
-
 const getDraftIdFromProps = (
   state: RootStateRecord,
   { draftId }: { draftId: TaskDraftId },
 ) => draftId;
 
-const getColonyENSNameFromProps = (
-  state: RootStateRecord,
-  { colonyENSName }: { colonyENSName: string },
-) => colonyENSName;
+// TODO use constant for 'tasks'
+const getTaskRefs = (state: RootStateRecord) =>
+  state.get('tasks', ImmutableMap());
+
+// TODO use constants
+const getUserOpenDraftIds = (state: RootStateRecord) =>
+  state.getIn(
+    [USERS_NAMESPACE, USERS_CURRENT_USER, 'tasks', 'record', 'closed'],
+    ImmutableSet(),
+  );
+
+const getUserClosedDraftIds = (state: RootStateRecord) =>
+  state.getIn(
+    [USERS_NAMESPACE, USERS_CURRENT_USER, 'tasks', 'record', 'open'],
+    ImmutableSet(),
+  );
+
+const getTaskRefsFromDraftIds = (taskRefs, draftIds) =>
+  taskRefs.filter((_, draftId) => draftIds.has(draftId));
 
 /*
  * Selectors
  */
-export const colonyTasksSelector = createSelector(
-  getAllTasks,
-  getColonyENSNameFromProps,
-  (allTasks, colonyENSName) => allTasks.get(colonyENSName, ImmutableMap()),
+export const taskRefSelector = createSelector(
+  getTaskRefs,
+  getDraftIdFromProps,
+  (taskRefs, draftId) => taskRefs.get(draftId),
+);
+
+export const taskStorePropsSelector = createSelector(
+  taskRefSelector,
+  taskRef => {
+    if (taskRef && taskRef.has('record')) {
+      const {
+        colonyENSName,
+        commentsStoreAddress,
+        taskStoreAddress,
+      } = taskRef.get('record');
+      return { taskStoreAddress, commentsStoreAddress, colonyENSName };
+    }
+    return null;
+  },
 );
 
 export const taskSelector = createSelector(
-  colonyTasksSelector,
-  getDraftIdFromProps,
-  (tasks, draftId) => tasks.get(draftId),
+  taskRefSelector,
+  taskRef => (taskRef ? taskRef.getIn(['record', 'task']) : null),
+);
+
+export const currentUserOpenTaskRefsSelector = createSelector(
+  getTaskRefs,
+  getUserOpenDraftIds,
+  getTaskRefsFromDraftIds,
+);
+
+export const currentUserClosedTaskRefsSelector = createSelector(
+  getTaskRefs,
+  getUserClosedDraftIds,
+  getTaskRefsFromDraftIds,
+);
+
+export const taskFeedItemsSelector = createSelector(
+  taskRefSelector,
+  taskRef =>
+    taskRef ? taskRef.getIn(['record', 'feedItems'], List()) : List(),
 );
 
 // TODO consider whether the following are best as selectors, or whether

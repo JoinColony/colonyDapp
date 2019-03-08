@@ -23,6 +23,7 @@ import {
   USERS_NAMESPACE as ns,
   USERS_USERNAMES,
   USERS_USERS,
+  USERS_CURRENT_USER_METADATA,
 } from '../constants';
 
 /*
@@ -124,6 +125,8 @@ const getCurrentUserColonyPermissions = (
     USERS_CURRENT_USER_PERMISSIONS,
     ensName,
   ]);
+const getCurrentUserMetadata = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
 
 /*
  * Current user selectors
@@ -147,6 +150,10 @@ export const currentUserTransactionsSelector = createSelector(
 export const currentUserColonyPermissionsSelector = createSelector(
   getCurrentUserColonyPermissions,
   permissions => permissions,
+);
+export const currentUserMetadataSelector = createSelector(
+  getCurrentUserMetadata,
+  metadata => metadata,
 );
 
 // TODO this doesn't quite fit here, maybe move?

@@ -60,7 +60,7 @@ type Props = {
  * But in combination with Flow and react-intl you can't get it to actually work
  * in this component using default props.
  *
- * @TODO Enable react/button-has-type rule
+ * TODO Enable react/button-has-type rule
  *
  * After a non-workaround has been found for this.
  */

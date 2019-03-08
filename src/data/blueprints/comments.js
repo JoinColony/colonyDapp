@@ -21,7 +21,7 @@ const commentsStore: StoreBlueprint = {
       body: yup.string().required(),
       metadata: yup.object({
         /*
-         * @TODO When the time is right, add attachments
+         * TODO When the time is right, add attachments
          */
         mentions: yup.array().of(yup.string().required()),
       }),

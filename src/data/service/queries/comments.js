@@ -2,8 +2,12 @@
 
 import type { OrbitDBAddress } from '~types';
 
-import type { ContextWithMetadata, DDBContext, Query } from '../../types';
-import type { CommentPostedEvent } from '../events';
+import type {
+  ContextWithMetadata,
+  DDBContext,
+  Event,
+  Query,
+} from '../../types';
 
 import { getCommentsStore } from '../../stores';
 import { TASK_EVENT_TYPES } from '../../constants';
@@ -31,6 +35,6 @@ export const getTaskComments: CommentQuery<*, *> = ({
     return commentsStore
       .all()
       .filter(({ type }) => type === COMMENT_POSTED)
-      .map(({ payload }: CommentPostedEvent) => payload);
+      .map(({ payload }: Event<typeof COMMENT_POSTED>) => payload);
   },
 });

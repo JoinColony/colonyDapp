@@ -47,14 +47,14 @@ export const SetTaskSkillCommandArgsSchema = yup.object({
 });
 
 export const CreateTaskCommandArgsSchema = yup.object({
-  domainId: yup.number().required(),
-  draftId: yup.string().required(),
-  description: yup.string(),
-  title: yup.string(),
+  creator: yup.string().required(),
 });
 
-export const UpdateTaskCommandArgsSchema = yup.object({
+export const SetTaskDescriptionCommandArgsSchema = yup.object({
   description: yup.string(),
+});
+
+export const SetTaskTitleCommandArgsSchema = yup.object({
   title: yup.string(),
 });
 
@@ -76,7 +76,7 @@ export const PostCommentCommandArgsSchema = yup.object({
       body: yup.string().required(),
       metadata: yup.object({
         /*
-         * @TODO When the time is right, add attachments
+         * TODO When the time is right, add attachments
          */
         mentions: yup.array().of(yup.string().required()),
       }),
@@ -124,7 +124,7 @@ export const SetTaskDomainCommandArgsSchema = yup.object({
 });
 
 export const CancelTaskCommandArgsSchema = yup.object({
-  taskId: yup.string().required(),
+  draftId: yup.string().required(),
   domainId: yup.number().required(),
 });
 

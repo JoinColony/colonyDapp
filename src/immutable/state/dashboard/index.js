@@ -13,7 +13,7 @@ import type { AllTokensRecord } from './AllTokens';
 import type { DataRecordType } from '../../Data';
 import type { DomainId, DomainRecordType } from '../../Domain';
 import type { TaskCommentRecordType } from '../../TaskComment';
-import type { TaskDraftId, TaskRecordType } from '../../Task';
+import type { TaskDraftId } from '../../Task';
 
 export * from './AllColonies';
 export * from './AllTokens';
@@ -26,8 +26,6 @@ export type AllDomainsMap = ImmutableMapType<
   ENSName,
   DataRecordType<DomainsMap>,
 >;
-export type TasksMap = ImmutableMapType<string, TaskRecordType>;
-export type AllTasksMap = ImmutableMapType<ENSName, TasksMap>;
 export type CommentsList = ListType<TaskCommentRecordType>;
 export type AllCommentsMap = ImmutableMapType<TaskDraftId, CommentsList>;
 
@@ -35,7 +33,6 @@ export type DashboardStateProps = {|
   allColonies: AllColoniesRecord,
   allComments: AllCommentsMap,
   allDomains: AllDomainsMap,
-  allTasks: AllTasksMap,
   allTokens: AllTokensRecord,
 |};
 

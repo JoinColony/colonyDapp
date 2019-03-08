@@ -28,25 +28,19 @@ import type {
   TokenType,
 } from '~immutable';
 
-import type {
-  DomainCreatedEvent,
-  TaskStoreRegistered,
-  TaskStoreUnregistered,
-} from '../events';
-
 import { getColonyStore } from '../../stores';
 import { COLONY_EVENT_TYPES } from '../../constants';
 import { getUserProfile } from './users';
+import {
+  getColonyAvatarReducer,
+  getColonyReducer,
+  getColonyTasksReducer,
+} from '../reducers';
 
 const {
-  AVATAR_REMOVED,
-  AVATAR_UPLOADED,
   DOMAIN_CREATED,
-  PROFILE_CREATED,
-  PROFILE_UPDATED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
-  TOKEN_INFO_ADDED,
 } = COLONY_EVENT_TYPES;
 
 type ColonyMetadata = {|
@@ -263,7 +257,7 @@ export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
 
 export const getColony: ColonyQuery<
   void,
-  { colony: ColonyType, tokens: Array<TokenType> },
+  { colony: $Shape<ColonyType>, tokens: $Shape<TokenType>[] },
 > = ({
   ddb,
   colonyClient,
@@ -278,7 +272,7 @@ export const getColony: ColonyQuery<
 
     const getAdminsQuery = getColonyAdmins({ colonyClient, ddb });
     const admins = await getAdminsQuery.execute();
-    // @TODO: Include `founder` to ColonyType
+    // TODO: Include `founder` to ColonyType
     // const getFounderQuery = getColonyFounder({ colonyClient });
     // const founder = await getFounderQuery.execute();
 
@@ -288,57 +282,8 @@ export const getColony: ColonyQuery<
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
       .reduce(
-        (
-          { colony, tokens },
-          { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
-        ) => {
-          switch (type) {
-            case TOKEN_INFO_ADDED: {
-              const { address, isNative } = payload;
-              return {
-                colony: {
-                  ...colony,
-                  tokens: {
-                    ...colony.tokens,
-                    [address]: {
-                      address,
-                      isNative,
-                    },
-                  },
-                },
-                tokens: [...tokens, payload],
-              };
-            }
-            case AVATAR_UPLOADED: {
-              // @TODO: Make avatar an object so we have the ipfsHash and data
-              const { ipfsHash } = payload;
-              return {
-                colony: {
-                  ...colony,
-                  avatar: ipfsHash,
-                },
-                tokens,
-              };
-            }
-            case AVATAR_REMOVED: {
-              const { avatar } = colony;
-              const { ipfsHash } = payload;
-              return {
-                colony: {
-                  ...colony,
-                  avatar: avatar && avatar === ipfsHash ? undefined : avatar,
-                },
-                tokens,
-              };
-            }
-            case PROFILE_CREATED:
-            case PROFILE_UPDATED:
-              return { colony: Object.assign({}, colony, payload), tokens };
-            default:
-              return { colony, tokens };
-          }
-        },
-        // @TODO: Add the right defaults here using a data model or something like that
+        getColonyReducer,
+        // TODO: Add the right defaults here using a data model or something like that
         {
           colony: {
             address: colonyAddress,
@@ -356,7 +301,7 @@ export const getColony: ColonyQuery<
 });
 
 export const getColonyAvatar: ColonyQuery<
-  *,
+  void,
   null | {| ipfsHash: string, avatar: string |},
 > = ({
   ddb,
@@ -372,35 +317,19 @@ export const getColonyAvatar: ColonyQuery<
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-      .reduce(
-        (
-          colony,
-          { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
-        ) => {
-          switch (type) {
-            case AVATAR_UPLOADED: {
-              const { ipfsHash, avatar } = payload;
-              return {
-                ipfsHash,
-                avatar,
-              };
-            }
-            case AVATAR_REMOVED:
-              return null;
-
-            default:
-              return colony;
-          }
-        },
-        null,
-      );
+      .reduce(getColonyAvatarReducer, null);
   },
 });
 
 // @NOTE: This is a separate query so we can, later on, cache the query result
 export const getColonyTasks: ColonyQuery<
   void,
-  { [domainId: string]: { [draftId: string]: string } },
+  {
+    [draftId: string]: {|
+      commentsStoreAddress: string,
+      taskStoreAddress: string,
+    |},
+  },
 > = ({
   ddb,
   colonyClient,
@@ -415,39 +344,10 @@ export const getColonyTasks: ColonyQuery<
     return colonyStore
       .all()
       .filter(
-        ({ type: eventType }) =>
-          eventType === TASK_STORE_REGISTERED ||
-          eventType === TASK_STORE_UNREGISTERED,
+        ({ type }) =>
+          type === TASK_STORE_REGISTERED || type === TASK_STORE_UNREGISTERED,
       )
-      .reduce(
-        (
-          domainTasks,
-          {
-            type,
-            payload: { domainId, taskId, taskStoreAddress },
-          }: TaskStoreRegistered | TaskStoreUnregistered,
-        ) => {
-          switch (type) {
-            case TASK_STORE_REGISTERED: {
-              return Object.assign({}, domainTasks, {
-                [domainId]: Object.assign({}, domainTasks[domainId], {
-                  [taskId]: taskStoreAddress,
-                }),
-              });
-            }
-            case TASK_STORE_UNREGISTERED: {
-              const tasks = Object.assign({}, domainTasks);
-              if (tasks && tasks[domainId] && tasks[domainId][taskId]) {
-                delete tasks[domainId][taskId];
-              }
-              return tasks;
-            }
-            default:
-              return domainTasks;
-          }
-        },
-        {},
-      );
+      .reduce(getColonyTasksReducer, {});
   },
 });
 
@@ -463,8 +363,8 @@ export const getColonyDomains: ColonyQuery<void, DomainType[]> = ({
     );
     return colonyStore
       .all()
-      .filter(({ type: eventType }) => eventType === DOMAIN_CREATED)
-      .map(({ payload: { domainId, name } }: DomainCreatedEvent) => ({
+      .filter(({ type }) => type === DOMAIN_CREATED)
+      .map(({ payload: { domainId, name } }: Event<typeof DOMAIN_CREATED>) => ({
         id: domainId,
         name,
       }));
