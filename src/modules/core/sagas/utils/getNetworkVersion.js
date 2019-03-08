@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Saga } from 'redux-saga';
+
 import { call, put } from 'redux-saga/effects';
 
 import type { NetworkProps } from '~immutable';
