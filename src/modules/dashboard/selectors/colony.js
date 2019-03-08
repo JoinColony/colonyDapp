@@ -10,6 +10,8 @@ import type {
   DataRecordType,
 } from '~immutable';
 
+import { getNetworkVersion } from '../../core/selectors';
+
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_AVATARS,
@@ -94,3 +96,13 @@ export const colonyENSNameSelector = createSelector(
  */
 export const isInRecoveryMode = (colony: DataRecordType<ColonyRecordType>) =>
   !!(colony && colony.record && colony.record.inRecoveryMode);
+
+export const canBeUpgraded = (
+  colony: DataRecordType<ColonyRecordType>,
+  reduxState: RootStateRecord,
+) =>
+  createSelector(
+    getNetworkVersion,
+    (state, { colony: { version } }) => version,
+    (networkVersion, colonyVersion) => networkVersion > colonyVersion,
+  )(reduxState, { colony });
