@@ -55,8 +55,8 @@ const SelectListBox = ({
     ? options.findIndex(option => option.value === activeDescendantOption.value)
     : -1;
   return (
-    <ul // eslint-disable-line jsx-a11y/aria-activedescendant-has-tabindex
-      tabIndex={-1}
+    <ul
+      tabIndex={0}
       className={getMainClasses(appearance, styles)}
       role="listbox"
       aria-activedescendant={getOptionId(name, activeDescendantIdx)}
