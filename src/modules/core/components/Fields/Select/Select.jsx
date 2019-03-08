@@ -243,6 +243,7 @@ class Select extends Component<Props, State> {
     const checkedOption = this.getCheckedOption();
     if (selectedOption === checkedOption || selectedOption === -1) {
       // No change
+      this.close();
       return;
     }
     const { value } = options[selectedOption];
