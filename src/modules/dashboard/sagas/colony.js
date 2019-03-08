@@ -45,7 +45,9 @@ import {
 import { fetchColony } from '../actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+
 import { colonyAvatarHashSelector } from '../selectors';
+import { getNetworkVersion } from '../../core/selectors';
 
 function* getColonyContext(
   colonyENSName: ?string,
@@ -565,6 +567,39 @@ function* colonyRecoveryModeEnter({
   }
 }
 
+function* colonyUpgradeContract({
+  payload: { ensName },
+  meta,
+}: Action<typeof ACTIONS.COLONY_VERSION_UPGRADE>) {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  const newVersion = yield select(getNetworkVersion);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'upgrade',
+      identifier: ensName,
+      params: { newVersion },
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+
+    yield put({
+      type: ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS,
+      meta,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(fetchColony(ensName));
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_VERSION_UPGRADE_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, colonyAvatarFetch);
   // TODO: rename properly once the new onboarding is done
@@ -575,6 +610,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
+  yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.
