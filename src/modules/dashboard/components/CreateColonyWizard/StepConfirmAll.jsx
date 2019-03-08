@@ -13,7 +13,7 @@ import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { ACTIONS } from '~redux';
 
-import styles from './StepCreateColony.css';
+import styles from './StepConfirmAll.css';
 
 import CardRow from './CreateColonyCardRow.jsx';
 
@@ -32,19 +32,19 @@ const MSG = defineMessages({
       "Could not create Colony. Most likely that's not your fault",
   },
   title: {
-    id: 'CreateColony.StepCreateColony.title',
+    id: 'CreateColony.StepConfirmAll.title',
     defaultMessage: `Almost there! Confirm your details`,
   },
   subtitle: {
-    id: 'CreateColony.StepCreateColony.subtitle',
+    id: 'CreateColony.StepConfirmAll.subtitle',
     defaultMessage: `and create your new Colony.`,
   },
   confirm: {
-    id: 'CreateColony.StepCreateColony.confirmButton',
+    id: 'CreateColony.StepConfirmAll.confirmButton',
     defaultMessage: `Create Colony`,
   },
   back: {
-    id: 'CreateColony.StepCreateColony.backButton',
+    id: 'CreateColony.StepConfirmAll.backButton',
     defaultMessage: `Back`,
   },
   displayName: {
@@ -52,11 +52,11 @@ const MSG = defineMessages({
     defaultMessage: `Colony Name`,
   },
   tokenName: {
-    id: 'CreateColony.StepCreateColony.tokenName',
+    id: 'CreateColony.StepConfirmAll.tokenName',
     defaultMessage: `Token Name`,
   },
   tokenSymbol: {
-    id: 'CreateColony.StepCreateColony.tokenSymbol',
+    id: 'CreateColony.StepConfirmAll.tokenSymbol',
     defaultMessage: `Token Symbol`,
   },
 });
@@ -76,7 +76,7 @@ const options = [
   },
 ];
 
-const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
+const StepConfirmAll = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <ActionForm
     submit={ACTIONS.COLONY_CREATE}
     error={ACTIONS.COLONY_CREATE_ERROR}
@@ -121,6 +121,6 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
   </ActionForm>
 );
 
-StepCreateColony.displayName = 'dashboard.CreateColonyWizard.StepCreateColony';
+StepConfirmAll.displayName = 'dashboard.CreateColonyWizard.StepConfirmAll';
 
-export default StepCreateColony;
+export default StepConfirmAll;

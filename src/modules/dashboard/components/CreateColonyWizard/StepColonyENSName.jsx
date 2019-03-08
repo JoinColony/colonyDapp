@@ -7,7 +7,7 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 
-import styles from './StepCreateENSName.css';
+import styles from './StepColonyENSName.css';
 
 import { mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
@@ -26,42 +26,42 @@ type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.heading',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.heading',
     defaultMessage: 'Last step: create a unique name for your Colony',
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.descriptionOne',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
       "Here's something cool about Colony: {boldText} You own it, you control it.",
   },
   descriptionBoldText: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.descriptionBoldText',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionBoldText',
     defaultMessage:
       // eslint-disable-next-line max-len
       "we are a fully decentralized application and do not have a central store of yours or anyone's data.",
   },
   descriptionTwo: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.descriptionTwo',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionTwo',
     defaultMessage:
       // eslint-disable-next-line max-len
       'To setup your data storage, we need you to create a unique name for your colony. This allows a mapping between the data stored on the blockchain, on IPFS, and your colony.',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.label',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
     defaultMessage: 'Your unique colony domain name',
   },
   done: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.done',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.done',
     defaultMessage: 'Done',
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepCreateENSName.errorDomainTaken',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepCreateENSName';
+const displayName = 'dashboard.CreateColonyWizard.StepColonyENSName';
 
 const validationSchema = yup.object({
   colonyName: yup
@@ -70,7 +70,7 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepCreateENSName = ({ wizardValues, wizardForm }: Props) => {
+const StepColonyENSName = ({ wizardValues, wizardForm }: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ACTIONS.COLONY_DOMAIN_VALIDATE,
     success: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
@@ -149,6 +149,6 @@ const StepCreateENSName = ({ wizardValues, wizardForm }: Props) => {
   );
 };
 
-StepCreateENSName.displayName = displayName;
+StepColonyENSName.displayName = displayName;
 
-export default StepCreateENSName;
+export default StepColonyENSName;
