@@ -127,8 +127,8 @@ class PinnerConnector extends EventEmitter {
           clearTimeout(timeout);
           return;
         }
-        retry();
         retries += 1;
+        retry();
       }, 10 * 1000);
     };
     retry();
