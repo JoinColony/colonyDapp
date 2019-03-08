@@ -106,5 +106,5 @@ export const canBeUpgraded = (
     getNetworkVersion,
     (state, { colony: { version } }) => version,
     (networkVersion, colonyVersion) =>
-      networkVersion && colonyVersion ? networkVersion && colonyVersion : false,
+      networkVersion && colonyVersion ? networkVersion > colonyVersion : false,
   )(reduxState, { colony });
