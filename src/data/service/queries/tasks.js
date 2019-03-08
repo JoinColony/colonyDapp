@@ -16,19 +16,19 @@ import { TASK_EVENT_TYPES } from '../../constants';
 
 const {
   COMMENT_STORE_CREATED,
-  TASK_CREATED,
-  TASK_UPDATED,
+  DOMAIN_SET,
   DUE_DATE_SET,
+  PAYOUT_SET,
   SKILL_SET,
+  TASK_CANCELLED,
+  TASK_CLOSED,
+  TASK_CREATED,
+  TASK_FINALIZED,
+  TASK_UPDATED,
   WORK_INVITE_SENT,
   WORK_REQUEST_CREATED,
   WORKER_ASSIGNED,
   WORKER_UNASSIGNED,
-  BOUNTY_SET,
-  TASK_FINALIZED,
-  TASK_CLOSED,
-  TASK_CANCELLED,
-  DOMAIN_SET,
 } = TASK_EVENT_TYPES;
 
 export type TaskQueryContext = ContextWithMetadata<
@@ -131,11 +131,11 @@ export const getTask: TaskQuery<*, *> = ({
                 status,
               };
             }
-            case BOUNTY_SET: {
+            case PAYOUT_SET: {
               const { amount } = payload;
               return {
                 ...task,
-                bounty: amount,
+                payout: amount,
               };
             }
             case DUE_DATE_SET: {
@@ -198,7 +198,7 @@ export const getTask: TaskQuery<*, *> = ({
         },
         {
           assignee: null,
-          bounty: null,
+          payout: null,
           dueDate: null,
           skillId: null,
           domainId: null,

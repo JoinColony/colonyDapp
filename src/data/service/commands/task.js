@@ -21,13 +21,13 @@ import {
 import {
   createCommentPostedEvent,
   createCommentStoreCreatedEvent,
-  createTaskBountySetEvent,
   createTaskCancelledEvent,
   createTaskClosedEvent,
   createTaskCreatedEvent,
   createTaskDomainSetEvent,
   createTaskDueDateSetEvent,
   createTaskFinalizedEvent,
+  createTaskPayoutSetEvent,
   createTaskSkillSetEvent,
   createTaskStoreRegisteredEvent,
   createTaskStoreUnregisteredEvent,
@@ -44,9 +44,9 @@ import {
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
-  SetTaskBountyCommandArgsSchema,
   SetTaskDomainCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
+  SetTaskPayoutCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
   UpdateTaskCommandArgsSchema,
 } from './schemas';
@@ -92,9 +92,9 @@ type SetTaskDueDateCommandArgs = {|
   dueDate: number,
 |};
 
-type SetTaskBountyCommandArgs = {|
+type SetTaskPayoutCommandArgs = {|
   amount: string,
-  token?: ?string,
+  token: string,
 |};
 
 type AssignWorkerCommandArgs = {|
@@ -271,14 +271,14 @@ export const postComment: CommentCommand<PostCommentCommandArgs, FeedStore> = ({
   },
 });
 
-export const setTaskBounty: TaskCommand<
-  SetTaskBountyCommandArgs,
+export const setTaskPayout: TaskCommand<
+  SetTaskPayoutCommandArgs,
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
-  schema: SetTaskBountyCommandArgsSchema,
+  schema: SetTaskPayoutCommandArgsSchema,
   async execute(args) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
-    await taskStore.append(createTaskBountySetEvent(args));
+    await taskStore.append(createTaskPayoutSetEvent(args));
 
     return taskStore;
   },

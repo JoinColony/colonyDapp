@@ -121,7 +121,7 @@ export const TaskStatusChangeEventSchema = yup.object({
   status: yup.string().required(),
 });
 
-export const CreateBountySetEventSchema = yup.object({
+export const CreatePayoutSetEventSchema = yup.object({
   amount: yup.string().required(),
   token: yup.string(),
 });

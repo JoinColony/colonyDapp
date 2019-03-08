@@ -14,6 +14,7 @@ const genericTaskProps = {
   creator: 'collin',
   currentState: TASK_STATE.ACTIVE,
   domainId: 1,
+  description: 'my description',
   draftId: undefined,
   dueDate: new Date(),
   evaluatorHasRated: undefined,

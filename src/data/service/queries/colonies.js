@@ -12,8 +12,8 @@ import type {
 } from '../../types';
 
 import {
-  getEvents,
   getEventLogs,
+  getEvents,
   getLogsAndEvents,
   parseColonyFundsClaimedEvent,
   parseColonyFundsMovedBetweenFundingPotsEvent,
@@ -41,8 +41,8 @@ const {
   AVATAR_REMOVED,
   AVATAR_UPLOADED,
   DOMAIN_CREATED,
-  PROFILE_UPDATED,
   PROFILE_CREATED,
+  PROFILE_UPDATED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
