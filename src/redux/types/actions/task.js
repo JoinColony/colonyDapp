@@ -71,7 +71,7 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_CREATE,
     {|
       colonyENSName: string,
-      bounty: string,
+      payout: string,
       domainId: number,
       dueDate: Date,
       skillId: number,
@@ -308,7 +308,7 @@ export type TaskActionTypes = {|
       colonyENSName: string,
       taskStoreAddress: string,
       amount: string,
-      token?: ?string,
+      token: string,
     |},
     WithKeyPathDepth2,
   >,

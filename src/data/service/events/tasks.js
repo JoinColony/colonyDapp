@@ -13,7 +13,7 @@ import {
   CreateDueDateSetEventSchema,
   CreateSkillSetEventSchema,
   WorkerAssignmentEventSchema,
-  CreateBountySetEventSchema,
+  CreatePayoutSetEventSchema,
   CreateDomainSetEventSchema,
   CreateTaskFinalizedEventSchema,
 } from './schemas';
@@ -32,7 +32,7 @@ const {
   TASK_FINALIZED,
   WORKER_ASSIGNED,
   WORKER_UNASSIGNED,
-  BOUNTY_SET,
+  PAYOUT_SET,
   DOMAIN_SET,
 } = TASK_EVENT_TYPES;
 
@@ -164,12 +164,12 @@ export type WorkerUnassignedEvent = Event<
   WorkerUnassignedEventPayload,
 >;
 
-export type BountySetEventArgs = {|
+export type PayoutSetEventArgs = {|
   amount: string,
-  token?: ?string,
+  token: string,
 |};
-export type BountySetEventPayload = BountySetEventArgs;
-export type BountySetEvent = Event<typeof BOUNTY_SET, BountySetEventPayload>;
+export type PayoutSetEventPayload = PayoutSetEventArgs;
+export type PayoutSetEvent = Event<typeof PAYOUT_SET, PayoutSetEventPayload>;
 
 export type DomainSetEventArgs = {|
   domainId: number,
@@ -237,11 +237,11 @@ export const createWorkerUnassignedEvent = createEventCreator<
   WorkerUnassignedEvent,
 >(WORKER_UNASSIGNED, WorkerAssignmentEventSchema);
 
-export const createTaskBountySetEvent = createEventCreator<
-  typeof BOUNTY_SET,
-  BountySetEventArgs,
-  BountySetEvent,
->(BOUNTY_SET, CreateBountySetEventSchema);
+export const createTaskPayoutSetEvent = createEventCreator<
+  typeof PAYOUT_SET,
+  PayoutSetEventArgs,
+  PayoutSetEvent,
+>(PAYOUT_SET, CreatePayoutSetEventSchema);
 
 export const createTaskCancelledEvent = createEventCreator<
   typeof TASK_CANCELLED,

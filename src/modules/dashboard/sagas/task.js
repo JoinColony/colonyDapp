@@ -18,7 +18,7 @@ import {
   postComment,
   finalizeTask,
   setTaskSkill,
-  setTaskBounty,
+  setTaskPayout,
   setTaskDueDate,
   cancelTask,
   closeTask,
@@ -272,7 +272,7 @@ function* taskSetSkill({
 /**
  * As worker or manager, I want to be able to set a skill
  */
-function* taskSetBounty({
+function* taskSetPayout({
   payload: { taskStoreAddress, taskId, token, amount },
   meta: {
     keyPath: [colonyENSName],
@@ -281,7 +281,7 @@ function* taskSetBounty({
 }: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<void> {
   try {
     const context = yield* getStoreContext(colonyENSName, taskStoreAddress);
-    yield* executeCommand(context, setTaskBounty, { token, amount });
+    yield* executeCommand(context, setTaskPayout, { token, amount });
     yield put({
       type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
       payload: {
@@ -511,7 +511,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_CANCEL, taskCancel);
   yield takeEvery(ACTIONS.TASK_SET_DATE, taskSetDueDate);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
-  yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetBounty);
+  yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_ASSIGN, assignWorkerSaga);
   yield takeEvery(ACTIONS.TASK_UNASSIGN, unassignWorkerSaga);

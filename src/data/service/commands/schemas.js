@@ -114,8 +114,9 @@ export const SetUserAvatarCommandArgsSchema = yup.object({
   data: yup.string().required(),
 });
 
-export const SetTaskBountyCommandArgsSchema = yup.object({
+export const SetTaskPayoutCommandArgsSchema = yup.object({
   amount: yup.string().required(),
+  token: yup.string().required(),
 });
 
 export const SetTaskDomainCommandArgsSchema = yup.object({

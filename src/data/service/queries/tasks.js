@@ -24,7 +24,7 @@ const {
   WORK_REQUEST_CREATED,
   WORKER_ASSIGNED,
   WORKER_UNASSIGNED,
-  BOUNTY_SET,
+  PAYOUT_SET,
   TASK_FINALIZED,
   TASK_CLOSED,
   TASK_CANCELLED,
@@ -131,11 +131,11 @@ export const getTask: TaskQuery<*, *> = ({
                 status,
               };
             }
-            case BOUNTY_SET: {
+            case PAYOUT_SET: {
               const { amount } = payload;
               return {
                 ...task,
-                bounty: amount,
+                payout: amount,
               };
             }
             case DUE_DATE_SET: {
@@ -198,7 +198,7 @@ export const getTask: TaskQuery<*, *> = ({
         },
         {
           assignee: null,
-          bounty: null,
+          payout: null,
           dueDate: null,
           skillId: null,
           domainId: null,
