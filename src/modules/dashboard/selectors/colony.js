@@ -8,6 +8,7 @@ import type {
   RootStateRecord,
   ColonyRecordType,
   DataRecordType,
+  ColonyType,
 } from '~immutable';
 
 import { getNetworkVersion } from '../../core/selectors';
@@ -98,11 +99,12 @@ export const isInRecoveryMode = (colony: DataRecordType<ColonyRecordType>) =>
   !!(colony && colony.record && colony.record.inRecoveryMode);
 
 export const canBeUpgraded = (
-  colony: DataRecordType<ColonyRecordType>,
+  colony: ColonyType,
   reduxState: RootStateRecord,
 ) =>
   createSelector(
     getNetworkVersion,
     (state, { colony: { version } }) => version,
-    (networkVersion, colonyVersion) => networkVersion > colonyVersion,
+    (networkVersion, colonyVersion) =>
+      networkVersion && colonyVersion ? networkVersion && colonyVersion : false,
   )(reduxState, { colony });
