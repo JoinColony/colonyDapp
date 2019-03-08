@@ -332,7 +332,7 @@ function* colonyDomainValidate({
 
   const ensAddress = yield call(
     [ensCache, ensCache.getAddress],
-    ensName,
+    ensCache.constructor.getFullDomain('colony', ensName),
     networkClient,
   );
 
