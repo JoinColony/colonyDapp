@@ -9,5 +9,8 @@
 // ***********************************************
 
 Cypress.Commands.add('goToDashboard', () => {
-  cy.get('a[data-test="goToDashboard"]').click();
+  /*
+   * Use force, since this might be blocked by an opened modal
+   */
+  cy.get('a[data-test="goToDashboard"]').click({ force: true });
 });
