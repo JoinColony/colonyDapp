@@ -98,7 +98,6 @@ describe('Claims a username', () => {
        */
       .wait(2000)
       .click()
-      .wait(5000)
       .then(() => {
         /*
          * Wait until the transaction succeeded
