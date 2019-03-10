@@ -1,5 +1,3 @@
-const TEST_USER_NAME = 'cypressTestUser';
-
 describe('Claims a username', () => {
   it('Connect to the dApp', () => {
     cy.visit('/connect');
@@ -19,7 +17,7 @@ describe('Claims a username', () => {
     /*
      * Select the second entry (Account 1), focus it, and click it
      */
-    cy.get('li#accountIndex-listbox-entry-1')
+    cy.get('li#accountIndex-listbox-entry-0')
       .trigger('mouseover')
       .click();
     /*
@@ -51,9 +49,14 @@ describe('Claims a username', () => {
       .contains('Continue')
       .click();
     /*
-     * Fill the username form
+     * Load the usernames fixture
      */
-    cy.get('input[data-test="claimUsernameInput"]').type(TEST_USER_NAME);
+    cy.fixture('users').then(({ ensName }) => {
+      /*
+       * Fill the username form
+       */
+      cy.get('input[data-test="claimUsernameInput"]').type(ensName);
+    });
     /*
      * Submit your selected username
      */
@@ -123,11 +126,13 @@ describe('Claims a username', () => {
     /*
      * Click the Avatar Dropdown
      */
-    cy.get('span[data-test="userProfileUsername"]').should(content => {
-      /*
-       * The user is listed in the "mention" format with an @ in front of it
-       */
-      expect(content.text().trim()).to.eq(`@${TEST_USER_NAME}`);
+    cy.fixture('users').then(({ ensName }) => {
+      cy.get('span[data-test="userProfileUsername"]').should(content => {
+        /*
+         * The user is listed in the "mention" format with an @ in front of it
+         */
+        expect(content.text().trim()).to.eq(`@${ensName}`);
+      });
     });
   });
 });
