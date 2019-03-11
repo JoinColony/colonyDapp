@@ -120,8 +120,6 @@ const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
         const $help = formatIntl(help, formatMessage, helpValues);
         const $placeholder = formatIntl(placeholder, formatMessage);
         const $status = formatIntl(status, formatMessage, statusValues);
-        // This is assigning an empty string to the field's value.
-        // It might be problematic for some cases but for now I couldn't think of one
         return {
           elementOnly,
           'aria-invalid': !!$error,

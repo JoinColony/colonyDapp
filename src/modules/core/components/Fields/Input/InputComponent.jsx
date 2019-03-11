@@ -1,9 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import type { MessageDescriptor, IntlShape, MessageValues } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 import Cleave from 'cleave.js/react';
-import { injectIntl } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
@@ -34,8 +33,6 @@ type Props = {
   placeholder?: string | MessageDescriptor,
   /** @ignore Will be injected by `asField` */
   isSubmitting?: boolean,
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape,
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: ?HTMLInputElement) => void,
   /** @ignore Standard input field property */
@@ -49,7 +46,9 @@ type Props = {
 class InputComponent extends Component<Props> {
   static displayName = 'InputComponent';
 
-  handleChange = (evt: SyntheticInputEvent<CleaveHTMLInputElement>): void => {
+  handleCleaveChange = (
+    evt: SyntheticInputEvent<CleaveHTMLInputElement>,
+  ): void => {
     const {
       props: { onChange },
     } = this;
@@ -66,7 +65,6 @@ class InputComponent extends Component<Props> {
       innerRef,
       isSubmitting,
       placeholder,
-      intl,
       ...props
     } = this.props;
 
@@ -77,13 +75,15 @@ class InputComponent extends Component<Props> {
           className={getMainClasses(appearance, styles)}
           htmlRef={innerRef}
           options={formattingOptions}
-          onChange={this.handleChange}
+          onChange={this.handleCleaveChange}
+          placeholder={placeholder}
         />
       );
     }
     return (
       <input
         className={getMainClasses(appearance, styles)}
+        placeholder={placeholder}
         ref={innerRef}
         {...props}
       />
@@ -91,4 +91,4 @@ class InputComponent extends Component<Props> {
   }
 }
 
-export default injectIntl(InputComponent);
+export default InputComponent;
