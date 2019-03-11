@@ -20,7 +20,7 @@ const cardContentData = [
       <p><strong>{heading}</strong></p>
       <p>{content}</p>
       {extraContent && (
-        <p>{extraContent.split(' ').map(word => (<span>{word}<br/></span>))}</p>
+        <p>{extraContent.split(' ').map(word => (<span key={word}>{word}<br/></span>))}</p>
       )}
     </Card>
   ))}
