@@ -164,7 +164,10 @@ class OmniPicker extends Component<Props> {
       | SyntheticInputEvent<HTMLInputElement>
       | SyntheticKeyboardEvent<HTMLElement>,
   ) => {
-    const { onBlur } = this.props;
+    const { inputRef, onBlur } = this.props;
+    if (inputRef) {
+      inputRef.blur();
+    }
     if (typeof onBlur == 'function') {
       onBlur(evt);
     }

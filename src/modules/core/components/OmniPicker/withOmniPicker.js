@@ -54,7 +54,7 @@ const getClass = WrappedComponent => {
     state = {
       isOpen: false,
       filterValue: '',
-      selected: -1,
+      selected: 0,
       keyUsed: false,
     };
 
@@ -111,7 +111,7 @@ const getClass = WrappedComponent => {
       this.setState({
         isOpen: false,
         filterValue: '',
-        selected: -1,
+        selected: 0,
         keyUsed: false,
       });
     };
