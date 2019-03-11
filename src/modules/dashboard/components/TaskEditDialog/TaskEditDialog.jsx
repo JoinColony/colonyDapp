@@ -73,12 +73,26 @@ type Props = {|
   users: Array<UserType>,
 |};
 
-const filter = (data: Array<UserType>, filterValue) =>
-  data.filter(
+const supFilter = (data, filterValue) => {
+  const filtered = data.filter(
     user =>
-      user.profile.username &&
-      user.profile.username.toLowerCase().startsWith(filterValue.toLowerCase()),
+      user &&
+      filterValue &&
+      user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
   );
+
+  if (!filterValue) return filtered;
+
+  const customValue = {
+    id: 'filterValue',
+    profile: {
+      walletAddress: filterValue,
+      displayName: filterValue,
+    },
+  };
+
+  return [customValue].concat(filtered);
+};
 
 const canAddTokens = (values, maxTokens) =>
   !maxTokens || (values.payouts && values.payouts.length < maxTokens);
@@ -152,11 +166,11 @@ const TaskEditDialog = ({
                 />
                 <SingleUserPicker
                   data={users}
-                  filter={filter}
                   isResettable
                   itemComponent={ItemDefault}
                   label={MSG.selectAssignee}
                   name="worker"
+                  filter={supFilter}
                   placeholder={MSG.search}
                 />
               </DialogSection>
