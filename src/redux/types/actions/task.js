@@ -275,7 +275,7 @@ export type TaskActionTypes = {|
     {|
       colonyENSName: string,
       domainId: Date,
-      taskId: string,
+      draftId: string,
     |},
     WithKeyPathDepth2,
   >,
@@ -438,7 +438,7 @@ export type TaskActionTypes = {|
   TASK_WORKER_CLAIM_REWARD: UniqueActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD,
     {|
-      taskId: string,
+      draftId: string,
       colonyENSName: string,
       tokenAddresses: string[],
     |},

@@ -32,8 +32,8 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator?: boolean,
-  /* we will only have a taskId if we are updating an existing task */
-  taskId: number,
+  /* we will only have a draftId if we are updating an existing task */
+  draftId: string,
 |};
 
 type State = {
@@ -63,11 +63,11 @@ class TaskDomains extends Component<Props, State> {
   }
 
   handleSetDomain = async (domainValue: Object) => {
-    const { taskId } = this.props;
+    const { draftId } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
         domainId: domainValue.id,
-        taskId,
+        draftId,
       });
       this.setState({ selectedDomainId: domainValue.id });
     } catch (error) {

@@ -37,7 +37,7 @@ const enhance = compose(
   withProps(
     ({
       task: {
-        taskId,
+        draftId,
         colonyENSName,
         payouts,
         workerHasRated,
@@ -48,7 +48,7 @@ const enhance = compose(
         title,
       },
     }: Props) => ({
-      taskId,
+      draftId,
       colonyENSName,
       rating,
       reputation: getReputation(reputation, rating, workerRateFail),

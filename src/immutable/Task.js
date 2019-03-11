@@ -33,7 +33,7 @@ type Shared = {|
   managerRating?: TaskRating,
   reputation: number, // TODO: should be BigNumber
   skillId: number,
-  taskId: number, // On-chain ID, when the task is all grown up :'-)
+  taskId?: number, // On-chain ID, when the task is all grown up :'-)
   title: string,
   workerHasRated: boolean, // secret was submitted
   workerPayoutClaimed: boolean,
