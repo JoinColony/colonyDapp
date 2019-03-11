@@ -4,13 +4,13 @@ A list that shows token payouts of a task (or something else).
 ```jsx
 const { List } = require('immutable');
 const BN = require('bn.js');
-const { TaskPayout } = require('~immutable');
+const { TaskPayoutRecord } = require('~immutable');
 
 const payouts = List.of(
-  TaskPayout({ token: { symbol: 'COOL' }, amount: new BN(92000) }),
-  TaskPayout({ token: { symbol: 'ETH' }, amount: new BN(75000) }),
-  TaskPayout({ token: { symbol: 'DAI' }, amount: new BN(460000) }),
-  TaskPayout({ token: { symbol: 'CLNY' }, amount: new BN(210000) }),
+  TaskPayoutRecord({ token: { symbol: 'COOL' }, amount: new BN(92000) }),
+  TaskPayoutRecord({ token: { symbol: 'ETH' }, amount: new BN(75000) }),
+  TaskPayoutRecord({ token: { symbol: 'DAI' }, amount: new BN(460000) }),
+  TaskPayoutRecord({ token: { symbol: 'CLNY' }, amount: new BN(210000) }),
 );
 
 <div style={{ width: '80px' }}>
@@ -22,13 +22,13 @@ const payouts = List.of(
 ```jsx
 const { List } = require('immutable');
 const BN = require('bn.js');
-const { TaskPayout } = require('~immutable');
+const { TaskPayoutRecord } = require('~immutable');
 
 const payouts = List.of(
-  TaskPayout({ token: { symbol: 'COOL' }, amount: new BN(92000) }),
-  TaskPayout({ token: { symbol: 'ETH' }, amount: new BN(75000) }),
-  TaskPayout({ token: { symbol: 'DAI' }, amount: new BN(460000) }),
-  TaskPayout({ token: { symbol: 'CLNY' }, amount: new BN(210000) }),
+  TaskPayoutRecord({ token: { symbol: 'COOL' }, amount: new BN(92000) }),
+  TaskPayoutRecord({ token: { symbol: 'ETH' }, amount: new BN(75000) }),
+  TaskPayoutRecord({ token: { symbol: 'DAI' }, amount: new BN(460000) }),
+  TaskPayoutRecord({ token: { symbol: 'CLNY' }, amount: new BN(210000) }),
 );
 
 <div style={{ width: '80px' }}>

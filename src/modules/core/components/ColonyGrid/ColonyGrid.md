@@ -1,7 +1,7 @@
 ### Simple colony grid
 
 ```js
-const { Colony } = require('~immutable');
+const { ColonyRecord } = require('~immutable');
 
 const colonies = [
   Colony({ name: 'Cool Colony', address : '0x12345678923452345' }),
