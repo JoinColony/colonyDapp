@@ -3,17 +3,18 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { TaskType } from '~immutable';
+
+import ColonyGrid from '~dashboard/ColonyGrid';
+import TaskList from '~dashboard/TaskList';
+
 import type { InitialTaskType } from './InitialTask.jsx';
 
-import ColonyGrid from '~core/ColonyGrid';
-import TaskList from '~dashboard/TaskList';
 import InitialTask from './InitialTask.jsx';
 
 import styles from './TabMyTasks.css';
 
 import mockColonies from '../../../../__mocks__/mockColonies';
-
-import type { TaskType } from '~immutable';
 
 const MSG = defineMessages({
   emptyText: {

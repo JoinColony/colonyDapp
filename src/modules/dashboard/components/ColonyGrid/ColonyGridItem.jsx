@@ -1,9 +1,9 @@
 /* @flow */
 import React from 'react';
 
-import ColonyAvatar from '../ColonyAvatar';
-import Heading from '../Heading';
-import Link from '../Link';
+import ColonyAvatar from '~core/ColonyAvatar';
+import Heading from '~core/Heading';
+import Link from '~core/Link';
 
 import styles from './ColonyGridItem.css';
 
