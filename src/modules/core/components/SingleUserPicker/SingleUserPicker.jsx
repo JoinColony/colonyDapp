@@ -74,11 +74,7 @@ type Props = {|
   setValue: (val: any) => void,
 |} & OmniPickerProps;
 
-type State = {
-  selectedUser: ?UserType,
-};
-
-class SingleUserPicker extends Component<Props, State> {
+class SingleUserPicker extends Component<Props> {
   static displayName = 'SingleUserPicker';
 
   handleActiveUserClick = () => {
