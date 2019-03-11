@@ -3,12 +3,13 @@
 import React, { Component } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
 
 import Icon from '../Icon';
 import Link from '../Link';
+import { Tooltip } from '../Popover';
 import Heading from '../Heading';
 import { asField } from '../Fields';
 
@@ -32,6 +33,7 @@ type Props = {|
     title: MessageDescriptor | string,
     subtitle: MessageDescriptor | string,
     icon?: string,
+    tooltip?: MessageDescriptor,
   |},
   link?: string,
   /** @ignore Will be injected by `asField` */
@@ -49,10 +51,38 @@ class DecisionOption extends Component<Props> {
     setValue(value);
   };
 
+  renderIcon = (tooltip, icon, title) => {
+    /* Wrap icon in tooltip wrapper only if tooltip propert exists */
+    if (tooltip && icon) {
+      return (
+        <Tooltip
+          placement="left"
+          content={
+            <span className={styles.tooltip}>
+              <FormattedMessage {...tooltip} />
+            </span>
+          }
+        >
+          <div className={styles.rowIcon}>
+            <Icon name={icon} title={title} />
+          </div>
+        </Tooltip>
+      );
+    }
+    if (icon) {
+      return (
+        <div className={styles.rowIcon}>
+          <Icon name={icon} title={title} />
+        </div>
+      );
+    }
+    return null;
+  };
+
   render() {
     const {
       appearance,
-      option: { icon, subtitle, title },
+      option: { icon, subtitle, title, tooltip },
       link,
     } = this.props;
     const Element = link ? Link : 'button';
@@ -64,11 +94,7 @@ class DecisionOption extends Component<Props> {
         className={getMainClasses(appearance, styles)}
         {...elmProps}
       >
-        {icon && (
-          <div className={styles.rowIcon}>
-            <Icon name={icon} title={title} />
-          </div>
-        )}
+        {this.renderIcon(tooltip, icon, title)}
         <div className={styles.rowContent}>
           <Heading
             appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
