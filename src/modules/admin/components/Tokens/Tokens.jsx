@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenReferenceType } from '~immutable';
+import type { TokenType, TokenReferenceType } from '~immutable';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -35,6 +35,7 @@ const MSG = defineMessages({
 type Props = {|
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
   tokens: Array<TokenReferenceType>,
+  nativeToken: TokenType,
 |};
 
 class Tokens extends Component<Props> {
@@ -84,7 +85,10 @@ class Tokens extends Component<Props> {
   };
 
   render() {
-    const { tokens = [] } = this.props;
+    const {
+      tokens = [],
+      nativeToken: { symbol: nativeTokenSymbol } = {},
+    } = this.props;
     const nativeToken = tokens.find(token => token.isNative);
     const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
     const isUserColonyFounder = true; // TODO determine this value.
@@ -101,8 +105,7 @@ class Tokens extends Component<Props> {
               <Heading appearance={{ size: 'normal' }}>
                 <FormattedMessage
                   {...MSG.nativeTokenText}
-                  // TODO: fetch native token info and put symbol here
-                  values={{ nativeToken: 'SYMBOL GOES HERE' }}
+                  values={{ nativeToken: nativeTokenSymbol }}
                 />
               </Heading>
             )}

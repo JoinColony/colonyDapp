@@ -119,10 +119,16 @@ const coloniesReducer: ReducerType<
         },
         payload,
       } = action;
-      return state.mergeDeepIn(
-        [ensName, 'record', 'tokens', tokenAddress],
-        TokenReferenceRecord(payload),
-      );
+      const previousRecord = state.getIn([
+        ensName,
+        'record',
+        'tokens',
+        tokenAddress,
+      ]);
+      const record = previousRecord
+        ? previousRecord.merge(payload)
+        : TokenReferenceRecord(payload);
+      return state.setIn([ensName, 'record', 'tokens', tokenAddress], record);
     }
     default:
       return state;

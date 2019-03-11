@@ -25,22 +25,25 @@ const tokensReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.TOKEN_INFO_FETCH_SUCCESS: {
       const { name, symbol, tokenAddress } = action.payload;
-      const record = TokenRecord({
+      const newInfo = {
         address: tokenAddress,
         name,
         symbol,
-      });
-      return state.get(tokenAddress)
-        ? state.mergeIn([tokenAddress], record)
-        : state.set(tokenAddress, record);
+      };
+      const existingRecord = state.get(tokenAddress);
+      const record = existingRecord
+        ? existingRecord.merge(newInfo)
+        : TokenRecord(newInfo);
+      return state.set(tokenAddress, record);
     }
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const [, tokens] = action.payload;
       return tokens.reduce((currentState, token) => {
-        const record = TokenRecord(token);
-        return currentState.get(token.address)
-          ? currentState.mergeIn([token.address], record)
-          : state.set(token.address, record);
+        const existingRecord = state.get(token.address);
+        const record = existingRecord
+          ? existingRecord.merge(token)
+          : TokenRecord(token);
+        return state.set(token.address, record);
       }, state);
     }
     default:

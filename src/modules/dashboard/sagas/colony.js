@@ -12,6 +12,7 @@ import {
   select,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
+import nanoid from 'nanoid';
 
 import type { Action } from '~redux';
 
@@ -403,14 +404,24 @@ function* colonyFetch({
       payload,
     });
 
-    // dispatch actions to fetch the balances of each colony token
     const [{ address: colonyAddress, tokens }] = payload;
-    yield* Object.keys(tokens || {}).map(tokenAddress =>
-      put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
-        type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-        meta: { keyPath: [ensName, tokenAddress] },
-        payload: { colonyAddress },
-      }),
+
+    // dispatch actions to fetch info and balances for each colony token
+    yield* Object.keys(tokens || {}).reduce(
+      (acc, tokenAddress) => [
+        ...acc,
+        put<Action<typeof ACTIONS.TOKEN_INFO_FETCH>>({
+          type: ACTIONS.TOKEN_INFO_FETCH,
+          meta: { id: nanoid() },
+          payload: { tokenAddress },
+        }),
+        put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
+          type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+          meta: { keyPath: [ensName, tokenAddress] },
+          payload: { colonyAddress },
+        }),
+      ],
+      [],
     );
   } catch (error) {
     yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
