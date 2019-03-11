@@ -2,21 +2,21 @@
 
 import React from 'react';
 
-import ColonyGrid from '~core/ColonyGrid';
-import ActivityFeed from '~core/ActivityFeed';
-import { withUserFromRoute } from '../../hocs';
+import type { DataType, UserType } from '~immutable';
 
+import ColonyGrid from '~dashboard/ColonyGrid';
+import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import UserMeta from './UserMeta.jsx';
+
+import { withUserFromRoute } from '../../hocs';
 
 import mockActivities from './__datamocks__/mockActivities';
 import mockColonies from '../../../../__mocks__/mockColonies';
 
 import styles from './UserProfile.css';
 
+import UserMeta from './UserMeta.jsx';
 import UserProfileSpinner from './UserProfileSpinner.jsx';
-
-import type { DataType, UserType } from '~immutable';
 
 type Props = {|
   user: ?DataType<UserType>,

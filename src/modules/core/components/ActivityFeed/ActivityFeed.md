@@ -3,10 +3,10 @@
 
 ```jsx
 const { List } = require('immutable');
-const { ActivityFeedItem } = require('~immutable');
+const { ActivityFeedItemRecord } = require('~immutable');
 
 const activityItems = List.of(
-  ActivityFeedItem({
+  ActivityFeedItemRecord({
     id: 1,
     actionType: 'assignedUser',
     date: new Date(2018, 8, 21),
@@ -15,7 +15,7 @@ const activityItems = List.of(
     organization: 'C21t',
     domainTag: 'Dev',
   }),
-  ActivityFeedItem({
+  ActivityFeedItemRecord({
     id: 2,
     actionType: 'commentedOn',
     date: new Date(2018, 8, 20),
@@ -23,7 +23,7 @@ const activityItems = List.of(
     organization: 'Zirtual',
     domainTag: 'Design',
   }),
-  ActivityFeedItem({
+  ActivityFeedItemRecord({
     id: 3,
     actionType: 'addedSkillTag',
     date: new Date(2018, 8, 20),

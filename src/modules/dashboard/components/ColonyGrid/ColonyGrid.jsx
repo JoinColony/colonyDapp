@@ -2,19 +2,13 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { compose } from 'recompose';
 
-import { withImmutablePropsToJS } from '~utils/hoc';
-
-import { withColonies } from '../../../dashboard/hocs';
-
-import Heading from '../Heading';
+import type { ColonyType, DataType } from '~immutable';
+import Heading from '~core/Heading';
 
 import ColonyGridItem from './ColonyGridItem.jsx';
 
 import styles from './ColonyGrid.css';
-
-import type { ColonyType, DataType } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -55,7 +49,4 @@ const ColonyGrid = ({ colonies = [] }: Props) => (
 
 ColonyGrid.displayName = displayName;
 
-export default compose(
-  withColonies,
-  withImmutablePropsToJS,
-)(ColonyGrid);
+export default ColonyGrid;

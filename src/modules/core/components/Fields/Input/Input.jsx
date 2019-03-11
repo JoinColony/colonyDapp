@@ -69,6 +69,8 @@ type Props = {|
     textValues?: MessageValues,
   ) => string,
   /** @ignore Will be injected by `asField` */
+  onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
+  /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
   /** @ignore Will be injected by `asField` */
   setError: (val: any) => void,
@@ -93,18 +95,25 @@ const Input = ({
   setError,
   status,
   connect,
+  onChange,
   ...props
 }: Props) => {
   const inputProps = {
     appearance,
+    'aria-invalid': $error ? true : null,
     formattingOptions,
     id: $id,
     innerRef,
     name,
-    'aria-invalid': $error ? true : null,
-    value: $value,
+    onChange,
+    value: undefined,
     ...props,
   };
+
+  // If there is an onChange handler, make it a controlled input
+  if (onChange) {
+    inputProps.value = $value;
+  }
 
   if (elementOnly) {
     return <InputComponent {...inputProps} />;

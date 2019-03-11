@@ -11,7 +11,7 @@ For available `Formik` options see here: https://jaredpalmer.com/formik/docs/api
   {({ status }) => (
     <div>
       <FieldSet>
-        <Input name="foo" label="A foo label" />
+        <Input connect={false} name="foo" label="A foo label" />
       </FieldSet>
       <FieldSet>
         <Button text="Cool" type="submit" />
