@@ -93,3 +93,13 @@ export const fileUploadEvent = (
   createdAt: new Date(),
   userAction: 'fileUpload',
 });
+
+export const walletTransferEvent = (
+  senderName: string,
+  amount: string,
+): UserActivityType => ({
+  senderName,
+  amount,
+  createdAt: new Date(),
+  userAction: 'walletTransfer',
+});

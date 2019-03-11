@@ -42,5 +42,9 @@ const messages = defineMessages({
     id: 'dashboard.UserActivity.joinedColony',
     defaultMessage: 'Joined Colony',
   },
+  walletTransfer: {
+    id: 'dashboard.UserActivity.walletTransfer',
+    defaultMessage: '@{username} sent you {amount}',
+  },
 });
 export default messages;
