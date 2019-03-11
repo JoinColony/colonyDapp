@@ -12,11 +12,9 @@ const enhance = compose(
   withDialog(),
   withProps(() => ({
     // TODO: fetch from Colony record
-    tokens: [].sort(
-      sortObjectsBy('isNative').splice(1, 0, {
-        address: '0x0000000000000000000000000000000000000000',
-      }),
-    ),
+    tokens: [].sort(sortObjectsBy('isNative')).splice(1, 0, {
+      address: '0x0000000000000000000000000000000000000000',
+    }),
   })),
   withImmutablePropsToJS,
 );

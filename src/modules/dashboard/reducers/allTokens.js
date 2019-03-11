@@ -31,7 +31,7 @@ const tokensReducer: ReducerType<
         symbol,
       });
       return state.get(tokenAddress)
-        ? state.mergeIn(tokenAddress, record)
+        ? state.mergeIn([tokenAddress], record)
         : state.set(tokenAddress, record);
     }
     case ACTIONS.COLONY_FETCH_SUCCESS: {
@@ -39,7 +39,7 @@ const tokensReducer: ReducerType<
       return tokens.reduce((currentState, token) => {
         const record = TokenRecord(token);
         return currentState.get(token.address)
-          ? currentState.mergeIn(token.address, record)
+          ? currentState.mergeIn([token.address], record)
           : state.set(token.address, record);
       }, state);
     }

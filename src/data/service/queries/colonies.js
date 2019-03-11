@@ -295,7 +295,13 @@ export const getColony: ColonyQuery<void, [ColonyType, Array<TokenType>]> = ({
               return [
                 {
                   ...colony,
-                  tokens: [...colony.tokens, { address, isNative }],
+                  tokens: {
+                    ...colony.tokens,
+                    [address]: {
+                      address,
+                      isNative,
+                    },
+                  },
                 },
                 [...tokens, payload],
               ];
@@ -338,7 +344,7 @@ export const getColony: ColonyQuery<void, [ColonyType, Array<TokenType>]> = ({
             ensName: colonyENSName,
             inRecoveryMode,
             name: '',
-            tokens: [],
+            tokens: {},
           },
           [],
         ],

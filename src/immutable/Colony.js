@@ -4,10 +4,9 @@ import type {
   RecordFactory,
   RecordOf,
   Map as ImmutableMapType,
-  List as ListType,
 } from 'immutable';
 
-import { Record, Map as ImmutableMap, List } from 'immutable';
+import { Record, Map as ImmutableMap } from 'immutable';
 
 import type { Address, ENSName } from '~types';
 import type {
@@ -32,13 +31,13 @@ type Shared = {|
 
 export type ColonyType = $ReadOnly<{|
   ...Shared,
-  tokens?: TokenReferenceType[],
+  tokens?: { [address: Address]: TokenReferenceType },
   admins?: { [username: string]: ColonyAdminType },
 |}>;
 
 type ColonyRecordProps = {|
   ...Shared,
-  tokens?: ListType<TokenReferenceRecordType>,
+  tokens?: ImmutableMapType<Address, TokenReferenceRecordType>,
   admins?: ImmutableMapType<string, ColonyAdminRecordType>,
 |};
 
@@ -52,7 +51,7 @@ const defaultValues: $Shape<ColonyRecordProps> = {
   id: undefined,
   inRecoveryMode: false,
   name: undefined,
-  tokens: List(),
+  tokens: ImmutableMap(),
   version: undefined,
   website: undefined,
 };

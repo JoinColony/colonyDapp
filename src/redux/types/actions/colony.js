@@ -1,10 +1,11 @@
 /* @flow */
 
-import type { WithKeyPathDepth1 } from '~types';
+import type { WithKeyPathDepth1, WithKeyPathDepth2 } from '~types';
 import type {
   ColonyType,
   ContractTransactionType,
   DomainType,
+  TokenReferenceType,
   TokenType,
   TransactionType,
 } from '~immutable';
@@ -288,5 +289,19 @@ export type ColonyActionTypes = {|
   COLONY_VERSION_UPGRADE_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE_ERROR,
     void,
+  >,
+  COLONY_TOKEN_BALANCE_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+    {| colonyAddress: string |},
+    WithKeyPathDepth2,
+  >,
+  COLONY_TOKEN_BALANCE_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR,
+    WithKeyPathDepth2,
+  >,
+  COLONY_TOKEN_BALANCE_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
+    TokenReferenceType,
+    WithKeyPathDepth2,
   >,
 |};
