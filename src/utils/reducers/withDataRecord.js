@@ -13,6 +13,7 @@ const handleSuccess = <T: DataRecordType<*>>(state: T) =>
   state.merge({
     error: undefined,
     isFetching: false,
+    lastFetchedAt: new Date(),
   });
 
 const handleError = <T: DataRecordType<*>>(state: T, { payload: error }: *) =>

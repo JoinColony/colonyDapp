@@ -20,25 +20,24 @@ type Props = {|
   link?: boolean,
 |};
 
-const UserAvatar = ({ link, username, address, ...rest }: Props) => {
+const UserAvatar = ({ link, address, ...rest }: Props) => {
   const args = [address];
-  const { data: user } = useDataFetcher<UserType>(userFetcher, args, args);
+  const { data: user } = useDataFetcher<UserType>(userFetcher, args, args, {
+    ttl: 1000 * 30, // 30 seconds
+  });
   const { data: avatarData } = useDataFetcher<string>(
     userAvatarByAddressFetcher,
     args,
     args,
+    { ttl: 1000 * 60 * 60 * 24 }, // one day
   );
 
-  if (!user)
-    // TODO do we need address="" ?
-    return (
-      <UserAvatarDisplay username={username} address="" notSet {...rest} />
-    );
+  if (!user) return <UserAvatarDisplay address={address} notSet {...rest} />;
 
   // The `username` prop is optional, so take it from the fetched user profile
-  const { displayName, username: profileUsername } = user.profile;
-  return link && profileUsername ? (
-    <NavLink to={`/user/${profileUsername.toLowerCase()}`}>
+  const { displayName, username } = user.profile;
+  return link && username ? (
+    <NavLink to={`/user/${username.toLowerCase()}`}>
       <UserAvatarDisplay
         address={address}
         avatar={avatarData}

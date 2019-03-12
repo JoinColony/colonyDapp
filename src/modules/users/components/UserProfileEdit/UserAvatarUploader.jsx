@@ -62,7 +62,7 @@ class UserAvatarUploader extends Component<Props> {
           <UserAvatar
             address={walletAddress}
             size="xl"
-            // TODO why is this here? title={MSG.uploaderLabel}
+            // title={MSG.uploaderLabel} // TODO this is not supported on UserAvatar
             username={username}
           />
         }

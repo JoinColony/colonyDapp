@@ -137,6 +137,8 @@ export type UserActionTypes = {|
   USER_UPLOAD_AVATAR_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
     {|
+      address: string,
+      avatar: string,
       hash: string,
     |},
     void,

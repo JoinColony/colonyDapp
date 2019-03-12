@@ -26,7 +26,10 @@ const userAvatarsReducer: ReducerType<
     case ACTIONS.USER_AVATAR_FETCH_SUCCESS: {
       const { avatar, address } = action.payload;
       return avatar
-        ? state.set(address, DataRecord({ record: avatar }))
+        ? state.set(
+            address,
+            DataRecord({ record: avatar, lastFetchedAt: new Date() }),
+          )
         : state.delete(address);
     }
     default:

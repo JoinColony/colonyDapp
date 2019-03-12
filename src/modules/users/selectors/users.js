@@ -149,13 +149,6 @@ export const currentUserColonyPermissionsSelector = createSelector(
   permissions => permissions,
 );
 
-// TODO this is unused, do we need it?
-// export const currentUserAvatarSelector = createSelector(
-//   getCurrentUserAddress,
-//   getUserAvatars,
-//   (address, avatars) => avatars.get(address),
-// );
-
 // TODO this doesn't quite fit here, maybe move?
 export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
   !!(permissions && permissions.canEnterRecoveryMode);

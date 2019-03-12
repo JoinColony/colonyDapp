@@ -7,7 +7,7 @@ import React from 'react';
 import type { UserType } from '~immutable';
 
 import { useDataFetcher } from '~utils/hooks';
-import ColonyGrid from '~core/ColonyGrid';
+import ColonyGrid from '~dashboard/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
@@ -30,6 +30,7 @@ const UserProfileTemplate = ({ address }: { address: string }) => {
     userFetcher,
     userArgs,
     userArgs,
+    { ttl: 1000 * 10 },
   );
 
   return user ? (

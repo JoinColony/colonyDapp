@@ -5,7 +5,7 @@ import { branch, lifecycle } from 'recompose';
 import { shouldFetchData } from '~immutable/utils';
 
 const shouldFetchDomains = ({ domains, ensName }) =>
-  ensName && shouldFetchData(domains);
+  ensName && shouldFetchData(domains, 0, false);
 
 const fetchMissingDomains = branch(
   shouldFetchDomains,
