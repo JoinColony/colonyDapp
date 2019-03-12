@@ -1,0 +1,27 @@
+.layoutMain {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  overflow: auto;
+  background-color: var(--grey-blue-2);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  height: 60px;
+  width: 100%;
+}
+
+.steps {
+  flex: 1;
+  margin-top: 22px;
+}
+
+.backButton {
+  margin-left: 18px;
+}
+
+.content {
+  composes: flexContainerColumn flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+  padding-bottom: 20px;
+}

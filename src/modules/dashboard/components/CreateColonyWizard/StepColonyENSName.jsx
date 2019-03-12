@@ -7,7 +7,7 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 
-import styles from './StepColonyENSName.css';
+import styles from './StepUserENSName.css';
 
 import { mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
