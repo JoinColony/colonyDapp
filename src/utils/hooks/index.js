@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { InputSelector } from 'reselect';
+
 import type { Action } from '~redux';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 
@@ -63,15 +64,15 @@ export const useDataFetcher = <T>(
 |} => {
   const dispatch = useDispatch();
   const mapState = useCallback(
-    state => ({
-      data: fetcher.select(state, ...selectArgs),
-    }),
+    state => fetcher.select(state, ...selectArgs),
     selectArgs,
   );
-  const { data } = useMappedState(mapState);
+  const data = useMappedState(mapState);
+
   useEffect(() => {
     dispatch(fetcher.fetch(...fetchArgs), fetchArgs);
   }, fetchArgs);
+
   return {
     data: transformFetchedData(data),
     isFetching: isFetchingData(data),
