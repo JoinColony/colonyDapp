@@ -8,15 +8,15 @@ import createDate from 'sugar-date/date/create';
 import formatDate from 'sugar-date/date/format';
 import DayPicker, { DateUtils } from 'react-day-picker';
 
-import { asField } from '../Fields';
-import Popover from '../Popover';
-import InputField from './InputField.jsx';
+import type { InputComponentAppearance } from '~core/Fields/Input';
+import type { PopoverTriggerType } from '~core/Popover';
+
+import { asField } from '~core/Fields';
+import Popover from '~core/Popover';
 
 import styles from './DatePicker.css';
 
-import type { InputComponentAppearance } from '../Fields/Input';
-import type { PopoverTrigger } from '../Popover';
-
+import InputField from './InputField.jsx';
 import CaptionElement from './CaptionElement.jsx';
 import NavbarElement from './NavbarElement.jsx';
 
@@ -42,7 +42,7 @@ type Props = {|
   /** Placeholder for input */
   placeholder?: string,
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */
-  renderTrigger?: PopoverTrigger,
+  renderTrigger?: PopoverTriggerType,
   /** Wheather or not to show the Popover's arrow */
   showArrow?: boolean,
   /** Callback to call when a date is picked. Only needed when using `connect={false}` */

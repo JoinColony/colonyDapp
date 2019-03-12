@@ -9,7 +9,6 @@ import { ConnectedRouter } from 'connected-react-router';
 
 import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
-import { PopoverProvider } from '~core/Popover';
 
 import dialogComponents from './dialogComponents';
 import messages from './i18n/en.json';
@@ -26,15 +25,13 @@ const App = ({ store, history }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
     <StoreContext.Provider value={store}>
       <ReduxProvider store={store}>
-        <PopoverProvider>
-          <ConnectedRouter history={history}>
-            <DialogProvider dialogComponents={dialogComponents}>
-              <div className={layout.stretch}>
-                <Routes />
-              </div>
-            </DialogProvider>
-          </ConnectedRouter>
-        </PopoverProvider>
+        <ConnectedRouter history={history}>
+          <DialogProvider dialogComponents={dialogComponents}>
+            <div className={layout.stretch}>
+              <Routes />
+            </div>
+          </DialogProvider>
+        </ConnectedRouter>
       </ReduxProvider>
     </StoreContext.Provider>
   </IntlProvider>
