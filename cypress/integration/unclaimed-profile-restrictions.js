@@ -17,7 +17,7 @@ describe('Unclaimed Profile Restrictions', () => {
      */
     cy.fixture('accounts').then(({ mnemonic }) => {
       /*
-       * Fill the menmonic Phrase Textarea
+       * Fill the mnemonic Phrase Textarea
        */
       cy.get('#connectwalletmnemonic').type(mnemonic);
     });
@@ -25,8 +25,11 @@ describe('Unclaimed Profile Restrictions', () => {
     /*
      * Click on the button to go to the dApp
      */
-    cy.get('button')
-      .contains('Go to Colony')
+    cy.get('button[data-test="submitMnemonic"]')
+      /*
+       * Here we also test the copy
+       */
+      .should('have.text', 'Go to Colony')
       .click()
       .wait(2000);
   });

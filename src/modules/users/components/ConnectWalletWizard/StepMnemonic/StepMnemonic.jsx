@@ -95,6 +95,7 @@ const StepMnemonic = ({
             text={MSG.buttonAdvanceText}
             type="submit"
             loading={isSubmitting}
+            data-test="submitMnemonic"
           />
         </div>
       </main>
