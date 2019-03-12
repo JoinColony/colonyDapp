@@ -8,6 +8,7 @@ import type {
   ErrorActionType,
   UniqueActionType,
 } from '../index';
+import type { WithKeyPathDepth1 } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
@@ -19,7 +20,7 @@ export type CurrentUserActionTypes = {|
       profileData: $Shape<UserProfileType>,
       walletAddress: string,
     |},
-    void,
+    WithKeyPathDepth1,
   >,
   CURRENT_USER_GET_BALANCE: ActionType<typeof ACTIONS.CURRENT_USER_GET_BALANCE>,
   CURRENT_USER_GET_BALANCE_ERROR: ErrorActionType<

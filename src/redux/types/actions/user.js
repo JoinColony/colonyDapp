@@ -18,20 +18,22 @@ import type {
 import { ACTIONS } from '../../index';
 
 export type UserActionTypes = {|
-  USER_AVATAR_FETCH: ActionTypeWithPayload<
+  USER_AVATAR_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_AVATAR_FETCH,
     {| address: string |},
+    WithKeyPathDepth1,
   >,
   USER_AVATAR_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_AVATAR_FETCH_ERROR,
-    void,
+    WithKeyPathDepth1,
   >,
-  USER_AVATAR_FETCH_SUCCESS: ActionTypeWithPayload<
+  USER_AVATAR_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS,
     {|
       address: string,
       avatar: ?string,
     |},
+    WithKeyPathDepth1,
   >,
   USER_TASK_IDS_FETCH: ActionType<typeof ACTIONS.USER_TASK_IDS_FETCH>,
   USER_TASK_IDS_FETCH_ERROR: ErrorActionType<

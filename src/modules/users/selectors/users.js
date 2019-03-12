@@ -11,6 +11,8 @@ import type {
 } from '~immutable';
 import type { ENSName } from '~types';
 
+import { DataRecord } from '~immutable';
+
 import {
   USERS_ALL_USERS,
   USERS_AVATARS,
@@ -52,7 +54,10 @@ export const usernameSelector = createSelector(
 export const userAddressSelector = createSelector(
   getUsernameFromProps,
   getUsernames,
-  (username, usernames) => usernames.keyOf(username),
+  // This creates an inverted version of the entry for this map (with a data record)
+  // so that we can use it in the same way.
+  (username, usernames) =>
+    DataRecord({ record: usernames.keyOf(DataRecord({ record: username })) }),
 );
 
 /*

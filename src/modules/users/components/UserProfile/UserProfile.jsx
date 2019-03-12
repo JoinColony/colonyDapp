@@ -4,7 +4,7 @@ import type { Match } from 'react-router-dom';
 
 import React from 'react';
 
-import { useDataFetcher, useFetcher } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 
 import { userAddressFetcher, userFetcher } from '../../fetchers';
 
@@ -55,7 +55,7 @@ const UserProfile = ({
   },
 }: Props) => {
   const addressArgs = [username];
-  const address = useFetcher<string>(
+  const { data: address } = useDataFetcher<string>(
     userAddressFetcher,
     addressArgs,
     addressArgs,

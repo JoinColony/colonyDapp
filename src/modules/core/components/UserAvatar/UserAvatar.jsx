@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { useDataFetcher, useFetcher } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 
 import {
   userFetcher,
@@ -23,7 +23,11 @@ type Props = {|
 const UserAvatar = ({ link, username, address, ...rest }: Props) => {
   const args = [address];
   const { data: user } = useDataFetcher<UserType>(userFetcher, args, args);
-  const avatarData = useFetcher<string>(userAvatarByAddressFetcher, args, args);
+  const { data: avatarData } = useDataFetcher<string>(
+    userAvatarByAddressFetcher,
+    args,
+    args,
+  );
 
   if (!user)
     // TODO do we need address="" ?

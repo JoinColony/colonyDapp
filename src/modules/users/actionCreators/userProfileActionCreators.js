@@ -9,6 +9,7 @@ export const usernameFetch = (
   address: string,
 ): Action<typeof ACTIONS.USERNAME_FETCH> => ({
   type: ACTIONS.USERNAME_FETCH,
+  meta: { keyPath: [address] },
   payload: { address },
 });
 
@@ -31,6 +32,7 @@ export const userAvatarFetch = (
   address: string,
 ): Action<typeof ACTIONS.USER_AVATAR_FETCH> => ({
   type: ACTIONS.USER_AVATAR_FETCH,
+  meta: { keyPath: [address] },
   payload: { address },
 });
 
