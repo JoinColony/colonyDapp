@@ -7,10 +7,10 @@ import withDialog from '~core/Dialog/withDialog';
 
 import Wallet from './Wallet.jsx';
 
-import { fetchUserTransactions } from '../../../users/actionCreators';
+import { userTokenTransfersFetch } from '../../../users/actionCreators';
 import {
   currentUserAddressSelector,
-  currentUserTransactions,
+  currentUserTransactionsSelector,
 } from '../../../users/selectors';
 
 import mockTokens from '../../../../__mocks__/mockTokens';
@@ -23,10 +23,10 @@ const enhance = compose(
   connect(
     state => ({
       walletAddress: currentUserAddressSelector(state),
-      transactions: currentUserTransactions(state),
+      transactions: currentUserTransactionsSelector(state),
     }),
     {
-      fetchUserTransactions,
+      userTokenTransfersFetch,
     },
   ),
 );

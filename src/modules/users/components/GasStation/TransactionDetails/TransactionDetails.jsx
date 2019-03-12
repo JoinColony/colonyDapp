@@ -24,7 +24,6 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  username: string,
   transactionGroup: TransactionGroup,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};

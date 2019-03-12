@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './UserAvatar';
+export { default } from './UserAvatar.jsx';

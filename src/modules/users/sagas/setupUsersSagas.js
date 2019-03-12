@@ -32,6 +32,7 @@ import {
 } from '../../../data/service/commands/user';
 import {
   checkUsernameIsAvailable,
+  getUserAddress,
   getUserAvatar,
   getUserBalance,
   getUserColonyTransactions,
@@ -43,15 +44,14 @@ import {
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
 function* userAvatarFetch({
-  payload: { username },
+  payload: { address },
 }: Action<typeof ACTIONS.USER_AVATAR_FETCH>): Saga<void> {
   try {
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
       metadata: {
-        username,
-        walletAddress: yield select(currentUserAddressSelector),
+        walletAddress: address,
       },
     };
 
@@ -59,10 +59,10 @@ function* userAvatarFetch({
 
     yield put<Action<typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_FETCH_SUCCESS,
-      payload: { username, avatar },
+      payload: { address, avatar },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error, { key: username });
+    yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error, { key: address });
   }
 }
 
@@ -97,44 +97,63 @@ function* userFetchTokenTransfers(
 
 function* userProfileFetch({
   meta,
-  payload: { username },
-}: Action<typeof ACTIONS.USER_PROFILE_FETCH>): Saga<void> {
+  payload: { address },
+}: Action<typeof ACTIONS.USER_FETCH>): Saga<void> {
   try {
+    const username = yield select(usernameSelector, address);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
         username,
-        walletAddress: yield select(currentUserAddressSelector),
+        walletAddress: address,
       },
     };
 
     const user = yield* executeQuery(context, getUserProfile);
 
-    yield put<Action<typeof ACTIONS.USER_PROFILE_FETCH_SUCCESS>>({
-      type: ACTIONS.USER_PROFILE_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.USER_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_FETCH_SUCCESS,
       meta,
       payload: user,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_PROFILE_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.USER_FETCH_ERROR, error, meta);
   }
 }
 
 function* usernameFetch({
-  payload: { userAddress },
+  payload: { address },
 }: Action<typeof ACTIONS.USERNAME_FETCH>): Saga<void> {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
     const context = { ensCache, networkClient };
 
-    const username = yield* executeQuery(context, getUsername, userAddress);
+    const username = yield* executeQuery(context, getUsername, address);
     yield put<Action<typeof ACTIONS.USERNAME_FETCH_SUCCESS>>({
       type: ACTIONS.USERNAME_FETCH_SUCCESS,
-      payload: { username, key: userAddress },
+      payload: { username, address },
     });
   } catch (error) {
     yield putError(ACTIONS.USERNAME_FETCH_ERROR, error);
+  }
+}
+
+function* userAddressFetch({
+  payload: { username },
+}: Action<typeof ACTIONS.USER_ADDRESS_FETCH>): Saga<void> {
+  try {
+    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
+    const context = { ensCache, networkClient };
+
+    const address = yield* executeQuery(context, getUserAddress, username);
+    yield put<Action<typeof ACTIONS.USER_ADDRESS_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_ADDRESS_FETCH_SUCCESS,
+      payload: { username, address },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_ADDRESS_FETCH_ERROR, error);
   }
 }
 
@@ -192,11 +211,11 @@ function* userRemoveAvatar({
   meta,
 }: Action<typeof ACTIONS.USER_REMOVE_AVATAR>): Saga<void> {
   try {
+    const address = yield select(currentUserAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        username: yield select(usernameSelector),
-        walletAddress: yield select(currentUserAddressSelector),
+        walletAddress: address,
       },
     };
 
@@ -205,7 +224,7 @@ function* userRemoveAvatar({
     yield put<Action<typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS>>({
       type: ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
       meta,
-      payload: { username: context.metadata.username },
+      payload: { address },
     });
   } catch (error) {
     yield putError(ACTIONS.USER_REMOVE_AVATAR_ERROR, error, meta);
@@ -365,19 +384,20 @@ function* fetchUserTaskIds(
 }
 
 export default function* setupUsersSagas(): Saga<void> {
+  yield takeEvery(ACTIONS.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
-  yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userFetchTokenTransfers);
-  yield takeEvery(ACTIONS.USER_PROFILE_FETCH, userProfileFetch);
+  yield takeEvery(ACTIONS.USER_FETCH, userProfileFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
-  yield takeEvery(ACTIONS.USERNAME_FETCH, usernameFetch);
   yield takeEvery(ACTIONS.USER_TASK_IDS_FETCH, fetchUserTaskIds);
-  yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
-  yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
-  yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, userRemoveAvatar);
-  yield takeLatest(ACTIONS.USER_UPLOAD_AVATAR, userUploadAvatar);
+  yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userFetchTokenTransfers);
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
   );
   yield takeLatest(ACTIONS.USERNAME_CREATE, usernameCreate);
+  yield takeEvery(ACTIONS.USERNAME_FETCH, usernameFetch);
+  yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
+  yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
+  yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, userRemoveAvatar);
+  yield takeLatest(ACTIONS.USER_UPLOAD_AVATAR, userUploadAvatar);
 }

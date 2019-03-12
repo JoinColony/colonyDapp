@@ -45,9 +45,8 @@ const ItemDefault = ({
   >
     <UserAvatar
       size="s"
-      userId={walletAddress}
       username={username || walletAddress}
-      walletAddress={walletAddress}
+      address={walletAddress}
     />
     <span className={styles.dataContainer}>
       {displayName && (

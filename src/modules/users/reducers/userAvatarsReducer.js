@@ -13,12 +13,12 @@ const userAvatarsReducer: ReducerType<
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
     case ACTIONS.USER_REMOVE_AVATAR_SUCCESS: {
-      const { username } = action.payload;
-      return state.delete(username);
+      const { address } = action.payload;
+      return state.delete(address);
     }
     case ACTIONS.USER_AVATAR_FETCH_SUCCESS: {
-      const { avatar, username } = action.payload;
-      return avatar ? state.set(username, avatar) : state.delete(username);
+      const { avatar, address } = action.payload;
+      return avatar ? state.set(address, avatar) : state.delete(address);
     }
     default:
       return state;

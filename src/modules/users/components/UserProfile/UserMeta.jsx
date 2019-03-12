@@ -29,10 +29,10 @@ const UserMeta = ({
 }: Props) => (
   <div className={styles.main}>
     <UserAvatar
+      address={walletAddress}
       className={styles.avatar}
-      walletAddress={walletAddress}
-      username={username}
       size="xl"
+      username={username}
     />
     <Heading
       appearance={{ margin: 'none', size: 'large' }}

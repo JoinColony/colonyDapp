@@ -1,10 +1,15 @@
 /* @flow */
 
+import type { Match } from 'react-router-dom';
+
 import React from 'react';
+
+import { useDataFetcher, useFetcher } from '~utils/hooks';
+
+import { userAddressFetcher, userFetcher } from '../../fetchers';
 
 import ColonyGrid from '~core/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
-import { withUserFromRoute } from '../../hocs';
 
 import ProfileTemplate from '~pages/ProfileTemplate';
 import UserMeta from './UserMeta.jsx';
@@ -16,15 +21,22 @@ import styles from './UserProfile.css';
 
 import UserProfileSpinner from './UserProfileSpinner.jsx';
 
-import type { DataType, UserType } from '~immutable';
+import type { UserType } from '~immutable';
 
 type Props = {|
-  user: ?DataType<UserType>,
+  match: Match,
 |};
 
-const UserProfile = ({ user }: Props) =>
-  user && user.record ? (
-    <ProfileTemplate asideContent={<UserMeta user={user.record} />}>
+const UserProfileTemplate = ({ address }: { address: string }) => {
+  const userArgs = [address];
+  const { data: user } = useDataFetcher<UserType>(
+    userFetcher,
+    userArgs,
+    userArgs,
+  );
+
+  return user ? (
+    <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
         <ColonyGrid colonies={mockColonies} />
       </section>
@@ -35,5 +47,25 @@ const UserProfile = ({ user }: Props) =>
   ) : (
     <UserProfileSpinner />
   );
+};
 
-export default withUserFromRoute(UserProfile);
+const UserProfile = ({
+  match: {
+    params: { username },
+  },
+}: Props) => {
+  const addressArgs = [username];
+  const address = useFetcher<string>(
+    userAddressFetcher,
+    addressArgs,
+    addressArgs,
+  );
+
+  return address ? (
+    <UserProfileTemplate address={address} />
+  ) : (
+    <UserProfileSpinner />
+  );
+};
+
+export default UserProfile;

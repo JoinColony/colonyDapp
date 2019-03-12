@@ -18,26 +18,26 @@ type Props = {|
   /** Users's handle (aka Username) */
   username?: string,
   /** User's wallet address */
-  walletAddress?: string,
+  address?: string,
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled',
 |};
 
 const UserInfo = ({
-  displayName,
-  username,
-  walletAddress,
-  trigger = 'hover',
+  address,
   children,
+  displayName,
+  trigger = 'hover',
+  username,
 }: Props) => (
   <Tooltip
     content={
       <div className={styles.main}>
         {displayName && <p className={styles.displayName}>{displayName}</p>}
         {username && <UserMention username={username} to="" />}
-        {walletAddress && (
+        {address && (
           <p className={styles.walletAddress}>
-            <MaskedAddress address={walletAddress} />
+            <MaskedAddress address={address} />
           </p>
         )}
       </div>

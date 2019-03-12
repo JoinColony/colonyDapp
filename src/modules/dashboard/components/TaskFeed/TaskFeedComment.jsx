@@ -52,12 +52,11 @@ const TaskFeedComment = ({
       {!currentUser && (
         <div className={styles.commentAvatar}>
           <UserAvatar
-            avatarURL={mockUser.profile.avatar}
+            address={commentAuthorWalletAddress}
             displayName={mockUser.profile.displayName}
             hasUserInfo
-            username={mockUser.profile.username}
-            walletAddress={commentAuthorWalletAddress}
             size="s"
+            username={mockUser.profile.username}
           />
         </div>
       )}
@@ -65,9 +64,9 @@ const TaskFeedComment = ({
         {!currentUser && (
           <div className={styles.commentUsername}>
             <UserInfo
+              address={commentAuthorWalletAddress}
               displayName={mockUser.profile.displayName}
               username={mockUser.profile.username}
-              walletAddress={commentAuthorWalletAddress}
             >
               <span>{mockUser.profile.displayName}</span>
             </UserInfo>

@@ -11,7 +11,7 @@ import { ACTIONS } from '~redux';
 import Heading from '~core/Heading';
 import Button, { DialogActionButton } from '~core/Button';
 
-import { colonyPermissionsFetcher } from '../../../users/fetchers';
+import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { canEnterRecoveryMode } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/selectors';
 
@@ -61,7 +61,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
     data: permissions,
     error,
   } = useDataFetcher<UserPermissionsType>(
-    colonyPermissionsFetcher,
+    currentUserColonyPermissionsFetcher,
     [colony.ensName],
     [colony.ensName],
   );

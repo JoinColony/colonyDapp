@@ -25,7 +25,7 @@ import { ACTIONS } from '~redux';
 
 import { userProfile as userProfileStoreBlueprint } from '../../../../data/blueprints';
 
-import { currentUser } from '../../selectors';
+import { currentUserSelector } from '../../selectors';
 
 import styles from './UserProfileEdit.css';
 
@@ -134,7 +134,7 @@ UserProfileEdit.displayName = displayName;
 
 export default compose(
   connect(state => ({
-    user: currentUser(state),
+    user: currentUserSelector(state),
   })),
   withImmutablePropsToJS,
 )(UserProfileEdit);
