@@ -26,7 +26,7 @@ export type Props = {
   rating: number,
   reputation: number,
   sortedPayouts: Array<TaskPayoutType>,
-  title: string,
+  title?: string,
 };
 
 const displayName = 'dashboard.TaskClaimReward';

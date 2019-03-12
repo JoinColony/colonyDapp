@@ -18,9 +18,7 @@ const enhance = compose(
   withProps(() => {
     const task = mockTask;
     const user = userMock;
-    const isTaskCreator =
-      task.creator.toLowerCase() === user.profile.walletAddress.toLowerCase() ||
-      false;
+    const isTaskCreator = task.manager.username === user.profile.username;
     return {
       task,
       user,

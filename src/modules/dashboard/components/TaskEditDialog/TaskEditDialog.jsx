@@ -16,7 +16,8 @@ import DialogBox from '~core/Dialog/DialogBox.jsx';
 import Payout from './Payout.jsx';
 import { tokenIsETH } from '../../../../immutable/utils';
 
-import type { UserType, TokenType, TaskPayoutType } from '~immutable';
+import type { UserType, TokenType, TaskType } from '~immutable';
+import type { $Pick } from '~types';
 
 import styles from './TaskEditDialog.css';
 
@@ -60,18 +61,16 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  assignee?: UserType,
-  availableTokens: Array<TokenType>,
-  maxTokens?: BigNumber,
-  payouts?: Array<TaskPayoutType>,
-  reputation?: BigNumber,
-  users: Array<UserType>,
-  cancel: () => void,
+  ...$Exact<$Pick<TaskType, {| worker: *, payouts: *, reputation: * |}>>,
   addTokenFunding: (
     values: { payouts?: Array<any> },
     helpers: () => void,
   ) => void,
+  availableTokens: Array<TokenType>,
+  cancel: () => void,
+  maxTokens?: BigNumber,
   setPayload: (action: Object, payload: Object) => Object,
+  users: Array<UserType>,
 |};
 
 const filter = (data: Array<UserType>, filterValue) =>
@@ -87,15 +86,15 @@ const canAddTokens = (values, maxTokens) =>
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
-  cancel,
-  reputation,
-  payouts,
-  assignee,
-  maxTokens,
-  availableTokens,
-  users,
   addTokenFunding,
+  availableTokens,
+  cancel,
+  maxTokens,
+  payouts,
+  reputation,
   setPayload,
+  users,
+  worker,
 }: Props) => {
   const validateFunding = yup.object().shape({
     payouts: yup
@@ -136,8 +135,8 @@ const TaskEditDialog = ({
         /* $FlowFixMe */
         error="COOL_THING_CREATE_ERROR"
         initialValues={{
-          payouts: payouts || [],
-          assignee: assignee || null,
+          payouts,
+          worker,
         }}
         validationSchema={validateFunding}
         setPayload={setPayload}
@@ -152,12 +151,12 @@ const TaskEditDialog = ({
                   text={MSG.titleAssignment}
                 />
                 <SingleUserPicker
-                  name="assignee"
+                  data={users}
+                  filter={filter}
                   isResettable
                   itemComponent={ItemDefault}
                   label={MSG.selectAssignee}
-                  data={users}
-                  filter={filter}
+                  name="worker"
                   placeholder={MSG.search}
                 />
               </DialogSection>

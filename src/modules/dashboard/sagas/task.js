@@ -173,6 +173,8 @@ function* taskUpdate({
 }: Action<typeof ACTIONS.TASK_UPDATE>): Saga<void> {
   try {
     const context = yield* getStoreContext(colonyENSName);
+    // TODO in #938: call updateTask with the right props
+    // $FlowFixMe
     yield* executeCommand(context, updateTask, payload);
 
     /*

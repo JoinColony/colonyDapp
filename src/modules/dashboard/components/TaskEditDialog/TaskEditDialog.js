@@ -17,9 +17,11 @@ const enhance = compose(
         helpers.push({
           id: nanoid(),
         });
+
     },
     setPayload: ({ availableTokens }) => (
       action: Object,
+      // TODO I don't think we have assignee here anymore
       { assignee, payouts }: Object,
     ) => ({
       ...action,

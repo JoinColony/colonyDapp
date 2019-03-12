@@ -40,10 +40,8 @@ const enhance = compose(
         draftId,
         colonyENSName,
         payouts,
-        workerHasRated,
-        workerRateFail,
-        // This will always be set, default to appease the type gods
-        workerRating: rating = 0,
+        // `rating` will always be set, default to appease the type gods
+        worker: { didRate, didFailToRate, rating = 0 },
         reputation,
         title,
       },
@@ -51,11 +49,11 @@ const enhance = compose(
       draftId,
       colonyENSName,
       rating,
-      reputation: getReputation(reputation, rating, workerRateFail),
+      reputation: getReputation(reputation, rating, didFailToRate),
       payouts,
       title,
-      lateRating: !workerHasRated,
-      lateReveal: !!workerHasRated && workerRateFail,
+      lateRating: !didRate,
+      lateReveal: !!didRate && didFailToRate,
       sortedPayouts: payouts
         /*
          * Take out the native token
