@@ -1,0 +1,13 @@
+.confirmContainer {
+  margin: 0 10px;
+}
+
+.confirmText {
+  margin: 0 10px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+}
+
+.separator {
+  margin: 0 10px;
+}
