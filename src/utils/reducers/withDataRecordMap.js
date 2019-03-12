@@ -48,6 +48,7 @@ const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
   return getNextState<S, V>(state, keyPath, {
     error: undefined,
     isFetching: false,
+    lastFetchedAt: new Date(),
   });
 };
 

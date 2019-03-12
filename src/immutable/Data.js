@@ -8,6 +8,7 @@ type Shared<R> = {|
   record: ?R,
   error: ?string,
   isFetching: boolean,
+  lastFetchedAt: Date,
 |};
 
 export type DataType<R> = $ReadOnly<Shared<R>>;
@@ -18,6 +19,7 @@ const defaultValues: $Shape<Shared<*>> = {
   record: undefined,
   error: undefined,
   isFetching: false,
+  lastFetchedAt: new Date(0),
 };
 
 const DataRecordFactory: RecordFactory<Shared<*>> = Record(defaultValues);

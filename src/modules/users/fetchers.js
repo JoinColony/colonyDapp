@@ -35,4 +35,5 @@ export const userAvatarByAddressFetcher = Object.freeze({
   fetch: userAvatarFetch,
   select: (state: RootStateRecord, address: string) =>
     userAvatarByAddressSelector(state, { address }),
+  ttl: 30 * 60 * 1000,
 });

@@ -17,6 +17,7 @@ type DataFetcher = {|
     ...selectArgs: any[]
   ) => ?DataRecordType<*>,
   fetch: (...fetchArgs: any[]) => Action<*>,
+  ttl?: number,
 |};
 
 type DependantSelector = (
@@ -29,6 +30,10 @@ export type Given = (
   potentialSelector: InputSelector<RootStateRecord, *, *>,
   dependantSelector?: DependantSelector,
 ) => any | boolean;
+
+type DataFetcherOptions = {
+  ttl?: number,
+};
 
 export const usePrevious = (value: any) => {
   const ref = useRef();
@@ -49,31 +54,34 @@ const transformFetchedData = (data: DataRecordType<*>) => {
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
 export const useDataFetcher = <T>(
-  fetcher: DataFetcher,
+  { fetch, select, ttl = 0 }: DataFetcher,
   selectArgs: any[],
   fetchArgs: any[],
+  { ttl: ttlOverride }: DataFetcherOptions,
 ): {|
   data: ?T,
   isFetching: boolean,
   error: ?string,
-  timestamp: number,
 |} => {
   const dispatch = useDispatch();
   const mapState = useCallback(
-    state => fetcher.select(state, ...selectArgs),
+    state => select(state, ...selectArgs),
     selectArgs,
   );
   const data = useMappedState(mapState);
 
+  const actualTTL = ttlOverride || ttl;
+
+  const shouldFetch = !data || !!(Date.now() - data.lastFetchedAt > actualTTL);
+
   useEffect(() => {
-    dispatch(fetcher.fetch(...fetchArgs), fetchArgs);
+    if (shouldFetch) dispatch(fetch(...fetchArgs), fetchArgs);
   }, fetchArgs);
 
   return {
     data: transformFetchedData(data),
     isFetching: isFetchingData(data),
     error: data ? data.error : null,
-    timestamp: Date.now(),
   };
 };
 
