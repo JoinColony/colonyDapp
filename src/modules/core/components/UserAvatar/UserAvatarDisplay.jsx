@@ -23,7 +23,7 @@ export type Props = {|
   /** For the title */
   username?: string,
   /** Address of the current user for identicon fallback */
-  walletAddress: string,
+  address: string,
   /* Whether to show or not show the UserInfo tooltip over the avatar */
   hasUserInfo?: boolean,
 |};
@@ -34,6 +34,7 @@ export type Props = {|
 const componentDisplayName = 'UserAvatarDisplay';
 
 const UserAvatarDisplay = ({
+  address,
   avatar,
   className,
   displayName,
@@ -41,21 +42,20 @@ const UserAvatarDisplay = ({
   notSet,
   size,
   username,
-  walletAddress,
 }: Props) => (
   <UserInfo
+    address={address}
     displayName={displayName}
-    username={username}
-    walletAddress={walletAddress}
     trigger={hasUserInfo ? 'hover' : 'disabled'}
+    username={username}
   >
     <Avatar
-      avatarURL={avatar || (!notSet ? getIcon(walletAddress) : null)}
+      avatarURL={avatar || (!notSet ? getIcon(address) : null)}
       className={className}
       notSet={notSet}
       placeholderIcon="circle-person"
       size={size}
-      title={username || walletAddress}
+      title={username || address}
     />
   </UserInfo>
 );

@@ -44,12 +44,12 @@ const TaskFeedRating = ({
   <div className={styles.main}>
     <div className={styles.ratingPart}>
       <UserAvatar
-        avatarUrl={raterAvatar}
+        address={raterWalletAddress}
+        avatar={raterAvatar}
         displayName={raterDisplayName}
+        hasUserInfo
         size="xs"
         username={raterUserName}
-        walletAddress={raterWalletAddress}
-        hasUserInfo
       />
     </div>
     <div className={styles.ratingPart}>

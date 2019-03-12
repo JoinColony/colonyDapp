@@ -2,18 +2,20 @@
 
 import type { Map as ImmutableMapType, RecordOf } from 'immutable';
 
-import type { Address } from '~types';
 import type { UserRecordType, DataRecordType } from '~immutable';
 
-type Username = string;
-type Hash = string;
+export type UserAvatarsMap = ImmutableMapType<
+  string, // address
+  string, // IPFS hash
+>;
 
-export type UserAvatarsMap = ImmutableMapType<Username, Hash>;
-
-export type UsernamesMap = ImmutableMapType<Address, Username>;
+export type UsernamesMap = ImmutableMapType<
+  string, // address
+  string, // username
+>;
 
 export type UsersMap = ImmutableMapType<
-  Username,
+  string, // address
   DataRecordType<UserRecordType>,
 >;
 

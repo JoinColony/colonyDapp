@@ -2,45 +2,51 @@
 
 import React from 'react';
 
+import { useDataFetcher, useFetcher } from '~utils/hooks';
+
+import {
+  userFetcher,
+  userAvatarByAddressFetcher,
+} from '../../../users/fetchers';
+
 import NavLink from '../NavLink';
 import UserAvatarDisplay from './UserAvatarDisplay.jsx';
 
 import type { Props as UserAvatarProps } from './UserAvatarDisplay.jsx';
-import type { DataType, UserType } from '~immutable';
+import type { UserType } from '~immutable';
 
 type Props = {|
   ...UserAvatarProps,
-  user?: DataType<UserType>,
-  avatarData?: string,
   link?: boolean,
 |};
 
-const UserAvatar = ({ avatarData, link, username, user, ...rest }: Props) => {
-  if (!user || !user.record)
+const UserAvatar = ({ link, username, address, ...rest }: Props) => {
+  const args = [address];
+  const { data: user } = useDataFetcher<UserType>(userFetcher, args, args);
+  const avatarData = useFetcher<string>(userAvatarByAddressFetcher, args, args);
+
+  if (!user)
+    // TODO do we need address="" ?
     return (
-      <UserAvatarDisplay
-        username={username}
-        walletAddress=""
-        notSet
-        {...rest}
-      />
+      <UserAvatarDisplay username={username} address="" notSet {...rest} />
     );
 
-  const { displayName, walletAddress } = user.record.profile;
-  return link && username ? (
-    <NavLink to={`/user/${username.toLowerCase()}`}>
+  // The `username` prop is optional, so take it from the fetched user profile
+  const { displayName, username: profileUsername } = user.profile;
+  return link && profileUsername ? (
+    <NavLink to={`/user/${profileUsername.toLowerCase()}`}>
       <UserAvatarDisplay
+        address={address}
         avatar={avatarData}
         displayName={displayName}
-        walletAddress={walletAddress}
         {...rest}
       />
     </NavLink>
   ) : (
     <UserAvatarDisplay
+      address={address}
       avatar={avatarData}
       displayName={displayName}
-      walletAddress={walletAddress}
       {...rest}
     />
   );

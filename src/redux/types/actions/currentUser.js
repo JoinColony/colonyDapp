@@ -21,15 +21,6 @@ export type CurrentUserActionTypes = {|
     |},
     void,
   >,
-  CURRENT_USER_CREATE_ERROR: ErrorActionType<
-    typeof ACTIONS.CURRENT_USER_CREATE_ERROR,
-    void,
-  >,
-  CURRENT_USER_CREATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.CURRENT_USER_CREATE_SUCCESS,
-    void,
-    void,
-  >,
   CURRENT_USER_GET_BALANCE: ActionType<typeof ACTIONS.CURRENT_USER_GET_BALANCE>,
   CURRENT_USER_GET_BALANCE_ERROR: ErrorActionType<
     typeof ACTIONS.CURRENT_USER_GET_BALANCE_ERROR,

@@ -38,8 +38,6 @@ const MSG = defineMessages({
   },
 });
 
-const displayName: string = 'dashboard.ColonyHome.ColonyMeta';
-
 type Props = {|
   colony: ColonyType,
   founders: Array<UserType>,
@@ -115,14 +113,18 @@ const ColonyMeta = ({ colony, founders, admins, canAdminister }: Props) => {
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.foundersLabel}
           />
-          {founders.map((founder, index) => (
-            <UserAvatar
-              key={`founder_${index + 1}`}
-              className={styles.userAvatar}
-              hasUserInfo
-              {...founder}
-            />
-          ))}
+          {founders.map(
+            ({ profile: { walletAddress, username, displayName } }, index) => (
+              <UserAvatar
+                address={walletAddress}
+                className={styles.userAvatar}
+                displayName={displayName}
+                hasUserInfo
+                key={`founder_${index + 1}`}
+                username={username}
+              />
+            ),
+          )}
         </section>
       )}
       {admins && admins.length ? (
@@ -131,20 +133,24 @@ const ColonyMeta = ({ colony, founders, admins, canAdminister }: Props) => {
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.adminsLabel}
           />
-          {admins.map((admin, index) => (
-            <UserAvatar
-              key={`admin_${index + 1}`}
-              className={styles.userAvatar}
-              hasUserInfo
-              {...admin}
-            />
-          ))}
+          {admins.map(
+            ({ profile: { walletAddress, username, displayName } }, index) => (
+              <UserAvatar
+                address={walletAddress}
+                className={styles.userAvatar}
+                displayName={displayName}
+                hasUserInfo
+                key={`admin_${index + 1}`}
+                username={username}
+              />
+            ),
+          )}
         </section>
       ) : null}
     </div>
   );
 };
 
-ColonyMeta.displayName = displayName;
+ColonyMeta.displayName = 'dashboard.ColonyHome.ColonyMeta';
 
 export default ColonyMeta;

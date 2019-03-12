@@ -20,7 +20,7 @@ import { ACTIONS } from '../../index';
 export type UserActionTypes = {|
   USER_AVATAR_FETCH: ActionTypeWithPayload<
     typeof ACTIONS.USER_AVATAR_FETCH,
-    {| username: string |},
+    {| address: string |},
   >,
   USER_AVATAR_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_AVATAR_FETCH_ERROR,
@@ -29,8 +29,8 @@ export type UserActionTypes = {|
   USER_AVATAR_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS,
     {|
+      address: string,
       avatar: ?string,
-      username: string,
     |},
   >,
   USER_TASK_IDS_FETCH: ActionType<typeof ACTIONS.USER_TASK_IDS_FETCH>,
@@ -76,17 +76,17 @@ export type UserActionTypes = {|
     |},
     WithKeyPathDepth1,
   >,
-  USER_PROFILE_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_PROFILE_FETCH,
-    {| username: string |},
+  USER_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_FETCH,
+    {| address: string |},
     WithKeyPathDepth1,
   >,
-  USER_PROFILE_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_PROFILE_FETCH_ERROR,
+  USER_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
-  USER_PROFILE_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_PROFILE_FETCH_SUCCESS,
+  USER_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_FETCH_SUCCESS,
     UserProfileType,
     WithKeyPathDepth1,
   >,
@@ -120,7 +120,7 @@ export type UserActionTypes = {|
   >,
   USER_REMOVE_AVATAR_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
-    {| username: string |},
+    {| address: string |},
     void,
   >,
   USER_UPLOAD_AVATAR: UniqueActionType<

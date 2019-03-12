@@ -13,11 +13,11 @@ const userProfilesReducer: ReducerType<
   UsersMap,
   {|
     USER_ACTIVITIES_FETCH_SUCCESS: *,
-    USER_PROFILE_FETCH_SUCCESS: *,
+    USER_FETCH_SUCCESS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.USER_PROFILE_FETCH_SUCCESS: {
+    case ACTIONS.USER_FETCH_SUCCESS: {
       const {
         meta: { keyPath },
         payload,
@@ -51,6 +51,6 @@ const userProfilesReducer: ReducerType<
 };
 
 export default withDataRecordMap<UsersMap, UserRecordType>(
-  new Set([ACTIONS.USER_PROFILE_FETCH, ACTIONS.USER_ACTIVITIES_FETCH]),
+  new Set([ACTIONS.USER_FETCH, ACTIONS.USER_ACTIVITIES_FETCH]),
   ImmutableMap(),
 )(userProfilesReducer);

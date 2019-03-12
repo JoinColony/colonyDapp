@@ -5,41 +5,48 @@ import type { ENSName } from '~types';
 
 import { ACTIONS } from '~redux';
 
-export const fetchUsername = (
-  userAddress: string,
+export const usernameFetch = (
+  address: string,
 ): Action<typeof ACTIONS.USERNAME_FETCH> => ({
   type: ACTIONS.USERNAME_FETCH,
-  payload: { userAddress },
+  payload: { address },
 });
 
-export const fetchUserProfile = (
+export const userAddressFetch = (
   username: string,
-): Action<typeof ACTIONS.USER_PROFILE_FETCH> => ({
-  type: ACTIONS.USER_PROFILE_FETCH,
-  meta: { keyPath: [username] },
+): Action<typeof ACTIONS.USER_ADDRESS_FETCH> => ({
+  type: ACTIONS.USER_ADDRESS_FETCH,
   payload: { username },
 });
 
-export const fetchUserAvatar = (
-  username: string,
+export const userFetch = (
+  address: string,
+): Action<typeof ACTIONS.USER_FETCH> => ({
+  type: ACTIONS.USER_FETCH,
+  meta: { keyPath: [address] },
+  payload: { address },
+});
+
+export const userAvatarFetch = (
+  address: string,
 ): Action<typeof ACTIONS.USER_AVATAR_FETCH> => ({
   type: ACTIONS.USER_AVATAR_FETCH,
-  payload: { username },
+  payload: { address },
 });
 
-export const fetchUserTransactions = (): Action<
+export const userTokenTransfersFetch = (): Action<
   typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 > => ({
   type: ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 });
 
-export const getCurrentUserBalance = (): Action<
+export const currentUserGetBalance = (): Action<
   typeof ACTIONS.CURRENT_USER_GET_BALANCE,
 > => ({
   type: ACTIONS.CURRENT_USER_GET_BALANCE,
 });
 
-export const fetchColonyPermissions = (
+export const userPermissionsFetch = (
   ensName: ENSName,
 ): Action<typeof ACTIONS.USER_PERMISSIONS_FETCH> => ({
   type: ACTIONS.USER_PERMISSIONS_FETCH,

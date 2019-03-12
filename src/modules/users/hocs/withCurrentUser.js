@@ -3,7 +3,7 @@
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
-import { currentUser as currentUserSelector } from '../selectors';
+import { currentUserSelector } from '../selectors';
 
 const withCurrentUser = compose(
   connect(

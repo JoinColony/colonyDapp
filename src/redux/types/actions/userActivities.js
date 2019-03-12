@@ -10,7 +10,7 @@ export type UserActivitiesActionTypes = {|
   USER_ACTIVITIES_FETCH: UniqueActionType<
     typeof ACTIONS.USER_ACTIVITIES_FETCH,
     {|
-      walletAddress: string,
+      address: string,
     |},
     WithKeyPathDepth1,
   >,
@@ -22,7 +22,7 @@ export type UserActivitiesActionTypes = {|
     typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
     {|
       activities: UserActivityType[],
-      walletAddress: string,
+      address: string,
     |},
     WithKeyPathDepth1,
   >,
@@ -30,7 +30,7 @@ export type UserActivitiesActionTypes = {|
     typeof ACTIONS.USER_ACTIVITIES_UPDATE,
     {|
       activity: *,
-      walletAddress: string,
+      address: string,
     |},
     WithKeyPathDepth1,
   >,
@@ -42,7 +42,7 @@ export type UserActivitiesActionTypes = {|
     typeof ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS,
     {|
       activities: UserActivityType[],
-      walletAddress: string,
+      address: string,
     |},
     WithKeyPathDepth1,
   >,

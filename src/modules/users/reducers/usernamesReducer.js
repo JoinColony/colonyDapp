@@ -9,20 +9,44 @@ import type { ReducerType } from '~redux';
 
 const usernamesReducer: ReducerType<
   UsernamesMap,
-  {| USERNAME_FETCH_SUCCESS: *, USER_PROFILE_FETCH_SUCCESS: * |},
+  {|
+    CURRENT_USER_CREATE: *,
+    USER_ADDRESS_FETCH_SUCCESS: *,
+    USER_FETCH_SUCCESS: *,
+    USERNAME_CREATE_SUCCESS: *,
+    USERNAME_FETCH_SUCCESS: *,
+  |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
+    case ACTIONS.USER_ADDRESS_FETCH_SUCCESS:
     case ACTIONS.USERNAME_FETCH_SUCCESS: {
-      const { key, username } = action.payload;
-      return state.set(key, username);
+      const { address, username } = action.payload;
+      return state.set(address, username);
     }
 
-    case ACTIONS.USER_PROFILE_FETCH_SUCCESS: {
+    case ACTIONS.USERNAME_CREATE_SUCCESS: {
       const {
-        payload: { walletAddress },
-        meta: { keyPath: [username] } = {},
+        from: address,
+        params: { username },
+      } = action.payload;
+      return state.set(address, username);
+    }
+
+    case ACTIONS.CURRENT_USER_CREATE: {
+      const {
+        payload: {
+          walletAddress,
+          profileData: { username },
+        },
       } = action;
-      return state.set(walletAddress, username);
+      return username ? state.set(walletAddress, username) : state;
+    }
+
+    case ACTIONS.USER_FETCH_SUCCESS: {
+      const {
+        payload: { walletAddress, username },
+      } = action;
+      return username ? state.set(walletAddress, username) : state;
     }
 
     default:
