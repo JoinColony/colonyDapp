@@ -89,24 +89,26 @@ class Task extends Component<Props> {
   };
 
   openTaskEditDialog = () => {
-    const { openDialog, task } = this.props;
-    const payouts = task.payouts.map(payout => ({
-      token:
-        // we add 1 because Formik thinks 0 is empty
-        tokensMock.indexOf(
-          tokensMock.find(token => token.symbol === payout.token.symbol),
-        ) + 1,
-      amount: payout.amount,
-      id: nanoid(),
-    }));
+    const {
+      openDialog,
+      task: { worker, payouts, reputation },
+    } = this.props;
 
     openDialog('TaskEditDialog', {
-      assignee: task.assignee,
       availableTokens: tokensMock,
       maxTokens: 2,
-      payouts,
-      reputation: task.reputation,
+      payouts: payouts.map(payout => ({
+        token:
+          // we add 1 because Formik thinks 0 is empty
+          tokensMock.indexOf(
+            tokensMock.find(token => token.symbol === payout.token.symbol),
+          ) + 1,
+        amount: payout.amount,
+        id: nanoid(),
+      })),
+      reputation,
       users: userMocks,
+      worker,
     });
   };
 
@@ -123,24 +125,28 @@ class Task extends Component<Props> {
 
   get isWorker() {
     const {
-      task: { assignee },
-      currentUser,
+      task: { worker },
+      currentUser: {
+        profile: { walletAddress },
+      },
     } = this.props;
     return (
-      !!assignee &&
-      assignee.profile.walletAddress.toLowerCase() ===
-        currentUser.profile.walletAddress.toLowerCase()
+      worker &&
+      worker.address &&
+      worker.address.toLowerCase() === walletAddress.toLowerCase()
     );
   }
 
   get isManager() {
     const {
-      task: { creator },
-      currentUser,
+      task: {
+        manager: { address },
+      },
+      currentUser: {
+        profile: { walletAddress },
+      },
     } = this.props;
-    return (
-      creator.toLowerCase() === currentUser.profile.walletAddress.toLowerCase()
-    );
+    return address.toLowerCase() === walletAddress.toLowerCase();
   }
 
   get dueDatePassed() {
@@ -152,26 +158,37 @@ class Task extends Component<Props> {
 
   get canClaimPayout() {
     const {
-      task: { currentState, workerPayoutClaimed, managerPayoutClaimed },
+      task: { currentState, manager, worker },
     } = this.props;
     return (
       currentState === TASK_STATE.FINALIZED &&
-      ((this.isWorker && !workerPayoutClaimed) ||
-        (this.isManager && !managerPayoutClaimed))
+      ((this.isWorker && !(worker && worker.didClaimPayout)) ||
+        (this.isManager && !manager.didClaimPayout))
     );
   }
 
+  // eslint-disable-next-line class-methods-use-this
   get canBeFinalized() {
-    const {
-      task: { currentState, managerRating, workerRating },
-    } = this.props;
-    return (
-      currentState === TASK_STATE.REVEAL && !!managerRating && !!workerRating
-    );
+    return true;
+    // TODO
+    // const {
+    //   task: { currentState, manager, worker },
+    // } = this.props;
+    // return (
+    //   currentState === TASK_STATE.REVEAL &&
+    //   !!manager.didRate &&
+    //   !!worker.didRate
+    // );
   }
 
   render() {
-    const { isTaskCreator, preventEdit, task, currentUser } = this.props;
+    const {
+      currentUser,
+      isTaskCreator,
+      preventEdit,
+      task: { worker },
+      task,
+    } = this.props;
     const {
       setValues,
       isWorker,
@@ -255,7 +272,7 @@ class Task extends Component<Props> {
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
               isWorker &&
-              !task.workerHasRated && (
+              !(worker && worker.didRate) && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
                   dialogProps={{

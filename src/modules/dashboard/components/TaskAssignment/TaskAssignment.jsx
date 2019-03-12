@@ -1,7 +1,12 @@
 /* @flow */
+
 import React from 'react';
 
-import type { TaskType } from '~immutable';
+import type { TaskType, UserType } from '~immutable';
+
+import { useDataFetcher } from '~utils/hooks';
+
+import { userFetcher } from '../../../users/fetchers';
 
 import Assignment from '~core/Assignment';
 
@@ -14,15 +19,22 @@ const displayName = 'dashboard.TaskAssignment';
 
 const TaskAssignment = ({
   nativeToken,
-  task: { assignee, reputation, payouts },
-}: Props) => (
-  <Assignment
-    assignee={assignee}
-    reputation={reputation}
-    payouts={payouts}
-    nativeToken={nativeToken}
-  />
-);
+  task: { payouts, reputation, worker },
+}: Props) => {
+  const address = worker && worker.address;
+  const { data: assignee } = useDataFetcher<UserType>(
+    userFetcher,
+    [address],
+    [address],
+  );
+  const props = {
+    ...(assignee && { assignee }),
+    nativeToken,
+    payouts,
+    reputation,
+  };
+  return <Assignment {...props} />;
+};
 
 TaskAssignment.displayName = displayName;
 

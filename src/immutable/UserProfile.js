@@ -4,16 +4,14 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import type { Address, ENSName } from '../types';
-
 type Shared = {|
   avatar?: ?string,
   balance?: string,
   bio?: string,
   displayName?: string,
   location?: string,
-  username?: ENSName,
-  walletAddress: Address,
+  username?: string,
+  walletAddress: string,
   website?: string,
 |};
 

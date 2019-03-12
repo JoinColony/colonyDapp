@@ -5,11 +5,11 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 import { ACTIONS } from '~redux';
 
 import {
-  TaskRecord,
   DataRecord,
-  UserRecord,
   TaskFeedItemRecord,
   TaskPayoutRecord,
+  TaskRecord,
+  TaskUserRecord,
 } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 
@@ -36,17 +36,18 @@ const allTasksReducer: ReducerType<
           keyPath: [ensName, id],
           keyPath,
         },
-        payload: { assignee, feedItems = [], payouts = [], ...task },
+        payload: { feedItems = [], payouts = [], manager, worker, ...task },
       } = action;
       const data = DataRecord({
         // TODO in #939
         // $FlowFixMe some of these records aren't constructed properly
         record: TaskRecord({
-          ...(assignee && UserRecord(fromJS(assignee))),
           feedItems: feedItems.map(feedItem =>
             TaskFeedItemRecord(fromJS(feedItem)),
           ),
           payouts: payouts.map(payout => TaskPayoutRecord(fromJS(payout))),
+          ...(manager && TaskUserRecord(manager)),
+          ...(worker && TaskUserRecord(worker)),
           ...task,
         }),
       });
