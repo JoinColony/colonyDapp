@@ -12,6 +12,7 @@ import {
   userAddressFetch,
   userAvatarFetch,
 } from './actionCreators';
+import type { RootStateRecord } from '~immutable/state';
 
 export const currentUserColonyPermissionsFetcher = Object.freeze({
   fetch: userPermissionsFetch,
@@ -20,15 +21,18 @@ export const currentUserColonyPermissionsFetcher = Object.freeze({
 
 export const userFetcher = Object.freeze({
   fetch: userFetch,
-  select: (state, address) => userByAddressSelector(state, { address }),
+  select: (state: RootStateRecord, address: string) =>
+    userByAddressSelector(state, { address }),
 });
 
 export const userAddressFetcher = Object.freeze({
   fetch: userAddressFetch,
-  select: (state, username) => userAddressSelector(state, { username }),
+  select: (state: RootStateRecord, username: string) =>
+    userAddressSelector(state, { username }),
 });
 
 export const userAvatarByAddressFetcher = Object.freeze({
   fetch: userAvatarFetch,
-  select: (state, address) => userAvatarByAddressSelector(state, { address }),
+  select: (state: RootStateRecord, address: string) =>
+    userAvatarByAddressSelector(state, { address }),
 });

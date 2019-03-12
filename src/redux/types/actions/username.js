@@ -2,9 +2,11 @@
 
 import type {
   ActionTypeWithPayload,
+  ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
 } from '../index';
+import type { WithKeyPathDepth1 } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
@@ -40,11 +42,11 @@ export type UsernameActionTypes = {|
   USERNAME_CREATE: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE,
     {| username: string |},
-    void,
+    WithKeyPathDepth1,
   >,
   USERNAME_CREATE_ERROR: ErrorActionType<
     typeof ACTIONS.USERNAME_CREATE_ERROR,
-    void,
+    WithKeyPathDepth1,
   >,
   USERNAME_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE_SUCCESS,
@@ -54,15 +56,20 @@ export type UsernameActionTypes = {|
         username: string,
       },
     },
-    void,
+    WithKeyPathDepth1,
   >,
-  USERNAME_FETCH: ActionTypeWithPayload<
+  USERNAME_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USERNAME_FETCH,
     {| address: string |},
+    WithKeyPathDepth1,
   >,
-  USERNAME_FETCH_ERROR: ErrorActionType<typeof ACTIONS.USERNAME_FETCH_ERROR, *>,
-  USERNAME_FETCH_SUCCESS: ActionTypeWithPayload<
+  USERNAME_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USERNAME_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  USERNAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USERNAME_FETCH_SUCCESS,
     {| address: string, username: string |},
+    WithKeyPathDepth1,
   >,
 |};

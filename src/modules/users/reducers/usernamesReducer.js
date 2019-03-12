@@ -3,9 +3,14 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import { ACTIONS } from '~redux';
+import { DataRecord } from '~immutable';
+import { withDataRecordMap } from '~utils/reducers';
 
 import type { UsernamesMap } from '~immutable';
 import type { ReducerType } from '~redux';
+
+const setUsername = (state: UsernamesMap, address: string, username?: string) =>
+  username ? state.set(address, DataRecord({ record: username })) : state;
 
 const usernamesReducer: ReducerType<
   UsernamesMap,
@@ -21,7 +26,7 @@ const usernamesReducer: ReducerType<
     case ACTIONS.USER_ADDRESS_FETCH_SUCCESS:
     case ACTIONS.USERNAME_FETCH_SUCCESS: {
       const { address, username } = action.payload;
-      return state.set(address, username);
+      return setUsername(state, address, username);
     }
 
     case ACTIONS.USERNAME_CREATE_SUCCESS: {
@@ -29,7 +34,7 @@ const usernamesReducer: ReducerType<
         from: address,
         params: { username },
       } = action.payload;
-      return state.set(address, username);
+      return setUsername(state, address, username);
     }
 
     case ACTIONS.CURRENT_USER_CREATE: {
@@ -39,14 +44,14 @@ const usernamesReducer: ReducerType<
           profileData: { username },
         },
       } = action;
-      return username ? state.set(walletAddress, username) : state;
+      return setUsername(state, walletAddress, username);
     }
 
     case ACTIONS.USER_FETCH_SUCCESS: {
       const {
         payload: { walletAddress, username },
       } = action;
-      return username ? state.set(walletAddress, username) : state;
+      return setUsername(state, walletAddress, username);
     }
 
     default:
@@ -54,4 +59,7 @@ const usernamesReducer: ReducerType<
   }
 };
 
-export default usernamesReducer;
+export default withDataRecordMap<UsernamesMap, string>(
+  ACTIONS.USERNAME_FETCH,
+  ImmutableMap(),
+)(usernamesReducer);

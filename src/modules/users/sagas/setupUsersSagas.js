@@ -44,6 +44,7 @@ import {
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
 function* userAvatarFetch({
+  meta,
   payload: { address },
 }: Action<typeof ACTIONS.USER_AVATAR_FETCH>): Saga<void> {
   try {
@@ -59,10 +60,11 @@ function* userAvatarFetch({
 
     yield put<Action<typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_FETCH_SUCCESS,
+      meta,
       payload: { address, avatar },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error, { key: address });
+    yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error, meta);
   }
 }
 
@@ -122,6 +124,7 @@ function* userProfileFetch({
 }
 
 function* usernameFetch({
+  meta,
   payload: { address },
 }: Action<typeof ACTIONS.USERNAME_FETCH>): Saga<void> {
   try {
@@ -132,10 +135,11 @@ function* usernameFetch({
     const username = yield* executeQuery(context, getUsername, address);
     yield put<Action<typeof ACTIONS.USERNAME_FETCH_SUCCESS>>({
       type: ACTIONS.USERNAME_FETCH_SUCCESS,
+      meta,
       payload: { username, address },
     });
   } catch (error) {
-    yield putError(ACTIONS.USERNAME_FETCH_ERROR, error);
+    yield putError(ACTIONS.USERNAME_FETCH_ERROR, error, meta);
   }
 }
 
@@ -236,11 +240,12 @@ function* userUploadAvatar({
   payload,
 }: Action<typeof ACTIONS.USER_UPLOAD_AVATAR>): Saga<void> {
   try {
+    const address = yield select(currentUserAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
       metadata: {
-        walletAddress: yield select(currentUserAddressSelector),
+        walletAddress: address,
       },
     };
 
@@ -249,7 +254,7 @@ function* userUploadAvatar({
     yield put<Action<typeof ACTIONS.USER_UPLOAD_AVATAR_SUCCESS>>({
       type: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
       meta,
-      payload: { hash },
+      payload: { hash, avatar: payload.data, address },
     });
   } catch (error) {
     yield putError(ACTIONS.USER_UPLOAD_AVATAR_ERROR, error, meta);

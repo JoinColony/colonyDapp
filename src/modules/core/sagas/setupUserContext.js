@@ -125,7 +125,10 @@ export default function* setupUserContext(
         profileData,
         walletAddress,
       },
-      meta,
+      meta: {
+        ...meta,
+        keyPath: [walletAddress],
+      },
     });
 
     yield call(setupOnBeforeUnload);

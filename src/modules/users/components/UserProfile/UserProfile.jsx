@@ -6,7 +6,7 @@ import React from 'react';
 
 import type { UserType } from '~immutable';
 
-import { useDataFetcher, useFetcher } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import ColonyGrid from '~core/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '~pages/ProfileTemplate';
@@ -52,7 +52,7 @@ const UserProfile = ({
   },
 }: Props) => {
   const addressArgs = [username];
-  const address = useFetcher<string>(
+  const { data: address } = useDataFetcher<string>(
     userAddressFetcher,
     addressArgs,
     addressArgs,
