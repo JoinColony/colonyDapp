@@ -42,6 +42,10 @@ type Props = {|
    * Internationalization library object, injected by `react-intl`
    */
   intl: IntlShape,
+  /*
+   * In some occasions we do not want any button text
+   */
+  noText: boolean,
 |};
 
 const HistoryNavigation = ({
@@ -50,6 +54,7 @@ const HistoryNavigation = ({
   backText,
   backTextValues,
   intl: { formatMessage },
+  noText,
 }: Props) => {
   let linkText: string = formatMessage(MSG.backHistoryLink);
   if (backText) {
@@ -57,6 +62,9 @@ const HistoryNavigation = ({
       typeof backText === 'string'
         ? backText
         : formatMessage(backText, backTextValues);
+  }
+  if (noText) {
+    linkText = '';
   }
   return (
     <div className={styles.main}>

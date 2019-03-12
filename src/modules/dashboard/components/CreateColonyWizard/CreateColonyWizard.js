@@ -38,7 +38,7 @@ const stepFunction = (step: number, { tokenChoice }: StepValues) => {
 const CreateColonyContainer = compose(
   withWizard({
     steps: stepFunction,
-    stepCount: 5,
+    stepCount: 6,
   }),
 )(CreateColony);
 

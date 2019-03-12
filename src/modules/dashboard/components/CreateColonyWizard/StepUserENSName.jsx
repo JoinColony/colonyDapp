@@ -16,68 +16,54 @@ import { ACTIONS } from '~redux';
 import promiseListener from '../../../../createPromiseListener';
 
 type FormValues = {
-  colonyName: string,
-  colonyId: string,
-  colonyAddress: string,
+  username: string,
 };
 
 type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.heading',
-    defaultMessage: 'Last step: create a unique name for your Colony',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.heading',
+    defaultMessage: 'Welcome to Colony!',
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionOne',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      "Here's something cool about Colony: {boldText} You own it, you control it.",
-  },
-  descriptionBoldText: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionBoldText',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      "we are a fully decentralized application and do not have a central store of yours or anyone's data.",
-  },
-  descriptionTwo: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionTwo',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'To setup your data storage, we need you to create a unique name for your colony. This allows a mapping between the data stored on the blockchain, on IPFS, and your colony.',
+      'Let’s start with the basics. What can we call you?',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
-    defaultMessage: 'Your unique colony domain name',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.label',
+    defaultMessage: 'Your Unique Username',
   },
-  done: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.done',
-    defaultMessage: 'Done',
+  continue: {
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.done',
+    defaultMessage: 'Continue',
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyENSName';
+const displayName = 'dashboard.CreateColonyWizard.StepUserENSName';
 
 const validationSchema = yup.object({
-  ensName: yup
+  username: yup
     .string()
     .required()
     .ensAddress(),
 });
 
-class StepColonyENSName extends Component<Props> {
+class StepUserENSName extends Component<Props> {
   componentWillUnmount() {
     this.checkDomainTaken.unsubscribe();
   }
 
   checkDomainTaken = promiseListener.createAsyncFunction({
-    start: ACTIONS.COLONY_DOMAIN_VALIDATE,
-    resolve: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
-    reject: ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
+    start: ACTIONS.USERNAME_CHECK_AVAILABILITY,
+    resolve: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
+    reject: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
   });
 
   validateDomain = async (values: FormValues) => {
@@ -85,7 +71,7 @@ class StepColonyENSName extends Component<Props> {
       await this.checkDomainTaken.asyncFunction(values);
     } catch (e) {
       const error = {
-        ensName: MSG.errorDomainTaken,
+        username: MSG.errorDomainTaken,
       };
       // eslint doesn't allow for throwing object literals
       throw error;
@@ -99,9 +85,9 @@ class StepColonyENSName extends Component<Props> {
     } = this.props;
     return (
       <ActionForm
-        submit={ACTIONS.COLONY_CREATE_LABEL}
-        error={ACTIONS.COLONY_CREATE_LABEL_ERROR}
-        success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
+        submit={ACTIONS.USERNAME_CREATE}
+        error={ACTIONS.USERNAME_CREATE_ERROR}
+        success={ACTIONS.USERNAME_CREATE_SUCCESS}
         validationSchema={validationSchema}
         validate={this.validateDomain}
         setPayload={includeWizardValues}
@@ -110,31 +96,16 @@ class StepColonyENSName extends Component<Props> {
         {({ isValid, isSubmitting }) => (
           <section className={styles.main}>
             <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'thin' }}
-                text={MSG.heading}
-              />
+              <Heading appearance={{ size: 'medium' }} text={MSG.heading} />
               <p className={styles.paragraph}>
-                <FormattedMessage
-                  {...MSG.descriptionOne}
-                  values={{
-                    boldText: (
-                      <FormattedMessage
-                        tagName="strong"
-                        {...MSG.descriptionBoldText}
-                      />
-                    ),
-                  }}
-                />
-              </p>
-              <p className={styles.paragraph}>
-                <FormattedMessage {...MSG.descriptionTwo} />
+                <FormattedMessage {...MSG.descriptionOne} />
               </p>
               <div className={styles.nameForm}>
                 <Input
                   appearance={{ theme: 'fat' }}
-                  name="ensName"
+                  name="username"
                   label={MSG.label}
+                  extensionString=".user.joincolony.eth"
                 />
                 <div className={styles.buttons}>
                   <Button
@@ -142,7 +113,7 @@ class StepColonyENSName extends Component<Props> {
                     type="submit"
                     disabled={!isValid}
                     loading={isSubmitting}
-                    text={MSG.done}
+                    text={MSG.continue}
                   />
                 </div>
               </div>
@@ -154,6 +125,6 @@ class StepColonyENSName extends Component<Props> {
   }
 }
 
-StepColonyENSName.displayName = displayName;
+StepUserENSName.displayName = displayName;
 
-export default StepColonyENSName;
+export default StepUserENSName;
