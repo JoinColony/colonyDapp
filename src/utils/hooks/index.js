@@ -18,6 +18,11 @@ type DataFetcher = {|
   fetch: (...fetchArgs: any[]) => Action<*>,
 |};
 
+type Fetcher = {|
+  select: (rootState: RootStateRecord, ...selectArgs: any[]) => ?*,
+  fetch: (...fetchArgs: any[]) => Action<*>,
+|};
+
 type DependantSelector = (
   selector: InputSelector<RootStateRecord, *, *>,
   reduxState: RootStateRecord,
@@ -72,6 +77,30 @@ export const useDataFetcher = <T>(
     isFetching: isFetchingData(data),
     error: data ? data.error : null,
   };
+};
+
+/*
+ * T: JS type of the fetched and transformed data, e.g. `string` or `ColonyType`
+ */
+export const useFetcher = <T>(
+  fetcher: Fetcher,
+  selectArgs: any[],
+  fetchArgs: any[],
+): ?T => {
+  const dispatch = useDispatch();
+  const mapState = useCallback(
+    state => fetcher.select(state, ...selectArgs),
+    selectArgs,
+  );
+  const selected = useMappedState(mapState);
+
+  useEffect(() => {
+    dispatch(fetcher.fetch(...fetchArgs), fetchArgs);
+  }, fetchArgs);
+
+  return selected && typeof selected.toJS == 'function'
+    ? selected.toJS()
+    : selected;
 };
 
 export const useFeatureFlags = (
