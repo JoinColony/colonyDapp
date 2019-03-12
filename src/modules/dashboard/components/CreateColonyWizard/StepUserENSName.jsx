@@ -82,6 +82,7 @@ class StepUserENSName extends Component<Props> {
     const {
       formHelpers: { includeWizardValues },
       wizardForm,
+      nextStep,
     } = this.props;
     return (
       <ActionForm
@@ -91,6 +92,9 @@ class StepUserENSName extends Component<Props> {
         validationSchema={validationSchema}
         validate={this.validateDomain}
         setPayload={includeWizardValues}
+        onSuccess={({ params: { orbitDBPath, username } }) =>
+          nextStep({ colonyAddress: orbitDBPath, username })
+        }
         {...wizardForm}
       >
         {({ isValid, isSubmitting }) => (

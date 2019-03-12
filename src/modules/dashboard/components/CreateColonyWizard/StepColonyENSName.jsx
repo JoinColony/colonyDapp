@@ -9,17 +9,23 @@ import type { WizardProps } from '~core/Wizard';
 
 import styles from './StepUserENSName.css';
 
+<<<<<<< HEAD
 import { mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import { ActionForm, Input } from '~core/Fields';
+=======
+import { Form, Input } from '~core/Fields';
+>>>>>>> Adjust colony ENS name step
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ACTIONS } from '~redux';
 
 type FormValues = {
   colonyName: string,
+  ensName: string,
   colonyId: string,
   colonyAddress: string,
+  username: string,
 };
 
 type Props = WizardProps<FormValues>;
@@ -27,33 +33,25 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.heading',
-    defaultMessage: 'Last step: create a unique name for your Colony',
+    defaultMessage: 'Welcome @{username}, let’s begin creating your colony.',
   },
   descriptionOne: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      "Here's something cool about Colony: {boldText} You own it, you control it.",
-  },
-  descriptionBoldText: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionBoldText',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      "we are a fully decentralized application and do not have a central store of yours or anyone's data.",
-  },
-  descriptionTwo: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionTwo',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'To setup your data storage, we need you to create a unique name for your colony. This allows a mapping between the data stored on the blockchain, on IPFS, and your colony.',
+      'First thing is choosing a name. What would you like to name your colony?',
   },
   label: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
-    defaultMessage: 'Your unique colony domain name',
+    defaultMessage: 'Colony Name',
   },
-  done: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.done',
-    defaultMessage: 'Done',
+  labelDisplay: {
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.labelDisplay',
+    defaultMessage: 'Colony Unique URL',
+  },
+  continue: {
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.Continue',
+    defaultMessage: 'Continue',
   },
   errorDomainTaken: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
