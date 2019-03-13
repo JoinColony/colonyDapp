@@ -5,7 +5,7 @@ import type { RecordOf, RecordFactory } from 'immutable';
 import { Record } from 'immutable';
 
 export type NetworkProps = {
-  version?: string,
+  version?: number,
 };
 
 const defaultValues: $Shape<NetworkProps> = {
