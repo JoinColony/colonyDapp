@@ -8,4 +8,4 @@ export const getNetwork = (state: RootStateRecord) =>
   state.getIn([ns, CORE_NETWORK]);
 
 export const getNetworkVersion = (state: RootStateRecord) =>
-  state.getIn([ns, CORE_NETWORK, 'version']);
+  state.getIn([ns, CORE_NETWORK, 'record', 'version']);
