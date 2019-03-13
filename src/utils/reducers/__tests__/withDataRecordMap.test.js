@@ -88,6 +88,7 @@ describe('reducers - withDataRecordMap', () => {
         record: undefined,
         error: undefined,
         isFetching: true,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -103,6 +104,7 @@ describe('reducers - withDataRecordMap', () => {
         },
         error: undefined,
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(successReducerAction).toHaveBeenCalledWith(
         fetchState,
@@ -122,6 +124,7 @@ describe('reducers - withDataRecordMap', () => {
         },
         error: undefined,
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(successState, otherAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -136,6 +139,7 @@ describe('reducers - withDataRecordMap', () => {
         record: undefined,
         error: undefined,
         isFetching: true,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -147,6 +151,7 @@ describe('reducers - withDataRecordMap', () => {
         record: undefined,
         error: 'fetch error',
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(fetchState, errorAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -166,6 +171,7 @@ describe('reducers - withDataRecordMap', () => {
         record: undefined,
         error: 'fetch error',
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(fetchState, errorAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -180,6 +186,7 @@ describe('reducers - withDataRecordMap', () => {
         },
         error: undefined, // removed
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(errorState, successAction);
       expect(successReducerAction).toHaveBeenCalledWith(
@@ -198,6 +205,7 @@ describe('reducers - withDataRecordMap', () => {
         record: undefined,
         error: undefined,
         isFetching: true,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(initialState, fetchAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -209,6 +217,7 @@ describe('reducers - withDataRecordMap', () => {
         record: undefined,
         error: undefined,
         isFetching: true,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(fetchOneState, fetchAction);
       expect(successReducerAction).not.toHaveBeenCalled();
@@ -228,6 +237,7 @@ describe('reducers - withDataRecordMap', () => {
         },
         error: undefined,
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(fetchTwoState, successOneAction);
       expect(successReducerAction).toHaveBeenCalledWith(
@@ -254,6 +264,7 @@ describe('reducers - withDataRecordMap', () => {
         },
         error: undefined,
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(successOneState, successTwoAction);
       expect(successReducerAction).toHaveBeenCalledWith(
@@ -281,6 +292,7 @@ describe('reducers - withDataRecordMap', () => {
         },
         error: undefined,
         isFetching: false,
+        lastFetchedAt: expect.any(Date),
       });
       expect(myReducer).toHaveBeenCalledWith(
         successTwoState,
