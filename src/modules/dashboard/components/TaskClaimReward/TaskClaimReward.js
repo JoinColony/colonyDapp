@@ -41,7 +41,7 @@ const enhance = compose(
         colonyENSName,
         payouts,
         // `rating` will always be set, default to appease the type gods
-        worker: { didRate, didFailToRate, rating = 0 },
+        worker: { didRate, didFailToRate, rating = 0 } = {},
         reputation,
         title,
       },
