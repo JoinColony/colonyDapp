@@ -1,24 +1,31 @@
 /* @flow */
 
-import type { NetworkRecord } from '~immutable';
-
-import { Network } from '~immutable';
-import { ACTIONS } from '~redux';
-
 import type { ReducerType } from '~redux';
 
-const coreNetworkReducer: ReducerType<
-  NetworkRecord,
-  {|
-    NETWORK_FETCH_VERSION_SUCCESS: *,
-  |},
-> = (state = Network(), action) => {
+import type { NetworkType } from '~immutable';
+
+import { Network, DataRecord } from '~immutable';
+import { ACTIONS } from '~redux';
+import { withDataRecord } from '~utils/reducers';
+
+type NetworkActions = {
+  NETWORK_FETCH_VERSION: *,
+  NETWORK_FETCH_VERSION_SUCCESS: *,
+  NETWORK_FETCH_VERSION_ERROR: *,
+};
+
+const coreNetworkReducer: ReducerType<NetworkType, NetworkActions> = (
+  state = DataRecord(),
+  action,
+) => {
   switch (action.type) {
     case ACTIONS.NETWORK_FETCH_VERSION_SUCCESS:
-      return Network(action.payload);
+      return state.set('record', Network(action.payload));
     default:
       return state;
   }
 };
 
-export default coreNetworkReducer;
+export default withDataRecord<NetworkType, NetworkActions>(
+  ACTIONS.NETWORK_FETCH_VERSION,
+)(coreNetworkReducer);
