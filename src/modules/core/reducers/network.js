@@ -10,11 +10,11 @@ import type { ReducerType } from '~redux';
 const coreNetworkReducer: ReducerType<
   NetworkRecord,
   {|
-    NETWORK_VERSION_UPDATE: *,
+    NETWORK_FETCH_VERSION_SUCCESS: *,
   |},
 > = (state = Network(), action) => {
   switch (action.type) {
-    case ACTIONS.NETWORK_VERSION_UPDATE:
+    case ACTIONS.NETWORK_FETCH_VERSION_SUCCESS:
       return Network(action.payload);
     default:
       return state;

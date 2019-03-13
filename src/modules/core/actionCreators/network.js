@@ -10,10 +10,3 @@ export const fetchNetworkVersion = (): Action<
 > => ({
   type: ACTIONS.NETWORK_FETCH_VERSION,
 });
-
-export const updateNetworkVersion = (version: string) => ({
-  type: ACTIONS.NETWORK_VERSION_UPDATE,
-  payload: {
-    version,
-  },
-});
