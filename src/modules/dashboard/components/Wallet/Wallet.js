@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 
 import withDialog from '~core/Dialog/withDialog';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import Wallet from './Wallet.jsx';
 
@@ -18,7 +19,7 @@ const enhance = compose(
   withProps(() => ({
     // TODO: fetch from current user record
     tokens: [].splice(1, 0, {
-      address: '0x0000000000000000000000000000000000000000',
+      address: ZERO_ADDRESS,
     }),
   })),
   connect(

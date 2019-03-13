@@ -261,7 +261,10 @@ export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
   },
 });
 
-export const getColony: ColonyQuery<void, [ColonyType, Array<TokenType>]> = ({
+export const getColony: ColonyQuery<
+  void,
+  { colony: ColonyType, tokens: Array<TokenType> },
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -286,14 +289,14 @@ export const getColony: ColonyQuery<void, [ColonyType, Array<TokenType>]> = ({
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
       .reduce(
         (
-          [colony, tokens],
+          { colony, tokens },
           { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
         ) => {
           switch (type) {
             case TOKEN_INFO_ADDED: {
               const { address, isNative } = payload;
-              return [
-                {
+              return {
+                colony: {
                   ...colony,
                   tokens: {
                     ...colony.tokens,
@@ -303,41 +306,41 @@ export const getColony: ColonyQuery<void, [ColonyType, Array<TokenType>]> = ({
                     },
                   },
                 },
-                [...tokens, payload],
-              ];
+                tokens: [...tokens, payload],
+              };
             }
             case AVATAR_UPLOADED: {
               // @TODO: Make avatar an object so we have the ipfsHash and data
               const { ipfsHash } = payload;
-              return [
-                {
+              return {
+                colony: {
                   ...colony,
                   avatar: ipfsHash,
                 },
                 tokens,
-              ];
+              };
             }
             case AVATAR_REMOVED: {
               const { avatar } = colony;
               const { ipfsHash } = payload;
-              return [
-                {
+              return {
+                colony: {
                   ...colony,
                   avatar: avatar && avatar === ipfsHash ? undefined : avatar,
                 },
                 tokens,
-              ];
+              };
             }
             case PROFILE_CREATED:
             case PROFILE_UPDATED:
-              return [Object.assign({}, colony, payload), tokens];
+              return { colony: Object.assign({}, colony, payload), tokens };
             default:
-              return [colony, tokens];
+              return { colony, tokens };
           }
         },
         // @TODO: Add the right defaults here using a data model or something like that
-        [
-          {
+        {
+          colony: {
             address: colonyAddress,
             admins,
             avatar: undefined,
@@ -346,8 +349,8 @@ export const getColony: ColonyQuery<void, [ColonyType, Array<TokenType>]> = ({
             name: '',
             tokens: {},
           },
-          [],
-        ],
+          tokens: [],
+        },
       );
   },
 });

@@ -28,7 +28,9 @@ const coloniesReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
-        payload: [{ tokens, ensName, admins = {}, ...props }],
+        payload: {
+          colony: { tokens, ensName, admins = {}, ...props },
+        },
       } = action;
       const record = ColonyRecord({
         tokens: ImmutableMap(

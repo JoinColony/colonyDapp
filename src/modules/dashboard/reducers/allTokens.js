@@ -37,7 +37,7 @@ const tokensReducer: ReducerType<
       return state.set(tokenAddress, record);
     }
     case ACTIONS.COLONY_FETCH_SUCCESS: {
-      const [, tokens] = action.payload;
+      const { tokens } = action.payload;
       return tokens.reduce((currentState, token) => {
         const existingRecord = state.get(token.address);
         const record = existingRecord
