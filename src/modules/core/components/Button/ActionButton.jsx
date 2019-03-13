@@ -1,9 +1,11 @@
 /* @flow */
 
+import type { ComponentType } from 'react';
+
 import React, { Component } from 'react';
 
 import { log } from '~utils/debug';
-import Button from '~core/Button';
+import DefaultButton from '~core/Button';
 
 import promiseListener from '../../../../createPromiseListener';
 
@@ -15,6 +17,7 @@ type Props = {
   success: string,
   error: string,
   values?: Object | (() => Object | Promise<Object>),
+  button?: ComponentType<*>,
 };
 
 type State = {|
@@ -58,7 +61,14 @@ class ActionButton extends Component<Props, State> {
   };
 
   render() {
-    const { submit, success, error, values, ...props } = this.props;
+    const {
+      submit,
+      success,
+      error,
+      values,
+      button: Button = DefaultButton,
+      ...props
+    } = this.props;
     const { loading } = this.state;
     return <Button onClick={this.handleClick} loading={loading} {...props} />;
   }
