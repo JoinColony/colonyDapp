@@ -44,6 +44,10 @@
   border-bottom: 1px solid var(--grey-blue-0);
 }
 
+.headerConfirm {
+  background-color: rgba(248, 43, 101, 0.1);
+}
+
 .headerAside {
   display: flex;
   flex-direction: row;

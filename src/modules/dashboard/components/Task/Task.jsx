@@ -15,7 +15,7 @@ import type { TaskFeedItemType, TaskType, UserType } from '~immutable';
 
 import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
-import Button, { ActionButton, DialogActionButton } from '~core/Button';
+import Button, { ActionButton, ConfirmButton } from '~core/Button';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskDate from '~dashboard/TaskDate';
@@ -24,7 +24,6 @@ import TaskDomains from '~dashboard/TaskDomains';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
-import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
 import userMocks from './__datamocks__/mockUsers';
@@ -49,25 +48,17 @@ const MSG = defineMessages({
     id: 'dashboard.Task.completed',
     defaultMessage: 'Task completed',
   },
-  submitWork: {
-    id: 'dashboard.Task.submitWork',
-    defaultMessage: 'Submit Work',
-  },
-  rateWorker: {
-    id: 'dashboard.Task.rateWorker',
-    defaultMessage: 'Rate Worker',
-  },
-  rateManager: {
-    id: 'dashboard.Task.rateManager',
-    defaultMessage: 'Rate Manager',
-  },
-  revealRating: {
-    id: 'dashboard.Task.revealRating',
-    defaultMessage: 'Reveal Rating',
-  },
   finalizeTask: {
     id: 'dashboard.Task.finalizeTask',
     defaultMessage: 'Finalize Task',
+  },
+  discardTask: {
+    id: 'dashboard.Task.discardTask',
+    defaultMessage: 'Discard task',
+  },
+  confirmText: {
+    id: 'dashboard.Task.confirmText',
+    defaultMessage: 'Are you sure you want to discard this task?',
   },
 });
 
@@ -85,13 +76,21 @@ type Props = {|
   task: TaskType,
 |};
 
-class Task extends Component<Props> {
+type State = {|
+  isDiscardConfirmDisplayed: boolean,
+|};
+
+class Task extends Component<Props, State> {
   static displayName = 'dashboard.Task';
 
   static defaultProps = {
     isTaskCreator: false,
     preventEdit: true,
     currentUser: {},
+  };
+
+  state = {
+    isDiscardConfirmDisplayed: false,
   };
 
   openTaskEditDialog = () => {
@@ -132,22 +131,24 @@ class Task extends Component<Props> {
     };
   };
 
+  handleDiscardConfirmToggled = (state: boolean) => {
+    this.setState({ isDiscardConfirmDisplayed: state });
+  };
+
   render() {
     const {
       props: {
-        canTaskBeFinalized,
-        canTaskPayoutBeClaimed,
         currentUser,
-        didTaskDueDateElapse,
         feedItems,
         isTaskCreator,
         isTaskManager,
-        isTaskWorker,
         preventEdit,
         task: { worker },
         task,
       },
+      state: { isDiscardConfirmDisplayed },
       setValues,
+      handleDiscardConfirmToggled,
     } = this;
     // TODO: this should be determined from Colony in state
     const hasRequestedToWork = true;
@@ -208,116 +209,54 @@ class Task extends Component<Props> {
           </section>
         </aside>
         <div className={styles.container}>
-          <section className={styles.header}>
-            {/* Work has been submitted and rating have been given  */}
-            {canTaskBeFinalized && (
+          <section
+            className={`${styles.header} ${
+              isDiscardConfirmDisplayed ? styles.headerConfirm : ''
+            }`}
+          >
+            {/* Task can be canceled by current user */}
+            {isTaskManager && task.currentState === TASK_STATE.ACTIVE && (
               <ActionButton
-                text={MSG.finalizeTask}
-                submit={ACTIONS.TASK_FINALIZE}
-                success={ACTIONS.TASK_FINALIZE_SUCCESS}
-                error={ACTIONS.TASK_FINALIZE_ERROR}
+                appearance={{ theme: 'secondary', size: 'small' }}
+                button={ConfirmButton}
+                confirmText={MSG.confirmText}
+                error={ACTIONS.TASK_CANCEL_ERROR}
+                onConfirmToggled={handleDiscardConfirmToggled}
+                submit={ACTIONS.TASK_CANCEL}
+                success={ACTIONS.TASK_CANCEL_SUCCESS}
+                text={MSG.discardTask}
                 values={setValues}
               />
             )}
-            {/* Apply to work/display "submitted" if already done */}
-            {!worker && !isTaskCreator && (
-              <TaskRequestWork
-                currentUser={currentUser}
-                task={task}
-                hasRequested={hasRequestedToWork}
-              />
+            {/* Hide when discard confirm is displayed */}
+            {!isDiscardConfirmDisplayed && (
+              <>
+                {/* Apply to work/display "submitted" if already done */}
+                {!worker && !isTaskCreator && (
+                  <TaskRequestWork
+                    currentUser={currentUser}
+                    task={task}
+                    hasRequested={hasRequestedToWork}
+                  />
+                )}
+                {/* Work has been submitted  */}
+                {isTaskManager && task.currentState === TASK_STATE.ACTIVE && (
+                  <ActionButton
+                    text={MSG.finalizeTask}
+                    submit={ACTIONS.TASK_FINALIZE}
+                    success={ACTIONS.TASK_FINALIZE_SUCCESS}
+                    error={ACTIONS.TASK_FINALIZE_ERROR}
+                    values={setValues}
+                  />
+                )}
+                {/* Task is finalized/completed */}
+                {task.currentState === TASK_STATE.FINALIZED && (
+                  <p className={styles.completedDescription}>
+                    <FormattedMessage {...MSG.completed} />
+                  </p>
+                )}
+              </>
             )}
-            {/* Worker misses deadline and rates manager */}
-            {task.currentState === TASK_STATE.RATING &&
-              isTaskWorker &&
-              !(worker && worker.didRate) && (
-                <DialogActionButton
-                  dialog="ManagerRatingDialog"
-                  dialogProps={{
-                    submitWork: false,
-                  }}
-                  text={MSG.rateManager}
-                  submit={ACTIONS.TASK_WORKER_RATE_MANAGER}
-                  success={ACTIONS.TASK_WORKER_RATE_MANAGER_SUCCESS}
-                  error={ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR}
-                  values={setValues}
-                />
-              )}
-            {/* Worker submits work, ends task + rates before deadline */}
-            {task.currentState !== TASK_STATE.RATING &&
-              isTaskWorker &&
-              !didTaskDueDateElapse && (
-                <DialogActionButton
-                  dialog="ManagerRatingDialog"
-                  dialogProps={{
-                    submitWork: true,
-                  }}
-                  text={MSG.submitWork}
-                  submit={ACTIONS.TASK_WORKER_END}
-                  success={ACTIONS.TASK_WORKER_END_SUCCESS}
-                  error={ACTIONS.TASK_WORKER_END_ERROR}
-                  values={setValues}
-                />
-              )}
-            {/* Worker misses deadline and manager ends task + rates */}
-            {task.currentState !== TASK_STATE.RATING &&
-              isTaskManager &&
-              didTaskDueDateElapse && (
-                <DialogActionButton
-                  dialog="WorkerRatingDialog"
-                  options={{
-                    workSubmitted: false,
-                  }}
-                  text={MSG.rateWorker}
-                  submit={ACTIONS.TASK_MANAGER_END}
-                  success={ACTIONS.TASK_MANAGER_END_SUCCESS}
-                  error={ACTIONS.TASK_MANAGER_END_ERROR}
-                  values={setValues}
-                />
-              )}
-            {/* Worker makes deadline and manager rates worker */}
-            {task.currentState === TASK_STATE.RATING && isTaskManager && (
-              <DialogActionButton
-                dialog="WorkerRatingDialog"
-                options={{
-                  workSubmitted: true,
-                }}
-                text={MSG.rateWorker}
-                submit={ACTIONS.TASK_MANAGER_RATE_WORKER}
-                success={ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS}
-                error={ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR}
-                values={setValues}
-              />
-            )}
-            {/* Manager reveal rating of worker */}
-            {task.currentState === TASK_STATE.REVEAL && isTaskManager && (
-              <ActionButton
-                text={MSG.revealRating}
-                submit={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING}
-                success={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS}
-                error={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR}
-                values={setValues}
-              />
-            )}
-            {/* Worker reveal rating of manager */}
-            {task.currentState === TASK_STATE.REVEAL && isTaskWorker && (
-              <ActionButton
-                text={MSG.revealRating}
-                submit={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING}
-                success={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS}
-                error={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR}
-                values={setValues}
-              />
-            )}
-            {/* Task is finalized and payouts can be claimed */}
-            {canTaskPayoutBeClaimed && <TaskClaimReward task={task} />}
-            {/* Task is finalized and no payouts can be claimed */}
-            {task.currentState === TASK_STATE.FINALIZED &&
-              !canTaskPayoutBeClaimed && (
-                <p className={styles.completedDescription}>
-                  <FormattedMessage {...MSG.completed} />
-                </p>
-              )}
           </section>
           <div className={styles.activityContainer}>
             <section className={styles.activity}>
