@@ -1,21 +1,3 @@
-Skip to content
-
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- @karolinkas Sign out
-9
-4 0 JoinColony/colonyDapp Private
- Code  Issues 137  Pull requests 16  Projects 0  Wiki  Insights
-colonyDapp/src/modules/dashboard/sagas/task.js
-@JamesLefrere JamesLefrere Fix task action types
-369a659  5 days ago
-@JamesLefrere @chmanie @sprusr @karolinkas @thiagodelgado111
-527 lines (493 sloc)  14.4 KB
-
 /* @flow */
 
 import type { Saga } from 'redux-saga';
@@ -636,15 +618,3 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ACTIONS.TASK_UNASSIGN, taskUnassign);
 }
-© 2019 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About

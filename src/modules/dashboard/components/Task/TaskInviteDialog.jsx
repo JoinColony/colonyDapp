@@ -49,7 +49,7 @@ class TaskInviteDialog extends Component<Props> {
 
   setPayload = (action: Object) => {
     const {
-      task: { taskId },
+      task: { taskId, taskStoreAddress },
       currentUser,
       /* This shouldn't throw an error since address is
       indeed a property of shared */
@@ -59,8 +59,9 @@ class TaskInviteDialog extends Component<Props> {
     return {
       ...action,
       payload: {
-        user: currentUser,
+        worker: currentUser,
         taskId,
+        taskStoreAddress,
         colonyAddress: address,
       },
     };

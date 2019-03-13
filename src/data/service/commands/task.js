@@ -105,12 +105,10 @@ type SetTaskPayoutCommandArgs = {|
 
 type AssignWorkerCommandArgs = {|
   worker: Address,
-  taskStoreAddress: string | OrbitDBAddress,
 |};
 
 type UnassignWorkerCommandArgs = {|
   worker: Address,
-  taskStoreAddress: string | OrbitDBAddress,
 |};
 
 type CancelTaskCommandArgs = {|

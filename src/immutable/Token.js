@@ -17,7 +17,6 @@ type Shared = {|
   isEnabled?: boolean,
   // TODO: should be `nativeFor: ColonyIdentifier`
   isNative?: boolean,
-  isEth?: boolean,
   name: string,
   symbol: string,
 |};
@@ -34,7 +33,6 @@ const defaultValues: $Shape<Shared> = {
   isBlocked: undefined,
   isEnabled: undefined,
   isNative: undefined,
-  isEth: undefined,
   name: undefined,
   symbol: undefined,
 };

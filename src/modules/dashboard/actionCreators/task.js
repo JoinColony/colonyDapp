@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ENSName } from '~types';
+import type { ENSName, Address } from '~types';
 
 import { ACTIONS } from '~redux';
 
@@ -17,12 +17,12 @@ export const fetchTaskComments = (
 
 // eslint-disable-next-line import/prefer-default-export
 export const setTaskWorker = (
-  colonyENSName: ENSName,
-  taskId: number,
+  colonyAddress: Address,
+  taskStoreAddress: string,
   assignee: string,
 ) => ({
   type: ACTIONS.TASK_ASSIGN,
   meta: {
-    keyPath: [colonyENSName, assignee],
+    keyPath: [colonyAddress, taskStoreAddress, assignee],
   },
 });

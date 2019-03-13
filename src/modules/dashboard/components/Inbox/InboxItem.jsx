@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
-import { UserAvatarDisplay } from '~core/UserAvatar';
+import UserAvatar from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { DialogLink } from '~core/Dialog';
@@ -49,7 +49,7 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-const getTaskId = () => mockTask;
+const getTask = () => mockTask;
 
 /* Some inbox items link somewhere, others open a modal so it's important to differentiate here */
 const ConditionalWrapper = ({
@@ -65,7 +65,7 @@ const ConditionalWrapper = ({
 }) => {
   // TODO: Make this happen dynamically, we can't create a condition for each inbox event
   if (event === 'actionWorkerInviteReceived') {
-    const details = getTaskId();
+    const details = getTask();
     return (
       <DialogLink
         to="TaskInviteDialog"
@@ -122,7 +122,7 @@ const InboxItem = ({
       <ConditionalWrapper to={onClickRoute} event={event} user={user}>
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
-          <UserAvatarDisplay
+          <UserAvatar
             size="xxs"
             address={user.walletAddress}
             username={user.username}

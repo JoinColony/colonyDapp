@@ -39,6 +39,7 @@ export const mockTask = {
   reputation: 19.5,
   taskId: 1,
   title: 'Develop Github integration',
+  taskStoreAddress: 'orbitDbHash',
   payouts: [
     {
       token: ETHToken,
