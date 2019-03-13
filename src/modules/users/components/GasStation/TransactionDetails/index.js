@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './TransactionDetails';
+export { default } from './TransactionDetails.jsx';

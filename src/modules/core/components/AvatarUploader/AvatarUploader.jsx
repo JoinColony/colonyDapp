@@ -85,6 +85,7 @@ class AvatarUploader extends Component<Props> {
             label={label}
             help={help}
             maxFilesLimit={1}
+            maxFileSize={2097152} // 2MB
             name="avatarUploader"
             renderPlaceholder={placeholder}
             itemComponent={AvatarUploadItem}

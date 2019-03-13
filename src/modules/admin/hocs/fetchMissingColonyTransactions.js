@@ -19,7 +19,7 @@ const shouldFetchColonyTransactions = ({
 }: {
   transactions: TransactionsData,
   ensName: ENSName,
-}) => !!(ensName && shouldFetchData(transactions));
+}) => !!(ensName && shouldFetchData(transactions, 0, false));
 
 const shouldFetchColonyUnclaimedTransactions = ({
   unclaimedTransactions,
@@ -27,7 +27,7 @@ const shouldFetchColonyUnclaimedTransactions = ({
 }: {
   unclaimedTransactions: TransactionsData,
   ensName: ENSName,
-}) => !!(ensName && shouldFetchData(unclaimedTransactions));
+}) => !!(ensName && shouldFetchData(unclaimedTransactions, 0, false));
 
 const fetchMissingColonyTransactions = branch(
   props =>

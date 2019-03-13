@@ -111,6 +111,21 @@ export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
   },
 });
 
+export const getUserAddress: UsernameQuery<string, string> = ({
+  networkClient,
+  ensCache,
+}) => ({
+  async execute(username) {
+    const domain = ensCache.constructor.getFullDomain('user', username);
+    const address = await ensCache.getAddress(domain, networkClient);
+
+    if (!address)
+      throw new Error(`No address found for username "${username}"`);
+
+    return address;
+  },
+});
+
 export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
   networkClient,
   ensCache,
@@ -132,16 +147,14 @@ export const getUsername: UsernameQuery<string, string> = ({
   networkClient,
   ensCache,
 }) => ({
-  async execute(ensAddress) {
-    const domain = await ensCache.getDomain(ensAddress, networkClient);
+  async execute(address) {
+    const domain = await ensCache.getDomain(address, networkClient);
 
-    if (!domain)
-      throw new Error(`No username found for address "${ensAddress}"`);
+    if (!domain) throw new Error(`No username found for address "${address}"`);
 
     const [username, type] = domain.split('.');
 
-    if (type !== 'user')
-      throw new Error(`Address "${ensAddress}" is not a user`);
+    if (type !== 'user') throw new Error(`Address "${address}" is not a user`);
 
     return username;
   },

@@ -7,24 +7,20 @@ import { shouldFetchData } from '~immutable/utils';
 import type { DataRecordType, UserRecordType } from '~immutable';
 
 type Props = {
-  fetchUserProfile: (username: string) => any,
+  userFetch: (username: string) => any,
   user: ?DataRecordType<UserRecordType>,
-  username: ?string,
+  address: ?string,
 };
 
-const shouldFetchUser = ({ user, username }: Props) =>
-  !!(
-    username &&
-    username !== 'user' && // TODO remove this, just for guarding against mocks
-    shouldFetchData(user)
-  );
+const shouldFetchUser = ({ user, address }: Props) =>
+  !!(address && shouldFetchData(user, 0, true));
 
 const fetchMissingUser = branch(
   shouldFetchUser,
   lifecycle<*, Props>({
     componentDidMount() {
-      const { username, fetchUserProfile } = this.props;
-      if (shouldFetchUser(this.props)) fetchUserProfile(username);
+      const { address, userFetch } = this.props;
+      if (shouldFetchUser(this.props)) userFetch(address);
     },
   }),
 );

@@ -81,7 +81,7 @@ const InboxItem = ({
         {user && (
           <UserAvatar
             size="xxs"
-            walletAddress={user.walletAddress}
+            address={user.walletAddress}
             username={user.username}
             className={styles.userAvatar}
           />

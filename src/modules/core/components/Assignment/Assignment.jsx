@@ -65,7 +65,7 @@ const Assignment = ({
           <div className={styles.avatarContainer}>
             <UserAvatar
               className={styles.recipientAvatar}
-              walletAddress={assignee.profile.walletAddress}
+              address={assignee.profile.walletAddress}
               username={
                 assignee.profile.username || assignee.profile.walletAddress
               }

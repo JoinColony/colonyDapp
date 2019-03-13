@@ -3,26 +3,32 @@
 import { connect } from 'react-redux';
 import { compose, branch, lifecycle } from 'recompose';
 
-import { usernameFromAddressProp } from '../selectors';
-import { fetchUsername as fetchUsernameAction } from '../actionCreators';
+import type { RootStateRecord } from '~immutable';
 
-/**
- * With `userAddress` in props, fetch the user's registered ensName and provide
+import { usernameSelector } from '../selectors';
+import { usernameFetch } from '../actionCreators';
+
+type Props = {
+  username?: string,
+  address: string,
+};
+
+/*
+ * With `address` in props, fetch the user's registered ensName and provide
  * as `username`.
  */
 const withUsername = compose(
   connect(
-    (state, props) => ({
-      username: usernameFromAddressProp(state, props),
+    (state: RootStateRecord, props: Props) => ({
+      username: usernameSelector(state, props),
     }),
-    { fetchUsername: fetchUsernameAction },
+    { usernameFetch },
   ),
   branch(
-    ({ username }) => !username,
+    ({ username }: Props) => !username,
     lifecycle({
       componentDidMount() {
-        const { userAddress, fetchUsername } = this.props;
-        fetchUsername(userAddress);
+        this.props.fetchUsername(this.props.address);
       },
     }),
   ),

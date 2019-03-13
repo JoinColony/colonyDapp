@@ -54,7 +54,7 @@ const InitialTask = ({
             </button>
           </TableCell>
           <TableCell className={styles.userAvatar}>
-            <UserAvatar size="xs" walletAddress={walletAddress} />
+            <UserAvatar size="xs" address={walletAddress} />
           </TableCell>
         </TableRow>
       </TableBody>

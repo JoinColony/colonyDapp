@@ -52,7 +52,7 @@ const TaskListItem = ({
       {assignee ? (
         <UserAvatar
           size="xs"
-          walletAddress={assignee.profile.walletAddress}
+          address={assignee.profile.walletAddress}
           username={assignee.profile.username}
         />
       ) : null}

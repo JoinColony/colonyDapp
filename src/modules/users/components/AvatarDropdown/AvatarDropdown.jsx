@@ -10,7 +10,7 @@ import UserAvatar from '~core/UserAvatar';
 
 import type { RootStateRecord, UserType } from '~immutable';
 
-import { currentUser as currentUserSelector } from '../../selectors';
+import { currentUserSelector } from '../../selectors';
 
 import styles from './AvatarDropdown.css';
 
@@ -35,9 +35,10 @@ const AvatarDropdown = ({ user }: Props) => (
       data-test="avatarDropdown"
     >
       <UserAvatar
-        username={user.profile.username}
-        avatarURL={user.profile.avatar}
+        address={user.profile.walletAddress}
+        avatar={user.profile.avatar}
         link={false}
+        username={user.profile.username}
       />
     </button>
   </Popover>

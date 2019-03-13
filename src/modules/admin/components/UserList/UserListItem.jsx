@@ -71,7 +71,7 @@ const UserListItem = ({
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.userAvatar}>
-      <UserAvatar size="xs" walletAddress={walletAddress} username={username} />
+      <UserAvatar size="xs" address={walletAddress} username={username} />
     </TableCell>
     <TableCell className={styles.userDetails}>
       {showDisplayName && displayName && (

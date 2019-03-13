@@ -2,18 +2,22 @@
 
 import type { Map as ImmutableMapType, RecordOf } from 'immutable';
 
-import type { Address } from '~types';
 import type { UserRecordType, DataRecordType } from '~immutable';
 
-type Username = string;
-type Hash = string;
+export type UserAvatarsMap = ImmutableMapType<
+  string, // address
+  DataRecordType<string>, // Base64 of IPFS image
+  // TODO ^ instead, store the IPFS hash, and perhaps use a service worker
+  // to download and cache the image data.
+>;
 
-export type UserAvatarsMap = ImmutableMapType<Username, Hash>;
-
-export type UsernamesMap = ImmutableMapType<Address, Username>;
+export type UsernamesMap = ImmutableMapType<
+  string, // address
+  DataRecordType<string>, // username
+>;
 
 export type UsersMap = ImmutableMapType<
-  Username,
+  string, // address
   DataRecordType<UserRecordType>,
 >;
 

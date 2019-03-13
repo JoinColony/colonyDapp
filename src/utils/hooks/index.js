@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { InputSelector } from 'reselect';
+
 import type { Action } from '~redux';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 
@@ -8,7 +9,7 @@ import type { DataRecordType, RootStateRecord } from '~immutable';
 import { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
-import { isFetchingData } from '~immutable/utils';
+import { isFetchingData, shouldFetchData } from '~immutable/utils';
 
 type DataFetcher = {|
   select: (
@@ -16,6 +17,7 @@ type DataFetcher = {|
     ...selectArgs: any[]
   ) => ?DataRecordType<*>,
   fetch: (...fetchArgs: any[]) => Action<*>,
+  ttl?: number,
 |};
 
 type DependantSelector = (
@@ -28,6 +30,10 @@ export type Given = (
   potentialSelector: InputSelector<RootStateRecord, *, *>,
   dependantSelector?: DependantSelector,
 ) => any | boolean;
+
+type DataFetcherOptions = {
+  ttl?: number,
+};
 
 export const usePrevious = (value: any) => {
   const ref = useRef();
@@ -48,9 +54,10 @@ const transformFetchedData = (data: DataRecordType<*>) => {
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
 export const useDataFetcher = <T>(
-  fetcher: DataFetcher,
+  { fetch, select, ttl = 0 }: DataFetcher,
   selectArgs: any[],
   fetchArgs: any[],
+  { ttl: ttlOverride }: DataFetcherOptions = {},
 ): {|
   data: ?T,
   isFetching: boolean,
@@ -58,15 +65,27 @@ export const useDataFetcher = <T>(
 |} => {
   const dispatch = useDispatch();
   const mapState = useCallback(
-    state => ({
-      data: fetcher.select(state, ...selectArgs),
-    }),
+    state => select(state, ...selectArgs),
     selectArgs,
   );
-  const { data } = useMappedState(mapState);
-  useEffect(() => {
-    dispatch(fetcher.fetch(...fetchArgs), fetchArgs);
-  }, fetchArgs);
+  const data = useMappedState(mapState);
+
+  const isFirstMount = useRef(true);
+
+  const shouldFetch = shouldFetchData(
+    data,
+    ttlOverride || ttl,
+    isFirstMount.current,
+  );
+
+  useEffect(
+    () => {
+      isFirstMount.current = false;
+      if (shouldFetch) dispatch(fetch(...fetchArgs), fetchArgs);
+    },
+    [shouldFetch, ...fetchArgs],
+  );
+
   return {
     data: transformFetchedData(data),
     isFetching: isFetchingData(data),

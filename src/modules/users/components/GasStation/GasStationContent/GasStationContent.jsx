@@ -24,7 +24,7 @@ const MSG = defineMessages({
 
 type Props = {|
   close?: () => void,
-  getCurrentUserBalance: () => void,
+  currentUserGetBalance: () => void,
   transactionGroups: Array<TransactionGroup>,
 |};
 
@@ -40,8 +40,8 @@ class GasStationContent extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const { getCurrentUserBalance } = this.props;
-    return getCurrentUserBalance();
+    const { currentUserGetBalance } = this.props;
+    currentUserGetBalance();
   }
 
   unselectTransactionGroup = () => {
