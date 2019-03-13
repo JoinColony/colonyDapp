@@ -9,6 +9,8 @@ import BigNumber from 'bn.js';
 
 import type { ContractTransactionType } from '~immutable';
 
+import { addressEquals } from '~utils/strings';
+
 import { getLogDate } from './blocks';
 
 /*
@@ -143,7 +145,7 @@ export const parseUnclaimedTransferEvent = async ({
   // Only return if we haven't claimed since it happened
   return claimEvents.find(
     (claimEvent, i) =>
-      claimEvent.token.toLowerCase() === token.toLowerCase() &&
+      addressEquals(claimEvent.token, token) &&
       claimLogs[i].blockNumber > blockNumber,
   )
     ? null
@@ -184,7 +186,7 @@ export const parseUserTransferEvent = async ({
     from,
     hash,
     id: hash,
-    incoming: to.toLowerCase() === walletAddress.toLowerCase(),
+    incoming: addressEquals(to, walletAddress),
     to,
     token,
   };

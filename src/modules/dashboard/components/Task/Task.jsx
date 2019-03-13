@@ -4,18 +4,18 @@ import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 
-import styles from './Task.css';
-
-import Form from '~core/Fields/Form';
-import Heading from '~core/Heading';
-import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import { ACTIONS } from '~redux';
+import { TASK_STATE } from '~immutable';
 
 /*
  * @TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskType, UserType } from '~immutable';
+
+import Form from '~core/Fields/Form';
+import Heading from '~core/Heading';
+import Button, { ActionButton, DialogActionButton } from '~core/Button';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskDate from '~dashboard/TaskDate';
@@ -27,10 +27,10 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskClaimReward from '~dashboard/TaskClaimReward';
 import TaskSkills from '~dashboard/TaskSkills';
 
-import { TASK_STATE } from '~immutable';
-
 import userMocks from './__datamocks__/mockUsers';
 import tokensMock from '../../../../__mocks__/mockTokens';
+
+import styles from './Task.css';
 
 const MSG = defineMessages({
   assignmentFunding: {
@@ -72,11 +72,16 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  openDialog: OpenDialog,
-  task: TaskType,
+  canTaskBeFinalized: boolean,
+  canTaskPayoutBeClaimed: boolean,
   currentUser: UserType,
+  didTaskDueDateElapse: boolean,
   isTaskCreator?: boolean,
+  isTaskManager: boolean,
+  isTaskWorker: boolean,
+  openDialog: OpenDialog,
   preventEdit: boolean,
+  task: TaskType,
 |};
 
 class Task extends Component<Props> {
@@ -89,24 +94,26 @@ class Task extends Component<Props> {
   };
 
   openTaskEditDialog = () => {
-    const { openDialog, task } = this.props;
-    const payouts = task.payouts.map(payout => ({
-      token:
-        // we add 1 because Formik thinks 0 is empty
-        tokensMock.indexOf(
-          tokensMock.find(token => token.symbol === payout.token.symbol),
-        ) + 1,
-      amount: payout.amount,
-      id: nanoid(),
-    }));
+    const {
+      openDialog,
+      task: { worker, payouts, reputation },
+    } = this.props;
 
     openDialog('TaskEditDialog', {
-      assignee: task.assignee,
       availableTokens: tokensMock,
       maxTokens: 2,
-      payouts,
-      reputation: task.reputation,
+      payouts: payouts.map(payout => ({
+        token:
+          // we add 1 because Formik thinks 0 is empty
+          tokensMock.indexOf(
+            tokensMock.find(token => token.symbol === payout.token.symbol),
+          ) + 1,
+        amount: payout.amount,
+        id: nanoid(),
+      })),
+      reputation,
       users: userMocks,
+      worker,
     });
   };
 
@@ -121,64 +128,21 @@ class Task extends Component<Props> {
     };
   };
 
-  get isWorker() {
-    const {
-      task: { assignee },
-      currentUser,
-    } = this.props;
-    return (
-      !!assignee &&
-      assignee.profile.walletAddress.toLowerCase() ===
-        currentUser.profile.walletAddress.toLowerCase()
-    );
-  }
-
-  get isManager() {
-    const {
-      task: { creator },
-      currentUser,
-    } = this.props;
-    return (
-      creator.toLowerCase() === currentUser.profile.walletAddress.toLowerCase()
-    );
-  }
-
-  get dueDatePassed() {
-    const {
-      task: { dueDate },
-    } = this.props;
-    return !!dueDate && dueDate < new Date();
-  }
-
-  get canClaimPayout() {
-    const {
-      task: { currentState, workerPayoutClaimed, managerPayoutClaimed },
-    } = this.props;
-    return (
-      currentState === TASK_STATE.FINALIZED &&
-      ((this.isWorker && !workerPayoutClaimed) ||
-        (this.isManager && !managerPayoutClaimed))
-    );
-  }
-
-  get canBeFinalized() {
-    const {
-      task: { currentState, managerRating, workerRating },
-    } = this.props;
-    return (
-      currentState === TASK_STATE.REVEAL && !!managerRating && !!workerRating
-    );
-  }
-
   render() {
-    const { isTaskCreator, preventEdit, task, currentUser } = this.props;
     const {
+      props: {
+        canTaskBeFinalized,
+        canTaskPayoutBeClaimed,
+        currentUser,
+        didTaskDueDateElapse,
+        isTaskCreator,
+        isTaskManager,
+        isTaskWorker,
+        preventEdit,
+        task: { worker },
+        task,
+      },
       setValues,
-      isWorker,
-      isManager,
-      dueDatePassed,
-      canClaimPayout,
-      canBeFinalized,
     } = this;
     return (
       <div className={styles.main}>
@@ -226,7 +190,7 @@ class Task extends Component<Props> {
           </section>
           <section className={styles.section}>
             <div className={styles.editor}>
-              <TaskDomains isTaskCreator={preventEdit} taskId={task.taskId} />
+              <TaskDomains isTaskCreator={preventEdit} draftId={task.draftId} />
             </div>
             <div className={styles.editor}>
               <TaskSkills isTaskCreator={preventEdit} task={task} />
@@ -239,7 +203,7 @@ class Task extends Component<Props> {
         <div className={styles.container}>
           <section className={styles.header}>
             {/* Work has been submitted and rating have been given  */}
-            {canBeFinalized && (
+            {canTaskBeFinalized && (
               <ActionButton
                 text={MSG.finalizeTask}
                 submit={ACTIONS.TASK_FINALIZE}
@@ -254,8 +218,8 @@ class Task extends Component<Props> {
             />
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
-              isWorker &&
-              !task.workerHasRated && (
+              isTaskWorker &&
+              !(worker && worker.didRate) && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
                   dialogProps={{
@@ -270,8 +234,8 @@ class Task extends Component<Props> {
               )}
             {/* Worker submits work, ends task + rates before deadline */}
             {task.currentState !== TASK_STATE.RATING &&
-              isWorker &&
-              !dueDatePassed && (
+              isTaskWorker &&
+              !didTaskDueDateElapse && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
                   dialogProps={{
@@ -286,8 +250,8 @@ class Task extends Component<Props> {
               )}
             {/* Worker misses deadline and manager ends task + rates */}
             {task.currentState !== TASK_STATE.RATING &&
-              isManager &&
-              dueDatePassed && (
+              isTaskManager &&
+              didTaskDueDateElapse && (
                 <DialogActionButton
                   dialog="WorkerRatingDialog"
                   options={{
@@ -301,7 +265,7 @@ class Task extends Component<Props> {
                 />
               )}
             {/* Worker makes deadline and manager rates worker */}
-            {task.currentState === TASK_STATE.RATING && isManager && (
+            {task.currentState === TASK_STATE.RATING && isTaskManager && (
               <DialogActionButton
                 dialog="WorkerRatingDialog"
                 options={{
@@ -315,7 +279,7 @@ class Task extends Component<Props> {
               />
             )}
             {/* Manager reveal rating of worker */}
-            {task.currentState === TASK_STATE.REVEAL && isManager && (
+            {task.currentState === TASK_STATE.REVEAL && isTaskManager && (
               <ActionButton
                 text={MSG.revealRating}
                 submit={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING}
@@ -325,7 +289,7 @@ class Task extends Component<Props> {
               />
             )}
             {/* Worker reveal rating of manager */}
-            {task.currentState === TASK_STATE.REVEAL && isWorker && (
+            {task.currentState === TASK_STATE.REVEAL && isTaskWorker && (
               <ActionButton
                 text={MSG.revealRating}
                 submit={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING}
@@ -335,13 +299,14 @@ class Task extends Component<Props> {
               />
             )}
             {/* Task is finalized and payouts can be claimed */}
-            {canClaimPayout && <TaskClaimReward task={task} />}
+            {canTaskPayoutBeClaimed && <TaskClaimReward task={task} />}
             {/* Task is finalized and no payouts can be claimed */}
-            {task.currentState === TASK_STATE.FINALIZED && !canClaimPayout && (
-              <p className={styles.completedDescription}>
-                <FormattedMessage {...MSG.completed} />
-              </p>
-            )}
+            {task.currentState === TASK_STATE.FINALIZED &&
+              !canTaskPayoutBeClaimed && (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
           </section>
           <div className={styles.activityContainer}>
             <section className={styles.activity}>

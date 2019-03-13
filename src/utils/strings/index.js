@@ -116,3 +116,6 @@ export const splitAddress = (address: string): AddressElements | Error => {
     return caughtError;
   }
 };
+
+export const addressEquals = (a: ?string, b: ?string) =>
+  (a && a.toLowerCase()) === (b && b.toLowerCase());

@@ -26,7 +26,7 @@ type Props = {|
 |};
 
 const TaskListItem = ({
-  task: { assignee, draftId, payouts, reputation, title, colonyENSName },
+  task: { worker, draftId, payouts, reputation, title, colonyENSName },
 }: Props) => (
   <TableRow>
     <TableCell className={styles.taskDetails}>
@@ -49,12 +49,8 @@ const TaskListItem = ({
       <PayoutsList payouts={payouts} nativeToken="CLNY" />
     </TableCell>
     <TableCell className={styles.userAvatar}>
-      {assignee ? (
-        <UserAvatar
-          size="xs"
-          address={assignee.profile.walletAddress}
-          username={assignee.profile.username}
-        />
+      {worker && worker.address ? (
+        <UserAvatar size="xs" address={worker.address} />
       ) : null}
     </TableCell>
   </TableRow>

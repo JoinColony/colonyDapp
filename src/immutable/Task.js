@@ -6,87 +6,74 @@ import { Record, List } from 'immutable';
 
 import { TASK_STATE } from './constants';
 
-import type { ENSName, OrbitDBAddress } from '~types';
-
 import type { TaskFeedItemRecordType, TaskFeedItemType } from './TaskFeedItem';
 import type { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
-import type { UserType, UserRecordType } from './User';
-
-export type TaskRating = 1 | 2 | 3;
+import type { TaskUserRecordType, TaskUserType } from './TaskUser';
 
 export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 
+// TODO support full task workflow:
+// export type TaskRating = 1 | 2 | 3;
+
 type Shared = {|
-  colonyENSName: ENSName,
-  creator: string,
+  colonyENSName: string,
+  createdAt: Date,
   currentState: TaskCurrentState,
-  description: string,
-  domainId: number,
-  draftId: string, // Draft ID, when the task is a little babby
+  description?: string,
+  domainId?: number,
+  draftId: string, // Draft task ID, when the task is a little babby
   dueDate?: Date,
-  evaluatorHasRated: boolean, // secret was submitted
-  evaluatorPayoutClaimed: boolean,
-  evaluatorRateFail: boolean, // if they didn't rate or reveal
-  managerHasRated: boolean, // secret was submitted
-  managerPayoutClaimed: boolean,
-  managerRateFail: boolean, // if they didn't rate or reveal
-  managerRating?: TaskRating,
-  reputation: number, // TODO: should be BigNumber
-  skillId: number,
-  taskId: number, // On-chain ID, when the task is all grown up :'-)
-  title: string,
-  workerHasRated: boolean, // secret was submitted
-  workerPayoutClaimed: boolean,
-  workerRateFail: boolean, // if they didn't rate or reveal
-  workerRating?: TaskRating,
-  commentsStoreAddress?: string | OrbitDBAddress,
+  reputation: number,
+  skillId?: number,
+  title?: string,
+  // TODO support full task workflow:
+  // reputation: number,
+  // specificationHash?: string,
+  // taskId?: number, // On-chain ID, when the task is all grown up :'-)
 |};
 
 export type TaskType = $ReadOnly<{|
   ...Shared,
-  assignee?: UserType,
   feedItems: Array<TaskFeedItemType>,
+  manager?: TaskUserType,
   payouts: Array<TaskPayoutType>,
+  worker?: TaskUserType,
+  // TODO support full task workflow:
+  // evaluator?: TaskUserType,
 |}>;
 
 type TaskRecordProps = {|
   ...Shared,
-  assignee?: UserRecordType,
   feedItems: List<TaskFeedItemRecordType>,
+  manager?: TaskUserRecordType,
   payouts: List<TaskPayoutRecordType>,
+  worker?: TaskUserRecordType,
+  // TODO support full task workflow:
+  // evaluator?: TaskUserRecordType,
 |};
 
 export type TaskRecordType = RecordOf<TaskRecordProps>;
 
 export type TaskDraftId = $PropertyType<TaskRecordType, 'draftId'>;
-export type TaskId = $PropertyType<TaskRecordType, 'taskId'>;
+
+// TODO support full task workflow:
+// export type TaskId = $PropertyType<TaskRecordType, 'taskId'>;
 
 const defaultValues: $Shape<TaskRecordProps> = {
-  assignee: undefined,
   colonyENSName: undefined,
-  creator: undefined,
+  createdAt: undefined,
   currentState: undefined,
+  description: undefined,
   domainId: undefined,
-  dueDate: undefined,
-  evaluatorHasRated: undefined,
-  evaluatorPayoutClaimed: undefined,
-  evaluatorRateFail: undefined,
-  feedItems: new List(),
   draftId: undefined,
-  managerHasRated: undefined,
-  managerPayoutClaimed: undefined,
-  managerRateFail: undefined,
-  managerRating: undefined,
-  payouts: new List(),
+  dueDate: undefined,
+  feedItems: List(),
+  manager: undefined,
+  payouts: List(),
   reputation: undefined,
   skillId: undefined,
-  taskId: undefined,
   title: undefined,
-  workerHasRated: undefined,
-  workerPayoutClaimed: undefined,
-  workerRateFail: undefined,
-  workerRating: undefined,
-  commentsStoreAddress: undefined,
+  worker: undefined,
 };
 
 const TaskRecord: RecordFactory<TaskRecordProps> = Record(defaultValues);

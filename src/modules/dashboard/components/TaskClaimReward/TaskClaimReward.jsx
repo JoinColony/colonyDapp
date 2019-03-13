@@ -17,50 +17,50 @@ const MSG = defineMessages({
 
 // Can't seal this object because of HOC
 export type Props = {
-  taskId: number,
   colonyENSName: string,
-  rating: number,
-  reputation: number,
-  payouts: Array<TaskPayoutType>,
-  title: string,
+  draftId: string,
   lateRating: boolean,
   lateReveal: boolean,
-  sortedPayouts: Array<TaskPayoutType>,
   nativeTokenPayout: Object | void,
+  payouts: Array<TaskPayoutType>,
+  rating: number,
+  reputation: number,
+  sortedPayouts: Array<TaskPayoutType>,
+  title?: string,
 };
 
 const displayName = 'dashboard.TaskClaimReward';
 
 const TaskClaimReward = ({
-  taskId,
   colonyENSName,
-  rating,
-  reputation,
-  payouts,
-  title,
+  draftId,
   lateRating,
   lateReveal,
-  sortedPayouts,
   nativeTokenPayout,
+  payouts,
+  rating,
+  reputation,
+  sortedPayouts,
+  title,
 }: Props) => (
   <DialogActionButton
     text={MSG.claimRewards}
     dialog="TaskClaimRewardDialog"
     dialogProps={{
-      rating,
-      reputation,
-      payouts,
-      title,
       lateRating,
       lateReveal,
-      sortedPayouts,
       nativeTokenPayout,
+      payouts,
+      rating,
+      reputation,
+      sortedPayouts,
+      title,
     }}
     submit={ACTIONS.TASK_WORKER_CLAIM_REWARD}
     success={ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS}
     error={ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR}
     values={{
-      taskId,
+      draftId,
       colonyENSName,
       tokenAddresses: payouts.map(payout => payout.token.address),
     }}
