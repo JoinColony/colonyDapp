@@ -5,6 +5,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import type { RootStateRecord, TaskDraftId, TaskUserType } from '~immutable';
 import { TASK_STATE } from '~immutable/constants';
+import { addressEquals } from '~utils/strings';
 
 import { DASHBOARD_ALL_TASKS, DASHBOARD_NAMESPACE as ns } from '../constants';
 import { currentUserAddressSelector } from '../../users/selectors';
@@ -12,12 +13,9 @@ import { currentUserAddressSelector } from '../../users/selectors';
 /*
  * Utils
  */
-const isTaskUser = (taskUser: ?TaskUserType, address: string) =>
-  taskUser &&
-  taskUser.address &&
-  taskUser.address.toLowerCase() === address.toLowerCase();
 const didClaimPayout = (taskUser: TaskUserType, address: string) =>
-  isTaskUser(taskUser, address) && taskUser.didClaimPayout;
+  addressEquals(taskUser && taskUser.address, address) &&
+  taskUser.didClaimPayout;
 
 /*
  * Getters
@@ -55,13 +53,15 @@ export const taskSelector = createSelector(
 export const isTaskManager = createSelector(
   taskSelector,
   currentUserAddressSelector,
-  (task, address) => task && isTaskUser(task.manager, address),
+  (task, address) =>
+    task && task.manager && addressEquals(task.manager.address, address),
 );
 
 export const isTaskWorker = createSelector(
   taskSelector,
   currentUserAddressSelector,
-  (task, address) => task && isTaskUser(task.worker, address),
+  (task, address) =>
+    task && task.worker && addressEquals(task.worker.address, address),
 );
 
 export const canTaskPayoutBeClaimed = createSelector(

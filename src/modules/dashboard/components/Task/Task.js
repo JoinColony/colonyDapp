@@ -26,7 +26,8 @@ const dummyProps = { draftId: '1', colonyENSName: 'cool-colony' };
 const enhance = compose(
   withCurrentUser,
   // TODO in #939 wire this up with hooks instead; this is just indicative
-  // of the state that will be needed
+  // of the state that will be needed.
+  // Suggestion: use `useFeatureFlags` 🚀
   connect(state => ({
     canTaskBeFinalized: canTaskBeFinalized(state, dummyProps),
     canTaskPayoutBeClaimed: canTaskPayoutBeClaimed(state, dummyProps),
@@ -50,5 +51,4 @@ const enhance = compose(
   }),
   withImmutablePropsToJS,
 );
-
 export default enhance(Task);

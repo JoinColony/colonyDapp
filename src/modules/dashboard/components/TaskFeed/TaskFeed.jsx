@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import type { UserType, TaskFeedItemType } from '~immutable';
 
+import { addressEquals } from '~utils/strings';
+
 import Comment from './TaskFeedComment.jsx';
 import Rating from './TaskFeedRating.jsx';
 
@@ -20,8 +22,7 @@ type Props = {|
 |};
 
 const isSameUser = (a: UserType, b: UserType) =>
-  a.profile.walletAddress.toLowerCase() ===
-  b.profile.walletAddress.toLowerCase();
+  addressEquals(a.profile.walletAddress, b.profile.walletAddress);
 
 class TaskFeed extends Component<Props> {
   bottomEl: *;
