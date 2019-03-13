@@ -2,6 +2,7 @@
 
 import type { TokenType, TokenRecordType } from '../Token';
 
+// TODO consider moving these to somewhere better (selectors? elsewhere?)
 export const tokenBalanceIsPositive = ({
   balance,
 }: TokenType | TokenRecordType) => balance >= 0;

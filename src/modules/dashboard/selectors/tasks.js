@@ -3,21 +3,94 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { RootStateRecord } from '~immutable';
+import type { RootStateRecord, TaskDraftId, TaskUserType } from '~immutable';
+import { TASK_STATE } from '~immutable/constants';
 
 import { DASHBOARD_ALL_TASKS, DASHBOARD_NAMESPACE as ns } from '../constants';
+import { currentUserAddressSelector } from '../../users/selectors';
 
-export const allTasksSelector = (state: RootStateRecord) =>
+/*
+ * Utils
+ */
+const isTaskUser = (taskUser: ?TaskUserType, address: string) =>
+  taskUser &&
+  taskUser.address &&
+  taskUser.address.toLowerCase() === address.toLowerCase();
+const didClaimPayout = (taskUser: TaskUserType, address: string) =>
+  isTaskUser(taskUser, address) && taskUser.didClaimPayout;
+
+/*
+ * Getters
+ */
+const getAllTasks = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_TASKS], ImmutableMap());
 
+const getDraftIdFromProps = (
+  state: RootStateRecord,
+  { draftId }: { draftId: TaskDraftId },
+) => draftId;
+
+const getColonyENSNameFromProps = (
+  state: RootStateRecord,
+  { colonyENSName }: { colonyENSName: string },
+) => colonyENSName;
+
+/*
+ * Selectors
+ */
 export const colonyTasksSelector = createSelector(
-  allTasksSelector,
-  (state, props) => props.colonyENSName,
+  getAllTasks,
+  getColonyENSNameFromProps,
   (allTasks, colonyENSName) => allTasks.get(colonyENSName, ImmutableMap()),
 );
 
-export const singleTaskSelector = createSelector(
+export const taskSelector = createSelector(
   colonyTasksSelector,
-  (state, props) => props.id,
-  (tasks, id) => tasks.get(id),
+  getDraftIdFromProps,
+  (tasks, draftId) => tasks.get(draftId),
+);
+
+// TODO consider whether the following are best as selectors, or whether
+// they should be functions used in components
+export const isTaskManager = createSelector(
+  taskSelector,
+  currentUserAddressSelector,
+  (task, address) => task && isTaskUser(task.manager, address),
+);
+
+export const isTaskWorker = createSelector(
+  taskSelector,
+  currentUserAddressSelector,
+  (task, address) => task && isTaskUser(task.worker, address),
+);
+
+export const canTaskPayoutBeClaimed = createSelector(
+  taskSelector,
+  currentUserAddressSelector,
+  (task, address) =>
+    !!(
+      task &&
+      task.currentState === TASK_STATE.FINALIZED &&
+      (didClaimPayout(task.worker, address) ||
+        didClaimPayout(task.manager, address))
+    ),
+);
+
+export const didTaskDueDateElapse = createSelector(
+  taskSelector,
+  // TODO consider not using a date in selectors like this, because
+  // it might cause unwanted behaviour (e.g. selector invalidation)
+  task => !!(task && task.dueDate && task.dueDate < new Date()),
+);
+
+// TODO update this for the task payments workflow
+export const canTaskBeFinalized = createSelector(
+  taskSelector,
+  task =>
+    task &&
+    task.currentState === TASK_STATE.REVEAL &&
+    task.manager &&
+    task.manager.didRate &&
+    task.worker &&
+    task.worker.didRate,
 );

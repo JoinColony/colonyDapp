@@ -7,7 +7,7 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import type { Address } from '~types';
 
 import { ACTIONS } from '~redux';
-import { tokenSelector } from '../selectors';
+import { tokenWithIconSelector } from '../selectors';
 
 const useToken = (tokenAddress: Address) => {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const useToken = (tokenAddress: Address) => {
   );
   const mapState = useCallback(
     state => ({
-      token: tokenSelector(state, { tokenAddress }),
+      token: tokenWithIconSelector(state, { tokenAddress }),
     }),
     [tokenAddress],
   );

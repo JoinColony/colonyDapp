@@ -6,13 +6,6 @@ import nanoid from 'nanoid';
 
 import { ACTIONS } from '~redux';
 import { TASK_STATE } from '~immutable';
-import {
-  canTaskBeFinalized,
-  canTaskPayoutBeClaimed,
-  didTaskDueDateElapse,
-  isTaskManager,
-  isTaskWorker,
-} from '~immutable/utils';
 
 /*
  * @TODO Temporary, please remove when wiring in the rating modals
@@ -79,11 +72,16 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  openDialog: OpenDialog,
-  task: TaskType,
+  canTaskBeFinalized: boolean,
+  canTaskPayoutBeClaimed: boolean,
   currentUser: UserType,
+  didTaskDueDateElapse: boolean,
   isTaskCreator?: boolean,
+  isTaskManager: boolean,
+  isTaskWorker: boolean,
+  openDialog: OpenDialog,
   preventEdit: boolean,
+  task: TaskType,
 |};
 
 class Task extends Component<Props> {
@@ -133,22 +131,19 @@ class Task extends Component<Props> {
   render() {
     const {
       props: {
-        currentUser: {
-          profile: { walletAddress },
-        },
+        canTaskBeFinalized,
+        canTaskPayoutBeClaimed,
         currentUser,
+        didTaskDueDateElapse,
         isTaskCreator,
+        isTaskManager,
+        isTaskWorker,
         preventEdit,
         task: { worker },
         task,
       },
       setValues,
     } = this;
-    const canBeFinalized = canTaskBeFinalized(task);
-    const canClaimPayout = canTaskPayoutBeClaimed(task, walletAddress);
-    const isManager = isTaskManager(task, walletAddress);
-    const isWorker = isTaskWorker(task, walletAddress);
-    const taskDueDateDidElapse = didTaskDueDateElapse(task);
     return (
       <div className={styles.main}>
         <aside className={styles.sidebar}>
@@ -208,7 +203,7 @@ class Task extends Component<Props> {
         <div className={styles.container}>
           <section className={styles.header}>
             {/* Work has been submitted and rating have been given  */}
-            {canBeFinalized && (
+            {canTaskBeFinalized && (
               <ActionButton
                 text={MSG.finalizeTask}
                 submit={ACTIONS.TASK_FINALIZE}
@@ -223,7 +218,7 @@ class Task extends Component<Props> {
             />
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
-              isWorker &&
+              isTaskWorker &&
               !(worker && worker.didRate) && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
@@ -239,8 +234,8 @@ class Task extends Component<Props> {
               )}
             {/* Worker submits work, ends task + rates before deadline */}
             {task.currentState !== TASK_STATE.RATING &&
-              isWorker &&
-              !taskDueDateDidElapse && (
+              isTaskWorker &&
+              !didTaskDueDateElapse && (
                 <DialogActionButton
                   dialog="ManagerRatingDialog"
                   dialogProps={{
@@ -255,8 +250,8 @@ class Task extends Component<Props> {
               )}
             {/* Worker misses deadline and manager ends task + rates */}
             {task.currentState !== TASK_STATE.RATING &&
-              isManager &&
-              taskDueDateDidElapse && (
+              isTaskManager &&
+              didTaskDueDateElapse && (
                 <DialogActionButton
                   dialog="WorkerRatingDialog"
                   options={{
@@ -270,7 +265,7 @@ class Task extends Component<Props> {
                 />
               )}
             {/* Worker makes deadline and manager rates worker */}
-            {task.currentState === TASK_STATE.RATING && isManager && (
+            {task.currentState === TASK_STATE.RATING && isTaskManager && (
               <DialogActionButton
                 dialog="WorkerRatingDialog"
                 options={{
@@ -284,7 +279,7 @@ class Task extends Component<Props> {
               />
             )}
             {/* Manager reveal rating of worker */}
-            {task.currentState === TASK_STATE.REVEAL && isManager && (
+            {task.currentState === TASK_STATE.REVEAL && isTaskManager && (
               <ActionButton
                 text={MSG.revealRating}
                 submit={ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING}
@@ -294,7 +289,7 @@ class Task extends Component<Props> {
               />
             )}
             {/* Worker reveal rating of manager */}
-            {task.currentState === TASK_STATE.REVEAL && isWorker && (
+            {task.currentState === TASK_STATE.REVEAL && isTaskWorker && (
               <ActionButton
                 text={MSG.revealRating}
                 submit={ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING}
@@ -304,13 +299,14 @@ class Task extends Component<Props> {
               />
             )}
             {/* Task is finalized and payouts can be claimed */}
-            {canClaimPayout && <TaskClaimReward task={task} />}
+            {canTaskPayoutBeClaimed && <TaskClaimReward task={task} />}
             {/* Task is finalized and no payouts can be claimed */}
-            {task.currentState === TASK_STATE.FINALIZED && !canClaimPayout && (
-              <p className={styles.completedDescription}>
-                <FormattedMessage {...MSG.completed} />
-              </p>
-            )}
+            {task.currentState === TASK_STATE.FINALIZED &&
+              !canTaskPayoutBeClaimed && (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
           </section>
           <div className={styles.activityContainer}>
             <section className={styles.activity}>

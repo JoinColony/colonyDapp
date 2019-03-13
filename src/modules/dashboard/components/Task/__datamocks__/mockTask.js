@@ -30,7 +30,7 @@ export const mockTaskReward = {
 export const mockTask = {
   assignee: userMock,
   colonyENSName: 'cool-colony',
-  manager: { username: 'collin' },
+  manager: { address: '0x123collin' },
   worker: {},
   currentState: 'ACTIVE',
   draftId: '1',
