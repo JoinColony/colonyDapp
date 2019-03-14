@@ -45,6 +45,7 @@ const TaskRequestWork = ({
       userDidClaimProfile(currentUser) ||
       unfinishedProfileOpener(openDialog, balance)
     }
+    data-test="requestWorkButton"
   />
 );
 

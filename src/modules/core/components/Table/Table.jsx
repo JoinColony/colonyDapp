@@ -18,6 +18,7 @@ type Props = {|
   children: ChildrenArray<ElementType<*>>,
   /** If table is expected to be larger than its parent, and will need to scroll to show all rows */
   scrollable?: boolean,
+  'data-test'?: string,
 |};
 
 const displayName = 'Table';

@@ -52,6 +52,7 @@ const UserNavigation = ({ events = mockEvents }: Props) => {
         to={DASHBOARD_ROUTE}
         className={styles.navigationItem}
         activeClassName={styles.navigationItemActive}
+        data-test="goToDashboard"
       >
         <Icon name="home" title={MSG.dashboardTitle} />
       </NavLink>

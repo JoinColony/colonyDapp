@@ -53,7 +53,7 @@ class UnfinishedProfileDialog extends Component<Props> {
         confirmButtonText={{ id: 'button.continue' }}
       >
         <FormattedMessage {...MSG.description} />
-        <p className={styles.cta}>
+        <p className={styles.cta} data-test="claimProfileDialog">
           <FormattedMessage {...MSG.callToAction} />
         </p>
       </ConfirmDialog>

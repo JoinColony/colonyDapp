@@ -13,7 +13,7 @@ type Props = {|
 |};
 
 const TaskList = ({ tasks }: Props) => (
-  <Table scrollable>
+  <Table data-test="dashboardTaskList" scrollable>
     <TableBody>
       {tasks.map(task => (
         <TaskListItem key={task.draftId} task={task} />
