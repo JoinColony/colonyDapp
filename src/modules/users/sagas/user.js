@@ -68,7 +68,7 @@ function* userAvatarFetch({
   }
 }
 
-function* userFetchTokenTransfers(
+function* userTokenTransfersFetch(
   // eslint-disable-next-line no-unused-vars
   action: Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH>,
 ): Saga<void> {
@@ -362,7 +362,7 @@ function* userPermissionsFetch({
   }
 }
 
-function* fetchUserTaskIds(
+function* userTaskIdsFetch(
   // eslint-disable-next-line no-unused-vars
   action: Action<typeof ACTIONS.USER_TASK_IDS_FETCH>,
 ): Saga<void> {
@@ -393,8 +393,8 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_FETCH, userProfileFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
-  yield takeEvery(ACTIONS.USER_TASK_IDS_FETCH, fetchUserTaskIds);
-  yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userFetchTokenTransfers);
+  yield takeEvery(ACTIONS.USER_TASK_IDS_FETCH, userTaskIdsFetch);
+  yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
