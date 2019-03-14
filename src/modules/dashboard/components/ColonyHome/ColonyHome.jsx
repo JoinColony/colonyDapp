@@ -7,7 +7,13 @@ import React, { Fragment, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
-import type { ColonyType, DataType, DomainType, UserType } from '~immutable';
+import type {
+  ColonyType,
+  DataType,
+  DomainType,
+  UserType,
+  UserPermissionsType,
+} from '~immutable';
 
 import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -19,8 +25,9 @@ import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
+import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
+import { canCreateTask } from '../../../users/selectors';
 import { colonyFetcher } from '../../fetchers';
-
 import { isInRecoveryMode } from '../../selectors';
 
 import ColonyMeta from './ColonyMeta';
@@ -117,17 +124,26 @@ const ColonyHome = ({
    * @TODO Replace with actual filtering logic
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
-  const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  const {
+    data: colony,
+    isFetching: isFetchingColony,
+    error: colonyError,
+  } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
+
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher<UserPermissionsType>(
+    currentUserColonyPermissionsFetcher,
     [ensName],
     [ensName],
   );
 
-  if (!ensName || error) {
+  if (!ensName || colonyError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || isFetching) {
+  if (!colony || isFetchingColony) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -195,12 +211,15 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        {/* //TODO: Show this only to admins once we know user roles */}
         <Button
           text={MSG.newTaskButton}
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => 'unset'}
-          disabled={given(colony, isInRecoveryMode)}
+          loading={isFetchingPermissions}
+          disabled={
+            given(colony, isInRecoveryMode) ||
+            !given(permissions, canCreateTask)
+          }
         />
         <ul className={styles.domainsFilters}>
           <Heading
