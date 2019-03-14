@@ -152,3 +152,6 @@ export const currentUserColonyPermissionsSelector = createSelector(
 // TODO this doesn't quite fit here, maybe move?
 export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
   !!(permissions && permissions.canEnterRecoveryMode);
+
+export const canCreateTask = (permissions?: UserPermissionsType) =>
+  !!(permissions && (permissions.isAdmin || permissions.isFounder));

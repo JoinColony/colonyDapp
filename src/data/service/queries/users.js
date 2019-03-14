@@ -1,5 +1,6 @@
 /* @flow */
 import { formatEther } from 'ethers/utils';
+import { ADMIN_ROLE, FOUNDER_ROLE } from '@colony/colony-js-client';
 
 import type { OrbitDBAddress } from '~types';
 
@@ -199,15 +200,20 @@ export const getUserPermissions: Query<
 > = ({ colonyClient }) => ({
   async execute(walletAddress) {
     // TODO: Wait for new ColonyJS version and replace with the code below
-    const canEnterRecoveryMode = await colonyClient.contract.hasUserRole(
-      walletAddress,
-      2,
-    );
     // const canEnterRecoveryMode = await colonyClient.hasUserRole.call({
     //   user: walletAddress,
-    //   role: RECOVERY,
+    //   role: RECOVERY_ROLE,
     // });
-    return { canEnterRecoveryMode };
+    const canEnterRecoveryMode = false;
+    const isAdmin = await colonyClient.hasUserRole.call({
+      user: walletAddress,
+      role: ADMIN_ROLE,
+    });
+    const isFounder = await colonyClient.hasUserRole.call({
+      user: walletAddress,
+      role: FOUNDER_ROLE,
+    });
+    return { canEnterRecoveryMode, isAdmin, isFounder };
   },
 });
 
