@@ -2,7 +2,6 @@
 
 import type { ComponentType } from 'react';
 import type { MessageDescriptor } from 'react-intl';
-import type { List as ListType } from 'immutable';
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -75,7 +74,7 @@ type Props = {
       | SyntheticKeyboardEvent<HTMLElement>,
   ) => void,
   /** @ignore Will be injected by `withOmniPicker` */
-  filteredData: ListType<Data>,
+  filteredData: Array<Data>,
   /** @ignore Will be injected by `withOmniPicker` */
   id: string,
   /** @ignore Will be injected by `withOmniPicker` */
@@ -165,7 +164,10 @@ class OmniPicker extends Component<Props> {
       | SyntheticInputEvent<HTMLInputElement>
       | SyntheticKeyboardEvent<HTMLElement>,
   ) => {
-    const { onBlur } = this.props;
+    const { inputRef, onBlur } = this.props;
+    if (inputRef) {
+      inputRef.blur();
+    }
     if (typeof onBlur == 'function') {
       onBlur(evt);
     }

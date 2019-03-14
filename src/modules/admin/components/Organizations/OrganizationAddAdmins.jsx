@@ -29,13 +29,26 @@ const MSG = defineMessages({
   },
 });
 
-const filter = (data, filterValue) =>
-  data.filter(
+const supFilter = (data, filterValue) => {
+  const filtered = data.filter(
     user =>
       user &&
       filterValue &&
       user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
   );
+
+  if (!filterValue) return filtered;
+
+  const customValue = {
+    id: 'filterValue',
+    profile: {
+      walletAddress: filterValue,
+      displayName: filterValue,
+    },
+  };
+
+  return [customValue].concat(filtered);
+};
 const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 
 const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
@@ -77,7 +90,7 @@ const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
               placeholder={MSG.placeholderAddAdmins}
               itemComponent={ItemWithAddress}
               data={availableUsers}
-              filter={filter}
+              filter={supFilter}
             />
           </div>
           <Button
