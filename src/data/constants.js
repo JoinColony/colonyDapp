@@ -29,6 +29,8 @@ export const TASK_EVENT_TYPES = Object.freeze({
 // @TODO: Add inbox event types
 export const USER_EVENT_TYPES = Object.freeze({
   READ_UNTIL: 'READ_UNTIL',
+  SUBSCRIBED_TO_TASK: 'SUBSCRIBED_TO_TASK',
+  UNSUBSCRIBED_FROM_TASK: 'UNSUBSCRIBED_FROM_TASK',
 });
 
 export const COLONY_EVENT_TYPES = Object.freeze({
