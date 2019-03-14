@@ -30,17 +30,14 @@ describe('Unclaimed Profile Restrictions', () => {
        * Here we also test the copy
        */
       .should('have.text', 'Go to Colony')
-      .click()
-      .wait(2000);
+      .click();
   });
 
   it('Tries to leave a comment on the first task', () => {
     /*
      * Go to the first task in the dashboard list
      */
-    cy.get('table[data-test="dashboardTaskList"] tr')
-      .first()
-      .click();
+    cy.getFirstTask().click();
 
     cy.get('#comment')
       /*
@@ -61,9 +58,7 @@ describe('Unclaimed Profile Restrictions', () => {
     /*
      * Go to the first task in the dashboard list
      */
-    cy.get('table[data-test="dashboardTaskList"] tr')
-      .first()
-      .click();
+    cy.getFirstTask().click();
 
     cy.get('button[data-test="requestWorkButton"]')
       .click()

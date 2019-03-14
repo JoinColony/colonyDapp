@@ -14,3 +14,11 @@ Cypress.Commands.add('goToDashboard', () => {
    */
   cy.get('a[data-test="goToDashboard"]').click({ force: true });
 });
+
+Cypress.Commands.add('getFirstTask', () => {
+  cy.goToDashboard();
+  /*
+   * Go to the first task in the dashboard list
+   */
+  return cy.get('table[data-test="dashboardTaskList"] tr').first();
+});
