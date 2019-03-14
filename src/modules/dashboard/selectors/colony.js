@@ -8,6 +8,7 @@ import type {
   RootStateRecord,
   ColonyRecordType,
   DataRecordType,
+  NetworkProps,
 } from '~immutable';
 
 import {
@@ -94,3 +95,16 @@ export const colonyENSNameSelector = createSelector(
  */
 export const isInRecoveryMode = (colony: DataRecordType<ColonyRecordType>) =>
   !!(colony && colony.record && colony.record.inRecoveryMode);
+
+export const canBeUpgraded = ({
+  colony,
+  network,
+}: {
+  colony: ColonyRecordType,
+  network: NetworkProps,
+}) =>
+  colony &&
+  network &&
+  network.version &&
+  colony.version &&
+  network.version > colony.version;

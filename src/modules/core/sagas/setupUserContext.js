@@ -27,6 +27,7 @@ import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
+import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 
@@ -36,6 +37,7 @@ function* setupContextDependentSagas(): Saga<void> {
     call(setupDashboardSagas),
     call(setupUsersSagas),
     call(setupTransactionsSagas),
+    call(setupNetworkSagas),
   ]);
 }
 

@@ -3,17 +3,18 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyType, UserPermissionsType } from '~immutable';
+import type { ColonyType, UserPermissionsType, NetworkProps } from '~immutable';
 
 import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 
 import Heading from '~core/Heading';
-import Button, { DialogActionButton } from '~core/Button';
+import { DialogActionButton } from '~core/Button';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { canEnterRecoveryMode } from '../../../users/selectors';
-import { isInRecoveryMode } from '../../../dashboard/selectors';
+import { networkVersionFetcher } from '../../../core/fetchers';
+import { isInRecoveryMode, canBeUpgraded } from '../../../dashboard/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -28,7 +29,7 @@ const MSG = defineMessages({
   },
   buttonUpdate: {
     id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
-    defaultMessage: 'Update',
+    defaultMessage: 'Upgrade',
   },
   buttonRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
@@ -57,14 +58,21 @@ const ProfileAdvanced = ({ colony }: Props) => {
   const { given } = useFeatureFlags();
 
   const {
-    isFetching,
+    isFetching: isFetchingUserPermissions,
     data: permissions,
-    error,
+    error: userPermissionsError,
   } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
     [colony.ensName],
     [colony.ensName],
   );
+
+  const {
+    isFetching: isFetchingNetworkVersion,
+    data: network,
+    error: networkVersionError,
+  } = useDataFetcher<NetworkProps>(networkVersionFetcher, [], []);
+
   return (
     <div className={styles.main}>
       <section className={styles.section}>
@@ -75,11 +83,18 @@ const ProfileAdvanced = ({ colony }: Props) => {
           />
           <p className={styles.bigInfoText}>{colony.version}</p>
         </div>
-        <Button
+        <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.buttonUpdate}
-          // eslint-disable-next-line no-console
-          onClick={() => console.log(`[${displayName}] Updating the colony`)}
+          dialog="UpgradeContractDialog"
+          submit={ACTIONS.COLONY_VERSION_UPGRADE}
+          success={ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS}
+          error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
+          values={{ ensName: colony.ensName }}
+          loading={isFetchingNetworkVersion}
+          disabled={
+            !!networkVersionError || !given({ colony, network }, canBeUpgraded)
+          }
         />
       </section>
       <section className={styles.section}>
@@ -110,9 +125,9 @@ const ProfileAdvanced = ({ colony }: Props) => {
           success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ ensName: colony.ensName }}
-          loading={isFetching}
+          loading={isFetchingUserPermissions}
           disabled={
-            !!error ||
+            !!userPermissionsError ||
             given(colony, isInRecoveryMode) ||
             !given(permissions, canEnterRecoveryMode)
           }
