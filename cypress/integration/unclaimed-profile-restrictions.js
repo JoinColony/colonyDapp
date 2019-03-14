@@ -54,7 +54,11 @@ describe('Unclaimed Profile Restrictions', () => {
     cy.goToDashboard();
   });
 
-  it('Tries to request to work on the first task', () => {
+  /*
+   * This is skipped until the task is getting wired.
+   * We can't actually rely on the _Request to Work_ button until then
+   */
+  it.skip('Tries to request to work on the first task', () => {
     /*
      * Go to the first task in the dashboard list
      */
