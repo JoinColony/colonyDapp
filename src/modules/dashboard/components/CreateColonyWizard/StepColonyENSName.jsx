@@ -43,11 +43,11 @@ const MSG = defineMessages({
   },
   label: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
-    defaultMessage: 'Colony Name',
+    defaultMessage: 'Colony Unique URL',
   },
   labelDisplay: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.labelDisplay',
-    defaultMessage: 'Colony Unique URL',
+    defaultMessage: 'Colony Name',
   },
   continue: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.Continue',
