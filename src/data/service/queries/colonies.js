@@ -25,6 +25,7 @@ import type {
   ColonyType,
   ContractTransactionType,
   DomainType,
+  TokenType,
 } from '~immutable';
 
 import type {
@@ -260,7 +261,10 @@ export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
   },
 });
 
-export const getColony: ColonyQuery<void, ColonyType> = ({
+export const getColony: ColonyQuery<
+  void,
+  { colony: ColonyType, tokens: Array<TokenType> },
+> = ({
   ddb,
   colonyClient,
   wallet,
@@ -285,53 +289,67 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
       .reduce(
         (
-          colony,
+          { colony, tokens },
           { type, payload }: Event<$Values<typeof COLONY_EVENT_TYPES>, *>,
         ) => {
           switch (type) {
             case TOKEN_INFO_ADDED: {
-              // @TODO: We should change this to not return the balance, we have to change the ColonyType or make a mapping from the query result to it
-              const { address } = payload;
-              const { tokens } = colony;
+              const { address, isNative } = payload;
               return {
-                ...colony,
-                tokens: Object.assign({}, tokens, {
-                  [address]: Object.assign({}, payload, { balance: 0 }),
-                }),
+                colony: {
+                  ...colony,
+                  tokens: {
+                    ...colony.tokens,
+                    [address]: {
+                      address,
+                      isNative,
+                    },
+                  },
+                },
+                tokens: [...tokens, payload],
               };
             }
             case AVATAR_UPLOADED: {
               // @TODO: Make avatar an object so we have the ipfsHash and data
               const { ipfsHash } = payload;
               return {
-                ...colony,
-                avatar: ipfsHash,
+                colony: {
+                  ...colony,
+                  avatar: ipfsHash,
+                },
+                tokens,
               };
             }
             case AVATAR_REMOVED: {
               const { avatar } = colony;
               const { ipfsHash } = payload;
               return {
-                ...colony,
-                avatar: avatar && avatar === ipfsHash ? undefined : avatar,
+                colony: {
+                  ...colony,
+                  avatar: avatar && avatar === ipfsHash ? undefined : avatar,
+                },
+                tokens,
               };
             }
             case PROFILE_CREATED:
             case PROFILE_UPDATED:
-              return Object.assign({}, colony, payload);
+              return { colony: Object.assign({}, colony, payload), tokens };
             default:
-              return colony;
+              return { colony, tokens };
           }
         },
         // @TODO: Add the right defaults here using a data model or something like that
         {
-          address: colonyAddress,
-          admins,
-          avatar: undefined,
-          ensName: colonyENSName,
-          inRecoveryMode,
-          name: '',
-          tokens: {},
+          colony: {
+            address: colonyAddress,
+            admins,
+            avatar: undefined,
+            ensName: colonyENSName,
+            inRecoveryMode,
+            name: '',
+            tokens: {},
+          },
+          tokens: [],
         },
       );
   },

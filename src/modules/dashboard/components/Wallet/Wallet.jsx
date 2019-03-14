@@ -4,7 +4,11 @@ import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { ContractTransactionType, DataType, TokenType } from '~immutable';
+import type {
+  ContractTransactionType,
+  DataType,
+  TokenReferenceType,
+} from '~immutable';
 import type { Address } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -43,7 +47,7 @@ const MSG = defineMessages({
 
 type Props = {|
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenType>,
+  tokens: Array<TokenReferenceType>,
   walletAddress: Address,
   transactions: ?DataType<Array<ContractTransactionType>>,
   fetchUserTransactions: () => any,

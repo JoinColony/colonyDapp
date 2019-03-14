@@ -3,12 +3,16 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { RootStateRecord } from '~immutable';
+import type {
+  AllTokensRecord,
+  RootStateRecord,
+  TokenReferenceType,
+} from '~immutable';
 
 import {
   DASHBOARD_ALL_TOKENS,
-  DASHBOARD_TOKENS,
   DASHBOARD_TOKEN_ICONS,
+  DASHBOARD_TOKENS,
   DASHBOARD_NAMESPACE as ns,
 } from '../constants';
 
@@ -26,6 +30,16 @@ const getAllTokens = (state: RootStateRecord) =>
 const getTokens = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_TOKENS, DASHBOARD_TOKENS], ImmutableMap());
 
+export const getTokenWithIcon = (
+  tokenAddress: string,
+  allTokens: ?AllTokensRecord,
+) => {
+  if (!allTokens) return undefined; // TODO why can this be undefined?
+  const token = allTokens.getIn([DASHBOARD_TOKENS, tokenAddress]);
+  const icon = allTokens.getIn([DASHBOARD_TOKEN_ICONS, tokenAddress]);
+  return token ? token.set('icon', icon) : undefined;
+};
+
 /*
  * Selectors
  */
@@ -39,10 +53,17 @@ export const tokenSelector = createSelector(
 export const tokenWithIconSelector = createSelector(
   getTokenAddressFromProps,
   getAllTokens,
-  (tokenAddress, allTokens) => {
-    if (!allTokens) return undefined; // TODO why can this be undefined?
-    const token = allTokens.getIn([DASHBOARD_TOKENS, tokenAddress]);
-    const icon = allTokens.getIn([DASHBOARD_TOKEN_ICONS, tokenAddress]);
-    return token ? token.set('icon', icon) : undefined;
-  },
+  getTokenWithIcon,
+);
+
+export const nativeFromColonyTokensSelector = createSelector<
+  RootStateRecord,
+  Array<TokenReferenceType>,
+  *,
+  *,
+  *,
+>(
+  (state, tokens) => (tokens.find(({ isNative }) => !!isNative) || {}).address,
+  getAllTokens,
+  getTokenWithIcon,
 );

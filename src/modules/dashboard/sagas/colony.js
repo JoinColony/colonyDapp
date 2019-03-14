@@ -12,6 +12,7 @@ import {
   select,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
+import nanoid from 'nanoid';
 
 import type { Action } from '~redux';
 
@@ -21,6 +22,7 @@ import {
   executeCommand,
   executeQuery,
 } from '~utils/saga/effects';
+import { getTokenClient } from '~utils/web3/contracts';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
@@ -227,15 +229,7 @@ function* colonyCreate({
 }
 
 function* colonyCreateLabel({
-  payload: {
-    colonyAddress,
-    colonyName,
-    ensName,
-    tokenAddress,
-    tokenName,
-    tokenSymbol,
-    tokenIcon,
-  },
+  payload: { colonyAddress, colonyName, ensName, tokenAddress, tokenIcon },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
   // @NOTE: We wanna use the address, we haven't anything mapped to the ENS name yet. Used on metadata
@@ -247,35 +241,14 @@ function* colonyCreateLabel({
     token: {
       address: tokenAddress,
       icon: tokenIcon,
+      isNative: true,
     },
   };
 
-  // @TODO: Should we actually dispatch and action to fetch it from the store?
-  // Dispatch and action to set the current colony in the app state (simulating fetching it)
-  const fetchSuccessAction = {
-    type: ACTIONS.COLONY_FETCH_SUCCESS,
-    meta: { keyPath: [ensName] },
-    payload: {
-      address: colonyAddress,
-      ensName,
-      name: colonyName,
-      tokens: {
-        [tokenAddress]: {
-          address: tokenAddress,
-          balance: 0,
-          icon: tokenIcon,
-          name: tokenName,
-          symbol: tokenSymbol,
-        },
-      },
-    },
-  };
-  yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>(fetchSuccessAction);
   /*
    * Get or create a colony store and save the colony to that store.
    */
   const store = yield* executeCommand(context, createColonyProfile, args);
-  yield put(fetchSuccessAction);
 
   const txChannel = yield call(getTxChannel, meta.id);
 
@@ -406,6 +379,28 @@ function* colonyFetch({
       meta,
       payload,
     });
+
+    const {
+      colony: { address: colonyAddress, tokens },
+    } = payload;
+
+    // dispatch actions to fetch info and balances for each colony token
+    yield* Object.keys(tokens || {}).reduce(
+      (acc, tokenAddress) => [
+        ...acc,
+        put<Action<typeof ACTIONS.TOKEN_INFO_FETCH>>({
+          type: ACTIONS.TOKEN_INFO_FETCH,
+          meta: { id: nanoid() },
+          payload: { tokenAddress },
+        }),
+        put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
+          type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+          meta: { keyPath: [ensName, tokenAddress] },
+          payload: { colonyAddress },
+        }),
+      ],
+      [],
+    );
   } catch (error) {
     yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
   }
@@ -600,6 +595,33 @@ function* colonyUpgradeContract({
   }
 }
 
+function* colonyTokenBalanceFetch({
+  meta,
+  meta: {
+    keyPath: [, tokenAddress],
+  },
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>) {
+  try {
+    const networkClient = yield call(getNetworkClient);
+    const tokenClient = yield call(getTokenClient, tokenAddress, networkClient);
+    const { amount: balance } = yield call(
+      [tokenClient.getBalanceOf, tokenClient.getBalanceOf.call],
+      { sourceAddress: colonyAddress },
+    );
+    yield put({
+      type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
+      payload: {
+        address: tokenAddress,
+        balance,
+      },
+      meta,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR, error, meta);
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, colonyAvatarFetch);
   // TODO: rename properly once the new onboarding is done
@@ -611,6 +633,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
   yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
+  yield takeEvery(ACTIONS.COLONY_TOKEN_BALANCE_FETCH, colonyTokenBalanceFetch);
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.

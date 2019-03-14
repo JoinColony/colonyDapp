@@ -10,10 +10,10 @@ import { Record, Map as ImmutableMap } from 'immutable';
 
 import type { Address, ENSName } from '~types';
 import type {
-  TokenRecordType,
-  TokenType,
   ColonyAdminRecordType,
   ColonyAdminType,
+  TokenReferenceRecordType,
+  TokenReferenceType,
 } from './index';
 
 type Shared = {|
@@ -31,13 +31,13 @@ type Shared = {|
 
 export type ColonyType = $ReadOnly<{|
   ...Shared,
-  tokens?: { [tokenAddress: string]: TokenType },
+  tokens?: { [address: Address]: TokenReferenceType },
   admins?: { [username: string]: ColonyAdminType },
 |}>;
 
 type ColonyRecordProps = {|
   ...Shared,
-  tokens?: ImmutableMapType<string, TokenRecordType>,
+  tokens?: ImmutableMapType<Address, TokenReferenceRecordType>,
   admins?: ImmutableMapType<string, ColonyAdminRecordType>,
 |};
 

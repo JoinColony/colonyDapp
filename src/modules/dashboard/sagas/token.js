@@ -3,8 +3,6 @@
 import type { Saga } from 'redux-saga';
 
 import ColonyNetworkClient from '@colony/colony-js-client';
-import TokenClient from '@colony/colony-js-client/lib/TokenClient';
-import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import {
   call,
   delay,
@@ -17,26 +15,12 @@ import {
 import type { Action } from '~redux';
 
 import { putError, takeFrom } from '~utils/saga/effects';
+import { getTokenClient } from '~utils/web3/contracts';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { NETWORK_CONTEXT } from '../../core/constants';
-
-// A minimal version of the `Token.sol` ABI, with only `name`, `symbol` and
-// `decimals` entries included.
-import TokenABI from './TokenABI.json';
-
-/**
- * Rather than use e.g. the Etherscan loader and make more/larger requests than
- * necessary, provide a loader to simply return the minimal Token ABI and the
- * given token contract address.
- */
-const tokenABILoader = {
-  async load({ contractAddress: address }) {
-    return { abi: TokenABI, address };
-  },
-};
 
 /**
  * Given a token contract address, create a `TokenClient` with the minimal
@@ -47,19 +31,7 @@ async function getTokenClientInfo(
   contractAddress: string,
   networkClient: ColonyNetworkClient,
 ) {
-  const adapter = new EthersAdapter({
-    // $FlowFixMe The `ContractLoader` type is currently not exported
-    loader: tokenABILoader,
-    provider: networkClient.adapter.provider,
-    wallet: networkClient.adapter.wallet,
-  });
-
-  const client = new TokenClient({
-    adapter,
-    query: { contractAddress },
-  });
-
-  await client.init();
+  const client = await getTokenClient(contractAddress, networkClient);
 
   return client.getTokenInfo.call();
 }

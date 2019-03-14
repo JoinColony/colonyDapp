@@ -1,37 +1,31 @@
 /* @flow */
 
+import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
-import { List } from 'immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import { sortObjectsBy } from '~utils/arrays';
 import { withImmutablePropsToJS } from '~utils/hoc';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { nativeFromColonyTokensSelector } from '../../../dashboard/selectors';
 
 import Tokens from './Tokens.jsx';
 
-import mockTokens from './__datamocks__/mockTokens';
-
-const isEthSort = (prev: string, next: string): number => {
-  const prevVal = prev.toLowerCase();
-  const nextVal = next.toLowerCase();
-  if (prevVal === 'eth' || nextVal === 'eth') {
-    return prevVal === 'eth' ? -1 : 1;
-  }
+const isEth = (a: Object, b: Object) => {
+  if (a.address === ZERO_ADDRESS) return -1;
+  if (b.address === ZERO_ADDRESS) return 1;
   return 0;
 };
 
 const enhance = compose(
   withDialog(),
-  withProps(() => ({
-    tokens: List(
-      mockTokens.sort(
-        sortObjectsBy(
-          'isNative',
-          { name: 'symbol', compareFn: isEthSort },
-          'id',
-        ),
-      ),
-    ),
+  withProps(({ tokens }) => ({
+    tokens: Object.values(tokens || {})
+      // $FlowFixMe Object.values result is not mixed
+      .sort(sortObjectsBy('isNative'), isEth),
+  })),
+  connect((state, { tokens }) => ({
+    nativeToken: nativeFromColonyTokensSelector(state, tokens),
   })),
   withImmutablePropsToJS,
 );

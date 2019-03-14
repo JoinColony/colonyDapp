@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { TokenType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
@@ -13,44 +13,52 @@ import {
   tokenBalanceIsNotPositive,
 } from '../../../../immutable/utils';
 
+import { useToken } from '../../../dashboard/hooks';
+
 import styles from './TokenCard.css';
 
 type Props = {|
-  token: TokenType,
+  token: TokenReferenceType,
 |};
 
 const displayName = 'admin.Tokens.TokenCard';
 
-const TokenCard = ({
-  token: { address, balance, isNative, icon, name, symbol },
-  token,
-}: Props) => (
-  <Card key={address} className={styles.main}>
-    <div className={styles.cardHeading}>
-      {!!icon && (
-        <div className={styles.iconContainer}>
-          <img src={icon} alt={name} />
+const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
+  const token = useToken(address);
+  const { icon, name, symbol } = token;
+  return (
+    <Card key={address} className={styles.main}>
+      <div className={styles.cardHeading}>
+        {!!icon && (
+          <div className={styles.iconContainer}>
+            <img src={icon} alt={name} />
+          </div>
+        )}
+        <div className={styles.tokenSymbol}>
+          {symbol}
+          {isNative && <span>*</span>}
         </div>
-      )}
-      <div className={styles.tokenSymbol}>
-        {symbol}
-        {isNative && <span>*</span>}
       </div>
-    </div>
-    <div
-      className={
-        tokenBalanceIsNotPositive(token)
-          ? styles.balanceNotPositive
-          : styles.balanceContent
-      }
-    >
-      <Numeral value={balance} decimals={2} integerSeparator="" unit="ether" />
-    </div>
-    <div className={styles.cardFooter}>
-      {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
-    </div>
-  </Card>
-);
+      <div
+        className={
+          tokenBalanceIsNotPositive(token)
+            ? styles.balanceNotPositive
+            : styles.balanceContent
+        }
+      >
+        <Numeral
+          value={balance}
+          decimals={2}
+          integerSeparator=""
+          unit="ether"
+        />
+      </div>
+      <div className={styles.cardFooter}>
+        {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
+      </div>
+    </Card>
+  );
+};
 
 TokenCard.displayName = displayName;
 

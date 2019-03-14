@@ -2,7 +2,7 @@
 
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { ColonyRecord, DataRecord, TokenRecord } from '~immutable';
+import { ColonyRecord, DataRecord, TokenReferenceRecord } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
@@ -22,18 +22,21 @@ const coloniesReducer: ReducerType<
     COLONY_FETCH: *,
     COLONY_FETCH_SUCCESS: *,
     COLONY_PROFILE_UPDATE_SUCCESS: *,
+    COLONY_TOKEN_BALANCE_FETCH_SUCCESS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
-        payload: { tokens, ensName, admins = {}, ...props },
+        payload: {
+          colony: { tokens, ensName, admins = {}, ...props },
+        },
       } = action;
       const record = ColonyRecord({
         tokens: ImmutableMap(
           Object.entries(tokens).map(([address, token]) => [
             address,
-            TokenRecord(token),
+            TokenReferenceRecord(token),
           ]),
         ),
         admins: ImmutableMap(
@@ -110,6 +113,24 @@ const coloniesReducer: ReducerType<
         payload: { username },
       } = action;
       return state.deleteIn([...keyPath, 'record', 'admins', username]);
+    }
+    case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
+      const {
+        meta: {
+          keyPath: [ensName, tokenAddress],
+        },
+        payload,
+      } = action;
+      const previousRecord = state.getIn([
+        ensName,
+        'record',
+        'tokens',
+        tokenAddress,
+      ]);
+      const record = previousRecord
+        ? previousRecord.merge(payload)
+        : TokenReferenceRecord(payload);
+      return state.setIn([ensName, 'record', 'tokens', tokenAddress], record);
     }
     default:
       return state;
