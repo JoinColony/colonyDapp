@@ -1,20 +1,27 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { OpenDialog } from '~core/Dialog/types';
-import type { UserType } from '~immutable';
+import type { TaskType, UserType } from '~immutable';
 
 import { userDidClaimProfile } from '~immutable/utils';
 import withDialog from '~core/Dialog/withDialog';
-import Button from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import { ACTIONS } from '~redux';
+
+import styles from './TaskRequestWork.css';
 
 const MSG = defineMessages({
   requestWork: {
     id: 'dashboard.TaskRequestWork.requestWork',
-    defaultMessage: 'Request Work',
+    defaultMessage: 'Request to work',
+  },
+  workRequestSubmitted: {
+    id: 'dashboard.TaskRequestWork.workRequestSubmitted',
+    defaultMessage: 'Work request submitted',
   },
 });
 
@@ -22,32 +29,50 @@ const displayName = 'dashboard.TaskRequestWork';
 
 // Can't seal this object because of withConsumerFactory
 type Props = {
-  /*
-   * @TODO Interaction for this button if the user is the task creator
-   */
-  isTaskCreator: boolean,
   openDialog: OpenDialog,
   currentUser: UserType,
+  task: TaskType,
+  hasRequested: boolean,
 };
 
 const TaskRequestWork = ({
-  isTaskCreator,
   openDialog,
   currentUser: {
     profile: { balance },
   },
   currentUser,
-}: Props) => (
-  <Button
-    text={MSG.requestWork}
-    disabled={!isTaskCreator}
-    onClick={() =>
-      userDidClaimProfile(currentUser) ||
-      unfinishedProfileOpener(openDialog, balance)
-    }
-    data-test="requestWorkButton"
-  />
-);
+  task: { colonyENSName, draftId },
+  hasRequested,
+}: Props) => {
+  if (hasRequested) {
+    return (
+      <p className={styles.requestSubmittedText}>
+        <FormattedMessage {...MSG.workRequestSubmitted} />
+      </p>
+    );
+  }
+  if (userDidClaimProfile(currentUser)) {
+    return (
+      <ActionButton
+        text={MSG.requestWork}
+        submit={ACTIONS.TASK_SEND_WORK_REQUEST}
+        error={ACTIONS.TASK_SEND_WORK_REQUEST_ERROR}
+        success={ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS}
+        values={{
+          colonyENSName,
+          taskId: draftId,
+        }}
+      />
+    );
+  }
+  return (
+    <Button
+      text={MSG.requestWork}
+      onClick={() => unfinishedProfileOpener(openDialog, balance)}
+      data-test="requestWorkButton"
+    />
+  );
+};
 
 TaskRequestWork.displayName = displayName;
 
