@@ -13,7 +13,6 @@ import {
   WorkerRatingDialog,
 } from '~dashboard/TaskRatingDialogs';
 import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
-import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import TaskEditDialog from '~dashboard/TaskEditDialog';
 import ClaimProfileDialog from '~users/ClaimProfileDialog';
 import ENSNameDialog from '~users/ENSNameDialog';
@@ -28,7 +27,6 @@ const dialogComponents: Object = {
   ENSNameDialog,
   TokenEditDialog,
   TokenMintDialog,
-  TaskRequestWorkDialog,
   TaskEditDialog,
   ManagerRatingDialog,
   WorkerRatingDialog,
