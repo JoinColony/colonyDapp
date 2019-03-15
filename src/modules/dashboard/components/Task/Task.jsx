@@ -101,8 +101,9 @@ class Task extends Component<Props> {
     } = this.props;
 
     openDialog('TaskEditDialog', {
-      availableTokens: tokensMock,
-      maxTokens: 2,
+      availableTokens: tokensMock.toJS(),
+      maxTokens: 1,
+      minTokens: 1,
       payouts: payouts.map(payout => ({
         token:
           // we add 1 because Formik thinks 0 is empty
@@ -157,7 +158,7 @@ class Task extends Component<Props> {
                 appearance={{ size: 'normal' }}
                 text={MSG.assignmentFunding}
               />
-              {preventEdit && (
+              {!preventEdit && (
                 <Button
                   appearance={{ theme: 'blue' }}
                   text={MSG.details}

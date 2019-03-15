@@ -37,6 +37,7 @@ type Props = {|
   tokenOptions?: Array<{ value: number, label: string }>,
   editPayout: boolean,
   remove?: () => void,
+  canRemove?: boolean,
 |};
 
 class Payout extends Component<Props, State> {
@@ -60,6 +61,7 @@ class Payout extends Component<Props, State> {
       name,
       tokenOptions,
       isEth = false,
+      canRemove = true,
       remove,
       editPayout,
     } = this.props;
@@ -73,11 +75,20 @@ class Payout extends Component<Props, State> {
               appearance={{ size: 'small', margin: 'small' }}
               text={{ id: 'label.amount' }}
             />
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={{ id: 'button.remove' }}
-              onClick={remove}
-            />
+            <span>
+              {canRemove && (
+                <Button
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  text={{ id: 'button.remove' }}
+                  onClick={remove}
+                />
+              )}
+              <Button
+                appearance={{ theme: 'blue', size: 'small' }}
+                text={{ id: 'button.cancel' }}
+                onClick={this.toggleEdit}
+              />
+            </span>
           </div>
           <div className={styles.editContainer}>
             <div className={styles.setAmount}>

@@ -1,7 +1,7 @@
 /* @flow */
+
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import BigNumber from 'bn.js';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
@@ -68,7 +68,8 @@ type Props = {|
   ) => void,
   availableTokens: Array<TokenType>,
   cancel: () => void,
-  maxTokens?: BigNumber,
+  maxTokens?: number,
+  minTokens?: number,
   transform: (action: Object) => Object,
   users: Array<UserType>,
 |};
@@ -97,6 +98,9 @@ const supFilter = (data, filterValue) => {
 const canAddTokens = (values, maxTokens) =>
   !maxTokens || (values.payouts && values.payouts.length < maxTokens);
 
+const canRemoveTokens = (values, minTokens) =>
+  !minTokens || (values.payouts && values.payouts.length > minTokens);
+
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
@@ -104,6 +108,7 @@ const TaskEditDialog = ({
   availableTokens,
   cancel,
   maxTokens,
+  minTokens,
   payouts,
   reputation,
   transform,
@@ -209,6 +214,7 @@ const TaskEditDialog = ({
                               }
                               isEth={tokenIsETH(token)}
                               tokenOptions={tokenOptions}
+                              canRemove={canRemoveTokens(values, minTokens)}
                               remove={() => arrayHelpers.remove(index)}
                             />
                           );
