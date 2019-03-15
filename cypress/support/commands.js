@@ -46,3 +46,23 @@ Cypress.Commands.add('goToUserProfile', () => {
    */
   cy.get('a[data-test="userProfile"]').click();
 });
+
+Cypress.Commands.add(
+  'uploadAvatar',
+  { prevSubject: 'element' },
+  (selector, fileName, optionalType = 'image/jpeg') =>
+    cy
+      .fixture(fileName, 'base64')
+      .then(Cypress.Blob.base64StringToBlob)
+      .then(blob =>
+        cy.window().then(win => {
+          const file = new win.File([blob], fileName, { type: optionalType });
+          const dataTransfer = new win.DataTransfer();
+          dataTransfer.items.add(file);
+
+          return cy.wrap(selector).trigger('drop', {
+            dataTransfer,
+          });
+        }),
+      ),
+);
