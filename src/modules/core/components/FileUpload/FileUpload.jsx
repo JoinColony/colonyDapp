@@ -211,6 +211,7 @@ class FileUpload extends Component<Props> {
           disableClick={disableClick || !maxFileLimitNotMet}
           maxSize={maxFileSize}
           ref={dropzoneRef}
+          data-test="avatarUploaderDrop"
         >
           {childProps => (
             <Fragment>

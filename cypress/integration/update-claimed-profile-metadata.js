@@ -13,7 +13,7 @@ describe('Update Claim Profile Metadata', () => {
     /*
      * Select the second entry (Account 1), focus it, and click it
      */
-    cy.get('li#accountIndex-listbox-entry-1')
+    cy.get('li#accountIndex-listbox-entry-0')
       .trigger('mouseover')
       .click();
     /*
@@ -93,5 +93,19 @@ describe('Update Claim Profile Metadata', () => {
         .should('exist')
         .should('contain', location);
     });
+  });
+
+  /*
+   * Update the avatar
+   */
+
+  it('Go to the User Profile Settings', () => {
+    cy.goToUserProfileSettings();
+  });
+
+  it('Update the User Avatar', () => {
+    cy.get('div[data-test="avatarUploaderDrop"]').uploadAvatar(
+      'jolly-roger.jpeg',
+    );
   });
 });
