@@ -1,6 +1,6 @@
 .main {
   margin: 10px 0;
-  padding: 10px 15px;
+  padding: 5px 15px;
   position: relative;
   border-radius: var(--radius-tiny);
 }

@@ -9,7 +9,6 @@ import { getMainClasses } from '~utils/css';
 import type { TransactionGroup } from '../transactionGroup';
 
 import GasStationHeader from '../GasStationHeader';
-import GasStationFooter from '../GasStationFooter';
 import TransactionDetails from '../TransactionDetails';
 import TransactionList from '../TransactionList';
 
@@ -88,7 +87,6 @@ class GasStationContent extends Component<Props, State> {
             this.renderTransactions()
           )}
         </div>
-        <GasStationFooter />
       </div>
     );
   }

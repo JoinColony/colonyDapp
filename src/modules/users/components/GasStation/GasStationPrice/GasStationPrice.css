@@ -66,10 +66,6 @@
   justify-self: flex-end;
 }
 
-.walletPromptContainer {
-  padding: 0 10px;
-}
-
 /* State */
 
 .transactionSpeedContainerToggleable {

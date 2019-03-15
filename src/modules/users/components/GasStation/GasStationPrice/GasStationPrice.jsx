@@ -6,6 +6,7 @@ import BigNumber from 'bn.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
+import { fromWei } from 'ethjs-unit';
 
 import type { GasPricesProps, TransactionType } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
@@ -20,6 +21,8 @@ import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
 import { SpinnerLoader } from '~core/Preloaders';
+
+import { bnLessThan } from '~utils/numbers';
 
 import styles from './GasStationPrice.css';
 
@@ -63,11 +66,17 @@ are expensive. We recommend waiting.`,
       hardware {your hardware wallet}
     }.`,
   },
+  inSufficientFundsNotification: {
+    id: 'users.GasStation.GasStationFooter.insufficientFundsNotification',
+    defaultMessage: `You do not have enough funds to complete this transaction.
+      Add more ETH to cover the transaction fee.`,
+  },
 });
 
 type Props = {|
   estimateGas: (id: string) => void,
   gasPrices: GasPricesProps,
+  balance: number,
   isNetworkCongested: boolean,
   transaction: TransactionType<*, *>,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,
@@ -77,6 +86,7 @@ type Props = {|
 type State = {|
   isSpeedMenuOpen: boolean,
   speedMenuId: string,
+  insufficientFunds: boolean,
 |};
 
 type FormValues = {|
@@ -111,6 +121,7 @@ class GasStationPrice extends Component<Props, State> {
      * `speedMenuId` is used for the tx speed menu's id attribute for aria-* purposes.
      */
     speedMenuId: nanoid(),
+    insufficientFunds: false,
   };
 
   componentDidMount() {
@@ -128,6 +139,48 @@ class GasStationPrice extends Component<Props, State> {
     });
   };
 
+  isBalanceLessThanTxFee = (currentFeeInWei: BigNumber) => {
+    /* this is checking if the user can afford the transaction fee */
+    const { insufficientFunds } = this.state;
+    const { balance } = this.props;
+    if (currentFeeInWei) {
+      const currentFeeinEth = fromWei(currentFeeInWei, 'ether') || 0;
+
+      const isLess = bnLessThan(balance, currentFeeinEth);
+
+      if (isLess && isLess !== insufficientFunds) {
+        this.setState({ insufficientFunds: true });
+      }
+    }
+  };
+
+  showAlert = () => {
+    const { isNetworkCongested, walletNeedsAction } = this.props;
+    const { insufficientFunds } = this.state;
+    if (isNetworkCongested) {
+      return <Alert text={MSG.networkCongestedWarning} />;
+    }
+    if (walletNeedsAction) {
+      return (
+        <Alert
+          text={MSG.walletPromptText}
+          textValues={{
+            walletType: walletNeedsAction,
+          }}
+        />
+      );
+    }
+    if (insufficientFunds) {
+      return (
+        <Alert
+          appearance={{ theme: 'danger', size: 'small' }}
+          text={MSG.inSufficientFundsNotification}
+        />
+      );
+    }
+    return null;
+  };
+
   render() {
     const {
       isNetworkCongested,
@@ -136,7 +189,7 @@ class GasStationPrice extends Component<Props, State> {
       transaction: { id, gasLimit },
       walletNeedsAction,
     } = this.props;
-    const { isSpeedMenuOpen, speedMenuId } = this.state;
+    const { isSpeedMenuOpen, speedMenuId, insufficientFunds } = this.state;
     const initialFormValues: FormValues = {
       id,
       transactionSpeed: transactionSpeedOptions[0].value,
@@ -165,10 +218,7 @@ class GasStationPrice extends Component<Props, State> {
               currentGasPrice &&
               gasLimit &&
               currentGasPrice.mul(new BigNumber(gasLimit));
-            localStorage.setItem(
-              'currentTransactionFee',
-              String(transactionFee),
-            );
+            this.isBalanceLessThanTxFee(transactionFee);
             const waitTime = gasPrices[`${transactionSpeed}Wait`];
             return (
               <Fragment>
@@ -259,19 +309,8 @@ class GasStationPrice extends Component<Props, State> {
             );
           }}
         </ActionForm>
-        {(isNetworkCongested || walletNeedsAction) && (
-          <div className={styles.walletPromptContainer}>
-            {walletNeedsAction ? (
-              <Alert
-                text={MSG.walletPromptText}
-                textValues={{
-                  walletType: walletNeedsAction,
-                }}
-              />
-            ) : (
-              <Alert text={MSG.networkCongestedWarning} />
-            )}
-          </div>
+        {(isNetworkCongested || walletNeedsAction || insufficientFunds) && (
+          <div>{this.showAlert()}</div>
         )}
       </div>
     );

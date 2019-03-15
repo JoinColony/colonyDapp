@@ -13,6 +13,7 @@ import {
   transactionUpdateGas,
 } from '../../../../core/actionCreators';
 import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
+import { currentUserBalanceSelector } from '../../../selectors';
 import GasStationPrice from './GasStationPrice.jsx';
 
 type InProps = {|
@@ -23,6 +24,7 @@ const enhance: HOC<*, InProps> = compose(
   connect(
     state => ({
       gasPrices: gasPricesSelector(state),
+      balance: currentUserBalanceSelector(state),
     }),
     {
       estimateGas: transactionEstimateGas,
