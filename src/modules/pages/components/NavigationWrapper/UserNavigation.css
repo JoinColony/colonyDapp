@@ -22,24 +22,6 @@
   composes: button from '~styles/reset.css';
 }
 
-.navigationItemHasCircle {
-  composes: navigationItem;
-
-  &::after {
-    display: inline-block;
-    margin-bottom: 8px;
-    margin-left: -5px;
-    height: 8px;
-    width: 8px;
-    position: absolute;
-    top: 25px;
-    right: 97px;
-    border-radius: 50%;
-    background-color: var(--danger);
-    content: '';
-  }
-}
-
 .navigationItem:hover {
   background-color: var(--temp-grey-6);
 }
