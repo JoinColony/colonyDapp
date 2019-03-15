@@ -45,7 +45,7 @@ type Props = {|
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = ({ events = mockEvents }: Props) => {
-  const unhandled = events && !events.find(event => !event.handled);
+  const unhandled = events && events.find(event => !event.handled);
   return (
     <nav className={styles.main}>
       <NavLink
