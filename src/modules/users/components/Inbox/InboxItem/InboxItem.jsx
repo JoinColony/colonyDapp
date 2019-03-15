@@ -12,10 +12,11 @@ import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import type { Node } from 'react';
-import styles from './InboxItem.css';
-import MSG from './messages';
 
-import type { InboxElement, EventType } from './types';
+import MSG from '../messages';
+import type { InboxElement, EventType } from '../types';
+
+import styles from './InboxItem.css';
 
 import { mockTask } from '../Task/__datamocks__/mockTask';
 

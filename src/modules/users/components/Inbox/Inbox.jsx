@@ -7,7 +7,7 @@ import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 
-import InboxItem from './InboxItem.jsx';
+import InboxItem from './InboxItem';
 
 import CenteredTemplate from '~pages/CenteredTemplate';
 
