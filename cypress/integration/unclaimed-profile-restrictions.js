@@ -1,8 +1,4 @@
 describe('Unclaimed Profile Restrictions', () => {
-  it('Connects to the dApp', () => {
-    cy.visit('/connect');
-  });
-
   /*
    * So we can ensure the wallet is empty
    * And also test logging in this way

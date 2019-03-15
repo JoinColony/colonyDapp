@@ -1,8 +1,4 @@
 describe('Claims a username', () => {
-  it('Connect to the dApp', () => {
-    cy.visit('/connect');
-  });
-
   it('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
