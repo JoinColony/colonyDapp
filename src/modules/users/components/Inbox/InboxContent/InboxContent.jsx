@@ -17,16 +17,16 @@ import mockInbox from '../__datamocks__/mockInbox';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Inbox.title',
+    id: 'users.Inbox.InboxContent.title',
     defaultMessage: 'Inbox',
   },
   markAllRead: {
-    id: 'dashboard.Inbox.markAllRead',
+    id: 'users.Inbox.InboxContent.markAllRead',
     defaultMessage: 'Mark all as read',
   },
 });
 
-const displayName = 'dashboard.Inbox';
+const displayName = 'users.Inbox.InboxContent';
 
 const sortItems = items =>
   items

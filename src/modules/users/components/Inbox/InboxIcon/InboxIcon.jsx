@@ -24,8 +24,8 @@ import styles from './InboxIcon.css';
 const mockEvents = [{ handled: true }];
 
 const MSG = defineMessages({
-  title: {
-    id: 'users.Inbox.title',
+  fallbackTitle: {
+    id: 'users.Inbox.InboxIcon.fallbackTitle',
     defaultMessage: 'Go to Inbox',
   },
 });
@@ -36,12 +36,12 @@ type Props = {|
   title?: MessageDescriptor,
 |};
 
-const displayName = 'users.Inbox';
+const displayName = 'users.Inbox.InboxIcon';
 
 const Inbox = ({
   events = mockEvents,
   activeClassName,
-  title = MSG.title,
+  title = MSG.fallbackTitle,
 }: Props) => {
   const unhandled = events && events.find(event => !event.handled);
   return (

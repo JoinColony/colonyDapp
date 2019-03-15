@@ -22,7 +22,7 @@ import { mockTask } from '../Task/__datamocks__/mockTask';
 
 const UserAvatar = HookedUserAvatar();
 
-const displayName = 'dashboard.Inbox.InboxItem';
+const displayName = 'users.Inbox.InboxItem';
 
 type Props = {|
   item: InboxElement,
