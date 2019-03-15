@@ -34,3 +34,15 @@ Cypress.Commands.add('goToUserProfileSettings', () => {
    */
   cy.get('a[data-test="userProfileSettings"]').click();
 });
+
+Cypress.Commands.add('goToUserProfile', () => {
+  cy.goToDashboard();
+  /*
+   * Click the Avatar Dropdown
+   */
+  cy.get('button[data-test="avatarDropdown"]').click();
+  /*
+   * Click Settings Link
+   */
+  cy.get('a[data-test="userProfile"]').click();
+});

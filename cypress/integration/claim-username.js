@@ -99,7 +99,7 @@ describe('Claims a username', () => {
          * Wait until the transaction succeeded
          */
         cy.get('span[data-test="gasStationTransactionSucceeded"]')
-          .wait(5000)
+          .wait(10000)
           .should('exist');
       });
   });

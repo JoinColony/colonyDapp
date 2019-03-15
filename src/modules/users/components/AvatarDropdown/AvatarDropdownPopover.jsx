@@ -90,7 +90,11 @@ class AvatarDropdownPopover extends Component<Props> {
         )}
         {username && (
           <DropdownMenuItem>
-            <NavLink to={`/user/${username}`} text={MSG.myProfile} />
+            <NavLink
+              to={`/user/${username}`}
+              text={MSG.myProfile}
+              data-test="userProfile"
+            />
           </DropdownMenuItem>
         )}
         {username && (
