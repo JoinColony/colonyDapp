@@ -22,3 +22,15 @@ Cypress.Commands.add('getFirstTask', () => {
    */
   return cy.get('table[data-test="dashboardTaskList"] tr').first();
 });
+
+Cypress.Commands.add('goToUserProfileSettings', () => {
+  cy.goToDashboard();
+  /*
+   * Click the Avatar Dropdown
+   */
+  cy.get('button[data-test="avatarDropdown"]').click();
+  /*
+   * Click Settings Link
+   */
+  cy.get('a[data-test="userProfileSettings"]').click();
+});

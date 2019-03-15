@@ -98,23 +98,14 @@ describe('Claims a username', () => {
         /*
          * Wait until the transaction succeeded
          */
-        cy.get('span[data-test="gasStationTransactionSucceeded"]').should(
-          'exist',
-        );
+        cy.get('span[data-test="gasStationTransactionSucceeded"]')
+          .wait(5000)
+          .should('exist');
       });
   });
 
   it('Go to the User Profile Settings', () => {
-    /*
-     * Click the Avatar Dropdown
-     */
-    cy.get('button[data-test="avatarDropdown"]').click();
-    /*
-     * Click on the Get Started link
-     */
-    cy.get('li[role="menuitem"]')
-      .contains('Settings')
-      .click();
+    cy.goToUserProfileSettings();
   });
 
   it('Verify the Username', () => {
