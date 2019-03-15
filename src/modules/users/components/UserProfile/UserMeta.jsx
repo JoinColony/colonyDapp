@@ -37,17 +37,23 @@ const UserMeta = ({
     <Heading
       appearance={{ margin: 'none', size: 'large' }}
       text={displayName}
+      data-test="userProfileName"
     />
     <UserMention username={username || walletAddress} hasLink={false} />
     <CopyableAddress>{walletAddress}</CopyableAddress>
     {bio && (
       <div className={styles.bioContainer}>
-        <p>{bio}</p>
+        <p data-test="userProfileBio">{bio}</p>
       </div>
     )}
     {website && (
       <div className={styles.websiteContainer}>
-        <a href={website} rel="noopener noreferrer" target="_blank">
+        <a
+          href={website}
+          rel="noopener noreferrer"
+          target="_blank"
+          data-test="userProfileWebsite"
+        >
           {website}
         </a>
       </div>
@@ -57,6 +63,7 @@ const UserMeta = ({
         <Heading
           appearance={{ size: 'normal', weight: 'thin' }}
           text={location}
+          data-test="userProfileLocation"
         />
       </div>
     )}

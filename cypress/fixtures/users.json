@@ -1,3 +1,7 @@
 {
-  "ensName": "cypressTestUser"
+  "ensName": "cypressTestUser",
+  "displayName": "Cypress Test User",
+  "bio": "Hovering between planes of existence",
+  "website": "https://cypresstestuser.com",
+  "location": "IPFS"
 }
