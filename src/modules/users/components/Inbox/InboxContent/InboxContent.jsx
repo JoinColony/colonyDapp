@@ -3,19 +3,17 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { InboxElement } from '../types';
+
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-
-import InboxItem from './InboxItem';
-
 import CenteredTemplate from '~pages/CenteredTemplate';
+import InboxItem from '../InboxItem';
 
-import mockInbox from './__datamocks__/mockInbox';
+import styles from './InboxContent.css';
 
-import styles from './Inbox.css';
-
-import type { InboxElement } from './types';
+import mockInbox from '../__datamocks__/mockInbox';
 
 const MSG = defineMessages({
   title: {

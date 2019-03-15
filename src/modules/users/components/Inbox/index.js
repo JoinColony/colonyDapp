@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './Inbox.jsx';
+export { default } from './InboxContent';
