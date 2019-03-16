@@ -9,7 +9,7 @@ import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation.jsx';
 import UserNavigation from './UserNavigation.jsx';
 
-import { PAGES_MAINNET_BANNER_DISMISSED } from '../../constants';
+import { isBannerDismissed, dismissBanner } from '~utils/localStorage';
 import { getMainClasses } from '~utils/css';
 
 import styles from './NavigationWrapper.css';
@@ -84,47 +84,41 @@ const NavigationWrapper = ({
    * All the remaining props are passed down to the the children
    */
   ...props
-}: Props) => {
-  const isBannerDismissed = () =>
-    localStorage.getItem(PAGES_MAINNET_BANNER_DISMISSED) === 'true' || false;
-  const dismissBanner = () =>
-    localStorage.setItem(PAGES_MAINNET_BANNER_DISMISSED, 'true');
-  return (
-    <div className={className || getMainClasses(appearance, styles)}>
-      <div className={styles.wrapper}>
-        <nav className={styles.navigation}>
-          {hasBackLink && (
-            <div className={styles.history}>
-              <HistoryNavigation
-                backRoute={backRoute}
-                backText={backText}
-                backTextValues={backTextValues}
-              />
-            </div>
-          )}
-          {hasUserNavigation && (
-            <div className={styles.user}>
-              <UserNavigation />
-            </div>
-          )}
-        </nav>
-        <main className={styles.content}>
-          {children && cloneElement(children, { ...props })}
-          {!isBannerDismissed() && (
-            <div className={styles.alertBanner}>
-              <Alert
-                appearance={{ theme: 'danger' }}
-                text={MSG.mainnetAlert}
-                onAlertDismissed={dismissBanner}
-                isDismissible
-              />
-            </div>
-          )}
-        </main>
-      </div>
+}: Props) => (
+  <div className={className || getMainClasses(appearance, styles)}>
+    <div className={styles.wrapper}>
+      <nav className={styles.navigation}>
+        {hasBackLink && (
+          <div className={styles.history}>
+            <HistoryNavigation
+              backRoute={backRoute}
+              backText={backText}
+              backTextValues={backTextValues}
+            />
+          </div>
+        )}
+        {hasUserNavigation && (
+          <div className={styles.user}>
+            <UserNavigation />
+          </div>
+        )}
+      </nav>
+      <main className={styles.content}>
+        {children && cloneElement(children, { ...props })}
+        {!isBannerDismissed() && (
+          <div className={styles.alertBanner}>
+            <Alert
+              appearance={{ theme: 'danger' }}
+              text={MSG.mainnetAlert}
+              onAlertDismissed={dismissBanner}
+              isDismissible
+            />
+          </div>
+        )}
+      </main>
     </div>
-  );
-};
+  </div>
+);
 
 NavigationWrapper.displayName = displayName;
 
