@@ -1,9 +1,11 @@
 /* @flow */
 import type { MessageDescriptor, MessageValues } from 'react-intl';
-
-import React, { cloneElement } from 'react';
 import type { Element } from 'react';
 
+import React, { cloneElement } from 'react';
+import { defineMessages } from 'react-intl';
+
+import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation.jsx';
 import UserNavigation from './UserNavigation.jsx';
 
@@ -12,6 +14,15 @@ import { getMainClasses } from '~utils/css';
 import styles from './NavigationWrapper.css';
 
 const displayName = 'pages.NavigationWrapper';
+
+const MSG = defineMessages({
+  mainnetAlert: {
+    id: `pages.NavigationWrapper.mainnetAlert`,
+    defaultMessage:
+      /* eslint-disable-next-line max-len */
+      'Heads up! Colony is a beta product on the Ethereum mainnet. Please be careful.',
+  },
+});
 
 type Appearance = {
   theme?: 'main' | 'transparent',
@@ -93,6 +104,14 @@ const NavigationWrapper = ({
       </nav>
       <main className={styles.content}>
         {children && cloneElement(children, { ...props })}
+        <div className={styles.alertBanner}>
+          <Alert
+            appearance={{ theme: 'danger' }}
+            text={MSG.mainnetAlert}
+            onAlertDismissed={() => {}}
+            isDismissible
+          />
+        </div>
       </main>
     </div>
   </div>
