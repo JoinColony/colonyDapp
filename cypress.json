@@ -3,6 +3,7 @@
     "screenshotsFolder": "reports/cypress/screenshots",
     "videosFolder": "reports/cypress/videos",
     "reporter": "junit",
+    "defaultCommandTimeout": 10000,
     "reporterOptions": {
         "mochaFile": "reports/cypress/cypress-results-[hash].xml",
         "toConsole": false
