@@ -144,6 +144,8 @@ class Task extends Component<Props> {
       },
       setValues,
     } = this;
+    // TODO: this should be determined from Colony in state
+    const hasRequestedToWork = true;
     return (
       <div className={styles.main}>
         <aside className={styles.sidebar}>
@@ -212,10 +214,14 @@ class Task extends Component<Props> {
                 setValues={setValues}
               />
             )}
-            <TaskRequestWork
-              isTaskCreator={isTaskCreator}
-              currentUser={currentUser}
-            />
+            {/* Apply to work/display "submitted" if already done */}
+            {!worker && !isTaskCreator && (
+              <TaskRequestWork
+                currentUser={currentUser}
+                task={task}
+                hasRequested={hasRequestedToWork}
+              />
+            )}
             {/* Worker misses deadline and rates manager */}
             {task.currentState === TASK_STATE.RATING &&
               isTaskWorker &&
