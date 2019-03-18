@@ -17,6 +17,7 @@ import type { RootStateRecord } from '~immutable/state';
 export const currentUserColonyPermissionsFetcher = Object.freeze({
   fetch: userPermissionsFetch,
   select: currentUserColonyPermissionsSelector,
+  ttl: 60 * 1000,
 });
 
 export const userFetcher = Object.freeze({
