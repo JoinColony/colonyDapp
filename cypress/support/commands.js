@@ -66,3 +66,20 @@ Cypress.Commands.add(
         }),
       ),
 );
+
+Cypress.Commands.add(
+  'checkImage',
+  { prevSubject: 'element' },
+  (selector, fileName) =>
+    cy
+      .fixture(fileName, 'base64')
+      .then(base64image =>
+        cy
+          .wrap(selector)
+          .should(
+            'have.css',
+            'background-image',
+            `url("data:image/jpeg;base64,/${base64image}");`,
+          ),
+      ),
+);
