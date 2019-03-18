@@ -108,4 +108,12 @@ describe('Update Claim Profile Metadata', () => {
       'jolly-roger.jpeg',
     );
   });
+
+  it('Check uploaded Avatar', () => {
+    cy.goToUserProfile();
+
+    cy.get('div[data-test="userProfileAvatar"] figure div').checkImage(
+      'jolly-roger.jpeg',
+    );
+  });
 });

@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import type { UserType } from '~immutable';
 
@@ -28,12 +28,14 @@ const UserMeta = ({
   },
 }: Props) => (
   <div className={styles.main}>
-    <UserAvatar
-      address={walletAddress}
-      className={styles.avatar}
-      size="xl"
-      username={username}
-    />
+    <div data-test="userProfileAvatar">
+      <UserAvatar
+        address={walletAddress}
+        className={styles.avatar}
+        size="xl"
+        username={username}
+      />
+    </div>
     <Heading
       appearance={{ margin: 'none', size: 'large' }}
       text={displayName}
