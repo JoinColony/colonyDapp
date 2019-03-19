@@ -113,7 +113,7 @@ const TaskEditDialog = ({
   reputation,
   transform,
   users,
-  worker,
+  worker, // eslint-disable-line no-unused-vars
 }: Props) => {
   const validateFunding = yup.object().shape({
     payouts: yup
@@ -155,7 +155,8 @@ const TaskEditDialog = ({
         error="COOL_THING_CREATE_ERROR"
         initialValues={{
           payouts,
-          worker,
+          // TODO: this should be of UserType, fetched from worker.address
+          worker: '',
         }}
         validationSchema={validateFunding}
         transform={transform}

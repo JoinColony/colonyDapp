@@ -101,6 +101,7 @@ class Task extends Component<Props> {
     } = this.props;
 
     openDialog('TaskEditDialog', {
+      // TODO: this should be the Colony's tokens
       availableTokens: tokensMock.toJS(),
       maxTokens: 1,
       minTokens: 1,
@@ -114,7 +115,8 @@ class Task extends Component<Props> {
         id: nanoid(),
       })),
       reputation,
-      users: userMocks,
+      // TODO: this should be users who have requested to work
+      users: userMocks.toJS(),
       worker,
     });
   };
