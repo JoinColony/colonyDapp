@@ -1,17 +1,34 @@
 /* @flow */
 import type { MessageDescriptor, MessageValues } from 'react-intl';
+import type { Element } from 'react';
+import { compose } from 'recompose';
 
 import React, { cloneElement } from 'react';
-import type { Element } from 'react';
+import { defineMessages } from 'react-intl';
 
+import type { UserType } from '~immutable';
+
+import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation.jsx';
 import UserNavigation from './UserNavigation.jsx';
 
 import { getMainClasses } from '~utils/css';
+import { withImmutablePropsToJS } from '~utils/hoc';
+
+import { withCurrentUser } from '../../../users/hocs';
 
 import styles from './NavigationWrapper.css';
 
 const displayName = 'pages.NavigationWrapper';
+
+const MSG = defineMessages({
+  mainnetAlert: {
+    id: `pages.NavigationWrapper.mainnetAlert`,
+    defaultMessage:
+      /* eslint-disable-next-line max-len */
+      'Heads up! Colony is a beta product on the Ethereum mainnet. Please be careful.',
+  },
+});
 
 type Appearance = {
   theme?: 'main' | 'transparent',
@@ -57,6 +74,10 @@ type Props = {|
    * this should always have a value
    */
   children: Element<*>,
+  /*
+   * Current User
+   */
+  currentUser: UserType,
 |};
 
 const NavigationWrapper = ({
@@ -68,6 +89,9 @@ const NavigationWrapper = ({
   children,
   className,
   appearance = { theme: 'main' },
+  currentUser: {
+    profile: { username },
+  },
   /*
    * All the remaining props are passed down to the the children
    */
@@ -93,6 +117,18 @@ const NavigationWrapper = ({
       </nav>
       <main className={styles.content}>
         {children && cloneElement(children, { ...props })}
+        {!username && (
+          <div className={styles.alertBanner}>
+            <Alert
+              appearance={{
+                theme: 'danger',
+                borderRadius: 'round',
+              }}
+              text={MSG.mainnetAlert}
+              isDismissible
+            />
+          </div>
+        )}
       </main>
     </div>
   </div>
@@ -100,4 +136,9 @@ const NavigationWrapper = ({
 
 NavigationWrapper.displayName = displayName;
 
-export default NavigationWrapper;
+const enhance = compose(
+  withCurrentUser,
+  withImmutablePropsToJS,
+);
+
+export default enhance(NavigationWrapper);

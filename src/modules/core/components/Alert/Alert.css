@@ -37,9 +37,24 @@
   color: var(--colony-white);
 }
 
-/* Theme */
 .sizeSmall {
   font-size: var(--size-tiny);
   font-weight: var(--weight-medium);
   line-height: 18px;
+}
+
+.borderRadiusSmall {
+  border-radius: var(--radius-small);
+}
+
+.borderRadiusMedium {
+  border-radius: var(--radius-normal);
+}
+
+.borderRadiusLarge {
+  border-radius: var(--radius-large);
+}
+
+.borderRadiusRound {
+  border-radius: 50px;
 }
