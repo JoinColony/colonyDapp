@@ -51,6 +51,19 @@ const transformFetchedData = (data: DataRecordType<*>) => {
 };
 
 /*
+ * Given a redux selector and optional selector arguments, get the
+ * (immutable) redux state and return a mutable version of it.
+ */
+export const useReduxState = (
+  select: InputSelector<*, *, *>,
+  args: *[] = [],
+) => {
+  const mapState = useCallback(state => select(state, ...args), args);
+  const data = useMappedState(mapState);
+  return data && typeof data.toJS == 'function' ? data.toJS() : data;
+};
+
+/*
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
 export const useDataFetcher = <T>(
