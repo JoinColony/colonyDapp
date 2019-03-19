@@ -47,7 +47,11 @@
   margin: 0 auto;
   padding: 9px 0 9px 20px;
   width: 600px;
-  border-radius: 50px;
+}
+
+.alertBanner button {
+  top: 12px;
+  right: 10px;
 }
 
 /*
