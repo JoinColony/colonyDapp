@@ -3,7 +3,7 @@
 import type { FormikBag } from 'formik';
 
 import React, { Component, Fragment } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
@@ -28,6 +28,7 @@ type FormValues = {
   tokenName?: string,
   iconUpload?: string,
   tokenData: ?TokenData,
+  colonyName: string,
 };
 
 type Bag = FormikBag<Object, FormValues>;
@@ -42,7 +43,7 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.heading',
-    defaultMessage: 'Select an existing ERC20 Token',
+    defaultMessage: 'Which ERC20 token would you like to use for {colony}',
   },
   symbolHint: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.symbolHint',
@@ -56,18 +57,18 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepSelectToken.tokenSymbol',
     defaultMessage: 'Token Symbol',
   },
-  cancel: {
-    id: 'dashboard.CreateColonyWizard.StepSelectToken.back',
-    defaultMessage: 'Back',
-  },
-  next: {
-    id: 'dashboard.CreateColonyWizard.StepSelectToken.next',
-    defaultMessage: 'Next',
+  continue: {
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.continue',
+    defaultMessage: 'Continue',
   },
   invalidAddress: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.invalidAddress',
     defaultMessage:
       'Not a valid token address. Check: https://etherscan.io/tokens',
+  },
+  link: {
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
+    defaultMessage: 'I want to use a New Token',
   },
   fileUploadTitle: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUpload',
@@ -84,6 +85,16 @@ export const validationSchema = yup.object({
   tokenSymbol: yup.string().max(6),
   tokenName: yup.string(),
 });
+
+const linkToTokenCreate = (wizardValues, nextStep, previousStep) => {
+  /* This is a custom link since it goes to a sibling step that appears
+  to be parallel to this one after the wizard steps diverge,
+  while making sure that the data form the previous wizard steps doesn't get lost */
+  const wizardValuesCopy = Object.assign({}, wizardValues);
+  previousStep(wizardValuesCopy);
+  wizardValuesCopy.tokenChoice = 'create';
+  nextStep(wizardValuesCopy);
+};
 
 class StepSelectToken extends Component<Props, State> {
   static displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
@@ -102,14 +113,15 @@ class StepSelectToken extends Component<Props, State> {
   };
 
   render() {
-    const { nextStep, previousStep, wizardForm } = this.props;
+    const { nextStep, previousStep, wizardForm, wizardValues } = this.props;
     const { tokenData } = this.state;
     return (
       <section className={styles.main}>
         <div className={styles.title}>
           <Heading
-            appearance={{ size: 'medium', weight: 'thin' }}
+            appearance={{ size: 'medium', weight: 'bold' }}
             text={MSG.heading}
+            textValues={{ colony: wizardValues.colonyName }}
           />
         </div>
         <Form
@@ -126,6 +138,20 @@ class StepSelectToken extends Component<Props, State> {
                   this.handleTokenSelect(data, setFieldValue)
                 }
                 tokenData={tokenData}
+                extra={
+                  // The key events are unlikely to be used here
+                  /* eslint-disable jsx-a11y/click-events-have-key-events */
+                  <span
+                    role="button"
+                    className={styles.linkToOtherStep}
+                    tabIndex={-2}
+                    onClick={() =>
+                      linkToTokenCreate(wizardValues, nextStep, previousStep)
+                    }
+                  >
+                    <FormattedMessage {...MSG.link} />
+                  </span>
+                }
               />
               {values.tokenAddress && tokenData === null && (
                 <Fragment>
@@ -157,15 +183,10 @@ class StepSelectToken extends Component<Props, State> {
               )}
               <div className={styles.buttons}>
                 <Button
-                  appearance={{ theme: 'secondary' }}
-                  text={MSG.cancel}
-                  onClick={() => previousStep(values)}
-                />
-                <Button
-                  appearance={{ theme: 'primary' }}
+                  appearance={{ theme: 'primary', size: 'large' }}
                   type="submit"
                   disabled={!isValid}
-                  text={MSG.next}
+                  text={MSG.continue}
                 />
               </div>
             </div>

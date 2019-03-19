@@ -3,16 +3,15 @@
 import type { FormikBag } from 'formik';
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 
-import { ActionForm, FormStatus, Input } from '~core/Fields';
+import { Form, FormStatus, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ActionFileUpload } from '~core/FileUpload';
-import ExternalLink from '~core/ExternalLink';
 import { ACTIONS } from '~redux';
 import { mapPayload } from '~utils/actions';
 
@@ -21,7 +20,7 @@ import styles from './StepCreateToken.css';
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.heading',
-    defaultMessage: "Let's create your new token.",
+    defaultMessage: 'Create new token for {colony}',
   },
   learnMoreLink: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.learnMoreLink',
@@ -37,23 +36,27 @@ const MSG = defineMessages({
   },
   labelTokenName: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenName',
-    defaultMessage: 'Token Name (example: Colony Token)',
+    defaultMessage: 'Token Name',
   },
   labelTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenSymbol',
-    defaultMessage: 'Token Symbol (example: CLNY)',
+    defaultMessage: 'Token Symbol',
   },
   helpTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenSymbol',
-    defaultMessage: 'Max of 6 characters',
+    defaultMessage: 'E.g.: (MAT), up to 4 characters',
+  },
+  helpTokenName: {
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenName',
+    defaultMessage: 'E.g.: My Awesome Token',
   },
   labelTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
-    defaultMessage: 'Token Icon (.svg or .png)',
+    defaultMessage: 'Token Logo (optional)',
   },
-  helpTokenIcon: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenIcon',
-    defaultMessage: 'Recommended 60px by 60px, up to 1 MB',
+  link: {
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
+    defaultMessage: 'I want to use an existing token',
   },
   errorCreateToken: {
     id: 'error.colony.createToken',
@@ -62,7 +65,7 @@ const MSG = defineMessages({
   errorTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenSymbol',
     defaultMessage: `The token symbol can only contain letters and numbers, and
-      can only have a length of 6`,
+      can only have a length of 4`,
   },
   errorTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenIcon',
@@ -79,7 +82,7 @@ const validationSchema = yup.object({
   tokenSymbol: yup
     .string()
     .required()
-    .max(6, MSG.errorTokenSymbol),
+    .max(4, MSG.errorTokenSymbol),
   tokenIcon: yup.array().min(1, MSG.errorTokenIcon),
 });
 
@@ -87,42 +90,46 @@ type FormValues = {
   tokenName: string,
   tokenSymbol: string,
   tokenAddress: string,
+  colonyName: string,
+  tokenChoice: string,
 };
 
 type Props = WizardProps<FormValues>;
 
-const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
-  <ActionForm
-    submit={ACTIONS.TOKEN_CREATE}
-    error={ACTIONS.TOKEN_CREATE_ERROR}
-    success={ACTIONS.TOKEN_CREATE_SUCCESS}
-    onSuccess={(
-      { receipt: { contractAddress: tokenAddress } },
-      bag,
-      values,
-    ) => {
-      nextStep({
-        ...values,
-        tokenAddress,
-        tokenIcon:
-          values.tokenIcon &&
-          values.tokenIcon.length &&
-          values.tokenIcon[0].uploaded
-            ? values.tokenIcon[0].uploaded.ipfsHash
-            : undefined,
-      });
-    }}
+const linkToTokenSelect = (wizardValues, nextStep, previousStep) => {
+  /* This is a custom link since it goes to a sibling step that appears
+  to be parallel to this one after the wizard steps diverge,
+  while making sure that the data form the previous wizard steps doesn't get lost */
+  const wizardValuesCopy = Object.assign({}, wizardValues);
+  previousStep(wizardValuesCopy);
+  wizardValuesCopy.tokenChoice = 'select';
+  nextStep(wizardValuesCopy);
+};
+
+const StepCreateToken = ({
+  nextStep,
+  previousStep,
+  wizardForm,
+  wizardValues,
+}: Props) => (
+  <Form
+    onSubmit={({ tokenSymbol, tokenName, tokenIcon }) =>
+      nextStep({ ...wizardValues, tokenSymbol, tokenName, tokenIcon })
+    }
     onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
       setStatus({ error: MSG.errorCreateToken })
     }
     validationSchema={validationSchema}
     {...wizardForm}
   >
-    {({ isSubmitting, isValid, status, values }) => (
+    {({ isSubmitting, isValid, status }) => (
       <div className={styles.main}>
         <section className={styles.titleSection}>
-          <Heading className={styles.customHeading} text={MSG.heading} />
-          <ExternalLink text={MSG.learnMoreLink} href="#" />
+          <Heading
+            appearance={{ size: 'medium', weight: 'bold' }}
+            text={MSG.heading}
+            textValues={{ colony: wizardValues.colonyName }}
+          />
         </section>
         <section className={styles.inputFields}>
           <div className={styles.inputFieldWrapper}>
@@ -130,6 +137,21 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
               name="tokenName"
               appearance={{ theme: 'fat' }}
               label={MSG.labelTokenName}
+              help={MSG.helpTokenName}
+              extra={
+                // The key events are unlikely to be used here
+                /* eslint-disable jsx-a11y/click-events-have-key-events */
+                <span
+                  role="button"
+                  className={styles.linkToOtherStep}
+                  tabIndex={-2}
+                  onClick={() =>
+                    linkToTokenSelect(wizardValues, nextStep, previousStep)
+                  }
+                >
+                  <FormattedMessage {...MSG.link} />
+                </span>
+              }
             />
           </div>
           <div className={styles.inputFieldWrapper}>
@@ -157,12 +179,6 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
         <FormStatus status={status} />
         <section className={styles.actionsContainer}>
           <Button
-            text={MSG.backButton}
-            appearance={{ theme: 'secondary', size: 'large' }}
-            onClick={() => previousStep(values)}
-            disabled={isSubmitting}
-          />
-          <Button
             appearance={{ theme: 'primary', size: 'large' }}
             text={MSG.nextButton}
             type="submit"
@@ -172,7 +188,7 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
         </section>
       </div>
     )}
-  </ActionForm>
+  </Form>
 );
 
 StepCreateToken.displayName = 'dashboard.CreateColonyWizard.CreateToken';

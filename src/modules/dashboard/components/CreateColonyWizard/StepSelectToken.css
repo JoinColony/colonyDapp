@@ -36,3 +36,10 @@
   justify-content: flex-end;
   margin-top: 48px;
 }
+
+.linkToOtherStep {
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+  cursor: pointer;
+}

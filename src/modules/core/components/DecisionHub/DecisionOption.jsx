@@ -57,6 +57,7 @@ class DecisionOption extends Component<Props> {
       return (
         <Tooltip
           placement="left"
+          trigger="hover"
           content={
             <span className={styles.tooltip}>
               <FormattedMessage {...tooltip} />
