@@ -38,6 +38,7 @@ type Props = {|
   editPayout: boolean,
   remove?: () => void,
   canRemove?: boolean,
+  reset?: () => void,
 |};
 
 class Payout extends Component<Props, State> {
@@ -48,9 +49,12 @@ class Payout extends Component<Props, State> {
   state = { editing: false };
 
   toggleEdit = () => {
-    this.setState(prevState => ({
-      editing: !prevState.editing,
-    }));
+    const { reset } = this.props;
+    const { editing } = this.state;
+    if (editing && reset) reset();
+    this.setState({
+      editing: !editing,
+    });
   };
 
   render() {

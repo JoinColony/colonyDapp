@@ -217,6 +217,9 @@ const TaskEditDialog = ({
                               tokenOptions={tokenOptions}
                               canRemove={canRemoveTokens(values, minTokens)}
                               remove={() => arrayHelpers.remove(index)}
+                              reset={() =>
+                                arrayHelpers.replace(index, payouts[index])
+                              }
                             />
                           );
                         })}
