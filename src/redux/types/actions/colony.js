@@ -21,7 +21,7 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| colonyAddress: string, newAdmin: Object, ensName: string |},
+    {| newAdmin: string, ensName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_CONFIRM_ERROR: ErrorActionType<

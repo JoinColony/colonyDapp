@@ -2,11 +2,15 @@
 
 import type { FormikConfig, FormikBag } from 'formik';
 
-import type { ActionTypeString, UniqueActionType } from '~redux';
+import type { ActionTypeString } from '~redux';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import MakeAsyncFunction from 'react-redux-promise-listener';
+
+import type { ActionTransformFnType } from '~utils/actions';
+
+import { log } from '~utils/debug';
 
 import promiseListener from '../../../../../createPromiseListener';
 
@@ -47,15 +51,14 @@ type Props = ActionFormikConfig & {
   ) => void,
   /** Function to call after error action was dispatched */
   onError?: OnError,
-  /** A function to set the payload (the parameter passed to the async function). Defaults to (action, payload) => ({ ...action, payload }) */
-  setPayload?: (
-    action: Object | UniqueActionType<*, *, *>,
-    payload: any,
-  ) => UniqueActionType<*, *, Object>,
+  /** A function to transform the action after the form data was passed in (as payload) */
+  transform?: ActionTransformFnType,
 };
 
-const defaultOnErrror: OnError = (err, { setStatus }) =>
+const defaultOnErrror: OnError = (err, { setStatus }) => {
+  log(err);
   setStatus({ error: MSG.defaultError });
+};
 
 const ActionForm = ({
   submit,
@@ -63,34 +66,45 @@ const ActionForm = ({
   error,
   onSuccess,
   onError = defaultOnErrror,
-  setPayload,
+  transform,
   ...props
-}: Props) => (
-  <MakeAsyncFunction
-    listener={promiseListener}
-    start={submit}
-    resolve={success}
-    reject={error}
-    setPayload={setPayload}
-  >
-    {asyncFunc => {
-      const handleSubmit = (values, formikBag) =>
-        asyncFunc(values, formikBag).then(
-          res => {
-            formikBag.setSubmitting(false);
-            if (typeof onSuccess === 'function') {
-              onSuccess(res, formikBag, values);
-            }
-          },
-          err => {
-            formikBag.setSubmitting(false);
-            if (typeof onError === 'function') onError(err, formikBag, values);
-          },
-        );
-      return <Form {...props} onSubmit={handleSubmit} />;
-    }}
-  </MakeAsyncFunction>
-);
+}: Props) => {
+  // Always pass through meta props (and merge payload)
+  let setPayloadFn;
+  if (transform) {
+    setPayloadFn = (action, payload) => {
+      const newAction = transform({ ...action, payload });
+      return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
+    };
+  }
+  return (
+    <MakeAsyncFunction
+      listener={promiseListener}
+      start={submit}
+      resolve={success}
+      reject={error}
+      setPayload={setPayloadFn}
+    >
+      {asyncFunc => {
+        const handleSubmit = (values, formikBag) =>
+          asyncFunc(values, formikBag).then(
+            res => {
+              formikBag.setSubmitting(false);
+              if (typeof onSuccess === 'function') {
+                onSuccess(res, formikBag, values);
+              }
+            },
+            err => {
+              formikBag.setSubmitting(false);
+              if (typeof onError === 'function')
+                onError(err, formikBag, values);
+            },
+          );
+        return <Form {...props} onSubmit={handleSubmit} />;
+      }}
+    </MakeAsyncFunction>
+  );
+};
 
 Form.displayName = displayName;
 

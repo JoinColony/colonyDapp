@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl';
 import type { UserType } from '~immutable';
 import type { ENSName } from '~types';
 
+import { withKeyPath } from '~utils/actions';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
@@ -53,6 +54,7 @@ const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 
 const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
 
+// Validate the value we get back from SingleUserPicker
 const validationSchema = yup.object({
   newAdmin: yup
     .object()
@@ -69,6 +71,14 @@ type Props = {|
   ensName: ENSName,
 |};
 
+const transformAction = action => ({
+  ...action,
+  payload: {
+    ...action.payload,
+    newAdmin: action.payload.newAdmin.profile.walletAddress,
+  },
+});
+
 const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
@@ -76,8 +86,9 @@ const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
       success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
       error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
       validationSchema={validationSchema}
+      transform={withKeyPath(ensName)(transformAction)}
       initialValues={{
-        newAdmin: '',
+        newAdmin: null,
         ensName,
       }}
     >

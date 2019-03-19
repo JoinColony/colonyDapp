@@ -16,7 +16,7 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { mergePayload } from '~utils/actions';
+import { withKeyPath } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
 import { colony as colonyStoreBlueprint } from '../../../../data/blueprints';
@@ -80,9 +80,7 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_PROFILE_UPDATE}
           success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
           error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
-          setPayload={(action: *, payload: *) =>
-            mergePayload(action, { payload, meta: { keyPath: [ensName] } })
-          }
+          transform={withKeyPath(ensName)()}
           initialValues={{
             ensName,
             name,

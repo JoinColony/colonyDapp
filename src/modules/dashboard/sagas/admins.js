@@ -12,6 +12,7 @@ import { ACTIONS } from '~redux';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { singleUserSelector } from '../../users/selectors';
 
 import { routerColonySelector } from '../selectors/colony';
 
@@ -21,7 +22,6 @@ function* colonyAdminAdd({
 }: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const { walletAddress, username } = newAdmin.profile;
     const colony = yield select(routerColonySelector);
     const { address } = colony.record;
     /*
@@ -31,10 +31,12 @@ function* colonyAdminAdd({
       context: COLONY_CONTEXT,
       methodName: 'setAdminRole',
       identifier: address,
-      params: { user: walletAddress },
+      params: { user: newAdmin },
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+
+    const { record: admin } = yield select(singleUserSelector, newAdmin);
 
     /*
      * Dispatch the action to the admin in the Redux store
@@ -45,8 +47,8 @@ function* colonyAdminAdd({
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
       payload: {
-        adminData: newAdmin.profile,
-        username,
+        adminData: admin.profile,
+        username: admin.profile.username,
       },
       meta,
     });
@@ -65,7 +67,7 @@ function* colonyAdminAdd({
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
       meta,
-      payload: { username },
+      payload: { username: admin.profile.username },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);

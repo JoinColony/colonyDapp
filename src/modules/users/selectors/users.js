@@ -70,6 +70,9 @@ const getUsers = (state: RootStateRecord) =>
 /*
  * User selectors
  */
+export const singleUserSelector = (state: RootStateRecord, address: string) =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
+
 export const userByAddressSelector = createSelector(
   getAddressFromProps,
   getUsers,

@@ -6,8 +6,8 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
-import type { UniqueActionType } from '~redux';
 
+import { mergePayload } from '~utils/actions';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
@@ -81,10 +81,7 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
     submit={ACTIONS.COLONY_CREATE}
     error={ACTIONS.COLONY_CREATE_ERROR}
     success={ACTIONS.COLONY_CREATE_SUCCESS}
-    setPayload={(action: UniqueActionType<*, *, *>) => ({
-      ...action,
-      payload: { tokenAddress: wizardValues.tokenAddress },
-    })}
+    transform={mergePayload({ tokenAddress: wizardValues.tokenAddress })()}
     onSuccess={({ eventData: { colonyId, colonyAddress } }) =>
       nextStep({
         ...wizardValues,

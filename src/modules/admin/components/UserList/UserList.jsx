@@ -7,10 +7,12 @@ import React, { Component } from 'react';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
-import type { AsyncFunction } from '../../../../createPromiseListener';
 import type { ColonyAdminType } from '~immutable';
-import { mergePayload } from '~utils/actions';
+
+import { withKeyPath } from '~utils/actions';
 import { ACTIONS } from '~redux';
+
+import type { AsyncFunction } from '../../../../createPromiseListener';
 
 import promiseListener from '../../../../createPromiseListener';
 import UserListItem from './UserListItem.jsx';
@@ -73,13 +75,15 @@ class UserList extends Component<Props> {
   constructor(props: Props) {
     super(props);
     const { remove, removeSuccess, removeError, ensName } = this.props;
+
+    const setPayload = (originalAction: *, payload: Object) =>
+      withKeyPath(ensName)()({ ...originalAction, payload });
+
     this.remove = promiseListener.createAsyncFunction({
       start: remove,
       resolve: removeSuccess,
       reject: removeError,
-      setPayload(action: *, payload: *) {
-        return mergePayload(action, { payload, meta: { keyPath: [ensName] } });
-      },
+      setPayload,
     });
   }
 

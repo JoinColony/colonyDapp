@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { UniqueActionType } from '~redux';
+import type { ActionTransformFnType } from '~utils/actions';
 
 export type WizardProps<FormValues> = {
   step: number,
@@ -14,8 +14,7 @@ export type WizardProps<FormValues> = {
   },
   formHelpers: {
     includeWizardValues: (
-      action: UniqueActionType<*, *, *>,
-      currentValues: Object,
-    ) => UniqueActionType<*, *, *>,
+      transformFn?: ActionTransformFnType,
+    ) => ActionTransformFnType,
   },
 };

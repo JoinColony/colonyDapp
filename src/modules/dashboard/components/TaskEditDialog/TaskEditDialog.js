@@ -18,15 +18,11 @@ const enhance = compose(
           id: nanoid(),
         });
     },
-    setPayload: ({ availableTokens }) => (
-      action: Object,
-      // TODO I don't think we have assignee here anymore
-      { assignee, payouts }: Object,
-    ) => ({
+    transform: ({ availableTokens }) => (action: Object) => ({
       ...action,
       payload: {
-        assignee,
-        payouts: payouts.map(({ token, amount }) => ({
+        assignee: action.payload.assignee,
+        payouts: action.payload.payouts.map(({ token, amount }) => ({
           amount,
           token: availableTokens.get(token - 1),
         })),

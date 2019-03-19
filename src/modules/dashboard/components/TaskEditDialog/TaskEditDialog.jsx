@@ -69,7 +69,7 @@ type Props = {|
   availableTokens: Array<TokenType>,
   cancel: () => void,
   maxTokens?: BigNumber,
-  setPayload: (action: Object, payload: Object) => Object,
+  transform: (action: Object) => Object,
   users: Array<UserType>,
 |};
 
@@ -106,7 +106,7 @@ const TaskEditDialog = ({
   maxTokens,
   payouts,
   reputation,
-  setPayload,
+  transform,
   users,
   worker,
 }: Props) => {
@@ -153,7 +153,7 @@ const TaskEditDialog = ({
           worker,
         }}
         validationSchema={validateFunding}
-        setPayload={setPayload}
+        transform={transform}
       >
         {({ status, values, dirty, isSubmitting, isValid }) => (
           <Fragment>
