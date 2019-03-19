@@ -1,13 +1,17 @@
 /* @flow */
+
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyAdminType, DataType, DomainType } from '~immutable';
 import type { ENSName } from '~types';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { ACTIONS } from '~redux';
+import { useReduxState } from '~utils/hooks';
+
+import { colonyAdminsSelector } from '../../../dashboard/selectors';
+import { useDomainsFetcher } from '../../../dashboard/fetchers';
 
 import UserList from '../UserList';
 import DomainList from '../DomainList';
@@ -59,106 +63,108 @@ const displayName: string = 'admin.Organizations';
 
 type Props = {|
   ensName: ENSName,
-  colonyAdmins: Array<ColonyAdminType>,
-  colonyDomains: Array<DataType<DomainType>>,
 |};
 
-const Organizations = ({ ensName, colonyAdmins, colonyDomains }: Props) => (
-  <div className={styles.main}>
-    <Tabs>
-      <TabList>
-        <Tab>
-          <FormattedMessage {...MSG.tabAdmins} />
-        </Tab>
-        <Tab>
-          <FormattedMessage {...MSG.tabDomains} />
-        </Tab>
-      </TabList>
-      <TabPanel>
-        <div className={styles.sectionWrapper}>
-          <OrganizationAddAdmins
-            /*
-             * TODO Add *real* user data
-             * Once we have a way to _discover_ users that interacted with the current colony,
-             * and which can be made admins
-             */
-            availableUsers={usersMocks}
-            ensName={ensName}
-          />
-          <section className={styles.list}>
-            {/*
-             * UserList follows the design principles from TaskList in dashboard,
-             * but if it turns out we're going to use this in multiple places,
-             * we should consider moving it to core
-             */}
-            {colonyAdmins && colonyAdmins.length ? (
-              <UserList
-                users={colonyAdmins}
-                label={MSG.labelAdminList}
-                ensName={ensName}
-                showDisplayName
-                showUsername
-                showMaskedAddress
-                viewOnly={false}
-                remove={ACTIONS.COLONY_ADMIN_REMOVE}
-                removeSuccess={ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS}
-                removeError={ACTIONS.COLONY_ADMIN_REMOVE_ERROR}
-              />
-            ) : (
-              <Fragment>
-                <Heading
-                  appearance={{
-                    size: 'small',
-                    weight: 'bold',
-                    margin: 'small',
-                  }}
-                  text={MSG.labelAdminList}
+const Organizations = ({ ensName }: Props) => {
+  const admins = useReduxState(colonyAdminsSelector, [ensName]);
+  const domains = useDomainsFetcher(ensName);
+  return (
+    <div className={styles.main}>
+      <Tabs>
+        <TabList>
+          <Tab>
+            <FormattedMessage {...MSG.tabAdmins} />
+          </Tab>
+          <Tab>
+            <FormattedMessage {...MSG.tabDomains} />
+          </Tab>
+        </TabList>
+        <TabPanel>
+          <div className={styles.sectionWrapper}>
+            <OrganizationAddAdmins
+              /*
+               * @TODO Add *real* user data
+               * Once we have a way to _discover_ users that interacted with the current colony,
+               * and which can be made admins
+               */
+              availableUsers={usersMocks}
+              ensName={ensName}
+            />
+            <section className={styles.list}>
+              {/*
+               * UserList follows the design principles from TaskList in dashboard,
+               * but if it turns out we're going to use this in multiple places,
+               * we should consider moving it to core
+               */}
+              {admins && admins.length ? (
+                <UserList
+                  users={admins}
+                  label={MSG.labelAdminList}
+                  ensName={ensName}
+                  showDisplayName
+                  showUsername
+                  showMaskedAddress
+                  viewOnly={false}
+                  remove={ACTIONS.COLONY_ADMIN_REMOVE}
+                  removeSuccess={ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS}
+                  removeError={ACTIONS.COLONY_ADMIN_REMOVE_ERROR}
                 />
-                <p className={styles.noCurrent}>
-                  <FormattedMessage {...MSG.noCurrentAdmins} />
-                </p>
-              </Fragment>
-            )}
-          </section>
-        </div>
-      </TabPanel>
-      <TabPanel>
-        <div className={styles.sectionWrapper}>
-          <OrganizationAddDomains ensName={ensName} />
-          <section className={styles.list}>
-            {/*
-             * DomainList follows the design principles from TaskList in dashboard,
-             * but if it turns out we're going to use this in multiple places,
-             * we should consider moving it to core
-             */}
-            {colonyDomains && colonyDomains.length ? (
-              <DomainList
-                domains={colonyDomains}
-                label={MSG.labelAdminList}
-                // eslint-disable-next-line no-console
-                onRemove={console.log}
-              />
-            ) : (
-              <Fragment>
-                <Heading
-                  appearance={{
-                    size: 'small',
-                    weight: 'bold',
-                    margin: 'small',
-                  }}
-                  text={MSG.labelAdminList}
+              ) : (
+                <Fragment>
+                  <Heading
+                    appearance={{
+                      size: 'small',
+                      weight: 'bold',
+                      margin: 'small',
+                    }}
+                    text={MSG.labelAdminList}
+                  />
+                  <p className={styles.noCurrent}>
+                    <FormattedMessage {...MSG.noCurrentAdmins} />
+                  </p>
+                </Fragment>
+              )}
+            </section>
+          </div>
+        </TabPanel>
+        <TabPanel>
+          <div className={styles.sectionWrapper}>
+            <OrganizationAddDomains ensName={ensName} />
+            <section className={styles.list}>
+              {/*
+               * DomainList follows the design principles from TaskList in dashboard,
+               * but if it turns out we're going to use this in multiple places,
+               * we should consider moving it to core
+               */}
+              {domains && domains.length ? (
+                <DomainList
+                  domains={domains}
+                  label={MSG.labelAdminList}
+                  // eslint-disable-next-line no-console
+                  onRemove={console.log}
                 />
-                <p className={styles.noCurrent}>
-                  <FormattedMessage {...MSG.noCurrentDomains} />
-                </p>
-              </Fragment>
-            )}
-          </section>
-        </div>
-      </TabPanel>
-    </Tabs>
-  </div>
-);
+              ) : (
+                <Fragment>
+                  <Heading
+                    appearance={{
+                      size: 'small',
+                      weight: 'bold',
+                      margin: 'small',
+                    }}
+                    text={MSG.labelAdminList}
+                  />
+                  <p className={styles.noCurrent}>
+                    <FormattedMessage {...MSG.noCurrentDomains} />
+                  </p>
+                </Fragment>
+              )}
+            </section>
+          </div>
+        </TabPanel>
+      </Tabs>
+    </div>
+  );
+};
 
 Organizations.displayName = displayName;
 

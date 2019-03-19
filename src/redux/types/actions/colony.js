@@ -21,7 +21,7 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| newAdmin: string, ensName: string |},
+    {| newAdmin: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_CONFIRM_ERROR: ErrorActionType<
@@ -30,21 +30,21 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_ADD_CONFIRM_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-    {| username: string |},
+    {| userAddress: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_ERROR,
-    WithKeyPathDepth1,
+    {| ...WithKeyPathDepth1, userAddress: string |},
   >,
   COLONY_ADMIN_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
-    {| adminData: Object, username: string |},
+    {| userAddress: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| colonyAddress: string, admin: Object, username: string |},
+    {| userAddress: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_CONFIRM_ERROR: ErrorActionType<
@@ -53,7 +53,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-    {| username: string |},
+    {| userAddress: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_ERROR: ErrorActionType<
@@ -62,7 +62,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
-    {| username: string |},
+    {| userAddress: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_FETCH: UniqueActionType<
@@ -182,7 +182,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_DOMAINS_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
-    { _id: string & DomainType }[],
+    DomainType[],
     WithKeyPathDepth1,
   >,
   COLONY_ENS_NAME_FETCH: UniqueActionType<

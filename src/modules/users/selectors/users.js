@@ -64,7 +64,7 @@ export const userAddressSelector = createSelector(
 /*
  * User getters
  */
-const getUsers = (state: RootStateRecord) =>
+export const getUsers = (state: RootStateRecord) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap());
 
 /*

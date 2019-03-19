@@ -4,7 +4,7 @@ import type { MessageDescriptor } from 'react-intl';
 import React from 'react';
 import nanoid from 'nanoid';
 
-import type { DataType, DomainType } from '~immutable';
+import type { DomainType } from '~immutable';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -17,7 +17,7 @@ type Props = {|
   /*
    * Array of domain data
    */
-  domains?: Array<DataType<DomainType>>,
+  domains?: Array<DomainType>,
   /*
    * Whether to show the remove button
    * Gets passed down to `DomainListItem`
@@ -31,7 +31,7 @@ type Props = {|
    * Method to call when removing the domain
    * Gets passed down to `DomainListItem`
    */
-  onRemove: (DataType<DomainType>) => any,
+  onRemove: DomainType => any,
 |};
 
 const displayName: string = 'admin.DomainList';

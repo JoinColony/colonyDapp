@@ -30,7 +30,7 @@ const MSG = defineMessages({
   },
 });
 
-const supFilter = (data, filterValue) => {
+const singleUserPickerFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
       user &&
@@ -89,7 +89,7 @@ const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
       transform={withKeyPath(ensName)(transformAction)}
       initialValues={{
         newAdmin: null,
-        ensName,
+        colonyENSName: ensName,
       }}
     >
       {({ status, isSubmitting, isValid }) => (
@@ -100,8 +100,11 @@ const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
               label={MSG.labelAddAdmins}
               placeholder={MSG.placeholderAddAdmins}
               itemComponent={ItemWithAddress}
-              data={availableUsers}
-              filter={supFilter}
+              data={availableUsers.map((user, index) => ({
+                ...user,
+                id: index,
+              }))}
+              filter={singleUserPickerFilter}
             />
           </div>
           <Button

@@ -25,9 +25,9 @@ const displayName = 'admin.DomainList.DomainListItem';
 type Props = {|
   contributions?: number,
   /*
-   * User data Object, follows the same format as UserPicker
+   * Domain data object, follows the same format as UserPicker
    */
-  domain: DataType<DomainType>,
+  domain: DomainType,
   viewOnly: boolean,
   /*
    * Method to call when clicking the remove button
@@ -37,15 +37,15 @@ type Props = {|
 |};
 
 const DomainListItem = ({
-  domain: { record },
+  domain,
   contributions,
   viewOnly = true,
   onRemove,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
-      <span className={styles.domainName} title={record && record.name}>
-        #{record && record.name}
+      <span className={styles.domainName} title={domain.name}>
+        #{domain.name}
       </span>
       {contributions && (
         <span className={styles.contributions}>

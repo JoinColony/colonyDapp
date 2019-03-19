@@ -26,7 +26,7 @@ const allDomainsReducer: ReducerType<
         payload: domains,
       } = action;
       return state.withMutations(mutable => {
-        domains.forEach(({ _id, ...domain }) => {
+        domains.forEach(({ id: _id, ...domain }) => {
           const id = parseInt(_id, 10);
           mutable.mergeIn(
             [ensName, id],
@@ -52,8 +52,7 @@ const allDomainsReducer: ReducerType<
       });
       return state.has(ensName)
         ? state.mergeDeepIn(keyPath, data)
-        : // $FlowFixMe some bullshit
-          state.set(ensName, ImmutableMap({ [ensName]: data }));
+        : state.mergeDeepIn([ensName], ImmutableMap({ [ensName]: data }));
     }
     default:
       return state;

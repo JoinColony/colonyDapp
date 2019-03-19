@@ -14,7 +14,7 @@ import { DialogActionButton } from '~core/Button';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { canEnterRecoveryMode } from '../../../users/selectors';
 import { networkVersionFetcher } from '../../../core/fetchers';
-import { isInRecoveryMode, canBeUpgraded } from '../../../dashboard/selectors';
+import { canBeUpgraded } from '../../../dashboard/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -128,7 +128,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           loading={isFetchingUserPermissions}
           disabled={
             !!userPermissionsError ||
-            given(colony, isInRecoveryMode) ||
+            colony.inRecoveryMode ||
             !given(permissions, canEnterRecoveryMode)
           }
         />

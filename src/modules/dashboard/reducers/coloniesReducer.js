@@ -14,6 +14,7 @@ const coloniesReducer: ReducerType<
   AllColoniesMap,
   {|
     COLONY_ADMIN_ADD_CONFIRM_SUCCESS: *,
+    COLONY_ADMIN_ADD_ERROR: *,
     COLONY_ADMIN_ADD_SUCCESS: *,
     COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: *,
     COLONY_ADMIN_REMOVE_SUCCESS: *,
@@ -66,7 +67,6 @@ const coloniesReducer: ReducerType<
         meta: { keyPath },
         payload: { hash },
       } = action;
-      // $FlowFixMe issue with keyPath
       return state.setIn([...keyPath, 'record', 'avatar'], hash);
     }
     case ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS: {
@@ -78,41 +78,43 @@ const coloniesReducer: ReducerType<
     case ACTIONS.COLONY_ADMIN_ADD_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: { adminData, username },
+        payload: { userAddress },
       } = action;
-      return state.setIn([...keyPath, 'record', 'admins', username], {
-        ...adminData.toJS(),
+      return state.mergeDeepIn([...keyPath, 'record', 'admins', userAddress], {
+        address: userAddress,
         state: 'pending',
       });
     }
     case ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: { username },
+        payload: { userAddress },
       } = action;
-      return state.setIn(
-        // $FlowFixMe
-        [...keyPath, 'record', 'admins', username, 'state'],
-        'confirmed',
-      );
+      return state.mergeDeepIn([...keyPath, 'record', 'admins', userAddress], {
+        status: 'confirmed',
+      });
     }
     case ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: { username },
+        payload: { userAddress },
       } = action;
-      return state.setIn(
-        // $FlowFixMe // issue with updating the admins map by value
-        [...keyPath, 'record', 'admins', username, 'status'],
-        'pending',
-      );
+      return state.mergeDeepIn([...keyPath, 'record', 'admins', userAddress], {
+        status: 'pending',
+      });
+    }
+    case ACTIONS.COLONY_ADMIN_ADD_ERROR: {
+      const {
+        meta: { keyPath, userAddress },
+      } = action;
+      return state.deleteIn([...keyPath, 'record', 'admins', userAddress]);
     }
     case ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: {
       const {
         meta: { keyPath },
-        payload: { username },
+        payload: { userAddress },
       } = action;
-      return state.deleteIn([...keyPath, 'record', 'admins', username]);
+      return state.deleteIn([...keyPath, 'record', 'admins', userAddress]);
     }
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {

@@ -7,35 +7,31 @@ import type { RootStateRecord } from '~immutable';
 
 import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 
-export const allDomainsSelector = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_DOMAINS], ImmutableMap());
+/*
+ * Getters
+ */
+const getColonyDomains = (state: RootStateRecord, ensName: string) =>
+  state.getIn([ns, DASHBOARD_ALL_DOMAINS, ensName], ImmutableMap());
+
+// TODO this is not yet needed; consider removing it?
+// export const singleDomainSelector = createSelector(
+//   colonyDomainsSelector,
+//   (state, props) => props.domainId,
+//   (domains, domainId) => domains.get(domainId),
+// );
 
 /*
- * Domains selectors
+ * Selectors
  */
+// eslint-disable-next-line import/prefer-default-export
 export const colonyDomainsSelector = createSelector(
-  allDomainsSelector,
-  (state, colonyENSName) => colonyENSName,
-  (allDomains, colonyENSName) => allDomains.get(colonyENSName),
-);
-
-export const singleDomainSelector = createSelector(
-  colonyDomainsSelector,
-  (state, props) => props.domainId,
-  (domains, domainId) => domains.get(domainId),
-);
-
-export const singleDomainTaskIdsSelector = createSelector(
-  singleDomainSelector,
-  domain => domain.get('taskIds'),
-);
-export const getColonyDomains = createSelector(
-  colonyDomainsSelector,
-  colonyDomains =>
-    (colonyDomains &&
-      colonyDomains
-        .filter(domain => domain.has('record')) // ensure they are loaded
-        .sortBy(domain => domain.getIn(['record', 'name']).toLowerCase())
-        .toList()) ||
-    List(),
+  getColonyDomains,
+  domains =>
+    domains
+      ? domains
+          .map(domain => domain.get('record'))
+          .filter(Boolean) // ensure they are loaded
+          .sortBy(({ name }) => name.toLowerCase()) // sort by name asc
+          .toList()
+      : List(),
 );
