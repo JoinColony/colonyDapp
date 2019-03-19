@@ -120,7 +120,10 @@ const NavigationWrapper = ({
         {!username && (
           <div className={styles.alertBanner}>
             <Alert
-              appearance={{ theme: 'danger' }}
+              appearance={{
+                theme: 'danger',
+                borderRadius: 'round',
+              }}
               text={MSG.mainnetAlert}
               isDismissible
             />
