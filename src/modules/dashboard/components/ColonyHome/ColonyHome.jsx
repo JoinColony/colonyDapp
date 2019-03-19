@@ -218,7 +218,6 @@ const ColonyHome = ({
             appearance={{ theme: 'primary', size: 'large' }}
             error={ACTIONS.TASK_CREATE_ERROR}
             loading={isFetchingPermissions}
-            onClick={() => 'unset'}
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
