@@ -34,7 +34,7 @@ type Appearance = {
   theme?: 'main' | 'transparent',
 };
 
-export type Props = {|
+type Props = {|
   /*
    * If disabled, the navigation bar won't render the back link
    */
