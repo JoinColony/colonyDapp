@@ -1,17 +1,33 @@
+.main {
+  padding-top: 146px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.paragraph {
+  margin-top: 1.5em;
+  font-size: var(--size-normal);
+}
+
 .finalContainer {
-  margin-top: 224px;
-  padding: 20px 30px;
-  height: 364px;
-  width: 500px;
-  border: 1px solid var(--temp-grey-0);
+  margin-top: 21px;
+  height: 269px;
+  width: 460px;
   border-radius: 5px;
   background: var(--colony-white);
+  box-shadow: 0px 2px 11px rgba(62, 118, 244, 0.14);
 }
 
 .cardRow {
   display: flex;
   justify-content: space-between;
-  margin: 50px 0;
+  flex-direction: column;
+  padding: 20px;
+  border-bottom: 1px solid var(--temp-grey-blue-4);
+}
+
+.cardRow:last-child {
+  border-bottom: none;
 }
 
 .cardElement {
@@ -21,5 +37,5 @@
 .buttons {
   display: flex;
   justify-content: flex-end;
-  margin-top: 48px;
+  margin-top: 22px;
 }

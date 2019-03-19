@@ -3,11 +3,11 @@
 }
 
 .content {
+  margin-top: 155px;
   width: 340px;
 }
 
 .title {
-  margin-top: 124px;
   margin-bottom: 28px;
   font-weight: var(--weight-medium);
 }
