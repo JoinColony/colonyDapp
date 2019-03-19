@@ -17,9 +17,19 @@ const stepArray = [
   StepUserENSName,
   StepColonyENSName,
   StepTokenChoice,
+  StepCreateToken,
   StepConfirmAll,
   StepCreateTransaction,
 ];
+
+/* const stepArray = [
+  StepConfirmAll,
+  StepUserENSName,
+  StepColonyENSName,
+  StepTokenChoice,
+  StepCreateToken,
+  StepCreateTransaction,
+]; */
 
 type StepValues = {
   tokenChoice: 'create' | 'select',
