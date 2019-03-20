@@ -8,35 +8,22 @@ import { Manager, Reference, Popper } from 'react-popper';
 import { injectIntl } from 'react-intl';
 import nanoid from 'nanoid';
 
-import type { ReactRef } from './types';
+import type {
+  PopoverAppearanceType,
+  PopoverPlacementType,
+  PopoverTriggerType,
+  ReactRef,
+} from './types';
 
-// eslint-disable-next-line import/no-cycle
 import PopoverWrapper from './PopoverWrapper.jsx';
 
-export type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
-
-// This might be an eslint hiccup. Don't know where this is unused
-// eslint-disable-next-line react/no-unused-prop-types
 type RefObj = { ref: ReactRef };
-
-export type Appearance = {
-  theme: 'dark' | 'grey',
-};
-
-export type PopoverTrigger = ({
-  ref: ReactRef,
-  id: string,
-  isOpen: boolean,
-  open: () => void,
-  close: () => void,
-  toggle: () => void,
-}) => ReactNode;
 
 // Left intentionally unsealed (passing props)
 export type Props = {
-  appearance?: Appearance,
+  appearance?: PopoverAppearanceType,
   /** Child element to trigger the popover */
-  children: React$Element<*> | PopoverTrigger,
+  children: React$Element<*> | PopoverTriggerType,
   /** Whether the popover should close when clicking anywhere */
   closeOnOutsideClick?: boolean,
   /** Popover content */
@@ -53,7 +40,7 @@ export type Props = {
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number,
   /** Popover placement */
-  placement?: Placement,
+  placement?: PopoverPlacementType,
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   popperProps?: Object,
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */

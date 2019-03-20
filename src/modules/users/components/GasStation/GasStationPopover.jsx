@@ -3,7 +3,7 @@
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
 import React, { useEffect, useMemo, useState } from 'react';
 
-import type { PopoverTrigger } from '~core/Popover';
+import type { PopoverTriggerType } from '~core/Popover';
 
 import Popover from '~core/Popover';
 
@@ -16,7 +16,7 @@ import GasStationContent from './GasStationContent';
 
 type Props = {|
   transactionGroups: Array<TransactionGroup>,
-  children: React$Element<*> | PopoverTrigger,
+  children: React$Element<*> | PopoverTriggerType,
 |};
 
 const GasStationPopover = ({ children, transactionGroups }: Props) => {

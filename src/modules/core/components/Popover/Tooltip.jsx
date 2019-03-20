@@ -5,13 +5,11 @@ import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
 
-import type { ReactRef } from './types';
+import type { PopoverPlacementType, ReactRef } from './types';
 
 import Popover from './Popover.jsx';
 
 import styles from './Tooltip.css';
-
-type Placement = 'auto' | 'top' | 'right' | 'bottom' | 'left';
 
 type Props = {|
   /** Child element to trigger the popover */
@@ -21,7 +19,7 @@ type Props = {|
   /** How the popover gets triggered */
   trigger: 'hover' | 'click' | 'disabled',
   /** The tooltips' placement */
-  placement?: Placement,
+  placement?: PopoverPlacementType,
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   popperProps?: Object,
   /** Whether there should be an arrow on the tooltip */
