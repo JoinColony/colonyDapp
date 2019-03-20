@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 240px;
+  width: 24%;
 }
 
 .cardHeading {
