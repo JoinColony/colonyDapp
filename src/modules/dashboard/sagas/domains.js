@@ -160,7 +160,7 @@ function* colonyDomainsFetch({
 }: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
   try {
     const context = yield* getColonyContext(colonyENSName);
-    const domains = yield call(executeQuery, context, getColonyDomains);
+    const domains = yield* executeQuery(context, getColonyDomains);
     /*
      * Dispatch the success action.
      */

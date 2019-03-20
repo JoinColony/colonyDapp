@@ -7,7 +7,7 @@ import React, { Fragment, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
-import type { ColonyType, UserPermissionsType } from '~immutable';
+import type { ColonyType, DomainType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useFeatureFlags, useReduxState } from '~utils/hooks';
@@ -21,7 +21,7 @@ import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { colonyFetcher, useDomainsFetcher } from '../../fetchers';
+import { colonyFetcher, domainsFetcher } from '../../fetchers';
 import {
   canCreateTask,
   currentUserAddressSelector,
@@ -128,8 +128,9 @@ const ColonyHome = ({
     [ensName],
     [ensName],
   );
-
-  const colonyDomains = useDomainsFetcher(ensName);
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[],
+  >(domainsFetcher, [ensName], [ensName]);
 
   const walletAddress = useReduxState(currentUserAddressSelector);
 
@@ -137,7 +138,7 @@ const ColonyHome = ({
     return <Redirect to="/404" />;
   }
 
-  if (!colony || isFetchingColony) {
+  if (!colony || !domains || isFetchingColony || isFetchingDomains) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -228,7 +229,7 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.allDomains} />
             </Button>
           </li>
-          {colonyDomains.map(({ name, id }) => (
+          {domains.map(({ name, id }) => (
             <li key={`domain_${id}`}>
               <Button
                 className={getActiveDomainFilterClass(id, filteredDomainId)}

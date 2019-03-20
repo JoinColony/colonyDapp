@@ -4,6 +4,7 @@ import type {
   Collection as CollectionType,
   Map as ImmutableMapType,
   List as ListType,
+  Set as ImmutableSetType,
   RecordOf,
 } from 'immutable';
 
@@ -11,7 +12,7 @@ import type { ENSName } from '~types';
 import type { AllColoniesRecord } from './AllColonies';
 import type { AllTokensRecord } from './AllTokens';
 import type { DataRecordType } from '../../Data';
-import type { DomainId, DomainRecordType } from '../../Domain';
+import type { DomainRecordType } from '../../Domain';
 import type { TaskCommentRecordType } from '../../TaskComment';
 import type { TaskDraftId } from '../../Task';
 import type { TaskReferenceRecordType } from '../../TaskReference';
@@ -19,13 +20,10 @@ import type { TaskReferenceRecordType } from '../../TaskReference';
 export * from './AllColonies';
 export * from './AllTokens';
 
-export type DomainsMap = ImmutableMapType<
-  DomainId,
-  DataRecordType<DomainRecordType>,
->;
+export type DomainsSet = ImmutableSetType<DomainRecordType>;
 export type AllDomainsMap = ImmutableMapType<
   ENSName,
-  DataRecordType<DomainsMap>,
+  DataRecordType<DomainsSet>,
 >;
 export type CommentsList = ListType<TaskCommentRecordType>;
 export type AllCommentsMap = ImmutableMapType<TaskDraftId, CommentsList>;

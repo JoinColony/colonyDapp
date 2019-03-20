@@ -361,6 +361,7 @@ export const getColonyDomains: ColonyQuery<void, DomainType[]> = ({
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
+
     return colonyStore
       .all()
       .filter(({ type }) => type === DOMAIN_CREATED)

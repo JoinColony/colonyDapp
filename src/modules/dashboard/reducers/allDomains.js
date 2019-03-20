@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
 import { DomainRecord, DataRecord } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
@@ -9,14 +9,16 @@ import { ACTIONS } from '~redux';
 import type { AllDomainsMap, DomainRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
 
-const allDomainsReducer: ReducerType<
-  AllDomainsMap,
-  {|
-    COLONY_DOMAINS_FETCH_SUCCESS: *,
-    DOMAIN_CREATE_SUCCESS: *,
-    DOMAIN_FETCH_SUCCESS: *,
-  |},
-> = (state = ImmutableMap(), action) => {
+type DomainActions = {
+  COLONY_DOMAINS_FETCH: *,
+  COLONY_DOMAINS_FETCH_SUCCESS: *,
+  COLONY_DOMAINS_FETCH_ERROR: *,
+};
+
+const allDomainsReducer: ReducerType<AllDomainsMap, DomainActions> = (
+  state = ImmutableMap(),
+  action,
+) => {
   switch (action.type) {
     case ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
@@ -25,41 +27,19 @@ const allDomainsReducer: ReducerType<
         },
         payload: domains,
       } = action;
-      return state.withMutations(mutable => {
-        domains.forEach(({ id: _id, ...domain }) => {
-          const id = parseInt(_id, 10);
-          mutable.mergeIn(
-            [ensName, id],
-            DataRecord<DomainRecordType>({
-              record: DomainRecord({ id, ...domain }),
-            }),
-          );
-        });
-        return mutable;
-      });
-    }
-    case ACTIONS.DOMAIN_CREATE_SUCCESS:
-    case ACTIONS.DOMAIN_FETCH_SUCCESS: {
-      const {
-        meta: {
-          keyPath: [ensName],
-          keyPath,
-        },
-        payload,
-      } = action;
-      const data = DataRecord<DomainRecordType>({
-        record: DomainRecord(payload),
-      });
-      return state.has(ensName)
-        ? state.mergeDeepIn(keyPath, data)
-        : state.mergeDeepIn([ensName], ImmutableMap({ [ensName]: data }));
+      return state.set(
+        ensName,
+        DataRecord({
+          record: ImmutableSet(domains.map(domain => DomainRecord(domain))),
+        }),
+      );
     }
     default:
       return state;
   }
 };
 
-export default withDataRecordMap<AllDomainsMap, DomainRecordType>(
-  ACTIONS.DOMAIN_FETCH,
+export default withDataRecordMap<AllDomainsMap, ImmutableSet<DomainRecordType>>(
+  ACTIONS.COLONY_DOMAINS_FETCH,
   ImmutableMap(),
 )(allDomainsReducer);

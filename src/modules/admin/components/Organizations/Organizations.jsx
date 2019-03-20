@@ -4,14 +4,16 @@ import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { ENSName } from '~types';
+import type { DomainType } from '~immutable';
 
+import { ACTIONS } from '~redux';
+import { useDataFetcher, useReduxState } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
-import { ACTIONS } from '~redux';
-import { useReduxState } from '~utils/hooks';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import { colonyAdminsSelector } from '../../../dashboard/selectors';
-import { useDomainsFetcher } from '../../../dashboard/fetchers';
+import { domainsFetcher } from '../../../dashboard/fetchers';
 
 import UserList from '../UserList';
 import DomainList from '../DomainList';
@@ -67,7 +69,14 @@ type Props = {|
 
 const Organizations = ({ ensName }: Props) => {
   const admins = useReduxState(colonyAdminsSelector, [ensName]);
-  const domains = useDomainsFetcher(ensName);
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[],
+  >(domainsFetcher, [ensName], [ensName]);
+
+  if (!domains || isFetchingDomains) {
+    return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
+  }
+
   return (
     <div className={styles.main}>
       <Tabs>
