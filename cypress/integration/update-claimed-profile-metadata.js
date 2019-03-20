@@ -40,12 +40,9 @@ describe('Update Claim Profile Metadata', () => {
   /*
    * Update profile metadata
    */
-
-  it('Go to the User Profile Settings', () => {
-    cy.goToUserProfileSettings();
-  });
-
   it('Update the User Profile Values', () => {
+    cy.goToUserProfileSettings();
+
     cy.fixture('users').then(({ displayName, bio, website, location }) => {
       /*
        * @NOTE We clear all inputs before typing in data
@@ -66,22 +63,20 @@ describe('Update Claim Profile Metadata', () => {
     });
     cy.get('button[data-test="userSettingsSubmit"]')
       .click()
-      .wait(2000);
+      /*
+       * Wait for the dataFetcher cache to invalidate,
+       * otherwise we might get erroneous data
+       */
+      .wait(11000);
   });
 
   /*
    * Check the updated profile metadata
    */
-  it('Go to the User Profile', () => {
-    cy.goToUserProfile();
-  });
-
   it('Check the Updated User Profile Values', () => {
+    cy.goToUserProfile();
+
     cy.fixture('users').then(({ displayName, bio, website, location }) => {
-      /*
-       * @NOTE We clear all inputs before typing in data
-       * This is just so you can run the test multiple types w/o concatenating it
-       */
       cy.get('h2[data-test="userProfileName"]')
         .should('exist')
         .should('contain', displayName);
@@ -100,12 +95,9 @@ describe('Update Claim Profile Metadata', () => {
   /*
    * Update the avatar
    */
-
-  it('Go to the User Profile Settings', () => {
-    cy.goToUserProfileSettings();
-  });
-
   it('Update the User Avatar', () => {
+    cy.goToUserProfileSettings();
+
     cy.get('div[data-test="avatarUploaderDrop"]').uploadAvatar(
       'jolly-roger.jpeg',
     );
@@ -119,6 +111,9 @@ describe('Update Claim Profile Metadata', () => {
     );
   });
 
+  /*
+   * Remove the Avatar
+   */
   it('Remove the current User Avatar', () => {
     cy.goToUserProfileSettings();
 
