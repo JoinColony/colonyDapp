@@ -8,10 +8,12 @@ import { CONTEXT, getContext } from '~context';
 
 import { putError, executeCommand, executeQuery } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
-import { taskSelector, taskStorePropsSelector } from '~redux/selectors';
+import {
+  allColonyENSNames,
+  taskSelector,
+  taskStorePropsSelector,
+} from '../selectors';
 import { currentUserMetadataSelector } from '../../users/selectors';
-
-import { allColonyENSNames } from '../selectors';
 
 import {
   assignWorker,

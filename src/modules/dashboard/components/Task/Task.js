@@ -14,7 +14,7 @@ import {
   taskFeedItemsSelector,
   isTaskManager,
   isTaskWorker,
-} from '~redux/selectors';
+} from '../../selectors';
 
 import Task from './Task.jsx';
 

@@ -15,8 +15,6 @@ import { CORE_NAMESPACE } from './modules/core/constants';
 import { DASHBOARD_NAMESPACE } from './modules/dashboard/constants';
 import { USERS_NAMESPACE } from './modules/users/constants';
 
-import { tasksReducer } from './redux/reducers';
-
 const createRootReducer = (history: *) =>
   combineReducers(
     {
@@ -25,7 +23,6 @@ const createRootReducer = (history: *) =>
       [DASHBOARD_NAMESPACE]: dashboardReducer,
       [USERS_NAMESPACE]: usersReducer,
       router: connectRouter(history),
-      tasks: tasksReducer,
     },
     RootState,
   );

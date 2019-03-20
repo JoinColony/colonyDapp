@@ -5,13 +5,12 @@ import { createSelector } from 'reselect';
 
 import type { RootStateRecord, TaskDraftId, TaskUserType } from '~immutable';
 
-import { currentUserAddressSelector } from '../../modules/users/selectors';
-import {
-  USERS_CURRENT_USER,
-  USERS_NAMESPACE,
-} from '../../modules/users/constants';
 import { TASK_STATE } from '~immutable/constants';
 import { addressEquals } from '~utils/strings';
+
+import { DASHBOARD_NAMESPACE as ns, DASHBOARD_TASKS } from '../constants';
+import { currentUserAddressSelector } from '../../users/selectors';
+import { USERS_CURRENT_USER, USERS_NAMESPACE } from '../../users/constants';
 
 /*
  * Utils
@@ -28,20 +27,18 @@ const getDraftIdFromProps = (
   { draftId }: { draftId: TaskDraftId },
 ) => draftId;
 
-// TODO use constant for 'tasks'
 const getTaskRefs = (state: RootStateRecord) =>
-  state.get('tasks', ImmutableMap());
+  state.getIn([ns, DASHBOARD_TASKS], ImmutableMap());
 
-// TODO use constants
 const getUserOpenDraftIds = (state: RootStateRecord) =>
   state.getIn(
-    [USERS_NAMESPACE, USERS_CURRENT_USER, 'tasks', 'record', 'closed'],
+    [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'closed'],
     ImmutableSet(),
   );
 
 const getUserClosedDraftIds = (state: RootStateRecord) =>
   state.getIn(
-    [USERS_NAMESPACE, USERS_CURRENT_USER, 'tasks', 'record', 'open'],
+    [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'open'],
     ImmutableSet(),
   );
 
