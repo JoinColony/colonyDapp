@@ -118,4 +118,19 @@ describe('Update Claim Profile Metadata', () => {
       'jolly-roger.jpeg',
     );
   });
+
+  it('Remove the current User Avatar', () => {
+    cy.goToUserProfileSettings();
+
+    cy.get('button[data-test="avatarUploaderRemove"]').click();
+  });
+
+  it('Check that the Avatar was actually removed', () => {
+    cy.goToUserProfile();
+
+    cy.get('div[data-test="userProfileAvatar"] div figure div').checkImage(
+      'blockie_0xb77D57F4959eAfA0339424b83FcFaf9c15407461.png',
+      'image/png',
+    );
+  });
 });
