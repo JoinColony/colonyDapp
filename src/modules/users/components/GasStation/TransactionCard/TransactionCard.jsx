@@ -7,7 +7,11 @@ import Heading from '~core/Heading';
 import Card from '~core/Card';
 
 import type { TransactionGroup } from '../transactionGroup';
-import { getGroupKey, getGroupStatus } from '../transactionGroup';
+import {
+  getGroupKey,
+  getGroupStatus,
+  getGroupValues,
+} from '../transactionGroup';
 
 import styles from './TransactionCard.css';
 
@@ -31,6 +35,7 @@ class TransactionCard extends Component<Props> {
     const { transactionGroup, onClick } = this.props;
     const groupKey = getGroupKey(transactionGroup);
     const status = getGroupStatus(transactionGroup);
+    const values = getGroupValues(transactionGroup);
     return (
       <Card className={styles.main}>
         <button
@@ -44,8 +49,12 @@ class TransactionCard extends Component<Props> {
               <Heading
                 appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
                 text={{ id: `transaction.${groupKey}.title` }}
+                textValues={values.params}
               />
-              <FormattedMessage id={`transaction.${groupKey}.description`} />
+              <FormattedMessage
+                id={`transaction.${groupKey}.description`}
+                values={values.params}
+              />
             </div>
             {/* TODO-multisig: how do we pass it in here? */}
             <TransactionStatus

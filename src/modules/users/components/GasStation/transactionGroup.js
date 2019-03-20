@@ -24,6 +24,11 @@ export const getActiveTransactionIdx = (txGroup: TransactionGroup) => {
   return txGroup.findIndex(tx => tx.status === 'ready');
 };
 
+// Get transaction values to show in title or description
+export const getGroupValues = (txGroup: TransactionGroup) =>
+  // For now, just returns the first transaction if we have one
+  txGroup[0];
+
 // Get the joint status of the group
 export const getGroupStatus = (txGroup: TransactionGroup) => {
   if (txGroup.some(tx => tx.status === 'failed')) return 'failed';
