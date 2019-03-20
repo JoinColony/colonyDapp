@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
-import { useReduxState } from '~utils/hooks';
+import { useSelector } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
@@ -49,7 +49,7 @@ type Props = {|
 |};
 
 const ColonyMeta = ({ colony, canAdminister }: Props) => {
-  const admins = useReduxState(colonyAdminsSelector, [colony.ensName]);
+  const admins = useSelector(colonyAdminsSelector, [colony.ensName]);
 
   const {
     address,

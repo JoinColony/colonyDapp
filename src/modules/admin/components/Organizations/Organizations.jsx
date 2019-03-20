@@ -7,7 +7,7 @@ import type { ENSName } from '~types';
 import type { DomainType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useReduxState } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -68,7 +68,7 @@ type Props = {|
 |};
 
 const Organizations = ({ ensName }: Props) => {
-  const admins = useReduxState(colonyAdminsSelector, [ensName]);
+  const admins = useSelector(colonyAdminsSelector, [ensName]);
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
   >(domainsFetcher, [ensName], [ensName]);

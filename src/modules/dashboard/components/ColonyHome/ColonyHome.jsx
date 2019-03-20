@@ -10,7 +10,7 @@ import { Redirect } from 'react-router';
 import type { ColonyType, DomainType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useFeatureFlags, useReduxState } from '~utils/hooks';
+import { useDataFetcher, useFeatureFlags, useSelector } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -132,7 +132,7 @@ const ColonyHome = ({
     DomainType[],
   >(domainsFetcher, [ensName], [ensName]);
 
-  const walletAddress = useReduxState(currentUserAddressSelector);
+  const walletAddress = useSelector(currentUserAddressSelector);
 
   if (!ensName || colonyError) {
     return <Redirect to="/404" />;
