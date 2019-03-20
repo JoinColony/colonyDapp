@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import type { UserType } from '~immutable';
 

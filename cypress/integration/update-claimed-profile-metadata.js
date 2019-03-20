@@ -7,7 +7,7 @@ describe('Update Claim Profile Metadata', () => {
 
   it('Select the second account and Log in', () => {
     /*
-     * Click on the Button disquised as a Select
+     * Click on the Button disguised as a Select
      */
     cy.get('button[data-test="trufflepigAccountSelector"]').click();
     /*
