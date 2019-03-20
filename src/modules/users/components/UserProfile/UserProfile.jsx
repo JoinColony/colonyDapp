@@ -30,7 +30,7 @@ const UserProfileTemplate = ({ address }: { address: string }) => {
     userFetcher,
     userArgs,
     userArgs,
-    { ttl: 1000 * 10 },
+    { ttl: 1000 },
   );
 
   return user ? (
