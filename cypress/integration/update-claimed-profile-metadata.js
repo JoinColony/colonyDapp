@@ -64,7 +64,9 @@ describe('Update Claim Profile Metadata', () => {
         .clear()
         .type(location);
     });
-    cy.get('button[data-test="userSettingsSubmit"]').click();
+    cy.get('button[data-test="userSettingsSubmit"]')
+      .click()
+      .wait(2000);
   });
 
   /*
@@ -112,7 +114,7 @@ describe('Update Claim Profile Metadata', () => {
   it('Check uploaded Avatar', () => {
     cy.goToUserProfile();
 
-    cy.get('div[data-test="userProfileAvatar"] figure div').checkImage(
+    cy.get('div[data-test="userProfileAvatar"] div figure div').checkImage(
       'jolly-roger.jpeg',
     );
   });

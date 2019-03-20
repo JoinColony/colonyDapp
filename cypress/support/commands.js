@@ -77,9 +77,9 @@ Cypress.Commands.add(
         cy
           .wrap(selector)
           .should(
-            'have.css',
-            'background-image',
-            `url("data:image/jpeg;base64,/${base64image}");`,
+            'have.attr',
+            'style',
+            `background-image: url("data:image/jpeg;base64,${base64image}");`,
           ),
       ),
 );
