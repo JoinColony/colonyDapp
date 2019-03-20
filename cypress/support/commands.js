@@ -70,7 +70,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'checkImage',
   { prevSubject: 'element' },
-  (selector, fileName) =>
+  (selector, fileName, optionalType = 'image/jpeg') =>
     cy
       .fixture(fileName, 'base64')
       .then(base64image =>
@@ -79,7 +79,7 @@ Cypress.Commands.add(
           .should(
             'have.attr',
             'style',
-            `background-image: url("data:image/jpeg;base64,${base64image}");`,
+            `background-image: url("data:${optionalType};base64,${base64image}");`,
           ),
       ),
 );
