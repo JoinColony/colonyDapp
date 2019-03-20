@@ -32,7 +32,7 @@
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
     "transaction.network.registerUserLabel.title": "Your first transaction",
-    "transaction.network.registerUserLabel.description": "Confirm Your Username",
+    "transaction.network.registerUserLabel.description": "Confirm Your Username '{username}'",
 
     "transaction.group.createTask.title": "Create Task",
     "transaction.group.createTask.description": "Create Task",
@@ -81,9 +81,9 @@
     "transaction.colony.claimColonyFunds.title": "Claim Pending Transactions",
     "transaction.colony.claimColonyFunds.description": "Claim Pending Transactions",
     "transaction.colony.setAdminRole.title": "Add Admin",
-    "transaction.colony.setAdminRole.description": "Add Admin",
+    "transaction.colony.setAdminRole.description": "Add Admin ({ user })",
     "transaction.colony.removeAdminRole.title": "Remove Admin",
-    "transaction.colony.removeAdminRole.description": "Remove Admin",
+    "transaction.colony.removeAdminRole.description": "Remove Admin ({ user })",
     "transaction.colony.addDomain.title": "Create Domain",
     "transaction.colony.addDomain.description": "Create Domain"
   }
