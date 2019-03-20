@@ -138,13 +138,13 @@ const ColonyMeta = ({ colony, canAdminister }: Props) => {
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.adminsLabel}
           />
-          {admins.map(({ walletAddress, username, displayName }, index) => (
+          {admins.map(({ walletAddress, username, displayName }) => (
             <UserAvatar
               address={walletAddress}
               className={styles.userAvatar}
               displayName={displayName}
               hasUserInfo
-              key={`admin_${index + 1}`}
+              key={walletAddress}
               username={username}
             />
           ))}
