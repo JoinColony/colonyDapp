@@ -15,7 +15,7 @@ const {
   TOKEN_INFO_ADDED,
 } = COLONY_EVENT_TYPES;
 
-export const getColonyTasksReducer: EventReducer<
+export const colonyTasksReducer: EventReducer<
   {
     [draftId: string]: {|
       commentsStoreAddress: string,
@@ -44,7 +44,7 @@ export const getColonyTasksReducer: EventReducer<
   }
 };
 
-export const getColonyAvatarReducer: EventReducer<
+export const colonyAvatarReducer: EventReducer<
   null | {| ipfsHash: string, avatar: string |},
   {| AVATAR_UPLOADED: *, AVATAR_REMOVED: * |},
 > = (colony, event) => {
@@ -64,9 +64,8 @@ export const getColonyAvatarReducer: EventReducer<
   }
 };
 
-export const getColonyReducer: EventReducer<
-  // XXX $Shape is used because some events lack the required props
-  {| colony: $Shape<ColonyType>, tokens: $Shape<TokenType>[] |},
+export const colonyReducer: EventReducer<
+  {| colony: ColonyType, tokens: TokenType[] |},
   {|
     AVATAR_REMOVED: *,
     AVATAR_UPLOADED: *,

@@ -23,7 +23,7 @@ const {
 } = TASK_EVENT_TYPES;
 
 // eslint-disable-next-line import/prefer-default-export
-export const getTaskReducer: EventReducer<
+export const taskReducer: EventReducer<
   // TODO flow types, mo problems - should be fixed in #965
   // {|
   //   amountPaid: string,

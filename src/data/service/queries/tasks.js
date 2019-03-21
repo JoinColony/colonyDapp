@@ -11,7 +11,7 @@ import type {
 } from '../../types';
 
 import { getTaskStore } from '../../stores';
-import { getTaskReducer } from '../reducers';
+import { taskReducer } from '../reducers';
 import { TASK_EVENT_TYPES } from '../../constants';
 
 export type TaskQueryContext = ContextWithMetadata<
@@ -43,7 +43,7 @@ export const getTask: TaskQuery<*, *> = ({
     return taskStore
       .all()
       .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
-      .reduce(getTaskReducer, {
+      .reduce(taskReducer, {
         // TODO get these defaults from some model elsewhere? See #965
         amountPaid: undefined,
         commentsStoreAddress: '', // XXX Just to appease flow; it'll be there

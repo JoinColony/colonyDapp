@@ -32,9 +32,9 @@ import { getColonyStore } from '../../stores';
 import { COLONY_EVENT_TYPES } from '../../constants';
 import { getUserProfile } from './users';
 import {
-  getColonyAvatarReducer,
-  getColonyReducer,
-  getColonyTasksReducer,
+  colonyAvatarReducer,
+  colonyReducer,
+  colonyTasksReducer,
 } from '../reducers';
 
 const {
@@ -257,7 +257,7 @@ export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
 
 export const getColony: ColonyQuery<
   void,
-  { colony: $Shape<ColonyType>, tokens: $Shape<TokenType>[] },
+  { colony: ColonyType, tokens: TokenType[] },
 > = ({
   ddb,
   colonyClient,
@@ -282,7 +282,7 @@ export const getColony: ColonyQuery<
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
       .reduce(
-        getColonyReducer,
+        colonyReducer,
         // TODO: Add the right defaults here using a data model or something like that
         {
           colony: {
@@ -317,7 +317,7 @@ export const getColonyAvatar: ColonyQuery<
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-      .reduce(getColonyAvatarReducer, null);
+      .reduce(colonyAvatarReducer, null);
   },
 });
 
@@ -347,7 +347,7 @@ export const getColonyTasks: ColonyQuery<
         ({ type }) =>
           type === TASK_STORE_REGISTERED || type === TASK_STORE_UNREGISTERED,
       )
-      .reduce(getColonyTasksReducer, {});
+      .reduce(colonyTasksReducer, {});
   },
 });
 

@@ -210,7 +210,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_SUCCESS,
-    { colony: $Shape<ColonyType>, tokens: $Shape<TokenType>[] },
+    { colony: ColonyType, tokens: TokenType[] },
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_TRANSACTIONS: ActionTypeWithMeta<
