@@ -3,6 +3,7 @@
 import type { Saga } from 'redux-saga';
 
 import {
+  all,
   call,
   delay,
   fork,
@@ -387,29 +388,31 @@ function* colonyFetch({
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
       meta,
-      payload,
+      payload, // TODO this should probably only use `colony` from the query
     });
 
     const {
-      colony: { address: colonyAddress, tokens },
+      colony: { address: colonyAddress, tokens = {} },
     } = payload;
 
     // dispatch actions to fetch info and balances for each colony token
-    yield* Object.keys(tokens || {}).reduce(
-      (acc, tokenAddress) => [
-        ...acc,
-        put<Action<typeof ACTIONS.TOKEN_INFO_FETCH>>({
-          type: ACTIONS.TOKEN_INFO_FETCH,
-          meta: { id: nanoid() },
-          payload: { tokenAddress },
-        }),
-        put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
-          type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-          meta: { keyPath: [ensName, tokenAddress] },
-          payload: { colonyAddress },
-        }),
-      ],
-      [],
+    yield all(
+      Object.keys(tokens).reduce(
+        (effects, tokenAddress) => [
+          ...effects,
+          put<Action<typeof ACTIONS.TOKEN_INFO_FETCH>>({
+            type: ACTIONS.TOKEN_INFO_FETCH,
+            meta: { id: nanoid() },
+            payload: { tokenAddress },
+          }),
+          put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
+            type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+            meta: { keyPath: [ensName, tokenAddress] },
+            payload: { colonyAddress },
+          }),
+        ],
+        [],
+      ),
     );
   } catch (error) {
     yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
