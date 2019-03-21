@@ -65,7 +65,7 @@ export type ColonyActionTypes = {|
     {| userAddress: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
-  COLONY_AVATAR_FETCH: UniqueActionType<
+  COLONY_AVATAR_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_AVATAR_FETCH,
     void,
     WithKeyPathDepth1,
@@ -74,7 +74,7 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_AVATAR_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
-  COLONY_AVATAR_FETCH_SUCCESS: UniqueActionType<
+  COLONY_AVATAR_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
     {| hash: string, avatarData: string |},
     WithKeyPathDepth1,
@@ -171,7 +171,7 @@ export type ColonyActionTypes = {|
     void,
     void,
   >,
-  COLONY_DOMAINS_FETCH: UniqueActionType<
+  COLONY_DOMAINS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_DOMAINS_FETCH,
     void,
     WithKeyPathDepth1,
@@ -180,12 +180,12 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_DOMAINS_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
-  COLONY_DOMAINS_FETCH_SUCCESS: UniqueActionType<
+  COLONY_DOMAINS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
     DomainType[],
     WithKeyPathDepth1,
   >,
-  COLONY_ENS_NAME_FETCH: UniqueActionType<
+  COLONY_ENS_NAME_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ENS_NAME_FETCH,
     void,
     WithKeyPathDepth1,
@@ -194,7 +194,7 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_ENS_NAME_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
-  COLONY_ENS_NAME_FETCH_SUCCESS: UniqueActionType<
+  COLONY_ENS_NAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS,
     string,
     WithKeyPathDepth1,
