@@ -2,12 +2,14 @@
 
 import type { Saga } from 'redux-saga';
 import type { Action } from '~redux';
+
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
+import nanoid from 'nanoid';
 
 import { CONTEXT, getContext } from '~context';
-
 import { putError, executeCommand, executeQuery } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
+
 import {
   allColonyENSNames,
   taskSelector,
@@ -557,7 +559,6 @@ function* taskFetchComments({
 function* taskCommentAdd({
   payload: { draftId, commentData, colonyENSName },
   meta,
-  meta: { id },
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
     const context = yield call(getTaskCommentsStoreContext, draftId);
@@ -572,7 +573,7 @@ function* taskCommentAdd({
     yield* executeCommand(context, postComment, {
       signature,
       content: {
-        id, // TODO why use the action ID here rather than a new nanoid?
+        id: nanoid(),
         author: wallet.address,
         ...commentData,
       },
