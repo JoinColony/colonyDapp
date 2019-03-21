@@ -22,7 +22,6 @@ const userProfileStore: StoreBlueprint = {
     location: yup.string(),
     metadataStoreAddress: yup.string(),
     inboxStoreAddress: yup.string(),
-    tokens: yup.array().of(yup.string().address()),
   }),
   type: ValidatedKVStore,
 };

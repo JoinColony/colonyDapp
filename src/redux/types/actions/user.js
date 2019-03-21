@@ -4,6 +4,7 @@ import type { ENSName, WithKeyPathDepth1 } from '~types';
 import type {
   ContractTransactionType,
   TaskReferenceType,
+  TokenReferenceType,
   UserMetadataType,
   UserProfileType,
 } from '~immutable';
@@ -59,6 +60,17 @@ export type UserActionTypes = {|
     typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
     {|
       transactions: ContractTransactionType[],
+    |},
+  >,
+  USER_TOKENS_FETCH: ActionType<typeof ACTIONS.USER_TOKENS_FETCH>,
+  USER_TOKENS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_TOKENS_FETCH_ERROR,
+    void,
+  >,
+  USER_TOKENS_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TOKENS_FETCH_SUCCESS,
+    {|
+      tokens: TokenReferenceType[],
     |},
   >,
   // In the future we could specify in the payload which permission(s) we would like to fetch

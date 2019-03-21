@@ -7,6 +7,7 @@ import type { EventReducer } from '../../types';
 const {
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
+  TOKEN_ADDED,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
@@ -50,5 +51,23 @@ export const getUserColoniesReducer: EventReducer<
     }
     default:
       return userColonies;
+  }
+};
+
+export const getUserTokensReducer: EventReducer<
+  string[],
+  {|
+    TOKEN_ADDED: *,
+    // TOKEN_REMOVED: *,
+  |},
+> = (userTokens, event) => {
+  switch (event.type) {
+    case TOKEN_ADDED: {
+      const { address } = event.payload;
+      return [...userTokens, address];
+    }
+    // TODO: TOKEN_REMOVED
+    default:
+      return userTokens;
   }
 };

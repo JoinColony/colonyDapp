@@ -37,6 +37,8 @@ import {
   getUserColonyTransactions,
   getUserPermissions,
   getUserProfile,
+  getUserTokens,
+  getUserMetadataStoreAddress,
 } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -356,12 +358,49 @@ function* userPermissionsFetch({
   }
 }
 
+function* userTokensFetch(
+  // eslint-disable-next-line no-unused-vars
+  action: Action<typeof ACTIONS.USER_TOKENS_FETCH>,
+): Saga<void> {
+  try {
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const walletAddress = yield select(currentUserAddressSelector);
+    // TODO: refactor this into its own function
+    const userMetadataStoreAddress = yield* executeQuery(
+      {
+        ddb,
+        metadata: {
+          walletAddress,
+        },
+      },
+      getUserMetadataStoreAddress,
+    );
+    const context = {
+      ddb,
+      networkClient,
+      metadata: {
+        walletAddress,
+        userMetadataStoreAddress,
+      },
+    };
+    const tokens = yield* executeQuery(context, getUserTokens);
+    yield put<Action<typeof ACTIONS.USER_TOKENS_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_TOKENS_FETCH_SUCCESS,
+      payload: { tokens },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_TOKENS_FETCH_ERROR, error);
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
   yield takeEvery(ACTIONS.USER_BY_USERNAME_FETCH, userByUsernameFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
+  yield takeEvery(ACTIONS.USER_TOKENS_FETCH, userTokensFetch);
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,

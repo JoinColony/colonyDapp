@@ -21,6 +21,7 @@ import {
 } from '../../stores';
 
 import {
+  createUserAddTokenEvent,
   createNotificationsReadEvent,
   createSubscribeToColonyEvent,
   createUnsubscribeToColonyEvent,
@@ -29,6 +30,7 @@ import {
 } from '../events';
 
 import {
+  UserAddTokenCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
@@ -178,20 +180,19 @@ export const removeUserAvatar: UserCommand<
   },
 });
 
-export const addTokenInfoCommand: UserCommand<
+export const addToken: UserMetadataCommand<
   AddTokenInfoCommandArgs,
-  ValidatedKVStore<UserProfileStoreValues>,
+  EventStore,
 > = ({ ddb, metadata }) => ({
+  schema: UserAddTokenCommandArgsSchema,
   async execute(args) {
-    const { address } = args;
-    const profileStore = await getUserProfileStore(ddb)(metadata);
-    const userTokens = await profileStore.get('tokens');
-    await profileStore.set({
-      tokens: Array.from(new Set([...(userTokens || []), address])),
-    });
-    return profileStore;
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createUserAddTokenEvent(args));
+    return userMetadataStore;
   },
 });
+
+// TODO: removeToken
 
 export const markNotificationsAsRead: UserMetadataCommand<
   MarkNotificationsAsReadCommandArgs,
