@@ -4,6 +4,7 @@ import type { Saga } from 'redux-saga';
 
 import { call, fork, put, select, takeEvery } from 'redux-saga/effects';
 
+import type { Action } from '~redux';
 import type { ENSName } from '~types';
 
 import {
@@ -12,7 +13,6 @@ import {
   executeQuery,
   executeCommand,
 } from '~utils/saga/effects';
-import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
 import { getColonyMethod } from '../../core/sagas/utils';
@@ -22,35 +22,31 @@ import { COLONY_CONTEXT } from '../../core/constants';
 
 import { createDomain } from '../../../data/service/commands';
 import { getColonyDomains } from '../../../data/service/queries';
-import type { Action } from '~redux';
 
 import { domainSelector } from '../selectors';
 
-function* getColonyContext(
-  colonyENSName: ?string,
-  colonyAddress: ?string,
-): Saga<Object> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-  if (!colonyManager)
-    throw new Error('Cannot get colony context. Invalid manager instance');
-  const identifier = colonyENSName || colonyAddress;
-  if (!identifier)
-    throw new Error('Cannot get colony context. Invalid identifier');
-  const colonyClient = yield call(
-    [colonyManager, colonyManager.getColonyClient],
-    identifier,
-  );
-  return {
-    ddb,
-    colonyClient,
-    wallet,
-    metadata: {
-      colonyENSName,
-      colonyAddress: colonyClient.contract.address,
-    },
-  };
+import { getColonyContext } from './shared';
+
+function* colonyDomainsFetch({
+  meta: {
+    keyPath: [colonyENSName],
+  },
+  meta,
+}: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
+  try {
+    const context = yield* getColonyContext(colonyENSName);
+    const domains = yield* executeQuery(context, getColonyDomains);
+    /*
+     * Dispatch the success action.
+     */
+    yield put<Action<typeof ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
+      meta,
+      payload: domains,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_DOMAINS_FETCH_ERROR, error, meta);
+  }
 }
 
 function* domainCreate({
@@ -149,28 +145,6 @@ function* domainFetch({
     });
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_FETCH_ERROR, error, meta);
-  }
-}
-
-function* colonyDomainsFetch({
-  meta: {
-    keyPath: [colonyENSName],
-  },
-  meta,
-}: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
-  try {
-    const context = yield* getColonyContext(colonyENSName);
-    const domains = yield* executeQuery(context, getColonyDomains);
-    /*
-     * Dispatch the success action.
-     */
-    yield put<Action<typeof ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS>>({
-      type: ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
-      meta,
-      payload: domains,
-    });
-  } catch (error) {
-    yield putError(ACTIONS.COLONY_DOMAINS_FETCH_ERROR, error, meta);
   }
 }
 

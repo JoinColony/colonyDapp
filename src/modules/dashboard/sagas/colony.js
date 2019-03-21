@@ -52,32 +52,7 @@ import { COLONY_CONTEXT } from '../../core/constants';
 import { colonyAvatarHashSelector } from '../selectors';
 import { getNetworkVersion } from '../../core/selectors';
 
-function* getColonyContext(
-  colonyENSName: ?string,
-  colonyAddress: ?string,
-): Saga<Object> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-  if (!colonyManager)
-    throw new Error('Cannot get colony context. Invalid manager instance');
-  const identifier = colonyENSName || colonyAddress;
-  if (!identifier)
-    throw new Error('Cannot get colony context. Invalid identifier');
-  const colonyClient = yield call(
-    [colonyManager, colonyManager.getColonyClient],
-    identifier,
-  );
-  return {
-    ddb,
-    colonyClient,
-    wallet,
-    metadata: {
-      colonyENSName: identifier,
-      colonyAddress: colonyClient.contract.address,
-    },
-  };
-}
+import { getColonyContext } from './shared';
 
 // TODO: Rename, complete and wire up after new onboarding is in place
 function* colonyCreateNew({
