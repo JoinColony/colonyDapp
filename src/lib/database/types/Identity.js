@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { IdentityProvider } from './IdentityProvider';
-import type { KeyPair } from './KeyPair';
 
 type Signatures = {
   id: string, // The 'wallet signature' (the Ethereum account address, signed by Orbit's key)
@@ -18,8 +17,6 @@ export type IdentityObject = {
 export interface Identity {
   _id: string;
 
-  _orbitKey: KeyPair;
-
   +_provider: IdentityProvider<Identity>;
 
   _publicKey: string;
@@ -29,8 +26,6 @@ export interface Identity {
   _type: string;
 
   get id(): string;
-
-  get orbitKey(): KeyPair;
 
   get provider(): IdentityProvider<Identity>;
 
