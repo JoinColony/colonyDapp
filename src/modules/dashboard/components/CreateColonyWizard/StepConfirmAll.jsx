@@ -18,6 +18,8 @@ type FormValues = {
   tokenAddress: string,
   colonyId: string,
   colonyAddress: string,
+  colonyName: string,
+  username: string,
   tokenSymbol: string,
   tokenName: string,
 };

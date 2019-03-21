@@ -13,10 +13,27 @@ type Row = {
   valueKey: string | Array<string>,
 };
 
+type FormValues = {
+  colonyName: string,
+  username: string,
+  tokenName: string,
+  tokenSymbol: string,
+};
+
 type CardProps = {
   cardOptions: Array<Row>,
-  values: {},
+  values: FormValues,
 };
+
+const concatenateWithURL = (
+  option: { title: MessageDescriptor, valueKey: string | Array<string> },
+  values: FormValues,
+) =>
+  `${
+    option.valueKey === `colonyName`
+      ? `${values[option.valueKey]} (colony.io/${values[option.valueKey]} )`
+      : `@${values[option.valueKey.toString()]}`
+  }`;
 
 const CardRow = ({ cardOptions, values }: CardProps): any[] =>
   cardOptions.map(option => (
@@ -29,7 +46,7 @@ const CardRow = ({ cardOptions, values }: CardProps): any[] =>
         appearance={{ size: 'normal', weight: 'medium', margin: 'small' }}
         text={
           typeof option.valueKey === 'string'
-            ? values[option.valueKey]
+            ? concatenateWithURL(option, values)
             : `${values[option.valueKey[0]]} (${values[option.valueKey[1]]})`
         }
       />
