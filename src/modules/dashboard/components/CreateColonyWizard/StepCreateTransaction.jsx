@@ -1,19 +1,22 @@
 /* @flow */
 
+import { connect } from 'react-redux';
+
 import React, { Component } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import * as yup from 'yup';
+import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
+import type { TransactionGroup } from '../../../users/components/GasStation/transactionGroup';
 
-import styles from './StepColonyENSName.css';
+import styles from './StepCreateTransaction.css';
 
-import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
-import Button from '~core/Button';
-import { ACTIONS } from '~redux';
+import { GroupedTransaction } from '../../../users/components/GasStation/TransactionCard';
+import GasStationPrice from '../../../users/components/GasStation/GasStationPrice';
 
-import promiseListener from '../../../../createPromiseListener';
+import { groupedTransactions } from '../../../core/selectors';
+
+import { createColonyTransactions } from '../../actionCreators';
 
 type FormValues = {
   colonyName: string,
@@ -21,139 +24,98 @@ type FormValues = {
   colonyAddress: string,
 };
 
-type Props = WizardProps<FormValues>;
+type Props = WizardProps<FormValues> & {
+  transactionGroups: Array<TransactionGroup>,
+  createTransactions: () => void,
+};
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.heading',
-    defaultMessage: 'Last step: create a unique name for your Colony',
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.heading',
+    defaultMessage: `Complete these transactions to deploy
+      your colony to the blockchain.`,
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionOne',
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
       "Here's something cool about Colony: {boldText} You own it, you control it.",
   },
   descriptionBoldText: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionBoldText',
+    id:
+      'dashboard.CreateColonyWizard.StepCreateTransaction.descriptionBoldText',
     defaultMessage:
       // eslint-disable-next-line max-len
       "we are a fully decentralized application and do not have a central store of yours or anyone's data.",
   },
   descriptionTwo: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionTwo',
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.descriptionTwo',
     defaultMessage:
       // eslint-disable-next-line max-len
       'To setup your data storage, we need you to create a unique name for your colony. This allows a mapping between the data stored on the blockchain, on IPFS, and your colony.',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.label',
     defaultMessage: 'Your unique colony domain name',
   },
-  done: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.done',
-    defaultMessage: 'Done',
+  continue: {
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.continue',
+    defaultMessage: 'Continue',
+  },
+  callToAction: {
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.callToAction',
+    defaultMessage: 'Click confirm to sign each transaction',
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
+    id: 'dashboard.CreateColonyWizard.StepCreateTransaction.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyENSName';
-
-const validationSchema = yup.object({
-  ensName: yup
-    .string()
-    .required()
-    .ensAddress(),
-});
+const displayName = 'dashboard.CreateColonyWizard.StepCreateTransaction';
 
 class StepCreateTransaction extends Component<Props> {
-  componentWillUnmount() {
-    this.checkDomainTaken.unsubscribe();
+  componentDidMount() {
+    const { createTransactions } = this.props;
+    createTransactions();
   }
 
-  checkDomainTaken = promiseListener.createAsyncFunction({
-    start: ACTIONS.COLONY_DOMAIN_VALIDATE,
-    resolve: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
-    reject: ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
-  });
-
-  validateDomain = async (values: FormValues) => {
-    try {
-      await this.checkDomainTaken.asyncFunction(values);
-    } catch (e) {
-      const error = {
-        ensName: MSG.errorDomainTaken,
-      };
-      // eslint doesn't allow for throwing object literals
-      throw error;
-    }
-  };
-
   render() {
-    const {
-      formHelpers: { includeWizardValues },
-      wizardForm,
-    } = this.props;
+    const { transactionGroups } = this.props;
     return (
-      <ActionForm
-        submit={ACTIONS.COLONY_CREATE_LABEL}
-        error={ACTIONS.COLONY_CREATE_LABEL_ERROR}
-        success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
-        validationSchema={validationSchema}
-        validate={this.validateDomain}
-        setPayload={includeWizardValues}
-        {...wizardForm}
-      >
-        {({ isValid, isSubmitting }) => (
-          <section className={styles.main}>
-            <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'thin' }}
-                text={MSG.heading}
-              />
-              <p className={styles.paragraph}>
-                <FormattedMessage
-                  {...MSG.descriptionOne}
-                  values={{
-                    boldText: (
-                      <FormattedMessage
-                        tagName="strong"
-                        {...MSG.descriptionBoldText}
-                      />
-                    ),
-                  }}
-                />
-              </p>
-              <p className={styles.paragraph}>
-                <FormattedMessage {...MSG.descriptionTwo} />
-              </p>
-              <div className={styles.nameForm}>
-                <Input
-                  appearance={{ theme: 'fat' }}
-                  name="ensName"
-                  label={MSG.label}
-                />
-                <div className={styles.buttons}>
-                  <Button
-                    appearance={{ theme: 'primary', size: 'large' }}
-                    type="submit"
-                    disabled={!isValid}
-                    loading={isSubmitting}
-                    text={MSG.done}
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
+      <section className={styles.main}>
+        <Heading
+          appearance={{ size: 'medium', weight: 'medium' }}
+          text={MSG.heading}
+        />
+        <div className={styles.container}>
+          {transactionGroups && transactionGroups[0] && (
+            <GroupedTransaction
+              hideSummary
+              selectedTransactionIdx={0}
+              transactionGroup={transactionGroups[0]}
+            />
+          )}
+        </div>
+        <Heading
+          appearance={{ size: 'small', weight: 'medium', margin: 'small' }}
+          text={MSG.callToAction}
+        />
+        {transactionGroups && transactionGroups[0] && transactionGroups[0][0] && (
+          <div className={styles.containerGasPrice}>
+            <GasStationPrice transaction={transactionGroups[0][0]} />
+          </div>
         )}
-      </ActionForm>
+      </section>
     );
   }
 }
 
 StepCreateTransaction.displayName = displayName;
 
-export default StepCreateTransaction;
+export default connect(
+  (state: Object) => ({
+    transactionGroups: groupedTransactions(state).toJS(),
+  }),
+  { createTransactions: createColonyTransactions },
+)(StepCreateTransaction);

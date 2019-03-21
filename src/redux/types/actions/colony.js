@@ -126,6 +126,29 @@ export type ColonyActionTypes = {|
     TransactionType<{ colonyName: string }, *>,
     void,
   >,
+  COLONY_CREATE_NEW: UniqueActionType<
+    typeof ACTIONS.COLONY_CREATE_NEW,
+    {|
+      colonyId: number,
+      colonyAddress: string,
+      colonyName: string,
+      ensName: string,
+      tokenAddress: string,
+      tokenName: string,
+      tokenSymbol: string,
+      tokenIcon: string,
+    |},
+    void,
+  >,
+  COLONY_CREATE_NEW_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_CREATE_NEW_ERROR,
+    void,
+  >,
+  COLONY_CREATE_NEW_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_CREATE_NEW_SUCCESS,
+    TransactionType<{ colonyName: string }, *>,
+    void,
+  >,
   COLONY_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE_SUCCESS,
     void,
