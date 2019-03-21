@@ -168,8 +168,7 @@ export const removeUserAvatar: UserCommand<
   },
 });
 
-// XXX bad name, but without `Metadata` it conflicts with another command
-export const addTokenInfoMetadata: UserCommand<
+export const addTokenInfoCommand: UserCommand<
   AddTokenInfoCommandArgs,
   ValidatedKVStore<UserProfileStoreValues>,
 > = ({ ddb, metadata }) => ({
