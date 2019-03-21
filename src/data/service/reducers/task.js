@@ -24,7 +24,7 @@ const {
 
 // eslint-disable-next-line import/prefer-default-export
 export const getTaskReducer: EventReducer<
-  // TODO flow types, mo problems
+  // TODO flow types, mo problems - should be fixed in #965
   // {|
   //   amountPaid: string,
   //   commentsStoreAddress: string,

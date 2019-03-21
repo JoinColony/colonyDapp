@@ -139,6 +139,7 @@ export default function* setupUserContext(
      */
     try {
       const metadata = yield* executeQuery(context, getUserMetadata);
+      // TODO consider merging this action with `CURRENT_USER_CREATE`?
       yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
         type: ACTIONS.USER_METADATA_SET,
         payload: metadata,

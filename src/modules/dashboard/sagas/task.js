@@ -156,8 +156,7 @@ function* taskCreate({
   }
 }
 
-// TODO handle this in the data layer with some handy abstraction
-// (at least the `task` part).
+// TODO simplify this in #965.
 const getTaskFetchSuccessPayload = (
   { colonyENSName, draftId }: *,
   { metadata: { taskStoreAddress } }: *,

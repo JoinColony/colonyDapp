@@ -44,7 +44,7 @@ export const getTask: TaskQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
       .reduce(getTaskReducer, {
-        // TODO get these defaults from some model elsewhere?
+        // TODO get these defaults from some model elsewhere? See #965
         amountPaid: undefined,
         commentsStoreAddress: '', // XXX Just to appease flow; it'll be there
         createdAt: undefined,

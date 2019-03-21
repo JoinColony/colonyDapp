@@ -18,7 +18,6 @@ export type Query<C: ?Object, A, R> = C => {|
   execute: (args: A) => Promise<R>,
 |};
 
-// TODO EventReducer
 /*
  * This type, when assigned to a reducer, ensures that the actions specified
  * exist in `ActionsType`, and that the action objects are fully typed.

@@ -102,13 +102,14 @@ export const getUserProfile: UserQuery<void, UserProfileType> = ({
   },
 });
 
+// TODO consider merging this query with `getUserProfile`
 export const getUserMetadata: UserQuery<void, *> = ({ ddb, metadata }) => ({
   async execute() {
     const profileStore = await getUserProfileStore(ddb)(metadata);
     const inboxStoreAddress = profileStore.get('inboxStoreAddress');
     const metadataStoreAddress = profileStore.get('metadataStoreAddress');
 
-    // XXX should not happen, here to appease flow
+    // Flow hack: Should not happen, here to appease flow
     if (!(inboxStoreAddress && metadataStoreAddress))
       throw new Error('User metadata not found');
 
