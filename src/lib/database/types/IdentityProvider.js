@@ -7,7 +7,7 @@ export interface IdentityProvider<+T: Identity> {
 
   get type(): string;
 
-  createIdentity(id: string): Promise<T>;
+  createIdentity(): Promise<T>;
 
   sign(identity: T, data: any): Promise<string>;
 

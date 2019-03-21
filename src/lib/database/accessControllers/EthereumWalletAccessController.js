@@ -7,18 +7,11 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
-// TODO: Use provider's type
-const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
-
 class EthereumWalletAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
 > {
   _walletAddress: string;
-
-  static get type() {
-    return PROVIDER_TYPE;
-  }
 
   constructor(walletAddress: string) {
     super();
@@ -39,7 +32,7 @@ class EthereumWalletAccessController extends AbstractAccessController<
   }
 
   async save() {
-    return `/${this.constructor.type}/account/${this._walletAddress}`;
+    return `/ethereum_account/${this._walletAddress}`;
   }
 
   /* eslint-disable no-unused-vars,class-methods-use-this */
