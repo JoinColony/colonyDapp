@@ -32,13 +32,13 @@ const getTaskRefs = (state: RootStateRecord) =>
 
 const getUserOpenDraftIds = (state: RootStateRecord) =>
   state.getIn(
-    [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'closed'],
+    [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'open'],
     ImmutableSet(),
   );
 
 const getUserClosedDraftIds = (state: RootStateRecord) =>
   state.getIn(
-    [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'open'],
+    [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'closed'],
     ImmutableSet(),
   );
 
