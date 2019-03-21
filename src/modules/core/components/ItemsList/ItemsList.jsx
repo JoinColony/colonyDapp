@@ -247,7 +247,7 @@ class ItemsList extends Component<Props, State> {
           )}
         </Popover>
         {/*
-         * @TODO This should be passed _somehow_ outside of this component, so
+         * TODO This should be passed _somehow_ outside of this component, so
          * that displaying it has a bigger degree of customization.
          * (Consumers maybe?)
          */}

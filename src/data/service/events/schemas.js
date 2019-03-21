@@ -8,15 +8,14 @@ export const CreateDomainCreatedEventSchema = yup.object({
 });
 
 export const CreateTaskStoreRegisteredEventSchema = yup.object({
+  commentsStoreAddress: yup.string().required(),
+  draftId: yup.string().required(),
   taskStoreAddress: yup.string().required(),
-  taskId: yup.string().required(),
-  domainId: yup.number().required(),
 });
 
 export const CreateTaskStoreUnregisteredEventSchema = yup.object({
   taskStoreAddress: yup.string().required(),
-  taskId: yup.string().required(),
-  domainId: yup.number().required(),
+  draftId: yup.string().required(),
 });
 
 export const CreateColonyAvatarUploadedEventSchema = yup.object({
@@ -34,6 +33,7 @@ export const CreateTokenInfoAddedEventSchema = yup.object({
   icon: yup.string(),
 });
 
+// TODO set max lengths?
 export const CreateColonyProfileCreatedEventSchema = yup.object({
   address: yup.string().required(),
   ensName: yup.string().required(),
@@ -43,6 +43,7 @@ export const CreateColonyProfileCreatedEventSchema = yup.object({
   guideline: yup.string().url(),
 });
 
+// TODO set max lengths?
 export const CreateColonyProfileUpdatedEventSchema = yup.object({
   name: yup.string(),
   description: yup.string(),
@@ -72,15 +73,15 @@ export const CreateDomainSetEventSchema = yup.object({
 });
 
 export const CreateTaskCreatedEventSchema = yup.object({
-  domainId: yup.number().required(),
-  taskId: yup.string().required(),
-  description: yup.string().required(),
-  title: yup.string().required(),
+  creator: yup.string().required(),
 });
 
-export const CreateTaskUpdatedEventSchema = yup.object({
-  description: yup.string(),
-  title: yup.string(),
+export const CreateTaskDescriptionSetEventSchema = yup.object({
+  description: yup.string(), // TODO set max length?
+});
+
+export const CreateTaskTitleSetEventSchema = yup.object({
+  title: yup.string(), // TODO set max length?
 });
 
 export const WorkerAssignmentEventSchema = yup.object({
@@ -103,7 +104,7 @@ export const CreateCommentPostedEventSchema = yup.object({
             .string()
             .address()
             .required(),
-          body: yup.string().required(),
+          body: yup.string().required(), // TODO set max length?
           timestamp: yup.number().required(),
           metadata: yup.object().shape({
             mentions: yup

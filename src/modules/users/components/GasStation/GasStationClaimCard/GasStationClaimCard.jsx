@@ -26,7 +26,7 @@ sign your first transaction and finish setting up your account.`,
 });
 
 /*
- * @TODO: get number of steps from Claim Profile and use here.
+ * TODO: get number of steps from Claim Profile and use here.
  * This should always be the last step.
  */
 type Props = {|

@@ -11,6 +11,7 @@ import {
   canTaskBeFinalized,
   canTaskPayoutBeClaimed,
   didTaskDueDateElapse,
+  taskFeedItemsSelector,
   isTaskManager,
   isTaskWorker,
 } from '../../selectors';
@@ -32,6 +33,7 @@ const enhance = compose(
     canTaskBeFinalized: canTaskBeFinalized(state, dummyProps),
     canTaskPayoutBeClaimed: canTaskPayoutBeClaimed(state, dummyProps),
     didTaskDueDateElapse: didTaskDueDateElapse(state, dummyProps),
+    feedItems: taskFeedItemsSelector(state, dummyProps),
     isTaskManager: isTaskManager(state, dummyProps),
     isTaskWorker: isTaskWorker(state, dummyProps),
   })),

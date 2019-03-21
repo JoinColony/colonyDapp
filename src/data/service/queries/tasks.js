@@ -6,30 +6,13 @@ import type {
   ColonyClientContext,
   ContextWithMetadata,
   DDBContext,
-  Event,
   Query,
   WalletContext,
 } from '../../types';
 
 import { getTaskStore } from '../../stores';
+import { taskReducer } from '../reducers';
 import { TASK_EVENT_TYPES } from '../../constants';
-
-const {
-  COMMENT_STORE_CREATED,
-  DOMAIN_SET,
-  DUE_DATE_SET,
-  PAYOUT_SET,
-  SKILL_SET,
-  TASK_CANCELLED,
-  TASK_CLOSED,
-  TASK_CREATED,
-  TASK_FINALIZED,
-  TASK_UPDATED,
-  WORK_INVITE_SENT,
-  WORK_REQUEST_CREATED,
-  WORKER_ASSIGNED,
-  WORKER_UNASSIGNED,
-} = TASK_EVENT_TYPES;
 
 export type TaskQueryContext = ContextWithMetadata<
   {|
@@ -42,7 +25,7 @@ export type TaskQueryContext = ContextWithMetadata<
 
 export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
 
-// @TODO: We should be able to merge contract events here as well
+// TODO: We should be able to merge contract events here as well
 // eslint-disable-next-line import/prefer-default-export
 export const getTask: TaskQuery<*, *> = ({
   ddb,
@@ -60,154 +43,26 @@ export const getTask: TaskQuery<*, *> = ({
     return taskStore
       .all()
       .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
-      .reduce(
-        (
-          task,
-          { type, payload }: Event<$Values<typeof TASK_EVENT_TYPES>, *>,
-        ) => {
-          switch (type) {
-            case COMMENT_STORE_CREATED: {
-              const { commentsStoreAddress } = payload;
-              return {
-                ...task,
-                commentsStoreAddress,
-              };
-            }
-            case TASK_CREATED: {
-              const {
-                domainId,
-                taskId,
-                description,
-                title,
-                timestamp: createdAt,
-              } = payload;
-              return {
-                ...task,
-                domainId,
-                taskId,
-                description,
-                title,
-                createdAt,
-              };
-            }
-            case TASK_UPDATED: {
-              const { description, title } = payload;
-              return {
-                ...task,
-                description,
-                title,
-              };
-            }
-            case TASK_FINALIZED: {
-              const {
-                worker: assignee,
-                amountPaid,
-                status,
-                paymentId,
-                token,
-                timestamp: finalizedAt,
-              } = payload;
-              return {
-                ...task,
-                paymentId,
-                paymentToken: token,
-                amountPaid,
-                assignee,
-                status,
-                finalizedAt,
-              };
-            }
-            case TASK_CANCELLED: {
-              const { status } = payload;
-              return {
-                ...task,
-                status,
-              };
-            }
-            case TASK_CLOSED: {
-              const { status } = payload;
-              return {
-                ...task,
-                status,
-              };
-            }
-            case PAYOUT_SET: {
-              const { amount } = payload;
-              return {
-                ...task,
-                payout: amount,
-              };
-            }
-            case DUE_DATE_SET: {
-              const { dueDate } = payload;
-              return {
-                ...task,
-                dueDate,
-              };
-            }
-            case DOMAIN_SET: {
-              const { domainId } = payload;
-              return {
-                ...task,
-                domainId,
-              };
-            }
-            case SKILL_SET: {
-              const { skillId } = payload;
-              return {
-                ...task,
-                skillId,
-              };
-            }
-            case WORK_INVITE_SENT: {
-              const { invites = [] } = task;
-              return {
-                ...task,
-                invites: [...invites, payload],
-              };
-            }
-            case WORK_REQUEST_CREATED: {
-              const { requests = [] } = task;
-              return {
-                ...task,
-                requests: [...requests, payload],
-              };
-            }
-            case WORKER_ASSIGNED: {
-              const { worker: assignee } = payload;
-              return {
-                ...task,
-                assignee,
-              };
-            }
-            case WORKER_UNASSIGNED: {
-              const { assignee: currentAssignee } = task;
-              const { worker: assignee } = payload;
-              return {
-                ...task,
-                assignee:
-                  currentAssignee && currentAssignee === assignee
-                    ? null
-                    : currentAssignee,
-              };
-            }
-
-            default:
-              return task;
-          }
-        },
-        {
-          assignee: null,
-          payout: null,
-          dueDate: null,
-          skillId: null,
-          domainId: null,
-          title: null,
-          description: null,
-          commentsStoreAddress: null,
-          requests: [],
-          invites: [],
-        },
-      );
+      .reduce(taskReducer, {
+        // TODO get these defaults from some model elsewhere? See #965
+        amountPaid: undefined,
+        commentsStoreAddress: '', // XXX Just to appease flow; it'll be there
+        createdAt: undefined,
+        creator: undefined,
+        description: undefined,
+        domainId: undefined,
+        draftId: '', // XXX Just to appease flow; it'll be there
+        dueDate: undefined,
+        finalizedAt: undefined,
+        invites: [],
+        paymentId: undefined,
+        payout: undefined,
+        paymentToken: undefined,
+        requests: [],
+        skillId: undefined,
+        status: undefined,
+        title: undefined,
+        worker: undefined,
+      });
   },
 });

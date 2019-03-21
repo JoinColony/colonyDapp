@@ -1,520 +1,336 @@
+/* eslint-disable max-len */
 /* @flow */
 
-import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+import type { TaskType, TaskProps } from '~immutable';
+import type { $Required } from '~types';
+import type {
+  ActionType,
+  ActionTypeWithPayload,
+  ErrorActionType,
+  UniqueActionType,
+} from '~redux';
+import type { Event } from '../../../data/types';
 
-import type { $Pick, WithKeyPathDepth2 } from '~types';
-import type { TaskType } from '~immutable';
+import { ACTIONS } from '~redux';
 
-import type { ErrorActionType, UniqueActionType } from '../index';
-import type { CommentPostedEvent } from '../../../data/service/events';
+type TaskActionMeta = {|
+  keyPath: [string], // draftId
+|};
 
-import { ACTIONS } from '../../index';
+type TaskActionType<T, P> = UniqueActionType<
+  T,
+  {|
+    colonyENSName: string,
+    draftId: string,
+    ...P,
+  |},
+  TaskActionMeta,
+>;
+
+type TaskErrorActionType<T> = ErrorActionType<T, TaskActionMeta>;
 
 export type TaskActionTypes = {|
-  TASK_CANCEL: UniqueActionType<
-    typeof ACTIONS.TASK_CANCEL,
-    {| taskId: string, domainId: number, taskStoreAddress: string |},
-    WithKeyPathDepth2,
+  TASK_ASSIGN: TaskActionType<typeof ACTIONS.TASK_ASSIGN, {| worker: string |}>,
+  TASK_ASSIGN_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_ASSIGN_ERROR>,
+  TASK_ASSIGN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_ASSIGN_SUCCESS,
+    {| worker: string |},
   >,
-  TASK_CANCEL_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_CANCEL_SUCCESS,
-    void,
-    WithKeyPathDepth2,
-  >,
-  TASK_CANCEL_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_CANCEL_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_CLOSE: UniqueActionType<
-    typeof ACTIONS.TASK_CLOSE,
-    {| taskId: string, taskStoreAddress: string |},
-    WithKeyPathDepth2,
-  >,
-  TASK_CLOSE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_CLOSE_SUCCESS,
-    {| taskId: string |},
-    WithKeyPathDepth2,
-  >,
-  TASK_CLOSE_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_CLOSE_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_COMMENT_ADD: UniqueActionType<
+  TASK_CANCEL: TaskActionType<typeof ACTIONS.TASK_CANCEL, void>,
+  TASK_CANCEL_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_CANCEL_ERROR>,
+  TASK_CANCEL_SUCCESS: TaskActionType<typeof ACTIONS.TASK_CANCEL_SUCCESS, void>,
+  TASK_CLOSE: TaskActionType<typeof ACTIONS.TASK_CLOSE, void>,
+  TASK_CLOSE_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_CLOSE_ERROR>,
+  TASK_CLOSE_SUCCESS: TaskActionType<typeof ACTIONS.TASK_CLOSE_SUCCESS, void>,
+  TASK_COMMENT_ADD: TaskActionType<
     typeof ACTIONS.TASK_COMMENT_ADD,
-    {| taskId: string, commentsStoreAddress: string, commentData: * |},
-    void,
+    {| commentData: * |},
   >,
-  TASK_COMMENT_ADD_ERROR: UniqueActionType<
+  TASK_COMMENT_ADD_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_COMMENT_ADD_ERROR,
-    void,
   >,
-  TASK_COMMENT_ADD_SUCCESS: UniqueActionType<
+  TASK_COMMENT_ADD_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS,
-    {|
-      taskId: string,
-      commentsStoreAddress: string,
-      commentData: *,
-      signature: string,
-    |},
-    void,
-  >,
-  TASK_COMMENTS_GET: UniqueActionType<
-    typeof ACTIONS.TASK_COMMENTS_GET,
-    void,
-    WithKeyPathDepth2,
-  >,
-  TASK_COMMENTS_GET_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_COMMENTS_GET_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_COMMENTS_GET_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_COMMENTS_GET_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    {| commentData: *, signature: * |},
   >,
   TASK_CREATE: UniqueActionType<
     typeof ACTIONS.TASK_CREATE,
-    // TODO this payload will no doubt change in #938
-    {|
-      colonyENSName: string,
-      payout: string,
-      domainId: number,
-      dueDate: Date,
-      skillId: number,
-      description: string,
-      user: string,
-    |},
-    WithKeyPathDepth2,
+    TaskProps<{ colonyENSName: * }>,
+    void,
   >,
-  TASK_CREATE_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_CREATE_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_CREATE_SUCCESS: UniqueActionType<
+  TASK_CREATE_ERROR: ErrorActionType<typeof ACTIONS.TASK_CREATE_ERROR>,
+  TASK_CREATE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_CREATE_SUCCESS,
-    TaskType,
-    WithKeyPathDepth2,
-  >,
-  TASK_FETCH: UniqueActionType<typeof ACTIONS.TASK_FETCH, *, WithKeyPathDepth2>,
-  // @TODO: Move to colony actions
-  COLONY_FETCH_TASKS: UniqueActionType<
-    typeof ACTIONS.COLONY_FETCH_TASKS,
-    void,
-    WithKeyPathDepth2,
-  >,
-  COLONY_FETCH_TASKS_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_FETCH_TASKS_SUCCESS,
     {|
-      colonyENSName: string,
-      colonyTasks: { [domainId: string]: { [draftId: string]: string } },
+      commentsStoreAddress: string,
+      taskStoreAddress: string,
+      task: TaskProps<{ colonyENSName: *, draftId: * }>,
     |},
-    WithKeyPathDepth2,
   >,
-  COLONY_FETCH_TASKS_ERROR: UniqueActionType<
-    typeof ACTIONS.COLONY_FETCH_TASKS_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_FETCH_COMMENTS: UniqueActionType<
-    typeof ACTIONS.TASK_FETCH_COMMENTS,
-    {| commentsStoreAddress: string |},
-    WithKeyPathDepth2,
-  >,
-  TASK_FETCH_COMMENTS_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_FETCH_COMMENTS_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_FETCH_COMMENTS_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
-    $PropertyType<CommentPostedEvent, 'payload'>[],
-    WithKeyPathDepth2,
-  >,
-  TASK_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_FETCH_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_FETCH_SUCCESS: UniqueActionType<
+  TASK_FETCH: TaskActionType<typeof ACTIONS.TASK_FETCH, void>,
+  TASK_FETCH_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_FETCH_ERROR>,
+  TASK_FETCH_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_FETCH_SUCCESS,
-    TaskType,
-    WithKeyPathDepth2,
+    {|
+      commentsStoreAddress: string,
+      taskStoreAddress: string,
+      task: $Shape<TaskType>,
+    |},
   >,
-  TASK_FINALIZE: UniqueActionType<
+  TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>,
+  TASK_FETCH_ALL_FOR_COLONY: ActionTypeWithPayload<
+    typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+    TaskProps<{ colonyENSName: * }>,
+  >,
+  TASK_FETCH_ALL_FOR_COLONY_ERROR: ErrorActionType<
+    typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR,
+    void,
+  >,
+  TASK_FETCH_ALL_FOR_COLONY_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS,
+    {|
+      ...TaskProps<{ colonyENSName: * }>,
+      colonyTasks: {
+        [draftId: string]: {|
+          commentsStoreAddress: string,
+          taskStoreAddress: string,
+        |},
+      },
+    |},
+  >,
+  TASK_FETCH_COMMENTS: TaskActionType<typeof ACTIONS.TASK_FETCH_COMMENTS, void>,
+  TASK_FETCH_COMMENTS_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_FETCH_COMMENTS_ERROR,
+  >,
+  TASK_FETCH_COMMENTS_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
+    {| comments: $ElementType<Event<'COMMENT_POSTED'>, 'payload'>[] |}, // todo use constant
+  >,
+  TASK_FETCH_IDS_FOR_CURRENT_USER: ActionType<
+    typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER,
+  >,
+  TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR: ErrorActionType<
+    typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR,
+    void,
+  >,
+  TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS,
+    string[],
+  >,
+  TASK_FINALIZE: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE,
-    {|
-      amountPaid: string,
-      colonyENSName: string,
-      taskId: string,
-      taskStoreAddress: string,
-      worker: string,
-    |},
-    WithKeyPathDepth2,
+    {| amountPaid: number, ...TaskProps<{ worker: * }> |},
   >,
-  TASK_FINALIZE_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_FINALIZE_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_FINALIZE_SUCCESS: UniqueActionType<
+  TASK_FINALIZE_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_FINALIZE_ERROR>,
+  TASK_FINALIZE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE_SUCCESS,
-    {|
-      amountPaid: string,
-      taskId: string,
-      worker: string,
-    |},
-    WithKeyPathDepth2,
+    {| amountPaid: number, ...TaskProps<{ worker: * }> |},
   >,
-  TASK_MANAGER_COMPLETE: UniqueActionType<
+  TASK_MANAGER_COMPLETE: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_COMPLETE_ERROR: ErrorActionType<
+  TASK_MANAGER_COMPLETE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_MANAGER_COMPLETE_SUCCESS: UniqueActionType<
+  TASK_MANAGER_COMPLETE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_END: UniqueActionType<
+  TASK_MANAGER_END: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_END,
-    {|
-      taskId: string, // TODO should be draftId
-      colonyENSName: string,
-      rating: number,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_END_ERROR: ErrorActionType<
+  TASK_MANAGER_END_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_END_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_MANAGER_END_SUCCESS: UniqueActionType<
+  TASK_MANAGER_END_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_END_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_RATE_WORKER: UniqueActionType<
+  TASK_MANAGER_RATE_WORKER: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER,
-    {|
-      taskId: string, // TODO should be draftId
-      colonyENSName: string,
-      rating: number,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_RATE_WORKER_ERROR: ErrorActionType<
+  TASK_MANAGER_RATE_WORKER_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_MANAGER_RATE_WORKER_SUCCESS: UniqueActionType<
+  TASK_MANAGER_RATE_WORKER_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_REVEAL_WORKER_RATING: UniqueActionType<
+  TASK_MANAGER_REVEAL_WORKER_RATING: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING,
-    {|
-      taskId: string, // TODO should be draftId
-      colonyENSName: string,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR: ErrorActionType<
+  TASK_MANAGER_REVEAL_WORKER_RATING_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS: UniqueActionType<
+  TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MODIFY_WORKER_PAYOUT: UniqueActionType<
+  TASK_MODIFY_WORKER_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT,
-    {|
-      amount: number,
-      fromPot: number,
-      taskId: string, // TODO should be draftId
-      token: string,
-      toPot: number,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_MODIFY_WORKER_PAYOUT_ERROR: ErrorActionType<
+  TASK_MODIFY_WORKER_PAYOUT_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_MODIFY_WORKER_PAYOUT_SUCCESS: UniqueActionType<
+  TASK_MODIFY_WORKER_PAYOUT_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_SET_DATE: UniqueActionType<
-    typeof ACTIONS.TASK_SET_DATE,
-    {|
-      colonyENSName: string,
-      dueDate: Date,
-      taskId: string,
-      taskStoreAddress: string,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_DATE_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_SET_DATE_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_DATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_SET_DATE_SUCCESS,
-    {|
-      taskId: string,
-      dueDate: Date,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_DOMAIN: UniqueActionType<
-    typeof ACTIONS.TASK_SET_DOMAIN,
-    {|
-      colonyENSName: string,
-      domainId: Date,
-      draftId: string,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_DOMAIN_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_SET_DOMAIN_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_DOMAIN_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS,
-    {||}, // TODO define a type for this when a saga is created
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_SKILL: UniqueActionType<
-    typeof ACTIONS.TASK_SET_SKILL,
-    {|
-      taskId: string, // TODO should be draftId
-      skillId: number,
-      colonyENSName: string,
-      taskStoreAddress: string,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_SKILL_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_SET_SKILL_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_SKILL_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_SET_SKILL_SUCCESS,
-    {| taskId: string, skillId: number |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_PAYOUT: UniqueActionType<
-    typeof ACTIONS.TASK_SET_PAYOUT,
-    {|
-      taskId: string,
-      colonyENSName: string,
-      taskStoreAddress: string,
-      amount: string,
-      token: string,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_PAYOUT_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_SET_PAYOUT_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_SET_PAYOUT_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-    {| taskId: string, amount: string |},
-    WithKeyPathDepth2,
-  >,
-  TASK_ASSIGN: UniqueActionType<
-    typeof ACTIONS.TASK_ASSIGN,
-    {|
-      taskId: string,
-      taskStoreAddress: string,
-      colonyENSName: string,
-      worker: string,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_ASSIGN_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_ASSIGN_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_ASSIGN_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_ASSIGN_SUCCESS,
-    {| taskId: string, worker: string |},
-    WithKeyPathDepth2,
-  >,
-  TASK_UNASSIGN: UniqueActionType<
-    typeof ACTIONS.TASK_UNASSIGN,
-    {|
-      taskId: string,
-      taskStoreAddress: string,
-      worker: string,
-      colonyENSName: string,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_UNASSIGN_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_UNASSIGN_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_UNASSIGN_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_UNASSIGN_SUCCESS,
-    {| taskId: string, worker: string |},
-    WithKeyPathDepth2,
-  >,
-  TASK_SEND_WORK_INVITE: UniqueActionType<
+  TASK_SEND_WORK_INVITE: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE,
-    {|
-      taskId: string,
-      taskStoreAddress: string,
-      worker: string,
-      colonyENSName: string,
-    |},
-    WithKeyPathDepth2,
+    {| worker: string |},
   >,
-  TASK_SEND_WORK_INVITE_ERROR: ErrorActionType<
+  TASK_SEND_WORK_INVITE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_SEND_WORK_INVITE_SUCCESS: UniqueActionType<
+  TASK_SEND_WORK_INVITE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS,
-    {| taskId: string, worker: string |},
-    WithKeyPathDepth2,
+    {| worker: string |},
   >,
-  TASK_SEND_WORK_REQUEST: UniqueActionType<
+  TASK_SEND_WORK_REQUEST: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_REQUEST,
-    {|
-      taskId: string,
-      taskStoreAddress: string,
-      colonyENSName: string,
-      worker: string,
-    |},
-    WithKeyPathDepth2,
+    void, // the worker will be the wallet address from state
   >,
-  TASK_SEND_WORK_REQUEST_ERROR: ErrorActionType<
+  TASK_SEND_WORK_REQUEST_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SEND_WORK_REQUEST_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_SEND_WORK_REQUEST_SUCCESS: UniqueActionType<
+  TASK_SEND_WORK_REQUEST_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
-    {| taskId: string, worker: string |},
-    WithKeyPathDepth2,
+    {| worker: string |},
   >,
-  TASK_SUBMIT_DELIVERABLE: UniqueActionType<
+  TASK_SET_DUE_DATE: TaskActionType<
+    typeof ACTIONS.TASK_SET_DUE_DATE,
+    $Required<TaskProps<{ dueDate: * }>>,
+  >,
+  TASK_SET_DUE_DATE_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_DUE_DATE_ERROR,
+  >,
+  TASK_SET_DUE_DATE_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
+    $Required<TaskProps<{ dueDate: * }>>,
+  >,
+  TASK_SET_DESCRIPTION: TaskActionType<
+    typeof ACTIONS.TASK_SET_DESCRIPTION,
+    $Required<TaskProps<{ description: * }>>,
+  >,
+  TASK_SET_DESCRIPTION_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_DESCRIPTION_ERROR,
+  >,
+  TASK_SET_DESCRIPTION_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_DESCRIPTION_SUCCESS,
+    $Required<TaskProps<{ description: * }>>,
+  >,
+  TASK_SET_DOMAIN: TaskActionType<
+    typeof ACTIONS.TASK_SET_DOMAIN,
+    $Required<TaskProps<{ domainId: * }>>,
+  >,
+  TASK_SET_DOMAIN_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_DOMAIN_ERROR,
+  >,
+  TASK_SET_DOMAIN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS,
+    $Required<TaskProps<{ domainId: * }>>,
+  >,
+  TASK_SET_PAYOUT: TaskActionType<
+    typeof ACTIONS.TASK_SET_PAYOUT,
+    {| token: string, amount: string |},
+  >,
+  TASK_SET_PAYOUT_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_PAYOUT_ERROR,
+  >,
+  TASK_SET_PAYOUT_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS,
+    {| token: string, amount: string |},
+  >,
+  TASK_SET_SKILL: TaskActionType<
+    typeof ACTIONS.TASK_SET_SKILL,
+    $Required<TaskProps<{ skillId: * }>>,
+  >,
+  TASK_SET_SKILL_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_SKILL_ERROR,
+  >,
+  TASK_SET_SKILL_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_SKILL_SUCCESS,
+    $Required<TaskProps<{ skillId: * }>>,
+  >,
+  TASK_SET_TITLE: TaskActionType<
+    typeof ACTIONS.TASK_SET_TITLE,
+    $Required<TaskProps<{ title: * }>>,
+  >,
+  TASK_SET_TITLE_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_TITLE_ERROR,
+  >,
+  TASK_SET_TITLE_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_TITLE_SUCCESS,
+    $Required<TaskProps<{ title: * }>>,
+  >,
+  TASK_SUBMIT_DELIVERABLE: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
-    {|
-      colonyENSName: string,
-      taskId: string,
-      deliverableHash: string,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_SUBMIT_DELIVERABLE_ERROR: ErrorActionType<
+  TASK_SUBMIT_DELIVERABLE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_SUBMIT_DELIVERABLE_SUCCESS: UniqueActionType<
+  TASK_SUBMIT_DELIVERABLE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
-    {||}, // TODO define a type for this when the saga is created
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_UPDATE: UniqueActionType<
-    typeof ACTIONS.TASK_UPDATE,
-    $Exact<$Pick<TaskType, {| title: *, description: * |}>>,
-    WithKeyPathDepth2,
+  TASK_UNASSIGN: TaskActionType<
+    typeof ACTIONS.TASK_UNASSIGN,
+    {| worker: string |},
   >,
-  TASK_UPDATE_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_UPDATE_ERROR,
-    WithKeyPathDepth2,
+  TASK_UNASSIGN_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_UNASSIGN_ERROR>,
+  TASK_UNASSIGN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_UNASSIGN_SUCCESS,
+    {| worker: string |},
   >,
-  TASK_UPDATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_UPDATE_SUCCESS,
-    $Exact<$Pick<TaskType, {| title: *, description: * |}>>,
-    WithKeyPathDepth2,
-  >,
-  TASK_WORKER_CLAIM_REWARD: UniqueActionType<
+  TASK_WORKER_CLAIM_REWARD: TaskActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD,
-    {|
-      draftId: string,
-      colonyENSName: string,
-      tokenAddresses: string[],
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_CLAIM_REWARD_ERROR: ErrorActionType<
+  TASK_WORKER_CLAIM_REWARD_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_WORKER_CLAIM_REWARD_SUCCESS: UniqueActionType<
+  TASK_WORKER_CLAIM_REWARD_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS,
-    {
-      eventData: $PropertyType<
-        $PropertyType<ColonyClientType, 'events'>,
-        'TaskPayoutClaimed',
-      >,
-    },
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_END: UniqueActionType<
+  TASK_WORKER_END: TaskActionType<
     typeof ACTIONS.TASK_WORKER_END,
-    {|
-      taskId: string, // TODO should be draftId
-      colonyENSName: string,
-      workDescription: *,
-      rating: number,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_END_ERROR: ErrorActionType<
+  TASK_WORKER_END_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_END_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_WORKER_END_SUCCESS: UniqueActionType<
+  TASK_WORKER_END_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_END_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_RATE_MANAGER: UniqueActionType<
+  TASK_WORKER_RATE_MANAGER: TaskActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER,
-    {|
-      taskId: string, // TODO should be draftId
-      colonyENSName: string,
-      rating: number,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_RATE_MANAGER_ERROR: ErrorActionType<
+  TASK_WORKER_RATE_MANAGER_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_WORKER_RATE_MANAGER_SUCCESS: UniqueActionType<
+  TASK_WORKER_RATE_MANAGER_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER_SUCCESS,
-    void,
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_REVEAL_MANAGER_RATING: UniqueActionType<
+  TASK_WORKER_REVEAL_MANAGER_RATING: TaskActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING,
-    {|
-      taskId: string, // TODO should be draftId
-      colonyENSName: string,
-    |},
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
-  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR: ErrorActionType<
+  TASK_WORKER_REVEAL_MANAGER_RATING_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
-    WithKeyPathDepth2,
   >,
-  TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS: UniqueActionType<
+  TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-    {
-      eventData: $PropertyType<
-        $PropertyType<ColonyClientType, 'events'>,
-        'TaskWorkRatingRevealed',
-      >,
-    },
-    WithKeyPathDepth2,
+    void, // TODO define the payload
   >,
 |};

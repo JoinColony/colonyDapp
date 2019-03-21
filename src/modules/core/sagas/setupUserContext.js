@@ -22,7 +22,11 @@ import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 
 import ENS from '../../../lib/ENS';
-import { getUserBalance, getUserProfile } from '../../../data/service/queries';
+import {
+  getUserBalance,
+  getUserMetadata,
+  getUserProfile,
+} from '../../../data/service/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
@@ -84,21 +88,18 @@ export default function* setupUserContext(
 
     yield call(getGasPrices);
 
-    const ens = yield getContext('ens');
-
+    const ens = yield getContext(CONTEXT.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
     /*
      * Attempt to get the user profile data.
      */
+    const context = { ddb, metadata: { walletAddress } };
     let profileData = {};
     try {
-      profileData = yield* executeQuery(
-        { ddb, metadata: { walletAddress } },
-        getUserProfile,
-      );
+      profileData = yield* executeQuery(context, getUserProfile);
     } catch (error) {
-      // It's on here if the user store doesn't exist (yet)
+      // It's ok if the user store doesn't exist (yet)
       log.warn(error);
     }
 
@@ -132,6 +133,21 @@ export default function* setupUserContext(
         keyPath: [walletAddress],
       },
     });
+
+    /*
+     * Attempt to get the user metadata.
+     */
+    try {
+      const metadata = yield* executeQuery(context, getUserMetadata);
+      // TODO consider merging this action with `CURRENT_USER_CREATE`?
+      yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
+        type: ACTIONS.USER_METADATA_SET,
+        payload: metadata,
+      });
+    } catch (error) {
+      // It's ok if the user store doesn't exist (yet)
+      log.warn(error);
+    }
 
     yield call(setupOnBeforeUnload);
   } catch (error) {

@@ -19,7 +19,7 @@ import styles from './UserNavigation.css';
  * These should be added directly in here, so we won't have to deal with passing
  * down of props
  *
- * @TODO replace this with actual events, not sure where they will me from yet
+ * TODO replace this with actual events, not sure where they will me from yet
  */
 const mockEvents = [{ handled: true }];
 

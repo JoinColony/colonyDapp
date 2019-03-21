@@ -4,6 +4,7 @@ import type { ENSName, WithKeyPathDepth1 } from '~types';
 import type {
   ContractTransactionType,
   TaskReferenceType,
+  UserMetadataType,
   UserProfileType,
 } from '~immutable';
 
@@ -91,6 +92,10 @@ export type UserActionTypes = {|
     typeof ACTIONS.USER_FETCH_SUCCESS,
     UserProfileType,
     WithKeyPathDepth1,
+  >,
+  USER_METADATA_SET: ActionTypeWithPayload<
+    typeof ACTIONS.USER_METADATA_SET,
+    $Shape<UserMetadataType>,
   >,
   USER_PROFILE_UPDATE: UniqueActionType<
     typeof ACTIONS.USER_PROFILE_UPDATE,

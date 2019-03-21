@@ -46,7 +46,7 @@ class DDB {
     { getAccessController, name }: StoreBlueprint,
     storeProps?: Object,
   ) {
-    // @TODO: Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
+    // TODO: Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
     const accessController = getAccessController
       ? getAccessController(storeProps || {})
       : new PermissiveAccessController();
@@ -213,7 +213,7 @@ class DDB {
   // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e
   async storeExists(identifier: StoreIdentifier): Promise<boolean> {
     const address = await this._getStoreAddress(identifier);
-    // @TODO This should actually throw an error
+    // TODO This should actually throw an error
     if (!address) return false;
     // eslint-disable-next-line no-underscore-dangle
     const cache = await this._orbitNode._loadCache(

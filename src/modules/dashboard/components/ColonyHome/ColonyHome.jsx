@@ -11,14 +11,16 @@ import type {
   ColonyType,
   DataType,
   DomainType,
-  UserType,
   UserPermissionsType,
+  UserType,
 } from '~immutable';
 
+import { ACTIONS } from '~redux';
 import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
+
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
-import Button from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import TaskList from '~dashboard/TaskList';
@@ -121,7 +123,7 @@ const ColonyHome = ({
   const { given } = useFeatureFlags();
   const [filterOption, setFilterOption] = useState('all');
   /*
-   * @TODO Replace with actual filtering logic
+   * TODO Replace with actual filtering logic
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
   const {
@@ -211,16 +213,18 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        <Button
-          text={MSG.newTaskButton}
-          appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() => 'unset'}
-          loading={isFetchingPermissions}
-          disabled={
-            given(colony, isInRecoveryMode) ||
-            !given(permissions, canCreateTask)
-          }
-        />
+        {given(permissions, canCreateTask) && (
+          <ActionButton
+            appearance={{ theme: 'primary', size: 'large' }}
+            error={ACTIONS.TASK_CREATE_ERROR}
+            loading={isFetchingPermissions}
+            submit={ACTIONS.TASK_CREATE}
+            success={ACTIONS.TASK_CREATE_SUCCESS}
+            text={MSG.newTaskButton}
+            values={{ colonyENSName: ensName }}
+            disabled={given(colony, isInRecoveryMode)}
+          />
+        )}
         <ul className={styles.domainsFilters}>
           <Heading
             appearance={{ size: 'normal', weight: 'bold' }}

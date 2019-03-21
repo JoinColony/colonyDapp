@@ -1,24 +1,45 @@
 /* @flow */
 
-import type { RecordFactory, RecordOf } from 'immutable';
+import type { RecordFactory, RecordOf, List as ListType } from 'immutable';
 
 import { Record } from 'immutable';
 
+import type { DataRecordType, DataType } from './Data';
+import type { TaskRecordType, TaskType } from './Task';
+import type { TaskFeedItemRecordType, TaskFeedItemType } from './TaskFeedItem';
+
 type Shared = {|
-  taskId: number,
-  // ENS name or Address
-  colonyIdentifier: string,
+  colonyENSName: string,
+  commentsStoreAddress: string,
+  draftId: string,
+  taskStoreAddress: string,
 |};
 
-export type TaskReferenceType = $ReadOnly<Shared>;
+export type TaskReferenceType = $ReadOnly<{|
+  ...Shared,
+  task: DataType<TaskType>,
+  feedItems: DataType<Array<TaskFeedItemType>>,
+|}>;
 
-export type TaskReferenceRecordType = RecordOf<Shared>;
+type TaskReferenceRecordProps = {|
+  ...Shared,
+  task: DataRecordType<TaskRecordType>,
+  feedItems: DataRecordType<ListType<TaskFeedItemRecordType>>,
+|};
 
-const defaultValues: $Shape<Shared> = {
-  taskId: undefined,
-  colonyIdentifier: undefined,
+export type TaskReferenceRecordType = RecordOf<TaskReferenceRecordProps>;
+
+const defaultValues: $Shape<TaskReferenceRecordProps> = {
+  colonyENSName: undefined,
+  commentsStoreAddress: undefined,
+  draftId: undefined,
+  feedItems: undefined,
+  task: undefined,
+  taskStoreAddress: undefined,
 };
 
-const TaskReferenceRecord: RecordFactory<Shared> = Record(defaultValues);
+const TaskReferenceRecord: RecordFactory<TaskReferenceRecordProps> = Record(
+  defaultValues,
+);
 
 export default TaskReferenceRecord;

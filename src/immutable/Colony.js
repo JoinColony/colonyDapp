@@ -8,7 +8,7 @@ import type {
 
 import { Record, Map as ImmutableMap } from 'immutable';
 
-import type { Address, ENSName } from '~types';
+import type { $Pick, Address, ENSName } from '~types';
 import type {
   ColonyAdminRecordType,
   ColonyAdminType,
@@ -34,6 +34,8 @@ export type ColonyType = $ReadOnly<{|
   tokens?: { [address: Address]: TokenReferenceType },
   admins?: { [username: string]: ColonyAdminType },
 |}>;
+
+export type ColonyProps<T> = $Pick<ColonyType, $Exact<T>>;
 
 type ColonyRecordProps = {|
   ...Shared,

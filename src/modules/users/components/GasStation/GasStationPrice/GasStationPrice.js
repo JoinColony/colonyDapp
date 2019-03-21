@@ -33,13 +33,13 @@ const enhance: HOC<*, InProps> = compose(
   ),
   withProps(({ gasPrices }) => {
     /*
-     * @TODO: Actually determine if a tx requires any action with the wallet.
+     * TODO: Actually determine if a tx requires any action with the wallet.
      * Also, union type here isn't necessary, just being used during mocking
      * to remind that `undefined` is possible
      */
     const walletNeedsAction: 'hardware' | 'metamask' | void = undefined;
 
-    // @TODO: Actually determine whether the network is congested
+    // TODO: Actually determine whether the network is congested
     const isNetworkCongested = false;
 
     return {

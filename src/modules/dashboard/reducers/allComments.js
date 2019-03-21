@@ -17,16 +17,16 @@ const allCommentsReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.TASK_COMMENT_ADD_SUCCESS: {
       const {
-        payload: { taskId, commentData, signature },
+        payload: { draftId, commentData, signature },
         meta: { id },
       } = action;
       const comment = TaskCommentRecord({
         content: { ...commentData, id },
         signature,
       });
-      return state.has(taskId)
-        ? state.updateIn([taskId], list => list.push(comment))
-        : state.set(taskId, List.of(comment));
+      return state.has(draftId)
+        ? state.updateIn([draftId], list => list.push(comment))
+        : state.set(draftId, List.of(comment));
     }
     default:
       return state;

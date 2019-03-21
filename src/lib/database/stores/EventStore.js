@@ -13,7 +13,7 @@ class EventStore extends Store {
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBEventStore = this._orbitStore;
 
-  // @TODO We need to check how flow can help here
+  // TODO We need to check how flow can help here
   /*
    @NOTE: for initialization purposes. The convention we're creating is that
    from within "infrastructure" layer we can only initialize. "service" layer

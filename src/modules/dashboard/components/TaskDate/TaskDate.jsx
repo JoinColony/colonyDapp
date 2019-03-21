@@ -55,9 +55,9 @@ class TaskDate extends Component<Props, State> {
     super(props);
 
     this.setTaskDate = promiseListener.createAsyncFunction({
-      start: ACTIONS.TASK_SET_DATE,
-      resolve: ACTIONS.TASK_SET_DATE_SUCCESS,
-      reject: ACTIONS.TASK_SET_DATE_ERROR,
+      start: ACTIONS.TASK_SET_DUE_DATE,
+      resolve: ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
+      reject: ACTIONS.TASK_SET_DUE_DATE_ERROR,
     });
   }
 

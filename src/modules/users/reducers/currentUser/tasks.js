@@ -1,44 +1,36 @@
 /* @flow */
 
-import { List } from 'immutable';
+import { Set as ImmutableSet } from 'immutable';
 
 import { ACTIONS } from '~redux';
-import {
-  DataRecord,
-  CurrentUserTasksRecord,
-  TaskReferenceRecord,
-} from '~immutable';
+import { DataRecord } from '~immutable';
 
-import type { CurrentUserTasksRecordType, DataRecordType } from '~immutable';
+import type { DataRecordType, CurrentUserTasksType } from '~immutable';
 import type { ReducerType } from '~redux';
+import { withDataRecord } from '~utils/reducers';
 
-const currentUserTasksReducer: ReducerType<
-  DataRecordType<CurrentUserTasksRecordType>,
-  {|
-    USER_TASK_IDS_FETCH: *,
-    USER_TASK_IDS_FETCH_ERROR: *,
-    USER_TASK_IDS_FETCH_SUCCESS: *,
-  |},
-> = (state = DataRecord(), action) => {
+type State = DataRecordType<CurrentUserTasksType>;
+type Actions = {
+  TASK_FETCH_IDS_FOR_CURRENT_USER: *,
+  TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR: *,
+  TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS: *,
+};
+
+// TODO in #755 (user logout) unset this state
+const currentUserTasksReducer: ReducerType<State, Actions> = (
+  state = DataRecord({ record: ImmutableSet() }),
+  action,
+) => {
   switch (action.type) {
-    case ACTIONS.USER_TASK_IDS_FETCH: {
-      return state.set('isFetching', true);
-    }
-    case ACTIONS.USER_TASK_IDS_FETCH_ERROR: {
-      const { message: error } = action.payload;
-      return state.merge({ error, isFetching: false });
-    }
-    case ACTIONS.USER_TASK_IDS_FETCH_SUCCESS: {
-      const { open, closed } = action.payload;
-      const record = CurrentUserTasksRecord({
-        open: List(open.map(item => TaskReferenceRecord(item))),
-        closed: List(closed.map(item => TaskReferenceRecord(item))),
-      });
-      return state.merge({ record, isFetching: false });
+    case ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS: {
+      const record = ImmutableSet(action.payload);
+      return state.merge({ error: undefined, record, isFetching: false });
     }
     default:
       return state;
   }
 };
 
-export default currentUserTasksReducer;
+export default withDataRecord<State, Actions>(
+  ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER,
+)(currentUserTasksReducer);

@@ -5,6 +5,7 @@ import { connectRouter } from 'connected-react-router';
 
 import { RootState } from '~immutable';
 
+// TODO eventually, move all reducers to src/redux/reducers
 import adminReducer from './modules/admin/reducers';
 import coreReducer from './modules/core/reducers';
 import dashboardReducer from './modules/dashboard/reducers';

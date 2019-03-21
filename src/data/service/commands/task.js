@@ -1,5 +1,7 @@
 /* @flow */
 
+import nanoid from 'nanoid';
+
 import type { Address, ENSName, OrbitDBAddress } from '~types';
 import type {
   ColonyClientContext,
@@ -8,6 +10,7 @@ import type {
   DDBContext,
   WalletContext,
 } from '../../types';
+import type { ColonyContext } from './colony';
 import type { FeedStore, EventStore } from '../../../lib/database/stores';
 
 import { TASK_STATUS } from '../../constants';
@@ -24,6 +27,7 @@ import {
   createTaskCancelledEvent,
   createTaskClosedEvent,
   createTaskCreatedEvent,
+  createTaskDescriptionSetEvent,
   createTaskDomainSetEvent,
   createTaskDueDateSetEvent,
   createTaskFinalizedEvent,
@@ -31,7 +35,7 @@ import {
   createTaskSkillSetEvent,
   createTaskStoreRegisteredEvent,
   createTaskStoreUnregisteredEvent,
-  createTaskUpdatedEvent,
+  createTaskTitleSetEvent,
   createWorkerAssignedEvent,
   createWorkerUnassignedEvent,
   createWorkInviteSentEvent,
@@ -44,11 +48,12 @@ import {
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
+  SetTaskDescriptionCommandArgsSchema,
   SetTaskDomainCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
   SetTaskPayoutCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
-  UpdateTaskCommandArgsSchema,
+  SetTaskTitleCommandArgsSchema,
 } from './schemas';
 
 export type TaskContext = ContextWithMetadata<
@@ -71,21 +76,22 @@ export type TaskCommand<I: *, R: *> = Command<TaskContext, I, R>;
 export type CommentCommand<I: *, R: *> = Command<CommentContext, I, R>;
 
 type CreateTaskCommandArgs = {|
-  domainId: number,
-  taskId: string,
-  description: string,
-  title: string,
+  creator: string,
 |};
 
 type CreateTaskCommandReturn = {|
-  commentsStore: FeedStore,
-  taskStore: EventStore,
   colonyStore: EventStore,
+  commentsStore: FeedStore,
+  draftId: string,
+  taskStore: EventStore,
 |};
 
-type UpdateTaskCommandArgs = {|
-  description: string,
+type SetTaskTitleCommandArgs = {|
   title: string,
+|};
+
+type SetTaskDescriptionCommandArgs = {|
+  description: string,
 |};
 
 type SetTaskDueDateCommandArgs = {|
@@ -106,8 +112,7 @@ type UnassignWorkerCommandArgs = {|
 |};
 
 type CancelTaskCommandArgs = {|
-  taskId: string,
-  domainId: number,
+  draftId: string,
 |};
 
 type FinalizeTaskCommandArgs = {|
@@ -144,58 +149,71 @@ type PostCommentCommandArgs = {|
   |},
 |};
 
-export const createTask: TaskCommand<
+// This is not a TaskCommand because we don't yet have a taskStoreAddress
+export const createTask: Command<
+  ColonyContext,
   CreateTaskCommandArgs,
   CreateTaskCommandReturn,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateTaskCommandArgsSchema,
-  async execute(args) {
-    // @TODO: Put their address on state somehow
+  async execute({ creator }) {
     const { taskStore, commentsStore } = await createTaskStore(
       colonyClient,
       ddb,
       wallet,
     )(metadata);
 
+    const commentsStoreAddress = commentsStore.address.toString();
     await taskStore.init(
-      createCommentStoreCreatedEvent({
-        commentsStoreAddress: commentsStore.address.toString(),
-      }),
+      createCommentStoreCreatedEvent({ commentsStoreAddress }),
     );
 
-    await taskStore.append(createTaskCreatedEvent(args));
+    const draftId = nanoid();
+    await taskStore.append(createTaskCreatedEvent({ creator, draftId }));
 
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
 
-    const { taskId, domainId } = args;
     await colonyStore.append(
       createTaskStoreRegisteredEvent({
+        commentsStoreAddress,
+        draftId,
         taskStoreAddress: taskStore.address.toString(),
-        taskId,
-        domainId,
       }),
     );
 
     return {
-      commentsStore,
-      taskStore,
       colonyStore,
+      commentsStore,
+      draftId,
+      taskStore,
     };
   },
 });
 
-export const updateTask: TaskCommand<UpdateTaskCommandArgs, EventStore> = ({
+export const setTaskTitle: TaskCommand<SetTaskTitleCommandArgs, EventStore> = ({
   ddb,
   colonyClient,
   wallet,
   metadata,
 }) => ({
-  schema: UpdateTaskCommandArgsSchema,
+  schema: SetTaskTitleCommandArgsSchema,
   async execute(args) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
-    await taskStore.append(createTaskUpdatedEvent(args));
+    await taskStore.append(createTaskTitleSetEvent(args));
+    return taskStore;
+  },
+});
+
+export const setTaskDescription: TaskCommand<
+  SetTaskDescriptionCommandArgs,
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  schema: SetTaskDescriptionCommandArgsSchema,
+  async execute(args) {
+    const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
+    await taskStore.append(createTaskDescriptionSetEvent(args));
     return taskStore;
   },
 });
@@ -344,7 +362,7 @@ export const cancelTask: TaskCommand<CancelTaskCommandArgs, EventStore> = ({
   metadata,
 }) => ({
   schema: CancelTaskCommandArgsSchema,
-  async execute(args) {
+  async execute({ draftId }) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
     await taskStore.append(
       createTaskCancelledEvent({ status: TASK_STATUS.CANCELLED }),
@@ -353,11 +371,9 @@ export const cancelTask: TaskCommand<CancelTaskCommandArgs, EventStore> = ({
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
-    const { taskId, domainId } = args;
     await colonyStore.append(
       createTaskStoreUnregisteredEvent({
-        taskId,
-        domainId,
+        draftId,
         taskStoreAddress: taskStore.address.toString(),
       }),
     );

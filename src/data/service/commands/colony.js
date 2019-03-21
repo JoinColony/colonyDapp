@@ -39,9 +39,11 @@ export type ColonyContext = ContextWithMetadata<
 export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
 
 type AddTokenInfoCommandArgs = {|
-  isNative?: ?boolean,
   address: Address,
   icon?: ?string,
+  isNative?: ?boolean,
+  name: string,
+  symbol: string,
 |};
 
 type CreateColonyProfileCommandArgs = {|

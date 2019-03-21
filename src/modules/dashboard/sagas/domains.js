@@ -125,7 +125,7 @@ function* checkDomainExists(
     );
 }
 
-// @TODO: We can just use the state directly from the colony we fetch
+// TODO: We can just use the state directly from the colony we fetch
 /*
  * Fetch the domain for the given colony ENS name and domain ID.
  */

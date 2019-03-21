@@ -49,7 +49,7 @@ const MSG = defineMessages({
 });
 
 /*
- * @TODO The word choosen to test should be randomized
+ * TODO The word choosen to test should be randomized
  *
  * This can be done by splitting the mnemonic, randomizing it, then extract the
  * chosen word, before chosing another

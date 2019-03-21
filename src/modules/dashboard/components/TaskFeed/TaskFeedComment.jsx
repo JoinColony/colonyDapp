@@ -40,7 +40,7 @@ const TaskFeedComment = ({
     ),
   });
   /*
-   * @TODO The comment author (wallet address) <-> user profile relationship
+   * TODO The comment author (wallet address) <-> user profile relationship
    * has to come from a reducer, since it's not available in the comments store
    */
   return (

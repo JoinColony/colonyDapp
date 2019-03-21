@@ -12,7 +12,7 @@ const userInboxStore: StoreBlueprint = {
   schema: yup.object({
     userAction: yup
       .string()
-      // @TODO: Add inbox event type message validation
+      // TODO: Add inbox event type message validation
       // .oneOf(Object.keys(activityMessages))
       .required(),
     colonyName: yup.string(),
