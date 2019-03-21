@@ -78,6 +78,8 @@ export type ColonyEvents = {|
       address: string,
       icon?: string,
       isNative?: boolean,
+      name: string,
+      symbol: string,
     |},
   >,
 |};

@@ -229,7 +229,15 @@ function* colonyCreate({
 }
 
 function* colonyCreateLabel({
-  payload: { colonyAddress, colonyName, ensName, tokenAddress, tokenIcon },
+  payload: {
+    colonyAddress,
+    colonyName,
+    ensName,
+    tokenAddress,
+    tokenIcon,
+    tokenName,
+    tokenSymbol,
+  },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
   // @NOTE: We wanna use the address, we haven't anything mapped to the ENS name yet. Used on metadata
@@ -242,6 +250,8 @@ function* colonyCreateLabel({
       address: tokenAddress,
       icon: tokenIcon,
       isNative: true,
+      name: tokenName,
+      symbol: tokenSymbol,
     },
   };
 

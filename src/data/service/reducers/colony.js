@@ -76,7 +76,7 @@ export const colonyReducer: EventReducer<
 > = ({ colony, tokens }, event) => {
   switch (event.type) {
     case TOKEN_INFO_ADDED: {
-      const { address, isNative, icon } = event.payload;
+      const { address, isNative, icon, name, symbol } = event.payload;
       const token = { address, isNative };
       return {
         colony: {
@@ -86,7 +86,7 @@ export const colonyReducer: EventReducer<
             [address]: token,
           },
         },
-        tokens: [...tokens, { ...token, icon }],
+        tokens: [...tokens, { ...token, icon, name, symbol }],
       };
     }
     case AVATAR_UPLOADED: {
