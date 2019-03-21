@@ -15,10 +15,6 @@ export default class AbstractAccessController<
   I: PurserIdentity,
   P: PurserIdentityProvider<I>,
 > implements AccessController<I, P> {
-  static get type(): string {
-    throw new Error('Not implemented');
-  }
-
   static _walletDidVerifyOrbitKey({
     identity: {
       id: walletAddress,
@@ -65,7 +61,7 @@ export default class AbstractAccessController<
     // TODO: Add logs here with debug so we have a verbose mode that gives us a clue on what's going on
 
     // Is the entry identity type valid?
-    const isTypeValid = type === this.constructor.type;
+    const isTypeValid = type === provider.type;
     if (!isTypeValid) return false;
 
     const isWalletSignatureValid = this.constructor._walletDidVerifyOrbitKey(

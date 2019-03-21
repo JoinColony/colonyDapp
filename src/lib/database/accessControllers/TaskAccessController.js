@@ -10,8 +10,6 @@ import PurserIdentityProvider from '../PurserIdentityProvider';
 import PermissionManager from './PermissionManager';
 import type { Entry } from '../types/index';
 
-const PROVIDER_TYPE: 'ETHEREUM_ACCOUNT' = 'ETHEREUM_ACCOUNT';
-
 class TaskAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
@@ -21,10 +19,6 @@ class TaskAccessController extends AbstractAccessController<
   _manager: PermissionManager;
 
   _purserWallet: WalletObjectType;
-
-  static get type() {
-    return PROVIDER_TYPE;
-  }
 
   constructor(
     colonyAddress: string,
@@ -56,9 +50,7 @@ class TaskAccessController extends AbstractAccessController<
       message: signingWalletAddress,
     });
 
-    return `/${
-      this.constructor.type
-    }/colony/${signingWalletAddress}/${signature}`;
+    return `/colony/${this._colonyAddress}/task/creator/${signingWalletAddress}/${signature}`;
   }
 
   async setup() {
