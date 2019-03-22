@@ -111,16 +111,34 @@ const UserProfileEdit = ({ user }: Props) => (
             />
           </FieldSet>
           <FieldSet className={styles.inputFieldSet}>
-            <Input label={MSG.labelName} name="displayName" />
-            <Textarea label={MSG.labelBio} name="bio" maxLength={160} />
-            <Input label={MSG.labelWebsite} name="website" />
-            <Input label={MSG.labelLocation} name="location" />
+            <Input
+              label={MSG.labelName}
+              name="displayName"
+              data-test="userSettingsName"
+            />
+            <Textarea
+              label={MSG.labelBio}
+              name="bio"
+              maxLength={160}
+              data-test="userSettingsBio"
+            />
+            <Input
+              label={MSG.labelWebsite}
+              name="website"
+              data-test="userSettingsWebsite"
+            />
+            <Input
+              label={MSG.labelLocation}
+              name="location"
+              data-test="userSettingsLocation"
+            />
           </FieldSet>
           <FieldSet>
             <Button
               type="submit"
               text={{ id: 'button.save' }}
               loading={isSubmitting}
+              data-test="userSettingsSubmit"
             />
           </FieldSet>
           <FormStatus status={status} />

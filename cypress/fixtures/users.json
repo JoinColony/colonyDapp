@@ -1,3 +1,7 @@
 {
-  "ensName": "cypressTestUser"
+  "ensName": "cypresstestuser",
+  "displayName": "Tessa Alvarado",
+  "bio": "Queen of Swords",
+  "website": "https://en.wikipedia.org/wiki/Queen_of_Swords_(TV_series)",
+  "location": "Spanish California"
 }

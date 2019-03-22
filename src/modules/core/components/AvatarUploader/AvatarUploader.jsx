@@ -98,8 +98,13 @@ class AvatarUploader extends Component<Props> {
               appearance={{ theme: 'danger' }}
               text={{ id: 'button.remove' }}
               onClick={remove}
+              data-test="avatarUploaderRemove"
             />
-            <Button text={{ id: 'button.choose' }} onClick={this.choose} />
+            <Button
+              text={{ id: 'button.choose' }}
+              onClick={this.choose}
+              data-test="avatarUploaderChoose"
+            />
           </div>
         </form>
       </Formik>

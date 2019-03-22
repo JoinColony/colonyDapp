@@ -1,8 +1,4 @@
 describe('Claims a username', () => {
-  it('Connect to the dApp', () => {
-    cy.visit('/connect');
-  });
-
   it('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
@@ -109,16 +105,7 @@ describe('Claims a username', () => {
   });
 
   it('Go to the User Profile Settings', () => {
-    /*
-     * Click the Avatar Dropdown
-     */
-    cy.get('button[data-test="avatarDropdown"]').click();
-    /*
-     * Click on the Get Started link
-     */
-    cy.get('li[role="menuitem"]')
-      .contains('Settings')
-      .click();
+    cy.goToUserProfileSettings();
   });
 
   it('Verify the Username', () => {
