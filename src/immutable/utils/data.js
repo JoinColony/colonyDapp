@@ -7,9 +7,11 @@ import type { DataRecordType } from '../Data';
  * the data should be fetched.
  *
  * The data should be fetched if:
- * 1. it is falsy
- * 2. it is not fetching or loaded
- * 3. its `lastFetchedAt` property indicates it should be refreshed
+ * 1. It is falsy
+ * 2. It is not fetching or loaded
+ * 3. There was an error but it is the component's first mount
+ * 4. Record is undefined and it is the component's first mount
+ * 5. Its `lastFetchedAt` property indicates it should be refreshed
  */
 export const shouldFetchData = (
   data: ?DataRecordType<*>,
@@ -20,6 +22,7 @@ export const shouldFetchData = (
   if (data == null) return true;
   if (data.isFetching) return false;
   if (data.error && isFirstMount) return true;
+  if (typeof data.record === 'undefined' && isFirstMount) return true;
 
   return !!(
     ttl &&
