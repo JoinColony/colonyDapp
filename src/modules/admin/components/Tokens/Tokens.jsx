@@ -110,7 +110,7 @@ class Tokens extends Component<Props> {
               </Heading>
             )}
           </div>
-          <TokenList tokens={tokens} />
+          <TokenList tokens={tokens} appearance={{ numCols: '5' }} />
         </main>
         {isColonyAdmin && (
           <aside className={styles.sidebar}>
