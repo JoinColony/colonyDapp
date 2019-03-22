@@ -48,7 +48,7 @@ const Numeral = ({
   if (BN.isBN(value)) {
     convertedNum = unit ? fromWei(value, unit) : value.toString();
   } else {
-    convertedNum = unit ? fromWei(parseInt(value, 10), unit) : value;
+    convertedNum = unit ? fromWei(value.toString(), unit) : value;
   }
 
   const formattedNumber = formatNumber({

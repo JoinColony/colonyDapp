@@ -50,7 +50,12 @@ const Transactions = ({
       <div className={styles.pendingTransactionsWrapper}>
         <TransactionList
           label={MSG.pendingTransactionsTitle}
-          transactions={unclaimedTransactions}
+          transactions={
+            (unclaimedTransactions && unclaimedTransactions.record) || undefined
+          }
+          isLoading={
+            (unclaimedTransactions && unclaimedTransactions.isFetching) || false
+          }
           onClaim={transaction => claimColonyToken(ensName, transaction.token)}
           linkToEtherscan={false}
         />
@@ -58,7 +63,8 @@ const Transactions = ({
       <div className={styles.historyTransactionsWrapper}>
         <TransactionList
           label={MSG.transactionHistoryTitle}
-          transactions={transactions}
+          transactions={(transactions && transactions.record) || undefined}
+          isLoading={(transactions && transactions.isFetching) || false}
           linkToEtherscan
         />
       </div>
