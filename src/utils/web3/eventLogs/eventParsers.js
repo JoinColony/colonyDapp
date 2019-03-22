@@ -129,7 +129,7 @@ export const parseUnclaimedTransferEvent = async ({
   claimLogs,
   colonyClient,
   colonyENSName,
-  transferEvent: { from, tokens: amount },
+  transferEvent: { from, value: amount },
   transferLog: { address: token, blockNumber, transactionHash: hash },
   transferLog,
 }: {
@@ -168,7 +168,7 @@ export const parseUnclaimedTransferEvent = async ({
  */
 export const parseUserTransferEvent = async ({
   tokenClient,
-  event: { to, from, tokens: amount },
+  event: { to, from, value: amount },
   log: { address: token, transactionHash: hash },
   log,
   walletAddress,
