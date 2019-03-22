@@ -17,7 +17,7 @@ export const withKeyPath = (keyPath: string) => (
       : originalTransform;
   return {
     ...action,
-    meta: { keyPath: [].concat(keyPath) },
+    meta: { ...action.meta, keyPath: [].concat(keyPath) },
   };
 };
 

@@ -5,7 +5,6 @@ import type { SendOptions } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js/lib/bn';
 
 import { Record, List } from 'immutable';
-import nanoid from 'nanoid';
 
 import type {
   Address,
@@ -92,7 +91,7 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   gasPrice: undefined,
   group: undefined,
   hash: undefined,
-  id: nanoid(),
+  id: undefined,
   identifier: undefined,
   methodName: undefined,
   multisig: undefined,
