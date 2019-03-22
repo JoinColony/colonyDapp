@@ -157,19 +157,19 @@ export type ColonyActionTypes = {|
     void,
     void,
   >,
-  COLONY_DOMAIN_VALIDATE: UniqueActionType<
-    typeof ACTIONS.COLONY_DOMAIN_VALIDATE,
+  COLONY_ADMINS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_ADMINS_FETCH,
     {| ensName: string |},
-    void,
+    WithKeyPathDepth1,
   >,
-  COLONY_DOMAIN_VALIDATE_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
-    void,
+  COLONY_ADMINS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_ADMINS_FETCH_ERROR,
+    WithKeyPathDepth1,
   >,
-  COLONY_DOMAIN_VALIDATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
-    void,
-    void,
+  COLONY_ADMINS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_ADMINS_FETCH_SUCCESS,
+    string[],
+    WithKeyPathDepth1,
   >,
   COLONY_DOMAINS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_DOMAINS_FETCH,
@@ -184,6 +184,20 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
     DomainType[],
     WithKeyPathDepth1,
+  >,
+  COLONY_DOMAIN_VALIDATE: UniqueActionType<
+    typeof ACTIONS.COLONY_DOMAIN_VALIDATE,
+    {| ensName: string |},
+    void,
+  >,
+  COLONY_DOMAIN_VALIDATE_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
+    void,
+  >,
+  COLONY_DOMAIN_VALIDATE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
+    void,
+    void,
   >,
   COLONY_ENS_NAME_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ENS_NAME_FETCH,

@@ -2,6 +2,7 @@
 
 export const DASHBOARD_NAMESPACE = 'dashboard';
 
+export const DASHBOARD_ALL_ADMINS = 'allAdmins';
 export const DASHBOARD_ALL_COLONIES = 'allColonies';
 export const DASHBOARD_ALL_COMMENTS = 'allComments';
 export const DASHBOARD_ALL_DOMAINS = 'allDomains';
