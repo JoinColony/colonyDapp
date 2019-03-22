@@ -7,6 +7,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
 import BigNumber from 'bn.js';
+import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
 import styles from './ENSNameDialog.css';
 
@@ -45,6 +46,10 @@ const MSG = defineMessages({
       a {url} for your profile. Next, you’ll sign your first
       transaction and claim this username “on chain".`,
   },
+  statusText: {
+    id: 'users.ENSNameDialog.statusText',
+    defaultMessage: 'Actual username: {normalized}',
+  },
   url: {
     id: 'users.ENSNameDialog.url',
     defaultMessage: 'personalized URL',
@@ -59,16 +64,16 @@ const MSG = defineMessages({
   },
   errorDomainTaken: {
     id: 'users.ENSNameDialog.errorDomainTaken',
-    defaultMessage: 'This colony domain name is already taken',
+    defaultMessage: 'This domain name is already taken',
   },
-  errorIllegalCharacters: {
-    id: 'users.ENSNameDialog.errorIllegalCharacters',
-    defaultMessage: 'This colony domain name includes illegal characters',
+  invalid: {
+    id: 'users.ENSNameDialog.invalid',
+    defaultMessage: 'This domain name is invalid',
   },
 });
 
 type FormValues = {
-  ENSname: string,
+  username: string,
 };
 
 type Props = {|
@@ -85,6 +90,17 @@ const validationSchema = yup.object({
     .required()
     .ensAddress(),
 });
+
+const getNormalizedDomainText = (domain: string) => {
+  if (!domain) return null;
+  try {
+    const normalized = ensNormalize(domain);
+    if (normalized === domain) return null;
+    return normalized;
+  } catch (e) {
+    return null;
+  }
+};
 
 class ENSNameDialog extends Component<Props, State> {
   static displayName = 'users.ENSNameDialog';
@@ -103,7 +119,7 @@ class ENSNameDialog extends Component<Props, State> {
     // 1. Validate with schema
     if (!validationSchema.isValidSync(values)) {
       const error = {
-        username: MSG.errorIllegalCharacters,
+        username: MSG.invalid,
       };
       throw error;
     } else {
@@ -131,64 +147,74 @@ class ENSNameDialog extends Component<Props, State> {
           validate={this.validateDomain}
           onSuccess={close}
         >
-          {({ isValid, isSubmitting, status }: FormikProps<FormValues>) => (
-            <Fragment>
-              <DialogSection>
-                <Heading
-                  appearance={{ size: 'medium', margin: 'none' }}
-                  text={MSG.stepTitle}
-                  textValues={{
-                    hasBalance: bigNumberBalance.gt(new BigNumber(0)),
-                  }}
-                />
-              </DialogSection>
-              <DialogSection>
-                <div className={styles.sectionBody}>
-                  <FormattedMessage
-                    {...MSG.stepText}
-                    values={{
-                      url: (
-                        <b>
-                          <FormattedMessage {...MSG.url} />
-                        </b>
-                      ),
-                      mention: (
-                        <b>
-                          <FormattedMessage {...MSG.mention} />
-                        </b>
-                      ),
+          {({
+            isValid,
+            isSubmitting,
+            status,
+            values,
+          }: FormikProps<FormValues>) => {
+            const normalizedUsername = getNormalizedDomainText(values.username);
+            return (
+              <Fragment>
+                <DialogSection>
+                  <Heading
+                    appearance={{ size: 'medium', margin: 'none' }}
+                    text={MSG.stepTitle}
+                    textValues={{
+                      hasBalance: bigNumberBalance.gt(new BigNumber(0)),
                     }}
                   />
-                </div>
-              </DialogSection>
-              <DialogSection>
-                <Input
-                  name="username"
-                  label={MSG.inputLabel}
-                  appearance={{ theme: 'fat' }}
-                  extensionString=".user.joincolony.eth"
-                  extra={<FormattedMessage {...MSG.helpENSName} />}
-                  data-test="claimUsernameInput"
-                />
-              </DialogSection>
-              <DialogSection appearance={{ align: 'right' }}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={MSG.iWillDoItLater}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  text={{ id: 'button.confirm' }}
-                  disabled={!isValid}
-                  type="submit"
-                  loading={isSubmitting}
-                  data-test="claimUsernameConfirm"
-                />
-              </DialogSection>
-              <FormStatus status={status} />
-            </Fragment>
-          )}
+                </DialogSection>
+                <DialogSection>
+                  <div className={styles.sectionBody}>
+                    <FormattedMessage
+                      {...MSG.stepText}
+                      values={{
+                        url: (
+                          <b>
+                            <FormattedMessage {...MSG.url} />
+                          </b>
+                        ),
+                        mention: (
+                          <b>
+                            <FormattedMessage {...MSG.mention} />
+                          </b>
+                        ),
+                      }}
+                    />
+                  </div>
+                </DialogSection>
+                <DialogSection>
+                  <Input
+                    name="username"
+                    label={MSG.inputLabel}
+                    appearance={{ theme: 'fat' }}
+                    extensionString=".user.joincolony.eth"
+                    help={MSG.helpENSName}
+                    status={normalizedUsername && MSG.statusText}
+                    statusValues={{ normalized: normalizedUsername }}
+                    data-test="claimUsernameInput"
+                  />
+                </DialogSection>
+                <DialogSection appearance={{ align: 'right' }}>
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'large' }}
+                    onClick={cancel}
+                    text={MSG.iWillDoItLater}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    text={{ id: 'button.confirm' }}
+                    disabled={!isValid}
+                    type="submit"
+                    loading={isSubmitting}
+                    data-test="claimUsernameConfirm"
+                  />
+                </DialogSection>
+                <FormStatus status={status} />
+              </Fragment>
+            );
+          }}
         </ActionForm>
       </Dialog>
     );
