@@ -1,7 +1,7 @@
 /* @flow */
 
 import { colonyDomainsSelector, singleColonySelector } from './selectors';
-import { fetchColony, fetchColonyDomains } from './actionCreators';
+import { fetchColony, fetchDomains } from './actionCreators';
 
 export const colonyFetcher = {
   select: singleColonySelector,
@@ -11,6 +11,6 @@ export const colonyFetcher = {
 
 export const domainsFetcher = {
   select: colonyDomainsSelector,
-  fetch: fetchColonyDomains,
+  fetch: fetchDomains,
   ttl: 1000 * 60, // 1 minute,
 };

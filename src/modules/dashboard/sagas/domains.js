@@ -24,6 +24,7 @@ import { createDomain } from '../../../data/service/commands';
 import { getColonyDomains } from '../../../data/service/queries';
 
 import { domainSelector } from '../selectors';
+import { fetchDomains } from '../actionCreators';
 
 import { getColonyContext } from './shared';
 
@@ -97,6 +98,8 @@ function* domainCreate({
       },
       payload: { id: domainId, name: domainName },
     });
+
+    yield put(fetchDomains(colonyENSName));
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {
@@ -121,7 +124,6 @@ function* checkDomainExists(
     );
 }
 
-// TODO: We can just use the state directly from the colony we fetch
 /*
  * Fetch the domain for the given colony ENS name and domain ID.
  */
