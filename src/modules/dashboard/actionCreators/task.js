@@ -18,11 +18,11 @@ export const fetchTaskComments = (
 // eslint-disable-next-line import/prefer-default-export
 export const setTaskWorker = (
   colonyAddress: Address,
-  taskStoreAddress: string,
+  draftId: string,
   assignee: string,
 ) => ({
-  type: ACTIONS.TASK_ASSIGN,
+  type: ACTIONS.TASK_WORKER_ASSIGN,
   meta: {
-    keyPath: [colonyAddress, taskStoreAddress, assignee],
+    keyPath: [colonyAddress, draftId, assignee],
   },
 });

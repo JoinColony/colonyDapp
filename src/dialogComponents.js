@@ -13,7 +13,6 @@ import {
   WorkerRatingDialog,
 } from '~dashboard/TaskRatingDialogs';
 import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
-import TaskRequestWorkDialog from '~dashboard/TaskRequestWork/TaskRequestWorkDialog.jsx';
 import TaskEditDialog from '~dashboard/TaskEditDialog';
 import TaskInviteDialog from '~dashboard/Task/TaskInviteDialog.jsx';
 import ClaimProfileDialog from '~users/ClaimProfileDialog';

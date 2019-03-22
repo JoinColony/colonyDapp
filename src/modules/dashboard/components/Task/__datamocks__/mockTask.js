@@ -28,7 +28,6 @@ export const mockTaskReward = {
 };
 
 export const mockTask = {
-  id: 1,
   assignee: userMock,
   colonyENSName: 'cool-colony',
   manager: { address: '0x123collin' },
@@ -39,7 +38,6 @@ export const mockTask = {
   reputation: 19.5,
   taskId: 1,
   title: 'Develop Github integration',
-  taskStoreAddress: 'orbitDbHash',
   payouts: [
     {
       token: ETHToken,

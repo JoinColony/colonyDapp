@@ -49,7 +49,7 @@ class TaskInviteDialog extends Component<Props> {
 
   setPayload = (action: Object) => {
     const {
-      task: { taskId, taskStoreAddress },
+      task: { draftId },
       currentUser,
       /* This shouldn't throw an error since address is
       indeed a property of shared */
@@ -60,8 +60,7 @@ class TaskInviteDialog extends Component<Props> {
       ...action,
       payload: {
         worker: currentUser,
-        taskId,
-        taskStoreAddress,
+        draftId,
         colonyAddress: address,
       },
     };
@@ -79,9 +78,9 @@ class TaskInviteDialog extends Component<Props> {
       <FullscreenDialog cancel={cancel}>
         <ActionForm
           initialValues={{ payouts: payouts || [], assignee: currentUser }}
-          submit={ACTIONS.TASK_ASSIGN}
-          success={ACTIONS.TASK_ASSIGN_SUCCESS}
-          error={ACTIONS.TASK_ASSIGN_ERROR}
+          submit={ACTIONS.TASK_WORKER_ASSIGN}
+          success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
+          error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
           setPayLoad={this.setPayload}
         >
           {({ status, isSubmitting }) => (

@@ -30,10 +30,26 @@ type TaskActionType<T, P> = UniqueActionType<
 type TaskErrorActionType<T> = ErrorActionType<T, TaskActionMeta>;
 
 export type TaskActionTypes = {|
-  TASK_ASSIGN: TaskActionType<typeof ACTIONS.TASK_ASSIGN, {| worker: string |}>,
-  TASK_ASSIGN_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_ASSIGN_ERROR>,
-  TASK_ASSIGN_SUCCESS: TaskActionType<
-    typeof ACTIONS.TASK_ASSIGN_SUCCESS,
+  TASK_WORKER_ASSIGN: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN,
+    {| worker: string |},
+  >,
+  TASK_WORKER_ASSIGN_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
+  >,
+  TASK_WORKER_ASSIGN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
+    {| worker: string |},
+  >,
+  TASK_WORKER_UNASSIGN: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_UNASSIGN,
+    {| worker: string |},
+  >,
+  TASK_WORKER_UNASSIGN_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_WORKER_UNASSIGN_ERROR,
+  >,
+  TASK_WORKER_UNASSIGN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
     {| worker: string |},
   >,
   TASK_CANCEL: TaskActionType<typeof ACTIONS.TASK_CANCEL, void>,
@@ -280,13 +296,15 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
     void, // TODO define the payload
   >,
-  TASK_UNASSIGN: TaskActionType<
-    typeof ACTIONS.TASK_UNASSIGN,
+  TASK_WORKER_ASSIGN: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN,
     {| worker: string |},
   >,
-  TASK_UNASSIGN_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_UNASSIGN_ERROR>,
-  TASK_UNASSIGN_SUCCESS: TaskActionType<
-    typeof ACTIONS.TASK_UNASSIGN_SUCCESS,
+  TASK_WORKER_ASSIGN_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
+  >,
+  TASK_WORKER_ASSIGN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
     {| worker: string |},
   >,
   TASK_WORKER_CLAIM_REWARD: TaskActionType<
@@ -299,25 +317,6 @@ export type TaskActionTypes = {|
   TASK_WORKER_CLAIM_REWARD_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS,
     void, // TODO define the payload
-  >,
-  TASK_WORKER_ASSIGN: UniqueActionType<
-    typeof ACTIONS.TASK_WORKER_ASSIGN,
-    {|
-      taskId: number, // TODO should be draftId
-      colonyENSName: string,
-      workDescription: *,
-      rating: number,
-    |},
-    WithKeyPathDepth2,
-  >,
-  TASK_WORKER_ASSIGN_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
-    WithKeyPathDepth2,
-  >,
-  TASK_WORKER_ASSIGN_SUCCESS: UniqueActionType<
-    typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
-    void,
-    WithKeyPathDepth2,
   >,
   TASK_WORKER_END: TaskActionType<
     typeof ACTIONS.TASK_WORKER_END,

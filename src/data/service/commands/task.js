@@ -308,8 +308,7 @@ export const assignWorker: TaskCommand<AssignWorkerCommandArgs, EventStore> = ({
   wallet,
   metadata,
 }) => ({
-  async execute({ worker /* taskStoreAddress */ }) {
-    // TODO: use taskStoreAddress in this command to assign worker to a specific task
+  async execute({ worker }) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
     await taskStore.append(
       createWorkerAssignedEvent({
