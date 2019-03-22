@@ -17,5 +17,5 @@ const getColonyAdmins = (state: RootStateRecord, ensName: string) =>
 // eslint-disable-next-line import/prefer-default-export
 export const colonyAdminsSelector = createSelector(
   getColonyAdmins,
-  domains => domains,
+  admins => admins,
 );
