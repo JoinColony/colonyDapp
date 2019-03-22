@@ -358,6 +358,21 @@ function* userPermissionsFetch({
   }
 }
 
+function* getMetadataStoreAddress() {
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+  const walletAddress = yield select(currentUserAddressSelector);
+  const userMetadataStoreAddress = yield* executeQuery(
+    {
+      ddb,
+      metadata: {
+        walletAddress,
+      },
+    },
+    getUserMetadataStoreAddress,
+  );
+  return userMetadataStoreAddress;
+}
+
 function* userTokensFetch(
   // eslint-disable-next-line no-unused-vars
   action: Action<typeof ACTIONS.USER_TOKENS_FETCH>,
@@ -366,16 +381,7 @@ function* userTokensFetch(
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const walletAddress = yield select(currentUserAddressSelector);
-    // TODO: refactor this into its own function
-    const userMetadataStoreAddress = yield* executeQuery(
-      {
-        ddb,
-        metadata: {
-          walletAddress,
-        },
-      },
-      getUserMetadataStoreAddress,
-    );
+    const userMetadataStoreAddress = yield* getMetadataStoreAddress();
     const context = {
       ddb,
       networkClient,

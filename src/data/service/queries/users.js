@@ -12,6 +12,7 @@ import type {
 
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 import { getTokenClient } from '~utils/web3/contracts';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import type {
   ColonyClientContext,
@@ -295,8 +296,13 @@ export const getUserTokens: UserTokensQuery<void, *> = ({
 }) => ({
   async execute() {
     const { walletAddress } = metadata;
+    const {
+      adapter: { provider },
+    } = networkClient;
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
-    return Promise.all(
+
+    // for each address, get balance
+    const tokens = await Promise.all(
       metadataStore
         .all()
         .filter(
@@ -311,6 +317,16 @@ export const getUserTokens: UserTokensQuery<void, *> = ({
           return { address, balance };
         }),
     );
+
+    // also get balance for ether and return in same format
+    const etherBalance = await provider.getBalance(walletAddress);
+    const etherToken = {
+      address: ZERO_ADDRESS,
+      balance: etherBalance,
+    };
+
+    // return combined array
+    return [etherToken, ...tokens];
   },
 });
 
