@@ -7,7 +7,7 @@ import TransactionList from '~core/TransactionList';
 
 import styles from './WalletTransactions.css';
 
-import type { ContractTransactionType, DataType } from '~immutable';
+import type { ContractTransactionType } from '~immutable';
 
 const MSG = defineMessages({
   transactionsEmptyTitle: {
@@ -25,14 +25,15 @@ const MSG = defineMessages({
 const displayName = 'dashboard.WalletTransactions';
 
 type Props = {|
-  transactions: ?DataType<Array<ContractTransactionType>>,
-  userAddress: string,
+  transactions?: Array<ContractTransactionType>,
+  isLoading?: boolean,
 |};
 
-const WalletTransactions = ({ transactions }: Props) => (
+const WalletTransactions = ({ transactions, isLoading }: Props) => (
   <div className={styles.main}>
     <TransactionList
       transactions={transactions}
+      isLoading={isLoading}
       linkToEtherscan
       emptyState={
         <div className={styles.transactionsEmpty}>

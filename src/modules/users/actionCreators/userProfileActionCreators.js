@@ -28,6 +28,12 @@ export const userAvatarFetch = (
   payload: { address },
 });
 
+export const userTokensFetch = (): Action<
+  typeof ACTIONS.USER_TOKENS_FETCH,
+> => ({
+  type: ACTIONS.USER_TOKENS_FETCH,
+});
+
 export const userTokenTransfersFetch = (): Action<
   typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 > => ({

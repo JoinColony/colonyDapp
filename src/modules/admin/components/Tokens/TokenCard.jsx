@@ -25,38 +25,41 @@ const displayName = 'admin.Tokens.TokenCard';
 
 const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
   const token = useToken(address);
-  const { icon, name, symbol } = token;
+  const { icon, name, symbol } = token || {};
   return (
-    <Card key={address} className={styles.main}>
-      <div className={styles.cardHeading}>
-        {!!icon && (
-          <div className={styles.iconContainer}>
-            <img src={icon} alt={name} />
+    token && (
+      <Card key={address} className={styles.main}>
+        <div className={styles.cardHeading}>
+          {!!icon && (
+            <div className={styles.iconContainer}>
+              {/* TODO: this is cheating, we should load from our own node */}
+              <img src={`https://ipfs.io/ipfs/${icon}`} alt={name} />
+            </div>
+          )}
+          <div className={styles.tokenSymbol}>
+            {symbol}
+            {isNative && <span>*</span>}
           </div>
-        )}
-        <div className={styles.tokenSymbol}>
-          {symbol}
-          {isNative && <span>*</span>}
         </div>
-      </div>
-      <div
-        className={
-          tokenBalanceIsNotPositive(token)
-            ? styles.balanceNotPositive
-            : styles.balanceContent
-        }
-      >
-        <Numeral
-          value={balance}
-          decimals={2}
-          integerSeparator=""
-          unit="ether"
-        />
-      </div>
-      <div className={styles.cardFooter}>
-        {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
-      </div>
-    </Card>
+        <div
+          className={
+            tokenBalanceIsNotPositive(token)
+              ? styles.balanceNotPositive
+              : styles.balanceContent
+          }
+        >
+          <Numeral
+            value={balance}
+            decimals={2}
+            integerSeparator=""
+            unit="ether"
+          />
+        </div>
+        <div className={styles.cardFooter}>
+          {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
+        </div>
+      </Card>
+    )
   );
 };
 

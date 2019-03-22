@@ -12,7 +12,7 @@ import TransactionListItem from './TransactionListItem';
 
 import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';
-import type { ContractTransactionType, DataType } from '~immutable';
+import type { ContractTransactionType } from '~immutable';
 
 const MSG = defineMessages({
   noTransactions: {
@@ -26,10 +26,8 @@ type Props = {|
    * Title to show before the list
    */
   label?: string | MessageDescriptor,
-  /*
-   *
-   */
-  transactions: ?DataType<Array<ContractTransactionType>>,
+  transactions?: Array<ContractTransactionType>,
+  isLoading?: boolean,
   /*
    * The user's address will always be shown, this just controls if it's
    * shown in full, or masked.
@@ -56,6 +54,7 @@ const displayName: string = 'admin.TransactionList';
 const TransactionList = ({
   label,
   transactions,
+  isLoading = false,
   showMaskedAddress,
   onClaim,
   linkToEtherscan = true,
@@ -68,10 +67,10 @@ const TransactionList = ({
         text={label}
       />
     )}
-    {transactions && transactions.record && !!transactions.record.length && (
+    {transactions && !!transactions.length && (
       <Table scrollable>
         <TableBody>
-          {transactions.record.map(transaction => (
+          {transactions.map(transaction => (
             <TransactionListItem
               key={transaction.id}
               transaction={transaction}
@@ -84,15 +83,14 @@ const TransactionList = ({
         </TableBody>
       </Table>
     )}
-    {transactions &&
-      transactions.record &&
-      !transactions.record.length &&
+    {!isLoading &&
+      !(transactions && transactions.length) &&
       (emptyState || (
         <p>
           <FormattedMessage {...MSG.noTransactions} />
         </p>
       ))}
-    {transactions && transactions.isFetching && <SpinnerLoader />}
+    {isLoading && <SpinnerLoader />}
   </div>
 );
 
