@@ -462,7 +462,7 @@ function* colonyAvatarUpload({
      */
     yield put<Action<typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
-      meta,
+      meta: { keyPath: [ensName] },
       payload: { hash, avatarData: data },
     });
   } catch (error) {

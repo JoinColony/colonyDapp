@@ -1,21 +1,21 @@
 /* @flow */
-
 import { createSelector } from 'reselect';
-import { Map as ImmutableMap } from 'immutable';
 
-import type { ColonyRecordType, DataRecordType } from '~immutable';
+import type { RootStateRecord } from '~immutable';
 
-import { singleColonySelector } from './colony';
-import { getUsers } from '../../users/selectors';
+import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_ADMINS } from '../constants';
 
-const getColonyAdmins = (colony: DataRecordType<ColonyRecordType>) =>
-  colony ? colony.getIn(['record', 'admins'], ImmutableMap()) : ImmutableMap();
+/*
+ * Getters
+ */
+const getColonyAdmins = (state: RootStateRecord, ensName: string) =>
+  state.getIn([ns, DASHBOARD_ALL_ADMINS, ensName]);
 
+/*
+ * Selectors
+ */
 // eslint-disable-next-line import/prefer-default-export
 export const colonyAdminsSelector = createSelector(
-  singleColonySelector,
   getColonyAdmins,
-  getUsers,
-  (colony, admins, users) =>
-    users.filter((_, address) => admins && admins.has(address)).toList(),
+  domains => domains,
 );

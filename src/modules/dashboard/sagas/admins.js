@@ -7,11 +7,34 @@ import { push } from 'connected-react-router';
 
 import type { Action } from '~redux';
 
-import { putError, takeFrom } from '~utils/saga/effects';
+import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
+import { getColonyAdmins } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+
+import { getColonyContext } from './shared';
+
+function* colonyAdminsFetch({
+  payload: { ensName },
+  meta,
+}: Action<typeof ACTIONS.COLONY_ADMINS_FETCH>) {
+  try {
+    const context = yield* getColonyContext(ensName);
+    const admins = yield* executeQuery(context, getColonyAdmins);
+    /*
+     * Dispatch the success action.
+     */
+    yield put<Action<typeof ACTIONS.COLONY_ADMINS_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_ADMINS_FETCH_SUCCESS,
+      meta,
+      payload: admins,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_ADMINS_FETCH_ERROR, error, meta);
+  }
+}
 
 function* colonyAdminAdd({
   payload: { newAdmin, colonyENSName },
@@ -124,6 +147,7 @@ function* colonyAdminRemove({
 }
 
 export default function* adminsSagas(): Saga<void> {
+  yield takeEvery(ACTIONS.COLONY_ADMINS_FETCH, colonyAdminsFetch);
   yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, colonyAdminAdd);
   yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, colonyAdminRemove);
 }

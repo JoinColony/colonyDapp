@@ -9,12 +9,7 @@ import type {
 import { Record, Map as ImmutableMap } from 'immutable';
 
 import type { $Pick, Address, ENSName } from '~types';
-import type {
-  ColonyAdminRecordType,
-  ColonyAdminType,
-  TokenReferenceRecordType,
-  TokenReferenceType,
-} from './index';
+import type { TokenReferenceRecordType, TokenReferenceType } from './index';
 
 type Shared = {|
   address: Address,
@@ -32,7 +27,6 @@ type Shared = {|
 export type ColonyType = $ReadOnly<{|
   ...Shared,
   tokens?: { [address: Address]: TokenReferenceType },
-  admins?: { [username: string]: ColonyAdminType },
 |}>;
 
 export type ColonyProps<T> = $Pick<ColonyType, $Exact<T>>;
@@ -40,12 +34,10 @@ export type ColonyProps<T> = $Pick<ColonyType, $Exact<T>>;
 type ColonyRecordProps = {|
   ...Shared,
   tokens?: ImmutableMapType<Address, TokenReferenceRecordType>,
-  admins?: ImmutableMapType<string, ColonyAdminRecordType>,
 |};
 
 const defaultValues: $Shape<ColonyRecordProps> = {
   address: undefined,
-  admins: ImmutableMap(),
   avatar: undefined,
   description: undefined,
   ensName: undefined,

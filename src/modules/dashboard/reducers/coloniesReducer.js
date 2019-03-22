@@ -8,7 +8,6 @@ import { ACTIONS } from '~redux';
 
 import type { AllColoniesMap, ColonyRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
-import ColonyAdminRecord from '~immutable/ColonyAdmin';
 
 const coloniesReducer: ReducerType<
   AllColoniesMap,
@@ -30,7 +29,7 @@ const coloniesReducer: ReducerType<
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
         payload: {
-          colony: { tokens, ensName, admins = {}, ...props },
+          colony: { tokens, ensName, ...props },
         },
       } = action;
       const record = ColonyRecord({
@@ -38,12 +37,6 @@ const coloniesReducer: ReducerType<
           Object.entries(tokens).map(([address, token]) => [
             address,
             TokenReferenceRecord(token),
-          ]),
-        ),
-        admins: ImmutableMap(
-          Object.entries(admins).map(([username, user]) => [
-            username,
-            ColonyAdminRecord(user),
           ]),
         ),
         ensName,
@@ -74,47 +67,6 @@ const coloniesReducer: ReducerType<
         meta: { keyPath },
       } = action;
       return state.setIn([...keyPath, 'record', 'avatar'], undefined);
-    }
-    case ACTIONS.COLONY_ADMIN_ADD_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { userAddress },
-      } = action;
-      return state.mergeDeepIn([...keyPath, 'record', 'admins', userAddress], {
-        address: userAddress,
-        state: 'pending',
-      });
-    }
-    case ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { userAddress },
-      } = action;
-      return state.mergeDeepIn([...keyPath, 'record', 'admins', userAddress], {
-        status: 'confirmed',
-      });
-    }
-    case ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { userAddress },
-      } = action;
-      return state.mergeDeepIn([...keyPath, 'record', 'admins', userAddress], {
-        status: 'pending',
-      });
-    }
-    case ACTIONS.COLONY_ADMIN_ADD_ERROR: {
-      const {
-        meta: { keyPath, userAddress },
-      } = action;
-      return state.deleteIn([...keyPath, 'record', 'admins', userAddress]);
-    }
-    case ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { userAddress },
-      } = action;
-      return state.deleteIn([...keyPath, 'record', 'admins', userAddress]);
     }
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {

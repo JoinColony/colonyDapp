@@ -28,14 +28,15 @@ import type {
   TokenType,
 } from '~immutable';
 
-import { getColonyStore } from '../../stores';
-import { COLONY_EVENT_TYPES } from '../../constants';
-import { getUserProfile } from './users';
 import {
   colonyAvatarReducer,
   colonyReducer,
   colonyTasksReducer,
 } from '../reducers';
+import { reduceToLastState } from '~utils/reducers';
+
+import { getColonyStore } from '../../stores';
+import { COLONY_EVENT_TYPES } from '../../constants';
 
 const {
   DOMAIN_CREATED,
@@ -72,32 +73,6 @@ export type ColonyContractAdminEventQuery<I: *, R: *> = Query<
 >;
 
 export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
-
-const getAdminProfiles = async ({ colonyClient, ddb }: *, events: *) => {
-  const uniqueRemovedAdmins = [
-    ...new Set(
-      events
-        .filter(
-          ({ eventName }) =>
-            eventName === colonyClient.events.ColonyAdminRoleRemoved.eventName,
-        )
-        .map(({ user }) => user),
-    ),
-  ];
-  return Promise.all(
-    events
-      // TODO rethink this logic so that we can handle the case of an admin being set,
-      // removed and later set again
-      .filter(
-        ({ eventName, user }) =>
-          eventName === colonyClient.events.ColonyAdminRoleSet.eventName &&
-          !uniqueRemovedAdmins.includes(user),
-      )
-      .map(({ user: walletAddress }) =>
-        getUserProfile({ ddb, metadata: { walletAddress } }).execute(),
-      ),
-  );
-};
 
 const EVENT_PARSERS = {
   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
@@ -202,7 +177,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
 
 export const getColonyAdmins: ColonyContractAdminEventQuery<
   void,
-  $PropertyType<ColonyType, 'admins'>,
+  string[],
 > = context => ({
   async execute() {
     const { colonyClient } = context;
@@ -217,19 +192,13 @@ export const getColonyAdmins: ColonyContractAdminEventQuery<
         ],
       },
     );
+    const { eventName: ADDED } = colonyClient.events.ColonyAdminRoleSet;
+    const getKey = event => event.user;
+    const getValue = event => event.eventName;
 
-    const adminProfiles = await getAdminProfiles(context, events);
-
-    return adminProfiles.reduce(
-      (admins, admin) => ({
-        ...admins,
-        [admin.username || admin.walletAddress]: {
-          ...admin,
-          state: 'pending', // TODO get admin user state
-        },
-      }),
-      {},
-    );
+    return reduceToLastState(events, getKey, getValue)
+      .filter(([, eventName]) => eventName === ADDED)
+      .map(([user]) => user);
   },
 });
 
@@ -270,8 +239,6 @@ export const getColony: ColonyQuery<
       colonyENSName,
     });
 
-    const getAdminsQuery = getColonyAdmins({ colonyClient, ddb });
-    const admins = await getAdminsQuery.execute();
     // TODO: Include `founder` to ColonyType
     // const getFounderQuery = getColonyFounder({ colonyClient });
     // const founder = await getFounderQuery.execute();
@@ -287,7 +254,6 @@ export const getColony: ColonyQuery<
         {
           colony: {
             address: colonyAddress,
-            admins,
             avatar: undefined,
             ensName: colonyENSName,
             inRecoveryMode,
