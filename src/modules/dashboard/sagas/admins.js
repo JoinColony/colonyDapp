@@ -3,7 +3,6 @@
 import type { Saga } from 'redux-saga';
 
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { push } from 'connected-react-router';
 
 import type { Action } from '~redux';
 
@@ -13,6 +12,8 @@ import { ACTIONS } from '~redux';
 import { getColonyAdmins } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+
+import { fetchAdmins } from '../actionCreators';
 
 import { getColonyContext } from './shared';
 
@@ -52,7 +53,7 @@ function* colonyAdminAdd({
       params: { user: newAdmin },
     });
 
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
      * Dispatch the action to the admin in the Redux store;
@@ -60,40 +61,20 @@ function* colonyAdminAdd({
      */
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
-      payload: {
-        userAddress: newAdmin,
-      },
+      payload: { user: newAdmin },
       meta,
     });
 
-    /*
-     * Redirect the user back to the admins tab
-     */
-    yield put(
-      push({
-        state: { initialTab: 3 },
-      }),
-    );
-
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    yield put<Action<typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS>>({
-      type: ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-      meta,
-      payload: { userAddress: newAdmin },
-    });
+    yield put(fetchAdmins(colonyENSName));
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, {
-      ...meta,
-      newAdmin,
-    });
+    yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
   }
 }
 
 function* colonyAdminRemove({
-  payload: { userAddress, colonyENSName },
+  payload: { user, colonyENSName },
   payload,
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_REMOVE>): Saga<void> {
@@ -108,37 +89,18 @@ function* colonyAdminRemove({
       context: COLONY_CONTEXT,
       methodName: 'removeAdminRole',
       identifier: colonyENSName,
-      params: {
-        user: userAddress,
-      },
+      params: { user },
     });
 
-    /*
-     * Dispatch the action to the admin in the Redux store
-     *
-     * @NOTE Don't actually remove the admin, just set the state to pending
-     */
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
       meta,
       payload,
     });
-    /*
-     * Redirect the user back to the admins tab
-     */
-    yield put(
-      push({
-        state: { initialTab: 3 },
-      }),
-    );
 
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    yield put<Action<typeof ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS>>({
-      type: ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-      meta,
-      payload,
-    });
+    yield put(fetchAdmins(colonyENSName));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
   } finally {

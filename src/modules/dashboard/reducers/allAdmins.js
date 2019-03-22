@@ -15,7 +15,7 @@ type AdminActions = {
   COLONY_ADMINS_FETCH_ERROR: *,
 };
 
-const allDomainsReducer: ReducerType<AllAdminsMap, AdminActions> = (
+const allAdminsReducer: ReducerType<AllAdminsMap, AdminActions> = (
   state = ImmutableMap(),
   action,
 ) => {
@@ -40,6 +40,6 @@ const allDomainsReducer: ReducerType<AllAdminsMap, AdminActions> = (
 };
 
 export default withDataRecordMap<AllAdminsMap, ImmutableSet<string>>(
-  ACTIONS.COLONY_DOMAINS_FETCH,
+  ACTIONS.COLONY_ADMINS_FETCH,
   ImmutableMap(),
-)(allDomainsReducer);
+)(allAdminsReducer);

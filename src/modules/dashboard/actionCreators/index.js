@@ -2,4 +2,5 @@
 
 export * from './colony';
 export * from './domains';
-export * from './task.js';
+export * from './task';
+export * from './admins';

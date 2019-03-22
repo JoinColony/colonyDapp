@@ -24,36 +24,18 @@ export type ColonyActionTypes = {|
     {| newAdmin: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
-  COLONY_ADMIN_ADD_CONFIRM_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_ERROR,
-    WithKeyPathDepth1,
-  >,
-  COLONY_ADMIN_ADD_CONFIRM_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS,
-    {| userAddress: string |},
-    WithKeyPathDepth1,
-  >,
   COLONY_ADMIN_ADD_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_ERROR,
     {| ...WithKeyPathDepth1, userAddress: string |},
   >,
   COLONY_ADMIN_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
-    {| userAddress: string |},
+    {| user: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| userAddress: string, colonyENSName: string |},
-    WithKeyPathDepth1,
-  >,
-  COLONY_ADMIN_REMOVE_CONFIRM_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_ERROR,
-    WithKeyPathDepth1,
-  >,
-  COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS,
-    {| userAddress: string, colonyENSName: string |},
+    {| user: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_ERROR: ErrorActionType<
@@ -62,7 +44,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
-    {| userAddress: string, colonyENSName: string |},
+    {| user: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_FETCH: ActionTypeWithPayloadAndMeta<

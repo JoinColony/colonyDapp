@@ -12,11 +12,6 @@ import type { ReducerType } from '~redux';
 const coloniesReducer: ReducerType<
   AllColoniesMap,
   {|
-    COLONY_ADMIN_ADD_CONFIRM_SUCCESS: *,
-    COLONY_ADMIN_ADD_ERROR: *,
-    COLONY_ADMIN_ADD_SUCCESS: *,
-    COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: *,
-    COLONY_ADMIN_REMOVE_SUCCESS: *,
     COLONY_AVATAR_REMOVE_SUCCESS: *,
     COLONY_AVATAR_UPLOAD_SUCCESS: *,
     COLONY_FETCH: *,

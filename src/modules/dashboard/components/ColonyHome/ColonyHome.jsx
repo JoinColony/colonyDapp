@@ -10,7 +10,7 @@ import { Redirect } from 'react-router';
 import type { ColonyType, DomainType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useFeatureFlags, useSelector } from '~utils/hooks';
+import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -22,10 +22,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyFetcher, domainsFetcher } from '../../fetchers';
-import {
-  canCreateTask,
-  currentUserAddressSelector,
-} from '../../../users/selectors';
+import { canAdminister, canCreateTask } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../selectors';
 
 import ColonyMeta from './ColonyMeta';
@@ -132,8 +129,6 @@ const ColonyHome = ({
     DomainType[],
   >(domainsFetcher, [ensName], [ensName]);
 
-  const walletAddress = useSelector(currentUserAddressSelector);
-
   if (!ensName || colonyError) {
     return <Redirect to="/404" />;
   }
@@ -176,10 +171,10 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <ColonyMeta
           colony={colony}
-          /*
-           * TODO This needs real logic to determine if the user is an admin
-           */
-          canAdminister={!!walletAddress && given(colony, isInRecoveryMode)}
+          canAdminister={
+            !given(colony, isInRecoveryMode) &&
+            given(permissions, canAdminister)
+          }
         />
       </aside>
       <main className={styles.content}>

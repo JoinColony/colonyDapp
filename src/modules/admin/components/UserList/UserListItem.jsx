@@ -1,16 +1,13 @@
 /* @flow */
 
-import type { IntlShape } from 'react-intl';
-
 import React from 'react';
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
-import { Tooltip } from '~core/Popover';
 import { useDataFetcher } from '~utils/hooks';
 import { userFetcher } from '../../../users/fetchers';
 
@@ -33,9 +30,9 @@ const componentDisplayName = 'admin.UserList.UserListItem';
 
 type Props = {|
   /*
-   * User record
+   * User address
    */
-  user: ColonyAdminType,
+  address: string,
   /*
    * Whether to show the fullname
    */
@@ -58,18 +55,15 @@ type Props = {|
    * Gets passed down to `UserListItem`
    */
   onRemove: ColonyAdminType => any,
-  /** @ignore Injected by `injectIntl` */
-  intl: IntlShape,
 |};
 
 const UserListItem = ({
-  user: { address, state = 'pending' },
+  address,
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
   onRemove,
-  intl: { formatMessage },
 }: Props) => {
   const { data: user } = useDataFetcher<UserType>(
     userFetcher,
@@ -106,33 +100,13 @@ const UserListItem = ({
         </span>
       </TableCell>
       <TableCell className={styles.userRemove}>
-        {!viewOnly && state === 'confirmed' && (
+        {!viewOnly && (
           <Button
             className={styles.customRemoveButton}
             appearance={{ theme: 'primary' }}
             text={MSG.buttonRemove}
             onClick={onRemove}
           />
-        )}
-        {state === 'pending' && (
-          <div className={styles.pendingDotWrapper}>
-            <Tooltip
-              placement="top"
-              showArrow
-              content={
-                <span className={styles.tooltipContentReset}>
-                  <FormattedMessage {...MSG.pending} />
-                </span>
-              }
-            >
-              <div className={styles.pendingDotClickArea}>
-                <span
-                  className={styles.pendingDot}
-                  aria-label={formatMessage(MSG.pending)}
-                />
-              </div>
-            </Tooltip>
-          </div>
         )}
       </TableCell>
     </TableRow>
@@ -141,4 +115,4 @@ const UserListItem = ({
 
 UserListItem.displayName = componentDisplayName;
 
-export default injectIntl(UserListItem);
+export default UserListItem;

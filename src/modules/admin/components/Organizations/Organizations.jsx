@@ -7,13 +7,12 @@ import type { ENSName } from '~types';
 import type { DomainType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { colonyAdminsSelector } from '../../../dashboard/selectors';
-import { domainsFetcher } from '../../../dashboard/fetchers';
+import { adminsFetcher, domainsFetcher } from '../../../dashboard/fetchers';
 
 import UserList from '../UserList';
 import DomainList from '../DomainList';
@@ -68,12 +67,15 @@ type Props = {|
 |};
 
 const Organizations = ({ ensName }: Props) => {
-  const admins = useSelector(colonyAdminsSelector, [ensName]);
+  const { data: admins, isFetching: isFetchingAdmins } = useDataFetcher<
+    string[],
+  >(adminsFetcher, [ensName], [ensName]);
+
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
   >(domainsFetcher, [ensName], [ensName]);
 
-  if (!domains || isFetchingDomains) {
+  if (!domains || isFetchingDomains || !admins || isFetchingAdmins) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 

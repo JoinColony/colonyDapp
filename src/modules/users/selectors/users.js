@@ -165,3 +165,6 @@ export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
 
 export const canCreateTask = (permissions?: UserPermissionsType) =>
   !!(permissions && permissions.isAdmin);
+
+export const canAdminister = (permissions?: UserPermissionsType) =>
+  !!(permissions && permissions.isAdmin);
