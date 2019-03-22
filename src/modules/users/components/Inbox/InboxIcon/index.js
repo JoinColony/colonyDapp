@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './InboxIcon.jsx';
+export { default } from './InboxIcon';

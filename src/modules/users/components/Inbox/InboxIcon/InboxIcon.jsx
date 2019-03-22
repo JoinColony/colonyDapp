@@ -13,16 +13,6 @@ import NavLink from '~core/NavLink';
 
 import styles from './InboxIcon.css';
 
-/*
- * Mocked Events
- *
- * These should be added directly in here, so we won't have to deal with passing
- * down of props
- *
- * @TODO replace this with actual events, not sure where they will me from yet
- */
-const mockEvents = [{ handled: true }];
-
 const MSG = defineMessages({
   fallbackTitle: {
     id: 'users.Inbox.InboxIcon.fallbackTitle',
@@ -31,29 +21,26 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  events?: Array<{ handled: boolean }>,
   activeClassName?: string,
   title?: MessageDescriptor,
+  hasUnreadActivities: boolean,
 |};
 
 const displayName = 'users.Inbox.InboxIcon';
 
 const Inbox = ({
-  events = mockEvents,
   activeClassName,
   title = MSG.fallbackTitle,
-}: Props) => {
-  const unhandled = events && events.find(event => !event.handled);
-  return (
-    <NavLink
-      to={INBOX_ROUTE}
-      className={unhandled ? styles.inboxIconWCircle : styles.inboxIcon}
-      activeClassName={activeClassName}
-    >
-      <Icon name="envelope" title={title} />
-    </NavLink>
-  );
-};
+  hasUnreadActivities,
+}: Props) => (
+  <NavLink
+    to={INBOX_ROUTE}
+    className={hasUnreadActivities ? styles.inboxIconWCircle : styles.inboxIcon}
+    activeClassName={activeClassName}
+  >
+    <Icon name="envelope" title={title} />
+  </NavLink>
+);
 
 Inbox.displayName = displayName;
 
