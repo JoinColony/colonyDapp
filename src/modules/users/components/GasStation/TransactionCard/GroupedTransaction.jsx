@@ -8,7 +8,11 @@ import Card from '~core/Card';
 
 import type { TransactionGroup } from '../transactionGroup';
 
-import { getGroupKey, getGroupStatus } from '../transactionGroup';
+import {
+  getGroupKey,
+  getGroupStatus,
+  getGroupValues,
+} from '../transactionGroup';
 
 import styles from './GroupedTransaction.css';
 
@@ -28,6 +32,7 @@ const GroupedTransaction = ({
 }: Props) => {
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);
+  const values = getGroupValues(transactionGroup);
   return (
     <Card className={styles.main}>
       <div className={styles.summary}>
@@ -35,6 +40,7 @@ const GroupedTransaction = ({
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
             text={{ id: `transaction.${groupKey}.title` }}
+            textValues={values.params}
           />
           <FormattedMessage
             id={
@@ -42,6 +48,7 @@ const GroupedTransaction = ({
                 ? `transaction.debug.description`
                 : `transaction.${groupKey}.description`
             }
+            values={values.params}
           />
         </div>
         {/* TODO-multisig: we have to pass in _something_ */}
