@@ -179,13 +179,11 @@ class GasStationPrice extends Component<Props, State> {
 
   render() {
     const {
-      isNetworkCongested,
       gasPrices,
       updateGas,
       transaction: { id, gasLimit },
-      walletNeedsAction,
     } = this.props;
-    const { isSpeedMenuOpen, speedMenuId, insufficientFunds } = this.state;
+    const { isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
       id,
       transactionSpeed: transactionSpeedOptions[0].value,
@@ -305,9 +303,7 @@ class GasStationPrice extends Component<Props, State> {
             );
           }}
         </ActionForm>
-        {(isNetworkCongested || walletNeedsAction || insufficientFunds) && (
-          <div>{this.showAlert()}</div>
-        )}
+        <div>{this.showAlert()}</div>
       </div>
     );
   }
