@@ -45,10 +45,7 @@ type UserMetadataQueryContext = ContextWithMetadata<
 >;
 
 type UserAvatarQueryContext = ContextWithMetadata<
-  {|
-    walletAddress: string,
-    username?: string,
-  |},
+  {| walletAddress: string |},
   DDBContext & IPFSContext,
 >;
 
@@ -133,21 +130,6 @@ export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
   },
 });
 
-export const getUserAddress: UsernameQuery<string, string> = ({
-  networkClient,
-  ensCache,
-}) => ({
-  async execute(username) {
-    const domain = ensCache.constructor.getFullDomain('user', username);
-    const address = await ensCache.getAddress(domain, networkClient);
-
-    if (!address)
-      throw new Error(`No address found for username "${username}"`);
-
-    return address;
-  },
-});
-
 export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
   networkClient,
   ensCache,
@@ -162,23 +144,6 @@ export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
       throw new Error(`ENS address for user "${username}" already exists`);
 
     return true;
-  },
-});
-
-export const getUsername: UsernameQuery<string, string> = ({
-  networkClient,
-  ensCache,
-}) => ({
-  async execute(address) {
-    const domain = await ensCache.getDomain(address, networkClient);
-
-    if (!domain) throw new Error(`No username found for address "${address}"`);
-
-    const [username, type] = domain.split('.');
-
-    if (type !== 'user') throw new Error(`Address "${address}" is not a user`);
-
-    return username;
   },
 });
 

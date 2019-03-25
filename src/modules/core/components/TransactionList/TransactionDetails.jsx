@@ -39,7 +39,7 @@ type Props = {|
   transaction: ContractTransactionType,
   colony?: DataType<ColonyType>,
   task?: TaskType,
-  user?: DataType<UserType>,
+  user?: UserType,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -116,7 +116,7 @@ const TransactionDetails = ({
               values={{
                 senderString: (
                   <UserDetails
-                    user={user && user.record && user.record.profile}
+                    user={user && user && user.profile}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -202,7 +202,7 @@ const TransactionDetails = ({
               values={{
                 recipientString: (
                   <UserDetails
-                    user={user && user.record && user.record.profile}
+                    user={user && user && user.profile}
                     address={
                       showMaskedAddress ? <MaskedAddress address={to} /> : to
                     }

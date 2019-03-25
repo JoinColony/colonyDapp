@@ -122,21 +122,6 @@ export const getUserProfileStore = (ddb: DDB) => async ({
     },
   );
 
-export const getUserProfileStoreByUsername = (ddb: DDB) => async ({
-  walletAddress,
-  username,
-}: {
-  walletAddress: string,
-  username: string,
-}) =>
-  ddb.getStore<ValidatedKVStore<UserProfileStoreValues>>(
-    userProfileStoreBlueprint,
-    ENS.getFullDomain('user', username),
-    {
-      walletAddress,
-    },
-  );
-
 export const getUserInboxStore = (ddb: DDB) => async ({
   inboxStoreAddress,
   walletAddress,

@@ -1,28 +1,11 @@
 /* @flow */
 
-import type {
-  ActionTypeWithPayload,
-  ActionTypeWithPayloadAndMeta,
-  ErrorActionType,
-  UniqueActionType,
-} from '../index';
+import type { ErrorActionType, UniqueActionType } from '../index';
 import type { WithKeyPathDepth1 } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
 export type UsernameActionTypes = {|
-  USER_ADDRESS_FETCH: ActionTypeWithPayload<
-    typeof ACTIONS.USER_ADDRESS_FETCH,
-    {| username: string |},
-  >,
-  USER_ADDRESS_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_ADDRESS_FETCH_ERROR,
-    *,
-  >,
-  USER_ADDRESS_FETCH_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.USER_ADDRESS_FETCH_SUCCESS,
-    {| address: string, username: string |},
-  >,
   USERNAME_CHECK_AVAILABILITY: UniqueActionType<
     typeof ACTIONS.USERNAME_CHECK_AVAILABILITY,
     {|
@@ -56,20 +39,6 @@ export type UsernameActionTypes = {|
         username: string,
       },
     },
-    WithKeyPathDepth1,
-  >,
-  USERNAME_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USERNAME_FETCH,
-    {| address: string |},
-    WithKeyPathDepth1,
-  >,
-  USERNAME_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USERNAME_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
-  USERNAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USERNAME_FETCH_SUCCESS,
-    {| address: string, username: string |},
     WithKeyPathDepth1,
   >,
 |};

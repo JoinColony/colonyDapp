@@ -2,23 +2,17 @@
 
 import React from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
-import { compose, withProps } from 'recompose';
 
-import { withImmutablePropsToJS } from '~utils/hoc';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
-import TransactionDetails from './TransactionDetails.jsx';
+import { useDataFetcher } from '~utils/hooks';
 
-import {
-  withColony,
-  withTask,
-  withToken,
-  withColonyENSName,
-} from '../../../dashboard/hocs';
-import { withUser, withUsername } from '../../../users/hocs';
+import { userFetcher } from '../../../users/fetchers';
+
+import TransactionDetails from './TransactionDetails.jsx';
 
 import styles from './TransactionListItem.css';
 
@@ -60,7 +54,6 @@ type Props = {|
   colony?: DataType<ColonyType>,
   task?: TaskType,
   token?: TokenType,
-  user?: DataType<UserType>,
   /*
    * The user's address will always be shown, this just controlls if it's
    * shown in full, or masked.
@@ -93,13 +86,23 @@ const TransactionListItem = ({
   colony,
   task,
   token,
-  user,
   showMaskedAddress = true,
   incoming = true,
   onClaim,
   linkToEtherscan,
 }: Props) => {
   const { date, amount } = transaction;
+  const { data: user, isFetching } = useDataFetcher<UserType>(
+    userFetcher,
+    [transaction.from],
+    [transaction.from],
+  );
+
+  if (!user || isFetching) {
+    // TODO: ideally we would like to show some sort of loader
+    return null;
+  }
+
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.transactionDate}>
@@ -168,28 +171,4 @@ const TransactionListItem = ({
 
 TransactionListItem.displayName = displayName;
 
-/*
- * TODO: in the future, come up with a better way of providing this data to the
- * component. Many recompose wrappers is potentially bad for performance.
- * Soon-to-be-arriving React Hooks could offer a nicer solution here.
- */
-export default compose(
-  withProps(
-    ({
-      transaction: { colonyENSName, taskId, token, from, to, incoming },
-    }) => ({
-      ensName: colonyENSName,
-      taskId,
-      tokenAddress: token,
-      userAddress: incoming ? from : to,
-      colonyAddress: incoming ? from : to,
-    }),
-  ),
-  withColonyENSName,
-  withColony,
-  withTask,
-  withToken,
-  withUsername,
-  withUser,
-  withImmutablePropsToJS,
-)(TransactionListItem);
+export default TransactionListItem;

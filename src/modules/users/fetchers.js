@@ -2,14 +2,14 @@
 
 import {
   currentUserColonyPermissionsSelector,
-  userAddressSelector,
   userAvatarByAddressSelector,
   singleUserSelector,
+  singleUserByUsernameSelector,
 } from './selectors';
 import {
   userPermissionsFetch,
   userFetch,
-  userAddressFetch,
+  userByUsernameFetch,
   userAvatarFetch,
 } from './actionCreators';
 
@@ -24,9 +24,9 @@ export const userFetcher = Object.freeze({
   select: singleUserSelector,
 });
 
-export const userAddressFetcher = Object.freeze({
-  fetch: userAddressFetch,
-  select: userAddressSelector,
+export const userByUsernameFetcher = Object.freeze({
+  fetch: userByUsernameFetch,
+  select: singleUserByUsernameSelector,
 });
 
 export const userAvatarByAddressFetcher = Object.freeze({

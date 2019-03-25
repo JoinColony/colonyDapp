@@ -23,7 +23,7 @@ import {
 import { ACTIONS } from '~redux';
 
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
-import { usernameSelector, currentUserAddressSelector } from '../selectors';
+import { currentUserAddressSelector } from '../selectors';
 import {
   createUserProfile,
   removeUserAvatar,
@@ -32,11 +32,9 @@ import {
 } from '../../../data/service/commands/user';
 import {
   checkUsernameIsAvailable,
-  getUserAddress,
   getUserAvatar,
   getUserBalance,
   getUserColonyTransactions,
-  getUsername,
   getUserPermissions,
   getUserProfile,
 } from '../../../data/service/queries';
@@ -96,16 +94,38 @@ function* userTokenTransfersFetch(
   }
 }
 
-function* userProfileFetch({
+function* userByUsernameFetch({
+  payload: { username },
+}: Action<typeof ACTIONS.USER_BY_USERNAME_FETCH>): Saga<void> {
+  try {
+    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
+
+    const address = yield call(
+      [ensCache, ensCache.getAddress],
+      ensCache.constructor.getFullDomain('user', username),
+      networkClient,
+    );
+    // Construct meta here, as we don't have it yet when we call the action creator
+    const meta = { keyPath: [address] };
+    yield call(userFetch, {
+      type: ACTIONS.USER_FETCH,
+      meta,
+      payload: { address },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_FETCH_ERROR, error);
+  }
+}
+
+function* userFetch({
   meta,
   payload: { address },
 }: Action<typeof ACTIONS.USER_FETCH>): Saga<void> {
   try {
-    const username = yield select(usernameSelector, address);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        username,
         walletAddress: address,
       },
     };
@@ -119,44 +139,6 @@ function* userProfileFetch({
     });
   } catch (error) {
     yield putError(ACTIONS.USER_FETCH_ERROR, error, meta);
-  }
-}
-
-function* usernameFetch({
-  meta,
-  payload: { address },
-}: Action<typeof ACTIONS.USERNAME_FETCH>): Saga<void> {
-  try {
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const context = { ensCache, networkClient };
-
-    const username = yield* executeQuery(context, getUsername, address);
-    yield put<Action<typeof ACTIONS.USERNAME_FETCH_SUCCESS>>({
-      type: ACTIONS.USERNAME_FETCH_SUCCESS,
-      meta,
-      payload: { username, address },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.USERNAME_FETCH_ERROR, error, meta);
-  }
-}
-
-function* userAddressFetch({
-  payload: { username },
-}: Action<typeof ACTIONS.USER_ADDRESS_FETCH>): Saga<void> {
-  try {
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const context = { ensCache, networkClient };
-
-    const address = yield* executeQuery(context, getUserAddress, username);
-    yield put<Action<typeof ACTIONS.USER_ADDRESS_FETCH_SUCCESS>>({
-      type: ACTIONS.USER_ADDRESS_FETCH_SUCCESS,
-      payload: { username, address },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.USER_ADDRESS_FETCH_ERROR, error);
   }
 }
 
@@ -375,9 +357,9 @@ function* userPermissionsFetch({
 }
 
 export default function* setupUsersSagas(): Saga<void> {
-  yield takeEvery(ACTIONS.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
-  yield takeEvery(ACTIONS.USER_FETCH, userProfileFetch);
+  yield takeEvery(ACTIONS.USER_FETCH, userFetch);
+  yield takeEvery(ACTIONS.USER_BY_USERNAME_FETCH, userByUsernameFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeLatest(
@@ -385,7 +367,6 @@ export default function* setupUsersSagas(): Saga<void> {
     usernameCheckAvailability,
   );
   yield takeLatest(ACTIONS.USERNAME_CREATE, usernameCreate);
-  yield takeEvery(ACTIONS.USERNAME_FETCH, usernameFetch);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
   yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, userRemoveAvatar);

@@ -8,7 +8,7 @@ import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import TransactionListItem from './TransactionListItem.jsx';
+import TransactionListItem from './TransactionListItem';
 
 import type { Node } from 'react';
 import type { MessageDescriptor } from 'react-intl';

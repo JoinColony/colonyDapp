@@ -69,9 +69,6 @@ const UserListItem = ({
     userFetcher,
     [address],
     [address],
-    {
-      ttl: 1000 * 60,
-    },
   );
   const { profile: { username, displayName } = {} } = user || {};
   return (

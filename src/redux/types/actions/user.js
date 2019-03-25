@@ -79,6 +79,10 @@ export type UserActionTypes = {|
     |},
     WithKeyPathDepth1,
   >,
+  USER_BY_USERNAME_FETCH: ActionTypeWithPayload<
+    typeof ACTIONS.USER_BY_USERNAME_FETCH,
+    {| username: string |},
+  >,
   USER_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH,
     {| address: string |},
