@@ -5,11 +5,12 @@ import { useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import type { Address } from '~types';
+import type { TokenType } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { tokenWithIconSelector } from '../selectors';
 
-const useToken = (tokenAddress: Address) => {
+const useToken = (tokenAddress: Address): ?TokenType => {
   const dispatch = useDispatch();
   const fetchToken = useCallback(
     () =>
@@ -24,7 +25,7 @@ const useToken = (tokenAddress: Address) => {
   );
   const { token } = useMappedState(mapState);
   if (!token) fetchToken();
-  return token;
+  return token && token.toJS();
 };
 
 export default useToken;

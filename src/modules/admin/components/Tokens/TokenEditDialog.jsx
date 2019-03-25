@@ -1,16 +1,20 @@
 /* @flow */
 import type { FormikProps } from 'formik';
 
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { Checkbox, Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
+import { SpinnerLoader } from '~core/Preloaders';
+
+import { useToken } from '../../../dashboard/hooks';
+import { tokenIsETH } from '../../../../immutable/utils';
 
 import styles from './TokenEditDialog.css';
 
@@ -48,124 +52,121 @@ type FormValues = {
 type Props = {|
   cancel: () => void,
   close: () => void,
-  tokens: Array<TokenType>,
-  /* We need to be aware of who own the tokens since it changes the UI */
-  tokenOwner: 'Colony' | 'User',
+  /* Using this only for address and isNative */
+  tokens?: Array<TokenReferenceType>,
+  /* Addresses of tokens to be selected initially */
+  selectedTokens: Array<string>, // address[]
 |};
 
-const validateNativeTokenSelect = (nativeToken?: TokenType): any => {
+const validateNativeTokenSelect = (nativeToken?: TokenReferenceType): any => {
   if (nativeToken) {
-    const { symbol } = nativeToken;
+    const { address } = nativeToken;
     return yup.object().shape({
-      colonyTokens: yup
+      tokens: yup
         .array()
         .of(yup.string())
-        .includes(symbol, MSG.errorNativeTokenRequired),
+        .includes(address, MSG.errorNativeTokenRequired),
     });
   }
   return null;
 };
 
-class TokenEditDialog extends Component<Props> {
-  timeoutId: TimeoutID;
+const TokenCheckbox = ({
+  address,
+  isNative = false,
+}: {
+  address: string,
+  isNative?: boolean,
+}) => {
+  const token = useToken(address);
+  return token ? (
+    <Checkbox
+      className={styles.tokenChoice}
+      value={address}
+      name="tokens"
+      disabled={isNative || tokenIsETH(token)}
+    >
+      {!!token.icon && (
+        <img
+          // TODO: this is cheating, we should load from our own node
+          src={`https://ipfs.io/ipfs/${token.icon}`}
+          alt={token.name}
+          className={styles.tokenChoiceIcon}
+        />
+      )}
+      <span className={styles.tokenChoiceSymbol}>
+        <Heading
+          text={token.symbol}
+          appearance={{ size: 'small', margin: 'none' }}
+        />
+        {token.name}
+      </span>
+    </Checkbox>
+  ) : (
+    <SpinnerLoader />
+  );
+};
 
-  static displayName = 'admin.Tokens.TokenEditDialog';
+const TokenEditDialog = ({
+  tokens = [],
+  selectedTokens = [],
+  cancel,
+  close,
+}: Props) => {
+  const nativeToken = tokens.find(token => token.isNative);
+  return (
+    <Dialog cancel={cancel}>
+      <Form
+        initialValues={{
+          tokens: selectedTokens,
+        }}
+        onSubmit={close}
+        validationSchema={validateNativeTokenSelect(nativeToken)}
+      >
+        {({ isSubmitting }: FormikProps<FormValues>) => (
+          <Fragment>
+            <DialogSection>
+              <Heading
+                appearance={{ size: 'medium', margin: 'none' }}
+                text={MSG.title}
+              />
+            </DialogSection>
+            <DialogSection>
+              <Heading
+                text={MSG.instructionText}
+                appearance={{ size: 'normal', weight: 'thin' }}
+              />
+              <InputLabel label={MSG.fieldLabel} />
+              <div className={styles.tokenChoiceContainer}>
+                {tokens.map(({ address, isNative }) => (
+                  <TokenCheckbox
+                    key={address}
+                    address={address}
+                    isNative={isNative}
+                  />
+                ))}
+              </div>
+            </DialogSection>
+            <DialogSection appearance={{ align: 'right' }}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={cancel}
+                text={MSG.buttonCancel}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                loading={isSubmitting}
+                text={MSG.buttonConfirm}
+                type="submit"
+              />
+            </DialogSection>
+          </Fragment>
+        )}
+      </Form>
+    </Dialog>
+  );
+};
 
-  static defaultProps = {
-    tokens: [],
-  };
-
-  componentWillUnmount() {
-    clearTimeout(this.timeoutId);
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  handleSubmitTokenForm = ({ colonyTokens }: FormValues) => {
-    const { close } = this.props;
-    // TODO handle form value submission
-    this.timeoutId = setTimeout(() => {
-      close();
-    }, 500);
-  };
-
-  render() {
-    const { tokens, cancel, tokenOwner } = this.props;
-    const nativeToken = tokens.find(token => token.isNative);
-    return (
-      <Dialog cancel={cancel}>
-        <Form
-          initialValues={{
-            colonyTokens: tokens
-              .filter(token => token.isEnabled || token.isNative)
-              .map(token => token.symbol),
-          }}
-          onSubmit={this.handleSubmitTokenForm}
-          validationSchema={validateNativeTokenSelect(nativeToken)}
-        >
-          {({ isSubmitting }: FormikProps<FormValues>) => (
-            <Fragment>
-              <DialogSection>
-                <Heading
-                  appearance={{ size: 'medium', margin: 'none' }}
-                  text={MSG.title}
-                />
-              </DialogSection>
-              <DialogSection>
-                <Heading
-                  text={MSG.instructionText}
-                  appearance={{ size: 'normal', weight: 'thin' }}
-                />
-                <InputLabel label={MSG.fieldLabel} />
-                <div className={styles.tokenChoiceContainer}>
-                  {tokens.map(
-                    ({ address, symbol, isNative, name, icon, isBlocked }) => (
-                      <Checkbox
-                        className={styles.tokenChoice}
-                        key={address}
-                        value={symbol}
-                        name="colonyTokens"
-                        disabled={
-                          tokenOwner === 'Colony' ? isNative : isBlocked
-                        }
-                      >
-                        {!!icon && (
-                          <img
-                            src={icon}
-                            alt={name}
-                            className={styles.tokenChoiceIcon}
-                          />
-                        )}
-                        <span className={styles.tokenChoiceSymbol}>
-                          <Heading
-                            text={symbol}
-                            appearance={{ size: 'small', margin: 'none' }}
-                          />
-                          {name}
-                        </span>
-                      </Checkbox>
-                    ),
-                  )}
-                </div>
-              </DialogSection>
-              <DialogSection appearance={{ align: 'right' }}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={MSG.buttonCancel}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  loading={isSubmitting}
-                  text={MSG.buttonConfirm}
-                  type="submit"
-                />
-              </DialogSection>
-            </Fragment>
-          )}
-        </Form>
-      </Dialog>
-    );
-  }
-}
+TokenEditDialog.displayName = 'admin.Tokens.TokenEditDialog';
 
 export default TokenEditDialog;

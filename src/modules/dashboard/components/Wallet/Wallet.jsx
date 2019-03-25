@@ -52,10 +52,23 @@ type Props = {|
   walletAddress: Address,
 |};
 
-const handleEditToken = (openDialog: *, tokens: *) => {
+const handleEditToken = (openDialog: *, tokens: *, transactions: *) => {
+  // combination of passed tokens and tokens from recent transactions
+  const potentialTokens = [
+    ...(tokens || []),
+    ...Object.values(
+      (transactions || []).reduce(
+        (acc, transaction) => ({
+          ...acc,
+          [transaction.token]: { address: transaction.token },
+        }),
+        {},
+      ),
+    ),
+  ];
   const tokenDialog = openDialog('TokenEditDialog', {
-    tokens,
-    tokenOwner: 'User',
+    tokens: potentialTokens,
+    selectedTokens: tokens && tokens.map(({ address }) => address),
   });
 
   tokenDialog
@@ -126,7 +139,7 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
           <Button
             appearance={{ theme: 'blue', size: 'small' }}
             text={MSG.linkEditToken}
-            onClick={() => handleEditToken(openDialog, tokens)}
+            onClick={() => handleEditToken(openDialog, tokens, transactions)}
           />
         </p>
       </aside>
