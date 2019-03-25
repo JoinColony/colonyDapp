@@ -57,14 +57,20 @@ export const getColonyStoreAccessController = ({
 };
 
 export const getTaskStoreAccessController = ({
+  draftId,
   colonyAddress,
   colonyClient,
   wallet,
 }: {
+  draftId: string,
   colonyAddress: Address,
   wallet: WalletObjectType,
   colonyClient: ColonyClientType,
 } = {}) => {
+  if (!draftId)
+    throw new Error(
+      `Could not create access controller, invalid draft ID: "${draftId}"`,
+    );
   if (!colonyAddress)
     throw new Error(
       // eslint-disable-next-line max-len
@@ -80,5 +86,5 @@ export const getTaskStoreAccessController = ({
     );
 
   const manifest = loadPermissionManifest(colonyClient);
-  return new TaskAccessController(colonyAddress, wallet, manifest);
+  return new TaskAccessController(draftId, colonyAddress, wallet, manifest);
 };

@@ -14,6 +14,8 @@ class TaskAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
 > {
+  _draftId: string;
+
   _colonyAddress: string;
 
   _manager: PermissionManager;
@@ -21,11 +23,13 @@ class TaskAccessController extends AbstractAccessController<
   _purserWallet: WalletObjectType;
 
   constructor(
+    draftId: string,
     colonyAddress: string,
     purserWallet: WalletObjectType,
     permissionsManifest: PermissionsManifest,
   ) {
     super();
+    this._draftId = draftId;
     this._colonyAddress = colonyAddress;
     this._purserWallet = purserWallet;
     this._manager = new PermissionManager(permissionsManifest);
@@ -47,10 +51,12 @@ class TaskAccessController extends AbstractAccessController<
 
     const signingWalletAddress = this._purserWallet.address;
     const signature = await this._purserWallet.signMessage({
-      message: signingWalletAddress,
+      message: this._colonyAddress + this._draftId + signingWalletAddress,
     });
 
-    return `/colony/${this._colonyAddress}/task/creator/${signingWalletAddress}/${signature}`;
+    return `/colony/${this._colonyAddress}/task/${
+      this._draftId
+    }/creator/${signingWalletAddress}/${signature}`;
   }
 
   async setup() {
