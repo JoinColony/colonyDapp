@@ -15,7 +15,7 @@ import {
   taskSelector,
   taskStorePropsSelector,
 } from '../selectors';
-import { currentUserMetadataSelector } from '../../users/selectors';
+import { getUserMetadataStoreContext } from './shared';
 
 import {
   assignWorker,
@@ -59,22 +59,6 @@ function* getColonyStoreContext(colonyENSName: string): Saga<*> {
     metadata: {
       colonyENSName,
       colonyAddress: colonyClient.contract.address,
-    },
-  };
-}
-
-function* getUserMetadataStoreContext(): Saga<*> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  const { metadataStoreAddress: userMetadataStoreAddress } = yield select(
-    currentUserMetadataSelector,
-  );
-  return {
-    ddb,
-    wallet,
-    metadata: {
-      userMetadataStoreAddress,
-      walletAddress: wallet.address,
     },
   };
 }

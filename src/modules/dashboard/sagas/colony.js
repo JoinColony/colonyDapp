@@ -29,12 +29,13 @@ import { ACTIONS } from '~redux';
 
 import {
   createColonyProfile,
-  updateColonyProfile,
-  setColonyAvatar,
   removeColonyAvatar,
+  setColonyAvatar,
+  subscribeToColony,
+  updateColonyProfile,
 } from '../../../data/service/commands';
 
-import { getColony } from '../../../data/service/queries';
+import { getColony, getUserColonies } from '../../../data/service/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
 import { getNetworkClient } from '../../core/sagas/utils';
@@ -52,7 +53,40 @@ import { COLONY_CONTEXT } from '../../core/constants';
 import { colonyAvatarHashSelector } from '../selectors';
 import { getNetworkVersion } from '../../core/selectors';
 
-import { getColonyContext } from './shared';
+import { getColonyContext, getUserMetadataStoreContext } from './shared';
+
+function* colonyFetchSubscribedForCurrentUser(): Saga<*> {
+  try {
+    const context = yield call(getUserMetadataStoreContext);
+    const colonies = yield* executeQuery(getUserColonies, context);
+    yield put<
+      Action<typeof ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS>,
+    >({
+      type: ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS,
+      payload: colonies,
+    });
+  } catch (error) {
+    yield putError(
+      ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS,
+      error,
+    );
+  }
+}
+
+function* colonySubscribe({
+  payload,
+}: Action<typeof ACTIONS.COLONY_SUBSCRIBE>): Saga<*> {
+  try {
+    const context = yield call(getUserMetadataStoreContext);
+    yield* executeCommand(context, subscribeToColony, payload);
+    yield put<Action<typeof ACTIONS.COLONY_SUBSCRIBE_SUCCESS>>({
+      type: ACTIONS.COLONY_SUBSCRIBE_SUCCESS,
+      payload,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_SUBSCRIBE_ERROR, error);
+  }
+}
 
 // TODO: Rename, complete and wire up after new onboarding is in place
 function* colonyCreateNew({
@@ -235,6 +269,14 @@ function* colonyCreateLabel({
    * Get or create a colony store and save the colony to that store.
    */
   const store = yield* executeCommand(context, createColonyProfile, args);
+
+  /*
+   * Subscribe the current user to the colony
+   */
+  yield put<Action<typeof ACTIONS.COLONY_SUBSCRIBE>>({
+    type: ACTIONS.COLONY_SUBSCRIBE,
+    payload: { address: colonyAddress },
+  });
 
   const txChannel = yield call(getTxChannel, meta.id);
 
@@ -618,8 +660,13 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
   yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyENSNameFetch);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
+  yield takeEvery(
+    ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER,
+    colonyFetchSubscribedForCurrentUser,
+  );
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
+  yield takeEvery(ACTIONS.COLONY_SUBSCRIBE, colonySubscribe);
   yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
   yield takeEvery(ACTIONS.COLONY_TOKEN_BALANCE_FETCH, colonyTokenBalanceFetch);
   /*

@@ -1,7 +1,7 @@
 /* @flow */
 
 import { createSelector } from 'reselect';
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
 import type {
   DataRecordType,
@@ -21,6 +21,7 @@ import {
   USERS_NAMESPACE as ns,
   USERS_USERS,
   USERS_CURRENT_USER_METADATA,
+  USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
 } from '../constants';
 
 /*
@@ -112,6 +113,11 @@ const getCurrentUserColonyPermissions = (
   ]);
 const getCurrentUserMetadata = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
+const getCurrentUserColonies = (state: RootStateRecord) =>
+  state.getIn(
+    [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES],
+    ImmutableSet(),
+  );
 
 /*
  * Current user selectors
@@ -139,6 +145,10 @@ export const currentUserColonyPermissionsSelector = createSelector(
 export const currentUserMetadataSelector = createSelector(
   getCurrentUserMetadata,
   metadata => metadata,
+);
+export const currentUserColoniesSelector = createSelector(
+  getCurrentUserColonies,
+  colonies => colonies,
 );
 
 // TODO this doesn't quite fit here, maybe move?
