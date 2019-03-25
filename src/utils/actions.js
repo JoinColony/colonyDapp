@@ -1,17 +1,35 @@
 /* @flow */
 
-// eslint-disable-next-line import/prefer-default-export
-export const mergePayload = (
-  action: *,
-  {
-    meta,
-    payload,
-  }: {
-    meta?: Object,
-    payload?: Object,
-  },
-) => ({
-  ...action,
-  meta: { ...action.meta, ...meta },
-  payload: { ...action.payload, ...payload },
-});
+import type { UniqueActionType } from '~redux';
+
+const defaultTransform = action => action;
+
+export type ActionTransformFnType = (
+  UniqueActionType<*, *, *>,
+) => UniqueActionType<*, *, Object>;
+
+export const withKeyPath = (keyPath: string) => (
+  originalTransform?: ActionTransformFnType = defaultTransform,
+) => (originalAction: UniqueActionType<*, *, *>) => {
+  const action =
+    typeof originalTransform == 'function'
+      ? originalTransform(originalAction)
+      : originalTransform;
+  return {
+    ...action,
+    meta: { ...action.meta, keyPath: [].concat(keyPath) },
+  };
+};
+
+export const mergePayload = (payload: Object) => (
+  originalTransform?: ActionTransformFnType = defaultTransform,
+) => (originalAction: UniqueActionType<*, *, *>) => {
+  const action =
+    typeof originalTransform == 'function'
+      ? originalTransform(originalAction)
+      : originalTransform;
+  return {
+    ...action,
+    payload: { ...action.payload, ...payload },
+  };
+};

@@ -70,16 +70,13 @@ const validationSchema = yup.object({
   walletJsonPassword: yup.string(),
 });
 
-// Transform payload because it's ugly
-const transformPayload = (
-  action: Object,
-  { method, walletJsonFileUpload, walletJsonPassword }: FormValues,
-) => {
+const transformPayload = (action: Object) => {
+  const { walletJsonFileUpload, walletJsonPassword } = action.payload;
   const [file] = walletJsonFileUpload;
   const keystore = file.uploaded;
   return {
     ...action,
-    payload: { keystore, method, password: walletJsonPassword },
+    payload: { ...action.payload, keystore, password: walletJsonPassword },
   };
 };
 
@@ -105,7 +102,7 @@ const StepJSONUpload = ({
   nextStep,
   previousStep,
   wizardForm,
-  wizardValues,
+  formHelpers: { includeWizardValues },
 }: Props) => (
   <ActionForm
     submit={ACTIONS.WALLET_CREATE}
@@ -116,9 +113,7 @@ const StepJSONUpload = ({
     }}
     onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
-    setPayload={(action, values) =>
-      transformPayload(action, { ...values, ...wizardValues })
-    }
+    transform={includeWizardValues(transformPayload)}
     {...wizardForm}
   >
     {({ status, isValid, values }) => (

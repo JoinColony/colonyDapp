@@ -7,17 +7,10 @@ import React, { Fragment, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
-import type {
-  ColonyType,
-  DataType,
-  DomainType,
-  UserPermissionsType,
-  UserType,
-} from '~immutable';
+import type { ColonyType, DomainType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
-
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -28,15 +21,14 @@ import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { canCreateTask } from '../../../users/selectors';
-import { colonyFetcher } from '../../fetchers';
+import { colonyFetcher, domainsFetcher } from '../../fetchers';
+import { canAdminister, canCreateTask } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../selectors';
 
 import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
 
-import mockColonyFounders from './__datamocks__/mockColonyFounders';
 import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
 
@@ -93,11 +85,7 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {|
-  colony: DataType<ColonyType>,
-  colonyAdmins: Array<UserType>,
-  colonyDomains: Array<DataType<DomainType>>,
   match: Match,
-  walletAddress: string,
 |};
 
 const displayName = 'dashboard.ColonyHome';
@@ -113,12 +101,9 @@ const getActiveDomainFilterClass = (id: number = 0, filteredDomainId: number) =>
   filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
 
 const ColonyHome = ({
-  colonyAdmins,
-  colonyDomains = [],
   match: {
     params: { ensName },
   },
-  walletAddress,
 }: Props) => {
   const { given } = useFeatureFlags();
   const [filterOption, setFilterOption] = useState('all');
@@ -126,12 +111,12 @@ const ColonyHome = ({
    * TODO Replace with actual filtering logic
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
+
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
   } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
-
   const {
     data: permissions,
     isFetching: isFetchingPermissions,
@@ -140,12 +125,15 @@ const ColonyHome = ({
     [ensName],
     [ensName],
   );
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[],
+  >(domainsFetcher, [ensName], [ensName]);
 
   if (!ensName || colonyError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || isFetchingColony) {
+  if (!colony || !domains || isFetchingColony || isFetchingDomains) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -183,12 +171,10 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <ColonyMeta
           colony={colony}
-          founders={mockColonyFounders}
-          admins={colonyAdmins}
-          /*
-           * TODO This needs real logic to determine if the user is an admin
-           */
-          canAdminister={!!walletAddress && !given(colony, isInRecoveryMode)}
+          canAdminister={
+            !given(colony, isInRecoveryMode) &&
+            given(permissions, canAdminister)
+          }
         />
       </aside>
       <main className={styles.content}>
@@ -238,26 +224,16 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.allDomains} />
             </Button>
           </li>
-          {colonyDomains.map(domain => {
-            /*
-             * @NOTE Need to check for the existence of the `record` property
-             * since the domain might not be loaded yet.
-             */
-            if (domain.record) {
-              const { name, id } = domain.record;
-              return (
-                <li key={`domain_${id}`}>
-                  <Button
-                    className={getActiveDomainFilterClass(id, filteredDomainId)}
-                    onClick={() => setFilteredDomainId(id)}
-                  >
-                    #{name}
-                  </Button>
-                </li>
-              );
-            }
-            return null;
-          })}
+          {domains.map(({ name, id }) => (
+            <li key={`domain_${id}`}>
+              <Button
+                className={getActiveDomainFilterClass(id, filteredDomainId)}
+                onClick={() => setFilteredDomainId(id)}
+              >
+                #{name}
+              </Button>
+            </li>
+          ))}
         </ul>
       </aside>
       {given(colony, isInRecoveryMode) && <RecoveryModeAlert />}

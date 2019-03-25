@@ -73,7 +73,7 @@ const StepMnemonic = ({
     }}
     onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
-    setPayload={includeWizardValues}
+    transform={includeWizardValues()}
     {...wizardForm}
   >
     {({ isSubmitting, isValid, status, values }) => (

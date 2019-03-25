@@ -64,12 +64,15 @@ export const userAddressSelector = createSelector(
 /*
  * User getters
  */
-const getUsers = (state: RootStateRecord) =>
+export const getUsers = (state: RootStateRecord) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap());
 
 /*
  * User selectors
  */
+export const singleUserSelector = (state: RootStateRecord, address: string) =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
+
 export const userByAddressSelector = createSelector(
   getAddressFromProps,
   getUsers,
@@ -161,4 +164,7 @@ export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
   !!(permissions && permissions.canEnterRecoveryMode);
 
 export const canCreateTask = (permissions?: UserPermissionsType) =>
+  !!(permissions && permissions.isAdmin);
+
+export const canAdminister = (permissions?: UserPermissionsType) =>
   !!(permissions && permissions.isAdmin);

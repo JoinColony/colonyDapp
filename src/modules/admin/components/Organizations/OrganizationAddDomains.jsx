@@ -5,8 +5,8 @@ import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
 import type { ENSName } from '~types';
-import type { UniqueActionType } from '~redux';
 
+import { withKeyPath } from '~utils/actions';
 import Button from '~core/Button';
 import { ActionForm, FormStatus, Input } from '~core/Fields';
 import { ACTIONS } from '~redux';
@@ -15,10 +15,6 @@ import styles from './OrganizationAddDomains.css';
 
 type Props = {
   ensName: ENSName,
-};
-
-type FormValues = {
-  domainName: string,
 };
 
 const MSG = defineMessages({
@@ -48,25 +44,13 @@ const validationSchema = yup.object({
 const OrganizationAddDomains = ({ ensName }: Props) => (
   <div className={styles.main}>
     <ActionForm
-      setPayload={(
-        action: UniqueActionType<*, *, *>,
-        { domainName }: FormValues,
-      ) => ({
-        ...action,
-        payload: {
-          domainName,
-        },
-        meta: {
-          ...action.meta,
-          keyPath: [ensName],
-        },
-      })}
       submit={ACTIONS.DOMAIN_CREATE}
       success={ACTIONS.DOMAIN_CREATE_SUCCESS}
       error={ACTIONS.DOMAIN_CREATE_ERROR}
       onSuccess={(_, { resetForm }) => {
         resetForm();
       }}
+      transform={withKeyPath(ensName)()}
       initialValues={{
         domainName: '',
       }}

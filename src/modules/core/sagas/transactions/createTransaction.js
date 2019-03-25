@@ -43,6 +43,10 @@ export function* createTransaction(
     );
   }
 
+  if (!id) {
+    throw new Error('Could not create transaction. No transaction id provided');
+  }
+
   // Put transaction into store
   const txAction = createTxAction(id, address, config);
   yield put<Action<typeof txAction.type>>(txAction);

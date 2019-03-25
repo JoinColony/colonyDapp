@@ -1,20 +1,19 @@
 /* @flow */
 
-import type { IntlShape } from 'react-intl';
-
 import React from 'react';
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
-import { Tooltip } from '~core/Popover';
+import { useDataFetcher } from '~utils/hooks';
+import { userFetcher } from '../../../users/fetchers';
 
 import styles from './UserListItem.css';
 
-import type { ColonyAdminType } from '~immutable';
+import type { ColonyAdminType, UserType } from '~immutable';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -31,9 +30,9 @@ const componentDisplayName = 'admin.UserList.UserListItem';
 
 type Props = {|
   /*
-   * User record
+   * User address
    */
-  user: ColonyAdminType,
+  address: string,
   /*
    * Whether to show the fullname
    */
@@ -56,76 +55,64 @@ type Props = {|
    * Gets passed down to `UserListItem`
    */
   onRemove: ColonyAdminType => any,
-  /** @ignore Injected by `injectIntl` */
-  intl: IntlShape,
 |};
 
 const UserListItem = ({
-  user: { walletAddress, username = '', displayName = '', state = 'pending' },
+  address,
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
   onRemove,
-  intl: { formatMessage },
-}: Props) => (
-  <TableRow className={styles.main}>
-    <TableCell className={styles.userAvatar}>
-      <UserAvatar size="xs" address={walletAddress} username={username} />
-    </TableCell>
-    <TableCell className={styles.userDetails}>
-      {showDisplayName && displayName && (
-        <span className={styles.displayName} title={displayName}>
-          {displayName}
-        </span>
-      )}
-      {showUsername && username && (
-        <span className={styles.username}>
-          &nbsp;
-          <UserMention hasLink={false} username={username} />
-        </span>
-      )}
-      <span className={styles.address}>
-        {showMaskedAddress ? (
-          <MaskedAddress address={walletAddress} />
-        ) : (
-          <span>{walletAddress}</span>
+}: Props) => {
+  const { data: user } = useDataFetcher<UserType>(
+    userFetcher,
+    [address],
+    [address],
+    {
+      ttl: 1000 * 60,
+    },
+  );
+  const { profile: { username, displayName } = {} } = user || {};
+  return (
+    <TableRow className={styles.main}>
+      <TableCell className={styles.userAvatar}>
+        <UserAvatar size="xs" address={address} username={username} />
+      </TableCell>
+      <TableCell className={styles.userDetails}>
+        {showDisplayName && displayName && (
+          <span className={styles.displayName} title={displayName}>
+            {displayName}
+          </span>
         )}
-      </span>
-    </TableCell>
-    <TableCell className={styles.userRemove}>
-      {!viewOnly && state === 'confirmed' && (
-        <Button
-          className={styles.customRemoveButton}
-          appearance={{ theme: 'primary' }}
-          text={MSG.buttonRemove}
-          onClick={onRemove}
-        />
-      )}
-      {state === 'pending' && (
-        <div className={styles.pendingDotWrapper}>
-          <Tooltip
-            placement="top"
-            showArrow
-            content={
-              <span className={styles.tooltipContentReset}>
-                <FormattedMessage {...MSG.pending} />
-              </span>
-            }
-          >
-            <div className={styles.pendingDotClickArea}>
-              <span
-                className={styles.pendingDot}
-                aria-label={formatMessage(MSG.pending)}
-              />
-            </div>
-          </Tooltip>
-        </div>
-      )}
-    </TableCell>
-  </TableRow>
-);
+        {showUsername && username && (
+          <span className={styles.username}>
+            &nbsp;
+            <UserMention hasLink={false} username={username} />
+          </span>
+        )}
+        <span className={styles.address}>
+          {showMaskedAddress ? (
+            <MaskedAddress address={address} />
+          ) : (
+            <span>{address}</span>
+          )}
+        </span>
+      </TableCell>
+      <TableCell className={styles.userRemove}>
+        {!viewOnly && (
+          <Button
+            className={styles.customRemoveButton}
+            appearance={{ theme: 'primary' }}
+            text={MSG.buttonRemove}
+            onClick={onRemove}
+          />
+        )}
+      </TableCell>
+    </TableRow>
+  );
+};
 
 UserListItem.displayName = componentDisplayName;
 
-export default injectIntl(UserListItem);
+export default UserListItem;

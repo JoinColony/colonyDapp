@@ -14,7 +14,7 @@ import { DialogActionButton } from '~core/Button';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { canEnterRecoveryMode } from '../../../users/selectors';
 import { networkVersionFetcher } from '../../../core/fetchers';
-import { isInRecoveryMode, canBeUpgraded } from '../../../dashboard/selectors';
+import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -113,7 +113,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           <p className={styles.bigInfoText}>
             <FormattedMessage
               {...MSG.inRecoveryMode}
-              values={{ inRecoveryMode: colony.inRecoveryMode }}
+              values={{ inRecoveryMode: given(colony, isInRecoveryMode) }}
             />
           </p>
         </div>

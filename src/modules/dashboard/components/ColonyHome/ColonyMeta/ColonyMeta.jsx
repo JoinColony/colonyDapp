@@ -4,6 +4,7 @@ import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
+import { useSelector } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
@@ -11,9 +12,13 @@ import Icon from '~core/Icon';
 import Link from '~core/Link';
 import UserAvatar from '~core/UserAvatar';
 
+import { colonyAdminsSelector } from '../../../selectors';
+
 import styles from './ColonyMeta.css';
 
-import type { ColonyType, UserType } from '~immutable';
+import type { ColonyType } from '~immutable';
+
+import mockColonyFounders from '../__datamocks__/mockColonyFounders';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -40,12 +45,12 @@ const MSG = defineMessages({
 
 type Props = {|
   colony: ColonyType,
-  founders: Array<UserType>,
-  admins: Array<UserType>,
   canAdminister: boolean,
 |};
 
-const ColonyMeta = ({ colony, founders, admins, canAdminister }: Props) => {
+const ColonyMeta = ({ colony, canAdminister }: Props) => {
+  const admins = useSelector(colonyAdminsSelector, [colony.ensName]);
+
   const {
     address,
     avatar,
@@ -107,13 +112,13 @@ const ColonyMeta = ({ colony, founders, admins, canAdminister }: Props) => {
           </a>
         </section>
       )}
-      {founders.length && (
+      {mockColonyFounders.length && (
         <section className={styles.dynamicSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.foundersLabel}
           />
-          {founders.map(
+          {mockColonyFounders.map(
             ({ profile: { walletAddress, username, displayName } }, index) => (
               <UserAvatar
                 address={walletAddress}
@@ -133,18 +138,16 @@ const ColonyMeta = ({ colony, founders, admins, canAdminister }: Props) => {
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.adminsLabel}
           />
-          {admins.map(
-            ({ profile: { walletAddress, username, displayName } }, index) => (
-              <UserAvatar
-                address={walletAddress}
-                className={styles.userAvatar}
-                displayName={displayName}
-                hasUserInfo
-                key={`admin_${index + 1}`}
-                username={username}
-              />
-            ),
-          )}
+          {admins.map(({ walletAddress, username, displayName }) => (
+            <UserAvatar
+              address={walletAddress}
+              className={styles.userAvatar}
+              displayName={displayName}
+              hasUserInfo
+              key={walletAddress}
+              username={username}
+            />
+          ))}
         </section>
       ) : null}
     </div>

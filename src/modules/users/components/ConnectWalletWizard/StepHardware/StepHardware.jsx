@@ -214,7 +214,7 @@ class StepHardware extends Component<Props> {
         }
         onSuccess={values => nextStep({ ...values })}
         validationSchema={validationSchema}
-        setPayload={includeWizardValues}
+        transform={includeWizardValues()}
         {...wizardForm}
       >
         {({ isSubmitting, isValid, status, values }) => (

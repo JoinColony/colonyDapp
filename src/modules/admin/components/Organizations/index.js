@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './Organizations';
+export { default } from './Organizations.jsx';

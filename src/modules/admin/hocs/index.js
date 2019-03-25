@@ -1,5 +1,4 @@
 /* @flow */
 
-export { default as withDomains } from './withDomains';
-export { default as withAdmins } from './withAdmins';
+// eslint-disable-next-line import/prefer-default-export
 export { default as withColonyTransactions } from './withColonyTransactions';

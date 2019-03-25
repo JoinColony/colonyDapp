@@ -1,7 +1,6 @@
 /* @flow */
 
 import BigNumber from 'bn.js';
-import nanoid from 'nanoid';
 
 import type { TransactionReceipt } from '~types';
 import type {
@@ -22,7 +21,7 @@ export {
 } from '../../../lib/ColonyManager/constants';
 
 export const createTxAction = <P>(
-  id?: string,
+  id: string,
   from: string,
   {
     context,
@@ -50,7 +49,7 @@ export const createTxAction = <P>(
     params,
     status: ready === false ? 'created' : 'ready',
   },
-  meta: { id: id || nanoid() },
+  meta: { id },
 });
 
 export const multisigTransactionRefreshError = (

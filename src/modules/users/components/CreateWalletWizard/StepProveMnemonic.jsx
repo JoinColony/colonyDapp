@@ -8,6 +8,7 @@ import styles from './StepProveMnemonic.css';
 
 import type { WizardProps } from '~core/Wizard';
 
+import { mergePayload } from '~utils/actions';
 import { ActionForm, FormStatus, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -77,10 +78,7 @@ const StepProveMnemonic = ({
         submit={ACTIONS.WALLET_CREATE}
         success={ACTIONS.CURRENT_USER_CREATE}
         error={ACTIONS.WALLET_CREATE_ERROR}
-        setPayload={(action: *) => ({
-          ...action,
-          payload: { method: 'create', mnemonic },
-        })}
+        transform={mergePayload({ method: 'create', mnemonic })()}
         validationSchema={yup.object().shape({
           proofWord1: yup
             .string()

@@ -126,7 +126,7 @@ class MetaMask extends Component<Props, State> {
           setStatus({ error: MSG.errorOpenMetamask });
         }}
         onSuccess={values => nextStep({ ...values })}
-        setPayload={includeWizardValues}
+        transform={includeWizardValues()}
         {...wizardForm}
       >
         {({ isSubmitting, status, values }) => (

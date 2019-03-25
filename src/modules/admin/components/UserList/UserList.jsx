@@ -3,14 +3,14 @@
 import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
+import compose from 'lodash/fp/compose';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
+import { mergePayload, withKeyPath } from '~utils/actions';
+
 import type { AsyncFunction } from '../../../../createPromiseListener';
-import type { ColonyAdminType } from '~immutable';
-import { mergePayload } from '~utils/actions';
-import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
 import UserListItem from './UserListItem.jsx';
@@ -21,7 +21,7 @@ type Props = {|
   /*
    * Array of user data, follows the same format as UserPicker
    */
-  users: Array<ColonyAdminType>,
+  users: string[],
   /*
    * Whether to show the fullname
    * Gets passed down to `UserListItem`
@@ -64,22 +64,21 @@ class UserList extends Component<Props> {
 
   static displayName = 'admin.UserList';
 
-  static defaultProps = {
-    remove: ACTIONS.COLONY_ADMIN_REMOVE,
-    removeSuccess: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
-    removeError: ACTIONS.COLONY_ADMIN_REMOVE_ERROR,
-  };
-
   constructor(props: Props) {
     super(props);
     const { remove, removeSuccess, removeError, ensName } = this.props;
+
+    const setPayload = (originalAction: *, payload: Object) =>
+      compose(
+        withKeyPath(ensName),
+        mergePayload({ colonyENSName: ensName }),
+      )()({ ...originalAction, payload });
+
     this.remove = promiseListener.createAsyncFunction({
       start: remove,
       resolve: removeSuccess,
       reject: removeError,
-      setPayload(action: *, payload: *) {
-        return mergePayload(action, { payload, meta: { keyPath: [ensName] } });
-      },
+      setPayload,
     });
   }
 
@@ -107,19 +106,15 @@ class UserList extends Component<Props> {
         <div className={styles.listWrapper}>
           <Table scrollable>
             <TableBody>
-              {users.map((user, currentIndex) => (
+              {users.map(user => (
                 <UserListItem
-                  /*
-                   * This is just so we can have duplicate data inside datamocks
-                   * Might as well remove it when the *real* data comes in
-                   */
-                  key={`${user.walletAddress}${currentIndex + 1}`}
-                  user={user}
+                  key={user}
+                  address={user}
                   showDisplayName={showDisplayName}
                   showUsername={showUsername}
                   showMaskedAddress={showMaskedAddress}
                   viewOnly={viewOnly}
-                  onRemove={() => this.remove.asyncFunction({ admin: user })}
+                  onRemove={() => this.remove.asyncFunction({ user })}
                 />
               ))}
             </TableBody>

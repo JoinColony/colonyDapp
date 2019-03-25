@@ -182,7 +182,10 @@ class DDB {
       );
 
     const cachedStore: ?T = this._getCachedStore(address);
-    if (cachedStore) return cachedStore;
+    if (cachedStore) {
+      await cachedStore.load();
+      return cachedStore;
+    }
 
     const name = address.path.split('.')[0];
     if (name !== bluePrintName) {

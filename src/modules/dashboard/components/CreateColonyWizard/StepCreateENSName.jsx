@@ -104,7 +104,7 @@ class StepCreateENSName extends Component<Props> {
         success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
         validationSchema={validationSchema}
         validate={this.validateDomain}
-        setPayload={includeWizardValues}
+        transform={includeWizardValues()}
         {...wizardForm}
       >
         {({ isValid, isSubmitting }) => (

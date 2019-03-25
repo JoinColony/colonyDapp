@@ -8,15 +8,10 @@ import { ACTIONS } from '~redux';
 
 import type { AllColoniesMap, ColonyRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
-import ColonyAdminRecord from '~immutable/ColonyAdmin';
 
 const coloniesReducer: ReducerType<
   AllColoniesMap,
   {|
-    COLONY_ADMIN_ADD_CONFIRM_SUCCESS: *,
-    COLONY_ADMIN_ADD_SUCCESS: *,
-    COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: *,
-    COLONY_ADMIN_REMOVE_SUCCESS: *,
     COLONY_AVATAR_REMOVE_SUCCESS: *,
     COLONY_AVATAR_UPLOAD_SUCCESS: *,
     COLONY_FETCH: *,
@@ -29,7 +24,7 @@ const coloniesReducer: ReducerType<
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
         payload: {
-          colony: { tokens, ensName, admins = {}, ...props },
+          colony: { tokens, ensName, ...props },
         },
       } = action;
       const record = ColonyRecord({
@@ -37,12 +32,6 @@ const coloniesReducer: ReducerType<
           Object.entries(tokens).map(([address, token]) => [
             address,
             TokenReferenceRecord(token),
-          ]),
-        ),
-        admins: ImmutableMap(
-          Object.entries(admins).map(([username, user]) => [
-            username,
-            ColonyAdminRecord(user),
           ]),
         ),
         ensName,
@@ -66,7 +55,6 @@ const coloniesReducer: ReducerType<
         meta: { keyPath },
         payload: { hash },
       } = action;
-      // $FlowFixMe issue with keyPath
       return state.setIn([...keyPath, 'record', 'avatar'], hash);
     }
     case ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS: {
@@ -74,45 +62,6 @@ const coloniesReducer: ReducerType<
         meta: { keyPath },
       } = action;
       return state.setIn([...keyPath, 'record', 'avatar'], undefined);
-    }
-    case ACTIONS.COLONY_ADMIN_ADD_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { adminData, username },
-      } = action;
-      return state.setIn([...keyPath, 'record', 'admins', username], {
-        ...adminData.toJS(),
-        state: 'pending',
-      });
-    }
-    case ACTIONS.COLONY_ADMIN_ADD_CONFIRM_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { username },
-      } = action;
-      return state.setIn(
-        // $FlowFixMe
-        [...keyPath, 'record', 'admins', username, 'state'],
-        'confirmed',
-      );
-    }
-    case ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { username },
-      } = action;
-      return state.setIn(
-        // $FlowFixMe // issue with updating the admins map by value
-        [...keyPath, 'record', 'admins', username, 'status'],
-        'pending',
-      );
-    }
-    case ACTIONS.COLONY_ADMIN_REMOVE_CONFIRM_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { username },
-      } = action;
-      return state.deleteIn([...keyPath, 'record', 'admins', username]);
     }
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {

@@ -197,7 +197,7 @@ class GasStationPrice extends Component<Props, State> {
           validationSchema={validationSchema}
           isInitialValid={!!initialFormValues.transactionSpeed}
           initialValues={initialFormValues}
-          setPayload={(action: *) => ({
+          transform={(action: *) => ({
             ...action,
             meta: { id },
           })}
