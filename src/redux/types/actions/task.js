@@ -30,28 +30,6 @@ type TaskActionType<T, P> = UniqueActionType<
 type TaskErrorActionType<T> = ErrorActionType<T, TaskActionMeta>;
 
 export type TaskActionTypes = {|
-  TASK_WORKER_ASSIGN: TaskActionType<
-    typeof ACTIONS.TASK_WORKER_ASSIGN,
-    {| worker: string |},
-  >,
-  TASK_WORKER_ASSIGN_ERROR: TaskErrorActionType<
-    typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
-  >,
-  TASK_WORKER_ASSIGN_SUCCESS: TaskActionType<
-    typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
-    {| worker: string |},
-  >,
-  TASK_WORKER_UNASSIGN: TaskActionType<
-    typeof ACTIONS.TASK_WORKER_UNASSIGN,
-    {| worker: string |},
-  >,
-  TASK_WORKER_UNASSIGN_ERROR: TaskErrorActionType<
-    typeof ACTIONS.TASK_WORKER_UNASSIGN_ERROR,
-  >,
-  TASK_WORKER_UNASSIGN_SUCCESS: TaskActionType<
-    typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
-    {| worker: string |},
-  >,
   TASK_CANCEL: TaskActionType<typeof ACTIONS.TASK_CANCEL, void>,
   TASK_CANCEL_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_CANCEL_ERROR>,
   TASK_CANCEL_SUCCESS: TaskActionType<typeof ACTIONS.TASK_CANCEL_SUCCESS, void>,
@@ -350,5 +328,16 @@ export type TaskActionTypes = {|
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
     void, // TODO define the payload
+  >,
+  TASK_WORKER_UNASSIGN: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_UNASSIGN,
+    {| worker: string |},
+  >,
+  TASK_WORKER_UNASSIGN_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_WORKER_UNASSIGN_ERROR,
+  >,
+  TASK_WORKER_UNASSIGN_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
+    {| worker: string |},
   >,
 |};

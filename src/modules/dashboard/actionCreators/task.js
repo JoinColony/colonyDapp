@@ -4,7 +4,6 @@ import type { ENSName, Address } from '~types';
 
 import { ACTIONS } from '~redux';
 
-// eslint-disable-next-line import/prefer-default-export
 export const fetchTaskComments = (
   colonyENSName: ENSName,
   commentsStoreAddress: string,
@@ -15,7 +14,6 @@ export const fetchTaskComments = (
   },
 });
 
-// eslint-disable-next-line import/prefer-default-export
 export const setTaskWorker = (
   colonyAddress: Address,
   draftId: string,
@@ -23,6 +21,11 @@ export const setTaskWorker = (
 ) => ({
   type: ACTIONS.TASK_WORKER_ASSIGN,
   meta: {
-    keyPath: [colonyAddress, draftId, assignee],
+    keyPath: [draftId],
+  },
+  payload: {
+    colonyENSName: colonyAddress,
+    draftId,
+    worker: assignee,
   },
 });
