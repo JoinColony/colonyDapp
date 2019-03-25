@@ -23,10 +23,15 @@ import type {
 } from '../../types';
 
 import { USER_EVENT_TYPES } from '../../constants';
-import { getUserTasksReducer } from '../reducers';
+import { getUserTasksReducer, getUserColoniesReducer } from '../reducers';
 import { getUserMetadataStore, getUserProfileStore } from '../../stores';
 
-const { SUBSCRIBED_TO_TASK, UNSUBSCRIBED_FROM_TASK } = USER_EVENT_TYPES;
+const {
+  SUBSCRIBED_TO_COLONY,
+  SUBSCRIBED_TO_TASK,
+  UNSUBSCRIBED_FROM_COLONY,
+  UNSUBSCRIBED_FROM_TASK,
+} = USER_EVENT_TYPES;
 
 type UserQueryContext = ContextWithMetadata<
   {|
@@ -249,5 +254,21 @@ export const getUserTasks: UserMetadataQuery<void, *> = ({
           type === SUBSCRIBED_TO_TASK || type === UNSUBSCRIBED_FROM_TASK,
       )
       .reduce(getUserTasksReducer, []);
+  },
+});
+
+export const getUserColonies: UserMetadataQuery<void, *> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute() {
+    const metadataStore = await getUserMetadataStore(ddb)(metadata);
+    return metadataStore
+      .all()
+      .filter(
+        ({ type }) =>
+          type === SUBSCRIBED_TO_COLONY || type === UNSUBSCRIBED_FROM_COLONY,
+      )
+      .reduce(getUserColoniesReducer, []);
   },
 });
