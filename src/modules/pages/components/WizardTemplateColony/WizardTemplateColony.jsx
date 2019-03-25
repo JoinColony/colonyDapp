@@ -12,15 +12,16 @@ type Props = {|
   children: Node,
   step?: number,
   stepCount?: number,
+  previousStep: () => void,
 |};
 
 const displayName = 'pages.WizardTemplateColony';
 
-const WizardTemplateColony = ({ children, step, stepCount }: Props) => (
+const WizardTemplateColony = ({ children, step, stepCount, previousStep }: Props) => (
   <main className={styles.layoutMain}>
     <header className={styles.header}>
       <div className={styles.backButton}>
-        <HistoryNavigation noText />
+        <HistoryNavigation noText customHandler={previousStep} />
       </div>
       {stepCount && step && (
         <div className={styles.steps}>

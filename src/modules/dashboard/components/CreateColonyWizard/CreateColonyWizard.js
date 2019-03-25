@@ -13,22 +13,13 @@ import StepConfirmAll from './StepConfirmAll.jsx';
 import StepUserENSName from './StepUserENSName.jsx';
 import StepCreateTransaction from './StepCreateTransaction.jsx';
 
-/* const stepArray = [
-  StepUserENSName,
-  StepColonyENSName,
-  StepTokenChoice,
-  StepCreateToken,
-  StepConfirmAll,
-  StepCreateTransaction,
-]; */
-
 const stepArray = [
-  StepCreateTransaction,
-  StepConfirmAll,
   StepUserENSName,
   StepColonyENSName,
   StepTokenChoice,
   StepCreateToken,
+  StepConfirmAll,
+  StepCreateTransaction,
 ];
 
 type StepValues = {
