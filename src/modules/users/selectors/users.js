@@ -58,11 +58,20 @@ export const singleUserByUsernameSelector = (
 
 export const usersExceptSelector = (
   state: RootStateRecord,
-  except: string[] | string,
+  except: string[] | string = [],
 ) =>
   state
     .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
     .filter((user, address) => ![].concat(except).includes(address));
+
+usersExceptSelector.transform = (
+  input: ImmutableMap<string, DataRecordType<UserRecordType>>,
+) =>
+  input
+    .map(user => user.record)
+    .filter(Boolean)
+    .toList()
+    .toJS();
 
 /*
  * Avatar selectors

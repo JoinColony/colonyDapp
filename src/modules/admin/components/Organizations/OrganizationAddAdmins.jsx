@@ -4,14 +4,19 @@ import React, { Fragment } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
-import type { UserType } from '~immutable';
 import type { ENSName } from '~types';
 
 import { withKeyPath } from '~utils/actions';
+import { useSelector } from '~utils/hooks';
 import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { ACTIONS } from '~redux';
+
+import {
+  currentUserAddressSelector,
+  usersExceptSelector,
+} from '../../../users/selectors';
 
 import styles from './OrganizationAddAdmins.css';
 
@@ -67,7 +72,6 @@ const validationSchema = yup.object({
 });
 
 type Props = {|
-  availableUsers: Array<UserType>,
   ensName: ENSName,
 |};
 
@@ -79,48 +83,52 @@ const transformAction = action => ({
   },
 });
 
-const OrganizationAddAdmins = ({ availableUsers, ensName }: Props) => (
-  <div className={styles.main}>
-    <ActionForm
-      submit={ACTIONS.COLONY_ADMIN_ADD}
-      success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
-      error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
-      validationSchema={validationSchema}
-      transform={withKeyPath(ensName)(transformAction)}
-      initialValues={{
-        newAdmin: null,
-        colonyENSName: ensName,
-      }}
-    >
-      {({ status, isSubmitting, isValid }) => (
-        <Fragment>
-          <div className={styles.pickerWrapper}>
-            <SingleUserPicker
-              name="newAdmin"
-              label={MSG.labelAddAdmins}
-              placeholder={MSG.placeholderAddAdmins}
-              itemComponent={ItemWithAddress}
-              data={availableUsers.map((user, index) => ({
-                ...user,
-                id: index,
-              }))}
-              filter={singleUserPickerFilter}
+const OrganizationAddAdmins = ({ ensName }: Props) => {
+  const currentUserAddress = useSelector(currentUserAddressSelector);
+  const knownUsers = useSelector(usersExceptSelector, [currentUserAddress]);
+  return (
+    <div className={styles.main}>
+      <ActionForm
+        submit={ACTIONS.COLONY_ADMIN_ADD}
+        success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
+        error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
+        validationSchema={validationSchema}
+        transform={withKeyPath(ensName)(transformAction)}
+        initialValues={{
+          newAdmin: null,
+          colonyENSName: ensName,
+        }}
+      >
+        {({ status, isSubmitting, isValid }) => (
+          <Fragment>
+            <div className={styles.pickerWrapper}>
+              <SingleUserPicker
+                name="newAdmin"
+                label={MSG.labelAddAdmins}
+                placeholder={MSG.placeholderAddAdmins}
+                itemComponent={ItemWithAddress}
+                data={knownUsers.map(user => ({
+                  ...user,
+                  id: user.profile.walletAddress,
+                }))}
+                filter={singleUserPickerFilter}
+              />
+            </div>
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              style={{ width: styles.wideButton }}
+              text={MSG.buttonAddAdmin}
+              type="submit"
+              disabled={!isValid}
+              loading={isSubmitting}
             />
-          </div>
-          <Button
-            appearance={{ theme: 'primary', size: 'large' }}
-            style={{ width: styles.wideButton }}
-            text={MSG.buttonAddAdmin}
-            type="submit"
-            disabled={!isValid}
-            loading={isSubmitting}
-          />
-          <FormStatus status={status} />
-        </Fragment>
-      )}
-    </ActionForm>
-  </div>
-);
+            <FormStatus status={status} />
+          </Fragment>
+        )}
+      </ActionForm>
+    </div>
+  );
+};
 
 OrganizationAddAdmins.displayName = displayName;
 
