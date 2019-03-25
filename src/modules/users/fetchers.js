@@ -22,11 +22,13 @@ export const currentUserColonyPermissionsFetcher = Object.freeze({
 export const userFetcher = Object.freeze({
   fetch: userFetch,
   select: singleUserSelector,
+  ttl: 60 * 1000,
 });
 
 export const userByUsernameFetcher = Object.freeze({
   fetch: userByUsernameFetch,
   select: singleUserByUsernameSelector,
+  ttl: 60 * 1000,
 });
 
 export const userAvatarByAddressFetcher = Object.freeze({
