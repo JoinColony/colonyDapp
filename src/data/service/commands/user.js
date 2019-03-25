@@ -100,11 +100,11 @@ export type UnsubscribeToTaskCommandArgs = {|
 |};
 
 export type SubscribeToColonyCommandArgs = {|
-  address: string,
+  address: Address,
 |};
 
 export type UnsubscribeToColonyCommandArgs = {|
-  address: string,
+  address: Address,
 |};
 
 export type AddTokenInfoCommandArgs = {|
