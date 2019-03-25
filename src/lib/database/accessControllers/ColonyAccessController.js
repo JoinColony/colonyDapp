@@ -47,10 +47,12 @@ class ColonyAccessController extends AbstractAccessController<
 
     const signingWalletAddress = this._purserWallet.address;
     const signature = await this._purserWallet.signMessage({
-      message: signingWalletAddress,
+      message: this._colonyAddress + signingWalletAddress,
     });
 
-    return `/colony/${this._colonyAddress}/creator/${signingWalletAddress}/${signature}`;
+    return `/colony/${
+      this._colonyAddress
+    }/creator/${signingWalletAddress}/${signature}`;
   }
 
   async setup() {
