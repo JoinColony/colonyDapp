@@ -46,6 +46,11 @@ type Props = {|
    * In some occasions we do not want any button text
    */
   noText: boolean,
+  /*
+   * If you would like to stay at the same route but handle the navigation manually
+   * a custom handler can be used i.e. switching to another wizard step
+   */
+  customHandler?: () => void
 |};
 
 const HistoryNavigation = ({
@@ -55,6 +60,7 @@ const HistoryNavigation = ({
   backTextValues,
   intl: { formatMessage },
   noText,
+  customHandler,
 }: Props) => {
   let linkText: string = formatMessage(MSG.backHistoryLink);
   if (backText) {
@@ -78,7 +84,7 @@ const HistoryNavigation = ({
           {linkText}
         </NavLink>
       ) : (
-        <button className={styles.back} type="button" onClick={history.goBack}>
+        <button className={styles.back} type="button" onClick={customHandler? customHandler : history.goBack}>
           <Icon
             name="circle-back"
             title={linkText}
