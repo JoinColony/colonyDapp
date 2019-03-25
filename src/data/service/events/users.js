@@ -6,7 +6,9 @@ import { CreateNotificationsReadUntilEventSchema } from './schemas';
 
 const {
   READ_UNTIL,
+  SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
+  UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
 
@@ -21,3 +23,11 @@ export const createSubscribeToTaskEvent = createEventCreator<
 export const createUnsubscribeToTaskEvent = createEventCreator<
   typeof UNSUBSCRIBED_FROM_TASK,
 >(UNSUBSCRIBED_FROM_TASK);
+
+export const createSubscribeToColonyEvent = createEventCreator<
+  typeof SUBSCRIBED_TO_COLONY,
+>(SUBSCRIBED_TO_COLONY);
+
+export const createUnsubscribeToColonyEvent = createEventCreator<
+  typeof UNSUBSCRIBED_FROM_COLONY,
+>(UNSUBSCRIBED_FROM_COLONY);
