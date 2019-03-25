@@ -6,7 +6,7 @@ import BigNumber from 'bn.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
-import { fromWei } from 'ethjs-unit';
+import { toWei } from 'ethjs-unit';
 
 import type { GasPricesProps, TransactionType } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
@@ -21,8 +21,6 @@ import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
 import { SpinnerLoader } from '~core/Preloaders';
-
-import { bnLessThan } from '~utils/numbers';
 
 import styles from './GasStationPrice.css';
 
@@ -76,7 +74,7 @@ are expensive. We recommend waiting.`,
 type Props = {|
   estimateGas: (id: string) => void,
   gasPrices: GasPricesProps,
-  balance: number,
+  balance: string,
   isNetworkCongested: boolean,
   transaction: TransactionType<*, *>,
   updateGas: (id: string, { gasPrice: BigNumber }) => void,
@@ -142,13 +140,11 @@ class GasStationPrice extends Component<Props, State> {
   isBalanceLessThanTxFee = (currentFeeInWei: BigNumber) => {
     /* this is checking if the user can afford the transaction fee */
     const { insufficientFunds } = this.state;
-    const { balance } = this.props;
+    const { balance: balanceInEth = '0' } = this.props;
     if (currentFeeInWei) {
-      const currentFeeinEth = fromWei(currentFeeInWei, 'ether') || 0;
-
-      const isLess = bnLessThan(balance, currentFeeinEth);
-
-      if (isLess && isLess !== insufficientFunds) {
+      const balanceInWei = toWei(balanceInEth, 'ether');
+      const enoughEth = currentFeeInWei.lte(balanceInWei);
+      if (!enoughEth && !insufficientFunds) {
         this.setState({ insufficientFunds: true });
       }
     }
@@ -183,13 +179,11 @@ class GasStationPrice extends Component<Props, State> {
 
   render() {
     const {
-      isNetworkCongested,
       gasPrices,
       updateGas,
       transaction: { id, gasLimit },
-      walletNeedsAction,
     } = this.props;
-    const { isSpeedMenuOpen, speedMenuId, insufficientFunds } = this.state;
+    const { isSpeedMenuOpen, speedMenuId } = this.state;
     const initialFormValues: FormValues = {
       id,
       transactionSpeed: transactionSpeedOptions[0].value,
@@ -309,9 +303,7 @@ class GasStationPrice extends Component<Props, State> {
             );
           }}
         </ActionForm>
-        {(isNetworkCongested || walletNeedsAction || insufficientFunds) && (
-          <div>{this.showAlert()}</div>
-        )}
+        <div>{this.showAlert()}</div>
       </div>
     );
   }
