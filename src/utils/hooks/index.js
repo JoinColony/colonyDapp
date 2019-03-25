@@ -1,12 +1,13 @@
 /* @flow */
 
+import type { Collection } from 'immutable';
 import type { InputSelector } from 'reselect';
 
 import type { Action } from '~redux';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
@@ -50,14 +51,25 @@ const transformFetchedData = (data: DataRecordType<*>) => {
     : data.record;
 };
 
+const defaultTransform = (obj: Collection<*, *>) =>
+  obj && typeof obj.toJS == 'function' ? obj.toJS() : obj;
 /*
  * Given a redux selector and optional selector arguments, get the
  * (immutable) redux state and return a mutable version of it.
  */
-export const useSelector = (select: InputSelector<*, *, *>, args: *[] = []) => {
+export const useSelector = (
+  select: InputSelector<*, *, *>,
+  args: *[] = [],
+  transform?: (obj: Collection<*, *>) => any,
+) => {
   const mapState = useCallback(state => select(state, ...args), args);
-  const data = useMappedState(mapState);
-  return data && typeof data.toJS == 'function' ? data.toJS() : data;
+  const data = useMappedState(mapState, [mapState]);
+  const transformFn =
+    typeof transform == 'function'
+      ? transform
+      : select.transform || defaultTransform;
+
+  return useMemo(() => transformFn(data), [data, ...args]);
 };
 
 /*

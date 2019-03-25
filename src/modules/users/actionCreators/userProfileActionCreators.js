@@ -5,27 +5,19 @@ import type { ENSName } from '~types';
 
 import { ACTIONS } from '~redux';
 
-export const usernameFetch = (
-  address: string,
-): Action<typeof ACTIONS.USERNAME_FETCH> => ({
-  type: ACTIONS.USERNAME_FETCH,
-  meta: { keyPath: [address] },
-  payload: { address },
-});
-
-export const userAddressFetch = (
-  username: string,
-): Action<typeof ACTIONS.USER_ADDRESS_FETCH> => ({
-  type: ACTIONS.USER_ADDRESS_FETCH,
-  payload: { username },
-});
-
 export const userFetch = (
   address: string,
 ): Action<typeof ACTIONS.USER_FETCH> => ({
   type: ACTIONS.USER_FETCH,
   meta: { keyPath: [address] },
   payload: { address },
+});
+
+export const userByUsernameFetch = (
+  username: string,
+): Action<typeof ACTIONS.USER_BY_USERNAME_FETCH> => ({
+  type: ACTIONS.USER_BY_USERNAME_FETCH,
+  payload: { username },
 });
 
 export const userAvatarFetch = (

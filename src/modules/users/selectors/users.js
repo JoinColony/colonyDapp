@@ -11,8 +11,6 @@ import type {
 } from '~immutable';
 import type { ENSName } from '~types';
 
-import { DataRecord } from '~immutable';
-
 import {
   USERS_ALL_USERS,
   USERS_AVATARS,
@@ -21,7 +19,6 @@ import {
   USERS_CURRENT_USER_TRANSACTIONS,
   USERS_CURRENT_USER_PERMISSIONS,
   USERS_NAMESPACE as ns,
-  USERS_USERNAMES,
   USERS_USERS,
   USERS_CURRENT_USER_METADATA,
 } from '../constants';
@@ -29,43 +26,21 @@ import {
 /*
  * Username/address getters
  */
-const getUsernames = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_ALL_USERS, USERS_USERNAMES], ImmutableMap());
-const getAddressFromProps = (
-  state: RootStateRecord,
-  { address }: { address: string },
-) => address;
-const getUsernameFromProps = (
-  state: RootStateRecord,
-  { username }: { username: string },
-) => username;
-const getAddressFromUserData = (
-  state: RootStateRecord,
-  { user }: { user: DataRecordType<UserRecordType> },
-) => user && user.getIn(['record', 'profile', 'walletAddress']);
+const getUsernameFromUserData = (user?: DataRecordType<UserRecordType>) =>
+  user && user.getIn(['record', 'profile', 'username']);
 
 /*
  * Username/address selectors
  */
-export const usernameSelector = createSelector(
-  getAddressFromProps,
-  getUsernames,
-  (address, usernames) => usernames.get(address),
-);
-export const userAddressSelector = createSelector(
-  getUsernameFromProps,
-  getUsernames,
-  // This creates an inverted version of the entry for this map (with a data record)
-  // so that we can use it in the same way.
-  (username, usernames) =>
-    DataRecord({ record: usernames.keyOf(DataRecord({ record: username })) }),
-);
+export const userAddressSelector = (state: RootStateRecord, username: string) =>
+  state
+    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
+    .findKey(user => getUsernameFromUserData(user) === username);
 
-/*
- * User getters
- */
-export const getUsers = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap());
+export const usernameSelector = (state: RootStateRecord, address: string) =>
+  getUsernameFromUserData(
+    state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]),
+  );
 
 /*
  * User selectors
@@ -73,31 +48,38 @@ export const getUsers = (state: RootStateRecord) =>
 export const singleUserSelector = (state: RootStateRecord, address: string) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
 
-export const userByAddressSelector = createSelector(
-  getAddressFromProps,
-  getUsers,
-  (address, users) => users.get(address),
-);
+export const singleUserByUsernameSelector = (
+  state: RootStateRecord,
+  username: string,
+) =>
+  state
+    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
+    .find(user => getUsernameFromUserData(user) === username);
 
-/*
- * Avatar getters
- */
-const getUserAvatars = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_ALL_USERS, USERS_AVATARS], ImmutableMap());
+export const usersExceptSelector = (
+  state: RootStateRecord,
+  except: string[] | string = [],
+) =>
+  state
+    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
+    .filter((user, address) => ![].concat(except).includes(address));
+
+usersExceptSelector.transform = (
+  input: ImmutableMap<string, DataRecordType<UserRecordType>>,
+) =>
+  input
+    .map(user => user.record)
+    .filter(Boolean)
+    .toList()
+    .toJS();
 
 /*
  * Avatar selectors
  */
-export const userAvatarByAddressSelector = createSelector(
-  getAddressFromProps,
-  getUserAvatars,
-  (address, avatars) => avatars.get(address),
-);
-export const userAvatarByUserDataSelector = createSelector(
-  getAddressFromUserData,
-  getUserAvatars,
-  (address, avatars) => avatars.get(address),
-);
+export const userAvatarByAddressSelector = (
+  state: RootStateRecord,
+  address: string,
+) => state.getIn([ns, USERS_ALL_USERS, USERS_AVATARS, address]);
 
 /*
  * Current user getters

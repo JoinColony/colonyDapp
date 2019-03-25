@@ -13,7 +13,7 @@ import ProfileTemplate from '~pages/ProfileTemplate';
 
 import mockActivities from './__datamocks__/mockActivities';
 import mockColonies from '../../../../__mocks__/mockColonies';
-import { userAddressFetcher, userFetcher } from '../../fetchers';
+import { userByUsernameFetcher } from '../../fetchers';
 
 import UserMeta from './UserMeta.jsx';
 import UserProfileSpinner from './UserProfileSpinner.jsx';
@@ -24,16 +24,23 @@ type Props = {|
   match: Match,
 |};
 
-const UserProfileTemplate = ({ address }: { address: string }) => {
-  const userArgs = [address];
-  const { data: user } = useDataFetcher<UserType>(
-    userFetcher,
-    userArgs,
-    userArgs,
+const UserProfile = ({
+  match: {
+    params: { username },
+  },
+}: Props) => {
+  const { data: user, isFetching } = useDataFetcher<UserType>(
+    userByUsernameFetcher,
+    [username],
+    [username],
     { ttl: 1000 * 10 },
   );
 
-  return user ? (
+  if (!user || isFetching) {
+    return <UserProfileSpinner />;
+  }
+
+  return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
         <ColonyGrid colonies={mockColonies} />
@@ -42,27 +49,6 @@ const UserProfileTemplate = ({ address }: { address: string }) => {
         <ActivityFeed activities={mockActivities} />
       </section>
     </ProfileTemplate>
-  ) : (
-    <UserProfileSpinner />
-  );
-};
-
-const UserProfile = ({
-  match: {
-    params: { username },
-  },
-}: Props) => {
-  const addressArgs = [username];
-  const { data: address } = useDataFetcher<string>(
-    userAddressFetcher,
-    addressArgs,
-    addressArgs,
-  );
-
-  return address ? (
-    <UserProfileTemplate address={address} />
-  ) : (
-    <UserProfileSpinner />
   );
 };
 

@@ -21,8 +21,6 @@ import OrganizationAddDomains from './OrganizationAddDomains.jsx';
 
 import styles from './Organizations.css';
 
-import usersMocks from './__datamocks__/usersMocks';
-
 const MSG = defineMessages({
   tabContributors: {
     id: 'admin.Organizations.tabContributors',
@@ -98,7 +96,6 @@ const Organizations = ({ ensName }: Props) => {
                * Once we have a way to _discover_ users that interacted with the current colony,
                * and which can be made admins
                */
-              availableUsers={usersMocks}
               ensName={ensName}
             />
             <section className={styles.list}>
