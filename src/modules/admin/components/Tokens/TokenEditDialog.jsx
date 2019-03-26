@@ -43,6 +43,10 @@ const MSG = defineMessages({
     id: 'admin.Tokens.EditTokensModal.errorNativeTokenRequired',
     defaultMessage: 'The native token must be selected.',
   },
+  unknownToken: {
+    id: 'admin.Tokens.EditTokensModal.unknownToken',
+    defaultMessage: 'Unknown Token',
+  },
 });
 
 type FormValues = {
@@ -96,10 +100,10 @@ const TokenCheckbox = ({
       )}
       <span className={styles.tokenChoiceSymbol}>
         <Heading
-          text={token.symbol}
+          text={token.symbol || token.name || MSG.unknownToken}
           appearance={{ size: 'small', margin: 'none' }}
         />
-        {token.name}
+        {(!!token.symbol && token.name) || address}
       </span>
     </Checkbox>
   ) : (

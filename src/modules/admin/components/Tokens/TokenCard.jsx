@@ -8,6 +8,7 @@ import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
+import CopyableAddress from '~core/CopyableAddress';
 
 import {
   tokenIsETH,
@@ -37,7 +38,11 @@ const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
           </div>
         )}
         <div className={styles.tokenSymbol}>
-          {symbol}
+          {symbol || (
+            <div>
+              Unknown Token<CopyableAddress>{address}</CopyableAddress>
+            </div>
+          )}
           {isNative && <span>*</span>}
         </div>
       </div>

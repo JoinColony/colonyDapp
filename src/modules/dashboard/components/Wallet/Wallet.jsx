@@ -1,7 +1,9 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe until hooks types
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 
 import type { DialogType } from '~core/Dialog';
 import type { ContractTransactionType, TokenReferenceType } from '~immutable';
@@ -21,6 +23,7 @@ import {
   currentUserTokenTransfersFetcher,
   currentUserTokensFetcher,
 } from '../../../users/fetchers';
+import { userTokensUpdate } from '../../../users/actionCreators';
 
 import styles from './Wallet.css';
 
@@ -52,20 +55,20 @@ type Props = {|
   walletAddress: Address,
 |};
 
-const handleEditToken = (openDialog: *, tokens: *, transactions: *) => {
+const handleEditTokens = (
+  openDialog: *,
+  dispatch: *,
+  tokens: *,
+  transactions: *,
+) => {
   // combination of passed tokens and tokens from recent transactions
-  const potentialTokens = [
-    ...(tokens || []),
-    ...Object.values(
-      (transactions || []).reduce(
-        (acc, transaction) => ({
-          ...acc,
-          [transaction.token]: { address: transaction.token },
-        }),
-        {},
-      ),
-    ),
-  ];
+  const potentialTokens = Object.values(
+    [
+      ...(tokens || []),
+      ...(transactions || []).map(({ token }) => ({ address: token })),
+    ].reduce((acc, token) => ({ ...acc, [token.address]: token }), {}),
+  );
+
   const tokenDialog = openDialog('TokenEditDialog', {
     tokens: potentialTokens,
     selectedTokens: tokens && tokens.map(({ address }) => address),
@@ -73,13 +76,10 @@ const handleEditToken = (openDialog: *, tokens: *, transactions: *) => {
 
   tokenDialog
     .afterClosed()
-    .then(() => {
-      /* eslint-disable-next-line no-console */
-      console.log(tokenDialog.props);
+    .then(({ tokens: newTokens }) => {
+      dispatch(userTokensUpdate(newTokens));
     })
-    .catch(() => {
-      // cancel actions here
-    });
+    .catch(() => {});
 };
 
 const Wallet = ({ walletAddress, openDialog }: Props) => {
@@ -93,6 +93,11 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
     currentUserTokenTransfersFetcher,
     [],
     [],
+  );
+  const dispatch = useDispatch();
+  const editTokens = useCallback(
+    () => handleEditTokens(openDialog, dispatch, tokens, transactions),
+    [openDialog, dispatch, tokens, transactions],
   );
   return (
     <div className={styles.layoutMain}>
@@ -139,7 +144,7 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
           <Button
             appearance={{ theme: 'blue', size: 'small' }}
             text={MSG.linkEditToken}
-            onClick={() => handleEditToken(openDialog, tokens, transactions)}
+            onClick={editTokens}
           />
         </p>
       </aside>
