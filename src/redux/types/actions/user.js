@@ -73,6 +73,19 @@ export type UserActionTypes = {|
       tokens: TokenReferenceType[],
     |},
   >,
+  USER_TOKENS_UPDATE: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TOKENS_UPDATE,
+    {|
+      tokens: string[],
+    |},
+  >,
+  USER_TOKENS_UPDATE_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_TOKENS_UPDATE_ERROR,
+    void,
+  >,
+  USER_TOKENS_UPDATE_SUCCESS: ActionType<
+    typeof ACTIONS.USER_TOKENS_UPDATE_SUCCESS,
+  >,
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,

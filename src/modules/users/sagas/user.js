@@ -3,6 +3,7 @@
 import type { Saga } from 'redux-saga';
 
 import {
+  all,
   call,
   delay,
   fork,
@@ -25,7 +26,9 @@ import { ACTIONS } from '~redux';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { currentUserAddressSelector } from '../selectors';
 import {
+  addToken,
   createUserProfile,
+  removeToken,
   removeUserAvatar,
   setUserAvatar,
   updateUserProfile,
@@ -400,6 +403,70 @@ function* userTokensFetch(
   }
 }
 
+/**
+ * Diff the current user tokens and the list sent as payload, and work out
+ * which tokens need adding and which need removing. Then append the relevant
+ * events to the user metadata store.
+ */
+function* userTokensUpdate(
+  action: Action<typeof ACTIONS.USER_TOKENS_UPDATE>,
+): Saga<void> {
+  try {
+    const { tokens } = action.payload;
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const walletAddress = yield select(currentUserAddressSelector);
+    const userMetadataStoreAddress = yield* getMetadataStoreAddress();
+    const commandContext = {
+      ddb,
+      metadata: {
+        walletAddress,
+        userMetadataStoreAddress,
+      },
+    };
+    const queryContext = {
+      ...commandContext,
+      networkClient,
+    };
+
+    const currentTokenAddresses = (yield* executeQuery(
+      queryContext,
+      getUserTokens,
+    )).map(({ address }) => address);
+
+    const toAdd = tokens.filter(
+      token =>
+        !currentTokenAddresses.find(
+          currentToken => token.toLowerCase() === currentToken.toLowerCase(),
+        ),
+    );
+    const toRemove = currentTokenAddresses.filter(
+      currentToken =>
+        !tokens.find(
+          token => token.toLowerCase() === currentToken.toLowerCase(),
+        ),
+    );
+
+    // $FlowFixMe why is flow unhappy about these two?
+    yield all([
+      ...toAdd.map(address =>
+        executeCommand(commandContext, addToken, { address }),
+      ),
+    ]);
+    // $FlowFixMe
+    yield all([
+      ...toRemove.map(address =>
+        executeCommand(commandContext, removeToken, { address }),
+      ),
+    ]);
+
+    yield put({ type: ACTIONS.USER_TOKENS_FETCH });
+    yield put({ type: ACTIONS.USER_TOKENS_UPDATE_SUCCESS });
+  } catch (error) {
+    yield putError(ACTIONS.USER_TOKENS_UPDATE_ERROR, error);
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
@@ -415,5 +482,6 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
   yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, userRemoveAvatar);
+  yield takeLatest(ACTIONS.USER_TOKENS_UPDATE, userTokensUpdate);
   yield takeLatest(ACTIONS.USER_UPLOAD_AVATAR, userUploadAvatar);
 }

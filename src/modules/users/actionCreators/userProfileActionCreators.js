@@ -53,3 +53,10 @@ export const userPermissionsFetch = (
   payload: { ensName },
   meta: { keyPath: [ensName] },
 });
+
+export const userTokensUpdate = (
+  tokens: string[],
+): Action<typeof ACTIONS.USER_TOKENS_UPDATE> => ({
+  type: ACTIONS.USER_TOKENS_UPDATE,
+  payload: { tokens },
+});
