@@ -18,7 +18,7 @@ const useToken = (tokenAddress: Address) => {
   );
   const mapState = useCallback(
     state => ({
-      token: tokenWithIconSelector(state, { tokenAddress }),
+      token: tokenWithIconSelector(state, tokenAddress),
     }),
     [tokenAddress],
   );

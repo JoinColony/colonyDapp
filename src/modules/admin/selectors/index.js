@@ -9,10 +9,15 @@ import {
   ADMIN_UNCLAIMED_TRANSACTIONS,
 } from '../constants';
 
-export const colonyTransactions = (state: RootStateRecord, ensName: ENSName) =>
-  state.getIn([ns, ADMIN_TRANSACTIONS, ensName]);
+/*
+ * Input selectors
+ */
+export const colonyTransactionsSelector = (
+  state: RootStateRecord,
+  ensName: ENSName,
+) => state.getIn([ns, ADMIN_TRANSACTIONS, ensName]);
 
-export const colonyUnclaimedTransactions = (
+export const colonyUnclaimedTransactionsSelector = (
   state: RootStateRecord,
   ensName: ENSName,
 ) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, ensName]);

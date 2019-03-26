@@ -22,38 +22,33 @@ const didClaimPayout = (taskUser: TaskUserType, address: string) =>
 /*
  * Getters
  */
-const getDraftIdFromProps = (
-  state: RootStateRecord,
-  { draftId }: { draftId: TaskDraftId },
-) => draftId;
+const getTaskRefsFromDraftIds = (taskRefs, draftIds) =>
+  taskRefs.filter((_, draftId) => draftIds.has(draftId));
 
-const getTaskRefs = (state: RootStateRecord) =>
+/*
+ * Input selectors
+ */
+export const taskRefsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_TASKS], ImmutableMap());
 
-const getUserOpenDraftIds = (state: RootStateRecord) =>
+export const userOpenDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn(
     [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'open'],
     ImmutableSet(),
   );
 
-const getUserClosedDraftIds = (state: RootStateRecord) =>
+export const userClosedDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn(
     [USERS_NAMESPACE, USERS_CURRENT_USER, ns, 'record', 'closed'],
     ImmutableSet(),
   );
 
-const getTaskRefsFromDraftIds = (taskRefs, draftIds) =>
-  taskRefs.filter((_, draftId) => draftIds.has(draftId));
+export const taskRefSelector = (state: RootStateRecord, draftId: TaskDraftId) =>
+  state.getIn([ns, DASHBOARD_TASKS, draftId]);
 
 /*
  * Selectors
  */
-export const taskRefSelector = createSelector(
-  getTaskRefs,
-  getDraftIdFromProps,
-  (taskRefs, draftId) => taskRefs.get(draftId),
-);
-
 export const taskStorePropsSelector = createSelector(
   taskRefSelector,
   taskRef => {
@@ -75,14 +70,14 @@ export const taskSelector = createSelector(
 );
 
 export const currentUserOpenTaskRefsSelector = createSelector(
-  getTaskRefs,
-  getUserOpenDraftIds,
+  taskRefsSelector,
+  userOpenDraftIdsSelector,
   getTaskRefsFromDraftIds,
 );
 
 export const currentUserClosedTaskRefsSelector = createSelector(
-  getTaskRefs,
-  getUserClosedDraftIds,
+  taskRefsSelector,
+  userClosedDraftIdsSelector,
   getTaskRefsFromDraftIds,
 );
 
@@ -98,14 +93,20 @@ export const isTaskManager = createSelector(
   taskSelector,
   currentUserAddressSelector,
   (task, address) =>
-    task && task.manager && addressEquals(task.manager.address, address),
+    address &&
+    task &&
+    task.manager &&
+    addressEquals(task.manager.address, address),
 );
 
 export const isTaskWorker = createSelector(
   taskSelector,
   currentUserAddressSelector,
   (task, address) =>
-    task && task.worker && addressEquals(task.worker.address, address),
+    address &&
+    task &&
+    task.worker &&
+    addressEquals(task.worker.address, address),
 );
 
 export const canTaskPayoutBeClaimed = createSelector(
@@ -113,6 +114,7 @@ export const canTaskPayoutBeClaimed = createSelector(
   currentUserAddressSelector,
   (task, address) =>
     !!(
+      address &&
       task &&
       task.currentState === TASK_STATE.FINALIZED &&
       (didClaimPayout(task.worker, address) ||

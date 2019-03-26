@@ -8,6 +8,7 @@ import type {
   RootStateRecord,
   TokenReferenceType,
 } from '~immutable';
+import type { Address } from '~types';
 
 import {
   DASHBOARD_ALL_TOKENS,
@@ -19,40 +20,38 @@ import {
 /*
  * Getters
  */
-const getTokenAddressFromProps = (
-  state: RootStateRecord,
-  { tokenAddress }: { tokenAddress: string },
-) => tokenAddress;
-
-const getAllTokens = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_TOKENS]);
-
-const getTokens = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_TOKENS, DASHBOARD_TOKENS], ImmutableMap());
-
-export const getTokenWithIcon = (
+const getTokenWithIcon = (
   tokenAddress: string,
   allTokens: ?AllTokensRecord,
 ) => {
-  if (!allTokens) return undefined; // TODO why can this be undefined?
+  // allTokens _will_ be defined. The following code is not included in the bundle:
+  // eslint-disable-next-line
+  /*:: if (!allTokens) throw Error(); */
+
   const token = allTokens.getIn([DASHBOARD_TOKENS, tokenAddress]);
   const icon = allTokens.getIn([DASHBOARD_TOKEN_ICONS, tokenAddress]);
   return token ? token.set('icon', icon) : undefined;
 };
 
 /*
+ * Input selectors
+ */
+export const allTokensSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_TOKENS]);
+
+export const tokensSelector = (state: RootStateRecord) =>
+  state.getIn([ns, DASHBOARD_ALL_TOKENS, DASHBOARD_TOKENS], ImmutableMap());
+
+export const tokenSelector = (state: RootStateRecord, tokenAddress: Address) =>
+  state.getIn([ns, DASHBOARD_ALL_TOKENS, DASHBOARD_TOKENS], tokenAddress);
+
+/*
  * Selectors
  */
-export const tokenSelector = createSelector(
-  getTokenAddressFromProps,
-  getTokens,
-  (tokenAddress, tokens) => tokens.get(tokenAddress),
-);
-
 // TODO get token/icon separately for much better selector performance
 export const tokenWithIconSelector = createSelector(
-  getTokenAddressFromProps,
-  getAllTokens,
+  (state: RootStateRecord, tokenAddress: Address) => tokenAddress,
+  allTokensSelector,
   getTokenWithIcon,
 );
 
@@ -64,6 +63,6 @@ export const nativeFromColonyTokensSelector = createSelector<
   *,
 >(
   (state, tokens) => (tokens.find(({ isNative }) => !!isNative) || {}).address,
-  getAllTokens,
+  allTokensSelector,
   getTokenWithIcon,
 );

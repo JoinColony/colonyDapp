@@ -3,7 +3,7 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import type { RootStateRecord } from '~immutable';
+import type { RootStateRecord, TaskDraftId } from '~immutable';
 
 import {
   DASHBOARD_ALL_COMMENTS,
@@ -11,13 +11,13 @@ import {
 } from '../constants';
 
 /*
- * Tasks selectors
+ * Input selectors
  */
 export const allCommentsSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_COMMENTS], ImmutableMap());
 
-export const tasksCommentsSelector = createSelector(
+export const taskCommentsSelector = createSelector(
   allCommentsSelector,
-  (state, props) => props.id,
-  (allComments, id) => allComments.get(id, ImmutableMap()),
+  (state: RootStateRecord, draftId: TaskDraftId) => draftId,
+  (allComments, draftId) => allComments.get(draftId, ImmutableMap()),
 );

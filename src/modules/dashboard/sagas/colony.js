@@ -50,7 +50,7 @@ import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
 import { colonyAvatarHashSelector } from '../selectors';
-import { getNetworkVersion } from '../../core/selectors';
+import { networkVersionSelector } from '../../core/selectors';
 
 import { getColonyContext } from './shared';
 
@@ -501,7 +501,7 @@ function* colonyAvatarRemove({
 }: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
   try {
     const context = yield* getColonyContext(ensName);
-    const ipfsHash = yield select(colonyAvatarHashSelector, { ensName });
+    const ipfsHash = yield select(colonyAvatarHashSelector, ensName);
     /*
      * Remove colony avatar
      */
@@ -556,7 +556,7 @@ function* colonyUpgradeContract({
 }: Action<typeof ACTIONS.COLONY_VERSION_UPGRADE>) {
   const txChannel = yield call(getTxChannel, meta.id);
 
-  const newVersion = yield select(getNetworkVersion);
+  const newVersion = yield select(networkVersionSelector);
 
   try {
     yield fork(createTransaction, meta.id, {

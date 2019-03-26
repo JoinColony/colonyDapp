@@ -4,8 +4,11 @@ import type { RootStateRecord } from '~immutable';
 
 import { CORE_NAMESPACE as ns, CORE_NETWORK } from '../constants';
 
-export const getNetwork = (state: RootStateRecord) =>
+/*
+ * Input selectors
+ */
+export const networkSelector = (state: RootStateRecord) =>
   state.getIn([ns, CORE_NETWORK]);
 
-export const getNetworkVersion = (state: RootStateRecord) =>
+export const networkVersionSelector = (state: RootStateRecord) =>
   state.getIn([ns, CORE_NETWORK, 'record', 'version']);
