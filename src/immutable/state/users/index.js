@@ -30,10 +30,13 @@ export type CurrentUserPermissionsType = ImmutableMapType<
   DataRecordType<ImmutableMapType<UserPermissionsRecordType>>,
 >;
 
+export type CurrentUserColoniesType = ImmutableSetType<string>;
+
 export type CurrentUserTasksType = ImmutableSetType<string>;
 
 export type CurrentUser = {|
   activities: ListType<UserActivityRecordType>,
+  colonies: DataRecordType<CurrentUserColoniesType>,
   metadata: UserMetadataRecordType,
   permissions: CurrentUserPermissionsType,
   profile: UserProfileRecordType,

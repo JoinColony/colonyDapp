@@ -22,6 +22,8 @@ import {
 
 import {
   createNotificationsReadEvent,
+  createSubscribeToColonyEvent,
+  createUnsubscribeToColonyEvent,
   createSubscribeToTaskEvent,
   createUnsubscribeToTaskEvent,
 } from '../events';
@@ -95,6 +97,14 @@ export type SubscribeToTaskCommandArgs = {|
 
 export type UnsubscribeToTaskCommandArgs = {|
   draftId: string,
+|};
+
+export type SubscribeToColonyCommandArgs = {|
+  address: Address,
+|};
+
+export type UnsubscribeToColonyCommandArgs = {|
+  address: Address,
 |};
 
 export type AddTokenInfoCommandArgs = {|
@@ -213,6 +223,28 @@ export const unsubscribeToTask: UserMetadataCommand<
   async execute(args) {
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToTaskEvent(args));
+    return userMetadataStore;
+  },
+});
+
+export const subscribeToColony: UserMetadataCommand<
+  SubscribeToColonyCommandArgs,
+  EventStore,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createSubscribeToColonyEvent(args));
+    return userMetadataStore;
+  },
+});
+
+export const unsubscribeToColony: UserMetadataCommand<
+  UnsubscribeToColonyCommandArgs,
+  EventStore,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
     return userMetadataStore;
   },
 });

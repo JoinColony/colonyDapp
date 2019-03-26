@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
 import type {
   DataRecordType,
@@ -20,6 +20,7 @@ import {
   USERS_NAMESPACE as ns,
   USERS_USERS,
   USERS_CURRENT_USER_METADATA,
+  USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
 } from '../constants';
 
 /*
@@ -111,6 +112,12 @@ export const currentUserColonyPermissionsSelector = (
   ]);
 export const currentUserMetadataSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
+
+export const currentUserColoniesSelector = (state: RootStateRecord) =>
+  state.getIn(
+    [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES],
+    ImmutableSet(),
+  );
 
 /*
  * User permissions getters
