@@ -13,16 +13,15 @@ import fetchMissingColonyAvatar from './fetchMissingColonyAvatar';
 import type { RootStateRecord } from '~immutable';
 
 type Props = {
-  ensName?: string,
+  ensName: string,
   avatarData?: string,
 };
 
 const withColonyAvatar = compose(
   connect(
-    (state: RootStateRecord, props: Props) => ({
-      avatarData: colonyAvatarDataSelector(state, props),
-      // TODO what's the deal with this?
-      avatarHash: colonyAvatarHashSelector.resultFunc(state, props),
+    (state: RootStateRecord, { ensName }: Props) => ({
+      avatarData: colonyAvatarDataSelector(state, ensName),
+      avatarHash: colonyAvatarHashSelector(state, ensName),
     }),
     {
       fetchColonyAvatar,

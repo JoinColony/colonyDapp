@@ -1,26 +1,21 @@
 /* @flow */
 
 import { branch, lifecycle } from 'recompose';
-import type { DataRecordType, ColonyRecordType } from '~immutable';
 
 type Props = {
-  avatarData: string,
-  colony: ?DataRecordType<ColonyRecordType>,
+  avatarData?: string,
+  avatarHash?: string,
 };
 
-const shouldFetchColonyAvatar = ({ avatarData, colony }: Props) =>
-  !!(
-    !avatarData &&
-    (colony && colony.record && colony.record && colony.record.avatar)
-  );
+const shouldFetchColonyAvatar = ({ avatarHash, avatarData }: Props) =>
+  !!(!avatarData && avatarHash);
 
 const fetchMissingColonyAvatar = branch(
   shouldFetchColonyAvatar,
   lifecycle({
     componentDidMount() {
-      const { colony, fetchColonyAvatar } = this.props;
-      if (shouldFetchColonyAvatar(this.props))
-        fetchColonyAvatar(colony.record.avatar);
+      const { avatarHash, fetchColonyAvatar } = this.props;
+      if (shouldFetchColonyAvatar(this.props)) fetchColonyAvatar(avatarHash);
     },
   }),
 );
