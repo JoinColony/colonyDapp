@@ -1,6 +1,5 @@
 /* @flow */
 
-import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
 import type {
@@ -30,7 +29,7 @@ const getUsernameFromUserData = (user?: DataRecordType<UserRecordType>) =>
   user && user.getIn(['record', 'profile', 'username']);
 
 /*
- * Username/address selectors
+ * Username/address input selectors
  */
 export const userAddressSelector = (state: RootStateRecord, username: string) =>
   state
@@ -43,12 +42,12 @@ export const usernameSelector = (state: RootStateRecord, address: string) =>
   );
 
 /*
- * User selectors
+ * User input selectors
  */
-export const singleUserSelector = (state: RootStateRecord, address: string) =>
+export const userSelector = (state: RootStateRecord, address: string) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
 
-export const singleUserByUsernameSelector = (
+export const userByUsernameSelector = (
   state: RootStateRecord,
   username: string,
 ) =>
@@ -74,7 +73,7 @@ usersExceptSelector.transform = (
     .toJS();
 
 /*
- * Avatar selectors
+ * Avatar input selectors
  */
 export const userAvatarByAddressSelector = (
   state: RootStateRecord,
@@ -82,25 +81,25 @@ export const userAvatarByAddressSelector = (
 ) => state.getIn([ns, USERS_ALL_USERS, USERS_AVATARS, address]);
 
 /*
- * Current user getters
+ * Current user input selectors
  */
-const getCurrentUser = (state: RootStateRecord) =>
+export const currentUserSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER]);
-const getCurrentUserAddress = (state: RootStateRecord) =>
+export const currentUserAddressSelector = (state: RootStateRecord) =>
   state.getIn([
     ns,
     USERS_CURRENT_USER,
     USERS_CURRENT_USER_PROFILE,
     'walletAddress',
   ]);
-const getCurrentUserBalance = (state: RootStateRecord) =>
+export const currentUserBalanceSelector = (state: RootStateRecord) =>
   state.getIn(
     [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'balance'],
     0,
   );
-const getCurrentUserTransactions = (state: RootStateRecord) =>
+export const currentUserTransactionsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
-const getCurrentUserColonyPermissions = (
+export const currentUserColonyPermissionsSelector = (
   state: RootStateRecord,
   ensName: ENSName,
 ) =>
@@ -110,38 +109,12 @@ const getCurrentUserColonyPermissions = (
     USERS_CURRENT_USER_PERMISSIONS,
     ensName,
   ]);
-const getCurrentUserMetadata = (state: RootStateRecord) =>
+export const currentUserMetadataSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
 
 /*
- * Current user selectors
+ * User permissions getters
  */
-export const currentUserSelector = createSelector(
-  getCurrentUser,
-  user => user,
-);
-export const currentUserAddressSelector = createSelector(
-  getCurrentUserAddress,
-  address => address,
-);
-export const currentUserBalanceSelector = createSelector(
-  getCurrentUserBalance,
-  balance => balance,
-);
-export const currentUserTransactionsSelector = createSelector(
-  getCurrentUserTransactions,
-  transactions => transactions,
-);
-export const currentUserColonyPermissionsSelector = createSelector(
-  getCurrentUserColonyPermissions,
-  permissions => permissions,
-);
-export const currentUserMetadataSelector = createSelector(
-  getCurrentUserMetadata,
-  metadata => metadata,
-);
-
-// TODO this doesn't quite fit here, maybe move?
 export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
   !!(permissions && permissions.canEnterRecoveryMode);
 

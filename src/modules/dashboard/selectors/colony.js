@@ -21,7 +21,10 @@ import {
 
 type ENSNameFromRouter = (state: RootStateRecord, props: Object) => ENSName;
 
-export const ensNameFromRouter: ENSNameFromRouter = (state, props) =>
+/*
+ * Input selectors
+ */
+export const ensNameFromRouterSelector: ENSNameFromRouter = (state, props) =>
   props.match.params.ensName;
 
 export const allColoniesSelector = (state: RootStateRecord) =>
@@ -42,35 +45,29 @@ export const colonyENSNamesSelector = (state: RootStateRecord) =>
     ImmutableMap(),
   );
 
+/*
+ * Selectors
+ */
 export const routerColonySelector = createSelector(
   coloniesSelector,
-  ensNameFromRouter,
+  ensNameFromRouterSelector,
   (colonies, ensName) => colonies.get(ensName),
 );
 
-export const singleColonySelector = (
-  state: RootStateRecord,
-  ensName: ENSName,
-) => state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, ensName]);
-
-export const domainsIndexSelector = createSelector(
-  singleColonySelector,
-  colony =>
-    colony ? colony.getIn(['record', 'databases', 'domainsIndex']) : undefined,
-);
+export const colonySelector = (state: RootStateRecord, ensName: ENSName) =>
+  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, ensName]);
 
 export const domainSelector = createSelector(
   (state, domainId) => domainId,
-  singleColonySelector,
+  colonySelector,
   (domainId, colony) =>
     colony ? colony.getIn(['record', 'domains', domainId]) : undefined,
 );
 
 export const colonyAvatarHashSelector = createSelector(
+  (state: RootStateRecord, ensName: ENSName) => ensName,
   coloniesSelector,
-  (state, props) => props.ensName,
-  (colonies, ensName) =>
-    ensName ? colonies.getIn([ensName, 'record', 'avatar']) : null,
+  (ensName, colonies) => colonies.getIn([ensName, 'record', 'avatar']),
 );
 
 export const colonyAvatarDataSelector = createSelector(
@@ -79,14 +76,14 @@ export const colonyAvatarDataSelector = createSelector(
   (hash, state) => (state && hash ? state.get(hash) : null),
 );
 
-export const allColonyENSNames = createSelector(
+export const allColonyENSNamesSelector = createSelector(
   coloniesSelector,
-  colonies => colonies.keySeq().toArray(), // TODO don't use a selector for this
+  colonies => colonies.keySeq(),
 );
 
 export const colonyENSNameSelector = createSelector(
   colonyENSNamesSelector,
-  (state, props) => props.colonyAddress,
+  (state, props) => props.colonyAddress, // TODO use a string argument
   (ensNames, colonyAddress) => ensNames.get(colonyAddress),
 );
 

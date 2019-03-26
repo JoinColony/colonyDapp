@@ -3,12 +3,12 @@
 import {
   colonyAdminsSelector,
   colonyDomainsSelector,
-  singleColonySelector,
+  colonySelector,
 } from './selectors';
 import { fetchAdmins, fetchColony, fetchDomains } from './actionCreators';
 
 export const colonyFetcher = {
-  select: singleColonySelector,
+  select: colonySelector,
   fetch: fetchColony,
   ttl: 1000 * 60, // 1 minute
 };

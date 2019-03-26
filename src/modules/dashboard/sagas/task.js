@@ -11,7 +11,7 @@ import { putError, executeCommand, executeQuery } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
 import {
-  allColonyENSNames,
+  allColonyENSNamesSelector,
   taskSelector,
   taskStorePropsSelector,
 } from '../selectors';
@@ -248,7 +248,7 @@ function* taskFetchAllForColony({
  * colonies (in parallel).
  */
 function* taskFetchAll(): Saga<void> {
-  const colonyENSNames = yield select(allColonyENSNames);
+  const colonyENSNames = yield select(allColonyENSNamesSelector);
   yield all(
     colonyENSNames.map(colonyENSName =>
       put<Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>>({
