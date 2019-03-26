@@ -22,6 +22,7 @@ import {
 
 import {
   createUserAddTokenEvent,
+  createUserRemoveTokenEvent,
   createNotificationsReadEvent,
   createSubscribeToColonyEvent,
   createUnsubscribeToColonyEvent,
@@ -31,6 +32,7 @@ import {
 
 import {
   UserAddTokenCommandArgsSchema,
+  UserRemoveTokenCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
@@ -192,7 +194,17 @@ export const addToken: UserMetadataCommand<
   },
 });
 
-// TODO: removeToken
+export const removeToken: UserMetadataCommand<
+  AddTokenInfoCommandArgs,
+  EventStore,
+> = ({ ddb, metadata }) => ({
+  schema: UserRemoveTokenCommandArgsSchema,
+  async execute(args) {
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+    await userMetadataStore.append(createUserRemoveTokenEvent(args));
+    return userMetadataStore;
+  },
+});
 
 export const markNotificationsAsRead: UserMetadataCommand<
   MarkNotificationsAsReadCommandArgs,

@@ -36,6 +36,7 @@ const {
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
   TOKEN_ADDED,
+  TOKEN_REMOVED,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
@@ -305,13 +306,11 @@ export const getUserTokens: UserTokensQuery<void, *> = ({
     const tokens = await Promise.all(
       metadataStore
         .all()
-        .filter(
-          ({ type }) => type === TOKEN_ADDED, // TODO: or TOKEN_REMOVED
-        )
+        .filter(({ type }) => type === TOKEN_ADDED || type === TOKEN_REMOVED)
         .reduce(getUserTokensReducer, [])
         .map(async address => {
           const tokenClient = await getTokenClient(address, networkClient);
-          const balance = await tokenClient.getBalanceOf.call({
+          const { amount: balance } = await tokenClient.getBalanceOf.call({
             sourceAddress: walletAddress,
           });
           return { address, balance };

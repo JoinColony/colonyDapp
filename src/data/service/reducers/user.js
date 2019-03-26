@@ -8,6 +8,7 @@ const {
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
   TOKEN_ADDED,
+  TOKEN_REMOVED,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
@@ -58,7 +59,7 @@ export const getUserTokensReducer: EventReducer<
   string[],
   {|
     TOKEN_ADDED: *,
-    // TOKEN_REMOVED: *,
+    TOKEN_REMOVED: *,
   |},
 > = (userTokens, event) => {
   switch (event.type) {
@@ -66,7 +67,12 @@ export const getUserTokensReducer: EventReducer<
       const { address } = event.payload;
       return [...userTokens, address];
     }
-    // TODO: TOKEN_REMOVED
+    case TOKEN_REMOVED: {
+      const { address } = event.payload;
+      return userTokens.filter(
+        tokenAddress => tokenAddress.toLowerCase() !== address.toLowerCase(),
+      );
+    }
     default:
       return userTokens;
   }

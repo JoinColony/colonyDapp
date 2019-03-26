@@ -69,7 +69,9 @@ export const UserAddTokenCommandArgsSchema = yup.object({
   address: yup.string(),
 });
 
-// TODO: UserRemoveTokenCommandArgsSchema
+export const UserRemoveTokenCommandArgsSchema = yup.object({
+  address: yup.string(),
+});
 
 export const PostCommentCommandArgsSchema = yup.object({
   comment: yup.object({
