@@ -18,7 +18,7 @@ type Actions = {
 
 // TODO in #755 (user logout) unset this state
 const currentUserTasksReducer: ReducerType<State, Actions> = (
-  state = DataRecord({ record: ImmutableSet() }),
+  state = DataRecord(),
   action,
 ) => {
   switch (action.type) {

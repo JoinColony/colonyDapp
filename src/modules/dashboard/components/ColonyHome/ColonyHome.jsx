@@ -29,7 +29,6 @@ import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
 
-import mockTasks from '../../../../__mocks__/mockTasks';
 import mockColonies from '../../../../__mocks__/mockColonies';
 
 const MSG = defineMessages({
@@ -150,7 +149,7 @@ const ColonyHome = ({
   /*
    * Tasks and colonies will most likely end up being passed in via props
    */
-  const tasks = mockTasks;
+  const tasks = []; // TODO: fetch colony task draftIds
   const colonies = mockColonies;
   const filterSelect = (
     <Select

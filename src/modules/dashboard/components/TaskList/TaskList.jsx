@@ -6,17 +6,16 @@ import { Table, TableBody } from '~core/Table';
 
 import TaskListItem from './TaskListItem.jsx';
 
-import type { TaskType } from '~immutable';
-
 type Props = {|
-  tasks: Array<TaskType>,
+  // Array of draftIds
+  tasks: string[],
 |};
 
 const TaskList = ({ tasks }: Props) => (
   <Table data-test="dashboardTaskList" scrollable>
     <TableBody>
-      {tasks.map(task => (
-        <TaskListItem key={task.draftId} task={task} />
+      {tasks.map(draftId => (
+        <TaskListItem key={draftId} draftId={draftId} />
       ))}
     </TableBody>
   </Table>

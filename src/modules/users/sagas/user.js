@@ -478,7 +478,7 @@ function* userColonySubscribe({
 function* userSubscribedTasksFetch(): Saga<*> {
   try {
     const context = yield call(getUserMetadataStoreContext);
-    const tasks = yield* executeQuery(getUserTasks, context);
+    const tasks = yield* executeQuery(context, getUserTasks);
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
       payload: tasks,

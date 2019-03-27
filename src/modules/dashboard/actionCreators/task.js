@@ -4,6 +4,10 @@ import type { ENSName, Address } from '~types';
 
 import { ACTIONS } from '~redux';
 
+export const fetchCurrentUserTasks = () => ({
+  type: 'TASK_FETCH_IDS_FOR_CURRENT_USER',
+});
+
 export const fetchTaskComments = (
   colonyENSName: ENSName,
   commentsStoreAddress: string,

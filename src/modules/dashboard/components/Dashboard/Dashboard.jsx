@@ -15,8 +15,6 @@ import styles from './Dashboard.css';
 
 import TabMyTasks from './TabMyTasks.jsx';
 
-import mockTasks from '../../../../__mocks__/mockTasks';
-
 const MSG = defineMessages({
   tabMyTasks: {
     id: 'dashboard.Dashboard.tabMyTasks',
@@ -127,7 +125,6 @@ class Dashboard extends Component<Props, State> {
             </TabList>
             <TabPanel>
               <TabMyTasks
-                tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,
                   walletAddress: currentUser.profile.walletAddress,

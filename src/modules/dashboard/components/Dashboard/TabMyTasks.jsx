@@ -3,14 +3,17 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskType } from '~immutable';
+import { useDataFetcher } from '~utils/hooks';
 
+import { SpinnerLoader } from '~core/Preloaders';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import TaskList from '~dashboard/TaskList';
 
 import type { InitialTaskType } from './InitialTask.jsx';
 
 import InitialTask from './InitialTask.jsx';
+
+import { currentUserTasksFetcher } from '../../fetchers';
 
 import styles from './TabMyTasks.css';
 
@@ -25,13 +28,19 @@ Why don't you check out one of these colonies for tasks that you can complete:`,
 });
 
 type Props = {|
-  /** Tasks for MyTasks table */
-  tasks: Array<TaskType>,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
 |};
 
-const TabMyTasks = ({ initialTask, tasks, userClaimedProfile }: Props) => {
+const TabMyTasks = ({ initialTask, userClaimedProfile }: Props) => {
+  const { isFetching: isFetchingTasks, data: tasks } = useDataFetcher<string[]>(
+    currentUserTasksFetcher,
+    [],
+    [],
+  );
+
+  if (isFetchingTasks) return <SpinnerLoader />;
+
   if (!userClaimedProfile) {
     return (
       <Fragment>

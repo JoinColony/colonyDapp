@@ -5,7 +5,13 @@ import {
   colonyDomainsSelector,
   colonySelector,
 } from './selectors';
-import { fetchRoles, fetchColony, fetchDomains } from './actionCreators';
+import { currentUserTasksSelector } from '../users/selectors';
+import {
+  fetchColony,
+  fetchCurrentUserTasks,
+  fetchDomains,
+  fetchRoles,
+} from './actionCreators';
 
 export const colonyFetcher = {
   select: colonySelector,
@@ -22,5 +28,11 @@ export const domainsFetcher = {
 export const rolesFetcher = {
   select: colonyRolesSelector,
   fetch: fetchRoles,
+  ttl: 1000 * 60,
+};
+
+export const currentUserTasksFetcher = {
+  select: currentUserTasksSelector,
+  fetch: fetchCurrentUserTasks,
   ttl: 1000 * 60,
 };
