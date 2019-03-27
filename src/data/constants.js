@@ -36,6 +36,10 @@ export const USER_EVENT_TYPES = Object.freeze({
   UNSUBSCRIBED_FROM_TASK: 'UNSUBSCRIBED_FROM_TASK',
   TOKEN_ADDED: 'TOKEN_ADDED',
   TOKEN_REMOVED: 'TOKEN_REMOVED',
+  /*
+   * @NOTE We also have COMMENT event types in TASK_EVENT_TYPES
+   */
+  COMMENT_MENTION: 'COMMENT_MENTION',
 });
 
 export const COLONY_EVENT_TYPES = Object.freeze({
