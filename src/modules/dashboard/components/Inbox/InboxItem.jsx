@@ -7,6 +7,8 @@ import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import UserAvatar from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
+import Button from '~core/Button';
+import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 
 import type { Node } from 'react';
@@ -14,6 +16,9 @@ import styles from './InboxItem.css';
 import MSG from './messages';
 
 import type { InboxElement, EventType } from './types';
+
+// eslint-disable-next-line import/no-named-as-default
+import mockTask from '../Task/__datamocks__/mockTask';
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
@@ -44,14 +49,48 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-const ConditionalLink = ({ to, children }: { to?: string, children: Node }) =>
-  to ? (
-    <Link to={to} className={styles.fullWidthLink}>
-      <div className={styles.inboxDetails}>{children}</div>
-    </Link>
-  ) : (
-    <div className={styles.inboxDetails}>{children}</div>
-  );
+const getTask = () => mockTask;
+
+/* Some inbox items link somewhere, others open a modal so it's important to differentiate here */
+const ConditionalWrapper = ({
+  to,
+  children,
+  event,
+  user,
+}: {
+  to?: string,
+  children: Node,
+  event: string,
+  user?: {},
+}) => {
+  // TODO: Make this happen dynamically, we can't create a condition for each inbox event
+  if (event === 'actionWorkerInviteReceived') {
+    const details = getTask();
+    return (
+      <DialogLink
+        to="TaskInviteDialog"
+        props={{
+          assignee: { profile: user },
+          task: details,
+        }}
+      >
+        {({ open }) => (
+          <Button className={styles.noStyleButton} onClick={open}>
+            <div className={styles.inboxDetails}>{children}</div>
+          </Button>
+        )}
+      </DialogLink>
+    );
+  }
+  if (to) {
+    return (
+      <Link to={to} className={styles.fullWidthLink}>
+        <div className={styles.inboxDetails}>{children}</div>
+      </Link>
+    );
+  }
+  return <div className={styles.inboxDetails}>{children}</div>;
+};
 
 const InboxItem = ({
   item: {
@@ -73,10 +112,14 @@ const InboxItem = ({
 }: Props) => (
   <TableRow
     className={styles.inboxRow}
-    onClick={() => unread && markAsRead(id)}
+    onClick={() => {
+      if (unread) {
+        markAsRead(id);
+      }
+    }}
   >
     <TableCell className={styles.inboxRowCell}>
-      <ConditionalLink to={onClickRoute}>
+      <ConditionalWrapper to={onClickRoute} event={event} user={user}>
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
           <UserAvatar
@@ -139,7 +182,7 @@ const InboxItem = ({
             <TimeRelative value={createdAt} />
           </span>
         </span>
-      </ConditionalLink>
+      </ConditionalWrapper>
     </TableCell>
   </TableRow>
 );

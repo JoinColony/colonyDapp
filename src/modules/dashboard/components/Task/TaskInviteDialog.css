@@ -1,0 +1,25 @@
+.taskEditContainer {
+  max-height: 250px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 35px;
+}
+
+.editor {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.editor > h3 {
+  margin-right: 5px;
+}
+
+.taskDialog {
+  width: 500px;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+}

@@ -482,19 +482,19 @@ function* taskAssign({
   payload: { draftId, colonyENSName, worker },
   payload,
   meta,
-}: Action<typeof ACTIONS.TASK_ASSIGN>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(colonyENSName, draftId);
     yield* executeCommand(context, assignWorker, {
       worker,
     });
-    yield put<Action<typeof ACTIONS.TASK_ASSIGN_SUCCESS>>({
-      type: ACTIONS.TASK_ASSIGN_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS>>({
+      type: ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
       payload,
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_ASSIGN_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_WORKER_ASSIGN_ERROR, error, meta);
   }
 }
 
@@ -502,19 +502,19 @@ function* taskUnassign({
   payload: { draftId, colonyENSName, worker },
   payload,
   meta,
-}: Action<typeof ACTIONS.TASK_UNASSIGN>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(colonyENSName, draftId);
     yield* executeCommand(context, unassignWorker, {
       worker,
     });
-    yield put<Action<typeof ACTIONS.TASK_UNASSIGN_SUCCESS>>({
-      type: ACTIONS.TASK_UNASSIGN_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
+      type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
       payload,
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_UNASSIGN_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);
   }
 }
 
@@ -594,7 +594,7 @@ function* taskFetchIdsForCurrentUser(): Saga<*> {
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(ACTIONS.TASK_ASSIGN, taskAssign);
+  yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskAssign);
   yield takeEvery(ACTIONS.TASK_CANCEL, taskCancel);
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
@@ -616,5 +616,5 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
-  yield takeEvery(ACTIONS.TASK_UNASSIGN, taskUnassign);
+  yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskUnassign);
 }

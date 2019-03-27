@@ -49,10 +49,6 @@ export const mockTask = {
       amount: new BN(6007),
       token: CLNYToken,
     },
-    {
-      amount: new BN(123),
-      token: COOLToken,
-    },
   ],
   feedItems: [
     {

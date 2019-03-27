@@ -3,12 +3,13 @@
 const mockInbox = [
   {
     id: 0,
-    event: 'notificationUserClaimedProfile',
+    event: 'actionWorkerInviteReceived',
     createdAt: new Date(2018, 10, 1),
     unread: true,
     user: {
       walletAddress: '0xF822d689a2e10c1511dcD54dF5Ce43a9d393e75c',
       username: 'Ragny',
+      displayName: 'Ragny',
     },
     colonyName: 'The Nords',
   },
@@ -79,7 +80,7 @@ const mockInbox = [
   },
   {
     id: 6,
-    event: 'actionWorkerTaskFinalized',
+    event: 'actionWorkerInviteReceived',
     createdAt: new Date(2018, 9, 16),
     unread: true,
     user: {
