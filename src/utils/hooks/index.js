@@ -98,6 +98,7 @@ export const useDataFetcher = <T>(
     data,
     ttlOverride || ttl,
     isFirstMount.current,
+    fetchArgs,
   );
 
   useEffect(

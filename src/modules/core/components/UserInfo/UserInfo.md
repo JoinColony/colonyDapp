@@ -20,7 +20,8 @@ const avatar = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaG
   username="Chewie"
 >
   <UserAvatar
-    avatarURL={avatar}
+    address="0x1afb213afa8729fa7908154b90e256f1be70987a"
+    getAvatar={() => avatar}
   />
 </UserInfo>
 ```

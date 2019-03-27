@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
-import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
+import SingleUserPicker from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
@@ -195,7 +195,6 @@ const TaskEditDialog = ({
                     <SingleUserPicker
                       data={users}
                       isResettable
-                      itemComponent={ItemDefault}
                       label={MSG.selectAssignee}
                       name="worker"
                       filter={supFilter}

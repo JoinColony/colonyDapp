@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { DialogLink } from '~core/Dialog';
@@ -17,8 +17,9 @@ import MSG from './messages';
 
 import type { InboxElement, EventType } from './types';
 
-// eslint-disable-next-line import/no-named-as-default
-import mockTask from '../Task/__datamocks__/mockTask';
+import { mockTask } from '../Task/__datamocks__/mockTask';
+
+const UserAvatar = UserAvatarFactory();
 
 const displayName = 'dashboard.Inbox.InboxItem';
 
@@ -123,10 +124,9 @@ const InboxItem = ({
         {unread && <UnreadIndicator type={getType(event)} />}
         {user && (
           <UserAvatar
+            className={styles.userAvatar}
             size="xxs"
             address={user.walletAddress}
-            username={user.username}
-            className={styles.userAvatar}
           />
         )}
 

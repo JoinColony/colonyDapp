@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
@@ -25,6 +25,8 @@ const MSG = defineMessages({
     defaultMessage: 'Transaction pending',
   },
 });
+
+const UserAvatar = UserAvatarFactory({ fetchUser: false });
 
 const componentDisplayName = 'admin.UserList.UserListItem';
 
@@ -70,11 +72,12 @@ const UserListItem = ({
     [address],
     [address],
   );
+
   const { profile: { username, displayName } = {} } = user || {};
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.userAvatar}>
-        <UserAvatar size="xs" address={address} username={username} />
+        <UserAvatar size="xs" address={address} user={user} />
       </TableCell>
       <TableCell className={styles.userDetails}>
         {showDisplayName && displayName && (

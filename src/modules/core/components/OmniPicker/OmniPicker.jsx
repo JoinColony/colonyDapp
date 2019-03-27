@@ -1,6 +1,5 @@
 /* @flow */
 
-import type { ComponentType } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
@@ -9,7 +8,12 @@ import cx from 'classnames';
 
 import styles from './OmniPicker.css';
 
-import type { Choose, Data, ItemComponentType } from './types';
+import type {
+  Choose,
+  OmniPickerData,
+  EmptyRenderFnType,
+  ItemRenderFnType,
+} from './types';
 
 import OmniPickerContent from './OmniPickerContent.jsx';
 import OmniPickerItemEmpty from './OmniPickerItemEmpty.jsx';
@@ -29,16 +33,13 @@ type Appearance = {
   position: 'top' | 'bottom',
 };
 
-// TODO sealing this object shows `getItem` being used
-type Props = {
+export type Props = {|
   /** Appearance object */
   appearance: Appearance,
-  /** `className` for content element */
-  contentClassName?: string,
-  /** Component to use for the empty state */
-  emptyComponent: ComponentType<{}>,
-  /** Component to use for a single item */
-  itemComponent: ItemComponentType,
+  /** Render prop to use for the empty state */
+  renderEmpty: EmptyRenderFnType,
+  /** Render prop for rendering the item component */
+  renderItem: ItemRenderFnType<*>,
   /**  Called after the picker was opened */
   onOpen?: () => void,
   /** Called after the picker was closed */
@@ -61,7 +62,7 @@ type Props = {
       | SyntheticKeyboardEvent<HTMLElement>,
   ) => void,
   /** Is called when a data entry was picked */
-  onPick?: (itemData: Data) => void,
+  onPick?: (itemData: OmniPickerData) => void,
   /** Title for the dropdown header */
   title?: string | MessageDescriptor,
   /** @ignore Will be injected by `withOmniPicker` */
@@ -74,7 +75,9 @@ type Props = {
       | SyntheticKeyboardEvent<HTMLElement>,
   ) => void,
   /** @ignore Will be injected by `withOmniPicker` */
-  filteredData: Array<Data>,
+  getItem: (data: Array<OmniPickerData>, selectedIdx: number) => OmniPickerData,
+  /** @ignore Will be injected by `withOmniPicker` */
+  filteredData: Array<OmniPickerData>,
   /** @ignore Will be injected by `withOmniPicker` */
   id: string,
   /** @ignore Will be injected by `withOmniPicker` */
@@ -85,7 +88,7 @@ type Props = {
   select: (idx: number) => void,
   /** @ignore Will be injected by `withOmniPicker` */
   selected: number,
-};
+|};
 
 class OmniPicker extends Component<Props> {
   elm: ?HTMLElement;
@@ -94,7 +97,7 @@ class OmniPicker extends Component<Props> {
 
   static defaultProps = {
     appearance: { position: 'bottom' },
-    emptyComponent: OmniPickerItemEmpty,
+    renderEmpty: () => <OmniPickerItemEmpty />,
   };
 
   componentDidMount() {
@@ -173,7 +176,7 @@ class OmniPicker extends Component<Props> {
     }
   };
 
-  handlePick = (itemData: Data) => {
+  handlePick = (itemData: OmniPickerData) => {
     const { onPick } = this.props;
     if (typeof onPick == 'function') {
       onPick(itemData);
@@ -220,13 +223,12 @@ class OmniPicker extends Component<Props> {
 
   render() {
     const {
-      contentClassName,
       choose,
       appearance: { position },
-      emptyComponent,
       filteredData,
       id,
-      itemComponent,
+      renderEmpty,
+      renderItem,
       keyUsed,
       select,
       selected,
@@ -235,15 +237,14 @@ class OmniPicker extends Component<Props> {
       <div className={styles.main} ref={this.registerElement}>
         {position === 'top' && this.renderHeader()}
         <OmniPickerContent
-          className={contentClassName}
           onChoose={choose}
           id={id}
           onSelect={select}
           filteredData={filteredData}
           keyUsed={keyUsed}
           selected={selected}
-          emptyComponent={emptyComponent}
-          itemComponent={itemComponent}
+          renderEmpty={renderEmpty}
+          renderItem={renderItem}
         />
         {position === 'bottom' && this.renderHeader()}
       </div>

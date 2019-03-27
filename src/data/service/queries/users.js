@@ -58,8 +58,8 @@ type UserMetadataQueryContext = ContextWithMetadata<
 >;
 
 type UserAvatarQueryContext = ContextWithMetadata<
-  {| walletAddress: string |},
-  DDBContext & IPFSContext,
+  {| avatarIpfsHash: string |},
+  IPFSContext,
 >;
 
 type UserBalanceQueryContext = NetworkClientContext;
@@ -145,14 +145,12 @@ export const getUserMetadata: UserQuery<void, *> = ({ ddb, metadata }) => ({
 });
 
 export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
-  ddb,
   ipfsNode,
   metadata,
 }) => ({
   async execute() {
-    const profileStore = await getUserProfileStore(ddb)(metadata);
-    const hash = profileStore.get('avatar');
-    return hash ? ipfsNode.getString(hash) : null;
+    const { avatarIpfsHash } = metadata;
+    return avatarIpfsHash ? ipfsNode.getString(avatarIpfsHash) : null;
   },
 });
 

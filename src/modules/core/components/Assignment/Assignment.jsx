@@ -5,11 +5,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TaskPayoutType, UserType } from '~immutable';
 
-import styles from './Assignment.css';
-
 import Icon from '~core/Icon';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
+
+import styles from './Assignment.css';
 
 const MSG = defineMessages({
   selectMember: {
@@ -34,7 +34,10 @@ const MSG = defineMessages({
   },
 });
 
+const UserAvatar = UserAvatarFactory({ fetchUser: false });
+
 type Props = {|
+  /** Actual assignee */
   assignee?: UserType,
   /** List of payouts per token that has been set for a task */
   payouts?: Array<TaskPayoutType>,
@@ -68,9 +71,7 @@ const Assignment = ({
             <UserAvatar
               className={styles.recipientAvatar}
               address={assignee.profile.walletAddress}
-              username={
-                assignee.profile.username || assignee.profile.walletAddress
-              }
+              user={assignee}
               size="xs"
             />
           </div>

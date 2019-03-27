@@ -6,7 +6,7 @@ import type { TaskCommentType } from '~immutable';
 
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 import UserInfo from '~core/UserInfo';
 import UserMention from '~core/UserMention';
 import { PreserveLinebreaks } from '~utils/components';
@@ -16,6 +16,8 @@ import TextDecorator from '../../../../lib/TextDecorator';
 import styles from './TaskFeedComment.css';
 
 import mockUser from '../Wallet/__datamocks__/mockUser';
+
+const UserAvatar = UserAvatarFactory({ showInfo: true });
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
@@ -53,21 +55,15 @@ const TaskFeedComment = ({
         <div className={styles.commentAvatar}>
           <UserAvatar
             address={commentAuthorWalletAddress}
-            displayName={mockUser.profile.displayName}
-            hasUserInfo
+            user={mockUser}
             size="s"
-            username={mockUser.profile.username}
           />
         </div>
       )}
       <div className={styles.commentMain}>
         {!currentUser && (
           <div className={styles.commentUsername}>
-            <UserInfo
-              address={commentAuthorWalletAddress}
-              displayName={mockUser.profile.displayName}
-              username={mockUser.profile.username}
-            >
+            <UserInfo user={mockUser}>
               <span>{mockUser.profile.displayName}</span>
             </UserInfo>
           </div>

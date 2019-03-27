@@ -1,24 +1,30 @@
 /* @flow */
 
+import type { Node } from 'react';
 import type { MessageDescriptor, MessageValues } from 'react-intl';
 
-import React, { Component } from 'react';
+// $FlowFixMe Update flow
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
-import styles from './SingleUserPicker.css';
+import type { UserType } from '~immutable';
 
 import { getMainClasses } from '~utils/css';
 
-import type { OmniPickerProps, OmniPickerItemComponent } from '../OmniPicker';
+import type { ItemDataType, OmniPickerProps } from '../OmniPicker';
 
 import { asField, InputLabel } from '../Fields';
 import Icon from '../Icon';
 import Button from '../Button';
 import { withOmniPicker } from '../OmniPicker';
-import UserAvatar from '../UserAvatar';
+import UserAvatarFactory from '../UserAvatar';
 
-import type { UserType } from '~immutable';
+import ItemDefault from './ItemDefault.jsx';
+
+import styles from './SingleUserPicker.css';
+
+type AvatarRenderFn = (address: string, user: ItemDataType<UserType>) => Node;
 
 const MSG = defineMessages({
   selectMember: {
@@ -34,6 +40,27 @@ const MSG = defineMessages({
     defaultMessage: 'Remove',
   },
 });
+
+const UserAvatar = UserAvatarFactory({ fetchUser: false });
+
+const defaultRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
+  const { id, ...user } = item;
+  return (
+    <UserAvatar
+      address={address}
+      className={styles.recipientAvatar}
+      user={user}
+      size="xs"
+    />
+  );
+};
+
+const defaultRenderItem = (
+  user: ItemDataType<UserType>,
+  renderAvatar: AvatarRenderFn,
+) => (
+  <ItemDefault itemData={user} renderAvatar={renderAvatar} showMaskedAddress />
+);
 
 type Appearance = {
   direction?: 'horizontal',
@@ -56,8 +83,10 @@ type Props = {|
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: MessageValues,
+  /** Override avatar rendering */
+  renderAvatar: AvatarRenderFn,
   /** Item component for omnipicker listbox */
-  itemComponent: OmniPickerItemComponent,
+  renderItem?: (user: ItemDataType<UserType>, selected?: boolean) => Node,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
@@ -67,137 +96,124 @@ type Props = {|
   /** @ignore Will be injected by `asField` */
   $error?: string,
   /** @ignore Will be injected by `asField` */
-  $value?: UserType,
+  $value?: ItemDataType<UserType>,
   /** @ignore Will be injected by `asField` */
   $touched?: boolean,
   /** @ignore Will be injected by `asField` */
   setValue: (val: any) => void,
 |} & OmniPickerProps;
 
-class SingleUserPicker extends Component<Props> {
-  static displayName = 'SingleUserPicker';
+const displayName = 'SingleUserPicker';
 
-  handleActiveUserClick = () => {
-    const { openOmniPicker, setValue } = this.props;
+const SingleUserPicker = ({
+  // Form field
+  $error,
+  $touched,
+  $value,
+  elementOnly,
+  help,
+  label,
+  placeholder,
+  // OmniPicker
+  inputProps,
+  OmniPicker,
+  OmniPickerWrapper,
+  omniPickerIsOpen,
+  registerInputNode,
+  // Rest
+  appearance,
+  disabled,
+  isResettable,
+  renderAvatar = defaultRenderAvatar,
+  renderItem: renderItemProp,
+  openOmniPicker,
+  setValue,
+}: Props) => {
+  const handleActiveUserClick = useCallback(() => {
     setValue(null);
     openOmniPicker();
-  };
+  });
+  const handlePick = useCallback((user: UserType) => setValue(user));
+  const resetSelection = useCallback(() => setValue(null));
+  // Use custom render prop for item or the default one with the given renderAvatar function
+  const renderItem =
+    renderItemProp ||
+    useCallback((user: ItemDataType<UserType>) =>
+      defaultRenderItem(user, renderAvatar),
+    );
 
-  handlePick = (user: UserType) => {
-    const { setValue } = this.props;
-    setValue(user);
-  };
+  const labelAppearance = appearance
+    ? { direction: appearance.direction }
+    : undefined;
 
-  resetSelection = () => {
-    const { setValue } = this.props;
-    setValue(null);
-  };
-
-  render() {
-    const {
-      isResettable,
-      disabled,
-      appearance,
-      itemComponent,
-      // Form field
-      $error,
-      $touched,
-      $value,
-      elementOnly,
-      help,
-      label,
-      placeholder,
-      // OmniPicker
-      inputProps,
-      OmniPicker,
-      OmniPickerWrapper,
-      omniPickerIsOpen,
-      registerInputNode,
-    } = this.props;
-
-    const labelAppearance = appearance
-      ? { direction: appearance.direction }
-      : undefined;
-    return (
-      <div className={styles.omniContainer}>
-        <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
-          <div className={styles.inputContainer}>
-            {!elementOnly && label && (
-              <InputLabel
-                inputId={inputProps.id}
-                label={label}
-                help={help}
-                appearance={labelAppearance}
-              />
-            )}
-            {$value ? (
-              <div className={styles.avatarContainer}>
-                <UserAvatar
-                  className={styles.recipientAvatar}
-                  address={$value.profile.walletAddress}
-                  username={
-                    $value.profile.username || $value.profile.walletAddress
-                  }
-                  size="xs"
-                />
+  return (
+    <div className={styles.omniContainer}>
+      <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
+        <div className={styles.inputContainer}>
+          {!elementOnly && label && (
+            <InputLabel
+              inputId={inputProps.id}
+              label={label}
+              help={help}
+              appearance={labelAppearance}
+            />
+          )}
+          {$value ? (
+            <div className={styles.avatarContainer}>
+              {renderAvatar($value.profile.walletAddress, $value)}
+            </div>
+          ) : (
+            <Icon
+              className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
+              name="circle-person"
+              title={MSG.selectMember}
+            />
+          )}
+          <div className={styles.container}>
+            {/* eslint-disable jsx-a11y/click-events-have-key-events */
+            $value && (
+              <div
+                role="button"
+                className={styles.recipientName}
+                onClick={handleActiveUserClick}
+                onFocus={handleActiveUserClick}
+                tabIndex="0"
+              >
+                {$value.profile.displayName}
               </div>
-            ) : (
-              <Icon
-                className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-                name="circle-person"
-                title={MSG.selectMember}
-              />
             )}
-            {}
-            <div className={styles.container}>
-              {/* eslint-disable jsx-a11y/click-events-have-key-events */
-              $value && (
-                <div
-                  role="button"
-                  className={styles.recipientName}
-                  onClick={this.handleActiveUserClick}
-                  onFocus={this.handleActiveUserClick}
-                  tabIndex="0"
-                >
-                  {$value.profile.displayName}
-                </div>
-              )}
-              {/* eslint-enable jsx-a11y/click-events-have-key-events */}
-              <input
-                disabled={disabled}
-                className={
-                  $touched && $error ? styles.inputInvalid : styles.input
-                }
-                {...inputProps}
-                placeholder={placeholder}
-                hidden={!!$value}
-                ref={registerInputNode}
-              />
-              {$error &&
-                appearance &&
-                appearance.direction === 'horizontal' && (
-                  <span className={styles.errorHorizontal}>{$error}</span>
-                )}
-              <div className={styles.omniPickerContainer}>
-                <OmniPicker
-                  itemComponent={itemComponent}
-                  onPick={this.handlePick}
-                />
-              </div>
+            {/* eslint-enable jsx-a11y/click-events-have-key-events */}
+            <input
+              disabled={disabled}
+              className={
+                $touched && $error ? styles.inputInvalid : styles.input
+              }
+              {...inputProps}
+              placeholder={placeholder}
+              hidden={!!$value}
+              ref={registerInputNode}
+            />
+            {$error && appearance && appearance.direction === 'horizontal' && (
+              <span className={styles.errorHorizontal}>{$error}</span>
+            )}
+            <div className={styles.omniPickerContainer}>
+              <OmniPicker renderItem={renderItem} onPick={handlePick} />
             </div>
           </div>
-        </OmniPickerWrapper>
-        {$value && isResettable && (
-          <Button
-            onClick={this.resetSelection}
-            appearance={{ theme: 'blue', size: 'small' }}
-            text={{ id: 'button.remove' }}
-          />
-        )}
-      </div>
-    );
-  }
-}
+        </div>
+      </OmniPickerWrapper>
+      {$value && isResettable && (
+        <Button
+          onClick={resetSelection}
+          appearance={{ theme: 'blue', size: 'small' }}
+          text={{ id: 'button.remove' }}
+        />
+      )}
+    </div>
+  );
+};
+
+SingleUserPicker.displayName = displayName;
 
 const enhance = compose(
   asField(),

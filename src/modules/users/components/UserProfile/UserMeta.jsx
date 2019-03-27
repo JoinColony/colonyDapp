@@ -4,12 +4,14 @@ import React from 'react';
 
 import type { UserType } from '~immutable';
 
-import CopyableAddress from '../../../core/components/CopyableAddress';
-import Heading from '../../../core/components/Heading';
-import UserMention from '../../../core/components/UserMention';
-import UserAvatar from '~core/UserAvatar';
+import CopyableAddress from '~core/CopyableAddress';
+import Heading from '~core/Heading';
+import UserMention from '~core/UserMention';
+import UserAvatarFactory from '~core/UserAvatar';
 
 import styles from './UserMeta.css';
+
+const UserAvatar = UserAvatarFactory({ fetchUser: false });
 
 type Props = {|
   user: UserType,
@@ -17,23 +19,17 @@ type Props = {|
 
 const UserMeta = ({
   user: {
-    profile: {
-      username,
-      displayName,
-      bio,
-      website,
-      location,
-      walletAddress,
-    } = {},
+    profile: { username, displayName, bio, website, location, walletAddress },
   },
+  user,
 }: Props) => (
   <div className={styles.main}>
     <div data-test="userProfileAvatar">
       <UserAvatar
-        address={walletAddress}
         className={styles.avatar}
+        address={walletAddress}
         size="xl"
-        username={username}
+        user={user}
       />
     </div>
     <Heading

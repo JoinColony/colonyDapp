@@ -1,12 +1,14 @@
 /* @flow */
 
+import type { Node } from 'react';
+
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 
 import type { UserType } from '~immutable';
+import type { ItemDataType } from '~core/OmniPicker';
 
-import UserAvatar from '~core/UserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
 import UserMention from '~core/UserMention';
 
@@ -20,8 +22,9 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  currentUserId?: string,
-  itemData: UserType,
+  currentUserAddress?: string,
+  itemData: ItemDataType<UserType>,
+  renderAvatar: (address: string, user: ItemDataType<UserType>) => Node,
   selected?: boolean,
   showAddress?: boolean,
   /*
@@ -31,10 +34,12 @@ type Props = {|
 |};
 
 const ItemDefault = ({
-  currentUserId,
+  currentUserAddress,
   itemData: {
     profile: { walletAddress, displayName, username },
   },
+  itemData,
+  renderAvatar,
   showAddress,
   showMaskedAddress,
 }: Props) => (
@@ -43,16 +48,12 @@ const ItemDefault = ({
       [styles.showAddress]: showAddress || showMaskedAddress,
     })}
   >
-    <UserAvatar
-      size="s"
-      username={username || walletAddress}
-      address={walletAddress}
-    />
+    {renderAvatar(itemData.profile.walletAddress, itemData)}
     <span className={styles.dataContainer}>
       {displayName && (
         <span className={styles.displayName}>
           {displayName}
-          {currentUserId === walletAddress && (
+          {currentUserAddress === walletAddress && (
             <span className={styles.thatsYou}>
               <FormattedMessage {...MSG.ownName} />
             </span>

@@ -50,5 +50,5 @@ export const userByUsernameFetcher = Object.freeze({
 export const userAvatarByAddressFetcher = Object.freeze({
   fetch: userAvatarFetch,
   select: userAvatarByAddressSelector,
-  ttl: 30 * 60 * 1000,
+  ttl: 60 * 60 * 1000,
 });
