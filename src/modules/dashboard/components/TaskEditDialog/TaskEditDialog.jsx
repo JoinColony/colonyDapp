@@ -1,7 +1,7 @@
 /* @flow */
 
 // $FlowFixMe until we have new react flow types with hooks
-import React, { Fragment, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
@@ -15,8 +15,7 @@ import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import Payout from './Payout.jsx';
-import { tokenIsETH } from '../../../../immutable/utils';
+import WrappedPayout from './WrappedPayout.jsx';
 import { useDataFetcher } from '~utils/hooks';
 import { userFetcher } from '../../../users/fetchers';
 
@@ -119,29 +118,31 @@ const TaskEditDialog = ({
   users,
   worker: { address: workerAddress } = {},
 }: Props) => {
-  const validateFunding = yup.object().shape({
-    payouts: yup
-      .array()
-      .of(
-        yup.object().shape({
-          token: yup.string().required(MSG.tokenRequiredError),
-          amount: yup
-            .string()
-            .required(MSG.amountRequiredError)
-            .lessThanPot(availableTokens, MSG.insufficientFundsError),
-        }),
-      )
-      .max(maxTokens),
-  });
-  const tokenOptions = availableTokens.map(({ symbol }, i) => ({
-    value: i + 1,
-    label: symbol,
-  }));
-  const resetPayout = useCallback(
-    (arrayHelpers, index) => {
-      arrayHelpers.replace(index, payouts[index]);
-    },
-    [payouts],
+  const validateFunding = useMemo(
+    () =>
+      yup.object().shape({
+        payouts: yup
+          .array()
+          .of(
+            yup.object().shape({
+              token: yup.string().required(MSG.tokenRequiredError),
+              amount: yup
+                .string()
+                .required(MSG.amountRequiredError)
+                .lessThanPot(availableTokens, MSG.insufficientFundsError),
+            }),
+          )
+          .max(maxTokens),
+      }),
+    [maxTokens, availableTokens],
+  );
+  const tokenOptions = useMemo(
+    () =>
+      availableTokens.map(({ symbol }, i) => ({
+        value: i + 1,
+        label: symbol,
+      })),
+    [availableTokens],
   );
   const args = [workerAddress];
   const {
@@ -180,88 +181,84 @@ const TaskEditDialog = ({
           validationSchema={validateFunding}
           transform={transform}
         >
-          {({ status, values, dirty, isSubmitting, isValid }) => (
-            <Fragment>
-              <FormStatus status={status} />
-              <DialogBox>
-                <DialogSection appearance={{ border: 'bottom' }}>
-                  <Heading
-                    appearance={{ size: 'medium' }}
-                    text={MSG.titleAssignment}
-                  />
-                  <SingleUserPicker
-                    data={users}
-                    isResettable
-                    itemComponent={ItemDefault}
-                    label={MSG.selectAssignee}
-                    name="worker"
-                    filter={supFilter}
-                    placeholder={MSG.search}
-                  />
-                </DialogSection>
-                <DialogSection>
-                  <FieldArray
-                    name="payouts"
-                    render={arrayHelpers => (
-                      <Fragment>
-                        <div className={styles.editor}>
-                          <Heading
-                            appearance={{ size: 'medium' }}
-                            text={MSG.titleFunding}
-                          />
-                          {canAddTokens(values, maxTokens) && (
-                            <Button
-                              appearance={{ theme: 'blue', size: 'small' }}
-                              text={MSG.add}
-                              onClick={() =>
-                                addTokenFunding(values, arrayHelpers)
-                              }
+          {({ status, values, dirty, isSubmitting, isValid }) => {
+            const canRemove = canRemoveTokens(values, minTokens);
+            return (
+              <>
+                <FormStatus status={status} />
+                <DialogBox>
+                  <DialogSection appearance={{ border: 'bottom' }}>
+                    <Heading
+                      appearance={{ size: 'medium' }}
+                      text={MSG.titleAssignment}
+                    />
+                    <SingleUserPicker
+                      data={users}
+                      isResettable
+                      itemComponent={ItemDefault}
+                      label={MSG.selectAssignee}
+                      name="worker"
+                      filter={supFilter}
+                      placeholder={MSG.search}
+                    />
+                  </DialogSection>
+                  <DialogSection>
+                    <FieldArray
+                      name="payouts"
+                      render={arrayHelpers => (
+                        <>
+                          <div className={styles.editor}>
+                            <Heading
+                              appearance={{ size: 'medium' }}
+                              text={MSG.titleFunding}
                             />
-                          )}
-                        </div>
-                        {values.payouts &&
-                          values.payouts.map((payout, index) => {
-                            const { amount, token: tokenIndex } = payout;
-                            const token = availableTokens[tokenIndex - 1] || {};
-                            return (
-                              <Payout
-                                key={payout.id}
-                                name={`payouts.${index}`}
-                                amount={amount}
-                                symbol={token.symbol}
-                                reputation={
-                                  token.isNative ? reputation : undefined
+                            {canAddTokens(values, maxTokens) && (
+                              <Button
+                                appearance={{ theme: 'blue', size: 'small' }}
+                                text={MSG.add}
+                                onClick={() =>
+                                  addTokenFunding(values, arrayHelpers)
                                 }
-                                isEth={tokenIsETH(token)}
-                                tokenOptions={tokenOptions}
-                                canRemove={canRemoveTokens(values, minTokens)}
-                                remove={() => arrayHelpers.remove(index)}
-                                reset={() => resetPayout(arrayHelpers, index)}
                               />
-                            );
-                          })}
-                      </Fragment>
-                    )}
+                            )}
+                          </div>
+                          {values.payouts &&
+                            values.payouts.map((payout, index) => (
+                              <WrappedPayout
+                                key={payout.id}
+                                arrayHelpers={arrayHelpers}
+                                payouts={payouts}
+                                payout={payout}
+                                availableTokens={availableTokens}
+                                canRemove={canRemove}
+                                index={index}
+                                reputation={reputation}
+                                tokenOptions={tokenOptions}
+                              />
+                            ))}
+                        </>
+                      )}
+                    />
+                  </DialogSection>
+                </DialogBox>
+                <div className={styles.buttonContainer}>
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'large' }}
+                    onClick={cancel}
+                    text={{ id: 'button.cancel' }}
+                    disabled={isSubmitting}
                   />
-                </DialogSection>
-              </DialogBox>
-              <div className={styles.buttonContainer}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={{ id: 'button.cancel' }}
-                  disabled={isSubmitting}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  text={{ id: 'button.confirm' }}
-                  type="submit"
-                  disabled={!dirty || !isValid}
-                  loading={isSubmitting}
-                />
-              </div>
-            </Fragment>
-          )}
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    text={{ id: 'button.confirm' }}
+                    type="submit"
+                    disabled={!dirty || !isValid}
+                    loading={isSubmitting}
+                  />
+                </div>
+              </>
+            );
+          }}
         </ActionForm>
       )}
     </FullscreenDialog>
