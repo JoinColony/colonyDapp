@@ -37,6 +37,8 @@ type Props = {|
   tokenOptions?: Array<{ value: number, label: string }>,
   editPayout: boolean,
   remove?: () => void,
+  canRemove?: boolean,
+  reset?: () => void,
 |};
 
 class Payout extends Component<Props, State> {
@@ -47,9 +49,12 @@ class Payout extends Component<Props, State> {
   state = { editing: false };
 
   toggleEdit = () => {
-    this.setState(prevState => ({
-      editing: !prevState.editing,
-    }));
+    const { reset } = this.props;
+    const { editing } = this.state;
+    if (editing && reset) reset();
+    this.setState({
+      editing: !editing,
+    });
   };
 
   render() {
@@ -60,6 +65,7 @@ class Payout extends Component<Props, State> {
       name,
       tokenOptions,
       isEth = false,
+      canRemove = true,
       remove,
       editPayout,
     } = this.props;
@@ -73,11 +79,20 @@ class Payout extends Component<Props, State> {
               appearance={{ size: 'small', margin: 'small' }}
               text={{ id: 'label.amount' }}
             />
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={{ id: 'button.remove' }}
-              onClick={remove}
-            />
+            <span>
+              {canRemove && (
+                <Button
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  text={{ id: 'button.remove' }}
+                  onClick={remove}
+                />
+              )}
+              <Button
+                appearance={{ theme: 'blue', size: 'small' }}
+                text={{ id: 'button.cancel' }}
+                onClick={this.toggleEdit}
+              />
+            </span>
           </div>
           <div className={styles.editContainer}>
             <div className={styles.setAmount}>

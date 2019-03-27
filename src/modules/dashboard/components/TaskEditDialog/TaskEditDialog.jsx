@@ -1,7 +1,8 @@
 /* @flow */
-import React, { Fragment } from 'react';
+
+// $FlowFixMe until we have new react flow types with hooks
+import React, { useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import BigNumber from 'bn.js';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
@@ -12,9 +13,11 @@ import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
+import { SpinnerLoader } from '~core/Preloaders';
 
-import Payout from './Payout.jsx';
-import { tokenIsETH } from '../../../../immutable/utils';
+import WrappedPayout from './WrappedPayout.jsx';
+import { useDataFetcher } from '~utils/hooks';
+import { userFetcher } from '../../../users/fetchers';
 
 import type { UserType, TokenType, TaskType } from '~immutable';
 import type { $Pick } from '~types';
@@ -68,7 +71,8 @@ type Props = {|
   ) => void,
   availableTokens: Array<TokenType>,
   cancel: () => void,
-  maxTokens?: BigNumber,
+  maxTokens?: number,
+  minTokens?: number,
   transform: (action: Object) => Object,
   users: Array<UserType>,
 |};
@@ -97,6 +101,9 @@ const supFilter = (data, filterValue) => {
 const canAddTokens = (values, maxTokens) =>
   !maxTokens || (values.payouts && values.payouts.length < maxTokens);
 
+const canRemoveTokens = (values, minTokens) =>
+  !minTokens || (values.payouts && values.payouts.length > minTokens);
+
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
@@ -104,30 +111,46 @@ const TaskEditDialog = ({
   availableTokens,
   cancel,
   maxTokens,
+  minTokens,
   payouts,
   reputation,
   transform,
   users,
-  worker,
+  worker: { address: workerAddress } = {},
 }: Props) => {
-  const validateFunding = yup.object().shape({
-    payouts: yup
-      .array()
-      .of(
-        yup.object().shape({
-          token: yup.string().required(MSG.tokenRequiredError),
-          amount: yup
-            .string()
-            .required(MSG.amountRequiredError)
-            .lessThanPot(availableTokens, MSG.insufficientFundsError),
-        }),
-      )
-      .max(maxTokens),
+  const validateFunding = useMemo(
+    () =>
+      yup.object().shape({
+        payouts: yup
+          .array()
+          .of(
+            yup.object().shape({
+              token: yup.string().required(MSG.tokenRequiredError),
+              amount: yup
+                .string()
+                .required(MSG.amountRequiredError)
+                .lessThanPot(availableTokens, MSG.insufficientFundsError),
+            }),
+          )
+          .max(maxTokens),
+      }),
+    [maxTokens, availableTokens],
+  );
+  const tokenOptions = useMemo(
+    () =>
+      availableTokens.map(({ symbol }, i) => ({
+        value: i + 1,
+        label: symbol,
+      })),
+    [availableTokens],
+  );
+  const args = [workerAddress];
+  const {
+    data: worker,
+    isFetching: isFetchingWorker,
+  } = useDataFetcher<UserType>(userFetcher, args, args, {
+    ttl: 1000 * 30, // 30 seconds
   });
-  const tokenOptions = availableTokens.map(({ symbol }, i) => ({
-    value: i + 1,
-    label: symbol,
-  }));
 
   return (
     <FullscreenDialog
@@ -141,101 +164,103 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      <ActionForm
-        /* $FlowFixMe */
-        submit="CREATE_COOL_THING"
-        /* $FlowFixMe */
-        success="COOL_THING_CREATED"
-        /* $FlowFixMe */
-        error="COOL_THING_CREATE_ERROR"
-        initialValues={{
-          payouts,
-          worker,
-        }}
-        validationSchema={validateFunding}
-        transform={transform}
-      >
-        {({ status, values, dirty, isSubmitting, isValid }) => (
-          <Fragment>
-            <FormStatus status={status} />
-            <DialogBox>
-              <DialogSection appearance={{ border: 'bottom' }}>
-                <Heading
-                  appearance={{ size: 'medium' }}
-                  text={MSG.titleAssignment}
-                />
-                <SingleUserPicker
-                  data={users}
-                  isResettable
-                  itemComponent={ItemDefault}
-                  label={MSG.selectAssignee}
-                  name="worker"
-                  filter={supFilter}
-                  placeholder={MSG.search}
-                />
-              </DialogSection>
-              <DialogSection>
-                <FieldArray
-                  name="payouts"
-                  render={arrayHelpers => (
-                    <Fragment>
-                      <div className={styles.editor}>
-                        <Heading
-                          appearance={{ size: 'medium' }}
-                          text={MSG.titleFunding}
-                        />
-                        {canAddTokens(values, maxTokens) && (
-                          <Button
-                            appearance={{ theme: 'blue', size: 'small' }}
-                            text={MSG.add}
-                            onClick={() =>
-                              addTokenFunding(values, arrayHelpers)
-                            }
-                          />
-                        )}
-                      </div>
-                      {values.payouts &&
-                        values.payouts.map((payout, index) => {
-                          const { amount, token: tokenIndex } = payout;
-                          const token = availableTokens[tokenIndex - 1] || {};
-                          return (
-                            <Payout
-                              key={payout.id}
-                              name={`payouts.${index}`}
-                              amount={amount}
-                              symbol={token.symbol}
-                              reputation={
-                                token.isNative ? reputation : undefined
-                              }
-                              isEth={tokenIsETH(token)}
-                              tokenOptions={tokenOptions}
-                              remove={() => arrayHelpers.remove(index)}
+      {isFetchingWorker ? (
+        <SpinnerLoader />
+      ) : (
+        <ActionForm
+          /* $FlowFixMe */
+          submit="CREATE_COOL_THING"
+          /* $FlowFixMe */
+          success="COOL_THING_CREATED"
+          /* $FlowFixMe */
+          error="COOL_THING_CREATE_ERROR"
+          initialValues={{
+            payouts,
+            worker,
+          }}
+          validationSchema={validateFunding}
+          transform={transform}
+        >
+          {({ status, values, dirty, isSubmitting, isValid }) => {
+            const canRemove = canRemoveTokens(values, minTokens);
+            return (
+              <>
+                <FormStatus status={status} />
+                <DialogBox>
+                  <DialogSection appearance={{ border: 'bottom' }}>
+                    <Heading
+                      appearance={{ size: 'medium' }}
+                      text={MSG.titleAssignment}
+                    />
+                    <SingleUserPicker
+                      data={users}
+                      isResettable
+                      itemComponent={ItemDefault}
+                      label={MSG.selectAssignee}
+                      name="worker"
+                      filter={supFilter}
+                      placeholder={MSG.search}
+                    />
+                  </DialogSection>
+                  <DialogSection>
+                    <FieldArray
+                      name="payouts"
+                      render={arrayHelpers => (
+                        <>
+                          <div className={styles.editor}>
+                            <Heading
+                              appearance={{ size: 'medium' }}
+                              text={MSG.titleFunding}
                             />
-                          );
-                        })}
-                    </Fragment>
-                  )}
-                />
-              </DialogSection>
-            </DialogBox>
-            <div className={styles.buttonContainer}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={cancel}
-                text={{ id: 'button.cancel' }}
-                disabled={isSubmitting}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                text={{ id: 'button.confirm' }}
-                type="submit"
-                disabled={!dirty || !isValid}
-                loading={isSubmitting}
-              />
-            </div>
-          </Fragment>
-        )}
-      </ActionForm>
+                            {canAddTokens(values, maxTokens) && (
+                              <Button
+                                appearance={{ theme: 'blue', size: 'small' }}
+                                text={MSG.add}
+                                onClick={() =>
+                                  addTokenFunding(values, arrayHelpers)
+                                }
+                              />
+                            )}
+                          </div>
+                          {values.payouts &&
+                            values.payouts.map((payout, index) => (
+                              <WrappedPayout
+                                key={payout.id}
+                                arrayHelpers={arrayHelpers}
+                                payouts={payouts}
+                                payout={payout}
+                                availableTokens={availableTokens}
+                                canRemove={canRemove}
+                                index={index}
+                                reputation={reputation}
+                                tokenOptions={tokenOptions}
+                              />
+                            ))}
+                        </>
+                      )}
+                    />
+                  </DialogSection>
+                </DialogBox>
+                <div className={styles.buttonContainer}>
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'large' }}
+                    onClick={cancel}
+                    text={{ id: 'button.cancel' }}
+                    disabled={isSubmitting}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    text={{ id: 'button.confirm' }}
+                    type="submit"
+                    disabled={!dirty || !isValid}
+                    loading={isSubmitting}
+                  />
+                </div>
+              </>
+            );
+          }}
+        </ActionForm>
+      )}
     </FullscreenDialog>
   );
 };

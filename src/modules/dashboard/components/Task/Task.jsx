@@ -101,8 +101,10 @@ class Task extends Component<Props> {
     } = this.props;
 
     openDialog('TaskEditDialog', {
-      availableTokens: tokensMock,
-      maxTokens: 2,
+      // TODO: this should be the Colony's tokens
+      availableTokens: tokensMock.toJS(),
+      maxTokens: 1,
+      minTokens: 1,
       payouts: payouts.map(payout => ({
         token:
           // we add 1 because Formik thinks 0 is empty
@@ -113,7 +115,8 @@ class Task extends Component<Props> {
         id: nanoid(),
       })),
       reputation,
-      users: userMocks,
+      // TODO: this should be users who have requested to work
+      users: userMocks.toJS(),
       worker,
     });
   };
@@ -157,7 +160,7 @@ class Task extends Component<Props> {
                 appearance={{ size: 'normal' }}
                 text={MSG.assignmentFunding}
               />
-              {preventEdit && (
+              {!preventEdit && (
                 <Button
                   appearance={{ theme: 'blue' }}
                   text={MSG.details}
