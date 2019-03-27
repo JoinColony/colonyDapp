@@ -39,9 +39,9 @@ const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
         )}
         <div className={styles.tokenSymbol}>
           {symbol || (
-            <div>
+            <>
               Unknown Token<CopyableAddress>{address}</CopyableAddress>
-            </div>
+            </>
           )}
           {isNative && <span>*</span>}
         </div>

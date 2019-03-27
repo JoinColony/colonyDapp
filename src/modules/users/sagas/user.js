@@ -3,7 +3,6 @@
 import type { Saga } from 'redux-saga';
 
 import {
-  all,
   call,
   delay,
   fork,
@@ -26,9 +25,8 @@ import { ACTIONS } from '~redux';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import { currentUserAddressSelector } from '../selectors';
 import {
-  addToken,
+  updateTokens,
   createUserProfile,
-  removeToken,
   removeUserAvatar,
   setUserAvatar,
   updateUserProfile,
@@ -376,10 +374,7 @@ function* getMetadataStoreAddress() {
   return userMetadataStoreAddress;
 }
 
-function* userTokensFetch(
-  // eslint-disable-next-line no-unused-vars
-  action: Action<typeof ACTIONS.USER_TOKENS_FETCH>,
-): Saga<void> {
+function* userTokensFetch(): Saga<void> {
   try {
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
@@ -414,51 +409,19 @@ function* userTokensUpdate(
   try {
     const { tokens } = action.payload;
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const walletAddress = yield select(currentUserAddressSelector);
     const userMetadataStoreAddress = yield* getMetadataStoreAddress();
-    const commandContext = {
+    const context = {
       ddb,
       metadata: {
         walletAddress,
         userMetadataStoreAddress,
       },
     };
-    const queryContext = {
-      ...commandContext,
-      networkClient,
-    };
 
-    const currentTokenAddresses = (yield* executeQuery(
-      queryContext,
-      getUserTokens,
-    )).map(({ address }) => address);
-
-    const toAdd = tokens.filter(
-      token =>
-        !currentTokenAddresses.find(
-          currentToken => token.toLowerCase() === currentToken.toLowerCase(),
-        ),
-    );
-    const toRemove = currentTokenAddresses.filter(
-      currentToken =>
-        !tokens.find(
-          token => token.toLowerCase() === currentToken.toLowerCase(),
-        ),
-    );
-
-    // $FlowFixMe why is flow unhappy about these two?
-    yield all([
-      ...toAdd.map(address =>
-        executeCommand(commandContext, addToken, { address }),
-      ),
-    ]);
-    // $FlowFixMe
-    yield all([
-      ...toRemove.map(address =>
-        executeCommand(commandContext, removeToken, { address }),
-      ),
-    ]);
+    yield* executeCommand(context, updateTokens, {
+      tokens,
+    });
 
     yield put({ type: ACTIONS.USER_TOKENS_FETCH });
     yield put({ type: ACTIONS.USER_TOKENS_UPDATE_SUCCESS });
