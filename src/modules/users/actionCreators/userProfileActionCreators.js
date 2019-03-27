@@ -28,6 +28,12 @@ export const userAvatarFetch = (
   payload: { address },
 });
 
+export const userTokensFetch = (): Action<
+  typeof ACTIONS.USER_TOKENS_FETCH,
+> => ({
+  type: ACTIONS.USER_TOKENS_FETCH,
+});
+
 export const userTokenTransfersFetch = (): Action<
   typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
 > => ({
@@ -46,4 +52,11 @@ export const userPermissionsFetch = (
   type: ACTIONS.USER_PERMISSIONS_FETCH,
   payload: { ensName },
   meta: { keyPath: [ensName] },
+});
+
+export const userTokensUpdate = (
+  tokens: string[],
+): Action<typeof ACTIONS.USER_TOKENS_UPDATE> => ({
+  type: ACTIONS.USER_TOKENS_UPDATE,
+  payload: { tokens },
 });

@@ -7,6 +7,8 @@ import type { TokenReferenceType } from '~immutable';
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
+import { SpinnerLoader } from '~core/Preloaders';
+import CopyableAddress from '~core/CopyableAddress';
 
 import {
   tokenIsETH,
@@ -25,17 +27,22 @@ const displayName = 'admin.Tokens.TokenCard';
 
 const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
   const token = useToken(address);
-  const { icon, name, symbol } = token;
-  return (
+  const { icon, name, symbol } = token || {};
+  return token ? (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
         {!!icon && (
           <div className={styles.iconContainer}>
-            <img src={icon} alt={name} />
+            {/* TODO: this is cheating, we should load from our own node */}
+            <img src={`https://ipfs.io/ipfs/${icon}`} alt={name} />
           </div>
         )}
         <div className={styles.tokenSymbol}>
-          {symbol}
+          {symbol || (
+            <>
+              Unknown Token<CopyableAddress>{address}</CopyableAddress>
+            </>
+          )}
           {isNative && <span>*</span>}
         </div>
       </div>
@@ -57,6 +64,8 @@ const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
         {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
       </div>
     </Card>
+  ) : (
+    <SpinnerLoader />
   );
 };
 

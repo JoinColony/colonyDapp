@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, OrbitDBAddress } from '~types';
+import type { OrbitDBAddress } from '~types';
 import type {
   Command,
   ContextWithMetadata,
@@ -21,6 +21,8 @@ import {
 } from '../../stores';
 
 import {
+  createUserAddTokenEvent,
+  createUserRemoveTokenEvent,
   createNotificationsReadEvent,
   createSubscribeToColonyEvent,
   createUnsubscribeToColonyEvent,
@@ -29,11 +31,17 @@ import {
 } from '../events';
 
 import {
+  UserUpdateTokensCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
   UpdateUserProfileCommandArgsSchema,
 } from './schemas';
+
+import { getUserTokensReducer } from '../reducers';
+import { USER_EVENT_TYPES } from '../../constants';
+
+const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
 
 type UserCommandMetadata = {|
   walletAddress: string,
@@ -100,15 +108,15 @@ export type UnsubscribeToTaskCommandArgs = {|
 |};
 
 export type SubscribeToColonyCommandArgs = {|
-  address: Address,
+  address: string,
 |};
 
 export type UnsubscribeToColonyCommandArgs = {|
-  address: Address,
+  address: string,
 |};
 
-export type AddTokenInfoCommandArgs = {|
-  address: Address,
+export type UpdateTokensCommandArgs = {|
+  tokens: string[],
 |};
 
 export const createUserProfile: UserCommand<
@@ -178,18 +186,53 @@ export const removeUserAvatar: UserCommand<
   },
 });
 
-export const addTokenInfoCommand: UserCommand<
-  AddTokenInfoCommandArgs,
-  ValidatedKVStore<UserProfileStoreValues>,
+export const updateTokens: UserMetadataCommand<
+  UpdateTokensCommandArgs,
+  EventStore,
 > = ({ ddb, metadata }) => ({
+  schema: UserUpdateTokensCommandArgsSchema,
   async execute(args) {
-    const { address } = args;
-    const profileStore = await getUserProfileStore(ddb)(metadata);
-    const userTokens = await profileStore.get('tokens');
-    await profileStore.set({
-      tokens: Array.from(new Set([...(userTokens || []), address])),
-    });
-    return profileStore;
+    const { tokens } = args;
+    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+
+    // get existing tokens
+    const currentTokens = await Promise.all(
+      userMetadataStore
+        .all()
+        .filter(({ type }) => type === TOKEN_ADDED || type === TOKEN_REMOVED)
+        .reduce(getUserTokensReducer, []),
+    );
+
+    // add new missing tokens to store
+    await Promise.all(
+      tokens
+        .filter(
+          token =>
+            !currentTokens.find(
+              currentToken =>
+                token.toLowerCase() === currentToken.toLowerCase(),
+            ),
+        )
+        .map(address =>
+          userMetadataStore.append(createUserAddTokenEvent({ address })),
+        ),
+    );
+
+    // remove tokens from store which have been removed by user
+    await Promise.all(
+      currentTokens
+        .filter(
+          currentToken =>
+            !tokens.find(
+              token => token.toLowerCase() === currentToken.toLowerCase(),
+            ),
+        )
+        .map(address =>
+          userMetadataStore.append(createUserRemoveTokenEvent({ address })),
+        ),
+    );
+
+    return userMetadataStore;
   },
 });
 

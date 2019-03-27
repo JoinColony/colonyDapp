@@ -15,6 +15,7 @@ import {
   USERS_AVATARS,
   USERS_CURRENT_USER,
   USERS_CURRENT_USER_PROFILE,
+  USERS_CURRENT_USER_TOKENS,
   USERS_CURRENT_USER_TRANSACTIONS,
   USERS_CURRENT_USER_PERMISSIONS,
   USERS_NAMESPACE as ns,
@@ -98,6 +99,8 @@ export const currentUserBalanceSelector = (state: RootStateRecord) =>
     [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'balance'],
     0,
   );
+export const currentUserTokensSelector = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TOKENS]);
 export const currentUserTransactionsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
 export const currentUserColonyPermissionsSelector = (

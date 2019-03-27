@@ -12,7 +12,7 @@ import type { LogFilterOptions } from './types';
  * Returns a padded hex string of the size expected for a contract event topic,
  * for the given address.
  */
-const padTopicAddress = (address: string) => padLeft(address, 64);
+const padTopicAddress = (address: string) => padLeft(address.toLowerCase(), 64);
 
 /**
  * Returns a padded hex string of the size expected for a contract event topic,

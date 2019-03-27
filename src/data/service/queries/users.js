@@ -11,6 +11,8 @@ import type {
 } from '~immutable';
 
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
+import { getTokenClient } from '~utils/web3/contracts';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import type {
   ColonyClientContext,
@@ -23,12 +25,18 @@ import type {
 } from '../../types';
 
 import { USER_EVENT_TYPES } from '../../constants';
-import { getUserTasksReducer, getUserColoniesReducer } from '../reducers';
+import {
+  getUserColoniesReducer,
+  getUserTasksReducer,
+  getUserTokensReducer,
+} from '../reducers';
 import { getUserMetadataStore, getUserProfileStore } from '../../stores';
 
 const {
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
+  TOKEN_ADDED,
+  TOKEN_REMOVED,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
@@ -57,6 +65,14 @@ type UserAvatarQueryContext = ContextWithMetadata<
 type UserBalanceQueryContext = NetworkClientContext;
 type UserPermissionsQueryContext = ColonyClientContext;
 
+type UserTokensQueryContext = ContextWithMetadata<
+  {|
+    userMetadataStoreAddress: string | OrbitDBAddress,
+    walletAddress: string,
+  |},
+  DDBContext & NetworkClientContext,
+>;
+
 type UserColonyTransactionsQueryContext = ContextWithMetadata<
   {|
     walletAddress: string,
@@ -69,7 +85,12 @@ type UsernameQueryContext = {| ...ENSCacheContext, ...NetworkClientContext |};
 type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
 type UserMetadataQuery<I: *, R: *> = Query<UserMetadataQueryContext, I, R>;
 type UsernameQuery<I: *, R: *> = Query<UsernameQueryContext, I, R>;
-// type UserPermissionsQuery<I: *, R: *> = Query<ColonyClientContext, I, R>;
+type UserPermissionsQuery<I: *, R: *> = Query<
+  UserPermissionsQueryContext,
+  I,
+  R,
+>;
+type UserTokensQuery<I: *, R: *> = Query<UserTokensQueryContext, I, R>;
 
 type UserColonyTransactionsQuery<I: *> = Query<
   UserColonyTransactionsQueryContext,
@@ -164,8 +185,7 @@ export const getUserBalance: Query<UserBalanceQueryContext, string, string> = ({
   },
 });
 
-export const getUserPermissions: Query<
-  UserPermissionsQueryContext,
+export const getUserPermissions: UserPermissionsQuery<
   string,
   UserPermissionsType,
 > = ({ colonyClient }) => ({
@@ -270,5 +290,55 @@ export const getUserColonies: UserMetadataQuery<void, *> = ({
           type === SUBSCRIBED_TO_COLONY || type === UNSUBSCRIBED_FROM_COLONY,
       )
       .reduce(getUserColoniesReducer, []);
+  },
+});
+
+export const getUserTokens: UserTokensQuery<void, *> = ({
+  ddb,
+  networkClient,
+  metadata,
+}) => ({
+  async execute() {
+    const { walletAddress } = metadata;
+    const {
+      adapter: { provider },
+    } = networkClient;
+    const metadataStore = await getUserMetadataStore(ddb)(metadata);
+
+    // for each address, get balance
+    const tokens = await Promise.all(
+      metadataStore
+        .all()
+        .filter(({ type }) => type === TOKEN_ADDED || type === TOKEN_REMOVED)
+        .reduce(getUserTokensReducer, [])
+        .map(async address => {
+          const tokenClient = await getTokenClient(address, networkClient);
+          const { amount: balance } = await tokenClient.getBalanceOf.call({
+            sourceAddress: walletAddress,
+          });
+          return { address, balance };
+        }),
+    );
+
+    // also get balance for ether and return in same format
+    const etherBalance = await provider.getBalance(walletAddress);
+    const etherToken = {
+      address: ZERO_ADDRESS,
+      balance: etherBalance,
+    };
+
+    // return combined array
+    return [etherToken, ...tokens];
+  },
+});
+
+export const getUserMetadataStoreAddress: UserQuery<void, string> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute() {
+    const profileStore = await getUserProfileStore(ddb)(metadata);
+    const { metadataStoreAddress } = await profileStore.all();
+    return metadataStoreAddress;
   },
 });

@@ -8,6 +8,8 @@ const {
   READ_UNTIL,
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
+  TOKEN_ADDED,
+  TOKEN_REMOVED,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
@@ -31,3 +33,11 @@ export const createSubscribeToColonyEvent = createEventCreator<
 export const createUnsubscribeToColonyEvent = createEventCreator<
   typeof UNSUBSCRIBED_FROM_COLONY,
 >(UNSUBSCRIBED_FROM_COLONY);
+
+export const createUserAddTokenEvent = createEventCreator<typeof TOKEN_ADDED>(
+  TOKEN_ADDED,
+);
+
+export const createUserRemoveTokenEvent = createEventCreator<
+  typeof TOKEN_REMOVED,
+>(TOKEN_REMOVED);

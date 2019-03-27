@@ -10,6 +10,8 @@ const {
   SUBSCRIBED_TO_TASK,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
+  TOKEN_ADDED,
+  TOKEN_REMOVED,
 } = USER_EVENT_TYPES;
 
 export type UserEvents = {|
@@ -38,6 +40,18 @@ export type UserEvents = {|
     typeof UNSUBSCRIBED_FROM_TASK,
     {|
       draftId: string,
+    |},
+  >,
+  TOKEN_ADDED: EventDefinition<
+    typeof TOKEN_ADDED,
+    {|
+      address: string,
+    |},
+  >,
+  TOKEN_REMOVED: EventDefinition<
+    typeof TOKEN_REMOVED,
+    {|
+      address: string,
     |},
   >,
 |};

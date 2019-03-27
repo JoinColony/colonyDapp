@@ -8,6 +8,7 @@ import metadata from './metadata';
 import permissions from './permissions';
 import profile from './profile';
 import tasks from './tasks';
+import tokens from './tokens';
 import transactions from './transactions';
 
 export default combineReducers({
@@ -17,5 +18,6 @@ export default combineReducers({
   permissions,
   profile,
   tasks,
+  tokens,
   transactions,
 });

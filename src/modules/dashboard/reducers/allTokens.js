@@ -8,6 +8,7 @@ import type { AllTokensMap, AllTokensIconsMap } from '~immutable';
 
 import { TokenRecord } from '~immutable';
 import { ACTIONS } from '~redux';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import {
   DASHBOARD_TOKENS,
@@ -15,13 +16,20 @@ import {
   DASHBOARD_TOKEN_ICON_DEFAULTS,
 } from '../constants';
 
+const INITIAL_STATE = ImmutableMap([
+  [
+    ZERO_ADDRESS,
+    TokenRecord({ address: ZERO_ADDRESS, symbol: 'ETH', name: 'Ether' }),
+  ],
+]);
+
 const tokensReducer: ReducerType<
   AllTokensMap,
   {|
     TOKEN_INFO_FETCH_SUCCESS: *,
     COLONY_FETCH_SUCCESS: *,
   |},
-> = (state = new ImmutableMap(), action) => {
+> = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ACTIONS.TOKEN_INFO_FETCH_SUCCESS: {
       const { name, symbol, tokenAddress } = action.payload;
