@@ -65,12 +65,9 @@ export const MarkNotificationsAsReadCommandArgsSchema = yup.object({
   exceptFor: yup.array().of(yup.string().required()),
 });
 
-export const UserAddTokenCommandArgsSchema = yup.object({
-  address: yup.string(),
-});
-
-export const UserRemoveTokenCommandArgsSchema = yup.object({
-  address: yup.string(),
+export const UserUpdateTokensCommandArgsSchema = yup.object({
+  tokens: yup.array().of(yup.string()),
+  currentTokens: yup.array().of(yup.string()),
 });
 
 export const PostCommentCommandArgsSchema = yup.object({

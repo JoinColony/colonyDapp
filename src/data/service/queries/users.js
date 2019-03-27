@@ -85,7 +85,11 @@ type UsernameQueryContext = {| ...ENSCacheContext, ...NetworkClientContext |};
 type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
 type UserMetadataQuery<I: *, R: *> = Query<UserMetadataQueryContext, I, R>;
 type UsernameQuery<I: *, R: *> = Query<UsernameQueryContext, I, R>;
-// type UserPermissionsQuery<I: *, R: *> = Query<ColonyClientContext, I, R>;
+type UserPermissionsQuery<I: *, R: *> = Query<
+  UserPermissionsQueryContext,
+  I,
+  R,
+>;
 type UserTokensQuery<I: *, R: *> = Query<UserTokensQueryContext, I, R>;
 
 type UserColonyTransactionsQuery<I: *> = Query<
@@ -181,8 +185,7 @@ export const getUserBalance: Query<UserBalanceQueryContext, string, string> = ({
   },
 });
 
-export const getUserPermissions: Query<
-  UserPermissionsQueryContext,
+export const getUserPermissions: UserPermissionsQuery<
   string,
   UserPermissionsType,
 > = ({ colonyClient }) => ({

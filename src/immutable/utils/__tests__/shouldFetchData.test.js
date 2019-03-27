@@ -44,6 +44,10 @@ describe('immutable utils - shouldFetchData', () => {
     const ttl = 1000 * 60 * 60; // one hour
     expect(shouldFetchData(DataRecord({ error }), ttl, true)).toBe(true);
   });
+  test('it should fetch when record is undefined and it is the first mount', () => {
+    const ttl = 1000 * 60 * 60; // one hour
+    expect(shouldFetchData(DataRecord(), ttl, true)).toBe(true);
+  });
 
   /*
    * Negative cases
@@ -67,5 +71,8 @@ describe('immutable utils - shouldFetchData', () => {
     expect(shouldFetchData(DataRecord({ record, lastFetchedAt }), ttl)).toBe(
       false,
     );
+  });
+  test('it should not fetch when record is undefined', () => {
+    expect(shouldFetchData(DataRecord())).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, OrbitDBAddress } from '~types';
+import type { OrbitDBAddress } from '~types';
 import type {
   Command,
   ContextWithMetadata,
@@ -31,8 +31,7 @@ import {
 } from '../events';
 
 import {
-  UserAddTokenCommandArgsSchema,
-  UserRemoveTokenCommandArgsSchema,
+  UserUpdateTokensCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
@@ -104,15 +103,16 @@ export type UnsubscribeToTaskCommandArgs = {|
 |};
 
 export type SubscribeToColonyCommandArgs = {|
-  address: Address,
+  address: string,
 |};
 
 export type UnsubscribeToColonyCommandArgs = {|
-  address: Address,
+  address: string,
 |};
 
-export type AddTokenInfoCommandArgs = {|
-  address: Address,
+export type UpdateTokensCommandArgs = {|
+  tokens: string[],
+  currentTokens: string[],
 |};
 
 export const createUserProfile: UserCommand<
@@ -182,26 +182,44 @@ export const removeUserAvatar: UserCommand<
   },
 });
 
-export const addToken: UserMetadataCommand<
-  AddTokenInfoCommandArgs,
+export const updateTokens: UserMetadataCommand<
+  UpdateTokensCommandArgs,
   EventStore,
 > = ({ ddb, metadata }) => ({
-  schema: UserAddTokenCommandArgsSchema,
+  schema: UserUpdateTokensCommandArgsSchema,
   async execute(args) {
+    const { tokens, currentTokens } = args;
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-    await userMetadataStore.append(createUserAddTokenEvent(args));
-    return userMetadataStore;
-  },
-});
 
-export const removeToken: UserMetadataCommand<
-  AddTokenInfoCommandArgs,
-  EventStore,
-> = ({ ddb, metadata }) => ({
-  schema: UserRemoveTokenCommandArgsSchema,
-  async execute(args) {
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-    await userMetadataStore.append(createUserRemoveTokenEvent(args));
+    // add new missing tokens to store
+    await Promise.all(
+      tokens
+        .filter(
+          token =>
+            !currentTokens.find(
+              currentToken =>
+                token.toLowerCase() === currentToken.toLowerCase(),
+            ),
+        )
+        .map(address =>
+          userMetadataStore.append(createUserAddTokenEvent({ address })),
+        ),
+    );
+
+    // remove tokens from store which have been removed by user
+    await Promise.all(
+      currentTokens
+        .filter(
+          currentToken =>
+            !tokens.find(
+              token => token.toLowerCase() === currentToken.toLowerCase(),
+            ),
+        )
+        .map(address =>
+          userMetadataStore.append(createUserRemoveTokenEvent({ address })),
+        ),
+    );
+
     return userMetadataStore;
   },
 });
