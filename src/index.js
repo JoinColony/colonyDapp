@@ -11,6 +11,10 @@ import App from './App.jsx';
 import store from './createReduxStore';
 import history from './history';
 
+import registerIPFSSW from './workers/ipfs';
+
+registerIPFSSW().then(w => console.log(w), err => console.error(err));
+
 const rootNode = document.getElementById('root');
 
 ReactModal.setAppElement(rootNode);

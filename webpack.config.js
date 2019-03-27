@@ -34,6 +34,8 @@ const config = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
+    // For web / service workers and HMR
+    globalObject: 'this',
   },
   resolve: {
     alias: Object.assign(
@@ -52,6 +54,15 @@ const config = {
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        include: [
+          path.resolve(__dirname, 'src', 'workers'),
+        ],
+        use: [
+          'service-worker-loader',
+        ]
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
