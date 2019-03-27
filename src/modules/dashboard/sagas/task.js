@@ -601,6 +601,27 @@ function* taskCommentAdd({
       },
     });
 
+    /*
+     * @TODO We need to filter out mentioned users from `commentData`.
+     * In the old beta we used to use `linkify-it` to achieve that
+     *
+     * See: https://github.com/JoinColony/colonyDapp/issues/1011 for the
+     * implementation details regarding this
+     */
+    yield* executeCommand(
+      inboxContext,
+      commentMentionNotification,
+      /*
+       * @TODO Add proper payload
+       */
+      {
+        userAction: 'commentMention',
+      },
+    );
+
+    /*
+     * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
+     */
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
       payload: {
