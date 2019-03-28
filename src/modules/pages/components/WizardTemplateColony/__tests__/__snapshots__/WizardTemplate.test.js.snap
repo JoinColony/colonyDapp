@@ -1,20 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WizardTemplateColony component Renders initial component 1`] = `
-<main>
-  <header>
-    <div>
-      <withRouter(InjectIntl(pages.NavigationWrapper.HistoryNavigation))
-        noText={true}
-      />
-    </div>
-    <div>
-      <InjectIntl(StepBar)
-        step={1}
-        stepCount={2}
-      />
-    </div>
-  </header>
-  <article />
-</main>
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
 `;

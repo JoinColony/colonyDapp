@@ -21,13 +21,13 @@
 }
 
 .reminder {
-  font-size: var(--size-tiny);
   max-width: 215px;
-  line-height: 18px;
+  font-size: var(--size-tiny);
   font-weight: var(--weight-medium);
+  line-height: 18px;
 }
 
 .iconContainer {
-  bottom: 5px;
   position: relative;
+  bottom: 5px;
 }

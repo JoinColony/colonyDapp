@@ -4,9 +4,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import React from 'react';
 import compose from 'recompose/compose';
+import BN from 'bn.js';
 
 import Numeral from '~core/Numeral';
 import { StepBar } from '~core/ProgressBar';
+import QRCode from '~core/QRCode';
 import MaskedAddress from '~core/MaskedAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { withImmutablePropsToJS } from '~utils/hoc';
@@ -53,14 +55,31 @@ const WizardTemplateColony = ({
           <StepBar step={step} stepCount={stepCount} />
         </div>
       )}
-      <div className={styles.wallet}>
-        <div className={styles.address}>
-          <FormattedMessage {...MSG.wallet} />
-          <MaskedAddress address={walletAddress} />
+      <div className={styles.headerWallet}>
+        <div className={styles.wallet}>
+          <div className={styles.address}>
+            <FormattedMessage {...MSG.wallet} />
+            <MaskedAddress address={walletAddress} />
+          </div>
+          <div className={styles.balance}>
+            {new BN(balance).isZero() ? (
+              <Numeral
+                decimals={0}
+                value={new BN(balance)}
+                suffix=" ETH"
+                unit="ether"
+              />
+            ) : (
+              <Numeral
+                decimals={2}
+                value={new BN(balance)}
+                suffix=" ETH"
+                unit="ether"
+              />
+            )}
+          </div>
         </div>
-        <div>
-          <Numeral decimals={2} value={balance} suffix=" ETH" unit="ether" />
-        </div>
+        <QRCode address={walletAddress} width={60} />
       </div>
     </header>
     <article className={styles.content}>{children}</article>

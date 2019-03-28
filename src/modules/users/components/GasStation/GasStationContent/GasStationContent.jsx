@@ -22,10 +22,14 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  /* We don't want to show the header that shows the wallet address
+   * if the gasStation is embedded in wizard step
+   */
   hideHeader?: boolean,
+  skipToDetails?: boolean,
   close?: () => void,
-  currentUserGetBalance: () => void,
   transactionGroups: Array<TransactionGroup>,
+  currentUserGetBalance: () => void,
 |};
 
 type State = {|
@@ -54,10 +58,19 @@ class GasStationContent extends Component<Props, State> {
 
   renderTransactions() {
     const { selectedGroupIdx } = this.state;
-    const { transactionGroups } = this.props;
-    const detailsTransactionGroup = transactionGroups[selectedGroupIdx];
-    return detailsTransactionGroup ? (
+    const { transactionGroups, skipToDetails = false } = this.props;
+    let detailsTransactionGroup = transactionGroups[selectedGroupIdx];
+
+    /*  If the GasStationContent is less interactive,
+     * like in StepConfirmTransactions, we select the first group buy default
+     */
+    if (skipToDetails) {
+      [detailsTransactionGroup] = transactionGroups;
+    }
+
+    return detailsTransactionGroup || skipToDetails ? (
       <TransactionDetails
+        hideBackButton={skipToDetails}
         transactionGroup={detailsTransactionGroup}
         onClose={this.unselectTransactionGroup}
       />

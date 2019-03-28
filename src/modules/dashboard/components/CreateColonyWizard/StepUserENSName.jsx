@@ -54,8 +54,9 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'dashboard.CreateColonyWizard.StepUserENSName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your wallet address.
-      This allows us to provide a good user experience while using a fully decentralized architecture.`,
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
+      your wallet address. This allows us to provide a good user experience
+      while using a fully decentralized architecture.`,
   },
   statusText: {
     id: 'users.ENSNameDialog.statusText',
@@ -107,12 +108,7 @@ class StepUserENSName extends Component<Props> {
   };
 
   render() {
-    const {
-      formHelpers: { includeWizardValues },
-      wizardForm,
-      wizardValues,
-      nextStep,
-    } = this.props;
+    const { wizardForm, wizardValues, nextStep } = this.props;
     const normalizedUsername = getNormalizedDomainText(wizardValues.username);
     return (
       <Form

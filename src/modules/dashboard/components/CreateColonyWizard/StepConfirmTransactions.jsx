@@ -1,21 +1,18 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
+import { Redirect } from 'react-router';
 
 import type { WizardProps } from '~core/Wizard';
-import type { TransactionGroup } from '../../../users/components/GasStation/transactionGroup';
 
 import styles from './StepConfirmTransactions.css';
 
 import { groupedTransactions } from '../../../core/selectors';
 
 import Heading from '~core/Heading';
-import GasStationContent from '../../../users/components/GasStation';
+import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
-
-type FormValues = {};
-type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
@@ -31,6 +28,7 @@ const MSG = defineMessages({
   },
   descriptionBoldText: {
     id:
+      // eslint-disable-next-line max-len
       'dashboard.CreateColonyWizard.StepConfirmTransactions.descriptionBoldText',
     defaultMessage:
       // eslint-disable-next-line max-len
@@ -60,11 +58,26 @@ const MSG = defineMessages({
   },
 });
 
+type FormValues = { ensName: string };
+
+type Props = WizardProps<FormValues>;
+
 const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
-// fixme TODO: when last transaction is successful redirect
-const StepConfirmTransactions = () => {
+/* check if all transactions are ready so redirect can happen */
+const checkIfTransactionsSucceeded = transactionGroup => {
+  const succeededTransactionIdx = transactionGroup.findIndex(
+    transaction => transaction.status !== 'succeeded',
+  );
+  if (succeededTransactionIdx > -1) return false;
+  return true;
+};
+
+const StepConfirmTransactions = ({ wizardValues: { ensName } }: Props) => {
   const transactionGroups = useSelector(groupedTransactions);
+  if (checkIfTransactionsSucceeded(transactionGroups)) {
+    return <Redirect to={`/colony/${ensName}`} />;
+  }
 
   return (
     <section className={styles.main}>
@@ -74,7 +87,11 @@ const StepConfirmTransactions = () => {
       />
       <div className={styles.container}>
         {transactionGroups && transactionGroups[0] && (
-          <GasStationContent hideHeader transactionGroups={transactionGroups} />
+          <GasStationContent
+            hideHeader
+            skipToDetails
+            transactionGroups={transactionGroups}
+          />
         )}
       </div>
     </section>
