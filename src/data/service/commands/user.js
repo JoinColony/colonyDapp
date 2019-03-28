@@ -44,6 +44,8 @@ import {
   UpdateUserProfileCommandArgsSchema,
 } from './schemas';
 
+import { ZERO_ADDRESS } from '~utils/web3/constants';
+
 const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
 
 type UserCommandMetadata = {|
@@ -198,12 +200,12 @@ export const updateTokens: UserMetadataCommand<
     const { tokens } = args;
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
 
-    // get existing tokens
+    // get existing tokens, plus ether so we don't add that
     const currentTokens = await Promise.all(
       userMetadataStore
         .all()
         .filter(({ type }) => type === TOKEN_ADDED || type === TOKEN_REMOVED)
-        .reduce(getUserTokensReducer, []),
+        .reduce(getUserTokensReducer, [ZERO_ADDRESS]),
     );
 
     // add new missing tokens to store
