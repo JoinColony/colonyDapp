@@ -17,6 +17,9 @@ const userInboxStore: StoreBlueprint = {
    */
   schema: yup.object({
     event: yup.string().oneOf(Object.keys(inboxMessages)),
+    user: yup.string(),
+    task: yup.string(),
+    comment: yup.string(),
   }),
   type: FeedStore,
 };
