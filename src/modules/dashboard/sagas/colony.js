@@ -111,6 +111,13 @@ Action<'COLONY_CREATE_NEW'>): Saga<void> {
     yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_CREATED);
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_CREATED);
 
+    // TODO: This will be resolved in colonyDapp#978
+    yield put({
+      type: ACTIONS.COLONY_CREATE_NEW_SUCCESS,
+      meta,
+      payload: '',
+    });
+
     const {
       payload: {
         transaction: { receipt },
@@ -148,12 +155,6 @@ Action<'COLONY_CREATE_NEW'>): Saga<void> {
     yield put(transactionReady(createLabelId));
 
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    yield put({
-      type: ACTIONS.COLONY_CREATE_SUCCESS,
-      meta,
-      payload: undefined,
-    });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {

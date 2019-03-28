@@ -22,8 +22,6 @@ import { ACTIONS } from '~redux';
 type FormValues = {
   colonyName: string,
   ensName: string,
-  colonyId: string,
-  colonyAddress: string,
   username: string,
 };
 
@@ -63,7 +61,8 @@ const MSG = defineMessages({
   tooltip: {
     id: 'users.ENSNameDialog.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your
-      colony. This will also allow us to create a custom URL for inviting people to your colony.`,
+      colony. This will also allow us to create a custom URL for inviting people
+      to your colony.`,
   },
 });
 

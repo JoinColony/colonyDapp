@@ -18,9 +18,9 @@ type State = {
 
 type StepType = ComponentType<any>;
 
-type StepsFn = (step: number, values: Values) => StepType;
+type StepsFn<T> = (step: number, values: Values, props?: T) => StepType;
 
-type Steps = Array<StepType> | StepsFn;
+type Steps = Array<StepType> | StepsFn<Object>;
 
 type WizardArgs = {
   stepCount?: number,
@@ -30,8 +30,8 @@ type WizardArgs = {
 const all = (values: ValueList) =>
   values.reduce((map, curr) => map.merge(curr), ImmutableMap()).toJS();
 
-const getStep = (steps: Steps, step: number, values: Object) =>
-  typeof steps === 'function' ? steps(step, values) : steps[step];
+const getStep = (steps: Steps, step: number, values: Object, props?: Object) =>
+  typeof steps === 'function' ? steps(step, values, props) : steps[step];
 
 const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
@@ -61,20 +61,16 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
     render() {
       const { step, values } = this.state;
       const allValues = all(values);
-      const Step = getStep(steps, step, allValues);
+      const Step = getStep(steps, step, allValues, this.props);
 
       if (!Step) throw new Error('Step needs to be implemented!');
 
       const currentStep = step + 1;
       const stepCount = maxSteps || steps.length;
+
       return createElement(
         OuterComponent,
-        {
-          step: currentStep,
-          stepCount,
-          previousStep: this.prev,
-          ...this.props,
-        },
+        { step: currentStep, stepCount, ...this.props },
         createElement(Step, {
           step: currentStep,
           stepCount,

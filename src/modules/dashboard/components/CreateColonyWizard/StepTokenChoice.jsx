@@ -98,7 +98,7 @@ type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
-const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => console.log(wizardValues) || (
+const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <Form onSubmit={nextStep} {...wizardForm}>
     {() => (
       <section className={styles.content}>

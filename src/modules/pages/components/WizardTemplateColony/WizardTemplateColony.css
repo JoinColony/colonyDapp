@@ -27,11 +27,39 @@
 }
 
 .wallet {
-  margin-right: 21px;
-  max-width: 162px;
   display: flex;
   flex-direction: column;
+  margin: 10px 19px 0px 0px;
 }
 
 .address {
+  display: flex;
+  justify-content: flex-end;
+  justify-content: space-between;
+  width: 150px;
+}
+
+.headerWallet {
+  display: flex;
+  margin: 7px 14px 0px 0px;
+}
+
+.balance {
+  display: flex;
+  justify-content: flex-end;
+  color: var(--danger);
+}
+
+.balance::after {
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-left: 3px;
+  height: 8px;
+  width: 8px;
+  position: relative;
+  top: 5px;
+  right: 74px;
+  border-radius: 50%;
+  background-color: var(--danger);
+  content: '';
 }

@@ -3,6 +3,8 @@
 }
 
 .container {
+  display: flex;
+  justify-content: center;
   margin-bottom: 30px;
   padding: 22px 15px 18px 15px;
   border: 1px solid var(--temp-grey-blue-2);

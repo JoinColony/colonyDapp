@@ -16,12 +16,16 @@ export const getGroupKey = (txGroup: TransactionGroup) =>
 
 // Get the index of the first transaction in a group that is ready to sign
 export const getActiveTransactionIdx = (txGroup: TransactionGroup) => {
-  // Select the pending selection so that the user can't sign the next one
-  const pendingTransactionIdx = txGroup.findIndex(
-    tx => tx.status === 'pending',
-  );
-  if (pendingTransactionIdx > -1) return pendingTransactionIdx;
-  return txGroup.findIndex(tx => tx.status === 'ready');
+  if (txGroup) {
+    // Select the pending selection so that the user can't sign the next one
+    const pendingTransactionIdx = txGroup.findIndex(
+      tx => tx.status === 'pending',
+    );
+    if (pendingTransactionIdx > -1) return pendingTransactionIdx;
+    return txGroup.findIndex(tx => tx.status === 'ready');
+  }
+  // if there's no transaction selected, just select the first one
+  return 0;
 };
 
 // Get transaction values to show in title or description
