@@ -3,19 +3,33 @@
 import {
   colonyRolesSelector,
   colonyDomainsSelector,
+  colonyENSNameSelector,
   colonySelector,
 } from './selectors';
-import { currentUserTasksSelector } from '../users/selectors';
+import {
+  currentUserTasksSelector,
+  currentUserColoniesSelector,
+} from '../users/selectors';
 import {
   fetchColony,
-  fetchCurrentUserTasks,
+  fetchColonyENSName,
   fetchDomains,
   fetchRoles,
 } from './actionCreators';
+import {
+  currentUserFetchColonies,
+  currentUserFetchTasks,
+} from '../users/actionCreators';
 
 export const colonyFetcher = {
   select: colonySelector,
   fetch: fetchColony,
+  ttl: 1000 * 60, // 1 minute
+};
+
+export const colonyENSNameFetcher = {
+  select: colonyENSNameSelector,
+  fetch: fetchColonyENSName,
   ttl: 1000 * 60, // 1 minute
 };
 
@@ -33,6 +47,12 @@ export const rolesFetcher = {
 
 export const currentUserTasksFetcher = {
   select: currentUserTasksSelector,
-  fetch: fetchCurrentUserTasks,
+  fetch: currentUserFetchTasks,
+  ttl: 1000 * 60,
+};
+
+export const currentUserColoniesFetcher = {
+  select: currentUserColoniesSelector,
+  fetch: currentUserFetchColonies,
   ttl: 1000 * 60,
 };

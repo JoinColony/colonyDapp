@@ -29,8 +29,6 @@ import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
 
-import mockColonies from '../../../../__mocks__/mockColonies';
-
 const MSG = defineMessages({
   loadingText: {
     id: 'dashboard.Admin.loadingText',
@@ -149,8 +147,10 @@ const ColonyHome = ({
   /*
    * Tasks and colonies will most likely end up being passed in via props
    */
-  const tasks = []; // TODO: fetch colony task draftIds
-  const colonies = mockColonies;
+  // TODO: fetch colony task draftIds
+  const tasks = [];
+  // TODO: which colonies should be displayed in empty state?
+  const colonies = [];
   const filterSelect = (
     <Select
       appearance={{ alignOptions: 'right', theme: 'alt' }}

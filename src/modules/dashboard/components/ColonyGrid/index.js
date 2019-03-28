@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './ColonyGrid';
+export { default } from './ColonyGrid.jsx';

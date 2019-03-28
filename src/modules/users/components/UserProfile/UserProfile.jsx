@@ -12,7 +12,6 @@ import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
 import mockActivities from './__datamocks__/mockActivities';
-import mockColonies from '../../../../__mocks__/mockColonies';
 import { userByUsernameFetcher } from '../../fetchers';
 
 import UserMeta from './UserMeta.jsx';
@@ -35,6 +34,9 @@ const UserProfile = ({
     [username],
   );
 
+  // TODO: fetch colonies for the user we're viewing
+  const colonies = [];
+
   if (!user || isFetching) {
     return <UserProfileSpinner />;
   }
@@ -42,7 +44,7 @@ const UserProfile = ({
   return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
-        <ColonyGrid colonies={mockColonies} />
+        <ColonyGrid colonies={colonies} />
       </section>
       <section className={styles.sectionContainer}>
         <ActivityFeed activities={mockActivities} />

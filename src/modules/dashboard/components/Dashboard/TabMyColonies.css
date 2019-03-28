@@ -1,0 +1,4 @@
+.emptyText {
+  font-size: var(--size-medium-l);
+  line-height: 2em;
+}

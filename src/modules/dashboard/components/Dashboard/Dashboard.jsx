@@ -14,6 +14,7 @@ import { userDidClaimProfile } from '~immutable/utils';
 import styles from './Dashboard.css';
 
 import TabMyTasks from './TabMyTasks.jsx';
+import TabMyColonies from './TabMyColonies.jsx';
 
 const MSG = defineMessages({
   tabMyTasks: {
@@ -146,7 +147,7 @@ class Dashboard extends Component<Props, State> {
               />
             </TabPanel>
             <TabPanel>
-              <h2>TODO: colony list</h2>
+              <TabMyColonies currentUser={currentUserAddress} />
             </TabPanel>
           </Tabs>
         </main>
