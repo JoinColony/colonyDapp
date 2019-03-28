@@ -8,7 +8,9 @@ import type { WizardProps } from '~core/Wizard';
 import { mergePayload } from '~utils/actions';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import { Form, FormStatus } from '~core/Fields';
+import { ActionForm, FormStatus } from '~core/Fields';
+
+import { ACTIONS } from '~redux';
 
 import styles from './StepConfirmAll.css';
 
@@ -71,7 +73,13 @@ const options = [
 
 
 const StepConfirmAll = ({ nextStep, wizardValues }: Props) => (
-  <Form onSubmit={() => nextStep(wizardValues)}>
+  <ActionForm
+    submit={ACTIONS.COLONY_CREATE}
+    success={ACTIONS.COLONY_CREATE_SUCCESS}
+    error={ACTIONS.COLONY_CREATE_ERROR}
+    transform={mergePayload(wizardValues)()}
+    onSuccess={nextStep}
+  >
     {({ isSubmitting, status }) => (
       <section className={styles.main}>
         <Heading
@@ -95,7 +103,7 @@ const StepConfirmAll = ({ nextStep, wizardValues }: Props) => (
         </div>
       </section>
     )}
-  </Form>
+  </ActionForm>
 );
 
 StepConfirmAll.displayName = 'dashboard.CreateColonyWizard.StepConfirmAll';

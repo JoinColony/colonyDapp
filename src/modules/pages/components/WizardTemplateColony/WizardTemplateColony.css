@@ -25,3 +25,13 @@
   composes: flexContainerColumn flexAlignCenter flexJustifyCenter from '~styles/layout.css';
   padding-bottom: 20px;
 }
+
+.wallet {
+  margin-right: 21px;
+  max-width: 162px;
+  display: flex;
+  flex-direction: column;
+}
+
+.address {
+}

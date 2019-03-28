@@ -11,7 +11,7 @@ import StepSelectToken from './StepSelectToken.jsx';
 import StepCreateToken from './StepCreateToken.jsx';
 import StepConfirmAll from './StepConfirmAll.jsx';
 import StepUserENSName from './StepUserENSName.jsx';
-import StepCreateTransaction from './StepCreateTransaction.jsx';
+import StepConfirmTransactions from './StepConfirmTransactions.jsx';
 
 const stepArray = [
   StepUserENSName,
@@ -19,7 +19,7 @@ const stepArray = [
   StepTokenChoice,
   StepCreateToken,
   StepConfirmAll,
-  StepCreateTransaction,
+  StepConfirmTransactions,
 ];
 
 type StepValues = {
