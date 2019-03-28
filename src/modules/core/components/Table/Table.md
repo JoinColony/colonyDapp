@@ -3,7 +3,6 @@
 
 ```jsx
 const {
-  Table,
   TableBody,
   TableCell,
   TableHeader,
@@ -37,7 +36,6 @@ const {
 
 ```jsx
 const {
-  Table,
   TableBody,
   TableCell,
   TableHeader,

@@ -5,6 +5,10 @@ When using the `DialogLink`, there is no need to use the withDialog HoC, yet you
 **Warning: whoever uses something that does not eventually render as a `button` inside the render prop loses all their taco privileges! 🚫🌮**
 
 ```js
+import Button from '../Button';
+import { DialogProvider } from '../Dialog';
+import ConfirmDialog from './ConfirmDialog.jsx'
+
 const ComponentThatOpensADialog = () => (
   <div>
     <DialogLink to="ConfirmDialog" props={{ heading: 'Cool dialog' }}>

@@ -1,7 +1,10 @@
 ### Radio Inputs
 
 ```jsx
-const { Formik } = require('formik');
+import { Formik } from 'formik';
+import Heading from '../../Heading';
+import Button from '../../Button';
+
 const radioChoices = ['foo', 'bar', 'baz'];
 <Formik
   onSubmit={values => console.log(values)}

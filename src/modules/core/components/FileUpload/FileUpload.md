@@ -1,7 +1,9 @@
 ### FileUpload
 
 ```js
-const { Formik } = require('formik');
+import { Formik } from 'formik';
+import Button from '../Button';
+
 <Formik
   onSubmit={values => console.log(values)}
   render={
@@ -22,7 +24,9 @@ const { Formik } = require('formik');
 ### FileUpload with `extra` node
 
 ```js
-const { Formik } = require('formik');
+import { Formik } from 'formik';
+import Button from '../Button';
+
 <Formik
   onSubmit={values => console.log(values)}
   render={

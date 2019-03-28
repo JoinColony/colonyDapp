@@ -7,8 +7,9 @@ Most common usage: Skills, Domains.
 ### Connected to a Form (default)
 
 ```jsx
-const { Form, Formik } = require('formik');
-const WrappedItemsList = require('./ItemsList.js').default;
+import { Form, Formik } from 'formik';
+import WrappedItemsList from './ItemsList.js';
+import Button from '../Button';
 
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
@@ -34,7 +35,7 @@ const singleLevel = [
 ### Single Level List (unconnected)
 
 ```js
-const WrappedItemsList = require('./ItemsList.js').default;
+import WrappedItemsList from './ItemsList.js';
 
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
@@ -65,7 +66,7 @@ const singleLevel = [
 ### Multi Level, Nested List (unconnected)
 
 ```js
-const WrappedItemsList = require('./ItemsList.js').default;
+import WrappedItemsList from './ItemsList.js';
 
 const multiLevel = [
   { id: 1, name: 'Metals' },

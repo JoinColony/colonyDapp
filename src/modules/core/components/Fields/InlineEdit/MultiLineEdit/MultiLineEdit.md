@@ -2,7 +2,10 @@
 ### MultiLine Edit
 
 ```jsx
-const { EditorState } = require('draft-js');
+import { EditorState } from 'draft-js';
+import Button from '../../../Button'
+import { Form } from '../..';
+
 <Form
   initialValues={{
     multiLineEdit: EditorState.createEmpty(),

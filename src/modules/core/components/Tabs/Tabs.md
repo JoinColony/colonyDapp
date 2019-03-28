@@ -7,7 +7,7 @@ You can import Tabs into your component similarly:
 ### Simple Tabs example
 
 ```js
-const { Tab, Tabs, TabList, TabPanel } = require('.');
+const { Tab, TabList, TabPanel } = require('.');
 
 <Tabs>
   <TabList extra={<a href="#">I am an extra node!</a>}>
@@ -37,7 +37,7 @@ const { Tab, Tabs, TabList, TabPanel } = require('.');
 *NOTE:* That the `VerticalTabList` component does not have an `extras` prop.
 
 ```js
-const { Tab, Tabs, VerticalTabList, TabPanel } = require('.');
+const { Tab, VerticalTabList, TabPanel } = require('.');
 
 const makeshiftStyles = {
   display: 'inline-block',

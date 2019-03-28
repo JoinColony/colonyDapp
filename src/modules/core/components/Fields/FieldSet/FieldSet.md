@@ -3,15 +3,22 @@ A `<FieldSet>` is a simple html fieldset element with special styles applied. Yo
 ### FieldSet example
 
 ```js
-<Input name="fieldsetinput" connect={false} label="Field next to fieldset" />
-<FieldSet>
-  <Button text="Cool" />
-  <Button appearance={{ theme: 'danger' }} text="Cool other button" />
-</FieldSet>
+import { Input } from '..';
+import Button from '../../Button';
+
+<div>
+  <Input name="fieldsetinput" connect={false} label="Field next to fieldset" />
+  <FieldSet>
+    <Button text="Cool" />
+    <Button appearance={{ theme: 'danger' }} text="Cool other button" />
+  </FieldSet>
+</div>
 ```
 ### Fieldset aligned to the right
 
 ```js
+import Button from '../../Button';
+
 <FieldSet appearance={{ align: 'right' }}>
   <Button text="Cool" />
   <Button appearance={{ theme: 'danger' }} text="Cool other button" />

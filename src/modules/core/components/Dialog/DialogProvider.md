@@ -41,7 +41,9 @@ const Task = ({ openDialog } => (
 ### Example for the whole dialog workflow
 
 ```js
-const withDialog = require('./withDialog.js').default;
+import { withDialog, DialogProvider } from '.';
+import Button from '../Button'
+import ConfirmDialog from './ConfirmDialog.jsx'
 
 const ComponentThatOpensADialog = ({ openDialog }) => (
   <div>

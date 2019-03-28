@@ -2,7 +2,9 @@
 ### Basic Select Input
 
 ```jsx
-const { Formik } = require('formik');
+import { Formik } from 'formik';
+import Button from '../../Button';
+
 const options = [
   { label: 'Option 1', value: 1 },
   { label: 'Option 2', value: 2 },
@@ -12,16 +14,16 @@ const options = [
   onSubmit={(values) => console.log(values)}
   render={({ handleSubmit }) => (
     <form onSubmit={handleSubmit}>
-      <Select 
-        label="I'm a Select" 
-        options={options} 
+      <Select
+        label="I'm a Select"
+        options={options}
         placeholder="Select an option"
         name="basicSelect"
       />
       <Select
         appearance={{ alignOptions: 'left', theme: 'alt' }}
-        label="I'm an alt Select" 
-        options={options} 
+        label="I'm an alt Select"
+        options={options}
         placeholder="Select an alt option"
         name="selectAltTheme"
       />
@@ -34,6 +36,8 @@ const options = [
 ### Unconnected select input
 
 ```jsx
+import Button from '../../Button';
+
 const options = [
   { label: 'Option 1', value: 1 },
   { label: 'Option 2', value: 2 },
@@ -48,12 +52,12 @@ initialState = { $value: ''};
     setValue={val => setState({ $value: val })}
     appearance={{ alignOptions: 'right', theme: 'alt' }}
     elementOnly={true}
-    label="I'm an unconnected Select" 
-    options={options} 
+    label="I'm an unconnected Select"
+    options={options}
     placeholder="Select"
     name="selectUnconnected"
   />
-  <Button 
+  <Button
     onClick={() => {
       console.log(`Currenly chosen value: ${state.$value}`);
     }}

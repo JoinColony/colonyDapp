@@ -2,6 +2,8 @@
 ### Single Line Editor
 
 ```jsx
+import { Form } from '../..';
+
 <Form>
   {({ values }) => (
     <div>
