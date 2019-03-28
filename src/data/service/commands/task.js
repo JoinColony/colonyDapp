@@ -157,18 +157,18 @@ export const createTask: Command<
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateTaskCommandArgsSchema,
   async execute({ creator }) {
+    const draftId = nanoid();
     const { taskStore, commentsStore } = await createTaskStore(
       colonyClient,
       ddb,
       wallet,
-    )(metadata);
+    )({ ...metadata, draftId });
 
     const commentsStoreAddress = commentsStore.address.toString();
     await taskStore.init(
       createCommentStoreCreatedEvent({ commentsStoreAddress }),
     );
 
-    const draftId = nanoid();
     await taskStore.append(createTaskCreatedEvent({ creator, draftId }));
 
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(

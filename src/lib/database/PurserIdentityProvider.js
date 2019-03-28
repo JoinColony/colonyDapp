@@ -10,9 +10,9 @@ import PurserIdentity from './PurserIdentity';
 // TODO: Use actual type for common wallet interface
 type PurserWallet = WalletObjectType;
 type Options = {};
-type ProviderType = 'ETHEREUM_ACCOUNT';
+type ProviderType = 'ethereum';
 
-const PROVIDER_TYPE = 'ETHEREUM_ACCOUNT';
+const PROVIDER_TYPE = 'ethereum';
 
 class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
   _options: Options;
@@ -28,15 +28,20 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
     this._options = options;
   }
 
+  get type() {
+    return this._type;
+  }
+
   async createIdentity() {
     const walletAddress = this._purserWallet.address;
     if (!walletAddress) {
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
-    // Always create a key per "session"
-    const orbitKey = Keystore.createKey();
 
-    // Sign the id with the signing key we're going to use
+    // Always create a key per "session"
+    const orbitKey = Keystore.createKey(walletAddress);
+
+    // Sign wallet address with the orbit signing key we've created and are going to use
     const idSignature = Keystore.sign(orbitKey, walletAddress);
 
     // Get the hex string of the public key
@@ -54,15 +59,13 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
       pubKeyIdSignature,
       this._type,
       this,
-      orbitKey,
     );
   }
 
   async sign(identity: PurserIdentity, data: any): Promise<string> {
-    const signingKey = identity.orbitKey;
+    const signingKey = Keystore.getKey(identity.id);
     if (!signingKey)
       throw new Error(`Private signing key not found from Keystore`);
-
     return Keystore.sign(signingKey, data);
   }
 

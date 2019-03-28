@@ -89,9 +89,11 @@ export const createTaskStore = (
   ddb: DDB,
   wallet: WalletObjectType,
 ) => async ({
+  draftId,
   colonyAddress,
   colonyENSName,
 }: {
+  draftId: string,
   colonyAddress: Address,
   colonyENSName: ENSName,
 }) => {
@@ -101,6 +103,7 @@ export const createTaskStore = (
       colonyAddress,
       colonyClient,
       meta: {
+        draftId,
         colonyENSName,
       },
     }),

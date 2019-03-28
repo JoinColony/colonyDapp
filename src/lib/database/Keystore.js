@@ -1,14 +1,20 @@
 /* @flow */
 
 import { ec as EC } from 'elliptic';
-
 import type { KeyPair } from './types';
 
 const ec = new EC('secp256k1');
+const storage = {};
 
 export default class Keystore {
-  static createKey(): KeyPair {
-    return ec.genKeyPair();
+  static getKey(id: string) {
+    return storage[id];
+  }
+
+  static createKey(id: string): KeyPair {
+    const key = ec.genKeyPair();
+    storage[id] = key;
+    return key;
   }
 
   static sign(key: KeyPair, data: string): string {
