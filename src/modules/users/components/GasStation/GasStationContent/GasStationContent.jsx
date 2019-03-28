@@ -22,6 +22,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  hideHeader?: boolean,
   close?: () => void,
   currentUserGetBalance: () => void,
   transactionGroups: Array<TransactionGroup>,
@@ -69,14 +70,14 @@ class GasStationContent extends Component<Props, State> {
   }
 
   render() {
-    const { close, transactionGroups } = this.props;
+    const { close, transactionGroups, hideHeader } = this.props;
     const isEmpty = !transactionGroups || !transactionGroups.length;
     return (
       <div
         className={getMainClasses({}, styles, { isEmpty })}
         data-test="gasStation"
       >
-        <GasStationHeader close={close} />
+        {!hideHeader && <GasStationHeader close={close} />}
         <div className={styles.transactionsContainer}>
           {isEmpty ? (
             <Heading

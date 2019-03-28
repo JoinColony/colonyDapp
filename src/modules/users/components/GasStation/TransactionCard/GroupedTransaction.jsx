@@ -30,7 +30,7 @@ const displayName = 'users.GasStation.GroupedTransaction';
 const GroupedTransaction = ({
   selectedTransactionIdx,
   transactionGroup,
-  hideSummary = false,
+  hideSummary = true,
 }: Props) => {
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);

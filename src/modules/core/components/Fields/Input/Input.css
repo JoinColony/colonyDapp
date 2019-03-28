@@ -17,12 +17,15 @@
   flex: 6;
   border-radius: none;
   border-radius: var(--radius-tiny) 0 0 var(--radius-tiny);
-  border-right: none;
 }
 
 .extensionContainer > :nth-child(2) {
   flex: 1;
   border-left: none;
+}
+
+.extension + input {
+  border-right: none;
 }
 
 .extension {

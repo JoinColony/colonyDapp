@@ -3,14 +3,17 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
 import type { WizardProps } from '~core/Wizard';
 
 import styles from './StepUserENSName.css';
 
-import { ActionForm, Input } from '~core/Fields';
+import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
@@ -37,12 +40,26 @@ const MSG = defineMessages({
     defaultMessage: 'Your Unique Username',
   },
   continue: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.done',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.continue',
     defaultMessage: 'Continue',
+  },
+  gotETH: {
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.gotETH',
+    defaultMessage: `Got ETH? You'll need some at the end
+      to cover Ethereum's transaction fees.`,
   },
   errorDomainTaken: {
     id: 'dashboard.CreateColonyWizard.StepUserENSName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
+  },
+  tooltip: {
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.tooltip',
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your wallet address.
+      This allows us to provide a good user experience while using a fully decentralized architecture.`,
+  },
+  statusText: {
+    id: 'users.ENSNameDialog.statusText',
+    defaultMessage: 'Username available: @{normalized}',
   },
 });
 
@@ -54,6 +71,17 @@ const validationSchema = yup.object({
     .required()
     .ensAddress(),
 });
+
+const getNormalizedDomainText = (domain: string) => {
+  if (!domain) return null;
+  try {
+    const normalized = ensNormalize(domain);
+    if (normalized === domain) return null;
+    return normalized;
+  } catch (e) {
+    return null;
+  }
+};
 
 class StepUserENSName extends Component<Props> {
   componentWillUnmount() {
@@ -82,19 +110,15 @@ class StepUserENSName extends Component<Props> {
     const {
       formHelpers: { includeWizardValues },
       wizardForm,
+      wizardValues,
       nextStep,
     } = this.props;
+    const normalizedUsername = getNormalizedDomainText(wizardValues.username);
     return (
-      <ActionForm
-        submit={ACTIONS.USERNAME_CREATE}
-        error={ACTIONS.USERNAME_CREATE_ERROR}
-        success={ACTIONS.USERNAME_CREATE_SUCCESS}
+      <Form
+        onSubmit={nextStep}
         validationSchema={validationSchema}
         validate={this.validateDomain}
-        setPayload={includeWizardValues}
-        onSuccess={({ params: { orbitDBPath, username } }) =>
-          nextStep({ colonyAddress: orbitDBPath, username })
-        }
         {...wizardForm}
       >
         {({ isValid, isSubmitting }) => (
@@ -110,8 +134,32 @@ class StepUserENSName extends Component<Props> {
                   name="username"
                   label={MSG.label}
                   extensionString=".user.joincolony.eth"
+                  status={normalizedUsername && MSG.statusText}
+                  statusValues={{ normalized: normalizedUsername }}
+                  data-test="claimUsernameInput"
+                  extra={
+                    <Tooltip
+                      placement="right"
+                      content={
+                        <span className={styles.tooltip}>
+                          <FormattedMessage {...MSG.tooltip} />
+                        </span>
+                      }
+                    >
+                      <div className={styles.iconContainer}>
+                        <Icon
+                          name="question-mark"
+                          title="helper"
+                          appearance={{ size: 'small' }}
+                        />
+                      </div>
+                    </Tooltip>
+                  }
                 />
                 <div className={styles.buttons}>
+                  <p className={styles.reminder}>
+                    <FormattedMessage {...MSG.gotETH} />
+                  </p>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"
@@ -124,7 +172,7 @@ class StepUserENSName extends Component<Props> {
             </div>
           </section>
         )}
-      </ActionForm>
+      </Form>
     );
   }
 }

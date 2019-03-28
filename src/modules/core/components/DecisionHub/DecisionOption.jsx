@@ -65,7 +65,7 @@ class DecisionOption extends Component<Props> {
           }
         >
           <div className={styles.rowIcon}>
-            <Icon name={icon} title={title} />
+            <Icon name={icon} title={title} appearance={{ size: 'small' }} />
           </div>
         </Tooltip>
       );

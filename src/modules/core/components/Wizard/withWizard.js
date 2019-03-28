@@ -69,7 +69,12 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
       const stepCount = maxSteps || steps.length;
       return createElement(
         OuterComponent,
-        { step: currentStep, stepCount, previousStep: this.prev,...this.props },
+        {
+          step: currentStep,
+          stepCount,
+          previousStep: this.prev,
+          ...this.props,
+        },
         createElement(Step, {
           step: currentStep,
           stepCount,

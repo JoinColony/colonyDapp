@@ -1,7 +1,7 @@
 .main {
   padding-top: 155px;
   width: 100%;
-  max-width: 520px;
+  max-width: 460px;
 }
 
 .paragraph {
@@ -15,6 +15,19 @@
 
 .buttons {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 48px;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 13px;
+}
+
+.reminder {
+  font-size: var(--size-tiny);
+  max-width: 215px;
+  line-height: 18px;
+  font-weight: var(--weight-medium);
+}
+
+.iconContainer {
+  bottom: 5px;
+  position: relative;
 }
