@@ -8,6 +8,8 @@ import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
 import Link from '~core/Link';
 
+import type { TaskType } from '~immutable';
+
 import styles from './TaskListItem.css';
 
 const MSG = defineMessages({
@@ -23,17 +25,28 @@ const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {|
   draftId: string,
+  filter?: (task: TaskType) => boolean,
+  willRender: (draftId: string, willRender: boolean) => void,
 |};
 
-const TaskListItem = ({ draftId }: Props) => {
+const TaskListItem = ({ draftId, filter, willRender }: Props) => {
   // TODO: fetch from draftId
-  const { worker, payouts, reputation, title, colonyENSName } = {
+  const task = {
     worker: {},
     payouts: [],
     reputation: '',
     title: '',
     colonyENSName: '',
   };
+  const { worker, payouts, reputation, title, colonyENSName } = task;
+
+  // $FlowFixMe will be correct once fetching actual task
+  if (filter && !filter(task)) {
+    willRender(draftId, false);
+    return null;
+  }
+  willRender(draftId, true);
+
   return (
     <TableRow>
       <TableCell className={styles.taskDetails}>

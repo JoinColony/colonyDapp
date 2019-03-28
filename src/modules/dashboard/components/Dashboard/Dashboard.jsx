@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
   tabMyColonies: {
     id: 'dashboard.Dashboard.tabMyColonies',
-    defaultMessage: 'My Colonies (coming soon)',
+    defaultMessage: 'My Colonies',
   },
   labelFilter: {
     id: 'dashboard.Dashboard.labelFilter',
@@ -68,6 +68,7 @@ type Props = {|
 
 type State = {|
   filterOption: 'all' | 'created' | 'assigned' | 'completed',
+  tabIndex: number,
 |};
 
 const filterOptions = [
@@ -82,10 +83,9 @@ class Dashboard extends Component<Props, State> {
 
   state = {
     filterOption: 'all',
+    tabIndex: 0,
   };
 
-  /* TODO: This has probably to be done using containers
-    depending on the way data is fed into this component */
   setFilterOption = (
     _: string,
     value: $PropertyType<State, 'filterOption'>,
@@ -95,10 +95,21 @@ class Dashboard extends Component<Props, State> {
     });
   };
 
+  setTabIndex = (tabIndex: number) => {
+    this.setState({
+      tabIndex,
+    });
+  };
+
   render() {
-    const { filterOption } = this.state;
-    const { currentUser } = this.props;
-    const filterSelect = (
+    const { filterOption, tabIndex } = this.state;
+    const {
+      currentUser,
+      currentUser: {
+        profile: { walletAddress: currentUserAddress },
+      },
+    } = this.props;
+    const filterSelect = tabIndex === 0 && (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
         connect={false}
@@ -114,12 +125,12 @@ class Dashboard extends Component<Props, State> {
     return (
       <div className={styles.layoutMain}>
         <main className={styles.content}>
-          <Tabs>
+          <Tabs onSelect={this.setTabIndex}>
             <TabList extra={filterSelect}>
               <Tab>
                 <FormattedMessage {...MSG.tabMyTasks} />
               </Tab>
-              <Tab disabled>
+              <Tab>
                 <FormattedMessage {...MSG.tabMyColonies} />
               </Tab>
             </TabList>
@@ -127,13 +138,15 @@ class Dashboard extends Component<Props, State> {
               <TabMyTasks
                 initialTask={{
                   title: MSG.initialTaskTitle,
-                  walletAddress: currentUser.profile.walletAddress,
+                  walletAddress: currentUserAddress,
                 }}
                 userClaimedProfile={userDidClaimProfile(currentUser)}
+                filterOption={filterOption}
+                currentUser={currentUserAddress}
               />
             </TabPanel>
             <TabPanel>
-              <h2>This should not be visible</h2>
+              <h2>TODO: colony list</h2>
             </TabPanel>
           </Tabs>
         </main>
