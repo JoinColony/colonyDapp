@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Node } from 'react';
+
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -41,6 +43,7 @@ type Props = {|
   assignee?: UserType,
   /** List of payouts per token that has been set for a task */
   payouts?: Array<TaskPayoutType>,
+  renderAvatar?: (address: string, user: UserType) => Node,
   /** current user reputation */
   reputation?: number,
   /** The assignment has to be confirmed first and can therefore appear as pending,
@@ -52,9 +55,19 @@ type Props = {|
   showFunding?: boolean,
 |};
 
+const defaultRenderAvatar = (address: string, user: UserType) => (
+  <UserAvatar
+    address={address}
+    className={styles.recipientAvatar}
+    user={user}
+    size="xs"
+  />
+);
+
 const Assignment = ({
   assignee,
   payouts,
+  renderAvatar = defaultRenderAvatar,
   reputation,
   pending,
   nativeToken,
@@ -68,12 +81,7 @@ const Assignment = ({
       <div className={styles.displayContainer}>
         {assignee ? (
           <div className={styles.avatarContainer}>
-            <UserAvatar
-              className={styles.recipientAvatar}
-              address={assignee.profile.walletAddress}
-              user={assignee}
-              size="xs"
-            />
+            {renderAvatar(assignee.profile.walletAddress, assignee)}
           </div>
         ) : (
           <Icon

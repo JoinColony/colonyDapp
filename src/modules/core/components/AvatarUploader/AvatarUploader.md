@@ -3,7 +3,9 @@
 This AvatarUploader has a fake upload function that does nothing except for waiting for 5 seconds.
 
 ```js
+import UserAvatarFactory from '../UserAvatar';
 
+const UserAvatar = UserAvatarFactory({ fetchUser: false, fetchAvatar: false });
 // Let's create a fake upload function
 const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
 
@@ -19,7 +21,7 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
     />
   }
   upload={upload}
-  remove={async () => {}}
+  remove={() => {}}
 />
 ```
 
@@ -27,8 +29,11 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
 
 Here we passing the result of the upload process (in this case the avatarURL) back into the uploader. Normally this would be done via a database or IPFS.
 
-```
+```js
 const { Component } = require('react');
+import UserAvatarFactory from '../UserAvatar';
+
+const UserAvatar = UserAvatarFactory({ fetchUser: false, fetchAvatar: false });
 
 class AvatarUploadWrapper extends Component {
   constructor(props) {

@@ -1,9 +1,10 @@
 ```jsx
-const { List } = require('immutable');
-const { Formik } = require('formik');
+import { Formik } from 'formik';
+import Heading from '../Heading';
+import UserAvatarFactory from '../UserAvatar'
 
-const { UserRecord, UserProfileRecord } = require('~immutable');
 const { ItemDefault } = require('.')
+const UserAvatar = UserAvatarFactory({ fetchUser: false, fetchAvatar: false });
 
 const data = [
   {
@@ -65,6 +66,8 @@ const ItemWithAddress = (props) => <ItemDefault showAddress {...props} />;
 const ItemWithMakedAddress = (props) => <ItemDefault showMaskedAddress {...props} />;
 const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {...props} />;
 
+const renderAvatar = (address) => <UserAvatar address={address} />;
+
 <Formik>
   <div>
     <Heading appearance={{ size: "medium" }}>Default item</Heading>
@@ -74,6 +77,7 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       itemComponent={ItemDefault}
       data={data}
       filter={filter}
+      renderAvatar={renderAvatar}
     />
     <br />
     <Heading appearance={{ size: "medium" }}>With address</Heading>
@@ -83,6 +87,7 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       itemComponent={ItemWithAddress}
       data={data}
       filter={filter}
+      renderAvatar={renderAvatar}
     />
     <Heading appearance={{ size: "medium" }}>With masked address</Heading>
     <SingleUserPicker
@@ -91,6 +96,7 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       itemComponent={ItemWithMakedAddress}
       data={data}
       filter={filter}
+      renderAvatar={renderAvatar}
     />
     <br />
     <Heading appearance={{ size: "medium" }}>Showing the current user</Heading>
@@ -100,6 +106,7 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       itemComponent={ItemWithCurrentUser}
       data={data}
       filter={filter}
+      renderAvatar={renderAvatar}
     />
     <br />
     <Heading appearance={{ size: "medium" }}>Disabled</Heading>
@@ -110,6 +117,7 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
       data={data}
       disabled
       filter={filter}
+      renderAvatar={renderAvatar}
     />
   </div>
 </Formik>
