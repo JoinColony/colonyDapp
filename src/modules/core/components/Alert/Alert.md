@@ -17,17 +17,6 @@
 </div>
 ```
 
-#### Border Radius
-
-```jsx
-<div>
-  <Alert appearance={{ theme: 'primary' boderRadius: 'small' }} text="Primary" />
-  <Alert appearance={{ boderRadius: 'medium' }} text="Primary" />
-  <Alert appearance={{ boderRadius: 'large' }} text="Primary" />
-  <Alert appearance={{ boderRadius: 'round' }} text="Primary" />
-</div>
-```
-
 ## Dismissible Alert
 
 ```jsx
