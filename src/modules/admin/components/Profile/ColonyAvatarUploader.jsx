@@ -29,13 +29,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  /** Address of the current colony for identicon fallback */
-  address: $PropertyType<ColonyType, 'address'>,
-  /** For UserAvatar title */
-  name: $PropertyType<ColonyType, 'name'>,
-  /** Avatar hash */
-  avatar: $PropertyType<ColonyType, 'avatar'>,
-  ensName: $PropertyType<ColonyType, 'ensName'>,
+  colony: ColonyType,
 |};
 
 class ColonyAvatarUploader extends Component<Props> {
@@ -48,7 +42,7 @@ class ColonyAvatarUploader extends Component<Props> {
   constructor(props: Props) {
     super(props);
     const setPayload = (originalAction: *, payload: Object) =>
-      withKeyPath(props.ensName)()({ ...originalAction, payload });
+      withKeyPath(props.colony.ensName)()({ ...originalAction, payload });
 
     this.upload = promiseListener.createAsyncFunction({
       start: ACTIONS.COLONY_AVATAR_UPLOAD,
@@ -70,7 +64,7 @@ class ColonyAvatarUploader extends Component<Props> {
   }
 
   render() {
-    const { address, name, avatar, ensName } = this.props;
+    const { colony } = this.props;
     return (
       <AvatarUploader
         label={MSG.labelProfilePicture}
@@ -82,11 +76,9 @@ class ColonyAvatarUploader extends Component<Props> {
              * But appends the current one to that
              */
             className={styles.main}
+            address={colony.address}
+            colony={colony}
             size="xl"
-            address={address}
-            name={name}
-            ensName={ensName}
-            hash={avatar}
           />
         }
         upload={avatarData => this.upload.asyncFunction(avatarData)}

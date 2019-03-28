@@ -53,23 +53,13 @@ type Props = {|
 const ColonyMeta = ({ colony, canAdminister }: Props) => {
   const admins = useSelector(colonyAdminsSelector, [colony.ensName]);
 
-  const {
-    address,
-    avatar,
-    description,
-    ensName,
-    guideline,
-    name,
-    website,
-  } = colony;
+  const { description, ensName, guideline, name, website } = colony;
   return (
     <div>
       <ColonyAvatar
-        address={address}
-        avatar={avatar}
-        name={name}
-        ensName={ensName}
         className={styles.avatar}
+        address={colony.address}
+        colony={colony}
         size="xl"
       />
       <section className={styles.headingWrapper}>
