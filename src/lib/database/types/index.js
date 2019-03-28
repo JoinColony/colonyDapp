@@ -31,7 +31,6 @@ export type StoreType =
 export type OrbitDBAddress = Object & {
   root: string,
   path: string,
-  signature: string,
 };
 
 export type OrbitStoreOpenOpts = {
