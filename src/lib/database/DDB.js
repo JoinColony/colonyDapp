@@ -228,6 +228,28 @@ class DDB {
     return data !== undefined && data !== null;
   }
 
+  async generateStoreAddress(
+    blueprint: StoreBlueprint,
+    identifier: ?StoreIdentifier,
+    storeProps?: Object,
+  ) {
+    const { name, type: StoreClass } = blueprint;
+    if (name.includes('.')) {
+      throw new Error('A dot (.) in store names is not allowed');
+    }
+    const id = `${name}.${generateId()}`;
+    const accessController = this.constructor.getAccessController(
+      blueprint,
+      storeProps,
+    );
+    return this._orbitNode.determineAddress(
+      id,
+      StoreClass.orbitType,
+      // We might want to use more options in the future. Just add them here
+      { accessController, overwrite: false },
+    );
+  }
+
   async init() {
     const identity = await this._identityProvider.createIdentity();
     await this._ipfsNode.ready;
