@@ -77,7 +77,7 @@ class TaskInviteDialog extends Component<Props> {
     return (
       <FullscreenDialog cancel={cancel}>
         <ActionForm
-          initialValues={{ payouts: payouts || [], assignee: currentUser }}
+          initialValues={{ payouts: payouts || [], worker: currentUser }}
           submit={ACTIONS.TASK_WORKER_ASSIGN}
           success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
           error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
@@ -92,13 +92,14 @@ class TaskInviteDialog extends Component<Props> {
                     appearance={{ size: 'medium' }}
                     text={MSG.titleAssignment}
                   />
+                  {/* TODO supply nativeToken with a selector */}
                   <Assignment
-                    assignee={currentUser}
-                    reputation={reputation}
+                    nativeToken={{ address: '' }}
                     payouts={payouts}
-                    nativeToken="CLNY"
-                    showFunding={false}
                     pending
+                    reputation={reputation}
+                    showFunding={false}
+                    worker={currentUser}
                   />
                 </DialogSection>
                 <DialogSection>

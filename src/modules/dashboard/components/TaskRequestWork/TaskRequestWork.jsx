@@ -34,26 +34,25 @@ type Props = {
   openDialog: OpenDialog,
   currentUser: UserType,
   task: TaskType,
-  hasRequested: boolean,
 };
 
 const TaskRequestWork = ({
   openDialog,
   currentUser: {
-    profile: { balance },
+    profile: { balance, walletAddress: address },
   },
   currentUser,
   task: { colonyENSName, draftId },
-  hasRequested,
+  task,
 }: Props) => {
-  if (hasRequested) {
+  if (hasRequestedToWork(task, address))
     return (
       <p className={styles.requestSubmittedText}>
         <FormattedMessage {...MSG.workRequestSubmitted} />
       </p>
     );
-  }
-  if (userDidClaimProfile(currentUser)) {
+
+  if (userDidClaimProfile(currentUser))
     return (
       <ActionButton
         text={MSG.requestWork}
@@ -62,11 +61,11 @@ const TaskRequestWork = ({
         success={ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS}
         values={{
           colonyENSName,
-          taskId: draftId,
+          draftId,
         }}
       />
     );
-  }
+
   return (
     <Button
       text={MSG.requestWork}

@@ -2,36 +2,42 @@
 
 import React from 'react';
 
-import type { TaskType, UserType } from '~immutable';
+import type { TaskProps, UserType } from '~immutable';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { userFetcher } from '../../../users/fetchers';
+import { colonyNativeTokenSelector } from '../../selectors';
 
 import Assignment from '~core/Assignment';
 
-type Props = {|
-  nativeToken: string,
-  task: TaskType,
-|};
+type Props = TaskProps<{
+  colonyENSName: *,
+  draftId: *,
+  payouts: *,
+  reputation: *,
+  worker: *,
+}>;
 
 const displayName = 'dashboard.TaskAssignment';
 
 const TaskAssignment = ({
-  nativeToken,
-  task: { payouts, reputation, worker },
+  colonyENSName,
+  payouts,
+  reputation,
+  worker: workerAddress,
 }: Props) => {
-  const address = worker && worker.address;
-  const { data: assignee } = useDataFetcher<UserType>(
+  const nativeToken = useSelector(colonyNativeTokenSelector, [colonyENSName]);
+  const { data: worker } = useDataFetcher<UserType>(
     userFetcher,
-    [address],
-    [address],
+    [workerAddress],
+    [workerAddress],
   );
   const props = {
-    ...(assignee && { assignee }),
     nativeToken,
     payouts,
     reputation,
+    ...(worker && { worker }),
   };
   return <Assignment {...props} />;
 };

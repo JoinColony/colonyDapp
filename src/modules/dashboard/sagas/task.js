@@ -13,7 +13,7 @@ import { ACTIONS } from '~redux';
 import {
   allColonyENSNamesSelector,
   taskSelector,
-  taskStorePropsSelector,
+  taskRefRecordSelector,
 } from '../selectors';
 
 import {
@@ -68,9 +68,7 @@ function* getTaskStoreContext(colonyENSName: string, draftId: string): Saga<*> {
    * it is already in state. If we encounter problems here, we'll want to either
    * fetch the task reference, or supply taskStoreAddress in the action.
    */
-  const { taskStoreAddress } = yield select(taskStorePropsSelector, {
-    draftId,
-  });
+  const { taskStoreAddress } = yield select(taskRefRecordSelector, draftId);
   return {
     ...context,
     metadata: {
@@ -88,9 +86,7 @@ function* getTaskCommentsStoreContext(draftId: string): Saga<*> {
    * it is already in state. If we encounter problems here, we'll want to either
    * fetch the task reference, or supply commentsStoreAddress in the action.
    */
-  const { commentsStoreAddress } = yield select(taskStorePropsSelector, {
-    draftId,
-  });
+  const { commentsStoreAddress } = yield select(taskRefRecordSelector, draftId);
   return {
     ddb,
     wallet,
@@ -475,7 +471,7 @@ function* taskSendWorkRequest({
   }
 }
 
-function* taskAssign({
+function* taskWorkerAssign({
   payload: { draftId, colonyENSName, worker },
   payload,
   meta,
@@ -495,7 +491,7 @@ function* taskAssign({
   }
 }
 
-function* taskUnassign({
+function* taskWorkerUnassign({
   payload: { draftId, colonyENSName, worker },
   payload,
   meta,
@@ -578,7 +574,6 @@ function* taskCommentAdd({
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskAssign);
   yield takeEvery(ACTIONS.TASK_CANCEL, taskCancel);
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
@@ -596,5 +591,6 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
-  yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskUnassign);
+  yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
+  yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
 }

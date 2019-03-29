@@ -5,7 +5,7 @@ import type { Node } from 'react';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskPayoutType, UserType } from '~immutable';
+import type { TaskPayoutType, TokenReferenceType, UserType } from '~immutable';
 
 import Icon from '~core/Icon';
 import UserAvatarFactory from '~core/UserAvatar';
@@ -39,8 +39,7 @@ const MSG = defineMessages({
 const UserAvatar = UserAvatarFactory({ fetchUser: false });
 
 type Props = {|
-  /** Actual assignee */
-  assignee?: UserType,
+  worker?: UserType,
   /** List of payouts per token that has been set for a task */
   payouts?: Array<TaskPayoutType>,
   renderAvatar?: (address: string, user: UserType) => Node,
@@ -51,7 +50,7 @@ type Props = {|
    */
   pending?: boolean,
   /** We need to be aware of the native token to adjust the UI */
-  nativeToken: string,
+  nativeToken: TokenReferenceType,
   showFunding?: boolean,
 |};
 
@@ -65,23 +64,24 @@ const defaultRenderAvatar = (address: string, user: UserType) => (
 );
 
 const Assignment = ({
-  assignee,
+  nativeToken,
   payouts,
+  pending,
   renderAvatar = defaultRenderAvatar,
   reputation,
-  pending,
-  nativeToken,
   showFunding,
+  worker,
 }: Props) => {
   const fundingWithNativeToken =
-    payouts && payouts.find(payout => payout.token.symbol === nativeToken);
+    payouts &&
+    payouts.find(payout => payout.token.address === nativeToken.address);
 
   return (
     <div>
       <div className={styles.displayContainer}>
-        {assignee ? (
+        {worker ? (
           <div className={styles.avatarContainer}>
-            {renderAvatar(assignee.profile.walletAddress, assignee)}
+            {renderAvatar(worker.profile.walletAddress, worker)}
           </div>
         ) : (
           <Icon
@@ -91,12 +91,12 @@ const Assignment = ({
           />
         )}
         <div className={styles.container}>
-          {assignee ? (
+          {worker ? (
             <div
               role="button"
               className={pending ? styles.pending : styles.assigneeName}
             >
-              {assignee.profile.displayName}
+              {worker.profile.displayName || worker.profile.username}
               {pending && (
                 <span className={styles.pendingLabel}>
                   <FormattedMessage {...MSG.pendingAssignment} />

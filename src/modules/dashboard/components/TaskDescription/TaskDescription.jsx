@@ -1,39 +1,33 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { SingleLineEdit, MultiLineEdit } from '~core/Fields';
+import type { TaskProps } from '~immutable';
+
+import { Form, MultiLineEdit } from '~core/Fields';
 
 const MSG = defineMessages({
-  taskTitlePlaceholder: {
-    id: 'dashboard.TaskDescription.taskTitlePlaceholder',
-    defaultMessage: 'Title',
-  },
-  taskDescriptionPlaceholder: {
-    id: 'dashboard.TaskDescription.taskDescriptionPlaceholder',
+  placeholder: {
+    id: 'dashboard.TaskDescription.placeholder',
     defaultMessage: 'Description',
   },
 });
 
 type Props = {|
   isTaskCreator: boolean,
+  ...TaskProps<{ colonyENSName: *, draftId: *, description: * }>,
 |};
 
-const TaskDescription = ({ isTaskCreator }: Props) => (
-  <Fragment>
-    <SingleLineEdit
-      maxLength={90}
-      name="taskTitle"
-      placeholder={MSG.taskTitlePlaceholder}
-      readOnly={!isTaskCreator}
-    />
+const TaskDescription = ({ description, isTaskCreator }: Props) => (
+  // eslint-disable-next-line no-console
+  <Form onSubmit={console.log} initialValues={{ description }}>
     <MultiLineEdit
-      name="taskDescription"
-      placeholder={MSG.taskDescriptionPlaceholder}
+      name="description"
+      placeholder={MSG.placeholder}
       readOnly={!isTaskCreator}
     />
-  </Fragment>
+  </Form>
 );
 
 export default TaskDescription;
