@@ -15,9 +15,13 @@ import {
 import UserAvatarDisplay from './UserAvatarDisplay.jsx';
 
 type FactoryOpts = {|
+  /** Try to fetch user using a data fetcher */
   fetchUser?: boolean,
+  /** Try to fetch the avatar using a data fetcher */
   fetchAvatar?: boolean,
+  /** Show user info on hover */
   showInfo?: boolean,
+  /** Wrap the UserAvatar in a link to the user's profile */
   showLink?: boolean,
 |};
 
