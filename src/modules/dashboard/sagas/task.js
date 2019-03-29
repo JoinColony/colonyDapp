@@ -641,12 +641,14 @@ function* taskCommentAdd({
      * (once the mentions are all wired up)
      */
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_UPDATE,
+      type: ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS,
       payload: {
-        event: 'notificationUserMentioned',
-        user: 'John Doe',
-        task: 'Draft task Name',
-        comment: commentData.body,
+        activity: {
+          event: 'notificationUserMentioned',
+          user: 'John Doe',
+          task: 'Draft task Name',
+          comment: commentData.body,
+        },
       },
       meta,
     });
