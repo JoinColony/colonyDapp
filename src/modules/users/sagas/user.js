@@ -469,11 +469,12 @@ function* userColonySubscribe({
 }: Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE>): Saga<*> {
   try {
     const context = yield call(getUserMetadataStoreContext);
-    yield* executeCommand(context, subscribeToColony, payload);
-    yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
-      type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
-      payload,
-    });
+    if (yield* executeCommand(context, subscribeToColony, payload)) {
+      yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
+        type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
+        payload,
+      });
+    }
   } catch (error) {
     yield putError(ACTIONS.USER_COLONY_SUBSCRIBE_ERROR, error);
   }
@@ -497,13 +498,12 @@ function* userTaskSubscribe({
 }: Action<typeof ACTIONS.USER_TASK_SUBSCRIBE>): Saga<*> {
   try {
     const context = yield call(getUserMetadataStoreContext);
-    yield* executeCommand(context, subscribeToTask, {
-      draftId: payload.draftId,
-    });
-    yield put<Action<typeof ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS>>({
-      type: ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS,
-      payload,
-    });
+    if (yield* executeCommand(context, subscribeToTask, payload)) {
+      yield put<Action<typeof ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS>>({
+        type: ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS,
+        payload,
+      });
+    }
   } catch (error) {
     yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
   }

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 import type {
   DataRecordType,
@@ -116,7 +116,4 @@ export const currentUserMetadataSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
 
 export const currentUserColoniesSelector = (state: RootStateRecord) =>
-  state.getIn(
-    [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES],
-    ImmutableSet(),
-  );
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES]);
