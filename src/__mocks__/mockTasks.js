@@ -27,6 +27,8 @@ const genericTaskProps = {
   reputation: undefined,
   skillId: undefined,
   title: undefined,
+  requests: [],
+  invites: [],
   worker: {
     address: '0x1afb213afa8729fa7908154b90e256f1be70989a',
     didClaimPayout: false,

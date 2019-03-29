@@ -160,6 +160,7 @@ const getTaskFetchSuccessPayload = (
     colonyENSName,
     currentState,
     draftId,
+    invites,
     payouts: paymentToken
       ? [
           {
@@ -171,6 +172,7 @@ const getTaskFetchSuccessPayload = (
           },
         ]
       : undefined,
+    requests,
   },
   taskStoreAddress,
 });
