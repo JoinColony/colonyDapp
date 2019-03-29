@@ -33,7 +33,6 @@ const UserProfile = ({
     userByUsernameFetcher,
     [username],
     [username],
-    { ttl: 1000 * 10 },
   );
 
   if (!user || isFetching) {
