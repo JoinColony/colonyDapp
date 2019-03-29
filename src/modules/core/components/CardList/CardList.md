@@ -5,6 +5,8 @@
 By default, the cards will automatically wrap as they need to, and they'll match heights on a per-row basis. Resize your browser to see this behavior in action.
 
 ```jsx
+import Card from '../Card';
+
 const cardContentData = [
   { id: 1, heading: 'Normal Card', content: 'Some content' },
   { id: 2, heading: 'Tall Card', content: 'Some more content', extraContent: 'Some extra content to demonstrate matching heights' },

@@ -22,10 +22,11 @@ export const userByUsernameFetch = (
 
 export const userAvatarFetch = (
   address: string,
+  avatarIpfsHash: string,
 ): Action<typeof ACTIONS.USER_AVATAR_FETCH> => ({
   type: ACTIONS.USER_AVATAR_FETCH,
   meta: { keyPath: [address] },
-  payload: { address },
+  payload: { address, avatarIpfsHash },
 });
 
 export const userTokensFetch = (): Action<

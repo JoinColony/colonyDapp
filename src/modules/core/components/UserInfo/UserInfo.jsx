@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import type { UserType } from '~immutable';
+
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
@@ -13,31 +15,25 @@ const componentDisplayName: string = 'UserInfo';
 type Props = {|
   /** Children elemnts or components to wrap the tooltip around */
   children: React$Element<*>,
-  /** The user's name (aka Display Name) */
-  displayName?: string,
-  /** Users's handle (aka Username) */
-  username?: string,
-  /** User's wallet address */
-  address?: string,
+  /** The user object */
+  user?: $Shape<UserType>,
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled',
 |};
 
 const UserInfo = ({
-  address,
+  user: { profile: { displayName, username, walletAddress } = {} } = {},
   children,
-  displayName,
   trigger = 'hover',
-  username,
 }: Props) => (
   <Tooltip
     content={
       <div className={styles.main}>
         {displayName && <p className={styles.displayName}>{displayName}</p>}
         {username && <UserMention username={username} to="" />}
-        {address && (
+        {walletAddress && (
           <p className={styles.walletAddress}>
-            <MaskedAddress address={address} />
+            <MaskedAddress address={walletAddress} />
           </p>
         )}
       </div>

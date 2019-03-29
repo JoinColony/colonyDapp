@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { withImmutablePropsToJS } from '~utils/hoc';
 import Popover from '~core/Popover';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 
 import type { RootStateRecord, UserType } from '~immutable';
 
@@ -15,6 +15,8 @@ import { currentUserSelector } from '../../selectors';
 import styles from './AvatarDropdown.css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover.jsx';
+
+const UserAvatar = UserAvatarFactory({ fetchUser: false });
 
 type Props = {|
   user: UserType,
@@ -34,12 +36,7 @@ const AvatarDropdown = ({ user }: Props) => (
       type="button"
       data-test="avatarDropdown"
     >
-      <UserAvatar
-        address={user.profile.walletAddress}
-        avatar={user.profile.avatar}
-        link={false}
-        username={user.profile.username}
-      />
+      <UserAvatar address={user.profile.walletAddress} user={user} />
     </button>
   </Popover>
 );

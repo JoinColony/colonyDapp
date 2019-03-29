@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { TaskFeedItemRatingType } from '~immutable';
 
 import StarRating from '~core/StarRating';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 
 import styles from './TaskFeedRating.css';
 
@@ -19,6 +19,8 @@ const MSG = defineMessages({
   },
 });
 
+const UserAvatar = UserAvatarFactory({ showInfo: true });
+
 type Props = {|
   rating: TaskFeedItemRatingType,
 |};
@@ -29,12 +31,11 @@ const TaskFeedRating = ({
   rating: {
     rater: {
       profile: {
-        avatar: raterAvatar,
         displayName: raterDisplayName,
-        username: raterUserName,
         walletAddress: raterWalletAddress,
       },
     },
+    rater,
     ratee: {
       profile: { displayName: rateeDisplayName },
     },
@@ -43,14 +44,7 @@ const TaskFeedRating = ({
 }: Props) => (
   <div className={styles.main}>
     <div className={styles.ratingPart}>
-      <UserAvatar
-        address={raterWalletAddress}
-        avatar={raterAvatar}
-        displayName={raterDisplayName}
-        hasUserInfo
-        size="xs"
-        username={raterUserName}
-      />
+      <UserAvatar address={raterWalletAddress} user={rater} size="xs" />
     </div>
     <div className={styles.ratingPart}>
       <div className={styles.ratingPartText}>

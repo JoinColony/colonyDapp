@@ -8,7 +8,7 @@ import type { ENSName } from '~types';
 
 import { withKeyPath } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
-import SingleUserPicker, { ItemDefault } from '~core/SingleUserPicker';
+import SingleUserPicker from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { ACTIONS } from '~redux';
@@ -55,7 +55,6 @@ const singleUserPickerFilter = (data, filterValue) => {
 
   return [customValue].concat(filtered);
 };
-const ItemWithAddress = props => <ItemDefault showMaskedAddress {...props} />;
 
 const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
 
@@ -106,7 +105,6 @@ const OrganizationAddAdmins = ({ ensName }: Props) => {
                 name="newAdmin"
                 label={MSG.labelAddAdmins}
                 placeholder={MSG.placeholderAddAdmins}
-                itemComponent={ItemWithAddress}
                 data={knownUsers.map(user => ({
                   ...user,
                   id: user.profile.walletAddress,

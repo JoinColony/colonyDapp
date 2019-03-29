@@ -4,11 +4,15 @@ This example component deals with the display of a currently selected assignee f
 
 ### No Assignment or Funding set
 ```js
-<Assignment/>
+const renderAvatar = () => null;
+
+<Assignment renderAvatar={renderAvatar} />
 ```
 
 ### Pending Assignee
 ```js
+const renderAvatar = () => null;
+
 const Assignee = {
   profile: {
     walletAddress: '0x1afb213afa8729fa7908154b90e256f1be70989a',
@@ -16,12 +20,14 @@ const Assignee = {
     displayName: 'Elena Dimitrova',
   }
 };
-<Assignment assignee={Assignee} pending/>
+<Assignment assignee={Assignee} pending renderAvatar={renderAvatar} />
 ```
 
 
 ### Assignee with Funding set
 ```js
+const renderAvatar = () => null;
+
 const { List } = require('immutable');
 const BN = require('bn.js');
 const { TaskPayoutRecord } = require('~immutable');
@@ -41,5 +47,5 @@ const payouts = List.of(
   TaskPayoutRecord({ token: { symbol: 'CLNY' }, amount: new BN(60000) }),
 );
 
-<Assignment nativeToken="CLNY" assignee={assignee} payouts={payouts} reputation={reputation} />
+<Assignment nativeToken="CLNY" assignee={assignee} payouts={payouts} reputation={reputation} renderAvatar={renderAvatar} />
 ```

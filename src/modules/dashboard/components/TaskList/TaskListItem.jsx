@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
 import Link from '~core/Link';
 
@@ -18,6 +18,8 @@ const MSG = defineMessages({
     defaultMessage: '+{reputation} max rep',
   },
 });
+
+const UserAvatar = UserAvatarFactory();
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 

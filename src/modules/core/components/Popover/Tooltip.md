@@ -1,6 +1,8 @@
 ### Simple tooltip
 
 ```js
+import Button from '../Button';
+
 <Tooltip
   content="Hi I'm a tooltip. Tipeditip"
 >
@@ -13,6 +15,8 @@
 You get the idea...
 
 ```js
+import Button from '../Button';
+
 <Tooltip
   content="Hi I'm a tooltip on the right"
   placement="right"

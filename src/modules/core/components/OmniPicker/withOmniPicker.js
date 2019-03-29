@@ -3,27 +3,18 @@
 import type { ComponentType } from 'react';
 
 import { createElement, Component } from 'react';
-
 import nanoid from 'nanoid';
 
+import type { Props as OmniPickerProps } from './OmniPicker.jsx';
+import type { OmniPickerData } from './types';
+
 import { ESC, TAB, UP, DOWN, ENTER } from './keyTypes';
-
-import type { Data, ItemComponentType } from './types';
-
 import OmniPicker from './OmniPicker.jsx';
-
-type ExternalOmniPickerProps = {
-  /*
-   * This prop is used, but apparently `eslint` get confused by something...
-   */
-  /* eslint-disable-next-line */
-  itemComponent: ItemComponentType,
-};
 
 type Props = {
   data: any | (any => any),
-  filter: (data: any, filterStr: string) => Array<Data>,
-  getItem: (data: Array<Data>, selectedIdx: number) => Data,
+  filter: (data: any, filterStr: string) => Array<OmniPickerData>,
+  getItem: (data: Array<OmniPickerData>, selectedIdx: number) => OmniPickerData,
 };
 
 type State = {
@@ -42,7 +33,7 @@ const getClass = WrappedComponent => {
     omniPicker: ?OmniPicker;
 
     static defaultProps = {
-      getItem: (filteredData: Array<Data>, selectedIdx: number) =>
+      getItem: (filteredData: Array<OmniPickerData>, selectedIdx: number) =>
         filteredData[selectedIdx],
     };
 
@@ -225,21 +216,20 @@ const getClass = WrappedComponent => {
       });
     };
 
-    getOmniPicker = ({ itemComponent, ...props }: ExternalOmniPickerProps) => {
+    getOmniPicker = (omniPickerProps: OmniPickerProps) => {
       const { getItem } = this.props;
       const { isOpen, keyUsed, selected } = this.state;
       const filteredData = this.getFilteredData();
       const { id } = this;
       return isOpen
         ? createElement(OmniPicker, {
-            ...props,
+            ...omniPickerProps,
             choose: this.choose,
             close: this.close,
             filteredData,
             getItem,
             id,
             inputRef: this.inputNode,
-            itemComponent,
             keyUsed,
             ref: this.registerOmniPicker,
             select: this.select,

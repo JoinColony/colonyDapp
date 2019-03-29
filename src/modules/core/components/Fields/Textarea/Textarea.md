@@ -184,7 +184,9 @@ Uses the background color of its background (same for text). This should also wo
 ### A form embedded in Formik
 
 ```js
-const { Formik } = require('formik');
+import { Formik } from 'formik';
+import Button from '../../Button';
+
 <Formik
   initialValues={{
     textarea1: 'Hello let me write some text',

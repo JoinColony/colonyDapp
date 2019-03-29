@@ -7,6 +7,9 @@ For available `Formik` options see here: https://jaredpalmer.com/formik/docs/api
 ### Form example
 
 ```js
+import { FieldSet, Input, FormStatus } from '..';
+import Button from '../../Button';
+
 <Form onSubmit={values => alert(JSON.stringify(values))}>
   {({ status }) => (
     <div>

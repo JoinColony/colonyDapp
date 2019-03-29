@@ -71,12 +71,7 @@ const displayName = 'users.UserProfileEdit';
 const UserProfileEdit = ({ user }: Props) => (
   <ProfileTemplate
     appearance={{ theme: 'alt' }}
-    asideContent={
-      <Sidebar
-        walletAddress={user.profile.walletAddress}
-        username={user.profile.username || user.profile.walletAddress}
-      />
-    }
+    asideContent={<Sidebar user={user} />}
   >
     <Heading
       appearance={{ theme: 'dark', size: 'medium' }}

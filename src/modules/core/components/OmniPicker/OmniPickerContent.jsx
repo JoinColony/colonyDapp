@@ -1,26 +1,28 @@
 /* @flow */
 
-import type { ComponentType } from 'react';
-
 import React from 'react';
 
 import styles from './OmniPickerContent.css';
 
-import type { Choose, ItemComponentType, Select } from './types';
+import type {
+  Choose,
+  EmptyRenderFnType,
+  ItemRenderFnType,
+  Select,
+} from './types';
 
 import OmniPickerItem from './OmniPickerItem.jsx';
 
-// TODO sealing this object shows `className` being used
-type Props = {
+type Props = {|
   filteredData?: Array<{ id: string }>,
   id: string,
-  itemComponent: ItemComponentType,
-  emptyComponent: ComponentType<{}>,
+  renderEmpty: EmptyRenderFnType,
+  renderItem: ItemRenderFnType<*>,
   keyUsed: boolean,
   selected: number,
   onChoose: Choose,
   onSelect: Select,
-};
+|};
 
 // The key events are handled by the OmniPickerBase class
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -28,16 +30,17 @@ const OmniPickerContent = ({
   onChoose,
   filteredData = [],
   id,
-  itemComponent,
-  emptyComponent: EmptyComponent,
+  renderEmpty,
+  renderItem,
   keyUsed,
   onSelect,
   selected,
 }: Props) => (
   <div className={styles.main}>
     <ul onClick={onChoose} role="listbox" id={`omnipicker-${id}-listbox`}>
-      {filteredData.length ? (
-        filteredData.map((itemData, idx) => (
+      {filteredData.length
+        ? filteredData.map((itemData, idx) => (
+          /* eslint-disable prettier/prettier */
           <OmniPickerItem
             key={itemData.id}
             idx={idx}
@@ -45,12 +48,11 @@ const OmniPickerContent = ({
             selected={selected === idx}
             itemData={itemData}
             onSelect={onSelect}
-            itemComponent={itemComponent}
-          />
-        ))
-      ) : (
-        <EmptyComponent />
-      )}
+            renderItem={renderItem}
+          />))
+        : renderEmpty()
+        /* eslint-enable prettier/prettier */
+      }
     </ul>
   </div>
 );

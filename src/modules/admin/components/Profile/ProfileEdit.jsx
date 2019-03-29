@@ -64,15 +64,7 @@ type Props = {|
 |};
 
 const ProfileEdit = ({ colony }: Props) => {
-  const {
-    avatar,
-    description,
-    guideline,
-    address,
-    ensName,
-    name,
-    website,
-  } = colony;
+  const { description, guideline, address, ensName, name, website } = colony;
   return (
     <div className={styles.main}>
       <main className={styles.content}>
@@ -158,12 +150,7 @@ const ProfileEdit = ({ colony }: Props) => {
         </ActionForm>
       </main>
       <aside className={styles.sidebar}>
-        <ColonyAvatarUploader
-          name={name}
-          avatar={avatar}
-          address={address}
-          ensName={ensName}
-        />
+        <ColonyAvatarUploader colony={colony} />
       </aside>
     </div>
   );

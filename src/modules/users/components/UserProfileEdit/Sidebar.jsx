@@ -3,7 +3,10 @@
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { UserType } from '~immutable';
+
 import Heading from '~core/Heading';
+
 import UserAvatarUploader from './UserAvatarUploader.jsx';
 
 const MSG = defineMessages({
@@ -14,22 +17,18 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  /** Address of the current user for identicon fallback */
-  walletAddress: string,
-  /** For UserAvatar title */
-  username: string,
-  avatarURL?: string, // eslint-disable-line react/no-unused-prop-types
+  user: UserType,
 |};
 
 const displayName = 'users.UserProfileEdit.Sidebar';
 
-const Sidebar = ({ walletAddress, username }: Props) => (
+const Sidebar = ({ user }: Props) => (
   <Fragment>
     <Heading
       appearance={{ theme: 'dark', size: 'medium' }}
       text={MSG.heading}
     />
-    <UserAvatarUploader walletAddress={walletAddress} username={username} />
+    <UserAvatarUploader user={user} />
   </Fragment>
 );
 

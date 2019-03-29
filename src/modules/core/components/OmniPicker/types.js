@@ -1,20 +1,24 @@
 /* @flow */
 
-import type { ComponentType } from 'react';
+import type { ComponentType, Node } from 'react';
 
-export type ItemComponentType = ComponentType<{
-  itemData: any,
+export type ItemDataType<D> = { id: string, ...D };
+
+export type EmptyRenderFnType = () => Node;
+
+export type ItemRenderFnType<D> = (
+  itemData: ItemDataType<D>,
   selected: boolean,
-}>;
+) => Node;
 
 export type Choose = void => void;
 
 export type Select = (idx: number) => void;
 
-export type Data = { id: string };
+export type OmniPickerData = { id: string };
 
 export type WrappedComponentProps = {
-  OmniPicker: ComponentType<{ itemComponent: ItemComponentType }>,
+  OmniPicker: ComponentType<{ renderItem: ItemRenderFnType<*> }>,
   inputProps: {
     id: string,
     autoComplete: 'off',

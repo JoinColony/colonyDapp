@@ -73,7 +73,7 @@ describe('Update Claim Profile Metadata', () => {
   /*
    * Check the updated profile metadata
    */
-  it('Check the Updated User Profile Values', () => {
+  it.skip('Check the Updated User Profile Values', () => {
     cy.goToUserProfile();
 
     cy.fixture('users').then(({ displayName, bio, website, location }) => {
@@ -103,7 +103,7 @@ describe('Update Claim Profile Metadata', () => {
     );
   });
 
-  it('Check uploaded Avatar', () => {
+  it.skip('Check uploaded Avatar', () => {
     cy.goToUserProfile();
 
     cy.get('div[data-test="userProfileAvatar"] div figure div').checkImage(
@@ -120,7 +120,7 @@ describe('Update Claim Profile Metadata', () => {
     cy.get('button[data-test="avatarUploaderRemove"]').click();
   });
 
-  it('Check that the Avatar was actually removed', () => {
+  it.skip('Check that the Avatar was actually removed', () => {
     cy.goToUserProfile();
 
     cy.get('div[data-test="userProfileAvatar"] div figure div').checkImage(

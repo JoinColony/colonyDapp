@@ -10,7 +10,7 @@ import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 
 import { colonyAdminsSelector } from '../../../selectors';
 
@@ -43,6 +43,8 @@ const MSG = defineMessages({
   },
 });
 
+const UserAvatar = UserAvatarFactory({ showInfo: true, showLink: true });
+
 type Props = {|
   colony: ColonyType,
   canAdminister: boolean,
@@ -51,23 +53,13 @@ type Props = {|
 const ColonyMeta = ({ colony, canAdminister }: Props) => {
   const admins = useSelector(colonyAdminsSelector, [colony.ensName]);
 
-  const {
-    address,
-    avatar,
-    description,
-    ensName,
-    guideline,
-    name,
-    website,
-  } = colony;
+  const { description, ensName, guideline, name, website } = colony;
   return (
     <div>
       <ColonyAvatar
-        address={address}
-        avatar={avatar}
-        name={name}
-        ensName={ensName}
         className={styles.avatar}
+        address={colony.address}
+        colony={colony}
         size="xl"
       />
       <section className={styles.headingWrapper}>
@@ -118,18 +110,14 @@ const ColonyMeta = ({ colony, canAdminister }: Props) => {
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.foundersLabel}
           />
-          {mockColonyFounders.map(
-            ({ profile: { walletAddress, username, displayName } }, index) => (
-              <UserAvatar
-                address={walletAddress}
-                className={styles.userAvatar}
-                displayName={displayName}
-                hasUserInfo
-                key={`founder_${index + 1}`}
-                username={username}
-              />
-            ),
-          )}
+          {/* This is likely going to look like the admins map */}
+          {mockColonyFounders.map((founderAdress: string) => (
+            <UserAvatar
+              key={`founder_${founderAdress}`}
+              address={founderAdress}
+              className={styles.userAvatar}
+            />
+          ))}
         </section>
       )}
       {admins && admins.length ? (
@@ -138,14 +126,11 @@ const ColonyMeta = ({ colony, canAdminister }: Props) => {
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.adminsLabel}
           />
-          {admins.map(({ walletAddress, username, displayName }) => (
+          {admins.map((adminAddress: string) => (
             <UserAvatar
-              address={walletAddress}
+              key={`admin_${adminAddress}`}
+              address={adminAddress}
               className={styles.userAvatar}
-              displayName={displayName}
-              hasUserInfo
-              key={walletAddress}
-              username={username}
             />
           ))}
         </section>

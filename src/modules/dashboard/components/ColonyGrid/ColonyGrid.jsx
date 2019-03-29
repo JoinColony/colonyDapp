@@ -30,19 +30,18 @@ const ColonyGrid = ({ colonies = [] }: Props) => (
       <Heading text={MSG.title} appearance={{ size: 'medium' }} />
     </div>
     <div className={styles.colonyGrid}>
-      {/* Once the colonies are persisted, we need to use withDataReducer and useDataFetcher
-        I don't want to deal with this right now
-        $FlowFixMe */}
-      {colonies.map(({ record: { ensName, address, name, avatar } }) => (
-        <div className={styles.colonyGridItem} key={address}>
-          <ColonyGridItem
-            address={address}
-            avatar={avatar}
-            ensName={ensName}
-            name={name}
-          />
-        </div>
-      ))}
+      {/* Once the colonies are persisted, use withDataReducer */}
+      {colonies
+        .filter(({ record }) => !!record)
+        .map(({ record: colony }) => (
+          // $FlowFixMe I think we'll be handling this properly once this is wired, probably on a selector level
+          <div className={styles.colonyGridItem} key={colony.address}>
+            <ColonyGridItem
+              // $FlowFixMe see above
+              colony={colony}
+            />
+          </div>
+        ))}
     </div>
   </div>
 );

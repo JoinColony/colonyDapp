@@ -22,7 +22,7 @@ import { ACTIONS } from '../../index';
 export type UserActionTypes = {|
   USER_AVATAR_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_AVATAR_FETCH,
-    {| address: string |},
+    {| address: string, avatarIpfsHash: string |},
     WithKeyPathDepth1,
   >,
   USER_AVATAR_FETCH_ERROR: ErrorActionType<

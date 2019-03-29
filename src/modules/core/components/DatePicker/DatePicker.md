@@ -1,7 +1,7 @@
 ### DatePicker in Formik form
 
 ```
-const { Formik } = require('formik');
+import { Formik } from 'formik';
 <Formik>
   <DatePicker name="datepicker" label="Pick a date" placeholder="Pick a date" />
 </Formik>
@@ -12,6 +12,8 @@ const { Formik } = require('formik');
 For compatibility purposes the function which is called after a day is picked is passed through the `setValue` prop.
 
 ```
+import Button from '../Button';
+
 <DatePicker
   connect={false}
   name="datepicker-unconnected"

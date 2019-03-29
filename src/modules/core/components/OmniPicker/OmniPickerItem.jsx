@@ -3,15 +3,15 @@
 import React, { Component } from 'react';
 import scrollIntoView from 'scroll-into-view-if-needed';
 
-import type { ItemComponentType } from './types';
+import type { ItemDataType, ItemRenderFnType } from './types';
 
 type Props = {|
   keyUsed?: boolean,
   idx: number,
   selected: boolean,
-  itemData: { id: string },
+  itemData: ItemDataType<*>,
   onSelect: (idx: number) => void,
-  itemComponent: ItemComponentType,
+  renderItem: ItemRenderFnType<*>,
 |};
 
 class OmniPickerItem extends Component<Props> {
@@ -31,12 +31,7 @@ class OmniPickerItem extends Component<Props> {
   };
 
   render() {
-    const {
-      idx,
-      selected,
-      itemData,
-      itemComponent: ItemComponent,
-    } = this.props;
+    const { idx, selected, itemData, renderItem } = this.props;
     return (
       <li
         id={`omnipicker-item-${idx}`}
@@ -45,7 +40,7 @@ class OmniPickerItem extends Component<Props> {
         onMouseEnter={this.select}
         ref={ref => this.scrollToElement(ref)}
       >
-        <ItemComponent itemData={itemData} selected={selected} />
+        {renderItem(itemData, selected)}
       </li>
     );
   }

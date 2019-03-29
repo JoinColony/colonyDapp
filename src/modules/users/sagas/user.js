@@ -45,15 +45,12 @@ import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
 function* userAvatarFetch({
   meta,
-  payload: { address },
+  payload: { address, avatarIpfsHash },
 }: Action<typeof ACTIONS.USER_AVATAR_FETCH>): Saga<void> {
   try {
     const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
-      metadata: {
-        walletAddress: address,
-      },
+      metadata: { avatarIpfsHash },
     };
 
     const avatar = yield* executeQuery(context, getUserAvatar);

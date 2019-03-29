@@ -2,31 +2,24 @@
 
 import React from 'react';
 
-import getIcon from '../../../../lib/identicon';
+import type { $Pick } from '~types';
 
 import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
 
-export type Props = {|
+import getIcon from '../../../../lib/identicon';
+import type { Props as UserAvatarProps } from './UserAvatarFactory.jsx';
+
+type Props = {
+  ...$Pick<
+    UserAvatarProps,
+    { className?: *, notSet?: *, size?: *, user?: *, address: * },
+  >,
   /** Avatar image URL (can be a base64 encoded string) */
   avatar?: ?string,
-  /** Is passed through to Avatar */
-  className?: string,
-  /** Avatars that are not set have a different placeholder */
-  notSet?: boolean,
-  /** Avatar size (default is between `s` and `m`) */
-  size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
-  /*
-   * The user's name (aka Display Name)
-   */
-  displayName?: string,
-  /** For the title */
-  username?: string,
-  /** Address of the current user for identicon fallback */
-  address: string,
-  /* Whether to show or not show the UserInfo tooltip over the avatar */
-  hasUserInfo?: boolean,
-|};
+  /** Whether to show or not show the UserInfo tooltip over the avatar */
+  showInfo?: boolean,
+};
 
 /*
  * `displayName` is a prop name, so we'll use `componentDisplayName` here
@@ -37,25 +30,19 @@ const UserAvatarDisplay = ({
   address,
   avatar,
   className,
-  displayName,
-  hasUserInfo,
+  showInfo,
   notSet,
   size,
-  username,
+  user,
 }: Props) => (
-  <UserInfo
-    address={address}
-    displayName={displayName}
-    trigger={hasUserInfo ? 'hover' : 'disabled'}
-    username={username}
-  >
+  <UserInfo trigger={showInfo ? 'hover' : 'disabled'} user={user}>
     <Avatar
       avatarURL={avatar || (!notSet ? getIcon(address) : null)}
       className={className}
       notSet={notSet}
       placeholderIcon="circle-person"
       size={size}
-      title={username || address}
+      title={(user && user.profile.username) || address}
     />
   </UserInfo>
 );

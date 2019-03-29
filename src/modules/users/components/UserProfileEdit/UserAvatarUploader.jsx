@@ -3,10 +3,11 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { UserType } from '~immutable';
 import type { FileReaderFile } from '~core/FileUpload';
 
 import AvatarUploader from '~core/AvatarUploader';
-import UserAvatar from '~core/UserAvatar';
+import UserAvatarFactory from '~core/UserAvatar';
 import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
@@ -20,11 +21,11 @@ const MSG = defineMessages({
   },
 });
 
+const UserAvatar = UserAvatarFactory({ fetchUser: false });
+
 type Props = {|
-  /** Address of the current user for identicon fallback */
-  walletAddress: string,
-  /** For UserAvatar title */
-  username: string,
+  /** Current user */
+  user: UserType,
 |};
 
 class UserAvatarUploader extends Component<Props> {
@@ -54,16 +55,15 @@ class UserAvatarUploader extends Component<Props> {
   }
 
   render() {
-    const { walletAddress, username } = this.props;
+    const { user } = this.props;
     return (
       <AvatarUploader
         label={MSG.uploaderLabel}
         placeholder={
           <UserAvatar
-            address={walletAddress}
+            address={user.profile.walletAddress}
+            user={user}
             size="xl"
-            // title={MSG.uploaderLabel} // TODO this is not supported on UserAvatar
-            username={username}
           />
         }
         upload={this.upload.asyncFunction}
