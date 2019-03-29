@@ -641,7 +641,7 @@ function* taskCommentAdd({
      * (once the mentions are all wired up)
      */
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS,
+      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
       payload: {
         activity: {
           event: 'notificationUserMentioned',

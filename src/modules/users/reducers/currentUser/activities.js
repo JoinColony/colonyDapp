@@ -16,11 +16,11 @@ const currentUserActivitiesReducer: ReducerType<
     // TODO these should use actions based on the current user.
     // Currently, they are not dispatched.
     USER_ACTIVITIES_FETCH_SUCCESS: *,
-    USER_ACTIVITIES_UPDATE_SUCCESS: *,
+    USER_ACTIVITIES_ADD_SUCCESS: *,
   |},
 > = (state = List(), action) => {
   switch (action.type) {
-    case ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS: {
+    case ACTIONS.USER_ACTIVITIES_ADD_SUCCESS: {
       const { activity } = action.payload;
       return state.push(UserActivityRecord(activity));
     }

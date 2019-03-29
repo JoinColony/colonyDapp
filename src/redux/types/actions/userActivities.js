@@ -26,23 +26,22 @@ export type UserActivitiesActionTypes = {|
     |},
     WithKeyPathDepth1,
   >,
-  USER_ACTIVITIES_UPDATE: UniqueActionType<
-    typeof ACTIONS.USER_ACTIVITIES_UPDATE,
+  USER_ACTIVITIES_ADD: UniqueActionType<
+    typeof ACTIONS.USER_ACTIVITIES_ADD,
     {|
       activity: *,
       address: string,
     |},
     WithKeyPathDepth1,
   >,
-  USER_ACTIVITIES_UPDATE_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_ACTIVITIES_UPDATE_ERROR,
+  USER_ACTIVITIES_ADD_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_ACTIVITIES_ADD_ERROR,
     WithKeyPathDepth1,
   >,
-  USER_ACTIVITIES_UPDATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS,
+  USER_ACTIVITIES_ADD_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
     {|
-      activities: UserActivityType[],
-      address: string,
+      activity: UserActivityType,
     |},
     WithKeyPathDepth1,
   >,
