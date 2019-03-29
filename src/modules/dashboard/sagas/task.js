@@ -51,6 +51,7 @@ import {
   setTaskSkill,
   setTaskTitle,
   unassignWorker,
+  commentMentionNotification,
 } from '../data/commands';
 import { getTask, getTaskFeedItems } from '../data/queries';
 
@@ -607,6 +608,9 @@ function* taskCommentAdd({
      *
      * See: https://github.com/JoinColony/colonyDapp/issues/1011 for the
      * implementation details regarding this
+     *
+     * Also, this should be iterated through each mentioned user, and add
+     * a notification event to each one's store
      */
     yield* executeCommand(
       inboxContext,
@@ -627,6 +631,22 @@ function* taskCommentAdd({
       payload: {
         draftId,
         event,
+      },
+      meta,
+    });
+
+    /*
+     * @NOTE This is assuming we have a notification for the current user
+     * So this should actually be gated behind a conditional
+     * (once the mentions are all wired up)
+     */
+    yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
+      type: ACTIONS.USER_ACTIVITIES_UPDATE,
+      payload: {
+        event: 'notificationUserMentioned',
+        user: 'John Doe',
+        task: 'Draft task Name',
+        comment: commentData.body,
       },
       meta,
     });
