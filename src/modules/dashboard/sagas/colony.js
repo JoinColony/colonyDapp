@@ -58,7 +58,7 @@ import { getColonyContext, getUserMetadataStoreContext } from './shared';
 function* colonyFetchSubscribedForCurrentUser(): Saga<*> {
   try {
     const context = yield call(getUserMetadataStoreContext);
-    const colonies = yield* executeQuery(getUserColonies, context);
+    const colonies = yield* executeQuery(context, getUserColonies);
     yield put<
       Action<typeof ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS>,
     >({
