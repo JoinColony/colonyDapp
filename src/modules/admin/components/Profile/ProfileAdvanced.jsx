@@ -5,16 +5,16 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { ColonyType, UserPermissionsType, NetworkProps } from '~immutable';
 
-import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 
 import Heading from '~core/Heading';
 import { DialogActionButton } from '~core/Button';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { canEnterRecoveryMode } from '../../../users/selectors';
 import { networkVersionFetcher } from '../../../core/fetchers';
-import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/selectors';
+import { canEnterRecoveryMode } from '../../../users/checks';
+import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 
 import styles from './ProfileAdvanced.css';
 
@@ -55,8 +55,6 @@ type Props = {|
 |};
 
 const ProfileAdvanced = ({ colony }: Props) => {
-  const { given } = useFeatureFlags();
-
   const {
     isFetching: isFetchingUserPermissions,
     data: permissions,
@@ -92,9 +90,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
           values={{ ensName: colony.ensName }}
           loading={isFetchingNetworkVersion}
-          disabled={
-            !!networkVersionError || !given({ colony, network }, canBeUpgraded)
-          }
+          disabled={!!networkVersionError || !canBeUpgraded(colony, network)}
         />
       </section>
       <section className={styles.section}>
@@ -113,7 +109,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           <p className={styles.bigInfoText}>
             <FormattedMessage
               {...MSG.inRecoveryMode}
-              values={{ inRecoveryMode: given(colony, isInRecoveryMode) }}
+              values={{ inRecoveryMode: isInRecoveryMode(colony) }}
             />
           </p>
         </div>
@@ -128,8 +124,8 @@ const ProfileAdvanced = ({ colony }: Props) => {
           loading={isFetchingUserPermissions}
           disabled={
             !!userPermissionsError ||
-            given(colony, isInRecoveryMode) ||
-            !given(permissions, canEnterRecoveryMode)
+            isInRecoveryMode(colony) ||
+            !canEnterRecoveryMode(permissions)
           }
         />
       </section>

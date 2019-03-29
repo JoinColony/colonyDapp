@@ -4,12 +4,7 @@ import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
 import type { ENSName } from '~types';
-import type {
-  RootStateRecord,
-  ColonyRecordType,
-  ColonyType,
-  NetworkProps,
-} from '~immutable';
+import type { RootStateRecord } from '~immutable';
 
 import {
   DASHBOARD_ALL_COLONIES,
@@ -86,22 +81,3 @@ export const colonyENSNameSelector = createSelector(
   (state, props) => props.colonyAddress, // TODO use a string argument
   (ensNames, colonyAddress) => ensNames.get(colonyAddress),
 );
-
-/*
- * Checks (use for `given`)
- */
-export const isInRecoveryMode = (colony: ColonyType) =>
-  !!(colony && colony.inRecoveryMode);
-
-export const canBeUpgraded = ({
-  colony,
-  network,
-}: {
-  colony: ColonyRecordType,
-  network: NetworkProps,
-}) =>
-  colony &&
-  network &&
-  network.version &&
-  colony.version &&
-  network.version > colony.version;

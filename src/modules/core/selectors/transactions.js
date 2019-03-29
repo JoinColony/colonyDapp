@@ -7,20 +7,13 @@ import { createSelector } from 'reselect';
 import type { RootStateRecord, TransactionRecordType } from '~immutable';
 
 import { currentUserAddressSelector } from '../../users/selectors';
+import { isMultisig, isPendingMultisig } from '../checks';
 
 import {
   CORE_NAMESPACE as ns,
   CORE_TRANSACTIONS,
   CORE_TRANSACTIONS_LIST,
 } from '../constants';
-
-/*
- * Individual transaction selectors
- */
-const isMultisig = tx => !!tx.multisig;
-const isPendingMultisig = tx =>
-  !!tx.multisig &&
-  !(tx.multisig.missingSignees && tx.multisig.missingSignees.length);
 
 /*
  * Transactions sorting functions.

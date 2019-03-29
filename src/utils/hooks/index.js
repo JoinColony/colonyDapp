@@ -126,21 +126,18 @@ export const useFeatureFlags = (
         potentialSelector: any,
         dependantSelector?: DependantSelector,
       ) => {
-        let potentialSelectorValue = potentialSelector;
-        if (potentialSelector && typeof potentialSelector === 'function') {
-          potentialSelectorValue = potentialSelector(
-            reduxState,
-            ...potentialSelectorArgs,
-          );
-        }
-        if (dependantSelector && typeof dependantSelector === 'function') {
-          return dependantSelector(
-            potentialSelectorValue,
-            reduxState,
-            ...dependantSelectorArgs,
-          );
-        }
-        return potentialSelectorValue;
+        const potentialSelectorValue =
+          typeof potentialSelector == 'function'
+            ? potentialSelector(reduxState, ...potentialSelectorArgs)
+            : potentialSelector;
+
+        return typeof dependantSelector == 'function'
+          ? dependantSelector(
+              potentialSelectorValue,
+              reduxState,
+              ...dependantSelectorArgs,
+            )
+          : potentialSelectorValue;
       },
     }),
     [...potentialSelectorArgs, ...dependantSelectorArgs],

@@ -6,7 +6,7 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
-import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -19,7 +19,7 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 
 import { colonyFetcher } from '../../../dashboard/fetchers';
-import { isInRecoveryMode } from '../../../dashboard/selectors';
+import { isInRecoveryMode } from '../../../dashboard/checks';
 
 import styles from './AdminDashboard.css';
 
@@ -95,8 +95,6 @@ const AdminDashboard = ({
     params: { ensName },
   },
 }: Props) => {
-  const { given } = useFeatureFlags();
-
   const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
     colonyFetcher,
     [ensName],
@@ -141,7 +139,7 @@ const AdminDashboard = ({
           />
         </div>
       </VerticalNavigation>
-      {given(colony, isInRecoveryMode) && <RecoveryModeAlert />}
+      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
     </div>
   );
 };

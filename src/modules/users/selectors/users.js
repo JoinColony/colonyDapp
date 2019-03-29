@@ -5,7 +5,6 @@ import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import type {
   DataRecordType,
   RootStateRecord,
-  UserPermissionsType,
   UserRecordType,
 } from '~immutable';
 import type { ENSName } from '~types';
@@ -121,15 +120,3 @@ export const currentUserColoniesSelector = (state: RootStateRecord) =>
     [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES],
     ImmutableSet(),
   );
-
-/*
- * User permissions getters
- */
-export const canEnterRecoveryMode = (permissions?: UserPermissionsType) =>
-  !!(permissions && permissions.canEnterRecoveryMode);
-
-export const canCreateTask = (permissions?: UserPermissionsType) =>
-  !!(permissions && permissions.isAdmin);
-
-export const canAdminister = (permissions?: UserPermissionsType) =>
-  !!(permissions && permissions.isAdmin);
