@@ -10,9 +10,7 @@ import type {
   TransactionType,
 } from '~immutable';
 import type {
-  ActionType,
   ActionTypeWithMeta,
-  ActionTypeWithPayload,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
@@ -211,17 +209,6 @@ export type ColonyActionTypes = {|
     { colony: ColonyType, tokens: TokenType[] },
     WithKeyPathDepth1,
   >,
-  COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER: ActionType<
-    typeof ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER,
-  >,
-  COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_ERROR,
-    void,
-  >,
-  COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS,
-    string[],
-  >,
   COLONY_FETCH_TRANSACTIONS: ActionTypeWithMeta<
     typeof ACTIONS.COLONY_FETCH_TRANSACTIONS,
     WithKeyPathDepth1,
@@ -284,18 +271,6 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
     void,
     void,
-  >,
-  COLONY_SUBSCRIBE: ActionTypeWithPayload<
-    typeof ACTIONS.COLONY_SUBSCRIBE,
-    {| address: string |},
-  >,
-  COLONY_SUBSCRIBE_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_SUBSCRIBE_ERROR,
-    void,
-  >,
-  COLONY_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.COLONY_SUBSCRIBE,
-    {| address: string |},
   >,
   COLONY_VERSION_UPGRADE: UniqueActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE,

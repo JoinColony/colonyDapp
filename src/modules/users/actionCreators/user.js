@@ -61,3 +61,17 @@ export const userTokensUpdate = (
   type: ACTIONS.USER_TOKENS_UPDATE,
   payload: { tokens },
 });
+
+export const subscribeToColony = (
+  colonyAddress: string,
+): Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE> => ({
+  type: ACTIONS.USER_COLONY_SUBSCRIBE,
+  payload: { address: colonyAddress },
+});
+
+export const subscribeToTask = (
+  draftId: string,
+): Action<typeof ACTIONS.USER_TASK_SUBSCRIBE> => ({
+  type: ACTIONS.USER_TASK_SUBSCRIBE,
+  payload: { draftId },
+});

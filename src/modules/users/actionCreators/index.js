@@ -1,4 +1,4 @@
 /* @flow */
 
-export * from './walletActionCreators';
-export * from './userProfileActionCreators';
+export * from './user';
+export * from './wallet';

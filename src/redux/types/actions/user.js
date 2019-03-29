@@ -3,7 +3,6 @@
 import type { ENSName, WithKeyPathDepth1 } from '~types';
 import type {
   ContractTransactionType,
-  TaskReferenceType,
   TokenReferenceType,
   UserMetadataType,
   UserProfileType,
@@ -37,17 +36,124 @@ export type UserActionTypes = {|
     |},
     WithKeyPathDepth1,
   >,
-  USER_TASK_IDS_FETCH: ActionType<typeof ACTIONS.USER_TASK_IDS_FETCH>,
-  USER_TASK_IDS_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_TASK_IDS_FETCH_ERROR,
+  USER_BY_USERNAME_FETCH: ActionTypeWithPayload<
+    typeof ACTIONS.USER_BY_USERNAME_FETCH,
+    {| username: string |},
+  >,
+  USER_COLONY_SUBSCRIBE: ActionTypeWithPayload<
+    typeof ACTIONS.USER_COLONY_SUBSCRIBE,
+    {| address: string |},
+  >,
+  USER_COLONY_SUBSCRIBE_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_COLONY_SUBSCRIBE_ERROR,
     void,
   >,
-  USER_TASK_IDS_FETCH_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.USER_TASK_IDS_FETCH_SUCCESS,
+  USER_COLONY_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_COLONY_SUBSCRIBE,
+    {| address: string |},
+  >,
+  USER_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_FETCH,
+    {| address: string |},
+    WithKeyPathDepth1,
+  >,
+  USER_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  USER_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_FETCH_SUCCESS,
+    UserProfileType,
+    WithKeyPathDepth1,
+  >,
+  USER_METADATA_SET: ActionTypeWithPayload<
+    typeof ACTIONS.USER_METADATA_SET,
+    $Shape<UserMetadataType>,
+  >,
+  // In the future we could specify in the payload which permission(s) we would like to fetch
+  USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH,
+    {| ensName: ENSName |},
+    WithKeyPathDepth1,
+  >,
+  USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_PERMISSIONS_FETCH,
     {|
-      open: TaskReferenceType[],
-      closed: TaskReferenceType[],
+      ensName: ENSName,
+      permissions: { +canEnterRecoveryMode?: boolean },
     |},
+    WithKeyPathDepth1,
+  >,
+  USER_PROFILE_UPDATE: UniqueActionType<
+    typeof ACTIONS.USER_PROFILE_UPDATE,
+    {|
+      bio?: string,
+      displayName?: string,
+      location?: string,
+      website?: string,
+    |},
+    void,
+  >,
+  USER_PROFILE_UPDATE_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_PROFILE_UPDATE_ERROR,
+    void,
+  >,
+  USER_PROFILE_UPDATE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_PROFILE_UPDATE_SUCCESS,
+    UserProfileType,
+    void,
+  >,
+  USER_REMOVE_AVATAR: UniqueActionType<
+    typeof ACTIONS.USER_REMOVE_AVATAR,
+    void,
+    void,
+  >,
+  USER_REMOVE_AVATAR_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_REMOVE_AVATAR_ERROR,
+    void,
+  >,
+  USER_REMOVE_AVATAR_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
+    {| address: string |},
+    void,
+  >,
+  USER_SUBSCRIBED_COLONIES_FETCH: ActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+  >,
+  USER_SUBSCRIBED_COLONIES_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_ERROR,
+    void,
+  >,
+  USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
+    string[],
+  >,
+  USER_SUBSCRIBED_TASKS_FETCH: ActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
+  >,
+  USER_SUBSCRIBED_TASKS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_ERROR,
+    void,
+  >,
+  USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
+    string[],
+  >,
+  USER_TASK_SUBSCRIBE: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TASK_SUBSCRIBE,
+    {| draftId: string |},
+  >,
+  USER_TASK_SUBSCRIBE_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_TASK_SUBSCRIBE_ERROR,
+    void,
+  >,
+  USER_TASK_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_TASK_SUBSCRIBE,
+    {| draftId: string |},
   >,
   USER_TOKEN_TRANSFERS_FETCH: ActionType<
     typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
@@ -85,79 +191,6 @@ export type UserActionTypes = {|
   >,
   USER_TOKENS_UPDATE_SUCCESS: ActionType<
     typeof ACTIONS.USER_TOKENS_UPDATE_SUCCESS,
-  >,
-  // In the future we could specify in the payload which permission(s) we would like to fetch
-  USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_PERMISSIONS_FETCH,
-    {| ensName: ENSName |},
-    WithKeyPathDepth1,
-  >,
-  USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_PERMISSIONS_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
-  USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_PERMISSIONS_FETCH,
-    {|
-      ensName: ENSName,
-      permissions: { +canEnterRecoveryMode?: boolean },
-    |},
-    WithKeyPathDepth1,
-  >,
-  USER_BY_USERNAME_FETCH: ActionTypeWithPayload<
-    typeof ACTIONS.USER_BY_USERNAME_FETCH,
-    {| username: string |},
-  >,
-  USER_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_FETCH,
-    {| address: string |},
-    WithKeyPathDepth1,
-  >,
-  USER_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
-  USER_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_FETCH_SUCCESS,
-    UserProfileType,
-    WithKeyPathDepth1,
-  >,
-  USER_METADATA_SET: ActionTypeWithPayload<
-    typeof ACTIONS.USER_METADATA_SET,
-    $Shape<UserMetadataType>,
-  >,
-  USER_PROFILE_UPDATE: UniqueActionType<
-    typeof ACTIONS.USER_PROFILE_UPDATE,
-    {|
-      bio?: string,
-      displayName?: string,
-      location?: string,
-      website?: string,
-    |},
-    void,
-  >,
-  USER_PROFILE_UPDATE_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_PROFILE_UPDATE_ERROR,
-    void,
-  >,
-  USER_PROFILE_UPDATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.USER_PROFILE_UPDATE_SUCCESS,
-    UserProfileType,
-    void,
-  >,
-  USER_REMOVE_AVATAR: UniqueActionType<
-    typeof ACTIONS.USER_REMOVE_AVATAR,
-    void,
-    void,
-  >,
-  USER_REMOVE_AVATAR_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_REMOVE_AVATAR_ERROR,
-    void,
-  >,
-  USER_REMOVE_AVATAR_SUCCESS: UniqueActionType<
-    typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
-    {| address: string |},
-    void,
   >,
   USER_UPLOAD_AVATAR: UniqueActionType<
     typeof ACTIONS.USER_UPLOAD_AVATAR,

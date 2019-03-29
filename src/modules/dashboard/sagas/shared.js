@@ -2,12 +2,11 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, select } from 'redux-saga/effects';
+import { call } from 'redux-saga/effects';
 
 import { CONTEXT, getContext } from '~context';
 
-import { currentUserMetadataSelector } from '../../users/selectors';
-
+// eslint-disable-next-line import/prefer-default-export
 export function* getColonyContext(
   colonyENSName: ?string,
   colonyAddress: ?string,
@@ -31,22 +30,6 @@ export function* getColonyContext(
     metadata: {
       colonyENSName,
       colonyAddress: colonyClient.contract.address,
-    },
-  };
-}
-
-export function* getUserMetadataStoreContext(): Saga<*> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  const { metadataStoreAddress: userMetadataStoreAddress } = yield select(
-    currentUserMetadataSelector,
-  );
-  return {
-    ddb,
-    wallet,
-    metadata: {
-      userMetadataStoreAddress,
-      walletAddress: wallet.address,
     },
   };
 }

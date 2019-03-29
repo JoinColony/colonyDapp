@@ -11,12 +11,12 @@ import { withDataRecord } from '~utils/reducers';
 
 type State = DataRecordType<CurrentUserColoniesType>;
 type Actions = {
-  COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER: *,
-  COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_ERROR: *,
-  COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS: *,
-  COLONY_SUBSCRIBE: *,
-  COLONY_SUBSCRIBE_ERROR: *,
-  COLONY_SUBSCRIBE_SUCCESS: *,
+  USER_COLONY_SUBSCRIBE: *,
+  USER_COLONY_SUBSCRIBE_ERROR: *,
+  USER_COLONY_SUBSCRIBE_SUCCESS: *,
+  USER_SUBSCRIBED_COLONIES_FETCH: *,
+  USER_SUBSCRIBED_COLONIES_FETCH_ERROR: *,
+  USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: *,
 };
 
 // TODO in #755 (user logout) unset this state
@@ -25,11 +25,11 @@ const currentUserColoniesReducer: ReducerType<State, Actions> = (
   action,
 ) => {
   switch (action.type) {
-    case ACTIONS.COLONY_SUBSCRIBE_SUCCESS: {
+    case ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS: {
       const record = (state.record || ImmutableSet()).union([action.payload]);
       return state.merge({ error: undefined, record, isFetching: false });
     }
-    case ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS: {
+    case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {
       const record = (state.record || ImmutableSet()).union(action.payload);
       return state.merge({ error: undefined, record, isFetching: false });
     }
@@ -40,7 +40,7 @@ const currentUserColoniesReducer: ReducerType<State, Actions> = (
 
 export default withDataRecord<State, Actions>(
   new Set([
-    ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER,
-    ACTIONS.COLONY_SUBSCRIBE,
+    ACTIONS.USER_COLONY_SUBSCRIBE,
+    ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
   ]),
 )(currentUserColoniesReducer);

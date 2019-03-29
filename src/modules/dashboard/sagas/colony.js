@@ -31,62 +31,28 @@ import {
   createColonyProfile,
   removeColonyAvatar,
   setColonyAvatar,
-  subscribeToColony,
   updateColonyProfile,
 } from '../../../data/service/commands';
 
-import { getColony, getUserColonies } from '../../../data/service/queries';
+import { getColony } from '../../../data/service/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
 import { getNetworkClient } from '../../core/sagas/utils';
-
 import {
   transactionAddParams,
   transactionAddIdentifier,
   transactionReady,
 } from '../../core/actionCreators';
-
-import { fetchColony } from '../actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
-
-import { colonyAvatarHashSelector } from '../selectors';
 import { networkVersionSelector } from '../../core/selectors';
 
-import { getColonyContext, getUserMetadataStoreContext } from './shared';
+import { subscribeToColony } from '../../users/actionCreators';
 
-function* colonyFetchSubscribedForCurrentUser(): Saga<*> {
-  try {
-    const context = yield call(getUserMetadataStoreContext);
-    const colonies = yield* executeQuery(context, getUserColonies);
-    yield put<
-      Action<typeof ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS>,
-    >({
-      type: ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS,
-      payload: colonies,
-    });
-  } catch (error) {
-    yield putError(
-      ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER_SUCCESS,
-      error,
-    );
-  }
-}
+import { fetchColony } from '../actionCreators';
+import { colonyAvatarHashSelector } from '../selectors';
 
-function* colonySubscribe({
-  payload,
-}: Action<typeof ACTIONS.COLONY_SUBSCRIBE>): Saga<*> {
-  try {
-    const context = yield call(getUserMetadataStoreContext);
-    yield* executeCommand(context, subscribeToColony, payload);
-    yield put<Action<typeof ACTIONS.COLONY_SUBSCRIBE_SUCCESS>>({
-      type: ACTIONS.COLONY_SUBSCRIBE_SUCCESS,
-      payload,
-    });
-  } catch (error) {
-    yield putError(ACTIONS.COLONY_SUBSCRIBE_ERROR, error);
-  }
-}
+import { getColonyContext } from './shared';
 
 // TODO: Rename, complete and wire up after new onboarding is in place
 function* colonyCreateNew({
@@ -273,10 +239,7 @@ function* colonyCreateLabel({
   /*
    * Subscribe the current user to the colony
    */
-  yield put<Action<typeof ACTIONS.COLONY_SUBSCRIBE>>({
-    type: ACTIONS.COLONY_SUBSCRIBE,
-    payload: { address: colonyAddress },
-  });
+  yield put(subscribeToColony(colonyAddress));
 
   const txChannel = yield call(getTxChannel, meta.id);
 
@@ -660,13 +623,8 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
   yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyENSNameFetch);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
-  yield takeEvery(
-    ACTIONS.COLONY_FETCH_SUBSCRIBED_FOR_CURRENT_USER,
-    colonyFetchSubscribedForCurrentUser,
-  );
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
-  yield takeEvery(ACTIONS.COLONY_SUBSCRIBE, colonySubscribe);
   yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
   yield takeEvery(ACTIONS.COLONY_TOKEN_BALANCE_FETCH, colonyTokenBalanceFetch);
   /*
