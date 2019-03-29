@@ -10,7 +10,7 @@ import { Redirect } from 'react-router';
 import type { ColonyType, DomainType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useFeatureFlags } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -22,8 +22,8 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyFetcher, domainsFetcher } from '../../fetchers';
-import { canAdminister, canCreateTask } from '../../../users/selectors';
-import { isInRecoveryMode } from '../../selectors';
+import { canAdminister, canCreateTask } from '../../../users/checks';
+import { isInRecoveryMode } from '../../checks';
 
 import ColonyMeta from './ColonyMeta';
 
@@ -105,7 +105,6 @@ const ColonyHome = ({
     params: { ensName },
   },
 }: Props) => {
-  const { given } = useFeatureFlags();
   const [filterOption, setFilterOption] = useState('all');
   /*
    * TODO Replace with actual filtering logic
@@ -172,8 +171,7 @@ const ColonyHome = ({
         <ColonyMeta
           colony={colony}
           canAdminister={
-            !given(colony, isInRecoveryMode) &&
-            given(permissions, canAdminister)
+            !isInRecoveryMode(colony) && canAdminister(permissions)
           }
         />
       </aside>
@@ -199,7 +197,7 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        {given(permissions, canCreateTask) && (
+        {canCreateTask(permissions) && (
           <ActionButton
             appearance={{ theme: 'primary', size: 'large' }}
             error={ACTIONS.TASK_CREATE_ERROR}
@@ -208,7 +206,7 @@ const ColonyHome = ({
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
             values={{ colonyENSName: ensName }}
-            disabled={given(colony, isInRecoveryMode)}
+            disabled={isInRecoveryMode(colony)}
           />
         )}
         <ul className={styles.domainsFilters}>
@@ -236,7 +234,7 @@ const ColonyHome = ({
           ))}
         </ul>
       </aside>
-      {given(colony, isInRecoveryMode) && <RecoveryModeAlert />}
+      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
     </div>
   );
 };
