@@ -14,7 +14,7 @@ import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { useToken } from '../../../dashboard/hooks';
-import { tokenIsETH } from '../../../../immutable/utils';
+import { tokenIsETH } from '../../../dashboard/checks';
 
 import styles from './TokenEditDialog.css';
 

@@ -3,11 +3,12 @@
 // $FlowFixMe until hooks flow types
 import React, { useCallback, useMemo } from 'react';
 
-import Payout from './Payout.jsx';
-import { tokenIsETH } from '~immutable/utils';
-
 import type { TaskType, TokenType } from '~immutable';
 import type { $Pick } from '~types';
+
+import { tokenIsETH } from '../../checks';
+
+import Payout from './Payout.jsx';
 
 type Props = {|
   ...$Exact<$Pick<TaskType, {| payouts: *, reputation: * |}>>,

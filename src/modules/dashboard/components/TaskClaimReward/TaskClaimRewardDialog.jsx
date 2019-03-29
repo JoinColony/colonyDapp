@@ -16,7 +16,7 @@ import styles from './TaskClaimRewardDialog.css';
 import {
   getTaskPayoutNetworkFee,
   getTaskPayoutAmountMinusNetworkFee,
-} from '~immutable/utils';
+} from '../../checks';
 
 const MSG = defineMessages({
   yourRating: {

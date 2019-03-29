@@ -6,11 +6,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskType, UserType } from '~immutable';
 
-import { userDidClaimProfile } from '~immutable/utils';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { ACTIONS } from '~redux';
+
+import { hasRequestedToWork } from '../../checks';
+import { userDidClaimProfile } from '../../../users/checks';
 
 import styles from './TaskRequestWork.css';
 

@@ -13,7 +13,7 @@ import CopyableAddress from '~core/CopyableAddress';
 import {
   tokenIsETH,
   tokenBalanceIsNotPositive,
-} from '../../../../immutable/utils';
+} from '../../../dashboard/checks';
 
 import { useToken } from '../../../dashboard/hooks';
 

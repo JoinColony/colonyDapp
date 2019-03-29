@@ -10,12 +10,13 @@ import promiseListener from '../../../../createPromiseListener';
 import type { OpenDialog } from '~core/Dialog/types';
 import type { UserType } from '~immutable';
 
-import { userDidClaimProfile } from '~immutable/utils';
 import withDialog from '~core/Dialog/withDialog';
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { ACTIONS } from '~redux';
+
+import { userDidClaimProfile } from '../../../users/checks';
 
 import { ENTER } from './keyTypes';
 
