@@ -65,15 +65,19 @@ type Props = {|
 |};
 
 const Organizations = ({ ensName }: Props) => {
-  const { data: admins, isFetching: isFetchingAdmins } = useDataFetcher<
-    string[],
-  >(adminsFetcher, [ensName], [ensName]);
+  const { data: admins } = useDataFetcher<string[]>(
+    adminsFetcher,
+    [ensName],
+    [ensName],
+  );
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[],
-  >(domainsFetcher, [ensName], [ensName]);
+  const { data: domains } = useDataFetcher<DomainType[]>(
+    domainsFetcher,
+    [ensName],
+    [ensName],
+  );
 
-  if (!domains || isFetchingDomains || !admins || isFetchingAdmins) {
+  if (!domains || !admins) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 
