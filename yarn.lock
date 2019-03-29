@@ -8395,7 +8395,7 @@ ipld-dag-cbor@~0.13.0:
     multihashing-async "~0.5.1"
     traverse "~0.6.6"
 
-ipld-dag-pb@~0.14.11, ipld-dag-pb@~0.14.6:
+ipld-dag-pb@^0.14.11, ipld-dag-pb@~0.14.11, ipld-dag-pb@~0.14.6:
   version "0.14.11"
   resolved "https://registry.yarnpkg.com/ipld-dag-pb/-/ipld-dag-pb-0.14.11.tgz#df235a301fec8443cf933387cebb38e42c22c2a8"
   integrity sha512-ja4FH6elDprVuJBkNObFlq7+9h1Q3aoQx5SSG/v3I9e7j19nwyuMhLJYwBhdv29LiqpyD2cEqNrJLm8lWn0lJg==
@@ -12659,11 +12659,12 @@ orbit-db-store@^2.5.3, "orbit-db-store@github:orbitdb/orbit-db-store", "orbit-db
     p-each-series "^1.0.0"
     readable-stream "~2.3.5"
 
-orbit-db@JoinColony/orbit-db#develop, orbit-db@^0.19.9:
+orbit-db@JoinColony/orbit-db#develop:
   version "0.19.9"
-  resolved "https://codeload.github.com/JoinColony/orbit-db/tar.gz/e014c2ba2093e60b7ccaba7fd24b52274b15b452"
+  resolved "https://codeload.github.com/JoinColony/orbit-db/tar.gz/86b12cdd048ea7d5fa5a615adf6a2126d3084794"
   dependencies:
     ipfs-pubsub-1on1 "~0.0.4"
+    ipld-dag-pb "^0.14.11"
     logplease "^1.2.14"
     multihashes "^0.4.12"
     orbit-db-cache "~0.2.4"
