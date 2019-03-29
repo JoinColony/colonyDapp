@@ -139,20 +139,6 @@ export type ColonyActionTypes = {|
     void,
     void,
   >,
-  COLONY_ADMINS_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_ADMINS_FETCH,
-    {| ensName: string |},
-    WithKeyPathDepth1,
-  >,
-  COLONY_ADMINS_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_ADMINS_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
-  COLONY_ADMINS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_ADMINS_FETCH_SUCCESS,
-    string[],
-    WithKeyPathDepth1,
-  >,
   COLONY_DOMAINS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_DOMAINS_FETCH,
     void,
@@ -271,6 +257,20 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
     void,
     void,
+  >,
+  COLONY_ROLES_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_ROLES_FETCH,
+    {| ensName: string |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_ROLES_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_ROLES_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  COLONY_ROLES_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_ROLES_FETCH_SUCCESS,
+    { admins: string[], founder: string },
+    WithKeyPathDepth1,
   >,
   COLONY_VERSION_UPGRADE: UniqueActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE,

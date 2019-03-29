@@ -9,31 +9,31 @@ import type { Action } from '~redux';
 import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { getColonyAdmins } from '../../../data/service/queries';
+import { getColonyRoles } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
-import { fetchAdmins } from '../actionCreators';
+import { fetchRoles } from '../actionCreators';
 
 import { getColonyContext } from './shared';
 
-function* colonyAdminsFetch({
+function* colonyRolesFetch({
   payload: { ensName },
   meta,
-}: Action<typeof ACTIONS.COLONY_ADMINS_FETCH>) {
+}: Action<typeof ACTIONS.COLONY_ROLES_FETCH>) {
   try {
     const context = yield* getColonyContext(ensName);
-    const admins = yield* executeQuery(context, getColonyAdmins);
+    const roles = yield* executeQuery(context, getColonyRoles);
     /*
      * Dispatch the success action.
      */
-    yield put<Action<typeof ACTIONS.COLONY_ADMINS_FETCH_SUCCESS>>({
-      type: ACTIONS.COLONY_ADMINS_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_ROLES_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_ROLES_FETCH_SUCCESS,
       meta,
-      payload: admins,
+      payload: roles,
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ADMINS_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_ROLES_FETCH_ERROR, error, meta);
   }
 }
 
@@ -65,7 +65,7 @@ function* colonyAdminAdd({
       meta,
     });
 
-    yield put(fetchAdmins(colonyENSName));
+    yield put(fetchRoles(colonyENSName));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
   } finally {
@@ -100,7 +100,7 @@ function* colonyAdminRemove({
       payload,
     });
 
-    yield put(fetchAdmins(colonyENSName));
+    yield put(fetchRoles(colonyENSName));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
   } finally {
@@ -108,8 +108,8 @@ function* colonyAdminRemove({
   }
 }
 
-export default function* adminsSagas(): Saga<void> {
-  yield takeEvery(ACTIONS.COLONY_ADMINS_FETCH, colonyAdminsFetch);
+export default function* rolesSagas(): Saga<void> {
+  yield takeEvery(ACTIONS.COLONY_ROLES_FETCH, colonyRolesFetch);
   yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, colonyAdminAdd);
   yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, colonyAdminRemove);
 }

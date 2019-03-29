@@ -11,7 +11,7 @@ import type { ENSName } from '~types';
 import type { AllColoniesRecord } from './AllColonies';
 import type { AllTokensRecord } from './AllTokens';
 import type { AllDomainsMap } from './AllDomains';
-import type { AllAdminsMap } from './AllAdmins';
+import type { AllRolesMap } from './AllRoles';
 
 import type { DataRecordType } from '../../Data';
 import type { TaskCommentRecordType } from '../../TaskComment';
@@ -21,7 +21,7 @@ import type { TaskReferenceRecordType } from '../../TaskReference';
 export * from './AllColonies';
 export * from './AllTokens';
 export * from './AllDomains';
-export * from './AllAdmins';
+export * from './AllRoles';
 
 export type TasksMap = ImmutableMapType<string, TaskRecordType>;
 export type AllTasksMap = ImmutableMapType<ENSName, TasksMap>;
@@ -34,7 +34,7 @@ export type TaskRefsMap = ImmutableMapType<
 >;
 
 export type DashboardStateProps = {|
-  allAdmins: AllAdminsMap,
+  allRoles: AllRolesMap,
   allColonies: AllColoniesRecord,
   allComments: AllCommentsMap,
   allDomains: AllDomainsMap,

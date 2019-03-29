@@ -1,5 +1,7 @@
 /* @flow */
 
+import findLast from 'lodash/findLast';
+
 export * from './withDataRecordMap';
 export { default as withDataRecordMap } from './withDataRecordMap';
 export { default as withDataRecord } from './withDataRecord';
@@ -14,3 +16,5 @@ export const reduceToLastState = (events: Array<*>, getKey, getValue) =>
       return map;
     }, new Map()),
   );
+
+export const getLast = findLast;

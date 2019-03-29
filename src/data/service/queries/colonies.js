@@ -12,7 +12,6 @@ import type {
 } from '../../types';
 
 import {
-  getEventLogs,
   getEvents,
   getLogsAndEvents,
   parseColonyFundsClaimedEvent,
@@ -33,7 +32,7 @@ import {
   colonyReducer,
   colonyTasksReducer,
 } from '../reducers';
-import { reduceToLastState } from '~utils/reducers';
+import { reduceToLastState, getLast } from '~utils/reducers';
 
 import { getColonyStore } from '../../stores';
 import { COLONY_EVENT_TYPES } from '../../constants';
@@ -66,7 +65,7 @@ export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
   R,
 >;
 
-export type ColonyContractAdminEventQuery<I: *, R: *> = Query<
+export type ColonyContractRolesEventQuery<I: *, R: *> = Query<
   {| ...ColonyClientContext, ...DDBContext |},
   I,
   R,
@@ -175,9 +174,9 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
   },
 });
 
-export const getColonyAdmins: ColonyContractAdminEventQuery<
+export const getColonyRoles: ColonyContractRolesEventQuery<
   void,
-  string[],
+  { admins: string[], founder: string },
 > = context => ({
   async execute() {
     const { colonyClient } = context;
@@ -189,38 +188,29 @@ export const getColonyAdmins: ColonyContractAdminEventQuery<
         events: [
           colonyClient.events.ColonyAdminRoleRemoved,
           colonyClient.events.ColonyAdminRoleSet,
+          colonyClient.events.ColonyFounderRoleSet,
         ],
       },
     );
-    const { eventName: ADDED } = colonyClient.events.ColonyAdminRoleSet;
+    const { eventName: ADMIN_ADDED } = colonyClient.events.ColonyAdminRoleSet;
+    const { eventName: FOUNDER_SET } = colonyClient.events.ColonyFounderRoleSet;
+
     const getKey = event => event.user;
     const getValue = event => event.eventName;
 
-    return reduceToLastState(events, getKey, getValue)
-      .filter(([, eventName]) => eventName === ADDED)
+    const admins = reduceToLastState(events, getKey, getValue)
+      .filter(([, eventName]) => eventName === ADMIN_ADDED)
       .map(([user]) => user);
-  },
-});
 
-export const getColonyFounder: ColonyContractEventQuery<void, ?string> = ({
-  colonyClient,
-}) => ({
-  async execute() {
-    const founderRoleSetLogs = await getEventLogs(
-      colonyClient,
-      {},
-      {
-        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
-        events: [colonyClient.events.ColonyFounderRoleSet],
-      },
+    const founderEvent = getLast(
+      events,
+      ({ eventName }) => eventName === FOUNDER_SET,
     );
 
-    // TODO colonyJS should support sorting
-    const [head] = founderRoleSetLogs
-      .sort((a, b) => a.blockNumber - b.blockNumber)
-      .reverse();
-
-    return head && head.newFounder;
+    return {
+      admins,
+      founder: founderEvent && founderEvent.newFounder,
+    };
   },
 });
 
@@ -238,10 +228,6 @@ export const getColony: ColonyQuery<
       colonyAddress,
       colonyENSName,
     });
-
-    // TODO: Include `founder` to ColonyType
-    // const getFounderQuery = getColonyFounder({ colonyClient });
-    // const founder = await getFounderQuery.execute();
 
     const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
 
