@@ -67,14 +67,14 @@ const TaskList = ({ tasks = [], filter, isLoading, emptyState }: Props) => {
               willRender={handleWillRender}
             />
           ))}
-          {!visibleTaskCount &&
-            (emptyState || (
-              <p>
-                <FormattedMessage {...MSG.noTasks} />
-              </p>
-            ))}
         </TableBody>
       </Table>
+      {!visibleTaskCount &&
+        (emptyState || (
+          <p>
+            <FormattedMessage {...MSG.noTasks} />
+          </p>
+        ))}
     </>
   );
 };

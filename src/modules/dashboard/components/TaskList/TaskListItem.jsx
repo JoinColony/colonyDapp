@@ -12,6 +12,8 @@ import type { TaskType } from '~immutable';
 
 import styles from './TaskListItem.css';
 
+import mockTasks from '../../../../__mocks__/mockTasks';
+
 const MSG = defineMessages({
   reputation: {
     id: 'dashboard.TaskList.TaskListItem.reputation',
@@ -31,13 +33,7 @@ type Props = {|
 
 const TaskListItem = ({ draftId, filter, willRender }: Props) => {
   // TODO: fetch from draftId
-  const task = {
-    worker: {},
-    payouts: [],
-    reputation: '',
-    title: '',
-    colonyENSName: '',
-  };
+  const task = mockTasks[0];
   const { worker, payouts, reputation, title, colonyENSName } = task;
 
   // $FlowFixMe will be correct once fetching actual task
