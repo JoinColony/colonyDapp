@@ -25,19 +25,31 @@ const ConnectedOnlyRoute = ({
      * Render props that are passed directly to the route Component
      */
     render={props => {
+      const {
+        match: { params },
+        location,
+      } = props;
       if (isConnected) {
-        const {
-          match: { params },
-        } = props;
+        // We disable the back link for locations we redirect to from /connect
         return hasNavigation ? (
-          <NavigationWrapper {...rest}>
+          <NavigationWrapper
+            {...rest}
+            hasBackLink={location.state && location.state.hasBackLink}
+          >
             <Component {...props} params={params} />
           </NavigationWrapper>
         ) : (
           <Component {...props} params={params} />
         );
       }
-      return <Redirect to={CONNECT_ROUTE} />;
+      return (
+        <Redirect
+          to={{
+            pathname: CONNECT_ROUTE,
+            state: { redirectTo: location },
+          }}
+        />
+      );
     }}
   />
 );

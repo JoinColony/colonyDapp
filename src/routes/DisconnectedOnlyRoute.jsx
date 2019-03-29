@@ -16,9 +16,19 @@ const DisconnectedOnlyRoute = ({
 }) => (
   <Route
     {...rest}
-    render={props =>
-      isConnected ? <Redirect to={DASHBOARD_ROUTE} /> : <Component {...props} />
-    }
+    render={props => {
+      if (isConnected) {
+        const redirectTo =
+          props.location.state && props.location.state.redirectTo;
+        const location = {
+          pathname: DASHBOARD_ROUTE,
+          ...redirectTo,
+          state: { hasBackLink: false },
+        };
+        return <Redirect to={location} />;
+      }
+      return <Component {...props} />;
+    }}
   />
 );
 
