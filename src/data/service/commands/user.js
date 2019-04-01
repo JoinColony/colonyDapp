@@ -304,11 +304,17 @@ export const subscribeToColony: UserMetadataCommand<
 
 export const unsubscribeToColony: UserMetadataCommand<
   UnsubscribeToColonyCommandArgs,
-  EventStore,
-> = ({ ddb, metadata }) => ({
+  ?string,
+> = context => ({
   async execute(args) {
+    const { ddb, metadata } = context;
+    const { execute } = getUserColonies(context);
+    const colonies = await execute();
+    if (!colonies.some(address => address === args.address)) {
+      return null;
+    }
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
-    return userMetadataStore;
+    return args.address;
   },
 });
