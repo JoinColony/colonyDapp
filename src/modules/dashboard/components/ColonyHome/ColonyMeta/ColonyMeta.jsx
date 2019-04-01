@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
-import { useSelector } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 
 import Heading from '~core/Heading';
 import ColonyAvatar from '~core/ColonyAvatar';
@@ -12,13 +12,11 @@ import Icon from '~core/Icon';
 import Link from '~core/Link';
 import UserAvatarFactory from '~core/UserAvatar';
 
-import { colonyAdminsSelector } from '../../../selectors';
+import { rolesFetcher } from '../../../fetchers';
 
 import styles from './ColonyMeta.css';
 
-import type { ColonyType } from '~immutable';
-
-import mockColonyFounders from '../__datamocks__/mockColonyFounders';
+import type { ColonyType, RolesType } from '~immutable';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -29,9 +27,9 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.guidelineLabel',
     defaultMessage: 'Contribute Guidelines',
   },
-  foundersLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.foundersLabel',
-    defaultMessage: 'Colony Founders',
+  founderLabel: {
+    id: 'dashboard.ColonyHome.ColonyMeta.founderLabel',
+    defaultMessage: 'Colony Founder',
   },
   adminsLabel: {
     id: 'dashboard.ColonyHome.ColonyMeta.adminsLabel',
@@ -50,10 +48,19 @@ type Props = {|
   canAdminister: boolean,
 |};
 
-const ColonyMeta = ({ colony, canAdminister }: Props) => {
-  const admins = useSelector(colonyAdminsSelector, [colony.ensName]);
+const ColonyMeta = ({
+  colony: { description, ensName, guideline, name, website },
+  colony,
+  canAdminister,
+}: Props) => {
+  const { data: roles } = useDataFetcher<RolesType>(
+    rolesFetcher,
+    [ensName],
+    [ensName],
+  );
 
-  const { description, ensName, guideline, name, website } = colony;
+  const { admins, founder } = roles || {};
+
   return (
     <div>
       <ColonyAvatar
@@ -104,20 +111,17 @@ const ColonyMeta = ({ colony, canAdminister }: Props) => {
           </a>
         </section>
       )}
-      {mockColonyFounders.length && (
+      {founder && (
         <section className={styles.dynamicSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.foundersLabel}
+            text={MSG.founderLabel}
           />
-          {/* This is likely going to look like the admins map */}
-          {mockColonyFounders.map((founderAdress: string) => (
-            <UserAvatar
-              key={`founder_${founderAdress}`}
-              address={founderAdress}
-              className={styles.userAvatar}
-            />
-          ))}
+          <UserAvatar
+            key={`founder_${founder}`}
+            address={founder}
+            className={styles.userAvatar}
+          />
         </section>
       )}
       {admins && admins.length ? (

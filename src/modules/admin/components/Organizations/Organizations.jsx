@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { ENSName } from '~types';
-import type { DomainType } from '~immutable';
+import type { DomainType, RolesType } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher } from '~utils/hooks';
@@ -12,7 +12,7 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { adminsFetcher, domainsFetcher } from '../../../dashboard/fetchers';
+import { rolesFetcher, domainsFetcher } from '../../../dashboard/fetchers';
 
 import UserList from '../UserList';
 import DomainList from '../DomainList';
@@ -65,8 +65,8 @@ type Props = {|
 |};
 
 const Organizations = ({ ensName }: Props) => {
-  const { data: admins } = useDataFetcher<string[]>(
-    adminsFetcher,
+  const { data: roles } = useDataFetcher<RolesType>(
+    rolesFetcher,
     [ensName],
     [ensName],
   );
@@ -77,10 +77,11 @@ const Organizations = ({ ensName }: Props) => {
     [ensName],
   );
 
-  if (!domains || !admins) {
+  if (!domains || !roles) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 
+  const { admins } = roles;
   return (
     <div className={styles.main}>
       <Tabs>
