@@ -100,17 +100,6 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
     {| comments: $ElementType<Event<'COMMENT_POSTED'>, 'payload'>[] |}, // todo use constant
   >,
-  TASK_FETCH_IDS_FOR_CURRENT_USER: ActionType<
-    typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER,
-  >,
-  TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR,
-    void,
-  >,
-  TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS,
-    string[],
-  >,
   TASK_FINALIZE: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE,
     {| amountPaid: number, ...TaskProps<{ worker: * }> |},

@@ -15,7 +15,6 @@ import {
   taskSelector,
   taskStorePropsSelector,
 } from '../selectors';
-import { getUserMetadataStoreContext } from './shared';
 
 import {
   assignWorker,
@@ -32,15 +31,15 @@ import {
   setTaskPayout,
   setTaskSkill,
   setTaskTitle,
-  subscribeToTask,
   unassignWorker,
 } from '../../../data/service/commands';
 import {
   getColonyTasks,
   getTask,
   getTaskComments,
-  getUserTasks,
 } from '../../../data/service/queries';
+
+import { subscribeToTask } from '../../users/actionCreators';
 
 function* getColonyStoreContext(colonyENSName: string): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
@@ -111,7 +110,6 @@ function* taskCreate({
 }: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
   try {
     const colonyContext = yield call(getColonyStoreContext, colonyENSName);
-    const metadataContext = yield call(getUserMetadataStoreContext);
     const { taskStore, commentsStore, draftId } = yield* executeCommand(
       colonyContext,
       createTask,
@@ -119,7 +117,8 @@ function* taskCreate({
         creator: colonyContext.wallet.address,
       },
     );
-    yield* executeCommand(metadataContext, subscribeToTask, { draftId });
+
+    yield put(subscribeToTask(draftId));
 
     yield put<Action<typeof ACTIONS.TASK_CREATE_SUCCESS>>({
       type: ACTIONS.TASK_CREATE_SUCCESS,
@@ -580,19 +579,6 @@ function* taskCommentAdd({
   }
 }
 
-function* taskFetchIdsForCurrentUser(): Saga<*> {
-  try {
-    const context = yield call(getUserMetadataStoreContext);
-    const tasks = yield* executeQuery(getUserTasks, context);
-    yield put<Action<typeof ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS>>({
-      type: ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS,
-      payload: tasks,
-    });
-  } catch (error) {
-    yield putError(ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR, error);
-  }
-}
-
 export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskAssign);
   yield takeEvery(ACTIONS.TASK_CANCEL, taskCancel);
@@ -601,10 +587,6 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
-  yield takeEvery(
-    ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER,
-    taskFetchIdsForCurrentUser,
-  );
   yield takeEvery(ACTIONS.TASK_FETCH_ALL_FOR_COLONY, taskFetchAllForColony);
   yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskFetchComments);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);

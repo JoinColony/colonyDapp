@@ -13,6 +13,7 @@ import type {
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 import { getTokenClient } from '~utils/web3/contracts';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { reduceToLastState } from '~utils/reducers';
 
 import type {
   ColonyClientContext,
@@ -25,11 +26,7 @@ import type {
 } from '../../types';
 
 import { USER_EVENT_TYPES } from '../../constants';
-import {
-  getUserColoniesReducer,
-  getUserTasksReducer,
-  getUserTokensReducer,
-} from '../reducers';
+import { getUserTasksReducer, getUserTokensReducer } from '../reducers';
 import { getUserMetadataStore, getUserProfileStore } from '../../stores';
 
 const {
@@ -37,7 +34,6 @@ const {
   SUBSCRIBED_TO_TASK,
   TOKEN_ADDED,
   TOKEN_REMOVED,
-  UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
 
@@ -281,13 +277,11 @@ export const getUserColonies: UserMetadataQuery<void, *> = ({
 }) => ({
   async execute() {
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
-    return metadataStore
-      .all()
-      .filter(
-        ({ type }) =>
-          type === SUBSCRIBED_TO_COLONY || type === UNSUBSCRIBED_FROM_COLONY,
-      )
-      .reduce(getUserColoniesReducer, []);
+    const getKey = event => event.payload.address;
+    const getValue = event => event.type;
+    return reduceToLastState(metadataStore.all(), getKey, getValue)
+      .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
+      .map(([address]) => address);
   },
 });
 

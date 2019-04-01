@@ -23,25 +23,49 @@ import {
 import { ACTIONS } from '~redux';
 
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
-import { currentUserAddressSelector } from '../selectors';
+import {
+  currentUserAddressSelector,
+  currentUserMetadataSelector,
+} from '../selectors';
+
 import {
   updateTokens,
   createUserProfile,
   removeUserAvatar,
   setUserAvatar,
+  subscribeToColony,
+  subscribeToTask,
   updateUserProfile,
 } from '../../../data/service/commands/user';
 import {
   checkUsernameIsAvailable,
   getUserAvatar,
   getUserBalance,
+  getUserColonies,
   getUserColonyTransactions,
   getUserPermissions,
   getUserProfile,
+  getUserTasks,
   getUserTokens,
   getUserMetadataStoreAddress,
 } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
+
+function* getUserMetadataStoreContext(): Saga<*> {
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+  const wallet = yield* getContext(CONTEXT.WALLET);
+  const { metadataStoreAddress: userMetadataStoreAddress } = yield select(
+    currentUserMetadataSelector,
+  );
+  return {
+    ddb,
+    wallet,
+    metadata: {
+      userMetadataStoreAddress,
+      walletAddress: wallet.address,
+    },
+  };
+}
 
 function* userAvatarFetch({
   meta,
@@ -427,6 +451,64 @@ function* userTokensUpdate(
   }
 }
 
+function* userSubscribedColoniesFetch(): Saga<*> {
+  try {
+    const context = yield call(getUserMetadataStoreContext);
+    const colonies = yield* executeQuery(context, getUserColonies);
+    yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
+      payload: colonies,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS, error);
+  }
+}
+
+function* userColonySubscribe({
+  payload,
+}: Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE>): Saga<*> {
+  try {
+    const context = yield call(getUserMetadataStoreContext);
+    if (yield* executeCommand(context, subscribeToColony, payload)) {
+      yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
+        type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
+        payload,
+      });
+    }
+  } catch (error) {
+    yield putError(ACTIONS.USER_COLONY_SUBSCRIBE_ERROR, error);
+  }
+}
+
+function* userSubscribedTasksFetch(): Saga<*> {
+  try {
+    const context = yield call(getUserMetadataStoreContext);
+    const tasks = yield* executeQuery(getUserTasks, context);
+    yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
+      payload: tasks,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);
+  }
+}
+
+function* userTaskSubscribe({
+  payload,
+}: Action<typeof ACTIONS.USER_TASK_SUBSCRIBE>): Saga<*> {
+  try {
+    const context = yield call(getUserMetadataStoreContext);
+    if (yield* executeCommand(context, subscribeToTask, payload)) {
+      yield put<Action<typeof ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS>>({
+        type: ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS,
+        payload,
+      });
+    }
+  } catch (error) {
+    yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
@@ -434,6 +516,17 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeEvery(ACTIONS.USER_TOKENS_FETCH, userTokensFetch);
+  yield takeEvery(ACTIONS.USER_COLONY_SUBSCRIBE, userColonySubscribe);
+  yield takeEvery(
+    ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
+    userSubscribedTasksFetch,
+  );
+  yield takeEvery(ACTIONS.USER_TASK_SUBSCRIBE, userTaskSubscribe);
+  yield takeEvery(
+    ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+    userSubscribedColoniesFetch,
+  );
+
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,

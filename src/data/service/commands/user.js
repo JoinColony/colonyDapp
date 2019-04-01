@@ -2,16 +2,16 @@
 
 import type { OrbitDBAddress } from '~types';
 import type {
+  EventStore,
+  FeedStore,
+  ValidatedKVStore,
+} from '../../../lib/database/stores';
+import type {
   Command,
   ContextWithMetadata,
   IPFSContext,
   DDBContext,
 } from '../../types';
-import type {
-  EventStore,
-  FeedStore,
-  ValidatedKVStore,
-} from '../../../lib/database/stores';
 import type { UserProfileStoreValues } from '../../storeValuesTypes';
 
 import {
@@ -19,6 +19,8 @@ import {
   getUserProfileStore,
   getUserMetadataStore,
 } from '../../stores';
+
+import { USER_EVENT_TYPES } from '../../constants';
 
 import {
   createUserAddTokenEvent,
@@ -30,6 +32,10 @@ import {
   createUnsubscribeToTaskEvent,
 } from '../events';
 
+import { getUserTokensReducer } from '../reducers';
+
+import { getUserColonies, getUserTasks } from '../queries';
+
 import {
   UserUpdateTokensCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
@@ -37,9 +43,6 @@ import {
   SetUserAvatarCommandArgsSchema,
   UpdateUserProfileCommandArgsSchema,
 } from './schemas';
-
-import { getUserTokensReducer } from '../reducers';
-import { USER_EVENT_TYPES } from '../../constants';
 
 const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
 
@@ -250,44 +253,68 @@ export const markNotificationsAsRead: UserMetadataCommand<
 
 export const subscribeToTask: UserMetadataCommand<
   SubscribeToTaskCommandArgs,
-  EventStore,
-> = ({ ddb, metadata }) => ({
+  ?string,
+> = context => ({
   async execute(args) {
+    const { ddb, metadata } = context;
+    const { execute } = getUserTasks(context);
+    const tasks = await execute();
+    if (tasks.some(draftId => draftId === args.draftId)) {
+      return null;
+    }
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createSubscribeToTaskEvent(args));
-    return userMetadataStore;
+    return args.draftId;
   },
 });
 
 export const unsubscribeToTask: UserMetadataCommand<
   UnsubscribeToTaskCommandArgs,
-  EventStore,
-> = ({ ddb, metadata }) => ({
+  ?string,
+> = context => ({
   async execute(args) {
+    const { ddb, metadata } = context;
+    const { execute } = getUserTasks(context);
+    const tasks = await execute();
+    if (!tasks.some(draftId => draftId === args.draftId)) {
+      return null;
+    }
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToTaskEvent(args));
-    return userMetadataStore;
+    return args.draftId;
   },
 });
 
 export const subscribeToColony: UserMetadataCommand<
   SubscribeToColonyCommandArgs,
-  EventStore,
-> = ({ ddb, metadata }) => ({
+  ?string,
+> = context => ({
   async execute(args) {
+    const { ddb, metadata } = context;
+    const { execute } = getUserColonies(context);
+    const colonies = await execute();
+    if (colonies.some(address => address === args.address)) {
+      return null;
+    }
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createSubscribeToColonyEvent(args));
-    return userMetadataStore;
+    return args.address;
   },
 });
 
 export const unsubscribeToColony: UserMetadataCommand<
   UnsubscribeToColonyCommandArgs,
-  EventStore,
-> = ({ ddb, metadata }) => ({
+  ?string,
+> = context => ({
   async execute(args) {
+    const { ddb, metadata } = context;
+    const { execute } = getUserColonies(context);
+    const colonies = await execute();
+    if (!colonies.some(address => address === args.address)) {
+      return null;
+    }
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
-    return userMetadataStore;
+    return args.address;
   },
 });

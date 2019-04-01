@@ -11,9 +11,9 @@ import { withDataRecord } from '~utils/reducers';
 
 type State = DataRecordType<CurrentUserTasksType>;
 type Actions = {
-  TASK_FETCH_IDS_FOR_CURRENT_USER: *,
-  TASK_FETCH_IDS_FOR_CURRENT_USER_ERROR: *,
-  TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS: *,
+  USER_SUBSCRIBED_TASKS_FETCH: *,
+  USER_SUBSCRIBED_TASKS_FETCH_ERROR: *,
+  USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: *,
 };
 
 // TODO in #755 (user logout) unset this state
@@ -22,7 +22,7 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
   action,
 ) => {
   switch (action.type) {
-    case ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER_SUCCESS: {
+    case ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: {
       const record = ImmutableSet(action.payload);
       return state.merge({ error: undefined, record, isFetching: false });
     }
@@ -32,5 +32,5 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
 };
 
 export default withDataRecord<State, Actions>(
-  ACTIONS.TASK_FETCH_IDS_FOR_CURRENT_USER,
+  ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
 )(currentUserTasksReducer);
