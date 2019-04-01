@@ -50,6 +50,7 @@ import {
   getUserMetadataStoreAddress,
 } from '../../../data/service/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
+import { userFetch as userFetchActionCreator } from '../actionCreators';
 
 function* getUserMetadataStoreContext(): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
@@ -130,13 +131,7 @@ function* userByUsernameFetch({
       ensCache.constructor.getFullDomain('user', username),
       networkClient,
     );
-    // Construct meta here, as we don't have it yet when we call the action creator
-    const meta = { keyPath: [address] };
-    yield call(userFetch, {
-      type: ACTIONS.USER_FETCH,
-      meta,
-      payload: { address },
-    });
+    yield put(userFetchActionCreator(address));
   } catch (error) {
     yield putError(ACTIONS.USER_FETCH_ERROR, error);
   }
