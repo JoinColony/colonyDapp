@@ -11,10 +11,16 @@ const enhanced = compose(
   connect((state: Object) => ({
     activities: currentUserActivitiesSelector(state),
   })),
+  /*
+   * @TODO Introduce handled logic
+   */
+  // withProps(({ activities }) => ({
+  //   hasUnreadActivities: !!(
+  //     activities && activities.find(activity => !activity.handled)
+  //   ),
+  // })),
   withProps(({ activities }) => ({
-    hasUnreadActivities: !!(
-      activities && activities.find(activity => !activity.handled)
-    ),
+    hasUnreadActivities: !!(activities && activities.size > 0),
   })),
 );
 
