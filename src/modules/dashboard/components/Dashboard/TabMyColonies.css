@@ -3,6 +3,6 @@
   line-height: 2em;
 }
 
-.coloniesContainer {
-  margin-top: 40px;
+.createColonyLink {
+  color: var(--sky-blue);
 }

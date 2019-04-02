@@ -75,3 +75,11 @@ export const subscribeToTask = (
   type: ACTIONS.USER_TASK_SUBSCRIBE,
   payload: { draftId },
 });
+
+export const currentUserFetchTasks = () => ({
+  type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
+});
+
+export const currentUserFetchColonies = () => ({
+  type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+});

@@ -3,7 +3,7 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -15,7 +15,6 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
 import Heading from '~core/Heading';
-import ColonyGrid from '~dashboard/ColonyGrid';
 import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -28,9 +27,6 @@ import { isInRecoveryMode } from '../../checks';
 import ColonyMeta from './ColonyMeta';
 
 import styles from './ColonyHome.css';
-
-import mockTasks from '../../../../__mocks__/mockTasks';
-import mockColonies from '../../../../__mocks__/mockColonies';
 
 const MSG = defineMessages({
   loadingText: {
@@ -67,8 +63,7 @@ const MSG = defineMessages({
   },
   emptyText: {
     id: 'dashboard.ColonyHome.emptyText',
-    defaultMessage: `It looks like you have not worked on any colonies.
-Why don't you check out one of these colonies for tasks that you can complete:`,
+    defaultMessage: `There are no tasks here.`,
   },
   newTaskButton: {
     id: 'dashboard.ColonyHome.newTaskButton',
@@ -147,11 +142,9 @@ const ColonyHome = ({
     value: 'all' | 'created' | 'assigned' | 'completed',
   ) => setFilterOption(value);
 
-  /*
-   * Tasks and colonies will most likely end up being passed in via props
-   */
-  const tasks = mockTasks;
-  const colonies = mockColonies;
+  // TODO: fetch colony task draftIds in #1034
+  const draftIds = [];
+
   const filterSelect = (
     <Select
       appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -183,15 +176,12 @@ const ColonyHome = ({
             </Tab>
           </TabList>
           <TabPanel>
-            {tasks && tasks.length ? (
-              <TaskList tasks={tasks} />
+            {draftIds && draftIds.length ? (
+              <TaskList draftIds={draftIds} />
             ) : (
-              <Fragment>
-                <p className={styles.noTasks}>
-                  <FormattedMessage {...MSG.emptyText} />
-                </p>
-                <ColonyGrid colonies={colonies} />
-              </Fragment>
+              <p className={styles.noTasks}>
+                <FormattedMessage {...MSG.emptyText} />
+              </p>
             )}
           </TabPanel>
         </Tabs>

@@ -11,11 +11,14 @@ import ExternalLink from '~core/ExternalLink';
 
 import { userDidClaimProfile } from '~immutable/utils';
 
+import type { MyTasksFilterOptionType } from './constants';
+
+import { MY_TASKS_FILTER } from './constants';
+
 import styles from './Dashboard.css';
 
 import TabMyTasks from './TabMyTasks.jsx';
-
-import mockTasks from '../../../../__mocks__/mockTasks';
+import TabMyColonies from './TabMyColonies.jsx';
 
 const MSG = defineMessages({
   tabMyTasks: {
@@ -24,7 +27,7 @@ const MSG = defineMessages({
   },
   tabMyColonies: {
     id: 'dashboard.Dashboard.tabMyColonies',
-    defaultMessage: 'My Colonies (coming soon)',
+    defaultMessage: 'My Colonies',
   },
   labelFilter: {
     id: 'dashboard.Dashboard.labelFilter',
@@ -69,25 +72,25 @@ type Props = {|
 |};
 
 type State = {|
-  filterOption: 'all' | 'created' | 'assigned' | 'completed',
+  filterOption: MyTasksFilterOptionType,
+  tabIndex: number,
 |};
 
 const filterOptions = [
-  { label: MSG.filterOptionAll, value: 'all' },
-  { label: MSG.filterOptionCreated, value: 'created' },
-  { label: MSG.filterOptionAssigned, value: 'assigned' },
-  { label: MSG.filterOptionCompleted, value: 'completed' },
+  { label: MSG.filterOptionAll, value: MY_TASKS_FILTER.ALL },
+  { label: MSG.filterOptionCreated, value: MY_TASKS_FILTER.CREATED },
+  { label: MSG.filterOptionAssigned, value: MY_TASKS_FILTER.ASSIGNED },
+  { label: MSG.filterOptionCompleted, value: MY_TASKS_FILTER.COMPLETED },
 ];
 
 class Dashboard extends Component<Props, State> {
   static displayName = 'dashboard.Dashboard';
 
   state = {
-    filterOption: 'all',
+    filterOption: MY_TASKS_FILTER.ALL,
+    tabIndex: 0,
   };
 
-  /* TODO: This has probably to be done using containers
-    depending on the way data is fed into this component */
   setFilterOption = (
     _: string,
     value: $PropertyType<State, 'filterOption'>,
@@ -97,10 +100,21 @@ class Dashboard extends Component<Props, State> {
     });
   };
 
+  setTabIndex = (tabIndex: number) => {
+    this.setState({
+      tabIndex,
+    });
+  };
+
   render() {
-    const { filterOption } = this.state;
-    const { currentUser } = this.props;
-    const filterSelect = (
+    const { filterOption, tabIndex } = this.state;
+    const {
+      currentUser,
+      currentUser: {
+        profile: { walletAddress },
+      },
+    } = this.props;
+    const filterSelect = tabIndex === 0 && (
       <Select
         appearance={{ alignOptions: 'right', theme: 'alt' }}
         connect={false}
@@ -116,27 +130,28 @@ class Dashboard extends Component<Props, State> {
     return (
       <div className={styles.layoutMain}>
         <main className={styles.content}>
-          <Tabs>
+          <Tabs onSelect={this.setTabIndex}>
             <TabList extra={filterSelect}>
               <Tab>
                 <FormattedMessage {...MSG.tabMyTasks} />
               </Tab>
-              <Tab disabled>
+              <Tab>
                 <FormattedMessage {...MSG.tabMyColonies} />
               </Tab>
             </TabList>
             <TabPanel>
               <TabMyTasks
-                tasks={mockTasks}
                 initialTask={{
                   title: MSG.initialTaskTitle,
-                  walletAddress: currentUser.profile.walletAddress,
+                  walletAddress,
                 }}
                 userClaimedProfile={userDidClaimProfile(currentUser)}
+                filterOption={filterOption}
+                currentUserAddress={walletAddress}
               />
             </TabPanel>
             <TabPanel>
-              <h2>This should not be visible</h2>
+              <TabMyColonies />
             </TabPanel>
           </Tabs>
         </main>

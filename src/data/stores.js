@@ -102,8 +102,8 @@ export const createTaskStore = (
       wallet,
       colonyAddress,
       colonyClient,
+      draftId,
       meta: {
-        draftId,
         colonyENSName,
       },
     }),

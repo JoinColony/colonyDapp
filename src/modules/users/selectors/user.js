@@ -21,6 +21,7 @@ import {
   USERS_USERS,
   USERS_CURRENT_USER_METADATA,
   USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
+  USERS_CURRENT_USER_TASKS,
 } from '../constants';
 
 /*
@@ -117,3 +118,6 @@ export const currentUserMetadataSelector = (state: RootStateRecord) =>
 
 export const currentUserColoniesSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES]);
+
+export const currentUserTasksSelector = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);

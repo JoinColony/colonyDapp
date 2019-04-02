@@ -8,9 +8,11 @@ import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
 import Link from '~core/Link';
 
+import type { TaskType } from '~immutable';
+
 import styles from './TaskListItem.css';
 
-import type { TaskType } from '~immutable';
+import mockTasks from '../../../../__mocks__/mockTasks';
 
 const MSG = defineMessages({
   reputation: {
@@ -24,39 +26,52 @@ const UserAvatar = UserAvatarFactory();
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {|
-  task: TaskType,
+  draftId: string,
+  filter?: (task: TaskType) => boolean,
+  willRender: (draftId: string, willRender: boolean) => void,
 |};
 
-const TaskListItem = ({
-  task: { worker, draftId, payouts, reputation, title, colonyENSName },
-}: Props) => (
-  <TableRow>
-    <TableCell className={styles.taskDetails}>
-      <Link
-        title={title}
-        className={styles.taskDetailsTitle}
-        to={`/colony/${colonyENSName}/task/${draftId}`}
-        text={title}
-      />
-      {reputation && (
-        <span className={styles.taskDetailsReputation}>
-          <FormattedMessage
-            {...MSG.reputation}
-            values={{ reputation: reputation.toString() }}
-          />
-        </span>
-      )}
-    </TableCell>
-    <TableCell className={styles.taskPayouts}>
-      <PayoutsList payouts={payouts} nativeToken="CLNY" />
-    </TableCell>
-    <TableCell className={styles.userAvatar}>
-      {worker && worker.address ? (
-        <UserAvatar size="xs" address={worker.address} />
-      ) : null}
-    </TableCell>
-  </TableRow>
-);
+const TaskListItem = ({ draftId, filter, willRender }: Props) => {
+  // TODO: fetch from draftId
+  const task = mockTasks[0];
+  const { worker, payouts, reputation, title, colonyENSName } = task;
+
+  // $FlowFixMe will be correct once fetching actual task
+  if (filter && !filter(task)) {
+    willRender(draftId, false);
+    return null;
+  }
+  willRender(draftId, true);
+
+  return (
+    <TableRow>
+      <TableCell className={styles.taskDetails}>
+        <Link
+          title={title}
+          className={styles.taskDetailsTitle}
+          to={`/colony/${colonyENSName}/task/${draftId}`}
+          text={title}
+        />
+        {reputation && (
+          <span className={styles.taskDetailsReputation}>
+            <FormattedMessage
+              {...MSG.reputation}
+              values={{ reputation: reputation.toString() }}
+            />
+          </span>
+        )}
+      </TableCell>
+      <TableCell className={styles.taskPayouts}>
+        <PayoutsList payouts={payouts} nativeToken="CLNY" />
+      </TableCell>
+      <TableCell className={styles.userAvatar}>
+        {worker && worker.address ? (
+          <UserAvatar size="xs" address={worker.address} />
+        ) : null}
+      </TableCell>
+    </TableRow>
+  );
+};
 
 TaskListItem.displayName = displayName;
 

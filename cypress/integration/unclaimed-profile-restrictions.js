@@ -29,7 +29,7 @@ describe('Unclaimed Profile Restrictions', () => {
       .click();
   });
 
-  it('Tries to leave a comment on the first task', () => {
+  it.skip('Tries to leave a comment on the first task', () => {
     /*
      * Go to the first task in the dashboard list
      */

@@ -121,19 +121,6 @@ export default function* setupUserContext(
      */
     yield fork(setupContextDependentSagas);
 
-    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
-      type: ACTIONS.CURRENT_USER_CREATE,
-      payload: {
-        balance,
-        profileData,
-        walletAddress,
-      },
-      meta: {
-        ...meta,
-        keyPath: [walletAddress],
-      },
-    });
-
     /*
      * Attempt to get the user metadata.
      */
@@ -148,6 +135,19 @@ export default function* setupUserContext(
       // It's ok if the user store doesn't exist (yet)
       log.warn(error);
     }
+
+    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
+      type: ACTIONS.CURRENT_USER_CREATE,
+      payload: {
+        balance,
+        profileData,
+        walletAddress,
+      },
+      meta: {
+        ...meta,
+        keyPath: [walletAddress],
+      },
+    });
 
     yield call(setupOnBeforeUnload);
   } catch (error) {
