@@ -40,6 +40,8 @@ const config = {
       {},
       {
         '~context': path.resolve(__dirname, 'src/context'),
+        '~lib': path.resolve(__dirname, 'src/lib'),
+        '~data': path.resolve(__dirname, 'src/data'),
         '~redux': path.resolve(__dirname, 'src/redux'),
         '~routes': path.resolve(__dirname, 'src/routes'),
         '~utils': path.resolve(__dirname, 'src/utils/'),
