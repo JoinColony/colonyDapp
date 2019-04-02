@@ -16,6 +16,8 @@ import styles from './TaskSkills.css';
 
 import taskSkills from './taskSkillsTree';
 
+const taskSkillsList = Array(...taskSkills);
+
 const MSG = defineMessages({
   title: {
     id: 'dashboard.TaskSkills.title',
@@ -70,12 +72,11 @@ class TaskSkills extends Component<Props> {
 
   render() {
     const { isTaskCreator, skillId } = this.props;
-    const list = Array(...taskSkills);
     return (
       <div className={styles.main}>
         {isTaskCreator && (
           <ItemsList
-            list={list}
+            list={taskSkillsList}
             handleSetItem={this.handleSetSkill}
             name="taskSkills"
             connect={false}
