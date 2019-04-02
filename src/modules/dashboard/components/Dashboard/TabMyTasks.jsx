@@ -5,6 +5,7 @@ import React, { Fragment, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDataFetcher } from '~utils/hooks';
+import { addressEquals } from '~utils/strings';
 import { TASK_STATE } from '~immutable';
 
 import type { TaskType } from '~immutable';
@@ -13,8 +14,10 @@ import { SpinnerLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
 
 import type { InitialTaskType } from './InitialTask.jsx';
+import type { MyTasksFilterOptionType } from './constants';
 
 import InitialTask from './InitialTask.jsx';
+import { MY_TASKS_FILTER } from './constants';
 
 import { currentUserTasksFetcher } from '../../fetchers';
 
@@ -29,14 +32,14 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  currentUser: string,
-  filterOption: *,
+  currentUserAddress: string,
+  filterOption: MyTasksFilterOptionType,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
 |};
 
 const TabMyTasks = ({
-  currentUser,
+  currentUserAddress,
   filterOption,
   initialTask,
   userClaimedProfile,
@@ -50,22 +53,20 @@ const TabMyTasks = ({
   const filter = useCallback(
     ({ creator, worker, currentState }: TaskType) => {
       switch (filterOption) {
-        case 'created':
-          return creator.toLowerCase() === currentUser.toLowerCase();
+        case MY_TASKS_FILTER.CREATED:
+          return addressEquals(creator, currentUserAddress);
 
-        case 'assigned':
-          return (
-            worker && worker.address.toLowerCase() === currentUser.toLowerCase()
-          );
+        case MY_TASKS_FILTER.ASSIGNED:
+          return worker && addressEquals(worker.address, currentUserAddress);
 
-        case 'completed':
+        case MY_TASKS_FILTER.COMPLETED:
           return currentState === TASK_STATE.FINALIZED;
 
         default:
           return true;
       }
     },
-    [filterOption, currentUser],
+    [filterOption, currentUserAddress],
   );
 
   if (isFetchingTasks) return <SpinnerLoader />;
@@ -74,12 +75,12 @@ const TabMyTasks = ({
     return (
       <Fragment>
         <InitialTask task={initialTask} />
-        {tasks && tasks.length ? <TaskList tasks={tasks} /> : null}
+        {tasks && tasks.length ? <TaskList draftIds={tasks} /> : null}
       </Fragment>
     );
   }
   return tasks && tasks.length ? (
-    <TaskList tasks={tasks} filter={filter} />
+    <TaskList draftIds={tasks} filter={filter} />
   ) : (
     <Fragment>
       <p className={styles.emptyText}>

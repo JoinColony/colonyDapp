@@ -20,8 +20,6 @@ import {
   getUserMetadataStore,
 } from '../../stores';
 
-import { USER_EVENT_TYPES } from '../../constants';
-
 import {
   createUserAddTokenEvent,
   createUserRemoveTokenEvent,
@@ -32,9 +30,9 @@ import {
   createUnsubscribeToTaskEvent,
 } from '../events';
 
-import { getUserTokensReducer } from '../reducers';
-
 import { getUserColonies, getUserTasks } from '../queries';
+
+import { getUserTokenAddresses } from '../utils';
 
 import {
   UserUpdateTokensCommandArgsSchema,
@@ -45,8 +43,6 @@ import {
 } from './schemas';
 
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-
-const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
 
 type UserCommandMetadata = {|
   walletAddress: string,
@@ -201,12 +197,10 @@ export const updateTokens: UserMetadataCommand<
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
 
     // get existing tokens, plus ether so we don't add that
-    const currentTokens = await Promise.all(
-      userMetadataStore
-        .all()
-        .filter(({ type }) => type === TOKEN_ADDED || type === TOKEN_REMOVED)
-        .reduce(getUserTokensReducer, [ZERO_ADDRESS]),
-    );
+    const currentTokens = [
+      ZERO_ADDRESS,
+      ...getUserTokenAddresses(userMetadataStore),
+    ];
 
     // add new missing tokens to store
     await Promise.all(

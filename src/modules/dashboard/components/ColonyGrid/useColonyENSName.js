@@ -4,24 +4,25 @@
 import { useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
-import { colonyENSNameFetcher } from '../../fetchers';
+import { colonyENSNameSelector } from '../../selectors';
+import { fetchColonyENSName as fetchColonyENSNameActionCreator } from '../../actionCreators';
 
 import type { Address } from '~types';
 
 /*
  * PLEASE NOTE: this hook is temporary and should be removed once we can lookup
- * colonies by address (rather than ensName).
+ * colonies by address (rather than ensName) - #1032
  */
 
 const useColonyENSName = (address: Address) => {
   const dispatch = useDispatch();
   const fetchColonyENSName = useCallback(
-    () => dispatch(colonyENSNameFetcher.fetch(address)),
+    () => dispatch(fetchColonyENSNameActionCreator(address)),
     [address],
   );
   const mapState = useCallback(
     state => ({
-      ensName: colonyENSNameFetcher.select(state, { colonyAddress: address }),
+      ensName: colonyENSNameSelector(state, { colonyAddress: address }),
     }),
     [address],
   );

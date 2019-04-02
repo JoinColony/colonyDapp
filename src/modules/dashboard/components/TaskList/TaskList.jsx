@@ -21,14 +21,16 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  // Array of draftIds
-  tasks?: string[],
+  draftIds?: string[],
   filter?: (task: TaskType) => boolean,
   isLoading?: boolean,
   emptyState?: Node,
 |};
 
-const TaskList = ({ tasks = [], filter, isLoading, emptyState }: Props) => {
+const TaskList = ({ draftIds = [], filter, isLoading, emptyState }: Props) => {
+  // TODO: refactor this in the future to fetch tasks and perform filtering in
+  // this component, thus removing the need for this crazy hook stuff!
+
   // keep track of which items aren't rendering due to being filtered out
   const [taskVisibility, setTaskVisibility] = useState({});
   const handleWillRender = useCallback(
@@ -51,7 +53,7 @@ const TaskList = ({ tasks = [], filter, isLoading, emptyState }: Props) => {
   );
 
   // if the draftIds change, reset the state
-  useMemo(() => setTaskVisibility({}), [tasks]);
+  useMemo(() => setTaskVisibility({}), [draftIds]);
 
   if (isLoading) return <SpinnerLoader />;
 
@@ -59,7 +61,7 @@ const TaskList = ({ tasks = [], filter, isLoading, emptyState }: Props) => {
     <>
       <Table data-test="dashboardTaskList" scrollable>
         <TableBody>
-          {tasks.map(draftId => (
+          {draftIds.map(draftId => (
             <TaskListItem
               key={draftId}
               draftId={draftId}

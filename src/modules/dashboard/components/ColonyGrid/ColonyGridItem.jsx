@@ -21,7 +21,7 @@ type Props = {|
 |};
 
 const ColonyGridItem = ({ address }: Props) => {
-  // TODO: in the future we should just be able to lookup by address
+  // TODO: as of #1032 we can look up colony by address
   const ensName = useColonyENSName(address);
 
   // fetch colony with ensName we just got

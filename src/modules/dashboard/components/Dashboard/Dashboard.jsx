@@ -11,6 +11,10 @@ import ExternalLink from '~core/ExternalLink';
 
 import { userDidClaimProfile } from '~immutable/utils';
 
+import type { MyTasksFilterOptionType } from './constants';
+
+import { MY_TASKS_FILTER } from './constants';
+
 import styles from './Dashboard.css';
 
 import TabMyTasks from './TabMyTasks.jsx';
@@ -68,22 +72,22 @@ type Props = {|
 |};
 
 type State = {|
-  filterOption: 'all' | 'created' | 'assigned' | 'completed',
+  filterOption: MyTasksFilterOptionType,
   tabIndex: number,
 |};
 
 const filterOptions = [
-  { label: MSG.filterOptionAll, value: 'all' },
-  { label: MSG.filterOptionCreated, value: 'created' },
-  { label: MSG.filterOptionAssigned, value: 'assigned' },
-  { label: MSG.filterOptionCompleted, value: 'completed' },
+  { label: MSG.filterOptionAll, value: MY_TASKS_FILTER.ALL },
+  { label: MSG.filterOptionCreated, value: MY_TASKS_FILTER.CREATED },
+  { label: MSG.filterOptionAssigned, value: MY_TASKS_FILTER.ASSIGNED },
+  { label: MSG.filterOptionCompleted, value: MY_TASKS_FILTER.COMPLETED },
 ];
 
 class Dashboard extends Component<Props, State> {
   static displayName = 'dashboard.Dashboard';
 
   state = {
-    filterOption: 'all',
+    filterOption: MY_TASKS_FILTER.ALL,
     tabIndex: 0,
   };
 
@@ -107,7 +111,7 @@ class Dashboard extends Component<Props, State> {
     const {
       currentUser,
       currentUser: {
-        profile: { walletAddress: currentUserAddress },
+        profile: { walletAddress },
       },
     } = this.props;
     const filterSelect = tabIndex === 0 && (
@@ -139,15 +143,15 @@ class Dashboard extends Component<Props, State> {
               <TabMyTasks
                 initialTask={{
                   title: MSG.initialTaskTitle,
-                  walletAddress: currentUserAddress,
+                  walletAddress,
                 }}
                 userClaimedProfile={userDidClaimProfile(currentUser)}
                 filterOption={filterOption}
-                currentUser={currentUserAddress}
+                currentUserAddress={walletAddress}
               />
             </TabPanel>
             <TabPanel>
-              <TabMyColonies currentUser={currentUserAddress} />
+              <TabMyColonies />
             </TabPanel>
           </Tabs>
         </main>
