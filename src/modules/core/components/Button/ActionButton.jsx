@@ -2,76 +2,51 @@
 
 import type { ComponentType } from 'react';
 
-import React, { Component } from 'react';
+// $FlowFixMe
+import React, { useState } from 'react';
 
 import { log } from '~utils/debug';
+import { useAsyncFunction } from '~utils/hooks';
 import DefaultButton from '~core/Button';
-
-import promiseListener from '../../../../createPromiseListener';
-
-import type { AsyncFunction } from '../../../../createPromiseListener';
 
 // TODO if this object is sealed, there are unspecified props being used
 type Props = {
+  button?: ComponentType<*>,
+  error: string,
   submit: string,
   success: string,
-  error: string,
   values?: Object | (() => Object | Promise<Object>),
-  button?: ComponentType<*>,
+  willUnmountOnSuccess?: boolean,
 };
 
-type State = {|
-  loading: boolean,
-|};
+const ActionButton = ({
+  button,
+  error: reject,
+  submit: start,
+  success: resolve,
+  values,
+  willUnmountOnSuccess,
+  ...props
+}: Props) => {
+  const [loading, setLoading] = useState(false);
+  const asyncFunc = useAsyncFunction({ start, reject, resolve });
 
-class ActionButton extends Component<Props, State> {
-  asyncFunc: AsyncFunction<Object, void>;
-
-  constructor(props: Props) {
-    super(props);
-    const { submit, success, error } = props;
-    this.asyncFunc = promiseListener.createAsyncFunction({
-      start: submit,
-      resolve: success,
-      reject: error,
-    });
-  }
-
-  state = {
-    loading: false,
-  };
-
-  componentWillUnmount() {
-    this.asyncFunc.unsubscribe();
-  }
-
-  handleClick = async () => {
+  const handleClick = async () => {
+    setLoading(true);
     try {
-      const { values: valuesProp = {} } = this.props;
-      const values =
-        typeof valuesProp === 'function' ? await valuesProp() : valuesProp;
-      this.setState({ loading: true });
-      await this.asyncFunc.asyncFunction(values);
-      this.setState({ loading: false });
+      const asyncFuncValues =
+        typeof values == 'function' ? await values() : values;
+      await asyncFunc.current.asyncFunction(asyncFuncValues);
+      if (!willUnmountOnSuccess) setLoading(false);
     } catch (error) {
       log(error);
-      this.setState({ loading: false });
+      setLoading(false);
       // TODO: display error somewhere
     }
   };
 
-  render() {
-    const {
-      submit,
-      success,
-      error,
-      values,
-      button: Button = DefaultButton,
-      ...props
-    } = this.props;
-    const { loading } = this.state;
-    return <Button onClick={this.handleClick} loading={loading} {...props} />;
-  }
-}
+  const Button = button || DefaultButton;
+  return <Button onClick={handleClick} loading={loading} {...props} />;
+};
 
 export default ActionButton;

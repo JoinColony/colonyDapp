@@ -3,14 +3,17 @@
 import type { Collection } from 'immutable';
 import type { InputSelector } from 'reselect';
 
-import type { Action } from '~redux';
-import type { DataRecordType, RootStateRecord } from '~immutable';
-
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
+import type { Action } from '~redux';
+import type { DataRecordType, RootStateRecord } from '~immutable';
+import type { AsyncFunction } from '../../createPromiseListener';
+
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
+
+import promiseListener from '../../createPromiseListener';
 
 type DataFetcher = {|
   select: (
@@ -143,4 +146,30 @@ export const useFeatureFlags = (
     [...potentialSelectorArgs, ...dependantSelectorArgs],
   );
   return useMappedState(mapState);
+};
+
+export const useAsyncFunction = <P, R>({
+  start,
+  resolve,
+  reject,
+}: {|
+  start: string,
+  resolve: string,
+  reject: string,
+|}): { current: AsyncFunction<P, R> } => {
+  const ref = useRef();
+  useEffect(
+    () => {
+      ref.current = promiseListener.createAsyncFunction<P, R>({
+        start,
+        resolve,
+        reject,
+      });
+      return () => {
+        ref.current.unsubscribe();
+      };
+    },
+    [start, resolve, reject],
+  );
+  return ref;
 };

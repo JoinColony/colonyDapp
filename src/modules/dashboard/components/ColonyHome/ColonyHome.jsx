@@ -120,10 +120,7 @@ const ColonyHome = ({
     isFetching: isFetchingColony,
     error: colonyError,
   } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher<UserPermissionsType>(
+  const { data: permissions } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
     [ensName],
     [ensName],
@@ -199,13 +196,13 @@ const ColonyHome = ({
         {canCreateTask(permissions) && (
           <ActionButton
             appearance={{ theme: 'primary', size: 'large' }}
+            disabled={isInRecoveryMode(colony)}
             error={ACTIONS.TASK_CREATE_ERROR}
-            loading={isFetchingPermissions}
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
             values={{ colonyENSName: ensName }}
-            disabled={isInRecoveryMode(colony)}
+            willUnmountOnSuccess
           />
         )}
         <ul className={styles.domainsFilters}>
