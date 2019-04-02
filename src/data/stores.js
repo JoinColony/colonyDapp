@@ -4,6 +4,7 @@ import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client'
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { TaskDraftId } from '~immutable';
 
 import type { UserProfileStoreValues } from './storeValuesTypes';
 import type { DDB } from '../lib/database';
@@ -62,17 +63,20 @@ export const getTaskStore = (
   wallet: WalletObjectType,
 ) => async ({
   colonyAddress,
-  taskStoreAddress,
   colonyENSName,
+  draftId,
+  taskStoreAddress,
 }: {
   colonyAddress: Address,
-  taskStoreAddress: string | OrbitDBAddress,
   colonyENSName: ENSName,
+  draftId: TaskDraftId,
+  taskStoreAddress: string | OrbitDBAddress,
 }) =>
   ddb.getStore<EventStore>(taskStoreBlueprint, taskStoreAddress, {
     wallet,
     colonyAddress,
     colonyClient,
+    draftId,
     meta: {
       colonyENSName,
     },

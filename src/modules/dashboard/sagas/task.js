@@ -73,6 +73,7 @@ function* getTaskStoreContext(colonyENSName: string, draftId: string): Saga<*> {
     ...context,
     metadata: {
       ...metadata,
+      draftId,
       taskStoreAddress,
     },
   };
