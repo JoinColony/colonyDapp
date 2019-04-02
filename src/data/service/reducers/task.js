@@ -1,8 +1,8 @@
 /* @flow */
 
-import { TASK_EVENT_TYPES } from '../../constants';
+import type { EventReducer } from '~data/types';
 
-import type { EventReducer } from '../../types';
+import { TASK_EVENT_TYPES } from '~data/constants';
 
 const {
   COMMENT_STORE_CREATED,

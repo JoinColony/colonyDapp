@@ -9,7 +9,7 @@ import type {
   Event,
   Query,
   WalletContext,
-} from '../../types';
+} from '~data/types';
 
 import {
   getEvents,
@@ -30,8 +30,8 @@ import type {
 import { colonyReducer, colonyTasksReducer } from '../reducers';
 import { reduceToLastState, getLast } from '~utils/reducers';
 
-import { getColonyStore } from '../../stores';
-import { COLONY_EVENT_TYPES } from '../../constants';
+import { getColonyStore } from '~data/stores';
+import { COLONY_EVENT_TYPES } from '~data/constants';
 
 const {
   DOMAIN_CREATED,

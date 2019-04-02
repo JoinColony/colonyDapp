@@ -1,16 +1,16 @@
 /* @flow */
 
 import type { Address, ENSName } from '~types';
+import type { EventStore } from '~lib/database/stores';
 import type {
   ColonyClientContext,
   Command,
   ContextWithMetadata,
   DDBContext,
   WalletContext,
-} from '../../types';
-import type { EventStore } from '../../../lib/database/stores';
+} from '~data/types';
 
-import { getColonyStore, createColonyStore } from '../../stores';
+import { getColonyStore, createColonyStore } from '~data/stores';
 import {
   createColonyAvatarRemovedEvent,
   createColonyAvatarUploadedEvent,

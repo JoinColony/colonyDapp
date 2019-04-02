@@ -1,8 +1,8 @@
 /* @flow */
 
-import { USER_EVENT_TYPES } from '../../constants';
+import type { EventReducer } from '~data/types';
 
-import type { EventReducer } from '../../types';
+import { USER_EVENT_TYPES } from '~data/constants';
 
 const {
   SUBSCRIBED_TO_TASK,

@@ -8,11 +8,11 @@ import type {
   DDBContext,
   Query,
   WalletContext,
-} from '../../types';
+} from '~data/types';
 
-import { getTaskStore } from '../../stores';
 import { taskReducer } from '../reducers';
-import { TASK_EVENT_TYPES } from '../../constants';
+import { getTaskStore } from '~data/stores';
+import { TASK_EVENT_TYPES } from '~data/constants';
 
 export type TaskQueryContext = ContextWithMetadata<
   {|
