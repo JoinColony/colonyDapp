@@ -73,7 +73,7 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   {
     id: 2,
     title: MSG.tabTokens,
-    content: <Tokens tokens={colony.tokens} ensName={colony.ensName} />,
+    content: <Tokens tokens={colony.tokens} ensName={colony.colonyName} />,
   },
   {
     id: 3,

@@ -19,6 +19,7 @@ import {
   parseTaskPayoutClaimedEvent,
   parseUnclaimedTransferEvent,
 } from '~utils/web3/eventLogs';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import type {
   ColonyType,
@@ -234,7 +235,12 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
           colonyName: '',
           displayName: '',
           inRecoveryMode,
-          tokens: {},
+          tokens: {
+            // also include Ether
+            [ZERO_ADDRESS]: {
+              address: ZERO_ADDRESS,
+            },
+          },
         },
       );
   },

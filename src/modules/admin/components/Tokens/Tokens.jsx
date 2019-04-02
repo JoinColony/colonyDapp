@@ -22,6 +22,8 @@ import {
   colonyUnclaimedTransactionsFetcher,
 } from '../../fetchers';
 
+import { updateColonyTokens } from '../../actionCreators';
+
 import TokenList from './TokenList.jsx';
 
 import styles from './Tokens.css';
@@ -55,6 +57,7 @@ type Props = {|
 const handleEditTokens = (
   openDialog: *,
   dispatch: *,
+  ensName: *,
   tokens: *,
   transactions: *,
   unclaimedTransactions: *,
@@ -76,9 +79,7 @@ const handleEditTokens = (
   tokenEditDialog
     .afterClosed()
     .then(({ tokens: newTokens }) => {
-      // eslint-disable-next-line no-console
-      console.log(newTokens);
-      // dispatch(updateColonyTokens(newTokens));
+      dispatch(updateColonyTokens(ensName, newTokens));
     })
     .catch(() => {});
 };
@@ -123,11 +124,19 @@ const Tokens = ({
       handleEditTokens(
         openDialog,
         dispatch,
+        ensName,
         tokens,
         transactions,
         unclaimedTransactions,
       ),
-    [openDialog, dispatch, tokens, transactions, unclaimedTransactions],
+    [
+      openDialog,
+      dispatch,
+      ensName,
+      tokens,
+      transactions,
+      unclaimedTransactions,
+    ],
   );
   const mintTokens = useCallback(
     () => handleMintTokens(openDialog, dispatch, nativeToken),

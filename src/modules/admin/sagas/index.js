@@ -6,7 +6,12 @@ import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
-import { takeFrom, putError, executeQuery } from '~utils/saga/effects';
+import {
+  takeFrom,
+  putError,
+  executeCommand,
+  executeQuery,
+} from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
@@ -14,12 +19,15 @@ import {
   getColonyTransactions,
   getColonyUnclaimedTransactions,
 } from '../data/queries';
+import { updateTokenInfo } from '../../dashboard/data/commands';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
+import { fetchColony } from '../../dashboard/actionCreators';
+import { getColonyContext } from '../../dashboard/sagas/shared';
 
 function* colonyFetchTransactions({
   payload: { colonyAddress },
@@ -128,6 +136,22 @@ function* colonyClaimToken({
   }
 }
 
+function* colonyUpdateTokens({
+  payload: { colonyAddress, tokens },
+  meta,
+}: Action<typeof ACTIONS.COLONY_UPDATE_TOKENS>): Saga<void> {
+  try {
+    const context = yield* getColonyContext(colonyAddress);
+    yield* executeCommand(context, updateTokenInfo, {
+      tokens,
+    });
+    yield put(fetchColony(colonyAddress)); // TODO: just fetch tokens
+    yield put({ type: ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS, meta });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_UPDATE_TOKENS_ERROR, error, meta);
+  }
+}
+
 export default function* adminSagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_FETCH_TRANSACTIONS, colonyFetchTransactions);
   yield takeEvery(
@@ -135,4 +159,5 @@ export default function* adminSagas(): Saga<void> {
     colonyFetchUnclaimedTransactions,
   );
   yield takeEvery(ACTIONS.COLONY_CLAIM_TOKEN, colonyClaimToken);
+  yield takeEvery(ACTIONS.COLONY_UPDATE_TOKENS, colonyUpdateTokens);
 }

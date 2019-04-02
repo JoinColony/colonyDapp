@@ -23,6 +23,8 @@ import {
   executeCommand,
   executeQuery,
 } from '~utils/saga/effects';
+import { addressEquals } from '~utils/strings';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { getTokenClient } from '~utils/web3/contracts';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
@@ -546,13 +548,35 @@ function* colonyTokenBalanceFetch({
 }: Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const tokenClient = yield call(getTokenClient, tokenAddress, networkClient);
-    const { amount } = yield call(
-      [tokenClient.getBalanceOf, tokenClient.getBalanceOf.call],
-      { sourceAddress: colonyAddress },
-    );
-    // convert from Ethers BN
-    const balance = new BigNumber(amount.toString());
+    const {
+      adapter: { provider },
+    } = networkClient;
+    let balance;
+
+    // if ether, handle differently
+    if (addressEquals(tokenAddress, ZERO_ADDRESS)) {
+      const etherBalance = yield call(
+        [provider, provider.getBalance],
+        colonyAddress,
+      );
+
+      // convert from Ethers BN
+      balance = new BigNumber(etherBalance.toString());
+    } else {
+      const tokenClient = yield call(
+        getTokenClient,
+        tokenAddress,
+        networkClient,
+      );
+      const { amount } = yield call(
+        [tokenClient.getBalanceOf, tokenClient.getBalanceOf.call],
+        { sourceAddress: colonyAddress },
+      );
+
+      // convert from Ethers BN
+      balance = new BigNumber(amount.toString());
+    }
+
     yield put({
       type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
       payload: {

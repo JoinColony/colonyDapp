@@ -28,3 +28,12 @@ export const claimColonyToken = (
   type: ACTIONS.COLONY_CLAIM_TOKEN,
   payload: { colonyAddress, tokenAddress },
 });
+
+export const updateColonyTokens = (
+  colonyAddress: Address,
+  tokens: Address[],
+) => ({
+  type: ACTIONS.COLONY_UPDATE_TOKENS,
+  meta: { keyPath: [colonyAddress] },
+  payload: { colonyAddress, tokens },
+});
