@@ -396,7 +396,9 @@ function* taskSetDueDate({
 }: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(colonyENSName, draftId);
-    yield* executeCommand(context, setTaskDueDate, { dueDate });
+    yield* executeCommand(context, setTaskDueDate, {
+      dueDate: dueDate.getTime(),
+    });
     yield put<Action<typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS>>({
       type: ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
       payload: {
