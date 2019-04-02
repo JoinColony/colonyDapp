@@ -1,20 +1,7 @@
 /* @flow */
 
-import { createEventCreator } from '../../utils';
-import { TASK_EVENT_TYPES } from '../../constants';
-import {
-  CreateCommentPostedEventSchema,
-  CreateCommentStoreCreatedEventSchema,
-  CreateDomainSetEventSchema,
-  CreateDueDateSetEventSchema,
-  CreatePayoutSetEventSchema,
-  CreateSkillSetEventSchema,
-  CreateTaskCreatedEventSchema,
-  CreateTaskDescriptionSetEventSchema,
-  CreateTaskFinalizedEventSchema,
-  CreateTaskTitleSetEventSchema,
-  WorkerAssignmentEventSchema,
-} from './schemas';
+import { createEventCreator } from '~data/utils';
+import { TASK_EVENT_TYPES } from '~data/constants';
 
 const {
   COMMENT_POSTED,
@@ -37,53 +24,50 @@ const {
 
 export const createCommentStoreCreatedEvent = createEventCreator<
   typeof COMMENT_STORE_CREATED,
->(COMMENT_STORE_CREATED, CreateCommentStoreCreatedEventSchema);
+>(COMMENT_STORE_CREATED);
 
 export const createTaskDueDateSetEvent = createEventCreator<
   typeof DUE_DATE_SET,
->(DUE_DATE_SET, CreateDueDateSetEventSchema);
+>(DUE_DATE_SET);
 
 export const createTaskCreatedEvent = createEventCreator<typeof TASK_CREATED>(
   TASK_CREATED,
-  CreateTaskCreatedEventSchema,
 );
 
 export const createTaskDescriptionSetEvent = createEventCreator<
   typeof TASK_DESCRIPTION_SET,
->(TASK_DESCRIPTION_SET, CreateTaskDescriptionSetEventSchema);
+>(TASK_DESCRIPTION_SET);
 
 export const createTaskTitleSetEvent = createEventCreator<
   typeof TASK_TITLE_SET,
->(TASK_TITLE_SET, CreateTaskTitleSetEventSchema);
+>(TASK_TITLE_SET);
 
 export const createTaskSkillSetEvent = createEventCreator<typeof SKILL_SET>(
   SKILL_SET,
-  CreateSkillSetEventSchema,
 );
 
 export const createWorkInviteSentEvent = createEventCreator<
   typeof WORK_INVITE_SENT,
->(WORK_INVITE_SENT, WorkerAssignmentEventSchema);
+>(WORK_INVITE_SENT);
 
 export const createWorkRequestCreatedEvent = createEventCreator<
   typeof WORK_REQUEST_CREATED,
->(WORK_REQUEST_CREATED, WorkerAssignmentEventSchema);
+>(WORK_REQUEST_CREATED);
 
 export const createCommentPostedEvent = createEventCreator<
   typeof COMMENT_POSTED,
->(COMMENT_POSTED, CreateCommentPostedEventSchema);
+>(COMMENT_POSTED);
 
 export const createWorkerAssignedEvent = createEventCreator<
   typeof WORKER_ASSIGNED,
->(WORKER_ASSIGNED, WorkerAssignmentEventSchema);
+>(WORKER_ASSIGNED);
 
 export const createWorkerUnassignedEvent = createEventCreator<
   typeof WORKER_UNASSIGNED,
->(WORKER_UNASSIGNED, WorkerAssignmentEventSchema);
+>(WORKER_UNASSIGNED);
 
 export const createTaskPayoutSetEvent = createEventCreator<typeof PAYOUT_SET>(
   PAYOUT_SET,
-  CreatePayoutSetEventSchema,
 );
 
 export const createTaskCancelledEvent = createEventCreator<
@@ -96,9 +80,8 @@ export const createTaskClosedEvent = createEventCreator<typeof TASK_CLOSED>(
 
 export const createTaskFinalizedEvent = createEventCreator<
   typeof TASK_FINALIZED,
->(TASK_FINALIZED, CreateTaskFinalizedEventSchema);
+>(TASK_FINALIZED);
 
 export const createTaskDomainSetEvent = createEventCreator<typeof DOMAIN_SET>(
   DOMAIN_SET,
-  CreateDomainSetEventSchema,
 );

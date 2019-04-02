@@ -1,17 +1,7 @@
 /* @flow */
 
-import { createEventCreator } from '../../utils';
-import { COLONY_EVENT_TYPES } from '../../constants';
-import {
-  CreateColonyAvatarRemovedEventSchema,
-  CreateColonyAvatarUploadedEventSchema,
-  CreateColonyProfileCreatedEventSchema,
-  CreateColonyProfileUpdatedEventSchema,
-  CreateDomainCreatedEventSchema,
-  CreateTaskStoreRegisteredEventSchema,
-  CreateTaskStoreUnregisteredEventSchema,
-  CreateTokenInfoAddedEventSchema,
-} from './schemas';
+import { createEventCreator } from '~data/utils';
+import { COLONY_EVENT_TYPES } from '~data/constants';
 
 const {
   AVATAR_REMOVED,
@@ -26,32 +16,32 @@ const {
 
 export const createDomainCreatedEvent = createEventCreator<
   typeof DOMAIN_CREATED,
->(DOMAIN_CREATED, CreateDomainCreatedEventSchema);
+>(DOMAIN_CREATED);
 
 export const createTaskStoreRegisteredEvent = createEventCreator<
   typeof TASK_STORE_REGISTERED,
->(TASK_STORE_REGISTERED, CreateTaskStoreRegisteredEventSchema);
+>(TASK_STORE_REGISTERED);
 
 export const createTaskStoreUnregisteredEvent = createEventCreator<
   typeof TASK_STORE_UNREGISTERED,
->(TASK_STORE_UNREGISTERED, CreateTaskStoreUnregisteredEventSchema);
+>(TASK_STORE_UNREGISTERED);
 
 export const createColonyAvatarRemovedEvent = createEventCreator<
   typeof AVATAR_REMOVED,
->(AVATAR_REMOVED, CreateColonyAvatarRemovedEventSchema);
+>(AVATAR_REMOVED);
 
 export const createColonyAvatarUploadedEvent = createEventCreator<
   typeof AVATAR_UPLOADED,
->(AVATAR_UPLOADED, CreateColonyAvatarUploadedEventSchema);
+>(AVATAR_UPLOADED);
 
 export const createColonyProfileCreatedEvent = createEventCreator<
   typeof PROFILE_CREATED,
->(PROFILE_CREATED, CreateColonyProfileCreatedEventSchema);
+>(PROFILE_CREATED);
 
 export const createColonyProfileUpdatedEvent = createEventCreator<
   typeof PROFILE_UPDATED,
->(PROFILE_UPDATED, CreateColonyProfileUpdatedEventSchema);
+>(PROFILE_UPDATED);
 
 export const createTokenInfoAddedEvent = createEventCreator<
   typeof TOKEN_INFO_ADDED,
->(TOKEN_INFO_ADDED, CreateTokenInfoAddedEventSchema);
+>(TOKEN_INFO_ADDED);
