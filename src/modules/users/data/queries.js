@@ -1,6 +1,7 @@
 /* @flow */
 import { formatEther } from 'ethers/utils';
 import { ADMIN_ROLE, FOUNDER_ROLE } from '@colony/colony-js-client';
+import BigNumber from 'bn.js';
 
 import type { OrbitDBAddress } from '~types';
 
@@ -298,9 +299,11 @@ export const getUserTokens: UserTokensQuery<void, *> = ({
     const tokens = await Promise.all(
       getUserTokenAddresses(metadataStore).map(async address => {
         const tokenClient = await getTokenClient(address, networkClient);
-        const { amount: balance } = await tokenClient.getBalanceOf.call({
+        const { amount } = await tokenClient.getBalanceOf.call({
           sourceAddress: walletAddress,
         });
+        // convert from Ethers BN
+        const balance = new BigNumber(amount.toString());
         return { address, balance };
       }),
     );
@@ -309,7 +312,8 @@ export const getUserTokens: UserTokensQuery<void, *> = ({
     const etherBalance = await provider.getBalance(walletAddress);
     const etherToken = {
       address: ZERO_ADDRESS,
-      balance: etherBalance,
+      // convert from Ethers BN
+      balance: new BigNumber(etherBalance.toString()),
     };
 
     // return combined array

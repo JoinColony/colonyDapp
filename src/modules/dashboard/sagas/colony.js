@@ -14,6 +14,7 @@ import {
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 import nanoid from 'nanoid';
+import BigNumber from 'bn.js';
 
 import type { Action } from '~redux';
 
@@ -561,10 +562,12 @@ function* colonyTokenBalanceFetch({
   try {
     const networkClient = yield call(getNetworkClient);
     const tokenClient = yield call(getTokenClient, tokenAddress, networkClient);
-    const { amount: balance } = yield call(
+    const { amount } = yield call(
       [tokenClient.getBalanceOf, tokenClient.getBalanceOf.call],
       { sourceAddress: colonyAddress },
     );
+    // convert from Ethers BN
+    const balance = new BigNumber(amount.toString());
     yield put({
       type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
       payload: {
