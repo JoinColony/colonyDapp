@@ -100,9 +100,6 @@ class TaskDate extends Component<Props, State> {
       // TODO: handle this error properly / display it in some way
       console.error(error);
     }
-
-    /* eslint-disable-next-line no-console */
-    console.log(TaskDate.displayName, selectedDate);
   };
 
   /*

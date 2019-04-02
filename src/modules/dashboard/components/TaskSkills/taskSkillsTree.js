@@ -86,7 +86,6 @@ const taskSkills = List.of(
     name: 'Product Development',
     parent: 2,
   }),
-
   SkillRecord({
     id: 18,
     name: 'Research and Development',

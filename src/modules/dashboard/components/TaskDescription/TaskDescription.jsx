@@ -1,11 +1,16 @@
 /* @flow */
 
+import type { FormikProps } from 'formik';
+
+import { ContentState, EditorState } from 'draft-js';
+
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
 
-import { Form, MultiLineEdit } from '~core/Fields';
+import { MultiLineEdit, ActionForm } from '~core/Fields';
+import { ACTIONS } from '~redux';
 
 const MSG = defineMessages({
   placeholder: {
@@ -19,15 +24,42 @@ type Props = {|
   ...TaskProps<{ colonyENSName: *, draftId: *, description: * }>,
 |};
 
-const TaskDescription = ({ description, isTaskCreator }: Props) => (
-  // eslint-disable-next-line no-console
-  <Form onSubmit={console.log} initialValues={{ description }}>
-    <MultiLineEdit
-      name="description"
-      placeholder={MSG.placeholder}
-      readOnly={!isTaskCreator}
-    />
-  </Form>
+const TaskDescription = ({
+  description,
+  isTaskCreator,
+  colonyENSName,
+  draftId,
+}: Props) => (
+  <ActionForm
+    initialValues={{
+      description: EditorState.createWithContent(
+        ContentState.createFromText(description || ''),
+      ),
+    }}
+    submit={ACTIONS.TASK_SET_DESCRIPTION}
+    success={ACTIONS.TASK_SET_DESCRIPTION_SUCCESS}
+    error={ACTIONS.TASK_SET_DESCRIPTION_ERROR}
+    transform={(originalAction: *) => ({
+      ...originalAction,
+      payload: {
+        ...originalAction.payload,
+        description: originalAction.payload.description
+          .getCurrentContent()
+          .getPlainText(),
+        colonyENSName,
+        draftId,
+      },
+    })}
+  >
+    {({ submitForm }: FormikProps<*>) => (
+      <MultiLineEdit
+        name="description"
+        placeholder={MSG.placeholder}
+        readOnly={!isTaskCreator}
+        onEditorBlur={() => submitForm()}
+      />
+    )}
+  </ActionForm>
 );
 
 export default TaskDescription;

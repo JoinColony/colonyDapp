@@ -11,7 +11,7 @@ import Button, { ActionButton } from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { ACTIONS } from '~redux';
 
-import { hasRequestedToWork } from '../../checks';
+import { canRequestToWork, hasRequestedToWork } from '../../checks';
 import { userDidClaimProfile } from '../../../users/checks';
 
 import styles from './TaskRequestWork.css';
@@ -52,7 +52,7 @@ const TaskRequestWork = ({
       </p>
     );
 
-  if (userDidClaimProfile(currentUser))
+  if (userDidClaimProfile(currentUser) && canRequestToWork(task, address))
     return (
       <ActionButton
         text={MSG.requestWork}

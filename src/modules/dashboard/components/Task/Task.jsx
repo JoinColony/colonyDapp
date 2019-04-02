@@ -33,7 +33,6 @@ import TaskTitle from '~dashboard/TaskTitle';
 
 import {
   canBeCancelled,
-  canRequestToWork,
   isActive,
   isCreator,
   isFinalized,
@@ -261,8 +260,7 @@ const Task = ({
               )}
             </>
           )}
-          {/* Apply to work/display "submitted" if already done */}
-          {canRequestToWork(task, address) && (
+          {!isTaskCreator && (
             <TaskRequestWork currentUser={currentUser} task={task} />
           )}
           {/*

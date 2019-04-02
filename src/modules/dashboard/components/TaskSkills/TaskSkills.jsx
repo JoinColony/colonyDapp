@@ -80,6 +80,7 @@ class TaskSkills extends Component<Props> {
             name="taskSkills"
             connect={false}
             showArrow={false}
+            itemId={skillId}
           >
             <div className={styles.controls}>
               <Heading

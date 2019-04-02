@@ -1,15 +1,9 @@
 /* @flow */
 
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
-import { compose } from 'recompose';
 
-import type { UserType, TaskType, ColonyType, DataType } from '~immutable';
-
-import { withTask, withColony } from '../../hocs';
-import { withCurrentUser } from '../../../users/hocs';
-
-import { withImmutablePropsToJS } from '~utils/hoc';
+import type { UserType, TaskType } from '~immutable';
 
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
@@ -37,126 +31,100 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   task: TaskType,
   currentUser: UserType,
-  colony?: DataType<ColonyType>,
   cancel: () => void,
-};
+|};
 
-class TaskInviteDialog extends Component<Props> {
-  static displayName = 'dashboard.task.taskInviteDialog';
-
-  setPayload = (action: Object) => {
-    const {
-      task: { draftId },
-      currentUser,
-      /* This shouldn't throw an error since address is
-      indeed a property of shared */
-      // $FlowFixMe
-      colony: { address },
-    } = this.props;
-    return {
-      ...action,
-      payload: {
-        worker: currentUser,
-        draftId,
-        colonyAddress: address,
-      },
-    };
-  };
-
-  mounted = false;
-
-  render() {
-    const {
-      cancel,
-      task: { reputation, payouts },
-      currentUser,
-    } = this.props;
-    return (
-      <FullscreenDialog cancel={cancel}>
-        <ActionForm
-          initialValues={{ payouts: payouts || [], worker: currentUser }}
-          submit={ACTIONS.TASK_WORKER_ASSIGN}
-          success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
-          error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
-          setPayLoad={this.setPayload}
-        >
-          {({ status, isSubmitting }) => (
-            <Fragment>
-              <FormStatus status={status} />
-              <DialogBox>
-                <DialogSection appearance={{ border: 'bottom' }}>
+const TaskInviteDialog = ({
+  cancel,
+  task: { reputation, payouts, draftId, colonyENSName },
+  currentUser: {
+    profile: { walletAddress },
+  },
+  currentUser,
+}: Props) => (
+  <FullscreenDialog cancel={cancel}>
+    <ActionForm
+      initialValues={{ payouts: payouts || [], worker: currentUser }}
+      submit={ACTIONS.TASK_WORKER_ASSIGN}
+      success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
+      error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
+      transform={(originalAction: *) => ({
+        ...originalAction,
+        payload: {
+          worker: walletAddress,
+          draftId,
+          colonyENSName,
+        },
+      })}
+    >
+      {({ status, isSubmitting }) => (
+        <>
+          <FormStatus status={status} />
+          <DialogBox>
+            <DialogSection appearance={{ border: 'bottom' }}>
+              <Heading
+                appearance={{ size: 'medium' }}
+                text={MSG.titleAssignment}
+              />
+              {/* TODO supply nativeToken with a selector */}
+              <Assignment
+                nativeToken={{ address: '' }}
+                payouts={payouts}
+                pending
+                reputation={reputation}
+                showFunding={false}
+                worker={currentUser}
+              />
+            </DialogSection>
+            <DialogSection>
+              <div className={styles.taskEditContainer}>
+                <div className={styles.editor}>
                   <Heading
                     appearance={{ size: 'medium' }}
-                    text={MSG.titleAssignment}
+                    text={MSG.titleFunding}
                   />
-                  {/* TODO supply nativeToken with a selector */}
-                  <Assignment
-                    nativeToken={{ address: '' }}
-                    payouts={payouts}
-                    pending
-                    reputation={reputation}
-                    showFunding={false}
-                    worker={currentUser}
-                  />
-                </DialogSection>
-                <DialogSection>
-                  <div className={styles.taskEditContainer}>
-                    <div className={styles.editor}>
-                      <Heading
-                        appearance={{ size: 'medium' }}
-                        text={MSG.titleFunding}
-                      />
-                    </div>
-                    <div>
-                      {payouts &&
-                        payouts.map((payout, index) => {
-                          const { amount } = payout;
-                          const token = tokensMock.get(index - 1) || {};
-                          return (
-                            <Payout
-                              key={token.symbol}
-                              name={`payouts.${index}`}
-                              amount={amount}
-                              symbol={token.symbol}
-                              reputation={
-                                token.isNative ? reputation : undefined
-                              }
-                              editPayout={false}
-                            />
-                          );
-                        })}
-                    </div>
-                  </div>
-                </DialogSection>
-              </DialogBox>
-              <div className={styles.buttonContainer}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={{ id: 'button.decline' }}
-                  disabled={isSubmitting}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  text={{ id: 'button.accept' }}
-                  type="submit"
-                  loading={isSubmitting}
-                />
+                </div>
+                <div>
+                  {payouts &&
+                    payouts.map((payout, index) => {
+                      const { amount } = payout;
+                      const token = tokensMock.get(index - 1) || {};
+                      return (
+                        <Payout
+                          key={token.symbol}
+                          name={`payouts.${index}`}
+                          amount={amount}
+                          symbol={token.symbol}
+                          reputation={token.isNative ? reputation : undefined}
+                          editPayout={false}
+                        />
+                      );
+                    })}
+                </div>
               </div>
-            </Fragment>
-          )}
-        </ActionForm>
-      </FullscreenDialog>
-    );
-  }
-}
+            </DialogSection>
+          </DialogBox>
+          <div className={styles.buttonContainer}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={cancel}
+              text={{ id: 'button.decline' }}
+              disabled={isSubmitting}
+            />
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              text={{ id: 'button.accept' }}
+              type="submit"
+              loading={isSubmitting}
+            />
+          </div>
+        </>
+      )}
+    </ActionForm>
+  </FullscreenDialog>
+);
 
-export default compose(
-  withColony,
-  withTask,
-  withCurrentUser,
-  withImmutablePropsToJS,
-)(TaskInviteDialog);
+export default TaskInviteDialog;
