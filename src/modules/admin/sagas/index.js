@@ -13,7 +13,7 @@ import { ACTIONS } from '~redux';
 import {
   getColonyTransactions,
   getColonyUnclaimedTransactions,
-} from '../../../data/service/queries';
+} from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 import {

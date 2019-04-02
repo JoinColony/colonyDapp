@@ -28,11 +28,11 @@ import {
   createUnsubscribeToColonyEvent,
   createSubscribeToTaskEvent,
   createUnsubscribeToTaskEvent,
-} from '../events';
+} from './events';
 
-import { getUserColonies, getUserTasks } from '../queries';
+import { getUserColonies, getUserTasks } from './queries';
 
-import { getUserTokenAddresses } from '../utils';
+import { getUserTokenAddresses } from './utils';
 
 import {
   UserUpdateTokensCommandArgsSchema,
