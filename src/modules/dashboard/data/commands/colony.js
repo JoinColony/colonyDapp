@@ -20,6 +20,8 @@ import {
   createTokenInfoAddedEvent,
 } from '../events';
 
+import { getColony } from '../queries';
+
 import {
   CreateColonyProfileCommandArgsSchema,
   CreateDomainCommandArgsSchema,
@@ -170,6 +172,59 @@ export const addTokenInfo: ColonyCommand<
       metadata,
     );
     await colonyStore.append(tokenInfoAddedEvent);
+    await colonyStore.load();
+    return colonyStore;
+  },
+});
+
+export const updateTokenInfo: ColonyCommand<
+  {|
+    tokens: Address[],
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  async execute(args) {
+    const { tokens } = args;
+    const { tokens: currentTokenReferences } = await getColony({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
+    }).execute();
+    const currentTokens = Object.keys(currentTokenReferences || {});
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
+
+    // add new missing tokens to store
+    await Promise.all(
+      tokens
+        .filter(
+          token =>
+            !currentTokens.find(
+              currentToken =>
+                token.toLowerCase() === currentToken.toLowerCase(),
+            ),
+        )
+        .map(address =>
+          colonyStore.append(createTokenInfoAddedEvent({ address })),
+        ),
+    );
+
+    // // remove tokens from store which have been removed by user
+    // await Promise.all(
+    //   currentTokens
+    //     .filter(
+    //       currentToken =>
+    //         !tokens.find(
+    //           token => token.toLowerCase() === currentToken.toLowerCase(),
+    //         ),
+    //     )
+    //     .map(address =>
+    //       colonyStore.append(createTokenInfoRemovedEvent({ address })),
+    //     ),
+    // );
+
     await colonyStore.load();
     return colonyStore;
   },

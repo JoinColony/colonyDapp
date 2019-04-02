@@ -290,4 +290,17 @@ export type ColonyActionTypes = {|
     TokenReferenceType,
     WithKeyPathDepth2,
   >,
+  COLONY_UPDATE_TOKENS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_UPDATE_TOKENS,
+    {| tokens: string[] |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_UPDATE_TOKENS_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_UPDATE_TOKENS_ERROR,
+    WithKeyPathDepth1,
+  >,
+  COLONY_UPDATE_TOKENS_SUCCESS: ActionTypeWithMeta<
+    typeof ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS,
+    WithKeyPathDepth1,
+  >,
 |};
