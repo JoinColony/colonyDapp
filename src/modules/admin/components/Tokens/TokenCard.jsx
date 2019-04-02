@@ -25,9 +25,12 @@ type Props = {|
 
 const displayName = 'admin.Tokens.TokenCard';
 
-const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
+const TokenCard = ({
+  token: { address, isNative, balance, icon },
+  token: tokenReference,
+}: Props) => {
   const token = useToken(address);
-  const { icon, name, symbol } = token || {};
+  const { name, symbol } = token || {};
   return token ? (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
@@ -48,7 +51,7 @@ const TokenCard = ({ token: { address, isNative, balance } }: Props) => {
       </div>
       <div
         className={
-          tokenBalanceIsNotPositive(token)
+          tokenBalanceIsNotPositive(tokenReference)
             ? styles.balanceNotPositive
             : styles.balanceContent
         }

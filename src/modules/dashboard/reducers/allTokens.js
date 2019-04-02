@@ -27,7 +27,6 @@ const tokensReducer: ReducerType<
   AllTokensMap,
   {|
     TOKEN_INFO_FETCH_SUCCESS: *,
-    COLONY_FETCH_SUCCESS: *,
   |},
 > = (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -43,16 +42,6 @@ const tokensReducer: ReducerType<
         ? existingRecord.merge(newInfo)
         : TokenRecord(newInfo);
       return state.set(tokenAddress, record);
-    }
-    case ACTIONS.COLONY_FETCH_SUCCESS: {
-      const { tokens } = action.payload;
-      return tokens.reduce((currentState, token) => {
-        const existingRecord = state.get(token.address);
-        const record = existingRecord
-          ? existingRecord.merge(token)
-          : TokenRecord(token);
-        return state.set(token.address, record);
-      }, state);
     }
     default:
       return state;

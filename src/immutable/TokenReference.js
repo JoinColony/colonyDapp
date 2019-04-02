@@ -11,6 +11,7 @@ type Shared = {|
   address: Address,
   balance?: BigNumber,
   isNative?: boolean,
+  icon?: string,
 |};
 
 export type TokenReferenceType = $ReadOnly<Shared>;
@@ -21,6 +22,7 @@ const defaultProps: $Shape<Shared> = {
   address: undefined,
   balance: undefined,
   isNative: undefined,
+  icon: undefined,
 };
 
 const TokenReferenceRecord: RecordFactory<Shared> = Record(defaultProps);

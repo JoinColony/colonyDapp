@@ -97,7 +97,10 @@ const TaskInviteDialog = ({
                           name={`payouts.${index}`}
                           amount={amount}
                           symbol={token.symbol}
-                          reputation={token.isNative ? reputation : undefined}
+                          reputation={
+                            // $FlowFixMe this should be from TokenReference
+                            token.isNative ? reputation : undefined
+                          }
                           editPayout={false}
                         />
                       );

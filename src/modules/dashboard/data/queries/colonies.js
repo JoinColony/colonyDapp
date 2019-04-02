@@ -24,7 +24,6 @@ import type {
   ColonyType,
   ContractTransactionType,
   DomainType,
-  TokenType,
 } from '~immutable';
 
 import { colonyReducer, colonyTasksReducer } from '../reducers';
@@ -210,10 +209,7 @@ export const getColonyRoles: ColonyContractRolesEventQuery<
   },
 });
 
-export const getColony: ColonyQuery<
-  void,
-  { colony: ColonyType, tokens: TokenType[] },
-> = ({
+export const getColony: ColonyQuery<void, ColonyType> = ({
   ddb,
   colonyClient,
   wallet,
@@ -234,15 +230,12 @@ export const getColony: ColonyQuery<
         colonyReducer,
         // TODO: Add the right defaults here using a data model or something like that
         {
-          colony: {
-            address: colonyAddress,
-            avatar: undefined,
-            ensName: colonyENSName,
-            inRecoveryMode,
-            name: '',
-            tokens: {},
-          },
-          tokens: [],
+          address: colonyAddress,
+          avatar: undefined,
+          ensName: colonyENSName,
+          inRecoveryMode,
+          name: '',
+          tokens: {},
         },
       );
   },

@@ -58,6 +58,7 @@ const enhance = compose(
         /*
          * Take out the native token
          */
+        // $FlowFixMe this should be from TokenReference
         .filter(payout => !payout.token.isNative)
         /*
          * Sort ETH to the top
@@ -67,6 +68,7 @@ const enhance = compose(
         /*
          * See if we have a native token
          */
+        // $FlowFixMe this should be from TokenReference
         .find(payout => payout.token.isNative),
     }),
   ),

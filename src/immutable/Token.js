@@ -3,21 +3,17 @@
 import type { RecordOf, RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
-import BigNumber from 'bn.js';
 
 import type { Address } from '~types';
 
 type Shared = {|
   address: Address,
-  // TODO: balance shouldn't be part of this record
-  balance?: BigNumber,
+  // TODO: this should be required
+  // TODO: this should be BN
   decimals?: number,
-  icon?: string,
-  isBlocked?: boolean,
-  isEnabled?: boolean,
-  // TODO: should be `nativeFor: ColonyIdentifier`
-  isNative?: boolean,
+  // TODO: this should be optional
   name: string,
+  // TODO: this should be optional
   symbol: string,
 |};
 
@@ -27,12 +23,7 @@ export type TokenRecordType = RecordOf<Shared>;
 
 const defaultValues: $Shape<Shared> = {
   address: undefined,
-  balance: undefined,
   decimals: undefined,
-  icon: undefined,
-  isBlocked: undefined,
-  isEnabled: undefined,
-  isNative: undefined,
   name: undefined,
   symbol: undefined,
 };

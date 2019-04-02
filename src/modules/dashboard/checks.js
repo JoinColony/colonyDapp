@@ -4,6 +4,7 @@ import type {
   ColonyType,
   NetworkProps,
   TaskType,
+  TokenReferenceType,
   TokenType,
   TaskUserType,
 } from '~immutable';
@@ -17,13 +18,14 @@ import { TASK_STATE } from '~immutable';
 /*
  * Tokens
  */
-export const tokenBalanceIsPositive = ({ balance }: TokenType) =>
+export const tokenBalanceIsPositive = ({ balance }: TokenReferenceType) =>
   !!balance && balance.gten(0);
 
-export const tokenBalanceIsNotPositive = ({ balance }: TokenType) =>
+export const tokenBalanceIsNotPositive = ({ balance }: TokenReferenceType) =>
   !!balance && balance.lten(0);
 
-export const tokenIsETH = ({ address }: TokenType) => address === ZERO_ADDRESS;
+export const tokenIsETH = ({ address }: TokenType | TokenReferenceType) =>
+  address === ZERO_ADDRESS;
 
 /*
  * Colony
