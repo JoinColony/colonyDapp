@@ -23,12 +23,12 @@ import type {
   IPFSContext,
   NetworkClientContext,
   Query,
-} from '../../types';
+} from '~data/types';
 
-import { USER_EVENT_TYPES } from '../../constants';
 import { getUserTasksReducer } from '../reducers';
-import { getUserMetadataStore, getUserProfileStore } from '../../stores';
 import { getUserTokenAddresses } from '../utils';
+import { USER_EVENT_TYPES } from '~data/constants';
+import { getUserMetadataStore, getUserProfileStore } from '~data/stores';
 
 const {
   SUBSCRIBED_TO_COLONY,

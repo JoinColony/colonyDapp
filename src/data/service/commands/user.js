@@ -5,20 +5,20 @@ import type {
   EventStore,
   FeedStore,
   ValidatedKVStore,
-} from '../../../lib/database/stores';
+} from '~lib/database/stores';
 import type {
   Command,
   ContextWithMetadata,
   IPFSContext,
   DDBContext,
-} from '../../types';
-import type { UserProfileStoreValues } from '../../storeValuesTypes';
+} from '~data/types';
+import type { UserProfileStoreValues } from '~data/storeValuesTypes';
 
 import {
   createUserProfileStore,
   getUserProfileStore,
   getUserMetadataStore,
-} from '../../stores';
+} from '~data/stores';
 
 import {
   createUserAddTokenEvent,

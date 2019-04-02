@@ -3,23 +3,23 @@
 import nanoid from 'nanoid';
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { FeedStore, EventStore } from '~lib/database/stores';
 import type {
   ColonyClientContext,
   Command,
   ContextWithMetadata,
   DDBContext,
   WalletContext,
-} from '../../types';
+} from '~data/types';
 import type { ColonyContext } from './colony';
-import type { FeedStore, EventStore } from '../../../lib/database/stores';
 
-import { TASK_STATUS } from '../../constants';
+import { TASK_STATUS } from '~data/constants';
 import {
   createTaskStore,
   getColonyStore,
   getCommentsStore,
   getTaskStore,
-} from '../../stores';
+} from '~data/stores';
 
 import {
   createCommentPostedEvent,
