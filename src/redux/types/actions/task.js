@@ -67,7 +67,7 @@ export type TaskActionTypes = {|
     {|
       commentsStoreAddress: string,
       taskStoreAddress: string,
-      task: TaskProps<{ colonyENSName: *, draftId: * }>,
+      task: TaskProps<{ colonyENSName: *, creator: *, draftId: * }>,
     |},
   >,
   TASK_FETCH: NonUniqueTaskActionType<typeof ACTIONS.TASK_FETCH, void>,

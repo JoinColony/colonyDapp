@@ -5,6 +5,7 @@ import type { Action } from '~redux';
 
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import nanoid from 'nanoid';
+import { replace } from 'connected-react-router';
 
 import { CONTEXT, getContext } from '~context';
 import { putError, executeCommand, executeQuery } from '~utils/saga/effects';
@@ -103,17 +104,14 @@ function* taskCreate({
 }: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
   try {
     const colonyContext = yield call(getColonyStoreContext, colonyENSName);
+    const creator = colonyContext.wallet.address;
     const { taskStore, commentsStore, draftId } = yield* executeCommand(
       colonyContext,
       createTask,
-      {
-        creator: colonyContext.wallet.address,
-      },
+      { creator },
     );
 
-    yield put(subscribeToTask(draftId));
-
-    yield put<Action<typeof ACTIONS.TASK_CREATE_SUCCESS>>({
+    const successAction: Action<typeof ACTIONS.TASK_CREATE_SUCCESS> = {
       type: ACTIONS.TASK_CREATE_SUCCESS,
       payload: {
         colonyENSName,
@@ -123,10 +121,19 @@ function* taskCreate({
         task: {
           colonyENSName,
           draftId,
+          creator,
         },
       },
       meta: { keyPath: [draftId], ...meta },
-    });
+    };
+    /*
+     * Put the success action, subscribe to the task and redirect to it
+     */
+    yield all([
+      put(successAction),
+      put(subscribeToTask(draftId)),
+      put(replace(`/colony/${colonyENSName}/task/${draftId}`)),
+    ]);
   } catch (error) {
     yield putError(ACTIONS.TASK_CREATE_ERROR, error, meta);
   }
