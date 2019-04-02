@@ -38,7 +38,7 @@ import {
   subscribeToColony,
   subscribeToTask,
   updateUserProfile,
-} from '../../../data/service/commands/user';
+} from '../data/commands';
 import {
   checkUsernameIsAvailable,
   getUserBalance,
@@ -49,7 +49,7 @@ import {
   getUserTasks,
   getUserTokens,
   getUserMetadataStoreAddress,
-} from '../../../data/service/queries';
+} from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { userFetch as userFetchActionCreator } from '../actionCreators';
 

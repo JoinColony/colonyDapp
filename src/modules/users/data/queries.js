@@ -24,10 +24,10 @@ import type {
   Query,
 } from '~data/types';
 
-import { getUserTasksReducer } from '../reducers';
-import { getUserTokenAddresses } from '../utils';
 import { USER_EVENT_TYPES } from '~data/constants';
 import { getUserMetadataStore, getUserProfileStore } from '~data/stores';
+import { getUserTokenAddresses } from './utils';
+import { getUserTasksReducer } from './reducers';
 
 const {
   SUBSCRIBED_TO_COLONY,

@@ -9,7 +9,7 @@ import type { Action } from '~redux';
 import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { getColonyRoles } from '../../../data/service/queries';
+import { getColonyRoles } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
