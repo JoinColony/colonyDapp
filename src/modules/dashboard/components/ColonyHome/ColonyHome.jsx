@@ -3,7 +3,8 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'redux-react-hook';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -105,6 +106,14 @@ const ColonyHome = ({
    * TODO Replace with actual filtering logic
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch({
+      type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+      payload: { colonyENSName: ensName },
+    });
+  }, []);
 
   const {
     data: colony,
