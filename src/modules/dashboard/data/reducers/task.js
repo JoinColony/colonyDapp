@@ -160,14 +160,14 @@ export const taskReducer: EventReducer<
       const { invites = [] } = task;
       return {
         ...task,
-        invites: [...invites, event.payload],
+        invites: [...invites, event.payload.worker],
       };
     }
     case WORK_REQUEST_CREATED: {
       const { requests = [] } = task;
       return {
         ...task,
-        requests: [...requests, event.payload],
+        requests: [...requests, event.payload.worker],
       };
     }
     case WORKER_ASSIGNED: {
