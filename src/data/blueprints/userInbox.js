@@ -20,7 +20,6 @@ const userInboxStore: StoreBlueprint = {
     user: yup.string(),
     task: yup.string(),
     comment: yup.string(),
-    timestamp: yup.date().default(() => Date.now()),
   }),
   type: FeedStore,
 };
