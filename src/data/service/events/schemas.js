@@ -20,7 +20,6 @@ export const CreateTaskStoreUnregisteredEventSchema = yup.object({
 
 export const CreateColonyAvatarUploadedEventSchema = yup.object({
   ipfsHash: yup.string().required(),
-  avatar: yup.string().required(),
 });
 
 export const CreateColonyAvatarRemovedEventSchema = yup.object({

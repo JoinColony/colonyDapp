@@ -12,11 +12,6 @@ export const fetchColony = (ensName: ENSName) => ({
   meta: { keyPath: [ensName] },
 });
 
-export const fetchColonyAvatar = (hash: string) => ({
-  type: ACTIONS.COLONY_AVATAR_FETCH,
-  meta: { keyPath: [hash] },
-});
-
 export const fetchColonyENSName = (colonyAddress: string) => ({
   type: ACTIONS.COLONY_ENS_NAME_FETCH,
   meta: { keyPath: [colonyAddress] },

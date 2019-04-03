@@ -7,7 +7,7 @@ import type { FileReaderFile } from '~core/FileUpload';
 import type { ColonyType } from '~immutable';
 
 import AvatarUploader from '~core/AvatarUploader';
-import ColonyAvatar from '~core/ColonyAvatar';
+import ColonyAvatarFactory from '~core/ColonyAvatar';
 import { ACTIONS } from '~redux';
 import { withKeyPath } from '~utils/actions';
 
@@ -27,6 +27,8 @@ const MSG = defineMessages({
     defaultMessage: 'at least 250px by 250px, up to 1MB',
   },
 });
+
+const ColonyAvatar = ColonyAvatarFactory({ fetchColony: false });
 
 type Props = {|
   colony: ColonyType,

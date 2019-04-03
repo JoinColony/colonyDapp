@@ -32,7 +32,6 @@ export const CreateDomainCommandArgsSchema = yup.object({
 });
 
 export const SetColonyAvatarCommandArgsSchema = yup.object({
-  avatar: yup.string().required(),
   ipfsHash: yup.string().required(),
 });
 

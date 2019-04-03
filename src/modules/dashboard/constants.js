@@ -8,7 +8,6 @@ export const DASHBOARD_ALL_COMMENTS = 'allComments';
 export const DASHBOARD_ALL_DOMAINS = 'allDomains';
 export const DASHBOARD_TASKS = 'tasks';
 export const DASHBOARD_ALL_TOKENS = 'allTokens';
-export const DASHBOARD_AVATARS = 'avatars';
 export const DASHBOARD_COLONIES = 'colonies';
 export const DASHBOARD_ENS_NAMES = 'ensNames';
 export const DASHBOARD_TOKEN_ICONS = 'icons';
