@@ -6,11 +6,14 @@ export type InboxEvent = $Keys<typeof messages>;
 
 export type EventType = 'action' | 'notification';
 
+/*
+ * @TODO Handle read/unread notifications
+ */
 export type InboxElement = {
   id: number,
-  createdAt: Date,
+  timestamp: Date,
   event: InboxEvent,
-  unread: boolean,
+  // unread: boolean,
 
   /* present depending on event */
   amount?: {
@@ -23,9 +26,6 @@ export type InboxElement = {
   dueDate?: Date,
   onClickRoute?: string,
   otherUser?: string,
-  taskName?: string,
-  user?: {
-    walletAddress: string,
-    username: string,
-  },
+  task?: string,
+  user?: string,
 };
