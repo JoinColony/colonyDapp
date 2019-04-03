@@ -7,7 +7,7 @@ import { stripProtocol } from '~utils/strings';
 import { useDataFetcher } from '~utils/hooks';
 
 import Heading from '~core/Heading';
-import ColonyAvatar from '~core/ColonyAvatar';
+import ColonyAvatarFactory from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import UserAvatarFactory from '~core/UserAvatar';
@@ -41,6 +41,7 @@ const MSG = defineMessages({
   },
 });
 
+const ColonyAvatar = ColonyAvatarFactory({ fetchColony: false });
 const UserAvatar = UserAvatarFactory({ showInfo: true, showLink: true });
 
 type Props = {|
@@ -49,7 +50,7 @@ type Props = {|
 |};
 
 const ColonyMeta = ({
-  colony: { description, ensName, guideline, name, website },
+  colony: { address, description, ensName, guideline, name, website },
   colony,
   canAdminister,
 }: Props) => {
@@ -65,7 +66,7 @@ const ColonyMeta = ({
     <div>
       <ColonyAvatar
         className={styles.avatar}
-        address={colony.address}
+        address={address}
         colony={colony}
         size="xl"
       />

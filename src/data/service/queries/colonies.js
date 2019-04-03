@@ -27,11 +27,7 @@ import type {
   TokenType,
 } from '~immutable';
 
-import {
-  colonyAvatarReducer,
-  colonyReducer,
-  colonyTasksReducer,
-} from '../reducers';
+import { colonyReducer, colonyTasksReducer } from '../reducers';
 import { reduceToLastState, getLast } from '~utils/reducers';
 
 import { getColonyStore } from '../../stores';
@@ -249,27 +245,6 @@ export const getColony: ColonyQuery<
           tokens: [],
         },
       );
-  },
-});
-
-export const getColonyAvatar: ColonyQuery<
-  void,
-  null | {| ipfsHash: string, avatar: string |},
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
-  async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-    });
-    return colonyStore
-      .all()
-      .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-      .reduce(colonyAvatarReducer, null);
   },
 });
 

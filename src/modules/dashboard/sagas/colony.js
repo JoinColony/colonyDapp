@@ -44,6 +44,7 @@ import {
   transactionReady,
 } from '../../core/actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas';
+import { ipfsUpload } from '../../core/sagas/ipfs';
 import { COLONY_CONTEXT } from '../../core/constants';
 import { networkVersionSelector } from '../../core/selectors';
 
@@ -440,17 +441,15 @@ function* colonyAvatarUpload({
 }: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<void> {
   try {
     // first attempt upload to IPFS
-    const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const context = yield* getColonyContext(ensName);
 
-    const hash = yield call([ipfsNode, ipfsNode.addString], data);
+    const ipfsHash = yield call(ipfsUpload, data);
 
     /*
      * Set the avatar's hash in the store
      */
     yield* executeCommand(context, setColonyAvatar, {
-      avatar: data,
-      ipfsHash: hash,
+      ipfsHash,
     });
 
     /*
@@ -459,42 +458,10 @@ function* colonyAvatarUpload({
     yield put<Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS>>({
       type: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
       meta,
-      payload: { hash },
-    });
-
-    /*
-     * Trigger the Avatar Fetch success action, so that the avatar mapping gets updated
-     */
-    yield put<Action<typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS>>({
-      type: ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
-      meta: { keyPath: [ensName] },
-      payload: { hash, avatarData: data },
+      payload: { hash: ipfsHash },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
-  }
-}
-
-function* colonyAvatarFetch({
-  meta,
-  meta: {
-    keyPath: [hash],
-  },
-}: Action<typeof ACTIONS.COLONY_AVATAR_FETCH>): Saga<void> {
-  try {
-    const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
-    const avatarData = yield call([ipfsNode, ipfsNode.getString], hash);
-
-    /*
-     * Put the base64 value in the redux state so we can show it
-     */
-    yield put<Action<typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS>>({
-      type: ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
-      meta,
-      payload: { hash, avatarData },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.COLONY_AVATAR_FETCH_ERROR, error, meta);
   }
 }
 
@@ -616,7 +583,6 @@ function* colonyTokenBalanceFetch({
 }
 
 export default function* colonySagas(): Saga<void> {
-  yield takeEvery(ACTIONS.COLONY_AVATAR_FETCH, colonyAvatarFetch);
   // TODO: rename properly once the new onboarding is done
   yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
