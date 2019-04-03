@@ -11,7 +11,6 @@ import type { ENSName } from '~types';
 
 import {
   USERS_ALL_USERS,
-  USERS_AVATARS,
   USERS_CURRENT_USER,
   USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TOKENS,
@@ -73,14 +72,6 @@ usersExceptSelector.transform = (
     .filter(Boolean)
     .toList()
     .toJS();
-
-/*
- * Avatar input selectors
- */
-export const userAvatarByAddressSelector = (
-  state: RootStateRecord,
-  address: string,
-) => state.getIn([ns, USERS_ALL_USERS, USERS_AVATARS, address]);
 
 /*
  * Current user input selectors

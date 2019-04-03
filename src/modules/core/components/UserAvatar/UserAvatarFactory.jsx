@@ -7,10 +7,8 @@ import type { UserType } from '~immutable';
 import NavLink from '~core/NavLink';
 import { useDataFetcher } from '~utils/hooks';
 
-import {
-  userAvatarByAddressFetcher,
-  userFetcher,
-} from '../../../users/fetchers';
+import { userFetcher } from '../../../users/fetchers';
+import { ipfsDataFetcher } from '../../fetchers';
 
 import UserAvatarDisplay from './UserAvatarDisplay.jsx';
 
@@ -67,9 +65,9 @@ const UserAvatarFactory = ({
     if (fetchAvatar) {
       const avatarIpfsHash = user ? user.profile.avatar : undefined;
       ({ data: avatar } = useDataFetcher<string>(
-        userAvatarByAddressFetcher,
-        [address, avatarIpfsHash],
-        [address, avatarIpfsHash],
+        ipfsDataFetcher,
+        [avatarIpfsHash],
+        [avatarIpfsHash],
       ));
     }
 
