@@ -14,7 +14,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import type { Node } from 'react';
 
 import MSG from '../messages';
-import type { InboxElement, EventType } from '../types';
+import type { InboxElement } from '../types';
 
 import styles from './InboxItem.css';
 
@@ -25,8 +25,8 @@ const UserAvatar = HookedUserAvatar();
 const displayName = 'users.Inbox.InboxItem';
 
 type Props = {|
-  item: InboxElement,
-  markAsRead: (id: number) => void,
+  activity: InboxElement,
+  markAsRead: (id: string) => void,
 |};
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
@@ -36,20 +36,20 @@ const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
     </span>
   ) : null;
 
-const getType = (event: string): EventType => {
-  const type = event.split(/[A-Z]/)[0];
-  return type === 'action' || type === 'notification' ? type : 'notification';
-};
+// const getType = (event: string): EventType => {
+//   const type = event.split(/[A-Z]/)[0];
+//   return type === 'action' || type === 'notification' ? type : 'notification';
+// };
 
-const UnreadIndicator = ({ type }: { type: EventType }) => (
-  <div
-    className={`${styles.inboxUnread} ${
-      type === 'action'
-        ? styles.inboxUnreadAction
-        : styles.inboxUnreadNotification
-    }`}
-  />
-);
+// const UnreadIndicator = ({ type }: { type: EventType }) => (
+//   <div
+//     className={`${styles.inboxUnread} ${
+//       type === 'action'
+//         ? styles.inboxUnreadAction
+//         : styles.inboxUnreadNotification
+//     }`}
+//   />
+// );
 
 const getTask = () => mockTask;
 
@@ -95,34 +95,37 @@ const ConditionalWrapper = ({
 };
 
 const InboxItem = ({
-  item: {
+  activity: {
+    /*
+     * @TODO Handle read/unread notifications
+     */
+    // id,
+    // otherUser,
+    // unread,
     amount,
     colonyName,
     comment,
-    createdAt,
+    timestamp,
     domainName,
-    dueDate,
     event,
-    id,
-    otherUser,
-    taskName,
-    unread,
+    task,
     user,
     onClickRoute,
   },
-  markAsRead,
 }: Props) => (
   <TableRow
     className={styles.inboxRow}
-    onClick={() => {
-      if (unread) {
-        markAsRead(id);
-      }
-    }}
+    /*
+     * @TODO Handle read/unread notifications
+     */
+    // onClick={() => unread && markAsRead(id)}
   >
     <TableCell className={styles.inboxRowCell}>
       <ConditionalWrapper to={onClickRoute} event={event} user={user}>
-        {unread && <UnreadIndicator type={getType(event)} />}
+        {/*
+         * @TODO Handle read/unread notifications
+         */}
+        {/* {unread && <UnreadIndicator type={getType(event)} />} */}
         {user && (
           <UserAvatar
             className={styles.userAvatar}
@@ -140,10 +143,10 @@ const InboxItem = ({
               )),
               colony: makeInboxDetail(colonyName),
               comment: makeInboxDetail(comment),
-              domain: makeInboxDetail(domainName),
-              other: makeInboxDetail(otherUser),
-              task: makeInboxDetail(taskName),
-              time: makeInboxDetail(dueDate, value => (
+              // domain: makeInboxDetail(domainName),
+              // other: makeInboxDetail(otherUser),
+              task: makeInboxDetail(task),
+              time: makeInboxDetail(timestamp, value => (
                 <TimeRelative value={value} />
               )),
               user: makeInboxDetail(user, value => value.username),
@@ -152,7 +155,7 @@ const InboxItem = ({
         </span>
 
         <span className={styles.additionalDetails}>
-          {colonyName && domainName ? (
+          {colonyName && domainName && (
             <FormattedMessage
               {...MSG.metaColonyAndDomain}
               values={{
@@ -160,7 +163,8 @@ const InboxItem = ({
                 domain: domainName,
               }}
             />
-          ) : (
+          )}
+          {colonyName && !domainName && (
             <FormattedMessage
               {...MSG.metaColonyOnly}
               values={{
@@ -178,9 +182,9 @@ const InboxItem = ({
             </span>
           )}
 
-          <span className={styles.pipe}>|</span>
+          {(colonyName || amount) && <span className={styles.pipe}>|</span>}
           <span className={styles.time}>
-            <TimeRelative value={createdAt} />
+            <TimeRelative value={timestamp} />
           </span>
         </span>
       </ConditionalWrapper>

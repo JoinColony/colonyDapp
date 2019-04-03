@@ -9,6 +9,7 @@ import { activityMessages } from '../modules/dashboard/components/UserActivities
 export type ActivityEvent = $Keys<typeof activityMessages>;
 
 type Shared = {|
+  id?: string,
   comment?: string,
   tasK?: string,
   user?: string,
@@ -21,6 +22,7 @@ export type UserActivityType = $ReadOnly<Shared>;
 export type UserActivityRecordType = RecordOf<Shared>;
 
 const defaultValues: $Shape<Shared> = {
+  id: undefined,
   comment: undefined,
   task: undefined,
   user: undefined,

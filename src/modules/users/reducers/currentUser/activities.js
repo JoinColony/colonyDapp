@@ -13,8 +13,6 @@ import type { ReducerType } from '~redux';
 const currentUserActivitiesReducer: ReducerType<
   ListType<UserActivityRecordType>,
   {|
-    // TODO these should use actions based on the current user.
-    // Currently, they are not dispatched.
     USER_ACTIVITIES_FETCH_SUCCESS: *,
     USER_ACTIVITIES_ADD_SUCCESS: *,
   |},

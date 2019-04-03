@@ -10,7 +10,7 @@ export type EventType = 'action' | 'notification';
  * @TODO Handle read/unread notifications
  */
 export type InboxElement = {
-  id: number,
+  id: string,
   timestamp: Date,
   event: InboxEvent,
   // unread: boolean,
