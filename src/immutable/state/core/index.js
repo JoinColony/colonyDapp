@@ -1,10 +1,15 @@
 /* @flow */
 
-import type { RecordOf, Collection as CollectionType } from 'immutable';
+import type {
+  RecordOf,
+  Collection as CollectionType,
+  Map as ImmutableMapType,
+} from 'immutable';
 
 import type { CoreTransactionsRecord } from './CoreTransactions';
-import type { DataRecordType } from '../../Data';
+import type { GasPricesRecord } from './GasPrices';
 import type { NetworkRecord } from './Network';
+import type { DataRecordType } from '../../Data';
 
 export { default as GasPrices } from './GasPrices';
 export { default as CoreTransactions } from './CoreTransactions';
@@ -14,8 +19,13 @@ export * from './GasPrices';
 export * from './CoreTransactions';
 export * from './Network';
 
+export type IpfsDataType = ImmutableMapType<string, DataRecordType<string>>;
+
 export type CoreStateProps = {|
+  gasPrices: GasPricesRecord,
   transactions: CoreTransactionsRecord,
+  network: NetworkRecord,
+  ipfsData: IpfsDataType,
 |};
 
 /*
