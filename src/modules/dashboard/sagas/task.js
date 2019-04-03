@@ -552,6 +552,7 @@ function* taskWorkerUnassign({
   }
 }
 
+// TODO in #580 replace with fetching feed items
 function* taskFetchComments({
   payload: { colonyENSName, draftId },
   meta,

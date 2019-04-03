@@ -96,7 +96,6 @@ const TaskComments = ({
       .asyncFunction({
         commentData: {
           body: comment,
-          timestamp: new Date(),
           author: walletAddress,
         },
         draftId,

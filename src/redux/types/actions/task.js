@@ -10,7 +10,6 @@ import type {
   ErrorActionType,
   UniqueActionType,
 } from '~redux';
-import type { Event } from '../../../data/types';
 
 import { ACTIONS } from '~redux';
 
@@ -110,7 +109,7 @@ export type TaskActionTypes = {|
   >,
   TASK_FETCH_COMMENTS_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
-    {| comments: $ElementType<Event<'COMMENT_POSTED'>, 'payload'>[] |}, // todo use constant
+    {| comments: Object[] |}, // TODO in #580 replace with fetching feed items
   >,
   TASK_FINALIZE: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE,
