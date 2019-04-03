@@ -1,4 +1,5 @@
 /* @flow */
 
-export * from './transactions';
+export * from './ipfs';
 export * from './network';
+export * from './transactions';
