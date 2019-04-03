@@ -1,68 +1,46 @@
 /* @flow */
 
-import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { TaskQuery } from './types';
 
-import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  DDBContext,
-  Query,
-  WalletContext,
-} from '~data/types';
+import { getCommentsStore, getTaskStore } from '~data/stores';
+import { TaskRepository } from '../repositories';
 
-import { taskReducer } from '../reducers';
-import { getTaskStore } from '~data/stores';
-import { TASK_EVENT_TYPES } from '~data/constants';
+const prepareTaskQuery = async ({ colonyClient, ddb, wallet, metadata }) => {
+  const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
+  const commentsStore = await getCommentsStore(ddb)(metadata);
+  return new TaskRepository({ taskStore, commentsStore });
+};
 
-export type TaskQueryContext = ContextWithMetadata<
-  {|
-    colonyENSName: string | ENSName,
-    colonyAddress: Address,
-    taskStoreAddress: string | OrbitDBAddress,
-  |},
-  ColonyClientContext & DDBContext & WalletContext,
->;
-
-export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
-
-// TODO: We should be able to merge contract events here as well
-// eslint-disable-next-line import/prefer-default-export
 export const getTask: TaskQuery<*, *> = ({
   ddb,
   colonyClient,
   wallet,
-  metadata: { colonyAddress, colonyENSName, taskStoreAddress },
+  metadata,
 }) => ({
   async execute() {
-    const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
-      taskStoreAddress,
+    const taskRepository = await prepareTaskQuery({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
     });
+    return taskRepository.getTask();
+  },
+});
 
-    return taskStore
-      .all()
-      .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
-      .reduce(taskReducer, {
-        // TODO get these defaults from some model elsewhere? See #965
-        amountPaid: undefined,
-        commentsStoreAddress: '', // XXX Just to appease flow; it'll be there
-        createdAt: undefined,
-        creator: undefined,
-        description: undefined,
-        domainId: undefined,
-        draftId: '', // XXX Just to appease flow; it'll be there
-        dueDate: undefined,
-        finalizedAt: undefined,
-        invites: [],
-        paymentId: undefined,
-        payout: undefined,
-        paymentToken: undefined,
-        requests: [],
-        skillId: undefined,
-        status: undefined,
-        title: undefined,
-        worker: undefined,
-      });
+export const getTaskComments: TaskQuery<*, *> = ({
+  colonyClient,
+  ddb,
+  wallet,
+  metadata,
+}) => ({
+  async execute() {
+    const taskRepository = await prepareTaskQuery({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
+    });
+    return taskRepository.getComments();
   },
 });

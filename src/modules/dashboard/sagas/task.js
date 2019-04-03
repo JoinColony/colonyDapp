@@ -71,18 +71,7 @@ function* getTaskStoreContext(colonyENSName: string, draftId: string): Saga<*> {
   const { taskStoreAddress } = yield select(taskStorePropsSelector, {
     draftId,
   });
-  return {
-    ...context,
-    metadata: {
-      ...metadata,
-      taskStoreAddress,
-    },
-  };
-}
 
-function* getTaskCommentsStoreContext(draftId: string): Saga<*> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
   /*
    * By selecting the commentsStoreAddress from the redux store, we are assuming
    * it is already in state. If we encounter problems here, we'll want to either
@@ -91,10 +80,12 @@ function* getTaskCommentsStoreContext(draftId: string): Saga<*> {
   const { commentsStoreAddress } = yield select(taskStorePropsSelector, {
     draftId,
   });
+
   return {
-    ddb,
-    wallet,
+    ...context,
     metadata: {
+      ...metadata,
+      taskStoreAddress,
       commentsStoreAddress,
     },
   };
@@ -518,7 +509,7 @@ function* taskFetchComments({
   meta,
 }: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
   try {
-    const context = yield call(getTaskCommentsStoreContext, draftId);
+    const context = yield call(getTaskStoreContext, colonyENSName, draftId);
     const comments = yield* executeQuery(context, getTaskComments);
     yield put<Action<typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
@@ -539,7 +530,7 @@ function* taskCommentAdd({
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const context = yield call(getTaskCommentsStoreContext, draftId);
+    const context = yield call(getTaskStoreContext, colonyENSName, draftId);
     const { wallet } = context;
     /*
      * TODO Wire message signing to the Gas Station, once it's available

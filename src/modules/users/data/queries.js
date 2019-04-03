@@ -2,13 +2,7 @@
 import { formatEther } from 'ethers/utils';
 import { ADMIN_ROLE, FOUNDER_ROLE } from '@colony/colony-js-client';
 
-import type { OrbitDBAddress } from '~types';
-
-import type {
-  ContractTransactionType,
-  UserPermissionsType,
-  UserProfileType,
-} from '~immutable';
+import type { UserPermissionsType, UserProfileType } from '~immutable';
 
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 import { getTokenClient } from '~utils/web3/contracts';
@@ -16,14 +10,14 @@ import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { reduceToLastState } from '~utils/reducers';
 
 import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  DDBContext,
-  ENSCacheContext,
-  IPFSContext,
-  NetworkClientContext,
-  Query,
-} from '~data/types';
+  UserQuery,
+  UserMetadataQuery,
+  UserColonyTransactionsQuery,
+  UserBalanceQuery,
+  UserAvatarQuery,
+  UserPermissionsQuery,
+  UsernameQuery,
+} from './types';
 
 import { USER_EVENT_TYPES } from '~data/constants';
 import { getUserMetadataStore, getUserProfileStore } from '~data/stores';
@@ -35,63 +29,6 @@ const {
   SUBSCRIBED_TO_TASK,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
-
-type UserQueryContext = ContextWithMetadata<
-  {|
-    walletAddress: string,
-    username?: string,
-  |},
-  DDBContext,
->;
-
-type UserMetadataQueryContext = ContextWithMetadata<
-  {|
-    userMetadataStoreAddress: string | OrbitDBAddress,
-    walletAddress: string,
-  |},
-  DDBContext,
->;
-
-type UserAvatarQueryContext = ContextWithMetadata<
-  {| avatarIpfsHash: string |},
-  IPFSContext,
->;
-
-type UserBalanceQueryContext = NetworkClientContext;
-type UserPermissionsQueryContext = ColonyClientContext;
-
-type UserTokensQueryContext = ContextWithMetadata<
-  {|
-    userMetadataStoreAddress: string | OrbitDBAddress,
-    walletAddress: string,
-  |},
-  DDBContext & NetworkClientContext,
->;
-
-type UserColonyTransactionsQueryContext = ContextWithMetadata<
-  {|
-    walletAddress: string,
-  |},
-  ColonyClientContext,
->;
-
-type UsernameQueryContext = {| ...ENSCacheContext, ...NetworkClientContext |};
-
-type UserQuery<I: *, R: *> = Query<UserQueryContext, I, R>;
-type UserMetadataQuery<I: *, R: *> = Query<UserMetadataQueryContext, I, R>;
-type UsernameQuery<I: *, R: *> = Query<UsernameQueryContext, I, R>;
-type UserPermissionsQuery<I: *, R: *> = Query<
-  UserPermissionsQueryContext,
-  I,
-  R,
->;
-type UserTokensQuery<I: *, R: *> = Query<UserTokensQueryContext, I, R>;
-
-type UserColonyTransactionsQuery<I: *> = Query<
-  UserColonyTransactionsQueryContext,
-  I,
-  ContractTransactionType[],
->;
 
 export const getUserProfile: UserQuery<void, UserProfileType> = ({
   ddb,
@@ -139,10 +76,7 @@ export const getUserMetadata: UserQuery<void, *> = ({ ddb, metadata }) => ({
   },
 });
 
-export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
-  ipfsNode,
-  metadata,
-}) => ({
+export const getUserAvatar: UserAvatarQuery = ({ ipfsNode, metadata }) => ({
   async execute() {
     const { avatarIpfsHash } = metadata;
     return avatarIpfsHash ? ipfsNode.getString(avatarIpfsHash) : null;
@@ -166,9 +100,7 @@ export const checkUsernameIsAvailable: UsernameQuery<string, boolean> = ({
   },
 });
 
-export const getUserBalance: Query<UserBalanceQueryContext, string, string> = ({
-  networkClient,
-}) => ({
+export const getUserBalance: UserBalanceQuery = ({ networkClient }) => ({
   async execute(walletAddress) {
     const {
       adapter: { provider },

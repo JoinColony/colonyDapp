@@ -1,15 +1,10 @@
 /* @flow */
 
-import type { Address, ENSName } from '~types';
-
 import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  DDBContext,
-  Event,
-  Query,
-  WalletContext,
-} from '~data/types';
+  ColonyContractTransactionsEventQuery,
+  ColonyContractRolesEventQuery,
+  ColonyQuery,
+} from './types';
 
 import {
   getEvents,
@@ -27,57 +22,21 @@ import type {
   TokenType,
 } from '~immutable';
 
-import {
-  colonyAvatarReducer,
-  colonyReducer,
-  colonyTasksReducer,
-} from '../reducers';
+import { ColonyRepository } from '../repositories';
 import { reduceToLastState, getLast } from '~utils/reducers';
 
 import { getColonyStore } from '~data/stores';
-import { COLONY_EVENT_TYPES } from '~data/constants';
-
-const {
-  DOMAIN_CREATED,
-  TASK_STORE_REGISTERED,
-  TASK_STORE_UNREGISTERED,
-} = COLONY_EVENT_TYPES;
-
-type ColonyMetadata = {|
-  colonyENSName: string | ENSName,
-  colonyAddress: Address,
-|};
-
-export type ColonyQueryContext = ContextWithMetadata<
-  ColonyMetadata,
-  ColonyClientContext & DDBContext & WalletContext,
->;
-
-export type ColonyContractEventQuery<I: *, R: *> = Query<
-  ColonyClientContext,
-  I,
-  R,
->;
-
-export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
-  ContextWithMetadata<ColonyMetadata, ColonyClientContext>,
-  I,
-  R,
->;
-
-export type ColonyContractRolesEventQuery<I: *, R: *> = Query<
-  {| ...ColonyClientContext, ...DDBContext |},
-  I,
-  R,
->;
-
-export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
 
 const EVENT_PARSERS = {
   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
   // eslint-disable-next-line max-len
   ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
   TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
+};
+
+const prepareColonyQuery = async ({ colonyClient, ddb, wallet, metadata }) => {
+  const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
+  return new ColonyRepository({ colonyStore });
 };
 
 export const getColonyTransactions: ColonyContractTransactionsEventQuery<
@@ -217,59 +176,33 @@ export const getColonyRoles: ColonyContractRolesEventQuery<
 export const getColony: ColonyQuery<
   void,
   { colony: ColonyType, tokens: TokenType[] },
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
+    const repository = prepareColonyQuery({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
     });
-
+    const { colonyAddress: address, colonyENSName: ensName } = metadata;
     const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
-
-    return colonyStore
-      .all()
-      .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-      .reduce(
-        colonyReducer,
-        // TODO: Add the right defaults here using a data model or something like that
-        {
-          colony: {
-            address: colonyAddress,
-            avatar: undefined,
-            ensName: colonyENSName,
-            inRecoveryMode,
-            name: '',
-            tokens: {},
-          },
-          tokens: [],
-        },
-      );
+    const colony = await repository.getColony();
+    return Object.assign({}, { inRecoveryMode, address, ensName }, colony);
   },
 });
 
 export const getColonyAvatar: ColonyQuery<
   void,
   null | {| ipfsHash: string, avatar: string |},
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
+    const repository = prepareColonyQuery({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
     });
-    return colonyStore
-      .all()
-      .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-      .reduce(colonyAvatarReducer, null);
+    return repository.getAvatar();
   },
 });
 
@@ -282,24 +215,15 @@ export const getColonyTasks: ColonyQuery<
       taskStoreAddress: string,
     |},
   },
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyENSName },
-}) => ({
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyENSName,
+    const repository = prepareColonyQuery({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
     });
-    return colonyStore
-      .all()
-      .filter(
-        ({ type }) =>
-          type === TASK_STORE_REGISTERED || type === TASK_STORE_UNREGISTERED,
-      )
-      .reduce(colonyTasksReducer, {});
+    return repository.getTasks();
   },
 });
 
@@ -310,16 +234,12 @@ export const getColonyDomains: ColonyQuery<void, DomainType[]> = ({
   metadata,
 }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+    const repository = prepareColonyQuery({
+      colonyClient,
+      ddb,
+      wallet,
       metadata,
-    );
-
-    return colonyStore
-      .all()
-      .filter(({ type }) => type === DOMAIN_CREATED)
-      .map(({ payload: { domainId, name } }: Event<typeof DOMAIN_CREATED>) => ({
-        id: domainId,
-        name,
-      }));
+    });
+    return repository.getDomains();
   },
 });
