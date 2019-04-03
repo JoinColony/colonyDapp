@@ -6,12 +6,7 @@ import type {
   FeedStore,
   ValidatedKVStore,
 } from '../../../lib/database/stores';
-import type {
-  Command,
-  ContextWithMetadata,
-  IPFSContext,
-  DDBContext,
-} from '../../types';
+import type { Command, ContextWithMetadata, DDBContext } from '../../types';
 import type { UserProfileStoreValues } from '../../storeValuesTypes';
 
 import {
@@ -56,7 +51,7 @@ export type UserCommandContext = ContextWithMetadata<
 
 export type UserAvatarCommandContext = ContextWithMetadata<
   UserCommandMetadata,
-  DDBContext & IPFSContext,
+  DDBContext,
 >;
 
 export type UserMetadataCommandContext = ContextWithMetadata<
@@ -92,7 +87,7 @@ export type UpdateUserProfileCommandArgs = {|
 |};
 
 export type SetUserAvatarCommandArgs = {|
-  data: string,
+  ipfsHash: string,
 |};
 
 export type MarkNotificationsAsReadCommandArgs = {|
@@ -164,13 +159,12 @@ export const setUserAvatar: Command<
   UserAvatarCommandContext,
   SetUserAvatarCommandArgs,
   string,
-> = ({ ddb, ipfsNode, metadata }) => ({
+> = ({ ddb, metadata }) => ({
   schema: SetUserAvatarCommandArgsSchema,
-  async execute({ data }) {
-    const avatar = await ipfsNode.addString(data);
+  async execute({ ipfsHash }) {
     const profileStore = await getUserProfileStore(ddb)(metadata);
-    await profileStore.set({ avatar });
-    return avatar;
+    await profileStore.set({ avatar: ipfsHash });
+    return ipfsHash;
   },
 });
 

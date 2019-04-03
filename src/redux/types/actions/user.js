@@ -19,23 +19,6 @@ import type {
 import { ACTIONS } from '../../index';
 
 export type UserActionTypes = {|
-  USER_AVATAR_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_AVATAR_FETCH,
-    {| address: string, avatarIpfsHash: string |},
-    WithKeyPathDepth1,
-  >,
-  USER_AVATAR_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_AVATAR_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
-  USER_AVATAR_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS,
-    {|
-      address: string,
-      avatar: ?string,
-    |},
-    WithKeyPathDepth1,
-  >,
   USER_BY_USERNAME_FETCH: ActionTypeWithPayload<
     typeof ACTIONS.USER_BY_USERNAME_FETCH,
     {| username: string |},

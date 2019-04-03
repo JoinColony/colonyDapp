@@ -28,6 +28,8 @@ import {
   currentUserMetadataSelector,
 } from '../selectors';
 
+import { ipfsUpload } from '../../core/sagas/ipfs';
+
 import {
   updateTokens,
   createUserProfile,
@@ -39,7 +41,6 @@ import {
 } from '../../../data/service/commands/user';
 import {
   checkUsernameIsAvailable,
-  getUserAvatar,
   getUserBalance,
   getUserColonies,
   getUserColonyTransactions,
@@ -66,28 +67,6 @@ function* getUserMetadataStoreContext(): Saga<*> {
       walletAddress: wallet.address,
     },
   };
-}
-
-function* userAvatarFetch({
-  meta,
-  payload: { address, avatarIpfsHash },
-}: Action<typeof ACTIONS.USER_AVATAR_FETCH>): Saga<void> {
-  try {
-    const context = {
-      ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
-      metadata: { avatarIpfsHash },
-    };
-
-    const avatar = yield* executeQuery(context, getUserAvatar);
-
-    yield put<Action<typeof ACTIONS.USER_AVATAR_FETCH_SUCCESS>>({
-      type: ACTIONS.USER_AVATAR_FETCH_SUCCESS,
-      meta,
-      payload: { address, avatar },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.USER_AVATAR_FETCH_ERROR, error, meta);
-  }
 }
 
 function* userTokenTransfersFetch(
@@ -243,18 +222,19 @@ function* userUploadAvatar({
     const address = yield select(currentUserAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
-      ipfsNode: yield* getContext(CONTEXT.IPFS_NODE),
       metadata: {
         walletAddress: address,
       },
     };
 
-    const hash = yield* executeCommand(context, setUserAvatar, payload);
+    const ipfsHash = yield call(ipfsUpload, payload.data);
+
+    yield* executeCommand(context, setUserAvatar, { ipfsHash });
 
     yield put<Action<typeof ACTIONS.USER_UPLOAD_AVATAR_SUCCESS>>({
       type: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
       meta,
-      payload: { hash, avatar: payload.data, address },
+      payload: { hash: ipfsHash, avatar: payload.data, address },
     });
   } catch (error) {
     yield putError(ACTIONS.USER_UPLOAD_AVATAR_ERROR, error, meta);
@@ -505,7 +485,6 @@ function* userTaskSubscribe({
 }
 
 export default function* setupUsersSagas(): Saga<void> {
-  yield takeEvery(ACTIONS.USER_AVATAR_FETCH, userAvatarFetch);
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
   yield takeEvery(ACTIONS.USER_BY_USERNAME_FETCH, userByUsernameFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
