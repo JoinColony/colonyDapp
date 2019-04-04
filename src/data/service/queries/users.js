@@ -20,7 +20,6 @@ import type {
   ContextWithMetadata,
   DDBContext,
   ENSCacheContext,
-  IPFSContext,
   NetworkClientContext,
   Query,
 } from '../../types';
@@ -50,11 +49,6 @@ type UserMetadataQueryContext = ContextWithMetadata<
     walletAddress: string,
   |},
   DDBContext,
->;
-
-type UserAvatarQueryContext = ContextWithMetadata<
-  {| avatarIpfsHash: string |},
-  IPFSContext,
 >;
 
 type UserBalanceQueryContext = NetworkClientContext;
@@ -136,16 +130,6 @@ export const getUserMetadata: UserQuery<void, *> = ({ ddb, metadata }) => ({
       metadataStoreAddress,
       profileStoreAddress: profileStore.address.toString(),
     };
-  },
-});
-
-export const getUserAvatar: Query<UserAvatarQueryContext, void, ?string> = ({
-  ipfsNode,
-  metadata,
-}) => ({
-  async execute() {
-    const { avatarIpfsHash } = metadata;
-    return avatarIpfsHash ? ipfsNode.getString(avatarIpfsHash) : null;
   },
 });
 

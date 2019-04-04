@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './ColonyAvatar';
+export { default } from './ColonyAvatarFactory.jsx';

@@ -16,7 +16,6 @@ const currentUserProfileReducer: ReducerType<
     USER_PROFILE_UPDATE_SUCCESS: *,
     USER_REMOVE_AVATAR_SUCCESS: *,
     USER_UPLOAD_AVATAR_SUCCESS: *,
-    USER_AVATAR_FETCH_SUCCESS: *,
     USERNAME_CREATE_SUCCESS: *,
   |},
 > = (state = UserProfileRecord(), action) => {
@@ -37,12 +36,6 @@ const currentUserProfileReducer: ReducerType<
     case ACTIONS.USER_UPLOAD_AVATAR_SUCCESS: {
       const { avatar } = action.payload;
       return state.set('avatar', avatar);
-    }
-    case ACTIONS.USER_AVATAR_FETCH_SUCCESS: {
-      const { avatar, address } = action.payload;
-      return address === state.get('walletAddress')
-        ? state.set('avatar', avatar)
-        : state;
     }
     case ACTIONS.USER_REMOVE_AVATAR_SUCCESS: {
       return state.delete('avatar');

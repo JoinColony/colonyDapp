@@ -8,7 +8,6 @@ import type { RootStateRecord } from '~immutable';
 
 import {
   DASHBOARD_ALL_COLONIES,
-  DASHBOARD_AVATARS,
   DASHBOARD_COLONIES,
   DASHBOARD_ENS_NAMES,
   DASHBOARD_NAMESPACE as ns,
@@ -30,9 +29,6 @@ export const coloniesSelector = (state: RootStateRecord) =>
 
 export const coloniesListSelector = (state: RootStateRecord) =>
   coloniesSelector(state).toList();
-
-export const colonyAvatarsSelector = (state: RootStateRecord) =>
-  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS], ImmutableMap());
 
 export const colonyENSNamesSelector = (state: RootStateRecord) =>
   state.getIn(
@@ -63,12 +59,6 @@ export const colonyAvatarHashSelector = createSelector(
   (state: RootStateRecord, ensName: ENSName) => ensName,
   coloniesSelector,
   (ensName, colonies) => colonies.getIn([ensName, 'record', 'avatar']),
-);
-
-export const colonyAvatarDataSelector = createSelector(
-  colonyAvatarHashSelector,
-  state => state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_AVATARS]),
-  (hash, state) => (state && hash ? state.get(hash) : null),
 );
 
 export const allColonyENSNamesSelector = createSelector(

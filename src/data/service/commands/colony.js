@@ -64,7 +64,6 @@ type UpdateColonyProfileCommandArgs = {|
 |};
 
 type SetColonyAvatarCommandArgs = {|
-  avatar: string,
   ipfsHash: string,
 |};
 

@@ -26,7 +26,6 @@ export type ColonyEvents = {|
   AVATAR_UPLOADED: EventDefinition<
     typeof AVATAR_UPLOADED,
     {|
-      avatar: string,
       ipfsHash: string,
     |},
   >,

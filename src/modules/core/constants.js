@@ -5,6 +5,7 @@ export const CORE_TRANSACTIONS = 'transactions';
 export const CORE_TRANSACTIONS_LIST = 'list';
 export const CORE_GAS_PRICES = 'gasPrices';
 export const CORE_NETWORK = 'network';
+export const CORE_IPFS_DATA = 'ipfsData';
 
 export {
   COLONY_CONTEXT,

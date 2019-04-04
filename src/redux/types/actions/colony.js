@@ -47,20 +47,6 @@ export type ColonyActionTypes = {|
     {| user: string, colonyENSName: string |},
     WithKeyPathDepth1,
   >,
-  COLONY_AVATAR_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_AVATAR_FETCH,
-    void,
-    WithKeyPathDepth1,
-  >,
-  COLONY_AVATAR_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_AVATAR_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
-  COLONY_AVATAR_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_AVATAR_FETCH_SUCCESS,
-    {| hash: string, avatarData: string |},
-    WithKeyPathDepth1,
-  >,
   COLONY_AVATAR_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_AVATAR_REMOVE,
     void,

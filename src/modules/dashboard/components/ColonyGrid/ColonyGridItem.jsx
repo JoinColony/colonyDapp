@@ -4,7 +4,7 @@ import React from 'react';
 
 import { useDataFetcher } from '~utils/hooks';
 
-import ColonyAvatar from '~core/ColonyAvatar';
+import ColonyAvatarFactory from '~core/ColonyAvatar';
 import Heading from '~core/Heading';
 import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -15,6 +15,8 @@ import useColonyENSName from './useColonyENSName';
 import styles from './ColonyGridItem.css';
 
 import type { ColonyType } from '~immutable';
+
+const ColonyAvatar = ColonyAvatarFactory({ fetchColony: false });
 
 type Props = {|
   address: $PropertyType<ColonyType, 'address'>,

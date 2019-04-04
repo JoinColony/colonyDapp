@@ -32,7 +32,6 @@ export const CreateDomainCommandArgsSchema = yup.object({
 });
 
 export const SetColonyAvatarCommandArgsSchema = yup.object({
-  avatar: yup.string().required(),
   ipfsHash: yup.string().required(),
 });
 
@@ -117,7 +116,7 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 
 export const SetUserAvatarCommandArgsSchema = yup.object({
   // TODO: IPFS hash add yup validation for IPFS hash
-  data: yup.string().required(),
+  ipfsHash: yup.string().required(),
 });
 
 export const SetTaskPayoutCommandArgsSchema = yup.object({
