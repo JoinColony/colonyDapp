@@ -654,7 +654,7 @@ function* taskCommentAdd({
      * So this should actually be gated behind a conditional
      * (once the mentions are all wired up)
      */
-    yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
+    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
       type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
       payload: {
         activity: {

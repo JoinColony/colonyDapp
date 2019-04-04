@@ -88,11 +88,18 @@ type UserColonyTransactionsQuery<I: *> = Query<
   ContractTransactionType[],
 >;
 
-export type UserActivitiesQuery = ContextWithMetadata<
+export type UserActivitiesQueryContext = ContextWithMetadata<
   {|
     inboxStoreAddress: string | OrbitDBAddress,
+    walletAddress: string,
   |},
   DDBContext,
+>;
+
+export type UserActivitiesQuery<I: *, R: *> = Query<
+  UserActivitiesQueryContext,
+  I,
+  R,
 >;
 
 export const getUserProfile: UserQuery<void, UserProfileType> = ({

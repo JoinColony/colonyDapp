@@ -11,7 +11,7 @@ export type ActivityEvent = $Keys<typeof activityMessages>;
 type Shared = {|
   id?: string,
   comment?: string,
-  tasK?: string,
+  task?: string,
   user?: string,
   event: string,
   timestamp: Date,

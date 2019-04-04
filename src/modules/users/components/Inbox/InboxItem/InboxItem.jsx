@@ -40,7 +40,10 @@ const displayName = 'users.Inbox.InboxItem';
 
 type Props = {|
   activity: InboxElement,
-  markAsRead: (id: string) => void,
+  /*
+   * @TODO Handle read/unread notificationsX
+   */
+  // markAsRead: (id: string) => void,
 |};
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
@@ -185,7 +188,7 @@ const InboxItem = ({
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(user.profile.username),
+                  user: makeInboxDetail(user && user.profile.username),
                 }}
               />
             </span>

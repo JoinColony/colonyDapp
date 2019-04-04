@@ -22,7 +22,6 @@ export type UserActivitiesActionTypes = {|
     typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
     {|
       activities: UserActivityType[],
-      address: string,
     |},
     WithKeyPathDepth1,
   >,
