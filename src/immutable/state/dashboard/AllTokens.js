@@ -7,11 +7,8 @@ import type { TokenRecordType } from '~immutable';
 
 export type AllTokensMap = ImmutableMapType<Address, TokenRecordType>;
 
-export type AllTokensIconsMap = ImmutableMapType<Address, string>;
-
 export type AllTokensProps = {|
   tokens: AllTokensMap,
-  icons: AllTokensIconsMap,
 |};
 
 /*
