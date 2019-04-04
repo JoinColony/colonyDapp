@@ -131,6 +131,16 @@ export default function* setupUserContext(
         type: ACTIONS.USER_METADATA_SET,
         payload: metadata,
       });
+      /*
+       * Load the user activities from the store
+       */
+      yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
+        type: ACTIONS.USER_ACTIVITIES_FETCH,
+        meta: {
+          ...meta,
+          keyPath: [walletAddress],
+        },
+      });
     } catch (error) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(error);

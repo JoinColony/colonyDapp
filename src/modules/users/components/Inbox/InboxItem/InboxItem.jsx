@@ -177,7 +177,7 @@ const InboxItem = ({
                   amount: makeInboxDetail(amount, ({ unit, value }) => (
                     <Numeral prefix={unit} value={value} />
                   )),
-                  colony: makeInboxDetail(colony.name),
+                  colony: makeInboxDetail(colony && colony.name),
                   comment: makeInboxDetail(comment),
                   domain: makeInboxDetail(domainName),
                   other: makeInboxDetail(otherUser),
@@ -191,7 +191,7 @@ const InboxItem = ({
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony.name && domainName && (
+              {colony && colony.name && domainName && (
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
@@ -200,7 +200,7 @@ const InboxItem = ({
                   }}
                 />
               )}
-              {colony.name && !domainName && (
+              {colony && colony.name && !domainName && (
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
@@ -218,7 +218,7 @@ const InboxItem = ({
                 </span>
               )}
 
-              {(colony.name || amount) && (
+              {((colony && colony.name) || amount) && (
                 <span className={styles.pipe}>|</span>
               )}
               <span className={styles.time}>

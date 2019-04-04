@@ -49,7 +49,7 @@ const Inbox = ({ activities }: Props) => (
       <div className={styles.inboxContainer}>
         <Table scrollable appearance={{ separators: 'borders' }}>
           <TableBody>
-            {activities.map(activity => (
+            {activities.reverse().map(activity => (
               <InboxItem
                 key={activity.id}
                 activity={activity}
