@@ -1,20 +1,25 @@
 /* @flow */
 
+import type { Node } from 'react';
+
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
+
+import type { InboxElement } from '../types';
+import type { UserType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
+import UserAvatarFactory from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-
-import type { Node } from 'react';
-
-import MSG from '../messages';
-import type { InboxElement } from '../types';
+import { SpinnerLoader } from '~core/Preloaders';
+import { useDataFetcher } from '~utils/hooks';
+import { userFetcher } from '../../../fetchers';
+import { colonyFetcher } from '../../../../dashboard/fetchers';
 
 import styles from './InboxItem.css';
 
@@ -45,6 +50,9 @@ const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
     </span>
   ) : null;
 
+/*
+ * @TODO Handle read/unread notificationsX
+ */
 // const getType = (event: string): EventType => {
 //   const type = event.split(/[A-Z]/)[0];
 //   return type === 'action' || type === 'notification' ? type : 'notification';
@@ -111,7 +119,7 @@ const InboxItem = ({
     // unread,
     otherUser,
     amount,
-    colony,
+    colonyName: ensName,
     comment,
     timestamp,
     domainName,
@@ -122,13 +130,15 @@ const InboxItem = ({
   },
 }: Props) => {
   const args = [address];
-  const { data: user, isFetching } = useDataFetcher<UserType>(
+  const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
     args,
     args,
-    { ttl: 1000 * 30 }, // 30 seconds
   );
-  const { walletAddress, username } = user.profile;
+  const {
+    data: colony,
+    isFetching: isFetchingColony,
+  } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
   return (
     <TableRow
       className={styles.inboxRow}
@@ -138,7 +148,7 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {isFetching ? (
+        {isFetchingUser || isFetchingColony ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -154,8 +164,8 @@ const InboxItem = ({
             {user && (
               <UserAvatar
                 size="xxs"
-                address={walletAddress}
-                username={username}
+                address={user.profile.walletAddress}
+                username={user.profile.username}
                 className={styles.userAvatar}
               />
             )}
@@ -167,7 +177,7 @@ const InboxItem = ({
                   amount: makeInboxDetail(amount, ({ unit, value }) => (
                     <Numeral prefix={unit} value={value} />
                   )),
-                  colony: makeInboxDetail(colony),
+                  colony: makeInboxDetail(colony.name),
                   comment: makeInboxDetail(comment),
                   domain: makeInboxDetail(domainName),
                   other: makeInboxDetail(otherUser),
@@ -175,26 +185,26 @@ const InboxItem = ({
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(username),
+                  user: makeInboxDetail(user.profile.username),
                 }}
               />
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && domainName && (
+              {colony.name && domainName && (
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colony,
+                    colony: colony.name,
                     domain: domainName,
                   }}
                 />
               )}
-              {colony && !domainName && (
+              {colony.name && !domainName && (
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colony,
+                    colony: colony.name,
                   }}
                 />
               )}
@@ -208,7 +218,9 @@ const InboxItem = ({
                 </span>
               )}
 
-              {(colony || amount) && <span className={styles.pipe}>|</span>}
+              {(colony.name || amount) && (
+                <span className={styles.pipe}>|</span>
+              )}
               <span className={styles.time}>
                 <TimeRelative value={timestamp} />
               </span>

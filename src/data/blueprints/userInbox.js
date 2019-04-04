@@ -20,6 +20,7 @@ const userInboxStore: StoreBlueprint = {
     user: yup.string(),
     task: yup.string(),
     comment: yup.string(),
+    colony: yup.string(),
   }),
   type: FeedStore,
 };
