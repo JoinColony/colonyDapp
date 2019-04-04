@@ -58,28 +58,27 @@ const handleEditTokens = (
   openDialog: *,
   dispatch: *,
   ensName: *,
-  tokens: *,
+  selectedTokens: *,
   transactions: *,
   unclaimedTransactions: *,
 ) => {
   // convert current tokens and transactions to array of addresses
   const potentialTokens = Object.values(
     [
-      ...(tokens || []),
+      ...(selectedTokens || []),
       ...(transactions || []).map(({ token }) => ({ address: token })),
       ...(unclaimedTransactions || []).map(({ token }) => ({ address: token })),
     ].reduce((acc, token) => ({ ...acc, [token.address]: token }), {}),
   );
 
-  const tokenEditDialog = openDialog('TokenEditDialog', {
+  openDialog('TokenEditDialog', {
     tokens: potentialTokens,
-    selectedTokens: tokens && tokens.map(({ address }) => address),
-  });
-
-  tokenEditDialog
+    selectedTokens:
+      selectedTokens && selectedTokens.map(({ address }) => address),
+  })
     .afterClosed()
-    .then(({ tokens: newTokens }) => {
-      dispatch(updateColonyTokens(ensName, newTokens));
+    .then(({ tokens }) => {
+      dispatch(updateColonyTokens(ensName, tokens));
     })
     .catch(() => {});
 };
@@ -99,7 +98,7 @@ const handleMintTokens = (openDialog: *, dispatch: *, nativeToken: *) => {
 
 const Tokens = ({
   tokens = [],
-  nativeToken: { symbol: nativeTokenSymbol } = {},
+  nativeToken: { symbol: nativeTokenSymbol } = {}, // TODO: fetch this from tokens
   ensName,
   openDialog,
 }: Props) => {
