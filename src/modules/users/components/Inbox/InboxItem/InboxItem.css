@@ -75,6 +75,12 @@
   width: 100%;
 }
 
+.spinnerWrapper {
+  padding: 21px 0 20px;
+  width: 100%;
+  text-align: center;
+}
+
 .noStyleButton {
   padding: none;
   padding: 0;

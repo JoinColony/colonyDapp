@@ -20,7 +20,16 @@ import styles from './InboxItem.css';
 
 import { mockTask } from '../Task/__datamocks__/mockTask';
 
+import MSG from '../messages';
+
 const UserAvatar = HookedUserAvatar();
+
+const LOCAL_MSG = defineMessages({
+  loadingText: {
+    id: 'users.Inbox.InboxItem.loadingText',
+    defaultMessage: 'Loading message',
+  },
+});
 
 const displayName = 'users.Inbox.InboxItem';
 
@@ -99,98 +108,117 @@ const InboxItem = ({
     /*
      * @TODO Handle read/unread notifications
      */
-    // id,
-    // otherUser,
     // unread,
+    otherUser,
     amount,
-    colonyName,
+    colony,
     comment,
     timestamp,
     domainName,
     event,
     task,
-    user,
+    user: address,
     onClickRoute,
   },
-}: Props) => (
-  <TableRow
-    className={styles.inboxRow}
-    /*
-     * @TODO Handle read/unread notifications
-     */
-    // onClick={() => unread && markAsRead(id)}
-  >
-    <TableCell className={styles.inboxRowCell}>
-      <ConditionalWrapper to={onClickRoute} event={event} user={user}>
-        {/*
-         * @TODO Handle read/unread notifications
-         */}
-        {/* {unread && <UnreadIndicator type={getType(event)} />} */}
-        {user && (
-          <UserAvatar
-            className={styles.userAvatar}
-            size="xxs"
-            address={user.walletAddress}
-          />
-        )}
-
-        <span className={styles.inboxAction}>
-          <FormattedMessage
-            {...MSG[event]}
-            values={{
-              amount: makeInboxDetail(amount, ({ unit, value }) => (
-                <Numeral prefix={unit} value={value} />
-              )),
-              colony: makeInboxDetail(colonyName),
-              comment: makeInboxDetail(comment),
-              // domain: makeInboxDetail(domainName),
-              // other: makeInboxDetail(otherUser),
-              task: makeInboxDetail(task),
-              time: makeInboxDetail(timestamp, value => (
-                <TimeRelative value={value} />
-              )),
-              user: makeInboxDetail(user, value => value.username),
-            }}
-          />
-        </span>
-
-        <span className={styles.additionalDetails}>
-          {colonyName && domainName && (
-            <FormattedMessage
-              {...MSG.metaColonyAndDomain}
-              values={{
-                colony: colonyName,
-                domain: domainName,
-              }}
+}: Props) => {
+  const args = [address];
+  const { data: user, isFetching } = useDataFetcher<UserType>(
+    userFetcher,
+    args,
+    args,
+    { ttl: 1000 * 30 }, // 30 seconds
+  );
+  const { walletAddress, username } = user.profile;
+  return (
+    <TableRow
+      className={styles.inboxRow}
+      /*
+       * @TODO Handle read/unread notifications
+       */
+      // onClick={() => unread && markAsRead(id)}
+    >
+      <TableCell className={styles.inboxRowCell}>
+        {isFetching ? (
+          <div className={styles.spinnerWrapper}>
+            <SpinnerLoader
+              loadingText={LOCAL_MSG.loadingText}
+              appearance={{ theme: 'primary', size: 'medium' }}
             />
-          )}
-          {colonyName && !domainName && (
-            <FormattedMessage
-              {...MSG.metaColonyOnly}
-              values={{
-                colony: colonyName,
-              }}
-            />
-          )}
+          </div>
+        ) : (
+          <ConditionalWrapper to={onClickRoute} event={event} user={user}>
+            {/*
+             * @TODO Handle read/unread notifications
+             */}
+            {/* {unread && <UnreadIndicator type={getType(event)} />} */}
+            {user && (
+              <UserAvatar
+                size="xxs"
+                address={walletAddress}
+                username={username}
+                className={styles.userAvatar}
+              />
+            )}
 
-          {amount && (
-            <span>
-              <span className={styles.pipe}>|</span>
-              <span className={styles.amount}>
-                {amount.unit} {amount.value}
+            <span className={styles.inboxAction}>
+              <FormattedMessage
+                {...MSG[event]}
+                values={{
+                  amount: makeInboxDetail(amount, ({ unit, value }) => (
+                    <Numeral prefix={unit} value={value} />
+                  )),
+                  colony: makeInboxDetail(colony),
+                  comment: makeInboxDetail(comment),
+                  domain: makeInboxDetail(domainName),
+                  other: makeInboxDetail(otherUser),
+                  task: makeInboxDetail(task),
+                  time: makeInboxDetail(timestamp, value => (
+                    <TimeRelative value={value} />
+                  )),
+                  user: makeInboxDetail(username),
+                }}
+              />
+            </span>
+
+            <span className={styles.additionalDetails}>
+              {colony && domainName && (
+                <FormattedMessage
+                  {...MSG.metaColonyAndDomain}
+                  values={{
+                    colony,
+                    domain: domainName,
+                  }}
+                />
+              )}
+              {colony && !domainName && (
+                <FormattedMessage
+                  {...MSG.metaColonyOnly}
+                  values={{
+                    colony,
+                  }}
+                />
+              )}
+
+              {amount && (
+                <span>
+                  <span className={styles.pipe}>|</span>
+                  <span className={styles.amount}>
+                    {amount.unit} {amount.value}
+                  </span>
+                </span>
+              )}
+
+              {(colony || amount) && <span className={styles.pipe}>|</span>}
+              <span className={styles.time}>
+                <TimeRelative value={timestamp} />
               </span>
             </span>
-          )}
-
-          {(colonyName || amount) && <span className={styles.pipe}>|</span>}
-          <span className={styles.time}>
-            <TimeRelative value={timestamp} />
-          </span>
-        </span>
-      </ConditionalWrapper>
-    </TableCell>
-  </TableRow>
-);
+          </ConditionalWrapper>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+};
 
 InboxItem.displayName = displayName;
 
