@@ -26,7 +26,7 @@ import {
   getUserBalance,
   getUserMetadata,
   getUserProfile,
-} from '../../../data/service/queries';
+} from '../data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';

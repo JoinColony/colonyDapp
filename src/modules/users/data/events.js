@@ -1,8 +1,7 @@
 /* @flow */
 
-import { createEventCreator } from '../../utils';
-import { USER_EVENT_TYPES } from '../../constants';
-import { CreateNotificationsReadUntilEventSchema } from './schemas';
+import { createEventCreator } from '~data/utils';
+import { USER_EVENT_TYPES } from '~data/constants';
 
 const {
   READ_UNTIL,
@@ -16,7 +15,7 @@ const {
 
 export const createNotificationsReadEvent = createEventCreator<
   typeof READ_UNTIL,
->(READ_UNTIL, CreateNotificationsReadUntilEventSchema);
+>(READ_UNTIL);
 
 export const createSubscribeToTaskEvent = createEventCreator<
   typeof SUBSCRIBED_TO_TASK,

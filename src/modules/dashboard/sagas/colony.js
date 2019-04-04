@@ -32,9 +32,9 @@ import {
   removeColonyAvatar,
   setColonyAvatar,
   updateColonyProfile,
-} from '../../../data/service/commands';
+} from '../data/commands';
 
-import { getColony } from '../../../data/service/queries';
+import { getColony } from '../data/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
 import { getNetworkClient } from '../../core/sagas/utils';

@@ -1,9 +1,9 @@
 /* @flow */
 
-import type { EventStore } from '../../../lib/database/stores';
+import type { EventStore } from '~lib/database/stores';
 
-import { USER_EVENT_TYPES } from '../../constants';
-import { getUserTokensReducer } from '../reducers';
+import { USER_EVENT_TYPES } from '~data/constants';
+import { getUserTokensReducer } from './reducers';
 
 const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
 

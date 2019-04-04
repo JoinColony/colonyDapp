@@ -20,8 +20,8 @@ import { getColonyMethod } from '../../core/sagas/utils';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
-import { createDomain } from '../../../data/service/commands';
-import { getColonyDomains } from '../../../data/service/queries';
+import { createDomain } from '../data/commands';
+import { getColonyDomains } from '../data/queries';
 
 import { domainSelector } from '../selectors';
 import { fetchDomains } from '../actionCreators';

@@ -32,12 +32,8 @@ import {
   setTaskSkill,
   setTaskTitle,
   unassignWorker,
-} from '../../../data/service/commands';
-import {
-  getColonyTasks,
-  getTask,
-  getTaskComments,
-} from '../../../data/service/queries';
+} from '../data/commands';
+import { getColonyTasks, getTask, getTaskComments } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
 

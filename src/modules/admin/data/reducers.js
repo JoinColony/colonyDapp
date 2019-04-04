@@ -1,9 +1,9 @@
 /* @flow */
 
-import { COLONY_EVENT_TYPES } from '../../constants';
-
-import type { EventReducer } from '../../types';
 import type { ColonyType, TokenType } from '~immutable';
+import type { EventReducer } from '~data/types';
+
+import { COLONY_EVENT_TYPES } from '~data/constants';
 
 const {
   AVATAR_REMOVED,
