@@ -26,7 +26,11 @@ import type {
 } from '~data/types';
 
 import { USER_EVENT_TYPES } from '~data/constants';
-import { getUserMetadataStore, getUserProfileStore, getUserInboxStore } from '~data/stores';
+import {
+  getUserMetadataStore,
+  getUserProfileStore,
+  getUserInboxStore,
+} from '~data/stores';
 import { getUserTokenAddresses } from './utils';
 import { getUserTasksReducer } from './reducers';
 
