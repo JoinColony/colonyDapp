@@ -21,7 +21,7 @@ module.exports = {
         'flowtype/require-valid-file-annotation': 'off',
         'max-len': 'off',
         'no-underscore-dangle': 'off',
-        // ...require('./.eslintrc.jest.js'),
+        ...require('./.eslintrc.jest.js'),
       },
       env: {
         jest: true,

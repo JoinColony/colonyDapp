@@ -14,6 +14,7 @@ import {
   createUserProfileStore,
   getUserProfileStore,
   getUserMetadataStore,
+  getUserInboxStore,
 } from '~data/stores';
 
 import {
@@ -24,6 +25,7 @@ import {
   createUnsubscribeToColonyEvent,
   createSubscribeToTaskEvent,
   createUnsubscribeToTaskEvent,
+  createCommentMentionInboxEvent,
 } from './events';
 
 import { getUserColonies, getUserTasks } from './queries';
@@ -69,6 +71,28 @@ export type UserMetadataCommand<I: *, R: *> = Command<
   I,
   R,
 >;
+
+export type UserActivityCommandContext = ContextWithMetadata<
+  {|
+    walletAddress: string,
+    inboxStoreAddress: string | OrbitDBAddress,
+  |},
+  DDBContext,
+>;
+
+export type UserInboxCommand<I: *, R: *> = Command<
+  UserActivityCommandContext,
+  I,
+  R,
+>;
+
+export type CommentMentionInboxCommandArgs = {|
+  event: string,
+  user?: string,
+  task?: string,
+  comment?: string,
+  colony?: string,
+|};
 
 export const createUserProfile: UserCommand<
   {|
@@ -285,5 +309,16 @@ export const unsubscribeToColony: UserMetadataCommand<
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
     return args.colonyAddress;
+  },
+});
+
+export const commentMentionNotification: UserInboxCommand<
+  CommentMentionInboxCommandArgs,
+  FeedStore,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    await userInboxStore.add(createCommentMentionInboxEvent(args));
+    return userInboxStore;
   },
 });
