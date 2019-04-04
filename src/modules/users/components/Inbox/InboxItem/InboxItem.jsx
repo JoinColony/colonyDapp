@@ -23,7 +23,7 @@ import { colonyFetcher } from '../../../../dashboard/fetchers';
 
 import styles from './InboxItem.css';
 
-import { mockTask } from '../Task/__datamocks__/mockTask';
+import { mockTask } from '../../../../dashboard/components/Task/__datamocks__/mockTask';
 
 import MSG from '../messages';
 
@@ -159,7 +159,11 @@ const InboxItem = ({
             />
           </div>
         ) : (
-          <ConditionalWrapper to={onClickRoute} event={event} user={user}>
+          <ConditionalWrapper
+            to={onClickRoute}
+            event={event}
+            user={(user && user.profile) || {}}
+          >
             {/*
              * @TODO Handle read/unread notifications
              */}
@@ -168,7 +172,6 @@ const InboxItem = ({
               <UserAvatar
                 size="xxs"
                 address={user.profile.walletAddress}
-                username={user.profile.username}
                 className={styles.userAvatar}
               />
             )}
