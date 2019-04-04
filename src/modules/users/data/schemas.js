@@ -2,6 +2,8 @@
 
 import * as yup from 'yup';
 
+import inboxMessages from '~users/Inbox/messages';
+
 export const MarkNotificationsAsReadCommandArgsSchema = yup.object({
   readUntil: yup.string().required(),
   exceptFor: yup.array().of(yup.string().required()),
@@ -25,4 +27,12 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 export const SetUserAvatarCommandArgsSchema = yup.object({
   // TODO: IPFS hash add yup validation for IPFS hash
   data: yup.string().required(),
+});
+
+export const createCommentMentionInboxEventSchema = yup.object({
+  event: yup.string().oneOf(Object.keys(inboxMessages)),
+  user: yup.string(),
+  task: yup.string(),
+  comment: yup.string(),
+  colony: yup.string(),
 });
