@@ -69,55 +69,15 @@ export type UserMetadataCommand<I: *, R: *> = Command<
   R,
 >;
 
-export type CreateUserProfileCommandArgs = {|
-  username: string,
-|};
-
-export type CreateUserProfileCommandReturn = {|
-  inboxStore: FeedStore,
-  metadataStore: EventStore,
-  profileStore: ValidatedKVStore<UserProfileStoreValues>,
-|};
-
-export type UpdateUserProfileCommandArgs = {|
-  bio?: string,
-  displayName?: string,
-  location?: string,
-  website?: string,
-|};
-
-export type SetUserAvatarCommandArgs = {|
-  ipfsHash: string,
-|};
-
-export type MarkNotificationsAsReadCommandArgs = {|
-  readUntil: string,
-  exceptFor?: string[],
-|};
-
-export type SubscribeToTaskCommandArgs = {|
-  draftId: string,
-|};
-
-export type UnsubscribeToTaskCommandArgs = {|
-  draftId: string,
-|};
-
-export type SubscribeToColonyCommandArgs = {|
-  address: string,
-|};
-
-export type UnsubscribeToColonyCommandArgs = {|
-  address: string,
-|};
-
-export type UpdateTokensCommandArgs = {|
-  tokens: string[],
-|};
-
 export const createUserProfile: UserCommand<
-  CreateUserProfileCommandArgs,
-  CreateUserProfileCommandReturn,
+  {|
+    username: string,
+  |},
+  {|
+    inboxStore: FeedStore,
+    metadataStore: EventStore,
+    profileStore: ValidatedKVStore<UserProfileStoreValues>,
+  |},
 > = ({ ddb, metadata }) => ({
   schema: CreateUserProfileCommandArgsSchema,
   async execute(args) {
@@ -143,7 +103,12 @@ export const createUserProfile: UserCommand<
 });
 
 export const updateUserProfile: UserCommand<
-  UpdateUserProfileCommandArgs,
+  {|
+    bio?: string,
+    displayName?: string,
+    location?: string,
+    website?: string,
+  |},
   ValidatedKVStore<UserProfileStoreValues>,
 > = ({ ddb, metadata }) => ({
   schema: UpdateUserProfileCommandArgsSchema,
@@ -157,7 +122,9 @@ export const updateUserProfile: UserCommand<
 
 export const setUserAvatar: Command<
   UserAvatarCommandContext,
-  SetUserAvatarCommandArgs,
+  {|
+    ipfsHash: string,
+  |},
   string,
 > = ({ ddb, metadata }) => ({
   schema: SetUserAvatarCommandArgsSchema,
@@ -182,7 +149,9 @@ export const removeUserAvatar: UserCommand<
 });
 
 export const updateTokens: UserMetadataCommand<
-  UpdateTokensCommandArgs,
+  {|
+    tokens: string[],
+  |},
   EventStore,
 > = ({ ddb, metadata }) => ({
   schema: UserUpdateTokensCommandArgsSchema,
@@ -230,7 +199,10 @@ export const updateTokens: UserMetadataCommand<
 });
 
 export const markNotificationsAsRead: UserMetadataCommand<
-  MarkNotificationsAsReadCommandArgs,
+  {|
+    readUntil: string,
+    exceptFor?: string[],
+  |},
   EventStore,
 > = ({ ddb, metadata }) => ({
   schema: MarkNotificationsAsReadCommandArgsSchema,
@@ -242,7 +214,9 @@ export const markNotificationsAsRead: UserMetadataCommand<
 });
 
 export const subscribeToTask: UserMetadataCommand<
-  SubscribeToTaskCommandArgs,
+  {|
+    draftId: string,
+  |},
   ?string,
 > = context => ({
   async execute(args) {
@@ -259,7 +233,9 @@ export const subscribeToTask: UserMetadataCommand<
 });
 
 export const unsubscribeToTask: UserMetadataCommand<
-  UnsubscribeToTaskCommandArgs,
+  {|
+    draftId: string,
+  |},
   ?string,
 > = context => ({
   async execute(args) {
@@ -276,7 +252,9 @@ export const unsubscribeToTask: UserMetadataCommand<
 });
 
 export const subscribeToColony: UserMetadataCommand<
-  SubscribeToColonyCommandArgs,
+  {|
+    address: string,
+  |},
   ?string,
 > = context => ({
   async execute(args) {
@@ -293,7 +271,9 @@ export const subscribeToColony: UserMetadataCommand<
 });
 
 export const unsubscribeToColony: UserMetadataCommand<
-  UnsubscribeToColonyCommandArgs,
+  {|
+    address: string,
+  |},
   ?string,
 > = context => ({
   async execute(args) {

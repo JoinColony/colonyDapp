@@ -46,38 +46,16 @@ type AddTokenInfoCommandArgs = {|
   symbol: string,
 |};
 
-type CreateColonyProfileCommandArgs = {|
-  address: Address,
-  ensName: string,
-  name: string,
-  description?: string,
-  guideline?: string,
-  website?: string,
-  token: AddTokenInfoCommandArgs,
-|};
-
-type UpdateColonyProfileCommandArgs = {|
-  name?: string,
-  description?: string,
-  guideline?: string,
-  website?: string,
-|};
-
-type SetColonyAvatarCommandArgs = {|
-  ipfsHash: string,
-|};
-
-type RemoveColonyAvatarCommandArgs = {|
-  ipfsHash: string,
-|};
-
-type CreateDomainCommandArgs = {|
-  name: string,
-  domainId: number,
-|};
-
 export const createColonyProfile: ColonyCommand<
-  CreateColonyProfileCommandArgs,
+  {|
+    address: Address,
+    ensName: string,
+    name: string,
+    description?: string,
+    guideline?: string,
+    website?: string,
+    token: AddTokenInfoCommandArgs,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateColonyProfileCommandArgsSchema,
@@ -112,7 +90,10 @@ export const createColonyProfile: ColonyCommand<
 });
 
 export const createDomain: ColonyCommand<
-  CreateDomainCommandArgs,
+  {|
+    name: string,
+    domainId: number,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateDomainCommandArgsSchema,
@@ -126,7 +107,12 @@ export const createDomain: ColonyCommand<
 });
 
 export const updateColonyProfile: ColonyCommand<
-  UpdateColonyProfileCommandArgs,
+  {|
+    name?: string,
+    description?: string,
+    guideline?: string,
+    website?: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: UpdateColonyProfileCommandArgsSchema,
@@ -141,7 +127,9 @@ export const updateColonyProfile: ColonyCommand<
 });
 
 export const setColonyAvatar: ColonyCommand<
-  SetColonyAvatarCommandArgs,
+  {|
+    ipfsHash: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetColonyAvatarCommandArgsSchema,
@@ -156,7 +144,9 @@ export const setColonyAvatar: ColonyCommand<
 });
 
 export const removeColonyAvatar: ColonyCommand<
-  RemoveColonyAvatarCommandArgs,
+  {|
+    ipfsHash: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: RemoveColonyAvatarCommandArgsSchema,

@@ -75,85 +75,18 @@ export type CommentContext = ContextWithMetadata<
 export type TaskCommand<I: *, R: *> = Command<TaskContext, I, R>;
 export type CommentCommand<I: *, R: *> = Command<CommentContext, I, R>;
 
-type CreateTaskCommandArgs = {|
-  creator: string,
-|};
-
-type CreateTaskCommandReturn = {|
-  colonyStore: EventStore,
-  commentsStore: FeedStore,
-  draftId: string,
-  taskStore: EventStore,
-|};
-
-type SetTaskTitleCommandArgs = {|
-  title: string,
-|};
-
-type SetTaskDescriptionCommandArgs = {|
-  description: string,
-|};
-
-type SetTaskDueDateCommandArgs = {|
-  dueDate: number,
-|};
-
-type SetTaskPayoutCommandArgs = {|
-  amount: string,
-  token: string,
-|};
-
-type AssignWorkerCommandArgs = {|
-  worker: Address,
-|};
-
-type UnassignWorkerCommandArgs = {|
-  worker: Address,
-|};
-
-type CancelTaskCommandArgs = {|
-  draftId: string,
-|};
-
-type FinalizeTaskCommandArgs = {|
-  worker: Address,
-  amountPaid: string,
-|};
-
-type SetTaskSkillCommandArgs = {|
-  skillId: number,
-|};
-
-type CreateWorkRequestCommandArgs = {|
-  worker: string,
-|};
-
-type SetTaskDomainCommandArgs = {|
-  domainId: number,
-|};
-
-type SendWorkInviteCommandArgs = {|
-  worker: string,
-|};
-
-type PostCommentCommandArgs = {|
-  signature: string,
-  content: {|
-    id: string,
-    author: Address,
-    body: string,
-    timestamp: number,
-    metadata?: {|
-      mentions: string[],
-    |},
-  |},
-|};
-
 // This is not a TaskCommand because we don't yet have a taskStoreAddress
 export const createTask: Command<
   ColonyContext,
-  CreateTaskCommandArgs,
-  CreateTaskCommandReturn,
+  {|
+    creator: string,
+  |},
+  {|
+    colonyStore: EventStore,
+    commentsStore: FeedStore,
+    draftId: string,
+    taskStore: EventStore,
+  |},
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateTaskCommandArgsSchema,
   async execute({ creator }) {
@@ -192,12 +125,12 @@ export const createTask: Command<
   },
 });
 
-export const setTaskTitle: TaskCommand<SetTaskTitleCommandArgs, EventStore> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
+export const setTaskTitle: TaskCommand<
+  {|
+    title: string,
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetTaskTitleCommandArgsSchema,
   async execute(args) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
@@ -207,7 +140,9 @@ export const setTaskTitle: TaskCommand<SetTaskTitleCommandArgs, EventStore> = ({
 });
 
 export const setTaskDescription: TaskCommand<
-  SetTaskDescriptionCommandArgs,
+  {|
+    description: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetTaskDescriptionCommandArgsSchema,
@@ -219,7 +154,9 @@ export const setTaskDescription: TaskCommand<
 });
 
 export const setTaskDueDate: TaskCommand<
-  SetTaskDueDateCommandArgs,
+  {|
+    dueDate: number,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetTaskDueDateCommandArgsSchema,
@@ -230,12 +167,12 @@ export const setTaskDueDate: TaskCommand<
   },
 });
 
-export const setTaskSkill: TaskCommand<SetTaskSkillCommandArgs, EventStore> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
+export const setTaskSkill: TaskCommand<
+  {|
+    skillId: number,
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetTaskSkillCommandArgsSchema,
   async execute(args) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
@@ -245,7 +182,9 @@ export const setTaskSkill: TaskCommand<SetTaskSkillCommandArgs, EventStore> = ({
 });
 
 export const createWorkRequest: TaskCommand<
-  CreateWorkRequestCommandArgs,
+  {|
+    worker: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute({ worker }) {
@@ -261,7 +200,9 @@ export const createWorkRequest: TaskCommand<
 });
 
 export const sendWorkInvite: TaskCommand<
-  SendWorkInviteCommandArgs,
+  {|
+    worker: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SendWorkInviteCommandArgsSchema,
@@ -277,10 +218,21 @@ export const sendWorkInvite: TaskCommand<
   },
 });
 
-export const postComment: CommentCommand<PostCommentCommandArgs, FeedStore> = ({
-  ddb,
-  metadata,
-}) => ({
+export const postComment: CommentCommand<
+  {|
+    signature: string,
+    content: {|
+      id: string,
+      author: Address,
+      body: string,
+      timestamp: number,
+      metadata?: {|
+        mentions: string[],
+      |},
+    |},
+  |},
+  FeedStore,
+> = ({ ddb, metadata }) => ({
   schema: PostCommentCommandArgsSchema,
   async execute(args) {
     const commentStore = await getCommentsStore(ddb)(metadata);
@@ -290,7 +242,10 @@ export const postComment: CommentCommand<PostCommentCommandArgs, FeedStore> = ({
 });
 
 export const setTaskPayout: TaskCommand<
-  SetTaskPayoutCommandArgs,
+  {|
+    amount: string,
+    token: string,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetTaskPayoutCommandArgsSchema,
@@ -302,12 +257,12 @@ export const setTaskPayout: TaskCommand<
   },
 });
 
-export const assignWorker: TaskCommand<AssignWorkerCommandArgs, EventStore> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
+export const assignWorker: TaskCommand<
+  {|
+    worker: Address,
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute({ worker }) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
     await taskStore.append(
@@ -321,7 +276,9 @@ export const assignWorker: TaskCommand<AssignWorkerCommandArgs, EventStore> = ({
 });
 
 export const unassignWorker: TaskCommand<
-  UnassignWorkerCommandArgs,
+  {|
+    worker: Address,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute({ worker }) {
@@ -336,12 +293,13 @@ export const unassignWorker: TaskCommand<
   },
 });
 
-export const finalizeTask: TaskCommand<FinalizeTaskCommandArgs, EventStore> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
+export const finalizeTask: TaskCommand<
+  {|
+    worker: Address,
+    amountPaid: string,
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: FinalizeTaskCommandArgsSchema,
   async execute(args) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
@@ -355,12 +313,12 @@ export const finalizeTask: TaskCommand<FinalizeTaskCommandArgs, EventStore> = ({
   },
 });
 
-export const cancelTask: TaskCommand<CancelTaskCommandArgs, EventStore> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
+export const cancelTask: TaskCommand<
+  {|
+    draftId: string,
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CancelTaskCommandArgsSchema,
   async execute({ draftId }) {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
@@ -399,7 +357,9 @@ export const closeTask: TaskCommand<void, EventStore> = ({
 });
 
 export const setTaskDomain: TaskCommand<
-  SetTaskDomainCommandArgs,
+  {|
+    domainId: number,
+  |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetTaskDomainCommandArgsSchema,
