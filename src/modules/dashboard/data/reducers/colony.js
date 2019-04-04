@@ -5,6 +5,8 @@ import type { EventReducer } from '~data/types';
 
 import { COLONY_EVENT_TYPES } from '~data/constants';
 
+import { addressEquals } from '~utils/strings';
+
 const {
   AVATAR_REMOVED,
   AVATAR_UPLOADED,
@@ -13,6 +15,7 @@ const {
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
+  TOKEN_INFO_REMOVED,
 } = COLONY_EVENT_TYPES;
 
 export const colonyTasksReducer: EventReducer<
@@ -52,6 +55,7 @@ export const colonyReducer: EventReducer<
     PROFILE_CREATED: *,
     PROFILE_UPDATED: *,
     TOKEN_INFO_ADDED: *,
+    TOKEN_INFO_REMOVED: *,
   |},
 > = (colony, event) => {
   switch (event.type) {
@@ -63,6 +67,21 @@ export const colonyReducer: EventReducer<
           ...colony.tokens,
           [address]: event.payload,
         },
+      };
+    }
+    case TOKEN_INFO_REMOVED: {
+      const { address } = event.payload;
+      return {
+        ...colony,
+        tokens: Object.entries(colony.tokens)
+          .filter(([tokenAddress]) => !addressEquals(tokenAddress, address))
+          .reduce(
+            (acc, [tokenAddress, token]) => ({
+              ...acc,
+              [tokenAddress]: token,
+            }),
+            {},
+          ),
       };
     }
     case AVATAR_UPLOADED: {

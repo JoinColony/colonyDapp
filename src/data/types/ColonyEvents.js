@@ -14,6 +14,7 @@ const {
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
+  TOKEN_INFO_REMOVED,
 } = COLONY_EVENT_TYPES;
 
 export type ColonyEvents = {|
@@ -77,8 +78,14 @@ export type ColonyEvents = {|
       address: string,
       iconHash?: string,
       isNative?: boolean,
-      name: string,
-      symbol: string,
+      name?: string,
+      symbol?: string,
+    |},
+  >,
+  TOKEN_INFO_REMOVED: EventDefinition<
+    typeof TOKEN_INFO_REMOVED,
+    {|
+      address: string,
     |},
   >,
 |};

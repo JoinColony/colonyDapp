@@ -18,6 +18,7 @@ import {
   createColonyProfileUpdatedEvent,
   createDomainCreatedEvent,
   createTokenInfoAddedEvent,
+  createTokenInfoRemovedEvent,
 } from '../events';
 
 import { getColony } from '../queries';
@@ -210,19 +211,19 @@ export const updateTokenInfo: ColonyCommand<
         ),
     );
 
-    // // remove tokens from store which have been removed by user
-    // await Promise.all(
-    //   currentTokens
-    //     .filter(
-    //       currentToken =>
-    //         !tokens.find(
-    //           token => token.toLowerCase() === currentToken.toLowerCase(),
-    //         ),
-    //     )
-    //     .map(address =>
-    //       colonyStore.append(createTokenInfoRemovedEvent({ address })),
-    //     ),
-    // );
+    // remove tokens from store which are not in payload
+    await Promise.all(
+      currentTokens
+        .filter(
+          currentToken =>
+            !tokens.find(
+              token => token.toLowerCase() === currentToken.toLowerCase(),
+            ),
+        )
+        .map(address =>
+          colonyStore.append(createTokenInfoRemovedEvent({ address })),
+        ),
+    );
 
     await colonyStore.load();
     return colonyStore;
