@@ -584,8 +584,18 @@ function* taskCommentAdd({
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const context = yield call(getTaskStoreContext, draftId);
-    const { wallet } = context;
+    const commentsContext = yield call(getTaskStoreContext, draftId);
+    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
+    const walletAddress = yield select(currentUserAddressSelector);
+
+    const { wallet } = commentsContext;
+    const inboxContext = {
+      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+      metadata: {
+        walletAddress,
+        inboxStoreAddress,
+      },
+    };
     /*
      * TODO Wire message signing to the Gas Station, once it's available
      */
@@ -593,7 +603,7 @@ function* taskCommentAdd({
       message: JSON.stringify(commentData),
     });
 
-    const { event } = yield* executeCommand(context, postComment, {
+    yield* executeCommand(commentsContext, postComment, {
       signature,
       content: {
         id: nanoid(),
@@ -619,7 +629,11 @@ function* taskCommentAdd({
        * @TODO Add proper payload
        */
       {
-        userAction: 'commentMention',
+        event: 'notificationUserMentioned',
+        user: walletAddress,
+        task: 'Draft task Name',
+        comment: commentData.body,
+        colonyName,
       },
     );
 
@@ -644,10 +658,12 @@ function* taskCommentAdd({
       type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
       payload: {
         activity: {
+          id: nanoid(),
           event: 'notificationUserMentioned',
-          user: 'John Doe',
+          user: walletAddress,
           task: 'Draft task Name',
           comment: commentData.body,
+          timestamp: commentData.timestamp,
         },
       },
       meta,
