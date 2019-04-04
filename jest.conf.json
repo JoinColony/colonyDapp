@@ -7,6 +7,8 @@
         "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
         "^\\~context(.*)$": "<rootDir>/context$1",
         "^\\~redux(.*)$": "<rootDir>/redux$1",
+        "^\\~data(.*)$": "<rootDir>/data$1",
+        "^\\~lib(.*)$": "<rootDir>/lib$1",
         "^\\~routes(.*)$": "<rootDir>/routes$1",
         "^\\~utils(.*)$": "<rootDir>/utils$1",
         "^\\~types(.*)$": "<rootDir>/types$1",
