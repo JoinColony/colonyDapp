@@ -1,26 +1,31 @@
 /* @flow */
 
 // $FlowFixMe until hooks flow types
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import type { DialogType } from '~core/Dialog';
 import type {
   ContractTransactionType,
-  TokenType,
   TokenReferenceType,
+  TokenType,
 } from '~immutable';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import withDialog from '~core/Dialog/withDialog';
 
 import { useDataFetcher } from '~utils/hooks';
+import { sortObjectsBy } from '~utils/arrays';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { addressEquals } from '~utils/strings';
 
 import {
   colonyTransactionsFetcher,
   colonyUnclaimedTransactionsFetcher,
 } from '../../fetchers';
+import { tokenFetcher } from '../../../dashboard/fetchers';
 
 import { updateColonyTokens } from '../../actionCreators';
 
@@ -47,12 +52,17 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {|
+const isEth = (a: TokenReferenceType, b: TokenReferenceType) => {
+  if (addressEquals(a.address, ZERO_ADDRESS)) return -1;
+  if (addressEquals(b.address, ZERO_ADDRESS)) return 1;
+  return 0;
+};
+
+type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenReferenceType>,
+  tokens: {| [address: string]: TokenReferenceType |},
   ensName: string,
-  nativeToken: TokenType,
-|};
+};
 
 const handleEditTokens = (
   openDialog: *,
@@ -96,16 +106,32 @@ const handleMintTokens = (openDialog: *, dispatch: *, nativeToken: *) => {
     });
 };
 
-const Tokens = ({
-  tokens = [],
-  nativeToken: { symbol: nativeTokenSymbol } = {}, // TODO: fetch this from tokens
-  ensName,
-  openDialog,
-}: Props) => {
-  const nativeToken = tokens.find(token => token.isNative);
+const Tokens = ({ tokens: tokensObject, ensName, openDialog }: Props) => {
   const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
   const isUserColonyFounder = true; // TODO determine this value.
   const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
+
+  const tokens = useMemo(
+    () =>
+      Object.keys(tokensObject)
+        .map(key => tokensObject[key])
+        .sort(isEth)
+        .sort(sortObjectsBy('isNative')),
+    [tokensObject],
+  );
+
+  const nativeTokenReference = useMemo(
+    () => tokens.find(token => token.isNative) || {},
+    [tokens],
+  );
+  const nativeTokenAddress = nativeTokenReference
+    ? nativeTokenReference.address
+    : '';
+  const { data: nativeToken } = useDataFetcher<TokenType>(
+    tokenFetcher,
+    [nativeTokenAddress],
+    [nativeTokenAddress],
+  );
 
   const { data: transactions } = useDataFetcher<ContractTransactionType[]>(
     colonyTransactionsFetcher,
@@ -138,8 +164,8 @@ const Tokens = ({
     ],
   );
   const mintTokens = useCallback(
-    () => handleMintTokens(openDialog, dispatch, nativeToken),
-    [openDialog, dispatch, nativeToken],
+    () => handleMintTokens(openDialog, dispatch, nativeTokenReference),
+    [openDialog, dispatch, nativeTokenReference],
   );
 
   return (
@@ -154,7 +180,7 @@ const Tokens = ({
             <Heading appearance={{ size: 'normal' }}>
               <FormattedMessage
                 {...MSG.nativeTokenText}
-                values={{ nativeToken: nativeTokenSymbol }}
+                values={{ nativeToken: nativeToken.symbol }}
               />
             </Heading>
           )}
@@ -189,4 +215,4 @@ const Tokens = ({
 
 Tokens.displayName = 'admin.Tokens';
 
-export default Tokens;
+export default withDialog()(Tokens);
