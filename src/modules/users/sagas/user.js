@@ -49,6 +49,7 @@ import {
   getUserTasks,
   getUserTokens,
   getUserMetadataStoreAddress,
+  getUserActivities,
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { userFetch as userFetchActionCreator } from '../actionCreators';
@@ -487,6 +488,32 @@ function* userTaskSubscribe({
   }
 }
 
+function* userActivitiesFetch({
+  meta,
+}: Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>): Saga<void> {
+  try {
+    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
+    const walletAddress = yield select(currentUserAddressSelector);
+
+    const context = {
+      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+      metadata: {
+        walletAddress,
+        inboxStoreAddress,
+      },
+    };
+    const activities = yield* executeQuery(context, getUserActivities);
+
+    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
+      payload: { activities },
+      meta,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_ACTIVITIES_FETCH_ERROR, error, meta);
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
   yield takeEvery(ACTIONS.USER_BY_USERNAME_FETCH, userByUsernameFetch);
@@ -503,7 +530,7 @@ export default function* setupUsersSagas(): Saga<void> {
     ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
     userSubscribedColoniesFetch,
   );
-
+  yield takeEvery(ACTIONS.USER_ACTIVITIES_FETCH, userActivitiesFetch);
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
