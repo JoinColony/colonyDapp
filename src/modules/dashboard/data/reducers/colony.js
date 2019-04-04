@@ -44,26 +44,6 @@ export const colonyTasksReducer: EventReducer<
   }
 };
 
-export const colonyAvatarReducer: EventReducer<
-  null | {| ipfsHash: string, avatar: string |},
-  {| AVATAR_UPLOADED: *, AVATAR_REMOVED: * |},
-> = (colony, event) => {
-  switch (event.type) {
-    case AVATAR_UPLOADED: {
-      const { ipfsHash, avatar } = event.payload;
-      return {
-        ipfsHash,
-        avatar,
-      };
-    }
-    case AVATAR_REMOVED:
-      return null;
-
-    default:
-      return colony;
-  }
-};
-
 export const colonyReducer: EventReducer<
   {| colony: ColonyType, tokens: TokenType[] |},
   {|
