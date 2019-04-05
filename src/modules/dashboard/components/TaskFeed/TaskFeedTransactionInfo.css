@@ -1,0 +1,43 @@
+.main {
+  color: rgb(60, 68, 77);
+}
+
+.transactionSentCopy {
+  font-size: var(--size-small);
+  letter-spacing: var(--spacing-normal);
+}
+
+.username {
+  font-weight: var(--weight-semi);
+}
+
+.timeSinceTx {
+  margin-left: 10px;
+  color: rgb(118, 116, 138);
+}
+
+.receiptContainer {
+  display: flex;
+  align-items: stretch;
+  margin: 19px 0;
+}
+
+.receiptSideBorder {
+  width: 3px;
+  border-radius: 5px;
+  background: rgba(60, 68, 77, 0.2);
+}
+
+.receiptTextBlock {
+  margin: 0 0 0 33px;
+  font-size: var(--size-small);
+  line-height: 18px;
+  letter-spacing: var(--spacing-normal);
+}
+
+.receiptLink {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-semi);
+  color: var(--colony-blue);
+  letter-spacing: var(--spacing-medium);
+}
