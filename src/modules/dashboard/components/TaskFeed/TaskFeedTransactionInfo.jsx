@@ -32,8 +32,8 @@ const MSG = defineMessages({
   },
   receiptReputationText: {
     id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptReputationText',
-    // TODO +/- logic
-    defaultMessage: 'Reputation: {reputationAmount} rep',
+    defaultMessage: `Reputation:
+{isNonNegative, select, true {+} false {}}{reputationAmount} rep`,
   },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptViewTxLinkText',
@@ -42,12 +42,14 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  reputation: number,
   transaction: ContractTransactionType,
 |};
 
 const displayName = 'dashboard.TaskFeed.TaskFeedTransactionInfo';
 
 const TaskFeedTransactionInfo = ({
+  reputation,
   transaction: { amount, date, hash, to, token },
 }: Props) => {
   const { data: user, isFetching } = useDataFetcher<UserType>(
@@ -105,7 +107,10 @@ const TaskFeedTransactionInfo = ({
             <FormattedMessage
               {...MSG.receiptReputationText}
               // @TODO use actual reputation
-              values={{ reputationAmount: 2.34563 }}
+              values={{
+                isNonNegative: reputation >= 0,
+                reputationAmount: reputation,
+              }}
             />
             {hash && (
               <>
