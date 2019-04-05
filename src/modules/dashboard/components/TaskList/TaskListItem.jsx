@@ -4,9 +4,9 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
 import Link from '~core/Link';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import type { TaskType } from '~immutable';
 
@@ -21,7 +21,7 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = UserAvatarFactory();
+const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 

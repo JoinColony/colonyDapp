@@ -2,13 +2,16 @@
 
 import React from 'react';
 
+import getIcon from '../../../../lib/identicon';
 import Icon from '../Icon';
 
 import styles from './Avatar.css';
 
 type Props = {|
+  /** Seed phrade for blockies fallback (usually an address) */
+  seed: string,
   /** Avatar image URL (can be a base64 encoded string) */
-  avatarURL?: ?string,
+  avatarURL?: string,
   /** Extra className */
   className?: string,
   /** Avatars that are not set have a different placeholder */
@@ -24,6 +27,7 @@ type Props = {|
 const displayName = 'Avatar';
 
 const Avatar = ({
+  seed,
   avatarURL,
   className,
   notSet,
@@ -31,14 +35,15 @@ const Avatar = ({
   size,
   title,
 }: Props) => {
-  const imageStyle = avatarURL ? { backgroundImage: `url(${avatarURL})` } : {};
+  const avatar = notSet ? null : avatarURL || getIcon(seed);
+  const imageStyle = avatar ? { backgroundImage: `url(${avatar})` } : {};
   const mainClass = size ? styles[size] : styles.main;
   return (
     <figure
       className={className ? `${mainClass} ${className}` : mainClass}
       title={title}
     >
-      {avatarURL ? (
+      {avatar ? (
         <div className={styles.image} style={imageStyle} />
       ) : (
         <Icon

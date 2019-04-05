@@ -7,11 +7,11 @@ import type { UserType } from '~immutable';
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import UserMention from '~core/UserMention';
-import UserAvatarFactory from '~core/UserAvatar';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './UserMeta.css';
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 type Props = {|
   user: UserType,

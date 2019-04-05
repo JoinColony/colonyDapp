@@ -18,7 +18,7 @@ import { asField, InputLabel } from '../Fields';
 import Icon from '../Icon';
 import Button from '../Button';
 import { withOmniPicker } from '../OmniPicker';
-import UserAvatarFactory from '../UserAvatar';
+import UserAvatar from '../UserAvatar';
 
 import ItemDefault from './ItemDefault.jsx';
 
@@ -40,8 +40,6 @@ const MSG = defineMessages({
     defaultMessage: 'Remove',
   },
 });
-
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
 
 const defaultRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   const { id, ...user } = item;

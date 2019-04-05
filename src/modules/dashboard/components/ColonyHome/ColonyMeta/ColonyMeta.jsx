@@ -10,7 +10,7 @@ import Heading from '~core/Heading';
 import ColonyAvatarFactory from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
-import UserAvatarFactory from '~core/UserAvatar';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { rolesFetcher } from '../../../fetchers';
 
@@ -42,7 +42,7 @@ const MSG = defineMessages({
 });
 
 const ColonyAvatar = ColonyAvatarFactory({ fetchColony: false });
-const UserAvatar = UserAvatarFactory({ showInfo: true, showLink: true });
+const UserAvatar = HookedUserAvatar();
 
 type Props = {|
   colony: ColonyType,
@@ -122,6 +122,8 @@ const ColonyMeta = ({
             key={`founder_${founder}`}
             address={founder}
             className={styles.userAvatar}
+            showInfo
+            showLink
           />
         </section>
       )}
@@ -136,6 +138,8 @@ const ColonyMeta = ({
               key={`admin_${adminAddress}`}
               address={adminAddress}
               className={styles.userAvatar}
+              showInfo
+              showLink
             />
           ))}
         </section>

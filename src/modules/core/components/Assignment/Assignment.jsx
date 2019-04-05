@@ -9,8 +9,8 @@ import type { TaskPayoutType, TokenReferenceType, UserType } from '~immutable';
 
 import { addressEquals } from '~utils/strings';
 import Icon from '~core/Icon';
-import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './Assignment.css';
 
@@ -37,7 +37,7 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 type Props = {|
   worker: ?UserType,

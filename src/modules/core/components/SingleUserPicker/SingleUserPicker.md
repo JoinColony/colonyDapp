@@ -1,10 +1,9 @@
 ```jsx
 import { Formik } from 'formik';
 import Heading from '../Heading';
-import UserAvatarFactory from '../UserAvatar'
+import UserAvatar from '../UserAvatar'
 
 const { ItemDefault } = require('.')
-const UserAvatar = UserAvatarFactory({ fetchUser: false, fetchAvatar: false });
 
 const data = [
   {

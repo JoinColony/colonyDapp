@@ -3,9 +3,8 @@
 This AvatarUploader has a fake upload function that does nothing except for waiting for 5 seconds.
 
 ```js
-import UserAvatarFactory from '../UserAvatar';
+import UserAvatar from '../UserAvatar';
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false, fetchAvatar: false });
 // Let's create a fake upload function
 const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
 
@@ -15,9 +14,8 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
   placeholder={
     <UserAvatar
       size="xl"
-      title="Upload it already!"
-      walletAddress="0x1afb213afa8729fa7908154b90e256f1be70989a"
-      username="testuser"
+      address="0x1afb213afa8729fa7908154b90e256f1be70989a"
+      user={{profile: { username: 'testuser' }}}
     />
   }
   upload={upload}
@@ -31,9 +29,7 @@ Here we passing the result of the upload process (in this case the avatarURL) ba
 
 ```js
 const { Component } = require('react');
-import UserAvatarFactory from '../UserAvatar';
-
-const UserAvatar = UserAvatarFactory({ fetchUser: false, fetchAvatar: false });
+import UserAvatar from '../UserAvatar';
 
 class AvatarUploadWrapper extends Component {
   constructor(props) {
@@ -65,9 +61,8 @@ class AvatarUploadWrapper extends Component {
           <UserAvatar
             avatarURL={this.state.avatarURL}
             size="xl"
-            title="Upload it already!"
-            walletAddress="0x1afb213afa8729fa7908154b90e256f1be70989a"
-            username="testuser"
+            address="0x1afb213afa8729fa7908154b90e256f1be70989a"
+            user={{profile: { username: 'testuser' }}}
           />
         }
         upload={this.uploadAvatar}

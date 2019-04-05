@@ -5,11 +5,11 @@ import { FormattedMessage } from 'react-intl';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatarFactory from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import type { Node } from 'react';
 import styles from './InboxItem.css';
@@ -19,7 +19,7 @@ import type { InboxElement, EventType } from './types';
 
 import { mockTask } from '../Task/__datamocks__/mockTask';
 
-const UserAvatar = UserAvatarFactory();
+const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.Inbox.InboxItem';
 

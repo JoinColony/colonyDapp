@@ -4,12 +4,12 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatarFactory from '~core/UserAvatar';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
 import { useDataFetcher } from '~utils/hooks';
 import { userFetcher } from '../../../users/fetchers';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './UserListItem.css';
 
@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const componentDisplayName = 'admin.UserList.UserListItem';
 
