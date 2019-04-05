@@ -5,8 +5,10 @@ import { defineMessages } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
 
-import { SingleLineEdit, ActionForm } from '~core/Fields';
+import { mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
+
+import { SingleLineEdit, ActionForm } from '~core/Fields';
 
 const MSG = defineMessages({
   placeholder: {
@@ -25,14 +27,7 @@ const TaskTitle = ({ isTaskCreator, title, colonyENSName, draftId }: Props) => (
     submit={ACTIONS.TASK_SET_TITLE}
     error={ACTIONS.TASK_SET_TITLE_ERROR}
     success={ACTIONS.TASK_SET_TITLE_SUCCESS}
-    transform={(originalAction: *) => ({
-      ...originalAction,
-      payload: {
-        ...originalAction.payload,
-        colonyENSName,
-        draftId,
-      },
-    })}
+    transform={mergePayload({ colonyENSName, draftId })()}
     initialValues={{ title }}
   >
     <SingleLineEdit

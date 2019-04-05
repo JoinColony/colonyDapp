@@ -4,7 +4,8 @@ import type { FormikProps } from 'formik';
 
 import { ContentState, EditorState } from 'draft-js';
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
@@ -51,14 +52,17 @@ const TaskDescription = ({
       },
     })}
   >
-    {({ submitForm }: FormikProps<*>) => (
-      <MultiLineEdit
-        name="description"
-        placeholder={MSG.placeholder}
-        readOnly={!isTaskCreator}
-        onEditorBlur={() => submitForm()}
-      />
-    )}
+    {({ submitForm }: FormikProps<*>) => {
+      const onBlur = useCallback(() => submitForm());
+      return (
+        <MultiLineEdit
+          name="description"
+          placeholder={MSG.placeholder}
+          readOnly={!isTaskCreator}
+          onEditorBlur={onBlur}
+        />
+      );
+    }}
   </ActionForm>
 );
 
