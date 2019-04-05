@@ -8,7 +8,7 @@ import Icon from '../Icon';
 import styles from './Avatar.css';
 
 type Props = {|
-  /** Seed phrade for blockies fallback (usually an address) */
+  /** Seed phrase for blockies fallback (usually an address) */
   seed: string,
   /** Avatar image URL (can be a base64 encoded string) */
   avatarURL?: string,

@@ -8,7 +8,7 @@ type ConsumerType<T> = ComponentType<{
   children: (value: T) => ?Node,
 }>;
 
-type HookFn<H, P, R> = (hookParams: H, props: P) => R;
+type HookFn<H, P: Object, R> = (hookParams: H, props: P) => R;
 
 export {
   default as withImmutablePropsToJS,
@@ -21,7 +21,7 @@ export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
     createElement(Component, { ...value, ...props }),
   );
 
-export const withHooks = <H, P, R>(hookFn: HookFn<H, P, R>) => (
+export const withHooks = <H, P: Object, R>(hookFn: HookFn<H, P, R>) => (
   Component: ComponentType<P>,
 ) => (hookParams: H) => (props: P) => {
   const results = hookFn(hookParams, props);

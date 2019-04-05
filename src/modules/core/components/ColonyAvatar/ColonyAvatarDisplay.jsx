@@ -32,6 +32,7 @@ const ColonyAvatar = ({
     notSet={notSet}
     placeholderIcon="at-sign-circle"
     size={size}
+    seed={address}
     title={(colony && (colony.name || colony.ensName)) || address}
   />
 );

@@ -15,7 +15,7 @@ export default withHooks<
   UserAvatarProps,
   { user: ?UserType, avatarURL: ?string },
 >(({ fetchUser = true }, { user, address }) => {
-  const result: { user: ?UserType, avatarURL?: ?string } = { user };
+  const result = { user: undefined, avatarURL: undefined };
   const avatarHash = user && user.profile.avatar;
   if (fetchUser) {
     const { data: fetchedUser } = useDataFetcher<UserType>(

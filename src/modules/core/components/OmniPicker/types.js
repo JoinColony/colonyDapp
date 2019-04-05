@@ -2,7 +2,7 @@
 
 import type { ComponentType, Node } from 'react';
 
-export type ItemDataType<D> = { id: string, ...D };
+export type ItemDataType<D> = {| id: string, ...D |};
 
 export type EmptyRenderFnType = () => Node;
 
