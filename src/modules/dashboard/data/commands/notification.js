@@ -1,7 +1,12 @@
 /* @flow */
-/* eslint-disable import/prefer-default-export */
 
 export const createColony = () => ({
+  async execute() {
+    return false;
+  },
+});
+
+export const createToken = () => ({
   async execute() {
     return false;
   },
