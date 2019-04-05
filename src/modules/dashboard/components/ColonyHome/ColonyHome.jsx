@@ -107,6 +107,8 @@ const ColonyHome = ({
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
 
+  // TODO in #1034: preferably, use `useDataFetcher` or something similar,
+  // rather than just dispatching the action to set the state.
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch({
