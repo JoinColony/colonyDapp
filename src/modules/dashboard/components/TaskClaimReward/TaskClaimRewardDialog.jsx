@@ -3,6 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { TaskPayoutType } from '~immutable';
 import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
 
 import Button from '~core/Button';
@@ -13,10 +14,14 @@ import Numeral from '~core/Numeral';
 import StarRating from '~core/StarRating';
 
 import styles from './TaskClaimRewardDialog.css';
-import {
-  getTaskPayoutNetworkFee,
-  getTaskPayoutAmountMinusNetworkFee,
-} from '../../checks';
+
+const NETWORK_FEE = 0.01;
+
+export const getTaskPayoutNetworkFee = ({ amount }: TaskPayoutType) =>
+  amount * NETWORK_FEE;
+
+export const getTaskPayoutAmountMinusNetworkFee = (payout: TaskPayoutType) =>
+  payout.amount - getTaskPayoutNetworkFee(payout);
 
 const MSG = defineMessages({
   yourRating: {
