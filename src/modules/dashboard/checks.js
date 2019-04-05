@@ -6,7 +6,6 @@ import type {
   TaskType,
   TokenType,
   TaskUserType,
-  TaskPayoutType,
 } from '~immutable';
 
 import type { Address } from '~types';
@@ -42,26 +41,26 @@ export const canBeUpgraded = (colony: ?ColonyType, network: ?NetworkProps) =>
 /*
  * Tasks
  */
-const didClaimPayout = (taskUser: ?TaskUserType, address: string) =>
+const didClaimPayout = (taskUser: ?TaskUserType, userAddress: string) =>
   taskUser &&
   taskUser.didClaimPayout &&
-  addressEquals(taskUser.address, address);
+  addressEquals(taskUser.address, userAddress);
 
-export const isManager = ({ manager }: TaskType, address: Address) =>
-  manager && manager.address && addressEquals(manager.address, address);
+export const isManager = ({ manager }: TaskType, userAddress: Address) =>
+  manager && manager.address && addressEquals(manager.address, userAddress);
 
-export const isWorker = ({ worker }: TaskType, address: Address) =>
-  !!(worker && worker.address && addressEquals(worker.address, address));
+export const isWorker = ({ worker }: TaskType, userAddress: Address) =>
+  !!(worker && worker.address && addressEquals(worker.address, userAddress));
 
-export const isCreator = ({ creator }: TaskType, address: Address) =>
-  addressEquals(creator, address);
+export const isCreator = ({ creator }: TaskType, userAddress: Address) =>
+  addressEquals(creator, userAddress);
 
 export const payoutCanBeClaimed = (
   { currentState, manager, worker }: TaskType,
-  address: Address,
+  userAddress: Address,
 ) =>
   currentState === TASK_STATE.FINALIZED &&
-  (didClaimPayout(worker, address) || didClaimPayout(manager, address));
+  (didClaimPayout(worker, userAddress) || didClaimPayout(manager, userAddress));
 
 export const isFinalized = ({ currentState }: TaskType) =>
   currentState === TASK_STATE.FINALIZED;
@@ -78,67 +77,50 @@ export const isReveal = ({ currentState }: TaskType) =>
 export const didDueDateElapse = ({ dueDate }: TaskType) =>
   !!(dueDate && dueDate < new Date());
 
-export const taskCanBeEdited = (task: TaskType, address: Address) =>
-  !!(isFinalized(task) && isCreator(task, address));
+export const canEditTask = (task: TaskType, userAddress: Address) =>
+  !!(isFinalized(task) && isCreator(task, userAddress));
 
 // TODO fix this logic (why check didRate true??)
-export const workerCanRateManager = (task: TaskType, address: Address) =>
-  isWorker(task, address) &&
+export const workerCanRateManager = (task: TaskType, userAddress: Address) =>
+  isWorker(task, userAddress) &&
   isRating(task) &&
   task.worker &&
   task.worker.didRate;
 
-export const workerCanEndTask = (task: TaskType, address: Address) =>
-  isWorker(task, address) && !(isRating(task) || didDueDateElapse(task));
+export const workerCanEndTask = (task: TaskType, userAddress: Address) =>
+  isWorker(task, userAddress) && !(isRating(task) || didDueDateElapse(task));
 
 export const workerCanRevealManagerRating = (
   task: TaskType,
-  address: Address,
-) => !!(isWorker(task, address) && isReveal(task));
+  userAddress: Address,
+) => !!(isWorker(task, userAddress) && isReveal(task));
 
-// TODO check this logic (why no didRate false??)
-export const managerCanRateWorker = (task: TaskType, address: Address) =>
-  !!(isManager(task, address) && isRating(task));
+export const managerCanRateWorker = (task: TaskType, userAddress: Address) =>
+  !!(isManager(task, userAddress) && isRating(task));
 
-export const managerCanEndTask = (task: TaskType, address: Address) =>
-  !isRating(task) && isManager(task, address) && didDueDateElapse(task);
+export const managerCanEndTask = (task: TaskType, userAddress: Address) =>
+  !isRating(task) && isManager(task, userAddress) && didDueDateElapse(task);
 
 export const managerCanRevealWorkerRating = (
   task: TaskType,
-  address: Address,
-) => isManager(task, address) && isReveal(task);
+  userAddress: Address,
+) => isManager(task, userAddress) && isReveal(task);
 
-export const canBeCancelled = (task: TaskType, address: Address) =>
-  isManager(task, address) && isActive(task);
+export const canCancelTask = (task: TaskType, userAddress: Address) =>
+  isManager(task, userAddress) && isActive(task);
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
-  address: Address,
-) => requests.find(requestAddress => requestAddress === address);
+  userAddress: Address,
+) => requests.find(requestAddress => requestAddress === userAddress);
 
-export const canRequestToWork = (task: TaskType, address: Address) =>
+export const canRequestToWork = (task: TaskType, userAddress: Address) =>
   !(
     task.worker ||
-    isCreator(task, address) ||
-    hasRequestedToWork(task, address)
+    isCreator(task, userAddress) ||
+    hasRequestedToWork(task, userAddress)
   );
 
-// TODO update this for the task payment workflow
-export const canBeFinalized = ({ currentState, manager, worker }: TaskType) =>
-  currentState === TASK_STATE.REVEAL &&
-  manager &&
-  manager.didRate &&
-  worker &&
-  worker.didRate;
-
-/*
- * Task payouts
- */
-
-const NETWORK_FEE = 0.01;
-
-export const getTaskPayoutNetworkFee = ({ amount }: TaskPayoutType) =>
-  amount * NETWORK_FEE;
-
-export const getTaskPayoutAmountMinusNetworkFee = (payout: TaskPayoutType) =>
-  payout.amount - getTaskPayoutNetworkFee(payout);
+// TODO use a task property indicating that work has been submitted
+export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
+  isManager(task, userAddress) && isActive(task);
