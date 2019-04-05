@@ -33,13 +33,14 @@ const TaskAssignment = ({
     [workerAddress],
     [workerAddress],
   );
-  const props = {
-    nativeToken,
-    payouts,
-    reputation,
-    ...(worker && { worker }),
-  };
-  return <Assignment {...props} />;
+  return (
+    <Assignment
+      nativeToken={nativeToken}
+      payouts={payouts}
+      reputation={reputation}
+      worker={worker}
+    />
+  );
 };
 
 TaskAssignment.displayName = displayName;
