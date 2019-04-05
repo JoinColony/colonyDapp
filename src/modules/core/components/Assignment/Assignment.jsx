@@ -39,7 +39,7 @@ const MSG = defineMessages({
 const UserAvatar = UserAvatarFactory({ fetchUser: false });
 
 type Props = {|
-  worker?: UserType,
+  worker: ?UserType,
   /** List of payouts per token that has been set for a task */
   payouts?: Array<TaskPayoutType>,
   renderAvatar?: (address: string, user: UserType) => Node,

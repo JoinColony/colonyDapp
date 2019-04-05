@@ -3,9 +3,8 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import nanoid from 'nanoid';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useSelector } from '~utils/hooks';
@@ -32,12 +31,11 @@ import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
 
 import {
-  canBeCancelled,
-  isActive,
+  canCancelTask,
+  canEditTask,
+  canFinalizeTask,
   isCreator,
   isFinalized,
-  isManager,
-  taskCanBeEdited,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
 import { taskFetcher } from '../../fetchers';
@@ -84,35 +82,6 @@ type Props = {|
   openDialog: OpenDialog,
 |};
 
-const openTaskEditDialog = ({
-  openDialog,
-  task: { worker, payouts, reputation },
-}: {|
-  openDialog: OpenDialog,
-  task: TaskType,
-|}) => {
-  // TODO use props
-  const tokens = [];
-  const users = [];
-
-  openDialog('TaskEditDialog', {
-    availableTokens: tokens,
-    maxTokens: 2,
-    payouts: payouts.map(payout => ({
-      token:
-        // we add 1 because Formik thinks 0 is empty
-        tokens.indexOf(
-          tokens.find(token => token.symbol === payout.token.symbol),
-        ) + 1,
-      amount: payout.amount,
-      id: nanoid(),
-    })),
-    reputation,
-    users,
-    worker,
-  });
-};
-
 const displayName = 'dashboard.Task';
 
 const Task = ({
@@ -124,7 +93,7 @@ const Task = ({
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
   const currentUser = useSelector(currentUserSelector);
-  const { walletAddress: address } = currentUser.profile;
+  const { walletAddress } = currentUser.profile;
 
   const { data: task, isFetching, error } = useDataFetcher<TaskType>(
     taskFetcher,
@@ -132,10 +101,24 @@ const Task = ({
     [ensName, draftId],
   );
 
+  const onEditTask = useCallback(() => {
+    // If you've managed to click on the button that runs this without the
+    // task being fetched yet, you are a wizard
+    if (!task) return;
+
+    const { payouts, reputation, worker } = task;
+    openDialog('TaskEditDialog', {
+      maxTokens: 2,
+      payouts,
+      reputation,
+      worker,
+    });
+  });
+
   if (!task || isFetching || error)
     return <LoadingTemplate loadingText={MSG.loadingText} />;
 
-  const isTaskCreator = isCreator(task, address);
+  const isTaskCreator = isCreator(task, walletAddress);
 
   const {
     description,
@@ -159,16 +142,11 @@ const Task = ({
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
-            {!taskCanBeEdited(task, address) && (
+            {!canEditTask(task, walletAddress) && (
               <Button
                 appearance={{ theme: 'blue' }}
                 text={MSG.details}
-                onClick={() =>
-                  openTaskEditDialog({
-                    openDialog,
-                    task,
-                  })
-                }
+                onClick={onEditTask}
               />
             )}
           </header>
@@ -227,7 +205,7 @@ const Task = ({
             isDiscardConfirmDisplayed ? styles.headerConfirm : ''
           }`}
         >
-          {canBeCancelled(task, address) && (
+          {canCancelTask(task, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -243,8 +221,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {/* Work has been submitted TODO is this check correct? */}
-              {isManager(task, address) && isActive(task) && (
+              {canFinalizeTask(task, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ACTIONS.TASK_FINALIZE}
@@ -260,9 +237,7 @@ const Task = ({
               )}
             </>
           )}
-          {!isTaskCreator && (
-            <TaskRequestWork currentUser={currentUser} task={task} />
-          )}
+          <TaskRequestWork currentUser={currentUser} task={task} />
           {/*
             TODO use these components for the full on-chain task workflow
             <TaskRatingButtons task={task} />
