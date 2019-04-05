@@ -5,6 +5,8 @@ import { defineMessages } from 'react-intl';
 
 import type { UserType, TaskType } from '~immutable';
 
+import { mergePayload } from '~utils/actions';
+
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
@@ -51,14 +53,11 @@ const TaskInviteDialog = ({
       submit={ACTIONS.TASK_WORKER_ASSIGN}
       success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
       error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
-      transform={(originalAction: *) => ({
-        ...originalAction,
-        payload: {
-          worker: walletAddress,
-          draftId,
-          colonyENSName,
-        },
-      })}
+      transform={mergePayload({
+        worker: walletAddress,
+        draftId,
+        colonyENSName,
+      })()}
     >
       {({ status, isSubmitting }) => (
         <>
@@ -94,7 +93,7 @@ const TaskInviteDialog = ({
                       const token = tokensMock.get(index - 1) || {};
                       return (
                         <Payout
-                          key={token.symbol}
+                          key={token.address}
                           name={`payouts.${index}`}
                           amount={amount}
                           symbol={token.symbol}
