@@ -107,12 +107,16 @@ const TaskFeedTransactionInfo = ({
               // @TODO use actual reputation
               values={{ reputationAmount: 2.34563 }}
             />
-            <br />
-            <ExternalLink
-              className={styles.receiptLink}
-              text={MSG.receiptViewTxLinkText}
-              href={`https://rinkeby.etherscan.io/tx/${hash}`}
-            />
+            {hash && (
+              <>
+                <br />
+                <ExternalLink
+                  className={styles.receiptLink}
+                  text={MSG.receiptViewTxLinkText}
+                  href={`https://rinkeby.etherscan.io/tx/${hash}`}
+                />
+              </>
+            )}
           </p>
         </div>
       </div>
