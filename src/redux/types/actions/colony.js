@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 import type {
   Address,
   ENSName,
@@ -225,6 +227,20 @@ export type ColonyActionTypes = {|
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
     ContractTransactionType[],
+    WithKeyPathDepth1,
+  >,
+  COLONY_MINT_TOKENS: UniqueActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS,
+    {| colonyAddress: Address, amount: BigNumber |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_MINT_TOKENS_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS_ERROR,
+    void,
+  >,
+  COLONY_MINT_TOKENS_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS,
+    {| amount: BigNumber |},
     WithKeyPathDepth1,
   >,
   COLONY_PROFILE_UPDATE: UniqueActionType<

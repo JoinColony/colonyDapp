@@ -4,6 +4,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import BigNumber from 'bn.js';
+import nanoid from 'nanoid';
+import moveDecimal from 'move-decimal-point';
 
 import type { DialogType } from '~core/Dialog';
 import type {
@@ -27,7 +30,7 @@ import {
 } from '../../fetchers';
 import { tokenFetcher } from '../../../dashboard/fetchers';
 
-import { updateColonyTokens } from '../../actionCreators';
+import { updateColonyTokens, mintColonyTokens } from '../../actionCreators';
 
 import TokenList from './TokenList.jsx';
 
@@ -64,14 +67,14 @@ type Props = {
   ensName: string,
 };
 
-const handleEditTokens = (
-  openDialog: *,
-  dispatch: *,
-  ensName: *,
-  selectedTokens: *,
-  transactions: *,
-  unclaimedTransactions: *,
-) => {
+const handleEditTokens = ({
+  openDialog,
+  dispatch,
+  ensName,
+  selectedTokens,
+  transactions,
+  unclaimedTransactions,
+}) => {
   // convert current tokens and transactions to array of addresses
   const potentialTokens = Object.values(
     [
@@ -93,13 +96,28 @@ const handleEditTokens = (
     .catch(() => {});
 };
 
-const handleMintTokens = (openDialog: *, dispatch: *, nativeToken: *) => {
+const handleMintTokens = ({
+  openDialog,
+  dispatch,
+  nativeToken,
+  nativeTokenReference,
+  ensName,
+}) => {
   openDialog('TokenMintDialog', {
-    nativeToken,
+    nativeToken: nativeTokenReference,
   })
     .afterClosed()
-    .then(() => {
-      // TODO: mint tokens
+    .then(({ mintAmount }) => {
+      // shift by the token's decimals (or default of 18)
+      const amountNum = moveDecimal(
+        mintAmount,
+        nativeToken && nativeToken.decimals
+          ? parseInt(nativeToken.decimals, 10)
+          : 18,
+      );
+      const amount = new BigNumber(amountNum);
+
+      dispatch(mintColonyTokens(ensName, amount, nanoid()));
     })
     .catch(() => {
       // cancel actions here
@@ -146,14 +164,14 @@ const Tokens = ({ tokens: tokensObject, ensName, openDialog }: Props) => {
   const dispatch = useDispatch();
   const editTokens = useCallback(
     () =>
-      handleEditTokens(
+      handleEditTokens({
         openDialog,
         dispatch,
         ensName,
-        tokens,
+        selectedTokens: tokens,
         transactions,
         unclaimedTransactions,
-      ),
+      }),
     [
       openDialog,
       dispatch,
@@ -164,8 +182,15 @@ const Tokens = ({ tokens: tokensObject, ensName, openDialog }: Props) => {
     ],
   );
   const mintTokens = useCallback(
-    () => handleMintTokens(openDialog, dispatch, nativeTokenReference),
-    [openDialog, dispatch, nativeTokenReference],
+    () =>
+      handleMintTokens({
+        openDialog,
+        dispatch,
+        nativeToken,
+        nativeTokenReference,
+        ensName,
+      }),
+    [openDialog, dispatch, nativeToken, nativeTokenReference, ensName],
   );
 
   return (

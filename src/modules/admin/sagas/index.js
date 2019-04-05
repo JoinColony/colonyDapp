@@ -152,6 +152,53 @@ function* colonyUpdateTokens({
   }
 }
 
+function* colonyMintTokens({
+  payload: { amount, colonyAddress },
+  meta,
+}: Action<typeof ACTIONS.COLONY_MINT_TOKENS>): Saga<void> {
+  let txChannel;
+  try {
+    txChannel = yield call(getTxChannel, meta.id);
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'mintTokens',
+      identifier: colonyAddress,
+      params: { amount },
+    });
+
+    const {
+      payload: {
+        params: { amount: mintedAmount },
+        transaction: { receipt },
+      },
+    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    /* 
+      if we got a Mint event log back (we will have on success) get the
+      contract address it's from, and refetch the colony's balance for it
+    */
+    const mintLog = receipt.toJS().logs[0];
+    if (mintLog) {
+      const tokenAddress = mintLog.address;
+      yield put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
+        type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+        meta: { keyPath: [colonyAddress, tokenAddress] },
+        payload: { colonyAddress },
+      });
+    }
+
+    yield put<Action<typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS>>({
+      type: ACTIONS.COLONY_MINT_TOKENS_SUCCESS,
+      payload: { amount: mintedAmount },
+      meta,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_MINT_TOKENS_ERROR, error, meta);
+  } finally {
+    if (txChannel) txChannel.close();
+  }
+}
+
 export default function* adminSagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_FETCH_TRANSACTIONS, colonyFetchTransactions);
   yield takeEvery(
@@ -160,4 +207,5 @@ export default function* adminSagas(): Saga<void> {
   );
   yield takeEvery(ACTIONS.COLONY_CLAIM_TOKEN, colonyClaimToken);
   yield takeEvery(ACTIONS.COLONY_UPDATE_TOKENS, colonyUpdateTokens);
+  yield takeEvery(ACTIONS.COLONY_MINT_TOKENS, colonyMintTokens);
 }

@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 import type { Address } from '~types';
 import type { Action } from '~redux';
 
@@ -36,4 +38,14 @@ export const updateColonyTokens = (
   type: ACTIONS.COLONY_UPDATE_TOKENS,
   meta: { keyPath: [colonyAddress] },
   payload: { colonyAddress, tokens },
+});
+
+export const mintColonyTokens = (
+  colonyAddress: Address,
+  amount: BigNumber,
+  id: string,
+) => ({
+  type: ACTIONS.COLONY_MINT_TOKENS,
+  meta: { keyPath: [colonyAddress], id },
+  payload: { amount, colonyAddress },
 });
