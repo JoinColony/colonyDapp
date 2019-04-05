@@ -19,7 +19,7 @@ import WrappedPayout from './WrappedPayout.jsx';
 import { useDataFetcher } from '~utils/hooks';
 import { userFetcher } from '../../../users/fetchers';
 
-import type { UserType, TokenType, TaskType } from '~immutable';
+import type { UserType, TaskType } from '~immutable';
 import type { $Pick } from '~types';
 
 import styles from './TaskEditDialog.css';
@@ -69,12 +69,11 @@ type Props = {|
     values: { payouts?: Array<any> },
     helpers: () => void,
   ) => void,
-  availableTokens: Array<TokenType>,
   cancel: () => void,
   maxTokens?: number,
   minTokens?: number,
   transform: (action: Object) => Object,
-  users: Array<UserType>,
+  walletAddress: string,
 |};
 
 const supFilter = (data, filterValue) => {
@@ -108,16 +107,33 @@ const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
   addTokenFunding,
-  availableTokens,
   cancel,
   maxTokens,
   minTokens,
-  payouts,
+  payouts: taskPayouts,
   reputation,
   transform,
-  users,
-  worker: { address: workerAddress } = {},
+  worker,
 }: Props) => {
+  const availableTokens = []; // TODO use selector in #1048
+  const users = []; // TODO use selector in #1048
+
+  const payouts = useMemo(
+    () =>
+      taskPayouts.map(payout => ({
+        token:
+          // we add 1 because Formik thinks 0 is empty
+          availableTokens.indexOf(
+            availableTokens.find(
+              token => token.address === payout.token.address,
+            ),
+          ) + 1,
+        amount: payout.amount,
+        id: payout.token.address,
+      })),
+    [taskPayouts, availableTokens],
+  );
+
   const validateFunding = useMemo(
     () =>
       yup.object().shape({
@@ -136,6 +152,7 @@ const TaskEditDialog = ({
       }),
     [maxTokens, availableTokens],
   );
+
   const tokenOptions = useMemo(
     () =>
       availableTokens.map(({ symbol }, i) => ({
@@ -144,13 +161,12 @@ const TaskEditDialog = ({
       })),
     [availableTokens],
   );
-  const args = [workerAddress];
+
+  const args = [worker];
   const {
-    data: worker,
+    data: workerUser,
     isFetching: isFetchingWorker,
-  } = useDataFetcher<UserType>(userFetcher, args, args, {
-    ttl: 1000 * 30, // 30 seconds
-  });
+  } = useDataFetcher<UserType>(userFetcher, args, args);
 
   return (
     <FullscreenDialog
@@ -164,10 +180,11 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      {isFetchingWorker ? (
+      {isFetchingWorker && worker != null ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
+          /* TODO in #1048 use correct actions */
           /* $FlowFixMe */
           submit="CREATE_COOL_THING"
           /* $FlowFixMe */
@@ -176,7 +193,7 @@ const TaskEditDialog = ({
           error="COOL_THING_CREATE_ERROR"
           initialValues={{
             payouts,
-            worker,
+            worker: workerUser,
           }}
           validationSchema={validateFunding}
           transform={transform}
