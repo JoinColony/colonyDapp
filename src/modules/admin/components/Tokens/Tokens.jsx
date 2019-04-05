@@ -3,7 +3,7 @@
 // $FlowFixMe until hooks flow types
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useDispatch } from 'redux-react-hook';
+import { useDispatch, useMappedState } from 'redux-react-hook';
 import BigNumber from 'bn.js';
 import nanoid from 'nanoid';
 import moveDecimal from 'move-decimal-point';
@@ -11,6 +11,7 @@ import moveDecimal from 'move-decimal-point';
 import type { DialogType } from '~core/Dialog';
 import type {
   ContractTransactionType,
+  RolesType,
   TokenReferenceType,
   TokenType,
 } from '~immutable';
@@ -28,7 +29,9 @@ import {
   colonyTransactionsFetcher,
   colonyUnclaimedTransactionsFetcher,
 } from '../../fetchers';
-import { tokenFetcher } from '../../../dashboard/fetchers';
+import { rolesFetcher, tokenFetcher } from '../../../dashboard/fetchers';
+
+import { walletAddressSelector } from '../../../users/selectors';
 
 import { updateColonyTokens, mintColonyTokens } from '../../actionCreators';
 
@@ -125,9 +128,25 @@ const handleMintTokens = ({
 };
 
 const Tokens = ({ tokens: tokensObject, ensName, openDialog }: Props) => {
-  const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
-  const isUserColonyFounder = true; // TODO determine this value.
-  const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
+  const canMintNewTokens = true; // TODO fetch token `owner` and compare against colony/current user
+
+  const walletAddress = useMappedState(walletAddressSelector);
+
+  const { data: roles } = useDataFetcher<RolesType>(
+    rolesFetcher,
+    [ensName],
+    [ensName],
+  );
+  const isColonyAdmin = useMemo(
+    () =>
+      roles &&
+      !!roles.admins.find(admin => addressEquals(admin, walletAddress)),
+    [roles, walletAddress],
+  );
+  const isColonyFounder = useMemo(
+    () => roles && addressEquals(roles.founder, walletAddress),
+    [roles, walletAddress],
+  );
 
   const tokens = useMemo(
     () =>
@@ -212,10 +231,10 @@ const Tokens = ({ tokens: tokensObject, ensName, openDialog }: Props) => {
         </div>
         <TokenList tokens={tokens} appearance={{ numCols: '5' }} />
       </main>
-      {isColonyAdmin && (
+      {(isColonyAdmin || isColonyFounder) && (
         <aside className={styles.sidebar}>
           <ul>
-            {isUserColonyFounder && canMintNewTokens && (
+            {isColonyFounder && canMintNewTokens && (
               <li>
                 <Button
                   text={MSG.navItemMintNewTokens}
