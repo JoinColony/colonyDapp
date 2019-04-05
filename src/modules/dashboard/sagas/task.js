@@ -8,13 +8,19 @@ import nanoid from 'nanoid';
 import { replace } from 'connected-react-router';
 
 import { CONTEXT, getContext } from '~context';
-import { putError, executeCommand, executeQuery } from '~utils/saga/effects';
+import {
+  executeCommand,
+  executeQuery,
+  putError,
+  raceError,
+} from '~utils/saga/effects';
+import { shouldFetchData } from '~immutable/utils';
 import { ACTIONS } from '~redux';
 
 import {
   allColonyENSNamesSelector,
-  taskSelector,
   taskRefRecordSelector,
+  taskSelector,
 } from '../selectors';
 
 import {
@@ -37,6 +43,34 @@ import {
 import { getColonyTasks, getTask, getTaskComments } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
+
+/*
+ * If the given colony is not in state, dispatch an action to fetch it,
+ * and wait for the success/error action.
+ */
+export function* maybeFetchColonyTasks(
+  colonyENSName: string,
+  draftId: string,
+): Saga<*> {
+  const taskRef = yield select(taskRefRecordSelector, draftId);
+
+  // Use an infinite TTL because we don't want to refresh it
+  if (!shouldFetchData(taskRef, Infinity, false, [colonyENSName])) return null;
+
+  yield put({
+    type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+    payload: { colonyENSName },
+  });
+  yield raceError(
+    ({ type, payload }) =>
+      type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS &&
+      payload.colonyENSName === colonyENSName,
+    ({ type, payload }) =>
+      type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR &&
+      payload.colonyENSName === colonyENSName,
+  );
+  return null;
+}
 
 function* getColonyStoreContext(colonyENSName: string): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
@@ -64,11 +98,8 @@ function* getTaskStoreContext(colonyENSName: string, draftId: string): Saga<*> {
     getColonyStoreContext,
     colonyENSName,
   );
-  /*
-   * By selecting the taskStoreAddress from the redux store, we are assuming
-   * it is already in state. If we encounter problems here, we'll want to either
-   * fetch the task reference, or supply taskStoreAddress in the action.
-   */
+  yield call(maybeFetchColonyTasks, colonyENSName, draftId);
+
   const { taskStoreAddress } = yield select(taskRefRecordSelector, draftId);
   return {
     ...context,
@@ -80,14 +111,14 @@ function* getTaskStoreContext(colonyENSName: string, draftId: string): Saga<*> {
   };
 }
 
-function* getTaskCommentsStoreContext(draftId: string): Saga<*> {
+function* getTaskCommentsStoreContext(
+  colonyENSName: string,
+  draftId: string,
+): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const wallet = yield* getContext(CONTEXT.WALLET);
-  /*
-   * By selecting the commentsStoreAddress from the redux store, we are assuming
-   * it is already in state. If we encounter problems here, we'll want to either
-   * fetch the task reference, or supply commentsStoreAddress in the action.
-   */
+  yield call(maybeFetchColonyTasks, colonyENSName, draftId);
+
   const { commentsStoreAddress } = yield select(taskRefRecordSelector, draftId);
   return {
     ddb,
@@ -526,7 +557,11 @@ function* taskFetchComments({
   meta,
 }: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
   try {
-    const context = yield call(getTaskCommentsStoreContext, draftId);
+    const context = yield call(
+      getTaskCommentsStoreContext,
+      colonyENSName,
+      draftId,
+    );
     const comments = yield* executeQuery(context, getTaskComments);
     yield put<Action<typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
@@ -547,7 +582,11 @@ function* taskCommentAdd({
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const context = yield call(getTaskCommentsStoreContext, draftId);
+    const context = yield call(
+      getTaskCommentsStoreContext,
+      colonyENSName,
+      draftId,
+    );
     const { wallet } = context;
     /*
      * TODO Wire message signing to the Gas Station, once it's available
