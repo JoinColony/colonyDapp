@@ -1,14 +1,16 @@
 /* @flow */
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 
 import type { ContractTransactionType, UserType } from '~immutable';
 
 import ExternalLink from '~core/ExternalLink';
+import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import { useDataFetcher } from '~utils/hooks';
 
+import { useToken } from '../../hooks';
 import { userFetcher } from '../../../users/fetchers';
 
 import styles from './TaskFeedTransactionInfo.css';
@@ -20,11 +22,11 @@ const MSG = defineMessages({
   },
   receiptAmountText: {
     id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptAmountText',
-    defaultMessage: 'Amount: {amount} {tokenSymbol}',
+    defaultMessage: 'Amount: {amount} {symbol}',
   },
   receiptColonyFeeText: {
     id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptColonyFeeText',
-    defaultMessage: 'Colony fee: {amount} {tokenSymbol}',
+    defaultMessage: 'Colony fee: {amount} {symbol}',
   },
   receiptRecipientText: {
     id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptRecipientText',
@@ -50,13 +52,15 @@ const displayName = 'dashboard.TaskFeed.TaskFeedTransactionInfo';
 
 const TaskFeedTransactionInfo = ({
   reputation,
-  transaction: { amount, date, hash, to, token },
+  transaction: { amount, date, hash, to, token: tokenAddress },
 }: Props) => {
   const { data: user, isFetching } = useDataFetcher<UserType>(
     userFetcher,
     [to],
     [to],
   );
+  const token = useToken(tokenAddress);
+  const { symbol } = token || {};
 
   if (!user || isFetching) return <SpinnerLoader />;
 
@@ -92,24 +96,27 @@ const TaskFeedTransactionInfo = ({
             <br />
             <FormattedMessage
               {...MSG.receiptAmountText}
-              // @TODO use actual amount
-              // @TODO use actual token symbol
-              values={{ amount: amount.toString(), tokenSymbol: token }}
+              // @TODO use amount minus network fee
+              values={{
+                amount: <Numeral decimals={4} unit="ether" value={amount} />,
+                symbol,
+              }}
             />
             <br />
             <FormattedMessage
               {...MSG.receiptColonyFeeText}
-              // @TODO use actual amount
-              // @TODO use actual token symbol
-              values={{ amount: amount.toString(), tokenSymbol: token }}
+              // @TODO use actual network fee
+              values={{
+                amount: <Numeral decimals={4} unit="ether" value={amount} />,
+                symbol,
+              }}
             />
             <br />
             <FormattedMessage
               {...MSG.receiptReputationText}
-              // @TODO use actual reputation
               values={{
                 isNonNegative: reputation >= 0,
-                reputationAmount: reputation,
+                reputationAmount: <FormattedNumber value={reputation} />,
               }}
             />
             {hash && (
