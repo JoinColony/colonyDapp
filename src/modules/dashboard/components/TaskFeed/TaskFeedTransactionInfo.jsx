@@ -8,6 +8,10 @@ import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
+import {
+  getTaskPayoutNetworkFee,
+  getTaskPayoutAmountMinusNetworkFee,
+} from '~immutable/utils';
 import { useDataFetcher } from '~utils/hooks';
 
 import { useToken } from '../../hooks';
@@ -62,7 +66,7 @@ const TaskFeedTransactionInfo = ({
   const token = useToken(tokenAddress);
   const { symbol } = token || {};
 
-  if (!user || isFetching) return <SpinnerLoader />;
+  if (!user || !token || isFetching) return <SpinnerLoader />;
 
   return (
     <div className={styles.main}>
@@ -96,18 +100,31 @@ const TaskFeedTransactionInfo = ({
             <br />
             <FormattedMessage
               {...MSG.receiptAmountText}
-              // @TODO use amount minus network fee
               values={{
-                amount: <Numeral decimals={4} unit="ether" value={amount} />,
+                amount: (
+                  <Numeral
+                    decimals={4}
+                    unit="ether"
+                    value={getTaskPayoutAmountMinusNetworkFee({
+                      amount,
+                      token,
+                    })}
+                  />
+                ),
                 symbol,
               }}
             />
             <br />
             <FormattedMessage
               {...MSG.receiptColonyFeeText}
-              // @TODO use actual network fee
               values={{
-                amount: <Numeral decimals={4} unit="ether" value={amount} />,
+                amount: (
+                  <Numeral
+                    decimals={4}
+                    unit="ether"
+                    value={getTaskPayoutNetworkFee({ amount, token })}
+                  />
+                ),
                 symbol,
               }}
             />
