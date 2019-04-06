@@ -66,89 +66,95 @@ const TaskFeedTransactionInfo = ({
   const token = useToken(tokenAddress);
   const { symbol } = token || {};
 
-  if (!user || !token || isFetching) return <SpinnerLoader />;
-
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
         <p>
-          <FormattedMessage
-            {...MSG.eventTaskSentMessage}
-            values={{
-              user: (
-                <span className={styles.username}>
-                  {user.profile.displayName || user.profile.username}
-                </span>
-              ),
-            }}
-          />
+          {!user || isFetching ? (
+            <SpinnerLoader />
+          ) : (
+            <FormattedMessage
+              {...MSG.eventTaskSentMessage}
+              values={{
+                user: (
+                  <span className={styles.username}>
+                    {user.profile.displayName || user.profile.username}
+                  </span>
+                ),
+              }}
+            />
+          )}
           <span className={styles.timeSinceTx}>
             <TimeRelative value={date} />
           </span>
         </p>
       </div>
-      <div className={styles.receiptContainer}>
-        <div className={styles.receiptSideBorder} />
-        <div className={styles.receiptTextBlock}>
-          <p>
-            <FormattedMessage
-              {...MSG.receiptRecipientText}
-              values={{
-                address: to,
-              }}
-            />
-            <br />
-            <FormattedMessage
-              {...MSG.receiptAmountText}
-              values={{
-                amount: (
-                  <Numeral
-                    decimals={4}
-                    unit="ether"
-                    value={getTaskPayoutAmountMinusNetworkFee({
-                      amount,
-                      token,
-                    })}
+      {!token ? (
+        <SpinnerLoader />
+      ) : (
+        <div className={styles.receiptContainer}>
+          <div className={styles.receiptSideBorder} />
+          <div className={styles.receiptTextBlock}>
+            <p>
+              <FormattedMessage
+                {...MSG.receiptRecipientText}
+                values={{
+                  address: to,
+                }}
+              />
+              <br />
+              <FormattedMessage
+                {...MSG.receiptAmountText}
+                values={{
+                  amount: (
+                    <Numeral
+                      decimals={4}
+                      unit="ether"
+                      value={getTaskPayoutAmountMinusNetworkFee({
+                        amount,
+                        token,
+                      })}
+                    />
+                  ),
+                  symbol,
+                }}
+              />
+              <br />
+              <FormattedMessage
+                {...MSG.receiptColonyFeeText}
+                values={{
+                  amount: (
+                    <Numeral
+                      decimals={4}
+                      unit="ether"
+                      value={getTaskPayoutNetworkFee({ amount, token })}
+                    />
+                  ),
+                  symbol,
+                }}
+              />
+              <br />
+              <FormattedMessage
+                {...MSG.receiptReputationText}
+                values={{
+                  isNonNegative: reputation >= 0,
+                  reputationAmount: <FormattedNumber value={reputation} />,
+                }}
+              />
+              {hash && (
+                <>
+                  <br />
+                  <ExternalLink
+                    className={styles.receiptLink}
+                    text={MSG.receiptViewTxLinkText}
+                    href={`https://rinkeby.etherscan.io/tx/${hash}`}
                   />
-                ),
-                symbol,
-              }}
-            />
-            <br />
-            <FormattedMessage
-              {...MSG.receiptColonyFeeText}
-              values={{
-                amount: (
-                  <Numeral
-                    decimals={4}
-                    unit="ether"
-                    value={getTaskPayoutNetworkFee({ amount, token })}
-                  />
-                ),
-                symbol,
-              }}
-            />
-            <br />
-            <FormattedMessage
-              {...MSG.receiptReputationText}
-              values={{
-                isNonNegative: reputation >= 0,
-                reputationAmount: <FormattedNumber value={reputation} />,
-              }}
-            />
-            {hash && (
-              <>
-                <br />
-                <ExternalLink
-                  className={styles.receiptLink}
-                  text={MSG.receiptViewTxLinkText}
-                  href={`https://rinkeby.etherscan.io/tx/${hash}`}
-                />
-              </>
-            )}
-          </p>
+                </>
+              )}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
