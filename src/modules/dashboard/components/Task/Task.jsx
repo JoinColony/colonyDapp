@@ -1,40 +1,51 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import type { Match } from 'react-router';
+
+// $FlowFixMe
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import nanoid from 'nanoid';
 
 import { ACTIONS } from '~redux';
-import { TASK_STATE } from '~immutable';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 /*
  * TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { TaskFeedItemType, TaskType, UserType } from '~immutable';
+import type { TaskType } from '~immutable';
 
-import Form from '~core/Fields/Form';
 import Heading from '~core/Heading';
+import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
+import LoadingTemplate from '~pages/LoadingTemplate';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
+import TaskComments from '~dashboard/TaskComments';
 import TaskDate from '~dashboard/TaskDate';
 import TaskDescription from '~dashboard/TaskDescription';
 import TaskDomains from '~dashboard/TaskDomains';
-import TaskRequestWork from '~dashboard/TaskRequestWork';
-import TaskComments from '~dashboard/TaskComments';
 import TaskFeed from '~dashboard/TaskFeed';
+import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
+import TaskTitle from '~dashboard/TaskTitle';
 
-import userMocks from './__datamocks__/mockUsers';
-import tokensMock from '../../../../__mocks__/mockTokens';
+import {
+  canCancelTask,
+  canEditTask,
+  canFinalizeTask,
+  isCreator,
+  isFinalized,
+} from '../../checks';
+import { currentUserSelector } from '../../../users/selectors';
+import { taskFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
 const MSG = defineMessages({
   assignmentFunding: {
     id: 'dashboard.Task.assignmentFunding',
-    defaultMessage: 'Assignment and Funding',
+    defaultMessage: 'Assignment and funding',
   },
   details: {
     id: 'dashboard.Task.details',
@@ -50,7 +61,7 @@ const MSG = defineMessages({
   },
   finalizeTask: {
     id: 'dashboard.Task.finalizeTask',
-    defaultMessage: 'Finalize Task',
+    defaultMessage: 'Finalize task',
   },
   discardTask: {
     id: 'dashboard.Task.discardTask',
@@ -60,220 +71,199 @@ const MSG = defineMessages({
     id: 'dashboard.Task.confirmText',
     defaultMessage: 'Are you sure you want to discard this task?',
   },
+  loadingText: {
+    id: 'dashboard.Task.loadingText',
+    defaultMessage: 'Loading task',
+  },
 });
 
 type Props = {|
-  canTaskBeFinalized: boolean,
-  canTaskPayoutBeClaimed: boolean,
-  currentUser: UserType,
-  didTaskDueDateElapse: boolean,
-  feedItems: TaskFeedItemType[],
-  isTaskCreator?: boolean,
-  isTaskManager: boolean,
-  isTaskWorker: boolean,
+  match: Match,
   openDialog: OpenDialog,
-  preventEdit: boolean,
-  task: TaskType,
 |};
 
-type State = {|
-  isDiscardConfirmDisplayed: boolean,
-|};
+const displayName = 'dashboard.Task';
 
-class Task extends Component<Props, State> {
-  static displayName = 'dashboard.Task';
+const Task = ({
+  match: {
+    params: { draftId, ensName },
+  },
+  openDialog,
+}: Props) => {
+  const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
-  static defaultProps = {
-    isTaskCreator: false,
-    preventEdit: true,
-    currentUser: {},
-  };
+  const currentUser = useSelector(currentUserSelector);
+  const { walletAddress } = currentUser.profile;
 
-  state = {
-    isDiscardConfirmDisplayed: false,
-  };
+  const { data: task, isFetching, error } = useDataFetcher<TaskType>(
+    taskFetcher,
+    [draftId],
+    [ensName, draftId],
+  );
 
-  openTaskEditDialog = () => {
-    const {
-      openDialog,
-      task: { worker, payouts, reputation },
-    } = this.props;
+  const onEditTask = useCallback(
+    () => {
+      // If you've managed to click on the button that runs this without the
+      // task being fetched yet, you are a wizard
+      if (!task) return;
 
-    openDialog('TaskEditDialog', {
-      // TODO: this should be the Colony's tokens
-      availableTokens: tokensMock.toJS(),
-      maxTokens: 1,
-      minTokens: 1,
-      payouts: payouts.map(payout => ({
-        token:
-          // we add 1 because Formik thinks 0 is empty
-          tokensMock.indexOf(
-            tokensMock.find(token => token.symbol === payout.token.symbol),
-          ) + 1,
-        amount: payout.amount,
-        id: nanoid(),
-      })),
-      reputation,
-      // TODO: this should be users who have requested to work
-      users: userMocks.toJS(),
-      worker,
-    });
-  };
+      const { payouts, reputation, worker } = task;
+      openDialog('TaskEditDialog', {
+        maxTokens: 2,
+        payouts,
+        reputation,
+        worker,
+      });
+    },
+    [openDialog, task],
+  );
 
-  setValues = (dialogValues?: Object = {}) => {
-    const {
-      task: { colonyENSName, draftId },
-    } = this.props;
-    return {
-      ...dialogValues,
-      colonyENSName,
-      draftId,
-    };
-  };
+  if (!task || isFetching || error)
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
 
-  handleDiscardConfirmToggled = (state: boolean) => {
-    this.setState({ isDiscardConfirmDisplayed: state });
-  };
+  const isTaskCreator = isCreator(task, walletAddress);
 
-  render() {
-    const {
-      props: {
-        currentUser,
-        feedItems,
-        isTaskCreator,
-        isTaskManager,
-        preventEdit,
-        task: { worker },
-        task,
-      },
-      state: { isDiscardConfirmDisplayed },
-      setValues,
-      handleDiscardConfirmToggled,
-    } = this;
-    // TODO: this should be determined from Colony in state
-    const hasRequestedToWork = true;
-    return (
-      <div className={styles.main}>
-        <aside className={styles.sidebar}>
-          <section className={styles.section}>
-            <header className={styles.headerAside}>
-              <Heading
-                appearance={{ size: 'normal' }}
-                text={MSG.assignmentFunding}
+  const {
+    description,
+    domainId,
+    dueDate,
+    payouts,
+    reputation,
+    skillId,
+    title,
+    worker,
+  } = task;
+
+  const setActionButtonValues = () => ({ colonyENSName: ensName, draftId });
+
+  return (
+    <div className={styles.main}>
+      <aside className={styles.sidebar}>
+        <section className={styles.section}>
+          <header className={styles.headerAside}>
+            <Heading
+              appearance={{ size: 'normal' }}
+              text={MSG.assignmentFunding}
+            />
+            {!canEditTask(task, walletAddress) && (
+              <Button
+                appearance={{ theme: 'blue' }}
+                text={MSG.details}
+                onClick={onEditTask}
               />
-              {!preventEdit && (
-                <Button
-                  appearance={{ theme: 'blue' }}
-                  text={MSG.details}
-                  onClick={this.openTaskEditDialog}
+            )}
+          </header>
+          <TaskAssignment
+            colonyENSName={ensName}
+            draftId={draftId}
+            payouts={payouts}
+            reputation={reputation}
+            worker={worker}
+          />
+        </section>
+        <section className={styles.section}>
+          <TaskTitle
+            colonyENSName={ensName}
+            draftId={draftId}
+            isTaskCreator={isTaskCreator}
+            title={title}
+          />
+          <TaskDescription
+            colonyENSName={ensName}
+            description={description}
+            draftId={draftId}
+            isTaskCreator={isTaskCreator}
+          />
+        </section>
+        <section className={styles.section}>
+          <div className={styles.editor}>
+            <TaskDomains
+              colonyENSName={ensName}
+              domainId={domainId}
+              draftId={draftId}
+              isTaskCreator={isTaskCreator}
+            />
+          </div>
+          <div className={styles.editor}>
+            <TaskSkills
+              colonyENSName={ensName}
+              draftId={draftId}
+              isTaskCreator={isTaskCreator}
+              skillId={skillId}
+            />
+          </div>
+          <div className={styles.editor}>
+            <TaskDate
+              colonyENSName={ensName}
+              draftId={draftId}
+              isTaskCreator={isTaskCreator}
+              dueDate={dueDate}
+            />
+          </div>
+        </section>
+      </aside>
+      <div className={styles.container}>
+        <section
+          className={`${styles.header} ${
+            isDiscardConfirmDisplayed ? styles.headerConfirm : ''
+          }`}
+        >
+          {canCancelTask(task, walletAddress) && (
+            <ActionButton
+              appearance={{ theme: 'secondary', size: 'small' }}
+              button={ConfirmButton}
+              confirmText={MSG.confirmText}
+              onConfirmToggled={setDiscardConfirmDisplay}
+              text={MSG.discardTask}
+              submit={ACTIONS.TASK_CANCEL}
+              error={ACTIONS.TASK_CANCEL_ERROR}
+              success={ACTIONS.TASK_CANCEL_SUCCESS}
+              values={setActionButtonValues}
+            />
+          )}
+          {/* Hide when discard confirm is displayed */}
+          {!isDiscardConfirmDisplayed && (
+            <>
+              {canFinalizeTask(task, walletAddress) && (
+                <ActionButton
+                  text={MSG.finalizeTask}
+                  submit={ACTIONS.TASK_FINALIZE}
+                  error={ACTIONS.TASK_FINALIZE_ERROR}
+                  success={ACTIONS.TASK_FINALIZE_SUCCESS}
+                  values={setActionButtonValues}
                 />
               )}
-            </header>
-            <Form
-              /* eslint-disable-next-line no-console */
-              onSubmit={console.log}
-            >
-              {/*
-               * TODO: replace this with TaskAssignment component in colonyDapp#445
-               *
-               * This should also add in a `readOnly` prop for the `SingleUserPicker`
-               * to prevent opening when the task has been finalized.
-               *
-               * See:
-               * https://github.com/JoinColony/colonyDapp/pull/460#issuecomment-437870446
-               */}
-              <TaskAssignment task={task} nativeToken="CLNY" />
-            </Form>
+              {isFinalized(task) && (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
+            </>
+          )}
+          {!isTaskCreator && (
+            <TaskRequestWork currentUser={currentUser} task={task} />
+          )}
+          {/*
+            TODO use these components for the full on-chain task workflow
+            <TaskRatingButtons task={task} />
+            <TaskClaimReward task={task} />
+          */}
+        </section>
+        <div className={styles.activityContainer}>
+          <section className={styles.activity}>
+            {/* TODO in #580 define relevant props for TaskFeed */}
+            <TaskFeed currentUser={currentUser} />
           </section>
-          <section className={styles.section}>
-            <Form
-              /* eslint-disable-next-line no-console */
-              onSubmit={console.log}
-              initialValues={{
-                taskTitle: task.title,
-              }}
-            >
-              <TaskDescription isTaskCreator={preventEdit} />
-            </Form>
+          <section className={styles.commentBox}>
+            {/* TODO in #580 define relevant props for TaskComments */}
+            <TaskComments draftId={draftId} currentUser={currentUser} />
           </section>
-          <section className={styles.section}>
-            <div className={styles.editor}>
-              <TaskDomains isTaskCreator={preventEdit} draftId={task.draftId} />
-            </div>
-            <div className={styles.editor}>
-              <TaskSkills isTaskCreator={preventEdit} task={task} />
-            </div>
-            <div className={styles.editor}>
-              <TaskDate isTaskCreator task={task} />
-            </div>
-          </section>
-        </aside>
-        <div className={styles.container}>
-          <section
-            className={`${styles.header} ${
-              isDiscardConfirmDisplayed ? styles.headerConfirm : ''
-            }`}
-          >
-            {/* Task can be canceled by current user */}
-            {isTaskManager && task.currentState === TASK_STATE.ACTIVE && (
-              <ActionButton
-                appearance={{ theme: 'secondary', size: 'small' }}
-                button={ConfirmButton}
-                confirmText={MSG.confirmText}
-                error={ACTIONS.TASK_CANCEL_ERROR}
-                onConfirmToggled={handleDiscardConfirmToggled}
-                submit={ACTIONS.TASK_CANCEL}
-                success={ACTIONS.TASK_CANCEL_SUCCESS}
-                text={MSG.discardTask}
-                values={setValues}
-              />
-            )}
-            {/* Hide when discard confirm is displayed */}
-            {!isDiscardConfirmDisplayed && (
-              <>
-                {/* Apply to work/display "submitted" if already done */}
-                {!worker && !isTaskCreator && (
-                  <TaskRequestWork
-                    currentUser={currentUser}
-                    task={task}
-                    hasRequested={hasRequestedToWork}
-                  />
-                )}
-                {/* Work has been submitted  */}
-                {isTaskManager && task.currentState === TASK_STATE.ACTIVE && (
-                  <ActionButton
-                    text={MSG.finalizeTask}
-                    submit={ACTIONS.TASK_FINALIZE}
-                    success={ACTIONS.TASK_FINALIZE_SUCCESS}
-                    error={ACTIONS.TASK_FINALIZE_ERROR}
-                    values={setValues}
-                  />
-                )}
-                {/* Task is finalized/completed */}
-                {task.currentState === TASK_STATE.FINALIZED && (
-                  <p className={styles.completedDescription}>
-                    <FormattedMessage {...MSG.completed} />
-                  </p>
-                )}
-              </>
-            )}
-          </section>
-          <div className={styles.activityContainer}>
-            <section className={styles.activity}>
-              <TaskFeed
-                feedItems={feedItems}
-                currentUser={currentUser}
-                isRevealEnded={task.currentState === TASK_STATE.FINALIZED}
-              />
-            </section>
-            <section className={styles.commentBox}>
-              <TaskComments draftId={task.draftId} currentUser={currentUser} />
-            </section>
-          </div>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
-export default Task;
+Task.displayName = displayName;
+
+export default withDialog()(Task);

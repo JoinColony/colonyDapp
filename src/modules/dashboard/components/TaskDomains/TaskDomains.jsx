@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { TaskProps } from '~immutable';
+
 import promiseListener from '../../../../createPromiseListener';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -31,9 +33,8 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator?: boolean,
-  /* we will only have a draftId if we are updating an existing task */
-  draftId: string,
+  isTaskCreator: boolean,
+  ...TaskProps<{ colonyENSName: *, domainId: *, draftId: * }>,
 |};
 
 type State = {
@@ -63,9 +64,10 @@ class TaskDomains extends Component<Props, State> {
   }
 
   handleSetDomain = async (domainValue: Object) => {
-    const { draftId } = this.props;
+    const { colonyENSName, draftId } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
+        colonyENSName,
         domainId: domainValue.id,
         draftId,
       });
@@ -76,7 +78,7 @@ class TaskDomains extends Component<Props, State> {
   };
 
   render() {
-    const { isTaskCreator } = this.props;
+    const { isTaskCreator, domainId } = this.props;
     const { selectedDomainId } = this.state;
     const list = Array(...mockDomains);
     return (
@@ -89,6 +91,7 @@ class TaskDomains extends Component<Props, State> {
             name="taskDomains"
             connect={false}
             showArrow={false}
+            itemId={domainId}
           >
             <div className={styles.controls}>
               <Heading

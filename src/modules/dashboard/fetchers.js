@@ -4,12 +4,18 @@ import {
   colonyRolesSelector,
   colonyDomainsSelector,
   colonySelector,
+  taskSelector,
 } from './selectors';
 import {
   currentUserTasksSelector,
   currentUserColoniesSelector,
 } from '../users/selectors';
-import { fetchColony, fetchDomains, fetchRoles } from './actionCreators';
+import {
+  fetchColony,
+  fetchDomains,
+  fetchRoles,
+  taskFetch,
+} from './actionCreators';
 import {
   currentUserFetchColonies,
   currentUserFetchTasks,
@@ -43,4 +49,10 @@ export const currentUserColoniesFetcher = Object.freeze({
   select: currentUserColoniesSelector,
   fetch: currentUserFetchColonies,
   ttl: 1000 * 60,
+});
+
+export const taskFetcher = Object.freeze({
+  select: taskSelector,
+  fetch: taskFetch,
+  ttl: 1000 * 60, // 1 minute,
 });

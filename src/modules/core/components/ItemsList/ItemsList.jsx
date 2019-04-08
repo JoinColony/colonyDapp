@@ -39,6 +39,8 @@ type Props = {|
   itemDisplaySuffix?: string,
   /** Callback to call when setting a new item (only when the Form isn't connected) */
   handleSetItem?: (value: ConsumableItem) => void,
+  /** The item ID given to the form as the current ID */
+  itemId: number | void,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -197,12 +199,13 @@ class ItemsList extends Component<Props, State> {
         children,
         itemDisplayPrefix = '',
         itemDisplaySuffix = '',
+        itemId,
       },
       handleSet,
       renderListItem,
     } = this;
     const currentItem: ConsumableItem | void = list.find(
-      ({ id }) => id === setItemId,
+      ({ id }) => id === (setItemId || itemId),
     );
 
     return (

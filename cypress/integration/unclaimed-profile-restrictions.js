@@ -29,6 +29,10 @@ describe('Unclaimed Profile Restrictions', () => {
       .click();
   });
 
+  /*
+   * This is skipped until the task list items are wired and
+   * task mocks are removed (the task view tries to load real tasks now).
+   */
   it.skip('Tries to leave a comment on the first task', () => {
     /*
      * Go to the first task in the dashboard list

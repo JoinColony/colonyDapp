@@ -14,7 +14,7 @@ import styles from './TaskDate.css';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 
-import type { TaskType } from '~immutable';
+import type { TaskProps } from '~immutable';
 
 const MSG = defineMessages({
   title: {
@@ -31,8 +31,8 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator?: boolean,
-  task: TaskType,
+  isTaskCreator: boolean,
+  ...TaskProps<{ colonyENSName: *, draftId: *, dueDate: * }>,
 |};
 
 type State = {
@@ -80,9 +80,7 @@ class TaskDate extends Component<Props, State> {
   handleSetDate = async (callback: () => void) => {
     const { selectedDate } = this.state;
 
-    const {
-      task: { draftId, colonyENSName, domainId },
-    } = this.props;
+    const { draftId, colonyENSName } = this.props;
 
     this.setState(
       {
@@ -94,19 +92,14 @@ class TaskDate extends Component<Props, State> {
 
     try {
       await this.setTaskDate.asyncFunction({
-        dueDate: selectedDate,
-        domainId,
-        // draftId of currently selected task
+        colonyENSName,
         draftId,
-        ensName: colonyENSName,
+        dueDate: selectedDate,
       });
     } catch (error) {
       // TODO: handle this error properly / display it in some way
       console.error(error);
     }
-
-    /* eslint-disable-next-line no-console */
-    console.log(TaskDate.displayName, selectedDate);
   };
 
   /*
@@ -116,9 +109,7 @@ class TaskDate extends Component<Props, State> {
    * Otherwise the date picker might show the wrong selected day (state won't reset)
    */
   handleOpen = (callback: () => void) => {
-    const {
-      task: { dueDate },
-    } = this.props;
+    const { dueDate } = this.props;
     this.setState({ selectedDate: dueDate }, callback);
   };
 
@@ -132,19 +123,14 @@ class TaskDate extends Component<Props, State> {
    * the actual set one.
    */
   handleCleanup = (callback: () => void) => {
-    const {
-      task: { dueDate },
-    } = this.props;
+    const { dueDate } = this.props;
     this.setState({ selectedDate: dueDate, touched: false }, callback);
   };
 
   render() {
     const {
       state: { touched, selectedDate },
-      props: {
-        isTaskCreator = false,
-        task: { dueDate },
-      },
+      props: { isTaskCreator, dueDate },
     } = this;
     return (
       <div className={styles.main}>

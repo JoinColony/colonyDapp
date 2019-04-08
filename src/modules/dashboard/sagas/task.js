@@ -5,15 +5,22 @@ import type { Action } from '~redux';
 
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import nanoid from 'nanoid';
+import { replace } from 'connected-react-router';
 
 import { CONTEXT, getContext } from '~context';
-import { putError, executeCommand, executeQuery } from '~utils/saga/effects';
+import {
+  executeCommand,
+  executeQuery,
+  putError,
+  raceError,
+} from '~utils/saga/effects';
+import { shouldFetchData } from '~immutable/utils';
 import { ACTIONS } from '~redux';
 
 import {
   allColonyENSNamesSelector,
+  taskRefRecordSelector,
   taskSelector,
-  taskStorePropsSelector,
 } from '../selectors';
 
 import {
@@ -36,6 +43,34 @@ import {
 import { getColonyTasks, getTask, getTaskComments } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
+
+/*
+ * If the given colony is not in state, dispatch an action to fetch it,
+ * and wait for the success/error action.
+ */
+export function* maybeFetchColonyTasks(
+  colonyENSName: string,
+  draftId: string,
+): Saga<*> {
+  const taskRef = yield select(taskRefRecordSelector, draftId);
+
+  // Use an infinite TTL because we don't want to refresh it
+  if (!shouldFetchData(taskRef, Infinity, false, [colonyENSName])) return null;
+
+  yield put({
+    type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+    payload: { colonyENSName },
+  });
+  yield raceError(
+    ({ type, payload }) =>
+      type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS &&
+      payload.colonyENSName === colonyENSName,
+    ({ type, payload }) =>
+      type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR &&
+      payload.colonyENSName === colonyENSName,
+  );
+  return null;
+}
 
 function* getColonyStoreContext(colonyENSName: string): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
@@ -63,34 +98,28 @@ function* getTaskStoreContext(colonyENSName: string, draftId: string): Saga<*> {
     getColonyStoreContext,
     colonyENSName,
   );
-  /*
-   * By selecting the taskStoreAddress from the redux store, we are assuming
-   * it is already in state. If we encounter problems here, we'll want to either
-   * fetch the task reference, or supply taskStoreAddress in the action.
-   */
-  const { taskStoreAddress } = yield select(taskStorePropsSelector, {
-    draftId,
-  });
+  yield call(maybeFetchColonyTasks, colonyENSName, draftId);
+
+  const { taskStoreAddress } = yield select(taskRefRecordSelector, draftId);
   return {
     ...context,
     metadata: {
       ...metadata,
+      draftId,
       taskStoreAddress,
     },
   };
 }
 
-function* getTaskCommentsStoreContext(draftId: string): Saga<*> {
+function* getTaskCommentsStoreContext(
+  colonyENSName: string,
+  draftId: string,
+): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const wallet = yield* getContext(CONTEXT.WALLET);
-  /*
-   * By selecting the commentsStoreAddress from the redux store, we are assuming
-   * it is already in state. If we encounter problems here, we'll want to either
-   * fetch the task reference, or supply commentsStoreAddress in the action.
-   */
-  const { commentsStoreAddress } = yield select(taskStorePropsSelector, {
-    draftId,
-  });
+  yield call(maybeFetchColonyTasks, colonyENSName, draftId);
+
+  const { commentsStoreAddress } = yield select(taskRefRecordSelector, draftId);
   return {
     ddb,
     wallet,
@@ -106,17 +135,14 @@ function* taskCreate({
 }: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
   try {
     const colonyContext = yield call(getColonyStoreContext, colonyENSName);
+    const creator = colonyContext.wallet.address;
     const { taskStore, commentsStore, draftId } = yield* executeCommand(
       colonyContext,
       createTask,
-      {
-        creator: colonyContext.wallet.address,
-      },
+      { creator },
     );
 
-    yield put(subscribeToTask(draftId));
-
-    yield put<Action<typeof ACTIONS.TASK_CREATE_SUCCESS>>({
+    const successAction: Action<typeof ACTIONS.TASK_CREATE_SUCCESS> = {
       type: ACTIONS.TASK_CREATE_SUCCESS,
       payload: {
         colonyENSName,
@@ -126,10 +152,19 @@ function* taskCreate({
         task: {
           colonyENSName,
           draftId,
+          creator,
         },
       },
       meta: { keyPath: [draftId], ...meta },
-    });
+    };
+    /*
+     * Put the success action, subscribe to the task and redirect to it
+     */
+    yield all([
+      put(successAction),
+      put(subscribeToTask(draftId)),
+      put(replace(`/colony/${colonyENSName}/task/${draftId}`)),
+    ]);
   } catch (error) {
     yield putError(ACTIONS.TASK_CREATE_ERROR, error, meta);
   }
@@ -160,6 +195,7 @@ const getTaskFetchSuccessPayload = (
     colonyENSName,
     currentState,
     draftId,
+    invites,
     payouts: paymentToken
       ? [
           {
@@ -171,6 +207,7 @@ const getTaskFetchSuccessPayload = (
           },
         ]
       : undefined,
+    requests,
   },
   taskStoreAddress,
 });
@@ -397,7 +434,9 @@ function* taskSetDueDate({
 }: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(colonyENSName, draftId);
-    yield* executeCommand(context, setTaskDueDate, { dueDate });
+    yield* executeCommand(context, setTaskDueDate, {
+      dueDate: dueDate.getTime(),
+    });
     yield put<Action<typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS>>({
       type: ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
       payload: {
@@ -473,7 +512,7 @@ function* taskSendWorkRequest({
   }
 }
 
-function* taskAssign({
+function* taskWorkerAssign({
   payload: { draftId, colonyENSName, worker },
   payload,
   meta,
@@ -493,7 +532,7 @@ function* taskAssign({
   }
 }
 
-function* taskUnassign({
+function* taskWorkerUnassign({
   payload: { draftId, colonyENSName, worker },
   payload,
   meta,
@@ -518,7 +557,11 @@ function* taskFetchComments({
   meta,
 }: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
   try {
-    const context = yield call(getTaskCommentsStoreContext, draftId);
+    const context = yield call(
+      getTaskCommentsStoreContext,
+      colonyENSName,
+      draftId,
+    );
     const comments = yield* executeQuery(context, getTaskComments);
     yield put<Action<typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
@@ -539,7 +582,11 @@ function* taskCommentAdd({
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const context = yield call(getTaskCommentsStoreContext, draftId);
+    const context = yield call(
+      getTaskCommentsStoreContext,
+      colonyENSName,
+      draftId,
+    );
     const { wallet } = context;
     /*
      * TODO Wire message signing to the Gas Station, once it's available
@@ -576,7 +623,6 @@ function* taskCommentAdd({
 }
 
 export default function* tasksSagas(): any {
-  yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskAssign);
   yield takeEvery(ACTIONS.TASK_CANCEL, taskCancel);
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
@@ -594,5 +640,6 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
-  yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskUnassign);
+  yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
+  yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
 }

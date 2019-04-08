@@ -1,31 +1,41 @@
 /* @flow */
 
-import type { ENSName, Address } from '~types';
-
 import { ACTIONS } from '~redux';
 
-export const fetchTaskComments = (
+import type { TaskDraftId } from '~immutable';
+import type { Action } from '~redux';
+import type { Address, ENSName } from '~types';
+
+const keyPath = (draftId: TaskDraftId) => ({ keyPath: [draftId] });
+
+export const taskFetch = (
   colonyENSName: ENSName,
-  commentsStoreAddress: string,
-) => ({
-  type: ACTIONS.TASK_FETCH_COMMENTS,
-  meta: {
-    keyPath: [colonyENSName, commentsStoreAddress],
-  },
+  draftId: TaskDraftId,
+): Action<typeof ACTIONS.TASK_FETCH> => ({
+  type: ACTIONS.TASK_FETCH,
+  payload: { colonyENSName, draftId },
+  meta: keyPath(draftId),
 });
 
-export const setTaskWorker = (
-  colonyAddress: Address,
-  draftId: string,
-  assignee: string,
-) => ({
+export const taskFetchComments = (
+  colonyENSName: ENSName,
+  draftId: TaskDraftId,
+): Action<typeof ACTIONS.TASK_FETCH_COMMENTS> => ({
+  type: ACTIONS.TASK_FETCH_COMMENTS,
+  payload: { colonyENSName, draftId },
+  meta: keyPath(draftId),
+});
+
+export const taskSetWorker = (
+  colonyENSName: ENSName,
+  draftId: TaskDraftId,
+  worker: Address,
+): Action<typeof ACTIONS.TASK_WORKER_ASSIGN> => ({
   type: ACTIONS.TASK_WORKER_ASSIGN,
-  meta: {
-    keyPath: [draftId],
-  },
   payload: {
-    colonyENSName: colonyAddress,
+    colonyENSName,
     draftId,
-    worker: assignee,
+    worker,
   },
+  meta: keyPath(draftId),
 });

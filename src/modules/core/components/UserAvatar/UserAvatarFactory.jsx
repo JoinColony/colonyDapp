@@ -56,6 +56,7 @@ const UserAvatarFactory = ({
     let avatar = avatarProp;
 
     if (fetchUser) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       ({ data: user } = useDataFetcher<UserType>(
         userFetcher,
         [address],
@@ -64,6 +65,7 @@ const UserAvatarFactory = ({
     }
     if (fetchAvatar) {
       const avatarIpfsHash = user ? user.profile.avatar : undefined;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       ({ data: avatar } = useDataFetcher<string>(
         ipfsDataFetcher,
         [avatarIpfsHash],

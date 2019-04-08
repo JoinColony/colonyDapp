@@ -1,39 +1,64 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+import type { FormikProps } from 'formik';
+
+import { ContentState, EditorState } from 'draft-js';
+
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { SingleLineEdit, MultiLineEdit } from '~core/Fields';
+import type { TaskProps } from '~immutable';
+
+import { mergePayload } from '~utils/actions';
+import { MultiLineEdit, ActionForm } from '~core/Fields';
+import { ACTIONS } from '~redux';
 
 const MSG = defineMessages({
-  taskTitlePlaceholder: {
-    id: 'dashboard.TaskDescription.taskTitlePlaceholder',
-    defaultMessage: 'Title',
-  },
-  taskDescriptionPlaceholder: {
-    id: 'dashboard.TaskDescription.taskDescriptionPlaceholder',
+  placeholder: {
+    id: 'dashboard.TaskDescription.placeholder',
     defaultMessage: 'Description',
   },
 });
 
 type Props = {|
   isTaskCreator: boolean,
+  ...TaskProps<{ colonyENSName: *, draftId: *, description: * }>,
 |};
 
-const TaskDescription = ({ isTaskCreator }: Props) => (
-  <Fragment>
-    <SingleLineEdit
-      maxLength={90}
-      name="taskTitle"
-      placeholder={MSG.taskTitlePlaceholder}
-      readOnly={!isTaskCreator}
-    />
-    <MultiLineEdit
-      name="taskDescription"
-      placeholder={MSG.taskDescriptionPlaceholder}
-      readOnly={!isTaskCreator}
-    />
-  </Fragment>
+const TaskDescription = ({
+  description,
+  isTaskCreator,
+  colonyENSName,
+  draftId,
+}: Props) => (
+  <ActionForm
+    initialValues={{
+      description: EditorState.createWithContent(
+        ContentState.createFromText(description || ''),
+      ),
+    }}
+    submit={ACTIONS.TASK_SET_DESCRIPTION}
+    success={ACTIONS.TASK_SET_DESCRIPTION_SUCCESS}
+    error={ACTIONS.TASK_SET_DESCRIPTION_ERROR}
+    transform={(originalAction: *) =>
+      mergePayload({
+        description: originalAction.payload.description
+          .getCurrentContent()
+          .getPlainText(),
+        colonyENSName,
+        draftId,
+      })()(originalAction)
+    }
+  >
+    {({ submitForm }: FormikProps<*>) => (
+      <MultiLineEdit
+        name="description"
+        placeholder={MSG.placeholder}
+        readOnly={!isTaskCreator}
+        onEditorBlur={() => submitForm()}
+      />
+    )}
+  </ActionForm>
 );
 
 export default TaskDescription;

@@ -18,7 +18,7 @@ const useColonyENSName = (address: Address) => {
   const dispatch = useDispatch();
   const fetchColonyENSName = useCallback(
     () => dispatch(fetchColonyENSNameActionCreator(address)),
-    [address],
+    [address, dispatch],
   );
   const mapState = useCallback(
     state => ({

@@ -13,7 +13,7 @@ export {
 } from './withImmutablePropsToJS.jsx';
 
 export const withConsumerFactory = (Consumer: ConsumerType<*>) => () => (
-  Component: ComponentType<{ [string]: any }>,
+  Component: ComponentType<Object>,
 ) => (props: Object) =>
   createElement(Consumer, null, value =>
     createElement(Component, { ...value, ...props }),

@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { TaskDraftId } from '~immutable';
 
 import type {
   ColonyClientContext,
@@ -18,6 +19,7 @@ export type TaskQueryContext = ContextWithMetadata<
   {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
+    draftId: TaskDraftId,
     taskStoreAddress: string | OrbitDBAddress,
   |},
   ColonyClientContext & DDBContext & WalletContext,
@@ -31,12 +33,13 @@ export const getTask: TaskQuery<*, *> = ({
   ddb,
   colonyClient,
   wallet,
-  metadata: { colonyAddress, colonyENSName, taskStoreAddress },
+  metadata: { colonyAddress, colonyENSName, draftId, taskStoreAddress },
 }) => ({
   async execute() {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
       colonyAddress,
       colonyENSName,
+      draftId,
       taskStoreAddress,
     });
 

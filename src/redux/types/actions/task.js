@@ -6,6 +6,7 @@ import type { $Required } from '~types';
 import type {
   ActionType,
   ActionTypeWithPayload,
+  ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
 } from '~redux';
@@ -17,13 +18,21 @@ type TaskActionMeta = {|
   keyPath: [string], // draftId
 |};
 
+type TaskActionPayload<P> = {|
+  colonyENSName: string,
+  draftId: string,
+  ...P,
+|};
+
 type TaskActionType<T, P> = UniqueActionType<
   T,
-  {|
-    colonyENSName: string,
-    draftId: string,
-    ...P,
-  |},
+  TaskActionPayload<P>,
+  TaskActionMeta,
+>;
+
+type NonUniqueTaskActionType<T, P> = ActionTypeWithPayloadAndMeta<
+  T,
+  TaskActionPayload<P>,
   TaskActionMeta,
 >;
 
@@ -58,12 +67,12 @@ export type TaskActionTypes = {|
     {|
       commentsStoreAddress: string,
       taskStoreAddress: string,
-      task: TaskProps<{ colonyENSName: *, draftId: * }>,
+      task: TaskProps<{ colonyENSName: *, creator: *, draftId: * }>,
     |},
   >,
-  TASK_FETCH: TaskActionType<typeof ACTIONS.TASK_FETCH, void>,
+  TASK_FETCH: NonUniqueTaskActionType<typeof ACTIONS.TASK_FETCH, void>,
   TASK_FETCH_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_FETCH_ERROR>,
-  TASK_FETCH_SUCCESS: TaskActionType<
+  TASK_FETCH_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FETCH_SUCCESS,
     {|
       commentsStoreAddress: string,
@@ -92,11 +101,14 @@ export type TaskActionTypes = {|
       },
     |},
   >,
-  TASK_FETCH_COMMENTS: TaskActionType<typeof ACTIONS.TASK_FETCH_COMMENTS, void>,
+  TASK_FETCH_COMMENTS: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FETCH_COMMENTS,
+    void,
+  >,
   TASK_FETCH_COMMENTS_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS_ERROR,
   >,
-  TASK_FETCH_COMMENTS_SUCCESS: TaskActionType<
+  TASK_FETCH_COMMENTS_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
     {| comments: $ElementType<Event<'COMMENT_POSTED'>, 'payload'>[] |}, // todo use constant
   >,
@@ -263,14 +275,14 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
     void, // TODO define the payload
   >,
-  TASK_WORKER_ASSIGN: TaskActionType<
+  TASK_WORKER_ASSIGN: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN,
     {| worker: string |},
   >,
   TASK_WORKER_ASSIGN_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
   >,
-  TASK_WORKER_ASSIGN_SUCCESS: TaskActionType<
+  TASK_WORKER_ASSIGN_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
     {| worker: string |},
   >,

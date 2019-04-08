@@ -10,7 +10,7 @@ import type { TokenRecordType, TokenType } from './Token';
 
 export type TaskPayoutType = $ReadOnly<{|
   amount: number, // TODO: should be BigNumber
-  token: TokenType,
+  token: TokenType, // TODO: should be an address (see #1016)
 |}>;
 
 type TaskPayoutRecordProps = {|

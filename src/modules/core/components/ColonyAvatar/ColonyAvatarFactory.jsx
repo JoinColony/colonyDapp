@@ -51,7 +51,9 @@ const ColonyAvatarFactory = ({
 
     if (fetchColony) {
       // TODO: as of #1032 we can look up colony by address
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const { data: ensName } = useColonyENSName(address);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       ({ data: colony } = useDataFetcher<ColonyType>(
         colonyFetcher,
         [ensName],
@@ -60,6 +62,7 @@ const ColonyAvatarFactory = ({
     }
     if (fetchAvatar) {
       const avatarIpfsHash = colony ? colony.avatar : undefined;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       ({ data: avatar } = useDataFetcher<string>(
         ipfsDataFetcher,
         [avatarIpfsHash],

@@ -3,14 +3,17 @@
 import type { Collection } from 'immutable';
 import type { InputSelector } from 'reselect';
 
-import type { Action } from '~redux';
-import type { DataRecordType, RootStateRecord } from '~immutable';
-
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
+import type { Action } from '~redux';
+import type { DataRecordType, RootStateRecord } from '~immutable';
+import type { AsyncFunction } from '../../createPromiseListener';
+
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
+
+import promiseListener from '../../createPromiseListener';
 
 type DataFetcher = {|
   select: (
@@ -62,14 +65,14 @@ export const useSelector = (
   args: *[] = [],
   transform?: (obj: Collection<*, *>) => any,
 ) => {
-  const mapState = useCallback(state => select(state, ...args), args);
+  const mapState = useCallback(state => select(state, ...args), [args, select]);
   const data = useMappedState(mapState, [mapState]);
   const transformFn =
     typeof transform == 'function'
       ? transform
       : select.transform || defaultTransform;
 
-  return useMemo(() => transformFn(data), [data, ...args]);
+  return useMemo(() => transformFn(data), [data, transformFn]);
 };
 
 /*
@@ -86,10 +89,10 @@ export const useDataFetcher = <T>(
   error: ?string,
 |} => {
   const dispatch = useDispatch();
-  const mapState = useCallback(
-    state => select(state, ...selectArgs),
+  const mapState = useCallback(state => select(state, ...selectArgs), [
+    select,
     selectArgs,
-  );
+  ]);
   const data = useMappedState(mapState);
 
   const isFirstMount = useRef(true);
@@ -106,12 +109,12 @@ export const useDataFetcher = <T>(
       isFirstMount.current = false;
       if (shouldFetch) dispatch(fetch(...fetchArgs), fetchArgs);
     },
-    [shouldFetch, ...fetchArgs],
+    [dispatch, fetch, fetchArgs, shouldFetch],
   );
 
   return {
     data: transformFetchedData(data),
-    isFetching: isFetchingData(data),
+    isFetching: shouldFetch && isFetchingData(data),
     error: data ? data.error : null,
   };
 };
@@ -140,7 +143,52 @@ export const useFeatureFlags = (
           : potentialSelectorValue;
       },
     }),
-    [...potentialSelectorArgs, ...dependantSelectorArgs],
+    [dependantSelectorArgs, potentialSelectorArgs],
   );
   return useMappedState(mapState);
+};
+
+export const useAsyncFunction = <P, R>({
+  start,
+  resolve,
+  reject,
+}: {|
+  start: string,
+  resolve: string,
+  reject: string,
+|}): { current: AsyncFunction<P, R> } => {
+  const ref = useRef();
+  useEffect(
+    () => {
+      ref.current = promiseListener.createAsyncFunction<P, R>({
+        start,
+        resolve,
+        reject,
+      });
+      return () => {
+        ref.current.unsubscribe();
+      };
+    },
+    [start, resolve, reject],
+  );
+  // TODO can a React genius find out why we don't get the same
+  // behaviour when returning ref.current?
+  return ref;
+};
+
+/*
+ * To avoid state updates when this component is unmounted, use a ref
+ * that is set to false when cleaning up.
+ */
+export const useMounted = () => {
+  const ref = useRef(true);
+  useEffect(
+    () => () => {
+      ref.current = false;
+    },
+    [],
+  );
+  // TODO can a React genius find out why we don't get the same
+  // behaviour when returning ref.current?
+  return ref;
 };

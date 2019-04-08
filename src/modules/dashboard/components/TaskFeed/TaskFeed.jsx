@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import type { UserType, TaskFeedItemType } from '~immutable';
+import type { UserType } from '~immutable';
 
 import { addressEquals } from '~utils/strings';
 
@@ -16,14 +16,14 @@ import mockUser from '../Wallet/__datamocks__/mockUser';
 const displayName = 'dashboard.TaskFeed';
 
 type Props = {|
+  // TODO in #580 require a `draftId` prop
   currentUser: UserType,
-  feedItems: Array<TaskFeedItemType>,
-  isRevealEnded: boolean,
 |};
 
 const isSameUser = (a: UserType, b: UserType) =>
   addressEquals(a.profile.walletAddress, b.profile.walletAddress);
 
+// TODO in #580 convert to a functional component
 class TaskFeed extends Component<Props> {
   bottomEl: *;
 
@@ -35,7 +35,15 @@ class TaskFeed extends Component<Props> {
   }
 
   render() {
-    const { currentUser, isRevealEnded, feedItems } = this.props;
+    // TODO in #580 use a selector for this
+    const { currentUser } = this.props;
+
+    // TODO in #580 use a data fetcher for these
+    const feedItems = [];
+
+    // TODO in #580 use a selector for this
+    const isRevealEnded = false;
+
     return (
       <div className={styles.main}>
         <div className={styles.items}>

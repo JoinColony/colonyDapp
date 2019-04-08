@@ -71,3 +71,13 @@ export const colonyENSNameSelector = createSelector(
   (state, props) => props.colonyAddress, // TODO use a string argument
   (ensNames, colonyAddress) => ensNames.get(colonyAddress),
 );
+
+export const colonyNativeTokenSelector = createSelector(
+  colonySelector,
+  colony =>
+    colony
+      ? colony
+          .getIn(['record', 'tokens'], ImmutableMap())
+          .find(token => !!token && token.isNative)
+      : null,
+);

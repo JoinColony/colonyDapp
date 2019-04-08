@@ -6,11 +6,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskType, UserType } from '~immutable';
 
-import { userDidClaimProfile } from '~immutable/utils';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { ACTIONS } from '~redux';
+
+import { canRequestToWork, hasRequestedToWork } from '../../checks';
+import { userDidClaimProfile } from '../../../users/checks';
 
 import styles from './TaskRequestWork.css';
 
@@ -32,26 +34,25 @@ type Props = {
   openDialog: OpenDialog,
   currentUser: UserType,
   task: TaskType,
-  hasRequested: boolean,
 };
 
 const TaskRequestWork = ({
   openDialog,
   currentUser: {
-    profile: { balance },
+    profile: { balance, walletAddress: address },
   },
   currentUser,
   task: { colonyENSName, draftId },
-  hasRequested,
+  task,
 }: Props) => {
-  if (hasRequested) {
+  if (hasRequestedToWork(task, address))
     return (
       <p className={styles.requestSubmittedText}>
         <FormattedMessage {...MSG.workRequestSubmitted} />
       </p>
     );
-  }
-  if (userDidClaimProfile(currentUser)) {
+
+  if (userDidClaimProfile(currentUser) && canRequestToWork(task, address))
     return (
       <ActionButton
         text={MSG.requestWork}
@@ -60,11 +61,11 @@ const TaskRequestWork = ({
         success={ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS}
         values={{
           colonyENSName,
-          taskId: draftId,
+          draftId,
         }}
       />
     );
-  }
+
   return (
     <Button
       text={MSG.requestWork}

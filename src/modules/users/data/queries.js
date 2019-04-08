@@ -240,9 +240,16 @@ export const getUserColonyTransactions: UserColonyTransactionsQuery<void> = ({
 
 export const getUserTasks: UserMetadataQuery<void, *> = ({
   ddb,
+  metadata: { userMetadataStoreAddress },
   metadata,
 }) => ({
   async execute() {
+    /*
+     * If the user has no metadata store set, we will assume that the
+     * user is newly-created (and we can't get their subscribed tasks yet).
+     */
+    if (!userMetadataStoreAddress) return [];
+
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
     return metadataStore
       .all()
@@ -256,9 +263,16 @@ export const getUserTasks: UserMetadataQuery<void, *> = ({
 
 export const getUserColonies: UserMetadataQuery<void, *> = ({
   ddb,
+  metadata: { userMetadataStoreAddress },
   metadata,
 }) => ({
   async execute() {
+    /*
+     * If the user has no metadata store set, we will assume that the
+     * user is newly-created (and we can't get their subscribed colonies yet).
+     */
+    if (!userMetadataStoreAddress) return [];
+
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
     const getKey = event => event.payload.address;
     const getValue = event => event.type;

@@ -359,12 +359,12 @@ function* colonyProfileUpdate({
 }
 
 function* colonyFetch({
-  payload: { ensName },
+  payload: { colonyENSName },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
     // TODO error if the colony does not exist!
-    const context = yield* getColonyContext(ensName);
+    const context = yield* getColonyContext(colonyENSName);
     const payload = yield* executeQuery(context, getColony);
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
@@ -388,7 +388,7 @@ function* colonyFetch({
           }),
           put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
             type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-            meta: { keyPath: [ensName, tokenAddress] },
+            meta: { keyPath: [colonyENSName, tokenAddress] },
             payload: { colonyAddress },
           }),
         ],
@@ -401,9 +401,7 @@ function* colonyFetch({
 }
 
 function* colonyENSNameFetch({
-  meta: {
-    keyPath: [colonyAddress],
-  },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH>): Saga<void> {
   try {

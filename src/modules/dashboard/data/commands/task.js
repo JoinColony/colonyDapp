@@ -4,6 +4,7 @@ import nanoid from 'nanoid';
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
 import type { FeedStore, EventStore } from '~lib/database/stores';
+import type { TaskDraftId } from '~immutable';
 import type {
   ColonyClientContext,
   Command,
@@ -60,6 +61,7 @@ export type TaskContext = ContextWithMetadata<
   {|
     colonyENSName: string | ENSName,
     colonyAddress: Address,
+    draftId: TaskDraftId,
     taskStoreAddress: string | OrbitDBAddress,
   |},
   ColonyClientContext & WalletContext & DDBContext,

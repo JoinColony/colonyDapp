@@ -55,7 +55,7 @@ type Props = ActionFormikConfig & {
   transform?: ActionTransformFnType,
 };
 
-const defaultOnErrror: OnError = (err, { setStatus }) => {
+const defaultOnError: OnError = (err, { setStatus }) => {
   log(err);
   setStatus({ error: MSG.defaultError });
 };
@@ -65,7 +65,7 @@ const ActionForm = ({
   success,
   error,
   onSuccess,
-  onError = defaultOnErrror,
+  onError = defaultOnError,
   transform,
   ...props
 }: Props) => {

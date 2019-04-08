@@ -17,6 +17,12 @@ const tasksReducer: ReducerType<
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH_ALL_FOR_COLONY_SUCCESS: *,
     TASK_FETCH_SUCCESS: *,
+    TASK_SET_DESCRIPTION_SUCCESS: *,
+    TASK_SET_DOMAIN_SUCCESS: *,
+    TASK_SET_DUE_DATE_SUCCESS: *,
+    TASK_SET_PAYOUT_SUCCESS: *,
+    TASK_SET_SKILL_SUCCESS: *,
+    TASK_SET_TITLE_SUCCESS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
@@ -60,6 +66,21 @@ const tasksReducer: ReducerType<
         taskStoreAddress,
       });
       return state.mergeDeepIn([draftId], DataRecord({ record }));
+    }
+    case ACTIONS.TASK_SET_DESCRIPTION_SUCCESS:
+    case ACTIONS.TASK_SET_DOMAIN_SUCCESS:
+    case ACTIONS.TASK_SET_DUE_DATE_SUCCESS:
+    case ACTIONS.TASK_SET_PAYOUT_SUCCESS:
+    case ACTIONS.TASK_SET_SKILL_SUCCESS:
+    case ACTIONS.TASK_SET_TITLE_SUCCESS: {
+      const { draftId } = action.payload;
+      return state.mergeDeepIn(
+        [draftId, 'record', 'task'],
+        taskReducer(
+          state.getIn([draftId, 'record', 'task'], DataRecord()),
+          action,
+        ),
+      );
     }
     default:
       return state;

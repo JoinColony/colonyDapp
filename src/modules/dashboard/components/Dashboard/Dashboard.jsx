@@ -9,7 +9,7 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 
-import { userDidClaimProfile } from '~immutable/utils';
+import { userDidClaimProfile } from '../../../users/checks';
 
 import type { MyTasksFilterOptionType } from './constants';
 

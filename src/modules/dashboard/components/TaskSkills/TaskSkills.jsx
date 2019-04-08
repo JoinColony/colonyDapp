@@ -3,6 +3,9 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { TaskProps } from '~immutable';
+import type { AsyncFunction } from '../../../../createPromiseListener';
+
 import promiseListener from '../../../../createPromiseListener';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -13,9 +16,7 @@ import styles from './TaskSkills.css';
 
 import taskSkills from './taskSkillsTree';
 
-import type { AsyncFunction } from '../../../../createPromiseListener';
-
-import type { TaskType } from '~immutable';
+const taskSkillsList = Array(...taskSkills);
 
 const MSG = defineMessages({
   title: {
@@ -32,10 +33,8 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator?: boolean,
-  // After the skillId is set with the TaskSkills component it should be passed
-  // through form the redux store and is property of TaskType
-  task: TaskType,
+  isTaskCreator: boolean,
+  ...TaskProps<{ draftId: *, colonyENSName: *, skillId: * }>,
 |};
 
 class TaskSkills extends Component<Props> {
@@ -58,16 +57,12 @@ class TaskSkills extends Component<Props> {
   }
 
   handleSetSkill = async (skillValue: Object) => {
-    const {
-      task: { draftId, colonyENSName, domainId },
-    } = this.props;
+    const { draftId, colonyENSName } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
-        skillId: skillValue.id,
-        domainId,
-        // taskId of currently selected task
+        colonyENSName,
         draftId,
-        ensName: colonyENSName,
+        skillId: skillValue.id,
       });
     } catch (error) {
       // TODO: handle this error properly / display it in some way
@@ -76,20 +71,17 @@ class TaskSkills extends Component<Props> {
   };
 
   render() {
-    const {
-      isTaskCreator,
-      task: { skillId },
-    } = this.props;
-    const list = Array(...taskSkills);
+    const { isTaskCreator, skillId } = this.props;
     return (
       <div className={styles.main}>
         {isTaskCreator && (
           <ItemsList
-            list={list}
+            list={taskSkillsList}
             handleSetItem={this.handleSetSkill}
             name="taskSkills"
             connect={false}
             showArrow={false}
+            itemId={skillId}
           >
             <div className={styles.controls}>
               <Heading

@@ -3,7 +3,8 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'redux-react-hook';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -106,15 +107,25 @@ const ColonyHome = ({
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
 
+  // TODO in #1034: preferably, use `useDataFetcher` or something similar,
+  // rather than just dispatching the action to set the state.
+  const dispatch = useDispatch();
+  useEffect(
+    () => {
+      dispatch({
+        type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+        payload: { colonyENSName: ensName },
+      });
+    },
+    [dispatch, ensName],
+  );
+
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
   } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher<UserPermissionsType>(
+  const { data: permissions } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
     [ensName],
     [ensName],
@@ -190,13 +201,12 @@ const ColonyHome = ({
         {canCreateTask(permissions) && (
           <ActionButton
             appearance={{ theme: 'primary', size: 'large' }}
+            disabled={isInRecoveryMode(colony)}
             error={ACTIONS.TASK_CREATE_ERROR}
-            loading={isFetchingPermissions}
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
             values={{ colonyENSName: ensName }}
-            disabled={isInRecoveryMode(colony)}
           />
         )}
         <ul className={styles.domainsFilters}>

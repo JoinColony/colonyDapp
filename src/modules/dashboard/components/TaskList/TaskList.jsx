@@ -53,6 +53,7 @@ const TaskList = ({ draftIds = [], filter, isLoading, emptyState }: Props) => {
   );
 
   // if the draftIds change, reset the state
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useMemo(() => setTaskVisibility({}), [draftIds]);
 
   if (isLoading) return <SpinnerLoader />;

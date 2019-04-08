@@ -155,7 +155,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ENS_NAME_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ENS_NAME_FETCH,
-    void,
+    {| colonyAddress: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ENS_NAME_FETCH_ERROR: ErrorActionType<
@@ -169,7 +169,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH,
-    {| ensName: string |},
+    {| colonyENSName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_ERROR: ErrorActionType<
