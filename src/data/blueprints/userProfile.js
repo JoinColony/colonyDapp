@@ -14,7 +14,7 @@ const userProfileStore: StoreBlueprint = {
     createdAt: yup.number(),
     bio: yup.string(),
     // TODO: IPFS hash add yup validation for IPFS hash
-    avatar: yup.string().nullable(),
+    avatarHash: yup.string().nullable(),
     walletAddress: yup.string().address(),
     // TODO: yup validation for orbit address
     username: yup.string(),

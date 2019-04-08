@@ -5,7 +5,7 @@ import type { RecordFactory, RecordOf } from 'immutable';
 import { Record } from 'immutable';
 
 type Shared = {|
-  avatar?: ?string,
+  avatarHash?: ?string,
   balance?: string,
   bio?: string,
   displayName?: string,
@@ -20,7 +20,7 @@ export type UserProfileType = $ReadOnly<Shared>;
 export type UserProfileRecordType = RecordOf<Shared>;
 
 const defaultProps: $Shape<Shared> = {
-  avatar: undefined,
+  avatarHash: undefined,
   balance: undefined,
   bio: undefined,
   displayName: undefined,
