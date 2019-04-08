@@ -101,19 +101,22 @@ const Task = ({
     [ensName, draftId],
   );
 
-  const onEditTask = useCallback(() => {
-    // If you've managed to click on the button that runs this without the
-    // task being fetched yet, you are a wizard
-    if (!task) return;
+  const onEditTask = useCallback(
+    () => {
+      // If you've managed to click on the button that runs this without the
+      // task being fetched yet, you are a wizard
+      if (!task) return;
 
-    const { payouts, reputation, worker } = task;
-    openDialog('TaskEditDialog', {
-      maxTokens: 2,
-      payouts,
-      reputation,
-      worker,
-    });
-  });
+      const { payouts, reputation, worker } = task;
+      openDialog('TaskEditDialog', {
+        maxTokens: 2,
+        payouts,
+        reputation,
+        worker,
+      });
+    },
+    [openDialog, task],
+  );
 
   if (!task || isFetching || error)
     return <LoadingTemplate loadingText={MSG.loadingText} />;

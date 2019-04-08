@@ -110,12 +110,15 @@ const ColonyHome = ({
   // TODO in #1034: preferably, use `useDataFetcher` or something similar,
   // rather than just dispatching the action to set the state.
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch({
-      type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-      payload: { colonyENSName: ensName },
-    });
-  }, []);
+  useEffect(
+    () => {
+      dispatch({
+        type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+        payload: { colonyENSName: ensName },
+      });
+    },
+    [dispatch, ensName],
+  );
 
   const {
     data: colony,

@@ -15,7 +15,7 @@ const useToken = (tokenAddress: Address): ?TokenType => {
   const fetchToken = useCallback(
     () =>
       dispatch({ type: ACTIONS.TOKEN_INFO_FETCH, payload: { tokenAddress } }),
-    [tokenAddress],
+    [dispatch, tokenAddress],
   );
   const mapState = useCallback(
     state => ({

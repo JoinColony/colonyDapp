@@ -10,6 +10,9 @@ module.exports = {
     'eslint-config-airbnb/rules/react',
     'eslint-config-airbnb/rules/react-a11y',
   ],
+  plugins: [
+    'react-hooks',
+  ],
   overrides: [
     {
       files: '**/__tests__/*.js',
@@ -97,6 +100,8 @@ module.exports = {
       },
     ],
     'react/jsx-one-expression-per-line': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
     'import/resolver': {

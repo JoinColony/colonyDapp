@@ -129,17 +129,24 @@ const SingleUserPicker = ({
   openOmniPicker,
   setValue,
 }: Props) => {
-  const handleActiveUserClick = useCallback(() => {
-    setValue(null);
-    openOmniPicker();
-  });
-  const handlePick = useCallback((user: UserType) => setValue(user));
-  const resetSelection = useCallback(() => setValue(null));
+  const handleActiveUserClick = useCallback(
+    () => {
+      setValue(null);
+      openOmniPicker();
+    },
+    [openOmniPicker, setValue],
+  );
+  const handlePick = useCallback((user: UserType) => setValue(user), [
+    setValue,
+  ]);
+  const resetSelection = useCallback(() => setValue(null), [setValue]);
   // Use custom render prop for item or the default one with the given renderAvatar function
   const renderItem =
     renderItemProp ||
-    useCallback((user: ItemDataType<UserType>) =>
-      defaultRenderItem(user, renderAvatar),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useCallback(
+      (user: ItemDataType<UserType>) => defaultRenderItem(user, renderAvatar),
+      [renderAvatar],
     );
 
   const labelAppearance = appearance

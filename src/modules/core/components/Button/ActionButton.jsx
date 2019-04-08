@@ -6,7 +6,7 @@ import type { ComponentType } from 'react';
 import React, { useState } from 'react';
 
 import { log } from '~utils/debug';
-import { useAsyncFunction } from '~utils/hooks';
+import { useAsyncFunction, useMounted } from '~utils/hooks';
 import DefaultButton from '~core/Button';
 
 // TODO if this object is sealed, there are unspecified props being used
@@ -28,6 +28,7 @@ const ActionButton = ({
   willUnmountOnSuccess,
   ...props
 }: Props) => {
+  const isMountedRef = useMounted();
   const [loading, setLoading] = useState(false);
   const asyncFunc = useAsyncFunction({ start, reject, resolve });
 
@@ -37,7 +38,7 @@ const ActionButton = ({
       const asyncFuncValues =
         typeof values == 'function' ? await values() : values;
       await asyncFunc.current.asyncFunction(asyncFuncValues);
-      if (!willUnmountOnSuccess) setLoading(false);
+      if (isMountedRef.current) setLoading(false);
     } catch (error) {
       log(error);
       setLoading(false);
