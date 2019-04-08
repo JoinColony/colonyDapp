@@ -7,7 +7,7 @@ const avatar = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgaG
 const colony = {
   name: 'NASA',
 };
-<ColonyAvatar address="0x1234567890987654321234567890987654321234" colony={colony} avatar={avatar} />
+<ColonyAvatar address="0x1234567890987654321234567890987654321234" colony={colony} avatarURL={avatar} />
 ```
 
 ### Colony Avatar with Identicon as a fallback

@@ -78,7 +78,8 @@ export const colonyReducer: EventReducer<
       const { ipfsHash } = event.payload;
       return {
         ...colony,
-        avatarHash: avatarHash && avatarHash === ipfsHash ? undefined : avatarHash,
+        avatarHash:
+          avatarHash && avatarHash === ipfsHash ? undefined : avatarHash,
       };
     }
     case PROFILE_CREATED:

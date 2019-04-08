@@ -1,3 +1,5 @@
 /* @flow */
 
-export { default } from './ColonyAvatarFactory.jsx';
+export type { Props } from './ColonyAvatar.jsx';
+
+export { default } from './ColonyAvatar.jsx';

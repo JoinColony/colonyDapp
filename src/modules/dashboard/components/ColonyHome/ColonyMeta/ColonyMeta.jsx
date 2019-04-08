@@ -7,9 +7,9 @@ import { stripProtocol } from '~utils/strings';
 import { useDataFetcher } from '~utils/hooks';
 
 import Heading from '~core/Heading';
-import ColonyAvatarFactory from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { rolesFetcher } from '../../../fetchers';
@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyAvatar = ColonyAvatarFactory({ fetchColony: false });
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const UserAvatar = HookedUserAvatar();
 
 type Props = {|
