@@ -493,7 +493,7 @@ function* userActivitiesFetch({
 }: Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>): Saga<void> {
   try {
     const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
 
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),

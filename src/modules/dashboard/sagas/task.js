@@ -586,7 +586,7 @@ function* taskCommentAdd({
   try {
     const commentsContext = yield call(getTaskStoreContext, draftId);
     const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
 
     const { wallet } = commentsContext;
     const inboxContext = {
