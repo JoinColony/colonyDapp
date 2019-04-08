@@ -8,16 +8,19 @@ import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
-import {
-  getTaskPayoutNetworkFee,
-  getTaskPayoutAmountMinusNetworkFee,
-} from '~immutable/utils';
 import { useDataFetcher } from '~utils/hooks';
 
 import { useToken } from '../../hooks';
 import { userFetcher } from '../../../users/fetchers';
 
 import styles from './TaskFeedTransactionInfo.css';
+
+const NETWORK_FEE = 0.01;
+
+export const getTaskPayoutNetworkFee = (amount: number) => amount * NETWORK_FEE;
+
+export const getTaskPayoutAmountMinusNetworkFee = (amount: number) =>
+  amount - getTaskPayoutNetworkFee(amount);
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -110,10 +113,7 @@ const TaskFeedTransactionInfo = ({
                     <Numeral
                       decimals={4}
                       unit="ether"
-                      value={getTaskPayoutAmountMinusNetworkFee({
-                        amount,
-                        token,
-                      })}
+                      value={getTaskPayoutAmountMinusNetworkFee(amount)}
                     />
                   ),
                   symbol,
@@ -127,7 +127,7 @@ const TaskFeedTransactionInfo = ({
                     <Numeral
                       decimals={4}
                       unit="ether"
-                      value={getTaskPayoutNetworkFee({ amount, token })}
+                      value={getTaskPayoutNetworkFee(amount)}
                     />
                   ),
                   symbol,
