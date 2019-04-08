@@ -2,12 +2,7 @@
 
 import type { OrbitDBAddress } from '~types';
 
-import type {
-  ContextWithMetadata,
-  DDBContext,
-  Event,
-  Query,
-} from '~data/types';
+import type { ContextWithMetadata, DDBContext, Query } from '~data/types';
 
 import { getCommentsStore } from '~data/stores';
 import { TASK_EVENT_TYPES } from '~data/constants';
@@ -23,6 +18,7 @@ export type CommentQueryContext = ContextWithMetadata<
 
 export type CommentQuery<I: *, R: *> = Query<CommentQueryContext, I, R>;
 
+// TODO in #580 replace with fetching feed items
 // eslint-disable-next-line import/prefer-default-export
 export const getTaskComments: CommentQuery<*, *> = ({
   ddb,
@@ -32,9 +28,6 @@ export const getTaskComments: CommentQuery<*, *> = ({
     const commentsStore = await getCommentsStore(ddb)({
       commentsStoreAddress,
     });
-    return commentsStore
-      .all()
-      .filter(({ type }) => type === COMMENT_POSTED)
-      .map(({ payload }: Event<typeof COMMENT_POSTED>) => payload);
+    return commentsStore.all().filter(({ type }) => type === COMMENT_POSTED);
   },
 });

@@ -3,7 +3,7 @@
 import nanoid from 'nanoid';
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { FeedStore, EventStore } from '~lib/database/stores';
+import type { EventStore } from '~lib/database/stores';
 import type { TaskDraftId } from '~immutable';
 import type {
   ColonyClientContext,
@@ -85,7 +85,7 @@ export const createTask: Command<
   |},
   {|
     colonyStore: EventStore,
-    commentsStore: FeedStore,
+    commentsStore: EventStore,
     draftId: string,
     taskStore: EventStore,
   |},
@@ -227,18 +227,17 @@ export const postComment: CommentCommand<
       id: string,
       author: Address,
       body: string,
-      timestamp: number,
       metadata?: {|
         mentions: string[],
       |},
     |},
   |},
-  FeedStore,
+  EventStore,
 > = ({ ddb, metadata }) => ({
   schema: PostCommentCommandArgsSchema,
   async execute(args) {
     const commentStore = await getCommentsStore(ddb)(metadata);
-    await commentStore.add(createCommentPostedEvent(args));
+    await commentStore.append(createCommentPostedEvent(args));
     return commentStore;
   },
 });

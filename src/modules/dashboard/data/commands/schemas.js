@@ -68,7 +68,6 @@ export const PostCommentCommandArgsSchema = yup.object({
         .string()
         .address()
         .required(),
-      timestamp: yup.date().default(() => Date.now()),
       body: yup.string().required(),
       metadata: yup.object({
         /*
