@@ -19,7 +19,7 @@ import { ACTIONS } from '~redux';
 
 import type { TxConfig } from '../../types';
 
-import { currentUserAddressSelector } from '../../../users/selectors';
+import { walletAddressSelector } from '../../../users/selectors';
 
 import { createTxAction } from '../../actionCreators';
 
@@ -35,7 +35,7 @@ export function* createTransaction(
   id: string,
   config: TxConfig<*>,
 ): Saga<void> {
-  const address = yield select(currentUserAddressSelector);
+  const address = yield select(walletAddressSelector);
 
   if (!address) {
     throw new Error(

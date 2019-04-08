@@ -48,7 +48,7 @@ export const SetTaskSkillCommandArgsSchema = yup.object({
 });
 
 export const CreateTaskCommandArgsSchema = yup.object({
-  creator: yup.string().required(),
+  creatorAddress: yup.string().required(),
 });
 
 export const SetTaskDescriptionCommandArgsSchema = yup.object({

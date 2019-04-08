@@ -74,13 +74,13 @@ export const taskReducer: EventReducer<
     }
     case TASK_CREATED: {
       const {
-        payload: { creator, draftId },
+        payload: { creatorAddress, draftId },
         meta: { timestamp },
       } = event;
       return {
         ...task,
         createdAt: new Date(timestamp),
-        creator,
+        creatorAddress,
         draftId,
       };
     }

@@ -14,7 +14,7 @@ import { ActionForm, FormStatus } from '~core/Fields';
 import { ACTIONS } from '~redux';
 
 import {
-  currentUserAddressSelector,
+  walletAddressSelector,
   usersExceptSelector,
 } from '../../../users/selectors';
 
@@ -83,8 +83,8 @@ const transformAction = action => ({
 });
 
 const OrganizationAddAdmins = ({ ensName }: Props) => {
-  const currentUserAddress = useSelector(currentUserAddressSelector);
-  const knownUsers = useSelector(usersExceptSelector, [currentUserAddress]);
+  const walletAddress = useSelector(walletAddressSelector);
+  const knownUsers = useSelector(usersExceptSelector, [walletAddress]);
   return (
     <div className={styles.main}>
       <ActionForm

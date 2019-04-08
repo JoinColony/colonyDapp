@@ -51,7 +51,7 @@ export const getTask: TaskQuery<*, *> = ({
         amountPaid: undefined,
         commentsStoreAddress: '', // XXX Just to appease flow; it'll be there
         createdAt: undefined,
-        creator: undefined,
+        creatorAddress: undefined,
         description: undefined,
         domainId: undefined,
         draftId: '', // XXX Just to appease flow; it'll be there

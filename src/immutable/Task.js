@@ -18,7 +18,7 @@ export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 type Shared = {|
   colonyENSName: string,
   createdAt: Date,
-  creator: string, // Address of the task creator
+  creatorAddress: string, // Address of the task creator
   currentState: TaskCurrentState,
   description?: string,
   domainId?: number,
@@ -67,7 +67,7 @@ export type TaskDraftId = $PropertyType<TaskRecordType, 'draftId'>;
 const defaultValues: $Shape<TaskRecordProps> = {
   colonyENSName: undefined,
   createdAt: undefined,
-  creator: undefined,
+  creatorAddress: undefined,
   currentState: undefined,
   description: undefined,
   domainId: undefined,

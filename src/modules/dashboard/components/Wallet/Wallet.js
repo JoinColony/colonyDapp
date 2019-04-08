@@ -7,12 +7,12 @@ import withDialog from '~core/Dialog/withDialog';
 
 import Wallet from './Wallet.jsx';
 
-import { currentUserAddressSelector } from '../../../users/selectors';
+import { walletAddressSelector } from '../../../users/selectors';
 
 const enhance = compose(
   withDialog(),
   connect(state => ({
-    walletAddress: currentUserAddressSelector(state),
+    walletAddress: walletAddressSelector(state),
   })),
 );
 

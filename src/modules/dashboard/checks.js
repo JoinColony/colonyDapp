@@ -52,8 +52,8 @@ export const isManager = ({ manager }: TaskType, userAddress: Address) =>
 export const isWorker = ({ worker }: TaskType, userAddress: Address) =>
   !!(worker && worker.address && addressEquals(worker.address, userAddress));
 
-export const isCreator = ({ creator }: TaskType, userAddress: Address) =>
-  addressEquals(creator, userAddress);
+export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
+  addressEquals(creatorAddress, userAddress);
 
 export const payoutCanBeClaimed = (
   { currentState, manager, worker }: TaskType,
