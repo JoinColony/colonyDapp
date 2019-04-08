@@ -5,13 +5,16 @@ import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
 import type { ENSName } from '~types';
+import type { UserType } from '~immutable';
+import type { ItemDataType } from '~core/OmniPicker';
 
 import { withKeyPath } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
+import { ACTIONS } from '~redux';
 import SingleUserPicker from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
-import { ACTIONS } from '~redux';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import {
   walletAddressSelector,
@@ -35,7 +38,9 @@ const MSG = defineMessages({
   },
 });
 
-const singleUserPickerFilter = (data, filterValue) => {
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
+const supFiler = (data, filterValue) => {
   const filtered = data.filter(
     user =>
       user &&
@@ -54,6 +59,11 @@ const singleUserPickerFilter = (data, filterValue) => {
   };
 
   return [customValue].concat(filtered);
+};
+
+const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
+  const { id, ...user } = item;
+  return <UserAvatar address={address} user={user} size="xs" />;
 };
 
 const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
@@ -109,7 +119,8 @@ const OrganizationAddAdmins = ({ ensName }: Props) => {
                   ...user,
                   id: user.profile.walletAddress,
                 }))}
-                filter={singleUserPickerFilter}
+                filter={supFiler}
+                renderAvatar={supRenderAvatar}
               />
             </div>
             <Button

@@ -43,14 +43,7 @@ const MSG = defineMessages({
 
 const defaultRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   const { id, ...user } = item;
-  return (
-    <UserAvatar
-      address={address}
-      className={styles.recipientAvatar}
-      user={user}
-      size="xs"
-    />
-  );
+  return <UserAvatar address={address} user={user} size="xs" />;
 };
 
 const defaultRenderItem = (

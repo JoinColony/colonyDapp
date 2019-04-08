@@ -24,6 +24,7 @@ type Props = {|
 
 const displayName = 'users.AvatarDropdown';
 
+// TODO: use data fetcher here for current user
 const AvatarDropdown = ({ user }: Props) => (
   <Popover
     content={({ close }) => (

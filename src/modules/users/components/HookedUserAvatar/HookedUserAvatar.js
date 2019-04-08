@@ -14,9 +14,8 @@ export default withHooks<
   { fetchUser: boolean },
   UserAvatarProps,
   { user: ?UserType, avatarURL: ?string },
->(({ fetchUser = true }, { user, address }) => {
-  const result = { user: undefined, avatarURL: undefined };
-  const avatarHash = user && user.profile.avatar;
+>(({ fetchUser = true } = {}, { user, address } = {}) => {
+  const result = { user, avatarURL: undefined };
   if (fetchUser) {
     const { data: fetchedUser } = useDataFetcher<UserType>(
       userFetcher,
@@ -25,6 +24,7 @@ export default withHooks<
     );
     result.user = fetchedUser;
   }
+  const avatarHash = result.user ? result.user.profile.avatarHash : undefined;
   const { data: avatarURL } = useDataFetcher<string>(
     ipfsDataFetcher,
     [avatarHash],
