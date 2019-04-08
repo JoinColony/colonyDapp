@@ -85,7 +85,7 @@ export type TaskEvents = {|
   TASK_CREATED: EventDefinition<
     typeof TASK_CREATED,
     {|
-      creator: string,
+      creatorAddress: string,
       draftId: string,
     |},
   >,

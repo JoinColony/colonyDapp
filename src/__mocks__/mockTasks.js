@@ -11,7 +11,7 @@ const createBN = val =>
 const genericTaskProps = {
   colonyENSName: 'cool-colony',
   createdAt: new Date(1985, 10, 13),
-  creator: '0x1afb213afa8729fa7908154b90e256f1be70989b',
+  creatorAddress: '0x1afb213afa8729fa7908154b90e256f1be70989b',
   currentState: TASK_STATE.ACTIVE,
   description: 'my description',
   domainId: 1,

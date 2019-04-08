@@ -81,7 +81,7 @@ export type CommentCommand<I: *, R: *> = Command<CommentContext, I, R>;
 export const createTask: Command<
   ColonyContext,
   {|
-    creator: string,
+    creatorAddress: string,
   |},
   {|
     colonyStore: EventStore,
@@ -91,7 +91,7 @@ export const createTask: Command<
   |},
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateTaskCommandArgsSchema,
-  async execute({ creator }) {
+  async execute({ creatorAddress }) {
     const draftId = nanoid();
     const { taskStore, commentsStore } = await createTaskStore(
       colonyClient,
@@ -104,7 +104,7 @@ export const createTask: Command<
       createCommentStoreCreatedEvent({ commentsStoreAddress }),
     );
 
-    await taskStore.append(createTaskCreatedEvent({ creator, draftId }));
+    await taskStore.append(createTaskCreatedEvent({ creatorAddress, draftId }));
 
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,

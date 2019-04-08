@@ -51,10 +51,10 @@ const TabMyTasks = ({
   );
 
   const filter = useCallback(
-    ({ creator, worker, currentState }: TaskType) => {
+    ({ creatorAddress, worker, currentState }: TaskType) => {
       switch (filterOption) {
         case MY_TASKS_FILTER.CREATED:
-          return addressEquals(creator, currentUserAddress);
+          return addressEquals(creatorAddress, currentUserAddress);
 
         case MY_TASKS_FILTER.ASSIGNED:
           return worker && addressEquals(worker.address, currentUserAddress);

@@ -135,11 +135,11 @@ function* taskCreate({
 }: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
   try {
     const colonyContext = yield call(getColonyStoreContext, colonyENSName);
-    const creator = colonyContext.wallet.address;
+    const creatorAddress = colonyContext.wallet.address;
     const { taskStore, commentsStore, draftId } = yield* executeCommand(
       colonyContext,
       createTask,
-      { creator },
+      { creatorAddress },
     );
 
     const successAction: Action<typeof ACTIONS.TASK_CREATE_SUCCESS> = {
@@ -152,7 +152,7 @@ function* taskCreate({
         task: {
           colonyENSName,
           draftId,
-          creator,
+          creatorAddress,
         },
       },
       meta: { keyPath: [draftId], ...meta },
