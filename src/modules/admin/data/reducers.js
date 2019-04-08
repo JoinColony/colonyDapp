@@ -70,15 +70,15 @@ export const colonyReducer: EventReducer<
       const { ipfsHash } = event.payload;
       return {
         ...colony,
-        avatar: ipfsHash,
+        avatarHash: ipfsHash,
       };
     }
     case AVATAR_REMOVED: {
-      const { avatar } = colony;
+      const { avatarHash } = colony;
       const { ipfsHash } = event.payload;
       return {
         ...colony,
-        avatar: avatar && avatar === ipfsHash ? undefined : avatar,
+        avatarHash: avatarHash && avatarHash === ipfsHash ? undefined : avatarHash,
       };
     }
     case PROFILE_CREATED:

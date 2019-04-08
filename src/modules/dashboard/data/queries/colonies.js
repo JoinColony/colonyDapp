@@ -231,7 +231,7 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
         // TODO: Add the right defaults here using a data model or something like that
         {
           address: colonyAddress,
-          avatar: undefined,
+          avatarHash: undefined,
           ensName: colonyENSName,
           inRecoveryMode,
           name: '',
