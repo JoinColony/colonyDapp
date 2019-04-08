@@ -12,7 +12,7 @@ import MaskedAddress from '~core/MaskedAddress';
 import GroupList from '~core/GroupList';
 import Dialog, { DialogSection } from '~core/Dialog';
 
-import { currentUserAddressSelector } from '../../selectors';
+import { walletAddressSelector } from '../../selectors';
 
 import styles from './ClaimProfileDialog.css';
 
@@ -163,5 +163,5 @@ class ClaimProfileDialog extends Component<Props> {
 }
 
 export default connect(state => ({
-  walletAddress: currentUserAddressSelector(state),
+  walletAddress: walletAddressSelector(state),
 }))(ClaimProfileDialog);

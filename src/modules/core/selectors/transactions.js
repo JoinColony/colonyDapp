@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 
 import type { RootStateRecord, TransactionRecordType } from '~immutable';
 
-import { currentUserAddressSelector } from '../../users/selectors';
+import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
 
 import {
@@ -35,7 +35,7 @@ export const allTransactions = createSelector(
       [ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST],
       ImmutableMap(),
     ),
-  currentUserAddressSelector,
+  walletAddressSelector,
   (transactions, walletAddress) =>
     transactions.filter(tx => tx.from === walletAddress),
 );

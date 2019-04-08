@@ -78,7 +78,7 @@ usersExceptSelector.transform = (
  */
 export const currentUserSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER]);
-export const currentUserAddressSelector = (state: RootStateRecord) =>
+export const walletAddressSelector = (state: RootStateRecord) =>
   state.getIn([
     ns,
     USERS_CURRENT_USER,

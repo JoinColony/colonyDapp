@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { withImmutablePropsToJS } from '~utils/hoc';
 
 import {
-  currentUserAddressSelector,
+  walletAddressSelector,
   currentUserBalanceSelector,
 } from '../../../selectors';
 
@@ -20,7 +20,7 @@ export type InProps = {|
 
 const enhance = compose(
   connect((state: RootStateRecord) => ({
-    walletAddress: currentUserAddressSelector(state),
+    walletAddress: walletAddressSelector(state),
     balance: currentUserBalanceSelector(state),
   })),
   withImmutablePropsToJS,

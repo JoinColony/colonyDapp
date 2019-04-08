@@ -7,7 +7,7 @@ import { CORE_NAMESPACE as ns } from '../../constants';
 import { groupedTransactions } from '../transactions';
 
 jest.mock('../../../users/selectors', () => ({
-  currentUserAddressSelector: () => '0xdeadbeef',
+  walletAddressSelector: () => '0xdeadbeef',
 }));
 
 describe('Transaction selectors', () => {

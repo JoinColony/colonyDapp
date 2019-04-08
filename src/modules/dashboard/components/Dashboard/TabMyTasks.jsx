@@ -32,14 +32,14 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  currentUserAddress: string,
+  walletAddress: string,
   filterOption: MyTasksFilterOptionType,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
 |};
 
 const TabMyTasks = ({
-  currentUserAddress,
+  walletAddress,
   filterOption,
   initialTask,
   userClaimedProfile,
@@ -54,10 +54,10 @@ const TabMyTasks = ({
     ({ creatorAddress, worker, currentState }: TaskType) => {
       switch (filterOption) {
         case MY_TASKS_FILTER.CREATED:
-          return addressEquals(creatorAddress, currentUserAddress);
+          return addressEquals(creatorAddress, walletAddress);
 
         case MY_TASKS_FILTER.ASSIGNED:
-          return worker && addressEquals(worker.address, currentUserAddress);
+          return worker && addressEquals(worker.address, walletAddress);
 
         case MY_TASKS_FILTER.COMPLETED:
           return currentState === TASK_STATE.FINALIZED;
@@ -66,7 +66,7 @@ const TabMyTasks = ({
           return true;
       }
     },
-    [filterOption, currentUserAddress],
+    [filterOption, walletAddress],
   );
 
   if (isFetchingTasks) return <SpinnerLoader />;

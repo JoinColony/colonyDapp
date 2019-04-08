@@ -24,7 +24,7 @@ import { ACTIONS } from '~redux';
 
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import {
-  currentUserAddressSelector,
+  walletAddressSelector,
   currentUserMetadataSelector,
 } from '../selectors';
 
@@ -82,7 +82,7 @@ function* userTokenTransfersFetch(
         colonyManager.getMetaColonyClient,
       ]),
       metadata: {
-        walletAddress: yield select(currentUserAddressSelector),
+        walletAddress: yield select(walletAddressSelector),
       },
     };
     const transactions = yield* executeQuery(
@@ -147,7 +147,7 @@ function* currentUserGetBalance(
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const context = { networkClient };
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
 
     if (!walletAddress) {
       throw new Error('Could not get wallet address for current user');
@@ -172,7 +172,7 @@ function* userProfileUpdate({
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        walletAddress: yield select(currentUserAddressSelector),
+        walletAddress: yield select(walletAddressSelector),
       },
     };
 
@@ -194,7 +194,7 @@ function* userRemoveAvatar({
   meta,
 }: Action<typeof ACTIONS.USER_REMOVE_AVATAR>): Saga<void> {
   try {
-    const address = yield select(currentUserAddressSelector);
+    const address = yield select(walletAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
@@ -219,7 +219,7 @@ function* userUploadAvatar({
   payload,
 }: Action<typeof ACTIONS.USER_UPLOAD_AVATAR>): Saga<void> {
   try {
-    const address = yield select(currentUserAddressSelector);
+    const address = yield select(walletAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
@@ -272,7 +272,7 @@ function* usernameCreate({
   const txChannel = yield call(getTxChannel, meta.id);
 
   try {
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
@@ -332,7 +332,7 @@ function* userPermissionsFetch({
       [colonyManager, colonyManager.getColonyClient],
       ensName,
     );
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
 
     if (!walletAddress) {
       throw new Error('Could not get wallet address for current user');
@@ -357,7 +357,7 @@ function* userPermissionsFetch({
 
 function* getMetadataStoreAddress() {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const walletAddress = yield select(currentUserAddressSelector);
+  const walletAddress = yield select(walletAddressSelector);
   const userMetadataStoreAddress = yield* executeQuery(
     {
       ddb,
@@ -374,7 +374,7 @@ function* userTokensFetch(): Saga<void> {
   try {
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
     const userMetadataStoreAddress = yield* getMetadataStoreAddress();
     const context = {
       ddb,
@@ -405,7 +405,7 @@ function* userTokensUpdate(
   try {
     const { tokens } = action.payload;
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-    const walletAddress = yield select(currentUserAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
     const userMetadataStoreAddress = yield* getMetadataStoreAddress();
     const context = {
       ddb,

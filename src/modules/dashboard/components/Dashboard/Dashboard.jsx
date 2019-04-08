@@ -147,7 +147,7 @@ class Dashboard extends Component<Props, State> {
                 }}
                 userClaimedProfile={userDidClaimProfile(currentUser)}
                 filterOption={filterOption}
-                currentUserAddress={walletAddress}
+                walletAddress={walletAddress}
               />
             </TabPanel>
             <TabPanel>

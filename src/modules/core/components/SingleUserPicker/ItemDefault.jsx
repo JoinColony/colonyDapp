@@ -22,7 +22,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  currentUserAddress?: string,
+  walletAddress?: string,
   itemData: ItemDataType<UserType>,
   renderAvatar: (address: string, user: ItemDataType<UserType>) => Node,
   selected?: boolean,
@@ -34,9 +34,9 @@ type Props = {|
 |};
 
 const ItemDefault = ({
-  currentUserAddress,
+  walletAddress,
   itemData: {
-    profile: { walletAddress, displayName, username },
+    profile: { walletAddress: userAddress, displayName, username },
   },
   itemData,
   renderAvatar,
@@ -48,12 +48,12 @@ const ItemDefault = ({
       [styles.showAddress]: showAddress || showMaskedAddress,
     })}
   >
-    {renderAvatar(itemData.profile.walletAddress, itemData)}
+    {renderAvatar(userAddress, itemData)}
     <span className={styles.dataContainer}>
       {displayName && (
         <span className={styles.displayName}>
           {displayName}
-          {currentUserAddress === walletAddress && (
+          {walletAddress === userAddress && (
             <span className={styles.thatsYou}>
               <FormattedMessage {...MSG.ownName} />
             </span>
@@ -61,10 +61,10 @@ const ItemDefault = ({
         </span>
       )}
       {username && <UserMention username={username} hasLink={false} />}
-      {showAddress && <span className={styles.address}>{walletAddress}</span>}
+      {showAddress && <span className={styles.address}>{userAddress}</span>}
       {!showAddress && showMaskedAddress && (
         <span className={styles.address}>
-          <MaskedAddress address={walletAddress} />
+          <MaskedAddress address={userAddress} />
         </span>
       )}
     </span>
