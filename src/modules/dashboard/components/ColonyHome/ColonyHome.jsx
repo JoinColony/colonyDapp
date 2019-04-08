@@ -207,7 +207,6 @@ const ColonyHome = ({
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
             values={{ colonyENSName: ensName }}
-            willUnmountOnSuccess
           />
         )}
         <ul className={styles.domainsFilters}>

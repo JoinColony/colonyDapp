@@ -113,11 +113,12 @@ const TaskEditDialog = ({
   payouts: taskPayouts,
   reputation,
   transform,
-  worker,
+  worker: workerAddress,
 }: Props) => {
   const availableTokens = []; // TODO use selector in #1048
   const users = []; // TODO use selector in #1048
 
+  // TODO consider using a selector for this in #1048
   const payouts = useMemo(
     () =>
       taskPayouts.map(payout => ({
@@ -162,9 +163,9 @@ const TaskEditDialog = ({
     [availableTokens],
   );
 
-  const args = [worker];
+  const args = [workerAddress];
   const {
-    data: workerUser,
+    data: worker,
     isFetching: isFetchingWorker,
   } = useDataFetcher<UserType>(userFetcher, args, args);
 
@@ -180,7 +181,7 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      {isFetchingWorker && worker != null ? (
+      {isFetchingWorker ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
@@ -193,7 +194,7 @@ const TaskEditDialog = ({
           error="COOL_THING_CREATE_ERROR"
           initialValues={{
             payouts,
-            worker: workerUser,
+            worker,
           }}
           validationSchema={validateFunding}
           transform={transform}

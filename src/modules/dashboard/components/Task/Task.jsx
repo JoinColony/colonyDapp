@@ -240,7 +240,9 @@ const Task = ({
               )}
             </>
           )}
-          <TaskRequestWork currentUser={currentUser} task={task} />
+          {!isTaskCreator && (
+            <TaskRequestWork currentUser={currentUser} task={task} />
+          )}
           {/*
             TODO use these components for the full on-chain task workflow
             <TaskRatingButtons task={task} />

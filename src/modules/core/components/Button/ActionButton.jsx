@@ -16,7 +16,6 @@ type Props = {
   submit: string,
   success: string,
   values?: Object | (() => Object | Promise<Object>),
-  willUnmountOnSuccess?: boolean,
 };
 
 const ActionButton = ({
@@ -25,7 +24,6 @@ const ActionButton = ({
   submit: start,
   success: resolve,
   values,
-  willUnmountOnSuccess,
   ...props
 }: Props) => {
   const isMountedRef = useMounted();

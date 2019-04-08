@@ -7,6 +7,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TaskPayoutType, TokenReferenceType, UserType } from '~immutable';
 
+import { addressEquals } from '~utils/strings';
 import Icon from '~core/Icon';
 import UserAvatarFactory from '~core/UserAvatar';
 import PayoutsList from '~core/PayoutsList';
@@ -74,7 +75,9 @@ const Assignment = ({
 }: Props) => {
   const fundingWithNativeToken =
     payouts &&
-    payouts.find(payout => payout.token.address === nativeToken.address);
+    payouts.find(payout =>
+      addressEquals(payout.token.address, nativeToken.address),
+    );
 
   return (
     <div>
