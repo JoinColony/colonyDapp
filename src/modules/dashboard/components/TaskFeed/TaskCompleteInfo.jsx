@@ -13,7 +13,7 @@ import { useDataFetcher } from '~utils/hooks';
 import { useToken } from '../../hooks';
 import { userFetcher } from '../../../users/fetchers';
 
-import styles from './TaskFeedTransactionInfo.css';
+import styles from './TaskCompleteInfo.css';
 
 const NETWORK_FEE = 0.01;
 
@@ -24,28 +24,28 @@ const getTaskPayoutAmountMinusNetworkFee = (amount: number) =>
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
-    id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.eventTaskSentMessage',
+    id: 'dashboard.TaskFeed.TaskCompleteInfo.eventTaskSentMessage',
     defaultMessage: 'The task has been completed and payment sent to {user}',
   },
   receiptAmountText: {
-    id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptAmountText',
+    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptAmountText',
     defaultMessage: 'Amount: {amount} {symbol}',
   },
   receiptColonyFeeText: {
-    id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptColonyFeeText',
+    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptColonyFeeText',
     defaultMessage: 'Colony fee: {amount} {symbol}',
   },
   receiptRecipientText: {
-    id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptRecipientText',
+    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptRecipientText',
     defaultMessage: 'Recipient: {address}',
   },
   receiptReputationText: {
-    id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptReputationText',
+    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptReputationText',
     defaultMessage: `Reputation:
 {isNonNegative, select, true {+} false {}}{reputationAmount} rep`,
   },
   receiptViewTxLinkText: {
-    id: 'dashboard.TaskFeed.TaskFeedTransactionInfo.receiptViewTxLinkText',
+    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptViewTxLinkText',
     defaultMessage: 'View the task on Etherscan',
   },
 });
@@ -55,9 +55,9 @@ type Props = {|
   transaction: ContractTransactionType,
 |};
 
-const displayName = 'dashboard.TaskFeed.TaskFeedTransactionInfo';
+const displayName = 'dashboard.TaskFeed.TaskCompleteInfo';
 
-const TaskFeedTransactionInfo = ({
+const TaskCompleteInfo = ({
   reputation,
   transaction: { amount, date, hash, to, token: tokenAddress },
 }: Props) => {
@@ -159,6 +159,6 @@ const TaskFeedTransactionInfo = ({
   );
 };
 
-TaskFeedTransactionInfo.displayName = displayName;
+TaskCompleteInfo.displayName = displayName;
 
-export default TaskFeedTransactionInfo;
+export default TaskCompleteInfo;
