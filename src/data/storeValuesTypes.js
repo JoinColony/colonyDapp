@@ -4,7 +4,7 @@
 // ValidatedKVStores (and use event/feed stores).
 
 export type UserProfileStoreValues = {|
-  avatar?: ?string,
+  avatarHash?: ?string,
   bio?: string,
   createdAt: number,
   displayName?: string,

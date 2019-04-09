@@ -35,10 +35,10 @@ const currentUserProfileReducer: ReducerType<
     }
     case ACTIONS.USER_UPLOAD_AVATAR_SUCCESS: {
       const { hash } = action.payload;
-      return state.set('avatar', hash);
+      return state.set('avatarHash', hash);
     }
     case ACTIONS.USER_REMOVE_AVATAR_SUCCESS: {
-      return state.delete('avatar');
+      return state.delete('avatarHash');
     }
     case ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS: {
       const { balance } = action.payload;

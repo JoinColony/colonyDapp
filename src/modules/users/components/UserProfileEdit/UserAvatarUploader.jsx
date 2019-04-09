@@ -7,7 +7,7 @@ import type { UserType } from '~immutable';
 import type { FileReaderFile } from '~core/FileUpload';
 
 import AvatarUploader from '~core/AvatarUploader';
-import UserAvatarFactory from '~core/UserAvatar';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 import { ACTIONS } from '~redux';
 
 import promiseListener from '../../../../createPromiseListener';
@@ -21,7 +21,7 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 type Props = {|
   /** Current user */

@@ -4,12 +4,12 @@ import React from 'react';
 
 import type { TaskCommentType } from '~immutable';
 
+import { PreserveLinebreaks } from '~utils/components';
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
-import UserAvatarFactory from '~core/UserAvatar';
 import UserInfo from '~core/UserInfo';
 import UserMention from '~core/UserMention';
-import { PreserveLinebreaks } from '~utils/components';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import TextDecorator from '../../../../lib/TextDecorator';
 
@@ -17,7 +17,7 @@ import styles from './TaskFeedComment.css';
 
 import mockUser from '../Wallet/__datamocks__/mockUser';
 
-const UserAvatar = UserAvatarFactory({ showInfo: true });
+const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
@@ -56,6 +56,7 @@ const TaskFeedComment = ({
           <UserAvatar
             address={commentAuthorWalletAddress}
             user={mockUser}
+            showInfo
             size="s"
           />
         </div>

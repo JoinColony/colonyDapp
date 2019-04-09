@@ -130,7 +130,7 @@ export const setUserAvatar: Command<
   schema: SetUserAvatarCommandArgsSchema,
   async execute({ ipfsHash }) {
     const profileStore = await getUserProfileStore(ddb)(metadata);
-    await profileStore.set({ avatar: ipfsHash });
+    await profileStore.set({ avatarHash: ipfsHash });
     return ipfsHash;
   },
 });
@@ -142,7 +142,7 @@ export const removeUserAvatar: UserCommand<
 > = ({ ddb, metadata }) => ({
   async execute() {
     const profileStore = await getUserProfileStore(ddb)(metadata);
-    await profileStore.set({ avatar: null });
+    await profileStore.set({ avatarHash: null });
     await profileStore.load();
     return profileStore;
   },

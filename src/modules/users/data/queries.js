@@ -94,7 +94,7 @@ export const getUserProfile: UserQuery<void, UserProfileType> = ({
   async execute() {
     const profileStore = await getUserProfileStore(ddb)(metadata);
     const {
-      avatar,
+      avatarHash,
       bio,
       displayName,
       location,
@@ -103,7 +103,7 @@ export const getUserProfile: UserQuery<void, UserProfileType> = ({
       website,
     } = await profileStore.all();
     return {
-      avatar,
+      avatarHash,
       bio,
       displayName,
       location,

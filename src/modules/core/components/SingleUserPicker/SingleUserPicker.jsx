@@ -18,7 +18,7 @@ import { asField, InputLabel } from '../Fields';
 import Icon from '../Icon';
 import Button from '../Button';
 import { withOmniPicker } from '../OmniPicker';
-import UserAvatarFactory from '../UserAvatar';
+import UserAvatar from '../UserAvatar';
 
 import ItemDefault from './ItemDefault.jsx';
 
@@ -41,18 +41,9 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
-
 const defaultRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   const { id, ...user } = item;
-  return (
-    <UserAvatar
-      address={address}
-      className={styles.recipientAvatar}
-      user={user}
-      size="xs"
-    />
-  );
+  return <UserAvatar address={address} user={user} size="xs" />;
 };
 
 const defaultRenderItem = (

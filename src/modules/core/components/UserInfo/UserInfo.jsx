@@ -16,29 +16,33 @@ type Props = {|
   /** Children elemnts or components to wrap the tooltip around */
   children: React$Element<*>,
   /** The user object */
-  user?: $Shape<UserType>,
+  user?: UserType,
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled',
 |};
 
-const UserInfo = ({
-  user: { profile: { displayName, username, walletAddress } = {} } = {},
-  children,
-  trigger = 'hover',
-}: Props) => (
+const renderTooltipContent = (user?: UserType) => {
+  if (!user) return null;
+  const {
+    profile: { displayName, username, walletAddress },
+  } = user;
+  return (
+    <div className={styles.main}>
+      {displayName && <p className={styles.displayName}>{displayName}</p>}
+      {username && <UserMention username={username} />}
+      {walletAddress && (
+        <p className={styles.walletAddress}>
+          <MaskedAddress address={walletAddress} />
+        </p>
+      )}
+    </div>
+  );
+};
+
+const UserInfo = ({ user, children, trigger = 'hover' }: Props) => (
   <Tooltip
-    content={
-      <div className={styles.main}>
-        {displayName && <p className={styles.displayName}>{displayName}</p>}
-        {username && <UserMention username={username} to="" />}
-        {walletAddress && (
-          <p className={styles.walletAddress}>
-            <MaskedAddress address={walletAddress} />
-          </p>
-        )}
-      </div>
-    }
-    trigger={trigger}
+    content={renderTooltipContent(user)}
+    trigger={user ? trigger : 'disabled'}
   >
     {/*
      * This wrapper is needed because, if the child in an in-line element, the

@@ -4,11 +4,11 @@ import React from 'react';
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
 
+import type { RootStateRecord, UserType } from '~immutable';
+
 import { withImmutablePropsToJS } from '~utils/hoc';
 import Popover from '~core/Popover';
-import UserAvatarFactory from '~core/UserAvatar';
-
-import type { RootStateRecord, UserType } from '~immutable';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { currentUserSelector } from '../../selectors';
 
@@ -16,7 +16,7 @@ import styles from './AvatarDropdown.css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover.jsx';
 
-const UserAvatar = UserAvatarFactory({ fetchUser: false });
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 type Props = {|
   user: UserType,
@@ -24,6 +24,7 @@ type Props = {|
 
 const displayName = 'users.AvatarDropdown';
 
+// TODO: use data fetcher here for current user
 const AvatarDropdown = ({ user }: Props) => (
   <Popover
     content={({ close }) => (

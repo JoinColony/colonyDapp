@@ -12,18 +12,15 @@ const chewie = {
     displayName: 'Chewbacca',
     username: 'chewie'
   },
-}
+};
 
-// You can define the getAvatar function. Per default this is retrieved via react hooks from the redux store
-const getAvatar = () => return avatar;
-
-<UserAvatar user={chewie} address="0x1afb213afa8729fa7908154b90e256f1be70987a" getAvatar={getAvatar} />
+<UserAvatar avatarURL={avatar} user={chewie} address="0x1afb213afa8729fa7908154b90e256f1be70987a" />
 ```
 
 ### Placeholder
 
 ```
-<UserAvatar getAvatar={() => null} address="0x1afb213afa8729fa7908154b90e256f1be70987a />
+<UserAvatar address="0x1afb213afa8729fa7908154b90e256f1be70987a" />
 ```
 
 ### Placeholder not set
@@ -31,7 +28,7 @@ const getAvatar = () => return avatar;
 The placeholder for users who are not set (e.g. as an assignee) are different (as we don't have a wallet address here).
 
 ```
-<UserAvatarDisplay getAvatar={() => null} username="no-one" address="0x1afb213afa8729fa7908154b90e256f1be70987a" notSet />
+<UserAvatar username="no-one" address="0x1afb213afa8729fa7908154b90e256f1be70987a" notSet />
 ```
 
 ### User avatar with a UserInfo Tooltip
@@ -44,15 +41,12 @@ const chewie = {
     displayName: 'Chewbacca',
     username: 'chewie'
   },
-}
+};
 
-// You can define the getAvatar function. Per default this is retrieved via react hooks from the redux store
-const getAvatar = () => return avatar;
-
-<UserAvatarDisplay
-  avatar={avatar}
+<UserAvatar
+  avatarURL={avatar}
   user={chewie}
   address="0x1afb213afa8729fa7908154b90e256f1be70987a"
-  hasUserInfo
+  showInfo
 />
 ```

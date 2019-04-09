@@ -7,7 +7,7 @@ import type { FileReaderFile } from '~core/FileUpload';
 import type { ColonyType } from '~immutable';
 
 import AvatarUploader from '~core/AvatarUploader';
-import ColonyAvatarFactory from '~core/ColonyAvatar';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { ACTIONS } from '~redux';
 import { withKeyPath } from '~utils/actions';
 
@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyAvatar = ColonyAvatarFactory({ fetchColony: false });
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 type Props = {|
   colony: ColonyType,

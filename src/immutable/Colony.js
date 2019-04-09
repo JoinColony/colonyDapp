@@ -13,7 +13,7 @@ import type { TokenReferenceRecordType, TokenReferenceType } from './index';
 
 type Shared = {|
   address: Address,
-  avatar?: string,
+  avatarHash?: string,
   description?: string,
   ensName: ENSName,
   guideline?: string,
@@ -38,7 +38,7 @@ type ColonyRecordProps = {|
 
 const defaultValues: $Shape<ColonyRecordProps> = {
   address: undefined,
-  avatar: undefined,
+  avatarHash: undefined,
   description: undefined,
   ensName: undefined,
   guideline: undefined,

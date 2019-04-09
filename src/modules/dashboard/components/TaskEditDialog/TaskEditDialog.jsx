@@ -6,6 +6,10 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
+import type { UserType, TaskType } from '~immutable';
+import type { $Pick } from '~types';
+import type { ItemDataType } from '~core/OmniPicker';
+
 import SingleUserPicker from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
@@ -14,13 +18,11 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { SpinnerLoader } from '~core/Preloaders';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import WrappedPayout from './WrappedPayout.jsx';
 import { useDataFetcher } from '~utils/hooks';
 import { userFetcher } from '../../../users/fetchers';
-
-import type { UserType, TaskType } from '~immutable';
-import type { $Pick } from '~types';
 
 import styles from './TaskEditDialog.css';
 
@@ -76,6 +78,8 @@ type Props = {|
   walletAddress: string,
 |};
 
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
 const supFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
@@ -95,6 +99,11 @@ const supFilter = (data, filterValue) => {
   };
 
   return [customValue].concat(filtered);
+};
+
+const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
+  const { id, ...user } = item;
+  return <UserAvatar address={address} user={user} size="xs" />;
 };
 
 const canAddTokens = (values, maxTokens) =>
@@ -217,6 +226,7 @@ const TaskEditDialog = ({
                       name="worker"
                       filter={supFilter}
                       placeholder={MSG.search}
+                      renderAvatar={supRenderAvatar}
                     />
                   </DialogSection>
                   <DialogSection>

@@ -1,5 +1,5 @@
 /* @flow */
 
-export { default as UserAvatarDisplay } from './UserAvatarDisplay.jsx';
+export type { Props } from './UserAvatar.jsx';
 
-export { default } from './UserAvatarFactory.jsx';
+export { default } from './UserAvatar.jsx';

@@ -53,13 +53,13 @@ const coloniesReducer: ReducerType<
         meta: { keyPath },
         payload: { hash },
       } = action;
-      return state.setIn([...keyPath, 'record', 'avatar'], hash);
+      return state.setIn([...keyPath, 'record', 'avatarHash'], hash);
     }
     case ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS: {
       const {
         meta: { keyPath },
       } = action;
-      return state.setIn([...keyPath, 'record', 'avatar'], undefined);
+      return state.setIn([...keyPath, 'record', 'avatarHash'], undefined);
     }
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {

@@ -12,13 +12,13 @@ import type { UserType } from '~immutable';
 
 import withDialog from '~core/Dialog/withDialog';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
-import UserAvatarFactory from '~core/UserAvatar';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 import { withCurrentUser } from '../../../users/hocs';
 
 import styles from './InitialTask.css';
 
-const UserAvatar = UserAvatarFactory();
+const UserAvatar = HookedUserAvatar();
 
 export type InitialTaskType = {
   title: MessageDescriptor,
