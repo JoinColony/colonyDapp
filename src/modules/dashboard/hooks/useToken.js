@@ -8,7 +8,7 @@ import type { Address } from '~types';
 import type { TokenType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { tokenWithIconSelector } from '../selectors';
+import { tokenSelector } from '../selectors';
 
 const useToken = (tokenAddress: Address): ?TokenType => {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const useToken = (tokenAddress: Address): ?TokenType => {
   );
   const mapState = useCallback(
     state => ({
-      token: tokenWithIconSelector(state, tokenAddress),
+      token: tokenSelector(state, tokenAddress),
     }),
     [tokenAddress],
   );

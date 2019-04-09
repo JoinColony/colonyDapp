@@ -76,11 +76,9 @@ const validateNativeTokenSelect = (nativeToken?: TokenReferenceType): any => {
 };
 
 const TokenCheckbox = ({
-  address,
-  isNative = false,
+  token: { address, isNative = false, icon },
 }: {
-  address: string,
-  isNative?: boolean,
+  token: TokenReferenceType,
 }) => {
   const token = useToken(address);
   return token ? (
@@ -90,10 +88,10 @@ const TokenCheckbox = ({
       name="tokens"
       disabled={isNative || tokenIsETH(token)}
     >
-      {!!token.icon && (
+      {!!icon && (
         <img
           // TODO: this is cheating, we should load from our own node
-          src={`https://ipfs.io/ipfs/${token.icon}`}
+          src={`https://ipfs.io/ipfs/${icon}`}
           alt={token.name}
           className={styles.tokenChoiceIcon}
         />
@@ -142,12 +140,8 @@ const TokenEditDialog = ({
               />
               <InputLabel label={MSG.fieldLabel} />
               <div className={styles.tokenChoiceContainer}>
-                {tokens.map(({ address, isNative }) => (
-                  <TokenCheckbox
-                    key={address}
-                    address={address}
-                    isNative={isNative}
-                  />
+                {tokens.map(token => (
+                  <TokenCheckbox key={token.address} token={token} />
                 ))}
               </div>
             </DialogSection>

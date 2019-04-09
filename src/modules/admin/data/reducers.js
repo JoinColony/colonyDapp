@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ColonyType, TokenType } from '~immutable';
+import type { ColonyType } from '~immutable';
 import type { EventReducer } from '~data/types';
 
 import { COLONY_EVENT_TYPES } from '~data/constants';
@@ -45,7 +45,7 @@ export const colonyTasksReducer: EventReducer<
 };
 
 export const colonyReducer: EventReducer<
-  {| colony: ColonyType, tokens: TokenType[] |},
+  ColonyType,
   {|
     AVATAR_REMOVED: *,
     AVATAR_UPLOADED: *,
@@ -53,48 +53,38 @@ export const colonyReducer: EventReducer<
     PROFILE_UPDATED: *,
     TOKEN_INFO_ADDED: *,
   |},
-> = ({ colony, tokens }, event) => {
+> = (colony, event) => {
   switch (event.type) {
     case TOKEN_INFO_ADDED: {
-      const { address, isNative, icon, name, symbol } = event.payload;
-      const token = { address, isNative };
+      const { address } = event.payload;
       return {
-        colony: {
-          ...colony,
-          tokens: {
-            ...colony.tokens,
-            [address]: token,
-          },
+        ...colony,
+        tokens: {
+          ...colony.tokens,
+          [address]: event.payload,
         },
-        tokens: [...tokens, { ...token, icon, name, symbol }],
       };
     }
     case AVATAR_UPLOADED: {
       // TODO: Make avatar an object so we have the ipfsHash and data
       const { ipfsHash } = event.payload;
       return {
-        colony: {
-          ...colony,
-          avatar: ipfsHash,
-        },
-        tokens,
+        ...colony,
+        avatar: ipfsHash,
       };
     }
     case AVATAR_REMOVED: {
       const { avatar } = colony;
       const { ipfsHash } = event.payload;
       return {
-        colony: {
-          ...colony,
-          avatar: avatar && avatar === ipfsHash ? undefined : avatar,
-        },
-        tokens,
+        ...colony,
+        avatar: avatar && avatar === ipfsHash ? undefined : avatar,
       };
     }
     case PROFILE_CREATED:
     case PROFILE_UPDATED:
-      return { colony: { ...colony, ...event.payload }, tokens };
+      return { ...colony, ...event.payload };
     default:
-      return { colony, tokens };
+      return colony;
   }
 };

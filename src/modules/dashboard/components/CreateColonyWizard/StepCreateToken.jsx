@@ -14,6 +14,7 @@ import Button from '~core/Button';
 import { ActionFileUpload } from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
 import { ACTIONS } from '~redux';
+import { mergePayload } from '~utils/actions';
 
 import styles from './StepCreateToken.css';
 
@@ -107,7 +108,7 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
           values.tokenIcon &&
           values.tokenIcon.length &&
           values.tokenIcon[0].uploaded
-            ? values.tokenIcon[0].uploaded.hash
+            ? values.tokenIcon[0].uploaded.ipfsHash
             : undefined,
       });
     }}
@@ -146,9 +147,12 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
               name="tokenIcon"
               label={MSG.labelTokenIcon}
               help={MSG.helpTokenIcon}
-              submit={ACTIONS.TOKEN_ICON_UPLOAD}
-              success={ACTIONS.TOKEN_ICON_UPLOAD_SUCCESS}
-              error={ACTIONS.TOKEN_ICON_UPLOAD_ERROR}
+              submit={ACTIONS.IPFS_DATA_UPLOAD}
+              success={ACTIONS.IPFS_DATA_UPLOAD_SUCCESS}
+              error={ACTIONS.IPFS_DATA_UPLOAD_ERROR}
+              transform={action =>
+                mergePayload({ ipfsData: action.payload.data })()(action)
+              }
             />
           </div>
         </section>

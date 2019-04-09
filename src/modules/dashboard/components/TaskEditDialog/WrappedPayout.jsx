@@ -51,6 +51,7 @@ const WrappedPayout = ({
       name={`payouts.${index}`}
       amount={amount}
       symbol={token.symbol}
+      // $FlowFixMe this should be from TokenReference
       reputation={token.isNative ? reputation : undefined}
       isEth={isEth}
       tokenOptions={tokenOptions}

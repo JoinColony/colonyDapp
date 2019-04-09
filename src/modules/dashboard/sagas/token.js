@@ -108,52 +108,8 @@ function* tokenCreate({
   }
 }
 
-/**
- * Upload a token icon to IPFS.
- */
-function* tokenIconUpload({
-  payload: { data },
-  meta,
-}: Action<typeof ACTIONS.TOKEN_ICON_UPLOAD>): Saga<void> {
-  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
-
-  try {
-    const hash = yield call([ipfsNode, ipfsNode.addString], data);
-
-    yield put<Action<typeof ACTIONS.TOKEN_ICON_UPLOAD_SUCCESS>>({
-      type: ACTIONS.TOKEN_ICON_UPLOAD_SUCCESS,
-      payload: { hash },
-      meta,
-    });
-  } catch (error) {
-    yield putError(ACTIONS.TOKEN_ICON_UPLOAD_ERROR, error, meta);
-  }
-}
-
-/**
- * Get the token icon with given IPFS hash.
- */
-function* tokenIconFetch({
-  payload: { hash },
-}: Action<typeof ACTIONS.TOKEN_ICON_FETCH>): Saga<void> {
-  const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
-
-  try {
-    const iconData = yield call([ipfsNode, ipfsNode.getString], hash);
-    // TODO: this should be put in the redux store by a reducer
-    yield put<Action<typeof ACTIONS.TOKEN_ICON_FETCH_SUCCESS>>({
-      type: ACTIONS.TOKEN_ICON_FETCH_SUCCESS,
-      payload: { hash, iconData },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.TOKEN_ICON_FETCH_ERROR, error);
-  }
-}
-
 export default function* tokenSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TOKEN_CREATE, tokenCreate);
-  yield takeEvery(ACTIONS.TOKEN_ICON_UPLOAD, tokenIconUpload);
-  yield takeEvery(ACTIONS.TOKEN_ICON_FETCH, tokenIconFetch);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
   yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, tokenInfoFetch);

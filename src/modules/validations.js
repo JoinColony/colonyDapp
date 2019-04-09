@@ -28,6 +28,7 @@ function equalTo(ref, msg) {
 
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
+// TODO: this should accept a TokenReference
 function lessThanPot(availableTokens: Array<TokenType>, msg) {
   return this.test({
     name: 'lessThanPot',
@@ -36,6 +37,7 @@ function lessThanPot(availableTokens: Array<TokenType>, msg) {
       // $FlowFixMe `yup.ref` not recognised
       const tokenIndex = this.resolve(yup.ref('token'));
       if (!tokenIndex) return true;
+      // $FlowFixMe should be from TokenReference
       const { balance } = availableTokens[parseInt(tokenIndex, 10) - 1] || {};
       return balance === undefined || bnLessThan(value, balance);
     },

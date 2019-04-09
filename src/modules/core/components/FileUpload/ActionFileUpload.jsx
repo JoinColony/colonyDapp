@@ -1,40 +1,46 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
+import MakeAsyncFunction from 'react-redux-promise-listener';
 
 import promiseListener from '../../../../createPromiseListener';
 import FileUpload from './FileUpload.jsx';
 
-import type { AsyncFunction } from '../../../../createPromiseListener';
+import type { ActionTransformFnType } from '~utils/actions';
 
 // TODO if this object is sealed, there are unspecified props being used
 type Props = {
   submit: string,
   success: string,
   error: string,
+  transform?: ActionTransformFnType,
 };
 
-class ActionFileUpload extends Component<Props> {
-  upload: AsyncFunction<void, void>;
-
-  constructor(props: Props) {
-    super(props);
-    const { submit, success, error } = this.props;
-    this.upload = promiseListener.createAsyncFunction({
-      start: submit,
-      resolve: success,
-      reject: error,
-    });
+const ActionFileUpload = ({
+  submit,
+  success,
+  error,
+  transform,
+  ...props
+}: Props) => {
+  let setPayloadFn;
+  if (transform) {
+    setPayloadFn = (action, payload) => {
+      const newAction = transform({ ...action, payload });
+      return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
+    };
   }
-
-  componentWillUnmount() {
-    this.upload.unsubscribe();
-  }
-
-  render() {
-    const { submit, success, error, ...props } = this.props;
-    return <FileUpload upload={this.upload.asyncFunction} {...props} />;
-  }
-}
+  return (
+    <MakeAsyncFunction
+      listener={promiseListener}
+      start={submit}
+      resolve={success}
+      reject={error}
+      setPayload={setPayloadFn}
+    >
+      {asyncFunc => <FileUpload upload={asyncFunc} {...props} />}
+    </MakeAsyncFunction>
+  );
+};
 
 export default ActionFileUpload;

@@ -34,8 +34,8 @@ const currentUserProfileReducer: ReducerType<
       return state.set('username', username);
     }
     case ACTIONS.USER_UPLOAD_AVATAR_SUCCESS: {
-      const { avatar } = action.payload;
-      return state.set('avatar', avatar);
+      const { hash } = action.payload;
+      return state.set('avatar', hash);
     }
     case ACTIONS.USER_REMOVE_AVATAR_SUCCESS: {
       return state.delete('avatar');

@@ -10,8 +10,6 @@ const withToken = compose(
     withProps({
       token: TokenRecord({
         address: '0x0000000000000000000000000000000000000000',
-        balance: 0,
-        icon: '',
         name: 'Ether',
         symbol: 'ETH',
       }),

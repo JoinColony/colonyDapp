@@ -369,12 +369,10 @@ function* colonyFetch({
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
       meta,
-      payload, // TODO this should probably only use `colony` from the query
+      payload,
     });
 
-    const {
-      colony: { address: colonyAddress, tokens = {} },
-    } = payload;
+    const { address: colonyAddress, tokens = {} } = payload;
 
     // dispatch actions to fetch info and balances for each colony token
     yield all(
