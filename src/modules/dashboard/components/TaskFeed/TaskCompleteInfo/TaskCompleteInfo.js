@@ -25,7 +25,7 @@ const enhance: HOC<EnhancedProps, *> = compose(
     ({
       task: {
         reputation,
-        worker: { didFailToRate, rating },
+        worker: { didFailToRate, rating = 0 } = {}, // set defaults to make flow happy
       },
       transaction,
     }) => ({
