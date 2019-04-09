@@ -2,7 +2,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 
-import type { ContractTransactionType, UserType } from '~immutable';
+import type { UserType } from '~immutable';
 
 import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
@@ -10,8 +10,10 @@ import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import { useDataFetcher } from '~utils/hooks';
 
-import { useToken } from '../../hooks';
-import { userFetcher } from '../../../users/fetchers';
+import type { EnhancedProps as Props } from './types';
+
+import { useToken } from '../../../hooks';
+import { userFetcher } from '../../../../users/fetchers';
 
 import styles from './TaskCompleteInfo.css';
 
@@ -49,11 +51,6 @@ const MSG = defineMessages({
     defaultMessage: 'View the task on Etherscan',
   },
 });
-
-type Props = {|
-  reputation: number,
-  transaction: ContractTransactionType,
-|};
 
 const displayName = 'dashboard.TaskFeed.TaskCompleteInfo';
 
