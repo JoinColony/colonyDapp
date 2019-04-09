@@ -6,21 +6,22 @@ import { defineMessages, FormattedDate } from 'react-intl';
 
 import type { ContractTransactionType, TokenType, UserType } from '~immutable';
 
-import { ACTIONS } from '~redux';
-import { useDataFetcher } from '~utils/hooks';
-import { tokenFetcher } from '../../../dashboard/fetchers';
-import { userFetcher } from '../../../users/fetchers';
-
 import { TableRow, TableCell } from '~core/Table';
 import { ActionButton } from '~core/Button';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
+import { ACTIONS } from '~redux';
+import { mergePayload } from '~utils/actions';
+import { getEtherscanTxUrl } from '~utils/external';
+import { useDataFetcher } from '~utils/hooks';
+
+import { tokenFetcher } from '../../../dashboard/fetchers';
+import { userFetcher } from '../../../users/fetchers';
 
 import TransactionDetails from './TransactionDetails.jsx';
 
 import styles from './TransactionListItem.css';
-import { mergePayload } from '~utils/actions';
 
 const MSG = defineMessages({
   buttonClaim: {
@@ -145,7 +146,7 @@ const TransactionListItem = ({
              * @body Suggestion: use an environment variable or otherwise global config to determine which network we are on (or if local). This could also be a self-contained component.
              */}
             <ExternalLink
-              href={`https://rinkeby.etherscan.io/tx/${transaction.hash}`}
+              href={getEtherscanTxUrl(transaction.hash)}
               text={MSG.buttonEtherscan}
               className={styles.customButton}
             />

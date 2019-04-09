@@ -13,10 +13,12 @@ type EthUsdResponse = {
   },
 };
 
+export const getEtherscanTxUrl = (txHash: string | number) =>
+  `https://rinkeby.etherscan.io/tx/${txHash}`;
+
 /*
   Request dollar conversion value from etherScan
 */
-// eslint-disable-next-line import/prefer-default-export
 export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
