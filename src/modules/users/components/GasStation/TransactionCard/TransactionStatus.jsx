@@ -9,6 +9,7 @@ import { Tooltip } from '~core/Popover';
 import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
+import { getEtherscanTxUrl } from '~utils/external';
 
 import styles from './TransactionStatus.css';
 
@@ -43,7 +44,7 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
   <div className={styles.main}>
     {hash && (
       <ExternalLink
-        href={`https://rinkeby.etherscan.io/tx/${hash}`}
+        href={getEtherscanTxUrl(hash)}
         text="Etherscan"
         className={styles.interaction}
       />

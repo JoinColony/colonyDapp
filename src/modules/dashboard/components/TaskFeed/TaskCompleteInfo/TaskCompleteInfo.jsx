@@ -8,6 +8,7 @@ import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
+import { getEtherscanTxUrl } from '~utils/external';
 import { useDataFetcher } from '~utils/hooks';
 
 import type { EnhancedProps as Props } from './types';
@@ -144,7 +145,7 @@ const TaskCompleteInfo = ({
                   <ExternalLink
                     className={styles.receiptLink}
                     text={MSG.receiptViewTxLinkText}
-                    href={`https://rinkeby.etherscan.io/tx/${hash}`}
+                    href={getEtherscanTxUrl(hash)}
                   />
                 </>
               )}
