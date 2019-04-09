@@ -8,6 +8,7 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 
+import { mergePayload } from '~utils/actions';
 import { ActionForm, Textarea, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -61,8 +62,8 @@ const displayName = 'users.ConnectWalletWizard.StepMnemonic';
 const StepMnemonic = ({
   nextStep,
   previousStep,
-  formHelpers: { includeWizardValues },
   wizardForm,
+  wizardValues,
 }: Props) => (
   <ActionForm
     submit={ACTIONS.WALLET_CREATE}
@@ -73,7 +74,7 @@ const StepMnemonic = ({
     }}
     onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
-    transform={includeWizardValues()}
+    transform={mergePayload(wizardValues)}
     {...wizardForm}
   >
     {({ isSubmitting, isValid, status, values }) => (

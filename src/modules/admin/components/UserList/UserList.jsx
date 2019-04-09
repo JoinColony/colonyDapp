@@ -3,12 +3,11 @@
 import type { MessageDescriptor } from 'react-intl';
 
 import React, { Component } from 'react';
-import compose from 'lodash/fp/compose';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
-import { mergePayload, withKeyPath } from '~utils/actions';
+import { compose, mergePayload, withKeyPath } from '~utils/actions';
 
 import type { AsyncFunction } from '../../../../createPromiseListener';
 

@@ -9,11 +9,12 @@ import * as yup from 'yup';
 import type { WizardProps } from '~core/Wizard';
 import type { FileReaderFile, UploadFile } from '~core/FileUpload';
 
+import { compose, mapPayload, mergePayload } from '~utils/actions';
+import { ACTIONS } from '~redux';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import FileUpload from '~core/FileUpload';
 import { ActionForm, Input, FormStatus } from '~core/Fields';
-import { ACTIONS } from '~redux';
 
 import type { WalletMethod } from '../../../types';
 
@@ -70,14 +71,13 @@ const validationSchema = yup.object({
   walletJsonPassword: yup.string(),
 });
 
-const transformPayload = (action: Object) => {
-  const { walletJsonFileUpload, walletJsonPassword } = action.payload;
+const transformPayload = ({
+  walletJsonFileUpload,
+  walletJsonPassword,
+}: FormValues) => {
   const [file] = walletJsonFileUpload;
   const keystore = file.uploaded;
-  return {
-    ...action,
-    payload: { ...action.payload, keystore, password: walletJsonPassword },
-  };
+  return { keystore, password: walletJsonPassword };
 };
 
 type Props = WizardProps<FormValues>;
@@ -102,7 +102,7 @@ const StepJSONUpload = ({
   nextStep,
   previousStep,
   wizardForm,
-  formHelpers: { includeWizardValues },
+  wizardValues,
 }: Props) => (
   <ActionForm
     submit={ACTIONS.WALLET_CREATE}
@@ -113,7 +113,10 @@ const StepJSONUpload = ({
     }}
     onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
-    transform={includeWizardValues(transformPayload)}
+    transform={compose(
+      mergePayload(wizardValues),
+      mapPayload(transformPayload),
+    )}
     {...wizardForm}
   >
     {({ status, isValid, values }) => (

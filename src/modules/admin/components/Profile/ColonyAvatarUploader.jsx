@@ -44,7 +44,7 @@ class ColonyAvatarUploader extends Component<Props> {
   constructor(props: Props) {
     super(props);
     const setPayload = (originalAction: *, payload: Object) =>
-      withKeyPath(props.colony.colonyName)()({ ...originalAction, payload });
+      withKeyPath(props.colony.colonyName)({ ...originalAction, payload });
 
     this.upload = promiseListener.createAsyncFunction({
       start: ACTIONS.COLONY_AVATAR_UPLOAD,

@@ -9,6 +9,7 @@ import { open } from '@colony/purser-metamask';
 
 import type { WizardProps } from '~core/Wizard';
 
+import { mergePayload } from '~utils/actions';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -110,12 +111,7 @@ class MetaMask extends Component<Props, State> {
   };
 
   render() {
-    const {
-      nextStep,
-      previousStep,
-      wizardForm,
-      formHelpers: { includeWizardValues },
-    } = this.props;
+    const { nextStep, previousStep, wizardForm, wizardValues } = this.props;
     const { isLoading, isValid } = this.state;
     return (
       <ActionForm
@@ -126,7 +122,7 @@ class MetaMask extends Component<Props, State> {
           setStatus({ error: MSG.errorOpenMetamask });
         }}
         onSuccess={values => nextStep({ ...values })}
-        transform={includeWizardValues()}
+        transform={mergePayload(wizardValues)}
         {...wizardForm}
       >
         {({ isSubmitting, status, values }) => (

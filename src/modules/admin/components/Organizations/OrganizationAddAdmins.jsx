@@ -8,7 +8,7 @@ import type { ENSName } from '~types';
 import type { UserType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
-import { withKeyPath } from '~utils/actions';
+import { compose, mapPayload, withKeyPath } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -66,7 +66,7 @@ const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   return <UserAvatar address={address} user={user} size="xs" />;
 };
 
-const displayName: string = 'admin.Organizations.OrganizationAddAdmins';
+const displayName = 'admin.Organizations.OrganizationAddAdmins';
 
 // Validate the value we get back from SingleUserPicker
 const validationSchema = yup.object({
@@ -84,14 +84,6 @@ type Props = {|
   colonyName: ENSName,
 |};
 
-const transformAction = action => ({
-  ...action,
-  payload: {
-    ...action.payload,
-    newAdmin: action.payload.newAdmin.profile.walletAddress,
-  },
-});
-
 const OrganizationAddAdmins = ({ colonyName }: Props) => {
   const walletAddress = useSelector(walletAddressSelector);
   const knownUsers = useSelector(usersExceptSelector, [walletAddress]);
@@ -102,7 +94,10 @@ const OrganizationAddAdmins = ({ colonyName }: Props) => {
         success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
         error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
         validationSchema={validationSchema}
-        transform={withKeyPath(colonyName)(transformAction)}
+        transform={compose(
+          withKeyPath(colonyName),
+          mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
+        )}
         initialValues={{
           newAdmin: null,
           colonyName,

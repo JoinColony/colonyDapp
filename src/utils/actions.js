@@ -2,34 +2,29 @@
 
 import type { UniqueActionType } from '~redux';
 
-const defaultTransform = action => action;
-
 export type ActionTransformFnType = (
   UniqueActionType<*, *, *>,
 ) => UniqueActionType<*, *, Object>;
 
-export const withKeyPath = (keyPath: string) => (
-  originalTransform?: ActionTransformFnType = defaultTransform,
-) => (originalAction: UniqueActionType<*, *, *>) => {
-  const action =
-    typeof originalTransform == 'function'
-      ? originalTransform(originalAction)
-      : originalTransform;
-  return {
-    ...action,
-    meta: { ...action.meta, keyPath: [].concat(keyPath) },
-  };
-};
+export { default as compose } from 'lodash/fp/compose';
 
 export const mergePayload = (payload: Object) => (
-  originalTransform?: ActionTransformFnType = defaultTransform,
-) => (originalAction: UniqueActionType<*, *, *>) => {
-  const action =
-    typeof originalTransform == 'function'
-      ? originalTransform(originalAction)
-      : originalTransform;
-  return {
-    ...action,
-    payload: { ...action.payload, ...payload },
-  };
-};
+  action: UniqueActionType<*, *, *>,
+) => ({
+  ...action,
+  payload: { ...action.payload, ...payload },
+});
+
+export const mapPayload = (mapFn: any => any) => (
+  action: UniqueActionType<*, *, *>,
+) => ({
+  ...action,
+  payload: mapFn(action.payload),
+});
+
+export const withKeyPath = (keyPath: string) => (
+  action: UniqueActionType<*, *, *>,
+) => ({
+  ...action,
+  meta: { ...action.meta, keyPath: [].concat(keyPath) },
+});

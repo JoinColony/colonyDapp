@@ -9,7 +9,7 @@ import { defineMessages } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
 
-import { mergePayload } from '~utils/actions';
+import { compose, mapPayload, mergePayload } from '~utils/actions';
 import { MultiLineEdit, ActionForm } from '~core/Fields';
 import { ACTIONS } from '~redux';
 
@@ -40,15 +40,12 @@ const TaskDescription = ({
     submit={ACTIONS.TASK_SET_DESCRIPTION}
     success={ACTIONS.TASK_SET_DESCRIPTION_SUCCESS}
     error={ACTIONS.TASK_SET_DESCRIPTION_ERROR}
-    transform={(originalAction: *) =>
-      mergePayload({
-        description: originalAction.payload.description
-          .getCurrentContent()
-          .getPlainText(),
-        colonyName,
-        draftId,
-      })()(originalAction)
-    }
+    transform={compose(
+      mapPayload(({ description: editor }) => ({
+        description: editor.getCurrentContent().getPlainText(),
+      })),
+      mergePayload({ colonyName, draftId }),
+    )}
   >
     {({ submitForm }: FormikProps<*>) => (
       <MultiLineEdit

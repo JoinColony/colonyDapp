@@ -8,6 +8,7 @@ import type { WizardProps } from '~core/Wizard';
 
 import styles from './StepCreateENSName.css';
 
+import { mergePayload } from '~utils/actions';
 import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -93,10 +94,7 @@ class StepCreateENSName extends Component<Props> {
   };
 
   render() {
-    const {
-      formHelpers: { includeWizardValues },
-      wizardForm,
-    } = this.props;
+    const { wizardValues, wizardForm } = this.props;
     return (
       <ActionForm
         submit={ACTIONS.COLONY_CREATE_LABEL}
@@ -104,7 +102,7 @@ class StepCreateENSName extends Component<Props> {
         success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
         validationSchema={validationSchema}
         validate={this.validateDomain}
-        transform={includeWizardValues()}
+        transform={mergePayload(wizardValues)}
         {...wizardForm}
       >
         {({ isValid, isSubmitting }) => (

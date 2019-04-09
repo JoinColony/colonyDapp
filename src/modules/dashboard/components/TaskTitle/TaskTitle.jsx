@@ -27,7 +27,7 @@ const TaskTitle = ({ isTaskCreator, title, colonyName, draftId }: Props) => (
     submit={ACTIONS.TASK_SET_TITLE}
     error={ACTIONS.TASK_SET_TITLE_ERROR}
     success={ACTIONS.TASK_SET_TITLE_SUCCESS}
-    transform={mergePayload({ colonyName, draftId })()}
+    transform={mergePayload({ colonyName, draftId })}
     initialValues={{ title }}
   >
     <SingleLineEdit

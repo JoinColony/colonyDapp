@@ -5,8 +5,6 @@ import type { ComponentType } from 'react';
 import { createElement, Component } from 'react';
 import { List, Map as ImmutableMap } from 'immutable';
 
-import { mergePayload } from '~utils/actions';
-
 type Props = {};
 
 type Values = { [formValue: string]: any };
@@ -85,9 +83,6 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
             initialValues: values.get(step),
             // It must be valid if we submitted values for this step before
             isInitialValid: ({ initialValues }) => !!initialValues,
-          },
-          formHelpers: {
-            includeWizardValues: mergePayload(allValues),
           },
         }),
       );

@@ -78,7 +78,7 @@ const StepProveMnemonic = ({
         submit={ACTIONS.WALLET_CREATE}
         success={ACTIONS.CURRENT_USER_CREATE}
         error={ACTIONS.WALLET_CREATE_ERROR}
-        transform={mergePayload({ method: 'create', mnemonic })()}
+        transform={mergePayload({ method: 'create', mnemonic })}
         validationSchema={yup.object().shape({
           proofWord1: yup
             .string()

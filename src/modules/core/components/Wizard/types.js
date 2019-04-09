@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { ActionTransformFnType } from '~utils/actions';
-
 export type WizardProps<FormValues> = {
   step: number,
   stepCount: number,
@@ -11,10 +9,5 @@ export type WizardProps<FormValues> = {
   wizardForm: {
     initialValues: { [formValue: string]: any },
     isInitialValid: Object => boolean,
-  },
-  formHelpers: {
-    includeWizardValues: (
-      transformFn?: ActionTransformFnType,
-    ) => ActionTransformFnType,
   },
 };
