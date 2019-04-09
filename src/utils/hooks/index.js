@@ -149,27 +149,27 @@ export const useFeatureFlags = (
 };
 
 export const useAsyncFunction = <P, R>({
-  start,
-  resolve,
-  reject,
+  submit,
+  success,
+  error,
 }: {|
-  start: string,
-  resolve: string,
-  reject: string,
+  submit: string,
+  success: string,
+  error: string,
 |}): { current: AsyncFunction<P, R> } => {
   const ref = useRef();
   useEffect(
     () => {
       ref.current = promiseListener.createAsyncFunction<P, R>({
-        start,
-        resolve,
-        reject,
+        start: submit,
+        resolve: success,
+        reject: error,
       });
       return () => {
         ref.current.unsubscribe();
       };
     },
-    [start, resolve, reject],
+    [submit, success, error],
   );
   // TODO can a React genius find out why we don't get the same
   // behaviour when returning ref.current?
