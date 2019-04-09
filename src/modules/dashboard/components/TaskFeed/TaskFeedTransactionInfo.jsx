@@ -17,9 +17,9 @@ import styles from './TaskFeedTransactionInfo.css';
 
 const NETWORK_FEE = 0.01;
 
-export const getTaskPayoutNetworkFee = (amount: number) => amount * NETWORK_FEE;
+const getTaskPayoutNetworkFee = (amount: number) => amount * NETWORK_FEE;
 
-export const getTaskPayoutAmountMinusNetworkFee = (amount: number) =>
+const getTaskPayoutAmountMinusNetworkFee = (amount: number) =>
   amount - getTaskPayoutNetworkFee(amount);
 
 const MSG = defineMessages({
