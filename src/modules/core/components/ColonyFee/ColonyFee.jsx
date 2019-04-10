@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BN from 'bn.js';
 
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
+
+import type { EnhancedProps as Props } from './types';
 
 import styles from './ColonyFee.css';
 
@@ -25,19 +26,16 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {|
-  amount: BN | string,
-  symbol: string,
-|};
-
 const displayName = 'ColonyFee';
 
-const ColonyFee = ({ amount, symbol }: Props) => (
+const ColonyFee = ({ networkFee, symbol }: Props) => (
   <>
     <div className={styles.amount}>
       <FormattedMessage
         {...MSG.colonyFeeText}
-        values={{ amount: <Numeral value={amount} suffix={` ${symbol}`} /> }}
+        values={{
+          amount: <Numeral value={networkFee} suffix={` ${symbol}`} />,
+        }}
       />
     </div>
     <div className={styles.help}>
