@@ -9,6 +9,8 @@ import {
   createTokenCreatedEvent,
   createColonyLabelCreatedEvent,
   createColonyAdminAddedEvent,
+  createColonyAdminRemovedEvent,
+  createColonyDomainCreatedEvent,
 } from '../events';
 
 export const createColony: UserInboxCommand<*, FeedStore> = ({
@@ -51,6 +53,28 @@ export const addAdmin: UserInboxCommand<*, FeedStore> = ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
     await userInboxStore.add(createColonyAdminAddedEvent(args));
+    return userInboxStore;
+  },
+});
+
+export const removeAdmin: UserInboxCommand<*, FeedStore> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute(args) {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    await userInboxStore.add(createColonyAdminRemovedEvent(args));
+    return userInboxStore;
+  },
+});
+
+export const createDomain: UserInboxCommand<*, FeedStore> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute(args) {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    await userInboxStore.add(createColonyDomainCreatedEvent(args));
     return userInboxStore;
   },
 });
