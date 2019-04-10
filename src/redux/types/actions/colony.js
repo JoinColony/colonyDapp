@@ -95,14 +95,6 @@ export type ColonyActionTypes = {|
     {| params: { token: string }, transaction: TransactionType<*, *> |},
     WithKeyPathDepth2,
   >,
-  COLONY_CREATE: UniqueActionType<
-    typeof ACTIONS.COLONY_CREATE,
-    {|
-      tokenAddress: string,
-    |},
-    void,
-  >,
-  COLONY_CREATE_ERROR: ErrorActionType<typeof ACTIONS.COLONY_CREATE_ERROR, *>,
   COLONY_CREATE_LABEL: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE_LABEL,
     {|
@@ -126,32 +118,29 @@ export type ColonyActionTypes = {|
     TransactionType<{ colonyName: string }, *>,
     void,
   >,
-  COLONY_CREATE_NEW: UniqueActionType<
-    typeof ACTIONS.COLONY_CREATE_NEW,
+  COLONY_CREATE: UniqueActionType<
+    typeof ACTIONS.COLONY_CREATE,
     {|
-      colonyId: number,
-      colonyAddress: string,
+      // These don't exist yet
+      /* colonyId: number,
+      tokenAddress: string,
+      tokenIcon: string,
+      colonyAddress: string, */
+      username: string,
       colonyName: string,
       ensName: string,
-      tokenAddress: string,
       tokenName: string,
       tokenSymbol: string,
-      tokenIcon: string,
     |},
     void,
   >,
-  COLONY_CREATE_NEW_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_CREATE_NEW_ERROR,
-    void,
-  >,
-  COLONY_CREATE_NEW_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_CREATE_NEW_SUCCESS,
-    TransactionType<{ colonyName: string }, *>,
+  COLONY_CREATE_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_CREATE_ERROR,
     void,
   >,
   COLONY_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE_SUCCESS,
-    void,
+    TransactionType<{ colonyName: string }, *>,
     void,
   >,
   COLONY_DOMAINS_FETCH: ActionTypeWithPayloadAndMeta<

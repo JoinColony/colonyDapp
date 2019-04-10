@@ -27,7 +27,7 @@ type Props = {|
   /* If we are only showing the transaction details
    * and no overview we do not need a back button
    */
-  hideBackButton?: boolean,
+  hideInteractiveElements?: boolean,
   transactionGroup: TransactionGroup,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};
@@ -37,14 +37,14 @@ const displayName = 'users.GasStation.TransactionDetails';
 const TransactionDetails = ({
   onClose,
   transactionGroup,
-  hideBackButton = false,
+  hideInteractiveElements = false,
 }: Props) => {
-  const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup);
+  const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup) || 0;
   const selectedTransaction = transactionGroup[selectedTransactionIdx];
   const groupKey = getGroupKey(transactionGroup);
   return (
     <div>
-      {!hideBackButton && (
+      {!hideInteractiveElements && (
         <button
           type="button"
           className={styles.returnToSummary}
@@ -61,6 +61,7 @@ const TransactionDetails = ({
       <CardList appearance={{ numCols: '1' }}>
         {groupKey === 'network.registerUserLabel' && <GasStationClaimCard />}
         <GroupedTransaction
+          hideSummary={hideInteractiveElements}
           transactionGroup={transactionGroup}
           selectedTransactionIdx={selectedTransactionIdx}
         />

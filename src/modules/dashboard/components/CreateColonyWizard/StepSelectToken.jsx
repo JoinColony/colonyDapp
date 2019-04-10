@@ -2,7 +2,8 @@
 
 import type { FormikBag } from 'formik';
 
-import React, { Component, Fragment } from 'react';
+// $FlowFixMe Update flow
+import React, { Fragment, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -34,10 +35,6 @@ type FormValues = {
 type Bag = FormikBag<Object, FormValues>;
 type SetFieldValue = $PropertyType<Bag, 'setFieldValue'>;
 
-type State = {
-  tokenData: ?TokenData,
-};
-
 type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
@@ -64,7 +61,7 @@ const MSG = defineMessages({
   invalidAddress: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.invalidAddress',
     defaultMessage:
-      'Not a valid token address. Check: https://etherscan.io/tokens',
+      'Not a valid token. Only ERC20 tokens with 18 decimals are supported.',
   },
   link: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
@@ -86,115 +83,116 @@ export const validationSchema = yup.object({
   tokenName: yup.string(),
 });
 
-const linkToTokenCreate = (wizardValues, nextStep, previousStep) => {
-  /* This is a custom link since it goes to a sibling step that appears
-  to be parallel to this one after the wizard steps diverge,
-  while making sure that the data form the previous wizard steps doesn't get lost */
-  const wizardValuesCopy = Object.assign({}, wizardValues);
-  previousStep(wizardValuesCopy);
-  wizardValuesCopy.tokenChoice = 'create';
-  nextStep(wizardValuesCopy);
-};
+const StepSelectToken = ({
+  nextStep,
+  previousStep,
+  wizardForm,
+  wizardValues,
+}: Props) => {
+  /* Intialiase state */
+  const [tokenData, setTokenData] = useState(undefined);
 
-class StepSelectToken extends Component<Props, State> {
-  static displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
-
-  constructor(props: Props) {
-    super(props);
-    this.state = { tokenData: undefined };
-  }
-
-  handleTokenSelect = (tokenData: TokenData, setFieldValue: SetFieldValue) => {
-    this.setState({ tokenData });
+  const handleTokenSelect = (data: TokenData, setFieldValue: SetFieldValue) => {
+    setTokenData({ data });
     if (tokenData) {
       setFieldValue('tokenName', tokenData.name);
       setFieldValue('tokenSymbol', tokenData.symbol);
     }
   };
 
-  render() {
-    const { nextStep, previousStep, wizardForm, wizardValues } = this.props;
-    const { tokenData } = this.state;
-    return (
-      <section className={styles.main}>
-        <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'medium', weight: 'bold' }}
-            text={MSG.heading}
-            textValues={{ colony: wizardValues.colonyName }}
-          />
-        </div>
-        <Form
-          className={styles.nameForm}
-          onSubmit={nextStep}
-          validationSchema={validationSchema}
-          {...wizardForm}
-        >
-          {({ isValid, setFieldValue, values }) => (
-            <div>
-              <TokenSelector
-                tokenAddress={values.tokenAddress}
-                onTokenSelect={data =>
-                  this.handleTokenSelect(data, setFieldValue)
-                }
-                tokenData={tokenData}
-                extra={
-                  // The key events are unlikely to be used here
-                  /* eslint-disable jsx-a11y/click-events-have-key-events */
-                  <span
-                    role="button"
-                    className={styles.linkToOtherStep}
-                    tabIndex={-2}
-                    onClick={() =>
-                      linkToTokenCreate(wizardValues, nextStep, previousStep)
+  const linkToTokenCreate = useCallback(
+    () => {
+      /* This is a custom link since it goes to a sibling step that appears
+        to be parallel to this one after the wizard steps diverge,
+        while making sure that the data form the previous wizard steps doesn't get lost
+      */
+      const wizardValuesCopy = Object.assign({}, wizardValues);
+      previousStep(wizardValuesCopy);
+      wizardValuesCopy.tokenChoice = 'create';
+      nextStep(wizardValuesCopy);
+    },
+    [wizardValues, nextStep, previousStep],
+  );
+
+  return (
+    <section className={styles.main}>
+      <div className={styles.title}>
+        <Heading
+          appearance={{ size: 'medium', weight: 'bold' }}
+          text={MSG.heading}
+          textValues={{ colony: wizardValues.colonyName }}
+        />
+      </div>
+      <Form
+        className={styles.nameForm}
+        onSubmit={nextStep}
+        validationSchema={validationSchema}
+        {...wizardForm}
+      >
+        {({ isValid, setFieldValue, values }) => (
+          <div>
+            <TokenSelector
+              tokenAddress={values.tokenAddress}
+              onTokenSelect={data => handleTokenSelect(data, setFieldValue)}
+              tokenData={tokenData}
+              extra={
+                // The key events are unlikely to be used here
+                /* eslint-disable jsx-a11y/click-events-have-key-events */
+                <span
+                  role="button"
+                  className={styles.linkToOtherStep}
+                  tabIndex={-2}
+                  onClick={() =>
+                    linkToTokenCreate(wizardValues, nextStep, previousStep)
+                  }
+                >
+                  <FormattedMessage {...MSG.link} />
+                </span>
+              }
+            />
+            {values.tokenAddress && tokenData === null && (
+              <Fragment>
+                <div className={styles.tokenDetails}>
+                  <Input name="tokenName" label={MSG.tokenName} />
+                </div>
+                <div className={styles.tokenDetails}>
+                  <Input
+                    name="tokenSymbol"
+                    label={MSG.tokenSymbol}
+                    hint={
+                      <Heading
+                        appearance={{ size: 'small', weight: 'thin' }}
+                        text={MSG.symbolHint}
+                      />
                     }
-                  >
-                    <FormattedMessage {...MSG.link} />
-                  </span>
-                }
+                  />
+                </div>
+                <div className={styles.tokenDetails}>
+                  <FileUpload
+                    accept={['svg', 'png']}
+                    label={MSG.fileUploadTitle}
+                    name="iconUpload"
+                    status={MSG.fileUploadHint}
+                    maxFilesLimit={1}
+                  />
+                </div>
+              </Fragment>
+            )}
+            <div className={styles.buttons}>
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                type="submit"
+                disabled={!isValid}
+                text={MSG.continue}
               />
-              {values.tokenAddress && tokenData === null && (
-                <Fragment>
-                  <div className={styles.tokenDetails}>
-                    <Input name="tokenName" label={MSG.tokenName} />
-                  </div>
-                  <div className={styles.tokenDetails}>
-                    <Input
-                      name="tokenSymbol"
-                      label={MSG.tokenSymbol}
-                      hint={
-                        <Heading
-                          appearance={{ size: 'small', weight: 'thin' }}
-                          text={MSG.symbolHint}
-                        />
-                      }
-                    />
-                  </div>
-                  <div className={styles.tokenDetails}>
-                    <FileUpload
-                      accept={['svg', 'png']}
-                      label={MSG.fileUploadTitle}
-                      name="iconUpload"
-                      status={MSG.fileUploadHint}
-                      maxFilesLimit={1}
-                    />
-                  </div>
-                </Fragment>
-              )}
-              <div className={styles.buttons}>
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  type="submit"
-                  disabled={!isValid}
-                  text={MSG.continue}
-                />
-              </div>
             </div>
-          )}
-        </Form>
-      </section>
-    );
-  }
-}
+          </div>
+        )}
+      </Form>
+    </section>
+  );
+};
+
+StepSelectToken.displayName = 'dashboard.CreateColonyWizard.StepSelectToken';
 
 export default StepSelectToken;

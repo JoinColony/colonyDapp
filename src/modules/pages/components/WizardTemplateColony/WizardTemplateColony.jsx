@@ -48,7 +48,7 @@ const WizardTemplateColony = ({
   <main className={styles.layoutMain}>
     <header className={styles.header}>
       <div className={styles.backButton}>
-        <HistoryNavigation noText customHandler={previousStep} />
+        <HistoryNavigation customHandler={previousStep} backText=" " />
       </div>
       {stepCount && step && (
         <div className={styles.steps}>

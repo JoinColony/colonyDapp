@@ -20,6 +20,7 @@ import GroupedTransactionCard from './GroupedTransactionCard';
 import TransactionStatus from './TransactionStatus.jsx';
 
 type Props = {
+  hideSummary: boolean,
   transactionGroup: TransactionGroup,
   selectedTransactionIdx: number,
 };
@@ -27,6 +28,7 @@ type Props = {
 const displayName = 'users.GasStation.GroupedTransaction';
 
 const GroupedTransaction = ({
+  hideSummary,
   selectedTransactionIdx,
   transactionGroup,
 }: Props) => {
@@ -35,29 +37,31 @@ const GroupedTransaction = ({
   const values = getGroupValues(transactionGroup);
   return (
     <Card className={styles.main}>
-      <div className={styles.summary}>
-        <div className={styles.description}>
-          <Heading
-            appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={{ id: `transaction.${groupKey}.title` }}
-            textValues={values.params}
-          />
-          <FormattedMessage
-            id={
-              process.env.DEBUG
-                ? `transaction.debug.description`
-                : `transaction.${groupKey}.description`
-            }
-            values={values.params}
+      {!hideSummary && (
+        <div className={styles.summary}>
+          <div className={styles.description}>
+            <Heading
+              appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
+              text={{ id: `transaction.${groupKey}.title` }}
+              textValues={values.params}
+            />
+            <FormattedMessage
+              id={
+                process.env.DEBUG
+                  ? `transaction.debug.description`
+                  : `transaction.${groupKey}.description`
+              }
+              values={values.params}
+            />
+          </div>
+          {/* TODO-multisig: we have to pass in _something_ */}
+          <TransactionStatus
+            groupCount={transactionGroup.length}
+            status={status}
+            multisig={{}}
           />
         </div>
-        {/* TODO-multisig: we have to pass in _something_ */}
-        <TransactionStatus
-          groupCount={transactionGroup.length}
-          status={status}
-          multisig={{}}
-        />
-      </div>
+      )}
       <ul className={styles.transactionList}>
         {transactionGroup.map((transaction, idx) => (
           <GroupedTransactionCard

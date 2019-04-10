@@ -79,16 +79,16 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
   } = wizardValues;
   return (
     <ActionForm
-      submit={ACTIONS.COLONY_CREATE_NEW}
-      success={ACTIONS.COLONY_CREATE_NEW_SUCCESS}
-      error={ACTIONS.COLONY_CREATE_NEW_ERROR}
+      submit={ACTIONS.COLONY_CREATE}
+      success={ACTIONS.COLONY_CREATE_SUCCESS}
+      error={ACTIONS.COLONY_CREATE_ERROR}
       transform={mergePayload({
+        username,
         colonyName,
         ensName,
-        username,
-        tokenSymbol,
         tokenName,
-      })()}
+        tokenSymbol,
+      })}
       onSuccess={() => nextStep(wizardValues)}
     >
       {({ isSubmitting, status }) => (

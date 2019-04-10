@@ -14,6 +14,8 @@ import Heading from '~core/Heading';
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
 
+import { getGroupStatus } from '../../../users/components/GasStation/transactionGroup';
+
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.heading',
@@ -64,18 +66,9 @@ type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
-/* check if all transactions are ready so redirect can happen */
-const checkIfTransactionsSucceeded = transactionGroup => {
-  const succeededTransactionIdx = transactionGroup.findIndex(
-    transaction => transaction.status !== 'succeeded',
-  );
-  if (succeededTransactionIdx > -1) return false;
-  return true;
-};
-
 const StepConfirmTransactions = ({ wizardValues: { ensName } }: Props) => {
   const transactionGroups = useSelector(groupedTransactions);
-  if (checkIfTransactionsSucceeded(transactionGroups)) {
+  if (getGroupStatus(transactionGroups) === 'succeeded') {
     return <Redirect to={`/colony/${ensName}`} />;
   }
 

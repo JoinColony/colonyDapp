@@ -100,7 +100,7 @@ const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
 const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <Form onSubmit={nextStep} {...wizardForm}>
-    {() => (
+    {
       <section className={styles.content}>
         <div className={styles.title}>
           <Heading
@@ -136,7 +136,7 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
           <ExternalLink className={styles.link} text={MSG.learnMore} href="#" />
         </div>
       </section>
-    )}
+    }
   </Form>
 );
 

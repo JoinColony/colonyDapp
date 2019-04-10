@@ -43,10 +43,6 @@ type Props = {|
    */
   intl: IntlShape,
   /*
-   * In some occasions we do not want any button text
-   */
-  noText: boolean,
-  /*
    * If you would like to stay at the same route but handle the navigation manually
    * a custom handler can be used i.e. switching to another wizard step
    */
@@ -59,7 +55,6 @@ const HistoryNavigation = ({
   backText,
   backTextValues,
   intl: { formatMessage },
-  noText,
   customHandler,
 }: Props) => {
   let linkText: string = formatMessage(MSG.backHistoryLink);
@@ -68,9 +63,6 @@ const HistoryNavigation = ({
       typeof backText === 'string'
         ? backText
         : formatMessage(backText, backTextValues);
-  }
-  if (noText) {
-    linkText = '';
   }
   return (
     <div className={styles.main}>
