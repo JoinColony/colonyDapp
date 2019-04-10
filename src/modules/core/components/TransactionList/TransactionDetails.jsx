@@ -74,13 +74,13 @@ const UserDetails = ({
 );
 
 const ColonyDetails = ({
-  colony: { name, colonyAddress },
+  colony: { displayName: colonyDisplayName, colonyAddress },
 }: {
   colony: ColonyType,
 }) => (
   <span>
-    {name && <span>{`${name} `}</span>}
-    {!name && colonyAddress && <span>{colonyAddress}</span>}
+    {colonyDisplayName && <span>{`${colonyDisplayName} `}</span>}
+    {!colonyDisplayName && colonyAddress && <span>{colonyAddress}</span>}
   </span>
 );
 

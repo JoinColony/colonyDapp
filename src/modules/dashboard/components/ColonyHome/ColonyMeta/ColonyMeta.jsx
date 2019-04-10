@@ -50,7 +50,14 @@ type Props = {|
 |};
 
 const ColonyMeta = ({
-  colony: { colonyAddress, description, ensName, guideline, name, website },
+  colony: {
+    colonyAddress,
+    description,
+    ensName,
+    guideline,
+    displayName,
+    website,
+  },
   colony,
   canAdminister,
 }: Props) => {
@@ -73,7 +80,7 @@ const ColonyMeta = ({
       <section className={styles.headingWrapper}>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <Fragment>
-            <span>{name}</span>
+            <span>{displayName}</span>
             {canAdminister && (
               <Link
                 className={styles.editColony}

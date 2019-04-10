@@ -29,7 +29,7 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
     isFetching: isFetchingColony,
     data: colony,
   } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
-  const { name } = colony || {};
+  const { displayName } = colony || {};
 
   if (!ensName || isFetchingColony) return <SpinnerLoader />;
 
@@ -39,7 +39,7 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
       <div className={styles.main}>
         <Link to={`/colony/${ensName}`}>
           <ColonyAvatar address={colonyAddress} colony={colony} />
-          <Heading text={name} appearance={{ size: 'small' }} />
+          <Heading text={displayName} appearance={{ size: 'small' }} />
         </Link>
       </div>
     )

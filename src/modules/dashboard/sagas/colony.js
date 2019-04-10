@@ -330,9 +330,9 @@ function* colonyProfileUpdate({
     const {
       metadata: { colonyAddress },
     } = context;
-    const { name, description, guideline, website } = payload;
+    const { displayName, description, guideline, website } = payload;
     const args = {
-      name,
+      displayName,
       description,
       guideline,
       website,
@@ -347,7 +347,7 @@ function* colonyProfileUpdate({
       payload: {
         ensName,
         colonyAddress,
-        name,
+        displayName,
         description,
         guideline,
         website,

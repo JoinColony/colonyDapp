@@ -108,7 +108,7 @@ export const createDomain: ColonyCommand<
 
 export const updateColonyProfile: ColonyCommand<
   {|
-    name?: string,
+    displayName?: string,
     description?: string,
     guideline?: string,
     website?: string,

@@ -27,23 +27,20 @@ const ColonyAvatar = ({
   address,
   avatarURL,
   className,
-  colony,
+  colony: { displayName: colonyDisplayName, ensName } = {},
   notSet,
   size,
-}: Props) => {
-  const colonyName = (colony && (colony.name || colony.ensName)) || address;
-  return (
-    <Avatar
-      avatarURL={avatarURL}
-      className={className}
-      notSet={notSet}
-      placeholderIcon="at-sign-circle"
-      seed={address}
-      size={size}
-      title={colonyName || address}
-    />
-  );
-};
+}: Props) => (
+  <Avatar
+    avatarURL={avatarURL}
+    className={className}
+    notSet={notSet}
+    placeholderIcon="at-sign-circle"
+    seed={address}
+    size={size}
+    title={colonyDisplayName || ensName || address}
+  />
+);
 
 ColonyAvatar.displayName = displayName;
 

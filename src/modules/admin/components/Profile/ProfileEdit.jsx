@@ -69,7 +69,7 @@ const ProfileEdit = ({ colony }: Props) => {
     guideline,
     colonyAddress,
     ensName,
-    name,
+    displayName,
     website,
   } = colony;
   return (
@@ -82,7 +82,7 @@ const ProfileEdit = ({ colony }: Props) => {
           transform={withKeyPath(ensName)()}
           initialValues={{
             ensName,
-            name,
+            displayName,
             description,
             website,
             guideline,
@@ -113,7 +113,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelDisplayName}
-                  name="name"
+                  name="displayName"
                   maxLength={50}
                 />
               </FieldSet>

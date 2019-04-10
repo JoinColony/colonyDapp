@@ -234,7 +234,7 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
           avatarHash: undefined,
           ensName: colonyENSName,
           inRecoveryMode,
-          name: '',
+          displayName: '',
           tokens: {},
         },
       );

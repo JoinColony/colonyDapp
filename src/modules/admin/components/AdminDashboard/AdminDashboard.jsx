@@ -109,7 +109,7 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const { name } = colony;
+  const { displayName } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
@@ -124,7 +124,7 @@ const AdminDashboard = ({
           <HistoryNavigation
             backRoute={`/colony/${ensName}`}
             backText={MSG.backButton}
-            backTextValues={{ name }}
+            backTextValues={{ displayName }}
           />
         </div>
         <div className={styles.headingWrapper}>
