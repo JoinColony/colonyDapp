@@ -30,7 +30,7 @@ export const coloniesSelector = (state: RootStateRecord) =>
 export const coloniesListSelector = (state: RootStateRecord) =>
   coloniesSelector(state).toList();
 
-export const colonyENSNamesSelector = (state: RootStateRecord) =>
+export const colonyNamesSelector = (state: RootStateRecord) =>
   state.getIn(
     [ns, DASHBOARD_ALL_COLONIES, DASHBOARD_ENS_NAMES],
     ImmutableMap(),
@@ -66,8 +66,8 @@ export const allColonyENSNamesSelector = createSelector(
   colonies => colonies.keySeq(),
 );
 
-export const colonyENSNameSelector = createSelector(
-  colonyENSNamesSelector,
+export const colonyNameSelector = createSelector(
+  colonyNamesSelector,
   (state, props) => props.colonyAddress, // TODO use a string argument
   (ensNames, colonyAddress) => ensNames.get(colonyAddress),
 );

@@ -89,7 +89,7 @@ const TaskDetails = ({ task }: { task: TaskType }) => (
     {task.title && (
       <Link
         text={task.title}
-        to={`/colony/${task.colonyENSName}/task/${task.draftId}`}
+        to={`/colony/${task.colonyName}/task/${task.draftId}`}
         className={styles.taskLink}
       />
     )}

@@ -23,11 +23,11 @@ const adminTransactionsReducer: ReducerType<
       const {
         payload: transactions,
         meta: {
-          keyPath: [colonyENSName],
+          keyPath: [colonyName],
         },
       } = action;
       return state.mergeIn(
-        [colonyENSName],
+        [colonyName],
         DataRecord<ListType<ContractTransactionRecordType>>({
           record: List(transactions.map(tx => ContractTransactionRecord(tx))),
         }),

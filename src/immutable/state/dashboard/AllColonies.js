@@ -17,7 +17,7 @@ export type AllColonyENSNamesMap = ImmutableMapType<Address, ENSName>;
 export type AllColoniesProps = {|
   avatars: AllColonyAvatarsMap,
   colonies: AllColoniesMap,
-  ensNames: AllColonyENSNamesMap,
+  colonyNames: AllColonyENSNamesMap,
 |};
 
 /*

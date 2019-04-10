@@ -30,7 +30,7 @@ import {
 
 export type ColonyContext = ContextWithMetadata<
   {|
-    colonyENSName: string | ENSName,
+    colonyName: string | ENSName,
     colonyAddress: Address,
   |},
   ColonyClientContext & WalletContext & DDBContext,

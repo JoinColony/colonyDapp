@@ -59,7 +59,7 @@ import {
 
 export type TaskContext = ContextWithMetadata<
   {|
-    colonyENSName: string | ENSName,
+    colonyName: string | ENSName,
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskStoreAddress: string | OrbitDBAddress,

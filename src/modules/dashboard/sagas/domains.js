@@ -30,12 +30,12 @@ import { getColonyContext } from './shared';
 
 function* colonyDomainsFetch({
   meta: {
-    keyPath: [colonyENSName],
+    keyPath: [colonyName],
   },
   meta,
 }: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyENSName);
+    const context = yield* getColonyContext(colonyName);
     const domains = yield* executeQuery(context, getColonyDomains);
     /*
      * Dispatch the success action.
@@ -53,13 +53,13 @@ function* colonyDomainsFetch({
 function* domainCreate({
   payload: { domainName, parentDomainId = 1 },
   meta: {
-    keyPath: [colonyENSName],
+    keyPath: [colonyName],
   },
   meta,
 }: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const context = yield* getColonyContext(colonyENSName);
+    const context = yield* getColonyContext(colonyName);
     /*
      * Create the domain on the colony with a transaction.
      * TODO idempotency could be improved here by looking for a pending transaction.
@@ -67,7 +67,7 @@ function* domainCreate({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'addDomain',
-      identifier: colonyENSName,
+      identifier: colonyName,
       params: { parentDomainId },
     });
 
@@ -94,12 +94,12 @@ function* domainCreate({
       type: ACTIONS.DOMAIN_CREATE_SUCCESS,
       meta: {
         ...meta,
-        keyPath: [colonyENSName, domainId],
+        keyPath: [colonyName, domainId],
       },
       payload: { id: domainId, name: domainName },
     });
 
-    yield put(fetchDomains(colonyENSName));
+    yield put(fetchDomains(colonyName));
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {
@@ -107,20 +107,17 @@ function* domainCreate({
   }
 }
 
-function* checkDomainExists(
-  colonyENSName: ENSName,
-  domainId: number,
-): Saga<void> {
+function* checkDomainExists(colonyName: ENSName, domainId: number): Saga<void> {
   const getDomainCount = yield call(
     getColonyMethod,
     'getDomainCount',
-    colonyENSName,
+    colonyName,
   );
   const { count } = yield call(getDomainCount);
 
   if (domainId > count)
     throw new Error(
-      `Domain ID "${domainId}" does not exist on colony "${colonyENSName}"`,
+      `Domain ID "${domainId}" does not exist on colony "${colonyName}"`,
     );
 }
 
@@ -129,12 +126,12 @@ function* checkDomainExists(
  */
 function* domainFetch({
   meta: {
-    keyPath: [colonyENSName, domainId],
+    keyPath: [colonyName, domainId],
   },
   meta,
 }: Action<typeof ACTIONS.DOMAIN_FETCH>): Saga<void> {
   try {
-    yield call(checkDomainExists, colonyENSName, domainId);
+    yield call(checkDomainExists, colonyName, domainId);
     const domain = yield select(domainSelector, domainId);
 
     /*

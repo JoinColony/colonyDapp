@@ -4,7 +4,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
-import { colonyENSNameSelector } from '../../selectors';
+import { colonyNameSelector } from '../../selectors';
 import { fetchColonyENSName as fetchColonyENSNameActionCreator } from '../../actionCreators';
 
 import type { Address } from '~types';
@@ -22,7 +22,7 @@ const useColonyENSName = (address: Address) => {
   );
   const mapState = useCallback(
     state => ({
-      ensName: colonyENSNameSelector(state, { colonyAddress: address }),
+      ensName: colonyNameSelector(state, { colonyAddress: address }),
     }),
     [address],
   );

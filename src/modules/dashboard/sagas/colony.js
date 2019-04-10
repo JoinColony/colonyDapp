@@ -359,12 +359,12 @@ function* colonyProfileUpdate({
 }
 
 function* colonyFetch({
-  payload: { colonyENSName },
+  payload: { colonyName },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
     // TODO error if the colony does not exist!
-    const context = yield* getColonyContext(colonyENSName);
+    const context = yield* getColonyContext(colonyName);
     const payload = yield* executeQuery(context, getColony);
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
@@ -386,7 +386,7 @@ function* colonyFetch({
           }),
           put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
             type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-            meta: { keyPath: [colonyENSName, tokenAddress] },
+            meta: { keyPath: [colonyName, tokenAddress] },
             payload: { colonyAddress },
           }),
         ],
@@ -398,7 +398,7 @@ function* colonyFetch({
   }
 }
 
-function* colonyENSNameFetch({
+function* colonyNameFetch({
   payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH>): Saga<void> {
@@ -583,7 +583,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
   yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
-  yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyENSNameFetch);
+  yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);

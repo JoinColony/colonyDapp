@@ -20,7 +20,7 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| newAdmin: string, colonyENSName: string |},
+    {| newAdmin: string, colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_ERROR: ErrorActionType<
@@ -34,7 +34,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| user: string, colonyENSName: string |},
+    {| user: string, colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_ERROR: ErrorActionType<
@@ -43,7 +43,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
-    {| user: string, colonyENSName: string |},
+    {| user: string, colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_REMOVE: UniqueActionType<
@@ -168,7 +168,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH,
-    {| colonyENSName: string |},
+    {| colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_ERROR: ErrorActionType<

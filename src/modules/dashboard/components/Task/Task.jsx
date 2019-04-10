@@ -134,7 +134,7 @@ const Task = ({
     worker,
   } = task;
 
-  const setActionButtonValues = () => ({ colonyENSName: ensName, draftId });
+  const setActionButtonValues = () => ({ colonyName: ensName, draftId });
 
   return (
     <div className={styles.main}>
@@ -154,7 +154,7 @@ const Task = ({
             )}
           </header>
           <TaskAssignment
-            colonyENSName={ensName}
+            colonyName={ensName}
             draftId={draftId}
             payouts={payouts}
             reputation={reputation}
@@ -163,13 +163,13 @@ const Task = ({
         </section>
         <section className={styles.section}>
           <TaskTitle
-            colonyENSName={ensName}
+            colonyName={ensName}
             draftId={draftId}
             isTaskCreator={isTaskCreator}
             title={title}
           />
           <TaskDescription
-            colonyENSName={ensName}
+            colonyName={ensName}
             description={description}
             draftId={draftId}
             isTaskCreator={isTaskCreator}
@@ -178,7 +178,7 @@ const Task = ({
         <section className={styles.section}>
           <div className={styles.editor}>
             <TaskDomains
-              colonyENSName={ensName}
+              colonyName={ensName}
               domainId={domainId}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
@@ -186,7 +186,7 @@ const Task = ({
           </div>
           <div className={styles.editor}>
             <TaskSkills
-              colonyENSName={ensName}
+              colonyName={ensName}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
               skillId={skillId}
@@ -194,7 +194,7 @@ const Task = ({
           </div>
           <div className={styles.editor}>
             <TaskDate
-              colonyENSName={ensName}
+              colonyName={ensName}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
               dueDate={dueDate}

@@ -19,7 +19,7 @@ import {
 import type { ContractTransactionType } from '~immutable';
 
 type ColonyMetadata = {|
-  colonyENSName: string | ENSName,
+  colonyName: string | ENSName,
   colonyAddress: Address,
 |};
 
@@ -46,7 +46,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
   void,
   ContractTransactionType[],
 > = ({
-  metadata: { colonyENSName },
+  metadata: { colonyName },
   colonyClient: {
     events: {
       ColonyFundsClaimed,
@@ -76,7 +76,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
             event,
             log: logs[i],
             colonyClient,
-            colonyENSName,
+            colonyName,
           }),
         )
         .filter(Boolean),
@@ -88,7 +88,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
   void,
   ContractTransactionType[],
 > = ({
-  metadata: { colonyAddress, colonyENSName },
+  metadata: { colonyAddress, colonyName },
   colonyClient: {
     events: { ColonyFundsClaimed },
     tokenClient: {
@@ -125,7 +125,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
           claimEvents,
           claimLogs,
           colonyClient,
-          colonyENSName,
+          colonyName,
           transferEvent,
           transferLog: transferLogs[i],
         }),

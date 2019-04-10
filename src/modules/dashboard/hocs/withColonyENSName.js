@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
 import fetchMissingColonyENSName from './fetchMissingColonyENSName';
-import { colonyENSNameSelector } from '../selectors';
+import { colonyNameSelector } from '../selectors';
 import { fetchColonyENSName } from '../actionCreators';
 
 const withColonyENSName = compose(
   connect(
     (state, props) => ({
-      ensName: colonyENSNameSelector(state, props),
+      ensName: colonyNameSelector(state, props),
     }),
     {
       fetchColonyENSName,

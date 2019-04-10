@@ -105,7 +105,7 @@ const OrganizationAddAdmins = ({ ensName }: Props) => {
         transform={withKeyPath(ensName)(transformAction)}
         initialValues={{
           newAdmin: null,
-          colonyENSName: ensName,
+          colonyName: ensName,
         }}
       >
         {({ status, isSubmitting, isValid }) => (

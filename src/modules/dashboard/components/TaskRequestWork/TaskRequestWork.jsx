@@ -42,7 +42,7 @@ const TaskRequestWork = ({
     profile: { balance, walletAddress: address },
   },
   currentUser,
-  task: { colonyENSName, draftId },
+  task: { colonyName, draftId },
   task,
 }: Props) => {
   if (hasRequestedToWork(task, address))
@@ -60,7 +60,7 @@ const TaskRequestWork = ({
         error={ACTIONS.TASK_SEND_WORK_REQUEST_ERROR}
         success={ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS}
         values={{
-          colonyENSName,
+          colonyName,
           draftId,
         }}
       />

@@ -9,7 +9,7 @@ const createBN = val =>
   new BigNumber(val).mul(new BigNumber(10).pow(new BigNumber(17)));
 
 const genericTaskProps = {
-  colonyENSName: 'cool-colony',
+  colonyName: 'cool-colony',
   createdAt: new Date(1985, 10, 13),
   creatorAddress: '0x1afb213afa8729fa7908154b90e256f1be70989b',
   currentState: TASK_STATE.ACTIVE,
@@ -41,7 +41,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '1',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: 'Develop Github integration',
     payouts: [
       { token: COOLToken, amount: createBN(600) },
@@ -65,7 +65,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '2',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: 'Write docs for JS library',
     payouts: [{ token: ETHToken, amount: createBN(7) }],
     manager: {
@@ -84,7 +84,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '3',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: 'Conduct user interviews on lo-fi prototypes',
     payouts: [
       { token: ETHToken, amount: createBN(200105) },
@@ -106,7 +106,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '4',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: 'Create ux prototype of an Ethereum wallet',
     payouts: [
       { token: CLNYToken, amount: createBN(100) },
@@ -128,7 +128,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '5',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: 'Translate Colony whitepaper',
     payouts: [{ token: CLNYToken, amount: createBN(100) }],
     manager: {
@@ -147,7 +147,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '6',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -166,7 +166,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '7',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -185,7 +185,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '8',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -204,7 +204,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '9',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -223,7 +223,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '10',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -242,7 +242,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '11',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -261,7 +261,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '12',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -280,7 +280,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '13',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -299,7 +299,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '14',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {
@@ -318,7 +318,7 @@ const mockTasks = [
   {
     ...genericTaskProps,
     draftId: '15',
-    colonyENSName: 'cool-colony',
+    colonyName: 'cool-colony',
     title: '5 week open developer project',
     payouts: [{ token: ETHToken, amount: createBN(100) }],
     manager: {

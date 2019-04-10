@@ -17,7 +17,7 @@ const MSG = defineMessages({
 
 // Can't seal this object because of HOC
 export type Props = {
-  colonyENSName: string,
+  colonyName: string,
   draftId: string,
   lateRating: boolean,
   lateReveal: boolean,
@@ -32,7 +32,7 @@ export type Props = {
 const displayName = 'dashboard.TaskClaimReward';
 
 const TaskClaimReward = ({
-  colonyENSName,
+  colonyName,
   draftId,
   lateRating,
   lateReveal,
@@ -61,7 +61,7 @@ const TaskClaimReward = ({
     error={ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR}
     values={{
       draftId,
-      colonyENSName,
+      colonyName,
       tokenAddresses: payouts.map(payout => payout.token.address),
     }}
   />

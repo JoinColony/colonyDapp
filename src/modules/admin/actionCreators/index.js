@@ -4,14 +4,14 @@ import type { Address, ENSName } from '~types';
 
 import { ACTIONS } from '~redux';
 
-export const fetchColonyTransactions = (colonyENSName: ENSName) => ({
+export const fetchColonyTransactions = (colonyName: ENSName) => ({
   type: ACTIONS.COLONY_FETCH_TRANSACTIONS,
-  meta: { keyPath: [colonyENSName] },
+  meta: { keyPath: [colonyName] },
 });
 
-export const fetchColonyUnclaimedTransactions = (colonyENSName: ENSName) => ({
+export const fetchColonyUnclaimedTransactions = (colonyName: ENSName) => ({
   type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-  meta: { keyPath: [colonyENSName] },
+  meta: { keyPath: [colonyName] },
 });
 
 export const claimColonyToken = (ensName: ENSName, tokenAddress: Address) => ({

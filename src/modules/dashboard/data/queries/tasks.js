@@ -17,7 +17,7 @@ import { TASK_EVENT_TYPES } from '~data/constants';
 
 export type TaskQueryContext = ContextWithMetadata<
   {|
-    colonyENSName: string | ENSName,
+    colonyName: string | ENSName,
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskStoreAddress: string | OrbitDBAddress,
@@ -33,12 +33,12 @@ export const getTask: TaskQuery<*, *> = ({
   ddb,
   colonyClient,
   wallet,
-  metadata: { colonyAddress, colonyENSName, draftId, taskStoreAddress },
+  metadata: { colonyAddress, colonyName, draftId, taskStoreAddress },
 }) => ({
   async execute() {
     const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
       colonyAddress,
-      colonyENSName,
+      colonyName,
       draftId,
       taskStoreAddress,
     });

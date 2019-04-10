@@ -46,11 +46,11 @@ const initialState = MockState({
     allComments: ImmutableMap(),
     allDomains: ImmutableMap(),
     allDrafts: ImmutableMap(),
-    allTasks: ImmutableMap(),
+    tasks: ImmutableMap(),
     allColonies: {
       avatars: ImmutableMap(),
       colonies: ImmutableMap(),
-      ensNames: ImmutableMap(),
+      colonyNames: ImmutableMap(),
     },
   },
   users: {

@@ -114,7 +114,7 @@ const ColonyHome = ({
     () => {
       dispatch({
         type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-        payload: { colonyENSName: ensName },
+        payload: { colonyName: ensName },
       });
     },
     [dispatch, ensName],
@@ -206,7 +206,7 @@ const ColonyHome = ({
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
-            values={{ colonyENSName: ensName }}
+            values={{ colonyName: ensName }}
           />
         )}
         <ul className={styles.domainsFilters}>

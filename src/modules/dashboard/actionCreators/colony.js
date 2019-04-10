@@ -6,11 +6,11 @@ import type { Action } from '~redux';
 import { ACTIONS } from '~redux';
 
 export const fetchColony = (
-  colonyENSName: ENSName,
+  colonyName: ENSName,
 ): Action<typeof ACTIONS.COLONY_FETCH> => ({
   type: ACTIONS.COLONY_FETCH,
-  payload: { colonyENSName },
-  meta: { keyPath: [colonyENSName] },
+  payload: { colonyName },
+  meta: { keyPath: [colonyName] },
 });
 
 export const fetchColonyENSName = (

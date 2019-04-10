@@ -34,7 +34,7 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ draftId: *, colonyENSName: *, skillId: * }>,
+  ...TaskProps<{ draftId: *, colonyName: *, skillId: * }>,
 |};
 
 class TaskSkills extends Component<Props> {
@@ -57,10 +57,10 @@ class TaskSkills extends Component<Props> {
   }
 
   handleSetSkill = async (skillValue: Object) => {
-    const { draftId, colonyENSName } = this.props;
+    const { draftId, colonyName } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
-        colonyENSName,
+        colonyName,
         draftId,
         skillId: skillValue.id,
       });

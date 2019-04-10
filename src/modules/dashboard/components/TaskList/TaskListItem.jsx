@@ -34,7 +34,7 @@ type Props = {|
 const TaskListItem = ({ draftId, filter, willRender }: Props) => {
   // TODO: fetch from draftId
   const task = mockTasks[0];
-  const { worker, payouts, reputation, title, colonyENSName } = task;
+  const { worker, payouts, reputation, title, colonyName } = task;
 
   // $FlowFixMe will be correct once fetching actual task
   if (filter && !filter(task)) {
@@ -49,7 +49,7 @@ const TaskListItem = ({ draftId, filter, willRender }: Props) => {
         <Link
           title={title}
           className={styles.taskDetailsTitle}
-          to={`/colony/${colonyENSName}/task/${draftId}`}
+          to={`/colony/${colonyName}/task/${draftId}`}
           text={title}
         />
         {reputation && (

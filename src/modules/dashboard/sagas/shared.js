@@ -8,7 +8,7 @@ import { CONTEXT, getContext } from '~context';
 
 // eslint-disable-next-line import/prefer-default-export
 export function* getColonyContext(
-  colonyENSName: ?string,
+  colonyName: ?string,
   colonyAddress: ?string,
 ): Saga<Object> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
@@ -16,7 +16,7 @@ export function* getColonyContext(
   const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
   if (!colonyManager)
     throw new Error('Cannot get colony context. Invalid manager instance');
-  const identifier = colonyENSName || colonyAddress;
+  const identifier = colonyName || colonyAddress;
   if (!identifier)
     throw new Error('Cannot get colony context. Invalid identifier');
   const colonyClient = yield call(
@@ -28,7 +28,7 @@ export function* getColonyContext(
     colonyClient,
     wallet,
     metadata: {
-      colonyENSName,
+      colonyName,
       colonyAddress: colonyClient.contract.address,
     },
   };

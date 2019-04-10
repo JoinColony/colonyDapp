@@ -19,15 +19,15 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyENSName: *, draftId: *, title: * }>,
+  ...TaskProps<{ colonyName: *, draftId: *, title: * }>,
 |};
 
-const TaskTitle = ({ isTaskCreator, title, colonyENSName, draftId }: Props) => (
+const TaskTitle = ({ isTaskCreator, title, colonyName, draftId }: Props) => (
   <ActionForm
     submit={ACTIONS.TASK_SET_TITLE}
     error={ACTIONS.TASK_SET_TITLE_ERROR}
     success={ACTIONS.TASK_SET_TITLE_SUCCESS}
-    transform={mergePayload({ colonyENSName, draftId })()}
+    transform={mergePayload({ colonyName, draftId })()}
     initialValues={{ title }}
   >
     <SingleLineEdit

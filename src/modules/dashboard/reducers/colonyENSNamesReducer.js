@@ -7,7 +7,7 @@ import { ACTIONS } from '~redux';
 import type { AllColonyENSNamesMap } from '~immutable';
 import type { ReducerType } from '~redux';
 
-const colonyENSNamesReducer: ReducerType<
+const colonyNamesReducer: ReducerType<
   AllColonyENSNamesMap,
   {| COLONY_ENS_NAME_FETCH_SUCCESS: * |},
 > = (state = ImmutableMap(), action) => {
@@ -26,4 +26,4 @@ const colonyENSNamesReducer: ReducerType<
   }
 };
 
-export default colonyENSNamesReducer;
+export default colonyNamesReducer;

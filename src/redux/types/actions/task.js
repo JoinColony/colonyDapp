@@ -18,7 +18,7 @@ type TaskActionMeta = {|
 |};
 
 type TaskActionPayload<P> = {|
-  colonyENSName: string,
+  colonyName: string,
   draftId: string,
   ...P,
 |};
@@ -57,7 +57,7 @@ export type TaskActionTypes = {|
   >,
   TASK_CREATE: UniqueActionType<
     typeof ACTIONS.TASK_CREATE,
-    TaskProps<{ colonyENSName: * }>,
+    TaskProps<{ colonyName: * }>,
     void,
   >,
   TASK_CREATE_ERROR: ErrorActionType<typeof ACTIONS.TASK_CREATE_ERROR>,
@@ -66,7 +66,7 @@ export type TaskActionTypes = {|
     {|
       commentsStoreAddress: string,
       taskStoreAddress: string,
-      task: TaskProps<{ colonyENSName: *, creatorAddress: *, draftId: * }>,
+      task: TaskProps<{ colonyName: *, creatorAddress: *, draftId: * }>,
     |},
   >,
   TASK_FETCH: NonUniqueTaskActionType<typeof ACTIONS.TASK_FETCH, void>,
@@ -82,7 +82,7 @@ export type TaskActionTypes = {|
   TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>,
   TASK_FETCH_ALL_FOR_COLONY: ActionTypeWithPayload<
     typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-    TaskProps<{ colonyENSName: * }>,
+    TaskProps<{ colonyName: * }>,
   >,
   TASK_FETCH_ALL_FOR_COLONY_ERROR: ErrorActionType<
     typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR,
@@ -91,7 +91,7 @@ export type TaskActionTypes = {|
   TASK_FETCH_ALL_FOR_COLONY_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS,
     {|
-      ...TaskProps<{ colonyENSName: * }>,
+      ...TaskProps<{ colonyName: * }>,
       colonyTasks: {
         [draftId: string]: {|
           commentsStoreAddress: string,

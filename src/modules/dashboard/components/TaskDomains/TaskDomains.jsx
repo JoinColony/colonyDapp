@@ -34,7 +34,7 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyENSName: *, domainId: *, draftId: * }>,
+  ...TaskProps<{ colonyName: *, domainId: *, draftId: * }>,
 |};
 
 type State = {
@@ -64,10 +64,10 @@ class TaskDomains extends Component<Props, State> {
   }
 
   handleSetDomain = async (domainValue: Object) => {
-    const { colonyENSName, draftId } = this.props;
+    const { colonyName, draftId } = this.props;
     try {
       await this.asyncFunc.asyncFunction({
-        colonyENSName,
+        colonyName,
         domainId: domainValue.id,
         draftId,
       });

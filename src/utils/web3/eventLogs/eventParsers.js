@@ -15,7 +15,7 @@ import { getLogDate } from './blocks';
 
 /*
  * Given a ColonyJS-parsed ColonyFundsClaimedEvent, log from which it was
- * parsed, ColonyClient and colonyENSName, return a ContractTransactionType
+ * parsed, ColonyClient and colonyName, return a ContractTransactionType
  * object, or null if the claim amount was zero.
  */
 export const parseColonyFundsClaimedEvent = async ({
@@ -23,13 +23,13 @@ export const parseColonyFundsClaimedEvent = async ({
     adapter: { provider },
   },
   colonyClient,
-  colonyENSName,
+  colonyName,
   event: { payoutRemainder: amount, token },
   log: { transactionHash },
   log,
 }: {
   colonyClient: ColonyClientType,
-  colonyENSName: string,
+  colonyName: string,
   event: Object,
   log: Object,
 }): Promise<?ContractTransactionType> => {
@@ -40,7 +40,7 @@ export const parseColonyFundsClaimedEvent = async ({
   return amount.gt(new BigNumber(0))
     ? {
         amount,
-        colonyENSName,
+        colonyName,
         date,
         from,
         id: transactionHash,
@@ -53,18 +53,18 @@ export const parseColonyFundsClaimedEvent = async ({
 
 /*
  * Given a ColonyJS-parsed ColonyFundsMovedBetweenFundingPotsEvent, log from
- * which it was parsed, ColonyClient and colonyENSName, return a
+ * which it was parsed, ColonyClient and colonyName, return a
  * ContractTransactionType object.
  */
 export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   colonyClient,
-  colonyENSName,
+  colonyName,
   event: { amount, fromPot, token },
   log: { transactionHash },
   log,
 }: {
   colonyClient: ColonyClientType,
-  colonyENSName: string,
+  colonyName: string,
   event: Object,
   log: Object,
 }): Promise<ContractTransactionType> => {
@@ -79,7 +79,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
 
   return {
     amount,
-    colonyENSName,
+    colonyName,
     date,
     id: transactionHash,
     incoming: fromPot !== 1,
@@ -121,14 +121,14 @@ export const parseTaskPayoutClaimedEvent = async ({
 /*
  * Given a ColonyJS-parsed TransferEvent, log from which it was parsed, Array
  * of Colony token claim events and associated logs from which they were
- * passed, ColonyClient, and colonyENSName, return a ContractTransactionType
+ * passed, ColonyClient, and colonyName, return a ContractTransactionType
  * object or null if that token has been claimed since the Transfer.
  */
 export const parseUnclaimedTransferEvent = async ({
   claimEvents,
   claimLogs,
   colonyClient,
-  colonyENSName,
+  colonyName,
   transferEvent: { from, value: amount },
   transferLog: { address: token, blockNumber, transactionHash: hash },
   transferLog,
@@ -136,7 +136,7 @@ export const parseUnclaimedTransferEvent = async ({
   claimEvents: Array<Object>,
   claimLogs: Array<Object>,
   colonyClient: ColonyClientType,
-  colonyENSName: string,
+  colonyName: string,
   transferEvent: Object,
   transferLog: Object,
 }): Promise<?ContractTransactionType> => {
@@ -151,7 +151,7 @@ export const parseUnclaimedTransferEvent = async ({
     ? null
     : {
         amount,
-        colonyENSName,
+        colonyName,
         date,
         from,
         hash,

@@ -16,7 +16,7 @@ const mockTransactions: DataRecordType<*> = DataRecord({
   record: List([
     ContractTransactionRecord({
       amount: createBN(12),
-      colonyENSName: 'cool-colony',
+      colonyName: 'cool-colony',
       date: new Date(),
       from: mockUser.profile.walletAddress,
       hash:

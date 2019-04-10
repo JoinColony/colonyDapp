@@ -23,7 +23,7 @@ import {
 
 function* fetchColonyTransactionsSaga({
   meta: {
-    keyPath: [colonyENSName],
+    keyPath: [colonyName],
   },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>): Saga<void> {
@@ -32,7 +32,7 @@ function* fetchColonyTransactionsSaga({
 
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      colonyENSName,
+      colonyName,
     );
 
     const transactions = yield* executeQuery(
@@ -40,7 +40,7 @@ function* fetchColonyTransactionsSaga({
         colonyClient,
         metadata: {
           colonyAddress: colonyClient.contract.address,
-          colonyENSName,
+          colonyName,
         },
       },
       getColonyTransactions,
@@ -58,7 +58,7 @@ function* fetchColonyTransactionsSaga({
 
 function* fetchColonyUnclaimedTransactionsSaga({
   meta: {
-    keyPath: [colonyENSName],
+    keyPath: [colonyName],
   },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>): Saga<void> {
@@ -66,13 +66,13 @@ function* fetchColonyUnclaimedTransactionsSaga({
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      colonyENSName,
+      colonyName,
     );
 
     const transactions = yield* executeQuery(
       {
         colonyClient,
-        metadata: { colonyAddress: colonyClient.address, colonyENSName },
+        metadata: { colonyAddress: colonyClient.address, colonyName },
       },
       getColonyUnclaimedTransactions,
     );

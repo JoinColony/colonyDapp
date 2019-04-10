@@ -20,10 +20,8 @@ import TransactionListItem from './TransactionListItem.jsx';
  */
 export default compose(
   withProps(
-    ({
-      transaction: { colonyENSName, taskId, token, from, to, incoming },
-    }) => ({
-      ensName: colonyENSName,
+    ({ transaction: { colonyName, taskId, token, from, to, incoming } }) => ({
+      ensName: colonyName,
       taskId,
       tokenAddress: token,
       userAddress: incoming ? from : to,

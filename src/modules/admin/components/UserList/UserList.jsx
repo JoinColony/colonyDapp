@@ -71,7 +71,7 @@ class UserList extends Component<Props> {
     const setPayload = (originalAction: *, payload: Object) =>
       compose(
         withKeyPath(ensName),
-        mergePayload({ colonyENSName: ensName }),
+        mergePayload({ colonyName: ensName }),
       )()({ ...originalAction, payload });
 
     this.remove = promiseListener.createAsyncFunction({
