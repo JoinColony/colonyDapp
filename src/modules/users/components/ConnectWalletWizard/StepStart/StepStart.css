@@ -16,8 +16,3 @@
 .createWalletLink {
   margin-top: 64px;
 }
-
-.createWalletLink > a {
-  border: none;
-  border-bottom: 1px solid rgb(0, 0, 0, 0);
-}

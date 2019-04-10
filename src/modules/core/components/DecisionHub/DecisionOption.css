@@ -14,13 +14,14 @@
     border-bottom-color: transparent;
   }
 
-  &:last-of-type {
+  &:last-of-type:not(.themeAlt) {
     border-bottom: 1px solid var(--grey-blue-0);
   }
 }
 
 .themeAlt {
   composes: main;
+  border: none;
   background-color: white;
 }
 

@@ -60,6 +60,7 @@ const coreTransactionsReducer: ReducerType<
           options,
           params,
           status,
+          group,
         },
       } = action;
 
@@ -74,6 +75,7 @@ const coreTransactionsReducer: ReducerType<
         options,
         params,
         status,
+        group,
       });
 
       return state.setIn(

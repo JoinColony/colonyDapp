@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
 import type { WizardProps } from '~core/Wizard';
 
@@ -15,6 +14,8 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
+
+import { getNormalizedDomainText } from '~utils/strings';
 
 import promiseListener from '../../../../createPromiseListener';
 
@@ -73,17 +74,6 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const getNormalizedDomainText = (domain: string) => {
-  if (!domain) return null;
-  try {
-    const normalized = ensNormalize(domain);
-    if (normalized === domain) return null;
-    return normalized;
-  } catch (e) {
-    return null;
-  }
-};
-
 class StepUserENSName extends Component<Props> {
   componentWillUnmount() {
     this.checkDomainTaken.unsubscribe();
@@ -102,9 +92,9 @@ class StepUserENSName extends Component<Props> {
       const error = {
         username: MSG.errorDomainTaken,
       };
-      // eslint doesn't allow for throwing object literals
-      throw error;
+      return Promise.reject(error);
     }
+    return Promise.resolve();
   };
 
   render() {

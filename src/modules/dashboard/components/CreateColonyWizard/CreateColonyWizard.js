@@ -13,7 +13,7 @@ import StepConfirmAllInput from './StepConfirmAllInput.jsx';
 import StepUserENSName from './StepUserENSName.jsx';
 import StepConfirmTransactions from './StepConfirmTransactions.jsx';
 
-import { userDidClaimProfile } from '~immutable/utils';
+import { userDidClaimProfile } from '../../../users/checks';
 
 import { withCurrentUser } from '../../../users/hocs';
 
@@ -44,22 +44,31 @@ const stepFunction = (
   { tokenChoice }: StepValues,
   props?: Object,
 ) => {
-  /*
-   * In case the username is already registered
-   * the create user name step should be skipped
-   */
   if (props) {
+    const usernameCreated = userDidClaimProfile(props.currentUser);
+    /*
+     * In case the username is already registered
+     * the create user name step should be skipped
+     */
+
+    /* When username hasn't been created flow through wizard is different */
+    if (!usernameCreated) {
+      if (step === 3) {
+        return pickTokenStep(tokenChoice);
+      }
+      return stepArray[step];
+    }
+
+    /* Standard wizard flow  */
     if (step === 0) {
-      const usernameCreated = userDidClaimProfile(props.currentUser);
       if (usernameCreated) {
         stepArray.shift();
         return stepArray[step];
       }
     }
-  }
-
-  if (step === 3) {
-    pickTokenStep(tokenChoice);
+    if (step === 2) {
+      return pickTokenStep(tokenChoice);
+    }
   }
   return stepArray[step];
 };

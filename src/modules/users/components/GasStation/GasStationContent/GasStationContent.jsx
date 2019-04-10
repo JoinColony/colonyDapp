@@ -70,7 +70,7 @@ class GasStationContent extends Component<Props, State> {
 
     return detailsTransactionGroup || skipToDetails ? (
       <TransactionDetails
-        hideBackButton={skipToDetails}
+        hideInteractiveElements={skipToDetails}
         transactionGroup={detailsTransactionGroup}
         onClose={this.unselectTransactionGroup}
       />

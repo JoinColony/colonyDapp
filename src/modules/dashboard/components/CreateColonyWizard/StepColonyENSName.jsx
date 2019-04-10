@@ -4,20 +4,25 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
+import { compose } from 'recompose';
 
 import type { WizardProps } from '~core/Wizard';
+import type { UserType } from '~immutable';
 
 import styles from './StepUserENSName.css';
 
-import { mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
-import { ActionForm, Input } from '~core/Fields';
+import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
+
+import { withCurrentUser } from '../../../users/hocs';
+import { withImmutablePropsToJS } from '~utils/hoc';
+
+import { getNormalizedDomainText } from '~utils/strings';
 
 type FormValues = {
   colonyName: string,
@@ -25,7 +30,9 @@ type FormValues = {
   username: string,
 };
 
-type Props = WizardProps<FormValues>;
+type Props = WizardProps<FormValues> & {
+  currentUser: UserType,
+};
 
 const MSG = defineMessages({
   heading: {
@@ -68,17 +75,6 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyENSName';
 
-const getNormalizedDomainText = (domain: string) => {
-  if (!domain) return null;
-  try {
-    const normalized = ensNormalize(domain);
-    if (normalized === domain) return null;
-    return normalized;
-  } catch (e) {
-    return null;
-  }
-};
-
 const validationSchema = yup.object({
   colonyName: yup
     .string()
@@ -86,7 +82,14 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepColonyENSName = ({ wizardValues, wizardForm }: Props) => {
+const StepColonyENSName = ({
+  wizardValues,
+  wizardForm,
+  nextStep,
+  currentUser: {
+    profile: { username },
+  },
+}: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ACTIONS.COLONY_DOMAIN_VALIDATE,
     success: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
@@ -108,45 +111,59 @@ const StepColonyENSName = ({ wizardValues, wizardForm }: Props) => {
     // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
     [checkDomainTaken],
   );
+  const normalizedUsername = getNormalizedDomainText(wizardValues.username);
 
   return (
-    <ActionForm
-      submit={ACTIONS.COLONY_CREATE_LABEL}
-      error={ACTIONS.COLONY_CREATE_LABEL_ERROR}
-      success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
+    <Form
+      onSubmit={nextStep}
       validationSchema={validationSchema}
       validate={validateDomain}
-      transform={mergePayload(wizardValues)}
       {...wizardForm}
     >
       {({ isValid, isSubmitting }) => (
         <section className={styles.main}>
           <div className={styles.title}>
             <Heading
-              appearance={{ size: 'medium', weight: 'thin' }}
+              appearance={{ size: 'medium', weight: 'medium' }}
               text={MSG.heading}
+              textValues={{
+                username: wizardValues.username || username,
+              }}
             />
             <p className={styles.paragraph}>
-              <FormattedMessage
-                {...MSG.descriptionOne}
-                values={{
-                  boldText: (
-                    <FormattedMessage
-                      tagName="strong"
-                      {...MSG.descriptionBoldText}
-                    />
-                  ),
-                }}
-              />
-            </p>
-            <p className={styles.paragraph}>
-              <FormattedMessage {...MSG.descriptionTwo} />
+              <FormattedMessage {...MSG.descriptionOne} />
             </p>
             <div className={styles.nameForm}>
               <Input
                 appearance={{ theme: 'fat' }}
                 name="colonyName"
+                label={MSG.labelDisplay}
+              />
+              <Input
+                appearance={{ theme: 'fat' }}
+                name="ensName"
+                extensionString=".colony.joincolony.eth"
                 label={MSG.label}
+                status={normalizedUsername && MSG.statusText}
+                statusValues={{ normalized: normalizedUsername }}
+                extra={
+                  <Tooltip
+                    placement="right"
+                    content={
+                      <span className={styles.tooltip}>
+                        <FormattedMessage {...MSG.tooltip} />
+                      </span>
+                    }
+                  >
+                    <div className={styles.iconContainer}>
+                      <Icon
+                        name="question-mark"
+                        title="helper"
+                        appearance={{ size: 'small' }}
+                      />
+                    </div>
+                  </Tooltip>
+                }
               />
               <div className={styles.buttons}>
                 <Button
@@ -154,17 +171,20 @@ const StepColonyENSName = ({ wizardValues, wizardForm }: Props) => {
                   type="submit"
                   disabled={!isValid}
                   loading={isSubmitting}
-                  text={MSG.done}
+                  text={MSG.continue}
                 />
               </div>
             </div>
           </div>
         </section>
       )}
-    </ActionForm>
+    </Form>
   );
 };
 
 StepColonyENSName.displayName = displayName;
 
-export default StepColonyENSName;
+export default compose(
+  withCurrentUser,
+  withImmutablePropsToJS,
+)(StepColonyENSName);

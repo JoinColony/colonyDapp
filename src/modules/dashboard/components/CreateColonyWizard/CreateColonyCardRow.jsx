@@ -32,7 +32,7 @@ type CardProps = {
   currentUser: UserType,
 };
 
-const concatenateWithURL = (
+const concatenatePreviewString = (
   option: { title: MessageDescriptor, valueKey: string | Array<string> },
   values: FormValues,
   currentUser?: UserType,
@@ -58,7 +58,7 @@ const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] =>
         appearance={{ size: 'normal', weight: 'medium', margin: 'small' }}
         text={
           typeof option.valueKey === 'string'
-            ? concatenateWithURL(option, values, currentUser)
+            ? concatenatePreviewString(option, values, currentUser)
             : `${values[option.valueKey[0]]} (${values[option.valueKey[1]]})`
         }
       />

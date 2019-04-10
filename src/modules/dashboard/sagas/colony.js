@@ -56,12 +56,11 @@ import { colonyAvatarHashSelector } from '../selectors';
 
 import { getColonyContext, getColonyAddress, getColonyName } from './shared';
 
-// TODO: Rename, complete and wire up after new onboarding is in place
-function* colonyCreateNew({
+function* colonyCreate({
   meta,
   payload,
 }: // $FlowFixMe (not an actual action)
-Action<'COLONY_CREATE_NEW'>): Saga<void> {
+Action<'COLONY_CREATE'>): Saga<void> {
   const key = 'transaction.batch.createColony';
   const createTokenId = `${meta.id}-createToken`;
   const createColonyId = `${meta.id}-createColony`;
@@ -113,7 +112,7 @@ Action<'COLONY_CREATE_NEW'>): Saga<void> {
 
     // TODO: This will be resolved in colonyDapp#978
     yield put({
-      type: ACTIONS.COLONY_CREATE_NEW_SUCCESS,
+      type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
       payload: '',
     });
@@ -161,49 +160,6 @@ Action<'COLONY_CREATE_NEW'>): Saga<void> {
     createTokenChannel.close();
     createColonyChannel.close();
     createLabelChannel.close();
-  }
-}
-
-function* colonyCreate({
-  payload: { tokenAddress },
-  meta,
-}: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
-  const txChannel = yield call(getTxChannel, meta.id);
-
-  try {
-    yield fork(createTransaction, meta.id, {
-      context: NETWORK_CONTEXT,
-      methodName: 'createColony',
-      params: { tokenAddress },
-    });
-
-    // TODO: These are just temporary for now until we have the new onboarding workflow
-    // Normally these are done by the user
-    yield put({
-      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
-      meta,
-    });
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
-    yield put({
-      type: ACTIONS.TRANSACTION_SEND,
-      meta,
-    });
-    // TODO temp end
-
-    const { payload } = yield takeFrom(
-      txChannel,
-      ACTIONS.TRANSACTION_SUCCEEDED,
-    );
-
-    yield put({
-      type: ACTIONS.COLONY_CREATE_SUCCESS,
-      meta,
-      payload,
-    });
-  } catch (error) {
-    yield putError(ACTIONS.COLONY_CREATE_ERROR, error);
-  } finally {
-    txChannel.close();
   }
 }
 
@@ -597,8 +553,6 @@ function* colonyTaskMetadataFetch({
 
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
-  // TODO: rename properly once the new onboarding is done
-  yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
   yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
