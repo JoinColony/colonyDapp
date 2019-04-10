@@ -1,5 +1,6 @@
 /* @flow */
 
+import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
 import type {
@@ -112,3 +113,18 @@ export const currentUserColoniesSelector = (state: RootStateRecord) =>
 
 export const currentUserDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);
+
+export const currentUserRecentTokensSelector = createSelector(
+  currentUserTokensSelector,
+  currentUserTransactionsSelector,
+  (tokens, transactions) =>
+    Array.from(
+      new Map([
+        ...((tokens && tokens.record && tokens.record.entries()) || []),
+        ...((transactions && transactions.record) || []).map(({ token }) => [
+          token,
+          { address: token },
+        ]),
+      ]).values(),
+    ),
+);

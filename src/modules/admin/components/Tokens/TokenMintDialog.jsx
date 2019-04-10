@@ -5,14 +5,21 @@ import type { FormikProps } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
+import compose from 'lodash/fp/compose';
+import moveDecimal from 'move-decimal-point';
+import BigNumber from 'bn.js';
 
 import type { TokenType } from '~immutable';
+import type { Address } from '~types';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
-import { Form, Input } from '~core/Fields';
+import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
+
+import { mergePayload, withKeyPath } from '~utils/actions';
+import { ACTIONS } from '~redux';
 
 import styles from './TokenMintDialog.css';
 
@@ -60,6 +67,7 @@ type Props = {|
   cancel: () => void,
   close: () => void,
   nativeToken: TokenType,
+  colonyAddress: Address,
 |};
 
 const validationSchema = yup.object().shape({
@@ -69,18 +77,51 @@ const validationSchema = yup.object().shape({
     .min(0.000000000000000001, MSG.errorAmountMin),
 });
 
+const transformMintAmount = (decimals?: number, colonyAddress: Address) => ({
+  payload: { amount: inputAmount, ...payload },
+  meta,
+  ...action
+}) => {
+  // shift by the token's decimals (or default of 18)
+  const amountNum = moveDecimal(
+    inputAmount,
+    decimals ? parseInt(decimals, 10) : 18,
+  );
+  const amount = new BigNumber(amountNum);
+  const payloadWithAmount = {
+    ...action,
+    payload: {
+      ...payload,
+      amount,
+    },
+    meta: {
+      ...meta,
+    },
+  };
+  return compose(
+    withKeyPath(colonyAddress),
+    mergePayload({ colonyAddress }),
+  )(payloadWithAmount);
+};
+
 const TokenMintDialog = ({
   cancel,
   close,
   nativeToken: { name, symbol, decimals },
+  colonyAddress,
 }: Props) => (
   <Dialog cancel={cancel}>
-    <Form
+    <ActionForm
       initialValues={{
         mintAmount: 0,
       }}
       onSubmit={close}
+      onSuccess={close}
       validationSchema={validationSchema}
+      submit={ACTIONS.COLONY_MINT_TOKENS}
+      error={ACTIONS.COLONY_MINT_TOKENS_ERROR}
+      success={ACTIONS.COLONY_MINT_TOKENS_SUCCESS}
+      transform={transformMintAmount(decimals, colonyAddress)}
     >
       {({ handleSubmit, isSubmitting, isValid }: FormikProps<FormValues>) => (
         <>
@@ -133,7 +174,7 @@ const TokenMintDialog = ({
           </DialogSection>
         </>
       )}
-    </Form>
+    </ActionForm>
   </Dialog>
 );
 

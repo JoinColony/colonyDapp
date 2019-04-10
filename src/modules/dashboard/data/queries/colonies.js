@@ -1,5 +1,7 @@
 /* @flow */
 
+import BigNumber from 'bn.js';
+
 import type { Address } from '~types';
 
 import type {
@@ -7,6 +9,7 @@ import type {
   ContextWithMetadata,
   DDBContext,
   Event,
+  NetworkClientContext,
   Query,
   WalletContext,
 } from '~data/types';
@@ -20,6 +23,8 @@ import {
   parseUnclaimedTransferEvent,
 } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { getTokenClient } from '~utils/web3/contracts';
+import { addressEquals } from '~utils/strings';
 
 import type {
   ColonyType,
@@ -62,6 +67,12 @@ export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
 
 export type ColonyContractRolesEventQuery<I: *, R: *> = Query<
   { ...ColonyClientContext, ...DDBContext },
+  I,
+  R,
+>;
+
+export type ColonyTokenBalanceQuery<I: *, R: *> = Query<
+  ContextWithMetadata<ColonyMetadata, NetworkClientContext>,
   I,
   R,
 >;
@@ -288,5 +299,35 @@ export const getColonyDomains: ColonyQuery<void, DomainType[]> = ({
         id: domainId,
         name,
       }));
+  },
+});
+
+export const getColonyTokenBalance: ColonyTokenBalanceQuery<
+  Address,
+  BigNumber,
+> = ({
+  networkClient,
+  networkClient: {
+    adapter: { provider },
+  },
+  metadata: { colonyAddress },
+}) => ({
+  async execute(tokenAddress) {
+    // if ether, handle differently
+    if (addressEquals(tokenAddress, ZERO_ADDRESS)) {
+      const etherBalance = await provider.getBalance(colonyAddress);
+
+      // convert from Ethers BN
+      return new BigNumber(etherBalance.toString());
+    }
+
+    // otherwise handle as ERC 20
+    const tokenClient = await getTokenClient(tokenAddress, networkClient);
+    const { amount } = await tokenClient.getBalanceOf.call({
+      sourceAddress: colonyAddress,
+    });
+
+    // convert from Ethers BN
+    return new BigNumber(amount.toString());
   },
 });

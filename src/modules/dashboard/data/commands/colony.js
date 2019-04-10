@@ -10,6 +10,7 @@ import type {
   WalletContext,
 } from '~data/types';
 
+import { diffAddresses } from '~utils/arrays';
 import { getColonyStore, createColonyStore } from '~data/stores';
 import {
   createColonyAvatarRemovedEvent,
@@ -185,45 +186,31 @@ export const updateTokenInfo: ColonyCommand<
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute(args) {
     const { tokens } = args;
-    const { tokens: currentTokenReferences } = await getColony({
+    const { tokens: currentTokenReferences = {} } = await getColony({
       colonyClient,
       ddb,
       wallet,
       metadata,
     }).execute();
-    const currentTokens = Object.keys(currentTokenReferences || {});
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
 
-    // add new missing tokens to store
-    await Promise.all(
-      tokens
-        .filter(
-          token =>
-            !currentTokens.find(
-              currentToken =>
-                token.toLowerCase() === currentToken.toLowerCase(),
-            ),
-        )
-        .map(address =>
-          colonyStore.append(createTokenInfoAddedEvent({ address })),
-        ),
+    // diff existing and user provided tokens
+    const [add, remove] = diffAddresses(
+      tokens,
+      Object.keys(currentTokenReferences),
     );
 
-    // remove tokens from store which are not in payload
-    await Promise.all(
-      currentTokens
-        .filter(
-          currentToken =>
-            !tokens.find(
-              token => token.toLowerCase() === currentToken.toLowerCase(),
-            ),
-        )
-        .map(address =>
-          colonyStore.append(createTokenInfoRemovedEvent({ address })),
-        ),
-    );
+    // add and remove tokens as required
+    await Promise.all([
+      ...add.map(address =>
+        colonyStore.append(createTokenInfoAddedEvent({ address })),
+      ),
+      ...remove.map(address =>
+        colonyStore.append(createTokenInfoRemovedEvent({ address })),
+      ),
+    ]);
 
     await colonyStore.load();
     return colonyStore;

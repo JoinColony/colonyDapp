@@ -1,5 +1,13 @@
 /* @flow */
 
+import differenceWith from 'lodash/differenceWith';
+
+import type { Address } from '~types';
+import type { TokenReferenceType } from '~immutable';
+
+import { addressEquals } from '../strings';
+import { ZERO_ADDRESS } from '../web3/constants';
+
 /**
  * pass in array of strings and shuffle them around
  */
@@ -105,4 +113,27 @@ export const sortObjectsBy = (
     }
     return result;
   };
+};
+
+/**
+ * Diff two arrays of addresses and return arrays of added and removed items.
+ */
+export const diffAddresses = (
+  a: Address[],
+  b: Address[],
+): [Address[], Address[]] => [
+  differenceWith(a, b, addressEquals),
+  differenceWith(b, a, addressEquals),
+];
+
+/**
+ * Sort an array of TokenReferences so that any of address `0x0` are first.
+ */
+export const sortTokensByEth = (
+  a: TokenReferenceType,
+  b: TokenReferenceType,
+) => {
+  if (addressEquals(a.address, ZERO_ADDRESS)) return -1;
+  if (addressEquals(b.address, ZERO_ADDRESS)) return 1;
+  return 0;
 };

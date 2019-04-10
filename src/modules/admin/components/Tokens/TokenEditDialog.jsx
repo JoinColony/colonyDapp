@@ -2,16 +2,18 @@
 
 import type { FormikProps } from 'formik';
 
-import React, { Fragment } from 'react';
+// $FlowFixMe until hooks flow types
+import React from 'react';
 import { defineMessages } from 'react-intl';
-import * as yup from 'yup';
 
 import type { TokenReferenceType, TokenType } from '~immutable';
+import type { ActionTypeString } from '~redux';
+import type { ActionTransformFnType } from '~utils/actions';
 
 import { useDataFetcher } from '~utils/hooks';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Checkbox, Form, InputLabel } from '~core/Fields';
+import { Checkbox, ActionForm, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -52,31 +54,16 @@ const MSG = defineMessages({
   },
 });
 
-type FormValues = {
-  colonyTokens: Array<string>,
-};
-
 type Props = {|
   cancel: () => void,
   close: () => void,
-  /* Using this only for address and isNative */
-  tokens?: Array<TokenReferenceType>,
-  /* Addresses of tokens to be selected initially */
-  selectedTokens: Array<string>, // address[]
+  availableTokens: TokenReferenceType[],
+  selectedTokens: string[],
+  submit: ActionTypeString,
+  success: ActionTypeString,
+  error: ActionTypeString,
+  transform?: ActionTransformFnType,
 |};
-
-const validateNativeTokenSelect = (nativeToken?: TokenReferenceType): any => {
-  if (nativeToken) {
-    const { address } = nativeToken;
-    return yup.object().shape({
-      tokens: yup
-        .array()
-        .of(yup.string())
-        .includes(address, MSG.errorNativeTokenRequired),
-    });
-  }
-  return null;
-};
 
 const TokenCheckbox = ({
   token: { address, isNative = false },
@@ -111,60 +98,64 @@ const TokenCheckbox = ({
 };
 
 const TokenEditDialog = ({
-  tokens = [],
+  availableTokens = [],
   selectedTokens = [],
   cancel,
   close,
-}: Props) => {
-  const nativeToken = tokens.find(token => token.isNative);
-  return (
-    <Dialog cancel={cancel}>
-      <Form
-        initialValues={{
-          tokens: selectedTokens,
-        }}
-        onSubmit={close}
-        validationSchema={validateNativeTokenSelect(nativeToken)}
-      >
-        {({ isSubmitting }: FormikProps<FormValues>) => (
-          <Fragment>
-            <DialogSection>
-              <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
-                text={MSG.title}
-              />
-            </DialogSection>
-            <DialogSection>
-              <Heading
-                text={MSG.instructionText}
-                appearance={{ size: 'normal', weight: 'thin' }}
-              />
-              <InputLabel label={MSG.fieldLabel} />
-              <div className={styles.tokenChoiceContainer}>
-                {tokens.map(token => (
-                  <TokenCheckbox key={token.address} token={token} />
-                ))}
-              </div>
-            </DialogSection>
-            <DialogSection appearance={{ align: 'right' }}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={cancel}
-                text={MSG.buttonCancel}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                loading={isSubmitting}
-                text={MSG.buttonConfirm}
-                type="submit"
-              />
-            </DialogSection>
-          </Fragment>
-        )}
-      </Form>
-    </Dialog>
-  );
-};
+  submit,
+  error,
+  success,
+  transform,
+}: Props) => (
+  <Dialog cancel={cancel}>
+    <ActionForm
+      initialValues={{
+        tokens: selectedTokens,
+      }}
+      onSuccess={close}
+      submit={submit}
+      error={error}
+      success={success}
+      transform={transform}
+    >
+      {({ isSubmitting }: FormikProps<*>) => (
+        <>
+          <DialogSection>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none' }}
+              text={MSG.title}
+            />
+          </DialogSection>
+          <DialogSection>
+            <Heading
+              text={MSG.instructionText}
+              appearance={{ size: 'normal', weight: 'thin' }}
+            />
+            <InputLabel label={MSG.fieldLabel} />
+            <div className={styles.tokenChoiceContainer}>
+              {availableTokens.map(token => (
+                <TokenCheckbox key={token.address} token={token} />
+              ))}
+            </div>
+          </DialogSection>
+          <DialogSection appearance={{ align: 'right' }}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={cancel}
+              text={MSG.buttonCancel}
+            />
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              loading={isSubmitting}
+              text={MSG.buttonConfirm}
+              type="submit"
+            />
+          </DialogSection>
+        </>
+      )}
+    </ActionForm>
+  </Dialog>
+);
 
 TokenEditDialog.displayName = 'admin.Tokens.TokenEditDialog';
 
