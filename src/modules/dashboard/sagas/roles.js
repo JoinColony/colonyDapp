@@ -18,11 +18,11 @@ import { fetchRoles } from '../actionCreators';
 import { getColonyContext } from './shared';
 
 function* colonyRolesFetch({
-  payload: { ensName },
+  payload: { colonyName },
   meta,
 }: Action<typeof ACTIONS.COLONY_ROLES_FETCH>) {
   try {
-    const context = yield* getColonyContext(ensName);
+    const context = yield* getColonyContext(colonyName);
     const roles = yield* executeQuery(context, getColonyRoles);
     /*
      * Dispatch the success action.

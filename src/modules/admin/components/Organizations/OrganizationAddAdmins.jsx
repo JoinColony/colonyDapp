@@ -81,7 +81,7 @@ const validationSchema = yup.object({
 });
 
 type Props = {|
-  ensName: ENSName,
+  colonyName: ENSName,
 |};
 
 const transformAction = action => ({
@@ -92,7 +92,7 @@ const transformAction = action => ({
   },
 });
 
-const OrganizationAddAdmins = ({ ensName }: Props) => {
+const OrganizationAddAdmins = ({ colonyName }: Props) => {
   const walletAddress = useSelector(walletAddressSelector);
   const knownUsers = useSelector(usersExceptSelector, [walletAddress]);
   return (
@@ -102,10 +102,10 @@ const OrganizationAddAdmins = ({ ensName }: Props) => {
         success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
         error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
         validationSchema={validationSchema}
-        transform={withKeyPath(ensName)(transformAction)}
+        transform={withKeyPath(colonyName)(transformAction)}
         initialValues={{
           newAdmin: null,
-          colonyName: ensName,
+          colonyName,
         }}
       >
         {({ status, isSubmitting, isValid }) => (

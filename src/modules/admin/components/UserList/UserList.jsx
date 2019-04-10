@@ -54,7 +54,7 @@ type Props = {|
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
   removeError: string,
   /* Colony ENS Name to use when removing the user */
-  ensName: string,
+  colonyName: string,
 |};
 
 const displayName: string = 'admin.UserList';
@@ -66,12 +66,12 @@ class UserList extends Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    const { remove, removeSuccess, removeError, ensName } = this.props;
+    const { remove, removeSuccess, removeError, colonyName } = this.props;
 
     const setPayload = (originalAction: *, payload: Object) =>
       compose(
-        withKeyPath(ensName),
-        mergePayload({ colonyName: ensName }),
+        withKeyPath(colonyName),
+        mergePayload({ colonyName }),
       )()({ ...originalAction, payload });
 
     this.remove = promiseListener.createAsyncFunction({

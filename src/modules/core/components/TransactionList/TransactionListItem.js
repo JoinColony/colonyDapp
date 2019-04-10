@@ -8,7 +8,7 @@ import {
   withColony,
   withTask,
   withToken,
-  withColonyENSName,
+  withColonyName,
 } from '../../../dashboard/hocs';
 
 import TransactionListItem from './TransactionListItem.jsx';
@@ -21,14 +21,14 @@ import TransactionListItem from './TransactionListItem.jsx';
 export default compose(
   withProps(
     ({ transaction: { colonyName, taskId, token, from, to, incoming } }) => ({
-      ensName: colonyName,
+      colonyName,
       taskId,
       tokenAddress: token,
       userAddress: incoming ? from : to,
       colonyAddress: incoming ? from : to,
     }),
   ),
-  withColonyENSName,
+  withColonyName,
   withColony,
   withTask,
   withToken,

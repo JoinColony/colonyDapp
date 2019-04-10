@@ -96,13 +96,13 @@ export const currentUserTransactionsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
 export const currentUserColonyPermissionsSelector = (
   state: RootStateRecord,
-  ensName: ENSName,
+  colonyName: ENSName,
 ) =>
   state.getIn([
     ns,
     USERS_CURRENT_USER,
     USERS_CURRENT_USER_PERMISSIONS,
-    ensName,
+    colonyName,
   ]);
 export const currentUserMetadataSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);

@@ -18,11 +18,11 @@ import fetchMissingColonyTransactions from './fetchMissingColonyTransactions';
 
 const withColonyTransactions = compose(
   connect(
-    (state: RootStateRecord, { ensName }: { ensName: ENSName }) => ({
-      transactions: colonyTransactionsSelector(state, ensName),
+    (state: RootStateRecord, { colonyName }: { colonyName: ENSName }) => ({
+      transactions: colonyTransactionsSelector(state, colonyName),
       unclaimedTransactions: colonyUnclaimedTransactionsSelector(
         state,
-        ensName,
+        colonyName,
       ),
     }),
     {

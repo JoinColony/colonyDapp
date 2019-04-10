@@ -232,7 +232,7 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
         {
           colonyAddress,
           avatarHash: undefined,
-          ensName: colonyName,
+          colonyName,
           inRecoveryMode,
           displayName: '',
           tokens: {},

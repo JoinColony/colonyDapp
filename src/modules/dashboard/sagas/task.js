@@ -18,7 +18,7 @@ import { shouldFetchData } from '~immutable/utils';
 import { ACTIONS } from '~redux';
 
 import {
-  allColonyENSNamesSelector,
+  allColonyNamesSelector,
   taskRefRecordSelector,
   taskSelector,
 } from '../selectors';
@@ -264,7 +264,7 @@ function* taskFetchAllForColony({
  * colonies (in parallel).
  */
 function* taskFetchAll(): Saga<void> {
-  const colonyNames = yield select(allColonyENSNamesSelector);
+  const colonyNames = yield select(allColonyNamesSelector);
   yield all(
     colonyNames.map(colonyName =>
       put<Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>>({

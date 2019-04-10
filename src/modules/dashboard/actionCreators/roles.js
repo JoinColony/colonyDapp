@@ -8,7 +8,7 @@ import { ACTIONS } from '~redux';
 export const fetchRoles = (colonyName: ENSName) => ({
   type: ACTIONS.COLONY_ROLES_FETCH,
   payload: {
-    ensName: colonyName,
+    colonyName,
   },
   meta: {
     keyPath: [colonyName],

@@ -61,8 +61,8 @@ const ProfileAdvanced = ({ colony }: Props) => {
     error: userPermissionsError,
   } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
-    [colony.ensName],
-    [colony.ensName],
+    [colony.colonyName],
+    [colony.colonyName],
   );
 
   const {
@@ -88,7 +88,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_VERSION_UPGRADE}
           success={ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
-          values={{ ensName: colony.ensName }}
+          values={{ colonyName: colony.colonyName }}
           loading={isFetchingNetworkVersion}
           disabled={!!networkVersionError || !canBeUpgraded(colony, network)}
         />
@@ -120,7 +120,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_RECOVERY_MODE_ENTER}
           success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
-          values={{ ensName: colony.ensName }}
+          values={{ colonyName: colony.colonyName }}
           loading={isFetchingUserPermissions}
           disabled={
             !!userPermissionsError ||

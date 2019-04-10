@@ -68,7 +68,7 @@ const ProfileEdit = ({ colony }: Props) => {
     description,
     guideline,
     colonyAddress,
-    ensName,
+    colonyName,
     displayName,
     website,
   } = colony;
@@ -79,9 +79,9 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_PROFILE_UPDATE}
           success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
           error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
-          transform={withKeyPath(ensName)()}
+          transform={withKeyPath(colonyName)()}
           initialValues={{
-            ensName,
+            colonyName,
             displayName,
             description,
             website,
@@ -105,7 +105,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     size: 'medium',
                     weight: 'thin',
                   }}
-                  text={ENS.getFullDomain('colony', ensName)}
+                  text={ENS.getFullDomain('colony', colonyName)}
                 />
               </FieldSet>
               <div className={styles.divider} />

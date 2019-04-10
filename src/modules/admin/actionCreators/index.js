@@ -14,7 +14,10 @@ export const fetchColonyUnclaimedTransactions = (colonyName: ENSName) => ({
   meta: { keyPath: [colonyName] },
 });
 
-export const claimColonyToken = (ensName: ENSName, tokenAddress: Address) => ({
+export const claimColonyToken = (
+  colonyName: ENSName,
+  tokenAddress: Address,
+) => ({
   type: ACTIONS.COLONY_CLAIM_TOKEN,
-  payload: { ensName, tokenAddress },
+  payload: { colonyName, tokenAddress },
 });

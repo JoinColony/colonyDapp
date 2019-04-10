@@ -53,7 +53,7 @@ const ColonyMeta = ({
   colony: {
     colonyAddress,
     description,
-    ensName,
+    colonyName,
     guideline,
     displayName,
     website,
@@ -63,8 +63,8 @@ const ColonyMeta = ({
 }: Props) => {
   const { data: roles } = useDataFetcher<RolesType>(
     rolesFetcher,
-    [ensName],
-    [ensName],
+    [colonyName],
+    [colonyName],
   );
 
   const { admins, founder } = roles || {};
@@ -84,7 +84,7 @@ const ColonyMeta = ({
             {canAdminister && (
               <Link
                 className={styles.editColony}
-                to={`/colony/${ensName}/admin`}
+                to={`/colony/${colonyName}/admin`}
               >
                 <Icon name="settings" title={MSG.editColonyTitle} />
               </Link>

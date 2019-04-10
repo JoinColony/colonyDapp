@@ -8,7 +8,7 @@ import mockTask from '../components/Task/__datamocks__/mockTask';
 const withTask = compose(
   // $FlowFixMe Let's fix this when we wire it properly
   branch(
-    props => props.taskId && props.ensName,
+    props => props.taskId && props.colonyName,
     withProps({
       task: mockTask,
     }),

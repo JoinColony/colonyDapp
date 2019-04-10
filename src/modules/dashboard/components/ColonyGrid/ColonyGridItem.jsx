@@ -10,7 +10,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import { colonyFetcher } from '../../fetchers';
-import useColonyENSName from './useColonyENSName';
+import useColonyName from './useColonyName';
 
 import styles from './ColonyGridItem.css';
 
@@ -22,22 +22,22 @@ type Props = ColonyProps<{ colonyAddress: * }>;
 
 const ColonyGridItem = ({ colonyAddress }: Props) => {
   // TODO: as of #1032 we can look up colony by address
-  const ensName = useColonyENSName(colonyAddress);
+  const colonyName = useColonyName(colonyAddress);
 
-  // fetch colony with ensName we just got
+  // fetch colony with colonyName we just got
   const {
     isFetching: isFetchingColony,
     data: colony,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
+  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
   const { displayName } = colony || {};
 
-  if (!ensName || isFetchingColony) return <SpinnerLoader />;
+  if (!colonyName || isFetchingColony) return <SpinnerLoader />;
 
   return (
-    !!ensName &&
+    !!colonyName &&
     !!colony && (
       <div className={styles.main}>
-        <Link to={`/colony/${ensName}`}>
+        <Link to={`/colony/${colonyName}`}>
           <ColonyAvatar address={colonyAddress} colony={colony} />
           <Heading text={displayName} appearance={{ size: 'small' }} />
         </Link>

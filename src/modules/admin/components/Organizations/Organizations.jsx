@@ -61,20 +61,20 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations';
 
 type Props = {|
-  ensName: ENSName,
+  colonyName: ENSName,
 |};
 
-const Organizations = ({ ensName }: Props) => {
+const Organizations = ({ colonyName }: Props) => {
   const { data: roles } = useDataFetcher<RolesType>(
     rolesFetcher,
-    [ensName],
-    [ensName],
+    [colonyName],
+    [colonyName],
   );
 
   const { data: domains } = useDataFetcher<DomainType[]>(
     domainsFetcher,
-    [ensName],
-    [ensName],
+    [colonyName],
+    [colonyName],
   );
 
   if (!domains || !roles) {
@@ -101,7 +101,7 @@ const Organizations = ({ ensName }: Props) => {
                * Once we have a way to _discover_ users that interacted with the current colony,
                * and which can be made admins
                */
-              ensName={ensName}
+              colonyName={colonyName}
             />
             <section className={styles.list}>
               {/*
@@ -113,7 +113,7 @@ const Organizations = ({ ensName }: Props) => {
                 <UserList
                   users={admins}
                   label={MSG.labelAdminList}
-                  ensName={ensName}
+                  colonyName={colonyName}
                   showDisplayName
                   showUsername
                   showMaskedAddress
@@ -142,7 +142,7 @@ const Organizations = ({ ensName }: Props) => {
         </TabPanel>
         <TabPanel>
           <div className={styles.sectionWrapper}>
-            <OrganizationAddDomains ensName={ensName} />
+            <OrganizationAddDomains colonyName={colonyName} />
             <section className={styles.list}>
               {/*
                * DomainList follows the design principles from TaskList in dashboard,

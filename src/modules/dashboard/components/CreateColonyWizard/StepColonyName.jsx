@@ -42,11 +42,11 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  colonyName: yup.string().required(),
+  displayName: yup.string().required(),
 });
 
 type FormValues = {
-  colonyName: string,
+  displayName: string,
 };
 
 type Props = WizardProps<FormValues> & ContextRouter;
@@ -69,7 +69,7 @@ const StepColonyName = ({
           <div className={styles.nameForm}>
             <Input
               appearance={{ theme: 'fat' }}
-              name="colonyName"
+              name="displayName"
               label={MSG.label}
               placeholder={MSG.placeholder}
             />

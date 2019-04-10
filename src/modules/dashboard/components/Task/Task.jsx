@@ -86,7 +86,7 @@ const displayName = 'dashboard.Task';
 
 const Task = ({
   match: {
-    params: { draftId, ensName },
+    params: { draftId, colonyName },
   },
   openDialog,
 }: Props) => {
@@ -98,7 +98,7 @@ const Task = ({
   const { data: task, isFetching, error } = useDataFetcher<TaskType>(
     taskFetcher,
     [draftId],
-    [ensName, draftId],
+    [colonyName, draftId],
   );
 
   const onEditTask = useCallback(
@@ -134,7 +134,7 @@ const Task = ({
     worker,
   } = task;
 
-  const setActionButtonValues = () => ({ colonyName: ensName, draftId });
+  const setActionButtonValues = () => ({ colonyName, draftId });
 
   return (
     <div className={styles.main}>
@@ -154,7 +154,7 @@ const Task = ({
             )}
           </header>
           <TaskAssignment
-            colonyName={ensName}
+            colonyName={colonyName}
             draftId={draftId}
             payouts={payouts}
             reputation={reputation}
@@ -163,13 +163,13 @@ const Task = ({
         </section>
         <section className={styles.section}>
           <TaskTitle
-            colonyName={ensName}
+            colonyName={colonyName}
             draftId={draftId}
             isTaskCreator={isTaskCreator}
             title={title}
           />
           <TaskDescription
-            colonyName={ensName}
+            colonyName={colonyName}
             description={description}
             draftId={draftId}
             isTaskCreator={isTaskCreator}
@@ -178,7 +178,7 @@ const Task = ({
         <section className={styles.section}>
           <div className={styles.editor}>
             <TaskDomains
-              colonyName={ensName}
+              colonyName={colonyName}
               domainId={domainId}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
@@ -186,7 +186,7 @@ const Task = ({
           </div>
           <div className={styles.editor}>
             <TaskSkills
-              colonyName={ensName}
+              colonyName={colonyName}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
               skillId={skillId}
@@ -194,7 +194,7 @@ const Task = ({
           </div>
           <div className={styles.editor}>
             <TaskDate
-              colonyName={ensName}
+              colonyName={colonyName}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
               dueDate={dueDate}

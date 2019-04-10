@@ -27,7 +27,7 @@ const ColonyAvatar = ({
   address,
   avatarURL,
   className,
-  colony: { displayName: colonyDisplayName, ensName } = {},
+  colony: { displayName: colonyDisplayName, colonyName } = {},
   notSet,
   size,
 }: Props) => (
@@ -38,7 +38,7 @@ const ColonyAvatar = ({
     placeholderIcon="at-sign-circle"
     seed={address}
     size={size}
-    title={colonyDisplayName || ensName || address}
+    title={colonyDisplayName || colonyName || address}
   />
 );
 

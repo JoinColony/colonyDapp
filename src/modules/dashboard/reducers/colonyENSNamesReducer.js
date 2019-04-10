@@ -4,11 +4,11 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { ACTIONS } from '~redux';
 
-import type { AllColonyENSNamesMap } from '~immutable';
+import type { AllColonyNamesMap } from '~immutable';
 import type { ReducerType } from '~redux';
 
 const colonyNamesReducer: ReducerType<
-  AllColonyENSNamesMap,
+  AllColonyNamesMap,
   {| COLONY_ENS_NAME_FETCH_SUCCESS: * |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
@@ -17,9 +17,9 @@ const colonyNamesReducer: ReducerType<
         meta: {
           keyPath: [colonyAddress],
         },
-        payload: ensName,
+        payload: colonyName,
       } = action;
-      return state.set(colonyAddress, ensName);
+      return state.set(colonyAddress, colonyName);
     }
     default:
       return state;

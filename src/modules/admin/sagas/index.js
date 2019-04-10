@@ -97,7 +97,7 @@ function* fetchColonyUnclaimedTransactionsSaga({
  * Claim tokens, then reload unclaimed transactions list.
  */
 function* claimColonyToken({
-  payload: { ensName, tokenAddress: token },
+  payload: { colonyName, tokenAddress: token },
   meta,
 }: Action<typeof ACTIONS.COLONY_CLAIM_TOKEN>): Saga<void> {
   let txChannel;
@@ -106,7 +106,7 @@ function* claimColonyToken({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'claimColonyFunds',
-      identifier: ensName,
+      identifier: colonyName,
       params: { token },
     });
 
@@ -121,10 +121,10 @@ function* claimColonyToken({
       meta,
     });
     yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>>(
-      fetchColonyTransactions(ensName),
+      fetchColonyTransactions(colonyName),
     );
     yield put<Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>>(
-      fetchColonyUnclaimedTransactions(ensName),
+      fetchColonyUnclaimedTransactions(colonyName),
     );
   } catch (error) {
     yield putError(ACTIONS.COLONY_CLAIM_TOKEN_ERROR, error, meta);

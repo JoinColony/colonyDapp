@@ -13,7 +13,7 @@ export const fetchColony = (
   meta: { keyPath: [colonyName] },
 });
 
-export const fetchColonyENSName = (
+export const fetchColonyName = (
   colonyAddress: string,
 ): Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH> => ({
   type: ACTIONS.COLONY_ENS_NAME_FETCH,

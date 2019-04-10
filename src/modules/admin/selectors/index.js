@@ -14,10 +14,10 @@ import {
  */
 export const colonyTransactionsSelector = (
   state: RootStateRecord,
-  ensName: ENSName,
-) => state.getIn([ns, ADMIN_TRANSACTIONS, ensName]);
+  colonyName: ENSName,
+) => state.getIn([ns, ADMIN_TRANSACTIONS, colonyName]);
 
 export const colonyUnclaimedTransactionsSelector = (
   state: RootStateRecord,
-  ensName: ENSName,
-) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, ensName]);
+  colonyName: ENSName,
+) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, colonyName]);

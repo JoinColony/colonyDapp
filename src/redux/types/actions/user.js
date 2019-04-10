@@ -56,7 +56,7 @@ export type UserActionTypes = {|
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
-    {| ensName: ENSName |},
+    {| colonyName: ENSName |},
     WithKeyPathDepth1,
   >,
   USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
@@ -66,7 +66,7 @@ export type UserActionTypes = {|
   USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
     {|
-      ensName: ENSName,
+      colonyName: ENSName,
       permissions: { +canEnterRecoveryMode?: boolean },
     |},
     WithKeyPathDepth1,

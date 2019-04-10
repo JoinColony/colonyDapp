@@ -9,7 +9,7 @@ import ColonyAvatar from '~core/ColonyAvatar';
 
 import { colonyFetcher } from '../../fetchers';
 import { ipfsDataFetcher } from '../../../core/fetchers';
-import useColonyENSName from '../ColonyGrid/useColonyENSName';
+import useColonyName from '../ColonyGrid/useColonyName';
 
 export default withHooks<
   { fetchColony: boolean },
@@ -20,15 +20,15 @@ export default withHooks<
 
   // TODO: as of #1032 we can look up colony by address
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const ensNameResult = useColonyENSName(address);
-  const ensName = ensNameResult ? ensNameResult.data : undefined;
+  const colonyNameResult = useColonyName(address);
+  const colonyName = colonyNameResult ? colonyNameResult.data : undefined;
   // eslint-disable-next-line react-hooks/rules-of-hooks
 
   if (fetchColony) {
     const { data: fetchedColony } = useDataFetcher<ColonyType>(
       colonyFetcher,
-      [ensName],
-      [ensName],
+      [colonyName],
+      [colonyName],
     );
     result.colony = fetchedColony;
   }

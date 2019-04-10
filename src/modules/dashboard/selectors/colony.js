@@ -18,8 +18,8 @@ type ENSNameFromRouter = (state: RootStateRecord, props: Object) => ENSName;
 /*
  * Input selectors
  */
-export const ensNameFromRouterSelector: ENSNameFromRouter = (state, props) =>
-  props.match.params.ensName;
+export const colonyNameFromRouterSelector: ENSNameFromRouter = (state, props) =>
+  props.match.params.colonyName;
 
 export const allColoniesSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_COLONIES], ImmutableMap());
@@ -41,12 +41,12 @@ export const colonyNamesSelector = (state: RootStateRecord) =>
  */
 export const routerColonySelector = createSelector(
   coloniesSelector,
-  ensNameFromRouterSelector,
-  (colonies, ensName) => colonies.get(ensName),
+  colonyNameFromRouterSelector,
+  (colonies, colonyName) => colonies.get(colonyName),
 );
 
-export const colonySelector = (state: RootStateRecord, ensName: ENSName) =>
-  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, ensName]);
+export const colonySelector = (state: RootStateRecord, colonyName: ENSName) =>
+  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, colonyName]);
 
 export const domainSelector = createSelector(
   (state, domainId) => domainId,
@@ -56,12 +56,12 @@ export const domainSelector = createSelector(
 );
 
 export const colonyAvatarHashSelector = createSelector(
-  (state: RootStateRecord, ensName: ENSName) => ensName,
+  (state: RootStateRecord, colonyName: ENSName) => colonyName,
   coloniesSelector,
-  (ensName, colonies) => colonies.getIn([ensName, 'record', 'avatar']),
+  (colonyName, colonies) => colonies.getIn([colonyName, 'record', 'avatar']),
 );
 
-export const allColonyENSNamesSelector = createSelector(
+export const allColonyNamesSelector = createSelector(
   coloniesSelector,
   colonies => colonies.keySeq(),
 );
@@ -69,7 +69,7 @@ export const allColonyENSNamesSelector = createSelector(
 export const colonyNameSelector = createSelector(
   colonyNamesSelector,
   (state, props) => props.colonyAddress, // TODO use a string argument
-  (ensNames, colonyAddress) => ensNames.get(colonyAddress),
+  (colonyNames, colonyAddress) => colonyNames.get(colonyAddress),
 );
 
 export const colonyNativeTokenSelector = createSelector(

@@ -209,7 +209,7 @@ function* colonyCreateLabel({
   payload: {
     colonyAddress,
     colonyName,
-    ensName,
+    displayName,
     tokenAddress,
     tokenIcon,
     tokenName,
@@ -221,8 +221,8 @@ function* colonyCreateLabel({
   const context = yield* getColonyContext(null, colonyAddress);
   const args = {
     colonyAddress,
-    ensName,
-    name: colonyName,
+    colonyName,
+    displayName,
     token: {
       address: tokenAddress,
       icon: tokenIcon,
@@ -250,7 +250,7 @@ function* colonyCreateLabel({
       methodName: 'registerColonyLabel',
       identifier: colonyAddress,
       params: {
-        colonyName: ensName,
+        colonyName,
         orbitDBPath: store.address.toString(),
       },
     });
@@ -279,7 +279,7 @@ function* colonyCreateLabel({
       payload,
     });
 
-    yield put(replace(`/colony/${ensName}`));
+    yield put(replace(`/colony/${colonyName}`));
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_LABEL_ERROR, error);
   } finally {
@@ -288,7 +288,7 @@ function* colonyCreateLabel({
 }
 
 function* colonyDomainValidate({
-  payload: { ensName },
+  payload: { colonyName },
   meta,
 }: Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE>): Saga<void> {
   yield delay(300);
@@ -299,7 +299,7 @@ function* colonyDomainValidate({
 
   const ensAddress = yield call(
     [ensCache, ensCache.getAddress],
-    ensCache.constructor.getFullDomain('colony', ensName),
+    ensCache.constructor.getFullDomain('colony', colonyName),
     networkClient,
   );
 
@@ -320,13 +320,13 @@ function* colonyDomainValidate({
 
 function* colonyProfileUpdate({
   meta: {
-    keyPath: [ensName],
+    keyPath: [colonyName],
   },
   meta,
   payload,
 }: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
   try {
-    const context = yield* getColonyContext(ensName);
+    const context = yield* getColonyContext(colonyName);
     const {
       metadata: { colonyAddress },
     } = context;
@@ -345,7 +345,7 @@ function* colonyProfileUpdate({
       type: ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
       meta,
       payload: {
-        ensName,
+        colonyName,
         colonyAddress,
         displayName,
         description,
@@ -430,14 +430,14 @@ function* colonyNameFetch({
 
 function* colonyAvatarUpload({
   meta: {
-    keyPath: [ensName],
+    keyPath: [colonyName],
   },
   meta,
   payload: { data },
 }: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<void> {
   try {
     // first attempt upload to IPFS
-    const context = yield* getColonyContext(ensName);
+    const context = yield* getColonyContext(colonyName);
 
     const ipfsHash = yield call(ipfsUpload, data);
 
@@ -464,12 +464,12 @@ function* colonyAvatarUpload({
 function* colonyAvatarRemove({
   meta,
   meta: {
-    keyPath: [ensName],
+    keyPath: [colonyName],
   },
 }: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
   try {
-    const context = yield* getColonyContext(ensName);
-    const ipfsHash = yield select(colonyAvatarHashSelector, ensName);
+    const context = yield* getColonyContext(colonyName);
+    const ipfsHash = yield select(colonyAvatarHashSelector, colonyName);
     /*
      * Remove colony avatar
      */
@@ -489,7 +489,7 @@ function* colonyAvatarRemove({
 }
 
 function* colonyRecoveryModeEnter({
-  payload: { ensName },
+  payload: { colonyName },
   meta,
 }: Action<typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER>) {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -498,7 +498,7 @@ function* colonyRecoveryModeEnter({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'enterRecoveryMode',
-      identifier: ensName,
+      identifier: colonyName,
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
@@ -510,7 +510,7 @@ function* colonyRecoveryModeEnter({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield put(fetchColony(ensName));
+    yield put(fetchColony(colonyName));
   } catch (error) {
     yield putError(ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR, error, meta);
   } finally {
@@ -519,7 +519,7 @@ function* colonyRecoveryModeEnter({
 }
 
 function* colonyUpgradeContract({
-  payload: { ensName },
+  payload: { colonyName },
   meta,
 }: Action<typeof ACTIONS.COLONY_VERSION_UPGRADE>) {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -530,7 +530,7 @@ function* colonyUpgradeContract({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'upgrade',
-      identifier: ensName,
+      identifier: colonyName,
       params: { newVersion },
     });
 
@@ -543,7 +543,7 @@ function* colonyUpgradeContract({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield put(fetchColony(ensName));
+    yield put(fetchColony(colonyName));
   } catch (error) {
     yield putError(ACTIONS.COLONY_VERSION_UPGRADE_ERROR, error, meta);
   } finally {

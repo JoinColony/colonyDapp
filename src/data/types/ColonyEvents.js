@@ -41,7 +41,7 @@ export type ColonyEvents = {|
     ColonyProps<{
       colonyAddress: *,
       description: *,
-      ensName: *,
+      colonyName: *,
       guideline: *,
       displayName: *,
       website?: *,
