@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { OrbitDBAddress } from '~types';
+import type { Address, OrbitDBAddress } from '~types';
 import type {
   EventStore,
   FeedStore,
@@ -253,38 +253,38 @@ export const unsubscribeToTask: UserMetadataCommand<
 
 export const subscribeToColony: UserMetadataCommand<
   {|
-    address: string,
+    colonyAddress: Address,
   |},
   ?string,
 > = context => ({
   async execute(args) {
     const { ddb, metadata } = context;
-    const { execute } = getUserColonies(context);
-    const colonies = await execute();
-    if (colonies.some(address => address === args.address)) {
+    const colonies = await getUserColonies(context).execute();
+
+    if (colonies.some(colonyAddress => colonyAddress === args.colonyAddress))
       return null;
-    }
+
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createSubscribeToColonyEvent(args));
-    return args.address;
+    return args.colonyAddress;
   },
 });
 
 export const unsubscribeToColony: UserMetadataCommand<
   {|
-    address: string,
+    colonyAddress: Address,
   |},
   ?string,
 > = context => ({
   async execute(args) {
     const { ddb, metadata } = context;
-    const { execute } = getUserColonies(context);
-    const colonies = await execute();
-    if (!colonies.some(address => address === args.address)) {
+    const colonies = await getUserColonies(context).execute();
+
+    if (!colonies.some(colonyAddress => colonyAddress === args.colonyAddress))
       return null;
-    }
+
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
-    return args.address;
+    return args.colonyAddress;
   },
 });

@@ -9,5 +9,5 @@ export const DASHBOARD_ALL_DOMAINS = 'allDomains';
 export const DASHBOARD_TASKS = 'tasks';
 export const DASHBOARD_ALL_TOKENS = 'allTokens';
 export const DASHBOARD_COLONIES = 'colonies';
-export const DASHBOARD_ENS_NAMES = 'colonyNames';
+export const DASHBOARD_COLONY_NAMES = 'colonyNames';
 export const DASHBOARD_TOKENS = 'tokens';

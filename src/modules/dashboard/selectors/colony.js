@@ -9,7 +9,7 @@ import type { RootStateRecord } from '~immutable';
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_COLONIES,
-  DASHBOARD_ENS_NAMES,
+  DASHBOARD_COLONY_NAMES,
   DASHBOARD_NAMESPACE as ns,
 } from '../constants';
 
@@ -32,7 +32,7 @@ export const coloniesListSelector = (state: RootStateRecord) =>
 
 export const colonyNamesSelector = (state: RootStateRecord) =>
   state.getIn(
-    [ns, DASHBOARD_ALL_COLONIES, DASHBOARD_ENS_NAMES],
+    [ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONY_NAMES],
     ImmutableMap(),
   );
 

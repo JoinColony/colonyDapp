@@ -401,7 +401,7 @@ function* colonyFetch({
 function* colonyNameFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_NAME_FETCH>): Saga<void> {
   try {
     const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
 
@@ -418,13 +418,13 @@ function* colonyNameFetch({
         `No Colony ENS name found for address "${colonyAddress}"`,
       );
 
-    yield put<Action<typeof ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS>>({
-      type: ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_NAME_FETCH_SUCCESS,
       meta,
       payload: domain,
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ENS_NAME_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_NAME_FETCH_ERROR, error, meta);
   }
 }
 
@@ -583,7 +583,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
   yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
-  yield takeEvery(ACTIONS.COLONY_ENS_NAME_FETCH, colonyNameFetch);
+  yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);

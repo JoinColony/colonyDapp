@@ -157,17 +157,17 @@ export type ColonyActionTypes = {|
     void,
     void,
   >,
-  COLONY_ENS_NAME_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_ENS_NAME_FETCH,
+  COLONY_NAME_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_NAME_FETCH,
     {| colonyAddress: string |},
     WithKeyPathDepth1,
   >,
-  COLONY_ENS_NAME_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_ENS_NAME_FETCH_ERROR,
+  COLONY_NAME_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_NAME_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
-  COLONY_ENS_NAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS,
+  COLONY_NAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS,
     string,
     WithKeyPathDepth1,
   >,

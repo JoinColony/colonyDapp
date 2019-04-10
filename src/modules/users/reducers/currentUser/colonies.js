@@ -26,7 +26,9 @@ const currentUserColoniesReducer: ReducerType<State, Actions> = (
 ) => {
   switch (action.type) {
     case ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS: {
-      const record = (state.record || ImmutableSet()).union([action.payload]);
+      const record = (state.record || ImmutableSet()).union([
+        action.payload.colonyAddress,
+      ]);
       return state.merge({ error: undefined, record, isFetching: false });
     }
     case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {

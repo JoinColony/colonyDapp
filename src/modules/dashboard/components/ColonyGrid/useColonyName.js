@@ -14,17 +14,17 @@ import type { Address } from '~types';
  * colonies by address (rather than colonyName) - #1032
  */
 
-const useColonyName = (address: Address) => {
+const useColonyName = (colonyAddress: Address) => {
   const dispatch = useDispatch();
   const fetchColonyName = useCallback(
-    () => dispatch(fetchColonyNameActionCreator(address)),
-    [address, dispatch],
+    () => dispatch(fetchColonyNameActionCreator(colonyAddress)),
+    [colonyAddress, dispatch],
   );
   const mapState = useCallback(
     state => ({
-      colonyName: colonyNameSelector(state, { colonyAddress: address }),
+      colonyName: colonyNameSelector(state, { colonyAddress }),
     }),
-    [address],
+    [colonyAddress],
   );
   const { colonyName } = useMappedState(mapState);
   if (!colonyName) fetchColonyName();

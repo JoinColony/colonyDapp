@@ -57,7 +57,7 @@ export const subscribeToColony = (
   colonyAddress: string,
 ): Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE> => ({
   type: ACTIONS.USER_COLONY_SUBSCRIBE,
-  payload: { address: colonyAddress },
+  payload: { colonyAddress },
 });
 
 export const subscribeToTask = (
