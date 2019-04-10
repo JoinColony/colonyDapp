@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { Node } from 'react';
-import type { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
 
@@ -15,7 +14,7 @@ type Props = {|
   /** Child element to trigger the popover */
   children: React$Element<*> | (({ ref: ReactRef }) => Node),
   /** The tooltips' content */
-  content: Node | MessageDescriptor,
+  content: Node,
   /** How the popover gets triggered */
   trigger: 'hover' | 'click' | 'disabled',
   /** The tooltips' placement */
