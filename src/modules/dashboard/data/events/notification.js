@@ -8,6 +8,8 @@ const {
   TOKEN_CREATED,
   COLONY_LABEL_CREATED,
   ADMIN_ADDED,
+  ADMIN_REMOVED,
+  DOMAIN_CREATED,
 } = COLONY_EVENT_TYPES;
 
 export const createColonyCreatedEvent = createEventCreator<
@@ -25,3 +27,11 @@ export const createColonyLabelCreatedEvent = createEventCreator<
 export const createColonyAdminAddedEvent = createEventCreator<
   typeof ADMIN_ADDED,
 >(ADMIN_ADDED);
+
+export const createColonyAdminRemovedEvent = createEventCreator<
+  typeof ADMIN_REMOVED,
+>(ADMIN_REMOVED);
+
+export const createColonyDomainCreatedEvent = createEventCreator<
+  typeof DOMAIN_CREATED,
+>(DOMAIN_CREATED);
