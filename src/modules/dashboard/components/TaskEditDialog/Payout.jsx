@@ -6,6 +6,7 @@ import BigNumber from 'bn.js';
 
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
+import ColonyFee from '~core/ColonyFee';
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
@@ -155,6 +156,11 @@ class Payout extends Component<Props, State> {
             </div>
           </div>
         </div>
+        {amount && symbol && (
+          <div>
+            <ColonyFee amount={amount} symbol={symbol} />
+          </div>
+        )}
       </div>
     );
   }
