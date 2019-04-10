@@ -4,7 +4,7 @@ import type { UserInboxCommand } from '~data/types';
 
 import { getUserInboxStore } from '~data/stores';
 
-import { createColonyCreatedEvent } from '../events';
+import { createColonyCreatedEvent, createTokenCreatedEvent } from '../events';
 
 export const createColony: UserInboxCommand<*, FeedStore> = ({
   ddb,
@@ -17,8 +17,13 @@ export const createColony: UserInboxCommand<*, FeedStore> = ({
   },
 });
 
-export const createToken = () => ({
-  async execute() {
-    return false;
+export const createToken: UserInboxCommand<*, FeedStore> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute(args) {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    await userInboxStore.add(createTokenCreatedEvent(args));
+    return userInboxStore;
   },
 });
