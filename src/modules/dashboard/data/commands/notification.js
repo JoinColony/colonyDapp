@@ -4,7 +4,12 @@ import type { UserInboxCommand } from '~data/types';
 
 import { getUserInboxStore } from '~data/stores';
 
-import { createColonyCreatedEvent, createTokenCreatedEvent, createColonyLabelCreatedEvent } from '../events';
+import {
+  createColonyCreatedEvent,
+  createTokenCreatedEvent,
+  createColonyLabelCreatedEvent,
+  createColonyAdminAddedEvent,
+} from '../events';
 
 export const createColony: UserInboxCommand<*, FeedStore> = ({
   ddb,
@@ -35,6 +40,17 @@ export const createColonyLabel: UserInboxCommand<*, FeedStore> = ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
     await userInboxStore.add(createColonyLabelCreatedEvent(args));
+    return userInboxStore;
+  },
+});
+
+export const addAdmin: UserInboxCommand<*, FeedStore> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute(args) {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    await userInboxStore.add(createColonyAdminAddedEvent(args));
     return userInboxStore;
   },
 });
