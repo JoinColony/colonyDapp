@@ -155,12 +155,12 @@ class Payout extends Component<Props, State> {
               )}
             </div>
           </div>
+          {amount && symbol && !editing && (
+            <div className={styles.networkFeeRow}>
+              <ColonyFee amount={amount} symbol={symbol} />
+            </div>
+          )}
         </div>
-        {amount && symbol && (
-          <div>
-            <ColonyFee amount={amount} symbol={symbol} />
-          </div>
-        )}
       </div>
     );
   }
