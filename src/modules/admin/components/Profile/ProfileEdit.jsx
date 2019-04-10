@@ -64,7 +64,14 @@ type Props = {|
 |};
 
 const ProfileEdit = ({ colony }: Props) => {
-  const { description, guideline, address, ensName, name, website } = colony;
+  const {
+    description,
+    guideline,
+    colonyAddress,
+    ensName,
+    name,
+    website,
+  } = colony;
   return (
     <div className={styles.main}>
       <main className={styles.content}>
@@ -87,7 +94,7 @@ const ProfileEdit = ({ colony }: Props) => {
               <FieldSet className={styles.section}>
                 <InputLabel label={MSG.labelAddress} />
                 <CopyableAddress appearance={{ theme: 'big' }} full>
-                  {address}
+                  {colonyAddress}
                 </CopyableAddress>
               </FieldSet>
               <FieldSet className={styles.section}>

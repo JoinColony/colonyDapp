@@ -73,10 +73,14 @@ const UserDetails = ({
   </span>
 );
 
-const ColonyDetails = ({ colony }: { colony: ColonyType }) => (
+const ColonyDetails = ({
+  colony: { name, colonyAddress },
+}: {
+  colony: ColonyType,
+}) => (
   <span>
-    {colony.name && <span>{`${colony.name} `}</span>}
-    {!colony.name && colony.address && <span>{colony.address}</span>}
+    {name && <span>{`${name} `}</span>}
+    {!name && colonyAddress && <span>{colonyAddress}</span>}
   </span>
 );
 
@@ -150,9 +154,9 @@ const TransactionDetails = ({
                     colony={colony.record}
                     address={
                       showMaskedAddress ? (
-                        <MaskedAddress address={colony.record.address} />
+                        <MaskedAddress address={colony.record.colonyAddress} />
                       ) : (
-                        colony.record.address
+                        colony.record.colonyAddress
                       )
                     }
                   />
@@ -174,9 +178,9 @@ const TransactionDetails = ({
                     colony={colony.record}
                     address={
                       showMaskedAddress ? (
-                        <MaskedAddress address={colony.record.address} />
+                        <MaskedAddress address={colony.record.colonyAddress} />
                       ) : (
-                        colony.record.address
+                        colony.record.colonyAddress
                       )
                     }
                   />

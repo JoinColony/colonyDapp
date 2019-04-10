@@ -78,7 +78,7 @@ class ColonyAvatarUploader extends Component<Props> {
              * But appends the current one to that
              */
             className={styles.main}
-            address={colony.address}
+            address={colony.colonyAddress}
             colony={colony}
             size="xl"
           />

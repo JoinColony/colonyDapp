@@ -34,8 +34,8 @@ const UserProfile = ({
     [username],
   );
 
-  // TODO: fetch colonies for the user we're viewing
-  const colonies = [];
+  // TODO: fetch colony addresses for the user we're viewing
+  const colonyAddresses = [];
 
   if (!user || isFetching) {
     return <UserProfileSpinner />;
@@ -44,7 +44,7 @@ const UserProfile = ({
   return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
-        <ColonyGrid colonies={colonies} />
+        <ColonyGrid colonyAddresses={colonyAddresses} />
       </section>
       <section className={styles.sectionContainer}>
         <ActivityFeed activities={mockActivities} />

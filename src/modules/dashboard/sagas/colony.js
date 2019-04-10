@@ -220,7 +220,7 @@ function* colonyCreateLabel({
   // @NOTE: We wanna use the address, we haven't anything mapped to the ENS name yet. Used on metadata
   const context = yield* getColonyContext(null, colonyAddress);
   const args = {
-    address: colonyAddress,
+    colonyAddress,
     ensName,
     name: colonyName,
     token: {
@@ -346,7 +346,7 @@ function* colonyProfileUpdate({
       meta,
       payload: {
         ensName,
-        address: colonyAddress,
+        colonyAddress,
         name,
         description,
         guideline,
@@ -372,7 +372,7 @@ function* colonyFetch({
       payload,
     });
 
-    const { address: colonyAddress, tokens = {} } = payload;
+    const { colonyAddress, tokens = {} } = payload;
 
     // dispatch actions to fetch info and balances for each colony token
     yield all(

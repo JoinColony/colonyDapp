@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { Address } from '~types';
+
 import Heading from '~core/Heading';
 
 import ColonyGridItem from './ColonyGridItem.jsx';
@@ -18,20 +20,20 @@ const MSG = defineMessages({
 
 type Props = {|
   /** List of Colony addresses */
-  colonies?: Array<string>,
+  colonyAddresses?: Address[],
 |};
 
 const displayName = 'ColonyGrid';
 
-const ColonyGrid = ({ colonies = [] }: Props) => (
+const ColonyGrid = ({ colonyAddresses = [] }: Props) => (
   <div className={styles.main}>
     <div className={styles.sectionTitle}>
       <Heading text={MSG.title} appearance={{ size: 'medium' }} />
     </div>
     <div className={styles.colonyGrid}>
-      {colonies.map(address => (
-        <div className={styles.colonyGridItem} key={address}>
-          <ColonyGridItem address={address} />
+      {colonyAddresses.map(colonyAddress => (
+        <div className={styles.colonyGridItem} key={colonyAddress}>
+          <ColonyGridItem colonyAddress={colonyAddress} />
         </div>
       ))}
     </div>

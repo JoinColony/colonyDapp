@@ -230,7 +230,7 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
         colonyReducer,
         // TODO: Add the right defaults here using a data model or something like that
         {
-          address: colonyAddress,
+          colonyAddress,
           avatarHash: undefined,
           ensName: colonyENSName,
           inRecoveryMode,

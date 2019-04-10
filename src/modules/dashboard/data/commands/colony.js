@@ -48,7 +48,7 @@ type AddTokenInfoCommandArgs = {|
 
 export const createColonyProfile: ColonyCommand<
   {|
-    address: Address,
+    colonyAddress: Address,
     ensName: string,
     name: string,
     description?: string,
@@ -61,7 +61,7 @@ export const createColonyProfile: ColonyCommand<
   schema: CreateColonyProfileCommandArgsSchema,
   async execute(args) {
     const {
-      address,
+      colonyAddress,
       ensName,
       name,
       description,
@@ -70,7 +70,7 @@ export const createColonyProfile: ColonyCommand<
       token,
     } = args;
     const profileCreatedEvent = createColonyProfileCreatedEvent({
-      address,
+      colonyAddress,
       ensName,
       name,
       description,

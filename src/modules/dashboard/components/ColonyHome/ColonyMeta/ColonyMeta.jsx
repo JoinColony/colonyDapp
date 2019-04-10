@@ -50,7 +50,7 @@ type Props = {|
 |};
 
 const ColonyMeta = ({
-  colony: { address, description, ensName, guideline, name, website },
+  colony: { colonyAddress, description, ensName, guideline, name, website },
   colony,
   canAdminister,
 }: Props) => {
@@ -66,7 +66,7 @@ const ColonyMeta = ({
     <div>
       <ColonyAvatar
         className={styles.avatar}
-        address={address}
+        address={colonyAddress}
         colony={colony}
         size="xl"
       />

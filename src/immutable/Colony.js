@@ -12,7 +12,7 @@ import type { $Pick, Address, ENSName } from '~types';
 import type { TokenReferenceRecordType, TokenReferenceType } from './index';
 
 type Shared = {|
-  address: Address,
+  colonyAddress: Address,
   avatarHash?: string,
   description?: string,
   ensName: ENSName,
@@ -26,7 +26,7 @@ type Shared = {|
 
 export type ColonyType = $ReadOnly<{|
   ...Shared,
-  tokens?: { [address: Address]: TokenReferenceType },
+  tokens?: { [tokenAddress: Address]: TokenReferenceType },
 |}>;
 
 export type ColonyProps<T> = $Pick<ColonyType, $Exact<T>>;
@@ -37,7 +37,7 @@ type ColonyRecordProps = {|
 |};
 
 const defaultValues: $Shape<ColonyRecordProps> = {
-  address: undefined,
+  colonyAddress: undefined,
   avatarHash: undefined,
   description: undefined,
   ensName: undefined,

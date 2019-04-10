@@ -14,17 +14,15 @@ import useColonyENSName from './useColonyENSName';
 
 import styles from './ColonyGridItem.css';
 
-import type { ColonyType } from '~immutable';
+import type { ColonyProps, ColonyType } from '~immutable';
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
-type Props = {|
-  address: $PropertyType<ColonyType, 'address'>,
-|};
+type Props = ColonyProps<{ colonyAddress: * }>;
 
-const ColonyGridItem = ({ address }: Props) => {
+const ColonyGridItem = ({ colonyAddress }: Props) => {
   // TODO: as of #1032 we can look up colony by address
-  const ensName = useColonyENSName(address);
+  const ensName = useColonyENSName(colonyAddress);
 
   // fetch colony with ensName we just got
   const {
@@ -40,7 +38,7 @@ const ColonyGridItem = ({ address }: Props) => {
     !!colony && (
       <div className={styles.main}>
         <Link to={`/colony/${ensName}`}>
-          <ColonyAvatar address={address} colony={colony} />
+          <ColonyAvatar address={colonyAddress} colony={colony} />
           <Heading text={name} appearance={{ size: 'small' }} />
         </Link>
       </div>
