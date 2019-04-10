@@ -6,6 +6,7 @@ import BN from 'bn.js';
 
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
+import { Tooltip } from '~core/Popover';
 
 import styles from './ColonyFee.css';
 
@@ -17,6 +18,10 @@ const MSG = defineMessages({
   helpIconTitle: {
     id: 'ColonyFee.helpIconTitle',
     defaultMessage: 'Help',
+  },
+  helpText: {
+    id: 'ColonyFee.helpText',
+    defaultMessage: 'There is a 2.5% fee to help run the Colony Network.',
   },
 });
 
@@ -36,11 +41,21 @@ const ColonyFee = ({ amount, symbol }: Props) => (
       />
     </div>
     <div className={styles.help}>
-      <Icon
-        appearance={{ size: 'small', theme: 'invert' }}
-        name="question-mark"
-        title={MSG.helpIconTitle}
-      />
+      <Tooltip
+        content={
+          <div className={styles.tooltipText}>
+            <FormattedMessage {...MSG.helpText} />
+          </div>
+        }
+      >
+        <button className={styles.helpButton} type="button">
+          <Icon
+            appearance={{ size: 'small', theme: 'invert' }}
+            name="question-mark"
+            title={MSG.helpIconTitle}
+          />
+        </button>
+      </Tooltip>
     </div>
   </>
 );
