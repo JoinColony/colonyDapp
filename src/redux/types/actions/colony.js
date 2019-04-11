@@ -1,6 +1,11 @@
 /* @flow */
 
-import type { WithKeyPathDepth1, WithKeyPathDepth2 } from '~types';
+import type {
+  Address,
+  ENSName,
+  WithKeyPathDepth1,
+  WithKeyPathDepth2,
+} from '~types';
 import type {
   ColonyType,
   ContractTransactionType,
@@ -20,7 +25,7 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| newAdmin: string, colonyENSName: string |},
+    {| newAdmin: string, colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_ERROR: ErrorActionType<
@@ -34,7 +39,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| user: string, colonyENSName: string |},
+    {| user: string, colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_ERROR: ErrorActionType<
@@ -43,7 +48,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
-    {| user: string, colonyENSName: string |},
+    {| user: string, colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_REMOVE: UniqueActionType<
@@ -76,7 +81,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
-    {| tokenAddress: string, ensName: string |},
+    {| tokenAddress: string, colonyName: string |},
     void,
   >,
   COLONY_CLAIM_TOKEN_ERROR: ErrorActionType<
@@ -100,9 +105,9 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_CREATE_LABEL,
     {|
       colonyId: number,
-      colonyAddress: string,
-      colonyName: string,
-      ensName: string,
+      colonyAddress: Address,
+      colonyName: ENSName,
+      displayName: string,
       tokenAddress: string,
       tokenName: string,
       tokenSymbol: string,
@@ -140,7 +145,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_DOMAIN_VALIDATE: UniqueActionType<
     typeof ACTIONS.COLONY_DOMAIN_VALIDATE,
-    {| ensName: string |},
+    {| colonyName: string |},
     void,
   >,
   COLONY_DOMAIN_VALIDATE_ERROR: ErrorActionType<
@@ -152,23 +157,23 @@ export type ColonyActionTypes = {|
     void,
     void,
   >,
-  COLONY_ENS_NAME_FETCH: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_ENS_NAME_FETCH,
+  COLONY_NAME_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_NAME_FETCH,
     {| colonyAddress: string |},
     WithKeyPathDepth1,
   >,
-  COLONY_ENS_NAME_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_ENS_NAME_FETCH_ERROR,
+  COLONY_NAME_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_NAME_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
-  COLONY_ENS_NAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_ENS_NAME_FETCH_SUCCESS,
+  COLONY_NAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS,
     string,
     WithKeyPathDepth1,
   >,
   COLONY_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH,
-    {| colonyENSName: string |},
+    {| colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_ERROR: ErrorActionType<
@@ -231,7 +236,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_RECOVERY_MODE_ENTER: UniqueActionType<
     typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER,
-    {| ensName: string |},
+    {| colonyName: string |},
     void,
   >,
   COLONY_RECOVERY_MODE_ENTER_ERROR: ErrorActionType<
@@ -245,7 +250,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ROLES_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ROLES_FETCH,
-    {| ensName: string |},
+    {| colonyName: string |},
     WithKeyPathDepth1,
   >,
   COLONY_ROLES_FETCH_ERROR: ErrorActionType<
@@ -259,7 +264,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_VERSION_UPGRADE: UniqueActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE,
-    {| ensName: string |},
+    {| colonyName: string |},
     void,
   >,
   COLONY_VERSION_UPGRADE_SUCCESS: UniqueActionType<

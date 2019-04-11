@@ -27,15 +27,15 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  claimColonyToken: (ensName: ENSName, tokenAddress: Address) => any,
-  ensName: string,
+  claimColonyToken: (colonyName: ENSName, tokenAddress: Address) => any,
+  colonyName: string,
   transactions: ?DataType<Array<ContractTransactionType>>,
   unclaimedTransactions: ?DataType<Array<ContractTransactionType>>,
 |};
 
 const Transactions = ({
   claimColonyToken,
-  ensName,
+  colonyName,
   transactions,
   unclaimedTransactions,
 }: Props) => (
@@ -56,7 +56,9 @@ const Transactions = ({
           isLoading={
             (unclaimedTransactions && unclaimedTransactions.isFetching) || false
           }
-          onClaim={transaction => claimColonyToken(ensName, transaction.token)}
+          onClaim={transaction =>
+            claimColonyToken(colonyName, transaction.token)
+          }
           linkToEtherscan={false}
         />
       </div>

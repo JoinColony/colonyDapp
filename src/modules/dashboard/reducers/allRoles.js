@@ -23,12 +23,12 @@ const allRolesReducer: ReducerType<AllRolesMap, RolesActions> = (
     case ACTIONS.COLONY_ROLES_FETCH_SUCCESS: {
       const {
         meta: {
-          keyPath: [ensName],
+          keyPath: [colonyName],
         },
         payload: roles,
       } = action;
       return state.set(
-        ensName,
+        colonyName,
         DataRecord({
           record: RolesRecord(fromJS(roles)),
         }),

@@ -44,7 +44,7 @@ class ColonyAvatarUploader extends Component<Props> {
   constructor(props: Props) {
     super(props);
     const setPayload = (originalAction: *, payload: Object) =>
-      withKeyPath(props.colony.ensName)()({ ...originalAction, payload });
+      withKeyPath(props.colony.colonyName)()({ ...originalAction, payload });
 
     this.upload = promiseListener.createAsyncFunction({
       start: ACTIONS.COLONY_AVATAR_UPLOAD,
@@ -78,7 +78,7 @@ class ColonyAvatarUploader extends Component<Props> {
              * But appends the current one to that
              */
             className={styles.main}
-            address={colony.address}
+            address={colony.colonyAddress}
             colony={colony}
             size="xl"
           />

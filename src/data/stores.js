@@ -31,14 +31,14 @@ export const getColonyStore = (
   wallet: WalletObjectType,
 ) => async ({
   colonyAddress,
-  colonyENSName,
+  colonyName,
 }: {
   colonyAddress: string,
-  colonyENSName: ENSName,
+  colonyName: ENSName,
 }) =>
   ddb.getStore<EventStore>(
     colonyStoreBlueprint,
-    ENS.getFullDomain('colony', colonyENSName),
+    ENS.getFullDomain('colony', colonyName),
     {
       wallet,
       colonyAddress,
@@ -63,12 +63,12 @@ export const getTaskStore = (
   wallet: WalletObjectType,
 ) => async ({
   colonyAddress,
-  colonyENSName,
+  colonyName,
   draftId,
   taskStoreAddress,
 }: {
   colonyAddress: Address,
-  colonyENSName: ENSName,
+  colonyName: ENSName,
   draftId: TaskDraftId,
   taskStoreAddress: string | OrbitDBAddress,
 }) =>
@@ -78,7 +78,7 @@ export const getTaskStore = (
     colonyClient,
     draftId,
     meta: {
-      colonyENSName,
+      colonyName,
     },
   });
 
@@ -95,11 +95,11 @@ export const createTaskStore = (
 ) => async ({
   draftId,
   colonyAddress,
-  colonyENSName,
+  colonyName,
 }: {
   draftId: string,
   colonyAddress: Address,
-  colonyENSName: ENSName,
+  colonyName: ENSName,
 }) => {
   const [taskStore, commentsStore] = await Promise.all([
     ddb.createStore<EventStore>(taskStoreBlueprint, {
@@ -108,7 +108,7 @@ export const createTaskStore = (
       colonyClient,
       draftId,
       meta: {
-        colonyENSName,
+        colonyName,
       },
     }),
     ddb.createStore<EventStore>(commentsStoreBlueprint),

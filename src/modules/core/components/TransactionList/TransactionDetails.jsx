@@ -73,10 +73,14 @@ const UserDetails = ({
   </span>
 );
 
-const ColonyDetails = ({ colony }: { colony: ColonyType }) => (
+const ColonyDetails = ({
+  colony: { displayName: colonyDisplayName, colonyAddress },
+}: {
+  colony: ColonyType,
+}) => (
   <span>
-    {colony.name && <span>{`${colony.name} `}</span>}
-    {!colony.name && colony.address && <span>{colony.address}</span>}
+    {colonyDisplayName && <span>{`${colonyDisplayName} `}</span>}
+    {!colonyDisplayName && colonyAddress && <span>{colonyAddress}</span>}
   </span>
 );
 
@@ -85,7 +89,7 @@ const TaskDetails = ({ task }: { task: TaskType }) => (
     {task.title && (
       <Link
         text={task.title}
-        to={`/colony/${task.colonyENSName}/task/${task.draftId}`}
+        to={`/colony/${task.colonyName}/task/${task.draftId}`}
         className={styles.taskLink}
       />
     )}
@@ -150,9 +154,9 @@ const TransactionDetails = ({
                     colony={colony.record}
                     address={
                       showMaskedAddress ? (
-                        <MaskedAddress address={colony.record.address} />
+                        <MaskedAddress address={colony.record.colonyAddress} />
                       ) : (
-                        colony.record.address
+                        colony.record.colonyAddress
                       )
                     }
                   />
@@ -174,9 +178,9 @@ const TransactionDetails = ({
                     colony={colony.record}
                     address={
                       showMaskedAddress ? (
-                        <MaskedAddress address={colony.record.address} />
+                        <MaskedAddress address={colony.record.colonyAddress} />
                       ) : (
-                        colony.record.address
+                        colony.record.colonyAddress
                       )
                     }
                   />

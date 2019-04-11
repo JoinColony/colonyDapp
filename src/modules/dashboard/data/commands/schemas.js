@@ -7,7 +7,7 @@ export const CreateColonyProfileCommandArgsSchema = yup.object({
     .string()
     .address()
     .required(),
-  ensName: yup.string().required(),
+  colonyName: yup.string().required(),
   name: yup.string().required(),
   description: yup.string(),
   website: yup.string().url(),

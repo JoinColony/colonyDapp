@@ -9,31 +9,31 @@ import type { Address, ENSName } from '~types';
 const keyPath = (draftId: TaskDraftId) => ({ keyPath: [draftId] });
 
 export const taskFetch = (
-  colonyENSName: ENSName,
+  colonyName: ENSName,
   draftId: TaskDraftId,
 ): Action<typeof ACTIONS.TASK_FETCH> => ({
   type: ACTIONS.TASK_FETCH,
-  payload: { colonyENSName, draftId },
+  payload: { colonyName, draftId },
   meta: keyPath(draftId),
 });
 
 export const taskFetchComments = (
-  colonyENSName: ENSName,
+  colonyName: ENSName,
   draftId: TaskDraftId,
 ): Action<typeof ACTIONS.TASK_FETCH_COMMENTS> => ({
   type: ACTIONS.TASK_FETCH_COMMENTS,
-  payload: { colonyENSName, draftId },
+  payload: { colonyName, draftId },
   meta: keyPath(draftId),
 });
 
 export const taskSetWorker = (
-  colonyENSName: ENSName,
+  colonyName: ENSName,
   draftId: TaskDraftId,
   worker: Address,
 ): Action<typeof ACTIONS.TASK_WORKER_ASSIGN> => ({
   type: ACTIONS.TASK_WORKER_ASSIGN,
   payload: {
-    colonyENSName,
+    colonyName,
     draftId,
     worker,
   },

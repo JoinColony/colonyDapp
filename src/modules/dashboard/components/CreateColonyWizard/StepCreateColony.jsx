@@ -47,8 +47,8 @@ const MSG = defineMessages({
     id: 'CreateColony.StepCreateColony.backButton',
     defaultMessage: `Back`,
   },
-  colonyName: {
-    id: 'CreateColony.StepCreateColony.colonyName',
+  displayName: {
+    id: 'CreateColony.StepCreateColony.displayName',
     defaultMessage: `Colony Name`,
   },
   tokenName: {
@@ -63,8 +63,8 @@ const MSG = defineMessages({
 
 const options = [
   {
-    title: MSG.colonyName,
-    valueKey: 'colonyName',
+    title: MSG.displayName,
+    valueKey: 'displayName',
   },
   {
     title: MSG.tokenName,

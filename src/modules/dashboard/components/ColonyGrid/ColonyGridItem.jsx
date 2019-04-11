@@ -10,38 +10,36 @@ import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import { colonyFetcher } from '../../fetchers';
-import useColonyENSName from './useColonyENSName';
+import useColonyName from './useColonyName';
 
 import styles from './ColonyGridItem.css';
 
-import type { ColonyType } from '~immutable';
+import type { ColonyProps, ColonyType } from '~immutable';
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
-type Props = {|
-  address: $PropertyType<ColonyType, 'address'>,
-|};
+type Props = ColonyProps<{ colonyAddress: * }>;
 
-const ColonyGridItem = ({ address }: Props) => {
+const ColonyGridItem = ({ colonyAddress }: Props) => {
   // TODO: as of #1032 we can look up colony by address
-  const ensName = useColonyENSName(address);
+  const colonyName = useColonyName(colonyAddress);
 
-  // fetch colony with ensName we just got
+  // fetch colony with colonyName we just got
   const {
     isFetching: isFetchingColony,
     data: colony,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
-  const { name } = colony || {};
+  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
+  const { displayName } = colony || {};
 
-  if (!ensName || isFetchingColony) return <SpinnerLoader />;
+  if (!colonyName || isFetchingColony) return <SpinnerLoader />;
 
   return (
-    !!ensName &&
+    !!colonyName &&
     !!colony && (
       <div className={styles.main}>
-        <Link to={`/colony/${ensName}`}>
-          <ColonyAvatar address={address} colony={colony} />
-          <Heading text={name} appearance={{ size: 'small' }} />
+        <Link to={`/colony/${colonyName}`}>
+          <ColonyAvatar address={colonyAddress} colony={colony} />
+          <Heading text={displayName} appearance={{ size: 'small' }} />
         </Link>
       </div>
     )

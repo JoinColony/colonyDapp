@@ -22,13 +22,13 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyENSName: *, draftId: *, description: * }>,
+  ...TaskProps<{ colonyName: *, draftId: *, description: * }>,
 |};
 
 const TaskDescription = ({
   description,
   isTaskCreator,
-  colonyENSName,
+  colonyName,
   draftId,
 }: Props) => (
   <ActionForm
@@ -45,7 +45,7 @@ const TaskDescription = ({
         description: originalAction.payload.description
           .getCurrentContent()
           .getPlainText(),
-        colonyENSName,
+        colonyName,
         draftId,
       })()(originalAction)
     }

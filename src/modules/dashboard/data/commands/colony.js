@@ -30,7 +30,7 @@ import {
 
 export type ColonyContext = ContextWithMetadata<
   {|
-    colonyENSName: string | ENSName,
+    colonyName: string | ENSName,
     colonyAddress: Address,
   |},
   ColonyClientContext & WalletContext & DDBContext,
@@ -48,9 +48,9 @@ type AddTokenInfoCommandArgs = {|
 
 export const createColonyProfile: ColonyCommand<
   {|
-    address: Address,
-    ensName: string,
-    name: string,
+    colonyAddress: Address,
+    colonyName: string,
+    displayName: string,
     description?: string,
     guideline?: string,
     website?: string,
@@ -61,18 +61,18 @@ export const createColonyProfile: ColonyCommand<
   schema: CreateColonyProfileCommandArgsSchema,
   async execute(args) {
     const {
-      address,
-      ensName,
-      name,
+      colonyAddress,
+      colonyName,
+      displayName,
       description,
       guideline,
       website,
       token,
     } = args;
     const profileCreatedEvent = createColonyProfileCreatedEvent({
-      address,
-      ensName,
-      name,
+      colonyAddress,
+      colonyName,
+      displayName,
       description,
       guideline,
       website,
@@ -108,7 +108,7 @@ export const createDomain: ColonyCommand<
 
 export const updateColonyProfile: ColonyCommand<
   {|
-    name?: string,
+    displayName?: string,
     description?: string,
     guideline?: string,
     website?: string,

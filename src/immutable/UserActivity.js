@@ -11,7 +11,7 @@ export type ActivityEvent = $Keys<typeof activityMessages>;
 type Shared = {|
   assignedUser?: string,
   acceptedUser?: string,
-  colonyName?: string, // TODO should this be ensName?
+  colonyName?: string, // TODO should this be colonyName?
   createdAt: Date,
   domainName?: string,
   numberOfStars?: number,
@@ -26,7 +26,7 @@ export type UserActivityRecordType = RecordOf<Shared>;
 const defaultValues: $Shape<Shared> = {
   assignedUser: undefined,
   acceptedUser: undefined,
-  colonyName: undefined, // TODO should this be ensName?
+  colonyName: undefined, // TODO should this be colonyName?
   createdAt: undefined,
   domainName: undefined,
   numberOfStars: undefined,

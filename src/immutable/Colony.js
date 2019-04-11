@@ -12,21 +12,21 @@ import type { $Pick, Address, ENSName } from '~types';
 import type { TokenReferenceRecordType, TokenReferenceType } from './index';
 
 type Shared = {|
-  address: Address,
   avatarHash?: string,
+  colonyAddress: Address,
+  colonyName: ENSName,
   description?: string,
-  ensName: ENSName,
+  displayName: string,
   guideline?: string,
   id?: number,
-  name: string,
+  inRecoveryMode?: boolean,
   version?: number,
   website?: string,
-  inRecoveryMode?: boolean,
 |};
 
 export type ColonyType = $ReadOnly<{|
   ...Shared,
-  tokens?: { [address: Address]: TokenReferenceType },
+  tokens?: { [tokenAddress: Address]: TokenReferenceType },
 |}>;
 
 export type ColonyProps<T> = $Pick<ColonyType, $Exact<T>>;
@@ -37,14 +37,14 @@ type ColonyRecordProps = {|
 |};
 
 const defaultValues: $Shape<ColonyRecordProps> = {
-  address: undefined,
   avatarHash: undefined,
+  colonyAddress: undefined,
+  colonyName: undefined,
   description: undefined,
-  ensName: undefined,
+  displayName: undefined,
   guideline: undefined,
   id: undefined,
   inRecoveryMode: false,
-  name: undefined,
   tokens: ImmutableMap(),
   version: undefined,
   website: undefined,

@@ -39,11 +39,11 @@ export const currentUserGetBalance = (): Action<
 });
 
 export const userPermissionsFetch = (
-  ensName: ENSName,
+  colonyName: ENSName,
 ): Action<typeof ACTIONS.USER_PERMISSIONS_FETCH> => ({
   type: ACTIONS.USER_PERMISSIONS_FETCH,
-  payload: { ensName },
-  meta: { keyPath: [ensName] },
+  payload: { colonyName },
+  meta: { keyPath: [colonyName] },
 });
 
 export const userTokensUpdate = (
@@ -57,7 +57,7 @@ export const subscribeToColony = (
   colonyAddress: string,
 ): Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE> => ({
   type: ACTIONS.USER_COLONY_SUBSCRIBE,
-  payload: { address: colonyAddress },
+  payload: { colonyAddress },
 });
 
 export const subscribeToTask = (

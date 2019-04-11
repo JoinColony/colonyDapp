@@ -98,7 +98,7 @@ const getActiveDomainFilterClass = (id: number = 0, filteredDomainId: number) =>
 
 const ColonyHome = ({
   match: {
-    params: { ensName },
+    params: { colonyName },
   },
 }: Props) => {
   const [filterOption, setFilterOption] = useState('all');
@@ -114,27 +114,27 @@ const ColonyHome = ({
     () => {
       dispatch({
         type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-        payload: { colonyENSName: ensName },
+        payload: { colonyName },
       });
     },
-    [dispatch, ensName],
+    [dispatch, colonyName],
   );
 
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
+  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
   const { data: permissions } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
-    [ensName],
-    [ensName],
+    [colonyName],
+    [colonyName],
   );
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
-  >(domainsFetcher, [ensName], [ensName]);
+  >(domainsFetcher, [colonyName], [colonyName]);
 
-  if (!ensName || colonyError) {
+  if (!colonyName || colonyError) {
     return <Redirect to="/404" />;
   }
 
@@ -206,7 +206,7 @@ const ColonyHome = ({
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
-            values={{ colonyENSName: ensName }}
+            values={{ colonyName }}
           />
         )}
         <ul className={styles.domainsFilters}>

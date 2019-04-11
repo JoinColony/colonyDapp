@@ -14,7 +14,7 @@ import { ACTIONS } from '~redux';
 import styles from './OrganizationAddDomains.css';
 
 type Props = {
-  ensName: ENSName,
+  colonyName: ENSName,
 };
 
 const MSG = defineMessages({
@@ -41,7 +41,7 @@ const validationSchema = yup.object({
     .required(),
 });
 
-const OrganizationAddDomains = ({ ensName }: Props) => (
+const OrganizationAddDomains = ({ colonyName }: Props) => (
   <div className={styles.main}>
     <ActionForm
       submit={ACTIONS.DOMAIN_CREATE}
@@ -50,7 +50,7 @@ const OrganizationAddDomains = ({ ensName }: Props) => (
       onSuccess={(_, { resetForm }) => {
         resetForm();
       }}
-      transform={withKeyPath(ensName)()}
+      transform={withKeyPath(colonyName)()}
       initialValues={{
         domainName: '',
       }}

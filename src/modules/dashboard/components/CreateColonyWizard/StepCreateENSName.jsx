@@ -63,7 +63,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateColonyWizard.StepCreateENSName';
 
 const validationSchema = yup.object({
-  ensName: yup
+  colonyName: yup
     .string()
     .required()
     .ensAddress(),
@@ -85,7 +85,7 @@ class StepCreateENSName extends Component<Props> {
       await this.checkDomainTaken.asyncFunction(values);
     } catch (e) {
       const error = {
-        ensName: MSG.errorDomainTaken,
+        colonyName: MSG.errorDomainTaken,
       };
       // eslint doesn't allow for throwing object literals
       throw error;
@@ -133,7 +133,7 @@ class StepCreateENSName extends Component<Props> {
               <div className={styles.nameForm}>
                 <Input
                   appearance={{ theme: 'fat' }}
-                  name="ensName"
+                  name="colonyName"
                   label={MSG.label}
                 />
                 <div className={styles.buttons}>

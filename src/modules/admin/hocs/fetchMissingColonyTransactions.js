@@ -15,19 +15,19 @@ type TransactionsData = ?DataRecordType<
 
 const shouldFetchColonyTransactions = ({
   transactions,
-  ensName,
+  colonyName,
 }: {
   transactions: TransactionsData,
-  ensName: ENSName,
-}) => !!(ensName && shouldFetchData(transactions, 0, false));
+  colonyName: ENSName,
+}) => !!(colonyName && shouldFetchData(transactions, 0, false));
 
 const shouldFetchColonyUnclaimedTransactions = ({
   unclaimedTransactions,
-  ensName,
+  colonyName,
 }: {
   unclaimedTransactions: TransactionsData,
-  ensName: ENSName,
-}) => !!(ensName && shouldFetchData(unclaimedTransactions, 0, false));
+  colonyName: ENSName,
+}) => !!(colonyName && shouldFetchData(unclaimedTransactions, 0, false));
 
 const fetchMissingColonyTransactions = branch(
   props =>
@@ -36,14 +36,14 @@ const fetchMissingColonyTransactions = branch(
   lifecycle({
     componentDidMount() {
       const {
-        ensName,
+        colonyName,
         fetchColonyTransactions,
         fetchColonyUnclaimedTransactions,
       } = this.props;
       if (shouldFetchColonyTransactions(this.props))
-        fetchColonyTransactions(ensName);
+        fetchColonyTransactions(colonyName);
       if (shouldFetchColonyUnclaimedTransactions(this.props))
-        fetchColonyUnclaimedTransactions(ensName);
+        fetchColonyUnclaimedTransactions(colonyName);
     },
   }),
 );

@@ -11,8 +11,8 @@ import type { ENSName } from '~types';
 
 const withColony = compose(
   connect(
-    (state, { ensName }: { ensName: ENSName }) => ({
-      colony: colonySelector(state, ensName),
+    (state, { colonyName }: { colonyName: ENSName }) => ({
+      colony: colonySelector(state, colonyName),
     }),
     {
       fetchColony,

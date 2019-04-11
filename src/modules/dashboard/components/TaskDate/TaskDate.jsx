@@ -32,7 +32,7 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyENSName: *, draftId: *, dueDate: * }>,
+  ...TaskProps<{ colonyName: *, draftId: *, dueDate: * }>,
 |};
 
 type State = {
@@ -80,7 +80,7 @@ class TaskDate extends Component<Props, State> {
   handleSetDate = async (callback: () => void) => {
     const { selectedDate } = this.state;
 
-    const { draftId, colonyENSName } = this.props;
+    const { draftId, colonyName } = this.props;
 
     this.setState(
       {
@@ -92,7 +92,7 @@ class TaskDate extends Component<Props, State> {
 
     try {
       await this.setTaskDate.asyncFunction({
-        colonyENSName,
+        colonyName,
         draftId,
         dueDate: selectedDate,
       });

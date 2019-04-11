@@ -323,14 +323,14 @@ function* usernameCreate({
 }
 
 function* userPermissionsFetch({
-  payload: { ensName },
+  payload: { colonyName },
   meta,
 }: Action<typeof ACTIONS.USER_PERMISSIONS_FETCH>): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      ensName,
+      colonyName,
     );
     const walletAddress = yield select(walletAddressSelector);
 
@@ -347,7 +347,7 @@ function* userPermissionsFetch({
 
     yield put<Action<typeof ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS,
-      payload: { permissions, ensName },
+      payload: { permissions, colonyName },
       meta,
     });
   } catch (error) {

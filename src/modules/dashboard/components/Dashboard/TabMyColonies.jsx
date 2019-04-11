@@ -27,14 +27,15 @@ const MSG = defineMessages({
 });
 
 const TabMyColonies = () => {
-  const { isFetching: isFetchingColonies, data: colonies } = useDataFetcher<
-    string[],
-  >(currentUserColoniesFetcher, [], []);
+  const {
+    isFetching: isFetchingColonies,
+    data: colonyAddresses,
+  } = useDataFetcher<string[]>(currentUserColoniesFetcher, [], []);
 
   if (isFetchingColonies) return <SpinnerLoader />;
 
-  return colonies && colonies.length ? (
-    <ColonyGrid colonies={colonies} />
+  return colonyAddresses && colonyAddresses.length ? (
+    <ColonyGrid colonyAddresses={colonyAddresses} />
   ) : (
     <Fragment>
       <p className={styles.emptyText}>

@@ -23,12 +23,12 @@ const allDomainsReducer: ReducerType<AllDomainsMap, DomainActions> = (
     case ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
         meta: {
-          keyPath: [ensName],
+          keyPath: [colonyName],
         },
         payload: domains,
       } = action;
       return state.set(
-        ensName,
+        colonyName,
         DataRecord({
           record: ImmutableSet(domains.map(domain => DomainRecord(domain))),
         }),

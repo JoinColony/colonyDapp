@@ -27,7 +27,7 @@ const tasksReducer: ReducerType<
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
     case ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS: {
-      const { colonyENSName, colonyTasks } = action.payload;
+      const { colonyName, colonyTasks } = action.payload;
       const draftIds = Object.keys(colonyTasks);
       return state.withMutations(mutableState => {
         draftIds.forEach(draftId => {
@@ -38,7 +38,7 @@ const tasksReducer: ReducerType<
               isFetching: false,
               lastFetchedAt: new Date(),
               record: TaskReferenceRecord({
-                colonyENSName,
+                colonyName,
                 draftId,
                 ...colonyTasks[draftId],
               }),
@@ -51,7 +51,7 @@ const tasksReducer: ReducerType<
     case ACTIONS.TASK_FETCH_SUCCESS: {
       const {
         commentsStoreAddress,
-        task: { colonyENSName, draftId },
+        task: { colonyName, draftId },
         taskStoreAddress,
       } = action.payload;
       const task = taskReducer(
@@ -59,7 +59,7 @@ const tasksReducer: ReducerType<
         action,
       );
       const record = TaskReferenceRecord({
-        colonyENSName,
+        colonyName,
         commentsStoreAddress,
         draftId,
         task,

@@ -80,28 +80,28 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   {
     id: 3,
     title: MSG.tabTransaction,
-    content: <Transactions ensName={colony.ensName} />,
+    content: <Transactions colonyName={colony.colonyName} />,
   },
   {
     id: 4,
     title: MSG.tabOrganisation,
-    content: <Organizations ensName={colony.ensName} />,
+    content: <Organizations colonyName={colony.colonyName} />,
   },
 ];
 
 const AdminDashboard = ({
   location,
   match: {
-    params: { ensName },
+    params: { colonyName },
   },
 }: Props) => {
   const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
     colonyFetcher,
-    [ensName],
-    [ensName],
+    [colonyName],
+    [colonyName],
   );
 
-  if (!ensName || error) {
+  if (!colonyName || error) {
     return <Redirect to="/404" />;
   }
 
@@ -109,7 +109,7 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const { name } = colony;
+  const { displayName } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
@@ -122,9 +122,9 @@ const AdminDashboard = ({
       >
         <div className={styles.backNavigation}>
           <HistoryNavigation
-            backRoute={`/colony/${ensName}`}
+            backRoute={`/colony/${colonyName}`}
             backText={MSG.backButton}
-            backTextValues={{ name }}
+            backTextValues={{ displayName }}
           />
         </div>
         <div className={styles.headingWrapper}>

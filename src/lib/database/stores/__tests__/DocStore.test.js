@@ -9,7 +9,7 @@ const schema = yup.object({
     username: yup.string().required(),
   }),
   meta: yup.object({
-    colonyENSName: yup.string().required(),
+    colonyName: yup.string().required(),
   }),
 });
 

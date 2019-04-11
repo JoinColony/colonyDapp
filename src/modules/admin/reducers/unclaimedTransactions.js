@@ -22,12 +22,12 @@ const colonyUnclaimedTransactionsReducer: ReducerType<
     case ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: {
       const {
         meta: {
-          keyPath: [colonyENSName],
+          keyPath: [colonyName],
         },
         payload: transactions,
       } = action;
       return state.mergeIn(
-        [colonyENSName],
+        [colonyName],
         DataRecord<ListType<ContractTransactionRecordType>>({
           record: List(transactions.map(tx => ContractTransactionRecord(tx))),
         }),

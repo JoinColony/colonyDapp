@@ -274,11 +274,11 @@ export const getUserColonies: UserMetadataQuery<void, *> = ({
     if (!userMetadataStoreAddress) return [];
 
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
-    const getKey = event => event.payload.address;
+    const getKey = event => event.payload.colonyAddress;
     const getValue = event => event.type;
     return reduceToLastState(metadataStore.all(), getKey, getValue)
       .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
-      .map(([address]) => address);
+      .map(([colonyAddress]) => colonyAddress);
   },
 });
 

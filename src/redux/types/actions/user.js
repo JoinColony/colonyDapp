@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ENSName, WithKeyPathDepth1 } from '~types';
+import type { Address, ENSName, WithKeyPathDepth1 } from '~types';
 import type {
   ContractTransactionType,
   TokenReferenceType,
@@ -25,7 +25,7 @@ export type UserActionTypes = {|
   >,
   USER_COLONY_SUBSCRIBE: ActionTypeWithPayload<
     typeof ACTIONS.USER_COLONY_SUBSCRIBE,
-    {| address: string |},
+    {| colonyAddress: Address |},
   >,
   USER_COLONY_SUBSCRIBE_ERROR: ErrorActionType<
     typeof ACTIONS.USER_COLONY_SUBSCRIBE_ERROR,
@@ -33,7 +33,7 @@ export type UserActionTypes = {|
   >,
   USER_COLONY_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_COLONY_SUBSCRIBE,
-    {| address: string |},
+    {| colonyAddress: Address |},
   >,
   USER_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH,
@@ -56,7 +56,7 @@ export type UserActionTypes = {|
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
-    {| ensName: ENSName |},
+    {| colonyName: ENSName |},
     WithKeyPathDepth1,
   >,
   USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
@@ -66,7 +66,7 @@ export type UserActionTypes = {|
   USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
     {|
-      ensName: ENSName,
+      colonyName: ENSName,
       permissions: { +canEnterRecoveryMode?: boolean },
     |},
     WithKeyPathDepth1,
@@ -113,7 +113,7 @@ export type UserActionTypes = {|
   >,
   USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-    string[],
+    Address[],
   >,
   USER_SUBSCRIBED_TASKS_FETCH: ActionType<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,

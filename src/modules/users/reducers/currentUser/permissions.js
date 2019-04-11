@@ -19,10 +19,10 @@ const userPermissionsReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS: {
       const {
-        payload: { permissions, ensName },
+        payload: { permissions, colonyName },
       } = action;
       return state.mergeIn(
-        [ensName],
+        [colonyName],
         DataRecord<UserPermissionsRecordType>({
           record: UserPermissionsRecord(permissions),
         }),

@@ -12,7 +12,7 @@ import { colonyNativeTokenSelector } from '../../selectors';
 import Assignment from '~core/Assignment';
 
 type Props = TaskProps<{
-  colonyENSName: *,
+  colonyName: *,
   draftId: *,
   payouts: *,
   reputation: *,
@@ -22,12 +22,12 @@ type Props = TaskProps<{
 const displayName = 'dashboard.TaskAssignment';
 
 const TaskAssignment = ({
-  colonyENSName,
+  colonyName,
   payouts,
   reputation,
   worker: workerAddress,
 }: Props) => {
-  const nativeToken = useSelector(colonyNativeTokenSelector, [colonyENSName]);
+  const nativeToken = useSelector(colonyNativeTokenSelector, [colonyName]);
   const { data: worker } = useDataFetcher<UserType>(
     userFetcher,
     [workerAddress],

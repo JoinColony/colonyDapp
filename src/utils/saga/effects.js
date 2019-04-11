@@ -98,7 +98,7 @@ function* callCallerSaga({
 
 /*
  * Gets the caller from the colonyManager and calls it with the given
- * parameters. If no colonyENSName, network context is assumed.
+ * parameters. If no colonyName, network context is assumed.
  */
 export const callCaller = (args: {
   context: 'colony' | 'network',

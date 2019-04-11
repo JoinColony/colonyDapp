@@ -9,7 +9,7 @@ import type { TaskRecordType, TaskType } from './Task';
 import type { TaskFeedItemRecordType, TaskFeedItemType } from './TaskFeedItem';
 
 type Shared = {|
-  colonyENSName: string,
+  colonyName: string,
   commentsStoreAddress: string,
   draftId: string,
   taskStoreAddress: string,
@@ -30,7 +30,7 @@ type TaskReferenceRecordProps = {|
 export type TaskReferenceRecordType = RecordOf<TaskReferenceRecordProps>;
 
 const defaultValues: $Shape<TaskReferenceRecordProps> = {
-  colonyENSName: undefined,
+  colonyName: undefined,
   commentsStoreAddress: undefined,
   draftId: undefined,
   feedItems: undefined,

@@ -64,7 +64,14 @@ type Props = {|
 |};
 
 const ProfileEdit = ({ colony }: Props) => {
-  const { description, guideline, address, ensName, name, website } = colony;
+  const {
+    description,
+    guideline,
+    colonyAddress,
+    colonyName,
+    displayName,
+    website,
+  } = colony;
   return (
     <div className={styles.main}>
       <main className={styles.content}>
@@ -72,10 +79,10 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_PROFILE_UPDATE}
           success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
           error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
-          transform={withKeyPath(ensName)()}
+          transform={withKeyPath(colonyName)()}
           initialValues={{
-            ensName,
-            name,
+            colonyName,
+            displayName,
             description,
             website,
             guideline,
@@ -87,7 +94,7 @@ const ProfileEdit = ({ colony }: Props) => {
               <FieldSet className={styles.section}>
                 <InputLabel label={MSG.labelAddress} />
                 <CopyableAddress appearance={{ theme: 'big' }} full>
-                  {address}
+                  {colonyAddress}
                 </CopyableAddress>
               </FieldSet>
               <FieldSet className={styles.section}>
@@ -98,7 +105,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     size: 'medium',
                     weight: 'thin',
                   }}
-                  text={ENS.getFullDomain('colony', ensName)}
+                  text={ENS.getFullDomain('colony', colonyName)}
                 />
               </FieldSet>
               <div className={styles.divider} />
@@ -106,7 +113,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <Input
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelDisplayName}
-                  name="name"
+                  name="displayName"
                   maxLength={50}
                 />
               </FieldSet>

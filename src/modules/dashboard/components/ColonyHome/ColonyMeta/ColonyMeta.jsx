@@ -50,14 +50,21 @@ type Props = {|
 |};
 
 const ColonyMeta = ({
-  colony: { address, description, ensName, guideline, name, website },
+  colony: {
+    colonyAddress,
+    description,
+    colonyName,
+    guideline,
+    displayName,
+    website,
+  },
   colony,
   canAdminister,
 }: Props) => {
   const { data: roles } = useDataFetcher<RolesType>(
     rolesFetcher,
-    [ensName],
-    [ensName],
+    [colonyName],
+    [colonyName],
   );
 
   const { admins, founder } = roles || {};
@@ -66,18 +73,18 @@ const ColonyMeta = ({
     <div>
       <ColonyAvatar
         className={styles.avatar}
-        address={address}
+        address={colonyAddress}
         colony={colony}
         size="xl"
       />
       <section className={styles.headingWrapper}>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <Fragment>
-            <span>{name}</span>
+            <span>{displayName}</span>
             {canAdminister && (
               <Link
                 className={styles.editColony}
-                to={`/colony/${ensName}/admin`}
+                to={`/colony/${colonyName}/admin`}
               >
                 <Icon name="settings" title={MSG.editColonyTitle} />
               </Link>

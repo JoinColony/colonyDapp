@@ -23,7 +23,7 @@ const coloniesReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.COLONY_FETCH_SUCCESS: {
       const {
-        payload: { tokens, ensName, ...props },
+        payload: { tokens, colonyName, ...props },
       } = action;
       const record = ColonyRecord({
         tokens: ImmutableMap(
@@ -32,12 +32,12 @@ const coloniesReducer: ReducerType<
             TokenReferenceRecord(token),
           ]),
         ),
-        ensName,
+        colonyName,
         ...props,
       });
-      return state.get(ensName)
-        ? state.setIn([ensName, 'record'], record)
-        : state.set(ensName, DataRecord<ColonyRecordType>({ record }));
+      return state.get(colonyName)
+        ? state.setIn([colonyName, 'record'], record)
+        : state.set(colonyName, DataRecord<ColonyRecordType>({ record }));
     }
     case ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
@@ -64,12 +64,12 @@ const coloniesReducer: ReducerType<
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {
         meta: {
-          keyPath: [ensName, tokenAddress],
+          keyPath: [colonyName, tokenAddress],
         },
         payload,
       } = action;
       const previousRecord = state.getIn([
-        ensName,
+        colonyName,
         'record',
         'tokens',
         tokenAddress,
@@ -77,7 +77,10 @@ const coloniesReducer: ReducerType<
       const record = previousRecord
         ? previousRecord.merge(payload)
         : TokenReferenceRecord(payload);
-      return state.setIn([ensName, 'record', 'tokens', tokenAddress], record);
+      return state.setIn(
+        [colonyName, 'record', 'tokens', tokenAddress],
+        record,
+      );
     }
     default:
       return state;

@@ -10,5 +10,5 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 // eslint-disable-next-line import/prefer-default-export
 export const colonyDomainsSelector = (
   state: RootStateRecord,
-  ensName: string,
-) => state.getIn([ns, DASHBOARD_ALL_DOMAINS, ensName]);
+  colonyName: string,
+) => state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyName]);
