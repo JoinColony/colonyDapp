@@ -8,6 +8,7 @@ import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import type { Action } from '~redux';
+import type { ActionTransformFnType } from '~utils/actions';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 import type { AsyncFunction } from '../../createPromiseListener';
 
@@ -152,24 +153,35 @@ export const useAsyncFunction = <P, R>({
   submit,
   success,
   error,
+  transform,
 }: {|
   submit: string,
   success: string,
   error: string,
+  transform?: ActionTransformFnType,
 |}): { current: AsyncFunction<P, R> } => {
-  const ref = useRef();
+  // We provide a default object to be sure that `current` is defined (and an object)
+  const ref = useRef({});
   useEffect(
     () => {
+      let setPayload;
+      if (transform) {
+        setPayload = (action, payload) => {
+          const newAction = transform({ ...action, payload });
+          return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
+        };
+      }
       ref.current = promiseListener.createAsyncFunction<P, R>({
         start: submit,
         resolve: success,
         reject: error,
+        setPayload,
       });
       return () => {
         ref.current.unsubscribe();
       };
     },
-    [submit, success, error],
+    [submit, success, error, transform],
   );
   // TODO can a React genius find out why we don't get the same
   // behaviour when returning ref.current?
