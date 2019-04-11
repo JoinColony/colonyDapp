@@ -68,7 +68,11 @@ export const removeAdmin: UserInboxCommand<*, FeedStore> = ({
   },
 });
 
-export const createDomain: UserInboxCommand<*, FeedStore> = ({
+/*
+ * @NOTE This breaks naming convention by appending `Notification` afther the function's name
+ * This is because there's already a `createDomain` method in the colony commands
+ */
+export const createDomainNotification: UserInboxCommand<*, FeedStore> = ({
   ddb,
   metadata,
 }) => ({

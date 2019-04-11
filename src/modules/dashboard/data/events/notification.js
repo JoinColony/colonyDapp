@@ -16,9 +16,9 @@ export const createColonyCreatedEvent = createEventCreator<
   typeof COLONY_CREATED,
 >(COLONY_CREATED);
 
-export const createTokenCreatedEvent = createEventCreator<
-  typeof TOKEN_CREATED,
->(TOKEN_CREATED);
+export const createTokenCreatedEvent = createEventCreator<typeof TOKEN_CREATED>(
+  TOKEN_CREATED,
+);
 
 export const createColonyLabelCreatedEvent = createEventCreator<
   typeof COLONY_LABEL_CREATED,
