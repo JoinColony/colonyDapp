@@ -3,10 +3,10 @@
 import type { MessageDescriptor, MessageValues } from 'react-intl';
 import type { Node } from 'react';
 
-import React, { Component } from 'react';
+// $FlowFixMe update flow
+import React, { useCallback, useState } from 'react';
 import createDate from 'sugar-date/date/create';
 import formatDate from 'sugar-date/date/format';
-import DayPicker, { DateUtils } from 'react-day-picker';
 
 import type { InputComponentAppearance } from '~core/Fields/Input';
 import type { PopoverTriggerType } from '~core/Popover';
@@ -16,15 +16,20 @@ import Popover from '~core/Popover';
 
 import styles from './DatePicker.css';
 
+import DatePickerContent from './DatePickerContent.jsx';
 import InputField from './InputField.jsx';
-import CaptionElement from './CaptionElement.jsx';
-import NavbarElement from './NavbarElement.jsx';
+
+export type Close = (data?: any, modifiers?: { cancelled: boolean }) => void;
 
 type Props = {|
   /** Appearance object, will be passed down to `Input`, see [InputComponent](#inputcomponent) */
   appearance?: InputComponentAppearance,
+  /** Whether the picker should close when a day is selected */
+  closeOnDayPick?: boolean,
+  /* eslint-disable react/no-unused-prop-types */
   /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
   connect?: boolean,
+  /* eslint-enable react/no-unused-prop-types */
   /** Just render the `<input>` element without label */
   elementOnly?: boolean,
   /** Input field name (form variable) */
@@ -33,191 +38,151 @@ type Props = {|
   help?: string | MessageDescriptor,
   /** Values for help text (react-intl interpolation) */
   helpValues?: MessageValues,
-  /** Pass a ref to the `<input>` element */
-  innerRef?: (ref: ?HTMLElement) => void,
   /** Label text */
   label: string | MessageDescriptor,
   /** Values for label text (react-intl interpolation) */
   labelValues?: MessageValues,
   /** Placeholder for input */
   placeholder?: string,
+  /** Render content below the date picker, inside the popover. Useful to combine with `preventClose` */
+  renderContentFooter?: (close: Close, currentDate: ?Date) => Node,
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */
   renderTrigger?: PopoverTriggerType,
-  /** Wheather or not to show the Popover's arrow */
+  /** Whether or not to show the Popover's arrow */
   showArrow?: boolean,
-  /** Callback to call when a date is picked. Only needed when using `connect={false}` */
-  setValue: (val: ?Date) => void,
-  /** @ignore Will be injected by `asField` */
-  $error?: string,
   /** @ignore Will be injected by `asField` */
   $value?: ?Date,
   /** @ignore Will be injected by `asField` */
-  setError: (val: any) => void,
-  /** @ignore Will be injected by `asField` */
-  onBlur: (evt: SyntheticFocusEvent<HTMLInputElement>) => void,
-  /** @ignore Will be injected by `asField` */
-  onChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
-  /**
-   * Render children under the date picker, inside the popover
-   *
-   * If the children are a function, pass them the close method.
-   * Useful to combine with `preventClose`
-   */
-  children?: Node | ((val: any) => void),
-  /**
-   * If set, it will not close the popover when clicking the new date
-   */
-  preventClose?: boolean,
-  /**
-   * If set, it will manually overwrite the currently selected date
-   *
-   * It's kind of a hardswitch to be able to select a date even when you're not
-   * connected to a form.
-   *
-   * This implies you handle the state on you're own.
-   */
-  selectedDate?: ?Date,
-|};
-
-type State = {|
-  inputValue: string,
-  currentDate: ?Date,
+  setValue: (val: ?Date) => void,
 |};
 
 const getShortDate = (date: Date) => formatDate(date, '{date} {Mon} {year}');
 
-class DatePicker extends Component<Props, State> {
-  static displayName = 'DatePicker';
+const displayName = 'DatePicker';
 
-  static defaultProps = {
-    $value: null,
-  };
+const DatePicker = ({
+  appearance,
+  closeOnDayPick,
+  elementOnly,
+  help,
+  helpValues,
+  label,
+  labelValues,
+  name,
+  // onChange,
+  placeholder,
+  renderContentFooter,
+  renderTrigger,
+  showArrow,
+  // setError,
+  setValue,
+  $value,
+}: Props) => {
+  // Handles state of the input field if present
+  const [inputValue, setInputValue] = useState('');
+  // currentDate is a temporary value to represent the value when it's not set yet (active day in date picker)
+  const [currentDate, setCurrentDate] = useState($value);
 
-  state = {
-    inputValue: '',
-    currentDate: null,
-  };
+  // Handle day picking via daypicker
+  const handleDayPick = useCallback(day => {
+    setCurrentDate(day);
+    setInputValue(getShortDate(day));
+  }, []);
 
-  handlePopoverClose = (day, { cancelled } = {}) => {
-    const { $value, setValue } = this.props;
-    const { currentDate, inputValue } = this.state;
-    // User cancelled using ESC
-    if (cancelled) {
-      this.setState({
-        inputValue: $value ? getShortDate($value) : '',
-        currentDate: $value || null,
-      });
-      return;
-    }
-    // User clicked on the day
-    if (day && day instanceof Date) {
-      setValue(day);
-      this.setState({
-        inputValue: getShortDate(day),
-        currentDate: null,
-      });
-      return;
-    }
-    // User removed the input value and closed
-    if (!inputValue) {
-      setValue(null);
-      this.setState({
-        inputValue: '',
-        currentDate: null,
-      });
-      return;
-    }
-    // User typed in a day and tabbed out
-    if (currentDate) {
-      setValue(currentDate);
-      this.setState({
-        inputValue: getShortDate(currentDate),
-        currentDate: null,
-      });
-    }
-  };
-
-  handleInputChange = evt => {
+  // Handle day picking via input field
+  const handleInputChange = useCallback(evt => {
     const maybeDate = createDate(evt.target.value);
+    setInputValue(evt.target.value);
     if (maybeDate instanceof Date && !Number.isNaN(maybeDate.valueOf())) {
-      this.setState({
-        currentDate: maybeDate,
-        inputValue: evt.target.value,
-      });
-    } else {
-      this.setState({ inputValue: evt.target.value });
+      setCurrentDate(maybeDate);
     }
-  };
+  }, []);
 
-  getTrigger = () => {
-    const {
-      appearance,
-      label,
-      name,
-      placeholder,
-      renderTrigger,
-      onBlur,
-      onChange,
-      setError,
-      setValue,
-      $value,
-      ...datePickerProps
-    } = this.props;
-    const { inputValue } = this.state;
-    if (renderTrigger) return renderTrigger;
-    return ({ ref, ...props }) => (
-      <InputField
-        appearance={appearance}
-        name={name}
-        label={label}
-        innerRef={ref}
-        onChange={this.handleInputChange}
-        placeholder={placeholder}
-        value={inputValue}
-        {...datePickerProps}
-        {...props}
+  // Handle what should happen when the popover closes based on current state
+  const handlePopoverClose = useCallback(
+    (day, { cancelled } = {}) => {
+      // User cancelled using ESC
+      if (cancelled) {
+        setInputValue($value ? getShortDate($value) : '');
+        setCurrentDate($value || null);
+        return;
+      }
+      /* User:
+        a) has selected a date and then clicked outside of the popover (=close)
+        b) typed in a day and tabbed out
+        c) clicked on a date with `closeOnDayPick` on
+      */
+      const date = day || currentDate;
+      if (date) {
+        setValue(date);
+        setInputValue(getShortDate(date));
+        setCurrentDate(null);
+        return;
+      }
+      // User removed the input value and closed
+      if (!inputValue) {
+        setValue(null);
+        setInputValue('');
+        setCurrentDate(null);
+      }
+    },
+    [$value, currentDate, inputValue, setValue],
+  );
+
+  const selectedDay = currentDate || $value;
+
+  const renderDatePickerContent = useCallback(
+    close => (
+      <DatePickerContent
+        close={close}
+        closeOnDayPick={closeOnDayPick}
+        currentDate={currentDate}
+        onDayPick={handleDayPick}
+        selectedDay={selectedDay}
+        renderContentFooter={renderContentFooter}
       />
-    );
-  };
+    ),
+    [
+      closeOnDayPick,
+      currentDate,
+      handleDayPick,
+      renderContentFooter,
+      selectedDay,
+    ],
+  );
 
-  render() {
-    const {
-      $value,
-      children,
-      preventClose,
-      selectedDate: manuallySelectedDate,
-      showArrow = true,
-    } = this.props;
-    const { currentDate } = this.state;
-    const selectedDay = manuallySelectedDate || currentDate || $value;
-    return (
-      <div className={styles.main}>
-        <Popover
-          className={styles.picker}
-          placement="bottom"
-          retainRefFocus
-          onClose={this.handlePopoverClose}
-          showArrow={showArrow}
-          content={({ close }) => (
-            <div>
-              <DayPicker
-                classNames={styles}
-                enableOutsideDays
-                month={currentDate || new Date()}
-                onDayClick={preventClose ? this.handlePopoverClose : close}
-                selectedDays={day => DateUtils.isSameDay(selectedDay, day)}
-                captionElement={props => <CaptionElement {...props} />}
-                navbarElement={props => <NavbarElement {...props} />}
-              />
-              {typeof children == 'function' ? children({ close }) : children}
-            </div>
-          )}
-        >
-          {this.getTrigger()}
-        </Popover>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={styles.main}>
+      <Popover
+        className={styles.picker}
+        onClose={handlePopoverClose}
+        placement="bottom"
+        retainRefFocus
+        showArrow={showArrow}
+        content={({ close }) => renderDatePickerContent(close)}
+      >
+        {renderTrigger ||
+          (({ ref, ...props }) => (
+            <InputField
+              appearance={appearance}
+              elementOnly={elementOnly}
+              name={name}
+              help={help}
+              helpValues={helpValues}
+              label={label}
+              labelValues={labelValues}
+              innerRef={ref}
+              onChange={handleInputChange}
+              placeholder={placeholder}
+              value={inputValue}
+              {...props}
+            />
+          ))}
+      </Popover>
+    </div>
+  );
+};
+
+DatePicker.displayName = displayName;
 
 export default asField()(DatePicker);
