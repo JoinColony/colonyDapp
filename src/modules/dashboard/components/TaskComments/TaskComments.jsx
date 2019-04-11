@@ -5,16 +5,16 @@ import type { FormikProps } from 'formik';
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
-import promiseListener from '../../../../createPromiseListener';
 
 import type { OpenDialog } from '~core/Dialog/types';
 import type { UserType } from '~immutable';
 
+import { ACTIONS } from '~redux';
+import { useAsyncFunction } from '~utils/hooks';
 import withDialog from '~core/Dialog/withDialog';
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
-import { ACTIONS } from '~redux';
 
 import { userDidClaimProfile } from '../../../users/checks';
 
@@ -69,11 +69,12 @@ const TaskComments = ({
   currentUser,
   draftId,
 }: Props) => {
-  const addComment = promiseListener.createAsyncFunction({
-    start: ACTIONS.TASK_COMMENT_ADD,
-    resolve: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
-    reject: ACTIONS.TASK_COMMENT_ADD_ERROR,
+  const addComment = useAsyncFunction({
+    submit: ACTIONS.TASK_COMMENT_ADD,
+    success: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
+    error: ACTIONS.TASK_COMMENT_ADD_ERROR,
   });
+
   const didClaimProfile = userDidClaimProfile(currentUser);
 
   const handleKeyboardSubmit = (
@@ -92,18 +93,16 @@ const TaskComments = ({
   };
 
   const handleCommentSubmit = ({ comment }: FormValues, actions) => {
-    addComment
-      .asyncFunction({
-        commentData: {
-          body: comment,
-          author: walletAddress,
-        },
-        draftId,
-      })
-      .then(() => {
-        actions.setSubmitting(false);
-        actions.resetForm({});
-      });
+    addComment({
+      commentData: {
+        body: comment,
+        author: walletAddress,
+      },
+      draftId,
+    }).then(() => {
+      actions.setSubmitting(false);
+      actions.resetForm({});
+    });
   };
 
   const handleUnclaimedProfile = () => {

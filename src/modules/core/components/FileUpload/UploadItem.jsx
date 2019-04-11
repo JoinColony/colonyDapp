@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import { log } from '~utils/debug';
+
 import fileReader from '../../../../lib/fileReader';
 
 import type { UploadFile, FileReaderFile } from './types';
@@ -68,7 +70,6 @@ class UploadItem extends Component<Props> {
     const {
       $value: { error, file, uploaded },
     } = this.props;
-
     if (file && !error && !uploaded) {
       this.uploadFile();
     }
@@ -90,6 +91,7 @@ class UploadItem extends Component<Props> {
       setValue({ ...$value, preview: readFile.data });
       fileReference = await upload(readFile);
     } catch (e) {
+      log(e);
       // TODO better error handling here
       setValue({ ...$value, error: 'uploadError' });
       return;

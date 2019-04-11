@@ -192,7 +192,7 @@ function* userProfileUpdate({
 
 function* userRemoveAvatar({
   meta,
-}: Action<typeof ACTIONS.USER_REMOVE_AVATAR>): Saga<void> {
+}: Action<typeof ACTIONS.USER_AVATAR_REMOVE>): Saga<void> {
   try {
     const address = yield select(walletAddressSelector);
     const context = {
@@ -204,20 +204,20 @@ function* userRemoveAvatar({
 
     yield* executeCommand(context, removeUserAvatar);
 
-    yield put<Action<typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS>>({
-      type: ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
+    yield put<Action<typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS>>({
+      type: ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
       meta,
       payload: { address },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_REMOVE_AVATAR_ERROR, error, meta);
+    yield putError(ACTIONS.USER_AVATAR_REMOVE_ERROR, error, meta);
   }
 }
 
 function* userUploadAvatar({
   meta,
   payload,
-}: Action<typeof ACTIONS.USER_UPLOAD_AVATAR>): Saga<void> {
+}: Action<typeof ACTIONS.USER_AVATAR_UPLOAD>): Saga<void> {
   try {
     const address = yield select(walletAddressSelector);
     const context = {
@@ -231,13 +231,13 @@ function* userUploadAvatar({
 
     yield* executeCommand(context, setUserAvatar, { ipfsHash });
 
-    yield put<Action<typeof ACTIONS.USER_UPLOAD_AVATAR_SUCCESS>>({
-      type: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
+    yield put<Action<typeof ACTIONS.USER_AVATAR_UPLOAD_SUCCESS>>({
+      type: ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
       meta,
       payload: { hash: ipfsHash, avatar: payload.data, address },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_UPLOAD_AVATAR_ERROR, error, meta);
+    yield putError(ACTIONS.USER_AVATAR_UPLOAD_ERROR, error, meta);
   }
 }
 
@@ -508,7 +508,7 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeLatest(ACTIONS.USERNAME_CREATE, usernameCreate);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
-  yield takeLatest(ACTIONS.USER_REMOVE_AVATAR, userRemoveAvatar);
+  yield takeLatest(ACTIONS.USER_AVATAR_REMOVE, userRemoveAvatar);
   yield takeLatest(ACTIONS.USER_TOKENS_UPDATE, userTokensUpdate);
-  yield takeLatest(ACTIONS.USER_UPLOAD_AVATAR, userUploadAvatar);
+  yield takeLatest(ACTIONS.USER_AVATAR_UPLOAD, userUploadAvatar);
 }

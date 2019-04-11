@@ -13,9 +13,9 @@ const currentUserProfileReducer: ReducerType<
   {|
     CURRENT_USER_CREATE: *,
     CURRENT_USER_GET_BALANCE_SUCCESS: *,
+    USER_AVATAR_REMOVE_SUCCESS: *,
+    USER_AVATAR_UPLOAD_SUCCESS: *,
     USER_PROFILE_UPDATE_SUCCESS: *,
-    USER_REMOVE_AVATAR_SUCCESS: *,
-    USER_UPLOAD_AVATAR_SUCCESS: *,
     USERNAME_CREATE_SUCCESS: *,
   |},
 > = (state = UserProfileRecord(), action) => {
@@ -33,11 +33,11 @@ const currentUserProfileReducer: ReducerType<
       } = action.payload;
       return state.set('username', username);
     }
-    case ACTIONS.USER_UPLOAD_AVATAR_SUCCESS: {
+    case ACTIONS.USER_AVATAR_UPLOAD_SUCCESS: {
       const { hash } = action.payload;
       return state.set('avatarHash', hash);
     }
-    case ACTIONS.USER_REMOVE_AVATAR_SUCCESS: {
+    case ACTIONS.USER_AVATAR_REMOVE_SUCCESS: {
       return state.delete('avatarHash');
     }
     case ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS: {

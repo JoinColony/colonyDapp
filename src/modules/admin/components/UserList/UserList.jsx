@@ -2,16 +2,14 @@
 
 import type { MessageDescriptor } from 'react-intl';
 
-import React, { Component } from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 
+import { compose, mergePayload, withKeyPath } from '~utils/actions';
+import { useAsyncFunction } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 
-import { compose, mergePayload, withKeyPath } from '~utils/actions';
-
-import type { AsyncFunction } from '../../../../createPromiseListener';
-
-import promiseListener from '../../../../createPromiseListener';
 import UserListItem from './UserListItem.jsx';
 
 import styles from './UserList.css';
@@ -56,73 +54,67 @@ type Props = {|
   colonyName: string,
 |};
 
-const displayName: string = 'admin.UserList';
+const displayName = 'admin.UserList';
 
-class UserList extends Component<Props> {
-  remove: AsyncFunction<Object, empty>;
+const UserList = ({
+  colonyName,
+  label,
+  remove,
+  removeSuccess,
+  removeError,
+  users,
+  showDisplayName,
+  showUsername,
+  showMaskedAddress,
+  viewOnly = true,
+}: Props) => {
+  const transform = compose(
+    withKeyPath(colonyName),
+    mergePayload({ colonyName }),
+  );
 
-  static displayName = 'admin.UserList';
+  const removeFn = useAsyncFunction({
+    submit: remove,
+    success: removeSuccess,
+    error: removeError,
+    transform,
+  });
 
-  constructor(props: Props) {
-    super(props);
-    const { remove, removeSuccess, removeError, colonyName } = this.props;
+  const handleRemove = useCallback(
+    (user: string) => removeFn({ user }),
+    // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
+    [removeFn],
+  );
 
-    const setPayload = (originalAction: *, payload: Object) =>
-      compose(
-        withKeyPath(colonyName),
-        mergePayload({ colonyName }),
-      )()({ ...originalAction, payload });
-
-    this.remove = promiseListener.createAsyncFunction({
-      start: remove,
-      resolve: removeSuccess,
-      reject: removeError,
-      setPayload,
-    });
-  }
-
-  componentWillUnmount() {
-    this.remove.unsubscribe();
-  }
-
-  render() {
-    const {
-      users,
-      showDisplayName,
-      showUsername,
-      showMaskedAddress,
-      viewOnly = true,
-      label,
-    } = this.props;
-    return (
-      <div className={styles.main}>
-        {label && (
-          <Heading
-            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-            text={label}
-          />
-        )}
-        <div className={styles.listWrapper}>
-          <Table scrollable>
-            <TableBody>
-              {users.map(user => (
-                <UserListItem
-                  key={user}
-                  address={user}
-                  showDisplayName={showDisplayName}
-                  showUsername={showUsername}
-                  showMaskedAddress={showMaskedAddress}
-                  viewOnly={viewOnly}
-                  onRemove={() => this.remove.asyncFunction({ user })}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+  return (
+    <div className={styles.main}>
+      {label && (
+        <Heading
+          appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+          text={label}
+        />
+      )}
+      <div className={styles.listWrapper}>
+        <Table scrollable>
+          <TableBody>
+            {users.map(user => (
+              <UserListItem
+                key={user}
+                address={user}
+                showDisplayName={showDisplayName}
+                showUsername={showUsername}
+                showMaskedAddress={showMaskedAddress}
+                viewOnly={viewOnly}
+                // TODO: we probably want to delegate this to the userListItem somehow?
+                onRemove={handleRemove}
+              />
+            ))}
+          </TableBody>
+        </Table>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 UserList.displayName = displayName;
 

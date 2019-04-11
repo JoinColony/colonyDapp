@@ -159,33 +159,26 @@ export const useAsyncFunction = <P, R>({
   success: string,
   error: string,
   transform?: ActionTransformFnType,
-|}): { current: AsyncFunction<P, R> } => {
-  // We provide a default object to be sure that `current` is defined (and an object)
-  const ref = useRef({});
-  useEffect(
-    () => {
-      let setPayload;
-      if (transform) {
-        setPayload = (action, payload) => {
-          const newAction = transform({ ...action, payload });
-          return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
-        };
-      }
-      ref.current = promiseListener.createAsyncFunction<P, R>({
-        start: submit,
-        resolve: success,
-        reject: error,
-        setPayload,
-      });
-      return () => {
-        ref.current.unsubscribe();
+|}): $PropertyType<AsyncFunction<P, R>, 'asyncFunction'> => {
+  const ref = useRef();
+  if (!ref.current) {
+    let setPayload;
+    if (transform) {
+      setPayload = (action, payload) => {
+        const newAction = transform({ ...action, payload });
+        return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
       };
-    },
-    [submit, success, error, transform],
-  );
-  // TODO can a React genius find out why we don't get the same
-  // behaviour when returning ref.current?
-  return ref;
+    }
+    ref.current = promiseListener.createAsyncFunction<P, R>({
+      start: submit,
+      resolve: success,
+      reject: error,
+      setPayload,
+    });
+  }
+  // Automatically unsubscribe on unmount
+  useEffect(() => () => ref.current.unsubscribe(), []);
+  return ref.current.asyncFunction;
 };
 
 /*

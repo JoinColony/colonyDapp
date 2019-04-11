@@ -6,13 +6,11 @@ import type { ActionTypeString } from '~redux';
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import MakeAsyncFunction from 'react-redux-promise-listener';
 
 import type { ActionTransformFnType } from '~utils/actions';
 
 import { log } from '~utils/debug';
-
-import promiseListener from '../../../../../createPromiseListener';
+import { useAsyncFunction } from '~utils/hooks';
 
 import Form from './Form.jsx';
 
@@ -69,41 +67,26 @@ const ActionForm = ({
   transform,
   ...props
 }: Props) => {
-  // Always pass through meta props (and merge payload)
-  let setPayloadFn;
-  if (transform) {
-    setPayloadFn = (action, payload) => {
-      const newAction = transform({ ...action, payload });
-      return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
-    };
-  }
-  return (
-    <MakeAsyncFunction
-      listener={promiseListener}
-      start={submit}
-      resolve={success}
-      reject={error}
-      setPayload={setPayloadFn}
-    >
-      {asyncFunc => {
-        const handleSubmit = (values, formikBag) =>
-          asyncFunc(values, formikBag).then(
-            res => {
-              formikBag.setSubmitting(false);
-              if (typeof onSuccess === 'function') {
-                onSuccess(res, formikBag, values);
-              }
-            },
-            err => {
-              formikBag.setSubmitting(false);
-              if (typeof onError === 'function')
-                onError(err, formikBag, values);
-            },
-          );
-        return <Form {...props} onSubmit={handleSubmit} />;
-      }}
-    </MakeAsyncFunction>
-  );
+  const asyncFunction = useAsyncFunction({
+    submit,
+    error,
+    success,
+    transform,
+  });
+  const handleSubmit = (values, formikBag) =>
+    asyncFunction(values).then(
+      res => {
+        formikBag.setSubmitting(false);
+        if (typeof onSuccess === 'function') {
+          onSuccess(res, formikBag, values);
+        }
+      },
+      err => {
+        formikBag.setSubmitting(false);
+        if (typeof onError === 'function') onError(err, formikBag, values);
+      },
+    );
+  return <Form {...props} onSubmit={handleSubmit} />;
 };
 
 Form.displayName = displayName;

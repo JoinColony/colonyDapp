@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import { log } from '~utils/debug';
+
 import styles from './AvatarUploadItem.css';
 
 import type { FileReaderFile, UploadFile } from '../FileUpload';
@@ -73,6 +75,7 @@ class AvatarUploadItem extends Component<Props> {
       setValue({ ...$value, preview: readFile.data });
       await upload(readFile);
     } catch (e) {
+      log(e);
       // TODO better error handling here
       setValue({ ...$value, error: 'uploadError' });
     }

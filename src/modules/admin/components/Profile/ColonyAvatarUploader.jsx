@@ -1,19 +1,15 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { FileReaderFile } from '~core/FileUpload';
 import type { ColonyType } from '~immutable';
 
-import AvatarUploader from '~core/AvatarUploader';
-import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { ACTIONS } from '~redux';
 import { withKeyPath } from '~utils/actions';
-
-import promiseListener from '../../../../createPromiseListener';
-
-import type { AsyncFunction } from '../../../../createPromiseListener';
+import { useAsyncFunction } from '~utils/hooks';
+import AvatarUploader from '~core/AvatarUploader';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import styles from './ColonyAvatarUploader.css';
 
@@ -34,60 +30,47 @@ type Props = {|
   colony: ColonyType,
 |};
 
-class ColonyAvatarUploader extends Component<Props> {
-  remove: AsyncFunction<Object, empty>;
+const displayName = 'admin.Profile.ColonyAvatarUploader';
 
-  upload: AsyncFunction<FileReaderFile, empty>;
+const uploadActions = {
+  submit: ACTIONS.COLONY_AVATAR_UPLOAD,
+  success: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
+  error: ACTIONS.COLONY_AVATAR_UPLOAD_ERROR,
+};
 
-  static displayName = 'admin.Profile.ColonyAvatarUploader';
+const removeActions = {
+  submit: ACTIONS.COLONY_AVATAR_REMOVE,
+  success: ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS,
+  error: ACTIONS.COLONY_AVATAR_REMOVE_ERROR,
+};
 
-  constructor(props: Props) {
-    super(props);
-    const setPayload = (originalAction: *, payload: Object) =>
-      withKeyPath(props.colony.colonyName)({ ...originalAction, payload });
+const ColonyAvatarUploader = ({ colony }: Props) => {
+  const transform = withKeyPath(colony.colonyName);
+  const upload = useAsyncFunction({ ...uploadActions, transform });
+  const remove = useAsyncFunction({ ...removeActions, transform });
 
-    this.upload = promiseListener.createAsyncFunction({
-      start: ACTIONS.COLONY_AVATAR_UPLOAD,
-      resolve: ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS,
-      reject: ACTIONS.COLONY_AVATAR_UPLOAD_ERROR,
-      setPayload,
-    });
-    this.remove = promiseListener.createAsyncFunction({
-      start: ACTIONS.COLONY_AVATAR_REMOVE,
-      resolve: ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS,
-      reject: ACTIONS.COLONY_AVATAR_REMOVE_ERROR,
-      setPayload,
-    });
-  }
+  return (
+    <AvatarUploader
+      label={MSG.labelProfilePicture}
+      help={MSG.labelUploader}
+      placeholder={
+        <ColonyAvatar
+          /*
+           * @NOTE Unlike other components this does not override the main class
+           * But appends the current one to that
+           */
+          className={styles.main}
+          address={colony.colonyAddress}
+          colony={colony}
+          size="xl"
+        />
+      }
+      upload={upload}
+      remove={remove}
+    />
+  );
+};
 
-  componentWillUnmount() {
-    this.upload.unsubscribe();
-    this.remove.unsubscribe();
-  }
-
-  render() {
-    const { colony } = this.props;
-    return (
-      <AvatarUploader
-        label={MSG.labelProfilePicture}
-        help={MSG.labelUploader}
-        placeholder={
-          <ColonyAvatar
-            /*
-             * @NOTE Unlike other components this does not override the main class
-             * But appends the current one to that
-             */
-            className={styles.main}
-            address={colony.colonyAddress}
-            colony={colony}
-            size="xl"
-          />
-        }
-        upload={avatarData => this.upload.asyncFunction(avatarData)}
-        remove={() => this.remove.asyncFunction({})}
-      />
-    );
-  }
-}
+ColonyAvatarUploader.displayName = displayName;
 
 export default ColonyAvatarUploader;
