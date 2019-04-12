@@ -76,7 +76,7 @@ const validateNativeTokenSelect = (nativeToken?: TokenReferenceType): any => {
 };
 
 const TokenCheckbox = ({
-  token: { address, isNative = false, icon },
+  token: { address, isNative = false, iconHash },
 }: {
   token: TokenReferenceType,
 }) => {
@@ -88,10 +88,10 @@ const TokenCheckbox = ({
       name="tokens"
       disabled={isNative || tokenIsETH(token)}
     >
-      {!!icon && (
+      {!!iconHash && (
         <img
           // TODO: this is cheating, we should load from our own node
-          src={`https://ipfs.io/ipfs/${icon}`}
+          src={`https://ipfs.io/ipfs/${iconHash}`}
           alt={token.name}
           className={styles.tokenChoiceIcon}
         />

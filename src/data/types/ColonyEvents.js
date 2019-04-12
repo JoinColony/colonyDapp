@@ -75,7 +75,7 @@ export type ColonyEvents = {|
     typeof TOKEN_INFO_ADDED,
     {|
       address: string,
-      icon?: string,
+      iconHash?: string,
       isNative?: boolean,
       name: string,
       symbol: string,

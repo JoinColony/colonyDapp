@@ -26,7 +26,7 @@ type Props = {|
 const displayName = 'admin.Tokens.TokenCard';
 
 const TokenCard = ({
-  token: { address, isNative, balance, icon },
+  token: { address, isNative, balance, iconHash },
   token: tokenReference,
 }: Props) => {
   const token = useToken(address);
@@ -34,10 +34,10 @@ const TokenCard = ({
   return token ? (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
-        {!!icon && (
+        {!!iconHash && (
           <div className={styles.iconContainer}>
             {/* TODO: this is cheating, we should load from our own node */}
-            <img src={`https://ipfs.io/ipfs/${icon}`} alt={name} />
+            <img src={`https://ipfs.io/ipfs/${iconHash}`} alt={name} />
           </div>
         )}
         <div className={styles.tokenSymbol}>
