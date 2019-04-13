@@ -69,12 +69,10 @@ const DatePicker = ({
   label,
   labelValues,
   name,
-  // onChange,
   placeholder,
   renderContentFooter,
   renderTrigger,
   showArrow,
-  // setError,
   setValue,
   $value,
 }: Props) => {

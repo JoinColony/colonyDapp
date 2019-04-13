@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl';
 import type { TaskProps } from '~immutable';
 
 import { useAsyncFunction } from '~utils/hooks';
+import { log } from '~utils/debug';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -62,7 +63,7 @@ const TaskDomains = ({
         });
         setSelectedDomainId(domainValue.id);
       } catch (error) {
-        console.error(error);
+        log(error);
       }
     },
     [colonyName, draftId, setDomain],

@@ -8,6 +8,7 @@ import type { TaskProps } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { useAsyncFunction } from '~utils/hooks';
+import { log } from '~utils/debug';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -56,7 +57,7 @@ const TaskSkills = ({ colonyName, draftId, isTaskCreator, skillId }: Props) => {
         });
       } catch (error) {
         // TODO: handle this error properly / display it in some way
-        console.error(error);
+        log(error);
       }
     },
     [colonyName, draftId, setSkill],

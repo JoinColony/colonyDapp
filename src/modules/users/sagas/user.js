@@ -190,7 +190,7 @@ function* userProfileUpdate({
   }
 }
 
-function* userRemoveAvatar({
+function* userAvatarRemove({
   meta,
 }: Action<typeof ACTIONS.USER_AVATAR_REMOVE>): Saga<void> {
   try {
@@ -214,7 +214,7 @@ function* userRemoveAvatar({
   }
 }
 
-function* userUploadAvatar({
+function* userAvatarUpload({
   meta,
   payload,
 }: Action<typeof ACTIONS.USER_AVATAR_UPLOAD>): Saga<void> {
@@ -508,7 +508,7 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeLatest(ACTIONS.USERNAME_CREATE, usernameCreate);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);
-  yield takeLatest(ACTIONS.USER_AVATAR_REMOVE, userRemoveAvatar);
+  yield takeLatest(ACTIONS.USER_AVATAR_REMOVE, userAvatarRemove);
+  yield takeLatest(ACTIONS.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ACTIONS.USER_TOKENS_UPDATE, userTokensUpdate);
-  yield takeLatest(ACTIONS.USER_AVATAR_UPLOAD, userUploadAvatar);
 }
