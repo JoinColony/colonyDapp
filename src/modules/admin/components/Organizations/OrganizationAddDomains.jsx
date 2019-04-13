@@ -50,7 +50,7 @@ const OrganizationAddDomains = ({ colonyName }: Props) => (
       onSuccess={(_, { resetForm }) => {
         resetForm();
       }}
-      transform={withKeyPath(colonyName)()}
+      transform={withKeyPath(colonyName)}
       initialValues={{
         domainName: '',
       }}

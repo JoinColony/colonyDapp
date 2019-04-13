@@ -16,32 +16,37 @@ type Props = {
   submit: string,
   success: string,
   values?: Object | (() => Object | Promise<Object>),
+  onSuccess?: (result: any) => void,
 };
 
 const ActionButton = ({
   button,
-  error: reject,
-  submit: start,
-  success: resolve,
+  error,
+  submit,
+  success,
+  onSuccess,
   values,
   ...props
 }: Props) => {
   const isMountedRef = useMounted();
   const [loading, setLoading] = useState(false);
-  const asyncFunc = useAsyncFunction({ start, reject, resolve });
+  const asyncFunction = useAsyncFunction({ submit, error, success });
 
   const handleClick = async () => {
+    let result;
     setLoading(true);
     try {
       const asyncFuncValues =
         typeof values == 'function' ? await values() : values;
-      await asyncFunc.current.asyncFunction(asyncFuncValues);
+      await asyncFunction(asyncFuncValues);
       if (isMountedRef.current) setLoading(false);
-    } catch (error) {
-      log(error);
+    } catch (err) {
+      log(err);
       setLoading(false);
       // TODO: display error somewhere
+      return;
     }
+    if (typeof onSuccess == 'function') onSuccess(result);
   };
 
   const Button = button || DefaultButton;

@@ -81,7 +81,7 @@ const StepCreateColony = ({ nextStep, wizardForm, wizardValues }: Props) => (
     submit={ACTIONS.COLONY_CREATE}
     error={ACTIONS.COLONY_CREATE_ERROR}
     success={ACTIONS.COLONY_CREATE_SUCCESS}
-    transform={mergePayload({ tokenAddress: wizardValues.tokenAddress })()}
+    transform={mergePayload({ tokenAddress: wizardValues.tokenAddress })}
     onSuccess={({ eventData: { colonyId, colonyAddress } }) =>
       nextStep({
         ...wizardValues,

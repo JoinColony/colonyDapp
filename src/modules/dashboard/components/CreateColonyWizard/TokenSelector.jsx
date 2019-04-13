@@ -1,19 +1,17 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import { isAddress } from 'web3-utils';
 
+import { useAsyncFunction, usePrevious } from '~utils/hooks';
 import { Input } from '~core/Fields';
 import Button from '~core/Button';
 import { log } from '~utils/debug';
 import { ACTIONS } from '~redux';
 
 import styles from './StepSelectToken.css';
-
-import promiseListener from '../../../../createPromiseListener';
-
-import type { AsyncFunction } from '../../../../createPromiseListener';
 
 const MSG = defineMessages({
   inputLabel: {
@@ -53,10 +51,6 @@ type Props = {|
   tokenData: ?TokenData,
 |};
 
-type State = {|
-  isLoading: boolean,
-|};
-
 const getStatusText = (tokenData, isLoading) => {
   if (isLoading) {
     return { status: MSG.statusLoading };
@@ -69,89 +63,85 @@ const getStatusText = (tokenData, isLoading) => {
     : { status: MSG.hint };
 };
 
-class TokenSelector extends Component<Props, State> {
-  getToken: AsyncFunction<{ tokenAddress: string }, any>;
+const displayName = 'dashboard.CreateColonyWizard.TokenSelector';
 
-  static displayName = 'dashboard.CreateColonyWizard.TokenSelector';
+const TokenSelector = ({ tokenAddress, onTokenSelect, tokenData }: Props) => {
+  const getToken = useAsyncFunction({
+    submit: ACTIONS.TOKEN_INFO_FETCH,
+    success: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
+    error: ACTIONS.TOKEN_INFO_FETCH_ERROR,
+  });
 
-  constructor(props: Props) {
-    super(props);
-    this.state = { isLoading: false };
-    this.getToken = promiseListener.createAsyncFunction({
-      start: ACTIONS.TOKEN_INFO_FETCH,
-      resolve: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-      reject: ACTIONS.TOKEN_INFO_FETCH_ERROR,
-    });
-  }
+  const [isLoading, setLoading] = useState(false);
 
-  componentDidUpdate({ tokenAddress: prevTokenAddress }: Props) {
-    const { onTokenSelect, tokenAddress } = this.props;
-    const { isLoading } = this.state;
+  const handleGetTokenSuccess = useCallback(
+    ({ name, symbol }: TokenData) => {
+      setLoading(false);
+      if (!name || !symbol) {
+        onTokenSelect(null);
+        return;
+      }
+      onTokenSelect({ name, symbol });
+    },
+    [onTokenSelect],
+  );
 
-    // Guard against updates that don't include a new, valid `tokenAddress`,
-    // or if the form is submitting or loading.
-
-    if (tokenAddress === prevTokenAddress || isLoading) return;
-
-    if (!tokenAddress || !tokenAddress.length || !isAddress(tokenAddress)) {
-      onTokenSelect();
-      return;
-    }
-
-    // For a valid address, attempt to load token info.
-    // XXX this is setting state during `componentDidUpdate`, which is
-    // generally a bad idea, but we are guarding against it by checking the
-    // state first.
-    this.setLoading(true);
-    onTokenSelect();
-
-    // Get the token address and handle success/error
-    this.getToken
-      .asyncFunction({ tokenAddress })
-      .then((...args) => this.handleGetTokenSuccess(...args))
-      .catch(error => this.handleGetTokenError(error));
-  }
-
-  componentWillUnmount() {
-    this.getToken.unsubscribe();
-  }
-
-  setLoading(isLoading: boolean) {
-    this.setState({ isLoading });
-  }
-
-  handleGetTokenSuccess({ name, symbol }: TokenData) {
-    const { onTokenSelect } = this.props;
-    this.setLoading(false);
-    if (!name || !symbol) {
+  const handleGetTokenError = useCallback(
+    (error: Error) => {
+      setLoading(false);
       onTokenSelect(null);
-      return;
-    }
-    onTokenSelect({ name, symbol });
-  }
+      log(error);
+    },
+    [onTokenSelect],
+  );
 
-  handleGetTokenError(error: Error) {
-    const { onTokenSelect } = this.props;
-    this.setLoading(false);
-    onTokenSelect(null);
-    log(error);
-  }
+  const prevTokenAddress = usePrevious(tokenAddress);
 
-  render() {
-    const { tokenData } = this.props;
-    const { isLoading } = this.state;
-    return (
-      // TODO: I feel like this should be a custom input component at some point, that'd spare us a lot of hassle
-      <div className={styles.main}>
-        <Input
-          name="tokenAddress"
-          label={MSG.inputLabel}
-          extra={<Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />}
-          {...getStatusText(tokenData, isLoading)}
-        />
-      </div>
-    );
-  }
-}
+  useEffect(
+    () => {
+      // Guard against updates that don't include a new, valid `tokenAddress`,
+      // or if the form is submitting or loading.
+      if (tokenAddress === prevTokenAddress || isLoading) return;
+      if (!tokenAddress || !tokenAddress.length || !isAddress(tokenAddress)) {
+        onTokenSelect();
+        return;
+      }
+      // For a valid address, attempt to load token info.
+      // XXX this is setting state during `componentDidUpdate`, which is
+      // generally a bad idea, but we are guarding against it by checking the
+      // state first.
+      setLoading(true);
+      onTokenSelect();
+
+      // Get the token address and handle success/error
+      getToken({ tokenAddress })
+        .then((...args) => handleGetTokenSuccess(...args))
+        .catch(error => handleGetTokenError(error));
+    },
+    [
+      tokenAddress,
+      getToken,
+      isLoading,
+      onTokenSelect,
+      prevTokenAddress,
+      handleGetTokenSuccess,
+      handleGetTokenError,
+    ],
+  );
+
+  return (
+    // TODO: I feel like this should be a custom input component at some point, that'd spare us a lot of hassle
+    <div className={styles.main}>
+      <Input
+        name="tokenAddress"
+        label={MSG.inputLabel}
+        extra={<Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />}
+        {...getStatusText(tokenData, isLoading)}
+      />
+    </div>
+  );
+};
+
+TokenSelector.displayName = displayName;
 
 export default TokenSelector;

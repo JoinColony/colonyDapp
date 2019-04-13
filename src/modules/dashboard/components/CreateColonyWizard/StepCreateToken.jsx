@@ -14,7 +14,7 @@ import Button from '~core/Button';
 import { ActionFileUpload } from '~core/FileUpload';
 import ExternalLink from '~core/ExternalLink';
 import { ACTIONS } from '~redux';
-import { mergePayload } from '~utils/actions';
+import { mapPayload } from '~utils/actions';
 
 import styles from './StepCreateToken.css';
 
@@ -150,9 +150,7 @@ const StepCreateToken = ({ nextStep, previousStep, wizardForm }: Props) => (
               submit={ACTIONS.IPFS_DATA_UPLOAD}
               success={ACTIONS.IPFS_DATA_UPLOAD_SUCCESS}
               error={ACTIONS.IPFS_DATA_UPLOAD_ERROR}
-              transform={action =>
-                mergePayload({ ipfsData: action.payload.data })()(action)
-              }
+              transform={mapPayload(({ data }) => ({ ipfsData: data }))}
             />
           </div>
         </section>

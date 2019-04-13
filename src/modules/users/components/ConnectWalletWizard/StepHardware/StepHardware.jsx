@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { FormikBag } from 'formik';
+
 import * as yup from 'yup';
 import { connect } from 'react-redux';
 import React, { Component, Fragment } from 'react';
@@ -8,17 +9,17 @@ import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
 
-import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
-
-import AddressItem from './AddressItem.jsx';
-
+import { ACTIONS } from '~redux';
+import { mergePayload } from '~utils/actions';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import { ActionForm, Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepHardware.css';
-import { ACTIONS } from '~redux';
+
+import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
+import AddressItem from './AddressItem.jsx';
 
 const MSG = defineMessages({
   heading: {
@@ -202,7 +203,7 @@ class StepHardware extends Component<Props> {
       availableAddresses,
       previousStep,
       wizardForm,
-      formHelpers: { includeWizardValues },
+      wizardValues,
     } = this.props;
     return (
       <ActionForm
@@ -214,7 +215,7 @@ class StepHardware extends Component<Props> {
         }
         onSuccess={values => nextStep({ ...values })}
         validationSchema={validationSchema}
-        transform={includeWizardValues()}
+        transform={mergePayload(wizardValues)}
         {...wizardForm}
       >
         {({ isSubmitting, isValid, status, values }) => (

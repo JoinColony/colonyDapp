@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -8,12 +9,12 @@ import type { WizardProps } from '~core/Wizard';
 
 import styles from './StepCreateENSName.css';
 
+import { mergePayload } from '~utils/actions';
+import { useAsyncFunction } from '~utils/hooks';
 import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ACTIONS } from '~redux';
-
-import promiseListener from '../../../../createPromiseListener';
 
 type FormValues = {
   colonyName: string,
@@ -69,90 +70,84 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-class StepCreateENSName extends Component<Props> {
-  componentWillUnmount() {
-    this.checkDomainTaken.unsubscribe();
-  }
-
-  checkDomainTaken = promiseListener.createAsyncFunction({
-    start: ACTIONS.COLONY_DOMAIN_VALIDATE,
-    resolve: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
-    reject: ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
+const StepCreateENSName = ({ wizardValues, wizardForm }: Props) => {
+  const checkDomainTaken = useAsyncFunction({
+    submit: ACTIONS.COLONY_DOMAIN_VALIDATE,
+    success: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
+    error: ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
   });
 
-  validateDomain = async (values: FormValues) => {
-    try {
-      await this.checkDomainTaken.asyncFunction(values);
-    } catch (e) {
-      const error = {
-        colonyName: MSG.errorDomainTaken,
-      };
-      // eslint doesn't allow for throwing object literals
-      throw error;
-    }
-  };
+  const validateDomain = useCallback(
+    async (values: FormValues) => {
+      try {
+        await checkDomainTaken(values);
+      } catch (e) {
+        const error = {
+          ensName: MSG.errorDomainTaken,
+        };
+        // eslint doesn't allow for throwing object literals
+        throw error;
+      }
+    },
+    // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
+    [checkDomainTaken],
+  );
 
-  render() {
-    const {
-      formHelpers: { includeWizardValues },
-      wizardForm,
-    } = this.props;
-    return (
-      <ActionForm
-        submit={ACTIONS.COLONY_CREATE_LABEL}
-        error={ACTIONS.COLONY_CREATE_LABEL_ERROR}
-        success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
-        validationSchema={validationSchema}
-        validate={this.validateDomain}
-        transform={includeWizardValues()}
-        {...wizardForm}
-      >
-        {({ isValid, isSubmitting }) => (
-          <section className={styles.main}>
-            <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'thin' }}
-                text={MSG.heading}
+  return (
+    <ActionForm
+      submit={ACTIONS.COLONY_CREATE_LABEL}
+      error={ACTIONS.COLONY_CREATE_LABEL_ERROR}
+      success={ACTIONS.COLONY_CREATE_LABEL_SUCCESS}
+      validationSchema={validationSchema}
+      validate={validateDomain}
+      transform={mergePayload(wizardValues)}
+      {...wizardForm}
+    >
+      {({ isValid, isSubmitting }) => (
+        <section className={styles.main}>
+          <div className={styles.title}>
+            <Heading
+              appearance={{ size: 'medium', weight: 'thin' }}
+              text={MSG.heading}
+            />
+            <p className={styles.paragraph}>
+              <FormattedMessage
+                {...MSG.descriptionOne}
+                values={{
+                  boldText: (
+                    <FormattedMessage
+                      tagName="strong"
+                      {...MSG.descriptionBoldText}
+                    />
+                  ),
+                }}
               />
-              <p className={styles.paragraph}>
-                <FormattedMessage
-                  {...MSG.descriptionOne}
-                  values={{
-                    boldText: (
-                      <FormattedMessage
-                        tagName="strong"
-                        {...MSG.descriptionBoldText}
-                      />
-                    ),
-                  }}
+            </p>
+            <p className={styles.paragraph}>
+              <FormattedMessage {...MSG.descriptionTwo} />
+            </p>
+            <div className={styles.nameForm}>
+              <Input
+                appearance={{ theme: 'fat' }}
+                name="colonyName"
+                label={MSG.label}
+              />
+              <div className={styles.buttons}>
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  type="submit"
+                  disabled={!isValid}
+                  loading={isSubmitting}
+                  text={MSG.done}
                 />
-              </p>
-              <p className={styles.paragraph}>
-                <FormattedMessage {...MSG.descriptionTwo} />
-              </p>
-              <div className={styles.nameForm}>
-                <Input
-                  appearance={{ theme: 'fat' }}
-                  name="colonyName"
-                  label={MSG.label}
-                />
-                <div className={styles.buttons}>
-                  <Button
-                    appearance={{ theme: 'primary', size: 'large' }}
-                    type="submit"
-                    disabled={!isValid}
-                    loading={isSubmitting}
-                    text={MSG.done}
-                  />
-                </div>
               </div>
             </div>
-          </section>
-        )}
-      </ActionForm>
-    );
-  }
-}
+          </div>
+        </section>
+      )}
+    </ActionForm>
+  );
+};
 
 StepCreateENSName.displayName = displayName;
 

@@ -1,18 +1,14 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { UserType } from '~immutable';
-import type { FileReaderFile } from '~core/FileUpload';
+import { useAsyncFunction } from '~utils/hooks';
 
 import AvatarUploader from '~core/AvatarUploader';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { ACTIONS } from '~redux';
-
-import promiseListener from '../../../../createPromiseListener';
-
-import type { AsyncFunction } from '../../../../createPromiseListener';
 
 const MSG = defineMessages({
   uploaderLabel: {
@@ -28,49 +24,40 @@ type Props = {|
   user: UserType,
 |};
 
-class UserAvatarUploader extends Component<Props> {
-  remove: AsyncFunction<void, empty>;
+const uploadActions = {
+  submit: ACTIONS.USER_AVATAR_UPLOAD,
+  success: ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
+  error: ACTIONS.USER_AVATAR_UPLOAD_ERROR,
+};
 
-  upload: AsyncFunction<FileReaderFile, empty>;
+const removeActions = {
+  submit: ACTIONS.USER_AVATAR_REMOVE,
+  success: ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
+  error: ACTIONS.USER_AVATAR_UPLOAD_ERROR,
+};
 
-  static displayName = 'users.UserProfileEdit.UserAvatarUploader';
+const displayName = 'users.UserProfileEdit.UserAvatarUploader';
 
-  constructor(props: Props) {
-    super(props);
-    this.remove = promiseListener.createAsyncFunction({
-      start: ACTIONS.USER_REMOVE_AVATAR,
-      resolve: ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
-      reject: ACTIONS.USER_REMOVE_AVATAR_ERROR,
-    });
-    this.upload = promiseListener.createAsyncFunction({
-      start: ACTIONS.USER_UPLOAD_AVATAR,
-      resolve: ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
-      reject: ACTIONS.USER_UPLOAD_AVATAR_ERROR,
-    });
-  }
+const UserAvatarUploader = ({ user }: Props) => {
+  const upload = useAsyncFunction(uploadActions);
+  const remove = useAsyncFunction(removeActions);
 
-  componentWillUnmount() {
-    this.remove.unsubscribe();
-    this.upload.unsubscribe();
-  }
+  return (
+    <AvatarUploader
+      label={MSG.uploaderLabel}
+      placeholder={
+        <UserAvatar
+          address={user.profile.walletAddress}
+          user={user}
+          size="xl"
+        />
+      }
+      upload={upload}
+      remove={remove}
+    />
+  );
+};
 
-  render() {
-    const { user } = this.props;
-    return (
-      <AvatarUploader
-        label={MSG.uploaderLabel}
-        placeholder={
-          <UserAvatar
-            address={user.profile.walletAddress}
-            user={user}
-            size="xl"
-          />
-        }
-        upload={this.upload.asyncFunction}
-        remove={this.remove.asyncFunction}
-      />
-    );
-  }
-}
+UserAvatarUploader.displayName = displayName;
 
 export default UserAvatarUploader;

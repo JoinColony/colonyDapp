@@ -4,7 +4,6 @@ import type { FormikBag } from 'formik';
 
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import compose from 'lodash/fp/compose';
 
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
@@ -129,16 +128,8 @@ class StepTrufflePig extends Component<Props, State> {
   };
 
   render() {
-    const {
-      previousStep,
-      wizardForm,
-      formHelpers: { includeWizardValues },
-    } = this.props;
+    const { previousStep, wizardForm, wizardValues } = this.props;
     const { isLoading, isValid, accountIndex } = this.state;
-    const transform = compose(
-      includeWizardValues,
-      mergePayload({ accountIndex }),
-    )();
     return (
       <ActionForm
         submit={ACTIONS.WALLET_CREATE}
@@ -150,7 +141,7 @@ class StepTrufflePig extends Component<Props, State> {
         ) => {
           setStatus({ error: MSG.errorOpenTrufflepig });
         }}
-        transform={transform}
+        transform={mergePayload({ ...wizardValues, accountIndex })}
         {...wizardForm}
       >
         {({ status, isSubmitting, values }) => (

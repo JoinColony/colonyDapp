@@ -79,7 +79,7 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_PROFILE_UPDATE}
           success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
           error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
-          transform={withKeyPath(colonyName)()}
+          transform={withKeyPath(colonyName)}
           initialValues={{
             colonyName,
             displayName,

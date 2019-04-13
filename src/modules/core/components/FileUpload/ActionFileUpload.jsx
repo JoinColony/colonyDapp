@@ -1,9 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import MakeAsyncFunction from 'react-redux-promise-listener';
 
-import promiseListener from '../../../../createPromiseListener';
+import { useAsyncFunction } from '~utils/hooks';
+
 import FileUpload from './FileUpload.jsx';
 
 import type { ActionTransformFnType } from '~utils/actions';
@@ -23,24 +23,8 @@ const ActionFileUpload = ({
   transform,
   ...props
 }: Props) => {
-  let setPayloadFn;
-  if (transform) {
-    setPayloadFn = (action, payload) => {
-      const newAction = transform({ ...action, payload });
-      return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
-    };
-  }
-  return (
-    <MakeAsyncFunction
-      listener={promiseListener}
-      start={submit}
-      resolve={success}
-      reject={error}
-      setPayload={setPayloadFn}
-    >
-      {asyncFunc => <FileUpload upload={asyncFunc} {...props} />}
-    </MakeAsyncFunction>
-  );
+  const asyncFunction = useAsyncFunction({ submit, error, success, transform });
+  return <FileUpload upload={asyncFunction} {...props} />;
 };
 
 export default ActionFileUpload;

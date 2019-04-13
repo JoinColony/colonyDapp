@@ -8,6 +8,7 @@ import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import type { Action } from '~redux';
+import type { ActionTransformFnType } from '~utils/actions';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 import type { AsyncFunction } from '../../createPromiseListener';
 
@@ -149,31 +150,35 @@ export const useFeatureFlags = (
 };
 
 export const useAsyncFunction = <P, R>({
-  start,
-  resolve,
-  reject,
+  submit,
+  success,
+  error,
+  transform,
 }: {|
-  start: string,
-  resolve: string,
-  reject: string,
-|}): { current: AsyncFunction<P, R> } => {
+  submit: string,
+  success: string,
+  error: string,
+  transform?: ActionTransformFnType,
+|}): $PropertyType<AsyncFunction<P, R>, 'asyncFunction'> => {
   const ref = useRef();
-  useEffect(
-    () => {
-      ref.current = promiseListener.createAsyncFunction<P, R>({
-        start,
-        resolve,
-        reject,
-      });
-      return () => {
-        ref.current.unsubscribe();
+  if (!ref.current) {
+    let setPayload;
+    if (transform) {
+      setPayload = (action, payload) => {
+        const newAction = transform({ ...action, payload });
+        return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
       };
-    },
-    [start, resolve, reject],
-  );
-  // TODO can a React genius find out why we don't get the same
-  // behaviour when returning ref.current?
-  return ref;
+    }
+    ref.current = promiseListener.createAsyncFunction<P, R>({
+      start: submit,
+      resolve: success,
+      reject: error,
+      setPayload,
+    });
+  }
+  // Automatically unsubscribe on unmount
+  useEffect(() => () => ref.current.unsubscribe(), []);
+  return ref.current.asyncFunction;
 };
 
 /*

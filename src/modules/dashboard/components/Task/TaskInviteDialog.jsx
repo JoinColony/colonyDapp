@@ -57,7 +57,7 @@ const TaskInviteDialog = ({
         worker: walletAddress,
         draftId,
         colonyName,
-      })()}
+      })}
     >
       {({ status, isSubmitting }) => (
         <>

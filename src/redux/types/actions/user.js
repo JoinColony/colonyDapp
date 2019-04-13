@@ -19,6 +19,38 @@ import type {
 import { ACTIONS } from '../../index';
 
 export type UserActionTypes = {|
+  USER_AVATAR_REMOVE: UniqueActionType<
+    typeof ACTIONS.USER_AVATAR_REMOVE,
+    void,
+    void,
+  >,
+  USER_AVATAR_REMOVE_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_AVATAR_REMOVE_ERROR,
+    void,
+  >,
+  USER_AVATAR_REMOVE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
+    {| address: string |},
+    void,
+  >,
+  USER_AVATAR_UPLOAD: UniqueActionType<
+    typeof ACTIONS.USER_AVATAR_UPLOAD,
+    {| data: string |},
+    void,
+  >,
+  USER_AVATAR_UPLOAD_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_AVATAR_UPLOAD_ERROR,
+    void,
+  >,
+  USER_AVATAR_UPLOAD_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
+    {|
+      address: string,
+      avatar: string,
+      hash: string,
+    |},
+    void,
+  >,
   USER_BY_USERNAME_FETCH: ActionTypeWithPayload<
     typeof ACTIONS.USER_BY_USERNAME_FETCH,
     {| username: string |},
@@ -88,20 +120,6 @@ export type UserActionTypes = {|
   USER_PROFILE_UPDATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_PROFILE_UPDATE_SUCCESS,
     UserProfileType,
-    void,
-  >,
-  USER_REMOVE_AVATAR: UniqueActionType<
-    typeof ACTIONS.USER_REMOVE_AVATAR,
-    void,
-    void,
-  >,
-  USER_REMOVE_AVATAR_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_REMOVE_AVATAR_ERROR,
-    void,
-  >,
-  USER_REMOVE_AVATAR_SUCCESS: UniqueActionType<
-    typeof ACTIONS.USER_REMOVE_AVATAR_SUCCESS,
-    {| address: string |},
     void,
   >,
   USER_SUBSCRIBED_COLONIES_FETCH: ActionType<
@@ -174,23 +192,5 @@ export type UserActionTypes = {|
   >,
   USER_TOKENS_UPDATE_SUCCESS: ActionType<
     typeof ACTIONS.USER_TOKENS_UPDATE_SUCCESS,
-  >,
-  USER_UPLOAD_AVATAR: UniqueActionType<
-    typeof ACTIONS.USER_UPLOAD_AVATAR,
-    {| data: string |},
-    void,
-  >,
-  USER_UPLOAD_AVATAR_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_UPLOAD_AVATAR_ERROR,
-    void,
-  >,
-  USER_UPLOAD_AVATAR_SUCCESS: UniqueActionType<
-    typeof ACTIONS.USER_UPLOAD_AVATAR_SUCCESS,
-    {|
-      address: string,
-      avatar: string,
-      hash: string,
-    |},
-    void,
   >,
 |};

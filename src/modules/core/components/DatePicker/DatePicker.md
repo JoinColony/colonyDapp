@@ -15,6 +15,7 @@ For compatibility purposes the function which is called after a day is picked is
 import Button from '../Button';
 
 <DatePicker
+  closeOnDayPick
   connect={false}
   name="datepicker-unconnected"
   label="Pick a date"
