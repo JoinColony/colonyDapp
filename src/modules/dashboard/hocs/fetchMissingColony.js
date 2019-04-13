@@ -4,15 +4,15 @@ import { branch, lifecycle } from 'recompose';
 
 import { shouldFetchData } from '~immutable/utils';
 
-const shouldFetchColony = ({ colony, colonyName }) =>
-  !!(colonyName && shouldFetchData(colony, 0, true));
+const shouldFetchColony = ({ colony, colonyAddress }) =>
+  !!(colonyAddress && shouldFetchData(colony, 0, true));
 
 const fetchMissingColony = branch(
   shouldFetchColony,
   lifecycle({
     componentDidMount() {
-      const { colonyName, fetchColony } = this.props;
-      if (shouldFetchColony(this.props)) fetchColony(colonyName);
+      const { colonyAddress, fetchColony } = this.props;
+      if (shouldFetchColony(this.props)) fetchColony(colonyAddress);
     },
   }),
 );

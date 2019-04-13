@@ -1,23 +1,30 @@
 /* @flow */
 
-import type { Address, ENSName } from '~types';
+import type { Address } from '~types';
+import type { Action } from '~redux';
 
 import { ACTIONS } from '~redux';
 
-export const fetchColonyTransactions = (colonyName: ENSName) => ({
+export const fetchColonyTransactions = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS> => ({
   type: ACTIONS.COLONY_FETCH_TRANSACTIONS,
-  meta: { keyPath: [colonyName] },
+  payload: { colonyAddress },
+  meta: { keyPath: [colonyAddress] },
 });
 
-export const fetchColonyUnclaimedTransactions = (colonyName: ENSName) => ({
+export const fetchColonyUnclaimedTransactions = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS> => ({
   type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-  meta: { keyPath: [colonyName] },
+  payload: { colonyAddress },
+  meta: { keyPath: [colonyAddress] },
 });
 
 export const claimColonyToken = (
-  colonyName: ENSName,
+  colonyAddress: Address,
   tokenAddress: Address,
 ) => ({
   type: ACTIONS.COLONY_CLAIM_TOKEN,
-  payload: { colonyName, tokenAddress },
+  payload: { colonyAddress, tokenAddress },
 });

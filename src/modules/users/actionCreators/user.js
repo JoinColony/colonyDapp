@@ -1,16 +1,17 @@
 /* @flow */
 
 import type { Action } from '~redux';
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 
 import { ACTIONS } from '~redux';
+import type { TaskDraftId } from '~immutable';
 
 export const userFetch = (
-  address: string,
+  userAddress: Address,
 ): Action<typeof ACTIONS.USER_FETCH> => ({
   type: ACTIONS.USER_FETCH,
-  meta: { keyPath: [address] },
-  payload: { address },
+  meta: { keyPath: [userAddress] },
+  payload: { userAddress },
 });
 
 export const userByUsernameFetch = (
@@ -39,29 +40,29 @@ export const currentUserGetBalance = (): Action<
 });
 
 export const userPermissionsFetch = (
-  colonyName: ENSName,
+  colonyAddress: Address,
 ): Action<typeof ACTIONS.USER_PERMISSIONS_FETCH> => ({
   type: ACTIONS.USER_PERMISSIONS_FETCH,
-  payload: { colonyName },
-  meta: { keyPath: [colonyName] },
+  payload: { colonyAddress },
+  meta: { keyPath: [colonyAddress] },
 });
 
 export const userTokensUpdate = (
-  tokens: string[],
+  tokens: Address[],
 ): Action<typeof ACTIONS.USER_TOKENS_UPDATE> => ({
   type: ACTIONS.USER_TOKENS_UPDATE,
   payload: { tokens },
 });
 
 export const subscribeToColony = (
-  colonyAddress: string,
+  colonyAddress: Address,
 ): Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE> => ({
   type: ACTIONS.USER_COLONY_SUBSCRIBE,
   payload: { colonyAddress },
 });
 
 export const subscribeToTask = (
-  draftId: string,
+  draftId: TaskDraftId,
 ): Action<typeof ACTIONS.USER_TASK_SUBSCRIBE> => ({
   type: ACTIONS.USER_TASK_SUBSCRIBE,
   payload: { draftId },

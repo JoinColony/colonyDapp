@@ -7,29 +7,18 @@ import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
 import ColonyAvatar from '~core/ColonyAvatar';
 
-import { colonyFetcher } from '../../fetchers';
 import { ipfsDataFetcher } from '../../../core/fetchers';
-import useColonyName from '../ColonyGrid/useColonyName';
+import { useColonyWithAddress } from '../../hooks';
 
 export default withHooks<
   { fetchColony: boolean },
   ColonyAvatarProps,
   { colony: ?ColonyType, avatarURL: ?string },
->(({ fetchColony = true } = {}, { colony, address } = {}) => {
+>(({ fetchColony = true } = {}, { colony, colonyAddress } = {}) => {
   const result = { colony, avatarURL: undefined };
 
-  // TODO: as of #1032 we can look up colony by address
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const colonyNameResult = useColonyName(address);
-  const colonyName = colonyNameResult ? colonyNameResult.data : undefined;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-
   if (fetchColony) {
-    const { data: fetchedColony } = useDataFetcher<ColonyType>(
-      colonyFetcher,
-      [colonyName],
-      [colonyName],
-    );
+    const { data: fetchedColony } = useColonyWithAddress(colonyAddress);
     result.colony = fetchedColony;
   }
   const avatarHash = result.colony ? result.colony.avatarHash : undefined;

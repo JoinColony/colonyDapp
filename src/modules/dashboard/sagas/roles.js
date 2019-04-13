@@ -18,11 +18,11 @@ import { fetchRoles } from '../actionCreators';
 import { getColonyContext } from './shared';
 
 function* colonyRolesFetch({
-  payload: { colonyName },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_ROLES_FETCH>) {
   try {
-    const context = yield* getColonyContext(colonyName);
+    const context = yield* getColonyContext(colonyAddress);
     const roles = yield* executeQuery(context, getColonyRoles);
     /*
      * Dispatch the success action.
@@ -38,7 +38,7 @@ function* colonyRolesFetch({
 }
 
 function* colonyAdminAdd({
-  payload: { newAdmin, colonyName },
+  payload: { newAdmin, colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -49,7 +49,7 @@ function* colonyAdminAdd({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'setAdminRole',
-      identifier: colonyName,
+      identifier: colonyAddress,
       params: { user: newAdmin },
     });
 
@@ -65,7 +65,7 @@ function* colonyAdminAdd({
       meta,
     });
 
-    yield put(fetchRoles(colonyName));
+    yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
   } finally {
@@ -74,7 +74,7 @@ function* colonyAdminAdd({
 }
 
 function* colonyAdminRemove({
-  payload: { user, colonyName },
+  payload: { user, colonyAddress },
   payload,
   meta,
 }: Action<typeof ACTIONS.COLONY_ADMIN_REMOVE>): Saga<void> {
@@ -88,7 +88,7 @@ function* colonyAdminRemove({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'removeAdminRole',
-      identifier: colonyName,
+      identifier: colonyAddress,
       params: { user },
     });
 
@@ -100,7 +100,7 @@ function* colonyAdminRemove({
       payload,
     });
 
-    yield put(fetchRoles(colonyName));
+    yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
   } finally {

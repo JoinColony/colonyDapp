@@ -1,14 +1,13 @@
 /* @flow */
 
-import type { WithKeyPathDepth2 } from '~types';
-import type { DomainType } from '~immutable';
+import type { Address, WithKeyPathDepth2 } from '~types';
+import type { DomainId, DomainType } from '~immutable';
 
 import type {
   ActionType,
   ErrorActionType,
   UniqueActionType,
   ActionTypeWithPayloadAndMeta,
-  ActionTypeWithMeta,
 } from '../index';
 
 import { ACTIONS } from '../../index';
@@ -16,7 +15,7 @@ import { ACTIONS } from '../../index';
 export type DomainActionTypes = {|
   DOMAIN_CREATE: UniqueActionType<
     typeof ACTIONS.DOMAIN_CREATE,
-    {| domainName: string, parentDomainId?: number |},
+    {| colonyAddress: Address, domainName: string, parentDomainId?: number |},
     WithKeyPathDepth2,
   >,
   DOMAIN_CREATE_ERROR: ErrorActionType<
@@ -34,8 +33,9 @@ export type DomainActionTypes = {|
     void,
   >,
   DOMAIN_CREATE_TX_SUCCESS: ActionType<typeof ACTIONS.DOMAIN_CREATE_TX_SUCCESS>,
-  DOMAIN_FETCH: ActionTypeWithMeta<
+  DOMAIN_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.DOMAIN_FETCH,
+    {| colonyAddress: Address, domainId: DomainId |},
     WithKeyPathDepth2,
   >,
   DOMAIN_FETCH_ERROR: ErrorActionType<

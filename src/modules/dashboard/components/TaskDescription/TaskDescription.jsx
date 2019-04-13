@@ -22,13 +22,13 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyName: *, draftId: *, description: * }>,
+  ...TaskProps<{ colonyAddress: *, draftId: *, description: * }>,
 |};
 
 const TaskDescription = ({
   description,
   isTaskCreator,
-  colonyName,
+  colonyAddress,
   draftId,
 }: Props) => (
   <ActionForm
@@ -44,7 +44,7 @@ const TaskDescription = ({
       mapPayload(({ description: editor }) => ({
         description: editor.getCurrentContent().getPlainText(),
       })),
-      mergePayload({ colonyName, draftId }),
+      mergePayload({ colonyAddress, draftId }),
     )}
   >
     {({ submitForm }: FormikProps<*>) => (

@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, ENSName } from '~types';
+import type { Address } from '~types';
 import type { EventStore } from '~lib/database/stores';
 import type {
   ColonyClientContext,
@@ -30,7 +30,6 @@ import {
 
 export type ColonyContext = ContextWithMetadata<
   {|
-    colonyName: string | ENSName,
     colonyAddress: Address,
   |},
   ColonyClientContext & WalletContext & DDBContext,

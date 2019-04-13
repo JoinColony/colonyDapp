@@ -7,9 +7,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { Node } from 'react';
 
 import { Table, TableBody } from '~core/Table';
-import { SpinnerLoader } from '~core/Preloaders';
 
-import type { TaskType } from '~immutable';
+import type { TaskDraftId, TaskType } from '~immutable';
 
 import TaskListItem from './TaskListItem.jsx';
 
@@ -21,13 +20,12 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  draftIds?: string[],
+  draftIds?: TaskDraftId[],
   filter?: (task: TaskType) => boolean,
-  isLoading?: boolean,
   emptyState?: Node,
 |};
 
-const TaskList = ({ draftIds = [], filter, isLoading, emptyState }: Props) => {
+const TaskList = ({ draftIds = [], filter, emptyState }: Props) => {
   // TODO: refactor this in the future to fetch tasks and perform filtering in
   // this component, thus removing the need for this crazy hook stuff!
 
@@ -55,8 +53,6 @@ const TaskList = ({ draftIds = [], filter, isLoading, emptyState }: Props) => {
   // if the draftIds change, reset the state
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useMemo(() => setTaskVisibility({}), [draftIds]);
-
-  if (isLoading) return <SpinnerLoader />;
 
   return (
     <>

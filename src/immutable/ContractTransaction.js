@@ -9,7 +9,7 @@ import type { Address } from '~types';
 
 type Shared = {|
   amount: BigNumber,
-  colonyName?: string,
+  colonyAddress?: Address,
   date: Date,
   from?: Address,
   hash?: string,
@@ -26,7 +26,7 @@ export type ContractTransactionRecordType = RecordOf<Shared>;
 
 const defaultValues: $Shape<Shared> = {
   amount: undefined,
-  colonyName: undefined,
+  colonyAddress: undefined,
   date: undefined,
   from: undefined,
   hash: undefined,

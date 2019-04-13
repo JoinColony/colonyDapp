@@ -14,7 +14,6 @@ import type {
   TransactionType,
 } from '~immutable';
 import type {
-  ActionTypeWithMeta,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
@@ -25,7 +24,7 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| newAdmin: string, colonyName: string |},
+    {| newAdmin: string, colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_ADD_ERROR: ErrorActionType<
@@ -39,7 +38,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| user: string, colonyName: string |},
+    {| user: string, colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_ADMIN_REMOVE_ERROR: ErrorActionType<
@@ -48,12 +47,12 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ADMIN_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
-    {| user: string, colonyName: string |},
+    {| user: Address, colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_AVATAR_REMOVE,
-    void,
+    {| user: Address, colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_REMOVE_ERROR: ErrorActionType<
@@ -67,7 +66,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_AVATAR_UPLOAD: UniqueActionType<
     typeof ACTIONS.COLONY_AVATAR_UPLOAD,
-    {| data: string |},
+    {| colonyAddress: Address, data: string |},
     WithKeyPathDepth1,
   >,
   COLONY_AVATAR_UPLOAD_ERROR: ErrorActionType<
@@ -81,7 +80,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
-    {| tokenAddress: string, colonyName: string |},
+    {| tokenAddress: string, colonyAddress: Address |},
     void,
   >,
   COLONY_CLAIM_TOKEN_ERROR: ErrorActionType<
@@ -104,14 +103,14 @@ export type ColonyActionTypes = {|
   COLONY_CREATE_LABEL: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE_LABEL,
     {|
-      colonyId: number,
       colonyAddress: Address,
+      colonyId: number,
       colonyName: ENSName,
       displayName: string,
-      tokenAddress: string,
+      tokenAddress: Address,
+      tokenIcon: string,
       tokenName: string,
       tokenSymbol: string,
-      tokenIcon: string,
     |},
     void,
   >,
@@ -131,7 +130,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_DOMAINS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_DOMAINS_FETCH,
-    void,
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_DOMAINS_FETCH_ERROR: ErrorActionType<
@@ -159,7 +158,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_NAME_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_NAME_FETCH,
-    {| colonyAddress: string |},
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_NAME_FETCH_ERROR: ErrorActionType<
@@ -168,12 +167,26 @@ export type ColonyActionTypes = {|
   >,
   COLONY_NAME_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS,
-    string,
+    {| colonyAddress: Address, colonyName: ENSName |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_ADDRESS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_ADDRESS_FETCH,
+    {| colonyName: ENSName |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_ADDRESS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_ADDRESS_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  COLONY_ADDRESS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_ADDRESS_FETCH_SUCCESS,
+    {| colonyAddress: Address, colonyName: ENSName |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH,
-    {| colonyName: string |},
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_ERROR: ErrorActionType<
@@ -185,8 +198,9 @@ export type ColonyActionTypes = {|
     ColonyType,
     WithKeyPathDepth1,
   >,
-  COLONY_FETCH_TRANSACTIONS: ActionTypeWithMeta<
+  COLONY_FETCH_TRANSACTIONS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_TRANSACTIONS,
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_TRANSACTIONS_ERROR: ErrorActionType<
@@ -198,8 +212,9 @@ export type ColonyActionTypes = {|
     ContractTransactionType[],
     WithKeyPathDepth1,
   >,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS: ActionTypeWithMeta<
+  COLONY_FETCH_UNCLAIMED_TRANSACTIONS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR: ErrorActionType<
@@ -236,7 +251,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_RECOVERY_MODE_ENTER: UniqueActionType<
     typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER,
-    {| colonyName: string |},
+    {| colonyAddress: Address |},
     void,
   >,
   COLONY_RECOVERY_MODE_ENTER_ERROR: ErrorActionType<
@@ -250,7 +265,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ROLES_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ROLES_FETCH,
-    {| colonyName: string |},
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   COLONY_ROLES_FETCH_ERROR: ErrorActionType<
@@ -264,7 +279,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_VERSION_UPGRADE: UniqueActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE,
-    {| colonyName: string |},
+    {| colonyAddress: Address |},
     void,
   >,
   COLONY_VERSION_UPGRADE_SUCCESS: UniqueActionType<
@@ -278,7 +293,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_TOKEN_BALANCE_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-    {| colonyAddress: string |},
+    {| colonyAddress: Address |},
     WithKeyPathDepth2,
   >,
   COLONY_TOKEN_BALANCE_FETCH_ERROR: ErrorActionType<

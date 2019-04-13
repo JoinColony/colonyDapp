@@ -34,13 +34,13 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyName: *, domainId: *, draftId: * }>,
+  ...TaskProps<{ colonyAddress: *, domainId: *, draftId: * }>,
 |};
 
 const displayName = 'dashboard.TaskDomains';
 
 const TaskDomains = ({
-  colonyName,
+  colonyAddress,
   domainId,
   draftId,
   isTaskCreator,
@@ -57,7 +57,7 @@ const TaskDomains = ({
     async (domainValue: Object) => {
       try {
         await setDomain({
-          colonyName,
+          colonyAddress,
           domainId: domainValue.id,
           draftId,
         });
@@ -66,7 +66,7 @@ const TaskDomains = ({
         log(error);
       }
     },
-    [colonyName, draftId, setDomain],
+    [colonyAddress, draftId, setDomain],
   );
 
   const list = Array(...mockDomains);

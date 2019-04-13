@@ -4,12 +4,7 @@ import { compose, withProps } from 'recompose';
 
 import { withImmutablePropsToJS } from '~utils/hoc';
 
-import {
-  withColony,
-  withTask,
-  withToken,
-  withColonyName,
-} from '../../../dashboard/hocs';
+import { withColony, withTask, withToken } from '../../../dashboard/hocs';
 
 import TransactionListItem from './TransactionListItem.jsx';
 
@@ -19,16 +14,12 @@ import TransactionListItem from './TransactionListItem.jsx';
  * Soon-to-be-arriving React Hooks could offer a nicer solution here.
  */
 export default compose(
-  withProps(
-    ({ transaction: { colonyName, taskId, token, from, to, incoming } }) => ({
-      colonyName,
-      taskId,
-      tokenAddress: token,
-      userAddress: incoming ? from : to,
-      colonyAddress: incoming ? from : to,
-    }),
-  ),
-  withColonyName,
+  withProps(({ transaction: { taskId, token, from, to, incoming } }) => ({
+    colonyAddress: incoming ? from : to,
+    taskId,
+    tokenAddress: token,
+    userAddress: incoming ? from : to,
+  })),
   withColony,
   withTask,
   withToken,

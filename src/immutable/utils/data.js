@@ -26,7 +26,7 @@ export const shouldFetchData = (
   if (data.error && isFirstMount) return true;
 
   // If there's no record (and it's not fetching) and it's the first mount, fetch
-  if (typeof data.record === 'undefined' && isFirstMount) return true;
+  if (typeof data.record == 'undefined' && isFirstMount) return true;
 
   // Check if the TTL is passed, if so, fetch again
   return !!(

@@ -35,12 +35,17 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ draftId: *, colonyName: *, skillId: * }>,
+  ...TaskProps<{ draftId: *, colonyAddress: *, skillId: * }>,
 |};
 
 const displayName = 'daskboard.TaskSKills';
 
-const TaskSkills = ({ colonyName, draftId, isTaskCreator, skillId }: Props) => {
+const TaskSkills = ({
+  colonyAddress,
+  draftId,
+  isTaskCreator,
+  skillId,
+}: Props) => {
   const setSkill = useAsyncFunction({
     submit: ACTIONS.TASK_SET_SKILL,
     success: ACTIONS.TASK_SET_SKILL_SUCCESS,
@@ -51,7 +56,7 @@ const TaskSkills = ({ colonyName, draftId, isTaskCreator, skillId }: Props) => {
     async (skillValue: Object) => {
       try {
         await setSkill({
-          colonyName,
+          colonyAddress,
           draftId,
           skillId: skillValue.id,
         });
@@ -60,7 +65,7 @@ const TaskSkills = ({ colonyName, draftId, isTaskCreator, skillId }: Props) => {
         log(error);
       }
     },
-    [colonyName, draftId, setSkill],
+    [colonyAddress, draftId, setSkill],
   );
 
   return (

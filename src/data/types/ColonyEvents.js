@@ -40,10 +40,10 @@ export type ColonyEvents = {|
     typeof PROFILE_CREATED,
     ColonyProps<{
       colonyAddress: *,
-      description: *,
       colonyName: *,
-      guideline: *,
+      description: *,
       displayName: *,
+      guideline: *,
       website?: *,
     }>,
   >,
@@ -51,8 +51,8 @@ export type ColonyEvents = {|
     typeof PROFILE_UPDATED,
     ColonyProps<{
       description: *,
-      guideline: *,
       displayName: *,
+      guideline: *,
       website: *,
     }>,
   >,

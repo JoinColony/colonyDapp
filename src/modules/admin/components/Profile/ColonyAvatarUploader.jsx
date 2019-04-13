@@ -45,7 +45,7 @@ const removeActions = {
 };
 
 const ColonyAvatarUploader = ({ colony }: Props) => {
-  const transform = withKeyPath(colony.colonyName);
+  const transform = withKeyPath(colony.colonyAddress);
   const upload = useAsyncFunction({ ...uploadActions, transform });
   const remove = useAsyncFunction({ ...removeActions, transform });
 

@@ -3,12 +3,15 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'redux-react-hook';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
-import type { ColonyType, DomainType, UserPermissionsType } from '~immutable';
+import type {
+  DomainType,
+  TaskMetadataMap,
+  UserPermissionsType,
+} from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher } from '~utils/hooks';
@@ -20,8 +23,9 @@ import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
+import { useColonyWithName } from '../../hooks';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { colonyFetcher, domainsFetcher } from '../../fetchers';
+import { domainsFetcher, colonyTaskMetadataFetcher } from '../../fetchers';
 import { canAdminister, canCreateTask } from '../../../users/checks';
 import { isInRecoveryMode } from '../../checks';
 
@@ -107,40 +111,33 @@ const ColonyHome = ({
    */
   const [filteredDomainId, setFilteredDomainId] = useState(0);
 
-  // TODO in #1034: preferably, use `useDataFetcher` or something similar,
-  // rather than just dispatching the action to set the state.
-  const dispatch = useDispatch();
-  useEffect(
-    () => {
-      dispatch({
-        type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-        payload: { colonyName },
-      });
-    },
-    [dispatch, colonyName],
-  );
-
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
+  } = useColonyWithName(colonyName);
+  const { colonyAddress } = colony || {};
+
   const { data: permissions } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
-    [colonyName],
-    [colonyName],
+    [colonyAddress],
+    [colonyAddress],
   );
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
-  >(domainsFetcher, [colonyName], [colonyName]);
+  >(domainsFetcher, [colonyAddress], [colonyAddress]);
 
-  if (!colonyName || colonyError) {
-    return <Redirect to="/404" />;
-  }
+  const { data: taskMetadata } = useDataFetcher<TaskMetadataMap>(
+    colonyTaskMetadataFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const draftIds = Object.keys(taskMetadata || {});
 
-  if (!colony || !domains || isFetchingColony || isFetchingDomains) {
+  if (colonyError) return <Redirect to="/404" />;
+
+  if (!colony || !domains || isFetchingColony || isFetchingDomains)
     return <LoadingTemplate loadingText={MSG.loadingText} />;
-  }
 
   /*
    * @NOTE Also change this when working on the Dashboard tasks
@@ -152,9 +149,6 @@ const ColonyHome = ({
     _: string,
     value: 'all' | 'created' | 'assigned' | 'completed',
   ) => setFilterOption(value);
-
-  // TODO: fetch colony task draftIds in #1034
-  const draftIds = [];
 
   const filterSelect = (
     <Select
@@ -206,7 +200,7 @@ const ColonyHome = ({
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
-            values={{ colonyName }}
+            values={{ colonyAddress }}
           />
         )}
         <ul className={styles.domainsFilters}>

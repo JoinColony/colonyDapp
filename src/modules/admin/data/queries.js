@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, ENSName } from '~types';
+import type { Address } from '~types';
 
 import type {
   ColonyClientContext,
@@ -19,7 +19,6 @@ import {
 import type { ContractTransactionType } from '~immutable';
 
 type ColonyMetadata = {|
-  colonyName: string | ENSName,
   colonyAddress: Address,
 |};
 
@@ -46,7 +45,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
   void,
   ContractTransactionType[],
 > = ({
-  metadata: { colonyName },
+  metadata: { colonyAddress },
   colonyClient: {
     events: {
       ColonyFundsClaimed,
@@ -76,7 +75,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
             event,
             log: logs[i],
             colonyClient,
-            colonyName,
+            colonyAddress,
           }),
         )
         .filter(Boolean),
@@ -88,7 +87,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
   void,
   ContractTransactionType[],
 > = ({
-  metadata: { colonyAddress, colonyName },
+  metadata: { colonyAddress },
   colonyClient: {
     events: { ColonyFundsClaimed },
     tokenClient: {
@@ -125,7 +124,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
           claimEvents,
           claimLogs,
           colonyClient,
-          colonyName,
+          colonyAddress,
           transferEvent,
           transferLog: transferLogs[i],
         }),

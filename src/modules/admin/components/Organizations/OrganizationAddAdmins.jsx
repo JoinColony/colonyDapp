@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 import type { UserType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
@@ -40,7 +40,7 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const supFiler = (data, filterValue) => {
+const supFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
       user &&
@@ -81,10 +81,10 @@ const validationSchema = yup.object({
 });
 
 type Props = {|
-  colonyName: ENSName,
+  colonyAddress: Address,
 |};
 
-const OrganizationAddAdmins = ({ colonyName }: Props) => {
+const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
   const walletAddress = useSelector(walletAddressSelector);
   const knownUsers = useSelector(usersExceptSelector, [walletAddress]);
   return (
@@ -95,12 +95,12 @@ const OrganizationAddAdmins = ({ colonyName }: Props) => {
         error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
         validationSchema={validationSchema}
         transform={compose(
-          withKeyPath(colonyName),
+          withKeyPath(colonyAddress),
           mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
         )}
         initialValues={{
           newAdmin: null,
-          colonyName,
+          colonyAddress,
         }}
       >
         {({ status, isSubmitting, isValid }) => (
@@ -114,7 +114,7 @@ const OrganizationAddAdmins = ({ colonyName }: Props) => {
                   ...user,
                   id: user.profile.walletAddress,
                 }))}
-                filter={supFiler}
+                filter={supFilter}
                 renderAvatar={supRenderAvatar}
               />
             </div>

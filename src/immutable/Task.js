@@ -16,7 +16,7 @@ export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 // export type TaskRating = 1 | 2 | 3;
 
 type Shared = {|
-  colonyName: string,
+  colonyAddress: Address,
   createdAt: Date,
   creatorAddress: string, // Address of the task creator
   currentState: TaskCurrentState,
@@ -65,7 +65,7 @@ export type TaskDraftId = $PropertyType<TaskRecordType, 'draftId'>;
 // export type TaskId = $PropertyType<TaskRecordType, 'taskId'>;
 
 const defaultValues: $Shape<TaskRecordProps> = {
-  colonyName: undefined,
+  colonyAddress: undefined,
   createdAt: undefined,
   creatorAddress: undefined,
   currentState: undefined,

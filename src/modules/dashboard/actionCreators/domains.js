@@ -1,19 +1,28 @@
 /* @flow */
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
+import type { DomainId } from '~immutable';
+import type { Action } from '~redux';
 
 import { ACTIONS } from '~redux';
 
-export const fetchDomain = (colonyName: ENSName, domainId: number) => ({
+export const fetchDomain = (
+  colonyAddress: Address,
+  domainId: DomainId,
+): Action<typeof ACTIONS.DOMAIN_FETCH> => ({
   type: ACTIONS.DOMAIN_FETCH,
+  payload: { colonyAddress, domainId },
   meta: {
-    keyPath: [colonyName, domainId],
+    keyPath: [colonyAddress, domainId],
   },
 });
 
-export const fetchDomains = (colonyName: ENSName) => ({
+export const fetchDomains = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_DOMAINS_FETCH> => ({
   type: ACTIONS.COLONY_DOMAINS_FETCH,
+  payload: { colonyAddress },
   meta: {
-    keyPath: [colonyName],
+    keyPath: [colonyAddress],
   },
 });

@@ -6,14 +6,14 @@ import { withWizard } from '../../../core/components/Wizard';
 import CreateColony from './CreateColonyWizard.jsx';
 
 import StepTokenChoice from './StepTokenChoice.jsx';
-import StepColonyName from './StepColonyName.jsx';
+import StepColonyDisplayName from './StepColonyDisplayName.jsx';
 import StepSelectToken from './StepSelectToken.jsx';
 import StepCreateToken from './StepCreateToken.jsx';
 import StepCreateColony from './StepCreateColony.jsx';
 import StepCreateENSName from './StepCreateENSName.jsx';
 
 const stepArray = [
-  StepColonyName,
+  StepColonyDisplayName,
   StepTokenChoice,
   StepCreateColony,
   StepCreateENSName,

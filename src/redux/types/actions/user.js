@@ -1,8 +1,9 @@
 /* @flow */
 
-import type { Address, ENSName, WithKeyPathDepth1 } from '~types';
+import type { Address, WithKeyPathDepth1 } from '~types';
 import type {
   ContractTransactionType,
+  TaskDraftId,
   TokenReferenceType,
   UserMetadataType,
   UserProfileType,
@@ -69,7 +70,7 @@ export type UserActionTypes = {|
   >,
   USER_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH,
-    {| address: string |},
+    {| userAddress: string |},
     WithKeyPathDepth1,
   >,
   USER_FETCH_ERROR: ErrorActionType<
@@ -88,7 +89,7 @@ export type UserActionTypes = {|
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
-    {| colonyName: ENSName |},
+    {| colonyAddress: Address |},
     WithKeyPathDepth1,
   >,
   USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
@@ -98,7 +99,7 @@ export type UserActionTypes = {|
   USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
     {|
-      colonyName: ENSName,
+      colonyAddress: Address,
       permissions: { +canEnterRecoveryMode?: boolean },
     |},
     WithKeyPathDepth1,
@@ -142,11 +143,11 @@ export type UserActionTypes = {|
   >,
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-    string[],
+    TaskDraftId[],
   >,
   USER_TASK_SUBSCRIBE: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,
-    {| draftId: string |},
+    {| draftId: TaskDraftId |},
   >,
   USER_TASK_SUBSCRIBE_ERROR: ErrorActionType<
     typeof ACTIONS.USER_TASK_SUBSCRIBE_ERROR,
@@ -154,7 +155,7 @@ export type UserActionTypes = {|
   >,
   USER_TASK_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,
-    {| draftId: string |},
+    {| draftId: TaskDraftId |},
   >,
   USER_TOKEN_TRANSFERS_FETCH: ActionType<
     typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,

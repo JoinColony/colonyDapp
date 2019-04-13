@@ -3,7 +3,7 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 import type { DomainType, RolesType } from '~immutable';
 
 import { ACTIONS } from '~redux';
@@ -61,20 +61,20 @@ const MSG = defineMessages({
 const displayName: string = 'admin.Organizations';
 
 type Props = {|
-  colonyName: ENSName,
+  colonyAddress: Address,
 |};
 
-const Organizations = ({ colonyName }: Props) => {
+const Organizations = ({ colonyAddress }: Props) => {
   const { data: roles } = useDataFetcher<RolesType>(
     rolesFetcher,
-    [colonyName],
-    [colonyName],
+    [colonyAddress],
+    [colonyAddress],
   );
 
   const { data: domains } = useDataFetcher<DomainType[]>(
     domainsFetcher,
-    [colonyName],
-    [colonyName],
+    [colonyAddress],
+    [colonyAddress],
   );
 
   if (!domains || !roles) {
@@ -101,7 +101,7 @@ const Organizations = ({ colonyName }: Props) => {
                * Once we have a way to _discover_ users that interacted with the current colony,
                * and which can be made admins
                */
-              colonyName={colonyName}
+              colonyAddress={colonyAddress}
             />
             <section className={styles.list}>
               {/*
@@ -113,7 +113,7 @@ const Organizations = ({ colonyName }: Props) => {
                 <UserList
                   users={admins}
                   label={MSG.labelAdminList}
-                  colonyName={colonyName}
+                  colonyAddress={colonyAddress}
                   showDisplayName
                   showUsername
                   showMaskedAddress
@@ -142,7 +142,7 @@ const Organizations = ({ colonyName }: Props) => {
         </TabPanel>
         <TabPanel>
           <div className={styles.sectionWrapper}>
-            <OrganizationAddDomains colonyName={colonyName} />
+            <OrganizationAddDomains colonyAddress={colonyAddress} />
             <section className={styles.list}>
               {/*
                * DomainList follows the design principles from TaskList in dashboard,

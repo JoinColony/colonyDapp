@@ -2,6 +2,9 @@
 
 import { USER_EVENT_TYPES } from '../constants';
 
+import type { Address } from '~types';
+import type { TaskDraftId } from '~immutable';
+
 import type { EventDefinition } from './events';
 
 const {
@@ -24,34 +27,34 @@ export type UserEvents = {|
   >,
   SUBSCRIBED_TO_COLONY: EventDefinition<
     typeof SUBSCRIBED_TO_COLONY,
-    {| address: string |},
+    {| colonyAddress: Address |},
   >,
   UNSUBSCRIBED_FROM_COLONY: EventDefinition<
     typeof UNSUBSCRIBED_FROM_COLONY,
-    {| address: string |},
+    {| colonyAddress: Address |},
   >,
   SUBSCRIBED_TO_TASK: EventDefinition<
     typeof SUBSCRIBED_TO_TASK,
     {|
-      draftId: string,
+      draftId: TaskDraftId,
     |},
   >,
   UNSUBSCRIBED_FROM_TASK: EventDefinition<
     typeof UNSUBSCRIBED_FROM_TASK,
     {|
-      draftId: string,
+      draftId: TaskDraftId,
     |},
   >,
   TOKEN_ADDED: EventDefinition<
     typeof TOKEN_ADDED,
     {|
-      address: string,
+      address: Address,
     |},
   >,
   TOKEN_REMOVED: EventDefinition<
     typeof TOKEN_REMOVED,
     {|
-      address: string,
+      address: Address,
     |},
   >,
 |};

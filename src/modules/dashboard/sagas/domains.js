@@ -2,10 +2,10 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 
 import {
   putError,
@@ -23,19 +23,16 @@ import { COLONY_CONTEXT } from '../../core/constants';
 import { createDomain } from '../data/commands';
 import { getColonyDomains } from '../data/queries';
 
-import { domainSelector } from '../selectors';
 import { fetchDomains } from '../actionCreators';
 
 import { getColonyContext } from './shared';
 
 function* colonyDomainsFetch({
-  meta: {
-    keyPath: [colonyName],
-  },
   meta,
+  payload: { colonyAddress },
 }: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyName);
+    const context = yield* getColonyContext(colonyAddress);
     const domains = yield* executeQuery(context, getColonyDomains);
     /*
      * Dispatch the success action.
@@ -51,15 +48,12 @@ function* colonyDomainsFetch({
 }
 
 function* domainCreate({
-  payload: { domainName, parentDomainId = 1 },
-  meta: {
-    keyPath: [colonyName],
-  },
+  payload: { colonyAddress, domainName, parentDomainId = 1 },
   meta,
 }: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const context = yield* getColonyContext(colonyName);
+    const context = yield* getColonyContext(colonyAddress);
     /*
      * Create the domain on the colony with a transaction.
      * TODO idempotency could be improved here by looking for a pending transaction.
@@ -67,7 +61,7 @@ function* domainCreate({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'addDomain',
-      identifier: colonyName,
+      identifier: colonyAddress,
       params: { parentDomainId },
     });
 
@@ -94,12 +88,12 @@ function* domainCreate({
       type: ACTIONS.DOMAIN_CREATE_SUCCESS,
       meta: {
         ...meta,
-        keyPath: [colonyName, domainId],
+        keyPath: [colonyAddress, domainId],
       },
       payload: { id: domainId, name: domainName },
     });
 
-    yield put(fetchDomains(colonyName));
+    yield put(fetchDomains(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {
@@ -107,17 +101,20 @@ function* domainCreate({
   }
 }
 
-function* checkDomainExists(colonyName: ENSName, domainId: number): Saga<void> {
+function* checkDomainExists(
+  colonyAddress: Address,
+  domainId: number,
+): Saga<void> {
   const getDomainCount = yield call(
     getColonyMethod,
     'getDomainCount',
-    colonyName,
+    colonyAddress,
   );
   const { count } = yield call(getDomainCount);
 
   if (domainId > count)
     throw new Error(
-      `Domain ID "${domainId}" does not exist on colony "${colonyName}"`,
+      `Domain ID "${domainId}" does not exist on colony "${colonyAddress}"`,
     );
 }
 
@@ -125,14 +122,11 @@ function* checkDomainExists(colonyName: ENSName, domainId: number): Saga<void> {
  * Fetch the domain for the given colony ENS name and domain ID.
  */
 function* domainFetch({
-  meta: {
-    keyPath: [colonyName, domainId],
-  },
   meta,
+  payload: { colonyAddress, domainId },
 }: Action<typeof ACTIONS.DOMAIN_FETCH>): Saga<void> {
   try {
-    yield call(checkDomainExists, colonyName, domainId);
-    const domain = yield select(domainSelector, domainId);
+    yield call(checkDomainExists, colonyAddress, domainId);
 
     /*
      * Dispatch the success action.
@@ -140,7 +134,8 @@ function* domainFetch({
     yield put<Action<typeof ACTIONS.DOMAIN_FETCH_SUCCESS>>({
       type: ACTIONS.DOMAIN_FETCH_SUCCESS,
       meta,
-      payload: domain,
+      // TODO this ain't doing a whole lot.
+      payload: { id: domainId, name: '' },
     });
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_FETCH_ERROR, error, meta);

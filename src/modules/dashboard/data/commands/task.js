@@ -89,10 +89,15 @@ export const createTask: Command<
     draftId: string,
     taskStore: EventStore,
   |},
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
+> = ({ ddb, colonyClient, wallet, metadata: { colonyAddress }, metadata }) => ({
   schema: CreateTaskCommandArgsSchema,
   async execute({ creatorAddress }) {
-    const draftId = nanoid();
+    // Prefix the randomly-generated draftId with the colony address, so that
+    // we can obtain the task's context and store more easily.
+    // In the future, we may simply use the task store address (the IPFS hash
+    // without the signature).
+    const draftId = `${colonyAddress}_${nanoid()}`;
+
     const { taskStore, commentsStore } = await createTaskStore(
       colonyClient,
       ddb,

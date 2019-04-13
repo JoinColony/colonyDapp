@@ -1,11 +1,21 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import type { Action } from '~redux';
 
-import { all, call, put, select, takeEvery } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  put,
+  select,
+  takeEvery,
+  takeLeading,
+} from 'redux-saga/effects';
 import nanoid from 'nanoid';
 import { replace } from 'connected-react-router';
+
+import type { Action } from '~redux';
+import type { Address } from '~types';
+import type { TaskDraftId } from '~immutable';
 
 import { CONTEXT, getContext } from '~context';
 import {
@@ -14,12 +24,14 @@ import {
   putError,
   raceError,
 } from '~utils/saga/effects';
-import { shouldFetchData } from '~immutable/utils';
 import { ACTIONS } from '~redux';
 
+import { fetchTaskMetadataForColony } from '../actionCreators';
 import {
   allColonyNamesSelector,
-  taskRefRecordSelector,
+  colonySelector,
+  colonyTaskMetadataSelector,
+  taskMetadataSelector,
   taskSelector,
 } from '../selectors';
 
@@ -45,112 +57,122 @@ import { getColonyTasks, getTask, getTaskComments } from '../data/queries';
 import { subscribeToTask } from '../../users/actionCreators';
 
 /*
- * If the given colony is not in state, dispatch an action to fetch it,
- * and wait for the success/error action.
+ * Dispatch an action to fetch the colony task metadata and wait for the
+ * success/error action.
  */
-export function* maybeFetchColonyTasks(
-  colonyName: string,
-  draftId: string,
-): Saga<*> {
-  const taskRef = yield select(taskRefRecordSelector, draftId);
+export function* fetchColonyTaskMetadata(colonyAddress: Address): Saga<*> {
+  const metadata = yield select(colonyTaskMetadataSelector, colonyAddress);
 
-  // Use an infinite TTL because we don't want to refresh it
-  if (!shouldFetchData(taskRef, Infinity, false, [colonyName])) return null;
+  /*
+   * Dispatch an action to fetch the task metadata for this colony
+   * (if necessary).
+   */
+  if (metadata == null || metadata.error || !metadata.isFetching)
+    yield put(fetchTaskMetadataForColony(colonyAddress));
 
-  yield put({
-    type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-    payload: { colonyName },
-  });
+  /*
+   * Wait for the success/error action.
+   */
   yield raceError(
     ({ type, payload }) =>
       type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS &&
-      payload.colonyName === colonyName,
+      payload.colonyAddress === colonyAddress,
     ({ type, payload }) =>
       type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR &&
-      payload.colonyName === colonyName,
+      payload.colonyAddress === colonyAddress,
   );
   return null;
 }
 
-function* getColonyStoreContext(colonyName: string): Saga<*> {
+function* getColonyStoreContext(colonyAddress: Address): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const wallet = yield* getContext(CONTEXT.WALLET);
   const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+
   if (!colonyManager)
     throw new Error('Cannot get colony context. Invalid manager instance');
+
   const colonyClient = yield call(
     [colonyManager, colonyManager.getColonyClient],
-    colonyName,
+    colonyAddress,
   );
+
   return {
     ddb,
     colonyClient,
     wallet,
     metadata: {
-      colonyName,
-      colonyAddress: colonyClient.contract.address,
+      colonyAddress,
     },
   };
 }
 
-function* getTaskStoreContext(colonyName: string, draftId: string): Saga<*> {
-  const { metadata, ...context } = yield call(
+function* getTaskStoreContext(draftId: TaskDraftId): Saga<*> {
+  /*
+   * Get the colony address for the task from the draftId.
+   */
+  const [colonyAddress] = draftId.split('_');
+
+  /*
+   * The task store context inherits the colony store context.
+   */
+  const { metadata: colonyMetadata, ...colonyContext } = yield call(
     getColonyStoreContext,
-    colonyName,
+    colonyAddress,
   );
-  yield call(maybeFetchColonyTasks, colonyName, draftId);
 
-  const { taskStoreAddress } = yield select(taskRefRecordSelector, draftId);
+  /*
+   * Select the possibly-fetched task reference from state.
+   */
+  let taskMetadata = yield select(taskMetadataSelector, colonyAddress, draftId);
+
+  /*
+   * If we don't have the required metadata, fetch it from the colony
+   * (if this isn't happening already) and re-select the metadata from state.
+   */
+  if (!(taskMetadata && taskMetadata.taskStoreAddress)) {
+    yield call(fetchColonyTaskMetadata, colonyAddress);
+    taskMetadata = yield select(taskMetadataSelector, colonyAddress, draftId);
+  }
+
+  /*
+   * Use the task metadata to complete the task context.
+   */
   return {
-    ...context,
+    ...colonyContext,
     metadata: {
-      ...metadata,
+      ...colonyMetadata,
+      ...taskMetadata.toJS(),
       draftId,
-      taskStoreAddress,
-    },
-  };
-}
-
-function* getTaskCommentsStoreContext(
-  colonyName: string,
-  draftId: string,
-): Saga<*> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  yield call(maybeFetchColonyTasks, colonyName, draftId);
-
-  const { commentsStoreAddress } = yield select(taskRefRecordSelector, draftId);
-  return {
-    ddb,
-    wallet,
-    metadata: {
-      commentsStoreAddress,
     },
   };
 }
 
 function* taskCreate({
   meta,
-  payload: { colonyName },
+  payload: { colonyAddress },
 }: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
   try {
-    const colonyContext = yield call(getColonyStoreContext, colonyName);
-    const creatorAddress = colonyContext.wallet.address;
+    const context = yield call(getColonyStoreContext, colonyAddress);
+    const creatorAddress = context.wallet.address;
     const { taskStore, commentsStore, draftId } = yield* executeCommand(
-      colonyContext,
+      context,
       createTask,
       { creatorAddress },
     );
+    const {
+      record: { colonyName },
+    } = yield select(colonySelector, colonyAddress);
 
     const successAction: Action<typeof ACTIONS.TASK_CREATE_SUCCESS> = {
       type: ACTIONS.TASK_CREATE_SUCCESS,
       payload: {
-        colonyName,
+        colonyAddress,
         commentsStoreAddress: commentsStore.address.toString(),
         draftId,
         taskStoreAddress: taskStore.address.toString(),
         task: {
-          colonyName,
+          colonyAddress,
           draftId,
           creatorAddress,
         },
@@ -172,8 +194,8 @@ function* taskCreate({
 
 // TODO simplify this in #965.
 const getTaskFetchSuccessPayload = (
-  { colonyName, draftId }: *,
-  { metadata: { taskStoreAddress } }: *,
+  { draftId }: *,
+  { metadata: { colonyAddress, taskStoreAddress } }: *,
   {
     amountPaid,
     commentsStoreAddress,
@@ -187,12 +209,12 @@ const getTaskFetchSuccessPayload = (
     ...task
   }: *,
 ) => ({
-  colonyName,
+  colonyAddress,
   commentsStoreAddress,
   draftId,
   task: {
     ...task,
-    colonyName,
+    colonyAddress,
     currentState,
     draftId,
     invites,
@@ -213,17 +235,15 @@ const getTaskFetchSuccessPayload = (
 });
 
 /*
- * Given a colony ENS name a task ID, fetch the task from its store.
- * Optionally, the `taskStoreAddress` property can be included in
- * the payload, which allows some steps to be skipped.
+ * Given a colony address and a task draft ID, fetch the task from its store.
  */
 function* taskFetch({
   meta,
-  payload: { colonyName, draftId },
+  payload: { draftId },
   payload,
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     const taskData = yield* executeQuery(context, getTask);
     yield put<Action<typeof ACTIONS.TASK_FETCH_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_SUCCESS,
@@ -237,14 +257,15 @@ function* taskFetch({
 
 // TODO: Move this to colony sagas?
 /*
- * Given a colony ENS name, dispatch actions to fetch all tasks
+ * Given a colony address, dispatch actions to fetch all tasks
  * for that colony.
  */
 function* taskFetchAllForColony({
-  payload: { colonyName },
+  meta,
+  payload: { colonyAddress },
 }: Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>): Saga<void> {
   try {
-    const context = yield* getColonyStoreContext(colonyName);
+    const context = yield* getColonyStoreContext(colonyAddress);
     const colonyTasks = yield* executeQuery(context, getColonyTasks);
 
     /*
@@ -252,10 +273,11 @@ function* taskFetchAllForColony({
      */
     yield put<Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS,
-      payload: { colonyName, colonyTasks },
+      meta: { keyPath: [colonyAddress] },
+      payload: { colonyAddress, colonyTasks },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR, error);
+    yield putError(ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR, error, meta);
   }
 }
 
@@ -264,24 +286,21 @@ function* taskFetchAllForColony({
  * colonies (in parallel).
  */
 function* taskFetchAll(): Saga<void> {
-  const colonyNames = yield select(allColonyNamesSelector);
+  const colonyAddresss = yield select(allColonyNamesSelector);
   yield all(
-    colonyNames.map(colonyName =>
-      put<Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>>({
-        type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-        payload: { colonyName },
-      }),
+    colonyAddresss.map(colonyAddress =>
+      put(fetchTaskMetadataForColony(colonyAddress)),
     ),
   );
 }
 
 function* taskSetDescription({
   meta,
-  payload: { colonyName, draftId, description },
+  payload: { draftId, description },
   payload,
 }: Action<typeof ACTIONS.TASK_SET_DESCRIPTION>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, setTaskDescription, { description });
     yield put<Action<typeof ACTIONS.TASK_SET_DESCRIPTION_SUCCESS>>({
       type: ACTIONS.TASK_SET_DESCRIPTION_SUCCESS,
@@ -295,11 +314,11 @@ function* taskSetDescription({
 
 function* taskSetTitle({
   meta,
-  payload: { colonyName, draftId, title },
+  payload: { draftId, title },
   payload,
 }: Action<typeof ACTIONS.TASK_SET_TITLE>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, setTaskTitle, { title });
     yield put<Action<typeof ACTIONS.TASK_SET_TITLE_SUCCESS>>({
       type: ACTIONS.TASK_SET_TITLE_SUCCESS,
@@ -313,11 +332,11 @@ function* taskSetTitle({
 
 function* taskSetDomain({
   meta,
-  payload: { colonyName, draftId, domainId },
+  payload: { draftId, domainId },
   payload,
 }: Action<typeof ACTIONS.TASK_SET_DOMAIN>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, setTaskDomain, { domainId });
     yield put<Action<typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS>>({
       type: ACTIONS.TASK_SET_DOMAIN_SUCCESS,
@@ -330,17 +349,17 @@ function* taskSetDomain({
 }
 
 /*
- * Given a colony ENS name and task ID, remove the task by unsetting
+ * Given a colony address and task ID, remove the task by unsetting
  * the corresponding key in the tasks index store. The task store is
  * simply unpinned.
  */
 function* taskCancel({
   meta,
-  payload: { draftId, colonyName },
+  payload: { draftId },
   payload,
 }: Action<typeof ACTIONS.TASK_CANCEL>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, cancelTask, { draftId });
 
     /*
@@ -357,17 +376,17 @@ function* taskCancel({
 }
 
 /*
- * Given a colony ENS name and task ID, remove the task by unsetting
+ * Given a colony address and task ID, remove the task by unsetting
  * the corresponding key in the tasks index store. The task store is
  * simply unpinned.
  */
 function* taskClose({
   meta,
-  payload: { draftId, colonyName },
+  payload: { draftId },
   payload,
 }: Action<typeof ACTIONS.TASK_CLOSE>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, closeTask);
 
     /*
@@ -387,12 +406,12 @@ function* taskClose({
  * As worker or manager, I want to be able to set a skill
  */
 function* taskSetSkill({
-  payload: { draftId, skillId, colonyName },
+  payload: { draftId, skillId },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, setTaskSkill, { skillId });
     yield put<Action<typeof ACTIONS.TASK_SET_SKILL_SUCCESS>>({
       type: ACTIONS.TASK_SET_SKILL_SUCCESS,
@@ -408,12 +427,12 @@ function* taskSetSkill({
  * As worker or manager, I want to be able to set a skill
  */
 function* taskSetPayout({
-  payload: { colonyName, draftId, token, amount },
+  payload: { draftId, token, amount },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, setTaskPayout, { token, amount });
     yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
       type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
@@ -429,18 +448,17 @@ function* taskSetPayout({
  * As worker or manager, I want to be able to set a date
  */
 function* taskSetDueDate({
-  payload: { colonyName, dueDate, draftId },
+  payload: { dueDate, draftId },
   meta,
 }: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, setTaskDueDate, {
       dueDate: dueDate.getTime(),
     });
     yield put<Action<typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS>>({
       type: ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
       payload: {
-        colonyName,
         draftId,
         dueDate,
       },
@@ -455,13 +473,13 @@ function* taskSetDueDate({
  * As anyone, finalize task (`completeTask` group)
  */
 function* taskFinalize({
-  payload: { draftId, colonyName },
+  payload: { draftId },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   try {
     const { worker, amountPaid } = yield select(taskSelector, draftId);
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, finalizeTask, { amountPaid, worker });
     yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({
       type: ACTIONS.TASK_FINALIZE_SUCCESS,
@@ -474,13 +492,13 @@ function* taskFinalize({
 }
 
 function* taskSendWorkInvite({
-  payload: { draftId, colonyName },
+  payload: { draftId },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SEND_WORK_INVITE>): Saga<void> {
   try {
     const { worker } = yield select(taskSelector, draftId);
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, sendWorkInvite, { worker });
     yield put<Action<typeof ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS,
@@ -493,14 +511,14 @@ function* taskSendWorkInvite({
 }
 
 function* taskSendWorkRequest({
-  payload: { draftId, colonyName },
+  payload: { draftId },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     const wallet = yield* getContext(CONTEXT.WALLET);
-    const worker = wallet.address;
+    const worker = wallet.colonyAddress;
     yield* executeCommand(context, createWorkRequest, { worker });
     yield put<Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
@@ -513,12 +531,12 @@ function* taskSendWorkRequest({
 }
 
 function* taskWorkerAssign({
-  payload: { draftId, colonyName, worker },
+  payload: { draftId, worker },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, assignWorker, {
       worker,
     });
@@ -533,12 +551,12 @@ function* taskWorkerAssign({
 }
 
 function* taskWorkerUnassign({
-  payload: { draftId, colonyName, worker },
+  payload: { draftId, worker },
   payload,
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<void> {
   try {
-    const context = yield* getTaskStoreContext(colonyName, draftId);
+    const context = yield* getTaskStoreContext(draftId);
     yield* executeCommand(context, unassignWorker, {
       worker,
     });
@@ -554,21 +572,16 @@ function* taskWorkerUnassign({
 
 // TODO in #580 replace with fetching feed items
 function* taskFetchComments({
-  payload: { colonyName, draftId },
+  payload: { draftId },
   meta,
 }: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
   try {
-    const context = yield call(
-      getTaskCommentsStoreContext,
-      colonyName,
-      draftId,
-    );
+    const context = yield call(getTaskStoreContext, draftId);
     const comments = yield* executeQuery(context, getTaskComments);
     yield put<Action<typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
       meta,
       payload: {
-        colonyName,
         comments,
         draftId,
       },
@@ -579,15 +592,11 @@ function* taskFetchComments({
 }
 
 function* taskCommentAdd({
-  payload: { draftId, commentData, colonyName },
+  payload: { draftId, commentData },
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const context = yield call(
-      getTaskCommentsStoreContext,
-      colonyName,
-      draftId,
-    );
+    const context = yield call(getTaskStoreContext, draftId);
     const { wallet } = context;
     /*
      * TODO Wire message signing to the Gas Station, once it's available
@@ -611,7 +620,6 @@ function* taskCommentAdd({
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
       payload: {
-        colonyName,
         commentData,
         draftId,
         signature,
@@ -629,7 +637,6 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
-  yield takeEvery(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
   yield takeEvery(ACTIONS.TASK_FETCH_ALL_FOR_COLONY, taskFetchAllForColony);
   yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskFetchComments);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
@@ -643,4 +650,5 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
   yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
+  yield takeLeading(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
 }

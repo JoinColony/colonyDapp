@@ -11,6 +11,7 @@ import { withDataRecord } from '~utils/reducers';
 
 type State = DataRecordType<CurrentUserTasksType>;
 type Actions = {
+  USER_TASK_SUBSCRIBE_SUCCESS: *,
   USER_SUBSCRIBED_TASKS_FETCH: *,
   USER_SUBSCRIBED_TASKS_FETCH_ERROR: *,
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: *,
@@ -22,6 +23,16 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
   action,
 ) => {
   switch (action.type) {
+    case ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS: {
+      const { draftId } = action.payload;
+      return state.merge({
+        error: undefined,
+        record: state.record
+          ? state.record.add(draftId)
+          : ImmutableSet([draftId]),
+        isFetching: false,
+      });
+    }
     case ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: {
       const record = ImmutableSet(action.payload);
       return state.merge({ error: undefined, record, isFetching: false });

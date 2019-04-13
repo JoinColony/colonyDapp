@@ -8,7 +8,7 @@ import type {
   RecordOf,
 } from 'immutable';
 
-import type { ENSName } from '~types';
+import type { Address, ENSName } from '~types';
 
 import type { AllUsersRecord } from './AllUsers';
 import type { ContractTransactionRecordType } from '../../ContractTransaction';
@@ -19,6 +19,7 @@ import type { UserMetadataRecordType } from '../../UserMetadata';
 import type { UserPermissionsRecordType } from '../../UserPermissions';
 import type { UserProfileRecordType } from '../../UserProfile';
 import type { WalletRecordType } from '../../Wallet';
+import type { TaskDraftId } from '~immutable/Task';
 
 export * from './AllUsers';
 
@@ -31,9 +32,9 @@ export type CurrentUserPermissionsType = ImmutableMapType<
   DataRecordType<ImmutableMapType<UserPermissionsRecordType>>,
 >;
 
-export type CurrentUserColoniesType = ImmutableSetType<string>;
+export type CurrentUserColoniesType = ImmutableSetType<Address>;
 
-export type CurrentUserTasksType = ImmutableSetType<string>;
+export type CurrentUserTasksType = ImmutableSetType<TaskDraftId>;
 
 export type CurrentUserTokensType = DataRecordType<
   ListType<TokenReferenceRecordType>,

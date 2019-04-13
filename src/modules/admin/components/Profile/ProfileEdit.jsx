@@ -65,11 +65,11 @@ type Props = {|
 
 const ProfileEdit = ({ colony }: Props) => {
   const {
-    description,
-    guideline,
     colonyAddress,
     colonyName,
+    description,
     displayName,
+    guideline,
     website,
   } = colony;
   return (
@@ -79,13 +79,13 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_PROFILE_UPDATE}
           success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
           error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
-          transform={withKeyPath(colonyName)}
+          transform={withKeyPath(colonyAddress)}
           initialValues={{
             colonyName,
-            displayName,
             description,
-            website,
+            displayName,
             guideline,
+            website,
           }}
           validationSchema={colonyStoreBlueprint.schema}
         >

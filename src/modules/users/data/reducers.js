@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { TaskDraftId } from '~immutable';
 import type { EventReducer } from '~data/types';
 
 import { USER_EVENT_TYPES } from '~data/constants';
@@ -12,7 +13,7 @@ const {
 } = USER_EVENT_TYPES;
 
 export const getUserTasksReducer: EventReducer<
-  string[],
+  TaskDraftId[],
   {|
     SUBSCRIBED_TO_TASK: *,
     UNSUBSCRIBED_FROM_TASK: *,

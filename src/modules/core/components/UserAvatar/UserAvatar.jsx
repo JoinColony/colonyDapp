@@ -49,11 +49,12 @@ const UserAvatar = ({
         placeholderIcon="circle-person"
         seed={address}
         size={size}
-        title={(user && user.profile.username) || address}
+        title={username || address}
       />
     </UserInfo>
   );
   if (showLink && username) {
+    // TODO won't this always be lowercase?
     return <NavLink to={`/user/${username.toLowerCase()}`}>{avatar}</NavLink>;
   }
   return avatar;

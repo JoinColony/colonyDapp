@@ -7,7 +7,7 @@ import type {
   RootStateRecord,
   UserRecordType,
 } from '~immutable';
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 
 import {
   USERS_ALL_USERS,
@@ -96,13 +96,13 @@ export const currentUserTransactionsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
 export const currentUserColonyPermissionsSelector = (
   state: RootStateRecord,
-  colonyName: ENSName,
+  colonyAddress: Address,
 ) =>
   state.getIn([
     ns,
     USERS_CURRENT_USER,
     USERS_CURRENT_USER_PERMISSIONS,
-    colonyName,
+    colonyAddress,
   ]);
 export const currentUserMetadataSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
@@ -110,5 +110,5 @@ export const currentUserMetadataSelector = (state: RootStateRecord) =>
 export const currentUserColoniesSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES]);
 
-export const currentUserTasksSelector = (state: RootStateRecord) =>
+export const currentUserDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);

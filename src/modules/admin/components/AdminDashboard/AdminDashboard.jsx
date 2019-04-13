@@ -6,8 +6,6 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
-
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Organizations from '~admin/Organizations';
@@ -18,8 +16,8 @@ import Transactions from '~admin/Transactions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 
-import { colonyFetcher } from '../../../dashboard/fetchers';
 import { isInRecoveryMode } from '../../../dashboard/checks';
+import { useColonyWithName } from '../../../dashboard/hooks';
 
 import styles from './AdminDashboard.css';
 
@@ -80,12 +78,12 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   {
     id: 3,
     title: MSG.tabTransaction,
-    content: <Transactions colonyName={colony.colonyName} />,
+    content: <Transactions colonyAddress={colony.colonyAddress} />,
   },
   {
     id: 4,
     title: MSG.tabOrganisation,
-    content: <Organizations colonyName={colony.colonyName} />,
+    content: <Organizations colonyAddress={colony.colonyAddress} />,
   },
 ];
 
@@ -95,19 +93,12 @@ const AdminDashboard = ({
     params: { colonyName },
   },
 }: Props) => {
-  const { data: colony, isFetching, error } = useDataFetcher<ColonyType>(
-    colonyFetcher,
-    [colonyName],
-    [colonyName],
-  );
+  const { data: colony, isFetching, error } = useColonyWithName(colonyName);
 
-  if (!colonyName || error) {
-    return <Redirect to="/404" />;
-  }
+  if (!colonyName || error) return <Redirect to="/404" />;
 
-  if (!colony || isFetching) {
+  if (!colony || isFetching)
     return <LoadingTemplate loadingText={MSG.loadingText} />;
-  }
 
   const { displayName } = colony;
   return (

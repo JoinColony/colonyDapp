@@ -3,7 +3,7 @@
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
-import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { Address, OrbitDBAddress } from '~types';
 import type { TaskDraftId } from '~immutable';
 
 import type { UserProfileStoreValues } from './storeValuesTypes';
@@ -13,8 +13,6 @@ import type {
   FeedStore,
   ValidatedKVStore,
 } from '../lib/database/stores';
-
-import ENS from '../lib/ENS';
 
 import {
   colony as colonyStoreBlueprint,
@@ -29,22 +27,12 @@ export const getColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
   wallet: WalletObjectType,
-) => async ({
-  colonyAddress,
-  colonyName,
-}: {
-  colonyAddress: string,
-  colonyName: ENSName,
-}) =>
-  ddb.getStore<EventStore>(
-    colonyStoreBlueprint,
-    ENS.getFullDomain('colony', colonyName),
-    {
-      wallet,
-      colonyAddress,
-      colonyClient,
-    },
-  );
+) => async ({ colonyAddress }: { colonyAddress: Address }) =>
+  ddb.getStore<EventStore>(colonyStoreBlueprint, colonyAddress, {
+    wallet,
+    colonyAddress,
+    colonyClient,
+  });
 
 export const createColonyStore = (
   colonyClient: ColonyClientType,
@@ -63,12 +51,10 @@ export const getTaskStore = (
   wallet: WalletObjectType,
 ) => async ({
   colonyAddress,
-  colonyName,
   draftId,
   taskStoreAddress,
 }: {
   colonyAddress: Address,
-  colonyName: ENSName,
   draftId: TaskDraftId,
   taskStoreAddress: string | OrbitDBAddress,
 }) =>
@@ -78,7 +64,7 @@ export const getTaskStore = (
     colonyClient,
     draftId,
     meta: {
-      colonyName,
+      colonyAddress,
     },
   });
 
@@ -95,11 +81,9 @@ export const createTaskStore = (
 ) => async ({
   draftId,
   colonyAddress,
-  colonyName,
 }: {
-  draftId: string,
+  draftId: TaskDraftId,
   colonyAddress: Address,
-  colonyName: ENSName,
 }) => {
   const [taskStore, commentsStore] = await Promise.all([
     ddb.createStore<EventStore>(taskStoreBlueprint, {
@@ -108,7 +92,7 @@ export const createTaskStore = (
       colonyClient,
       draftId,
       meta: {
-        colonyName,
+        colonyAddress,
       },
     }),
     ddb.createStore<EventStore>(commentsStoreBlueprint),
@@ -119,7 +103,7 @@ export const createTaskStore = (
 export const getUserProfileStore = (ddb: DDB) => async ({
   walletAddress,
 }: {
-  walletAddress: string,
+  walletAddress: Address,
 }) =>
   ddb.getStore<ValidatedKVStore<UserProfileStoreValues>>(
     userProfileStoreBlueprint,
@@ -133,8 +117,8 @@ export const getUserInboxStore = (ddb: DDB) => async ({
   inboxStoreAddress,
   walletAddress,
 }: {
-  inboxStoreAddress: string | string | OrbitDBAddress,
-  walletAddress: string,
+  inboxStoreAddress: string | OrbitDBAddress,
+  walletAddress: Address,
 }) =>
   ddb.getStore<FeedStore>(userInboxStoreBlueprint, inboxStoreAddress, {
     walletAddress,
@@ -145,7 +129,7 @@ export const getUserMetadataStore = (ddb: DDB) => async ({
   walletAddress,
 }: {
   userMetadataStoreAddress: string | OrbitDBAddress,
-  walletAddress: string,
+  walletAddress: Address,
 }) =>
   ddb.getStore<EventStore>(
     userMetadataStoreBlueprint,
@@ -158,7 +142,7 @@ export const getUserMetadataStore = (ddb: DDB) => async ({
 export const createUserProfileStore = (ddb: DDB) => async ({
   walletAddress,
 }: {
-  walletAddress: string,
+  walletAddress: Address,
 }) => {
   const [profileStore, inboxStore, metadataStore] = await Promise.all([
     ddb.createStore<ValidatedKVStore<UserProfileStoreValues>>(

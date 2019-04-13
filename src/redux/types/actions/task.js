@@ -2,10 +2,9 @@
 /* @flow */
 
 import type { TaskType, TaskProps } from '~immutable';
-import type { $Required } from '~types';
+import type { $Required, Address, WithKeyPathDepth1 } from '~types';
 import type {
   ActionType,
-  ActionTypeWithPayload,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
@@ -18,8 +17,7 @@ type TaskActionMeta = {|
 |};
 
 type TaskActionPayload<P> = {|
-  colonyName: string,
-  draftId: string,
+  ...TaskProps<{ draftId: * }>,
   ...P,
 |};
 
@@ -57,16 +55,17 @@ export type TaskActionTypes = {|
   >,
   TASK_CREATE: UniqueActionType<
     typeof ACTIONS.TASK_CREATE,
-    TaskProps<{ colonyName: * }>,
+    TaskProps<{ colonyAddress: * }>,
     void,
   >,
   TASK_CREATE_ERROR: ErrorActionType<typeof ACTIONS.TASK_CREATE_ERROR>,
   TASK_CREATE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_CREATE_SUCCESS,
     {|
+      colonyAddress: Address,
       commentsStoreAddress: string,
       taskStoreAddress: string,
-      task: TaskProps<{ colonyName: *, creatorAddress: *, draftId: * }>,
+      task: TaskProps<{ colonyAddress: *, creatorAddress: *, draftId: * }>,
     |},
   >,
   TASK_FETCH: NonUniqueTaskActionType<typeof ACTIONS.TASK_FETCH, void>,
@@ -74,24 +73,26 @@ export type TaskActionTypes = {|
   TASK_FETCH_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FETCH_SUCCESS,
     {|
+      colonyAddress: Address,
       commentsStoreAddress: string,
       taskStoreAddress: string,
       task: $Shape<TaskType>,
     |},
   >,
   TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>,
-  TASK_FETCH_ALL_FOR_COLONY: ActionTypeWithPayload<
+  TASK_FETCH_ALL_FOR_COLONY: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-    TaskProps<{ colonyName: * }>,
+    TaskProps<{ colonyAddress: * }>,
+    WithKeyPathDepth1,
   >,
   TASK_FETCH_ALL_FOR_COLONY_ERROR: ErrorActionType<
     typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR,
-    void,
+    WithKeyPathDepth1,
   >,
-  TASK_FETCH_ALL_FOR_COLONY_SUCCESS: ActionTypeWithPayload<
+  TASK_FETCH_ALL_FOR_COLONY_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS,
     {|
-      ...TaskProps<{ colonyName: * }>,
+      ...TaskProps<{ colonyAddress: * }>,
       colonyTasks: {
         [draftId: string]: {|
           commentsStoreAddress: string,
@@ -99,6 +100,7 @@ export type TaskActionTypes = {|
         |},
       },
     |},
+    WithKeyPathDepth1,
   >,
   TASK_FETCH_COMMENTS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS,
