@@ -9,7 +9,7 @@ import type {
 
 import type { ENSName } from '~types';
 import type { AllColoniesRecord } from './AllColonies';
-import type { AllTokensRecord } from './AllTokens';
+import type { AllTokensMap } from './AllTokens';
 import type { AllDomainsMap } from './AllDomains';
 import type { AllRolesMap } from './AllRoles';
 
@@ -38,7 +38,7 @@ export type DashboardStateProps = {|
   allColonies: AllColoniesRecord,
   allComments: AllCommentsMap,
   allDomains: AllDomainsMap,
-  allTokens: AllTokensRecord,
+  allTokens: AllTokensMap,
   tasks: TaskRefsMap,
 |};
 
