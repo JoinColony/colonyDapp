@@ -1,20 +1,23 @@
 /* @flow */
+
 import type { FormikProps } from 'formik';
 
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import type { TokenReferenceType } from '~immutable';
+import type { TokenReferenceType, TokenType } from '~immutable';
 
+import { useDataFetcher } from '~utils/hooks';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { Checkbox, Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import { useToken } from '../../../dashboard/hooks';
 import { tokenIsETH } from '../../../dashboard/checks';
+import { tokenFetcher } from '../../../dashboard/fetchers';
 
 import styles from './TokenEditDialog.css';
 
@@ -76,11 +79,16 @@ const validateNativeTokenSelect = (nativeToken?: TokenReferenceType): any => {
 };
 
 const TokenCheckbox = ({
-  token: { address, isNative = false, iconHash },
+  token: { address, isNative = false },
+  token: tokenReference,
 }: {
   token: TokenReferenceType,
 }) => {
-  const token = useToken(address);
+  const { data: token } = useDataFetcher<TokenType>(
+    tokenFetcher,
+    [address],
+    [address],
+  );
   return token ? (
     <Checkbox
       className={styles.tokenChoice}
@@ -88,14 +96,7 @@ const TokenCheckbox = ({
       name="tokens"
       disabled={isNative || tokenIsETH(token)}
     >
-      {!!iconHash && (
-        <img
-          // TODO: this is cheating, we should load from our own node
-          src={`https://ipfs.io/ipfs/${iconHash}`}
-          alt={token.name}
-          className={styles.tokenChoiceIcon}
-        />
-      )}
+      <TokenIcon token={tokenReference} name={token.name} />
       <span className={styles.tokenChoiceSymbol}>
         <Heading
           text={token.symbol || token.name || MSG.unknownToken}

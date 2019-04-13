@@ -5,6 +5,7 @@ import {
   colonyDomainsSelector,
   colonySelector,
   taskSelector,
+  tokenSelector,
 } from './selectors';
 import {
   currentUserTasksSelector,
@@ -15,6 +16,7 @@ import {
   fetchDomains,
   fetchRoles,
   taskFetch,
+  fetchToken,
 } from './actionCreators';
 import {
   currentUserFetchColonies,
@@ -55,4 +57,10 @@ export const taskFetcher = Object.freeze({
   select: taskSelector,
   fetch: taskFetch,
   ttl: 1000 * 60, // 1 minute,
+});
+
+export const tokenFetcher = Object.freeze({
+  select: tokenSelector,
+  fetch: fetchToken,
+  ttl: 1000 * 60,
 });
