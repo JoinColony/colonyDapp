@@ -4,13 +4,11 @@ import type { Channel, Saga } from 'redux-saga';
 
 import { call, put, race, take } from 'redux-saga/effects';
 
-import type { ENSName } from '~types';
 import type { ErrorActionType, TakeFilter } from '~redux';
 import type { Command, Query } from '../../data/types';
 
 import { validateSync } from '~utils/yup';
 import { isDev, log } from '~utils/debug';
-import { getContext, CONTEXT } from '~context';
 
 /*
  * Effect to take a specific action from a channel
@@ -73,39 +71,6 @@ export const raceError = (
   }
   return call(raceErrorGenerator);
 };
-
-function* callCallerSaga({
-  context,
-  identifier,
-  methodName,
-  params = {},
-}: {
-  context: 'colony' | 'network',
-  identifier?: ENSName,
-  methodName: string,
-  params?: Object,
-}): Saga<*> {
-  // TODO typing could be better here, params and return value :-(
-  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-  const caller = yield call(
-    [colonyManager, colonyManager.getMethod],
-    context,
-    methodName,
-    identifier,
-  );
-  return yield call([caller, caller.call], params);
-}
-
-/*
- * Gets the caller from the colonyManager and calls it with the given
- * parameters. If no colonyName, network context is assumed.
- */
-export const callCaller = (args: {
-  context: 'colony' | 'network',
-  identifier?: ENSName,
-  methodName: string,
-  params?: Object,
-}) => call(callCallerSaga, args);
 
 export function* executeQuery<C: *, I: *, R: *>(
   context: C,
