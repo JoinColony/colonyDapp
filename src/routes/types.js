@@ -19,6 +19,10 @@ export type RouteProps = {
    */
   isConnected?: boolean,
   /*
+   * Whether or not to display the back navigation link
+   */
+  hasBackLink?: boolean,
+  /*
    * Wheater or not to wrap the route's component inside the NavigationBar
    */
   hasNavigation?: boolean,

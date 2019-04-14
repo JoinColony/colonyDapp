@@ -11,6 +11,7 @@ import type { RouteProps } from './types';
 
 const ConnectedOnlyRoute = ({
   component: Component,
+  hasBackLink,
   isConnected,
   hasNavigation = true,
   path,
@@ -34,7 +35,11 @@ const ConnectedOnlyRoute = ({
         return hasNavigation ? (
           <NavigationWrapper
             {...rest}
-            hasBackLink={location.state && location.state.hasBackLink}
+            hasBackLink={
+              hasBackLink === false
+                ? false
+                : location.state && location.state.hasBackLink
+            }
           >
             <Component {...props} params={params} />
           </NavigationWrapper>
