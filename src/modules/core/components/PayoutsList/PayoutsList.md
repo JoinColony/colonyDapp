@@ -11,7 +11,7 @@ const payouts = List.of(
   TaskPayoutRecord({ token: { symbol: 'ETH' }, amount: new BN(75000) }),
   TaskPayoutRecord({ token: { symbol: 'DAI' }, amount: new BN(460000) }),
   TaskPayoutRecord({ token: { symbol: 'CLNY' }, amount: new BN(210000) }),
-);
+).toJS();
 
 <div style={{ width: '80px' }}>
   <PayoutsList payouts={payouts} nativeToken="CLNY" />
@@ -29,7 +29,7 @@ const payouts = List.of(
   TaskPayoutRecord({ token: { symbol: 'ETH' }, amount: new BN(75000) }),
   TaskPayoutRecord({ token: { symbol: 'DAI' }, amount: new BN(460000) }),
   TaskPayoutRecord({ token: { symbol: 'CLNY' }, amount: new BN(210000) }),
-);
+).toJS();
 
 <div style={{ width: '80px' }}>
   <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
