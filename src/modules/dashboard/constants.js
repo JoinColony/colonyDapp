@@ -10,4 +10,3 @@ export const DASHBOARD_TASKS = 'tasks';
 export const DASHBOARD_ALL_TOKENS = 'allTokens';
 export const DASHBOARD_COLONIES = 'colonies';
 export const DASHBOARD_COLONY_NAMES = 'colonyNames';
-export const DASHBOARD_TOKENS = 'tokens';
