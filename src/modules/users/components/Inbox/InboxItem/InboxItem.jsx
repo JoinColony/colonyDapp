@@ -10,7 +10,6 @@ import type { UserType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
-import UserAvatarFactory from '~core/UserAvatar';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { DialogLink } from '~core/Dialog';

@@ -4,10 +4,6 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
-import { activityMessages } from '../modules/dashboard/components/UserActivities';
-
-export type ActivityEvent = $Keys<typeof activityMessages>;
-
 type Shared = {|
   id?: string,
   comment?: string,
