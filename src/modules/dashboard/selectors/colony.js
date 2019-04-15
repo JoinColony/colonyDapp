@@ -49,7 +49,7 @@ export const colonyAvatarHashSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
 ) =>
-  // $FlowFixMe
+  // $FlowFixMe the length of this path exceeds what the types support.
   state.getIn([
     ns,
     DASHBOARD_ALL_COLONIES,

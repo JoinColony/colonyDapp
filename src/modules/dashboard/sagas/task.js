@@ -26,7 +26,7 @@ import {
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { fetchTaskMetadataForColony } from '../actionCreators';
+import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
   allColonyNamesSelector,
   colonySelector,
@@ -34,6 +34,7 @@ import {
   taskMetadataSelector,
   taskSelector,
 } from '../selectors';
+import { getColonyContext } from './shared';
 
 import {
   assignWorker,
@@ -52,7 +53,7 @@ import {
   setTaskTitle,
   unassignWorker,
 } from '../data/commands';
-import { getColonyTasks, getTask, getTaskComments } from '../data/queries';
+import { getTask, getTaskComments } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -68,43 +69,22 @@ export function* fetchColonyTaskMetadata(colonyAddress: Address): Saga<*> {
    * (if necessary).
    */
   if (metadata == null || metadata.error || !metadata.isFetching)
-    yield put(fetchTaskMetadataForColony(colonyAddress));
+    yield put(createColonyTaskMetadataFetchAction(colonyAddress));
 
   /*
-   * Wait for the success/error action.
+   * Wait for any success/error action of this type; this may not be from
+   * the action dispatched above, because it could have been from a previously
+   * dispatched action that did not block the UI.
    */
   yield raceError(
     ({ type, payload }) =>
-      type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS &&
+      type === ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS &&
       payload.colonyAddress === colonyAddress,
     ({ type, payload }) =>
-      type === ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR &&
+      type === ACTIONS.COLONY_TASK_METADATA_FETCH_ERROR &&
       payload.colonyAddress === colonyAddress,
   );
   return null;
-}
-
-function* getColonyStoreContext(colonyAddress: Address): Saga<*> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-
-  if (!colonyManager)
-    throw new Error('Cannot get colony context. Invalid manager instance');
-
-  const colonyClient = yield call(
-    [colonyManager, colonyManager.getColonyClient],
-    colonyAddress,
-  );
-
-  return {
-    ddb,
-    colonyClient,
-    wallet,
-    metadata: {
-      colonyAddress,
-    },
-  };
 }
 
 function* getTaskStoreContext(draftId: TaskDraftId): Saga<*> {
@@ -117,7 +97,7 @@ function* getTaskStoreContext(draftId: TaskDraftId): Saga<*> {
    * The task store context inherits the colony store context.
    */
   const { metadata: colonyMetadata, ...colonyContext } = yield call(
-    getColonyStoreContext,
+    getColonyContext,
     colonyAddress,
   );
 
@@ -153,7 +133,7 @@ function* taskCreate({
   payload: { colonyAddress },
 }: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
   try {
-    const context = yield call(getColonyStoreContext, colonyAddress);
+    const context = yield call(getColonyContext, colonyAddress);
     const creatorAddress = context.wallet.address;
     const { taskStore, commentsStore, draftId } = yield* executeCommand(
       context,
@@ -255,32 +235,6 @@ function* taskFetch({
   }
 }
 
-// TODO: Move this to colony sagas?
-/*
- * Given a colony address, dispatch actions to fetch all tasks
- * for that colony.
- */
-function* taskFetchAllForColony({
-  meta,
-  payload: { colonyAddress },
-}: Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>): Saga<void> {
-  try {
-    const context = yield* getColonyStoreContext(colonyAddress);
-    const colonyTasks = yield* executeQuery(context, getColonyTasks);
-
-    /*
-     * Dispatch the success action.
-     */
-    yield put<Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS>>({
-      type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS,
-      meta: { keyPath: [colonyAddress] },
-      payload: { colonyAddress, colonyTasks },
-    });
-  } catch (error) {
-    yield putError(ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR, error, meta);
-  }
-}
-
 /*
  * Given all colonies in the current state, fetch all tasks for all
  * colonies (in parallel).
@@ -289,7 +243,7 @@ function* taskFetchAll(): Saga<void> {
   const colonyAddresss = yield select(allColonyNamesSelector);
   yield all(
     colonyAddresss.map(colonyAddress =>
-      put(fetchTaskMetadataForColony(colonyAddress)),
+      put(fetchColonyTaskMetadata(colonyAddress)),
     ),
   );
 }
@@ -637,7 +591,6 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
-  yield takeEvery(ACTIONS.TASK_FETCH_ALL_FOR_COLONY, taskFetchAllForColony);
   yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskFetchComments);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ACTIONS.TASK_SEND_WORK_INVITE, taskSendWorkInvite);

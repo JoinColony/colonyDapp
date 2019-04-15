@@ -33,7 +33,7 @@ import {
   updateColonyProfile,
 } from '../data/commands';
 
-import { getColony } from '../data/queries';
+import { getColony, getColonyTasks } from '../data/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
 import {
@@ -553,13 +553,39 @@ function* colonyTokenBalanceFetch({
     yield put({
       type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
       payload: {
-        address: tokenAddress,
-        balance,
+        token: {
+          address: tokenAddress,
+          balance,
+        },
+        tokenAddress,
+        colonyAddress,
       },
       meta,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR, error, meta);
+  }
+}
+
+/*
+ * Given a colony address, dispatch actions to fetch all tasks
+ * for that colony.
+ */
+function* colonyTaskMetadataFetch({
+  meta,
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH>): Saga<void> {
+  try {
+    const context = yield* getColonyContext(colonyAddress);
+    const colonyTasks = yield* executeQuery(context, getColonyTasks);
+
+    yield put<Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS,
+      meta: { keyPath: [colonyAddress] },
+      payload: { colonyAddress, colonyTasks },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_TASK_METADATA_FETCH_ERROR, error, meta);
   }
 }
 
@@ -573,6 +599,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
+  yield takeEvery(ACTIONS.COLONY_TASK_METADATA_FETCH, colonyTaskMetadataFetch);
   yield takeEvery(ACTIONS.COLONY_TOKEN_BALANCE_FETCH, colonyTokenBalanceFetch);
   yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
   /*

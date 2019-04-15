@@ -291,6 +291,28 @@ export type ColonyActionTypes = {|
     typeof ACTIONS.COLONY_VERSION_UPGRADE_ERROR,
     void,
   >,
+  COLONY_TASK_METADATA_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TASK_METADATA_FETCH,
+    {| colonyAddress: Address |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_TASK_METADATA_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_TASK_METADATA_FETCH_ERROR,
+    WithKeyPathDepth1,
+  >,
+  COLONY_TASK_METADATA_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS,
+    {|
+      colonyAddress: Address,
+      colonyTasks: {
+        [draftId: string]: {|
+          commentsStoreAddress: string,
+          taskStoreAddress: string,
+        |},
+      },
+    |},
+    WithKeyPathDepth1,
+  >,
   COLONY_TOKEN_BALANCE_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
     {| colonyAddress: Address |},
@@ -302,7 +324,11 @@ export type ColonyActionTypes = {|
   >,
   COLONY_TOKEN_BALANCE_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
-    TokenReferenceType,
+    {|
+      token: TokenReferenceType,
+      tokenAddress: Address,
+      colonyAddress: Address,
+    |},
     WithKeyPathDepth2,
   >,
 |};

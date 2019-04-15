@@ -25,14 +25,6 @@ export const fetchTaskComments = (
   meta: keyPath(draftId),
 });
 
-export const fetchTaskMetadataForColony = (
-  colonyAddress: Address,
-): Action<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY> => ({
-  type: ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-  payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
-});
-
 // TODO this is unused
 export const taskSetWorker = (
   draftId: TaskDraftId,

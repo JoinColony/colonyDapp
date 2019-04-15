@@ -2,7 +2,7 @@
 /* @flow */
 
 import type { TaskType, TaskProps } from '~immutable';
-import type { $Required, Address, WithKeyPathDepth1 } from '~types';
+import type { $Required, Address } from '~types';
 import type {
   ActionType,
   ActionTypeWithPayloadAndMeta,
@@ -79,29 +79,7 @@ export type TaskActionTypes = {|
       task: $Shape<TaskType>,
     |},
   >,
-  TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY>,
-  TASK_FETCH_ALL_FOR_COLONY: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
-    TaskProps<{ colonyAddress: * }>,
-    WithKeyPathDepth1,
-  >,
-  TASK_FETCH_ALL_FOR_COLONY_ERROR: ErrorActionType<
-    typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_ERROR,
-    WithKeyPathDepth1,
-  >,
-  TASK_FETCH_ALL_FOR_COLONY_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS,
-    {|
-      ...TaskProps<{ colonyAddress: * }>,
-      colonyTasks: {
-        [draftId: string]: {|
-          commentsStoreAddress: string,
-          taskStoreAddress: string,
-        |},
-      },
-    |},
-    WithKeyPathDepth1,
-  >,
+  TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL>,
   TASK_FETCH_COMMENTS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FETCH_COMMENTS,
     void,

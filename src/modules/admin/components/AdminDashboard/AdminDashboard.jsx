@@ -17,7 +17,7 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 
 import { isInRecoveryMode } from '../../../dashboard/checks';
-import { useColonyWithName } from '../../../dashboard/hooks';
+import { useColonyWithName } from '../../../dashboard/hooks/useColony';
 
 import styles from './AdminDashboard.css';
 
@@ -95,10 +95,13 @@ const AdminDashboard = ({
 }: Props) => {
   const { data: colony, isFetching, error } = useColonyWithName(colonyName);
 
-  if (!colonyName || error) return <Redirect to="/404" />;
+  if (!colonyName || error) {
+    return <Redirect to="/404" />;
+  }
 
-  if (!colony || isFetching)
+  if (!colony || isFetching) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
 
   const { displayName } = colony;
   return (

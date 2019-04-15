@@ -67,12 +67,12 @@ const taskMetadataReducer: ReducerType<
   {|
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH: *,
-    TASK_FETCH_ALL_FOR_COLONY: *,
-    TASK_FETCH_ALL_FOR_COLONY_SUCCESS: *,
+    COLONY_TASK_METADATA_FETCH: *,
+    COLONY_TASK_METADATA_FETCH_SUCCESS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.TASK_FETCH_ALL_FOR_COLONY_SUCCESS: {
+    case ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS: {
       const { colonyAddress, colonyTasks } = action.payload;
       return updateState(state, colonyAddress, colonyTasks);
     }
@@ -96,6 +96,6 @@ const taskMetadataReducer: ReducerType<
 };
 
 export default withDataRecordMap<AllTaskMetadataMap, TaskMetadataMap>(
-  ACTIONS.TASK_FETCH_ALL_FOR_COLONY,
+  ACTIONS.COLONY_TASK_METADATA_FETCH,
   ImmutableMap(),
 )(taskMetadataReducer);

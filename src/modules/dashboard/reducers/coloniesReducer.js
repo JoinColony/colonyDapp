@@ -63,11 +63,7 @@ const coloniesReducer: ReducerType<
     }
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {
-        meta: {
-          // TODO should use payload for this
-          keyPath: [colonyAddress, tokenAddress],
-        },
-        payload,
+        payload: { colonyAddress, tokenAddress, token },
       } = action;
       const previousRecord = state.getIn([
         colonyAddress,
@@ -76,8 +72,8 @@ const coloniesReducer: ReducerType<
         tokenAddress,
       ]);
       const record = previousRecord
-        ? previousRecord.merge(payload)
-        : TokenReferenceRecord(payload);
+        ? previousRecord.merge(token)
+        : TokenReferenceRecord(token);
       return state.setIn(
         [colonyAddress, 'record', 'tokens', tokenAddress],
         record,

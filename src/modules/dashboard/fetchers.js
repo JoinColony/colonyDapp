@@ -21,8 +21,8 @@ import {
   fetchDomains,
   fetchRoles,
   fetchTask,
-  fetchTaskMetadataForColony,
   fetchToken,
+  fetchColonyTaskMetadata,
 } from './actionCreators';
 import {
   currentUserFetchColonies,
@@ -79,7 +79,7 @@ export const taskFetcher = Object.freeze({
 
 export const colonyTaskMetadataFetcher = Object.freeze({
   select: colonyTaskMetadataSelector,
-  fetch: fetchTaskMetadataForColony,
+  fetch: fetchColonyTaskMetadata,
   ttl: 1000 * 60, // 1 minute,
 });
 

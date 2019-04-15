@@ -8,7 +8,7 @@ import { withHooks } from '~utils/hoc';
 import ColonyAvatar from '~core/ColonyAvatar';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
-import { useColonyWithAddress } from '../../hooks';
+import { useColonyWithAddress } from '../../hooks/useColony';
 
 export default withHooks<
   { fetchColony: boolean },

@@ -23,7 +23,7 @@ import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
-import { useColonyWithName } from '../../hooks';
+import { useColonyWithName } from '../../hooks/useColony';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { domainsFetcher, colonyTaskMetadataFetcher } from '../../fetchers';
 import { canAdminister, canCreateTask } from '../../../users/checks';

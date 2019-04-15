@@ -7,7 +7,7 @@ import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
-import { useColonyWithAddress } from '../../hooks';
+import { useColonyWithAddress } from '../../hooks/useColony';
 
 import styles from './ColonyGridItem.css';
 

@@ -28,3 +28,11 @@ export const fetchColonyName = (
   payload: { colonyAddress },
   meta: { keyPath: [colonyAddress] },
 });
+
+export const fetchColonyTaskMetadata = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH> => ({
+  type: ACTIONS.COLONY_TASK_METADATA_FETCH,
+  payload: { colonyAddress },
+  meta: { keyPath: [colonyAddress] },
+});
