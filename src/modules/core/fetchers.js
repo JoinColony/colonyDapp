@@ -2,7 +2,16 @@
 /* eslint-disable import/prefer-default-export */
 
 import { networkSelector, ipfsDataSelector } from './selectors';
-import { fetchNetworkVersion, fetchIpfsData } from './actionCreators';
+import {
+  fetchNetworkFee,
+  fetchNetworkVersion,
+  fetchIpfsData,
+} from './actionCreators';
+
+export const networkFeeFetcher = Object.freeze({
+  select: networkSelector,
+  fetch: fetchNetworkFee,
+});
 
 export const networkVersionFetcher = Object.freeze({
   select: networkSelector,
