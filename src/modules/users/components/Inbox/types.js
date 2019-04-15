@@ -20,7 +20,7 @@ export type InboxElement = {
     unit: string,
     value: number,
   },
-  colony?: string,
+  colonyName?: string,
   comment?: string,
   domainName?: string,
   dueDate?: Date,

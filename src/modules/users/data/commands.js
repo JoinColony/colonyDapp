@@ -91,7 +91,7 @@ export type CommentMentionInboxCommandArgs = {|
   user?: string,
   task?: string,
   comment?: string,
-  colony?: string,
+  colonyName?: string,
 |};
 
 export const createUserProfile: UserCommand<
