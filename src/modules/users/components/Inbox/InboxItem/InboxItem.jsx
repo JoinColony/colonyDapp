@@ -6,7 +6,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import type { InboxElement } from '../types';
-import type { UserType } from '~immutable';
+import type { UserType, ColonyType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
@@ -121,7 +121,7 @@ const InboxItem = ({
     // unread,
     otherUser,
     amount,
-    colonyName: ensName,
+    colonyName,
     comment,
     timestamp,
     domainName,
@@ -140,7 +140,7 @@ const InboxItem = ({
   const {
     data: colony,
     isFetching: isFetchingColony,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [ensName], [ensName]);
+  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
   return (
     <TableRow
       className={styles.inboxRow}
@@ -182,7 +182,7 @@ const InboxItem = ({
                   amount: makeInboxDetail(amount, ({ unit, value }) => (
                     <Numeral prefix={unit} value={value} />
                   )),
-                  colony: makeInboxDetail(colony && colony.name),
+                  colony: makeInboxDetail(colony && colony.colonyName),
                   comment: makeInboxDetail(comment),
                   domain: makeInboxDetail(domainName),
                   other: makeInboxDetail(otherUser),
@@ -196,20 +196,20 @@ const InboxItem = ({
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && colony.name && domainName && (
+              {colony && colony.colonyName && domainName && (
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colony: colony.name,
+                    colony: colony.colonyName,
                     domain: domainName,
                   }}
                 />
               )}
-              {colony && colony.name && !domainName && (
+              {colony && colony.colonyName && !domainName && (
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colony: colony.name,
+                    colony: colony.colonyName,
                   }}
                 />
               )}
@@ -223,7 +223,7 @@ const InboxItem = ({
                 </span>
               )}
 
-              {((colony && colony.name) || amount) && (
+              {((colony && colony.colonyName) || amount) && (
                 <span className={styles.pipe}>|</span>
               )}
               <span className={styles.time}>
