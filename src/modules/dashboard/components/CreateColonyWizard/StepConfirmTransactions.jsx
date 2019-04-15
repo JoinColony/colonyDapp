@@ -81,8 +81,7 @@ const StepConfirmTransactions = ({ wizardValues: { ensName } }: Props) => {
       <div className={styles.container}>
         {transactionGroups && transactionGroups[0] && (
           <GasStationContent
-            hideHeader
-            skipToDetails
+            appearance={{ interactive: false }}
             transactionGroups={transactionGroups}
           />
         )}

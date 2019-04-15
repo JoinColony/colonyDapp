@@ -19,8 +19,12 @@ import styles from './GroupedTransaction.css';
 import GroupedTransactionCard from './GroupedTransactionCard';
 import TransactionStatus from './TransactionStatus.jsx';
 
+export type Appearance = {
+  interactive: boolean,
+};
+
 type Props = {
-  hideSummary: boolean,
+  appearance: Appearance,
   transactionGroup: TransactionGroup,
   selectedTransactionIdx: number,
 };
@@ -28,16 +32,17 @@ type Props = {
 const displayName = 'users.GasStation.GroupedTransaction';
 
 const GroupedTransaction = ({
-  hideSummary,
+  appearance = { interactive: true },
   selectedTransactionIdx,
   transactionGroup,
 }: Props) => {
+  const { interactive } = appearance;
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);
   const values = getGroupValues(transactionGroup);
   return (
     <Card className={styles.main}>
-      {!hideSummary && (
+      {interactive && (
         <div className={styles.summary}>
           <div className={styles.description}>
             <Heading
