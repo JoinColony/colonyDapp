@@ -13,7 +13,6 @@ import {
   select,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
-import nanoid from 'nanoid';
 
 import type { Action } from '~redux';
 
@@ -50,7 +49,7 @@ import { networkVersionSelector } from '../../core/selectors';
 
 import { subscribeToColony } from '../../users/actionCreators';
 
-import { fetchColony } from '../actionCreators';
+import { fetchColony, fetchToken } from '../actionCreators';
 import { colonyAvatarHashSelector } from '../selectors';
 
 import { getColonyContext } from './shared';
@@ -379,11 +378,7 @@ function* colonyFetch({
       Object.keys(tokens).reduce(
         (effects, tokenAddress) => [
           ...effects,
-          put<Action<typeof ACTIONS.TOKEN_INFO_FETCH>>({
-            type: ACTIONS.TOKEN_INFO_FETCH,
-            meta: { id: nanoid() },
-            payload: { tokenAddress },
-          }),
+          put(fetchToken(tokenAddress)),
           put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
             type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
             meta: { keyPath: [colonyName, tokenAddress] },
