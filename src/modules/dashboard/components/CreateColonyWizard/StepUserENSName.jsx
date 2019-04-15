@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -8,6 +9,7 @@ import type { WizardProps } from '~core/Wizard';
 
 import styles from './StepUserENSName.css';
 
+import { useAsyncFunction } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -16,8 +18,6 @@ import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
 
 import { getNormalizedDomainText } from '~utils/strings';
-
-import promiseListener from '../../../../createPromiseListener';
 
 type FormValues = {
   username: string,
@@ -53,6 +53,11 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepUserENSName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
+  errorDomainInvalid: {
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
+    defaultMessage:
+      'Invalid username. Please make sure this will be a valid domain',
+  },
   tooltip: {
     id: 'dashboard.CreateColonyWizard.StepUserENSName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
@@ -74,40 +79,45 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-class StepUserENSName extends Component<Props> {
-  componentWillUnmount() {
-    this.checkDomainTaken.unsubscribe();
-  }
-
-  checkDomainTaken = promiseListener.createAsyncFunction({
-    start: ACTIONS.USERNAME_CHECK_AVAILABILITY,
-    resolve: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
-    reject: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
+const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
+  const checkDomainTaken = useAsyncFunction({
+    submit: ACTIONS.USERNAME_CHECK_AVAILABILITY,
+    success: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
+    error: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
   });
 
-  validateDomain = async (values: FormValues) => {
-    try {
-      await this.checkDomainTaken.asyncFunction(values);
-    } catch (e) {
-      const error = {
-        username: MSG.errorDomainTaken,
-      };
-      return Promise.reject(error);
-    }
-    return Promise.resolve();
-  };
-
-  render() {
-    const { wizardForm, wizardValues, nextStep } = this.props;
-    const normalizedUsername = getNormalizedDomainText(wizardValues.username);
-    return (
-      <Form
-        onSubmit={nextStep}
-        validationSchema={validationSchema}
-        validate={this.validateDomain}
-        {...wizardForm}
-      >
-        {({ isValid, isSubmitting }) => (
+  const validateDomain = useCallback(
+    async (values: FormValues) => {
+      // 1. Validate with schema
+      if (!validationSchema.isValidSync(values)) {
+        const error = {
+          username: MSG.errorDomainInvalid,
+        };
+        throw error;
+      } else {
+        // 2. Validate with saga
+        try {
+          await checkDomainTaken(values);
+        } catch (e) {
+          const error = {
+            username: MSG.errorDomainTaken,
+          };
+          throw error;
+        }
+      }
+    },
+    [checkDomainTaken],
+  );
+  return (
+    <Form
+      onSubmit={nextStep}
+      validationSchema={validationSchema}
+      validate={validateDomain}
+      {...wizardForm}
+    >
+      {({ isValid, isSubmitting, values: { username } }) => {
+        const normalized = getNormalizedDomainText(username);
+        return (
           <section className={styles.main}>
             <div className={styles.title}>
               <Heading appearance={{ size: 'medium' }} text={MSG.heading} />
@@ -120,8 +130,10 @@ class StepUserENSName extends Component<Props> {
                   name="username"
                   label={MSG.label}
                   extensionString=".user.joincolony.eth"
-                  status={normalizedUsername && MSG.statusText}
-                  statusValues={{ normalized: normalizedUsername }}
+                  status={normalized && MSG.statusText}
+                  statusValues={{
+                    normalized,
+                  }}
                   data-test="claimUsernameInput"
                   extra={
                     <Tooltip
@@ -157,11 +169,11 @@ class StepUserENSName extends Component<Props> {
               </div>
             </div>
           </section>
-        )}
-      </Form>
-    );
-  }
-}
+        );
+      }}
+    </Form>
+  );
+};
 
 StepUserENSName.displayName = displayName;
 

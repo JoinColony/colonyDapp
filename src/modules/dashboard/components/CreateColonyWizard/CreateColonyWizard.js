@@ -77,7 +77,7 @@ const CreateColonyContainer = compose(
   withCurrentUser,
   withWizard({
     steps: stepFunction,
-    stepCount: 6,
+    stepCount: stepArray.length,
   }),
 )(CreateColony);
 

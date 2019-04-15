@@ -23,11 +23,15 @@ const MSG = defineMessages({
   },
 });
 
+export type Appearance = {
+  interactive: boolean,
+};
+
 type Props = {|
   /* If we are only showing the transaction details
    * and no overview we do not need a back button
    */
-  hideInteractiveElements?: boolean,
+  appearance: Appearance,
   transactionGroup: TransactionGroup,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};
@@ -37,14 +41,15 @@ const displayName = 'users.GasStation.TransactionDetails';
 const TransactionDetails = ({
   onClose,
   transactionGroup,
-  hideInteractiveElements = false,
+  appearance = { interactive: true },
 }: Props) => {
+  const { interactive } = appearance;
   const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup) || 0;
   const selectedTransaction = transactionGroup[selectedTransactionIdx];
   const groupKey = getGroupKey(transactionGroup);
   return (
     <div>
-      {!hideInteractiveElements && (
+      {interactive && (
         <button
           type="button"
           className={styles.returnToSummary}
@@ -61,7 +66,7 @@ const TransactionDetails = ({
       <CardList appearance={{ numCols: '1' }}>
         {groupKey === 'network.registerUserLabel' && <GasStationClaimCard />}
         <GroupedTransaction
-          hideSummary={hideInteractiveElements}
+          appearance={{ interactive: false }}
           transactionGroup={transactionGroup}
           selectedTransactionIdx={selectedTransactionIdx}
         />

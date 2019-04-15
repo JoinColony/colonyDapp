@@ -21,12 +21,16 @@ const MSG = defineMessages({
   },
 });
 
+export type Appearance = {
+  interactive: boolean,
+};
+
 type Props = {|
   /* We don't want to show the header that shows the wallet address
-   * if the gasStation is embedded in wizard step
+   * if the gasStation is embedded in wizard step, the apperance object
+   * helps with that
    */
-  hideHeader?: boolean,
-  skipToDetails?: boolean,
+  appearance: Appearance,
   close?: () => void,
   transactionGroups: Array<TransactionGroup>,
   currentUserGetBalance: () => void,
@@ -58,19 +62,23 @@ class GasStationContent extends Component<Props, State> {
 
   renderTransactions() {
     const { selectedGroupIdx } = this.state;
-    const { transactionGroups, skipToDetails = false } = this.props;
+    const {
+      transactionGroups,
+      appearance = { interactive: true },
+    } = this.props;
     let detailsTransactionGroup = transactionGroups[selectedGroupIdx];
+    const { interactive } = appearance;
 
     /*  If the GasStationContent is less interactive,
      * like in StepConfirmTransactions, we select the first group buy default
      */
-    if (skipToDetails) {
+    if (!interactive) {
       [detailsTransactionGroup] = transactionGroups;
     }
 
-    return detailsTransactionGroup || skipToDetails ? (
+    return detailsTransactionGroup || !interactive ? (
       <TransactionDetails
-        hideInteractiveElements={skipToDetails}
+        appearance={{ interactive: false }}
         transactionGroup={detailsTransactionGroup}
         onClose={this.unselectTransactionGroup}
       />
@@ -83,14 +91,18 @@ class GasStationContent extends Component<Props, State> {
   }
 
   render() {
-    const { close, transactionGroups, hideHeader } = this.props;
+    const {
+      close,
+      transactionGroups,
+      appearance: { interactive },
+    } = this.props;
     const isEmpty = !transactionGroups || !transactionGroups.length;
     return (
       <div
         className={getMainClasses({}, styles, { isEmpty })}
         data-test="gasStation"
       >
-        {!hideHeader && <GasStationHeader close={close} />}
+        {interactive && <GasStationHeader close={close} />}
         <div className={styles.transactionsContainer}>
           {isEmpty ? (
             <Heading

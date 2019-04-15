@@ -39,6 +39,7 @@ const GasStationPopover = ({ children, transactionGroups }: Props) => {
       appearance={{ theme: 'grey' }}
       content={({ close }) => (
         <GasStationContent
+          appearance={{ interactive: true }}
           transactionGroups={transactionGroups}
           close={close}
         />

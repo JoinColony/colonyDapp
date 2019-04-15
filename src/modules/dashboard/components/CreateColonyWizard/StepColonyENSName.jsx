@@ -25,8 +25,8 @@ import { withImmutablePropsToJS } from '~utils/hoc';
 import { getNormalizedDomainText } from '~utils/strings';
 
 type FormValues = {
+  displayName: string,
   colonyName: string,
-  ensName: string,
   username: string,
 };
 
@@ -61,12 +61,17 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
+  errorDomainInvalid: {
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
+    defaultMessage:
+      'Invalid colony name. Please make sure this will be a valid domain',
+  },
   statusText: {
-    id: 'users.ENSNameDialog.statusText',
+    id: 'users.CreateColonyWizard.StepColonyENSName.statusText',
     defaultMessage: 'URL available: @{normalized}',
   },
   tooltip: {
-    id: 'users.ENSNameDialog.tooltip',
+    id: 'users.CreateColonyWizard.StepColonyENSName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your
       colony. This will also allow us to create a custom URL for inviting people
       to your colony.`,
@@ -83,7 +88,6 @@ const validationSchema = yup.object({
 });
 
 const StepColonyENSName = ({
-  wizardValues,
   wizardForm,
   nextStep,
   currentUser: {
@@ -98,20 +102,26 @@ const StepColonyENSName = ({
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
-      try {
-        await checkDomainTaken(values);
-      } catch (e) {
+      // 1. Validate with schema
+      if (!validationSchema.isValidSync(values)) {
         const error = {
-          ensName: MSG.errorDomainTaken,
+          colonyName: MSG.errorDomainInvalid,
         };
-        // eslint doesn't allow for throwing object literals
         throw error;
+      } else {
+        // 2. Validate with saga
+        try {
+          await checkDomainTaken(values);
+        } catch (e) {
+          const error = {
+            colonyName: MSG.errorDomainTaken,
+          };
+          throw error;
+        }
       }
     },
-    // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
     [checkDomainTaken],
   );
-  const normalizedUsername = getNormalizedDomainText(wizardValues.username);
 
   return (
     <Form
@@ -120,64 +130,67 @@ const StepColonyENSName = ({
       validate={validateDomain}
       {...wizardForm}
     >
-      {({ isValid, isSubmitting }) => (
-        <section className={styles.main}>
-          <div className={styles.title}>
-            <Heading
-              appearance={{ size: 'medium', weight: 'medium' }}
-              text={MSG.heading}
-              textValues={{
-                username: wizardValues.username || username,
-              }}
-            />
-            <p className={styles.paragraph}>
-              <FormattedMessage {...MSG.descriptionOne} />
-            </p>
-            <div className={styles.nameForm}>
-              <Input
-                appearance={{ theme: 'fat' }}
-                name="colonyName"
-                label={MSG.labelDisplay}
+      {({ isValid, isSubmitting, values }) => {
+        const normalized = getNormalizedDomainText(values.colonyName);
+        return (
+          <section className={styles.main}>
+            <div className={styles.title}>
+              <Heading
+                appearance={{ size: 'medium', weight: 'medium' }}
+                text={MSG.heading}
+                textValues={{
+                  username: normalized || username,
+                }}
               />
-              <Input
-                appearance={{ theme: 'fat' }}
-                name="ensName"
-                extensionString=".colony.joincolony.eth"
-                label={MSG.label}
-                status={normalizedUsername && MSG.statusText}
-                statusValues={{ normalized: normalizedUsername }}
-                extra={
-                  <Tooltip
-                    placement="right"
-                    content={
-                      <span className={styles.tooltip}>
-                        <FormattedMessage {...MSG.tooltip} />
-                      </span>
-                    }
-                  >
-                    <div className={styles.iconContainer}>
-                      <Icon
-                        name="question-mark"
-                        title="helper"
-                        appearance={{ size: 'small' }}
-                      />
-                    </div>
-                  </Tooltip>
-                }
-              />
-              <div className={styles.buttons}>
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  type="submit"
-                  disabled={!isValid}
-                  loading={isSubmitting}
-                  text={MSG.continue}
+              <p className={styles.paragraph}>
+                <FormattedMessage {...MSG.descriptionOne} />
+              </p>
+              <div className={styles.nameForm}>
+                <Input
+                  appearance={{ theme: 'fat' }}
+                  name="displayName"
+                  label={MSG.labelDisplay}
                 />
+                <Input
+                  appearance={{ theme: 'fat' }}
+                  name="colonyName"
+                  extensionString=".colony.joincolony.eth"
+                  label={MSG.label}
+                  status={normalized && MSG.statusText}
+                  statusValues={{ normalized }}
+                  extra={
+                    <Tooltip
+                      placement="right"
+                      content={
+                        <span className={styles.tooltip}>
+                          <FormattedMessage {...MSG.tooltip} />
+                        </span>
+                      }
+                    >
+                      <div className={styles.iconContainer}>
+                        <Icon
+                          name="question-mark"
+                          title="helper"
+                          appearance={{ size: 'small' }}
+                        />
+                      </div>
+                    </Tooltip>
+                  }
+                />
+                <div className={styles.buttons}>
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    type="submit"
+                    disabled={!isValid}
+                    loading={isSubmitting}
+                    text={MSG.continue}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        );
+      }}
     </Form>
   );
 };

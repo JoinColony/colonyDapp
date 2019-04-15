@@ -16,7 +16,7 @@ import { withImmutablePropsToJS } from '~utils/hoc';
 
 type Row = {
   title: MessageDescriptor,
-  valueKey: string | Array<string>,
+  valueKey: string,
 };
 
 type FormValues = {
@@ -32,19 +32,25 @@ type CardProps = {
   currentUser: UserType,
 };
 
+const formatUserName = (currentUser, values, option) =>
+  `@${
+    currentUser && currentUser.profile && currentUser.profile.username
+      ? currentUser.profile.username
+      : values[option.valueKey.toString()]
+  }`;
+
+const formatColonyName = (values, option: { valueKey: string }) =>
+  `${values[option.valueKey]} (colony.io/${values[option.valueKey]})`;
+
 const concatenatePreviewString = (
-  option: { title: MessageDescriptor, valueKey: string | Array<string> },
+  option: { title: MessageDescriptor, valueKey: string },
   values: FormValues,
   currentUser?: UserType,
 ) =>
   `${
     option.valueKey === `colonyName`
-      ? `${values[option.valueKey]} (colony.io/${values[option.valueKey]})`
-      : `@${
-          currentUser && currentUser.profile && currentUser.profile.username
-            ? currentUser.profile.username
-            : values[option.valueKey.toString()]
-        }`
+      ? formatColonyName(values, option)
+      : formatUserName(currentUser, values, option)
   }`;
 
 const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] =>

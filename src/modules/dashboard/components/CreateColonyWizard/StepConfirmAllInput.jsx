@@ -17,8 +17,8 @@ import styles from './StepConfirmAllInput.css';
 import CardRow from './CreateColonyCardRow.jsx';
 
 type FormValues = {
-  ensName: string,
   colonyName: string,
+  displayName: string,
   username: string,
   tokenSymbol: string,
   tokenName: string,
@@ -71,11 +71,11 @@ const options = [
 
 const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
   const {
-    colonyName,
+    displayName,
     username,
     tokenSymbol,
     tokenName,
-    ensName,
+    colonyName,
   } = wizardValues;
   return (
     <ActionForm
@@ -84,8 +84,8 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
       error={ACTIONS.COLONY_CREATE_ERROR}
       transform={mergePayload({
         username,
+        displayName,
         colonyName,
-        ensName,
         tokenName,
         tokenSymbol,
       })}

@@ -150,7 +150,7 @@ const StepSelectToken = ({
                 </span>
               }
             />
-            {values.tokenAddress && tokenData === null && (
+            {values.tokenAddress && !tokenData && (
               <Fragment>
                 <div className={styles.tokenDetails}>
                   <Input name="tokenName" label={MSG.tokenName} />
