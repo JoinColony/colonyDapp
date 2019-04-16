@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './ColonyFee';
+export { default } from './ColonyFee.jsx';
