@@ -8,7 +8,7 @@ import type { Address } from '~types';
 import type { UserType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
-import { compose, mapPayload, withKeyPath } from '~utils/actions';
+import { pipe, mapPayload, withKeyPath } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -94,7 +94,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
         success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
         error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
         validationSchema={validationSchema}
-        transform={compose(
+        transform={pipe(
           withKeyPath(colonyAddress),
           mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
         )}
