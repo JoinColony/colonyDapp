@@ -8,21 +8,21 @@ import UserRecord from './User';
 
 import type { UserType, UserRecordType } from './User';
 
-type TaskFeedItemRatingRecordProps = {|
+type TaskRatingRecordProps = {|
   ratee: UserRecordType,
   rater: UserRecordType,
   rating: number,
 |};
 
-export type TaskFeedItemRatingType = $ReadOnly<{|
+export type TaskRatingType = $ReadOnly<{|
   ratee: UserType,
   rater: UserType,
   rating: number,
 |}>;
 
-export type TaskFeedItemRatingRecordType = RecordOf<TaskFeedItemRatingRecordProps>;
+export type TaskRatingRecordType = RecordOf<TaskRatingRecordProps>;
 
-const defaultValues: $Shape<TaskFeedItemRatingRecordProps> = {
+const defaultValues: $Shape<TaskRatingRecordProps> = {
   ratee: UserRecord(),
   rater: UserRecord(),
   rating: undefined,
@@ -30,8 +30,8 @@ const defaultValues: $Shape<TaskFeedItemRatingRecordProps> = {
 
 // eslint-shame-enable
 // eslint-disable-next-line max-len
-const TaskFeedItemRatingRecord: RecordFactory<TaskFeedItemRatingRecordProps> = Record(
+const TaskRatingRecord: RecordFactory<TaskRatingRecordProps> = Record(
   defaultValues,
 );
 
-export default TaskFeedItemRatingRecord;
+export default TaskRatingRecord;

@@ -43,26 +43,21 @@ export const canBeUpgraded = (colony: ?ColonyType, network: ?NetworkProps) =>
 /*
  * Tasks
  */
+// TODO this should be used at some point
+// eslint-disable-next-line no-unused-vars
 const didClaimPayout = (taskUser: ?TaskUserType, userAddress: string) =>
   taskUser &&
   taskUser.didClaimPayout &&
   addressEquals(taskUser.address, userAddress);
 
-export const isManager = ({ manager }: TaskType, userAddress: Address) =>
-  manager && manager.address && addressEquals(manager.address, userAddress);
+export const isManager = ({ managerAddress }: TaskType, userAddress: Address) =>
+  addressEquals(managerAddress, userAddress);
 
-export const isWorker = ({ worker }: TaskType, userAddress: Address) =>
-  !!(worker && worker.address && addressEquals(worker.address, userAddress));
+export const isWorker = ({ workerAddress }: TaskType, userAddress: Address) =>
+  addressEquals(workerAddress, userAddress);
 
 export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
   addressEquals(creatorAddress, userAddress);
-
-export const payoutCanBeClaimed = (
-  { currentState, manager, worker }: TaskType,
-  userAddress: Address,
-) =>
-  currentState === TASK_STATE.FINALIZED &&
-  (didClaimPayout(worker, userAddress) || didClaimPayout(manager, userAddress));
 
 export const isFinalized = ({ currentState }: TaskType) =>
   currentState === TASK_STATE.FINALIZED;
@@ -82,12 +77,10 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
 export const canEditTask = (task: TaskType, userAddress: Address) =>
   !!(isFinalized(task) && isCreator(task, userAddress));
 
-// TODO fix this logic (why check didRate true??)
+// TODO Fix this logic in #169
+// eslint-disable-next-line no-unused-vars
 export const workerCanRateManager = (task: TaskType, userAddress: Address) =>
-  isWorker(task, userAddress) &&
-  isRating(task) &&
-  task.worker &&
-  task.worker.didRate;
+  false;
 
 export const workerCanEndTask = (task: TaskType, userAddress: Address) =>
   isWorker(task, userAddress) && !(isRating(task) || didDueDateElapse(task));
@@ -118,7 +111,7 @@ export const hasRequestedToWork = (
 
 export const canRequestToWork = (task: TaskType, userAddress: Address) =>
   !(
-    task.worker ||
+    task.workerAddress ||
     isCreator(task, userAddress) ||
     hasRequestedToWork(task, userAddress)
   );

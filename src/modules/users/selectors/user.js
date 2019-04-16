@@ -1,6 +1,7 @@
 /* @flow */
 
 import { createSelector } from 'reselect';
+
 import { Map as ImmutableMap } from 'immutable';
 
 import type {
@@ -38,7 +39,7 @@ export const userAddressSelector = (state: RootStateRecord, username: string) =>
     .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
     .findKey(user => getUsernameFromUserData(user) === username);
 
-export const usernameSelector = (state: RootStateRecord, address: string) =>
+export const usernameSelector = (state: RootStateRecord, address: Address) =>
   getUsernameFromUserData(
     state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]),
   );
@@ -46,7 +47,7 @@ export const usernameSelector = (state: RootStateRecord, address: string) =>
 /*
  * User input selectors
  */
-export const userSelector = (state: RootStateRecord, address: string) =>
+export const userSelector = (state: RootStateRecord, address: Address) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
 
 export const userByUsernameSelector = (
@@ -127,4 +128,20 @@ export const currentUserRecentTokensSelector = createSelector(
         ]),
       ]).values(),
     ),
+);
+
+/*
+ * Given a user address, select (in order of preference):
+ * - The display name from the user profile
+ * - The username from the user profile
+ * - The user address
+ */
+export const friendlyUsernameSelector = createSelector(
+  userSelector,
+  (_, userAddress) => userAddress,
+  (user, userAddress): string => {
+    const { displayName, username } =
+      (user && user.getIn(['record', 'profile'])) || {};
+    return displayName || username || userAddress;
+  },
 );

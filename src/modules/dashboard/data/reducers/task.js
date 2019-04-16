@@ -100,7 +100,7 @@ export const taskReducer: EventReducer<
     }
     case TASK_FINALIZED: {
       const {
-        payload: { amountPaid, paymentId, status, token, worker },
+        payload: { amountPaid, paymentId, status, token, workerAddress },
         meta: { timestamp },
       } = event;
       return {
@@ -110,7 +110,7 @@ export const taskReducer: EventReducer<
         paymentId,
         paymentToken: token,
         status,
-        worker,
+        workerAddress,
       };
     }
     case TASK_CANCELLED: {
@@ -160,30 +160,32 @@ export const taskReducer: EventReducer<
       const { invites = [] } = task;
       return {
         ...task,
-        invites: [...invites, event.payload.worker],
+        invites: [...invites, event.payload.workerAddress],
       };
     }
     case WORK_REQUEST_CREATED: {
       const { requests = [] } = task;
       return {
         ...task,
-        requests: [...requests, event.payload.worker],
+        requests: [...requests, event.payload.workerAddress],
       };
     }
     case WORKER_ASSIGNED: {
-      const { worker } = event.payload;
+      const { workerAddress } = event.payload;
       return {
         ...task,
-        worker,
+        workerAddress,
       };
     }
     case WORKER_UNASSIGNED: {
-      const { worker: currentWorker } = task;
-      const { worker } = event.payload;
+      const { workerAddress: currentWorkerAddress } = task;
+      const { workerAddress } = event.payload;
       return {
         ...task,
-        worker:
-          currentWorker && currentWorker === worker ? undefined : currentWorker,
+        workerAddress:
+          currentWorkerAddress && currentWorkerAddress === workerAddress
+            ? undefined
+            : currentWorkerAddress,
       };
     }
 

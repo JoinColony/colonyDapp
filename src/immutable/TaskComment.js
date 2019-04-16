@@ -1,33 +1,34 @@
 /* @flow */
 
-import type { RecordFactory, RecordOf } from 'immutable';
+import type { RecordFactory, RecordOf, List as ListType } from 'immutable';
 
-import { Record } from 'immutable';
+import { List, Record } from 'immutable';
 
-import type {
-  TaskCommentContentRecordType,
-  TaskCommentContentType,
-} from './TaskCommentContent';
+import type { Address } from '~types';
 
 type Shared = {|
+  authorAddress: Address,
+  body: string,
   signature: string,
-|};
-
-type TaskCommentRecordProps = {|
-  ...Shared,
-  content: TaskCommentContentRecordType,
 |};
 
 export type TaskCommentType = $ReadOnly<{|
   ...Shared,
-  content: TaskCommentContentType,
+  mentions: string[],
 |}>;
+
+type TaskCommentRecordProps = {|
+  ...Shared,
+  mentions: ListType<string>,
+|};
 
 export type TaskCommentRecordType = RecordOf<TaskCommentRecordProps>;
 
 const defaultValues: $Shape<TaskCommentRecordProps> = {
+  authorAddress: undefined,
+  body: undefined,
+  mentions: List(),
   signature: undefined,
-  content: undefined,
 };
 
 const TaskCommentRecord: RecordFactory<TaskCommentRecordProps> = Record(

@@ -45,7 +45,8 @@ const TaskListItem = ({ draftId, filter, willRender }: Props) => {
     [draftId],
     [draftId],
   );
-  const { worker, payouts, reputation, title = MSG.untitled } = task || {};
+  const { workerAddress, payouts, reputation, title = MSG.untitled } =
+    task || {};
 
   const [colonyAddress] = draftId.split('_');
   const {
@@ -57,7 +58,7 @@ const TaskListItem = ({ draftId, filter, willRender }: Props) => {
     [colonyAddress],
   );
 
-  if (!task || !colonyName || isFetchingTask || isFetchingColonyName)
+  if (!task || !colonyName || isFetchingTask || isFetchingColonyName) {
     return (
       <TableRow>
         <TableCell className={styles.taskDetails}>
@@ -65,8 +66,8 @@ const TaskListItem = ({ draftId, filter, willRender }: Props) => {
         </TableCell>
       </TableRow>
     );
+  }
 
-  // $FlowFixMe will be correct once fetching actual task
   if (filter && !filter(task)) {
     willRender(draftId, false);
     return null;
@@ -95,9 +96,7 @@ const TaskListItem = ({ draftId, filter, willRender }: Props) => {
         <PayoutsList payouts={payouts} nativeToken="CLNY" />
       </TableCell>
       <TableCell className={styles.userAvatar}>
-        {worker && worker.address ? (
-          <UserAvatar size="xs" address={worker.address} />
-        ) : null}
+        {workerAddress && <UserAvatar size="xs" address={workerAddress} />}
       </TableCell>
     </TableRow>
   );

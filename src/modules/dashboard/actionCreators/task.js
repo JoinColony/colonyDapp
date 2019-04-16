@@ -16,11 +16,10 @@ export const fetchTask = (
   meta: keyPath(draftId),
 });
 
-// TODO in #580 this will probably be TASK_FETCH_FEED_ITEMS
-export const fetchTaskComments = (
+export const fetchTaskFeedItems = (
   draftId: TaskDraftId,
-): Action<typeof ACTIONS.TASK_FETCH_COMMENTS> => ({
-  type: ACTIONS.TASK_FETCH_COMMENTS,
+): Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH> => ({
+  type: ACTIONS.TASK_FEED_ITEMS_FETCH,
   payload: { draftId },
   meta: keyPath(draftId),
 });
@@ -28,12 +27,12 @@ export const fetchTaskComments = (
 // TODO this is unused
 export const taskSetWorker = (
   draftId: TaskDraftId,
-  worker: Address,
+  workerAddress: Address,
 ): Action<typeof ACTIONS.TASK_WORKER_ASSIGN> => ({
   type: ACTIONS.TASK_WORKER_ASSIGN,
   payload: {
     draftId,
-    worker,
+    workerAddress,
   },
   meta: keyPath(draftId),
 });

@@ -3,14 +3,35 @@
 
 import type { TaskType, TaskProps } from '~immutable';
 import type { $Required, Address } from '~types';
+import type { Event } from '~data/types';
 import type {
   ActionType,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
 } from '~redux';
+import type { TaskFeedItemEvents } from '../../../modules/dashboard/data/queries';
 
 import { ACTIONS } from '~redux';
+import { TASK_EVENT_TYPES } from '~data/constants';
+
+const {
+  COMMENT_POSTED,
+  DOMAIN_SET,
+  DUE_DATE_SET,
+  PAYOUT_SET,
+  SKILL_SET,
+  TASK_CANCELLED,
+  TASK_CLOSED,
+  TASK_CREATED,
+  TASK_DESCRIPTION_SET,
+  TASK_FINALIZED,
+  TASK_TITLE_SET,
+  WORK_INVITE_SENT,
+  WORK_REQUEST_CREATED,
+  WORKER_ASSIGNED,
+  WORKER_UNASSIGNED,
+} = TASK_EVENT_TYPES;
 
 type TaskActionMeta = {|
   keyPath: [string], // draftId
@@ -38,10 +59,16 @@ type TaskErrorActionType<T> = ErrorActionType<T, TaskActionMeta>;
 export type TaskActionTypes = {|
   TASK_CANCEL: TaskActionType<typeof ACTIONS.TASK_CANCEL, void>,
   TASK_CANCEL_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_CANCEL_ERROR>,
-  TASK_CANCEL_SUCCESS: TaskActionType<typeof ACTIONS.TASK_CANCEL_SUCCESS, void>,
+  TASK_CANCEL_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_CANCEL_SUCCESS,
+    {| event: Event<typeof TASK_CANCELLED> |},
+  >,
   TASK_CLOSE: TaskActionType<typeof ACTIONS.TASK_CLOSE, void>,
   TASK_CLOSE_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_CLOSE_ERROR>,
-  TASK_CLOSE_SUCCESS: TaskActionType<typeof ACTIONS.TASK_CLOSE_SUCCESS, void>,
+  TASK_CLOSE_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_CLOSE_SUCCESS,
+    {| event: Event<typeof TASK_CLOSED> |},
+  >,
   TASK_COMMENT_ADD: TaskActionType<
     typeof ACTIONS.TASK_COMMENT_ADD,
     {| commentData: * |},
@@ -51,7 +78,7 @@ export type TaskActionTypes = {|
   >,
   TASK_COMMENT_ADD_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS,
-    {| commentData: *, signature: * |},
+    {| event: Event<typeof COMMENT_POSTED> |},
   >,
   TASK_CREATE: UniqueActionType<
     typeof ACTIONS.TASK_CREATE,
@@ -66,6 +93,7 @@ export type TaskActionTypes = {|
       commentsStoreAddress: string,
       taskStoreAddress: string,
       task: TaskProps<{ colonyAddress: *, creatorAddress: *, draftId: * }>,
+      event: Event<typeof TASK_CREATED>,
     |},
   >,
   TASK_FETCH: NonUniqueTaskActionType<typeof ACTIONS.TASK_FETCH, void>,
@@ -80,25 +108,25 @@ export type TaskActionTypes = {|
     |},
   >,
   TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL>,
-  TASK_FETCH_COMMENTS: NonUniqueTaskActionType<
-    typeof ACTIONS.TASK_FETCH_COMMENTS,
+  TASK_FEED_ITEMS_FETCH: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_FETCH,
     void,
   >,
-  TASK_FETCH_COMMENTS_ERROR: TaskErrorActionType<
-    typeof ACTIONS.TASK_FETCH_COMMENTS_ERROR,
+  TASK_FEED_ITEMS_FETCH_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_FETCH_ERROR,
   >,
-  TASK_FETCH_COMMENTS_SUCCESS: NonUniqueTaskActionType<
-    typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
-    {| comments: Object[] |}, // TODO in #580 replace with fetching feed items
+  TASK_FEED_ITEMS_FETCH_SUCCESS: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS,
+    {| events: TaskFeedItemEvents[] |},
   >,
   TASK_FINALIZE: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE,
-    {| amountPaid: number, ...TaskProps<{ worker: * }> |},
+    {| amountPaid: number, ...$Required<TaskProps<{ workerAddress: * }>> |},
   >,
   TASK_FINALIZE_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_FINALIZE_ERROR>,
   TASK_FINALIZE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE_SUCCESS,
-    {| amountPaid: number, ...TaskProps<{ worker: * }> |},
+    {| event: Event<typeof TASK_FINALIZED> |},
   >,
   TASK_MANAGER_COMPLETE: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE,
@@ -157,14 +185,14 @@ export type TaskActionTypes = {|
   >,
   TASK_SEND_WORK_INVITE: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE,
-    {| worker: string |},
+    TaskProps<{ workerAddress: * }>,
   >,
   TASK_SEND_WORK_INVITE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE_ERROR,
   >,
   TASK_SEND_WORK_INVITE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS,
-    {| worker: string |},
+    {| event: Event<typeof WORK_INVITE_SENT> |},
   >,
   TASK_SEND_WORK_REQUEST: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_REQUEST,
@@ -175,7 +203,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SEND_WORK_REQUEST_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
-    {| worker: string |},
+    {| event: Event<typeof WORK_REQUEST_CREATED> |},
   >,
   TASK_SET_DUE_DATE: TaskActionType<
     typeof ACTIONS.TASK_SET_DUE_DATE,
@@ -186,7 +214,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_DUE_DATE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
-    $Required<TaskProps<{ dueDate: * }>>,
+    {| event: Event<typeof DUE_DATE_SET> |},
   >,
   TASK_SET_DESCRIPTION: TaskActionType<
     typeof ACTIONS.TASK_SET_DESCRIPTION,
@@ -197,7 +225,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_DESCRIPTION_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_DESCRIPTION_SUCCESS,
-    $Required<TaskProps<{ description: * }>>,
+    {| event: Event<typeof TASK_DESCRIPTION_SET> |},
   >,
   TASK_SET_DOMAIN: TaskActionType<
     typeof ACTIONS.TASK_SET_DOMAIN,
@@ -208,7 +236,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_DOMAIN_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS,
-    $Required<TaskProps<{ domainId: * }>>,
+    {| event: Event<typeof DOMAIN_SET> |},
   >,
   TASK_SET_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_SET_PAYOUT,
@@ -219,7 +247,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_PAYOUT_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-    {| token: string, amount: string |},
+    {| event: Event<typeof PAYOUT_SET> |},
   >,
   TASK_SET_SKILL: TaskActionType<
     typeof ACTIONS.TASK_SET_SKILL,
@@ -230,7 +258,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_SKILL_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_SKILL_SUCCESS,
-    $Required<TaskProps<{ skillId: * }>>,
+    {| event: Event<typeof SKILL_SET> |},
   >,
   TASK_SET_TITLE: TaskActionType<
     typeof ACTIONS.TASK_SET_TITLE,
@@ -241,7 +269,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_TITLE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_TITLE_SUCCESS,
-    $Required<TaskProps<{ title: * }>>,
+    {| event: Event<typeof TASK_TITLE_SET> |},
   >,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
@@ -256,14 +284,14 @@ export type TaskActionTypes = {|
   >,
   TASK_WORKER_ASSIGN: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN,
-    {| worker: string |},
+    $Required<TaskProps<{ workerAddress: * }>>,
   >,
   TASK_WORKER_ASSIGN_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN_ERROR,
   >,
   TASK_WORKER_ASSIGN_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
-    {| worker: string |},
+    {| event: Event<typeof WORKER_ASSIGNED> |},
   >,
   TASK_WORKER_CLAIM_REWARD: TaskActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD,
@@ -311,13 +339,13 @@ export type TaskActionTypes = {|
   >,
   TASK_WORKER_UNASSIGN: TaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN,
-    {| worker: string |},
+    $Required<TaskProps<{ workerAddress: * }>>,
   >,
   TASK_WORKER_UNASSIGN_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN_ERROR,
   >,
   TASK_WORKER_UNASSIGN_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
-    {| worker: string |},
+    {| event: Event<typeof WORKER_UNASSIGNED> |},
   >,
 |};

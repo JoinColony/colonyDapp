@@ -36,41 +36,38 @@ const getReputation = (
 const enhance = compose(
   withProps(
     ({
-      task: {
+      task: { draftId, colonyAddress, payouts, reputation, title },
+    }: Props) => {
+      // TODO get these from a TaskUser record (in state)
+      const { didRate, didFailToRate, rating = 0 } = {};
+
+      return {
         draftId,
         colonyAddress,
+        rating,
+        reputation: getReputation(reputation, rating, didFailToRate),
         payouts,
-        // `rating` will always be set, default to appease the type gods
-        worker: { didRate, didFailToRate, rating = 0 } = {},
-        reputation,
         title,
-      },
-    }: Props) => ({
-      draftId,
-      colonyAddress,
-      rating,
-      reputation: getReputation(reputation, rating, didFailToRate),
-      payouts,
-      title,
-      lateRating: !didRate,
-      lateReveal: !!didRate && didFailToRate,
-      sortedPayouts: payouts
-        /*
-         * Take out the native token
-         */
-        // $FlowFixMe this should be from TokenReference
-        .filter(payout => !payout.token.isNative)
-        /*
-         * Sort ETH to the top
-         */
-        .sort(sortObjectsBy({ name: 'isEth', compareFn: isEth }, 'token')),
-      nativeTokenPayout: payouts
-        /*
-         * See if we have a native token
-         */
-        // $FlowFixMe this should be from TokenReference
-        .find(payout => payout.token.isNative),
-    }),
+        lateRating: !didRate,
+        lateReveal: !!didRate && didFailToRate,
+        sortedPayouts: payouts
+          /*
+           * Take out the native token
+           */
+          // $FlowFixMe this should be from TokenReference
+          .filter(payout => !payout.token.isNative)
+          /*
+           * Sort ETH to the top
+           */
+          .sort(sortObjectsBy({ name: 'isEth', compareFn: isEth }, 'token')),
+        nativeTokenPayout: payouts
+          /*
+           * See if we have a native token
+           */
+          // $FlowFixMe this should be from TokenReference
+          .find(payout => payout.token.isNative),
+      };
+    },
   ),
 );
 

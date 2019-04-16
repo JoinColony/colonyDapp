@@ -2,7 +2,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskFeedItemRatingType } from '~immutable';
+import type { TaskRatingType } from '~immutable';
 
 import StarRating from '~core/StarRating';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -22,7 +22,7 @@ const MSG = defineMessages({
 const UserAvatar = HookedUserAvatar();
 
 type Props = {|
-  rating: TaskFeedItemRatingType,
+  rating: TaskRatingType,
 |};
 
 const displayName = 'dashboard.TaskFeed.TaskFeedRating';

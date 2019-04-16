@@ -8,7 +8,6 @@ import { TASK_STATE } from './constants';
 
 import type { $Pick, Address } from '~types';
 import type { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
-import type { TaskUserRecordType, TaskUserType } from './TaskUser';
 
 export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 
@@ -24,9 +23,11 @@ type Shared = {|
   domainId?: number,
   draftId: string, // Draft task ID, when the task is a little babby
   dueDate?: Date,
+  managerAddress: Address,
   reputation: number,
   skillId?: number,
   title?: string,
+  workerAddress: Address,
   // TODO support full task workflow:
   // reputation: number,
   // specificationHash?: string,
@@ -36,10 +37,8 @@ type Shared = {|
 export type TaskType = $ReadOnly<{|
   ...Shared,
   invites: Address[],
-  manager?: TaskUserType,
   payouts: TaskPayoutType[],
   requests: Address[],
-  worker?: TaskUserType,
   // TODO support full task workflow:
   // evaluator?: TaskUserType,
 |}>;
@@ -47,10 +46,8 @@ export type TaskType = $ReadOnly<{|
 type TaskRecordProps = {|
   ...Shared,
   invites: ImmutableSet<Address>,
-  manager?: TaskUserRecordType,
   payouts: List<TaskPayoutRecordType>,
   requests: ImmutableSet<Address>,
-  worker?: TaskUserRecordType,
   // TODO support full task workflow:
   // evaluator?: TaskUserRecordType,
 |};
@@ -74,13 +71,13 @@ const defaultValues: $Shape<TaskRecordProps> = {
   draftId: undefined,
   dueDate: undefined,
   invites: ImmutableSet(),
-  manager: undefined,
+  managerAddress: undefined,
   payouts: List(),
   reputation: undefined,
   requests: ImmutableSet(),
   skillId: undefined,
   title: undefined,
-  worker: undefined,
+  workerAddress: undefined,
 };
 
 const TaskRecord: RecordFactory<TaskRecordProps> = Record(defaultValues);

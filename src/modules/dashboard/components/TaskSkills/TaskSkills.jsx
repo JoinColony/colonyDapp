@@ -15,9 +15,7 @@ import ItemsList from '~core/ItemsList';
 
 import styles from './TaskSkills.css';
 
-import taskSkills from './taskSkillsTree';
-
-const taskSkillsList = Array(...taskSkills);
+import taskSkillsTree from './taskSkillsTree';
 
 const MSG = defineMessages({
   title: {
@@ -72,7 +70,7 @@ const TaskSkills = ({
     <div className={styles.main}>
       {isTaskCreator && (
         <ItemsList
-          list={taskSkillsList}
+          list={taskSkillsTree}
           handleSetItem={handleSetSkill}
           name="taskSkills"
           connect={false}
