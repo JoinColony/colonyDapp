@@ -2,13 +2,14 @@
 
 import React from 'react';
 
+import type { Address } from '~types';
 import type { ColonyType } from '~immutable';
 
 import Avatar from '~core/Avatar';
 
 export type Props = {|
-  /** Address of the current user for identicon fallback */
-  address: string,
+  /** Address of the colony for identicon fallback */
+  colonyAddress: Address,
   /** Avatar image URL (can be a base64 encoded url string) */
   avatarURL?: string,
   /** Is passed through to Avatar */
@@ -24,7 +25,7 @@ export type Props = {|
 const displayName = 'ColonyAvatar';
 
 const ColonyAvatar = ({
-  address,
+  colonyAddress,
   avatarURL,
   className,
   colony: { displayName: colonyDisplayName, colonyName } = {},
@@ -36,9 +37,9 @@ const ColonyAvatar = ({
     className={className}
     notSet={notSet}
     placeholderIcon="at-sign-circle"
-    seed={address}
+    seed={colonyAddress}
     size={size}
-    title={colonyDisplayName || colonyName || address}
+    title={colonyDisplayName || colonyName || colonyAddress}
   />
 );
 

@@ -29,12 +29,17 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyName: *, draftId: *, dueDate: * }>,
+  ...TaskProps<{ colonyAddress: *, draftId: *, dueDate: * }>,
 |};
 
 const displayName = 'dashboard.TaskDate';
 
-const TaskDate = ({ colonyName, draftId, dueDate, isTaskCreator }: Props) => {
+const TaskDate = ({
+  colonyAddress,
+  draftId,
+  dueDate,
+  isTaskCreator,
+}: Props) => {
   const [selectedDate, setSelectedDate] = useState(dueDate);
 
   const handleSelectDate = useCallback(
@@ -80,7 +85,7 @@ const TaskDate = ({ colonyName, draftId, dueDate, isTaskCreator }: Props) => {
                   success={ACTIONS.TASK_SET_DUE_DATE_SUCCESS}
                   error={ACTIONS.TASK_SET_DUE_DATE_ERROR}
                   onSuccess={close}
-                  values={{ colonyName, draftId, dueDate: currentDate }}
+                  values={{ colonyAddress, draftId, dueDate: currentDate }}
                 />
               </div>
             )}

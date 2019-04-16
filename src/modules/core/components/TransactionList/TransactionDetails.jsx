@@ -8,10 +8,10 @@ import Link from '~core/Link';
 
 import styles from './TransactionDetails.css';
 
+import type { ENSName } from '~types';
 import type {
   ColonyType,
   ContractTransactionType,
-  DataType,
   TaskType,
   UserType,
 } from '~immutable';
@@ -25,6 +25,10 @@ const MSG = defineMessages({
     id: 'admin.TransactionList.TransactionDetails.toText',
     defaultMessage: 'To {recipientString}',
   },
+  untitled: {
+    id: 'dashboard.TaskList.TaskListItem.untitled',
+    defaultMessage: 'Untitled task',
+  },
 });
 
 /*
@@ -37,7 +41,7 @@ type Props = {|
    * User data Object, follows the same format as UserPicker
    */
   transaction: ContractTransactionType,
-  colony?: DataType<ColonyType>,
+  colony?: ColonyType,
   task?: TaskType,
   user?: UserType,
   /*
@@ -84,15 +88,19 @@ const ColonyDetails = ({
   </span>
 );
 
-const TaskDetails = ({ task }: { task: TaskType }) => (
+const TaskDetails = ({
+  colonyName = '',
+  task: { draftId, title },
+}: {
+  task: TaskType,
+  colonyName?: ENSName,
+}) => (
   <span>
-    {task.title && (
-      <Link
-        text={task.title}
-        to={`/colony/${task.colonyName}/task/${task.draftId}`}
-        className={styles.taskLink}
-      />
-    )}
+    <Link
+      text={title || MSG.untitled}
+      to={`/colony/${colonyName}/task/${draftId}`}
+      className={styles.taskLink}
+    />
   </span>
 );
 
@@ -114,7 +122,7 @@ const TransactionDetails = ({
           {/*
            * From a user
            */}
-          {from && !(to && colony && colony.record) && (
+          {from && !(to && colony) && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
@@ -136,27 +144,34 @@ const TransactionDetails = ({
           {/*
            * From a task
            */}
-          {!from && task && (
+          {!from && task && colony && (
             <FormattedMessage
               {...MSG.fromText}
-              values={{ senderString: <TaskDetails task={task} /> }}
+              values={{
+                senderString: (
+                  <TaskDetails
+                    task={task}
+                    colonyName={colony && colony.colonyName}
+                  />
+                ),
+              }}
             />
           )}
           {/*
            * From a Colony
            */}
-          {to && colony && colony.record && (
+          {to && colony && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
                 senderString: (
                   <ColonyDetails
-                    colony={colony.record}
+                    colony={colony}
                     address={
                       showMaskedAddress ? (
-                        <MaskedAddress address={colony.record.colonyAddress} />
+                        <MaskedAddress address={colony.colonyAddress} />
                       ) : (
-                        colony.record.colonyAddress
+                        colony.colonyAddress
                       )
                     }
                   />
@@ -169,18 +184,18 @@ const TransactionDetails = ({
          * To the colony
          */}
         <p className={styles.secondaryText}>
-          {!to && colony && colony.record && (
+          {!to && colony && (
             <FormattedMessage
               {...MSG.toText}
               values={{
                 recipientString: (
                   <ColonyDetails
-                    colony={colony.record}
+                    colony={colony}
                     address={
                       showMaskedAddress ? (
-                        <MaskedAddress address={colony.record.colonyAddress} />
+                        <MaskedAddress address={colony.colonyAddress} />
                       ) : (
-                        colony.record.colonyAddress
+                        colony.colonyAddress
                       )
                     }
                   />
@@ -200,7 +215,7 @@ const TransactionDetails = ({
           {/*
            * To a user
            */}
-          {to && !(from && colony && colony.record) && (
+          {to && !(from && colony) && (
             <FormattedMessage
               {...MSG.toText}
               values={{
@@ -218,22 +233,26 @@ const TransactionDetails = ({
           {/*
            * To a task
            */}
-          {!to && task && (
+          {!to && task && colony && (
             <FormattedMessage
               {...MSG.toText}
-              values={{ recipientString: <TaskDetails task={task} /> }}
+              values={{
+                recipientString: (
+                  <TaskDetails task={task} colonyName={colony.colonyName} />
+                ),
+              }}
             />
           )}
           {/*
            * To a Colony
            */}
-          {from && colony && colony.record && (
+          {from && colony && (
             <FormattedMessage
               {...MSG.toText}
               values={{
                 recipientString: (
                   <ColonyDetails
-                    colony={colony.record}
+                    colony={colony}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />
@@ -251,13 +270,13 @@ const TransactionDetails = ({
          * From the colony
          */}
         <p className={styles.secondaryText}>
-          {!from && colony && colony.record && (
+          {!from && colony && (
             <FormattedMessage
               {...MSG.fromText}
               values={{
                 senderString: (
                   <ColonyDetails
-                    colony={colony.record}
+                    colony={colony}
                     address={
                       showMaskedAddress ? (
                         <MaskedAddress address={from} />

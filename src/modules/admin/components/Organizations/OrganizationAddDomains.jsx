@@ -4,7 +4,7 @@ import React from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 
 import { withKeyPath } from '~utils/actions';
 import Button from '~core/Button';
@@ -14,7 +14,7 @@ import { ACTIONS } from '~redux';
 import styles from './OrganizationAddDomains.css';
 
 type Props = {
-  colonyName: ENSName,
+  colonyAddress: Address,
 };
 
 const MSG = defineMessages({
@@ -41,7 +41,7 @@ const validationSchema = yup.object({
     .required(),
 });
 
-const OrganizationAddDomains = ({ colonyName }: Props) => (
+const OrganizationAddDomains = ({ colonyAddress }: Props) => (
   <div className={styles.main}>
     <ActionForm
       submit={ACTIONS.DOMAIN_CREATE}
@@ -50,7 +50,7 @@ const OrganizationAddDomains = ({ colonyName }: Props) => (
       onSuccess={(_, { resetForm }) => {
         resetForm();
       }}
-      transform={withKeyPath(colonyName)}
+      transform={withKeyPath(colonyAddress)}
       initialValues={{
         domainName: '',
       }}

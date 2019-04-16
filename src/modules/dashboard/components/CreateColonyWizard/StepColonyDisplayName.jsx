@@ -8,7 +8,7 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 
-import styles from './StepColonyName.css';
+import styles from './StepColonyDisplayName.css';
 
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -16,27 +16,27 @@ import Button from '~core/Button';
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
+    id: 'dashboard.CreateColonyWizard.StepColonyDisplayName.heading',
     defaultMessage: 'What would you like to name your Colony?',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.label',
+    id: 'dashboard.CreateColonyWizard.StepColonyDisplayName.label',
     defaultMessage: 'Colony Name',
   },
   helpText: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.helpText',
+    id: 'dashboard.CreateColonyWizard.StepColonyDisplayName.helpText',
     defaultMessage: 'So, this is some placeholder text',
   },
   placeholder: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.placeholder',
+    id: 'dashboard.CreateColonyWizard.StepColonyDisplayName.placeholder',
     defaultMessage: 'Type a display name for a colony',
   },
   cancel: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.cancel',
+    id: 'dashboard.CreateColonyWizard.StepColonyDisplayName.cancel',
     defaultMessage: 'Cancel',
   },
   next: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.next',
+    id: 'dashboard.CreateColonyWizard.StepColonyDisplayName.next',
     defaultMessage: 'Next',
   },
 });
@@ -51,9 +51,9 @@ type FormValues = {
 
 type Props = WizardProps<FormValues> & ContextRouter;
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
+const displayName = 'dashboard.CreateColonyWizard.StepColonyDisplayName';
 
-const StepColonyName = ({
+const StepColonyDisplayName = ({
   nextStep,
   wizardForm,
   history: { goBack },
@@ -93,6 +93,6 @@ const StepColonyName = ({
   </Form>
 );
 
-StepColonyName.displayName = displayName;
+StepColonyDisplayName.displayName = displayName;
 
-export default withRouter(StepColonyName);
+export default withRouter(StepColonyDisplayName);

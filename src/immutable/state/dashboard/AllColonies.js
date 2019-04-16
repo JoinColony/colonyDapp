@@ -12,7 +12,10 @@ export type AllColoniesMap = ImmutableMapType<
 
 export type AllColonyAvatarsMap = ImmutableMapType<string, string>;
 
-export type AllColonyNamesMap = ImmutableMapType<Address, ENSName>;
+export type AllColonyNamesMap = ImmutableMapType<
+  Address,
+  DataRecordType<ENSName>,
+>;
 
 export type AllColoniesProps = {|
   avatars: AllColonyAvatarsMap,

@@ -37,9 +37,7 @@ const UserProfile = ({
   // TODO: fetch colony addresses for the user we're viewing
   const colonyAddresses = [];
 
-  if (!user || isFetching) {
-    return <UserProfileSpinner />;
-  }
+  if (!user || isFetching) return <UserProfileSpinner />;
 
   return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>

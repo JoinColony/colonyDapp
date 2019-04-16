@@ -21,10 +21,8 @@ import {
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
 
-function* fetchColonyTransactionsSaga({
-  meta: {
-    keyPath: [colonyName],
-  },
+function* colonyFetchTransactions({
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>): Saga<void> {
   try {
@@ -32,15 +30,14 @@ function* fetchColonyTransactionsSaga({
 
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      colonyName,
+      colonyAddress,
     );
 
     const transactions = yield* executeQuery(
       {
         colonyClient,
         metadata: {
-          colonyAddress: colonyClient.contract.address,
-          colonyName,
+          colonyAddress,
         },
       },
       getColonyTransactions,
@@ -56,23 +53,21 @@ function* fetchColonyTransactionsSaga({
   }
 }
 
-function* fetchColonyUnclaimedTransactionsSaga({
-  meta: {
-    keyPath: [colonyName],
-  },
+function* colonyFetchUnclaimedTransactions({
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      colonyName,
+      colonyAddress,
     );
 
     const transactions = yield* executeQuery(
       {
         colonyClient,
-        metadata: { colonyAddress: colonyClient.address, colonyName },
+        metadata: { colonyAddress },
       },
       getColonyUnclaimedTransactions,
     );
@@ -96,8 +91,8 @@ function* fetchColonyUnclaimedTransactionsSaga({
 /*
  * Claim tokens, then reload unclaimed transactions list.
  */
-function* claimColonyToken({
-  payload: { colonyName, tokenAddress: token },
+function* colonyClaimToken({
+  payload: { colonyAddress, tokenAddress: token },
   meta,
 }: Action<typeof ACTIONS.COLONY_CLAIM_TOKEN>): Saga<void> {
   let txChannel;
@@ -106,7 +101,7 @@ function* claimColonyToken({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'claimColonyFunds',
-      identifier: colonyName,
+      identifier: colonyAddress,
       params: { token },
     });
 
@@ -121,10 +116,10 @@ function* claimColonyToken({
       meta,
     });
     yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>>(
-      fetchColonyTransactions(colonyName),
+      fetchColonyTransactions(colonyAddress),
     );
     yield put<Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>>(
-      fetchColonyUnclaimedTransactions(colonyName),
+      fetchColonyUnclaimedTransactions(colonyAddress),
     );
   } catch (error) {
     yield putError(ACTIONS.COLONY_CLAIM_TOKEN_ERROR, error, meta);
@@ -134,13 +129,10 @@ function* claimColonyToken({
 }
 
 export default function* adminSagas(): Saga<void> {
-  yield takeEvery(
-    ACTIONS.COLONY_FETCH_TRANSACTIONS,
-    fetchColonyTransactionsSaga,
-  );
+  yield takeEvery(ACTIONS.COLONY_FETCH_TRANSACTIONS, colonyFetchTransactions);
   yield takeEvery(
     ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-    fetchColonyUnclaimedTransactionsSaga,
+    colonyFetchUnclaimedTransactions,
   );
-  yield takeEvery(ACTIONS.COLONY_CLAIM_TOKEN, claimColonyToken);
+  yield takeEvery(ACTIONS.COLONY_CLAIM_TOKEN, colonyClaimToken);
 }

@@ -41,7 +41,7 @@ type Props = {|
 
 const TaskInviteDialog = ({
   cancel,
-  task: { reputation, payouts, draftId, colonyName },
+  task: { reputation, payouts, draftId, colonyAddress },
   currentUser: {
     profile: { walletAddress },
   },
@@ -56,7 +56,7 @@ const TaskInviteDialog = ({
       transform={mergePayload({
         worker: walletAddress,
         draftId,
-        colonyName,
+        colonyAddress,
       })}
     >
       {({ status, isSubmitting }) => (

@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import type { WizardProps } from '~core/Wizard';
 import type { FileReaderFile, UploadFile } from '~core/FileUpload';
 
-import { compose, mapPayload, mergePayload } from '~utils/actions';
+import { pipe, mapPayload, mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -113,7 +113,7 @@ const StepJSONUpload = ({
     }}
     onSuccess={values => nextStep({ ...values })}
     validationSchema={validationSchema}
-    transform={compose(
+    transform={pipe(
       mergePayload(wizardValues),
       mapPayload(transformPayload),
     )}

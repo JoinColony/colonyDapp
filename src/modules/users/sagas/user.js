@@ -118,13 +118,13 @@ function* userByUsernameFetch({
 
 function* userFetch({
   meta,
-  payload: { address },
+  payload: { userAddress },
 }: Action<typeof ACTIONS.USER_FETCH>): Saga<void> {
   try {
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        walletAddress: address,
+        walletAddress: userAddress,
       },
     };
 
@@ -194,11 +194,11 @@ function* userAvatarRemove({
   meta,
 }: Action<typeof ACTIONS.USER_AVATAR_REMOVE>): Saga<void> {
   try {
-    const address = yield select(walletAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        walletAddress: address,
+        walletAddress,
       },
     };
 
@@ -206,8 +206,8 @@ function* userAvatarRemove({
 
     yield put<Action<typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
+      payload: { address: walletAddress },
       meta,
-      payload: { address },
     });
   } catch (error) {
     yield putError(ACTIONS.USER_AVATAR_REMOVE_ERROR, error, meta);
@@ -219,11 +219,11 @@ function* userAvatarUpload({
   payload,
 }: Action<typeof ACTIONS.USER_AVATAR_UPLOAD>): Saga<void> {
   try {
-    const address = yield select(walletAddressSelector);
+    const walletAddress = yield select(walletAddressSelector);
     const context = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
       metadata: {
-        walletAddress: address,
+        walletAddress,
       },
     };
 
@@ -234,7 +234,11 @@ function* userAvatarUpload({
     yield put<Action<typeof ACTIONS.USER_AVATAR_UPLOAD_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
       meta,
-      payload: { hash: ipfsHash, avatar: payload.data, address },
+      payload: {
+        hash: ipfsHash,
+        avatar: payload.data,
+        address: walletAddress,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.USER_AVATAR_UPLOAD_ERROR, error, meta);
@@ -323,14 +327,14 @@ function* usernameCreate({
 }
 
 function* userPermissionsFetch({
-  payload: { colonyName },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.USER_PERMISSIONS_FETCH>): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
-      colonyName,
+      colonyAddress,
     );
     const walletAddress = yield select(walletAddressSelector);
 
@@ -347,7 +351,7 @@ function* userPermissionsFetch({
 
     yield put<Action<typeof ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS,
-      payload: { permissions, colonyName },
+      payload: { permissions, colonyAddress },
       meta,
     });
   } catch (error) {
@@ -358,7 +362,7 @@ function* userPermissionsFetch({
 function* getMetadataStoreAddress() {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const walletAddress = yield select(walletAddressSelector);
-  const userMetadataStoreAddress = yield* executeQuery(
+  return yield* executeQuery(
     {
       ddb,
       metadata: {
@@ -367,7 +371,6 @@ function* getMetadataStoreAddress() {
     },
     getUserMetadataStoreAddress,
   );
-  return userMetadataStoreAddress;
 }
 
 function* userTokensFetch(): Saga<void> {
@@ -429,10 +432,10 @@ function* userTokensUpdate(
 function* userSubscribedColoniesFetch(): Saga<*> {
   try {
     const context = yield call(getUserMetadataStoreContext);
-    const colonies = yield* executeQuery(context, getUserColonies);
+    const colonyAddresses = yield* executeQuery(context, getUserColonies);
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      payload: colonies,
+      payload: colonyAddresses,
     });
   } catch (error) {
     yield putError(ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS, error);
@@ -458,10 +461,10 @@ function* userColonySubscribe({
 function* userSubscribedTasksFetch(): Saga<*> {
   try {
     const context = yield call(getUserMetadataStoreContext);
-    const tasks = yield* executeQuery(context, getUserTasks);
+    const userTasks = yield* executeQuery(context, getUserTasks);
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-      payload: tasks,
+      payload: userTasks,
     });
   } catch (error) {
     yield putError(ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);

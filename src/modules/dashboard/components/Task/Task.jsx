@@ -13,7 +13,6 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
  * TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
-import type { TaskType } from '~immutable';
 
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
@@ -95,35 +94,13 @@ const Task = ({
   const currentUser = useSelector(currentUserSelector);
   const { walletAddress } = currentUser.profile;
 
-  const { data: task, isFetching, error } = useDataFetcher<TaskType>(
+  const { data: task, isFetching: isFetchingTask } = useDataFetcher(
     taskFetcher,
     [draftId],
-    [colonyName, draftId],
+    [draftId],
   );
-
-  const onEditTask = useCallback(
-    () => {
-      // If you've managed to click on the button that runs this without the
-      // task being fetched yet, you are a wizard
-      if (!task) return;
-
-      const { payouts, reputation, worker } = task;
-      openDialog('TaskEditDialog', {
-        maxTokens: 2,
-        payouts,
-        reputation,
-        worker,
-      });
-    },
-    [openDialog, task],
-  );
-
-  if (!task || isFetching || error)
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
-
-  const isTaskCreator = isCreator(task, walletAddress);
-
   const {
+    colonyAddress,
     description,
     domainId,
     dueDate,
@@ -132,7 +109,28 @@ const Task = ({
     skillId,
     title,
     worker,
-  } = task;
+  } = task || {};
+
+  const onEditTask = useCallback(
+    () => {
+      // If you've managed to click on the button that runs this without the
+      // task being fetched yet, you are a wizard
+      if (!task) return;
+
+      openDialog('TaskEditDialog', {
+        maxTokens: 2,
+        payouts,
+        reputation,
+        worker,
+      });
+    },
+    [openDialog, payouts, reputation, task, worker],
+  );
+
+  if (isFetchingTask || !task)
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
+
+  const isTaskCreator = isCreator(task, walletAddress);
 
   const setActionButtonValues = () => ({ colonyName, draftId });
 
@@ -154,7 +152,7 @@ const Task = ({
             )}
           </header>
           <TaskAssignment
-            colonyName={colonyName}
+            colonyAddress={colonyAddress}
             draftId={draftId}
             payouts={payouts}
             reputation={reputation}
@@ -163,13 +161,13 @@ const Task = ({
         </section>
         <section className={styles.section}>
           <TaskTitle
-            colonyName={colonyName}
+            colonyAddress={colonyAddress}
             draftId={draftId}
             isTaskCreator={isTaskCreator}
             title={title}
           />
           <TaskDescription
-            colonyName={colonyName}
+            colonyAddress={colonyAddress}
             description={description}
             draftId={draftId}
             isTaskCreator={isTaskCreator}
@@ -178,7 +176,7 @@ const Task = ({
         <section className={styles.section}>
           <div className={styles.editor}>
             <TaskDomains
-              colonyName={colonyName}
+              colonyAddress={colonyAddress}
               domainId={domainId}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
@@ -186,7 +184,7 @@ const Task = ({
           </div>
           <div className={styles.editor}>
             <TaskSkills
-              colonyName={colonyName}
+              colonyAddress={colonyAddress}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
               skillId={skillId}
@@ -194,7 +192,7 @@ const Task = ({
           </div>
           <div className={styles.editor}>
             <TaskDate
-              colonyName={colonyName}
+              colonyAddress={colonyAddress}
               draftId={draftId}
               isTaskCreator={isTaskCreator}
               dueDate={dueDate}

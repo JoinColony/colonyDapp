@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Address, OrbitDBAddress } from '~types';
+import type { TaskDraftId } from '~immutable';
 import type {
   EventStore,
   FeedStore,
@@ -215,17 +216,16 @@ export const markNotificationsAsRead: UserMetadataCommand<
 
 export const subscribeToTask: UserMetadataCommand<
   {|
-    draftId: string,
+    draftId: TaskDraftId,
   |},
   ?string,
 > = context => ({
   async execute(args) {
     const { ddb, metadata } = context;
-    const { execute } = getUserTasks(context);
-    const tasks = await execute();
-    if (tasks.some(draftId => draftId === args.draftId)) {
-      return null;
-    }
+    const draftIds = await getUserTasks(context).execute();
+
+    if (draftIds.some(draftId => draftId === args.draftId)) return null;
+
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createSubscribeToTaskEvent(args));
     return args.draftId;
@@ -234,17 +234,16 @@ export const subscribeToTask: UserMetadataCommand<
 
 export const unsubscribeToTask: UserMetadataCommand<
   {|
-    draftId: string,
+    draftId: TaskDraftId,
   |},
   ?string,
 > = context => ({
   async execute(args) {
     const { ddb, metadata } = context;
-    const { execute } = getUserTasks(context);
-    const tasks = await execute();
-    if (!tasks.some(draftId => draftId === args.draftId)) {
-      return null;
-    }
+    const draftIds = await getUserTasks(context).execute();
+
+    if (!draftIds.some(draftId => draftId === args.draftId)) return null;
+
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToTaskEvent(args));
     return args.draftId;

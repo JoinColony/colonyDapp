@@ -6,7 +6,7 @@ export type ActionTransformFnType = (
   UniqueActionType<*, *, *>,
 ) => UniqueActionType<*, *, Object>;
 
-export { default as compose } from 'lodash/fp/compose';
+export { default as pipe } from 'lodash/fp/pipe';
 
 export const mergePayload = (payload: Object) => (
   action: UniqueActionType<*, *, *>,

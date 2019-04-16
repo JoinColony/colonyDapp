@@ -1,14 +1,14 @@
 /* @flow */
 
 // $FlowFixMe until hooks flow types
-import React, { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDataFetcher } from '~utils/hooks';
 import { addressEquals } from '~utils/strings';
 import { TASK_STATE } from '~immutable';
 
-import type { TaskType } from '~immutable';
+import type { TaskDraftId, TaskType } from '~immutable';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
@@ -19,7 +19,7 @@ import type { MyTasksFilterOptionType } from './constants';
 import InitialTask from './InitialTask.jsx';
 import { MY_TASKS_FILTER } from './constants';
 
-import { currentUserTasksFetcher } from '../../fetchers';
+import { currentUserDraftIdsFetcher } from '../../fetchers';
 
 import styles from './TabMyTasks.css';
 
@@ -44,11 +44,9 @@ const TabMyTasks = ({
   initialTask,
   userClaimedProfile,
 }: Props) => {
-  const { isFetching: isFetchingTasks, data: tasks } = useDataFetcher<string[]>(
-    currentUserTasksFetcher,
-    [],
-    [],
-  );
+  const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
+    TaskDraftId[],
+  >(currentUserDraftIdsFetcher, [], []);
 
   const filter = useCallback(
     ({ creatorAddress, worker, currentState }: TaskType) => {
@@ -73,20 +71,21 @@ const TabMyTasks = ({
 
   if (!userClaimedProfile) {
     return (
-      <Fragment>
+      <>
         <InitialTask task={initialTask} />
-        {tasks && tasks.length ? <TaskList draftIds={tasks} /> : null}
-      </Fragment>
+        {draftIds && draftIds.length ? <TaskList draftIds={draftIds} /> : null}
+      </>
     );
   }
-  return tasks && tasks.length ? (
-    <TaskList draftIds={tasks} filter={filter} />
+
+  return draftIds && draftIds.length ? (
+    <TaskList draftIds={draftIds} filter={filter} />
   ) : (
-    <Fragment>
+    <>
       <p className={styles.emptyText}>
         <FormattedMessage {...MSG.emptyText} />
       </p>
-    </Fragment>
+    </>
   );
 };
 

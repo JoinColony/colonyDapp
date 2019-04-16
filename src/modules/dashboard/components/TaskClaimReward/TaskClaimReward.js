@@ -38,7 +38,7 @@ const enhance = compose(
     ({
       task: {
         draftId,
-        colonyName,
+        colonyAddress,
         payouts,
         // `rating` will always be set, default to appease the type gods
         worker: { didRate, didFailToRate, rating = 0 } = {},
@@ -47,7 +47,7 @@ const enhance = compose(
       },
     }: Props) => ({
       draftId,
-      colonyName,
+      colonyAddress,
       rating,
       reputation: getReputation(reputation, rating, didFailToRate),
       payouts,

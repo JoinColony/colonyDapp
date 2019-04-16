@@ -33,10 +33,9 @@ import {
   updateColonyProfile,
 } from '../data/commands';
 
-import { getColony } from '../data/queries';
+import { getColony, getColonyTasks } from '../data/queries';
 import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 
-import { getNetworkClient } from '../../core/sagas/utils';
 import {
   transactionAddParams,
   transactionAddIdentifier,
@@ -52,7 +51,7 @@ import { subscribeToColony } from '../../users/actionCreators';
 import { fetchColony, fetchToken } from '../actionCreators';
 import { colonyAvatarHashSelector } from '../selectors';
 
-import { getColonyContext } from './shared';
+import { getColonyContext, getColonyAddress, getColonyName } from './shared';
 
 // TODO: Rename, complete and wire up after new onboarding is in place
 function* colonyCreateNew({
@@ -216,8 +215,7 @@ function* colonyCreateLabel({
   },
   meta,
 }: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
-  // @NOTE: We wanna use the address, we haven't anything mapped to the ENS name yet. Used on metadata
-  const context = yield* getColonyContext(null, colonyAddress);
+  const context = yield* getColonyContext(colonyAddress);
   const args = {
     colonyAddress,
     colonyName,
@@ -292,17 +290,9 @@ function* colonyDomainValidate({
 }: Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE>): Saga<void> {
   yield delay(300);
 
-  const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
+  const colonyAddress = yield call(getColonyAddress, colonyName);
 
-  const networkClient = yield call(getNetworkClient);
-
-  const ensAddress = yield call(
-    [ensCache, ensCache.getAddress],
-    ensCache.constructor.getFullDomain('colony', colonyName),
-    networkClient,
-  );
-
-  if (ensAddress) {
+  if (colonyAddress) {
     yield putError(
       ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
       new Error('ENS address already exists'),
@@ -318,25 +308,24 @@ function* colonyDomainValidate({
 }
 
 function* colonyProfileUpdate({
-  meta: {
-    keyPath: [colonyName],
-  },
   meta,
-  payload,
+  payload: {
+    colonyAddress,
+    colonyName,
+    description,
+    displayName,
+    guideline,
+    website,
+  },
 }: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyName);
-    const {
-      metadata: { colonyAddress },
-    } = context;
-    const { displayName, description, guideline, website } = payload;
-    const args = {
+    const context = yield* getColonyContext(colonyAddress);
+    yield* executeCommand(context, updateColonyProfile, {
       displayName,
       description,
       guideline,
       website,
-    };
-    yield* executeCommand(context, updateColonyProfile, args);
+    });
     /*
      * Update the colony in the redux store to show the updated values
      */
@@ -344,10 +333,10 @@ function* colonyProfileUpdate({
       type: ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
       meta,
       payload: {
-        colonyName,
         colonyAddress,
-        displayName,
+        colonyName,
         description,
+        displayName,
         guideline,
         website,
       },
@@ -358,12 +347,12 @@ function* colonyProfileUpdate({
 }
 
 function* colonyFetch({
-  payload: { colonyName },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
     // TODO error if the colony does not exist!
-    const context = yield* getColonyContext(colonyName);
+    const context = yield* getColonyContext(colonyAddress);
     const payload = yield* executeQuery(context, getColony);
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
@@ -371,17 +360,15 @@ function* colonyFetch({
       payload,
     });
 
-    const { colonyAddress, tokens = {} } = payload;
-
     // dispatch actions to fetch info and balances for each colony token
     yield all(
-      Object.keys(tokens).reduce(
+      Object.keys(payload.tokens || {}).reduce(
         (effects, tokenAddress) => [
           ...effects,
           put(fetchToken(tokenAddress)),
           put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
             type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-            meta: { keyPath: [colonyName, tokenAddress] },
+            meta: { keyPath: [colonyAddress, tokenAddress] },
             payload: { colonyAddress },
           }),
         ],
@@ -393,22 +380,32 @@ function* colonyFetch({
   }
 }
 
+function* colonyAddressFetch({
+  payload: { colonyName },
+}: Action<typeof ACTIONS.COLONY_ADDRESS_FETCH>): Saga<void> {
+  try {
+    const colonyAddress = yield call(getColonyAddress, colonyName);
+
+    if (!colonyAddress)
+      throw new Error(`No Colony address found for ENS name "${colonyName}"`);
+
+    yield put<Action<typeof ACTIONS.COLONY_ADDRESS_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_ADDRESS_FETCH_SUCCESS,
+      meta: { keyPath: [colonyAddress] },
+      payload: { colonyAddress, colonyName },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_ADDRESS_FETCH_ERROR, error, { colonyName });
+  }
+}
+
 function* colonyNameFetch({
   payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_NAME_FETCH>): Saga<void> {
   try {
-    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-
-    const networkClient = yield call(getNetworkClient);
-
-    const domain = yield call(
-      [ensCache, ensCache.getDomain],
-      colonyAddress,
-      networkClient,
-    );
-
-    if (!domain)
+    const colonyName = yield call(getColonyName, colonyAddress);
+    if (!colonyName)
       throw new Error(
         `No Colony ENS name found for address "${colonyAddress}"`,
       );
@@ -416,7 +413,7 @@ function* colonyNameFetch({
     yield put<Action<typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_NAME_FETCH_SUCCESS,
       meta,
-      payload: domain,
+      payload: { colonyAddress, colonyName },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_NAME_FETCH_ERROR, error, meta);
@@ -424,16 +421,11 @@ function* colonyNameFetch({
 }
 
 function* colonyAvatarUpload({
-  meta: {
-    keyPath: [colonyName],
-  },
   meta,
-  payload: { data },
+  payload: { colonyAddress, data },
 }: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<void> {
   try {
-    // first attempt upload to IPFS
-    const context = yield* getColonyContext(colonyName);
-
+    const context = yield* getColonyContext(colonyAddress);
     const ipfsHash = yield call(ipfsUpload, data);
 
     /*
@@ -458,13 +450,11 @@ function* colonyAvatarUpload({
 
 function* colonyAvatarRemove({
   meta,
-  meta: {
-    keyPath: [colonyName],
-  },
+  payload: { colonyAddress },
 }: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyName);
-    const ipfsHash = yield select(colonyAvatarHashSelector, colonyName);
+    const context = yield* getColonyContext(colonyAddress);
+    const ipfsHash = yield select(colonyAvatarHashSelector, colonyAddress);
     /*
      * Remove colony avatar
      */
@@ -484,7 +474,7 @@ function* colonyAvatarRemove({
 }
 
 function* colonyRecoveryModeEnter({
-  payload: { colonyName },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER>) {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -493,7 +483,7 @@ function* colonyRecoveryModeEnter({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'enterRecoveryMode',
-      identifier: colonyName,
+      identifier: colonyAddress,
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
@@ -505,7 +495,7 @@ function* colonyRecoveryModeEnter({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield put(fetchColony(colonyName));
+    yield put(fetchColony(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR, error, meta);
   } finally {
@@ -514,7 +504,7 @@ function* colonyRecoveryModeEnter({
 }
 
 function* colonyUpgradeContract({
-  payload: { colonyName },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_VERSION_UPGRADE>) {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -525,7 +515,7 @@ function* colonyUpgradeContract({
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'upgrade',
-      identifier: colonyName,
+      identifier: colonyAddress,
       params: { newVersion },
     });
 
@@ -538,7 +528,7 @@ function* colonyUpgradeContract({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield put(fetchColony(colonyName));
+    yield put(fetchColony(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_VERSION_UPGRADE_ERROR, error, meta);
   } finally {
@@ -554,7 +544,7 @@ function* colonyTokenBalanceFetch({
   payload: { colonyAddress },
 }: Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
-    const networkClient = yield call(getNetworkClient);
+    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const tokenClient = yield call(getTokenClient, tokenAddress, networkClient);
     const { amount: balance } = yield call(
       [tokenClient.getBalanceOf, tokenClient.getBalanceOf.call],
@@ -563,8 +553,12 @@ function* colonyTokenBalanceFetch({
     yield put({
       type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
       payload: {
-        address: tokenAddress,
-        balance,
+        token: {
+          address: tokenAddress,
+          balance,
+        },
+        tokenAddress,
+        colonyAddress,
       },
       meta,
     });
@@ -573,17 +567,41 @@ function* colonyTokenBalanceFetch({
   }
 }
 
+/*
+ * Given a colony address, dispatch actions to fetch all tasks
+ * for that colony.
+ */
+function* colonyTaskMetadataFetch({
+  meta,
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH>): Saga<void> {
+  try {
+    const context = yield* getColonyContext(colonyAddress);
+    const colonyTasks = yield* executeQuery(context, getColonyTasks);
+
+    yield put<Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS,
+      meta: { keyPath: [colonyAddress] },
+      payload: { colonyAddress, colonyTasks },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_TASK_METADATA_FETCH_ERROR, error, meta);
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
+  yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   // TODO: rename properly once the new onboarding is done
   yield takeEvery('COLONY_CREATE_NEW', colonyCreateNew);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
   yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
-  yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
+  yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
-  yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
+  yield takeEvery(ACTIONS.COLONY_TASK_METADATA_FETCH, colonyTaskMetadataFetch);
   yield takeEvery(ACTIONS.COLONY_TOKEN_BALANCE_FETCH, colonyTokenBalanceFetch);
+  yield takeEvery(ACTIONS.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
   /*
    * Note that the following actions use `takeLatest` because they are
    * dispatched on user keyboard input and use the `delay` saga helper.

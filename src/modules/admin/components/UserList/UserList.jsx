@@ -5,7 +5,9 @@ import type { MessageDescriptor } from 'react-intl';
 // $FlowFixMe upgrade flow
 import React, { useCallback } from 'react';
 
-import { compose, mergePayload, withKeyPath } from '~utils/actions';
+import type { Address } from '~types';
+
+import { pipe, mergePayload, withKeyPath } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -50,14 +52,14 @@ type Props = {|
   removeSuccess: string,
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
   removeError: string,
-  /* Colony ENS Name to use when removing the user */
-  colonyName: string,
+  /* Colony address to use when removing the user */
+  colonyAddress: Address,
 |};
 
 const displayName = 'admin.UserList';
 
 const UserList = ({
-  colonyName,
+  colonyAddress,
   label,
   remove,
   removeSuccess,
@@ -68,9 +70,9 @@ const UserList = ({
   showMaskedAddress,
   viewOnly = true,
 }: Props) => {
-  const transform = compose(
-    withKeyPath(colonyName),
-    mergePayload({ colonyName }),
+  const transform = pipe(
+    withKeyPath(colonyAddress),
+    mergePayload({ colonyAddress }),
   );
 
   const removeFn = useAsyncFunction({

@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { RootStateRecord } from '~immutable';
+import type { Address } from '~types';
 
 import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 
@@ -10,5 +11,5 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 // eslint-disable-next-line import/prefer-default-export
 export const colonyDomainsSelector = (
   state: RootStateRecord,
-  colonyName: string,
-) => state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyName]);
+  colonyAddress: Address,
+) => state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress]);

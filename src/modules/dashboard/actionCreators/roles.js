@@ -1,16 +1,19 @@
 /* @flow */
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
+import type { Action } from '~redux';
 
 import { ACTIONS } from '~redux';
 
 // eslint-disable-next-line import/prefer-default-export
-export const fetchRoles = (colonyName: ENSName) => ({
+export const fetchRoles = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_ROLES_FETCH> => ({
   type: ACTIONS.COLONY_ROLES_FETCH,
   payload: {
-    colonyName,
+    colonyAddress,
   },
   meta: {
-    keyPath: [colonyName],
+    keyPath: [colonyAddress],
   },
 });

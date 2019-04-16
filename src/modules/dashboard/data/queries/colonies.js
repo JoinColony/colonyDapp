@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, ENSName } from '~types';
+import type { Address } from '~types';
 
 import type {
   ColonyClientContext,
@@ -39,7 +39,6 @@ const {
 } = COLONY_EVENT_TYPES;
 
 type ColonyMetadata = {|
-  colonyName: string | ENSName,
   colonyAddress: Address,
 |};
 
@@ -61,7 +60,7 @@ export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
 >;
 
 export type ColonyContractRolesEventQuery<I: *, R: *> = Query<
-  {| ...ColonyClientContext, ...DDBContext |},
+  { ...ColonyClientContext, ...DDBContext },
   I,
   R,
 >;
@@ -79,7 +78,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
   void,
   ContractTransactionType[],
 > = ({
-  metadata: { colonyName },
+  metadata: { colonyAddress },
   colonyClient: {
     events: {
       ColonyFundsClaimed,
@@ -109,7 +108,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
             event,
             log: logs[i],
             colonyClient,
-            colonyName,
+            colonyAddress,
           }),
         )
         .filter(Boolean),
@@ -121,7 +120,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
   void,
   ContractTransactionType[],
 > = ({
-  metadata: { colonyAddress, colonyName },
+  metadata: { colonyAddress },
   colonyClient: {
     events: { ColonyFundsClaimed },
     tokenClient: {
@@ -158,7 +157,7 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
           claimEvents,
           claimLogs,
           colonyClient,
-          colonyName,
+          colonyAddress,
           transferEvent,
           transferLog: transferLogs[i],
         }),
@@ -213,13 +212,13 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
   ddb,
   colonyClient,
   wallet,
-  metadata: { colonyAddress, colonyName },
+  metadata: { colonyAddress },
+  metadata,
 }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyName,
-    });
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
 
     const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
 
@@ -230,11 +229,11 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
         colonyReducer,
         // TODO: Add the right defaults here using a data model or something like that
         {
-          colonyAddress,
           avatarHash: undefined,
-          colonyName,
-          inRecoveryMode,
+          colonyAddress,
+          colonyName: '',
           displayName: '',
+          inRecoveryMode,
           tokens: {},
         },
       );
@@ -250,17 +249,11 @@ export const getColonyTasks: ColonyQuery<
       taskStoreAddress: string,
     |},
   },
-> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyName },
-}) => ({
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyName,
-    });
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
     return colonyStore
       .all()
       .filter(

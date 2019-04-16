@@ -9,7 +9,7 @@ import { defineMessages } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
 
-import { compose, mapPayload, mergePayload } from '~utils/actions';
+import { pipe, mapPayload, mergePayload } from '~utils/actions';
 import { MultiLineEdit, ActionForm } from '~core/Fields';
 import { ACTIONS } from '~redux';
 
@@ -22,13 +22,13 @@ const MSG = defineMessages({
 
 type Props = {|
   isTaskCreator: boolean,
-  ...TaskProps<{ colonyName: *, draftId: *, description: * }>,
+  ...TaskProps<{ colonyAddress: *, draftId: *, description: * }>,
 |};
 
 const TaskDescription = ({
   description,
   isTaskCreator,
-  colonyName,
+  colonyAddress,
   draftId,
 }: Props) => (
   <ActionForm
@@ -40,11 +40,11 @@ const TaskDescription = ({
     submit={ACTIONS.TASK_SET_DESCRIPTION}
     success={ACTIONS.TASK_SET_DESCRIPTION_SUCCESS}
     error={ACTIONS.TASK_SET_DESCRIPTION_ERROR}
-    transform={compose(
+    transform={pipe(
       mapPayload(({ description: editor }) => ({
         description: editor.getCurrentContent().getPlainText(),
       })),
-      mergePayload({ colonyName, draftId }),
+      mergePayload({ colonyAddress, draftId }),
     )}
   >
     {({ submitForm }: FormikProps<*>) => (

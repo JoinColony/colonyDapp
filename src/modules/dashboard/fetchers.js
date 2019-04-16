@@ -1,22 +1,28 @@
 /* @flow */
 
 import {
-  colonyRolesSelector,
+  colonyAddressSelector,
   colonyDomainsSelector,
+  colonyNameSelector,
+  colonyRolesSelector,
   colonySelector,
+  colonyTaskMetadataSelector,
   taskSelector,
   tokenSelector,
 } from './selectors';
 import {
-  currentUserTasksSelector,
   currentUserColoniesSelector,
+  currentUserDraftIdsSelector,
 } from '../users/selectors';
 import {
   fetchColony,
+  fetchColonyAddress,
+  fetchColonyName,
   fetchDomains,
   fetchRoles,
-  taskFetch,
+  fetchTask,
   fetchToken,
+  fetchColonyTaskMetadata,
 } from './actionCreators';
 import {
   currentUserFetchColonies,
@@ -26,6 +32,18 @@ import {
 export const colonyFetcher = Object.freeze({
   select: colonySelector,
   fetch: fetchColony,
+  ttl: 1000 * 60, // 1 minute
+});
+
+export const colonyAddressFetcher = Object.freeze({
+  select: colonyAddressSelector,
+  fetch: fetchColonyAddress,
+  ttl: 1000 * 60, // 1 minute
+});
+
+export const colonyNameFetcher = Object.freeze({
+  select: colonyNameSelector,
+  fetch: fetchColonyName,
   ttl: 1000 * 60, // 1 minute
 });
 
@@ -41,8 +59,8 @@ export const rolesFetcher = Object.freeze({
   ttl: 1000 * 60,
 });
 
-export const currentUserTasksFetcher = Object.freeze({
-  select: currentUserTasksSelector,
+export const currentUserDraftIdsFetcher = Object.freeze({
+  select: currentUserDraftIdsSelector,
   fetch: currentUserFetchTasks,
   ttl: 1000 * 60,
 });
@@ -55,7 +73,13 @@ export const currentUserColoniesFetcher = Object.freeze({
 
 export const taskFetcher = Object.freeze({
   select: taskSelector,
-  fetch: taskFetch,
+  fetch: fetchTask,
+  ttl: 1000 * 60, // 1 minute,
+});
+
+export const colonyTaskMetadataFetcher = Object.freeze({
+  select: colonyTaskMetadataSelector,
+  fetch: fetchColonyTaskMetadata,
   ttl: 1000 * 60, // 1 minute,
 });
 

@@ -3,6 +3,8 @@
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { Address } from '~types';
+
 import { useDataFetcher } from '~utils/hooks';
 
 import { SpinnerLoader } from '~core/Preloaders';
@@ -30,7 +32,7 @@ const TabMyColonies = () => {
   const {
     isFetching: isFetchingColonies,
     data: colonyAddresses,
-  } = useDataFetcher<string[]>(currentUserColoniesFetcher, [], []);
+  } = useDataFetcher<Address[]>(currentUserColoniesFetcher, [], []);
 
   if (isFetchingColonies) return <SpinnerLoader />;
 

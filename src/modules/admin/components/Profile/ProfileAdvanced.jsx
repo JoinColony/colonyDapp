@@ -54,15 +54,18 @@ type Props = {|
   colony: ColonyType,
 |};
 
-const ProfileAdvanced = ({ colony }: Props) => {
+const ProfileAdvanced = ({
+  colony: { colonyAddress, id, version },
+  colony,
+}: Props) => {
   const {
     isFetching: isFetchingUserPermissions,
     data: permissions,
     error: userPermissionsError,
   } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
-    [colony.colonyName],
-    [colony.colonyName],
+    [colonyAddress],
+    [colonyAddress],
   );
 
   const {
@@ -79,7 +82,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.labelVersion}
           />
-          <p className={styles.bigInfoText}>{colony.version}</p>
+          <p className={styles.bigInfoText}>{version}</p>
         </div>
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
@@ -88,7 +91,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_VERSION_UPGRADE}
           success={ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
-          values={{ colonyName: colony.colonyName }}
+          values={{ colonyAddress }}
           loading={isFetchingNetworkVersion}
           disabled={!!networkVersionError || !canBeUpgraded(colony, network)}
         />
@@ -98,7 +101,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.labelId}
         />
-        <p className={styles.bigInfoText}>{colony.id}</p>
+        <p className={styles.bigInfoText}>{id}</p>
       </section>
       <section className={styles.section}>
         <div className={styles.withInlineButton}>
@@ -120,7 +123,7 @@ const ProfileAdvanced = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_RECOVERY_MODE_ENTER}
           success={ACTIONS.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR}
-          values={{ colonyName: colony.colonyName }}
+          values={{ colonyAddress }}
           loading={isFetchingUserPermissions}
           disabled={
             !!userPermissionsError ||

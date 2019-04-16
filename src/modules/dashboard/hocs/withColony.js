@@ -7,12 +7,12 @@ import { colonySelector } from '../selectors';
 import { fetchColony } from '../actionCreators';
 import fetchMissingColony from './fetchMissingColony';
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 
 const withColony = compose(
   connect(
-    (state, { colonyName }: { colonyName: ENSName }) => ({
-      colony: colonySelector(state, colonyName),
+    (state, { colonyAddress }: { colonyAddress: Address }) => ({
+      colony: colonySelector(state, colonyAddress),
     }),
     {
       fetchColony,

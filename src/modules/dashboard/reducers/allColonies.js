@@ -3,7 +3,7 @@
 import { combineReducers } from 'redux-immutable';
 
 import coloniesReducer from './coloniesReducer';
-import colonyNamesReducer from './colonyENSNamesReducer';
+import colonyNamesReducer from './colonyNamesReducer';
 
 import { DASHBOARD_COLONIES, DASHBOARD_COLONY_NAMES } from '../constants';
 

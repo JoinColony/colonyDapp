@@ -63,8 +63,8 @@ const ColonyMeta = ({
 }: Props) => {
   const { data: roles } = useDataFetcher<RolesType>(
     rolesFetcher,
-    [colonyName],
-    [colonyName],
+    [colonyAddress],
+    [colonyAddress],
   );
 
   const { admins, founder } = roles || {};
@@ -73,7 +73,7 @@ const ColonyMeta = ({
     <div>
       <ColonyAvatar
         className={styles.avatar}
-        address={colonyAddress}
+        colonyAddress={colonyAddress}
         colony={colony}
         size="xl"
       />

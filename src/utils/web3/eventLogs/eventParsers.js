@@ -8,6 +8,7 @@ import type {
 import BigNumber from 'bn.js';
 
 import type { ContractTransactionType } from '~immutable';
+import type { Address } from '~types';
 
 import { addressEquals } from '~utils/strings';
 
@@ -15,7 +16,7 @@ import { getLogDate } from './blocks';
 
 /*
  * Given a ColonyJS-parsed ColonyFundsClaimedEvent, log from which it was
- * parsed, ColonyClient and colonyName, return a ContractTransactionType
+ * parsed, ColonyClient and colonyAddress, return a ContractTransactionType
  * object, or null if the claim amount was zero.
  */
 export const parseColonyFundsClaimedEvent = async ({
@@ -23,13 +24,13 @@ export const parseColonyFundsClaimedEvent = async ({
     adapter: { provider },
   },
   colonyClient,
-  colonyName,
+  colonyAddress,
   event: { payoutRemainder: amount, token },
   log: { transactionHash },
   log,
 }: {
   colonyClient: ColonyClientType,
-  colonyName: string,
+  colonyAddress: Address,
   event: Object,
   log: Object,
 }): Promise<?ContractTransactionType> => {
@@ -40,7 +41,7 @@ export const parseColonyFundsClaimedEvent = async ({
   return amount.gt(new BigNumber(0))
     ? {
         amount,
-        colonyName,
+        colonyAddress,
         date,
         from,
         id: transactionHash,
@@ -53,18 +54,18 @@ export const parseColonyFundsClaimedEvent = async ({
 
 /*
  * Given a ColonyJS-parsed ColonyFundsMovedBetweenFundingPotsEvent, log from
- * which it was parsed, ColonyClient and colonyName, return a
+ * which it was parsed, ColonyClient and colonyAddress, return a
  * ContractTransactionType object.
  */
 export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   colonyClient,
-  colonyName,
+  colonyAddress,
   event: { amount, fromPot, token },
   log: { transactionHash },
   log,
 }: {
   colonyClient: ColonyClientType,
-  colonyName: string,
+  colonyAddress: Address,
   event: Object,
   log: Object,
 }): Promise<ContractTransactionType> => {
@@ -79,7 +80,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
 
   return {
     amount,
-    colonyName,
+    colonyAddress,
     date,
     id: transactionHash,
     incoming: fromPot !== 1,
@@ -121,14 +122,14 @@ export const parseTaskPayoutClaimedEvent = async ({
 /*
  * Given a ColonyJS-parsed TransferEvent, log from which it was parsed, Array
  * of Colony token claim events and associated logs from which they were
- * passed, ColonyClient, and colonyName, return a ContractTransactionType
+ * passed, ColonyClient, and colonyAddress, return a ContractTransactionType
  * object or null if that token has been claimed since the Transfer.
  */
 export const parseUnclaimedTransferEvent = async ({
   claimEvents,
   claimLogs,
   colonyClient,
-  colonyName,
+  colonyAddress,
   transferEvent: { from, value: amount },
   transferLog: { address: token, blockNumber, transactionHash: hash },
   transferLog,
@@ -136,7 +137,7 @@ export const parseUnclaimedTransferEvent = async ({
   claimEvents: Array<Object>,
   claimLogs: Array<Object>,
   colonyClient: ColonyClientType,
-  colonyName: string,
+  colonyAddress: Address,
   transferEvent: Object,
   transferLog: Object,
 }): Promise<?ContractTransactionType> => {
@@ -151,7 +152,7 @@ export const parseUnclaimedTransferEvent = async ({
     ? null
     : {
         amount,
-        colonyName,
+        colonyAddress,
         date,
         from,
         hash,
