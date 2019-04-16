@@ -10,14 +10,14 @@ import { withDataRecord } from '~utils/reducers';
 
 type State = DataRecordType<NetworkType>;
 
-type NetworkActions = {|
+type NetworkActions = {
   NETWORK_FETCH_FEE: *,
   NETWORK_FETCH_FEE_ERROR: *,
   NETWORK_FETCH_FEE_SUCCESS: *,
   NETWORK_FETCH_VERSION: *,
   NETWORK_FETCH_VERSION_ERROR: *,
   NETWORK_FETCH_VERSION_SUCCESS: *,
-|};
+};
 
 const coreNetworkReducer: ReducerType<NetworkType, NetworkActions> = (
   state = DataRecord(),
