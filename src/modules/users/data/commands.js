@@ -2,11 +2,7 @@
 
 import type { Address, OrbitDBAddress } from '~types';
 import type { TaskDraftId } from '~immutable';
-import type {
-  EventStore,
-  FeedStore,
-  ValidatedKVStore,
-} from '~lib/database/stores';
+import type { EventStore, ValidatedKVStore } from '~lib/database/stores';
 import type { Command, ContextWithMetadata, DDBContext } from '~data/types';
 import type { UserProfileStoreValues } from '~data/storeValuesTypes';
 
@@ -99,7 +95,7 @@ export const createUserProfile: UserCommand<
     username: string,
   |},
   {|
-    inboxStore: FeedStore,
+    inboxStore: EventStore,
     metadataStore: EventStore,
     profileStore: ValidatedKVStore<UserProfileStoreValues>,
   |},
@@ -314,11 +310,11 @@ export const unsubscribeToColony: UserMetadataCommand<
 
 export const commentMentionNotification: UserInboxCommand<
   CommentMentionInboxCommandArgs,
-  FeedStore,
+  EventStore,
 > = ({ ddb, metadata }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createCommentMentionInboxEvent(args));
+    await userInboxStore.append(createCommentMentionInboxEvent(args));
     return userInboxStore;
   },
 });
