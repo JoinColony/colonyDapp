@@ -2,9 +2,11 @@
 import type { Node } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import compose from 'recompose/compose';
 import BN from 'bn.js';
+import { toWei } from 'ethjs-unit';
 
 import Numeral from '~core/Numeral';
 import { StepBar } from '~core/ProgressBar';
@@ -44,47 +46,57 @@ const WizardTemplateColony = ({
   currentUser: {
     profile: { walletAddress, balance },
   },
-}: Props) => (
-  <main className={styles.layoutMain}>
-    <header className={styles.header}>
-      <div className={styles.backButton}>
-        <HistoryNavigation customHandler={previousStep} backText=" " />
-      </div>
-      {stepCount && step && (
-        <div className={styles.steps}>
-          <StepBar step={step} stepCount={stepCount} />
+}: Props) => {
+  const customHandler = useCallback(() => previousStep(), [previousStep]);
+  const ethBalance = toWei(balance, 'ether');
+  return (
+    <main className={styles.layoutMain}>
+      <header className={styles.header}>
+        <div className={styles.backButton}>
+          <HistoryNavigation customHandler={customHandler} backText=" " />
         </div>
-      )}
-      <div className={styles.headerWallet}>
-        <div className={styles.wallet}>
-          <div className={styles.address}>
-            <FormattedMessage {...MSG.wallet} />
-            <MaskedAddress address={walletAddress} />
+        {stepCount && step && (
+          <div className={styles.steps}>
+            <StepBar step={step} stepCount={stepCount} />
           </div>
-          <div className={styles.balance}>
-            {new BN(balance).isZero() ? (
-              <Numeral
-                decimals={0}
-                value={new BN(balance)}
-                suffix=" ETH"
-                unit="ether"
-              />
-            ) : (
-              <Numeral
-                decimals={2}
-                value={new BN(balance)}
-                suffix=" ETH"
-                unit="ether"
-              />
-            )}
+        )}
+        <div className={styles.headerWallet}>
+          <div className={styles.wallet}>
+            <div className={styles.address}>
+              <span className={styles.hello}>
+                <FormattedMessage {...MSG.wallet} />
+              </span>
+              <MaskedAddress address={walletAddress} />
+            </div>
+            <div className={styles.moneyContainer}>
+              {new BN(balance).isZero() ? (
+                <div className={styles.noMoney}>
+                  <Numeral
+                    decimals={0}
+                    value={ethBalance}
+                    suffix=" ETH"
+                    unit="ether"
+                  />
+                </div>
+              ) : (
+                <div className={styles.yeihMoney}>
+                  <Numeral
+                    decimals={2}
+                    value={ethBalance}
+                    suffix=" ETH"
+                    unit="ether"
+                  />
+                </div>
+              )}
+            </div>
           </div>
+          <QRCode address={walletAddress} width={60} />
         </div>
-        <QRCode address={walletAddress} width={60} />
-      </div>
-    </header>
-    <article className={styles.content}>{children}</article>
-  </main>
-);
+      </header>
+      <article className={styles.content}>{children}</article>
+    </main>
+  );
+};
 
 WizardTemplateColony.displayName = displayName;
 

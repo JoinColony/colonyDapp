@@ -68,7 +68,7 @@ const MSG = defineMessages({
   },
   statusText: {
     id: 'users.CreateColonyWizard.StepColonyENSName.statusText',
-    defaultMessage: 'URL available: @{normalized}',
+    defaultMessage: 'Actual Colony Name: {normalized}',
   },
   tooltip: {
     id: 'users.CreateColonyWizard.StepColonyENSName.tooltip',
@@ -85,11 +85,13 @@ const validationSchema = yup.object({
     .string()
     .required()
     .ensAddress(),
+  displayName: yup.string().required(),
 });
 
 const StepColonyENSName = ({
   wizardForm,
   nextStep,
+  wizardValues,
   currentUser: {
     profile: { username },
   },
@@ -107,7 +109,7 @@ const StepColonyENSName = ({
         const error = {
           colonyName: MSG.errorDomainInvalid,
         };
-        throw error;
+        if (values.colonyName) throw error;
       } else {
         // 2. Validate with saga
         try {
@@ -124,12 +126,7 @@ const StepColonyENSName = ({
   );
 
   return (
-    <Form
-      onSubmit={nextStep}
-      validationSchema={validationSchema}
-      validate={validateDomain}
-      {...wizardForm}
-    >
+    <Form onSubmit={nextStep} validate={validateDomain} {...wizardForm}>
       {({ isValid, isSubmitting, values }) => {
         const normalized = getNormalizedDomainText(values.colonyName);
         return (
@@ -139,7 +136,9 @@ const StepColonyENSName = ({
                 appearance={{ size: 'medium', weight: 'medium' }}
                 text={MSG.heading}
                 textValues={{
-                  username: normalized || username,
+                  username: username
+                    ? getNormalizedDomainText(username)
+                    : getNormalizedDomainText(wizardValues.username),
                 }}
               />
               <p className={styles.paragraph}>

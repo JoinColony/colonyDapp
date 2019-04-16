@@ -11,8 +11,10 @@ import styles from './StepConfirmAllInput.css';
 
 import Heading from '~core/Heading';
 
+import { userDidClaimProfile } from '../../../users/checks';
 import { withCurrentUser } from '../../../users/hocs';
 import { withImmutablePropsToJS } from '~utils/hoc';
+import { getNormalizedDomainText } from '~utils/strings';
 
 type Row = {
   title: MessageDescriptor,
@@ -32,26 +34,35 @@ type CardProps = {
   currentUser: UserType,
 };
 
-const formatUserName = (currentUser, values, option) =>
-  `@${
-    currentUser && currentUser.profile && currentUser.profile.username
-      ? currentUser.profile.username
-      : values[option.valueKey.toString()]
-  }`;
+const normalize = (name): string => {
+  if (name) {
+    return getNormalizedDomainText(name) || '';
+  }
+  return '';
+};
 
-const formatColonyName = (values, option: { valueKey: string }) =>
-  `${values[option.valueKey]} (colony.io/${values[option.valueKey]})`;
+const formatUserName = (currentUser, values, option): string => {
+  if (userDidClaimProfile(currentUser)) {
+    return `@${normalize(currentUser.profile.username)}`;
+  }
+  return `@${normalize(values[option.valueKey.toString()])}`;
+};
+
+const formatColonyName = (values, option: { valueKey: string }): string => {
+  const normalized = normalize(values[option.valueKey]);
+  return `${normalized} (colony.io/colony/${normalized})`;
+};
 
 const concatenatePreviewString = (
   option: { title: MessageDescriptor, valueKey: string },
   values: FormValues,
-  currentUser?: UserType,
-) =>
-  `${
-    option.valueKey === `colonyName`
-      ? formatColonyName(values, option)
-      : formatUserName(currentUser, values, option)
-  }`;
+  currentUser: UserType,
+) => {
+  if (option.valueKey === `colonyName`) {
+    return formatColonyName(values, option);
+  }
+  return formatUserName(currentUser, values, option);
+};
 
 const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] =>
   cardOptions.map(option => (

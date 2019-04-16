@@ -37,6 +37,7 @@
   justify-content: flex-end;
   justify-content: space-between;
   width: 150px;
+  font-weight: var(--weight-medium);
 }
 
 .headerWallet {
@@ -44,13 +45,13 @@
   margin: 7px 14px 0px 0px;
 }
 
-.balance {
+.noMoney {
   display: flex;
   justify-content: flex-end;
   color: var(--danger);
 }
 
-.balance::after {
+.noMoney::after {
   display: inline-block;
   margin-bottom: 1px;
   margin-left: 3px;
@@ -58,8 +59,22 @@
   width: 8px;
   position: relative;
   top: 5px;
-  right: 74px;
+  right: 54%;
   border-radius: 50%;
   background-color: var(--danger);
   content: '';
+}
+
+.yeihMoney {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.moneyContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hello {
+  font-weight: var(--weight-normal);
 }

@@ -126,7 +126,6 @@ export const getNormalizedDomainText = (domain: string) => {
   if (!domain) return null;
   try {
     const normalized = ensNormalize(domain);
-    if (normalized === domain) return null;
     return normalized;
   } catch (e) {
     return null;

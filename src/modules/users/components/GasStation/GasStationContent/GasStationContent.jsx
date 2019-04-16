@@ -72,7 +72,8 @@ class GasStationContent extends Component<Props, State> {
     /*  If the GasStationContent is less interactive,
      * like in StepConfirmTransactions, we select the first group buy default
      */
-    if (!interactive) {
+    // TODO: make gasStation progress to next transaction when one is ready
+    if (!interactive && selectedGroupIdx === -1) {
       [detailsTransactionGroup] = transactionGroups;
     }
 

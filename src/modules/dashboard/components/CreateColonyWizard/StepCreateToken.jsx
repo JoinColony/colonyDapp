@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { FormikBag } from 'formik';
-
 // $FlowFixMe Update flow
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -15,6 +13,8 @@ import Button from '~core/Button';
 import { ActionFileUpload } from '~core/FileUpload';
 import { ACTIONS } from '~redux';
 import { mapPayload } from '~utils/actions';
+
+import { getNormalizedDomainText } from '~utils/strings';
 
 import styles from './StepCreateToken.css';
 
@@ -103,11 +103,13 @@ const StepCreateToken = ({
   wizardForm,
   wizardValues,
 }: Props) => {
-  const linkToTokenSelect = useCallback(
+  const goToTokenSelect = useCallback(
     () => {
       /* This is a custom link since it goes to a sibling step that appears
         to be parallel to this one after the wizard steps diverge,
         while making sure that the data form the previous wizard steps doesn't get lost
+        TODO: there will be smoother solution or this, we already have an issue for it:
+        https://github.com/JoinColony/colonyDapp/issues/1057
       */
       const wizardValuesCopy = Object.assign({}, wizardValues);
       previousStep(wizardValuesCopy);
@@ -120,9 +122,6 @@ const StepCreateToken = ({
   return (
     <Form
       onSubmit={nextStep}
-      onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) =>
-        setStatus({ error: MSG.errorCreateToken })
-      }
       validationSchema={validationSchema}
       {...wizardForm}
     >
@@ -132,7 +131,9 @@ const StepCreateToken = ({
             <Heading
               appearance={{ size: 'medium', weight: 'bold' }}
               text={MSG.heading}
-              textValues={{ colony: wizardValues.colonyName }}
+              textValues={{
+                colony: getNormalizedDomainText(wizardValues.colonyName),
+              }}
             />
           </section>
           <section className={styles.inputFields}>
@@ -143,18 +144,16 @@ const StepCreateToken = ({
                 label={MSG.labelTokenName}
                 help={MSG.helpTokenName}
                 extra={
-                  // The key events are unlikely to be used here
-                  /* eslint-disable jsx-a11y/click-events-have-key-events */
-                  <span
-                    role="button"
+                  <button
+                    type="button"
                     className={styles.linkToOtherStep}
                     tabIndex={-2}
                     onClick={() =>
-                      linkToTokenSelect(wizardValues, nextStep, previousStep)
+                      goToTokenSelect(wizardValues, nextStep, previousStep)
                     }
                   >
                     <FormattedMessage {...MSG.link} />
-                  </span>
+                  </button>
                 }
               />
             </div>
