@@ -13,6 +13,8 @@ import { Form } from '~core/Fields';
 
 import type { WizardProps } from '~core/Wizard';
 
+import { getNormalizedDomainText } from '~utils/strings';
+
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.heading',
@@ -106,7 +108,9 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
           <Heading
             appearance={{ size: 'medium', weight: 'medium' }}
             text={MSG.heading}
-            textValues={{ colony: wizardValues.colonyName }}
+            textValues={{
+              colony: getNormalizedDomainText(wizardValues.colonyName),
+            }}
           />
         </div>
         <div className={styles.subtitle}>

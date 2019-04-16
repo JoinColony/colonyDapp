@@ -68,7 +68,12 @@ const getStatusText = (tokenData, isLoading) => {
 
 const displayName = 'dashboard.CreateColonyWizard.TokenSelector';
 
-const TokenSelector = ({ tokenAddress, onTokenSelect, tokenData }: Props) => {
+const TokenSelector = ({
+  tokenAddress,
+  onTokenSelect,
+  tokenData,
+  extra,
+}: Props) => {
   const getToken = useAsyncFunction({
     submit: ACTIONS.TOKEN_INFO_FETCH,
     success: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
@@ -138,7 +143,13 @@ const TokenSelector = ({ tokenAddress, onTokenSelect, tokenData }: Props) => {
       <Input
         name="tokenAddress"
         label={MSG.inputLabel}
-        extra={<Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />}
+        extra={
+          !extra ? (
+            <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
+          ) : (
+            extra
+          )
+        }
         {...getStatusText(tokenData, isLoading)}
       />
     </div>

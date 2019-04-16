@@ -18,6 +18,8 @@ import styles from './StepSelectToken.css';
 
 import TokenSelector from './TokenSelector.jsx';
 
+import { getNormalizedDomainText } from '~utils/strings';
+
 type TokenData = ?{
   name: string,
   symbol: string,
@@ -65,7 +67,7 @@ const MSG = defineMessages({
   },
   link: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
-    defaultMessage: 'I want to use a New Token',
+    defaultMessage: 'I want to create a New Token',
   },
   fileUploadTitle: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUpload',
@@ -100,11 +102,13 @@ const StepSelectToken = ({
     }
   };
 
-  const linkToTokenCreate = useCallback(
+  const goToTokenCreate = useCallback(
     () => {
       /* This is a custom link since it goes to a sibling step that appears
         to be parallel to this one after the wizard steps diverge,
         while making sure that the data form the previous wizard steps doesn't get lost
+        TODO: there will be smoother solution or this, we already have an issue for it:
+        https://github.com/JoinColony/colonyDapp/issues/1057
       */
       const wizardValuesCopy = Object.assign({}, wizardValues);
       previousStep(wizardValuesCopy);
@@ -120,7 +124,9 @@ const StepSelectToken = ({
         <Heading
           appearance={{ size: 'medium', weight: 'bold' }}
           text={MSG.heading}
-          textValues={{ colony: wizardValues.colonyName }}
+          textValues={{
+            colony: getNormalizedDomainText(wizardValues.colonyName),
+          }}
         />
       </div>
       <Form
@@ -136,18 +142,16 @@ const StepSelectToken = ({
               onTokenSelect={data => handleTokenSelect(data, setFieldValue)}
               tokenData={tokenData}
               extra={
-                // The key events are unlikely to be used here
-                /* eslint-disable jsx-a11y/click-events-have-key-events */
-                <span
-                  role="button"
+                <button
+                  type="button"
                   className={styles.linkToOtherStep}
                   tabIndex={-2}
                   onClick={() =>
-                    linkToTokenCreate(wizardValues, nextStep, previousStep)
+                    goToTokenCreate(wizardValues, nextStep, previousStep)
                   }
                 >
                   <FormattedMessage {...MSG.link} />
-                </span>
+                </button>
               }
             />
             {values.tokenAddress && !tokenData && (

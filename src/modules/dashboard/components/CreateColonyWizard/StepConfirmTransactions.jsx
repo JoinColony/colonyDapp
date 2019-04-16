@@ -14,7 +14,10 @@ import Heading from '~core/Heading';
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
 
-import { getGroupStatus } from '../../../users/components/GasStation/transactionGroup';
+import {
+  getGroupStatus,
+  findTransactionGroupByKey,
+} from '../../../users/components/GasStation/transactionGroup';
 
 const MSG = defineMessages({
   heading: {
@@ -72,6 +75,11 @@ const StepConfirmTransactions = ({ wizardValues: { ensName } }: Props) => {
     return <Redirect to={`/colony/${ensName}`} />;
   }
 
+  const colonyTransaction = findTransactionGroupByKey(
+    transactionGroups,
+    'group.transaction.batch.createColony',
+  );
+
   return (
     <section className={styles.main}>
       <Heading
@@ -79,10 +87,10 @@ const StepConfirmTransactions = ({ wizardValues: { ensName } }: Props) => {
         text={MSG.heading}
       />
       <div className={styles.container}>
-        {transactionGroups && transactionGroups[0] && (
+        {colonyTransaction && (
           <GasStationContent
             appearance={{ interactive: false }}
-            transactionGroups={transactionGroups}
+            transactionGroups={[colonyTransaction]}
           />
         )}
       </div>

@@ -1,6 +1,7 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
@@ -82,13 +83,16 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
       submit={ACTIONS.COLONY_CREATE}
       success={ACTIONS.COLONY_CREATE_SUCCESS}
       error={ACTIONS.COLONY_CREATE_ERROR}
-      transform={mergePayload({
-        username,
-        displayName,
-        colonyName,
-        tokenName,
-        tokenSymbol,
-      })}
+      transform={useCallback(
+        mergePayload({
+          username,
+          displayName,
+          colonyName,
+          tokenName,
+          tokenSymbol,
+        }),
+        [username, displayName, colonyName, tokenName, tokenSymbol],
+      )}
       onSuccess={() => nextStep(wizardValues)}
     >
       {({ isSubmitting, status }) => (

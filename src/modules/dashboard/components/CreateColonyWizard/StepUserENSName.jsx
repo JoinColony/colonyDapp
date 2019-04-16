@@ -66,7 +66,7 @@ const MSG = defineMessages({
   },
   statusText: {
     id: 'users.ENSNameDialog.statusText',
-    defaultMessage: 'Username available: @{normalized}',
+    defaultMessage: 'Actual Username: @{normalized}',
   },
 });
 
@@ -93,7 +93,7 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
         const error = {
           username: MSG.errorDomainInvalid,
         };
-        throw error;
+        if (values.username) throw error;
       } else {
         // 2. Validate with saga
         try {
@@ -109,12 +109,7 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
     [checkDomainTaken],
   );
   return (
-    <Form
-      onSubmit={nextStep}
-      validationSchema={validationSchema}
-      validate={validateDomain}
-      {...wizardForm}
-    >
+    <Form onSubmit={nextStep} validate={validateDomain} {...wizardForm}>
       {({ isValid, isSubmitting, values: { username } }) => {
         const normalized = getNormalizedDomainText(username);
         return (

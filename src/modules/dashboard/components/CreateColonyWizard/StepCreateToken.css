@@ -21,6 +21,8 @@
 }
 
 .linkToOtherStep {
+  border: none;
+  background-color: transparent;
   font-size: var(--size-small);
   font-weight: var(--weight-semi);
   color: var(--sky-blue);

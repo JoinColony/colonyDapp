@@ -4,6 +4,8 @@ import type { TransactionType } from '~immutable';
 
 export type TransactionGroup = Array<TransactionType<*, *>>;
 
+export type TransactionGroups = Array<TransactionGroup>;
+
 // get the group id (mostly used as a unique identifier for the group)
 export const getGroupId = (txGroup: TransactionGroup) =>
   (txGroup[0].group && txGroup[0].group.key) || txGroup[0].id;
@@ -13,6 +15,11 @@ export const getGroupKey = (txGroup: TransactionGroup) =>
   txGroup[0].group
     ? `group.${txGroup[0].group.key}`
     : `${txGroup[0].context}.${txGroup[0].methodName}`;
+
+export const findTransactionGroupByKey = (
+  txGroups: TransactionGroups,
+  key: string,
+) => txGroups.find(transactionGroup => getGroupKey(transactionGroup) === key);
 
 // Get the index of the first transaction in a group that is ready to sign
 export const getActiveTransactionIdx = (txGroup: TransactionGroup) => {
