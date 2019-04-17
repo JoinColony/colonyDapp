@@ -97,25 +97,23 @@ export const colonyNativeTokenSelector = createSelector(
       : null,
 );
 
+/**
+ * Get an array of `TokenReference`s for any "recent" tokens used in the
+ * colony. This includes the colony's set tokens, as well as any used in recent
+ * transactions to/from the colony.
+ */
 export const colonyRecentTokensSelector = createSelector(
-  colonySelector,
+  colonyTokensSelector,
   colonyTransactionsSelector,
   colonyUnclaimedTransactionsSelector,
-  (colony, transactions, unclaimedTransactions) => {
-    const currentTokens =
-      (colony &&
-        colony.record &&
-        colony.record.tokens &&
-        colony.record.tokens.entries()) ||
-      [];
-    return Array.from(
+  (colonyTokens, transactions, unclaimedTransactions) =>
+    Array.from(
       new Map([
-        ...currentTokens,
+        ...colonyTokens.map(token => [token.address, token]),
         ...[
           ...((transactions && transactions.record) || []),
           ...((unclaimedTransactions && unclaimedTransactions.record) || []),
         ].map(({ token }) => [token, { address: token }]),
       ]).values(),
-    );
-  },
+    ),
 );

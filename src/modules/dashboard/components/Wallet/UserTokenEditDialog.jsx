@@ -10,7 +10,7 @@ import { currentUserRecentTokensSelector } from '../../../users/selectors';
 
 import { userTokenTransfersFetch } from '../../../users/actionCreators';
 
-import { TokenEditDialog } from '~admin/Tokens';
+import TokenEditDialog from '~core/TokenEditDialog';
 
 type Props = {|
   cancel: () => void,

@@ -1,7 +1,5 @@
 /* @flow */
 
-import type BigNumber from 'bn.js';
-
 import type { Address } from '~types';
 import type { Action } from '~redux';
 
@@ -26,26 +24,9 @@ export const fetchColonyUnclaimedTransactions = (
 export const claimColonyToken = (
   colonyAddress: Address,
   tokenAddress: Address,
-) => ({
-  type: ACTIONS.COLONY_CLAIM_TOKEN,
-  payload: { colonyAddress, tokenAddress },
-});
-
-export const updateColonyTokens = (
-  colonyAddress: Address,
-  tokens: Address[],
-) => ({
-  type: ACTIONS.COLONY_UPDATE_TOKENS,
-  meta: { keyPath: [colonyAddress] },
-  payload: { colonyAddress, tokens },
-});
-
-export const mintColonyTokens = (
-  colonyAddress: Address,
-  amount: BigNumber,
   id: string,
-) => ({
-  type: ACTIONS.COLONY_MINT_TOKENS,
-  meta: { keyPath: [colonyAddress], id },
-  payload: { amount, colonyAddress },
+): Action<typeof ACTIONS.COLONY_CLAIM_TOKEN> => ({
+  type: ACTIONS.COLONY_CLAIM_TOKEN,
+  meta: { keyPath: [colonyAddress, tokenAddress], id },
+  payload: { colonyAddress, tokenAddress },
 });

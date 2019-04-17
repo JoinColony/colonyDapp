@@ -84,16 +84,16 @@ export type ColonyActionTypes = {|
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
     {| tokenAddress: string, colonyAddress: Address |},
-    void,
+    WithKeyPathDepth2,
   >,
   COLONY_CLAIM_TOKEN_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_ERROR,
-    void,
+    WithKeyPathDepth2,
   >,
   COLONY_CLAIM_TOKEN_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS,
     {| params: { token: string }, transaction: TransactionType<*, *> |},
-    void,
+    WithKeyPathDepth2,
   >,
   COLONY_CREATE: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE,
@@ -236,7 +236,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_MINT_TOKENS_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_MINT_TOKENS_ERROR,
-    void,
+    WithKeyPathDepth1,
   >,
   COLONY_MINT_TOKENS_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS,

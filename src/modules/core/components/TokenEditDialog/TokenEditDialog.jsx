@@ -2,55 +2,46 @@
 
 import type { FormikProps } from 'formik';
 
-// $FlowFixMe until hooks flow types
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { TokenReferenceType, TokenType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 import type { ActionTypeString } from '~redux';
 import type { ActionTransformFnType } from '~utils/actions';
 
-import { useDataFetcher } from '~utils/hooks';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Checkbox, ActionForm, InputLabel } from '~core/Fields';
+import { ActionForm, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
-import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import { tokenIsETH } from '../../../dashboard/checks';
-import { tokenFetcher } from '../../../dashboard/fetchers';
+import TokenCheckbox from './TokenCheckbox.jsx';
 
 import styles from './TokenEditDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.Tokens.TokenEditDialog.title',
+    id: 'core.TokenEditDialog.title',
     defaultMessage: 'Add Token',
   },
   instructionText: {
-    id: 'admin.Tokens.TokenEditDialog.instructionText',
+    id: 'core.TokenEditDialog.instructionText',
     defaultMessage: 'Please select from these ERC20 tokens.',
   },
   fieldLabel: {
-    id: 'admin.Tokens.TokenEditDialog.fieldLabel',
+    id: 'core.TokenEditDialog.fieldLabel',
     defaultMessage: 'Add Tokens',
   },
   buttonCancel: {
-    id: 'admin.Tokens.EditTokensModal.buttonCancel',
+    id: 'core.TokenEditDialog.buttonCancel',
     defaultMessage: 'Cancel',
   },
   buttonConfirm: {
-    id: 'admin.Tokens.EditTokensModal.buttonConfirm',
+    id: 'core.TokenEditDialog.buttonConfirm',
     defaultMessage: 'Confirm',
   },
   errorNativeTokenRequired: {
-    id: 'admin.Tokens.EditTokensModal.errorNativeTokenRequired',
+    id: 'core.TokenEditDialog.errorNativeTokenRequired',
     defaultMessage: 'The native token must be selected.',
-  },
-  unknownToken: {
-    id: 'admin.Tokens.EditTokensModal.unknownToken',
-    defaultMessage: 'Unknown Token',
   },
 });
 
@@ -64,38 +55,6 @@ type Props = {|
   error: ActionTypeString,
   transform?: ActionTransformFnType,
 |};
-
-const TokenCheckbox = ({
-  token: { address, isNative = false },
-  token: tokenReference,
-}: {
-  token: TokenReferenceType,
-}) => {
-  const { data: token } = useDataFetcher<TokenType>(
-    tokenFetcher,
-    [address],
-    [address],
-  );
-  return token ? (
-    <Checkbox
-      className={styles.tokenChoice}
-      value={address}
-      name="tokens"
-      disabled={isNative || tokenIsETH(token)}
-    >
-      <TokenIcon token={tokenReference} name={token.name} />
-      <span className={styles.tokenChoiceSymbol}>
-        <Heading
-          text={token.symbol || token.name || MSG.unknownToken}
-          appearance={{ size: 'small', margin: 'none' }}
-        />
-        {(!!token.symbol && token.name) || address}
-      </span>
-    </Checkbox>
-  ) : (
-    <SpinnerLoader />
-  );
-};
 
 const TokenEditDialog = ({
   availableTokens = [],
@@ -157,6 +116,6 @@ const TokenEditDialog = ({
   </Dialog>
 );
 
-TokenEditDialog.displayName = 'admin.Tokens.TokenEditDialog';
+TokenEditDialog.displayName = 'core.TokenEditDialog';
 
 export default TokenEditDialog;

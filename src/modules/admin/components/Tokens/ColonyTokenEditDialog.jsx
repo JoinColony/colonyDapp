@@ -10,14 +10,14 @@ import type { Address } from '~types';
 import { mergePayload, withKeyPath } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
+import TokenEditDialog from '~core/TokenEditDialog';
+
 import { colonyRecentTokensSelector } from '../../../dashboard/selectors';
 
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../../actionCreators';
-
-import TokenEditDialog from './TokenEditDialog.jsx';
 
 type Props = {|
   cancel: () => void,
@@ -49,6 +49,15 @@ const ColonyTokenEditDialog = ({
   );
   const availableTokens = useMappedState(mapAvailableTokens);
 
+  const transform = useCallback(
+    () =>
+      compose(
+        withKeyPath(colonyAddress),
+        mergePayload({ colonyAddress }),
+      ),
+    [colonyAddress],
+  );
+
   return (
     <TokenEditDialog
       cancel={cancel}
@@ -58,10 +67,7 @@ const ColonyTokenEditDialog = ({
       submit={ACTIONS.COLONY_UPDATE_TOKENS}
       error={ACTIONS.COLONY_UPDATE_TOKENS_ERROR}
       success={ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS}
-      transform={compose(
-        withKeyPath(colonyAddress),
-        mergePayload({ colonyAddress }),
-      )}
+      transform={transform}
     />
   );
 };
