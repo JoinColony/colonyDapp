@@ -1,6 +1,7 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe upgrade react
+import React, { useCallback } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
@@ -41,42 +42,45 @@ const validationSchema = yup.object({
     .required(),
 });
 
-const OrganizationAddDomains = ({ colonyAddress }: Props) => (
-  <div className={styles.main}>
-    <ActionForm
-      submit={ACTIONS.DOMAIN_CREATE}
-      success={ACTIONS.DOMAIN_CREATE_SUCCESS}
-      error={ACTIONS.DOMAIN_CREATE_ERROR}
-      onSuccess={(_, { resetForm }) => {
-        resetForm();
-      }}
-      transform={withKeyPath(colonyAddress)}
-      initialValues={{
-        domainName: '',
-      }}
-      validationSchema={validationSchema}
-    >
-      {({ status, isSubmitting, isValid }) => (
-        <div className={styles.inputWrapper}>
-          <div className={styles.domainInput}>
-            <Input name="domainName" label={MSG.labelAddDomain} />
+const OrganizationAddDomains = ({ colonyAddress }: Props) => {
+  const transform = useCallback(withKeyPath(colonyAddress), [colonyAddress]);
+  return (
+    <div className={styles.main}>
+      <ActionForm
+        submit={ACTIONS.DOMAIN_CREATE}
+        success={ACTIONS.DOMAIN_CREATE_SUCCESS}
+        error={ACTIONS.DOMAIN_CREATE_ERROR}
+        onSuccess={(_, { resetForm }) => {
+          resetForm();
+        }}
+        transform={transform}
+        initialValues={{
+          domainName: '',
+        }}
+        validationSchema={validationSchema}
+      >
+        {({ status, isSubmitting, isValid }) => (
+          <div className={styles.inputWrapper}>
+            <div className={styles.domainInput}>
+              <Input name="domainName" label={MSG.labelAddDomain} />
+            </div>
+            <div className={styles.submitButton}>
+              <Button
+                appearance={{ theme: 'primary', size: 'medium' }}
+                style={{ width: styles.wideButton }}
+                text={MSG.buttonAddDomain}
+                type="submit"
+                disabled={!isValid}
+                loading={isSubmitting}
+              />
+            </div>
+            <FormStatus status={status} />
           </div>
-          <div className={styles.submitButton}>
-            <Button
-              appearance={{ theme: 'primary', size: 'medium' }}
-              style={{ width: styles.wideButton }}
-              text={MSG.buttonAddDomain}
-              type="submit"
-              disabled={!isValid}
-              loading={isSubmitting}
-            />
-          </div>
-          <FormStatus status={status} />
-        </div>
-      )}
-    </ActionForm>
-  </div>
-);
+        )}
+      </ActionForm>
+    </div>
+  );
+};
 
 OrganizationAddDomains.displayName = displayName;
 

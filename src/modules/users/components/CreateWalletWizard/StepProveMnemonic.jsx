@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+// $FlowFixMe upgrade react
+import React, { Fragment, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -72,13 +73,16 @@ const StepProveMnemonic = ({
   wizardValues: { mnemonic },
 }: Props) => {
   const mnemonicWords = mnemonic.split(' ');
+  const transform = useCallback(mergePayload({ method: 'create', mnemonic }), [
+    mnemonic,
+  ]);
   return (
     <main className={styles.main}>
       <ActionForm
         submit={ACTIONS.WALLET_CREATE}
         success={ACTIONS.CURRENT_USER_CREATE}
         error={ACTIONS.WALLET_CREATE_ERROR}
-        transform={mergePayload({ method: 'create', mnemonic })}
+        transform={transform}
         validationSchema={yup.object().shape({
           proofWord1: yup
             .string()

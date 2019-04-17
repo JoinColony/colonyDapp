@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+// $FlowFixMe upgrade flow
+import React, { Fragment, useCallback } from 'react';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 
@@ -87,6 +88,12 @@ type Props = {|
 const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
   const walletAddress = useSelector(walletAddressSelector);
   const knownUsers = useSelector(usersExceptSelector, [walletAddress]);
+  const transform = useCallback(
+    pipe(
+      withKeyPath(colonyAddress),
+      mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
+    ),
+  );
   return (
     <div className={styles.main}>
       <ActionForm
@@ -94,10 +101,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
         success={ACTIONS.COLONY_ADMIN_ADD_SUCCESS}
         error={ACTIONS.COLONY_ADMIN_ADD_ERROR}
         validationSchema={validationSchema}
-        transform={pipe(
-          withKeyPath(colonyAddress),
-          mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
-        )}
+        transform={transform}
         initialValues={{
           newAdmin: null,
           colonyAddress,

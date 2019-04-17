@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+// $FlowFixMe upgrade flow
+import React, { Fragment, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { ColonyType } from '~immutable';
@@ -72,6 +73,7 @@ const ProfileEdit = ({ colony }: Props) => {
     guideline,
     website,
   } = colony;
+  const transform = useCallback(withKeyPath(colonyAddress), [colonyAddress]);
   return (
     <div className={styles.main}>
       <main className={styles.content}>
@@ -79,7 +81,7 @@ const ProfileEdit = ({ colony }: Props) => {
           submit={ACTIONS.COLONY_PROFILE_UPDATE}
           success={ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS}
           error={ACTIONS.COLONY_PROFILE_UPDATE_ERROR}
-          transform={withKeyPath(colonyAddress)}
+          transform={transform}
           initialValues={{
             colonyName,
             description,

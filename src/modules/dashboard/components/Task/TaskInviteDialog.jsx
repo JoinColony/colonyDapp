@@ -1,6 +1,7 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { UserType, TaskType } from '~immutable';
@@ -46,87 +47,93 @@ const TaskInviteDialog = ({
     profile: { walletAddress },
   },
   currentUser,
-}: Props) => (
-  <FullscreenDialog cancel={cancel}>
-    <ActionForm
-      initialValues={{ payouts: payouts || [], worker: currentUser }}
-      submit={ACTIONS.TASK_WORKER_ASSIGN}
-      success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
-      error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
-      transform={mergePayload({
-        worker: walletAddress,
-        draftId,
-        colonyAddress,
-      })}
-    >
-      {({ status, isSubmitting }) => (
-        <>
-          <FormStatus status={status} />
-          <DialogBox>
-            <DialogSection appearance={{ border: 'bottom' }}>
-              <Heading
-                appearance={{ size: 'medium' }}
-                text={MSG.titleAssignment}
-              />
-              {/* TODO supply nativeToken with a selector */}
-              <Assignment
-                nativeToken={{ address: '' }}
-                payouts={payouts}
-                pending
-                reputation={reputation}
-                showFunding={false}
-                worker={currentUser}
-              />
-            </DialogSection>
-            <DialogSection>
-              <div className={styles.taskEditContainer}>
-                <div className={styles.editor}>
-                  <Heading
-                    appearance={{ size: 'medium' }}
-                    text={MSG.titleFunding}
-                  />
+}: Props) => {
+  const transform = useCallback(
+    mergePayload({
+      worker: walletAddress,
+      draftId,
+      colonyAddress,
+    }),
+    [walletAddress, draftId, colonyAddress],
+  );
+  return (
+    <FullscreenDialog cancel={cancel}>
+      <ActionForm
+        initialValues={{ payouts: payouts || [], worker: currentUser }}
+        submit={ACTIONS.TASK_WORKER_ASSIGN}
+        success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
+        error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
+        transform={transform}
+      >
+        {({ status, isSubmitting }) => (
+          <>
+            <FormStatus status={status} />
+            <DialogBox>
+              <DialogSection appearance={{ border: 'bottom' }}>
+                <Heading
+                  appearance={{ size: 'medium' }}
+                  text={MSG.titleAssignment}
+                />
+                {/* TODO supply nativeToken with a selector */}
+                <Assignment
+                  nativeToken={{ address: '' }}
+                  payouts={payouts}
+                  pending
+                  reputation={reputation}
+                  showFunding={false}
+                  worker={currentUser}
+                />
+              </DialogSection>
+              <DialogSection>
+                <div className={styles.taskEditContainer}>
+                  <div className={styles.editor}>
+                    <Heading
+                      appearance={{ size: 'medium' }}
+                      text={MSG.titleFunding}
+                    />
+                  </div>
+                  <div>
+                    {payouts &&
+                      payouts.map((payout, index) => {
+                        const { amount } = payout;
+                        const token = tokensMock.get(index - 1) || {};
+                        return (
+                          <Payout
+                            key={token.address}
+                            name={`payouts.${index}`}
+                            amount={amount}
+                            symbol={token.symbol}
+                            reputation={
+                              // $FlowFixMe this should be from TokenReference
+                              token.isNative ? reputation : undefined
+                            }
+                            editPayout={false}
+                          />
+                        );
+                      })}
+                  </div>
                 </div>
-                <div>
-                  {payouts &&
-                    payouts.map((payout, index) => {
-                      const { amount } = payout;
-                      const token = tokensMock.get(index - 1) || {};
-                      return (
-                        <Payout
-                          key={token.address}
-                          name={`payouts.${index}`}
-                          amount={amount}
-                          symbol={token.symbol}
-                          reputation={
-                            // $FlowFixMe this should be from TokenReference
-                            token.isNative ? reputation : undefined
-                          }
-                          editPayout={false}
-                        />
-                      );
-                    })}
-                </div>
-              </div>
-            </DialogSection>
-          </DialogBox>
-          <div className={styles.buttonContainer}>
-            <Button
-              appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={cancel}
-              text={{ id: 'button.decline' }}
-              disabled={isSubmitting}
-            />
-            <Button
-              appearance={{ theme: 'primary', size: 'large' }}
-              text={{ id: 'button.accept' }}
-              type="submit"
-              loading={isSubmitting}
-            />
-          </div>
-        </>
-      )}
-    </ActionForm>
-  </FullscreenDialog>
-);
+              </DialogSection>
+            </DialogBox>
+            <div className={styles.buttonContainer}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={cancel}
+                text={{ id: 'button.decline' }}
+                disabled={isSubmitting}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                text={{ id: 'button.accept' }}
+                type="submit"
+                loading={isSubmitting}
+              />
+            </div>
+          </>
+        )}
+      </ActionForm>
+    </FullscreenDialog>
+  );
+};
 
 export default TaskInviteDialog;
