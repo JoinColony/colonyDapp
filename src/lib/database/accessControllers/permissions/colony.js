@@ -12,6 +12,7 @@ export default function loadModule(): PermissionsManifest {
     TASK_STORE_REGISTERED: { inherits: 'register-task-store' },
     TASK_STORE_UNREGISTERED: { inherits: 'register-task-store' },
     TOKEN_INFO_ADDED: { inherits: 'add-token' },
+    TOKEN_INFO_REMOVED: { inherits: 'add-token' },
     'add-domain': { inherits: 'is-colony-founder-or-admin' },
     'add-token': { inherits: 'is-colony-founder' },
     'create-colony-profile': { inherits: 'is-colony-founder' },

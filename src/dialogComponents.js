@@ -12,7 +12,8 @@ import {
   ManagerRatingDialog,
   WorkerRatingDialog,
 } from '~dashboard/TaskRatingDialogs';
-import { TokenEditDialog, TokenMintDialog } from '~admin/Tokens';
+import { ColonyTokenEditDialog, TokenMintDialog } from '~admin/Tokens';
+import { UserTokenEditDialog } from '~dashboard/Wallet';
 import TaskEditDialog from '~dashboard/TaskEditDialog';
 import TaskInviteDialog from '~dashboard/Task/TaskInviteDialog.jsx';
 import ClaimProfileDialog from '~users/ClaimProfileDialog';
@@ -25,18 +26,19 @@ import UpgradeContractDialog from '~admin/UpgradeContractDialog';
 const dialogComponents: Object = {
   ActivityBarExample,
   ClaimProfileDialog,
+  ColonyTokenEditDialog,
   ConfirmDialog,
   ENSNameDialog,
-  TokenEditDialog,
-  TokenMintDialog,
+  ManagerRatingDialog,
+  RecoveryModeDialog,
+  TaskClaimRewardDialog,
   TaskEditDialog,
   TaskInviteDialog,
-  ManagerRatingDialog,
-  WorkerRatingDialog,
-  TaskClaimRewardDialog,
+  TokenMintDialog,
   UnfinishedProfileDialog,
-  RecoveryModeDialog,
   UpgradeContractDialog,
+  UserTokenEditDialog,
+  WorkerRatingDialog,
 };
 
 export default dialogComponents;

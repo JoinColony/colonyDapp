@@ -6,12 +6,19 @@ import { Map as ImmutableMap } from 'immutable';
 import type { Address, ENSName } from '~types';
 import type { RootStateRecord } from '~immutable';
 
+import { sortObjectsBy, sortTokensByEth } from '~utils/arrays';
+
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_COLONIES,
   DASHBOARD_COLONY_NAMES,
   DASHBOARD_NAMESPACE as ns,
 } from '../constants';
+
+import {
+  colonyTransactionsSelector,
+  colonyUnclaimedTransactionsSelector,
+} from '../../admin/selectors';
 
 /*
  * Input selectors
@@ -66,6 +73,20 @@ export const allColonyNamesSelector = createSelector(
   colonyNamesSelector,
   colonies => colonies.keySeq(),
 );
+
+export const colonyTokensSelector = createSelector(
+  colonySelector,
+  colony =>
+    colony
+      ? colony
+          .getIn(['record', 'tokens'], ImmutableMap())
+          .valueSeq()
+          .sort(sortTokensByEth)
+          .sort(sortObjectsBy('isNative'))
+          .toJS()
+      : [],
+);
+
 export const colonyNativeTokenSelector = createSelector(
   colonySelector,
   colony =>
@@ -74,4 +95,25 @@ export const colonyNativeTokenSelector = createSelector(
           .getIn(['record', 'tokens'], ImmutableMap())
           .find(token => !!token && token.isNative)
       : null,
+);
+
+/**
+ * Get an array of `TokenReference`s for any "recent" tokens used in the
+ * colony. This includes the colony's set tokens, as well as any used in recent
+ * transactions to/from the colony.
+ */
+export const colonyRecentTokensSelector = createSelector(
+  colonyTokensSelector,
+  colonyTransactionsSelector,
+  colonyUnclaimedTransactionsSelector,
+  (colonyTokens, transactions, unclaimedTransactions) =>
+    Array.from(
+      new Map([
+        ...colonyTokens.map(token => [token.address, token]),
+        ...[
+          ...((transactions && transactions.record) || []),
+          ...((unclaimedTransactions && unclaimedTransactions.record) || []),
+        ].map(({ token }) => [token, { address: token }]),
+      ]).values(),
+    ),
 );

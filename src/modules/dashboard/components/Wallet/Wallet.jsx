@@ -3,7 +3,6 @@
 // $FlowFixMe until hooks types
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useDispatch } from 'redux-react-hook';
 
 import type { DialogType } from '~core/Dialog';
 import type { ContractTransactionType, TokenReferenceType } from '~immutable';
@@ -23,7 +22,6 @@ import {
   currentUserTokenTransfersFetcher,
   currentUserTokensFetcher,
 } from '../../../users/fetchers';
-import { userTokensUpdate } from '../../../users/actionCreators';
 
 import styles from './Wallet.css';
 
@@ -55,33 +53,6 @@ type Props = {|
   walletAddress: Address,
 |};
 
-const handleEditTokens = (
-  openDialog: *,
-  dispatch: *,
-  tokens: *,
-  transactions: *,
-) => {
-  // combination of passed tokens and tokens from recent transactions
-  const potentialTokens = Object.values(
-    [
-      ...(tokens || []),
-      ...(transactions || []).map(({ token }) => ({ address: token })),
-    ].reduce((acc, token) => ({ ...acc, [token.address]: token }), {}),
-  );
-
-  const tokenDialog = openDialog('TokenEditDialog', {
-    tokens: potentialTokens,
-    selectedTokens: tokens && tokens.map(({ address }) => address),
-  });
-
-  tokenDialog
-    .afterClosed()
-    .then(({ tokens: newTokens }) => {
-      dispatch(userTokensUpdate(newTokens));
-    })
-    .catch(() => {});
-};
-
 const Wallet = ({ walletAddress, openDialog }: Props) => {
   const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher<
     TokenReferenceType[],
@@ -94,10 +65,12 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
     [],
     [],
   );
-  const dispatch = useDispatch();
   const editTokens = useCallback(
-    () => handleEditTokens(openDialog, dispatch, tokens, transactions),
-    [openDialog, dispatch, tokens, transactions],
+    () =>
+      openDialog('UserTokenEditDialog', {
+        selectedTokens: tokens && tokens.map(({ address }) => address),
+      }),
+    [openDialog, tokens],
   );
   return (
     <div className={styles.layoutMain}>

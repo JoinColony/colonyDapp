@@ -171,6 +171,7 @@
         "localforage": "^1.7.3",
         "lodash": "4.17.11",
         "lru-cache": "^4.1.3",
+        "move-decimal-point": "^0.0.4",
         "nanoid": "^1.0.7",
         "orbit-db": "JoinColony/orbit-db#develop",
         "orbit-db-keystore": "^0.1.0",
@@ -214,8 +215,7 @@
         "orbit-db-kvstore": "JoinColony/orbit-db-kvstore#develop",
         "orbit-db-store": "orbitdb/orbit-db-store#b5483fe3beec72fb8c98f993ea42b1345467ffd2",
         "orbit-db-keystore": "orbitdb/orbit-db-keystore#fix/verification",
-        "ipfs-log": "orbitdb/ipfs-log#2bdbe7a99d86570e0e05d28045da0379d2b9a879",
-        "orbit-db-identity-provider": "0.0.2"
+        "ipfs-log": "orbitdb/ipfs-log#2bdbe7a99d86570e0e05d28045da0379d2b9a879"
     },
     "greenkeeper": {
         "ignore": [

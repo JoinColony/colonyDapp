@@ -1,13 +1,29 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe until hooks flow types
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useMappedState } from 'redux-react-hook';
 
 import type { DialogType } from '~core/Dialog';
-import type { TokenType, TokenReferenceType } from '~immutable';
+import type { RolesType, TokenType } from '~immutable';
+import type { Address } from '~types';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import withDialog from '~core/Dialog/withDialog';
+
+import { useDataFetcher } from '~utils/hooks';
+
+import { rolesFetcher, tokenFetcher } from '../../../dashboard/fetchers';
+
+import {
+  colonyTokensSelector,
+  colonyNativeTokenSelector,
+} from '../../../dashboard/selectors';
+import { walletAddressSelector } from '../../../users/selectors';
+
+import { canMintTokens, canEditTokens } from '../../checks';
 
 import TokenList from './TokenList.jsx';
 
@@ -32,111 +48,113 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {|
+type Props = {
   openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
-  tokens: Array<TokenReferenceType>,
-  nativeToken: TokenType,
-|};
+  colonyAddress: Address,
+};
 
-class Tokens extends Component<Props> {
-  timeoutId: TimeoutID;
+const Tokens = ({ colonyAddress, openDialog }: Props) => {
+  // permissions checks
+  const { data: roles } = useDataFetcher<RolesType>(
+    rolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const walletAddress = useMappedState(walletAddressSelector);
+  const canMint = useMemo(() => canMintTokens(roles, walletAddress), [
+    roles,
+    walletAddress,
+  ]);
+  const canEdit = useMemo(() => canEditTokens(roles, walletAddress), [
+    roles,
+    walletAddress,
+  ]);
 
-  static displayName = 'admin.Tokens';
+  // get sorted tokens
+  const mapColonyTokens = useCallback(
+    state => colonyTokensSelector(state, colonyAddress),
+    [colonyAddress],
+  );
+  const tokens = useMappedState(mapColonyTokens);
 
-  componentWillUnmount() {
-    clearTimeout(this.timeoutId);
-  }
+  // get the native token info from reference
+  const mapColonyNativeToken = useCallback(
+    state => colonyNativeTokenSelector(state, colonyAddress),
+    [colonyAddress],
+  );
+  const nativeTokenReference = useMappedState(mapColonyNativeToken);
+  const nativeTokenAddress = nativeTokenReference
+    ? nativeTokenReference.address
+    : '';
+  const { data: nativeToken } = useDataFetcher<TokenType>(
+    tokenFetcher,
+    [nativeTokenAddress],
+    [nativeTokenAddress],
+  );
 
-  handleOpenTokenEditDialog = () => {
-    const { openDialog, tokens } = this.props;
-    const tokenEditDialog = openDialog('TokenEditDialog', {
-      tokens,
-      tokenOwner: 'Colony',
-    });
-    tokenEditDialog.afterClosed().catch(() => {
-      // cancel actions here
-    });
-  };
+  // handle opening of dialogs
+  const handleEditTokens = useCallback(
+    () =>
+      openDialog('ColonyTokenEditDialog', {
+        selectedTokens: tokens && tokens.map(({ address }) => address),
+        colonyAddress,
+      }),
+    [openDialog, tokens, colonyAddress],
+  );
+  const handleMintTokens = useCallback(
+    () =>
+      openDialog('TokenMintDialog', {
+        nativeToken,
+        colonyAddress,
+      }),
+    [openDialog, nativeToken, colonyAddress],
+  );
 
-  handleOpenTokenMintDialog = () => {
-    const { openDialog, tokens } = this.props;
-    const nativeToken = tokens.find(token => token.isNative);
-    const mintNewTokensDialog = openDialog('TokenMintDialog', {
-      onMintNewTokensSubmitted: this.onMintNewTokensSubmitted,
-      nativeToken,
-    });
-    mintNewTokensDialog.afterClosed().catch(() => {
-      // cancel actions here
-    });
-  };
+  return (
+    <div className={styles.main}>
+      <main>
+        <div className={styles.titleContainer}>
+          <Heading
+            text={MSG.title}
+            appearance={{ size: 'medium', theme: 'dark' }}
+          />
+          {nativeToken && (
+            <Heading appearance={{ size: 'normal' }}>
+              <FormattedMessage
+                {...MSG.nativeTokenText}
+                values={{ nativeToken: nativeToken.symbol }}
+              />
+            </Heading>
+          )}
+        </div>
+        <TokenList tokens={tokens} appearance={{ numCols: '5' }} />
+      </main>
+      <aside className={styles.sidebar}>
+        <ul>
+          {canMint && (
+            <li>
+              <Button
+                text={MSG.navItemMintNewTokens}
+                appearance={{ theme: 'blue' }}
+                onClick={handleMintTokens}
+              />
+            </li>
+          )}
+          {canEdit && (
+            <li>
+              <Button
+                text={MSG.navItemEditTokens}
+                appearance={{ theme: 'blue' }}
+                onClick={handleEditTokens}
+              />
+            </li>
+          )}
+        </ul>
+      </aside>
+    </div>
+  );
+};
 
-  onMintNewTokensSubmitted = () => {
-    /*
-     * TODO: Open the gas station here once implemented
-     *
-     * There's a chance this will happen in a reducer or some
-     * other place at some point, but it's here now for demo purposes
-     */
-    const { openDialog } = this.props;
-    const mintingNewTokensDialog = openDialog('ActivityBarExample');
-    this.timeoutId = setTimeout(() => {
-      mintingNewTokensDialog.close();
-    }, 3000);
-  };
+Tokens.displayName = 'admin.Tokens';
 
-  render() {
-    const {
-      tokens = [],
-      nativeToken: { symbol: nativeTokenSymbol } = {},
-    } = this.props;
-    const nativeToken = tokens.find(token => token.isNative);
-    const isColonyAdmin = true; // TODO determine this value. Will all users visiting this route be admins?
-    const isUserColonyFounder = true; // TODO determine this value.
-    const canMintNewTokens = true; // TODO determine this value. token generated at colony launch ? true : false;
-    return (
-      <div className={styles.main}>
-        <main>
-          <div className={styles.titleContainer}>
-            <Heading
-              text={MSG.title}
-              appearance={{ size: 'medium', theme: 'dark' }}
-            />
-            {nativeToken && (
-              <Heading appearance={{ size: 'normal' }}>
-                <FormattedMessage
-                  {...MSG.nativeTokenText}
-                  values={{ nativeToken: nativeTokenSymbol }}
-                />
-              </Heading>
-            )}
-          </div>
-          <TokenList tokens={tokens} appearance={{ numCols: '5' }} />
-        </main>
-        {isColonyAdmin && (
-          <aside className={styles.sidebar}>
-            <ul>
-              {isUserColonyFounder && canMintNewTokens && (
-                <li>
-                  <Button
-                    text={MSG.navItemMintNewTokens}
-                    appearance={{ theme: 'blue' }}
-                    onClick={this.handleOpenTokenMintDialog}
-                  />
-                </li>
-              )}
-              <li>
-                <Button
-                  text={MSG.navItemEditTokens}
-                  appearance={{ theme: 'blue' }}
-                  onClick={this.handleOpenTokenEditDialog}
-                />
-              </li>
-            </ul>
-          </aside>
-        )}
-      </div>
-    );
-  }
-}
-
-export default Tokens;
+export default withDialog()(Tokens);

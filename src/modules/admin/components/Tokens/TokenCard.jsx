@@ -36,7 +36,8 @@ const TokenCard = ({
     [address],
     [address],
   );
-  return token ? (
+  // balance is fetched seperately to rest of token
+  return token && balance !== undefined ? (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
         <TokenIcon token={tokenReference} name={token.name} />
@@ -57,14 +58,14 @@ const TokenCard = ({
         }
       >
         <Numeral
-          value={balance}
+          value={balance || 0}
           decimals={2}
           integerSeparator=""
           unit="ether"
         />
       </div>
       <div className={styles.cardFooter}>
-        {tokenIsETH(token) && <EthUsd value={balance} decimals={3} />}
+        {tokenIsETH(token) && <EthUsd value={balance || 0} decimals={3} />}
       </div>
     </Card>
   ) : (

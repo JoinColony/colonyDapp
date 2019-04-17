@@ -10,6 +10,7 @@ import type {
   WalletContext,
 } from '~data/types';
 
+import { diffAddresses } from '~utils/arrays';
 import { getColonyStore, createColonyStore } from '~data/stores';
 import {
   createColonyAvatarRemovedEvent,
@@ -18,7 +19,10 @@ import {
   createColonyProfileUpdatedEvent,
   createDomainCreatedEvent,
   createTokenInfoAddedEvent,
+  createTokenInfoRemovedEvent,
 } from '../events';
+
+import { getColony } from '../queries';
 
 import {
   CreateColonyProfileCommandArgsSchema,
@@ -169,6 +173,45 @@ export const addTokenInfo: ColonyCommand<
       metadata,
     );
     await colonyStore.append(tokenInfoAddedEvent);
+    await colonyStore.load();
+    return colonyStore;
+  },
+});
+
+export const updateTokenInfo: ColonyCommand<
+  {|
+    tokens: Address[],
+  |},
+  EventStore,
+> = ({ ddb, colonyClient, wallet, metadata }) => ({
+  async execute(args) {
+    const { tokens } = args;
+    const { tokens: currentTokenReferences = {} } = await getColony({
+      colonyClient,
+      ddb,
+      wallet,
+      metadata,
+    }).execute();
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
+
+    // diff existing and user provided tokens
+    const [add, remove] = diffAddresses(
+      tokens,
+      Object.keys(currentTokenReferences),
+    );
+
+    // add and remove tokens as required
+    await Promise.all([
+      ...add.map(address =>
+        colonyStore.append(createTokenInfoAddedEvent({ address })),
+      ),
+      ...remove.map(address =>
+        colonyStore.append(createTokenInfoRemovedEvent({ address })),
+      ),
+    ]);
+
     await colonyStore.load();
     return colonyStore;
   },

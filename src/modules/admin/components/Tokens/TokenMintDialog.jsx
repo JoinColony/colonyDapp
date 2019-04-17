@@ -2,17 +2,24 @@
 
 import type { FormikProps } from 'formik';
 
-import React, { Component, Fragment } from 'react';
+// $FlowFixMe until hooks flow types
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
+import moveDecimal from 'move-decimal-point';
+import BigNumber from 'bn.js';
 
 import type { TokenType } from '~immutable';
+import type { Address } from '~types';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
-import { Form, Input } from '~core/Fields';
+import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
+
+import { pipe, mapPayload, mergePayload, withKeyPath } from '~utils/actions';
+import { ACTIONS } from '~redux';
 
 import styles from './TokenMintDialog.css';
 
@@ -60,7 +67,7 @@ type Props = {|
   cancel: () => void,
   close: () => void,
   nativeToken: TokenType,
-  onMintNewTokensSubmitted: (symbol: string, amount: number) => void,
+  colonyAddress: Address,
 |};
 
 const validationSchema = yup.object().shape({
@@ -70,101 +77,95 @@ const validationSchema = yup.object().shape({
     .min(0.000000000000000001, MSG.errorAmountMin),
 });
 
-class TokenMintDialog extends Component<Props> {
-  timeoutId: TimeoutID;
+const TokenMintDialog = ({
+  cancel,
+  close,
+  nativeToken: { name, symbol, decimals },
+  colonyAddress,
+}: Props) => {
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ amount: inputAmount }) => ({
+        // shift by the token's decimals (or default of 18)
+        amount: new BigNumber(
+          moveDecimal(inputAmount, decimals ? parseInt(decimals, 10) : 18),
+        ),
+      })),
+      withKeyPath(colonyAddress),
+      mergePayload({ colonyAddress }),
+    ),
+    [decimals, colonyAddress],
+  );
 
-  static displayName = 'admin.Tokens.TokenMintDialog';
-
-  componentWillUnmount() {
-    clearTimeout(this.timeoutId);
-  }
-
-  handleSubmitTokenForm = ({ mintAmount }: FormValues) => {
-    const {
-      close,
-      onMintNewTokensSubmitted,
-      nativeToken: { symbol },
-    } = this.props;
-    // TODO handle form data here
-    this.timeoutId = setTimeout(() => {
-      close();
-      onMintNewTokensSubmitted(symbol, mintAmount);
-    }, 500);
-  };
-
-  render() {
-    const {
-      cancel,
-      nativeToken: { name, symbol },
-    } = this.props;
-    return (
-      <Dialog cancel={cancel}>
-        <Form
-          initialValues={{
-            mintAmount: 0,
-          }}
-          onSubmit={this.handleSubmitTokenForm}
-          validationSchema={validationSchema}
-        >
-          {({
-            handleSubmit,
-            isSubmitting,
-            isValid,
-          }: FormikProps<FormValues>) => (
-            <Fragment>
-              <DialogSection>
-                <Heading
-                  appearance={{ size: 'medium', margin: 'none' }}
-                  text={MSG.title}
-                />
-              </DialogSection>
-              <DialogSection>
-                <Heading
-                  appearance={{
-                    margin: 'double',
-                    size: 'normal',
-                    weight: 'thin',
-                  }}
-                  text={MSG.descriptionText}
-                />
-                <div className={styles.inputContainer}>
-                  <div className={styles.input}>
-                    <Input
-                      appearance={{ theme: 'minimal' }}
-                      formattingOptions={{
-                        numeral: true,
-                        numeralPositiveOnly: true,
-                        numeralDecimalScale: 18,
-                      }}
-                      label={MSG.amountLabel}
-                      name="mintAmount"
-                    />
-                  </div>
-                  <span className={styles.nativeToken} title={name}>
-                    {symbol}
-                  </span>
+  return (
+    <Dialog cancel={cancel}>
+      <ActionForm
+        initialValues={{
+          mintAmount: 0,
+        }}
+        validationSchema={validationSchema}
+        submit={ACTIONS.COLONY_MINT_TOKENS}
+        error={ACTIONS.COLONY_MINT_TOKENS_ERROR}
+        success={ACTIONS.COLONY_MINT_TOKENS_SUBMITTED}
+        onSuccess={close}
+        transform={transform}
+      >
+        {({ handleSubmit, isSubmitting, isValid }: FormikProps<FormValues>) => (
+          <>
+            <DialogSection>
+              <Heading
+                appearance={{ size: 'medium', margin: 'none' }}
+                text={MSG.title}
+              />
+            </DialogSection>
+            <DialogSection>
+              <Heading
+                appearance={{
+                  margin: 'double',
+                  size: 'normal',
+                  weight: 'thin',
+                }}
+                text={MSG.descriptionText}
+              />
+              <div className={styles.inputContainer}>
+                <div className={styles.input}>
+                  <Input
+                    appearance={{ theme: 'minimal' }}
+                    formattingOptions={{
+                      numeral: true,
+                      numeralPositiveOnly: true,
+                      numeralDecimalScale: decimals || 18,
+                    }}
+                    label={MSG.amountLabel}
+                    name="mintAmount"
+                  />
                 </div>
-              </DialogSection>
-              <DialogSection appearance={{ align: 'right' }}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={MSG.buttonCancel}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  onClick={handleSubmit}
-                  text={MSG.buttonConfirm}
-                  loading={isSubmitting}
-                  disabled={!isValid}
-                />
-              </DialogSection>
-            </Fragment>
-          )}
-        </Form>
-      </Dialog>
-    );
-  }
-}
+                <span className={styles.nativeToken} title={name}>
+                  {symbol}
+                </span>
+              </div>
+            </DialogSection>
+            <DialogSection appearance={{ align: 'right' }}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={cancel}
+                text={MSG.buttonCancel}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                onClick={handleSubmit}
+                text={MSG.buttonConfirm}
+                loading={isSubmitting}
+                disabled={!isValid}
+              />
+            </DialogSection>
+          </>
+        )}
+      </ActionForm>
+    </Dialog>
+  );
+};
+
+TokenMintDialog.displayName = 'admin.Tokens.TokenMintDialog';
 
 export default TokenMintDialog;

@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 import type {
   Address,
   ENSName,
@@ -14,6 +16,7 @@ import type {
   TransactionType,
 } from '~immutable';
 import type {
+  ActionTypeWithMeta,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
@@ -81,16 +84,16 @@ export type ColonyActionTypes = {|
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
     {| tokenAddress: string, colonyAddress: Address |},
-    void,
+    WithKeyPathDepth2,
   >,
   COLONY_CLAIM_TOKEN_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_ERROR,
-    void,
+    WithKeyPathDepth2,
   >,
   COLONY_CLAIM_TOKEN_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS,
     {| params: { token: string }, transaction: TransactionType<*, *> |},
-    void,
+    WithKeyPathDepth2,
   >,
   COLONY_CREATE: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE,
@@ -226,6 +229,25 @@ export type ColonyActionTypes = {|
     ContractTransactionType[],
     WithKeyPathDepth1,
   >,
+  COLONY_MINT_TOKENS: UniqueActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS,
+    {| colonyAddress: Address, amount: BigNumber |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_MINT_TOKENS_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS_ERROR,
+    WithKeyPathDepth1,
+  >,
+  COLONY_MINT_TOKENS_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS,
+    {| amount: BigNumber |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_MINT_TOKENS_SUBMITTED: UniqueActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS_SUBMITTED,
+    void,
+    void,
+  >,
   COLONY_PROFILE_UPDATE: UniqueActionType<
     typeof ACTIONS.COLONY_PROFILE_UPDATE,
     ColonyType,
@@ -330,5 +352,18 @@ export type ColonyActionTypes = {|
       colonyAddress: Address,
     |},
     WithKeyPathDepth2,
+  >,
+  COLONY_UPDATE_TOKENS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_UPDATE_TOKENS,
+    {| colonyAddress: Address, tokens: Address[] |},
+    WithKeyPathDepth1,
+  >,
+  COLONY_UPDATE_TOKENS_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_UPDATE_TOKENS_ERROR,
+    WithKeyPathDepth1,
+  >,
+  COLONY_UPDATE_TOKENS_SUCCESS: ActionTypeWithMeta<
+    typeof ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS,
+    WithKeyPathDepth1,
   >,
 |};

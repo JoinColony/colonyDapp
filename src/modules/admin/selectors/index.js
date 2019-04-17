@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ENSName } from '~types';
+import type { Address } from '~types';
 import type { RootStateRecord } from '~immutable';
 
 import {
@@ -14,10 +14,10 @@ import {
  */
 export const colonyTransactionsSelector = (
   state: RootStateRecord,
-  colonyName: ENSName,
-) => state.getIn([ns, ADMIN_TRANSACTIONS, colonyName]);
+  colonyAddress: Address,
+) => state.getIn([ns, ADMIN_TRANSACTIONS, colonyAddress]);
 
 export const colonyUnclaimedTransactionsSelector = (
   state: RootStateRecord,
-  colonyName: ENSName,
-) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, colonyName]);
+  colonyAddress: Address,
+) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, colonyAddress]);

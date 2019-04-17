@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import nanoid from 'nanoid';
 
 import Heading from '~core/Heading';
 import TransactionList from '~core/TransactionList';
@@ -27,7 +28,11 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  claimColonyToken: (colonyName: ENSName, tokenAddress: Address) => any,
+  claimColonyToken: (
+    colonyName: ENSName,
+    tokenAddress: Address,
+    id: string,
+  ) => any,
   colonyName: string,
   transactions: ?DataType<Array<ContractTransactionType>>,
   unclaimedTransactions: ?DataType<Array<ContractTransactionType>>,
@@ -57,7 +62,7 @@ const Transactions = ({
             (unclaimedTransactions && unclaimedTransactions.isFetching) || false
           }
           onClaim={transaction =>
-            claimColonyToken(colonyName, transaction.token)
+            claimColonyToken(colonyName, transaction.token, nanoid())
           }
           linkToEtherscan={false}
         />

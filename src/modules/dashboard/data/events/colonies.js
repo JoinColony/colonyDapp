@@ -12,6 +12,7 @@ const {
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
+  TOKEN_INFO_REMOVED,
 } = COLONY_EVENT_TYPES;
 
 export const createDomainCreatedEvent = createEventCreator<
@@ -45,3 +46,7 @@ export const createColonyProfileUpdatedEvent = createEventCreator<
 export const createTokenInfoAddedEvent = createEventCreator<
   typeof TOKEN_INFO_ADDED,
 >(TOKEN_INFO_ADDED);
+
+export const createTokenInfoRemovedEvent = createEventCreator<
+  typeof TOKEN_INFO_REMOVED,
+>(TOKEN_INFO_REMOVED);
