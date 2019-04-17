@@ -1,0 +1,21 @@
+@import 'variables.css';
+
+.main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+/*
+ * The first nested span is the username
+ */
+.main > span span {
+  font-weight: var(--weight-semi);
+}
+
+/*
+ * Subsequent nested spans (e.g. the time) should be reset
+ */
+.main > span + span span {
+  font-weight: var(--weight-normal);
+}

@@ -17,7 +17,6 @@ import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
-import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
   executeQuery,
@@ -53,7 +52,7 @@ import {
   setTaskTitle,
   unassignWorker,
 } from '../data/commands';
-import { getTask, getTaskComments } from '../data/queries';
+import { getTask, getTaskFeedItems } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -135,7 +134,7 @@ function* taskCreate({
   try {
     const context = yield call(getColonyContext, colonyAddress);
     const creatorAddress = context.wallet.address;
-    const { taskStore, commentsStore, draftId } = yield* executeCommand(
+    const { taskStore, commentsStore, draftId, event } = yield* executeCommand(
       context,
       createTask,
       { creatorAddress },
@@ -150,6 +149,7 @@ function* taskCreate({
         colonyAddress,
         commentsStoreAddress: commentsStore.address.toString(),
         draftId,
+        event,
         taskStoreAddress: taskStore.address.toString(),
         task: {
           colonyAddress,
@@ -251,15 +251,19 @@ function* taskFetchAll(): Saga<void> {
 function* taskSetDescription({
   meta,
   payload: { draftId, description },
-  payload,
 }: Action<typeof ACTIONS.TASK_SET_DESCRIPTION>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, setTaskDescription, { description });
+    const { event } = yield* executeCommand(context, setTaskDescription, {
+      description,
+    });
     yield put<Action<typeof ACTIONS.TASK_SET_DESCRIPTION_SUCCESS>>({
       type: ACTIONS.TASK_SET_DESCRIPTION_SUCCESS,
       meta,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_SET_DESCRIPTION_ERROR, error, meta);
@@ -269,15 +273,17 @@ function* taskSetDescription({
 function* taskSetTitle({
   meta,
   payload: { draftId, title },
-  payload,
 }: Action<typeof ACTIONS.TASK_SET_TITLE>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, setTaskTitle, { title });
+    const { event } = yield* executeCommand(context, setTaskTitle, { title });
     yield put<Action<typeof ACTIONS.TASK_SET_TITLE_SUCCESS>>({
       type: ACTIONS.TASK_SET_TITLE_SUCCESS,
       meta,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_SET_TITLE_ERROR, error, meta);
@@ -287,15 +293,19 @@ function* taskSetTitle({
 function* taskSetDomain({
   meta,
   payload: { draftId, domainId },
-  payload,
 }: Action<typeof ACTIONS.TASK_SET_DOMAIN>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, setTaskDomain, { domainId });
+    const { event } = yield* executeCommand(context, setTaskDomain, {
+      domainId,
+    });
     yield put<Action<typeof ACTIONS.TASK_SET_DOMAIN_SUCCESS>>({
       type: ACTIONS.TASK_SET_DOMAIN_SUCCESS,
       meta,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_SET_DOMAIN_ERROR, error, meta);
@@ -310,19 +320,20 @@ function* taskSetDomain({
 function* taskCancel({
   meta,
   payload: { draftId },
-  payload,
 }: Action<typeof ACTIONS.TASK_CANCEL>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, cancelTask, { draftId });
+    const { event } = yield* executeCommand(context, cancelTask, {
+      draftId,
+    });
 
-    /*
-     * Dispatch the success action.
-     */
     yield put<Action<typeof ACTIONS.TASK_CANCEL_SUCCESS>>({
       type: ACTIONS.TASK_CANCEL_SUCCESS,
       meta,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_CANCEL_ERROR, error, meta);
@@ -337,19 +348,18 @@ function* taskCancel({
 function* taskClose({
   meta,
   payload: { draftId },
-  payload,
 }: Action<typeof ACTIONS.TASK_CLOSE>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, closeTask);
+    const { event } = yield* executeCommand(context, closeTask);
 
-    /*
-     * Dispatch the success action.
-     */
     yield put<Action<typeof ACTIONS.TASK_CLOSE_SUCCESS>>({
       type: ACTIONS.TASK_CLOSE_SUCCESS,
       meta,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_CLOSE_ERROR, error, meta);
@@ -361,15 +371,18 @@ function* taskClose({
  */
 function* taskSetSkill({
   payload: { draftId, skillId },
-  payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, setTaskSkill, { skillId });
+    const { event } = yield* executeCommand(context, setTaskSkill, { skillId });
+
     yield put<Action<typeof ACTIONS.TASK_SET_SKILL_SUCCESS>>({
       type: ACTIONS.TASK_SET_SKILL_SUCCESS,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -382,15 +395,21 @@ function* taskSetSkill({
  */
 function* taskSetPayout({
   payload: { draftId, token, amount },
-  payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, setTaskPayout, { token, amount });
+    const { event } = yield* executeCommand(context, setTaskPayout, {
+      token,
+      amount,
+    });
+
     yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
       type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -407,14 +426,14 @@ function* taskSetDueDate({
 }: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, setTaskDueDate, {
+    const { event } = yield* executeCommand(context, setTaskDueDate, {
       dueDate: dueDate.getTime(),
     });
     yield put<Action<typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS>>({
       type: ACTIONS.TASK_SET_DUE_DATE_SUCCESS,
       payload: {
         draftId,
-        dueDate,
+        event,
       },
       meta,
     });
@@ -428,16 +447,21 @@ function* taskSetDueDate({
  */
 function* taskFinalize({
   payload: { draftId },
-  payload,
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   try {
-    const { worker, amountPaid } = yield select(taskSelector, draftId);
+    const { workerAddress, amountPaid } = yield select(taskSelector, draftId);
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, finalizeTask, { amountPaid, worker });
+    const { event } = yield* executeCommand(context, finalizeTask, {
+      amountPaid,
+      workerAddress,
+    });
     yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({
       type: ACTIONS.TASK_FINALIZE_SUCCESS,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -447,16 +471,20 @@ function* taskFinalize({
 
 function* taskSendWorkInvite({
   payload: { draftId },
-  payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SEND_WORK_INVITE>): Saga<void> {
   try {
-    const { worker } = yield select(taskSelector, draftId);
+    const { workerAddress } = yield select(taskSelector, draftId);
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, sendWorkInvite, { worker });
+    const { event } = yield* executeCommand(context, sendWorkInvite, {
+      workerAddress,
+    });
     yield put<Action<typeof ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -466,17 +494,19 @@ function* taskSendWorkInvite({
 
 function* taskSendWorkRequest({
   payload: { draftId },
-  payload,
   meta,
 }: Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    const wallet = yield* getContext(CONTEXT.WALLET);
-    const worker = wallet.colonyAddress;
-    yield* executeCommand(context, createWorkRequest, { worker });
+    const { event } = yield* executeCommand(context, createWorkRequest, {
+      workerAddress: context.wallet.address,
+    });
     yield put<Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
-      payload: { ...payload, worker },
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -485,18 +515,20 @@ function* taskSendWorkRequest({
 }
 
 function* taskWorkerAssign({
-  payload: { draftId, worker },
-  payload,
+  payload: { draftId, workerAddress },
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, assignWorker, {
-      worker,
+    const { event } = yield* executeCommand(context, assignWorker, {
+      workerAddress,
     });
     yield put<Action<typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS>>({
       type: ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -505,18 +537,20 @@ function* taskWorkerAssign({
 }
 
 function* taskWorkerUnassign({
-  payload: { draftId, worker },
-  payload,
+  payload: { draftId, workerAddress },
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<void> {
   try {
     const context = yield* getTaskStoreContext(draftId);
-    yield* executeCommand(context, unassignWorker, {
-      worker,
+    const { event } = yield* executeCommand(context, unassignWorker, {
+      workerAddress,
     });
     yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
       type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
-      payload,
+      payload: {
+        draftId,
+        event,
+      },
       meta,
     });
   } catch (error) {
@@ -524,24 +558,23 @@ function* taskWorkerUnassign({
   }
 }
 
-// TODO in #580 replace with fetching feed items
-function* taskFetchComments({
+function* taskFeedItemsFetch({
   payload: { draftId },
   meta,
-}: Action<typeof ACTIONS.TASK_FETCH_COMMENTS>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH>): Saga<void> {
   try {
     const context = yield call(getTaskStoreContext, draftId);
-    const comments = yield* executeQuery(context, getTaskComments);
-    yield put<Action<typeof ACTIONS.TASK_FETCH_COMMENTS_SUCCESS>>({
-      type: ACTIONS.TASK_FETCH_COMMENTS_SUCCESS,
+    const events = yield* executeQuery(context, getTaskFeedItems);
+    yield put<Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS>>({
+      type: ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS,
       meta,
       payload: {
-        comments,
         draftId,
+        events,
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_FETCH_COMMENTS_ERROR, error, meta);
+    yield putError(ACTIONS.TASK_FEED_ITEMS_FETCH_ERROR, error, meta);
   }
 }
 
@@ -559,7 +592,7 @@ function* taskCommentAdd({
       message: JSON.stringify(commentData),
     });
 
-    yield* executeCommand(context, postComment, {
+    const { event } = yield* executeCommand(context, postComment, {
       signature,
       content: {
         id: nanoid(),
@@ -568,15 +601,11 @@ function* taskCommentAdd({
       },
     });
 
-    /*
-     * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
-     */
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
       payload: {
-        commentData,
         draftId,
-        signature,
+        event,
       },
       meta,
     });
@@ -590,8 +619,8 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
+  yield takeEvery(ACTIONS.TASK_FEED_ITEMS_FETCH, taskFeedItemsFetch);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
-  yield takeEvery(ACTIONS.TASK_FETCH_COMMENTS, taskFetchComments);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ACTIONS.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
   yield takeEvery(ACTIONS.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);

@@ -1,7 +1,7 @@
 /* @flow */
 
 // eslint-disable-next-line no-unused-vars
-import type { $Pick } from '~types';
+import type { Address, $Pick } from '~types';
 
 import type { ColonyEvents } from './ColonyEvents';
 import type { TaskEvents } from './TaskEvents';
@@ -27,7 +27,12 @@ const ALL_EVENT_TYPES = Object.freeze({
  * P: Object type representing the payload properties (technically optional).
  */
 export type EventDefinition<T: string, P: ?Object> = {|
-  meta: {| timestamp: number, version: number, id: string |},
+  meta: {|
+    id: string,
+    timestamp: number,
+    userAddress: Address,
+    version: number,
+  |},
   payload: P,
   type: T,
 |};

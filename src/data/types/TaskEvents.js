@@ -99,7 +99,7 @@ export type TaskEvents = {|
     typeof TASK_FINALIZED,
     {|
       status: typeof TASK_STATUS.FINALIZED,
-      worker: string,
+      workerAddress: string,
       amountPaid: string,
       token?: string,
       paymentId?: number,
@@ -114,25 +114,25 @@ export type TaskEvents = {|
   WORK_INVITE_SENT: EventDefinition<
     typeof WORK_INVITE_SENT,
     {|
-      worker: string,
+      workerAddress: string,
     |},
   >,
   WORK_REQUEST_CREATED: EventDefinition<
     typeof WORK_REQUEST_CREATED,
     {|
-      worker: string,
+      workerAddress: string,
     |},
   >,
   WORKER_ASSIGNED: EventDefinition<
     typeof WORKER_ASSIGNED,
     {|
-      worker: string,
+      workerAddress: string,
     |},
   >,
   WORKER_UNASSIGNED: EventDefinition<
     typeof WORKER_UNASSIGNED,
     {|
-      worker: string,
+      workerAddress: string,
     |},
   >,
 |};

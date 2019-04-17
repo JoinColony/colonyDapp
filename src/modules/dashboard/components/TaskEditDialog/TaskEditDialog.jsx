@@ -66,7 +66,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  ...$Exact<$Pick<TaskType, {| worker: *, payouts: *, reputation: * |}>>,
+  ...$Exact<$Pick<TaskType, {| workerAddress: *, payouts: *, reputation: * |}>>,
   addTokenFunding: (
     values: { payouts?: Array<any> },
     helpers: () => void,
@@ -122,7 +122,7 @@ const TaskEditDialog = ({
   payouts: taskPayouts,
   reputation,
   transform,
-  worker: workerAddress,
+  workerAddress,
 }: Props) => {
   const availableTokens = []; // TODO use selector in #1048
   const users = []; // TODO use selector in #1048

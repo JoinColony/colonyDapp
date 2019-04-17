@@ -49,13 +49,13 @@ const TabMyTasks = ({
   >(currentUserDraftIdsFetcher, [], []);
 
   const filter = useCallback(
-    ({ creatorAddress, worker, currentState }: TaskType) => {
+    ({ creatorAddress, workerAddress, currentState }: TaskType) => {
       switch (filterOption) {
         case MY_TASKS_FILTER.CREATED:
           return addressEquals(creatorAddress, walletAddress);
 
         case MY_TASKS_FILTER.ASSIGNED:
-          return worker && addressEquals(worker.address, walletAddress);
+          return addressEquals(workerAddress, walletAddress);
 
         case MY_TASKS_FILTER.COMPLETED:
           return currentState === TASK_STATE.FINALIZED;
@@ -67,7 +67,9 @@ const TabMyTasks = ({
     [filterOption, walletAddress],
   );
 
-  if (isFetchingTasks) return <SpinnerLoader />;
+  if (isFetchingTasks) {
+    return <SpinnerLoader />;
+  }
 
   if (!userClaimedProfile) {
     return (

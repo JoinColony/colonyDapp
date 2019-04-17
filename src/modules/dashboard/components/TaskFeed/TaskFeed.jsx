@@ -1,83 +1,84 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe
+import React, { useRef, useLayoutEffect } from 'react';
 
-import type { UserType } from '~immutable';
+import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 
-import { addressEquals } from '~utils/strings';
+import { useDataFetcher } from '~utils/hooks';
+import { taskFeedItemsFetcher } from '../../fetchers';
 
-import Comment from './TaskFeedComment.jsx';
-import Rating from './TaskFeedRating.jsx';
+import { SpinnerLoader } from '~core/Preloaders';
+import TaskFeedEvent from './TaskFeedEvent.jsx';
+import TaskFeedComment from './TaskFeedComment.jsx';
+import TaskFeedRating from './TaskFeedRating.jsx';
 
 import styles from './TaskFeed.css';
-
-import mockUser from '../Wallet/__datamocks__/mockUser';
 
 const displayName = 'dashboard.TaskFeed';
 
 type Props = {|
-  // TODO in #580 require a `draftId` prop
-  currentUser: UserType,
+  draftId: TaskDraftId,
 |};
 
-const isSameUser = (a: UserType, b: UserType) =>
-  addressEquals(a.profile.walletAddress, b.profile.walletAddress);
+const TaskFeed = ({ draftId }: Props) => {
+  const bottomEl = useRef();
 
-// TODO in #580 convert to a functional component
-class TaskFeed extends Component<Props> {
-  bottomEl: *;
+  const scrollToEnd = () => {
+    if (bottomEl.current) {
+      bottomEl.current.scrollIntoView(false);
+    }
+  };
 
-  componentDidMount() {
-    // TODO: content is not fully loaded at first, wait a moment
-    setTimeout(() => {
-      if (this.bottomEl) this.bottomEl.scrollIntoView(false);
-    }, 100);
-  }
+  useLayoutEffect(
+    () => {
+      // Content is not fully loaded at first, wait a moment
+      setTimeout(scrollToEnd, 1000);
+    },
+    [bottomEl],
+  );
 
-  render() {
-    // TODO in #580 use a selector for this
-    const { currentUser } = this.props;
+  const { data: feedItems } = useDataFetcher<TaskFeedItemType[]>(
+    taskFeedItemsFetcher,
+    [draftId],
+    [draftId],
+  );
 
-    // TODO in #580 use a data fetcher for these
-    const feedItems = [];
+  const nFeedItems = feedItems ? feedItems.length : 0;
+  useLayoutEffect(scrollToEnd, [nFeedItems]);
 
-    // TODO in #580 use a selector for this
-    const isRevealEnded = false;
+  return feedItems != null ? (
+    <div className={styles.main}>
+      <div className={styles.items}>
+        <div>
+          {feedItems.map(({ id, createdAt, comment, event, rating }) => {
+            if (comment) {
+              return (
+                <TaskFeedComment
+                  key={id}
+                  comment={comment}
+                  createdAt={createdAt}
+                />
+              );
+            }
 
-    return (
-      <div className={styles.main}>
-        <div className={styles.items}>
-          <div>
-            {feedItems.map(({ id, createdAt, comment, rating }) => {
-              if (comment)
-                return (
-                  <Comment
-                    key={id}
-                    comment={comment}
-                    createdAt={createdAt}
-                    /*
-                     * TODO The author wallet <-> profile raltionship will have to come from a reducer
-                     */
-                    currentUser={isSameUser(mockUser, currentUser)}
-                  />
-                );
+            if (event) {
+              return (
+                <TaskFeedEvent key={id} event={event} createdAt={createdAt} />
+              );
+            }
 
-              // For ratings, check that the reveal period is over
-              return rating && isRevealEnded ? (
-                <Rating key={id} rating={rating} />
-              ) : null;
-            })}
-            <div
-              ref={el => {
-                this.bottomEl = el;
-              }}
-            />
-          </div>
+            // TODO For ratings, check that the reveal period is over
+            return rating ? <TaskFeedRating key={id} rating={rating} /> : null;
+          })}
+          <div ref={bottomEl} />
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  ) : (
+    <SpinnerLoader />
+  );
+};
 
 TaskFeed.displayName = displayName;
 

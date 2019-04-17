@@ -16,7 +16,7 @@ type Props = TaskProps<{
   draftId: *,
   payouts: *,
   reputation: *,
-  worker: *,
+  workerAddress: *,
 }>;
 
 const displayName = 'dashboard.TaskAssignment';
@@ -25,7 +25,7 @@ const TaskAssignment = ({
   colonyAddress,
   payouts,
   reputation,
-  worker: workerAddress,
+  workerAddress,
 }: Props) => {
   const nativeToken = useSelector(colonyNativeTokenSelector, [colonyAddress]);
   const { data: worker } = useDataFetcher<UserType>(

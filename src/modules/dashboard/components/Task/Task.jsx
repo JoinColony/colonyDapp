@@ -108,7 +108,7 @@ const Task = ({
     reputation,
     skillId,
     title,
-    worker,
+    workerAddress,
   } = task || {};
 
   const onEditTask = useCallback(
@@ -121,10 +121,10 @@ const Task = ({
         maxTokens: 2,
         payouts,
         reputation,
-        worker,
+        workerAddress,
       });
     },
-    [openDialog, payouts, reputation, task, worker],
+    [openDialog, payouts, reputation, task, workerAddress],
   );
 
   if (isFetchingTask || !task)
@@ -156,7 +156,7 @@ const Task = ({
             draftId={draftId}
             payouts={payouts}
             reputation={reputation}
-            worker={worker}
+            workerAddress={workerAddress}
           />
         </section>
         <section className={styles.section}>
@@ -249,11 +249,9 @@ const Task = ({
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            {/* TODO in #580 define relevant props for TaskFeed */}
-            <TaskFeed currentUser={currentUser} />
+            <TaskFeed draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
-            {/* TODO in #580 define relevant props for TaskComments */}
             <TaskComments draftId={draftId} currentUser={currentUser} />
           </section>
         </div>

@@ -65,7 +65,7 @@ export const getTask: TaskQuery<*, *> = ({
         skillId: undefined,
         status: undefined,
         title: undefined,
-        worker: undefined,
+        workerAddress: undefined,
       });
   },
 });
