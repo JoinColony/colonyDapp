@@ -1,9 +1,9 @@
 /* @flow */
 
-import { List, Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 import { withDataRecordMap } from '~utils/reducers';
-import { UserRecord, UserProfileRecord, UserActivityRecord } from '~immutable';
+import { UserRecord, UserProfileRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 
 import type { UserRecordType, UsersMap } from '~immutable';
