@@ -41,8 +41,6 @@ type Props = ActionFormikConfig & {
   success: ActionTypeString,
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
   error: ActionTypeString,
-  /** Function to call after submit action was dispatched */
-  onSubmit?: (values: Object, bag: FormikBag<Object, Object>) => void,
   /** Function to call after successful action was dispatched */
   onSuccess?: (
     result: any,
@@ -64,7 +62,6 @@ const ActionForm = ({
   submit,
   success,
   error,
-  onSubmit,
   onSuccess,
   onError = defaultOnError,
   transform,

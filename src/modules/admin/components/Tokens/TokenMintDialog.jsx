@@ -103,11 +103,11 @@ const TokenMintDialog = ({
         initialValues={{
           mintAmount: 0,
         }}
-        onSubmit={close}
         validationSchema={validationSchema}
         submit={ACTIONS.COLONY_MINT_TOKENS}
         error={ACTIONS.COLONY_MINT_TOKENS_ERROR}
-        success={ACTIONS.COLONY_MINT_TOKENS_SUCCESS}
+        success={ACTIONS.COLONY_MINT_TOKENS_SUBMITTED}
+        onSuccess={close}
         transform={transform}
       >
         {({ handleSubmit, isSubmitting, isValid }: FormikProps<FormValues>) => (

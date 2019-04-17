@@ -243,6 +243,11 @@ export type ColonyActionTypes = {|
     {| amount: BigNumber |},
     WithKeyPathDepth1,
   >,
+  COLONY_MINT_TOKENS_SUBMITTED: UniqueActionType<
+    typeof ACTIONS.COLONY_MINT_TOKENS_SUBMITTED,
+    void,
+    void,
+  >,
   COLONY_PROFILE_UPDATE: UniqueActionType<
     typeof ACTIONS.COLONY_PROFILE_UPDATE,
     ColonyType,

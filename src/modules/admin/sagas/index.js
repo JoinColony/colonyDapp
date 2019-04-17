@@ -166,6 +166,8 @@ function* colonyMintTokens({
       params: { amount },
     });
 
+    yield put({ type: ACTIONS.COLONY_MINT_TOKENS_SUBMITTED });
+
     const {
       payload: {
         params: { amount: mintedAmount },
