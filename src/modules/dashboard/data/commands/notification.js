@@ -1,5 +1,5 @@
 /* @flow */
-import type { FeedStore } from '~lib/database/stores';
+import type { EventStore } from '~lib/database/stores';
 import type { UserInboxCommand } from '~data/types';
 
 import { getUserInboxStore } from '~data/stores';
@@ -13,57 +13,57 @@ import {
   createColonyDomainCreatedEvent,
 } from '../events';
 
-export const createColony: UserInboxCommand<*, FeedStore> = ({
+export const createColony: UserInboxCommand<*, EventStore> = ({
   ddb,
   metadata,
 }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createColonyCreatedEvent(args));
+    await userInboxStore.append(createColonyCreatedEvent(args));
     return userInboxStore;
   },
 });
 
-export const createToken: UserInboxCommand<*, FeedStore> = ({
+export const createToken: UserInboxCommand<*, EventStore> = ({
   ddb,
   metadata,
 }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createTokenCreatedEvent(args));
+    await userInboxStore.append(createTokenCreatedEvent(args));
     return userInboxStore;
   },
 });
 
-export const createColonyLabel: UserInboxCommand<*, FeedStore> = ({
+export const createColonyLabel: UserInboxCommand<*, EventStore> = ({
   ddb,
   metadata,
 }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createColonyLabelCreatedEvent(args));
+    await userInboxStore.append(createColonyLabelCreatedEvent(args));
     return userInboxStore;
   },
 });
 
-export const addAdmin: UserInboxCommand<*, FeedStore> = ({
+export const addAdmin: UserInboxCommand<*, EventStore> = ({
   ddb,
   metadata,
 }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createColonyAdminAddedEvent(args));
+    await userInboxStore.append(createColonyAdminAddedEvent(args));
     return userInboxStore;
   },
 });
 
-export const removeAdmin: UserInboxCommand<*, FeedStore> = ({
+export const removeAdmin: UserInboxCommand<*, EventStore> = ({
   ddb,
   metadata,
 }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createColonyAdminRemovedEvent(args));
+    await userInboxStore.append(createColonyAdminRemovedEvent(args));
     return userInboxStore;
   },
 });
@@ -72,13 +72,13 @@ export const removeAdmin: UserInboxCommand<*, FeedStore> = ({
  * @NOTE This breaks naming convention by appending `Notification` afther the function's name
  * This is because there's already a `createDomain` method in the colony commands
  */
-export const createDomainNotification: UserInboxCommand<*, FeedStore> = ({
+export const createDomainNotification: UserInboxCommand<*, EventStore> = ({
   ddb,
   metadata,
 }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
-    await userInboxStore.add(createColonyDomainCreatedEvent(args));
+    await userInboxStore.append(createColonyDomainCreatedEvent(args));
     return userInboxStore;
   },
 });
