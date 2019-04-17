@@ -46,8 +46,8 @@ export default class PermissionManager {
   }
 
   async can<Context: Object>(
-    user: string,
     actionId: ActionId,
+    user: string,
     context?: Context,
   ) {
     if (!(this._permissions && Object.keys(this._permissions).length))
