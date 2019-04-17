@@ -33,6 +33,10 @@ import {
   taskMetadataSelector,
   taskSelector,
 } from '../selectors';
+import {
+  currentUserMetadataSelector,
+  walletAddressSelector,
+} from '../../users/selectors';
 import { getColonyContext } from './shared';
 
 import {
@@ -51,9 +55,9 @@ import {
   setTaskSkill,
   setTaskTitle,
   unassignWorker,
-  commentMentionNotification,
 } from '../data/commands';
-import { getTask, getTaskFeedItems } from '../data/queries';
+import { commentMentionNotification } from '../../users/data/commands';
+import { getTask, getTaskComments } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -622,20 +626,12 @@ function* taskCommentAdd({
      * Also, this should be iterated through each mentioned user, and add
      * a notification event to each one's store
      */
-    yield* executeCommand(
-      inboxContext,
-      commentMentionNotification,
-      /*
-       * @TODO Add proper payload
-       */
-      {
-        event: 'notificationUserMentioned',
-        user: walletAddress,
-        task: 'Draft task Name',
-        comment: commentData.body,
-        colonyName,
-      },
-    );
+    yield* executeCommand(inboxContext, commentMentionNotification, {
+      event: 'notificationUserMentioned',
+      user: walletAddress,
+      task: 'Draft task Name',
+      comment: commentData.body,
+    });
 
     /*
      * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
