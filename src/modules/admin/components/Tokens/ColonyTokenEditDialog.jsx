@@ -50,11 +50,10 @@ const ColonyTokenEditDialog = ({
   const availableTokens = useMappedState(mapAvailableTokens);
 
   const transform = useCallback(
-    () =>
-      compose(
-        withKeyPath(colonyAddress),
-        mergePayload({ colonyAddress }),
-      ),
+    compose(
+      withKeyPath(colonyAddress),
+      mergePayload({ colonyAddress }),
+    ),
     [colonyAddress],
   );
 

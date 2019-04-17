@@ -84,17 +84,16 @@ const TokenMintDialog = ({
   colonyAddress,
 }: Props) => {
   const transform = useCallback(
-    () =>
-      pipe(
-        mapPayload(({ amount: inputAmount }) => ({
-          // shift by the token's decimals (or default of 18)
-          amount: new BigNumber(
-            moveDecimal(inputAmount, decimals ? parseInt(decimals, 10) : 18),
-          ),
-        })),
-        withKeyPath(colonyAddress),
-        mergePayload({ colonyAddress }),
-      ),
+    pipe(
+      mapPayload(({ amount: inputAmount }) => ({
+        // shift by the token's decimals (or default of 18)
+        amount: new BigNumber(
+          moveDecimal(inputAmount, decimals ? parseInt(decimals, 10) : 18),
+        ),
+      })),
+      withKeyPath(colonyAddress),
+      mergePayload({ colonyAddress }),
+    ),
     [decimals, colonyAddress],
   );
 
