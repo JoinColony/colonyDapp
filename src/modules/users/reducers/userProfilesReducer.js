@@ -28,23 +28,6 @@ const userProfilesReducer: ReducerType<
         ? state.setIn([...recordPath, 'profile'], profile)
         : state.setIn(recordPath, UserRecord({ profile }));
     }
-
-    case ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { activities },
-      } = action;
-      const recordPath = [...keyPath, 'record'];
-      return state.hasIn(recordPath)
-        ? state.setIn(
-            [...recordPath, 'activities'],
-            List.of(
-              ...activities.map(activity => UserActivityRecord(activity)),
-            ),
-          )
-        : state;
-    }
-
     default:
       return state;
   }
