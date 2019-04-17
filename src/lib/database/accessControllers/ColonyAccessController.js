@@ -41,7 +41,10 @@ class ColonyAccessController extends AbstractAccessController<
   }
 
   async save() {
-    const isAllowed = await this.can('is-colony-founder');
+    const isAllowed = await this.can(
+      'is-colony-founder',
+      this._purserWallet.address,
+    );
     if (!isAllowed)
       throw new Error('Cannot create colony database, user not allowed');
 
@@ -69,17 +72,19 @@ class ColonyAccessController extends AbstractAccessController<
     // Is the wallet signature valid?
     const {
       payload: { value: event },
+      identity: { id: user },
     } = entry;
-    return this.can(event.type, event);
+    return this.can(event.type, user, event);
   }
 
   async can<Context: {}>(
     actionId: string,
+    user: string,
     context: ?Context,
   ): Promise<boolean> {
     return this._manager.can(
-      this._purserWallet.address,
       actionId,
+      user,
       this._extendVerifyContext<Context>(context),
     );
   }
