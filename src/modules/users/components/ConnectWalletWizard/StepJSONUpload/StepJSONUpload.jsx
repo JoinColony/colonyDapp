@@ -2,7 +2,8 @@
 
 import type { FormikBag } from 'formik';
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -103,60 +104,66 @@ const StepJSONUpload = ({
   previousStep,
   wizardForm,
   wizardValues,
-}: Props) => (
-  <ActionForm
-    submit={ACTIONS.WALLET_CREATE}
-    success={ACTIONS.CURRENT_USER_CREATE}
-    error={ACTIONS.WALLET_CREATE_ERROR}
-    onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
-      setStatus({ error: MSG.errorUnlockWallet });
-    }}
-    onSuccess={values => nextStep({ ...values })}
-    validationSchema={validationSchema}
-    transform={pipe(
+}: Props) => {
+  const transform = useCallback(
+    pipe(
       mergePayload(wizardValues),
       mapPayload(transformPayload),
-    )}
-    {...wizardForm}
-  >
-    {({ status, isValid, values }) => (
-      <main>
-        <div className={styles.content}>
-          <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-          <div className={styles.uploadArea}>
-            <FileUpload
-              accept={['application/json']}
-              name="walletJsonFileUpload"
-              label={MSG.fileUploadLabel}
-              help={MSG.fileUploadHelp}
-              upload={readKeystoreFromFileData}
+    ),
+    [wizardValues],
+  );
+  return (
+    <ActionForm
+      submit={ACTIONS.WALLET_CREATE}
+      success={ACTIONS.CURRENT_USER_CREATE}
+      error={ACTIONS.WALLET_CREATE_ERROR}
+      onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
+        setStatus({ error: MSG.errorUnlockWallet });
+      }}
+      onSuccess={values => nextStep({ ...values })}
+      validationSchema={validationSchema}
+      transform={transform}
+      {...wizardForm}
+    >
+      {({ status, isValid, values }) => (
+        <main>
+          <div className={styles.content}>
+            <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+            <div className={styles.uploadArea}>
+              <FileUpload
+                accept={['application/json']}
+                name="walletJsonFileUpload"
+                label={MSG.fileUploadLabel}
+                help={MSG.fileUploadHelp}
+                upload={readKeystoreFromFileData}
+              />
+            </div>
+            <Input
+              name="walletJsonPassword"
+              label={MSG.filePasswordLabel}
+              help={MSG.filePasswordHelp}
+              type="password"
             />
           </div>
-          <Input
-            name="walletJsonPassword"
-            label={MSG.filePasswordLabel}
-            help={MSG.filePasswordHelp}
-            type="password"
-          />
-        </div>
-        <FormStatus status={status} />
-        <div className={styles.actions}>
-          <Button
-            appearance={{ theme: 'secondary', size: 'large' }}
-            text={MSG.buttonBack}
-            onClick={() => previousStep(values)}
-          />
-          <Button
-            appearance={{ theme: 'primary', size: 'large' }}
-            disabled={!isValid}
-            text={MSG.buttonAdvance}
-            type="submit"
-          />
-        </div>
-      </main>
-    )}
-  </ActionForm>
-);
+          <FormStatus status={status} />
+          <div className={styles.actions}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              text={MSG.buttonBack}
+              onClick={() => previousStep(values)}
+            />
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              disabled={!isValid}
+              text={MSG.buttonAdvance}
+              type="submit"
+            />
+          </div>
+        </main>
+      )}
+    </ActionForm>
+  );
+};
 
 StepJSONUpload.displayName = displayName;
 

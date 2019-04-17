@@ -160,25 +160,32 @@ export const useAsyncFunction = <P, R>({
   error: string,
   transform?: ActionTransformFnType,
 |}): $PropertyType<AsyncFunction<P, R>, 'asyncFunction'> => {
-  const ref = useRef();
-  if (!ref.current) {
-    let setPayload;
-    if (transform) {
-      setPayload = (action, payload) => {
-        const newAction = transform({ ...action, payload });
-        return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
-      };
-    }
-    ref.current = promiseListener.createAsyncFunction<P, R>({
-      start: submit,
-      resolve: success,
-      reject: error,
-      setPayload,
-    });
+  const asyncFunc = useMemo(
+    () => {
+      let setPayload;
+      if (transform) {
+        setPayload = (action, payload) => {
+          const newAction = transform({ ...action, payload });
+          return { ...newAction, meta: { ...action.meta, ...newAction.meta } };
+        };
+      }
+      return promiseListener.createAsyncFunction<P, R>({
+        start: submit,
+        resolve: success,
+        reject: error,
+        setPayload,
+      });
+    },
+    [submit, success, error, transform],
+  );
+  // Unsubscribe from the previous async function when it changes
+  const prevAsyncFunc = usePrevious(asyncFunc);
+  if (prevAsyncFunc && prevAsyncFunc !== asyncFunc) {
+    prevAsyncFunc.unsubscribe();
   }
   // Automatically unsubscribe on unmount
-  useEffect(() => () => ref.current.unsubscribe(), []);
-  return ref.current.asyncFunction;
+  useEffect(() => () => asyncFunc.unsubscribe(), [asyncFunc]);
+  return asyncFunc.asyncFunction;
 };
 
 /*

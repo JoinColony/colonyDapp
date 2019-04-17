@@ -4,7 +4,8 @@ import type { FormikProps } from 'formik';
 
 import { ContentState, EditorState } from 'draft-js';
 
-import React from 'react';
+// $FlowFixMe upgrade react
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
@@ -30,32 +31,37 @@ const TaskDescription = ({
   isTaskCreator,
   colonyAddress,
   draftId,
-}: Props) => (
-  <ActionForm
-    initialValues={{
-      description: EditorState.createWithContent(
-        ContentState.createFromText(description || ''),
-      ),
-    }}
-    submit={ACTIONS.TASK_SET_DESCRIPTION}
-    success={ACTIONS.TASK_SET_DESCRIPTION_SUCCESS}
-    error={ACTIONS.TASK_SET_DESCRIPTION_ERROR}
-    transform={pipe(
+}: Props) => {
+  const transform = useCallback(
+    pipe(
       mapPayload(({ description: editor }) => ({
         description: editor.getCurrentContent().getPlainText(),
       })),
       mergePayload({ colonyAddress, draftId }),
-    )}
-  >
-    {({ submitForm }: FormikProps<*>) => (
-      <MultiLineEdit
-        name="description"
-        placeholder={MSG.placeholder}
-        readOnly={!isTaskCreator}
-        onEditorBlur={() => submitForm()}
-      />
-    )}
-  </ActionForm>
-);
+    ),
+  );
+  return (
+    <ActionForm
+      initialValues={{
+        description: EditorState.createWithContent(
+          ContentState.createFromText(description || ''),
+        ),
+      }}
+      submit={ACTIONS.TASK_SET_DESCRIPTION}
+      success={ACTIONS.TASK_SET_DESCRIPTION_SUCCESS}
+      error={ACTIONS.TASK_SET_DESCRIPTION_ERROR}
+      transform={transform}
+    >
+      {({ submitForm }: FormikProps<*>) => (
+        <MultiLineEdit
+          name="description"
+          placeholder={MSG.placeholder}
+          readOnly={!isTaskCreator}
+          onEditorBlur={() => submitForm()}
+        />
+      )}
+    </ActionForm>
+  );
+};
 
 export default TaskDescription;

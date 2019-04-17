@@ -2,7 +2,8 @@
 
 import type { FormikBag } from 'formik';
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -64,45 +65,52 @@ const StepMnemonic = ({
   previousStep,
   wizardForm,
   wizardValues,
-}: Props) => (
-  <ActionForm
-    submit={ACTIONS.WALLET_CREATE}
-    success={ACTIONS.CURRENT_USER_CREATE}
-    error={ACTIONS.WALLET_CREATE_ERROR}
-    onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
-      setStatus({ error: MSG.errorOpenMnemonic });
-    }}
-    onSuccess={values => nextStep({ ...values })}
-    validationSchema={validationSchema}
-    transform={mergePayload(wizardValues)}
-    {...wizardForm}
-  >
-    {({ isSubmitting, isValid, status, values }) => (
-      <main>
-        <div className={styles.content}>
-          <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
-          <Textarea label={MSG.instructionText} name="connectwalletmnemonic" />
-        </div>
-        <FormStatus status={status} />
-        <div className={styles.actions}>
-          <Button
-            appearance={{ theme: 'secondary', size: 'large' }}
-            text={MSG.buttonBackText}
-            onClick={() => previousStep(values)}
-          />
-          <Button
-            appearance={{ theme: 'primary', size: 'large' }}
-            disabled={!isValid}
-            text={MSG.buttonAdvanceText}
-            type="submit"
-            loading={isSubmitting}
-            data-test="submitMnemonic"
-          />
-        </div>
-      </main>
-    )}
-  </ActionForm>
-);
+}: Props) => {
+  const transform = useCallback(mergePayload(wizardValues), [wizardValues]);
+
+  return (
+    <ActionForm
+      submit={ACTIONS.WALLET_CREATE}
+      success={ACTIONS.CURRENT_USER_CREATE}
+      error={ACTIONS.WALLET_CREATE_ERROR}
+      onError={(_: Object, { setStatus }: FormikBag<Object, FormValues>) => {
+        setStatus({ error: MSG.errorOpenMnemonic });
+      }}
+      onSuccess={values => nextStep({ ...values })}
+      validationSchema={validationSchema}
+      transform={transform}
+      {...wizardForm}
+    >
+      {({ isSubmitting, isValid, status, values }) => (
+        <main>
+          <div className={styles.content}>
+            <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
+            <Textarea
+              label={MSG.instructionText}
+              name="connectwalletmnemonic"
+            />
+          </div>
+          <FormStatus status={status} />
+          <div className={styles.actions}>
+            <Button
+              appearance={{ theme: 'secondary', size: 'large' }}
+              text={MSG.buttonBackText}
+              onClick={() => previousStep(values)}
+            />
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              disabled={!isValid}
+              text={MSG.buttonAdvanceText}
+              type="submit"
+              loading={isSubmitting}
+              data-test="submitMnemonic"
+            />
+          </div>
+        </main>
+      )}
+    </ActionForm>
+  );
+};
 
 StepMnemonic.displayName = displayName;
 
