@@ -2,13 +2,15 @@
 
 import type { FormikBag } from 'formik';
 
-import React, { Component, Fragment } from 'react';
+// $FlowFixMe
+import React, { useState, useEffect, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
 import type { WizardProps } from '~core/Wizard';
 
+import { log } from '~utils/debug';
 import { mergePayload } from '~utils/actions';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -56,12 +58,6 @@ type FormValues = {};
 
 type Props = WizardProps<FormValues>;
 
-type State = {
-  isLoading: boolean,
-  isValid: boolean,
-  accountIndex: number,
-};
-
 // TODO provide some means in Trufflepig to get information for these accounts
 // (at the moment we are assuming that 10 addresses are available).
 // Waiting on PR: colonyJS#319
@@ -73,142 +69,134 @@ const accountIndexOptions = Array.from({ length: 10 }).map((_, value) => ({
   },
 }));
 
-class StepTrufflePig extends Component<Props, State> {
-  timerHandle: TimeoutID;
+const displayName = 'users.ConnectWalletWizard.StepTrufflePig';
 
-  static displayName = 'users.ConnectWalletWizard.StepTrufflePig';
+const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isValid, setIsValid] = useState(false);
+  const [accountIndex, setAccountIndex] = useState(0);
+  const [retryAttempts, setRetryAttempts] = useState(0);
 
-  state = {
-    isLoading: false,
-    isValid: false,
-    accountIndex: 0,
-  };
+  useEffect(
+    () => {
+      const connectTrufflepig = async () => {
+        setIsLoading(true);
+        try {
+          const loader = new TrufflepigLoader();
+          await loader.getAccount(accountIndex);
+          setIsValid(true);
+        } catch (caughtError) {
+          /*
+           * Since this is a dev-only loader, logging the error is enough.
+           */
+          log(caughtError);
+          setIsValid(false);
+        }
+        setIsLoading(false);
+      };
+      connectTrufflepig();
+    },
+    /*
+     * Reconnect to Trufflepig whenever the account index or retry
+     * attempts change
+     */
+    [accountIndex, retryAttempts],
+  );
 
-  componentDidMount() {
-    this.connectTrufflePig();
-  }
+  const handleRetryClick = useCallback(
+    () => (event: SyntheticEvent<*>) => {
+      event.preventDefault();
+      setRetryAttempts(retryAttempts + 1);
+    },
+    [retryAttempts],
+  );
 
-  componentWilUnmount() {
-    if (this.timerHandle) {
-      clearTimeout(this.timerHandle);
-    }
-  }
+  const transform = useCallback(
+    mergePayload({ ...wizardValues, accountIndex }),
+    [wizardValues, accountIndex],
+  );
 
-  connectTrufflePig = async () => {
-    const { accountIndex } = this.state;
-    let trufflepigError = null;
-    try {
-      const loader = new TrufflepigLoader();
-      await loader.getAccount(accountIndex);
-    } catch (error) {
-      trufflepigError = error;
-    }
-    this.setState({
-      isValid: !trufflepigError,
-      isLoading: false,
-    });
-  };
-
-  handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    evt.preventDefault();
-    this.reconnectTrufflePig();
-  };
-
-  reconnectTrufflePig = () => {
-    this.setState({ isLoading: true });
-    // add a short timeout to show the loading spinner so the user knows there's something processing
-    this.timerHandle = setTimeout(async () => {
-      await this.connectTrufflePig();
-    }, 500);
-  };
-
-  setAccountIndex = (_: string, accountIndex: number) => {
-    this.setState({ accountIndex });
-    this.reconnectTrufflePig();
-  };
-
-  render() {
-    const { previousStep, wizardForm, wizardValues } = this.props;
-    const { isLoading, isValid, accountIndex } = this.state;
-    return (
-      <ActionForm
-        submit={ACTIONS.WALLET_CREATE}
-        success={ACTIONS.CURRENT_USER_CREATE}
-        error={ACTIONS.WALLET_CREATE_ERROR}
-        onError={(
-          errorMessage: string,
-          { setStatus }: FormikBag<Object, FormValues>,
-        ) => {
-          setStatus({ error: MSG.errorOpenTrufflepig });
-        }}
-        transform={mergePayload({ ...wizardValues, accountIndex })}
-        {...wizardForm}
-      >
-        {({ status, isSubmitting, values }) => (
-          <main>
-            <div className={styles.content}>
-              <div className={styles.iconContainer}>
-                <Icon
-                  name="wallet"
-                  title="wallet"
-                  appearance={{ size: 'medium' }}
-                />
-              </div>
-              {isValid ? (
-                <Fragment>
-                  <Heading
-                    text={MSG.heading}
-                    appearance={{ size: 'medium', margin: 'none' }}
-                  />
-                  <Heading
-                    text={MSG.subHeading}
-                    appearance={{ size: 'medium' }}
-                  />
-                  <Select
-                    $value={accountIndex}
-                    form={{ setFieldValue: this.setAccountIndex }}
-                    label={MSG.accountIndex}
-                    name="accountIndex"
-                    options={accountIndexOptions}
-                    data-test="trufflepigAccountSelector"
-                  />
-                </Fragment>
-              ) : (
+  return (
+    <ActionForm
+      submit={ACTIONS.WALLET_CREATE}
+      success={ACTIONS.CURRENT_USER_CREATE}
+      error={ACTIONS.WALLET_CREATE_ERROR}
+      onError={(
+        errorMessage: string,
+        { setStatus }: FormikBag<Object, FormValues>,
+      ) => {
+        setStatus({ error: MSG.errorOpenTrufflepig });
+      }}
+      transform={transform}
+      {...wizardForm}
+    >
+      {({ status, isSubmitting, values }) => (
+        <main>
+          <div className={styles.content}>
+            <div className={styles.iconContainer}>
+              <Icon
+                name="wallet"
+                title="wallet"
+                appearance={{ size: 'medium' }}
+              />
+            </div>
+            {isValid ? (
+              <>
                 <Heading
-                  text={
-                    status && status.error ? status.error : MSG.errorHeading
-                  }
+                  text={MSG.heading}
                   appearance={{ size: 'medium', margin: 'none' }}
                 />
-              )}
-            </div>
-            <div className={styles.actions}>
-              <Button
-                text={MSG.buttonBack}
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={() => previousStep(values)}
+                <Heading
+                  text={MSG.subHeading}
+                  appearance={{ size: 'medium' }}
+                />
+                <Select
+                  $value={Number(accountIndex)}
+                  form={{
+                    setFieldValue: (key: string, value: number) =>
+                      setAccountIndex(value),
+                  }}
+                  label={MSG.accountIndex}
+                  name="accountIndex"
+                  options={accountIndexOptions}
+                  data-test="trufflepigAccountSelector"
+                />
+              </>
+            ) : (
+              <Heading
+                text={status && status.error ? status.error : MSG.errorHeading}
+                appearance={{ size: 'medium', margin: 'none' }}
               />
-              {isValid ? (
-                <Button
-                  text={MSG.buttonAdvance}
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  type="submit"
-                  loading={isLoading || isSubmitting}
-                />
-              ) : (
-                <Button
-                  text={MSG.buttonRetry}
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  onClick={this.handleRetryClick}
-                  loading={isLoading || isSubmitting}
-                />
-              )}
-            </div>
-          </main>
-        )}
-      </ActionForm>
-    );
-  }
-}
+            )}
+          </div>
+          <div className={styles.actions}>
+            <Button
+              text={MSG.buttonBack}
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={() => previousStep(values)}
+            />
+            {isValid ? (
+              <Button
+                text={MSG.buttonAdvance}
+                appearance={{ theme: 'primary', size: 'large' }}
+                type="submit"
+                loading={isLoading || isSubmitting}
+              />
+            ) : (
+              <Button
+                text={MSG.buttonRetry}
+                appearance={{ theme: 'primary', size: 'large' }}
+                onClick={handleRetryClick}
+                loading={isLoading || isSubmitting}
+              />
+            )}
+          </div>
+        </main>
+      )}
+    </ActionForm>
+  );
+};
+
+StepTrufflePig.displayName = displayName;
 
 export default StepTrufflePig;
