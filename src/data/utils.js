@@ -20,6 +20,7 @@ export const createEventCreator = <T: string>(type: T) => <P>(
   meta: {
     id: nanoid(),
     timestamp: Date.now(),
+    userAddress: '', // This will get set by the EventStore from the Orbit Entry
     version: VERSION,
   },
   payload,

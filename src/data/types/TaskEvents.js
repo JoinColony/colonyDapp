@@ -49,14 +49,12 @@ export type TaskEvents = {|
     typeof DOMAIN_SET,
     {|
       domainId: number,
-      userAddress: string,
     |},
   >,
   DUE_DATE_SET: EventDefinition<
     typeof DUE_DATE_SET,
     {|
       dueDate: number,
-      userAddress: string,
     |},
   >,
   PAYOUT_SET: EventDefinition<
@@ -64,28 +62,24 @@ export type TaskEvents = {|
     {|
       amount: string,
       token: string,
-      userAddress: string,
     |},
   >,
   SKILL_SET: EventDefinition<
     typeof SKILL_SET,
     {|
       skillId: number,
-      userAddress: string,
     |},
   >,
   TASK_CANCELLED: EventDefinition<
     typeof TASK_CANCELLED,
     {|
       status: typeof TASK_STATUS.CANCELLED,
-      userAddress: string,
     |},
   >,
   TASK_CLOSED: EventDefinition<
     typeof TASK_CLOSED,
     {|
       status: typeof TASK_STATUS.CLOSED,
-      userAddress: string,
     |},
   >,
   TASK_CREATED: EventDefinition<
@@ -99,7 +93,6 @@ export type TaskEvents = {|
     typeof TASK_DESCRIPTION_SET,
     {|
       description: string,
-      userAddress: string,
     |},
   >,
   TASK_FINALIZED: EventDefinition<
@@ -110,41 +103,35 @@ export type TaskEvents = {|
       amountPaid: string,
       token?: string,
       paymentId?: number,
-      userAddress: string,
     |},
   >,
   TASK_TITLE_SET: EventDefinition<
     typeof TASK_TITLE_SET,
     {|
       title: string,
-      userAddress: string,
     |},
   >,
   WORK_INVITE_SENT: EventDefinition<
     typeof WORK_INVITE_SENT,
     {|
-      userAddress: string,
       workerAddress: string,
     |},
   >,
   WORK_REQUEST_CREATED: EventDefinition<
     typeof WORK_REQUEST_CREATED,
     {|
-      userAddress: string,
       workerAddress: string,
     |},
   >,
   WORKER_ASSIGNED: EventDefinition<
     typeof WORKER_ASSIGNED,
     {|
-      userAddress: string,
       workerAddress: string,
     |},
   >,
   WORKER_UNASSIGNED: EventDefinition<
     typeof WORKER_UNASSIGNED,
     {|
-      userAddress: string,
       workerAddress: string,
     |},
   >,

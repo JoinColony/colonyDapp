@@ -38,12 +38,8 @@ const getTaskFeedItemRecordProps = (event: *) => {
     }
 
     default: {
-      const { payload, type } = event;
       return {
-        event: TaskEventRecord({
-          payload,
-          type,
-        }),
+        event: TaskEventRecord(event),
       };
     }
   }

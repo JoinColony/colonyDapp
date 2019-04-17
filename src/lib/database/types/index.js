@@ -3,7 +3,8 @@
 import type { ObjectSchema } from 'yup';
 
 import { PurserIdentity, PurserIdentityProvider } from '..';
-import type { AccessController, Entry } from './AccessController';
+import type { AccessController } from './AccessController';
+import type { Entry } from './Entry';
 
 export type { AccessController, Entry };
 export type { Identity, IdentityObject } from './Identity';

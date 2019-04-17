@@ -2,13 +2,28 @@
 
 import Store from './Store';
 
-import type { EventIteratorOptions, OrbitDBEventStore } from '../types';
+import type { EventIteratorOptions, OrbitDBEventStore, Entry } from '../types';
 
 /**
  * The wrapper Store class for orbit's eventlog store.
  */
 class EventStore extends Store {
   static orbitType = 'eventlog';
+
+  static decorateEntry({
+    identity: { id: userAddress },
+    payload: {
+      value: { meta, ...event },
+    },
+  }: Entry) {
+    return {
+      ...event,
+      meta: {
+        ...meta,
+        userAddress,
+      },
+    };
+  }
 
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBEventStore = this._orbitStore;
@@ -28,27 +43,31 @@ class EventStore extends Store {
       .iterator(filter)
       .collect()
       .reduce(
-        (events, event) => [
-          ...events,
-          ...((event &&
-            event.next &&
-            event.next.length &&
-            event.next.map(hash => this._orbitStore.get(hash))) ||
+        (entries, entry) => [
+          ...entries,
+          ...((entry &&
+            entry.next &&
+            entry.next.length &&
+            entry.next.map(hash => this._orbitStore.get(hash))) ||
             []),
-          event,
+          entry,
         ],
         [],
       )
-      .map(event => event.payload.value);
+      .map(entry => this.constructor.decorateEntry(entry));
   }
 
   async append(value: {}) {
     return this._orbitStore.add(value);
   }
 
+  getEvent(hash: string) {
+    return this.constructor.decorateEntry(this._orbitStore.get(hash));
+  }
+
   get(hashOrOptions: string | EventIteratorOptions) {
     return typeof hashOrOptions === 'string'
-      ? this._orbitStore.get(hashOrOptions)
+      ? this.getEvent(hashOrOptions)
       : this.all(hashOrOptions);
   }
 
@@ -56,7 +75,7 @@ class EventStore extends Store {
     return this._orbitStore
       .iterator(options)
       .collect()
-      .map(item => item.payload.value);
+      .map(entry => this.constructor.decorateEntry(entry));
   }
 }
 export default EventStore;

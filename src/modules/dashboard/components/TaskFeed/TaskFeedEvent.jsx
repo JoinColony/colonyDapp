@@ -47,7 +47,7 @@ const MSG = defineMessages({
   },
   payoutSet: {
     id: 'dashboard.TaskFeedEvent.payoutSet',
-    defaultMessage: 'Task payout added by {user}', // TODO add other text
+    defaultMessage: 'Task payout added by {user}', // TODO add other text in #943
   },
   skillSet: {
     id: 'dashboard.TaskFeedEvent.skillSet',
@@ -102,11 +102,14 @@ type Props = {|
 
 const TaskFeedEventDomainSet = ({
   event: {
-    payload: { userAddress, domainId },
+    meta: { userAddress },
+    payload: { domainId },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   const { domainName } = useSelector(domainSelector, [domainId]) || {
+    // TODO do not fall back to this, use a data fetcher when the domain
+    // modal is wired up properly
     domainName: 'Example domain',
   };
   return (
@@ -122,10 +125,10 @@ const TaskFeedEventDomainSet = ({
 
 const TaskFeedEventCreated = ({
   event: {
-    payload: { creatorAddress },
+    meta: { userAddress },
   },
 }: *) => {
-  const user = useSelector(friendlyUsernameSelector, [creatorAddress]);
+  const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
     <FormattedMessage {...MSG.created} values={{ user: <span>{user}</span> }} />
   );
@@ -133,7 +136,8 @@ const TaskFeedEventCreated = ({
 
 const TaskFeedEventDueDateSet = ({
   event: {
-    payload: { userAddress, dueDate },
+    meta: { userAddress },
+    payload: { dueDate },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -150,8 +154,8 @@ const TaskFeedEventDueDateSet = ({
 
 const TaskFeedEventPayoutSet = ({
   event: {
-    // TODO use more from payload
-    payload: { userAddress },
+    meta: { userAddress },
+    // TODO use more from payload in #943
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -165,7 +169,8 @@ const TaskFeedEventPayoutSet = ({
 
 const TaskFeedEventSkillSet = ({
   event: {
-    payload: { userAddress, skillId },
+    meta: { userAddress },
+    payload: { skillId },
   },
 }: *) => {
   const { name: skillName } = useMemo(
@@ -183,7 +188,7 @@ const TaskFeedEventSkillSet = ({
 
 const TaskFeedEventCancelled = ({
   event: {
-    payload: { userAddress },
+    meta: { userAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -197,7 +202,7 @@ const TaskFeedEventCancelled = ({
 
 const TaskFeedEventClosed = ({
   event: {
-    payload: { userAddress },
+    meta: { userAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -208,7 +213,8 @@ const TaskFeedEventClosed = ({
 
 const TaskFeedEventDescriptionSet = ({
   event: {
-    payload: { userAddress, description },
+    meta: { userAddress },
+    payload: { description },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -222,7 +228,7 @@ const TaskFeedEventDescriptionSet = ({
 
 const TaskFeedEventFinalized = ({
   event: {
-    payload: { userAddress },
+    meta: { userAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -236,7 +242,8 @@ const TaskFeedEventFinalized = ({
 
 const TaskFeedEventTitleSet = ({
   event: {
-    payload: { userAddress, title },
+    meta: { userAddress },
+    payload: { title },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -250,7 +257,8 @@ const TaskFeedEventTitleSet = ({
 
 const TaskFeedEventWorkInviteSent = ({
   event: {
-    payload: { userAddress, workerAddress },
+    meta: { userAddress },
+    payload: { workerAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -268,7 +276,7 @@ const TaskFeedEventWorkInviteSent = ({
 
 const TaskFeedEventWorkRequestCreated = ({
   event: {
-    payload: { userAddress },
+    meta: { userAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
@@ -277,7 +285,8 @@ const TaskFeedEventWorkRequestCreated = ({
 
 const TaskFeedEventWorkerAssigned = ({
   event: {
-    payload: { userAddress, workerAddress },
+    meta: { userAddress },
+    payload: { workerAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);

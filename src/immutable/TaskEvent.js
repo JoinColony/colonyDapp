@@ -6,6 +6,7 @@ import { Record } from 'immutable';
 
 import type { $Pick } from '~types';
 import type { TaskEvents } from '~data/types/TaskEvents';
+import type { EventDefinition } from '~data/types';
 
 type Events = $Pick<
   TaskEvents,
@@ -28,8 +29,9 @@ type Events = $Pick<
 >;
 
 type TaskEventRecordProps = {|
-  type: $Keys<Events>,
+  meta: $PropertyType<EventDefinition<*, *>, 'meta'>,
   payload: Object,
+  type: $Keys<Events>,
 |};
 
 export type TaskEventType = $ReadOnly<TaskEventRecordProps>;
@@ -37,8 +39,9 @@ export type TaskEventType = $ReadOnly<TaskEventRecordProps>;
 export type TaskEventRecordType = RecordOf<TaskEventRecordProps>;
 
 const defaultValues: $Shape<TaskEventRecordProps> = {
-  type: undefined,
+  meta: undefined,
   payload: undefined,
+  type: undefined,
 };
 
 const TaskEventRecord: RecordFactory<TaskEventRecordProps> = Record(
