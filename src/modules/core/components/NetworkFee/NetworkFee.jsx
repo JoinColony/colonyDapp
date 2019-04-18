@@ -31,8 +31,6 @@ const MSG = defineMessages({
   },
 });
 
-const getFeePercentage = (feeInverse: BN): number => 1 / feeInverse;
-
 const getNetworkFee = (amount: BN | number, feePercentage: number): number =>
   new BN(amount).toNumber() * feePercentage;
 
@@ -51,13 +49,11 @@ const NetworkFee = ({ amount, symbol }: Props) => {
   } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
 
   // TODO return loader
-  if (isFetchingNetwork || !network || !network.feeInverse || networkError)
+  if (isFetchingNetwork || !network || !network.fee || networkError)
     return null;
 
-  const { feeInverse } = network;
-
-  const feePercentage: number = getFeePercentage(feeInverse);
-  const feeAmount: number = getNetworkFee(amount, feePercentage);
+  const { fee } = network;
+  const feeAmount: number = getNetworkFee(amount, fee);
 
   return (
     <>
@@ -78,7 +74,7 @@ const NetworkFee = ({ amount, symbol }: Props) => {
                 values={{
                   percentage: (
                     // eslint-disable-next-line react/style-prop-object
-                    <FormattedNumber style="percent" value={feePercentage} />
+                    <FormattedNumber style="percent" value={fee} />
                   ),
                 }}
               />
