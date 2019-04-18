@@ -127,15 +127,14 @@ const InboxItem = ({
     domainName,
     event,
     task,
-    user: address,
+    userAddress,
     onClickRoute,
   },
 }: Props) => {
-  const args = [address];
   const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
-    args,
-    args,
+    [userAddress],
+    [userAddress],
   );
   const {
     data: colony,

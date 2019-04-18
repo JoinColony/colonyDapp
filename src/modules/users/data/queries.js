@@ -360,8 +360,8 @@ export const getUserInboxActivity: UserActivitiesQuery<*, *> = ({
     const userInboxStore = await getUserInboxStore(ddb)(metadata);
     return userInboxStore
       .all()
-      .map(({ meta: { id, timestamp }, payload }) =>
-        Object.assign({}, payload, { id, timestamp }),
+      .map(({ meta: { id, timestamp, userAddress }, payload }) =>
+        Object.assign({}, payload, { id, timestamp, userAddress }),
       );
   },
 });

@@ -27,5 +27,5 @@ export type InboxElement = {
   onClickRoute?: string,
   otherUser?: string,
   task?: string,
-  user?: string,
+  userAddress?: string,
 };

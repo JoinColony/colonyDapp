@@ -62,7 +62,6 @@ export type UserEvents = {|
     typeof COMMENT_MENTION,
     {|
       event: string,
-      user?: Address,
       task?: string,
       comment?: string,
     |},

@@ -628,7 +628,6 @@ function* taskCommentAdd({
      */
     yield* executeCommand(inboxContext, commentMentionNotification, {
       event: 'notificationUserMentioned',
-      user: walletAddress,
       task: 'Draft task Name',
       comment: commentData.body,
     });
@@ -653,7 +652,7 @@ function* taskCommentAdd({
         activity: {
           id: nanoid(),
           event: 'notificationUserMentioned',
-          user: walletAddress,
+          userAddress: walletAddress,
           task: 'Draft task Name',
           comment: commentData.body,
           timestamp: commentData.timestamp,
