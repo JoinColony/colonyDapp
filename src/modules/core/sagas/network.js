@@ -3,7 +3,6 @@
 import type { Saga } from 'redux-saga';
 
 import { call, put, takeLatest } from 'redux-saga/effects';
-import BN from 'bn.js';
 
 import type { Action } from '~redux';
 
