@@ -7,22 +7,13 @@ import type { WithKeyPathDepth1 } from '~types';
 import { ACTIONS } from '../../index';
 
 export type NetworkActionTypes = {|
-  NETWORK_FETCH_FEE: Action<typeof ACTIONS.NETWORK_FETCH_FEE>,
-  NETWORK_FETCH_FEE_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.NETWORK_FETCH_FEE_SUCCESS,
+  NETWORK_FETCH: Action<typeof ACTIONS.NETWORK_FETCH>,
+  NETWORK_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.NETWORK_FETCH_SUCCESS,
     NetworkProps,
   >,
-  NETWORK_FETCH_FEE_ERROR: ErrorActionType<
-    typeof ACTIONS.NETWORK_FETCH_FEE_ERROR,
-    WithKeyPathDepth1,
-  >,
-  NETWORK_FETCH_VERSION: Action<typeof ACTIONS.NETWORK_FETCH_VERSION>,
-  NETWORK_FETCH_VERSION_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.NETWORK_FETCH_VERSION_SUCCESS,
-    NetworkProps,
-  >,
-  NETWORK_FETCH_VERSION_ERROR: ErrorActionType<
-    typeof ACTIONS.NETWORK_FETCH_VERSION_ERROR,
+  NETWORK_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.NETWORK_FETCH_ERROR,
     WithKeyPathDepth1,
   >,
 |};
