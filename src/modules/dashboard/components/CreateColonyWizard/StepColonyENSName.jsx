@@ -104,29 +104,25 @@ const StepColonyENSName = ({
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
-      // 1. Validate with schema
-      if (!validationSchema.isValidSync(values)) {
+      try {
+        await checkDomainTaken(values);
+      } catch (e) {
         const error = {
-          colonyName: MSG.errorDomainInvalid,
+          colonyName: MSG.errorDomainTaken,
         };
-        if (values.colonyName) throw error;
-      } else {
-        // 2. Validate with saga
-        try {
-          await checkDomainTaken(values);
-        } catch (e) {
-          const error = {
-            colonyName: MSG.errorDomainTaken,
-          };
-          throw error;
-        }
+        throw error;
       }
     },
     [checkDomainTaken],
   );
 
   return (
-    <Form onSubmit={nextStep} validate={validateDomain} {...wizardForm}>
+    <Form
+      onSubmit={nextStep}
+      validate={validateDomain}
+      validationSchema={validationSchema}
+      {...wizardForm}
+    >
       {({ isValid, isSubmitting, values }) => {
         const normalized = getNormalizedDomainText(values.colonyName);
         return (
