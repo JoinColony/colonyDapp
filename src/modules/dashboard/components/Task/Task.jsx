@@ -252,7 +252,11 @@ const Task = ({
             <TaskFeed draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
-            <TaskComments draftId={draftId} currentUser={currentUser} />
+            <TaskComments
+              draftId={draftId}
+              taskTitle={title}
+              currentUser={currentUser}
+            />
           </section>
         </div>
       </div>

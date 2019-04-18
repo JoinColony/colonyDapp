@@ -585,7 +585,7 @@ function* taskFeedItemsFetch({
 }
 
 function* taskCommentAdd({
-  payload: { draftId, commentData },
+  payload: { draftId, commentData, taskTitle },
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
@@ -628,7 +628,7 @@ function* taskCommentAdd({
      */
     yield* executeCommand(inboxContext, commentMentionNotification, {
       event: 'notificationUserMentioned',
-      task: 'Draft task Name',
+      taskTitle,
       comment: commentData.body,
     });
 
@@ -653,7 +653,7 @@ function* taskCommentAdd({
           id: nanoid(),
           event: 'notificationUserMentioned',
           userAddress: walletAddress,
-          task: 'Draft task Name',
+          taskTitle,
           comment: commentData.body,
           timestamp: commentData.timestamp,
         },

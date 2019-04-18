@@ -7,7 +7,7 @@ import { Record } from 'immutable';
 type Shared = {|
   id?: string,
   comment?: string,
-  task?: string,
+  taskTitle?: string,
   userAddress?: string,
   event: string,
   timestamp: Date,
@@ -21,7 +21,7 @@ export type UserActivityRecordType = RecordOf<Shared>;
 const defaultValues: $Shape<Shared> = {
   id: undefined,
   comment: undefined,
-  task: undefined,
+  taskTitle: undefined,
   userAddress: undefined,
   event: undefined,
   timestamp: new Date(),

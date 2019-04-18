@@ -84,8 +84,7 @@ export type UserInboxCommand<I: *, R: *> = Command<
 
 export type CommentMentionInboxCommandArgs = {|
   event: string,
-  user?: string,
-  task?: string,
+  taskTitle?: string,
   comment?: string,
   colonyName?: string,
 |};

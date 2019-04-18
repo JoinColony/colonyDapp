@@ -126,7 +126,7 @@ const InboxItem = ({
     timestamp,
     domainName,
     event,
-    task,
+    taskTitle,
     userAddress,
     onClickRoute,
   },
@@ -185,7 +185,7 @@ const InboxItem = ({
                   comment: makeInboxDetail(comment),
                   domain: makeInboxDetail(domainName),
                   other: makeInboxDetail(otherUser),
-                  task: makeInboxDetail(task),
+                  task: makeInboxDetail(taskTitle),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
