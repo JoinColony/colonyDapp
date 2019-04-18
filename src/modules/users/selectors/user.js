@@ -1,6 +1,7 @@
 /* @flow */
 
 import { createSelector } from 'reselect';
+
 import { Map as ImmutableMap } from 'immutable';
 
 import type {
@@ -114,6 +115,37 @@ export const currentUserColoniesSelector = (state: RootStateRecord) =>
 
 export const currentUserDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);
+
+export const currentUserRecentTokensSelector = createSelector(
+  currentUserTokensSelector,
+  currentUserTransactionsSelector,
+  (tokens, transactions) =>
+    Array.from(
+      new Map([
+        ...((tokens && tokens.record && tokens.record.entries()) || []),
+        ...((transactions && transactions.record) || []).map(({ token }) => [
+          token,
+          { address: token },
+        ]),
+      ]).values(),
+    ),
+);
+
+/*
+ * Given a user address, select (in order of preference):
+ * - The display name from the user profile
+ * - The username from the user profile
+ * - The user address
+ */
+export const friendlyUsernameSelector = createSelector(
+  userSelector,
+  (_, userAddress) => userAddress,
+  (user, userAddress): string => {
+    const { displayName, username } =
+      (user && user.getIn(['record', 'profile'])) || {};
+    return displayName || username || userAddress;
+  },
+);
 
 /*
  * User activities (Eg: Inbox)
