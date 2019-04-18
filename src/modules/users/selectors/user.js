@@ -114,3 +114,14 @@ export const currentUserColoniesSelector = (state: RootStateRecord) =>
 
 export const currentUserDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);
+
+/*
+ * User activities (Eg: Inbox)
+ */
+const getCurrentUserActivities = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_ACTIVITIES]);
+
+export const currentUserActivitiesSelector = createSelector(
+  getCurrentUserActivities,
+  activitities => activitities,
+);
