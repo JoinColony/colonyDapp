@@ -6,9 +6,11 @@ import BN from 'bn.js';
 
 import type { NetworkProps } from '~immutable';
 
+import Alert from '~core/Alert';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
+import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 
 import { networkFetcher } from '../../../../core/fetchers';
@@ -16,6 +18,10 @@ import { networkFetcher } from '../../../../core/fetchers';
 import styles from './NetworkFee.css';
 
 const MSG = defineMessages({
+  errorText: {
+    id: 'dashboard.Task.Payout.NetworkFee.errorText',
+    defaultMessage: 'There was an error loading network information.',
+  },
   colonyFeeText: {
     id: 'dashboard.Task.Payout.NetworkFee.colonyFeeText',
     defaultMessage: 'Colony Fee: {amount}',
@@ -48,9 +54,12 @@ const NetworkFee = ({ amount, symbol }: Props) => {
     error: networkError,
   } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
 
-  // TODO return loader
-  if (isFetchingNetwork || !network || !network.fee || networkError)
-    return null;
+  /*
+   * Handle instances where fee can't be displayed.
+   */
+  if (isFetchingNetwork) return <SpinnerLoader />;
+  if (networkError) return <Alert text={MSG.errorText} />;
+  if (!network || !network.fee) return null;
 
   const { fee } = network;
   const feeAmount: number = getNetworkFee(amount, fee);
