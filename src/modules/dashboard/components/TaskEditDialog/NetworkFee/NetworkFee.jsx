@@ -11,21 +11,21 @@ import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
 import { useDataFetcher } from '~utils/hooks';
 
-import { networkFetcher } from '../../fetchers';
+import { networkFetcher } from '../../../../core/fetchers';
 
 import styles from './NetworkFee.css';
 
 const MSG = defineMessages({
   colonyFeeText: {
-    id: 'NetworkFee.colonyFeeText',
+    id: 'dashboard.Task.Payout.NetworkFee.colonyFeeText',
     defaultMessage: 'Colony Fee: {amount}',
   },
   helpIconTitle: {
-    id: 'NetworkFee.helpIconTitle',
+    id: 'dashboard.Task.Payout.NetworkFee.helpIconTitle',
     defaultMessage: 'Help',
   },
   helpText: {
-    id: 'NetworkFee.helpText',
+    id: 'dashboard.Task.Payout.NetworkFee.helpText',
     defaultMessage:
       'There is a {percentage} fee to help run the Colony Network.',
   },
@@ -39,7 +39,7 @@ type Props = {|
   symbol: string,
 |};
 
-const displayName = 'NetworkFee';
+const displayName = 'dashboard.Task.Payout.NetworkFee';
 
 const NetworkFee = ({ amount, symbol }: Props) => {
   const {

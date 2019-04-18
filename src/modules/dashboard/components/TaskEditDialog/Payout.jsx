@@ -6,11 +6,12 @@ import BigNumber from 'bn.js';
 
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
-import NetworkFee from '~core/NetworkFee';
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
+
+import NetworkFee from './NetworkFee';
 
 import styles from './Payout.css';
 
