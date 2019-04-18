@@ -71,7 +71,7 @@ export type TaskActionTypes = {|
   >,
   TASK_COMMENT_ADD: TaskActionType<
     typeof ACTIONS.TASK_COMMENT_ADD,
-    {| commentData: * |},
+    {| commentData: *, taskTitle: string |},
   >,
   TASK_COMMENT_ADD_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_COMMENT_ADD_ERROR,

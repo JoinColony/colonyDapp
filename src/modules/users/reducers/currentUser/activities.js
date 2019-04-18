@@ -13,16 +13,14 @@ import type { ReducerType } from '~redux';
 const currentUserActivitiesReducer: ReducerType<
   ListType<UserActivityRecordType>,
   {|
-    // TODO these should use actions based on the current user.
-    // Currently, they are not dispatched.
     USER_ACTIVITIES_FETCH_SUCCESS: *,
-    USER_ACTIVITIES_UPDATE_SUCCESS: *,
+    USER_ACTIVITIES_ADD_SUCCESS: *,
   |},
 > = (state = List(), action) => {
   switch (action.type) {
-    case ACTIONS.USER_ACTIVITIES_UPDATE_SUCCESS: {
-      const { activities } = action.payload;
-      return List(activities.map(activity => UserActivityRecord(activity)));
+    case ACTIONS.USER_ACTIVITIES_ADD_SUCCESS: {
+      const { activity } = action.payload;
+      return state.push(UserActivityRecord(activity));
     }
     case ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS: {
       const { activities } = action.payload;

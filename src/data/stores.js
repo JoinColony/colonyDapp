@@ -8,11 +8,7 @@ import type { TaskDraftId } from '~immutable';
 
 import type { UserProfileStoreValues } from './storeValuesTypes';
 import type { DDB } from '../lib/database';
-import type {
-  EventStore,
-  FeedStore,
-  ValidatedKVStore,
-} from '../lib/database/stores';
+import type { EventStore, ValidatedKVStore } from '../lib/database/stores';
 
 import {
   colony as colonyStoreBlueprint,
@@ -120,7 +116,7 @@ export const getUserInboxStore = (ddb: DDB) => async ({
   inboxStoreAddress: string | OrbitDBAddress,
   walletAddress: Address,
 }) =>
-  ddb.getStore<FeedStore>(userInboxStoreBlueprint, inboxStoreAddress, {
+  ddb.getStore<EventStore>(userInboxStoreBlueprint, inboxStoreAddress, {
     walletAddress,
   });
 
@@ -151,7 +147,7 @@ export const createUserProfileStore = (ddb: DDB) => async ({
         walletAddress,
       },
     ),
-    ddb.createStore<FeedStore>(userInboxStoreBlueprint, {
+    ddb.createStore<EventStore>(userInboxStoreBlueprint, {
       walletAddress,
     }),
     ddb.createStore<EventStore>(userMetadataStoreBlueprint, {

@@ -53,6 +53,7 @@ type Props = {
   currentUser: UserType,
   openDialog: OpenDialog,
   draftId: string,
+  taskTitle: string,
 } & FormikProps<FormValues>;
 
 const displayName = 'dashboard.TaskComments';
@@ -67,6 +68,7 @@ const TaskComments = ({
     profile: { balance, walletAddress },
   },
   currentUser,
+  taskTitle,
   draftId,
 }: Props) => {
   const addComment = useAsyncFunction({
@@ -99,6 +101,7 @@ const TaskComments = ({
         author: walletAddress,
       },
       draftId,
+      taskTitle,
     }).then(() => {
       actions.setSubmitting(false);
       actions.resetForm({});

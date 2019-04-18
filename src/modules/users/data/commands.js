@@ -2,11 +2,7 @@
 
 import type { Address, OrbitDBAddress } from '~types';
 import type { TaskDraftId } from '~immutable';
-import type {
-  EventStore,
-  FeedStore,
-  ValidatedKVStore,
-} from '~lib/database/stores';
+import type { EventStore, ValidatedKVStore } from '~lib/database/stores';
 import type { Command, ContextWithMetadata, DDBContext } from '~data/types';
 import type { UserProfileStoreValues } from '~data/storeValuesTypes';
 
@@ -14,6 +10,7 @@ import {
   createUserProfileStore,
   getUserProfileStore,
   getUserMetadataStore,
+  getUserInboxStore,
 } from '~data/stores';
 
 import {
@@ -24,6 +21,7 @@ import {
   createUnsubscribeToColonyEvent,
   createSubscribeToTaskEvent,
   createUnsubscribeToTaskEvent,
+  createCommentMentionInboxEvent,
 } from './events';
 
 import { getUserColonies, getUserTasks } from './queries';
@@ -70,12 +68,33 @@ export type UserMetadataCommand<I: *, R: *> = Command<
   R,
 >;
 
+export type UserActivityCommandContext = ContextWithMetadata<
+  {|
+    walletAddress: string,
+    inboxStoreAddress: string | OrbitDBAddress,
+  |},
+  DDBContext,
+>;
+
+export type UserInboxCommand<I: *, R: *> = Command<
+  UserActivityCommandContext,
+  I,
+  R,
+>;
+
+export type CommentMentionInboxCommandArgs = {|
+  event: string,
+  taskTitle?: string,
+  comment?: string,
+  colonyName?: string,
+|};
+
 export const createUserProfile: UserCommand<
   {|
     username: string,
   |},
   {|
-    inboxStore: FeedStore,
+    inboxStore: EventStore,
     metadataStore: EventStore,
     profileStore: ValidatedKVStore<UserProfileStoreValues>,
   |},
@@ -285,5 +304,16 @@ export const unsubscribeToColony: UserMetadataCommand<
     const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
     await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
     return args.colonyAddress;
+  },
+});
+
+export const commentMentionNotification: UserInboxCommand<
+  CommentMentionInboxCommandArgs,
+  EventStore,
+> = ({ ddb, metadata }) => ({
+  async execute(args) {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    await userInboxStore.append(createCommentMentionInboxEvent(args));
+    return userInboxStore;
   },
 });

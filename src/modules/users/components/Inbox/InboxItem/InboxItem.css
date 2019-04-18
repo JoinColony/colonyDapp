@@ -36,7 +36,7 @@
   display: flex;
   margin-top: 2px;
   width: 100%;
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
 }
 
 .userAvatar {
@@ -73,6 +73,12 @@
 
 .fullWidthLink {
   width: 100%;
+}
+
+.spinnerWrapper {
+  padding: 21px 0 20px;
+  width: 100%;
+  text-align: center;
 }
 
 .noStyleButton {

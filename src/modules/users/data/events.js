@@ -11,6 +11,7 @@ const {
   TOKEN_REMOVED,
   UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
+  COMMENT_MENTION,
 } = USER_EVENT_TYPES;
 
 export const createNotificationsReadEvent = createEventCreator<
@@ -40,3 +41,7 @@ export const createUserAddTokenEvent = createEventCreator<typeof TOKEN_ADDED>(
 export const createUserRemoveTokenEvent = createEventCreator<
   typeof TOKEN_REMOVED,
 >(TOKEN_REMOVED);
+
+export const createCommentMentionInboxEvent = createEventCreator<
+  typeof COMMENT_MENTION,
+>(COMMENT_MENTION);

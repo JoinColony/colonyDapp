@@ -23,6 +23,7 @@ import {
   USERS_CURRENT_USER_METADATA,
   USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
   USERS_CURRENT_USER_TASKS,
+  USERS_CURRENT_USER_ACTIVITIES,
 } from '../constants';
 
 /*
@@ -144,4 +145,15 @@ export const friendlyUsernameSelector = createSelector(
       (user && user.getIn(['record', 'profile'])) || {};
     return displayName || username || userAddress;
   },
+);
+
+/*
+ * User activities (Eg: Inbox)
+ */
+const getCurrentUserActivities = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_ACTIVITIES]);
+
+export const currentUserActivitiesSelector = createSelector(
+  getCurrentUserActivities,
+  activitities => activitities,
 );

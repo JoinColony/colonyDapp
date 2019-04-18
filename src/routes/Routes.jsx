@@ -8,7 +8,7 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
 import Dashboard from '~dashboard/Dashboard';
-import Inbox from '~dashboard/Inbox';
+import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
 
 import ConnectWalletWizard from '~users/ConnectWalletWizard';

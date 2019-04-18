@@ -26,7 +26,11 @@ import type {
 } from '~data/types';
 
 import { USER_EVENT_TYPES } from '~data/constants';
-import { getUserMetadataStore, getUserProfileStore } from '~data/stores';
+import {
+  getUserMetadataStore,
+  getUserProfileStore,
+  getUserInboxStore,
+} from '~data/stores';
 import { getUserTokenAddresses } from './utils';
 import { getUserTasksReducer } from './reducers';
 
@@ -86,6 +90,20 @@ type UserColonyTransactionsQuery<I: *> = Query<
   UserColonyTransactionsQueryContext,
   I,
   ContractTransactionType[],
+>;
+
+export type UserActivitiesQueryContext = ContextWithMetadata<
+  {|
+    inboxStoreAddress: string | OrbitDBAddress,
+    walletAddress: string,
+  |},
+  DDBContext,
+>;
+
+export type UserActivitiesQuery<I: *, R: *> = Query<
+  UserActivitiesQueryContext,
+  I,
+  R,
 >;
 
 export const getUserProfile: UserQuery<void, UserProfileType> = ({
@@ -331,5 +349,19 @@ export const getUserMetadataStoreAddress: UserQuery<void, string> = ({
     const profileStore = await getUserProfileStore(ddb)(metadata);
     const { metadataStoreAddress } = await profileStore.all();
     return metadataStoreAddress;
+  },
+});
+
+export const getUserInboxActivity: UserActivitiesQuery<*, *> = ({
+  ddb,
+  metadata,
+}) => ({
+  async execute() {
+    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+    return userInboxStore
+      .all()
+      .map(({ meta: { id, timestamp, userAddress }, payload }) =>
+        Object.assign({}, payload, { id, timestamp, userAddress }),
+      );
   },
 });

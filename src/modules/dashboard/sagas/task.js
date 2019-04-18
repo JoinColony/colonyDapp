@@ -17,6 +17,7 @@ import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
+import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
   executeQuery,
@@ -33,6 +34,10 @@ import {
   taskMetadataSelector,
   taskSelector,
 } from '../selectors';
+import {
+  currentUserMetadataSelector,
+  walletAddressSelector,
+} from '../../users/selectors';
 import { getColonyContext } from './shared';
 
 import {
@@ -52,6 +57,7 @@ import {
   setTaskTitle,
   unassignWorker,
 } from '../data/commands';
+import { commentMentionNotification } from '../../users/data/commands';
 import { getTask, getTaskFeedItems } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
@@ -579,12 +585,21 @@ function* taskFeedItemsFetch({
 }
 
 function* taskCommentAdd({
-  payload: { draftId, commentData },
+  payload: { draftId, commentData, taskTitle },
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const context = yield call(getTaskStoreContext, draftId);
-    const { wallet } = context;
+    const commentsContext = yield call(getTaskStoreContext, draftId);
+    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
+    const walletAddress = yield select(walletAddressSelector);
+    const { wallet } = commentsContext;
+    const inboxContext = {
+      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+      metadata: {
+        walletAddress,
+        inboxStoreAddress,
+      },
+    };
     /*
      * TODO Wire message signing to the Gas Station, once it's available
      */
@@ -592,7 +607,7 @@ function* taskCommentAdd({
       message: JSON.stringify(commentData),
     });
 
-    const { event } = yield* executeCommand(context, postComment, {
+    const { event } = yield* executeCommand(commentsContext, postComment, {
       signature,
       content: {
         id: nanoid(),
@@ -601,11 +616,47 @@ function* taskCommentAdd({
       },
     });
 
+    /*
+     * @TODO We need to filter out mentioned users from `commentData`.
+     * In the old beta we used to use `linkify-it` to achieve that
+     *
+     * See: https://github.com/JoinColony/colonyDapp/issues/1011 for the
+     * implementation details regarding this
+     *
+     * Also, this should be iterated through each mentioned user, and add
+     * a notification event to each one's store
+     */
+    yield* executeCommand(inboxContext, commentMentionNotification, {
+      event: 'notificationUserMentioned',
+      taskTitle,
+      comment: commentData.body,
+    });
+
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
       payload: {
         draftId,
         event,
+      },
+      meta,
+    });
+
+    /*
+     * @NOTE This is assuming we have a notification for the current user
+     * So this should actually be gated behind a conditional
+     * (once the mentions are all wired up)
+     */
+    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
+      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+      payload: {
+        activity: {
+          id: nanoid(),
+          event: 'notificationUserMentioned',
+          userAddress: walletAddress,
+          taskTitle,
+          comment: commentData.body,
+          timestamp: commentData.timestamp,
+        },
       },
       meta,
     });

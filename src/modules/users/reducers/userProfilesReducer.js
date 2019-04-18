@@ -1,9 +1,9 @@
 /* @flow */
 
-import { List, Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 import { withDataRecordMap } from '~utils/reducers';
-import { UserRecord, UserProfileRecord, UserActivityRecord } from '~immutable';
+import { UserRecord, UserProfileRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 
 import type { UserRecordType, UsersMap } from '~immutable';
@@ -28,23 +28,6 @@ const userProfilesReducer: ReducerType<
         ? state.setIn([...recordPath, 'profile'], profile)
         : state.setIn(recordPath, UserRecord({ profile }));
     }
-
-    case ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS: {
-      const {
-        meta: { keyPath },
-        payload: { activities },
-      } = action;
-      const recordPath = [...keyPath, 'record'];
-      return state.hasIn(recordPath)
-        ? state.setIn(
-            [...recordPath, 'activities'],
-            List.of(
-              ...activities.map(activity => UserActivityRecord(activity)),
-            ),
-          )
-        : state;
-    }
-
     default:
       return state;
   }
