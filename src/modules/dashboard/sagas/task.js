@@ -17,6 +17,7 @@ import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
+import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
   executeQuery,
@@ -57,7 +58,7 @@ import {
   unassignWorker,
 } from '../data/commands';
 import { commentMentionNotification } from '../../users/data/commands';
-import { getTask, getTaskComments } from '../data/queries';
+import { getTask, getTaskFeedItems } from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -591,7 +592,6 @@ function* taskCommentAdd({
     const commentsContext = yield call(getTaskStoreContext, draftId);
     const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const walletAddress = yield select(walletAddressSelector);
-
     const { wallet } = commentsContext;
     const inboxContext = {
       ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
@@ -607,7 +607,7 @@ function* taskCommentAdd({
       message: JSON.stringify(commentData),
     });
 
-    yield* executeCommand(commentsContext, postComment, {
+    const { event } = yield* executeCommand(commentsContext, postComment, {
       signature,
       content: {
         id: nanoid(),
@@ -633,9 +633,6 @@ function* taskCommentAdd({
       comment: commentData.body,
     });
 
-    /*
-     * @NOTE If the above is sucessfull, put the comment in the Redux Store as well
-     */
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
       payload: {
