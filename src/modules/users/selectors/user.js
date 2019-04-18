@@ -26,6 +26,15 @@ import {
   USERS_CURRENT_USER_ACTIVITIES,
 } from '../constants';
 
+const userMapFilterTransform = (
+  input: ImmutableMap<string, DataRecordType<UserRecordType>>,
+) =>
+  input
+    .map(user => user.record)
+    .filter(Boolean)
+    .toList()
+    .toJS();
+
 /*
  * Username/address getters
  */
@@ -66,14 +75,17 @@ export const usersExceptSelector = createSelector(
     allUsers.filter((user, address) => ![].concat(except).includes(address)),
 );
 
-usersExceptSelector.transform = (
-  input: ImmutableMap<string, DataRecordType<UserRecordType>>,
+usersExceptSelector.transform = userMapFilterTransform;
+
+export const usersByAddressesSelector = (
+  state: RootStateRecord,
+  addresses: string[],
 ) =>
-  input
-    .map(user => user.record)
-    .filter(Boolean)
-    .toList()
-    .toJS();
+  state
+    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
+    .filter((user, address) => [].concat(addresses).includes(address));
+
+usersByAddressesSelector.transform = userMapFilterTransform;
 
 /*
  * Current user input selectors
