@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import BN from 'bn.js';
 
 import type { NetworkProps } from '~immutable';
@@ -26,9 +26,15 @@ const MSG = defineMessages({
   },
   helpText: {
     id: 'ColonyFee.helpText',
-    defaultMessage: 'There is a 2.5% fee to help run the Colony Network.',
+    defaultMessage:
+      'There is a {percentage} fee to help run the Colony Network.',
   },
 });
+
+const getFeePercentage = (feeInverse: BN): number => 1 / feeInverse;
+
+const getNetworkFee = (amount: BN | number, feePercentage: number): number =>
+  new BN(amount).toNumber() * feePercentage;
 
 type Props = {|
   amount: BN | number,
@@ -50,7 +56,8 @@ const ColonyFee = ({ amount, symbol }: Props) => {
 
   const { feeInverse } = network;
 
-  const feeAmount = new BN(amount).mul(new BN(feeInverse));
+  const feePercentage: number = getFeePercentage(feeInverse);
+  const feeAmount: number = getNetworkFee(amount, feePercentage);
 
   return (
     <>
@@ -66,7 +73,15 @@ const ColonyFee = ({ amount, symbol }: Props) => {
         <Tooltip
           content={
             <div className={styles.tooltipText}>
-              <FormattedMessage {...MSG.helpText} />
+              <FormattedMessage
+                {...MSG.helpText}
+                values={{
+                  percentage: (
+                    // eslint-disable-next-line react/style-prop-object
+                    <FormattedNumber style="percent" value={feePercentage} />
+                  ),
+                }}
+              />
             </div>
           }
         >
