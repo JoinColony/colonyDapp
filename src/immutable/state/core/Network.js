@@ -5,11 +5,13 @@ import type { RecordOf, RecordFactory } from 'immutable';
 import { Record } from 'immutable';
 
 export type NetworkProps = {
-  feeInverse?: string,
+  fee?: number,
+  feeInverse?: number,
   version?: number,
 };
 
 const defaultValues: $Shape<NetworkProps> = {
+  fee: undefined,
   feeInverse: undefined,
   version: undefined,
 };

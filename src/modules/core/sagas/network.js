@@ -14,10 +14,12 @@ function* networkFetch(): Saga<void> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
 
-    const { feeInverse } = yield call([
+    const { feeInverse: feeInverseBigNum } = yield call([
       colonyManager.networkClient.getFeeInverse,
       colonyManager.networkClient.getFeeInverse.call,
     ]);
+
+    const feeInverse = feeInverseBigNum.toNumber();
 
     const { version } = yield call([
       colonyManager.networkClient.getCurrentColonyVersion,
@@ -26,7 +28,11 @@ function* networkFetch(): Saga<void> {
 
     yield put<Action<typeof ACTIONS.NETWORK_FETCH_SUCCESS>>({
       type: ACTIONS.NETWORK_FETCH_SUCCESS,
-      payload: { feeInverse: feeInverse.toString(), version },
+      payload: {
+        fee: 1 / feeInverse,
+        feeInverse,
+        version,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.NETWORK_FETCH_ERROR, error);
