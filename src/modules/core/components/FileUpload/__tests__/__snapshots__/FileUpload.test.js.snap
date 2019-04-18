@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FileUpload component Renders initial component 1`] = `
-<C
+<FormikConnect(FieldArrayInner)
   name="fileUpload"
   render={[Function]}
 />
