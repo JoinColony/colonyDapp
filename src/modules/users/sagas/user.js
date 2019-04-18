@@ -49,7 +49,7 @@ import {
   getUserTasks,
   getUserTokens,
   getUserMetadataStoreAddress,
-  getUserActivities,
+  getUserInboxActivity,
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { userFetch as userFetchActionCreator } from '../actionCreators';
@@ -502,7 +502,7 @@ function* userActivitiesFetch({
         inboxStoreAddress,
       },
     };
-    const activities = yield* executeQuery(context, getUserActivities);
+    const activities = yield* executeQuery(context, getUserInboxActivity);
 
     yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,

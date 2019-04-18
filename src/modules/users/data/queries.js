@@ -352,7 +352,7 @@ export const getUserMetadataStoreAddress: UserQuery<void, string> = ({
   },
 });
 
-export const getUserActivities: UserActivitiesQuery<*, *> = ({
+export const getUserInboxActivity: UserActivitiesQuery<*, *> = ({
   ddb,
   metadata,
 }) => ({
