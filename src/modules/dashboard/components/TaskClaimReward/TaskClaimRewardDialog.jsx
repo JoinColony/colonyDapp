@@ -1,9 +1,9 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 
-import type { TaskPayoutType } from '~immutable';
+import type { NetworkProps, TaskPayoutType } from '~immutable';
 import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
 
 import Button from '~core/Button';
@@ -12,16 +12,21 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import StarRating from '~core/StarRating';
+import { useDataFetcher } from '~utils/hooks';
+
+import { networkFetcher } from '../../../core/fetchers';
 
 import styles from './TaskClaimRewardDialog.css';
 
-const NETWORK_FEE = 0.01;
+export const getTaskPayoutNetworkFee = (
+  { amount }: TaskPayoutType,
+  fee: number,
+) => amount * fee;
 
-export const getTaskPayoutNetworkFee = ({ amount }: TaskPayoutType) =>
-  amount * NETWORK_FEE;
-
-export const getTaskPayoutAmountMinusNetworkFee = (payout: TaskPayoutType) =>
-  payout.amount - getTaskPayoutNetworkFee(payout);
+export const getTaskPayoutAmountMinusNetworkFee = (
+  payout: TaskPayoutType,
+  fee: number,
+) => payout.amount - getTaskPayoutNetworkFee(payout, fee);
 
 const MSG = defineMessages({
   yourRating: {
@@ -56,7 +61,7 @@ const MSG = defineMessages({
   },
   networkFee: {
     id: 'dashboard.TaskClaimRewardDialog.networkFee',
-    defaultMessage: '1% Network Fee',
+    defaultMessage: '{percentage} Network Fee',
   },
   total: {
     id: 'dashboard.TaskClaimRewardDialog.total',
@@ -98,172 +103,192 @@ const TaskClaimRewardDialog = ({
   lateReveal,
   sortedPayouts,
   nativeTokenPayout,
-}: Props) => (
-  <Dialog cancel={cancel}>
-    <DialogSection appearance={{ border: 'bottom' }}>
-      <Heading appearance={{ size: 'medium' }} text={title} />
-      <section className={styles.starRating}>
-        <p className={styles.starRatingDescription}>
-          <FormattedMessage {...MSG.yourRating} />
-        </p>
-        <div className={styles.stars}>
-          <StarRating rating={rating} />
-        </div>
-      </section>
-      {nativeTokenPayout && (
-        <section className={styles.earnedReputation}>
+}: Props) => {
+  const {
+    isFetching: isFetchingNetwork,
+    data: network,
+  } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
+
+  if (isFetchingNetwork || !network || !network.fee) return null;
+
+  const { fee } = network;
+
+  return (
+    <Dialog cancel={cancel}>
+      <DialogSection appearance={{ border: 'bottom' }}>
+        <Heading appearance={{ size: 'medium' }} text={title} />
+        <section className={styles.starRating}>
           <p className={styles.starRatingDescription}>
-            <FormattedMessage {...MSG.yourReputation} />
-            {rating === 3 && (
-              <span className={styles.earnedReputationDetails}>
-                <FormattedMessage
-                  {...MSG.reputationDetails}
-                  values={{ rating }}
-                />
-              </span>
-            )}
-            {rating === 1 && (
-              <p className={styles.earnedReputationPenalty}>
-                <FormattedMessage
-                  {...MSG.reputationDetails}
-                  values={{ rating }}
-                />
-              </p>
-            )}
-            {(lateRating || lateReveal) && (
-              <p className={styles.earnedReputationPenalty}>
-                <FormattedMessage
-                  {...MSG.reputationPenalty}
-                  values={{ lateRating }}
-                />
-              </p>
-            )}
+            <FormattedMessage {...MSG.yourRating} />
           </p>
-          <div className={styles.reputationValue}>
-            <Numeral
-              value={reputation}
-              prefix={rating === 1 ? '- ' : ''}
-              suffix=" REP"
-            />
+          <div className={styles.stars}>
+            <StarRating rating={rating} />
           </div>
         </section>
-      )}
-    </DialogSection>
-    {rating > 1 && payouts.length ? (
-      <DialogSection>
-        <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
-        <section className={styles.rewards}>
-          {/*
-           * Rewards
-           */}
-          <div className={styles.rewardItem}>
-            <p className={styles.rewardItemDescription}>
-              <FormattedMessage {...MSG.yourReward} />
-            </p>
-            <span className={styles.rewardItemValue}>
-              {nativeTokenPayout && (
-                <Numeral
-                  value={nativeTokenPayout.amount}
-                  suffix={` ${nativeTokenPayout.symbol}`}
-                />
+        {nativeTokenPayout && (
+          <section className={styles.earnedReputation}>
+            <p className={styles.starRatingDescription}>
+              <FormattedMessage {...MSG.yourReputation} />
+              {rating === 3 && (
+                <span className={styles.earnedReputationDetails}>
+                  <FormattedMessage
+                    {...MSG.reputationDetails}
+                    values={{ rating }}
+                  />
+                </span>
               )}
-              {sortedPayouts.map(({ amount, token: { symbol } }) => (
-                <Numeral
-                  /*
-                   * @NOTE Symbol appearance is unique, there can be only one
-                   */
-                  key={symbol}
-                  value={amount}
-                  suffix={` ${symbol}`}
-                />
-              ))}
-            </span>
-          </div>
-          {/*
-           * Network Fee
-           */}
-          <div className={styles.rewardItem}>
-            <p className={styles.rewardItemDescription}>
-              <FormattedMessage {...MSG.networkFee} />
-            </p>
-            <span className={styles.rewardItemValue}>
-              {nativeTokenPayout && (
-                <Numeral
-                  value={nativeTokenPayout.networkFee}
-                  prefix="- "
-                  suffix={` ${nativeTokenPayout.symbol}`}
-                />
+              {rating === 1 && (
+                <p className={styles.earnedReputationPenalty}>
+                  <FormattedMessage
+                    {...MSG.reputationDetails}
+                    values={{ rating }}
+                  />
+                </p>
               )}
-              {sortedPayouts.map(payout => (
-                <Numeral
-                  /*
-                   * @NOTE Symbol appearance is unique, there can be only one
-                   */
-                  key={payout.token.symbol}
-                  value={getTaskPayoutNetworkFee(payout)}
-                  prefix="- "
-                  suffix={` ${payout.token.symbol}`}
-                />
-              ))}
-            </span>
-          </div>
-          {/*
-           * Totals
-           */}
-          <div className={styles.total}>
-            <p className={styles.rewardItemDescription}>
-              <FormattedMessage {...MSG.total} />
-            </p>
-            <span className={styles.rewardItemValue}>
-              {nativeTokenPayout && (
-                <Numeral
-                  value={getTaskPayoutAmountMinusNetworkFee(nativeTokenPayout)}
-                  suffix={` ${nativeTokenPayout.token.symbol}`}
-                />
+              {(lateRating || lateReveal) && (
+                <p className={styles.earnedReputationPenalty}>
+                  <FormattedMessage
+                    {...MSG.reputationPenalty}
+                    values={{ lateRating }}
+                  />
+                </p>
               )}
-              {sortedPayouts.map(payout => (
-                <Numeral
-                  /*
-                   * @NOTE Symbol appearance is unique, there can be only one
-                   */
-                  key={payout.token.symbol}
-                  value={getTaskPayoutAmountMinusNetworkFee(payout)}
-                  suffix={` ${payout.token.symbol}`}
-                />
-              ))}
-            </span>
-          </div>
-        </section>
+            </p>
+            <div className={styles.reputationValue}>
+              <Numeral
+                value={reputation}
+                prefix={rating === 1 ? '- ' : ''}
+                suffix=" REP"
+              />
+            </div>
+          </section>
+        )}
       </DialogSection>
-    ) : (
-      <DialogSection>
-        <Heading appearance={{ size: 'medium' }} text={MSG.noRewardsTitle} />
-        <FormattedMessage
-          {...MSG.noRewardsDescription}
-          values={{
-            oneStarRating: (
-              <span className={styles.oneStarRating}>
-                <FormattedMessage {...MSG.oneStarRating} />
+      {rating > 1 && payouts.length ? (
+        <DialogSection>
+          <Heading appearance={{ size: 'medium' }} text={MSG.claimReward} />
+          <section className={styles.rewards}>
+            {/*
+             * Rewards
+             */}
+            <div className={styles.rewardItem}>
+              <p className={styles.rewardItemDescription}>
+                <FormattedMessage {...MSG.yourReward} />
+              </p>
+              <span className={styles.rewardItemValue}>
+                {nativeTokenPayout && (
+                  <Numeral
+                    value={nativeTokenPayout.amount}
+                    suffix={` ${nativeTokenPayout.symbol}`}
+                  />
+                )}
+                {sortedPayouts.map(({ amount, token: { symbol } }) => (
+                  <Numeral
+                    /*
+                     * @NOTE Symbol appearance is unique, there can be only one
+                     */
+                    key={symbol}
+                    value={amount}
+                    suffix={` ${symbol}`}
+                  />
+                ))}
               </span>
-            ),
-          }}
+            </div>
+            {/*
+             * Network Fee
+             */}
+            <div className={styles.rewardItem}>
+              <p className={styles.rewardItemDescription}>
+                <FormattedMessage
+                  {...MSG.networkFee}
+                  values={{
+                    // eslint-disable-next-line react/style-prop-object
+                    percentage: <FormattedNumber style="percent" value={fee} />,
+                  }}
+                />
+              </p>
+              <span className={styles.rewardItemValue}>
+                {nativeTokenPayout && (
+                  <Numeral
+                    value={nativeTokenPayout.networkFee}
+                    prefix="- "
+                    suffix={` ${nativeTokenPayout.symbol}`}
+                  />
+                )}
+                {sortedPayouts.map(payout => (
+                  <Numeral
+                    /*
+                     * @NOTE Symbol appearance is unique, there can be only one
+                     */
+                    key={payout.token.symbol}
+                    value={getTaskPayoutNetworkFee(payout, fee)}
+                    prefix="- "
+                    suffix={` ${payout.token.symbol}`}
+                  />
+                ))}
+              </span>
+            </div>
+            {/*
+             * Totals
+             */}
+            <div className={styles.total}>
+              <p className={styles.rewardItemDescription}>
+                <FormattedMessage {...MSG.total} />
+              </p>
+              <span className={styles.rewardItemValue}>
+                {nativeTokenPayout && (
+                  <Numeral
+                    value={getTaskPayoutAmountMinusNetworkFee(
+                      nativeTokenPayout,
+                      fee,
+                    )}
+                    suffix={` ${nativeTokenPayout.token.symbol}`}
+                  />
+                )}
+                {sortedPayouts.map(payout => (
+                  <Numeral
+                    /*
+                     * @NOTE Symbol appearance is unique, there can be only one
+                     */
+                    key={payout.token.symbol}
+                    value={getTaskPayoutAmountMinusNetworkFee(payout, fee)}
+                    suffix={` ${payout.token.symbol}`}
+                  />
+                ))}
+              </span>
+            </div>
+          </section>
+        </DialogSection>
+      ) : (
+        <DialogSection>
+          <Heading appearance={{ size: 'medium' }} text={MSG.noRewardsTitle} />
+          <FormattedMessage
+            {...MSG.noRewardsDescription}
+            values={{
+              oneStarRating: (
+                <span className={styles.oneStarRating}>
+                  <FormattedMessage {...MSG.oneStarRating} />
+                </span>
+              ),
+            }}
+          />
+        </DialogSection>
+      )}
+      <DialogSection appearance={{ align: 'right' }}>
+        <Button
+          appearance={{ theme: 'secondary', size: 'large' }}
+          text={{ id: 'button.cancel' }}
+          onClick={() => cancel()}
+        />
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={{ id: 'button.continue' }}
+          onClick={() => close()}
         />
       </DialogSection>
-    )}
-    <DialogSection appearance={{ align: 'right' }}>
-      <Button
-        appearance={{ theme: 'secondary', size: 'large' }}
-        text={{ id: 'button.cancel' }}
-        onClick={() => cancel()}
-      />
-      <Button
-        appearance={{ theme: 'primary', size: 'large' }}
-        text={{ id: 'button.continue' }}
-        onClick={() => close()}
-      />
-    </DialogSection>
-  </Dialog>
-);
+    </Dialog>
+  );
+};
 
 TaskClaimRewardDialog.displayName = displayName;
 
