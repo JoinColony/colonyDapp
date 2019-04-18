@@ -1,5 +1,7 @@
 /* @flow */
 
+import { Map as ImmutableMap } from 'immutable';
+
 import type { Address } from '~types';
 import type { RootStateRecord, TaskDraftId } from '~immutable';
 
@@ -27,6 +29,14 @@ export const taskMetadataSelector = (
 
 export const taskSelector = (state: RootStateRecord, draftId: TaskDraftId) =>
   state.getIn([ns, DASHBOARD_TASKS, draftId]);
+
+export const tasksByIdsSelector = (
+  state: RootStateRecord,
+  draftIds: TaskDraftId[],
+) =>
+  state
+    .getIn([ns, DASHBOARD_TASKS], ImmutableMap())
+    .filter((task, draftId) => draftIds.includes(draftId));
 
 export const taskFeedItemsSelector = (
   state: RootStateRecord,

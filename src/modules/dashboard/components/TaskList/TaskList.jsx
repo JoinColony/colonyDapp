@@ -1,15 +1,17 @@
 /* @flow */
 
-// $FlowFixMe until hooks flow types
-import React, { useState, useCallback, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-
 import type { Node } from 'react';
 
-import { Table, TableBody } from '~core/Table';
+// $FlowFixMe until hooks flow types
+import React, { useMemo } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TaskDraftId, TaskType } from '~immutable';
 
+import { useMultiDataFetcher } from '~utils/hooks';
+import { tasksByIdFetcher } from '../../fetchers';
+
+import { Table, TableBody } from '~core/Table';
 import TaskListItem from './TaskListItem.jsx';
 
 const MSG = defineMessages({
@@ -26,49 +28,25 @@ type Props = {|
 |};
 
 const TaskList = ({ draftIds = [], filter, emptyState }: Props) => {
-  // TODO: refactor this in the future to fetch tasks and perform filtering in
-  // this component, thus removing the need for this crazy hook stuff!
-
-  // keep track of which items aren't rendering due to being filtered out
-  const [taskVisibility, setTaskVisibility] = useState({});
-  const handleWillRender = useCallback(
-    (draftId: string, willRender: boolean) => {
-      if (taskVisibility[draftId] === willRender) return;
-      setTaskVisibility({
-        ...taskVisibility,
-        [draftId]: willRender,
-      });
-    },
-    [taskVisibility],
-  );
-  const visibleTaskCount = useMemo(
+  const tasksData = useMultiDataFetcher<TaskType>(tasksByIdFetcher, draftIds);
+  const filteredTasksData = useMemo(
     () =>
-      Object.values(taskVisibility).reduce(
-        (count, isVisible) => (isVisible ? count + 1 : count),
-        0,
-      ),
-    [taskVisibility],
+      filter
+        ? tasksData.filter(({ data }) => (data ? filter(data) : true))
+        : tasksData,
+    [tasksData, filter],
   );
-
-  // if the draftIds change, reset the state
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useMemo(() => setTaskVisibility({}), [draftIds]);
 
   return (
     <>
       <Table data-test="dashboardTaskList" scrollable>
         <TableBody>
-          {draftIds.map(draftId => (
-            <TaskListItem
-              key={draftId}
-              draftId={draftId}
-              filter={filter}
-              willRender={handleWillRender}
-            />
+          {filteredTasksData.map(taskData => (
+            <TaskListItem key={taskData.key} data={taskData} />
           ))}
         </TableBody>
       </Table>
-      {!visibleTaskCount &&
+      {!filteredTasksData.length &&
         (emptyState || (
           <p>
             <FormattedMessage {...MSG.noTasks} />
