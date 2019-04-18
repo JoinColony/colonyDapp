@@ -6532,20 +6532,20 @@ formidable@^1.2.0:
   resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.2.1.tgz#70fb7ca0290ee6ff961090415f4b3df3d2082659"
   integrity sha512-Fs9VRguL0gqGHkXS5GQiMCr1VhZBxz0JnJs4JmMp/2jL18Fmbzvv7vOFRU+U8TBkHEE/CX1qDXzJplVULgsLeg==
 
-formik@^1.0.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/formik/-/formik-1.3.2.tgz#f97b9e71084db4a51f7bde798584c094b3696738"
-  integrity sha512-WzKX8MGfSJTBF97oDDeP2meb2/I1bi1dLdkICmUfPB2KJ9mcdBOmsOPY8cE1cfV25ML3DzLomYsUezH+yedpvQ==
+formik@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/formik/-/formik-1.5.2.tgz#bb46853f10433f6f0a83415122c2a8e7e2e285fc"
+  integrity sha512-gVrNN4OmxvtwV4IvoyQJk797D3ptl3X8C1lJjbOBX48EFxxFTzchtUX5XiDSmhMIhtsg2rahT41VEbZPpgM6lQ==
   dependencies:
     create-react-context "^0.2.2"
     deepmerge "^2.1.1"
     hoist-non-react-statics "^2.5.5"
-    lodash.clonedeep "^4.5.0"
-    lodash.topath "4.5.2"
+    lodash "^4.17.11"
+    lodash-es "^4.17.11"
     prop-types "^15.6.1"
-    react-fast-compare "^1.0.0"
+    react-fast-compare "^2.0.1"
+    tiny-warning "^1.0.2"
     tslib "^1.9.3"
-    warning "^3.0.0"
 
 forwarded@~0.1.2:
   version "0.1.2"
@@ -10774,6 +10774,11 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
+lodash-es@^4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.11.tgz#145ab4a7ac5c5e52a3531fb4f310255a152b4be0"
+  integrity sha512-DHb1ub+rMjjrxqlB3H56/6MXtm1lSksDp2rA2cNWjG8mlDUYFhUj3Di2Zn5IwSU87xLv8tNIQ7sSwE/YOX/D/Q==
+
 lodash._baseisequal@^3.0.0:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/lodash._baseisequal/-/lodash._baseisequal-3.0.7.tgz#d8025f76339d29342767dcc887ce5cb95a5b51f1"
@@ -11009,11 +11014,6 @@ lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
-
-lodash.topath@4.5.2:
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/lodash.topath/-/lodash.topath-4.5.2.tgz#3616351f3bba61994a0931989660bd03254fd009"
-  integrity sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=
 
 lodash.uniqby@^4.7.0:
   version "4.7.0"
@@ -14669,10 +14669,10 @@ react-error-overlay@^5.1.0:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.0.tgz#c516995a5652e7bfbed8b497910d5280df74a7e8"
   integrity sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
 
-react-fast-compare@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-1.0.0.tgz#813a039155e49b43ceffe99528fe5e9d97a6c938"
-  integrity sha512-dcQpdWr62flXQJuM8/bVEY5/10ad2SYBUafp8H4q4WHR3fTA/MMlp8mpzX12I0CCoEJc1P6QdiMg7U+7lFS6Rw==
+react-fast-compare@^2.0.1:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
+  integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
 react-group@^3.0.0:
   version "3.0.0"
@@ -17518,6 +17518,11 @@ tiny-secp256k1@^1.0.0:
     create-hmac "^1.1.7"
     elliptic "^6.4.0"
     nan "^2.10.0"
+
+tiny-warning@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.2.tgz#1dfae771ee1a04396bdfde27a3adcebc6b648b28"
+  integrity sha512-rru86D9CpQRLvsFG5XFdy0KdLAvjdQDyZCsRcuu60WtzFylDM3eAWSxEVz5kzL2Gp544XiUvPbVKtOA/txLi9Q==
 
 title-case@^2.1.0:
   version "2.1.1"

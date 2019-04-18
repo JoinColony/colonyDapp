@@ -161,7 +161,7 @@
         "ethers": "^3.0.27",
         "ethjs-unit": "^0.1.6",
         "format-number": "^3.0.0",
-        "formik": "^1.0.2",
+        "formik": "^1.5.2",
         "history": "^4.7.2",
         "hoist-non-react-statics": "^3.3.0",
         "immutable": "^4.0.0-rc.12",

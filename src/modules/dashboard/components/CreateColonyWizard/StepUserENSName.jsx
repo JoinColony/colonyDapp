@@ -88,28 +88,24 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
-      // 1. Validate with schema
-      if (!validationSchema.isValidSync(values)) {
+      try {
+        await checkDomainTaken(values);
+      } catch (e) {
         const error = {
-          username: MSG.errorDomainInvalid,
+          username: MSG.errorDomainTaken,
         };
-        if (values.username) throw error;
-      } else {
-        // 2. Validate with saga
-        try {
-          await checkDomainTaken(values);
-        } catch (e) {
-          const error = {
-            username: MSG.errorDomainTaken,
-          };
-          throw error;
-        }
+        throw error;
       }
     },
     [checkDomainTaken],
   );
   return (
-    <Form onSubmit={nextStep} validate={validateDomain} {...wizardForm}>
+    <Form
+      onSubmit={nextStep}
+      validate={validateDomain}
+      validationSchema={validationSchema}
+      {...wizardForm}
+    >
       {({ isValid, isSubmitting, values: { username } }) => {
         const normalized = getNormalizedDomainText(username);
         return (
