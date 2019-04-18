@@ -14,6 +14,6 @@ export const fetchRoles = (
     colonyAddress,
   },
   meta: {
-    keyPath: [colonyAddress],
+    key: colonyAddress,
   },
 });

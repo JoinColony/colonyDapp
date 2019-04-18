@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { WithKeyPathDepth1 } from '~types';
+import type { WithKey } from '~types';
 import type {
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
@@ -34,11 +34,11 @@ export type IpfsActionTypes = {|
     {|
       ipfsHash: string,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   IPFS_DATA_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.IPFS_DATA_FETCH_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   IPFS_DATA_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.IPFS_DATA_FETCH_SUCCESS,
@@ -46,6 +46,6 @@ export type IpfsActionTypes = {|
       ipfsHash: string,
       ipfsData: string,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
 |};

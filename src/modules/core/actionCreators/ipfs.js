@@ -20,6 +20,6 @@ export const fetchIpfsData = (
   ipfsHash: string,
 ): Action<typeof ACTIONS.IPFS_DATA_FETCH> => ({
   type: ACTIONS.IPFS_DATA_FETCH,
-  meta: { keyPath: [ipfsHash] },
+  meta: { key: ipfsHash },
   payload: { ipfsHash },
 });

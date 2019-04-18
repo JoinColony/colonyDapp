@@ -41,25 +41,25 @@ const coloniesReducer: ReducerType<
     }
     case ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
-        meta: { keyPath },
+        meta: { key },
         payload,
       } = action;
       // fromJS is `mixed`, so we have to cast `any`
       const props: any = fromJS(payload);
-      return state.mergeDeepIn([...keyPath, 'record'], props);
+      return state.mergeDeepIn([key, 'record'], props);
     }
     case ACTIONS.COLONY_AVATAR_UPLOAD_SUCCESS: {
       const {
-        meta: { keyPath },
+        meta: { key },
         payload: { hash },
       } = action;
-      return state.setIn([...keyPath, 'record', 'avatarHash'], hash);
+      return state.setIn([key, 'record', 'avatarHash'], hash);
     }
     case ACTIONS.COLONY_AVATAR_REMOVE_SUCCESS: {
       const {
-        meta: { keyPath },
+        meta: { key },
       } = action;
-      return state.setIn([...keyPath, 'record', 'avatarHash'], undefined);
+      return state.setIn([key, 'record', 'avatarHash'], undefined);
     }
     case ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {

@@ -22,8 +22,9 @@ const ipfsDatasReducer: ReducerType<
     case ACTIONS.IPFS_DATA_UPLOAD_SUCCESS:
     case ACTIONS.IPFS_DATA_FETCH_SUCCESS: {
       const { ipfsHash, ipfsData } = action.payload;
-      // same hash will always be the same data, so just overwrite
-      return state.set(ipfsHash, DataRecord({ record: ipfsData }));
+      return state.getIn([ipfsHash, 'record'])
+        ? state
+        : state.set(ipfsHash, DataRecord({ record: ipfsData }));
     }
     default:
       return state;

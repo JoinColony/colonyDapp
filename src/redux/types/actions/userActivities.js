@@ -1,5 +1,5 @@
 /* @flow */
-import type { WithKeyPathDepth1 } from '~types';
+import type { WithKey } from '~types';
 
 import type { UniqueActionType, ErrorActionType } from '../index';
 
@@ -12,18 +12,18 @@ export type UserActivitiesActionTypes = {|
     {|
       address: string,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_ACTIVITIES_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_ACTIVITIES_FETCH_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_ACTIVITIES_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
     {|
       activities: UserActivityType[],
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_ACTIVITIES_ADD: UniqueActionType<
     typeof ACTIONS.USER_ACTIVITIES_ADD,
@@ -31,17 +31,17 @@ export type UserActivitiesActionTypes = {|
       activity: *,
       address: string,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_ACTIVITIES_ADD_ERROR: ErrorActionType<
     typeof ACTIONS.USER_ACTIVITIES_ADD_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_ACTIVITIES_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
     {|
       activity: UserActivityType,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
 |};

@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Saga } from 'redux-saga';
+
 import { call } from 'redux-saga/effects';
 
 import { create } from '~utils/saga/effects';
@@ -11,12 +13,7 @@ import getNetworkClient from './getNetworkClient';
 /*
  * Return an initialized ColonyManager instance.
  */
-export default function* getColonyManager(): Generator<*, ColonyManager, *> {
+export default function* getColonyManager(): Saga<ColonyManager> {
   const networkClient = yield call(getNetworkClient);
-
-  const colonyManager: ColonyManager = yield create(
-    ColonyManager,
-    networkClient,
-  );
-  return colonyManager;
+  return yield create(ColonyManager, networkClient);
 }

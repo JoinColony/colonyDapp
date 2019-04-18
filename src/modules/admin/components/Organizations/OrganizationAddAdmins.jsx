@@ -9,7 +9,7 @@ import type { Address } from '~types';
 import type { UserType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
-import { pipe, mapPayload, withKeyPath } from '~utils/actions';
+import { pipe, mapPayload, withKey } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -90,7 +90,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
   const knownUsers = useSelector(usersExceptSelector, [walletAddress]);
   const transform = useCallback(
     pipe(
-      withKeyPath(colonyAddress),
+      withKey(colonyAddress),
       mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
     ),
   );

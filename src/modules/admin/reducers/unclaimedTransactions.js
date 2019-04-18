@@ -21,9 +21,7 @@ const colonyUnclaimedTransactionsReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: {
       const {
-        meta: {
-          keyPath: [colonyName],
-        },
+        meta: { key: colonyName },
         payload: transactions,
       } = action;
       return state.mergeIn(

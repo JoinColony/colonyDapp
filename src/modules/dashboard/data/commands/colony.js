@@ -95,7 +95,7 @@ export const createColonyProfile: ColonyCommand<
 export const createDomain: ColonyCommand<
   {|
     name: string,
-    domainId: number,
+    id: number,
   |},
   EventStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({

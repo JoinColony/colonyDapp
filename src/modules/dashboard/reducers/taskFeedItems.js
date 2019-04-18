@@ -126,7 +126,10 @@ const taskFeedItemsReducer: ReducerType<
         ? state.updateIn(path, items => items && update(items))
         : state.set(
             draftId,
-            DataRecord({ lastFetchedAt: new Date(), record: update(List()) }),
+            DataRecord({
+              lastFetchedAt: new Date(),
+              record: update(List()),
+            }),
           );
     }
 

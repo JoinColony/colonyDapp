@@ -7,7 +7,7 @@ import { defineMessages } from 'react-intl';
 
 import type { Address } from '~types';
 
-import { withKeyPath } from '~utils/actions';
+import { pipe, mergePayload, withKey } from '~utils/actions';
 import Button from '~core/Button';
 import { ActionForm, FormStatus, Input } from '~core/Fields';
 import { ACTIONS } from '~redux';
@@ -43,7 +43,13 @@ const validationSchema = yup.object({
 });
 
 const OrganizationAddDomains = ({ colonyAddress }: Props) => {
-  const transform = useCallback(withKeyPath(colonyAddress), [colonyAddress]);
+  const transform = useCallback(
+    pipe(
+      withKey(colonyAddress),
+      mergePayload({ colonyAddress }),
+    ),
+    [colonyAddress],
+  );
   return (
     <div className={styles.main}>
       <ActionForm

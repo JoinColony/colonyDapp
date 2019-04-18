@@ -22,9 +22,9 @@ export const mapPayload = (mapFn: any => any) => (
   payload: mapFn(action.payload),
 });
 
-export const withKeyPath = (keyPath: string) => (
+export const withKey = (key: string) => (
   action: UniqueActionType<*, *, *>,
 ) => ({
   ...action,
-  meta: { ...action.meta, keyPath: [].concat(keyPath) },
+  meta: { ...action.meta, key },
 });

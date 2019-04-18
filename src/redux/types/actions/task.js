@@ -34,7 +34,7 @@ const {
 } = TASK_EVENT_TYPES;
 
 type TaskActionMeta = {|
-  keyPath: [string], // draftId
+  key: string, // draftId
 |};
 
 type TaskActionPayload<P> = {|

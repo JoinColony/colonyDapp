@@ -13,5 +13,5 @@ export const fetchToken = (
 ): Action<typeof ACTIONS.TOKEN_INFO_FETCH> => ({
   type: ACTIONS.TOKEN_INFO_FETCH,
   payload: { tokenAddress },
-  meta: { id: nanoid(), keyPath: [tokenAddress] },
+  meta: { id: nanoid(), key: tokenAddress },
 });
