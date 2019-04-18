@@ -11,7 +11,7 @@ import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
 import { useDataFetcher } from '~utils/hooks';
 
-import { networkFeeFetcher } from '../../fetchers';
+import { networkFetcher } from '../../fetchers';
 
 import styles from './ColonyFee.css';
 
@@ -39,21 +39,16 @@ const displayName = 'ColonyFee';
 
 const ColonyFee = ({ amount, symbol }: Props) => {
   const {
-    isFetching: isFetchingNetworkFee,
-    data: networkData,
-    error: networkFeeError,
-  } = useDataFetcher<NetworkProps>(networkFeeFetcher, [], []);
+    isFetching: isFetchingNetwork,
+    data: network,
+    error: networkError,
+  } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
 
   // TODO return loader
-  if (
-    isFetchingNetworkFee ||
-    !networkData ||
-    !networkData.feeInverse ||
-    networkFeeError
-  )
+  if (isFetchingNetwork || !network || !network.feeInverse || networkError)
     return null;
 
-  const { feeInverse } = networkData;
+  const { feeInverse } = network;
 
   const feeAmount = new BN(amount).mul(new BN(feeInverse));
 
