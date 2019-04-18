@@ -15,6 +15,7 @@ const {
   UNSUBSCRIBED_FROM_TASK,
   TOKEN_ADDED,
   TOKEN_REMOVED,
+  COMMENT_MENTION,
 } = USER_EVENT_TYPES;
 
 export type UserEvents = {|
@@ -55,6 +56,15 @@ export type UserEvents = {|
     typeof TOKEN_REMOVED,
     {|
       address: Address,
+    |},
+  >,
+  COMMENT_MENTION: EventDefinition<
+    typeof COMMENT_MENTION,
+    {|
+      event: string,
+      user?: Address,
+      task?: string,
+      comment?: string,
     |},
   >,
 |};
