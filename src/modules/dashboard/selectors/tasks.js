@@ -1,6 +1,7 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { createSelector } from 'reselect';
 
 import type { Address } from '~types';
 import type { RootStateRecord, TaskDraftId } from '~immutable';
@@ -9,6 +10,7 @@ import {
   DASHBOARD_NAMESPACE as ns,
   DASHBOARD_TASK_FEED_ITEMS,
   DASHBOARD_TASK_METADATA,
+  DASHBOARD_TASK_REQUESTS,
   DASHBOARD_TASKS,
 } from '../constants';
 
@@ -42,3 +44,11 @@ export const taskFeedItemsSelector = (
   state: RootStateRecord,
   draftId: TaskDraftId,
 ) => state.getIn([ns, DASHBOARD_TASK_FEED_ITEMS, draftId]);
+
+export const taskRequestsSelector = createSelector(
+  taskSelector,
+  task =>
+    task
+      ? task.getIn(['record', DASHBOARD_TASK_REQUESTS], ImmutableSet())
+      : ImmutableSet(),
+);
