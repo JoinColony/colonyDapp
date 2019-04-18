@@ -13,19 +13,19 @@ import { useDataFetcher } from '~utils/hooks';
 
 import { networkFetcher } from '../../fetchers';
 
-import styles from './ColonyFee.css';
+import styles from './NetworkFee.css';
 
 const MSG = defineMessages({
   colonyFeeText: {
-    id: 'ColonyFee.colonyFeeText',
+    id: 'NetworkFee.colonyFeeText',
     defaultMessage: 'Colony Fee: {amount}',
   },
   helpIconTitle: {
-    id: 'ColonyFee.helpIconTitle',
+    id: 'NetworkFee.helpIconTitle',
     defaultMessage: 'Help',
   },
   helpText: {
-    id: 'ColonyFee.helpText',
+    id: 'NetworkFee.helpText',
     defaultMessage:
       'There is a {percentage} fee to help run the Colony Network.',
   },
@@ -41,9 +41,9 @@ type Props = {|
   symbol: string,
 |};
 
-const displayName = 'ColonyFee';
+const displayName = 'NetworkFee';
 
-const ColonyFee = ({ amount, symbol }: Props) => {
+const NetworkFee = ({ amount, symbol }: Props) => {
   const {
     isFetching: isFetchingNetwork,
     data: network,
@@ -98,6 +98,6 @@ const ColonyFee = ({ amount, symbol }: Props) => {
   );
 };
 
-ColonyFee.displayName = displayName;
+NetworkFee.displayName = displayName;
 
-export default ColonyFee;
+export default NetworkFee;
