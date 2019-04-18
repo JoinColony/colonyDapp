@@ -116,13 +116,14 @@ const Task = ({
       if (!task) return;
 
       openDialog('TaskEditDialog', {
+        draftId,
         maxTokens: 2,
         payouts,
         reputation,
         workerAddress,
       });
     },
-    [openDialog, payouts, reputation, task, workerAddress],
+    [draftId, openDialog, payouts, reputation, task, workerAddress],
   );
 
   if (isFetchingTask || !task)

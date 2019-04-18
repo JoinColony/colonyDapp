@@ -21,8 +21,10 @@ import { SpinnerLoader } from '~core/Preloaders';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
+import { taskRequestsSelector } from '../../selectors';
 import { userFetcher } from '../../../users/fetchers';
+import { usersByAddressesSelector } from '../../../users/selectors';
 
 import styles from './TaskEditDialog.css';
 
@@ -72,6 +74,7 @@ type Props = {|
     helpers: () => void,
   ) => void,
   cancel: () => void,
+  draftId: string,
   maxTokens?: number,
   minTokens?: number,
   transform: (action: Object) => Object,
@@ -117,6 +120,7 @@ const displayName = 'dashboard.TaskEditDialog';
 const TaskEditDialog = ({
   addTokenFunding,
   cancel,
+  draftId,
   maxTokens,
   minTokens,
   payouts: taskPayouts,
@@ -125,8 +129,8 @@ const TaskEditDialog = ({
   workerAddress,
 }: Props) => {
   const availableTokens = [];
-  // Use a selector in #1048
-  const users = [];
+  const userAddresses = useSelector(taskRequestsSelector, [draftId]);
+  const users = useSelector(usersByAddressesSelector, userAddresses);
 
   // consider using a selector for this in #1048
   const payouts = useMemo(
