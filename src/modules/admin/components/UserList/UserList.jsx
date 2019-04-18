@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 
 import type { Address } from '~types';
 
-import { pipe, mergePayload, withKeyPath } from '~utils/actions';
+import { pipe, mergePayload, withKey } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -71,7 +71,7 @@ const UserList = ({
   viewOnly = true,
 }: Props) => {
   const transform = pipe(
-    withKeyPath(colonyAddress),
+    withKey(colonyAddress),
     mergePayload({ colonyAddress }),
   );
 

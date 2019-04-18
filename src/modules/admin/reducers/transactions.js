@@ -22,9 +22,7 @@ const adminTransactionsReducer: ReducerType<
     case ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS: {
       const {
         payload: transactions,
-        meta: {
-          keyPath: [colonyName],
-        },
+        meta: { key: colonyName },
       } = action;
       return state.mergeIn(
         [colonyName],

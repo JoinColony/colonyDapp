@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Action, ErrorActionType, UniqueActionType } from '../index';
-import type { WithKeyPathDepth1 } from '~types';
+import type { WithKey } from '~types';
 
 import { ACTIONS } from '../../index';
 
@@ -21,11 +21,11 @@ export type TokenActionTypes = {|
     {|
       tokenAddress: string,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   TOKEN_INFO_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.TOKEN_INFO_FETCH_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   TOKEN_INFO_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
@@ -35,6 +35,6 @@ export type TokenActionTypes = {|
       symbol: string,
       tokenAddress: string,
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
 |};

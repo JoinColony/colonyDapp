@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, WithKeyPathDepth1 } from '~types';
+import type { Address, WithKey } from '~types';
 import type {
   ContractTransactionType,
   TaskDraftId,
@@ -71,16 +71,13 @@ export type UserActionTypes = {|
   USER_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH,
     {| userAddress: string |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
-  USER_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_FETCH_ERROR,
-    WithKeyPathDepth1,
-  >,
+  USER_FETCH_ERROR: ErrorActionType<typeof ACTIONS.USER_FETCH_ERROR, WithKey>,
   USER_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH_SUCCESS,
     UserProfileType,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_METADATA_SET: ActionTypeWithPayload<
     typeof ACTIONS.USER_METADATA_SET,
@@ -90,11 +87,11 @@ export type UserActionTypes = {|
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
     {| colonyAddress: Address |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_PERMISSIONS_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_PERMISSIONS_FETCH_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_PERMISSIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
@@ -102,7 +99,7 @@ export type UserActionTypes = {|
       colonyAddress: Address,
       permissions: { +canEnterRecoveryMode?: boolean },
     |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USER_PROFILE_UPDATE: UniqueActionType<
     typeof ACTIONS.USER_PROFILE_UPDATE,

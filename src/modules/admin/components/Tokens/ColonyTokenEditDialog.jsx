@@ -7,7 +7,7 @@ import compose from 'lodash/fp/compose';
 
 import type { Address } from '~types';
 
-import { mergePayload, withKeyPath } from '~utils/actions';
+import { mergePayload, withKey } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
 import TokenEditDialog from '~core/TokenEditDialog';
@@ -51,7 +51,7 @@ const ColonyTokenEditDialog = ({
 
   const transform = useCallback(
     compose(
-      withKeyPath(colonyAddress),
+      withKey(colonyAddress),
       mergePayload({ colonyAddress }),
     ),
     [colonyAddress],

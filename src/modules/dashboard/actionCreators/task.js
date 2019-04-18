@@ -6,14 +6,12 @@ import type { TaskDraftId } from '~immutable';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 
-const keyPath = (draftId: TaskDraftId) => ({ keyPath: [draftId] });
-
 export const fetchTask = (
   draftId: TaskDraftId,
 ): Action<typeof ACTIONS.TASK_FETCH> => ({
   type: ACTIONS.TASK_FETCH,
   payload: { draftId },
-  meta: keyPath(draftId),
+  meta: { key: draftId },
 });
 
 export const fetchTaskFeedItems = (
@@ -21,7 +19,7 @@ export const fetchTaskFeedItems = (
 ): Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH> => ({
   type: ACTIONS.TASK_FEED_ITEMS_FETCH,
   payload: { draftId },
-  meta: keyPath(draftId),
+  meta: { key: draftId },
 });
 
 // TODO this is unused
@@ -34,5 +32,5 @@ export const taskSetWorker = (
     draftId,
     workerAddress,
   },
-  meta: keyPath(draftId),
+  meta: { key: draftId },
 });

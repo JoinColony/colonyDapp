@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { ErrorActionType, UniqueActionType } from '../index';
-import type { WithKeyPathDepth1 } from '../../../types';
+import type { WithKey } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
@@ -25,11 +25,11 @@ export type UsernameActionTypes = {|
   USERNAME_CREATE: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE,
     {| username: string |},
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USERNAME_CREATE_ERROR: ErrorActionType<
     typeof ACTIONS.USERNAME_CREATE_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
   USERNAME_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE_SUCCESS,
@@ -39,6 +39,6 @@ export type UsernameActionTypes = {|
         username: string,
       },
     },
-    WithKeyPathDepth1,
+    WithKey,
   >,
 |};

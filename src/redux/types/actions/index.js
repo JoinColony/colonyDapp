@@ -35,14 +35,14 @@ export type ActionType<T> = {|
  * Type that represents an action with a `payload` property.
  *
  * P: the action payload, e.g. `{| tokenAddress: string |}`
- * M: any additional `meta` properties, e.g. `keyPath: [*]`
+ * M: any additional `meta` properties, e.g. `key: *`
  */
 export type ActionTypeWithPayload<T, P> = {| ...ActionType<T>, payload: P |};
 
 /*
  * Type that represents an action with a `meta` property.
  *
- * M: any additional `meta` properties, e.g. `keyPath: [*]`
+ * M: any additional `meta` properties, e.g. `key: *`
  */
 export type ActionTypeWithMeta<T, M> = {| ...ActionType<T>, meta: M |};
 
@@ -50,7 +50,7 @@ export type ActionTypeWithMeta<T, M> = {| ...ActionType<T>, meta: M |};
  * Type that represents an action with `payload` and `meta` properties.
  *
  * P: the action payload, e.g. `{| tokenAddress: string |}`
- * M: any additional `meta` properties, e.g. `keyPath: [*]`
+ * M: any additional `meta` properties, e.g. `key: *`
  */
 export type ActionTypeWithPayloadAndMeta<T, P, M> = {|
   ...ActionType<T>,

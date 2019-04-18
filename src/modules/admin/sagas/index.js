@@ -138,6 +138,7 @@ function* colonyClaimToken({
 
 function* colonyUpdateTokens({
   payload: { colonyAddress, tokens },
+  payload,
   meta,
 }: Action<typeof ACTIONS.COLONY_UPDATE_TOKENS>): Saga<void> {
   try {
@@ -146,7 +147,7 @@ function* colonyUpdateTokens({
       tokens,
     });
     yield put(fetchColony(colonyAddress)); // TODO: just fetch tokens
-    yield put({ type: ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS, meta });
+    yield put({ type: ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS, payload });
   } catch (error) {
     yield putError(ACTIONS.COLONY_UPDATE_TOKENS_ERROR, error, meta);
   }
@@ -175,7 +176,7 @@ function* colonyMintTokens({
       },
     } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    /* 
+    /*
       if we got a Mint event log back (we will have on success) get the
       contract address it's from, and refetch the colony's balance for it
     */
@@ -184,8 +185,7 @@ function* colonyMintTokens({
       const tokenAddress = mintLog.address;
       yield put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
         type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-        meta: { keyPath: [colonyAddress, tokenAddress] },
-        payload: { colonyAddress },
+        payload: { colonyAddress, tokenAddress },
       });
     }
 

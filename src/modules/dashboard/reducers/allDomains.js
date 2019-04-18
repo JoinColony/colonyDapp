@@ -10,6 +10,7 @@ import type { AllDomainsMap, DomainRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
 
 type DomainActions = {
+  DOMAIN_CREATE_SUCCESS: *,
   COLONY_DOMAINS_FETCH: *,
   COLONY_DOMAINS_FETCH_SUCCESS: *,
   COLONY_DOMAINS_FETCH_ERROR: *,
@@ -20,15 +21,29 @@ const allDomainsReducer: ReducerType<AllDomainsMap, DomainActions> = (
   action,
 ) => {
   switch (action.type) {
+    case ACTIONS.DOMAIN_CREATE_SUCCESS: {
+      const { colonyAddress, domain } = action.payload;
+      const path = [colonyAddress, 'record'];
+      return state.getIn(path)
+        ? state.updateIn(
+            path,
+            domains => domains && domains.add(DomainRecord(domain)),
+          )
+        : state.set(
+            colonyAddress,
+            DataRecord({
+              record: ImmutableSet.of(DomainRecord(domain)),
+            }),
+          );
+    }
+
     case ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
-        meta: {
-          keyPath: [colonyName],
-        },
-        payload: domains,
+        meta: { key },
+        payload: { domains },
       } = action;
       return state.set(
-        colonyName,
+        key,
         DataRecord({
           record: ImmutableSet(domains.map(domain => DomainRecord(domain))),
         }),

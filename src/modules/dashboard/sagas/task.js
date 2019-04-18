@@ -163,7 +163,7 @@ function* taskCreate({
           creatorAddress,
         },
       },
-      meta: { keyPath: [draftId], ...meta },
+      meta: { key: draftId, ...meta },
     };
     /*
      * Put the success action, subscribe to the task and redirect to it

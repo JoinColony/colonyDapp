@@ -10,7 +10,7 @@ export const fetchColonyTransactions = (
 ): Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS> => ({
   type: ACTIONS.COLONY_FETCH_TRANSACTIONS,
   payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
+  meta: { key: colonyAddress },
 });
 
 export const fetchColonyUnclaimedTransactions = (
@@ -18,7 +18,7 @@ export const fetchColonyUnclaimedTransactions = (
 ): Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS> => ({
   type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
   payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
+  meta: { key: colonyAddress },
 });
 
 export const claimColonyToken = (
@@ -27,6 +27,6 @@ export const claimColonyToken = (
   id: string,
 ): Action<typeof ACTIONS.COLONY_CLAIM_TOKEN> => ({
   type: ACTIONS.COLONY_CLAIM_TOKEN,
-  meta: { keyPath: [colonyAddress, tokenAddress], id },
+  meta: { key: colonyAddress, id },
   payload: { colonyAddress, tokenAddress },
 });

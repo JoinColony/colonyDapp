@@ -27,13 +27,13 @@ describe('reducers - withDataRecordMap', () => {
     const MY_OTHER_ACTION = 'MY_OTHER_ACTION';
 
     const successReducerAction = sandbox.fn(
-      (state, { meta: { keyPath }, payload }) =>
-        state.setIn([...keyPath, 'record'], MyRecord(payload)),
+      (state, { meta: { key }, payload }) =>
+        state.setIn([key, 'record'], MyRecord(payload)),
     );
 
     const otherReducerAction = sandbox.fn(
-      (state, { meta: { keyPath }, payload: { c } }) =>
-        state.setIn([...keyPath, 'record', 'c'], c),
+      (state, { meta: { key }, payload: { c } }) =>
+        state.setIn([key, 'record', 'c'], c),
     );
 
     // Create a reducer we can wrap
@@ -56,13 +56,13 @@ describe('reducers - withDataRecordMap', () => {
 
     const fetchAction = {
       type: MY_FETCH,
-      meta: { keyPath: ['myKey'] },
+      meta: { key: 'myKey' },
     };
 
     const errorAction = {
       type: MY_FETCH_ERROR,
       error: true,
-      meta: { keyPath: ['myKey'] },
+      meta: { key: 'myKey' },
       payload: {
         message: 'fetch error',
       },
@@ -70,13 +70,13 @@ describe('reducers - withDataRecordMap', () => {
 
     const successAction = {
       type: MY_FETCH_SUCCESS,
-      meta: { keyPath: ['myKey'] },
+      meta: { key: 'myKey' },
       payload: { a: 1, b: 1 },
     };
 
     const otherAction = {
       type: MY_OTHER_ACTION,
-      meta: { keyPath: ['myKey'] },
+      meta: { key: 'myKey' },
       payload: { c: 1 },
     };
 
@@ -225,7 +225,7 @@ describe('reducers - withDataRecordMap', () => {
 
       const successOneAction = {
         type: MY_FETCH_SUCCESS,
-        meta: { keyPath: ['myKey'] },
+        meta: { key: 'myKey' },
         payload: { a: 20 },
       };
       const successOneState = myWrappedReducer(fetchTwoState, successOneAction);
@@ -249,7 +249,7 @@ describe('reducers - withDataRecordMap', () => {
 
       const successTwoAction = {
         type: MY_FETCH_SUCCESS,
-        meta: { keyPath: ['myKey'] },
+        meta: { key: 'myKey' },
         payload: { b: 2000 },
       };
       const successTwoState = myWrappedReducer(
@@ -277,7 +277,7 @@ describe('reducers - withDataRecordMap', () => {
       // An unexpected success action
       const successThreeAction = {
         type: MY_FETCH_SUCCESS,
-        meta: { keyPath: ['myKey'] },
+        meta: { key: 'myKey' },
         payload: { a: 5000 },
       };
       const successThreeState = myWrappedReducer(
