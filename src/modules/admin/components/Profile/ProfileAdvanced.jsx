@@ -8,11 +8,12 @@ import type { ColonyType, UserPermissionsType, NetworkProps } from '~immutable';
 import { useDataFetcher } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 
-import Heading from '~core/Heading';
 import { DialogActionButton } from '~core/Button';
+import Heading from '~core/Heading';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { networkVersionFetcher } from '../../../core/fetchers';
+import { networkFetcher } from '../../../core/fetchers';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 
@@ -54,10 +55,7 @@ type Props = {|
   colony: ColonyType,
 |};
 
-const ProfileAdvanced = ({
-  colony: { colonyAddress, id, version },
-  colony,
-}: Props) => {
+const ProfileAdvanced = ({ colony: { colonyAddress, id }, colony }: Props) => {
   const {
     isFetching: isFetchingUserPermissions,
     data: permissions,
@@ -69,10 +67,10 @@ const ProfileAdvanced = ({
   );
 
   const {
-    isFetching: isFetchingNetworkVersion,
+    isFetching: isFetchingNetwork,
     data: network,
-    error: networkVersionError,
-  } = useDataFetcher<NetworkProps>(networkVersionFetcher, [], []);
+    error: networkError,
+  } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
 
   return (
     <div className={styles.main}>
@@ -82,7 +80,11 @@ const ProfileAdvanced = ({
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.labelVersion}
           />
-          <p className={styles.bigInfoText}>{version}</p>
+          {network && network.version ? (
+            <p className={styles.bigInfoText}>{network.version}</p>
+          ) : (
+            <SpinnerLoader />
+          )}
         </div>
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
@@ -92,8 +94,8 @@ const ProfileAdvanced = ({
           success={ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingNetworkVersion}
-          disabled={!!networkVersionError || !canBeUpgraded(colony, network)}
+          loading={isFetchingNetwork}
+          disabled={!!networkError || !canBeUpgraded(colony, network)}
         />
       </section>
       <section className={styles.section}>
