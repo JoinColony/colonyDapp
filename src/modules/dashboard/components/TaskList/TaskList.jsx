@@ -3,32 +3,68 @@
 import type { Node } from 'react';
 
 // $FlowFixMe until hooks flow types
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskDraftId, TaskType } from '~immutable';
+import type { Address } from '~types';
+import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 
-import { useMultiDataFetcher } from '~utils/hooks';
+import { addressEquals } from '~utils/strings';
+import { TASK_STATE } from '~immutable';
+import { useDataMapFetcher } from '~utils/hooks';
+import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
 import { tasksByIdFetcher } from '../../fetchers';
 
-import { Table, TableBody } from '~core/Table';
+import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import TaskListItem from './TaskListItem.jsx';
+
+import taskListItemStyles from './TaskListItem.css';
 
 const MSG = defineMessages({
   noTasks: {
     id: 'dashboard.TaskList.noTasks',
-    defaultMessage: 'No tasks',
+    defaultMessage: 'There are no tasks here.',
   },
 });
 
 type Props = {|
   draftIds?: TaskDraftId[],
-  filter?: (task: TaskType) => boolean,
   emptyState?: Node,
+  filteredDomainId?: DomainId,
+  filterOption: string,
+  walletAddress: Address,
 |};
 
-const TaskList = ({ draftIds = [], filter, emptyState }: Props) => {
-  const tasksData = useMultiDataFetcher<TaskType>(tasksByIdFetcher, draftIds);
+const TaskList = ({
+  draftIds = [],
+  emptyState,
+  filteredDomainId,
+  filterOption,
+  walletAddress,
+}: Props) => {
+  const tasksData = useDataMapFetcher<TaskType>(tasksByIdFetcher, draftIds);
+
+  const filter = useCallback(
+    ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
+      if (filteredDomainId && filteredDomainId !== domainId) return false;
+
+      switch (filterOption) {
+        case TASKS_FILTER_OPTIONS.CREATED:
+          return addressEquals(creatorAddress, walletAddress);
+
+        case TASKS_FILTER_OPTIONS.ASSIGNED:
+          return addressEquals(workerAddress, walletAddress);
+
+        case TASKS_FILTER_OPTIONS.COMPLETED:
+          return currentState === TASK_STATE.FINALIZED;
+
+        default:
+          return true;
+      }
+    },
+    [filterOption, walletAddress, filteredDomainId],
+  );
+
   const filteredTasksData = useMemo(
     () =>
       filter
@@ -44,14 +80,19 @@ const TaskList = ({ draftIds = [], filter, emptyState }: Props) => {
           {filteredTasksData.map(taskData => (
             <TaskListItem key={taskData.key} data={taskData} />
           ))}
+          {filteredTasksData.length === 0 && (
+            <TableRow>
+              <TableCell className={taskListItemStyles.empty}>
+                {emptyState || (
+                  <p>
+                    <FormattedMessage {...MSG.noTasks} />
+                  </p>
+                )}
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
-      {!filteredTasksData.length &&
-        (emptyState || (
-          <p>
-            <FormattedMessage {...MSG.noTasks} />
-          </p>
-        ))}
     </>
   );
 };

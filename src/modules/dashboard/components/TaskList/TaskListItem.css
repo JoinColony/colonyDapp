@@ -10,6 +10,12 @@ td.taskDetails {
   font-weight: var(--weight-semi);
 }
 
+td.empty {
+  flex-wrap: wrap;
+  padding: cellPaddingVertical cellPaddingHorizontal;
+  font-weight: var(--weight-semi);
+}
+
 .taskDetailsTitle {
   width: 100%;
   overflow: hidden;
