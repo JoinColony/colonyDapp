@@ -2,7 +2,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 
-import type { UserType } from '~immutable';
+import type { TokenType, UserType } from '~immutable';
 
 import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
@@ -13,7 +13,7 @@ import { useDataFetcher } from '~utils/hooks';
 
 import type { EnhancedProps as Props } from './types';
 
-import { useToken } from '../../../hooks';
+import { tokenFetcher } from '../../../fetchers';
 import { userFetcher } from '../../../../users/fetchers';
 
 import styles from './TaskCompleteInfo.css';
@@ -59,19 +59,23 @@ const TaskCompleteInfo = ({
   reputation,
   transaction: { amount, date, hash, to, token: tokenAddress },
 }: Props) => {
-  const { data: user, isFetching } = useDataFetcher<UserType>(
+  const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
     [to],
     [to],
   );
-  const token = useToken(tokenAddress);
+  const {
+    data: token,
+    isFetching: isFetchingToken,
+  } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
+
   const { symbol } = token || {};
 
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
         <p>
-          {!user || isFetching ? (
+          {!user || isFetchingUser ? (
             <SpinnerLoader />
           ) : (
             <FormattedMessage
@@ -90,7 +94,7 @@ const TaskCompleteInfo = ({
           </span>
         </p>
       </div>
-      {!token ? (
+      {isFetchingToken ? (
         <SpinnerLoader />
       ) : (
         <div className={styles.receiptContainer}>
