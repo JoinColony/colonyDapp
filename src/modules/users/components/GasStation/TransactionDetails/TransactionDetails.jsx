@@ -9,6 +9,7 @@ import CardList from '~core/CardList';
 import styles from './TransactionDetails.css';
 
 import type { TransactionGroup } from '../transactionGroup';
+import type { Appearance } from '../GasStationContent';
 
 import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 
@@ -22,10 +23,6 @@ const MSG = defineMessages({
     defaultMessage: 'See all pending actions',
   },
 });
-
-export type Appearance = {
-  interactive: boolean,
-};
 
 type Props = {|
   /* If we are only showing the transaction details

@@ -78,21 +78,22 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
     tokenName,
     colonyName,
   } = wizardValues;
+  const transform = useCallback(
+    mergePayload({
+      username,
+      displayName,
+      colonyName,
+      tokenName,
+      tokenSymbol,
+    }),
+    [username, displayName, colonyName, tokenName, tokenSymbol],
+  );
   return (
     <ActionForm
       submit={ACTIONS.COLONY_CREATE}
       success={ACTIONS.COLONY_CREATE_SUCCESS}
       error={ACTIONS.COLONY_CREATE_ERROR}
-      transform={useCallback(
-        mergePayload({
-          username,
-          displayName,
-          colonyName,
-          tokenName,
-          tokenSymbol,
-        }),
-        [username, displayName, colonyName, tokenName, tokenSymbol],
-      )}
+      transform={transform}
       onSuccess={() => nextStep(wizardValues)}
     >
       {({ isSubmitting, status }) => (

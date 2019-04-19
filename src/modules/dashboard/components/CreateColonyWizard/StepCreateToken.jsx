@@ -103,6 +103,10 @@ const StepCreateToken = ({
   wizardForm,
   wizardValues,
 }: Props) => {
+  const transform = useCallback(
+    mapPayload(({ data }) => ({ ipfsData: data })),
+    [],
+  );
   const goToTokenSelect = useCallback(
     () => {
       /* This is a custom link since it goes to a sibling step that appears
@@ -148,9 +152,7 @@ const StepCreateToken = ({
                     type="button"
                     className={styles.linkToOtherStep}
                     tabIndex={-2}
-                    onClick={() =>
-                      goToTokenSelect(wizardValues, nextStep, previousStep)
-                    }
+                    onClick={goToTokenSelect}
                   >
                     <FormattedMessage {...MSG.link} />
                   </button>
@@ -174,7 +176,7 @@ const StepCreateToken = ({
                 submit={ACTIONS.IPFS_DATA_UPLOAD}
                 success={ACTIONS.IPFS_DATA_UPLOAD_SUCCESS}
                 error={ACTIONS.IPFS_DATA_UPLOAD_ERROR}
-                transform={mapPayload(({ data }) => ({ ipfsData: data }))}
+                transform={transform}
               />
             </div>
           </section>

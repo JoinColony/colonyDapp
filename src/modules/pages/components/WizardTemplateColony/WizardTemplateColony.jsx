@@ -9,7 +9,6 @@ import BN from 'bn.js';
 import { toWei } from 'ethjs-unit';
 
 import Numeral from '~core/Numeral';
-import { StepBar } from '~core/ProgressBar';
 import QRCode from '~core/QRCode';
 import MaskedAddress from '~core/MaskedAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
@@ -24,8 +23,6 @@ import styles from './WizardTemplateColony.css';
 type Props = {|
   children: Node,
   currentUser: UserType,
-  step?: number,
-  stepCount?: number,
   previousStep: (wizardValues?: Object) => void,
   wizardValues: Object,
 |};
@@ -44,8 +41,6 @@ const WizardTemplateColony = ({
   currentUser: {
     profile: { walletAddress, balance },
   },
-  step,
-  stepCount,
   previousStep,
   wizardValues,
 }: Props) => {
@@ -60,11 +55,6 @@ const WizardTemplateColony = ({
         <div className={styles.backButton}>
           <HistoryNavigation customHandler={customHandler} backText=" " />
         </div>
-        {stepCount && step && (
-          <div className={styles.steps}>
-            <StepBar step={step} stepCount={stepCount} />
-          </div>
-        )}
         <div className={styles.headerWallet}>
           <div className={styles.wallet}>
             <div className={styles.address}>

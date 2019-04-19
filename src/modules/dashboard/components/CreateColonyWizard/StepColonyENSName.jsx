@@ -140,9 +140,9 @@ const StepColonyENSName = ({
                 appearance={{ size: 'medium', weight: 'medium' }}
                 text={MSG.heading}
                 textValues={{
-                  username: username
-                    ? getNormalizedDomainText(username)
-                    : getNormalizedDomainText(wizardValues.username),
+                  username: getNormalizedDomainText(
+                    username || wizardValues.username,
+                  ),
                 }}
               />
               <p className={styles.paragraph}>

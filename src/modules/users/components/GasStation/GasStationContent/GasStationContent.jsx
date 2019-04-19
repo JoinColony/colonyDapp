@@ -43,6 +43,10 @@ type State = {|
 class GasStationContent extends Component<Props, State> {
   static displayName = 'users.GasStation.GasStationContent';
 
+  static defaultProps = {
+    appearance: { interactive: true },
+  };
+
   state = {
     selectedGroupIdx: -1,
   };
@@ -64,15 +68,13 @@ class GasStationContent extends Component<Props, State> {
     const { selectedGroupIdx } = this.state;
     const {
       transactionGroups,
-      appearance = { interactive: true },
+      appearance: { interactive },
     } = this.props;
     let detailsTransactionGroup = transactionGroups[selectedGroupIdx];
-    const { interactive } = appearance;
 
     /*  If the GasStationContent is less interactive,
      * like in StepConfirmTransactions, we select the first group buy default
      */
-    // TODO: make gasStation progress to next transaction when one is ready
     if (!interactive && selectedGroupIdx === -1) {
       [detailsTransactionGroup] = transactionGroups;
     }

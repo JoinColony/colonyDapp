@@ -7,6 +7,7 @@ import Heading from '~core/Heading';
 import Card from '~core/Card';
 
 import type { TransactionGroup } from '../transactionGroup';
+import type { Appearance } from '../GasStationContent';
 
 import {
   getGroupKey,
@@ -18,10 +19,6 @@ import styles from './GroupedTransaction.css';
 
 import GroupedTransactionCard from './GroupedTransactionCard';
 import TransactionStatus from './TransactionStatus.jsx';
-
-export type Appearance = {
-  interactive: boolean,
-};
 
 type Props = {
   appearance: Appearance,
