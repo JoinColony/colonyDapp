@@ -56,7 +56,6 @@ const updateState = (
     DataRecord({
       error: undefined,
       isFetching: false,
-      lastFetchedAt: new Date(),
       record,
     }),
   );
