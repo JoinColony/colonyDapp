@@ -1,6 +1,7 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { ColonyType } from '~immutable';
@@ -45,7 +46,9 @@ const removeActions = {
 };
 
 const ColonyAvatarUploader = ({ colony }: Props) => {
-  const transform = withKey(colony.colonyAddress);
+  const transform = useCallback(withKey(colony.colonyAddress), [
+    colony.colonyAddress,
+  ]);
   const upload = useAsyncFunction({ ...uploadActions, transform });
   const remove = useAsyncFunction({ ...removeActions, transform });
 
