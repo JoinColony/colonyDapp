@@ -86,6 +86,45 @@ export const useSelector = (
 };
 
 /*
+ * Esteemed React developer!
+ *
+ * Are *you* tired of giving `useMemo` some dependencies, only to find
+ * recomputations with the same data (e.g. arrays)?
+ *
+ * Better make a memo to self: simply use `createCustomMemo`™!
+ *
+ * It's only the memoization function designed *by* a developer, *for* that
+ * very same developer. Upgrade today!
+ */
+export const createCustomMemo = (comparator: (...any) => boolean) => (
+  fn: Function,
+  deps: any[],
+) => {
+  const lastDeps = useRef(deps);
+  const lastResult = useRef(fn());
+  if (comparator(lastDeps, deps)) {
+    return lastResult.current;
+  }
+  lastResult.current = fn();
+  lastDeps.current = deps;
+  return lastResult.current;
+};
+
+const areFlatArraysEqual = (arr1: any[], arr2: any[]) => {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = arr1.length - 1; i >= 0; i -= 1) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const useMemoWithFlatArray = createCustomMemo(areFlatArraysEqual);
+
+/*
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
 export const useDataFetcher = <T>(
@@ -147,12 +186,8 @@ export const useDataMapFetcher = <T>(
   /*
    * Created memoized keys to guard the rest of the function against
    * unnecessary updates.
-   *
-   * Since the keys `array` is of variable length, join it into a string
-   * in order to provide reference equality for the `useMemo` input.
    */
-  const joinedKeys = keys.join(',');
-  const memoizedKeys = useMemo(() => joinedKeys.split(','), [joinedKeys]);
+  const memoizedKeys = useMemoWithFlatArray(() => keys, [keys]);
 
   const dispatch = useDispatch();
   const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
