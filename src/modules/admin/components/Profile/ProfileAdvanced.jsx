@@ -10,7 +10,6 @@ import { ACTIONS } from '~redux';
 
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { networkFetcher } from '../../../core/fetchers';
@@ -80,10 +79,8 @@ const ProfileAdvanced = ({ colony: { colonyAddress, id }, colony }: Props) => {
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.labelVersion}
           />
-          {network && network.version ? (
+          {network && network.version && (
             <p className={styles.bigInfoText}>{network.version}</p>
-          ) : (
-            <SpinnerLoader />
           )}
         </div>
         <DialogActionButton
