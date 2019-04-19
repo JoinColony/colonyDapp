@@ -12,9 +12,10 @@ import type {
   TaskMetadataMap,
   UserPermissionsType,
 } from '~immutable';
+import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -22,9 +23,14 @@ import Heading from '~core/Heading';
 import TaskList from '~dashboard/TaskList';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import {
+  TASKS_FILTER_OPTIONS,
+  tasksFilterSelectOptions,
+} from '../shared/tasksFilter';
 
 import { useColonyWithName } from '../../hooks/useColony';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
+import { walletAddressSelector } from '../../../users/selectors';
 import { domainsFetcher, colonyTaskMetadataFetcher } from '../../fetchers';
 import { canAdminister, canCreateTask } from '../../../users/checks';
 import { isInRecoveryMode } from '../../checks';
@@ -50,26 +56,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.placeholderFilter',
     defaultMessage: 'Filter',
   },
-  filterOptionAll: {
-    id: 'dashboard.ColonyHome.filterOptionAll',
-    defaultMessage: 'All open tasks',
-  },
-  filterOptionCreated: {
-    id: 'dashboard.ColonyHome.filterOptionCreated',
-    defaultMessage: 'Created by you',
-  },
-  filterOptionAssigned: {
-    id: 'dashboard.ColonyHome.filterOptionAssigned',
-    defaultMessage: 'Assigned to you',
-  },
-  filterOptionCompleted: {
-    id: 'dashboard.ColonyHome.filterOptionCompleted',
-    defaultMessage: 'Completed',
-  },
-  emptyText: {
-    id: 'dashboard.ColonyHome.emptyText',
-    defaultMessage: `There are no tasks here.`,
-  },
   newTaskButton: {
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
@@ -90,13 +76,6 @@ type Props = {|
 
 const displayName = 'dashboard.ColonyHome';
 
-const filterOptions = [
-  { label: MSG.filterOptionAll, value: 'all' },
-  { label: MSG.filterOptionCreated, value: 'created' },
-  { label: MSG.filterOptionAssigned, value: 'assigned' },
-  { label: MSG.filterOptionCompleted, value: 'completed' },
-];
-
 const getActiveDomainFilterClass = (id: number = 0, filteredDomainId: number) =>
   filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
 
@@ -105,11 +84,10 @@ const ColonyHome = ({
     params: { colonyName },
   },
 }: Props) => {
-  const [filterOption, setFilterOption] = useState('all');
-  /*
-   * TODO Replace with actual filtering logic
-   */
-  const [filteredDomainId, setFilteredDomainId] = useState(0);
+  const [filterOption, setFilterOption] = useState(TASKS_FILTER_OPTIONS.ALL);
+  const [filteredDomainId, setFilteredDomainId] = useState();
+
+  const walletAddress = useSelector(walletAddressSelector, []);
 
   const {
     data: colony,
@@ -134,21 +112,16 @@ const ColonyHome = ({
   );
   const draftIds = Object.keys(taskMetadata || {});
 
-  if (colonyError) return <Redirect to="/404" />;
+  if (colonyError) {
+    return <Redirect to="/404" />;
+  }
 
-  if (!colony || !domains || isFetchingColony || isFetchingDomains)
+  if (!colony || !domains || isFetchingColony || isFetchingDomains) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
 
-  /*
-   * @NOTE Also change this when working on the Dashboard tasks
-   *
-   * This is exactly the same as the task list from the dashboard, so it will be
-   * wise to also work on this when implementing the real filtering login / tasks
-   */
-  const formSetFilter = (
-    _: string,
-    value: 'all' | 'created' | 'assigned' | 'completed',
-  ) => setFilterOption(value);
+  const formSetFilter = (_: string, value: TasksFilterOptionType) =>
+    setFilterOption(value);
 
   const filterSelect = (
     <Select
@@ -157,7 +130,7 @@ const ColonyHome = ({
       elementOnly
       label={MSG.labelFilter}
       name="filter"
-      options={filterOptions}
+      options={tasksFilterSelectOptions}
       placeholder={MSG.placeholderFilter}
       form={{ setFieldValue: formSetFilter }}
       $value={filterOption}
@@ -181,13 +154,12 @@ const ColonyHome = ({
             </Tab>
           </TabList>
           <TabPanel>
-            {draftIds && draftIds.length ? (
-              <TaskList draftIds={draftIds} />
-            ) : (
-              <p className={styles.noTasks}>
-                <FormattedMessage {...MSG.emptyText} />
-              </p>
-            )}
+            <TaskList
+              draftIds={draftIds}
+              filterOption={filterOption}
+              filteredDomainId={filteredDomainId}
+              walletAddress={walletAddress}
+            />
           </TabPanel>
         </Tabs>
       </main>

@@ -11,9 +11,12 @@ import ExternalLink from '~core/ExternalLink';
 
 import { userDidClaimProfile } from '../../../users/checks';
 
-import type { MyTasksFilterOptionType } from './constants';
+import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
-import { MY_TASKS_FILTER } from './constants';
+import {
+  TASKS_FILTER_OPTIONS,
+  tasksFilterSelectOptions,
+} from '../shared/tasksFilter';
 
 import styles from './Dashboard.css';
 
@@ -45,22 +48,6 @@ const MSG = defineMessages({
     id: 'dashboard.Dashboard.linkHelpCenter',
     defaultMessage: 'Help Center',
   },
-  filterOptionAll: {
-    id: 'dashboard.Dashboard.filterOptionAll',
-    defaultMessage: 'All open tasks',
-  },
-  filterOptionCreated: {
-    id: 'dashboard.Dashboard.filterOptionCreated',
-    defaultMessage: 'Created by you',
-  },
-  filterOptionAssigned: {
-    id: 'dashboard.Dashboard.filterOptionAssigned',
-    defaultMessage: 'Assigned to you',
-  },
-  filterOptionCompleted: {
-    id: 'dashboard.Dashboard.filterOptionCompleted',
-    defaultMessage: 'Completed',
-  },
   initialTaskTitle: {
     id: 'dashboard.Dashboard.initialTaskTitle',
     defaultMessage: 'Get started with Colony',
@@ -72,22 +59,15 @@ type Props = {|
 |};
 
 type State = {|
-  filterOption: MyTasksFilterOptionType,
+  filterOption: TasksFilterOptionType,
   tabIndex: number,
 |};
-
-const filterOptions = [
-  { label: MSG.filterOptionAll, value: MY_TASKS_FILTER.ALL },
-  { label: MSG.filterOptionCreated, value: MY_TASKS_FILTER.CREATED },
-  { label: MSG.filterOptionAssigned, value: MY_TASKS_FILTER.ASSIGNED },
-  { label: MSG.filterOptionCompleted, value: MY_TASKS_FILTER.COMPLETED },
-];
 
 class Dashboard extends Component<Props, State> {
   static displayName = 'dashboard.Dashboard';
 
   state = {
-    filterOption: MY_TASKS_FILTER.ALL,
+    filterOption: TASKS_FILTER_OPTIONS.ALL,
     tabIndex: 0,
   };
 
@@ -121,7 +101,7 @@ class Dashboard extends Component<Props, State> {
         elementOnly
         label={MSG.labelFilter}
         name="filter"
-        options={filterOptions}
+        options={tasksFilterSelectOptions}
         placeholder={MSG.placeholderFilter}
         form={{ setFieldValue: this.setFilterOption }}
         $value={filterOption}
