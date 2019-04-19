@@ -144,8 +144,15 @@ export const useDataMapFetcher = <T>(
   isFetching: boolean,
   error: ?string,
 |}[] => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memoizedKeys = useMemo(() => keys, [...keys]);
+  /*
+   * Created memoized keys to guard the rest of the function against
+   * unnecessary updates.
+   *
+   * Since the keys `array` is of variable length, join it into a string
+   * in order to provide reference equality for the `useMemo` input.
+   */
+  const joinedKeys = keys.join(',');
+  const memoizedKeys = useMemo(() => joinedKeys.split(','), [joinedKeys]);
 
   const dispatch = useDispatch();
   const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
