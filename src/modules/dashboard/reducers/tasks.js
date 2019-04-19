@@ -128,7 +128,6 @@ const tasksReducer: ReducerType<
         DataRecord({
           error: undefined,
           isFetching: false,
-          lastFetchedAt: new Date(),
           record: TaskRecord(fromJS(task)),
         }),
       );
