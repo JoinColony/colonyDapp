@@ -4,7 +4,8 @@ import type { MessageDescriptor } from 'react-intl';
 
 import type { UserType } from '~immutable';
 
-import React from 'react';
+// $FlowFixMe Update flow
+import React, { useCallback } from 'react';
 import { compose } from 'recompose';
 
 import styles from './StepConfirmAllInput.css';
@@ -41,46 +42,48 @@ const normalize = (name): string => {
   return '';
 };
 
-const formatUserName = (currentUser, values, option): string => {
+const formatUsername = (currentUser, values, option) => {
   if (userDidClaimProfile(currentUser)) {
     return `@${normalize(currentUser.profile.username)}`;
   }
   return `@${normalize(values[option.valueKey.toString()])}`;
 };
 
-const formatColonyName = (values, option: { valueKey: string }): string => {
+const formatColonyName = (values, option: { valueKey: string }) => {
   const normalized = normalize(values[option.valueKey]);
   return `${normalized} (colony.io/colony/${normalized})`;
 };
 
-const concatenatePreviewString = (
-  option: { title: MessageDescriptor, valueKey: string },
-  values: FormValues,
-  currentUser: UserType,
-) => {
-  if (option.valueKey === `colonyName`) {
-    return formatColonyName(values, option);
-  }
-  return formatUserName(currentUser, values, option);
-};
+const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] => {
+  const getHeadingPreviewText = useCallback(
+    option => {
+      switch (option.valueKey) {
+        case 'colonyName':
+          return formatColonyName(values, option);
+        case 'username':
+          return formatUsername(currentUser, values, option);
+        default:
+          return `${values[option.valueKey[0]]} (${
+            values[option.valueKey[1]]
+          })`;
+      }
+    },
+    [values, currentUser],
+  );
 
-const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] =>
-  cardOptions.map(option => (
+  return cardOptions.map(option => (
     <div className={styles.cardRow} key={`option ${option.valueKey[0]}`}>
       <Heading
         appearance={{ size: 'tiny', weight: 'medium', margin: 'small' }}
         text={option.title}
       />
       <Heading
-        appearance={{ size: 'normal', weight: 'medium', margin: 'small' }}
-        text={
-          typeof option.valueKey === 'string'
-            ? concatenatePreviewString(option, values, currentUser)
-            : `${values[option.valueKey[0]]} (${values[option.valueKey[1]]})`
-        }
+        appearance={{ size: 'normal', weight: 'thin', margin: 'none' }}
+        text={getHeadingPreviewText(option, values, currentUser)}
       />
     </div>
   ));
+};
 
 export default compose(
   withCurrentUser,

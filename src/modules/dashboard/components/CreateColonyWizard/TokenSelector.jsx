@@ -144,10 +144,8 @@ const TokenSelector = ({
         name="tokenAddress"
         label={MSG.inputLabel}
         extra={
-          !extra ? (
+          extra || (
             <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
-          ) : (
-            extra
           )
         }
         {...getStatusText(tokenData, isLoading)}

@@ -63,16 +63,16 @@ const MSG = defineMessages({
   },
 });
 
-type FormValues = { ensName: string };
+type FormValues = { colonyName: string };
 
 type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
-const StepConfirmTransactions = ({ wizardValues: { ensName } }: Props) => {
+const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const transactionGroups = useSelector(groupedTransactions);
   if (getGroupStatus(transactionGroups) === 'succeeded') {
-    return <Redirect to={`/colony/${ensName}`} />;
+    return <Redirect to={`/colony/${colonyName}`} />;
   }
 
   const colonyTransaction = findTransactionGroupByKey(

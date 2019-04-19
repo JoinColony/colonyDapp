@@ -146,9 +146,7 @@ const StepSelectToken = ({
                   type="button"
                   className={styles.linkToOtherStep}
                   tabIndex={-2}
-                  onClick={() =>
-                    goToTokenCreate(wizardValues, nextStep, previousStep)
-                  }
+                  onClick={goToTokenCreate}
                 >
                   <FormattedMessage {...MSG.link} />
                 </button>
