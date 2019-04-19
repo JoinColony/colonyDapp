@@ -25,7 +25,7 @@ type DataFetcher<T> = {|
   ttl?: number,
 |};
 
-type MultiDataFetcher<T> = {|
+type DataMapFetcher<T> = {|
   select: (
     rootState: RootStateRecord,
     keys: string[],
@@ -130,12 +130,12 @@ export const useDataFetcher = <T>(
 };
 
 /*
- * Given a `MultiDataFetcher` object and an array of keys (the items
+ * Given a `DataMapFetcher` object and an array of keys (the items
  * to fetch data for), select the data and fetch the parts that need
  * to be (re-)fetched.
  */
-export const useMultiDataFetcher = <T>(
-  { fetch, select, ttl: ttlDefault = 0 }: MultiDataFetcher<T>,
+export const useDataMapFetcher = <T>(
+  { fetch, select, ttl: ttlDefault = 0 }: DataMapFetcher<T>,
   keys: string[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
 ): {|
