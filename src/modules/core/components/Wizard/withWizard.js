@@ -73,7 +73,9 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
         {
           step: currentStep,
           stepCount,
+          nextStep: this.next,
           previousStep: this.prev,
+          wizardValues: allValues,
           ...this.props,
         },
         createElement(Step, {
