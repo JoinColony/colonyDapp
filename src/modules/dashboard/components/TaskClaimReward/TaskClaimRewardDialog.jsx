@@ -6,11 +6,13 @@ import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import type { NetworkProps, TaskPayoutType } from '~immutable';
 import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
 
+import Alert from '~core/Alert';
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
+import { SpinnerLoader } from '~core/Preloaders';
 import StarRating from '~core/StarRating';
 import { useDataFetcher } from '~utils/hooks';
 
@@ -58,6 +60,11 @@ const MSG = defineMessages({
   yourReward: {
     id: 'dashboard.TaskClaimRewardDialog.yourReward',
     defaultMessage: 'Your Reward',
+  },
+  networkError: {
+    id: 'dashboard.TaskClaimRewardDialog.networkError',
+    defaultMessage:
+      'There was an error with the network. Please try again later.',
   },
   networkFee: {
     id: 'dashboard.TaskClaimRewardDialog.networkFee',
@@ -107,11 +114,8 @@ const TaskClaimRewardDialog = ({
   const {
     isFetching: isFetchingNetwork,
     data: network,
+    error: networkError,
   } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
-
-  if (isFetchingNetwork || !network || !network.fee) return null;
-
-  const { fee } = network;
 
   return (
     <Dialog cancel={cancel}>
@@ -197,66 +201,86 @@ const TaskClaimRewardDialog = ({
             {/*
              * Network Fee
              */}
-            <div className={styles.rewardItem}>
-              <p className={styles.rewardItemDescription}>
-                <FormattedMessage
-                  {...MSG.networkFee}
-                  values={{
-                    // eslint-disable-next-line react/style-prop-object
-                    percentage: <FormattedNumber style="percent" value={fee} />,
-                  }}
-                />
-              </p>
-              <span className={styles.rewardItemValue}>
-                {nativeTokenPayout && (
-                  <Numeral
-                    value={nativeTokenPayout.networkFee}
-                    prefix="- "
-                    suffix={` ${nativeTokenPayout.symbol}`}
-                  />
-                )}
-                {sortedPayouts.map(payout => (
-                  <Numeral
-                    /*
-                     * @NOTE Symbol appearance is unique, there can be only one
-                     */
-                    key={payout.token.symbol}
-                    value={getTaskPayoutNetworkFee(payout, fee)}
-                    prefix="- "
-                    suffix={` ${payout.token.symbol}`}
-                  />
-                ))}
-              </span>
-            </div>
-            {/*
-             * Totals
-             */}
-            <div className={styles.total}>
-              <p className={styles.rewardItemDescription}>
-                <FormattedMessage {...MSG.total} />
-              </p>
-              <span className={styles.rewardItemValue}>
-                {nativeTokenPayout && (
-                  <Numeral
-                    value={getTaskPayoutAmountMinusNetworkFee(
-                      nativeTokenPayout,
-                      fee,
+            {network && network.fee && (
+              <>
+                <div className={styles.rewardItem}>
+                  <p className={styles.rewardItemDescription}>
+                    <FormattedMessage
+                      {...MSG.networkFee}
+                      values={{
+                        percentage: (
+                          <FormattedNumber
+                            // eslint-disable-next-line react/style-prop-object
+                            style="percent"
+                            // default to satisfy flow
+                            value={network.fee || 0}
+                          />
+                        ),
+                      }}
+                    />
+                  </p>
+                  <span className={styles.rewardItemValue}>
+                    {nativeTokenPayout && (
+                      <Numeral
+                        value={nativeTokenPayout.networkFee}
+                        prefix="- "
+                        suffix={` ${nativeTokenPayout.symbol}`}
+                      />
                     )}
-                    suffix={` ${nativeTokenPayout.token.symbol}`}
-                  />
-                )}
-                {sortedPayouts.map(payout => (
-                  <Numeral
-                    /*
-                     * @NOTE Symbol appearance is unique, there can be only one
-                     */
-                    key={payout.token.symbol}
-                    value={getTaskPayoutAmountMinusNetworkFee(payout, fee)}
-                    suffix={` ${payout.token.symbol}`}
-                  />
-                ))}
-              </span>
-            </div>
+                    {sortedPayouts.map(payout => (
+                      <Numeral
+                        /*
+                         * @NOTE Symbol appearance is unique, there can be only one
+                         */
+                        key={payout.token.symbol}
+                        value={getTaskPayoutNetworkFee(
+                          payout,
+                          // default to satisfy flow
+                          network.fee || 0,
+                        )}
+                        prefix="- "
+                        suffix={` ${payout.token.symbol}`}
+                      />
+                    ))}
+                  </span>
+                </div>
+                {/*
+                 * Totals
+                 */}
+                <div className={styles.total}>
+                  <p className={styles.rewardItemDescription}>
+                    <FormattedMessage {...MSG.total} />
+                  </p>
+                  <span className={styles.rewardItemValue}>
+                    {nativeTokenPayout && (
+                      <Numeral
+                        value={getTaskPayoutAmountMinusNetworkFee(
+                          nativeTokenPayout,
+                          // default to satisfy flow
+                          network.fee || 0,
+                        )}
+                        suffix={` ${nativeTokenPayout.token.symbol}`}
+                      />
+                    )}
+                    {sortedPayouts.map(payout => (
+                      <Numeral
+                        /*
+                         * @NOTE Symbol appearance is unique, there can be only one
+                         */
+                        key={payout.token.symbol}
+                        value={getTaskPayoutAmountMinusNetworkFee(
+                          payout,
+                          // default to satisfy flow
+                          network.fee || 0,
+                        )}
+                        suffix={` ${payout.token.symbol}`}
+                      />
+                    ))}
+                  </span>
+                </div>
+              </>
+            )}
+            {isFetchingNetwork && <SpinnerLoader />}
           </section>
         </DialogSection>
       ) : (
@@ -274,6 +298,11 @@ const TaskClaimRewardDialog = ({
           />
         </DialogSection>
       )}
+      {!!networkError && (
+        <DialogSection>
+          <Alert text={MSG.networkError} />
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -282,8 +311,9 @@ const TaskClaimRewardDialog = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.continue' }}
+          disabled={!!networkError || !network}
           onClick={() => close()}
+          text={{ id: 'button.continue' }}
         />
       </DialogSection>
     </Dialog>
