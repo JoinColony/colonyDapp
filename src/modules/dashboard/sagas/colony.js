@@ -244,27 +244,33 @@ function* colonyCreateLabel({
   }
 }
 
-function* colonyDomainValidate({
+function* colonyNameCheckAvailability({
   payload: { colonyName },
   meta,
-}: Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE>): Saga<void> {
-  yield delay(300);
+}: Action<typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY>): Saga<void> {
+  try {
+    yield delay(300);
 
-  const colonyAddress = yield call(getColonyAddress, colonyName);
+    // TODO: this should probably be a query at some point like in
+    // usernameCheckAvailability
+    const colonyAddress = yield call(getColonyAddress, colonyName);
 
-  if (colonyAddress) {
+    if (colonyAddress) {
+      throw new Error('ENS address already exists');
+    }
+
+    yield put<Action<typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS>>({
+      type: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
+      meta,
+      payload: undefined,
+    });
+  } catch (caughtError) {
     yield putError(
-      ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
-      new Error('ENS address already exists'),
+      ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
+      caughtError,
       meta,
     );
-    return;
   }
-  yield put<Action<typeof ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS>>({
-    type: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
-    meta,
-    payload: undefined,
-  });
 }
 
 function* colonyProfileUpdate({
@@ -568,5 +574,8 @@ export default function* colonySagas(): Saga<void> {
    */
   yield takeLatest(ACTIONS.COLONY_AVATAR_REMOVE, colonyAvatarRemove);
   yield takeLatest(ACTIONS.COLONY_AVATAR_UPLOAD, colonyAvatarUpload);
-  yield takeLatest(ACTIONS.COLONY_DOMAIN_VALIDATE, colonyDomainValidate);
+  yield takeLatest(
+    ACTIONS.COLONY_NAME_CHECK_AVAILABILITY,
+    colonyNameCheckAvailability,
+  );
 }

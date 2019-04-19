@@ -97,13 +97,21 @@ const StepColonyENSName = ({
   },
 }: Props) => {
   const checkDomainTaken = useAsyncFunction({
-    submit: ACTIONS.COLONY_DOMAIN_VALIDATE,
-    success: ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
-    error: ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
+    submit: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY,
+    success: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
+    error: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
   });
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
+      try {
+        // Let's check whether this is even valid first
+        validationSchema.validateSyncAt('colonyName', values);
+      } catch (caughtError) {
+        // Just return. The actual validation will be done by the
+        // validationSchema
+        return;
+      }
       try {
         await checkDomainTaken(values);
       } catch (e) {

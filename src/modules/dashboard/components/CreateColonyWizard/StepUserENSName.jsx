@@ -51,7 +51,7 @@ const MSG = defineMessages({
   },
   errorDomainTaken: {
     id: 'dashboard.CreateColonyWizard.StepUserENSName.errorDomainTaken',
-    defaultMessage: 'This colony domain name is already taken',
+    defaultMessage: 'This Username is already taken',
   },
   errorDomainInvalid: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
@@ -88,6 +88,14 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
+      try {
+        // Let's check whether this is even valid first
+        validationSchema.validateSyncAt('username', values);
+      } catch (caughtError) {
+        // Just return. The actual validation will be done by the
+        // validationSchema
+        return;
+      }
       try {
         await checkDomainTaken(values);
       } catch (e) {

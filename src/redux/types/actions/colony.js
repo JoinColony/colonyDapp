@@ -157,17 +157,17 @@ export type ColonyActionTypes = {|
     DomainType[],
     WithKeyPathDepth1,
   >,
-  COLONY_DOMAIN_VALIDATE: UniqueActionType<
-    typeof ACTIONS.COLONY_DOMAIN_VALIDATE,
+  COLONY_NAME_CHECK_AVAILABILITY: UniqueActionType<
+    typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY,
     {| colonyName: string |},
     void,
   >,
-  COLONY_DOMAIN_VALIDATE_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_DOMAIN_VALIDATE_ERROR,
+  COLONY_NAME_CHECK_AVAILABILITY_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
     void,
   >,
-  COLONY_DOMAIN_VALIDATE_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_DOMAIN_VALIDATE_SUCCESS,
+  COLONY_NAME_CHECK_AVAILABILITY_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
     void,
     void,
   >,
