@@ -144,9 +144,12 @@ export const useDataMapFetcher = <T>(
   isFetching: boolean,
   error: ?string,
 |}[] => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedKeys = useMemo(() => keys, [...keys]);
+
   const dispatch = useDispatch();
   const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
-    useCallback(state => select(state, keys), [select, keys]),
+    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
   const isFirstMount = useRef(true);
@@ -159,10 +162,10 @@ export const useDataMapFetcher = <T>(
    */
   const keysToFetchFor = useMemo(
     () =>
-      keys.filter(key =>
+      memoizedKeys.filter(key =>
         shouldFetchData(allData.get(key), ttl, isFirstMount.current, [key]),
       ),
-    [allData, keys, ttl],
+    [allData, memoizedKeys, ttl],
   );
 
   /*
@@ -173,7 +176,7 @@ export const useDataMapFetcher = <T>(
       isFirstMount.current = false;
       keysToFetchFor.map(key => dispatch(fetch(key)));
     },
-    [keysToFetchFor, dispatch, fetch, keys],
+    [keysToFetchFor, dispatch, fetch, memoizedKeys],
   );
 
   /*
@@ -182,7 +185,7 @@ export const useDataMapFetcher = <T>(
    */
   return useMemo(
     () =>
-      keys.map(key => {
+      memoizedKeys.map(key => {
         const data = allData.get(key);
         return {
           key,
@@ -191,7 +194,7 @@ export const useDataMapFetcher = <T>(
           error: data ? data.error : null,
         };
       }),
-    [allData, keys, keysToFetchFor],
+    [allData, memoizedKeys, keysToFetchFor],
   );
 };
 
