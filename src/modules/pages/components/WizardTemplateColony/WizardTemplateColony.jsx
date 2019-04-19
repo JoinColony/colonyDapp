@@ -23,10 +23,11 @@ import styles from './WizardTemplateColony.css';
 
 type Props = {|
   children: Node,
+  currentUser: UserType,
   step?: number,
   stepCount?: number,
-  previousStep: () => void,
-  currentUser: UserType,
+  previousStep: (wizardValues?: Object) => void,
+  wizardValues: Object,
 |};
 
 const MSG = defineMessages({
@@ -40,14 +41,18 @@ const displayName = 'pages.WizardTemplateColony';
 
 const WizardTemplateColony = ({
   children,
-  step,
-  stepCount,
-  previousStep,
   currentUser: {
     profile: { walletAddress, balance },
   },
+  step,
+  stepCount,
+  previousStep,
+  wizardValues,
 }: Props) => {
-  const customHandler = useCallback(() => previousStep(), [previousStep]);
+  const customHandler = useCallback(() => previousStep(wizardValues), [
+    previousStep,
+    wizardValues,
+  ]);
   const ethBalance = toWei(balance, 'ether');
   return (
     <main className={styles.layoutMain}>
