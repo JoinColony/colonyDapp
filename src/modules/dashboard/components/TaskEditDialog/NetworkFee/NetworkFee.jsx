@@ -4,16 +4,12 @@ import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import BN from 'bn.js';
 
-import type { NetworkProps } from '~immutable';
-
-import Alert from '~core/Alert';
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
-import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
+import { useSelector } from '~utils/hooks';
 
-import { networkFetcher } from '../../../../core/fetchers';
+import { networkFeeSelector } from '../../../../core/selectors';
 
 import styles from './NetworkFee.css';
 
@@ -48,22 +44,8 @@ type Props = {|
 const displayName = 'dashboard.Task.Payout.NetworkFee';
 
 const NetworkFee = ({ amount, symbol }: Props) => {
-  const {
-    isFetching: isFetchingNetwork,
-    data: network,
-    error: networkError,
-  } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
-
-  /*
-   * Handle instances where fee can't be displayed.
-   */
-  if (isFetchingNetwork) return <SpinnerLoader />;
-  if (networkError) return <Alert text={MSG.errorText} />;
-  if (!network || !network.fee) return null;
-
-  const { fee } = network;
-  const feeAmount: number = getNetworkFee(amount, fee);
-
+  const networkFee = useSelector(networkFeeSelector);
+  const feeAmount: number = getNetworkFee(amount, networkFee);
   return (
     <>
       <div className={styles.amount}>
@@ -83,7 +65,7 @@ const NetworkFee = ({ amount, symbol }: Props) => {
                 values={{
                   percentage: (
                     // eslint-disable-next-line react/style-prop-object
-                    <FormattedNumber style="percent" value={fee} />
+                    <FormattedNumber style="percent" value={networkFee} />
                   ),
                 }}
               />
