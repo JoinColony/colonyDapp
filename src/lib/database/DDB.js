@@ -24,7 +24,7 @@ import {
 // We'll skip the Q here because every id that contains a `Qm` is not allowed
 const ipfsCompatibleBase57 =
   '123456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-const generateId = () => generate(ipfsCompatibleBase57, 21);
+export const generateId = () => generate(ipfsCompatibleBase57, 21);
 
 type StoreIdentifier = string | OrbitDBAddress;
 
