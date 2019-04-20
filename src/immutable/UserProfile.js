@@ -13,6 +13,8 @@ type Shared = {|
   username?: string,
   walletAddress: string,
   website?: string,
+  inboxStoreAddress?: string,
+  metadataStoreAddress?: string,
 |};
 
 export type UserProfileType = $ReadOnly<Shared>;
@@ -28,6 +30,8 @@ const defaultProps: $Shape<Shared> = {
   username: undefined,
   walletAddress: undefined,
   website: undefined,
+  inboxStoreAddress: undefined,
+  metadataStoreAddress: undefined,
 };
 
 const UserProfileRecord: RecordFactory<Shared> = Record(defaultProps);
