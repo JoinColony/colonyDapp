@@ -6,7 +6,7 @@ import { getEthereumWalletStoreAccessController } from '../accessControllers';
 
 const userMetadataStore: StoreBlueprint = {
   getAccessController: getEthereumWalletStoreAccessController,
-  name: 'userMetadata',
+  defaultName: 'userMetadata',
   type: EventStore,
 };
 

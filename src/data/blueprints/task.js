@@ -1,13 +1,25 @@
 /* @flow */
 
+import type { Address, StoreBlueprint } from '~types';
+import type { TaskDraftId } from '~immutable';
+
 import { EventStore } from '../../lib/database/stores';
 import { getTaskStoreAccessController } from '../accessControllers';
 
-import type { StoreBlueprint } from '~types';
-
+// TODO: We should type store props!
 const taskStoreBlueprint: StoreBlueprint = {
   getAccessController: getTaskStoreAccessController,
-  name: 'task',
+  getName: ({
+    colonyAddress,
+    draftId,
+  }: {
+    colonyAddress: Address,
+    draftId: TaskDraftId,
+  } = {}) => {
+    if (!(colonyAddress && draftId))
+      throw new Error('Could not generate task store name');
+    return `colony_${colonyAddress}_task_${draftId}`;
+  },
   type: EventStore,
 };
 

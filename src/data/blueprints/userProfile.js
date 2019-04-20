@@ -8,7 +8,7 @@ import { getEthereumWalletStoreAccessController } from '../accessControllers';
 
 const userProfileStore: StoreBlueprint = {
   getAccessController: getEthereumWalletStoreAccessController,
-  name: 'userProfile',
+  defaultName: 'userProfile',
   schema: yup.object({
     displayName: yup.string(),
     createdAt: yup.number(),
