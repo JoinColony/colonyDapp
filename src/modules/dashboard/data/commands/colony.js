@@ -1,8 +1,8 @@
 /* @flow */
 
 import type { Address } from '~types';
-import type { EventStore } from '~lib/database/stores';
 import type {
+  ColonyStore,
   ColonyClientContext,
   Command,
   ContextWithMetadata,
@@ -59,7 +59,7 @@ export const createColonyProfile: ColonyCommand<
     website?: string,
     token: AddTokenInfoCommandArgs,
   |},
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateColonyProfileCommandArgsSchema,
   async execute(args) {
@@ -97,7 +97,7 @@ export const createDomain: ColonyCommand<
     name: string,
     id: number,
   |},
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: CreateDomainCommandArgsSchema,
   async execute(args) {
@@ -116,7 +116,7 @@ export const updateColonyProfile: ColonyCommand<
     guideline?: string,
     website?: string,
   |},
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: UpdateColonyProfileCommandArgsSchema,
   async execute(args) {
@@ -133,7 +133,7 @@ export const setColonyAvatar: ColonyCommand<
   {|
     ipfsHash: string,
   |},
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: SetColonyAvatarCommandArgsSchema,
   async execute(args) {
@@ -150,7 +150,7 @@ export const removeColonyAvatar: ColonyCommand<
   {|
     ipfsHash: string,
   |},
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   schema: RemoveColonyAvatarCommandArgsSchema,
   async execute(args) {
@@ -165,7 +165,7 @@ export const removeColonyAvatar: ColonyCommand<
 
 export const addTokenInfo: ColonyCommand<
   AddTokenInfoCommandArgs,
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute(args) {
     const tokenInfoAddedEvent = createTokenInfoAddedEvent(args);
@@ -182,7 +182,7 @@ export const updateTokenInfo: ColonyCommand<
   {|
     tokens: Address[],
   |},
-  EventStore,
+  ColonyStore,
 > = ({ ddb, colonyClient, wallet, metadata }) => ({
   async execute(args) {
     const { tokens } = args;
