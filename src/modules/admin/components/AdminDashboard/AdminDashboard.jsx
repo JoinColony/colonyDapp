@@ -31,7 +31,7 @@ const MSG = defineMessages({
   },
   backButton: {
     id: 'dashboard.Admin.backButton',
-    defaultMessage: 'Go to {name}',
+    defaultMessage: 'Go to {displayName}',
   },
   colonySettings: {
     id: 'dashboard.Admin.colonySettings',

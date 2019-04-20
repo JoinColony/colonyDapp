@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
 
 import type { TaskPayoutType } from '~immutable';
@@ -10,12 +11,19 @@ import Numeral from '../Numeral';
 
 import styles from './PayoutsList.css';
 
+const MSG = defineMessages({
+  extraPayoutsText: {
+    id: 'PayoutsList.extraPayoutsText',
+    defaultMessage: '+{extraPayouts} more',
+  },
+});
+
 type Props = {|
-  /* Payouts list containing all the payouts */
+  /** Payouts list containing all the payouts */
   payouts: Array<TaskPayoutType>,
-  /* Maximum lines to show before switching to popover */
+  /** Maximum lines to show before switching to popover */
   maxLines?: number,
-  /* Native token of the displayed Colony */
+  /** Native token of the displayed Colony */
   nativeToken: string,
 |};
 
@@ -75,7 +83,12 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
           }
         >
           <span className={styles.payoutPopover}>
-            +{extraPayouts.length} more
+            <FormattedMessage
+              {...MSG.extraPayoutsText}
+              values={{
+                extraPayouts: <FormattedNumber value={extraPayouts.length} />,
+              }}
+            />
           </span>
         </Tooltip>
       ) : null}
