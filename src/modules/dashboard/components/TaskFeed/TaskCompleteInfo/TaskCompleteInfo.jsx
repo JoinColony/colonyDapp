@@ -9,21 +9,20 @@ import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import { getEtherscanTxUrl } from '~utils/external';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import type { EnhancedProps as Props } from './types';
 
+import { networkFeeSelector } from '../../../../core/selectors';
 import { tokenFetcher } from '../../../fetchers';
 import { userFetcher } from '../../../../users/fetchers';
 
 import styles from './TaskCompleteInfo.css';
 
-const NETWORK_FEE = 0.01;
+const getTaskPayoutNetworkFee = (amount: number, fee: number) => amount * fee;
 
-const getTaskPayoutNetworkFee = (amount: number) => amount * NETWORK_FEE;
-
-const getTaskPayoutAmountMinusNetworkFee = (amount: number) =>
-  amount - getTaskPayoutNetworkFee(amount);
+const getTaskPayoutAmountMinusNetworkFee = (amount: number, fee: number) =>
+  amount - getTaskPayoutNetworkFee(amount, fee);
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -71,6 +70,12 @@ const TaskCompleteInfo = ({
 
   const { symbol } = token || {};
 
+  /*
+   * TODO: Use fee data from the transaction, as the current network fee doesn't
+   * necessarily reflect the fee at time of tx. This is intended to be temporary.
+   */
+  const networkFee = useSelector(networkFeeSelector);
+
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
@@ -115,7 +120,10 @@ const TaskCompleteInfo = ({
                     <Numeral
                       decimals={4}
                       unit="ether"
-                      value={getTaskPayoutAmountMinusNetworkFee(amount)}
+                      value={getTaskPayoutAmountMinusNetworkFee(
+                        amount,
+                        networkFee,
+                      )}
                     />
                   ),
                   symbol,
@@ -129,7 +137,7 @@ const TaskCompleteInfo = ({
                     <Numeral
                       decimals={4}
                       unit="ether"
-                      value={getTaskPayoutNetworkFee(amount)}
+                      value={getTaskPayoutNetworkFee(amount, networkFee)}
                     />
                   ),
                   symbol,
