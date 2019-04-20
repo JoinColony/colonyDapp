@@ -126,8 +126,6 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_FETCH_SUCCESS,
     {|
       colonyAddress: Address,
-      commentsStoreAddress: string,
-      taskStoreAddress: string,
       task: $Shape<TaskType>,
     |},
   >,

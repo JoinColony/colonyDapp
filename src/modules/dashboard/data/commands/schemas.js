@@ -46,7 +46,7 @@ export const SetTaskDueDateCommandArgsSchema = yup.object({
 });
 
 export const SetTaskSkillCommandArgsSchema = yup.object({
-  skillId: yup.string().required(),
+  skillId: yup.number().required(),
 });
 
 export const CreateTaskCommandArgsSchema = yup.object({
