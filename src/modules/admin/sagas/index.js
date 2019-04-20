@@ -12,9 +12,9 @@ import {
   executeCommand,
   executeQuery,
 } from '~utils/saga/effects';
-import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
+import { getColony } from '../../dashboard/data/queries';
 import {
   getColonyTransactions,
   getColonyUnclaimedTransactions,
@@ -27,29 +27,17 @@ import {
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
 import { fetchColony } from '../../dashboard/actionCreators';
-import { getColonyContext } from '../../dashboard/sagas/shared';
 
 function* colonyFetchTransactions({
   payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>): Saga<void> {
   try {
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
-
-    const transactions = yield* executeQuery(
-      {
-        colonyClient,
-        metadata: {
-          colonyAddress,
-        },
+    const transactions = yield* executeQuery(getColonyTransactions, {
+      metadata: {
+        colonyAddress,
       },
-      getColonyTransactions,
-    );
+    });
 
     yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
@@ -66,19 +54,9 @@ function* colonyFetchUnclaimedTransactions({
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>): Saga<void> {
   try {
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
-
-    const transactions = yield* executeQuery(
-      {
-        colonyClient,
-        metadata: { colonyAddress },
-      },
-      getColonyUnclaimedTransactions,
-    );
+    const transactions = yield* executeQuery(getColonyUnclaimedTransactions, {
+      metadata: { colonyAddress },
+    });
 
     yield put<
       Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS>,
@@ -142,9 +120,16 @@ function* colonyUpdateTokens({
   meta,
 }: Action<typeof ACTIONS.COLONY_UPDATE_TOKENS>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyAddress);
-    yield* executeCommand(context, updateTokenInfo, {
-      tokens,
+    // TODO: Fetch it from state
+    const { tokens: currentTokenReferences = {} } = yield* executeQuery(
+      getColony,
+      {
+        metadata: { colonyAddress },
+      },
+    );
+    yield* executeCommand(updateTokenInfo, {
+      metadata: { colonyAddress },
+      args: { tokens, currentTokenReferences },
     });
     yield put(fetchColony(colonyAddress));
 
