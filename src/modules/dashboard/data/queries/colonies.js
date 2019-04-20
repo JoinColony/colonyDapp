@@ -58,6 +58,12 @@ const EVENT_PARSERS = {
 };
 
 const context = [CONTEXT.COLONY_MANAGER];
+const colonyContext = [
+  CONTEXT.COLONY_MANAGER,
+  CONTEXT.DDB_INSTANCE,
+  CONTEXT.WALLET,
+];
+
 export const prepareColonyClientQuery = async (
   {
     colonyManager,
@@ -238,7 +244,7 @@ export const getColony: Query<
   {| colonyAddress: Address |},
   ColonyType,
 > = {
-  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  context: colonyContext,
   async prepare(
     {
       colonyManager,
@@ -294,7 +300,7 @@ export const getColonyTasks: Query<
     |},
   },
 > = {
-  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  context: colonyContext,
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore) {
     return colonyStore
@@ -313,7 +319,7 @@ export const getColonyDomains: Query<
   void,
   DomainType[],
 > = {
-  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  context: colonyContext,
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore) {
     return colonyStore
@@ -332,7 +338,7 @@ export const getColonyTokenBalance: Query<
   {| colonyAddress: Address, tokenAddress: Address |},
   BigNumber,
 > = {
-  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  context: colonyContext,
   prepare: async ({
     colonyManager: { networkClient },
   }: {|

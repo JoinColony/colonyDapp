@@ -14,8 +14,6 @@ import {
 } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
-import type { ValidatedKVStore } from '~lib/database/stores';
-import type { UserProfileStoreValues } from '~data/storeValuesTypes';
 
 import {
   putError,
@@ -24,7 +22,6 @@ import {
   executeQuery,
   selectAsJS,
 } from '~utils/saga/effects';
-import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
 import {
@@ -62,38 +59,7 @@ import { userDidClaimProfile } from '../../users/checks';
 
 import { fetchColony, fetchToken } from '../actionCreators';
 import { colonyAvatarHashSelector } from '../selectors';
-
-import { getColonyContext, getColonyAddress, getColonyName } from './shared';
-
-function* prepareProfileStore(
-  username: string,
-): Saga<ValidatedKVStore<UserProfileStoreValues>> {
-  const walletAddress = yield select(walletAddressSelector);
-  const context = {
-    ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
-    metadata: {
-      username,
-      walletAddress,
-    },
-  };
-
-  const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
-    context,
-    createUserProfile,
-    {
-      username,
-    },
-  );
-  yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
-    type: ACTIONS.USER_METADATA_SET,
-    payload: {
-      inboxStoreAddress: inboxStore.address.toString(),
-      metadataStoreAddress: metadataStore.address.toString(),
-      profileStoreAddress: profileStore.address.toString(),
-    },
-  });
-  return profileStore;
-}
+import { getColonyAddress, getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
@@ -138,7 +104,27 @@ function* colonyCreate({
       /*
        * Create the profile store
        */
-      const profileStore = yield* prepareProfileStore(username);
+      const walletAddress = yield select(walletAddressSelector);
+      const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+        createUserProfile,
+        {
+          args: {
+            username,
+            walletAddress,
+          },
+          metadata: {
+            walletAddress,
+          },
+        },
+      );
+      yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
+        type: ACTIONS.USER_METADATA_SET,
+        payload: {
+          inboxStoreAddress: inboxStore.address.toString(),
+          metadataStoreAddress: metadataStore.address.toString(),
+          profileStoreAddress: profileStore.address.toString(),
+        },
+      });
       yield put(
         transactionAddParams(createUserId, {
           orbitDBPath: profileStore.address.toString(),
@@ -234,7 +220,6 @@ function* colonyCreate({
     /*
      * Create the colony store
      */
-    const colonyContext = yield* getColonyContext(colonyAddress);
     const args = {
       colonyAddress,
       colonyName,
@@ -247,11 +232,10 @@ function* colonyCreate({
         symbol: tokenSymbol,
       },
     };
-    const colonyStore = yield* executeCommand(
-      colonyContext,
-      createColonyProfile,
+    const colonyStore = yield* executeCommand(createColonyProfile, {
+      metadata: { colonyAddress },
       args,
-    );
+    });
 
     yield put(subscribeToColony(colonyAddress));
 
@@ -321,16 +305,15 @@ function* colonyProfileUpdate({
   },
 }: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyAddress);
-    yield* executeCommand(context, updateColonyProfile, {
-      displayName,
+    const metadata = { colonyAddress };
+    const args = {
       description,
+      displayName,
       guideline,
       website,
-    });
-    /*
-     * Update the colony in the redux store to show the updated values
-     */
+    };
+    yield* executeCommand(updateColonyProfile, { args, metadata });
+
     yield put<Action<typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS>>({
       type: ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
       meta,
@@ -356,8 +339,10 @@ function* colonyFetch({
     /**
      * @todo Add error mode for fetching a non-existent colony.
      */
-    const context = yield* getColonyContext(colonyAddress);
-    const payload = yield* executeQuery(context, getColony);
+    const payload = yield* executeQuery(getColony, {
+      args: { colonyAddress },
+      metadata: { colonyAddress },
+    });
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
       meta,
@@ -428,14 +413,17 @@ function* colonyAvatarUpload({
   payload: { colonyAddress, data },
 }: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyAddress);
+    // first attempt upload to IPFS
     const ipfsHash = yield call(ipfsUpload, data);
 
     /*
      * Set the avatar's hash in the store
      */
-    yield* executeCommand(context, setColonyAvatar, {
-      ipfsHash,
+    yield* executeCommand(setColonyAvatar, {
+      args: {
+        ipfsHash,
+      },
+      metadata: { colonyAddress },
     });
 
     /*
@@ -456,12 +444,16 @@ function* colonyAvatarRemove({
   payload: { colonyAddress },
 }: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyAddress);
     const ipfsHash = yield select(colonyAvatarHashSelector, colonyAddress);
     /*
      * Remove colony avatar
      */
-    yield* executeCommand(context, removeColonyAvatar, { ipfsHash });
+    yield* executeCommand(removeColonyAvatar, {
+      args: {
+        ipfsHash,
+      },
+      metadata: { colonyAddress },
+    });
 
     /*
      * Also set the avatar in the state to undefined (via a reducer)
@@ -543,13 +535,9 @@ function* colonyTokenBalanceFetch({
   payload: { colonyAddress, tokenAddress },
 }: Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const { metadata } = yield* getColonyContext(colonyAddress);
-    const balance = yield* executeQuery(
-      { metadata, networkClient },
-      getColonyTokenBalance,
-      tokenAddress,
-    );
+    const balance = yield* executeQuery(getColonyTokenBalance, {
+      args: { colonyAddress, tokenAddress },
+    });
 
     yield put({
       type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
@@ -576,9 +564,9 @@ function* colonyTaskMetadataFetch({
   payload: { colonyAddress },
 }: Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyAddress);
-    const colonyTasks = yield* executeQuery(context, getColonyTasks);
-
+    const colonyTasks = yield* executeQuery(getColonyTasks, {
+      metadata: { colonyAddress },
+    });
     yield put<Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS,
       meta: { key: colonyAddress },
