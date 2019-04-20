@@ -20,16 +20,17 @@ import { COLONY_CONTEXT } from '../../core/constants';
 import { createDomain } from '../data/commands';
 import { getColonyDomains } from '../data/queries';
 
-import { getColonyContext } from './shared';
-
 function* colonyDomainsFetch({
   meta,
   payload: { colonyAddress },
 }: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
   try {
-    const context = yield* getColonyContext(colonyAddress);
-    const domains = yield* executeQuery(context, getColonyDomains);
-
+    const domains = yield* executeQuery(getColonyDomains, {
+      metadata: { colonyAddress },
+    });
+    /*
+     * Dispatch the success action.
+     */
     yield put<Action<typeof ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
@@ -49,7 +50,6 @@ function* domainCreate({
 }: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const context = yield* getColonyContext(colonyAddress);
     /*
      * Create the domain on the colony with a transaction.
      * TODO idempotency could be improved here by looking for a pending transaction.
@@ -73,8 +73,16 @@ function* domainCreate({
     /*
      * Add an entry to the colony store.
      */
-    yield* executeCommand(context, createDomain, { id, name });
-
+    yield* executeCommand(createDomain, {
+      metadata: { colonyAddress },
+      args: {
+        domainId: id,
+        name,
+      },
+    });
+    /*
+     * Dispatch a success action with the newly-added domain.
+     */
     yield put<Action<typeof ACTIONS.DOMAIN_CREATE_SUCCESS>>({
       type: ACTIONS.DOMAIN_CREATE_SUCCESS,
       meta,
