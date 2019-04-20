@@ -10,7 +10,7 @@ import createIPFSNode from './utils/createIPFSNode';
 
 const feedBlueprint = {
   getAccessController() {},
-  name: 'activity',
+  defaultName: 'activity',
   schema: yup.object({
     userAction: yup.string().required(),
     colonyName: yup.string().required(),

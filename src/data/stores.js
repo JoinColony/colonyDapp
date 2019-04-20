@@ -159,3 +159,32 @@ export const createUserProfileStore = (ddb: DDB) => async ({
 
   return { profileStore, inboxStore, metadataStore };
 };
+
+export const getTaskStoreAddress = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({
+  draftId,
+  colonyAddress,
+}: {
+  draftId: TaskDraftId,
+  colonyAddress: Address,
+}) =>
+  ddb.generateStoreAddress(taskStoreBlueprint, {
+    colonyAddress,
+    colonyClient,
+    draftId,
+    wallet,
+  });
+export const getCommentsStoreAddress = (ddb: DDB) => async ({
+  draftId,
+  colonyAddress,
+}: {
+  draftId: TaskDraftId,
+  colonyAddress: Address,
+}) =>
+  ddb.generateStoreAddress(commentsStoreBlueprint, {
+    colonyAddress,
+    draftId,
+  });

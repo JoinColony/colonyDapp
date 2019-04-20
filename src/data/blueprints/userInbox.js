@@ -7,7 +7,7 @@ import { getPermissiveStoreAccessController } from '../accessControllers';
 
 const userInboxStore: StoreBlueprint = {
   getAccessController: getPermissiveStoreAccessController,
-  name: 'userInbox',
+  defaultName: 'userInbox',
   type: EventStore,
 };
 

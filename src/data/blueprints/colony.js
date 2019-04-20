@@ -7,7 +7,7 @@ import type { StoreBlueprint } from '~types';
 
 const colonyStoreBlueprint: StoreBlueprint = {
   getAccessController: getColonyStoreAccessController,
-  name: 'colony',
+  defaultName: 'colony',
   type: EventStore,
 };
 
