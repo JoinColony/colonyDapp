@@ -1,0 +1,11 @@
+.help {
+  margin-left: 20px;
+}
+
+.helpButton {
+  composes: button from '~styles/reset.css';
+}
+
+.tooltipText {
+  max-width: 180px;
+}

@@ -11,6 +11,8 @@ import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
 
+import NetworkFee from './NetworkFee';
+
 import styles from './Payout.css';
 
 const MSG = defineMessages({
@@ -154,6 +156,11 @@ class Payout extends Component<Props, State> {
               )}
             </div>
           </div>
+          {amount && symbol && !editing && (
+            <div className={styles.networkFeeRow}>
+              <NetworkFee amount={amount} symbol={symbol} />
+            </div>
+          )}
         </div>
       </div>
     );

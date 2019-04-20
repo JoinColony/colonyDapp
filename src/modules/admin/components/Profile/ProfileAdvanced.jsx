@@ -3,16 +3,16 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyType, UserPermissionsType, NetworkProps } from '~immutable';
+import type { ColonyType, UserPermissionsType } from '~immutable';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 
-import Heading from '~core/Heading';
 import { DialogActionButton } from '~core/Button';
+import Heading from '~core/Heading';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { networkVersionFetcher } from '../../../core/fetchers';
+import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 
@@ -68,11 +68,7 @@ const ProfileAdvanced = ({
     [colonyAddress],
   );
 
-  const {
-    isFetching: isFetchingNetworkVersion,
-    data: network,
-    error: networkVersionError,
-  } = useDataFetcher<NetworkProps>(networkVersionFetcher, [], []);
+  const networkVersion = useSelector(networkVersionSelector);
 
   return (
     <div className={styles.main}>
@@ -92,8 +88,7 @@ const ProfileAdvanced = ({
           success={ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingNetworkVersion}
-          disabled={!!networkVersionError || !canBeUpgraded(colony, network)}
+          disabled={!networkVersion || !canBeUpgraded(colony, networkVersion)}
         />
       </section>
       <section className={styles.section}>

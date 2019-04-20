@@ -1,12 +1,11 @@
 /* @flow */
-/* eslint-disable import/prefer-default-export */
 
 import { networkSelector, ipfsDataSelector } from './selectors';
-import { fetchNetworkVersion, fetchIpfsData } from './actionCreators';
+import { fetchNetwork, fetchIpfsData } from './actionCreators';
 
-export const networkVersionFetcher = Object.freeze({
+export const networkFetcher = Object.freeze({
   select: networkSelector,
-  fetch: fetchNetworkVersion,
+  fetch: fetchNetwork,
 });
 
 export const ipfsDataFetcher = Object.freeze({
