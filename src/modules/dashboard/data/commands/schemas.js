@@ -3,12 +3,12 @@
 import * as yup from 'yup';
 
 export const CreateColonyProfileCommandArgsSchema = yup.object({
-  address: yup
+  colonyAddress: yup
     .string()
     .address()
     .required(),
   colonyName: yup.string().required(),
-  name: yup.string().required(),
+  displayName: yup.string().required(),
   description: yup.string(),
   website: yup.string().url(),
   guideline: yup.string().url(),
@@ -17,11 +17,12 @@ export const CreateColonyProfileCommandArgsSchema = yup.object({
     icon: yup.string(),
     name: yup.string(),
     symbol: yup.string(),
+    isNative: yup.boolean(),
   }),
 });
 
 export const UpdateColonyProfileCommandArgsSchema = yup.object({
-  name: yup.string().required(),
+  displayName: yup.string().required(),
   description: yup.string(),
   website: yup.string().url(),
   guideline: yup.string().url(),
@@ -29,6 +30,7 @@ export const UpdateColonyProfileCommandArgsSchema = yup.object({
 
 export const CreateDomainCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
+  name: yup.string().required(),
 });
 
 export const SetColonyAvatarCommandArgsSchema = yup.object({
