@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { UserMetadataStore } from '~data/types';
-
 import { USER_EVENT_TYPES } from '~data/constants';
 import { getUserTokensReducer } from './reducers';
 
