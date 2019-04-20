@@ -3,16 +3,16 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ColonyType, UserPermissionsType, NetworkProps } from '~immutable';
+import type { ColonyType, UserPermissionsType } from '~immutable';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { networkFetcher } from '../../../core/fetchers';
+import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 
@@ -54,7 +54,10 @@ type Props = {|
   colony: ColonyType,
 |};
 
-const ProfileAdvanced = ({ colony: { colonyAddress, id }, colony }: Props) => {
+const ProfileAdvanced = ({
+  colony: { colonyAddress, id, version },
+  colony,
+}: Props) => {
   const {
     isFetching: isFetchingUserPermissions,
     data: permissions,
@@ -65,11 +68,7 @@ const ProfileAdvanced = ({ colony: { colonyAddress, id }, colony }: Props) => {
     [colonyAddress],
   );
 
-  const {
-    isFetching: isFetchingNetwork,
-    data: network,
-    error: networkError,
-  } = useDataFetcher<NetworkProps>(networkFetcher, [], []);
+  const networkVersion = useSelector(networkVersionSelector);
 
   return (
     <div className={styles.main}>
@@ -79,9 +78,7 @@ const ProfileAdvanced = ({ colony: { colonyAddress, id }, colony }: Props) => {
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.labelVersion}
           />
-          {network && network.version && (
-            <p className={styles.bigInfoText}>{network.version}</p>
-          )}
+          <p className={styles.bigInfoText}>{version}</p>
         </div>
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
@@ -91,8 +88,7 @@ const ProfileAdvanced = ({ colony: { colonyAddress, id }, colony }: Props) => {
           success={ACTIONS.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ACTIONS.COLONY_VERSION_UPGRADE_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingNetwork}
-          disabled={!!networkError || !canBeUpgraded(colony, network)}
+          disabled={!networkVersion || !canBeUpgraded(colony, networkVersion)}
         />
       </section>
       <section className={styles.section}>
