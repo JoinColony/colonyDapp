@@ -42,7 +42,7 @@ export const RemoveColonyAvatarCommandArgsSchema = yup.object({
 });
 
 export const SetTaskDueDateCommandArgsSchema = yup.object({
-  dueDate: yup.date(),
+  dueDate: yup.number().required(),
 });
 
 export const SetTaskSkillCommandArgsSchema = yup.object({
