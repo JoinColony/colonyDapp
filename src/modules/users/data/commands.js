@@ -4,13 +4,14 @@ import type { Address, OrbitDBAddress } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
   Command,
-  ContextWithMetadata,
-  DDBContext,
+  DDB,
   UserInboxStore,
   UserMetadataStore,
   UserProfileStore,
 } from '~data/types';
 
+import { CONTEXT } from '~context';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   createUserProfileStore,
   getUserProfileStore,
@@ -29,8 +30,6 @@ import {
   createCommentMentionInboxEvent,
 } from './events';
 
-import { getUserColonies, getUserTasks } from './queries';
-
 import { getUserTokenAddresses } from './utils';
 
 import {
@@ -41,93 +40,72 @@ import {
   UpdateUserProfileCommandArgsSchema,
 } from './schemas';
 
-import { ZERO_ADDRESS } from '~utils/web3/constants';
-
-type UserCommandMetadata = {|
-  walletAddress: string,
-  username?: string,
+type UserProfileStoreMetadata = {|
+  walletAddress: Address,
 |};
 
-export type UserCommandContext = ContextWithMetadata<
-  UserCommandMetadata,
-  DDBContext,
->;
-
-export type UserAvatarCommandContext = ContextWithMetadata<
-  UserCommandMetadata,
-  DDBContext,
->;
-
-export type UserMetadataCommandContext = ContextWithMetadata<
-  {|
-    walletAddress: string,
-    metadataStoreAddress: string | OrbitDBAddress,
-  |},
-  DDBContext,
->;
-
-export type UserCommand<I: *, R: *> = Command<UserCommandContext, I, R>;
-export type UserMetadataCommand<I: *, R: *> = Command<
-  UserMetadataCommandContext,
-  I,
-  R,
->;
-
-export type UserActivityCommandContext = ContextWithMetadata<
-  {|
-    walletAddress: string,
-    inboxStoreAddress: string | OrbitDBAddress,
-  |},
-  DDBContext,
->;
-
-export type UserInboxCommand<I: *, R: *> = Command<
-  UserActivityCommandContext,
-  I,
-  R,
->;
-
-export type CommentMentionInboxCommandArgs = {|
-  event: string,
-  taskTitle?: string,
-  comment?: string,
-  colonyName?: string,
+type UserInboxStoreMetadata = {|
+  inboxStoreAddress: string | OrbitDBAddress,
+  walletAddress: Address,
 |};
 
-export const createUserProfile: UserCommand<
+type UserMetadataStoreMetadata = {|
+  metadataStoreAddress: string | OrbitDBAddress,
+  walletAddress: Address,
+|};
+
+const prepareProfileCommand = async (
+  { ddb }: {| ddb: DDB |},
+  metadata: UserProfileStoreMetadata,
+) => getUserProfileStore(ddb)(metadata);
+
+const prepareMetadataCommand = async (
+  { ddb }: {| ddb: DDB |},
+  metadata: UserMetadataStoreMetadata,
+) => getUserMetadataStore(ddb)(metadata);
+
+const prepareInboxStoreCommand = async (
+  { ddb }: { ddb: DDB },
+  metadata: UserInboxStoreMetadata,
+) => getUserInboxStore(ddb)(metadata);
+
+export const createUserProfile: Command<
   {|
-    username: string,
-  |},
-  {|
+    profileStore: UserProfileStore,
     inboxStore: UserInboxStore,
     metadataStore: UserMetadataStore,
-    profileStore: UserProfileStore,
   |},
-> = ({ ddb, metadata }) => ({
+  UserProfileStoreMetadata,
+  {|
+    username: string,
+    walletAddress: string,
+  |},
+  {|
+    profileStore: UserProfileStore,
+    inboxStore: UserInboxStore,
+    metadataStore: UserMetadataStore,
+  |},
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
   schema: CreateUserProfileCommandArgsSchema,
-  async execute(args) {
-    const {
-      profileStore,
-      inboxStore,
-      metadataStore,
-    } = await createUserProfileStore(ddb)(metadata);
-
-    const { walletAddress, username } = metadata;
+  async prepare({ ddb }: {| ddb: DDB |}, metadata: UserProfileStoreMetadata) {
+    return createUserProfileStore(ddb)(metadata);
+  },
+  async execute({ profileStore, inboxStore, metadataStore }, args) {
     await profileStore.set({
       createdAt: Date.now(),
-      walletAddress,
-      username,
       inboxStoreAddress: inboxStore.address.toString(),
       metadataStoreAddress: metadataStore.address.toString(),
       ...args,
     });
     await profileStore.load();
-
     return { profileStore, inboxStore, metadataStore };
   },
-});
+};
 
-export const updateUserProfile: UserCommand<
+export const updateUserProfile: Command<
+  UserProfileStore,
+  UserProfileStoreMetadata,
   {|
     bio?: string,
     displayName?: string,
@@ -135,57 +113,64 @@ export const updateUserProfile: UserCommand<
     website?: string,
   |},
   UserProfileStore,
-> = ({ ddb, metadata }) => ({
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
   schema: UpdateUserProfileCommandArgsSchema,
-  async execute(args) {
-    const profileStore = await getUserProfileStore(ddb)(metadata);
+  prepare: prepareProfileCommand,
+  async execute(profileStore, args) {
     await profileStore.set(args);
     await profileStore.load();
     return profileStore;
   },
-});
+};
 
 export const setUserAvatar: Command<
-  UserAvatarCommandContext,
+  UserProfileStore,
+  UserProfileStoreMetadata,
   {|
     ipfsHash: string,
   |},
   string,
-> = ({ ddb, metadata }) => ({
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
   schema: SetUserAvatarCommandArgsSchema,
-  async execute({ ipfsHash }) {
-    const profileStore = await getUserProfileStore(ddb)(metadata);
-    await profileStore.set({ avatarHash: ipfsHash });
-    return ipfsHash;
+  prepare: prepareProfileCommand,
+  async execute(profileStore, { ipfsHash: avatarHash }) {
+    await profileStore.set({ avatarHash });
+    return avatarHash;
   },
-});
+};
 
 /**
  * @todo Unpin the avatar when the PinnerConnector supports it.
  */
-export const removeUserAvatar: UserCommand<void, UserProfileStore> = ({
-  ddb,
-  metadata,
-}) => ({
-  async execute() {
-    const profileStore = await getUserProfileStore(ddb)(metadata);
+export const removeUserAvatar: Command<
+  UserProfileStore,
+  UserProfileStoreMetadata,
+  void,
+  UserProfileStore,
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareProfileCommand,
+  async execute(profileStore) {
     await profileStore.set({ avatarHash: null });
     await profileStore.load();
     return profileStore;
   },
-});
+};
 
-export const updateTokens: UserMetadataCommand<
+export const updateTokens: Command<
+  UserMetadataStore,
+  UserMetadataStoreMetadata,
   {|
     tokens: string[],
   |},
   UserMetadataStore,
-> = ({ ddb, metadata }) => ({
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
   schema: UserUpdateTokensCommandArgsSchema,
-  async execute(args) {
-    const { tokens } = args;
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-
+  prepare: prepareMetadataCommand,
+  async execute(userMetadataStore, { tokens }) {
     // get existing tokens, plus ether so we don't add that
     const currentTokens = [
       ZERO_ADDRESS,
@@ -223,104 +208,139 @@ export const updateTokens: UserMetadataCommand<
 
     return userMetadataStore;
   },
-});
+};
 
-export const markNotificationsAsRead: UserMetadataCommand<
+export const markNotificationsAsRead: Command<
+  UserMetadataStore,
+  UserMetadataStoreMetadata,
   {|
     readUntil: string,
     exceptFor?: string[],
   |},
   UserMetadataStore,
-> = ({ ddb, metadata }) => ({
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
   schema: MarkNotificationsAsReadCommandArgsSchema,
-  async execute(args) {
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
+  prepare: prepareMetadataCommand,
+  async execute(userMetadataStore, args) {
     await userMetadataStore.append(createNotificationsReadEvent(args));
     return userMetadataStore;
   },
-});
+};
 
-export const subscribeToTask: UserMetadataCommand<
+export const subscribeToTask: Command<
+  UserMetadataStore,
+  UserMetadataStoreMetadata,
   {|
     draftId: TaskDraftId,
+    userDraftIds: TaskDraftId[],
   |},
-  ?string,
-> = context => ({
-  async execute(args) {
-    const { ddb, metadata } = context;
-    const draftIds = await getUserTasks(context).execute();
-
-    if (draftIds.some(draftId => draftId === args.draftId)) return null;
-
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-    await userMetadataStore.append(createSubscribeToTaskEvent(args));
-    return args.draftId;
+  ?TaskDraftId,
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareMetadataCommand,
+  async execute(userMetadataStore, args) {
+    const { draftId, userDraftIds } = args;
+    if (
+      userDraftIds &&
+      userDraftIds.some(userDraftId => userDraftId === draftId)
+    )
+      return null;
+    await userMetadataStore.append(createSubscribeToTaskEvent({ draftId }));
+    return draftId;
   },
-});
+};
 
-export const unsubscribeToTask: UserMetadataCommand<
+export const unsubscribeToTask: Command<
+  UserMetadataStore,
+  UserMetadataStoreMetadata,
   {|
     draftId: TaskDraftId,
+    userDraftIds: TaskDraftId[],
   |},
-  ?string,
-> = context => ({
-  async execute(args) {
-    const { ddb, metadata } = context;
-    const draftIds = await getUserTasks(context).execute();
-
-    if (!draftIds.some(draftId => draftId === args.draftId)) return null;
-
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-    await userMetadataStore.append(createUnsubscribeToTaskEvent(args));
-    return args.draftId;
+  ?TaskDraftId,
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareMetadataCommand,
+  async execute(userMetadataStore, args) {
+    const { draftId, userDraftIds } = args;
+    if (
+      userDraftIds &&
+      !userDraftIds.some(userDraftId => userDraftId === draftId)
+    )
+      return null;
+    await userMetadataStore.append(createUnsubscribeToTaskEvent({ draftId }));
+    return draftId;
   },
-});
+};
 
-export const subscribeToColony: UserMetadataCommand<
+export const subscribeToColony: Command<
+  UserMetadataStore,
+  UserMetadataStoreMetadata,
   {|
     colonyAddress: Address,
+    userColonyAddresses: Address[],
   |},
-  ?string,
-> = context => ({
-  async execute(args) {
-    const { ddb, metadata } = context;
-    const colonies = await getUserColonies(context).execute();
-
-    if (colonies.some(colonyAddress => colonyAddress === args.colonyAddress))
+  ?Address,
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareMetadataCommand,
+  async execute(userMetadataStore, { colonyAddress, userColonyAddresses }) {
+    if (
+      userColonyAddresses &&
+      userColonyAddresses.some(
+        userColonyAddress => userColonyAddress === colonyAddress,
+      )
+    )
       return null;
-
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-    await userMetadataStore.append(createSubscribeToColonyEvent(args));
-    return args.colonyAddress;
+    await userMetadataStore.append(
+      createSubscribeToColonyEvent({ colonyAddress }),
+    );
+    return colonyAddress;
   },
-});
+};
 
-export const unsubscribeToColony: UserMetadataCommand<
+export const unsubscribeToColony: Command<
+  UserMetadataStore,
+  UserMetadataStoreMetadata,
   {|
     colonyAddress: Address,
+    userColonyAddresses: Address[],
   |},
-  ?string,
-> = context => ({
-  async execute(args) {
-    const { ddb, metadata } = context;
-    const colonies = await getUserColonies(context).execute();
-
-    if (!colonies.some(colonyAddress => colonyAddress === args.colonyAddress))
+  ?Address,
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareMetadataCommand,
+  async execute(userMetadataStore, { colonyAddress, userColonyAddresses }) {
+    if (
+      userColonyAddresses &&
+      !userColonyAddresses.some(
+        userColonyAddress => userColonyAddress === colonyAddress,
+      )
+    )
       return null;
-
-    const userMetadataStore = await getUserMetadataStore(ddb)(metadata);
-    await userMetadataStore.append(createUnsubscribeToColonyEvent(args));
-    return args.colonyAddress;
+    await userMetadataStore.append(
+      createUnsubscribeToColonyEvent({ colonyAddress }),
+    );
+    return colonyAddress;
   },
-});
+};
 
-export const commentMentionNotification: UserInboxCommand<
-  CommentMentionInboxCommandArgs,
+export const commentMentionNotification: Command<
   UserInboxStore,
-> = ({ ddb, metadata }) => ({
-  async execute(args) {
-    const userInboxStore = await getUserInboxStore(ddb)(metadata);
+  UserInboxStoreMetadata,
+  {|
+    event: string,
+    taskTitle?: string,
+    comment?: string,
+    colonyName?: string,
+  |},
+  UserInboxStore,
+> = {
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareInboxStoreCommand,
+  async execute(userInboxStore, args) {
     await userInboxStore.append(createCommentMentionInboxEvent(args));
     return userInboxStore;
   },
-});
+};
