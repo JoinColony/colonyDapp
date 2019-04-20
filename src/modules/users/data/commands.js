@@ -2,9 +2,14 @@
 
 import type { Address, OrbitDBAddress } from '~types';
 import type { TaskDraftId } from '~immutable';
-import type { EventStore, ValidatedKVStore } from '~lib/database/stores';
-import type { Command, ContextWithMetadata, DDBContext } from '~data/types';
-import type { UserProfileStoreValues } from '~data/storeValuesTypes';
+import type {
+  Command,
+  ContextWithMetadata,
+  DDBContext,
+  UserInboxStore,
+  UserMetadataStore,
+  UserProfileStore,
+} from '~data/types';
 
 import {
   createUserProfileStore,
@@ -56,7 +61,7 @@ export type UserAvatarCommandContext = ContextWithMetadata<
 export type UserMetadataCommandContext = ContextWithMetadata<
   {|
     walletAddress: string,
-    userMetadataStoreAddress: string | OrbitDBAddress,
+    metadataStoreAddress: string | OrbitDBAddress,
   |},
   DDBContext,
 >;
@@ -94,9 +99,9 @@ export const createUserProfile: UserCommand<
     username: string,
   |},
   {|
-    inboxStore: EventStore,
-    metadataStore: EventStore,
-    profileStore: ValidatedKVStore<UserProfileStoreValues>,
+    inboxStore: UserInboxStore,
+    metadataStore: UserMetadataStore,
+    profileStore: UserProfileStore,
   |},
 > = ({ ddb, metadata }) => ({
   schema: CreateUserProfileCommandArgsSchema,
@@ -129,7 +134,7 @@ export const updateUserProfile: UserCommand<
     location?: string,
     website?: string,
   |},
-  ValidatedKVStore<UserProfileStoreValues>,
+  UserProfileStore,
 > = ({ ddb, metadata }) => ({
   schema: UpdateUserProfileCommandArgsSchema,
   async execute(args) {
@@ -156,10 +161,10 @@ export const setUserAvatar: Command<
 });
 
 // TODO unpin the avatar when ipfsNode supports it
-export const removeUserAvatar: UserCommand<
-  void,
-  ValidatedKVStore<UserProfileStoreValues>,
-> = ({ ddb, metadata }) => ({
+export const removeUserAvatar: UserCommand<void, UserProfileStore> = ({
+  ddb,
+  metadata,
+}) => ({
   async execute() {
     const profileStore = await getUserProfileStore(ddb)(metadata);
     await profileStore.set({ avatarHash: null });
@@ -172,7 +177,7 @@ export const updateTokens: UserMetadataCommand<
   {|
     tokens: string[],
   |},
-  EventStore,
+  UserMetadataStore,
 > = ({ ddb, metadata }) => ({
   schema: UserUpdateTokensCommandArgsSchema,
   async execute(args) {
@@ -223,7 +228,7 @@ export const markNotificationsAsRead: UserMetadataCommand<
     readUntil: string,
     exceptFor?: string[],
   |},
-  EventStore,
+  UserMetadataStore,
 > = ({ ddb, metadata }) => ({
   schema: MarkNotificationsAsReadCommandArgsSchema,
   async execute(args) {
@@ -309,7 +314,7 @@ export const unsubscribeToColony: UserMetadataCommand<
 
 export const commentMentionNotification: UserInboxCommand<
   CommentMentionInboxCommandArgs,
-  EventStore,
+  UserInboxStore,
 > = ({ ddb, metadata }) => ({
   async execute(args) {
     const userInboxStore = await getUserInboxStore(ddb)(metadata);

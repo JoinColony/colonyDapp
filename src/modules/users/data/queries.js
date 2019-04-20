@@ -50,7 +50,7 @@ type UserQueryContext = ContextWithMetadata<
 
 type UserMetadataQueryContext = ContextWithMetadata<
   {|
-    userMetadataStoreAddress: string | OrbitDBAddress,
+    metadataStoreAddress: string | OrbitDBAddress,
     walletAddress: string,
   |},
   DDBContext,
@@ -61,7 +61,7 @@ type UserPermissionsQueryContext = ColonyClientContext;
 
 type UserTokensQueryContext = ContextWithMetadata<
   {|
-    userMetadataStoreAddress: string | OrbitDBAddress,
+    metadataStoreAddress: string | OrbitDBAddress,
     walletAddress: string,
   |},
   DDBContext & NetworkClientContext,
@@ -259,7 +259,7 @@ export const getUserColonyTransactions: UserColonyTransactionsQuery<void> = ({
 
 export const getUserTasks: UserMetadataQuery<void, *> = ({
   ddb,
-  metadata: { userMetadataStoreAddress },
+  metadata: { metadataStoreAddress },
   metadata,
 }) => ({
   async execute() {
@@ -267,7 +267,7 @@ export const getUserTasks: UserMetadataQuery<void, *> = ({
      * If the user has no metadata store set, we will assume that the
      * user is newly-created (and we can't get their subscribed tasks yet).
      */
-    if (!userMetadataStoreAddress) return [];
+    if (!metadataStoreAddress) return [];
 
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
     return metadataStore
@@ -282,7 +282,7 @@ export const getUserTasks: UserMetadataQuery<void, *> = ({
 
 export const getUserColonies: UserMetadataQuery<void, *> = ({
   ddb,
-  metadata: { userMetadataStoreAddress },
+  metadata: { metadataStoreAddress },
   metadata,
 }) => ({
   async execute() {
@@ -290,7 +290,7 @@ export const getUserColonies: UserMetadataQuery<void, *> = ({
      * If the user has no metadata store set, we will assume that the
      * user is newly-created (and we can't get their subscribed colonies yet).
      */
-    if (!userMetadataStoreAddress) return [];
+    if (!metadataStoreAddress) return [];
 
     const metadataStore = await getUserMetadataStore(ddb)(metadata);
     return reduceToLastState(
