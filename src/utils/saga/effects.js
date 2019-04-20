@@ -2,11 +2,12 @@
 
 import type { Channel, Saga } from 'redux-saga';
 
-import { call, put, race, take, select } from 'redux-saga/effects';
+import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter } from '~redux';
 import type { Command, Query } from '../../data/types';
 
+import { getContext } from '~context';
 import { validateSync } from '~utils/yup';
 import { isDev, log } from '~utils/debug';
 
@@ -72,32 +73,77 @@ export const raceError = (
   return call(raceErrorGenerator);
 };
 
-export function* executeQuery<C: *, I: *, R: *>(
-  context: C,
-  query: Query<C, I, R>,
-  args: I,
+export function* executeQuery<D: *, M: *, A: *, R: *>(
+  query: Query<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {
+    args?: A,
+    metadata: M,
+  },
 ): Saga<R> {
-  const { execute } = query(context);
-  return yield call(execute, args);
+  const { context, execute, prepare } = query;
+  // TODO: Validate context contains context keys only and that it has at least one key
+  if (!context) throw new Error('Cannot execute query, context not defined');
+  if (!(context && context.length > 0)) {
+    throw new Error('Cannot execute query, invalid context');
+  }
+  if (!execute) {
+    throw new Error('Cannot execute query, "execute" function not defined');
+  }
+  if (!prepare) {
+    throw new Error('Cannot execute query, "prepare" function not defined');
+  }
+
+  const queryContext = yield all(
+    context.reduce(
+      (ctx, key) => ({
+        ...ctx,
+        [key]: call(getContext, key),
+      }),
+      {},
+    ),
+  );
+  const dependencies = yield call(prepare, queryContext, metadata);
+  return yield call(execute, dependencies, args);
 }
 
-export function* executeCommand<C: *, I: *, R: *>(
-  context: C,
-  createCommand: Command<C, I, R>,
-  args: I,
+export function* executeCommand<D: *, M: *, A: *, R: *>(
+  command: Command<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {
+    args: A,
+    metadata: M,
+  },
 ): Saga<R> {
-  const { execute } = createCommand(context);
-  return yield call(execute, args);
-}
+  const { context, execute, prepare, schema } = command;
+  // TODO: Validate context contains context keys only and that it has at least one key
+  if (!context) throw new Error('Cannot execute command, context not defined');
+  if (!(context && context.length > 0)) {
+    throw new Error('Cannot execute command, invalid context');
+  }
+  if (!execute) {
+    throw new Error('Cannot execute command, "execute" function not defined');
+  }
+  if (!prepare) {
+    throw new Error('Cannot execute command, "prepare" function not defined');
+  }
 
-export function* validateAndExecuteCommand<C: *, I: *, R: *>(
-  context: C,
-  createCommand: Command<C, I, R>,
-  args: I,
-): Saga<R> {
-  const { execute, schema } = createCommand(context);
+  const commandContext = yield all(
+    context.reduce(
+      (ctx, key) => ({
+        ...ctx,
+        [key]: call(getContext, key),
+      }),
+      {},
+    ),
+  );
+  const dependencies = yield call(prepare, commandContext, metadata);
   const maybeSanitizedArgs = schema ? validateSync(schema)(args) : args;
-  return yield call(execute, maybeSanitizedArgs);
+  return yield call(execute, dependencies, maybeSanitizedArgs);
 }
 
 export function* selectAsJS(
