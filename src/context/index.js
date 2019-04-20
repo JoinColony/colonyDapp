@@ -10,7 +10,7 @@ import type { RootContext } from './rootContext';
 import type { UserContext } from './userContext';
 
 type ContextType = $Exact<RootContext & UserContext>;
-type ContextName = $Keys<ContextType>;
+export type ContextName = $Keys<ContextType>;
 
 export * from './constants';
 
