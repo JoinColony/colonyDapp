@@ -52,14 +52,7 @@ class TaskAccessController extends AbstractAccessController<
     if (!isAllowed)
       throw new Error('Cannot create task database, user not allowed');
 
-    const signingWalletAddress = this._purserWallet.address;
-    const signature = await this._purserWallet.signMessage({
-      message: this._colonyAddress + this._draftId + signingWalletAddress,
-    });
-
-    return `/colony/${this._colonyAddress}/task/${
-      this._draftId
-    }/creator/${signingWalletAddress}/${signature}`;
+    return `/colony/${this._colonyAddress}/task/${this._draftId}`;
   }
 
   async setup() {
