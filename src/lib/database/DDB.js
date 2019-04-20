@@ -13,8 +13,6 @@ import type {
 } from './types';
 import IPFSNode from '../ipfs';
 
-// import { Store } from './stores';
-import { setMeta } from './commands';
 import { PermissiveAccessController } from './accessControllers';
 
 // We'll skip the Q here because every id that contains a `Qm` is not allowed
@@ -158,9 +156,6 @@ class DDB {
 
     const store: T = this._makeStore(orbitStore, blueprint);
     await store.ready();
-
-    // If supported, set the `meta` values on the store.
-    if (storeProps && storeProps.meta) await setMeta(store, storeProps.meta);
 
     return store;
   }
