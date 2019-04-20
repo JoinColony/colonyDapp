@@ -1,14 +1,30 @@
 /* @flow */
 
+import { Map as ImmutableMap } from 'immutable';
+
+import { createSelector } from 'reselect';
+
 import type { RootStateRecord } from '~immutable';
 
-import { CORE_NAMESPACE as ns, CORE_NETWORK } from '../constants';
+import {
+  CORE_NAMESPACE as ns,
+  CORE_NETWORK,
+  CORE_NETWORK_FEE,
+  CORE_NETWORK_VERSION,
+} from '../constants';
 
 /*
  * Input selectors
  */
 export const networkSelector = (state: RootStateRecord) =>
-  state.getIn([ns, CORE_NETWORK]);
+  state.getIn([ns, CORE_NETWORK], ImmutableMap());
 
-export const networkVersionSelector = (state: RootStateRecord) =>
-  state.getIn([ns, CORE_NETWORK, 'record', 'version']);
+export const networkFeeSelector = createSelector(
+  networkSelector,
+  state => state.getIn(['record', CORE_NETWORK_FEE]),
+);
+
+export const networkVersionSelector = createSelector(
+  networkSelector,
+  state => state.getIn(['record', CORE_NETWORK_VERSION]),
+);
