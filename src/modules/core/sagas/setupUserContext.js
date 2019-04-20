@@ -94,10 +94,11 @@ export default function* setupUserContext(
     /*
      * Attempt to get the user profile data.
      */
-    const context = { ddb, metadata: { walletAddress } };
     let profileData = {};
     try {
-      profileData = yield* executeQuery(context, getUserProfile);
+      profileData = yield* executeQuery(getUserProfile, {
+        metadata: { walletAddress },
+      });
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
@@ -106,12 +107,11 @@ export default function* setupUserContext(
     /*
      * Get the user's wallet balance
      */
-    const { networkClient } = colonyManager;
-    const balance = yield* executeQuery(
-      { networkClient },
-      getUserBalance,
-      walletAddress,
-    );
+    const balance = yield* executeQuery(getUserBalance, {
+      args: {
+        walletAddress,
+      },
+    });
 
     /*
      * This needs to happen first because CURRENT_USER_CREATE causes a redirect
@@ -125,9 +125,12 @@ export default function* setupUserContext(
      * Attempt to get the user metadata.
      */
     try {
-      const metadata = yield* executeQuery(context, getUserMetadata);
-
-      // Consider merging this action with `CURRENT_USER_CREATE`?
+      const metadata = yield* executeQuery(getUserMetadata, {
+        metadata: { walletAddress },
+      });
+      /*
+       * @todo consider merging this action with `CURRENT_USER_CREATE`?
+       */
       yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
         type: ACTIONS.USER_METADATA_SET,
         payload: metadata,
