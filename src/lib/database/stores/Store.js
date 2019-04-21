@@ -45,12 +45,16 @@ class Store {
     // Let's see whether we have local heads already
     const heads = await this.ready();
 
-    // Consider throwing an error when we are relying fully on the pinner...
-    if (!this._pinner.online) {
-      log.verbose(
+    try {
+      // Try to connect to pinner, wait if necessary
+      await this._pinner.ready();
+    } catch (caughtError) {
+      log.error(
         `Unable to fully load store "${this._name}"; pinner is offline`,
-        heads,
+        caughtError,
       );
+      // Pinner is probably offline
+      log(caughtError);
       return heads;
     }
 
