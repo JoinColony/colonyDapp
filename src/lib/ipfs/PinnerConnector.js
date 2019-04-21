@@ -15,6 +15,9 @@ type PubsubMessage = {
   data: string,
 };
 
+const PINNER_CONNECT_TIMEOUT = 20 * 1000; // This is just a number I came up with randomly. Adjust if necessary
+const PINNER_HAVE_HEADS_TIMEOUT = 20 * 1000; // Same
+
 const PIN_ACTIONS = {
   PIN_STORE: 'PIN_STORE',
   LOAD_STORE: 'LOAD_STORE',
@@ -37,6 +40,8 @@ class PinnerConnector extends EventEmitter {
 
   // Can be an array in the future
   _pinnerId: string;
+
+  _resolveReadyPromise: (boolean => void) | void;
 
   _room: string;
 
@@ -66,23 +71,22 @@ class PinnerConnector extends EventEmitter {
   _handlePinnerMessage(message: PubsubMessage) {
     // Don't process anything that doesn't come from a pinner
     if (message.from !== this._pinnerId) return;
-    let pinnerAction: PinnerAction;
     try {
-      pinnerAction = JSON.parse(message.data);
+      const pinnerAction = JSON.parse(message.data);
       this.emit('action', pinnerAction);
     } catch (caughtError) {
       log.error(new Error(`Could not parse pinner message: ${message.data}`));
     }
   }
 
-  async _handleNewPeer(peer: string) {
+  _handleNewPeer(peer: string) {
     // If no pinner id was given, everyone can be the pinner! Definitely not recommended.
 
     /**
      * @todo Maintain multiple pinner IDs for the PinnerConnector
      */
     if (peer === this._pinnerId) {
-      this.online = true;
+      this._setReady();
       this._flushPinnerMessages();
     }
   }
@@ -110,6 +114,14 @@ class PinnerConnector extends EventEmitter {
         .catch(console.warn);
     } else {
       this._outstandingPubsubMessages.push(action);
+    }
+  }
+
+  _setReady() {
+    this.online = true;
+    if (this._resolveReadyPromise) {
+      this._resolveReadyPromise(true);
+      this._resolveReadyPromise = undefined;
     }
   }
 
@@ -160,6 +172,17 @@ class PinnerConnector extends EventEmitter {
     this._roomMonitor.on('error', log);
   }
 
+  async ready() {
+    if (this.online) return true;
+    return new Promise((resolve, reject) => {
+      this._resolveReadyPromise = resolve;
+      setTimeout(() => {
+        if (!this.online)
+          reject(new Error('Could not connect to pinner in time'));
+      }, PINNER_CONNECT_TIMEOUT);
+    });
+  }
+
   async disconnect() {
     await this._ipfs.pubsub.unsubscribe(
       this._room,
@@ -183,12 +206,15 @@ class PinnerConnector extends EventEmitter {
       type: PIN_ACTIONS.LOAD_STORE,
       payload: { address },
     });
-    return raceAgainstTimeout(
+    const [heads] = await raceAgainstTimeout(
       Promise.all([getHeads, publishActionPromise]),
-      10000,
-      new Error('Pinner did not react in time'),
+      PINNER_HAVE_HEADS_TIMEOUT,
+      new Error(
+        `Pinner did not react in time to get heads for store ${address}`,
+      ),
       () => this.removeListener('action', listener),
     );
+    return heads;
   }
 
   pinStore(address: string) {
