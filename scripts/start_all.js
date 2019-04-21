@@ -64,6 +64,47 @@ const webpackPromise = () =>
     });
   });
 
+
+const ipfsdPromise = () =>
+  new Promise((resolve, reject) => {
+    const ipfsdProcess = spawn('yarn', ['ipfsd'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
+      stdio: 'pipe',
+    });
+    ipfsdProcess.stdout.on('data', chunk => {
+      if (chunk.includes('Daemon is ready')) resolve(ipfsdProcess);
+    });
+    if (args.foreground) {
+      ipfsdProcess.stdout.pipe(process.stdout);
+      ipfsdProcess.stderr.pipe(process.stderr);
+    }
+    ipfsdProcess.on('error', e => {
+      console.error(e);
+      webpackProcess.kill();
+      reject(e);
+    });
+  });
+
+const pinionProc = () => {
+  const pinionProcess = spawn('yarn', ['start'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
+    stdio: 'pipe',
+    env: {
+      ...process.env,
+      DEBUG: 'pinner:*',
+    },
+  });
+  if (args.foreground) {
+    pinionProcess.stdout.pipe(process.stdout);
+    pinionProcess.stderr.pipe(process.stderr);
+  }
+  pinionProcess.on('error', e => {
+    console.error(e);
+    pinionProcess.kill();
+  });
+  return pinionProcess;
+}
+
 const wssProxyPromise = async () => {
   const wssProxyProcess = spawn(
     path.resolve(__dirname, './start_wss_proxy.js'),
@@ -71,7 +112,7 @@ const wssProxyPromise = async () => {
       stdio: 'pipe',
     },
   );
-  await waitOn({ resources: ['tcp:4003'] });
+  await waitOn({ resources: ['tcp:4004'] });
   return wssProxyProcess;
 };
 
@@ -86,23 +127,29 @@ const startAll = async () => {
     console.info(chalk.magentaBright('Starting trufflepig...'));
     const trufflepigProcess = await trufflePigPromise();
 
-    // This will probably be replaced with pinion
     console.info('Starting star signal...');
     const starSignalProcess = await startStarSignal();
 
-    // This is temporarily disabled until we actually *really* need it
-    // console.info('Starting websocket proxy...');
-    // const wssProxyProcess = await wssProxyPromise();
+    console.info('Starting ipfsd');
+    const ipfsdProcess = await ipfsdPromise();
+
+    console.info('Starting pinion...');
+    const pinionProcess = pinionProc();
+
+    console.info('Starting websocket proxy...');
+    const wssProxyProcess = await wssProxyPromise();
 
     console.info('Starting webpack...');
     const webpackProcess = await webpackPromise();
 
     const pids = {
       ganache: ganacheProcess.pid,
+      ifpsd: ipfsdProcess.pid,
+      pinion: pinionProcess.pid,
       trufflepig: trufflepigProcess.pid,
       webpack: webpackProcess.pid,
       starSignal: starSignalProcess.pid,
-      // wssProxy: wssProxyProcess.pid,
+      wssProxy: wssProxyProcess.pid,
     };
 
     fs.writeFileSync(PID_FILE, JSON.stringify(pids));
