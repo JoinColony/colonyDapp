@@ -1,12 +1,13 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { ColonyType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { withKeyPath } from '~utils/actions';
+import { withKey } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import AvatarUploader from '~core/AvatarUploader';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
@@ -45,7 +46,9 @@ const removeActions = {
 };
 
 const ColonyAvatarUploader = ({ colony }: Props) => {
-  const transform = withKeyPath(colony.colonyAddress);
+  const transform = useCallback(withKey(colony.colonyAddress), [
+    colony.colonyAddress,
+  ]);
   const upload = useAsyncFunction({ ...uploadActions, transform });
   const remove = useAsyncFunction({ ...removeActions, transform });
 

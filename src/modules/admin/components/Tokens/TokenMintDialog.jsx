@@ -18,7 +18,7 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import { pipe, mapPayload, mergePayload, withKeyPath } from '~utils/actions';
+import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
 import styles from './TokenMintDialog.css';
@@ -91,7 +91,7 @@ const TokenMintDialog = ({
           moveDecimal(inputAmount, decimals ? parseInt(decimals, 10) : 18),
         ),
       })),
-      withKeyPath(colonyAddress),
+      withKey(colonyAddress),
       mergePayload({ colonyAddress }),
     ),
     [decimals, colonyAddress],

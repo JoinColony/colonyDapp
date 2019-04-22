@@ -33,7 +33,7 @@ export type ColonyEvents = {|
   DOMAIN_CREATED: EventDefinition<
     typeof DOMAIN_CREATED,
     {|
-      domainId: number,
+      id: number,
       name: string,
     |},
   >,

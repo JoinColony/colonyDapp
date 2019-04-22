@@ -19,11 +19,11 @@ const userProfilesReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.USER_FETCH_SUCCESS: {
       const {
-        meta: { keyPath },
+        meta: { key },
         payload,
       } = action;
       const profile = UserProfileRecord(payload);
-      const recordPath = [...keyPath, 'record'];
+      const recordPath = [key, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
         : state.setIn(recordPath, UserRecord({ profile }));

@@ -2,9 +2,7 @@
 
 import type { Map as ImmutableMapType } from 'immutable';
 
-import { Map as ImmutableMap, fromJS } from 'immutable';
-
-import type { KeyPath } from '~types';
+import { fromJS } from 'immutable';
 
 import { DataRecord } from '../../immutable';
 import type { DataRecordType } from '../../immutable';
@@ -15,27 +13,22 @@ export type DataReducer<S: ImmutableMapType<*, *>> = (state: S, action: *) => S;
 
 const getNextState = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  keyPath: KeyPath,
+  key: string,
   payload: $Shape<DataRecordType<V>>,
 ) => {
   const immutablePayload: typeof payload = fromJS(payload);
   const data = DataRecord<V>(immutablePayload);
 
-  if (keyPath.length === 2)
-    return state.has(keyPath[0])
-      ? state.mergeDeepIn(keyPath, immutablePayload)
-      : state.set(keyPath[0], ImmutableMap([[keyPath[1], data]]));
-
-  return state.has(keyPath[0])
-    ? state.mergeDeepIn(keyPath, immutablePayload)
-    : state.set(keyPath[0], data);
+  return state.has(key)
+    ? state.mergeDeepIn([key], immutablePayload)
+    : state.set(key, data);
 };
 
 const handleFetch = <S: ImmutableMapType<*, *>, V: *>(state: S, action: *) => {
   const {
-    meta: { keyPath },
+    meta: { key },
   } = action;
-  return getNextState<S, V>(state, keyPath, { isFetching: true });
+  return getNextState<S, V>(state, key, { isFetching: true });
 };
 
 const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
@@ -43,9 +36,9 @@ const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
   action: *,
 ) => {
   const {
-    meta: { keyPath },
+    meta: { key },
   } = action;
-  return getNextState<S, V>(state, keyPath, {
+  return getNextState<S, V>(state, key, {
     error: undefined,
     isFetching: false,
     lastFetchedAt: new Date(),
@@ -54,9 +47,9 @@ const handleSuccess = <S: ImmutableMapType<*, *>, V: *>(
 
 const handleError = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  { meta: { keyPath }, payload: error }: *,
+  { meta: { key }, payload: error }: *,
 ) =>
-  getNextState<S, V>(state, keyPath, {
+  getNextState<S, V>(state, key, {
     isFetching: false,
     error: error.message || error.toString(),
   });

@@ -85,7 +85,6 @@ const taskFeedItemsReducer: ReducerType<
       return state.set(
         draftId,
         DataRecord({
-          lastFetchedAt: new Date(),
           record: List(events.map(createTaskFeedItemRecord)),
         }),
       );
@@ -126,7 +125,9 @@ const taskFeedItemsReducer: ReducerType<
         ? state.updateIn(path, items => items && update(items))
         : state.set(
             draftId,
-            DataRecord({ lastFetchedAt: new Date(), record: update(List()) }),
+            DataRecord({
+              record: update(List()),
+            }),
           );
     }
 

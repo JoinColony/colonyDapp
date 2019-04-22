@@ -2,7 +2,7 @@
 
 import type { Action, ActionTypeWithPayload, ErrorActionType } from '~redux';
 import type { NetworkProps } from '~immutable';
-import type { WithKeyPathDepth1 } from '~types';
+import type { WithKey } from '~types';
 
 import { ACTIONS } from '../../index';
 
@@ -14,6 +14,6 @@ export type NetworkActionTypes = {|
   >,
   NETWORK_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.NETWORK_FETCH_ERROR,
-    WithKeyPathDepth1,
+    WithKey,
   >,
 |};

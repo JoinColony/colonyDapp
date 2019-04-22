@@ -10,7 +10,7 @@ export const userFetch = (
   userAddress: Address,
 ): Action<typeof ACTIONS.USER_FETCH> => ({
   type: ACTIONS.USER_FETCH,
-  meta: { keyPath: [userAddress] },
+  meta: { key: userAddress },
   payload: { userAddress },
 });
 
@@ -44,7 +44,7 @@ export const userPermissionsFetch = (
 ): Action<typeof ACTIONS.USER_PERMISSIONS_FETCH> => ({
   type: ACTIONS.USER_PERMISSIONS_FETCH,
   payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
+  meta: { key: colonyAddress },
 });
 
 export const userTokensUpdate = (

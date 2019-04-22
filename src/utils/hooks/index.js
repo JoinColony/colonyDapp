@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Collection } from 'immutable';
+import type { Collection, Map as ImmutableMapType } from 'immutable';
 import type { InputSelector } from 'reselect';
 
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
@@ -16,12 +16,21 @@ import { isFetchingData, shouldFetchData } from '~immutable/utils';
 
 import promiseListener from '../../createPromiseListener';
 
-type DataFetcher = {|
+type DataFetcher<T> = {|
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => ?DataRecordType<*>,
+  ) => ?DataRecordType<T>,
   fetch: (...fetchArgs: any[]) => Action<*>,
+  ttl?: number,
+|};
+
+type DataMapFetcher<T> = {|
+  select: (
+    rootState: RootStateRecord,
+    keys: string[],
+  ) => ImmutableMapType<string, ?DataRecordType<T>>,
+  fetch: (key: string) => Action<*>,
   ttl?: number,
 |};
 
@@ -48,7 +57,7 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data: DataRecordType<*>) => {
+const transformFetchedData = (data: ?DataRecordType<*>) => {
   if (!data) return null;
   return data.record && typeof data.record.toJS == 'function'
     ? data.record.toJS()
@@ -77,10 +86,49 @@ export const useSelector = (
 };
 
 /*
+ * Esteemed React developer!
+ *
+ * Are *you* tired of giving `useMemo` some dependencies, only to find
+ * recomputations with the same data (e.g. arrays)?
+ *
+ * Better make a memo to self: simply use `createCustomMemo`™!
+ *
+ * It's only the memoization function designed *by* a developer, *for* that
+ * very same developer. Upgrade today!
+ */
+export const createCustomMemo = (comparator: (...any) => boolean) => (
+  fn: Function,
+  deps: any[],
+) => {
+  const lastDeps = useRef(deps);
+  const lastResult = useRef(fn());
+  if (comparator(lastDeps, deps)) {
+    return lastResult.current;
+  }
+  lastResult.current = fn();
+  lastDeps.current = deps;
+  return lastResult.current;
+};
+
+const areFlatArraysEqual = (arr1: any[], arr2: any[]) => {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = arr1.length - 1; i >= 0; i -= 1) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const useMemoWithFlatArray = createCustomMemo(areFlatArraysEqual);
+
+/*
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
 export const useDataFetcher = <T>(
-  { fetch, select, ttl = 0 }: DataFetcher,
+  { fetch, select, ttl = 0 }: DataFetcher<T>,
   selectArgs: any[],
   fetchArgs: any[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
@@ -118,6 +166,78 @@ export const useDataFetcher = <T>(
     isFetching: shouldFetch && isFetchingData(data),
     error: data ? data.error : null,
   };
+};
+
+/*
+ * Given a `DataMapFetcher` object and an array of keys (the items
+ * to fetch data for), select the data and fetch the parts that need
+ * to be (re-)fetched.
+ */
+export const useDataMapFetcher = <T>(
+  { fetch, select, ttl: ttlDefault = 0 }: DataMapFetcher<T>,
+  keys: string[],
+  { ttl: ttlOverride }: DataFetcherOptions = {},
+): {|
+  data: ?T,
+  key: string,
+  isFetching: boolean,
+  error: ?string,
+|}[] => {
+  /*
+   * Created memoized keys to guard the rest of the function against
+   * unnecessary updates.
+   */
+  const memoizedKeys = useMemoWithFlatArray(() => keys, [keys]);
+
+  const dispatch = useDispatch();
+  const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
+    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+  );
+
+  const isFirstMount = useRef(true);
+  const ttl = ttlOverride || ttlDefault;
+
+  /*
+   * Use with the array of keys we want data for, get the data from `allData`
+   * and use `shouldFetchData` to obtain an array of keys we should
+   * dispatch fetch actions for.
+   */
+  const keysToFetchFor = useMemo(
+    () =>
+      memoizedKeys.filter(key =>
+        shouldFetchData(allData.get(key), ttl, isFirstMount.current, [key]),
+      ),
+    [allData, memoizedKeys, ttl],
+  );
+
+  /*
+   * Set the `isFirstMount` ref and dispatch any needed fetch actions.
+   */
+  useEffect(
+    () => {
+      isFirstMount.current = false;
+      keysToFetchFor.map(key => dispatch(fetch(key)));
+    },
+    [keysToFetchFor, dispatch, fetch, memoizedKeys],
+  );
+
+  /*
+   * Return an array of data objects with keys by mapping over the keys
+   * and getting the data from `allData`.
+   */
+  return useMemo(
+    () =>
+      memoizedKeys.map(key => {
+        const data = allData.get(key);
+        return {
+          key,
+          data: transformFetchedData(data),
+          isFetching: keysToFetchFor.includes(key) && isFetchingData(data),
+          error: data ? data.error : null,
+        };
+      }),
+    [allData, memoizedKeys, keysToFetchFor],
+  );
 };
 
 export const useFeatureFlags = (

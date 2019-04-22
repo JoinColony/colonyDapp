@@ -295,10 +295,7 @@ export const getColonyDomains: ColonyQuery<void, DomainType[]> = ({
     return colonyStore
       .all()
       .filter(({ type }) => type === DOMAIN_CREATED)
-      .map(({ payload: { domainId, name } }: Event<typeof DOMAIN_CREATED>) => ({
-        id: domainId,
-        name,
-      }));
+      .map(({ payload }: Event<typeof DOMAIN_CREATED>) => payload);
   },
 });
 

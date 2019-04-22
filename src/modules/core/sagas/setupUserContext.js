@@ -138,7 +138,7 @@ export default function* setupUserContext(
         type: ACTIONS.USER_ACTIVITIES_FETCH,
         meta: {
           ...meta,
-          keyPath: [walletAddress],
+          key: walletAddress,
         },
       });
     } catch (error) {
@@ -155,7 +155,7 @@ export default function* setupUserContext(
       },
       meta: {
         ...meta,
-        keyPath: [walletAddress],
+        key: walletAddress,
       },
     });
 

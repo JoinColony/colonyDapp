@@ -334,8 +334,7 @@ function* colonyFetch({
           put(fetchToken(tokenAddress)),
           put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
             type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-            meta: { keyPath: [colonyAddress, tokenAddress] },
-            payload: { colonyAddress },
+            payload: { colonyAddress, tokenAddress },
           }),
         ],
         [],
@@ -357,7 +356,7 @@ function* colonyAddressFetch({
 
     yield put<Action<typeof ACTIONS.COLONY_ADDRESS_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_ADDRESS_FETCH_SUCCESS,
-      meta: { keyPath: [colonyAddress] },
+      meta: { key: colonyAddress },
       payload: { colonyAddress, colonyName },
     });
   } catch (error) {
@@ -503,11 +502,7 @@ function* colonyUpgradeContract({
 }
 
 function* colonyTokenBalanceFetch({
-  meta,
-  meta: {
-    keyPath: [, tokenAddress],
-  },
-  payload: { colonyAddress },
+  payload: { colonyAddress, tokenAddress },
 }: Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
@@ -528,10 +523,9 @@ function* colonyTokenBalanceFetch({
         tokenAddress,
         colonyAddress,
       },
-      meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR, error);
   }
 }
 
@@ -549,7 +543,7 @@ function* colonyTaskMetadataFetch({
 
     yield put<Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS,
-      meta: { keyPath: [colonyAddress] },
+      meta: { key: colonyAddress },
       payload: { colonyAddress, colonyTasks },
     });
   } catch (error) {

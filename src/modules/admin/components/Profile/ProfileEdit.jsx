@@ -17,7 +17,7 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { withKeyPath } from '~utils/actions';
+import { pipe, mergePayload, withKey } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
 import { colony as colonyStoreBlueprint } from '../../../../data/blueprints';
@@ -73,7 +73,13 @@ const ProfileEdit = ({ colony }: Props) => {
     guideline,
     website,
   } = colony;
-  const transform = useCallback(withKeyPath(colonyAddress), [colonyAddress]);
+  const transform = useCallback(
+    pipe(
+      withKey(colonyAddress),
+      mergePayload({ colonyAddress }),
+    ),
+    [colonyAddress],
+  );
   return (
     <div className={styles.main}>
       <main className={styles.content}>

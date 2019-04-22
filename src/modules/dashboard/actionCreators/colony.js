@@ -10,7 +10,7 @@ export const fetchColony = (
 ): Action<typeof ACTIONS.COLONY_FETCH> => ({
   type: ACTIONS.COLONY_FETCH,
   payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
+  meta: { key: colonyAddress },
 });
 
 export const fetchColonyAddress = (
@@ -18,7 +18,7 @@ export const fetchColonyAddress = (
 ): Action<typeof ACTIONS.COLONY_ADDRESS_FETCH> => ({
   type: ACTIONS.COLONY_ADDRESS_FETCH,
   payload: { colonyName },
-  meta: { keyPath: [colonyName] },
+  meta: { key: colonyName },
 });
 
 export const fetchColonyName = (
@@ -26,7 +26,7 @@ export const fetchColonyName = (
 ): Action<typeof ACTIONS.COLONY_NAME_FETCH> => ({
   type: ACTIONS.COLONY_NAME_FETCH,
   payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
+  meta: { key: colonyAddress },
 });
 
 export const fetchColonyTaskMetadata = (
@@ -34,5 +34,5 @@ export const fetchColonyTaskMetadata = (
 ): Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH> => ({
   type: ACTIONS.COLONY_TASK_METADATA_FETCH,
   payload: { colonyAddress },
-  meta: { keyPath: [colonyAddress] },
+  meta: { key: colonyAddress },
 });

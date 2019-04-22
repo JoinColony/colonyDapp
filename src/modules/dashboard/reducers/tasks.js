@@ -126,9 +126,8 @@ const tasksReducer: ReducerType<
       return state.set(
         draftId,
         DataRecord({
-          isFetching: false,
           error: undefined,
-          lastFetchedAt: new Date(),
+          isFetching: false,
           record: TaskRecord(fromJS(task)),
         }),
       );
