@@ -71,7 +71,7 @@ const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
 const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const transactionGroups = useSelector(groupedTransactions);
-  if (getGroupStatus(transactionGroups) === 'succeeded') {
+  if (getGroupStatus(transactionGroups[0]) === 'succeeded') {
     return <Redirect to={`/colony/${colonyName}`} />;
   }
 

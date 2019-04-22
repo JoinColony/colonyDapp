@@ -167,8 +167,6 @@ Action<'COLONY_CREATE'>): Saga<void> {
     yield put(transactionReady(createLabelId));
 
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    yield put(replace(`/colony/${colonyName}`));
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {
