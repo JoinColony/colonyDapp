@@ -2,9 +2,10 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, select } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 
 import { ACTIONS } from '~redux';
+import { selectAsJS } from '~utils/saga/effects';
 
 import type { Action } from '~redux';
 
@@ -23,7 +24,7 @@ export default function* estimateGasCost({
   meta: { id },
 }: Action<typeof ACTIONS.TRANSACTION_ESTIMATE_GAS>): Saga<void> {
   // Get the given transaction
-  const { context, methodName, identifier, params } = yield select(
+  const { context, methodName, identifier, params } = yield* selectAsJS(
     oneTransaction,
     id,
   );

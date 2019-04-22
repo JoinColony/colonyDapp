@@ -2,7 +2,7 @@
 
 import type { Channel, Saga } from 'redux-saga';
 
-import { call, put, race, take } from 'redux-saga/effects';
+import { call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter } from '~redux';
 import type { Command, Query } from '../../data/types';
@@ -98,4 +98,14 @@ export function* validateAndExecuteCommand<C: *, I: *, R: *>(
   const { execute, schema } = createCommand(context);
   const maybeSanitizedArgs = schema ? validateSync(schema)(args) : args;
   return yield call(execute, maybeSanitizedArgs);
+}
+
+export function* selectAsJS(
+  selector: (...any) => any,
+  ...args: any
+): Saga<any> {
+  const selected = yield select(selector, ...args);
+  return selected && typeof selected.toJS == 'function'
+    ? selected.toJS()
+    : selected;
 }

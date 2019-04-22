@@ -2,9 +2,10 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, select } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 
 import { ACTIONS } from '~redux';
+import { selectAsJS } from '~utils/saga/effects';
 
 import type { Action } from '~redux';
 
@@ -24,10 +25,13 @@ export function* refreshMultisigTransaction({
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_REFRESHED>): Saga<void> {
   try {
     // fetch the method, check it's multisig
-    const { methodName, context, identifier, multisig, params } = yield select(
-      oneTransaction,
-      id,
-    );
+    const {
+      methodName,
+      context,
+      identifier,
+      multisig,
+      params,
+    } = yield* selectAsJS(oneTransaction, id);
     const method = yield call(getMethod, context, methodName, identifier);
     if (!method.restoreOperation)
       throw new Error(`"${methodName}" is not a multisig method`);
@@ -74,7 +78,7 @@ export function* signMultisigTransaction({
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGN>): Saga<void> {
   try {
     // fetch from store
-    const { methodName, context, identifier, multisig } = yield select(
+    const { methodName, context, identifier, multisig } = yield* selectAsJS(
       oneTransaction,
       id,
     );

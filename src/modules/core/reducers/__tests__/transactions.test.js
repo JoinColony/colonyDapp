@@ -8,7 +8,7 @@ import {
   createTxAction,
   transactionSent,
   transactionError,
-  transactionEventDataReceived,
+  transactionSucceeded,
   transactionReceiptReceived,
 } from '../../actionCreators';
 
@@ -57,7 +57,7 @@ describe(`core: reducers (transactions)`, () => {
 
   const sentTx = transactionSent(id, { hash });
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
-  const eventDataReceived = transactionEventDataReceived(id, { eventData });
+  const eventDataReceived = transactionSucceeded(id, { eventData });
 
   const sendError = transactionError(id, new Error('send error'));
   const receiptError = transactionError(id, new Error('receipt error'));
