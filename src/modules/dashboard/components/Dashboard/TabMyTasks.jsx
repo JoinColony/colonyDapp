@@ -1,23 +1,21 @@
 /* @flow */
 
 // $FlowFixMe until hooks flow types
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDataFetcher } from '~utils/hooks';
-import { addressEquals } from '~utils/strings';
-import { TASK_STATE } from '~immutable';
 
-import type { TaskDraftId, TaskType } from '~immutable';
+import type { Address } from '~types';
+import type { TaskDraftId } from '~immutable';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
 
 import type { InitialTaskType } from './InitialTask.jsx';
-import type { MyTasksFilterOptionType } from './constants';
+import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import InitialTask from './InitialTask.jsx';
-import { MY_TASKS_FILTER } from './constants';
 
 import { currentUserDraftIdsFetcher } from '../../fetchers';
 
@@ -32,40 +30,21 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  walletAddress: string,
-  filterOption: MyTasksFilterOptionType,
+  filterOption: TasksFilterOptionType,
   initialTask: InitialTaskType,
   userClaimedProfile: boolean,
+  walletAddress: Address,
 |};
 
 const TabMyTasks = ({
-  walletAddress,
   filterOption,
   initialTask,
   userClaimedProfile,
+  walletAddress,
 }: Props) => {
   const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
     TaskDraftId[],
   >(currentUserDraftIdsFetcher, [], []);
-
-  const filter = useCallback(
-    ({ creatorAddress, workerAddress, currentState }: TaskType) => {
-      switch (filterOption) {
-        case MY_TASKS_FILTER.CREATED:
-          return addressEquals(creatorAddress, walletAddress);
-
-        case MY_TASKS_FILTER.ASSIGNED:
-          return addressEquals(workerAddress, walletAddress);
-
-        case MY_TASKS_FILTER.COMPLETED:
-          return currentState === TASK_STATE.FINALIZED;
-
-        default:
-          return true;
-      }
-    },
-    [filterOption, walletAddress],
-  );
 
   if (isFetchingTasks) {
     return <SpinnerLoader />;
@@ -75,13 +54,23 @@ const TabMyTasks = ({
     return (
       <>
         <InitialTask task={initialTask} />
-        {draftIds && draftIds.length ? <TaskList draftIds={draftIds} /> : null}
+        {draftIds && draftIds.length ? (
+          <TaskList
+            draftIds={draftIds}
+            filterOption={filterOption}
+            walletAddress={walletAddress}
+          />
+        ) : null}
       </>
     );
   }
 
   return draftIds && draftIds.length ? (
-    <TaskList draftIds={draftIds} filter={filter} />
+    <TaskList
+      draftIds={draftIds}
+      filterOption={filterOption}
+      walletAddress={walletAddress}
+    />
   ) : (
     <>
       <p className={styles.emptyText}>

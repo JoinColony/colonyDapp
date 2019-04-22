@@ -1,79 +1,98 @@
 /* @flow */
 
-// $FlowFixMe until hooks flow types
-import React, { useState, useCallback, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-
 import type { Node } from 'react';
 
-import { Table, TableBody } from '~core/Table';
+// $FlowFixMe until hooks flow types
+import React, { useMemo, useCallback } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskDraftId, TaskType } from '~immutable';
+import type { Address } from '~types';
+import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 
+import { addressEquals } from '~utils/strings';
+import { TASK_STATE } from '~immutable';
+import { useDataMapFetcher } from '~utils/hooks';
+import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
+import { tasksByIdFetcher } from '../../fetchers';
+
+import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import TaskListItem from './TaskListItem.jsx';
+
+import taskListItemStyles from './TaskListItem.css';
 
 const MSG = defineMessages({
   noTasks: {
     id: 'dashboard.TaskList.noTasks',
-    defaultMessage: 'No tasks',
+    defaultMessage: 'There are no tasks here.',
   },
 });
 
 type Props = {|
   draftIds?: TaskDraftId[],
-  filter?: (task: TaskType) => boolean,
   emptyState?: Node,
+  filteredDomainId?: DomainId,
+  filterOption: string,
+  walletAddress: Address,
 |};
 
-const TaskList = ({ draftIds = [], filter, emptyState }: Props) => {
-  // TODO: refactor this in the future to fetch tasks and perform filtering in
-  // this component, thus removing the need for this crazy hook stuff!
+const TaskList = ({
+  draftIds = [],
+  emptyState,
+  filteredDomainId,
+  filterOption,
+  walletAddress,
+}: Props) => {
+  const tasksData = useDataMapFetcher<TaskType>(tasksByIdFetcher, draftIds);
 
-  // keep track of which items aren't rendering due to being filtered out
-  const [taskVisibility, setTaskVisibility] = useState({});
-  const handleWillRender = useCallback(
-    (draftId: string, willRender: boolean) => {
-      if (taskVisibility[draftId] === willRender) return;
-      setTaskVisibility({
-        ...taskVisibility,
-        [draftId]: willRender,
-      });
+  const filter = useCallback(
+    ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
+      if (filteredDomainId && filteredDomainId !== domainId) return false;
+
+      switch (filterOption) {
+        case TASKS_FILTER_OPTIONS.CREATED:
+          return addressEquals(creatorAddress, walletAddress);
+
+        case TASKS_FILTER_OPTIONS.ASSIGNED:
+          return addressEquals(workerAddress, walletAddress);
+
+        case TASKS_FILTER_OPTIONS.COMPLETED:
+          return currentState === TASK_STATE.FINALIZED;
+
+        default:
+          return true;
+      }
     },
-    [taskVisibility],
-  );
-  const visibleTaskCount = useMemo(
-    () =>
-      Object.values(taskVisibility).reduce(
-        (count, isVisible) => (isVisible ? count + 1 : count),
-        0,
-      ),
-    [taskVisibility],
+    [filterOption, walletAddress, filteredDomainId],
   );
 
-  // if the draftIds change, reset the state
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useMemo(() => setTaskVisibility({}), [draftIds]);
+  const filteredTasksData = useMemo(
+    () =>
+      filter
+        ? tasksData.filter(({ data }) => (data ? filter(data) : true))
+        : tasksData,
+    [tasksData, filter],
+  );
 
   return (
     <>
       <Table data-test="dashboardTaskList" scrollable>
         <TableBody>
-          {draftIds.map(draftId => (
-            <TaskListItem
-              key={draftId}
-              draftId={draftId}
-              filter={filter}
-              willRender={handleWillRender}
-            />
+          {filteredTasksData.map(taskData => (
+            <TaskListItem key={taskData.key} data={taskData} />
           ))}
+          {filteredTasksData.length === 0 && (
+            <TableRow>
+              <TableCell className={taskListItemStyles.empty}>
+                {emptyState || (
+                  <p>
+                    <FormattedMessage {...MSG.noTasks} />
+                  </p>
+                )}
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
-      {!visibleTaskCount &&
-        (emptyState || (
-          <p>
-            <FormattedMessage {...MSG.noTasks} />
-          </p>
-        ))}
     </>
   );
 };

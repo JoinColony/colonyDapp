@@ -8,6 +8,7 @@ import {
   colonySelector,
   colonyTaskMetadataSelector,
   taskFeedItemsSelector,
+  tasksByIdsSelector,
   taskSelector,
   tokenSelector,
 } from './selectors';
@@ -75,6 +76,12 @@ export const currentUserColoniesFetcher = Object.freeze({
 
 export const taskFetcher = Object.freeze({
   select: taskSelector,
+  fetch: fetchTask,
+  ttl: 1000 * 60, // 1 minute,
+});
+
+export const tasksByIdFetcher = Object.freeze({
+  select: tasksByIdsSelector,
   fetch: fetchTask,
   ttl: 1000 * 60, // 1 minute,
 });

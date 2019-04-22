@@ -4,11 +4,11 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { ENSName } from '~types';
-import type { TaskDraftId, TaskType } from '~immutable';
+import type { TaskType } from '~immutable';
 
 import { useDataFetcher } from '~utils/hooks';
 
-import { colonyNameFetcher, taskFetcher } from '../../fetchers';
+import { colonyNameFetcher } from '../../fetchers';
 
 import { TableRow, TableCell } from '~core/Table';
 import PayoutsList from '~core/PayoutsList';
@@ -34,21 +34,15 @@ const UserAvatar = HookedUserAvatar();
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {|
-  draftId: TaskDraftId,
-  filter?: (task: TaskType) => boolean,
-  willRender: (draftId: string, willRender: boolean) => void,
+  data: {| key: string, data: ?TaskType, isFetching: boolean, error: boolean |},
 |};
 
-const TaskListItem = ({ draftId, filter, willRender }: Props) => {
-  const { data: task, isFetching: isFetchingTask } = useDataFetcher(
-    taskFetcher,
-    [draftId],
-    [draftId],
-  );
-  const { workerAddress, payouts, reputation, title = MSG.untitled } =
+const TaskListItem = ({ data }: Props) => {
+  const { data: task, key, isFetching: isFetchingTask } = data;
+  const { workerAddress, payouts, reputation, draftId, title = MSG.untitled } =
     task || {};
 
-  const [colonyAddress] = draftId.split('_');
+  const [colonyAddress] = key.split('_');
   const {
     data: colonyName,
     isFetching: isFetchingColonyName,
@@ -67,12 +61,6 @@ const TaskListItem = ({ draftId, filter, willRender }: Props) => {
       </TableRow>
     );
   }
-
-  if (filter && !filter(task)) {
-    willRender(draftId, false);
-    return null;
-  }
-  willRender(draftId, true);
 
   return (
     <TableRow>
