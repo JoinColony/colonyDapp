@@ -12,6 +12,7 @@ type Shared = {|
   event: string,
   timestamp: Date,
   colonyName?: string,
+  colonyAddress?: string,
 |};
 
 export type UserActivityType = $ReadOnly<Shared>;
@@ -26,6 +27,7 @@ const defaultValues: $Shape<Shared> = {
   event: undefined,
   timestamp: new Date(),
   colonyName: undefined,
+  colonyAddress: undefined,
 };
 
 const UserActivityRecord: RecordFactory<Shared> = Record(defaultValues);

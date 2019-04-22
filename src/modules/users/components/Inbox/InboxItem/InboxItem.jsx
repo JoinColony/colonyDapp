@@ -119,6 +119,7 @@ const InboxItem = ({
     otherUser,
     amount,
     colonyName,
+    colonyAddress,
     comment,
     timestamp,
     domainName,
@@ -136,7 +137,11 @@ const InboxItem = ({
   const {
     data: colony,
     isFetching: isFetchingColony,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
+  } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
   return (
     <TableRow
       className={styles.inboxRow}
@@ -144,7 +149,7 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {isFetchingUser || isFetchingColony ? (
+        {!isFetchingUser && !isFetchingColony && user && colony ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -168,7 +173,6 @@ const InboxItem = ({
                 className={styles.userAvatar}
               />
             )}
-
             <span className={styles.inboxAction}>
               <FormattedMessage
                 {...MSG[event]}
@@ -176,7 +180,10 @@ const InboxItem = ({
                   amount: makeInboxDetail(amount, ({ unit, value }) => (
                     <Numeral prefix={unit} value={value} />
                   )),
-                  colony: makeInboxDetail(colony && colony.colonyName),
+                  colonyDisplayName: makeInboxDetail(
+                    colony && colony.displayName,
+                  ),
+                  colonyName: makeInboxDetail(colonyName),
                   comment: makeInboxDetail(comment),
                   domain: makeInboxDetail(domainName),
                   other: makeInboxDetail(otherUser),
