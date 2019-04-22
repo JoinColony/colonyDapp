@@ -4,8 +4,9 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TransactionType } from '~immutable';
-import type { UniqueActionType } from '~redux';
+import type { Action } from '~redux';
 
+import { ACTIONS } from '~redux';
 import { getMainClasses } from '~utils/css';
 
 import { Tooltip } from '~core/Popover';
@@ -26,7 +27,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  cancelTransaction: (id: string) => UniqueActionType<*, *, *>,
+  cancelTransaction: (id: string) => Action<typeof ACTIONS.TRANSACTION_CANCEL>,
   idx: number,
   selected: boolean,
   transaction: TransactionType<*, *>,

@@ -11,7 +11,7 @@ import type {
 } from '~immutable';
 
 import {
-  transactionEventDataReceived,
+  transactionSucceeded,
   transactionReceiptReceived,
   transactionSent,
 } from '../../actionCreators';
@@ -51,7 +51,7 @@ const channelGetEventData = async ({ id, params }, sentTx, emit) => {
   if (eventDataPromise) {
     try {
       const eventData = await eventDataPromise;
-      emit(transactionEventDataReceived(id, { eventData, params }));
+      emit(transactionSucceeded(id, { eventData, params }));
     } catch (error) {
       emit(error);
     }
