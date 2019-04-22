@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WizardTemplateColony component Renders initial component 1`] = `
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
+`;

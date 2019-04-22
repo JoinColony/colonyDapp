@@ -1,0 +1,33 @@
+.main {
+  padding-top: 155px;
+  width: 100%;
+  width: 460px;
+}
+
+.paragraph {
+  margin-top: 1.5em;
+  font-size: var(--size-medium);
+}
+
+.nameForm {
+  margin-top: 40px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 13px;
+}
+
+.reminder {
+  max-width: 215px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-medium);
+  line-height: 18px;
+}
+
+.iconContainer {
+  position: relative;
+  bottom: 5px;
+}

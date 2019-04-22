@@ -57,6 +57,7 @@ class DecisionOption extends Component<Props> {
       return (
         <Tooltip
           placement="left"
+          trigger="hover"
           content={
             <span className={styles.tooltip}>
               <FormattedMessage {...tooltip} />
@@ -64,7 +65,7 @@ class DecisionOption extends Component<Props> {
           }
         >
           <div className={styles.rowIcon}>
-            <Icon name={icon} title={title} />
+            <Icon name={icon} title={title} appearance={{ size: 'small' }} />
           </div>
         </Tooltip>
       );

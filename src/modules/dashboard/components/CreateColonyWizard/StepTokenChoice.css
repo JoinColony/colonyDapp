@@ -3,12 +3,12 @@
 }
 
 .content {
+  margin-top: 155px;
   width: 340px;
 }
 
 .title {
-  margin-top: 124px;
-  margin-bottom: 45px;
+  margin-bottom: 28px;
   font-weight: var(--weight-medium);
 }
 
@@ -17,48 +17,23 @@
   font-size: 14px;
 }
 
-.subtitleWithLink {
+.subtitleWithExample {
   flex: 4;
 }
 
-.subtitleWithLinkBox {
+.subtitleWithExampleBox {
   display: flex;
   margin-bottom: 20px;
 }
 
+.titleAndButton {
+  display: flex;
+  margin-top: 15px;
+}
+
 .link {
-  flex: 2;
-}
-
-.callToAction {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 64px;
-  padding: 10px 16px;
-  max-height: 60px;
-  width: 100%;
-  border: none;
-  background-color: white;
-  cursor: pointer;
-}
-
-.callToAction:focus {
-  outline: none;
-}
-
-.actionImage {
-  flex: 1;
-  margin-top: 7px;
-}
-
-.actionText {
-  flex: 6;
-  text-align: left;
-}
-
-.buttonContainer {
-  display: flex;
-  justify-content: flex-start;
-  margin-left: -16px;
-  margin-top: 5px;
+  margin-left: 5px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-medium);
+  color: var(--sky-blue);
 }

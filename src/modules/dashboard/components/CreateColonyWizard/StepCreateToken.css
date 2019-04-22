@@ -1,26 +1,9 @@
 .main {
-  width: 560px;
+  width: 460px;
 }
 
 .titleSection {
   margin-top: 180px;
-}
-
-/*
- * This was needed due to the way we compose the intl values in the `Heading` component
- *
- * This also ties into a limitation of `react-intl`, where the legacy `formatMessage()` method
- * can't render JSX syntax, so everything you pass in as values will end up like: [Object object]
- */
-.customHeading {
-  /*
-   * Also, if you're using the webpack aliases, you need to declare them one per line.
-   * Apparently it doesn't like you comma separating them
-   */
-  composes: sizeMedium from '~core/Heading/Heading.css';
-  composes: weightThin from '~core/Heading/Heading.css';
-  display: inline-block;
-  margin-right: 15px;
 }
 
 .inputFields {
@@ -35,4 +18,13 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 60px;
+}
+
+.linkToOtherStep {
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+  cursor: pointer;
 }

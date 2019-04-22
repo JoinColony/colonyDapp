@@ -21,10 +21,19 @@ const MSG = defineMessages({
   },
 });
 
+export type Appearance = {
+  interactive: boolean,
+};
+
 type Props = {|
+  /* We don't want to show the header that shows the wallet address
+   * if the gasStation is embedded in wizard step, the apperance object
+   * helps with that
+   */
+  appearance: Appearance,
   close?: () => void,
-  currentUserGetBalance: () => void,
   transactionGroups: Array<TransactionGroup>,
+  currentUserGetBalance: () => void,
 |};
 
 type State = {|
@@ -33,6 +42,10 @@ type State = {|
 
 class GasStationContent extends Component<Props, State> {
   static displayName = 'users.GasStation.GasStationContent';
+
+  static defaultProps = {
+    appearance: { interactive: true },
+  };
 
   state = {
     selectedGroupIdx: -1,
@@ -53,10 +66,22 @@ class GasStationContent extends Component<Props, State> {
 
   renderTransactions() {
     const { selectedGroupIdx } = this.state;
-    const { transactionGroups } = this.props;
-    const detailsTransactionGroup = transactionGroups[selectedGroupIdx];
-    return detailsTransactionGroup ? (
+    const {
+      transactionGroups,
+      appearance: { interactive },
+    } = this.props;
+    let detailsTransactionGroup = transactionGroups[selectedGroupIdx];
+
+    /*  If the GasStationContent is less interactive,
+     * like in StepConfirmTransactions, we select the first group buy default
+     */
+    if (!interactive && selectedGroupIdx === -1) {
+      [detailsTransactionGroup] = transactionGroups;
+    }
+
+    return detailsTransactionGroup || !interactive ? (
       <TransactionDetails
+        appearance={{ interactive: false }}
         transactionGroup={detailsTransactionGroup}
         onClose={this.unselectTransactionGroup}
       />
@@ -69,14 +94,18 @@ class GasStationContent extends Component<Props, State> {
   }
 
   render() {
-    const { close, transactionGroups } = this.props;
+    const {
+      close,
+      transactionGroups,
+      appearance: { interactive },
+    } = this.props;
     const isEmpty = !transactionGroups || !transactionGroups.length;
     return (
       <div
         className={getMainClasses({}, styles, { isEmpty })}
         data-test="gasStation"
       >
-        <GasStationHeader close={close} />
+        {interactive && <GasStationHeader close={close} />}
         <div className={styles.transactionsContainer}>
           {isEmpty ? (
             <Heading

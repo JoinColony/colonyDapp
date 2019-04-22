@@ -42,6 +42,11 @@ type Props = {|
    * Internationalization library object, injected by `react-intl`
    */
   intl: IntlShape,
+  /*
+   * If you would like to stay at the same route but handle the navigation manually
+   * a custom handler can be used i.e. switching to another wizard step
+   */
+  customHandler?: () => void,
 |};
 
 const HistoryNavigation = ({
@@ -50,6 +55,7 @@ const HistoryNavigation = ({
   backText,
   backTextValues,
   intl: { formatMessage },
+  customHandler,
 }: Props) => {
   let linkText: string = formatMessage(MSG.backHistoryLink);
   if (backText) {
@@ -70,7 +76,11 @@ const HistoryNavigation = ({
           {linkText}
         </NavLink>
       ) : (
-        <button className={styles.back} type="button" onClick={history.goBack}>
+        <button
+          className={styles.back}
+          type="button"
+          onClick={customHandler || history.goBack}
+        >
           <Icon
             name="circle-back"
             title={linkText}

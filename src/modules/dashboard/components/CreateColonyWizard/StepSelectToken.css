@@ -1,6 +1,6 @@
 .main {
   width: 100%;
-  max-width: 520px;
+  max-width: 460px;
 }
 
 .header {
@@ -35,4 +35,13 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 48px;
+}
+
+.linkToOtherStep {
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+  cursor: pointer;
 }

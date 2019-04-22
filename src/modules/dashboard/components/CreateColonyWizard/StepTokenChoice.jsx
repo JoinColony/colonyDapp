@@ -7,28 +7,32 @@ import { defineMessages } from 'react-intl';
 import styles from './StepTokenChoice.css';
 
 import Heading from '~core/Heading';
-import Button from '~core/Button';
+import ExternalLink from '~core/ExternalLink';
 import DecisionHub from '~core/DecisionHub';
 import { Form } from '~core/Fields';
 
 import type { WizardProps } from '~core/Wizard';
+
+import { getNormalizedDomainText } from '~utils/strings';
 
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.heading',
     defaultMessage:
       /* eslint-disable max-len */
-      'How would you like to create a new token or use an existing ERC20 token?',
+      'Choose a native token for {colony}',
   },
-  subTitle: {
-    id: 'dashboard.CreateColonyWizard.StepTokenChoice.subTitle',
+  subtitle: {
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitle',
     defaultMessage:
       /* eslint-disable max-len */
-      'Each Colony has a native token. When rewarding contributors with the native token, those users will also earn reputation in your Colony.',
+      `Colonies need a native token to calculate reputation at the end of a task.
+      Choose which token is right for {colony}.`,
   },
-  subTitleWithLink: {
-    id: 'dashboard.CreateColonyWizard.StepTokenChoice.subTitleWithLink',
-    defaultMessage: 'Not sure which option to choose?',
+  subtitleWithExample: {
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitleWithExample',
+    defaultMessage: `E.g.: Leia has completed a task worth 1.5 ETH and 5 CLNY.
+      If CLNY is the native token then she also earns +5 reputation points.`,
   },
   button: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
@@ -37,6 +41,10 @@ const MSG = defineMessages({
   learnMore: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.learnMore',
     defaultMessage: 'Learn More',
+  },
+  notSure: {
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.notSure',
+    defaultMessage: 'Not sure?',
   },
   createTokenTitle: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.newToken',
@@ -48,11 +56,21 @@ const MSG = defineMessages({
   },
   createTokenSubtitle: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.newTokenSubtitle',
-    defaultMessage: 'Earn reputation for your tasks',
+    defaultMessage: 'For example: MyAwesomeToken',
   },
   selectTokenSubtitle: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.existingTokenSubtitle',
     defaultMessage: 'For example: DAI, EOS, SNT, etc',
+  },
+  tooltipCreate: {
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipCreate',
+    defaultMessage: `You’ll be able to mint new tokens at any time.
+      Good for new projects or projects that want more control over their tokens.`,
+  },
+  tooltipSelect: {
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipSelect',
+    defaultMessage: `Use a token that already has some value.
+      Good for established projects or projects wanting to use existing market forces.`,
   },
 });
 
@@ -61,63 +79,68 @@ const options = [
     value: 'create',
     title: MSG.createTokenTitle,
     subtitle: MSG.createTokenSubtitle,
+    icon: 'question-mark',
+    tooltip: MSG.tooltipCreate,
   },
   {
     value: 'select',
     title: MSG.selectTokenTitle,
     subtitle: MSG.selectTokenSubtitle,
+    icon: 'question-mark',
+    tooltip: MSG.tooltipSelect,
   },
 ];
 
 type FormValues = {
   tokenChoice: string,
+  colonyName: string,
 };
 
 type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
-const StepTokenChoice = ({ nextStep, previousStep, wizardForm }: Props) => (
+const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <Form onSubmit={nextStep} {...wizardForm}>
-    {({ values }) => (
+    {
       <section className={styles.content}>
         <div className={styles.title}>
           <Heading
-            appearance={{ size: 'medium', weight: 'thin' }}
+            appearance={{ size: 'medium', weight: 'medium' }}
             text={MSG.heading}
+            textValues={{
+              colony: getNormalizedDomainText(wizardValues.colonyName),
+            }}
           />
         </div>
         <div className={styles.subtitle}>
           <Heading
             appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subTitle}
+            text={MSG.subtitle}
+            textValues={{ colony: wizardValues.colonyName }}
           />
         </div>
-        <div className={styles.subtitleWithLinkBox}>
+        <div className={styles.subtitleWithExampleBox}>
           <Heading
-            className={styles.subtitleWithLink}
+            className={styles.subtitleWithExample}
             appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subTitleWithLink}
+            text={MSG.subtitleWithExample}
           />
-          <div className={styles.link}>
-            <Button
-              appearance={{ theme: 'blue' }}
-              type="button"
-              text={MSG.learnMore}
-            />
-          </div>
         </div>
         <DecisionHub name="tokenChoice" options={options} />
-        <div className={styles.buttonContainer}>
-          <Button
-            appearance={{ theme: 'secondary' }}
-            type="button"
-            text={MSG.button}
-            onClick={() => previousStep(values)}
+        <div className={styles.titleAndButton}>
+          <Heading
+            appearance={{
+              size: 'tiny',
+              weight: 'bold',
+              margin: 'none',
+            }}
+            text={MSG.notSure}
           />
+          <ExternalLink className={styles.link} text={MSG.learnMore} href="#" />
         </div>
       </section>
-    )}
+    }
   </Form>
 );
 

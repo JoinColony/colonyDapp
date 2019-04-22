@@ -9,6 +9,7 @@ import CardList from '~core/CardList';
 import styles from './TransactionDetails.css';
 
 import type { TransactionGroup } from '../transactionGroup';
+import type { Appearance } from '../GasStationContent';
 
 import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 
@@ -24,33 +25,45 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  /* If we are only showing the transaction details
+   * and no overview we do not need a back button
+   */
+  appearance: Appearance,
   transactionGroup: TransactionGroup,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};
 
 const displayName = 'users.GasStation.TransactionDetails';
 
-const TransactionDetails = ({ onClose, transactionGroup }: Props) => {
-  const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup);
+const TransactionDetails = ({
+  onClose,
+  transactionGroup,
+  appearance = { interactive: true },
+}: Props) => {
+  const { interactive } = appearance;
+  const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup) || 0;
   const selectedTransaction = transactionGroup[selectedTransactionIdx];
   const groupKey = getGroupKey(transactionGroup);
   return (
     <div>
-      <button
-        type="button"
-        className={styles.returnToSummary}
-        onClick={onClose}
-      >
-        <Icon
-          appearance={{ size: 'small' }}
-          name="caret-left"
-          title={MSG.returnToSummary}
-        />
-        <FormattedMessage {...MSG.returnToSummary} />
-      </button>
+      {interactive && (
+        <button
+          type="button"
+          className={styles.returnToSummary}
+          onClick={onClose}
+        >
+          <Icon
+            appearance={{ size: 'small' }}
+            name="caret-left"
+            title={MSG.returnToSummary}
+          />
+          <FormattedMessage {...MSG.returnToSummary} />
+        </button>
+      )}
       <CardList appearance={{ numCols: '1' }}>
         {groupKey === 'network.registerUserLabel' && <GasStationClaimCard />}
         <GroupedTransaction
+          appearance={{ interactive: false }}
           transactionGroup={transactionGroup}
           selectedTransactionIdx={selectedTransactionIdx}
         />

@@ -24,6 +24,10 @@
   border-left: none;
 }
 
+.extension + input {
+  border-right: none;
+}
+
 .extension {
   padding: 0 16px;
   height: 45px;
@@ -34,7 +38,7 @@
   font-size: var(--size-normal);
   font-weight: var(--weight-medium);
   line-height: 40px;
-  color: var(--grey-dark);
+  color: var(--temp-grey-4);
   letter-spacing: var(--spacing-normal);
   transition: border-color 0.1s ease-in;
 }

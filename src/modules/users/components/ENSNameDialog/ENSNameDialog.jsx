@@ -8,7 +8,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
 import BigNumber from 'bn.js';
-import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
 import styles from './ENSNameDialog.css';
 
@@ -20,6 +19,8 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { ACTIONS } from '~redux';
+
+import { getNormalizedDomainText } from '~utils/strings';
 
 import { currentUserBalanceSelector } from '../../selectors';
 
@@ -89,19 +90,6 @@ const validationSchema = yup.object({
     .required()
     .ensAddress(),
 });
-
-const getNormalizedDomainText = (domain: string) => {
-  if (!domain) return null;
-  try {
-    const normalized = ensNormalize(domain);
-    if (normalized === domain) return null;
-    return normalized;
-  } catch (e) {
-    return null;
-  }
-};
-
-const displayName = 'users.ENSNameDialog';
 
 const ENSNameDialog = ({ cancel, close, balance = '0' }: Props) => {
   const checkDomainTaken = useAsyncFunction({
@@ -216,7 +204,7 @@ const ENSNameDialog = ({ cancel, close, balance = '0' }: Props) => {
   );
 };
 
-ENSNameDialog.displayName = displayName;
+ENSNameDialog.displayName = 'users.ENSNameDialog';
 
 export default connect(state => ({
   balance: currentUserBalanceSelector(state),

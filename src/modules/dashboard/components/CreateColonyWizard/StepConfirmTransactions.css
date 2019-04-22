@@ -1,0 +1,19 @@
+.main {
+  width: 460px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  padding: 22px 15px 18px 15px;
+  border-radius: 5px;
+  border: 1px solid var(--temp-grey-blue-2);
+  background-color: var(--temp-grey-blue-6);
+}
+
+.containerGasPrice {
+  padding: 0px 15px 12px 15px;
+  border: 1px solid var(--temp-grey-blue-2);
+  background-color: var(--temp-grey-blue-6);
+}

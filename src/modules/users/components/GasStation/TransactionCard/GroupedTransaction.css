@@ -13,3 +13,7 @@
 .description {
   flex: 1 1 auto;
 }
+
+.main.transactionList:first-child.li {
+  background-color: var(--colony-white);
+}

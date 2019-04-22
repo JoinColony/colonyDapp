@@ -11,12 +11,13 @@ import Button from '~core/Button';
 import { log } from '~utils/debug';
 import { ACTIONS } from '~redux';
 
+import type { Node } from 'react';
 import styles from './StepSelectToken.css';
 
 const MSG = defineMessages({
   inputLabel: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.label',
-    defaultMessage: 'Token Contact Address',
+    defaultMessage: 'Token Address',
   },
   learnMore: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.learnMore',
@@ -49,6 +50,8 @@ type Props = {|
   tokenAddress: string,
   onTokenSelect: (TokenData | null | void) => any,
   tokenData: ?TokenData,
+  /** Extra node to render on the top right in the label */
+  extra?: Node,
 |};
 
 const getStatusText = (tokenData, isLoading) => {
@@ -65,7 +68,12 @@ const getStatusText = (tokenData, isLoading) => {
 
 const displayName = 'dashboard.CreateColonyWizard.TokenSelector';
 
-const TokenSelector = ({ tokenAddress, onTokenSelect, tokenData }: Props) => {
+const TokenSelector = ({
+  tokenAddress,
+  onTokenSelect,
+  tokenData,
+  extra,
+}: Props) => {
   const getToken = useAsyncFunction({
     submit: ACTIONS.TOKEN_INFO_FETCH,
     success: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
@@ -135,7 +143,11 @@ const TokenSelector = ({ tokenAddress, onTokenSelect, tokenData }: Props) => {
       <Input
         name="tokenAddress"
         label={MSG.inputLabel}
-        extra={<Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />}
+        extra={
+          extra || (
+            <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
+          )
+        }
         {...getStatusText(tokenData, isLoading)}
       />
     </div>
