@@ -10,6 +10,7 @@ import type {
   TransactionParams,
   TransactionEventData,
 } from '~immutable';
+import type { Action } from '~redux/types/actions';
 
 import type { MultisigSender, Sender } from '../../types';
 
@@ -19,8 +20,8 @@ import { oneTransaction } from '../../selectors';
 import { getMethod } from '../utils';
 
 import transactionChannel from './transactionChannel';
-import type { Action } from '~redux/types/actions';
 import { ACTIONS } from '~redux';
+import { selectAsJS } from '~utils/saga/effects';
 
 /*
  * Given a method and a transaction record, create a promise for sending the
@@ -61,7 +62,7 @@ async function getMethodTransactionPromise<
 }
 
 export default function* sendTransaction(id: string): Saga<void> {
-  const transaction = yield select(oneTransaction, id);
+  const transaction = yield* selectAsJS(oneTransaction, id);
 
   if (transaction.status !== 'ready') {
     throw new Error('Transaction is not ready to send.');
@@ -79,7 +80,7 @@ export default function* sendTransaction(id: string): Saga<void> {
     while (true) {
       const action = yield take(channel);
       // Add the transaction to the payload (we need to get the most recent version of it)
-      const tx = yield select(oneTransaction, id);
+      const tx = yield* selectAsJS(oneTransaction, id);
 
       // Put the action to the store
       yield put({
