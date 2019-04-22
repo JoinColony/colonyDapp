@@ -86,10 +86,10 @@ const messages = defineMessages({
   },
   notificationAdminENSCreated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminENSCreated',
-    defaultMessage: '{user} added the username {username} to {colony}.',
+    defaultMessage: '{user} added the ENS name {ensName} to {colony}.',
   },
-  notificationAdminDomainAdded: {
-    id: 'dashboard.Inbox.InboxItem.notificationAdminDomainAdded',
+  notificationAdminColonyLabelAdded: {
+    id: 'dashboard.Inbox.InboxItem.notificationAdminColonyLabelAdded',
     defaultMessage: '{user} added a new domain titled {domain} to {colony}.',
   },
   notificationAdminTokensGenerated: {
