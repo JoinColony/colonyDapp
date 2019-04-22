@@ -3,7 +3,7 @@
 import type { Saga } from 'redux-saga';
 import type { ContractResponse } from '@colony/colony-js-client';
 
-import { call, put, take, select } from 'redux-saga/effects';
+import { call, put, take } from 'redux-saga/effects';
 
 import type {
   TransactionRecordType,

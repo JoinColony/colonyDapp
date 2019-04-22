@@ -58,7 +58,7 @@ import { getColonyContext, getColonyAddress, getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
-  payload,
+  payload: { tokenName, tokenSymbol, colonyName, displayName },
 }: // $FlowFixMe (not an actual action)
 Action<'COLONY_CREATE'>): Saga<void> {
   const key = 'transaction.batch.createColony';
@@ -70,8 +70,6 @@ Action<'COLONY_CREATE'>): Saga<void> {
   const createLabelChannel = yield call(getTxChannel, createLabelId);
 
   try {
-    const { tokenName, tokenSymbol, colonyName } = payload;
-
     yield fork(createTransaction, createTokenId, {
       context: NETWORK_CONTEXT,
       methodName: 'createToken',
@@ -119,41 +117,55 @@ Action<'COLONY_CREATE'>): Saga<void> {
 
     const {
       payload: {
-        transaction: { receipt },
+        transaction: {
+          receipt: { contractAddress: tokenAddress },
+        },
       },
     } = yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    yield put(
-      transactionAddParams(createColonyId, {
-        tokenAddress: receipt && receipt.contractAddress,
-      }),
-    );
+    yield put(transactionAddParams(createColonyId, { tokenAddress }));
 
     yield put(transactionReady(createColonyId));
 
     const {
       payload: {
-        transaction: { eventData },
+        eventData: { colonyAddress },
       },
     } = yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
+    /*
+     * Create the colony store
+     */
+    const context = yield* getColonyContext(colonyAddress);
+    const args = {
+      colonyAddress,
+      colonyName,
+      displayName,
+      token: {
+        address: tokenAddress,
+        // TODO add tokenIcon; can we get this in the action payload?
+        isNative: true,
+        name: tokenName,
+        symbol: tokenSymbol,
+      },
+    };
+    const store = yield* executeCommand(context, createColonyProfile, args);
+
+    yield put(subscribeToColony(colonyAddress));
+
     yield put(
       transactionAddParams(createLabelId, {
-        // TODO: get orbit db path from somewhere
-        orbitDBPath: 'temp',
+        orbitDBPath: store.address.toString(),
       }),
     );
 
-    yield put(
-      transactionAddIdentifier(
-        createLabelId,
-        eventData && eventData.colonyAddress,
-      ),
-    );
+    yield put(transactionAddIdentifier(createLabelId, colonyAddress));
 
     yield put(transactionReady(createLabelId));
 
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(replace(`/colony/${colonyName}`));
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {
