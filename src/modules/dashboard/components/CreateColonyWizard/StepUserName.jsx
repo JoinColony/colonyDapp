@@ -4,12 +4,10 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { compose } from 'recompose';
 
 import type { WizardProps } from '~core/Wizard';
-import type { UserType } from '~immutable';
 
-import styles from './StepUserENSName.css';
+import styles from './StepUserName.css';
 
 import { useAsyncFunction } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
@@ -19,94 +17,80 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
 
-import { withCurrentUser } from '../../../users/hocs';
-import { withImmutablePropsToJS } from '~utils/hoc';
-
 import { getNormalizedDomainText } from '~utils/strings';
 
 type FormValues = {
-  displayName: string,
-  colonyName: string,
   username: string,
 };
 
-type Props = WizardProps<FormValues> & {
-  currentUser: UserType,
-};
+type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.heading',
-    defaultMessage: 'Welcome @{username}, let’s begin creating your colony.',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.heading',
+    defaultMessage: 'Welcome to Colony!',
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionOne',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'First thing is choosing a name. What would you like to name your colony?',
+      'Let’s start with the basics. What can we call you?',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
-    defaultMessage: 'Colony Unique URL',
-  },
-  labelDisplay: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.labelDisplay',
-    defaultMessage: 'Colony Name',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.label',
+    defaultMessage: 'Your Unique Username',
   },
   continue: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.Continue',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.continue',
     defaultMessage: 'Continue',
   },
+  gotETH: {
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.gotETH',
+    defaultMessage: `Got ETH? You'll need some at the end
+      to cover Ethereum's transaction fees.`,
+  },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
-    defaultMessage: 'This colony domain name is already taken',
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.errorDomainTaken',
+    defaultMessage: 'This Username is already taken',
   },
   errorDomainInvalid: {
     id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
     defaultMessage:
-      'Invalid colony name. Please make sure this will be a valid domain',
-  },
-  statusText: {
-    id: 'users.CreateColonyWizard.StepColonyENSName.statusText',
-    defaultMessage: 'Actual Colony Name: {normalized}',
+      'Invalid username. Please make sure this will be a valid domain',
   },
   tooltip: {
-    id: 'users.CreateColonyWizard.StepColonyENSName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your
-      colony. This will also allow us to create a custom URL for inviting people
-      to your colony.`,
+    id: 'dashboard.CreateColonyWizard.StepUserENSName.tooltip',
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
+      your wallet address. This allows us to provide a good user experience
+      while using a fully decentralized architecture.`,
+  },
+  statusText: {
+    id: 'users.ENSNameDialog.statusText',
+    defaultMessage: 'Actual Username: @{normalized}',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyENSName';
+const displayName = 'dashboard.CreateColonyWizard.StepUserENSName';
 
 const validationSchema = yup.object({
-  colonyName: yup
+  username: yup
     .string()
     .required()
     .ensAddress(),
-  displayName: yup.string().required(),
 });
 
-const StepColonyENSName = ({
-  wizardForm,
-  nextStep,
-  wizardValues,
-  currentUser: {
-    profile: { username },
-  },
-}: Props) => {
+const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
   const checkDomainTaken = useAsyncFunction({
-    submit: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY,
-    success: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
-    error: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
+    submit: ACTIONS.USERNAME_CHECK_AVAILABILITY,
+    success: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
+    error: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
   });
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
       try {
         // Let's check whether this is even valid first
-        validationSchema.validateSyncAt('colonyName', values);
+        validationSchema.validateSyncAt('username', values);
       } catch (caughtError) {
         // Just return. The actual validation will be done by the
         // validationSchema
@@ -116,14 +100,13 @@ const StepColonyENSName = ({
         await checkDomainTaken(values);
       } catch (e) {
         const error = {
-          colonyName: MSG.errorDomainTaken,
+          username: MSG.errorDomainTaken,
         };
         throw error;
       }
     },
     [checkDomainTaken],
   );
-
   return (
     <Form
       onSubmit={nextStep}
@@ -131,36 +114,26 @@ const StepColonyENSName = ({
       validationSchema={validationSchema}
       {...wizardForm}
     >
-      {({ isValid, isSubmitting, values }) => {
-        const normalized = getNormalizedDomainText(values.colonyName);
+      {({ isValid, isSubmitting, values: { username } }) => {
+        const normalized = getNormalizedDomainText(username);
         return (
           <section className={styles.main}>
             <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'medium' }}
-                text={MSG.heading}
-                textValues={{
-                  username: getNormalizedDomainText(
-                    username || wizardValues.username,
-                  ),
-                }}
-              />
+              <Heading appearance={{ size: 'medium' }} text={MSG.heading} />
               <p className={styles.paragraph}>
                 <FormattedMessage {...MSG.descriptionOne} />
               </p>
               <div className={styles.nameForm}>
                 <Input
                   appearance={{ theme: 'fat' }}
-                  name="displayName"
-                  label={MSG.labelDisplay}
-                />
-                <Input
-                  appearance={{ theme: 'fat' }}
-                  name="colonyName"
-                  extensionString=".colony.joincolony.eth"
+                  name="username"
                   label={MSG.label}
+                  extensionString=".user.joincolony.eth"
                   status={normalized && MSG.statusText}
-                  statusValues={{ normalized }}
+                  statusValues={{
+                    normalized,
+                  }}
+                  data-test="claimUsernameInput"
                   extra={
                     <Tooltip
                       placement="right"
@@ -181,6 +154,9 @@ const StepColonyENSName = ({
                   }
                 />
                 <div className={styles.buttons}>
+                  <p className={styles.reminder}>
+                    <FormattedMessage {...MSG.gotETH} />
+                  </p>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"
@@ -198,9 +174,6 @@ const StepColonyENSName = ({
   );
 };
 
-StepColonyENSName.displayName = displayName;
+StepUserENSName.displayName = displayName;
 
-export default compose(
-  withCurrentUser,
-  withImmutablePropsToJS,
-)(StepColonyENSName);
+export default StepUserENSName;

@@ -6,11 +6,11 @@ import { withWizard } from '../../../core/components/Wizard';
 import CreateColony from './CreateColonyWizard.jsx';
 
 import StepTokenChoice from './StepTokenChoice.jsx';
-import StepColonyENSName from './StepColonyENSName.jsx';
+import StepColonyName from './StepColonyName.jsx';
 import StepSelectToken from './StepSelectToken.jsx';
 import StepCreateToken from './StepCreateToken.jsx';
 import StepConfirmAllInput from './StepConfirmAllInput.jsx';
-import StepUserENSName from './StepUserENSName.jsx';
+import StepUserName from './StepUserName.jsx';
 import StepConfirmTransactions from './StepConfirmTransactions.jsx';
 
 import { userDidClaimProfile } from '../../../users/checks';
@@ -18,8 +18,8 @@ import { userDidClaimProfile } from '../../../users/checks';
 import { withCurrentUser } from '../../../users/hocs';
 
 const stepArray = [
-  StepUserENSName,
-  StepColonyENSName,
+  StepUserName,
+  StepColonyName,
   StepTokenChoice,
   StepCreateToken,
   StepConfirmAllInput,
