@@ -317,13 +317,14 @@ class DDB {
     await this._ipfsNode.ready;
     const ipfs = this._ipfsNode.getIPFS();
 
-    this._orbitNode = new OrbitDB(ipfs, identity, {
+    this._orbitNode = await OrbitDB.createInstance(ipfs, {
+      AccessControllers: AccessControllerFactory,
+      identity,
+      keystore: Keystore,
       /**
-       * @todo : is there a case where this could not be the default? TODO should this be a constant, or configurable? and `colonyOrbitDB`?
+       * @todo : is there a case where this could not be the default? This be a constant, or configurable? and `colonyOrbitDB`?
        */
       path: 'colonyOrbitdb',
-      keystore: Keystore,
-      AccessControllers: AccessControllerFactory,
     });
   }
 
