@@ -95,13 +95,13 @@ export default class AbstractAccessController<
     throw new Error('Not implemented');
   }
 
-  // No setup required
-  async setup() {
+  async close() {
     return Promise.resolve();
   }
 
-  static get type() {
-    throw new Error('Not implemented');
+  // No setup required
+  async load() {
+    return Promise.resolve();
   }
   /* eslint-enable no-unused-vars,class-methods-use-this */
 }

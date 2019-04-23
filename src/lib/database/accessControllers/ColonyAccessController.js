@@ -64,7 +64,7 @@ class ColonyAccessController extends AbstractAccessController<
     }/creator/${signingWalletAddress}/${signature}`;
   }
 
-  async setup() {
+  async load() {
     this._checkWalletAddress();
   }
 

@@ -9,7 +9,7 @@ export interface AccessController<I: Identity, P: IdentityProvider<I>> {
 
   canAppend(entry: Entry, provider: P): Promise<boolean>;
 
-  setup(options: any): Promise<void>;
+  load(options: any): Promise<void>;
 
   save(): Promise<string>;
 

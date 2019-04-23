@@ -60,7 +60,7 @@ class TaskAccessController extends AbstractAccessController<
     return `/colony/${this._colonyAddress}/task/${this._draftId}`;
   }
 
-  async setup() {
+  async load() {
     this._checkWalletAddress();
   }
 
