@@ -36,7 +36,7 @@ export const getColonyTransactions: ContractEventQuery<
 > = {
   context,
   prepare,
-  async execute(colonyClient: ColonyClient) {
+  async execute(colonyClient) {
     const {
       contract: { address: colonyAddress },
       events: {
@@ -78,7 +78,7 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
 > = {
   context,
   prepare,
-  async execute(colonyClient: ColonyClient) {
+  async execute(colonyClient) {
     const {
       contract: { address: colonyAddress },
       events: { ColonyFundsClaimed },

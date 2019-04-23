@@ -100,7 +100,7 @@ export const getColonyTransactions: ContractEventQuery<
 > = {
   context,
   prepare: prepareColonyClientQuery,
-  async execute(colonyClient: ColonyClient) {
+  async execute(colonyClient) {
     const {
       contract: { address: colonyAddress },
       events: {
@@ -142,7 +142,7 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
 > = {
   context,
   prepare: prepareColonyClientQuery,
-  async execute(colonyClient: ColonyClient) {
+  async execute(colonyClient) {
     const {
       contract: { address: colonyAddress },
       events: { ColonyFundsClaimed },
@@ -193,7 +193,7 @@ export const getColonyRoles: ContractEventQuery<
 > = {
   context,
   prepare: prepareColonyClientQuery,
-  async execute(colonyClient: ColonyClient) {
+  async execute(colonyClient) {
     const {
       events: {
         ColonyAdminRoleRemoved,
@@ -344,7 +344,7 @@ export const getColonyTokenBalance: Query<
   }: {|
     colonyManager: ColonyManager,
   |}) => networkClient,
-  async execute(networkClient: NetworkClient, { colonyAddress, tokenAddress }) {
+  async execute(networkClient, { colonyAddress, tokenAddress }) {
     const {
       adapter: { provider },
     } = networkClient;
