@@ -9,7 +9,7 @@ import type { Address } from '~types';
 import type { UserType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
-import { pipe, mapPayload, withKey } from '~utils/actions';
+import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
 import { ACTIONS } from '~redux';
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -92,6 +92,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
     pipe(
       withKey(colonyAddress),
       mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
+      mergePayload({ colonyAddress }),
     ),
   );
   return (
