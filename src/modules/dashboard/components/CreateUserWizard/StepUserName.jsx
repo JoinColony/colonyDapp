@@ -57,8 +57,7 @@ const MSG = defineMessages({
   },
   errorDomainInvalid: {
     id: 'dashboard.CreateUserWizard.StepUserName.errorDomainInvalid',
-    defaultMessage:
-      'Invalid username. Please make sure this will be a valid domain',
+    defaultMessage: 'Only characters a-z, 0-9, - and . are allowed',
   },
   tooltip: {
     id: 'dashboard.CreateUserWizard.StepUserName.tooltip',
@@ -132,7 +131,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   name="username"
                   label={MSG.label}
                   extensionString=".user.joincolony.eth"
-                  status={normalized && MSG.statusText}
+                  status={normalized !== username ? MSG.statusText : null}
                   statusValues={{
                     normalized,
                   }}

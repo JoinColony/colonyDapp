@@ -122,7 +122,7 @@ export const splitAddress = (address: Address): AddressElements | Error => {
 };
 
 export const getNormalizedDomainText = (domain: string) => {
-  if (!domain) return null;
+  if (!domain) return domain;
   try {
     const normalized: string = ensNormalize(domain);
     return normalized;
