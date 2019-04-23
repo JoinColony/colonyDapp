@@ -7,7 +7,7 @@ import { all, call, put, race, take, select } from 'redux-saga/effects';
 import type { ErrorActionType, TakeFilter } from '~redux';
 import type { Command, Query } from '../../data/types';
 
-import { getContext } from '~context';
+import { getContext, CONTEXT } from '~context';
 import { validateSync } from '~utils/yup';
 import { isDev, log } from '~utils/debug';
 
@@ -73,44 +73,8 @@ export const raceError = (
   return call(raceErrorGenerator);
 };
 
-export function* executeQuery<D: *, M: *, A: *, R: *>(
-  query: Query<D, M, A, R>,
-  {
-    args,
-    metadata,
-  }: {
-    args?: A,
-    metadata: M,
-  },
-): Saga<R> {
-  const { context, execute, prepare } = query;
-  // TODO: Validate context contains context keys only and that it has at least one key
-  if (!context) throw new Error('Cannot execute query, context not defined');
-  if (!(context && context.length > 0)) {
-    throw new Error('Cannot execute query, invalid context');
-  }
-  if (!execute) {
-    throw new Error('Cannot execute query, "execute" function not defined');
-  }
-  if (!prepare) {
-    throw new Error('Cannot execute query, "prepare" function not defined');
-  }
-
-  const queryContext = yield all(
-    context.reduce(
-      (ctx, key) => ({
-        ...ctx,
-        [key]: call(getContext, key),
-      }),
-      {},
-    ),
-  );
-  const dependencies = yield call(prepare, queryContext, metadata);
-  return yield call(execute, dependencies, args);
-}
-
-export function* executeCommand<D: *, M: *, A: *, R: *>(
-  command: Command<D, M, A, R>,
+function* executeCommandOrQuery<D, M, A, R>(
+  commandOrQuery: Command<D, M, A, R> | Query<D, M, A, R>,
   {
     args,
     metadata,
@@ -119,31 +83,92 @@ export function* executeCommand<D: *, M: *, A: *, R: *>(
     metadata: M,
   },
 ): Saga<R> {
-  const { context, execute, prepare, schema } = command;
-  // TODO: Validate context contains context keys only and that it has at least one key
-  if (!context) throw new Error('Cannot execute command, context not defined');
-  if (!(context && context.length > 0)) {
-    throw new Error('Cannot execute command, invalid context');
+  const { context, execute, prepare } = commandOrQuery;
+
+  /*
+   * Validate the command or query object
+   */
+  if (!context) {
+    throw new Error('Cannot execute, context not defined');
+  }
+  const allowedContextNames = Object.values(CONTEXT);
+  if (
+    !(
+      context.length > 0 &&
+      context.every(contextName => allowedContextNames.includes(contextName))
+    )
+  ) {
+    throw new Error('Cannot execute, invalid context');
   }
   if (!execute) {
-    throw new Error('Cannot execute command, "execute" function not defined');
+    throw new Error('Cannot execute, "execute" function not defined');
   }
   if (!prepare) {
-    throw new Error('Cannot execute command, "prepare" function not defined');
+    throw new Error('Cannot execute, "prepare" function not defined');
   }
 
-  const commandContext = yield all(
-    context.reduce(
-      (ctx, key) => ({
-        ...ctx,
-        [key]: call(getContext, key),
-      }),
-      {},
-    ),
+  /*
+   * Create a context object for the `prepare` step.
+   */
+  const contextValues = yield all(
+    context.map(contextName => call(getContext, contextName)),
   );
-  const dependencies = yield call(prepare, commandContext, metadata);
-  const maybeSanitizedArgs = schema ? validateSync(schema)(args) : args;
-  return yield call(execute, dependencies, maybeSanitizedArgs);
+  const prepareContext = context.reduce(
+    (contextObj, contextName, index) => ({
+      ...contextObj,
+      [contextName]: contextValues[index],
+    }),
+    {},
+  );
+
+  /*
+   * Call the `prepare` step to get the `execute` dependencies.
+   */
+  const executeDeps = yield call(prepare, prepareContext, metadata);
+
+  /*
+   * Call and return the `execute` step with the dependencies and given args.
+   */
+  return yield call(execute, executeDeps, args);
+}
+
+export function* executeQuery<D, M, A, R>(
+  query: Query<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {
+    args?: A,
+    metadata?: M,
+  },
+): Saga<R> {
+  return yield call(executeCommandOrQuery, query, {
+    // Destructure the objects; either prop is optional, but for flow,
+    // they need to be defined to call the inner function.
+    args: { ...args },
+    metadata: { ...metadata },
+  });
+}
+
+export function* executeCommand<D, M, A, R>(
+  command: Command<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {|
+    args?: A,
+    metadata?: M,
+  |},
+): Saga<R> {
+  const maybeSanitizedArgs = command.schema
+    ? validateSync(command.schema)(args)
+    : args;
+  return yield call(executeCommandOrQuery, command, {
+    // Destructure the objects; either prop is optional, but for flow,
+    // they need to be defined to call the inner function.
+    args: { ...maybeSanitizedArgs },
+    metadata: { ...metadata },
+  });
 }
 
 export function* selectAsJS(
