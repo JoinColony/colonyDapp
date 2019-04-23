@@ -62,9 +62,8 @@ const MSG = defineMessages({
     defaultMessage: 'This colony domain name is already taken',
   },
   errorDomainInvalid: {
-    id: 'dashboard.CreateColonyWizard.StepColonyName.errorDomainInvalid',
-    defaultMessage:
-      'Invalid colony name. Please make sure this will be a valid domain',
+    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
+    defaultMessage: 'Only characters a-z, 0-9, - and . are allowed',
   },
   statusText: {
     id: 'users.CreateColonyWizard.StepColonyName.statusText',
@@ -131,8 +130,8 @@ const StepColonyName = ({
       validationSchema={validationSchema}
       {...wizardForm}
     >
-      {({ isValid, isSubmitting, values }) => {
-        const normalized = getNormalizedDomainText(values.colonyName);
+      {({ isValid, isSubmitting, values: { colonyName } }) => {
+        const normalized = getNormalizedDomainText(colonyName);
         return (
           <section className={styles.main}>
             <div className={styles.title}>
@@ -159,7 +158,7 @@ const StepColonyName = ({
                   name="colonyName"
                   extensionString=".colony.joincolony.eth"
                   label={MSG.label}
-                  status={normalized && MSG.statusText}
+                  status={normalized !== colonyName ? MSG.statusText : null}
                   statusValues={{ normalized }}
                   extra={
                     <Tooltip
