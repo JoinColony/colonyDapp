@@ -10,7 +10,7 @@ import createIPFSNode from './utils/createIPFSNode';
 
 const docBlueprint = {
   getAccessController() {},
-  name: 'drafts',
+  defaultName: 'drafts',
   schema: yup.object({
     doc: yup.object({
       id: yup.string(),

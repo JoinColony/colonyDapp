@@ -57,14 +57,12 @@ import { userFetch as userFetchActionCreator } from '../actionCreators';
 function* getUserMetadataStoreContext(): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
   const wallet = yield* getContext(CONTEXT.WALLET);
-  const { metadataStoreAddress: userMetadataStoreAddress } = yield select(
-    currentUserMetadataSelector,
-  );
+  const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
   return {
     ddb,
     wallet,
     metadata: {
-      userMetadataStoreAddress,
+      metadataStoreAddress,
       walletAddress: wallet.address,
     },
   };
@@ -379,13 +377,13 @@ function* userTokensFetch(): Saga<void> {
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const walletAddress = yield select(walletAddressSelector);
-    const userMetadataStoreAddress = yield* getMetadataStoreAddress();
+    const metadataStoreAddress = yield* getMetadataStoreAddress();
     const context = {
       ddb,
       networkClient,
       metadata: {
         walletAddress,
-        userMetadataStoreAddress,
+        metadataStoreAddress,
       },
     };
     const tokens = yield* executeQuery(context, getUserTokens);
@@ -410,12 +408,12 @@ function* userTokensUpdate(
     const { tokens } = action.payload;
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const walletAddress = yield select(walletAddressSelector);
-    const userMetadataStoreAddress = yield* getMetadataStoreAddress();
+    const metadataStoreAddress = yield* getMetadataStoreAddress();
     const context = {
       ddb,
       metadata: {
         walletAddress,
-        userMetadataStoreAddress,
+        metadataStoreAddress,
       },
     };
 

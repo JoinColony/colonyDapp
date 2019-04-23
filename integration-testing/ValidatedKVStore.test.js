@@ -12,7 +12,7 @@ import { getAll } from '../src/lib/database/commands';
 
 const kvBlueprint = {
   getAccessController() {},
-  name: 'user',
+  defaultName: 'user',
   schema: yup.object({
     username: yup.string().required(),
     bio: yup.string().required(),

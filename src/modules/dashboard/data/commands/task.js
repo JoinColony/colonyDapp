@@ -3,14 +3,16 @@
 import nanoid from 'nanoid';
 
 import type { Address, ENSName, OrbitDBAddress } from '~types';
-import type { EventStore } from '~lib/database/stores';
 import type { TaskDraftId } from '~immutable';
 import type {
   ColonyClientContext,
+  ColonyStore,
+  CommentsStore,
   Command,
   ContextWithMetadata,
   DDBContext,
   Event,
+  TaskStore,
   WalletContext,
 } from '~data/types';
 import type { ColonyContext } from './colony';
@@ -85,11 +87,11 @@ export const createTask: Command<
     creatorAddress: Address,
   |},
   {|
-    colonyStore: EventStore,
-    commentsStore: EventStore,
+    colonyStore: ColonyStore,
+    commentsStore: CommentsStore,
     draftId: TaskDraftId,
     event: Event<typeof TASK_EVENT_TYPES.TASK_CREATED>,
-    taskStore: EventStore,
+    taskStore: TaskStore,
   |},
 > = ({ ddb, colonyClient, wallet, metadata: { colonyAddress }, metadata }) => ({
   schema: CreateTaskCommandArgsSchema,

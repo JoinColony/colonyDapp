@@ -3,6 +3,8 @@
 import OrbitDB from 'orbit-db';
 import generate from 'nanoid/generate';
 
+import type { ObjectSchema } from 'yup';
+
 import type {
   ResolverFn,
   Identity,
@@ -13,8 +15,6 @@ import type {
 } from './types';
 import IPFSNode from '../ipfs';
 
-// import { Store } from './stores';
-import { setMeta } from './commands';
 import { PermissiveAccessController } from './accessControllers';
 
 // We'll skip the Q here because every id that contains a `Qm` is not allowed
@@ -43,7 +43,8 @@ class DDB {
   _resolver: ?ResolverFn;
 
   static getAccessController(
-    { getAccessController, name }: StoreBlueprint,
+    storeName: string,
+    { getAccessController }: StoreBlueprint,
     storeProps?: Object,
   ) {
     // TODO: Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
@@ -52,7 +53,10 @@ class DDB {
       : new PermissiveAccessController();
 
     if (!getAccessController)
-      console.warn(`Using permissive access controller for store "${name}"`);
+      console.warn(
+        `Using permissive access controller for store "${storeName}"`,
+      ); // eslint-disable-line max-len
+
     return accessController;
   }
 
@@ -82,7 +86,11 @@ class DDB {
 
   _makeStore(
     orbitStore: *,
-    { name, schema, type: StoreClass }: StoreBlueprint,
+    {
+      name,
+      schema,
+      type: StoreClass,
+    }: { name: string, schema?: ObjectSchema, type: * },
   ) {
     const store = new StoreClass(
       orbitStore,
@@ -139,28 +147,35 @@ class DDB {
     blueprint: StoreBlueprint,
     storeProps?: Object,
   ): Promise<T> {
-    const { name, type: StoreClass } = blueprint;
-    if (name.includes('.')) {
+    const { defaultName, getName, type: StoreClass } = blueprint;
+    if (!(defaultName || getName)) {
+      throw new Error('Store blueprint is invalid');
+    }
+
+    if (defaultName && defaultName.includes('.')) {
       throw new Error('A dot (.) in store names is not allowed');
     }
-    const id = `${name}.${generateId()}`;
 
+    const name = defaultName
+      ? `${defaultName}.${generateId()}`
+      : getName && getName(storeProps);
+
+    if (!name) throw new Error('Store name is invalid or undefined');
     const accessController = this.constructor.getAccessController(
+      name,
       blueprint,
       storeProps,
     );
     const orbitStore: OrbitDBStore = await this._orbitNode.create(
-      id,
+      name,
       StoreClass.orbitType,
       // We might want to use more options in the future. Just add them here
       { accessController, overwrite: false },
     );
 
-    const store: T = this._makeStore(orbitStore, blueprint);
+    const { type, schema } = blueprint;
+    const store: T = this._makeStore(orbitStore, { name, schema, type });
     await store.ready();
-
-    // If supported, set the `meta` values on the store.
-    if (storeProps && storeProps.meta) await setMeta(store, storeProps.meta);
 
     return store;
   }
@@ -170,7 +185,11 @@ class DDB {
     identifier: ?StoreIdentifier,
     storeProps?: Object,
   ): Promise<T> {
-    const { name: bluePrintName, type } = blueprint;
+    const { defaultName, getName, type } = blueprint;
+    if (!(defaultName || getName)) {
+      throw new Error('Store blueprint is invalid');
+    }
+
     const address = await this._getStoreAddress(identifier);
     if (!address)
       throw new Error(
@@ -187,15 +206,20 @@ class DDB {
       return cachedStore;
     }
 
+    const expectedStoreName = defaultName || (getName && getName(storeProps));
+    if (!expectedStoreName)
+      throw new Error('Cannot define expected store name');
+
     const name = address.path.split('.')[0];
-    if (name !== bluePrintName) {
+    if (name !== expectedStoreName) {
       throw new Error(
         // eslint-disable-next-line max-len
-        `Expected name matching blueprint "${bluePrintName}" for store "${name}"`,
+        `Expected name matching blueprint "${expectedStoreName}" for store "${name}"`,
       );
     }
 
     const accessController = this.constructor.getAccessController(
+      name,
       blueprint,
       storeProps,
     );
@@ -207,7 +231,8 @@ class DDB {
         `Expected ${type.orbitType} for store ${name}, got ${orbitStore.type}`,
       );
     }
-    const store: T = this._makeStore(orbitStore, blueprint);
+    const { schema } = blueprint;
+    const store: T = this._makeStore(orbitStore, { name, type, schema });
 
     await store.load();
     return store;
@@ -230,20 +255,25 @@ class DDB {
 
   async generateStoreAddress(
     blueprint: StoreBlueprint,
-    identifier: ?StoreIdentifier,
     storeProps?: Object,
-  ) {
-    const { name, type: StoreClass } = blueprint;
-    if (name.includes('.')) {
-      throw new Error('A dot (.) in store names is not allowed');
+  ): Promise<OrbitDBAddress> {
+    const { defaultName, getName, type: StoreClass } = blueprint;
+    if (defaultName || !getName) {
+      throw new Error(
+        // eslint-disable-next-line max-len
+        'Cannot determine store address for the given blueprint. Store name not deterministic',
+      );
     }
-    const id = `${name}.${generateId()}`;
+
+    const name = getName && getName(storeProps);
+    if (!name) throw new Error('Store name is invalid or undefined');
     const accessController = this.constructor.getAccessController(
+      name,
       blueprint,
       storeProps,
     );
     return this._orbitNode.determineAddress(
-      id,
+      name,
       StoreClass.orbitType,
       // We might want to use more options in the future. Just add them here
       { accessController, overwrite: false },
