@@ -33,6 +33,8 @@ import {
   updateColonyProfile,
 } from '../data/commands';
 
+import { createUserProfile } from '../../users/data/commands';
+
 import {
   getColony,
   getColonyTasks,
@@ -50,7 +52,10 @@ import { ipfsUpload } from '../../core/sagas/ipfs';
 import { COLONY_CONTEXT } from '../../core/constants';
 import { networkVersionSelector } from '../../core/selectors';
 
-import { currentUserSelector } from '../../users/selectors';
+import {
+  currentUserSelector,
+  walletAddressSelector,
+} from '../../users/selectors';
 import { subscribeToColony } from '../../users/actionCreators';
 import { userDidClaimProfile } from '../../users/checks';
 
@@ -80,9 +85,10 @@ function* colonyCreate({
   /* STEP 2: Create all transactions of createColony transactiongroup */
   try {
     if (!usernameCreated) {
-      yield fork(createTransaction, meta.id, {
+      yield fork(createTransaction, createUserId, {
         context: NETWORK_CONTEXT,
         methodName: 'registerUserLabel',
+        ready: false,
         params: { username },
         group: {
           key,
@@ -96,6 +102,7 @@ function* colonyCreate({
       context: NETWORK_CONTEXT,
       methodName: 'createToken',
       params: { name: tokenName, symbol: tokenSymbol },
+      ready: false,
       group: {
         key,
         id: meta.id,
@@ -128,6 +135,7 @@ function* colonyCreate({
 
     /* STEP 3: Notify about creation of each transaction in the group so they can
     be added to the gas station  */
+
     yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_CREATED);
     yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_CREATED);
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_CREATED);
@@ -142,6 +150,48 @@ function* colonyCreate({
 
     /* STEP 5: Some transactions require input from the previous transactions
     pass them through, notify when transaction has succeeded */
+
+    // USER PROFILE CREATION:
+    const walletAddress = yield select(walletAddressSelector);
+    const context = {
+      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+      metadata: {
+        username,
+        walletAddress,
+      },
+    };
+
+    const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+      context,
+      createUserProfile,
+      {
+        username,
+      },
+    );
+    yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
+      type: ACTIONS.USER_METADATA_SET,
+      payload: {
+        inboxStoreAddress: inboxStore.address.toString(),
+        metadataStoreAddress: metadataStore.address.toString(),
+        profileStoreAddress: profileStore.address.toString(),
+      },
+    });
+
+    yield put(
+      transactionAddParams(createUserId, {
+        orbitDBPath: profileStore.address.toString(),
+      }),
+    );
+
+    yield put(transactionReady(createUserId));
+
+    yield put(transactionReady(createTokenId));
+
+    yield takeFrom(createUserChannel, ACTIONS.TRANSACTION_CREATED);
+
+    yield takeFrom(createUserChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    // TOKEN CREATION:
     const {
       payload: {
         transaction: {
@@ -160,7 +210,7 @@ function* colonyCreate({
       },
     } = yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
-    if (colonyAddress) {
+    if (!colonyAddress) {
       yield putError(
         ACTIONS.COLONY_CREATE_ERROR,
         new Error('Missing colony address'),
@@ -171,7 +221,7 @@ function* colonyCreate({
     /*
      * Create the colony store
      */
-    const context = yield* getColonyContext(colonyAddress);
+    const colonyContext = yield* getColonyContext(colonyAddress);
     const args = {
       colonyAddress,
       colonyName,
@@ -187,33 +237,24 @@ function* colonyCreate({
          */
       },
     };
-    const store = yield* executeCommand(context, createColonyProfile, args);
+    const colonyStore = yield* executeCommand(
+      colonyContext,
+      createColonyProfile,
+      args,
+    );
 
     yield put(subscribeToColony(colonyAddress));
 
     yield put(
       transactionAddParams(createLabelId, {
-        orbitDBPath: store.address.toString(),
+        orbitDBPath: colonyStore.address.toString(),
       }),
     );
-
     yield put(transactionAddIdentifier(createLabelId, colonyAddress));
 
     yield put(transactionReady(createLabelId));
 
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    yield put(
-      transactionAddParams(createUserId, {
-        orbitDBPath: store.address.toString(),
-      }),
-    );
-
-    yield put(transactionAddIdentifier(createUserId, colonyAddress));
-
-    yield put(transactionReady(createUserId));
-
-    yield takeFrom(createUserChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {
