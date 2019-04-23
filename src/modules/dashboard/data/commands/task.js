@@ -72,7 +72,9 @@ export type TaskContext = ContextWithMetadata<
 
 export type CommentContext = ContextWithMetadata<
   {|
+    colonyAddress: Address,
     commentsStoreAddress: string | OrbitDBAddress,
+    draftId: TaskDraftId,
   |},
   DDBContext,
 >;
