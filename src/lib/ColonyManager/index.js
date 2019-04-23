@@ -27,13 +27,12 @@ export default class ColonyManager {
   }
 
   async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
-    if (isAddress(identifier)) return identifier;
-
-    const ensAddress = await ens.getAddress(
-      ens.constructor.getFullDomain('colony', identifier),
-      this.networkClient,
-    );
-    return ensAddress;
+    return isAddress(identifier)
+      ? identifier
+      : ens.getAddress(
+          ens.constructor.getFullDomain('colony', identifier),
+          this.networkClient,
+        );
   }
 
   async setColonyClient(address: Address) {
