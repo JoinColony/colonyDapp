@@ -16,7 +16,7 @@ import type { Schema as SchemaType } from 'yup';
  *
  * R: Return type for the execute function.
  */
-export type Command<D: *, M: *, A: *, R: *> = {|
+export type Command<D, M, A, R> = {|
   context: Array<ContextName>,
   prepare: (context: *, metadata: M) => Promise<D>,
   /*
