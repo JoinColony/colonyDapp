@@ -15,6 +15,7 @@ export const CreateColonyProfileCommandArgsSchema = yup.object({
   token: yup.object({
     address: yup.string().address(),
     icon: yup.string(),
+    isNative: yup.boolean(),
     name: yup.string(),
     symbol: yup.string(),
     isNative: yup.boolean(),
