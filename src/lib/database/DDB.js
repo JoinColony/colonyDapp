@@ -15,6 +15,7 @@ import type {
 } from './types';
 import IPFSNode from '../ipfs';
 
+import Keystore from './Keystore';
 import { PermissiveAccessController } from './accessControllers';
 
 // We'll skip the Q here because every id that contains a `Qm` is not allowed
@@ -298,6 +299,7 @@ class DDB {
        * @todo : is there a case where this could not be the default? TODO should this be a constant, or configurable? and `colonyOrbitDB`?
        */
       path: 'colonyOrbitdb',
+      keystore: Keystore,
     });
   }
 
