@@ -14,5 +14,5 @@ export const canCreateTask = (permissions: ?UserPermissionsType) =>
 export const canAdminister = (permissions: ?UserPermissionsType) =>
   !!(permissions && permissions.isAdmin);
 
-export const userDidClaimProfile = ({ profile: { username } }: UserType) =>
-  !!username;
+export const userDidClaimProfile = (user: ?UserType) =>
+  !!(user && user.profile && user.profile.username);

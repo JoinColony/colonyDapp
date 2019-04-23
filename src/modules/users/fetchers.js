@@ -2,6 +2,7 @@
 
 import {
   currentUserColonyPermissionsSelector,
+  currentUserSelector,
   currentUserTokensSelector,
   currentUserTransactionsSelector,
   userByUsernameSelector,

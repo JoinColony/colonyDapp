@@ -31,12 +31,13 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
           ? state.record.add(draftId)
           : ImmutableSet([draftId]),
         isFetching: false,
+        lastFetchedAt: new Date(),
       });
     }
-    case ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: {
-      const record = ImmutableSet(action.payload);
-      return state.merge({ error: undefined, record, isFetching: false });
-    }
+
+    case ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS:
+      return state.set('record', ImmutableSet(action.payload));
+
     default:
       return state;
   }

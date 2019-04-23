@@ -24,7 +24,10 @@ export default withHooks<
     );
     result.user = fetchedUser;
   }
-  const avatarHash = result.user ? result.user.profile.avatarHash : undefined;
+  const avatarHash =
+    result.user && result.user.profile
+      ? result.user.profile.avatarHash
+      : undefined;
   const { data: avatarURL } = useDataFetcher<string>(
     ipfsDataFetcher,
     [avatarHash],

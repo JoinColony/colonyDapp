@@ -22,7 +22,7 @@ type Props = {|
 |};
 
 const renderTooltipContent = (user?: UserType) => {
-  if (!user) return null;
+  if (!(user && user.profile)) return null;
   const {
     profile: { displayName, username, walletAddress },
   } = user;

@@ -1,14 +1,17 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { UserType } from '~immutable';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 
+import { userFetcher } from '../../../users/fetchers';
+import { walletAddressSelector } from '../../../users/selectors';
 import { userDidClaimProfile } from '../../../users/checks';
 
 import type { TasksFilterOptionType } from '../shared/tasksFilter';
@@ -54,98 +57,82 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {|
-  currentUser: UserType,
-|};
+const displayName = 'dashboard.Dashboard';
 
-type State = {|
-  filterOption: TasksFilterOptionType,
-  tabIndex: number,
-|};
+const Dashboard = () => {
+  const walletAddress = useSelector(walletAddressSelector);
+  const { data: currentUser } = useDataFetcher(
+    userFetcher,
+    [walletAddress],
+    [walletAddress],
+  );
 
-class Dashboard extends Component<Props, State> {
-  static displayName = 'dashboard.Dashboard';
+  const [filterOption, setFilterOption] = useState(TASKS_FILTER_OPTIONS.ALL);
+  const [tabIndex, setTabIndex] = useState(0);
 
-  state = {
-    filterOption: TASKS_FILTER_OPTIONS.ALL,
-    tabIndex: 0,
-  };
+  const setFieldValue = useCallback(
+    (_: string, value: TasksFilterOptionType) => {
+      setFilterOption(value);
+    },
+    [setFilterOption],
+  );
 
-  setFilterOption = (
-    _: string,
-    value: $PropertyType<State, 'filterOption'>,
-  ) => {
-    this.setState({
-      filterOption: value,
-    });
-  };
+  return (
+    <div className={styles.layoutMain}>
+      <main className={styles.content}>
+        <Tabs onSelect={setTabIndex}>
+          <TabList
+            extra={
+              tabIndex === 0 && (
+                <Select
+                  appearance={{ alignOptions: 'right', theme: 'alt' }}
+                  connect={false}
+                  elementOnly
+                  label={MSG.labelFilter}
+                  name="filter"
+                  options={tasksFilterSelectOptions}
+                  placeholder={MSG.placeholderFilter}
+                  form={{ setFieldValue }}
+                  $value={filterOption}
+                />
+              )
+            }
+          >
+            <Tab>
+              <FormattedMessage {...MSG.tabMyTasks} />
+            </Tab>
+            <Tab>
+              <FormattedMessage {...MSG.tabMyColonies} />
+            </Tab>
+          </TabList>
+          <TabPanel>
+            <TabMyTasks
+              initialTask={{
+                title: MSG.initialTaskTitle,
+                walletAddress,
+              }}
+              userClaimedProfile={userDidClaimProfile(currentUser)}
+              filterOption={filterOption}
+              walletAddress={walletAddress}
+            />
+          </TabPanel>
+          <TabPanel>
+            <TabMyColonies />
+          </TabPanel>
+        </Tabs>
+      </main>
+      <aside className={styles.sidebar}>
+        <p className={styles.helpText}>
+          <FormattedMessage {...MSG.helpText} />
+          <br />
+          <br />
+          <ExternalLink text={MSG.linkHelpCenter} href="#" />
+        </p>
+      </aside>
+    </div>
+  );
+};
 
-  setTabIndex = (tabIndex: number) => {
-    this.setState({
-      tabIndex,
-    });
-  };
-
-  render() {
-    const { filterOption, tabIndex } = this.state;
-    const {
-      currentUser,
-      currentUser: {
-        profile: { walletAddress },
-      },
-    } = this.props;
-    const filterSelect = tabIndex === 0 && (
-      <Select
-        appearance={{ alignOptions: 'right', theme: 'alt' }}
-        connect={false}
-        elementOnly
-        label={MSG.labelFilter}
-        name="filter"
-        options={tasksFilterSelectOptions}
-        placeholder={MSG.placeholderFilter}
-        form={{ setFieldValue: this.setFilterOption }}
-        $value={filterOption}
-      />
-    );
-    return (
-      <div className={styles.layoutMain}>
-        <main className={styles.content}>
-          <Tabs onSelect={this.setTabIndex}>
-            <TabList extra={filterSelect}>
-              <Tab>
-                <FormattedMessage {...MSG.tabMyTasks} />
-              </Tab>
-              <Tab>
-                <FormattedMessage {...MSG.tabMyColonies} />
-              </Tab>
-            </TabList>
-            <TabPanel>
-              <TabMyTasks
-                initialTask={{
-                  title: MSG.initialTaskTitle,
-                  walletAddress,
-                }}
-                userClaimedProfile={userDidClaimProfile(currentUser)}
-                filterOption={filterOption}
-                walletAddress={walletAddress}
-              />
-            </TabPanel>
-            <TabPanel>
-              <TabMyColonies />
-            </TabPanel>
-          </Tabs>
-        </main>
-        <aside className={styles.sidebar}>
-          <p className={styles.helpText}>
-            <FormattedMessage {...MSG.helpText} />
-            <br />
-            <br />
-            <ExternalLink text={MSG.linkHelpCenter} href="#" />
-          </p>
-        </aside>
-      </div>
-    );
-  }
-}
+Dashboard.displayName = displayName;
 
 export default Dashboard;

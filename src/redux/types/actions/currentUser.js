@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { Address, WithKey} from '~types';
 import type { UserProfileType } from '~immutable';
 
 import type {
@@ -8,7 +9,6 @@ import type {
   ErrorActionType,
   UniqueActionType,
 } from '../index';
-import type { WithKey } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
@@ -30,6 +30,7 @@ export type CurrentUserActionTypes = {|
   CURRENT_USER_GET_BALANCE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS,
     {|
+      walletAddress: Address,
       // Apparently a string, maybe converted from BN?
       balance: string,
     |},

@@ -4,25 +4,22 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { compose } from 'recompose';
 
 import type { WizardProps } from '~core/Wizard';
-import type { UserType } from '~immutable';
 
 import styles from './StepColonyName.css';
 
-import { useAsyncFunction } from '~utils/hooks';
+import { ACTIONS } from '~redux';
+import { useAsyncFunction, useSelector } from '~utils/hooks';
+import { getNormalizedDomainText } from '~utils/strings';
+
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { ACTIONS } from '~redux';
 
-import { withCurrentUser } from '../../../users/hocs';
-import { withImmutablePropsToJS } from '~utils/hoc';
-
-import { getNormalizedDomainText } from '~utils/strings';
+import { currentUsernameSelector } from '../../../users/selectors';
 
 type FormValues = {
   displayName: string,
@@ -30,9 +27,7 @@ type FormValues = {
   username: string,
 };
 
-type Props = WizardProps<FormValues> & {
-  currentUser: UserType,
-};
+type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
@@ -88,19 +83,14 @@ const validationSchema = yup.object({
   displayName: yup.string().required(),
 });
 
-const StepColonyENSName = ({
-  wizardForm,
-  nextStep,
-  wizardValues,
-  currentUser: {
-    profile: { username },
-  },
-}: Props) => {
+const StepColonyENSName = ({ wizardForm, nextStep, wizardValues }: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY,
     success: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
     error: ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
   });
+
+  const username = useSelector(currentUsernameSelector);
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
@@ -114,11 +104,11 @@ const StepColonyENSName = ({
       }
       try {
         await checkDomainTaken(values);
-      } catch (e) {
-        const error = {
+      } catch (caughtError) {
+        // eslint-disable-next-line no-throw-literal
+        throw {
           colonyName: MSG.errorDomainTaken,
         };
-        throw error;
       }
     },
     [checkDomainTaken],
@@ -200,7 +190,4 @@ const StepColonyENSName = ({
 
 StepColonyENSName.displayName = displayName;
 
-export default compose(
-  withCurrentUser,
-  withImmutablePropsToJS,
-)(StepColonyENSName);
+export default StepColonyENSName;

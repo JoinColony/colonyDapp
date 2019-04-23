@@ -13,6 +13,7 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
  * TODO Temporary, please remove when wiring in the rating modals
  */
 import type { OpenDialog } from '~core/Dialog/types';
+import type { UserType } from '~immutable';
 
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
@@ -29,6 +30,7 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
 
+import { userFetcher } from '../../../users/fetchers';
 import {
   canCancelTask,
   canEditTask,
@@ -36,7 +38,7 @@ import {
   isCreator,
   isFinalized,
 } from '../../checks';
-import { currentUserSelector } from '../../../users/selectors';
+import { walletAddressSelector } from '../../../users/selectors';
 import { taskFetcher } from '../../fetchers';
 
 import styles from './Task.css';
@@ -91,8 +93,12 @@ const Task = ({
 }: Props) => {
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
-  const currentUser = useSelector(currentUserSelector);
-  const { walletAddress } = currentUser.profile;
+  const walletAddress = useSelector(walletAddressSelector);
+  const { data: currentUser } = useDataFetcher<UserType>(
+    userFetcher,
+    [walletAddress],
+    [walletAddress],
+  );
 
   const { data: task, isFetching: isFetchingTask } = useDataFetcher(
     taskFetcher,

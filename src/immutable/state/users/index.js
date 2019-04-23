@@ -17,7 +17,6 @@ import type { TokenReferenceRecordType } from '../../TokenReference';
 import type { UserActivityRecordType } from '../../UserActivity';
 import type { UserMetadataRecordType } from '../../UserMetadata';
 import type { UserPermissionsRecordType } from '../../UserPermissions';
-import type { UserProfileRecordType } from '../../UserProfile';
 import type { WalletRecordType } from '../../Wallet';
 import type { TaskDraftId } from '~immutable/Task';
 
@@ -45,7 +44,6 @@ export type CurrentUser = {|
   colonies: DataRecordType<CurrentUserColoniesType>,
   metadata: UserMetadataRecordType,
   permissions: CurrentUserPermissionsType,
-  profile: UserProfileRecordType,
   tasks: DataRecordType<CurrentUserTasksType>,
   tokens: CurrentUserTokensType,
   transactions: CurrentUserTransactionsType,

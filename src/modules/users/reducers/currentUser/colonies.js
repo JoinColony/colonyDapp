@@ -29,11 +29,11 @@ const currentUserColoniesReducer: ReducerType<State, Actions> = (
       const record = (state.record || ImmutableSet()).union([
         action.payload.colonyAddress,
       ]);
-      return state.merge({ error: undefined, record, isFetching: false });
+      return state.set('record', record);
     }
     case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {
       const record = (state.record || ImmutableSet()).union(action.payload);
-      return state.merge({ error: undefined, record, isFetching: false });
+      return state.set('record', record);
     }
     default:
       return state;

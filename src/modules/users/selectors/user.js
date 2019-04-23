@@ -14,7 +14,6 @@ import type { Address } from '~types';
 import {
   USERS_ALL_USERS,
   USERS_CURRENT_USER,
-  USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TOKENS,
   USERS_CURRENT_USER_TRANSACTIONS,
   USERS_CURRENT_USER_PERMISSIONS,
@@ -25,6 +24,7 @@ import {
   USERS_CURRENT_USER_TASKS,
   USERS_CURRENT_USER_ACTIVITIES,
 } from '../constants';
+import { walletAddressSelector } from './wallet';
 
 /*
  * Username/address getters
@@ -79,24 +79,29 @@ usersExceptSelector.transform = (
 /*
  * Current user input selectors
  */
-export const currentUserSelector = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_CURRENT_USER]);
-export const walletAddressSelector = (state: RootStateRecord) =>
-  state.getIn([
-    ns,
-    USERS_CURRENT_USER,
-    USERS_CURRENT_USER_PROFILE,
-    'walletAddress',
-  ]);
-export const currentUserBalanceSelector = (state: RootStateRecord) =>
-  state.getIn(
-    [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'balance'],
-    0,
-  );
+export const currentUserSelector = createSelector(
+  (state: RootStateRecord) =>
+    state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap()),
+  walletAddressSelector,
+  (users, walletAddress) => users.get(walletAddress),
+);
+
+export const currentUserBalanceSelector = createSelector(
+  currentUserSelector,
+  user => (user ? user.getIn(['record', 'profile', 'balance']) : null),
+);
+
+export const currentUsernameSelector = createSelector(
+  currentUserSelector,
+  user => (user ? user.getIn(['record', 'profile', 'username']) : null),
+);
+
 export const currentUserTokensSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TOKENS]);
+
 export const currentUserTransactionsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
+
 export const currentUserColonyPermissionsSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
@@ -107,6 +112,7 @@ export const currentUserColonyPermissionsSelector = (
     USERS_CURRENT_USER_PERMISSIONS,
     colonyAddress,
   ]);
+
 export const currentUserMetadataSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
 

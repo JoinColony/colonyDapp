@@ -156,7 +156,7 @@ function* currentUserGetBalance(
 
     yield put<Action<typeof ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS>>({
       type: ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS,
-      payload: { balance },
+      payload: { balance, walletAddress },
     });
   } catch (error) {
     yield putError(ACTIONS.CURRENT_USER_GET_BALANCE_ERROR, error);
@@ -205,7 +205,7 @@ function* userAvatarRemove({
 
     yield put<Action<typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
-      payload: { address: walletAddress },
+      payload: { walletAddress },
       meta,
     });
   } catch (error) {
@@ -236,7 +236,7 @@ function* userAvatarUpload({
       payload: {
         hash: ipfsHash,
         avatar: payload.data,
-        address: walletAddress,
+        walletAddress,
       },
     });
   } catch (error) {

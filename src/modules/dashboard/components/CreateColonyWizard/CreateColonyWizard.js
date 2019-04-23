@@ -53,18 +53,13 @@ const stepFunction = (
 
     /* When username hasn't been created flow through wizard is different */
     if (!usernameCreated) {
-      if (step === 3) {
-        return pickTokenStep(tokenChoice);
-      }
-      return stepArray[step];
+      return step === 3 ? pickTokenStep(tokenChoice) : stepArray[step];
     }
 
     /* Standard wizard flow  */
-    if (step === 0) {
-      if (usernameCreated) {
-        stepArray.shift();
-        return stepArray[step];
-      }
+    if (step === 0 && usernameCreated) {
+      stepArray.shift();
+      return stepArray[step];
     }
     if (step === 2) {
       return pickTokenStep(tokenChoice);

@@ -4,6 +4,8 @@ import type { OpenDialog } from '~core/Dialog/types';
 
 import BigNumber from 'bn.js';
 
+import { log } from '~utils/debug';
+
 /**
  * Simple wrapper function to orchestrate the chain of dialogs needed for the
  * unclaimed profile flow
@@ -11,6 +13,7 @@ import BigNumber from 'bn.js';
  * @method unfinishedProfileOpener
  *
  * @param {Function} openDialogFn The `openDialog` method provided by the withDialog() HoC
+ * @param {string} balance The current user's wallet balance
  */
 const unfinishedProfileOpener = (
   openDialogFn: OpenDialog,
@@ -37,14 +40,15 @@ const unfinishedProfileOpener = (
     /*
      * If we have some ETH in the wallet, skip the funding step
      */
-    if (bigNumberBalance.gt(new BigNumber('0'))) {
-      return unfinishedProfileClosed.then(claimUsernameDialog);
-    }
-    return unfinishedProfileClosed.then(fundWalletDialog);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    return console.log(error);
+    return unfinishedProfileClosed.then(
+      bigNumberBalance.gt(new BigNumber('0'))
+        ? claimUsernameDialog
+        : fundWalletDialog,
+    );
+  } catch (caughtError) {
+    log(caughtError);
   }
+  return null;
 };
 
 export default unfinishedProfileOpener;

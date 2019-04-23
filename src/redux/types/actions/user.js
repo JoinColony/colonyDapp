@@ -31,7 +31,7 @@ export type UserActionTypes = {|
   >,
   USER_AVATAR_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
-    {| address: string |},
+    {| walletAddress: Address |},
     void,
   >,
   USER_AVATAR_UPLOAD: UniqueActionType<
@@ -46,7 +46,7 @@ export type UserActionTypes = {|
   USER_AVATAR_UPLOAD_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
     {|
-      address: string,
+      walletAddress: Address,
       avatar: string,
       hash: string,
     |},

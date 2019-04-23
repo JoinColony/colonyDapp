@@ -4,19 +4,19 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 // $FlowFixMe upgrade flow
 import React, { useCallback } from 'react';
-import compose from 'recompose/compose';
 import BN from 'bn.js';
 import { toWei } from 'ethjs-unit';
+
+import type { UserType } from '~immutable';
+
+import { useDataFetcher, useSelector } from '~utils/hooks';
+import { userFetcher } from '../../../users/fetchers';
+import { walletAddressSelector } from '../../../users/selectors';
 
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
 import MaskedAddress from '~core/MaskedAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { withImmutablePropsToJS } from '~utils/hoc';
-
-import type { UserType } from '~immutable';
-
-import { withCurrentUser } from '../../../users/hocs';
 
 import styles from './WizardTemplateColony.css';
 
@@ -38,12 +38,18 @@ const displayName = 'pages.WizardTemplateColony';
 
 const WizardTemplateColony = ({
   children,
-  currentUser: {
-    profile: { walletAddress, balance },
-  },
   previousStep,
   wizardValues,
 }: Props) => {
+  const walletAddress = useSelector(walletAddressSelector);
+  const { data: currentUser } = useDataFetcher<UserType>(
+    userFetcher,
+    [walletAddress],
+    [walletAddress],
+  );
+  const {
+    profile: { balance },
+  } = currentUser || {};
   const customHandler = useCallback(() => previousStep(wizardValues), [
     previousStep,
     wizardValues,
@@ -95,7 +101,4 @@ const WizardTemplateColony = ({
 
 WizardTemplateColony.displayName = displayName;
 
-export default compose(
-  withCurrentUser,
-  withImmutablePropsToJS,
-)(WizardTemplateColony);
+export default WizardTemplateColony;
