@@ -1,8 +1,16 @@
 /* @flow */
-/* eslint-disable class-methods-use-this, no-empty-function */
 
+/* eslint-disable class-methods-use-this, no-empty-function */
 export default class PermissiveAccessController {
-  async setup() {}
+  static get type() {
+    return 'PERMISSIVE';
+  }
+
+  get type() {
+    return this.constructor.type;
+  }
+
+  async load() {}
 
   async grant() {
     return true;
@@ -20,5 +28,4 @@ export default class PermissiveAccessController {
     return true;
   }
 }
-
 /* eslint-emable class-methods-use-this */

@@ -10,6 +10,8 @@ import PurserIdentityProvider from '../PurserIdentityProvider';
 import PermissionManager from './PermissionManager';
 import type { Entry } from '../types/index';
 
+const TYPE = 'eth-contract/colony/purser';
+
 class ColonyAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
@@ -19,6 +21,10 @@ class ColonyAccessController extends AbstractAccessController<
   _manager: PermissionManager;
 
   _purserWallet: WalletObjectType;
+
+  static get type() {
+    return TYPE;
+  }
 
   constructor(
     colonyAddress: string,

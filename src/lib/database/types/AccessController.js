@@ -5,7 +5,7 @@ import type { IdentityProvider } from './IdentityProvider';
 import type { Entry } from './Entry';
 
 export interface AccessController<I: Identity, P: IdentityProvider<I>> {
-  // static getter: `type: string`
+  +type: string;
 
   canAppend(entry: Entry, provider: P): Promise<boolean>;
 

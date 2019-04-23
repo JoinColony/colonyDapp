@@ -47,6 +47,14 @@ export default class AbstractAccessController<
     return Wallet.verifyMessage(message, signature) === walletAddress;
   }
 
+  static get type() {
+    throw new Error('Not implemented');
+  }
+
+  get type() {
+    return this.constructor.type;
+  }
+
   /**
    * Necessary authorisation for all access controllers:
    * - The type of the entry should match
@@ -90,6 +98,10 @@ export default class AbstractAccessController<
   // No setup required
   async setup() {
     return Promise.resolve();
+  }
+
+  static get type() {
+    throw new Error('Not implemented');
   }
   /* eslint-enable no-unused-vars,class-methods-use-this */
 }

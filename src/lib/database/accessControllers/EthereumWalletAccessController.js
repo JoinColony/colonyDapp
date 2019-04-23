@@ -7,11 +7,17 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
+const TYPE = 'eth-wallet/purser';
+
 class EthereumWalletAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
 > {
   _walletAddress: string;
+
+  static get type() {
+    return TYPE;
+  }
 
   constructor(walletAddress: string) {
     super();

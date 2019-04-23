@@ -1,14 +1,15 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-
+import type { Entry } from '../types/index';
 import type { PermissionsManifest } from './permissions/types';
-import AbstractAccessController from './AbstractAccessController';
 
+import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 import PermissionManager from './PermissionManager';
-import type { Entry } from '../types/index';
+
+const TYPE = 'eth-contract/colony/task/purser';
 
 class TaskAccessController extends AbstractAccessController<
   PurserIdentity,
@@ -21,6 +22,10 @@ class TaskAccessController extends AbstractAccessController<
   _manager: PermissionManager;
 
   _purserWallet: WalletObjectType;
+
+  static get type() {
+    return TYPE;
+  }
 
   constructor(
     draftId: string,
