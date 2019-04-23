@@ -32,7 +32,7 @@ export type IPFSContext = {| ipfsNode: IPFSNodeType |};
 export type ColonyClientContext = {| colonyClient: ColonyClientType |};
 export type NetworkClientContext = {| networkClient: NetworkClientType |};
 export type WalletContext = {| wallet: WalletObjectType |};
-export type ENSCacheContext = {| ensCache: ENS |};
+export type ENSCacheContext = {| ens: ENS |};
 
 export type ColonyClient = ColonyClientType;
 export type ColonyManager = ColonyManagerType;
