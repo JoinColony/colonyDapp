@@ -82,16 +82,14 @@ describe('username TextDecorator schema', () => {
     const decorated = replacer._decorate('Hello @username$%^&*()');
     expect(decorated).toEqual(['Hello @username$%^&*()']);
   });
-  test('Parse usename with dots, dashes and underscores', () => {
+  test('Parse usename with dots and dashes', () => {
     const decorated = replacer._decorate(
-      'Hello @malcolm.reynolds, how is @kaylee_frye and @innara-serra?',
+      'Hello @malcolm.reynolds, how is @innara-serra?',
     );
     expect(decorated).toEqual([
       'Hello ',
       { username: '@malcolm.reynolds' },
       ', how is ',
-      { username: '@kaylee_frye' },
-      ' and ',
       { username: '@innara-serra' },
       '?',
     ]);
