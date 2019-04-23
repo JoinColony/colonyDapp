@@ -19,8 +19,6 @@ export default class ColonyManager {
 
   _metaColonyClient: ColonyNetworkClient.ColonyClient;
 
-  ensCache: Map<ENSName, Address>;
-
   networkClient: ColonyNetworkClient;
 
   constructor(networkClient: ColonyNetworkClient) {
