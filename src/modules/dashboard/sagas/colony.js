@@ -66,8 +66,15 @@ import { getColonyContext, getColonyAddress, getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
-  payload: { tokenName, tokenSymbol, colonyName, displayName, username },
-}: Action<'COLONY_CREATE'>): Saga<void> {
+  payload: {
+    tokenName,
+    tokenSymbol,
+    tokenIcon,
+    colonyName,
+    displayName,
+    username,
+  },
+}: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
   const currentUser = yield* selectAsJS(currentUserSelector);
   const usernameCreated = userDidClaimProfile(currentUser);
 
@@ -202,13 +209,15 @@ function* colonyCreate({
 
     yield put(transactionAddParams(createColonyId, { tokenAddress }));
 
-    yield put(transactionReady(createColonyId));
-
     const {
       payload: {
         eventData: { colonyAddress },
       },
     } = yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(transactionAddIdentifier(createColonyId, colonyAddress));
+
+    yield put(transactionReady(createColonyId));
 
     if (!colonyAddress) {
       yield putError(
@@ -228,13 +237,10 @@ function* colonyCreate({
       displayName,
       token: {
         address: tokenAddress,
+        icon: tokenIcon,
         isNative: true,
         name: tokenName,
         symbol: tokenSymbol,
-        /**
-         * @todo Add missing tokenIcon when creating the colony profile.
-         * @body This should be in the action payload.
-         */
       },
     };
     const colonyStore = yield* executeCommand(
