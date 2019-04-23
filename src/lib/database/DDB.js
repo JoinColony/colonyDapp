@@ -16,7 +16,10 @@ import type {
 import IPFSNode from '../ipfs';
 
 import Keystore from './Keystore';
-import { PermissiveAccessController } from './accessControllers';
+import {
+  AccessControllerFactory,
+  PermissiveAccessController,
+} from './accessControllers';
 
 // We'll skip the Q here because every id that contains a `Qm` is not allowed
 const ipfsCompatibleBase57 =
@@ -167,7 +170,12 @@ class DDB {
       : getName && getName(storeProps);
 
     if (!name) throw new Error('Store name is invalid or undefined');
-    const accessController = this.constructor.getAccessController(
+
+    /**
+     * @NOTE: Only necessary to pass in the whole access controller object
+     * to orbit-db without it getting on our way
+     */
+    const storeAccessController = this.constructor.getAccessController(
       name,
       blueprint,
       storeProps,
@@ -176,7 +184,10 @@ class DDB {
       name,
       StoreClass.orbitType,
       // We might want to use more options in the future. Just add them here
-      { accessController, overwrite: false },
+      {
+        accessController: { controller: storeAccessController },
+        overwrite: false,
+      },
     );
 
     const { type, schema } = blueprint;
@@ -224,13 +235,18 @@ class DDB {
       );
     }
 
-    const accessController = this.constructor.getAccessController(
+    /**
+     * @NOTE: Only necessary to pass in the whole access controller object
+     * to orbit-db without it getting on our way
+     */
+    const storeAccessController = this.constructor.getAccessController(
       name,
       blueprint,
       storeProps,
     );
     const orbitStore: OrbitDBStore = await this._orbitNode.open(address, {
-      accessController,
+      accessController: { controller: storeAccessController },
+      overwrite: false,
     });
     if (orbitStore.type !== type.orbitType) {
       throw new Error(
@@ -276,7 +292,7 @@ class DDB {
 
     const name = getName && getName(storeProps);
     if (!name) throw new Error('Store name is invalid or undefined');
-    const accessController = this.constructor.getAccessController(
+    const storeAccessController = this.constructor.getAccessController(
       name,
       blueprint,
       storeProps,
@@ -285,7 +301,14 @@ class DDB {
       name,
       StoreClass.orbitType,
       // We might want to use more options in the future. Just add them here
-      { accessController, overwrite: false },
+      {
+        /**
+         * @NOTE: Only necessary to pass in the whole access controller object
+         * to orbit-db without it getting on our way
+         */
+        accessController: { controller: storeAccessController },
+        overwrite: false,
+      },
     );
   }
 
@@ -300,6 +323,7 @@ class DDB {
        */
       path: 'colonyOrbitdb',
       keystore: Keystore,
+      AccessControllers: AccessControllerFactory,
     });
   }
 
