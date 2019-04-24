@@ -4,19 +4,19 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { TaskProps } from '~immutable';
+import type { DomainType, TaskProps } from '~immutable';
 
-import { useAsyncFunction } from '~utils/hooks';
+import ACTIONS from '~redux/actions';
+import { useAsyncFunction, useDataFetcher } from '~utils/hooks';
 import { log } from '~utils/debug';
+
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
 
+import { domainsFetcher } from '../../fetchers';
+
 import styles from './TaskDomains.css';
-
-import mockDomains from '../../../../__mocks__/mockDomains';
-
-import ACTIONS from '~redux/actions';
 
 const MSG = defineMessages({
   title: {
@@ -62,19 +62,23 @@ const TaskDomains = ({
           draftId,
         });
         setSelectedDomainId(domainValue.id);
-      } catch (error) {
-        log(error);
+      } catch (caughtError) {
+        log(caughtError);
       }
     },
     [colonyAddress, draftId, setDomain],
   );
 
-  const list = Array(...mockDomains);
+  const { data: domains } = useDataFetcher<
+    // This odd typing makes DomainType compatible with ConsumableItem
+    { children?: *, parent?: *, ...DomainType }[],
+  >(domainsFetcher, [colonyAddress], [colonyAddress]);
+
   return (
     <div className={styles.main}>
       {isTaskCreator && (
         <ItemsList
-          list={list}
+          list={domains || []}
           itemDisplayPrefix="#"
           handleSetItem={handleSetDomain}
           name="taskDomains"
