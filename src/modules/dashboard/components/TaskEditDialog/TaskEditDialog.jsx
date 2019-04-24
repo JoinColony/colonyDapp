@@ -21,10 +21,9 @@ import { SpinnerLoader } from '~core/Preloaders';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
 import { taskRequestsSelector } from '../../selectors';
-import { userFetcher } from '../../../users/fetchers';
-import { usersByAddressesSelector } from '../../../users/selectors';
+import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
 
 import styles from './TaskEditDialog.css';
 
@@ -135,7 +134,19 @@ const TaskEditDialog = ({
 }: Props) => {
   const availableTokens = [];
   const userAddresses = useSelector(taskRequestsSelector, [draftId]);
-  const users = useSelector(usersByAddressesSelector, userAddresses);
+  const userData = useDataMapFetcher<UserType>(
+    usersByAddressFetcher,
+    userAddresses,
+  );
+
+  const users = useMemo(
+    () =>
+      userData.map(({ data, key }) => ({
+        id: key,
+        ...data,
+      })),
+    [userData],
+  );
 
   // consider using a selector for this in #1048
   const payouts = useMemo(
