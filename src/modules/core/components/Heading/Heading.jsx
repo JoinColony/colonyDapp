@@ -80,7 +80,7 @@ const Heading = ({
       className={getMainClasses(appearance, styles)}
       {...props}
     >
-      {value || children}
+      {value}
     </HeadingElement>
   );
 };
