@@ -13,8 +13,13 @@ type EthUsdResponse = {
   },
 };
 
-export const getEtherscanTxUrl = (txHash: string | number) =>
-  `https://rinkeby.etherscan.io/tx/${txHash}`;
+export const getEtherscanTxUrl = (
+  txHash: string | number,
+  network?: string = process.env.NETWORK || 'rinkeby',
+): string => {
+  const networkSubdomain = network === 'homestead' ? '' : 'rinkeby.';
+  return `https://${networkSubdomain}etherscan.io/tx/${txHash}`;
+};
 
 /*
   Request dollar conversion value from etherScan
