@@ -86,9 +86,14 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
-      user &&
-      filterValue &&
-      user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
+      (user &&
+        filterValue &&
+        user.profile.username
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())) ||
+      user.profile.walletAddress
+        .toLowerCase()
+        .includes(filterValue.toLowerCase()),
   );
 
   if (!filterValue) return filtered;
