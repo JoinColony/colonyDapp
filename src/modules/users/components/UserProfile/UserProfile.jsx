@@ -4,6 +4,7 @@ import type { Match } from 'react-router-dom';
 
 import React from 'react';
 
+import type { Address } from '~types';
 import type { UserType } from '~immutable';
 
 import { useDataFetcher } from '~utils/hooks';
@@ -13,6 +14,7 @@ import ProfileTemplate from '~pages/ProfileTemplate';
 
 import mockActivities from './__datamocks__/mockActivities';
 import { userByUsernameFetcher } from '../../fetchers';
+import { currentUserColoniesFetcher } from '../../../dashboard/fetchers';
 
 import UserMeta from './UserMeta.jsx';
 import UserProfileSpinner from './UserProfileSpinner.jsx';
@@ -28,21 +30,24 @@ const UserProfile = ({
     params: { username },
   },
 }: Props) => {
-  const { data: user, isFetching } = useDataFetcher<UserType>(
+  const { data: user } = useDataFetcher<UserType>(
     userByUsernameFetcher,
     [username],
     [username],
   );
 
-  // TODO: fetch colony addresses for the user we're viewing
-  const colonyAddresses = [];
+  const { data: colonyAddresses } = useDataFetcher<Address[]>(
+    currentUserColoniesFetcher,
+    [],
+    [],
+  );
 
-  if (!user || isFetching) return <UserProfileSpinner />;
+  if (!user) return <UserProfileSpinner />;
 
   return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
-        <ColonyGrid colonyAddresses={colonyAddresses} />
+        <ColonyGrid colonyAddresses={colonyAddresses || []} />
       </section>
       <section className={styles.sectionContainer}>
         <ActivityFeed activities={mockActivities} />
