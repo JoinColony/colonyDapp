@@ -3,46 +3,19 @@
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
-import type {
-  ColonyManager,
-  CommentsStore,
-  DDB,
-  Query,
-  Wallet,
-  TaskStore,
-} from '~data/types';
+import type { ColonyManager, DDB, Query, Wallet, TaskStore } from '~data/types';
 
 import { CONTEXT } from '~context';
 import { TASK_EVENT_TYPES } from '~data/constants';
 
-import {
-  getCommentsStore,
-  getTaskStore,
-  getTaskStoreAddress,
-  getCommentsStoreAddress,
-} from '~data/stores';
+import { getTaskStore, getTaskStoreAddress } from '~data/stores';
 import { taskReducer } from '../reducers';
-
-const { COMMENT_POSTED } = TASK_EVENT_TYPES;
 
 /*
  * TODO: There's a confusion around query metadata, store metadata, this is a mess!
  * I need to fix that as well but for now I wanna get c/q ready.
  */
 type TaskStoreMetadata = {| colonyAddress: Address, draftId: TaskDraftId |};
-type CommentsStoreMetadata = TaskStoreMetadata;
-
-const prepareCommentsStoreQuery = async (
-  {
-    ddb,
-  }: {|
-    ddb: DDB,
-  |},
-  metadata: CommentsStoreMetadata,
-) => {
-  const commentsStoreAddress = await getCommentsStoreAddress(ddb)(metadata);
-  return getCommentsStore(ddb)({ ...metadata, commentsStoreAddress });
-};
 
 const prepareTaskStoreQuery = async (
   {
@@ -105,20 +78,5 @@ export const getTask: Query<TaskStore, TaskStoreMetadata, void, *> = {
         title: undefined,
         workerAddress: undefined,
       });
-  },
-};
-
-// TODO in #580 replace with fetching feed items
-// eslint-disable-next-line import/prefer-default-export
-export const getTaskComments: Query<
-  CommentsStore,
-  CommentsStoreMetadata,
-  void,
-  *,
-> = {
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareCommentsStoreQuery,
-  async execute(commentsStore) {
-    return commentsStore.all().filter(({ type }) => type === COMMENT_POSTED);
   },
 };
