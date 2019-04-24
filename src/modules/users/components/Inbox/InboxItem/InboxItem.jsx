@@ -149,7 +149,7 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {!isFetchingUser && !isFetchingColony && user && colony ? (
+        {!isFetchingUser && !isFetchingColony && !user && !colony ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
