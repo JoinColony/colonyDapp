@@ -383,7 +383,7 @@ export const getUserColonyTransactions: Query<
 };
 
 export const checkUsernameIsAvailable: Query<
-  {| ensCache: ENSCache, networkClient: NetworkClient |},
+  {| ens: ENSCache, networkClient: NetworkClient |},
   void,
   { username: string },
   boolean,
@@ -391,20 +391,20 @@ export const checkUsernameIsAvailable: Query<
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
   async prepare({
     colonyManager: { networkClient },
-    ens: ensCache,
+    ens,
   }: {|
     colonyManager: ColonyManager,
     ens: ENSCache,
   |}) {
-    return { ensCache, networkClient };
+    return { ens, networkClient };
   },
-  async execute({ ensCache, networkClient }, { username }) {
-    const ensAddress = await ensCache.getAddress(
-      ensCache.constructor.getFullDomain('user', username),
+  async execute({ ens, networkClient }, { username }) {
+    const userAddress = await ens.getAddress(
+      ens.constructor.getFullDomain('user', username),
       networkClient,
     );
 
-    if (ensAddress)
+    if (userAddress)
       throw new Error(`ENS address for user "${username}" already exists`);
 
     return true;
