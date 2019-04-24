@@ -77,13 +77,13 @@ function* userByUsernameFetch({
 }: Action<typeof ACTIONS.USER_BY_USERNAME_FETCH>): Saga<void> {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const address = yield call(
-      [ensCache, ensCache.getAddress],
-      ensCache.constructor.getFullDomain('user', username),
+    const ens = yield* getContext(CONTEXT.ENS_INSTANCE);
+    const userAddress = yield call(
+      [ens, ens.getAddress],
+      ens.constructor.getFullDomain('user', username),
       networkClient,
     );
-    yield put(userFetchActionCreator(address));
+    yield put(userFetchActionCreator(userAddress));
   } catch (error) {
     yield putError(ACTIONS.USER_FETCH_ERROR, error);
   }
