@@ -40,7 +40,8 @@ const MSG = defineMessages({
 type Props = {| address: Address, task: TaskType |};
 
 const TaskRatingButtons = ({ task, address }: Props) => {
-  const values = {}; // TODO use setValues fn
+  const values = {};
+  // Consider using the setValues fn
   return (
     <>
       {/* Worker misses deadline and rates manager */}

@@ -98,9 +98,9 @@ export default function* setupUserContext(
     let profileData = {};
     try {
       profileData = yield* executeQuery(context, getUserProfile);
-    } catch (error) {
+    } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
-      log.warn(error);
+      log.warn(caughtError);
     }
 
     /*
@@ -126,7 +126,8 @@ export default function* setupUserContext(
      */
     try {
       const metadata = yield* executeQuery(context, getUserMetadata);
-      // TODO consider merging this action with `CURRENT_USER_CREATE`?
+
+      // Consider merging this action with `CURRENT_USER_CREATE`?
       yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
         type: ACTIONS.USER_METADATA_SET,
         payload: metadata,
@@ -141,9 +142,9 @@ export default function* setupUserContext(
           key: walletAddress,
         },
       });
-    } catch (error) {
+    } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
-      log.warn(error);
+      log.warn(caughtError);
     }
 
     yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
@@ -160,7 +161,7 @@ export default function* setupUserContext(
     });
 
     yield call(setupOnBeforeUnload);
-  } catch (error) {
-    yield putError(ACTIONS.WALLET_CREATE_ERROR, error, meta);
+  } catch (caughtError) {
+    yield putError(ACTIONS.WALLET_CREATE_ERROR, caughtError, meta);
   }
 }

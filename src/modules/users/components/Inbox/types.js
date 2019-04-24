@@ -6,9 +6,7 @@ export type InboxEvent = $Keys<typeof messages>;
 
 export type EventType = 'action' | 'notification';
 
-/*
- * @TODO Handle read/unread notifications
- */
+// Handle read/unread notifications
 export type InboxElement = {
   id: string,
   timestamp: Date,

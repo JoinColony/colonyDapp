@@ -33,12 +33,15 @@ const getReputation = (
   );
 };
 
+/**
+ * @todo Use hooks for `TaskClaimReward` and fix rating props
+ * @body Get the rating props from a TaskUser record (in state)
+ */
 const enhance = compose(
   withProps(
     ({
       task: { draftId, colonyAddress, payouts, reputation, title },
     }: Props) => {
-      // TODO get these from a TaskUser record (in state)
       const { didRate, didFailToRate, rating = 0 } = {};
 
       return {

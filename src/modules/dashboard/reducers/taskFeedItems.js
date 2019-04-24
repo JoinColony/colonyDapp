@@ -21,7 +21,9 @@ import { TASK_EVENT_TYPES } from '~data/constants';
  */
 const getTaskFeedItemRecordProps = (event: *) => {
   switch (event.type) {
-    // TODO handle rating props when ratings are re-introduced
+    /**
+     * @todo  handle rating props when ratings are re-introduced
+     */
     case TASK_EVENT_TYPES.COMMENT_POSTED: {
       const {
         signature,

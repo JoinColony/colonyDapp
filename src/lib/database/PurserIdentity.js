@@ -1,7 +1,7 @@
 /* @flow */
 
-/* TODO: I guess this should eventually live in its own package
- * orbit-db-identity-provider-purser (?)
+/**
+ * @todo Create `orbit-db-identity-provider-purser` package
  */
 
 import type { Identity } from './types';

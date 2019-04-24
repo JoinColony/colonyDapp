@@ -68,9 +68,9 @@ export default class ColonyManager {
   }
 
   async getMethod<
-    // TODO this typing isn't perfect; it would be better to use something like
-    // $PropertyType<ColonyNetworkClient, methodName>, but the key needs to be a
-    // string literal.
+    // This typing isn't perfect; it would be better to use something like
+    // $PropertyType<ColonyNetworkClient, methodName, but the key needs to
+    // be a string literal.
     M:
       | ColonyNetworkClient.Caller<*, *, *>
       | ColonyNetworkClient.Sender<*, *, *>

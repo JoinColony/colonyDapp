@@ -60,7 +60,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
       colonyClient,
       {},
       {
-        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+        blocksBack: 400000,
         events: [
           ColonyFundsClaimed,
           ColonyFundsMovedBetweenFundingPots,
@@ -98,7 +98,6 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
   colonyClient,
 }) => ({
   async execute() {
-    // TODO use a more meaningful value for blocksBack
     const blocksBack = 400000;
 
     // Get logs & events for token transfer to this colony

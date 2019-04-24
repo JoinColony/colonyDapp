@@ -69,8 +69,8 @@ describe(`core: reducers (transactions)`, () => {
         [
           createdTx,
           state => {
-            // TODO ideally we should evaluate the state based on the whole
-            // map, but jest has some unexpected results when using `toEqual`
+            // Ideally we should evaluate the state based on the whole map,
+            // but jest has some unexpected results when using `toEqual`
             // with immutable maps.
             expect(state.list.size).toBe(2);
 

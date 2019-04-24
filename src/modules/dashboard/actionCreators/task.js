@@ -22,7 +22,9 @@ export const fetchTaskFeedItems = (
   meta: { key: draftId },
 });
 
-// TODO this is unused
+/**
+ * @todo Wire up setting the task worker
+ */
 export const taskSetWorker = (
   draftId: TaskDraftId,
   workerAddress: Address,

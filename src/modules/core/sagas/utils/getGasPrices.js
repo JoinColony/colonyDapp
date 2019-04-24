@@ -54,7 +54,8 @@ export default function* getGasPrices(): Saga<GasPricesProps> {
 
     gasPrices = {
       timestamp: Date.now(),
-      // TODO: Handling the weird ethers BN implementation. Remove when web3
+
+      // Handling the weird ethers BN implementation. Remove when web3
       network: new BigNumber(networkGasPrice.toString()),
       // API prices are in 10Gwei
       suggested: new BigNumber(data.average).mul(pointOneGwei),
@@ -71,7 +72,8 @@ export default function* getGasPrices(): Saga<GasPricesProps> {
     gasPrices = {
       // Do not cache this
       timestamp: -Infinity,
-      // TODO: Handling the weird ethers BN implementation. Remove when web3
+
+      // Handling the weird ethers BN implementation. Remove when web3
       suggested: new BigNumber(networkGasPrice.toString()),
     };
     yield put(updateGasPrices(gasPrices));

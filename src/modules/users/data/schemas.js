@@ -25,7 +25,9 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 });
 
 export const SetUserAvatarCommandArgsSchema = yup.object({
-  // TODO: IPFS hash add yup validation for IPFS hash
+  /**
+   * @todo Add yup validation for IPFS hashes
+   */
   data: yup.string().required(),
 });
 

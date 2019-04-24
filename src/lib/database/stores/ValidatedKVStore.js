@@ -56,7 +56,7 @@ class ValidatedKVStore<T: { [key: string]: * }> extends KVStore {
   all(): $Shape<T> {
     return Object.keys(this._schema.fields).reduce((data, key) => {
       const value = this._orbitStore.get(key);
-      // XXX We could `.cast()` the values from the schema instead of removing
+      // We could `.cast()` the values from the schema instead of removing
       // undefined values, but that could potentially throw errors.
       if (typeof value !== 'undefined') {
         // eslint-disable-next-line no-param-reassign

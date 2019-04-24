@@ -13,10 +13,16 @@ const userProfileStore: StoreBlueprint = {
     displayName: yup.string(),
     createdAt: yup.number(),
     bio: yup.string(),
-    // TODO: IPFS hash add yup validation for IPFS hash
+
+    /**
+     * @todo : IPFS hash add yup validation for IPFS hash
+     */
     avatarHash: yup.string().nullable(),
     walletAddress: yup.string().address(),
-    // TODO: yup validation for orbit address
+
+    /**
+     * @todo : yup validation for orbit address
+     */
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),

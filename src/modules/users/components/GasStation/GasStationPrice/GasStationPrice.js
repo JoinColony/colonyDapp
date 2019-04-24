@@ -32,18 +32,20 @@ const enhance: HOC<*, InProps> = compose(
     },
   ),
   withProps(({ gasPrices }) => {
-    /*
-     * TODO: Actually determine if a tx requires any action with the wallet.
-     * Also, union type here isn't necessary, just being used during mocking
+    /**
+     * @todo: Determine if a tx requires any action with the wallet (gas station)
+     * @body Also, union type here isn't necessary, just being used during mocking
      * to remind that `undefined` is possible
      */
     const walletNeedsAction: 'hardware' | 'metamask' | void = undefined;
 
-    // TODO: Actually determine whether the network is congested
+    /**
+     * @todo Actually determine whether the network is congested (gas station)
+     */
     const isNetworkCongested = false;
 
     return {
-      // TODO: Use immutable helper?
+      // Use immutable helper? (or switch to hooks?)
       gasPrices: gasPrices.toJS(),
       walletNeedsAction,
       isNetworkCongested,

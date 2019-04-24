@@ -74,7 +74,9 @@ const TaskInviteDialog = ({
                   appearance={{ size: 'medium' }}
                   text={MSG.titleAssignment}
                 />
-                {/* TODO supply nativeToken with a selector */}
+                {/*
+                 * @todo Supply nativeToken with a selector (TaskInviteDialog)
+                 */}
                 <Assignment
                   nativeToken={{ address: '' }}
                   payouts={payouts}

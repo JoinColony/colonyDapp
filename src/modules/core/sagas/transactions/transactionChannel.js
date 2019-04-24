@@ -22,8 +22,8 @@ const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
     const { hash } = result.meta.transaction;
     emit(transactionSent(id, { hash, params }));
     return result;
-  } catch (error) {
-    emit(error);
+  } catch (caughtError) {
+    emit(caughtError);
   }
   return null;
 };
@@ -37,8 +37,8 @@ const channelGetTransactionReceipt = async ({ id, params }, sentTx, emit) => {
       const receipt = await receiptPromise;
       emit(transactionReceiptReceived(id, { receipt, params }));
       return receipt;
-    } catch (error) {
-      emit(error);
+    } catch (caughtError) {
+      emit(caughtError);
     }
   } else {
     emit(new Error('No receipt promise found'));
@@ -52,8 +52,8 @@ const channelGetEventData = async ({ id, params }, sentTx, emit) => {
     try {
       const eventData = await eventDataPromise;
       emit(transactionSucceeded(id, { eventData, params }));
-    } catch (error) {
-      emit(error);
+    } catch (caughtError) {
+      emit(caughtError);
     }
   } else {
     emit(new Error('No event promise found'));
@@ -72,7 +72,10 @@ const channelStart = async (tx, txPromise, emit) => {
   } else {
     // If the receipt was received but the tx wasn't successful,
     // emit an error event and stop the channel.
-    // TODO use revert reason strings (once supported)
+
+    /**
+     * @todo Use revert reason strings (once supported) in transactions
+     */
     emit(new Error('The transaction was unsuccessful'));
   }
   return emit(END);

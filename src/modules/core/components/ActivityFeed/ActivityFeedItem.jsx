@@ -70,7 +70,10 @@ const ActivityFeedItem = ({
               {...MSG.activityMeta}
               values={{
                 organizationName: organization,
-                // TODO: make this domain (I think that's what this is...?) a core component, like `UserMention`
+                /**
+                 * @todo Add core component for domains
+                 * @body Make this domain (I think that's what this is...?) a core component, like `UserMention`
+                 */
                 domain: <Link to="/">#{domainTag}</Link>,
               }}
             />

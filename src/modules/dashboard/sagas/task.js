@@ -178,7 +178,9 @@ function* taskCreate({
   }
 }
 
-// TODO simplify this in #965.
+/**
+ * @todo Simplify the conversion of `getTask` query results to redux data
+ */
 const getTaskFetchSuccessPayload = (
   { draftId }: *,
   { metadata: { colonyAddress, taskStoreAddress } }: *,
@@ -207,9 +209,9 @@ const getTaskFetchSuccessPayload = (
     payouts: paymentToken
       ? [
           {
-            // TODO consider using strings for amounts in TaskPayout
+            // Consider using strings for amounts in TaskPayout
             amount: parseInt(payout, 10),
-            // TODO get the token name, or even alter TaskType so that we use
+            // We should get the token name, or even alter TaskType so that we use
             // token addresses and amounts only (not name or symbol)
             token: { address: paymentToken, name: 'Token', symbol: 'TKN' },
           },
@@ -617,7 +619,8 @@ function* taskCommentAdd({
     });
 
     /*
-     * @TODO We need to filter out mentioned users from `commentData`.
+     * @todo Filter out mentioned users
+     * @body We need to filter out mentioned users from `commentData`.
      * In the old beta we used to use `linkify-it` to achieve that
      *
      * See: https://github.com/JoinColony/colonyDapp/issues/1011 for the

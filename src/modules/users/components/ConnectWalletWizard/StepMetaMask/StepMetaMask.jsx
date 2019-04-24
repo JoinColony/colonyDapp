@@ -68,7 +68,9 @@ class MetaMask extends Component<Props, State> {
   };
 
   componentDidMount() {
-    // TODO
+    /**
+     * @todo Improve error modes for creating the metamask connection
+     */
     this.connectMetaMask()
       .then()
       .catch();
@@ -81,12 +83,12 @@ class MetaMask extends Component<Props, State> {
   }
 
   connectMetaMask = async () => {
-    // TODO should this throw an error?
+    // Should this throw an error?
     let metamaskError = null;
     let wallet;
-    /*
-     * TODO Detect metamask wallet state for better errors
-     * This should actually use `detect()` to check which metamask error this is
+    /**
+     * @todo Detect metamask wallet state for better errors
+     * @body This should actually use `detect()` to check which metamask error this is
      * and show the user a specific messages (locked, disabled, no account, etc)
      */
     try {

@@ -119,7 +119,10 @@ class StepDisplayName extends Component<Props, State> {
                 disabled={!isValid}
                 text={MSG.buttonAdvanceText}
                 type="submit"
-                // TODO: the nextStep should be called onSucces once wizard is working again
+                /**
+                 * @todo Fix connect wallet wizard success handling
+                 * @body the nextStep should be called onSuccess once the wizard is working again
+                 */
                 onClick={() => this.progressWithDialog()}
                 loading={isSubmitting}
               />

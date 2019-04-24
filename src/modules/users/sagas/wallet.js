@@ -15,7 +15,7 @@ import type { Action } from '~redux';
 import { create, putError } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-// TODO: type better
+// This should be typed better
 type WalletInstance = Object;
 
 const hardwareWallets = {
@@ -30,7 +30,9 @@ function* fetchAccounts(
 
   try {
     const wallet = yield call(hardwareWallets[walletType].open, {
-      // TODO: is 100 addresses really what we want?
+      /**
+       * @todo Determine proper `addressCount` for fetching wallet accounts
+       */
       addressCount: 100,
     });
     yield put<Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS>>({
@@ -60,7 +62,9 @@ function* openHardwareWallet(
 ): Saga<void> {
   const { hardwareWalletChoice, method } = action.payload;
   const wallet = yield call(hardwareWallets[method].open, {
-    // TODO: is 100 addresses really what we want?
+    /**
+     * @todo : is 100 addresses really what we want?
+     */
     addressCount: 100,
   });
   const selectedAddressIndex = wallet.otherAddresses.findIndex(

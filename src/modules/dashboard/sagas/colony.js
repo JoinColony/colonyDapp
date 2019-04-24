@@ -108,7 +108,7 @@ Action<'COLONY_CREATE'>): Saga<void> {
     yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_CREATED);
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_CREATED);
 
-    // TODO: This will be resolved in colonyDapp#978
+    // This will be resolved in colonyDapp#978
     yield put({
       type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
@@ -143,10 +143,13 @@ Action<'COLONY_CREATE'>): Saga<void> {
       displayName,
       token: {
         address: tokenAddress,
-        // TODO add tokenIcon; can we get this in the action payload?
         isNative: true,
         name: tokenName,
         symbol: tokenSymbol,
+        /**
+         * @todo Add missing tokenIcon when creating the colony profile
+         * @body This should be in the action payload.
+         */
       },
     };
     const store = yield* executeCommand(context, createColonyProfile, args);
@@ -224,8 +227,6 @@ function* colonyCreateLabel({
       },
     });
 
-    // TODO: These are just temporary for now until we have the new onboarding workflow
-    // Normally these are done by the user
     yield put({
       type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
       meta,
@@ -235,7 +236,6 @@ function* colonyCreateLabel({
       type: ACTIONS.TRANSACTION_SEND,
       meta,
     });
-    // TODO temp end
 
     const { payload } = yield takeFrom(
       txChannel,
@@ -263,8 +263,10 @@ function* colonyNameCheckAvailability({
   try {
     yield delay(300);
 
-    // TODO: this should probably be a query at some point like in
-    // usernameCheckAvailability
+    /**
+     * @todo Define `getColonyAddress` query
+     * @body This should probably be a query at some point, like in `usernameCheckAvailability`.
+     */
     const colonyAddress = yield call(getColonyAddress, colonyName);
 
     if (colonyAddress) {
@@ -329,7 +331,9 @@ function* colonyFetch({
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
-    // TODO error if the colony does not exist!
+    /**
+     * @todo Add error mode for fetching a non-existent colony
+     */
     const context = yield* getColonyContext(colonyAddress);
     const payload = yield* executeQuery(context, getColony);
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({

@@ -320,7 +320,5 @@ export const useMounted = () => {
     },
     [],
   );
-  // TODO can a React genius find out why we don't get the same
-  // behaviour when returning ref.current?
   return ref;
 };

@@ -92,7 +92,10 @@ class UploadItem extends Component<Props> {
       fileReference = await upload(readFile);
     } catch (e) {
       log(e);
-      // TODO better error handling here
+
+      /**
+       * @todo  better error handling here
+       */
       setValue({ ...$value, error: 'uploadError' });
       return;
     }

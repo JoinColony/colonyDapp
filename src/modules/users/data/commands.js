@@ -160,7 +160,9 @@ export const setUserAvatar: Command<
   },
 });
 
-// TODO unpin the avatar when ipfsNode supports it
+/**
+ * @todo Unpin the avatar when the PinnerConnector supports it
+ */
 export const removeUserAvatar: UserCommand<void, UserProfileStore> = ({
   ddb,
   metadata,

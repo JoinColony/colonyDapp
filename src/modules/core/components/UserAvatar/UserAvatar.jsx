@@ -54,7 +54,7 @@ const UserAvatar = ({
     </UserInfo>
   );
   if (showLink && username) {
-    // TODO won't this always be lowercase?
+    // Won't this always be lowercase?
     return <NavLink to={`/user/${username.toLowerCase()}`}>{avatar}</NavLink>;
   }
   return avatar;

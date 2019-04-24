@@ -12,7 +12,7 @@ import asField from '../Fields/asField';
 import Button from '../Button';
 import { shuffle } from '../../../../utils/arrays';
 
-// TODO: Maybe create grid using CSS?
+// Maybe create grid using CSS?
 import Grid from './grid.svg';
 
 import styles from './MnemonicDnDSorter.css';

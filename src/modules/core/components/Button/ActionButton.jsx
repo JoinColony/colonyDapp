@@ -9,7 +9,6 @@ import { log } from '~utils/debug';
 import { useAsyncFunction, useMounted } from '~utils/hooks';
 import DefaultButton from '~core/Button';
 
-// TODO if this object is sealed, there are unspecified props being used
 type Props = {
   button?: ComponentType<*>,
   error: string,
@@ -43,7 +42,10 @@ const ActionButton = ({
     } catch (err) {
       log(err);
       setLoading(false);
-      // TODO: display error somewhere
+
+      /**
+       * @todo : display error somewhere
+       */
       return;
     }
     if (typeof onSuccess == 'function') onSuccess(result);

@@ -53,7 +53,7 @@ class Store {
     // Let's see whether we have local heads already
     const heads = await this.ready();
 
-    // TODO consider throwing an error when we are relying fully on the pinner.
+    // Consider throwing an error when we are relying fully on the pinner...
     if (!this._pinner.online) {
       log(new Error('Unable to load store; pinner is offline'));
       return heads;
@@ -74,14 +74,19 @@ class Store {
     }
     // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
     // but don't have to wait for any count. We'll replicate whenever it's convenient
-    // TODO: This could be dangerous in case of an unfinished replication. We have to account for that
-    // Quick fix could be to just also wait for the full replication, which might be a performance hit
+    /**
+     * @todo Improve error modes for failed pinned store requests
+     * @body This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
+     */
     this._pinner.requestPinnedStore(this.address.toString()).catch(log);
     return heads;
   }
 
   async _waitForReplication(headsRequired: number) {
-    // TODO: retry, replicated.progress? something else?
+    /**
+     * @todo Improve waiting for replication for stores
+     * @body Suggestion: retry, replicated.progress? something else?
+     */
     const replicated = new Promise(resolve => {
       const listener = () => {
         // We're using a private API here, don't know whether that's going to be painful at some point
@@ -133,7 +138,10 @@ class Store {
 
   // eslint-disable-next-line class-methods-use-this
   async unpin() {
-    // TODO use the pinner to stop pinning this store (once it's supported).
+    /**
+     * @todo Support store unpinning
+     * @body When pinion supports it :)
+     */
     return null;
   }
 }

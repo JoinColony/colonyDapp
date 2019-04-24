@@ -8,13 +8,17 @@ import TokenRecord from './Token';
 
 import type { TokenRecordType, TokenType } from './Token';
 
+/**
+ * @todo Fix `TaskPayout` record props
+ * @body `amount` should be a BigBumber, `token` should be an address
+ */
 export type TaskPayoutType = $ReadOnly<{|
-  amount: number, // TODO: should be BigNumber
-  token: TokenType, // TODO: should be an address (see #1016)
+  amount: number,
+  token: TokenType,
 |}>;
 
 type TaskPayoutRecordProps = {|
-  amount: number, // TODO: should be BigNumber
+  amount: number,
   token: TokenRecordType,
 |};
 

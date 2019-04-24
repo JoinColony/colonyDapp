@@ -54,7 +54,10 @@ export default class EthersWrappedWallet {
     let txHash;
     if (this.wallet.subtype === 'metamask') {
       // if metamask, tx has already been sent
-      // TODO: add `online` main wallet type or similar to Purser
+
+      /**
+       * @todo Add an `online` main wallet type or similar to Purser for EthersWrappedWallet
+       */
       const parsedSignedTx = new EthereumTx(signedTx);
       txHash = hexSequenceNormalizer(parsedSignedTx.hash().toString('hex'));
     } else {

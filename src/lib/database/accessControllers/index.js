@@ -1,6 +1,8 @@
 /* @flow */
 
-// TODO: We might want to move these close to the store blueprints as well!
+/**
+ * @todo Move access controller definitions (closer) to store blueprints
+ */
 export {
   default as AbstractAccessController,
 } from './AbstractAccessController';

@@ -9,9 +9,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
-/*
- * TODO Temporary, please remove when wiring in the rating modals
- */
+// Temporary, please remove when wiring in the rating modals
 import type { OpenDialog } from '~core/Dialog/types';
 
 import Heading from '~core/Heading';
@@ -242,7 +240,7 @@ const Task = ({
             <TaskRequestWork currentUser={currentUser} task={task} />
           )}
           {/*
-            TODO use these components for the full on-chain task workflow
+            Use these components for the full on-chain task workflow
             <TaskRatingButtons task={task} />
             <TaskClaimReward task={task} />
           */}

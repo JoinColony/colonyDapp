@@ -38,7 +38,9 @@ export const canBeUpgraded = (colony: ?ColonyType, networkVersion: ?number) =>
 /*
  * Tasks
  */
-// TODO this should be used at some point
+/**
+ * @todo Wire task payouts
+ */
 // eslint-disable-next-line no-unused-vars
 const didClaimPayout = (taskUser: ?TaskUserType, userAddress: string) =>
   taskUser &&
@@ -72,7 +74,10 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
 export const canEditTask = (task: TaskType, userAddress: Address) =>
   !!(isFinalized(task) && isCreator(task, userAddress));
 
-// TODO Fix this logic in #169
+/**
+ * @todo Fix task rating checks logic
+ * @body Fix this logic in #169
+ */
 // eslint-disable-next-line no-unused-vars
 export const workerCanRateManager = (task: TaskType, userAddress: Address) =>
   false;
@@ -111,6 +116,9 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
     hasRequestedToWork(task, userAddress)
   );
 
-// TODO use a task property indicating that work has been submitted
+/**
+ * @todo Fix `canFinalizeTask` check
+ * @body Use a task property indicating that work has been submitted
+ */
 export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
   isManager(task, userAddress) && isActive(task);

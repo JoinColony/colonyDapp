@@ -100,7 +100,6 @@ class MultiLineEdit extends Component<Props> {
   };
 
   onBlur = (evt: SyntheticFocusEvent<EditorType>) => {
-    // TODO: get this to work - onChange is currently overriding this and re-setting the editorState
     const { onEditorBlur, setValue, $value } = this.props;
     let editorState = $value;
     if (!this.editorHasContent()) {

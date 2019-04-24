@@ -137,7 +137,7 @@ const asField = ({ alwaysConnected, validate, initialValue }: Object = {}) => {
           $touched,
           onChange,
           onBlur,
-          // TODO create util / meta object for the following items
+          // We could consider creating a util/meta object for the following items:
           isSubmitting,
           formatIntl: (
             text?: string | MessageDescriptor,

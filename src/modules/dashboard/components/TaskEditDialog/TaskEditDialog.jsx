@@ -124,10 +124,11 @@ const TaskEditDialog = ({
   transform,
   workerAddress,
 }: Props) => {
-  const availableTokens = []; // TODO use selector in #1048
-  const users = []; // TODO use selector in #1048
+  const availableTokens = [];
+  // Use a selector in #1048
+  const users = [];
 
-  // TODO consider using a selector for this in #1048
+  // consider using a selector for this in #1048
   const payouts = useMemo(
     () =>
       taskPayouts.map(payout => ({
@@ -194,7 +195,7 @@ const TaskEditDialog = ({
         <SpinnerLoader />
       ) : (
         <ActionForm
-          /* TODO in #1048 use correct actions */
+          /* In #1048 use correct actions */
           /* $FlowFixMe */
           submit="CREATE_COOL_THING"
           /* $FlowFixMe */
