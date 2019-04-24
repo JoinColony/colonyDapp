@@ -23,6 +23,7 @@ type Props = {|
 
 const TaskFeed = ({ draftId }: Props) => {
   const bottomEl = useRef();
+  const [colonyAddress] = draftId.split('_');
 
   const scrollToEnd = () => {
     if (bottomEl.current) {
@@ -64,7 +65,12 @@ const TaskFeed = ({ draftId }: Props) => {
 
             if (event) {
               return (
-                <TaskFeedEvent key={id} event={event} createdAt={createdAt} />
+                <TaskFeedEvent
+                  colonyAddress={colonyAddress}
+                  createdAt={createdAt}
+                  event={event}
+                  key={id}
+                />
               );
             }
 

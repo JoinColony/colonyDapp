@@ -1,5 +1,7 @@
 /* @flow */
 
+import { Set as ImmutableSet } from 'immutable';
+
 import type { DomainId, RootStateRecord } from '~immutable';
 import type { Address } from '~types';
 
@@ -18,4 +20,7 @@ export const domainSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
   domainId: DomainId,
-) => state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, domainId]);
+) =>
+  state
+    .getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, 'record'], ImmutableSet())
+    .find(({ id }) => id === domainId);
