@@ -94,6 +94,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
       mapPayload(p => ({ newAdmin: p.newAdmin.profile.walletAddress })),
       mergePayload({ colonyAddress }),
     ),
+    [colonyAddress],
   );
   return (
     <div className={styles.main}>
@@ -106,6 +107,9 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
         initialValues={{
           newAdmin: null,
           colonyAddress,
+        }}
+        onSuccess={(_, { resetForm }) => {
+          resetForm();
         }}
       >
         {({ status, isSubmitting, isValid }) => (
