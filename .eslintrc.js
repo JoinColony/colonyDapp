@@ -11,6 +11,7 @@ module.exports = {
     'eslint-config-airbnb/rules/react-a11y',
   ],
   plugins: [
+    'jsdoc',
     'react-hooks',
   ],
   overrides: [
