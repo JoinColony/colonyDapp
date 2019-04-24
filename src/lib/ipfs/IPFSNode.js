@@ -123,8 +123,9 @@ class IPFSNode {
 
   /** Return a file from IPFS as text */
   async getString(hash: string): Promise<string> {
+    if (!hash) return '';
     await this.ready;
-    const result = await this._ipfs.files.cat(hash);
+    const result = await this._ipfs.cat(hash);
     if (!result) throw new Error('No such file');
     return result.toString();
   }
@@ -132,9 +133,7 @@ class IPFSNode {
   /** Upload a string */
   async addString(data: string): Promise<string> {
     await this.ready;
-    const [result] = await this._ipfs.files.add(
-      this._ipfs.types.Buffer.from(data),
-    );
+    const [result] = await this._ipfs.add(IPFS.Buffer.from(data));
     if (!result) throw new Error('Failed to upload to IPFS');
     if (this.pinner) {
       this.pinner.pinHash(result.hash);
