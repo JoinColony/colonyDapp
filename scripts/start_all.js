@@ -47,7 +47,11 @@ const trufflePigPromise = () =>
 
 const webpackPromise = () =>
   new Promise((resolve, reject) => {
-    const webpackProcess = spawn('yarn', ['run', 'webpack'], {
+    let webpackArgs = ['run', 'webpack'];
+    if (!args['without-https']) {
+      webpackArgs = webpackArgs.concat(['--https', '--key', './ssl/localhost+2-key.pem', '--cert', './ssl/localhost+2.pem']);
+    }
+    const webpackProcess = spawn('yarn', webpackArgs, {
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
     });
