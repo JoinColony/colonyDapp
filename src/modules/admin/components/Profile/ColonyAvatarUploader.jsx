@@ -7,7 +7,7 @@ import { defineMessages } from 'react-intl';
 import type { ColonyType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { withKey } from '~utils/actions';
+import { pipe, withKey, mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import AvatarUploader from '~core/AvatarUploader';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
@@ -45,10 +45,14 @@ const removeActions = {
   error: ACTIONS.COLONY_AVATAR_REMOVE_ERROR,
 };
 
-const ColonyAvatarUploader = ({ colony }: Props) => {
-  const transform = useCallback(withKey(colony.colonyAddress), [
-    colony.colonyAddress,
-  ]);
+const ColonyAvatarUploader = ({ colony: { colonyAddress }, colony }: Props) => {
+  const transform = useCallback(
+    pipe(
+      withKey(colonyAddress),
+      mergePayload({ colonyAddress }),
+    ),
+    [colonyAddress],
+  );
   const upload = useAsyncFunction({ ...uploadActions, transform });
   const remove = useAsyncFunction({ ...removeActions, transform });
 
@@ -63,7 +67,7 @@ const ColonyAvatarUploader = ({ colony }: Props) => {
            * But appends the current one to that
            */
           className={styles.main}
-          address={colony.colonyAddress}
+          address={colonyAddress}
           colony={colony}
           size="xl"
         />

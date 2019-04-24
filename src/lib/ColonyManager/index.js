@@ -3,12 +3,7 @@
 import ColonyNetworkClient from '@colony/colony-js-client';
 import { isAddress } from 'web3-utils';
 
-import type {
-  ENSName,
-  Address,
-  AddressOrENSName,
-  ColonyContext,
-} from './types';
+import type { Address, AddressOrENSName, ColonyContext } from './types';
 
 import { NETWORK_CONTEXT } from './constants';
 
