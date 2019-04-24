@@ -6,15 +6,19 @@
  */
 
 export default class AccessControllerFactory {
-  static async create(orbitdb, type, { controller: accessController }) {
+  static async create(
+    orbitdb: *,
+    type: string,
+    { controller: accessController }: { controller: * },
+  ) {
     await accessController.load();
     return accessController.save();
   }
 
   static async resolve(
-    orbitdb,
-    accessControllerAddress,
-    { controller: accessController },
+    orbitdb: *,
+    accessControllerAddress: string,
+    { controller: accessController }: { controller: * },
   ) {
     return accessController;
   }
