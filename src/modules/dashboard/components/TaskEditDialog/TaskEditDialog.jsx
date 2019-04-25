@@ -21,8 +21,9 @@ import { SpinnerLoader } from '~core/Preloaders';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import { useDataFetcher } from '~utils/hooks';
-import { userFetcher } from '../../../users/fetchers';
+import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
+import { taskRequestsSelector } from '../../selectors';
+import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
 
 import styles from './TaskEditDialog.css';
 
@@ -72,6 +73,7 @@ type Props = {|
     helpers: () => void,
   ) => void,
   cancel: () => void,
+  draftId: string,
   maxTokens?: number,
   minTokens?: number,
   transform: (action: Object) => Object,
@@ -83,9 +85,14 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
-      user &&
-      filterValue &&
-      user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
+      (user &&
+        filterValue &&
+        user.profile.username
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())) ||
+      user.profile.walletAddress
+        .toLowerCase()
+        .includes(filterValue.toLowerCase()),
   );
 
   if (!filterValue) return filtered;
@@ -117,6 +124,7 @@ const displayName = 'dashboard.TaskEditDialog';
 const TaskEditDialog = ({
   addTokenFunding,
   cancel,
+  draftId,
   maxTokens,
   minTokens,
   payouts: taskPayouts,
@@ -125,8 +133,20 @@ const TaskEditDialog = ({
   workerAddress,
 }: Props) => {
   const availableTokens = [];
-  // Use a selector in #1048
-  const users = [];
+  const userAddresses = useSelector(taskRequestsSelector, [draftId]);
+  const userData = useDataMapFetcher<UserType>(
+    usersByAddressFetcher,
+    userAddresses,
+  );
+
+  const users = useMemo(
+    () =>
+      userData.map(({ data, key }) => ({
+        id: key,
+        ...data,
+      })),
+    [userData],
+  );
 
   // consider using a selector for this in #1048
   const payouts = useMemo(
@@ -255,7 +275,7 @@ const TaskEditDialog = ({
                               <WrappedPayout
                                 key={payout.id}
                                 arrayHelpers={arrayHelpers}
-                                payouts={payouts}
+                                payouts={values.payouts}
                                 payout={payout}
                                 availableTokens={availableTokens}
                                 canRemove={canRemove}

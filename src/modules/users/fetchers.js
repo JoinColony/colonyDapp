@@ -6,6 +6,7 @@ import {
   currentUserTransactionsSelector,
   userByUsernameSelector,
   userSelector,
+  usersByAddressesSelector,
 } from './selectors';
 import {
   userByUsernameFetch,
@@ -42,5 +43,11 @@ export const userFetcher = Object.freeze({
 export const userByUsernameFetcher = Object.freeze({
   fetch: userByUsernameFetch,
   select: userByUsernameSelector,
+  ttl: 60 * 1000,
+});
+
+export const usersByAddressFetcher = Object.freeze({
+  fetch: userFetch,
+  select: usersByAddressesSelector,
   ttl: 60 * 1000,
 });

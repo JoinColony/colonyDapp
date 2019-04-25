@@ -177,7 +177,7 @@ const SingleUserPicker = ({
                 onFocus={handleActiveUserClick}
                 tabIndex="0"
               >
-                {$value.profile.displayName}
+                {$value.profile.displayName || $value.profile.username}
               </div>
             )}
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}

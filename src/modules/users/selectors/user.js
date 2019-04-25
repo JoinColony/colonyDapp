@@ -66,14 +66,13 @@ export const usersExceptSelector = createSelector(
     allUsers.filter((user, address) => ![].concat(except).includes(address)),
 );
 
-usersExceptSelector.transform = (
-  input: ImmutableMap<string, DataRecordType<UserRecordType>>,
+export const usersByAddressesSelector = (
+  state: RootStateRecord,
+  addresses: string[],
 ) =>
-  input
-    .map(user => user.record)
-    .filter(Boolean)
-    .toList()
-    .toJS();
+  state
+    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
+    .filter((_, address) => addresses.includes(address));
 
 /*
  * Current user input selectors
