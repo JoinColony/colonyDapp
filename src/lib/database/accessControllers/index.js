@@ -14,3 +14,4 @@ export {
   default as PermissiveAccessController,
 } from './PermissiveAccessController';
 export { default as TaskAccessController } from './TaskAccessController';
+export { default as AccessControllerFactory } from './AccessControllerFactory';

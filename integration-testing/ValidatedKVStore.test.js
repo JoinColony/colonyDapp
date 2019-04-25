@@ -1,17 +1,18 @@
 import test from 'ava';
 import * as yup from 'yup';
 import { create as createWallet } from '@colony/purser-software';
+
+import '../src/modules/validations';
+
+import { DDB } from '../src/lib/database';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 import { ValidatedKVStore } from '../src/lib/database/stores';
-import '../src/modules/validations';
-import { DDB } from '../src/lib/database';
+import { getAll } from '../src/lib/database/commands';
 
 import createIPFSNode from './utils/createIPFSNode';
 
-import { getAll } from '../src/lib/database/commands';
-
 const kvBlueprint = {
-  getAccessController() {},
+  getAccessController: null,
   defaultName: 'user',
   schema: yup.object({
     username: yup.string().required(),

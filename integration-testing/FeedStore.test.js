@@ -1,15 +1,17 @@
 import test from 'ava';
 import * as yup from 'yup';
 import { create as createWallet } from '@colony/purser-software';
+
+import '../src/modules/validations';
+
+import { DDB } from '../src/lib/database';
 import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
 import { FeedStore } from '../src/lib/database/stores';
-import '../src/modules/validations';
-import { DDB } from '../src/lib/database';
 
 import createIPFSNode from './utils/createIPFSNode';
 
 const feedBlueprint = {
-  getAccessController() {},
+  getAccessController: null,
   defaultName: 'activity',
   schema: yup.object({
     userAction: yup.string().required(),
