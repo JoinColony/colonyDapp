@@ -12,7 +12,6 @@ import {
   takeLatest,
   select,
 } from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
 
 import type { Action } from '~redux';
 import type { ValidatedKVStore } from '~lib/database/stores';
@@ -93,8 +92,7 @@ function* prepareProfileStore(
       profileStoreAddress: profileStore.address.toString(),
     },
   });
-  // $FlowFixMe
-  return yield profileStore;
+  return profileStore;
 }
 
 function* colonyCreate({
@@ -198,7 +196,7 @@ function* colonyCreate({
     yield put({
       type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
-      payload: '',
+      payload: undefined,
     });
 
     /* STEP 5: Some transactions require input from the previous transactions
@@ -243,7 +241,7 @@ function* colonyCreate({
       displayName,
       token: {
         address: tokenAddress,
-        icon: tokenIcon,
+        icon: tokenIcon ? tokenIcon[0].uploaded.ipfsHash : undefined,
         isNative: true,
         name: tokenName,
         symbol: tokenSymbol,
@@ -277,84 +275,6 @@ function* colonyCreate({
     createTokenChannel.close();
     createColonyChannel.close();
     createLabelChannel.close();
-  }
-}
-
-function* colonyCreateLabel({
-  payload: {
-    colonyAddress,
-    colonyName,
-    displayName,
-    tokenAddress,
-    tokenIcon,
-    tokenName,
-    tokenSymbol,
-  },
-  meta,
-}: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
-  const context = yield* getColonyContext(colonyAddress);
-  const args = {
-    colonyAddress,
-    colonyName,
-    displayName,
-    token: {
-      address: tokenAddress,
-      icon: tokenIcon,
-      isNative: true,
-      name: tokenName,
-      symbol: tokenSymbol,
-    },
-  };
-
-  /*
-   * Get or create a colony store and save the colony to that store.
-   */
-  const store = yield* executeCommand(context, createColonyProfile, args);
-
-  /*
-   * Subscribe the current user to the colony
-   */
-  yield put(subscribeToColony(colonyAddress));
-
-  const txChannel = yield call(getTxChannel, meta.id);
-
-  try {
-    yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
-      methodName: 'registerColonyLabel',
-      identifier: colonyAddress,
-      params: {
-        colonyName,
-        orbitDBPath: store.address.toString(),
-      },
-    });
-
-    yield put({
-      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
-      meta,
-    });
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
-    yield put({
-      type: ACTIONS.TRANSACTION_SEND,
-      meta,
-    });
-
-    const { payload } = yield takeFrom(
-      txChannel,
-      ACTIONS.TRANSACTION_SUCCEEDED,
-    );
-
-    yield put({
-      type: ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
-      meta,
-      payload,
-    });
-
-    yield put(replace(`/colony/${colonyName}`));
-  } catch (error) {
-    yield putError(ACTIONS.COLONY_CREATE_LABEL_ERROR, error);
-  } finally {
-    txChannel.close();
   }
 }
 
@@ -672,7 +592,6 @@ function* colonyTaskMetadataFetch({
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
-  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);

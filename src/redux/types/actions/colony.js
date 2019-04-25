@@ -121,7 +121,7 @@ export type ColonyActionTypes = {|
       displayName: string,
       tokenName: string,
       tokenSymbol: string,
-      tokenIcon: string,
+      tokenIcon: {},
     |},
     void,
   >,
