@@ -14,4 +14,9 @@ matcher
   .add('mailto:', null)
   .add(USERNAME_SCHEMA.prefix, USERNAME_SCHEMA.schema);
 
-export default matcher;
+const matchUsernames = (text: string) => {
+  const matches = matcher.match(text);
+  return matches ? matches.map(match => match.text.substr(1)) : [];
+};
+
+export default matchUsernames;

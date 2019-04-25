@@ -101,10 +101,8 @@ const TaskComments = ({
 
   const handleCommentSubmit = ({ comment }: FormValues, actions) => {
     addComment({
-      commentData: {
-        body: comment,
-        author: walletAddress,
-      },
+      comment,
+      author: walletAddress,
       draftId,
       colonyAddress,
       taskTitle,

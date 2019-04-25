@@ -96,7 +96,13 @@ export type TaskActionTypes = {|
   >,
   TASK_COMMENT_ADD: TaskActionType<
     typeof ACTIONS.TASK_COMMENT_ADD,
-    {| commentData: *, taskTitle: string |},
+    {|
+      comment: string,
+      author: string,
+      draftIt: string,
+      colonyAddress: Address,
+      taskTitle: string,
+    |},
   >,
   TASK_COMMENT_ADD_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_COMMENT_ADD_ERROR,
