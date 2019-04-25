@@ -59,13 +59,12 @@ export const userByUsernameSelector = (
     .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
     .find(user => getUsernameFromUserData(user) === username);
 
-export const usersExceptSelector = (
-  state: RootStateRecord,
-  except: string[] | string = [],
-) =>
-  state
-    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
-    .filter((user, address) => ![].concat(except).includes(address));
+export const usersExceptSelector = createSelector(
+  (state: RootStateRecord) =>
+    state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap()),
+  (allUsers, except: string[] | string = []) =>
+    allUsers.filter((user, address) => ![].concat(except).includes(address)),
+);
 
 usersExceptSelector.transform = (
   input: ImmutableMap<string, DataRecordType<UserRecordType>>,

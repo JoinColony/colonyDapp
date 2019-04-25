@@ -75,11 +75,12 @@ const Heading = ({
   const value = getText(children, text, textValues, intl);
   return (
     <HeadingElement
-      title={value}
+      // If `value` is of type `Node` (i.e. children prop), don't add broken title.
+      title={typeof value === 'string' ? value : null}
       className={getMainClasses(appearance, styles)}
       {...props}
     >
-      {value || children}
+      {value}
     </HeadingElement>
   );
 };

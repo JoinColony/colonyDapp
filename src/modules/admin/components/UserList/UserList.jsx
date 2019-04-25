@@ -108,7 +108,7 @@ const UserList = ({
                 showMaskedAddress={showMaskedAddress}
                 viewOnly={viewOnly}
                 // TODO: we probably want to delegate this to the userListItem somehow?
-                onRemove={handleRemove}
+                onRemove={() => handleRemove(user)}
               />
             ))}
           </TableBody>
