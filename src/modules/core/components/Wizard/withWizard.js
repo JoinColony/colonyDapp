@@ -47,7 +47,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
     };
 
     /**
-     * @todo Retain wizard validation state when going back
+     * @todo Retain wizard validation state when going back.
      * @body When going back we could instead store the isValid state of the form when going back
      */
     prev = (values?: Values) => {

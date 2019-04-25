@@ -78,7 +78,7 @@ class AvatarUploadItem extends Component<Props> {
       log(e);
 
       /**
-       * @todo Improve error modes for uploading avatars
+       * @todo Improve error modes for uploading avatars.
        */
       setValue({ ...$value, error: 'uploadError' });
     }

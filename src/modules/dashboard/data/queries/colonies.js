@@ -220,7 +220,7 @@ export const getColonyRoles: ColonyContractRolesEventQuery<
 });
 
 /**
- * @todo Get the right defaults for data reducers based on the redux data
+ * @todo Get the right defaults for data reducers based on the redux data.
  */
 export const getColony: ColonyQuery<void, ColonyType> = ({
   ddb,

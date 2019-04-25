@@ -179,7 +179,7 @@ function* taskCreate({
 }
 
 /**
- * @todo Simplify the conversion of `getTask` query results to redux data
+ * @todo Simplify the conversion of `getTask` query results to redux data.
  */
 const getTaskFetchSuccessPayload = (
   { draftId }: *,
@@ -619,7 +619,7 @@ function* taskCommentAdd({
     });
 
     /*
-     * @todo Filter out mentioned users
+     * @todo Filter out mentioned users.
      * @body We need to filter out mentioned users from `commentData`.
      * In the old beta we used to use `linkify-it` to achieve that
      *

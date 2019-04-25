@@ -69,7 +69,7 @@ const TaskFeed = ({ draftId }: Props) => {
             }
 
             /**
-             * @todo Check that the reveal period is over for ratings (task feed)
+             * @todo Check that the reveal period is over for ratings (task feed).
              */
             return rating ? <TaskFeedRating key={id} rating={rating} /> : null;
           })}

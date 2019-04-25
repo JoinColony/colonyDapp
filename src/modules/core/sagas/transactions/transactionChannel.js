@@ -74,7 +74,7 @@ const channelStart = async (tx, txPromise, emit) => {
     // emit an error event and stop the channel.
 
     /**
-     * @todo Use revert reason strings (once supported) in transactions
+     * @todo Use revert reason strings (once supported) in transactions.
      */
     emit(new Error('The transaction was unsuccessful'));
   }

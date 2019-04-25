@@ -139,7 +139,7 @@ const TokenSelector = ({
 
   return (
     /**
-     * @todo : I feel like this should be a custom input component at some point, that'd spare us a lot of hassle
+     * @todo Define custom input component for token addresses
      */
     <div className={styles.main}>
       <Input
