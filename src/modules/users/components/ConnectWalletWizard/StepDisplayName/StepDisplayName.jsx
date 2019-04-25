@@ -120,7 +120,7 @@ class StepDisplayName extends Component<Props, State> {
                 text={MSG.buttonAdvanceText}
                 type="submit"
                 /**
-                 * @todo Fix connect wallet wizard success handling
+                 * @todo Fix connect wallet wizard success handling.
                  * @body the nextStep should be called onSuccess once the wizard is working again
                  */
                 onClick={() => this.progressWithDialog()}

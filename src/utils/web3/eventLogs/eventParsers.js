@@ -72,7 +72,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   const date = await getLogDate(colonyClient.adapter.provider, log);
 
   /**
-   * @todo Replace the placeholder taskId once able to get taskId from potId (funds event handler)
+   * @todo Replace the placeholder taskId once able to get taskId from potId (funds event handler).
    */
   const taskId = 1;
   // const [, taskId] = yield call(

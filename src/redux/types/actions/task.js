@@ -57,7 +57,7 @@ type NonUniqueTaskActionType<T, P> = ActionTypeWithPayloadAndMeta<
 type TaskErrorActionType<T> = ErrorActionType<T, TaskActionMeta>;
 
 /**
- * @todo Define missing task action payload types
+ * @todo Define missing task action payload types.
  * @body These are:
  * TASK_MANAGER_COMPLETE
  * TASK_MANAGER_COMPLETE_SUCCESS

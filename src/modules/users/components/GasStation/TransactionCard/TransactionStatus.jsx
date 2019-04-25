@@ -29,7 +29,7 @@ const MSG = defineMessages({
 });
 
 /**
- * @todo Support multisig status in `TransactionStatus` component
+ * @todo Support multisig status in `TransactionStatus` component.
  */
 type Props = {
   groupCount?: number,

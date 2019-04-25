@@ -41,7 +41,7 @@ export const getGroupStatus = (txGroup: TransactionGroup) => {
   if (txGroup.some(tx => tx.status === 'failed')) return 'failed';
 
   /**
-   * @todo Identify waiting multisig transactions (gas station tx group)
+   * @todo Identify waiting multisig transactions (gas station tx group).
    * @body This might not be how we identify a waiting mulitsig tx
    */
   if (txGroup.some(tx => tx.status === 'multisig')) return 'multisig';

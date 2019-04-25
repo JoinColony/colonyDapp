@@ -161,7 +161,7 @@ export const setUserAvatar: Command<
 });
 
 /**
- * @todo Unpin the avatar when the PinnerConnector supports it
+ * @todo Unpin the avatar when the PinnerConnector supports it.
  */
 export const removeUserAvatar: UserCommand<void, UserProfileStore> = ({
   ddb,

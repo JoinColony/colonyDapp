@@ -81,7 +81,7 @@ const ConditionalWrapper = ({
   user?: {},
 }) => {
   /**
-   * @todo Handle inbox event types dynamically
+   * @todo Handle inbox event types dynamically.
    * @body Make this happen dynamically, we can't create a condition for each inbox event
    */
   if (event === 'actionWorkerInviteReceived') {

@@ -1,7 +1,7 @@
 /* @flow */
 
 /**
- * @todo Migrate low-level transaction/log handling to colonyJS (except event parsers)
+ * @todo Migrate low-level transaction/log handling to colonyJS (except event parsers).
  */
 export * from './blocks';
 export * from './events';

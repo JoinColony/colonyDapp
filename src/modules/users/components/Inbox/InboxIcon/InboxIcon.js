@@ -12,7 +12,7 @@ const enhanced = compose(
     activities: currentUserActivitiesSelector(state),
   })),
   /*
-   * @todo Introduce handled logic for inbox icons
+   * @todo Introduce handled logic for inbox icons.
    */
   // withProps(({ activities }) => ({
   //   hasUnreadActivities: !!(
