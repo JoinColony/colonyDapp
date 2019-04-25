@@ -10,11 +10,11 @@ import { defineMessages } from 'react-intl';
 const messages = defineMessages({
   metaColonyOnly: {
     id: 'dashboard.Inbox.InboxItem.metaColonyOnly',
-    defaultMessage: '{colonyDisplayName}',
+    defaultMessage: '{colonyName}',
   },
   metaColonyAndDomain: {
     id: 'dashboard.Inbox.InboxItem.metaColonyAndDomain',
-    defaultMessage: '{colonyDisplayName} in {domain}',
+    defaultMessage: '{colonyName} in {domain}',
   },
   actionColonyFundingReceived: {
     id: 'dashboard.Inbox.InboxItem.actionColonyFundingReceived',
