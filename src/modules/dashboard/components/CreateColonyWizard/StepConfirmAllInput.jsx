@@ -23,6 +23,7 @@ type FormValues = {
   username: string,
   tokenSymbol: string,
   tokenName: string,
+  tokenIcon: string,
 };
 
 type Props = WizardProps<FormValues>;
@@ -76,6 +77,7 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
     username,
     tokenSymbol,
     tokenName,
+    tokenIcon,
     colonyName,
   } = wizardValues;
   const transform = useCallback(
@@ -84,9 +86,10 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
       displayName,
       colonyName,
       tokenName,
+      tokenIcon,
       tokenSymbol,
     }),
-    [username, displayName, colonyName, tokenName, tokenSymbol],
+    [username, displayName, colonyName, tokenName, tokenIcon, tokenSymbol],
   );
   return (
     <ActionForm

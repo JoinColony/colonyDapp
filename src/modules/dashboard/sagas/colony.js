@@ -12,15 +12,17 @@ import {
   takeLatest,
   select,
 } from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
 
 import type { Action } from '~redux';
+import type { ValidatedKVStore } from '~lib/database/stores';
+import type { UserProfileStoreValues } from '~data/storeValuesTypes';
 
 import {
   putError,
   takeFrom,
   executeCommand,
   executeQuery,
+  selectAsJS,
 } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
@@ -31,6 +33,8 @@ import {
   setColonyAvatar,
   updateColonyProfile,
 } from '../data/commands';
+
+import { createUserProfile } from '../../users/data/commands';
 
 import {
   getColony,
@@ -49,27 +53,101 @@ import { ipfsUpload } from '../../core/sagas/ipfs';
 import { COLONY_CONTEXT } from '../../core/constants';
 import { networkVersionSelector } from '../../core/selectors';
 
+import {
+  currentUserSelector,
+  walletAddressSelector,
+} from '../../users/selectors';
 import { subscribeToColony } from '../../users/actionCreators';
+import { userDidClaimProfile } from '../../users/checks';
 
 import { fetchColony, fetchToken } from '../actionCreators';
 import { colonyAvatarHashSelector } from '../selectors';
 
 import { getColonyContext, getColonyAddress, getColonyName } from './shared';
 
+function* prepareProfileStore(
+  username: string,
+): Saga<ValidatedKVStore<UserProfileStoreValues>> {
+  const walletAddress = yield select(walletAddressSelector);
+  const context = {
+    ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+    metadata: {
+      username,
+      walletAddress,
+    },
+  };
+
+  const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+    context,
+    createUserProfile,
+    {
+      username,
+    },
+  );
+  yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
+    type: ACTIONS.USER_METADATA_SET,
+    payload: {
+      inboxStoreAddress: inboxStore.address.toString(),
+      metadataStoreAddress: metadataStore.address.toString(),
+      profileStoreAddress: profileStore.address.toString(),
+    },
+  });
+  return profileStore;
+}
+
 function* colonyCreate({
   meta,
-  payload: { tokenName, tokenSymbol, colonyName, displayName },
-}: // $FlowFixMe (not an actual action)
-Action<'COLONY_CREATE'>): Saga<void> {
+  payload: {
+    tokenName,
+    tokenSymbol,
+    tokenIcon,
+    colonyName,
+    displayName,
+    username,
+  },
+}: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
+  const currentUser = yield* selectAsJS(currentUserSelector);
+  const usernameCreated = userDidClaimProfile(currentUser);
+
+  /* STEP 1: Create ids to be able to find transactions in their channel */
   const key = 'transaction.batch.createColony';
+  const createUserId = `${meta.id}-createUser`;
   const createTokenId = `${meta.id}-createToken`;
   const createColonyId = `${meta.id}-createColony`;
   const createLabelId = `${meta.id}-createLabel`;
+  const createUserChannel = yield call(getTxChannel, createUserId);
   const createTokenChannel = yield call(getTxChannel, createTokenId);
   const createColonyChannel = yield call(getTxChannel, createColonyId);
   const createLabelChannel = yield call(getTxChannel, createLabelId);
 
+  /* STEP 2: Create all transactions of createColony transactiongroup */
   try {
+    if (!usernameCreated) {
+      yield fork(createTransaction, createUserId, {
+        context: NETWORK_CONTEXT,
+        methodName: 'registerUserLabel',
+        ready: false,
+        params: { username },
+        group: {
+          key,
+          id: meta.id,
+          index: 0,
+        },
+      });
+
+      /*
+       * Create the profile store
+       */
+      const profileStore = yield* prepareProfileStore(username);
+      yield put(
+        transactionAddParams(createUserId, {
+          orbitDBPath: profileStore.address.toString(),
+        }),
+      );
+
+      yield put(transactionReady(createUserId));
+    }
+
     yield fork(createTransaction, createTokenId, {
       context: NETWORK_CONTEXT,
       methodName: 'createToken',
@@ -77,7 +155,7 @@ Action<'COLONY_CREATE'>): Saga<void> {
       group: {
         key,
         id: meta.id,
-        index: 0,
+        index: 1,
       },
     });
 
@@ -88,7 +166,7 @@ Action<'COLONY_CREATE'>): Saga<void> {
       group: {
         key,
         id: meta.id,
-        index: 1,
+        index: 2,
       },
     });
 
@@ -100,20 +178,29 @@ Action<'COLONY_CREATE'>): Saga<void> {
       group: {
         key,
         id: meta.id,
-        index: 2,
+        index: 3,
       },
     });
 
+    /* STEP 3: Notify about creation of each transaction in the group so they can
+    be added to the gas station  */
+    if (!usernameCreated) {
+      yield takeFrom(createUserChannel, ACTIONS.TRANSACTION_CREATED);
+    }
     yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_CREATED);
     yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_CREATED);
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_CREATED);
 
-    // This will be resolved in colonyDapp#978
+    /* STEP 4: Fire success to progress to next wizard step where transactions can get
+    processed  */
     yield put({
       type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
-      payload: '',
+      payload: undefined,
     });
+
+    /* STEP 5: Some transactions require input from the previous transactions
+    pass them through, notify when transaction has succeeded */
 
     const {
       payload: {
@@ -123,6 +210,9 @@ Action<'COLONY_CREATE'>): Saga<void> {
       },
     } = yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
+    /*
+     * Pass through tokenAddress after token creation to colony creation
+     */
     yield put(transactionAddParams(createColonyId, { tokenAddress }));
 
     yield put(transactionReady(createColonyId));
@@ -133,126 +223,58 @@ Action<'COLONY_CREATE'>): Saga<void> {
       },
     } = yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
+    if (!colonyAddress) {
+      yield putError(
+        ACTIONS.COLONY_CREATE_ERROR,
+        new Error('Missing colony address'),
+        meta,
+      );
+    }
+
     /*
      * Create the colony store
      */
-    const context = yield* getColonyContext(colonyAddress);
+    const colonyContext = yield* getColonyContext(colonyAddress);
     const args = {
       colonyAddress,
       colonyName,
       displayName,
       token: {
         address: tokenAddress,
+        icon: tokenIcon ? tokenIcon[0].uploaded.ipfsHash : undefined,
         isNative: true,
         name: tokenName,
         symbol: tokenSymbol,
-        /**
-         * @todo Add missing tokenIcon when creating the colony profile.
-         * @body This should be in the action payload.
-         */
       },
     };
-    const store = yield* executeCommand(context, createColonyProfile, args);
+    const colonyStore = yield* executeCommand(
+      colonyContext,
+      createColonyProfile,
+      args,
+    );
 
     yield put(subscribeToColony(colonyAddress));
 
+    /*
+     * Pass through colonyStore Address after colony store creation to colonyName creation
+     */
     yield put(
       transactionAddParams(createLabelId, {
-        orbitDBPath: store.address.toString(),
+        orbitDBPath: colonyStore.address.toString(),
       }),
     );
-
     yield put(transactionAddIdentifier(createLabelId, colonyAddress));
 
     yield put(transactionReady(createLabelId));
 
     yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
-    yield put(replace(`/colony/${colonyName}`));
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {
+    createUserChannel.close();
     createTokenChannel.close();
     createColonyChannel.close();
     createLabelChannel.close();
-  }
-}
-
-function* colonyCreateLabel({
-  payload: {
-    colonyAddress,
-    colonyName,
-    displayName,
-    tokenAddress,
-    tokenIcon,
-    tokenName,
-    tokenSymbol,
-  },
-  meta,
-}: Action<typeof ACTIONS.COLONY_CREATE_LABEL>): Saga<void> {
-  const context = yield* getColonyContext(colonyAddress);
-  const args = {
-    colonyAddress,
-    colonyName,
-    displayName,
-    token: {
-      address: tokenAddress,
-      icon: tokenIcon,
-      isNative: true,
-      name: tokenName,
-      symbol: tokenSymbol,
-    },
-  };
-
-  /*
-   * Get or create a colony store and save the colony to that store.
-   */
-  const store = yield* executeCommand(context, createColonyProfile, args);
-
-  /*
-   * Subscribe the current user to the colony
-   */
-  yield put(subscribeToColony(colonyAddress));
-
-  const txChannel = yield call(getTxChannel, meta.id);
-
-  try {
-    yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
-      methodName: 'registerColonyLabel',
-      identifier: colonyAddress,
-      params: {
-        colonyName,
-        orbitDBPath: store.address.toString(),
-      },
-    });
-
-    yield put({
-      type: ACTIONS.TRANSACTION_ESTIMATE_GAS,
-      meta,
-    });
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_GAS_UPDATE);
-    yield put({
-      type: ACTIONS.TRANSACTION_SEND,
-      meta,
-    });
-
-    const { payload } = yield takeFrom(
-      txChannel,
-      ACTIONS.TRANSACTION_SUCCEEDED,
-    );
-
-    yield put({
-      type: ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
-      meta,
-      payload,
-    });
-
-    yield put(replace(`/colony/${colonyName}`));
-  } catch (error) {
-    yield putError(ACTIONS.COLONY_CREATE_LABEL_ERROR, error);
-  } finally {
-    txChannel.close();
   }
 }
 
@@ -570,7 +592,6 @@ function* colonyTaskMetadataFetch({
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
-  yield takeEvery(ACTIONS.COLONY_CREATE_LABEL, colonyCreateLabel);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);

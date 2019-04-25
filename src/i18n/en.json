@@ -33,7 +33,7 @@
     "placeholder.password": "Password",
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
-    "transaction.network.registerUserLabel.title": "Your first transaction",
+    "transaction.network.registerUserLabel.title": "Claim Username",
     "transaction.network.registerUserLabel.description": "Confirm Your Username '{username}'",
 
     "transaction.group.createTask.title": "Create Task",
