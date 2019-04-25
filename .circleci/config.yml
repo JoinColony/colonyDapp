@@ -219,11 +219,21 @@ jobs:
   build-and-push-image:
     docker:
       - image: circleci/node:10.12
+    working_directory: ~/colonyDapp
     steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - node-modules-{{ checksum "package.json" }}
+          - node-modules-
       - setup_remote_docker
-      - run: docker build --build-arg hostname=qa.colony.io eu.gcr.io/${PROJECT_NAME}/dapp:$CIRCLE_SHA1 .
+      - run: yarn
+      - run: yarn provision --skip-colony-network-build
+      - run: docker build --build-arg hostname=qa.colony.io -t eu.gcr.io/${PROJECT_NAME}/dapp:$CIRCLE_SHA1 .
       - run: chmod +x ./docker/push_image.sh
       - run: bash ./docker/push_image.sh
+      - run: chmod +x ./docker/gcrgc.sh
+      - run: bash ./docker/gcrgc.sh eu.gcr.io/${PROJECT_NAME}/dapp `date -d "1 week ago" '+%Y-%m-%d'`
 workflows:
   version: 2
   commit:

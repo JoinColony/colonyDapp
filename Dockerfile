@@ -87,6 +87,10 @@ USER root
 RUN mkdir colonyDapp
 COPY ./ ./colonyDapp/
 WORKDIR "/colonyDapp"
+RUN mkdir -p /root/.ssh
+RUN ssh-keyscan github.com >> ~/.ssh/known_hosts
+RUN apt-get -y install openssh-client
+RUN ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa
 RUN yarn
 RUN yarn provision --skip-colony-network-build
 RUN sed -i "s/docker: true,/docker: false,/g" /colonyDapp/src/lib/colonyNetwork/truffle.js
