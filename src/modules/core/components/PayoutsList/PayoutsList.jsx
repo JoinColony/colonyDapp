@@ -31,7 +31,7 @@ const displayName = 'PayoutsList';
 
 const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
   /**
-   * @todo Improve sorting of payouts (payouts list)
+   * @todo Improve sorting of payouts (payouts list).
    */
   const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
     if (a.symbol === nativeToken && b.symbol === 'ETH') {

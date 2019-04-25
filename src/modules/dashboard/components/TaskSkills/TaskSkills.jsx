@@ -60,7 +60,7 @@ const TaskSkills = ({
         });
       } catch (caughtError) {
         /**
-         * @todo Improve error modes for setting the task skill
+         * @todo Improve error modes for setting the task skill.
          */
         log(caughtError);
       }

@@ -147,7 +147,7 @@ Action<'COLONY_CREATE'>): Saga<void> {
         name: tokenName,
         symbol: tokenSymbol,
         /**
-         * @todo Add missing tokenIcon when creating the colony profile
+         * @todo Add missing tokenIcon when creating the colony profile.
          * @body This should be in the action payload.
          */
       },
@@ -264,7 +264,7 @@ function* colonyNameCheckAvailability({
     yield delay(300);
 
     /**
-     * @todo Define `getColonyAddress` query
+     * @todo Define `getColonyAddress` query.
      * @body This should probably be a query at some point, like in `usernameCheckAvailability`.
      */
     const colonyAddress = yield call(getColonyAddress, colonyName);
@@ -332,7 +332,7 @@ function* colonyFetch({
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
     /**
-     * @todo Add error mode for fetching a non-existent colony
+     * @todo Add error mode for fetching a non-existent colony.
      */
     const context = yield* getColonyContext(colonyAddress);
     const payload = yield* executeQuery(context, getColony);

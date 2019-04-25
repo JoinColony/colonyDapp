@@ -23,7 +23,7 @@ export const fetchTaskFeedItems = (
 });
 
 /**
- * @todo Wire up setting the task worker
+ * @todo Wire up setting the task worker.
  */
 export const taskSetWorker = (
   draftId: TaskDraftId,

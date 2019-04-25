@@ -34,7 +34,7 @@ const getReputation = (
 };
 
 /**
- * @todo Use hooks for `TaskClaimReward` and fix rating props
+ * @todo Use hooks for `TaskClaimReward` and fix rating props.
  * @body Get the rating props from a TaskUser record (in state)
  */
 const enhance = compose(

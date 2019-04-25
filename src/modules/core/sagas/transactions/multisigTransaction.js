@@ -130,7 +130,7 @@ export function* rejectMultisigTransaction({
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_REJECT>): Saga<void> {
   try {
     /**
-     * @todo Handle multisig rejection actions
+     * @todo Handle multisig rejection actions.
      * @body Tell the other signees we rejected their sigs :(
      */
   } catch (error) {
@@ -145,7 +145,7 @@ export function* signedMultisigTransaction({
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGNED>): Saga<void> {
   try {
     /**
-     * @todo Handle multisig signing actions
+     * @todo Handle multisig signing actions.
      * @body If there are any remaining required signees, distribute to them
      */
   } catch (error) {

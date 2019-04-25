@@ -28,7 +28,7 @@ export type TaskQueryContext = ContextWithMetadata<
 export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
 
 /**
- * @todo Merge contract events into getTask query
+ * @todo Merge contract events into getTask query.
  */
 // eslint-disable-next-line import/prefer-default-export
 export const getTask: TaskQuery<*, *> = ({
