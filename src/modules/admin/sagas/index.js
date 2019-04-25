@@ -120,7 +120,10 @@ function* colonyUpdateTokens({
   meta,
 }: Action<typeof ACTIONS.COLONY_UPDATE_TOKENS>): Saga<void> {
   try {
-    // TODO: Fetch it from state
+    /*
+     * @todo Consider fetching tokens from state
+     * @body Consider fetching tokens from state instead of executing a query before updating colony tokens
+     */
     const { tokens: currentTokenReferences = {} } = yield* executeQuery(
       getColony,
       {

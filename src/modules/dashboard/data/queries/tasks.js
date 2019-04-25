@@ -11,10 +11,6 @@ import { TASK_EVENT_TYPES } from '~data/constants';
 import { getTaskStore, getTaskStoreAddress } from '~data/stores';
 import { taskReducer } from '../reducers';
 
-/*
- * TODO: There's a confusion around query metadata, store metadata, this is a mess!
- * I need to fix that as well but for now I wanna get c/q ready.
- */
 type TaskStoreMetadata = {| colonyAddress: Address, draftId: TaskDraftId |};
 
 const prepareTaskStoreQuery = async (
@@ -36,8 +32,10 @@ const prepareTaskStoreQuery = async (
   );
 
   /*
-   * TODO: Getters should return a store **ONLY** by address, so we can end this mess. We need a StoreLocator
+   * @todo StoreLocator: Getters should return a store **ONLY** by address
+   * @body Store getters should return a store **ONLY** by address. We need a StoreLocator
    * with resolvers that can infer the address for deterministic address stores so the dapp can get that address easily
+   * That should by #964
    */
   return getTaskStore(colonyClient, ddb, wallet)({
     ...metadata,

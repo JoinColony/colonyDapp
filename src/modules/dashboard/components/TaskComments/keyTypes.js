@@ -1,7 +1,8 @@
 /* @flow */
 
 /*
- * TODO Move this to a global location, once more parts of the dApp use keyboard interactions
+ * @todo Move keyTypes to a global location
+ * @body Move this to a global location, once more parts of the dApp use keyboard interactions
  */
 export const ENTER: string = 'Enter';
 export const AT: string = '@';

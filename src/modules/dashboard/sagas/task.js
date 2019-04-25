@@ -144,7 +144,6 @@ function* taskCreate({
  * @todo Simplify the conversion of `getTask` query results to redux data.
  */
 const getTaskFetchSuccessPayload = (
-  // TODO: Rename draftId to slug?
   { draftId, colonyAddress }: *,
   {
     amountPaid,
@@ -581,7 +580,7 @@ function* taskCommentAdd({
     const walletAddress = yield select(walletAddressSelector);
     const wallet = yield* getContext(CONTEXT.WALLET);
     /*
-     * TODO Wire message signing to the Gas Station, once it's available
+     * @todo Wire message signing to the Gas Station, once it's available
      */
     const signature = yield call([wallet, wallet.signMessage], {
       message: JSON.stringify(commentData),
