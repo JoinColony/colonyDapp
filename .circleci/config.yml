@@ -216,7 +216,14 @@ jobs:
       - run: git config user.email "github@colony.io"
       - run: git config user.name "Colony Superuser"
       - run: yarn styleguide:deploy
-
+  build-and-push-image:
+    docker:
+      - image: circleci/node:10.12
+    steps:
+      - setup_remote_docker
+      - run: docker build --build-arg hostname=qa.colony.io eu.gcr.io/${PROJECT_NAME}/dapp:$CIRCLE_SHA1 .
+      - run: chmod +x ./docker/push_image.sh
+      - run: bash ./docker/push_image.sh
 workflows:
   version: 2
   commit:
@@ -233,6 +240,7 @@ workflows:
           filters:
             branches:
               only: master
+      - build-and-push-image
   nightly:
     triggers:
       - schedule:
