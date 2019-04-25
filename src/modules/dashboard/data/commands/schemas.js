@@ -73,7 +73,7 @@ export const PostCommentCommandArgsSchema = yup.object({
       body: yup.string().required(),
       metadata: yup.object({
         /*
-         * TODO When the time is right, add attachments
+         * @NOTE: When the time is right, add attachments
          */
         mentions: yup.array().of(yup.string().required()),
       }),

@@ -10,8 +10,8 @@ import type { Event } from './types';
 import { VERSION } from './constants';
 
 /*
- * TODO these types aren't fully working! :(
- * The argument of the created function (payload) seems to
+ * @todo createEventCreator types aren't fully working! :(
+ * @body The argument of the created function (payload) seems to
  * not be typed, so we don't know if we're calling the
  * action creators with the right arguments.
  */

@@ -51,8 +51,8 @@ function* domainCreate({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
-     * Create the domain on the colony with a transaction.
-     * TODO idempotency could be improved here by looking for a pending transaction.
+     * @todo Create the domain on the colony with a transaction.
+     * @body Idempotency could be improved here by looking for a pending transaction.
      */
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,

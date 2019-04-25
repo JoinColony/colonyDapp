@@ -61,8 +61,8 @@ import {
 } from './schemas';
 
 /*
- * TODO: There's a confusion around query metadata, store metadata, this is a mess!
- * I need to fix that as well but for now I wanna get c/q ready.
+ * @todo Better wording for metadata and context
+ * @body There's a confusion around query metadata, store metadata, this is a mess!
  */
 type TaskStoreMetadata = {| colonyAddress: Address, draftId: TaskDraftId |};
 type CommentsStoreMetadata = TaskStoreMetadata;
