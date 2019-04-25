@@ -84,7 +84,7 @@ const withDataRecordMap = <S: ImmutableMapType<*, *>, V: *>(
   actionTypes: ActionTypeString | Set<ActionTypeString>,
   initialState: S,
   /*
-   * @todo Remove initialState arg for `withDataRecordMap
+   * @todo Remove initialState arg for `withDataRecordMap.
    */
 ) => (wrappedReducer: DataReducer<S>) => {
   const { fetchTypes, successTypes, errorTypes } = getActionTypes(actionTypes);

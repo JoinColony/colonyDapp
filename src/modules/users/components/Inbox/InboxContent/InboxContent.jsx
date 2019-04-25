@@ -38,7 +38,7 @@ const Inbox = ({ activities }: Props) => (
           text={MSG.title}
         />
         {/*
-         * @todo Handle read/unread notifications (inbox content)
+         * @todo Handle read/unread notifications (inbox content).
          */}
         {/* <Button
           appearance={{ theme: 'blue' }}
@@ -54,7 +54,7 @@ const Inbox = ({ activities }: Props) => (
                 key={activity.id}
                 activity={activity}
                 /*
-                 * @todo Handle read/unread notifications
+                 * @todo Handle read/unread notifications.
                  */
                 // markAsRead={markAsRead}
               />

@@ -99,7 +99,7 @@ class ClaimProfileDialog extends Component<Props> {
         ),
         imageUrl:
           /**
-           * @todo Figure out what to do with inline ETH icon data (claim profile)
+           * @todo Figure out what to do with inline ETH icon data (claim profile).
            * @body Figure out if we'll make this one of our icons
            */
           /* eslint-disable-next-line max-len */

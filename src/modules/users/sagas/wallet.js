@@ -31,7 +31,7 @@ function* fetchAccounts(
   try {
     const wallet = yield call(hardwareWallets[walletType].open, {
       /**
-       * @todo Determine proper `addressCount` for fetching wallet accounts
+       * @todo Determine proper `addressCount` for fetching wallet accounts.
        */
       addressCount: 100,
     });

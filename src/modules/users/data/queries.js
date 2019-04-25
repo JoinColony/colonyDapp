@@ -134,7 +134,7 @@ export const getUserProfile: UserQuery<void, UserProfileType> = ({
 });
 
 /**
- * @todo Merge `getUserMetadata` query with `getUserProfile`
+ * @todo Merge `getUserMetadata` query with `getUserProfile`.
  */
 export const getUserMetadata: UserQuery<void, *> = ({ ddb, metadata }) => ({
   async execute() {
@@ -184,7 +184,7 @@ export const getUserBalance: Query<UserBalanceQueryContext, string, string> = ({
 });
 
 /**
- * @todo Query colony client for recovery mode permission
+ * @todo Query colony client for recovery mode permission.
  * @body Wait for new ColonyJS version and replace with the code below:
  * ```js
  * const canEnterRecoveryMode = await colonyClient.hasUserRole.call({ user: walletAddress, role: RECOVERY_ROLE });
@@ -209,7 +209,7 @@ export const getUserPermissions: UserPermissionsQuery<
 });
 
 /**
- * @todo Use a meaningful value for `blocksBack` when getting past transactions
+ * @todo Use a meaningful value for `blocksBack` when getting past transactions.
  */
 export const getUserColonyTransactions: UserColonyTransactionsQuery<void> = ({
   colonyClient: {
