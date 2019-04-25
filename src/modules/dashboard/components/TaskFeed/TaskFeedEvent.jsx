@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import formatDate from 'sugar-date/date/format';
 
+import type { Address } from '~types';
 import type { TaskFeedItemType } from '~immutable';
 
 import { TASK_EVENT_TYPES } from '~data/constants';
@@ -96,20 +97,21 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  colonyAddress: Address,
   createdAt: Date,
   event: $NonMaybeType<$PropertyType<TaskFeedItemType, 'event'>>,
 |};
 
 const TaskFeedEventDomainSet = ({
+  colonyAddress,
   event: {
     meta: { userAddress },
     payload: { domainId },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
-  const { domainName } = useSelector(domainSelector, [domainId]) || {
-    domainName: 'Example domain',
-  };
+  const { name: domainName } =
+    useSelector(domainSelector, [colonyAddress, domainId]) || {};
   return (
     <FormattedMessage
       {...MSG.domainSet}
@@ -329,11 +331,11 @@ const FEED_EVENT_COMPONENTS = {
   [WORKER_UNASSIGNED]: TaskFeedEventWorkerUnassigned,
 };
 
-const TaskFeedEvent = ({ createdAt, event }: Props) => {
+const TaskFeedEvent = ({ colonyAddress, createdAt, event }: Props) => {
   const FeedEventComponent = FEED_EVENT_COMPONENTS[event.type];
   return (
     <div className={styles.main}>
-      <FeedEventComponent event={event} />
+      <FeedEventComponent event={event} colonyAddress={colonyAddress} />
       &nbsp;
       <TimeRelative value={createdAt} />
     </div>
