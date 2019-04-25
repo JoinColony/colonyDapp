@@ -201,7 +201,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colonyName: colony.colonyName,
+                    colonyName,
                     domain: domainName,
                   }}
                 />
@@ -210,7 +210,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colonyName: colony.colonyName,
+                    colonyName,
                   }}
                 />
               )}
