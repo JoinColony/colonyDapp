@@ -2,9 +2,10 @@
 
 import type { Saga } from 'redux-saga';
 import type { ContractResponse } from '@colony/colony-js-client';
-
 import { call, put, take } from 'redux-saga/effects';
 
+import { ACTIONS } from '~redux';
+import { selectAsJS } from '~utils/saga/effects';
 import type {
   TransactionRecordType,
   TransactionParams,
@@ -20,8 +21,6 @@ import { oneTransaction } from '../../selectors';
 import { getMethod } from '../utils';
 
 import transactionChannel from './transactionChannel';
-import { ACTIONS } from '~redux';
-import { selectAsJS } from '~utils/saga/effects';
 
 /*
  * Given a method and a transaction record, create a promise for sending the
