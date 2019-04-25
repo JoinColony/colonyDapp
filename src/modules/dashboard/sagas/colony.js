@@ -428,6 +428,27 @@ function* colonyCreate({
     );
     yield put(transactionReady(ids.setOldRolesRole));
     yield takeFrom(channels.setOldRolesRole, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    /*
+     * Notification
+     */
+    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
+      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+      payload: {
+        activity: {
+          id: nanoid(),
+          event: 'notificationAdminENSCreated',
+          userAddress: walletAddress,
+          colonyName,
+          colonyAddress,
+          timestamp: new Date(),
+        },
+      },
+      meta: {
+        key: [colonyName],
+        ...meta,
+      },
+    });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {
