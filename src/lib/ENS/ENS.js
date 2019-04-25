@@ -2,6 +2,7 @@
 
 import namehash from 'eth-ens-namehash-ms';
 import { isAddress } from 'web3-utils';
+import punycode from 'punycode';
 
 import type ColonyNetworkClient from '@colony/colony-js-client';
 
@@ -9,12 +10,14 @@ import type { Address, ENSName } from '~types';
 
 import { createAddress } from '~types';
 
-const colonyNetworkENSName =
+const COLONY_NETWORK_ENS_NAME =
   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';
+// FIXME change this
+const EXTERNAL_PREFIX = '?';
 
 class ENS {
   static getFullDomain = (scope: 'user' | 'colony', name: string) =>
-    isAddress(name) ? name : `${name}.${scope}.${colonyNetworkENSName}`;
+    isAddress(name) ? name : `${name}.${scope}.${COLONY_NETWORK_ENS_NAME}`;
 
   _domainCache: Map<string, Address>;
 
@@ -28,10 +31,14 @@ class ENS {
     this._orbitAddressCache = new Map();
   }
 
-  async getAddressForDomain(
+  async _getRawAddress(
     domain: string,
     networkClient: ColonyNetworkClient,
   ): Promise<?Address> {
+    if (this._domainCache.has(domain)) {
+      // The default value is here to satisfy flow.
+      return createAddress(this._domainCache.get(domain) || '');
+    }
     const { ensAddress } = await networkClient.getAddressForENSHash.call({
       nameHash: namehash.hash(domain),
     });
@@ -45,45 +52,10 @@ class ENS {
     return null;
   }
 
-  async isENSNameAvailable(
-    scope: 'user' | 'colony',
-    ensName: ENSName,
-    networkClient: ColonyNetworkClient,
-  ): Promise<boolean> {
-    const domain = this.constructor.getFullDomain(scope, ensName);
-
-    if (this._domainCache.has(domain)) {
-      return false;
-    }
-
-    const address = await this.getAddressForDomain(domain, networkClient);
-
-    return !address;
-  }
-
-  /* Returns an Ethereum address, when given the human-readable name */
-  async getAddress(
-    domain: string,
-    networkClient: ColonyNetworkClient,
-  ): Promise<Address> {
-    if (this._domainCache.has(domain)) {
-      // The default value is here to satisfy flow.
-      return createAddress(this._domainCache.get(domain) || '');
-    }
-
-    const address = await this.getAddressForDomain(domain, networkClient);
-
-    if (!address) {
-      throw new Error(`Address not found for "${domain}"`);
-    }
-
-    return address;
-  }
-
-  async getDomain(
+  async _getRawDomain(
     address: Address,
     networkClient: ColonyNetworkClient,
-  ): Promise<ENSName> {
+  ): Promise<?ENSName> {
     if (this._addressCache.has(address)) {
       // The default value is here to satisfy flow.
       return this._addressCache.get(address) || '';
@@ -95,13 +67,55 @@ class ENS {
       ensAddress: address,
     });
 
-    if (!ensName) {
-      throw new Error(`ENS Name not found for address "${address}"`);
+    if (ensName) {
+      this._updateCaches(ensName, address);
+      return ensName;
     }
 
-    this._updateCaches(ensName, address);
+    return null;
+  }
 
-    return ensName;
+  async isENSNameAvailable(
+    scope: 'user' | 'colony',
+    ensName: ENSName,
+    networkClient: ColonyNetworkClient,
+  ): Promise<boolean> {
+    const domain = this.constructor.getFullDomain(scope, ensName);
+
+    const address = await this._getRawAddress(domain, networkClient);
+    return !address;
+  }
+
+  /* Returns an Ethereum address, when given the human-readable name */
+  async getAddress(
+    domain: string,
+    networkClient: ColonyNetworkClient,
+  ): Promise<Address> {
+    let normalizedDomain = domain;
+    if (domain.startsWith(EXTERNAL_PREFIX)) {
+      normalizedDomain = domain.substr(1);
+    }
+
+    const address = await this._getRawAddress(normalizedDomain, networkClient);
+
+    if (!address) {
+      throw new Error(`Address not found for "${normalizedDomain}"`);
+    }
+
+    return address;
+  }
+
+  async getDomain(
+    address: Address,
+    networkClient: ColonyNetworkClient,
+  ): Promise<ENSName> {
+    const rawDomain = await this._getRawDomain(address, networkClient);
+
+    if (!rawDomain) {
+      throw new Error(`ENS Name not found for address "${address}"`);
+    }
+    const domain = punycode.encode(rawDomain);
+    return rawDomain === domain ? rawDomain : `${EXTERNAL_PREFIX}${domain}`;
   }
 
   async getOrbitDBAddress(
@@ -109,21 +123,26 @@ class ENS {
     networkClient: ColonyNetworkClient,
   ): Promise<?string> {
     const domain = isAddress(addressOrDomain)
-      ? await this.getDomain(createAddress(addressOrDomain), networkClient)
+      ? await this._getRawDomain(createAddress(addressOrDomain), networkClient)
       : addressOrDomain;
 
     if (!domain) return null;
 
-    if (this._orbitAddressCache.has(domain)) {
-      return this._orbitAddressCache.get(domain);
+    let normalizedDomain = domain;
+    if (domain.startsWith(EXTERNAL_PREFIX)) {
+      normalizedDomain = domain.substr(1);
+    }
+
+    if (this._orbitAddressCache.has(normalizedDomain)) {
+      return this._orbitAddressCache.get(normalizedDomain);
     }
 
     const { orbitDBAddress } = await networkClient.getProfileDBAddress.call({
-      nameHash: namehash.hash(domain),
+      nameHash: namehash.hash(normalizedDomain),
     });
 
     if (orbitDBAddress) {
-      this._orbitAddressCache.set(domain, orbitDBAddress);
+      this._orbitAddressCache.set(normalizedDomain, orbitDBAddress);
     }
 
     return orbitDBAddress;
@@ -136,3 +155,4 @@ class ENS {
 }
 
 export default ENS;
+

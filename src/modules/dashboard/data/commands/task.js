@@ -336,6 +336,8 @@ export const postComment: Command<
        */
       author: Address,
       body: string,
+      // FIXME can I ask why the metadata is in the content here? Maybe not
+      // call it metadata? It's super confusing.
       metadata?: {|
         mentions: string[],
       |},
