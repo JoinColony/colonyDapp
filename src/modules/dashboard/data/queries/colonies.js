@@ -105,7 +105,7 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
       colonyClient,
       {},
       {
-        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+        blocksBack: 400000,
         events: [
           ColonyFundsClaimed,
           ColonyFundsMovedBetweenFundingPots,
@@ -143,7 +143,6 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
   colonyClient,
 }) => ({
   async execute() {
-    // TODO use a more meaningful value for blocksBack
     const blocksBack = 400000;
 
     // Get logs & events for token transfer to this colony
@@ -190,7 +189,7 @@ export const getColonyRoles: ColonyContractRolesEventQuery<
       colonyClient,
       {},
       {
-        blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+        blocksBack: 400000,
         events: [
           colonyClient.events.ColonyAdminRoleRemoved,
           colonyClient.events.ColonyAdminRoleSet,
@@ -220,6 +219,9 @@ export const getColonyRoles: ColonyContractRolesEventQuery<
   },
 });
 
+/**
+ * @todo Get the right defaults for data reducers based on the redux data
+ */
 export const getColony: ColonyQuery<void, ColonyType> = ({
   ddb,
   colonyClient,
@@ -237,23 +239,19 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-      .reduce(
-        colonyReducer,
-        // TODO: Add the right defaults here using a data model or something like that
-        {
-          avatarHash: undefined,
-          colonyAddress,
-          colonyName: '',
-          displayName: '',
-          inRecoveryMode,
-          tokens: {
-            // also include Ether
-            [ZERO_ADDRESS]: {
-              address: ZERO_ADDRESS,
-            },
+      .reduce(colonyReducer, {
+        avatarHash: undefined,
+        colonyAddress,
+        colonyName: '',
+        displayName: '',
+        inRecoveryMode,
+        tokens: {
+          // also include Ether
+          [ZERO_ADDRESS]: {
+            address: ZERO_ADDRESS,
           },
         },
-      );
+      });
   },
 });
 

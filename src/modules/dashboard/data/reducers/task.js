@@ -24,27 +24,6 @@ const {
 
 // eslint-disable-next-line import/prefer-default-export
 export const taskReducer: EventReducer<
-  // TODO flow types, mo problems - should be fixed in #965
-  // {|
-  //   amountPaid: string,
-  //   commentsStoreAddress: string,
-  //   createdAt: Date,
-  //   creator: string,
-  //   description: string,
-  //   domainId: number,
-  //   draftId: string,
-  //   dueDate: Date,
-  //   finalizedAt: Date,
-  //   invites: Array<*>,
-  //   paymentId: number,
-  //   paymentToken: string,
-  //   payout: string,
-  //   requests: Array<*>,
-  //   skillId: number,
-  //   status: string,
-  //   title: string,
-  //   worker: string,
-  // |},
   Object,
   {|
     COMMENT_STORE_CREATED: *,

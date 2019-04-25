@@ -4,7 +4,9 @@ import nanoid from 'nanoid';
 
 import type { Event } from './types';
 
-// TODO: we should find a better solution for it :(
+/**
+ * @todo : we should find a better solution for it :(
+ */
 import { VERSION } from './constants';
 
 /*

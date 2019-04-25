@@ -7,7 +7,7 @@ import type { IdentityProvider } from './types';
 import Keystore from './Keystore';
 import PurserIdentity from './PurserIdentity';
 
-// TODO: Use actual type for common wallet interface
+// Ideally, we should use the actual type for the common wallet interface
 type PurserWallet = WalletObjectType;
 type Options = {};
 type ProviderType = 'ethereum';
@@ -23,7 +23,10 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
 
   constructor(purserWallet: PurserWallet, options: Options = {}) {
     this._type = PROVIDER_TYPE;
-    // TODO: Make sure wallet is unlocked when creating an identity
+
+    /**
+     * @todo : Make sure wallet is unlocked when creating an identity
+     */
     this._purserWallet = purserWallet;
     this._options = options;
   }

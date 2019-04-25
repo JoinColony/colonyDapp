@@ -58,9 +58,11 @@ const TaskSkills = ({
           draftId,
           skillId: skillValue.id,
         });
-      } catch (error) {
-        // TODO: handle this error properly / display it in some way
-        log(error);
+      } catch (caughtError) {
+        /**
+         * @todo Improve error modes for setting the task skill
+         */
+        log(caughtError);
       }
     },
     [colonyAddress, draftId, setSkill],

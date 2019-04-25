@@ -51,6 +51,4 @@ describe('Store (KVStore)', () => {
       expect.any(Function),
     );
   });
-
-  // TODO: More tests once we validated our assumptions
 });

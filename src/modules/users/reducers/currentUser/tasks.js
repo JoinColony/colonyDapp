@@ -17,7 +17,9 @@ type Actions = {
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: *,
 };
 
-// TODO in #755 (user logout) unset this state
+/**
+ * @todo  in #755 (user logout) unset this state
+ */
 const currentUserTasksReducer: ReducerType<State, Actions> = (
   state = DataRecord(),
   action,

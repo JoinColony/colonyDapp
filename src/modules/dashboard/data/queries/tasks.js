@@ -27,7 +27,9 @@ export type TaskQueryContext = ContextWithMetadata<
 
 export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
 
-// TODO: We should be able to merge contract events here as well
+/**
+ * @todo Merge contract events into getTask query
+ */
 // eslint-disable-next-line import/prefer-default-export
 export const getTask: TaskQuery<*, *> = ({
   ddb,
@@ -47,14 +49,15 @@ export const getTask: TaskQuery<*, *> = ({
       .all()
       .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
       .reduce(taskReducer, {
-        // TODO get these defaults from some model elsewhere? See #965
         amountPaid: undefined,
-        commentsStoreAddress: '', // XXX Just to appease flow; it'll be there
+        // $MeFixFlow
+        commentsStoreAddress: '',
         createdAt: undefined,
         creatorAddress: undefined,
         description: undefined,
         domainId: undefined,
-        draftId: '', // XXX Just to appease flow; it'll be there
+        // $MeFixFlow
+        draftId: '',
         dueDate: undefined,
         finalizedAt: undefined,
         invites: [],

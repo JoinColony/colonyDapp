@@ -56,7 +56,7 @@ const GroupedTransaction = ({
               values={values.params}
             />
           </div>
-          {/* TODO-multisig: we have to pass in _something_ */}
+          {/* For multisig, we have to pass in _something_ */}
           <TransactionStatus
             groupCount={transactionGroup.length}
             status={status}

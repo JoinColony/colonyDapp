@@ -6,7 +6,9 @@ import type { TaskDraftId } from '~immutable';
 import { EventStore } from '../../lib/database/stores';
 import { getTaskStoreAccessController } from '../accessControllers';
 
-// TODO: We should type store props!
+/**
+ * @todo : We should type store props!
+ */
 const taskStoreBlueprint: StoreBlueprint = {
   getAccessController: getTaskStoreAccessController,
   getName: ({

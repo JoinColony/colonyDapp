@@ -133,7 +133,9 @@ export const getUserProfile: UserQuery<void, UserProfileType> = ({
   },
 });
 
-// TODO consider merging this query with `getUserProfile`
+/**
+ * @todo Merge `getUserMetadata` query with `getUserProfile`
+ */
 export const getUserMetadata: UserQuery<void, *> = ({ ddb, metadata }) => ({
   async execute() {
     const profileStore = await getUserProfileStore(ddb)(metadata);
@@ -181,16 +183,18 @@ export const getUserBalance: Query<UserBalanceQueryContext, string, string> = ({
   },
 });
 
+/**
+ * @todo Query colony client for recovery mode permission
+ * @body Wait for new ColonyJS version and replace with the code below:
+ * ```js
+ * const canEnterRecoveryMode = await colonyClient.hasUserRole.call({ user: walletAddress, role: RECOVERY_ROLE });
+ * ```
+ */
 export const getUserPermissions: UserPermissionsQuery<
   string,
   UserPermissionsType,
 > = ({ colonyClient }) => ({
   async execute(walletAddress) {
-    // TODO: Wait for new ColonyJS version and replace with the code below
-    // const canEnterRecoveryMode = await colonyClient.hasUserRole.call({
-    //   user: walletAddress,
-    //   role: RECOVERY_ROLE,
-    // });
     const canEnterRecoveryMode = false;
     const isAdmin = await colonyClient.hasUserRole.call({
       user: walletAddress,
@@ -204,6 +208,9 @@ export const getUserPermissions: UserPermissionsQuery<
   },
 });
 
+/**
+ * @todo Use a meaningful value for `blocksBack` when getting past transactions
+ */
 export const getUserColonyTransactions: UserColonyTransactionsQuery<void> = ({
   colonyClient: {
     tokenClient: {
@@ -215,7 +222,7 @@ export const getUserColonyTransactions: UserColonyTransactionsQuery<void> = ({
 }) => ({
   async execute() {
     const logFilterOptions = {
-      blocksBack: 400000, // TODO use a more meaningful value for blocksBack
+      blocksBack: 400000,
       events: [Transfer],
     };
 

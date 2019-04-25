@@ -28,7 +28,8 @@ function equalTo(ref, msg) {
 
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
-// TODO: this should accept a TokenReference
+
+// This should accept a TokenReference
 function lessThanPot(availableTokens: Array<TokenType>, msg) {
   return this.test({
     name: 'lessThanPot',

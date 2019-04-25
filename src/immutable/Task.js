@@ -11,9 +11,21 @@ import type { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
 
 export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 
-// TODO support full task workflow:
-// export type TaskRating = 1 | 2 | 3;
-
+/**
+ * @todo Support full task workflow for ratings
+ */
+/**
+ * @todo Support full task workflow for specificationHash
+ */
+/**
+ * @todo Support full task workflow for taskId
+ */
+/**
+ * @todo Support full task workflow for reputation
+ */
+/**
+ * @todo Support full task workflow for evaluator
+ */
 type Shared = {|
   colonyAddress: Address,
   createdAt: Date,
@@ -28,8 +40,6 @@ type Shared = {|
   skillId?: number,
   title?: string,
   workerAddress: Address,
-  // TODO support full task workflow:
-  // reputation: number,
   // specificationHash?: string,
   // taskId?: number, // On-chain ID, when the task is all grown up :'-)
 |};
@@ -39,8 +49,6 @@ export type TaskType = $ReadOnly<{|
   invites: Address[],
   payouts: TaskPayoutType[],
   requests: Address[],
-  // TODO support full task workflow:
-  // evaluator?: TaskUserType,
 |}>;
 
 type TaskRecordProps = {|
@@ -48,8 +56,6 @@ type TaskRecordProps = {|
   invites: ImmutableSet<Address>,
   payouts: List<TaskPayoutRecordType>,
   requests: ImmutableSet<Address>,
-  // TODO support full task workflow:
-  // evaluator?: TaskUserRecordType,
 |};
 
 export type TaskProps<T> = $Pick<TaskType, $Exact<T>>;
@@ -57,9 +63,6 @@ export type TaskProps<T> = $Pick<TaskType, $Exact<T>>;
 export type TaskRecordType = RecordOf<TaskRecordProps>;
 
 export type TaskDraftId = $PropertyType<TaskRecordType, 'draftId'>;
-
-// TODO support full task workflow:
-// export type TaskId = $PropertyType<TaskRecordType, 'taskId'>;
 
 const defaultValues: $Shape<TaskRecordProps> = {
   colonyAddress: undefined,

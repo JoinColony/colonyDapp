@@ -47,7 +47,10 @@ class DDB {
     { getAccessController }: StoreBlueprint,
     storeProps?: Object,
   ) {
-    // TODO: Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
+    /**
+     * @todo Remove fallback for DDB store props
+     * @body Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
+     */
     const accessController = getAccessController
       ? getAccessController(storeProps || {})
       : new PermissiveAccessController();
@@ -74,9 +77,11 @@ class DDB {
     this._identityProvider = identityProvider;
   }
 
+  /**
+   * @todo Optimise `DDB.busy` getter for open stores
+   * @body An improvement can be made if we limit the stores to the ones that are open (once we actually close stores) This eslint rule doesn't make much sense in this case
+   */
   get busy() {
-    // TODO: An improvement can be made if we limit the stores to the ones that are open (once we actually close stores)
-    // This eslint rule doesn't make much sense in this case
     // eslint-disable-next-line no-restricted-syntax
     for (const [, store] of this._stores) {
       if (store.busy) return true;
@@ -241,7 +246,10 @@ class DDB {
   // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e
   async storeExists(identifier: StoreIdentifier): Promise<boolean> {
     const address = await this._getStoreAddress(identifier);
-    // TODO This should actually throw an error
+    /**
+     * @todo Fix `DDB.storeExists` error modes
+     * @body If there's no address, it should return an error. Also, this method is unused...
+     */
     if (!address) return false;
     // eslint-disable-next-line no-underscore-dangle
     const cache = await this._orbitNode._loadCache(
@@ -286,8 +294,9 @@ class DDB {
     const ipfs = this._ipfsNode.getIPFS();
 
     this._orbitNode = new OrbitDB(ipfs, identity, {
-      // TODO: is there a case where this could not be the default?
-      // TODO should this be a constant, or configurable? and `colonyOrbitDB`?
+      /**
+       * @todo : is there a case where this could not be the default? TODO should this be a constant, or configurable? and `colonyOrbitDB`?
+       */
       path: 'colonyOrbitdb',
     });
   }

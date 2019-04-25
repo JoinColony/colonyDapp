@@ -56,7 +56,7 @@ class TransactionCard extends Component<Props> {
                 values={values.params}
               />
             </div>
-            {/* TODO-multisig: how do we pass it in here? */}
+            {/* For multisig, how do we pass it in here? */}
             <TransactionStatus
               groupCount={transactionGroup.length}
               multisig={{}}

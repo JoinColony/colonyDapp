@@ -284,7 +284,9 @@ function* usernameCreate({
       },
     };
 
-    // TODO should these stores be created after the transaction succeeded?
+    /**
+     * @todo  should these stores be created after the transaction succeeded?
+     */
     const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
       context,
       createUserProfile,

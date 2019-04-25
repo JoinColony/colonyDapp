@@ -15,7 +15,8 @@ const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
     [iconHash],
     [iconHash],
   );
-  // TODO: this is needed for flow for some reason (terrible)
+
+  // This is needed for flow for some reason (terrible)
   const iconURL = data || undefined;
   return <TokenIcon token={token} iconURL={iconURL} {...props} />;
 };

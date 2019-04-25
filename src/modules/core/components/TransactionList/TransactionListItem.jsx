@@ -98,7 +98,9 @@ const TransactionListItem = ({
   );
 
   if (!user || isFetching) {
-    // TODO: ideally we would like to show some sort of loader
+    /**
+     * @todo : ideally we would like to show some sort of loader
+     */
     return null;
   }
 
@@ -160,7 +162,9 @@ const TransactionListItem = ({
           value={amount}
           unit="ether"
           decimals={1}
-          // TODO: what should we show when we don't recognise the token?
+          /**
+           * @todo : what should we show when we don't recognise the token?
+           */
           suffix={` ${token ? token.symbol : '???'}`}
         />
       </TableCell>

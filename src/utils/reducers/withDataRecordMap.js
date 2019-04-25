@@ -82,7 +82,10 @@ const handleError = <S: ImmutableMapType<*, *>, V: *>(
  */
 const withDataRecordMap = <S: ImmutableMapType<*, *>, V: *>(
   actionTypes: ActionTypeString | Set<ActionTypeString>,
-  initialState: S, // TODO see if this can be removed
+  initialState: S,
+  /*
+   * @todo Remove initialState arg for `withDataRecordMap
+   */
 ) => (wrappedReducer: DataReducer<S>) => {
   const { fetchTypes, successTypes, errorTypes } = getActionTypes(actionTypes);
 

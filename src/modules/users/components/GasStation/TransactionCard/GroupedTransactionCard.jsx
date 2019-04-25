@@ -144,7 +144,7 @@ class GroupedTransactionCard extends Component<Props, State> {
         {canBeSigned ? (
           this.renderCancel()
         ) : (
-          // TODO-multisig: pass proper multisig prop here
+          // multisig: pass proper multisig prop here
           <TransactionStatus status={status} multisig={{}} />
         )}
       </li>

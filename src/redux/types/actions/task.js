@@ -56,6 +56,30 @@ type NonUniqueTaskActionType<T, P> = ActionTypeWithPayloadAndMeta<
 
 type TaskErrorActionType<T> = ErrorActionType<T, TaskActionMeta>;
 
+/**
+ * @todo Define missing task action payload types
+ * @body These are:
+ * TASK_MANAGER_COMPLETE
+ * TASK_MANAGER_COMPLETE_SUCCESS
+ * TASK_MANAGER_END
+ * TASK_MANAGER_END_SUCCESS
+ * TASK_MANAGER_RATE_WORKER
+ * TASK_MANAGER_RATE_WORKER_SUCCESS
+ * TASK_MANAGER_REVEAL_WORKER_RATING
+ * TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS
+ * TASK_MODIFY_WORKER_PAYOUT
+ * TASK_MODIFY_WORKER_PAYOUT_SUCCESS
+ * TASK_SUBMIT_DELIVERABLE
+ * TASK_SUBMIT_DELIVERABLE_SUCCESS
+ * TASK_WORKER_CLAIM_REWARD
+ * TASK_WORKER_CLAIM_REWARD_SUCCESS
+ * TASK_WORKER_END
+ * TASK_WORKER_END_SUCCESS
+ * TASK_WORKER_RATE_MANAGER
+ * TASK_WORKER_RATE_MANAGER_SUCCESS
+ * TASK_WORKER_REVEAL_MANAGER_RATING
+ * TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS
+ */
 export type TaskActionTypes = {|
   TASK_CANCEL: TaskActionType<typeof ACTIONS.TASK_CANCEL, void>,
   TASK_CANCEL_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_CANCEL_ERROR>,
@@ -130,58 +154,55 @@ export type TaskActionTypes = {|
   >,
   TASK_MANAGER_COMPLETE: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MANAGER_COMPLETE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE_ERROR,
   >,
   TASK_MANAGER_COMPLETE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_COMPLETE_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
-  TASK_MANAGER_END: TaskActionType<
-    typeof ACTIONS.TASK_MANAGER_END,
-    void, // TODO define the payload
-  >,
+  TASK_MANAGER_END: TaskActionType<typeof ACTIONS.TASK_MANAGER_END, void>,
   TASK_MANAGER_END_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_END_ERROR,
   >,
   TASK_MANAGER_END_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_END_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MANAGER_RATE_WORKER: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MANAGER_RATE_WORKER_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER_ERROR,
   >,
   TASK_MANAGER_RATE_WORKER_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_RATE_WORKER_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MANAGER_REVEAL_WORKER_RATING: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MANAGER_REVEAL_WORKER_RATING_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_ERROR,
   >,
   TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MODIFY_WORKER_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT,
-    void, // TODO define the payload
+    void,
   >,
   TASK_MODIFY_WORKER_PAYOUT_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_ERROR,
   >,
   TASK_MODIFY_WORKER_PAYOUT_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_SEND_WORK_INVITE: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE,
@@ -273,14 +294,14 @@ export type TaskActionTypes = {|
   >,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
-    void, // TODO define the payload
+    void,
   >,
   TASK_SUBMIT_DELIVERABLE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_ERROR,
   >,
   TASK_SUBMIT_DELIVERABLE_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_ASSIGN: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_ASSIGN,
@@ -295,47 +316,44 @@ export type TaskActionTypes = {|
   >,
   TASK_WORKER_CLAIM_REWARD: TaskActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_CLAIM_REWARD_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD_ERROR,
   >,
   TASK_WORKER_CLAIM_REWARD_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_CLAIM_REWARD_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
-  TASK_WORKER_END: TaskActionType<
-    typeof ACTIONS.TASK_WORKER_END,
-    void, // TODO define the payload
-  >,
+  TASK_WORKER_END: TaskActionType<typeof ACTIONS.TASK_WORKER_END, void>,
   TASK_WORKER_END_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_END_ERROR,
   >,
   TASK_WORKER_END_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_END_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_RATE_MANAGER: TaskActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_RATE_MANAGER_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER_ERROR,
   >,
   TASK_WORKER_RATE_MANAGER_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_RATE_MANAGER_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_REVEAL_MANAGER_RATING: TaskActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_REVEAL_MANAGER_RATING_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_ERROR,
   >,
   TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
-    void, // TODO define the payload
+    void,
   >,
   TASK_WORKER_UNASSIGN: TaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN,

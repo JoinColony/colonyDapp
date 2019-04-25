@@ -92,7 +92,9 @@ class IPFSNode {
   async waitForSomePeers(): Promise<IPFSPeer[]> {
     let peers: ?(IPFSPeer[]) = await this.getPeers();
 
-    // TODO: in offline mode this would go into an infinite loop.
+    /**
+     * @todo : in offline mode this would go into an infinite loop.
+     */
     while (!peers || !peers.length) {
       /* eslint-disable no-await-in-loop */
       await sleep(500);

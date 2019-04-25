@@ -97,7 +97,7 @@ const Organizations = ({ colonyAddress }: Props) => {
           <div className={styles.sectionWrapper}>
             <OrganizationAddAdmins
               /*
-               * @TODO Add *real* user data
+               * @todo Add *real* user data
                * Once we have a way to _discover_ users that interacted with the current colony,
                * and which can be made admins
                */

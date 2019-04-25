@@ -115,7 +115,7 @@ const TokenSelector = ({
         return;
       }
       // For a valid address, attempt to load token info.
-      // XXX this is setting state during `componentDidUpdate`, which is
+      // This is setting state during `componentDidUpdate`, which is
       // generally a bad idea, but we are guarding against it by checking the
       // state first.
       setLoading(true);
@@ -138,7 +138,9 @@ const TokenSelector = ({
   );
 
   return (
-    // TODO: I feel like this should be a custom input component at some point, that'd spare us a lot of hassle
+    /**
+     * @todo : I feel like this should be a custom input component at some point, that'd spare us a lot of hassle
+     */
     <div className={styles.main}>
       <Input
         name="tokenAddress"

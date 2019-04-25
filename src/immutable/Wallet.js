@@ -7,7 +7,7 @@ import { Record } from 'immutable';
 import type { Address } from '~types';
 
 export type WalletProps = {|
-  availableAddresses?: Address[], // TODO use List?
+  availableAddresses?: Address[],
   currentAddress?: Address,
   isLoading: boolean,
 |};

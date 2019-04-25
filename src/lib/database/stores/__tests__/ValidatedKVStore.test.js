@@ -107,6 +107,4 @@ describe('ValidatedKVStore', () => {
       expect(error.toString()).toMatch('this is a required field');
     }
   });
-
-  // TODO test: all(), append(), set()
 });

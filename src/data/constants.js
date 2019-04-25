@@ -27,7 +27,6 @@ export const TASK_EVENT_TYPES = Object.freeze({
   WORKER_UNASSIGNED: 'WORKER_UNASSIGNED',
 });
 
-// TODO: Add inbox event types
 export const USER_EVENT_TYPES = Object.freeze({
   READ_UNTIL: 'READ_UNTIL',
   SUBSCRIBED_TO_COLONY: 'SUBSCRIBED_TO_COLONY',

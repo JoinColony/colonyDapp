@@ -6,14 +6,14 @@ import { Record } from 'immutable';
 
 import type { Address } from '~types';
 
+/**
+ * @todo Fix Token record required props
+ * @body `decimals` should be a required BigBumber, `name` and `symbol` should be optional.
+ */
 type Shared = {|
   address: Address,
-  // TODO: this should be required
-  // TODO: this should be BN
   decimals?: number,
-  // TODO: this should be optional
   name: string,
-  // TODO: this should be optional
   symbol: string,
 |};
 

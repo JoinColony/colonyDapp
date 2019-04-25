@@ -39,7 +39,11 @@ export const getGroupValues = (txGroup: TransactionGroup) =>
 // Get the joint status of the group
 export const getGroupStatus = (txGroup: TransactionGroup) => {
   if (txGroup.some(tx => tx.status === 'failed')) return 'failed';
-  // TODO-multisig this might not be how we identify a waiting mulitsig tx
+
+  /**
+   * @todo Identify waiting multisig transactions (gas station tx group)
+   * @body This might not be how we identify a waiting mulitsig tx
+   */
   if (txGroup.some(tx => tx.status === 'multisig')) return 'multisig';
   if (txGroup.some(tx => tx.status === 'pending')) return 'pending';
   if (txGroup.every(tx => tx.status === 'succeeded')) return 'succeeded';

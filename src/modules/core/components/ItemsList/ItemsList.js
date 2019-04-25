@@ -33,7 +33,7 @@ type PartialProps = {
   title?: MessageDescriptor | string,
 };
 
-// TODO ensure mapped IDs are unique in #1041
+// Ensure mapped IDs are unique in #1041
 const enhance: HOC<*, PartialProps> = compose(
   withProps(
     ({ list = [], itemDisplayPrefix, itemDisplaySuffix }: PartialProps) => {

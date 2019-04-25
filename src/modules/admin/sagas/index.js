@@ -146,7 +146,10 @@ function* colonyUpdateTokens({
     yield* executeCommand(context, updateTokenInfo, {
       tokens,
     });
-    yield put(fetchColony(colonyAddress)); // TODO: just fetch tokens
+    yield put(fetchColony(colonyAddress));
+
+    // We could consider dispatching an action to fetch tokens when
+    // successfully updating them
     yield put({ type: ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS, payload });
   } catch (error) {
     yield putError(ACTIONS.COLONY_UPDATE_TOKENS_ERROR, error, meta);

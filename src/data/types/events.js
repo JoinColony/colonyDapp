@@ -44,7 +44,7 @@ export type EventsType = {|
 |};
 
 export type EventTypeString = $Keys<{|
-  // XXX This is a workaround for the `createEventCreator` typing;
+  // This is a workaround for the `createEventCreator` typing;
   // we need this to be an indexed object, but `EventsType` should not
   // have an indexer property because we need to check it against the
   // event types constant to make sure all event types match up.

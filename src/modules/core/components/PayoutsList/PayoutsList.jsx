@@ -30,7 +30,9 @@ type Props = {|
 const displayName = 'PayoutsList';
 
 const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
-  /* TODO: there is probably a better way to sort this. We can do better! */
+  /**
+   * @todo Improve sorting of payouts (payouts list)
+   */
   const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
     if (a.symbol === nativeToken && b.symbol === 'ETH') {
       return -1;

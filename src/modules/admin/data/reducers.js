@@ -44,6 +44,7 @@ export const colonyTasksReducer: EventReducer<
   }
 };
 
+// This is unused
 export const colonyReducer: EventReducer<
   ColonyType,
   {|
@@ -66,7 +67,6 @@ export const colonyReducer: EventReducer<
       };
     }
     case AVATAR_UPLOADED: {
-      // TODO: Make avatar an object so we have the ipfsHash and data
       const { ipfsHash } = event.payload;
       return {
         ...colony,

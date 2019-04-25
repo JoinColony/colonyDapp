@@ -34,7 +34,6 @@ const UserProfile = ({
     [username],
   );
 
-  // TODO: fetch colony addresses for the user we're viewing
   const colonyAddresses = [];
 
   if (!user || isFetching) return <UserProfileSpinner />;

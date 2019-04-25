@@ -6,7 +6,9 @@ import { ACTIONS } from '~redux';
 import type { UserMetadataRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
 
-// TODO in #755 (user logout) unset this state
+/**
+ * @todo  in #755 (user logout) unset this state
+ */
 const currentUserMetadataReducer: ReducerType<
   UserMetadataRecordType,
   {|

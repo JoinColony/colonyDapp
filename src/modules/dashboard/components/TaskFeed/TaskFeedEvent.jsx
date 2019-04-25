@@ -47,7 +47,7 @@ const MSG = defineMessages({
   },
   payoutSet: {
     id: 'dashboard.TaskFeedEvent.payoutSet',
-    defaultMessage: 'Task payout added by {user}', // TODO add other text in #943
+    defaultMessage: 'Task payout added by {user}', // Add other text in #943
   },
   skillSet: {
     id: 'dashboard.TaskFeedEvent.skillSet',
@@ -108,8 +108,6 @@ const TaskFeedEventDomainSet = ({
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   const { domainName } = useSelector(domainSelector, [domainId]) || {
-    // TODO do not fall back to this, use a data fetcher when the domain
-    // modal is wired up properly
     domainName: 'Example domain',
   };
   return (
@@ -155,7 +153,7 @@ const TaskFeedEventDueDateSet = ({
 const TaskFeedEventPayoutSet = ({
   event: {
     meta: { userAddress },
-    // TODO use more from payload in #943
+    // Use more from the action payload in #943
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);

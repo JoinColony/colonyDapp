@@ -76,7 +76,10 @@ class AvatarUploadItem extends Component<Props> {
       await upload(readFile);
     } catch (e) {
       log(e);
-      // TODO better error handling here
+
+      /**
+       * @todo Improve error modes for uploading avatars
+       */
       setValue({ ...$value, error: 'uploadError' });
     }
     // After successfully uploading the file we'd like to immediately remove it again.

@@ -28,12 +28,13 @@ const MSG = defineMessages({
   },
 });
 
+/**
+ * @todo Support multisig status in `TransactionStatus` component
+ */
 type Props = {
   groupCount?: number,
   hash?: string,
   status: $PropertyType<TransactionType<*, *>, 'status'>,
-  // TODO-multisig See below
-  // multisig: $PropertyType<TransactionType<*, *>, 'multisig'>,
 };
 
 const displayName = 'users.GasStation.TransactionStatus';
@@ -101,7 +102,6 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
             />
           </div>
         )}
-        {/* TODO-multisig There is no multisig status (yet) */}
         {status === 'multisig' && <span className={styles.multisig} />}
         {status === 'failed' && <span className={styles.failed}>!</span>}
       </div>

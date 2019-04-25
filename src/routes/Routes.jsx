@@ -130,7 +130,7 @@ const RoutesContainer = connect(
   null,
 )(Routes);
 
-// XXX we need `withRouter` here because (surprisingly) react-router-dom is not
+// We need `withRouter` here because (surprisingly) react-router-dom is not
 // using the router context property (available to e.g. each `Switch`):
 // https://github.com/ReactTraining/react-router/issues/4671
 // We are using `withRouter` to get around `connect()`'s `shouldComponentUpdate`

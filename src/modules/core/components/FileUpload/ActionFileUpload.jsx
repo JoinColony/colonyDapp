@@ -8,7 +8,9 @@ import FileUpload from './FileUpload.jsx';
 
 import type { ActionTransformFnType } from '~utils/actions';
 
-// TODO if this object is sealed, there are unspecified props being used
+/**
+ * @todo  if this object is sealed, there are unspecified props being used
+ */
 type Props = {
   submit: string,
   success: string,

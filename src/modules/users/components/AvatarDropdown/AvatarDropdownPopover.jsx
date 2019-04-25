@@ -52,8 +52,6 @@ const MSG = defineMessages({
   },
 });
 
-// TODO this can't be made exact because of withConsumerFactory
-// (inexact Object). Maybe try a generic for props there?
 type Props = {
   closePopover: () => void,
   user: UserType,

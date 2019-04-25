@@ -11,6 +11,7 @@ module.exports = {
     'eslint-config-airbnb/rules/react-a11y',
   ],
   plugins: [
+    'jsdoc',
     'react-hooks',
   ],
   overrides: [
@@ -102,6 +103,10 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
+
+    // Disallow TODO but not @todo; these are expected to be handled by the jsdoc plugin
+    'no-warning-comments': ['error', { terms: ['fixme', 'todo', 'xxx', '@fixme'], location: 'start' }],
+    'jsdoc/check-indentation': 1,
   },
   settings: {
     'import/resolver': {

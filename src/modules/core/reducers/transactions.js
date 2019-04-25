@@ -122,7 +122,7 @@ const coreTransactionsReducer: ReducerType<
         payload,
       } = action;
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], fromJS(payload));
-      // TODO: do we want an 'estimated' state for TX?
+      // Do we want an 'estimated' state for TX?
     }
     case ACTIONS.TRANSACTION_SENT: {
       const {

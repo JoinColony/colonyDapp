@@ -34,7 +34,7 @@ type Props = {|
 const displayName = 'ActivityFeed';
 
 const ActivityFeed = ({ activities }: Props) => (
-  // TODO remove this `div.main` and associated styles once it's actually implemented
+  // Remove this `div.main` and associated styles once it's actually implemented
   <div className={styles.main}>
     <Table>
       <TableHeader>

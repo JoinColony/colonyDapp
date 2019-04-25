@@ -77,7 +77,10 @@ class PinnerConnector extends EventEmitter {
 
   async _handleNewPeer(peer: string) {
     // If no pinner id was given, everyone can be the pinner! Definitely not recommended.
-    // TODO: In the future, we can maintain multiple ids here
+
+    /**
+     * @todo Maintain multiple pinner IDs for the PinnerConnector
+     */
     if (peer === this._pinnerId) {
       this.online = true;
       this._flushPinnerMessages();
@@ -85,7 +88,8 @@ class PinnerConnector extends EventEmitter {
   }
 
   _handleLeavePeer(peer: string) {
-    // TODO: Likewise. When the last pinner leaves we are offline
+    // When we have multiple pinner IDs, we are offline when the
+    // last one leaves.
     if (peer === this._pinnerId) {
       this.online = false;
     }

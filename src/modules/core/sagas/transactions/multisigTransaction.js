@@ -129,7 +129,10 @@ export function* rejectMultisigTransaction({
   meta: { id },
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_REJECT>): Saga<void> {
   try {
-    // TODO: tell the other signees we reject
+    /**
+     * @todo Handle multisig rejection actions
+     * @body Tell the other signees we rejected their sigs :(
+     */
   } catch (error) {
     yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
       multisigTransactionRejectError(id, { message: error.message }),
@@ -141,7 +144,10 @@ export function* signedMultisigTransaction({
   meta: { id },
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGNED>): Saga<void> {
   try {
-    // TODO: if there's any remaining required signees, distribute to them
+    /**
+     * @todo Handle multisig signing actions
+     * @body If there are any remaining required signees, distribute to them
+     */
   } catch (error) {
     yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
       multisigTransactionSignError(id, { message: error.message }),

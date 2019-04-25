@@ -72,7 +72,8 @@ export default function* sendTransaction(id: string): Saga<void> {
   const method = yield call(getMethod, context, methodName, identifier);
 
   // Create a promise to send the transaction with the given method.
-  // TODO explore using `call` without `yield` to make this more testable.
+
+  // We can explore using `call` without `yield` to make this more testable.
   const txPromise = getMethodTransactionPromise(method, transaction);
 
   const channel = yield call(transactionChannel, txPromise, transaction);

@@ -21,6 +21,4 @@ describe('KVStore', () => {
     expect(store._orbitStore).toBe(mockOrbitStore);
     expect(store._name).toBe(name);
   });
-
-  // TODO test: all(), get(), append(), set(), _setObject()
 });

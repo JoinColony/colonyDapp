@@ -39,9 +39,7 @@ const displayName = 'users.Inbox.InboxItem';
 
 type Props = {|
   activity: InboxElement,
-  /*
-   * @TODO Handle read/unread notificationsX
-   */
+  // Handle read/unread notifications (inbox items)
   // markAsRead: (id: string) => void,
 |};
 
@@ -52,9 +50,7 @@ const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
     </span>
   ) : null;
 
-/*
- * @TODO Handle read/unread notificationsX
- */
+// Handle read/unread notifications
 // const getType = (event: string): EventType => {
 //   const type = event.split(/[A-Z]/)[0];
 //   return type === 'action' || type === 'notification' ? type : 'notification';
@@ -84,7 +80,10 @@ const ConditionalWrapper = ({
   event: string,
   user?: {},
 }) => {
-  // TODO: Make this happen dynamically, we can't create a condition for each inbox event
+  /**
+   * @todo Handle inbox event types dynamically
+   * @body Make this happen dynamically, we can't create a condition for each inbox event
+   */
   if (event === 'actionWorkerInviteReceived') {
     const details = getTask();
     return (
@@ -115,9 +114,7 @@ const ConditionalWrapper = ({
 
 const InboxItem = ({
   activity: {
-    /*
-     * @TODO Handle read/unread notifications
-     */
+    // Handle read/unread notifications
     // unread,
     otherUser,
     amount,
@@ -143,9 +140,7 @@ const InboxItem = ({
   return (
     <TableRow
       className={styles.inboxRow}
-      /*
-       * @TODO Handle read/unread notifications
-       */
+      // Handle read/unread notifications
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
@@ -163,7 +158,7 @@ const InboxItem = ({
             user={(user && user.profile) || {}}
           >
             {/*
-             * @TODO Handle read/unread notifications
+             * Handle read/unread notifications
              */}
             {/* {unread && <UnreadIndicator type={getType(event)} />} */}
             {user && (
