@@ -7,7 +7,11 @@ import type { OpenDialog } from '~core/Dialog/types';
 import withDialog from '~core/Dialog/withDialog';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
-import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
+import {
+  USER_EDIT_ROUTE,
+  CREATE_COLONY_ROUTE,
+  CREATE_USER_ROUTE,
+} from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
@@ -81,9 +85,7 @@ class AvatarDropdownPopover extends Component<Props> {
       <DropdownMenuSection separator>
         {!username && (
           <DropdownMenuItem>
-            <button type="button" onClick={this.handleSetup}>
-              <FormattedMessage {...MSG.buttonGetStarted} />
-            </button>
+            <NavLink to={CREATE_USER_ROUTE} text={MSG.buttonGetStarted} />
           </DropdownMenuItem>
         )}
         {username && (
