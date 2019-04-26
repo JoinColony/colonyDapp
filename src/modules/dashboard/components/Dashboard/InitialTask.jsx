@@ -35,7 +35,7 @@ const InitialTask = ({
       <TableBody>
         <TableRow>
           <TableCell className={styles.taskDetails}>
-            <NavLink to={CREATE_USER_ROUTE} styles={styles.taskDetailsTitle}>
+            <NavLink className={styles.taskDetailsTitle} to={CREATE_USER_ROUTE}>
               <FormattedMessage {...title} values={titleValues} />
             </NavLink>
           </TableCell>
