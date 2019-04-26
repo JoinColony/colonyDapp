@@ -51,6 +51,8 @@ async function getMethodTransactionPromise<
       gasPrice: gasPriceOverride || gasPrice,
     },
     restOptions,
+    // DEBUG-#1071 to have the timeout rather sooner than later. Remove this!
+    { timeoutMs: 30 * 1000 },
     { waitForMining: false },
   );
   if (method.restoreOperation && multisig) {
