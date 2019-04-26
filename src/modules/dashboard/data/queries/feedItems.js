@@ -1,18 +1,25 @@
 /* @flow */
 
-import type { Address, OrbitDBAddress, $Pick } from '~types';
+import type { Address, $Pick } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  DDBContext,
+  ColonyManager,
+  CommentsStore,
+  DDB,
   Event,
   Query,
-  WalletContext,
+  TaskStore,
+  Wallet,
 } from '~data/types';
 import type { TaskEvents } from '~data/types/TaskEvents';
 
-import { getCommentsStore, getTaskStore } from '~data/stores';
+import { CONTEXT } from '~context';
+import {
+  getCommentsStore,
+  getCommentsStoreAddress,
+  getTaskStore,
+  getTaskStoreAddress,
+} from '~data/stores';
 import { TASK_EVENT_TYPES } from '~data/constants';
 
 const {
@@ -32,18 +39,6 @@ const {
   WORKER_ASSIGNED,
   WORKER_UNASSIGNED,
 } = TASK_EVENT_TYPES;
-
-export type FeedItemsQueryContext = ContextWithMetadata<
-  {|
-    colonyAddress: Address,
-    commentsStoreAddress: string | OrbitDBAddress,
-    draftId: TaskDraftId,
-    taskStoreAddress: string | OrbitDBAddress,
-  |},
-  DDBContext & ColonyClientContext & WalletContext,
->;
-
-export type FeedItemsQuery<I: *, R: *> = Query<FeedItemsQueryContext, I, R>;
 
 export type TaskFeedItemEvents = $Values<
   $Pick<
@@ -68,20 +63,57 @@ export type TaskFeedItemEvents = $Values<
   >,
 >;
 
+type Metadata = {|
+  colonyAddress: Address,
+  draftId: TaskDraftId,
+|};
+const prepare = async (
+  {
+    colonyManager,
+    ddb,
+    wallet,
+  }: {|
+    colonyManager: ColonyManager,
+    ddb: DDB,
+    wallet: Wallet,
+  |},
+  metadata: Metadata,
+) => {
+  const { colonyAddress } = metadata;
+  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  const taskStoreAddress = await getTaskStoreAddress(colonyClient, ddb, wallet)(
+    metadata,
+  );
+  const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
+    ...metadata,
+    taskStoreAddress,
+  });
+
+  const commentsStoreAddress = await getCommentsStoreAddress(ddb)(metadata);
+  const commentsStore = await getCommentsStore(ddb)({
+    ...metadata,
+    commentsStoreAddress,
+  });
+
+  return {
+    commentsStore,
+    taskStore,
+  };
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export const getTaskFeedItems: FeedItemsQuery<void, TaskFeedItemEvents[]> = ({
-  colonyClient,
-  ddb,
-  wallet,
-  metadata,
-}) => ({
-  async execute() {
-    const commentsStore = await getCommentsStore(ddb)(metadata);
+export const getTaskFeedItems: Query<
+  {| taskStore: TaskStore, commentsStore: CommentsStore |},
+  Metadata,
+  void,
+  TaskFeedItemEvents[],
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare,
+  async execute({ commentsStore, taskStore }) {
     const commentEvents: Event<
       typeof COMMENT_POSTED,
     >[] = commentsStore.all().filter(({ type }) => type === COMMENT_POSTED);
-
-    const taskStore = await getTaskStore(colonyClient, ddb, wallet)(metadata);
 
     // Include only events we can treat as feed items
     const feedItemTypes = [
@@ -109,4 +141,4 @@ export const getTaskFeedItems: FeedItemsQuery<void, TaskFeedItemEvents[]> = ({
       (a, b) => a.meta.timestamp - b.meta.timestamp,
     );
   },
-});
+};

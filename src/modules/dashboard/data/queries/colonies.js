@@ -1,19 +1,30 @@
 /* @flow */
 
-import BigNumber from 'bn.js';
-
 import type { Address } from '~types';
 
 import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  DDBContext,
+  ColonyManager,
+  ColonyClient,
+  ColonyStore,
+  DDB,
   Event,
-  NetworkClientContext,
+  NetworkClient,
   Query,
-  WalletContext,
+  Wallet,
 } from '~data/types';
 
+import type {
+  ColonyType,
+  ContractTransactionType,
+  DomainType,
+} from '~immutable';
+
+import BigNumber from 'bn.js';
+import { CONTEXT } from '~context';
+import { COLONY_EVENT_TYPES } from '~data/constants';
+
+import { reduceToLastState, getLast } from '~utils/reducers';
+import { getColonyStore } from '~data/stores';
 import {
   getEvents,
   getLogsAndEvents,
@@ -26,17 +37,7 @@ import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { getTokenClient } from '~utils/web3/contracts';
 import { addressEquals } from '~utils/strings';
 
-import type {
-  ColonyType,
-  ContractTransactionType,
-  DomainType,
-} from '~immutable';
-
 import { colonyReducer, colonyTasksReducer } from '../reducers';
-import { reduceToLastState, getLast } from '~utils/reducers';
-
-import { getColonyStore } from '~data/stores';
-import { COLONY_EVENT_TYPES } from '~data/constants';
 
 const {
   DOMAIN_CREATED,
@@ -44,40 +45,10 @@ const {
   TASK_STORE_UNREGISTERED,
 } = COLONY_EVENT_TYPES;
 
-type ColonyMetadata = {|
+type ColonyStoreMetadata = {|
   colonyAddress: Address,
 |};
-
-export type ColonyQueryContext = ContextWithMetadata<
-  ColonyMetadata,
-  ColonyClientContext & DDBContext & WalletContext,
->;
-
-export type ColonyContractEventQuery<I: *, R: *> = Query<
-  ColonyClientContext,
-  I,
-  R,
->;
-
-export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
-  ContextWithMetadata<ColonyMetadata, ColonyClientContext>,
-  I,
-  R,
->;
-
-export type ColonyContractRolesEventQuery<I: *, R: *> = Query<
-  { ...ColonyClientContext, ...DDBContext },
-  I,
-  R,
->;
-
-export type ColonyTokenBalanceQuery<I: *, R: *> = Query<
-  ContextWithMetadata<ColonyMetadata, NetworkClientContext>,
-  I,
-  R,
->;
-
-export type ColonyQuery<I: *, R: *> = Query<ColonyQueryContext, I, R>;
+type ContractEventQuery<A, R> = Query<ColonyClient, ColonyStoreMetadata, A, R>;
 
 const EVENT_PARSERS = {
   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
@@ -86,21 +57,58 @@ const EVENT_PARSERS = {
   TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
 };
 
-export const getColonyTransactions: ColonyContractTransactionsEventQuery<
+const context = [CONTEXT.COLONY_MANAGER];
+const colonyContext = [
+  CONTEXT.COLONY_MANAGER,
+  CONTEXT.DDB_INSTANCE,
+  CONTEXT.WALLET,
+];
+
+export const prepareColonyClientQuery = async (
+  {
+    colonyManager,
+  }: {|
+    colonyManager: ColonyManager,
+  |},
+  { colonyAddress }: ColonyStoreMetadata,
+) => {
+  if (!colonyAddress)
+    throw new Error('Cannot prepare query. Metadata is invalid');
+  return colonyManager.getColonyClient(colonyAddress);
+};
+
+const prepareColonyStoreQuery = async (
+  {
+    colonyManager,
+    ddb,
+    wallet,
+  }: {|
+    colonyManager: ColonyManager,
+    ddb: DDB,
+    wallet: Wallet,
+  |},
+  metadata: ColonyStoreMetadata,
+) => {
+  const { colonyAddress } = metadata;
+  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  return getColonyStore(colonyClient, ddb, wallet)(metadata);
+};
+
+export const getColonyTransactions: ContractEventQuery<
   void,
   ContractTransactionType[],
-> = ({
-  metadata: { colonyAddress },
-  colonyClient: {
-    events: {
-      ColonyFundsClaimed,
-      ColonyFundsMovedBetweenFundingPots,
-      TaskPayoutClaimed,
-    },
-  },
-  colonyClient,
-}) => ({
-  async execute() {
+> = {
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient) {
+    const {
+      contract: { address: colonyAddress },
+      events: {
+        ColonyFundsClaimed,
+        ColonyFundsMovedBetweenFundingPots,
+        TaskPayoutClaimed,
+      },
+    } = colonyClient;
     const { events, logs } = await getLogsAndEvents(
       colonyClient,
       {},
@@ -126,23 +134,23 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
         .filter(Boolean),
     );
   },
-});
+};
 
-export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuery<
+export const getColonyUnclaimedTransactions: ContractEventQuery<
   void,
   ContractTransactionType[],
-> = ({
-  metadata: { colonyAddress },
-  colonyClient: {
-    events: { ColonyFundsClaimed },
-    tokenClient: {
+> = {
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient) {
+    const {
+      contract: { address: colonyAddress },
+      events: { ColonyFundsClaimed },
+      tokenClient,
+    } = colonyClient;
+    const {
       events: { Transfer },
-    },
-    tokenClient,
-  },
-  colonyClient,
-}) => ({
-  async execute() {
+    } = tokenClient;
     const blocksBack = 400000;
 
     // Get logs & events for token transfer to this colony
@@ -177,28 +185,36 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
 
     return unclaimedTransfers.filter(Boolean);
   },
-});
+};
 
-export const getColonyRoles: ColonyContractRolesEventQuery<
+export const getColonyRoles: ContractEventQuery<
   void,
   { admins: string[], founder: string },
-> = context => ({
-  async execute() {
-    const { colonyClient } = context;
+> = {
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient) {
+    const {
+      events: {
+        ColonyAdminRoleRemoved,
+        ColonyAdminRoleSet,
+        ColonyFounderRoleSet,
+      },
+    } = colonyClient;
     const events = await getEvents(
       colonyClient,
       {},
       {
         blocksBack: 400000,
         events: [
-          colonyClient.events.ColonyAdminRoleRemoved,
-          colonyClient.events.ColonyAdminRoleSet,
-          colonyClient.events.ColonyFounderRoleSet,
+          ColonyAdminRoleRemoved,
+          ColonyAdminRoleSet,
+          ColonyFounderRoleSet,
         ],
       },
     );
-    const { eventName: ADMIN_ADDED } = colonyClient.events.ColonyAdminRoleSet;
-    const { eventName: FOUNDER_SET } = colonyClient.events.ColonyFounderRoleSet;
+    const { eventName: ADMIN_ADDED } = ColonyAdminRoleSet;
+    const { eventName: FOUNDER_SET } = ColonyFounderRoleSet;
 
     const getKey = event => event.user;
     const getValue = event => event.eventName;
@@ -217,25 +233,42 @@ export const getColonyRoles: ColonyContractRolesEventQuery<
       founder: founderEvent && founderEvent.newFounder,
     };
   },
-});
+};
 
 /**
  * @todo Get the right defaults for data reducers based on the redux data.
  */
-export const getColony: ColonyQuery<void, ColonyType> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress },
-  metadata,
-}) => ({
-  async execute() {
+export const getColony: Query<
+  {| colonyClient: ColonyClient, colonyStore: ColonyStore |},
+  ColonyStoreMetadata,
+  {| colonyAddress: Address |},
+  ColonyType,
+> = {
+  context: colonyContext,
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+      wallet,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+      wallet: Wallet,
+    |},
+    metadata: ColonyStoreMetadata,
+  ) {
+    const { colonyAddress } = metadata;
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
     const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
       metadata,
     );
-
+    return {
+      colonyClient,
+      colonyStore,
+    };
+  },
+  async execute({ colonyStore, colonyClient }, { colonyAddress }) {
     const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
-
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
@@ -253,10 +286,12 @@ export const getColony: ColonyQuery<void, ColonyType> = ({
         },
       });
   },
-});
+};
 
 // @NOTE: This is a separate query so we can, later on, cache the query result
-export const getColonyTasks: ColonyQuery<
+export const getColonyTasks: Query<
+  ColonyStore,
+  ColonyStoreMetadata,
   void,
   {
     [draftId: string]: {|
@@ -264,11 +299,10 @@ export const getColonyTasks: ColonyQuery<
       taskStoreAddress: string,
     |},
   },
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
-  async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
+> = {
+  context: colonyContext,
+  prepare: prepareColonyStoreQuery,
+  async execute(colonyStore) {
     return colonyStore
       .all()
       .filter(
@@ -277,37 +311,43 @@ export const getColonyTasks: ColonyQuery<
       )
       .reduce(colonyTasksReducer, {});
   },
-});
+};
 
-export const getColonyDomains: ColonyQuery<void, DomainType[]> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata,
-}) => ({
-  async execute() {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
-
+export const getColonyDomains: Query<
+  ColonyStore,
+  ColonyStoreMetadata,
+  void,
+  DomainType[],
+> = {
+  context: colonyContext,
+  prepare: prepareColonyStoreQuery,
+  async execute(colonyStore) {
     return colonyStore
       .all()
       .filter(({ type }) => type === DOMAIN_CREATED)
-      .map(({ payload }: Event<typeof DOMAIN_CREATED>) => payload);
+      .map(({ payload: { domainId, name } }: Event<typeof DOMAIN_CREATED>) => ({
+        id: domainId,
+        name,
+      }));
   },
-});
+};
 
-export const getColonyTokenBalance: ColonyTokenBalanceQuery<
-  Address,
+export const getColonyTokenBalance: Query<
+  NetworkClient,
+  void,
+  {| colonyAddress: Address, tokenAddress: Address |},
   BigNumber,
-> = ({
-  networkClient,
-  networkClient: {
-    adapter: { provider },
-  },
-  metadata: { colonyAddress },
-}) => ({
-  async execute(tokenAddress) {
+> = {
+  context: colonyContext,
+  prepare: async ({
+    colonyManager: { networkClient },
+  }: {|
+    colonyManager: ColonyManager,
+  |}) => networkClient,
+  async execute(networkClient, { colonyAddress, tokenAddress }) {
+    const {
+      adapter: { provider },
+    } = networkClient;
     // if ether, handle differently
     if (addressEquals(tokenAddress, ZERO_ADDRESS)) {
       const etherBalance = await provider.getBalance(colonyAddress);
@@ -325,4 +365,4 @@ export const getColonyTokenBalance: ColonyTokenBalanceQuery<
     // convert from Ethers BN
     return new BigNumber(amount.toString());
   },
-});
+};

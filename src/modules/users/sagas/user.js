@@ -48,46 +48,21 @@ import {
   getUserProfile,
   getUserTasks,
   getUserTokens,
-  getUserMetadataStoreAddress,
   getUserInboxActivity,
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { userFetch as userFetchActionCreator } from '../actionCreators';
-
-function* getUserMetadataStoreContext(): Saga<*> {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const wallet = yield* getContext(CONTEXT.WALLET);
-  const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-  return {
-    ddb,
-    wallet,
-    metadata: {
-      metadataStoreAddress,
-      walletAddress: wallet.address,
-    },
-  };
-}
 
 function* userTokenTransfersFetch(
   // eslint-disable-next-line no-unused-vars
   action: Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH>,
 ): Saga<void> {
   try {
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = {
-      // It shouldn't matter which colony client we use, so let's use the meta colony
-      colonyClient: yield call([
-        colonyManager,
-        colonyManager.getMetaColonyClient,
-      ]),
-      metadata: {
+    const transactions = yield* executeQuery(getUserColonyTransactions, {
+      args: {
         walletAddress: yield select(walletAddressSelector),
       },
-    };
-    const transactions = yield* executeQuery(
-      context,
-      getUserColonyTransactions,
-    );
+    });
     yield put<Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
       payload: { transactions },
@@ -102,14 +77,13 @@ function* userByUsernameFetch({
 }: Action<typeof ACTIONS.USER_BY_USERNAME_FETCH>): Saga<void> {
   try {
     const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-
-    const address = yield call(
-      [ensCache, ensCache.getAddress],
-      ensCache.constructor.getFullDomain('user', username),
+    const ens = yield* getContext(CONTEXT.ENS_INSTANCE);
+    const userAddress = yield call(
+      [ens, ens.getAddress],
+      ens.constructor.getFullDomain('user', username),
       networkClient,
     );
-    yield put(userFetchActionCreator(address));
+    yield put(userFetchActionCreator(userAddress));
   } catch (error) {
     yield putError(ACTIONS.USER_FETCH_ERROR, error);
   }
@@ -120,14 +94,11 @@ function* userFetch({
   payload: { userAddress },
 }: Action<typeof ACTIONS.USER_FETCH>): Saga<void> {
   try {
-    const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+    const user = yield* executeQuery(getUserProfile, {
       metadata: {
         walletAddress: userAddress,
       },
-    };
-
-    const user = yield* executeQuery(context, getUserProfile);
+    });
 
     yield put<Action<typeof ACTIONS.USER_FETCH_SUCCESS>>({
       type: ACTIONS.USER_FETCH_SUCCESS,
@@ -144,16 +115,14 @@ function* currentUserGetBalance(
   action: Action<typeof ACTIONS.CURRENT_USER_GET_BALANCE>,
 ): Saga<void> {
   try {
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const context = { networkClient };
     const walletAddress = yield select(walletAddressSelector);
-
     if (!walletAddress) {
       throw new Error('Could not get wallet address for current user');
     }
 
-    const balance = yield* executeQuery(context, getUserBalance, walletAddress);
-
+    const balance = yield* executeQuery(getUserBalance, {
+      args: { walletAddress },
+    });
     yield put<Action<typeof ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS>>({
       type: ACTIONS.CURRENT_USER_GET_BALANCE_SUCCESS,
       payload: { balance },
@@ -162,23 +131,24 @@ function* currentUserGetBalance(
     yield putError(ACTIONS.CURRENT_USER_GET_BALANCE_ERROR, error);
   }
 }
-
 function* userProfileUpdate({
   meta,
   payload,
 }: Action<typeof ACTIONS.USER_PROFILE_UPDATE>): Saga<void> {
   try {
-    const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+    const walletAddress = yield select(walletAddressSelector);
+    yield* executeCommand(updateUserProfile, {
       metadata: {
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress,
       },
-    };
+      args: payload,
+    });
 
-    yield* executeCommand(context, updateUserProfile, payload);
-
-    const user = yield* executeQuery(context, getUserProfile);
-
+    const user = yield* executeQuery(getUserProfile, {
+      metadata: {
+        walletAddress,
+      },
+    });
     yield put<Action<typeof ACTIONS.USER_PROFILE_UPDATE_SUCCESS>>({
       type: ACTIONS.USER_PROFILE_UPDATE_SUCCESS,
       meta,
@@ -188,20 +158,16 @@ function* userProfileUpdate({
     yield putError(ACTIONS.USER_PROFILE_UPDATE_ERROR, error, meta);
   }
 }
-
 function* userAvatarRemove({
   meta,
 }: Action<typeof ACTIONS.USER_AVATAR_REMOVE>): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
-    const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+    yield* executeCommand(removeUserAvatar, {
       metadata: {
         walletAddress,
       },
-    };
-
-    yield* executeCommand(context, removeUserAvatar);
+    });
 
     yield put<Action<typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
@@ -212,23 +178,19 @@ function* userAvatarRemove({
     yield putError(ACTIONS.USER_AVATAR_REMOVE_ERROR, error, meta);
   }
 }
-
 function* userAvatarUpload({
   meta,
   payload,
 }: Action<typeof ACTIONS.USER_AVATAR_UPLOAD>): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
-    const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
+    const ipfsHash = yield call(ipfsUpload, payload.data);
+    yield* executeCommand(setUserAvatar, {
       metadata: {
         walletAddress,
       },
-    };
-
-    const ipfsHash = yield call(ipfsUpload, payload.data);
-
-    yield* executeCommand(context, setUserAvatar, { ipfsHash });
+      args: { ipfsHash },
+    });
 
     yield put<Action<typeof ACTIONS.USER_AVATAR_UPLOAD_SUCCESS>>({
       type: ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
@@ -243,20 +205,14 @@ function* userAvatarUpload({
     yield putError(ACTIONS.USER_AVATAR_UPLOAD_ERROR, error, meta);
   }
 }
-
 function* usernameCheckAvailability({
   meta,
   payload: { username },
 }: Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY>): Saga<void> {
   try {
     yield delay(300);
-
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const ensCache = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const context = { ensCache, networkClient };
-
     // This will throw if the username is not available
-    yield* executeQuery(context, checkUsernameIsAvailable, username);
+    yield* executeQuery(checkUsernameIsAvailable, { args: { username } });
 
     yield put<Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS>>({
       type: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
@@ -267,31 +223,26 @@ function* usernameCheckAvailability({
     yield putError(ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR, error, meta);
   }
 }
-
 function* usernameCreate({
   meta,
   payload: { username },
 }: Action<typeof ACTIONS.USERNAME_CREATE>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
-
   try {
     const walletAddress = yield select(walletAddressSelector);
-    const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
-      metadata: {
-        username,
-        walletAddress,
-      },
-    };
-
     /**
      * @todo  should these stores be created after the transaction succeeded?
      */
     const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
-      context,
       createUserProfile,
       {
-        username,
+        args: {
+          username,
+          walletAddress,
+        },
+        metadata: {
+          walletAddress,
+        },
       },
     );
     yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
@@ -326,30 +277,19 @@ function* usernameCreate({
     txChannel.close();
   }
 }
-
 function* userPermissionsFetch({
   payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.USER_PERMISSIONS_FETCH>): Saga<void> {
   try {
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
     const walletAddress = yield select(walletAddressSelector);
-
     if (!walletAddress) {
       throw new Error('Could not get wallet address for current user');
     }
-
-    const context = { colonyClient };
-    const permissions = yield* executeQuery(
-      context,
-      getUserPermissions,
-      walletAddress,
-    );
-
+    const permissions = yield* executeQuery(getUserPermissions, {
+      metadata: { colonyAddress },
+      args: { walletAddress },
+    });
     yield put<Action<typeof ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS,
       payload: { permissions, colonyAddress },
@@ -359,36 +299,20 @@ function* userPermissionsFetch({
     yield putError(ACTIONS.USER_PERMISSIONS_FETCH_ERROR, error, meta);
   }
 }
-
-function* getMetadataStoreAddress() {
-  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-  const walletAddress = yield select(walletAddressSelector);
-  return yield* executeQuery(
-    {
-      ddb,
-      metadata: {
-        walletAddress,
-      },
-    },
-    getUserMetadataStoreAddress,
-  );
-}
-
 function* userTokensFetch(): Saga<void> {
   try {
-    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
     const walletAddress = yield select(walletAddressSelector);
-    const metadataStoreAddress = yield* getMetadataStoreAddress();
-    const context = {
-      ddb,
-      networkClient,
-      metadata: {
-        walletAddress,
-        metadataStoreAddress,
-      },
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
     };
-    const tokens = yield* executeQuery(context, getUserTokens);
+    const tokens = yield* executeQuery(getUserTokens, {
+      metadata,
+      args: {
+        walletAddress,
+      },
+    });
     yield put<Action<typeof ACTIONS.USER_TOKENS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_TOKENS_FETCH_SUCCESS,
       payload: { tokens },
@@ -397,7 +321,6 @@ function* userTokensFetch(): Saga<void> {
     yield putError(ACTIONS.USER_TOKENS_FETCH_ERROR, error);
   }
 }
-
 /**
  * Diff the current user tokens and the list sent as payload, and work out
  * which tokens need adding and which need removing. Then append the relevant
@@ -408,19 +331,15 @@ function* userTokensUpdate(
 ): Saga<void> {
   try {
     const { tokens } = action.payload;
-    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
     const walletAddress = yield select(walletAddressSelector);
-    const metadataStoreAddress = yield* getMetadataStoreAddress();
-    const context = {
-      ddb,
-      metadata: {
-        walletAddress,
-        metadataStoreAddress,
-      },
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
     };
-
-    yield* executeCommand(context, updateTokens, {
-      tokens,
+    yield* executeCommand(updateTokens, {
+      metadata,
+      args: { tokens },
     });
 
     yield put({ type: ACTIONS.USER_TOKENS_FETCH });
@@ -429,11 +348,17 @@ function* userTokensUpdate(
     yield putError(ACTIONS.USER_TOKENS_UPDATE_ERROR, error);
   }
 }
-
 function* userSubscribedColoniesFetch(): Saga<*> {
   try {
-    const context = yield call(getUserMetadataStoreContext);
-    const colonyAddresses = yield* executeQuery(context, getUserColonies);
+    const walletAddress = yield select(walletAddressSelector);
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
+    };
+    const colonyAddresses = yield* executeQuery(getUserColonies, {
+      metadata,
+    });
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
       payload: colonyAddresses,
@@ -442,13 +367,25 @@ function* userSubscribedColoniesFetch(): Saga<*> {
     yield putError(ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS, error);
   }
 }
-
 function* userColonySubscribe({
   payload,
 }: Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE>): Saga<*> {
   try {
-    const context = yield call(getUserMetadataStoreContext);
-    if (yield* executeCommand(context, subscribeToColony, payload)) {
+    const walletAddress = yield select(walletAddressSelector);
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
+    };
+    const userColonyAddresses = yield* executeQuery(getUserColonies, {
+      metadata,
+    });
+    if (
+      yield* executeCommand(subscribeToColony, {
+        args: { ...payload, userColonyAddresses },
+        metadata,
+      })
+    ) {
       yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
         type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
         payload,
@@ -458,11 +395,17 @@ function* userColonySubscribe({
     yield putError(ACTIONS.USER_COLONY_SUBSCRIBE_ERROR, error);
   }
 }
-
 function* userSubscribedTasksFetch(): Saga<*> {
   try {
-    const context = yield call(getUserMetadataStoreContext);
-    const userTasks = yield* executeQuery(context, getUserTasks);
+    const walletAddress = yield select(walletAddressSelector);
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
+    };
+    const userTasks = yield* executeQuery(getUserTasks, {
+      metadata,
+    });
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
       payload: userTasks,
@@ -471,13 +414,25 @@ function* userSubscribedTasksFetch(): Saga<*> {
     yield putError(ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);
   }
 }
-
 function* userTaskSubscribe({
   payload,
 }: Action<typeof ACTIONS.USER_TASK_SUBSCRIBE>): Saga<*> {
   try {
-    const context = yield call(getUserMetadataStoreContext);
-    if (yield* executeCommand(context, subscribeToTask, payload)) {
+    const walletAddress = yield select(walletAddressSelector);
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
+    };
+    const userDraftIds = yield* executeQuery(getUserTasks, {
+      metadata,
+    });
+    if (
+      yield* executeCommand(subscribeToTask, {
+        args: { ...payload, userDraftIds },
+        metadata,
+      })
+    ) {
       yield put<Action<typeof ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS>>({
         type: ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS,
         payload,
@@ -487,23 +442,15 @@ function* userTaskSubscribe({
     yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
   }
 }
-
 function* userActivitiesFetch({
   meta,
 }: Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>): Saga<void> {
   try {
-    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const walletAddress = yield select(walletAddressSelector);
-
-    const context = {
-      ddb: yield* getContext(CONTEXT.DDB_INSTANCE),
-      metadata: {
-        walletAddress,
-        inboxStoreAddress,
-      },
-    };
-    const activities = yield* executeQuery(context, getUserInboxActivity);
-
+    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
+    const activities = yield* executeQuery(getUserInboxActivity, {
+      metadata: { inboxStoreAddress, walletAddress },
+    });
     yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
       payload: { activities },
@@ -513,7 +460,6 @@ function* userActivitiesFetch({
     yield putError(ACTIONS.USER_ACTIVITIES_FETCH_ERROR, error, meta);
   }
 }
-
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
   yield takeEvery(ACTIONS.USER_BY_USERNAME_FETCH, userByUsernameFetch);

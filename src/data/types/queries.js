@@ -1,21 +1,27 @@
 /* @flow */
 
+import type { ContextName } from '~context';
 import type { $Pick } from '~types';
 import type { EventsType } from './events';
 
 /*
  * The specification for a data query.
  *
- * C: Optional object type indicating the context the query will
- * be executed with.
+ * D: Dependencies the query depend on to be executed. Those will be
+ * passed to execute via prepare, which uses the context to set them up.
+ *
+ * M: Metadata needed to locate the right store, colony contract or dependency
+ * in general
  *
  * A: Optional type for the arguments the execute function will
  * will be called with.
  *
  * R: Return type for the execute function.
  */
-export type Query<C: ?Object, A, R> = C => {|
-  execute: (args: A) => Promise<R>,
+export type Query<D, M, A, R> = {|
+  context: Array<ContextName>,
+  prepare: (context: *, metadata: M) => Promise<D>,
+  execute: (deps: D, args: A) => Promise<R>,
 |};
 
 /*

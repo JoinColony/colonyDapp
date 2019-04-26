@@ -1,12 +1,8 @@
 /* @flow */
 
 import type { Address } from '~types';
-
-import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  Query,
-} from '~data/types';
+import type { ColonyManager, ColonyClient, Query } from '~data/types';
+import type { ContractTransactionType } from '~immutable';
 
 import {
   getLogsAndEvents,
@@ -16,23 +12,10 @@ import {
   parseUnclaimedTransferEvent,
 } from '~utils/web3/eventLogs';
 
-import type { ContractTransactionType } from '~immutable';
+import { CONTEXT } from '~context';
 
-type ColonyMetadata = {|
-  colonyAddress: Address,
-|};
-
-export type ColonyContractEventQuery<I: *, R: *> = Query<
-  ColonyClientContext,
-  I,
-  R,
->;
-
-export type ColonyContractTransactionsEventQuery<I: *, R: *> = Query<
-  ContextWithMetadata<ColonyMetadata, ColonyClientContext>,
-  I,
-  R,
->;
+type Metadata = {| colonyAddress: Address |};
+type ContractEventQuery<A, R> = Query<ColonyClient, Metadata, A, R>;
 
 const EVENT_PARSERS = {
   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
@@ -41,21 +24,27 @@ const EVENT_PARSERS = {
   TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
 };
 
-export const getColonyTransactions: ColonyContractTransactionsEventQuery<
+const context = [CONTEXT.COLONY_MANAGER];
+const prepare = async (
+  { colonyManager }: { colonyManager: ColonyManager },
+  { colonyAddress }: Metadata,
+) => colonyManager.getColonyClient(colonyAddress);
+
+export const getColonyTransactions: ContractEventQuery<
   void,
   ContractTransactionType[],
-> = ({
-  metadata: { colonyAddress },
-  colonyClient: {
-    events: {
-      ColonyFundsClaimed,
-      ColonyFundsMovedBetweenFundingPots,
-      TaskPayoutClaimed,
-    },
-  },
-  colonyClient,
-}) => ({
-  async execute() {
+> = {
+  context,
+  prepare,
+  async execute(colonyClient) {
+    const {
+      contract: { address: colonyAddress },
+      events: {
+        ColonyFundsClaimed,
+        ColonyFundsMovedBetweenFundingPots,
+        TaskPayoutClaimed,
+      },
+    } = colonyClient;
     const { events, logs } = await getLogsAndEvents(
       colonyClient,
       {},
@@ -81,23 +70,27 @@ export const getColonyTransactions: ColonyContractTransactionsEventQuery<
         .filter(Boolean),
     );
   },
-});
+};
 
-export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuery<
+export const getColonyUnclaimedTransactions: ContractEventQuery<
   void,
   ContractTransactionType[],
-> = ({
-  metadata: { colonyAddress },
-  colonyClient: {
-    events: { ColonyFundsClaimed },
-    tokenClient: {
+> = {
+  context,
+  prepare,
+  async execute(colonyClient) {
+    const {
+      contract: { address: colonyAddress },
+      events: { ColonyFundsClaimed },
+      tokenClient,
+    } = colonyClient;
+    const {
       events: { Transfer },
-    },
-    tokenClient,
-  },
-  colonyClient,
-}) => ({
-  async execute() {
+    } = tokenClient;
+
+    /*
+     * @todo use a more meaningful value for blocksBack
+     */
     const blocksBack = 400000;
 
     // Get logs & events for token transfer to this colony
@@ -132,4 +125,4 @@ export const getColonyUnclaimedTransactions: ColonyContractTransactionsEventQuer
 
     return unclaimedTransfers.filter(Boolean);
   },
-});
+};

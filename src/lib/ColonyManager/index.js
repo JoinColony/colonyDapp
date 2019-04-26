@@ -3,12 +3,7 @@
 import ColonyNetworkClient from '@colony/colony-js-client';
 import { isAddress } from 'web3-utils';
 
-import type {
-  ENSName,
-  Address,
-  AddressOrENSName,
-  ColonyContext,
-} from './types';
+import type { Address, AddressOrENSName, ColonyContext } from './types';
 
 import { NETWORK_CONTEXT } from './constants';
 
@@ -19,8 +14,6 @@ export default class ColonyManager {
 
   _metaColonyClient: ColonyNetworkClient.ColonyClient;
 
-  ensCache: Map<ENSName, Address>;
-
   networkClient: ColonyNetworkClient;
 
   constructor(networkClient: ColonyNetworkClient) {
@@ -29,13 +22,12 @@ export default class ColonyManager {
   }
 
   async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
-    if (isAddress(identifier)) return identifier;
-
-    const ensAddress = await ens.getAddress(
-      ens.constructor.getFullDomain('colony', identifier),
-      this.networkClient,
-    );
-    return ensAddress;
+    return isAddress(identifier)
+      ? identifier
+      : ens.getAddress(
+          ens.constructor.getFullDomain('colony', identifier),
+          this.networkClient,
+        );
   }
 
   async setColonyClient(address: Address) {

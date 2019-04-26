@@ -1,50 +1,56 @@
 /* @flow */
 
-import type { Address, ENSName, OrbitDBAddress } from '~types';
+import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
-import type {
-  ColonyClientContext,
-  ContextWithMetadata,
-  DDBContext,
-  Query,
-  WalletContext,
-} from '~data/types';
+import type { ColonyManager, DDB, Query, Wallet, TaskStore } from '~data/types';
 
-import { taskReducer } from '../reducers';
-import { getTaskStore } from '~data/stores';
+import { CONTEXT } from '~context';
 import { TASK_EVENT_TYPES } from '~data/constants';
 
-export type TaskQueryContext = ContextWithMetadata<
-  {|
-    colonyName: string | ENSName,
-    colonyAddress: Address,
-    draftId: TaskDraftId,
-    taskStoreAddress: string | OrbitDBAddress,
-  |},
-  ColonyClientContext & DDBContext & WalletContext,
->;
+import { getTaskStore, getTaskStoreAddress } from '~data/stores';
+import { taskReducer } from '../reducers';
 
-export type TaskQuery<I: *, R: *> = Query<TaskQueryContext, I, R>;
+type TaskStoreMetadata = {| colonyAddress: Address, draftId: TaskDraftId |};
+
+const prepareTaskStoreQuery = async (
+  {
+    colonyManager,
+    ddb,
+    wallet,
+  }: {|
+    colonyManager: ColonyManager,
+    ddb: DDB,
+    wallet: Wallet,
+  |},
+  metadata: TaskStoreMetadata,
+) => {
+  const { colonyAddress } = metadata;
+  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  const taskStoreAddress = await getTaskStoreAddress(colonyClient, ddb, wallet)(
+    metadata,
+  );
+
+  /*
+   * @todo StoreLocator: Getters should return a store **ONLY** by address
+   * @body Store getters should return a store **ONLY** by address. We need a StoreLocator
+   * with resolvers that can infer the address for deterministic address stores so the dapp can get that address easily
+   * That should by #964
+   */
+  return getTaskStore(colonyClient, ddb, wallet)({
+    ...metadata,
+    taskStoreAddress,
+  });
+};
 
 /**
  * @todo Merge contract events into getTask query.
  */
 // eslint-disable-next-line import/prefer-default-export
-export const getTask: TaskQuery<*, *> = ({
-  ddb,
-  colonyClient,
-  wallet,
-  metadata: { colonyAddress, colonyName, draftId, taskStoreAddress },
-}) => ({
-  async execute() {
-    const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
-      colonyAddress,
-      colonyName,
-      draftId,
-      taskStoreAddress,
-    });
-
+export const getTask: Query<TaskStore, TaskStoreMetadata, void, *> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareTaskStoreQuery,
+  async execute(taskStore) {
     return taskStore
       .all()
       .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
@@ -71,4 +77,4 @@ export const getTask: TaskQuery<*, *> = ({
         workerAddress: undefined,
       });
   },
-});
+};

@@ -2,16 +2,16 @@
 
 import type { Address } from '~types';
 import type {
+  ColonyManager,
   ColonyStore,
-  ColonyClientContext,
   Command,
-  ContextWithMetadata,
-  DDBContext,
-  WalletContext,
+  DDB,
+  Wallet,
 } from '~data/types';
 
-import { diffAddresses } from '~utils/arrays';
+import { CONTEXT } from '~context';
 import { getColonyStore, createColonyStore } from '~data/stores';
+import { diffAddresses } from '~utils/arrays';
 import {
   createColonyAvatarRemovedEvent,
   createColonyAvatarUploadedEvent,
@@ -22,8 +22,6 @@ import {
   createTokenInfoRemovedEvent,
 } from '../events';
 
-import { getColony } from '../queries';
-
 import {
   CreateColonyProfileCommandArgsSchema,
   CreateDomainCommandArgsSchema,
@@ -32,24 +30,30 @@ import {
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
-export type ColonyContext = ContextWithMetadata<
-  {|
-    colonyAddress: Address,
-  |},
-  ColonyClientContext & WalletContext & DDBContext,
->;
-
-export type ColonyCommand<I: *, R: *> = Command<ColonyContext, I, R>;
-
-type AddTokenInfoCommandArgs = {|
-  address: Address,
-  icon?: ?string,
-  isNative?: ?boolean,
-  name: string,
-  symbol: string,
+type ColonyStoreMetadata = {|
+  colonyAddress: Address,
 |};
 
-export const createColonyProfile: ColonyCommand<
+const prepareColonyStoreQuery = async (
+  {
+    colonyManager,
+    ddb,
+    wallet,
+  }: {|
+    colonyManager: ColonyManager,
+    ddb: DDB,
+    wallet: Wallet,
+  |},
+  metadata: ColonyStoreMetadata,
+) => {
+  const { colonyAddress } = metadata;
+  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  return getColonyStore(colonyClient, ddb, wallet)(metadata);
+};
+
+export const createColonyProfile: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
   {|
     colonyAddress: Address,
     colonyName: string,
@@ -57,13 +61,37 @@ export const createColonyProfile: ColonyCommand<
     description?: string,
     guideline?: string,
     website?: string,
-    token: AddTokenInfoCommandArgs,
+    token: {|
+      address: Address,
+      icon?: ?string,
+      isNative?: ?boolean,
+      name: string,
+      symbol: string,
+    |},
   |},
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+      wallet,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+      wallet: Wallet,
+    |},
+    metadata: ColonyStoreMetadata,
+  ) {
+    const { colonyAddress } = metadata;
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+    return createColonyStore(colonyClient, ddb, wallet)(metadata);
+  },
   schema: CreateColonyProfileCommandArgsSchema,
-  async execute(args) {
-    const {
+  async execute(
+    colonyStore,
+    {
       colonyAddress,
       colonyName,
       displayName,
@@ -71,7 +99,8 @@ export const createColonyProfile: ColonyCommand<
       guideline,
       website,
       token,
-    } = args;
+    },
+  ) {
     const profileCreatedEvent = createColonyProfileCreatedEvent({
       colonyAddress,
       colonyName,
@@ -81,35 +110,34 @@ export const createColonyProfile: ColonyCommand<
       website,
     });
     const tokenInfoAddedEvent = createTokenInfoAddedEvent(token);
-    const colonyStore = await createColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
-
     await colonyStore.append(profileCreatedEvent);
     await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
     return colonyStore;
   },
-});
+};
 
-export const createDomain: ColonyCommand<
+export const createDomain: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
   {|
     name: string,
-    id: number,
+    domainId: number,
   |},
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
   schema: CreateDomainCommandArgsSchema,
-  async execute(args) {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
+  async execute(colonyStore, args) {
     await colonyStore.append(createDomainCreatedEvent(args));
     return colonyStore;
   },
-});
+};
 
-export const updateColonyProfile: ColonyCommand<
+export const updateColonyProfile: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
   {|
     displayName?: string,
     description?: string,
@@ -117,85 +145,87 @@ export const updateColonyProfile: ColonyCommand<
     website?: string,
   |},
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
   schema: UpdateColonyProfileCommandArgsSchema,
-  async execute(args) {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
+  async execute(colonyStore, args) {
     await colonyStore.append(createColonyProfileUpdatedEvent(args));
     await colonyStore.load();
     return colonyStore;
   },
-});
+};
 
-export const setColonyAvatar: ColonyCommand<
+export const setColonyAvatar: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
   {|
     ipfsHash: string,
   |},
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
   schema: SetColonyAvatarCommandArgsSchema,
-  async execute(args) {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
+  async execute(colonyStore, args) {
     await colonyStore.append(createColonyAvatarUploadedEvent(args));
     await colonyStore.load();
     return colonyStore;
   },
-});
+};
 
-export const removeColonyAvatar: ColonyCommand<
+export const removeColonyAvatar: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
   {|
     ipfsHash: string,
   |},
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
   schema: RemoveColonyAvatarCommandArgsSchema,
-  async execute(args) {
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
+  async execute(colonyStore, args) {
     await colonyStore.append(createColonyAvatarRemovedEvent(args));
     await colonyStore.load();
     return colonyStore;
   },
-});
+};
 
-export const addTokenInfo: ColonyCommand<
-  AddTokenInfoCommandArgs,
+export const addTokenInfo: Command<
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
-  async execute(args) {
+  ColonyStoreMetadata,
+  {|
+    address: Address,
+    icon?: ?string,
+    isNative?: ?boolean,
+    name: string,
+    symbol: string,
+  |},
+  ColonyStore,
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
+  async execute(colonyStore, args) {
     const tokenInfoAddedEvent = createTokenInfoAddedEvent(args);
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
     await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
     return colonyStore;
   },
-});
+};
 
-export const updateTokenInfo: ColonyCommand<
+export const updateTokenInfo: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
   {|
     tokens: Address[],
+    currentTokenReferences: Object,
   |},
   ColonyStore,
-> = ({ ddb, colonyClient, wallet, metadata }) => ({
-  async execute(args) {
-    const { tokens } = args;
-    const { tokens: currentTokenReferences = {} } = await getColony({
-      colonyClient,
-      ddb,
-      wallet,
-      metadata,
-    }).execute();
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
-
+> = {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
+  async execute(colonyStore, { tokens, currentTokenReferences = {} }) {
     // diff existing and user provided tokens
     const [add, remove] = diffAddresses(
       tokens,
@@ -215,4 +245,4 @@ export const updateTokenInfo: ColonyCommand<
     await colonyStore.load();
     return colonyStore;
   },
-});
+};

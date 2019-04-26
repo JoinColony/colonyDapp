@@ -15,15 +15,14 @@ import { COLONY_CONTEXT } from '../../core/constants';
 
 import { fetchRoles } from '../actionCreators';
 
-import { getColonyContext } from './shared';
-
 function* colonyRolesFetch({
   payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_ROLES_FETCH>) {
   try {
-    const context = yield* getColonyContext(colonyAddress);
-    const roles = yield* executeQuery(context, getColonyRoles);
+    const roles = yield* executeQuery(getColonyRoles, {
+      metadata: { colonyAddress },
+    });
     /*
      * Dispatch the success action.
      */
