@@ -85,14 +85,14 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
-      (user &&
-        filterValue &&
-        user.profile.username
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())) ||
-      user.profile.walletAddress
+      user &&
+      filterValue &&
+      (user.profile.username
         .toLowerCase()
-        .includes(filterValue.toLowerCase()),
+        .includes(filterValue.toLowerCase()) ||
+        user.profile.walletAddress
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())),
   );
 
   if (!filterValue) return filtered;
@@ -141,10 +141,12 @@ const TaskEditDialog = ({
 
   const users = useMemo(
     () =>
-      userData.map(({ data, key }) => ({
-        id: key,
-        ...data,
-      })),
+      userData
+        .filter(({ data }) => !!data)
+        .map(({ data, key }) => ({
+          id: key,
+          ...data,
+        })),
     [userData],
   );
 
