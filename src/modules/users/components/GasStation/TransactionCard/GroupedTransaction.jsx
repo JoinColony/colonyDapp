@@ -64,7 +64,10 @@ const GroupedTransaction = ({
           />
         </div>
       )}
-      <ul className={styles.transactionList}>
+      <ul
+        className={styles.transactionList}
+        data-test="gasStationGroupedTransaction"
+      >
         {transactionGroup.map((transaction, idx) => (
           <GroupedTransactionCard
             key={transaction.id}
