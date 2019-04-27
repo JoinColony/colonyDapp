@@ -182,6 +182,7 @@ const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
                 appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
                 loading={isLoading || isSubmitting}
+                data-test="confirmTruffleAccount"
               />
             ) : (
               <Button

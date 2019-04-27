@@ -1,8 +1,11 @@
 describe('Claims a username', () => {
+  // in cypress tests
+
   it('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
-      .click();
+      .click()
+      .wait(1000);
   });
 
   it('Select the second account and Log in', () => {
@@ -15,11 +18,12 @@ describe('Claims a username', () => {
      */
     cy.get('li#accountIndex-listbox-entry-0')
       .trigger('mouseover')
-      .click();
+      .click()
+      .wait(2000);
     /*
      * Click on the button to go to the dApp
      */
-    cy.get('button')
+    cy.get('button[data-test="confirmTruffleAccount"]')
       .contains('Go to Colony')
       .click();
   });
@@ -32,18 +36,10 @@ describe('Claims a username', () => {
     /*
      * Click on the Get Started link
      */
-    cy.get('button')
-      .contains('Get started')
-      .click();
+    cy.get('a[data-test="pickUserCreation"').click();
   });
 
   it('Go through the flow and claim a (ENS) username', () => {
-    /*
-     * Click on the Continue button on the first modal of the Claim Username flow
-     */
-    cy.get('button')
-      .contains('Continue')
-      .click();
     /*
      * Load the usernames fixture
      */
@@ -57,6 +53,7 @@ describe('Claims a username', () => {
      * Submit your selected username
      */
     cy.get('button[data-test="claimUsernameConfirm"]')
+      .contains('Continue')
       .click()
       /*
        * Wait a spell, it seems that the spinner on the button prevents
@@ -80,9 +77,9 @@ describe('Claims a username', () => {
     /*
      * Click on the Claim Username Transaction
      */
-    cy.get('ul[data-test="gasStationTransactionsList"]')
+    cy.get('ul[data-test="gasStationGroupedTransaction"]')
       .get('li')
-      .contains('Confirm Your Username')
+      .contains('Claim Username')
       .click();
     /*
      * Confirm the transaction
@@ -96,11 +93,9 @@ describe('Claims a username', () => {
       .click()
       .then(() => {
         /*
-         * Wait until the transaction succeeded
+         * After the transaction succeeds we redirect to the dashboard
          */
-        cy.get('span[data-test="gasStationTransactionSucceeded"]').should(
-          'exist',
-        );
+        cy.get('div[data-test="dashboard"]').should('exist');
       });
   });
 

@@ -85,7 +85,11 @@ class AvatarDropdownPopover extends Component<Props> {
       <DropdownMenuSection separator>
         {!username && (
           <DropdownMenuItem>
-            <NavLink to={CREATE_USER_ROUTE} text={MSG.buttonGetStarted} />
+            <NavLink
+              to={CREATE_USER_ROUTE}
+              text={MSG.buttonGetStarted}
+              data-test="pickUserCreation"
+            />
           </DropdownMenuItem>
         )}
         {username && (
