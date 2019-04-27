@@ -27,50 +27,50 @@ type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.heading',
+    id: 'dashboard.CreateColonyWizard.StepUserName.heading',
     defaultMessage: 'Welcome to Colony!',
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.descriptionOne',
+    id: 'dashboard.CreateColonyWizard.StepUserName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
       'Let’s start with the basics. What can we call you?',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.label',
+    id: 'dashboard.CreateColonyWizard.StepUserName.label',
     defaultMessage: 'Your Unique Username',
   },
   continue: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.continue',
+    id: 'dashboard.CreateColonyWizard.StepUserName.continue',
     defaultMessage: 'Continue',
   },
   gotETH: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.gotETH',
+    id: 'dashboard.CreateColonyWizard.StepUserName.gotETH',
     defaultMessage: `Got ETH? You'll need some at the end
       to cover Ethereum's transaction fees.`,
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.errorDomainTaken',
+    id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainTaken',
     defaultMessage: 'This Username is already taken',
   },
   errorDomainInvalid: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
+    id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainInvalid',
     defaultMessage:
       'Invalid username. Please make sure this will be a valid domain',
   },
   tooltip: {
-    id: 'dashboard.CreateColonyWizard.StepUserENSName.tooltip',
+    id: 'dashboard.CreateColonyWizard.StepUserName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
       your wallet address. This allows us to provide a good user experience
       while using a fully decentralized architecture.`,
   },
   statusText: {
-    id: 'users.ENSNameDialog.statusText',
+    id: 'users.CreateColonyWizard.StepUserName.statusText',
     defaultMessage: 'Actual Username: @{normalized}',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepUserENSName';
+const displayName = 'dashboard.CreateColonyWizard.StepUserName';
 
 const validationSchema = yup.object({
   username: yup
@@ -79,7 +79,7 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
+const StepUserName = ({ wizardForm, nextStep }: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ACTIONS.USERNAME_CHECK_AVAILABILITY,
     success: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
@@ -174,6 +174,6 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
   );
 };
 
-StepUserENSName.displayName = displayName;
+StepUserName.displayName = displayName;
 
-export default StepUserENSName;
+export default StepUserName;
