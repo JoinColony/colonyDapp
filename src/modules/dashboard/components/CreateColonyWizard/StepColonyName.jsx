@@ -36,49 +36,49 @@ type Props = WizardProps<FormValues> & {
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.heading',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
     defaultMessage: 'Welcome @{username}, let’s begin creating your colony.',
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.descriptionOne',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
       'First thing is choosing a name. What would you like to name your colony?',
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.label',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.label',
     defaultMessage: 'Colony Unique URL',
   },
   labelDisplay: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.labelDisplay',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.labelDisplay',
     defaultMessage: 'Colony Name',
   },
   continue: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.Continue',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.Continue',
     defaultMessage: 'Continue',
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainTaken',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
   errorDomainInvalid: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
+    id: 'dashboard.CreateColonyWizard.StepColonyName.errorDomainInvalid',
     defaultMessage:
       'Invalid colony name. Please make sure this will be a valid domain',
   },
   statusText: {
-    id: 'users.CreateColonyWizard.StepColonyENSName.statusText',
+    id: 'users.CreateColonyWizard.StepColonyName.statusText',
     defaultMessage: 'Actual Colony Name: {normalized}',
   },
   tooltip: {
-    id: 'users.CreateColonyWizard.StepColonyENSName.tooltip',
+    id: 'users.CreateColonyWizard.StepColonyName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your
       colony. This will also allow us to create a custom URL for inviting people
       to your colony.`,
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepColonyENSName';
+const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
 const validationSchema = yup.object({
   colonyName: yup
@@ -88,7 +88,7 @@ const validationSchema = yup.object({
   displayName: yup.string().required(),
 });
 
-const StepColonyENSName = ({
+const StepColonyName = ({
   wizardForm,
   nextStep,
   wizardValues,
@@ -198,9 +198,9 @@ const StepColonyENSName = ({
   );
 };
 
-StepColonyENSName.displayName = displayName;
+StepColonyName.displayName = displayName;
 
 export default compose(
   withCurrentUser,
   withImmutablePropsToJS,
-)(StepColonyENSName);
+)(StepColonyName);

@@ -66,7 +66,7 @@ const MSG = defineMessages({
       'Not a valid token. Only ERC20 tokens with 18 decimals are supported.',
   },
   link: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.link',
     defaultMessage: 'I want to create a New Token',
   },
   fileUploadTitle: {

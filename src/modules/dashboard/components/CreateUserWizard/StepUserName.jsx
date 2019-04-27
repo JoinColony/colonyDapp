@@ -10,7 +10,7 @@ import type { WizardProps } from '~core/Wizard';
 import styles from './StepUserName.css';
 
 import { useAsyncFunction } from '~utils/hooks';
-import { Form, Input } from '~core/Fields';
+import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
@@ -27,39 +27,39 @@ type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.heading',
+    id: 'dashboard.CreateUserWizard.StepUserName.heading',
     defaultMessage: 'Welcome to Colony!',
   },
   descriptionOne: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.descriptionOne',
+    id: 'dashboard.CreateUserWizard.StepUserName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'Let’s start with the basics. What can we call you?',
+      'Le’ts get your account set up. All we need is a username.',
   },
   label: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.label',
+    id: 'dashboard.CreateUserWizard.StepUserName.label',
     defaultMessage: 'Your Unique Username',
   },
   continue: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.continue',
+    id: 'dashboard.CreateUserWizard.StepUserName.continue',
     defaultMessage: 'Continue',
   },
   gotETH: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.gotETH',
+    id: 'dashboard.CreateUserWizard.StepUserName.gotETH',
     defaultMessage: `Got ETH? You'll need some at the end
       to cover Ethereum's transaction fees.`,
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.errorDomainTaken',
+    id: 'dashboard.CreateUserWizard.StepUserName.errorDomainTaken',
     defaultMessage: 'This Username is already taken',
   },
   errorDomainInvalid: {
-    id: 'dashboard.CreateUserWizard.StepColonyENSName.errorDomainInvalid',
+    id: 'dashboard.CreateUserWizard.StepUserName.errorDomainInvalid',
     defaultMessage:
       'Invalid username. Please make sure this will be a valid domain',
   },
   tooltip: {
-    id: 'dashboard.CreateUserWizard.StepUserENSName.tooltip',
+    id: 'dashboard.CreateUserWizard.StepUserName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
       your wallet address. This allows us to provide a good user experience
       while using a fully decentralized architecture.`,
@@ -70,7 +70,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.CreateUserWizard.StepUserENSName';
+const displayName = 'dashboard.CreateUserWizard.StepUserName';
 
 const validationSchema = yup.object({
   username: yup
@@ -79,13 +79,12 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
+const StepUserName = ({ wizardValues, nextStep }: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ACTIONS.USERNAME_CHECK_AVAILABILITY,
     success: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
     error: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
   });
-
   const validateDomain = useCallback(
     async (values: FormValues) => {
       try {
@@ -108,11 +107,13 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
     [checkDomainTaken],
   );
   return (
-    <Form
-      onSubmit={nextStep}
+    <ActionForm
+      submit={ACTIONS.USERNAME_CREATE}
+      success={ACTIONS.USERNAME_CREATE_SUCCESS}
+      error={ACTIONS.USERNAME_CREATE_ERROR}
+      onSuccess={() => nextStep(wizardValues)}
       validate={validateDomain}
       validationSchema={validationSchema}
-      {...wizardForm}
     >
       {({ isValid, isSubmitting, values: { username } }) => {
         const normalized = getNormalizedDomainText(username);
@@ -170,10 +171,10 @@ const StepUserENSName = ({ wizardForm, nextStep }: Props) => {
           </section>
         );
       }}
-    </Form>
+    </ActionForm>
   );
 };
 
-StepUserENSName.displayName = displayName;
+StepUserName.displayName = displayName;
 
-export default StepUserENSName;
+export default StepUserName;
