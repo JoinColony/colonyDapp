@@ -89,10 +89,6 @@ const pinionProc = () => {
   const pinionProcess = spawn('yarn', ['start'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
     stdio: 'pipe',
-    env: {
-      ...process.env,
-      DEBUG: 'pinner:*',
-    },
   });
   if (args.foreground) {
     pinionProcess.stdout.pipe(process.stdout);
