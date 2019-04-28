@@ -2,15 +2,20 @@
 
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import nanoid from 'nanoid';
+
+import type { Address } from '~types';
+import type { ContractTransactionType } from '~immutable';
+
+import { useDataFetcher } from '~utils/hooks';
+import {
+  colonyTransactionsFetcher,
+  colonyUnclaimedTransactionsFetcher,
+} from '../../fetchers';
 
 import Heading from '~core/Heading';
 import TransactionList from '~core/TransactionList';
 
 import styles from './Transactions.css';
-
-import type { Address, ENSName } from '~types';
-import type { ContractTransactionType, DataType } from '~immutable';
 
 const MSG = defineMessages({
   transactionsTitle: {
@@ -28,56 +33,57 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  claimColonyToken: (
-    colonyName: ENSName,
-    tokenAddress: Address,
-    id: string,
-  ) => any,
-  colonyName: string,
-  transactions: ?DataType<Array<ContractTransactionType>>,
-  unclaimedTransactions: ?DataType<Array<ContractTransactionType>>,
+  colonyAddress: Address,
 |};
 
-const Transactions = ({
-  claimColonyToken,
-  colonyName,
-  transactions,
-  unclaimedTransactions,
-}: Props) => (
-  <div className={styles.main}>
-    <div className={styles.titleContainer}>
-      <Heading
-        appearance={{ size: 'medium', margin: 'none' }}
-        text={MSG.transactionsTitle}
-      />
-    </div>
-    <div className={styles.transactionsWrapper}>
-      <div className={styles.pendingTransactionsWrapper}>
-        <TransactionList
-          label={MSG.pendingTransactionsTitle}
-          transactions={
-            (unclaimedTransactions && unclaimedTransactions.record) || undefined
-          }
-          isLoading={
-            (unclaimedTransactions && unclaimedTransactions.isFetching) || false
-          }
-          onClaim={transaction =>
-            claimColonyToken(colonyName, transaction.token, nanoid())
-          }
-          linkToEtherscan={false}
+const Transactions = ({ colonyAddress }: Props) => {
+  const {
+    data: transactions,
+    isFetching: isFetchingTransactions,
+  } = useDataFetcher<ContractTransactionType[]>(
+    colonyTransactionsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  const {
+    data: unclaimedTransactions,
+    isFetching: isFetchingUnclaimedTransactions,
+  } = useDataFetcher<ContractTransactionType[]>(
+    colonyUnclaimedTransactionsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  return (
+    <div className={styles.main}>
+      <div className={styles.titleContainer}>
+        <Heading
+          appearance={{ size: 'medium', margin: 'none' }}
+          text={MSG.transactionsTitle}
         />
       </div>
-      <div className={styles.historyTransactionsWrapper}>
-        <TransactionList
-          label={MSG.transactionHistoryTitle}
-          transactions={(transactions && transactions.record) || undefined}
-          isLoading={(transactions && transactions.isFetching) || false}
-          linkToEtherscan
-        />
+      <div className={styles.transactionsWrapper}>
+        <div className={styles.pendingTransactionsWrapper}>
+          <TransactionList
+            isLoading={isFetchingUnclaimedTransactions}
+            label={MSG.pendingTransactionsTitle}
+            linkToEtherscan={false}
+            transactions={unclaimedTransactions}
+          />
+        </div>
+        <div className={styles.historyTransactionsWrapper}>
+          <TransactionList
+            isLoading={isFetchingTransactions}
+            label={MSG.transactionHistoryTitle}
+            linkToEtherscan
+            transactions={transactions}
+          />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 Transactions.displayName = 'admin.Transactions';
 

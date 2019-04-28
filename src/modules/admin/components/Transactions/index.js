@@ -1,5 +1,5 @@
 /* @flow */
 
-import Transactions from './Transactions';
+import Transactions from './Transactions.jsx';
 
 export default Transactions;
